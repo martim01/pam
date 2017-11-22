@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="Workspace">
+		<Project filename="pambase/pambase.cbp" />
+		<Project filename="plugins/fft/fft.cbp">
+			<Depends filename="pambase/pambase.cbp" />
+		</Project>
+		<Project filename="plugins/lissajou/lissajou.cbp">
+			<Depends filename="pambase/pambase.cbp" />
+		</Project>
+		<Project filename="plugins/meters/meters.cbp">
+			<Depends filename="pambase/pambase.cbp" />
+		</Project>
+		<Project filename="plugins/scope/scope.cbp">
+			<Depends filename="pambase/pambase.cbp" />
+		</Project>
+		<Project filename="plugins/aoip info/aoip info.cbp">
+			<Depends filename="pambase/pambase.cbp" />
+		</Project>
+		<Project filename="plugins/channel delay/channel delay.cbp" />
+		<Project filename="plugins/distortion/distortion.cbp" />
+		<Project filename="plugins/levels/levels.cbp" />
+		<Project filename="plugins/identify/identify.cbp" />
+		<Project filename="plugins/peak log/peak log.cbp" />
+		<Project filename="pam2.cbp">
+			<Depends filename="pambase/pambase.cbp" />
+			<Depends filename="plugins/fft/fft.cbp" />
+			<Depends filename="plugins/lissajou/lissajou.cbp" />
+			<Depends filename="plugins/meters/meters.cbp" />
+			<Depends filename="plugins/scope/scope.cbp" />
+			<Depends filename="plugins/aoip info/aoip info.cbp" />
+			<Depends filename="plugins/channel delay/channel delay.cbp" />
+			<Depends filename="plugins/distortion/distortion.cbp" />
+			<Depends filename="plugins/levels/levels.cbp" />
+			<Depends filename="plugins/identify/identify.cbp" />
+			<Depends filename="plugins/peak log/peak log.cbp" />
+		</Project>
+		<Project filename="../pam/pam.cbp" />
+	</Workspace>
+</CodeBlocks_workspace_file>

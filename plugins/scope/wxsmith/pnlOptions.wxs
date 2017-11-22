@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlOptions">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmList" name="ID_M_PLST21" variable="m_plstScope_Mode" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>5,5</button_gap>
+			<items />
+			<pos>0,-2</pos>
+			<size>95,135</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstScope_ModeSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN30" variable="m_pbtnScope_Autotrigger" member="yes">
+			<label>Autotrigger</label>
+			<button_pressed>#800000</button_pressed>
+			<pos>100,0</pos>
+			<size>90,40</size>
+			<style>wmButton::STYLE_SELECT</style>
+			<handler function="OnbtnScope_AutotriggerClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN32" variable="m_pbtnScope_ResetSlide" member="yes">
+			<label>Reset Slide</label>
+			<button_pressed>#800000</button_pressed>
+			<pos>100,45</pos>
+			<size>90,40</size>
+			<style>wmButton::STYLE_NORMAL</style>
+			<handler function="OnbtnScope_ResetSlideClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN29" variable="m_pbtnScope_ClearMemory" member="yes">
+			<label>Clear Memory</label>
+			<button_pressed>#800000</button_pressed>
+			<pos>100,135</pos>
+			<size>90,40</size>
+			<style>wmButton::STYLE_NORMAL</style>
+			<handler function="OnbtnScope_ClearMemoryClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN33" variable="m_pbtnScope_Memory" member="yes">
+			<label>Memory</label>
+			<button_pressed>#800000</button_pressed>
+			<pos>2,135</pos>
+			<size>90,40</size>
+			<style>wmButton::STYLE_SELECT</style>
+			<handler function="OnbtnScope_MemoryClick" entry="EVT_BUTTON" />
+		</object>
+	</object>
+</wxsmith>

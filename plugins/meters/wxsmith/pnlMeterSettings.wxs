@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlMeterSettings">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnM3M6" member="yes">
+			<label>M+S</label>
+			<pos>2,0</pos>
+			<size>196,35</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400080</bg>
+			<style>wmButton::STYLE_SELECT</style>
+			<handler function="OnbtnM3M6Click" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmList" name="ID_M_PLST2" variable="m_plstSpeed" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>5,5</button_gap>
+			<columns>3</columns>
+			<items />
+			<pos>0,75</pos>
+			<size>200,42</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstSpeedSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnShading" member="yes">
+			<label>Shading</label>
+			<pos>2,160</pos>
+			<size>198,35</size>
+			<fg>#FFFFFF</fg>
+			<bg>#007100</bg>
+			<style>wmButton::STYLE_SELECT</style>
+			<handler function="OnbtnShadingClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+			<label>Meter Speed</label>
+			<pos>2,45</pos>
+			<size>196,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#3F73C0</bg>
+		</object>
+	</object>
+</wxsmith>

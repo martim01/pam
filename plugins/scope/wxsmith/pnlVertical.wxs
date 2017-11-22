@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlVertical">
+		<bg>#000000</bg>
+		<id_arg>0</id_arg>
+		<object class="wmButton" name="ID_M_PBTN13" variable="m_pbtnVerticalIn10" member="yes">
+			<label>Zoom In&#x0A;x10</label>
+			<pos>2,0</pos>
+			<size>90,40</size>
+			<handler function="OnbtnVerticalIn10Click" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN14" variable="m_pbtnVerticalOut10" member="yes">
+			<label>Zoom Out&#x0A;x10</label>
+			<pos>100,0</pos>
+			<size>90,40</size>
+			<handler function="OnbtnVerticalOut10Click" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN15" variable="m_pbtnVerticalIn4" member="yes">
+			<label>Zoom In&#x0A;x4</label>
+			<pos>2,45</pos>
+			<size>90,40</size>
+			<handler function="OnbtnVerticalIn4Click" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN16" variable="m_pbtnVerticalOut4" member="yes">
+			<label>Zoom Out&#x0A;x4</label>
+			<pos>100,45</pos>
+			<size>90,40</size>
+			<handler function="OnbtnVerticalOut4Click" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN17" variable="m_pbtnVerticalIn2" member="yes">
+			<label>Zoom In&#x0A;x2</label>
+			<pos>2,90</pos>
+			<size>90,40</size>
+			<handler function="OnbtnVerticalIn2Click" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN18" variable="m_pbtnVerticalOut2" member="yes">
+			<label>Zoom Out&#x0A;x2</label>
+			<pos>100,90</pos>
+			<size>90,40</size>
+			<handler function="OnbtnVerticalOut2Click" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN19" variable="m_pbtnVerticalIn1" member="yes">
+			<label>Zoom In&#x0A;0.01</label>
+			<pos>2,135</pos>
+			<size>90,40</size>
+			<style>wmButton::STYLE_REPEAT</style>
+			<handler function="OnbtnVerticalIn1Click" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN20" variable="m_pbtnVerticalOut1" member="yes">
+			<label>Zoom Out&#x0A;0.01</label>
+			<pos>100,135</pos>
+			<size>90,40</size>
+			<style>wmButton::STYLE_REPEAT</style>
+			<handler function="OnbtnVerticalOut1Click" entry="EVT_BUTTON" />
+		</object>
+	</object>
+</wxsmith>

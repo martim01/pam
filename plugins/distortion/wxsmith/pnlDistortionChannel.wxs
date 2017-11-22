@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlDistortionChannel">
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmLabel" name="ID_M_PLBL9" variable="m_plbLChannel" member="yes">
+			<label></label>
+			<border>uiRect::BORDER_FLAT</border>
+			<pos>0,0</pos>
+			<size>70,0</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400040</bg>
+			<font>
+				<size>10</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL1" variable="m_plblFrequency" member="yes">
+			<label></label>
+			<border>uiRect::BORDER_FLAT</border>
+			<pos>0,30</pos>
+			<size>70,25</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5B5B00</bg>
+			<font>
+				<size>10</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL2" variable="m_plblAmplitude" member="yes">
+			<label></label>
+			<border>uiRect::BORDER_FLAT</border>
+			<pos>0,60</pos>
+			<size>70,25</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5B5B00</bg>
+			<font>
+				<size>10</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL3" variable="m_plblPeaks" member="yes">
+			<label></label>
+			<border>uiRect::BORDER_FLAT</border>
+			<pos>0,90</pos>
+			<size>70,25</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5B5B00</bg>
+			<font>
+				<size>10</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL4" variable="m_plblDistortion" member="yes">
+			<label></label>
+			<border>uiRect::BORDER_FLAT</border>
+			<pos>0,120</pos>
+			<size>70,25</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5B5B00</bg>
+			<font>
+				<size>10</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL5" variable="m_plblMax" member="yes">
+			<label></label>
+			<border>uiRect::BORDER_FLAT</border>
+			<pos>0,150</pos>
+			<size>70,25</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5B5B00</bg>
+			<font>
+				<size>10</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL6" variable="m_plblTime" member="yes">
+			<label></label>
+			<border>uiRect::BORDER_FLAT</border>
+			<pos>0,180</pos>
+			<size>70,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5B5B00</bg>
+			<font>
+				<size>8</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+	</object>
+</wxsmith>

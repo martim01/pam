@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlMode">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmList" name="ID_M_PLST14" variable="m_plstMeters_Display" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>5,5</button_gap>
+			<columns>2</columns>
+			<text>#FFFFFF</text>
+			<items />
+			<pos>0,0</pos>
+			<size>190,140</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstMeters_DisplaySelected" entry="EVT_LIST_SELECTED" />
+		</object>
+	</object>
+</wxsmith>

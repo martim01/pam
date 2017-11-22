@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlNetworkSetup">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnStaticDHCP" member="yes">
+			<label>Type</label>
+			<pos>0,40</pos>
+			<size>200,40</size>
+			<bg>#0080C0</bg>
+			<style>wmButton::STYLE_SELECT</style>
+			<handler function="OntnStaticDHCPClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+			<label>IP Address</label>
+			<pos>0,85</pos>
+			<size>100,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400080</bg>
+		</object>
+		<object class="wmEdit" name="ID_M_PEDT1" variable="m_pedtAddress" member="yes">
+			<validation>Real</validation>
+			<border>uiRect::BORDER_DOWN</border>
+			<border_focused>uiRect::BORDER_DOWN</border_focused>
+			<background_focused>#FFFF80</background_focused>
+			<pos>100,85</pos>
+			<size>200,40</size>
+			<handler function="OnedtAddressTextEnter" entry="EVT_TEXT_ENTER" />
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
+			<label>Subnet Mask</label>
+			<pos>0,130</pos>
+			<size>100,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400080</bg>
+		</object>
+		<object class="wmEdit" name="ID_M_PEDT2" variable="m_pedtSubnet" member="yes">
+			<validation>Real</validation>
+			<border>uiRect::BORDER_DOWN</border>
+			<border_focused>uiRect::BORDER_DOWN</border_focused>
+			<background_focused>#FFFF80</background_focused>
+			<pos>100,130</pos>
+			<size>200,40</size>
+			<handler function="OnedtSubnetTextEnter" entry="EVT_TEXT_ENTER" />
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl4" member="yes">
+			<label>Gateway</label>
+			<pos>0,175</pos>
+			<size>100,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400080</bg>
+		</object>
+		<object class="wmEdit" name="ID_M_PEDT3" variable="m_pedtGateway" member="yes">
+			<validation>Real</validation>
+			<border>uiRect::BORDER_DOWN</border>
+			<border_focused>uiRect::BORDER_DOWN</border_focused>
+			<background_focused>#FFFF80</background_focused>
+			<pos>100,175</pos>
+			<size>200,40</size>
+			<handler function="OnedtGatewayTextEnter" entry="EVT_TEXT_ENTER" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnApply" member="yes">
+			<label>Apply</label>
+			<pos>320,175</pos>
+			<size>100,40</size>
+		</object>
+		<object class="wmKeyboard" name="ID_M_PKBD1" variable="m_pkbd" member="yes">
+			<type>Calc</type>
+			<pos>10,230</pos>
+			<size>240,200</size>
+			<fg>#FFFFFF</fg>
+			<font>
+				<size>10</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL5" variable="m_plblResult" member="yes">
+			<label>Gateway</label>
+			<pos>250,230</pos>
+			<size>300,200</size>
+			<fg>#FF0000</fg>
+			<bg>#000000</bg>
+			<font>
+				<size>12</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+			<extra_code>m__plblResult-&gt;SetTextAlign(wxALIGN__LEFT | wxALIGN__TOP);</extra_code>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
+			<label>Manage Network Settings</label>
+			<pos>0,5</pos>
+			<size>600,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#004000</bg>
+			<font>
+				<size>10</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+	</object>
+</wxsmith>

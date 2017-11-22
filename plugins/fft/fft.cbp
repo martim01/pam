@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="fft" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Release">
+				<Option output="../../lib/fft1.0.dll" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/release3" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-Wall" />
+					<Add option="-DWIN32" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DDLL_EXPORTS" />
+					<Add option="-D__WXMSW__" />
+					<Add option="-DWXUSINGDLL" />
+					<Add option="-DUNICODE" />
+					<Add option="-DwxUSE_UNICODE" />
+					<Add directory="$(#wx3_0.include)" />
+					<Add directory="$(#wx3_0.include)/mswu" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="$(#wx3_0.include)/mswu" />
+				</ResourceCompiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-Wl,--enable-auto-import,-Map=fft.map" />
+					<Add library="wxmsw30u_gcc_wammacs" />
+					<Add library="pambase2.0" />
+					<Add directory="$(#wx3_0.lib)" />
+				</Linker>
+			</Target>
+			<Target title="Debug">
+				<Option output="../../lib/debug/fft1.0.dll" prefix_auto="1" extension_auto="0" />
+				<Option object_output="obj/debug" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-DWIN32" />
+					<Add option="-D_USRDLL" />
+					<Add option="-D__WXMSW__" />
+					<Add option="-DWXUSINGDLL" />
+					<Add option="-DUNICODE" />
+					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-D__WXDEBUG__" />
+					<Add directory="$(#wx3_0.include)" />
+					<Add directory="$(#wx3_0.include)/mswu" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="$(#wx3_0.include)/mswu" />
+				</ResourceCompiler>
+				<Linker>
+					<Add option="-Wl,--enable-auto-import,-Map=fft.map" />
+					<Add library="wxmsw30ud_gcc_wammacs" />
+					<Add library="pambased2.0" />
+					<Add directory="$(#wx3_0.lib)" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add directory="../../pambase" />
+			<Add directory="$(#kiss.include)" />
+			<Add directory="$(#kiss.include)/tools" />
+		</Compiler>
+		<Linker>
+			<Add directory="../../lib" />
+		</Linker>
+		<Unit filename="../../../kiss_fft130/kiss_fft.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../kiss_fft130/tools/kfc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../kiss_fft130/tools/kiss_fftnd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../kiss_fft130/tools/kiss_fftndr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../kiss_fft130/tools/kiss_fftr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="fft.cpp" />
+		<Unit filename="fft.h" />
+		<Unit filename="fftAlgorithm.cpp" />
+		<Unit filename="fftAlgorithm.h" />
+		<Unit filename="fftbuilder.cpp" />
+		<Unit filename="fftbuilder.h" />
+		<Unit filename="fftmeter.cpp" />
+		<Unit filename="fftmeter.h" />
+		<Unit filename="kaiserwindow.cpp" />
+		<Unit filename="kaiserwindow.h" />
+		<Unit filename="kiss_xcorr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="kiss_xcorr.h" />
+		<Unit filename="pnlbins.cpp" />
+		<Unit filename="pnlbins.h" />
+		<Unit filename="pnldisplay.cpp" />
+		<Unit filename="pnldisplay.h" />
+		<Unit filename="pnloptions.cpp" />
+		<Unit filename="pnloptions.h" />
+		<Unit filename="pnloverlap.cpp" />
+		<Unit filename="pnloverlap.h" />
+		<Unit filename="pnlroutiing.cpp" />
+		<Unit filename="pnlroutiing.h" />
+		<Unit filename="pnltype.cpp" />
+		<Unit filename="pnltype.h" />
+		<Unit filename="pnlwindow.cpp" />
+		<Unit filename="pnlwindow.h" />
+		<Unit filename="wxsmith/pnlBins.wxs" />
+		<Unit filename="wxsmith/pnlDisplay.wxs" />
+		<Unit filename="wxsmith/pnlOptions.wxs" />
+		<Unit filename="wxsmith/pnlOverlap.wxs" />
+		<Unit filename="wxsmith/pnlRoutiing.wxs" />
+		<Unit filename="wxsmith/pnlType.wxs" />
+		<Unit filename="wxsmith/pnlWindow.wxs" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<AutoVersioning>
+				<Scheme minor_max="10" build_max="0" rev_max="0" rev_rand_max="10" build_times_to_increment_minor="100" />
+				<Settings autoincrement="1" date_declarations="1" use_define="0" update_manifest="0" do_auto_increment="0" ask_to_increment="0" language="C++" svn="0" svn_directory="" header_path="version.h" />
+				<Changes_Log show_changes_editor="0" app_title="released version %M.%m.%b of %p" changeslog_path="ChangesLog.txt" />
+				<Code header_guard="VERSION_H" namespace="AutoVersion" prefix="" />
+			</AutoVersioning>
+			<wxsmith version="1">
+				<resources>
+					<wxPanel wxs="wxsmith/pnlRoutiing.wxs" src="pnlroutiing.cpp" hdr="pnlroutiing.h" fwddecl="0" i18n="1" name="pnlRoutiing" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlDisplay.wxs" src="pnldisplay.cpp" hdr="pnldisplay.h" fwddecl="0" i18n="1" name="pnlDisplay" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlWindow.wxs" src="pnlwindow.cpp" hdr="pnlwindow.h" fwddecl="0" i18n="1" name="pnlWindow" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlType.wxs" src="pnltype.cpp" hdr="pnltype.h" fwddecl="0" i18n="1" name="pnlType" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlOverlap.wxs" src="pnloverlap.cpp" hdr="pnloverlap.h" fwddecl="0" i18n="1" name="pnlOverlap" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlBins.wxs" src="pnlbins.cpp" hdr="pnlbins.h" fwddecl="0" i18n="1" name="pnlBins" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlOptions.wxs" src="pnloptions.cpp" hdr="pnloptions.h" fwddecl="0" i18n="1" name="pnlOptions" language="CPP" />
+				</resources>
+			</wxsmith>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

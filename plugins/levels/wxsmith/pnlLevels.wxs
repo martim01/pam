@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlLevels">
+		<size>600,480</size>
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmLabel" name="ID_M_PLBL37" variable="m_pLbl12" member="yes">
+			<label>Level Measurements</label>
+			<pos>0,0</pos>
+			<size>600,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5B9539</bg>
+			<font>
+				<size>12</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnReset" member="yes">
+			<label>Reset</label>
+			<pos>5,420</pos>
+			<size>90,50</size>
+			<handler function="OnbtnResetClick" entry="EVT_BUTTON" />
+		</object>
+	</object>
+</wxsmith>

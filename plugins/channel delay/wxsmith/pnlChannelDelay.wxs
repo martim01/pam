@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlChannelDelay">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="Custom" name="ID_CUSTOM9" subclass="OffsetGraph" variable="m_pGraph" member="yes">
+			<creating_code>$(THIS) = new $(CLASS)($(PARENT),$(ID),$(POS),$(SIZE));</creating_code>
+			<include_file>offsetgraph.h</include_file>
+			<local_include>1</local_include>
+			<style></style>
+			<pos>20,50</pos>
+			<size>560,150</size>
+			<fg>#0000FF</fg>
+			<bg>#000000</bg>
+			<maxsize>800,480</maxsize>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL37" variable="m_pLbl12" member="yes">
+			<label>Channel Delay Measurements</label>
+			<pos>0,0</pos>
+			<size>600,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5B9539</bg>
+			<font>
+				<size>12</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmKeyboard" name="ID_M_PKBD1" variable="m_pKbd1" member="yes">
+			<type>Calc</type>
+			<pos>10,250</pos>
+			<size>240,200</size>
+			<fg>#FFFFFF</fg>
+			<font>
+				<size>10</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+			<label>Set maximum delay check in milliseconds</label>
+			<pos>10,220</pos>
+			<size>415,25</size>
+			<fg>#FFFFFF</fg>
+			<bg>#804000</bg>
+			<font>
+				<size>10</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
+			<label>Current</label>
+			<pos>260,250</pos>
+			<size>60,0</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400080</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL3" variable="m_plblCurrent" member="yes">
+			<label>Label</label>
+			<border>uiRect::BORDER_DOWN</border>
+			<pos>325,250</pos>
+			<size>100,25</size>
+			<bg>#FFFFFF</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl3" member="yes">
+			<label>Set To</label>
+			<pos>260,280</pos>
+			<size>60,0</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400080</bg>
+		</object>
+		<object class="wmEdit" name="ID_M_PEDT1" variable="m_pedtMaxDelay" member="yes">
+			<border>uiRect::BORDER_FLAT</border>
+			<border_focused>uiRect::BORDER_DOWN</border_focused>
+			<background_focused>#FFFFFF</background_focused>
+			<foreground_focused>#000000</foreground_focused>
+			<pos>325,280</pos>
+			<size>100,25</size>
+			<focused>1</focused>
+			<handler function="OnedtMaxDelayTextEnter" entry="EVT_TEXT_ENTER" />
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL5" variable="m_pLbl4" member="yes">
+			<label>Choose Channels</label>
+			<pos>260,320</pos>
+			<size>340,25</size>
+			<fg>#FFFFFF</fg>
+			<bg>#804000</bg>
+			<font>
+				<size>10</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL6" variable="m_pLbl5" member="yes">
+			<label>Channel 1</label>
+			<pos>260,350</pos>
+			<size>340,20</size>
+			<fg>#FFFFFF</fg>
+			<bg>#A80000</bg>
+		</object>
+		<object class="wmList" name="ID_M_PLST2" variable="m_plstChannel1" member="yes">
+			<scrolling>None</scrolling>
+			<button_size>-1,30</button_size>
+			<columns>8</columns>
+			<items />
+			<pos>260,370</pos>
+			<size>340,32</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstChannel1Selected" entry="EVT_LIST_SELECTED" />
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL7" variable="m_pLbl6" member="yes">
+			<label>Channel 2</label>
+			<pos>260,405</pos>
+			<size>340,20</size>
+			<fg>#FFFFFF</fg>
+			<bg>#00A800</bg>
+		</object>
+		<object class="wmList" name="ID_M_PLST1" variable="m_plstChannel2" member="yes">
+			<scrolling>None</scrolling>
+			<button_size>-1,30</button_size>
+			<columns>8</columns>
+			<items />
+			<pos>260,425</pos>
+			<size>340,32</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstChannel2Selected" entry="EVT_LIST_SELECTED" />
+		</object>
+	</object>
+</wxsmith>

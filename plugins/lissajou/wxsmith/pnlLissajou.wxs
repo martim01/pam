@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlLissajou">
+		<size>800,480</size>
+		<id_arg>0</id_arg>
+		<handler function="OnLeftUp" entry="EVT_LEFT_UP" />
+		<handler function="OnResize" entry="EVT_SIZE" />
+		<object class="Custom" name="ID_CUSTOM7" subclass="LissajouMeter" variable="m_pJellyfish" member="yes">
+			<creating_code>$(THIS) = new $(CLASS)($(PARENT),$(ID),$(POS),$(SIZE));</creating_code>
+			<include_file>lissajoumeter.h</include_file>
+			<local_include>1</local_include>
+			<style></style>
+			<pos>0,0</pos>
+			<size>600,480</size>
+			<fg>#0000FF</fg>
+			<bg>#FFFFFF</bg>
+		</object>
+		<object class="wxPanel" name="ID_PANEL19" variable="pnlLissajou_Meters" member="yes">
+			<pos>600,0</pos>
+			<size>200,481</size>
+			<bg>#000000</bg>
+			<object class="Custom" name="ID_CUSTOM1" subclass="LevelMeter" variable="m_pMeterLevels" member="yes">
+				<creating_code>$(THIS) = new $(CLASS)($(PARENT),$(ID),wxT(&quot;Left&quot;), -70, LevelMeter::LEVELS, $(POS),$(SIZE));</creating_code>
+				<include_file>levelmeter.h</include_file>
+				<local_include>1</local_include>
+				<style></style>
+				<pos>0,0</pos>
+				<size>50,481</size>
+				<fg>#0000FF</fg>
+				<bg>#000000</bg>
+				<maxsize>50,-1</maxsize>
+			</object>
+			<object class="Custom" name="ID_CUSTOM6" subclass="LevelMeter" variable="m_pMeterLeft" member="yes">
+				<creating_code>$(THIS) = new $(CLASS)($(PARENT),$(ID),wxT(&quot;Left&quot;), -70, LevelMeter::LEFT, $(POS),$(SIZE));</creating_code>
+				<include_file>levelmeter.h</include_file>
+				<local_include>1</local_include>
+				<style></style>
+				<pos>50,0</pos>
+				<size>50,481</size>
+				<fg>#0000FF</fg>
+				<bg>#000000</bg>
+				<maxsize>50,-1</maxsize>
+			</object>
+			<object class="Custom" name="ID_CUSTOM8" subclass="LevelMeter" variable="m_pMeterRight" member="yes">
+				<creating_code>$(THIS) = new $(CLASS)($(PARENT),$(ID),wxT(&quot;Right&quot;), -70, LevelMeter::RIGHT, $(POS),$(SIZE));</creating_code>
+				<include_file>levelmeter.h</include_file>
+				<local_include>1</local_include>
+				<style></style>
+				<pos>105,0</pos>
+				<size>50,481</size>
+				<fg>#0000FF</fg>
+				<bg>#000000</bg>
+				<maxsize>50,-1</maxsize>
+			</object>
+		</object>
+	</object>
+</wxsmith>

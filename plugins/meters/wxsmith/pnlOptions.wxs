@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlOptions">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmButton" name="ID_M_PBTN11" variable="m_pbnFreeze" member="yes">
+			<label>Freeze Meter</label>
+			<button_pressed>#800000</button_pressed>
+			<pos>95,165</pos>
+			<size>90,40</size>
+			<style>wmButton::STYLE_SELECT</style>
+			<handler function="OnbnFreezeClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN12" variable="m_pbtnMeterClear" member="yes">
+			<label>Clear</label>
+			<button_pressed>#800000</button_pressed>
+			<pos>2,165</pos>
+			<size>90,40</size>
+			<style>wmButton::STYLE_NORMAL</style>
+			<handler function="OnbtnMeterClearClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmList" name="ID_M_PLST25" variable="m_plstMeter_Peaks" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>5,5</button_gap>
+			<columns>3</columns>
+			<items />
+			<pos>0,0</pos>
+			<size>190,42</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstMeter_PeaksSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+	</object>
+</wxsmith>

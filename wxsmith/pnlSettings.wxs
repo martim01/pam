@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlSettings">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmLabel" name="ID_M_PLBL37" variable="m_plblSettings" member="yes">
+			<label>Settings</label>
+			<pos>0,0</pos>
+			<size>600,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#3D9292</bg>
+			<font>
+				<size>12</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmSwitcherPanel" name="ID_M_PSWP1" variable="m_pswpSettings" member="yes">
+			<pos>0,40</pos>
+			<size>600,440</size>
+			<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL1" variable="pnlInput" member="yes">
+					<bg>#000000</bg>
+					<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
+						<label>Audio Input</label>
+						<pos>0,5</pos>
+						<size>600,30</size>
+						<fg>#FFFFFF</fg>
+						<bg>#004000</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Arial</face>
+						</font>
+					</object>
+					<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnInput" member="yes">
+						<label>Input</label>
+						<pos>0,40</pos>
+						<size>240,30</size>
+						<bg>#400040</bg>
+						<style>wmButton::STYLE_SELECT</style>
+						<handler function="OnbtnInputClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmList" name="ID_M_PLST1" variable="m_plstDevices" member="yes">
+						<scrolling>None</scrolling>
+						<button_gap>5,1</button_gap>
+						<button_size>-1,60</button_size>
+						<columns>4</columns>
+						<button_selected>#008000</button_selected>
+						<items />
+						<pos>0,70</pos>
+						<size>600,370</size>
+						<bg>#000000</bg>
+						<style>wmList::STYLE_SELECT</style>
+						<handler function="OnlstDevicesSelected" entry="EVT_LIST_SELECTED" />
+					</object>
+				</object>
+				<label>Audio Input</label>
+			</object>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL2" variable="pnlOutput" member="yes">
+					<bg>#000000</bg>
+					<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl4" member="yes">
+						<label>Audio Output</label>
+						<pos>0,5</pos>
+						<size>600,30</size>
+						<fg>#FFFFFF</fg>
+						<bg>#004000</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Arial</face>
+						</font>
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+						<label>Play Buffer</label>
+						<pos>0,280</pos>
+						<size>80,30</size>
+						<fg>#FFFFFF</fg>
+						<bg>#909090</bg>
+						<extra_code>m__pLbl1-&gt;GetUiRect().SetGradient(0);</extra_code>
+					</object>
+					<object class="wmList" name="ID_M_PLST5" variable="m_plstBuffer" member="yes">
+						<scrolling>None</scrolling>
+						<button_gap>5,1</button_gap>
+						<button_size>-1,26</button_size>
+						<columns>4</columns>
+						<button>#008040</button>
+						<button_selected>#FF8000</button_selected>
+						<items />
+						<pos>80,280</pos>
+						<size>520,30</size>
+						<enabled>0</enabled>
+						<bg>#909090</bg>
+						<style>wmList::STYLE_SELECT</style>
+						<handler function="OnlstBufferSelected" entry="EVT_LIST_SELECTED" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnOutput" member="yes">
+						<label>Playback</label>
+						<pos>0,40</pos>
+						<size>200,30</size>
+						<bg>#400040</bg>
+						<style>wmButton::STYLE_SELECT</style>
+						<handler function="OnbtnOutputClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmList" name="ID_M_PLST6" variable="m_plstLatency" member="yes">
+						<scrolling>None</scrolling>
+						<button_gap>5,1</button_gap>
+						<button_size>-1,26</button_size>
+						<columns>10</columns>
+						<button>#008040</button>
+						<button_selected>#FF8000</button_selected>
+						<items />
+						<pos>80,320</pos>
+						<size>520,30</size>
+						<enabled>0</enabled>
+						<bg>#909090</bg>
+						<style>wmList::STYLE_SELECT</style>
+						<handler function="OnlblLatencySelected" entry="EVT_LIST_SELECTED" />
+					</object>
+					<object class="wmList" name="ID_M_PLST4" variable="m_plstPlayback" member="yes">
+						<scrolling>None</scrolling>
+						<button_gap>5,1</button_gap>
+						<button_size>-1,60</button_size>
+						<columns>4</columns>
+						<button_selected>#008000</button_selected>
+						<items />
+						<pos>0,70</pos>
+						<size>600,200</size>
+						<enabled>0</enabled>
+						<bg>#000000</bg>
+						<style>wmList::STYLE_SELECT</style>
+						<handler function="OnlstPlaybackSelected" entry="EVT_LIST_SELECTED" />
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL5" variable="m_pLbl5" member="yes">
+						<label>Latency</label>
+						<pos>0,320</pos>
+						<size>80,30</size>
+						<fg>#FFFFFF</fg>
+						<bg>#909090</bg>
+						<extra_code>m__pLbl1-&gt;GetUiRect().SetGradient(0);</extra_code>
+					</object>
+				</object>
+				<label>Audio Output</label>
+			</object>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL4" subclass="pnlRTP" variable="pnlSettingsRTP" member="yes" />
+				<label>AoIP</label>
+			</object>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL5" subclass="pnlNetworkSetup" variable="pnlSettingsNetwork" member="yes" />
+				<label>Network</label>
+			</object>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL3" subclass="pnlSettingsPlugins" variable="m_ppnlPlugins" member="yes" />
+				<label>Plugins</label>
+			</object>
+		</object>
+	</object>
+</wxsmith>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlTimeframe">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmButton" name="ID_M_PBTN9" variable="m_pbtnScopeIn1000" member="yes">
+			<label>Zoom In&#x0A;x10</label>
+			<pos>2,0</pos>
+			<size>90,40</size>
+			<handler function="OnbtnScopeIn1000Click" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN8" variable="m_pbtnScopeOut1000" member="yes">
+			<label>Zoom Out&#x0A;x10</label>
+			<pos>100,0</pos>
+			<size>90,40</size>
+			<handler function="OnbtnScopeOut1000Click" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN2" variable="m_btnScopeIn100" member="yes">
+			<label>Zoom In&#x0A;x4</label>
+			<pos>2,45</pos>
+			<size>90,40</size>
+			<handler function="OnbtnScopeIn100Click" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnScopeOut100" member="yes">
+			<label>Zoom Out&#x0A;x4</label>
+			<pos>100,45</pos>
+			<size>90,40</size>
+			<handler function="OnbtnScopeOut100Click" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnScopeIn10" member="yes">
+			<label>Zoom In&#x0A;x2</label>
+			<pos>2,90</pos>
+			<size>90,40</size>
+			<handler function="OnbtnScopeIn10Click" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnScopeOut10" member="yes">
+			<label>Zoom Out&#x0A;x2</label>
+			<pos>100,90</pos>
+			<size>90,40</size>
+			<handler function="OnbtnScopeOut10Click" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN6" variable="m_pbtnScopeIn1" member="yes">
+			<label>Zoom In&#x0A;1 sample</label>
+			<pos>2,135</pos>
+			<size>90,40</size>
+			<style>wmButton::STYLE_REPEAT</style>
+			<handler function="OnbtnScopeIn1Click" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN7" variable="m_pbtnScopeOut1" member="yes">
+			<label>Zoom Out&#x0A;1 sample</label>
+			<pos>100,135</pos>
+			<size>90,40</size>
+			<style>wmButton::STYLE_REPEAT</style>
+			<handler function="OnbtnScopeOut1Click" entry="EVT_BUTTON" />
+		</object>
+	</object>
+</wxsmith>

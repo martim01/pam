@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlTrigger">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmButton" name="ID_M_PBTN21" variable="m_pbtnTriggerUp1000" member="yes">
+			<label>+0.01</label>
+			<button_disabled>#909090</button_disabled>
+			<text_disabled>#C0C0C0</text_disabled>
+			<pos>2,0</pos>
+			<size>90,40</size>
+			<style>wmButton::STYLE_REPEAT</style>
+			<handler function="OnbtnTriggerUp1000Click" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN22" variable="m_pbtnTriggerDown1000" member="yes">
+			<label>-0.01</label>
+			<button_disabled>#909090</button_disabled>
+			<text_disabled>#C0C0C0</text_disabled>
+			<pos>100,0</pos>
+			<size>90,40</size>
+			<style>wmButton::STYLE_REPEAT</style>
+			<handler function="OnbtnTriggerDown1000Click" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN23" variable="m_pbtnTriggerUp100" member="yes">
+			<label>+0.001</label>
+			<button_disabled>#909090</button_disabled>
+			<text_disabled>#C0C0C0</text_disabled>
+			<pos>2,45</pos>
+			<size>90,40</size>
+			<style>wmButton::STYLE_REPEAT</style>
+			<handler function="OnbtnTriggerUp100Click" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN24" variable="m_pbtnTriggerDown100" member="yes">
+			<label>-0.001</label>
+			<button_disabled>#909090</button_disabled>
+			<text_disabled>#C0C0C0</text_disabled>
+			<pos>100,45</pos>
+			<size>90,40</size>
+			<style>wmButton::STYLE_REPEAT</style>
+			<handler function="OnbtnTriggerDown100Click" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN25" variable="m_pbtnTriggerUp10" member="yes">
+			<label>+0.0001</label>
+			<button_disabled>#909090</button_disabled>
+			<text_disabled>#C0C0C0</text_disabled>
+			<pos>2,90</pos>
+			<size>90,40</size>
+			<style>wmButton::STYLE_REPEAT</style>
+			<handler function="OnbtnTriggerUp10Click" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN26" variable="m_pbtnTriggerDown10" member="yes">
+			<label>-0.0001</label>
+			<button_disabled>#909090</button_disabled>
+			<text_disabled>#C0C0C0</text_disabled>
+			<pos>100,90</pos>
+			<size>90,40</size>
+			<style>wmButton::STYLE_REPEAT</style>
+			<handler function="OnbtnTriggerDown10Click" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN27" variable="m_pbtnTriggerUp1" member="yes">
+			<label>+0.00001</label>
+			<button_disabled>#909090</button_disabled>
+			<text_disabled>#C0C0C0</text_disabled>
+			<pos>2,135</pos>
+			<size>90,40</size>
+			<style>wmButton::STYLE_REPEAT</style>
+			<handler function="OnbtnTriggerUp1Click" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN28" variable="m_pbtnTriggerDown1" member="yes">
+			<label>-0.0001</label>
+			<button_disabled>#909090</button_disabled>
+			<text_disabled>#C0C0C0</text_disabled>
+			<pos>100,135</pos>
+			<size>90,40</size>
+			<style>wmButton::STYLE_REPEAT</style>
+			<handler function="OnbtnTriggerDown1Click" entry="EVT_BUTTON" />
+		</object>
+	</object>
+</wxsmith>

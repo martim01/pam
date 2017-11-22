@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlLog">
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wxListCtrl" name="ID_LISTCTRL1" variable="m_plclLog" member="yes">
+			<pos>0,0</pos>
+			<size>600,480</size>
+			<style>wxLC_REPORT|wxLC_SINGLE_SEL</style>
+			<handler function="OnlclLogColumnEndDrag" entry="EVT_LIST_COL_END_DRAG" />
+		</object>
+	</object>
+</wxsmith>

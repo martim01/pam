@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlOptions">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnFFT_Hold" member="yes">
+			<label>Hold</label>
+			<button_pressed>#800000</button_pressed>
+			<pos>2,0</pos>
+			<size>90,40</size>
+			<style>wmButton::STYLE_SELECT</style>
+			<handler function="OnbtnFFT_HoldClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN34" variable="m_pbtnFFT_Cursor" member="yes">
+			<label>Cursor Mode</label>
+			<button_pressed>#800000</button_pressed>
+			<pos>100,0</pos>
+			<size>90,40</size>
+			<style>wmButton::STYLE_SELECT</style>
+			<handler function="OnbtnFFT_CursorClick" entry="EVT_BUTTON" />
+		</object>
+	</object>
+</wxsmith>

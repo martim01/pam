@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlMeters">
+		<size>800,480</size>
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<handler function="OnLeftUp" entry="EVT_LEFT_UP" />
+		<object class="wxPanel" name="ID_PANEL1" variable="pnlInfo" member="yes">
+			<pos>600,0</pos>
+			<size>200,480</size>
+			<bg>#000000</bg>
+			<handler function="OnInfoLeftUp" entry="EVT_LEFT_UP" />
+			<object class="wmLabel" name="ID_M_PLBL59" variable="m_pLbl33" member="yes">
+				<label>Input</label>
+				<pos>0,0</pos>
+				<size>181,20</size>
+				<fg>#FFFFFF</fg>
+				<bg>#0000FF</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL38" variable="m_pLbl20" member="yes">
+				<label>Session Name</label>
+				<pos>0,50</pos>
+				<size>181,20</size>
+				<fg>#FFFFFF</fg>
+				<bg>#0000FF</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL40" variable="m_pLbl24" member="yes">
+				<label>Session Type</label>
+				<pos>0,100</pos>
+				<size>181,20</size>
+				<fg>#FFFFFF</fg>
+				<bg>#0000FF</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL39" variable="m_pLbl23" member="yes">
+				<label>Source</label>
+				<pos>0,150</pos>
+				<size>181,20</size>
+				<fg>#FFFFFF</fg>
+				<bg>#0000FF</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL60" variable="m_plblInput" member="yes">
+				<label></label>
+				<pos>0,21</pos>
+				<size>181,25</size>
+				<fg>#008000</fg>
+				<bg>#FFFFFF</bg>
+				<font>
+					<size>10</size>
+					<style>normal</style>
+					<weight>bold</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+					<face>Consolas</face>
+				</font>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL41" variable="m_plblSessionName" member="yes">
+				<label></label>
+				<pos>0,71</pos>
+				<size>181,25</size>
+				<fg>#008000</fg>
+				<bg>#FFFFFF</bg>
+				<font>
+					<size>10</size>
+					<style>normal</style>
+					<weight>bold</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+					<face>Consolas</face>
+				</font>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL43" variable="m_plblSessionType" member="yes">
+				<label></label>
+				<pos>0,121</pos>
+				<size>181,25</size>
+				<fg>#008000</fg>
+				<bg>#FFFFFF</bg>
+				<font>
+					<size>10</size>
+					<style>normal</style>
+					<weight>bold</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+					<face>Consolas</face>
+				</font>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL42" variable="m_plblSessionSource" member="yes">
+				<label></label>
+				<pos>0,171</pos>
+				<size>181,25</size>
+				<fg>#008000</fg>
+				<bg>#FFFFFF</bg>
+				<font>
+					<size>10</size>
+					<style>normal</style>
+					<weight>bold</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+					<face>Consolas</face>
+				</font>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL44" variable="m_pLbl25" member="yes">
+				<label>Bits</label>
+				<pos>0,210</pos>
+				<size>79,20</size>
+				<fg>#FFFFFF</fg>
+				<bg>#0000FF</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL47" variable="m_plblSessionBits" member="yes">
+				<label></label>
+				<pos>80,210</pos>
+				<size>100,20</size>
+				<fg>#008000</fg>
+				<bg>#FFFFFF</bg>
+				<font>
+					<size>10</size>
+					<style>normal</style>
+					<weight>bold</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+					<face>Consolas</face>
+				</font>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL45" variable="m_pLbl26" member="yes">
+				<label>Freq</label>
+				<pos>0,231</pos>
+				<size>79,20</size>
+				<fg>#FFFFFF</fg>
+				<bg>#0000FF</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL48" variable="m_plblSessionFrequency" member="yes">
+				<label></label>
+				<pos>80,231</pos>
+				<size>100,20</size>
+				<fg>#008000</fg>
+				<bg>#FFFFFF</bg>
+				<font>
+					<size>10</size>
+					<style>normal</style>
+					<weight>bold</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+					<face>Consolas</face>
+				</font>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL46" variable="m_pLbl27" member="yes">
+				<label>Channels</label>
+				<pos>0,252</pos>
+				<size>79,20</size>
+				<fg>#FFFFFF</fg>
+				<bg>#0000FF</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL49" variable="m_plblSessionChannels" member="yes">
+				<label></label>
+				<pos>80,252</pos>
+				<size>100,20</size>
+				<fg>#008000</fg>
+				<bg>#FFFFFF</bg>
+				<font>
+					<size>10</size>
+					<style>normal</style>
+					<weight>bold</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+					<face>Consolas</face>
+				</font>
+			</object>
+		</object>
+	</object>
+</wxsmith>

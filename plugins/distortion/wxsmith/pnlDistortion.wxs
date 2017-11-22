@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlDistortion">
+		<bg>#000000</bg>
+		<id_arg>0</id_arg>
+		<object class="wmLabel" name="ID_M_PLBL37" variable="m_pLbl12" member="yes">
+			<label>Distortion Measurements</label>
+			<pos>0,0</pos>
+			<size>600,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5B9539</bg>
+			<font>
+				<size>12</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wxPanel" name="ID_PANEL1" variable="pnlLeft" member="yes">
+			<pos>0,50</pos>
+			<size>600,430</size>
+			<bg>#000000</bg>
+			<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+				<label>Frq</label>
+				<pos>5,30</pos>
+				<size>32,25</size>
+				<fg>#FFFFFF</fg>
+				<bg>#2F5E5E</bg>
+				<style>wxALIGN_LEFT</style>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
+				<label>Amp</label>
+				<pos>5,60</pos>
+				<size>32,25</size>
+				<fg>#FFFFFF</fg>
+				<bg>#2F5E5E</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl2" member="yes">
+				<label>Peaks</label>
+				<pos>5,90</pos>
+				<size>32,25</size>
+				<fg>#FFFFFF</fg>
+				<bg>#2F5E5E</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL5" variable="m_pLbl4" member="yes">
+				<label>THD</label>
+				<pos>5,120</pos>
+				<size>32,25</size>
+				<fg>#FFFFFF</fg>
+				<bg>#2F5E5E</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL38" variable="m_pLbl15" member="yes">
+				<label>Max</label>
+				<pos>5,150</pos>
+				<size>32,25</size>
+				<fg>#FFFFFF</fg>
+				<bg>#2F5E5E</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL40" variable="m_pLbl17" member="yes">
+				<label>Max&#x0A;Time</label>
+				<pos>5,180</pos>
+				<size>32,40</size>
+				<fg>#FFFFFF</fg>
+				<bg>#2F5E5E</bg>
+			</object>
+			<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnReset" member="yes">
+				<label>Reset</label>
+				<pos>5,370</pos>
+				<size>90,50</size>
+				<handler function="OnbtnResetClick" entry="EVT_BUTTON" />
+			</object>
+		</object>
+		<object class="wxTimer" name="ID_TIMER1" variable="m_timerTest" member="yes">
+			<interval>500</interval>
+			<handler function="OntimerTestTrigger" entry="EVT_TIMER" />
+		</object>
+	</object>
+</wxsmith>

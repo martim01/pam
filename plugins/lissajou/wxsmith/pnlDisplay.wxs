@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlDisplay">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmList" name="ID_M_PLST24" variable="m_plstScaling" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>5,5</button_gap>
+			<columns>3</columns>
+			<items />
+			<pos>0,0</pos>
+			<size>190,45</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstScalingSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN36" variable="m_pbtnRotate" member="yes">
+			<label>Axis</label>
+			<button_pressed>#B40000</button_pressed>
+			<pos>2,50</pos>
+			<size>196,35</size>
+			<bg>#004000</bg>
+			<style>wmButton::STYLE_SELECT</style>
+			<handler function="OnbtnRotateClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN37" variable="m_pbtnLevels" member="yes">
+			<label>Levels</label>
+			<button_pressed>#008080</button_pressed>
+			<pos>2,90</pos>
+			<size>196,35</size>
+			<bg>#004000</bg>
+			<style>wmButton::STYLE_SELECT</style>
+			<handler function="OnbtnLevelsClick" entry="EVT_BUTTON" />
+		</object>
+	</object>
+</wxsmith>

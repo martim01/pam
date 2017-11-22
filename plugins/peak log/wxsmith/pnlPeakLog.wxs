@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlPeakLog">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmLabel" name="ID_M_PLBL37" variable="m_plblTitle" member="yes">
+			<label>Peak Level Log</label>
+			<pos>0,0</pos>
+			<size>600,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5B9539</bg>
+			<font>
+				<size>12</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="Custom" name="ID_CUSTOM7" subclass="LevelGraph" variable="m_pLevelGraph_Day" member="yes">
+			<creating_code>$(THIS) = new $(CLASS)($(PARENT),$(ID), $(POS),$(SIZE), 56400, -50);</creating_code>
+			<include_file>levelgraph.h</include_file>
+			<local_include>1</local_include>
+			<style></style>
+			<pos>0,70</pos>
+			<size>72,350</size>
+			<fg>#0000FF</fg>
+			<bg>#000000</bg>
+			<maxsize>50,-1</maxsize>
+		</object>
+		<object class="Custom" name="ID_CUSTOM8" subclass="LevelGraph" variable="m_pLevelGraph_Hour" member="yes">
+			<creating_code>$(THIS) = new $(CLASS)($(PARENT),$(ID), $(POS),$(SIZE), 470, -50);</creating_code>
+			<include_file>levelgraph.h</include_file>
+			<local_include>1</local_include>
+			<style></style>
+			<pos>72,70</pos>
+			<size>360,350</size>
+			<fg>#0000FF</fg>
+			<bg>#000000</bg>
+			<maxsize>50,-1</maxsize>
+		</object>
+		<object class="Custom" name="ID_CUSTOM9" subclass="LevelGraph" variable="m_pLevelGraph_Minute" member="yes">
+			<creating_code>$(THIS) = new $(CLASS)($(PARENT),$(ID), $(POS),$(SIZE),24,-50);</creating_code>
+			<include_file>levelgraph.h</include_file>
+			<local_include>1</local_include>
+			<style></style>
+			<pos>432,70</pos>
+			<size>120,350</size>
+			<fg>#0000FF</fg>
+			<bg>#000000</bg>
+			<maxsize>50,-1</maxsize>
+		</object>
+		<object class="Custom" name="ID_CUSTOM12" subclass="LevelGraph" variable="m_pLevelGraph_Second" member="yes">
+			<creating_code>$(THIS) = new $(CLASS)($(PARENT),$(ID), $(POS),$(SIZE),1,-50);</creating_code>
+			<include_file>levelgraph.h</include_file>
+			<local_include>1</local_include>
+			<style></style>
+			<pos>552,70</pos>
+			<size>47,350</size>
+			<fg>#0000FF</fg>
+			<bg>#000000</bg>
+			<maxsize>50,-1</maxsize>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+			<label>Day</label>
+			<border>uiRect::BORDER_FLAT</border>
+			<pos>0,40</pos>
+			<size>72,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400040</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
+			<label>Hour</label>
+			<border>uiRect::BORDER_FLAT</border>
+			<pos>72,40</pos>
+			<size>360,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400040</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
+			<label>Minute</label>
+			<border>uiRect::BORDER_FLAT</border>
+			<pos>432,40</pos>
+			<size>120,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400040</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl4" member="yes">
+			<label>Second</label>
+			<border>uiRect::BORDER_FLAT</border>
+			<pos>552,40</pos>
+			<size>47,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400040</bg>
+		</object>
+		<object class="wmList" name="ID_M_PLST1" variable="m_plstGraphs" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>5,0</button_gap>
+			<columns>8</columns>
+			<button>#004000</button>
+			<items />
+			<pos>5,430</pos>
+			<size>400,50</size>
+			<bg>#000000</bg>
+			<handler function="OnlstGraphsSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnType" member="yes">
+			<label>Log Loudness</label>
+			<button_pressed>#1D3147</button_pressed>
+			<pos>410,432</pos>
+			<size>90,40</size>
+			<bg>#253E5A</bg>
+			<handler function="OnbtnTypeClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnClear" member="yes">
+			<label>Clear Graphs</label>
+			<button_pressed>#5E2F00</button_pressed>
+			<pos>505,432</pos>
+			<size>90,40</size>
+			<bg>#804000</bg>
+			<handler function="OnbtnClearClick" entry="EVT_BUTTON" />
+		</object>
+	</object>
+</wxsmith>

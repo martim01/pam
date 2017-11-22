@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="pam2" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/pam2" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Option projectLinkerOptionsRelation="2" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-DWIN32" />
+					<Add option="-D__WXMSW__" />
+					<Add option="-DWXUSINGDLL" />
+					<Add option="-DUNICODE" />
+					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-D__WXDEBUG__" />
+					<Add directory="$(#wx3_0.include)" />
+					<Add directory="$(#wx3_0.include)/mswu" />
+					<Add directory="$(#portaudio.include)" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="$(#wx3_0.include)/mswu" />
+				</ResourceCompiler>
+				<Linker>
+					<Add option="-Wl,--enable-auto-import,-Map=pam2d.map" />
+					<Add library="wxmsw30ud_gcc_wammacs" />
+					<Add library="pambased2.0" />
+					<Add library="portaudio" />
+					<Add library="libliveMedia.a" />
+					<Add library="libBasicUsageEnvironment.a" />
+					<Add library="libUsageEnvironment.a" />
+					<Add library="libgroupsock.a" />
+					<Add library="Ws2_32" />
+					<Add library="iphlpapi" />
+					<Add directory="$(#wx3_0.lib)" />
+					<Add directory="$(#portaudio.lib)" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/pam2" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Option projectLinkerOptionsRelation="2" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-Wall" />
+					<Add option="-DWIN32" />
+					<Add option="-D__WXMSW__" />
+					<Add option="-DWXUSINGDLL" />
+					<Add option="-DUNICODE" />
+					<Add option="-DwxUSE_UNICODE" />
+					<Add directory="$(#wx3_0.include)" />
+					<Add directory="$(#wx3_0.include)/mswu" />
+					<Add directory="$(#portaudio.include)" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="$(#wx3_0.include)/mswu" />
+				</ResourceCompiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-Wl,--enable-auto-import,-Map=pam2.map" />
+					<Add library="wxmsw30u_gcc_wammacs" />
+					<Add library="portaudiod" />
+					<Add library="libliveMedia.a" />
+					<Add library="libBasicUsageEnvironment.a" />
+					<Add library="libUsageEnvironment.a" />
+					<Add library="libgroupsock.a" />
+					<Add library="Ws2_32" />
+					<Add library="iphlpapi" />
+					<Add library="pambase2.0" />
+					<Add directory="$(#wx3_0.lib)" />
+					<Add directory="$(#portaudio.lib)" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-pipe" />
+			<Add option="-mthreads" />
+			<Add option="-D__GNUWIN32__" />
+			<Add option="-D__WXMSW__" />
+			<Add option="-DWXUSINGDLL" />
+			<Add option="-DwxUSE_UNICODE" />
+			<Add directory="C:/wxWidgets-3.0.2/include" />
+			<Add directory="pambase" />
+			<Add directory="$(#live_media.include)" />
+			<Add directory="$(#live_group.include)" />
+			<Add directory="$(#live_usage.include)" />
+			<Add directory="$(#live_basicusage.include)" />
+		</Compiler>
+		<ResourceCompiler>
+			<Add directory="C:/wxWidgets-3.0.2/include" />
+		</ResourceCompiler>
+		<Linker>
+			<Add option="-mthreads" />
+			<Add directory="lib" />
+			<Add directory="$(#live_media.lib)" />
+			<Add directory="$(#live_group.lib)" />
+			<Add directory="$(#live_usage.lib)" />
+			<Add directory="$(#live_basicusage.lib)" />
+		</Linker>
+		<Unit filename="1035.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="1035.h" />
+		<Unit filename="PamMediaSession.h" />
+		<Unit filename="PamTaskScheduler.cpp" />
+		<Unit filename="PamTaskScheduler.h" />
+		<Unit filename="PamUsageEnvironment.cpp" />
+		<Unit filename="PamUsageEnvironment.h" />
+		<Unit filename="aes67client.cpp" />
+		<Unit filename="aes67client.h" />
+		<Unit filename="aes67mediasession.cpp" />
+		<Unit filename="aes67mediasession.h" />
+		<Unit filename="aes67source.cpp" />
+		<Unit filename="aes67source.h" />
+		<Unit filename="mdnsd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="mdnsd.h" />
+		<Unit filename="ourRTSPClient.cpp" />
+		<Unit filename="ourRTSPClient.h" />
+		<Unit filename="pam2App.cpp" />
+		<Unit filename="pam2App.h" />
+		<Unit filename="pam2Main.cpp" />
+		<Unit filename="pam2Main.h" />
+		<Unit filename="playout.cpp" />
+		<Unit filename="playout.h" />
+		<Unit filename="pnlLog.cpp" />
+		<Unit filename="pnlLog.h" />
+		<Unit filename="pnlLogControl.cpp" />
+		<Unit filename="pnlLogControl.h" />
+		<Unit filename="pnlNetworkSetup.cpp" />
+		<Unit filename="pnlNetworkSetup.h" />
+		<Unit filename="pnlRTP.cpp" />
+		<Unit filename="pnlRTP.h" />
+		<Unit filename="pnlSettings.cpp" />
+		<Unit filename="pnlSettings.h" />
+		<Unit filename="pnlSettingsInput.cpp" />
+		<Unit filename="pnlSettingsInput.h" />
+		<Unit filename="pnlSettingsOptions.cpp" />
+		<Unit filename="pnlSettingsOptions.h" />
+		<Unit filename="pnlSettingsPlugins.cpp" />
+		<Unit filename="pnlSettingsPlugins.h" />
+		<Unit filename="pnlTests.cpp" />
+		<Unit filename="pnlTests.h" />
+		<Unit filename="qos.cpp" />
+		<Unit filename="qos.h" />
+		<Unit filename="rtpthread.cpp" />
+		<Unit filename="rtpthread.h" />
+		<Unit filename="rtsputil.cpp" />
+		<Unit filename="rtsputil.h" />
+		<Unit filename="sapwatchthread.cpp" />
+		<Unit filename="sapwatchthread.h" />
+		<Unit filename="streamclientstate.cpp" />
+		<Unit filename="streamclientstate.h" />
+		<Unit filename="wxServDisc.cpp" />
+		<Unit filename="wxServDisc.h" />
+		<Unit filename="wxsink.cpp" />
+		<Unit filename="wxsink.h" />
+		<Unit filename="wxsmith/pnlAoIPInfo.wxs" />
+		<Unit filename="wxsmith/pnlLog.wxs" />
+		<Unit filename="wxsmith/pnlLogControl.wxs" />
+		<Unit filename="wxsmith/pnlSettingsOptions.wxs" />
+		<Unit filename="wxsmith/pnlSettingsPlugins.wxs" />
+		<Unit filename="wxsmith/pnlTests.wxs" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<wxsmith version="1">
+				<gui name="wxWidgets" src="pam2App.cpp" main="pam2Dialog" init_handlers="necessary" language="CPP" />
+				<resources>
+					<wxDialog wxs="wxsmith/pam2dialog.wxs" src="pam2Main.cpp" hdr="pam2Main.h" fwddecl="0" i18n="1" name="pam2Dialog" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlSettings.wxs" src="pnlSettings.cpp" hdr="pnlSettings.h" fwddecl="0" i18n="1" name="pnlSettings" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlRTP.wxs" src="pnlRTP.cpp" hdr="pnlRTP.h" fwddecl="0" i18n="1" name="pnlRTP" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlNetworkSetup.wxs" src="pnlNetworkSetup.cpp" hdr="pnlNetworkSetup.h" fwddecl="0" i18n="1" name="pnlNetworkSetup" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlSettingsInput.wxs" src="pnlSettingsInput.cpp" hdr="pnlSettingsInput.h" fwddecl="0" i18n="1" name="pnlSettingsInput" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlSettingsOptions.wxs" src="pnlSettingsOptions.cpp" hdr="pnlSettingsOptions.h" fwddecl="0" i18n="1" name="pnlSettingsOptions" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlTests.wxs" src="pnlTests.cpp" hdr="pnlTests.h" fwddecl="0" i18n="1" name="pnlTests" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlAoIPInfo.wxs" src="pnlAoIPInfo.cpp" hdr="pnlAoIPInfo.h" fwddecl="0" i18n="1" name="pnlAoIPInfo" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlSettingsPlugins.wxs" src="pnlSettingsPlugins.cpp" hdr="pnlSettingsPlugins.h" fwddecl="0" i18n="1" name="pnlSettingsPlugins" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlLog.wxs" src="pnlLog.cpp" hdr="pnlLog.h" fwddecl="0" i18n="1" name="pnlLog" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlLogControl.wxs" src="pnlLogControl.cpp" hdr="pnlLogControl.h" fwddecl="0" i18n="1" name="pnlLogControl" language="CPP" />
+				</resources>
+			</wxsmith>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
