@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlIdentify">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmLabel" name="ID_M_PLBL37" variable="m_pLbl12" member="yes">
+			<label>Audio Identification</label>
+			<pos>0,0</pos>
+			<size>600,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#9A4134</bg>
+			<font>
+				<size>12</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnIdentify" member="yes">
+			<label>Identify</label>
+			<button_disabled>#505050</button_disabled>
+			<pos>50,50</pos>
+			<size>90,40</size>
+			<bg>#008040</bg>
+			<font>
+				<size>10</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+			<handler function="OnbtnIdentifyClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL13" variable="m_plblStatus" member="yes">
+			<label></label>
+			<pos>150,60</pos>
+			<size>300,-1</size>
+			<fg>#FFFFFF</fg>
+			<bg>#000000</bg>
+			<style>wxALIGN_LEFT</style>
+		</object>
+		<object class="wxPanel" name="ID_PANEL1" variable="Panel2" member="yes">
+			<pos>50,100</pos>
+			<size>480,190</size>
+			<bg>#FFFFFF</bg>
+			<object class="wmLabel" name="ID_M_PLBL7" variable="m_pLbl7" member="yes">
+				<label>Artist:</label>
+				<pos>5,5</pos>
+				<bg>#FFFFFF</bg>
+				<font>
+					<size>10</size>
+					<style>normal</style>
+					<weight>bold</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+					<face>Arial</face>
+				</font>
+				<style>wxALIGN_LEFT</style>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL1" variable="m_plblArtist" member="yes">
+				<label></label>
+				<pos>70,5</pos>
+				<size>400,-1</size>
+				<fg>#000000</fg>
+				<bg>#FFFFFF</bg>
+				<font>
+					<size>10</size>
+					<style>normal</style>
+					<weight>normal</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+				</font>
+				<style>wxALIGN_LEFT</style>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL5" variable="m_pLbl5" member="yes">
+				<label>Album:</label>
+				<pos>5,65</pos>
+				<bg>#FFFFFF</bg>
+				<font>
+					<size>10</size>
+					<style>normal</style>
+					<weight>bold</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+					<face>Arial</face>
+				</font>
+				<style>wxALIGN_LEFT</style>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL8" variable="m_plblAlbum" member="yes">
+				<label></label>
+				<pos>70,65</pos>
+				<size>400,-1</size>
+				<fg>#000000</fg>
+				<bg>#FFFFFF</bg>
+				<font>
+					<size>10</size>
+					<style>normal</style>
+					<weight>normal</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+				</font>
+				<style>wxALIGN_LEFT</style>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl4" member="yes">
+				<label>Track:</label>
+				<pos>5,95</pos>
+				<bg>#FFFFFF</bg>
+				<font>
+					<size>10</size>
+					<style>normal</style>
+					<weight>bold</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+					<face>Arial</face>
+				</font>
+				<style>wxALIGN_LEFT</style>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL9" variable="m_plblTrack" member="yes">
+				<label></label>
+				<pos>70,95</pos>
+				<size>400,-1</size>
+				<fg>#000000</fg>
+				<bg>#FFFFFF</bg>
+				<font>
+					<size>10</size>
+					<style>normal</style>
+					<weight>normal</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+				</font>
+				<style>wxALIGN_LEFT</style>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
+				<label>Title:</label>
+				<pos>5,35</pos>
+				<bg>#FFFFFF</bg>
+				<font>
+					<size>10</size>
+					<style>normal</style>
+					<weight>bold</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+					<face>Arial</face>
+				</font>
+				<style>wxALIGN_LEFT</style>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL10" variable="m_plblTitle" member="yes">
+				<label></label>
+				<pos>70,35</pos>
+				<size>400,-1</size>
+				<fg>#000000</fg>
+				<bg>#FFFFFF</bg>
+				<font>
+					<size>10</size>
+					<style>normal</style>
+					<weight>normal</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+				</font>
+				<style>wxALIGN_LEFT</style>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
+				<label>Duration:</label>
+				<pos>5,125</pos>
+				<bg>#FFFFFF</bg>
+				<font>
+					<size>10</size>
+					<style>normal</style>
+					<weight>bold</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+					<face>Arial</face>
+				</font>
+				<style>wxALIGN_LEFT</style>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL11" variable="m_plblDuration" member="yes">
+				<label></label>
+				<pos>70,125</pos>
+				<size>400,-1</size>
+				<fg>#000000</fg>
+				<bg>#FFFFFF</bg>
+				<font>
+					<size>10</size>
+					<style>normal</style>
+					<weight>normal</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+					<face>Arial</face>
+				</font>
+				<style>wxALIGN_LEFT</style>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL6" variable="m_pLbl6" member="yes">
+				<label>Match:</label>
+				<pos>5,155</pos>
+				<bg>#FFFFFF</bg>
+				<font>
+					<size>10</size>
+					<style>normal</style>
+					<weight>bold</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+					<face>Arial</face>
+				</font>
+				<style>wxALIGN_LEFT</style>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL12" variable="m_plblMatch" member="yes">
+				<label></label>
+				<pos>70,155</pos>
+				<size>400,-1</size>
+				<fg>#000000</fg>
+				<bg>#FFFFFF</bg>
+				<font>
+					<size>10</size>
+					<style>normal</style>
+					<weight>normal</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+					<face>Arial</face>
+				</font>
+				<style>wxALIGN_LEFT</style>
+			</object>
+		</object>
+	</object>
+</wxsmith>

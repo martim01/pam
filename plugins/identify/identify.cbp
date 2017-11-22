@@ -73,6 +73,15 @@
 		<Linker>
 			<Add directory="../../lib" />
 		</Linker>
+		<Unit filename="identify.cpp" />
+		<Unit filename="identify.h" />
+		<Unit filename="identifybuilder.cpp" />
+		<Unit filename="identifybuilder.h" />
+		<Unit filename="myprocess.cpp" />
+		<Unit filename="myprocess.h" />
+		<Unit filename="pnlIdentify.cpp" />
+		<Unit filename="pnlIdentify.h" />
+		<Unit filename="wxsmith/pnlIdentify.wxs" />
 		<Extensions>
 			<code_completion />
 			<envvars />
@@ -83,6 +92,11 @@
 				<Changes_Log show_changes_editor="0" app_title="released version %M.%m.%b of %p" changeslog_path="ChangesLog.txt" />
 				<Code header_guard="VERSION_H" namespace="AutoVersion" prefix="" />
 			</AutoVersioning>
+			<wxsmith version="1">
+				<resources>
+					<wxPanel wxs="wxsmith/pnlIdentify.wxs" src="pnlIdentify.cpp" hdr="pnlIdentify.h" fwddecl="0" i18n="1" name="pnlIdentify" language="CPP" />
+				</resources>
+			</wxsmith>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

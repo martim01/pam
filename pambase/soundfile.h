@@ -5,6 +5,7 @@
 #include <fstream>
 #include <vector>
 #include <wx/string.h>
+#include "dlldefine.h"
 
 typedef struct tagWAVFORMAT
 {
@@ -18,10 +19,10 @@ typedef struct tagWAVFORMAT
 }WAVFORMAT;
 
 
+class timedbuffer;
 
 
-
-class  SoundFile
+class PAMBASE_IMPEXPORT SoundFile
 {
 public:
 	SoundFile(void);
@@ -83,6 +84,7 @@ public:
 	bool WriteAudio(std::vector<char>& vBuffer);
 	bool WriteAudio(char* pBuffer, int nSize);
 	bool WriteAudio(const float* pBuffer, int nSize);
+	bool WriteAudio(const timedbuffer* pBuffer, unsigned short nChannels, unsigned short nLef, unsigned short nRight);
 	unsigned int GetNumberOfSamples()
 	{	return m_nAudioByteLength / (m_wavformat.wChannels * m_wavformat.wBitsPerSample);	}
 	unsigned int GetAudioByteLength()

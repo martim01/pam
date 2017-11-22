@@ -1,5 +1,5 @@
 #include "soundfile.h"
-
+#include "timedbuffer.h"
 #include <wx/log.h>
 
 SoundFile::SoundFile(void) : m_bLooped(false)
@@ -432,4 +432,41 @@ bool SoundFile::WriteAudio(const float* pBuffer, int nSize)
 
 	return true;
 
+}
+
+bool SoundFile::WriteAudio(const timedbuffer* pBuffer, unsigned short nChannels, unsigned short nLeft, unsigned short nRight)
+{
+    if(!m_of.is_open())
+		return false;
+
+	//write the data
+
+	m_of.seekp(0,std::ios::end);
+
+	for(int i = 0; i < pBuffer->GetBufferSize(); i+= nChannels)
+    {
+        short nValue = static_cast<int>(pBuffer->GetBuffer()[i+nLeft]*32768.0);
+        m_of.write((char*)&nValue, 2);
+        m_nAudioByteLength +=2;
+
+        nValue = static_cast<int>(pBuffer->GetBuffer()[i+nRight]*32768.0);
+        m_of.write((char*)&nValue, 2);
+        m_nAudioByteLength +=2;
+    }
+
+
+	//rewrite the length bits
+	unsigned int nLen = m_of.tellp();
+	m_of.seekp(4,std::ios::beg);
+	m_of.write((char*)&nLen,4);
+
+	//skip the "WAVE" bit and the fmt chunk and the data bit
+	m_of.seekp(m_nAudioDataPointer-4,std::ios::beg);
+	m_of.write((char*)&m_nAudioByteLength,4);
+
+     //any errors in writing?
+    if(!m_of)
+        return false;
+
+	return true;
 }
