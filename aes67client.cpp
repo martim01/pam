@@ -20,7 +20,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // A generic SIP client
 // Implementation
 
-#include "AES67Client.h"
+#include "aes67client.h"
 #include "GroupsockHelper.hh"
 
 #if defined(__WIN32__) || defined(_WIN32) || defined(_QNX4)

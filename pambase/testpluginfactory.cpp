@@ -44,13 +44,15 @@ bool TestPluginFactory::LoadTestLibrary(const wxString& sLibrary)
     map<wxString, wxDynamicLibrary*>::iterator itLib = m_mLibraries.find(sLibrary);
     if(itLib == m_mLibraries.end())
     {
+        wxString sCan = wxDynamicLibrary::CanonicalizeName(sLibrary);
+
         wxString sLib;
         #ifdef PAMBASE_DEBUG
-            sLib = wxString::Format(wxT("lib\\debug\\%s"), sLibrary.c_str());
+            sLib = wxString::Format(wxT("lib/debug/%s"), sCan.c_str());
         #else
-            sLib = wxString::Format(wxT("lib\\%s"), sLibrary.c_str());
+            sLib = wxString::Format(wxT("lib/%s"), sCan.c_str());
         #endif
-        wxDynamicLibrary* pLib = new wxDynamicLibrary(wxDynamicLibrary::CanonicalizeName(sLib));
+        wxDynamicLibrary* pLib = new wxDynamicLibrary(sLib);
 
         if(pLib && pLib->IsLoaded())
         {

@@ -212,6 +212,7 @@ void wmList::OnLeftDown(wxMouseEvent& event)
 
 void wmList::OnLeftUp(wxMouseEvent& event)
 {
+
     m_bDownInWindow = false;
 
     if(m_itDown != m_lstButtons.end())
@@ -776,6 +777,8 @@ void wmList::SelectAll(bool bSelect, bool bEvent)
 
 void wmList::SelectButton(std::list<button*>::iterator itSel, bool bEvent)
 {
+
+
     if(itSel != m_lstButtons.end() && (*itSel)->nEnabled == wmENABLED)
     {
         //make this here before we possibly invalidate the iterator
@@ -832,7 +835,9 @@ void wmList::SelectButton(std::list<button*>::iterator itSel, bool bEvent)
         }
         if(bEvent)
         {
+
             event.SetExtraLong(bSelected);
+            //ProcessWindowEvent(event);
             wxPostEvent(GetEventHandler(), event);
         }
     }

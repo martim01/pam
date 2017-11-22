@@ -64,9 +64,9 @@ wxString wxbuildinfo(wxbuildinfoformat format)
 const long pam2Dialog::ID_M_PSWP1 = wxNewId();
 const long pam2Dialog::ID_M_PLST1 = wxNewId();
 const long pam2Dialog::ID_M_PLST2 = wxNewId();
-const long pam2Dialog::ID_PANEL2 = wxNewId();
 const long pam2Dialog::ID_M_PSWP2 = wxNewId();
 const long pam2Dialog::ID_PANEL1 = wxNewId();
+const long pam2Dialog::ID_PANEL2 = wxNewId();
 //*)
 
 using   namespace std;
@@ -105,6 +105,9 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
     Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnlstScreensSelected);
     Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnplstOptionsSelected);
+
+
+
     //*)
 
     Connect(wxID_ANY,wxEVT_DATA,(wxObjectEventFunction)&pam2Dialog::OnAudioData);
@@ -182,6 +185,7 @@ void pam2Dialog::OnAbout(wxCommandEvent& event)
 
 void pam2Dialog::LoadMonitorPanels()
 {
+
     MonitorPluginFactory::Get()->SetHandler(this);
     MonitorPluginFactory::Get()->SetSwitcherPanels(m_pswpMain, m_pswpOptions);
 
@@ -204,8 +208,11 @@ void pam2Dialog::LoadMonitorPanels()
     m_ppnlLog = new pnlLog(m_pswpMain);
     m_pswpMain->AddPage(m_ppnlLog, wxT("Log"));
 
+
+
     m_ppnlSettings = new pnlSettings(m_pswpMain);
     m_pswpMain->AddPage(m_ppnlSettings, wxT("Settings"));
+
 
     pnlLogControl* pnlControl = new pnlLogControl(m_pswpOptions, m_ppnlLog);
     m_ppnlLog->SetLogControl(pnlControl);
@@ -223,6 +230,7 @@ void pam2Dialog::LoadMonitorPanels()
 
 void pam2Dialog::OnlstScreensSelected(wxCommandEvent& event)
 {
+
     Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
     if(event.GetString() == wxT("Settings"))
     {

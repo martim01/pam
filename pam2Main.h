@@ -11,12 +11,12 @@
 #define PAM2MAIN_H
 
 //(*Headers(pam2Dialog)
-#include <wx/notebook.h>
-#include "wmswitcherpanel.h"
 #include <wx/panel.h>
 #include <wx/dialog.h>
-#include "wmlist.h"
 //*)
+
+#include "wmswitcherpanel.h"
+#include "wmlist.h"
 
 class Audio;
 class Playback;

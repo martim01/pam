@@ -5,6 +5,7 @@
 #include <wx/colour.h>
 
 
+
 /** @class basic ui element class for new wammacs stuff. Draws a rectangle with colours, borders, labels bitmaps etc.
 **/
 

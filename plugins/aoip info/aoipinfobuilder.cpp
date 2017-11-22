@@ -1,4 +1,4 @@
-#include "aoipInfoBuilder.h"
+#include "aoipinfobuilder.h"
 #include <wx/panel.h>
 #include "settings.h"
 #include "settingevent.h"

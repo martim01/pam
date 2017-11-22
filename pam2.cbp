@@ -80,15 +80,30 @@
 					<Add directory="$(#portaudio.lib)" />
 				</Linker>
 			</Target>
+			<Target title="Linux Release">
+				<Option output="bin/Linux Release/pam2" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="`wx-config --cxxflags`" />
+					<Add option="-fpermissive" />
+					<Add option="-O3" />
+					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-D__WXGNU__" />
+				</Compiler>
+				<Linker>
+					<Add option="`wx-config --libs`" />
+					<Add library="libportaudio" />
+					<Add library="libliveMedia.a" />
+					<Add library="libBasicUsageEnvironment.a" />
+					<Add library="libUsageEnvironment.a" />
+					<Add library="libgroupsock.a" />
+					<Add library="pambase2.0" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add option="-pipe" />
-			<Add option="-mthreads" />
-			<Add option="-D__GNUWIN32__" />
-			<Add option="-D__WXMSW__" />
-			<Add option="-DWXUSINGDLL" />
-			<Add option="-DwxUSE_UNICODE" />
 			<Add directory="C:/wxWidgets-3.0.2/include" />
 			<Add directory="pambase" />
 			<Add directory="$(#live_media.include)" />
@@ -100,7 +115,6 @@
 			<Add directory="C:/wxWidgets-3.0.2/include" />
 		</ResourceCompiler>
 		<Linker>
-			<Add option="-mthreads" />
 			<Add directory="lib" />
 			<Add directory="$(#live_media.lib)" />
 			<Add directory="$(#live_group.lib)" />

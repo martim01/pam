@@ -34,7 +34,7 @@ public:
     std::map<wxString, wxDynamicLibrary*>::const_iterator GetLibraryEnd() const;
     std::map<wxString, wxDynamicLibrary*>::const_iterator FindLibray(const wxString& sLibrary) const;
 
-    wxString GetPluginName(const wxString& sLibrary);
+    wxString GetPluginName(const wxString& sDir, const wxString& sLibrary);
 
 private:
     /** Constructor.**/

@@ -1,5 +1,6 @@
 #pragma once
 
+#ifdef __WXMSW__
 #ifdef CREATING_DLL
   	#define PAMBASE_IMPEXPORT __declspec(dllexport)
 #else
@@ -8,4 +9,7 @@
     #else
         #define PAMBASE_IMPEXPORT
     #endif
+#endif
+#else
+#define PAMBASE_IMPEXPORT
 #endif

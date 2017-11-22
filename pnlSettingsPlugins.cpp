@@ -68,13 +68,19 @@ pnlSettingsPlugins::pnlSettingsPlugins(wxWindow* parent,wxWindowID id,const wxPo
 	Connect(ID_M_PBTN2,wxEVT_BUTTON_HELD,(wxObjectEventFunction)&pnlSettingsPlugins::OnbtnClearHeld);
 	//*)
 
+    #ifdef __WXDEBUG__
+    wxString sLibDir = wxT("lib/debug");
+    #else
+    wxString sLibDir = wxT("lib");
+    #endif // __WXDEBUG__
+
     size_t nButton = 0;
     map<wxString, wxString>::const_iterator itBegin, itEnd;
     if(Settings::Get().GetSectionDataBegin(wxT("Monitor Plugins"), itBegin) && Settings::Get().GetSectionDataEnd(wxT("Monitor Plugins"), itEnd))
     {
         for(; itBegin != itEnd; ++itBegin)
         {
-            wxString sPlugin = MonitorPluginFactory::Get()->GetPluginName(itBegin->second);
+            wxString sPlugin = MonitorPluginFactory::Get()->GetPluginName(sLibDir, itBegin->second);
             if(sPlugin != wxEmptyString)
             {
                 m_plstCurrent->AddButton(sPlugin);
@@ -86,11 +92,7 @@ pnlSettingsPlugins::pnlSettingsPlugins(wxWindow* parent,wxWindowID id,const wxPo
     m_plstCurrent->SetButtonColour(nButton, wxColour(150,150,150));
 
 
-    #ifdef __WXDEBUG__
-    wxString sLibDir = wxT("lib\\debug");
-    #else
-    wxString sLibDir = wxT("lib");
-    #endif // __WXDEBUG__
+
 
     wxArrayString asLibs;
     wxDir::GetAllFiles(sLibDir, &asLibs);
@@ -99,7 +101,7 @@ pnlSettingsPlugins::pnlSettingsPlugins(wxWindow* parent,wxWindowID id,const wxPo
     {
         wxFileName fnLib(asLibs[i]);
 
-        wxString sPlugin = MonitorPluginFactory::Get()->GetPluginName(asLibs[i].BeforeLast(wxT('.')));
+        wxString sPlugin = MonitorPluginFactory::Get()->GetPluginName(sLibDir, fnLib.GetName().Mid(3));
         if(sPlugin != wxEmptyString)
         {
             m_mPossible.insert(make_pair(sPlugin, fnLib.GetName()));
