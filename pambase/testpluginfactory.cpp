@@ -45,11 +45,11 @@ bool TestPluginFactory::LoadTestLibrary(const wxString& sLibrary)
     if(itLib == m_mLibraries.end())
     {
         wxString sLib;
-        #ifdef __WXDEBUG__
-        sLib = wxString::Format(wxT("lib\\debug\\%s"), sLibrary.c_str());
+        #ifdef PAMBASE_DEBUG
+            sLib = wxString::Format(wxT("lib\\debug\\%s"), sLibrary.c_str());
         #else
-        sLib = wxString::Format(wxT("lib\\%s"), sLibrary.c_str());
-        #endif // __WXDEBUG__
+            sLib = wxString::Format(wxT("lib\\%s"), sLibrary.c_str());
+        #endif
         wxDynamicLibrary* pLib = new wxDynamicLibrary(wxDynamicLibrary::CanonicalizeName(sLib));
 
         if(pLib && pLib->IsLoaded())

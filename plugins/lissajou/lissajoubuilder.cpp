@@ -37,6 +37,7 @@ void LissajouBuilder::SetAudioData(const timedbuffer* pBuffer)
 
 wxWindow* LissajouBuilder::CreateMonitorPanel(wxWindow* pParent)
 {
+    wxASSERT(pParent);
     m_pLissajou = new pnlLissajou(pParent, this);
     return m_pLissajou;
 }
