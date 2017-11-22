@@ -72,6 +72,24 @@
 					<Add directory="$(#portaudio.lib)" />
 				</Linker>
 			</Target>
+			<Target title="Linux Release">
+				<Option output="../lib/pambase2.0.so" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option object_output="obj/debug" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="`wx-config --cxxflags`" />
+					<Add option="-fpermissive" />
+					<Add option="-O3" />
+					<Add option="-DDLL_EXPORTS" />
+					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-D__WXGNU__" />
+				</Compiler>
+				<Linker>
+					<Add option="`wx-config --libs`" />
+					<Add library="libportaudio" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-D_pambase_" />
