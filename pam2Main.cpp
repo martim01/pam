@@ -88,11 +88,11 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_pswpMain = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(0,0), wxSize(600,480), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
     m_pswpMain->SetPageNameStyle(0);
     pnlLists = new wxPanel(this, ID_PANEL1, wxPoint(600,0), wxSize(200,480), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
-    m_plstScreens = new wmList(pnlLists, ID_M_PLST1, wxPoint(0,0), wxSize(200,139), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
+    m_plstScreens = new wmList(pnlLists, ID_M_PLST1, wxPoint(0,0), wxSize(200,136), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
     m_plstScreens->SetBackgroundColour(wxColour(0,0,0));
     m_plstScreens->SetButtonColour(wxColour(wxT("#008000")));
     m_plstScreens->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
-    m_plstOptions = new wmList(pnlLists, ID_M_PLST2, wxPoint(0,140), wxSize(200,125), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
+    m_plstOptions = new wmList(pnlLists, ID_M_PLST2, wxPoint(0,136), wxSize(200,132), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
     m_plstOptions->SetBackgroundColour(wxColour(0,0,0));
     m_plstOptions->SetButtonColour(wxColour(wxT("#000080")));
     m_plstOptions->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
@@ -109,6 +109,11 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
 
     //*)
+
+    pnlLists->SetBackgroundColour(*wxBLACK);
+
+    m_plstScreens->SetBackgroundColour(*wxBLACK);
+    m_plstOptions->SetBackgroundColour(*wxBLACK);
 
     Connect(wxID_ANY,wxEVT_DATA,(wxObjectEventFunction)&pam2Dialog::OnAudioData);
     Connect(wxID_ANY,wxEVT_RTP_SESSION,(wxObjectEventFunction)&pam2Dialog::OnRTPSession);
@@ -631,7 +636,7 @@ void pam2Dialog::CreateAudioOutputDevice(unsigned long nSampleRate, unsigned lon
 
 void pam2Dialog::OnMonitorRequest(MonitorEvent& event)
 {
-    wxLogDebug(wxT("OnMonitorRequest"));
+
     if(m_pPlayback && event.GetChannels().size() >=2)
     {
         unsigned int nInputChannels(0);

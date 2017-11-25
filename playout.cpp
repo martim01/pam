@@ -89,7 +89,7 @@ bool Playback::OpenPlayback(unsigned long nDevice, unsigned long nSampleRate, un
 
 bool Playback::OpenStream(unsigned long nDevice, unsigned long nSampleRate, PaStreamCallback *streamCallback)
 {
-    wxLogDebug(wxT("Playback::OpenStream"));
+//    wxLogDebug(wxT("Playback::OpenStream"));
 
     PaStreamParameters outputParameters;
     outputParameters.channelCount = m_nOutputChannels;
@@ -111,7 +111,7 @@ bool Playback::OpenStream(unsigned long nDevice, unsigned long nSampleRate, PaSt
         }
         else
         {
-            wxLogDebug(wxT("Playback::OpenStream - Could not start stream %s"), wxString::FromAscii(Pa_GetErrorText(err)).c_str());
+            //wxLogDebug(wxT("Playback::OpenStream - Could not start stream %s"), wxString::FromAscii(Pa_GetErrorText(err)).c_str());
         }
     }
     else

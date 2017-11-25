@@ -196,8 +196,8 @@ void pnlChannelDelay::InputSession(const session& aSession)
 
     for(size_t i = 1; i <= m_nTotalChannels; i++)
     {
-        m_plstChannel1->AddButton(wxString::Format(wxT("Ch %d"), i));
-        m_plstChannel2->AddButton(wxString::Format(wxT("Ch %d"), i));
+        m_plstChannel1->AddButton(wxString::Format(wxT("Ch %zu"), i));
+        m_plstChannel2->AddButton(wxString::Format(wxT("Ch %zu"), i));
     }
 
     m_plstChannel1->Thaw();

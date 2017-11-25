@@ -27,6 +27,7 @@ pnlSettingsOptions::pnlSettingsOptions(wxWindow* parent,wxWindowID id,const wxPo
 
 	Connect(ID_M_PBTN1,wxEVT_BUTTON_HELD,(wxObjectEventFunction)&pnlSettingsOptions::OnbtnExitHeld);
 	//*)
+	SetBackgroundColour(*wxBLACK);
 }
 
 pnlSettingsOptions::~pnlSettingsOptions()

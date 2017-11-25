@@ -35,7 +35,7 @@ pnlDisplay::pnlDisplay(wxWindow* parent,LissajouBuilder* pBuilder, wxWindowID id
 	Connect(ID_M_PBTN36,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlDisplay::OnbtnRotateClick);
 	Connect(ID_M_PBTN37,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlDisplay::OnbtnLevelsClick);
 	//*)
-
+    SetBackgroundColour(*wxBLACK);
 	m_plstScaling->AddButton(wxT("dB"));
 	m_plstScaling->AddButton(wxT("Linear"));
 	m_plstScaling->AddButton(wxT("Auto Scale"));

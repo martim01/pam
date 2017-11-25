@@ -154,8 +154,8 @@ void pnlMeters::SetSession(const session& aSession)
     m_plblSessionName->SetLabel(aSession.sName);
     m_plblSessionSource->SetLabel(aSession.sEndpoint);
     m_plblSessionType->SetLabel(aSession.sType);
-    m_plblSessionChannels->SetLabel(wxString::Format(wxT("%d"), aSession.nChannels));
-    m_plblSessionFrequency->SetLabel(wxString::Format(wxT("%d"), aSession.nSampleRate));
+    m_plblSessionChannels->SetLabel(wxString::Format(wxT("%u"), aSession.nChannels));
+    m_plblSessionFrequency->SetLabel(wxString::Format(wxT("%u"), aSession.nSampleRate));
     m_plblSessionBits->SetLabel(aSession.sCodec);
 
 
@@ -179,9 +179,9 @@ void pnlMeters::SetSession(const session& aSession)
         m_vMeters.resize(aSession.nChannels);
         m_vMonitor.resize(aSession.nChannels/2);
 
-        for(size_t i = 0; i < m_vMeters.size(); i++)
+        for(unsigned long i = 0; i < m_vMeters.size(); i++)
         {
-            m_vMeters[i] = new LevelMeter(this,wxID_ANY, wxString::Format(wxT("%d"), i+1), -70, i, wxPoint(x, 0), wxSize(50, 440));
+            m_vMeters[i] = new LevelMeter(this,wxID_ANY, wxString::Format(wxT("%lu"), i+1), -70, i, wxPoint(x, 0), wxSize(50, 440));
 
             m_vMeters[i]->SetLightColours(-38,wxColour(0,220,0), -8, wxColour(230,230,0), wxColour(255,100,100));
 

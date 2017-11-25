@@ -157,7 +157,7 @@ void LevelMeter::OnPaint(wxPaintEvent& event)
                 uiRect uiLevel(wxRect(15, nY-10,GetClientSize().x-30, 20));
                 uiLevel.SetBackgroundColour(*wxBLACK);
                 uiLevel.SetForegroundColour(*wxWHITE);
-                uiLevel.Draw(dc, wxString::Format(wxT("%d"), i), uiRect::BORDER_NONE);
+                uiLevel.Draw(dc, wxString::Format(wxT("%zu"), i), uiRect::BORDER_NONE);
             }
         }
     }

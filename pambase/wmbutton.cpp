@@ -114,7 +114,10 @@ bool  wmButton::Create(wxWindow* parent, wxWindowID id, const wxBitmap& bitmap, 
 
 wmButton::~wmButton()
 {
-
+    if(HasCapture())
+    {
+        ReleaseMouse();
+    }
 }
 
 void wmButton::SetLabel(const wxString& sLabel)

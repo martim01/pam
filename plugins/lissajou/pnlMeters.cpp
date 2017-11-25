@@ -25,6 +25,7 @@ pnlMeters::pnlMeters(wxWindow* parent, LissajouBuilder* pBuilder, wxWindowID id,
 
 	Connect(ID_M_PLST19,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlMeters::OnlstMeterTypeSelected);
 	//*)
+	SetBackgroundColour(*wxBLACK);
 
 	m_plstMode->AddButton(wxT("PPM"));
 	m_plstMode->AddButton(wxT("Peak"));

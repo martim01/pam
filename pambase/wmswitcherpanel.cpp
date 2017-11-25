@@ -189,6 +189,7 @@ void wmSwitcherPanel::InsertPage(size_t nPage, wxWindow* pPage, const wxString& 
     else
     {
         m_vPages.push_back(page(sName,pPage));
+        nPage = m_vPages.size()-1;
     }
 
     if(bSelect)
@@ -209,7 +210,6 @@ size_t wmSwitcherPanel::ChangeSelection(size_t nPage)
     if(nPage >= m_vPages.size() || nPage == m_nSelectedPage)
         return nPage;
 
-    wxLogDebug(wxT("Change to %d from %d"), nPage, m_nSelectedPage);
     if((m_nStyle & STYLE_NOANIMATION))
     {
         m_nSwipePage = nPage;

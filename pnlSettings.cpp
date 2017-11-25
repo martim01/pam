@@ -1,6 +1,8 @@
 #include "pnlSettings.h"
 #include "portaudio.h"
 #include <wx/app.h>
+#include <wx/log.h>
+
 #include "settings.h"
 //#include "meter.h"
 #include "version.h"
@@ -39,10 +41,10 @@ BEGIN_EVENT_TABLE(pnlSettings,wxPanel)
 END_EVENT_TABLE()
 
 
-pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size, long nStyle, const wxString& sId)
+pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
 {
-	//(*Initialize(pnlSettings)
-	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
+    //(*Initialize(pnlSettings)
+	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, wxT("id"));
 	SetBackgroundColour(wxColour(0,0,0));
 	m_plblSettings = new wmLabel(this, ID_M_PLBL37, _("Settings"), wxPoint(0,0), wxSize(600,40), 0, _T("ID_M_PLBL37"));
 	m_plblSettings->SetBorderState(uiRect::BORDER_NONE);
@@ -116,13 +118,14 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	Connect(ID_M_PLST4,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstPlaybackSelected);
 	//*)
 
+
     SetSize(size);
     SetPosition(pos);
 
 
-    for(int i = 0; i < 10; i++)
+    for(unsigned int i = 0; i < 10; i++)
     {
-        m_plstLatency->AddButton(wxString::Format(wxT("%d ms"), i*20));
+        m_plstLatency->AddButton(wxString::Format(wxT("%u ms"), i*20));
     }
 
     m_pbtnInput->SetToggleLook(true, wxT("AoIP"), wxT("Card"),50.0);
@@ -181,7 +184,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
     m_plstLatency->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Latency"), 0)/20, false);
 
-    m_plblSettings->SetLabel(wxString::Format(wxT("Settings: %d.%d.%d.%d"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
+    m_plblSettings->SetLabel(wxString::Format(wxT("Settings: %ld.%ld.%ld.%ld"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
 }
 
 pnlSettings::~pnlSettings()

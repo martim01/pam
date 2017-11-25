@@ -45,7 +45,10 @@ wmEdit::wmEdit() : wxControl(),
 
 wmEdit::~wmEdit()
 {
-    //dtor
+    if(HasCapture())
+    {
+        ReleaseMouse();
+    }
 }
 
 

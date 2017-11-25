@@ -52,7 +52,7 @@ bool MonitorPluginFactory::LoadLibrary(const wxString& sLibrary)
         #ifdef PAMBASE_DEBUG
             sLib = wxString::Format(wxT("lib/debug/%s"), sCan.c_str());
         #else
-            sLib = wxString::Format(wxT("lib/%s"), sCan.c_str());
+            sLib = wxT("lib/") + sCan;
         #endif
         wxDynamicLibrary* pLib = new wxDynamicLibrary(sLib);
 
