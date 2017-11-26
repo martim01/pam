@@ -76,6 +76,7 @@ bool wmButton::Create(wxWindow *parent, wxWindowID id, const wxString& sLabel , 
 
     m_nHoldTrigger = 10;
 
+    SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
 
     return true;
 }

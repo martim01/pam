@@ -30,7 +30,7 @@ pnlLog::pnlLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	m_bScrollLock = false;
 
 	m_nPage = 0;
-    m_plclLog->SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT));
+    m_plclLog->SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
 
 	m_plclLog->InsertColumn(0, wxT("Time"), wxLIST_FORMAT_CENTER, Settings::Get().Read(wxT("Log"), wxT("Column_Time"), 80));
 	m_plclLog->InsertColumn(1, wxT("Entry"), wxLIST_FORMAT_LEFT, Settings::Get().Read(wxT("Log"), wxT("Column_Entry"), 500));

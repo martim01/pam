@@ -58,6 +58,7 @@ bool MaxMinGraph::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, co
     SetCursor(wxCURSOR_BLANK);
     #endif // __WXMSW__
 
+    SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
     return true;
 }
 
@@ -72,6 +73,7 @@ void MaxMinGraph::OnPaint(wxPaintEvent& event)
     //wxAutoBufferedPaintDC dc(this);
     wxAutoBufferedPaintDC dc(this);
 
+    dc.SetFont(GetFont());
 
     wxBrush br(*wxBLACK);
     dc.SetBrush(br);

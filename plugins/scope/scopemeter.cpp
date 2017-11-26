@@ -58,6 +58,8 @@ bool Scope::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wx
     m_timerNudge.SetOwner(this);
     Connect(wxID_ANY, wxEVT_TIMER, (wxObjectEventFunction)&Scope::OnTimerNudge);
 
+    SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
+
     m_vChannels.resize(2);
 
     return true;

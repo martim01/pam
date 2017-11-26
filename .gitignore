@@ -4,9 +4,9 @@
 *.map
 *.o
 *.exe
+*.so
 *.gdb
 *.wav
-/.gitignore
 *.dll
 /lib/licence.txt
 *.res

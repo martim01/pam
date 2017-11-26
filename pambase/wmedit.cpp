@@ -88,7 +88,7 @@ bool wmEdit::Create(wxWindow* pParent, wxWindowID id,const wxString& sValue, con
 
     SetInitialSize(GetSize());
 
-
+    SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
     SetInsertPos(m_sText.length());
 
 

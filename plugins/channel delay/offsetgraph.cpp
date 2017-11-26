@@ -44,6 +44,8 @@ bool OffsetGraph::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, co
     SetCursor(wxCURSOR_BLANK);
     #endif // __WXMSW__
 
+    SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
+
     return true;
 }
 
@@ -134,6 +136,7 @@ void OffsetGraph::OnPaint(wxPaintEvent& event)
     rectRight.Draw(dc, m_sChannel[1], uiRect::BORDER_NONE);
 
 
+    dc.SetFont(GetFont());
     uiRect uiSamples(wxRect(m_rectGrid.GetLeft(), GetClientRect().GetBottom()-30, 200,25));
     uiSamples.Draw(dc, m_sSamples, uiRect::BORDER_NONE);
 

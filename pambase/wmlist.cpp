@@ -123,7 +123,7 @@ bool wmList::Create(wxWindow* pParent, wxWindowID id, const wxPoint& pos, const 
     m_bDownInWindow = false;
 
     SetDefaultFactory();
-
+    SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
     m_pSlideWnd = 0;
     m_nSensitivity = 25;
     return true;

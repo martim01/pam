@@ -81,6 +81,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_pSelectedMonitor(0),
     m_ppnlLog(0)
 {
+
     //(*Initialize(pam2Dialog)
     Create(parent, id, _("wxWidgets app"), wxDefaultPosition, wxDefaultSize, wxNO_BORDER, _T("id"));
     SetClientSize(wxSize(800,480));
@@ -106,9 +107,10 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnlstScreensSelected);
     Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnplstOptionsSelected);
 
-
-
     //*)
+
+    m_plstScreens->SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
+    m_plstOptions->SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
 
     pnlLists->SetBackgroundColour(*wxBLACK);
 
@@ -145,6 +147,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
     CreateAudioInputDevice();
 
+    m_pPlayback = 0;
     m_pPlayback = new Playback();
     m_pPlayback->Init(this, 2048);
 }
@@ -194,6 +197,7 @@ void pam2Dialog::LoadMonitorPanels()
     MonitorPluginFactory::Get()->SetHandler(this);
     MonitorPluginFactory::Get()->SetSwitcherPanels(m_pswpMain, m_pswpOptions);
 
+
     Connect(wxID_ANY, wxEVT_MONITOR_MAX, (wxObjectEventFunction)&pam2Dialog::OnMonitorMax);
 
     map<wxString, wxString>::const_iterator itBegin, itEnd;
@@ -204,6 +208,7 @@ void pam2Dialog::LoadMonitorPanels()
             MonitorPluginFactory::Get()->LoadLibrary(itBegin->second);
         }
     }
+
 
     //Add the test and settings panels
     m_ppnlTests = new pnlTests(m_pswpMain);

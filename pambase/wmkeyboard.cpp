@@ -51,6 +51,7 @@ bool wmKeyboard::Create(wxWindow* pParent, wxWindowID id, const wxPoint& pos, co
     if(!wxWindow::Create(pParent,id,pos,szInit,wxWANTS_CHARS, wxEmptyString))
         return false;
 
+    SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
     SetBackgroundColour(*wxBLACK);

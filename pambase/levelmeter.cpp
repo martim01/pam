@@ -71,6 +71,7 @@ LevelMeter::LevelMeter(wxWindow *parent, wxWindowID id, const wxString & sText,d
     m_uiBlack.SetBackgroundColour(*wxBLACK);
     InitMeter(sText, dMin);
 
+    SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
     m_nChannels = 2;
 
 }

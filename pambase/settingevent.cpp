@@ -1,8 +1,7 @@
 #include "settingevent.h"
 
-DEFINE_EVENT_TYPE(wxEVT_SETTING_CHANGED)
-
-IMPLEMENT_DYNAMIC_CLASS(SettingEvent, wxCommandEvent)
+wxDEFINE_EVENT(wxEVT_SETTING_CHANGED, SettingEvent);
+//IMPLEMENT_DYNAMIC_CLASS(SettingEvent, wxCommandEvent)
 
 SettingEvent::SettingEvent() : wxCommandEvent(wxEVT_SETTING_CHANGED, wxID_ANY)
 {

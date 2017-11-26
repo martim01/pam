@@ -3,7 +3,7 @@ using namespace std;
 
 DEFINE_EVENT_TYPE(wxEVT_MONITOR_REQUEST)
 
-IMPLEMENT_DYNAMIC_CLASS(MonitorEvent, wxCommandEvent)
+//IMPLEMENT_DYNAMIC_CLASS(MonitorEvent, wxCommandEvent)
 
 MonitorEvent::MonitorEvent() : wxCommandEvent(wxEVT_MONITOR_REQUEST, wxID_ANY)
 {

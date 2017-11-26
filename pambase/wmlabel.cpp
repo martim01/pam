@@ -39,7 +39,7 @@ bool wmLabel::Create(wxWindow *parent, wxWindowID id, const wxString& sLabel , c
 
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
-
+    SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
 
     m_nBorderState = uiRect::BORDER_DOWN;
 
