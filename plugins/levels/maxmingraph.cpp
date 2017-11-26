@@ -84,12 +84,16 @@ void MaxMinGraph::OnPaint(wxPaintEvent& event)
 
     if(m_dMin < m_dMax)
     {
+        double dMax(70.0+m_dMax);
+        double dMin(70.0+m_dMin);
+        double dCurrent(70.0+m_dCurrent);
+
         dc.SetPen(*wxTRANSPARENT_PEN);
         dc.SetBrush(wxBrush(wxColour(220,180,180)));
-        dc.DrawRectangle(wxRect(1, m_rectGraph.GetBottom()-1-(m_dMax*m_dResolution), m_rectGraph.GetWidth()-2, (m_dMax-m_dMin)*m_dResolution));
+        dc.DrawRectangle(wxRect(1, m_rectGraph.GetBottom()-1-(dMax*m_dResolution), m_rectGraph.GetWidth()-2, (dMax-dMin)*m_dResolution));
 
         dc.SetPen(*wxBLUE);
-        dc.DrawLine(1, m_rectGraph.GetBottom()-1-m_dCurrent*m_dResolution, m_rectGraph.GetWidth()-2, m_rectGraph.GetBottom()-1-m_dCurrent*m_dResolution);
+        dc.DrawLine(1, m_rectGraph.GetBottom()-1-dCurrent*m_dResolution, m_rectGraph.GetWidth()-2, m_rectGraph.GetBottom()-1-dCurrent*m_dResolution);
     }
 
     m_uiCurrent.Draw(dc, uiRect::BORDER_DOWN);
@@ -108,23 +112,21 @@ void MaxMinGraph::OnSize(wxSizeEvent& event)
     m_uiMin.SetRect(wxRect(m_uiMax.GetLeft(), m_uiMax.GetBottom()+2, m_uiMax.GetWidth(), 20));
     m_uiRange.SetRect(wxRect(m_uiMin.GetLeft(), m_uiMin.GetBottom()+2, m_uiMin.GetWidth(), 20));
 
-    m_dResolution = static_cast<double>(m_rectGraph.GetHeight()-2);
+    m_dResolution = static_cast<double>(m_rectGraph.GetHeight()-2)/70.0;
     Refresh();
 }
 
 
 void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent)
 {
-    m_dMax = dMax;
-    m_dMin = dMin;
-    m_dCurrent = dCurrent;
+    m_dMax = max(-70.0, 20*log10(dMax));
+    m_dMin = max(-70.0, 20*log10(dMin));
+    m_dCurrent = 20*log10(dCurrent);
 
-    double ddbMax(20*log10(m_dMax));
-    double ddbMin(20*log10(m_dMin));
-    m_uiCurrent.SetLabel(wxString::Format(wxT("%.1fdB"), 20*log10(m_dCurrent)));
-    m_uiMax.SetLabel(wxString::Format(wxT("%.1fdB"), ddbMax));
-    m_uiMin.SetLabel(wxString::Format(wxT("%.1fdB"),ddbMin));
-    m_uiRange.SetLabel(wxString::Format(wxT("%.1fdB"), (ddbMax-ddbMin)));
+    m_uiCurrent.SetLabel(wxString::Format(wxT("%.1fdB"), m_dCurrent));
+    m_uiMax.SetLabel(wxString::Format(wxT("%.1fdB"), m_dMax));
+    m_uiMin.SetLabel(wxString::Format(wxT("%.1fdB"),m_dMin));
+    m_uiRange.SetLabel(wxString::Format(wxT("%.1fdB"), (m_dMax-m_dMin)));
 
     Refresh();
 }
