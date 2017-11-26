@@ -68,7 +68,7 @@ pnlSettingsPlugins::pnlSettingsPlugins(wxWindow* parent,wxWindowID id,const wxPo
 	Connect(ID_M_PBTN2,wxEVT_BUTTON_HELD,(wxObjectEventFunction)&pnlSettingsPlugins::OnbtnClearHeld);
 	//*)
     SetBackgroundColour(*wxBLACK);
-    #ifdef __WXDEBUG__
+    #ifdef PAMBASE_DEBUG
     wxString sLibDir = wxT("lib/debug");
     #else
     wxString sLibDir = wxT("lib");

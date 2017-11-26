@@ -15,7 +15,7 @@ public:
     AngleMeter();
     virtual ~AngleMeter();
 
-    AngleMeter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, unsigned int nRouting, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize);
+    AngleMeter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, unsigned int nRouting, unsigned int nChannel, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize);
 
     void InitMeter(const wxString & sText,double dMin);
 
@@ -27,7 +27,7 @@ public:
 
     void SetLabel(const wxString& sLabel);
 
-    void ShowMeter(const float* pBuffer, unsigned int nFrameCount);
+    void ShowMeter(const float* pBuffer, unsigned int nBufferSize);
     void SetRouting(short nRouting);
     void SetMeterDisplay(short nDisplay);
     void OnSize(wxSizeEvent& event);
@@ -42,20 +42,26 @@ public:
     void SetMeterMSMode(long nMode);
     void SetMeterSpeed(long nSpeed);
 
+    void SetInputChannels(unsigned int nInputChannels)
+    {
+        m_nInputChannels = nInputChannels;
+        SetMeterDisplay(m_nMeterDisplay);
+    }
+
     enum {PEAK_HIDE, PEAK_SHOW, PEAK_HOLD};
-    enum {LEFT_RIGHT, MONO_STEREO};
+    enum {MONO, LEFT_RIGHT, MONO_STEREO};
 
     enum {PPM, PEAK, ENERGY, LOUD, TOTAL, AVERAGE};
 protected:
 
     void ShowValue(double dValue[2], bool bdB=false);
-    void ShowPeak(const float* pBuffer, unsigned int nFrameCount);
-    void ShowEnergy(const float* pBuffer, unsigned int nFrameCount);
-    void ShowPPM(const float* pBuffer, unsigned int nFrameCount);
-    void ShowLUFS(const float* pBuffer, unsigned int nFrameCount);
+    void ShowPeak(const float* pBuffer, unsigned int nBufferSize);
+    void ShowEnergy(const float* pBuffer, unsigned int nBufferSize);
+    void ShowPPM(const float* pBuffer, unsigned int nBufferSize);
+    void ShowLUFS(const float* pBuffer, unsigned int nBufferSize);
 
-    std::pair<float,float> GetPeak(const float* pBuffer, unsigned int nFrameCount);
-    float GetTotal(const float* pBuffer, unsigned int nFrameCount);
+    std::pair<float,float> GetPeak(const float* pBuffer, unsigned int nBufferSize);
+    float GetTotal(const float* pBuffer, unsigned int nBufferSize);
 
     void WorkoutAngles(int i);
 
@@ -103,6 +109,9 @@ protected:
     loud* m_pLoud;
 
     int m_nPeakCounter[2];
+    unsigned int m_nChannel;
+    unsigned int m_nInputChannels;
+
 
     long m_nMeterMSMode;
     long m_nMeterSpeed;
