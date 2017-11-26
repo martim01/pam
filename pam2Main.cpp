@@ -404,11 +404,15 @@ void pam2Dialog::CreateAudioInputDevice()
 {
     if(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")) == wxT("Soundcard"))
     {
+
         m_pAudio = new Audio(this, Settings::Get().Read(wxT("Input"), wxT("Device"), 0));
         m_pAudio->Init();
 
+
+
         //tell all the plugins what the input session is...
         session aSession(m_pAudio->GetDeviceName(), wxEmptyString, wxT("Soundcard"), wxT("Audio"), wxEmptyString, wxEmptyString, m_pAudio->GetDevice(), m_pAudio->GetSampleRate(), m_pAudio->GetNumberOfChannels(), 0, make_pair(0,0));
+
 
         InputSession(aSession);
 
@@ -528,6 +532,7 @@ void pam2Dialog::InputChanged(const wxString& sKey)
                 }
             }
         }
+        //CreateAudioInputDevice();
     }
     else if(sKey == wxT("RTP") && Settings::Get().Read(wxT("Input"), wxT("RTP"), wxEmptyString) != m_sCurrentRtp)
     {

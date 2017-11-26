@@ -45,6 +45,6 @@ protected:
 typedef void (wxEvtHandler::*SettingEventFunction)(SettingEvent&);
 
 
-wxDECLARE_EVENT(wxEVT_SETTING_CHANGED,SettingEvent);
+wxDECLARE_EXPORTED_EVENT(PAMBASE_IMPEXPORT, wxEVT_SETTING_CHANGED,SettingEvent);
 
 

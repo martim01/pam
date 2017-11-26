@@ -91,9 +91,9 @@ void pnlAngleMeters::CreateMeters()
         else
         {
             m_vMeters.resize(3);
-            m_vMeters[0] = new AngleMeter(this, wxID_ANY, wxT("Left/Right"), -70.0, AngleMeter::MONO, 0, wxPoint(10,10), wxSize(250,200));
-            m_vMeters[1] = new AngleMeter(this, wxID_ANY, wxT("Left/Right"), -70.0, AngleMeter::MONO, 1, wxPoint(350,10), wxSize(250,200));
-            m_vMeters[2] = new AngleMeter(this, wxID_ANY, wxT("Mono/Stereo"), -70.0, AngleMeter::MONO_STEREO, 0, wxPoint(150,210), wxSize(250,200));
+            m_vMeters[0] = new AngleMeter(this, wxID_ANY, wxT("Left"), -70.0, AngleMeter::MONO, 0, wxPoint(10,10), wxSize(280,200));
+            m_vMeters[1] = new AngleMeter(this, wxID_ANY, wxT("Right"), -70.0, AngleMeter::MONO, 1, wxPoint(300,10), wxSize(280,200));
+            m_vMeters[2] = new AngleMeter(this, wxID_ANY, wxT("Mono/Stereo"), -70.0, AngleMeter::MONO_STEREO, 0, wxPoint(200,250), wxSize(280,200));
             m_vMeters[0]->SetInputChannels(2);
             m_vMeters[1]->SetInputChannels(2);
             m_vMeters[2]->SetInputChannels(2);
@@ -108,9 +108,9 @@ void pnlAngleMeters::CreateMeters()
 
             for(unsigned long i = 0; i < m_vMeters.size(); i++)
             {
-                m_vMeters[i] = new AngleMeter(this, wxID_ANY, wxString::Format(wxT("Channel %lu"),i), -70.0, AngleMeter::LEFT_RIGHT, i*2, wxPoint(x,y), wxSize(360,150));
+                m_vMeters[i] = new AngleMeter(this, wxID_ANY, wxString::Format(wxT("Channel %lu"),i), -70.0, AngleMeter::LEFT_RIGHT, i*2, wxPoint(x,y), wxSize(360,180));
                 m_vMeters[i]->SetInputChannels(m_nInputChannels);
-                m_vMonitor[i] = new wmButton(this, wxNewId(), wxT("Monitor"), wxPoint(x, y+155), wxSize(360, 35));
+                m_vMonitor[i] = new wmButton(this, wxNewId(), wxT("Monitor"), wxPoint(x, y+185), wxSize(360, 35));
                 m_vMonitor[i]->SetBackgroundColour(wxColour(80,70,180));
                 m_vMonitor[i]->SetIntData(i);
 
@@ -118,15 +118,15 @@ void pnlAngleMeters::CreateMeters()
                 if(i == 1)
                 {
                     x = 10;
-                    y = 250;
+                    y = 240;
                 }
             }
         }
         else
         {
             m_vMeters.resize(2);
-            m_vMeters[0] = new AngleMeter(this, wxID_ANY, wxT("Left/Right"), -70.0, AngleMeter::LEFT_RIGHT, 0, wxPoint(10,10), wxSize(250,200));
-            m_vMeters[1] = new AngleMeter(this, wxID_ANY, wxT("Mono/Stereo"), -70.0, AngleMeter::MONO_STEREO, 0, wxPoint(350,10), wxSize(250,200));
+            m_vMeters[0] = new AngleMeter(this, wxID_ANY, wxT("Left/Right"), -70.0, AngleMeter::LEFT_RIGHT, 0, wxPoint(10,60), wxSize(380,200));
+            m_vMeters[1] = new AngleMeter(this, wxID_ANY, wxT("Mono/Stereo"), -70.0, AngleMeter::MONO_STEREO, 0, wxPoint(400,60), wxSize(380,200));
             m_vMeters[0]->SetInputChannels(2);
             m_vMeters[1]->SetInputChannels(2);
         }

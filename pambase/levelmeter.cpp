@@ -158,7 +158,11 @@ void LevelMeter::OnPaint(wxPaintEvent& event)
                 uiRect uiLevel(wxRect(15, nY-10,GetClientSize().x-30, 20));
                 uiLevel.SetBackgroundColour(*wxBLACK);
                 uiLevel.SetForegroundColour(*wxWHITE);
+                #ifdef __WXMSW__
+                uiLevel.Draw(dc, wxString::Format(wxT("%u"), i), uiRect::BORDER_NONE);
+                #else
                 uiLevel.Draw(dc, wxString::Format(wxT("%zu"), i), uiRect::BORDER_NONE);
+                #endif
             }
         }
     }
@@ -174,7 +178,9 @@ void LevelMeter::InitMeter(const wxString& sText,double dMin)
     wxString sLevel;
 
     m_uiLabel.SetLabel(sText);
+    m_uiLabel.SetGradient(0);
     m_uiLevelText.SetRect(0,0, GetClientRect().GetWidth(), 20);
+    m_uiLevelText.SetGradient(0);
     m_uiLabel.SetRect(0,GetClientRect().GetBottom()-20, GetClientRect().GetWidth(), 20);
 
     m_dPixelsPerdB = (GetClientRect().GetHeight()-40)/(-m_dMin);

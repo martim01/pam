@@ -110,17 +110,18 @@ void AngleMeter::OnPaint(wxPaintEvent& event)
     dc.SetBrush(br);
     dc.DrawRectangle(GetClientRect());
 
+
     wxPoint pntBottom(m_rectGrid.GetLeft() + m_rectGrid.GetWidth()/2, m_rectGrid.GetBottom()+50);
     double dH = m_rectGrid.GetHeight()+20;
     double dHT = m_rectGrid.GetHeight()+30;
     double dHL = m_rectGrid.GetHeight()+10;
 
-
+    double dRatio = 15.0;
     //Draw the text
     for(int i = 1; i < 8; i++)
     {
-        double dAngle = (15.0*(i-4.0))*M_PI/180.0;
-        double dAngleDeg = (15.0*(i-4.0));
+        double dAngle = (dRatio*(i-4.0))*M_PI/180.0;
+        double dAngleDeg = (dRatio*(i-4.0));
         double dX = dHT*sin(dAngle);
         double dXTo = dHL*sin(dAngle);
         double dY = dHT*cos(dAngle);
@@ -172,6 +173,18 @@ void AngleMeter::OnPaint(wxPaintEvent& event)
         m_uiLevelText[1].Draw(dc, uiRect::BORDER_DOWN);
     }
 
+        dc.SetPen(*wxBLACK_PEN);
+    dc.SetBrush(wxBrush(wxColour(50,50,50)));
+
+    wxPoint pntTop[4] = {wxPoint(0,0), wxPoint(m_nBevel,m_nBevel), wxPoint(GetClientRect().GetRight()-m_nBevel,m_nBevel), wxPoint(GetClientRect().GetRight(),0)};
+    wxPoint pntRight[4] = {wxPoint(GetClientRect().GetRight(),0), wxPoint(GetClientRect().GetRight()-m_nBevel,m_nBevel), wxPoint(GetClientRect().GetRight()-m_nBevel,GetClientRect().GetBottom()-m_nBevel), wxPoint(GetClientRect().GetRight(),GetClientRect().GetBottom())};
+    wxPoint pntBottoms[4] = {wxPoint(0,GetClientRect().GetBottom()), wxPoint(m_nBevel,GetClientRect().GetBottom()-m_nBevel), wxPoint(GetClientRect().GetRight()-m_nBevel,GetClientRect().GetBottom()-m_nBevel), wxPoint(GetClientRect().GetRight(),GetClientRect().GetBottom())};
+    wxPoint pntLeft[4] = {wxPoint(0,0), wxPoint(m_nBevel,m_nBevel), wxPoint(m_nBevel,GetClientRect().GetBottom()-m_nBevel), wxPoint(0,GetClientRect().GetBottom())};
+    dc.DrawPolygon(4,pntTop);
+    dc.DrawPolygon(4,pntRight);
+    dc.DrawPolygon(4,pntLeft);
+    dc.DrawPolygon(4,pntBottoms);
+
 
 }
 
@@ -187,17 +200,26 @@ void AngleMeter::InitMeter(const wxString& sText,double dMin)
 
     m_uiLabel.SetLabel(sText);
 
+    m_nBevel = GetClientSize().x/15;
+
     m_uiLabel.SetRect(0,GetClientRect().GetBottom()-20, GetClientRect().GetWidth(), 20);
 
 
-    m_rectGrid = wxRect(1, 1, GetClientSize().x-2, GetClientSize().y-25);
+    m_rectGrid = wxRect(m_nBevel, m_nBevel, GetClientSize().x-2-(m_nBevel*2), GetClientSize().y-25-(m_nBevel*2));
 
     m_uiType.SetRect(m_rectGrid.GetRight()-80, m_rectGrid.GetBottom()-40, 70, 30);
     m_uiType.SetBackgroundColour(*wxBLACK);
 
-    m_uiLevelText[0].SetRect(5,GetClientRect().GetBottom()-23, m_rectGrid.GetWidth()/2-5, 20);
-    m_uiLevelText[1].SetRect(m_rectGrid.GetWidth()/2+5,GetClientRect().GetBottom()-23, m_rectGrid.GetWidth()/2-7, 20);
+    m_uiLevelText[0].SetRect(m_rectGrid.GetLeft()+5,GetClientRect().GetBottom()-23-m_nBevel, m_rectGrid.GetWidth()/2-5, 20);
 
+    int nLeft(m_rectGrid.GetLeft()+m_rectGrid.GetWidth()/2+5);
+    m_uiLevelText[1].SetRect(nLeft,GetClientRect().GetBottom()-23-m_nBevel, m_rectGrid.GetRight()-5-nLeft, 20);
+
+    m_uiLevelText[0].SetGradient(0);
+    m_uiLevelText[0].SetBackgroundColour(wxColour(0,0,100));
+
+    m_uiLevelText[1].SetGradient(0);
+    m_uiLevelText[1].SetBackgroundColour(wxColour(0,0,100));
 }
 
 bool AngleMeter::SetMeterColour(const wxColour& clrMeter1, const wxColour& clrMeter2)

@@ -26,6 +26,7 @@ Audio::Audio(wxEvtHandler* pHandler, unsigned int nDevice) :
 
     m_nSampleRate = 48000;
     m_nBufferSize = 2048;
+    Pa_Initialize();
 
 
  }
@@ -37,6 +38,7 @@ Audio::Audio(wxEvtHandler* pHandler, unsigned int nDevice) :
 }
 bool Audio::OpenStream(PaStreamCallback *streamCallback)
 {
+
     PaStreamParameters inputParameters;
 
     const PaDeviceInfo* pInfo = Pa_GetDeviceInfo(m_nDevice);
@@ -50,6 +52,7 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
     }
 
 
+
     inputParameters.channelCount = m_nChannels;
     inputParameters.device = m_nDevice;
     inputParameters.hostApiSpecificStreamInfo = NULL;
@@ -57,6 +60,7 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
     inputParameters.suggestedLatency = 0;
     inputParameters.hostApiSpecificStreamInfo = NULL;
     PaError err = Pa_OpenStream(&m_pStream, &inputParameters, 0, m_nSampleRate, m_nBufferSize, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
+
     if(err == paNoError)
     {
         err = Pa_StartStream(m_pStream);
@@ -65,7 +69,7 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
             return true;
         }
     }
-    wxMessageBox(wxString::Format(wxT("%d %s %d %d,"), m_nDevice, wxString::FromAscii(Pa_GetErrorText(err)).c_str(), m_nSampleRate, m_nChannels));
+    wxLogMessage(wxString::Format(wxT("%d %s %d %d,"), m_nDevice, wxString::FromAscii(Pa_GetErrorText(err)).c_str(), m_nSampleRate, m_nChannels));
     return false;
 }
 
@@ -76,7 +80,7 @@ Audio::~Audio()
     {
         Pa_StopStream(m_pStream);
     }
-
+    Pa_Terminate();
 
 }
 

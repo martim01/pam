@@ -70,7 +70,7 @@ protected:
     uiRect m_uiLabel;
     uiRect m_uiLevelText[2];
     uiRect m_uiPeakText[2];
-
+    unsigned int m_nBevel;
     wxBitmap m_bmpMeter;
     wxColour m_clrBackground;
 
