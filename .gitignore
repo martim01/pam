@@ -1,0 +1,14 @@
+*.bak
+*.depend
+*.layout
+*.map
+*.o
+*.exe
+*.gdb
+*.wav
+/.gitignore
+*.dll
+/lib/licence.txt
+*.res
+/sample.log
+/user.txt
