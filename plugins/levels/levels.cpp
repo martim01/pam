@@ -8,7 +8,7 @@ void CreateBuilders()
 }
 
 
-wxString GetPluginName()
+wxString GetTestPluginName()
 {
     return wxT("Levels");
 }

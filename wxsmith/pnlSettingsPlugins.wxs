@@ -1,82 +1,100 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <wxsmith>
 	<object class="wxPanel" name="pnlSettingsPlugins">
+		<bg>#000000</bg>
 		<pos_arg>1</pos_arg>
 		<size_arg>1</size_arg>
-		<object class="wmSwitcherPanel" name="ID_M_PSWP1" variable="m_pswpPlugins" member="yes">
-			<pagename>Button</pagename>
-			<pos>0,5</pos>
-			<size>600,400</size>
+		<object class="wxPanel" name="ID_PANEL1" variable="Panel1" member="yes">
+			<pos>0,30</pos>
+			<size>600,420</size>
 			<bg>#000000</bg>
-			<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
-			<object class="wmSwitcherPanelpage">
-				<object class="wxPanel" name="ID_PANEL1" variable="Panel1" member="yes">
-					<bg>#000000</bg>
-					<object class="wmList" name="ID_M_PLST1" variable="m_plstPossible" member="yes">
-						<scrolling>Horizontal</scrolling>
-						<button_gap>5,5</button_gap>
-						<button_size>-1,40</button_size>
-						<columns>3</columns>
-						<button>#008000</button>
-						<button_selected>#FF8000</button_selected>
-						<items />
-						<pos>10,40</pos>
-						<size>200,350</size>
-						<bg>#000000</bg>
-						<style>wmList::STYLE_SELECT</style>
-						<handler function="OnlstPossibleSelected" entry="EVT_LIST_SELECTED" />
-					</object>
-					<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
-						<label>Possible Plugins</label>
-						<pos>10,10</pos>
-						<size>200,30</size>
-						<fg>#FFFFFF</fg>
-						<bg>#0000A0</bg>
-					</object>
-					<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
-						<label>Current Plugins</label>
-						<pos>390,10</pos>
-						<size>200,30</size>
-						<fg>#FFFFFF</fg>
-						<bg>#0000A0</bg>
-					</object>
-					<object class="wmList" name="ID_M_PLST2" variable="m_plstCurrent" member="yes">
-						<scrolling>Horizontal</scrolling>
-						<button_gap>5,5</button_gap>
-						<button_size>-1,40</button_size>
-						<columns>3</columns>
-						<button>#008000</button>
-						<button_selected>#FF8000</button_selected>
-						<items />
-						<pos>390,40</pos>
-						<size>200,350</size>
-						<bg>#000000</bg>
-						<style>wmList::STYLE_SELECT</style>
-						<handler function="OnlstCurrentSelected" entry="EVT_LIST_SELECTED" />
-					</object>
-					<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnSet" member="yes">
-						<label>Hold To Set</label>
-						<button_disabled>#A0A0A0</button_disabled>
-						<pos>250,30</pos>
-						<size>100,50</size>
-						<enabled>0</enabled>
-						<bg>#009B00</bg>
-						<style>wmButton::STYLE_HOLD</style>
-						<handler function="OnpbtnSetHeld" entry="EVT_BUTTON_HELD" />
-					</object>
-					<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnClear" member="yes">
-						<label>Hold To Clear</label>
-						<button_disabled>#B0B0B0</button_disabled>
-						<pos>250,100</pos>
-						<size>100,50</size>
-						<enabled>0</enabled>
-						<bg>#9B0000</bg>
-						<style>wmButton::STYLE_HOLD</style>
-						<handler function="OnbtnClearHeld" entry="EVT_BUTTON_HELD" />
-					</object>
-				</object>
-				<label>Monitor</label>
+			<object class="wmList" name="ID_M_PLST1" variable="m_plstPossible" member="yes">
+				<scrolling>Horizontal</scrolling>
+				<button_gap>5,5</button_gap>
+				<button_size>-1,40</button_size>
+				<columns>3</columns>
+				<button>#008000</button>
+				<button_selected>#FF8000</button_selected>
+				<items />
+				<pos>10,40</pos>
+				<size>200,350</size>
+				<bg>#000000</bg>
+				<style>wmList::STYLE_SELECT</style>
+				<handler function="OnlstPossibleSelected" entry="EVT_LIST_SELECTED" />
 			</object>
+			<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+				<label>Possible Plugins</label>
+				<pos>10,10</pos>
+				<size>200,30</size>
+				<fg>#FFFFFF</fg>
+				<bg>#0000A0</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
+				<label>Current Plugins</label>
+				<pos>390,10</pos>
+				<size>200,30</size>
+				<fg>#FFFFFF</fg>
+				<bg>#0000A0</bg>
+			</object>
+			<object class="wmList" name="ID_M_PLST2" variable="m_plstCurrent" member="yes">
+				<button_gap>5,5</button_gap>
+				<button_size>-1,40</button_size>
+				<columns>3</columns>
+				<button>#008000</button>
+				<button_selected>#FF8000</button_selected>
+				<items />
+				<pos>390,40</pos>
+				<size>200,350</size>
+				<bg>#000000</bg>
+				<style>wmList::STYLE_SELECT</style>
+				<handler function="OnlstCurrentSelected" entry="EVT_LIST_SELECTED" />
+			</object>
+			<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnSet" member="yes">
+				<label>Hold To Add</label>
+				<button_disabled>#A0A0A0</button_disabled>
+				<pos>250,30</pos>
+				<size>100,50</size>
+				<enabled>0</enabled>
+				<bg>#009B00</bg>
+				<style>wmButton::STYLE_HOLD</style>
+				<handler function="OnpbtnSetHeld" entry="EVT_BUTTON_HELD" />
+			</object>
+			<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnClear" member="yes">
+				<label>Hold To Remove</label>
+				<button_disabled>#B0B0B0</button_disabled>
+				<pos>250,100</pos>
+				<size>100,50</size>
+				<enabled>0</enabled>
+				<bg>#9B0000</bg>
+				<style>wmButton::STYLE_HOLD</style>
+				<handler function="OnbtnClearHeld" entry="EVT_BUTTON_HELD" />
+			</object>
+			<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnUp" member="yes">
+				<label>Move Up</label>
+				<button_disabled>#A0A0A0</button_disabled>
+				<pos>250,200</pos>
+				<size>100,50</size>
+				<enabled>0</enabled>
+				<bg>#004040</bg>
+				<handler function="OnbtnUpClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnDown" member="yes">
+				<label>Move Down</label>
+				<button_disabled>#A0A0A0</button_disabled>
+				<pos>250,255</pos>
+				<size>100,50</size>
+				<enabled>0</enabled>
+				<bg>#004040</bg>
+				<handler function="OnbtnDownClick" entry="EVT_BUTTON" />
+			</object>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnPlugin" member="yes">
+			<label>Plugins</label>
+			<pos>175,5</pos>
+			<size>250,30</size>
+			<bg>#548CCB</bg>
+			<style>wmButton::STYLE_SELECT</style>
+			<handler function="OnbtnPluginClick" entry="EVT_BUTTON" />
 		</object>
 	</object>
 </wxsmith>

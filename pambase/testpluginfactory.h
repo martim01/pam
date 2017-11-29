@@ -20,6 +20,7 @@ public:
     void SetSwitcherPanels(wmSwitcherPanel* pswpTests);
 
     void Register(TestPluginBuilder* pBuilder);
+    wxString GetPluginName(const wxString& sDir, const wxString& sLibrary);
 
 
     void UnloadAll();

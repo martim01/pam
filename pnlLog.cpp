@@ -71,7 +71,7 @@ void pnlLog::Log(const wxString& sLogEntry)
                 }
                 else
                 {
-                    m_vLogPages.back().sTime[m_vLogPages.back().nLines] = wxT("--:--:--:----");
+                    m_vLogPages.back().sTime[m_vLogPages.back().nLines] = wxEmptyString;
                 }
                if(as[i].length() < 80)
                {
@@ -80,8 +80,21 @@ void pnlLog::Log(const wxString& sLogEntry)
                 }
                 else
                 {
-                    m_vLogPages.back().sEntry[m_vLogPages.back().nLines] = as[i].Left(80);
-                    as[i] = as[i].Mid(80);
+                    int nLength(70);
+                    do
+                    {
+                        if(as[i].GetChar(nLength-1) == wxT(' '))
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            ++nLength;
+                        }
+                    }while(nLength < 80);
+
+                    m_vLogPages.back().sEntry[m_vLogPages.back().nLines] = as[i].Left(nLength);
+                    as[i] = as[i].Mid(nLength);
                 }
                 m_vLogPages.back().nLines++;
                 nLine++;

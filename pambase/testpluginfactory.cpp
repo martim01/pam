@@ -115,3 +115,42 @@ map<wxString, TestPluginBuilder*>::iterator TestPluginFactory::FindPlugin(const 
 {
     return m_mBuilders.find(sName);
 }
+
+
+wxString TestPluginFactory::GetPluginName(const wxString& sDir, const wxString& sLibrary)
+{
+    wxLogNull ln;
+    map<wxString, wxDynamicLibrary*>::const_iterator itLib = m_mLibraries.find(sLibrary);
+    if(itLib != m_mLibraries.end())
+    {
+        if(itLib->second->HasSymbol(wxT("GetTestPluginName")))
+        {
+            typedef wxString (*RegPtr)();
+            RegPtr ptr = (RegPtr)itLib->second->GetSymbol(wxT("GetTestPluginName"));
+            return (*ptr)();
+        }
+    }
+    else
+    {
+        wxString sLib = sDir + wxT("/") + wxDynamicLibrary::CanonicalizeName(sLibrary);
+
+        wxDynamicLibrary* pLib = new wxDynamicLibrary(sLib);
+        if(pLib)
+        {
+            if(pLib->IsLoaded())
+            {
+                if(pLib->HasSymbol(wxT("GetTestPluginName")))
+                {
+                    typedef wxString (*RegPtr)();
+                    RegPtr ptr = (RegPtr)pLib->GetSymbol(wxT("GetTestPluginName"));
+                    if(ptr)
+                    {
+                        return (*ptr)();
+                    }
+                }
+            }
+            delete pLib;
+        }
+    }
+    return wxEmptyString;
+}

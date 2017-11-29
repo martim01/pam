@@ -194,6 +194,7 @@ bool iniManager::WriteIniFile(const wxString& sFilename)
 		++it;
 	}
 
+	//m_of.flush();
 		//Close the file again
 	if(m_of.is_open())
 		m_of.close();

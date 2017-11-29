@@ -2,10 +2,8 @@
 #define PNLSETTINGSPLUGINS_H
 
 //(*Headers(pnlSettingsPlugins)
-#include <wx/notebook.h>
 #include "wmbutton.h"
 #include "wmlabel.h"
-#include "wmswitcherpanel.h"
 #include <wx/panel.h>
 #include "wmlist.h"
 //*)
@@ -21,11 +19,13 @@ class pnlSettingsPlugins: public wxPanel
 		wmList* m_plstPossible;
 		wmButton* m_pbtnClear;
 		wmLabel* m_pLbl1;
-		wmSwitcherPanel* m_pswpPlugins;
 		wxPanel* Panel1;
 		wmList* m_plstCurrent;
+		wmButton* m_pbtnUp;
 		wmLabel* m_pLbl2;
+		wmButton* m_pbtnDown;
 		wmButton* m_pbtnSet;
+		wmButton* m_pbtnPlugin;
 		//*)
 
 	protected:
@@ -37,8 +37,10 @@ class pnlSettingsPlugins: public wxPanel
 		static const long ID_M_PLST2;
 		static const long ID_M_PBTN1;
 		static const long ID_M_PBTN2;
+		static const long ID_M_PBTN3;
+		static const long ID_M_PBTN4;
 		static const long ID_PANEL1;
-		static const long ID_M_PSWP1;
+		static const long ID_M_PBTN5;
 		//*)
 
 	private:
@@ -48,11 +50,25 @@ class pnlSettingsPlugins: public wxPanel
 		void OnlstCurrentSelected(wxCommandEvent& event);
 		void OnpbtnSetHeld(wxCommandEvent& event);
 		void OnbtnClearHeld(wxCommandEvent& event);
+		void OnbtnUpClick(wxCommandEvent& event);
+		void OnbtnDownClick(wxCommandEvent& event);
+		void OnPanel1Paint(wxPaintEvent& event);
+		void OnbtnPluginClick(wxCommandEvent& event);
 		//*)
+
+		void ShowMonitorPlugins();
+		void ShowTestPlugins();
+
+		void ClearLists();
+
 
 		std::map<wxString, wxString> m_mPossible;
         unsigned int m_nSelected;
         std::map<wxString, wxString>::iterator m_itPossible;
+        unsigned int m_nPossible;
+
+        bool m_bTests;
+        wxString m_sSection;
 		DECLARE_EVENT_TABLE()
 };
 
