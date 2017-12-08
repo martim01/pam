@@ -28,7 +28,7 @@ LevelMeter::LevelMeter()
     m_clrText = wxColour(200,180,255);
 }
 
-LevelMeter::LevelMeter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, unsigned int nRouting, const wxPoint& pos, const wxSize& size) :
+LevelMeter::LevelMeter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, bool bLevelDisplay, const wxPoint& pos, const wxSize& size) :
     m_dMax(0),
     m_nMeterDisplay(PEAK),
     m_pPPM(0),
@@ -55,10 +55,10 @@ LevelMeter::LevelMeter(wxWindow *parent, wxWindowID id, const wxString & sText,d
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
-    SetMeterSpeed(meter::NORMAL);
-    SetMeterMSMode(meter::M6);
+//    SetMeterSpeed(meter::NORMAL);
+//    SetMeterMSMode(meter::M6);
 
-    m_nRouting = nRouting;
+    m_bLevelDisplay = bLevelDisplay;
 
     Connect(wxEVT_PAINT, (wxObjectEventFunction)&LevelMeter::OnPaint);
     Connect(wxEVT_SIZE, (wxObjectEventFunction)&LevelMeter::OnSize);
@@ -99,7 +99,7 @@ void LevelMeter::OnPaint(wxPaintEvent& event)
     wxBrush br(*wxBLACK);
     dc.SetBrush(br);
     dc.DrawRectangle(GetClientRect());
-    if(m_nRouting != LEVELS)
+    if(!m_bLevelDisplay)
     {
         m_uiLabel.Draw(dc, uiRect::BORDER_NONE);
         m_uiLevelText.Draw(dc, uiRect::BORDER_NONE);
@@ -251,240 +251,90 @@ void LevelMeter::ResetMeter(void)
             m_dPeakValue = -80;
             break;
         case PPM:
-            if(m_pPPM && (m_nRouting == MIDDLE || m_nRouting == SIDE))
-            {
-                m_pPPM->setMode(m_nMeterMSMode);
-            }
-            else if(m_pPPM)
-            {
-                m_pPPM->setMode(meter::AB);
-            }
             m_dLastValue = 0;
             m_dPeakValue = 0;
             break;
         case LOUD:
-            if(m_pLoud && (m_nRouting == MIDDLE || m_nRouting == SIDE))
-            {
-                m_pLoud->setMode(m_nMeterMSMode);
-            }
-            else if(m_pLoud)
-            {
-                m_pLoud->setMode(meter::AB);
-            }
             m_dLastValue = -80;
             m_dPeakValue = -80;
 
     }
     Refresh();
 }
-void LevelMeter::ShowValue(double dValue, bool bdB)
+void LevelMeter::ShowValue(double dValue)
 {
-    if(!m_bFreeze)
+    if(m_nMeterDisplay == PPM)
     {
-        if(!bdB)
+        ShowPPM(dValue);
+    }
+    else
+    {
+        if(!m_bFreeze)
         {
-            if(dValue != 0)
+            if(m_nMeterDisplay != LOUD)
             {
-                dValue = 20*log10(dValue);
+                if(dValue != 0)
+                {
+                    dValue = 20*log10(dValue);
+                }
+                else
+                {
+                    dValue = -1e10;
+                }
+            }
+            if(dValue > m_dLastValue-m_dFall)
+            {
+                m_dLastValue = dValue;
             }
             else
             {
-                dValue = -1e10;
+                m_dLastValue -= m_dFall;
             }
         }
-        if(dValue > m_dLastValue-m_dFall)
+
+        if(m_nPeakMode != PEAK_HOLD)
         {
-            m_dLastValue = dValue;
+            m_nPeakCounter++;
         }
-        else
+        if(m_nPeakCounter >= 96 || dValue >= m_dPeakValue)
         {
-            m_dLastValue -= m_dFall;
-        }
-    }
-
-    if(m_nPeakMode != PEAK_HOLD)
-    {
-        m_nPeakCounter++;
-    }
-    if(m_nPeakCounter >= 96 || dValue >= m_dPeakValue)
-    {
-        m_dPeakValue = min(dValue, m_dMax);
-        if(m_nMeterDisplay != LOUD)
-        {
-            m_uiLevelText.SetLabel(wxString::Format(wxT("%.1fdB"), m_dPeakValue));
-        }
-        else
-        {
-            m_uiLevelText.SetLabel(wxString::Format(wxT("%.1f L"), m_dPeakValue));
-        }
-        m_nPeakCounter = 0;
-        RefreshRect(m_uiLevelText.GetRect());
-    }
-
-    int ndB = m_dPixelsPerdB*m_dLastValue;
-    ndB = max(ndB, -(m_uiLabel.GetTop()-m_uiLevelText.GetHeight()));
-
-    int nPeakdB = m_dPixelsPerdB*m_dPeakValue;
-    nPeakdB = max(nPeakdB, -(m_uiLabel.GetTop()-m_uiLevelText.GetHeight()));
-
-    m_uiBlack.SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), -ndB);
-    m_uiPeak.SetRect(0,m_uiLevelText.GetBottom()-(nPeakdB)-1, GetClientRect().GetWidth(), 3);
-
-    if(m_uiBlack.GetBottom() != m_rectLastBlack.GetBottom())    //level change
-    {
-        RefreshRect(wxRect(0,m_uiLevelText.GetBottom(), GetClientSize().x, max(m_uiBlack.GetBottom(), m_rectLastBlack.GetBottom())+1-m_uiLevelText.GetBottom()));
-    }
-
-    if(m_uiPeak.GetBottom() != m_rectLastPeak.GetBottom())
-    {
-        RefreshRect(m_uiPeak.GetRect());
-        RefreshRect(m_rectLastPeak);
-    }
-
-    m_rectLastBlack = m_uiBlack.GetRect();
-    m_rectLastBlack = m_uiBlack.GetRect();
-    m_rectLastPeak = m_uiPeak.GetRect();
-
-}
-
-void LevelMeter::ShowPeak(const float* pBuffer, unsigned int nBufferSize)
-{
-    ShowValue(GetPeak(pBuffer, nBufferSize));
-}
-
-float LevelMeter::GetPeak(const float* pBuffer, unsigned int nBufferSize)
-{
-    //find largest value
-    float dPeak = m_dMin;
-    unsigned int i = 0;
-    switch(m_nRouting)
-    {
-    case MIDDLE:
-        for(unsigned int i=0; i < nBufferSize; i+=2)
-        {
-            float dSample(fabs(pBuffer[i]+pBuffer[i+1]));
-            if(m_nMeterMSMode == meter::M6)
+            m_dPeakValue = min(dValue, m_dMax);
+            if(m_nMeterDisplay != LOUD)
             {
-                dSample*=0.5;
+                m_uiLevelText.SetLabel(wxString::Format(wxT("%.1fdB"), m_dPeakValue));
             }
             else
             {
-                dSample*=0.707;
+                m_uiLevelText.SetLabel(wxString::Format(wxT("%.1f L"), m_dPeakValue));
             }
-            dPeak = max(dPeak,dSample);
+            m_nPeakCounter = 0;
+            RefreshRect(m_uiLevelText.GetRect());
         }
-        break;
-    case SIDE:
-        for(unsigned int i=0; i < nBufferSize; i+=2)
-        {
-            float dSample(fabs(pBuffer[i]-pBuffer[i+1]));
-            if(m_nMeterMSMode == meter::M6)
-            {
-                dSample*=0.5;
-            }
-            else
-            {
-                dSample*=0.707;
-            }
-            dPeak = max(dPeak,dSample);
-        }
-        break;
-    default:
-        for(unsigned int i=m_nRouting; i < nBufferSize; i+=m_nChannels)
-        {
-            float dSample(fabs(pBuffer[i]));
-            dPeak = max(dPeak,dSample);
-        }
-        break;
 
+        int ndB = m_dPixelsPerdB*m_dLastValue;
+        ndB = max(ndB, -(m_uiLabel.GetTop()-m_uiLevelText.GetHeight()));
+
+        int nPeakdB = m_dPixelsPerdB*m_dPeakValue;
+        nPeakdB = max(nPeakdB, -(m_uiLabel.GetTop()-m_uiLevelText.GetHeight()));
+
+        m_uiBlack.SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), -ndB);
+        m_uiPeak.SetRect(0,m_uiLevelText.GetBottom()-(nPeakdB)-1, GetClientRect().GetWidth(), 3);
+
+        if(m_uiBlack.GetBottom() != m_rectLastBlack.GetBottom())    //level change
+        {
+            RefreshRect(wxRect(0,m_uiLevelText.GetBottom(), GetClientSize().x, max(m_uiBlack.GetBottom(), m_rectLastBlack.GetBottom())+1-m_uiLevelText.GetBottom()));
+        }
+
+        if(m_uiPeak.GetBottom() != m_rectLastPeak.GetBottom())
+        {
+            RefreshRect(m_uiPeak.GetRect());
+            RefreshRect(m_rectLastPeak);
+        }
+
+        m_rectLastBlack = m_uiBlack.GetRect();
+        m_rectLastBlack = m_uiBlack.GetRect();
+        m_rectLastPeak = m_uiPeak.GetRect();
     }
-    return dPeak;
-}
-
-void LevelMeter::ShowAverage(const float* pBuffer, unsigned int nBufferSize)
-{
-    double dTotal = GetTotal(pBuffer, nBufferSize);
-    dTotal /= static_cast<double>((nBufferSize/m_nChannels));
-    ShowValue(dTotal);
-}
-
-void LevelMeter::ShowTotal(const float* pBuffer, unsigned int nBufferSize)
-{
-    double dTotal = GetTotal(pBuffer, nBufferSize);
-    ShowValue(dTotal);
-}
-void LevelMeter::ShowVU(const float* pBuffer, unsigned int nBufferSize)
-{
-    float dTotal = 0;
-    unsigned int i = 0;
-    switch(m_nRouting)
-    {
-    case MIDDLE:
-        for(unsigned int i=0; i < nBufferSize; i+=2)
-        {
-            if(m_nMeterMSMode == meter::M6)
-            {
-                dTotal += pow((pBuffer[i]+pBuffer[i+1])/2,2);
-            }
-            else
-            {
-                dTotal += pow((pBuffer[i]+pBuffer[i+1]),2);
-            }
-
-        }
-        break;
-    case SIDE:
-        for(unsigned int i=0; i < nBufferSize; i+=2)
-        {
-            if(m_nMeterMSMode == meter::M6)
-            {
-                dTotal += pow((pBuffer[i]-pBuffer[i+1])/2,2);
-            }
-            else
-            {
-                dTotal += pow((pBuffer[i]-pBuffer[i+1]),2);
-            }
-        }
-        break;
-    default:
-        for(unsigned int i=m_nRouting; i < nBufferSize; i+=m_nChannels)
-        {
-            dTotal += pow(pBuffer[i],2);
-        }
-    }
-
-    dTotal = sqrt(dTotal/(nBufferSize/m_nChannels));
-    ShowValue(dTotal);
-}
-
-float LevelMeter::GetTotal(const float* pBuffer, unsigned int nBufferSize)
-{
-    double dTotal = 0;
-    double dValue = 0;
-    switch(m_nRouting)
-    {
-    case MIDDLE:
-        for(unsigned int i=0; i < nBufferSize; i+=2)
-        {
-            dTotal += fabs(pBuffer[i]+pBuffer[i+1])/2;
-        }
-        break;
-    case SIDE:
-        for(unsigned int i=0; i < nBufferSize; i+=2)
-        {
-            dTotal += fabs(pBuffer[i]-pBuffer[i+1])/2;
-        }
-        break;
-    default:
-        for(unsigned int i=m_nRouting; i < nBufferSize; i+=m_nChannels)
-        {
-            dTotal += fabs(pBuffer[i]);
-        }
-    }
-
-
-
-    return dTotal;
 }
 
 
@@ -496,33 +346,9 @@ void LevelMeter::OnSize(wxSizeEvent& event)
 }
 
 
-void LevelMeter::ShowMeter(const float* pBuffer, unsigned int nBufferSize)
+void LevelMeter::SetLevelDisplay(bool bLevel)
 {
-    switch(m_nMeterDisplay)
-    {
-    case PEAK:
-        ShowPeak(pBuffer, nBufferSize);
-        break;
-    case AVERAGE:
-        ShowAverage(pBuffer, nBufferSize);
-        break;
-    case TOTAL:
-        ShowTotal(pBuffer, nBufferSize);
-        break;
-    case ENERGY:
-        ShowVU(pBuffer, nBufferSize);
-        break;
-    case PPM:
-        ShowPPM(pBuffer, nBufferSize);
-        break;
-    case LOUD:
-        ShowLUFS(pBuffer, nBufferSize);
-    }
-}
-
-void LevelMeter::SetRouting(short nRouting)
-{
-    m_nRouting = nRouting;
+    m_bLevelDisplay = bLevel;
     ResetMeter();
 }
 
@@ -537,47 +363,6 @@ void LevelMeter::SetMeterDisplay(short nDisplay)
 {
     m_nMeterDisplay = nDisplay;
 
-    if(m_pPPM)
-    {
-        delete m_pPPM;
-        m_pPPM = 0;
-    }
-    if(m_pLoud)
-    {
-        delete m_pLoud;
-        m_pLoud = 0;
-    }
-
-    if(m_nRouting != LEVELS)
-    {
-        if(m_nMeterDisplay == PPM && !m_pPPM)
-        {
-            m_pPPM = new ppm(m_nChannels);
-            if(m_nRouting == LEFT || m_nRouting == RIGHT)
-            {
-                m_pPPM->setMode(meter::AB);
-            }
-            else
-            {
-                m_pPPM->setMode(m_nMeterMSMode);
-            }
-            m_pPPM->setSpeed(m_nMeterSpeed);
-        }
-        else if(m_nMeterDisplay == LOUD && !m_pLoud)
-        {
-            m_pLoud = new loud(m_nChannels);
-            m_pLoud->setIntegrationTime(8);
-            if(m_nRouting == LEFT || m_nRouting == RIGHT)
-            {
-                m_pLoud->setMode(meter::AB);
-            }
-            else
-            {
-                m_pLoud->setMode(m_nMeterMSMode);
-            }
-            m_pLoud->setSpeed(m_nMeterSpeed);
-        }
-    }
     ResetMeter();
 }
 
@@ -611,36 +396,8 @@ void LevelMeter::FreezeMeter(bool bFreeze)
 }
 
 
-void LevelMeter::ShowPPM(const float* pBuffer, unsigned int nBufferSize)
+void LevelMeter::ShowPPM(double dValue)
 {
-    double dValue(0);
-    double dMaxValue(0);
-    if(m_pPPM)
-    {
-        m_pPPM->calcIntermediate(m_nChannels, nBufferSize/m_nChannels, pBuffer);
-        if(m_nRouting < MIDDLE)
-        {
-            dValue = m_pPPM->getValue(m_nRouting);
-
-        }
-        else
-        {
-            switch(m_nRouting)
-            {
-                case MIDDLE:
-                    dValue = m_pPPM->getValue(0);
-                    break;
-                case SIDE:
-                    dValue = m_pPPM->getValue(1);
-                    break;
-            }
-        }
-
-    }
-    else
-    {
-        wxLogDebug(wxT("NO PPM"));
-    }
 
     if(!m_bFreeze)
     {
@@ -658,7 +415,6 @@ void LevelMeter::ShowPPM(const float* pBuffer, unsigned int nBufferSize)
         m_nPeakCounter = 0;
         RefreshRect(m_uiLevelText.GetRect());
     }
-
 
 
     int nY = m_dPixelsPerPPM*(8-m_dLastValue);
@@ -688,73 +444,6 @@ void LevelMeter::ShowPPM(const float* pBuffer, unsigned int nBufferSize)
 }
 
 
-void LevelMeter::ShowLUFS(const float* pBuffer, unsigned int nBufferSize)
-{
-    double dValue(0);
-    double dMaxValue(0);
-    if(m_pLoud)
-    {
-        m_pLoud->calcIntermediate(m_nChannels, nBufferSize/m_nChannels, pBuffer); // @todo
-
-        switch(m_nRouting)
-        {
-            case LEFT:
-                dValue = m_pLoud->getValue(0);
-                break;
-            case RIGHT:
-                dValue = m_pLoud->getValue(1);
-                break;
-            case MIDDLE:
-                dValue = m_pLoud->getValue(0);
-                break;
-            case SIDE:
-                dValue = m_pLoud->getValue(1);
-                break;
-
-        }
-        ShowValue(dValue,true);
-    }
-}
-
-
-void LevelMeter::SetMeterMSMode(long nMode)
-{
-    m_nMeterMSMode = nMode;
-    if(m_pPPM && (m_nRouting != LEFT && m_nRouting != RIGHT))
-    {
-        m_pPPM->setMode(nMode);
-    }
-    else if(m_pLoud && (m_nRouting != LEFT && m_nRouting != RIGHT))
-    {
-        m_pLoud->setMode(nMode);
-    }
-}
-
-void LevelMeter::SetMeterSpeed(long nSpeed)
-{
-    m_nMeterSpeed = nSpeed;
-    if(m_pPPM)
-    {
-        m_pPPM->setSpeed(nSpeed);
-    }
-    else if(m_pLoud)
-    {
-        m_pLoud->setSpeed(nSpeed);
-    }
-
-    switch(m_nMeterSpeed)
-    {
-        case meter::SLOW:
-            m_dFall = 0.15;
-            break;
-        case meter::NORMAL:
-            m_dFall = 0.3;
-            break;
-        case meter::FAST:
-            m_dFall = 0.6;
-    }
-}
-
 void LevelMeter::SetShading(bool bShading)
 {
     m_bShading = bShading;
@@ -774,4 +463,20 @@ void LevelMeter::SetShading(bool bShading)
         m_uiSimple.Draw(dc,uiRect::BORDER_NONE);
     }
     ResetMeter();
+}
+
+
+void LevelMeter::SetSpeed(long nSpeed)
+{
+    switch(nSpeed)
+    {
+        case meter::SLOW:
+            m_dFall = 0.15;
+            break;
+        case meter::NORMAL:
+            m_dFall = 0.3;
+            break;
+        case meter::FAST:
+            m_dFall = 0.6;
+    }
 }

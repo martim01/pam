@@ -230,10 +230,56 @@ void pam2Dialog::LoadMonitorPanels()
     m_pswpOptions->AddPage(new pnlSettingsOptions(m_pswpOptions), wxT("Settings|Options"));
     m_pswpOptions->AddPage(pnlControl, wxT("Log|Control"));
 
+
+    size_t nPage = 0;
     for(size_t i = 0; i < m_pswpMain->GetPageCount(); i++)
     {
-        m_plstScreens->AddButton(m_pswpMain->GetPageText(i));
+        if(m_pswpMain->GetPageCount() > 9)
+        {
+            if(i!=0 && i%8 ==0)
+            {
+                nPage++;
+            }
+        }
+        m_mmMonitorPlugins.insert(make_pair(nPage, m_pswpMain->GetPageText(i)));
     }
+    m_nCurrentMonitorPage = 0;
+    ShowMonitorList();
+}
+
+void pam2Dialog::ShowMonitorList()
+{
+    m_plstScreens->Freeze();
+    m_plstScreens->Clear();
+
+    size_t nButtons(0);
+    for(multimap<size_t, wxString>::const_iterator itText = m_mmMonitorPlugins.lower_bound(m_nCurrentMonitorPage); itText != m_mmMonitorPlugins.upper_bound(m_nCurrentMonitorPage);++itText)
+    {
+        m_plstScreens->AddButton(itText->second);
+        ++nButtons;
+    }
+
+    size_t nNext = m_nCurrentMonitorPage+1;
+    size_t nLast = m_nCurrentMonitorPage-1;
+    if(m_mmMonitorPlugins.lower_bound(nNext) != m_mmMonitorPlugins.upper_bound(nNext))
+    {
+        size_t nButton = m_plstScreens->AddButton(wxT("Next Page"));
+        m_plstScreens->SetButtonColour(nButton, wxColour(50,160,70));
+        m_plstScreens->SetTextButtonColour(nButton, *wxBLACK);
+    }
+    else if(m_mmMonitorPlugins.lower_bound(nLast) != m_mmMonitorPlugins.upper_bound(nLast))
+    {
+        for(; nButtons < 8; ++nButtons)
+        {
+            m_plstScreens->AddButton(wxEmptyString, wxNullBitmap, NULL, wmList::wmDISABLED);
+
+        }
+        size_t nButton = m_plstScreens->AddButton(wxT("Prev Page"));
+        m_plstScreens->SetButtonColour(nButton, wxColour(50,160,70));
+        m_plstScreens->SetTextButtonColour(nButton, *wxBLACK);
+    }
+    m_plstScreens->SelectButton(m_pswpMain->GetSelectionName(), false);
+    m_plstScreens->Thaw();
 }
 
 
@@ -256,6 +302,16 @@ void pam2Dialog::OnlstScreensSelected(wxCommandEvent& event)
     {
         m_pSelectedMonitor = 0;
         ShowTestPanels();
+    }
+    else if(event.GetString() == wxT("Next Page"))
+    {
+        m_nCurrentMonitorPage++;
+        ShowMonitorList();
+    }
+    else if(event.GetString() == wxT("Prev Page"))
+    {
+        m_nCurrentMonitorPage--;
+        ShowMonitorList();
     }
     else
     {

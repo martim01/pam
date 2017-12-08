@@ -20,6 +20,9 @@
 		<Project filename="plugins/aoip info/aoip info.cbp">
 			<Depends filename="pambase/pambase.cbp" />
 		</Project>
+		<Project filename="plugins/radar/radar.cbp">
+			<Depends filename="pambase/pambase.cbp" />
+		</Project>
 		<Project filename="plugins/channel delay/channel delay.cbp">
 			<Depends filename="pambase/pambase.cbp" />
 		</Project>
@@ -41,6 +44,7 @@
 			<Depends filename="plugins/anglemeters/anglemeters.cbp" />
 			<Depends filename="plugins/scope/scope.cbp" />
 			<Depends filename="plugins/aoip info/aoip info.cbp" />
+			<Depends filename="plugins/radar/radar.cbp" />
 			<Depends filename="plugins/channel delay/channel delay.cbp" />
 			<Depends filename="plugins/distortion/distortion.cbp" />
 			<Depends filename="plugins/levels/levels.cbp" />

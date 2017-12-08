@@ -5,6 +5,7 @@
 #include "levelmeter.h"
 #include "metersbuilder.h"
 #include "wmbutton.h"
+#include "levelcalculator.h"
 
 //(*InternalHeaders(pnlMeters)
 #include <wx/font.h>
@@ -139,6 +140,8 @@ pnlMeters::pnlMeters(wxWindow* parent,MetersBuilder* pBuilder, wxWindowID id,con
 
 
     Connect(wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&pnlMeters::OnMonitorClicked);
+
+    m_pCalculator = new LevelCalculator(-70.0);
 }
 
 pnlMeters::~pnlMeters()
@@ -158,6 +161,7 @@ void pnlMeters::SetSession(const session& aSession)
     m_plblSessionFrequency->SetLabel(wxString::Format(wxT("%u"), aSession.nSampleRate));
     m_plblSessionBits->SetLabel(aSession.sCodec);
 
+    m_nInputChannels = aSession.nChannels;
 
     for(size_t i = 0; i < m_vMeters.size(); i++)
     {
@@ -173,6 +177,8 @@ void pnlMeters::SetSession(const session& aSession)
         m_pLevels->Destroy();
     }
 
+    m_pCalculator->InputSession(aSession);
+
     int x = 55;
     if(aSession.nChannels != 2) //not stereo
     {
@@ -181,7 +187,7 @@ void pnlMeters::SetSession(const session& aSession)
 
         for(unsigned long i = 0; i < m_vMeters.size(); i++)
         {
-            m_vMeters[i] = new LevelMeter(this,wxID_ANY, wxString::Format(wxT("%lu"), i+1), -70, i, wxPoint(x, 0), wxSize(50, 440));
+            m_vMeters[i] = new LevelMeter(this,wxID_ANY, wxString::Format(wxT("%lu"), i+1), -70, false, wxPoint(x, 0), wxSize(50, 440));
 
             m_vMeters[i]->SetLightColours(-38,wxColour(0,220,0), -8, wxColour(230,230,0), wxColour(255,100,100));
 
@@ -193,41 +199,57 @@ void pnlMeters::SetSession(const session& aSession)
             }
             x+= 51;
         }
-        m_pLevels = new LevelMeter(this, wxID_ANY, wxEmptyString, -70, LevelMeter::LEVELS, wxPoint(5,0), wxSize(50,440));
+        m_pLevels = new LevelMeter(this, wxID_ANY, wxEmptyString, -70, true, wxPoint(5,0), wxSize(50,440));
     }
     else
     {
         m_vMeters.resize(4);
-        m_vMeters[0] = new LevelMeter(this,wxID_ANY, wxT("L"), -70, LevelMeter::LEFT, wxPoint(55, 0), wxSize(50, 480));
-        m_vMeters[1] = new LevelMeter(this,wxID_ANY, wxT("R"), -70, LevelMeter::RIGHT, wxPoint(110, 0), wxSize(50, 480));
-        m_vMeters[2] = new LevelMeter(this,wxID_ANY, wxT("M"), -70, LevelMeter::MIDDLE, wxPoint(200, 0), wxSize(50, 480));
-        m_vMeters[3] = new LevelMeter(this,wxID_ANY, wxT("S"), -70, LevelMeter::SIDE, wxPoint(260, 0), wxSize(50, 480));
+        m_vMeters[0] = new LevelMeter(this,wxID_ANY, wxT("L"), -70, false, wxPoint(55, 0), wxSize(50, 480));
+        m_vMeters[1] = new LevelMeter(this,wxID_ANY, wxT("R"), -70, false, wxPoint(110, 0), wxSize(50, 480));
+        m_vMeters[2] = new LevelMeter(this,wxID_ANY, wxT("M"), -70, false, wxPoint(200, 0), wxSize(50, 480));
+        m_vMeters[3] = new LevelMeter(this,wxID_ANY, wxT("S"), -70, false, wxPoint(260, 0), wxSize(50, 480));
 
 
 
-        m_pLevels = new LevelMeter(this, wxID_ANY, wxEmptyString, -70, LevelMeter::LEVELS, wxPoint(5,0), wxSize(50,481));
+        m_pLevels = new LevelMeter(this, wxID_ANY, wxEmptyString, -70, true, wxPoint(5,0), wxSize(50,481));
     }
     double dLevels[15] = {0,-3, -6, -9, -12, -15, -18, -21, -24, -30, -36, -42, -48, -54, -60};
+
     for(size_t i = 0; i < m_vMeters.size(); i++)
     {
         m_vMeters[i]->SetNumberOfChannels(aSession.nChannels);
         m_vMeters[i]->SetLevels(dLevels,15);
         m_vMeters[i]->SetShading(m_pBuilder->ReadSetting(wxT("Shading"),0)==1);
         m_vMeters[i]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlMeters::OnInfoLeftUp,0,this);
+
     }
     if(m_pLevels)
     {
         m_pLevels->SetLevels(dLevels,15);
         m_pLevels->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlMeters::OnInfoLeftUp,0,this);
     }
+
+    SetSpeed(m_pBuilder->ReadSetting(wxT("Speed"),1));
+    SetM3M6(m_pBuilder->ReadSetting(wxT("M3M6"),1));
 }
 
 
 void pnlMeters::SetAudioData(const timedbuffer* pBuffer)
 {
-    for(size_t i = 0; i < m_vMeters.size(); i++)
+    m_pCalculator->CalculateLevel(pBuffer);
+    if(m_nInputChannels != 2)
     {
-        m_vMeters[i]->ShowMeter(pBuffer->GetBuffer(), pBuffer->GetBufferSize());
+        for(size_t i = 0; i < m_vMeters.size(); i++)
+        {
+            m_vMeters[i]->ShowValue(m_pCalculator->GetLevel(i));
+        }
+    }
+    else
+    {
+        m_vMeters[0]->ShowValue(m_pCalculator->GetLevel(0));
+        m_vMeters[1]->ShowValue(m_pCalculator->GetLevel(1));
+        m_vMeters[2]->ShowValue(m_pCalculator->GetMSLevel(false));
+        m_vMeters[3]->ShowValue(m_pCalculator->GetMSLevel(true));
     }
     if(m_pLevels)
     {
@@ -238,6 +260,8 @@ void pnlMeters::SetAudioData(const timedbuffer* pBuffer)
 
 void pnlMeters::SetMode(unsigned int nMode)
 {
+    m_pCalculator->SetMode(nMode);
+
     if(m_pLevels)
     {
         m_pLevels->SetMeterDisplay(nMode);
@@ -246,6 +270,7 @@ void pnlMeters::SetMode(unsigned int nMode)
     {
         m_vMeters[i]->SetMeterDisplay(nMode);
     }
+
 }
 
 void pnlMeters::Freeze(bool bFreeze)
@@ -277,16 +302,15 @@ void pnlMeters::SetSpeed(unsigned long nSpeed)
 {
     for(size_t i = 0; i < m_vMeters.size(); i++)
     {
-        m_vMeters[i]->SetMeterSpeed(nSpeed);
+        m_vMeters[i]->SetSpeed(nSpeed);
     }
+    m_pCalculator->SetSpeed(nSpeed);
 }
 
 void pnlMeters::SetM3M6(unsigned long nMode)
 {
-    for(size_t i = 0; i < m_vMeters.size(); i++)
-    {
-        m_vMeters[i]->SetMeterMSMode(nMode);
-    }
+    m_pCalculator->SetMSMode(nMode);
+
 }
 
 

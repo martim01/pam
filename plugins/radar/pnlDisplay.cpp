@@ -1,0 +1,70 @@
+#include "pnlDisplay.h"
+#include "radarbuilder.h"
+//(*InternalHeaders(pnlDisplay)
+#include <wx/intl.h>
+#include <wx/string.h>
+//*)
+
+//(*IdInit(pnlDisplay)
+const long pnlDisplay::ID_M_PLST24 = wxNewId();
+const long pnlDisplay::ID_M_PLST1 = wxNewId();
+//*)
+
+BEGIN_EVENT_TABLE(pnlDisplay,wxPanel)
+	//(*EventTable(pnlDisplay)
+	//*)
+END_EVENT_TABLE()
+
+pnlDisplay::pnlDisplay(wxWindow* parent,RadarBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) :
+    m_pBuilder(pBuilder)
+{
+	//(*Initialize(pnlDisplay)
+	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
+	SetBackgroundColour(wxColour(0,0,0));
+	m_plstTimeframe = new wmList(this, ID_M_PLST24, wxPoint(0,0), wxSize(190,100), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 3, wxSize(5,5));
+	m_plstTimeframe->SetBackgroundColour(wxColour(0,0,0));
+	m_plstPoints = new wmList(this, ID_M_PLST1, wxPoint(0,110), wxSize(190,100), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 3, wxSize(5,5));
+	m_plstPoints->SetBackgroundColour(wxColour(0,0,0));
+
+	Connect(ID_M_PLST24,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlDisplay::OnlstTimeframeSelected);
+	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlDisplay::OnlstPointsSelected);
+	//*)
+    SetBackgroundColour(*wxBLACK);
+	m_plstTimeframe->AddButton(wxT("10s"), wxNullBitmap, (void*)10);
+	m_plstTimeframe->AddButton(wxT("30s"), wxNullBitmap, (void*)30);
+	m_plstTimeframe->AddButton(wxT("1m"), wxNullBitmap, (void*)60);
+	m_plstTimeframe->AddButton(wxT("10m"), wxNullBitmap, (void*)600);
+	m_plstTimeframe->AddButton(wxT("30m"), wxNullBitmap, (void*)1800);
+	m_plstTimeframe->AddButton(wxT("1 hour"), wxNullBitmap, (void*)3600);
+
+	m_plstTimeframe->SelectButton(m_plstTimeframe->FindButton((void*)m_pBuilder->ReadSetting(wxT("Timeframe"),60)), true);
+
+	m_plstPoints->AddButton(wxT("50 points"), wxNullBitmap, (void*)50);
+	m_plstPoints->AddButton(wxT("100 points"), wxNullBitmap, (void*)100);
+	m_plstPoints->AddButton(wxT("200 points"), wxNullBitmap, (void*)200);
+	m_plstPoints->AddButton(wxT("300 points"), wxNullBitmap, (void*)300);
+	m_plstPoints->AddButton(wxT("400 points"), wxNullBitmap, (void*)400);
+	m_plstPoints->AddButton(wxT("500 points"), wxNullBitmap, (void*)500);
+
+	m_plstPoints->SelectButton(m_plstPoints->FindButton((void*)m_pBuilder->ReadSetting(wxT("Points"),400)), true);
+
+
+}
+
+pnlDisplay::~pnlDisplay()
+{
+	//(*Destroy(pnlDisplay)
+	//*)
+}
+
+
+
+void pnlDisplay::OnlstTimeframeSelected(wxCommandEvent& event)
+{
+    m_pBuilder->WriteSetting(wxT("Timeframe"), (int)event.GetClientData());
+}
+
+void pnlDisplay::OnlstPointsSelected(wxCommandEvent& event)
+{
+    m_pBuilder->WriteSetting(wxT("Points"), (int)event.GetClientData());
+}

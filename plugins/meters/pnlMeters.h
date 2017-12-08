@@ -16,6 +16,7 @@ class timedbuffer;
 class LevelMeter;
 class wmButton;
 class MetersBuilder;
+class LevelCalculator;
 
 class pnlMeters: public wxPanel
 {
@@ -87,6 +88,9 @@ class pnlMeters: public wxPanel
 		std::vector<LevelMeter*> m_vMeters;
         std::vector<wmButton*> m_vMonitor;
 		MetersBuilder* m_pBuilder;
+
+		LevelCalculator* m_pCalculator;
+		unsigned int m_nInputChannels;
 
 		DECLARE_EVENT_TABLE()
 };

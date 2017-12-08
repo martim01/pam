@@ -12,7 +12,7 @@ class wmButton;
 
 struct session;
 class timedbuffer;
-
+class LevelCalculator;
 
 class pnlAngleMeters: public wxPanel
 {
@@ -59,6 +59,9 @@ class pnlAngleMeters: public wxPanel
 		AngleMetersBuilder* m_pBuilder;
 
         unsigned int m_nInputChannels;
+        bool m_bStereo;
+
+        LevelCalculator* m_pCalculator;
 		DECLARE_EVENT_TABLE()
 };
 

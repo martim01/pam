@@ -14,7 +14,7 @@ public:
     LevelMeter();
     virtual ~LevelMeter();
 
-    LevelMeter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, unsigned int nRouting, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize);
+    LevelMeter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, bool bLevelDisplay, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize);
 
     void InitMeter(const wxString & sText,double dMin);
 
@@ -26,8 +26,12 @@ public:
 
     void SetLabel(const wxString& sLabel);
 
-    void ShowMeter(const float* pBuffer, unsigned int nFrameCount);
-    void SetRouting(short nRouting);
+    void ShowValue(double dValue);
+
+    void SetSpeed(long nSpeed);
+
+
+    void SetLevelDisplay(bool bLevels);
     void SetMeterDisplay(short nDisplay);
     void OnSize(wxSizeEvent& event);
     wxSize DoGetBestSize()
@@ -39,8 +43,8 @@ public:
     void SetPeakMode(int nMode);
     void FreezeMeter(bool bFreeze);
 
-    void SetMeterMSMode(long nMode);
-    void SetMeterSpeed(long nSpeed);
+    //void SetMeterMSMode(long nMode);
+    //void SetMeterSpeed(long nSpeed);
 
     void SetShading(bool bShading);
 
@@ -51,16 +55,7 @@ public:
     enum {PPM, PEAK, ENERGY, LOUD, TOTAL, AVERAGE};
 protected:
 
-    void ShowValue(double dValue, bool bdB=false);
-    void ShowPeak(const float* pBuffer, unsigned int nBufferSize);
-    void ShowAverage(const float* pBuffer, unsigned int nBufferSize);
-    void ShowTotal(const float* pBuffer, unsigned int nBufferSize);
-    void ShowVU(const float* pBuffer, unsigned int nBufferSize);
-    void ShowPPM(const float* pBuffer, unsigned int nBufferSize);
-    void ShowLUFS(const float* pBuffer, unsigned int nBufferSize);
-
-    float GetPeak(const float* pBuffer, unsigned int nBufferSize);
-    float GetTotal(const float* pBuffer, unsigned int nBufferSize);
+    void ShowPPM(double dValue);
 
     uiRect m_uiSimple;
     uiRect m_uiLevel[3];
@@ -85,7 +80,7 @@ protected:
     bool m_bInit;
 
     double m_dLastValue;
-    unsigned int m_nRouting;
+    bool m_bLevelDisplay;
 
     double m_dPeakValue;
 

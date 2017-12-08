@@ -4,6 +4,7 @@
 #include "wmbutton.h"
 #include "session.h"
 #include "timedbuffer.h"
+#include "levelcalculator.h"
 
 //(*InternalHeaders(pnlAngleMeters)
 #include <wx/intl.h>
@@ -31,17 +32,21 @@ pnlAngleMeters::pnlAngleMeters(wxWindow* parent,AngleMetersBuilder* pBuilder,wxW
 	//*)
 
     Connect(wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&pnlAngleMeters::OnMonitorClicked);
+    m_pCalculator = new LevelCalculator(0);
 }
 
 pnlAngleMeters::~pnlAngleMeters()
 {
 	//(*Destroy(pnlAngleMeters)
 	//*)
+	delete m_pCalculator;
+
 }
 
 void pnlAngleMeters::SetSession(const session& aSession)
 {
     m_nInputChannels = aSession.nChannels;
+    m_pCalculator->InputSession(aSession);
     CreateMeters();
 }
 
@@ -51,7 +56,7 @@ void pnlAngleMeters::UpdateMeterStereo()
 }
 void pnlAngleMeters::CreateMeters()
 {
-    bool bStereo = (m_pBuilder->ReadSetting(wxT("Stereo"),0)==1);
+    m_bStereo = (m_pBuilder->ReadSetting(wxT("Stereo"),0)==1);
     for(size_t i = 0; i < m_vMeters.size(); i++)
     {
         m_vMeters[i]->Destroy();
@@ -65,7 +70,7 @@ void pnlAngleMeters::CreateMeters()
     int x = 10;
     int y = 10;
 
-    if(!bStereo)
+    if(!m_bStereo)
     {
         if(m_nInputChannels != 2) //not stereo
         {
@@ -145,9 +150,44 @@ void pnlAngleMeters::CreateMeters()
 
 void pnlAngleMeters::SetAudioData(const timedbuffer* pBuffer)
 {
-    for(size_t i = 0; i < m_vMeters.size(); i++)
+    m_pCalculator->CalculateLevel(pBuffer);
+    if(m_nInputChannels != 2)
     {
-        m_vMeters[i]->ShowMeter(pBuffer->GetBuffer(), pBuffer->GetBufferSize());
+        if(!m_bStereo)
+        {
+            for(size_t i = 0; i < m_vMeters.size(); i++)
+            {
+                double dValue[2] = {m_pCalculator->GetLevel(i), m_pCalculator->GetLevel(i)};
+                m_vMeters[i]->ShowValue(dValue);
+            }
+        }
+        else
+        {
+             for(size_t i = 0; i < m_vMeters.size(); i++)
+            {
+                double dValue[2] = {m_pCalculator->GetLevel(i*2), m_pCalculator->GetLevel(i*2+1)};
+                m_vMeters[i]->ShowValue(dValue);
+            }
+        }
+    }
+    else
+    {
+        if(!m_bStereo)
+        {
+            double dLeft[2] = {m_pCalculator->GetLevel(0), m_pCalculator->GetLevel(0)};
+            double dRight[2] = {m_pCalculator->GetLevel(1), m_pCalculator->GetLevel(1)};
+            double dMS[2] = {m_pCalculator->GetMSLevel(false), m_pCalculator->GetMSLevel(true)};
+            m_vMeters[0]->ShowValue(dLeft);
+            m_vMeters[1]->ShowValue(dRight);
+            m_vMeters[2]->ShowValue(dMS);
+        }
+        else
+        {
+            double dLeftRight[2] = {m_pCalculator->GetLevel(0), m_pCalculator->GetLevel(1)};
+            double dMS[2] = {m_pCalculator->GetMSLevel(false), m_pCalculator->GetMSLevel(true)};
+            m_vMeters[0]->ShowValue(dLeftRight);
+            m_vMeters[1]->ShowValue(dMS);
+        }
     }
 }
 
@@ -158,6 +198,7 @@ void pnlAngleMeters::SetMode(unsigned int nMode)
     {
         m_vMeters[i]->SetMeterDisplay(nMode);
     }
+    m_pCalculator->SetMode(nMode);
 }
 
 void pnlAngleMeters::Freeze(bool bFreeze)
@@ -191,6 +232,7 @@ void pnlAngleMeters::SetSpeed(unsigned long nSpeed)
     {
         m_vMeters[i]->SetMeterSpeed(nSpeed);
     }
+    m_pCalculator->SetSpeed(nSpeed);
 }
 
 void pnlAngleMeters::SetM3M6(unsigned long nMode)
@@ -199,6 +241,7 @@ void pnlAngleMeters::SetM3M6(unsigned long nMode)
     {
         m_vMeters[i]->SetMeterMSMode(nMode);
     }
+    m_pCalculator->SetMSMode(nMode);
 }
 
 
@@ -235,8 +278,8 @@ void pnlAngleMeters::ColourMonitorButtons()
         m_vMonitor[i]->SetBackgroundColour(wxColour(80,70,180));
     }
 
-    bool bStereo = (m_pBuilder->ReadSetting(wxT("Stereo"),0)==1);
-    if(!bStereo)
+    m_bStereo = (m_pBuilder->ReadSetting(wxT("Stereo"),0)==1);
+    if(!m_bStereo)
     {
         for(size_t i = 0; i < m_vOutputChannels.size(); i++)
         {

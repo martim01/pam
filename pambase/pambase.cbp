@@ -108,6 +108,8 @@
 		<Unit filename="inimanager.h" />
 		<Unit filename="inisection.cpp" />
 		<Unit filename="inisection.h" />
+		<Unit filename="levelcalculator.cpp" />
+		<Unit filename="levelcalculator.h" />
 		<Unit filename="levelmeter.cpp" />
 		<Unit filename="levelmeter.h" />
 		<Unit filename="loud.cpp" />

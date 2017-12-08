@@ -27,7 +27,9 @@ public:
 
     void SetLabel(const wxString& sLabel);
 
-    void ShowMeter(const float* pBuffer, unsigned int nBufferSize);
+    void ShowValue(double dValue[2]);
+
+
     void SetRouting(short nRouting);
     void SetMeterDisplay(short nDisplay);
     void OnSize(wxSizeEvent& event);
@@ -54,14 +56,7 @@ public:
     enum {PPM, PEAK, ENERGY, LOUD, TOTAL, AVERAGE};
 protected:
 
-    void ShowValue(double dValue[2], bool bdB=false);
-    void ShowPeak(const float* pBuffer, unsigned int nBufferSize);
-    void ShowEnergy(const float* pBuffer, unsigned int nBufferSize);
-    void ShowPPM(const float* pBuffer, unsigned int nBufferSize);
-    void ShowLUFS(const float* pBuffer, unsigned int nBufferSize);
 
-    std::pair<float,float> GetPeak(const float* pBuffer, unsigned int nBufferSize);
-    float GetTotal(const float* pBuffer, unsigned int nBufferSize);
 
     void WorkoutAngles(int i);
 
@@ -105,8 +100,6 @@ protected:
     wxRect m_rectGrid;
     uiRect m_uiType;
 
-    ppm* m_pPPM;
-    loud* m_pLoud;
 
     int m_nPeakCounter[2];
     unsigned int m_nChannel;

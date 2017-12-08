@@ -11,6 +11,7 @@
 class timedbuffer;
 class session;
 class LissajouBuilder;
+class LevelCalculator;
 
 class pnlLissajou: public wxPanel
 {
@@ -58,9 +59,13 @@ class pnlLissajou: public wxPanel
         void CheckAxis();
 		static LissajouBuilder* m_pBuilder;
 
+		LevelCalculator* m_pCalculator;
+
 		std::vector<char> m_vOutputs;
 
 		unsigned int m_nChannels;
+		unsigned int m_nChannelX;
+		unsigned int m_nChannelY;
 
 		DECLARE_EVENT_TABLE()
 };

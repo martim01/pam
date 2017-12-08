@@ -1,0 +1,373 @@
+#include "radarmeter.h"
+#include <wx/dc.h>
+#include <wx/dcbuffer.h>
+#include <wx/log.h>
+#include <wx/image.h>
+#include "levelcalculator.h"
+
+
+using namespace std;
+
+BEGIN_EVENT_TABLE(RadarMeter, wxWindow)
+    EVT_PAINT(RadarMeter::OnPaint)
+    EVT_SIZE(RadarMeter::OnSize)
+    EVT_LEFT_UP(RadarMeter::OnLeftUp)
+END_EVENT_TABLE()
+
+
+const float RadarMeter::LEVEL_PPM[7] = {0.031, 0.05, 0.079, 0.126, 0.199, 0.316, 0.501};
+const wxString RadarMeter::LABEL_SCALE[3] = {wxT("dB"), wxT("Linear"), wxT("Auto")};
+
+RadarMeter::RadarMeter(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size)
+{
+    Create(parent, id, pos, size);
+    #ifndef __WXMSW__
+    SetCursor(wxCURSOR_BLANK);
+    #endif // __WXMSW__
+    m_bRotate = false;
+    m_nScaling = SCALE_DB;
+    m_bShowLevels = false;
+
+    m_dAngle = 0.0;
+    m_dLevel = 0.0;
+
+    //m_timerSecond.SetOwner(this);
+   // m_timerSecond.Start(50,false);
+    m_nSampleRate = 48000;
+
+    m_nPoints = 400;
+    m_dAngleMod = (M_PI*2)/(static_cast<double>(m_nPoints));
+    m_nTimespan = 60*m_nSampleRate/m_nPoints;
+
+    m_nSamples = 0;
+    m_nMode = LevelCalculator::PEAK;
+
+//    Connect(wxID_ANY, wxEVT_TIMER, (wxObjectEventFunction)&RadarMeter::OnTimer);
+}
+
+bool RadarMeter::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size)
+{
+    wxSize szInit(size);
+    wxSize bestSize(600,481);
+    if(size.x<=0)
+        szInit.SetWidth(bestSize.x);
+    if(size.y <= 0)
+        szInit.SetHeight(bestSize.y);
+
+    if(!wxWindow::Create(parent,id,pos,szInit,wxWANTS_CHARS, wxT("Radar")))
+        return false;
+
+    SetMinSize(size);
+
+    SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+
+    m_nChannels = 2;
+
+    int nX = min(GetClientRect().GetWidth()-2, GetClientRect().GetHeight()-2);
+    m_rectGrid = wxRect(5, 0, nX, nX);
+
+
+    SetMindB(-70.0);
+
+    return true;
+}
+
+RadarMeter::~RadarMeter()
+{
+
+}
+
+
+void RadarMeter::OnPaint(wxPaintEvent& event)
+{
+    wxAutoBufferedPaintDC dc(this);
+    wxBrush br(*wxBLACK);
+    dc.SetBrush(br);
+    dc.DrawRectangle(GetClientRect());
+    dc.SetPen(wxColour(0,0,200));
+
+    DrawRadar(dc);
+
+}
+
+
+void RadarMeter::DrawRadar(wxDC& dc)
+{
+
+    double dYa = (sin(m_dAngle) * m_dLevel)*m_dResolution;
+    double dXa = (cos(m_dAngle) * m_dLevel)*m_dResolution;
+    m_queueLines.push(wxPoint(m_pntCenter.x+dXa, m_pntCenter.y+dYa));
+    m_queueFade.push(wxPoint(m_pntCenter.x+dXa, m_pntCenter.y+dYa));
+
+    wxPoint pnt[3] = {m_pntCenter, m_pntLast, m_queueLines.back()};
+    wxRegion rgn(3, pnt);
+
+
+    wxMemoryDC memDC;
+    memDC.SelectObject(m_bmpScreen);
+
+
+
+
+    memDC.SetClippingRegion(rgn);
+    memDC.DrawBitmap(m_bmpBackground, 0,0);
+    memDC.DestroyClippingRegion();
+
+
+    m_pntLast = m_queueLines.back();
+
+
+    if(m_queueFade.size() > (static_cast<double>(m_nPoints*0.8)))
+    {
+        wxPoint pntFade[3] = {m_pntCenter, m_pntLastFade, m_queueFade.front()};
+        wxRegion rgnFade(3, pntFade);
+        memDC.SetClippingRegion(rgnFade);
+        memDC.DrawBitmap(m_bmpFade, 0,0);
+        memDC.DestroyClippingRegion();
+        m_pntLastFade = m_queueFade.front();
+        m_queueFade.pop();
+    }
+
+    if(m_queueLines.size() > m_nPoints-2)
+    {
+        //draw the blank bit
+        memDC.SetPen(*wxBLACK_PEN);
+        memDC.SetBrush(*wxBLACK_BRUSH);
+        wxPoint pnt[3] = {m_pntCenter, m_pntLastBlack, m_queueLines.front()};
+        memDC.DrawPolygon(3, pnt);
+
+        m_pntLastBlack = m_queueLines.front();
+        m_queueLines.pop();
+
+    }
+    memDC.SetBrush(*wxTRANSPARENT_BRUSH);
+    memDC.SetPen(wxPen(wxColour(wxT("#354e61"))));
+
+    if(m_nMode != LevelCalculator::PPM)
+    {
+        for(size_t i = 10; i < 80; i+= 10)
+        {
+            memDC.DrawCircle(m_pntCenter, i*m_dResolution);
+        }
+    }
+    else
+    {
+        for(size_t i = 0; i < 8; i++)
+        {
+            int nPPM = (i*4)-34;
+            memDC.DrawCircle(m_pntCenter, (70.0+nPPM)*m_dResolution);
+        }
+    }
+
+    for(size_t i = 0; i < 12; i++)
+    {
+        dYa = (sin((M_PI/6*i)) * 70)*m_dResolution;
+        dXa = (cos((M_PI/6*i)) * 70)*m_dResolution;
+        memDC.DrawLine(m_pntCenter.x, m_pntCenter.y, m_pntCenter.x+dXa, m_pntCenter.y+dYa);
+    }
+
+
+    dc.Blit(m_rectGrid.GetLeft(),m_rectGrid.GetTop(),m_rectGrid.GetWidth(), m_rectGrid.GetHeight(), &memDC,0,0);
+
+    m_dAngle += m_dAngleMod;
+
+    m_dLevel = 0.0;
+}
+
+
+
+void RadarMeter::OnSize(wxSizeEvent& event)
+{
+    int nX = min(GetClientRect().GetWidth()-2, GetClientRect().GetHeight()-2);
+    m_rectGrid = wxRect(5, 0, nX, nX);
+
+    m_bmpScreen.Create(m_rectGrid.GetWidth()-2, m_rectGrid.GetHeight()-2);
+
+    m_pntCenter = wxPoint(m_rectGrid.GetLeft() + m_rectGrid.GetWidth()/2 -7, m_rectGrid.GetTop() + m_rectGrid.GetHeight()/2);
+    m_pntLast = m_pntCenter;
+    m_pntLastBlack = m_pntCenter;
+    m_pntLastFade = m_pntCenter;
+
+    m_bmpBackground.Create(m_rectGrid.GetWidth()-2, m_rectGrid.GetHeight()-2);
+    m_bmpFade.Create(m_rectGrid.GetWidth()-2, m_rectGrid.GetHeight()-2);
+
+    CreateBackgroundBitmap();
+
+
+    Refresh();
+}
+
+
+void RadarMeter::CreateBackgroundBitmap()
+{
+    wxMemoryDC memDC;
+
+    memDC.SelectObject(m_bmpBackground);
+
+    memDC.SetPen(*wxTRANSPARENT_PEN);
+
+    memDC.SetBrush(*wxBLACK_BRUSH);
+    memDC.DrawRectangle(0,0, m_bmpBackground.GetWidth(), m_bmpBackground.GetHeight());
+
+    memDC.SetBrush(wxBrush(wxColour(wxT("#DA9107"))));
+    memDC.DrawCircle(m_pntCenter, 68*m_dResolution);
+
+    memDC.SetBrush(wxBrush(wxColour(wxT("#01FF3E"))));
+    memDC.DrawCircle(m_pntCenter, 60*m_dResolution);
+
+    memDC.SetBrush(wxBrush(wxColour(wxT("#01A836"))));
+    memDC.DrawCircle(m_pntCenter, 52*m_dResolution);
+    memDC.SetBrush(wxBrush(wxColour(wxT("#007473"))));
+    memDC.DrawCircle(m_pntCenter, 30*m_dResolution);
+
+    memDC.SetBrush(*wxTRANSPARENT_BRUSH);
+
+    memDC.SetPen(wxPen(wxColour(wxT("#354e61"))));
+
+    if(m_nMode != LevelCalculator::PPM)
+    {
+        for(size_t i = 10; i < 80; i+= 10)
+        {
+            memDC.DrawCircle(m_pntCenter, i*m_dResolution);
+        }
+    }
+    else
+    {
+        for(size_t i = 0; i < 8; i++)
+        {
+            int nPPM = (i*4)-34;
+            memDC.DrawCircle(m_pntCenter, (70.0+nPPM)*m_dResolution);
+        }
+    }
+
+
+
+
+    memDC.SelectObject(m_bmpFade);
+    memDC.SetPen(*wxTRANSPARENT_PEN);
+    memDC.SetBrush(*wxBLACK_BRUSH);
+    memDC.DrawRectangle(0,0, m_bmpFade.GetWidth(), m_bmpFade.GetHeight());
+
+    memDC.SetBrush(wxBrush(wxColour(wxT("#855804"))));
+    memDC.DrawCircle(m_pntCenter, 68*m_dResolution);
+
+    memDC.SetBrush(wxBrush(wxColour(wxT("#01811f"))));
+    memDC.DrawCircle(m_pntCenter, 60*m_dResolution);
+
+    memDC.SetBrush(wxBrush(wxColour(wxT("#01601f"))));
+    memDC.DrawCircle(m_pntCenter, 52*m_dResolution);
+    memDC.SetBrush(wxBrush(wxColour(wxT("#004948"))));
+    memDC.DrawCircle(m_pntCenter, 30*m_dResolution);
+
+    memDC.SetBrush(*wxTRANSPARENT_BRUSH);
+
+    memDC.SetPen(wxPen(wxColour(wxT("#354e61"))));
+    if(m_nMode != LevelCalculator::PPM)
+    {
+        for(size_t i = 10; i < 80; i+= 10)
+        {
+            memDC.DrawCircle(m_pntCenter, i*m_dResolution);
+        }
+    }
+    else
+    {
+        for(size_t i = 0; i < 8; i++)
+        {
+            int nPPM = (i*4)-34;
+            memDC.DrawCircle(m_pntCenter, (70.0+nPPM)*m_dResolution);
+        }
+    }
+
+
+}
+
+void RadarMeter::SetMindB(float dMin)
+{
+    //m_dMindB = dMin;
+    m_dResolution = static_cast<double>((m_rectGrid.GetWidth()-4))/(140.0);
+}
+
+void RadarMeter::SetRadarLevel(double dLevel, unsigned int nSamples, bool bInDBAlready)
+{
+    if(!bInDBAlready)
+    {
+        m_dLevel = max(m_dLevel, -(-70 - 20*log10(dLevel)));
+    }
+    else
+    {
+        m_dLevel = max(m_dLevel, -(-70.0 - dLevel));
+    }
+
+    m_nSamples += nSamples;
+    if(m_nSamples > m_nTimespan)
+    {
+        m_nSamples -= m_nTimespan;
+        Refresh();
+        Update();
+    }
+}
+
+
+void RadarMeter::OnLeftUp(wxMouseEvent& event)
+{
+    wxPostEvent(GetParent(), event);
+}
+
+
+void RadarMeter::SetTimespan(unsigned int nSeconds)
+{
+    m_nTimespan = nSeconds * m_nSampleRate / m_nPoints;
+    ClearMeter();
+}
+
+void RadarMeter::SetSampleRate(unsigned int nSampleRate)
+{
+    if(m_nSampleRate != nSampleRate)
+    {
+        unsigned int nSeconds = m_nTimespan * m_nPoints / m_nSampleRate;
+        m_nSampleRate = nSampleRate;
+        SetTimespan(nSeconds);
+    }
+}
+
+void RadarMeter::SetPoints(unsigned int nPoints)
+{
+    if(m_nPoints != nPoints)
+    {
+        unsigned int nSeconds = m_nTimespan * m_nPoints / m_nSampleRate;
+        m_nPoints = nPoints;
+        m_dAngleMod = (M_PI*2)/(static_cast<double>(m_nPoints));
+        SetTimespan(nSeconds);
+    }
+}
+
+
+void RadarMeter::ClearMeter()
+{
+    wxMemoryDC dc;
+    dc.SelectObject(m_bmpScreen);
+    dc.SetBrush(*wxBLACK_BRUSH);
+    dc.DrawRectangle(0,0, m_bmpScreen.GetWidth(), m_bmpScreen.GetHeight());
+
+    while(m_queueFade.empty() == false)
+    {
+        m_queueFade.pop();
+    }
+    while(m_queueLines.empty() == false)
+    {
+        m_queueLines.pop();
+    }
+    m_dAngle = 0.0;
+
+    m_pntLast = m_pntCenter;
+    m_pntLastBlack = m_pntCenter;
+    m_pntLastFade = m_pntCenter;
+
+}
+
+void RadarMeter::SetMode(unsigned int nMode)
+{
+    m_nMode = nMode;
+    CreateBackgroundBitmap();
+    ClearMeter();
+}

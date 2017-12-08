@@ -16,8 +16,6 @@ AngleMeter::AngleMeter()
     : m_dMin(-70)
     , m_dMax(0)
     , m_nMeterDisplay(PEAK)
-    , m_pPPM(0)
-    , m_pLoud(0)
 {
     //create our font
     Connect(wxEVT_PAINT, (wxObjectEventFunction)&AngleMeter::OnPaint);
@@ -28,8 +26,6 @@ AngleMeter::AngleMeter()
 AngleMeter::AngleMeter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, unsigned int nRouting, unsigned int nChannel, const wxPoint& pos, const wxSize& size) :
     m_dMax(0),
     m_nMeterDisplay(PEAK),
-    m_pPPM(0),
-    m_pLoud(0),
     m_nChannel(nChannel)
 {
     m_dLastValue[0] = -180;
@@ -86,14 +82,6 @@ AngleMeter::AngleMeter(wxWindow *parent, wxWindowID id, const wxString & sText,d
 
 AngleMeter::~AngleMeter()
 {
-    if(m_pPPM)
-    {
-        delete m_pPPM;
-    }
-    if(m_pLoud)
-    {
-        delete m_pLoud;
-    }
 }
 
 
@@ -249,41 +237,30 @@ void AngleMeter::ResetMeter(void)
             ShowValue(m_dLastValue);
             break;
         case PPM:
-            if(m_pPPM && m_nRouting == MONO_STEREO)
-            {
-                m_pPPM->setMode(m_nMeterMSMode);
-            }
-            else if(m_pPPM)
-            {
-                m_pPPM->setMode(meter::AB);
-            }
             m_dLastValue[0] = 0.0;
             m_dLastValue[1] = 0.0;
             m_dPeakValue[0] = 0.0;
             m_dPeakValue[1] = 0.0;
-            ShowValue(m_dLastValue, true);
+            ShowValue(m_dLastValue);
             break;
         case LOUD:
-            if(m_pLoud && m_nRouting == MONO_STEREO)
-            {
-                m_pLoud->setMode(m_nMeterMSMode);
-            }
-            else if(m_pLoud)
-            {
-                m_pLoud->setMode(meter::AB);
-            }
             m_dLastValue[0] = -80.0;
             m_dLastValue[1] = -80.0;
             m_dPeakValue[0] = -80.0;
             m_dPeakValue[1] = -80.0;
-            ShowValue(m_dLastValue, true);
+            ShowValue(m_dLastValue);
             break;
     }
 
 
 }
-void AngleMeter::ShowValue(double dValue[2], bool bdB)
+void AngleMeter::ShowValue(double dValue[2])
 {
+    bool bdB = false;
+    if(m_nMeterDisplay == PPM || m_nMeterDisplay == LOUD)
+    {
+        bdB = true;
+    }
     for(int i = 0; i < 2; i++)
     {
         if(!m_bFreeze)
@@ -346,107 +323,6 @@ void AngleMeter::WorkoutAngles(int i)
 
 }
 
-void AngleMeter::ShowPeak(const float* pBuffer, unsigned int nBufferSize)
-{
-    pair<float, float> pairPeak(GetPeak(pBuffer, nBufferSize));
-    double dValue[2] = {pairPeak.first, pairPeak.second};
-    ShowValue(dValue);
-}
-
-pair<float, float> AngleMeter::GetPeak(const float* pBuffer, unsigned int nBufferSize)
-{
-    //find largest value
-    pair<float, float> pairPeak = make_pair(m_dMin, m_dMin);
-    unsigned int i = 0;
-    switch(m_nRouting)
-    {
-    case LEFT_RIGHT:
-        for(unsigned int i=0; i < nBufferSize; i+=m_nInputChannels)
-        {
-            float dSample[2] = {fabs(pBuffer[i+m_nChannel]), fabs(pBuffer[i+1+m_nChannel])};
-
-            pairPeak.first = max(pairPeak.first,dSample[0]);
-            pairPeak.second = max(pairPeak.second,dSample[1]);
-        }
-        break;
-    case MONO:
-        for(unsigned int i=0; i < nBufferSize; i+=m_nInputChannels)
-        {
-            float dSample[2] = {fabs(pBuffer[i+m_nChannel]), fabs(pBuffer[i+m_nChannel])};
-
-            pairPeak.first = max(pairPeak.first,dSample[0]);
-            pairPeak.second = max(pairPeak.second,dSample[1]);
-        }
-        break;
-
-    case MONO_STEREO:
-        for(unsigned int i=0; i < nBufferSize; i+=m_nInputChannels)
-        {
-            float dSampleMono(fabs(pBuffer[i+m_nChannel]+pBuffer[i+m_nChannel+1]));
-            float dSampleStereo(fabs(pBuffer[i+m_nChannel]-pBuffer[i+m_nChannel+1]));
-
-            if(m_nMeterMSMode == meter::M6)
-            {
-                dSampleMono*=0.5;
-                dSampleStereo*=0.5;
-            }
-            else
-            {
-                dSampleMono*=0.707;
-                dSampleStereo*=0.707;
-            }
-
-            pairPeak.first = max(pairPeak.first,dSampleMono);
-            pairPeak.second = max(pairPeak.second,dSampleStereo);
-        }
-        break;
-    }
-    return pairPeak;
-}
-
-void AngleMeter::ShowEnergy(const float* pBuffer, unsigned int nBufferSize)
-{
-    double dTotal[2] = {0.0,0.0};
-    unsigned int i = 0;
-    switch(m_nRouting)
-    {
-    case LEFT_RIGHT:
-        for(unsigned int i=0; i < nBufferSize; i+=m_nInputChannels)
-        {
-            dTotal[0] += pow(pBuffer[i+m_nChannel],2);
-            dTotal[1] += pow(pBuffer[i+m_nChannel+1],2);
-        }
-        break;
-    case MONO:
-        for(unsigned int i=0; i < nBufferSize; i+=m_nInputChannels)
-        {
-            dTotal[0] += pow(pBuffer[i+m_nChannel],2);
-            dTotal[1] += pow(pBuffer[i+m_nChannel],2);
-        }
-        break;
-    case MONO_STEREO:
-        for(unsigned int i=0; i < nBufferSize; i+=m_nInputChannels)
-        {
-            if(m_nMeterMSMode == meter::M6)
-            {
-                dTotal[0] += pow((pBuffer[i+m_nChannel]+pBuffer[i+m_nChannel+1])/2,2);
-                dTotal[1] += pow((pBuffer[i+m_nChannel]-pBuffer[i+m_nChannel+1])/2,2);
-            }
-            else
-            {
-                dTotal[0] += pow((pBuffer[i+m_nChannel]+pBuffer[i+m_nChannel+1]),2);
-                dTotal[1] += pow((pBuffer[i+m_nChannel]-pBuffer[i+m_nChannel+1]),2);
-            }
-
-        }
-        break;
-    }
-
-    dTotal[0] = sqrt(dTotal[0]/(nBufferSize/m_nInputChannels));
-    dTotal[1] = sqrt(dTotal[1]/(nBufferSize/m_nInputChannels));
-    ShowValue(dTotal);
-}
-
 void AngleMeter::OnSize(wxSizeEvent& event)
 {
     InitMeter(m_uiLabel.GetLabel(), m_dMin);
@@ -454,24 +330,6 @@ void AngleMeter::OnSize(wxSizeEvent& event)
     Refresh();
 }
 
-
-void AngleMeter::ShowMeter(const float* pBuffer, unsigned int nBufferSize)
-{
-    switch(m_nMeterDisplay)
-    {
-    case PEAK:
-        ShowPeak(pBuffer, nBufferSize);
-        break;
-    case ENERGY:
-        ShowEnergy(pBuffer, nBufferSize);
-        break;
-    case PPM:
-        ShowPPM(pBuffer, nBufferSize);
-        break;
-    case LOUD:
-        ShowLUFS(pBuffer, nBufferSize);
-    }
-}
 
 void AngleMeter::SetRouting(short nRouting)
 {
@@ -502,46 +360,6 @@ void AngleMeter::SetMeterDisplay(short nDisplay)
             break;
     }
 
-    if(m_nMeterDisplay != PPM && m_pPPM)
-    {
-        delete m_pPPM;
-        m_pPPM = 0;
-    }
-    if(m_nMeterDisplay != LOUD && m_pLoud)
-    {
-        delete m_pLoud;
-        m_pLoud = 0;
-    }
-
-    if(m_nMeterDisplay == PPM && !m_pPPM)
-    {
-        m_pPPM = new ppm(m_nInputChannels);
-        if(m_nRouting == LEFT_RIGHT || m_nRouting == MONO)
-        {
-            m_pPPM->setMode(meter::AB);
-        }
-        else
-        {
-            m_pPPM->setMode(m_nMeterMSMode);
-        }
-
-        m_pPPM->setSpeed(m_nMeterSpeed);
-    }
-    else if(m_nMeterDisplay == LOUD && !m_pLoud)
-    {
-        m_pLoud = new loud(m_nInputChannels);
-        m_pLoud->setIntegrationTime(8);
-
-        if(m_nRouting == LEFT_RIGHT || m_nRouting == MONO)
-        {
-            m_pLoud->setMode(meter::AB);
-        }
-        else
-        {
-            m_pLoud->setMode(m_nMeterMSMode);
-        }
-        m_pLoud->setSpeed(m_nMeterSpeed);
-    }
     ResetMeter();
 }
 
@@ -575,76 +393,16 @@ void AngleMeter::FreezeMeter(bool bFreeze)
 }
 
 
-void AngleMeter::ShowPPM(const float* pBuffer, unsigned int nBufferSize)
-{
-    double dValue[2] = {0,0};
-    if(m_pPPM)
-    {
-        m_pPPM->calcIntermediate(m_nInputChannels, nBufferSize/m_nInputChannels, pBuffer);
-        switch(m_nRouting)
-        {
-            case MONO_STEREO:
-                dValue[0] = m_pPPM->getValue(0);
-                dValue[1] = m_pPPM->getValue(1);
-                break;
-            case LEFT_RIGHT:
-                dValue[0] = m_pPPM->getValue(m_nChannel);
-                dValue[1] = m_pPPM->getValue(m_nChannel+1);
-                break;
-            case MONO:
-                dValue[0] = m_pPPM->getValue(m_nChannel);
-                dValue[1] = m_pPPM->getValue(m_nChannel);
-                break;
 
-        }
-        ShowValue(dValue, true);
-    }
-}
-
-
-void AngleMeter::ShowLUFS(const float* pBuffer, unsigned int nBufferSize)
-{
-    // @todo LUFFS
-//    double dValue[2] = {0,0};
-//    double dMaxValue[2] = {0,0};
-//    if(m_pLoud)
-//    {
-//        m_pLoud->calcIntermediate(2, nBufferSize, pBuffer);
-//
-//        dValue[0] = m_pLoud->getValue(0);
-//        dValue[1] = m_pLoud->getValue(1);
-//
-//        ShowValue(dValue,true);
-//    }
-}
 
 void AngleMeter::SetMeterMSMode(long nMode)
 {
     m_nMeterMSMode = nMode;
-    if(m_nRouting == MONO_STEREO)
-    {
-        if(m_pPPM)
-        {
-            m_pPPM->setMode(nMode);
-        }
-        else if(m_pLoud)
-        {
-            m_pLoud->setMode(nMode);
-        }
-    }
 }
 
 void AngleMeter::SetMeterSpeed(long nSpeed)
 {
     m_nMeterSpeed = nSpeed;
-    if(m_pPPM)
-    {
-        m_pPPM->setSpeed(nSpeed);
-    }
-    else if(m_pLoud)
-    {
-        m_pLoud->setSpeed(nSpeed);
-    }
 
     switch(m_nMeterSpeed)
     {

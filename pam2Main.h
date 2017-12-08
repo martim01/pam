@@ -74,6 +74,8 @@ class pam2Dialog: public wxDialog
         void ShowMonitorPanel(const wxString& sPanel);
         void ShowOptionsPanel(const wxString& sPanel);
 
+        void ShowMonitorList();
+
         void ShowSettingsPanel();
         void ShowTestPanels();
         void ShowLogPanel();
@@ -113,6 +115,11 @@ class pam2Dialog: public wxDialog
         wxString m_sCurrentRtp;
 
         session* m_pSession;
+
+
+        std::multimap<size_t, wxString> m_mmMonitorPlugins;
+        size_t m_nCurrentMonitorPage;
+
 
         DECLARE_EVENT_TABLE()
 };
