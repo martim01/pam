@@ -31,6 +31,7 @@ pnlAngleMeters::pnlAngleMeters(wxWindow* parent,AngleMetersBuilder* pBuilder,wxW
 	Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlAngleMeters::OnLeftUp);
 	//*)
 
+    SetBackgroundColour(*wxBLACK);
     Connect(wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&pnlAngleMeters::OnMonitorClicked);
     m_pCalculator = new LevelCalculator(0);
 }

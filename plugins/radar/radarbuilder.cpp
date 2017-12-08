@@ -4,7 +4,7 @@
 #include "settingevent.h"
 #include "radarmeter.h"
 #include "levelcalculator.h"
-#include "pnlRouting.h"
+#include "pnlrouting.h"
 #include "pnlDisplay.h"
 #include "pnlMeters.h"
 #include <wx/log.h>
@@ -38,41 +38,44 @@ RadarBuilder::~RadarBuilder()
 
 void RadarBuilder::SetAudioData(const timedbuffer* pBuffer)
 {
-    m_pCalculator->CalculateLevel(pBuffer);
-
-    double dLevel;
-    switch(m_nDisplayChannel)
+    if(m_nInputChannels != 0)
     {
-        case 9:
-            dLevel = m_pCalculator->GetMSLevel(false);
-            break;
-        case 10:
-            dLevel = m_pCalculator->GetMSLevel(true);
-            break;
-        default:
-           dLevel = m_pCalculator->GetLevel(m_nDisplayChannel);
-    }
+        m_pCalculator->CalculateLevel(pBuffer);
 
-    switch(m_nMode)
-    {
-        case LevelCalculator::PPM:
-            dLevel *= 4.0;
-            dLevel -= 34.0;
-            m_pRadar->SetRadarLevel(dLevel, pBuffer->GetBufferSize()/m_nInputChannels, true);
-            break;
-        case LevelCalculator::LOUD:
-            m_pRadar->SetRadarLevel(dLevel, pBuffer->GetBufferSize()/m_nInputChannels, true);
-            break;
-        default:
-            m_pRadar->SetRadarLevel(dLevel, pBuffer->GetBufferSize()/m_nInputChannels, false);
+        double dLevel;
+        switch(m_nDisplayChannel)
+        {
+            case 9:
+                dLevel = m_pCalculator->GetMSLevel(false);
+                break;
+            case 10:
+                dLevel = m_pCalculator->GetMSLevel(true);
+                break;
+            default:
+               dLevel = m_pCalculator->GetLevel(m_nDisplayChannel);
+        }
+
+        switch(m_nMode)
+        {
+            case LevelCalculator::PPM:
+                dLevel *= 4.0;
+                dLevel -= 34.0;
+                m_pRadar->SetRadarLevel(dLevel, pBuffer->GetBufferSize()/m_nInputChannels, true);
+                break;
+            case LevelCalculator::LOUD:
+                m_pRadar->SetRadarLevel(dLevel, pBuffer->GetBufferSize()/m_nInputChannels, true);
+                break;
+            default:
+                m_pRadar->SetRadarLevel(dLevel, pBuffer->GetBufferSize()/m_nInputChannels, false);
+        }
     }
 }
 
 wxWindow* RadarBuilder::CreateMonitorPanel(wxWindow* pParent)
 {
     m_pRadar = new RadarMeter(pParent);
-    m_pRadar->SetTimespan(ReadSetting(wxT("Timeframe"),60));
-    m_pRadar->SetMode(m_nMode);
+    //m_pRadar->SetTimespan(ReadSetting(wxT("Timeframe"),60));
+    //m_pRadar->SetMode(m_nMode);
     return m_pRadar;
 }
 

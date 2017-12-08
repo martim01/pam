@@ -76,28 +76,32 @@ void LevelCalculator::SetMode(unsigned int nMode)
 
 void LevelCalculator::CreatePpm()
 {
-    m_pPpm = new ppm(m_nChannels);
-    m_pPpm->setMode(meter::AB);
-    m_pPpm->setSpeed(m_nSpeed);
+    if(m_nChannels != 0)
+    {
+        m_pPpm = new ppm(m_nChannels);
+        m_pPpm->setMode(meter::AB);
+        m_pPpm->setSpeed(m_nSpeed);
 
-    m_pPpmMS = new ppm(m_nChannels);
-    m_pPpmMS->setMode(m_nMSMode);
-    m_pPpmMS->setSpeed(m_nSpeed);
-
+        m_pPpmMS = new ppm(m_nChannels);
+        m_pPpmMS->setMode(m_nMSMode);
+        m_pPpmMS->setSpeed(m_nSpeed);
+    }
 }
 
 void LevelCalculator::CreateLoud()
 {
-    m_pLoud = new loud(m_nChannels);
-    m_pLoud->setIntegrationTime(8);
-    m_pLoud->setMode(meter::AB);
-    m_pLoud->setSpeed(m_nSpeed);
+    if(m_nChannels != 0)
+    {
+        m_pLoud = new loud(m_nChannels);
+        m_pLoud->setIntegrationTime(8);
+        m_pLoud->setMode(meter::AB);
+        m_pLoud->setSpeed(m_nSpeed);
 
-    m_pLoudMS = new loud(m_nChannels);
-    m_pLoudMS->setIntegrationTime(8);
-    m_pLoudMS->setMode(m_nMSMode);
-    m_pLoudMS->setSpeed(m_nSpeed);
-
+        m_pLoudMS = new loud(m_nChannels);
+        m_pLoudMS->setIntegrationTime(8);
+        m_pLoudMS->setMode(m_nMSMode);
+        m_pLoudMS->setSpeed(m_nSpeed);
+    }
 }
 
 
@@ -308,7 +312,7 @@ void LevelCalculator::CalculateAverage(const timedbuffer* pBuffer)
 
 double LevelCalculator::GetLevel(unsigned int nChannel)
 {
-    if(nChannel < 8)
+    if(nChannel < 8 && m_nChannels > 0)
     {
         switch(m_nMode)
         {

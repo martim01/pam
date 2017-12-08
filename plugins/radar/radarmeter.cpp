@@ -108,22 +108,26 @@ void RadarMeter::DrawRadar(wxDC& dc)
 
 
 
-
-    memDC.SetClippingRegion(rgn);
-    memDC.DrawBitmap(m_bmpBackground, 0,0);
-    memDC.DestroyClippingRegion();
-
+    if(rgn.IsEmpty() == false && m_queueLines.size()>1)
+    {
+        memDC.SetDeviceClippingRegion(rgn);
+        memDC.DrawBitmap(m_bmpBackground, 0,0);
+        memDC.DestroyClippingRegion();
+    }
 
     m_pntLast = m_queueLines.back();
 
 
-    if(m_queueFade.size() > (static_cast<double>(m_nPoints*0.8)))
+    if(m_queueFade.size() > (static_cast<double>(m_nPoints*0.2)))
     {
         wxPoint pntFade[3] = {m_pntCenter, m_pntLastFade, m_queueFade.front()};
         wxRegion rgnFade(3, pntFade);
-        memDC.SetClippingRegion(rgnFade);
-        memDC.DrawBitmap(m_bmpFade, 0,0);
-        memDC.DestroyClippingRegion();
+        if(rgnFade.IsEmpty() == false)
+        {
+            memDC.SetDeviceClippingRegion(rgnFade);
+            memDC.DrawBitmap(m_bmpFade, 0,0);
+            memDC.DestroyClippingRegion();
+        }
         m_pntLastFade = m_queueFade.front();
         m_queueFade.pop();
     }
