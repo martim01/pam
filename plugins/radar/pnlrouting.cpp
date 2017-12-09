@@ -58,7 +58,8 @@ void pnlRouting::SetNumberOfChannels(unsigned int nChannels)
         }
     }
 
-    m_plstFFT_Routing->SelectButton(m_pBuilder->ReadSetting(wxT("Routing"),0), true);
+
+    m_plstFFT_Routing->SelectButton(m_plstFFT_Routing->FindButton((void*)m_pBuilder->ReadSetting(wxT("Routing"),0)), true);
     m_plstFFT_Routing->Thaw();
 }
 

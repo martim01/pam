@@ -135,7 +135,7 @@ class RadarMeter : public wxWindow
 
         bool m_bShowLevels;
 
-        float m_dMindB;
+        double m_dMindB;
         float m_dResolution;
 
         double m_dAngle;

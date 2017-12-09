@@ -31,8 +31,8 @@ RadarMeter::RadarMeter(wxWindow *parent, wxWindowID id, const wxPoint& pos, cons
     m_dAngle = 0.0;
     m_dLevel = 0.0;
 
-    //m_timerSecond.SetOwner(this);
-   // m_timerSecond.Start(50,false);
+    SetMindB(70.0);
+
     m_nSampleRate = 48000;
 
     m_nPoints = 400;
@@ -67,7 +67,7 @@ bool RadarMeter::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, con
     m_rectGrid = wxRect(5, 0, nX, nX);
 
 
-    SetMindB(-70.0);
+
 
     return true;
 }
@@ -149,24 +149,32 @@ void RadarMeter::DrawRadar(wxDC& dc)
 
     if(m_nMode != LevelCalculator::PPM)
     {
-        for(size_t i = 10; i < 80; i+= 10)
+        for(int i = m_dMindB; i > 0; i-= 10)
         {
             memDC.DrawCircle(m_pntCenter, i*m_dResolution);
         }
     }
     else
     {
-        for(size_t i = 0; i < 8; i++)
+        for(size_t i = 0; i < 9; i++)
         {
             int nPPM = (i*4)-34;
-            memDC.DrawCircle(m_pntCenter, (70.0+nPPM)*m_dResolution);
+            if(i == 4)
+            {
+                memDC.SetPen(wxPen(wxColour(wxT("#654e61"))));
+            }
+            else
+            {
+                memDC.SetPen(wxPen(wxColour(wxT("#354e61"))));
+            }
+            memDC.DrawCircle(m_pntCenter, (m_dMindB+nPPM)*m_dResolution);
         }
     }
 
     for(size_t i = 0; i < 12; i++)
     {
-        dYa = (sin((M_PI/6*i)) * 70)*m_dResolution;
-        dXa = (cos((M_PI/6*i)) * 70)*m_dResolution;
+        dYa = (sin((M_PI/6*i)) * m_dMindB)*m_dResolution;
+        dXa = (cos((M_PI/6*i)) * m_dMindB)*m_dResolution;
         memDC.DrawLine(m_pntCenter.x, m_pntCenter.y, m_pntCenter.x+dXa, m_pntCenter.y+dYa);
     }
 
@@ -214,15 +222,15 @@ void RadarMeter::CreateBackgroundBitmap()
     memDC.DrawRectangle(0,0, m_bmpBackground.GetWidth(), m_bmpBackground.GetHeight());
 
     memDC.SetBrush(wxBrush(wxColour(wxT("#DA9107"))));
-    memDC.DrawCircle(m_pntCenter, 68*m_dResolution);
+    memDC.DrawCircle(m_pntCenter, (m_dMindB-2)*m_dResolution);
 
     memDC.SetBrush(wxBrush(wxColour(wxT("#01FF3E"))));
-    memDC.DrawCircle(m_pntCenter, 60*m_dResolution);
+    memDC.DrawCircle(m_pntCenter, (m_dMindB-10)*m_dResolution);
 
     memDC.SetBrush(wxBrush(wxColour(wxT("#01A836"))));
-    memDC.DrawCircle(m_pntCenter, 52*m_dResolution);
+    memDC.DrawCircle(m_pntCenter, (m_dMindB-18)*m_dResolution);
     memDC.SetBrush(wxBrush(wxColour(wxT("#007473"))));
-    memDC.DrawCircle(m_pntCenter, 30*m_dResolution);
+    memDC.DrawCircle(m_pntCenter, (m_dMindB-34)*m_dResolution);
 
     memDC.SetBrush(*wxTRANSPARENT_BRUSH);
 
@@ -230,7 +238,7 @@ void RadarMeter::CreateBackgroundBitmap()
 
     if(m_nMode != LevelCalculator::PPM)
     {
-        for(size_t i = 10; i < 80; i+= 10)
+        for(int i = m_dMindB; i > 0; i-= 10)
         {
             memDC.DrawCircle(m_pntCenter, i*m_dResolution);
         }
@@ -240,7 +248,15 @@ void RadarMeter::CreateBackgroundBitmap()
         for(size_t i = 0; i < 8; i++)
         {
             int nPPM = (i*4)-34;
-            memDC.DrawCircle(m_pntCenter, (70.0+nPPM)*m_dResolution);
+            if(i == 4)
+            {
+                memDC.SetPen(wxPen(wxColour(wxT("#654e61"))));
+            }
+            else
+            {
+                memDC.SetPen(wxPen(wxColour(wxT("#354e61"))));
+            }
+            memDC.DrawCircle(m_pntCenter, (m_dMindB+nPPM)*m_dResolution);
         }
     }
 
@@ -253,22 +269,22 @@ void RadarMeter::CreateBackgroundBitmap()
     memDC.DrawRectangle(0,0, m_bmpFade.GetWidth(), m_bmpFade.GetHeight());
 
     memDC.SetBrush(wxBrush(wxColour(wxT("#855804"))));
-    memDC.DrawCircle(m_pntCenter, 68*m_dResolution);
+    memDC.DrawCircle(m_pntCenter, (m_dMindB-2)*m_dResolution);
 
     memDC.SetBrush(wxBrush(wxColour(wxT("#01811f"))));
-    memDC.DrawCircle(m_pntCenter, 60*m_dResolution);
+    memDC.DrawCircle(m_pntCenter, (m_dMindB-10)*m_dResolution);
 
     memDC.SetBrush(wxBrush(wxColour(wxT("#01601f"))));
-    memDC.DrawCircle(m_pntCenter, 52*m_dResolution);
+    memDC.DrawCircle(m_pntCenter, (m_dMindB-18)*m_dResolution);
     memDC.SetBrush(wxBrush(wxColour(wxT("#004948"))));
-    memDC.DrawCircle(m_pntCenter, 30*m_dResolution);
+    memDC.DrawCircle(m_pntCenter, (m_dMindB-34)*m_dResolution);
 
     memDC.SetBrush(*wxTRANSPARENT_BRUSH);
 
     memDC.SetPen(wxPen(wxColour(wxT("#354e61"))));
     if(m_nMode != LevelCalculator::PPM)
     {
-        for(size_t i = 10; i < 80; i+= 10)
+        for(int i = m_dMindB; i > 0; i-= 10)
         {
             memDC.DrawCircle(m_pntCenter, i*m_dResolution);
         }
@@ -278,7 +294,15 @@ void RadarMeter::CreateBackgroundBitmap()
         for(size_t i = 0; i < 8; i++)
         {
             int nPPM = (i*4)-34;
-            memDC.DrawCircle(m_pntCenter, (70.0+nPPM)*m_dResolution);
+            if(i == 4)
+            {
+                memDC.SetPen(wxPen(wxColour(wxT("#654e61"))));
+            }
+            else
+            {
+                memDC.SetPen(wxPen(wxColour(wxT("#354e61"))));
+            }
+            memDC.DrawCircle(m_pntCenter, (m_dMindB+nPPM)*m_dResolution);
         }
     }
 
@@ -287,20 +311,21 @@ void RadarMeter::CreateBackgroundBitmap()
 
 void RadarMeter::SetMindB(float dMin)
 {
-    //m_dMindB = dMin;
-    m_dResolution = static_cast<double>((m_rectGrid.GetWidth()-4))/(140.0);
+    m_dMindB = dMin;
+    m_dResolution = static_cast<double>((m_rectGrid.GetWidth()-4))/(m_dMindB*2.0);
 }
 
 void RadarMeter::SetRadarLevel(double dLevel, unsigned int nSamples, bool bInDBAlready)
 {
     if(!bInDBAlready)
     {
-        m_dLevel = max(m_dLevel, -(-70 - 20*log10(dLevel)));
+        dLevel = 20*log10(dLevel);
     }
-    else
-    {
-        m_dLevel = max(m_dLevel, -(-70.0 - dLevel));
-    }
+
+    dLevel = max(dLevel, -m_dMindB);
+
+    m_dLevel = max(m_dLevel, -(-m_dMindB - dLevel));
+
 
     m_nSamples += nSamples;
     if(m_nSamples > m_nTimespan)
@@ -372,6 +397,14 @@ void RadarMeter::ClearMeter()
 void RadarMeter::SetMode(unsigned int nMode)
 {
     m_nMode = nMode;
+    if(m_nMode == LevelCalculator::PPM)
+    {
+        SetMindB(34.0);
+    }
+    else
+    {
+        SetMindB(70.0);
+    }
     CreateBackgroundBitmap();
     ClearMeter();
 }
