@@ -84,7 +84,7 @@ class RadarMeter : public wxWindow
 
         void SetMindB(float dMin);
 
-        void SetTimespan(unsigned int nSeconds);
+        void SetTimespan(unsigned int nSeconds, bool bClearMeter=true);
         void SetSampleRate(unsigned int nSampleRate);
         void ClearMeter();
 

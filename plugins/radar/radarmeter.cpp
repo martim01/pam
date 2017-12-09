@@ -38,7 +38,7 @@ RadarMeter::RadarMeter(wxWindow *parent, wxWindowID id, const wxPoint& pos, cons
     m_timerSecond.SetOwner(this, wxNewId());
     m_timerSecond.Start(250);
     m_nRefreshRate = 250;
-    SetTimespan(60);
+    SetTimespan(60, false);
 
 
     m_nSamples = 0;
@@ -356,7 +356,7 @@ void RadarMeter::OnLeftUp(wxMouseEvent& event)
 }
 
 
-void RadarMeter::SetTimespan(unsigned int nSeconds)
+void RadarMeter::SetTimespan(unsigned int nSeconds, bool bClearMeter)
 {
     m_nTimespan = nSeconds*1000;
 
@@ -366,7 +366,10 @@ void RadarMeter::SetTimespan(unsigned int nSeconds)
 
     m_nPoints = (M_PI*2)/m_dAngleMod;
 
-    ClearMeter();
+    if(bClearMeter)
+    {
+        ClearMeter();
+    }
 }
 
 void RadarMeter::SetSampleRate(unsigned int nSampleRate)
