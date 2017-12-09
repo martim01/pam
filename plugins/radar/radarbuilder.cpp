@@ -17,7 +17,7 @@ m_pRadar(0)
 
     RegisterForSettingsUpdates(wxT("Routing"), this);
     RegisterForSettingsUpdates(wxT("Timeframe"), this);
-    RegisterForSettingsUpdates(wxT("Points"), this);
+    RegisterForSettingsUpdates(wxT("RefreshRate"), this);
     RegisterForSettingsUpdates(wxT("MeterMode"), this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&RadarBuilder::OnSettingChanged);
@@ -128,9 +128,9 @@ void RadarBuilder::OnSettingChanged(SettingEvent& event)
     {
         m_pRadar->SetTimespan(ReadSetting(wxT("Timeframe"),60));
     }
-    else if(event.GetKey() == wxT("Points"))
+    else if(event.GetKey() == wxT("RefreshRate"))
     {
-        m_pRadar->SetPoints(ReadSetting(wxT("Points"),400));
+        m_pRadar->SetRefreshRate(ReadSetting(wxT("RefreshRate"),250));
     }
     else if(event.GetKey() == wxT("MeterMode"))
     {

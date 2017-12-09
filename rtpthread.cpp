@@ -46,7 +46,6 @@ void* RtpThread::Entry()
 
     if(m_sUrl.Before(wxT(':')) == wxT("rtsp"))
     {
-        // There are argc-1 URLs: argv[1] through argv[argc-1].  Open and start streaming each one:
         if(openURL())
         {
             // All subsequent activity takes place within the event loop:

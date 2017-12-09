@@ -33,20 +33,20 @@ pnlDisplay::pnlDisplay(wxWindow* parent,RadarBuilder* pBuilder, wxWindowID id,co
 	m_plstTimeframe->AddButton(wxT("10s"), wxNullBitmap, (void*)10);
 	m_plstTimeframe->AddButton(wxT("30s"), wxNullBitmap, (void*)30);
 	m_plstTimeframe->AddButton(wxT("1m"), wxNullBitmap, (void*)60);
+	m_plstTimeframe->AddButton(wxT("5m"), wxNullBitmap, (void*)300);
 	m_plstTimeframe->AddButton(wxT("10m"), wxNullBitmap, (void*)600);
 	m_plstTimeframe->AddButton(wxT("30m"), wxNullBitmap, (void*)1800);
-	m_plstTimeframe->AddButton(wxT("1 hour"), wxNullBitmap, (void*)3600);
 
 	m_plstTimeframe->SelectButton(m_plstTimeframe->FindButton((void*)m_pBuilder->ReadSetting(wxT("Timeframe"),60)), true);
 
-	m_plstPoints->AddButton(wxT("50 points"), wxNullBitmap, (void*)50);
-	m_plstPoints->AddButton(wxT("100 points"), wxNullBitmap, (void*)100);
-	m_plstPoints->AddButton(wxT("200 points"), wxNullBitmap, (void*)200);
-	m_plstPoints->AddButton(wxT("300 points"), wxNullBitmap, (void*)300);
-	m_plstPoints->AddButton(wxT("400 points"), wxNullBitmap, (void*)400);
-	m_plstPoints->AddButton(wxT("500 points"), wxNullBitmap, (void*)500);
+	m_plstPoints->AddButton(wxT("50ms"), wxNullBitmap, (void*)50);
+	m_plstPoints->AddButton(wxT("100ms"), wxNullBitmap, (void*)100);
+	m_plstPoints->AddButton(wxT("250ms"), wxNullBitmap, (void*)250);
+	m_plstPoints->AddButton(wxT("500ms"), wxNullBitmap, (void*)500);
+	m_plstPoints->AddButton(wxT("1s"), wxNullBitmap, (void*)1000);
+	m_plstPoints->AddButton(wxT("10s"), wxNullBitmap, (void*)10000);
 
-	m_plstPoints->SelectButton(m_plstPoints->FindButton((void*)m_pBuilder->ReadSetting(wxT("Points"),400)), true);
+	m_plstPoints->SelectButton(m_plstPoints->FindButton((void*)m_pBuilder->ReadSetting(wxT("RefreshRate"),250)), true);
 
 
 }
@@ -66,5 +66,5 @@ void pnlDisplay::OnlstTimeframeSelected(wxCommandEvent& event)
 
 void pnlDisplay::OnlstPointsSelected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Points"), (int)event.GetClientData());
+    m_pBuilder->WriteSetting(wxT("RefreshRate"), (int)event.GetClientData());
 }

@@ -35,14 +35,16 @@ RadarMeter::RadarMeter(wxWindow *parent, wxWindowID id, const wxPoint& pos, cons
 
     m_nSampleRate = 48000;
 
-    m_nPoints = 400;
-    m_dAngleMod = (M_PI*2)/(static_cast<double>(m_nPoints));
-    m_nTimespan = 60*m_nSampleRate/m_nPoints;
+    m_timerSecond.SetOwner(this, wxNewId());
+    m_timerSecond.Start(250);
+    m_nRefreshRate = 250;
+    SetTimespan(60);
+
 
     m_nSamples = 0;
     m_nMode = LevelCalculator::PEAK;
 
-//    Connect(wxID_ANY, wxEVT_TIMER, (wxObjectEventFunction)&RadarMeter::OnTimer);
+    Connect(wxID_ANY, wxEVT_TIMER, (wxObjectEventFunction)&RadarMeter::OnTimer);
 }
 
 bool RadarMeter::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size)
@@ -118,7 +120,7 @@ void RadarMeter::DrawRadar(wxDC& dc)
     m_pntLast = m_queueLines.back();
 
 
-    if(m_queueFade.size() > (static_cast<double>(m_nPoints*0.2)))
+    if(m_queueFade.size() > m_nPoints-5)//(static_cast<double>(m_nPoints*0.8)))
     {
         wxPoint pntFade[3] = {m_pntCenter, m_pntLastFade, m_queueFade.front()};
         wxRegion rgnFade(3, pntFade);
@@ -180,6 +182,12 @@ void RadarMeter::DrawRadar(wxDC& dc)
 
 
     dc.Blit(m_rectGrid.GetLeft(),m_rectGrid.GetTop(),m_rectGrid.GetWidth(), m_rectGrid.GetHeight(), &memDC,0,0);
+
+    dYa = (sin(m_dAngle) * m_dMindB)*m_dResolution;
+    dXa = (cos(m_dAngle) * m_dMindB)*m_dResolution;
+    dc.SetPen(*wxWHITE_PEN);
+    dc.DrawLine(m_pntCenter.x, m_pntCenter.y, m_pntCenter.x+dXa, m_pntCenter.y+dYa);
+
 
     m_dAngle += m_dAngleMod;
 
@@ -327,15 +335,20 @@ void RadarMeter::SetRadarLevel(double dLevel, unsigned int nSamples, bool bInDBA
     m_dLevel = max(m_dLevel, -(-m_dMindB - dLevel));
 
 
-    m_nSamples += nSamples;
-    if(m_nSamples > m_nTimespan)
-    {
-        m_nSamples -= m_nTimespan;
-        Refresh();
-        Update();
-    }
+//    m_nSamples += nSamples;
+//    if(m_nSamples > m_nTimespan)
+//    {
+//        m_nSamples -= m_nTimespan;
+//        Refresh();
+//        Update();
+//    }
 }
 
+void RadarMeter::OnTimer(wxTimerEvent& event)
+{
+    Refresh();
+    Update();
+}
 
 void RadarMeter::OnLeftUp(wxMouseEvent& event)
 {
@@ -345,29 +358,29 @@ void RadarMeter::OnLeftUp(wxMouseEvent& event)
 
 void RadarMeter::SetTimespan(unsigned int nSeconds)
 {
-    m_nTimespan = nSeconds * m_nSampleRate / m_nPoints;
+    m_nTimespan = nSeconds*1000;
+
+    //work out the angle mod
+    m_dAngleMod = (M_PI*2)/static_cast<double>(m_nTimespan);
+    m_dAngleMod *= static_cast<double>(m_nRefreshRate);
+
+    m_nPoints = (M_PI*2)/m_dAngleMod;
+
     ClearMeter();
 }
 
 void RadarMeter::SetSampleRate(unsigned int nSampleRate)
 {
-    if(m_nSampleRate != nSampleRate)
-    {
-        unsigned int nSeconds = m_nTimespan * m_nPoints / m_nSampleRate;
-        m_nSampleRate = nSampleRate;
-        SetTimespan(nSeconds);
-    }
+    m_nSampleRate = nSampleRate;
 }
 
-void RadarMeter::SetPoints(unsigned int nPoints)
+void RadarMeter::SetRefreshRate(unsigned int nMilliseconds)
 {
-    if(m_nPoints != nPoints)
-    {
-        unsigned int nSeconds = m_nTimespan * m_nPoints / m_nSampleRate;
-        m_nPoints = nPoints;
-        m_dAngleMod = (M_PI*2)/(static_cast<double>(m_nPoints));
-        SetTimespan(nSeconds);
-    }
+    m_nRefreshRate = nMilliseconds;
+    m_timerSecond.Stop();
+    m_timerSecond.Start(m_nRefreshRate);
+
+    SetTimespan(m_nTimespan/1000);  //set timespan to work out angle mode and clear meter...
 }
 
 

@@ -464,8 +464,6 @@ void pam2Dialog::CreateAudioInputDevice()
         m_pAudio = new Audio(this, Settings::Get().Read(wxT("Input"), wxT("Device"), 0));
         m_pAudio->Init();
 
-
-
         //tell all the plugins what the input session is...
         session aSession(m_pAudio->GetDeviceName(), wxEmptyString, wxT("Soundcard"), wxT("Audio"), wxEmptyString, wxEmptyString, m_pAudio->GetDevice(), m_pAudio->GetSampleRate(), m_pAudio->GetNumberOfChannels(), 0, make_pair(0,0));
 
@@ -610,8 +608,8 @@ void pam2Dialog::InputChanged(const wxString& sKey)
         {
             delete m_pAudio;
             m_pAudio = 0;
-            CreateAudioInputDevice();
         }
+        CreateAudioInputDevice();
     }
 }
 

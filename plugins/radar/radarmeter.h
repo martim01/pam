@@ -88,14 +88,15 @@ class RadarMeter : public wxWindow
         void SetSampleRate(unsigned int nSampleRate);
         void ClearMeter();
 
-        void SetPoints(unsigned int nPoints);
+        void SetRefreshRate(unsigned int nMilliseconds);
         void SetMode(unsigned int nMode);
 
   protected:
 
-        //wxTimer m_timerSecond;
+        wxTimer m_timerSecond;
 
-        //void OnTimer(wxTimerEvent& event);
+        void OnTimer(wxTimerEvent& event);
+
         void DrawRadar(wxDC& dc);
 
         void GetAmplitude(float dSample, float& dAmplitude, bool& bNegative);
@@ -156,6 +157,7 @@ class RadarMeter : public wxWindow
         unsigned int m_nSamples;
         unsigned int m_nSampleRate;
 
+        unsigned int m_nRefreshRate;
         unsigned int m_nPoints;
 
         unsigned int m_nMode;
