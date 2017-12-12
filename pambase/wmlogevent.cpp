@@ -17,14 +17,10 @@ void wmLog::Log(const wxString& sDevice, const wxString& sMessage, bool bSend)
 {
     if(m_pHandler)
     {
-        wmLogEvent lge(sDevice, sMessage, false);
+        wmLogEvent* plge = new wmLogEvent(sDevice, sMessage, false);
         if(bSend == true)
         {
-            wxPostEvent(m_pHandler, lge);
-        }
-        else
-        {
-            m_pHandler->ProcessEvent(lge);
+            m_pHandler->QueueEvent(plge);
         }
 
     }

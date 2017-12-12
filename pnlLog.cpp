@@ -27,7 +27,7 @@ pnlLog::pnlLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
 	m_plstLog = new wmList(this, ID_M_PLST1, wxPoint(5,5), wxSize(590,470), wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI, 0, wxSize(-1,20), 1, wxSize(0,0));
-	wxFont m_plstLogFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Courier New"),wxFONTENCODING_DEFAULT);
+	wxFont m_plstLogFont(7,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Courier New"),wxFONTENCODING_DEFAULT);
 	m_plstLog->SetFont(m_plstLogFont);
 	m_plstLog->SetButtonColour(wxColour(wxT("#FFFFFF")));
 	m_plstLog->SetPressedButtonColour(wxColour(wxT("#FFFFFF")));
@@ -87,14 +87,14 @@ void pnlLog::Log(const wxString& sLogEntry)
                 {
                     m_vLogPages.back().sTime[m_vLogPages.back().nLines] = wxDateTime::UNow().Format(wxT("              "));
                 }
-               if(as[i].length() < 70)
+               if(as[i].length() < 60)
                {
                     m_vLogPages.back().sEntry[m_vLogPages.back().nLines] = as[i];
                     bMore = false;
                 }
                 else
                 {
-                    int nLength(60);
+                    int nLength(50);
                     do
                     {
                         if(as[i].GetChar(nLength-1) == wxT(' '))
@@ -105,7 +105,7 @@ void pnlLog::Log(const wxString& sLogEntry)
                         {
                             ++nLength;
                         }
-                    }while(nLength < 70);
+                    }while(nLength < 60);
 
                     m_vLogPages.back().sEntry[m_vLogPages.back().nLines] = as[i].Left(nLength);
 
