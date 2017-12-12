@@ -52,8 +52,8 @@
 					<object class="wmList" name="ID_M_PLST1" variable="m_plstDevices" member="yes">
 						<scrolling>None</scrolling>
 						<button_gap>5,1</button_gap>
-						<button_size>-1,60</button_size>
-						<columns>4</columns>
+						<button_size>-1,40</button_size>
+						<columns>5</columns>
 						<button_selected>#008000</button_selected>
 						<items />
 						<pos>0,70</pos>

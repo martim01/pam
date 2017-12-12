@@ -83,7 +83,7 @@ class pam2Dialog: public wxDialog
         void OnMonitorMax(wxCommandEvent& event);
         void OnAudioData(wxCommandEvent& event);
         void OnQoS(wxCommandEvent& event);
-        void OnLog(wxCommandEvent& event);
+
 
         void InputSession(const session& aSession);
 

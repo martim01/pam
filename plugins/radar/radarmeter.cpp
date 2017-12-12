@@ -5,6 +5,8 @@
 #include <wx/image.h>
 #include "levelcalculator.h"
 
+const wxString RadarMeter::STR_MODE[4] = {wxT("PPM"), wxT("Peak"), wxT("Energy"), wxT("LUFS") };
+const wxString RadarMeter::STR_CHANNEL[11] = {wxT("L"), wxT("R"), wxT("3"), wxT("4"), wxT("5"), wxT("6"), wxT("7"), wxT("8"), wxEmptyString, wxT("M"), wxT("S")};
 
 using namespace std;
 
@@ -40,9 +42,12 @@ RadarMeter::RadarMeter(wxWindow *parent, wxWindowID id, const wxPoint& pos, cons
     m_nRefreshRate = 250;
     SetTimespan(60, false);
 
-
+    m_dtStart = wxDateTime::Now();
     m_nSamples = 0;
     m_nMode = LevelCalculator::PEAK;
+
+    SetForegroundColour(*wxWHITE);
+    SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
 
     Connect(wxID_ANY, wxEVT_TIMER, (wxObjectEventFunction)&RadarMeter::OnTimer);
 }
@@ -96,8 +101,8 @@ void RadarMeter::OnPaint(wxPaintEvent& event)
 void RadarMeter::DrawRadar(wxDC& dc)
 {
 
-    double dYa = (sin(m_dAngle) * m_dLevel)*m_dResolution;
-    double dXa = (cos(m_dAngle) * m_dLevel)*m_dResolution;
+    double dYa = -(cos(m_dAngle) * m_dLevel)*m_dResolution;
+    double dXa = (sin(m_dAngle) * m_dLevel)*m_dResolution;
     m_queueLines.push(wxPoint(m_pntCenter.x+dXa, m_pntCenter.y+dYa));
     m_queueFade.push(wxPoint(m_pntCenter.x+dXa, m_pntCenter.y+dYa));
 
@@ -175,18 +180,30 @@ void RadarMeter::DrawRadar(wxDC& dc)
 
     for(size_t i = 0; i < 12; i++)
     {
-        dYa = (sin((M_PI/6*i)) * m_dMindB)*m_dResolution;
-        dXa = (cos((M_PI/6*i)) * m_dMindB)*m_dResolution;
+        dYa = -(cos((M_PI/6*i)) * m_dMindB)*m_dResolution;
+        dXa = (sin((M_PI/6*i)) * m_dMindB)*m_dResolution;
         memDC.DrawLine(m_pntCenter.x, m_pntCenter.y, m_pntCenter.x+dXa, m_pntCenter.y+dYa);
     }
 
 
     dc.Blit(m_rectGrid.GetLeft(),m_rectGrid.GetTop(),m_rectGrid.GetWidth(), m_rectGrid.GetHeight(), &memDC,0,0);
 
-    dYa = (sin(m_dAngle) * m_dMindB)*m_dResolution;
-    dXa = (cos(m_dAngle) * m_dMindB)*m_dResolution;
+    dYa = -(cos(m_dAngle) * m_dMindB)*m_dResolution;
+    dXa = (sin(m_dAngle) * m_dMindB)*m_dResolution;
     dc.SetPen(*wxWHITE_PEN);
-    dc.DrawLine(m_pntCenter.x, m_pntCenter.y, m_pntCenter.x+dXa, m_pntCenter.y+dYa);
+    dc.DrawLine(m_pntCenter.x+5, m_pntCenter.y, m_pntCenter.x+5+dXa, m_pntCenter.y+dYa);
+
+    dc.SetTextForeground(*wxWHITE);
+    dc.SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
+    dc.DrawText(wxString::Format(wxT("Mode: %s"), STR_MODE[m_nMode].c_str()), wxPoint(400,430));
+    dc.DrawText(wxString::Format(wxT("Ch: %s"), STR_CHANNEL[m_nChannel].c_str()), wxPoint(400,450));
+
+    dc.DrawText(wxString::Format(wxT("%ds / %dms"), m_nTimespan/1000, m_nRefreshRate), wxPoint(10,430));
+    dc.DrawText((wxDateTime::Now()-m_dtStart).Format(wxT("%H:%M:%S")), wxPoint(10,450));
+
+    dc.SetTextForeground(wxColour(80,70,255));
+    dc.SetFont(wxFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
+    dc.DrawText(wxString::Format(wxT("-%.2fdBfs"), (m_dMindB-m_dLevel)), wxPoint(10,10));
 
 
     m_dAngle += m_dAngleMod;
@@ -408,6 +425,7 @@ void RadarMeter::ClearMeter()
     m_pntLastBlack = m_pntCenter;
     m_pntLastFade = m_pntCenter;
 
+    m_dtStart = wxDateTime::Now();
 }
 
 void RadarMeter::SetMode(unsigned int nMode)

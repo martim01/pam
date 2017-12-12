@@ -64,7 +64,7 @@ void* RtpThread::Entry()
     {
 
         wxString sDescriptor(m_sUrl.AfterFirst(wxT('[')).BeforeFirst(wxT(']')));
-        sDescriptor.Replace(wxT("\\n"), wxT("\n"));
+        sDescriptor.Replace(wxT("`"), wxT("\n"));
         sDescriptor = sDescriptor.AfterFirst(wxT('\n'));
         string sSDP(sDescriptor.mb_str());
 
@@ -142,6 +142,7 @@ bool RtpThread::openURL()
 {
     // Begin by creating a "RTSPClient" object.  Note that there is a separate "RTSPClient" object for each stream that we wish
     // to receive (even if more than stream uses the same "rtsp://" URL).
+    m_sUrl.Replace(wxT(" "), wxT("%20"));
     m_pRtspClient = ourRTSPClient::createNew((*m_penv), m_sUrl.mb_str(), this, 1, m_sProgName.mb_str());
     if (m_pRtspClient == NULL)
     {

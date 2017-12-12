@@ -20,7 +20,7 @@ END_EVENT_TABLE()
 
 
 const wxString FftMeter::LABEL_DISPLAY[3] = {wxT("Graph"), wxT("Lines"), wxT("EQ")};
-const wxString FftMeter::LABEL_ANALYSE[10] = {wxT("CH 1"), wxT("CH 2"), wxT("CH 3"), wxT("CH 4"), wxT("CH 5"), wxT("CH 6"), wxT("CH 7"), wxT("CH 8"), wxT("Middle"), wxT("Side")};
+const wxString FftMeter::LABEL_ANALYSE[10] = {wxT("CH 1"), wxT("CH 2"), wxT("CH 3"), wxT("CH 4"), wxT("CH 5"), wxT("CH 6"), wxT("CH 7"), wxT("CH 8"), wxT("Mono"), wxT("Stereo")};
 const wxString FftMeter::LABEL_WINDOW[6] = {wxT("None"), wxT("Hann"), wxT("Hamming"), wxT("Blackman"), wxT("Kaiser"), wxT("KaiserBessel")};
 const wxString FftMeter::LABEL_TYPE[3] = {wxT("FFT"), wxT("1/3 Octave"), wxT("Peaks")};
 const wxColour FftMeter::COLOUR_LABEL = wxColour(65,92,192);

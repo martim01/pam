@@ -29,6 +29,9 @@
 #include "pnlLogControl.h"
 #include "testpluginfactory.h"
 #include "testpluginbuilder.h"
+#include "wmlogevent.h"
+
+
 //(*InternalHeaders(pam2Dialog)
 #include <wx/intl.h>
 #include <wx/string.h>
@@ -109,6 +112,8 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
     //*)
 
+    wmLog::Get();
+
     m_plstScreens->SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
     m_plstOptions->SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
 
@@ -137,7 +142,9 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pam2Dialog::OnSettingChanged);
     Connect(wxID_ANY, wxEVT_MONITOR_REQUEST, (wxObjectEventFunction)&pam2Dialog::OnMonitorRequest);
-    Connect(wxID_ANY,wxEVT_PAMUE,(wxObjectEventFunction)&pam2Dialog::OnLog);
+
+
+
 
     LoadMonitorPanels();
 
@@ -460,6 +467,7 @@ void pam2Dialog::CreateAudioInputDevice()
 {
     if(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")) == wxT("Soundcard"))
     {
+        wmLog::Get()->Log(wxT("Create Audio Input Device: Soundcard"));
 
         m_pAudio = new Audio(this, Settings::Get().Read(wxT("Input"), wxT("Device"), 0));
         m_pAudio->Init();
@@ -476,6 +484,8 @@ void pam2Dialog::CreateAudioInputDevice()
     }
     else
     {
+        wmLog::Get()->Log(wxT("Create Audio Input Device: AoIP"));
+
         wxString sRtp(Settings::Get().Read(wxT("Input"), wxT("RTP"), wxEmptyString));
         sRtp = Settings::Get().Read(wxT("RTP"), sRtp, wxEmptyString);
         if(sRtp.empty() == false && m_mRtp.find(sRtp) == m_mRtp.end())
@@ -570,6 +580,7 @@ void pam2Dialog::InputChanged(const wxString& sKey)
         {
             if(m_pAudio)
             {
+                wmLog::Get()->Log(wxT("Audio Input Device Changed: Close Soundcard"));
                 delete m_pAudio;
                 m_pAudio = 0;
             }
@@ -579,6 +590,7 @@ void pam2Dialog::InputChanged(const wxString& sKey)
             map<wxString, RtpThread*>::iterator itThread = m_mRtp.find(m_sCurrentRtp);
             if(itThread != m_mRtp.end())
             {
+                wmLog::Get()->Log(wxT("Audio Input Device Changed: Close AoIP"));
                 bool bDelete = m_setRtpOrphan.insert(itThread->first).second;
                 if(bDelete)
                 {
@@ -590,6 +602,7 @@ void pam2Dialog::InputChanged(const wxString& sKey)
     }
     else if(sKey == wxT("RTP") && Settings::Get().Read(wxT("Input"), wxT("RTP"), wxEmptyString) != m_sCurrentRtp)
     {
+        wmLog::Get()->Log(wxT("Audio Input Device Changed: Close AoIP Session"));
         ClearSession();
         map<wxString, RtpThread*>::iterator itThread = m_mRtp.find(m_sCurrentRtp);
         if(itThread != m_mRtp.end())
@@ -604,12 +617,18 @@ void pam2Dialog::InputChanged(const wxString& sKey)
     }
     else if(sKey == wxT("Device"))
     {
-        if(m_pAudio)
+        if(m_pAudio && m_pAudio->GetDevice() != Settings::Get().Read(wxT("Input"), wxT("Device"),0))
         {
+            wmLog::Get()->Log(wxT("Audio Input Device Changed: Close Device"));
             delete m_pAudio;
             m_pAudio = 0;
+            CreateAudioInputDevice();
         }
-        CreateAudioInputDevice();
+        else if(!m_pAudio)
+        {
+            CreateAudioInputDevice();
+        }
+
     }
 }
 
@@ -744,10 +763,4 @@ void pam2Dialog::ClearSession()
 }
 
 
-void pam2Dialog::OnLog(wxCommandEvent& event)
-{
-    if(m_ppnlLog)
-    {
-        m_ppnlLog->Log(event.GetString());
-    }
-}
+

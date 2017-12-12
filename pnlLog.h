@@ -3,11 +3,12 @@
 #include <vector>
 
 //(*Headers(pnlLog)
-#include <wx/listctrl.h>
 #include <wx/panel.h>
+#include "wmlist.h"
 //*)
 
 class pnlLogControl;
+class wmLogEvent;
 
 class pnlLog: public wxPanel
 {
@@ -19,17 +20,19 @@ class pnlLog: public wxPanel
 		void SetLogControl(pnlLogControl* pCtrl);
 
 		//(*Declarations(pnlLog)
-		wxListCtrl* m_plclLog;
+		wmList* m_plstLog;
 		//*)
 
-		void Log(const wxString& sLogEntry);
+
 
 	protected:
 
+        void OnLog(wmLogEvent& event);
+        void Log(const wxString& sLogEntry);
         friend class pnlLogControl;
 
 		//(*Identifiers(pnlLog)
-		static const long ID_LISTCTRL1;
+		static const long ID_M_PLST1;
 		//*)
 
 		void Home();
@@ -46,7 +49,8 @@ class pnlLog: public wxPanel
 	    void ShowLog();
 
 		//(*Handlers(pnlLog)
-		void OnlclLogColumnEndDrag(wxListEvent& event);
+		//		void OnlclLogColumnEndDrag(wxListEvent& event);
+		void OnlstLogSelected(wxCommandEvent& event);
 		//*)
 
         long m_nPosition;
@@ -54,10 +58,12 @@ class pnlLog: public wxPanel
 
         struct logPage
         {
-            logPage() : nLines(0){}
-            wxString sTime[27];
-            wxString sEntry[27];
+            logPage() : nLines(0), nEntries(0){}
+            wxString sTime[23];
+            wxString sEntry[23];
+            unsigned int nId[23];
 
+            unsigned int nEntries;
             unsigned int nLines;
         };
         std::vector<logPage> m_vLogPages;

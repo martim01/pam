@@ -6,6 +6,7 @@
 #include <wx/datetime.h>
 //#include "kaiserwindow.h"
 #include "timedbuffer.h"
+#include "wmlogevent.h"
 
 DEFINE_EVENT_TYPE(wxEVT_FFT)
 DEFINE_EVENT_TYPE(wxEVT_DATA)
@@ -26,7 +27,13 @@ Audio::Audio(wxEvtHandler* pHandler, unsigned int nDevice) :
 
     m_nSampleRate = 48000;
     m_nBufferSize = 2048;
-    Pa_Initialize();
+
+    wmLog::Get()->Log(wxT("Init PortAudio"));
+    PaError err = Pa_Initialize();
+    if(err != paNoError)
+    {
+        wmLog::Get()->Log(wxString::Format(wxT("Failed to init PortAudio: %s"), wxString::FromAscii(Pa_GetErrorText(err)).c_str()));
+    }
 
 
  }
@@ -38,6 +45,7 @@ Audio::Audio(wxEvtHandler* pHandler, unsigned int nDevice) :
 }
 bool Audio::OpenStream(PaStreamCallback *streamCallback)
 {
+    wmLog::Get()->Log(wxString::Format(wxT("Attempt to open device %d"), m_nDevice));
 
     PaStreamParameters inputParameters;
 
@@ -66,10 +74,11 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
         err = Pa_StartStream(m_pStream);
         if(err == paNoError)
         {
+            wmLog::Get()->Log(wxString::Format(wxT("Device %d opened"), m_nDevice));
             return true;
         }
     }
-    wxLogMessage(wxString::Format(wxT("%d %s %d %d,"), m_nDevice, wxString::FromAscii(Pa_GetErrorText(err)).c_str(), m_nSampleRate, m_nChannels));
+    wmLog::Get()->Log(wxString::Format(wxT("Failed to open device %d %s %d %d,"), m_nDevice, wxString::FromAscii(Pa_GetErrorText(err)).c_str(), m_nSampleRate, m_nChannels));
     return false;
 }
 
@@ -78,9 +87,19 @@ Audio::~Audio()
 {
     if(m_pStream)
     {
-        Pa_StopStream(m_pStream);
+        wmLog::Get()->Log(wxT("Stop PortAudio input stream"));
+        PaError err = Pa_StopStream(m_pStream);
+        if(err != paNoError)
+        {
+            wmLog::Get()->Log(wxString::Format(wxT("Failed to stop PortAudio input stream: %s"), wxString::FromAscii(Pa_GetErrorText(err)).c_str()));
+        }
     }
-    Pa_Terminate();
+    wmLog::Get()->Log(wxT("Terminate PortAudio"));
+    PaError err = Pa_Terminate();
+    if(err != paNoError)
+    {
+        wmLog::Get()->Log(wxString::Format(wxT("Failed to terminate PortAudio: %s"), wxString::FromAscii(Pa_GetErrorText(err)).c_str()));
+    }
 
 }
 

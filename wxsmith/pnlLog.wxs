@@ -1,13 +1,30 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <wxsmith>
 	<object class="wxPanel" name="pnlLog">
+		<bg>#000000</bg>
 		<pos_arg>1</pos_arg>
 		<size_arg>1</size_arg>
-		<object class="wxListCtrl" name="ID_LISTCTRL1" variable="m_plclLog" member="yes">
-			<pos>0,0</pos>
-			<size>600,480</size>
-			<style>wxLC_REPORT|wxLC_SINGLE_SEL</style>
-			<handler function="OnlclLogColumnEndDrag" entry="EVT_LIST_COL_END_DRAG" />
+		<object class="wmList" name="ID_M_PLST1" variable="m_plstLog" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>0,0</button_gap>
+			<button_size>-1,20</button_size>
+			<button>#FFFFFF</button>
+			<button_pressed>#FFFFFF</button_pressed>
+			<button_selected>#8080FF</button_selected>
+			<text>#000000</text>
+			<items />
+			<pos>5,5</pos>
+			<size>590,470</size>
+			<font>
+				<size>8</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Courier New</face>
+			</font>
+			<style>wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI</style>
+			<handler function="OnlstLogSelected" entry="EVT_LIST_SELECTED" />
 		</object>
 	</object>
 </wxsmith>

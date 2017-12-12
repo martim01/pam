@@ -2,6 +2,7 @@
 #define PNLDISPLAY_H
 
 //(*Headers(pnlDisplay)
+#include "wmlabel.h"
 #include <wx/panel.h>
 #include "wmlist.h"
 //*)
@@ -15,7 +16,9 @@ class pnlDisplay: public wxPanel
 		virtual ~pnlDisplay();
 
 		//(*Declarations(pnlDisplay)
+		wmLabel* m_pLbl1;
 		wmList* m_plstPoints;
+		wmLabel* m_pLbl2;
 		wmList* m_plstTimeframe;
 		//*)
 
@@ -23,7 +26,9 @@ class pnlDisplay: public wxPanel
 
 		//(*Identifiers(pnlDisplay)
 		static const long ID_M_PLST24;
+		static const long ID_M_PLBL2;
 		static const long ID_M_PLST1;
+		static const long ID_M_PLBL1;
 		//*)
 
 	private:

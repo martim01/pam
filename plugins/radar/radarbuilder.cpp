@@ -86,7 +86,7 @@ list<pairOptionPanel_t> RadarBuilder::CreateOptionPanels(wxWindow* pParent)
     m_ppnlRouting = new pnlRouting(pParent, this);
 
     lstOptionPanels.push_back(make_pair(wxT("Routing"), m_ppnlRouting));
-    lstOptionPanels.push_back(make_pair(wxT("Timeframe"), new pnlDisplay(pParent, this)));
+    lstOptionPanels.push_back(make_pair(wxT("Time"), new pnlDisplay(pParent, this)));
     lstOptionPanels.push_back(make_pair(wxT("Meter"), new pnlMeters(pParent, this)));
 //    lstOptionPanels.push_back(make_pair(wxT("Options"), pOptions));
 //
@@ -122,6 +122,7 @@ void RadarBuilder::OnSettingChanged(SettingEvent& event)
     if(event.GetKey() == wxT("Routing"))
     {
         m_nDisplayChannel = ReadSetting(wxT("Routing"),0);
+        m_pRadar->SetChannel(m_nDisplayChannel);
         ClearMeter();
     }
     else if(event.GetKey() == wxT("Timeframe"))

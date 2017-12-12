@@ -7,7 +7,9 @@
 
 //(*IdInit(pnlDisplay)
 const long pnlDisplay::ID_M_PLST24 = wxNewId();
+const long pnlDisplay::ID_M_PLBL2 = wxNewId();
 const long pnlDisplay::ID_M_PLST1 = wxNewId();
+const long pnlDisplay::ID_M_PLBL1 = wxNewId();
 //*)
 
 BEGIN_EVENT_TABLE(pnlDisplay,wxPanel)
@@ -21,10 +23,18 @@ pnlDisplay::pnlDisplay(wxWindow* parent,RadarBuilder* pBuilder, wxWindowID id,co
 	//(*Initialize(pnlDisplay)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
-	m_plstTimeframe = new wmList(this, ID_M_PLST24, wxPoint(0,0), wxSize(190,100), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 3, wxSize(5,5));
+	m_plstTimeframe = new wmList(this, ID_M_PLST24, wxPoint(0,25), wxSize(190,80), wmList::STYLE_SELECT, 0, wxSize(-1,35), 3, wxSize(2,2));
 	m_plstTimeframe->SetBackgroundColour(wxColour(0,0,0));
-	m_plstPoints = new wmList(this, ID_M_PLST1, wxPoint(0,110), wxSize(190,100), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 3, wxSize(5,5));
+	m_pLbl2 = new wmLabel(this, ID_M_PLBL2, _("Refresh Rate"), wxPoint(0,105), wxSize(200,25), 0, _T("ID_M_PLBL2"));
+	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl2->SetBackgroundColour(wxColour(64,128,128));
+	m_plstPoints = new wmList(this, ID_M_PLST1, wxPoint(0,130), wxSize(190,80), wmList::STYLE_SELECT, 0, wxSize(-1,35), 3, wxSize(2,2));
 	m_plstPoints->SetBackgroundColour(wxColour(0,0,0));
+	m_pLbl1 = new wmLabel(this, ID_M_PLBL1, _("Timespan"), wxPoint(0,0), wxSize(200,25), 0, _T("ID_M_PLBL1"));
+	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl1->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl1->SetBackgroundColour(wxColour(64,128,128));
 
 	Connect(ID_M_PLST24,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlDisplay::OnlstTimeframeSelected);
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlDisplay::OnlstPointsSelected);

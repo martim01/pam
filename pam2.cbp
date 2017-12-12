@@ -32,7 +32,7 @@
 					<Add option="-Wl,--enable-auto-import,-Map=pam2d.map" />
 					<Add library="wxmsw30ud_gcc_wammacs" />
 					<Add library="pambased2.0" />
-					<Add library="portaudio" />
+					<Add library="portaudiod" />
 					<Add library="libliveMedia.a" />
 					<Add library="libBasicUsageEnvironment.a" />
 					<Add library="libUsageEnvironment.a" />
@@ -50,8 +50,8 @@
 				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
-					<Add option="-O2" />
 					<Add option="-Wall" />
+					<Add option="-g" />
 					<Add option="-DWIN32" />
 					<Add option="-D__WXMSW__" />
 					<Add option="-DWXUSINGDLL" />
@@ -65,10 +65,9 @@
 					<Add directory="$(#wx3_0.include)/mswu" />
 				</ResourceCompiler>
 				<Linker>
-					<Add option="-s" />
 					<Add option="-Wl,--enable-auto-import,-Map=pam2.map" />
 					<Add library="wxmsw30u_gcc_wammacs" />
-					<Add library="portaudiod" />
+					<Add library="portaudio" />
 					<Add library="libliveMedia.a" />
 					<Add library="libBasicUsageEnvironment.a" />
 					<Add library="libUsageEnvironment.a" />

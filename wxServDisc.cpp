@@ -43,7 +43,7 @@
 
 
 #include "wxServDisc.h"
-
+#include "wmlogevent.h"
 
 // Compatability defines
 #ifdef __APPLE__
@@ -269,6 +269,7 @@ int wxServDisc::ans(mdnsda a, void *arg)
 
     result.port = a->srv.port;
 
+    result.ipFrom = moi->GetFromIp();
 
     if(a->ttl == 0)
         // entry was expired
@@ -280,19 +281,19 @@ int wxServDisc::ans(mdnsda a, void *arg)
     moi->post_notify();
 
 
-//    wxLogDebug(wxT("wxServDisc %p: got answer:"), moi);
-//    wxLogDebug(wxT("wxServDisc %p:    key:  %s"), moi, key.c_str());
-//    wxLogDebug(wxT("wxServDisc %p:    ttl:  %i"), moi, (int)a->ttl);
-//    wxLogDebug(wxT("wxServDisc %p:    time: %lu"), moi, result.time);
-//    wxLogDebug(wxT("wxServDisc %p:    From: %s"), moi, moi->GetFromIp().c_str());
-//
-//    if(a->ttl != 0)
-//    {
-//        wxLogDebug(wxT("wxServDisc %p:    name: %s"), moi, moi->results[key].name.c_str());
-//        wxLogDebug(wxT("wxServDisc %p:    ip:   %s"), moi, moi->results[key].ip.c_str());
-//        wxLogDebug(wxT("wxServDisc %p:    port: %u"), moi, moi->results[key].port);
-//    }
-//    wxLogDebug(wxT("wxServDisc %p: answer end"),  moi);
+    wmLog::Get()->Log(wxString::Format(wxT("wxServDisc: got answer:")));
+    wmLog::Get()->Log(wxString::Format(wxT("wxServDisc:    key:  %s"), key.c_str()));
+    wmLog::Get()->Log(wxString::Format(wxT("wxServDisc:    ttl:  %i"), (int)a->ttl));
+    wmLog::Get()->Log(wxString::Format(wxT("wxServDisc:    time: %lu"), result.time));
+    wmLog::Get()->Log(wxString::Format(wxT("wxServDisc:    From: %s"), moi->GetFromIp().c_str()));
+
+    if(a->ttl != 0)
+    {
+        wmLog::Get()->Log(wxString::Format(wxT("wxServDisc    name: %s"), moi->results[key].name.c_str()));
+        wmLog::Get()->Log(wxString::Format(wxT("wxServDisc    ip:   %s"), moi->results[key].ip.c_str()));
+        wmLog::Get()->Log(wxString::Format(wxT("wxServDisc    port: %u"), moi->results[key].port));
+    }
+    wmLog::Get()->Log(wxString::Format(wxT("wxServDisc: answer end")));
 
     return 1;
 }

@@ -1,6 +1,7 @@
 #include "PamUsageEnvironment.h"
 #include <stdio.h>
 #include <wx/log.h>
+#include "wmlogevent.h"
 
 ////////// PamUsageEnvironment //////////
 
@@ -8,7 +9,8 @@
 extern "C" int initializeWinsockIfNecessary();
 #endif
 
-DEFINE_EVENT_TYPE(wxEVT_PAMUE)
+
+
 
 PamUsageEnvironment::PamUsageEnvironment(TaskScheduler& taskScheduler, wxEvtHandler* pHandler)
     : BasicUsageEnvironment0(taskScheduler),
@@ -51,12 +53,7 @@ UsageEnvironment& PamUsageEnvironment::operator<<(char const* str)
 
     if(m_sLog.Find(wxT("\n")) != wxNOT_FOUND)
     {
-        if(m_pHandler)
-        {
-            wxCommandEvent event(wxEVT_PAMUE);
-            event.SetString(m_sLog);
-            wxPostEvent(m_pHandler, event);
-        }
+        wmLog::Get()->Log(wxT("AoIP"), m_sLog);
         m_sLog = wxEmptyString;
     }
     return *this;

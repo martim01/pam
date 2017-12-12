@@ -4,12 +4,30 @@
 #include "audio.h"
 #include "uirect.h"
 #include <wx/timer.h>
-#include <queue>
+#include <list>
 //#include "wmscroller.h"
+#include "uirect.h"
+
+class timedbuffer;
+
+struct rgb
+{
+    double r;       // a fraction between 0 and 1
+    double g;       // a fraction between 0 and 1
+    double b;       // a fraction between 0 and 1
+};
+
+struct hsv
+{
+    double h;       // angle in degrees
+    double s;       // a fraction between 0 and 1
+    double v;       // a fraction between 0 and 1
+};
+
 
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/
-class RadarMeter : public wxWindow
+class PolarScope : public wxWindow
 {
     DECLARE_EVENT_TABLE()
 
@@ -17,7 +35,7 @@ class RadarMeter : public wxWindow
 
         /** @brief default constructor
         **/
-        RadarMeter(){}
+        PolarScope(){}
 
         /** @brief Constructor - made to be the same as a wxButton
         *   @param parent pointer to the parent window
@@ -29,7 +47,7 @@ class RadarMeter : public wxWindow
         *   @param validator not used - just here to have same structure as wxButton
         *   @param name not used - just here to have same structure as wxButton
         **/
-        RadarMeter(wxWindow *parent,
+        PolarScope(wxWindow *parent,
                  wxWindowID id = wxID_ANY,
                  const wxPoint& pos = wxDefaultPosition,
                  const wxSize& size = wxDefaultSize);
@@ -51,18 +69,7 @@ class RadarMeter : public wxWindow
 
 
 
-        virtual ~RadarMeter();
-
-        void SetRadarLevel(double dLevel, unsigned int nSamples, bool bInDBAlready);
-
-
-        void SetScaling(int nScaling)
-        {
-            m_nScaling = nScaling;
-            Refresh();
-        }
-
-        enum {SCALE_DB, SCALE_LINEAR, SCALE_AUTO};
+        virtual ~PolarScope();
 
 
         /** @brief returns the default size of the button for sizers
@@ -72,104 +79,59 @@ class RadarMeter : public wxWindow
             return wxSize(470,470);
         }
 
-        void SetDisplayType(short nType)
-        {
-            m_nType = nType;
-        }
+        void SetAudioData(const timedbuffer* pBuffer);
+        void SetNumberOfInputChannels(unsigned int nInputChannels);
+        void SetAxisX(unsigned int nChannel);
+        void SetAxisY(unsigned int nChannel);
 
-        void SetShowLevels(bool bShow)
-        {
-            m_bShowLevels = bShow;
-        }
 
-        void SetMindB(float dMin);
-
-        void SetTimespan(unsigned int nSeconds, bool bClearMeter=true);
-        void SetSampleRate(unsigned int nSampleRate);
         void ClearMeter();
 
-        void SetRefreshRate(unsigned int nMilliseconds);
-        void SetMode(unsigned int nMode);
-        void SetChannel(unsigned int nChannel)
-        {
-            m_nChannel = nChannel;
-        }
+      protected:
 
-  protected:
-
-        wxTimer m_timerSecond;
-
-        void OnTimer(wxTimerEvent& event);
-
-        void DrawRadar(wxDC& dc);
-
-        void GetAmplitude(float dSample, float& dAmplitude, bool& bNegative);
-
-        void CreateBackgroundBitmap();
 
         /** Called to draw the console
         *   @param event
         **/
         void OnPaint(wxPaintEvent& event);
 
+        void DrawPoints(wxDC& dc);
+        void DrawLevels(wxDC& dc);
+
         /** Called when the console resizes
         *   @param event
         **/
         virtual void OnSize(wxSizeEvent& event);
 
+        void CreateRects();
         void OnLeftUp(wxMouseEvent& event);
 
-        void DrawLines(wxImage& img, const wxPoint& pntCenter);
-        void Scale(float dSampleL, float dSampleR, float& x, float& y, const wxPoint& pntCenter);
+        rgb hsv2rgb(hsv in);
+        hsv rgb2hsv(rgb in);
 
-
-        double m_dLevel;
+        void WorkoutLevel();
         wxRect m_rectGrid;
+        wxRect m_rectCorrelation;
+        wxPoint m_pntPole;
+        double m_dResolution;
+        double m_dResolutionCorrelation;
 
-        short m_nType;
 
-        std::pair<float, float> m_pairStep;
-        wxBitmap m_bmpScreen;
-        wxBitmap m_bmpBackground;
-        wxBitmap m_bmpFade;
-        bool m_bRotate;
-        int m_nScaling;
+        float m_dMindB;
 
-        std::list<double> m_lstMax;
-        double m_dAutoScale;
+        unsigned int m_nInputChannels;
+        unsigned int m_nAxisX;
+        unsigned int m_nAxisY;
 
-        bool m_bShowLevels;
+        std::list<std::pair<double, double> > m_lstLevels;
+        double m_dCorrelation;
 
-        double m_dMindB;
-        float m_dResolution;
+        float* m_pBuffer;
+        unsigned int m_nBufferSize;
 
-        double m_dAngle;
-        double m_dAngleMod;
-        wxPoint m_pntCenter;
-        static const float LEVEL_PPM[7];
-        static const wxString LABEL_SCALE[3];
-
-        std::queue<wxPoint> m_queueLines;
-        std::queue<wxPoint> m_queueFade;
-        wxPoint m_pntLast;
-        wxPoint m_pntLastBlack;
-        wxPoint m_pntLastFade;
-        unsigned int m_nChannels;
-        unsigned int m_nChannel;
-
-        unsigned int m_nTimespan;
-        unsigned int m_nSamples;
-        unsigned int m_nSampleRate;
-
-        unsigned int m_nRefreshRate;
-        unsigned int m_nPoints;
-
-        unsigned int m_nMode;
-        wxDateTime m_dtStart;
-
-        static const wxString STR_MODE[4];
-        static const wxString STR_CHANNEL[11];
+        uiRect m_uiCorrelation;
 };
+
 
 
 

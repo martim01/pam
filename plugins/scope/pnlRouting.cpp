@@ -51,8 +51,8 @@ void pnlRouting::SetNumberOfChannels(unsigned int nChannels)
     {
         m_plstScope_Routing->AddButton(wxT("Left"), wxNullBitmap,(void*)0);
         m_plstScope_Routing->AddButton(wxT("Right"), wxNullBitmap,(void*)1);
-        m_plstScope_Routing->AddButton(wxT("Middle"), wxNullBitmap,(void*)8);
-        m_plstScope_Routing->AddButton(wxT("Side"), wxNullBitmap,(void*)9);
+        m_plstScope_Routing->AddButton(wxT("Mono"), wxNullBitmap,(void*)8);
+        m_plstScope_Routing->AddButton(wxT("Stereo"), wxNullBitmap,(void*)9);
     }
     else
     {

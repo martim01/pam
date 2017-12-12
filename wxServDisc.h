@@ -72,6 +72,7 @@ struct wxSDEntry
 {
   wxString name;
   wxString ip;
+  wxString ipFrom;
   int port;
   long time;
   wxSDEntry() { port=0; time=0; }

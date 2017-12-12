@@ -6,7 +6,7 @@
 #include <wx/string.h>
 #include <wx/log.h>
 
-
+#include "wmlogevent.h"
 
 DEFINE_EVENT_TYPE(wxEVT_SAP)
 
