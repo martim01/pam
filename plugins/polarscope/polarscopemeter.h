@@ -112,6 +112,7 @@ class PolarScope : public wxWindow
         void WorkoutLevel();
         wxRect m_rectGrid;
         wxRect m_rectCorrelation;
+        wxRect m_rectBalance;
         wxPoint m_pntPole;
         double m_dResolution;
         double m_dResolutionCorrelation;
@@ -125,11 +126,18 @@ class PolarScope : public wxWindow
 
         std::list<std::pair<double, double> > m_lstLevels;
         double m_dCorrelation;
+        double m_dBalance;
+        double m_dSpread[2];
 
         float* m_pBuffer;
         unsigned int m_nBufferSize;
 
+        std::list<double> m_lstCorrelation;
+
         uiRect m_uiCorrelation;
+
+        wxBitmap* m_pBmpCorrelationOut;
+        wxBitmap* m_pBmpCorrelationIn;
 };
 
 

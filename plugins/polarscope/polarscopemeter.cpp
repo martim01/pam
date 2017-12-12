@@ -16,7 +16,7 @@ END_EVENT_TABLE()
 
 
 
-PolarScope::PolarScope(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size) : m_dMindB(70.0), m_pBuffer(0), m_nBufferSize(0)
+PolarScope::PolarScope(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size) : m_dMindB(70.0), m_pBuffer(0), m_nBufferSize(0), m_pBmpCorrelationOut(0), m_pBmpCorrelationIn(0)
 {
     Create(parent, id, pos, size);
     #ifdef __TOUCHSCREEN__
@@ -61,6 +61,14 @@ PolarScope::~PolarScope()
     {
         delete m_pBuffer;
     }
+    if(m_pBmpCorrelationIn)
+    {
+        delete m_pBmpCorrelationIn;
+    }
+    if(m_pBmpCorrelationOut)
+    {
+        delete m_pBmpCorrelationOut;
+    }
 }
 
 
@@ -94,11 +102,67 @@ void PolarScope::OnPaint(wxPaintEvent& event)
 
     dc.DestroyClippingRegion();
 
-    dc.SetPen(wxPen(wxColour(82,110,61)));
+    dc.SetPen(*wxWHITE_PEN);
     dc.DrawRectangle(m_rectCorrelation);
-    dc.DrawRectangle(m_rectCorrelation.GetLeft()+m_dCorrelation*m_dResolutionCorrelation, m_rectCorrelation.GetTop(), 2, m_rectCorrelation.GetHeight());
+    dc.DrawRectangle(m_rectBalance);
 
-    m_uiCorrelation.Draw(dc, wxString::Format(wxT("%.2f"), m_dCorrelation), uiRect::BORDER_NONE);
+    dc.DrawBitmap(*m_pBmpCorrelationOut, m_rectCorrelation.GetLeft()+1, m_rectCorrelation.GetTop()+1);
+    dc.DrawBitmap(*m_pBmpCorrelationIn, wxPoint(m_rectCorrelation.GetLeft()+m_rectCorrelation.GetWidth()/2, m_rectCorrelation.GetTop()+1));
+
+
+    dc.SetBrush(*wxWHITE_BRUSH);
+    dc.SetPen(*wxTRANSPARENT_PEN);
+    dc.DrawRectangle(m_rectCorrelation.GetLeft()+m_dCorrelation*m_dResolutionCorrelation, m_rectCorrelation.GetTop(), 1, m_rectCorrelation.GetHeight());
+
+    double dCorrelation = 0.0;
+    for(list<double>::const_iterator itCorrelation = m_lstCorrelation.begin(); itCorrelation != m_lstCorrelation.end(); ++itCorrelation)
+    {
+        dCorrelation += (*itCorrelation);
+    }
+
+    dCorrelation /= m_lstCorrelation.size();
+
+
+    dc.SetBrush(*wxBLACK_BRUSH);
+    dc.SetPen(*wxTRANSPARENT_PEN);
+    dc.DrawRectangle(m_rectCorrelation.GetLeft()+dCorrelation*m_dResolutionCorrelation, m_rectCorrelation.GetTop()+1, 3, m_rectCorrelation.GetHeight()-2);
+
+    dc.SetBrush(wxBrush(wxColour(100,100,180)));
+    dc.DrawRectangle(m_rectBalance.GetLeft()+m_rectBalance.GetWidth()/2+(m_dSpread[0]*m_dResolutionCorrelation), m_rectBalance.GetTop()+1, (m_dSpread[1]-m_dSpread[0])*m_dResolutionCorrelation, m_rectBalance.GetHeight()-2);
+    dc.SetBrush(*wxWHITE_BRUSH);
+
+    dc.DrawRectangle(m_rectBalance.GetLeft()+m_rectBalance.GetWidth()/2+(m_dBalance*m_dResolutionCorrelation), m_rectBalance.GetTop()+1, 2, m_rectBalance.GetHeight()-2);
+
+
+    dc.SetPen(wxPen(wxColour(0,0,0), 1, wxPENSTYLE_DOT));
+    dc.DrawLine(m_rectCorrelation.GetLeft()+1+m_rectCorrelation.GetWidth()/4, m_rectCorrelation.GetTop()+1, m_rectCorrelation.GetLeft()+1+m_rectCorrelation.GetWidth()/4, m_uiCorrelation.GetBottom()-1);
+    dc.DrawLine(m_rectCorrelation.GetLeft()+1+m_rectCorrelation.GetWidth()/2, m_rectCorrelation.GetTop()+1, m_rectCorrelation.GetLeft()+1+m_rectCorrelation.GetWidth()/2, m_uiCorrelation.GetBottom()-1);
+    dc.DrawLine(3*(m_rectCorrelation.GetLeft()+1+m_rectCorrelation.GetWidth())/4, m_rectCorrelation.GetTop()+1, 3*(m_rectCorrelation.GetLeft()+1+m_rectCorrelation.GetWidth())/4, m_uiCorrelation.GetBottom()-1);
+
+
+    uiRect rectLabel(wxRect(m_rectCorrelation.GetLeft()-5, m_rectCorrelation.GetBottom()+5, 20,20));
+    rectLabel.SetBackgroundColour(*wxBLACK);
+    rectLabel.Draw(dc, wxT("-1"), uiRect::BORDER_NONE);
+
+    rectLabel.SetRect(m_rectCorrelation.GetLeft()+1+m_rectCorrelation.GetWidth()/4-10, m_rectCorrelation.GetBottom()+5, 20,20);
+    rectLabel.Draw(dc, wxT("-.5"), uiRect::BORDER_NONE);
+
+    rectLabel.SetRect(m_rectCorrelation.GetLeft()+1+m_rectCorrelation.GetWidth()/2-10, m_rectCorrelation.GetBottom()+5, 20,20);
+    rectLabel.Draw(dc, wxT("0"), uiRect::BORDER_NONE);
+
+    rectLabel.SetRect(3*(m_rectCorrelation.GetLeft()+1+m_rectCorrelation.GetWidth())/4-10, m_rectCorrelation.GetBottom()+5, 20,20);
+    rectLabel.Draw(dc, wxT(".5"), uiRect::BORDER_NONE);
+
+    rectLabel.SetRect(m_rectCorrelation.GetRight()-10, m_rectCorrelation.GetBottom()+5, 20,20);
+    rectLabel.Draw(dc, wxT("1"), uiRect::BORDER_NONE);
+
+    rectLabel.SetRect(m_rectBalance.GetLeft()-5, m_rectBalance.GetBottom()+5, 20,20);
+    rectLabel.Draw(dc, wxT("L"), uiRect::BORDER_NONE);
+    rectLabel.SetRect(m_rectBalance.GetRight()-10, m_rectBalance.GetBottom()+5, 20,20);
+    rectLabel.Draw(dc, wxT("R"), uiRect::BORDER_NONE);
+
+
+    m_uiCorrelation.Draw(dc, wxString::Format(wxT("%.2f"), (dCorrelation*2.0 - 1.0)), uiRect::BORDER_NONE);
 
 }
 
@@ -107,6 +171,9 @@ void PolarScope::DrawPoints(wxDC& dc)
     if(m_pBuffer)
     {
         float dCorrelation(0.0);
+        double dBalance(0.0);
+        m_dSpread[0] = 1.0;
+        m_dSpread[1] = -1.0;
 
         dc.SetPen(wxColour(50,255,50));
         wxPoint pntOld(m_pntPole);
@@ -116,6 +183,11 @@ void PolarScope::DrawPoints(wxDC& dc)
             float dY = m_pBuffer[i+m_nAxisY];
             float dHeight = sqrt(dX*dX + dY*dY);
             dHeight =  max(double(0.0), m_dMindB + 20*log10(dHeight))*m_dResolution;
+
+            dBalance += (fabs(dX)-fabs(dY));
+            m_dSpread[0] = min(m_dSpread[0], (fabs(dX)-fabs(dY)));
+            m_dSpread[1] = max(m_dSpread[1], (fabs(dX)-fabs(dY)));
+
 
             if(dY != 0.0 && dX != 0.0)
             {
@@ -140,6 +212,13 @@ void PolarScope::DrawPoints(wxDC& dc)
 
         }
         m_dCorrelation = dCorrelation / m_nBufferSize;
+        m_dBalance = dBalance / m_nBufferSize;
+
+        m_lstCorrelation.push_back(m_dCorrelation);
+        if(m_lstCorrelation.size() > 40)
+        {
+            m_lstCorrelation.pop_front();
+        }
 
     }
 
@@ -178,14 +257,43 @@ void PolarScope::OnSize(wxSizeEvent& event)
 
 void PolarScope::CreateRects()
 {
-    m_rectGrid = wxRect(5, 5, GetClientRect().GetWidth()-10, GetClientRect().GetHeight()-100);
-    m_rectCorrelation = wxRect(5, m_rectGrid.GetBottom()+10, m_rectGrid.GetWidth()-10, 20);
+    m_rectGrid = wxRect(5, 5, GetClientRect().GetWidth()-10, GetClientRect().GetHeight()-150);
+    m_rectCorrelation = wxRect(5, m_rectGrid.GetBottom()+10, m_rectGrid.GetWidth(), 20);
 
-    m_uiCorrelation.SetRect(wxRect(5, m_rectCorrelation.GetBottom()+5, m_rectCorrelation.GetWidth(), 30));
+
+    m_uiCorrelation.SetRect(wxRect(m_rectCorrelation.GetLeft()+m_rectCorrelation.GetWidth()/2 -25 , m_rectCorrelation.GetBottom()+25, 50, 20));
+    m_uiCorrelation.SetBackgroundColour(*wxBLACK);
     m_pntPole = wxPoint(m_rectGrid.GetLeft() + (m_rectGrid.GetWidth()/2), m_rectGrid.GetBottom());
 
+    m_rectBalance = wxRect(5, m_uiCorrelation.GetBottom()+20, m_rectCorrelation.GetWidth(), 20);
+
+
+
     m_dResolution = static_cast<double>((m_rectGrid.GetWidth()-4))/(m_dMindB*2.0);
-    m_dResolutionCorrelation = static_cast<double>((m_rectCorrelation.GetWidth()));
+    m_dResolutionCorrelation = static_cast<double>((m_rectCorrelation.GetWidth()-2));
+
+
+    if(m_pBmpCorrelationOut)
+    {
+        delete m_pBmpCorrelationOut;
+    }
+    m_pBmpCorrelationOut = new wxBitmap(m_rectCorrelation.GetWidth()/2-1, m_rectCorrelation.GetHeight()-2);
+
+    if(m_pBmpCorrelationIn)
+    {
+        delete m_pBmpCorrelationIn;
+    }
+    m_pBmpCorrelationIn = new wxBitmap(m_rectCorrelation.GetWidth()/2-1, m_rectCorrelation.GetHeight()-2);
+
+    wxMemoryDC dc;
+    dc.SelectObject(*m_pBmpCorrelationOut);
+    dc.GradientFillLinear(wxRect(0,0, m_pBmpCorrelationOut->GetWidth(), m_pBmpCorrelationOut->GetHeight()), wxColour(255,0,0), wxColour(255,255,0));
+
+    dc.SelectObject(*m_pBmpCorrelationIn);
+    dc.GradientFillLinear(wxRect(0,0, m_pBmpCorrelationIn->GetWidth(), m_pBmpCorrelationIn->GetHeight()), wxColour(255,255,0), wxColour(0,255,0));
+
+
+
 
     Refresh();
 }
