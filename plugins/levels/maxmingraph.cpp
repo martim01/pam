@@ -54,7 +54,7 @@ bool MaxMinGraph::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, co
     SetSize(size);
     SetPosition(pos);
 
-    #ifndef __WXMSW__
+    #ifdef __TOUCHSCREEN__
     SetCursor(wxCURSOR_BLANK);
     #endif // __WXMSW__
 

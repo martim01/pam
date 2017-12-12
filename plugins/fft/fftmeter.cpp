@@ -46,7 +46,7 @@ FftMeter::FftMeter(wxWindow *parent, FFTBuilder* pBuilder, wxWindowID id, const 
 
     m_nChannels = 2;
     m_nSampleRate = 48000;
-    #ifndef __WXMSW__
+    #ifdef __TOUCHSCREEN__
     SetCursor(wxCURSOR_BLANK);
     #endif // __WXMSW__
 

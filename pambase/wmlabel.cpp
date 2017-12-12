@@ -33,7 +33,7 @@ bool wmLabel::Create(wxWindow *parent, wxWindowID id, const wxString& sLabel , c
     if(!wxWindow::Create(parent,id,pos,szInit,wxWANTS_CHARS, wxEmptyString))
         return false;
 
-    #ifndef __WXMSW__
+    #ifdef __TOUCHSCREEN__
     SetCursor(wxCURSOR_BLANK);
     #endif // __WXMSW__
 

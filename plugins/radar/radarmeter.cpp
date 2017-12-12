@@ -23,7 +23,7 @@ const wxString RadarMeter::LABEL_SCALE[3] = {wxT("dB"), wxT("Linear"), wxT("Auto
 RadarMeter::RadarMeter(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size)
 {
     Create(parent, id, pos, size);
-    #ifndef __WXMSW__
+    #ifdef __TOUCHSCREEN__
     SetCursor(wxCURSOR_BLANK);
     #endif // __WXMSW__
     m_bRotate = false;

@@ -40,7 +40,7 @@ bool OffsetGraph::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, co
     m_bCalculating = false;
     m_dSampleRate = 48.0;
 
-    #ifndef __WXMSW__
+    #ifdef __TOUCHSCREEN__
     SetCursor(wxCURSOR_BLANK);
     #endif // __WXMSW__
 

@@ -51,7 +51,7 @@ bool wmButton::Create(wxWindow *parent, wxWindowID id, const wxString& sLabel , 
 
     m_nStyle = nStyle;
 
-    #ifndef __WXMSW__
+    #ifdef __TOUCHSCREEN__
     SetCursor(wxCURSOR_BLANK);
     #endif // __WXMSW__
 
@@ -336,6 +336,10 @@ void wmButton::OnHolding(wxTimerEvent& event)
             SendEvent(wxEVT_BUTTON_HELD);
             m_timerHold.Stop();
             m_nHoldCount = 0;
+            if(HasCapture())
+            {
+                ReleaseMouse();
+            }
         }
     }
     if((m_nStyle & STYLE_REPEAT))

@@ -62,7 +62,7 @@ bool wmSwitcherPanel::Create(wxWindow* pParent, wxWindowID id, const wxPoint& po
     }
 
     m_bDownInWindow = false;
-    #ifndef __WXMSW__
+    #ifdef __TOUCHSCREEN__
     SetCursor(wxCURSOR_BLANK);
     #endif // __WXMSW__
 

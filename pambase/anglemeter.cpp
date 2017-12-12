@@ -40,7 +40,7 @@ AngleMeter::AngleMeter(wxWindow *parent, wxWindowID id, const wxString & sText,d
 
     wxWindow::Create(parent,id,pos,szInit,wxWANTS_CHARS, wxT("AngleMeter"));
 
-#ifndef __WXMSW__
+#ifdef __TOUCHSCREEN__
     SetCursor(wxCURSOR_BLANK);
 #endif // __WXMSW__
     SetMinSize(size);

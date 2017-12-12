@@ -19,7 +19,7 @@ END_EVENT_TABLE()
 PolarScope::PolarScope(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size) : m_dMindB(70.0), m_pBuffer(0), m_nBufferSize(0)
 {
     Create(parent, id, pos, size);
-    #ifndef __WXMSW__
+    #ifdef __TOUCHSCREEN__
     SetCursor(wxCURSOR_BLANK);
     #endif // __WXMSW__
 
@@ -96,7 +96,7 @@ void PolarScope::OnPaint(wxPaintEvent& event)
 
     dc.SetPen(wxPen(wxColour(82,110,61)));
     dc.DrawRectangle(m_rectCorrelation);
-    dc.DrawRectangle(m_rectCorrelation.GetLeft()+m_dCorrelation, m_rectCorrelation.GetTop(), 2, m_rectCorrelation.GetHeight());
+    dc.DrawRectangle(m_rectCorrelation.GetLeft()+m_dCorrelation*m_dResolutionCorrelation, m_rectCorrelation.GetTop(), 2, m_rectCorrelation.GetHeight());
 
     m_uiCorrelation.Draw(dc, wxString::Format(wxT("%.2f"), m_dCorrelation), uiRect::BORDER_NONE);
 
@@ -106,6 +106,8 @@ void PolarScope::DrawPoints(wxDC& dc)
 {
     if(m_pBuffer)
     {
+        float dCorrelation(0.0);
+
         dc.SetPen(wxColour(50,255,50));
         wxPoint pntOld(m_pntPole);
         for(size_t i = 0; i < m_nBufferSize; i+=m_nInputChannels)
@@ -132,9 +134,12 @@ void PolarScope::DrawPoints(wxDC& dc)
 
                 dc.DrawPoint(m_pntPole.x+dCoordX, m_pntPole.y-dCoordY);
 
-                m_dCorrelation = cos(dAngle);
+                dCorrelation +=  fabs(cos(dAngle))*2.0;
+
             }
+
         }
+        m_dCorrelation = dCorrelation / m_nBufferSize;
 
     }
 
@@ -180,7 +185,7 @@ void PolarScope::CreateRects()
     m_pntPole = wxPoint(m_rectGrid.GetLeft() + (m_rectGrid.GetWidth()/2), m_rectGrid.GetBottom());
 
     m_dResolution = static_cast<double>((m_rectGrid.GetWidth()-4))/(m_dMindB*2.0);
-    m_dResolutionCorrelation = static_cast<double>((m_rectCorrelation.GetWidth()))/(2.0);
+    m_dResolutionCorrelation = static_cast<double>((m_rectCorrelation.GetWidth()));
 
     Refresh();
 }

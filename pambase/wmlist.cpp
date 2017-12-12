@@ -70,7 +70,7 @@ bool wmList::Create(wxWindow* pParent, wxWindowID id, const wxPoint& pos, const 
     if(!wxWindow::Create(pParent,id,pos,szInit,wxWANTS_CHARS, wxEmptyString))
         return false;
 
-    #ifndef __WXMSW__
+    #ifdef __TOUCHSCREEN__
     SetCursor(wxCURSOR_BLANK);
     #endif // __WXMSW__
 

@@ -20,7 +20,7 @@ const wxString LissajouMeter::LABEL_SCALE[3] = {wxT("dB"), wxT("Linear"), wxT("A
 LissajouMeter::LissajouMeter(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size)
 {
     Create(parent, id, pos, size);
-    #ifndef __WXMSW__
+    #ifdef __TOUCHSCREEN__
     SetCursor(wxCURSOR_BLANK);
     #endif // __WXMSW__
     m_pBuffer = 0;
