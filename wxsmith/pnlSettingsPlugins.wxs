@@ -87,6 +87,15 @@
 				<bg>#004040</bg>
 				<handler function="OnbtnDownClick" entry="EVT_BUTTON" />
 			</object>
+			<object class="wmButton" name="ID_M_PBTN6" variable="m_pbtnApply" member="yes">
+				<label>Hold To Apply&#x0A;(Restarts App)</label>
+				<button_disabled>#B0B0B0</button_disabled>
+				<pos>250,330</pos>
+				<size>100,50</size>
+				<bg>#FF6F28</bg>
+				<style>wmButton::STYLE_HOLD</style>
+				<handler function="OnbtnApplyHeld" entry="EVT_BUTTON_HELD" />
+			</object>
 		</object>
 		<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnPlugin" member="yes">
 			<label>Plugins</label>

@@ -21,15 +21,35 @@ void MonitorPluginBuilder::SetHandler(wxEvtHandler* pHandler)
 
 void MonitorPluginBuilder::CreatePanels(wmSwitcherPanel* pswpMonitor, wmSwitcherPanel* pswpOptions)
 {
-    pswpMonitor->AddPage(CreateMonitorPanel(pswpMonitor), GetName(), false);
-    list<pairOptionPanel_t> lstOptions(CreateOptionPanels(pswpOptions));
+    m_pswpMonitor = pswpMonitor;
+    m_pswpOptions = pswpOptions;
 
-    for(list<pairOptionPanel_t>::iterator itOption = lstOptions.begin(); itOption != lstOptions.end(); ++itOption)
+    pswpMonitor->AddPage(CreateMonitorPanel(pswpMonitor), GetName(), false);
+    m_lstOptions = CreateOptionPanels(pswpOptions);
+
+    for(list<pairOptionPanel_t>::iterator itOption = m_lstOptions.begin(); itOption != m_lstOptions.end(); ++itOption)
     {
         pswpOptions->AddPage((*itOption).second,wxString::Format(wxT("%s|%s"), GetName().c_str(), (*itOption).first.c_str()), false);
     }
 
     LoadSettings();
+}
+
+void MonitorPluginBuilder::DeletePanels()
+{
+    for(set<wxEvtHandler*>::iterator itHandler = m_setHandlers.begin(); itHandler != m_setHandlers.end(); ++itHandler)
+    {
+        Settings::Get().RemoveHandler((*itHandler));
+    }
+
+    m_setHandlers.clear();
+
+    m_pswpMonitor->DeletePage(GetName());
+    for(list<pairOptionPanel_t>::iterator itOption = m_lstOptions.begin(); itOption != m_lstOptions.end(); ++itOption)
+    {
+        m_pswpOptions->DeletePage(wxString::Format(wxT("%s|%s"), GetName().c_str(), (*itOption).first.c_str()));
+    }
+
 }
 
 
@@ -78,6 +98,7 @@ void MonitorPluginBuilder::Maximize(bool bMax)
 void MonitorPluginBuilder::RegisterForSettingsUpdates(const wxString& sSetting, wxEvtHandler* pHandler)
 {
     Settings::Get().AddHandler(GetName(), sSetting, pHandler);
+    m_setHandlers.insert(pHandler);
 }
 
 
@@ -95,4 +116,9 @@ void MonitorPluginBuilder::AskToMonitor(const vector<char>& vChannels)
 bool MonitorPluginBuilder::CanBeMaximized() const
 {
     return true;
+}
+
+
+MonitorPluginBuilder::~MonitorPluginBuilder()
+{
 }

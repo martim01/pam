@@ -87,10 +87,14 @@ bool MonitorPluginFactory::LoadLibrary(const wxString& sLibrary)
 }
 
 
-void MonitorPluginFactory::UnloadAll()
+void MonitorPluginFactory::UnloadAll(bool bDeletePanel)
 {
     for(map<wxString, MonitorPluginBuilder*>::iterator itBuilder = m_mBuilders.begin(); itBuilder != m_mBuilders.end(); ++itBuilder)
     {
+        if(bDeletePanel)
+        {
+            itBuilder->second->DeletePanels();
+        }
         delete itBuilder->second;
     }
     m_mBuilders.clear();

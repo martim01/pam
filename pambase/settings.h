@@ -26,6 +26,7 @@ class PAMBASE_IMPEXPORT Settings
         bool GetSectionDataEnd(const wxString& sSection, std::map<wxString, wxString>::const_iterator& itEnd) const;
 
         void AddHandler(const wxString& sSection, const wxString& sKey, wxEvtHandler* pHandler);
+        void RemoveHandler(wxEvtHandler* pHandler);
 
     protected:
         Settings();

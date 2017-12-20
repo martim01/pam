@@ -22,6 +22,7 @@ class pnlSettingsPlugins: public wxPanel
 		wxPanel* Panel1;
 		wmList* m_plstCurrent;
 		wmButton* m_pbtnUp;
+		wmButton* m_pbtnApply;
 		wmLabel* m_pLbl2;
 		wmButton* m_pbtnDown;
 		wmButton* m_pbtnSet;
@@ -39,6 +40,7 @@ class pnlSettingsPlugins: public wxPanel
 		static const long ID_M_PBTN2;
 		static const long ID_M_PBTN3;
 		static const long ID_M_PBTN4;
+		static const long ID_M_PBTN6;
 		static const long ID_PANEL1;
 		static const long ID_M_PBTN5;
 		//*)
@@ -54,6 +56,7 @@ class pnlSettingsPlugins: public wxPanel
 		void OnbtnDownClick(wxCommandEvent& event);
 		void OnPanel1Paint(wxPaintEvent& event);
 		void OnbtnPluginClick(wxCommandEvent& event);
+		void OnbtnApplyHeld(wxCommandEvent& event);
 		//*)
 
 		void ShowMonitorPlugins();
@@ -72,4 +75,6 @@ class pnlSettingsPlugins: public wxPanel
 		DECLARE_EVENT_TABLE()
 };
 
+
+DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_PLUGINS_APPLY,-1)
 #endif

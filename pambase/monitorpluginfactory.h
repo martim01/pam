@@ -24,7 +24,7 @@ public:
     void Register(MonitorPluginBuilder* pBuilder);
 
 
-    void UnloadAll();
+    void UnloadAll(bool bDeletePanel = false);
 
     std::map<wxString, MonitorPluginBuilder*>::iterator GetPluginBegin();
     std::map<wxString, MonitorPluginBuilder*>::iterator GetPluginEnd();

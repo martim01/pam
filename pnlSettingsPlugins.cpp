@@ -1,4 +1,5 @@
 #include "pnlSettingsPlugins.h"
+#include <wx/app.h>
 #include "settings.h"
 #include <wx/dir.h>
 #include <wx/dynlib.h>
@@ -23,9 +24,12 @@ const long pnlSettingsPlugins::ID_M_PBTN1 = wxNewId();
 const long pnlSettingsPlugins::ID_M_PBTN2 = wxNewId();
 const long pnlSettingsPlugins::ID_M_PBTN3 = wxNewId();
 const long pnlSettingsPlugins::ID_M_PBTN4 = wxNewId();
+const long pnlSettingsPlugins::ID_M_PBTN6 = wxNewId();
 const long pnlSettingsPlugins::ID_PANEL1 = wxNewId();
 const long pnlSettingsPlugins::ID_M_PBTN5 = wxNewId();
 //*)
+
+DEFINE_EVENT_TYPE(wxEVT_PLUGINS_APPLY)
 
 BEGIN_EVENT_TABLE(pnlSettingsPlugins,wxPanel)
 	//(*EventTable(pnlSettingsPlugins)
@@ -71,6 +75,9 @@ pnlSettingsPlugins::pnlSettingsPlugins(wxWindow* parent,wxWindowID id,const wxPo
 	m_pbtnDown->Disable();
 	m_pbtnDown->SetBackgroundColour(wxColour(0,64,64));
 	m_pbtnDown->SetColourDisabled(wxColour(wxT("#A0A0A0")));
+	m_pbtnApply = new wmButton(Panel1, ID_M_PBTN6, _("Hold To Apply\n(Restarts App)"), wxPoint(250,330), wxSize(100,50), wmButton::STYLE_HOLD, wxDefaultValidator, _T("ID_M_PBTN6"));
+	m_pbtnApply->SetBackgroundColour(wxColour(255,111,40));
+	m_pbtnApply->SetColourDisabled(wxColour(wxT("#B0B0B0")));
 	m_pbtnPlugin = new wmButton(this, ID_M_PBTN5, _("Plugins"), wxPoint(175,5), wxSize(250,30), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN5"));
 	m_pbtnPlugin->SetBackgroundColour(wxColour(84,140,203));
 
@@ -80,6 +87,7 @@ pnlSettingsPlugins::pnlSettingsPlugins(wxWindow* parent,wxWindowID id,const wxPo
 	Connect(ID_M_PBTN2,wxEVT_BUTTON_HELD,(wxObjectEventFunction)&pnlSettingsPlugins::OnbtnClearHeld);
 	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsPlugins::OnbtnUpClick);
 	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsPlugins::OnbtnDownClick);
+	Connect(ID_M_PBTN6,wxEVT_BUTTON_HELD,(wxObjectEventFunction)&pnlSettingsPlugins::OnbtnApplyHeld);
 	Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsPlugins::OnbtnPluginClick);
 	//*)
     SetBackgroundColour(*wxBLACK);
@@ -239,7 +247,13 @@ void pnlSettingsPlugins::ShowMonitorPlugins()
             wxString sPlugin = MonitorPluginFactory::Get()->GetPluginName(sLibDir, itBegin->second);
             if(sPlugin != wxEmptyString)
             {
-                m_mPossible.insert(make_pair(sPlugin, itBegin->second));
+                #ifdef __WXGNU__
+                    m_mPossible.insert(make_pair(sPlugin, itBegin->second.Mid(3)));
+                #else
+                    m_mPossible.insert(make_pair(sPlugin, itBegin->second));
+                #endif // __WXGNU__
+
+
                 m_plstCurrent->AddButton(sPlugin);
             }
         }
@@ -315,4 +329,11 @@ void pnlSettingsPlugins::ShowTestPlugins()
         }
     }
 
+}
+
+void pnlSettingsPlugins::OnbtnApplyHeld(wxCommandEvent& event)
+{
+    //tell the main window to reload all plugins
+    wxCommandEvent eventApply(wxEVT_PLUGINS_APPLY);
+    wxPostEvent(wxTheApp->GetTopWindow(), eventApply);
 }

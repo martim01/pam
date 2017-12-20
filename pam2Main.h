@@ -84,7 +84,7 @@ class pam2Dialog: public wxDialog
         void OnAudioData(wxCommandEvent& event);
         void OnQoS(wxCommandEvent& event);
 
-
+        void OnPluginsReload(wxCommandEvent& event);
         void InputSession(const session& aSession);
 
         void CreateAudioInputDevice();

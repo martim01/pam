@@ -90,6 +90,23 @@ void Settings::AddHandler(const wxString& sSection, const wxString& sKey, wxEvtH
     m_mmHandlers.insert(make_pair(wxString::Format(wxT("%s/%s"), sSection.c_str(), sKey.c_str()), pHandler));
 }
 
+void Settings::RemoveHandler(wxEvtHandler* pHandler)
+{
+    for(multimap<wxString, wxEvtHandler*>::iterator itHandler = m_mmHandlers.begin(); itHandler != m_mmHandlers.end();)
+    {
+        if(itHandler->second == pHandler)
+        {
+            multimap<wxString, wxEvtHandler*>::iterator  itDelete(itHandler);
+            ++itHandler;
+            m_mmHandlers.erase(itDelete);
+        }
+        else
+        {
+            ++itHandler;
+        }
+    }
+}
+
 
 bool Settings::RemoveKey(const wxString& sSection, const wxString& sKey)
 {

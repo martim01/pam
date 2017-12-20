@@ -5,7 +5,7 @@
 #include <list>
 #include <vector>
 #include "session.h"
-
+#include <set>
 class wmSwitcherPanel;
 class timedbuffer;
 
@@ -16,7 +16,7 @@ class PAMBASE_IMPEXPORT MonitorPluginBuilder : public wxEvtHandler
 {
     public:
         MonitorPluginBuilder();
-        virtual ~MonitorPluginBuilder(){}
+        virtual ~MonitorPluginBuilder();
 
         void Maximize(bool bShow);
 
@@ -30,7 +30,7 @@ class PAMBASE_IMPEXPORT MonitorPluginBuilder : public wxEvtHandler
 
         virtual bool CanBeMaximized() const;
 
-
+        void DeletePanels();
 
     protected:
 
@@ -60,6 +60,9 @@ class PAMBASE_IMPEXPORT MonitorPluginBuilder : public wxEvtHandler
     private:
         wmSwitcherPanel* m_pswpMonitor;
         wmSwitcherPanel* m_pswpOptions;
+        std::list<pairOptionPanel_t> m_lstOptions;
+
+        std::set<wxEvtHandler*> m_setHandlers;
 };
 
 DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_MONITOR_MAX, -1)

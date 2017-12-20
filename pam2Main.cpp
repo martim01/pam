@@ -30,7 +30,7 @@
 #include "testpluginfactory.h"
 #include "testpluginbuilder.h"
 #include "wmlogevent.h"
-
+#include <wx/stdpaths.h>
 
 //(*InternalHeaders(pam2Dialog)
 #include <wx/intl.h>
@@ -142,6 +142,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pam2Dialog::OnSettingChanged);
     Connect(wxID_ANY, wxEVT_MONITOR_REQUEST, (wxObjectEventFunction)&pam2Dialog::OnMonitorRequest);
+    Connect(wxID_ANY, wxEVT_PLUGINS_APPLY, (wxObjectEventFunction)&pam2Dialog::OnPluginsReload);
 
 
 
@@ -150,7 +151,21 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
     m_pSession = 0;
 
-    m_plstScreens->SelectButton(Settings::Get().Read(wxT("Main"), wxT("Monitor"), wxEmptyString));
+    //check which page we need.
+    wxString sPanel(Settings::Get().Read(wxT("Main"), wxT("Monitor"), wxEmptyString));
+
+    for(multimap<size_t, wxString>::iterator itPage = m_mmMonitorPlugins.begin(); itPage != m_mmMonitorPlugins.end(); ++itPage)
+    {
+        if(itPage->second == sPanel)
+        {
+            m_nCurrentMonitorPage = itPage->first;
+            ShowMonitorList();
+            break;
+        }
+    }
+
+
+    m_plstScreens->SelectButton(sPanel);
 
     CreateAudioInputDevice();
 
@@ -197,6 +212,11 @@ void pam2Dialog::OnAbout(wxCommandEvent& event)
     wxMessageBox(msg, _("Welcome to..."));
 }
 
+void pam2Dialog::OnPluginsReload(wxCommandEvent& event)
+{
+    wxExecute(wxStandardPaths::Get().GetExecutablePath());
+    Close();
+}
 
 void pam2Dialog::LoadMonitorPanels()
 {
