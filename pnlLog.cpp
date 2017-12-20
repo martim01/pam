@@ -3,6 +3,7 @@
 #include "settings.h"
 #include "pnlLogControl.h"
 #include "wmlogevent.h"
+#include <wx/log.h>
 
 //(*InternalHeaders(pnlLog)
 #include <wx/font.h>
@@ -228,7 +229,7 @@ size_t pnlLog::GetPageCount() const
 
 void pnlLog::OnLog(wmLogEvent& event)
 {
-
+    //wxLogMessage(event.GetLogMessage());
     Log(event.GetLogMessage());
 }
 

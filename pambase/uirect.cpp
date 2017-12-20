@@ -278,7 +278,7 @@ wxSize uiRect::DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int 
             szReturn.x = 0;
             if(bClip && szReturn.y > rect.GetHeight())
             {
-                sOutLine = wxT("...");
+            //    sOutLine = wxT("...");
                 bOverflow = true;
             }
         }
@@ -337,8 +337,8 @@ wxSize uiRect::DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int 
                         sOutput = sOutput.Left(sOutput.length()-1);
                     }
                 }
-                sOutput << wxT("...");
-                bOverflow = true;
+                //sOutput << wxT("...");
+               // bOverflow = true;
             }
         }
         if(!bOverflow)

@@ -133,8 +133,10 @@ class PolarScope : public wxWindow
         unsigned int m_nBufferSize;
 
         std::list<double> m_lstCorrelation;
+        std::list<double> m_lstBalance;
 
         uiRect m_uiCorrelation;
+        uiRect m_uiBalance;
 
         wxBitmap* m_pBmpCorrelationOut;
         wxBitmap* m_pBmpCorrelationIn;
