@@ -250,9 +250,8 @@ void pnlSettingsPlugins::ShowMonitorPlugins()
                 #ifdef __WXGNU__
                     m_mPossible.insert(make_pair(sPlugin, itBegin->second.Mid(3)));
                 #else
-                    m_mPossible.insert(make_pair(sPlugin, itBegin->second));
+                m_mPossible.insert(make_pair(sPlugin, itBegin->second));
                 #endif // __WXGNU__
-
 
                 m_plstCurrent->AddButton(sPlugin);
             }
