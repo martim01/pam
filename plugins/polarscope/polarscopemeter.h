@@ -98,6 +98,7 @@ class PolarScope : public wxWindow
         void DrawPoints(wxDC& dc);
         void DrawLevels(wxDC& dc);
 
+        void DrawConvexHull(wxDC& dc);
         /** Called when the console resizes
         *   @param event
         **/

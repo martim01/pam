@@ -5,6 +5,7 @@
 #include <wx/image.h>
 #include "levelcalculator.h"
 #include "timedbuffer.h"
+#include "jarvis.h"
 
 using namespace std;
 
@@ -99,8 +100,9 @@ void PolarScope::OnPaint(wxPaintEvent& event)
         dc.DrawLine(m_pntPole.x, m_pntPole.y, m_pntPole.x-dCoordX, m_pntPole.y-dCoordY);
         dc.DrawLine(m_rectGrid.GetLeft(), m_pntPole.y, m_rectGrid.GetRight(), m_pntPole.y);
 
-        DrawPoints(dc);
+        //DrawPoints(dc);
         //DrawLevels(dc);
+        DrawConvexHull(dc);
 
         dc.DestroyClippingRegion();
 
@@ -290,6 +292,101 @@ void PolarScope::DrawLevels(wxDC& dc)
 
     }
 }
+
+void PolarScope::DrawConvexHull(wxDC& dc)
+{
+    if(m_pBuffer)
+    {
+        float dCorrelation(0.0);
+        double dBalance[2] = {0.0, 0.0};
+        double dProduct(0.0);
+
+        m_dSpread[0] = 0.0;
+        m_dSpread[1] = 0.0;
+
+        dc.SetPen(wxColour(50,255,50));
+        wxPoint pntOld(m_pntPole);
+
+        vector<wxPoint> pntList(m_nBufferSize/m_nInputChannels, m_pntPole);
+
+        int nPointCount(0);
+        for(size_t i = 0; i < m_nBufferSize; i+=m_nInputChannels)
+        {
+            float dX = m_pBuffer[i+m_nAxisX];
+            float dY = m_pBuffer[i+m_nAxisY];
+            float dHeight = sqrt(dX*dX + dY*dY);
+            dHeight =  max(double(0.0), m_dMindB + 20*log10(dHeight))*m_dResolution;
+
+            dBalance[0] += pow(dX,2);
+            dBalance[1] += pow(dY,2);
+            dProduct += dX*dY;
+
+            m_dSpread[0] = max(m_dSpread[0], (fabs(dX)-fabs(dY)));
+            m_dSpread[1] = max(m_dSpread[1], (fabs(dY)-fabs(dX)));
+
+
+            if(dY != 0.0 && dX != 0.0)
+            {
+                double dAngle = atan(dX/dY);//-atan(1.0);
+                dAngle -= M_PI_4;
+
+
+                double dCoordX = sin(dAngle)*dHeight;
+                double dCoordY = cos(dAngle)*dHeight;
+                if(dCoordY < 0)
+                {
+                    dCoordX = -dCoordX;
+                    dCoordY = -dCoordY;
+                }
+
+                pntList[nPointCount] = wxPoint(m_pntPole.x-dCoordX, m_pntPole.y-dCoordY);
+                nPointCount++;
+
+                dCorrelation +=  fabs(cos(dAngle))*2.0;
+
+            }
+
+        }
+
+        vector<wxPoint> pntHull(convexHull(&pntList[0], pntList.size()));
+        dc.DrawPolygon(&pntHull[0], pntHull.size());
+
+
+        double dFrames = m_nBufferSize/m_nInputChannels;
+
+//        m_dCorrelation = dCorrelation / dFrames;
+        m_dCorrelation = dProduct/sqrt(dBalance[0]*dBalance[1]);
+
+        dBalance[1] = max(0.0, sqrt(dBalance[1]/dFrames));
+        dBalance[0] = max(0.0, sqrt(dBalance[0]/dFrames));
+
+        if(dBalance[1] > dBalance[0])
+        {
+            dBalance[0] /= dBalance[1];
+            m_dBalance = 1.0-dBalance[0];
+        }
+        else
+        {
+            dBalance[1] /= dBalance[0];
+            m_dBalance = -(1.0-dBalance[1]);
+        }
+
+
+
+        m_lstCorrelation.push_back(m_dCorrelation);
+        if(m_lstCorrelation.size() > 40)
+        {
+            m_lstCorrelation.pop_front();
+        }
+
+        m_lstBalance.push_back(m_dBalance);
+        if(m_lstBalance.size() > 10)
+        {
+            m_lstBalance.pop_front();
+        }
+    }
+}
+
 
 void PolarScope::OnSize(wxSizeEvent& event)
 {

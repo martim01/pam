@@ -239,7 +239,12 @@ void pnlSettingsPlugins::ShowMonitorPlugins()
             wxString sPlugin = MonitorPluginFactory::Get()->GetPluginName(sLibDir, itBegin->second);
             if(sPlugin != wxEmptyString)
             {
+                #ifdef __WXGNU__
+                    m_mPossible.insert(make_pair(sPlugin, itBegin->second.Mid(3)));
+                #else
                 m_mPossible.insert(make_pair(sPlugin, itBegin->second));
+                #endif // __WXGNU__
+
                 m_plstCurrent->AddButton(sPlugin);
             }
         }
