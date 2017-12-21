@@ -93,12 +93,15 @@
 			<Add directory="../../lib" />
 		</Linker>
 		<Unit filename="jarvis.h" />
+		<Unit filename="pnlOptionsMode.cpp" />
+		<Unit filename="pnlOptionsMode.h" />
 		<Unit filename="polarscope.cpp" />
 		<Unit filename="polarscope.h" />
 		<Unit filename="polarscopebuilder.cpp" />
 		<Unit filename="polarscopebuilder.h" />
 		<Unit filename="polarscopemeter.cpp" />
 		<Unit filename="polarscopemeter.h" />
+		<Unit filename="wxsmith/pnlOptionsMode.wxs" />
 		<Extensions>
 			<code_completion />
 			<envvars />
@@ -109,6 +112,11 @@
 				<Changes_Log show_changes_editor="0" app_title="released version %M.%m.%b of %p" changeslog_path="ChangesLog.txt" />
 				<Code header_guard="VERSION_H" namespace="AutoVersion" prefix="" />
 			</AutoVersioning>
+			<wxsmith version="1">
+				<resources>
+					<wxPanel wxs="wxsmith/pnlOptionsMode.wxs" src="pnlOptionsMode.cpp" hdr="pnlOptionsMode.h" fwddecl="0" i18n="1" name="pnlOptionsMode" language="CPP" />
+				</resources>
+			</wxsmith>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

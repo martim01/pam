@@ -30,6 +30,7 @@ class WXEXPORT PolarScopeBuilder : public MonitorPluginBuilder
     protected:
 
         friend class PolarScope;
+        friend class pnlOptionsMode;
         //friend class pnlRouting;
         //friend class pnlDisplay;
         //friend class pnlMeters;

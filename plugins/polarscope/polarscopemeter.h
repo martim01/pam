@@ -87,6 +87,11 @@ class PolarScope : public wxWindow
 
         void ClearMeter();
 
+        void WorkoutBalance();
+        void SetMode(int nMode);
+
+        enum {STARS, HULL, LINES};
+
       protected:
 
 
@@ -118,6 +123,7 @@ class PolarScope : public wxWindow
         double m_dResolution;
         double m_dResolutionCorrelation;
 
+        int m_nMode;
 
         float m_dMindB;
 

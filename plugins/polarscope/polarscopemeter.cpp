@@ -100,9 +100,19 @@ void PolarScope::OnPaint(wxPaintEvent& event)
         dc.DrawLine(m_pntPole.x, m_pntPole.y, m_pntPole.x-dCoordX, m_pntPole.y-dCoordY);
         dc.DrawLine(m_rectGrid.GetLeft(), m_pntPole.y, m_rectGrid.GetRight(), m_pntPole.y);
 
-        //DrawPoints(dc);
-        //DrawLevels(dc);
-        DrawConvexHull(dc);
+        switch(m_nMode)
+        {
+            case STARS:
+                DrawPoints(dc);
+                break;
+            case HULL:
+                DrawConvexHull(dc);
+                break;
+            case LINES:
+                DrawLevels(dc);
+                break;
+        }
+
 
         dc.DestroyClippingRegion();
 
@@ -127,25 +137,30 @@ void PolarScope::OnPaint(wxPaintEvent& event)
         dCorrelation /= m_lstCorrelation.size();
 
 
-        double dBalance = 0.0;
-        for(list<double>::const_iterator itBalance = m_lstBalance.begin(); itBalance != m_lstBalance.end(); ++itBalance)
-        {
-            dBalance += (*itBalance);
-        }
-
-        dBalance /= m_lstBalance.size();
-
-
 
         dc.SetBrush(*wxBLACK_BRUSH);
         dc.SetPen(*wxTRANSPARENT_PEN);
         dc.DrawRectangle(m_rectCorrelation.GetLeft()+m_rectCorrelation.GetWidth()/2+dCorrelation*m_dResolutionCorrelation, m_rectCorrelation.GetTop()+1, 3, m_rectCorrelation.GetHeight()-2);
 
-        dc.SetBrush(wxBrush(wxColour(100,100,180)));
-        dc.DrawRectangle(m_rectBalance.GetLeft()+m_rectBalance.GetWidth()/2-(m_dSpread[0]*m_dResolutionCorrelation), m_rectBalance.GetTop()+1, (m_dSpread[1]+m_dSpread[0])*m_dResolutionCorrelation, m_rectBalance.GetHeight()-2);
-        dc.SetBrush(*wxWHITE_BRUSH);
 
-        dc.DrawRectangle(m_rectBalance.GetLeft()+m_rectBalance.GetWidth()/2+(dBalance*m_dResolutionCorrelation), m_rectBalance.GetTop()+1, 2, m_rectBalance.GetHeight()-2);
+        double dBalance = 0.0;
+        int nCount = 0;
+        for(list<double>::const_reverse_iterator itBalance = m_lstBalance.rbegin(); itBalance != m_lstBalance.rend(); ++itBalance)
+        {
+            dBalance += (*itBalance);
+        }
+        dBalance /= m_lstBalance.size();
+
+        double dLeft = m_rectBalance.GetLeft()+m_rectBalance.GetWidth()/2+(dBalance*m_dResolutionCorrelation);
+        dc.SetBrush(wxColour(50,255,50));
+        dc.DrawRectangle(dLeft-1, m_rectBalance.GetTop()+1, 2, m_rectBalance.GetHeight()-2);
+
+
+        dc.SetBrush(*wxTRANSPARENT_BRUSH);
+
+
+
+
 
 
         dc.SetPen(wxPen(wxColour(0,0,0), 1, wxPENSTYLE_DOT));
@@ -186,15 +201,9 @@ void PolarScope::DrawPoints(wxDC& dc)
 {
     if(m_pBuffer)
     {
-        float dCorrelation(0.0);
-        double dBalance[2] = {0.0, 0.0};
-        double dProduct(0.0);
-
-        m_dSpread[0] = 0.0;
-        m_dSpread[1] = 0.0;
-
         dc.SetPen(wxColour(50,255,50));
         wxPoint pntOld(m_pntPole);
+
         for(size_t i = 0; i < m_nBufferSize; i+=m_nInputChannels)
         {
             float dX = m_pBuffer[i+m_nAxisX];
@@ -202,19 +211,10 @@ void PolarScope::DrawPoints(wxDC& dc)
             float dHeight = sqrt(dX*dX + dY*dY);
             dHeight =  max(double(0.0), m_dMindB + 20*log10(dHeight))*m_dResolution;
 
-            dBalance[0] += pow(dX,2);
-            dBalance[1] += pow(dY,2);
-            dProduct += dX*dY;
-
-            m_dSpread[0] = max(m_dSpread[0], (fabs(dX)-fabs(dY)));
-            m_dSpread[1] = max(m_dSpread[1], (fabs(dY)-fabs(dX)));
-
-
-            if(dY != 0.0 && dX != 0.0)
+            if(dY != 0.0)
             {
                 double dAngle = atan(dX/dY);//-atan(1.0);
                 dAngle -= M_PI_4;
-
 
                 double dCoordX = sin(dAngle)*dHeight;
                 double dCoordY = cos(dAngle)*dHeight;
@@ -224,17 +224,32 @@ void PolarScope::DrawPoints(wxDC& dc)
                     dCoordY = -dCoordY;
                 }
 
-
                 dc.DrawPoint(m_pntPole.x-dCoordX, m_pntPole.y-dCoordY);
-
-                dCorrelation +=  fabs(cos(dAngle))*2.0;
-
             }
+        }
+    }
+}
+
+void PolarScope::WorkoutBalance()
+{
+    if(m_pBuffer)
+    {
+        float dCorrelation(0.0);
+        double dBalance[2] = {0.0, 0.0};
+        double dProduct(0.0);
+
+        for(size_t i = 0; i < m_nBufferSize; i+=m_nInputChannels)
+        {
+            float dX = m_pBuffer[i+m_nAxisX];
+            float dY = m_pBuffer[i+m_nAxisY];
+
+            dBalance[0] += pow(dX,2);
+            dBalance[1] += pow(dY,2);
+            dProduct += dX*dY;
 
         }
         double dFrames = m_nBufferSize/m_nInputChannels;
 
-//        m_dCorrelation = dCorrelation / dFrames;
         m_dCorrelation = dProduct/sqrt(dBalance[0]*dBalance[1]);
 
         dBalance[1] = max(0.0, sqrt(dBalance[1]/dFrames));
@@ -251,8 +266,6 @@ void PolarScope::DrawPoints(wxDC& dc)
             m_dBalance = -(1.0-dBalance[1]);
         }
 
-
-
         m_lstCorrelation.push_back(m_dCorrelation);
         if(m_lstCorrelation.size() > 40)
         {
@@ -260,14 +273,13 @@ void PolarScope::DrawPoints(wxDC& dc)
         }
 
         m_lstBalance.push_back(m_dBalance);
-        if(m_lstBalance.size() > 10)
+        if(m_lstBalance.size() > 300)
         {
             m_lstBalance.pop_front();
         }
     }
 
 }
-
 
 void PolarScope::DrawLevels(wxDC& dc)
 {
@@ -297,13 +309,6 @@ void PolarScope::DrawConvexHull(wxDC& dc)
 {
     if(m_pBuffer)
     {
-        float dCorrelation(0.0);
-        double dBalance[2] = {0.0, 0.0};
-        double dProduct(0.0);
-
-        m_dSpread[0] = 0.0;
-        m_dSpread[1] = 0.0;
-
         dc.SetPen(wxColour(50,255,50));
         wxPoint pntOld(m_pntPole);
 
@@ -317,19 +322,10 @@ void PolarScope::DrawConvexHull(wxDC& dc)
             float dHeight = sqrt(dX*dX + dY*dY);
             dHeight =  max(double(0.0), m_dMindB + 20*log10(dHeight))*m_dResolution;
 
-            dBalance[0] += pow(dX,2);
-            dBalance[1] += pow(dY,2);
-            dProduct += dX*dY;
-
-            m_dSpread[0] = max(m_dSpread[0], (fabs(dX)-fabs(dY)));
-            m_dSpread[1] = max(m_dSpread[1], (fabs(dY)-fabs(dX)));
-
-
-            if(dY != 0.0 && dX != 0.0)
+            if(dY != 0.0)
             {
                 double dAngle = atan(dX/dY);//-atan(1.0);
                 dAngle -= M_PI_4;
-
 
                 double dCoordX = sin(dAngle)*dHeight;
                 double dCoordY = cos(dAngle)*dHeight;
@@ -342,48 +338,12 @@ void PolarScope::DrawConvexHull(wxDC& dc)
                 pntList[nPointCount] = wxPoint(m_pntPole.x-dCoordX, m_pntPole.y-dCoordY);
                 nPointCount++;
 
-                dCorrelation +=  fabs(cos(dAngle))*2.0;
-
             }
 
         }
 
         vector<wxPoint> pntHull(convexHull(&pntList[0], pntList.size()));
-        dc.DrawPolygon(&pntHull[0], pntHull.size());
-
-
-        double dFrames = m_nBufferSize/m_nInputChannels;
-
-//        m_dCorrelation = dCorrelation / dFrames;
-        m_dCorrelation = dProduct/sqrt(dBalance[0]*dBalance[1]);
-
-        dBalance[1] = max(0.0, sqrt(dBalance[1]/dFrames));
-        dBalance[0] = max(0.0, sqrt(dBalance[0]/dFrames));
-
-        if(dBalance[1] > dBalance[0])
-        {
-            dBalance[0] /= dBalance[1];
-            m_dBalance = 1.0-dBalance[0];
-        }
-        else
-        {
-            dBalance[1] /= dBalance[0];
-            m_dBalance = -(1.0-dBalance[1]);
-        }
-
-
-
-        m_lstCorrelation.push_back(m_dCorrelation);
-        if(m_lstCorrelation.size() > 40)
-        {
-            m_lstCorrelation.pop_front();
-        }
-
-        m_lstBalance.push_back(m_dBalance);
-        if(m_lstBalance.size() > 10)
-        {
-            m_lstBalance.pop_front();
-        }
+        dc.DrawPolygon(pntHull.size(), &pntHull[0]);
     }
 }
 
@@ -462,6 +422,7 @@ void PolarScope::SetAudioData(const timedbuffer* pBuffer)
     memcpy(m_pBuffer, pBuffer->GetBuffer(), m_nBufferSize*sizeof(float));
 
     WorkoutLevel();
+    WorkoutBalance();
 
     Refresh();
 }
@@ -629,4 +590,10 @@ rgb PolarScope::hsv2rgb(hsv in)
         break;
     }
     return out;
+}
+
+void PolarScope::SetMode(int nMode)
+{
+    m_nMode = nMode;
+    Refresh();
 }

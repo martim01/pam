@@ -3,6 +3,7 @@
 #include "settings.h"
 #include "settingevent.h"
 #include "polarscopemeter.h"
+#include "pnlOptionsMode.h"
 #include <wx/log.h>
 
 using namespace std;
@@ -11,10 +12,7 @@ PolarScopeBuilder::PolarScopeBuilder() : MonitorPluginBuilder(),
 m_pPolarScope(0)
 {
 
-    RegisterForSettingsUpdates(wxT("Routing"), this);
-    RegisterForSettingsUpdates(wxT("Timeframe"), this);
-    RegisterForSettingsUpdates(wxT("RefreshRate"), this);
-    RegisterForSettingsUpdates(wxT("MeterMode"), this);
+    RegisterForSettingsUpdates(wxT("Mode"), this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&PolarScopeBuilder::OnSettingChanged);
 
@@ -43,9 +41,10 @@ list<pairOptionPanel_t> PolarScopeBuilder::CreateOptionPanels(wxWindow* pParent)
 {
     list<pairOptionPanel_t> lstOptionPanels;
 
+
 //    m_ppnlRouting = new pnlRouting(pParent, this);
 
-//    lstOptionPanels.push_back(make_pair(wxT("Routing"), m_ppnlRouting));
+    lstOptionPanels.push_back(make_pair(wxT("Mode"), new pnlOptionsMode(pParent, this)));
 //    lstOptionPanels.push_back(make_pair(wxT("Time"), new pnlDisplay(pParent, this)));
 //    lstOptionPanels.push_back(make_pair(wxT("Meter"), new pnlMeters(pParent, this)));
 //    lstOptionPanels.push_back(make_pair(wxT("Options"), pOptions));
@@ -78,6 +77,10 @@ void PolarScopeBuilder::OutputChannels(const std::vector<char>& vChannels)
 
 void PolarScopeBuilder::OnSettingChanged(SettingEvent& event)
 {
+    if(event.GetKey() == wxT("Mode"))
+    {
+        m_pPolarScope->SetMode(ReadSetting(wxT("Mode"),0));
+    }
 //    if(event.GetKey() == wxT("Routing"))
 //    {
 //        m_nDisplayChannel = ReadSetting(wxT("Routing"),0);
