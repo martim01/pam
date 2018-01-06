@@ -273,7 +273,7 @@ void pnlSettingsPlugins::ShowMonitorPlugins()
         wxString sPlugin = MonitorPluginFactory::Get()->GetPluginName(sLibDir, sLibToLoad);
         if(sPlugin != wxEmptyString)
         {
-            if(m_mPossible.insert(make_pair(sPlugin, fnLib.GetName())).second)
+            if(m_mPossible.insert(make_pair(sPlugin, sLibToLoad)).second)
             {
                 m_plstPossible->AddButton(sPlugin);
             }
@@ -322,7 +322,7 @@ void pnlSettingsPlugins::ShowTestPlugins()
         wxString sPlugin = TestPluginFactory::Get()->GetPluginName(sLibDir, sLibToLoad);
         if(sPlugin != wxEmptyString)
         {
-            if(m_mPossible.insert(make_pair(sPlugin, fnLib.GetName())).second)
+            if(m_mPossible.insert(make_pair(sPlugin, sLibToLoad)).second)
             {
                 m_plstPossible->AddButton(sPlugin);
             }
