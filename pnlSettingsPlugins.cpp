@@ -231,6 +231,7 @@ void pnlSettingsPlugins::ShowMonitorPlugins()
 
     ClearLists();
 
+
     #ifdef PAMBASE_DEBUG
     wxString sLibDir = wxT("./lib/debug");
     #else

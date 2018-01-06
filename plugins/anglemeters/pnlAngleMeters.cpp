@@ -46,7 +46,15 @@ pnlAngleMeters::~pnlAngleMeters()
 
 void pnlAngleMeters::SetSession(const session& aSession)
 {
-    m_nInputChannels = aSession.nChannels;
+    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    {
+        m_nInputChannels = aSession.itCurrentSubsession->nChannels;
+    }
+    else
+    {
+        m_nInputChannels = 0;
+    }
+
     m_pCalculator->InputSession(aSession);
     CreateMeters();
 }

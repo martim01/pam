@@ -14,8 +14,8 @@
 				<Option projectIncludeDirsRelation="1" />
 				<Option projectLibDirsRelation="1" />
 				<Compiler>
+					<Add option="-O3" />
 					<Add option="-Wall" />
-					<Add option="-g" />
 					<Add option="-DWIN32" />
 					<Add option="-D_USRDLL" />
 					<Add option="-DDLL_EXPORTS" />
@@ -31,6 +31,7 @@
 					<Add directory="$(#wx3_0.include)/mswu" />
 				</ResourceCompiler>
 				<Linker>
+					<Add option="-s" />
 					<Add option="-Wl,--enable-auto-import,-Map=pambase.map" />
 					<Add library="wxmsw30u_gcc_wammacs" />
 					<Add library="portaudio" />
@@ -54,6 +55,7 @@
 					<Add option="-D__WXMSW__" />
 					<Add option="-DWXUSINGDLL" />
 					<Add option="-DUNICODE" />
+					<Add option="-DPAMBASE_DEBUG" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXDEBUG__" />
 					<Add directory="$(#wx3_0.include)" />

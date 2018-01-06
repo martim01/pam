@@ -101,7 +101,12 @@ void pnlPeakLog::InputSession(const session& aSession)
     {
         delete m_ploud;
     }
-    m_ploud = new loud(aSession.nChannels);
+    m_nChannels = 0;
+    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    {
+        m_nChannels = aSession.itCurrentSubsession->nChannels;
+    }
+    m_ploud = new loud(m_nChannels);
 
     m_pLevelGraph_Day->DeleteAllGraphs();
     m_pLevelGraph_Hour->DeleteAllGraphs();
@@ -110,7 +115,7 @@ void pnlPeakLog::InputSession(const session& aSession)
 
     m_plstGraphs->Clear();
 
-    for(int i = 0; i < aSession.nChannels; i++)
+    for(int i = 0; i < m_nChannels; i++)
     {
         m_pLevelGraph_Day->AddGraph(GRAPH_LINES[i], COLOUR_LINES[i]);
         m_pLevelGraph_Hour->AddGraph(GRAPH_LINES[i], COLOUR_LINES[i]);
@@ -119,7 +124,6 @@ void pnlPeakLog::InputSession(const session& aSession)
 
         m_plstGraphs->AddButton(wxString::Format(wxT("Hide %s"), GRAPH_LINES[i].c_str()));
     }
-    m_nChannels = aSession.nChannels;
 }
 
 void pnlPeakLog::SetAudioData(const timedbuffer* pBuffer)

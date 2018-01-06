@@ -7,6 +7,7 @@
 #include "wxsink.h"
 
 class RtpThread;
+
 class qosMeasurementRecord;
 
 static unsigned nextQOSMeasurementUSecs;
@@ -18,6 +19,8 @@ static unsigned nextQOSMeasurementUSecs;
 void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultString);
 void continueAfterSETUP(RTSPClient* rtspClient, int resultCode, char* resultString);
 void continueAfterPLAY(RTSPClient* rtspClient, int resultCode, char* resultString);
+
+void saveAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultString);
 
 // Other event handler functions:
 void subsessionAfterPlaying(void* clientData); // called when a stream's subsession (e.g., audio or video substream) ends

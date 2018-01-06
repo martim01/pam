@@ -67,9 +67,10 @@ wxString wxbuildinfo(wxbuildinfoformat format)
 const long pam2Dialog::ID_M_PSWP1 = wxNewId();
 const long pam2Dialog::ID_M_PLST1 = wxNewId();
 const long pam2Dialog::ID_M_PLST2 = wxNewId();
+const long pam2Dialog::ID_PANEL2 = wxNewId();
 const long pam2Dialog::ID_M_PSWP2 = wxNewId();
 const long pam2Dialog::ID_PANEL1 = wxNewId();
-const long pam2Dialog::ID_PANEL2 = wxNewId();
+const long pam2Dialog::ID_TIMER1 = wxNewId();
 //*)
 
 using   namespace std;
@@ -92,11 +93,11 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_pswpMain = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(0,0), wxSize(600,480), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
     m_pswpMain->SetPageNameStyle(0);
     pnlLists = new wxPanel(this, ID_PANEL1, wxPoint(600,0), wxSize(200,480), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
-    m_plstScreens = new wmList(pnlLists, ID_M_PLST1, wxPoint(0,0), wxSize(200,136), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
+    m_plstScreens = new wmList(pnlLists, ID_M_PLST1, wxPoint(0,0), wxSize(200,139), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
     m_plstScreens->SetBackgroundColour(wxColour(0,0,0));
     m_plstScreens->SetButtonColour(wxColour(wxT("#008000")));
     m_plstScreens->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
-    m_plstOptions = new wmList(pnlLists, ID_M_PLST2, wxPoint(0,136), wxSize(200,132), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
+    m_plstOptions = new wmList(pnlLists, ID_M_PLST2, wxPoint(0,140), wxSize(200,125), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
     m_plstOptions->SetBackgroundColour(wxColour(0,0,0));
     m_plstOptions->SetButtonColour(wxColour(wxT("#000080")));
     m_plstOptions->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
@@ -106,13 +107,13 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Panel1 = new wxPanel(m_pswpOptions, ID_PANEL2, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL2"));
     Panel1->SetBackgroundColour(wxColour(0,0,0));
     m_pswpOptions->AddPage(Panel1, _("Blank"), false);
+    timerStart.SetOwner(this, ID_TIMER1);
+    timerStart.Start(10, true);
 
     Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnlstScreensSelected);
     Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnplstOptionsSelected);
-
+    Connect(ID_TIMER1,wxEVT_TIMER,(wxObjectEventFunction)&pam2Dialog::OntimerStartTrigger);
     //*)
-
-    wmLog::Get();
 
     m_plstScreens->SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
     m_plstOptions->SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
@@ -147,31 +148,10 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
 
 
-    LoadMonitorPanels();
-
-    m_pSession = 0;
-
-    //check which page we need.
-    wxString sPanel(Settings::Get().Read(wxT("Main"), wxT("Monitor"), wxEmptyString));
-
-    for(multimap<size_t, wxString>::iterator itPage = m_mmMonitorPlugins.begin(); itPage != m_mmMonitorPlugins.end(); ++itPage)
-    {
-        if(itPage->second == sPanel)
-        {
-            m_nCurrentMonitorPage = itPage->first;
-            ShowMonitorList();
-            break;
-        }
-    }
-
-
-    m_plstScreens->SelectButton(sPanel);
-
-    CreateAudioInputDevice();
 
     m_pPlayback = 0;
-    m_pPlayback = new Playback();
-    m_pPlayback->Init(this, 2048);
+
+
 }
 
 pam2Dialog::~pam2Dialog()
@@ -194,10 +174,6 @@ pam2Dialog::~pam2Dialog()
         delete m_pPlayback;
     }
 
-    if(m_pSession)
-    {
-        delete m_pSession;
-    }
     Pa_Terminate();
 }
 
@@ -492,8 +468,9 @@ void pam2Dialog::CreateAudioInputDevice()
         m_pAudio = new Audio(this, Settings::Get().Read(wxT("Input"), wxT("Device"), 0));
         m_pAudio->Init();
 
-        //tell all the plugins what the input session is...
-        session aSession(m_pAudio->GetDeviceName(), wxEmptyString, wxT("Soundcard"), wxT("Audio"), wxEmptyString, wxEmptyString, m_pAudio->GetDevice(), m_pAudio->GetSampleRate(), m_pAudio->GetNumberOfChannels(), 0, make_pair(0,0));
+        session aSession(wxEmptyString, m_pAudio->GetDeviceName(), wxT("Soundcard"));
+        aSession.lstSubsession.push_back(subsession(wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, m_pAudio->GetDevice(), m_pAudio->GetSampleRate(), m_pAudio->GetNumberOfChannels(), wxEmptyString, 0, make_pair(0,0), refclk()));
+        aSession.itCurrentSubsession = aSession.lstSubsession.begin();
 
 
         InputSession(aSession);
@@ -680,17 +657,19 @@ void pam2Dialog::OnRTPSessionClosed(wxCommandEvent& event)
 
 void pam2Dialog::OnRTPSession(wxCommandEvent& event)
 {
-    if(m_pSession)
+
+    m_Session = *reinterpret_cast<session*>(event.GetClientData());
+
+    InputSession(m_Session);
+
+    if(m_Session.itCurrentSubsession != m_Session.lstSubsession.end())
     {
-        delete m_pSession;
+        CheckPlayback(m_Session.itCurrentSubsession->nSampleRate, m_Session.itCurrentSubsession->nChannels);
     }
-
-    m_pSession = reinterpret_cast<session*>(event.GetClientData());
-
-    InputSession(*m_pSession);
-
-
-    CheckPlayback(m_pSession->nSampleRate, m_pSession->nChannels);
+    else
+    {
+        CheckPlayback(0,0);
+    }
 
 
 }
@@ -743,9 +722,9 @@ void pam2Dialog::OnMonitorRequest(MonitorEvent& event)
     if(m_pPlayback && event.GetChannels().size() >=2)
     {
         unsigned int nInputChannels(0);
-        if(m_pSession)
+        if(m_Session.itCurrentSubsession != m_Session.lstSubsession.end())
         {
-            nInputChannels = m_pSession->nChannels;
+            nInputChannels = m_Session.itCurrentSubsession->nChannels;
         }
         m_pPlayback->SetMixer(event.GetChannels(), nInputChannels);
         //@todo make this multichannel
@@ -775,12 +754,34 @@ void pam2Dialog::TellPluginsAboutOutputChannels()
 
 void pam2Dialog::ClearSession()
 {
-    session aSession(wxEmptyString, wxEmptyString, wxEmptyString, wxT("Audio"), wxEmptyString, wxEmptyString, 0, 48000, 0, 0, make_pair(0,0));
-
-    InputSession(aSession);
-
+    InputSession(session());
     CheckPlayback(48000,0);
 }
 
 
 
+
+void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
+{
+    wmLog::Get();
+
+    LoadMonitorPanels();
+    //check which page we need.
+    wxString sPanel(Settings::Get().Read(wxT("Main"), wxT("Monitor"), wxEmptyString));
+
+    for(multimap<size_t, wxString>::iterator itPage = m_mmMonitorPlugins.begin(); itPage != m_mmMonitorPlugins.end(); ++itPage)
+    {
+        if(itPage->second == sPanel)
+        {
+            m_nCurrentMonitorPage = itPage->first;
+            ShowMonitorList();
+            break;
+        }
+    }
+
+
+    m_plstScreens->SelectButton(sPanel);
+    CreateAudioInputDevice();
+    m_pPlayback = new Playback();
+    m_pPlayback->Init(this, 2048);
+}

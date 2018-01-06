@@ -89,7 +89,14 @@ void pnlLevels::ResetTest()
 
 void pnlLevels::InputSession(const session& aSession)
 {
-    CreateGraphs(aSession.nChannels);
+    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    {
+        CreateGraphs(aSession.itCurrentSubsession->nChannels);
+    }
+    else
+    {
+        CreateGraphs(0);
+    }
 }
 
 void pnlLevels::CreateGraphs(unsigned int nChannels)

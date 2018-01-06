@@ -64,9 +64,16 @@ void PolarScopeBuilder::LoadSettings()
 
 void PolarScopeBuilder::InputSession(const session& aSession)
 {
-    m_pPolarScope->SetNumberOfInputChannels(aSession.nChannels);
-    m_nInputChannels = aSession.nChannels;
-//    m_ppnlRouting->SetNumberOfChannels(aSession.nChannels);
+    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    {
+        m_pPolarScope->SetNumberOfInputChannels(aSession.itCurrentSubsession->nChannels);
+        m_nInputChannels = aSession.itCurrentSubsession->nChannels;
+    }
+    else
+    {
+        m_pPolarScope->SetNumberOfInputChannels(0);
+        m_nInputChannels = 0;
+    }
     ClearMeter();
 }
 

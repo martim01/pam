@@ -2,6 +2,7 @@
 #include "Groupsock.hh"
 #include "GroupsockHelper.hh"
 #include "BasicUsageEnvironment.hh"
+#include "PamTaskScheduler.h"
 #include <stdio.h>
 #include <wx/string.h>
 #include <wx/log.h>
@@ -19,19 +20,21 @@ SapWatchThread::SapWatchThread(wxEvtHandler* pParent) : m_pParent(pParent)
 void* SapWatchThread::Entry()
 {
     // Begin by setting up our usage environment:
-    TaskScheduler* scheduler = BasicTaskScheduler::createNew();
+    TaskScheduler* scheduler = PamTaskScheduler::createNew();
     UsageEnvironment* env = BasicUsageEnvironment::createNew(*scheduler);
 
 
-      // Create a 'groupsock' for the input multicast group,port:
-      char const* sessionAddressStr = "239.255.255.255";
-      struct in_addr sessionAddress;
-      sessionAddress.s_addr = our_inet_addr(sessionAddressStr);
+    // Create a 'groupsock' for the input multicast group,port:
+    char const* sessionAddressStr = "239.255.255.255";
+    struct in_addr sessionAddress;
+    sessionAddress.s_addr = our_inet_addr(sessionAddressStr);
 
     const Port port(9875);
     const unsigned char ttl = 0; // we're only reading from this mcast group
 
     Groupsock inputGroupsock(*env, sessionAddress, port, ttl);
+    int nResult = makeSocketBlocking(inputGroupsock.socketNum(), 1000);
+    wxLogMessage(wxT("Blocking %d"), nResult);
 
     // Start reading and printing incoming packets
     // (Because this is the only thing we do, we can just do this
@@ -39,12 +42,17 @@ void* SapWatchThread::Entry()
     // event handler like we do in most of the other test programs.)
     unsigned packetSize;
     struct sockaddr_in fromAddress;
-    while (inputGroupsock.handleRead(m_packet, 65536, packetSize, fromAddress) && !TestDestroy())
+    while (inputGroupsock.handleRead(m_packet, 65536, packetSize, fromAddress))
     {
+        if(TestDestroy())
+        {
+            break;
+        }
+
+        wxLogMessage(wxT("SAP INSIDE"));
         // Ignore the first 8 bytes (SAP header).
         if (packetSize >= 8)
         {
-
             // convert "application/sdp\0" -> "application/sdp\0x20"
             // or all other nonprintable characters to blank, except new line
             unsigned idx = 8;
@@ -66,6 +74,8 @@ void* SapWatchThread::Entry()
                 wxPostEvent(m_pParent, event);
             }
         }
+        ::wxMilliSleep(10);
     }
+    wxLogMessage(wxT("SAP EXIT"));
     return NULL;
 }

@@ -5,7 +5,6 @@
 #include <wx/log.h>
 #include "aes67mediasession.h"
 
-
 UsageEnvironment& operator<<(UsageEnvironment& env, const RTSPClient& rtspClient)
 {
     return env << "[URL:\"" << rtspClient.url() << "\"]: ";
@@ -14,7 +13,7 @@ UsageEnvironment& operator<<(UsageEnvironment& env, const RTSPClient& rtspClient
 //// A function that outputs a string that identifies each subsession (for debugging output).  Modify this if you wish:
 UsageEnvironment& operator<<(UsageEnvironment& env, const MediaSubsession& subsession)
 {
-    return env << subsession.mediumName() << "/" << subsession.codecName();
+    return env << subsession.sessionId() << ":" <<  subsession.mediumName() << "/" << subsession.codecName();
 }
 
 
@@ -25,18 +24,18 @@ qosMeasurementRecord* g_pRecord = NULL;
 
 void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultString)
 {
-    do
+    bool bSuccess(true);
+    UsageEnvironment& env = rtspClient->envir(); // alias
+    StreamClientState& scs = ((ourRTSPClient*)rtspClient)->scs; // alias
+
+    if (resultCode != 0)
     {
-        UsageEnvironment& env = rtspClient->envir(); // alias
-        StreamClientState& scs = ((ourRTSPClient*)rtspClient)->scs; // alias
-
-        if (resultCode != 0)
-        {
-            env << *rtspClient << "Failed to get a SDP description: " << resultString << "\n";
-            delete[] resultString;
-            break;
-        }
-
+        env << *rtspClient << "Failed to get a SDP description: " << resultString << "\n";
+        delete[] resultString;
+        bSuccess = false;
+    }
+    else
+    {
         char* const sdpDescription = resultString;
         env << *rtspClient << "Got a SDP description:\n" << sdpDescription << "\n";
 
@@ -46,30 +45,56 @@ void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultS
         if (scs.session == NULL)
         {
             env << *rtspClient << "Failed to create a MediaSession object from the SDP description: " << env.getResultMsg() << "\n";
-            break;
+            bSuccess = false;
         }
         else if (!scs.session->hasSubsessions())
         {
             env << *rtspClient << "This session has no media subsessions (i.e., no \"m=\" lines)\n";
-            break;
+            bSuccess = false;
         }
+        else
+        {
+            int nCount(0);
+            MediaSubsessionIterator* pIter = new MediaSubsessionIterator(*scs.session);
+            MediaSubsession* pSub = NULL;
+            do
+            {
+                pSub = pIter->next();
+                if(pSub)
+                {
+                    nCount++;
+                }
+            }while(pSub);
 
-        // Then, create and set up our data source objects for the session.  We do this by iterating over the session's 'subsessions',
-        // calling "MediaSubsession::initiate()", and then sending a RTSP "SETUP" command, on each one.
-        // (Each 'subsession' will have its own data source.)
-        scs.iter = new MediaSubsessionIterator(*scs.session);
-        setupNextSubsession(rtspClient);
-        return;
+            // calling "MediaSubsession::initiate()", and then sending a RTSP "SETUP" command, on each one.
+            // (Each 'subsession' will have its own data source.)
+            scs.iter = new MediaSubsessionIterator(*scs.session);
+            setupNextSubsession(rtspClient);
+        }
     }
-    while (0);
+    if(!bSuccess)
+    {
+        // An unrecoverable error occurred with this stream.
+        shutdownStream(rtspClient);
+    }
+}
 
+void saveAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultString)
+{
+    bool bSuccess(true);
+    ourRTSPClient* pClient = dynamic_cast<ourRTSPClient*>(rtspClient);
+    if(pClient)
+    {
+        pClient->GetHandler()->SaveSDP(resultCode, wxString::FromAscii(resultString));
+    }
+
+    delete[] resultString;
     // An unrecoverable error occurred with this stream.
     shutdownStream(rtspClient);
 }
 
-// By default, we request that the server stream its data using RTP/UDP.
-// If, instead, you want to request that the server stream via RTP-over-TCP, change the following to True:
-#define REQUEST_STREAMING_OVER_TCP False
+
+
 
 void setupNextSubsession(RTSPClient* rtspClient)
 {
@@ -86,7 +111,7 @@ void setupNextSubsession(RTSPClient* rtspClient)
         }
         else
         {
-            env << *rtspClient << "Initiated the \"" << *scs.subsession << "\" subsession (";
+            env << *rtspClient << "Initiated the \"" <<scs.subsession->sessionId()<< /*<< *scs.subsession <<*/ "\" subsession (";
             if (scs.subsession->rtcpIsMuxed())
             {
                 env << "client port " << scs.subsession->clientPortNum();
@@ -95,12 +120,19 @@ void setupNextSubsession(RTSPClient* rtspClient)
             {
                 env << "client ports " << scs.subsession->clientPortNum() << "-" << scs.subsession->clientPortNum()+1;
             }
-            env << ")\n";
+            env << "  SubsessionId: " << scs.subsession->sessionId() << "\n";
+
 
             // Continue setting up this subsession, by sending a RTSP "SETUP" command:
-            rtspClient->sendSetupCommand(*scs.subsession, continueAfterSETUP, False, REQUEST_STREAMING_OVER_TCP);
+            rtspClient->sendSetupCommand(*scs.subsession, continueAfterSETUP, False, False);
         }
         return;
+    }
+
+    ourRTSPClient* pClient = dynamic_cast<ourRTSPClient*>(rtspClient);
+    if(pClient)
+    {
+        pClient->GetHandler()->PassSessionDetails(dynamic_cast<Aes67MediaSession*>(scs.session));
     }
 
     // We've finished setting up all of the subsessions.  Now, send a RTSP "PLAY" command to start the streaming:
@@ -164,13 +196,7 @@ void continueAfterSETUP(RTSPClient* rtspClient, int resultCode, char* resultStri
             scs.subsession->rtcpInstance()->setByeHandler(subsessionByeHandler, scs.subsession);
         }
 
-        Aes67MediaSubsession* pAesSubsession = dynamic_cast<Aes67MediaSubsession*>(scs.subsession);
-        if(pAesSubsession && scs.session)
-        {
-            pClient->GetHandler()->PassSessionDetails(wxString::FromAscii(scs.session->sessionName()), pAesSubsession->GetEndpoint(), wxString::FromAscii(scs.session->mediaSessionType()), wxString::FromAscii(pAesSubsession->mediumName()), wxString::FromAscii(pAesSubsession->codecName()), wxString::FromAscii(pAesSubsession->protocolName()), pAesSubsession->clientPortNum(), pAesSubsession->rtpTimestampFrequency(), pAesSubsession->numChannels(), pAesSubsession->GetSyncTime(), pAesSubsession->GetLastEpoch());
-        }
-            }
-    while (0);
+    }while (0);
     delete[] resultString;
 
     // Set up the next subsession, if any:

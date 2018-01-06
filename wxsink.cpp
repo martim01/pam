@@ -6,6 +6,7 @@
 #endif
 
 #include "aes67source.h"
+#include "aes67mediasession.h"
 
 // Even though we're not going to be doing anything with the incoming data, we still need to receive it.
 // Define the size of the buffer that we'll use:
@@ -20,7 +21,7 @@ wxSink* wxSink::createNew(UsageEnvironment& env, MediaSubsession& subsession, Rt
 
 wxSink::wxSink(UsageEnvironment& env, MediaSubsession& subsession,RtpThread* pHandler, char const* streamId)
     : MediaSink(env),
-      fSubsession(subsession),
+      m_pSubsession(dynamic_cast<Aes67MediaSubsession*>(&subsession)),
       m_pHandler(pHandler)
 {
     fStreamId = strDup(streamId);
@@ -46,9 +47,10 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
 {
     // We've just received a frame of data.  (Optionally) print out information about it:
 
-    if(strcmp(fSubsession.mediumName(), "audio") == 0)
+    if(strcmp(m_pSubsession->mediumName(), "audio") == 0)
     {
-        Aes67Source* pSource = dynamic_cast<Aes67Source*>(fSubsession.rtpSource());
+        Aes67Source* pSource = dynamic_cast<Aes67Source*>(m_pSubsession->rtpSource());
+
 
         if(m_nLastTimestamp > pSource->GetRTPTimestamp())   //this means we must have crossed an Epoch
         {
@@ -56,13 +58,13 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
         }
         m_nLastTimestamp = pSource->GetRTPTimestamp();
 
-        if(strcmp(fSubsession.codecName(),"L16") == 0)
+        if(strcmp(m_pSubsession->codecName(),"L16") == 0)
         {
-            m_pHandler->AddFrame(presentationTime, frameSize, fReceiveBuffer, 2, pSource->GetTransmissionTime(), pSource->GetRTPTimestamp(),frameSize);
+            m_pHandler->AddFrame(m_pSubsession->GetEndpoint(),  pSource->lastReceivedSSRC(), presentationTime, frameSize, fReceiveBuffer, 2, pSource->GetTransmissionTime(), pSource->GetRTPTimestamp(),frameSize);
         }
-        else if(strcmp(fSubsession.codecName(),"L24") == 0)
+        else if(strcmp(m_pSubsession->codecName(),"L24") == 0)
         {
-            m_pHandler->AddFrame(presentationTime, frameSize, fReceiveBuffer, 3, pSource->GetTransmissionTime(), pSource->GetRTPTimestamp(),frameSize);
+            m_pHandler->AddFrame(m_pSubsession->GetEndpoint(), pSource->lastReceivedSSRC(), presentationTime, frameSize, fReceiveBuffer, 3, pSource->GetTransmissionTime(), pSource->GetRTPTimestamp(),frameSize);
         }
 
 

@@ -6,6 +6,7 @@
 #include "timedbuffer.h"
 
 class RtpThread;
+class Aes67MediaSubsession;
 
 class wxSink: public MediaSink
 {
@@ -33,7 +34,7 @@ private:
 
 private:
     u_int8_t* fReceiveBuffer;
-    MediaSubsession& fSubsession;
+    Aes67MediaSubsession* m_pSubsession;
     RtpThread* m_pHandler;
     char* fStreamId;
 

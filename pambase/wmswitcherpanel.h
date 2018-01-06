@@ -160,7 +160,8 @@ class PAMBASE_IMPEXPORT wmSwitcherPanel : public wxPanel
     private:
         void OnSize(wxSizeEvent& event);
         void OnPaint(wxPaintEvent& event);
-
+        void OnLeftDown(wxMouseEvent& event);
+        void OnLeftUp(wxMouseEvent& event);
         void OnScroll(wxTimerEvent& event);
 
         void DrawScroll();

@@ -11,6 +11,8 @@ const long wmSwitcherPanel::ID_SCROLLING     = wxNewId();
 BEGIN_EVENT_TABLE(wmSwitcherPanel, wxPanel)
     EVT_SIZE(wmSwitcherPanel::OnSize)
     EVT_PAINT(wmSwitcherPanel::OnPaint)
+    EVT_LEFT_DOWN(wmSwitcherPanel::OnLeftDown)
+    EVT_LEFT_UP(wmSwitcherPanel::OnLeftUp)
     EVT_TIMER(ID_SCROLLING, wmSwitcherPanel::OnScroll)
 END_EVENT_TABLE()
 
@@ -593,4 +595,39 @@ wxString wmSwitcherPanel::GetPageText(size_t nPage)
         return m_vPages[nPage].sPage;
     }
     return wxEmptyString;
+}
+
+
+
+void wmSwitcherPanel::OnLeftDown(wxMouseEvent& event)
+{
+    CaptureMouse();
+    m_bDownInWindow = true;
+    m_pntMouse = event.GetPosition();
+    m_nSwipePage = 0xFFFFFFFF;
+    for(size_t i = 0; i < m_vPages.size(); ++i)
+    {
+        if(m_vPages[i].uiLabel.Contains(event.GetPosition()))
+        {
+            m_nSwipePage = i;
+            break;
+        }
+    }
+
+    m_nSwipeCount = 0;
+    m_nSwipeTotal = 0;
+}
+
+void wmSwitcherPanel::OnLeftUp(wxMouseEvent& event)
+{
+    m_bDownInWindow = false;
+    if(m_nSwipePage != 0xFFFFFFFF && m_vPages[m_nSwipePage].uiLabel.Contains(event.GetPosition()))
+    {
+        ChangeSelection(m_nSwipePage);
+    }
+
+    if(HasCapture())
+    {
+        ReleaseMouse();
+    }
 }

@@ -10,14 +10,14 @@
 #include "session.h"
 
 struct qosData;
-
+class Aes67MediaSession;
 
 class RtpThread : public wxThread
 {
     public:
-        RtpThread(wxEvtHandler* pHandler, const wxString& sProg, const wxString& sUrl, unsigned int nBufferSize);
+        RtpThread(wxEvtHandler* pHandler, const wxString& sProg, const wxString& sUrl, unsigned int nBufferSize, bool bSaveSDPOnly = false);
         void* Entry();
-        void AddFrame(const pairTime_t& timePresentation, unsigned long nFrameSize, u_int8_t* pBuffer, u_int8_t nBits, const pairTime_t& timeTransmission, unsigned int nTimestamp,unsigned int nDuration);
+        void AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const pairTime_t& timePresentation, unsigned long nFrameSize, u_int8_t* pBuffer, u_int8_t nBits, const pairTime_t& timeTransmission, unsigned int nTimestamp,unsigned int nDuration);
 
         void StopStream();
 
@@ -33,9 +33,12 @@ class RtpThread : public wxThread
 
         void QosUpdated(qosData* pData);
 
-        void PassSessionDetails(const wxString& sSessionName, const wxString& sEndpoint, const wxString& sSessionType, const wxString& sMedium, const wxString& sCodec,const wxString& sProtocol, unsigned int nPort, unsigned int nFrequency, unsigned int nNumChannels, unsigned int nSyncTimestamp, const pairTime_t& tvEpoch);
+        void PassSessionDetails(Aes67MediaSession* pSession);
+
 
         bool openURL();
+
+        void SaveSDP(unsigned int nResult, const wxString& sResult);
 
         pairTime_t ConvertDoubleToPairTime(double dTime);
         wxEvtHandler* m_pHandler;
@@ -59,11 +62,14 @@ class RtpThread : public wxThread
         UsageEnvironment* m_penv;
 
         RTSPClient* m_pRtspClient;
+        Aes67MediaSession* m_pSession;
         unsigned int m_nInputChannels;
 
         char m_eventLoopWatchVariable;
 
         bool m_bClosing;
+        bool m_bSaveSDP;
+        session m_Session;
 
 };
 
@@ -71,3 +77,5 @@ class RtpThread : public wxThread
 DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_QOS_UPDATED,-1)
 DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_RTP_SESSION,-1)
 DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_RTP_SESSION_CLOSED,-1)
+DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_SDP,-1)
+

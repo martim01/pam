@@ -153,15 +153,27 @@ pnlMeters::~pnlMeters()
 
 void pnlMeters::SetSession(const session& aSession)
 {
-    m_plblInput->SetLabel(aSession.sProtocol);
-    m_plblSessionName->SetLabel(aSession.sName);
-    m_plblSessionSource->SetLabel(aSession.sEndpoint);
     m_plblSessionType->SetLabel(aSession.sType);
-    m_plblSessionChannels->SetLabel(wxString::Format(wxT("%u"), aSession.nChannels));
-    m_plblSessionFrequency->SetLabel(wxString::Format(wxT("%u"), aSession.nSampleRate));
-    m_plblSessionBits->SetLabel(aSession.sCodec);
+    m_plblSessionName->SetLabel(aSession.sName);
 
-    m_nInputChannels = aSession.nChannels;
+    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    {
+        m_plblInput->SetLabel(aSession.itCurrentSubsession->sProtocol);
+        m_plblSessionSource->SetLabel(aSession.itCurrentSubsession->sSourceAddress);
+        m_plblSessionChannels->SetLabel(wxString::Format(wxT("%u"), aSession.itCurrentSubsession->nChannels));
+        m_plblSessionFrequency->SetLabel(wxString::Format(wxT("%u"), aSession.itCurrentSubsession->nSampleRate));
+        m_plblSessionBits->SetLabel(aSession.itCurrentSubsession->sCodec);
+        m_nInputChannels = aSession.itCurrentSubsession->nChannels;
+    }
+    else
+    {
+        m_plblInput->SetLabel(wxEmptyString);
+        m_plblSessionSource->SetLabel(wxEmptyString);
+        m_plblSessionChannels->SetLabel(wxT("0"));
+        m_plblSessionFrequency->SetLabel(wxT("----"));
+        m_plblSessionBits->SetLabel(wxEmptyString);
+        m_nInputChannels = 0;
+    }
 
     for(size_t i = 0; i < m_vMeters.size(); i++)
     {
@@ -180,10 +192,10 @@ void pnlMeters::SetSession(const session& aSession)
     m_pCalculator->InputSession(aSession);
 
     int x = 55;
-    if(aSession.nChannels != 2) //not stereo
+    if(m_nInputChannels != 2) //not stereo
     {
-        m_vMeters.resize(aSession.nChannels);
-        m_vMonitor.resize(aSession.nChannels/2);
+        m_vMeters.resize(m_nInputChannels);
+        m_vMonitor.resize(m_nInputChannels/2);
 
         for(unsigned long i = 0; i < m_vMeters.size(); i++)
         {
@@ -217,7 +229,7 @@ void pnlMeters::SetSession(const session& aSession)
 
     for(size_t i = 0; i < m_vMeters.size(); i++)
     {
-        m_vMeters[i]->SetNumberOfChannels(aSession.nChannels);
+        m_vMeters[i]->SetNumberOfChannels(m_nInputChannels);
         m_vMeters[i]->SetLevels(dLevels,15);
         m_vMeters[i]->SetShading(m_pBuilder->ReadSetting(wxT("Shading"),0)==1);
         m_vMeters[i]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlMeters::OnInfoLeftUp,0,this);

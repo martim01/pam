@@ -11,12 +11,17 @@
 #define PAM2MAIN_H
 
 //(*Headers(pam2Dialog)
+#include <wx/notebook.h>
+#include "wmswitcherpanel.h"
 #include <wx/panel.h>
 #include <wx/dialog.h>
+#include <wx/timer.h>
+#include "wmlist.h"
 //*)
 
 #include "wmswitcherpanel.h"
 #include "wmlist.h"
+#include "session.h"
 
 class Audio;
 class Playback;
@@ -45,6 +50,7 @@ class pam2Dialog: public wxDialog
         void OnAbout(wxCommandEvent& event);
         void OnlstScreensSelected(wxCommandEvent& event);
         void OnplstOptionsSelected(wxCommandEvent& event);
+        void OntimerStartTrigger(wxTimerEvent& event);
         //*)
 
         //(*Identifiers(pam2Dialog)
@@ -54,6 +60,7 @@ class pam2Dialog: public wxDialog
         static const long ID_PANEL2;
         static const long ID_M_PSWP2;
         static const long ID_PANEL1;
+        static const long ID_TIMER1;
         //*)
 
         //(*Declarations(pam2Dialog)
@@ -62,6 +69,7 @@ class pam2Dialog: public wxDialog
         wmList* m_plstOptions;
         wxPanel* Panel1;
         wmSwitcherPanel* m_pswpOptions;
+        wxTimer timerStart;
         wmSwitcherPanel* m_pswpMain;
         //*)
 
@@ -114,7 +122,7 @@ class pam2Dialog: public wxDialog
         std::set<wxString> m_setRtpOrphan;
         wxString m_sCurrentRtp;
 
-        session* m_pSession;
+        session m_Session;
 
 
         std::multimap<size_t, wxString> m_mmMonitorPlugins;

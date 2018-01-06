@@ -28,6 +28,9 @@ public:
         m_pHandler = pThread;
     }
 
+    void CountSubSession();
+    size_t GetSubSessionCount();
+
 
 protected:
     ourRTSPClient(UsageEnvironment& env, char const* rtspURL, RtpThread* pThread,
@@ -36,6 +39,9 @@ protected:
     virtual ~ourRTSPClient();
 
     RtpThread* m_pHandler;
+
+    size_t m_nSubsessions;
+
 public:
     StreamClientState scs;
 

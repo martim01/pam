@@ -1,6 +1,7 @@
 #pragma once
 #include "dlldefine.h"
 #include "timedbuffer.h"
+#include <list>
 
 
 struct PAMBASE_IMPEXPORT frameBuffer
@@ -17,22 +18,48 @@ struct PAMBASE_IMPEXPORT frameBuffer
 };
 
 
-struct PAMBASE_IMPEXPORT session
+struct PAMBASE_IMPEXPORT refclk
 {
-    session(const wxString& sn, const wxString sE, const wxString& st, const wxString& sm, const wxString& sc, const wxString& sp, unsigned int np, unsigned int nSr, unsigned int nCh, unsigned int nSync, const pairTime_t& tvE) :
-        sName(sn), sEndpoint(sE), sType(st), sMedium(sm), sCodec(sc), sProtocol(sp), nPort(np), nSampleRate(nSr), nChannels(nCh), nSyncTimestamp(nSync), tvEpoch(tvE){}
-    wxString sName;
-    wxString sEndpoint;
+    refclk() : nDomain(0){}
     wxString sType;
+    wxString sId;
+    wxString sVersion;
+    unsigned long nDomain;
+};
+
+struct PAMBASE_IMPEXPORT subsession
+{
+
+    subsession(const wxString& sourceaddress, const wxString& medium, const wxString& codec, const wxString& protocol, unsigned int port, unsigned int samplerate, unsigned int channels, const wxString& channelnames, unsigned int synctimestamp, const pairTime_t epoch, const refclk clk) :
+    sSourceAddress(sourceaddress), sMedium(medium), sCodec(codec), sProtocol(protocol), nPort(port), nSampleRate(samplerate),nChannels(channels),sChannelNames(channelnames),nSyncTimestamp(synctimestamp), tvEpoch(epoch),refClock(clk){}
+
+    wxString sSourceAddress;
     wxString sMedium;
     wxString sCodec;
     wxString sProtocol;
     unsigned int nPort;
     unsigned int nSampleRate;
     unsigned int nChannels;
-
+    wxString sChannelNames;
     unsigned int nSyncTimestamp;
     pairTime_t tvEpoch;
+    refclk refClock;
+
+};
+
+struct PAMBASE_IMPEXPORT session
+{
+    session(const wxString& sRaw=wxEmptyString, const wxString& sn=wxEmptyString, const wxString& st=wxEmptyString, const wxString& sD=wxEmptyString, const wxString& sGr=wxEmptyString) : sRawSDP(sRaw), sName(sn), sType(st), sDescription(sD), sGroups(sGr), itCurrentSubsession(lstSubsession.end()){}
+
+    wxString sRawSDP;
+    wxString sName;
+    wxString sType;
+    wxString sDescription;
+    wxString sGroups;
+    refclk refClock;
+
+    std::list<subsession> lstSubsession;
+    std::list<subsession>::iterator itCurrentSubsession;
 };
 
 

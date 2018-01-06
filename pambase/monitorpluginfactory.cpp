@@ -22,7 +22,10 @@ void MonitorPluginFactory::SetHandler(wxEvtHandler* pHandler)
 void MonitorPluginFactory::Register(MonitorPluginBuilder* pBuilder)
 {
     pBuilder->SetHandler(m_pHandler);
-    pBuilder->CreatePanels(m_pswpMonitor, m_pswpOptions);
+    if(m_pswpMonitor && m_pswpOptions)
+    {
+        pBuilder->CreatePanels(m_pswpMonitor, m_pswpOptions);
+    }
 
     m_mBuilders.insert(make_pair(pBuilder->GetName(), pBuilder));
 }
@@ -55,6 +58,7 @@ bool MonitorPluginFactory::LoadLibrary(const wxString& sLibrary)
             sLib = wxT("lib/") + sCan;
         #endif
         wxDynamicLibrary* pLib = new wxDynamicLibrary(sLib);
+
 
         if(pLib && pLib->IsLoaded())
         {

@@ -70,7 +70,14 @@ void LissajouBuilder::InputSession(const session& aSession)
     //check if we need to change our routing....
     if(m_ppnlRouting)
     {
-        m_ppnlRouting->SetNumberOfChannels(aSession.nChannels);
+        if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+        {
+            m_ppnlRouting->SetNumberOfChannels(aSession.itCurrentSubsession->nChannels);
+        }
+        else
+        {
+            m_ppnlRouting->SetNumberOfChannels(0);
+        }
     }
     if(m_pLissajou)
     {

@@ -2,49 +2,195 @@
 #include "UsageEnvironment.hh"
 #include "aes67source.h"
 #include <wx/string.h>
-
+#include <wx/tokenzr.h>
 #include <cmath>
 #include "timedbuffer.h"
 #include <wx/log.h>
 
-//static int gettimeofday(struct timeval * tp, struct timezone * tzp)
-//{
-//    // Note: some broken versions only have 8 trailing zero's, the correct epoch has 9 trailing zero's
-//    // This magic number is the number of 100 nanosecond intervals since January 1, 1601 (UTC)
-//    // until 00:00:00 January 1, 1970
-//    static const uint64_t EPOCH = ((uint64_t) 116444736000000000ULL);
-//
-//    SYSTEMTIME  system_time;
-//    FILETIME    file_time;
-//    uint64_t    time;
-//
-//    GetSystemTime( &system_time );
-//    SystemTimeToFileTime( &system_time, &file_time );
-//    time =  ((uint64_t)file_time.dwLowDateTime )      ;
-//    time += ((uint64_t)file_time.dwHighDateTime) << 32;
-//
-//    tp->tv_sec  = (long) ((time - EPOCH) / 10000000L);
-//    tp->tv_usec = (long) (system_time.wMilliseconds * 1000);
-//    return 0;
-//}
-
-
 using namespace std;
 
 Aes67MediaSession* Aes67MediaSession::createNew(UsageEnvironment& env,
-				      char const* sdpDescription)
+        char const* sdpDescription)
 {
     Aes67MediaSession* newSession = new Aes67MediaSession(env);
     if (newSession != NULL)
     {
+
+        newSession->initializeSMPTE_SDP(sdpDescription);
         if (!newSession->initializeWithSDP(sdpDescription))
         {
             delete newSession;
             return NULL;
         }
+
     }
 
-  return newSession;
+    return newSession;
+}
+
+void Aes67MediaSession::initializeSMPTE_SDP(char const* sdpDescription)
+{
+    if (sdpDescription == NULL)
+    {
+        return;
+    }
+
+    m_sRawSDP = wxString::FromAscii(sdpDescription);
+
+    // Begin by processing all SDP lines until we see the first "m="
+    char const* sdpLine = sdpDescription;
+    char const* nextSDPLine;
+    while (1)
+    {
+        if (!parseSDPLine(sdpLine, nextSDPLine))
+        {
+            return;
+        }
+        if (sdpLine[0] == 'm')
+        {
+            break;
+        }
+        sdpLine = nextSDPLine;
+        if (sdpLine == NULL)
+        {
+            break; // there are no m= lines at all
+        }
+
+        // Check for various special SMPTE 2110 and AES56 and Ravenna SDP lines that we understand:
+        if (parseSDPAttribute_RefClk(sdpLine)) continue;
+        if (parseSDPAttribute_ClockDomain(sdpLine)) continue;
+        if (parseSDPAttribute_PTime(sdpLine)) continue;
+        if (parseSDPAttribute_MaxPTime(sdpLine)) continue;
+        if (parseSDPAttribute_Group(sdpLine)) continue;
+    }
+
+}
+
+
+Boolean Aes67MediaSession::parseSDPAttribute_RefClk(char const* sdpLine)
+{
+    wxString sSdp(wxString::FromAscii(sdpLine));
+
+    wxString sFind(wxT("a=ts-refclk:"));
+    size_t nFront = sSdp.find(sFind);
+    if(nFront != wxNOT_FOUND)
+    {
+        size_t nEnd = sSdp.find(wxT("\n"), nFront);
+        nEnd -= nFront;
+        wxString sLine = sSdp.substr(nFront+sFind.length(), (nEnd-sFind.length()));
+        m_refclk.sType = sLine.BeforeFirst(wxT('='));
+
+
+        if(m_refclk.sType.CmpNoCase(wxT("ntp")) == 0)
+        {
+            m_refclk.sId = sLine.AfterFirst(wxT('='));
+        }
+        else if(m_refclk.sType.CmpNoCase(wxT("localmac")) == 0)
+        {
+            m_refclk.sId = sLine.AfterFirst(wxT('='));
+        }
+        else if(m_refclk.sType.CmpNoCase(wxT("ntp")) == 0)
+        {
+            wxString sDetails = sLine.AfterFirst(wxT('='));
+            if(sDetails.CmpNoCase(wxT("traceable")) == 0)
+            {
+                m_refclk.sId = sDetails;
+            }
+            else
+            {
+                wxArrayString asDetails(wxStringTokenize(sDetails, wxT(":")));
+                if(asDetails.Count() >= 3)
+                {
+                    asDetails[2].ToULong(&m_refclk.nDomain);
+                }
+                if(asDetails.Count() >= 2)
+                {
+                    m_refclk.sId = asDetails[1];
+                }
+                if(asDetails.Count() >= 1)
+                {
+                    m_refclk.sVersion = asDetails[0];
+                }
+            }
+        }
+    }
+}
+
+
+Boolean Aes67MediaSession::parseSDPAttribute_ClockDomain(char const* sdpLine)
+{
+    wxString sSdp(wxString::FromAscii(sdpLine));
+
+    wxString sFind(wxT("a=clock-domain:"));
+    size_t nFront = sSdp.find(sFind);
+    if(nFront != wxNOT_FOUND)
+    {
+        size_t nEnd = sSdp.find(wxT("\n"), nFront);
+        nEnd -= nFront;
+        wxString sLine = sSdp.substr(nFront+sFind.length(), (nEnd-sFind.length()));
+
+
+        if(sLine.BeforeFirst(wxT(' ')).CmpNoCase(wxT("PTPV2")) == 0)
+        {
+            m_refclk.sType = wxT("PTP");
+            m_refclk.sVersion = wxT("IEEE1588-2008");
+
+            wxString sDomain(sLine.AfterFirst(wxT(' ')));
+            if(sDomain != wxEmptyString)
+            {
+                sDomain.ToULong(&m_refclk.nDomain);
+            }
+        }
+        return True;
+    }
+    return False;
+}
+
+Boolean Aes67MediaSession::parseSDPAttribute_Group(char const* sdpLine)
+{
+    wxString sSdp(wxString::FromAscii(sdpLine));
+
+    wxString sFind(wxT("a=group:DUP "));
+    size_t nFront = sSdp.find(sFind);
+    if(nFront != wxNOT_FOUND)
+    {
+        size_t nEnd = sSdp.find(wxT("\n"), nFront);
+        nEnd -= nFront;
+        m_sGroups = sSdp.substr(nFront+sFind.length(), (nEnd-sFind.length()));
+        return True;
+    }
+    return False;
+}
+
+Boolean Aes67MediaSession::parseSDPAttribute_PTime(char const* sdpLine)
+{
+    wxString sSdp(wxString::FromAscii(sdpLine));
+
+    wxString sFind(wxT("a=ptime:"));
+    size_t nFront = sSdp.find(sFind);
+    if(nFront != wxNOT_FOUND)
+    {
+        size_t nEnd = sSdp.find(wxT("\n"), nFront);
+        nEnd -= nFront;
+        sSdp.substr(nFront+sFind.length(), (nEnd-sFind.length())).ToDouble(&m_dPackageMs);
+        return True;
+    }
+    return False;
+}
+Boolean Aes67MediaSession::parseSDPAttribute_MaxPTime(char const* sdpLine)
+{
+    wxString sSdp(wxString::FromAscii(sdpLine));
+
+    wxString sFind(wxT("a=maxptime:"));
+    size_t nFront = sSdp.find(sFind);
+    if(nFront != wxNOT_FOUND)
+    {
+        size_t nEnd = sSdp.find(wxT("\n"), nFront);
+        nEnd -= nFront;
+        sSdp.substr(nFront+sFind.length(), (nEnd-sFind.length())).ToDouble(&m_dMaxPackageMs);
+        return True;
+    }
+    return False;
 }
 
 
@@ -74,16 +220,20 @@ wxString Aes67MediaSubsession::GetEndpoint()
 
 Boolean Aes67MediaSubsession::createSourceObjects(int useSpecialRTPoffset)
 {
+    parseSDPAttribute_Sync();           //Sync time AES67 and Ravenna and SMPTE2110
+    parseSDPAttribute_Deviation();      //Clock deviation sample rate Ravenna
+    parseSDPAttribute_RefClk();      //Clock deviation sample rate Ravenna
+    parseSDPAttribute_PTime();      //Clock deviation sample rate Ravenna
+    parseSDPAttribute_MaxPTime();      //Clock deviation sample rate Ravenna
+
+
     if (strcmp(fCodecName, "L16") == 0 || strcmp(fCodecName, "L24") == 0) // 16 or 24-bit linear audio (RFC 3190)
     {
-        parseSDPAttribute_Sync();
-
         m_sEndpoint = wxString::FromAscii(fConnectionEndpointName);
-
 
         char* mimeType = new char[strlen(mediumName()) + strlen(codecName()) + 2] ;
         sprintf(mimeType, "%s/%s", mediumName(), codecName());
-        fReadSource = fRTPSource = Aes67Source::createNew(env(), fRTPSocket, fRTPPayloadFormat, fRTPTimestampFrequency, mimeType, 0 ,FALSE, m_nSyncTime);
+        fReadSource = fRTPSource = Aes67Source::createNew(env(), fRTPSocket, fRTPPayloadFormat, fRTPTimestampFrequency, mimeType, 0,FALSE, m_nSyncTime);
         delete[] mimeType;
 
         return TRUE;
@@ -93,41 +243,60 @@ Boolean Aes67MediaSubsession::createSourceObjects(int useSpecialRTPoffset)
         env().setResultMsg("RTP payload format unknown or not supported");
     }
 
-  return False; // an error occurred
+    return False; // an error occurred
 }
 
 
-Boolean Aes67MediaSubsession::parseSDPAttribute_Sync()
+void Aes67MediaSubsession::parseSDPAttribute_Sync()
 {
     wxString sSdp(wxString::FromAscii(fSavedSDPLines));
 
-    size_t nFront = sSdp.find(wxT("a=sync-time:"));
+    wxString sFind(wxT("a=sync-time:"));
+    size_t nFront = sSdp.find(sFind);
+
+    if(nFront == wxNOT_FOUND)   //not found try the mediaclk:direct
+    {
+        sFind = wxT("a=mediaclk:direct=");
+        nFront = sSdp.find(sFind);
+    }
+
     if(nFront != wxNOT_FOUND)
     {
         size_t nEnd = sSdp.find(wxT("\n"), nFront);
         nEnd -= nFront;
-        wxString sTime = sSdp.substr(nFront+12, (nEnd-12));
+        wxString sTime = sSdp.substr(nFront+sFind.length(), (nEnd-sFind.length()));
 
         sTime.ToULong(&m_nSyncTime);
-
-        return True;
     }
+    else
+    {
+        m_nSyncTime = 0;
+    }
+}
 
-    //maybe mediaclk instead...
-    nFront = sSdp.find(wxT("a=mediaclk:direct="));
+void Aes67MediaSubsession::parseSDPAttribute_Deviation()
+{
+    wxString sSdp(wxString::FromAscii(fSavedSDPLines));
+
+    wxString sFind(wxT("a=clock-deviation:"));
+    size_t nFront = sSdp.find(sFind);
+
     if(nFront != wxNOT_FOUND)
     {
         size_t nEnd = sSdp.find(wxT("\n"), nFront);
         nEnd -= nFront;
-        wxString sTime = sSdp.substr(nFront+12, (nEnd-12));
+        wxString sDeviation = sSdp.substr(nFront+sFind.length(), (nEnd-sFind.length()));
+        double dNumerator, dDenominator;
+        sDeviation.BeforeFirst(wxT('/')).ToDouble(&dNumerator);
+        sDeviation.AfterFirst(wxT('/')).ToDouble(&dDenominator);
 
-        sTime.ToULong(&m_nSyncTime);
+        m_dClockDeviation = dNumerator/dDenominator;
 
-        return True;
     }
-
-    m_nSyncTime = 0;
-    return False;
+    else
+    {
+        m_dClockDeviation = 1.0;
+    }
 }
 
 const pairTime_t& Aes67MediaSubsession::GetLastEpoch()
@@ -135,110 +304,138 @@ const pairTime_t& Aes67MediaSubsession::GetLastEpoch()
     Aes67Source* pSource = dynamic_cast<Aes67Source*>(rtpSource());
     return pSource->GetLastEpoch();
 }
-//void Aes67MediaSubsession::WorkoutLastEpoch()
-//{
-//    double dTime = static_cast<double>(m_nSyncTime)/static_cast<double>(fRTPTimestampFrequency); //this is number of seconds before Epoch that the stream started...
-//    dTime *= 1000000.0;
-//
-//    //get the current time
-//    timeval tvNow;
-//    gettimeofday(&tvNow, 0);
-//
-//    double dNow = static_cast<double>(tvNow.tv_sec)*1000000.0;
-//    dNow += tvNow.tv_usec;
-//    dNow += dTime;
-//
-//    //divide answer by 2^32
-//    double dSecPerCycle = (4294967296.0/static_cast<double>(fRTPTimestampFrequency));
-//    unsigned int nCycles = static_cast<unsigned int>(dNow / dSecPerCycle);
-//
-//    //now workout when the time was
-//    dTime = static_cast<double>(nCycles)*dSecPerCycle;
-//
-//    double dInt, dDec;
-//    dDec = modf(dTime, &dInt);
-//
-//    m_tvLastEpoch.tv_sec = dInt;
-//    m_tvLastEpoch.tv_usec = (dDec*1000000.0);
-//
-//
-//}
 
 
-//unsigned int Aes67MediaSubsession::GetExpectedTimestamp()
-//{
-//    timeval tv;
-//    gettimeofday(&tv,0);
-//
-//    return GetExpectedTimestamp(tv);
-//
-//}
 
-//unsigned int Aes67MediaSubsession::GetExpectedTimestamp(const timeval& tv)
-//{
-//    double dSec = tv.tv_sec;
-//    double dUSec  = tv.tv_usec;
-//
-//    double dTime = dSec + (dUSec/1000000.0);
-//
-//    //work out timestamp cycles since then
-//    double dCycles = static_cast<double>(fRTPTimestampFrequency)*dTime;
-//    //add the epoch timestamp
-//    double dTimestamp = static_cast<double>(m_nSyncTime)+dCycles;
-//    int64_t nTimestamp = dTimestamp;
-//
-//    return static_cast<unsigned int>(nTimestamp % 4294967296);
-//}
-//
-Boolean Aes67MediaSubsession::parseSDPAttribute_Domain()
+void Aes67MediaSubsession::parseSDPAttribute_RefClk()
 {
+    wxString sSdp(wxString::FromAscii(fSavedSDPLines));
 
+    wxString sFind(wxT("a=ts-refclk:"));
+    size_t nFront = sSdp.find(sFind);
+    if(nFront != wxNOT_FOUND)
+    {
+        size_t nEnd = sSdp.find(wxT("\n"), nFront);
+        nEnd -= nFront;
+        wxString sLine = sSdp.substr(nFront+sFind.length(), (nEnd-sFind.length()));
+        m_refclk.sType = sLine.BeforeFirst(wxT('='));
+
+
+        if(m_refclk.sType.CmpNoCase(wxT("ntp")) == 0)
+        {
+            m_refclk.sId = sLine.AfterFirst(wxT('='));
+        }
+        else if(m_refclk.sType.CmpNoCase(wxT("localmac")) == 0)
+        {
+            m_refclk.sId = sLine.AfterFirst(wxT('='));
+        }
+        else if(m_refclk.sType.CmpNoCase(wxT("ntp")) == 0)
+        {
+            wxString sDetails = sLine.AfterFirst(wxT('='));
+            if(sDetails.CmpNoCase(wxT("traceable")) == 0)
+            {
+                m_refclk.sId = sDetails;
+            }
+            else
+            {
+                wxArrayString asDetails(wxStringTokenize(sDetails, wxT(":")));
+                if(asDetails.Count() >= 3)
+                {
+                    asDetails[2].ToULong(&m_refclk.nDomain);
+                }
+                if(asDetails.Count() >= 2)
+                {
+                    m_refclk.sId = asDetails[1];
+                }
+                if(asDetails.Count() >= 1)
+                {
+                    m_refclk.sVersion = asDetails[0];
+                }
+            }
+        }
+    }
+    else    //use the parent session
+    {
+        parseSDPAttribute_ClockDomain();
+    }
 }
 
-Boolean Aes67MediaSubsession::parseSDPAttribute_Deviation()
+void Aes67MediaSubsession::parseSDPAttribute_ClockDomain()
 {
+    wxString sSdp(wxString::FromAscii(fSavedSDPLines));
 
+    wxString sFind(wxT("a=clock-domain:"));
+    size_t nFront = sSdp.find(sFind);
+    if(nFront != wxNOT_FOUND)
+    {
+        size_t nEnd = sSdp.find(wxT("\n"), nFront);
+        nEnd -= nFront;
+        wxString sLine = sSdp.substr(nFront+sFind.length(), (nEnd-sFind.length()));
+
+
+        if(sLine.BeforeFirst(wxT(' ')).CmpNoCase(wxT("PTPV2")) == 0)
+        {
+            m_refclk.sType = wxT("PTP");
+            m_refclk.sVersion = wxT("IEEE1588-2008");
+
+            wxString sDomain(sLine.AfterFirst(wxT(' ')));
+            if(sDomain != wxEmptyString)
+            {
+                sDomain.ToULong(&m_refclk.nDomain);
+            }
+        }
+    }
+    else    //use the parent session
+    {
+        Aes67MediaSession* pParent = dynamic_cast<Aes67MediaSession*>(&fParent);
+        if(pParent)
+        {
+            m_refclk = pParent->GetRefClock();
+        }
+    }
 }
 
-/*
-timeval Aes67MediaSubsession::GetTransmissionTime(unsigned int nRTPTimestamp)
+void Aes67MediaSubsession::parseSDPAttribute_PTime()
 {
+    wxString sSdp(wxString::FromAscii(fSavedSDPLines));
 
-    double dSeconds = static_cast<double>(nRTPTimestamp)/static_cast<double>(fRTPTimestampFrequency);
-
-    timeval tvTransmision;
-    tvTransmision.tv_sec = m_tvLastEpoch.tv_sec;
-    tvTransmision.tv_usec = m_tvLastEpoch.tv_usec;
-
-    double dInt, dDec;
-    dDec = modf(dSeconds, &dInt);
-    tvTransmision.tv_sec += dInt;
-    tvTransmision.tv_usec += dDec*1000000.0;
-
-    return tvTransmision;
-/*
-
-    timeval tvTransmission;
-    gettimeofday(&tvTransmission,0);
-
-    unsigned int nExpected = GetExpectedTimestamp(tvTransmission);
-
-    double dSamples;
-    dSamples = nExpected - nRTPTimestamp;
-
-    //divide the samples by the frequency to give us the number of seconds difference
-    dSamples /= static_cast<double>(rtpTimestampFrequency());
-    dSamples *= 1000000.0;  //in usec
-
-    int64_t nTime = tvTransmission.tv_sec;
-    nTime *= 1000000;
-    nTime += tvTransmission.tv_usec;
-
-    nTime -= dSamples;
-
-    tvTransmission.tv_sec = nTime / 1000000;
-    tvTransmission.tv_usec = nTime % 1000000;
-
-    return tvTransmission;
+    wxString sFind(wxT("a=ptime:"));
+    size_t nFront = sSdp.find(sFind);
+    if(nFront != wxNOT_FOUND)
+    {
+        size_t nEnd = sSdp.find(wxT("\n"), nFront);
+        nEnd -= nFront;
+        sSdp.substr(nFront+sFind.length(), (nEnd-sFind.length())).ToDouble(&m_dPackageMs);
+    }
+    else
+    {
+        Aes67MediaSession* pParent = dynamic_cast<Aes67MediaSession*>(&fParent);
+        if(pParent)
+        {
+            m_dPackageMs = pParent->GetPackageTime();
+        }
+    }
 }
-*/
+
+void Aes67MediaSubsession::parseSDPAttribute_MaxPTime()
+{
+    wxString sSdp(wxString::FromAscii(fSavedSDPLines));
+
+    wxString sFind(wxT("a=maxptime:"));
+    size_t nFront = sSdp.find(sFind);
+    if(nFront != wxNOT_FOUND)
+    {
+        size_t nEnd = sSdp.find(wxT("\n"), nFront);
+        nEnd -= nFront;
+        sSdp.substr(nFront+sFind.length(), (nEnd-sFind.length())).ToDouble(&m_dMaxPackageMs);
+
+    }
+    else
+    {
+        Aes67MediaSession* pParent = dynamic_cast<Aes67MediaSession*>(&fParent);
+        if(pParent)
+        {
+            m_dMaxPackageMs = pParent->GetMaxPackageTime();
+        }
+    }
+}

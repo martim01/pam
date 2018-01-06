@@ -39,7 +39,6 @@ void TestPluginFactory::SetSwitcherPanels(wmSwitcherPanel* pswpTests)
 
 bool TestPluginFactory::LoadTestLibrary(const wxString& sLibrary)
 {
- //   wxLogNull ln;
 
     map<wxString, wxDynamicLibrary*>::iterator itLib = m_mLibraries.find(sLibrary);
     if(itLib == m_mLibraries.end())

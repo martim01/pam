@@ -21,6 +21,7 @@
 					<Add option="-DUNICODE" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXDEBUG__" />
+					<Add option="-DPAMBASE_DEBUG" />
 					<Add directory="$(#wx3_0.include)" />
 					<Add directory="$(#wx3_0.include)/mswu" />
 					<Add directory="$(#portaudio.include)" />
@@ -50,8 +51,8 @@
 				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
+					<Add option="-O3" />
 					<Add option="-Wall" />
-					<Add option="-g" />
 					<Add option="-DWIN32" />
 					<Add option="-D__WXMSW__" />
 					<Add option="-DWXUSINGDLL" />
@@ -65,6 +66,7 @@
 					<Add directory="$(#wx3_0.include)/mswu" />
 				</ResourceCompiler>
 				<Linker>
+					<Add option="-s" />
 					<Add option="-Wl,--enable-auto-import,-Map=pam2.map" />
 					<Add library="wxmsw30u_gcc_wammacs" />
 					<Add library="portaudio" />
@@ -129,8 +131,6 @@
 		<Unit filename="PamTaskScheduler.h" />
 		<Unit filename="PamUsageEnvironment.cpp" />
 		<Unit filename="PamUsageEnvironment.h" />
-		<Unit filename="aes67client.cpp" />
-		<Unit filename="aes67client.h" />
 		<Unit filename="aes67mediasession.cpp" />
 		<Unit filename="aes67mediasession.h" />
 		<Unit filename="aes67source.cpp" />

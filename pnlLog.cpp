@@ -45,6 +45,9 @@ pnlLog::pnlLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
     m_plstLog->SetBorderStyle(uiRect::BORDER_NONE);
 //    m_plblLog->SetTextAlign(wxALIGN_LEFT | wxALIGN_TOP);
 
+    #ifdef __WXMSW__
+	m_plstLog->SetFont(wxFont(9,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Courier New"),wxFONTENCODING_DEFAULT));
+    #endif // __WXMSW__
 
 	wmLog::Get()->SetTarget(this);
 	Connect(wxID_ANY,wxEVT_WMLOG,(wxObjectEventFunction)&pnlLog::OnLog);

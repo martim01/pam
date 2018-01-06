@@ -13,9 +13,11 @@
 //*)
 
 #include <set>
+#include <queue>
 
 class wxServDisc;
 class SapWatchThread;
+class RtpThread;
 
 class pnlRTP: public wxPanel
 {
@@ -91,6 +93,10 @@ class pnlRTP: public wxPanel
 
 		void OnDiscovery(wxCommandEvent& event);
 		void OnSap(wxCommandEvent& event);
+		void OnSDPReceived(wxCommandEvent& event);
+		void GetSDP(const wxString& sUrl);
+		void GetSDP();
+		void OnRTPClosed(wxCommandEvent& event);
 		wxString m_sSelectedSource;
 		wxString m_sSelectedUrl;
 
@@ -98,6 +104,10 @@ class pnlRTP: public wxPanel
         SapWatchThread* m_pSapWatch;
         size_t m_nDiscovered;
         std::set<std::pair<wxString, wxString> > m_setDiscover;
+
+        std::queue<wxString> m_queueUrl;
+
+        RtpThread* m_pThread;
 		DECLARE_EVENT_TABLE()
 };
 

@@ -87,7 +87,11 @@ void pnlDistortion::InputSession(const session& aSession)
     }
     m_vChannels.clear();
 
-    m_vChannels.resize(aSession.nChannels);
+    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    {
+        m_vChannels.resize(aSession.itCurrentSubsession->nChannels);
+    }
+
     for(size_t i = 0; i < m_vChannels.size(); i++)
     {
         m_vChannels[i] = new pnlDistortionChannel(pnlLeft, i, wxID_ANY, wxPoint(38+(71*i), 0));

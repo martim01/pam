@@ -53,7 +53,14 @@ void LevelCalculator::DeletePpmLoud()
 }
 void LevelCalculator::InputSession(const session& aSession)
 {
-    m_nChannels = aSession.nChannels;
+    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    {
+        m_nChannels = aSession.itCurrentSubsession->nChannels;
+    }
+    else
+    {
+        m_nChannels = 0;
+    }
     SetMode(m_nMode);
 }
 

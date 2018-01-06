@@ -21,15 +21,17 @@ UsageEnvironment& operator<<(UsageEnvironment& env, const Aes67MediaSubsession& 
 DEFINE_EVENT_TYPE(wxEVT_QOS_UPDATED)
 DEFINE_EVENT_TYPE(wxEVT_RTP_SESSION)
 DEFINE_EVENT_TYPE(wxEVT_RTP_SESSION_CLOSED)
+DEFINE_EVENT_TYPE(wxEVT_SDP)
 
-RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sProg, const wxString& sUrl, unsigned int nBufferSize) :
+RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sProg, const wxString& sUrl, unsigned int nBufferSize, bool bSaveSDPOnly) :
     m_pHandler(pHandler),
     m_sProgName(sProg),
     m_sUrl(sUrl),
     m_nBufferSize(nBufferSize),
     m_pCurrentBuffer(0),
     m_pRtspClient(0),
-    m_bClosing(false)
+    m_bClosing(false),
+    m_bSaveSDP(bSaveSDPOnly)
 {
     m_eventLoopWatchVariable = 0;
     m_pCondition = new wxCondition(m_mutex);
@@ -70,8 +72,8 @@ void* RtpThread::Entry()
 
         *m_penv << "\nUsing SDP passed via SAP \n" << sSDP.c_str() << "\n";
 
-        Aes67MediaSession* session = Aes67MediaSession::createNew(*m_penv, sSDP.c_str());
-        if (session == NULL)
+        Aes67MediaSession* pSession = Aes67MediaSession::createNew(*m_penv, sSDP.c_str());
+        if (pSession == NULL)
         {
             *m_penv << "Failed to create a MediaSession object from the SDP description: " << m_penv->getResultMsg() << "\n";
             return 0;
@@ -81,7 +83,28 @@ void* RtpThread::Entry()
             *m_penv << "Created MediaSession object\n";
         }
 
-        MediaSubsessionIterator iter(*session);
+        //count number of subsessions
+        unsigned int nCountAudio(0);
+        unsigned int nCountVideo(0);
+        MediaSubsessionIterator iterCount(*pSession);
+        MediaSubsession* pSubsessionCount = NULL;
+        while ((pSubsessionCount = iterCount.next()) != NULL)
+        {
+            if (strcmp(pSubsessionCount->codecName(), "L16") == 0 || strcmp(pSubsessionCount->codecName(), "L24") == 0) // 16 or 24-bit linear audio (RFC 3190)
+            {
+                nCountAudio++;
+            }
+            else if (strcmp(pSubsessionCount->codecName(), "RAW") == 0)
+            {
+                nCountVideo++;
+            }
+        }
+        *m_penv << "---------------------------------------\n";
+        *m_penv << "Number of AES67 Subsessions: " << nCountAudio << "\n";
+        *m_penv << "Number of Video Subsessions: " << nCountVideo << "\n";
+        *m_penv << "---------------------------------------\n";
+
+        MediaSubsessionIterator iter(*pSession);
         Aes67MediaSubsession* subsession = NULL;
         while ((subsession = dynamic_cast<Aes67MediaSubsession*>(iter.next())) != NULL)
         {
@@ -102,6 +125,8 @@ void* RtpThread::Entry()
                     *m_penv << "client ports " << subsession->clientPortNum() << "-" << subsession->clientPortNum()+1;
                 }
                 *m_penv << ")\n";
+
+                *m_penv << "SessionId: " << subsession->GetEndpoint() << "\n";
                 if (subsession->sink == NULL)
                 {
                     *m_penv << "Failed to create a data sink for the subsession: " << m_penv->getResultMsg() << "\n";
@@ -110,13 +135,13 @@ void* RtpThread::Entry()
                 {
                     *m_penv << "Created a data sink for the \"" << *subsession << "\" subsession\n";
 
-                    PassSessionDetails(wxString::FromAscii(session->sessionName()), subsession->GetEndpoint(), wxString::FromAscii(session->mediaSessionType()), wxString::FromAscii(subsession->mediumName()), wxString::FromAscii(subsession->codecName()), wxString::FromAscii(subsession->protocolName()), subsession->clientPortNum(), subsession->rtpTimestampFrequency(), subsession->numChannels(), subsession->GetSyncTime(), subsession->GetLastEpoch());
-
+                    // @todo move the startPlaying to later??
                     subsession->sink->startPlaying(*subsession->readSource(), NULL, NULL);
-                    beginQOSMeasurement(*m_penv, session, this);
+                    beginQOSMeasurement(*m_penv, pSession, this);
                 }
             }
         }
+        PassSessionDetails(pSession);
 
         while(TestDestroy() == false && m_eventLoopWatchVariable == 0)
         {
@@ -154,8 +179,14 @@ bool RtpThread::openURL()
     // Next, send a RTSP "DESCRIBE" command, to get a SDP description for the stream.
     // Note that this command - like all RTSP commands - is sent asynchronously; we do not block, waiting for a response.
     // Instead, the following function call returns immediately, and we handle the RTSP response later, from within the event loop:
-    m_pRtspClient->sendDescribeCommand(continueAfterDESCRIBE);
-
+    if(m_bSaveSDP)
+    {
+        m_pRtspClient->sendDescribeCommand(saveAfterDESCRIBE);
+    }
+    else
+    {
+        m_pRtspClient->sendDescribeCommand(continueAfterDESCRIBE);
+    }
     return true;
 }
 
@@ -166,112 +197,112 @@ pairTime_t RtpThread::ConvertDoubleToPairTime(double dTime)
     return make_pair(static_cast<unsigned int>(dInt), static_cast<unsigned int>(dDec*1000000.0));
 }
 
-void RtpThread::AddFrame(const pairTime_t& timePresentation, unsigned long nFrameSize, u_int8_t* pFrameBuffer, u_int8_t nBytesPerSample, const pairTime_t& timeTransmission, unsigned int nTimestamp,unsigned int nDuration)
+void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const pairTime_t& timePresentation, unsigned long nFrameSize, u_int8_t* pFrameBuffer, u_int8_t nBytesPerSample, const pairTime_t& timeTransmission, unsigned int nTimestamp,unsigned int nDuration)
 {
-
     if(!m_bClosing)
     {
-
-
-        if(m_pCurrentBuffer == 0)
+        if(m_Session.itCurrentSubsession != m_Session.lstSubsession.end() && m_Session.itCurrentSubsession->sSourceAddress == sEndpoint)
         {
-            m_pCurrentBuffer = new float[m_nBufferSize*m_nInputChannels];
-            m_nSampleBufferSize = 0;
 
-        }
-
-
-        if(nBytesPerSample == 2)    //16 bit
-        {
-            for(int i = 0; i < nFrameSize; i+=2)
+            if(m_pCurrentBuffer == 0)
             {
-                int nSample = (static_cast<int>(pFrameBuffer[i+1]) << 16) | (static_cast<int>(pFrameBuffer[i]) << 24);
-                float dSample = static_cast<float>(nSample);
-                dSample /= 2147483648.0;
+                m_pCurrentBuffer = new float[m_nBufferSize*m_nInputChannels];
+                m_nSampleBufferSize = 0;
+            }
 
-                if(m_nSampleBufferSize == 0)
+
+            if(nBytesPerSample == 2)    //16 bit
+            {
+                for(int i = 0; i < nFrameSize; i+=2)
                 {
-                    m_dTransmission = timeTransmission.first + (static_cast<double>(timeTransmission.second))/1000000.0;
-                    m_dPresentation = timePresentation.first + (static_cast<double>(timePresentation.second))/1000000.0;
+                    int nSample = (static_cast<int>(pFrameBuffer[i+1]) << 16) | (static_cast<int>(pFrameBuffer[i]) << 24);
+                    float dSample = static_cast<float>(nSample);
+                    dSample /= 2147483648.0;
 
-                    m_nTimestamp = nTimestamp;
-                }
-                else
-                {
-                    ++m_nTimestamp; //timestamp goes up 1 per sample
-                    m_dTransmission += (1.0 / 48000.0); //@todo assuming 48K here
-                    m_dPresentation += (1.0 / 48000.0); //@todo assuming 48K here
-                }
+                    if(m_nSampleBufferSize == 0)
+                    {
+                        m_dTransmission = timeTransmission.first + (static_cast<double>(timeTransmission.second))/1000000.0;
+                        m_dPresentation = timePresentation.first + (static_cast<double>(timePresentation.second))/1000000.0;
 
-                m_pCurrentBuffer[m_nSampleBufferSize] = dSample;
-                ++m_nSampleBufferSize;
+                        m_nTimestamp = nTimestamp;
+                    }
+                    else
+                    {
+                        ++m_nTimestamp; //timestamp goes up 1 per sample
+                        m_dTransmission += (1.0 / 48000.0); //@todo assuming 48K here
+                        m_dPresentation += (1.0 / 48000.0); //@todo assuming 48K here
+                    }
 
-                if(m_nSampleBufferSize == m_nBufferSize*m_nInputChannels)   //filled up buffer
-                {
+                    m_pCurrentBuffer[m_nSampleBufferSize] = dSample;
+                    ++m_nSampleBufferSize;
+
+                    if(m_nSampleBufferSize == m_nBufferSize*m_nInputChannels)   //filled up buffer
+                    {
 
 
 
-                    timedbuffer* pTimedBuffer = new timedbuffer(m_nBufferSize*m_nInputChannels, ConvertDoubleToPairTime(m_dPresentation), m_nTimestamp);
-                    pTimedBuffer->SetBuffer(m_pCurrentBuffer);
+                        timedbuffer* pTimedBuffer = new timedbuffer(m_nBufferSize*m_nInputChannels, ConvertDoubleToPairTime(m_dPresentation), m_nTimestamp);
+                        pTimedBuffer->SetBuffer(m_pCurrentBuffer);
 
-                    pTimedBuffer->SetTransmissionTime(ConvertDoubleToPairTime(m_dTransmission));
-                    pTimedBuffer->SetDuration(nDuration);
+                        pTimedBuffer->SetTransmissionTime(ConvertDoubleToPairTime(m_dTransmission));
+                        pTimedBuffer->SetDuration(nDuration);
 
-                    wxCommandEvent event(wxEVT_DATA);
-                    event.SetId(0);
-                    event.SetClientData(reinterpret_cast<void*>(pTimedBuffer));
-                    event.SetInt(m_nBufferSize);
-                    event.SetExtraLong(48000);  //@todo sample rate
-                    wxPostEvent(m_pHandler, event);
+                        wxCommandEvent event(wxEVT_DATA);
+                        event.SetId(0);
+                        event.SetClientData(reinterpret_cast<void*>(pTimedBuffer));
+                        event.SetInt(m_nBufferSize);
+                        event.SetExtraLong(48000);  //@todo sample rate
+                        wxPostEvent(m_pHandler, event);
 
-                    m_nSampleBufferSize = 0;
+                        m_nSampleBufferSize = 0;
 
+                    }
                 }
             }
-        }
-        else if(nBytesPerSample == 3)   //24 bit
-        {
-            for(int i = 0; i < nFrameSize; i+=3)
+            else if(nBytesPerSample == 3)   //24 bit
             {
-                int nSample = (static_cast<int>(pFrameBuffer[i+2]) << 8) | (static_cast<int>(pFrameBuffer[i+1]) << 16) | (static_cast<int>(pFrameBuffer[i]) << 24);
-                float dSample = static_cast<float>(nSample);
-                dSample /= 2147483648.0;
-
-                if(m_nSampleBufferSize == 0)
+                for(int i = 0; i < nFrameSize; i+=3)
                 {
-                    m_dTransmission = timeTransmission.first + (static_cast<double>(timeTransmission.second))/1000000.0;
-                    m_dPresentation = timePresentation.first + (static_cast<double>(timePresentation.second))/1000000.0;
-                    m_nTimestamp = nTimestamp;
+                    int nSample = (static_cast<int>(pFrameBuffer[i+2]) << 8) | (static_cast<int>(pFrameBuffer[i+1]) << 16) | (static_cast<int>(pFrameBuffer[i]) << 24);
+                    float dSample = static_cast<float>(nSample);
+                    dSample /= 2147483648.0;
 
-                }
-                else
-                {
-                    ++m_nTimestamp; //timestamp goes up 1 per sample
-                    m_dTransmission += (1.0/ 48000.0);
-                    m_dPresentation += (1.0/ 48000.0);
+                    if(m_nSampleBufferSize == 0)
+                    {
+                        m_dTransmission = timeTransmission.first + (static_cast<double>(timeTransmission.second))/1000000.0;
+                        m_dPresentation = timePresentation.first + (static_cast<double>(timePresentation.second))/1000000.0;
+                        m_nTimestamp = nTimestamp;
 
-                }
+                    }
+                    else
+                    {
+                        ++m_nTimestamp; //timestamp goes up 1 per sample
+                        m_dTransmission += (1.0/ 48000.0);
+                        m_dPresentation += (1.0/ 48000.0);
 
-                m_pCurrentBuffer[m_nSampleBufferSize] = dSample;
-                ++m_nSampleBufferSize;
+                    }
 
-                if(m_nSampleBufferSize == m_nBufferSize*m_nInputChannels)   //filled up buffer assuming two channels
-                {
+                    m_pCurrentBuffer[m_nSampleBufferSize] = dSample;
+                    ++m_nSampleBufferSize;
 
-                    timedbuffer* pTimedBuffer = new timedbuffer(m_nBufferSize*m_nInputChannels, ConvertDoubleToPairTime(m_dPresentation), m_nTimestamp);
-                    pTimedBuffer->SetBuffer(m_pCurrentBuffer);
-                    pTimedBuffer->SetTransmissionTime(ConvertDoubleToPairTime(m_dTransmission));
+                    if(m_nSampleBufferSize == m_nBufferSize*m_nInputChannels)   //filled up buffer assuming two channels
+                    {
 
-                    pTimedBuffer->SetDuration(nDuration);
+                        timedbuffer* pTimedBuffer = new timedbuffer(m_nBufferSize*m_nInputChannels, ConvertDoubleToPairTime(m_dPresentation), m_nTimestamp);
+                        pTimedBuffer->SetBuffer(m_pCurrentBuffer);
+                        pTimedBuffer->SetTransmissionTime(ConvertDoubleToPairTime(m_dTransmission));
 
-                    wxCommandEvent event(wxEVT_DATA);
-                    event.SetId(0);
-                    event.SetClientData(reinterpret_cast<void*>(pTimedBuffer));
-                    event.SetInt(m_nBufferSize);
-                    event.SetExtraLong(48000);  //@todo sample rate
-                    wxPostEvent(m_pHandler, event);
+                        pTimedBuffer->SetDuration(nDuration);
 
-                    m_nSampleBufferSize = 0;
+                        wxCommandEvent event(wxEVT_DATA);
+                        event.SetId(0);
+                        event.SetClientData(reinterpret_cast<void*>(pTimedBuffer));
+                        event.SetInt(m_nBufferSize);
+                        event.SetExtraLong(48000);  //@todo sample rate
+                        wxPostEvent(m_pHandler, event);
+
+                        m_nSampleBufferSize = 0;
+                    }
                 }
             }
         }
@@ -292,8 +323,6 @@ void RtpThread::StopStream()
     {
         m_eventLoopWatchVariable = 1;
     }
-//    m_mutex.Lock();
-//    m_pCondition->Wait();
 
 }
 
@@ -308,17 +337,62 @@ void RtpThread::QosUpdated(qosData* pData)
 }
 
 
-void RtpThread::PassSessionDetails(const wxString& sSessionName, const wxString& sEndpoint, const wxString& sSessionType, const wxString& sMedium, const wxString& sCodec,const wxString& sProtocol, unsigned int nPort, unsigned int nFrequency, unsigned int nNumChannels, unsigned int nSyncTimestamp, const pairTime_t& tvEpoch)
+void RtpThread::PassSessionDetails(Aes67MediaSession* pSession)
 {
-    m_nInputChannels = nNumChannels;
+    m_Session = session();
+
+    m_Session.sName = wxString::FromAscii(pSession->sessionName());
+    m_Session.sRawSDP = pSession->GetRawSDP();
+    m_Session.sType = wxString::FromAscii(pSession->mediaSessionType());
+    m_Session.refClock = pSession->GetRefClock();
+    m_Session.sDescription = wxString::FromAscii(pSession->sessionDescription());
+    m_Session.sGroups = pSession->GetGroupDup();
+
+    MediaSubsessionIterator iterSub(*pSession);
+    Aes67MediaSubsession* pSubsession = NULL;
+    while ((pSubsession = dynamic_cast<Aes67MediaSubsession*>(iterSub.next())) != NULL)
+    {
+        wxLogDebug(wxT("Subsession: %s  %s"), wxString::FromAscii(pSubsession->mediumName()).c_str(), wxString::FromAscii(pSubsession->protocolName()).c_str());
+        m_Session.lstSubsession.push_back(subsession(wxString::FromAscii(pSubsession->GetEndpoint()),
+                                                     wxString::FromAscii(pSubsession->mediumName()),
+                                                     wxString::FromAscii(pSubsession->codecName()),
+                                                     wxString::FromAscii(pSubsession->protocolName()),
+                                                     pSubsession->clientPortNum(),
+                                                     pSubsession->rtpTimestampFrequency(),
+                                                     pSubsession->numChannels(),
+                                                     wxEmptyString,  /* @todo this is the channel list from SMPTE2110 */
+                                                     pSubsession->GetSyncTime(),
+                                                     pSubsession->GetLastEpoch(),
+                                                     pSubsession->GetRefClock()));
+    }
+
+    m_Session.itCurrentSubsession = m_Session.lstSubsession.begin();
+    if(m_Session.itCurrentSubsession != m_Session.lstSubsession.end())
+    {
+        m_nInputChannels = m_Session.itCurrentSubsession->nChannels;
+    }
+    else
+    {
+        m_nInputChannels = 0;
+    }
+
     if(m_pHandler)
     {
-        session* pSession = new session(sSessionName, sEndpoint, sSessionType.Before(wxT('\n')), sMedium, sCodec, sProtocol, nPort, nFrequency, nNumChannels, nSyncTimestamp, tvEpoch);
-
-
-        wxCommandEvent event(wxEVT_RTP_SESSION);
-        event.SetClientData((void*)pSession);
-        wxPostEvent(m_pHandler, event);
+        wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_RTP_SESSION);
+        pEvent->SetClientData((void*)&m_Session);
+        wxQueueEvent(m_pHandler, pEvent);
     }
 }
 
+
+void RtpThread::SaveSDP(unsigned int nResult, const wxString& sResult)
+{
+    if(m_pHandler)
+    {
+        wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_SDP);
+        pEvent->SetClientData(reinterpret_cast<void*>(this));
+        pEvent->SetString(sResult);
+        pEvent->SetInt(nResult);
+        wxQueueEvent(m_pHandler, pEvent);
+    }
+}

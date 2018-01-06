@@ -106,9 +106,18 @@ void RadarBuilder::LoadSettings()
 void RadarBuilder::InputSession(const session& aSession)
 {
     m_pCalculator->InputSession(aSession);
-    m_pRadar->SetSampleRate(aSession.nSampleRate);
-    m_nInputChannels = aSession.nChannels;
-    m_ppnlRouting->SetNumberOfChannels(aSession.nChannels);
+    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    {
+        m_pRadar->SetSampleRate(aSession.itCurrentSubsession->nSampleRate);
+        m_nInputChannels = aSession.itCurrentSubsession->nChannels;
+        m_ppnlRouting->SetNumberOfChannels(aSession.itCurrentSubsession->nChannels);
+    }
+    else
+    {
+        m_pRadar->SetSampleRate(48000);
+        m_nInputChannels = 0;
+        m_ppnlRouting->SetNumberOfChannels(0);
+    }
     ClearMeter();
 }
 

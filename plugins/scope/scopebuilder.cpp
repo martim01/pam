@@ -74,11 +74,17 @@ void ScopeBuilder::LoadSettings()
 
 void ScopeBuilder::InputSession(const session& aSession)
 {
-    m_pScope->SetNumberOfChannels(aSession.nChannels);
- //   m_pScope->SetSampleRate(aSession.nSampleRate);
-  //  m_pScope->SetNumberOfChannels(aSession.nChannels);
+    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    {
+        m_pScope->SetNumberOfChannels(aSession.itCurrentSubsession->nChannels);
+        m_pRouting->SetNumberOfChannels(aSession.itCurrentSubsession->nChannels);
+    }
+    else
 
-    m_pRouting->SetNumberOfChannels(aSession.nChannels);
+    {
+        m_pScope->SetNumberOfChannels(0);
+        m_pRouting->SetNumberOfChannels(0);
+    }
 
 }
 

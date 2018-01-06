@@ -128,10 +128,22 @@ void FFTBuilder::LoadSettings()
 
 void FFTBuilder::InputSession(const session& aSession)
 {
-    m_pMeter->SetSampleRate(aSession.nSampleRate);
-    m_pMeter->SetNumberOfChannels(aSession.nChannels);
+    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    {
+        m_pMeter->SetSampleRate(aSession.itCurrentSubsession->nSampleRate);
+        m_pMeter->SetNumberOfChannels(aSession.itCurrentSubsession->nChannels);
+        m_ppnlRouting->SetNumberOfChannels(aSession.itCurrentSubsession->nChannels);
+    }
+    else
+    {
+        m_pMeter->SetSampleRate(48000);
+        m_pMeter->SetNumberOfChannels(0);
+        m_ppnlRouting->SetNumberOfChannels(0);
+    }
+
+
     //@todo if more than 2 channels then let's change our routing buttons...
-    m_ppnlRouting->SetNumberOfChannels(aSession.nChannels);
+
 }
 
 void FFTBuilder::OutputChannels(const std::vector<char>& vChannels)

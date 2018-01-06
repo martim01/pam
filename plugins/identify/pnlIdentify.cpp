@@ -304,6 +304,14 @@ void pnlIdentify::OutputChannels(const vector<char>& vChannels)
 
 void pnlIdentify::InputSession(const session& aSession)
 {
-    m_nInputChannels = aSession.nChannels;
-    m_nSampleRate = aSession.nSampleRate;
+    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    {
+        m_nInputChannels = aSession.itCurrentSubsession->nChannels;
+        m_nSampleRate = aSession.itCurrentSubsession->nSampleRate;
+    }
+    else
+    {
+        m_nInputChannels = 0;
+        m_nSampleRate = 48000;
+    }
 }

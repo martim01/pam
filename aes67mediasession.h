@@ -2,6 +2,9 @@
 #include <wx/string.h>
 #include "MediaSession.hh"
 #include "timedbuffer.h"
+#include "session.h"
+
+
 
 class Aes67MediaSubsession;
 
@@ -11,12 +14,52 @@ class Aes67MediaSession : public MediaSession
     public:
         static Aes67MediaSession* createNew(UsageEnvironment& env, char const* sdpDescription);
 
+        const wxString& GetRawSDP() const
+        {
+            return m_sRawSDP;
+        }
+
+        const refclk& GetRefClock() const
+        {
+            return m_refclk;
+        }
+
+        double GetPackageTime() const
+        {
+            return m_dPackageMs;
+        }
+
+        double GetMaxPackageTime() const
+        {
+            return m_dMaxPackageMs;
+        }
+
+        const wxString& GetGroupDup() const
+        {
+            return m_sGroups;
+        }
+
     protected:
+
 
         Aes67MediaSession(UsageEnvironment& env);
         //~Aes67MediaSession();
+        void initializeSMPTE_SDP(char const* sdpDescription);
+
+        Boolean parseSDPAttribute_RefClk(char const* sdpLine);
+        Boolean parseSDPAttribute_ClockDomain(char const* sdpLine);
+        Boolean parseSDPAttribute_PTime(char const* sdpLine);
+        Boolean parseSDPAttribute_MaxPTime(char const* sdpLine);
+        Boolean parseSDPAttribute_Group(char const* sdpLine);
 
         MediaSubsession* createNewMediaSubsession();
+
+        wxString m_sRawSDP;
+
+        wxString m_sGroups;
+        refclk m_refclk;
+        double m_dPackageMs;
+        double m_dMaxPackageMs;
 };
 
 
@@ -32,6 +75,20 @@ class Aes67MediaSubsession : public MediaSubsession
 
         wxString GetEndpoint();
 
+        const refclk& GetRefClock() const
+        {
+            return m_refclk;
+        }
+        double GetPackageTime() const
+        {
+            return m_dPackageMs;
+        }
+
+        double GetMaxPackageTime() const
+        {
+            return m_dMaxPackageMs;
+        }
+
     protected:
         friend class Aes67MediaSession;
         Aes67MediaSubsession(MediaSession& parent);
@@ -39,13 +96,22 @@ class Aes67MediaSubsession : public MediaSubsession
 
 
 
-        Boolean parseSDPAttribute_Sync();
-        Boolean parseSDPAttribute_Domain();
-        Boolean parseSDPAttribute_Deviation();
+        void  parseSDPAttribute_Sync();
+        void  parseSDPAttribute_Deviation();
+        void  parseSDPAttribute_RefClk();
+        void parseSDPAttribute_ClockDomain();
+        void  parseSDPAttribute_PTime();
+        void parseSDPAttribute_MaxPTime();
 
         unsigned long m_nSyncTime;
         unsigned int m_nFirstTimestamp;
         wxString m_sEndpoint;
 
+        double m_dClockDeviation;
+
+
+        refclk m_refclk;
+        double m_dPackageMs;
+        double m_dMaxPackageMs;
 
 };

@@ -76,12 +76,17 @@ void pnlLissajou::SetAudioData(const timedbuffer* pBuffer)
 
 void pnlLissajou::SetSession(const session& aSession)
 {
-    m_pJellyfish->SetNumberOfChannels(aSession.nChannels);
-
-    m_nChannels = aSession.nChannels;
-
-    m_pMeterLeft->SetNumberOfChannels(aSession.nChannels);
-    m_pMeterRight->SetNumberOfChannels(aSession.nChannels);
+    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    {
+        m_nChannels = aSession.itCurrentSubsession->nChannels;
+    }
+    else
+    {
+        m_nChannels = 0;
+    }
+    m_pJellyfish->SetNumberOfChannels(m_nChannels);
+    m_pMeterLeft->SetNumberOfChannels(m_nChannels);
+    m_pMeterRight->SetNumberOfChannels(m_nChannels);
 
     m_pCalculator->InputSession(aSession);
 }

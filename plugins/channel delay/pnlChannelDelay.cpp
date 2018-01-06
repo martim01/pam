@@ -184,9 +184,16 @@ void pnlChannelDelay::OnedtMaxDelayTextEnter(wxCommandEvent& event)
 
 void pnlChannelDelay::InputSession(const session& aSession)
 {
-    m_pGraph->SetSampleRate(aSession.nSampleRate);
-    m_nTotalChannels = aSession.nChannels;
-
+    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    {
+        m_pGraph->SetSampleRate(aSession.itCurrentSubsession->nSampleRate);
+        m_nTotalChannels = aSession.itCurrentSubsession->nChannels;
+    }
+    else
+    {
+        m_pGraph->SetSampleRate(48000);
+        m_nTotalChannels = 0;
+    }
 
     m_plstChannel1->Freeze();
     m_plstChannel1->Clear();

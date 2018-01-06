@@ -13,6 +13,10 @@
 #include "sapwatchthread.h"
 #include "settings.h"
 #include "wmlogevent.h"
+#include "PamUsageEnvironment.h"
+#include "PamTaskScheduler.h"
+#include "rtpthread.h"
+
 
 using namespace std;
 
@@ -45,7 +49,7 @@ BEGIN_EVENT_TABLE(pnlRTP,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size, long nStyle, const wxString& sId)
+pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size, long nStyle, const wxString& sId) : m_pThread(0)
 {
 	//(*Initialize(pnlRTP)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
@@ -147,6 +151,8 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlRTP::OnbtnCancelClick);
 	//*)
 
+	Connect(wxID_ANY, wxEVT_SDP, (wxObjectEventFunction)&pnlRTP::OnSDPReceived);
+	Connect(wxID_ANY, wxEVT_RTP_SESSION_CLOSED, (wxObjectEventFunction)&pnlRTP::OnRTPClosed);
 	m_plstSources->SetGradient(0);
 	m_plstSources->SetTextAlign(wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
 
@@ -288,9 +294,10 @@ void pnlRTP::OnbtnDiscoverClick(wxCommandEvent& event)
             m_pSapWatch->Delete();
             m_pSapWatch = 0;
         }
-        m_pSapWatch = new SapWatchThread(this);
-        m_pSapWatch->Create();
-        m_pSapWatch->Run();
+        // @todo work out how to make the sapwatchthread non-blocking then we can use this....
+//        m_pSapWatch = new SapWatchThread(this);
+//        m_pSapWatch->Create();
+//        m_pSapWatch->Run();
     }
     else
     {
@@ -315,60 +322,27 @@ void pnlRTP::OnDiscovery(wxCommandEvent& event)
     {
         if(m_setDiscover.insert(make_pair(m_pServscan->getResults()[i].name, event.GetString())).second)
         {
-//            wxServDisc namescan(0, m_pServscan->getResults()[i].name, QTYPE_SRV);
-//            int nTimeout = 3000;
-//            while(!namescan.getResultCount() && nTimeout > 0)
-//            {
-//                wxMilliSleep(25);
-//                nTimeout-=25;
-//            }
-//            if(nTimeout <= 0)
-//            {
-//                wmLog::Get()->Log(wxT("Error: Timeout looking up hostname."));
-//            }
-//            else
-//            {
-//                wxString sHostname = namescan.getResults().at(0).name;
-//                wxString sPort = wxString() << namescan.getResults().at(0).port;
-//
-//
-//                wxServDisc addrscan(0, sHostname, QTYPE_A);
-//
-//                nTimeout = 3000;
-//                while(!addrscan.getResultCount() && nTimeout > 0)
-//                {
-//                    wxMilliSleep(25);
-//                    nTimeout-=25;
-//                }
-//                if(nTimeout <= 0)
-//                {
-//                    wmLog::Get()->Log(wxT("Error: Timeout looking up IP address."));
-//                }
-//                else
-//                {
-//                    wxString sAddr = addrscan.getResults().at(0).ip;
-//
-                    wxString sSession(m_pServscan->getResults()[i].name);
-                    int nEnd = sSession.Find(wxT("._rtsp._tcp.local."));
-                    if(nEnd != wxNOT_FOUND)
-                    {
-                       sSession = sSession.Left(nEnd);
-                    }
-                    wxString sName(sSession.BeforeLast(wxT('@')));
-
-                    wxString sAddress(wxString::Format(wxT("rtsp://%s/by-name/%s"), m_pServscan->getResults()[i].ipFrom.c_str(), sSession.c_str()));
-
-                    Settings::Get().Write(wxT("RTP"), sName, sAddress);
-
-                    ListSources();
-
-                    m_nDiscovered++;
-                    m_pbtnDiscover->SetLabel(wxString::Format(wxT("Discovering...\n%04d Found"), m_nDiscovered));
-                    m_pbtnDiscover->Update();
-                }
+            wxString sSession(m_pServscan->getResults()[i].name);
+            int nEnd = sSession.Find(wxT("._rtsp._tcp.local."));
+            if(nEnd != wxNOT_FOUND)
+            {
+               sSession = sSession.Left(nEnd);
             }
-  //      }
-//    }
+            wxString sName(sSession.BeforeLast(wxT('@')));
+
+            wxString sAddress(wxString::Format(wxT("rtsp://%s/by-name/%s"), m_pServscan->getResults()[i].ipFrom.c_str(), sSession.c_str()));
+            GetSDP(sAddress);
+
+            Settings::Get().Write(wxT("RTP"), sName, sAddress);
+
+
+            ListSources();
+
+            m_nDiscovered++;
+            m_pbtnDiscover->SetLabel(wxString::Format(wxT("Discovering...\n%04d Found"), m_nDiscovered));
+            m_pbtnDiscover->Update();
+        }
+    }
 }
 
 void pnlRTP::OnSap(wxCommandEvent& event)
@@ -416,4 +390,40 @@ void pnlRTP::OnbtnDeleteAllHeld(wxCommandEvent& event)
     ListSources();
     m_pbtnDelete->Disable();
     m_pbtnUpdate->Disable();
+}
+
+
+void pnlRTP::GetSDP(const wxString& sUrl)
+{
+    m_queueUrl.push(sUrl);
+    GetSDP();
+}
+
+void pnlRTP::GetSDP()
+{
+    if(m_pThread == 0 && m_queueUrl.empty() == false)
+    {
+        m_pThread = new RtpThread(this, wxEmptyString, m_queueUrl.front(), 4096, true);
+        m_pThread->Create();
+        m_pThread->Run();
+    }
+}
+
+void pnlRTP::OnSDPReceived(wxCommandEvent& event)
+{
+    wxString sSDP(event.GetString());
+    sSDP.Replace(wxT("\r"), wxEmptyString);
+    sSDP.Replace(wxT("\n"), wxT("`"));
+
+    Settings::Get().Write(wxT("SDP"), m_queueUrl.front(), sSDP);
+    //wmLog::Get()->Log(wxString::Format(wxT("'%s' = '%s'"), m_queueUrl.front().c_str(), event.GetString().c_str()));
+
+    m_queueUrl.pop();
+}
+
+void pnlRTP::OnRTPClosed(wxCommandEvent& event)
+{
+    //wmLog::Get()->Log(wxT("---------------------CLOSED-------------------"));
+    m_pThread = NULL;
+    GetSDP();
 }
