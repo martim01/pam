@@ -76,11 +76,51 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
 
 Boolean wxSink::continuePlaying()
 {
-    if (fSource == NULL) return False; // sanity check (should not happen)
+    if (fSource != NULL)
+    {
+        Aes67Source* pSource = dynamic_cast<Aes67Source*>(fSource);
 
-    // Request the next frame of data from our input source.  "afterGettingFrame()" will get called later, when it arrives:
-    fSource->getNextFrame(fReceiveBuffer, DUMMY_SINK_RECEIVE_BUFFER_SIZE,
-                          afterGettingFrame, this,
-                          onSourceClosure, this);
-    return True;
+        pSource->setRtpExtHdrCallback(rtpExtensionCallback, this);
+
+        // Request the next frame of data from our input source.  "afterGettingFrame()" will get called later, when it arrives:
+        pSource->getNextFrame(fReceiveBuffer, DUMMY_SINK_RECEIVE_BUFFER_SIZE,
+                              afterGettingFrame, this,
+                              onSourceClosure, this);
+        return True;
+    }
+    else
+    {
+         return False; // sanity check (should not happen)
+    }
+}
+
+
+void wxSink::rtpExtensionCallback(unsigned int nDefinedByProfile, unsigned char* pExtHdrData, unsigned nExtHdrDataLen, struct timeval& presentationTime, unsigned short nRtpSeqNo, unsigned nRtpTimestamp, bool bRtpMarkerBitSet)
+{
+    wxLogDebug(wxT("Extension"));
+
+    // the DefinedByProfile should be 0xBEDE
+    if(nDefinedByProfile == 0xBEDE) //one byte extension
+    {
+        unsigned long nPlace(0);
+        //now we have 4 bits are id, then 4 bit of length, then payload
+        while(nPlace < nExtHdrDataLen)
+        {
+            extIdLengthBits_t* pBits = reinterpret_cast<extIdLengthBits_t*>(&pExtHdrData[nPlace]);
+            unsigned long nId = pBits->id;
+            unsigned long nBytes = (pBits->length)+1;
+
+            ++nPlace;
+            //extract the data and tell the thread so it can pass stuff up again
+
+            nPlace += nBytes; //move along to the next id
+        }
+    }
+
+}
+
+void wxSink::rtpExtensionCallback(unsigned int definedByProfile, unsigned char* extHdrData, unsigned extHdrDataLen, struct timeval& presentationTime, unsigned short rtpSeqNo, unsigned rtpTimestamp, bool rtpMarkerBitSet, void* pPriv)
+{
+    wxSink* pSink = (wxSink*)pPriv;
+    pSink->rtpExtensionCallback(definedByProfile, extHdrData, extHdrDataLen, presentationTime, rtpSeqNo, rtpTimestamp, rtpMarkerBitSet);
 }

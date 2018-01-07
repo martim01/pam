@@ -28,6 +28,14 @@ private:
     void afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes,
                            const pairTime_t& presentationTime, unsigned durationInMicroseconds);
 
+
+    void rtpExtensionCallback(unsigned int nDefinedByProfile, unsigned char* pExtHdrData, unsigned nExtHdrDataLen, struct timeval& presentationTime, unsigned short nRtpSeqNo, unsigned nRtpTimestamp, bool bRtpMarkerBitSet);
+
+    static void rtpExtensionCallback(unsigned int definedByProfile, unsigned char* extHdrData, unsigned extHdrDataLen, struct timeval& presentationTime, unsigned short rtpSeqNo, unsigned rtpTimestamp, bool rtpMarkerBitSet, void* pPriv);
+
+
+
+
 private:
     // redefined virtual functions:
     virtual Boolean continuePlaying();
@@ -41,3 +49,9 @@ private:
     unsigned int m_nLastTimestamp;
 
 };
+
+
+typedef struct {
+  unsigned char id:4;
+  unsigned char length:4;
+} extIdLengthBits_t;

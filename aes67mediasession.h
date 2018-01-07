@@ -3,7 +3,7 @@
 #include "MediaSession.hh"
 #include "timedbuffer.h"
 #include "session.h"
-
+#include <map>
 
 
 class Aes67MediaSubsession;
@@ -38,6 +38,8 @@ class Aes67MediaSession : public MediaSession
         {
             return m_sGroups;
         }
+
+
 
     protected:
 
@@ -89,6 +91,10 @@ class Aes67MediaSubsession : public MediaSubsession
             return m_dMaxPackageMs;
         }
 
+        std::map<unsigned long, wxString>::const_iterator GetExtHeaderBegin() const;
+        std::map<unsigned long, wxString>::const_iterator GetExtHeaderEnd() const;
+        std::map<unsigned long, wxString>::const_iterator GetExtHeader(unsigned long nId) const;
+
     protected:
         friend class Aes67MediaSession;
         Aes67MediaSubsession(MediaSession& parent);
@@ -102,6 +108,7 @@ class Aes67MediaSubsession : public MediaSubsession
         void parseSDPAttribute_ClockDomain();
         void  parseSDPAttribute_PTime();
         void parseSDPAttribute_MaxPTime();
+        void parseSDPAttribute_ExtMap();
 
         unsigned long m_nSyncTime;
         unsigned int m_nFirstTimestamp;
@@ -114,4 +121,5 @@ class Aes67MediaSubsession : public MediaSubsession
         double m_dPackageMs;
         double m_dMaxPackageMs;
 
+        std::map<unsigned long, wxString> m_mExtHeader;
 };

@@ -225,7 +225,7 @@ Boolean Aes67MediaSubsession::createSourceObjects(int useSpecialRTPoffset)
     parseSDPAttribute_RefClk();      //Clock deviation sample rate Ravenna
     parseSDPAttribute_PTime();      //Clock deviation sample rate Ravenna
     parseSDPAttribute_MaxPTime();      //Clock deviation sample rate Ravenna
-
+    void parseSDPAttribute_ExtMap();    //Header extension mapping
 
     if (strcmp(fCodecName, "L16") == 0 || strcmp(fCodecName, "L24") == 0) // 16 or 24-bit linear audio (RFC 3190)
     {
@@ -266,7 +266,8 @@ void Aes67MediaSubsession::parseSDPAttribute_Sync()
         nEnd -= nFront;
         wxString sTime = sSdp.substr(nFront+sFind.length(), (nEnd-sFind.length()));
 
-        sTime.ToULong(&m_nSyncTime);
+        //might possibly have clock rate after sync time. Ignore for now
+        sTime.BeforeFirst(wxT(' ')).ToULong(&m_nSyncTime);
     }
     else
     {
@@ -438,4 +439,40 @@ void Aes67MediaSubsession::parseSDPAttribute_MaxPTime()
             m_dMaxPackageMs = pParent->GetMaxPackageTime();
         }
     }
+}
+
+
+void Aes67MediaSubsession::parseSDPAttribute_ExtMap()
+{
+    wxString sSdp(wxString::FromAscii(fSavedSDPLines));
+
+    wxString sFind(wxT("a=extmap:"));
+    size_t nFront = sSdp.find(sFind);
+    if(nFront != wxNOT_FOUND)
+    {
+        size_t nEnd = sSdp.find(wxT("\n"), nFront);
+        nEnd -= nFront;
+        wxString sExt = sSdp.substr(nFront+sFind.length(), (nEnd-sFind.length()));
+
+        unsigned long nId;
+        sExt.BeforeFirst(wxT(' ')).ToULong(&nId);
+        m_mExtHeader.insert(make_pair(nId, sExt.AfterFirst(wxT(' '))));
+
+    }
+}
+
+
+map<unsigned long, wxString>::const_iterator Aes67MediaSubsession::GetExtHeaderBegin() const
+{
+    return m_mExtHeader.begin();
+}
+
+map<unsigned long, wxString>::const_iterator Aes67MediaSubsession::GetExtHeaderEnd() const
+{
+    return m_mExtHeader.end();
+}
+
+map<unsigned long, wxString>::const_iterator Aes67MediaSubsession::GetExtHeader(unsigned long nId) const
+{
+    return m_mExtHeader.find(nId);
 }
