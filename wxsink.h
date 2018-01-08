@@ -1,12 +1,17 @@
 #pragma once
 #include <wx/event.h>
-
+#include <map>
 #include "liveMedia.hh"
 #include "BasicUsageEnvironment.hh"
 #include "timedbuffer.h"
 
 class RtpThread;
 class Aes67MediaSubsession;
+
+
+bool operator<(const timeval& t1, const timeval& t2);
+
+typedef std::map<unsigned char, unsigned char*> mExtension_t;
 
 class wxSink: public MediaSink
 {
@@ -26,7 +31,7 @@ private:
                                   timeval presentationTime,
                                   unsigned durationInMicroseconds);
     void afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes,
-                           const pairTime_t& presentationTime, unsigned durationInMicroseconds);
+                           const timeval& tvPresentation, unsigned durationInMicroseconds);
 
 
     void rtpExtensionCallback(unsigned int nDefinedByProfile, unsigned char* pExtHdrData, unsigned nExtHdrDataLen, struct timeval& presentationTime, unsigned short nRtpSeqNo, unsigned nRtpTimestamp, bool bRtpMarkerBitSet);
@@ -40,7 +45,6 @@ private:
     // redefined virtual functions:
     virtual Boolean continuePlaying();
 
-private:
     u_int8_t* fReceiveBuffer;
     Aes67MediaSubsession* m_pSubsession;
     RtpThread* m_pHandler;
@@ -48,10 +52,8 @@ private:
 
     unsigned int m_nLastTimestamp;
 
+    std::map<timeval, mExtension_t*> m_mExtension;
+
 };
 
 
-typedef struct {
-  unsigned char id:4;
-  unsigned char length:4;
-} extIdLengthBits_t;

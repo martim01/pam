@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="liveMedia" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/liveMedia" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj/Debug/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-DBUILD_DLL" />
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add library="user32" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="liveMedia" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj/Release/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-DBUILD_DLL" />
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="user32" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-D_UNICODE" />
+			<Add option="-DUNICODE" />
+			<Add directory="include" />
+			<Add directory="$(#live_group.include)" />
+			<Add directory="$(#live_usage.include)" />
+		</Compiler>
+		<Unit filename="AC3AudioFileServerMediaSubsession.cpp" />
+		<Unit filename="AC3AudioRTPSink.cpp" />
+		<Unit filename="AC3AudioRTPSource.cpp" />
+		<Unit filename="AC3AudioStreamFramer.cpp" />
+		<Unit filename="ADTSAudioFileServerMediaSubsession.cpp" />
+		<Unit filename="ADTSAudioFileSource.cpp" />
+		<Unit filename="AMRAudioFileServerMediaSubsession.cpp" />
+		<Unit filename="AMRAudioFileSink.cpp" />
+		<Unit filename="AMRAudioFileSource.cpp" />
+		<Unit filename="AMRAudioRTPSink.cpp" />
+		<Unit filename="AMRAudioRTPSource.cpp" />
+		<Unit filename="AMRAudioSource.cpp" />
+		<Unit filename="AVIFileSink.cpp" />
+		<Unit filename="AudioInputDevice.cpp" />
+		<Unit filename="AudioRTPSink.cpp" />
+		<Unit filename="Base64.cpp" />
+		<Unit filename="BasicUDPSink.cpp" />
+		<Unit filename="BasicUDPSource.cpp" />
+		<Unit filename="BitVector.cpp" />
+		<Unit filename="ByteStreamFileSource.cpp" />
+		<Unit filename="ByteStreamMemoryBufferSource.cpp" />
+		<Unit filename="ByteStreamMultiFileSource.cpp" />
+		<Unit filename="DVVideoFileServerMediaSubsession.cpp" />
+		<Unit filename="DVVideoRTPSink.cpp" />
+		<Unit filename="DVVideoRTPSource.cpp" />
+		<Unit filename="DVVideoStreamFramer.cpp" />
+		<Unit filename="DeviceSource.cpp" />
+		<Unit filename="DigestAuthentication.cpp" />
+		<Unit filename="EBMLNumber.cpp" />
+		<Unit filename="EBMLNumber.hh" />
+		<Unit filename="FileServerMediaSubsession.cpp" />
+		<Unit filename="FileSink.cpp" />
+		<Unit filename="FramedFileSource.cpp" />
+		<Unit filename="FramedFilter.cpp" />
+		<Unit filename="FramedSource.cpp" />
+		<Unit filename="GSMAudioRTPSink.cpp" />
+		<Unit filename="GenericMediaServer.cpp" />
+		<Unit filename="H261VideoRTPSource.cpp" />
+		<Unit filename="H263plusVideoFileServerMediaSubsession.cpp" />
+		<Unit filename="H263plusVideoRTPSink.cpp" />
+		<Unit filename="H263plusVideoRTPSource.cpp" />
+		<Unit filename="H263plusVideoStreamFramer.cpp" />
+		<Unit filename="H263plusVideoStreamParser.cpp" />
+		<Unit filename="H263plusVideoStreamParser.hh" />
+		<Unit filename="H264VideoFileServerMediaSubsession.cpp" />
+		<Unit filename="H264VideoFileSink.cpp" />
+		<Unit filename="H264VideoRTPSink.cpp" />
+		<Unit filename="H264VideoRTPSource.cpp" />
+		<Unit filename="H264VideoStreamDiscreteFramer.cpp" />
+		<Unit filename="H264VideoStreamFramer.cpp" />
+		<Unit filename="H264or5VideoFileSink.cpp" />
+		<Unit filename="H264or5VideoRTPSink.cpp" />
+		<Unit filename="H264or5VideoStreamDiscreteFramer.cpp" />
+		<Unit filename="H264or5VideoStreamFramer.cpp" />
+		<Unit filename="H265VideoFileServerMediaSubsession.cpp" />
+		<Unit filename="H265VideoFileSink.cpp" />
+		<Unit filename="H265VideoRTPSink.cpp" />
+		<Unit filename="H265VideoRTPSource.cpp" />
+		<Unit filename="H265VideoStreamDiscreteFramer.cpp" />
+		<Unit filename="H265VideoStreamFramer.cpp" />
+		<Unit filename="InputFile.cpp" />
+		<Unit filename="JPEGVideoRTPSink.cpp" />
+		<Unit filename="JPEGVideoRTPSource.cpp" />
+		<Unit filename="JPEGVideoSource.cpp" />
+		<Unit filename="Locale.cpp" />
+		<Unit filename="MP3ADU.cpp" />
+		<Unit filename="MP3ADURTPSink.cpp" />
+		<Unit filename="MP3ADURTPSource.cpp" />
+		<Unit filename="MP3ADUTranscoder.cpp" />
+		<Unit filename="MP3ADUdescriptor.cpp" />
+		<Unit filename="MP3ADUdescriptor.hh" />
+		<Unit filename="MP3ADUinterleaving.cpp" />
+		<Unit filename="MP3AudioFileServerMediaSubsession.cpp" />
+		<Unit filename="MP3AudioMatroskaFileServerMediaSubsession.cpp" />
+		<Unit filename="MP3AudioMatroskaFileServerMediaSubsession.hh" />
+		<Unit filename="MP3FileSource.cpp" />
+		<Unit filename="MP3Internals.cpp" />
+		<Unit filename="MP3Internals.hh" />
+		<Unit filename="MP3InternalsHuffman.cpp" />
+		<Unit filename="MP3InternalsHuffman.hh" />
+		<Unit filename="MP3InternalsHuffmanTable.cpp" />
+		<Unit filename="MP3StreamState.cpp" />
+		<Unit filename="MP3StreamState.hh" />
+		<Unit filename="MP3Transcoder.cpp" />
+		<Unit filename="MPEG1or2AudioRTPSink.cpp" />
+		<Unit filename="MPEG1or2AudioRTPSource.cpp" />
+		<Unit filename="MPEG1or2AudioStreamFramer.cpp" />
+		<Unit filename="MPEG1or2Demux.cpp" />
+		<Unit filename="MPEG1or2DemuxedElementaryStream.cpp" />
+		<Unit filename="MPEG1or2DemuxedServerMediaSubsession.cpp" />
+		<Unit filename="MPEG1or2FileServerDemux.cpp" />
+		<Unit filename="MPEG1or2VideoFileServerMediaSubsession.cpp" />
+		<Unit filename="MPEG1or2VideoRTPSink.cpp" />
+		<Unit filename="MPEG1or2VideoRTPSource.cpp" />
+		<Unit filename="MPEG1or2VideoStreamDiscreteFramer.cpp" />
+		<Unit filename="MPEG1or2VideoStreamFramer.cpp" />
+		<Unit filename="MPEG2IndexFromTransportStream.cpp" />
+		<Unit filename="MPEG2TransportFileServerMediaSubsession.cpp" />
+		<Unit filename="MPEG2TransportStreamAccumulator.cpp" />
+		<Unit filename="MPEG2TransportStreamFramer.cpp" />
+		<Unit filename="MPEG2TransportStreamFromESSource.cpp" />
+		<Unit filename="MPEG2TransportStreamFromPESSource.cpp" />
+		<Unit filename="MPEG2TransportStreamIndexFile.cpp" />
+		<Unit filename="MPEG2TransportStreamMultiplexor.cpp" />
+		<Unit filename="MPEG2TransportStreamTrickModeFilter.cpp" />
+		<Unit filename="MPEG2TransportUDPServerMediaSubsession.cpp" />
+		<Unit filename="MPEG4ESVideoRTPSink.cpp" />
+		<Unit filename="MPEG4ESVideoRTPSource.cpp" />
+		<Unit filename="MPEG4GenericRTPSink.cpp" />
+		<Unit filename="MPEG4GenericRTPSource.cpp" />
+		<Unit filename="MPEG4LATMAudioRTPSink.cpp" />
+		<Unit filename="MPEG4LATMAudioRTPSource.cpp" />
+		<Unit filename="MPEG4VideoFileServerMediaSubsession.cpp" />
+		<Unit filename="MPEG4VideoStreamDiscreteFramer.cpp" />
+		<Unit filename="MPEG4VideoStreamFramer.cpp" />
+		<Unit filename="MPEGVideoStreamFramer.cpp" />
+		<Unit filename="MPEGVideoStreamParser.cpp" />
+		<Unit filename="MPEGVideoStreamParser.hh" />
+		<Unit filename="MatroskaDemuxedTrack.cpp" />
+		<Unit filename="MatroskaDemuxedTrack.hh" />
+		<Unit filename="MatroskaFile.cpp" />
+		<Unit filename="MatroskaFileParser.cpp" />
+		<Unit filename="MatroskaFileParser.hh" />
+		<Unit filename="MatroskaFileServerDemux.cpp" />
+		<Unit filename="MatroskaFileServerMediaSubsession.cpp" />
+		<Unit filename="MatroskaFileServerMediaSubsession.hh" />
+		<Unit filename="Media.cpp" />
+		<Unit filename="MediaSession.cpp" />
+		<Unit filename="MediaSink.cpp" />
+		<Unit filename="MediaSource.cpp" />
+		<Unit filename="MultiFramedRTPSink.cpp" />
+		<Unit filename="MultiFramedRTPSource.cpp" />
+		<Unit filename="OggDemuxedTrack.cpp" />
+		<Unit filename="OggDemuxedTrack.hh" />
+		<Unit filename="OggFile.cpp" />
+		<Unit filename="OggFileParser.cpp" />
+		<Unit filename="OggFileParser.hh" />
+		<Unit filename="OggFileServerDemux.cpp" />
+		<Unit filename="OggFileServerMediaSubsession.cpp" />
+		<Unit filename="OggFileServerMediaSubsession.hh" />
+		<Unit filename="OggFileSink.cpp" />
+		<Unit filename="OnDemandServerMediaSubsession.cpp" />
+		<Unit filename="OutputFile.cpp" />
+		<Unit filename="PassiveServerMediaSubsession.cpp" />
+		<Unit filename="ProxyServerMediaSession.cpp" />
+		<Unit filename="QCELPAudioRTPSource.cpp" />
+		<Unit filename="QuickTimeFileSink.cpp" />
+		<Unit filename="QuickTimeGenericRTPSource.cpp" />
+		<Unit filename="RTCP.cpp" />
+		<Unit filename="RTPInterface.cpp" />
+		<Unit filename="RTPSink.cpp" />
+		<Unit filename="RTPSource.cpp" />
+		<Unit filename="RTSPClient.cpp" />
+		<Unit filename="RTSPCommon.cpp" />
+		<Unit filename="RTSPRegisterSender.cpp" />
+		<Unit filename="RTSPServer.cpp" />
+		<Unit filename="RTSPServerRegister.cpp" />
+		<Unit filename="RTSPServerSupportingHTTPStreaming.cpp" />
+		<Unit filename="SIPClient.cpp" />
+		<Unit filename="ServerMediaSession.cpp" />
+		<Unit filename="SimpleRTPSink.cpp" />
+		<Unit filename="SimpleRTPSource.cpp" />
+		<Unit filename="StreamParser.cpp" />
+		<Unit filename="StreamParser.hh" />
+		<Unit filename="StreamReplicator.cpp" />
+		<Unit filename="T140TextRTPSink.cpp" />
+		<Unit filename="TCPStreamSink.cpp" />
+		<Unit filename="TextRTPSink.cpp" />
+		<Unit filename="TheoraVideoRTPSink.cpp" />
+		<Unit filename="TheoraVideoRTPSource.cpp" />
+		<Unit filename="VP8VideoRTPSink.cpp" />
+		<Unit filename="VP8VideoRTPSource.cpp" />
+		<Unit filename="VP9VideoRTPSink.cpp" />
+		<Unit filename="VP9VideoRTPSource.cpp" />
+		<Unit filename="VideoRTPSink.cpp" />
+		<Unit filename="VorbisAudioRTPSink.cpp" />
+		<Unit filename="VorbisAudioRTPSource.cpp" />
+		<Unit filename="WAVAudioFileServerMediaSubsession.cpp" />
+		<Unit filename="WAVAudioFileSource.cpp" />
+		<Unit filename="main.cpp" />
+		<Unit filename="main.h" />
+		<Unit filename="ourMD5.cpp" />
+		<Unit filename="rtcp_from_spec.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rtcp_from_spec.h" />
+		<Unit filename="uLawAudioFilter.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

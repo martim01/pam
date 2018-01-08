@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="testRTSP" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/testRTSP" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="rtsp://10.10.11.200/by-id/2" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/testRTSP" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+			<Add directory="$(#live_media.include)" />
+			<Add directory="$(#live_group.include)" />
+			<Add directory="$(#live_usage.include)" />
+			<Add directory="$(#live_basicusage.include)" />
+		</Compiler>
+		<Linker>
+			<Add library="libliveMedia.a" />
+			<Add library="libBasicUsageEnvironment.a" />
+			<Add library="libUsageEnvironment.a" />
+			<Add library="libgroupsock.a" />
+			<Add library="Ws2_32" />
+			<Add directory="$(#live_media.lib)" />
+			<Add directory="$(#live_group.lib)" />
+			<Add directory="$(#live_usage.lib)" />
+			<Add directory="$(#live_basicusage.lib)" />
+		</Linker>
+		<Unit filename="aes67mediasession.cpp" />
+		<Unit filename="aes67mediasession.h" />
+		<Unit filename="testRTSPClient.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

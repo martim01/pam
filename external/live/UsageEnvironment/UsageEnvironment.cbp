@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="UsageEnvironment" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/UsageEnvironment" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="C:/developer/matt/live/UsageEnvironment/.objs" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-DBUILD_DLL" />
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add library="user32" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="UsageEnvironment" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj/Release/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-DBUILD_DLL" />
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="user32" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-D_UNICODE" />
+			<Add option="-DUNICODE" />
+			<Add directory="include" />
+			<Add directory="$(#live_group.include)" />
+		</Compiler>
+		<Linker>
+			<Add option="-L" />
+			<Add option="-r" />
+			<Add option="-Bstatic" />
+		</Linker>
+		<Unit filename="HashTable.cpp" />
+		<Unit filename="UsageEnvironment.cpp" />
+		<Unit filename="include/Boolean.hh" />
+		<Unit filename="include/HashTable.hh" />
+		<Unit filename="include/UsageEnvironment.hh" />
+		<Unit filename="include/UsageEnvironment_version.hh" />
+		<Unit filename="include/strDup.hh" />
+		<Unit filename="strDup.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

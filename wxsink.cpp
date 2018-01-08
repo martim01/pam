@@ -14,6 +14,11 @@
 
 using namespace std;
 
+bool operator<(const timeval& t1, const timeval& t2)
+{
+    return (t1.tv_sec < t2.tv_sec || (t1.tv_sec == t2.tv_sec && t1.tv_usec < t2.tv_usec));
+}
+
 wxSink* wxSink::createNew(UsageEnvironment& env, MediaSubsession& subsession, RtpThread* pHandler, char const* streamId)
 {
     return new wxSink(env, subsession, pHandler, streamId);
@@ -38,12 +43,12 @@ wxSink::~wxSink()
 void wxSink::afterGettingFrame(void* clientData, unsigned frameSize, unsigned numTruncatedBytes, struct timeval presentationTime, unsigned durationInMicroseconds)
 {
     wxSink* sink = (wxSink*)clientData;
-    pairTime_t tvPresentation(make_pair(presentationTime.tv_sec, presentationTime.tv_usec));
-    sink->afterGettingFrame(frameSize, numTruncatedBytes, tvPresentation, durationInMicroseconds);
+
+    sink->afterGettingFrame(frameSize, numTruncatedBytes, presentationTime, durationInMicroseconds);
 }
 
 
-void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, const pairTime_t& presentationTime, unsigned durationInMicroseconds)
+void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, const timeval& tvPresentation, unsigned durationInMicroseconds)
 {
     // We've just received a frame of data.  (Optionally) print out information about it:
 
@@ -51,6 +56,7 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
     {
         Aes67Source* pSource = dynamic_cast<Aes67Source*>(m_pSubsession->rtpSource());
 
+        pairTime_t presentationTime(make_pair(tvPresentation.tv_sec, tvPresentation.tv_usec));  //todo change all the pairTime_t to timeval
 
         if(m_nLastTimestamp > pSource->GetRTPTimestamp())   //this means we must have crossed an Epoch
         {
@@ -58,16 +64,23 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
         }
         m_nLastTimestamp = pSource->GetRTPTimestamp();
 
+        //do we have an associated header ext??
+        mExtension_t* mExt = NULL;
+        map<timeval, mExtension_t*>::iterator itExt = m_mExtension.find(tvPresentation);
+        if(itExt != m_mExtension.end())
+        {
+            mExt = itExt->second;
+            m_mExtension.erase(itExt); //remove the extension map
+        }
+
         if(strcmp(m_pSubsession->codecName(),"L16") == 0)
         {
-            m_pHandler->AddFrame(m_pSubsession->GetEndpoint(),  pSource->lastReceivedSSRC(), presentationTime, frameSize, fReceiveBuffer, 2, pSource->GetTransmissionTime(), pSource->GetRTPTimestamp(),frameSize);
+            m_pHandler->AddFrame(m_pSubsession->GetEndpoint(),  pSource->lastReceivedSSRC(), presentationTime, frameSize, fReceiveBuffer, 2, pSource->GetTransmissionTime(), pSource->GetRTPTimestamp(),frameSize, mExt);
         }
         else if(strcmp(m_pSubsession->codecName(),"L24") == 0)
         {
-            m_pHandler->AddFrame(m_pSubsession->GetEndpoint(), pSource->lastReceivedSSRC(), presentationTime, frameSize, fReceiveBuffer, 3, pSource->GetTransmissionTime(), pSource->GetRTPTimestamp(),frameSize);
+            m_pHandler->AddFrame(m_pSubsession->GetEndpoint(), pSource->lastReceivedSSRC(), presentationTime, frameSize, fReceiveBuffer, 3, pSource->GetTransmissionTime(), pSource->GetRTPTimestamp(),frameSize, mExt);
         }
-
-
     }
 
 
@@ -103,15 +116,21 @@ void wxSink::rtpExtensionCallback(unsigned int nDefinedByProfile, unsigned char*
     if(nDefinedByProfile == 0xBEDE) //one byte extension
     {
         unsigned long nPlace(0);
+
+        map<timeval, mExtension_t*>::iterator itExt = m_mExtension.insert(make_pair(presentationTime, new mExtension_t())).first;
+
         //now we have 4 bits are id, then 4 bit of length, then payload
         while(nPlace < nExtHdrDataLen)
         {
-            extIdLengthBits_t* pBits = reinterpret_cast<extIdLengthBits_t*>(&pExtHdrData[nPlace]);
-            unsigned long nId = pBits->id;
-            unsigned long nBytes = (pBits->length)+1;
-
+            unsigned char nId = (pExtHdrData[nPlace] >> 4);
+            unsigned long nBytes = (pExtHdrData[nPlace] & 0xF);
             ++nPlace;
-            //extract the data and tell the thread so it can pass stuff up again
+
+            //extract the data and store it ready for when the rest of the frame arrives
+            unsigned char* pData = new unsigned char[nBytes];
+            memcpy(pData, &pExtHdrData[nPlace], nBytes);
+            itExt->second->insert(make_pair(nId, pData));
+
 
             nPlace += nBytes; //move along to the next id
         }

@@ -1,0 +1,42 @@
+EXPORTS
+    _Z10strDupSizePKc @1
+    _Z10strDupSizePKcRj @2
+    _Z6strDupPKc @3
+    _ZN13TaskScheduler13internalErrorEv @4
+    _ZN13TaskScheduler21rescheduleDelayedTaskERPvxPFvS0_ES0_ @5
+    _ZN13TaskSchedulerC1Ev @6
+    _ZN13TaskSchedulerC2Ev @7
+    _ZN13TaskSchedulerD0Ev @8
+    _ZN13TaskSchedulerD1Ev @9
+    _ZN13TaskSchedulerD2Ev @10
+    _ZN16UsageEnvironment13internalErrorEv @11
+    _ZN16UsageEnvironment7reclaimEv @12
+    _ZN16UsageEnvironmentC1ER13TaskScheduler @13
+    _ZN16UsageEnvironmentC2ER13TaskScheduler @14
+    _ZN16UsageEnvironmentD0Ev @15
+    _ZN16UsageEnvironmentD1Ev @16
+    _ZN16UsageEnvironmentD2Ev @17
+    _ZN9HashTable10RemoveNextEv @18
+    _ZN9HashTable8IteratorC1Ev @19
+    _ZN9HashTable8IteratorC2Ev @20
+    _ZN9HashTable8IteratorD0Ev @21
+    _ZN9HashTable8IteratorD1Ev @22
+    _ZN9HashTable8IteratorD2Ev @23
+    _ZN9HashTable8getFirstEv @24
+    _ZN9HashTableC1Ev @25
+    _ZN9HashTableC2Ev @26
+    _ZN9HashTableD0Ev @27
+    _ZN9HashTableD1Ev @28
+    _ZN9HashTableD2Ev @29
+    _ZTI13TaskScheduler @30 DATA
+    _ZTI16UsageEnvironment @31 DATA
+    _ZTI9HashTable @32 DATA
+    _ZTIN9HashTable8IteratorE @33 DATA
+    _ZTS13TaskScheduler @34 DATA
+    _ZTS16UsageEnvironment @35 DATA
+    _ZTS9HashTable @36 DATA
+    _ZTSN9HashTable8IteratorE @37 DATA
+    _ZTV13TaskScheduler @38 DATA
+    _ZTV16UsageEnvironment @39 DATA
+    _ZTV9HashTable @40 DATA
+    _ZTVN9HashTable8IteratorE @41 DATA
