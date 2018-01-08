@@ -55,10 +55,10 @@ bool TestPluginFactory::LoadTestLibrary(const wxString& sLibrary)
 
         if(pLib && pLib->IsLoaded())
         {
-            if(pLib->HasSymbol(wxT("CreateBuilders")))
+            if(pLib->HasSymbol(wxT("CreateTestBuilder")))
             {
                 typedef void (*RegPtr)();
-                RegPtr ptr = (RegPtr)pLib->GetSymbol(wxT("CreateBuilders"));
+                RegPtr ptr = (RegPtr)pLib->GetSymbol(wxT("CreateTestBuilder"));
                 if(ptr)
                 {
                     (*ptr)();
@@ -73,7 +73,7 @@ bool TestPluginFactory::LoadTestLibrary(const wxString& sLibrary)
     {
         typedef void (*RegPtr)();
 
-        RegPtr ptr = (RegPtr)itLib->second->GetSymbol(wxT("CreateBuilders"));
+        RegPtr ptr = (RegPtr)itLib->second->GetSymbol(wxT("CreateTestBuilder"));
         if(ptr)
         {
             (*ptr)();

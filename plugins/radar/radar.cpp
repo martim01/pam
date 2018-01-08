@@ -2,7 +2,7 @@
 #include "radarbuilder.h"
 #include "monitorpluginfactory.h"
 
-void CreateBuilders()
+void CreateMonitorBuilder()
 {
     MonitorPluginFactory::Get()->Register(new RadarBuilder());
 }
