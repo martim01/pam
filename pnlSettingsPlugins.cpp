@@ -145,6 +145,7 @@ void pnlSettingsPlugins::OnbtnClearHeld(wxCommandEvent& event)
     m_plstPossible->Freeze();
     m_plstPossible->AddButton(m_plstCurrent->GetButtonText(m_nSelected));
     m_plstPossible->Thaw();
+    m_plstPossible->Refresh();
 
     Settings::Get().RemoveKey(m_sSection, wxString::Format(wxT("%04d"), m_nSelected+1));
     m_plstCurrent->DeleteButton(m_nSelected);

@@ -62,10 +62,10 @@ bool MonitorPluginFactory::LoadLibrary(const wxString& sLibrary)
 
         if(pLib && pLib->IsLoaded())
         {
-            if(pLib->HasSymbol(wxT("CreateBuilders")))
+            if(pLib->HasSymbol(wxT("CreateMonitorBuilder")))
             {
                 typedef void (*RegPtr)();
-                RegPtr ptr = (RegPtr)pLib->GetSymbol(wxT("CreateBuilders"));
+                RegPtr ptr = (RegPtr)pLib->GetSymbol(wxT("CreateMonitorBuilder"));
                 if(ptr)
                 {
                     (*ptr)();
@@ -80,7 +80,7 @@ bool MonitorPluginFactory::LoadLibrary(const wxString& sLibrary)
     {
         typedef void (*RegPtr)();
 
-        RegPtr ptr = (RegPtr)itLib->second->GetSymbol(wxT("CreateBuilders"));
+        RegPtr ptr = (RegPtr)itLib->second->GetSymbol(wxT("CreateMonitorBuilder"));
         if(ptr)
         {
             (*ptr)();
@@ -165,7 +165,7 @@ wxString MonitorPluginFactory::GetPluginName(const wxString& sDir, const wxStrin
         {
             if(pLib->IsLoaded())
             {
-                if(pLib->HasSymbol(wxT("GetPluginName")))
+                if(pLib->HasSymbol(wxT("GetPluginName")) && pLib->HasSymbol(wxT("CreateMonitorBuilder")))
                 {
                     typedef wxString (*RegPtr)();
                     RegPtr ptr = (RegPtr)pLib->GetSymbol(wxT("GetPluginName"));

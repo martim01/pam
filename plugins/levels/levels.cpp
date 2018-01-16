@@ -2,7 +2,7 @@
 #include "levelsbuilder.h"
 #include "testpluginfactory.h"
 
-void CreateBuilders()
+void CreateTestBuilder()
 {
     TestPluginFactory::Get()->Register(new LevelsBuilder());
 }

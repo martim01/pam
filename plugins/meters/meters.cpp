@@ -2,7 +2,7 @@
 #include "metersbuilder.h"
 #include "monitorpluginfactory.h"
 
-void CreateBuilders()
+void CreateMonitorBuilder()
 {
     MonitorPluginFactory::Get()->Register(new MetersBuilder());
 }
