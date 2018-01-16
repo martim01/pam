@@ -23,7 +23,10 @@ BEGIN_EVENT_TABLE(pnlAngleMeters,wxPanel)
 END_EVENT_TABLE()
 
 pnlAngleMeters::pnlAngleMeters(wxWindow* parent,AngleMetersBuilder* pBuilder,wxWindowID id,const wxPoint& pos,const wxSize& size) :
-    m_pBuilder(pBuilder)
+    m_pBuilder(pBuilder),
+    m_nInputChannels(2),
+    m_bStereo(true),
+    m_pCalculator(0)
 {
 	//(*Initialize(pnlAngleMeters)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
