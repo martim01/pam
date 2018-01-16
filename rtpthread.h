@@ -10,7 +10,7 @@
 #include "session.h"
 
 struct qosData;
-class Aes67MediaSession;
+class Smpte2110MediaSession;
 
 class RtpThread : public wxThread
 {
@@ -35,7 +35,7 @@ class RtpThread : public wxThread
 
         void QosUpdated(qosData* pData);
 
-        void PassSessionDetails(Aes67MediaSession* pSession);
+        void PassSessionDetails(Smpte2110MediaSession* pSession);
 
 
         bool openURL();
@@ -64,7 +64,7 @@ class RtpThread : public wxThread
         UsageEnvironment* m_penv;
 
         RTSPClient* m_pRtspClient;
-        Aes67MediaSession* m_pSession;
+        Smpte2110MediaSession* m_pSession;
         unsigned int m_nInputChannels;
 
         char m_eventLoopWatchVariable;

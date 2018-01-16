@@ -1109,6 +1109,8 @@ Boolean MediaSubsession::parseSDPAttribute_fmtp(char const* sdpLine) {
     if (strncmp(sdpLine, "a=fmtp:", 7) != 0) break; sdpLine += 7;
     while (isdigit(*sdpLine)) ++sdpLine;
 
+    env() << "fmtp: " << sdpLine << "\n";
+
     // The remaining "sdpLine" should be a sequence of
     //     <name>=<value>;
     // or
@@ -1126,11 +1128,14 @@ Boolean MediaSubsession::parseSDPAttribute_fmtp(char const* sdpLine) {
 	Locale l("POSIX");
 	for (char* c = nameStr; *c != '\0'; ++c) *c = tolower(*c);
 
-	if (sscanfResult == 1) {
+	if (sscanfResult == 1)
+        {
 	  // <name>
 	  setAttribute(nameStr);
+    env() << "switch: " << nameStr << "\n";
 	} else {
 	  // <name>=<value>
+	  env() << "param: " << nameStr << "=" << valueStr << "\n";
 	  setAttribute(nameStr, valueStr);
 	}
       }

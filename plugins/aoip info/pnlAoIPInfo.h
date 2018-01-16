@@ -31,12 +31,11 @@ class pnlAoIPInfo: public wxPanel
 		wmLabel* m_plblQoSTime;
 		wxPanel* pnlSDP;
 		wmLabel* m_pLbl7;
+		wmLabel* m_plblSubSyncId;
 		wmLabel* m_plblQoSInterMin;
 		wmLabel* m_plblQoSPacketsAv;
-		wmLabel* m_pLbl39;
 		wmLabel* m_pLbl24;
 		wmLabel* m_plblSessionChannels;
-		wmLabel* m_pLbl38;
 		wmLabel* m_plblQoSReceived;
 		wmLabel* m_plblSubsessionVideo;
 		wmLabel* m_plblQoSPacketsMax;
@@ -106,6 +105,7 @@ class pnlAoIPInfo: public wxPanel
 		wmLabel* m_plblFrameDuration;
 		wmLabel* m_plblSessionName;
 		wmLabel* m_plblSyncDomain;
+		wmLabel* m_plblSubSyncDomain;
 		wmLabel* m_plblDescription;
 		wmLabel* m_plblSyncVersion;
 		wmLabel* m_plblInput;

@@ -3,7 +3,7 @@
 #include "timedbuffer.h"
 #include "qos.h"
 #include <wx/log.h>
-#include "aes67mediasession.h"
+#include "smpte2110mediasession.h"
 
 UsageEnvironment& operator<<(UsageEnvironment& env, const RTSPClient& rtspClient)
 {
@@ -40,7 +40,7 @@ void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultS
         env << *rtspClient << "Got a SDP description:\n" << sdpDescription << "\n";
 
         // Create a media session object from this SDP description:
-        scs.session = Aes67MediaSession::createNew(env, sdpDescription);
+        scs.session = Smpte2110MediaSession::createNew(env, sdpDescription);
         delete[] sdpDescription; // because we don't need it anymore
         if (scs.session == NULL)
         {
@@ -132,7 +132,7 @@ void setupNextSubsession(RTSPClient* rtspClient)
     ourRTSPClient* pClient = dynamic_cast<ourRTSPClient*>(rtspClient);
     if(pClient)
     {
-        pClient->GetHandler()->PassSessionDetails(dynamic_cast<Aes67MediaSession*>(scs.session));
+        pClient->GetHandler()->PassSessionDetails(dynamic_cast<Smpte2110MediaSession*>(scs.session));
     }
 
     // We've finished setting up all of the subsessions.  Now, send a RTSP "PLAY" command to start the streaming:

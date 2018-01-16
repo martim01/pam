@@ -195,7 +195,14 @@ void pnlMeters::SetSession(const session& aSession)
     if(m_nInputChannels != 2) //not stereo
     {
         m_vMeters.resize(m_nInputChannels);
-        m_vMonitor.resize(m_nInputChannels/2);
+        if(m_nInputChannels%2 == 0)
+        {
+            m_vMonitor.resize(m_nInputChannels/2);
+        }
+        else
+        {
+            m_vMonitor.resize(m_nInputChannels/2+1);
+        }
 
         for(unsigned long i = 0; i < m_vMeters.size(); i++)
         {

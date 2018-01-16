@@ -6,7 +6,7 @@
 #include "timedbuffer.h"
 
 class RtpThread;
-class Aes67MediaSubsession;
+class Smpte2110MediaSubsession;
 
 
 bool operator<(const timeval& t1, const timeval& t2);
@@ -46,7 +46,7 @@ private:
     virtual Boolean continuePlaying();
 
     u_int8_t* fReceiveBuffer;
-    Aes67MediaSubsession* m_pSubsession;
+    Smpte2110MediaSubsession* m_pSubsession;
     RtpThread* m_pHandler;
     char* fStreamId;
 

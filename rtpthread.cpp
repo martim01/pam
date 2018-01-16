@@ -6,13 +6,13 @@
 #include "PamUsageEnvironment.h"
 #include "PamTaskScheduler.h"
 #include "timedbuffer.h"
-#include "aes67mediasession.h"
+#include "smpte2110mediasession.h"
 #include "wxsink.h"
 
 using namespace std;
 
 //// A function that outputs a string that identifies each subsession (for debugging output).  Modify this if you wish:
-UsageEnvironment& operator<<(UsageEnvironment& env, const Aes67MediaSubsession& subsession)
+UsageEnvironment& operator<<(UsageEnvironment& env, const Smpte2110MediaSubsession& subsession)
 {
     return env << subsession.mediumName() << "/" << subsession.codecName();
 }
@@ -72,7 +72,7 @@ void* RtpThread::Entry()
 
         *m_penv << "\nUsing SDP passed via SAP \n" << sSDP.c_str() << "\n";
 
-        Aes67MediaSession* pSession = Aes67MediaSession::createNew(*m_penv, sSDP.c_str());
+        Smpte2110MediaSession* pSession = Smpte2110MediaSession::createNew(*m_penv, sSDP.c_str());
         if (pSession == NULL)
         {
             *m_penv << "Failed to create a MediaSession object from the SDP description: " << m_penv->getResultMsg() << "\n";
@@ -105,8 +105,8 @@ void* RtpThread::Entry()
         *m_penv << "---------------------------------------\n";
 
         MediaSubsessionIterator iter(*pSession);
-        Aes67MediaSubsession* subsession = NULL;
-        while ((subsession = dynamic_cast<Aes67MediaSubsession*>(iter.next())) != NULL)
+        Smpte2110MediaSubsession* subsession = NULL;
+        while ((subsession = dynamic_cast<Smpte2110MediaSubsession*>(iter.next())) != NULL)
         {
             if (!subsession->initiate (0))
             {
@@ -337,7 +337,7 @@ void RtpThread::QosUpdated(qosData* pData)
 }
 
 
-void RtpThread::PassSessionDetails(Aes67MediaSession* pSession)
+void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
 {
     m_Session = session();
 
@@ -348,10 +348,12 @@ void RtpThread::PassSessionDetails(Aes67MediaSession* pSession)
     m_Session.sDescription = wxString::FromAscii(pSession->sessionDescription());
     m_Session.sGroups = pSession->GetGroupDup();
 
+
     MediaSubsessionIterator iterSub(*pSession);
-    Aes67MediaSubsession* pSubsession = NULL;
-    while ((pSubsession = dynamic_cast<Aes67MediaSubsession*>(iterSub.next())) != NULL)
+    Smpte2110MediaSubsession* pSubsession = NULL;
+    while ((pSubsession = dynamic_cast<Smpte2110MediaSubsession*>(iterSub.next())) != NULL)
     {
+        refclk clock = pSubsession->GetRefClock();
         wxLogDebug(wxT("Subsession: %s  %s"), wxString::FromAscii(pSubsession->mediumName()).c_str(), wxString::FromAscii(pSubsession->protocolName()).c_str());
         m_Session.lstSubsession.push_back(subsession(wxString::FromAscii(pSubsession->GetEndpoint()),
                                                      wxString::FromAscii(pSubsession->mediumName()),
@@ -373,6 +375,7 @@ void RtpThread::PassSessionDetails(Aes67MediaSession* pSession)
     }
     else
     {
+
         m_nInputChannels = 0;
     }
 

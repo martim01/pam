@@ -167,12 +167,16 @@
 		<Unit filename="pnlTests.h" />
 		<Unit filename="qos.cpp" />
 		<Unit filename="qos.h" />
+		<Unit filename="rawvideosource.cpp" />
+		<Unit filename="rawvideosource.h" />
 		<Unit filename="rtpthread.cpp" />
 		<Unit filename="rtpthread.h" />
 		<Unit filename="rtsputil.cpp" />
 		<Unit filename="rtsputil.h" />
 		<Unit filename="sapwatchthread.cpp" />
 		<Unit filename="sapwatchthread.h" />
+		<Unit filename="smpte2110mediasession.cpp" />
+		<Unit filename="smpte2110mediasession.h" />
 		<Unit filename="streamclientstate.cpp" />
 		<Unit filename="streamclientstate.h" />
 		<Unit filename="wxServDisc.cpp" />

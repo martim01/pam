@@ -297,18 +297,18 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_plblSubSyncVersion->SetBackgroundColour(wxColour(255,255,255));
 	wxFont m_plblSubSyncVersionFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
 	m_plblSubSyncVersion->SetFont(m_plblSubSyncVersionFont);
-	m_pLbl39 = new wmLabel(pnlSubsession, ID_M_PLBL74, wxEmptyString, wxPoint(540,91), wxSize(55,25), 0, _T("ID_M_PLBL74"));
-	m_pLbl39->SetBorderState(uiRect::BORDER_NONE);
-	m_pLbl39->SetForegroundColour(wxColour(0,128,0));
-	m_pLbl39->SetBackgroundColour(wxColour(255,255,255));
-	wxFont m_pLbl39Font(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
-	m_pLbl39->SetFont(m_pLbl39Font);
-	m_pLbl38 = new wmLabel(pnlSubsession, ID_M_PLBL73, wxEmptyString, wxPoint(340,91), wxSize(199,25), 0, _T("ID_M_PLBL73"));
-	m_pLbl38->SetBorderState(uiRect::BORDER_NONE);
-	m_pLbl38->SetForegroundColour(wxColour(0,128,0));
-	m_pLbl38->SetBackgroundColour(wxColour(255,255,255));
-	wxFont m_pLbl38Font(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
-	m_pLbl38->SetFont(m_pLbl38Font);
+	m_plblSubSyncDomain = new wmLabel(pnlSubsession, ID_M_PLBL74, wxEmptyString, wxPoint(540,91), wxSize(55,25), 0, _T("ID_M_PLBL74"));
+	m_plblSubSyncDomain->SetBorderState(uiRect::BORDER_NONE);
+	m_plblSubSyncDomain->SetForegroundColour(wxColour(0,128,0));
+	m_plblSubSyncDomain->SetBackgroundColour(wxColour(255,255,255));
+	wxFont m_plblSubSyncDomainFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
+	m_plblSubSyncDomain->SetFont(m_plblSubSyncDomainFont);
+	m_plblSubSyncId = new wmLabel(pnlSubsession, ID_M_PLBL73, wxEmptyString, wxPoint(340,91), wxSize(199,25), 0, _T("ID_M_PLBL73"));
+	m_plblSubSyncId->SetBorderState(uiRect::BORDER_NONE);
+	m_plblSubSyncId->SetForegroundColour(wxColour(0,128,0));
+	m_plblSubSyncId->SetBackgroundColour(wxColour(255,255,255));
+	wxFont m_plblSubSyncIdFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
+	m_plblSubSyncId->SetFont(m_plblSubSyncIdFont);
 	m_pLbl29 = new wmLabel(pnlSubsession, ID_M_PLBL52, _("Sync Timestamp"), wxPoint(5,130), wxSize(149,20), 0, _T("ID_M_PLBL52"));
 	m_pLbl29->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl29->SetForegroundColour(wxColour(255,255,255));
@@ -635,6 +635,11 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
         {
             m_nFrameSize*=2;
         }
+
+        m_plblSubSyncType->SetLabel(aSession.itCurrentSubsession->refClock.sType);
+        m_plblSubSyncVersion->SetLabel(aSession.itCurrentSubsession->refClock.sVersion);
+        m_plblSubSyncId->SetLabel(aSession.itCurrentSubsession->refClock.sId);
+        m_plblSubSyncDomain->SetLabel(wxString::Format(wxT("%u"), aSession.itCurrentSubsession->refClock.nDomain));
     }
     else
     {

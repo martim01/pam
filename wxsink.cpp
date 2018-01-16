@@ -6,7 +6,7 @@
 #endif
 
 #include "aes67source.h"
-#include "aes67mediasession.h"
+#include "smpte2110mediasession.h"
 
 // Even though we're not going to be doing anything with the incoming data, we still need to receive it.
 // Define the size of the buffer that we'll use:
@@ -26,7 +26,7 @@ wxSink* wxSink::createNew(UsageEnvironment& env, MediaSubsession& subsession, Rt
 
 wxSink::wxSink(UsageEnvironment& env, MediaSubsession& subsession,RtpThread* pHandler, char const* streamId)
     : MediaSink(env),
-      m_pSubsession(dynamic_cast<Aes67MediaSubsession*>(&subsession)),
+      m_pSubsession(dynamic_cast<Smpte2110MediaSubsession*>(&subsession)),
       m_pHandler(pHandler)
 {
     fStreamId = strDup(streamId);
@@ -51,7 +51,6 @@ void wxSink::afterGettingFrame(void* clientData, unsigned frameSize, unsigned nu
 void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, const timeval& tvPresentation, unsigned durationInMicroseconds)
 {
     // We've just received a frame of data.  (Optionally) print out information about it:
-
     if(strcmp(m_pSubsession->mediumName(), "audio") == 0)
     {
         Aes67Source* pSource = dynamic_cast<Aes67Source*>(m_pSubsession->rtpSource());
@@ -73,6 +72,8 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
             m_mExtension.erase(itExt); //remove the extension map
         }
 
+        //fSubsession.rtpSource()->hasBeenSynchronizedUsingRTCP()
+
         if(strcmp(m_pSubsession->codecName(),"L16") == 0)
         {
             m_pHandler->AddFrame(m_pSubsession->GetEndpoint(),  pSource->lastReceivedSSRC(), presentationTime, frameSize, fReceiveBuffer, 2, pSource->GetTransmissionTime(), pSource->GetRTPTimestamp(),frameSize, mExt);
@@ -81,6 +82,10 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
         {
             m_pHandler->AddFrame(m_pSubsession->GetEndpoint(), pSource->lastReceivedSSRC(), presentationTime, frameSize, fReceiveBuffer, 3, pSource->GetTransmissionTime(), pSource->GetRTPTimestamp(),frameSize, mExt);
         }
+    }
+    else if(strcmp(m_pSubsession->mediumName(), "video") == 0)
+    {
+
     }
 
 

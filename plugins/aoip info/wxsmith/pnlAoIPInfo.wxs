@@ -405,7 +405,7 @@
 							<face>Consolas</face>
 						</font>
 					</object>
-					<object class="wmLabel" name="ID_M_PLBL74" variable="m_pLbl39" member="yes">
+					<object class="wmLabel" name="ID_M_PLBL74" variable="m_plblSubSyncDomain" member="yes">
 						<label></label>
 						<pos>540,91</pos>
 						<size>55,25</size>
@@ -420,7 +420,7 @@
 							<face>Consolas</face>
 						</font>
 					</object>
-					<object class="wmLabel" name="ID_M_PLBL73" variable="m_pLbl38" member="yes">
+					<object class="wmLabel" name="ID_M_PLBL73" variable="m_plblSubSyncId" member="yes">
 						<label></label>
 						<pos>340,91</pos>
 						<size>199,25</size>
