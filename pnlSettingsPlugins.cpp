@@ -7,7 +7,7 @@
 #include "testpluginfactory.h"
 #include <wx/filename.h>
 #include <wx/log.h>
-
+#include "wmlogevent.h"
 //(*InternalHeaders(pnlSettingsPlugins)
 #include <wx/intl.h>
 #include <wx/string.h>
@@ -260,9 +260,11 @@ void pnlSettingsPlugins::ShowMonitorPlugins()
         }
     }
 
-
+    wxFileName fnDir(sLibDir);
+    fnDir.MakeAbsolute();
+    wmLog::Get()->Log(wxString::Format(wxT("Lib Directory: %s"), fnDir.GetFullPath().c_str()));
     wxArrayString asLibs;
-    wxDir::GetAllFiles(sLibDir, &asLibs);
+    wxDir::GetAllFiles(fnDir.GetFullPath(), &asLibs);
 
     for(size_t i = 0; i < asLibs.GetCount(); i++)
     {
@@ -271,7 +273,8 @@ void pnlSettingsPlugins::ShowMonitorPlugins()
         #ifdef __WXGNU__
             sLibToLoad = sLibToLoad.Mid(3);
         #endif // __WXGNU__
-        wxString sPlugin = MonitorPluginFactory::Get()->GetPluginName(sLibDir, sLibToLoad);
+        wmLog::Get()->Log(wxString::Format(wxT("Lib : %s"), sLibToLoad.c_str()));
+        wxString sPlugin = MonitorPluginFactory::Get()->GetPluginName(fnDir.GetFullPath(), sLibToLoad);
         if(sPlugin != wxEmptyString)
         {
             if(m_mPossible.insert(make_pair(sPlugin, sLibToLoad)).second)

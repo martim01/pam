@@ -78,6 +78,7 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
             return true;
         }
     }
+    m_pStream = 0;
     wmLog::Get()->Log(wxString::Format(wxT("Failed to open device %d %s %d %d,"), m_nDevice, wxString::FromAscii(Pa_GetErrorText(err)).c_str(), m_nSampleRate, m_nChannels));
     return false;
 }

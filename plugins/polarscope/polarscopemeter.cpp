@@ -17,7 +17,21 @@ END_EVENT_TABLE()
 
 
 
-PolarScope::PolarScope(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size) : m_dMindB(70.0), m_pBuffer(0), m_nBufferSize(0), m_pBmpCorrelationOut(0), m_pBmpCorrelationIn(0)
+PolarScope::PolarScope(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size) :
+    m_pntPole(0,0),
+    m_dResolution(1.0),
+    m_dResolutionCorrelation(1.0),
+    m_nMode(0),
+    m_dMindB(70.0),
+    m_nInputChannels(1),
+    m_nAxisX(0),
+    m_nAxisY(0),
+    m_dCorrelation(0),
+    m_dBalance(0),
+    m_pBuffer(0),
+    m_nBufferSize(0),
+    m_pBmpCorrelationOut(0),
+    m_pBmpCorrelationIn(0)
 {
     Create(parent, id, pos, size);
     #ifdef __TOUCHSCREEN__
@@ -424,7 +438,10 @@ void PolarScope::SetAudioData(const timedbuffer* pBuffer)
     WorkoutLevel();
     WorkoutBalance();
 
-    Refresh();
+    if(IsShown())
+    {
+        Refresh();
+    }
 }
 
 void PolarScope::SetNumberOfInputChannels(unsigned int nInputChannels)

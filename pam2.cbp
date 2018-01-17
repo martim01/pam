@@ -102,6 +102,30 @@
 					<Add library="pambase2.0" />
 				</Linker>
 			</Target>
+			<Target title="Linux Debug">
+				<Option output="bin/Linux Debug/pam2" prefix_auto="1" extension_auto="1" />
+				<Option object_output=".objs/debug" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="`wx-config --cxxflags`" />
+					<Add option="-fpermissive" />
+					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-D__WXGNU__" />
+					<Add option="-DPAMBASE_DEBUG" />
+					<Add option="-D__WXDEBUG__" />
+				</Compiler>
+				<Linker>
+					<Add option="`wx-config --libs`" />
+					<Add library="libportaudio" />
+					<Add library="libliveMedia.a" />
+					<Add library="libBasicUsageEnvironment.a" />
+					<Add library="libUsageEnvironment.a" />
+					<Add library="libgroupsock.a" />
+					<Add library="pambased2.0" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />

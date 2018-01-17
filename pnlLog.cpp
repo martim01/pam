@@ -65,6 +65,9 @@ void pnlLog::SetLogControl(pnlLogControl* pControl)
 }
 void pnlLog::Log(const wxString& sLogEntry)
 {
+    #ifdef __WXDEBUG__
+        cout << sLogEntry.mb_str() << endl;
+    #endif // __WXDEBUG__
     size_t nIndex;
     bool bMore;
     wxArrayString as(wxStringTokenize(sLogEntry, wxT("\n")));

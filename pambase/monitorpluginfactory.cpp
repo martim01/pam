@@ -4,7 +4,7 @@
 #include <wx/dynlib.h>
 #include <wx/log.h>
 #include <wx/xml/xml.h>
-
+#include "wmlogevent.h"
 
 using namespace std;
 
@@ -145,7 +145,7 @@ map<wxString, wxDynamicLibrary*>::const_iterator MonitorPluginFactory::FindLibra
 
 wxString MonitorPluginFactory::GetPluginName(const wxString& sDir, const wxString& sLibrary)
 {
-    wxLogNull ln;
+    //wxLogNull ln;
     map<wxString, wxDynamicLibrary*>::const_iterator itLib = m_mLibraries.find(sLibrary);
     if(itLib != m_mLibraries.end())
     {
@@ -159,7 +159,7 @@ wxString MonitorPluginFactory::GetPluginName(const wxString& sDir, const wxStrin
     else
     {
         wxString sLib = sDir + wxT("/") + wxDynamicLibrary::CanonicalizeName(sLibrary);
-
+        wmLog::Get()->Log(sLib);
         wxDynamicLibrary* pLib = new wxDynamicLibrary(sLib);
         if(pLib)
         {
@@ -174,8 +174,20 @@ wxString MonitorPluginFactory::GetPluginName(const wxString& sDir, const wxStrin
                         return (*ptr)();
                     }
                 }
+                else
+                {
+                    wmLog::Get()->Log(wxString::Format(wxT("Could not find correct symbols in lib %s"), sLib.c_str()));
+                }
+            }
+            else
+            {
+                wmLog::Get()->Log(wxString::Format(wxT("Could not load lib %s"), sLib.c_str()));
             }
             delete pLib;
+        }
+        else
+        {
+            wmLog::Get()->Log(wxString::Format(wxT("Could not create lib %s"), sLib.c_str()));
         }
     }
     return wxEmptyString;

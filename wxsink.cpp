@@ -97,11 +97,12 @@ Boolean wxSink::continuePlaying()
     if (fSource != NULL)
     {
         Aes67Source* pSource = dynamic_cast<Aes67Source*>(fSource);
-
-        pSource->setRtpExtHdrCallback(rtpExtensionCallback, this);
-
-        // Request the next frame of data from our input source.  "afterGettingFrame()" will get called later, when it arrives:
-        pSource->getNextFrame(fReceiveBuffer, DUMMY_SINK_RECEIVE_BUFFER_SIZE,
+        if(pSource)
+        {
+            pSource->setRtpExtHdrCallback(rtpExtensionCallback, this);
+        }
+            // Request the next frame of data from our input source.  "afterGettingFrame()" will get called later, when it arrives:
+        fSource->getNextFrame(fReceiveBuffer, DUMMY_SINK_RECEIVE_BUFFER_SIZE,
                               afterGettingFrame, this,
                               onSourceClosure, this);
         return True;
