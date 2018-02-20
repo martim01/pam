@@ -18,7 +18,7 @@ public:
 
     void InitMeter(const wxString & sText,double dMin);
 
-    void SetLevels(const double dLevels[], size_t nSize);
+    void SetLevels(const double dLevels[], size_t nSize, double dOffset);
 
     bool SetLightColours(double dLow, wxColour clrLow, double dMid, wxColour clrMid,  wxColour clrHigh);
     void ResetMeter(void);
@@ -29,6 +29,7 @@ public:
     void ShowValue(double dValue);
 
     void SetSpeed(long nSpeed);
+
 
 
     void SetLevelDisplay(bool bLevels);
@@ -98,15 +99,14 @@ protected:
 
     std::pair<double, wxColour> m_pairColour[3];
 
-    ppm* m_pPPM;
-    loud* m_pLoud;
-
     int m_nPeakCounter;
 
     long m_nMeterMSMode;
     long m_nMeterSpeed;
 
     bool m_bShading;
+
+    double m_dLevelOffset;
 
     unsigned int m_nChannels;
 };

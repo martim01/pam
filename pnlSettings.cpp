@@ -2,12 +2,15 @@
 #include "portaudio.h"
 #include <wx/app.h>
 #include <wx/log.h>
+#include <wx/dir.h>
+#include <wx/filename.h>
 
 #include "settings.h"
 //#include "meter.h"
 #include "version.h"
 
 //(*InternalHeaders(pnlSettings)
+#include <wx/settings.h>
 #include <wx/font.h>
 #include <wx/intl.h>
 #include <wx/string.h>
@@ -18,8 +21,8 @@ using namespace std;
 //(*IdInit(pnlSettings)
 const long pnlSettings::ID_M_PLBL37 = wxNewId();
 const long pnlSettings::ID_M_PLBL3 = wxNewId();
-const long pnlSettings::ID_M_PBTN2 = wxNewId();
 const long pnlSettings::ID_M_PLST1 = wxNewId();
+const long pnlSettings::ID_M_PLST2 = wxNewId();
 const long pnlSettings::ID_PANEL1 = wxNewId();
 const long pnlSettings::ID_M_PLBL4 = wxNewId();
 const long pnlSettings::ID_M_PLBL1 = wxNewId();
@@ -32,6 +35,8 @@ const long pnlSettings::ID_PANEL2 = wxNewId();
 const long pnlSettings::ID_PANEL4 = wxNewId();
 const long pnlSettings::ID_PANEL5 = wxNewId();
 const long pnlSettings::ID_PANEL3 = wxNewId();
+const long pnlSettings::ID_M_PLST3 = wxNewId();
+const long pnlSettings::ID_PANEL6 = wxNewId();
 const long pnlSettings::ID_M_PSWP1 = wxNewId();
 //*)
 
@@ -62,11 +67,13 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pLbl3->SetBackgroundColour(wxColour(0,64,0));
     wxFont m_pLbl3Font(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
     m_pLbl3->SetFont(m_pLbl3Font);
-    m_pbtnInput = new wmButton(pnlInput, ID_M_PBTN2, _("Input"), wxPoint(0,40), wxSize(240,30), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN2"));
-    m_pbtnInput->SetBackgroundColour(wxColour(64,0,64));
     m_plstDevices = new wmList(pnlInput, ID_M_PLST1, wxPoint(0,70), wxSize(600,370), wmList::STYLE_SELECT, 0, wxSize(-1,40), 5, wxSize(5,1));
     m_plstDevices->SetBackgroundColour(wxColour(0,0,0));
     m_plstDevices->SetSelectedButtonColour(wxColour(wxT("#008000")));
+    m_plstInput = new wmList(pnlInput, ID_M_PLST2, wxPoint(0,36), wxSize(600,34), wmList::STYLE_SELECT, 0, wxSize(100,30), 3, wxSize(-1,-1));
+    m_plstInput->SetBackgroundColour(wxColour(0,0,0));
+    m_plstInput->SetButtonColour(wxColour(wxT("#400080")));
+    m_plstInput->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
     pnlOutput = new wxPanel(m_pswpSettings, ID_PANEL2, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL2"));
     pnlOutput->SetBackgroundColour(wxColour(0,0,0));
     m_pLbl4 = new wmLabel(pnlOutput, ID_M_PLBL4, _("Audio Output"), wxPoint(0,5), wxSize(600,30), 0, _T("ID_M_PLBL4"));
@@ -104,14 +111,19 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     pnlSettingsRTP = new pnlRTP(m_pswpSettings, ID_PANEL4, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL4"));
     pnlSettingsNetwork = new pnlNetworkSetup(m_pswpSettings, ID_PANEL5, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL5"));
     m_ppnlPlugins = new pnlSettingsPlugins(m_pswpSettings, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
+    pnlThreads = new wxPanel(m_pswpSettings, ID_PANEL6, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL6"));
+    pnlThreads->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
+    m_plstThreads = new wmList(pnlThreads, ID_M_PLST3, wxDefaultPosition, wxSize(600,480), 0, 0, wxSize(-1,40), 3, wxSize(1,1));
+    m_plstThreads->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
     m_pswpSettings->AddPage(pnlInput, _("Audio Input"), false);
     m_pswpSettings->AddPage(pnlOutput, _("Audio Output"), false);
     m_pswpSettings->AddPage(pnlSettingsRTP, _("AoIP"), false);
     m_pswpSettings->AddPage(pnlSettingsNetwork, _("Network"), false);
     m_pswpSettings->AddPage(m_ppnlPlugins, _("Plugins"), false);
+    m_pswpSettings->AddPage(pnlThreads, _("Threads"), false);
 
-    Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnInputClick);
     Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstDevicesSelected);
+    Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstInputSelected);
     Connect(ID_M_PLST5,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstBufferSelected);
     Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnOutputClick);
     Connect(ID_M_PLST6,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlblLatencySelected);
@@ -128,7 +140,10 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
         m_plstLatency->AddButton(wxString::Format(wxT("%u ms"), i*20));
     }
 
-    m_pbtnInput->SetToggleLook(true, wxT("AoIP"), wxT("Card"),50.0);
+    m_plstInput->AddButton(wxT("Soundcard"));
+    m_plstInput->AddButton(wxT("RTP"));
+    m_plstInput->AddButton(wxT("File"));
+
     m_pbtnOutput->SetToggleLook(true, wxT("OFF"), wxT("ON"),50.0);
 //    m_pbtnMeterShading->SetToggleLook(true, wxT("Solid"), wxT("Graded"), 50.0);
 
@@ -169,9 +184,8 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
 
 
-    m_pbtnInput->ToggleSelection((Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")) == wxT("Soundcard")), true);
+    m_plstInput->SelectButton(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")), true);
     m_pbtnOutput->ToggleSelection(Settings::Get().Read(wxT("Output"), wxT("Enabled"), 1), true);
-    //m_pbtnMeterShading->ToggleSelection(Settings::Get()->Read(wxT("meters/shading"), int(1)), true);
 
     ShowRTPDefined();
 
@@ -196,15 +210,19 @@ pnlSettings::~pnlSettings()
 
 void pnlSettings::OnlstDevicesSelected(wxCommandEvent& event)
 {
-    if(m_pbtnInput->IsChecked())
+    wxString sDevice(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")));
+    if(sDevice == wxT("Soundcard"))
     {
         Settings::Get().Write(wxT("Input"), wxT("Device"), (int)event.GetClientData());
     }
-    else
+    else if(sDevice == wxT("RTP"))
     {
         Settings::Get().Write(wxT("Input"), wxT("RTP"), event.GetString());
     }
-
+    else if(sDevice == wxT("File"))
+    {
+        Settings::Get().Write(wxT("Input"), wxT("File"), event.GetString());
+    }
 }
 
 void pnlSettings::OnlstMeters_M36Selected(wxCommandEvent& event)
@@ -242,22 +260,7 @@ void pnlSettings::OnBtnExit(wxCommandEvent& event)
 
 void pnlSettings::OnbtnInputClick(wxCommandEvent& event)
 {
-    if(event.IsChecked())
-    {
-        ShowSoundcardInputs();
-    }
-    else
-    {
-        ShowRTPDefined();
-    }
-    if(event.IsChecked())
-    {
-        Settings::Get().Write(wxT("Input"), wxT("Type"), wxT("Soundcard"));
-    }
-    else
-    {
-        Settings::Get().Write(wxT("Input"), wxT("Type"), wxT("RTP"));
-    }
+
 
 }
 
@@ -350,9 +353,29 @@ void pnlSettings::ShowRTPDefined()
 
 }
 
+void pnlSettings::ShowFiles()
+{
+    m_plstDevices->Freeze();
+    m_plstDevices->Clear();
+
+
+    wxArrayString asFiles;
+    wxDir::GetAllFiles(Settings::Get().Read(wxT("Input"), wxT("Directory"), wxT(".")), &asFiles, wxT("*.wav"));
+
+    for(size_t i = 0; i < asFiles.GetCount(); i++)
+    {
+        wxFileName fn(asFiles[i]);
+        m_plstDevices->AddButton(fn.GetName(), wxNullBitmap, (void*)i);
+    }
+    m_plstDevices->Thaw();
+
+    m_plstDevices->SelectButton(Settings::Get().Read(wxT("Input"), wxT("File"), wxEmptyString));
+
+}
+
 void pnlSettings::ReloadRTP()
 {
-    if(m_pbtnInput->IsChecked() == false)
+    if(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")) == wxT("RTP"))
     {
         ShowRTPDefined();
     }
@@ -380,4 +403,21 @@ void pnlSettings::OnbtnMeterShadingClick(wxCommandEvent& event)
 void pnlSettings::OnlblLatencySelected(wxCommandEvent& event)
 {
     Settings::Get().Write(wxT("Output"), wxT("Latency"), event.GetInt()*20);
+}
+
+void pnlSettings::OnlstInputSelected(wxCommandEvent& event)
+{
+    if(event.GetString() == wxT("Soundcard"))
+    {
+        ShowSoundcardInputs();
+    }
+    else if(event.GetString() == wxT("RTP"))
+    {
+        ShowRTPDefined();
+    }
+    else if(event.GetString() == wxT("File"))
+    {
+        ShowFiles();
+    }
+    Settings::Get().Write(wxT("Input"), wxT("Type"),event.GetString());
 }

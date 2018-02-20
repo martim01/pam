@@ -41,14 +41,6 @@
 							<face>Arial</face>
 						</font>
 					</object>
-					<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnInput" member="yes">
-						<label>Input</label>
-						<pos>0,40</pos>
-						<size>240,30</size>
-						<bg>#400040</bg>
-						<style>wmButton::STYLE_SELECT</style>
-						<handler function="OnbtnInputClick" entry="EVT_BUTTON" />
-					</object>
 					<object class="wmList" name="ID_M_PLST1" variable="m_plstDevices" member="yes">
 						<scrolling>None</scrolling>
 						<button_gap>5,1</button_gap>
@@ -61,6 +53,19 @@
 						<bg>#000000</bg>
 						<style>wmList::STYLE_SELECT</style>
 						<handler function="OnlstDevicesSelected" entry="EVT_LIST_SELECTED" />
+					</object>
+					<object class="wmList" name="ID_M_PLST2" variable="m_plstInput" member="yes">
+						<scrolling>None</scrolling>
+						<button_size>100,30</button_size>
+						<columns>3</columns>
+						<button>#400080</button>
+						<button_selected>#FF8000</button_selected>
+						<items />
+						<pos>0,36</pos>
+						<size>600,34</size>
+						<bg>#000000</bg>
+						<style>wmList::STYLE_SELECT</style>
+						<handler function="OnlstInputSelected" entry="EVT_LIST_SELECTED" />
 					</object>
 				</object>
 				<label>Audio Input</label>
@@ -165,6 +170,19 @@
 			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL3" subclass="pnlSettingsPlugins" variable="m_ppnlPlugins" member="yes" />
 				<label>Plugins</label>
+			</object>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL6" variable="pnlThreads" member="yes">
+					<bg>wxSYS_COLOUR_BACKGROUND</bg>
+					<object class="wmList" name="ID_M_PLST3" variable="m_plstThreads" member="yes">
+						<scrolling>None</scrolling>
+						<columns>3</columns>
+						<items />
+						<size>600,480</size>
+						<bg>wxSYS_COLOUR_BACKGROUND</bg>
+					</object>
+				</object>
+				<label>Threads</label>
 			</object>
 		</object>
 	</object>

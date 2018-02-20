@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlScale">
+		<bg>#000000</bg>
+		<id_arg>0</id_arg>
+		<object class="wmList" name="ID_M_PLST1" variable="m_plstScale" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>5,5</button_gap>
+			<columns>2</columns>
+			<text>#FFFFFF</text>
+			<items />
+			<pos>0,0</pos>
+			<size>190,140</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstScaleSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+	</object>
+</wxsmith>

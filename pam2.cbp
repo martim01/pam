@@ -70,7 +70,7 @@
 					<Add option="-Wl,--enable-auto-import,-Map=pam2.map" />
 					<Add library="wxmsw30u_gcc_wammacs" />
 					<Add library="portaudio" />
-					<Add library="libliveMedia.a" />
+					<Add library="libliveMedia" />
 					<Add library="libBasicUsageEnvironment.a" />
 					<Add library="libUsageEnvironment.a" />
 					<Add library="libgroupsock.a" />
@@ -203,6 +203,7 @@
 		<Unit filename="smpte2110mediasession.h" />
 		<Unit filename="streamclientstate.cpp" />
 		<Unit filename="streamclientstate.h" />
+		<Unit filename="version.h" />
 		<Unit filename="wxServDisc.cpp" />
 		<Unit filename="wxServDisc.h" />
 		<Unit filename="wxsink.cpp" />
@@ -233,6 +234,12 @@
 					<wxPanel wxs="wxsmith/pnlLogControl.wxs" src="pnlLogControl.cpp" hdr="pnlLogControl.h" fwddecl="0" i18n="1" name="pnlLogControl" language="CPP" />
 				</resources>
 			</wxsmith>
+			<AutoVersioning>
+				<Scheme minor_max="10" build_max="0" rev_max="0" rev_rand_max="10" build_times_to_increment_minor="100" />
+				<Settings autoincrement="1" date_declarations="1" use_define="0" update_manifest="1" do_auto_increment="0" ask_to_increment="0" language="C++" svn="0" svn_directory="" header_path="version.h" />
+				<Changes_Log show_changes_editor="0" app_title="released version %M.%m.%b of %p" changeslog_path="ChangesLog.txt" />
+				<Code header_guard="VERSION_H" namespace="AutoVersion" prefix="" />
+			</AutoVersioning>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

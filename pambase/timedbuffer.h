@@ -106,6 +106,11 @@ class PAMBASE_IMPEXPORT timedbuffer
         return m_pBuffer;
     }
 
+    float* GetWritableBuffer()
+    {
+        return m_pBuffer;
+    }
+
     const pairTime_t& GetTimeVal() const
     {
         return m_tvStamp;

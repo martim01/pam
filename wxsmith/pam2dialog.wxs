@@ -7,7 +7,7 @@
 		<style>wxNO_BORDER</style>
 		<object class="wmSwitcherPanel" name="ID_M_PSWP1" variable="m_pswpMain" member="yes">
 			<pos>0,0</pos>
-			<size>600,460</size>
+			<size>600,480</size>
 			<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
 		</object>
 		<object class="wxPanel" name="ID_PANEL1" variable="pnlLists" member="yes">
@@ -58,6 +58,9 @@
 			<interval>10</interval>
 			<oneshot>1</oneshot>
 			<handler function="OntimerStartTrigger" entry="EVT_TIMER" />
+		</object>
+		<object class="wxTimer" name="ID_TIMER2" variable="m_timerFile" member="yes">
+			<handler function="Onm_timerFileTrigger" entry="EVT_TIMER" />
 		</object>
 	</object>
 </wxsmith>

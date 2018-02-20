@@ -3,6 +3,7 @@
 #include <wx/string.h>
 
 class pnlMeters;
+class pnlScale;
 class SettingEvent;
 
 class WXEXPORT MetersBuilder : public MonitorPluginBuilder
@@ -26,6 +27,7 @@ class WXEXPORT MetersBuilder : public MonitorPluginBuilder
         friend class pnlMode;
         friend class pnlOptions;
         friend class pnlMeterSettings;
+        friend class pnlScale;
 
         void ClearMeter();
         void OnSettingChanged(SettingEvent& event);

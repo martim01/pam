@@ -55,6 +55,9 @@ class pnlMeters: public wxPanel
         void SetM3M6(unsigned long nMode);
         void SetShading(bool bShaded);
         void OutputChannels(const std::vector<char>& vChannels);
+
+        void SetScale(const wxString& sScale);
+
 	protected:
 
 		//(*Identifiers(pnlMeters)
@@ -92,6 +95,7 @@ class pnlMeters: public wxPanel
 		LevelCalculator* m_pCalculator;
 		unsigned int m_nInputChannels;
 
+        double m_dOffset;
 		DECLARE_EVENT_TABLE()
 };
 

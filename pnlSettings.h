@@ -27,7 +27,6 @@ class pnlSettings: public wxPanel
 		wmLabel* m_pLbl3;
 		wmList* m_plstDevices;
 		wmSwitcherPanel* m_pswpSettings;
-		wmButton* m_pbtnInput;
 		wmButton* m_pbtnOutput;
 		wmLabel* m_pLbl1;
 		pnlSettingsPlugins* m_ppnlPlugins;
@@ -36,8 +35,11 @@ class pnlSettings: public wxPanel
 		wmList* m_plstBuffer;
 		wmLabel* m_pLbl5;
 		wmLabel* m_plblSettings;
+		wmList* m_plstInput;
+		wxPanel* pnlThreads;
 		wxPanel* pnlOutput;
 		pnlRTP* pnlSettingsRTP;
+		wmList* m_plstThreads;
 		wxPanel* pnlInput;
 		//*)
 
@@ -48,8 +50,8 @@ class pnlSettings: public wxPanel
 		//(*Identifiers(pnlSettings)
 		static const long ID_M_PLBL37;
 		static const long ID_M_PLBL3;
-		static const long ID_M_PBTN2;
 		static const long ID_M_PLST1;
+		static const long ID_M_PLST2;
 		static const long ID_PANEL1;
 		static const long ID_M_PLBL4;
 		static const long ID_M_PLBL1;
@@ -62,6 +64,8 @@ class pnlSettings: public wxPanel
 		static const long ID_PANEL4;
 		static const long ID_PANEL5;
 		static const long ID_PANEL3;
+		static const long ID_M_PLST3;
+		static const long ID_PANEL6;
 		static const long ID_M_PSWP1;
 		//*)
 
@@ -81,11 +85,13 @@ class pnlSettings: public wxPanel
 		void OnlstBufferSelected(wxCommandEvent& event);
 		void OnbtnMeterShadingClick(wxCommandEvent& event);
 		void OnlblLatencySelected(wxCommandEvent& event);
+		void OnlstInputSelected(wxCommandEvent& event);
 		//*)
 
 
 		void ShowSoundcardInputs();
 		void ShowRTPDefined();
+		void ShowFiles();
         void ShowSoundcardOutputs();
 
 		DECLARE_EVENT_TABLE()

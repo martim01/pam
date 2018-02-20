@@ -55,6 +55,7 @@ void* RtpThread::Entry()
             {
                 m_penv->taskScheduler().doEventLoop(&m_eventLoopWatchVariable);
             }
+            wxLogDebug(wxT("TEST DESTROY = true"));
             m_bClosing = true;
             if(m_pRtspClient && m_eventLoopWatchVariable == 0)  //0 means stream has shutdown and is telling us to stop
             {
@@ -152,9 +153,10 @@ void* RtpThread::Entry()
 
     delete[] m_pCurrentBuffer;
 
-    wxCommandEvent event(wxEVT_RTP_SESSION_CLOSED);
-    event.SetString(m_sUrl);
-    wxPostEvent(m_pHandler, event);
+    wxLogDebug(wxT("SEND Close event %s"), m_sUrl.c_str());
+    wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_RTP_SESSION_CLOSED);
+    pEvent->SetString(m_sUrl);
+    wxQueueEvent(m_pHandler, pEvent);
 
 
 
@@ -247,12 +249,12 @@ void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const p
                         pTimedBuffer->SetTransmissionTime(ConvertDoubleToPairTime(m_dTransmission));
                         pTimedBuffer->SetDuration(nDuration);
 
-                        wxCommandEvent event(wxEVT_DATA);
-                        event.SetId(0);
-                        event.SetClientData(reinterpret_cast<void*>(pTimedBuffer));
-                        event.SetInt(m_nBufferSize);
-                        event.SetExtraLong(48000);  //@todo sample rate
-                        wxPostEvent(m_pHandler, event);
+                        wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_DATA);
+                        pEvent->SetId(0);
+                        pEvent->SetClientData(reinterpret_cast<void*>(pTimedBuffer));
+                        pEvent->SetInt(m_nBufferSize);
+                        pEvent->SetExtraLong(48000);  //@todo sample rate
+                        wxQueueEvent(m_pHandler, pEvent);
 
                         m_nSampleBufferSize = 0;
 
@@ -294,12 +296,12 @@ void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const p
 
                         pTimedBuffer->SetDuration(nDuration);
 
-                        wxCommandEvent event(wxEVT_DATA);
-                        event.SetId(0);
-                        event.SetClientData(reinterpret_cast<void*>(pTimedBuffer));
-                        event.SetInt(m_nBufferSize);
-                        event.SetExtraLong(48000);  //@todo sample rate
-                        wxPostEvent(m_pHandler, event);
+                        wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_DATA);
+                        pEvent->SetId(0);
+                        pEvent->SetClientData(reinterpret_cast<void*>(pTimedBuffer));
+                        pEvent->SetInt(m_nBufferSize);
+                        pEvent->SetExtraLong(48000);  //@todo sample rate
+                        wxQueueEvent(m_pHandler, pEvent);
 
                         m_nSampleBufferSize = 0;
                     }
@@ -330,9 +332,9 @@ void RtpThread::QosUpdated(qosData* pData)
 {
     if(m_pHandler)
     {
-        wxCommandEvent event(wxEVT_QOS_UPDATED);
-        event.SetClientData((void*)pData);
-        wxPostEvent(m_pHandler, event);
+        wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_QOS_UPDATED);
+        pEvent->SetClientData((void*)pData);
+        wxQueueEvent(m_pHandler, pEvent);
     }
 }
 

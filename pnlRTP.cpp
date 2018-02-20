@@ -320,7 +320,7 @@ void pnlRTP::OnDiscovery(wxCommandEvent& event)
 {
     for(size_t i = 0; i < m_pServscan->getResults().size(); i++)
     {
-        if(m_setDiscover.insert(make_pair(m_pServscan->getResults()[i].name, event.GetString())).second)
+        if(m_setDiscover.insert(make_pair(m_pServscan->getResults()[i].name, m_pServscan->getResults()[i].ipFrom)).second)
         {
             wxString sSession(m_pServscan->getResults()[i].name);
             int nEnd = sSession.Find(wxT("._rtsp._tcp.local."));
@@ -333,7 +333,7 @@ void pnlRTP::OnDiscovery(wxCommandEvent& event)
             wxString sAddress(wxString::Format(wxT("rtsp://%s/by-name/%s"), m_pServscan->getResults()[i].ipFrom.c_str(), sSession.c_str()));
             GetSDP(sAddress);
 
-            Settings::Get().Write(wxT("RTP"), sName, sAddress);
+            Settings::Get().Write(wxT("RTP"), wxString::Format(wxT("%s(%s)"), sName.c_str(), m_pServscan->getResults()[i].ipFrom.c_str()), sAddress);
 
 
             ListSources();

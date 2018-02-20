@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="Workspace">
+		<Project filename="BasicUsageEnvironment/BasicUsageEnvironment.cbp" />
+		<Project filename="groupsock/groupsock.cbp" />
+		<Project filename="liveMedia/liveMedia.cbp" />
+		<Project filename="UsageEnvironment/UsageEnvironment.cbp" />
+	</Workspace>
+</CodeBlocks_workspace_file>

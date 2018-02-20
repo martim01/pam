@@ -129,10 +129,13 @@
 		<Unit filename="pnlMode.h" />
 		<Unit filename="pnlOptions.cpp" />
 		<Unit filename="pnlOptions.h" />
+		<Unit filename="pnlScale.cpp" />
+		<Unit filename="pnlScale.h" />
 		<Unit filename="wxsmith/pnlMeterSettings.wxs" />
 		<Unit filename="wxsmith/pnlMeters.wxs" />
 		<Unit filename="wxsmith/pnlMode.wxs" />
 		<Unit filename="wxsmith/pnlOptions.wxs" />
+		<Unit filename="wxsmith/pnlScale.wxs" />
 		<Extensions>
 			<code_completion />
 			<envvars />
@@ -149,6 +152,7 @@
 					<wxPanel wxs="wxsmith/pnlMode.wxs" src="pnlMode.cpp" hdr="pnlMode.h" fwddecl="0" i18n="1" name="pnlMode" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlOptions.wxs" src="pnlOptions.cpp" hdr="pnlOptions.h" fwddecl="0" i18n="1" name="pnlOptions" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlMeterSettings.wxs" src="pnlMeterSettings.cpp" hdr="pnlMeterSettings.h" fwddecl="0" i18n="1" name="pnlMeterSettings" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlScale.wxs" src="pnlScale.cpp" hdr="pnlScale.h" fwddecl="0" i18n="1" name="pnlScale" language="CPP" />
 				</resources>
 			</wxsmith>
 		</Extensions>

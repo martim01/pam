@@ -47,9 +47,9 @@ pnlLissajou::pnlLissajou(wxWindow* parent,LissajouBuilder* pBuilder,wxWindowID i
 //	m_pJellyfish->Connect(wxEVT_COMMAND_LEFT_CLICK,(wxObjectEventFunction)&pnlLissajou::OnLeftUp);
 
 	double dLevels[15] = {0,-3, -6, -9, -12, -15, -18, -21, -24, -30, -36, -42, -48, -54, -60};
-	m_pMeterLeft->SetLevels(dLevels,15);
-    m_pMeterRight->SetLevels(dLevels,15);
-    m_pMeterLevels->SetLevels(dLevels,15);
+	m_pMeterLeft->SetLevels(dLevels,15,0.0);
+    m_pMeterRight->SetLevels(dLevels,15,0.0);
+    m_pMeterLevels->SetLevels(dLevels,15,0.0);
 
     m_pCalculator = new LevelCalculator(0);
 }

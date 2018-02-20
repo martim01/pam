@@ -32,6 +32,7 @@ class RtpThread;
 class SettingEvent;
 class pnlTests;
 class pnlLog;
+class SoundFile;
 
 class MonitorEvent;
 struct session;
@@ -51,6 +52,7 @@ class pam2Dialog: public wxDialog
         void OnlstScreensSelected(wxCommandEvent& event);
         void OnplstOptionsSelected(wxCommandEvent& event);
         void OntimerStartTrigger(wxTimerEvent& event);
+        void Onm_timerFileTrigger(wxTimerEvent& event);
         //*)
 
         //(*Identifiers(pam2Dialog)
@@ -61,6 +63,7 @@ class pam2Dialog: public wxDialog
         static const long ID_M_PSWP2;
         static const long ID_PANEL1;
         static const long ID_TIMER1;
+        static const long ID_TIMER2;
         //*)
 
         //(*Declarations(pam2Dialog)
@@ -68,6 +71,7 @@ class pam2Dialog: public wxDialog
         wxPanel* pnlLists;
         wmList* m_plstOptions;
         wxPanel* Panel1;
+        wxTimer m_timerFile;
         wmSwitcherPanel* m_pswpOptions;
         wxTimer timerStart;
         wmSwitcherPanel* m_pswpMain;
@@ -107,11 +111,18 @@ class pam2Dialog: public wxDialog
         void MaximizeMonitor(bool bMax);
 
         void TellPluginsAboutOutputChannels();
+        void OpenFileForReading();
+
+        void PopulateThreadList();
 
         void ClearSession();
 
+        void ReadSoundFile(unsigned int nSize);
+
         Audio* m_pAudio;
         Playback* m_pPlayback;
+
+        SoundFile* m_pSoundfile;
 
         pnlSettings* m_ppnlSettings;
         pnlTests* m_ppnlTests;
@@ -128,6 +139,7 @@ class pam2Dialog: public wxDialog
         std::multimap<size_t, wxString> m_mmMonitorPlugins;
         size_t m_nCurrentMonitorPage;
 
+        wxDateTime m_dtLastRead;
 
         DECLARE_EVENT_TABLE()
 };

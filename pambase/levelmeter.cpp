@@ -18,8 +18,6 @@ LevelMeter::LevelMeter()
     : m_dMin(-70)
     , m_dMax(0)
     , m_nMeterDisplay(PEAK)
-    , m_pPPM(0)
-    , m_pLoud(0)
     , m_bShading(true)
 {
     //create our font
@@ -30,9 +28,7 @@ LevelMeter::LevelMeter()
 
 LevelMeter::LevelMeter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, bool bLevelDisplay, const wxPoint& pos, const wxSize& size) :
     m_dMax(0),
-    m_nMeterDisplay(PEAK),
-    m_pPPM(0),
-    m_pLoud(0)
+    m_nMeterDisplay(PEAK)
 {
     m_dLastValue = -180;
     wxSize szInit(size);
@@ -43,6 +39,7 @@ LevelMeter::LevelMeter(wxWindow *parent, wxWindowID id, const wxString & sText,d
         szInit.SetHeight(bestSize.y);
 
 
+    m_dLevelOffset = 0.0;
     wxWindow::Create(parent,id,pos,szInit,wxWANTS_CHARS, wxT("levelmeter"));
 
 #ifdef __TOUCHSCREEN__
@@ -78,14 +75,6 @@ LevelMeter::LevelMeter(wxWindow *parent, wxWindowID id, const wxString & sText,d
 
 LevelMeter::~LevelMeter()
 {
-    if(m_pPPM)
-    {
-        delete m_pPPM;
-    }
-    if(m_pLoud)
-    {
-        delete m_pLoud;
-    }
 }
 
 
@@ -136,15 +125,15 @@ void LevelMeter::OnPaint(wxPaintEvent& event)
         {
                 for(size_t i = 0; i < m_vLevels.size(); i++)
                 {
-                    int nY(m_uiLevelText.GetBottom()-(m_dPixelsPerdB*m_vLevels[i]));
+                    int nY(m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])));
 
 
                     dc.SetPen(wxPen(wxColour(200,200,200),1, wxDOT));
-                    dc.DrawLine(0, m_uiLevelText.GetBottom()-(m_dPixelsPerdB*m_vLevels[i]), GetClientRect().GetWidth(), m_uiLevelText.GetBottom()-(m_dPixelsPerdB*m_vLevels[i]));
+                    dc.DrawLine(0, m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])), GetClientRect().GetWidth(), m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])));
                     uiRect uiLevel(wxRect(15, nY-10,GetClientSize().x-30, 20));
                     uiLevel.SetBackgroundColour(*wxBLACK);
                     uiLevel.SetForegroundColour(*wxWHITE);
-                    uiLevel.Draw(dc, wxString::Format(wxT("%.0f"), m_vLevels[i]), uiRect::BORDER_NONE);
+                    uiLevel.Draw(dc, wxString::Format(wxT("%.0f"), m_vLevels[i]-m_dLevelOffset), uiRect::BORDER_NONE);
                 }
         }
         else
@@ -301,7 +290,7 @@ void LevelMeter::ShowValue(double dValue)
             m_dPeakValue = min(dValue, m_dMax);
             if(m_nMeterDisplay != LOUD)
             {
-                m_uiLevelText.SetLabel(wxString::Format(wxT("%.1fdB"), m_dPeakValue));
+                m_uiLevelText.SetLabel(wxString::Format(wxT("%.1fdB"), m_dPeakValue-m_dLevelOffset));
             }
             else
             {
@@ -367,8 +356,9 @@ void LevelMeter::SetMeterDisplay(short nDisplay)
 }
 
 
-void LevelMeter::SetLevels(const double dLevels[], size_t nSize)
+void LevelMeter::SetLevels(const double dLevels[], size_t nSize, double dOffset)
 {
+    m_dLevelOffset = dOffset;
     m_vLevels.clear();
     m_vLevels.resize(nSize);
     for(size_t i = 0 ; i < nSize; i++)

@@ -46,7 +46,7 @@ public:
 	bool OpenToRead(const wxString& sFileName);
 	bool ReadAudio(std::vector<char>& vBuffer, unsigned int nLoop);
 	bool ReadAudio(std::vector<short>& vBuffer, unsigned int nLoop);
-
+    bool ReadAudio(float* pBuffer, int nSize, unsigned int nLoop);
 
 
 

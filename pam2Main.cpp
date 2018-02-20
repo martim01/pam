@@ -31,6 +31,7 @@
 #include "testpluginbuilder.h"
 #include "wmlogevent.h"
 #include <wx/stdpaths.h>
+#include "soundfile.h"
 
 //(*InternalHeaders(pam2Dialog)
 #include <wx/intl.h>
@@ -71,6 +72,7 @@ const long pam2Dialog::ID_PANEL2 = wxNewId();
 const long pam2Dialog::ID_M_PSWP2 = wxNewId();
 const long pam2Dialog::ID_PANEL1 = wxNewId();
 const long pam2Dialog::ID_TIMER1 = wxNewId();
+const long pam2Dialog::ID_TIMER2 = wxNewId();
 //*)
 
 using   namespace std;
@@ -82,6 +84,7 @@ END_EVENT_TABLE()
 pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_pAudio(0),
     m_pPlayback(0),
+    m_pSoundfile(0),
     m_pSelectedMonitor(0),
     m_ppnlLog(0)
 {
@@ -90,7 +93,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Create(parent, id, _("wxWidgets app"), wxDefaultPosition, wxDefaultSize, wxNO_BORDER, _T("id"));
     SetClientSize(wxSize(800,480));
     SetBackgroundColour(wxColour(0,0,0));
-    m_pswpMain = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(0,0), wxSize(600,460), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
+    m_pswpMain = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(0,0), wxSize(600,480), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
     m_pswpMain->SetPageNameStyle(0);
     pnlLists = new wxPanel(this, ID_PANEL1, wxPoint(600,0), wxSize(200,480), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
     m_plstScreens = new wmList(pnlLists, ID_M_PLST1, wxPoint(0,0), wxSize(200,139), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
@@ -109,10 +112,12 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_pswpOptions->AddPage(Panel1, _("Blank"), false);
     timerStart.SetOwner(this, ID_TIMER1);
     timerStart.Start(10, true);
+    m_timerFile.SetOwner(this, ID_TIMER2);
 
     Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnlstScreensSelected);
     Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnplstOptionsSelected);
     Connect(ID_TIMER1,wxEVT_TIMER,(wxObjectEventFunction)&pam2Dialog::OntimerStartTrigger);
+    Connect(ID_TIMER2,wxEVT_TIMER,(wxObjectEventFunction)&pam2Dialog::Onm_timerFileTrigger);
     //*)
 
     m_plstScreens->SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
@@ -135,6 +140,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Settings::Get().AddHandler(wxT("Input"),wxT("Type"), this);
     Settings::Get().AddHandler(wxT("Input"),wxT("RTP"), this);
     Settings::Get().AddHandler(wxT("Input"),wxT("Device"), this);
+    Settings::Get().AddHandler(wxT("Input"),wxT("File"), this);
 
     Settings::Get().AddHandler(wxT("Output"),wxT("Device"), this);
     Settings::Get().AddHandler(wxT("Output"),wxT("Enabled"), this);
@@ -172,6 +178,12 @@ pam2Dialog::~pam2Dialog()
         m_pPlayback->ClosePlayback();
     //    m_pPlayback->Delete();
         delete m_pPlayback;
+    }
+
+    if(m_pSoundfile)
+    {
+        delete m_pSoundfile;
+        m_pSoundfile = 0;
     }
 
     Pa_Terminate();
@@ -382,6 +394,7 @@ void pam2Dialog::ShowSettingsPanel()
     m_plstOptions->AddButton(wxT("AoIP"));
     m_plstOptions->AddButton(wxT("Network"));
     m_plstOptions->AddButton(wxT("Plugins"));
+    m_plstOptions->AddButton(wxT("Threads"));
 
     m_plstOptions->SelectButton(Settings::Get().Read(wxT("Settings"), wxT("_Options"), 0));
     m_plstOptions->Thaw();
@@ -461,7 +474,9 @@ void pam2Dialog::MaximizeMonitor(bool bMax)
 
 void pam2Dialog::CreateAudioInputDevice()
 {
-    if(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")) == wxT("Soundcard"))
+    wxString sType(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")));
+
+    if(sType == wxT("Soundcard"))
     {
         wmLog::Get()->Log(wxT("Create Audio Input Device: Soundcard"));
 
@@ -479,20 +494,30 @@ void pam2Dialog::CreateAudioInputDevice()
 
 
     }
-    else
+    else if(sType == wxT("RTP"))
     {
         wmLog::Get()->Log(wxT("Create Audio Input Device: AoIP"));
-
         wxString sRtp(Settings::Get().Read(wxT("Input"), wxT("RTP"), wxEmptyString));
         sRtp = Settings::Get().Read(wxT("RTP"), sRtp, wxEmptyString);
+
+        wxLogDebug(wxT("RTP=%s"), sRtp.c_str());
         if(sRtp.empty() == false && m_mRtp.find(sRtp) == m_mRtp.end())
         {
+
             m_sCurrentRtp = sRtp;
+            wxLogDebug(wxT("RTP=%s: Create new thread"), m_sCurrentRtp.c_str());
+
             RtpThread* pThread = new RtpThread(this, wxT("pam"), sRtp, 2048);
             pThread->Create();
             pThread->Run();
-            m_mRtp.insert(make_pair(sRtp, pThread));
+            m_mRtp.insert(make_pair(m_sCurrentRtp, pThread));
+            PopulateThreadList();
         }
+    }
+    else if(sType == wxT("File"))
+    {
+        wmLog::Get()->Log(wxT("Create Audio Input Device: File"));
+        OpenFileForReading();
     }
 }
 
@@ -522,6 +547,10 @@ void pam2Dialog::OnAudioData(wxCommandEvent& event)
         {
             m_pPlayback->AddSamples(pTimedBuffer);
             PassDataToPanels(pTimedBuffer);
+        }
+        else if(m_pSoundfile)
+        {
+            ReadSoundFile(pTimedBuffer->GetBufferSize());
         }
     }
     else
@@ -573,7 +602,8 @@ void pam2Dialog::InputChanged(const wxString& sKey)
     //has the type changed
     if(sKey == wxT("Type"))
     {
-        if(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")) != wxT("Soundcard"))
+        wxString sType(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")));
+        if(sType != wxT("Soundcard"))
         {
             if(m_pAudio)
             {
@@ -582,8 +612,9 @@ void pam2Dialog::InputChanged(const wxString& sKey)
                 m_pAudio = 0;
             }
         }
-        else
+        if(sType != wxT("RTP"))
         {
+            wxLogDebug(wxT("Input changed: Current: %s"), m_sCurrentRtp.c_str());
             map<wxString, RtpThread*>::iterator itThread = m_mRtp.find(m_sCurrentRtp);
             if(itThread != m_mRtp.end())
             {
@@ -595,22 +626,47 @@ void pam2Dialog::InputChanged(const wxString& sKey)
                 }
             }
         }
-        //CreateAudioInputDevice();
-    }
-    else if(sKey == wxT("RTP") && Settings::Get().Read(wxT("Input"), wxT("RTP"), wxEmptyString) != m_sCurrentRtp)
-    {
-        wmLog::Get()->Log(wxT("Audio Input Device Changed: Close AoIP Session"));
-        ClearSession();
-        map<wxString, RtpThread*>::iterator itThread = m_mRtp.find(m_sCurrentRtp);
-        if(itThread != m_mRtp.end())
+        if(sType != wxT("File"))
         {
-            bool bDelete = m_setRtpOrphan.insert(itThread->first).second;
-            if(bDelete)
+            if(m_pSoundfile)
             {
-                itThread->second->Delete();
+                wmLog::Get()->Log(wxT("Close sound file"));
+                delete m_pSoundfile;
+                m_pSoundfile = 0;
             }
         }
-        CreateAudioInputDevice();
+        //CreateAudioInputDevice();
+    }
+    else if(sKey == wxT("RTP"))
+    {
+        wxLogDebug(wxT("RTP Key"));
+        wxString sUrl = Settings::Get().Read(wxT("RTP"), Settings::Get().Read(wxT("Input"), wxT("RTP"), wxEmptyString), wxEmptyString);
+        if(sUrl != m_sCurrentRtp)
+        {
+            wmLog::Get()->Log(wxT("Audio Input Device Changed: Close AoIP Session"));
+            ClearSession();
+            map<wxString, RtpThread*>::iterator itThread = m_mRtp.find(m_sCurrentRtp);
+            wxLogDebug(wxT("Current: '%s' Read '%s'"), m_sCurrentRtp.c_str(), sUrl.c_str());
+            if(itThread != m_mRtp.end())
+            {
+                wxLogDebug(wxT("Thread found"));
+                bool bDelete = m_setRtpOrphan.insert(itThread->first).second;
+                if(bDelete)
+                {
+                    wxLogDebug(wxT("Ask thread to delete"));
+                    itThread->second->Delete();
+                }
+                else
+                {
+                    wxLogDebug(wxT("Thread '%s' already in orphan set"), itThread->first);
+                }
+            }
+            CreateAudioInputDevice();
+        }
+        else
+        {
+            wxLogDebug(wxT("Read=%s Current=%s"),Settings::Get().Read(wxT("Input"), wxT("RTP"), wxEmptyString).c_str(),  m_sCurrentRtp.c_str());
+        }
     }
     else if(sKey == wxT("Device"))
     {
@@ -625,7 +681,46 @@ void pam2Dialog::InputChanged(const wxString& sKey)
         {
             CreateAudioInputDevice();
         }
+    }
+    else if(sKey == wxT("File"))
+    {
+        OpenFileForReading();
+    }
+}
 
+void pam2Dialog::OpenFileForReading()
+{
+    wxString sFilePath;
+    sFilePath << Settings::Get().Read(wxT("Input"), wxT("Directory"), wxT(".")) << wxT("/") << Settings::Get().Read(wxT("Input"), wxT("File"), wxEmptyString) << wxT(".wav");
+    if(m_pSoundfile)
+    {
+        wmLog::Get()->Log(wxT("Close sound file"));
+        delete m_pSoundfile;
+    }
+
+    m_pSoundfile = new SoundFile();
+    if(m_pSoundfile->OpenToRead(sFilePath))
+    {
+        wmLog::Get()->Log(wxString::Format(wxT("Opened file '%s'"), sFilePath.c_str()));
+        wmLog::Get()->Log(wxString::Format(wxT("SampleRate = %d"), m_pSoundfile->GetFormat().dwSamplesPerSec));
+        wmLog::Get()->Log(wxString::Format(wxT("Channels = %d"), m_pSoundfile->GetFormat().wChannels));
+
+        session aSession(wxEmptyString, Settings::Get().Read(wxT("Input"), wxT("File"), wxEmptyString), wxT("File"));
+        aSession.lstSubsession.push_back(subsession(Settings::Get().Read(wxT("Input"), wxT("File"), wxEmptyString), wxEmptyString, wxEmptyString, wxEmptyString, 0, m_pSoundfile->GetFormat().dwSamplesPerSec, m_pSoundfile->GetFormat().wChannels, wxEmptyString, 0, make_pair(0,0), refclk()));
+        aSession.itCurrentSubsession = aSession.lstSubsession.begin();
+        m_Session = aSession;
+
+        InputSession(aSession);
+
+        CheckPlayback(m_pSoundfile->GetFormat().dwSamplesPerSec, m_pSoundfile->GetFormat().wChannels);
+        m_dtLastRead = wxDateTime::UNow();
+
+    }
+    else
+    {
+        wmLog::Get()->Log(wxString::Format(wxT("Failed to opend file '%s'"), sFilePath.c_str()));
+        delete m_pSoundfile;
+        m_pSoundfile = 0;
     }
 }
 
@@ -646,17 +741,25 @@ void pam2Dialog::OutputChanged(const wxString& sKey)
 
 void pam2Dialog::OnRTPSessionClosed(wxCommandEvent& event)
 {
-    if(m_sCurrentRtp == event.GetString())
+    wxLogDebug(wxT("RTP Session closed: %s [%s]"), event.GetString().c_str(), m_sCurrentRtp.c_str());
+    wxString sTest = event.GetString();
+    sTest.Replace(wxT("%20"), wxT(" "));
+
+    if(m_sCurrentRtp == sTest)
     {
         m_sCurrentRtp = wxEmptyString;
+        wxLogDebug(wxT("Current set to empty"));
     }
-    //m_ptxtRtpLog->AppendText(wxString::Format(wxT("%s   AoIP Sink %s closed\n"), wxDateTime::UNow().Format(wxT("%H:%M:%S:%l")).c_str(), event.GetString().c_str()));
-    m_setRtpOrphan.erase(event.GetString());
-    m_mRtp.erase(event.GetString());
+    //m_ptxtRtpLog->AppendText(wxString::Format(wxT("%s   AoIP Sink %s closed\n"), wxDateTime::UNow().Format(wxT("%H:%M:%S:%l")).c_str(), sTest().c_str()));
+    m_setRtpOrphan.erase(sTest);
+    m_mRtp.erase(sTest);
+
+    PopulateThreadList();
 }
 
 void pam2Dialog::OnRTPSession(wxCommandEvent& event)
 {
+    wxLogDebug(wxT("RTP Session"));
 
     m_Session = *reinterpret_cast<session*>(event.GetClientData());
 
@@ -784,4 +887,62 @@ void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
     CreateAudioInputDevice();
     m_pPlayback = new Playback();
     m_pPlayback->Init(this, 2048);
+}
+
+void pam2Dialog::Onm_timerFileTrigger(wxTimerEvent& event)
+{
+//    if(m_pSoundfile)
+//    {
+//        double dElapseMs((wxDateTime::UNow()-m_dtLastRead).GetMilliseconds().ToDouble());
+//        dElapseMs /= 2.0;
+//
+//        unsigned long nSize(static_cast<double>(m_pSoundfile->GetFormat().dwSamplesPerSec)/dElapseMs);
+//
+//        wxLogDebug(wxT("%d"), nSize);
+//        //nSize = m_pSoundfile->GetFormat().dwSamplesPerSec/12;
+//
+//        m_dtLastRead = wxDateTime::UNow();
+//        timedbuffer* pData = new timedbuffer(nSize);
+//        if(m_pSoundfile->ReadAudio(pData->GetWritableBuffer(), pData->GetBufferSize(), 1))
+//        {
+//            wxCommandEvent event(wxEVT_DATA);
+//            event.SetId(0);
+//            event.SetClientData(reinterpret_cast<void*>(pData));
+//            event.SetInt(pData->GetBufferSize()/2);
+//            event.SetExtraLong(m_pSoundfile->GetFormat().dwSamplesPerSec);
+//            wxPostEvent(this, event);
+//        }
+//    }
+}
+
+void pam2Dialog::ReadSoundFile(unsigned int nSize)
+{
+    wxLogDebug(wxT("%d"), nSize);
+
+    timedbuffer* pData = new timedbuffer(nSize);
+    if(m_pSoundfile->ReadAudio(pData->GetWritableBuffer(), pData->GetBufferSize(), 1))
+    {
+        wxCommandEvent event(wxEVT_DATA);
+        event.SetId(0);
+        event.SetClientData(reinterpret_cast<void*>(pData));
+        event.SetInt(pData->GetBufferSize()/2);
+        event.SetExtraLong(m_pSoundfile->GetFormat().dwSamplesPerSec);
+        wxPostEvent(this, event);
+    }
+
+}
+
+void pam2Dialog::PopulateThreadList()
+{
+    m_ppnlSettings->m_plstThreads->Freeze();
+    m_ppnlSettings->m_plstThreads->Clear();
+    for(map<wxString, RtpThread*>::iterator itThread = m_mRtp.begin(); itThread != m_mRtp.end(); ++itThread)
+    {
+        int nButton = m_ppnlSettings->m_plstThreads->AddButton(itThread->first);
+        if(m_setRtpOrphan.find(itThread->first) != m_setRtpOrphan.end())
+        {
+            m_ppnlSettings->m_plstThreads->SetButtonColour(nButton, wxColour(200,0,0));
+        }
+    }
+    m_ppnlSettings->m_plstThreads->Thaw();
 }

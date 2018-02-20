@@ -225,6 +225,31 @@ bool SoundFile::ReadAudio(std::vector<short>& vBuffer, unsigned int nLoop)
 }
 
 
+bool SoundFile::ReadAudio(float* pBuffer, int nSize, unsigned int nLoop)
+{
+    if(m_wavformat.wBitsPerSample == 16)
+    {
+        std::vector<short> vTemp(nSize);   //*2 as assuming 16 bit audio
+        if(ReadAudio(vTemp, nLoop))
+        {
+            size_t i = 0;
+            for(; i < vTemp.size(); i++)
+            {
+                int nSample = (static_cast<int>(vTemp[i]) << 16);// | (static_cast<int>(vTemp[i+1]) << 24);
+                float dSample = static_cast<float>(nSample);
+                dSample /= 2147483648.0;
+                pBuffer[i] = dSample;
+            }
+            for(; i < nSize; i++)
+            {
+                pBuffer[i] = 0.0;
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
 
 
 /* Moves the file pointer to nSamples from the start of the audio data if possible
