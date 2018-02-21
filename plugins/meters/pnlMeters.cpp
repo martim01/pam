@@ -6,6 +6,7 @@
 #include "metersbuilder.h"
 #include "wmbutton.h"
 #include "levelcalculator.h"
+#include <array>
 
 //(*InternalHeaders(pnlMeters)
 #include <wx/font.h>
@@ -403,7 +404,7 @@ void pnlMeters::OnInfoLeftUp(wxMouseEvent& event)
 void pnlMeters::SetScale(const wxString& sScale)
 {
 
-    double dLevels[15];
+    array<double,15> dLevels;
 
     if(sScale == wxT("dBFS"))
     {
@@ -425,11 +426,11 @@ void pnlMeters::SetScale(const wxString& sScale)
 
     for(size_t i = 0; i < m_vMeters.size(); i++)
     {
-        m_vMeters[i]->SetLevels(dLevels,15, m_dOffset);
+        m_vMeters[i]->SetLevels(dLevels.data(),15, m_dOffset);
 
     }
     if(m_pLevels)
     {
-        m_pLevels->SetLevels(dLevels,15,m_dOffset);
+        m_pLevels->SetLevels(dLevels.data(),15,m_dOffset);
     }
 }
