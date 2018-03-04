@@ -229,6 +229,10 @@ void pnlMeters::SetSession(const session& aSession)
         m_vMeters[2] = new LevelMeter(this,wxID_ANY, wxT("M"), -70, false, wxPoint(200, 0), wxSize(50, 480));
         m_vMeters[3] = new LevelMeter(this,wxID_ANY, wxT("S"), -70, false, wxPoint(260, 0), wxSize(50, 480));
 
+        m_vMeters[0]->SetLightColours(-38,wxColour(220,0,0), -8,wxColour(230,230,0),  wxColour(255,100,100));
+        m_vMeters[1]->SetLightColours(-38,wxColour(0,220,0), -8, wxColour(230,230,0), wxColour(255,100,100));
+        m_vMeters[2]->SetLightColours(-38,wxColour(255,255,255), -8, wxColour(230,230,0), wxColour(255,100,100));
+        m_vMeters[3]->SetLightColours(-38,wxColour(255,128,0), -8, wxColour(230,230,0), wxColour(255,100,100));
 
 
         m_pLevels = new LevelMeter(this, wxID_ANY, wxEmptyString, -70, true, wxPoint(5,0), wxSize(50,481));
