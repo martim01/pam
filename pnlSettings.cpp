@@ -4,6 +4,7 @@
 #include <wx/log.h>
 #include <wx/dir.h>
 #include <wx/filename.h>
+#include <wx/msgdlg.h>
 
 #include "settings.h"
 //#include "meter.h"
@@ -113,7 +114,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_ppnlPlugins = new pnlSettingsPlugins(m_pswpSettings, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
     pnlThreads = new wxPanel(m_pswpSettings, ID_PANEL6, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL6"));
     pnlThreads->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
-    m_plstThreads = new wmList(pnlThreads, ID_M_PLST3, wxDefaultPosition, wxSize(600,480), 0, 0, wxSize(-1,40), 3, wxSize(1,1));
+    m_plstThreads = new wmList(pnlThreads, ID_M_PLST3, wxDefaultPosition, wxSize(600,480), 0, 0, wxSize(-1,-1), 3, wxSize(-1,-1));
     m_plstThreads->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
     m_pswpSettings->AddPage(pnlInput, _("Audio Input"), false);
     m_pswpSettings->AddPage(pnlOutput, _("Audio Output"), false);
@@ -130,7 +131,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     Connect(ID_M_PLST4,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstPlaybackSelected);
     //*)
 
-
+    m_pswpSettings->Connect(wxID_ANY, wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, (wxObjectEventFunction)&pnlSettings::OnswpSettingsPageChanged, NULL, this);
     SetSize(size);
     SetPosition(pos);
 
@@ -145,38 +146,6 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_plstInput->AddButton(wxT("File"));
 
     m_pbtnOutput->SetToggleLook(true, wxT("OFF"), wxT("ON"),50.0);
-//    m_pbtnMeterShading->SetToggleLook(true, wxT("Solid"), wxT("Graded"), 50.0);
-
-//    m_plstMeters_M36->AddButton(wxT("M3"));
-//    m_plstMeters_M36->AddButton(wxT("M6"));
-//
-//    m_plstMeters_Speed->AddButton(wxT("Slow"));
-//    m_plstMeters_Speed->AddButton(wxT("Normal"));
-//    m_plstMeters_Speed->AddButton(wxT("Fast"));
-
-    //Settings::Get()->ReadConfig();
-
-//    if(Settings::Get().Read(wxT("Main")) == meter::M3)
-//    {
-//        m_plstMeters_M36->SelectButton(0, false);
-//    }
-//    else
-//    {
-//        m_plstMeters_M36->SelectButton(1, false);
-//    }
-//
-//    switch(Settings::Get()->GetMeterSpeed())
-//    {
-//        case meter::SLOW:
-//            m_plstMeters_Speed->SelectButton(0, false);
-//            break;
-//        case meter::NORMAL:
-//            m_plstMeters_Speed->SelectButton(1, false);
-//            break;
-//        case meter::FAST:
-//            m_plstMeters_Speed->SelectButton(1, false);
-//            break;
-//    }
 
     ShowSoundcardOutputs();
 
@@ -407,17 +376,32 @@ void pnlSettings::OnlblLatencySelected(wxCommandEvent& event)
 
 void pnlSettings::OnlstInputSelected(wxCommandEvent& event)
 {
-    if(event.GetString() == wxT("Soundcard"))
+    Settings::Get().Write(wxT("Input"), wxT("Type"),event.GetString());
+    RefreshInputs();
+
+}
+
+void pnlSettings::RefreshInputs()
+{
+    wxString sType = Settings::Get().Read(wxT("Input"), wxT("Type"), wxEmptyString);
+    if(sType == wxT("Soundcard"))
     {
         ShowSoundcardInputs();
     }
-    else if(event.GetString() == wxT("RTP"))
+    else if(sType == wxT("RTP"))
     {
         ShowRTPDefined();
     }
-    else if(event.GetString() == wxT("File"))
+    else if(sType == wxT("File"))
     {
         ShowFiles();
     }
-    Settings::Get().Write(wxT("Input"), wxT("Type"),event.GetString());
+}
+
+void pnlSettings::OnswpSettingsPageChanged(wxNotebookEvent& event)
+{
+    if(m_pswpSettings->GetPageText(m_pswpSettings->GetSelection()) == wxT("Audio Input"))
+    {
+       RefreshInputs();
+    }
 }

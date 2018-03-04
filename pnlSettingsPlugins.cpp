@@ -264,7 +264,11 @@ void pnlSettingsPlugins::ShowMonitorPlugins()
     fnDir.MakeAbsolute();
     wmLog::Get()->Log(wxString::Format(wxT("Lib Directory: %s"), fnDir.GetFullPath().c_str()));
     wxArrayString asLibs;
-    wxDir::GetAllFiles(fnDir.GetFullPath(), &asLibs);
+    #ifdef __WXMSW__
+        wxDir::GetAllFiles(fnDir.GetFullPath(), &asLibs, wxT("*.dll"));
+    #else
+        wxDir::GetAllFiles(fnDir.GetFullPath(), &asLibs, wxT("*.so"));
+    #endif
 
     for(size_t i = 0; i < asLibs.GetCount(); i++)
     {
@@ -314,7 +318,11 @@ void pnlSettingsPlugins::ShowTestPlugins()
 
 
     wxArrayString asLibs;
-    wxDir::GetAllFiles(sLibDir, &asLibs);
+    #ifdef __WXMSW__
+        wxDir::GetAllFiles(sLibDir, &asLibs, wxT("*.dll"));
+    #else
+        wxDir::GetAllFiles(sLibDir, &asLibs, wxT("*.so"));
+    #endif
 
     for(size_t i = 0; i < asLibs.GetCount(); i++)
     {

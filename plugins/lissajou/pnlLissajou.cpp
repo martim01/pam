@@ -191,7 +191,7 @@ void pnlLissajou::CheckAxis()
     //if the output channels are the same as our axis we colour the meters red and green...
     if(m_vOutputs.size() > 1)
     {
-        if(m_vOutputs[0] == m_pBuilder->ReadSetting(wxT("Axis_X"),0))
+        if(m_vOutputs[0] == m_pBuilder->ReadSetting(wxT("Axis_X"),0) || m_nChannels == 2)
         {
             m_pMeterLeft->SetLightColours(-38,wxColour(220,0,0), -8,wxColour(230,230,0),  wxColour(255,100,100));
         }
@@ -200,7 +200,7 @@ void pnlLissajou::CheckAxis()
             m_pMeterLeft->SetLightColours(-38,wxColour(255,255,255), -8,wxColour(230,230,0), wxColour(255,100,100));
         }
 
-        if(m_vOutputs[1] == m_pBuilder->ReadSetting(wxT("Axis_Y"),0))
+        if(m_vOutputs[1] == m_pBuilder->ReadSetting(wxT("Axis_Y"),0) || m_nChannels == 2)
         {
             m_pMeterRight->SetLightColours(-38,wxColour(0,220,0), -8, wxColour(230,230,0), wxColour(255,100,100));
         }
