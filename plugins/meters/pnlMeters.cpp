@@ -376,21 +376,24 @@ void pnlMeters::OutputChannels(const std::vector<char>& vChannels)
         }
     }
 
-    for(size_t i = 0; i < m_vMeters.size(); i++)
+    if(m_nInputChannels != 2)
     {
-        if(vChannels[0] == i)
+        for(size_t i = 0; i < m_vMeters.size(); i++)
         {
-            m_vMeters[i]->SetLightColours(-38,wxColour(220,0,0), -8,wxColour(230,230,0),  wxColour(255,100,100));
+            if(vChannels[0] == i)
+            {
+                m_vMeters[i]->SetLightColours(-38,wxColour(220,0,0), -8,wxColour(230,230,0),  wxColour(255,100,100));
+            }
+            else if(vChannels[1] == i)
+            {
+                m_vMeters[i]->SetLightColours(-38,wxColour(0,220,0), -8, wxColour(230,230,0), wxColour(255,100,100));
+            }
+            else
+            {
+                m_vMeters[i]->SetLightColours(-38,wxColour(245,255,245), -8,wxColour(230,230,0), wxColour(255,100,100));
+            }
+            m_vMeters[i]->ResetMeter();
         }
-        else if(vChannels[1] == i)
-        {
-            m_vMeters[i]->SetLightColours(-38,wxColour(0,220,0), -8, wxColour(230,230,0), wxColour(255,100,100));
-        }
-        else
-        {
-            m_vMeters[i]->SetLightColours(-38,wxColour(245,255,245), -8,wxColour(230,230,0), wxColour(255,100,100));
-        }
-        m_vMeters[i]->ResetMeter();
     }
 }
 

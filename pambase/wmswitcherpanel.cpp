@@ -3,6 +3,7 @@
 #include <wx/dcbuffer.h>
 #include <wx/settings.h>
 #include <wx/log.h>
+#include <wx/bookctrl.h>
 
 using namespace std;
 
@@ -217,6 +218,10 @@ size_t wmSwitcherPanel::ChangeSelection(size_t nPage)
         m_nSwipePage = nPage;
         size_t nReturn = m_nSelectedPage;
         SwipeFinished();
+
+        wxBookCtrlEvent event(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED);
+        event.SetSelection(nReturn);
+        wxPostEvent(GetEventHandler(), event);
         return nReturn;
     }
     else if((m_nStyle & STYLE_VERTICAL) ==0)
@@ -242,6 +247,10 @@ size_t wmSwitcherPanel::ChangeSelection(size_t nPage)
             m_nSwipeOffset = min(-1, -(GetClientRect().GetWidth())/10);
         }
         m_timerScroll.Start(10);
+
+        wxBookCtrlEvent event(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED);
+        event.SetSelection(m_nSelectedPage);
+        wxPostEvent(GetParent(), event);
         return m_nSelectedPage;
     }
     else
@@ -267,6 +276,9 @@ size_t wmSwitcherPanel::ChangeSelection(size_t nPage)
             m_nSwipeOffset = min(-1, -(GetClientRect().GetHeight())/10);
         }
         m_timerScroll.Start(10);
+        wxBookCtrlEvent event(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED);
+        event.SetSelection(m_nSelectedPage);
+        wxPostEvent(GetParent(), event);
         return m_nSelectedPage;
     }
 

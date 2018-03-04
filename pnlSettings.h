@@ -86,9 +86,10 @@ class pnlSettings: public wxPanel
 		void OnbtnMeterShadingClick(wxCommandEvent& event);
 		void OnlblLatencySelected(wxCommandEvent& event);
 		void OnlstInputSelected(wxCommandEvent& event);
+		void OnswpSettingsPageChanged(wxNotebookEvent& event);
 		//*)
 
-
+        void RefreshInputs();
 		void ShowSoundcardInputs();
 		void ShowRTPDefined();
 		void ShowFiles();
