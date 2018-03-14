@@ -30,9 +30,10 @@
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Compiler>
-					<Add option="-Wall" />
-					<Add option="-DBUILD_DLL" />
 					<Add option="-O2" />
+					<Add option="-Wall" />
+					<Add option="-fpermissive" />
+					<Add option="-DBUILD_DLL" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />

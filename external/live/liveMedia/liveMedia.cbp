@@ -41,6 +41,7 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-fpermissive" />
 			<Add option="-D_UNICODE" />
 			<Add option="-DUNICODE" />
 			<Add directory="include" />
@@ -226,8 +227,6 @@
 		<Unit filename="VorbisAudioRTPSource.cpp" />
 		<Unit filename="WAVAudioFileServerMediaSubsession.cpp" />
 		<Unit filename="WAVAudioFileSource.cpp" />
-		<Unit filename="main.cpp" />
-		<Unit filename="main.h" />
 		<Unit filename="ourMD5.cpp" />
 		<Unit filename="rtcp_from_spec.c">
 			<Option compilerVar="CC" />
