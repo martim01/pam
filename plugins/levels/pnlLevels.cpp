@@ -115,7 +115,11 @@ void pnlLevels::CreateGraphs(unsigned int nChannels)
 
     for(size_t i = 0 ; i < nChannels; i++)
     {
+        #ifdef __WXGNU__
         wmLabel* pLabel = new wmLabel(this, wxNewId(), wxString::Format(wxT("Ch %zu"), i+1), wxPoint(10+(i*60), 50), wxSize(50,30));
+        #else
+        wmLabel* pLabel = new wmLabel(this, wxNewId(), wxString::Format(wxT("Ch %u"), i+1), wxPoint(10+(i*60), 50), wxSize(50,30));
+        #endif
         pLabel->SetBackgroundColour(wxColour(50,50,100));
         pLabel->SetForegroundColour(*wxWHITE);
         m_vLabel.push_back(pLabel);

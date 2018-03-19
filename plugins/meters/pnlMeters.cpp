@@ -410,13 +410,16 @@ void pnlMeters::OnInfoLeftUp(wxMouseEvent& event)
 
 void pnlMeters::SetScale(const wxString& sScale)
 {
-
+    #ifdef __WXGNU__
     array<double,15> dLevels;
+    #else
+    double dLevels[15];
+    #endif
 
     if(sScale == wxT("dBFS"))
     {
         m_dOffset = 0.0;
-        dLevels = {0,-3, -6, -9, -12, -15, -18, -21, -24, -30, -36, -42, -48, -54, -60};
+        dLevels = {0.0,-3.0, -6.0, -9.0, -12.0, -15.0, -18.0, -21.0, -24.0, -30.0, -36.0, -42.0, -48.0, -54.0, -60.0};
     }
     else if(sScale == wxT("dBu (-18dBFS)"))
     {
@@ -433,11 +436,18 @@ void pnlMeters::SetScale(const wxString& sScale)
 
     for(size_t i = 0; i < m_vMeters.size(); i++)
     {
+        #ifdef __WXGNU__
         m_vMeters[i]->SetLevels(dLevels.data(),15, m_dOffset);
-
+        #else
+        m_vMeters[i]->SetLevels(dLevels,15, m_dOffset);
+        #endif
     }
     if(m_pLevels)
     {
+        #ifdef __WXGNU__
         m_pLevels->SetLevels(dLevels.data(),15,m_dOffset);
+        #else
+        m_pLevels->SetLevels(dLevels,15, m_dOffset);
+        #endif
     }
 }

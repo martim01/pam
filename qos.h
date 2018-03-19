@@ -47,16 +47,19 @@ public:
     UsageEnvironment* m_pEnv;
 
     RtpThread* m_pThread;
-public:
     timeval m_tvMeasurementStart;
     timeval m_tvMeasurementEnd;
     double m_dkbits_per_second_min;
     double m_dkbits_per_second_max;
     double m_dkBytesTotal;
+    double m_kBytesDeltaNow;
+    double m_dkbpsNow;
     double m_dPacket_loss_fraction_min;
     double m_dPacket_loss_fraction_max;
     unsigned int m_nTotNumPacketsReceived;
     unsigned int m_nTotNumPacketsExpected;
+
+
 };
 
 //static qosMeasurementRecord* qosRecordHead = NULL;

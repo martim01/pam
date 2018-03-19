@@ -31,7 +31,8 @@ RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sProg, const wxStri
     m_pCurrentBuffer(0),
     m_pRtspClient(0),
     m_bClosing(false),
-    m_bSaveSDP(bSaveSDPOnly)
+    m_bSaveSDP(bSaveSDPOnly),
+    m_nQosMeasurementIntervalMS(1000)
 {
     m_eventLoopWatchVariable = 0;
     m_pCondition = new wxCondition(m_mutex);
@@ -400,4 +401,16 @@ void RtpThread::SaveSDP(unsigned int nResult, const wxString& sResult)
         pEvent->SetInt(nResult);
         wxQueueEvent(m_pHandler, pEvent);
     }
+}
+
+void RtpThread::SetQosMeasurementIntervalMS(unsigned long nMilliseconds)
+{
+    wxMutexLocker ml(m_mutex);
+    m_nQosMeasurementIntervalMS = nMilliseconds;
+}
+
+unsigned long RtpThread::GetQosMeasurementIntervalMS()
+{
+    wxMutexLocker ml(m_mutex);
+    return m_nQosMeasurementIntervalMS;
 }

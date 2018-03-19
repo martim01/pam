@@ -27,7 +27,7 @@ class LevelGraph : public wxWindow
         *   @param validator not used - just here to have same structure as wxButton
         *   @param name not used - just here to have same structure as wxButton
         **/
-        LevelGraph(wxWindow *parent,wxWindowID id, const wxPoint& pos, const wxSize& size, size_t nDataSize, double dLimit);
+        LevelGraph(wxWindow *parent,wxWindowID id, const wxPoint& pos, const wxSize& size, size_t nDataSize, double dMax, double dMin);
 
         /** @brief Creates the button
         *   @param parent pointer to the parent window
@@ -57,10 +57,12 @@ class LevelGraph : public wxWindow
             return wxSize(100,200);
         }
 
-        void SetLimit(double dLimit)
+        void SetLimit(const wxString& sGraph, double dMax, double dMin);
+        void SetZoneLimit(double dMax, double dMin)
         {
-            m_dLimit = dLimit;
-            Refresh();
+            m_dMax = dMax;
+            m_dMin = dMin;
+            m_dResolution = static_cast<double>(GetClientSize().GetHeight())/(m_dMax-m_dMin);
         }
 
         void AddGraph(const wxString& sName, const wxColour& clr);
@@ -68,6 +70,9 @@ class LevelGraph : public wxWindow
 
         void AddZone(double dMin, double dMax, const wxColour& clr);
         void ClearZones();
+
+        void AddLine(double dPosition, const wxPen& penStyle);
+        void ClearLines();
 
         void ShowGraph(const wxString& sGraph, bool bShow=true);
         void ClearGraphs();
@@ -97,6 +102,9 @@ class LevelGraph : public wxWindow
             double dDataSetMax;
             size_t nDataSize;
             bool bShow;
+            double dMax;
+            double dMin;
+            double dResolution;
         };
 
 
@@ -106,7 +114,8 @@ class LevelGraph : public wxWindow
         std::map<wxString, graph> m_mGraphs;
 
         size_t m_nDataSize;
-        double m_dLimit;
+        double m_dMax;
+        double m_dMin;
         double m_dResolution;
 
         struct zone
@@ -118,5 +127,7 @@ class LevelGraph : public wxWindow
         };
 
         std::list<zone> m_lstZones;
+
+        std::map<double, wxPen> m_mLines;
 };
 

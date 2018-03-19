@@ -225,7 +225,7 @@ void PolarScope::DrawPoints(wxDC& dc)
             float dHeight = sqrt(dX*dX + dY*dY);
 
 
-            dHeight =  max(float(0.0), m_dMindB + 20*log10(dHeight))*m_dResolution;
+            dHeight =  max(float(0.0), float(m_dMindB + 20*log10(dHeight)))*m_dResolution;
 
             if(dY != 0.0)
             {
@@ -336,7 +336,7 @@ void PolarScope::DrawConvexHull(wxDC& dc)
             float dX = m_pBuffer[i+m_nAxisX];
             float dY = m_pBuffer[i+m_nAxisY];
             float dHeight = sqrt(dX*dX + dY*dY);
-            dHeight =  max(float(0.0), m_dMindB + 20*log10(dHeight))*m_dResolution;
+            dHeight =  max(float(0.0), float(m_dMindB + 20*log10(dHeight)))*m_dResolution;
 
             if(dY != 0.0)
             {
@@ -471,7 +471,7 @@ void PolarScope::WorkoutLevel()
         float dX = m_pBuffer[i+m_nAxisX];
         float dY = m_pBuffer[i+m_nAxisY];
         float dHeight_ = sqrt(dX*dX + dY*dY);
-        dHeight +=  max(float(0.0), m_dMindB + 20*log10(dHeight_))*m_dResolution;
+        dHeight +=  max(float(0.0), float(m_dMindB + 20*log10(dHeight_)))*m_dResolution;
 
         if(dY != 0.0 && dX != 0.0)
         {

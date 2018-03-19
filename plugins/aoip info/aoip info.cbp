@@ -111,10 +111,13 @@
 			<Add directory="../../pambase" />
 			<Add directory="$(#kiss.include)" />
 			<Add directory="$(#kiss.include)/tools" />
+			<Add directory="../peak log" />
 		</Compiler>
 		<Linker>
 			<Add directory="../../lib" />
 		</Linker>
+		<Unit filename="../peak log/levelgraph.cpp" />
+		<Unit filename="../peak log/levelgraph.h" />
 		<Unit filename="aoipinfo.cpp" />
 		<Unit filename="aoipinfo.h" />
 		<Unit filename="aoipinfobuilder.cpp" />

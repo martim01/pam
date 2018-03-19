@@ -65,7 +65,7 @@ class pnlPeakLog: public wxPanel
 		//*)
 
         void ClearGraphs();
-
+        void AddLines(LevelGraph* pGraph);
         static const wxString GRAPH_LINES[8];
 		static const wxColour COLOUR_LINES[8];
 

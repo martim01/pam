@@ -2,6 +2,8 @@
 #include "session.h"
 #include "timedbuffer.h"
 #include "settings.h"
+#include <wx/log.h>
+
 
 //(*InternalHeaders(pnlAoIPInfo)
 #include <wx/font.h>
@@ -96,6 +98,8 @@ const long pnlAoIPInfo::ID_M_PLBL30 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL31 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL32 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL35 = wxNewId();
+const long pnlAoIPInfo::ID_CUSTOM12 = wxNewId();
+const long pnlAoIPInfo::ID_PANEL4 = wxNewId();
 const long pnlAoIPInfo::ID_PANEL2 = wxNewId();
 const long pnlAoIPInfo::ID_TEXTCTRL1 = wxNewId();
 const long pnlAoIPInfo::ID_PANEL3 = wxNewId();
@@ -531,6 +535,9 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_plblQoSJitter->SetBackgroundColour(wxColour(255,255,255));
 	wxFont m_plblQoSJitterFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
 	m_plblQoSJitter->SetFont(m_plblQoSJitterFont);
+	Panel1 = new wxPanel(pnlQoS, ID_PANEL4, wxPoint(0,280), wxSize(600,160), wxTAB_TRAVERSAL, _T("ID_PANEL4"));
+	Panel1->SetBackgroundColour(wxColour(0,0,0));
+	m_pLevelGraph_Second = new LevelGraph(Panel1,ID_CUSTOM12, wxPoint(0,0),wxSize(600,160),1,10,0);
 	pnlSDP = new wxPanel(m_pswpInfo, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
 	pnlSDP->SetBackgroundColour(wxColour(0,0,0));
 	m_ptxtSDP = new wxTextCtrl(pnlSDP, ID_TEXTCTRL1, wxEmptyString, wxPoint(5,5), wxSize(590,435), wxTE_MULTILINE|wxTE_READONLY, wxDefaultValidator, _T("ID_TEXTCTRL1"));
@@ -539,6 +546,10 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_pswpInfo->AddPage(pnlQoS, _("QoS"), false);
 	m_pswpInfo->AddPage(pnlSDP, _("Raw SDP"), false);
 	//*)
+
+	m_pLevelGraph_Second->AddGraph(wxT("Speed"), wxColour(0,255,0));
+	m_pLevelGraph_Second->ShowGraph(wxT("Speed"), true);
+	m_pLevelGraph_Second->SetLimit(wxT("Speed"), 2310.0, 2300.0);
 }
 
 pnlAoIPInfo::~pnlAoIPInfo()
@@ -566,6 +577,10 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
     m_plblQoSInterMax->SetLabel(wxString::Format(wxT("%f ms"), pData->dInter_packet_gap_ms_max));
 
     m_plblQoSJitter->SetLabel(wxString::Format(wxT("%d"),pData->nJitter));
+
+    wxLogDebug(wxT("Speed %.2f"), pData->dkbits_per_second_Now);
+    m_pLevelGraph_Second->SetLimit(wxT("Speed"), pData->dkbits_per_second_max, pData->dkbits_per_second_min);
+    m_pLevelGraph_Second->AddPeak(wxT("Speed"), pData->dkbits_per_second_Now);
 
 }
 

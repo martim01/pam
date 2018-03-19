@@ -19,7 +19,7 @@ UsageEnvironment& operator<<(UsageEnvironment& env, const MediaSubsession& subse
 
 
 TaskToken qosMeasurementTimerTask = NULL;
-unsigned qosMeasurementIntervalMS = 1000; // 0 means: Don't output QOS data
+
 qosMeasurementRecord* g_pRecord = NULL;
 
 void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultString)
@@ -389,7 +389,7 @@ void beginQOSMeasurement(UsageEnvironment& env, MediaSession* session, RtpThread
 
 void scheduleNextQOSMeasurement()
 {
-    nextQOSMeasurementUSecs += qosMeasurementIntervalMS*1000;
+    nextQOSMeasurementUSecs += g_pRecord->m_pThread->GetQosMeasurementIntervalMS()*1000;
     struct timeval timeNow;
     gettimeofday(&timeNow, NULL);
     unsigned timeNowUSecs = timeNow.tv_sec*1000000 + timeNow.tv_usec;

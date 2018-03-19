@@ -20,18 +20,18 @@ void qosMeasurementRecord::periodicQOSMeasurement(struct timeval const& timeNow)
     if (stats != NULL)
     {
         double kBytesTotalNow = stats->totNumKBytesReceived();
-        double kBytesDeltaNow = kBytesTotalNow - m_dkBytesTotal;
+        m_kBytesDeltaNow = kBytesTotalNow - m_dkBytesTotal;
         m_dkBytesTotal = kBytesTotalNow;
 
-        double kbpsNow = timeDiff == 0.0 ? 0.0 : 8*kBytesDeltaNow/timeDiff;
-        if (kbpsNow < 0.0) kbpsNow = 0.0; // in case of roundoff error
-        if (kbpsNow < m_dkbits_per_second_min)
+        m_dkbpsNow = timeDiff == 0.0 ? 0.0 : 8*m_kBytesDeltaNow/timeDiff;
+        if (m_dkbpsNow < 0.0) m_dkbpsNow = 0.0; // in case of roundoff error
+        if (m_dkbpsNow < m_dkbits_per_second_min)
         {
-            m_dkbits_per_second_min = kbpsNow;
+            m_dkbits_per_second_min = m_dkbpsNow;
         }
-        if (kbpsNow > m_dkbits_per_second_max)
+        if (m_dkbpsNow > m_dkbits_per_second_max)
         {
-            m_dkbits_per_second_max = kbpsNow;
+            m_dkbits_per_second_max = m_dkbpsNow;
         }
 
         unsigned totReceivedNow = stats->totNumPacketsReceived();
@@ -78,12 +78,14 @@ void qosMeasurementRecord::printQOSData()
         pData->dkbits_per_second_min = 0;
         pData->dkbits_per_second_max = 0;
         pData->dkbits_per_second_Av = 0;
+        pData->dkbits_per_second_Now = 0;
     }
     else
     {
         pData->dkbits_per_second_min = m_dkbits_per_second_min;
         pData->dkbits_per_second_Av = (dTime == 0.0 ? 0.0 : 8*m_dkBytesTotal/dTime);
         pData->dkbits_per_second_max = m_dkbits_per_second_max;
+        pData->dkbits_per_second_Now = m_dkbpsNow;
     }
 
     pData->dPacket_loss_fraction_min = 100*m_dPacket_loss_fraction_min;

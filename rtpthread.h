@@ -28,6 +28,9 @@ class RtpThread : public wxThread
             m_eventLoopWatchVariable = 1;
         }
 
+        void SetQosMeasurementIntervalMS(unsigned long nMilliseconds);
+        unsigned long GetQosMeasurementIntervalMS();
+
         void Signal()
         {
             m_pCondition->Signal();
@@ -73,6 +76,7 @@ class RtpThread : public wxThread
         bool m_bSaveSDP;
         session m_Session;
 
+        unsigned long m_nQosMeasurementIntervalMS;
 };
 
 

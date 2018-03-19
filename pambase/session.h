@@ -69,6 +69,7 @@ struct PAMBASE_IMPEXPORT qosData
     double dkbits_per_second_min;
     double dkbits_per_second_max;
     double dkbits_per_second_Av;
+    double dkbits_per_second_Now;
     double dkBytesTotal;
     double dPacket_loss_fraction_min;
     double dPacket_loss_fraction_max;

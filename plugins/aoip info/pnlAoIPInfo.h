@@ -6,6 +6,7 @@
 #include <wx/textctrl.h>
 #include "wmlabel.h"
 #include "wmswitcherpanel.h"
+#include "levelgraph.h"
 #include <wx/panel.h>
 //*)
 
@@ -55,6 +56,7 @@ class pnlAoIPInfo: public wxPanel
 		wmLabel* m_pLbl28;
 		wmLabel* m_plblQoSKbMax;
 		wmLabel* m_plblQoSKbAv;
+		wxPanel* Panel1;
 		wmLabel* m_pLbl12;
 		wmLabel* m_plblSessionFrequency;
 		wmLabel* m_pLbl20;
@@ -107,6 +109,7 @@ class pnlAoIPInfo: public wxPanel
 		wmLabel* m_plblSyncDomain;
 		wmLabel* m_plblSubSyncDomain;
 		wmLabel* m_plblDescription;
+		LevelGraph* m_pLevelGraph_Second;
 		wmLabel* m_plblSyncVersion;
 		wmLabel* m_plblInput;
 		wmLabel* m_pLbl21;
@@ -205,6 +208,8 @@ class pnlAoIPInfo: public wxPanel
 		static const long ID_M_PLBL31;
 		static const long ID_M_PLBL32;
 		static const long ID_M_PLBL35;
+		static const long ID_CUSTOM12;
+		static const long ID_PANEL4;
 		static const long ID_PANEL2;
 		static const long ID_TEXTCTRL1;
 		static const long ID_PANEL3;

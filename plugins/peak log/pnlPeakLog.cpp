@@ -44,10 +44,10 @@ pnlPeakLog::pnlPeakLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	m_plblTitle->SetBackgroundColour(wxColour(91,149,57));
 	wxFont m_plblTitleFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	m_plblTitle->SetFont(m_plblTitleFont);
-	m_pLevelGraph_Day = new LevelGraph(this,ID_CUSTOM7, wxPoint(0,70),wxSize(72,350), 56400, -50);
-	m_pLevelGraph_Hour = new LevelGraph(this,ID_CUSTOM8, wxPoint(72,70),wxSize(360,350), 470, -50);
-	m_pLevelGraph_Minute = new LevelGraph(this,ID_CUSTOM9, wxPoint(432,70),wxSize(120,350),24,-50);
-	m_pLevelGraph_Second = new LevelGraph(this,ID_CUSTOM12, wxPoint(552,70),wxSize(47,350),1,-50);
+	m_pLevelGraph_Day = new LevelGraph(this,ID_CUSTOM7, wxPoint(0,70),wxSize(72,350), 56400,0, -50);
+	m_pLevelGraph_Hour = new LevelGraph(this,ID_CUSTOM8, wxPoint(72,70),wxSize(360,350), 470, 0,-50);
+	m_pLevelGraph_Minute = new LevelGraph(this,ID_CUSTOM9, wxPoint(432,70),wxSize(120,350),24,0,-50);
+	m_pLevelGraph_Second = new LevelGraph(this,ID_CUSTOM12, wxPoint(552,70),wxSize(47,350),1,0,-50);
 	m_pLbl1 = new wmLabel(this, ID_M_PLBL1, _("Day"), wxPoint(0,40), wxSize(72,30), 0, _T("ID_M_PLBL1"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_FLAT);
 	m_pLbl1->SetForegroundColour(wxColour(255,255,255));
@@ -115,6 +115,11 @@ void pnlPeakLog::InputSession(const session& aSession)
 
     m_plstGraphs->Clear();
 
+    AddLines(m_pLevelGraph_Day);
+    AddLines(m_pLevelGraph_Hour);
+    AddLines(m_pLevelGraph_Minute);
+    AddLines(m_pLevelGraph_Second);
+
     for(int i = 0; i < m_nChannels; i++)
     {
         m_pLevelGraph_Day->AddGraph(GRAPH_LINES[i], COLOUR_LINES[i]);
@@ -122,8 +127,25 @@ void pnlPeakLog::InputSession(const session& aSession)
         m_pLevelGraph_Minute->AddGraph(GRAPH_LINES[i], COLOUR_LINES[i]);
         m_pLevelGraph_Second->AddGraph(GRAPH_LINES[i], COLOUR_LINES[i]);
 
+        m_pLevelGraph_Day->SetLimit(GRAPH_LINES[i], 0,-50);
+        m_pLevelGraph_Hour->SetLimit(GRAPH_LINES[i], 0,-50);
+        m_pLevelGraph_Minute->SetLimit(GRAPH_LINES[i], 0,-50);
+        m_pLevelGraph_Second->SetLimit(GRAPH_LINES[i], 0,-50);
+
+
         m_plstGraphs->AddButton(wxString::Format(wxT("Hide %s"), GRAPH_LINES[i].c_str()));
     }
+}
+
+void pnlPeakLog::AddLines(LevelGraph* pGraph)
+{
+    pGraph->ClearLines();
+    pGraph->AddLine(-36.0, wxPen(*wxWHITE, 1, wxPENSTYLE_DOT));
+    pGraph->AddLine(-24.0, wxPen(*wxWHITE, 1, wxPENSTYLE_DOT));
+    pGraph->AddLine(-18.0, wxPen(wxColour(0,0,255), 1, wxPENSTYLE_DOT));
+    pGraph->AddLine(-12.0, wxPen(wxColour(255,200,0), 1, wxPENSTYLE_DOT));
+    pGraph->AddLine(-6.0, wxPen(wxColour(255,0,0), 1, wxPENSTYLE_DOT));
+
 }
 
 void pnlPeakLog::SetAudioData(const timedbuffer* pBuffer)
