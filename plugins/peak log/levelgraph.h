@@ -78,6 +78,7 @@ class LevelGraph : public wxWindow
         void ClearGraphs();
         void DeleteAllGraphs();
 
+        void ShowRange(const wxString& sGraph, bool bShow=true);
   protected:
 
 
@@ -95,7 +96,7 @@ class LevelGraph : public wxWindow
 
         struct graph
         {
-            graph(const wxColour& clr) : clrLine(clr), dDataSetTotal(0.0), dDataSetMax(-120.0), nDataSize(0), bShow(true) {}
+            graph(const wxColour& clr) : clrLine(clr), dDataSetTotal(0.0), dDataSetMax(-120.0), nDataSize(0), bShow(true), bShowRange(false) {}
             wxColour clrLine;
             std::list<double> lstPeaks;
             double dDataSetTotal;
@@ -105,6 +106,7 @@ class LevelGraph : public wxWindow
             double dMax;
             double dMin;
             double dResolution;
+            bool bShowRange;
         };
 
 

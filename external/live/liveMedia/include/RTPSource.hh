@@ -215,6 +215,7 @@ public:
 
   unsigned minInterPacketGapUS() const { return fMinInterPacketGapUS; }
   unsigned maxInterPacketGapUS() const { return fMaxInterPacketGapUS; }
+  unsigned currentInterPacketGapUS() const { return fCurrentInterPacketGapUs; }
   struct timeval const& totalInterPacketGaps() const {
     return fTotalInterPacketGaps;
   }
@@ -258,7 +259,7 @@ protected:
   unsigned fLastReceivedSR_NTPlsw; // NTP timestamp (from SR), least-signif
   struct timeval fLastReceivedSR_time;
   struct timeval fLastPacketReceptionTime;
-  unsigned fMinInterPacketGapUS, fMaxInterPacketGapUS;
+  unsigned fMinInterPacketGapUS, fMaxInterPacketGapUS, fCurrentInterPacketGapUs;
   struct timeval fTotalInterPacketGaps;
 
 private:

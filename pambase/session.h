@@ -76,6 +76,7 @@ struct PAMBASE_IMPEXPORT qosData
     double dPacket_loss_fraction_av;
     unsigned int nTotNumPacketsReceived;
 
+    double dInter_packet_gap_ms_Now;
     double dInter_packet_gap_ms_min;
     double dInter_packet_gap_ms_av;
     double dInter_packet_gap_ms_max;

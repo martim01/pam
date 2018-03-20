@@ -213,6 +213,7 @@ void RTPReceptionStats::init(u_int32_t SSRC) {
   fLastPacketReceptionTime.tv_sec = fLastPacketReceptionTime.tv_usec = 0;
   fMinInterPacketGapUS = 0x7FFFFFFF;
   fMaxInterPacketGapUS = 0;
+  fCurrentInterPacketGapUs = 0;
   fTotalInterPacketGaps.tv_sec = fTotalInterPacketGaps.tv_usec = 0;
   fHasBeenSynchronized = False;
   fSyncTime.tv_sec = fSyncTime.tv_usec = 0;
@@ -283,16 +284,16 @@ void RTPReceptionStats
   gettimeofday(&timeNow, NULL);
   if (fLastPacketReceptionTime.tv_sec != 0
       || fLastPacketReceptionTime.tv_usec != 0) {
-    unsigned gap
+    fCurrentInterPacketGapUs
       = (timeNow.tv_sec - fLastPacketReceptionTime.tv_sec)*MILLION
       + timeNow.tv_usec - fLastPacketReceptionTime.tv_usec;
-    if (gap > fMaxInterPacketGapUS) {
-      fMaxInterPacketGapUS = gap;
+    if (fCurrentInterPacketGapUs > fMaxInterPacketGapUS) {
+      fMaxInterPacketGapUS = fCurrentInterPacketGapUs;
     }
-    if (gap < fMinInterPacketGapUS) {
-      fMinInterPacketGapUS = gap;
+    if (fCurrentInterPacketGapUs < fMinInterPacketGapUS) {
+      fMinInterPacketGapUS = fCurrentInterPacketGapUs;
     }
-    fTotalInterPacketGaps.tv_usec += gap;
+    fTotalInterPacketGaps.tv_usec += fCurrentInterPacketGapUs;
     if (fTotalInterPacketGaps.tv_usec >= MILLION) {
       ++fTotalInterPacketGaps.tv_sec;
       fTotalInterPacketGaps.tv_usec -= MILLION;

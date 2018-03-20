@@ -547,9 +547,16 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_pswpInfo->AddPage(pnlSDP, _("Raw SDP"), false);
 	//*)
 
+    m_pLevelGraph_Second->SetFont(wxFont(7,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
 	m_pLevelGraph_Second->AddGraph(wxT("Speed"), wxColour(0,255,0));
-	m_pLevelGraph_Second->ShowGraph(wxT("Speed"), true);
+	m_pLevelGraph_Second->ShowGraph(wxT("Speed"), false);
+	m_pLevelGraph_Second->ShowRange(wxT("Speed"), false);
 	m_pLevelGraph_Second->SetLimit(wxT("Speed"), 2310.0, 2300.0);
+
+	m_pLevelGraph_Second->AddGraph(wxT("Gap"), wxColour(0,0,255));
+	m_pLevelGraph_Second->ShowGraph(wxT("Gap"), true);
+	m_pLevelGraph_Second->ShowRange(wxT("Gap"), true);
+	m_pLevelGraph_Second->SetLimit(wxT("Gap"), 1, 0.1);
 }
 
 pnlAoIPInfo::~pnlAoIPInfo()
@@ -578,9 +585,12 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
 
     m_plblQoSJitter->SetLabel(wxString::Format(wxT("%d"),pData->nJitter));
 
-    wxLogDebug(wxT("Speed %.2f"), pData->dkbits_per_second_Now);
+
     m_pLevelGraph_Second->SetLimit(wxT("Speed"), pData->dkbits_per_second_max, pData->dkbits_per_second_min);
     m_pLevelGraph_Second->AddPeak(wxT("Speed"), pData->dkbits_per_second_Now);
+
+    m_pLevelGraph_Second->SetLimit(wxT("Gap"), pData->dInter_packet_gap_ms_max, pData->dInter_packet_gap_ms_min);
+    m_pLevelGraph_Second->AddPeak(wxT("Gap"), pData->dInter_packet_gap_ms_Now);
 
 }
 

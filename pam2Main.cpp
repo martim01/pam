@@ -510,6 +510,7 @@ void pam2Dialog::CreateAudioInputDevice()
             RtpThread* pThread = new RtpThread(this, wxT("pam"), sRtp, 2048);
             pThread->Create();
             pThread->Run();
+            pThread->SetQosMeasurementIntervalMS(250);
             m_mRtp.insert(make_pair(m_sCurrentRtp, pThread));
             PopulateThreadList();
         }

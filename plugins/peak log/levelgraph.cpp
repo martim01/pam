@@ -2,7 +2,7 @@
 #include <wx/dc.h>
 #include <wx/dcbuffer.h>
 #include <wx/log.h>
-
+#include "uirect.h"
 
 using namespace std;
 
@@ -92,6 +92,9 @@ void LevelGraph::OnPaint(wxPaintEvent& event)
 
     dc.SetPen(wxPen(GetForegroundColour()));
 
+    dc.SetFont(GetFont());
+    uiRect rectMax(wxRect(GetClientRect().GetRight()-50, 0, 50, 20));
+    uiRect rectMin(wxRect(GetClientRect().GetRight()-50, GetClientRect().GetBottom()-20, 50, 20));
 
     for(map<wxString, graph>::iterator itGraph = m_mGraphs.begin(); itGraph != m_mGraphs.end(); ++itGraph)
     {
@@ -114,7 +117,14 @@ void LevelGraph::OnPaint(wxPaintEvent& event)
                 x--;
             }
         }
+        if(itGraph->second.bShowRange)
+        {
+            rectMax.Draw(dc, wxString::Format(wxT("%.2f"), itGraph->second.dMax), uiRect::BORDER_NONE);
+            rectMin.Draw(dc, wxString::Format(wxT("%.2f"), itGraph->second.dMin), uiRect::BORDER_NONE);
+        }
     }
+
+
 
 
 
@@ -209,7 +219,21 @@ void LevelGraph::ShowGraph(const wxString& sGraph, bool bShow)
     Refresh();
 }
 
-
+void LevelGraph::ShowRange(const wxString& sGraph, bool bShow)
+{
+    for(map<wxString, graph>::iterator itGraph = m_mGraphs.begin(); itGraph != m_mGraphs.end(); ++itGraph)
+    {
+        if(itGraph->first == sGraph)
+        {
+            itGraph->second.bShowRange = bShow;
+        }
+        else if(bShow)
+        {
+            itGraph->second.bShowRange = false;
+        }
+    }
+    Refresh();
+}
 
 void LevelGraph::AddZone(double dMin, double dMax, const wxColour& clr)
 {
