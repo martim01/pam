@@ -69,7 +69,7 @@ void qosMeasurementRecord::printQOSData()
 
 
     pData->tsTime = wxTimeSpan(0,0,secsDiff,usecsDiff/1000.0);
-    double dTime = secsDiff + (secsDiff/1000000.0);
+    unsigned long nTime = secsDiff + (secsDiff/1000000.0);
 
     pData->dkBytesTotal = m_dkBytesTotal;
 
@@ -83,7 +83,7 @@ void qosMeasurementRecord::printQOSData()
     else
     {
         pData->dkbits_per_second_min = m_dkbits_per_second_min;
-        pData->dkbits_per_second_Av = (dTime == 0.0 ? 0.0 : 8*m_dkBytesTotal/dTime);
+        pData->dkbits_per_second_Av = (pData->tsTime.GetMilliseconds() == 0.0 ? 0.0 : 8000.0*m_dkBytesTotal/pData->tsTime.GetMilliseconds().ToDouble());
         pData->dkbits_per_second_max = m_dkbits_per_second_max;
         pData->dkbits_per_second_Now = m_dkbpsNow;
     }
