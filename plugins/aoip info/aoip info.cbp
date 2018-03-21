@@ -124,7 +124,13 @@
 		<Unit filename="aoipinfobuilder.h" />
 		<Unit filename="pnlAoIPInfo.cpp" />
 		<Unit filename="pnlAoIPInfo.h" />
+		<Unit filename="pnlGraph.cpp" />
+		<Unit filename="pnlGraph.h" />
+		<Unit filename="pnlSettings.cpp" />
+		<Unit filename="pnlSettings.h" />
 		<Unit filename="wxsmith/pnlAoIPInfo.wxs" />
+		<Unit filename="wxsmith/pnlGraph.wxs" />
+		<Unit filename="wxsmith/pnlSettings.wxs" />
 		<Extensions>
 			<code_completion />
 			<envvars />
@@ -138,6 +144,8 @@
 			<wxsmith version="1">
 				<resources>
 					<wxPanel wxs="wxsmith/pnlAoIPInfo.wxs" src="pnlAoIPInfo.cpp" hdr="pnlAoIPInfo.h" fwddecl="0" i18n="1" name="pnlAoIPInfo" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlGraph.wxs" src="pnlGraph.cpp" hdr="pnlGraph.h" fwddecl="0" i18n="1" name="pnlGraph" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlSettings.wxs" src="pnlSettings.cpp" hdr="pnlSettings.h" fwddecl="0" i18n="1" name="pnlSettings" language="CPP" />
 				</resources>
 			</wxsmith>
 		</Extensions>

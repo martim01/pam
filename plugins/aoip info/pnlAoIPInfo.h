@@ -105,11 +105,11 @@ class pnlAoIPInfo: public wxPanel
 		wmLabel* m_plblQoSPacketsMin;
 		wxPanel* pnlSession;
 		wmLabel* m_plblFrameDuration;
+		LevelGraph* m_pGraph;
 		wmLabel* m_plblSessionName;
 		wmLabel* m_plblSyncDomain;
 		wmLabel* m_plblSubSyncDomain;
 		wmLabel* m_plblDescription;
-		LevelGraph* m_pLevelGraph_Second;
 		wmLabel* m_plblSyncVersion;
 		wmLabel* m_plblInput;
 		wmLabel* m_pLbl21;
@@ -120,6 +120,10 @@ class pnlAoIPInfo: public wxPanel
 		void SessionStarted(const session& aSession);
 
         void SetAudioData(const timedbuffer* pTimedBudder);
+
+        void ShowGraph(const wxString& sGraph);
+
+        void ClearGraphs();
 
 	protected:
 

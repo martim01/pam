@@ -17,6 +17,8 @@ class WXEXPORT AoIPInfoBuilder : public MonitorPluginBuilder
             return wxT("AoIP Info");
         }
 
+        void ClearGraphs();
+
         virtual void InputSession(const session& aSession);
         virtual void OutputChannels(const std::vector<char>& vChannels);
         virtual void SetQoSData(qosData* pData);
@@ -24,6 +26,9 @@ class WXEXPORT AoIPInfoBuilder : public MonitorPluginBuilder
         virtual bool CanBeMaximized() const;
 
     protected:
+
+        friend class pnlGraph;
+        friend class pnlSettings;
 
         void OnSettingChanged(SettingEvent& event);
 

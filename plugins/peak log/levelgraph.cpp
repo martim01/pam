@@ -93,8 +93,10 @@ void LevelGraph::OnPaint(wxPaintEvent& event)
     dc.SetPen(wxPen(GetForegroundColour()));
 
     dc.SetFont(GetFont());
-    uiRect rectMax(wxRect(GetClientRect().GetRight()-50, 0, 50, 20));
-    uiRect rectMin(wxRect(GetClientRect().GetRight()-50, GetClientRect().GetBottom()-20, 50, 20));
+    uiRect rectMax(wxRect(GetClientRect().GetLeft(), 0, 50, 20));
+    uiRect rectMin(wxRect(GetClientRect().GetLeft(), GetClientRect().GetBottom()-20, 50, 20));
+    //rectMax.SetBackgroundColour(*wxBLACK);
+    //rectMin.SetBackgroundColour(*wxBLACK);
 
     for(map<wxString, graph>::iterator itGraph = m_mGraphs.begin(); itGraph != m_mGraphs.end(); ++itGraph)
     {
@@ -116,11 +118,11 @@ void LevelGraph::OnPaint(wxPaintEvent& event)
                 dY_old=(GetClientRect().GetBottom()-itGraph->second.dResolution*dPeak);
                 x--;
             }
-        }
-        if(itGraph->second.bShowRange)
-        {
-            rectMax.Draw(dc, wxString::Format(wxT("%.2f"), itGraph->second.dMax), uiRect::BORDER_NONE);
-            rectMin.Draw(dc, wxString::Format(wxT("%.2f"), itGraph->second.dMin), uiRect::BORDER_NONE);
+            if(itGraph->second.bShowRange)
+            {
+                rectMax.Draw(dc, wxString::Format(wxT("%.2f"), itGraph->second.dMax), uiRect::BORDER_NONE);
+                rectMin.Draw(dc, wxString::Format(wxT("%.2f"), itGraph->second.dMin), uiRect::BORDER_NONE);
+            }
         }
     }
 
@@ -198,6 +200,9 @@ void LevelGraph::ClearGraphs()
         itGraph->second.dDataSetMax= -120.0;
         itGraph->second.nDataSize=0;
 
+        itGraph->second.dMax = 1.0;
+        itGraph->second.dMin = 0.0;
+        itGraph->second.dResolution = static_cast<double>(GetClientSize().y);
     }
     Refresh();
 }
@@ -206,6 +211,14 @@ void LevelGraph::DeleteAllGraphs()
 {
     m_mGraphs.clear();
     Refresh();
+}
+
+void LevelGraph::HideAllGraphs()
+{
+    for(map<wxString, graph>::iterator itGraph = m_mGraphs.begin(); itGraph != m_mGraphs.end(); ++itGraph)
+    {
+        itGraph->second.bShow = false;
+    }
 }
 
 
@@ -221,16 +234,10 @@ void LevelGraph::ShowGraph(const wxString& sGraph, bool bShow)
 
 void LevelGraph::ShowRange(const wxString& sGraph, bool bShow)
 {
-    for(map<wxString, graph>::iterator itGraph = m_mGraphs.begin(); itGraph != m_mGraphs.end(); ++itGraph)
+    map<wxString, graph>::iterator itGraph = m_mGraphs.find(sGraph);
+    if(itGraph != m_mGraphs.end())
     {
-        if(itGraph->first == sGraph)
-        {
-            itGraph->second.bShowRange = bShow;
-        }
-        else if(bShow)
-        {
-            itGraph->second.bShowRange = false;
-        }
+        itGraph->second.bShowRange = bShow;
     }
     Refresh();
 }
@@ -264,7 +271,6 @@ void LevelGraph::SetLimit(const wxString& sGraph, double dMax, double dMin)
         itGraph->second.dMax = dMax;
         itGraph->second.dMin = dMin;
         itGraph->second.dResolution = static_cast<double>(GetClientSize().y)/(dMax-dMin);
-        wxLogDebug(wxT("Resolution %.2f"), itGraph->second.dResolution);
         Refresh();
     }
 }
@@ -278,4 +284,15 @@ void LevelGraph::AddLine(double dPosition, const wxPen& penStyle)
 void LevelGraph::ClearLines()
 {
     m_mLines.clear();
+}
+
+
+pair<double,double> LevelGraph::GetRange(const wxString& sGraph)
+{
+    map<wxString, graph>::iterator itGraph = m_mGraphs.find(sGraph);
+    if(itGraph != m_mGraphs.end())
+    {
+        return make_pair(itGraph->second.dMin, itGraph->second.dMax);
+    }
+    return make_pair(0.0,0.0);
 }

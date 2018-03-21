@@ -147,6 +147,8 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Settings::Get().AddHandler(wxT("Output"),wxT("Buffer"), this);
     Settings::Get().AddHandler(wxT("Output"),wxT("Latency"), this);
 
+    Settings::Get().AddHandler(wxT("QoS"),wxT("Interval"), this);
+
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pam2Dialog::OnSettingChanged);
     Connect(wxID_ANY, wxEVT_MONITOR_REQUEST, (wxObjectEventFunction)&pam2Dialog::OnMonitorRequest);
     Connect(wxID_ANY, wxEVT_PLUGINS_APPLY, (wxObjectEventFunction)&pam2Dialog::OnPluginsReload);
@@ -510,7 +512,9 @@ void pam2Dialog::CreateAudioInputDevice()
             RtpThread* pThread = new RtpThread(this, wxT("pam"), sRtp, 2048);
             pThread->Create();
             pThread->Run();
-            pThread->SetQosMeasurementIntervalMS(250);
+
+            pThread->SetQosMeasurementIntervalMS(Settings::Get().Read(wxT("QoS"), wxT("Interval"), 1000));
+
             m_mRtp.insert(make_pair(m_sCurrentRtp, pThread));
             PopulateThreadList();
         }
@@ -594,6 +598,17 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
     else if(event.GetSection() == wxT("Output"))
     {
         OutputChanged(event.GetKey());
+    }
+    else if(event.GetSection() == wxT("QoS"))
+    {
+        if(event.GetKey() == wxT("Interval"))
+        {
+            map<wxString, RtpThread*>::iterator itThread = m_mRtp.find(m_sCurrentRtp);
+            if(itThread != m_mRtp.end())
+            {
+                itThread->second->SetQosMeasurementIntervalMS(Settings::Get().Read(wxT("QoS"), wxT("Interval"), 1000));
+            }
+        }
     }
 }
 

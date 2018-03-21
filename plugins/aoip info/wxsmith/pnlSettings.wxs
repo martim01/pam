@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlSettings">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmList" name="ID_M_PLST16" variable="m_plstInterval" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>5,5</button_gap>
+			<columns>3</columns>
+			<items />
+			<pos>0,0</pos>
+			<size>190,135</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstIntervalSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN29" variable="m_pbtnClear" member="yes">
+			<label>Clear Graphs</label>
+			<button_pressed>#800000</button_pressed>
+			<pos>100,135</pos>
+			<size>90,40</size>
+			<style>wmButton::STYLE_NORMAL</style>
+			<handler function="OnbtnClearClick" entry="EVT_BUTTON" />
+		</object>
+	</object>
+</wxsmith>

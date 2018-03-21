@@ -537,7 +537,7 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_plblQoSJitter->SetFont(m_plblQoSJitterFont);
 	Panel1 = new wxPanel(pnlQoS, ID_PANEL4, wxPoint(0,280), wxSize(600,160), wxTAB_TRAVERSAL, _T("ID_PANEL4"));
 	Panel1->SetBackgroundColour(wxColour(0,0,0));
-	m_pLevelGraph_Second = new LevelGraph(Panel1,ID_CUSTOM12, wxPoint(0,0),wxSize(600,160),1,10,0);
+	m_pGraph = new LevelGraph(Panel1,ID_CUSTOM12, wxPoint(0,0),wxSize(600,160),1,10,0);
 	pnlSDP = new wxPanel(m_pswpInfo, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
 	pnlSDP->SetBackgroundColour(wxColour(0,0,0));
 	m_ptxtSDP = new wxTextCtrl(pnlSDP, ID_TEXTCTRL1, wxEmptyString, wxPoint(5,5), wxSize(590,435), wxTE_MULTILINE|wxTE_READONLY, wxDefaultValidator, _T("ID_TEXTCTRL1"));
@@ -547,16 +547,27 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_pswpInfo->AddPage(pnlSDP, _("Raw SDP"), false);
 	//*)
 
-    m_pLevelGraph_Second->SetFont(wxFont(7,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
-	m_pLevelGraph_Second->AddGraph(wxT("Speed"), wxColour(0,255,0));
-	m_pLevelGraph_Second->ShowGraph(wxT("Speed"), false);
-	m_pLevelGraph_Second->ShowRange(wxT("Speed"), false);
-	m_pLevelGraph_Second->SetLimit(wxT("Speed"), 2310.0, 2300.0);
+    m_pGraph->SetFont(wxFont(7,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
 
-	m_pLevelGraph_Second->AddGraph(wxT("Gap"), wxColour(0,0,255));
-	m_pLevelGraph_Second->ShowGraph(wxT("Gap"), true);
-	m_pLevelGraph_Second->ShowRange(wxT("Gap"), true);
-	m_pLevelGraph_Second->SetLimit(wxT("Gap"), 1, 0.1);
+	m_pGraph->AddGraph(wxT("kBit/s"), wxColour(0,255,0));
+	m_pGraph->ShowGraph(wxT("kBit/s"), false);
+	m_pGraph->ShowRange(wxT("kBit/s"), true);
+	m_pGraph->SetLimit(wxT("kBit/s"), 2310.0, 2300.0);
+
+	m_pGraph->AddGraph(wxT("Packet Gap"), wxColour(0,0,255));
+	m_pGraph->ShowGraph(wxT("Packet Gap"), false);
+	m_pGraph->ShowRange(wxT("Packet Gap"), true);
+	m_pGraph->SetLimit(wxT("Packet Gap"), 1, 0.1);
+
+	m_pGraph->AddGraph(wxT("Packet Loss"), wxColour(0,255,0));
+	m_pGraph->ShowGraph(wxT("Packet Loss"), false);
+	m_pGraph->ShowRange(wxT("Packet Loss"), true);
+	m_pGraph->SetLimit(wxT("Packet Loss"), 2310.0, 2300.0);
+
+	m_pGraph->AddGraph(wxT("Jitter"), wxColour(0,0,255));
+	m_pGraph->ShowGraph(wxT("Jitter"), false);
+	m_pGraph->ShowRange(wxT("Jitter"), true);
+	m_pGraph->SetLimit(wxT("Jitter"), 1, 0.1);
 }
 
 pnlAoIPInfo::~pnlAoIPInfo()
@@ -586,11 +597,16 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
     m_plblQoSJitter->SetLabel(wxString::Format(wxT("%d"),pData->nJitter));
 
 
-    m_pLevelGraph_Second->SetLimit(wxT("Speed"), pData->dkbits_per_second_max, pData->dkbits_per_second_min);
-    m_pLevelGraph_Second->AddPeak(wxT("Speed"), pData->dkbits_per_second_Now);
+    m_pGraph->SetLimit(wxT("kBit/s"), pData->dkbits_per_second_max, pData->dkbits_per_second_min);
+    m_pGraph->AddPeak(wxT("kBit/s"), pData->dkbits_per_second_Now);
 
-    m_pLevelGraph_Second->SetLimit(wxT("Gap"), pData->dInter_packet_gap_ms_max, pData->dInter_packet_gap_ms_min);
-    m_pLevelGraph_Second->AddPeak(wxT("Gap"), pData->dInter_packet_gap_ms_Now);
+    m_pGraph->SetLimit(wxT("Packet Gap"), pData->dInter_packet_gap_ms_max, pData->dInter_packet_gap_ms_min);
+    m_pGraph->AddPeak(wxT("Packet Gap"), pData->dInter_packet_gap_ms_Now);
+
+    pair<double,double> pairMinMax(m_pGraph->GetRange(wxT("Jitter")));
+    m_pGraph->SetLimit(wxT("Jitter"), max(pairMinMax.second, (double)pData->nJitter), min(pairMinMax.first, (double)pData->nJitter));
+    m_pGraph->AddPeak(wxT("Jitter"), pData->nJitter);
+
 
 }
 
@@ -696,3 +712,13 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
 }
 
 
+void pnlAoIPInfo::ShowGraph(const wxString& sGraph)
+{
+    m_pGraph->HideAllGraphs();
+    m_pGraph->ShowGraph(sGraph);
+}
+
+void pnlAoIPInfo::ClearGraphs()
+{
+    m_pGraph->ClearGraphs();
+}

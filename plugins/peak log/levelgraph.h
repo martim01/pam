@@ -77,8 +77,11 @@ class LevelGraph : public wxWindow
         void ShowGraph(const wxString& sGraph, bool bShow=true);
         void ClearGraphs();
         void DeleteAllGraphs();
-
+        void HideAllGraphs();
         void ShowRange(const wxString& sGraph, bool bShow=true);
+
+        std::pair<double,double> GetRange(const wxString& sGraph);
+
   protected:
 
 
