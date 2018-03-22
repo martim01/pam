@@ -2,7 +2,7 @@
 
 #include <wx/log.h>
 #include <wx/event.h>
-#include "../fft/kiss_xcorr.h"
+#include "kiss_xcorr.h"
 
 DEFINE_EVENT_TYPE(wxEVT_OFFSET_DONE)
 

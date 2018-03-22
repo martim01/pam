@@ -2,19 +2,20 @@
 #include "monitorpluginbuilder.h"
 #include <wx/string.h>
 
-class pnlAngleMeters;
-class SettingEvent;
+class SpectogramMeter;
+class pnlRoutiing;
 
-class WXEXPORT AngleMetersBuilder : public MonitorPluginBuilder
+
+class WXEXPORT SpectogramBuilder : public MonitorPluginBuilder
 {
     public:
-        AngleMetersBuilder();
+        SpectogramBuilder();
 
         virtual void SetAudioData(const timedbuffer* pBuffer);
 
         wxString GetName() const
         {
-            return wxT("Angle Meters");
+            return wxT("Spectogram");
         }
 
 
@@ -22,22 +23,22 @@ class WXEXPORT AngleMetersBuilder : public MonitorPluginBuilder
         virtual void OutputChannels(const std::vector<char>& vChannels);
 
     protected:
-
-        friend class pnlAngleMeters;
-        friend class pnlMode;
+        friend class pnlBins;
+        friend class pnlDisplay;
         friend class pnlOptions;
-        friend class pnlMeterSettings;
+        friend class pnlOverlap;
+        friend class pnlRoutiing;
+        friend class pnlType;
+        friend class pnlWindow;
 
-        void ClearMeter();
-        void OnSettingChanged(SettingEvent& event);
+        void LoadSettings(){}
 
         virtual wxWindow* CreateMonitorPanel(wxWindow* pParent);
         virtual std::list<pairOptionPanel_t>CreateOptionPanels(wxWindow* pParent);
 
-        void LoadSettings();
+
+
     private:
-        pnlAngleMeters* m_pAngleMeters;
+        SpectogramMeter* m_pMeter;
+        //pnlRoutiing* m_ppnlRouting;
 };
-
-
-

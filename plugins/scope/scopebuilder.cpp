@@ -8,7 +8,7 @@
 #include "pnlTimeframe.h"
 #include "pnlTrigger.h"
 #include "pnlVertical.h"
-
+#include "version.h"
 
 using namespace std;
 
@@ -139,3 +139,5 @@ void ScopeBuilder::SetMemory(bool bSet)
 {
     m_pScope->SetMemory(bSet);
 }
+
+

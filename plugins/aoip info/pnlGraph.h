@@ -2,6 +2,7 @@
 #define PNLGRAPH_H
 
 //(*Headers(pnlGraph)
+#include "wmbutton.h"
 #include <wx/panel.h>
 #include "wmlist.h"
 //*)
@@ -16,6 +17,7 @@ class pnlGraph: public wxPanel
 		virtual ~pnlGraph();
 
 		//(*Declarations(pnlGraph)
+		wmButton* m_pbtnClear;
 		wmList* m_plstGraph;
 		//*)
 
@@ -23,12 +25,14 @@ class pnlGraph: public wxPanel
 
 		//(*Identifiers(pnlGraph)
 		static const long ID_M_PLST16;
+		static const long ID_M_PBTN29;
 		//*)
 
 	private:
 
 		//(*Handlers(pnlGraph)
 		void OnlstGraphSelected(wxCommandEvent& event);
+		void OnbtnClearClick(wxCommandEvent& event);
 		//*)
 		AoIPInfoBuilder* m_pBuilder;
 

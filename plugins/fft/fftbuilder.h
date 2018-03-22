@@ -18,6 +18,7 @@ class WXEXPORT FFTBuilder : public MonitorPluginBuilder
             return wxT("FFT");
         }
 
+
         void OnCursorMode(bool bOn);
 
         virtual void InputSession(const session& aSession);

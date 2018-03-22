@@ -7,6 +7,8 @@
 #include "pnlMeters.h"
 #include "pnlRouting.h"
 #include <wx/log.h>
+#include "version.h"
+
 
 using namespace std;
 

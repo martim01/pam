@@ -17,6 +17,7 @@ class WXEXPORT AoIPInfoBuilder : public MonitorPluginBuilder
             return wxT("AoIP Info");
         }
 
+
         void ClearGraphs();
 
         virtual void InputSession(const session& aSession);

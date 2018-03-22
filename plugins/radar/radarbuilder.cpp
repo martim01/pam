@@ -8,6 +8,7 @@
 #include "pnlDisplay.h"
 #include "pnlMeters.h"
 #include <wx/log.h>
+#include "version.h"
 
 using namespace std;
 
@@ -156,3 +157,6 @@ void RadarBuilder::ClearMeter()
 {
     m_pRadar->ClearMeter();
 }
+
+
+

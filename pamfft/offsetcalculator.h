@@ -1,7 +1,7 @@
 #pragma once
 #include <wx/event.h>
 #include <wx/thread.h>
-
+#include "pamfftdll.h"
 #include <math.h>
 #include <vector>
 
@@ -9,7 +9,7 @@
 
 /** Class that attempts to calculate the offset in milliseconds between the a and b leg of a stereo sample. Based on BBC R&D code
 **/
-class OffsetCalculator : public wxThread
+class PAMFFT_IMPEXPORT OffsetCalculator : public wxThread
 {
     public:
         ///< constructor

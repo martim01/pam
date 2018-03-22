@@ -33,6 +33,7 @@
 					<Add option="-Wl,--enable-auto-import,-Map=fft.map" />
 					<Add library="wxmsw30u_gcc_wammacs" />
 					<Add library="pambase2.0" />
+					<Add library="pamfft1.0" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 			</Target>
@@ -62,6 +63,7 @@
 					<Add option="-Wl,--enable-auto-import,-Map=fft.map" />
 					<Add library="wxmsw30ud_gcc_wammacs" />
 					<Add library="pambased2.0" />
+					<Add library="pamfftd1.0" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 			</Target>
@@ -92,19 +94,30 @@
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-Wall" />
 					<Add option="-g" />
-					<Add option="`wx-config --cxxflags`" />
-					<Add option="-fpermissive" />
-					<Add option="-fPIC" />
-					<Add option="-DDLL_EXPORTS" />
+					<Add option="-DWIN32" />
+					<Add option="-D_USRDLL" />
+					<Add option="-D__WXMSW__" />
+					<Add option="-DWXUSINGDLL" />
+					<Add option="-DUNICODE" />
 					<Add option="-DwxUSE_UNICODE" />
-					<Add option="-D__WXGNU__" />
-					<Add option="-DPAMBASE_DEBUG" />
 					<Add option="-D__WXDEBUG__" />
+					<Add directory="$(#wx3_0.include)" />
+					<Add directory="$(#wx3_0.include)/mswu" />
 				</Compiler>
+				<ResourceCompiler>
+					<Add directory="$(#wx3_0.include)/mswu" />
+				</ResourceCompiler>
 				<Linker>
-					<Add option="`wx-config --libs`" />
+					<Add option="-Wl,--enable-auto-import,-Map=fft.map" />
+					<Add library="wxmsw30ud_gcc_wammacs" />
 					<Add library="pambased2.0" />
+					<Add library="pamfftd1.0" />
+					<Add library="wxmsw30ud_gcc_wammacs" />
+					<Add library="pambased2.0" />
+					<Add library="pamfftd1.0" />
+					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 			</Target>
 		</Build>
@@ -112,39 +125,17 @@
 			<Add directory="../../pambase" />
 			<Add directory="$(#kiss.include)" />
 			<Add directory="$(#kiss.include)/tools" />
+			<Add directory="../../pamfft" />
 		</Compiler>
 		<Linker>
 			<Add directory="../../lib" />
 		</Linker>
-		<Unit filename="../../external/kiss_fft130/kiss_fft.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../external/kiss_fft130/tools/kfc.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../external/kiss_fft130/tools/kiss_fftnd.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../external/kiss_fft130/tools/kiss_fftndr.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../external/kiss_fft130/tools/kiss_fftr.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="fft.cpp" />
 		<Unit filename="fft.h" />
-		<Unit filename="fftAlgorithm.cpp" />
-		<Unit filename="fftAlgorithm.h" />
 		<Unit filename="fftbuilder.cpp" />
 		<Unit filename="fftbuilder.h" />
 		<Unit filename="fftmeter.cpp" />
 		<Unit filename="fftmeter.h" />
-		<Unit filename="kaiserwindow.cpp" />
-		<Unit filename="kaiserwindow.h" />
-		<Unit filename="kiss_xcorr.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="kiss_xcorr.h" />
 		<Unit filename="pnlbins.cpp" />
 		<Unit filename="pnlbins.h" />
 		<Unit filename="pnldisplay.cpp" />
@@ -159,6 +150,7 @@
 		<Unit filename="pnltype.h" />
 		<Unit filename="pnlwindow.cpp" />
 		<Unit filename="pnlwindow.h" />
+		<Unit filename="version.h" />
 		<Unit filename="wxsmith/pnlBins.wxs" />
 		<Unit filename="wxsmith/pnlDisplay.wxs" />
 		<Unit filename="wxsmith/pnlOptions.wxs" />

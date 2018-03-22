@@ -1,6 +1,7 @@
 #include "fft.h"
 #include "fftbuilder.h"
 #include "monitorpluginfactory.h"
+#include "version.h"
 
 void CreateMonitorBuilder()
 {
@@ -10,4 +11,15 @@ void CreateMonitorBuilder()
 wxString GetPluginName()
 {
     return wxT("FFT");
+}
+
+
+wxString GetPluginVersion()
+{
+    return wxString::FromAscii(AutoVersion::FULLVERSION_STRING);
+}
+
+wxString GetDetails()
+{
+    return wxT("Displays a graph of amplitude vs frequency.\n");
 }

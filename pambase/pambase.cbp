@@ -145,6 +145,7 @@
 		<Unit filename="monitorpluginbuilder.h" />
 		<Unit filename="monitorpluginfactory.cpp" />
 		<Unit filename="monitorpluginfactory.h" />
+		<Unit filename="plugin.h" />
 		<Unit filename="ppm.cpp" />
 		<Unit filename="ppm.h" />
 		<Unit filename="session.h" />

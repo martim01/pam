@@ -554,10 +554,20 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_pGraph->ShowRange(wxT("kBit/s"), true);
 	m_pGraph->SetLimit(wxT("kBit/s"), 2310.0, 2300.0);
 
+	m_pGraph->AddGraph(wxT("kBit/s Av"), wxColour(255,255,255));
+	m_pGraph->ShowGraph(wxT("kBit/s Av"), false);
+	m_pGraph->ShowRange(wxT("kBit/s Av"), true);
+	m_pGraph->SetLimit(wxT("kBit/s Av"), 2310.0, 2300.0);
+
 	m_pGraph->AddGraph(wxT("Packet Gap"), wxColour(0,0,255));
 	m_pGraph->ShowGraph(wxT("Packet Gap"), false);
 	m_pGraph->ShowRange(wxT("Packet Gap"), true);
 	m_pGraph->SetLimit(wxT("Packet Gap"), 1, 0.1);
+
+	m_pGraph->AddGraph(wxT("Packet Gap Av"), wxColour(255,255,255));
+	m_pGraph->ShowGraph(wxT("Packet Gap Av"), false);
+	m_pGraph->ShowRange(wxT("Packet Gap Av"), true);
+	m_pGraph->SetLimit(wxT("Packet Gap Av"), 1, 0.1);
 
 	m_pGraph->AddGraph(wxT("Packet Loss"), wxColour(0,255,0));
 	m_pGraph->ShowGraph(wxT("Packet Loss"), false);
@@ -594,18 +604,21 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
     m_plblQoSInterAv->SetLabel(wxString::Format(wxT("%f ms"), pData->dInter_packet_gap_ms_av));
     m_plblQoSInterMax->SetLabel(wxString::Format(wxT("%f ms"), pData->dInter_packet_gap_ms_max));
 
-    m_plblQoSJitter->SetLabel(wxString::Format(wxT("%d"),pData->nJitter));
+    m_plblQoSJitter->SetLabel(wxString::Format(wxT("%f ms"),pData->dJitter));
 
 
     m_pGraph->SetLimit(wxT("kBit/s"), pData->dkbits_per_second_max, pData->dkbits_per_second_min);
     m_pGraph->AddPeak(wxT("kBit/s"), pData->dkbits_per_second_Now);
 
+    m_pGraph->SetLimit(wxT("kBit/s Av"), pData->dkbits_per_second_max, pData->dkbits_per_second_min);
+    m_pGraph->AddPeak(wxT("kBit/s Av"), pData->dkbits_per_second_Av);
+
     m_pGraph->SetLimit(wxT("Packet Gap"), pData->dInter_packet_gap_ms_max, pData->dInter_packet_gap_ms_min);
     m_pGraph->AddPeak(wxT("Packet Gap"), pData->dInter_packet_gap_ms_Now);
 
     pair<double,double> pairMinMax(m_pGraph->GetRange(wxT("Jitter")));
-    m_pGraph->SetLimit(wxT("Jitter"), max(pairMinMax.second, (double)pData->nJitter), min(pairMinMax.first, (double)pData->nJitter));
-    m_pGraph->AddPeak(wxT("Jitter"), pData->nJitter);
+    m_pGraph->SetLimit(wxT("Jitter"), max(pairMinMax.second, pData->dJitter), min(pairMinMax.first, pData->dJitter));
+    m_pGraph->AddPeak(wxT("Jitter"), pData->dJitter);
 
 
 }
@@ -716,6 +729,14 @@ void pnlAoIPInfo::ShowGraph(const wxString& sGraph)
 {
     m_pGraph->HideAllGraphs();
     m_pGraph->ShowGraph(sGraph);
+    if(sGraph == wxT("kBit/s"))
+    {
+        m_pGraph->ShowGraph(wxT("kBit/s Av"));
+    }
+    else if(sGraph == wxT("Packet Gap"))
+    {
+        m_pGraph->ShowGraph(wxT("Packet Gap Av"));
+    }
 }
 
 void pnlAoIPInfo::ClearGraphs()

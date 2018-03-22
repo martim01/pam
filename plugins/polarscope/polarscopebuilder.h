@@ -19,6 +19,7 @@ class WXEXPORT PolarScopeBuilder : public MonitorPluginBuilder
             return wxT("Polar Scope");
         }
 
+
         virtual void InputSession(const session& aSession);
         virtual void OutputChannels(const std::vector<char>& vChannels);
 

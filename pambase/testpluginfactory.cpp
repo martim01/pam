@@ -116,9 +116,13 @@ map<wxString, TestPluginBuilder*>::iterator TestPluginFactory::FindPlugin(const 
 }
 
 
-wxString TestPluginFactory::GetPluginName(const wxString& sDir, const wxString& sLibrary)
+plugin TestPluginFactory::GetPluginDetails(const wxString& sDir, const wxString& sLibrary)
 {
     wxLogNull ln;
+
+    plugin aPlugin;
+    aPlugin.sLibrary = sLibrary;
+
     map<wxString, wxDynamicLibrary*>::const_iterator itLib = m_mLibraries.find(sLibrary);
     if(itLib != m_mLibraries.end())
     {
@@ -126,7 +130,19 @@ wxString TestPluginFactory::GetPluginName(const wxString& sDir, const wxString& 
         {
             typedef wxString (*RegPtr)();
             RegPtr ptr = (RegPtr)itLib->second->GetSymbol(wxT("GetTestPluginName"));
-            return (*ptr)();
+            aPlugin.sName = (*ptr)();
+        }
+        if(itLib->second->HasSymbol(wxT("GetVersion")))
+        {
+            typedef wxString (*RegPtr)();
+            RegPtr ptr = (RegPtr)itLib->second->GetSymbol(wxT("GetVersion"));
+            aPlugin.sVersion = (*ptr)();
+        }
+        if(itLib->second->HasSymbol(wxT("GetDetails")))
+        {
+            typedef wxString (*RegPtr)();
+            RegPtr ptr = (RegPtr)itLib->second->GetSymbol(wxT("GetDetails"));
+            aPlugin.sDetails = (*ptr)();
         }
     }
     else
@@ -144,12 +160,24 @@ wxString TestPluginFactory::GetPluginName(const wxString& sDir, const wxString& 
                     RegPtr ptr = (RegPtr)pLib->GetSymbol(wxT("GetTestPluginName"));
                     if(ptr)
                     {
-                        return (*ptr)();
+                        aPlugin.sName = (*ptr)();
+                    }
+                    if(pLib->HasSymbol(wxT("GetVersion")))
+                    {
+                        typedef wxString (*RegPtr)();
+                        RegPtr ptr = (RegPtr)pLib->GetSymbol(wxT("GetVersion"));
+                        aPlugin.sVersion = (*ptr)();
+                    }
+                    if(pLib->HasSymbol(wxT("GetDetails")))
+                    {
+                        typedef wxString (*RegPtr)();
+                        RegPtr ptr = (RegPtr)pLib->GetSymbol(wxT("GetDetails"));
+                        aPlugin.sDetails = (*ptr)();
                     }
                 }
             }
             delete pLib;
         }
     }
-    return wxEmptyString;
+    return aPlugin;
 }

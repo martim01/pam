@@ -120,7 +120,8 @@ void qosMeasurementRecord::printQOSData()
             pData->nBaseExtSeqNum = stats->baseExtSeqNumReceived();
             pData->nLastResetExtSeqNum = stats->lastResetExtSeqNumReceived();
             pData->nHighestExtSeqNum = stats->highestExtSeqNumReceived();
-            pData->nJitter = stats->jitter();
+            pData->dJitter = static_cast<double>(stats->jitter())/static_cast<double>(m_pSource->timestampFrequency());
+            pData->dJitter *= 1000.0;   //into ms not seconds
             pData->nLastSR_NTPmsw = stats->lastReceivedSR_NTPmsw();
             pData->nLastSR_NTPlsw = stats->lastReceivedSR_NTPlsw();
             pData->tvLastSR_Time = stats->lastReceivedSR_time();

@@ -1,5 +1,6 @@
 #include "distortionbuilder.h"
 #include "pnlDistortion.h"
+#include "version.h"
 
 DistortionBuilder::DistortionBuilder() : TestPluginBuilder(),
 m_ppnlDistortion(0)
@@ -42,6 +43,7 @@ void DistortionBuilder::LoadSettings()
 {
 
 }
+
 
 
 

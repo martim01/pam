@@ -15,13 +15,5 @@
 			<style>wmList::STYLE_SELECT</style>
 			<handler function="OnlstIntervalSelected" entry="EVT_LIST_SELECTED" />
 		</object>
-		<object class="wmButton" name="ID_M_PBTN29" variable="m_pbtnClear" member="yes">
-			<label>Clear Graphs</label>
-			<button_pressed>#800000</button_pressed>
-			<pos>100,135</pos>
-			<size>90,40</size>
-			<style>wmButton::STYLE_NORMAL</style>
-			<handler function="OnbtnClearClick" entry="EVT_BUTTON" />
-		</object>
 	</object>
 </wxsmith>

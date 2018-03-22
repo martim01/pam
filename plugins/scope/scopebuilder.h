@@ -19,6 +19,7 @@ class WXEXPORT ScopeBuilder : public MonitorPluginBuilder
             return wxT("Scope");
         }
 
+
         virtual void InputSession(const session& aSession);
         virtual void OutputChannels(const std::vector<char>& vChannels);
 

@@ -8,6 +8,7 @@
 
 //(*IdInit(pnlGraph)
 const long pnlGraph::ID_M_PLST16 = wxNewId();
+const long pnlGraph::ID_M_PBTN29 = wxNewId();
 //*)
 
 BEGIN_EVENT_TABLE(pnlGraph,wxPanel)
@@ -20,10 +21,14 @@ pnlGraph::pnlGraph(wxWindow* parent,AoIPInfoBuilder* pBuilder, wxWindowID id,con
 {
 	//(*Initialize(pnlGraph)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
-	m_plstGraph = new wmList(this, ID_M_PLST16, wxPoint(0,0), wxSize(190,210), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 2, wxSize(5,5));
+	SetBackgroundColour(wxColour(0,0,0));
+	m_plstGraph = new wmList(this, ID_M_PLST16, wxPoint(0,0), wxSize(190,128), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 2, wxSize(5,5));
 	m_plstGraph->SetBackgroundColour(wxColour(0,0,0));
+	m_pbtnClear = new wmButton(this, ID_M_PBTN29, _("Clear Graphs"), wxPoint(100,135), wxSize(90,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN29"));
+	m_pbtnClear->SetColourSelected(wxColour(wxT("#800000")));
 
 	Connect(ID_M_PLST16,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlGraph::OnlstGraphSelected);
+	Connect(ID_M_PBTN29,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlGraph::OnbtnClearClick);
 	//*)
 
 	m_plstGraph->AddButton(wxT("kBit/s"));
@@ -45,4 +50,9 @@ pnlGraph::~pnlGraph()
 void pnlGraph::OnlstGraphSelected(wxCommandEvent& event)
 {
     m_pBuilder->WriteSetting(wxT("Graph"), event.GetString());
+}
+
+void pnlGraph::OnbtnClearClick(wxCommandEvent& event)
+{
+    m_pBuilder->ClearGraphs();
 }

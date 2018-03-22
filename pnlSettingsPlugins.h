@@ -8,6 +8,8 @@
 #include "wmlist.h"
 //*)
 
+#include "plugin.h"
+
 class pnlSettingsPlugins: public wxPanel
 {
 	public:
@@ -22,10 +24,14 @@ class pnlSettingsPlugins: public wxPanel
 		wxPanel* Panel1;
 		wmList* m_plstCurrent;
 		wmButton* m_pbtnUp;
+		wmLabel* m_plblDetails;
 		wmButton* m_pbtnApply;
 		wmLabel* m_pLbl2;
+		wmLabel* m_plblCurrentVersion;
 		wmButton* m_pbtnDown;
+		wmLabel* m_plblVersion;
 		wmButton* m_pbtnSet;
+		wmLabel* m_plblCurrentDetails;
 		wmButton* m_pbtnPlugin;
 		//*)
 
@@ -36,11 +42,15 @@ class pnlSettingsPlugins: public wxPanel
 		static const long ID_M_PLBL1;
 		static const long ID_M_PLBL2;
 		static const long ID_M_PLST2;
+		static const long ID_M_PLBL5;
+		static const long ID_M_PLBL6;
 		static const long ID_M_PBTN1;
 		static const long ID_M_PBTN2;
 		static const long ID_M_PBTN3;
 		static const long ID_M_PBTN4;
 		static const long ID_M_PBTN6;
+		static const long ID_M_PLBL3;
+		static const long ID_M_PLBL4;
 		static const long ID_PANEL1;
 		static const long ID_M_PBTN5;
 		//*)
@@ -65,9 +75,10 @@ class pnlSettingsPlugins: public wxPanel
 		void ClearLists();
 
 
-		std::map<wxString, wxString> m_mPossible;
+
+		std::map<wxString, plugin> m_mPossible;
         unsigned int m_nSelected;
-        std::map<wxString, wxString>::iterator m_itPossible;
+        std::map<wxString, plugin>::iterator m_itPossible;
         unsigned int m_nPossible;
 
         bool m_bTests;

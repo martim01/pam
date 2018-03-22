@@ -85,7 +85,7 @@ struct PAMBASE_IMPEXPORT qosData
     unsigned int nBaseExtSeqNum;
     unsigned int nLastResetExtSeqNum;
     unsigned int nHighestExtSeqNum;
-    unsigned int nJitter;
+    double dJitter;
     unsigned int nLastSR_NTPmsw;
     unsigned int nLastSR_NTPlsw;
     timeval tvLastSR_Time;

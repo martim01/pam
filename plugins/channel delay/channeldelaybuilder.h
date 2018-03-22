@@ -15,6 +15,7 @@ class ChannelDelayBuilder : public TestPluginBuilder
         virtual void SetAudioData(const timedbuffer* pBuffer);
         virtual wxString GetName() const;
 
+
     protected:
 
         friend class pnlChannelDelay;

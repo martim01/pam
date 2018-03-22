@@ -9,7 +9,6 @@
 
 //(*IdInit(pnlSettings)
 const long pnlSettings::ID_M_PLST16 = wxNewId();
-const long pnlSettings::ID_M_PBTN29 = wxNewId();
 //*)
 
 BEGIN_EVENT_TABLE(pnlSettings,wxPanel)
@@ -25,11 +24,8 @@ pnlSettings::pnlSettings(wxWindow* parent, AoIPInfoBuilder* pBuilder, wxWindowID
 	SetBackgroundColour(wxColour(0,0,0));
 	m_plstInterval = new wmList(this, ID_M_PLST16, wxPoint(0,0), wxSize(190,135), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 3, wxSize(5,5));
 	m_plstInterval->SetBackgroundColour(wxColour(0,0,0));
-	m_pbtnClear = new wmButton(this, ID_M_PBTN29, _("Clear Graphs"), wxPoint(100,135), wxSize(90,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN29"));
-	m_pbtnClear->SetColourSelected(wxColour(wxT("#800000")));
 
 	Connect(ID_M_PLST16,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstIntervalSelected);
-	Connect(ID_M_PBTN29,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnClearClick);
 	//*)
 
     m_plstInterval->AddButton(wxT("50 ms"), wxNullBitmap, (void*)50);

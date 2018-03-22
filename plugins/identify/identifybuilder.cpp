@@ -1,5 +1,7 @@
 #include "identifybuilder.h"
 #include "pnlIdentify.h"
+#include "version.h"
+
 
 IdentifyBuilder::IdentifyBuilder() : TestPluginBuilder(),
 m_ppnlIdentify(0)
@@ -42,6 +44,7 @@ void IdentifyBuilder::LoadSettings()
 {
 
 }
+
 
 
 

@@ -6,6 +6,7 @@
 #include "pnlMode.h"
 #include "pnlOptions.h"
 #include "pnlMeterSettings.h"
+#include "version.h"
 
 using namespace std;
 
@@ -105,3 +106,6 @@ void AngleMetersBuilder::ClearMeter()
 {
     m_pAngleMeters->ClearMeters();
 }
+
+
+

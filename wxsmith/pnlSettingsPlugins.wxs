@@ -17,7 +17,7 @@
 				<button_selected>#FF8000</button_selected>
 				<items />
 				<pos>10,40</pos>
-				<size>200,350</size>
+				<size>200,150</size>
 				<bg>#000000</bg>
 				<style>wmList::STYLE_SELECT</style>
 				<handler function="OnlstPossibleSelected" entry="EVT_LIST_SELECTED" />
@@ -44,10 +44,24 @@
 				<button_selected>#FF8000</button_selected>
 				<items />
 				<pos>390,40</pos>
-				<size>200,350</size>
+				<size>200,150</size>
 				<bg>#000000</bg>
 				<style>wmList::STYLE_SELECT</style>
 				<handler function="OnlstCurrentSelected" entry="EVT_LIST_SELECTED" />
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL5" variable="m_plblCurrentVersion" member="yes">
+				<label>Version:</label>
+				<pos>390,200</pos>
+				<size>200,25</size>
+				<fg>#000000</fg>
+				<bg>#FFFFFF</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL6" variable="m_plblCurrentDetails" member="yes">
+				<label></label>
+				<pos>390,230</pos>
+				<size>200,150</size>
+				<fg>#000000</fg>
+				<bg>#FFFFFF</bg>
 			</object>
 			<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnSet" member="yes">
 				<label>Hold To Add</label>
@@ -95,6 +109,20 @@
 				<bg>#FF6F28</bg>
 				<style>wmButton::STYLE_HOLD</style>
 				<handler function="OnbtnApplyHeld" entry="EVT_BUTTON_HELD" />
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL3" variable="m_plblVersion" member="yes">
+				<label>Version:</label>
+				<pos>10,200</pos>
+				<size>200,25</size>
+				<fg>#000000</fg>
+				<bg>#FFFFFF</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL4" variable="m_plblDetails" member="yes">
+				<label></label>
+				<pos>10,230</pos>
+				<size>200,150</size>
+				<fg>#000000</fg>
+				<bg>#FFFFFF</bg>
 			</object>
 		</object>
 		<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnPlugin" member="yes">

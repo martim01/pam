@@ -4,7 +4,7 @@
 #include <map>
 #include <wx/event.h>
 #include <list>
-
+#include "plugin.h"
 
 class wxDynamicLibrary;
 class TestPluginBuilder;
@@ -20,7 +20,7 @@ public:
     void SetSwitcherPanels(wmSwitcherPanel* pswpTests);
 
     void Register(TestPluginBuilder* pBuilder);
-    wxString GetPluginName(const wxString& sDir, const wxString& sLibrary);
+    plugin GetPluginDetails(const wxString& sDir, const wxString& sLibrary);
 
 
     void UnloadAll();

@@ -2,12 +2,13 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="Distortion" />
+		<Option title="spectogram" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Release">
-				<Option output="../../lib/distortion1.0.dll" prefix_auto="0" extension_auto="0" />
+				<Option platforms="Windows;" />
+				<Option output="../../lib/spectogram1.0.dll" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/release3" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -29,15 +30,15 @@
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-s" />
-					<Add option="-Wl,--enable-auto-import,-Map=distortion.map" />
+					<Add option="-Wl,--enable-auto-import,-Map=spectogram.map" />
 					<Add library="wxmsw30u_gcc_wammacs" />
 					<Add library="pambase2.0" />
-					<Add library="pamfft1.0" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 			</Target>
 			<Target title="Debug">
-				<Option output="../../lib/debug/distortion1.0.dll" prefix_auto="1" extension_auto="0" />
+				<Option platforms="Windows;" />
+				<Option output="../../lib/debug/spectogram1.0.dll" prefix_auto="1" extension_auto="0" />
 				<Option object_output="obj/debug" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -46,7 +47,6 @@
 					<Add option="-g" />
 					<Add option="-DWIN32" />
 					<Add option="-D_USRDLL" />
-					<Add option="-DDLL_EXPORTS" />
 					<Add option="-D__WXMSW__" />
 					<Add option="-DWXUSINGDLL" />
 					<Add option="-DUNICODE" />
@@ -59,16 +59,15 @@
 					<Add directory="$(#wx3_0.include)/mswu" />
 				</ResourceCompiler>
 				<Linker>
-					<Add option="-Wl,--enable-auto-import,-Map=distortion.map" />
+					<Add option="-Wl,--enable-auto-import,-Map=spectogram.map" />
 					<Add library="wxmsw30ud_gcc_wammacs" />
 					<Add library="pambased2.0" />
-					<Add library="pamfftd1.0" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 			</Target>
 			<Target title="Linux Release">
 				<Option platforms="Unix;" />
-				<Option output="../../lib/libdistortion1.0.so" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="0" extension_auto="0" />
+				<Option output="../../lib/libspectogram1.0.so" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/linux" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -88,7 +87,7 @@
 			</Target>
 			<Target title="Linux Debug">
 				<Option platforms="Unix;" />
-				<Option output="../../lib/debug/libdistortion1.0.so" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="0" extension_auto="0" />
+				<Option output="../../lib/debug/libspectogram1.0.so" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/linux/debug" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -113,38 +112,18 @@
 			<Add directory="../../pambase" />
 			<Add directory="$(#kiss.include)" />
 			<Add directory="$(#kiss.include)/tools" />
-			<Add directory="../../pamfft" />
 		</Compiler>
 		<Linker>
 			<Add directory="../../lib" />
-			<Add directory="../../pamfft" />
 		</Linker>
-		<Unit filename="distortion.cpp" />
-		<Unit filename="distortion.h" />
-		<Unit filename="distortionbuilder.cpp" />
-		<Unit filename="distortionbuilder.h" />
-		<Unit filename="pnlDistortion.cpp" />
-		<Unit filename="pnlDistortion.h" />
-		<Unit filename="pnlDistortionChannel.cpp" />
-		<Unit filename="pnlDistortionChannel.h" />
-		<Unit filename="wxsmith/pnlDistortion.wxs" />
-		<Unit filename="wxsmith/pnlDistortionChannel.wxs" />
+		<Unit filename="spectogram.cpp" />
+		<Unit filename="spectogram.h" />
+		<Unit filename="spectogrambuilder.h" />
+		<Unit filename="spectogrambuilder.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
 			<debugger />
-			<AutoVersioning>
-				<Scheme minor_max="10" build_max="0" rev_max="0" rev_rand_max="10" build_times_to_increment_minor="100" />
-				<Settings autoincrement="1" date_declarations="1" use_define="0" update_manifest="0" do_auto_increment="0" ask_to_increment="0" language="C++" svn="0" svn_directory="" header_path="version.h" />
-				<Changes_Log show_changes_editor="0" app_title="released version %M.%m.%b of %p" changeslog_path="ChangesLog.txt" />
-				<Code header_guard="VERSION_H" namespace="AutoVersion" prefix="" />
-			</AutoVersioning>
-			<wxsmith version="1">
-				<resources>
-					<wxPanel wxs="wxsmith/pnlDistortion.wxs" src="pnlDistortion.cpp" hdr="pnlDistortion.h" fwddecl="0" i18n="1" name="pnlDistortion" language="CPP" />
-					<wxPanel wxs="wxsmith/pnlDistortionChannel.wxs" src="pnlDistortionChannel.cpp" hdr="pnlDistortionChannel.h" fwddecl="0" i18n="1" name="pnlDistortionChannel" language="CPP" />
-				</resources>
-			</wxsmith>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

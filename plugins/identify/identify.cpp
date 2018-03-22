@@ -1,6 +1,7 @@
 #include "identify.h"
 #include "identifybuilder.h"
 #include "testpluginfactory.h"
+#include "version.h"
 
 void CreateTestBuilder()
 {
@@ -11,4 +12,15 @@ void CreateTestBuilder()
 wxString GetTestPluginName()
 {
     return wxT("Identify");
+}
+
+
+wxString GetPluginVersion()
+{
+    return wxString::FromAscii(AutoVersion::FULLVERSION_STRING);
+}
+
+wxString GetDetails()
+{
+    return wxT("Uses Gracenote to attempt to identify the current audio.");
 }

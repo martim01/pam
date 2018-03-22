@@ -2,8 +2,10 @@
 <CodeBlocks_workspace_file>
 	<Workspace title="Workspace">
 		<Project filename="pambase/pambase.cbp" />
+		<Project filename="pamfft/pamfft.cbp" />
 		<Project filename="plugins/fft/fft.cbp">
 			<Depends filename="pambase/pambase.cbp" />
+			<Depends filename="pamfft/pamfft.cbp" />
 		</Project>
 		<Project filename="plugins/lissajou/lissajou.cbp">
 			<Depends filename="pambase/pambase.cbp" />
@@ -26,9 +28,11 @@
 		<Project filename="plugins/polarscope/polarscope.cbp" />
 		<Project filename="plugins/channel delay/channel delay.cbp">
 			<Depends filename="pambase/pambase.cbp" />
+			<Depends filename="pamfft/pamfft.cbp" />
 		</Project>
 		<Project filename="plugins/distortion/distortion.cbp">
 			<Depends filename="pambase/pambase.cbp" />
+			<Depends filename="pamfft/pamfft.cbp" />
 		</Project>
 		<Project filename="plugins/levels/levels.cbp">
 			<Depends filename="pambase/pambase.cbp" />

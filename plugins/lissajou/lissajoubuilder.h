@@ -18,6 +18,7 @@ class WXEXPORT LissajouBuilder : public MonitorPluginBuilder
             return wxT("Lissajou");
         }
 
+
         virtual void InputSession(const session& aSession);
         virtual void OutputChannels(const std::vector<char>& vChannels);
 

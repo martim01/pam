@@ -32,6 +32,7 @@
 					<Add option="-Wl,--enable-auto-import,-Map=channeldelay.map" />
 					<Add library="wxmsw30u_gcc_wammacs" />
 					<Add library="pambase2.0" />
+					<Add library="pamfft1.0" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 			</Target>
@@ -61,6 +62,7 @@
 					<Add option="-Wl,--enable-auto-import,-Map=channeldelay.map" />
 					<Add library="wxmsw30ud_gcc_wammacs" />
 					<Add library="pambased2.0" />
+					<Add library="pamfftd1.0" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 			</Target>
@@ -111,34 +113,16 @@
 			<Add directory="../../pambase" />
 			<Add directory="$(#kiss.include)" />
 			<Add directory="$(#kiss.include)/tools" />
+			<Add directory="../../pamfft" />
 		</Compiler>
 		<Linker>
 			<Add directory="../../lib" />
+			<Add directory="../../pamfft" />
 		</Linker>
-		<Unit filename="../../external/kiss_fft130/kiss_fft.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../external/kiss_fft130/tools/kfc.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../external/kiss_fft130/tools/kiss_fftnd.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../external/kiss_fft130/tools/kiss_fftndr.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../external/kiss_fft130/tools/kiss_fftr.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../fft/kiss_xcorr.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="channeldelay.cpp" />
 		<Unit filename="channeldelay.h" />
 		<Unit filename="channeldelaybuilder.cpp" />
 		<Unit filename="channeldelaybuilder.h" />
-		<Unit filename="offsetcalculator.cpp" />
-		<Unit filename="offsetcalculator.h" />
 		<Unit filename="offsetgraph.cpp" />
 		<Unit filename="offsetgraph.h" />
 		<Unit filename="pnlChannelDelay.cpp" />

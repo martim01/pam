@@ -20,11 +20,15 @@ const long pnlSettingsPlugins::ID_M_PLST1 = wxNewId();
 const long pnlSettingsPlugins::ID_M_PLBL1 = wxNewId();
 const long pnlSettingsPlugins::ID_M_PLBL2 = wxNewId();
 const long pnlSettingsPlugins::ID_M_PLST2 = wxNewId();
+const long pnlSettingsPlugins::ID_M_PLBL5 = wxNewId();
+const long pnlSettingsPlugins::ID_M_PLBL6 = wxNewId();
 const long pnlSettingsPlugins::ID_M_PBTN1 = wxNewId();
 const long pnlSettingsPlugins::ID_M_PBTN2 = wxNewId();
 const long pnlSettingsPlugins::ID_M_PBTN3 = wxNewId();
 const long pnlSettingsPlugins::ID_M_PBTN4 = wxNewId();
 const long pnlSettingsPlugins::ID_M_PBTN6 = wxNewId();
+const long pnlSettingsPlugins::ID_M_PLBL3 = wxNewId();
+const long pnlSettingsPlugins::ID_M_PLBL4 = wxNewId();
 const long pnlSettingsPlugins::ID_PANEL1 = wxNewId();
 const long pnlSettingsPlugins::ID_M_PBTN5 = wxNewId();
 //*)
@@ -43,7 +47,7 @@ pnlSettingsPlugins::pnlSettingsPlugins(wxWindow* parent,wxWindowID id,const wxPo
 	SetBackgroundColour(wxColour(0,0,0));
 	Panel1 = new wxPanel(this, ID_PANEL1, wxPoint(0,30), wxSize(600,420), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
 	Panel1->SetBackgroundColour(wxColour(0,0,0));
-	m_plstPossible = new wmList(Panel1, ID_M_PLST1, wxPoint(10,40), wxSize(200,350), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
+	m_plstPossible = new wmList(Panel1, ID_M_PLST1, wxPoint(10,40), wxSize(200,150), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
 	m_plstPossible->SetBackgroundColour(wxColour(0,0,0));
 	m_plstPossible->SetButtonColour(wxColour(wxT("#008000")));
 	m_plstPossible->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
@@ -55,10 +59,18 @@ pnlSettingsPlugins::pnlSettingsPlugins(wxWindow* parent,wxWindowID id,const wxPo
 	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl2->SetBackgroundColour(wxColour(0,0,160));
-	m_plstCurrent = new wmList(Panel1, ID_M_PLST2, wxPoint(390,40), wxSize(200,350), wmList::STYLE_SELECT, 1, wxSize(-1,40), 3, wxSize(5,5));
+	m_plstCurrent = new wmList(Panel1, ID_M_PLST2, wxPoint(390,40), wxSize(200,150), wmList::STYLE_SELECT, 1, wxSize(-1,40), 3, wxSize(5,5));
 	m_plstCurrent->SetBackgroundColour(wxColour(0,0,0));
 	m_plstCurrent->SetButtonColour(wxColour(wxT("#008000")));
 	m_plstCurrent->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
+	m_plblCurrentVersion = new wmLabel(Panel1, ID_M_PLBL5, _("Version:"), wxPoint(390,200), wxSize(200,25), 0, _T("ID_M_PLBL5"));
+	m_plblCurrentVersion->SetBorderState(uiRect::BORDER_NONE);
+	m_plblCurrentVersion->SetForegroundColour(wxColour(0,0,0));
+	m_plblCurrentVersion->SetBackgroundColour(wxColour(255,255,255));
+	m_plblCurrentDetails = new wmLabel(Panel1, ID_M_PLBL6, wxEmptyString, wxPoint(390,230), wxSize(200,150), 0, _T("ID_M_PLBL6"));
+	m_plblCurrentDetails->SetBorderState(uiRect::BORDER_NONE);
+	m_plblCurrentDetails->SetForegroundColour(wxColour(0,0,0));
+	m_plblCurrentDetails->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnSet = new wmButton(Panel1, ID_M_PBTN1, _("Hold To Add"), wxPoint(250,30), wxSize(100,50), wmButton::STYLE_HOLD, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnSet->Disable();
 	m_pbtnSet->SetBackgroundColour(wxColour(0,155,0));
@@ -78,6 +90,14 @@ pnlSettingsPlugins::pnlSettingsPlugins(wxWindow* parent,wxWindowID id,const wxPo
 	m_pbtnApply = new wmButton(Panel1, ID_M_PBTN6, _("Hold To Apply\n(Restarts App)"), wxPoint(250,330), wxSize(100,50), wmButton::STYLE_HOLD, wxDefaultValidator, _T("ID_M_PBTN6"));
 	m_pbtnApply->SetBackgroundColour(wxColour(255,111,40));
 	m_pbtnApply->SetColourDisabled(wxColour(wxT("#B0B0B0")));
+	m_plblVersion = new wmLabel(Panel1, ID_M_PLBL3, _("Version:"), wxPoint(10,200), wxSize(200,25), 0, _T("ID_M_PLBL3"));
+	m_plblVersion->SetBorderState(uiRect::BORDER_NONE);
+	m_plblVersion->SetForegroundColour(wxColour(0,0,0));
+	m_plblVersion->SetBackgroundColour(wxColour(255,255,255));
+	m_plblDetails = new wmLabel(Panel1, ID_M_PLBL4, wxEmptyString, wxPoint(10,230), wxSize(200,150), 0, _T("ID_M_PLBL4"));
+	m_plblDetails->SetBorderState(uiRect::BORDER_NONE);
+	m_plblDetails->SetForegroundColour(wxColour(0,0,0));
+	m_plblDetails->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnPlugin = new wmButton(this, ID_M_PBTN5, _("Plugins"), wxPoint(175,5), wxSize(250,30), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN5"));
 	m_pbtnPlugin->SetBackgroundColour(wxColour(84,140,203));
 
@@ -91,6 +111,11 @@ pnlSettingsPlugins::pnlSettingsPlugins(wxWindow* parent,wxWindowID id,const wxPo
 	Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsPlugins::OnbtnPluginClick);
 	//*)
     SetBackgroundColour(*wxBLACK);
+
+    m_plblDetails->SetTextAlign(wxALIGN_LEFT | wxALIGN_TOP);
+    m_plblCurrentDetails->SetTextAlign(wxALIGN_LEFT | wxALIGN_TOP);
+    m_plblVersion->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
+    m_plblCurrentVersion->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 
     m_pbtnPlugin->SetToggleLook(true, wxT("Monitors"), wxT("Tests"), 33.0);
     m_sSection = wxT("Monitor Plugins");
@@ -109,6 +134,10 @@ void pnlSettingsPlugins::OnlstPossibleSelected(wxCommandEvent& event)
     m_itPossible = m_mPossible.find(event.GetString());
     m_nPossible = event.GetInt();
     m_pbtnSet->Enable(m_plstPossible->GetSelectionCount() == 1);
+
+    m_plblVersion->SetLabel(wxString::Format(wxT("Version: %s"),m_itPossible->second.sVersion.c_str()));
+    m_plblDetails->SetLabel(m_itPossible->second.sDetails);
+
 }
 
 void pnlSettingsPlugins::OnlstCurrentSelected(wxCommandEvent& event)
@@ -117,13 +146,26 @@ void pnlSettingsPlugins::OnlstCurrentSelected(wxCommandEvent& event)
     m_pbtnClear->Enable((m_plstCurrent->GetSelectionCount() == 1));
     m_pbtnUp->Enable((m_plstCurrent->GetSelectionCount() == 1));
     m_pbtnDown->Enable((m_plstCurrent->GetSelectionCount() == 1));
+
+    map<wxString, plugin>::iterator itCurrent = m_mPossible.find(event.GetString());
+    if(itCurrent != m_mPossible.end())
+    {
+        m_plblCurrentVersion->SetLabel(wxString::Format(wxT("Version: %s"), itCurrent->second.sVersion.c_str()));
+        m_plblCurrentDetails->SetLabel(itCurrent->second.sDetails);
+    }
+    else
+    {
+        m_plblCurrentDetails->SetLabel(wxT("?"));
+        m_plblCurrentVersion->SetLabel(wxT("Version: ?"));
+    }
+
 }
 
 void pnlSettingsPlugins::OnpbtnSetHeld(wxCommandEvent& event)
 {
     if(m_itPossible != m_mPossible.end())
     {
-        Settings::Get().Write(m_sSection, wxString::Format(wxT("%04d"), m_plstCurrent->GetItemCount()+1), m_itPossible->second);
+        Settings::Get().Write(m_sSection, wxString::Format(wxT("%04d"), m_plstCurrent->GetItemCount()+1), m_itPossible->second.sLibrary);
         m_plstCurrent->Freeze();
         int nButton = m_plstCurrent->AddButton(m_itPossible->first);
         m_plstCurrent->SetButtonColour(nButton, wxColour(0,128,0));
@@ -133,6 +175,9 @@ void pnlSettingsPlugins::OnpbtnSetHeld(wxCommandEvent& event)
         m_plstPossible->DeleteButton(m_nPossible);
         m_pbtnSet->Enable(false);
         // @todo load plugin
+
+        m_plblDetails->SetLabel(wxEmptyString);
+        m_plblVersion->SetLabel(wxT("Version: "));
     }
     else
     {
@@ -155,6 +200,8 @@ void pnlSettingsPlugins::OnbtnClearHeld(wxCommandEvent& event)
     m_pbtnUp->Enable(false);
     m_pbtnDown->Enable(false);
 
+    m_plblCurrentDetails->SetLabel(wxEmptyString);
+    m_plblCurrentVersion->SetLabel(wxT("Version: "));
 
     // @todo remove plugin
 
@@ -225,6 +272,11 @@ void pnlSettingsPlugins::ClearLists()
     m_pbtnDown->Enable(false);
     m_pbtnSet->Enable(false);
     m_pbtnUp->Enable(false);
+
+    m_plblDetails->SetLabel(wxEmptyString);
+    m_plblVersion->SetLabel(wxT("Version: "));
+    m_plblCurrentDetails->SetLabel(wxEmptyString);
+    m_plblCurrentVersion->SetLabel(wxT("Version: "));
 }
 
 void pnlSettingsPlugins::ShowMonitorPlugins()
@@ -246,16 +298,19 @@ void pnlSettingsPlugins::ShowMonitorPlugins()
     {
         for(; itBegin != itEnd; ++itBegin)
         {
-            wxString sPlugin = MonitorPluginFactory::Get()->GetPluginName(sLibDir, itBegin->second);
-            if(sPlugin != wxEmptyString)
+            plugin aPlugin = MonitorPluginFactory::Get()->GetPluginDetails(sLibDir, itBegin->second);
+            if(aPlugin.sName != wxEmptyString)
             {
                 #ifdef __WXGNU__
-                    m_mPossible.insert(make_pair(sPlugin, itBegin->second.Mid(3)));
+                    aPlugin.sLibrary = aPlugin.sLibrary.Mid(3)
                 #else
-                m_mPossible.insert(make_pair(sPlugin, itBegin->second));
+                m_mPossible.insert(make_pair(aPlugin.sName, aPlugin));
                 #endif // __WXGNU__
-
-                m_plstCurrent->AddButton(sPlugin);
+                m_plstCurrent->AddButton(aPlugin.sName);
+            }
+            else
+            {
+                wxLogMessage(wxT("Plugin %s has no name"), itBegin->second.c_str());
             }
         }
     }
@@ -278,12 +333,12 @@ void pnlSettingsPlugins::ShowMonitorPlugins()
             sLibToLoad = sLibToLoad.Mid(3);
         #endif // __WXGNU__
         wmLog::Get()->Log(wxString::Format(wxT("Lib : %s"), sLibToLoad.c_str()));
-        wxString sPlugin = MonitorPluginFactory::Get()->GetPluginName(fnDir.GetFullPath(), sLibToLoad);
-        if(sPlugin != wxEmptyString)
+        plugin aPlugin = MonitorPluginFactory::Get()->GetPluginDetails(fnDir.GetFullPath(), sLibToLoad);
+        if(aPlugin.sName != wxEmptyString)
         {
-            if(m_mPossible.insert(make_pair(sPlugin, sLibToLoad)).second)
+            if(m_mPossible.insert(make_pair(aPlugin.sName, aPlugin)).second)
             {
-                m_plstPossible->AddButton(sPlugin);
+                m_plstPossible->AddButton(aPlugin.sName);
             }
         }
     }
@@ -307,11 +362,11 @@ void pnlSettingsPlugins::ShowTestPlugins()
     {
         for(; itBegin != itEnd; ++itBegin)
         {
-            wxString sPlugin = TestPluginFactory::Get()->GetPluginName(sLibDir, itBegin->second);
-            if(sPlugin != wxEmptyString)
+            plugin aPlugin = TestPluginFactory::Get()->GetPluginDetails(sLibDir, itBegin->second);
+            if(aPlugin.sName != wxEmptyString)
             {
-                m_mPossible.insert(make_pair(sPlugin, itBegin->second));
-                m_plstCurrent->AddButton(sPlugin);
+                m_mPossible.insert(make_pair(aPlugin.sName, aPlugin));
+                m_plstCurrent->AddButton(aPlugin.sName);
             }
         }
     }
@@ -331,12 +386,12 @@ void pnlSettingsPlugins::ShowTestPlugins()
         #ifdef __WXGNU__
             sLibToLoad = sLibToLoad.Mid(3);
         #endif // __WXGNU__
-        wxString sPlugin = TestPluginFactory::Get()->GetPluginName(sLibDir, sLibToLoad);
-        if(sPlugin != wxEmptyString)
+        plugin aPlugin = TestPluginFactory::Get()->GetPluginDetails(sLibDir, sLibToLoad);
+        if(aPlugin.sName != wxEmptyString)
         {
-            if(m_mPossible.insert(make_pair(sPlugin, sLibToLoad)).second)
+            if(m_mPossible.insert(make_pair(aPlugin.sName, aPlugin)).second)
             {
-                m_plstPossible->AddButton(sPlugin);
+                m_plstPossible->AddButton(aPlugin.sName);
             }
         }
     }

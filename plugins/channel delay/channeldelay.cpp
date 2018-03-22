@@ -1,6 +1,7 @@
 #include "channeldelay.h"
 #include "channeldelaybuilder.h"
 #include "testpluginfactory.h"
+#include "version.h"
 
 void CreateTestBuilder()
 {
@@ -11,4 +12,15 @@ void CreateTestBuilder()
 wxString GetTestPluginName()
 {
     return wxT("Channel Delay");
+}
+
+
+wxString GetPluginVersion()
+{
+    return wxString::FromAscii(AutoVersion::FULLVERSION_STRING);
+}
+
+wxString GetDetails()
+{
+    return wxT("Calculates and displays the delay between two channels of incoming audio.\nThe channels should contain the same audio, offset by time.");
 }

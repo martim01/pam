@@ -1,5 +1,5 @@
 #include "pnlDistortionChannel.h"
-#include "../fft/fftAlgorithm.h"
+#include "fftAlgorithm.h"
 
 //(*InternalHeaders(pnlDistortionChannel)
 #include <wx/font.h>

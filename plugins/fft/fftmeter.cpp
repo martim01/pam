@@ -384,8 +384,6 @@ void FftMeter::FFTRoutine()
         }
         dAmplitude /= static_cast<float>(m_vfft_out.size());
         double dLog = WindowMod(20*log10(dAmplitude));
-
-
         dLog = max(dLog, -80.0);
 
         m_vAmplitude[i] = min(0.0, max((double)m_vAmplitude[i]-m_dFall, (double)dLog));

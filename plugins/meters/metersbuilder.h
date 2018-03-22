@@ -18,6 +18,7 @@ class WXEXPORT MetersBuilder : public MonitorPluginBuilder
             return wxT("Meters");
         }
 
+
         virtual void InputSession(const session& aSession);
         virtual void OutputChannels(const std::vector<char>& vChannels);
 
