@@ -33,6 +33,7 @@
 					<Add option="-Wl,--enable-auto-import,-Map=spectogram.map" />
 					<Add library="wxmsw30u_gcc_wammacs" />
 					<Add library="pambase2.0" />
+					<Add library="pamfft1.0" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 			</Target>
@@ -62,6 +63,7 @@
 					<Add option="-Wl,--enable-auto-import,-Map=spectogram.map" />
 					<Add library="wxmsw30ud_gcc_wammacs" />
 					<Add library="pambased2.0" />
+					<Add library="pamfftd1.0" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 			</Target>
@@ -112,14 +114,19 @@
 			<Add directory="../../pambase" />
 			<Add directory="$(#kiss.include)" />
 			<Add directory="$(#kiss.include)/tools" />
+			<Add directory="../../pamfft" />
 		</Compiler>
 		<Linker>
 			<Add directory="../../lib" />
+			<Add directory="../../pamfft" />
 		</Linker>
+		<Unit filename="colourgradient.h" />
 		<Unit filename="spectogram.cpp" />
 		<Unit filename="spectogram.h" />
-		<Unit filename="spectogrambuilder.h" />
 		<Unit filename="spectogrambuilder.cpp" />
+		<Unit filename="spectogrambuilder.h" />
+		<Unit filename="spectogrammeter.cpp" />
+		<Unit filename="spectogrammeter.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

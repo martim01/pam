@@ -37,7 +37,7 @@
 			</Target>
 			<Target title="Debug">
 				<Option platforms="Windows;" />
-				<Option output="../lib/debug/pamfft1.0.dll" prefix_auto="1" extension_auto="0" />
+				<Option output="../lib/pamfftd1.0.dll" prefix_auto="1" extension_auto="0" />
 				<Option object_output="obj/debug" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -60,7 +60,6 @@
 				<Linker>
 					<Add option="-Wl,--enable-auto-import,-Map=pamfft.map" />
 					<Add library="wxmsw30ud_gcc_wammacs" />
-					<Add library="pambased2.0" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 			</Target>
