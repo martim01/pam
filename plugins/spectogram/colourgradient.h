@@ -40,31 +40,54 @@ public:
         m_vColour.clear();
     }
 
+    void createMonochromeHeatMapGradient()
+    {
+        m_vColour.clear();
+        m_vColour.push_back(ColourPoint(0, 0, 0,   0.0f));
+        m_vColour.push_back(ColourPoint(1, 1, 1,   1.0f));
+    }
+
+    void createColdHotHeatMapGradient()
+    {
+        m_vColour.clear();
+        m_vColour.push_back(ColourPoint(0, 0, 1,   0.0f));
+        m_vColour.push_back(ColourPoint(1, 0, 0,   1.0f));
+    }
+
+    void createPPMHeatMapGradient()
+    {
+        m_vColour.clear();
+
+        m_vColour.push_back(ColourPoint(0, 0, 0,   0.0f));
+        m_vColour.push_back(ColourPoint(0, 0, 1,   0.575f));     // PPM 0.
+        m_vColour.push_back(ColourPoint(0, 1, 1,   0.675f));      // PPM 2.
+        m_vColour.push_back(ColourPoint(0, 1, 0,   0.775f));     // PPM 4
+        m_vColour.push_back(ColourPoint(1, 1, 0,   0.8275));      //PPM 5
+        m_vColour.push_back(ColourPoint(1, 0, 0,   0.875f));      // PPM 6
+        m_vColour.push_back(ColourPoint(1, 1, 1,   1.0f));      // Red.
+    }
+
     //-- Places a 5 Colour heapmap gradient into the "Colour" vector:
     void createDefaultHeatMapGradient()
     {
         m_vColour.clear();
-//        m_vColour.push_back(ColourPoint(0, 0, 0,   0.0f));      // Blue.
-//        m_vColour.push_back(ColourPoint(0, 0, 1,   0.2f));     // Cyan.
-//        m_vColour.push_back(ColourPoint(0, 1, 1,   0.4f));      // Green.
-//        m_vColour.push_back(ColourPoint(0, 1, 0,   0.6f));     // Yellow.
-//        m_vColour.push_back(ColourPoint(1, 1, 0,   0.775f));      // Red.
-//        m_vColour.push_back(ColourPoint(1, 0, 0,   0.875f));      // Red.
-//        m_vColour.push_back(ColourPoint(1, 1, 1,   1.0f));      // Red.
-//
-        m_vColour.push_back(ColourPoint(0, 0, 1,   0.0f));     // Cyan.
-        m_vColour.push_back(ColourPoint(0, 1, 1,   0.25f));      // Green.
-        m_vColour.push_back(ColourPoint(0, 1, 0,   0.5f));     // Yellow.
-        m_vColour.push_back(ColourPoint(1, 1, 0,   0.75f));      // Red.
-        m_vColour.push_back(ColourPoint(1, 0, 0,   1.0f));      // Red.
+        m_vColour.push_back(ColourPoint(0, 0, 1,   0.0f));
+        m_vColour.push_back(ColourPoint(0, 1, 1,   0.25f));
+        m_vColour.push_back(ColourPoint(0, 1, 0,   0.5f));
+        m_vColour.push_back(ColourPoint(1, 1, 0,   0.75f));
+        m_vColour.push_back(ColourPoint(1, 0, 0,   1.0f));
+    }
 
-        //PPMs
-        m_vColour.push_back(ColourPoint(0, 0, 1,   0.0f));     // Cyan.
-        m_vColour.push_back(ColourPoint(0, 1, 1,   0.575f));      // Green.
-        m_vColour.push_back(ColourPoint(0, 1, 0,   0.675));     // Yellow.
-        m_vColour.push_back(ColourPoint(1, 1, 0,   0.7775));      // Red.
-        m_vColour.push_back(ColourPoint(1, 0, 0,   0.875f));      // Red.
-        m_vColour.push_back(ColourPoint(1, 1, 1,   1.0f));      // Red.
+    void createSevenHeatMapGradient()
+    {
+        m_vColour.clear();
+        m_vColour.push_back(ColourPoint(0, 0, 0,   0.0f));
+        m_vColour.push_back(ColourPoint(0, 0, 1,   0.167f));
+        m_vColour.push_back(ColourPoint(0, 1, 1,   0.333f));
+        m_vColour.push_back(ColourPoint(0, 1, 0,   0.5f));
+        m_vColour.push_back(ColourPoint(1, 1, 0,   0.667f));
+        m_vColour.push_back(ColourPoint(1, 0, 0,   0.833f));
+        m_vColour.push_back(ColourPoint(1, 1, 1,   1.0f));
     }
 
     //-- Inputs a (value) between 0 and 1 and outputs the (red), (green) and (blue)

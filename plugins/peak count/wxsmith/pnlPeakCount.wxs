@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlPeakCount">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmLabel" name="ID_M_PLBL37" variable="m_pLbl12" member="yes">
+			<label>Peak Sample Count</label>
+			<pos>0,0</pos>
+			<size>600,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5B9539</bg>
+			<font>
+				<size>12</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wxPanel" name="ID_PANEL1" variable="pnlLeft" member="yes">
+			<pos>0,50</pos>
+			<size>600,430</size>
+			<bg>#000000</bg>
+			<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+				<label>Smp</label>
+				<pos>5,60</pos>
+				<size>32,25</size>
+				<fg>#FFFFFF</fg>
+				<bg>#2F5E5E</bg>
+				<style>wxALIGN_LEFT</style>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL6" variable="m_pLbl5" member="yes">
+				<label>Pks</label>
+				<pos>5,90</pos>
+				<size>32,25</size>
+				<fg>#FFFFFF</fg>
+				<bg>#2F5E5E</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
+				<label>%</label>
+				<pos>5,120</pos>
+				<size>32,25</size>
+				<fg>#FFFFFF</fg>
+				<bg>#2F5E5E</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
+				<label>Count Samples Whose Amplitudes is Greater Than:</label>
+				<size>440,25</size>
+				<fg>#FFFFFF</fg>
+				<bg>#804000</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL5" variable="m_plblLimit" member="yes">
+				<label>0</label>
+				<pos>446,0</pos>
+				<size>50,25</size>
+				<fg>#FFFFFF</fg>
+				<bg>#004000</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl4" member="yes">
+				<label>dBFS</label>
+				<pos>500,0</pos>
+				<size>50,25</size>
+				<fg>#FFFFFF</fg>
+				<bg>#804000</bg>
+			</object>
+			<object class="wmKeyboard" name="ID_M_PKBD1" variable="m_pKbd1" member="yes">
+				<type>Calc</type>
+				<pos>5,220</pos>
+				<size>240,200</size>
+				<fg>#FFFFFF</fg>
+				<font>
+					<size>10</size>
+					<style>normal</style>
+					<weight>bold</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+					<face>Arial</face>
+				</font>
+			</object>
+			<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnReset" member="yes">
+				<label>Reset</label>
+				<pos>5,160</pos>
+				<size>90,50</size>
+				<handler function="OnbtnResetClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL7" variable="m_pLbl6" member="yes">
+				<label>Set To</label>
+				<pos>260,220</pos>
+				<size>60,0</size>
+				<fg>#FFFFFF</fg>
+				<bg>#400080</bg>
+			</object>
+			<object class="wmEdit" name="ID_M_PEDT1" variable="m_pedtLimit" member="yes">
+				<border>uiRect::BORDER_FLAT</border>
+				<border_focused>uiRect::BORDER_DOWN</border_focused>
+				<background_focused>#FFFFFF</background_focused>
+				<foreground_focused>#000000</foreground_focused>
+				<pos>325,220</pos>
+				<size>100,25</size>
+				<focused>1</focused>
+				<handler function="OnedtLimitTextEnter" entry="EVT_TEXT_ENTER" />
+			</object>
+		</object>
+	</object>
+</wxsmith>

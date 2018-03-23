@@ -49,7 +49,7 @@ SpectogramMeter::SpectogramMeter(wxWindow *parent, SpectogramBuilder* pBuilder, 
 
     m_nNudge = NONE;
 
-
+    SetHeatMap(MAP_PPM);
     SetNumberOfBins(1024);
 }
 
@@ -69,7 +69,7 @@ bool SpectogramMeter::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
-    m_rectGrid = wxRect(GetClientRect().GetLeft()+10, GetClientRect().GetTop()+5, GetClientRect().GetWidth()-10, GetClientRect().GetHeight()-55);
+    m_rectGrid = wxRect(GetClientRect().GetLeft()+10, GetClientRect().GetTop()+5, GetClientRect().GetWidth()-100, GetClientRect().GetHeight()-55);
 
     m_uiSettingsDisplay.SetBackgroundColour(COLOUR_LABEL);
     m_uiSettingsMeter.SetBackgroundColour(COLOUR_LABEL);
@@ -110,16 +110,44 @@ void SpectogramMeter::OnPaint(wxPaintEvent& event)
 
     dc.SetTextForeground(GetForegroundColour());
     wxPen penLine(wxColour(120,120,120),1,wxDOT);
-    uiRect uiLabel;
-    for(size_t i = 1; i < m_vfft_out.size()-1; i*=2)
+    uiRect uiLabel(wxRect(m_rectGrid.GetLeft()-50, 0, m_rectGrid.GetLeft(), 0));
+
+    for(size_t i = 1; i < m_vfft_out.size()-1; i++)
     {
         dc.SetPen(penLine);
         int x = m_rectGrid.GetLeft()+i;
-        dc.DrawLine(x, 0, x, m_rectGrid.GetHeight());
-        uiLabel.SetRect(wxRect(x-20, m_rectGrid.GetBottom()+1, 40, 20));
-        uiLabel.Draw(dc, wxString::Format(wxT("%.0f"), m_dBinSize*static_cast<double>(i)), uiRect::BORDER_NONE);
+        if(x > uiLabel.GetLeft()+65 && x +40 < m_rectGrid.GetRight())
+        {
+            dc.DrawLine(x, 0, x, m_rectGrid.GetHeight());
+            uiLabel.SetRect(wxRect(x-20, m_rectGrid.GetBottom()+1, 40, 20));
+            uiLabel.Draw(dc, wxString::Format(wxT("%.0f"), m_dBinSize*static_cast<double>(i)), uiRect::BORDER_NONE);
+        }
 
     }
+
+    dc.DrawBitmap(m_bmpScale, m_rectGrid.GetRight()+10, m_rectGrid.GetTop());
+
+    double dPos = static_cast<double>(m_rectGrid.GetHeight())/80.0;
+    dc.SetPen(wxPen(*wxWHITE,1,wxDOT));
+
+    dc.DrawLine(m_rectGrid.GetRight()+10, m_rectGrid.GetTop()+ (dPos*6.0), m_rectGrid.GetRight()+60, m_rectGrid.GetTop()+ (dPos*6.0));
+    uiLabel.SetRect(wxRect(m_rectGrid.GetRight()+25,  m_rectGrid.GetTop()+(dPos*6.0)-7, 20,14));
+    uiLabel.Draw(dc, wxT("7"), uiRect::BORDER_NONE);
+
+    dc.SetPen(wxPen(*wxWHITE,1,wxDOT));
+    dc.DrawLine(m_rectGrid.GetRight()+10, m_rectGrid.GetTop()+ (dPos*10.0), m_rectGrid.GetRight()+60, m_rectGrid.GetTop()+ (dPos*10.0));
+    uiLabel.SetRect(wxRect(m_rectGrid.GetRight()+25,  m_rectGrid.GetTop()+(dPos*10.0)-7, 20,14));
+    uiLabel.Draw(dc, wxT("6"), uiRect::BORDER_NONE);
+
+    dc.SetPen(wxPen(*wxWHITE,1,wxDOT));
+    dc.DrawLine(m_rectGrid.GetRight()+10, m_rectGrid.GetTop()+ (dPos*18.0), m_rectGrid.GetRight()+60, m_rectGrid.GetTop()+ (dPos*18.0));
+    uiLabel.SetRect(wxRect(m_rectGrid.GetRight()+25,  m_rectGrid.GetTop()+(dPos*18.0)-7, 20,14));
+    uiLabel.Draw(dc, wxT("4"), uiRect::BORDER_NONE);
+
+    dc.SetPen(wxPen(*wxWHITE,1,wxDOT));
+    dc.DrawLine(m_rectGrid.GetRight()+10, m_rectGrid.GetTop()+ (dPos*26.0), m_rectGrid.GetRight()+60, m_rectGrid.GetTop()+ (dPos*26.0));
+    uiLabel.SetRect(wxRect(m_rectGrid.GetRight()+25,  m_rectGrid.GetTop()+(dPos*26.0)-7, 20,14));
+    uiLabel.Draw(dc, wxT("2"), uiRect::BORDER_NONE);
 
 
 
@@ -147,23 +175,25 @@ void SpectogramMeter::DrawSpectogram(wxDC& dc)
 
 void SpectogramMeter::OnSize(wxSizeEvent& event)
 {
-    m_rectGrid = wxRect(GetClientRect().GetLeft()+10, GetClientRect().GetTop()+5, GetClientRect().GetWidth()-10, GetClientRect().GetHeight()-55);
+    m_rectGrid = wxRect(GetClientRect().GetLeft()+10, GetClientRect().GetTop()+5, GetClientRect().GetWidth()-70, GetClientRect().GetHeight()-55);
 
-    m_uiSettingsDisplay.SetRect(m_rectGrid.GetLeft(), GetClientRect().GetBottom()-23, 80,20);
-    m_uiSettingsMeter.SetRect(m_uiSettingsDisplay.GetRight()+5, GetClientRect().GetBottom()-23, 80,20);
+    CreateScaleBitmap();
+
+    //m_uiSettingsDisplay.SetRect(m_rectGrid.GetLeft(), GetClientRect().GetBottom()-23, 80,20);
+    //m_uiSettingsMeter.SetRect(m_uiSettingsDisplay.GetRight()+5, GetClientRect().GetBottom()-23, 80,20);
     m_uiSettingsAnalyse.SetRect(m_uiSettingsMeter.GetRight()+5, GetClientRect().GetBottom()-23, 80,20);
 
     m_uiSettingsWindow.SetRect(m_uiSettingsAnalyse.GetRight()+10, GetClientRect().GetBottom()-23, 80,20);
     m_uiSettingsOverlap.SetRect(m_uiSettingsWindow.GetRight()+5, GetClientRect().GetBottom()-23, 120,20);
     m_uiSettingsBins.SetRect(m_uiSettingsOverlap.GetRight()+5, GetClientRect().GetBottom()-23, 120,20);
 
-    m_uiPeakFrequency.SetRect(m_uiSettingsBins.GetRight()+15, GetClientRect().GetBottom()-23, 80,20);
-    m_uiPeakLevel.SetRect(m_uiPeakFrequency.GetRight()+3, GetClientRect().GetBottom()-23, 80,20);
+    //m_uiPeakFrequency.SetRect(m_uiSettingsBins.GetRight()+15, GetClientRect().GetBottom()-23, 80,20);
+    //m_uiPeakLevel.SetRect(m_uiPeakFrequency.GetRight()+3, GetClientRect().GetBottom()-23, 80,20);
 
-    m_uiClose.SetRect(GetClientRect().GetRight()-85, GetClientRect().GetTop()+5, 80, 50);
-    m_uiClose.SetBackgroundColour(*wxRED);
+    //m_uiClose.SetRect(GetClientRect().GetRight()-85, GetClientRect().GetTop()+5, 80, 50);
+    //m_uiClose.SetBackgroundColour(*wxRED);
 
-    m_uiAmplitude.SetRect(m_uiClose.GetLeft()-120, m_uiClose.GetTop(), 100, m_uiClose.GetHeight());
+    //m_uiAmplitude.SetRect(m_uiClose.GetLeft()-120, m_uiClose.GetTop(), 100, m_uiClose.GetHeight());
 
     m_uiBin.SetRect(m_uiAmplitude.GetLeft()-180, m_uiAmplitude.GetTop(), 100, m_uiAmplitude.GetHeight());
     m_uiNudgeUp.SetRect(m_uiBin.GetRight()+5, m_uiAmplitude.GetTop(), 50, m_uiAmplitude.GetHeight());
@@ -220,12 +250,14 @@ void SpectogramMeter::FFTRoutine()
 {
     FFTAlgorithm fft;
 
-    wxImage anImage(800,1);
+    wxImage anImage(max(730, m_rectGrid.GetWidth()),1);
 
     m_vfft_out = fft.DoFFT(m_lstBuffer, m_nSampleRate, m_nChannels, m_nFFTAnalyse, m_nWindowType, m_vfft_out.size(), m_nOverlap);
     m_dBinSize = static_cast<double>(m_nSampleRate)/static_cast<double>((m_vfft_out.size()-1)*2);
     float dMax(-80);
     double dMaxBin(0);
+
+    double dTest(0);
     for(size_t i = 0; i < m_vfft_out.size(); i++)
     {
         float dAmplitude(sqrt( (m_vfft_out[i].r*m_vfft_out[i].r) + (m_vfft_out[i].i*m_vfft_out[i].i)));
@@ -243,15 +275,20 @@ void SpectogramMeter::FFTRoutine()
         float dRed, dGreen, dBlue;
         m_HeatMap.getColourAtValue(dAmplitude, dRed, dGreen, dBlue);
 
+
         //we show the first 800 bins at most
         unsigned int nPixel = i*3;
 
-        if(nPixel < 2400)
+        if(nPixel < anImage.GetWidth()*3)
         {
             anImage.GetData()[nPixel] = static_cast<unsigned char>(dRed*255.0);
-            anImage.GetData()[nPixel+1] = static_cast<unsigned char>(dGreen*255.0);;
-            anImage.GetData()[nPixel+2] = static_cast<unsigned char>(dBlue*255.0);;
+            anImage.GetData()[nPixel+1] = static_cast<unsigned char>(dGreen*255.0);
+            anImage.GetData()[nPixel+2] = static_cast<unsigned char>(dBlue*255.0);
+
+         //   wxLogDebug(wxT("%f=%d,%d,%d"), dAmplitude, anImage.GetData()[nPixel],anImage.GetData()[nPixel+1],anImage.GetData()[nPixel+2]);
         }
+
+
     }
     m_lstBitmaps.push_back(wxBitmap(anImage));
     if(m_lstBitmaps.size() > m_rectGrid.GetHeight())
@@ -441,5 +478,72 @@ void SpectogramMeter::OnLeftUp(wxMouseEvent& event)
             TurnoffNudge();
         }
     }
+
+}
+
+
+void SpectogramMeter::SetHeatMap(int nMap)
+{
+    switch(nMap)
+    {
+    case MAP_MONO:
+        m_HeatMap.createMonochromeHeatMapGradient();
+        break;
+    case MAP_HOTCOLD:
+        m_HeatMap.createColdHotHeatMapGradient();
+        break;
+    case MAP_FIVE:
+        m_HeatMap.createDefaultHeatMapGradient();
+        break;
+    case MAP_PPM:
+        m_HeatMap.createPPMHeatMapGradient();
+        break;
+    case MAP_SEVEN:
+        m_HeatMap.createSevenHeatMapGradient();
+        break;
+    }
+
+    CreateScaleBitmap();
+    Refresh();
+}
+
+void SpectogramMeter::CreateScaleBitmap()
+{
+    wxImage anImage(50, m_rectGrid.GetHeight());
+
+    double dColour(1.0);
+    unsigned int nPixel(0);
+    for(int i = 0; i < m_rectGrid.GetHeight(); i++)
+    {
+        float dRed, dGreen, dBlue;
+
+        m_HeatMap.getColourAtValue(dColour, dRed, dGreen, dBlue);
+        dColour -= 1.0/(static_cast<double>(m_rectGrid.GetHeight()));
+
+
+        for(int j = 0; j < 50; j++)
+        {
+            anImage.GetData()[nPixel] = static_cast<unsigned char>(dRed*255.0);
+            anImage.GetData()[nPixel+1] = static_cast<unsigned char>(dGreen*255.0);
+            anImage.GetData()[nPixel+2] = static_cast<unsigned char>(dBlue*255.0);
+
+            nPixel+=3;
+        }
+    }
+
+    //add in the 0dBU line
+    int nZero = static_cast<double>(m_rectGrid.GetHeight())*0.775;
+    nZero = (nZero/3)*3;
+
+    for(int i = 0; i < 50; i++)
+    {
+        anImage.GetData()[nZero+i] = 255;
+        anImage.GetData()[nZero+1+i] = 255;
+        anImage.GetData()[nZero+2+i] = 255;
+    }
+
+    m_bmpScale = wxBitmap(anImage);
+
+    Refresh();
 
 }

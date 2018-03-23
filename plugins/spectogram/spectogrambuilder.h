@@ -4,7 +4,7 @@
 
 class SpectogramMeter;
 class pnlRoutiing;
-
+class SettingEvent;
 
 class WXEXPORT SpectogramBuilder : public MonitorPluginBuilder
 {
@@ -15,7 +15,7 @@ class WXEXPORT SpectogramBuilder : public MonitorPluginBuilder
 
         wxString GetName() const
         {
-            return wxT("Spectogram");
+            return wxT("Specto");
         }
 
 
@@ -24,14 +24,14 @@ class WXEXPORT SpectogramBuilder : public MonitorPluginBuilder
 
     protected:
         friend class pnlBins;
-        friend class pnlDisplay;
-        friend class pnlOptions;
         friend class pnlOverlap;
         friend class pnlRoutiing;
-        friend class pnlType;
         friend class pnlWindow;
+        friend class pnlColours;
 
         void LoadSettings(){}
+
+        void OnSettingChanged(SettingEvent& event);
 
         virtual wxWindow* CreateMonitorPanel(wxWindow* pParent);
         virtual std::list<pairOptionPanel_t>CreateOptionPanels(wxWindow* pParent);
@@ -40,5 +40,5 @@ class WXEXPORT SpectogramBuilder : public MonitorPluginBuilder
 
     private:
         SpectogramMeter* m_pMeter;
-        //pnlRoutiing* m_ppnlRouting;
+        pnlRoutiing* m_ppnlRouting;
 };

@@ -121,16 +121,47 @@
 			<Add directory="../../pamfft" />
 		</Linker>
 		<Unit filename="colourgradient.h" />
+		<Unit filename="pnlColours.cpp" />
+		<Unit filename="pnlColours.h" />
+		<Unit filename="pnlbins.cpp" />
+		<Unit filename="pnlbins.h" />
+		<Unit filename="pnldisplay.h" />
+		<Unit filename="pnloptions.h" />
+		<Unit filename="pnloverlap.cpp" />
+		<Unit filename="pnloverlap.h" />
+		<Unit filename="pnlroutiing.cpp" />
+		<Unit filename="pnlroutiing.h" />
+		<Unit filename="pnlwindow.cpp" />
+		<Unit filename="pnlwindow.h" />
 		<Unit filename="spectogram.cpp" />
 		<Unit filename="spectogram.h" />
 		<Unit filename="spectogrambuilder.cpp" />
 		<Unit filename="spectogrambuilder.h" />
 		<Unit filename="spectogrammeter.cpp" />
 		<Unit filename="spectogrammeter.h" />
+		<Unit filename="version.h" />
+		<Unit filename="wxsmith/pnlColours.wxs" />
 		<Extensions>
 			<code_completion />
 			<envvars />
 			<debugger />
+			<wxsmith version="1">
+				<resources>
+					<wxPanel wxs="wxsmith/pnlRoutiing.wxs" src="pnlroutiing.cpp" hdr="pnlroutiing.h" fwddecl="0" i18n="1" name="pnlRoutiing" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlDisplay.wxs" src="pnldisplay.cpp" hdr="pnldisplay.h" fwddecl="0" i18n="1" name="pnlDisplay" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlWindow.wxs" src="pnlwindow.cpp" hdr="pnlwindow.h" fwddecl="0" i18n="1" name="pnlWindow" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlOverlap.wxs" src="pnloverlap.cpp" hdr="pnloverlap.h" fwddecl="0" i18n="1" name="pnlOverlap" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlBins.wxs" src="pnlbins.cpp" hdr="pnlbins.h" fwddecl="0" i18n="1" name="pnlBins" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlOptions.wxs" src="pnloptions.cpp" hdr="pnloptions.h" fwddecl="0" i18n="1" name="pnlOptions" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlColours.wxs" src="pnlColours.cpp" hdr="pnlColours.h" fwddecl="0" i18n="1" name="pnlColours" language="CPP" />
+				</resources>
+			</wxsmith>
+			<AutoVersioning>
+				<Scheme minor_max="10" build_max="0" rev_max="0" rev_rand_max="10" build_times_to_increment_minor="100" />
+				<Settings autoincrement="1" date_declarations="1" use_define="0" update_manifest="0" do_auto_increment="0" ask_to_increment="0" language="C++" svn="0" svn_directory="" header_path="version.h" />
+				<Changes_Log show_changes_editor="0" app_title="released version %M.%m.%b of %p" changeslog_path="ChangesLog.txt" />
+				<Code header_guard="VERSION_H" namespace="AutoVersion" prefix="" />
+			</AutoVersioning>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

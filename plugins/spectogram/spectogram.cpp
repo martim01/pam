@@ -10,7 +10,7 @@ void CreateMonitorBuilder()
 
 wxString GetPluginName()
 {
-    return wxT("Spectogram");
+    return wxT("Specto");
 }
 
 

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlPeakCountChannel">
+		<bg>#000000</bg>
+		<id_arg>0</id_arg>
+		<object class="wmLabel" name="ID_M_PLBL9" variable="m_plbLChannel" member="yes">
+			<label></label>
+			<border>uiRect::BORDER_FLAT</border>
+			<pos>0,0</pos>
+			<size>70,0</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400040</bg>
+			<font>
+				<size>10</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL1" variable="m_plblCount" member="yes">
+			<label></label>
+			<border>uiRect::BORDER_FLAT</border>
+			<pos>0,30</pos>
+			<size>70,25</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5B5B00</bg>
+			<font>
+				<size>10</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL3" variable="m_plblPeaks" member="yes">
+			<label></label>
+			<border>uiRect::BORDER_FLAT</border>
+			<pos>0,60</pos>
+			<size>70,25</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5B5B00</bg>
+			<font>
+				<size>10</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL2" variable="m_plblPercent" member="yes">
+			<label></label>
+			<border>uiRect::BORDER_FLAT</border>
+			<pos>0,90</pos>
+			<size>70,25</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5B5B00</bg>
+			<font>
+				<size>10</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+	</object>
+</wxsmith>

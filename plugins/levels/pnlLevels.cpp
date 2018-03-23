@@ -63,15 +63,6 @@ void pnlLevels::SetAudioData(const timedbuffer* pBuffer)
         }
     }
 
-//    if(m_dLevelPeakMax[0] != dPeak[0])
-//    {
-//        TestLog::Get()->Log(wxT("Distortion+Level"), wxT("Left:\tMax Level: %.5f\tCurrent Level: %.5f"), m_dLevelPeakMax[0], dPeak[0]);
-//    }
-//    if(m_dLevelPeakMax[1] != dPeak[1])
-//    {
-//        TestLog::Get()->Log(wxT("Distortion+Level"), wxT("Right:\tMax Level: %.5f\tCurrent Level: %.5f"), m_dLevelPeakMax[1], dPeak[1]);
-//    }
-
     for(int i = 0; i < m_vLevelPeakMax.size(); i++)
     {
         m_vLevelPeakMax[i] = max(m_vLevelPeakMax[i], vPeak[i]);
