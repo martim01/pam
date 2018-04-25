@@ -1,5 +1,5 @@
 #pragma once
-#include <vector>>
+#include <vector>
 
 class ColourGradient
 {

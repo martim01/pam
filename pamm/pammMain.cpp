@@ -145,9 +145,10 @@ void pammDialog::LaunchPam()
                 wxString sPam = wxT("C:\\developer\\matt\\pam2\\bin\\Debug\\pam2");
             #else
 
+              wxString sPam = wxT("/home/pi/pam/bin/Linux\ Release/pam2");
             #endif
         #else
-            wxString sPam = wxT("./pam2");
+            wxString sPam = wxT("/home/pi/pam/bin/Linux\ Release/pam2");
         #endif
 
         if ( !wxExecute(sPam, wxEXEC_ASYNC, m_pProcess) )

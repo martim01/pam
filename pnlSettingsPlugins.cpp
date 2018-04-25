@@ -284,12 +284,7 @@ void pnlSettingsPlugins::ShowMonitorPlugins()
 
     ClearLists();
 
-
-    #ifdef PAMBASE_DEBUG
-    wxString sLibDir = wxT("./lib/debug");
-    #else
-    wxString sLibDir = wxT("./lib");
-    #endif // __WXDEBUG__
+    wxString sLibDir = MonitorPluginFactory::Get()->GetPluginDirectory();
 
 
     size_t nButton = 0;
@@ -302,7 +297,7 @@ void pnlSettingsPlugins::ShowMonitorPlugins()
             if(aPlugin.sName != wxEmptyString)
             {
                 #ifdef __WXGNU__
-                    aPlugin.sLibrary = aPlugin.sLibrary.Mid(3)
+                    aPlugin.sLibrary = aPlugin.sLibrary.Mid(3);
                 #else
                 m_mPossible.insert(make_pair(aPlugin.sName, aPlugin));
                 #endif // __WXGNU__
@@ -349,11 +344,7 @@ void pnlSettingsPlugins::ShowTestPlugins()
 {
     ClearLists();
 
-    #ifdef PAMBASE_DEBUG
-    wxString sLibDir = wxT("./lib/debug");
-    #else
-    wxString sLibDir = wxT("./lib");
-    #endif // __WXDEBUG__
+    wxString sLibDir = TestPluginFactory::Get()->GetPluginDirectory();
 
 
     size_t nButton = 0;

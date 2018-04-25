@@ -22,7 +22,7 @@ public:
     void Register(TestPluginBuilder* pBuilder);
     plugin GetPluginDetails(const wxString& sDir, const wxString& sLibrary);
 
-
+    wxString GetPluginDirectory();
     void UnloadAll();
 
     std::map<wxString, TestPluginBuilder*>::iterator GetPluginBegin();

@@ -42,6 +42,20 @@ void MonitorPluginFactory::SetSwitcherPanels(wmSwitcherPanel* pswpMonitor, wmSwi
     m_pswpOptions = pswpOptions;
 }
 
+wxString MonitorPluginFactory::GetPluginDirectory()
+{
+     #ifdef __WXMSW__
+        wxString sDir(wxT("lib"));
+    #else
+        wxString sDir(wxStandardPaths::Get().GetPluginsDir());
+    #endif // __WXMSW__
+
+    #ifdef PAMBASE_DEBUG
+        return wxString::Format(wxT("%s/debug"),sDir.c_str());
+    #else
+      return sDir;
+    #endif
+}
 
 bool MonitorPluginFactory::LoadLibrary(const wxString& sLibrary)
 {

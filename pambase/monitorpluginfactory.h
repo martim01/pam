@@ -24,6 +24,7 @@ public:
 
     void Register(MonitorPluginBuilder* pBuilder);
 
+    wxString GetPluginDirectory();
 
     void UnloadAll(bool bDeletePanel = false);
 

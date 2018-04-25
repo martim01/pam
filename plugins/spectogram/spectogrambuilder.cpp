@@ -1,5 +1,5 @@
-#include "Spectogrambuilder.h"
-#include "Spectogrammeter.h"
+#include "spectogrambuilder.h"
+#include "spectogrammeter.h"
 #include <wx/panel.h>
 #include "settings.h"
 #include "pnlroutiing.h"

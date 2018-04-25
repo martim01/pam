@@ -85,6 +85,7 @@
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add library="pambase2.0" />
+					<Add library="pamfft1.0" />
 				</Linker>
 			</Target>
 			<Target title="Linux Debug">
@@ -96,13 +97,12 @@
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
-					<Add option="-DWIN32" />
-					<Add option="-D_USRDLL" />
-					<Add option="-D__WXMSW__" />
-					<Add option="-DWXUSINGDLL" />
-					<Add option="-DUNICODE" />
+					<Add option="`wx-config --cxxflags`" />
+					<Add option="-fpermissive" />
+					<Add option="-fPIC" />
+					<Add option="-DDLL_EXPORTS" />
 					<Add option="-DwxUSE_UNICODE" />
-					<Add option="-D__WXDEBUG__" />
+					<Add option="-D__WXGNU__" />
 					<Add directory="$(#wx3_0.include)" />
 					<Add directory="$(#wx3_0.include)/mswu" />
 				</Compiler>
@@ -110,8 +110,7 @@
 					<Add directory="$(#wx3_0.include)/mswu" />
 				</ResourceCompiler>
 				<Linker>
-					<Add option="-Wl,--enable-auto-import,-Map=fft.map" />
-					<Add library="wxmsw30ud_gcc_wammacs" />
+					<Add option="`wx-config --libs`" />
 					<Add library="pambased2.0" />
 					<Add library="pamfftd1.0" />
 					<Add directory="$(#wx3_0.lib)" />
