@@ -44,7 +44,9 @@ const long pnlAoIPInfo::ID_M_PLBL47 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL45 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL48 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL46 = wxNewId();
+const long pnlAoIPInfo::ID_M_PLBL62 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL49 = wxNewId();
+const long pnlAoIPInfo::ID_M_PLBL84 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL67 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL68 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL69 = wxNewId();
@@ -97,7 +99,9 @@ const long pnlAoIPInfo::ID_M_PLBL29 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL30 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL31 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL32 = wxNewId();
+const long pnlAoIPInfo::ID_M_PLBL85 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL35 = wxNewId();
+const long pnlAoIPInfo::ID_M_PLBL86 = wxNewId();
 const long pnlAoIPInfo::ID_CUSTOM12 = wxNewId();
 const long pnlAoIPInfo::ID_PANEL4 = wxNewId();
 const long pnlAoIPInfo::ID_PANEL2 = wxNewId();
@@ -267,12 +271,22 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_pLbl27->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl27->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl27->SetBackgroundColour(wxColour(0,0,255));
+	m_pLbl38 = new wmLabel(pnlSubsession, ID_M_PLBL62, _("Id"), wxPoint(441,10), wxSize(158,20), 0, _T("ID_M_PLBL62"));
+	m_pLbl38->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl38->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl38->SetBackgroundColour(wxColour(0,0,255));
 	m_plblSessionChannels = new wmLabel(pnlSubsession, ID_M_PLBL49, wxEmptyString, wxPoint(381,31), wxSize(59,25), 0, _T("ID_M_PLBL49"));
 	m_plblSessionChannels->SetBorderState(uiRect::BORDER_NONE);
 	m_plblSessionChannels->SetForegroundColour(wxColour(0,128,0));
 	m_plblSessionChannels->SetBackgroundColour(wxColour(255,255,255));
 	wxFont m_plblSessionChannelsFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
 	m_plblSessionChannels->SetFont(m_plblSessionChannelsFont);
+	m_plblSubsessionId = new wmLabel(pnlSubsession, ID_M_PLBL84, wxEmptyString, wxPoint(441,31), wxSize(158,25), 0, _T("ID_M_PLBL84"));
+	m_plblSubsessionId->SetBorderState(uiRect::BORDER_NONE);
+	m_plblSubsessionId->SetForegroundColour(wxColour(0,128,0));
+	m_plblSubsessionId->SetBackgroundColour(wxColour(255,255,255));
+	wxFont m_plblSubsessionIdFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
+	m_plblSubsessionId->SetFont(m_plblSubsessionIdFont);
 	m_pLbl22 = new wmLabel(pnlSubsession, ID_M_PLBL67, _("Sync Type"), wxPoint(5,70), wxSize(144,20), 0, _T("ID_M_PLBL67"));
 	m_pLbl22->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl22->SetForegroundColour(wxColour(255,255,255));
@@ -529,12 +543,22 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_pLbl17->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl17->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl17->SetBackgroundColour(wxColour(0,0,255));
+	m_pLbl39 = new wmLabel(pnlQoS, ID_M_PLBL85, _("Current Graph"), wxPoint(400,225), wxSize(194,20), 0, _T("ID_M_PLBL85"));
+	m_pLbl39->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl39->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl39->SetBackgroundColour(wxColour(0,128,64));
 	m_plblQoSJitter = new wmLabel(pnlQoS, ID_M_PLBL35, wxEmptyString, wxPoint(5,246), wxSize(194,25), 0, _T("ID_M_PLBL35"));
 	m_plblQoSJitter->SetBorderState(uiRect::BORDER_NONE);
 	m_plblQoSJitter->SetForegroundColour(wxColour(0,128,0));
 	m_plblQoSJitter->SetBackgroundColour(wxColour(255,255,255));
 	wxFont m_plblQoSJitterFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
 	m_plblQoSJitter->SetFont(m_plblQoSJitterFont);
+	m_plblGraph = new wmLabel(pnlQoS, ID_M_PLBL86, wxEmptyString, wxPoint(400,246), wxSize(194,25), 0, _T("ID_M_PLBL86"));
+	m_plblGraph->SetBorderState(uiRect::BORDER_NONE);
+	m_plblGraph->SetForegroundColour(wxColour(0,128,0));
+	m_plblGraph->SetBackgroundColour(wxColour(255,255,255));
+	wxFont m_plblGraphFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
+	m_plblGraph->SetFont(m_plblGraphFont);
 	Panel1 = new wxPanel(pnlQoS, ID_PANEL4, wxPoint(0,280), wxSize(600,160), wxTAB_TRAVERSAL, _T("ID_PANEL4"));
 	Panel1->SetBackgroundColour(wxColour(0,0,0));
 	m_pGraph = new LevelGraph(Panel1,ID_CUSTOM12, wxPoint(0,0),wxSize(600,160),1,10,0);
@@ -608,16 +632,26 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
 
 
     m_pGraph->SetLimit(wxT("kBit/s"), pData->dkbits_per_second_max, pData->dkbits_per_second_min);
-    m_pGraph->AddPeak(wxT("kBit/s"), pData->dkbits_per_second_Now);
-
     m_pGraph->SetLimit(wxT("kBit/s Av"), pData->dkbits_per_second_max, pData->dkbits_per_second_min);
+    m_pGraph->SetLimit(wxT("Packet Gap"), pData->dInter_packet_gap_ms_max, pData->dInter_packet_gap_ms_min);
+    m_pGraph->SetLimit(wxT("Packet Loss"), pData->dPacket_loss_fraction_max, pData->dPacket_loss_fraction_min);
+
+    //pair<double,double> pairMinMax(m_pGraph->GetRange(wxT("kBit/s")));
+    //m_pGraph->SetLimit(wxT("kBit/s"), max(pairMinMax.second, pData->dkbits_per_second_Now), min(pairMinMax.first, pData->dkbits_per_second_Now));
+    //m_pGraph->SetLimit(wxT("kBit/s Av"), max(pairMinMax.second, pData->dkbits_per_second_Now), min(pairMinMax.first, pData->dkbits_per_second_Now));
+    m_pGraph->AddPeak(wxT("kBit/s"), pData->dkbits_per_second_Now);
     m_pGraph->AddPeak(wxT("kBit/s Av"), pData->dkbits_per_second_Av);
 
-    m_pGraph->SetLimit(wxT("Packet Gap"), pData->dInter_packet_gap_ms_max, pData->dInter_packet_gap_ms_min);
+    //pairMinMax = m_pGraph->GetRange(wxT("Packet Gap"));
+    //m_pGraph->SetLimit(wxT("Packet Gap"), max(pairMinMax.second, pData->dInter_packet_gap_ms_Now), min(pairMinMax.first, pData->dInter_packet_gap_ms_Now));
     m_pGraph->AddPeak(wxT("Packet Gap"), pData->dInter_packet_gap_ms_Now);
 
-    pair<double,double> pairMinMax(m_pGraph->GetRange(wxT("Jitter")));
-    m_pGraph->SetLimit(wxT("Jitter"), max(pairMinMax.second, pData->dJitter), min(pairMinMax.first, pData->dJitter));
+    //pairMinMax = m_pGraph->GetRange(wxT("Packet Loss"));
+    //m_pGraph->SetLimit(wxT("Packet Loss"), max(pairMinMax.second, pData->dPacket_loss_fraction_av), min(pairMinMax.first, pData->dPacket_loss_fraction_av));
+    m_pGraph->AddPeak(wxT("Packet Loss"), pData->dPacket_loss_fraction_av);
+
+    //pairMinMax = m_pGraph->GetRange(wxT("Jitter"));
+    //m_pGraph->SetLimit(wxT("Jitter"), max(pairMinMax.second, pData->dJitter), min(pairMinMax.first, pData->dJitter));
     m_pGraph->AddPeak(wxT("Jitter"), pData->dJitter);
 
 
@@ -672,6 +706,7 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
 
     if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
     {
+        m_plblSubsessionId->SetLabel(aSession.itCurrentSubsession->sId);
         m_plblSessionSource->SetLabel(aSession.itCurrentSubsession->sSourceAddress);
         m_plblSessionBits->SetLabel(aSession.itCurrentSubsession->sCodec);
         m_plblSessionFrequency->SetLabel(wxString::Format(wxT("%.1fkHz"), aSession.itCurrentSubsession->nSampleRate/1000.0));
@@ -737,6 +772,7 @@ void pnlAoIPInfo::ShowGraph(const wxString& sGraph)
     {
         m_pGraph->ShowGraph(wxT("Packet Gap Av"));
     }
+    m_plblGraph->SetLabel(sGraph);
 }
 
 void pnlAoIPInfo::ClearGraphs()

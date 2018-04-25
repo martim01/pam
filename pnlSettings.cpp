@@ -5,7 +5,7 @@
 #include <wx/dir.h>
 #include <wx/filename.h>
 #include <wx/msgdlg.h>
-
+#include <wx/stdpaths.h>
 #include "settings.h"
 //#include "meter.h"
 #include "version.h"
@@ -17,6 +17,15 @@
 #include <wx/string.h>
 //*)
 
+#include "images/end_hz.xpm"
+#include "images/end_hz_press.xpm"
+#include "images/home_hz_press.xpm"
+#include "images/home_hz.xpm"
+#include "images/pagedown.xpm"
+#include "images/pagedown_press.xpm"
+#include "images/pageup.xpm"
+#include "images/pageup_press.xpm"
+
 using namespace std;
 
 //(*IdInit(pnlSettings)
@@ -24,6 +33,10 @@ const long pnlSettings::ID_M_PLBL37 = wxNewId();
 const long pnlSettings::ID_M_PLBL3 = wxNewId();
 const long pnlSettings::ID_M_PLST1 = wxNewId();
 const long pnlSettings::ID_M_PLST2 = wxNewId();
+const long pnlSettings::ID_M_PBTN1 = wxNewId();
+const long pnlSettings::ID_M_PBTN2 = wxNewId();
+const long pnlSettings::ID_M_PBTN4 = wxNewId();
+const long pnlSettings::ID_M_PBTN5 = wxNewId();
 const long pnlSettings::ID_PANEL1 = wxNewId();
 const long pnlSettings::ID_M_PLBL4 = wxNewId();
 const long pnlSettings::ID_M_PLBL1 = wxNewId();
@@ -68,13 +81,21 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pLbl3->SetBackgroundColour(wxColour(0,64,0));
     wxFont m_pLbl3Font(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
     m_pLbl3->SetFont(m_pLbl3Font);
-    m_plstDevices = new wmList(pnlInput, ID_M_PLST1, wxPoint(0,70), wxSize(600,370), wmList::STYLE_SELECT, 0, wxSize(-1,40), 5, wxSize(5,1));
+    m_plstDevices = new wmList(pnlInput, ID_M_PLST1, wxPoint(0,70), wxSize(600,300), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
     m_plstDevices->SetBackgroundColour(wxColour(0,0,0));
     m_plstDevices->SetSelectedButtonColour(wxColour(wxT("#008000")));
     m_plstInput = new wmList(pnlInput, ID_M_PLST2, wxPoint(0,36), wxSize(600,34), wmList::STYLE_SELECT, 0, wxSize(100,30), 3, wxSize(-1,-1));
     m_plstInput->SetBackgroundColour(wxColour(0,0,0));
     m_plstInput->SetButtonColour(wxColour(wxT("#400080")));
     m_plstInput->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
+    m_pbtnHome = new wmButton(pnlInput, ID_M_PBTN1, wxEmptyString, wxPoint(70,390), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
+    m_pbtnHome->SetColourDisabled(wxColour(wxT("#808080")));
+    m_pbtnPrevious = new wmButton(pnlInput, ID_M_PBTN2, wxEmptyString, wxPoint(190,390), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
+    m_pbtnPrevious->SetColourDisabled(wxColour(wxT("#808080")));
+    m_pbtnNext = new wmButton(pnlInput, ID_M_PBTN4, wxEmptyString, wxPoint(310,390), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN4"));
+    m_pbtnNext->SetColourDisabled(wxColour(wxT("#808080")));
+    m_pbtnEnd = new wmButton(pnlInput, ID_M_PBTN5, wxEmptyString, wxPoint(430,390), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN5"));
+    m_pbtnEnd->SetColourDisabled(wxColour(wxT("#808080")));
     pnlOutput = new wxPanel(m_pswpSettings, ID_PANEL2, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL2"));
     pnlOutput->SetBackgroundColour(wxColour(0,0,0));
     m_pLbl4 = new wmLabel(pnlOutput, ID_M_PLBL4, _("Audio Output"), wxPoint(0,5), wxSize(600,30), 0, _T("ID_M_PLBL4"));
@@ -125,11 +146,24 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
     Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstDevicesSelected);
     Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstInputSelected);
+    Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnHomeClick);
+    Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnPreviousClick);
+    Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnNextClick);
+    Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnEndClick);
     Connect(ID_M_PLST5,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstBufferSelected);
     Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnOutputClick);
     Connect(ID_M_PLST6,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlblLatencySelected);
     Connect(ID_M_PLST4,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstPlaybackSelected);
     //*)
+
+    m_pbtnEnd->SetBitmapLabel(wxBitmap(end_hz_xpm));
+    m_pbtnEnd->SetBitmapSelected(wxBitmap(end_hz_press_xpm));
+    m_pbtnHome->SetBitmapLabel(wxBitmap(home_hz_xpm));
+    m_pbtnHome->SetBitmapSelected(wxBitmap(home_hz_press_xpm));
+    m_pbtnPrevious->SetBitmapLabel(wxBitmap(pageup_xpm));
+    m_pbtnPrevious->SetBitmapSelected(wxBitmap(pageup_press_xpm));
+    m_pbtnNext->SetBitmapLabel(wxBitmap(pagedown_xpm));
+    m_pbtnNext->SetBitmapSelected(wxBitmap(pagedown_press_xpm));
 
     m_pswpSettings->Connect(wxID_ANY, wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, (wxObjectEventFunction)&pnlSettings::OnswpSettingsPageChanged, NULL, this);
     SetSize(size);
@@ -272,6 +306,8 @@ void pnlSettings::ShowSoundcardInputs()
 
     m_plstDevices->Thaw();
 
+    ShowPagingButtons();
+
     int nInput = Settings::Get().Read(wxT("Input"), wxT("Device"), 0);
     int nDevice = m_plstDevices->FindButton(reinterpret_cast<void*>(nInput));
     if(nDevice == wmList::NOT_FOUND)
@@ -317,6 +353,8 @@ void pnlSettings::ShowRTPDefined()
     }
     m_plstDevices->Thaw();
 
+    ShowPagingButtons();
+
     m_plstDevices->SelectButton(Settings::Get().Read(wxT("Input"), wxT("RTP"), wxEmptyString));
 
 
@@ -329,7 +367,7 @@ void pnlSettings::ShowFiles()
 
 
     wxArrayString asFiles;
-    wxDir::GetAllFiles(Settings::Get().Read(wxT("Input"), wxT("Directory"), wxT(".")), &asFiles, wxT("*.wav"));
+    wxDir::GetAllFiles(Settings::Get().Read(wxT("Input"), wxT("Directory"), wxStandardPaths::Get().GetDocumentsDir()), &asFiles, wxT("*.wav"), wxDIR_FILES);
 
     for(size_t i = 0; i < asFiles.GetCount(); i++)
     {
@@ -338,8 +376,18 @@ void pnlSettings::ShowFiles()
     }
     m_plstDevices->Thaw();
 
+    ShowPagingButtons();
+
     m_plstDevices->SelectButton(Settings::Get().Read(wxT("Input"), wxT("File"), wxEmptyString));
 
+}
+
+void pnlSettings::ShowPagingButtons()
+{
+    m_pbtnEnd->Show(m_plstDevices->GetPageCount() > 1);
+    m_pbtnHome->Show(m_plstDevices->GetPageCount() > 1);
+    m_pbtnPrevious->Show(m_plstDevices->GetPageCount() > 1);
+    m_pbtnNext->Show(m_plstDevices->GetPageCount() > 1);
 }
 
 void pnlSettings::ReloadRTP()
@@ -404,4 +452,23 @@ void pnlSettings::OnswpSettingsPageChanged(wxNotebookEvent& event)
     {
        RefreshInputs();
     }
+}
+
+void pnlSettings::OnbtnHomeClick(wxCommandEvent& event)
+{
+
+}
+
+void pnlSettings::OnbtnPreviousClick(wxCommandEvent& event)
+{
+    m_plstDevices->ShowPreviousPage(false, false);
+}
+
+void pnlSettings::OnbtnNextClick(wxCommandEvent& event)
+{
+    m_plstDevices->ShowNextPage(false, false);
+}
+
+void pnlSettings::OnbtnEndClick(wxCommandEvent& event)
+{
 }

@@ -4,7 +4,7 @@
 #include <wx/dynlib.h>
 #include <wx/log.h>
 #include <wx/xml/xml.h>
-
+#include <wx/stdpaths.h>
 
 using namespace std;
 
@@ -45,12 +45,19 @@ bool TestPluginFactory::LoadTestLibrary(const wxString& sLibrary)
     {
         wxString sCan = wxDynamicLibrary::CanonicalizeName(sLibrary);
 
-        wxString sLib;
-        #ifdef PAMBASE_DEBUG
-            sLib = wxString::Format(wxT("lib/debug/%s"), sCan.c_str());
+        #ifdef __WXMSW__
+            wxString sDir(wxT("lib"));
         #else
-            sLib = wxString::Format(wxT("lib/%s"), sCan.c_str());
+            wxString sDir(wxStandardPaths::Get().GetPluginsDir());
+        #endif // __WXMSW__
+
+        #ifdef PAMBASE_DEBUG
+            wxString sLib(wxString::Format(wxT("%s/debug/%s"),sDir.c_str(), sCan.c_str()));
+        #else
+            wxString sLib(wxString::Format(wxT("%s/%s"), sDir.c_str(), sCan.c_str()));
         #endif
+
+
         wxDynamicLibrary* pLib = new wxDynamicLibrary(sLib);
 
         if(pLib && pLib->IsLoaded())

@@ -27,20 +27,24 @@ class pnlSettings: public wxPanel
 		wmLabel* m_pLbl3;
 		wmList* m_plstDevices;
 		wmSwitcherPanel* m_pswpSettings;
+		wmButton* m_pbtnPrevious;
 		wmButton* m_pbtnOutput;
 		wmLabel* m_pLbl1;
 		pnlSettingsPlugins* m_ppnlPlugins;
 		pnlNetworkSetup* pnlSettingsNetwork;
+		wmButton* m_pbtnNext;
 		wmList* m_plstPlayback;
 		wmList* m_plstBuffer;
 		wmLabel* m_pLbl5;
 		wmLabel* m_plblSettings;
 		wmList* m_plstInput;
 		wxPanel* pnlThreads;
+		wmButton* m_pbtnHome;
 		wxPanel* pnlOutput;
 		pnlRTP* pnlSettingsRTP;
 		wmList* m_plstThreads;
 		wxPanel* pnlInput;
+		wmButton* m_pbtnEnd;
 		//*)
 
 		void ReloadRTP();
@@ -52,6 +56,10 @@ class pnlSettings: public wxPanel
 		static const long ID_M_PLBL3;
 		static const long ID_M_PLST1;
 		static const long ID_M_PLST2;
+		static const long ID_M_PBTN1;
+		static const long ID_M_PBTN2;
+		static const long ID_M_PBTN4;
+		static const long ID_M_PBTN5;
 		static const long ID_PANEL1;
 		static const long ID_M_PLBL4;
 		static const long ID_M_PLBL1;
@@ -87,6 +95,10 @@ class pnlSettings: public wxPanel
 		void OnlblLatencySelected(wxCommandEvent& event);
 		void OnlstInputSelected(wxCommandEvent& event);
 		void OnswpSettingsPageChanged(wxNotebookEvent& event);
+		void OnbtnHomeClick(wxCommandEvent& event);
+		void OnbtnPreviousClick(wxCommandEvent& event);
+		void OnbtnNextClick(wxCommandEvent& event);
+		void OnbtnEndClick(wxCommandEvent& event);
 		//*)
 
         void RefreshInputs();
@@ -94,6 +106,8 @@ class pnlSettings: public wxPanel
 		void ShowRTPDefined();
 		void ShowFiles();
         void ShowSoundcardOutputs();
+
+        void ShowPagingButtons();
 
 		DECLARE_EVENT_TABLE()
 };

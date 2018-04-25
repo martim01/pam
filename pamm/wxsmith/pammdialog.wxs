@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxDialog" name="pammDialog">
+		<title>wxWidgets app</title>
+		<size>800,480</size>
+		<fg>#FFFFFF</fg>
+		<bg>#B0B0B0</bg>
+		<font>
+			<size>14</size>
+			<style>normal</style>
+			<weight>normal</weight>
+			<underlined>0</underlined>
+			<family>swiss</family>
+			<face>Arial</face>
+		</font>
+		<style>wxNO_BORDER</style>
+		<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+			<label>Pi Audio Monitor Manager</label>
+			<pos>0,0</pos>
+			<size>800,40</size>
+			<bg>#0F53D2</bg>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnLaunch" member="yes">
+			<label>Launch PAM</label>
+			<pos>50,360</pos>
+			<size>100,100</size>
+			<bg>#008040</bg>
+			<handler function="OnbtnLaunchClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnReboot" member="yes">
+			<label>Hold To Reboot</label>
+			<pos>450,360</pos>
+			<size>100,100</size>
+			<bg>#800000</bg>
+			<style>wmButton::STYLE_HOLD</style>
+			<handler function="OnbtnRebootHeld" entry="EVT_BUTTON_HELD" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnShutdown" member="yes">
+			<label>Hold To Shutdown</label>
+			<pos>600,360</pos>
+			<size>100,100</size>
+			<bg>#800000</bg>
+			<style>wmButton::STYLE_HOLD</style>
+			<handler function="OnbtnShutdownHeld" entry="EVT_BUTTON_HELD" />
+		</object>
+		<object class="wxListBox" name="ID_LISTBOX1" variable="m_plbxLog" member="yes">
+			<default>-1</default>
+			<pos>10,50</pos>
+			<size>780,300</size>
+			<font>
+				<size>10</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+	</object>
+</wxsmith>

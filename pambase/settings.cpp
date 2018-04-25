@@ -1,5 +1,6 @@
 #include "settings.h"
 #include <wx/log.h>
+#include <wx/stdpaths.h>
 #include "settingevent.h"
 
 using   namespace std;
@@ -7,7 +8,7 @@ using   namespace std;
 
 Settings::Settings()
 {
-    m_iniManager.ReadIniFile(wxT("pam2.ini"));
+    m_iniManager.ReadIniFile(wxString::Format(wxT("%s\\pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
 }
 
 
@@ -36,7 +37,7 @@ double Settings::Read(const wxString& sSection, const wxString& sKey, double dDe
 bool Settings::Write(const wxString& sSection, const wxString& sKey, const wxString& sValue)
 {
     m_iniManager.SetSectionValue(sSection, sKey,sValue);
-    bool bDone = m_iniManager.WriteIniFile(wxT("pam2.ini"));
+    bool bDone = m_iniManager.WriteIniFile(wxString::Format(wxT("%s\\pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
 
     if(bDone)
     {
@@ -111,11 +112,11 @@ void Settings::RemoveHandler(wxEvtHandler* pHandler)
 bool Settings::RemoveKey(const wxString& sSection, const wxString& sKey)
 {
     m_iniManager.RemoveSectionValue(sSection, sKey);
-    return m_iniManager.WriteIniFile(wxT("pam2.ini"));
+    return m_iniManager.WriteIniFile(wxString::Format(wxT("%s\\pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
 }
 
 bool Settings::RemoveSection(const wxString& sSection)
 {
     m_iniManager.RemoveSection(sSection);
-    return m_iniManager.WriteIniFile(wxT("pam2.ini"));
+    return m_iniManager.WriteIniFile(wxString::Format(wxT("%s\\pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
 }

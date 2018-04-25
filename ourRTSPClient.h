@@ -7,6 +7,7 @@
 
 
 class RtpThread;
+class wxString;
 
 class ourRTSPClient: public RTSPClient
 {
@@ -30,6 +31,9 @@ public:
 
     void CountSubSession();
     size_t GetSubSessionCount();
+
+    void PlaySubsession(const wxString& sId, responseHandler* responseHandler);
+    void PauseSubsession(const wxString& sId, responseHandler* responseHandler);
 
 
 protected:

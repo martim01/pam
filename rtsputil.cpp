@@ -133,19 +133,13 @@ void setupNextSubsession(RTSPClient* rtspClient)
     if(pClient)
     {
         pClient->GetHandler()->PassSessionDetails(dynamic_cast<Smpte2110MediaSession*>(scs.session));
+
+        // We've finished setting up all of the subsessions.  Now, send a RTSP "PLAY" command to start the streaming:
+        scs.duration = scs.session->playEndTime() - scs.session->playStartTime();
+        //Start the first subsession
+        pClient->PlaySubsession(wxT("0"), continueAfterPLAY);
     }
 
-    // We've finished setting up all of the subsessions.  Now, send a RTSP "PLAY" command to start the streaming:
-    if (scs.session->absStartTime() != NULL)
-    {
-        // Special case: The stream is indexed by 'absolute' time, so send an appropriate "PLAY" command:
-        rtspClient->sendPlayCommand(*scs.session, continueAfterPLAY, scs.session->absStartTime(), scs.session->absEndTime());
-    }
-    else
-    {
-        scs.duration = scs.session->playEndTime() - scs.session->playStartTime();
-        rtspClient->sendPlayCommand(*scs.session, continueAfterPLAY);
-    }
 }
 
 void continueAfterSETUP(RTSPClient* rtspClient, int resultCode, char* resultString)
@@ -200,6 +194,8 @@ void continueAfterSETUP(RTSPClient* rtspClient, int resultCode, char* resultStri
     delete[] resultString;
 
     // Set up the next subsession, if any:
+
+    // @todo decide how we are going to let user choose different subsessions
     setupNextSubsession(rtspClient);
 }
 
@@ -248,8 +244,6 @@ void continueAfterPLAY(RTSPClient* rtspClient, int resultCode, char* resultStrin
     }
     else
     {
-
-
         // Begin periodic QOS measurements:
         beginQOSMeasurement(env, ((ourRTSPClient*)rtspClient)->scs.session, ((ourRTSPClient*)rtspClient)->GetHandler());
     }

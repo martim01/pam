@@ -36,7 +36,7 @@
 				<button_selected>#FF8000</button_selected>
 				<items />
 				<pos>0,140</pos>
-				<size>200,125</size>
+				<size>200,130</size>
 				<bg>#000000</bg>
 				<style>wmList::STYLE_SELECT</style>
 				<handler function="OnplstOptionsSelected" entry="EVT_LIST_SELECTED" />

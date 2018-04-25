@@ -100,7 +100,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_plstScreens->SetBackgroundColour(wxColour(0,0,0));
     m_plstScreens->SetButtonColour(wxColour(wxT("#008000")));
     m_plstScreens->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
-    m_plstOptions = new wmList(pnlLists, ID_M_PLST2, wxPoint(0,140), wxSize(200,125), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
+    m_plstOptions = new wmList(pnlLists, ID_M_PLST2, wxPoint(0,140), wxSize(200,130), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
     m_plstOptions->SetBackgroundColour(wxColour(0,0,0));
     m_plstOptions->SetButtonColour(wxColour(wxT("#000080")));
     m_plstOptions->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
@@ -148,6 +148,8 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Settings::Get().AddHandler(wxT("Output"),wxT("Latency"), this);
 
     Settings::Get().AddHandler(wxT("QoS"),wxT("Interval"), this);
+
+    Settings::Get().AddHandler(wxT("Test"), wxT("Lock"), this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pam2Dialog::OnSettingChanged);
     Connect(wxID_ANY, wxEVT_MONITOR_REQUEST, (wxObjectEventFunction)&pam2Dialog::OnMonitorRequest);
@@ -486,7 +488,7 @@ void pam2Dialog::CreateAudioInputDevice()
         m_pAudio->Init();
 
         session aSession(wxEmptyString, m_pAudio->GetDeviceName(), wxT("Soundcard"));
-        aSession.lstSubsession.push_back(subsession(wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, m_pAudio->GetDevice(), m_pAudio->GetSampleRate(), m_pAudio->GetNumberOfChannels(), wxEmptyString, 0, make_pair(0,0), refclk()));
+        aSession.lstSubsession.push_back(subsession(wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, m_pAudio->GetDevice(), m_pAudio->GetSampleRate(), m_pAudio->GetNumberOfChannels(), wxEmptyString, 0, make_pair(0,0), refclk()));
         aSession.itCurrentSubsession = aSession.lstSubsession.begin();
 
 
@@ -610,6 +612,14 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
             }
         }
     }
+    else if(event.GetSection() == wxT("Test"))
+    {
+        if(event.GetKey() == wxT("Lock"))
+        {
+            m_plstScreens->Enable((Settings::Get().Read(event.GetSection(), event.GetKey(), 0) == 0));
+            m_plstOptions->Enable((Settings::Get().Read(event.GetSection(), event.GetKey(), 0) == 0));
+        }
+    }
 }
 
 
@@ -707,7 +717,7 @@ void pam2Dialog::InputChanged(const wxString& sKey)
 void pam2Dialog::OpenFileForReading()
 {
     wxString sFilePath;
-    sFilePath << Settings::Get().Read(wxT("Input"), wxT("Directory"), wxT(".")) << wxT("/") << Settings::Get().Read(wxT("Input"), wxT("File"), wxEmptyString) << wxT(".wav");
+    sFilePath << Settings::Get().Read(wxT("Input"), wxT("Directory"), wxStandardPaths::Get().GetDocumentsDir()) << wxT("/") << Settings::Get().Read(wxT("Input"), wxT("File"), wxEmptyString) << wxT(".wav");
     if(m_pSoundfile)
     {
         wmLog::Get()->Log(wxT("Close sound file"));
@@ -722,7 +732,7 @@ void pam2Dialog::OpenFileForReading()
         wmLog::Get()->Log(wxString::Format(wxT("Channels = %d"), m_pSoundfile->GetFormat().wChannels));
 
         session aSession(wxEmptyString, Settings::Get().Read(wxT("Input"), wxT("File"), wxEmptyString), wxT("File"));
-        aSession.lstSubsession.push_back(subsession(Settings::Get().Read(wxT("Input"), wxT("File"), wxEmptyString), wxEmptyString, wxEmptyString, wxEmptyString, 0, m_pSoundfile->GetFormat().dwSamplesPerSec, m_pSoundfile->GetFormat().wChannels, wxEmptyString, 0, make_pair(0,0), refclk()));
+        aSession.lstSubsession.push_back(subsession(wxEmptyString, Settings::Get().Read(wxT("Input"), wxT("File"), wxEmptyString), wxEmptyString, wxEmptyString, wxEmptyString, 0, m_pSoundfile->GetFormat().dwSamplesPerSec, m_pSoundfile->GetFormat().wChannels, wxEmptyString, 0, make_pair(0,0), refclk()));
         aSession.itCurrentSubsession = aSession.lstSubsession.begin();
         m_Session = aSession;
 

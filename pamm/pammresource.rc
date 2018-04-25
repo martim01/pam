@@ -1,0 +1,31 @@
+aaaa ICON "app.ico"
+
+#include "wx/msw/wx.rc"
+#include <wx/version.h>
+#include "version.h"
+
+1 VERSIONINFO
+FILEVERSION RC_FILEVERSION
+PRODUCTVERSION RC_FILEVERSION
+FILEOS VOS_NT_WINDOWS32
+FILETYPE VFT_APP
+{
+    BLOCK "StringFileInfo"
+    {
+        BLOCK "040904E4"
+        {
+            VALUE "CompanyName", "BBC\000"
+            VALUE "FileDescription", "PAM"
+            VALUE "FileVersion", RC_FILEVERSION_STRING
+            VALUE "Destination", "BBC W1"
+            VALUE "OriginalFilename", "pamm"
+            VALUE "wxWidgets Version", wxVERSION_NUM_DOT_STRING
+        }
+    }
+
+    BLOCK "VarFileInfo"
+    {
+        VALUE "Translation", 0x0809, 1200
+    }
+}
+

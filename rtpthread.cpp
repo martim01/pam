@@ -358,7 +358,8 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
     {
         refclk clock = pSubsession->GetRefClock();
         wxLogDebug(wxT("Subsession: %s  %s"), wxString::FromAscii(pSubsession->mediumName()).c_str(), wxString::FromAscii(pSubsession->protocolName()).c_str());
-        m_Session.lstSubsession.push_back(subsession(wxString::FromAscii(pSubsession->GetEndpoint()),
+        m_Session.lstSubsession.push_back(subsession(wxString::FromAscii(pSubsession->sessionId()),
+                                                     wxString::FromAscii(pSubsession->GetEndpoint()),
                                                      wxString::FromAscii(pSubsession->mediumName()),
                                                      wxString::FromAscii(pSubsession->codecName()),
                                                      wxString::FromAscii(pSubsession->protocolName()),

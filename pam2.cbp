@@ -169,6 +169,9 @@
 		<Unit filename="pam2App.h" />
 		<Unit filename="pam2Main.cpp" />
 		<Unit filename="pam2Main.h" />
+		<Unit filename="pam2resource.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
 		<Unit filename="playout.cpp" />
 		<Unit filename="playout.h" />
 		<Unit filename="pnlLog.cpp" />

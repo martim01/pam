@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlRecord">
+		<bg>#000000</bg>
+		<font>
+			<size>12</size>
+			<style>normal</style>
+			<weight>normal</weight>
+			<underlined>0</underlined>
+			<family>swiss</family>
+			<face>Arial</face>
+		</font>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmLabel" name="ID_M_PLBL37" variable="m_pLbl12" member="yes">
+			<label>Recorder</label>
+			<pos>0,0</pos>
+			<size>600,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5B9539</bg>
+			<font>
+				<size>12</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmKeyboard" name="ID_M_PKBD1" variable="m_pKbd1" member="yes">
+			<pos>0,200</pos>
+			<size>600,260</size>
+			<fg>#FFFFFF</fg>
+			<font>
+				<size>12</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+			<label>Filename</label>
+			<pos>0,50</pos>
+			<size>100,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#000000</bg>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnRecord" member="yes">
+			<label>Record</label>
+			<button_pressed>#6F0000</button_pressed>
+			<button_disabled>#909090</button_disabled>
+			<pos>110,100</pos>
+			<size>100,80</size>
+			<bg>#800000</bg>
+			<handler function="OnbtnRecordClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
+			<label>File Length</label>
+			<pos>240,100</pos>
+			<size>150,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#000000</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL3" variable="m_plblTime" member="yes">
+			<label>00:00:00</label>
+			<pos>390,100</pos>
+			<size>150,30</size>
+			<fg>#00FF80</fg>
+			<bg>#000000</bg>
+		</object>
+		<object class="wmEdit" name="ID_M_PEDT1" variable="m_pedtFile" member="yes">
+			<validation>1280335693</validation>
+			<border>uiRect::BORDER_DOWN</border>
+			<border_focused>uiRect::BORDER_DOWN</border_focused>
+			<background_focused>#B0FFD8</background_focused>
+			<foreground_focused>#000000</foreground_focused>
+			<pos>101,50</pos>
+			<size>270,40</size>
+			<fg>#000000</fg>
+			<bg>#FFFFFF</bg>
+			<handler function="OnedtFileText" entry="EVT_TEXT" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnDate" member="yes">
+			<label>Date Label</label>
+			<pos>380,50</pos>
+			<size>100,40</size>
+			<handler function="OnbtnDateClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnClear" member="yes">
+			<label>Clear</label>
+			<pos>500,50</pos>
+			<size>80,40</size>
+			<handler function="OnbtnClearClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wxTimer" name="ID_TIMER1" variable="m_timerSecond" member="yes">
+			<interval>1000</interval>
+			<handler function="OntimerSecondTrigger" entry="EVT_TIMER" />
+		</object>
+	</object>
+</wxsmith>

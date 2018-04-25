@@ -332,10 +332,32 @@
 						<fg>#FFFFFF</fg>
 						<bg>#0000FF</bg>
 					</object>
+					<object class="wmLabel" name="ID_M_PLBL62" variable="m_pLbl38" member="yes">
+						<label>Id</label>
+						<pos>441,10</pos>
+						<size>158,20</size>
+						<fg>#FFFFFF</fg>
+						<bg>#0000FF</bg>
+					</object>
 					<object class="wmLabel" name="ID_M_PLBL49" variable="m_plblSessionChannels" member="yes">
 						<label></label>
 						<pos>381,31</pos>
 						<size>59,25</size>
+						<fg>#008000</fg>
+						<bg>#FFFFFF</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Consolas</face>
+						</font>
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL84" variable="m_plblSubsessionId" member="yes">
+						<label></label>
+						<pos>441,31</pos>
+						<size>158,25</size>
 						<fg>#008000</fg>
 						<bg>#FFFFFF</bg>
 						<font>
@@ -910,9 +932,31 @@
 						<fg>#FFFFFF</fg>
 						<bg>#0000FF</bg>
 					</object>
+					<object class="wmLabel" name="ID_M_PLBL85" variable="m_pLbl39" member="yes">
+						<label>Current Graph</label>
+						<pos>400,225</pos>
+						<size>194,20</size>
+						<fg>#FFFFFF</fg>
+						<bg>#008040</bg>
+					</object>
 					<object class="wmLabel" name="ID_M_PLBL35" variable="m_plblQoSJitter" member="yes">
 						<label></label>
 						<pos>5,246</pos>
+						<size>194,25</size>
+						<fg>#008000</fg>
+						<bg>#FFFFFF</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Consolas</face>
+						</font>
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL86" variable="m_plblGraph" member="yes">
+						<label></label>
+						<pos>400,246</pos>
 						<size>194,25</size>
 						<fg>#008000</fg>
 						<bg>#FFFFFF</bg>

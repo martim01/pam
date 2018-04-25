@@ -1,7 +1,7 @@
 #include "pnlIdentify.h"
 #include "myprocess.h"
 #include "identifybuilder.h"
-
+#include <wx/stdpaths.h>
 //(*InternalHeaders(pnlIdentify)
 #include <wx/font.h>
 #include <wx/intl.h>
@@ -173,7 +173,7 @@ pnlIdentify::~pnlIdentify()
 
 void pnlIdentify::OnbtnIdentifyClick(wxCommandEvent& event)
 {
-    wxString sWavFile = m_pBuilder->ReadSetting(wxT("Wav"), wxEmptyString);
+    wxString sWavFile = m_pBuilder->ReadSetting(wxT("Wav"), wxString::Format(wxT("%s/identify.wav"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
 
 
     if(m_sf.OpenToWrite(sWavFile, 2, m_nSampleRate, 16))

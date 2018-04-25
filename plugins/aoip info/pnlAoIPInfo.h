@@ -35,8 +35,11 @@ class pnlAoIPInfo: public wxPanel
 		wmLabel* m_plblSubSyncId;
 		wmLabel* m_plblQoSInterMin;
 		wmLabel* m_plblQoSPacketsAv;
+		wmLabel* m_pLbl39;
 		wmLabel* m_pLbl24;
 		wmLabel* m_plblSessionChannels;
+		wmLabel* m_plblSubsessionId;
+		wmLabel* m_pLbl38;
 		wmLabel* m_plblQoSReceived;
 		wmLabel* m_plblSubsessionVideo;
 		wmLabel* m_plblQoSPacketsMax;
@@ -68,6 +71,7 @@ class pnlAoIPInfo: public wxPanel
 		wmLabel* m_pLbl42;
 		wmLabel* m_pLbl22;
 		wmLabel* m_pLbl40;
+		wmLabel* m_plblGraph;
 		wmLabel* m_pLbl41;
 		wmLabel* m_pLbl5;
 		wmLabel* m_plblSessionType;
@@ -158,7 +162,9 @@ class pnlAoIPInfo: public wxPanel
 		static const long ID_M_PLBL45;
 		static const long ID_M_PLBL48;
 		static const long ID_M_PLBL46;
+		static const long ID_M_PLBL62;
 		static const long ID_M_PLBL49;
+		static const long ID_M_PLBL84;
 		static const long ID_M_PLBL67;
 		static const long ID_M_PLBL68;
 		static const long ID_M_PLBL69;
@@ -211,7 +217,9 @@ class pnlAoIPInfo: public wxPanel
 		static const long ID_M_PLBL30;
 		static const long ID_M_PLBL31;
 		static const long ID_M_PLBL32;
+		static const long ID_M_PLBL85;
 		static const long ID_M_PLBL35;
+		static const long ID_M_PLBL86;
 		static const long ID_CUSTOM12;
 		static const long ID_PANEL4;
 		static const long ID_PANEL2;

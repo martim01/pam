@@ -2,13 +2,12 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="fft" />
+		<Option title="Record" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Release">
-				<Option platforms="Windows;" />
-				<Option output="../../lib/fft1.0.dll" prefix_auto="0" extension_auto="0" />
+				<Option output="../../lib/record1.0.dll" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/release3" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -30,7 +29,7 @@
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-s" />
-					<Add option="-Wl,--enable-auto-import,-Map=fft.map" />
+					<Add option="-Wl,--enable-auto-import,-Map=record.map" />
 					<Add library="wxmsw30u_gcc_wammacs" />
 					<Add library="pambase2.0" />
 					<Add library="pamfft1.0" />
@@ -38,8 +37,7 @@
 				</Linker>
 			</Target>
 			<Target title="Debug">
-				<Option platforms="Windows;" />
-				<Option output="../../lib/debug/fft1.0.dll" prefix_auto="1" extension_auto="0" />
+				<Option output="../../lib/debug/record1.0.dll" prefix_auto="1" extension_auto="0" />
 				<Option object_output="obj/debug" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -48,6 +46,7 @@
 					<Add option="-g" />
 					<Add option="-DWIN32" />
 					<Add option="-D_USRDLL" />
+					<Add option="-DDLL_EXPORTS" />
 					<Add option="-D__WXMSW__" />
 					<Add option="-DWXUSINGDLL" />
 					<Add option="-DUNICODE" />
@@ -60,7 +59,7 @@
 					<Add directory="$(#wx3_0.include)/mswu" />
 				</ResourceCompiler>
 				<Linker>
-					<Add option="-Wl,--enable-auto-import,-Map=fft.map" />
+					<Add option="-Wl,--enable-auto-import,-Map=record.map" />
 					<Add library="wxmsw30ud_gcc_wammacs" />
 					<Add library="pambased2.0" />
 					<Add library="pamfftd1.0" />
@@ -69,7 +68,7 @@
 			</Target>
 			<Target title="Linux Release">
 				<Option platforms="Unix;" />
-				<Option output="../../lib/libfft1.0.so" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="0" extension_auto="0" />
+				<Option output="../../lib/librecord1.0.so" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/linux" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -89,32 +88,24 @@
 			</Target>
 			<Target title="Linux Debug">
 				<Option platforms="Unix;" />
-				<Option output="../../lib/debug/libfft1.0.so" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="0" extension_auto="0" />
+				<Option output="../../lib/debug/librecord1.0.so" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/linux/debug" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-Wall" />
 					<Add option="-g" />
-					<Add option="-DWIN32" />
-					<Add option="-D_USRDLL" />
-					<Add option="-D__WXMSW__" />
-					<Add option="-DWXUSINGDLL" />
-					<Add option="-DUNICODE" />
+					<Add option="`wx-config --cxxflags`" />
+					<Add option="-fpermissive" />
+					<Add option="-fPIC" />
+					<Add option="-DDLL_EXPORTS" />
 					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-D__WXGNU__" />
+					<Add option="-DPAMBASE_DEBUG" />
 					<Add option="-D__WXDEBUG__" />
-					<Add directory="$(#wx3_0.include)" />
-					<Add directory="$(#wx3_0.include)/mswu" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="$(#wx3_0.include)/mswu" />
-				</ResourceCompiler>
 				<Linker>
-					<Add option="-Wl,--enable-auto-import,-Map=fft.map" />
-					<Add library="wxmsw30ud_gcc_wammacs" />
+					<Add option="`wx-config --libs`" />
 					<Add library="pambased2.0" />
-					<Add library="pamfftd1.0" />
-					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 			</Target>
 		</Build>
@@ -126,35 +117,15 @@
 		</Compiler>
 		<Linker>
 			<Add directory="../../lib" />
+			<Add directory="../../pamfft" />
 		</Linker>
-		<Unit filename="fft.cpp" />
-		<Unit filename="fft.h" />
-		<Unit filename="fftbuilder.cpp" />
-		<Unit filename="fftbuilder.h" />
-		<Unit filename="fftmeter.cpp" />
-		<Unit filename="fftmeter.h" />
-		<Unit filename="pnlbins.cpp" />
-		<Unit filename="pnlbins.h" />
-		<Unit filename="pnldisplay.cpp" />
-		<Unit filename="pnldisplay.h" />
-		<Unit filename="pnloptions.cpp" />
-		<Unit filename="pnloptions.h" />
-		<Unit filename="pnloverlap.cpp" />
-		<Unit filename="pnloverlap.h" />
-		<Unit filename="pnlroutiing.cpp" />
-		<Unit filename="pnlroutiing.h" />
-		<Unit filename="pnltype.cpp" />
-		<Unit filename="pnltype.h" />
-		<Unit filename="pnlwindow.cpp" />
-		<Unit filename="pnlwindow.h" />
-		<Unit filename="version.h" />
-		<Unit filename="wxsmith/pnlBins.wxs" />
-		<Unit filename="wxsmith/pnlDisplay.wxs" />
-		<Unit filename="wxsmith/pnlOptions.wxs" />
-		<Unit filename="wxsmith/pnlOverlap.wxs" />
-		<Unit filename="wxsmith/pnlRoutiing.wxs" />
-		<Unit filename="wxsmith/pnlType.wxs" />
-		<Unit filename="wxsmith/pnlWindow.wxs" />
+		<Unit filename="pnlRecord.cpp" />
+		<Unit filename="pnlRecord.h" />
+		<Unit filename="record.cpp" />
+		<Unit filename="record.h" />
+		<Unit filename="recordbuilder.cpp" />
+		<Unit filename="recordbuilder.h" />
+		<Unit filename="wxsmith/pnlRecord.wxs" />
 		<Extensions>
 			<code_completion />
 			<envvars />
@@ -167,13 +138,7 @@
 			</AutoVersioning>
 			<wxsmith version="1">
 				<resources>
-					<wxPanel wxs="wxsmith/pnlRoutiing.wxs" src="pnlroutiing.cpp" hdr="pnlroutiing.h" fwddecl="0" i18n="1" name="pnlRoutiing" language="CPP" />
-					<wxPanel wxs="wxsmith/pnlDisplay.wxs" src="pnldisplay.cpp" hdr="pnldisplay.h" fwddecl="0" i18n="1" name="pnlDisplay" language="CPP" />
-					<wxPanel wxs="wxsmith/pnlWindow.wxs" src="pnlwindow.cpp" hdr="pnlwindow.h" fwddecl="0" i18n="1" name="pnlWindow" language="CPP" />
-					<wxPanel wxs="wxsmith/pnlType.wxs" src="pnltype.cpp" hdr="pnltype.h" fwddecl="0" i18n="1" name="pnlType" language="CPP" />
-					<wxPanel wxs="wxsmith/pnlOverlap.wxs" src="pnloverlap.cpp" hdr="pnloverlap.h" fwddecl="0" i18n="1" name="pnlOverlap" language="CPP" />
-					<wxPanel wxs="wxsmith/pnlBins.wxs" src="pnlbins.cpp" hdr="pnlbins.h" fwddecl="0" i18n="1" name="pnlBins" language="CPP" />
-					<wxPanel wxs="wxsmith/pnlOptions.wxs" src="pnloptions.cpp" hdr="pnloptions.h" fwddecl="0" i18n="1" name="pnlOptions" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlRecord.wxs" src="pnlRecord.cpp" hdr="pnlRecord.h" fwddecl="0" i18n="1" name="pnlRecord" language="CPP" />
 				</resources>
 			</wxsmith>
 		</Extensions>

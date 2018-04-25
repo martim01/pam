@@ -46,6 +46,7 @@
 		</Project>
 		<Project filename="plugins/peak log/peak log.cbp" />
 		<Project filename="plugins/peak count/peakcount.cbp" />
+		<Project filename="plugins/record/record.cbp" />
 		<Project filename="pam2.cbp">
 			<Depends filename="pambase/pambase.cbp" />
 			<Depends filename="pamfft/pamfft.cbp" />
@@ -64,6 +65,8 @@
 			<Depends filename="plugins/identify/identify.cbp" />
 			<Depends filename="plugins/peak log/peak log.cbp" />
 			<Depends filename="plugins/peak count/peakcount.cbp" />
+			<Depends filename="plugins/record/record.cbp" />
 		</Project>
+		<Project filename="pamm/pamm.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
