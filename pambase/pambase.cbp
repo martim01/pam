@@ -138,6 +138,7 @@
 		<Unit filename="levelmeter.h" />
 		<Unit filename="loud.cpp" />
 		<Unit filename="loud.h" />
+		<Unit filename="message_queue.hpp" />
 		<Unit filename="meter.h" />
 		<Unit filename="monitorevent.cpp" />
 		<Unit filename="monitorevent.h" />

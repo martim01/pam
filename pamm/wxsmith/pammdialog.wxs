@@ -22,10 +22,22 @@
 		</object>
 		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnLaunch" member="yes">
 			<label>Launch PAM</label>
+			<button_disabled>#A0A0A0</button_disabled>
 			<pos>50,360</pos>
 			<size>100,100</size>
 			<bg>#008040</bg>
 			<handler function="OnbtnLaunchClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnKill" member="yes">
+			<label>Hold To Kill PAM</label>
+			<button_disabled>#A0A0A0</button_disabled>
+			<pos>235,410</pos>
+			<size>100,50</size>
+			<enabled>0</enabled>
+			<fg>#000000</fg>
+			<bg>#FF0000</bg>
+			<style>wmButton::STYLE_HOLD</style>
+			<handler function="OnbtnKillHeld" entry="EVT_BUTTON_HELD" />
 		</object>
 		<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnReboot" member="yes">
 			<label>Hold To Reboot</label>
@@ -55,6 +67,21 @@
 				<family>swiss</family>
 				<face>Arial</face>
 			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
+			<label>Time Since Heartbeat</label>
+			<pos>160,360</pos>
+			<size>250,25</size>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL3" variable="m_plblHeartbeat" member="yes">
+			<label>00:00:00</label>
+			<pos>160,386</pos>
+			<size>250,25</size>
+			<fg>#00DFDF</fg>
+		</object>
+		<object class="wxTimer" name="ID_TIMER1" variable="m_timerSecond" member="yes">
+			<interval>1000</interval>
+			<handler function="OnSecondTrigger" entry="EVT_TIMER" />
 		</object>
 	</object>
 </wxsmith>

@@ -5,6 +5,7 @@
 		<size>800,480</size>
 		<bg>#000000</bg>
 		<style>wxNO_BORDER</style>
+		<handler function="OnClose" entry="EVT_CLOSE" />
 		<object class="wmSwitcherPanel" name="ID_M_PSWP1" variable="m_pswpMain" member="yes">
 			<pos>0,0</pos>
 			<size>600,480</size>
@@ -61,6 +62,10 @@
 		</object>
 		<object class="wxTimer" name="ID_TIMER2" variable="m_timerFile" member="yes">
 			<handler function="Onm_timerFileTrigger" entry="EVT_TIMER" />
+		</object>
+		<object class="wxTimer" name="ID_TIMER3" variable="m_timerIpc" member="yes">
+			<interval>1000</interval>
+			<handler function="OntimerIpcTrigger" entry="EVT_TIMER" />
 		</object>
 	</object>
 </wxsmith>

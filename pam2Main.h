@@ -36,6 +36,7 @@ class SoundFile;
 
 class MonitorEvent;
 struct session;
+class PammClient;
 
 class pam2Dialog: public wxDialog
 {
@@ -53,6 +54,8 @@ class pam2Dialog: public wxDialog
         void OnplstOptionsSelected(wxCommandEvent& event);
         void OntimerStartTrigger(wxTimerEvent& event);
         void Onm_timerFileTrigger(wxTimerEvent& event);
+        void OntimerIpcTrigger(wxTimerEvent& event);
+        void OnClose(wxCloseEvent& event);
         //*)
 
         //(*Identifiers(pam2Dialog)
@@ -64,6 +67,7 @@ class pam2Dialog: public wxDialog
         static const long ID_PANEL1;
         static const long ID_TIMER1;
         static const long ID_TIMER2;
+        static const long ID_TIMER3;
         //*)
 
         //(*Declarations(pam2Dialog)
@@ -71,6 +75,7 @@ class pam2Dialog: public wxDialog
         wxPanel* pnlLists;
         wmList* m_plstOptions;
         wxPanel* Panel1;
+        wxTimer m_timerIpc;
         wxTimer m_timerFile;
         wmSwitcherPanel* m_pswpOptions;
         wxTimer timerStart;
@@ -141,6 +146,7 @@ class pam2Dialog: public wxDialog
 
         wxDateTime m_dtLastRead;
 
+        PammClient* m_pClient;
         DECLARE_EVENT_TABLE()
 };
 

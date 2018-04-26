@@ -21,6 +21,7 @@
 					<Add option="-DUNICODE" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXDEBUG__" />
+					<Add option="-D__WINDOWS__" />
 					<Add option="-DPAMBASE_DEBUG" />
 					<Add directory="$(#wx3_0.include)" />
 					<Add directory="$(#wx3_0.include)/mswu" />
@@ -49,6 +50,7 @@
 					<Add option="-DWXUSINGDLL" />
 					<Add option="-DUNICODE" />
 					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-D__WINDOWS__" />
 					<Add directory="$(#wx3_0.include)" />
 					<Add directory="$(#wx3_0.include)/mswu" />
 				</Compiler>
@@ -116,6 +118,10 @@
 		<Unit filename="pammMain.h" />
 		<Unit filename="pamprocess.cpp" />
 		<Unit filename="pamprocess.h" />
+		<Unit filename="wxpamconnection.cpp" />
+		<Unit filename="wxpamconnection.h" />
+		<Unit filename="wxpamserver.cpp" />
+		<Unit filename="wxpamserver.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

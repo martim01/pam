@@ -32,6 +32,7 @@
 #include "wmlogevent.h"
 #include <wx/stdpaths.h>
 #include "soundfile.h"
+#include "wxpammclient.h"
 
 //(*InternalHeaders(pam2Dialog)
 #include <wx/intl.h>
@@ -73,6 +74,7 @@ const long pam2Dialog::ID_M_PSWP2 = wxNewId();
 const long pam2Dialog::ID_PANEL1 = wxNewId();
 const long pam2Dialog::ID_TIMER1 = wxNewId();
 const long pam2Dialog::ID_TIMER2 = wxNewId();
+const long pam2Dialog::ID_TIMER3 = wxNewId();
 //*)
 
 using   namespace std;
@@ -113,12 +115,22 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     timerStart.SetOwner(this, ID_TIMER1);
     timerStart.Start(10, true);
     m_timerFile.SetOwner(this, ID_TIMER2);
+    m_timerIpc.SetOwner(this, ID_TIMER3);
+    m_timerIpc.Start(1000, false);
 
     Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnlstScreensSelected);
     Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnplstOptionsSelected);
     Connect(ID_TIMER1,wxEVT_TIMER,(wxObjectEventFunction)&pam2Dialog::OntimerStartTrigger);
     Connect(ID_TIMER2,wxEVT_TIMER,(wxObjectEventFunction)&pam2Dialog::Onm_timerFileTrigger);
+    Connect(ID_TIMER3,wxEVT_TIMER,(wxObjectEventFunction)&pam2Dialog::OntimerIpcTrigger);
+    Connect(wxID_ANY,wxEVT_CLOSE_WINDOW,(wxObjectEventFunction)&pam2Dialog::OnClose);
     //*)
+
+    m_pClient = new PammClient();
+    if(m_pClient->Connect(wxT("localhost"), wxT("pamm.ipc"), wxT("pam")))
+    {
+
+    }
 
     m_plstScreens->SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
     m_plstOptions->SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
@@ -168,6 +180,13 @@ pam2Dialog::~pam2Dialog()
 {
     //(*Destroy(pam2Dialog)
     //*)
+    if(m_pClient && m_pClient->IsConnected())
+    {
+        m_pClient->Disconnect();
+        delete m_pClient;
+        m_pClient = NULL;
+    }
+
     for(map<wxString, RtpThread*>::iterator itThread = m_mRtp.begin(); itThread != m_mRtp.end(); ++itThread)
     {
         bool bDelete = m_setRtpOrphan.insert(itThread->first).second;
@@ -191,6 +210,7 @@ pam2Dialog::~pam2Dialog()
     }
 
     Pa_Terminate();
+
 }
 
 void pam2Dialog::OnQuit(wxCommandEvent& event)
@@ -206,8 +226,11 @@ void pam2Dialog::OnAbout(wxCommandEvent& event)
 
 void pam2Dialog::OnPluginsReload(wxCommandEvent& event)
 {
-    wxExecute(wxStandardPaths::Get().GetExecutablePath());
-    Close();
+    if(!m_pClient || !m_pClient->Restart())
+    {
+        wxExecute(wxStandardPaths::Get().GetExecutablePath());
+        Close();
+    }
 }
 
 void pam2Dialog::LoadMonitorPanels()
@@ -971,4 +994,23 @@ void pam2Dialog::PopulateThreadList()
         }
     }
     m_ppnlSettings->m_plstThreads->Thaw();
+}
+
+void pam2Dialog::OntimerIpcTrigger(wxTimerEvent& event)
+{
+    if(m_pClient && m_pClient->IsConnected())
+    {
+        m_pClient->Poke();
+    }
+}
+
+void pam2Dialog::OnClose(wxCloseEvent& event)
+{
+    if(m_pClient && m_pClient->IsConnected())
+    {
+        m_pClient->Disconnect();
+        delete m_pClient;
+        m_pClient = NULL;
+    }
+    event.Skip();
 }
