@@ -12,3 +12,4 @@
 *.res
 /sample.log
 /user.txt
+*.a
