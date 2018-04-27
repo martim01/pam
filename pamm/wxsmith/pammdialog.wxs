@@ -14,7 +14,7 @@
 			<face>Arial</face>
 		</font>
 		<style>wxNO_BORDER</style>
-		<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+		<object class="wmLabel" name="ID_M_PLBL1" variable="m_plblTitle" member="yes">
 			<label>Pi Audio Monitor Manager</label>
 			<pos>0,0</pos>
 			<size>800,40</size>

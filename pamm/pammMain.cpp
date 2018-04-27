@@ -19,6 +19,7 @@
 #include <wx/stdpaths.h>
 #include "wxpamserver.h"
 #include "wxpamconnection.h"
+#include "version.h"
 
 //helper functions
 enum wxbuildinfoformat {
@@ -75,9 +76,9 @@ pammDialog::pammDialog(wxWindow* parent,wxWindowID id) :
     SetBackgroundColour(wxColour(176,176,176));
     wxFont thisFont(14,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
     SetFont(thisFont);
-    m_pLbl1 = new wmLabel(this, ID_M_PLBL1, _("Pi Audio Monitor Manager"), wxPoint(0,0), wxSize(800,40), 0, _T("ID_M_PLBL1"));
-    m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
-    m_pLbl1->SetBackgroundColour(wxColour(15,83,210));
+    m_plblTitle = new wmLabel(this, ID_M_PLBL1, _("Pi Audio Monitor Manager"), wxPoint(0,0), wxSize(800,40), 0, _T("ID_M_PLBL1"));
+    m_plblTitle->SetBorderState(uiRect::BORDER_NONE);
+    m_plblTitle->SetBackgroundColour(wxColour(15,83,210));
     m_pbtnLaunch = new wmButton(this, ID_M_PBTN1, _("Launch PAM"), wxPoint(50,360), wxSize(100,100), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
     m_pbtnLaunch->SetBackgroundColour(wxColour(0,128,64));
     m_pbtnLaunch->SetColourDisabled(wxColour(wxT("#A0A0A0")));
@@ -122,6 +123,7 @@ pammDialog::pammDialog(wxWindow* parent,wxWindowID id) :
 
     m_bRestart = false;
 
+    m_plblTitle->SetLabel(wxString::Format(wxT("Pi Audio Monitor Manager: %d.%d.%d.%d"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD,AutoVersion::REVISION));
 }
 
 pammDialog::~pammDialog()

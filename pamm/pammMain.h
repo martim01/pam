@@ -69,7 +69,7 @@ class pammDialog: public wxDialog
         //(*Declarations(pammDialog)
         wxListBox* m_plbxLog;
         wmButton* m_pbtnReboot;
-        wmLabel* m_pLbl1;
+        wmLabel* m_plblTitle;
         wmButton* m_pbtnShutdown;
         wmLabel* m_plblHeartbeat;
         wmLabel* m_pLbl2;
