@@ -127,7 +127,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     //*)
 
     m_pClient = new PammClient();
-    if(m_pClient->Connect(wxT("localhost"), wxT("pamm.ipc"), wxT("pam")))
+    if(m_pClient->Connect(wxT("localhost"), wxT("/tmp/pamm.ipc"), wxT("pam")))
     {
 
     }

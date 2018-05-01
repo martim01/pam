@@ -13,12 +13,10 @@ bool PammClient::Connect(const wxString& sHost, const wxString& sService, const 
 {
     // suppress the log messages from MakeConnection()
     //wxLogNull nolog;
-    wxLogMessage(wxT("Attempt to connect to %s"), sService.c_str());
 
     m_pConnection = dynamic_cast<PammConnection*>(MakeConnection(wxGetHostName(), sService, sTopic));
     if ( !m_pConnection )
     {
-        wxLogMessage(wxT("Failed to connect"));
         return false;
     }
 

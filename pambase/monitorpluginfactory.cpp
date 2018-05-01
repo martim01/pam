@@ -70,7 +70,7 @@ bool MonitorPluginFactory::LoadLibrary(const wxString& sLibrary)
         #ifdef __WXMSW__
             wxString sDir(wxT("lib"));
         #else
-            wxString sDir(wxStandardPaths::Get().GetPluginsDir());
+            wxString sDir(GetPluginDirectory());
         #endif // __WXMSW__
 
         #ifdef PAMBASE_DEBUG

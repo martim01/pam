@@ -116,7 +116,7 @@ pammDialog::pammDialog(wxWindow* parent,wxWindowID id) :
     m_nCrashRestarts = 0;
 
     m_pServer = new PamServer();
-    m_pServer->Create(wxT("pamm.ipc"));
+    m_pServer->Create(wxT("/tmp/pamm.ipc"));
     Connect(wxID_ANY, wxEVT_PROCESS_FINISHED, (wxObjectEventFunction)&pammDialog::OnPamClosed);
 
     Connect(wxID_ANY, wxEVT_IPC_RESTART, (wxObjectEventFunction)&pammDialog::OnPamRestart);
@@ -131,7 +131,7 @@ pammDialog::~pammDialog()
     //(*Destroy(pammDialog)
     //*)
     delete m_pServer;
-    wxRemove(wxT("pamm.ipc"));
+    //wxRemove(wxT("/tmp/pamm.ipc"));
 }
 
 void pammDialog::OnQuit(wxCommandEvent& event)
@@ -166,7 +166,7 @@ void pammDialog::OnPamClosed(wxCommandEvent& event)
 
     Log(wxT("Pam [#%d] closed. Exit code=%d"), event.GetInt(), event.GetExtraLong());
 
-    if(event.GetExtraLong() != -1)
+    if(event.GetExtraLong() != -1 && event.GetExtraLong() != -15)
     {
         m_nCrashRestarts++;
         Log(wxT("Pam [#%d] closed. Crash count %d"), event.GetInt(), m_nCrashRestarts);
@@ -189,13 +189,13 @@ void pammDialog::LaunchPam()
                 wxString sPam = wxT("C:\\developer\\matt\\pam2\\bin\\Debug\\pam2");
             #else
 
-              wxString sPam = wxT("/home/pi/pam/bin/Linux\ Release/pam2");
+              wxString sPam = wxT("pam2");
             #endif
         #else
-            wxString sPam = wxT("/home/pi/pam/bin/Linux\ Release/pam2");
+            wxString sPam = wxT("/home/pi/pam/bin/Linux Release/pam2");
         #endif
 
-        if ( !wxExecute(sPam, wxEXEC_ASYNC, m_pProcess) )
+        if ( wxExecute(sPam, wxEXEC_ASYNC, m_pProcess) <= 0)
         {
             Log(wxString::Format(wxT("Failed to launch %s"), sPam.c_str()));
             delete m_pProcess;
