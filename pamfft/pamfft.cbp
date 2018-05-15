@@ -113,7 +113,7 @@
 			<Add directory="$(#kiss.include)/tools" />
 		</Compiler>
 		<Linker>
-			<Add directory="../../lib" />
+			<Add directory="../lib" />
 		</Linker>
 		<Unit filename="../external/kiss_fft130/kiss_fft.c">
 			<Option compilerVar="CC" />

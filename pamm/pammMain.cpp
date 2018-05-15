@@ -20,6 +20,7 @@
 #include "wxpamserver.h"
 #include "wxpamconnection.h"
 #include "version.h"
+#include "settings.h"
 
 //helper functions
 enum wxbuildinfoformat {
@@ -110,7 +111,7 @@ pammDialog::pammDialog(wxWindow* parent,wxWindowID id) :
     //*)
 
     #ifdef __WXGNU__
-    wxExecute(wxT("sudo route add -net 224.0.0.0 netmask 240.0.0.0 eth0"));
+    wxExecute(wxT("route add -net 224.0.0.0 netmask 240.0.0.0 eth0"));
     #endif // __WXGNU__
 
     m_nCrashRestarts = 0;
@@ -124,6 +125,11 @@ pammDialog::pammDialog(wxWindow* parent,wxWindowID id) :
     m_bRestart = false;
 
     m_plblTitle->SetLabel(wxString::Format(wxT("Pi Audio Monitor Manager: %d.%d.%d.%d"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD,AutoVersion::REVISION));
+
+    Log(wxString::Format(wxT("Executable Path: %s"), Settings::Get().GetExecutableDirectory().c_str()));
+    Log(wxString::Format(wxT("Document Path: %s"), Settings::Get().GetDocumentDirectory().c_str()));
+    Log(wxString::Format(wxT("Config Path: %s"), Settings::Get().GetConfigDirectory().c_str()));
+    Log(wxString::Format(wxT("Plugins Path: %s"), Settings::Get().GetPluginDirectory().c_str()));
 }
 
 pammDialog::~pammDialog()

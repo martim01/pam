@@ -5,6 +5,7 @@
 #include <wx/log.h>
 #include <wx/xml/xml.h>
 #include <wx/stdpaths.h>
+#include "settings.h"
 
 using namespace std;
 
@@ -45,12 +46,8 @@ bool TestPluginFactory::LoadTestLibrary(const wxString& sLibrary)
     {
         wxString sCan = wxDynamicLibrary::CanonicalizeName(sLibrary);
 
-        #ifdef __WXMSW__
-            wxString sDir(wxT("lib"));
-        #else
-            wxString sDir(GetPluginDirectory());
+        wxString sDir(Settings::Get().GetPluginDirectory());
 
-        #endif // __WXMSW__
 
         #ifdef PAMBASE_DEBUG
             wxString sLib(wxString::Format(wxT("%s/debug/%s"),sDir.c_str(), sCan.c_str()));
@@ -192,15 +189,5 @@ plugin TestPluginFactory::GetPluginDetails(const wxString& sDir, const wxString&
 
 wxString TestPluginFactory::GetPluginDirectory()
 {
-     #ifdef __WXMSW__
-        wxString sDir(wxT("lib"));
-    #else
-        wxString sDir(wxStandardPaths::Get().GetPluginsDir());
-    #endif // __WXMSW__
-
-    #ifdef PAMBASE_DEBUG
-        return wxString::Format(wxT("%s/debug"),sDir.c_str());
-    #else
-      return sDir;
-    #endif
+     return Settings::Get().GetPluginDirectory();
 }

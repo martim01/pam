@@ -28,6 +28,12 @@ class PAMBASE_IMPEXPORT Settings
         void AddHandler(const wxString& sSection, const wxString& sKey, wxEvtHandler* pHandler);
         void RemoveHandler(wxEvtHandler* pHandler);
 
+        wxString GetExecutableDirectory() const;
+        wxString GetConfigDirectory() const;
+        wxString GetDocumentDirectory() const;
+        wxString GetPluginDirectory() const;
+
+
     protected:
         Settings();
         iniManager m_iniManager;

@@ -740,7 +740,7 @@ void pam2Dialog::InputChanged(const wxString& sKey)
 void pam2Dialog::OpenFileForReading()
 {
     wxString sFilePath;
-    sFilePath << Settings::Get().Read(wxT("Input"), wxT("Directory"), wxStandardPaths::Get().GetDocumentsDir()) << wxT("/") << Settings::Get().Read(wxT("Input"), wxT("File"), wxEmptyString) << wxT(".wav");
+    sFilePath << Settings::Get().GetDocumentDirectory() << wxT("/") << Settings::Get().Read(wxT("Input"), wxT("File"), wxEmptyString) << wxT(".wav");
     if(m_pSoundfile)
     {
         wmLog::Get()->Log(wxT("Close sound file"));

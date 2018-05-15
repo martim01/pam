@@ -367,7 +367,7 @@ void pnlSettings::ShowFiles()
 
 
     wxArrayString asFiles;
-    wxDir::GetAllFiles(Settings::Get().Read(wxT("Input"), wxT("Directory"), wxStandardPaths::Get().GetDocumentsDir()), &asFiles, wxT("*.wav"), wxDIR_FILES);
+    wxDir::GetAllFiles(Settings::Get().GetDocumentDirectory(), &asFiles, wxT("*.wav"), wxDIR_FILES);
 
     for(size_t i = 0; i < asFiles.GetCount(); i++)
     {

@@ -5,6 +5,7 @@
 #include <wx/log.h>
 #include <wx/xml/xml.h>
 #include "wmlogevent.h"
+#include "settings.h"
 #include <wx/stdpaths.h>
 
 using namespace std;
@@ -44,17 +45,7 @@ void MonitorPluginFactory::SetSwitcherPanels(wmSwitcherPanel* pswpMonitor, wmSwi
 
 wxString MonitorPluginFactory::GetPluginDirectory()
 {
-     #ifdef __WXMSW__
-        wxString sDir(wxT("lib"));
-    #else
-        wxString sDir(wxStandardPaths::Get().GetPluginsDir());
-    #endif // __WXMSW__
-
-    #ifdef PAMBASE_DEBUG
-        return wxString::Format(wxT("%s/debug"),sDir.c_str());
-    #else
-      return sDir;
-    #endif
+     return Settings::Get().GetPluginDirectory();
 }
 
 bool MonitorPluginFactory::LoadLibrary(const wxString& sLibrary)
@@ -67,11 +58,8 @@ bool MonitorPluginFactory::LoadLibrary(const wxString& sLibrary)
         wxString sCan = wxDynamicLibrary::CanonicalizeName(sLibrary);
 
 
-        #ifdef __WXMSW__
-            wxString sDir(wxT("lib"));
-        #else
-            wxString sDir(GetPluginDirectory());
-        #endif // __WXMSW__
+        wxString sDir(GetPluginDirectory());
+
 
         #ifdef PAMBASE_DEBUG
             wxString sLib(wxString::Format(wxT("%s/debug/%s"),sDir.c_str(), sCan.c_str()));

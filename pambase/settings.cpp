@@ -120,3 +120,32 @@ bool Settings::RemoveSection(const wxString& sSection)
     m_iniManager.RemoveSection(sSection);
     return m_iniManager.WriteIniFile(wxString::Format(wxT("%s/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
 }
+
+
+wxString Settings::GetExecutableDirectory() const
+{
+    #ifdef __WXGNU__
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("Executable"), wxT("/usr/bin"));
+    #else
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("Executable"), wxT("C:\\Program Files\\pam2"));
+    #endif // __WXGNU__
+}
+
+wxString Settings::GetConfigDirectory() const
+{
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("Config"), wxStandardPaths::Get().GetUserConfigDir());
+}
+
+wxString Settings::GetDocumentDirectory() const
+{
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("Config"), wxStandardPaths::Get().GetDocumentsDir());
+}
+
+wxString Settings::GetPluginDirectory() const
+{
+    #ifdef __WXGNU__
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("Executable"), wxT("/usr/lib/pam2"));
+    #else
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("Executable"), wxStandardPaths::Get().GetPluginsDir());
+    #endif // __WXGNU__
+}
