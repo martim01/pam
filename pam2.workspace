@@ -7,10 +7,7 @@
 			<Depends filename="pamfft/pamfft.cbp" />
 			<Depends filename="pambase/pambase.cbp" />
 		</Project>
-		<Project filename="plugins/spectogram/spectogram.cbp">
-			<Depends filename="pamfft/pamfft.cbp" />
-			<Depends filename="pambase/pambase.cbp" />
-		</Project>
+		<Project filename="plugins/spectogram/spectogram.cbp" />
 		<Project filename="plugins/lissajou/lissajou.cbp">
 			<Depends filename="pambase/pambase.cbp" />
 		</Project>
@@ -48,6 +45,7 @@
 		<Project filename="plugins/peak count/peakcount.cbp" />
 		<Project filename="plugins/record/record.cbp" />
 		<Project filename="pam2.cbp">
+			<Depends filename="pambase/pambase.cbp" />
 			<Depends filename="pamfft/pamfft.cbp" />
 			<Depends filename="plugins/fft/fft.cbp" />
 			<Depends filename="plugins/spectogram/spectogram.cbp" />
@@ -65,7 +63,6 @@
 			<Depends filename="plugins/peak log/peak log.cbp" />
 			<Depends filename="plugins/peak count/peakcount.cbp" />
 			<Depends filename="plugins/record/record.cbp" />
-			<Depends filename="pambase/pambase.cbp" />
 		</Project>
 		<Project filename="pamm/pamm.cbp">
 			<Depends filename="pam2.cbp" />

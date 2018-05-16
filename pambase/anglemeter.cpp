@@ -356,7 +356,7 @@ void AngleMeter::SetMeterDisplay(short nDisplay)
             break;
         case LOUD:
             m_dMax = 0.0;
-            m_uiType.SetLabel(wxT("LKFS"));
+            m_uiType.SetLabel(wxT("LUFS"));
             break;
     }
 

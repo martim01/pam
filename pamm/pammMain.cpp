@@ -110,8 +110,9 @@ pammDialog::pammDialog(wxWindow* parent,wxWindowID id) :
     Connect(ID_TIMER1,wxEVT_TIMER,(wxObjectEventFunction)&pammDialog::OnSecondTrigger);
     //*)
 
+    SetPosition(wxPoint(0,0));
     #ifdef __WXGNU__
-    wxExecute(wxT("route add -net 224.0.0.0 netmask 240.0.0.0 eth0"));
+    wxExecute(wxT("sudo route add -net 224.0.0.0 netmask 240.0.0.0 eth0"));
     #endif // __WXGNU__
 
     m_nCrashRestarts = 0;
@@ -251,10 +252,10 @@ void pammDialog::OnSecondTrigger(wxTimerEvent& event)
         wxTimeSpan tsPoke(wxDateTime::Now()-m_pServer->GetLastPoke());
         m_plblHeartbeat->SetLabel(tsPoke.Format(wxT("%H:%M:%S")));
 
-        if(tsPoke.GetSeconds().ToLong() > 4)
+        if(tsPoke.GetSeconds().ToLong() > 40)
         {
             Log(wxT("PAM has stalled. Kill it"));
-            wxKill(m_pProcess->GetPid(), wxSIGKILL);
+            //wxKill(m_pProcess->GetPid(), wxSIGKILL);
         }
     }
     else

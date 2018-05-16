@@ -303,10 +303,6 @@ void pnlSettingsPlugins::ShowMonitorPlugins()
                 #endif // __WXGNU__
                 m_plstCurrent->AddButton(aPlugin.sName);
             }
-            else
-            {
-                wxLogMessage(wxT("Plugin %s has no name"), itBegin->second.c_str());
-            }
         }
     }
 

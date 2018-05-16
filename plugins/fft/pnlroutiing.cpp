@@ -48,8 +48,8 @@ void pnlRoutiing::SetNumberOfChannels(unsigned int nChannels)
     {
         m_plstFFT_Routing->AddButton(wxT("Left"), wxNullBitmap, (void*)FFTAlgorithm::ANALYSE_L);
         m_plstFFT_Routing->AddButton(wxT("Right"), wxNullBitmap, (void*)FFTAlgorithm::ANALYSE_R);
-        m_plstFFT_Routing->AddButton(wxT("Mono"), wxNullBitmap, (void*)FFTAlgorithm::ANALYSE_L_P_R);
-        m_plstFFT_Routing->AddButton(wxT("Stereo"), wxNullBitmap, (void*)FFTAlgorithm::ANALYSE_L_M_R);
+        m_plstFFT_Routing->AddButton(wxT("Middle"), wxNullBitmap, (void*)FFTAlgorithm::ANALYSE_L_P_R);
+        m_plstFFT_Routing->AddButton(wxT("Side"), wxNullBitmap, (void*)FFTAlgorithm::ANALYSE_L_M_R);
     }
     else
     {

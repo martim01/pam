@@ -40,7 +40,7 @@ FftMeter::FftMeter(wxWindow *parent, FFTBuilder* pBuilder, wxWindowID id, const 
     SetMeter(FFT);
     m_vThirdOctave.resize(35);
     SetOverlap(50.0);
-    m_dFall = 2;
+    m_dFall = 0.5;
     m_nBinSelected = 0;
     m_bCursorMode = false;
 
@@ -90,6 +90,7 @@ bool FftMeter::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, const
     m_timerNudge.SetOwner(this);
     Connect(wxID_ANY, wxEVT_TIMER, (wxObjectEventFunction)&FftMeter::OnTimerNudge);
 
+    SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
 
     return true;
 }
@@ -595,7 +596,7 @@ void FftMeter::OnLeftDown(wxMouseEvent& event)
             m_timerNudge.Start(100);
             m_nNudge = UP;
         }
-        else
+        else if(event.GetPosition().y > m_uiNudgeDown.GetBottom())
         {
 
             //convert x to BIN

@@ -82,7 +82,19 @@ bool MonitorPluginFactory::LoadLibrary(const wxString& sLibrary)
                     m_mLibraries.insert(make_pair(sLibrary, pLib));
                     return true;
                 }
+                else
+                {
+                    wmLog::Get()->Log(wxT("Monitor Plugin"), wxString::Format(wxT("'%s' cannot execute function CreateMonitorBuilder"), sLib.c_str()));
+                }
             }
+            else
+            {
+                wmLog::Get()->Log(wxT("Monitor Plugin"), wxString::Format(wxT("'%s' has no function CreateMonitorBuilder"), sLib.c_str()));
+            }
+        }
+        else
+        {
+            wmLog::Get()->Log(wxT("Monitor Plugin"), wxString::Format(wxT("Could not load '%s'"), sLib.c_str()));
         }
         delete pLib;
     }
