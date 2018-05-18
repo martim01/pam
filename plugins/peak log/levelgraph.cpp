@@ -55,6 +55,7 @@ void LevelGraph::OnPaint(wxPaintEvent& event)
     dc.SetPen(*wxTRANSPARENT_PEN);
     dc.DrawRectangle(GetClientRect());
 
+
     //draw the zones
     dc.SetPen(*wxTRANSPARENT_PEN);
     for(list<zone>::iterator itZone = m_lstZones.begin(); itZone != m_lstZones.end(); ++itZone)
@@ -74,48 +75,27 @@ void LevelGraph::OnPaint(wxPaintEvent& event)
         dc.DrawLine(0, dY, GetClientSize().x, dY);
     }
 
-//    double dPPM0 = m_dResolution*-34.0;
-//    for(int i = 0; i < 9; i++)
-//    {
-//        if(i != 4)
-//        {
-//            dc.SetPen(wxPen(wxColour(100,100,100), 1, wxDOT));
-//        }
-//        else
-//        {
-//            dc.SetPen(wxPen(wxColour(100,100,160), 1, wxDOT));
-//        }
-//        double dY = static_cast<double>(i*4)*m_dResolution;
-//        dc.DrawLine(0, dY+dPPM0, GetClientSize().x, dY+dPPM0);
-//    }
-
 
     dc.SetPen(wxPen(GetForegroundColour()));
 
     dc.SetFont(GetFont());
     uiRect rectMax(wxRect(GetClientRect().GetLeft(), 0, 50, 20));
     uiRect rectMin(wxRect(GetClientRect().GetLeft(), GetClientRect().GetBottom()-20, 50, 20));
-    //rectMax.SetBackgroundColour(*wxBLACK);
-    //rectMin.SetBackgroundColour(*wxBLACK);
 
     for(map<wxString, graph>::iterator itGraph = m_mGraphs.begin(); itGraph != m_mGraphs.end(); ++itGraph)
     {
-        if(itGraph->second.bShow)
+        if(itGraph->second.bShow && itGraph->second.lstPeaks.empty() == false)
         {
             dc.SetPen(itGraph->second.clrLine);
             double dY_old(0);
 
             int x = GetClientRect().GetWidth()-1;
-            list<double>::iterator itPeak = itGraph->second.lstPeaks.end();
-            while(itPeak != itGraph->second.lstPeaks.begin())
+            for(list<double>::reverse_iterator itPeak = itGraph->second.lstPeaks.rbegin(); itPeak != itGraph->second.lstPeaks.rend(); ++itPeak)
             {
-                --itPeak;
-
                 double dPeak = (*itPeak)-itGraph->second.dMin;
-                wxLogDebug(wxT("Peak %.2f:  %.2f"), dPeak, (itGraph->second.dResolution*dPeak));
-
-                dc.DrawLine(x+1, dY_old, x, (GetClientRect().GetBottom()-itGraph->second.dResolution*dPeak));
-                dY_old=(GetClientRect().GetBottom()-itGraph->second.dResolution*dPeak);
+                double dTop = max((double)GetClientRect().GetTop(), GetClientRect().GetBottom()-(itGraph->second.dResolution*dPeak));
+                dc.DrawLine(x+1, dY_old, x, dTop);
+                dY_old=dTop;
                 x--;
             }
             if(itGraph->second.bShowRange)

@@ -631,28 +631,27 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
 
     m_plblQoSJitter->SetLabel(wxString::Format(wxT("%f ms"),pData->dJitter));
 
-
     m_pGraph->SetLimit(wxT("kBit/s"), pData->dkbits_per_second_max, pData->dkbits_per_second_min);
     m_pGraph->SetLimit(wxT("kBit/s Av"), pData->dkbits_per_second_max, pData->dkbits_per_second_min);
     m_pGraph->SetLimit(wxT("Packet Gap"), pData->dInter_packet_gap_ms_max, pData->dInter_packet_gap_ms_min);
     m_pGraph->SetLimit(wxT("Packet Loss"), pData->dPacket_loss_fraction_max, pData->dPacket_loss_fraction_min);
 
-    //pair<double,double> pairMinMax(m_pGraph->GetRange(wxT("kBit/s")));
-    //m_pGraph->SetLimit(wxT("kBit/s"), max(pairMinMax.second, pData->dkbits_per_second_Now), min(pairMinMax.first, pData->dkbits_per_second_Now));
-    //m_pGraph->SetLimit(wxT("kBit/s Av"), max(pairMinMax.second, pData->dkbits_per_second_Now), min(pairMinMax.first, pData->dkbits_per_second_Now));
+    pair<double,double> pairMinMax(m_pGraph->GetRange(wxT("kBit/s")));
+    m_pGraph->SetLimit(wxT("kBit/s"), max(pairMinMax.second, pData->dkbits_per_second_Now), min(pairMinMax.first, pData->dkbits_per_second_Now));
+    m_pGraph->SetLimit(wxT("kBit/s Av"), max(pairMinMax.second, pData->dkbits_per_second_Now), min(pairMinMax.first, pData->dkbits_per_second_Now));
     m_pGraph->AddPeak(wxT("kBit/s"), pData->dkbits_per_second_Now);
     m_pGraph->AddPeak(wxT("kBit/s Av"), pData->dkbits_per_second_Av);
 
-    //pairMinMax = m_pGraph->GetRange(wxT("Packet Gap"));
-    //m_pGraph->SetLimit(wxT("Packet Gap"), max(pairMinMax.second, pData->dInter_packet_gap_ms_Now), min(pairMinMax.first, pData->dInter_packet_gap_ms_Now));
+    pairMinMax = m_pGraph->GetRange(wxT("Packet Gap"));
+    m_pGraph->SetLimit(wxT("Packet Gap"), max(pairMinMax.second, pData->dInter_packet_gap_ms_Now), min(pairMinMax.first, pData->dInter_packet_gap_ms_Now));
     m_pGraph->AddPeak(wxT("Packet Gap"), pData->dInter_packet_gap_ms_Now);
 
-    //pairMinMax = m_pGraph->GetRange(wxT("Packet Loss"));
-    //m_pGraph->SetLimit(wxT("Packet Loss"), max(pairMinMax.second, pData->dPacket_loss_fraction_av), min(pairMinMax.first, pData->dPacket_loss_fraction_av));
+    pairMinMax = m_pGraph->GetRange(wxT("Packet Loss"));
+    m_pGraph->SetLimit(wxT("Packet Loss"), max(pairMinMax.second, pData->dPacket_loss_fraction_av), min(pairMinMax.first, pData->dPacket_loss_fraction_av));
     m_pGraph->AddPeak(wxT("Packet Loss"), pData->dPacket_loss_fraction_av);
 
-    //pairMinMax = m_pGraph->GetRange(wxT("Jitter"));
-    //m_pGraph->SetLimit(wxT("Jitter"), max(pairMinMax.second, pData->dJitter), min(pairMinMax.first, pData->dJitter));
+    pairMinMax = m_pGraph->GetRange(wxT("Jitter"));
+    m_pGraph->SetLimit(wxT("Jitter"), max(pairMinMax.second, pData->dJitter), min(pairMinMax.first, pData->dJitter));
     m_pGraph->AddPeak(wxT("Jitter"), pData->dJitter);
 
 
