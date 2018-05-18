@@ -44,8 +44,10 @@ void R128Calculator::InputSession(const session& aSession)
 void R128Calculator::CalculateLevel(const timedbuffer* pBuffer)
 {
     //copy the frames into chunks
+
+
     if(m_lstChunk.empty())
-    {
+    {   //No chunk yet so add an empty one
         m_lstChunk.push_back(chunk100());
     }
 
@@ -58,7 +60,7 @@ void R128Calculator::CalculateLevel(const timedbuffer* pBuffer)
             {
                 //got enough chunks now so work out the rms value
                 WorkoutRMS();
-
+                //add a new chunk to fill
                 m_lstChunk.push_back(chunk100());
             }
             m_lstChunk.back().lstSquares.push_back(ApplyFilter(pBuffer->GetBuffer()[i+j],j));
@@ -75,17 +77,18 @@ void R128Calculator::CalculateMomentary()
         double dMomentaryValue = 0.0;
         for(int i = 0; i < 4; i++)
         {
-            dMomentaryValue += (*itChunk).dRMS;
+            dMomentaryValue += (*itChunk).dRMS/4.0;
+            ++itChunk;
         }
-        dMomentaryValue /= 4.0;
         m_dMomentary = -0.691 + 10 * log10(dMomentaryValue);
 
+        //store the no db value in our short list
         m_lstShort.push_back(dMomentaryValue);
         if(m_dMomentary > -70.0)
-        {
+        {   //greater than silence so store the none db value in our live list
             m_lstLive.push_back(dMomentaryValue);
         }
-
+        //move the sliding frame along 100ms
         m_lstChunk.pop_front();
 
         CalculateShort();
@@ -101,43 +104,40 @@ void R128Calculator::CalculateShort()
         double dShortValue = 0.0;
         for(int i = 0; i < 30; i++)
         {
-            dShortValue += (*itShort);
+            dShortValue += (*itShort)/30.0;
+            ++itShort;
         }
-        dShortValue /= 30.0;
 
         m_dShort = -0.691 + 10 * log10(dShortValue);
 
+        //move the sliding frame along 100ms
         m_lstShort.pop_front();
     }
 }
 
 void R128Calculator::CalculateLive()
 {
+    //work out absolute non-gated value
     double dLiveValue(0.0);
     for(list<double>::iterator itLive = m_lstLive.begin(); itLive != m_lstLive.end(); ++itLive)
     {
-        dLiveValue += (*itLive);
+        dLiveValue += (*itLive)/static_cast<double>(m_lstLive.size());
     }
-    dLiveValue /= static_cast<double>(m_lstLive.size());
-
     m_dLiveAbs = -0.691 + 10*log10(dLiveValue);
 
-    list<double> lstGate;
+    //now
+    double dLiveGate(0.0);
+    double dCount(0);
     for(list<double>::iterator itLive = m_lstLive.begin(); itLive != m_lstLive.end(); ++itLive)
     {
         double dValue = -0.691 + 10*log10((*itLive));
         if(m_dLiveAbs-dValue < 10.0)
         {
-            lstGate.push_back((*itLive));
+            dLiveGate += (*itLive);
+            dCount++;
         }
     }
-
-    double dLiveGate(0.0);
-    for(list<double>::iterator itGate = lstGate.begin(); itGate != lstGate.end(); ++itGate)
-    {
-        dLiveGate += (*itGate);
-    }
-    dLiveGate /= static_cast<double>(lstGate.size());
+    dLiveGate /= dCount;
 
     m_dLiveGate = -0.691 + 10*log10(dLiveValue);
 
