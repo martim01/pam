@@ -45,7 +45,7 @@ void MonitorPluginFactory::SetSwitcherPanels(wmSwitcherPanel* pswpMonitor, wmSwi
 
 wxString MonitorPluginFactory::GetPluginDirectory()
 {
-     return Settings::Get().GetPluginDirectory();
+     return Settings::Get().GetMonitorPluginDirectory();
 }
 
 bool MonitorPluginFactory::LoadLibrary(const wxString& sLibrary)
@@ -167,7 +167,7 @@ map<wxString, wxDynamicLibrary*>::const_iterator MonitorPluginFactory::FindLibra
 
 plugin MonitorPluginFactory::GetPluginDetails(const wxString& sDir, const wxString& sLibrary)
 {
-    wxLogNull ln;
+    //wxLogNull ln;
 
     plugin aPlugin;
     aPlugin.sLibrary = sLibrary;

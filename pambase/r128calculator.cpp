@@ -1,7 +1,7 @@
 #include "r128calculator.h"
 #include "session.h"
 #include "timedbuffer.h"
-
+#include <wx/log.h>
 #include <math.h>
 
 using namespace std;
@@ -37,49 +37,52 @@ void R128Calculator::InputSession(const session& aSession)
         m_nInputChannels = 0;
         m_nChunkSize = 0;
     }
-    m_vPreFilter = vector<pair<double,double> >(m_nInputChannels, make_pair(0.0,0.0));
-    m_vFilter = vector<pair<double,double> >(m_nInputChannels, make_pair(0.0,0.0));
+    ResetMeter();
 }
 
 void R128Calculator::CalculateLevel(const timedbuffer* pBuffer)
 {
     //copy the frames into chunks
 
-
-    if(m_lstChunk.empty())
-    {   //No chunk yet so add an empty one
-        m_lstChunk.push_back(chunk100());
-    }
-
-
-    for(unsigned int i=0; i < pBuffer->GetBufferSize(); i+=m_nInputChannels)
+    wxLogMessage(wxT("ChunkSize  is %d"), m_nChunkSize);
+    if(m_nChunkSize != 0)
     {
-        for(unsigned int j = 0; j < m_nInputChannels; j++)
+
+        for(unsigned int i=0; i < pBuffer->GetBufferSize(); i+=m_nInputChannels)
         {
-            if(m_lstChunk.back().lstSquares.size() == m_nChunkSize)
+            for(unsigned int j = 0; j < m_nInputChannels; j++)
             {
-                //got enough chunks now so work out the rms value
-                WorkoutRMS();
-                //add a new chunk to fill
-                m_lstChunk.push_back(chunk100());
+
+                if(m_lstChunk.size() == m_nChunkSize)
+                {
+                    wxLogMessage(wxT("ChunkSize %d"), m_nChunkSize);
+                    //got enough chunks now so work out the MS value
+                   // WorkoutMS();
+                    m_lstChunk.clear();
+                    wxLogMessage(wxT("ChunkSize Cleared"));
+
+                }
+
+
+                m_lstChunk.push_back(ApplyFilter(pBuffer->GetBuffer()[i+j],j));
             }
-            m_lstChunk.back().lstSquares.push_back(ApplyFilter(pBuffer->GetBuffer()[i+j],j));
         }
+        CalculateMomentary();
     }
-    CalculateMomentary();
 }
 
 void R128Calculator::CalculateMomentary()
 {
-    while(m_lstChunk.size() > 4)    //at least 400 ms
+    while(m_lstMS.size() > 4)    //at least 400 ms
     {
-        list<chunk100>::iterator itChunk = m_lstChunk.begin();
+        list<double>::iterator itChunk = m_lstMS.begin();
         double dMomentaryValue = 0.0;
         for(int i = 0; i < 4; i++)
         {
-            dMomentaryValue += (*itChunk).dRMS/4.0;
+            dMomentaryValue += (*itChunk);
             ++itChunk;
         }
+        dMomentaryValue /=4.0;
         m_dMomentary = -0.691 + 10 * log10(dMomentaryValue);
 
         //store the no db value in our short list
@@ -89,10 +92,10 @@ void R128Calculator::CalculateMomentary()
             m_lstLive.push_back(dMomentaryValue);
         }
         //move the sliding frame along 100ms
-        m_lstChunk.pop_front();
+        m_lstMS.pop_front();
 
         CalculateShort();
-        CalculateLive();
+        //CalculateLive();
     }
 }
 
@@ -104,10 +107,10 @@ void R128Calculator::CalculateShort()
         double dShortValue = 0.0;
         for(int i = 0; i < 30; i++)
         {
-            dShortValue += (*itShort)/30.0;
+            dShortValue += (*itShort);
             ++itShort;
         }
-
+        dShortValue/=30.0;
         m_dShort = -0.691 + 10 * log10(dShortValue);
 
         //move the sliding frame along 100ms
@@ -143,14 +146,16 @@ void R128Calculator::CalculateLive()
 
 }
 
-void R128Calculator::WorkoutRMS()
+void R128Calculator::WorkoutMS()
 {
-    m_lstChunk.back().dRMS = 0.0;
-    for(list<double>::iterator itRMS = m_lstChunk.back().lstSquares.begin(); itRMS != m_lstChunk.back().lstSquares.end(); ++itRMS)
+    double dMS = 0.0;
+    for(list<double>::iterator itMS = m_lstChunk.begin(); itMS != m_lstChunk.end(); ++itMS)
     {
-        m_lstChunk.back().dRMS += (*itRMS); //@todo we should do something clever here to do with weighting of channels
+        dMS += (*itMS); //@todo we should do something clever here to do with weighting of channels
     }
-    m_lstChunk.back().dRMS /= m_lstChunk.back().lstSquares.size();
+    dMS /= static_cast<double>(m_lstChunk.size());
+
+    m_lstMS.push_back(dMS);
 }
 
 double R128Calculator::GetMomentaryLevel()
@@ -175,6 +180,7 @@ double R128Calculator::GetLURange()
 
 void R128Calculator::ResetMeter()
 {
+    m_lstMS.clear();
     m_lstChunk.clear();
     m_lstShort.clear();
     m_lstLive.clear();
@@ -186,10 +192,14 @@ void R128Calculator::ResetMeter()
 
     m_vPreFilter.clear();
     m_vFilter.clear();
+
+    m_vPreFilter = vector<pair<double,double> >(m_nInputChannels, make_pair(0.0,0.0));
+    m_vFilter = vector<pair<double,double> >(m_nInputChannels, make_pair(0.0,0.0));
 }
 
 double R128Calculator::ApplyFilter(double dSample, unsigned int nChannel)
 {
+
      double dPw_n = dSample - (m_vPreFilter[nChannel].first * PF_A1 + m_vPreFilter[nChannel].second * PF_A2);
      double dH_n = dPw_n * PF_B0 + m_vPreFilter[nChannel].first * PF_B1 + m_vPreFilter[nChannel].second * PF_B2;
      // shuffle the samples along the delay ..

@@ -141,10 +141,19 @@ wxString Settings::GetDocumentDirectory() const
     return m_iniManager.GetIniString(wxT("Paths"), wxT("Config"), wxStandardPaths::Get().GetDocumentsDir());
 }
 
-wxString Settings::GetPluginDirectory() const
+wxString Settings::GetMonitorPluginDirectory() const
 {
     #ifdef __WXGNU__
-    return m_iniManager.GetIniString(wxT("Paths"), wxT("Executable"), wxT("/usr/lib/pam2"));
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("Executable"), wxT("/usr/lib/pam2/monitor"));
+    #else
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("Executable"), wxStandardPaths::Get().GetPluginsDir());
+    #endif // __WXGNU__
+}
+
+wxString Settings::GetTestPluginDirectory() const
+{
+    #ifdef __WXGNU__
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("Executable"), wxT("/usr/lib/pam2/test"));
     #else
     return m_iniManager.GetIniString(wxT("Paths"), wxT("Executable"), wxStandardPaths::Get().GetPluginsDir());
     #endif // __WXGNU__

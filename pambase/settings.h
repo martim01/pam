@@ -31,7 +31,8 @@ class PAMBASE_IMPEXPORT Settings
         wxString GetExecutableDirectory() const;
         wxString GetConfigDirectory() const;
         wxString GetDocumentDirectory() const;
-        wxString GetPluginDirectory() const;
+        wxString GetMonitorPluginDirectory() const;
+        wxString GetTestPluginDirectory() const;
 
 
     protected:

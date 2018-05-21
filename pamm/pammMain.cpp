@@ -130,7 +130,8 @@ pammDialog::pammDialog(wxWindow* parent,wxWindowID id) :
     Log(wxString::Format(wxT("Executable Path: %s"), Settings::Get().GetExecutableDirectory().c_str()));
     Log(wxString::Format(wxT("Document Path: %s"), Settings::Get().GetDocumentDirectory().c_str()));
     Log(wxString::Format(wxT("Config Path: %s"), Settings::Get().GetConfigDirectory().c_str()));
-    Log(wxString::Format(wxT("Plugins Path: %s"), Settings::Get().GetPluginDirectory().c_str()));
+    Log(wxString::Format(wxT("Monitor Plugins Path: %s"), Settings::Get().GetMonitorPluginDirectory().c_str()));
+    Log(wxString::Format(wxT("Test Plugins Path: %s"), Settings::Get().GetTestPluginDirectory().c_str()));
 }
 
 pammDialog::~pammDialog()

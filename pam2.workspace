@@ -27,6 +27,9 @@
 			<Depends filename="pambase/pambase.cbp" />
 		</Project>
 		<Project filename="plugins/polarscope/polarscope.cbp" />
+		<Project filename="plugins/r128/r128.cbp">
+			<Depends filename="pambase/pambase.cbp" />
+		</Project>
 		<Project filename="plugins/channel delay/channel delay.cbp">
 			<Depends filename="pamfft/pamfft.cbp" />
 			<Depends filename="pambase/pambase.cbp" />
@@ -56,6 +59,7 @@
 			<Depends filename="plugins/aoip info/aoip info.cbp" />
 			<Depends filename="plugins/radar/radar.cbp" />
 			<Depends filename="plugins/polarscope/polarscope.cbp" />
+			<Depends filename="plugins/r128/r128.cbp" />
 			<Depends filename="plugins/channel delay/channel delay.cbp" />
 			<Depends filename="plugins/distortion/distortion.cbp" />
 			<Depends filename="plugins/levels/levels.cbp" />

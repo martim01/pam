@@ -46,7 +46,7 @@ bool TestPluginFactory::LoadTestLibrary(const wxString& sLibrary)
     {
         wxString sCan = wxDynamicLibrary::CanonicalizeName(sLibrary);
 
-        wxString sDir(Settings::Get().GetPluginDirectory());
+        wxString sDir(Settings::Get().GetTestPluginDirectory());
 
 
         #ifdef PAMBASE_DEBUG
@@ -189,5 +189,5 @@ plugin TestPluginFactory::GetPluginDetails(const wxString& sDir, const wxString&
 
 wxString TestPluginFactory::GetPluginDirectory()
 {
-     return Settings::Get().GetPluginDirectory();
+     return Settings::Get().GetTestPluginDirectory();
 }

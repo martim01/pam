@@ -24,21 +24,17 @@ class PAMBASE_IMPEXPORT R128Calculator
     protected:
 
         double ApplyFilter(double dSample, unsigned int nChannel);
-        void WorkoutRMS();
+
         void CalculateMomentary();
         void CalculateShort();
         void CalculateLive();
 
-        struct chunk100
-        {
-            chunk100(){}
-            std::list<double> lstSquares;
-            double dRMS;
-        };
-
-        std::list<chunk100> m_lstChunk;
 
 
+        std::list<double> m_lstChunk;
+        std::list<double> m_lstMS;
+
+        void WorkoutMS();
 
         std::list<double> m_lstShort;
         std::list<double> m_lstLive;

@@ -148,6 +148,8 @@
 		<Unit filename="plugin.h" />
 		<Unit filename="ppm.cpp" />
 		<Unit filename="ppm.h" />
+		<Unit filename="r128calculator.cpp" />
+		<Unit filename="r128calculator.h" />
 		<Unit filename="session.h" />
 		<Unit filename="settingevent.cpp" />
 		<Unit filename="settingevent.h" />

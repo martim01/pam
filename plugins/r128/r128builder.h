@@ -2,7 +2,7 @@
 #include "monitorpluginbuilder.h"
 #include <wx/string.h>
 
-class R128Meter;
+class pnlEbuMeter;
 class SettingEvent;
 
 class WXEXPORT R128Builder : public MonitorPluginBuilder
@@ -27,7 +27,7 @@ class WXEXPORT R128Builder : public MonitorPluginBuilder
 
     protected:
 
-        friend class R128Meter;
+        friend class pnlEbuMeter;
 
         void ClearMeter();
         void OnSettingChanged(SettingEvent& event);
@@ -37,7 +37,7 @@ class WXEXPORT R128Builder : public MonitorPluginBuilder
 
         void LoadSettings();
     private:
-        R128Meter* m_pRadar;
+        pnlEbuMeter* m_pMeters;
 
         unsigned int m_nInputChannels;
         unsigned int m_nDisplayChannel;
