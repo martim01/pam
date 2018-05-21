@@ -27,5 +27,7 @@ class R128Thread : public wxThread
 
         double m_dLive;
         double m_dRange;
+        double m_dLiveTotal;
+        double m_dRangeTotal;
 };
 
