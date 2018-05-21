@@ -2,12 +2,12 @@
 #include "pnlEbuMeter.h"
 #include "session.h"
 #include "timedbuffer.h"
-#include "levelmeter.h"
+#include "r128meter.h"
 #include "r128builder.h"
 #include "wmbutton.h"
 #include "r128calculator.h"
 #include <array>
-
+#include <wx/log.h>
 #include <wx/font.h>
 #include <wx/intl.h>
 #include <wx/string.h>
@@ -176,17 +176,21 @@ void pnlEbuMeter::SetSession(const session& aSession)
 void pnlEbuMeter::CreateMeters()
 {
     int x = 55;
-    m_aMeters[0] = new LevelMeter(this,wxID_ANY, wxT("Ml"), -70, false, wxPoint(55, 0), wxSize(50, 480));
-    m_aMeters[1] = new LevelMeter(this,wxID_ANY, wxT("Sl"), -70, false, wxPoint(110, 0), wxSize(50, 480));
-    m_aMeters[2] = new LevelMeter(this,wxID_ANY, wxT("Il"), -70, false, wxPoint(200, 0), wxSize(50, 480));
-    m_aMeters[3] = new LevelMeter(this,wxID_ANY, wxT("Range"), -70, false, wxPoint(260, 0), wxSize(50, 480));
-    m_pLevels = new LevelMeter(this, wxID_ANY, wxEmptyString, -70, true, wxPoint(5,0), wxSize(50,481));
+    m_aMeters[0] = new R128Meter(this,wxID_ANY, wxT("Momentary"), -70, false, wxPoint(55, 0), wxSize(80, 480));
+    m_aMeters[1] = new R128Meter(this,wxID_ANY, wxT("Short"), -70, false, wxPoint(145, 0), wxSize(80, 480));
+    m_aMeters[2] = new R128Meter(this,wxID_ANY, wxT("Integrated"), -70, false, wxPoint(235, 0), wxSize(100, 480));
+    m_aMeters[3] = new R128Meter(this,wxID_ANY, wxT("Range"), -70, false, wxPoint(355, 0), wxSize(80, 480));
+    m_pLevels = new R128Meter(this, wxID_ANY, wxEmptyString, -70, true, wxPoint(5,0), wxSize(50,481));
 
     double dLevels[15] = {0,-3, -6, -9, -12, -15, -18, -21, -24, -30, -36, -42, -48, -54, -60};
 
+    m_aMeters[0]->SetLightColours(-38,wxColour(0,0,200), -8, wxColour(230,230,0), wxColour(255,100,100));
+    m_aMeters[1]->SetLightColours(-38,wxColour(0,0,200), -8, wxColour(230,230,0), wxColour(255,100,100));
+    m_aMeters[2]->SetLightColours(-38,wxColour(0,200,0), -8, wxColour(230,230,0), wxColour(255,100,100));
+
     for(size_t i = 0; i < 4; i++)
     {
-        m_aMeters[i]->SetLightColours(-38,wxColour(255,255,255), -8, wxColour(230,230,0), wxColour(255,100,100));
+
         m_aMeters[i]->SetLevels(dLevels,15, 0.0);
         m_aMeters[i]->SetShading(m_pBuilder->ReadSetting(wxT("Shading"),0)==1);
         m_aMeters[i]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlEbuMeter::OnInfoLeftUp,0,this);
@@ -201,15 +205,16 @@ void pnlEbuMeter::CreateMeters()
 void pnlEbuMeter::SetAudioData(const timedbuffer* pBuffer)
 {
     m_pR128->CalculateLevel(pBuffer);
+
     m_aMeters[0]->ShowValue(m_pR128->GetMomentaryLevel());
     m_aMeters[1]->ShowValue(m_pR128->GetShortLevel());
     m_aMeters[2]->ShowValue(m_pR128->GetLiveLevel());
-    m_aMeters[3]->ShowValue(m_pR128->GetLURange());
+    m_aMeters[3]->ShowValue(-70);//m_pR128->GetLURange());
 
-    if(m_pLevels)
-    {
-        m_pLevels->Refresh();
-    }
+//    if(m_pLevels)
+//    {
+//        m_pLevels->Refresh();
+//    }
 }
 
 

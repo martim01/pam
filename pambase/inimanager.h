@@ -31,6 +31,7 @@ class iniSection;
 
 typedef std::map<wxString,iniSection*> mapSection;
 typedef std::map<wxString,iniSection*>::iterator itSection;
+typedef std::map<wxString,iniSection*>::const_iterator itConstSection;
 /**
 *   @brief simple class to read and write ini files
 *   @author Matthew Martin
@@ -62,14 +63,14 @@ public:
     *   @param sDefault the default value of the key (this is returned if the key is not set)
     *   @return <i>string</i> the value of the key
     **/
-    const wxString& GetIniString(const wxString& sSection, const wxString& sKey, const wxString& sDefault);
+    const wxString& GetIniString(const wxString& sSection, const wxString& sKey, const wxString& sDefault) const;
     /** @brief Get the ini value for the specified key in the specified section.
     *   @param sSection the section of the ini file the key live is
     *   @param sKey the key you want to retrieve the value of
     *   @param nDefault the default value of the key (this is returned if the key is not set)
     *   @return <i>int</i> the value of the key
     **/
-	int GetIniInt(const wxString& sSection, const wxString& sKey, int nDefault);
+	int GetIniInt(const wxString& sSection, const wxString& sKey, int nDefault) const;
 
 	/** @brief Get the double value for the specified key in the specified section.
     *   @param sSection the section of the ini file the key live is
@@ -77,7 +78,7 @@ public:
     *   @param dDefault the default value of the key (this is returned if the key is not set)
     *   @return <i>double</i> the value of the key
     **/
-	double GetIniDouble(const wxString& sSection, const wxString& sKey, double dDefault);
+	double GetIniDouble(const wxString& sSection, const wxString& sKey, double dDefault) const;
 
     /** @brief Writes the stored sections and keys into an ini file
     *   @param sFilename the path and filename of the ini file to write to

@@ -167,7 +167,7 @@ map<wxString, wxDynamicLibrary*>::const_iterator MonitorPluginFactory::FindLibra
 
 plugin MonitorPluginFactory::GetPluginDetails(const wxString& sDir, const wxString& sLibrary)
 {
-    //wxLogNull ln;
+    wxLogNull ln;
 
     plugin aPlugin;
     aPlugin.sLibrary = sLibrary;

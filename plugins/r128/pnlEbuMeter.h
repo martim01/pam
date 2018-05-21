@@ -11,7 +11,7 @@ class timedbuffer;
 #include "wmlabel.h"
 #include <wx/panel.h>
 
-class LevelMeter;
+class R128Meter;
 class wmButton;
 class R128Builder;
 class R128Calculator;
@@ -79,8 +79,8 @@ class pnlEbuMeter: public wxPanel
 		void CreateMeters();
 
         R128Builder* m_pBuilder;
-        LevelMeter* m_pLevels;
-		std::array<LevelMeter*, 4> m_aMeters;
+        R128Meter* m_pLevels;
+		std::array<R128Meter*, 4> m_aMeters;
 
         R128Calculator* m_pR128;
 

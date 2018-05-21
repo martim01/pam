@@ -29,12 +29,8 @@ class PAMBASE_IMPEXPORT R128Calculator
         void CalculateShort();
         void CalculateLive();
 
-
-
-        std::list<double> m_lstChunk;
         std::list<double> m_lstMS;
 
-        void WorkoutMS();
 
         std::list<double> m_lstShort;
         std::list<double> m_lstLive;
@@ -49,6 +45,8 @@ class PAMBASE_IMPEXPORT R128Calculator
         unsigned int m_nChunkFrames;
         unsigned int  m_nChunkSize;
 
+        unsigned int m_nFrames;
+        double m_dTempMS;
 
         std::vector<std::pair<double,double> > m_vPreFilter;
         std::vector<std::pair<double,double> > m_vFilter;

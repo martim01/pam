@@ -966,7 +966,6 @@ void pam2Dialog::Onm_timerFileTrigger(wxTimerEvent& event)
 
 void pam2Dialog::ReadSoundFile(unsigned int nSize)
 {
-    wxLogDebug(wxT("%d"), nSize);
 
     timedbuffer* pData = new timedbuffer(nSize);
     if(m_pSoundfile->ReadAudio(pData->GetWritableBuffer(), pData->GetBufferSize(), 1))

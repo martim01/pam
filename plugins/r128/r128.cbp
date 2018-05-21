@@ -14,6 +14,7 @@
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-Wall" />
+					<Add option="-std=c++0x" />
 					<Add option="-DWIN32" />
 					<Add option="-D_USRDLL" />
 					<Add option="-DDLL_EXPORTS" />
@@ -43,6 +44,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-Wall" />
+					<Add option="-std=c++0x" />
 					<Add option="-g" />
 					<Add option="-DWIN32" />
 					<Add option="-D_USRDLL" />
@@ -124,6 +126,8 @@
 		<Unit filename="r128.h" />
 		<Unit filename="r128builder.cpp" />
 		<Unit filename="r128builder.h" />
+		<Unit filename="r128meter.cpp" />
+		<Unit filename="r128meter.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

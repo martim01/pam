@@ -12,7 +12,7 @@ PammClient::PammClient() : wxClient()
 bool PammClient::Connect(const wxString& sHost, const wxString& sService, const wxString& sTopic)
 {
     // suppress the log messages from MakeConnection()
-    //wxLogNull nolog;
+    wxLogNull nolog;
 
     m_pConnection = dynamic_cast<PammConnection*>(MakeConnection(wxGetHostName(), sService, sTopic));
     if ( !m_pConnection )

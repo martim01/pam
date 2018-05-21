@@ -132,10 +132,10 @@ const iniSection* iniManager::GetSection(const wxString& sSectionName) const
 /*!
     \fn iniManager::GetIniString(const wxString& sSection, const wxString& sKey, const wxString& sDefault)
  */
-const wxString& iniManager::GetIniString(const wxString& sSection, const wxString& sKey, const wxString& sDefault)
+const wxString& iniManager::GetIniString(const wxString& sSection, const wxString& sKey, const wxString& sDefault) const
 {
     //does the section exist?
-    itSection it = m_mSections.find(sSection);
+    itConstSection it = m_mSections.find(sSection);
 	if(it==m_mSections.end())
 		return sDefault;
 
@@ -146,10 +146,10 @@ const wxString& iniManager::GetIniString(const wxString& sSection, const wxStrin
 /*!
     \fn iniManager::GetIniInt(const wxString& sSection, const wxString& sKey, int nDefault)
  */
-int iniManager::GetIniInt(const wxString& sSection, const wxString& sKey, int nDefault)
+int iniManager::GetIniInt(const wxString& sSection, const wxString& sKey, int nDefault) const
 {
     //does the section exist?
-	itSection it = m_mSections.find(sSection);
+	itConstSection it = m_mSections.find(sSection);
 	if(it==m_mSections.end())
 		return nDefault;
 
@@ -159,10 +159,10 @@ int iniManager::GetIniInt(const wxString& sSection, const wxString& sKey, int nD
 /*!
     \fn iniManager::GetIniDouble(const wxString& sSection, const wxString& sKey, double dDefault)
  */
-double iniManager::GetIniDouble(const wxString& sSection, const wxString& sKey, double dDefault)
+double iniManager::GetIniDouble(const wxString& sSection, const wxString& sKey, double dDefault) const
 {
     //does the section exist?
-	itSection it = m_mSections.find(sSection);
+	itConstSection it = m_mSections.find(sSection);
 	if(it==m_mSections.end())
 		return dDefault;
 

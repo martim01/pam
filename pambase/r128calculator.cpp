@@ -3,6 +3,7 @@
 #include "timedbuffer.h"
 #include <wx/log.h>
 #include <math.h>
+#include <wx/stopwatch.h>
 
 using namespace std;
 
@@ -13,7 +14,10 @@ R128Calculator::R128Calculator() :
     m_dLiveAbs(0),
     m_dRange(0),
     m_nInputChannels(0),
-    m_nChunkFrames(0)
+    m_nChunkFrames(0),
+    m_nChunkSize(0),
+    m_nFrames(0),
+    m_dTempMS(0.0)
 {
 
 }
@@ -43,29 +47,22 @@ void R128Calculator::InputSession(const session& aSession)
 void R128Calculator::CalculateLevel(const timedbuffer* pBuffer)
 {
     //copy the frames into chunks
-
-    wxLogMessage(wxT("ChunkSize  is %d"), m_nChunkSize);
     if(m_nChunkSize != 0)
     {
-
         for(unsigned int i=0; i < pBuffer->GetBufferSize(); i+=m_nInputChannels)
         {
             for(unsigned int j = 0; j < m_nInputChannels; j++)
             {
-
-                if(m_lstChunk.size() == m_nChunkSize)
+                if(m_nFrames == m_nChunkFrames)
                 {
-                    wxLogMessage(wxT("ChunkSize %d"), m_nChunkSize);
-                    //got enough chunks now so work out the MS value
-                   // WorkoutMS();
-                    m_lstChunk.clear();
-                    wxLogMessage(wxT("ChunkSize Cleared"));
-
+                    m_nFrames = 0;
+                    m_lstMS.push_back(m_dTempMS/static_cast<double>(m_nChunkFrames));
+                    m_dTempMS = 0.0;
                 }
 
-
-                m_lstChunk.push_back(ApplyFilter(pBuffer->GetBuffer()[i+j],j));
+                m_dTempMS += (ApplyFilter(pBuffer->GetBuffer()[i+j],j));
             }
+            ++m_nFrames;
         }
         CalculateMomentary();
     }
@@ -95,7 +92,7 @@ void R128Calculator::CalculateMomentary()
         m_lstMS.pop_front();
 
         CalculateShort();
-        //CalculateLive();
+        CalculateLive();
     }
 }
 
@@ -120,6 +117,7 @@ void R128Calculator::CalculateShort()
 
 void R128Calculator::CalculateLive()
 {
+    wxStopWatch st;
     //work out absolute non-gated value
     double dLiveValue(0.0);
     for(list<double>::iterator itLive = m_lstLive.begin(); itLive != m_lstLive.end(); ++itLive)
@@ -144,19 +142,13 @@ void R128Calculator::CalculateLive()
 
     m_dLiveGate = -0.691 + 10*log10(dLiveValue);
 
-}
-
-void R128Calculator::WorkoutMS()
-{
-    double dMS = 0.0;
-    for(list<double>::iterator itMS = m_lstChunk.begin(); itMS != m_lstChunk.end(); ++itMS)
+    if(st.Time() > 20)
     {
-        dMS += (*itMS); //@todo we should do something clever here to do with weighting of channels
+        m_lstLive.pop_front();
     }
-    dMS /= static_cast<double>(m_lstChunk.size());
-
-    m_lstMS.push_back(dMS);
+    wxLogDebug(wxT("Took %d"), st.Time());
 }
+
 
 double R128Calculator::GetMomentaryLevel()
 {
@@ -181,14 +173,15 @@ double R128Calculator::GetLURange()
 void R128Calculator::ResetMeter()
 {
     m_lstMS.clear();
-    m_lstChunk.clear();
     m_lstShort.clear();
     m_lstLive.clear();
-    m_dMomentary = 0.0;
-    m_dShort = 0.0;
-    m_dLiveGate = 0.0;
-    m_dLiveAbs = 0.0;
+    m_dMomentary = -80.0;
+    m_dShort = -80.0;
+    m_dLiveGate = -80.0;
+    m_dLiveAbs = -80.0;
     m_dRange = 0.0;
+    m_dTempMS = 0.0;
+    m_nFrames = 0;
 
     m_vPreFilter.clear();
     m_vFilter.clear();
