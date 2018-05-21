@@ -7,7 +7,7 @@ using namespace std;
 
 R128Thread::R128Thread() : wxThread()
 {
-
+    Reset();
 }
 
 void R128Thread::AddToLive(double dValue)
@@ -15,10 +15,12 @@ void R128Thread::AddToLive(double dValue)
     wxMutexLocker ml(m_mutex);
     m_lstLive.push_back(dValue);
     m_dLiveTotal += dValue;
-    //if(m_lstLive.size() > 72000)
-    //{
-    //    m_lstLive.pop_front();
-    //}
+   
+    if(m_lstLive.size() > 72000)
+    {   //more than two hours
+        m_dLiveTotal -= m_lstLive.front();
+        m_lstLive.pop_front();
+    }
 }
 
 void R128Thread::AddToRange(double dValue)
@@ -26,10 +28,11 @@ void R128Thread::AddToRange(double dValue)
     wxMutexLocker ml(m_mutex);
     m_lstRange.push_back(dValue);
     m_dRangeTotal += dValue;
-    //if(m_lstRange.size() > 72000)
-    //{
-    //    m_lstRange.pop_front();
-    //}
+    if(m_lstRange.size() > 72000)
+    {   //more than two hours
+        m_dRangeTotal -= m_lstRange.front();
+        m_lstRange.pop_front();
+    }
 }
 
 
