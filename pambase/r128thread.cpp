@@ -14,20 +14,22 @@ void R128Thread::AddToLive(double dValue)
 {
     wxMutexLocker ml(m_mutex);
     m_lstLive.push_back(dValue);
-    if(m_lstLive.size() > 72000)
-    {
-        m_lstLive.pop_front();
-    }
+    m_dLiveTotal += dValue;
+    //if(m_lstLive.size() > 72000)
+    //{
+    //    m_lstLive.pop_front();
+    //}
 }
 
 void R128Thread::AddToRange(double dValue)
 {
     wxMutexLocker ml(m_mutex);
     m_lstRange.push_back(dValue);
-    if(m_lstRange.size() > 72000)
-    {
-        m_lstRange.pop_front();
-    }
+    m_dRangeTotal += dValue;
+    //if(m_lstRange.size() > 72000)
+    //{
+    //    m_lstRange.pop_front();
+    //}
 }
 
 
@@ -47,19 +49,14 @@ void* R128Thread::Entry()
 
 void R128Thread::CalculateLive()
 {
-    wxMutexLocker ml(m_mutex);
-    //work out absolute non-gated value
-    double dLiveValue(0.0);
-    for(list<double>::iterator itLive = m_lstLive.begin(); itLive != m_lstLive.end(); ++itLive)
-    {
-        dLiveValue += (*itLive)/static_cast<double>(m_lstLive.size());
-    }
-    double dLiveAbs = -0.691 + 10*log10(dLiveValue);
-
-    //now
+    m_mutex.Lock();
+    list<double>::iterator itEnd = m_lstLive.end();
+    double dLiveAbs = -0.691 + 10*log10(m_dLiveTotal/static_cast<double>(m_lstLive.size());
+    m_mutex.Unlock();
+   
     double dLiveGate(0.0);
     double dCount(0);
-    for(list<double>::iterator itLive = m_lstLive.begin(); itLive != m_lstLive.end(); ++itLive)
+    for(list<double>::iterator itLive = m_lstLive.begin(); itLive != itEnd; ++itLive)
     {
         double dValue = -0.691 + 10*log10((*itLive));
         if(dLiveAbs-dValue < 10.0)
@@ -67,32 +64,23 @@ void R128Thread::CalculateLive()
             dLiveGate += (*itLive);
             dCount++;
         }
-
     }
-    dLiveGate /= dCount;
-
-    m_dLive = -0.691 + 10*log10(dLiveGate);
-
-    wxLogDebug(wxT("Abs: %.3f  Gate: %.3f"), dLiveAbs, m_dLive);
+    m_dLive = -0.691 + 10*log10(dLiveGate/dCount);
 }
 
 
 void R128Thread::CalculateRange()
 {
-    wxMutexLocker ml(m_mutex);
-    //work out absolute non-gated value
-    double dRangeValue(0.0);
-    for(list<double>::iterator itRange = m_lstRange.begin(); itRange != m_lstRange.end(); ++itRange)
-    {
-        dRangeValue += (*itRange)/static_cast<double>(m_lstRange.size());
-    }
-    double dRangeAbs = -0.691 + 10*log10(dRangeValue);
-
-    //now
+    m_mutex.Lock();
+    list<double>::iterator itEnd = m_lstRange.end();
+    double dRangeAbs = -0.691 + 10*log10(m_dRangeTotal/static_cast<double>(m_lstRange.size());
+    m_mutex.Unlock();
+    
+    //@todo try using a vector rather than a list to see if faster...
     list<double> lstRangeGate;
     double dRangeGate(0.0);
     double dCount(0);
-    for(list<double>::iterator itRange = m_lstRange.begin(); itRange != m_lstRange.end(); ++itRange)
+    for(list<double>::iterator itRange = m_lstRange.begin(); itRange != itEnd; ++itRange)
     {
         double dValue = -0.691 + 10*log10((*itRange));
         if(dRangeAbs-dValue < 20.0)
@@ -140,4 +128,6 @@ void R128Thread::Reset()
     m_dLive = -80.0;
     m_lstLive.clear();
     m_lstRange.clear();
+    m_dRangeTotal = 0.0;
+    m_dListTotal = 0.0;
 }
