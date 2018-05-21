@@ -53,7 +53,7 @@ class MaxMinGraph : public wxWindow
 
         virtual ~MaxMinGraph();
 
-        void SetLevels(double dMax, double dMin, double dCurrent);
+        void SetLevels(double dMax, double dMin, double dCurrent, bool bConvertToDb = true);
 
 
         /** @brief returns the default size of the button for sizers

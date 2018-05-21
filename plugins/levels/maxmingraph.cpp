@@ -117,11 +117,20 @@ void MaxMinGraph::OnSize(wxSizeEvent& event)
 }
 
 
-void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent)
+void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bConvertToDb)
 {
-    m_dMax = max(-70.0, 20*log10(dMax));
-    m_dMin = max(-70.0, 20*log10(dMin));
-    m_dCurrent = 20*log10(dCurrent);
+    if(bConvertToDb)
+    {
+        m_dMax = max(-70.0, 20*log10(dMax));
+        m_dMin = max(-70.0, 20*log10(dMin));
+        m_dCurrent = 20*log10(dCurrent);
+    }
+    else
+    {
+        m_dMax = max(dMax, dMin);
+        m_dMin = min(dMin, dMax);
+        m_dCurrent = dCurrent;
+    }
 
     m_uiCurrent.SetLabel(wxString::Format(wxT("%.1fdB"), m_dCurrent));
     m_uiMax.SetLabel(wxString::Format(wxT("%.1fdB"), m_dMax));

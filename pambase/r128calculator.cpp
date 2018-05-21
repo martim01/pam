@@ -4,22 +4,23 @@
 #include <wx/log.h>
 #include <math.h>
 #include <wx/stopwatch.h>
+#include <algorithm>
+#include "r128thread.h"
 
 using namespace std;
 
 R128Calculator::R128Calculator() :
-    m_dMomentary(0),
-    m_dShort(0),
-    m_dLiveGate(0),
-    m_dLiveAbs(0),
-    m_dRange(0),
+    m_dMomentary(-80),
+    m_dShort(-80),
     m_nInputChannels(0),
     m_nChunkFrames(0),
     m_nChunkSize(0),
     m_nFrames(0),
-    m_dTempMS(0.0)
+    m_dTempMS(0.0),
+    m_pThread(new R128Thread())
 {
-
+    m_pThread->Create();
+    m_pThread->Run();
 }
 
 R128Calculator::~R128Calculator()
@@ -82,17 +83,19 @@ void R128Calculator::CalculateMomentary()
         dMomentaryValue /=4.0;
         m_dMomentary = -0.691 + 10 * log10(dMomentaryValue);
 
+
         //store the no db value in our short list
         m_lstShort.push_back(dMomentaryValue);
         if(m_dMomentary > -70.0)
         {   //greater than silence so store the none db value in our live list
-            m_lstLive.push_back(dMomentaryValue);
+            m_pThread->AddToLive(dMomentaryValue);
         }
         //move the sliding frame along 100ms
         m_lstMS.pop_front();
 
         CalculateShort();
         CalculateLive();
+        CalculateRange();
     }
 }
 
@@ -110,6 +113,10 @@ void R128Calculator::CalculateShort()
         dShortValue/=30.0;
         m_dShort = -0.691 + 10 * log10(dShortValue);
 
+        if(m_dShort > -70)
+        {
+            m_pThread->AddToRange(dShortValue);
+        }
         //move the sliding frame along 100ms
         m_lstShort.pop_front();
     }
@@ -117,69 +124,43 @@ void R128Calculator::CalculateShort()
 
 void R128Calculator::CalculateLive()
 {
-    wxStopWatch st;
-    //work out absolute non-gated value
-    double dLiveValue(0.0);
-    for(list<double>::iterator itLive = m_lstLive.begin(); itLive != m_lstLive.end(); ++itLive)
-    {
-        dLiveValue += (*itLive)/static_cast<double>(m_lstLive.size());
-    }
-    m_dLiveAbs = -0.691 + 10*log10(dLiveValue);
 
-    //now
-    double dLiveGate(0.0);
-    double dCount(0);
-    for(list<double>::iterator itLive = m_lstLive.begin(); itLive != m_lstLive.end(); ++itLive)
-    {
-        double dValue = -0.691 + 10*log10((*itLive));
-        if(m_dLiveAbs-dValue < 10.0)
-        {
-            dLiveGate += (*itLive);
-            dCount++;
-        }
-    }
-    dLiveGate /= dCount;
 
-    m_dLiveGate = -0.691 + 10*log10(dLiveValue);
-
-    if(st.Time() > 20)
-    {
-        m_lstLive.pop_front();
-    }
-    wxLogDebug(wxT("Took %d"), st.Time());
 }
 
+void R128Calculator::CalculateRange()
+{
 
-double R128Calculator::GetMomentaryLevel()
+}
+
+double R128Calculator::GetMomentaryLevel() const
 {
     return m_dMomentary;
 }
 
-double R128Calculator::GetShortLevel()
+double R128Calculator::GetShortLevel() const
 {
     return m_dShort;
 }
 
-double R128Calculator::GetLiveLevel()
+double R128Calculator::GetLiveLevel() const
 {
-    return m_dLiveGate;
+    return m_pThread->GetLive();
 }
 
-double R128Calculator::GetLURange()
+double R128Calculator::GetLURange() const
 {
-    return m_dRange;
+    return m_pThread->GetRange();
 }
 
 void R128Calculator::ResetMeter()
 {
     m_lstMS.clear();
     m_lstShort.clear();
-    m_lstLive.clear();
+    m_pThread->Reset();
+
     m_dMomentary = -80.0;
     m_dShort = -80.0;
-    m_dLiveGate = -80.0;
-    m_dLiveAbs = -80.0;
-    m_dRange = 0.0;
     m_dTempMS = 0.0;
     m_nFrames = 0;
 
@@ -213,3 +194,5 @@ double R128Calculator::ApplyFilter(double dSample, unsigned int nChannel)
      return (dOutput * dOutput); /* and square it */
 
 }
+
+

@@ -150,6 +150,8 @@
 		<Unit filename="ppm.h" />
 		<Unit filename="r128calculator.cpp" />
 		<Unit filename="r128calculator.h" />
+		<Unit filename="r128thread.cpp" />
+		<Unit filename="r128thread.h" />
 		<Unit filename="session.h" />
 		<Unit filename="settingevent.cpp" />
 		<Unit filename="settingevent.h" />

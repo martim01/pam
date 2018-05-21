@@ -12,7 +12,7 @@
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-O2" />
+					<Add option="-O3" />
 					<Add option="-Wall" />
 					<Add option="-std=c++0x" />
 					<Add option="-DWIN32" />
@@ -116,10 +116,13 @@
 			<Add directory="../../pambase" />
 			<Add directory="$(#kiss.include)" />
 			<Add directory="$(#kiss.include)/tools" />
+			<Add directory="../levels" />
 		</Compiler>
 		<Linker>
 			<Add directory="../../lib" />
 		</Linker>
+		<Unit filename="pnlControl.cpp" />
+		<Unit filename="pnlControl.h" />
 		<Unit filename="pnlEbuMeter.cpp" />
 		<Unit filename="pnlEbuMeter.h" />
 		<Unit filename="r128.cpp" />

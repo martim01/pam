@@ -5,6 +5,7 @@
 
 struct session;
 struct timedbuffer;
+class R128Thread;
 
 class PAMBASE_IMPEXPORT R128Calculator
 {
@@ -14,10 +15,10 @@ class PAMBASE_IMPEXPORT R128Calculator
 
         void InputSession(const session& aSession);
         void CalculateLevel(const timedbuffer* pBuffer);
-        double GetMomentaryLevel();
-        double GetShortLevel();
-        double GetLiveLevel();
-        double GetLURange();
+        double GetMomentaryLevel() const;
+        double GetShortLevel() const;
+        double GetLiveLevel() const;
+        double GetLURange() const;
 
         void ResetMeter();
 
@@ -28,18 +29,16 @@ class PAMBASE_IMPEXPORT R128Calculator
         void CalculateMomentary();
         void CalculateShort();
         void CalculateLive();
+        void CalculateRange();
 
         std::list<double> m_lstMS;
 
 
         std::list<double> m_lstShort;
-        std::list<double> m_lstLive;
+
 
         double m_dMomentary;
         double m_dShort;
-        double m_dLiveGate;
-        double m_dLiveAbs;
-        double m_dRange;
 
         unsigned int m_nInputChannels;
         unsigned int m_nChunkFrames;
@@ -51,6 +50,7 @@ class PAMBASE_IMPEXPORT R128Calculator
         std::vector<std::pair<double,double> > m_vPreFilter;
         std::vector<std::pair<double,double> > m_vFilter;
 
+        R128Thread* m_pThread;
 
         /* pre-filter coefficients */
         static const double PF_A1 = -1.69065929318241;

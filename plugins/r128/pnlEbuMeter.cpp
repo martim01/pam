@@ -11,7 +11,7 @@
 #include <wx/font.h>
 #include <wx/intl.h>
 #include <wx/string.h>
-
+#include "maxmingraph.h"
 using namespace std;
 
 
@@ -32,6 +32,7 @@ const long pnlEbuMeter::ID_M_PLBL46 = wxNewId();
 const long pnlEbuMeter::ID_M_PLBL49 = wxNewId();
 const long pnlEbuMeter::ID_PANEL1 = wxNewId();
 //*)
+const wxColour pnlEbuMeter::CLR_LUFS = wxColour(110,207,169);
 
 BEGIN_EVENT_TABLE(pnlEbuMeter,wxPanel)
 END_EVENT_TABLE()
@@ -119,6 +120,7 @@ pnlEbuMeter::pnlEbuMeter(wxWindow* parent,R128Builder* pBuilder, wxWindowID id,c
 	//*)
 	m_pLevels = 0;
 
+
 	m_pLbl33->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlEbuMeter::OnInfoLeftUp,0,this);
 	m_pLbl20->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlEbuMeter::OnInfoLeftUp,0,this);
 	m_pLbl24->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlEbuMeter::OnInfoLeftUp,0,this);
@@ -179,8 +181,64 @@ void pnlEbuMeter::CreateMeters()
     m_aMeters[0] = new R128Meter(this,wxID_ANY, wxT("Momentary"), -70, false, wxPoint(55, 0), wxSize(80, 480));
     m_aMeters[1] = new R128Meter(this,wxID_ANY, wxT("Short"), -70, false, wxPoint(145, 0), wxSize(80, 480));
     m_aMeters[2] = new R128Meter(this,wxID_ANY, wxT("Integrated"), -70, false, wxPoint(235, 0), wxSize(100, 480));
-    m_aMeters[3] = new R128Meter(this,wxID_ANY, wxT("Range"), -70, false, wxPoint(355, 0), wxSize(80, 480));
     m_pLevels = new R128Meter(this, wxID_ANY, wxEmptyString, -70, true, wxPoint(5,0), wxSize(50,481));
+
+    m_plblMomentaryTitle = new wmLabel(this, wxID_ANY, wxT("Momentary:"), wxPoint(350,0), wxSize(100,40));
+    m_plblMomentaryTitle->SetForegroundColour(*wxWHITE);
+    m_plblMomentaryTitle->SetBackgroundColour(CLR_LUFS);
+    m_plblMomentaryTitle->SetBorderState(uiRect::BORDER_NONE);
+    m_plblShortTitle = new wmLabel(this, wxID_ANY, wxT("Short:"), wxPoint(350,50), wxSize(100,40));
+    m_plblShortTitle->SetForegroundColour(*wxWHITE);
+    m_plblShortTitle->SetBackgroundColour(CLR_LUFS);
+    m_plblShortTitle->SetBorderState(uiRect::BORDER_NONE);
+
+    m_plblMomentary = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,0), wxSize(130,40));
+    m_plblMomentary->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
+    m_plblMomentary->SetBorderState(uiRect::BORDER_NONE);
+    m_plblMomentary->SetForegroundColour(*wxWHITE);
+    m_plblMomentary->GetUiRect().Pad(10,0);
+    m_plblMomentary->SetBackgroundColour(CLR_LUFS);
+    m_plblShort = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,50), wxSize(130,40));
+    m_plblShort->SetForegroundColour(*wxWHITE);
+    m_plblShort->SetBackgroundColour(CLR_LUFS);
+    m_plblShort->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
+    m_plblShort->SetBorderState(uiRect::BORDER_NONE);
+    m_plblShort->GetUiRect().Pad(10,0);
+
+    m_plblMomentaryTitle->SetFont(wxFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
+    m_plblShortTitle->SetFont(wxFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
+    m_plblMomentary->SetFont(wxFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
+    m_plblShort->SetFont(wxFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
+
+
+
+    m_plblLufsTitle = new wmLabel(this, wxID_ANY, wxT("Integrated:"), wxPoint(350,100), wxSize(100,40));
+    m_plblLufsTitle->SetForegroundColour(*wxWHITE);
+    m_plblLufsTitle->SetBackgroundColour(CLR_LUFS);
+    m_plblLufsTitle->SetBorderState(uiRect::BORDER_NONE);
+    m_plblRangeTitle = new wmLabel(this, wxID_ANY, wxT("Range:"), wxPoint(350,150), wxSize(100,40));
+    m_plblRangeTitle->SetForegroundColour(*wxWHITE);
+    m_plblRangeTitle->SetBackgroundColour(CLR_LUFS);
+    m_plblRangeTitle->SetBorderState(uiRect::BORDER_NONE);
+
+    m_plblLufs = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,100), wxSize(130,40));
+    m_plblLufs->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
+    m_plblLufs->SetBorderState(uiRect::BORDER_NONE);
+    m_plblLufs->SetForegroundColour(*wxWHITE);
+    m_plblLufs->GetUiRect().Pad(10,0);
+    m_plblLufs->SetBackgroundColour(CLR_LUFS);
+    m_plblRange = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,150), wxSize(130,40));
+    m_plblRange->SetForegroundColour(*wxWHITE);
+    m_plblRange->SetBackgroundColour(CLR_LUFS);
+    m_plblRange->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
+    m_plblRange->SetBorderState(uiRect::BORDER_NONE);
+    m_plblRange->GetUiRect().Pad(10,0);
+
+    m_plblLufsTitle->SetFont(wxFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
+    m_plblRangeTitle->SetFont(wxFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
+    m_plblLufs->SetFont(wxFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
+    m_plblRange->SetFont(wxFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
+
 
     double dLevels[15] = {0,-3, -6, -9, -12, -15, -18, -21, -24, -30, -36, -42, -48, -54, -60};
 
@@ -188,7 +246,7 @@ void pnlEbuMeter::CreateMeters()
     m_aMeters[1]->SetLightColours(-38,wxColour(0,0,200), -8, wxColour(230,230,0), wxColour(255,100,100));
     m_aMeters[2]->SetLightColours(-38,wxColour(0,200,0), -8, wxColour(230,230,0), wxColour(255,100,100));
 
-    for(size_t i = 0; i < 4; i++)
+    for(size_t i = 0; i < 3; i++)
     {
 
         m_aMeters[i]->SetLevels(dLevels,15, 0.0);
@@ -206,21 +264,25 @@ void pnlEbuMeter::SetAudioData(const timedbuffer* pBuffer)
 {
     m_pR128->CalculateLevel(pBuffer);
 
+    UpdateMeters();
+}
+
+void pnlEbuMeter::UpdateMeters()
+{
     m_aMeters[0]->ShowValue(m_pR128->GetMomentaryLevel());
     m_aMeters[1]->ShowValue(m_pR128->GetShortLevel());
     m_aMeters[2]->ShowValue(m_pR128->GetLiveLevel());
-    m_aMeters[3]->ShowValue(-70);//m_pR128->GetLURange());
 
-//    if(m_pLevels)
-//    {
-//        m_pLevels->Refresh();
-//    }
+    m_plblRange->SetLabel(wxString::Format(wxT("%.1f LU"), m_pR128->GetLURange()));
+    m_plblLufs->SetLabel(wxString::Format(wxT("%.1f LUFS"), m_pR128->GetLiveLevel()));
+    m_plblMomentary->SetLabel(wxString::Format(wxT("%.1f LUFS"), m_pR128->GetMomentaryLevel()));
+    m_plblShort->SetLabel(wxString::Format(wxT("%.1f LUFS"), m_pR128->GetShortLevel()));
 }
 
 
 void pnlEbuMeter::Freeze(bool bFreeze)
 {
-    for(size_t i = 0; i < 4; i++)
+    for(size_t i = 0; i < m_aMeters.size(); i++)
     {
         m_aMeters[i]->FreezeMeter(bFreeze);
     }
@@ -228,7 +290,7 @@ void pnlEbuMeter::Freeze(bool bFreeze)
 
 void pnlEbuMeter::ShowPeaks(unsigned int nMode)
 {
-    for(size_t i = 0; i < 4; i++)
+    for(size_t i = 0; i < m_aMeters.size(); i++)
     {
         m_aMeters[i]->SetPeakMode(nMode);
     }
@@ -241,13 +303,14 @@ void pnlEbuMeter::ClearMeters()
         m_aMeters[i]->ResetMeter();
     }
     m_pR128->ResetMeter();
+    UpdateMeters();
 }
 
 
 
 void pnlEbuMeter::SetShading(bool bShaded)
 {
-    for(size_t i = 0; i < 4; i++)
+    for(size_t i = 0; i < m_aMeters.size(); i++)
     {
         m_aMeters[i]->SetShading(bShaded);
     }

@@ -4,6 +4,7 @@
 
 class pnlEbuMeter;
 class SettingEvent;
+class pnlControl;
 
 class WXEXPORT R128Builder : public MonitorPluginBuilder
 {
@@ -25,9 +26,11 @@ class WXEXPORT R128Builder : public MonitorPluginBuilder
             return false;
         }
 
+
     protected:
 
         friend class pnlEbuMeter;
+        friend class pnlControl;
 
         void ClearMeter();
         void OnSettingChanged(SettingEvent& event);
@@ -42,6 +45,8 @@ class WXEXPORT R128Builder : public MonitorPluginBuilder
         unsigned int m_nInputChannels;
         unsigned int m_nDisplayChannel;
         unsigned int m_nMode;
+
+        bool m_bRun;
 };
 
 

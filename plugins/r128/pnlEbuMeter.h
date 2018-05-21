@@ -11,6 +11,7 @@ class timedbuffer;
 #include "wmlabel.h"
 #include <wx/panel.h>
 
+class MaxMinGraph;
 class R128Meter;
 class wmButton;
 class R128Builder;
@@ -39,6 +40,17 @@ class pnlEbuMeter: public wxPanel
 		wmLabel* m_plblSessionName;
 		wmLabel* m_plblInput;
 
+        wmLabel* m_plblShortTitle;
+		wmLabel* m_plblShort;
+		wmLabel* m_plblMomentaryTitle;
+		wmLabel* m_plblMomentary;
+
+		wmLabel* m_plblLufsTitle;
+		wmLabel* m_plblLufs;
+
+		wmLabel* m_plblRange;
+		wmLabel* m_plblRangeTitle;
+
 		void SetSession(const session& aSession);
 
 		void SetAudioData(const timedbuffer* pBuffer);
@@ -49,6 +61,7 @@ class pnlEbuMeter: public wxPanel
         void ClearMeters();
         void SetShading(bool bShaded);
         void OutputChannels(const std::vector<char>& vChannels);
+        void UpdateMeters();
 
         void SetScale(const wxString& sScale);
 
@@ -80,10 +93,11 @@ class pnlEbuMeter: public wxPanel
 
         R128Builder* m_pBuilder;
         R128Meter* m_pLevels;
-		std::array<R128Meter*, 4> m_aMeters;
+		std::array<R128Meter*, 3> m_aMeters;
 
         R128Calculator* m_pR128;
 
+        static const wxColour CLR_LUFS;
 		DECLARE_EVENT_TABLE()
 };
 

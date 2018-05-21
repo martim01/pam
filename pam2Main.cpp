@@ -131,6 +131,11 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     {
 
     }
+    else
+    {
+        delete m_pClient;
+        m_pClient = 0;
+    }
 
     m_plstScreens->SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
     m_plstOptions->SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
