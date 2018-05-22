@@ -209,7 +209,7 @@ void pnlMeters::SetSession(const session& aSession)
         {
             m_vMeters[i] = new LevelMeter(this,wxID_ANY, wxString::Format(wxT("%lu"), i+1), -70, false, wxPoint(x, 0), wxSize(50, 440));
 
-            m_vMeters[i]->SetLightColours(-38,wxColour(0,220,0), -8, wxColour(230,230,0), wxColour(255,100,100));
+            m_vMeters[i]->SetLightColours(-8,wxColour(0,220,0), -8, wxColour(0,240,0), wxColour(255,100,100));
 
             if(i%2 == 0)
             {
@@ -229,10 +229,10 @@ void pnlMeters::SetSession(const session& aSession)
         m_vMeters[2] = new LevelMeter(this,wxID_ANY, wxT("M"), -70, false, wxPoint(200, 0), wxSize(50, 480));
         m_vMeters[3] = new LevelMeter(this,wxID_ANY, wxT("S"), -70, false, wxPoint(260, 0), wxSize(50, 480));
 
-        m_vMeters[0]->SetLightColours(-38,wxColour(220,0,0), -8,wxColour(230,230,0),  wxColour(255,100,100));
-        m_vMeters[1]->SetLightColours(-38,wxColour(0,220,0), -8, wxColour(230,230,0), wxColour(255,100,100));
-        m_vMeters[2]->SetLightColours(-38,wxColour(255,255,255), -8, wxColour(230,230,0), wxColour(255,100,100));
-        m_vMeters[3]->SetLightColours(-38,wxColour(255,128,0), -8, wxColour(230,230,0), wxColour(255,100,100));
+        m_vMeters[0]->SetLightColours(-8,wxColour(220,0,0), -8,wxColour(240,0,0),  wxColour(255,100,100));
+        m_vMeters[1]->SetLightColours(-8,wxColour(0,220,0), -8, wxColour(0,240,0), wxColour(255,100,100));
+        m_vMeters[2]->SetLightColours(-8,wxColour(255,255,255), -8, wxColour(255,255,255), wxColour(255,100,100));
+        m_vMeters[3]->SetLightColours(-8,wxColour(255,128,0), -8, wxColour(255,128,0), wxColour(255,100,100));
 
 
         m_pLevels = new LevelMeter(this, wxID_ANY, wxEmptyString, -70, true, wxPoint(5,0), wxSize(50,481));
@@ -387,15 +387,15 @@ void pnlMeters::OutputChannels(const std::vector<char>& vChannels)
         {
             if(vChannels[0] == i)
             {
-                m_vMeters[i]->SetLightColours(-38,wxColour(220,0,0), -8,wxColour(230,230,0),  wxColour(255,100,100));
+                m_vMeters[i]->SetLightColours(-8,wxColour(220,0,0), -8,wxColour(240,0,0),  wxColour(255,100,100));
             }
             else if(vChannels[1] == i)
             {
-                m_vMeters[i]->SetLightColours(-38,wxColour(0,220,0), -8, wxColour(230,230,0), wxColour(255,100,100));
+                m_vMeters[i]->SetLightColours(-8,wxColour(0,220,0), -8, wxColour(0,240,0), wxColour(255,100,100));
             }
             else
             {
-                m_vMeters[i]->SetLightColours(-38,wxColour(245,255,245), -8,wxColour(230,230,0), wxColour(255,100,100));
+                m_vMeters[i]->SetLightColours(-8,wxColour(245,255,245), -8,wxColour(255,255,255), wxColour(255,100,100));
             }
             m_vMeters[i]->ResetMeter();
         }

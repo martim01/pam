@@ -193,20 +193,20 @@ void pnlLissajou::CheckAxis()
     {
         if(m_vOutputs[0] == m_pBuilder->ReadSetting(wxT("Axis_X"),0) || m_nChannels == 2)
         {
-            m_pMeterLeft->SetLightColours(-38,wxColour(220,0,0), -8,wxColour(230,230,0),  wxColour(255,100,100));
+            m_pMeterLeft->SetLightColours(-8,wxColour(220,0,0), -8,wxColour(240,0,0),  wxColour(255,100,100));
         }
         else
         {
-            m_pMeterLeft->SetLightColours(-38,wxColour(255,255,255), -8,wxColour(230,230,0), wxColour(255,100,100));
+            m_pMeterLeft->SetLightColours(-8,wxColour(255,255,255), -8,wxColour(255,255,255), wxColour(255,100,100));
         }
 
         if(m_vOutputs[1] == m_pBuilder->ReadSetting(wxT("Axis_Y"),0) || m_nChannels == 2)
         {
-            m_pMeterRight->SetLightColours(-38,wxColour(0,220,0), -8, wxColour(230,230,0), wxColour(255,100,100));
+            m_pMeterRight->SetLightColours(-8,wxColour(0,220,0), -8, wxColour(0,240,0), wxColour(255,100,100));
         }
         else
         {
-            m_pMeterRight->SetLightColours(-38,wxColour(255,255,255), -8,wxColour(230,230,0), wxColour(255,100,100));
+            m_pMeterRight->SetLightColours(-8,wxColour(255,255,255), -8,wxColour(255,255,255), wxColour(255,100,100));
         }
     }
 }

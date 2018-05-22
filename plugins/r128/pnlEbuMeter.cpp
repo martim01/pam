@@ -136,6 +136,7 @@ pnlEbuMeter::pnlEbuMeter(wxWindow* parent,R128Builder* pBuilder, wxWindowID id,c
 	m_plblSessionFrequency->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlEbuMeter::OnInfoLeftUp,0,this);
 	m_plblSessionChannels->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlEbuMeter::OnInfoLeftUp,0,this);
 
+	m_dOffset = 0.0;
     CreateMeters();
 
 
@@ -178,10 +179,10 @@ void pnlEbuMeter::SetSession(const session& aSession)
 void pnlEbuMeter::CreateMeters()
 {
     int x = 55;
-    m_aMeters[0] = new R128Meter(this,wxID_ANY, wxT("Momentary"), -70, false, wxPoint(55, 0), wxSize(80, 480));
-    m_aMeters[1] = new R128Meter(this,wxID_ANY, wxT("Short"), -70, false, wxPoint(145, 0), wxSize(80, 480));
-    m_aMeters[2] = new R128Meter(this,wxID_ANY, wxT("Integrated"), -70, false, wxPoint(235, 0), wxSize(100, 480));
-    m_pLevels = new R128Meter(this, wxID_ANY, wxEmptyString, -70, true, wxPoint(5,0), wxSize(50,481));
+    m_aMeters[0] = new R128Meter(this,wxID_ANY, wxT("Momentary"), -59, false, wxPoint(55, 0), wxSize(80, 480));
+    m_aMeters[1] = new R128Meter(this,wxID_ANY, wxT("Short"), -59, false, wxPoint(145, 0), wxSize(80, 480));
+    m_aMeters[2] = new R128Meter(this,wxID_ANY, wxT("Integrated"), -59, false, wxPoint(235, 0), wxSize(100, 480));
+    m_pLevels = new R128Meter(this, wxID_ANY, wxEmptyString, -59, true, wxPoint(5,0), wxSize(50,481));
 
     m_plblMomentaryTitle = new wmLabel(this, wxID_ANY, wxT("Momentary:"), wxPoint(350,0), wxSize(100,40));
     m_plblMomentaryTitle->SetForegroundColour(*wxWHITE);
@@ -240,21 +241,18 @@ void pnlEbuMeter::CreateMeters()
     m_plblRange->SetFont(wxFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
 
 
-    double dLevels[15] = {0,-3, -6, -9, -12, -15, -18, -21, -24, -30, -36, -42, -48, -54, -60};
-
-    m_aMeters[0]->SetLightColours(-38,wxColour(0,0,200), -8, wxColour(230,230,0), wxColour(255,100,100));
-    m_aMeters[1]->SetLightColours(-38,wxColour(0,0,200), -8, wxColour(230,230,0), wxColour(255,100,100));
-    m_aMeters[2]->SetLightColours(-38,wxColour(0,200,0), -8, wxColour(230,230,0), wxColour(255,100,100));
+    m_aMeters[0]->SetLightColours(-8,wxColour(0,0,200), -23, wxColour(255,0,0), wxColour(255,100,100));
+    m_aMeters[1]->SetLightColours(-8,wxColour(0,0,200), -23, wxColour(50,50,255), wxColour(255,100,100));
+    m_aMeters[2]->SetLightColours(-8,wxColour(0,200,0), -23, wxColour(230,230,0), wxColour(255,100,100));
 
     for(size_t i = 0; i < 3; i++)
     {
 
-        m_aMeters[i]->SetLevels(dLevels,15, 0.0);
         m_aMeters[i]->SetShading(m_pBuilder->ReadSetting(wxT("Shading"),0)==1);
         m_aMeters[i]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlEbuMeter::OnInfoLeftUp,0,this);
     }
 
-    m_pLevels->SetLevels(dLevels,15,0.0);
+    ChangeScale();
     m_pLevels->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlEbuMeter::OnInfoLeftUp,0,this);
 
 }
@@ -274,9 +272,18 @@ void pnlEbuMeter::UpdateMeters()
     m_aMeters[2]->ShowValue(m_pR128->GetLiveLevel());
 
     m_plblRange->SetLabel(wxString::Format(wxT("%.1f LU"), m_pR128->GetLURange()));
-    m_plblLufs->SetLabel(wxString::Format(wxT("%.1f LUFS"), m_pR128->GetLiveLevel()));
-    m_plblMomentary->SetLabel(wxString::Format(wxT("%.1f LUFS"), m_pR128->GetMomentaryLevel()));
-    m_plblShort->SetLabel(wxString::Format(wxT("%.1f LUFS"), m_pR128->GetShortLevel()));
+    if(m_dOffset == 0.0)
+    {
+        m_plblLufs->SetLabel(wxString::Format(wxT("%.1f LUFS"), m_pR128->GetLiveLevel()));
+        m_plblMomentary->SetLabel(wxString::Format(wxT("%.1f LUFS"), m_pR128->GetMomentaryLevel()));
+        m_plblShort->SetLabel(wxString::Format(wxT("%.1f LUFS"), m_pR128->GetShortLevel()));
+    }
+    else
+    {
+        m_plblLufs->SetLabel(wxString::Format(wxT("%.1f LU"), m_pR128->GetLiveLevel()-m_dOffset));
+        m_plblMomentary->SetLabel(wxString::Format(wxT("%.1f LU"), m_pR128->GetMomentaryLevel()-m_dOffset));
+        m_plblShort->SetLabel(wxString::Format(wxT("%.1f LU"), m_pR128->GetShortLevel()-m_dOffset));
+    }
 }
 
 
@@ -328,5 +335,42 @@ void pnlEbuMeter::OnInfoLeftUp(wxMouseEvent& event)
     m_pBuilder->Maximize((GetSize().x <= 600));
 }
 
+void pnlEbuMeter::ChangeScale()
+{
+    if(m_pBuilder->ReadSetting(wxT("Zero"),1) == 0)
+    {
+        m_dOffset = -23.0;
+    }
 
+    if(m_pBuilder->ReadSetting(wxT("Scale"),1) == 1)
+    {
+        double dLevels[14] = {0,-5, -8, -11, -14, -17, -20, -23, -30, -36, -42, -48, -54, -59};
+        for(size_t i = 0; i < 3; i++)
+        {
+            m_aMeters[i]->SetMin(-59.0);
+            m_aMeters[i]->SetLevels(dLevels,14, m_dOffset);
+            m_aMeters[i]->Refresh();
+            m_aMeters[i]->SetTargetLevel(-23, wxPen(wxColour(255,255,255)));
+        }
+        m_pLevels->SetMin(-59.0);
+        m_pLevels->SetLevels(dLevels,14, m_dOffset);
+        m_pLevels->Refresh();
+    }
+    else
+    {
+        double dLevels[10] = {-14, -17, -20, -23, -26, -29, -32, -35, -38, -41};
+        for(size_t i = 0; i < 3; i++)
+        {
+            m_aMeters[i]->SetMin(-41.0);
+            m_aMeters[i]->SetLevels(dLevels,10, m_dOffset);
+            m_aMeters[i]->SetTargetLevel(-23, wxPen(wxColour(255,255,255)));
+            m_aMeters[i]->Refresh();
+        }
+        m_pLevels->SetMin(-41.0);
+        m_pLevels->SetLevels(dLevels,10, m_dOffset);
+        m_pLevels->Refresh();
+    }
+
+
+}
 

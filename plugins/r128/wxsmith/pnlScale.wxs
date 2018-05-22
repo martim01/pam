@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlScale">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnScale" member="yes">
+			<label>EBU Scale</label>
+			<pos>0,0</pos>
+			<size>200,40</size>
+			<bg>#0000A0</bg>
+			<style>wmButton::STYLE_SELECT</style>
+			<handler function="OnbtnScaleClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnZero" member="yes">
+			<label>Zero Point</label>
+			<pos>0,50</pos>
+			<size>200,40</size>
+			<bg>#0000A0</bg>
+			<style>wmButton::STYLE_SELECT</style>
+			<handler function="OnbtnZeroClick" entry="EVT_BUTTON" />
+		</object>
+	</object>
+</wxsmith>

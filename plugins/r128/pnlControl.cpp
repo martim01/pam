@@ -30,7 +30,6 @@ pnlControl::pnlControl(wxWindow* parent,R128Builder* pBuilder, wxWindowID id,con
 	//*)
 
 	m_pbtnCalculate->SetToggleLook(true, wxT("Pause"), wxT("Run"), 50.0);
-
 	m_pbtnCalculate->ToggleSelection(m_pBuilder->ReadSetting(wxT("Calculate"),1) == 1, true);
 }
 

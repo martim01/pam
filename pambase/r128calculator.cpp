@@ -20,12 +20,13 @@ R128Calculator::R128Calculator() :
     m_pThread(new R128Thread())
 {
     m_pThread->Create();
+    m_pThread->SetPriority(WXTHREAD_MIN_PRIORITY);
     m_pThread->Run();
 }
 
 R128Calculator::~R128Calculator()
 {
-
+    m_pThread->Delete();
 }
 
 void R128Calculator::InputSession(const session& aSession)

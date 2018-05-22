@@ -125,12 +125,15 @@
 		<Unit filename="pnlControl.h" />
 		<Unit filename="pnlEbuMeter.cpp" />
 		<Unit filename="pnlEbuMeter.h" />
+		<Unit filename="pnlScale.cpp" />
+		<Unit filename="pnlScale.h" />
 		<Unit filename="r128.cpp" />
 		<Unit filename="r128.h" />
 		<Unit filename="r128builder.cpp" />
 		<Unit filename="r128builder.h" />
 		<Unit filename="r128meter.cpp" />
 		<Unit filename="r128meter.h" />
+		<Unit filename="wxsmith/pnlScale.wxs" />
 		<Extensions>
 			<code_completion />
 			<envvars />
@@ -146,6 +149,7 @@
 					<wxPanel wxs="wxsmith/pnlDisplay.wxs" src="pnlDisplay.cpp" hdr="pnlDisplay.h" fwddecl="0" i18n="1" name="pnlDisplay" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlMeters.wxs" src="pnlMeters.cpp" hdr="pnlMeters.h" fwddecl="0" i18n="1" name="pnlMeters" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlRouting.wxs" src="pnlRouting.cpp" hdr="pnlRouting.h" fwddecl="0" i18n="1" name="pnlRouting" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlScale.wxs" src="pnlScale.cpp" hdr="pnlScale.h" fwddecl="0" i18n="1" name="pnlScale" language="CPP" />
 				</resources>
 			</wxsmith>
 		</Extensions>

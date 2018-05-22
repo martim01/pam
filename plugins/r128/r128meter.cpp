@@ -100,6 +100,13 @@ void R128Meter::OnPaint(wxPaintEvent& event)
         {
             dc.DrawLine(0, m_uiLevelText.GetBottom()-(m_dPixelsPerdB*m_vLevels[i]), GetClientRect().GetWidth(), m_uiLevelText.GetBottom()-(m_dPixelsPerdB*m_vLevels[i]));
         }
+
+        if(m_penTarget.IsOk())
+        {
+            dc.SetPen(m_penTarget);
+            dc.DrawLine(0, m_uiLevelText.GetBottom()-(m_dPixelsPerdB*m_dTargetLevel), GetClientRect().GetWidth(), m_uiLevelText.GetBottom()-(m_dPixelsPerdB*m_dTargetLevel));
+        }
+
         dc.SetPen(wxNullPen);
     }
     else
@@ -114,9 +121,19 @@ void R128Meter::OnPaint(wxPaintEvent& event)
             uiLevel.SetForegroundColour(*wxWHITE);
             uiLevel.Draw(dc, wxString::Format(wxT("%.0f"), m_vLevels[i]-m_dLevelOffset), uiRect::BORDER_NONE);
         }
+        if(m_penTarget.IsOk())
+        {
+            dc.SetPen(m_penTarget);
+            dc.DrawLine(0, m_uiLevelText.GetBottom()-(m_dPixelsPerdB*m_dTargetLevel), GetClientRect().GetWidth(), m_uiLevelText.GetBottom()-(m_dPixelsPerdB*m_dTargetLevel));
+        }
     }
 }
 
+void R128Meter::SetTargetLevel(double dValue, const wxPen& penLevel)
+{
+    m_dTargetLevel = dValue;
+    m_penTarget = penLevel;
+}
 
 void R128Meter::InitMeter(const wxString& sText,double dMin)
 {
@@ -131,6 +148,53 @@ void R128Meter::InitMeter(const wxString& sText,double dMin)
     m_uiLevelText.SetRect(0,0, GetClientRect().GetWidth(), 20);
     m_uiLevelText.SetGradient(0);
     m_uiLabel.SetRect(0,GetClientRect().GetBottom()-20, GetClientRect().GetWidth(), 20);
+
+    m_dPixelsPerdB = (GetClientRect().GetHeight()-40)/(-m_dMin);
+
+    int nLow = -m_pairColour[0].first*m_dPixelsPerdB;
+    int nMid = -m_pairColour[1].first*m_dPixelsPerdB;
+
+    m_uiLevel[0].SetRect(0, m_uiLevelText.GetBottom()+nLow, GetClientRect().GetWidth(), GetClientRect().GetHeight()-m_uiLevelText.GetHeight()-nLow-m_uiLabel.GetHeight());
+    m_uiLevel[1].SetRect(0, m_uiLevelText.GetBottom()+nMid, GetClientRect().GetWidth(), m_uiLevel[0].GetTop()-nMid);
+    m_uiLevel[2].SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), nMid);
+
+    m_uiSimple.SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), GetClientRect().GetHeight()-m_uiLevelText.GetHeight()-m_uiLabel.GetHeight());
+
+
+    //draw to the bmp..
+    wxMemoryDC dc;
+    m_bmpMeter = wxBitmap(GetClientSize().x, GetClientSize().y-m_uiLevelText.GetHeight()-m_uiLabel.GetHeight());
+    dc.SelectObject(m_bmpMeter);
+
+    if(!m_bShading)
+    {
+        for(int i = 0;i < 3; i++)
+        {
+            m_uiLevel[i].SetGradient(0);
+        }
+    }
+    else
+    {
+        for(int i = 0;i < 3; i++)
+        {
+            m_uiLevel[i].SetGradient(wxSOUTH);
+        }
+    }
+
+    m_uiLevel[2].Draw(dc, uiRect::BORDER_NONE);
+    m_uiLevel[1].Draw(dc, uiRect::BORDER_NONE);
+    m_uiLevel[0].Draw(dc, uiRect::BORDER_NONE);
+
+
+
+    m_uiPeak.SetBackgroundColour(m_pairColour[2].second);
+
+}
+
+void R128Meter::SetMin(double dMin)
+{
+    m_dMin = dMin;
+    m_dPeakValue = m_dMin;
 
     m_dPixelsPerdB = (GetClientRect().GetHeight()-40)/(-m_dMin);
 
@@ -164,6 +228,7 @@ void R128Meter::InitMeter(const wxString& sText,double dMin)
 
 }
 
+
 bool R128Meter::SetLightColours(double dLow, wxColour clrLow, double dMid, wxColour clrMid,  wxColour clrHigh)
 {
 
@@ -174,8 +239,8 @@ bool R128Meter::SetLightColours(double dLow, wxColour clrLow, double dMid, wxCol
     m_uiSimple.SetBackgroundColour(clrLow,clrLow);
 
     m_uiLevel[0].SetBackgroundColour(wxNullColour, clrLow);
-    m_uiLevel[1].SetBackgroundColour(clrLow, clrMid);
-    m_uiLevel[2].SetBackgroundColour(clrMid, clrHigh);
+    m_uiLevel[1].SetBackgroundColour(clrMid, clrLow);
+    m_uiLevel[2].SetBackgroundColour(clrHigh, clrMid);
 
     InitMeter(m_uiLabel.GetLabel(), m_dMin);
 
@@ -202,7 +267,14 @@ void R128Meter::ShowValue(double dValue)
         if(m_nPeakCounter >= 96 || dValue >= m_dPeakValue)
         {
             m_dPeakValue = min(dValue, m_dMax);
-            m_uiLevelText.SetLabel(wxString::Format(wxT("%.1f LUFS"), m_dPeakValue));
+            if(m_dLevelOffset == 0.0)
+            {
+                m_uiLevelText.SetLabel(wxString::Format(wxT("%.1f LUFS"), m_dPeakValue));
+            }
+            else
+            {
+                m_uiLevelText.SetLabel(wxString::Format(wxT("%.1f LU"), m_dPeakValue-m_dLevelOffset));
+            }
             m_nPeakCounter = 0;
             RefreshRect(m_uiLevelText.GetRect());
         }
@@ -257,6 +329,7 @@ void R128Meter::SetLevels(const double dLevels[], size_t nSize, double dOffset)
     {
         m_vLevels[i] = dLevels[i];
     }
+
     RefreshRect(m_uiLabel.GetRect());
 }
 

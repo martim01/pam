@@ -63,7 +63,8 @@ class pnlEbuMeter: public wxPanel
         void OutputChannels(const std::vector<char>& vChannels);
         void UpdateMeters();
 
-        void SetScale(const wxString& sScale);
+
+        void ChangeScale();
 
 	protected:
 
@@ -96,7 +97,7 @@ class pnlEbuMeter: public wxPanel
 		std::array<R128Meter*, 3> m_aMeters;
 
         R128Calculator* m_pR128;
-
+        double m_dOffset;
         static const wxColour CLR_LUFS;
 		DECLARE_EVENT_TABLE()
 };

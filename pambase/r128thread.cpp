@@ -15,7 +15,7 @@ void R128Thread::AddToLive(double dValue)
     wxMutexLocker ml(m_mutex);
     m_lstLive.push_back(dValue);
     m_dLiveTotal += dValue;
-   
+
     if(m_lstLive.size() > 72000)
     {   //more than two hours
         m_dLiveTotal -= m_lstLive.front();
@@ -54,9 +54,9 @@ void R128Thread::CalculateLive()
 {
     m_mutex.Lock();
     list<double>::iterator itEnd = m_lstLive.end();
-    double dLiveAbs = -0.691 + 10*log10(m_dLiveTotal/static_cast<double>(m_lstLive.size());
+    double dLiveAbs = -0.691 + 10*log10(m_dLiveTotal/static_cast<double>(m_lstLive.size()));
     m_mutex.Unlock();
-   
+
     double dLiveGate(0.0);
     double dCount(0);
     for(list<double>::iterator itLive = m_lstLive.begin(); itLive != itEnd; ++itLive)
@@ -76,9 +76,9 @@ void R128Thread::CalculateRange()
 {
     m_mutex.Lock();
     list<double>::iterator itEnd = m_lstRange.end();
-    double dRangeAbs = -0.691 + 10*log10(m_dRangeTotal/static_cast<double>(m_lstRange.size());
+    double dRangeAbs = -0.691 + 10*log10(m_dRangeTotal/static_cast<double>(m_lstRange.size()));
     m_mutex.Unlock();
-    
+
     //@todo try using a vector rather than a list to see if faster...
     list<double> lstRangeGate;
     double dRangeGate(0.0);
@@ -132,5 +132,5 @@ void R128Thread::Reset()
     m_lstLive.clear();
     m_lstRange.clear();
     m_dRangeTotal = 0.0;
-    m_dListTotal = 0.0;
+    m_dLiveTotal = 0.0;
 }

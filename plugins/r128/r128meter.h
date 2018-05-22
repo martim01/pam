@@ -14,6 +14,7 @@ public:
     R128Meter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, bool bLevelDisplay, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize);
 
     void InitMeter(const wxString & sText,double dMin);
+    void SetMin(double dMin);
 
     void SetLevels(const double dLevels[], size_t nSize, double dOffset);
 
@@ -24,6 +25,8 @@ public:
     void SetLabel(const wxString& sLabel);
 
     void ShowValue(double dValue);
+
+    void SetTargetLevel(double dValue, const wxPen& penLevel);
 
     void SetLevelDisplay(bool bLevels);
     void OnSize(wxSizeEvent& event);
@@ -89,6 +92,9 @@ protected:
     double m_dLevelOffset;
 
     unsigned int m_nChannels;
+
+    double m_dTargetLevel;
+    wxPen m_penTarget;
 };
 
 
