@@ -19,6 +19,7 @@ END_EVENT_TABLE()
 pnlControl::pnlControl(wxWindow* parent,R128Builder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) :
     m_pBuilder(pBuilder)
 {
+
 	//(*Initialize(pnlControl)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));

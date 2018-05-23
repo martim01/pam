@@ -83,6 +83,7 @@
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add library="pambase2.0" />
+					<Add library="libsamplerate.a" />
 				</Linker>
 			</Target>
 			<Target title="Linux Debug">
@@ -105,6 +106,7 @@
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add library="pambased2.0" />
+					<Add library="libsamplerate.a" />
 				</Linker>
 			</Target>
 		</Build>

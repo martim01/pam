@@ -47,7 +47,7 @@ void TruePeakCalculator::InputSession(const session& aSession)
     {
         m_nChannels = aSession.itCurrentSubsession->nChannels;
         int nError;
-        m_pSrc->pState = src_new (SRC_SINC_MEDIUM_QUALITY, aSession.itCurrentSubsession->nChannels, &nError);
+        m_pSrc->pState = src_new (SRC_SINC_FASTEST, aSession.itCurrentSubsession->nChannels, &nError);
         if(m_pSrc->pState)
         {
             src_set_ratio(m_pSrc->pState, 4.0);
