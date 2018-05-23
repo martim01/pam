@@ -40,7 +40,7 @@ FftMeter::FftMeter(wxWindow *parent, FFTBuilder* pBuilder, wxWindowID id, const 
     SetMeter(FFT);
     m_vThirdOctave.resize(35);
     SetOverlap(50.0);
-    m_dFall = 0.5;
+    m_dFall = 0.3;
     m_nBinSelected = 0;
     m_bCursorMode = false;
 

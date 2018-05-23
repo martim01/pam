@@ -341,6 +341,10 @@ void pnlEbuMeter::ChangeScale()
     {
         m_dOffset = -23.0;
     }
+    else
+    {
+        m_dOffset = 0.0;
+    }
 
     if(m_pBuilder->ReadSetting(wxT("Scale"),1) == 1)
     {
