@@ -33,9 +33,13 @@ const long pnlEbuMeter::ID_M_PLBL48 = wxNewId();
 const long pnlEbuMeter::ID_M_PLBL46 = wxNewId();
 const long pnlEbuMeter::ID_M_PLBL49 = wxNewId();
 const long pnlEbuMeter::ID_PANEL1 = wxNewId();
+const long pnlEbuMeter::ID_M_PBTN1 = wxNewId();
+const long pnlEbuMeter::ID_M_PBTN2 = wxNewId();
 //*)
 const wxColour pnlEbuMeter::CLR_LUFS = wxColour(110,207,169);
 const wxColour pnlEbuMeter::CLR_SHORT = wxColour(110,169,207);
+const wxColour pnlEbuMeter::CLR_PEAK = wxColour(110,169,169);
+const wxColour pnlEbuMeter::CLR_PEAK_ALARM = wxColour(207,110,110);
 
 BEGIN_EVENT_TABLE(pnlEbuMeter,wxPanel)
 END_EVENT_TABLE()
@@ -50,11 +54,20 @@ pnlEbuMeter::pnlEbuMeter(wxWindow* parent,R128Builder* pBuilder, wxWindowID id,c
 	//*)
 	m_pLevels = 0;
 
-
-
 	m_dOffset = 0.0;
+	m_dPeak[0] = -80;
+    m_dPeak[1] = -80;
+
     CreateMeters();
 
+    m_pbtnCalculate = new wmButton(this, ID_M_PBTN1, _("Calculate"), wxPoint(350,380), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
+	m_pbtnReset = new wmButton(this, ID_M_PBTN2, _("Reset"), wxPoint(400,430), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
+    Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlEbuMeter::OnbtnCalculateClick);
+	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlEbuMeter::OnbtnResetClick);
+
+    m_pbtnCalculate->SetBackgroundColour(CLR_SHORT);
+	m_pbtnCalculate->SetToggleLook(true, wxT("Pause"), wxT("Run"), 50.0);
+	m_pbtnCalculate->ToggleSelection(m_pBuilder->ReadSetting(wxT("Calculate"),1) == 1, true);
 
     m_pR128 = new R128Calculator();
     m_pTrue = new TruePeakCalculator();
@@ -96,6 +109,9 @@ void pnlEbuMeter::CreateMeters()
     m_pPeakLeft->SetMinMax(-40.0, 5.0);
     m_pPeakRight->SetMinMax(-40.0, 5.0);
 
+    m_pPeakLeft->SetTargetLevel(0, wxPen(wxColour(255,255,255)));
+    m_pPeakRight->SetTargetLevel(0, wxPen(wxColour(255,255,255)));
+
     double dLevels[14] = {5.0, 3.0, 0.0,-3.0, -6.0, -9.0, -12.0, -15.0, -18.0, -21.0, -24.0, -30.0, -36.0, -40.0};
     m_pPeakLevels->SetLevels(dLevels, 14,0.0);
     m_pPeakLeft->SetLevels(dLevels, 14,0.0);
@@ -111,6 +127,11 @@ void pnlEbuMeter::CreateMeters()
     m_plblRangeTitle = new wmLabel(this, wxID_ANY, wxT("Range"), wxPoint(350,150), wxSize(100,40));
     InitLabel(m_plblRangeTitle, CLR_LUFS);
 
+    m_plblPeakLeftTitle = new wmLabel(this, wxID_ANY, wxT("TP Left"), wxPoint(350,250), wxSize(100,40));
+    InitLabel(m_plblPeakLeftTitle, CLR_PEAK);
+    m_plblPeakRightTitle = new wmLabel(this, wxID_ANY, wxT("TP Right"), wxPoint(350,300), wxSize(100,40));
+    InitLabel(m_plblPeakRightTitle, CLR_PEAK);
+
     m_plblMomentary = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,0), wxSize(100,40));
     InitLabel(m_plblMomentary, CLR_SHORT);
     m_plblShort = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,50), wxSize(100,40));
@@ -119,11 +140,21 @@ void pnlEbuMeter::CreateMeters()
     InitLabel(m_plblLufs, CLR_LUFS);
     m_plblRange = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,150), wxSize(145,40));
     InitLabel(m_plblRange, CLR_LUFS);
+    m_plblPeakLeft = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,250), wxSize(100,40));
+    InitLabel(m_plblPeakLeft, CLR_PEAK);
+    m_plblPeakRight = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,300), wxSize(100,40));
+    InitLabel(m_plblPeakRight, CLR_PEAK);
+
 
     m_plblMomentaryMax = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(552, 0), wxSize(45,40));
     InitLabel(m_plblMomentaryMax, CLR_SHORT,8);
     m_plblShortMax = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(552, 50), wxSize(45,40));
     InitLabel(m_plblShortMax, CLR_SHORT,8);
+
+    m_plblPeakLeftMax = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(552, 250), wxSize(45,40));
+    InitLabel(m_plblPeakLeftMax, CLR_PEAK,8);
+    m_plblPeakRightMax = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(552, 300), wxSize(45,40));
+    InitLabel(m_plblPeakRightMax, CLR_PEAK,8);
 
 
     m_aMeters[0]->SetLightColours(-8,wxColour(0,0,200), -23, wxColour(255,0,0), wxColour(255,100,100));
@@ -169,6 +200,8 @@ void pnlEbuMeter::UpdateMeters()
     m_pPeakLeft->ShowValue(m_pTrue->GetLevel(0));
     m_pPeakRight->ShowValue(m_pTrue->GetLevel(1));
 
+    m_dPeak[0] = max(m_pTrue->GetLevel(0), m_dPeak[0]);
+    m_dPeak[1] = max(m_pTrue->GetLevel(1), m_dPeak[1]);
 
     m_plblRange->SetLabel(wxString::Format(wxT("%.1f LU"), m_pR128->GetLURange()));
     if(m_dOffset == 0.0)
@@ -185,8 +218,26 @@ void pnlEbuMeter::UpdateMeters()
     }
     m_plblMomentaryMax->SetLabel(wxString::Format(wxT("[%.1f]"), m_pR128->GetMomentaryMax()));
     m_plblShortMax->SetLabel(wxString::Format(wxT("[%.1f]"), m_pR128->GetShortMax()));
+
+    SetPeakColour(m_plblPeakLeft, m_pTrue->GetLevel(0));
+    SetPeakColour(m_plblPeakRight, m_pTrue->GetLevel(1));
+    SetPeakColour(m_plblPeakLeftMax, m_dPeak[0]);
+    SetPeakColour(m_plblPeakRightMax, m_dPeak[1]);
+
 }
 
+void pnlEbuMeter::SetPeakColour(wmLabel* pLabel, double dValue)
+{
+    pLabel->SetLabel(wxString::Format(wxT("%.1fdB"), dValue));
+    if(dValue > 0.0)
+    {
+        pLabel->SetBackgroundColour(CLR_PEAK_ALARM);
+    }
+    else
+    {
+        pLabel->SetBackgroundColour(CLR_PEAK);
+    }
+}
 
 void pnlEbuMeter::Freeze(bool bFreeze)
 {
@@ -210,6 +261,8 @@ void pnlEbuMeter::ClearMeters()
     {
         m_aMeters[i]->ResetMeter();
     }
+    m_dPeak[0] = -80;
+    m_dPeak[1] = -80;
     m_pR128->ResetMeter();
     UpdateMeters();
 }
@@ -279,3 +332,12 @@ void pnlEbuMeter::ChangeScale()
 
 }
 
+void pnlEbuMeter::OnbtnCalculateClick(wxCommandEvent& event)
+{
+    m_pBuilder->WriteSetting(wxT("Calculate"), event.IsChecked());
+}
+
+void pnlEbuMeter::OnbtnResetClick(wxCommandEvent& event)
+{
+    ClearMeters();
+}

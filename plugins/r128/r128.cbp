@@ -126,8 +126,6 @@
 		<Linker>
 			<Add directory="../../lib" />
 		</Linker>
-		<Unit filename="pnlControl.cpp" />
-		<Unit filename="pnlControl.h" />
 		<Unit filename="pnlEbuMeter.cpp" />
 		<Unit filename="pnlEbuMeter.h" />
 		<Unit filename="pnlScale.cpp" />

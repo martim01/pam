@@ -269,7 +269,7 @@ void R128Meter::ShowValue(double dValue)
         {
             m_nPeakCounter++;
         }
-        if(m_nPeakCounter >= 96 || dValue >= m_dPeakValue)
+        if(m_nPeakCounter >= 10 || dValue >= m_dPeakValue)
         {
             m_dPeakValue = min(dValue, m_dMax);
             if(m_dLevelOffset == 0.0)
@@ -280,7 +280,7 @@ void R128Meter::ShowValue(double dValue)
                 }
                 else
                 {
-                    m_uiLevelText.SetLabel(wxString::Format(wxT("%.1f dBTP"), dValue));
+                    m_uiLevelText.SetLabel(wxString::Format(wxT("%.1f dB"), dValue));
                 }
             }
             else

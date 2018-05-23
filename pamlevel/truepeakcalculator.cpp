@@ -56,7 +56,7 @@ void TruePeakCalculator::InputSession(const session& aSession)
         m_vFilter.resize(aSession.itCurrentSubsession->nChannels);
         for(size_t i = 0; i < m_vFilter.size(); i++)
         {
-            m_vFilter[i] = new Filter(LPF, 48, aSession.itCurrentSubsession->nSampleRate*4, aSession.itCurrentSubsession->nSampleRate/2);
+            m_vFilter[i] = new Filter(LPF, 48, (aSession.itCurrentSubsession->nSampleRate*4)/1000, (aSession.itCurrentSubsession->nSampleRate/2)/1000);
             if(m_vFilter[i]->get_error_flag() != 0)
             {
                 delete m_vFilter[i];

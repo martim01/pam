@@ -23,7 +23,7 @@ class WXEXPORT R128Builder : public MonitorPluginBuilder
 
         bool CanBeMaximized() const
         {
-            return false;
+            return true;
         }
 
 

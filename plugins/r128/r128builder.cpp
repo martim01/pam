@@ -46,7 +46,6 @@ list<pairOptionPanel_t> R128Builder::CreateOptionPanels(wxWindow* pParent)
     list<pairOptionPanel_t> lstOptionPanels;
 
 
-    lstOptionPanels.push_back(make_pair(wxT("Control"), new pnlControl(pParent, this)));
     lstOptionPanels.push_back(make_pair(wxT("Scale"), new pnlScale(pParent, this)));
    // lstOptionPanels.push_back(make_pair(wxT("Time"), new pnlDisplay(pParent, this)));
    // lstOptionPanels.push_back(make_pair(wxT("Meter"), new pnlMeters(pParent, this)));

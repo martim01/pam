@@ -39,6 +39,13 @@ class pnlEbuMeter: public wxPanel
 		wmLabel* m_plblRange;
 		wmLabel* m_plblRangeTitle;
 
+		wmLabel* m_plblPeakLeftTitle;
+		wmLabel* m_plblPeakLeft;
+		wmLabel* m_plblPeakLeftMax;
+		wmLabel* m_plblPeakRightTitle;
+		wmLabel* m_plblPeakRight;
+		wmLabel* m_plblPeakRightMax;
+
 		void SetSession(const session& aSession);
 
 		void SetAudioData(const timedbuffer* pBuffer);
@@ -72,14 +79,23 @@ class pnlEbuMeter: public wxPanel
 		static const long ID_M_PLBL48;
 		static const long ID_M_PLBL46;
 		static const long ID_M_PLBL49;
-		static const long ID_PANEL1;
+        static const long ID_PANEL1;
+        static const long ID_M_PBTN1;
+		static const long ID_M_PBTN2;
+
+        wmButton* m_pbtnCalculate;
+		wmButton* m_pbtnReset;
+
 
 	private:
+
+		void OnbtnCalculateClick(wxCommandEvent& event);
+		void OnbtnResetClick(wxCommandEvent& event);
 
 		void OnLeftUp(wxMouseEvent& event);
 		void OnInfoLeftUp(wxMouseEvent& event);
 
-
+        void SetPeakColour(wmLabel* pLabel, double dValue);
 		void CreateMeters();
 
         R128Builder* m_pBuilder;
@@ -90,12 +106,14 @@ class pnlEbuMeter: public wxPanel
         R128Meter* m_pPeakLeft;
         R128Meter* m_pPeakRight;
 
-
+        double m_dPeak[2];
         R128Calculator* m_pR128;
         TruePeakCalculator* m_pTrue;
         double m_dOffset;
         static const wxColour CLR_LUFS;
         static const wxColour CLR_SHORT;
+        static const wxColour CLR_PEAK;
+        static const wxColour CLR_PEAK_ALARM;
 		DECLARE_EVENT_TABLE()
 };
 
