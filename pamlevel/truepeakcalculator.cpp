@@ -3,10 +3,11 @@
 #include "session.h"
 #include "filt.h"
 #include "srcwrapper.h"
+#include <wx/log.h>
 
 using namespace std;
 
-TruePeakCalculator::TruePeakCalculator() : m_pSrc(0), m_pFilter(0)
+TruePeakCalculator::TruePeakCalculator() : m_pSrc(0)
 {
     m_pSrc = new SrcWrapper();
 }
@@ -18,9 +19,10 @@ TruePeakCalculator::~TruePeakCalculator()
     {
         delete m_pSrc->pState;
     }
-    if(m_pFilter)
+    for(size_t i = 0; i < m_vFilter.size(); i++)
     {
-        delete m_pFilter;
+        delete m_vFilter[i];
+        m_vFilter.clear();
     }
 }
 
@@ -32,11 +34,12 @@ void TruePeakCalculator::InputSession(const session& aSession)
         m_pSrc->pState = 0;
     }
 
-    if(m_pFilter)
+    for(size_t i = 0; i < m_vFilter.size(); i++)
     {
-        delete m_pFilter;
-        m_pFilter = 0;
+        delete m_vFilter[i];
+        m_vFilter.clear();
     }
+
     m_vTruePeak.clear();
     m_vCurrentPeak.clear();
 
@@ -44,17 +47,21 @@ void TruePeakCalculator::InputSession(const session& aSession)
     {
         m_nChannels = aSession.itCurrentSubsession->nChannels;
         int nError;
-        m_pSrc->pState = src_new (SRC_SINC_FASTEST, aSession.itCurrentSubsession->nChannels, &nError);
+        m_pSrc->pState = src_new (SRC_SINC_MEDIUM_QUALITY, aSession.itCurrentSubsession->nChannels, &nError);
         if(m_pSrc->pState)
         {
             src_set_ratio(m_pSrc->pState, 4.0);
         }
 
-        m_pFilter = new Filter(LPF, 48, aSession.itCurrentSubsession->nSampleRate*4, aSession.itCurrentSubsession->nSampleRate/2);
-        if(m_pFilter->get_error_flag() != 0)
+        m_vFilter.resize(aSession.itCurrentSubsession->nChannels);
+        for(size_t i = 0; i < m_vFilter.size(); i++)
         {
-            delete m_pFilter;
-            m_pFilter = 0;
+            m_vFilter[i] = new Filter(LPF, 48, aSession.itCurrentSubsession->nSampleRate*4, aSession.itCurrentSubsession->nSampleRate/2);
+            if(m_vFilter[i]->get_error_flag() != 0)
+            {
+                delete m_vFilter[i];
+                m_vFilter[i] = 0;
+            }
         }
         m_vCurrentPeak.resize(m_nChannels);
         m_vTruePeak.resize(m_nChannels);
@@ -68,7 +75,7 @@ void TruePeakCalculator::InputSession(const session& aSession)
 
 void TruePeakCalculator::CalculateLevel(const timedbuffer* pBuffer)
 {
-    if(m_pSrc->pState && m_pFilter)
+    if(m_pSrc->pState && m_vFilter.empty() == false)
     {
         m_pSrc->data.data_out = new float[pBuffer->GetBufferSize()*4];
         m_pSrc->data.data_in = pBuffer->GetBuffer();
@@ -84,11 +91,24 @@ void TruePeakCalculator::CalculateLevel(const timedbuffer* pBuffer)
         }
         else
         {//Now filter
+            for(int i = 0; i < m_vCurrentPeak.size();i++)
+            {
+                m_vCurrentPeak[i] = -80.0;
+            }
             for(int i = 0; i < m_pSrc->data.output_frames_gen*m_nChannels; i+= m_nChannels)
             {
                 for(int j = 0; j < m_nChannels; j++)
                 {
-                    float dSample = m_pFilter->do_sample(m_pSrc->data.data_out[i+j]);
+                    float dSample;
+                    if(m_vFilter[j])
+                    {
+                        dSample = m_vFilter[j]->do_sample(m_pSrc->data.data_out[i+j]);
+                    }
+                    else
+                    {
+                        dSample = m_pSrc->data.data_out[i+j];
+                    }
+
                     if(dSample < 0)
                     {
                         dSample = -dSample;

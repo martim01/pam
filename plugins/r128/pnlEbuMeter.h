@@ -16,6 +16,7 @@ class R128Meter;
 class wmButton;
 class R128Builder;
 class R128Calculator;
+class TruePeakCalculator;
 
 class pnlEbuMeter: public wxPanel
 {
@@ -24,26 +25,13 @@ class pnlEbuMeter: public wxPanel
 		pnlEbuMeter(wxWindow* parent,R128Builder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pnlEbuMeter();
 
-		wxPanel* pnlInfo;
-		wmLabel* m_pLbl23;
-		wmLabel* m_pLbl25;
-		wmLabel* m_pLbl24;
-		wmLabel* m_plblSessionChannels;
-		wmLabel* m_plblSessionBits;
-		wmLabel* m_plblSessionFrequency;
-		wmLabel* m_pLbl20;
-		wmLabel* m_pLbl27;
-		wmLabel* m_pLbl26;
-		wmLabel* m_plblSessionType;
-		wmLabel* m_plblSessionSource;
-		wmLabel* m_pLbl33;
-		wmLabel* m_plblSessionName;
-		wmLabel* m_plblInput;
-
         wmLabel* m_plblShortTitle;
 		wmLabel* m_plblShort;
 		wmLabel* m_plblMomentaryTitle;
 		wmLabel* m_plblMomentary;
+
+		wmLabel* m_plblShortMax;
+		wmLabel* m_plblMomentaryMax;
 
 		wmLabel* m_plblLufsTitle;
 		wmLabel* m_plblLufs;
@@ -62,6 +50,8 @@ class pnlEbuMeter: public wxPanel
         void SetShading(bool bShaded);
         void OutputChannels(const std::vector<char>& vChannels);
         void UpdateMeters();
+
+        void InitLabel(wmLabel* pLabel, const wxColour clrBack, int nFontSize=12);
 
 
         void ChangeScale();
@@ -96,9 +86,16 @@ class pnlEbuMeter: public wxPanel
         R128Meter* m_pLevels;
 		std::array<R128Meter*, 3> m_aMeters;
 
+        R128Meter* m_pPeakLevels;
+        R128Meter* m_pPeakLeft;
+        R128Meter* m_pPeakRight;
+
+
         R128Calculator* m_pR128;
+        TruePeakCalculator* m_pTrue;
         double m_dOffset;
         static const wxColour CLR_LUFS;
+        static const wxColour CLR_SHORT;
 		DECLARE_EVENT_TABLE()
 };
 

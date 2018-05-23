@@ -22,7 +22,7 @@ class PAMLEVEL_IMPEXPORT TruePeakCalculator
 
     private:
         SrcWrapper* m_pSrc;
-        Filter* m_pFilter;
+        std::vector<Filter*> m_vFilter;
         std::vector<float> m_vTruePeak;
         std::vector<float> m_vCurrentPeak;
 

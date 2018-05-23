@@ -66,6 +66,7 @@
 					<Add option="-Wl,--enable-auto-import,-Map=r128.map" />
 					<Add library="wxmsw30ud_gcc_wammacs" />
 					<Add library="pambased2.0" />
+					<Add library="pamleveld1.0" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 			</Target>

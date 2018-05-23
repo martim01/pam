@@ -83,6 +83,7 @@ void R128Calculator::CalculateMomentary()
         }
         dMomentaryValue /=4.0;
         m_dMomentary = -0.691 + 10 * log10(dMomentaryValue);
+        m_dMomentaryMax = max(m_dMomentary, m_dMomentaryMax);
 
 
         //store the no db value in our short list
@@ -113,6 +114,7 @@ void R128Calculator::CalculateShort()
         }
         dShortValue/=30.0;
         m_dShort = -0.691 + 10 * log10(dShortValue);
+        m_dShortMax = max(m_dShort, m_dShortMax);
 
         if(m_dShort > -70)
         {
@@ -132,6 +134,17 @@ void R128Calculator::CalculateLive()
 void R128Calculator::CalculateRange()
 {
 
+}
+
+
+double R128Calculator::GetMomentaryMax() const
+{
+    return m_dMomentaryMax;
+}
+
+double R128Calculator::GetShortMax() const
+{
+    return m_dShortMax;
 }
 
 double R128Calculator::GetMomentaryLevel() const
@@ -162,6 +175,8 @@ void R128Calculator::ResetMeter()
 
     m_dMomentary = -80.0;
     m_dShort = -80.0;
+    m_dMomentaryMax = -80.0;
+    m_dShortMax = -80.0;
     m_dTempMS = 0.0;
     m_nFrames = 0;
 

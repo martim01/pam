@@ -74,5 +74,6 @@
 		<Project filename="pamm/pamm.cbp">
 			<Depends filename="pam2.cbp" />
 		</Project>
+		<Project filename="../libsamplerate-0.1.9/libsamplerate/libsamplerate.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

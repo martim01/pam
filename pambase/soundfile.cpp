@@ -235,7 +235,7 @@ bool SoundFile::ReadAudio(float* pBuffer, int nSize, unsigned int nLoop)
             size_t i = 0;
             for(; i < vTemp.size(); i++)
             {
-                int nSample = (static_cast<int>(vTemp[i]) << 16);// | (static_cast<int>(vTemp[i+1]) << 24);
+                int nSample = (static_cast<int>(vTemp[i]) << 16);
                 float dSample = static_cast<float>(nSample);
                 dSample /= 2147483648.0;
                 pBuffer[i] = dSample;
@@ -243,6 +243,33 @@ bool SoundFile::ReadAudio(float* pBuffer, int nSize, unsigned int nLoop)
             for(; i < nSize; i++)
             {
                 pBuffer[i] = 0.0;
+            }
+            return true;
+        }
+    }
+    else if(m_wavformat.wBitsPerSample == 24)
+    {
+        std::vector<char> vTemp(nSize*3);   //*3 as assuming 24 bit audio
+        if(ReadAudio(vTemp, nLoop))
+        {
+            size_t nBuffer(0);
+            for(size_t i = 0; i < vTemp.size(); i+=3)
+            {
+                int nSample = vTemp[i+2];
+                nSample = nSample << 8;
+                nSample += vTemp[i+1];
+                nSample = nSample << 8;
+                nSample += vTemp[i];
+                nSample = nSample << 8;
+
+                float dSample = static_cast<float>(nSample);
+                dSample /= 2147483648.0;
+                pBuffer[nBuffer] = dSample;
+                nBuffer++;
+            }
+            for(;nBuffer < nSize; nBuffer++)
+            {
+                pBuffer[nBuffer] = 0.0;
             }
             return true;
         }

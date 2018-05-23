@@ -104,7 +104,7 @@ void pnlRecord::OnbtnRecordClick(wxCommandEvent& event)
             m_pKbd1->Disable();
             m_pedtFile->Disable();
             Settings::Get().Write(wxT("Test"), wxT("Lock"), 1);
-        }
+           }
     }
     else
     {

@@ -19,6 +19,8 @@ class PAMBASE_IMPEXPORT R128Calculator
         double GetShortLevel() const;
         double GetLiveLevel() const;
         double GetLURange() const;
+        double GetMomentaryMax() const;
+        double GetShortMax() const;
 
         void ResetMeter();
 
@@ -39,6 +41,8 @@ class PAMBASE_IMPEXPORT R128Calculator
 
         double m_dMomentary;
         double m_dShort;
+        double m_dMomentaryMax;
+        double m_dShortMax;
 
         unsigned int m_nInputChannels;
         unsigned int m_nChunkFrames;

@@ -85,8 +85,6 @@ void R128Meter::OnPaint(wxPaintEvent& event)
     dc.DrawRectangle(GetClientRect());
     if(!m_bLevelDisplay)
     {
-        m_uiLabel.Draw(dc, uiRect::BORDER_NONE);
-        m_uiLevelText.Draw(dc, uiRect::BORDER_NONE);
         dc.DrawBitmap(m_bmpMeter, 0,m_uiLevelText.GetBottom());
         m_uiBlack.Draw(dc, uiRect::BORDER_NONE);
 
@@ -98,24 +96,28 @@ void R128Meter::OnPaint(wxPaintEvent& event)
 
         for(size_t i = 0; i < m_vLevels.size(); i++)
         {
-            dc.DrawLine(0, m_uiLevelText.GetBottom()-(m_dPixelsPerdB*m_vLevels[i]), GetClientRect().GetWidth(), m_uiLevelText.GetBottom()-(m_dPixelsPerdB*m_vLevels[i]));
+            dc.DrawLine(0, m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i]-m_dMax)), GetClientRect().GetWidth(), m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i]-m_dMax)));
         }
 
         if(m_penTarget.IsOk())
         {
             dc.SetPen(m_penTarget);
-            dc.DrawLine(0, m_uiLevelText.GetBottom()-(m_dPixelsPerdB*m_dTargetLevel), GetClientRect().GetWidth(), m_uiLevelText.GetBottom()-(m_dPixelsPerdB*m_dTargetLevel));
+            dc.DrawLine(0, m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_dTargetLevel-m_dMax)), GetClientRect().GetWidth(), m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_dTargetLevel-m_dMax)));
         }
 
         dc.SetPen(wxNullPen);
+
+        m_uiLabel.Draw(dc, uiRect::BORDER_NONE);
+        m_uiLevelText.Draw(dc, uiRect::BORDER_NONE);
+
     }
     else
     {
         for(size_t i = 0; i < m_vLevels.size(); i++)
         {
-            int nY(m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])));
+            int nY(m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i]-m_dMax)));
             dc.SetPen(wxPen(wxColour(200,200,200),1, wxDOT));
-            dc.DrawLine(0, m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])), GetClientRect().GetWidth(), m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])));
+            dc.DrawLine(0, m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i]-m_dMax)), GetClientRect().GetWidth(), m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i]-m_dMax)));
             uiRect uiLevel(wxRect(15, nY-10,GetClientSize().x-30, 20));
             uiLevel.SetBackgroundColour(*wxBLACK);
             uiLevel.SetForegroundColour(*wxWHITE);
@@ -124,7 +126,7 @@ void R128Meter::OnPaint(wxPaintEvent& event)
         if(m_penTarget.IsOk())
         {
             dc.SetPen(m_penTarget);
-            dc.DrawLine(0, m_uiLevelText.GetBottom()-(m_dPixelsPerdB*m_dTargetLevel), GetClientRect().GetWidth(), m_uiLevelText.GetBottom()-(m_dPixelsPerdB*m_dTargetLevel));
+            dc.DrawLine(0, m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_dTargetLevel-m_dMax)), GetClientRect().GetWidth(), m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_dTargetLevel-m_dMax)));
         }
     }
 }
@@ -149,7 +151,7 @@ void R128Meter::InitMeter(const wxString& sText,double dMin)
     m_uiLevelText.SetGradient(0);
     m_uiLabel.SetRect(0,GetClientRect().GetBottom()-20, GetClientRect().GetWidth(), 20);
 
-    m_dPixelsPerdB = (GetClientRect().GetHeight()-40)/(-m_dMin);
+    m_dPixelsPerdB = (GetClientRect().GetHeight()-40)/(m_dMax-m_dMin);
 
     int nLow = -m_pairColour[0].first*m_dPixelsPerdB;
     int nMid = -m_pairColour[1].first*m_dPixelsPerdB;
@@ -191,15 +193,18 @@ void R128Meter::InitMeter(const wxString& sText,double dMin)
 
 }
 
-void R128Meter::SetMin(double dMin)
+void R128Meter::SetMinMax(double dMin, double dMax)
 {
     m_dMin = dMin;
+    m_dMax = dMax;
     m_dPeakValue = m_dMin;
 
-    m_dPixelsPerdB = (GetClientRect().GetHeight()-40)/(-m_dMin);
+    m_dPixelsPerdB = (GetClientRect().GetHeight()-40)/(m_dMax-m_dMin);
 
-    int nLow = -m_pairColour[0].first*m_dPixelsPerdB;
-    int nMid = -m_pairColour[1].first*m_dPixelsPerdB;
+    //int nTop = m
+
+    int nLow = (m_dMax-m_pairColour[0].first)*m_dPixelsPerdB;
+    int nMid = (m_dMax-m_pairColour[1].first)*m_dPixelsPerdB;
 
     m_uiLevel[0].SetRect(0, m_uiLevelText.GetBottom()+nLow, GetClientRect().GetWidth(), GetClientRect().GetHeight()-m_uiLevelText.GetHeight()-nLow-m_uiLabel.GetHeight());
     m_uiLevel[1].SetRect(0, m_uiLevelText.GetBottom()+nMid, GetClientRect().GetWidth(), m_uiLevel[0].GetTop()-nMid);
@@ -269,20 +274,27 @@ void R128Meter::ShowValue(double dValue)
             m_dPeakValue = min(dValue, m_dMax);
             if(m_dLevelOffset == 0.0)
             {
-                m_uiLevelText.SetLabel(wxString::Format(wxT("%.1f LUFS"), m_dPeakValue));
+                if(m_dMax <= 0)
+                {
+                    m_uiLevelText.SetLabel(wxString::Format(wxT("%.1f LUFS"), dValue));
+                }
+                else
+                {
+                    m_uiLevelText.SetLabel(wxString::Format(wxT("%.1f dBTP"), dValue));
+                }
             }
             else
             {
-                m_uiLevelText.SetLabel(wxString::Format(wxT("%.1f LU"), m_dPeakValue-m_dLevelOffset));
+                m_uiLevelText.SetLabel(wxString::Format(wxT("%.1f LU"), dValue-m_dLevelOffset));
             }
             m_nPeakCounter = 0;
             RefreshRect(m_uiLevelText.GetRect());
         }
 
-        int ndB = m_dPixelsPerdB*m_dLastValue;
+        int ndB = m_dPixelsPerdB*(m_dLastValue-m_dMax);
         ndB = max(ndB, -(m_uiLabel.GetTop()-m_uiLevelText.GetHeight()));
 
-        int nPeakdB = m_dPixelsPerdB*m_dPeakValue;
+        int nPeakdB = m_dPixelsPerdB*(m_dPeakValue-m_dMax);
         nPeakdB = max(nPeakdB, -(m_uiLabel.GetTop()-m_uiLevelText.GetHeight()));
 
         m_uiBlack.SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), -ndB);

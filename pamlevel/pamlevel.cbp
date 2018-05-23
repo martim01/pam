@@ -61,6 +61,7 @@
 				<Linker>
 					<Add option="-Wl,--enable-auto-import,-Map=pamlevel.map" />
 					<Add library="wxmsw30ud_gcc_wammacs" />
+					<Add library="libsamplerated.a" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 			</Target>

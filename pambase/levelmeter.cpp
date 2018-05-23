@@ -90,8 +90,6 @@ void LevelMeter::OnPaint(wxPaintEvent& event)
     dc.DrawRectangle(GetClientRect());
     if(!m_bLevelDisplay)
     {
-        m_uiLabel.Draw(dc, uiRect::BORDER_NONE);
-        m_uiLevelText.Draw(dc, uiRect::BORDER_NONE);
         dc.DrawBitmap(m_bmpMeter, 0,m_uiLevelText.GetBottom());
         m_uiBlack.Draw(dc, uiRect::BORDER_NONE);
 
@@ -116,7 +114,11 @@ void LevelMeter::OnPaint(wxPaintEvent& event)
                 dc.DrawLine(0, nY, GetClientRect().GetWidth(), nY);
             }
         }
+
         dc.SetPen(wxNullPen);
+        m_uiLabel.Draw(dc, uiRect::BORDER_NONE);
+        m_uiLevelText.Draw(dc, uiRect::BORDER_NONE);
+
     }
     else
     {
@@ -236,6 +238,8 @@ void LevelMeter::ResetMeter(void)
         case ENERGY:
         case TOTAL:
         case AVERAGE:
+        case LOUD:
+        case TRUEPEAK:
             m_dLastValue = -80;
             m_dPeakValue = -80;
             break;
@@ -243,9 +247,6 @@ void LevelMeter::ResetMeter(void)
             m_dLastValue = 0;
             m_dPeakValue = 0;
             break;
-        case LOUD:
-            m_dLastValue = -80;
-            m_dPeakValue = -80;
 
     }
     Refresh();
@@ -260,7 +261,7 @@ void LevelMeter::ShowValue(double dValue)
     {
         if(!m_bFreeze)
         {
-            if(m_nMeterDisplay != LOUD)
+            if(m_nMeterDisplay != LOUD && m_nMeterDisplay != TRUEPEAK)
             {
                 if(dValue != 0)
                 {

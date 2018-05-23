@@ -53,7 +53,7 @@ public:
     enum {PEAK_HIDE, PEAK_SHOW, PEAK_HOLD};
     enum {LEFT=0, RIGHT=1, MIDDLE=8, SIDE=9, LEVELS=10};
 
-    enum {PPM, PEAK, ENERGY, LOUD, TOTAL, AVERAGE};
+    enum {PPM, PEAK, ENERGY, LOUD, TOTAL, AVERAGE, TRUEPEAK};
 protected:
 
     void ShowPPM(double dValue);
