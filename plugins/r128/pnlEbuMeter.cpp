@@ -178,11 +178,12 @@ void pnlEbuMeter::SetSession(const session& aSession)
 
 void pnlEbuMeter::CreateMeters()
 {
-    int x = 55;
+
+    m_pLevels = new R128Meter(this, wxID_ANY, wxEmptyString, -59, true, wxPoint(5,0), wxSize(50,481));
     m_aMeters[0] = new R128Meter(this,wxID_ANY, wxT("Momentary"), -59, false, wxPoint(55, 0), wxSize(80, 480));
     m_aMeters[1] = new R128Meter(this,wxID_ANY, wxT("Short"), -59, false, wxPoint(145, 0), wxSize(80, 480));
     m_aMeters[2] = new R128Meter(this,wxID_ANY, wxT("Integrated"), -59, false, wxPoint(235, 0), wxSize(100, 480));
-    m_pLevels = new R128Meter(this, wxID_ANY, wxEmptyString, -59, true, wxPoint(5,0), wxSize(50,481));
+
 
     m_plblMomentaryTitle = new wmLabel(this, wxID_ANY, wxT("Momentary:"), wxPoint(350,0), wxSize(100,40));
     m_plblMomentaryTitle->SetForegroundColour(*wxWHITE);

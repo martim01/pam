@@ -3,6 +3,7 @@
 	<Workspace title="Workspace">
 		<Project filename="pambase/pambase.cbp" />
 		<Project filename="pamfft/pamfft.cbp" />
+		<Project filename="pamlevel/pamlevel.cbp" />
 		<Project filename="plugins/fft/fft.cbp">
 			<Depends filename="pamfft/pamfft.cbp" />
 			<Depends filename="pambase/pambase.cbp" />
@@ -29,6 +30,7 @@
 		<Project filename="plugins/polarscope/polarscope.cbp" />
 		<Project filename="plugins/r128/r128.cbp">
 			<Depends filename="pambase/pambase.cbp" />
+			<Depends filename="pamlevel/pamlevel.cbp" />
 		</Project>
 		<Project filename="plugins/channel delay/channel delay.cbp">
 			<Depends filename="pamfft/pamfft.cbp" />
@@ -50,6 +52,7 @@
 		<Project filename="pam2.cbp">
 			<Depends filename="pambase/pambase.cbp" />
 			<Depends filename="pamfft/pamfft.cbp" />
+			<Depends filename="pamlevel/pamlevel.cbp" />
 			<Depends filename="plugins/fft/fft.cbp" />
 			<Depends filename="plugins/spectogram/spectogram.cbp" />
 			<Depends filename="plugins/lissajou/lissajou.cbp" />
