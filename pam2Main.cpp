@@ -33,9 +33,12 @@
 #include <wx/stdpaths.h>
 #include "soundfile.h"
 #include "wxpammclient.h"
+#include "images/splash.xpm"
 
 //(*InternalHeaders(pam2Dialog)
+#include <wx/bitmap.h>
 #include <wx/intl.h>
+#include <wx/image.h>
 #include <wx/string.h>
 //*)
 
@@ -66,12 +69,16 @@ wxString wxbuildinfo(wxbuildinfoformat format)
 }
 
 //(*IdInit(pam2Dialog)
+const long pam2Dialog::ID_STATICBITMAP1 = wxNewId();
+const long pam2Dialog::ID_PANEL4 = wxNewId();
 const long pam2Dialog::ID_M_PSWP1 = wxNewId();
 const long pam2Dialog::ID_M_PLST1 = wxNewId();
 const long pam2Dialog::ID_M_PLST2 = wxNewId();
 const long pam2Dialog::ID_PANEL2 = wxNewId();
 const long pam2Dialog::ID_M_PSWP2 = wxNewId();
 const long pam2Dialog::ID_PANEL1 = wxNewId();
+const long pam2Dialog::ID_PANEL3 = wxNewId();
+const long pam2Dialog::ID_M_PSWP3 = wxNewId();
 const long pam2Dialog::ID_TIMER1 = wxNewId();
 const long pam2Dialog::ID_TIMER2 = wxNewId();
 const long pam2Dialog::ID_TIMER3 = wxNewId();
@@ -95,9 +102,16 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Create(parent, id, _("wxWidgets app"), wxDefaultPosition, wxDefaultSize, wxNO_BORDER, _T("id"));
     SetClientSize(wxSize(800,480));
     SetBackgroundColour(wxColour(0,0,0));
-    m_pswpMain = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(0,0), wxSize(600,480), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
+    m_pswpSplash = new wmSwitcherPanel(this, ID_M_PSWP3, wxDefaultPosition, wxSize(800,480), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP3"));
+    m_pswpSplash->SetPageNameStyle(0);
+    pnlSplash = new wxPanel(m_pswpSplash, ID_PANEL4, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL4"));
+    pnlSplash->SetBackgroundColour(wxColour(0,0,0));
+    m_pbmpSplash = new wxStaticBitmap(pnlSplash, ID_STATICBITMAP1, wxBitmap(splash_xpm), wxPoint(0,0), wxSize(800,480), wxSIMPLE_BORDER, _T("ID_STATICBITMAP1"));
+    pnlMain = new wxPanel(m_pswpSplash, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
+    pnlMain->SetBackgroundColour(wxColour(0,0,0));
+    m_pswpMain = new wmSwitcherPanel(pnlMain, ID_M_PSWP1, wxPoint(0,0), wxSize(600,480), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
     m_pswpMain->SetPageNameStyle(0);
-    pnlLists = new wxPanel(this, ID_PANEL1, wxPoint(600,0), wxSize(200,480), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
+    pnlLists = new wxPanel(pnlMain, ID_PANEL1, wxPoint(600,0), wxSize(200,480), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
     m_plstScreens = new wmList(pnlLists, ID_M_PLST1, wxPoint(0,0), wxSize(200,139), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
     m_plstScreens->SetBackgroundColour(wxColour(0,0,0));
     m_plstScreens->SetButtonColour(wxColour(wxT("#008000")));
@@ -112,6 +126,8 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Panel1 = new wxPanel(m_pswpOptions, ID_PANEL2, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL2"));
     Panel1->SetBackgroundColour(wxColour(0,0,0));
     m_pswpOptions->AddPage(Panel1, _("Blank"), false);
+    m_pswpSplash->AddPage(pnlSplash, _("Splash"), true);
+    m_pswpSplash->AddPage(pnlMain, _("Main"), false);
     timerStart.SetOwner(this, ID_TIMER1);
     timerStart.Start(10, true);
     m_timerFile.SetOwner(this, ID_TIMER2);
@@ -244,6 +260,7 @@ void pam2Dialog::LoadMonitorPanels()
     MonitorPluginFactory::Get()->SetHandler(this);
     MonitorPluginFactory::Get()->SetSwitcherPanels(m_pswpMain, m_pswpOptions);
 
+    m_pswpMain->Freeze();
 
     Connect(wxID_ANY, wxEVT_MONITOR_MAX, (wxObjectEventFunction)&pam2Dialog::OnMonitorMax);
 
@@ -291,6 +308,8 @@ void pam2Dialog::LoadMonitorPanels()
         m_mmMonitorPlugins.insert(make_pair(nPage, m_pswpMain->GetPageText(i)));
     }
     m_nCurrentMonitorPage = 0;
+
+    m_pswpMain->Thaw();
     ShowMonitorList();
 }
 
@@ -325,6 +344,7 @@ void pam2Dialog::ShowMonitorList()
         m_plstScreens->SetButtonColour(nButton, wxColour(50,160,70));
         m_plstScreens->SetTextButtonColour(nButton, *wxBLACK);
     }
+
     m_plstScreens->SelectButton(m_pswpMain->GetSelectionName(), false);
     m_plstScreens->Thaw();
 }
@@ -364,6 +384,7 @@ void pam2Dialog::OnlstScreensSelected(wxCommandEvent& event)
     {
        ShowMonitorPanel(event.GetString());
     }
+    m_pswpSplash->ChangeSelection(1);
 }
 
 void pam2Dialog::OnplstOptionsSelected(wxCommandEvent& event)
@@ -941,6 +962,8 @@ void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
     CreateAudioInputDevice();
     m_pPlayback = new Playback();
     m_pPlayback->Init(this, 2048);
+
+
 }
 
 void pam2Dialog::Onm_timerFileTrigger(wxTimerEvent& event)

@@ -227,15 +227,17 @@ void pnlIdentify::LaunchGracenote()
     {
         m_plblStatus->SetLabel(wxT("Querying Gracenote"));
 
-        wxString sApp = m_pBuilder->ReadSetting(wxT("Application"), wxEmptyString);
-        wxString sLicence = m_pBuilder->ReadSetting(wxT("Licence"), wxEmptyString);
-        wxString sWavFile = m_pBuilder->ReadSetting(wxT("Wav"), wxEmptyString);
-        wxString sPass = m_pBuilder->ReadSetting(wxT("Pass"), wxEmptyString);
 
-        sApp.Replace(wxT("/"), wxT("\\"));
-        sLicence.Replace(wxT("/"), wxT("\\"));
-        sWavFile.Replace(wxT("/"), wxT("\\"));
-        wxString sCmd; //(wxT(".\\musicid_stream.exe 350638583 21062C0B56DC5C080DAC1693D997F576 .\\licence.txt online .\\identify.wav"));
+        wxString sApp = m_pBuilder->ReadSetting(wxT("Application"), wxT("./identify/musicid_stream"));
+        wxString sLicence = m_pBuilder->ReadSetting(wxT("Licence"), wxString::Format(wxT("%s/licence.txt"),Settings::Get().GetDocumentDirectory().c_str()));
+        wxString sWavFile = m_pBuilder->ReadSetting(wxT("Wav"), wxString::Format(wxT("%s/identify.wav"), Settings::Get().GetDocumentDirectory().c_str()));
+        wxString sPass = m_pBuilder->ReadSetting(wxT("Pass"), wxT("350638583 21062C0B56DC5C080DAC1693D997F576"));
+
+        wxString sCmd;
+
+//        sApp.Replace(wxT("/"), wxT("\\"));
+//        sLicence.Replace(wxT("/"), wxT("\\"));
+//        sWavFile.Replace(wxT("/"), wxT("\\"));
         sCmd << sApp << wxT(" ") << sPass << wxT(" ") << sLicence << wxT(" online ") << sWavFile;
 
         m_pProcess = new MyProcess(this, sCmd);

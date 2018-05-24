@@ -6,53 +6,75 @@
 		<bg>#000000</bg>
 		<style>wxNO_BORDER</style>
 		<handler function="OnClose" entry="EVT_CLOSE" />
-		<object class="wmSwitcherPanel" name="ID_M_PSWP1" variable="m_pswpMain" member="yes">
-			<pos>0,0</pos>
-			<size>600,480</size>
+		<object class="wmSwitcherPanel" name="ID_M_PSWP3" variable="m_pswpSplash" member="yes">
+			<size>800,480</size>
 			<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
-		</object>
-		<object class="wxPanel" name="ID_PANEL1" variable="pnlLists" member="yes">
-			<pos>600,0</pos>
-			<size>200,480</size>
-			<object class="wmList" name="ID_M_PLST1" variable="m_plstScreens" member="yes">
-				<scrolling>Horizontal</scrolling>
-				<button_gap>5,5</button_gap>
-				<button_size>-1,40</button_size>
-				<columns>3</columns>
-				<button>#008000</button>
-				<button_selected>#FF8000</button_selected>
-				<items />
-				<pos>0,0</pos>
-				<size>200,139</size>
-				<bg>#000000</bg>
-				<style>wmList::STYLE_SELECT</style>
-				<handler function="OnlstScreensSelected" entry="EVT_LIST_SELECTED" />
-			</object>
-			<object class="wmList" name="ID_M_PLST2" variable="m_plstOptions" member="yes">
-				<scrolling>Horizontal</scrolling>
-				<button_gap>5,5</button_gap>
-				<button_size>-1,40</button_size>
-				<columns>3</columns>
-				<button>#000080</button>
-				<button_selected>#FF8000</button_selected>
-				<items />
-				<pos>0,140</pos>
-				<size>200,130</size>
-				<bg>#000000</bg>
-				<style>wmList::STYLE_SELECT</style>
-				<handler function="OnplstOptionsSelected" entry="EVT_LIST_SELECTED" />
-			</object>
-			<object class="wmSwitcherPanel" name="ID_M_PSWP2" variable="m_pswpOptions" member="yes">
-				<pos>0,270</pos>
-				<size>200,210</size>
-				<bg>#000000</bg>
-				<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
-				<object class="wmSwitcherPanelpage">
-					<object class="wxPanel" name="ID_PANEL2" variable="Panel1" member="yes">
-						<bg>#000000</bg>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL4" variable="pnlSplash" member="yes">
+					<bg>#000000</bg>
+					<object class="wxStaticBitmap" name="ID_STATICBITMAP1" variable="m_pbmpSplash" member="yes">
+						<bitmap code="wxBitmap(splash_xpm)" />
+						<pos>0,0</pos>
+						<size>800,480</size>
 					</object>
-					<label>Blank</label>
 				</object>
+				<label>Splash</label>
+				<selected>1</selected>
+			</object>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL3" variable="pnlMain" member="yes">
+					<bg>#000000</bg>
+					<object class="wmSwitcherPanel" name="ID_M_PSWP1" variable="m_pswpMain" member="yes">
+						<pos>0,0</pos>
+						<size>600,480</size>
+						<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
+					</object>
+					<object class="wxPanel" name="ID_PANEL1" variable="pnlLists" member="yes">
+						<pos>600,0</pos>
+						<size>200,480</size>
+						<object class="wmList" name="ID_M_PLST1" variable="m_plstScreens" member="yes">
+							<scrolling>Horizontal</scrolling>
+							<button_gap>5,5</button_gap>
+							<button_size>-1,40</button_size>
+							<columns>3</columns>
+							<button>#008000</button>
+							<button_selected>#FF8000</button_selected>
+							<items />
+							<pos>0,0</pos>
+							<size>200,139</size>
+							<bg>#000000</bg>
+							<style>wmList::STYLE_SELECT</style>
+							<handler function="OnlstScreensSelected" entry="EVT_LIST_SELECTED" />
+						</object>
+						<object class="wmList" name="ID_M_PLST2" variable="m_plstOptions" member="yes">
+							<scrolling>Horizontal</scrolling>
+							<button_gap>5,5</button_gap>
+							<button_size>-1,40</button_size>
+							<columns>3</columns>
+							<button>#000080</button>
+							<button_selected>#FF8000</button_selected>
+							<items />
+							<pos>0,140</pos>
+							<size>200,130</size>
+							<bg>#000000</bg>
+							<style>wmList::STYLE_SELECT</style>
+							<handler function="OnplstOptionsSelected" entry="EVT_LIST_SELECTED" />
+						</object>
+						<object class="wmSwitcherPanel" name="ID_M_PSWP2" variable="m_pswpOptions" member="yes">
+							<pos>0,270</pos>
+							<size>200,210</size>
+							<bg>#000000</bg>
+							<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
+							<object class="wmSwitcherPanelpage">
+								<object class="wxPanel" name="ID_PANEL2" variable="Panel1" member="yes">
+									<bg>#000000</bg>
+								</object>
+								<label>Blank</label>
+							</object>
+						</object>
+					</object>
+				</object>
+				<label>Main</label>
 			</object>
 		</object>
 		<object class="wxTimer" name="ID_TIMER1" variable="timerStart" member="yes">
