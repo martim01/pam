@@ -2,6 +2,7 @@
 #include "myprocess.h"
 #include "identifybuilder.h"
 #include "settings.h"
+#include "soundfile.h"
 
 //(*InternalHeaders(pnlIdentify)
 #include <wx/font.h>
@@ -163,12 +164,15 @@ pnlIdentify::pnlIdentify(wxWindow* parent,IdentifyBuilder* pBuilder, wxWindowID 
 
 	m_bWriting = false;
 	m_pProcess = 0;
+
+	m_pSf = new SoundFile();
 }
 
 pnlIdentify::~pnlIdentify()
 {
 	//(*Destroy(pnlIdentify)
 	//*)
+	delete m_pSf;
 }
 
 
@@ -177,7 +181,7 @@ void pnlIdentify::OnbtnIdentifyClick(wxCommandEvent& event)
     wxString sWavFile = m_pBuilder->ReadSetting(wxT("Wav"), wxString::Format(wxT("%s/identify.wav"), Settings::Get().GetDocumentDirectory().c_str()));
 
 
-    if(m_sf.OpenToWrite(sWavFile, 2, m_nSampleRate, 16))
+    if(m_pSf->OpenToWrite(sWavFile, 2, m_nSampleRate, 16))
     {
         m_plblStatus->SetLabel(wxString::Format(wxT("Recording Audio: %.1f seconds"),0.0));
         m_bWriting = true;
@@ -203,13 +207,13 @@ void pnlIdentify::SetAudioData(const timedbuffer* pBuffer)
 {
     if(m_bWriting)
     {
-        m_sf.WriteAudio(pBuffer, m_nInputChannels, m_nChannels[0], m_nChannels[1]);
+        m_pSf->WriteAudio(pBuffer);//, m_nInputChannels, m_nChannels[0], m_nChannels[1]);
 
-        m_plblStatus->SetLabel(wxString::Format(wxT("Recording Audio: %.1f seconds"),static_cast<double>(m_sf.GetAudioByteLength())/134400.0));
+        m_plblStatus->SetLabel(wxString::Format(wxT("Recording Audio: %.1f seconds"),static_cast<double>(m_pSf->GetLength())/134400.0));
 
-        if(m_sf.GetAudioByteLength() > m_nSampleRate*28)
+        if(m_pSf->GetLength() > m_nSampleRate*28)
         {
-            m_sf.Close();
+            m_pSf->Close();
             m_bWriting = false;
             LaunchGracenote();
         }

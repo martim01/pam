@@ -26,6 +26,7 @@
 					<Add directory="$(#wx3_0.include)" />
 					<Add directory="$(#wx3_0.include)/mswu" />
 					<Add directory="$(#portaudio.include)" />
+					<Add directory="$(#libsndfile.include)" />
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="$(#wx3_0.include)/mswu" />
@@ -35,8 +36,10 @@
 					<Add option="-Wl,--enable-auto-import,-Map=pambase.map" />
 					<Add library="wxmsw30u_gcc_wammacs" />
 					<Add library="portaudio" />
+					<Add library="libsndfile-1" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#portaudio.lib)" />
+					<Add directory="$(#libsndfile.lib)" />
 				</Linker>
 			</Target>
 			<Target title="Debug">
@@ -61,6 +64,7 @@
 					<Add directory="$(#wx3_0.include)" />
 					<Add directory="$(#wx3_0.include)/mswu" />
 					<Add directory="$(#portaudio.include)" />
+					<Add directory="$(#libsndfile.include)" />
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="$(#wx3_0.include)/mswu" />
@@ -69,8 +73,10 @@
 					<Add option="-Wl,--enable-auto-import,-Map=pambase.map" />
 					<Add library="wxmsw30ud_gcc_wammacs" />
 					<Add library="portaudio" />
+					<Add library="libsndfile-1" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#portaudio.lib)" />
+					<Add directory="$(#libsndfile.lib)" />
 				</Linker>
 			</Target>
 			<Target title="Linux Release">

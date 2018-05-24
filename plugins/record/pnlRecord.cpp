@@ -123,7 +123,7 @@ void pnlRecord::SetAudioData(const timedbuffer* pBuffer)
 {
     if(m_bRecording)
     {
-        m_sf.WriteAudio(pBuffer->GetBuffer(), pBuffer->GetBufferSize());
+        m_sf.WriteAudio(pBuffer);//->GetBuffer(), pBuffer->GetBufferSize());
 
     }
 }

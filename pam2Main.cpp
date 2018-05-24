@@ -756,17 +756,17 @@ void pam2Dialog::OpenFileForReading()
     if(m_pSoundfile->OpenToRead(sFilePath))
     {
         wmLog::Get()->Log(wxString::Format(wxT("Opened file '%s'"), sFilePath.c_str()));
-        wmLog::Get()->Log(wxString::Format(wxT("SampleRate = %d"), m_pSoundfile->GetFormat().dwSamplesPerSec));
-        wmLog::Get()->Log(wxString::Format(wxT("Channels = %d"), m_pSoundfile->GetFormat().wChannels));
+        wmLog::Get()->Log(wxString::Format(wxT("SampleRate = %d"), m_pSoundfile->GetSampleRate()));
+        wmLog::Get()->Log(wxString::Format(wxT("Channels = %d"), m_pSoundfile->GetChannels()));
 
         session aSession(wxEmptyString, Settings::Get().Read(wxT("Input"), wxT("File"), wxEmptyString), wxT("File"));
-        aSession.lstSubsession.push_back(subsession(wxEmptyString, Settings::Get().Read(wxT("Input"), wxT("File"), wxEmptyString), wxEmptyString, wxEmptyString, wxEmptyString, 0, m_pSoundfile->GetFormat().dwSamplesPerSec, m_pSoundfile->GetFormat().wChannels, wxEmptyString, 0, make_pair(0,0), refclk()));
+        aSession.lstSubsession.push_back(subsession(wxEmptyString, Settings::Get().Read(wxT("Input"), wxT("File"), wxEmptyString), wxEmptyString, wxEmptyString, wxEmptyString, 0, m_pSoundfile->GetSampleRate(), m_pSoundfile->GetChannels(), wxEmptyString, 0, make_pair(0,0), refclk()));
         aSession.itCurrentSubsession = aSession.lstSubsession.begin();
         m_Session = aSession;
 
         InputSession(aSession);
 
-        CheckPlayback(m_pSoundfile->GetFormat().dwSamplesPerSec, m_pSoundfile->GetFormat().wChannels);
+        CheckPlayback(m_pSoundfile->GetSampleRate(), m_pSoundfile->GetChannels());
         m_dtLastRead = wxDateTime::UNow();
 
     }
@@ -979,7 +979,7 @@ void pam2Dialog::ReadSoundFile(unsigned int nSize)
         event.SetId(0);
         event.SetClientData(reinterpret_cast<void*>(pData));
         event.SetInt(pData->GetBufferSize()/2);
-        event.SetExtraLong(m_pSoundfile->GetFormat().dwSamplesPerSec);
+        event.SetExtraLong(m_pSoundfile->GetSampleRate());
         wxPostEvent(this, event);
     }
 

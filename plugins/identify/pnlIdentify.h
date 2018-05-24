@@ -6,9 +6,10 @@
 #include "wmlabel.h"
 #include <wx/panel.h>
 //*)
-#include "soundfile.h"
 
+#include <vector>
 
+class SoundFile;
 class timedbuffer;
 struct session;
 
@@ -80,7 +81,7 @@ class pnlIdentify: public wxPanel
         IdentifyBuilder* m_pBuilder;
 
 		MyProcess *m_pProcess;
-		SoundFile m_sf;
+		SoundFile* m_pSf;
 
 		bool m_bWriting;
         unsigned int m_nInputChannels;
