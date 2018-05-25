@@ -40,7 +40,7 @@ FftMeter::FftMeter(wxWindow *parent, FFTBuilder* pBuilder, wxWindowID id, const 
     SetMeter(FFT);
     m_vThirdOctave.resize(35);
     SetOverlap(50.0);
-    m_dFall = 0.3;
+    m_dFall = 0.2;
     m_nBinSelected = 0;
     m_bCursorMode = false;
 
@@ -517,6 +517,7 @@ void FftMeter::SetNumberOfBins(size_t nBins)
     m_vfft_out.resize(nBins+1);
     m_vAmplitude.resize(m_vfft_out.size());
 
+    m_dFall = 0.000195 * static_cast<double>(nBins);
     //store here so we can get back
     if(m_nMeterType != OCTAVE)
     {

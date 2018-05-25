@@ -14,7 +14,7 @@
 #include <wx/notebook.h>
 #include "wmswitcherpanel.h"
 #include <wx/panel.h>
-#include <wx/statbmp.h>
+#include <wx/bmpbuttn.h>
 #include <wx/dialog.h>
 #include <wx/timer.h>
 #include "wmlist.h"
@@ -57,10 +57,11 @@ class pam2Dialog: public wxDialog
         void Onm_timerFileTrigger(wxTimerEvent& event);
         void OntimerIpcTrigger(wxTimerEvent& event);
         void OnClose(wxCloseEvent& event);
+        void OnbmpSplashClick(wxCommandEvent& event);
         //*)
 
         //(*Identifiers(pam2Dialog)
-        static const long ID_STATICBITMAP1;
+        static const long ID_BITMAPBUTTON1;
         static const long ID_PANEL4;
         static const long ID_M_PSWP1;
         static const long ID_M_PLST1;
@@ -78,6 +79,7 @@ class pam2Dialog: public wxDialog
         //(*Declarations(pam2Dialog)
         wmList* m_plstScreens;
         wxPanel* pnlMain;
+        wxBitmapButton* m_pbmpSplash;
         wxPanel* pnlLists;
         wmList* m_plstOptions;
         wxPanel* Panel1;
@@ -87,7 +89,6 @@ class pam2Dialog: public wxDialog
         wxTimer timerStart;
         wmSwitcherPanel* m_pswpMain;
         wxPanel* pnlSplash;
-        wxStaticBitmap* m_pbmpSplash;
         wmSwitcherPanel* m_pswpSplash;
         //*)
 

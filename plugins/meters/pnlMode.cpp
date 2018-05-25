@@ -29,9 +29,9 @@ pnlMode::pnlMode(wxWindow* parent, MetersBuilder* pBuilder, wxWindowID id,const 
 	//*)
 
 	m_plstMeters_Display->AddButton(wxT("PPM"));
-	m_plstMeters_Display->AddButton(wxT("Peak"));
+	m_plstMeters_Display->AddButton(wxT("Sample Peak"));
 	m_plstMeters_Display->AddButton(wxT("Energy"));
-	m_plstMeters_Display->AddButton(wxT("Loudness"));
+	m_plstMeters_Display->AddButton(wxT("LKFS"));
 
 	m_plstMeters_Display->SelectButton(m_pBuilder->ReadSetting(wxT("Mode"),1), true);
 }

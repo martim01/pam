@@ -28,9 +28,9 @@ pnlMeters::pnlMeters(wxWindow* parent, LissajouBuilder* pBuilder, wxWindowID id,
 	SetBackgroundColour(*wxBLACK);
 
 	m_plstMode->AddButton(wxT("PPM"));
-	m_plstMode->AddButton(wxT("Peak"));
+	m_plstMode->AddButton(wxT("Sample Peak"));
 	m_plstMode->AddButton(wxT("Energy"));
-	m_plstMode->AddButton(wxT("Loud"));
+	m_plstMode->AddButton(wxT("LKFS"));
 
 	m_plstMode->SelectButton(pBuilder->ReadSetting(wxT("MeterMode"), 0), true);
 

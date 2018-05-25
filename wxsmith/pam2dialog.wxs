@@ -12,10 +12,13 @@
 			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL4" variable="pnlSplash" member="yes">
 					<bg>#000000</bg>
-					<object class="wxStaticBitmap" name="ID_STATICBITMAP1" variable="m_pbmpSplash" member="yes">
+					<object class="wxBitmapButton" name="ID_BITMAPBUTTON1" variable="m_pbmpSplash" member="yes">
 						<bitmap code="wxBitmap(splash_xpm)" />
 						<pos>0,0</pos>
 						<size>800,480</size>
+						<bg>#000000</bg>
+						<style>wxNO_BORDER</style>
+						<handler function="OnbmpSplashClick" entry="EVT_BUTTON" />
 					</object>
 				</object>
 				<label>Splash</label>

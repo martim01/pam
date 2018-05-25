@@ -139,6 +139,7 @@ void pnlRecord::OntimerSecondTrigger(wxTimerEvent& event)
 void pnlRecord::OnbtnDateClick(wxCommandEvent& event)
 {
     m_pedtFile->SetValue(wxDateTime::Now().Format(wxT("%Y_%m-%d_%H%M")));
+    m_pbtnRecord->Enable();
 }
 
 

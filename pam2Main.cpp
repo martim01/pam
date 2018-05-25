@@ -69,7 +69,7 @@ wxString wxbuildinfo(wxbuildinfoformat format)
 }
 
 //(*IdInit(pam2Dialog)
-const long pam2Dialog::ID_STATICBITMAP1 = wxNewId();
+const long pam2Dialog::ID_BITMAPBUTTON1 = wxNewId();
 const long pam2Dialog::ID_PANEL4 = wxNewId();
 const long pam2Dialog::ID_M_PSWP1 = wxNewId();
 const long pam2Dialog::ID_M_PLST1 = wxNewId();
@@ -106,7 +106,8 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_pswpSplash->SetPageNameStyle(0);
     pnlSplash = new wxPanel(m_pswpSplash, ID_PANEL4, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL4"));
     pnlSplash->SetBackgroundColour(wxColour(0,0,0));
-    m_pbmpSplash = new wxStaticBitmap(pnlSplash, ID_STATICBITMAP1, wxBitmap(splash_xpm), wxPoint(0,0), wxSize(800,480), wxSIMPLE_BORDER, _T("ID_STATICBITMAP1"));
+    m_pbmpSplash = new wxBitmapButton(pnlSplash, ID_BITMAPBUTTON1, wxBitmap(splash_xpm), wxPoint(0,0), wxSize(800,480), wxNO_BORDER, wxDefaultValidator, _T("ID_BITMAPBUTTON1"));
+    m_pbmpSplash->SetBackgroundColour(wxColour(0,0,0));
     pnlMain = new wxPanel(m_pswpSplash, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
     pnlMain->SetBackgroundColour(wxColour(0,0,0));
     m_pswpMain = new wmSwitcherPanel(pnlMain, ID_M_PSWP1, wxPoint(0,0), wxSize(600,480), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
@@ -134,6 +135,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_timerIpc.SetOwner(this, ID_TIMER3);
     m_timerIpc.Start(1000, false);
 
+    Connect(ID_BITMAPBUTTON1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pam2Dialog::OnbmpSplashClick);
     Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnlstScreensSelected);
     Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnplstOptionsSelected);
     Connect(ID_TIMER1,wxEVT_TIMER,(wxObjectEventFunction)&pam2Dialog::OntimerStartTrigger);
@@ -551,12 +553,10 @@ void pam2Dialog::CreateAudioInputDevice()
         wxString sRtp(Settings::Get().Read(wxT("Input"), wxT("RTP"), wxEmptyString));
         sRtp = Settings::Get().Read(wxT("RTP"), sRtp, wxEmptyString);
 
-        wxLogDebug(wxT("RTP=%s"), sRtp.c_str());
         if(sRtp.empty() == false && m_mRtp.find(sRtp) == m_mRtp.end())
         {
 
             m_sCurrentRtp = sRtp;
-            wxLogDebug(wxT("RTP=%s: Create new thread"), m_sCurrentRtp.c_str());
 
             RtpThread* pThread = new RtpThread(this, wxT("pam"), sRtp, 2048);
             pThread->Create();
@@ -687,7 +687,6 @@ void pam2Dialog::InputChanged(const wxString& sKey)
         }
         if(sType != wxT("RTP"))
         {
-            wxLogDebug(wxT("Input changed: Current: %s"), m_sCurrentRtp.c_str());
             map<wxString, RtpThread*>::iterator itThread = m_mRtp.find(m_sCurrentRtp);
             if(itThread != m_mRtp.end())
             {
@@ -712,33 +711,21 @@ void pam2Dialog::InputChanged(const wxString& sKey)
     }
     else if(sKey == wxT("RTP"))
     {
-        wxLogDebug(wxT("RTP Key"));
         wxString sUrl = Settings::Get().Read(wxT("RTP"), Settings::Get().Read(wxT("Input"), wxT("RTP"), wxEmptyString), wxEmptyString);
         if(sUrl != m_sCurrentRtp)
         {
             wmLog::Get()->Log(wxT("Audio Input Device Changed: Close AoIP Session"));
             ClearSession();
             map<wxString, RtpThread*>::iterator itThread = m_mRtp.find(m_sCurrentRtp);
-            wxLogDebug(wxT("Current: '%s' Read '%s'"), m_sCurrentRtp.c_str(), sUrl.c_str());
             if(itThread != m_mRtp.end())
             {
-                wxLogDebug(wxT("Thread found"));
                 bool bDelete = m_setRtpOrphan.insert(itThread->first).second;
                 if(bDelete)
                 {
-                    wxLogDebug(wxT("Ask thread to delete"));
                     itThread->second->Delete();
-                }
-                else
-                {
-                    wxLogDebug(wxT("Thread '%s' already in orphan set"), itThread->first);
                 }
             }
             CreateAudioInputDevice();
-        }
-        else
-        {
-            wxLogDebug(wxT("Read=%s Current=%s"),Settings::Get().Read(wxT("Input"), wxT("RTP"), wxEmptyString).c_str(),  m_sCurrentRtp.c_str());
         }
     }
     else if(sKey == wxT("Device"))
@@ -814,16 +801,13 @@ void pam2Dialog::OutputChanged(const wxString& sKey)
 
 void pam2Dialog::OnRTPSessionClosed(wxCommandEvent& event)
 {
-    wxLogDebug(wxT("RTP Session closed: %s [%s]"), event.GetString().c_str(), m_sCurrentRtp.c_str());
     wxString sTest = event.GetString();
     sTest.Replace(wxT("%20"), wxT(" "));
 
     if(m_sCurrentRtp == sTest)
     {
         m_sCurrentRtp = wxEmptyString;
-        wxLogDebug(wxT("Current set to empty"));
     }
-    //m_ptxtRtpLog->AppendText(wxString::Format(wxT("%s   AoIP Sink %s closed\n"), wxDateTime::UNow().Format(wxT("%H:%M:%S:%l")).c_str(), sTest().c_str()));
     m_setRtpOrphan.erase(sTest);
     m_mRtp.erase(sTest);
 
@@ -832,8 +816,6 @@ void pam2Dialog::OnRTPSessionClosed(wxCommandEvent& event)
 
 void pam2Dialog::OnRTPSession(wxCommandEvent& event)
 {
-    wxLogDebug(wxT("RTP Session"));
-
     m_Session = *reinterpret_cast<session*>(event.GetClientData());
 
     InputSession(m_Session);
@@ -846,10 +828,7 @@ void pam2Dialog::OnRTPSession(wxCommandEvent& event)
     {
         CheckPlayback(0,0);
     }
-
-
 }
-
 
 void pam2Dialog::CheckPlayback(unsigned long nSampleRate, unsigned long nChannels)
 {
@@ -1038,4 +1017,9 @@ void pam2Dialog::OnClose(wxCloseEvent& event)
         m_pClient = NULL;
     }
     event.Skip();
+}
+
+void pam2Dialog::OnbmpSplashClick(wxCommandEvent& event)
+{
+    m_pswpSplash->ChangeSelection(1);
 }

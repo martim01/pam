@@ -306,6 +306,9 @@ class PAMBASE_IMPEXPORT wmList : public wxWindow
         **/
         void ShowNextPage(bool bSelect, bool bEvent);
 
+        void ShowFirstPage(bool bSelect, bool bEvent);
+        void ShowLastPage(bool bSelect, bool bEvent);
+
         /** @brief Shows the previous page or scrolls up a page
         *   @param bSelect if true then selects the last button on the screen
         *   @param bEvent if true and bSelect is also true then a select event will be posted

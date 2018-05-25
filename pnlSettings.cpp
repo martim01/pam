@@ -457,7 +457,7 @@ void pnlSettings::OnswpSettingsPageChanged(wxNotebookEvent& event)
 
 void pnlSettings::OnbtnHomeClick(wxCommandEvent& event)
 {
-
+    m_plstDevices->ShowFirstPage(false,false);
 }
 
 void pnlSettings::OnbtnPreviousClick(wxCommandEvent& event)
@@ -472,4 +472,5 @@ void pnlSettings::OnbtnNextClick(wxCommandEvent& event)
 
 void pnlSettings::OnbtnEndClick(wxCommandEvent& event)
 {
+    m_plstDevices->ShowLastPage(false, false);
 }

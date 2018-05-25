@@ -1966,6 +1966,79 @@ void wmList::ShowPreviousPage(bool bSelect, bool bEvent)
 
 }
 
+void wmList::ShowFirstPage(bool bSelect, bool bEvent)
+{
+    if(m_nScrollAllowed == SCROLL_HORIZONTAL)
+    {
+        set<std::list<button*>::iterator>::iterator itPage = m_setPages.find(m_itTop);
+        if(itPage != m_setPages.end())
+        {
+            itPage = m_setPages.begin();
+            m_itSwipe = itPage;
+            m_nScrolling = SCROLL_HORIZONTAL;
+        }
+        m_nSwipeLeft = 0;//GetClientRect().GetWidth();
+        m_timerHold.Stop();
+        m_nSwipeOffset = 50;// max(1, (GetClientRect().GetWidth()-m_nSwipeLeft)/10);
+        CreateSwipeBitmaps();
+        m_timerScroll.Start(10);
+    }
+    else
+    {
+        if(m_lstButtons.empty() == false)
+        {
+            list<button*>::iterator itButton = m_lstButtons.begin();
+            int nButton = (*itButton)->pUi->GetTop();
+            int nDiff = min(GetClientSize().GetHeight(), -nButton);
+            ScrollVertical(nDiff);
+        }
+    }
+
+    if(bSelect)
+    {
+        Update(); //force a redrwaw
+        SelectButton(m_itLast, bEvent);
+    }
+
+}
+
+void wmList::ShowLastPage(bool bSelect, bool bEvent)
+{
+    if(m_nScrollAllowed == SCROLL_HORIZONTAL)
+    {
+        set<std::list<button*>::iterator>::iterator itPage = m_setPages.find(m_itTop);
+        if(itPage != m_setPages.end())
+        {
+            itPage = m_setPages.end();
+            --itPage;
+            m_itSwipe = itPage;
+            m_nScrolling = SCROLL_HORIZONTAL_RIGHT;
+        }
+
+        m_timerHold.Stop();
+        CreateSwipeBitmaps();
+        m_nSwipeOffset = -50;
+        m_nSwipeLeft = 0;
+        m_timerScroll.Start(10);
+    }
+    else
+    {
+        if(m_lstButtons.empty() == false)
+        {
+            list<button*>::iterator itButton = m_lstButtons.end();
+            --itButton;
+            int nButton = (*itButton)->pUi->GetBottom();
+            int nDiff = min(GetClientSize().GetHeight(), nButton - GetClientRect().GetHeight());
+            ScrollVertical(-nDiff);
+        }
+    }
+
+    if(bSelect)
+    {
+        Update(); //force a redrwaw
+        SelectButton(m_itTop, bEvent);
+    }
+}
 
 void wmList::ShowNextPage(bool bSelect, bool bEvent)
 {
