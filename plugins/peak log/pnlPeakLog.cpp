@@ -231,7 +231,13 @@ void pnlPeakLog::ClearGraphs()
     m_pLevelGraph_Minute->ClearGraphs();
     m_pLevelGraph_Second->ClearGraphs();
 
-
+    for(int i = 0; i < m_nChannels; i++)
+    {
+        m_pLevelGraph_Day->SetLimit(GRAPH_LINES[i], 0,-50);
+        m_pLevelGraph_Hour->SetLimit(GRAPH_LINES[i], 0,-50);
+        m_pLevelGraph_Minute->SetLimit(GRAPH_LINES[i], 0,-50);
+        m_pLevelGraph_Second->SetLimit(GRAPH_LINES[i], 0,-50);
+    }
 }
 
 void pnlPeakLog::SetLogType(bool bLUFS)

@@ -515,7 +515,7 @@ void FftMeter::SetNumberOfBins(size_t nBins)
 {
     m_nSampleSize = nBins*2;
     m_vfft_out.resize(nBins+1);
-    m_vAmplitude.resize(m_vfft_out.size());
+    m_vAmplitude = vector<float>(m_vfft_out.size(), -80.0);
 
     m_dFall = 0.000195 * static_cast<double>(nBins);
     //store here so we can get back

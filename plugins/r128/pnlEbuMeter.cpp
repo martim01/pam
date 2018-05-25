@@ -216,8 +216,8 @@ void pnlEbuMeter::UpdateMeters()
         m_plblMomentary->SetLabel(wxString::Format(wxT("%.1f LU"), m_pR128->GetMomentaryLevel()-m_dOffset));
         m_plblShort->SetLabel(wxString::Format(wxT("%.1f LU"), m_pR128->GetShortLevel()-m_dOffset));
     }
-    m_plblMomentaryMax->SetLabel(wxString::Format(wxT("[%.1f]"), m_pR128->GetMomentaryMax()));
-    m_plblShortMax->SetLabel(wxString::Format(wxT("[%.1f]"), m_pR128->GetShortMax()));
+    m_plblMomentaryMax->SetLabel(wxString::Format(wxT("%.1f"), m_pR128->GetMomentaryMax()));
+    m_plblShortMax->SetLabel(wxString::Format(wxT("%.1f"), m_pR128->GetShortMax()));
 
     SetPeakColour(m_plblPeakLeft, m_pTrue->GetLevel(0));
     SetPeakColour(m_plblPeakRight, m_pTrue->GetLevel(1));

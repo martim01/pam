@@ -131,5 +131,5 @@ double TruePeakCalculator::GetLevel(unsigned int nChannel)
     {
         return m_vTruePeak[nChannel];
     }
-    return 0.0;
+    return -120.0;
 }
