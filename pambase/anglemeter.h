@@ -21,6 +21,7 @@ public:
 
     void SetLevels(const double dLevels[], size_t nSize);
 
+
     bool SetMeterColour(const wxColour& clrMeter1, const wxColour& clrMeter2);
     void ResetMeter(void);
     void OnPaint(wxPaintEvent& event);
