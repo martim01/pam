@@ -16,6 +16,7 @@ class R128Thread : public wxThread
 
         void Reset();
 
+        size_t GetIntegrationTime();
     private:
 
         void CalculateLive();

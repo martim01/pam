@@ -16,6 +16,7 @@ void R128Thread::AddToLive(double dValue)
     m_lstLive.push_back(dValue);
     m_dLiveTotal += dValue;
 
+
     if(m_lstLive.size() > 72000)
     {   //more than two hours
         m_dLiveTotal -= m_lstLive.front();
@@ -28,6 +29,8 @@ void R128Thread::AddToRange(double dValue)
     wxMutexLocker ml(m_mutex);
     m_lstRange.push_back(dValue);
     m_dRangeTotal += dValue;
+
+
     if(m_lstRange.size() > 72000)
     {   //more than two hours
         m_dRangeTotal -= m_lstRange.front();
@@ -150,4 +153,10 @@ void R128Thread::Reset()
     m_lstRange.clear();
     m_dRangeTotal = 0.0;
     m_dLiveTotal = 0.0;
+}
+
+
+size_t R128Thread::GetIntegrationTime()
+{
+    return m_lstLive.size();
 }

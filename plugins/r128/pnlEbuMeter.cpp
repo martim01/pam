@@ -60,8 +60,8 @@ pnlEbuMeter::pnlEbuMeter(wxWindow* parent,R128Builder* pBuilder, wxWindowID id,c
 
     CreateMeters();
 
-    m_pbtnCalculate = new wmButton(this, ID_M_PBTN1, _("Calculate"), wxPoint(350,380), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
-	m_pbtnReset = new wmButton(this, ID_M_PBTN2, _("Reset"), wxPoint(400,430), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
+    m_pbtnCalculate = new wmButton(this, ID_M_PBTN1, _("R128"), wxPoint(370,380), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
+	m_pbtnReset = new wmButton(this, ID_M_PBTN2, _("Reset"), wxPoint(420,430), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
     Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlEbuMeter::OnbtnCalculateClick);
 	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlEbuMeter::OnbtnResetClick);
 

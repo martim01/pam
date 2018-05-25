@@ -121,6 +121,7 @@ void TruePeakCalculator::CalculateLevel(const timedbuffer* pBuffer)
                 m_vTruePeak[j] = 20 * log10(m_vCurrentPeak[j]);
             }
         }
+        delete[] m_pSrc->data.data_out;
     }
 }
 
