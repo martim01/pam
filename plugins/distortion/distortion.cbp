@@ -84,6 +84,7 @@
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add library="pambase2.0" />
+					<Add library="pamfft1.0" />
 				</Linker>
 			</Target>
 			<Target title="Linux Debug">
@@ -106,6 +107,7 @@
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add library="pambased2.0" />
+					<Add library="pamfftd1.0" />
 				</Linker>
 			</Target>
 		</Build>
