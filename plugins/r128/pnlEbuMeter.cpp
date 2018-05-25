@@ -91,16 +91,16 @@ void pnlEbuMeter::SetSession(const session& aSession)
 void pnlEbuMeter::CreateMeters()
 {
 
-    m_pLevels = new R128Meter(this, wxID_ANY, wxEmptyString, -59, true, wxPoint(5,0), wxSize(50,481));
-    m_aMeters[0] = new R128Meter(this,wxID_ANY, wxT("Momentary"), -59, false, wxPoint(55, 0), wxSize(80, 480));
-    m_aMeters[1] = new R128Meter(this,wxID_ANY, wxT("Short"), -59, false, wxPoint(145, 0), wxSize(80, 480));
-    m_aMeters[2] = new R128Meter(this,wxID_ANY, wxT("Integrated"), -59, false, wxPoint(235, 0), wxSize(100, 480));
+    m_pLevels = new R128Meter(this, wxID_ANY, wxEmptyString, -59, 0, true, wxPoint(5,0), wxSize(50,481));
+    m_aMeters[0] = new R128Meter(this,wxID_ANY, wxT("Momentary"), -59,0,  false, wxPoint(55, 0), wxSize(70, 480));
+    m_aMeters[1] = new R128Meter(this,wxID_ANY, wxT("Short"), -59, 0, false, wxPoint(135, 0), wxSize(70, 480));
+    m_aMeters[2] = new R128Meter(this,wxID_ANY, wxT("Integrated"), -59,0,  false, wxPoint(235, 0), wxSize(100, 480));
 
-    m_pPeakLevels = new R128Meter(this, wxID_ANY, wxEmptyString, -40, true, wxPoint(630,0), wxSize(50,481));
-    m_pPeakLeft = new R128Meter(this, wxID_ANY, wxT("Left"), -40, false, wxPoint(685,0), wxSize(50,481));
-    m_pPeakRight = new R128Meter(this, wxID_ANY, wxT("Right"), -40, false, wxPoint(740,0), wxSize(50,481));
-    m_pPeakLeft->SetLightColours(-8,wxColour(220,0,0), -8,wxColour(240,0,0),  wxColour(255,100,100));
-    m_pPeakRight->SetLightColours(-8,wxColour(0,220,0), -8,wxColour(0,240,0),  wxColour(255,100,100));
+    m_pPeakLevels = new R128Meter(this, wxID_ANY, wxEmptyString, -40,0,  true, wxPoint(630,0), wxSize(50,481));
+    m_pPeakLeft = new R128Meter(this, wxID_ANY, wxT("Left"), -40, 0, false, wxPoint(685,0), wxSize(50,481));
+    m_pPeakRight = new R128Meter(this, wxID_ANY, wxT("Right"), -40, 0, false, wxPoint(740,0), wxSize(50,481));
+    m_pPeakLeft->SetLightColours(-8,wxColour(220,0,0), 0,wxColour(240,0,0),  wxColour(255,100,100));
+    m_pPeakRight->SetLightColours(-8,wxColour(0,220,0), 0,wxColour(0,240,0),  wxColour(255,100,100));
     m_pPeakLevels->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlEbuMeter::OnInfoLeftUp,0,this);
     m_pPeakLeft->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlEbuMeter::OnInfoLeftUp,0,this);
     m_pPeakRight->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlEbuMeter::OnInfoLeftUp,0,this);
@@ -157,16 +157,16 @@ void pnlEbuMeter::CreateMeters()
     InitLabel(m_plblPeakRightMax, CLR_PEAK,8);
 
 
-    m_aMeters[0]->SetLightColours(-8,wxColour(0,0,200), -23, wxColour(255,0,0), wxColour(255,100,100));
-    m_aMeters[1]->SetLightColours(-8,wxColour(0,0,200), -23, wxColour(50,50,255), wxColour(255,100,100));
-    m_aMeters[2]->SetLightColours(-8,wxColour(0,200,0), -23, wxColour(230,230,0), wxColour(255,100,100));
-
     for(size_t i = 0; i < 3; i++)
     {
 
-        m_aMeters[i]->SetShading(m_pBuilder->ReadSetting(wxT("Shading"),0)==1);
+        m_aMeters[i]->SetShading(false);//m_pBuilder->ReadSetting(wxT("Shading"),0)==1);
         m_aMeters[i]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlEbuMeter::OnInfoLeftUp,0,this);
     }
+
+    m_aMeters[0]->SetLightColours(-26,wxColour(0,0,100), -20, wxColour(50,255,50), wxColour(255,100,100));
+    m_aMeters[1]->SetLightColours(-26,wxColour(0,0,100), -20, wxColour(50,255,50), wxColour(255,100,100));
+    m_aMeters[2]->SetLightColours(-26,wxColour(0,0,100), -20, wxColour(50,255,50), wxColour(255,100,100));
 
     ChangeScale();
     m_pLevels->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlEbuMeter::OnInfoLeftUp,0,this);

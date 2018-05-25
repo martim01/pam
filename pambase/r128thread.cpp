@@ -53,61 +53,78 @@ void* R128Thread::Entry()
 void R128Thread::CalculateLive()
 {
     m_mutex.Lock();
-    list<double>::iterator itEnd = m_lstLive.end();
-    double dLiveAbs = -0.691 + 10*log10(m_dLiveTotal/static_cast<double>(m_lstLive.size()));
-    m_mutex.Unlock();
-
-    double dLiveGate(0.0);
-    double dCount(0);
-    for(list<double>::iterator itLive = m_lstLive.begin(); itLive != itEnd; ++itLive)
+    if(m_lstLive.empty() == false)
     {
-        double dValue = -0.691 + 10*log10((*itLive));
-        if(dLiveAbs-dValue < 10.0)
+        list<double>::iterator itEnd = m_lstLive.end();
+        --itEnd;
+
+        double dLiveAbs = -0.691 + 10*log10(m_dLiveTotal/static_cast<double>(m_lstLive.size()));
+        m_mutex.Unlock();
+
+        double dLiveGate(0.0);
+        double dCount(0);
+        for(list<double>::iterator itLive = m_lstLive.begin(); itLive != itEnd; ++itLive)
         {
-            dLiveGate += (*itLive);
-            dCount++;
+            double dValue = -0.691 + 10*log10((*itLive));
+            if(dLiveAbs-dValue < 10.0)
+            {
+                dLiveGate += (*itLive);
+                dCount++;
+            }
         }
+        m_dLive = -0.691 + 10*log10(dLiveGate/dCount);
     }
-    m_dLive = -0.691 + 10*log10(dLiveGate/dCount);
+    else
+    {
+        m_mutex.Unlock();
+    }
 }
 
 
 void R128Thread::CalculateRange()
 {
     m_mutex.Lock();
-    list<double>::iterator itEnd = m_lstRange.end();
-    double dRangeAbs = -0.691 + 10*log10(m_dRangeTotal/static_cast<double>(m_lstRange.size()));
-    m_mutex.Unlock();
-
-    //@todo try using a vector rather than a list to see if faster...
-    list<double> lstRangeGate;
-    double dRangeGate(0.0);
-    double dCount(0);
-    for(list<double>::iterator itRange = m_lstRange.begin(); itRange != itEnd; ++itRange)
+    if(m_lstRange.empty() == false)
     {
-        double dValue = -0.691 + 10*log10((*itRange));
-        if(dRangeAbs-dValue < 20.0)
-        {
-            lstRangeGate.push_back(dValue);
-        }
-    }
-    lstRangeGate.sort();
-    int nLower = (10*lstRangeGate.size())/100;
-    int nHigher = (95*lstRangeGate.size())/100;
+        list<double>::iterator itEnd = m_lstRange.end();
+        --itEnd;
 
-    double dRange10, dRange95;
-    list<double>::iterator itValue = lstRangeGate.begin();
-    for(int i = 0; i <= nHigher; i++)
+        double dRangeAbs = -0.691 + 10*log10(m_dRangeTotal/static_cast<double>(m_lstRange.size()));
+        m_mutex.Unlock();
+
+        //@todo try using a vector rather than a list to see if faster...
+        list<double> lstRangeGate;
+        double dRangeGate(0.0);
+        double dCount(0);
+        for(list<double>::iterator itRange = m_lstRange.begin(); itRange != itEnd; ++itRange)
+        {
+            double dValue = -0.691 + 10*log10((*itRange));
+            if(dRangeAbs-dValue < 20.0)
+            {
+                lstRangeGate.push_back(dValue);
+            }
+        }
+        lstRangeGate.sort();
+        int nLower = (10*lstRangeGate.size())/100;
+        int nHigher = (95*lstRangeGate.size())/100;
+
+        double dRange10, dRange95;
+        list<double>::iterator itValue = lstRangeGate.begin();
+        for(int i = 0; i <= nHigher; i++)
+        {
+            if(i == nLower)
+            {
+                dRange10 = (*itValue);
+            }
+            ++itValue;
+        }
+        dRange95 = (*itValue);
+        m_dRange = dRange95-dRange10;
+    }
+    else
     {
-        if(i == nLower)
-        {
-            dRange10 = (*itValue);
-        }
-        ++itValue;
+        m_mutex.Unlock();
     }
-    dRange95 = (*itValue);
-    m_dRange = dRange95-dRange10;
-
 }
 
 

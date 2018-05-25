@@ -63,7 +63,6 @@
 						<items />
 						<pos>0,36</pos>
 						<size>600,34</size>
-						<bg>#000000</bg>
 						<style>wmList::STYLE_SELECT</style>
 						<handler function="OnlstInputSelected" entry="EVT_LIST_SELECTED" />
 					</object>

@@ -25,7 +25,7 @@ R128Meter::R128Meter()
     m_clrText = wxColour(200,180,255);
 }
 
-R128Meter::R128Meter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, bool bLevelDisplay, const wxPoint& pos, const wxSize& size) :
+R128Meter::R128Meter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, double dMax, bool bLevelDisplay, const wxPoint& pos, const wxSize& size) :
     m_dMax(0)
 {
     m_dLastValue = -180;
@@ -61,7 +61,7 @@ R128Meter::R128Meter(wxWindow *parent, wxWindowID id, const wxString & sText,dou
     m_pairColour[2] = make_pair(m_dMax, GetBackgroundColour());
 
     m_uiBlack.SetBackgroundColour(*wxBLACK);
-    InitMeter(sText, dMin);
+    InitMeter(sText, dMin, dMax);
 
     SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
     m_nChannels = 2;
@@ -137,60 +137,21 @@ void R128Meter::SetTargetLevel(double dValue, const wxPen& penLevel)
     m_penTarget = penLevel;
 }
 
-void R128Meter::InitMeter(const wxString& sText,double dMin)
+void R128Meter::InitMeter(const wxString& sText,double dMin, double dMax)
 {
     m_dMin = dMin;
+    m_dMax = dMax;
     m_dPeakValue = m_dMin;
 
     //work out size of rects
     wxString sLevel;
-
     m_uiLabel.SetLabel(sText);
     m_uiLabel.SetGradient(0);
     m_uiLevelText.SetRect(0,0, GetClientRect().GetWidth(), 20);
     m_uiLevelText.SetGradient(0);
     m_uiLabel.SetRect(0,GetClientRect().GetBottom()-20, GetClientRect().GetWidth(), 20);
 
-    m_dPixelsPerdB = (GetClientRect().GetHeight()-40)/(m_dMax-m_dMin);
-
-    int nLow = -m_pairColour[0].first*m_dPixelsPerdB;
-    int nMid = -m_pairColour[1].first*m_dPixelsPerdB;
-
-    m_uiLevel[0].SetRect(0, m_uiLevelText.GetBottom()+nLow, GetClientRect().GetWidth(), GetClientRect().GetHeight()-m_uiLevelText.GetHeight()-nLow-m_uiLabel.GetHeight());
-    m_uiLevel[1].SetRect(0, m_uiLevelText.GetBottom()+nMid, GetClientRect().GetWidth(), m_uiLevel[0].GetTop()-nMid);
-    m_uiLevel[2].SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), nMid);
-
-    m_uiSimple.SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), GetClientRect().GetHeight()-m_uiLevelText.GetHeight()-m_uiLabel.GetHeight());
-
-
-    //draw to the bmp..
-    wxMemoryDC dc;
-    m_bmpMeter = wxBitmap(GetClientSize().x, GetClientSize().y-m_uiLevelText.GetHeight()-m_uiLabel.GetHeight());
-    dc.SelectObject(m_bmpMeter);
-
-    if(!m_bShading)
-    {
-        for(int i = 0;i < 3; i++)
-        {
-            m_uiLevel[i].SetGradient(0);
-        }
-    }
-    else
-    {
-        for(int i = 0;i < 3; i++)
-        {
-            m_uiLevel[i].SetGradient(wxSOUTH);
-        }
-    }
-
-    m_uiLevel[2].Draw(dc, uiRect::BORDER_NONE);
-    m_uiLevel[1].Draw(dc, uiRect::BORDER_NONE);
-    m_uiLevel[0].Draw(dc, uiRect::BORDER_NONE);
-
-
-
-    m_uiPeak.SetBackgroundColour(m_pairColour[2].second);
-
+    SetMinMax(dMin, m_dMax);
 }
 
 void R128Meter::SetMinMax(double dMin, double dMax)
@@ -200,17 +161,21 @@ void R128Meter::SetMinMax(double dMin, double dMax)
     m_dPeakValue = m_dMin;
 
     m_dPixelsPerdB = (GetClientRect().GetHeight()-40)/(m_dMax-m_dMin);
-
+    int nTop = m_uiLevelText.GetBottom();
+    int nBottom = m_uiLabel.GetTop();
     //int nTop = m
 
-    int nLow = (m_dMax-m_pairColour[0].first)*m_dPixelsPerdB;
-    int nMid = (m_dMax-m_pairColour[1].first)*m_dPixelsPerdB;
 
-    m_uiLevel[0].SetRect(0, m_uiLevelText.GetBottom()+nLow, GetClientRect().GetWidth(), GetClientRect().GetHeight()-m_uiLevelText.GetHeight()-nLow-m_uiLabel.GetHeight());
-    m_uiLevel[1].SetRect(0, m_uiLevelText.GetBottom()+nMid, GetClientRect().GetWidth(), m_uiLevel[0].GetTop()-nMid);
-    m_uiLevel[2].SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), nMid);
+    int nLow = (m_pairColour[0].first-m_dMax)*m_dPixelsPerdB;
+    int nMid = (m_pairColour[1].first-m_dMax)*m_dPixelsPerdB;
 
-    m_uiSimple.SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), GetClientRect().GetHeight()-m_uiLevelText.GetHeight()-m_uiLabel.GetHeight());
+    m_uiLevel[0].SetRect(0, nTop, GetClientRect().GetWidth(), nBottom-nTop);
+    m_uiLevel[1].SetRect(0, 0, GetClientRect().GetWidth(), -nLow);
+    m_uiLevel[2].SetRect(0, 0, GetClientRect().GetWidth(), -nMid);
+
+
+
+    //m_uiLevel[2].SetRect(0, nTop, GetClientRect().GetWidth(), -nMid);
 
 
     //draw to the bmp..
@@ -219,14 +184,19 @@ void R128Meter::SetMinMax(double dMin, double dMax)
     dc.SelectObject(m_bmpMeter);
     if(m_bShading)
     {
-        m_uiLevel[2].Draw(dc, uiRect::BORDER_NONE);
-        m_uiLevel[1].Draw(dc, uiRect::BORDER_NONE);
-        m_uiLevel[0].Draw(dc, uiRect::BORDER_NONE);
+        m_uiLevel[0].SetGradient(wxSOUTH);
+        m_uiLevel[1].SetGradient(wxSOUTH);
+        m_uiLevel[2].SetGradient(wxSOUTH);
     }
     else
     {
-        m_uiSimple.Draw(dc,uiRect::BORDER_NONE);
+        m_uiLevel[0].SetGradient(0);
+        m_uiLevel[1].SetGradient(0);
+        m_uiLevel[2].SetGradient(0);
     }
+    m_uiLevel[0].Draw(dc, uiRect::BORDER_NONE);
+    m_uiLevel[1].Draw(dc, uiRect::BORDER_NONE);
+    m_uiLevel[2].Draw(dc, uiRect::BORDER_NONE);
 
 
     m_uiPeak.SetBackgroundColour(m_pairColour[2].second);
@@ -236,18 +206,17 @@ void R128Meter::SetMinMax(double dMin, double dMax)
 
 bool R128Meter::SetLightColours(double dLow, wxColour clrLow, double dMid, wxColour clrMid,  wxColour clrHigh)
 {
-
     m_pairColour[0] = make_pair(dLow, clrLow);
     m_pairColour[1] = make_pair(dMid, clrMid);
     m_pairColour[2] = make_pair(m_dMax, clrHigh);
 
     m_uiSimple.SetBackgroundColour(clrLow,clrLow);
 
-    m_uiLevel[0].SetBackgroundColour(wxNullColour, clrLow);
+    m_uiLevel[0].SetBackgroundColour(clrLow, *wxBLACK);
     m_uiLevel[1].SetBackgroundColour(clrMid, clrLow);
     m_uiLevel[2].SetBackgroundColour(clrHigh, clrMid);
 
-    InitMeter(m_uiLabel.GetLabel(), m_dMin);
+    InitMeter(m_uiLabel.GetLabel(), m_dMin, m_dMax);
 
     return true;
 
@@ -320,7 +289,7 @@ void R128Meter::ShowValue(double dValue)
 
 void R128Meter::OnSize(wxSizeEvent& event)
 {
-    InitMeter(m_uiLabel.GetLabel(), m_dMin);
+    InitMeter(m_uiLabel.GetLabel(), m_dMin, m_dMax);
 
     Refresh();
 }

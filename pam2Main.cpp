@@ -260,7 +260,6 @@ void pam2Dialog::LoadMonitorPanels()
     MonitorPluginFactory::Get()->SetHandler(this);
     MonitorPluginFactory::Get()->SetSwitcherPanels(m_pswpMain, m_pswpOptions);
 
-    m_pswpMain->Freeze();
 
     Connect(wxID_ANY, wxEVT_MONITOR_MAX, (wxObjectEventFunction)&pam2Dialog::OnMonitorMax);
 
@@ -309,7 +308,6 @@ void pam2Dialog::LoadMonitorPanels()
     }
     m_nCurrentMonitorPage = 0;
 
-    m_pswpMain->Thaw();
     ShowMonitorList();
 }
 

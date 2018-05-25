@@ -11,9 +11,9 @@ public:
     R128Meter();
     virtual ~R128Meter();
 
-    R128Meter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, bool bLevelDisplay, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize);
+    R128Meter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, double dMax, bool bLevelDisplay, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize);
 
-    void InitMeter(const wxString & sText,double dMin);
+    void InitMeter(const wxString & sText,double dMin, double dMax);
     void SetMinMax(double dMin, double dMax);
 
     void SetLevels(const double dLevels[], size_t nSize, double dOffset);

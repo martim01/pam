@@ -85,7 +85,6 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_plstDevices->SetBackgroundColour(wxColour(0,0,0));
     m_plstDevices->SetSelectedButtonColour(wxColour(wxT("#008000")));
     m_plstInput = new wmList(pnlInput, ID_M_PLST2, wxPoint(0,36), wxSize(600,34), wmList::STYLE_SELECT, 0, wxSize(100,30), 3, wxSize(-1,-1));
-    m_plstInput->SetBackgroundColour(wxColour(0,0,0));
     m_plstInput->SetButtonColour(wxColour(wxT("#400080")));
     m_plstInput->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
     m_pbtnHome = new wmButton(pnlInput, ID_M_PBTN1, wxEmptyString, wxPoint(70,395), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
@@ -175,9 +174,11 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
         m_plstLatency->AddButton(wxString::Format(wxT("%u ms"), i*20));
     }
 
+    m_plstInput->Freeze();
     m_plstInput->AddButton(wxT("Soundcard"));
     m_plstInput->AddButton(wxT("RTP"));
     m_plstInput->AddButton(wxT("File"));
+    m_plstInput->Thaw();
 
     m_pbtnOutput->SetToggleLook(true, wxT("OFF"), wxT("ON"),50.0);
 
