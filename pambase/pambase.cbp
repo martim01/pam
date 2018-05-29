@@ -199,6 +199,8 @@
 		<Unit filename="wmswipebutton.h" />
 		<Unit filename="wmswitcherpanel.cpp" />
 		<Unit filename="wmswitcherpanel.h" />
+		<Unit filename="wmtestlog.cpp" />
+		<Unit filename="wmtestlog.h" />
 		<Unit filename="wmtimeedit.cpp" />
 		<Unit filename="wmtimeedit.h" />
 		<Extensions>

@@ -7,6 +7,8 @@
 #include "fftAlgorithm.h"
 #include "timedbuffer.h"
 #include "spectogrambuilder.h"
+#include "settings.h"
+
 
 using namespace std;
 
@@ -43,9 +45,10 @@ SpectogramMeter::SpectogramMeter(wxWindow *parent, SpectogramBuilder* pBuilder, 
 
     m_nChannels = 2;
     m_nSampleRate = 48000;
-    #ifdef __TOUCHSCREEN__
-    SetCursor(wxCURSOR_BLANK);
-    #endif // __WXMSW__
+    if(Settings::Get().HideCursor())
+    {
+        SetCursor(wxCURSOR_BLANK);
+    }
 
     m_nNudge = NONE;
 

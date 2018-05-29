@@ -7,6 +7,7 @@
 #include "icons/left16.xpm"
 #include "icons/up16.xpm"
 #include "icons/down16.xpm"
+#include "settings.h"
 
 using namespace std;
 
@@ -70,9 +71,10 @@ bool wmList::Create(wxWindow* pParent, wxWindowID id, const wxPoint& pos, const 
     if(!wxWindow::Create(pParent,id,pos,szInit,wxWANTS_CHARS, wxEmptyString))
         return false;
 
-    #ifdef __TOUCHSCREEN__
-    SetCursor(wxCURSOR_BLANK);
-    #endif // __WXMSW__
+    if(Settings::Get().HideCursor())
+    {
+        SetCursor(wxCURSOR_BLANK);
+    }
 
     m_nGradient = wxEAST;
 

@@ -6,6 +6,8 @@
 #include "uirect.h"
 #include "timedbuffer.h"
 #include "scopebuilder.h"
+#include "settings.h"
+
 
 using namespace std;
 
@@ -42,9 +44,10 @@ bool Scope::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wx
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
 
-    #ifdef __TOUCHSCREEN__
-    SetCursor(wxCURSOR_BLANK);
-    #endif // __WXMSW__
+    if(Settings::Get().HideCursor())
+    {
+        SetCursor(wxCURSOR_BLANK);
+    }
 
     m_bMemory = false;
 

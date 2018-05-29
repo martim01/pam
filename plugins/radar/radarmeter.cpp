@@ -4,6 +4,8 @@
 #include <wx/log.h>
 #include <wx/image.h>
 #include "levelcalculator.h"
+#include "settings.h"
+
 
 const wxString RadarMeter::STR_MODE[4] = {wxT("PPM"), wxT("Peak"), wxT("Energy"), wxT("LUFS") };
 const wxString RadarMeter::STR_CHANNEL[11] = {wxT("L"), wxT("R"), wxT("3"), wxT("4"), wxT("5"), wxT("6"), wxT("7"), wxT("8"), wxEmptyString, wxT("M"), wxT("S")};
@@ -23,9 +25,10 @@ const wxString RadarMeter::LABEL_SCALE[3] = {wxT("dB"), wxT("Linear"), wxT("Auto
 RadarMeter::RadarMeter(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size)
 {
     Create(parent, id, pos, size);
-    #ifdef __TOUCHSCREEN__
-    SetCursor(wxCURSOR_BLANK);
-    #endif // __WXMSW__
+    if(Settings::Get().HideCursor())
+    {
+        SetCursor(wxCURSOR_BLANK);
+    }
     m_bRotate = false;
     m_nScaling = SCALE_DB;
     m_bShowLevels = false;

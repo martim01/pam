@@ -5,6 +5,7 @@
 #include <wx/image.h>
 #include "uirect.h"
 #include <algorithm>
+#include "settings.h"
 
 
 using namespace std;
@@ -40,9 +41,10 @@ bool OffsetGraph::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, co
     m_bCalculating = false;
     m_dSampleRate = 48.0;
 
-    #ifdef __TOUCHSCREEN__
-    SetCursor(wxCURSOR_BLANK);
-    #endif // __WXMSW__
+    if(Settings::Get().HideCursor())
+    {
+        SetCursor(wxCURSOR_BLANK);
+    }
 
     SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
 

@@ -4,6 +4,7 @@
 #include <wx/settings.h>
 #include <wx/log.h>
 #include <wx/bookctrl.h>
+#include "settings.h"
 
 using namespace std;
 
@@ -65,9 +66,10 @@ bool wmSwitcherPanel::Create(wxWindow* pParent, wxWindowID id, const wxPoint& po
     }
 
     m_bDownInWindow = false;
-    #ifdef __TOUCHSCREEN__
-    SetCursor(wxCURSOR_BLANK);
-    #endif // __WXMSW__
+    if(Settings::Get().HideCursor())
+    {
+        SetCursor(wxCURSOR_BLANK);
+    }
 
     m_nSwipeHeight = 10;
     m_nNameHeight = 20;

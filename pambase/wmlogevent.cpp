@@ -1,6 +1,8 @@
 #include "wmlogevent.h"
 #include <wx/log.h>
-
+#include "settings.h"
+#include <wx/file.h>
+#include <wx/filename.h>
 
 wmLog* wmLog::Get()
 {
@@ -22,15 +24,44 @@ void wmLog::Log(const wxString& sDevice, const wxString& sMessage, bool bSend)
         {
             m_pHandler->QueueEvent(plge);
         }
-
     }
+
+    if(m_dtLog.IsValid() == false || m_dtLog != wxDateTime::Today())
+	{
+		//Create new log file by closing and re-opening
+		OpenLogFile(true);
+	}
+	m_pFileLog->Write(wxString::Format(wxT("%s\t%s\t%s\r\n"), wxDateTime::Now().Format(wxT("%H:%M:%S")).c_str(), sDevice.c_str(), sMessage.c_str()));
 }
+
+void wmLog::OpenLogFile(bool bOpen)
+{
+    if(m_pFileLog)
+    {
+        delete m_pFileLog;
+        m_pFileLog = 0;
+    }
+	if(bOpen)
+	{
+		m_pFileLog = new wxFile(wxString::Format(wxT("%s/%s.log"), Settings::Get().GetLogDirectory().c_str(), wxDateTime::Now().FormatISODate().c_str()), wxFile::write_append);
+		m_dtLog = wxDateTime::Today();
+		Log(wxT("--Start logging to file--"));
+	}
+}
+
 
 void wmLog::Log(const wxString& sMessage)
 {
     Log(wxEmptyString, sMessage, true);
 }
 
+wmLog::~wmLog()
+{
+    if(m_pFileLog)
+    {
+        delete m_pFileLog;
+    }
+}
 
 DEFINE_EVENT_TYPE(wxEVT_WMLOG)
 
@@ -72,3 +103,4 @@ bool wmLogEvent::IsDebug() const
 {
     return m_bDebug;
 }
+

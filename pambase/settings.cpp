@@ -2,13 +2,16 @@
 #include <wx/log.h>
 #include <wx/stdpaths.h>
 #include "settingevent.h"
+#include <wx/filename.h>
 
 using   namespace std;
 
 
 Settings::Settings()
 {
-    m_iniManager.ReadIniFile(wxString::Format(wxT("%s/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
+    m_iniManager.ReadIniFile(wxString::Format(wxT("%s/pam/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
+
+    CreatePaths();
 }
 
 
@@ -133,12 +136,19 @@ wxString Settings::GetExecutableDirectory() const
 
 wxString Settings::GetConfigDirectory() const
 {
-    return m_iniManager.GetIniString(wxT("Paths"), wxT("Config"), wxStandardPaths::Get().GetUserConfigDir());
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("Config"), wxString::Format(wxT("%s/pam"), wxStandardPaths::Get().GetUserConfigDir().c_str()));
+
 }
 
 wxString Settings::GetDocumentDirectory() const
 {
-    return m_iniManager.GetIniString(wxT("Paths"), wxT("Config"), wxStandardPaths::Get().GetDocumentsDir());
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("Docs"), wxString::Format(wxT("%s/pam"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
+}
+
+wxString Settings::GetLogDirectory()
+{
+    return wxString::Format(wxT("%s/logs"), GetDocumentDirectory().c_str());
+
 }
 
 wxString Settings::GetMonitorPluginDirectory() const
@@ -157,4 +167,28 @@ wxString Settings::GetTestPluginDirectory() const
     #else
     return m_iniManager.GetIniString(wxT("Paths"), wxT("TestPlugins"), wxStandardPaths::Get().GetPluginsDir());
     #endif // __WXGNU__
+}
+
+
+bool Settings::HideCursor()
+{
+    return (m_iniManager.GetIniInt(wxT("General"), wxT("Cursor"), 1) == 0);
+}
+
+void Settings::CreatePaths()
+{
+    if(!wxFileName::DirExists(GetConfigDirectory()))
+    {
+        wxFileName::Mkdir(GetConfigDirectory(), 0777, wxPATH_MKDIR_FULL);
+    }
+
+    if(!wxFileName::DirExists(GetDocumentDirectory()))
+    {
+        wxFileName::Mkdir(GetDocumentDirectory(), 0777, wxPATH_MKDIR_FULL);
+    }
+
+    if(!wxFileName::DirExists(GetLogDirectory()))
+    {
+        wxFileName::Mkdir(GetLogDirectory(), 0777, wxPATH_MKDIR_FULL);
+    }
 }

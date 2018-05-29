@@ -6,7 +6,7 @@
 #include <wx/dcmemory.h>
 #include "meter.h"
 #include <algorithm>
-
+#include "settings.h"
 
 using namespace std;
 
@@ -42,9 +42,10 @@ LevelMeter::LevelMeter(wxWindow *parent, wxWindowID id, const wxString & sText,d
     m_dLevelOffset = 0.0;
     wxWindow::Create(parent,id,pos,szInit,wxWANTS_CHARS, wxT("levelmeter"));
 
-#ifdef __TOUCHSCREEN__
-    SetCursor(wxCURSOR_BLANK);
-#endif // __WXMSW__
+    if(Settings::Get().HideCursor())
+    {
+        SetCursor(wxCURSOR_BLANK);
+    }
     SetMinSize(size);
 
     m_nPeakMode = PEAK_SHOW;
@@ -188,7 +189,6 @@ void LevelMeter::InitMeter(const wxString& sText,double dMin)
     m_uiLevel[1].SetRect(0, m_uiLevelText.GetBottom()+nMid, GetClientRect().GetWidth(), m_uiLevel[0].GetTop()-nMid);
     m_uiLevel[2].SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), nMid);
 
-    m_uiSimple.SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), GetClientRect().GetHeight()-m_uiLevelText.GetHeight()-m_uiLabel.GetHeight());
 
 
     //draw to the bmp..
@@ -197,14 +197,22 @@ void LevelMeter::InitMeter(const wxString& sText,double dMin)
     dc.SelectObject(m_bmpMeter);
     if(m_bShading)
     {
-        m_uiLevel[2].Draw(dc, uiRect::BORDER_NONE);
-        m_uiLevel[1].Draw(dc, uiRect::BORDER_NONE);
-        m_uiLevel[0].Draw(dc, uiRect::BORDER_NONE);
+        for(int i= 0; i < 3; i++)
+        {
+            m_uiLevel[i].SetGradient(wxSOUTH);
+        }
     }
     else
     {
-        m_uiSimple.Draw(dc,uiRect::BORDER_NONE);
+        for(int i= 0; i < 3; i++)
+        {
+            m_uiLevel[i].SetGradient(0);
+        }
     }
+
+    m_uiLevel[2].Draw(dc, uiRect::BORDER_NONE);
+    m_uiLevel[1].Draw(dc, uiRect::BORDER_NONE);
+    m_uiLevel[0].Draw(dc, uiRect::BORDER_NONE);
 
 
     m_uiPeak.SetBackgroundColour(m_pairColour[2].second);
@@ -443,16 +451,26 @@ void LevelMeter::SetShading(bool bShading)
     wxMemoryDC dc;
     m_bmpMeter = wxBitmap(GetClientSize().x, GetClientSize().y-m_uiLevelText.GetHeight()-m_uiLabel.GetHeight());
     dc.SelectObject(m_bmpMeter);
+
     if(m_bShading)
     {
-        m_uiLevel[2].Draw(dc, uiRect::BORDER_NONE);
-        m_uiLevel[1].Draw(dc, uiRect::BORDER_NONE);
-        m_uiLevel[0].Draw(dc, uiRect::BORDER_NONE);
+        for(int i= 0; i < 3; i++)
+        {
+            m_uiLevel[i].SetGradient(wxSOUTH);
+        }
     }
     else
     {
-        m_uiSimple.Draw(dc,uiRect::BORDER_NONE);
+        for(int i= 0; i < 3; i++)
+        {
+            m_uiLevel[i].SetGradient(0);
+        }
     }
+
+    m_uiLevel[2].Draw(dc, uiRect::BORDER_NONE);
+    m_uiLevel[1].Draw(dc, uiRect::BORDER_NONE);
+    m_uiLevel[0].Draw(dc, uiRect::BORDER_NONE);
+
     ResetMeter();
 }
 

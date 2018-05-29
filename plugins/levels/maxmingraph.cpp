@@ -4,6 +4,8 @@
 #include <wx/log.h>
 #include <wx/image.h>
 #include "uirect.h"
+#include "settings.h"
+
 //#include "testlog.h"
 
 using namespace std;
@@ -54,9 +56,10 @@ bool MaxMinGraph::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, co
     SetSize(size);
     SetPosition(pos);
 
-    #ifdef __TOUCHSCREEN__
-    SetCursor(wxCURSOR_BLANK);
-    #endif // __WXMSW__
+    if(Settings::Get().HideCursor())
+    {
+        SetCursor(wxCURSOR_BLANK);
+    }
 
     SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
     return true;

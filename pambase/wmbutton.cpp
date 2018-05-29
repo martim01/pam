@@ -2,6 +2,7 @@
 #include <wx/dcbuffer.h>
 #include <wx/log.h>
 #include <algorithm>
+#include "settings.h"
 
 using namespace std;
 
@@ -51,9 +52,11 @@ bool wmButton::Create(wxWindow *parent, wxWindowID id, const wxString& sLabel , 
 
     m_nStyle = nStyle;
 
-    #ifdef __TOUCHSCREEN__
-    SetCursor(wxCURSOR_BLANK);
-    #endif // __WXMSW__
+    if(Settings::Get().HideCursor())
+    {
+        SetCursor(wxCURSOR_BLANK);
+    }
+
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 

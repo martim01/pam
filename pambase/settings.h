@@ -33,10 +33,13 @@ class PAMBASE_IMPEXPORT Settings
         wxString GetDocumentDirectory() const;
         wxString GetMonitorPluginDirectory() const;
         wxString GetTestPluginDirectory() const;
+        wxString GetLogDirectory();
 
+        bool HideCursor();
 
     protected:
         Settings();
+        void CreatePaths();
         iniManager m_iniManager;
 
         std::multimap<wxString, wxEvtHandler*> m_mmHandlers;

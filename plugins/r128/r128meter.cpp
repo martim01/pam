@@ -6,6 +6,7 @@
 #include <wx/dcmemory.h>
 #include "meter.h"
 #include <algorithm>
+#include "settings.h"
 
 
 using namespace std;
@@ -40,9 +41,10 @@ R128Meter::R128Meter(wxWindow *parent, wxWindowID id, const wxString & sText,dou
     m_dLevelOffset = 0.0;
     wxWindow::Create(parent,id,pos,szInit,wxWANTS_CHARS, wxT("R128Meter"));
 
-#ifdef __TOUCHSCREEN__
-    SetCursor(wxCURSOR_BLANK);
-#endif // __WXMSW__
+    if(Settings::Get().HideCursor())
+    {
+        SetCursor(wxCURSOR_BLANK);
+    }
     SetMinSize(size);
 
     m_nPeakMode = PEAK_SHOW;

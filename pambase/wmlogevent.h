@@ -4,6 +4,7 @@
 #include <wx/datetime.h>
 #include "dlldefine.h"
 
+class wxFile;
 /** Singleton class that is called to send wmLogEvents
 **/
 class PAMBASE_IMPEXPORT wmLog
@@ -13,12 +14,16 @@ class PAMBASE_IMPEXPORT wmLog
         void SetTarget(wxEvtHandler* pHandler);
         void Log(const wxString& sDevice, const wxString& sMessage, bool bSend=true);
         void Log(const wxString& sMessage);
-        ~wmLog(){}
+
 
     private:
-        wmLog() : m_pHandler(0){}
+        ~wmLog();
+        wmLog() : m_pHandler(0),m_pFileLog(0){}
+        void OpenLogFile(bool bOpen);
         wxEvtHandler* m_pHandler;
 
+        wxFile* m_pFileLog;
+        wxDateTime m_dtLog;
 };
 
 class PAMBASE_IMPEXPORT wmLogEvent : public wxCommandEvent

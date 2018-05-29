@@ -1010,6 +1010,7 @@ void pam2Dialog::OntimerIpcTrigger(wxTimerEvent& event)
 
 void pam2Dialog::OnClose(wxCloseEvent& event)
 {
+    wmLog::Get()->Log(wxT("Closing"));
     if(m_pClient && m_pClient->IsConnected())
     {
         m_pClient->Disconnect();

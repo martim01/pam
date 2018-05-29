@@ -6,6 +6,7 @@
 #include "levelcalculator.h"
 #include "timedbuffer.h"
 #include "jarvis.h"
+#include "settings.h"
 
 using namespace std;
 
@@ -34,9 +35,10 @@ PolarScope::PolarScope(wxWindow *parent, wxWindowID id, const wxPoint& pos, cons
     m_pBmpCorrelationIn(0)
 {
     Create(parent, id, pos, size);
-    #ifdef __TOUCHSCREEN__
-    SetCursor(wxCURSOR_BLANK);
-    #endif // __WXMSW__
+    if(Settings::Get().HideCursor())
+    {
+        SetCursor(wxCURSOR_BLANK);
+    }
 
     SetForegroundColour(*wxWHITE);
     SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));

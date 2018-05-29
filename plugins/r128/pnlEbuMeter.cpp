@@ -14,6 +14,7 @@
 #include <wx/intl.h>
 #include <wx/string.h>
 #include "maxmingraph.h"
+#include "settings.h"
 using namespace std;
 
 
@@ -68,6 +69,12 @@ pnlEbuMeter::pnlEbuMeter(wxWindow* parent,R128Builder* pBuilder, wxWindowID id,c
     m_pbtnCalculate->SetBackgroundColour(CLR_SHORT);
 	m_pbtnCalculate->SetToggleLook(true, wxT("Pause"), wxT("Run"), 50.0);
 	m_pbtnCalculate->ToggleSelection(m_pBuilder->ReadSetting(wxT("Calculate"),1) == 1, true);
+
+    if(Settings::Get().HideCursor())
+    {
+        SetCursor(wxCURSOR_BLANK);
+    }
+
 
     m_pR128 = new R128Calculator();
     m_pTrue = new TruePeakCalculator();

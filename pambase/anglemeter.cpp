@@ -5,6 +5,7 @@
 #include <wx/dcmemory.h>
 #include <algorithm>
 #include "meter.h"
+#include "settings.h"
 
 using namespace std;
 
@@ -40,9 +41,11 @@ AngleMeter::AngleMeter(wxWindow *parent, wxWindowID id, const wxString & sText,d
 
     wxWindow::Create(parent,id,pos,szInit,wxWANTS_CHARS, wxT("AngleMeter"));
 
-#ifdef __TOUCHSCREEN__
-    SetCursor(wxCURSOR_BLANK);
-#endif // __WXMSW__
+    if(Settings::Get().HideCursor())
+    {
+        SetCursor(wxCURSOR_BLANK);
+    }
+
     SetMinSize(size);
 
     m_nPeakMode = PEAK_SHOW;
