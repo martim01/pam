@@ -1022,5 +1022,6 @@ void pam2Dialog::OnClose(wxCloseEvent& event)
 
 void pam2Dialog::OnbmpSplashClick(wxCommandEvent& event)
 {
+    wxLogDebug(wxT("Change Selection"));
     m_pswpSplash->ChangeSelection(1);
 }

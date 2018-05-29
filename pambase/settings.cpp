@@ -40,7 +40,7 @@ double Settings::Read(const wxString& sSection, const wxString& sKey, double dDe
 bool Settings::Write(const wxString& sSection, const wxString& sKey, const wxString& sValue)
 {
     m_iniManager.SetSectionValue(sSection, sKey,sValue);
-    bool bDone = m_iniManager.WriteIniFile(wxString::Format(wxT("%s/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
+    bool bDone = m_iniManager.WriteIniFile(wxString::Format(wxT("%s/pam/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
 
     if(bDone)
     {

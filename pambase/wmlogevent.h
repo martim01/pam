@@ -3,28 +3,8 @@
 #include <wx/event.h>
 #include <wx/datetime.h>
 #include "dlldefine.h"
-
+#include <queue>
 class wxFile;
-/** Singleton class that is called to send wmLogEvents
-**/
-class PAMBASE_IMPEXPORT wmLog
-{
-    public:
-        static wmLog* Get();
-        void SetTarget(wxEvtHandler* pHandler);
-        void Log(const wxString& sDevice, const wxString& sMessage, bool bSend=true);
-        void Log(const wxString& sMessage);
-
-
-    private:
-        ~wmLog();
-        wmLog() : m_pHandler(0),m_pFileLog(0){}
-        void OpenLogFile(bool bOpen);
-        wxEvtHandler* m_pHandler;
-
-        wxFile* m_pFileLog;
-        wxDateTime m_dtLog;
-};
 
 class PAMBASE_IMPEXPORT wmLogEvent : public wxCommandEvent
 {
@@ -68,6 +48,30 @@ private:
     bool m_bDebug;
 
 };
+
+
+/** Singleton class that is called to send wmLogEvents
+**/
+class PAMBASE_IMPEXPORT wmLog
+{
+    public:
+        static wmLog* Get();
+        void SetTarget(wxEvtHandler* pHandler);
+        void Log(wxString sDevice, wxString sMessage, bool bSend=true);
+        void Log(const wxString& sMessage);
+
+
+    private:
+        ~wmLog();
+        wmLog() : m_pHandler(0),m_pFileLog(0){}
+        void OpenLogFile(bool bOpen);
+        wxEvtHandler* m_pHandler;
+
+        std::queue<wmLogEvent*> m_queueEvents;
+        wxFile* m_pFileLog;
+        wxDateTime m_dtLog;
+};
+
 
 typedef void (wxEvtHandler::*wmLogEventFunction)(wmLogEvent&);
 

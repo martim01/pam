@@ -98,7 +98,7 @@
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add library="libportaudio" />
-					<Add library="libsndfile" />
+					<Add library="libsndfile.a" />
 				</Linker>
 			</Target>
 			<Target title="Linux Debug">

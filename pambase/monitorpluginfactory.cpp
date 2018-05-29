@@ -50,8 +50,8 @@ wxString MonitorPluginFactory::GetPluginDirectory()
 
 bool MonitorPluginFactory::LoadLibrary(const wxString& sLibrary)
 {
-    wxLogNull ln;
-
+    //wxLogNull ln;
+    wmLog::Get()->Log(wxT("Monitor Plugin"), wxString::Format(wxT("Load '%s'"), sLibrary.c_str()));
     map<wxString, wxDynamicLibrary*>::iterator itLib = m_mLibraries.find(sLibrary);
     if(itLib == m_mLibraries.end())
     {
@@ -80,6 +80,7 @@ bool MonitorPluginFactory::LoadLibrary(const wxString& sLibrary)
                 {
                     (*ptr)();
                     m_mLibraries.insert(make_pair(sLibrary, pLib));
+                    wmLog::Get()->Log(wxT("Monitor Plugin"), wxString::Format(wxT("Loaded '%s'"), sLib.c_str()));
                     return true;
                 }
                 else
@@ -197,7 +198,6 @@ plugin MonitorPluginFactory::GetPluginDetails(const wxString& sDir, const wxStri
     else
     {
         wxString sLib = sDir + wxT("/") + wxDynamicLibrary::CanonicalizeName(sLibrary);
-        wmLog::Get()->Log(sLib);
         wxDynamicLibrary* pLib = new wxDynamicLibrary(sLib);
         if(pLib)
         {

@@ -13,4 +13,5 @@
 /sample.log
 /user.txt
 *.a
+*.log
 /*.mp3

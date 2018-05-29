@@ -13,16 +13,25 @@ wmLog* wmLog::Get()
 void wmLog::SetTarget(wxEvtHandler* pHandler)
 {
     m_pHandler = pHandler;
+    while(m_queueEvents.empty() == false)
+    {
+        m_pHandler->QueueEvent(m_queueEvents.front());
+        m_queueEvents.pop();
+    }
 }
 
-void wmLog::Log(const wxString& sDevice, const wxString& sMessage, bool bSend)
+void wmLog::Log(wxString sDevice, wxString sMessage, bool bSend)
 {
-    if(m_pHandler)
+    wmLogEvent* plge = new wmLogEvent(sDevice, sMessage, false);
+    if(bSend == true)
     {
-        wmLogEvent* plge = new wmLogEvent(sDevice, sMessage, false);
-        if(bSend == true)
+        if(m_pHandler)
         {
             m_pHandler->QueueEvent(plge);
+        }
+        else
+        {
+            m_queueEvents.push(plge);
         }
     }
 
@@ -31,7 +40,7 @@ void wmLog::Log(const wxString& sDevice, const wxString& sMessage, bool bSend)
 		//Create new log file by closing and re-opening
 		OpenLogFile(true);
 	}
-	m_pFileLog->Write(wxString::Format(wxT("%s\t%s\t%s\r\n"), wxDateTime::Now().Format(wxT("%H:%M:%S")).c_str(), sDevice.c_str(), sMessage.c_str()));
+	m_pFileLog->Write(wxString::Format(wxT("%s\t%s\t%s\r\n"), wxDateTime::Now().Format(wxT("%H:%M:%S")).c_str(), sDevice.Trim().c_str(), sMessage.Trim().c_str()));
 }
 
 void wmLog::OpenLogFile(bool bOpen)

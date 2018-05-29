@@ -6,6 +6,7 @@
 #include <wx/xml/xml.h>
 #include <wx/stdpaths.h>
 #include "settings.h"
+#include "wmlogevent.h"
 
 using namespace std;
 
@@ -40,7 +41,9 @@ void TestPluginFactory::SetSwitcherPanels(wmSwitcherPanel* pswpTests)
 
 bool TestPluginFactory::LoadTestLibrary(const wxString& sLibrary)
 {
+    wxLogNull ln;
 
+    wmLog::Get()->Log(wxT("Test Plugin"), wxString::Format(wxT("Load '%s'"), sLibrary.c_str()));
     map<wxString, wxDynamicLibrary*>::iterator itLib = m_mLibraries.find(sLibrary);
     if(itLib == m_mLibraries.end())
     {
@@ -68,9 +71,23 @@ bool TestPluginFactory::LoadTestLibrary(const wxString& sLibrary)
                 {
                     (*ptr)();
                     m_mLibraries.insert(make_pair(sLibrary, pLib));
+                    wmLog::Get()->Log(wxT("Test Plugin"), wxString::Format(wxT("Loaded '%s'"), sLibrary.c_str()));
                     return true;
                 }
+                else
+                {
+                    wmLog::Get()->Log(wxT("Test Plugin"), wxString::Format(wxT("'%s' cannot execute function CreateMonitorBuilder"), sLib.c_str()));
+                }
             }
+            else
+            {
+                wmLog::Get()->Log(wxT("Test Plugin"), wxString::Format(wxT("'%s' has no function CreateMonitorBuilder"), sLib.c_str()));
+
+            }
+        }
+        else
+        {
+            wmLog::Get()->Log(wxT("Test Plugin"), wxString::Format(wxT("Could not load '%s'"), sLib.c_str()));
         }
         delete pLib;
     }
