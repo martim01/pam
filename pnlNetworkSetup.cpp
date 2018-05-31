@@ -1,6 +1,6 @@
 #include "pnlNetworkSetup.h"
 #include <wx/log.h>
-
+#include "networkcontrol.h"
 
 //(*InternalHeaders(pnlNetworkSetup)
 #include <wx/font.h>
@@ -63,7 +63,7 @@ pnlNetworkSetup::pnlNetworkSetup(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_pkbd->SetForegroundColour(wxColour(255,255,255));
 	wxFont m_pkbdFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	m_pkbd->SetFont(m_pkbdFont);
-	m_plblResult = new wmLabel(this, ID_M_PLBL5, _("Gateway"), wxPoint(250,230), wxSize(300,200), 0, _T("ID_M_PLBL5"));
+	m_plblResult = new wmLabel(this, ID_M_PLBL5, _(""), wxPoint(250,230), wxSize(300,200), 0, _T("ID_M_PLBL5"));
 	m_plblResult->SetBorderState(uiRect::BORDER_NONE);
 	m_plblResult->SetForegroundColour(wxColour(255,0,0));
 	m_plblResult->SetBackgroundColour(wxColour(0,0,0));
@@ -82,14 +82,25 @@ pnlNetworkSetup::pnlNetworkSetup(wxWindow* parent,wxWindowID id,const wxPoint& p
 	Connect(ID_M_PEDT2,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&pnlNetworkSetup::OnedtSubnetTextEnter);
 	Connect(ID_M_PEDT3,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&pnlNetworkSetup::OnedtGatewayTextEnter);
 	//*)
+	Connect(ID_M_PBTN2, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&pnlNetworkSetup::OnbtnApplyClick);
 
-	m_pbtnStaticDHCP->SetToggleLook(true, wxT("Static"), wxT("DHCP"), 60);
+
+
+	m_pbtnStaticDHCP->SetToggleLook(true, wxT("Static"), wxT("DHCP"), 40);
     m_pedtAddress->SetValidation(wmEdit::IP);
-    m_pedtSubnet->SetValidation(wmEdit::IP);
+    m_pedtSubnet->SetValidation(wmEdit::INTEGER);
     m_pedtGateway->SetValidation(wmEdit::IP);
     m_pkbd->SetReturnString(wxT("-->|"));
 	SetSize(size);
 	SetPosition(pos);
+
+    bool bDHCP((NetworkControl::Get().GetAddress() == wxEmptyString));
+	m_pbtnStaticDHCP->ToggleSelection(bDHCP, true);
+
+	m_pedtAddress->SetValue(NetworkControl::Get().GetAddress());
+	m_pedtGateway->SetValue(NetworkControl::Get().GetGateway());
+    m_pedtSubnet->SetValue(wxString::Format(wxT("%d"), NetworkControl::Get().GetMask()));
+
 }
 
 pnlNetworkSetup::~pnlNetworkSetup()
@@ -108,6 +119,9 @@ void pnlNetworkSetup::OntnStaticDHCPClick(wxCommandEvent& event)
 
     if(event.IsChecked())
     {
+        m_pedtAddress->SetValue(wxEmptyString);
+        m_pedtSubnet->SetValue(wxEmptyString);
+        m_pedtGateway->SetValue(wxEmptyString);
         m_pLbl1->SetBackgroundColour(wxColour(128,128,128));
         m_pLbl2->SetBackgroundColour(wxColour(128,128,128));
         m_pLbl4->SetBackgroundColour(wxColour(128,128,128));
@@ -137,6 +151,9 @@ void pnlNetworkSetup::OnedtGatewayText(wxCommandEvent& event)
 
 void pnlNetworkSetup::OnbtnApplyClick(wxCommandEvent& event)
 {
+    unsigned long nMask(0);
+    m_pedtSubnet->GetValue().ToULong(&nMask);
+    m_plblResult->SetLabel(NetworkControl::Get().SetupNetworking(m_pedtAddress->GetValue(), nMask, m_pedtGateway->GetValue()));
 
 }
 

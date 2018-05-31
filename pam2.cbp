@@ -94,9 +94,9 @@
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-O3" />
 					<Add option="`wx-config --cxxflags`" />
 					<Add option="-fpermissive" />
-					<Add option="-O3" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
 				</Compiler>
@@ -108,6 +108,7 @@
 					<Add library="libUsageEnvironment.a" />
 					<Add library="libgroupsock.a" />
 					<Add library="pambase" />
+					<Add library="libcurl" />
 				</Linker>
 			</Target>
 			<Target title="Linux Debug">
@@ -132,6 +133,7 @@
 					<Add library="libUsageEnvironment.a" />
 					<Add library="libgroupsock.a" />
 					<Add library="pambased" />
+					<Add library="libcurl" />
 				</Linker>
 			</Target>
 		</Build>
