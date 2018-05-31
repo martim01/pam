@@ -32,7 +32,7 @@
 				<Linker>
 					<Add option="-Wl,--enable-auto-import,-Map=pammd.map" />
 					<Add library="wxmsw30ud_gcc_wammacs" />
-					<Add library="pambased2.0" />
+					<Add library="pambased" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 			</Target>
@@ -61,7 +61,7 @@
 					<Add option="-s" />
 					<Add option="-Wl,--enable-auto-import,-Map=pamm.map" />
 					<Add library="wxmsw30u_gcc_wammacs" />
-					<Add library="pambase2.0" />
+					<Add library="pambase" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 			</Target>
@@ -78,7 +78,7 @@
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
-					<Add library="pambase2.0" />
+					<Add library="pambase" />
 				</Linker>
 			</Target>
 			<Target title="Linux Debug">
@@ -97,7 +97,7 @@
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
-					<Add library="pambased2.0" />
+					<Add library="pambased" />
 				</Linker>
 			</Target>
 		</Build>

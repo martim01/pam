@@ -34,6 +34,7 @@
 #include "soundfile.h"
 #include "wxpammclient.h"
 #include "images/splash.xpm"
+#include "updatemanager.h"
 
 //(*InternalHeaders(pam2Dialog)
 #include <wx/bitmap.h>
@@ -167,6 +168,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Connect(wxID_ANY,wxEVT_RTP_SESSION,(wxObjectEventFunction)&pam2Dialog::OnRTPSession);
     Connect(wxID_ANY,wxEVT_RTP_SESSION_CLOSED,(wxObjectEventFunction)&pam2Dialog::OnRTPSessionClosed);
     Connect(wxID_ANY,wxEVT_QOS_UPDATED,(wxObjectEventFunction)&pam2Dialog::OnQoS);
+
 
 
     Pa_Initialize();
@@ -939,39 +941,14 @@ void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
     CreateAudioInputDevice();
     m_pPlayback = new Playback();
     m_pPlayback->Init(this, 2048);
-
-
 }
 
 void pam2Dialog::Onm_timerFileTrigger(wxTimerEvent& event)
 {
-//    if(m_pSoundfile)
-//    {
-//        double dElapseMs((wxDateTime::UNow()-m_dtLastRead).GetMilliseconds().ToDouble());
-//        dElapseMs /= 2.0;
-//
-//        unsigned long nSize(static_cast<double>(m_pSoundfile->GetFormat().dwSamplesPerSec)/dElapseMs);
-//
-//        wxLogDebug(wxT("%d"), nSize);
-//        //nSize = m_pSoundfile->GetFormat().dwSamplesPerSec/12;
-//
-//        m_dtLastRead = wxDateTime::UNow();
-//        timedbuffer* pData = new timedbuffer(nSize);
-//        if(m_pSoundfile->ReadAudio(pData->GetWritableBuffer(), pData->GetBufferSize(), 1))
-//        {
-//            wxCommandEvent event(wxEVT_DATA);
-//            event.SetId(0);
-//            event.SetClientData(reinterpret_cast<void*>(pData));
-//            event.SetInt(pData->GetBufferSize()/2);
-//            event.SetExtraLong(m_pSoundfile->GetFormat().dwSamplesPerSec);
-//            wxPostEvent(this, event);
-//        }
-//    }
 }
 
 void pam2Dialog::ReadSoundFile(unsigned int nSize)
 {
-
     timedbuffer* pData = new timedbuffer(nSize);
     if(m_pSoundfile->ReadAudio(pData->GetWritableBuffer(), pData->GetBufferSize(), 1))
     {
@@ -1022,6 +999,5 @@ void pam2Dialog::OnClose(wxCloseEvent& event)
 
 void pam2Dialog::OnbmpSplashClick(wxCommandEvent& event)
 {
-    wxLogDebug(wxT("Change Selection"));
     m_pswpSplash->ChangeSelection(1);
 }

@@ -17,10 +17,11 @@
 				<button_selected>#FF8000</button_selected>
 				<items />
 				<pos>10,40</pos>
-				<size>200,150</size>
+				<size>200,180</size>
 				<bg>#000000</bg>
 				<style>wmList::STYLE_SELECT</style>
 				<handler function="OnlstPossibleSelected" entry="EVT_LIST_SELECTED" />
+				<handler function="OnlstPossiblePaged" entry="EVT_LIST_PAGED" />
 			</object>
 			<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
 				<label>Possible Plugins</label>
@@ -37,6 +38,7 @@
 				<bg>#0000A0</bg>
 			</object>
 			<object class="wmList" name="ID_M_PLST2" variable="m_plstCurrent" member="yes">
+				<scrolling>Horizontal</scrolling>
 				<button_gap>5,5</button_gap>
 				<button_size>-1,40</button_size>
 				<columns>3</columns>
@@ -44,22 +46,39 @@
 				<button_selected>#FF8000</button_selected>
 				<items />
 				<pos>390,40</pos>
-				<size>200,150</size>
+				<size>200,180</size>
 				<bg>#000000</bg>
 				<style>wmList::STYLE_SELECT</style>
 				<handler function="OnlstCurrentSelected" entry="EVT_LIST_SELECTED" />
+				<handler function="OnlstCurrentPaged" entry="EVT_LIST_PAGED" />
+			</object>
+			<object class="wmButton" name="ID_M_PBTN9" variable="m_pbtnCurrentPrevious" member="yes">
+				<label>Previous Page</label>
+				<button_disabled>#000000</button_disabled>
+				<text_disabled>#000000</text_disabled>
+				<pos>390,224</pos>
+				<size>90,40</size>
+				<handler function="OnbtnCurrentPreviousClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmButton" name="ID_M_PBTN10" variable="m_pbtnCurrentNext" member="yes">
+				<label>Next Page</label>
+				<button_disabled>#000000</button_disabled>
+				<text_disabled>#000000</text_disabled>
+				<pos>500,224</pos>
+				<size>90,40</size>
+				<handler function="OnbtnCurrentNextClick" entry="EVT_BUTTON" />
 			</object>
 			<object class="wmLabel" name="ID_M_PLBL5" variable="m_plblCurrentVersion" member="yes">
 				<label>Version:</label>
-				<pos>390,200</pos>
+				<pos>390,270</pos>
 				<size>200,25</size>
 				<fg>#000000</fg>
 				<bg>#FFFFFF</bg>
 			</object>
 			<object class="wmLabel" name="ID_M_PLBL6" variable="m_plblCurrentDetails" member="yes">
 				<label></label>
-				<pos>390,230</pos>
-				<size>200,150</size>
+				<pos>390,300</pos>
+				<size>200,100</size>
 				<fg>#000000</fg>
 				<bg>#FFFFFF</bg>
 			</object>
@@ -112,17 +131,33 @@
 			</object>
 			<object class="wmLabel" name="ID_M_PLBL3" variable="m_plblVersion" member="yes">
 				<label>Version:</label>
-				<pos>10,200</pos>
+				<pos>10,270</pos>
 				<size>200,25</size>
 				<fg>#000000</fg>
 				<bg>#FFFFFF</bg>
 			</object>
 			<object class="wmLabel" name="ID_M_PLBL4" variable="m_plblDetails" member="yes">
 				<label></label>
-				<pos>10,230</pos>
-				<size>200,150</size>
+				<pos>10,300</pos>
+				<size>200,100</size>
 				<fg>#000000</fg>
 				<bg>#FFFFFF</bg>
+			</object>
+			<object class="wmButton" name="ID_M_PBTN7" variable="m_pbtnPossiblePrevious" member="yes">
+				<label>Previous Page</label>
+				<button_disabled>#000000</button_disabled>
+				<text_disabled>#000000</text_disabled>
+				<pos>10,224</pos>
+				<size>90,40</size>
+				<handler function="OnbtnPossiblePreviousClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmButton" name="ID_M_PBTN8" variable="m_pbtnPossibleNext" member="yes">
+				<label>Next Page</label>
+				<button_disabled>#000000</button_disabled>
+				<text_disabled>#000000</text_disabled>
+				<pos>120,224</pos>
+				<size>90,40</size>
+				<handler function="OnbtnPossibleNextClick" entry="EVT_BUTTON" />
 			</object>
 		</object>
 		<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnPlugin" member="yes">

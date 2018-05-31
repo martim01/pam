@@ -145,10 +145,23 @@ wxString Settings::GetDocumentDirectory() const
     return m_iniManager.GetIniString(wxT("Paths"), wxT("Docs"), wxString::Format(wxT("%s/pam"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
 }
 
-wxString Settings::GetLogDirectory()
+wxString Settings::GetLogDirectory() const
 {
     return wxString::Format(wxT("%s/logs"), GetDocumentDirectory().c_str());
+}
 
+wxString Settings::GetTempDirectory() const
+{
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("Temp"), wxStandardPaths::Get().GetTempDir());
+}
+
+wxString Settings::GetCoreLibDirectory() const
+{
+     #ifdef __WXGNU__
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("Core"), wxT("/usr/lib/pam2"));
+    #else
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("Core"), wxStandardPaths::Get().GetExecutablePath().BeforeLast(wxT('\\')));
+    #endif // __WXGNU__
 }
 
 wxString Settings::GetMonitorPluginDirectory() const

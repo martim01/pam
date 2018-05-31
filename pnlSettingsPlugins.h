@@ -21,15 +21,19 @@ class pnlSettingsPlugins: public wxPanel
 		wmList* m_plstPossible;
 		wmButton* m_pbtnClear;
 		wmLabel* m_pLbl1;
+		wmButton* m_pbtnPossiblePrevious;
 		wxPanel* Panel1;
 		wmList* m_plstCurrent;
 		wmButton* m_pbtnUp;
+		wmButton* m_pbtnPossibleNext;
 		wmLabel* m_plblDetails;
 		wmButton* m_pbtnApply;
 		wmLabel* m_pLbl2;
 		wmLabel* m_plblCurrentVersion;
+		wmButton* m_pbtnCurrentPrevious;
 		wmButton* m_pbtnDown;
 		wmLabel* m_plblVersion;
+		wmButton* m_pbtnCurrentNext;
 		wmButton* m_pbtnSet;
 		wmLabel* m_plblCurrentDetails;
 		wmButton* m_pbtnPlugin;
@@ -42,6 +46,8 @@ class pnlSettingsPlugins: public wxPanel
 		static const long ID_M_PLBL1;
 		static const long ID_M_PLBL2;
 		static const long ID_M_PLST2;
+		static const long ID_M_PBTN9;
+		static const long ID_M_PBTN10;
 		static const long ID_M_PLBL5;
 		static const long ID_M_PLBL6;
 		static const long ID_M_PBTN1;
@@ -51,6 +57,8 @@ class pnlSettingsPlugins: public wxPanel
 		static const long ID_M_PBTN6;
 		static const long ID_M_PLBL3;
 		static const long ID_M_PLBL4;
+		static const long ID_M_PBTN7;
+		static const long ID_M_PBTN8;
 		static const long ID_PANEL1;
 		static const long ID_M_PBTN5;
 		//*)
@@ -67,12 +75,20 @@ class pnlSettingsPlugins: public wxPanel
 		void OnPanel1Paint(wxPaintEvent& event);
 		void OnbtnPluginClick(wxCommandEvent& event);
 		void OnbtnApplyHeld(wxCommandEvent& event);
+		void OnlstPossiblePaged(wxCommandEvent& event);
+		void OnlstCurrentPaged(wxCommandEvent& event);
+		void OnbtnPossiblePreviousClick(wxCommandEvent& event);
+		void OnbtnPossibleNextClick(wxCommandEvent& event);
+		void OnbtnCurrentPreviousClick(wxCommandEvent& event);
+		void OnbtnCurrentNextClick(wxCommandEvent& event);
 		//*)
 
 		void ShowMonitorPlugins();
 		void ShowTestPlugins();
 
 		void ClearLists();
+
+		void EnablePageButtons();
 
 
 

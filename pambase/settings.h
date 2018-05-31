@@ -32,8 +32,10 @@ class PAMBASE_IMPEXPORT Settings
         wxString GetConfigDirectory() const;
         wxString GetDocumentDirectory() const;
         wxString GetMonitorPluginDirectory() const;
+        wxString GetCoreLibDirectory() const;
         wxString GetTestPluginDirectory() const;
-        wxString GetLogDirectory();
+        wxString GetLogDirectory() const;
+        wxString GetTempDirectory() const;
 
         bool HideCursor();
 

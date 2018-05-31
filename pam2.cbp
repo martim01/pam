@@ -26,6 +26,7 @@
 					<Add directory="$(#wx3_0.include)" />
 					<Add directory="$(#wx3_0.include)/mswu" />
 					<Add directory="$(#portaudio.include)" />
+					<Add directory="$(#curl.include)" />
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="$(#wx3_0.include)/mswu" />
@@ -33,7 +34,7 @@
 				<Linker>
 					<Add option="-Wl,--enable-auto-import,-Map=pam2d.map" />
 					<Add library="wxmsw30ud_gcc_wammacs" />
-					<Add library="pambased2.0" />
+					<Add library="pambased" />
 					<Add library="portaudiod" />
 					<Add library="libliveMedia.a" />
 					<Add library="libBasicUsageEnvironment.a" />
@@ -41,8 +42,10 @@
 					<Add library="libgroupsock.a" />
 					<Add library="Ws2_32" />
 					<Add library="iphlpapi" />
+					<Add library="libcurl" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#portaudio.lib)" />
+					<Add directory="$(#curl.lib)" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -63,6 +66,7 @@
 					<Add directory="$(#wx3_0.include)" />
 					<Add directory="$(#wx3_0.include)/mswu" />
 					<Add directory="$(#portaudio.include)" />
+					<Add directory="$(#curl.include)" />
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="$(#wx3_0.include)/mswu" />
@@ -78,9 +82,11 @@
 					<Add library="libgroupsock.a" />
 					<Add library="Ws2_32" />
 					<Add library="iphlpapi" />
-					<Add library="pambase2.0" />
+					<Add library="pambase" />
+					<Add library="libcurl" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#portaudio.lib)" />
+					<Add directory="$(#curl.lib)" />
 				</Linker>
 			</Target>
 			<Target title="Linux Release">
@@ -101,7 +107,7 @@
 					<Add library="libBasicUsageEnvironment.a" />
 					<Add library="libUsageEnvironment.a" />
 					<Add library="libgroupsock.a" />
-					<Add library="pambase2.0" />
+					<Add library="pambase" />
 				</Linker>
 			</Target>
 			<Target title="Linux Debug">
@@ -125,7 +131,7 @@
 					<Add library="libBasicUsageEnvironment.a" />
 					<Add library="libUsageEnvironment.a" />
 					<Add library="libgroupsock.a" />
-					<Add library="pambased2.0" />
+					<Add library="pambased" />
 				</Linker>
 			</Target>
 		</Build>
@@ -165,6 +171,8 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="mdnsd.h" />
+		<Unit filename="networkcontrol.cpp" />
+		<Unit filename="networkcontrol.h" />
 		<Unit filename="ourRTSPClient.cpp" />
 		<Unit filename="ourRTSPClient.h" />
 		<Unit filename="pam2App.cpp" />
@@ -208,6 +216,8 @@
 		<Unit filename="smpte2110mediasession.h" />
 		<Unit filename="streamclientstate.cpp" />
 		<Unit filename="streamclientstate.h" />
+		<Unit filename="updatemanager.cpp" />
+		<Unit filename="updatemanager.h" />
 		<Unit filename="version.h" />
 		<Unit filename="wxServDisc.cpp" />
 		<Unit filename="wxServDisc.h" />
