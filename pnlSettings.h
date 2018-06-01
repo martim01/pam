@@ -12,7 +12,7 @@
 #include "pnlNetworkSetup.h"
 #include "pnlRTP.h"
 #include "pnlSettingsPlugins.h"
-
+#include "pnlUpdate.h"
 
 class pnlSettings: public wxPanel
 {
@@ -45,6 +45,7 @@ class pnlSettings: public wxPanel
 		wmList* m_plstThreads;
 		wxPanel* pnlInput;
 		wmButton* m_pbtnEnd;
+		pnlUpdate* Panel1;
 		//*)
 
 		void ReloadRTP();
@@ -72,6 +73,7 @@ class pnlSettings: public wxPanel
 		static const long ID_PANEL4;
 		static const long ID_PANEL5;
 		static const long ID_PANEL3;
+		static const long ID_PANEL7;
 		static const long ID_M_PLST3;
 		static const long ID_PANEL6;
 		static const long ID_M_PSWP1;

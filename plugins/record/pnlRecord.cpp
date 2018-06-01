@@ -63,7 +63,7 @@ pnlRecord::pnlRecord(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 	m_plblTime->SetForegroundColour(wxColour(0,255,128));
 	m_plblTime->SetBackgroundColour(wxColour(0,0,0));
 	m_pedtFile = new wmEdit(this, ID_M_PEDT1, wxEmptyString, wxPoint(101,50), wxSize(270,40), 0, wxDefaultValidator, _T("ID_M_PEDT1"));
-	m_pedtFile->SetValidation(24397);
+	m_pedtFile->SetValidation(0);
 	m_pedtFile->SetForegroundColour(wxColour(0,0,0));
 	m_pedtFile->SetBackgroundColour(wxColour(255,255,255));
 	m_pedtFile->SetFocusedBackground(wxColour(wxT("#B0FFD8")));

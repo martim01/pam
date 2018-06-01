@@ -37,7 +37,7 @@ unsigned long NetworkControl::GetMask() const
 #include <stdio.h>
 #include <winnt.h>
 
-wxString NetworkControl::SetupNetworking()
+wxString NetworkControl::SetupNetworking(const wxString& sAddress, unsigned long nMask, const wxString& sGateway)
 {
     wxString sCommand;
     if(m_nNTEContext != 0)
@@ -66,8 +66,8 @@ wxString NetworkControl::SetupNetworking()
     LPVOID lpMsgBuf;
 
 
-    iaIPAddress = inet_addr(Settings::Get().Read(wxT("Network"), wxT("Address") ,wxEmptyString).mb_str());
-    iaIPMask = inet_addr(Settings::Get().Read(wxT("Network"), wxT("Subnet"),wxEmptyString).mb_str());
+    iaIPAddress = inet_addr(sAddress.mb_str());
+//    iaIPMask = inet_addr(nMask);
 
 
     // Before calling AddIPAddress we use GetIpAddrTable to get
@@ -97,8 +97,6 @@ wxString NetworkControl::SetupNetworking()
     // actual data we want
     if ((dwRetVal = GetIpAddrTable(pIPAddrTable, &dwSize, 0)) == NO_ERROR)
     {
-
-
         // Save the interface index to use for adding an IP address
         ifIndex = pIPAddrTable->table[0].dwIndex;
         IPAddr.S_un.S_addr = (u_long) pIPAddrTable->table[0].dwAddr;
@@ -149,6 +147,11 @@ bool NetworkControl::DeleteNetworking()
         return true;
     }
     return false;
+}
+
+void NetworkControl::GetCurrentSettings()
+{
+
 }
 
 #else

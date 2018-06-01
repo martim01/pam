@@ -449,6 +449,7 @@ void pam2Dialog::ShowSettingsPanel()
     m_plstOptions->AddButton(wxT("AoIP"));
     m_plstOptions->AddButton(wxT("Network"));
     m_plstOptions->AddButton(wxT("Plugins"));
+    m_plstOptions->AddButton(wxT("Update"));
     m_plstOptions->AddButton(wxT("Threads"));
 
     m_plstOptions->SelectButton(Settings::Get().Read(wxT("Settings"), wxT("_Options"), 0));

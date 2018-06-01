@@ -2,12 +2,14 @@
 #define PNLNETWORKSETUP_H
 
 //(*Headers(pnlNetworkSetup)
+#include <wx/notebook.h>
 #include "wmbutton.h"
 #include "wmkeyboard.h"
 #include "wmlabel.h"
+#include "wmswitcherpanel.h"
 #include <wx/panel.h>
-#include "wmedit.h"
 //*)
+#include "wmipeditpnl.h"
 
 class pnlNetworkSetup: public wxPanel
 {
@@ -20,14 +22,16 @@ class pnlNetworkSetup: public wxPanel
 		wmLabel* m_pLbl4;
 		wmButton* m_pbtnStaticDHCP;
 		wmLabel* m_pLbl3;
+		wmButton* m_pbtnMask;
+		wmipeditpnl* m_ppnlAddress;
 		wmLabel* m_plblResult;
 		wmKeyboard* m_pkbd;
+		wmipeditpnl* m_ppnlGateway;
 		wmLabel* m_pLbl1;
-		wmEdit* m_pedtAddress;
+		wmSwitcherPanel* m_pSwp1;
+		wxPanel* Panel1;
 		wmButton* m_pbtnApply;
 		wmLabel* m_pLbl2;
-		wmEdit* m_pedtSubnet;
-		wmEdit* m_pedtGateway;
 		//*)
 
 	protected:
@@ -35,15 +39,17 @@ class pnlNetworkSetup: public wxPanel
 		//(*Identifiers(pnlNetworkSetup)
 		static const long ID_M_PBTN1;
 		static const long ID_M_PLBL1;
-		static const long ID_M_PEDT1;
 		static const long ID_M_PLBL2;
-		static const long ID_M_PEDT2;
 		static const long ID_M_PLBL4;
-		static const long ID_M_PEDT3;
-		static const long ID_M_PBTN2;
+		static const long ID_PANEL3;
 		static const long ID_M_PKBD1;
-		static const long ID_M_PLBL5;
 		static const long ID_M_PLBL3;
+		static const long ID_M_PBTN3;
+		static const long ID_M_PLBL5;
+		static const long ID_M_PBTN2;
+		static const long ID_PANEL1;
+		static const long ID_M_PSWP1;
+		static const long ID_PANEL2;
 		//*)
 
 	private:
@@ -56,6 +62,8 @@ class pnlNetworkSetup: public wxPanel
 		void OnbtnApplyClick(wxCommandEvent& event);
 		void OnbtnCancelClick(wxCommandEvent& event);
 		void OnedtGatewayTextEnter(wxCommandEvent& event);
+		void OnbtnMaskClick(wxCommandEvent& event);
+		void OnlstSubnetSelected(wxCommandEvent& event);
 		//*)
 
 		DECLARE_EVENT_TABLE()

@@ -3,6 +3,7 @@
 #include <wx/stdpaths.h>
 #include "settingevent.h"
 #include <wx/filename.h>
+#include "version.h"
 
 using   namespace std;
 
@@ -204,4 +205,10 @@ void Settings::CreatePaths()
     {
         wxFileName::Mkdir(GetLogDirectory(), 0777, wxPATH_MKDIR_FULL);
     }
+}
+
+
+wxString Settings::GetLibraryVersion() const
+{
+    return wxString::Format(wxT("%d.%d.%d.%d"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION);
 }

@@ -38,7 +38,7 @@ struct UpdateObject
     wxString sChangelog;
     int nType;
 
-    std::list<UpdateObject> lstDependsOn;
+    std::map<wxString, wxString> mDependsOn;
 
     enum {UNKNOWN, APP, CORE_DLL, PLUGIN_MONITOR, PLUGIN_TEST, DOCUMENTATION};
 };
@@ -54,6 +54,13 @@ class UpdateManager
 
         bool Update(const wxString& sName);
 
+        std::map<wxString, UpdateObject>::const_iterator GetUpdateListBegin() const;
+        std::map<wxString, UpdateObject>::const_iterator GetUpdateListEnd() const;
+
+        wxString GetChangelog(const wxString& sName) const;
+        wxString GetVersion(const wxString& sName) const;
+        std::map<wxString, wxString> GetDependencies(const wxString& sName);
+
     private:
         UpdateManager();
         ~UpdateManager();
@@ -62,9 +69,11 @@ class UpdateManager
 
         bool GetUpdateListFromWebServer();
         bool GetUpdateListFromShare();
+        bool GetUpdateListFromFTP();
 
         bool UpdateFromWebServer(const wxString& sName, const wxString& sTempFile);
         bool UpdateFromShare(const wxString& sName, const wxString& sTempFile);
+        bool UpdateFromFTP(const wxString& sName, const wxString& sTempFile);
 
         bool DecodeUpdateList(const wxXmlDocument& xmlDoc);
         void AddUpdateToList(wxXmlNode* pUpdateNode);

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="wmipeditpnl">
+		<fg>#000000</fg>
+		<bg>#FFFFFF</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<handler function="OnSetFocus" entry="EVT_SET_FOCUS" />
+		<handler function="OnResize" entry="EVT_SIZE" />
+		<object class="wmEdit" name="ID_M_PEDT1" variable="m_pEdt1" member="yes">
+			<maxlength>3</maxlength>
+			<validation>Real</validation>
+			<border>uiRect::BORDER_NONE</border>
+			<border_focused>uiRect::BORDER_NONE</border_focused>
+			<handler function="Onm_pEdt1Text" entry="EVT_TEXT" />
+		</object>
+		<object class="wmEdit" name="ID_M_PEDT2" variable="m_pEdt2" member="yes">
+			<maxlength>3</maxlength>
+			<validation>Real</validation>
+			<border>uiRect::BORDER_NONE</border>
+			<border_focused>uiRect::BORDER_NONE</border_focused>
+			<handler function="Onm_pEdt2Text" entry="EVT_TEXT" />
+		</object>
+		<object class="wmEdit" name="ID_M_PEDT3" variable="m_pEdt3" member="yes">
+			<maxlength>3</maxlength>
+			<validation>Real</validation>
+			<border>uiRect::BORDER_NONE</border>
+			<border_focused>uiRect::BORDER_NONE</border_focused>
+			<handler function="Onm_pEdt3Text" entry="EVT_TEXT" />
+		</object>
+		<object class="wmEdit" name="ID_M_PEDT4" variable="m_pEdt4" member="yes">
+			<maxlength>3</maxlength>
+			<validation>Real</validation>
+			<border>uiRect::BORDER_NONE</border>
+			<border_focused>uiRect::BORDER_NONE</border_focused>
+			<handler function="Onm_pEdt4Text" entry="EVT_TEXT" />
+		</object>
+	</object>
+</wxsmith>

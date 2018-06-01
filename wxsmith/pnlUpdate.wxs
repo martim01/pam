@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlUpdate">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
+			<label>Manage Update Settings</label>
+			<pos>0,5</pos>
+			<size>600,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#004000</bg>
+			<font>
+				<size>10</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmList" name="ID_M_PLST2" variable="m_plstType" member="yes">
+			<scrolling>None</scrolling>
+			<button_size>100,30</button_size>
+			<columns>3</columns>
+			<button>#400080</button>
+			<button_selected>#FF8000</button_selected>
+			<items />
+			<pos>0,36</pos>
+			<size>600,34</size>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstTypeSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+		<object class="wmSwitcherPanel" name="ID_M_PSWP1" variable="m_pswpType" member="yes">
+			<pos>0,70</pos>
+			<size>600,315</size>
+			<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL1" variable="Panel1" member="yes">
+					<bg>#000000</bg>
+					<object class="wmKeyboard" name="ID_M_PKBD1" variable="m_pKbd1" member="yes">
+						<pos>0,60</pos>
+						<size>600,240</size>
+						<fg>#FFFFFF</fg>
+						<font>
+							<size>12</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Arial</face>
+						</font>
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+						<label>HTTPS://</label>
+						<pos>5,5</pos>
+						<size>100,40</size>
+						<fg>#FFFFFF</fg>
+						<bg>#0000A0</bg>
+					</object>
+					<object class="wmEdit" name="ID_M_PEDT1" variable="m_pEdt1" member="yes">
+						<border>uiRect::BORDER_DOWN</border>
+						<border_focused>uiRect::BORDER_DOWN</border_focused>
+						<pos>105,5</pos>
+						<size>460,40</size>
+						<fg>#000000</fg>
+						<bg>#FFFFFF</bg>
+					</object>
+				</object>
+				<label>HTTP</label>
+			</object>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL3" variable="Panel3" member="yes">
+					<bg>#000000</bg>
+					<object class="wmKeyboard" name="ID_M_PKBD2" variable="m_pKbd2" member="yes">
+						<pos>0,60</pos>
+						<size>600,240</size>
+						<fg>#FFFFFF</fg>
+						<font>
+							<size>12</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Arial</face>
+						</font>
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
+						<label>FTP://</label>
+						<pos>5,5</pos>
+						<size>100,40</size>
+						<fg>#FFFFFF</fg>
+						<bg>#0000A0</bg>
+					</object>
+					<object class="wmEdit" name="ID_M_PEDT2" variable="m_pEdt2" member="yes">
+						<border>uiRect::BORDER_DOWN</border>
+						<border_focused>uiRect::BORDER_DOWN</border_focused>
+						<pos>105,5</pos>
+						<size>460,40</size>
+						<fg>#000000</fg>
+						<bg>#FFFFFF</bg>
+					</object>
+				</object>
+				<label>FTP</label>
+			</object>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL2" variable="Panel2" member="yes">
+					<bg>#000000</bg>
+					<object class="wmList" name="ID_M_PLST1" variable="m_plstFolders" member="yes">
+						<button_gap>5,5</button_gap>
+						<button_size>-1,50</button_size>
+						<columns>5</columns>
+						<item_border>None</item_border>
+						<button>#FFFFFF</button>
+						<button_pressed>#FF8040</button_pressed>
+						<text>#000000</text>
+						<items />
+						<pos>0,45</pos>
+						<size>600,280</size>
+						<handler function="OnlstFoldersSelected" entry="EVT_LIST_SELECTED" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnUp" member="yes">
+						<label>Up</label>
+						<pos>400,2</pos>
+						<size>80,40</size>
+						<handler function="OnbtnUpClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnSelect" member="yes">
+						<label>Select</label>
+						<pos>500,2</pos>
+						<size>90,40</size>
+						<bg>#804000</bg>
+						<handler function="OnbtnSelectClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL4" variable="m_plblLocation" member="yes">
+						<label></label>
+						<pos>0,2</pos>
+						<size>400,40</size>
+						<fg>#000000</fg>
+						<bg>#FFFFFF</bg>
+					</object>
+				</object>
+				<label>Share</label>
+			</object>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnCheck" member="yes">
+			<label>Check For Updates</label>
+			<pos>200,390</pos>
+			<size>200,40</size>
+			<bg>#43A745</bg>
+			<font>
+				<size>12</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+			<handler function="OnbtnCheckClick" entry="EVT_BUTTON" />
+		</object>
+	</object>
+</wxsmith>

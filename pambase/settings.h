@@ -37,6 +37,8 @@ class PAMBASE_IMPEXPORT Settings
         wxString GetLogDirectory() const;
         wxString GetTempDirectory() const;
 
+        wxString GetLibraryVersion() const;
+
         bool HideCursor();
 
     protected:

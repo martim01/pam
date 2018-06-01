@@ -4,10 +4,10 @@
 namespace AutoVersion{
 	
 	//Date Version Types
-	static const char DATE[] = "31";
-	static const char MONTH[] = "05";
+	static const char DATE[] = "01";
+	static const char MONTH[] = "06";
 	static const char YEAR[] = "2018";
-	static const char UBUNTU_VERSION_STYLE[] =  "18.05";
+	static const char UBUNTU_VERSION_STYLE[] =  "18.06";
 	
 	//Software Status
 	static const char STATUS[] =  "Release";

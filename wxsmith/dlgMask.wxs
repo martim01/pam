@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxDialog" name="dlgMask">
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<style>wxNO_BORDER</style>
+		<handler function="OnLeftDown" entry="EVT_LEFT_DOWN" />
+		<object class="wmList" name="ID_M_PLST1" variable="m_plstSubnet" member="yes">
+			<button_gap>2,2</button_gap>
+			<button_size>-1,40</button_size>
+			<shading>South</shading>
+			<button>#FFFFFF</button>
+			<button_pressed>#8080FF</button_pressed>
+			<button_selected>#FF8000</button_selected>
+			<text>#000000</text>
+			<items />
+			<pos>0,0</pos>
+			<size>100,300</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstSubnetSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+	</object>
+</wxsmith>

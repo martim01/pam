@@ -49,6 +49,7 @@ const long pnlSettings::ID_PANEL2 = wxNewId();
 const long pnlSettings::ID_PANEL4 = wxNewId();
 const long pnlSettings::ID_PANEL5 = wxNewId();
 const long pnlSettings::ID_PANEL3 = wxNewId();
+const long pnlSettings::ID_PANEL7 = wxNewId();
 const long pnlSettings::ID_M_PLST3 = wxNewId();
 const long pnlSettings::ID_PANEL6 = wxNewId();
 const long pnlSettings::ID_M_PSWP1 = wxNewId();
@@ -132,6 +133,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     pnlSettingsRTP = new pnlRTP(m_pswpSettings, ID_PANEL4, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL4"));
     pnlSettingsNetwork = new pnlNetworkSetup(m_pswpSettings, ID_PANEL5, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL5"));
     m_ppnlPlugins = new pnlSettingsPlugins(m_pswpSettings, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
+    Panel1 = new pnlUpdate(m_pswpSettings, ID_PANEL7, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL7"));
     pnlThreads = new wxPanel(m_pswpSettings, ID_PANEL6, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL6"));
     pnlThreads->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
     m_plstThreads = new wmList(pnlThreads, ID_M_PLST3, wxDefaultPosition, wxSize(600,480), 0, 0, wxSize(-1,-1), 3, wxSize(-1,-1));
@@ -141,6 +143,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pswpSettings->AddPage(pnlSettingsRTP, _("AoIP"), false);
     m_pswpSettings->AddPage(pnlSettingsNetwork, _("Network"), false);
     m_pswpSettings->AddPage(m_ppnlPlugins, _("Plugins"), false);
+    m_pswpSettings->AddPage(Panel1, _("Update"), false);
     m_pswpSettings->AddPage(pnlThreads, _("Threads"), false);
 
     Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstDevicesSelected);

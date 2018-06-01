@@ -195,6 +195,10 @@
 				<label>Plugins</label>
 			</object>
 			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL7" subclass="pnlUpdate" variable="Panel1" member="yes" />
+				<label>Update</label>
+			</object>
+			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL6" variable="pnlThreads" member="yes">
 					<bg>wxSYS_COLOUR_BACKGROUND</bg>
 					<object class="wmList" name="ID_M_PLST3" variable="m_plstThreads" member="yes">

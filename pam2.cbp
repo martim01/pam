@@ -145,6 +145,7 @@
 			<Add directory="$(#live_group.include)" />
 			<Add directory="$(#live_usage.include)" />
 			<Add directory="$(#live_basicusage.include)" />
+			<Add directory="./images" />
 		</Compiler>
 		<ResourceCompiler>
 			<Add directory="C:/wxWidgets-3.0.2/include" />
@@ -169,6 +170,10 @@
 		<Unit filename="aes67mediasession.h" />
 		<Unit filename="aes67source.cpp" />
 		<Unit filename="aes67source.h" />
+		<Unit filename="dlgUpdate.cpp" />
+		<Unit filename="dlgUpdate.h" />
+		<Unit filename="dlgmask.cpp" />
+		<Unit filename="dlgmask.h" />
 		<Unit filename="mdnsd.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -204,6 +209,8 @@
 		<Unit filename="pnlSettingsPlugins.h" />
 		<Unit filename="pnlTests.cpp" />
 		<Unit filename="pnlTests.h" />
+		<Unit filename="pnlUpdate.cpp" />
+		<Unit filename="pnlUpdate.h" />
 		<Unit filename="qos.cpp" />
 		<Unit filename="qos.h" />
 		<Unit filename="rawvideosource.cpp" />
@@ -229,12 +236,15 @@
 		<Unit filename="wxpammconnection.h" />
 		<Unit filename="wxsink.cpp" />
 		<Unit filename="wxsink.h" />
+		<Unit filename="wxsmith/dlgMask.wxs" />
+		<Unit filename="wxsmith/dlgUpdate.wxs" />
 		<Unit filename="wxsmith/pnlAoIPInfo.wxs" />
 		<Unit filename="wxsmith/pnlLog.wxs" />
 		<Unit filename="wxsmith/pnlLogControl.wxs" />
 		<Unit filename="wxsmith/pnlSettingsOptions.wxs" />
 		<Unit filename="wxsmith/pnlSettingsPlugins.wxs" />
 		<Unit filename="wxsmith/pnlTests.wxs" />
+		<Unit filename="wxsmith/pnlUpdate.wxs" />
 		<Extensions>
 			<code_completion />
 			<envvars />
@@ -253,6 +263,9 @@
 					<wxPanel wxs="wxsmith/pnlSettingsPlugins.wxs" src="pnlSettingsPlugins.cpp" hdr="pnlSettingsPlugins.h" fwddecl="0" i18n="1" name="pnlSettingsPlugins" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlLog.wxs" src="pnlLog.cpp" hdr="pnlLog.h" fwddecl="0" i18n="1" name="pnlLog" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlLogControl.wxs" src="pnlLogControl.cpp" hdr="pnlLogControl.h" fwddecl="0" i18n="1" name="pnlLogControl" language="CPP" />
+					<wxDialog wxs="wxsmith/dlgMask.wxs" src="dlgmask.cpp" hdr="dlgmask.h" fwddecl="0" i18n="1" name="dlgMask" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlUpdate.wxs" src="pnlUpdate.cpp" hdr="pnlUpdate.h" fwddecl="0" i18n="1" name="pnlUpdate" language="CPP" />
+					<wxDialog wxs="wxsmith/dlgUpdate.wxs" src="dlgUpdate.cpp" hdr="dlgUpdate.h" fwddecl="0" i18n="1" name="dlgUpdate" language="CPP" />
 				</resources>
 			</wxsmith>
 			<AutoVersioning>

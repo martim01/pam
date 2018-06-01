@@ -74,7 +74,16 @@ bool UpdateManager::GetUpdateList()
     {
         return GetUpdateListFromShare();
     }
+    else if(Settings::Get().Read(wxT("Update"), wxT("Type"), wxT("Share")) == wxT("FTP"))
+    {
+        return GetUpdateListFromFTP();
+    }
 }
+bool UpdateManager::GetUpdateListFromFTP()
+{
+
+}
+
 
 bool UpdateManager::GetUpdateListFromWebServer()
 {
@@ -220,21 +229,23 @@ void UpdateManager::AddUpdateToList(wxXmlNode* pUpdateNode)
 
 void UpdateManager::AddDependencyToList(UpdateObject& anObject, wxXmlNode* pDepNode)
 {
-    UpdateObject dependsObject;
-    dependsObject.nType = UpdateObject::CORE_DLL;
-
-    for(wxXmlNode* pNode = pDepNode->GetChildren(); pNode; pNode = pNode->GetChildren())
+    wxString sName, sVersion;
+    for(wxXmlNode* pNode = pDepNode->GetChildren(); pNode; pNode = pNode->GetNext())
     {
         if(pNode->GetName().CmpNoCase(wxT("name")) == 0)
         {
-            dependsObject.sName = pNode->GetNodeContent();
+            sName = pNode->GetNodeContent();
         }
         else if(pNode->GetName().CmpNoCase(wxT("version")) == 0)
         {
-            dependsObject.sVersion = pNode->GetNodeContent();
+            sVersion = pNode->GetNodeContent();
         }
     }
-    anObject.lstDependsOn.push_back(dependsObject);
+    if(sVersion.empty() == false && sName.empty() == false)
+    {
+
+        anObject.mDependsOn.insert(make_pair(sName, sVersion));
+    }
 }
 
 
@@ -389,3 +400,43 @@ bool UpdateManager::UpdateFromShare(const wxString& sName, const wxString& sTemp
 }
 
 
+
+map<wxString, UpdateObject>::const_iterator UpdateManager::GetUpdateListBegin() const
+{
+    return m_mUpdates.begin();
+}
+
+map<wxString, UpdateObject>::const_iterator UpdateManager::GetUpdateListEnd() const
+{
+    return m_mUpdates.end();
+}
+
+wxString UpdateManager::GetChangelog(const wxString& sName) const
+{
+    map<wxString, UpdateObject>::const_iterator itObject = m_mUpdates.find(sName);
+    if(itObject != m_mUpdates.end())
+    {
+        return itObject->second.sChangelog;
+    }
+    return wxEmptyString;
+}
+
+wxString UpdateManager::GetVersion(const wxString& sName) const
+{
+    map<wxString, UpdateObject>::const_iterator itObject = m_mUpdates.find(sName);
+    if(itObject != m_mUpdates.end())
+    {
+        return itObject->second.sVersion;
+    }
+    return wxEmptyString;
+}
+
+map<wxString, wxString> UpdateManager::GetDependencies(const wxString& sName)
+{
+    map<wxString, UpdateObject>::const_iterator itObject = m_mUpdates.find(sName);
+    if(itObject != m_mUpdates.end())
+    {
+        return itObject->second.mDependsOn;
+    }
+    return map<wxString,wxString>();
+}

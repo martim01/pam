@@ -17,6 +17,7 @@ using namespace std;
 
 DEFINE_EVENT_TYPE(wxEVT_TEXT_ESCAPE)
 DEFINE_EVENT_TYPE(wxEVT_TEXT_TAB)
+DEFINE_EVENT_TYPE(wxEVT_TEXT_BACKSPACE)
 
 IMPLEMENT_DYNAMIC_CLASS(wmEdit, wxControl)
 
@@ -221,6 +222,11 @@ void wmEdit::OnChar(wxKeyEvent& event)
                 UpdateText(sStr);
                 --m_nInsert;
             }
+            if(m_nInsert == 0)
+            {
+                wxCommandEvent eventUp(wxEVT_TEXT_BACKSPACE, GetId());
+                wxPostEvent(GetParent(), eventUp);
+            }
             break;
         case 9:		//tab
             if((m_nStyle & wxTE_PROCESS_TAB)  && m_sText.length() < m_nMaxCharacters)
@@ -243,9 +249,9 @@ void wmEdit::OnChar(wxKeyEvent& event)
                 ++m_nInsert;
             }
             {
-                wxCommandEvent event(wxEVT_COMMAND_TEXT_ENTER, GetId());
-                event.SetString(m_sText);
-                wxPostEvent(GetParent(), event);
+                wxCommandEvent eventUp(wxEVT_COMMAND_TEXT_ENTER, GetId());
+                eventUp.SetString(m_sText);
+                wxPostEvent(GetParent(), eventUp);
             }
             break;
         case WXK_DOWN:
@@ -594,18 +600,11 @@ bool wmEdit::Validate(const wxChar& ch)
             if((m_sText.empty() || m_sText.GetChar(m_sText.length()-1) == wxT('.')) && ch == wxT('.'))
                 return false;
 
-            wxArrayString asIp = wxStringTokenize(AddChar(ch), wxT("."));
-            if(asIp.GetCount() > 4)
+            if(ch==wxT('.') || ch >= wxT('0') && ch <= wxT('9'))
             {
-                return false;
+                return true;
             }
-            for(int i = 0; i < asIp.GetCount(); i++)
-            {
-                unsigned long nIp;
-                if(asIp[i].ToULong(&nIp) == false || nIp > 255)
-                    return false;
-            }
-            return true;
+            return false;
         }
     }
     return true;

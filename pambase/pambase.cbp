@@ -185,6 +185,8 @@
 		<Unit filename="wmedit.h" />
 		<Unit filename="wmfocusmanager.cpp" />
 		<Unit filename="wmfocusmanager.h" />
+		<Unit filename="wmipeditpnl.cpp" />
+		<Unit filename="wmipeditpnl.h" />
 		<Unit filename="wmkeyboard.cpp" />
 		<Unit filename="wmkeyboard.h" />
 		<Unit filename="wmlabel.cpp" />
@@ -205,6 +207,7 @@
 		<Unit filename="wmtestlog.h" />
 		<Unit filename="wmtimeedit.cpp" />
 		<Unit filename="wmtimeedit.h" />
+		<Unit filename="wxsmith/wmipeditpnl.wxs" />
 		<Extensions>
 			<code_completion />
 			<envvars />
@@ -215,6 +218,11 @@
 				<Changes_Log show_changes_editor="0" app_title="released version %M.%m.%b of %p" changeslog_path="ChangesLog.txt" />
 				<Code header_guard="VERSION_H" namespace="AutoVersion" prefix="" />
 			</AutoVersioning>
+			<wxsmith version="1">
+				<resources>
+					<wxPanel wxs="wxsmith/wmipeditpnl.wxs" src="wmipeditpnl.cpp" hdr="wmipeditpnl.h" fwddecl="0" i18n="1" name="wmipeditpnl" language="CPP" />
+				</resources>
+			</wxsmith>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

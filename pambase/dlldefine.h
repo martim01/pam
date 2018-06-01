@@ -1,4 +1,5 @@
 #pragma once
+#include <wx/string.h>
 
 #ifdef __WXMSW__
 #ifdef CREATING_DLL
@@ -13,3 +14,6 @@
 #else
 #define PAMBASE_IMPEXPORT
 #endif
+
+
+
