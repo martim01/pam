@@ -72,7 +72,7 @@ dlgMask::dlgMask(wxWindow* parent,const wxString& sSelected, wxWindowID id,const
 
     m_plstSubnet->SelectButton(sSelected, false);
     m_plstSubnet->ShowButton(m_plstSubnet->FindButton(sSelected), wmList::TOP, false);
-    CaptureMouse();
+    //CaptureMouse();
 }
 
 dlgMask::~dlgMask()

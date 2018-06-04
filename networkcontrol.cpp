@@ -303,4 +303,75 @@ void NetworkControl::GetCurrentSettings()
 
 
 
+wxString NetworkControl::ConvertMaskToAddress(unsigned long nMask)
+{
+    switch(nMask)
+    {
+       case 32:
+           return wxT("255.255.255.255");
 
+        case 31:
+                return wxT("255.255.255.254");
+        case 30:
+                return wxT("255.255.255.252");
+        case 29:
+                return wxT("255.255.255.248");
+        case 28:
+                return wxT("255.255.255.240");
+        case 27:
+                return wxT("255.255.255.224");
+        case 26:
+                return wxT("255.255.255.192");
+        case 25:
+                return wxT("255.255.255.128");
+        case 24:
+                return wxT("255.255.255.0");
+        case 23:
+                return wxT("255.255.254.0");
+        case 22:
+                return wxT("255.255.252.0");
+        case 21:
+                return wxT("255.255.248.0");
+        case 20:
+                return wxT("255.255.240.0");
+        case 19:
+                return wxT("255.255.224.0");
+        case 18:
+                return wxT("255.255.192.0");
+        case 17:
+                return wxT("255.255.128.0");
+        case 16:
+                return wxT("255.255.0.0");
+        case 15:
+                return wxT("255.254.0.0");
+        case 14:
+                return wxT("255.252.0.0");
+        case 13:
+                return wxT("255.248.0.0");
+        case 12:
+                return wxT("255.240.0.0");
+        case 11:
+                return wxT("255.224.0.0");
+        case 10:
+                return wxT("255.192.0.0");
+        case 9:
+                return wxT("255.128.0.0");
+        case 8:
+                return wxT("255.0.0.0");
+        case 7:
+                return wxT("254.0.0.0");
+        case 6:
+                return wxT("252.0.0.0");
+        case 5:
+                return wxT("248.0.0.0");
+        case 4:
+                return wxT("240.0.0.0");
+        case 3:
+                return wxT("224.0.0.0");
+        case 2:
+                return wxT("192.0.0.0");
+        case 1:
+                return wxT("128.0.0.0");
+    }
+    return wxEmptyString;
+}

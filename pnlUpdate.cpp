@@ -159,7 +159,10 @@ void pnlUpdate::OnlstTypeSelected(wxCommandEvent& event)
 }
 void pnlUpdate::OnlstFoldersSelected(wxCommandEvent& event)
 {
-    m_sLocation << event.GetString() << wxT("/");
+    if(m_sLocation.empty() == false && m_sLocation.GetChar(m_sLocation.length()-1) != wxT('/'))
+        m_sLocation << wxT("/");
+
+    m_sLocation << event.GetString();
 
     ShowDirectories();
 }
@@ -206,7 +209,7 @@ void pnlUpdate::ShowDrives()
 {
     m_plstFolders->Freeze();
     m_plstFolders->Clear();
-
+#ifdef __WXMSW__
     wxArrayString asVolumes(wxFSVolume::GetVolumes());
 
     for(int i = 0; i < asVolumes.GetCount(); i++)
@@ -218,6 +221,9 @@ void pnlUpdate::ShowDrives()
             m_plstFolders->AddButton(asVolumes[i], wxBitmap(aVolume.GetIcon(wxFS_VOL_ICO_LARGE)));
         }
     }
+#else
+    m_plstFolders->AddButton(wxT("/"));
+#endif
 
     m_plstFolders->Thaw();
 

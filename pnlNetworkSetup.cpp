@@ -103,8 +103,8 @@ pnlNetworkSetup::pnlNetworkSetup(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_ppnlAddress->SetValue(NetworkControl::Get().GetAddress());
 	m_ppnlGateway->SetValue(NetworkControl::Get().GetGateway());
 
-	//@todo select mask
-    //m_pedtSubnet->SetValue(wxString::Format(wxT("%d"), NetworkControl::Get().GetMask()));
+    m_pbtnMask->SetLabel(wxString::Format(wxT("/%d (%s)"), NetworkControl::Get().GetMask(), NetworkControl::Get().ConvertMaskToAddress(NetworkControl::Get().GetMask())));
+
 
 }
 

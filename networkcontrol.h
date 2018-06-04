@@ -12,6 +12,8 @@ class NetworkControl
         const wxString& GetGateway() const;
         unsigned long GetMask() const;
 
+        wxString ConvertMaskToAddress(unsigned long nMask);
+
 //        bool HasAdminRights();
 
     protected:
