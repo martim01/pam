@@ -5,9 +5,10 @@
 #include <wx/filename.h>
 #include <wx/dynlib.h>
 #include <wx/log.h>
+#include <wx/tokenzr.h>
 #include "monitorpluginfactory.h"
 #include "testpluginfactory.h"
-
+#include <wx/dir.h>
 
 
 using namespace std;
@@ -66,6 +67,7 @@ UpdateManager& UpdateManager::Get()
 
 bool UpdateManager::GetUpdateList()
 {
+    m_mUpdates.clear();
     if(Settings::Get().Read(wxT("Update"), wxT("Type"), wxT("Share")) == wxT("HTTP"))
     {
         return GetUpdateListFromWebServer();
@@ -73,6 +75,10 @@ bool UpdateManager::GetUpdateList()
     else if(Settings::Get().Read(wxT("Update"), wxT("Type"), wxT("Share")) == wxT("Share"))
     {
         return GetUpdateListFromShare();
+    }
+    else if(Settings::Get().Read(wxT("Update"), wxT("Type"), wxT("Share")) == wxT("Local"))
+    {
+        return GetUpdateListFromLocal();
     }
     else if(Settings::Get().Read(wxT("Update"), wxT("Type"), wxT("Share")) == wxT("FTP"))
     {
@@ -151,12 +157,21 @@ bool UpdateManager::GetUpdateListFromWebServer()
 bool UpdateManager::GetUpdateListFromShare()
 {
     return DecodeUpdateList(wxString::Format(wxT("%s/manifest.xml"), Settings::Get().Read(wxT("Update"), wxT("Share"), wxT(".")).c_str()));
+}
 
+bool UpdateManager::GetUpdateListFromLocal()
+{
+    wxArrayString asFiles;
+    wxDir::GetAllFiles(Settings::Get().Read(wxT("Update"), wxT("Local"), wxT(".")), &asFiles, wxT("*_manifest.xml"));
+    for(size_t i = 0; i < asFiles.GetCount(); i++)
+    {
+        DecodeUpdateList(asFiles[i]);
+    }
 }
 
 bool UpdateManager::DecodeUpdateList(const wxXmlDocument& xmlDoc)
 {
-    m_mUpdates.clear();
+
 
     if(xmlDoc.IsOk() && xmlDoc.GetRoot())
     {
@@ -250,11 +265,62 @@ void UpdateManager::AddDependencyToList(UpdateObject& anObject, wxXmlNode* pDepN
 
 
 
-bool UpdateManager::Update(const wxString& sName)
+bool UpdateManager::Update(wxString sName)
 {
+    //wxLogNull ln;
+
+    wxFileName fileOld;
+
     map<wxString, UpdateObject>::iterator itUpdate = m_mUpdates.find(sName);
     if(itUpdate != m_mUpdates.end())
     {
+        switch(itUpdate->second.nType)
+        {
+            case UpdateObject::APP:
+                #ifdef __WXMSW__
+                sName << wxT(".exe");
+                #endif // __WXMSW__
+
+                fileOld.SetPath(Settings::Get().GetExecutableDirectory());
+                fileOld.SetName(sName);
+
+                break;
+            case UpdateObject::CORE_DLL:
+                #ifdef __WXMSW__
+                sName << wxT(".dll");
+                #else ifdef __WXGNU__
+                sName  = wxT("lib")+sName+wxT(".so");
+                #endif // __WXMSW__
+
+                fileOld.SetPath(Settings::Get().GetCoreLibDirectory());
+                fileOld.SetName(sName);
+                break;
+
+            case UpdateObject::PLUGIN_MONITOR:
+                #ifdef __WXMSW__
+                sName << wxT(".dll");
+                #else ifdef __WXGNU__
+                sName  = wxT("lib")+sName+wxT(".so");
+                #endif // __WXMSW__
+                fileOld.SetPath(Settings::Get().GetMonitorPluginDirectory());
+                fileOld.SetName(sName);
+
+            case UpdateObject::PLUGIN_TEST:
+                #ifdef __WXMSW__
+                sName << wxT(".dll");
+                #else ifdef __WXGNU__
+                sName  = wxT("lib")+sName+wxT(".so");
+                #endif // __WXMSW__
+                fileOld.SetPath(Settings::Get().GetTestPluginDirectory());
+                fileOld.SetName(sName);
+                break;
+            case UpdateObject::DOCUMENTATION:
+                sName << wxT(".html");
+                fileOld.SetPath(Settings::Get().GetDocumentDirectory());
+                fileOld.SetName(sName);
+                break;
+
+        }
         wxFileName fileTo(Settings::Get().GetTempDirectory(), sName);
 
         bool bCopied(false);
@@ -266,57 +332,29 @@ bool UpdateManager::Update(const wxString& sName)
         {
             bCopied = UpdateFromShare(sName, fileTo.GetFullPath());
         }
+        else if(Settings::Get().Read(wxT("Update"), wxT("Type"), wxT("Share")) == wxT("Local"))
+        {
+            bCopied = UpdateFromLocal(sName, fileTo.GetFullPath());
+        }
 
         if(bCopied)
         {
-            wxFileName fileOld;
-
-            switch(itUpdate->second.nType)
-            {
-                case UpdateObject::APP:
-                    fileOld.SetPath(Settings::Get().GetExecutableDirectory());
-                    fileOld.SetName(wxT("pam2"));
-                    break;
-                case UpdateObject::CORE_DLL:
-                    fileOld.SetPath(Settings::Get().GetCoreLibDirectory());
-                    #ifdef __WXGNU__
-                        fileOld.SetName(wxString::Format(wxT("lib%s.so")));
-                    #else
-                        fileOld.SetName(wxString::Format(wxT("%s.dll"), sName.c_str()));
-                    #endif
-                    break;
-                case UpdateObject::PLUGIN_MONITOR:
-                    fileOld.SetPath(Settings::Get().GetMonitorPluginDirectory());
-                    #ifdef __WXGNU__
-                        fileOld.SetName(wxString::Format(wxT("lib%s.so")));
-                    #else
-                        fileOld.SetName(wxString::Format(wxT("%s.dll"), sName.c_str()));
-                    #endif
-                    break;
-                case UpdateObject::PLUGIN_TEST:
-                    fileOld.SetPath(Settings::Get().GetTestPluginDirectory());
-                    #ifdef __WXGNU__
-                        fileOld.SetName(wxString::Format(wxT("lib%s.so")));
-                    #else
-                        fileOld.SetName(wxString::Format(wxT("%s.dll"), sName.c_str()));
-                    #endif
-                    break;
-                case UpdateObject::DOCUMENTATION:
-                    fileOld.SetPath(Settings::Get().GetDocumentDirectory());
-                    fileOld.SetName(wxString::Format(wxT("%s.html"), sName.c_str()));
-                    break;
-
-            }
-            if(wxRenameFile(wxString::Format(wxT("%s.bak"), fileOld.GetFullPath().c_str()), fileOld.GetFullPath()))
+            if(wxRenameFile(fileOld.GetFullPath(), wxString::Format(wxT("%s.bak"), fileOld.GetFullPath().c_str())))
             {
                 if(wxRenameFile(fileTo.GetFullPath(), fileOld.GetFullPath()))
                 {
-                    wxRemoveFile(wxString::Format(wxT("%s.bak"), fileOld.GetFullPath().c_str()));
+                    wxString sRemove(Settings::Get().Read(wxT("Startup"), wxT("Remove"), wxEmptyString));
+                    if(sRemove.empty() == false)
+                    {
+                        sRemove << wxT(",");
+                    }
+                    sRemove << wxString::Format(wxT("%s.bak"), fileOld.GetFullPath().c_str());
+                    Settings::Get().Write(wxT("Startup"), wxT("Remove"), sRemove);
                     return true;
                 }
                 else
                 {
-                    wxRenameFile(fileOld.GetFullPath(), wxString::Format(wxT("%s.bak"), fileOld.GetFullPath().c_str()));
+                    wxRenameFile(wxString::Format(wxT("%s.bak"), fileOld.GetFullPath().c_str()), fileOld.GetFullPath());
                     return false;
                 }
             }
@@ -399,6 +437,13 @@ bool UpdateManager::UpdateFromShare(const wxString& sName, const wxString& sTemp
     return wxCopyFile(fileFrom.GetFullPath(), sTempFile);
 }
 
+bool UpdateManager::UpdateFromLocal(const wxString& sName, const wxString& sTempFile)
+{
+    wxFileName fileFrom(Settings::Get().Read(wxT("Update"), wxT("Local"), wxT(".")), sName);
+
+    //Copy the file from the share to our temp location
+    return wxCopyFile(fileFrom.GetFullPath(), sTempFile);
+}
 
 
 map<wxString, UpdateObject>::const_iterator UpdateManager::GetUpdateListBegin() const
@@ -439,4 +484,38 @@ map<wxString, wxString> UpdateManager::GetDependencies(const wxString& sName)
         return itObject->second.mDependsOn;
     }
     return map<wxString,wxString>();
+}
+
+
+bool UpdateManager::UpdateIsNewer(const wxString& sUpdate, const wxString& sLocalVersion)
+{
+    wxString sUpdateVersion(GetVersion(sUpdate));
+    return UpdateVersionIsNewer(sUpdateVersion, sLocalVersion);
+}
+
+bool UpdateManager::UpdateVersionIsNewer(const wxString& sUpdateVersion, const wxString& sLocalVersion)
+{
+    wxArrayString asUpdate(wxStringTokenize(sUpdateVersion, wxT(".")));
+
+    wxArrayString asLocal(wxStringTokenize(sLocalVersion, wxT(".")));
+
+    if(asUpdate.GetCount() != 4)
+    {
+        return false;
+    }
+    if(asLocal.GetCount() != 4)
+    {
+        return true;
+    }
+
+    unsigned long nUpdate[4];
+    unsigned long nLocal[4];
+
+    for(int i = 0; i < 4; i++)
+    {
+        asUpdate[i].ToULong(&nUpdate[i]);
+        asLocal[i].ToULong(&nLocal[i]);
+    }
+
+    return ( (nUpdate[0] > nLocal[0]) || (nUpdate[0] == nLocal[0] && nUpdate[1] > nLocal[1]) || (nUpdate[0] == nLocal[0] && nUpdate[1] == nLocal[1] && nUpdate[2] > nLocal[2]) || (nUpdate[0] == nLocal[0] && nUpdate[1] == nLocal[1] && nUpdate[2] == nLocal[2] && nUpdate[3] > nLocal[3]));
 }

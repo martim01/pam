@@ -388,6 +388,7 @@ void Aes67MediaSubsession::parseSDPAttribute_ClockDomain()
     }
     else    //use the parent session
     {
+
         Aes67MediaSession* pParent = dynamic_cast<Aes67MediaSession*>(&fParent);
         if(pParent)
         {

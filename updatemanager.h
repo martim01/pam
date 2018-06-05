@@ -52,7 +52,7 @@ class UpdateManager
 
         bool GetUpdateList();
 
-        bool Update(const wxString& sName);
+        bool Update(wxString sName);
 
         std::map<wxString, UpdateObject>::const_iterator GetUpdateListBegin() const;
         std::map<wxString, UpdateObject>::const_iterator GetUpdateListEnd() const;
@@ -60,6 +60,9 @@ class UpdateManager
         wxString GetChangelog(const wxString& sName) const;
         wxString GetVersion(const wxString& sName) const;
         std::map<wxString, wxString> GetDependencies(const wxString& sName);
+
+        bool UpdateIsNewer(const wxString& sUpdate, const wxString& sLocalVersion);
+        bool UpdateVersionIsNewer(const wxString& sUpdateVersion, const wxString& sLocalVersion);
 
     private:
         UpdateManager();
@@ -69,10 +72,12 @@ class UpdateManager
 
         bool GetUpdateListFromWebServer();
         bool GetUpdateListFromShare();
+        bool GetUpdateListFromLocal();
         bool GetUpdateListFromFTP();
 
         bool UpdateFromWebServer(const wxString& sName, const wxString& sTempFile);
         bool UpdateFromShare(const wxString& sName, const wxString& sTempFile);
+        bool UpdateFromLocal(const wxString& sName, const wxString& sTempFile);
         bool UpdateFromFTP(const wxString& sName, const wxString& sTempFile);
 
         bool DecodeUpdateList(const wxXmlDocument& xmlDoc);

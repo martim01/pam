@@ -8,6 +8,7 @@
 #include "wmswitcherpanel.h"
 #include <wx/panel.h>
 #include <wx/dialog.h>
+#include <wx/timer.h>
 #include <wx/html/htmlwin.h>
 #include "wmlist.h"
 //*)
@@ -20,17 +21,22 @@ class dlgUpdate: public wxDialog
 		virtual ~dlgUpdate();
 
 		//(*Declarations(dlgUpdate)
+		wmLabel* m_pLbl4;
 		wmButton* m_pbtnDependencies;
 		wmLabel* m_pLbl3;
 		wmButton* m_pbtnSelectNone;
 		wmButton* m_pbtnSelectAll;
+		wxPanel* Panel4;
 		wmLabel* m_pLbl1;
+		wmList* m_plstLog;
 		wxPanel* Panel1;
 		wxPanel* Panel3;
+		wmLabel* m_pLbl5;
 		wmLabel* m_plblSettings;
 		wxHtmlWindow* m_phtmlDependencies;
 		wmList* m_plstUpdates;
 		wxHtmlWindow* m_phtmlChangelog;
+		wxTimer m_timerUpdate;
 		wmLabel* m_pLbl2;
 		wmButton* m_pbtnChangelog;
 		wmButton* m_pbtnUpdate;
@@ -50,6 +56,7 @@ class dlgUpdate: public wxDialog
 		static const long ID_M_PBTN2;
 		static const long ID_M_PBTN3;
 		static const long ID_M_PLBL1;
+		static const long ID_M_PLBL4;
 		static const long ID_M_PLBL2;
 		static const long ID_M_PLBL3;
 		static const long ID_M_PLST1;
@@ -58,7 +65,11 @@ class dlgUpdate: public wxDialog
 		static const long ID_PANEL2;
 		static const long ID_HTMLWINDOW2;
 		static const long ID_PANEL3;
+		static const long ID_M_PLBL5;
+		static const long ID_M_PLST2;
+		static const long ID_PANEL4;
 		static const long ID_M_PSWP1;
+		static const long ID_TIMER1;
 		//*)
 
 	private:
@@ -71,10 +82,14 @@ class dlgUpdate: public wxDialog
 		void OnbtnDependenciesClick(wxCommandEvent& event);
 		void OnbtnUpdateClick(wxCommandEvent& event);
 		void OnlstUpdatesSelected(wxCommandEvent& event);
+		void OntimerUpdateTrigger(wxTimerEvent& event);
 		//*)
 
-        void ShowMonitorPluginVersion(const wxString& sPlugin);
-        void ShowTestPluginVersion(const wxString& sPlugin);
+        wxString GetMonitorPluginVersion(const wxString& sPlugin);
+        wxString GetTestPluginVersion(const wxString& sPlugin);
+
+        std::map<wxString, wxString> m_mUpdate;
+        bool m_bUpdate;
 		DECLARE_EVENT_TABLE()
 };
 

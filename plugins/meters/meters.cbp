@@ -6,7 +6,7 @@
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
-			<Target title="Release">
+			<Target title="Windows Release">
 				<Option output="../../lib/monitor/meters.dll" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/release3" />
 				<Option type="3" />
@@ -36,8 +36,11 @@
 					<Add library="pambase" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
+				<ExtraCommands>
+					<Add after="C:\developer\matt\pam2\manifest_creator\bin\Release\manifest_creator.exe" />
+				</ExtraCommands>
 			</Target>
-			<Target title="Debug">
+			<Target title="Windows Debug">
 				<Option output="../../lib/monitor/debug/meters.dll" prefix_auto="1" extension_auto="0" />
 				<Option object_output="obj/debug" />
 				<Option type="3" />
@@ -147,7 +150,7 @@
 			<AutoVersioning>
 				<Scheme minor_max="10" build_max="0" rev_max="0" rev_rand_max="10" build_times_to_increment_minor="100" />
 				<Settings autoincrement="0" date_declarations="1" use_define="0" update_manifest="0" do_auto_increment="1" ask_to_increment="0" language="C++" svn="0" svn_directory="" header_path="version.h" />
-				<Changes_Log show_changes_editor="0" app_title="released version %M.%m.%b of %p" changeslog_path="ChangesLog.txt" />
+				<Changes_Log show_changes_editor="1" app_title="released version %M.%m.%b of %p" changeslog_path="ChangesLog.txt" />
 				<Code header_guard="VERSION_H" namespace="AutoVersion" prefix="" />
 			</AutoVersioning>
 			<wxsmith version="1">

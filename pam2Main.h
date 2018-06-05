@@ -107,6 +107,8 @@ class pam2Dialog: public wxDialog
         void ShowTestPanels();
         void ShowLogPanel();
 
+        void RemoveOldFiles();
+
         void OnMonitorMax(wxCommandEvent& event);
         void OnAudioData(wxCommandEvent& event);
         void OnQoS(wxCommandEvent& event);

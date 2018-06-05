@@ -384,6 +384,7 @@ void pam2Dialog::OnlstScreensSelected(wxCommandEvent& event)
     }
     else
     {
+
        ShowMonitorPanel(event.GetString());
     }
     m_pswpSplash->ChangeSelection(1);
@@ -451,6 +452,7 @@ void pam2Dialog::ShowSettingsPanel()
     m_plstOptions->AddButton(wxT("Plugins"));
     m_plstOptions->AddButton(wxT("Update"));
     m_plstOptions->AddButton(wxT("Threads"));
+
 
     m_plstOptions->SelectButton(Settings::Get().Read(wxT("Settings"), wxT("_Options"), 0));
     m_plstOptions->Thaw();
@@ -923,6 +925,9 @@ void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
 {
     wmLog::Get();
 
+    RemoveOldFiles();
+
+
     LoadMonitorPanels();
     //check which page we need.
     wxString sPanel(Settings::Get().Read(wxT("Main"), wxT("Monitor"), wxEmptyString));
@@ -1001,4 +1006,16 @@ void pam2Dialog::OnClose(wxCloseEvent& event)
 void pam2Dialog::OnbmpSplashClick(wxCommandEvent& event)
 {
     m_pswpSplash->ChangeSelection(1);
+}
+
+
+void pam2Dialog::RemoveOldFiles()
+{
+    wxLogNull ln;
+    wxArrayString asRemove(wxStringTokenize(Settings::Get().Read(wxT("Startup"), wxT("Remove"), wxEmptyString), wxT(",")));
+    for(size_t i = 0; i < asRemove.GetCount(); i++)
+    {
+        wxRemoveFile(asRemove[i]);
+    }
+    Settings::Get().Write(wxT("Startup"), wxT("Remove"), wxEmptyString);
 }
