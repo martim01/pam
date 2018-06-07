@@ -113,6 +113,9 @@
 					<Add library="pambase" />
 					<Add library="libcurl" />
 				</Linker>
+				<ExtraCommands>
+					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />
+				</ExtraCommands>
 			</Target>
 			<Target title="Linux Debug">
 				<Option output="bin/Linux Debug/pam2" prefix_auto="1" extension_auto="1" />

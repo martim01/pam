@@ -73,9 +73,9 @@
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-O3" />
 					<Add option="`wx-config --cxxflags`" />
 					<Add option="-fpermissive" />
-					<Add option="-O3" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
 				</Compiler>
@@ -83,6 +83,9 @@
 					<Add option="`wx-config --libs`" />
 					<Add library="pambase" />
 				</Linker>
+				<ExtraCommands>
+					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />
+				</ExtraCommands>
 			</Target>
 			<Target title="Linux Debug">
 				<Option output="bin/Linux Debug/pamm" prefix_auto="1" extension_auto="1" />

@@ -68,7 +68,7 @@ void manifest_creatorApp::ReadProjectFile()
                                 #ifdef __WXMSW__
                                 if(pTargetNode->GetName().CmpNoCase(wxT("Target")) == 0 && pTargetNode->GetAttribute(wxT("title"), wxEmptyString).CmpNoCase(wxT("Windows Release")) == 0)
                                 #else
-                                if(pTargetNode->GetName().CmpNoCase(wxT("Target")) == 0 && pTargetNode->GetAttribute((wxT("title")).CmpNoCase(wxT("Linux Release")) == 0)
+                                if(pTargetNode->GetName().CmpNoCase(wxT("Target")) == 0 && pTargetNode->GetAttribute(wxT("title"), wxEmptyString).CmpNoCase(wxT("Linux Release")) == 0)
                                 #endif // __WXMSW__
                                 {
                                     for(wxXmlNode* pLinkerNode = pTargetNode->GetChildren(); pLinkerNode; pLinkerNode = pLinkerNode->GetNext())

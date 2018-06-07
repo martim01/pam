@@ -94,6 +94,9 @@
 					<Add library="pambase" />
 					<Add library="pamlevel" />
 				</Linker>
+				<ExtraCommands>
+					<Add after="../../manifest_creator/bin/LinuxRelease/manifest_creator" />
+				</ExtraCommands>
 			</Target>
 			<Target title="Linux Debug">
 				<Option platforms="Unix;" />

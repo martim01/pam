@@ -14,7 +14,6 @@ DEFINE_EVENT_TYPE(wxEVT_DATA)
 using namespace std;
 
 
-
 Audio::Audio(wxEvtHandler* pHandler, unsigned int nDevice) :
  m_pManager(pHandler),
  m_pStream(0),
