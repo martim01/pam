@@ -188,22 +188,25 @@ void manifest_creatorApp::WriteManifest()
     sContent << wxT("</ul>");
     pChangeNode->AddChild(new wxXmlNode(wxXML_CDATA_SECTION_NODE, wxEmptyString, sContent));
 
-    wxXmlNode* pDependsNode = new wxXmlNode(wxXML_ELEMENT_NODE, wxT("depends_on"));
-
-    for(list<wxString>::iterator itDepends = m_lstDependencies.begin(); itDepends != m_lstDependencies.end(); ++itDepends)
-    {
-        wxXmlNode* pDependsNameNode = new wxXmlNode(wxXML_ELEMENT_NODE, wxT("name"));
-        pDependsNameNode->AddChild(new wxXmlNode(wxXML_TEXT_NODE, wxEmptyString, (*itDepends)));
-        //@todo add version
-        pDependsNode->AddChild(pDependsNameNode);
-    }
-
-
     pUpdateNode->AddChild(pNameNode);
     pUpdateNode->AddChild(pTypeNode);
     pUpdateNode->AddChild(pVersionNode);
     pUpdateNode->AddChild(pChangeNode);
-    pUpdateNode->AddChild(pDependsNode);
+
+
+    for(list<wxString>::iterator itDepends = m_lstDependencies.begin(); itDepends != m_lstDependencies.end(); ++itDepends)
+    {
+        wxXmlNode* pDependsNode = new wxXmlNode(wxXML_ELEMENT_NODE, wxT("depends_on"));
+        wxXmlNode* pDependsNameNode = new wxXmlNode(wxXML_ELEMENT_NODE, wxT("name"));
+        pDependsNameNode->AddChild(new wxXmlNode(wxXML_TEXT_NODE, wxEmptyString, (*itDepends)));
+        //@todo add version
+        pDependsNode->AddChild(pDependsNameNode);
+        pUpdateNode->AddChild(pDependsNode);
+    }
+
+
+
+
 
     xmlDoc.GetRoot()->AddChild(pUpdateNode);
 

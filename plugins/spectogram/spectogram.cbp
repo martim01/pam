@@ -113,7 +113,7 @@
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
-					<Add library="pambased&#x0D;&#x0A;&#x09;&#x09;&#x09;&#x09;&#x09;" />
+					<Add library="pambased" />
 					<Add library="pamfftd" />
 				</Linker>
 			</Target>

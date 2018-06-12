@@ -290,6 +290,8 @@ void dlgUpdate::OnbtnUpdateClick(wxCommandEvent& event)
     m_pbtnChangelog->Enable(false);
     m_pbtnDependencies->Enable(false);
     m_pbtnUpdate->Enable(false);
+    m_pbtnSelectAll->Enable(false);
+    m_pbtnSelectNone->Enable(false);
     m_pswpMain->ChangeSelection(wxT("Log"));
 
     m_mUpdate.clear();

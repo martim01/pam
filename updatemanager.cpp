@@ -102,8 +102,11 @@ bool UpdateManager::GetUpdateListFromWebServer()
     if(pCurl)
     {
         wxString sPage;
-        sPage.Printf(wxT("%s/updatelist"), Settings::Get().Read(wxT("Update"), wxT("Server"), wxT("127.0.0.1")).c_str());
-
+        #ifdef __WXMSW__
+        sPage.Printf(wxT("%s/updatelist/windows"), Settings::Get().Read(wxT("Update"), wxT("Server"), wxT("127.0.0.1")).c_str());
+        #else
+        sPage.Printf(wxT("%s/updatelist/pi"), Settings::Get().Read(wxT("Update"), wxT("Server"), wxT("127.0.0.1")).c_str());
+        #endif
 
         std::string url(sPage.mb_str());
 
@@ -139,6 +142,7 @@ bool UpdateManager::GetUpdateListFromWebServer()
         {
             std::string sBuff;
             sBuff.assign(chunk.pMemory, chunk.nSize);
+            wxLogDebug(wxT("UpdateManager Got UpdateList %s"), wxString::FromAscii(sBuff.c_str()).c_str());
 
             wxStringInputStream sis(wxString::FromAscii(sBuff.c_str()));
             DecodeUpdateList(wxXmlDocument(sis));
@@ -171,10 +175,9 @@ bool UpdateManager::GetUpdateListFromLocal()
 
 bool UpdateManager::DecodeUpdateList(const wxXmlDocument& xmlDoc)
 {
-
-
     if(xmlDoc.IsOk() && xmlDoc.GetRoot())
     {
+        wxLogDebug(wxT("UpdateManager Xml Correct"));
         for(wxXmlNode* pNode = xmlDoc.GetRoot()->GetChildren(); pNode; pNode = pNode->GetNext())
         {
             if(pNode->GetName().CmpNoCase(wxT("update")) == 0)
@@ -183,6 +186,10 @@ bool UpdateManager::DecodeUpdateList(const wxXmlDocument& xmlDoc)
             }
         }
         return true;
+    }
+    else
+    {
+        wxLogDebug(wxT("UpdateManager Xml is not correct"));
     }
     return false;
 }
@@ -256,7 +263,7 @@ void UpdateManager::AddDependencyToList(UpdateObject& anObject, wxXmlNode* pDepN
             sVersion = pNode->GetNodeContent();
         }
     }
-    if(sVersion.empty() == false && sName.empty() == false)
+    if(sName.empty() == false)
     {
 
         anObject.mDependsOn.insert(make_pair(sName, sVersion));
@@ -339,7 +346,7 @@ bool UpdateManager::Update(wxString sName)
 
         if(bCopied)
         {
-            if(wxRenameFile(fileOld.GetFullPath(), wxString::Format(wxT("%s.bak"), fileOld.GetFullPath().c_str())))
+            if(!wxFileExists(fileOld.GetFullPath()) || wxRenameFile(fileOld.GetFullPath(), wxString::Format(wxT("%s.bak"), fileOld.GetFullPath().c_str())))
             {
                 if(wxRenameFile(fileTo.GetFullPath(), fileOld.GetFullPath()))
                 {
@@ -376,7 +383,11 @@ bool UpdateManager::UpdateFromWebServer(const wxString& sName, const wxString& s
     {
 
         wxString sPage;
-        sPage.Printf(wxT("%s/update/?update=%s"), Settings::Get().Read(wxT("Update"), wxT("Server"), wxT("127.0.0.1")).c_str(), sName.c_str());
+        #ifdef __WXMSW__
+        sPage.Printf(wxT("%s/update/windows?update=%s"), Settings::Get().Read(wxT("Update"), wxT("Server"), wxT("127.0.0.1")).c_str(), sName.c_str());
+        #else
+        sPage.Printf(wxT("%s/update/pi?update=%s"), Settings::Get().Read(wxT("Update"), wxT("Server"), wxT("127.0.0.1")).c_str(), sName.c_str());
+        #endif
 
         std::string url(sPage.mb_str());
         std::string local(sTempFile.mb_str());
@@ -411,22 +422,23 @@ bool UpdateManager::UpdateFromWebServer(const wxString& sName, const wxString& s
                 m_sCurlError = wxString::FromAscii(sLastError.c_str());
                 m_sCurlErrorBuffer = wxString::FromAscii(chError);
 
-                //wxMessageBox(m_sCurlError+wxT("\n")+m_sCurlErrorBuffer);
+                wxLogMessage(m_sCurlError+wxT("\n")+m_sCurlErrorBuffer);
 
             }
             else
             {
-                m_sCurlError = wxEmptyString;
-                m_sCurlErrorBuffer = wxEmptyString;
+                if(m_nCurlResponseCode != 200)
+                {
+                    m_sCurlError = wxT("File not found");
+                }
             }
             /* close the header file */
             fclose(local_file);
         }
     }
-
     curl_easy_cleanup(pCurl);
 
-    return (res == CURLE_OK);
+    return ((res == CURLE_OK)&(m_nCurlResponseCode==200));
 }
 
 bool UpdateManager::UpdateFromShare(const wxString& sName, const wxString& sTempFile)
@@ -495,6 +507,9 @@ bool UpdateManager::UpdateIsNewer(const wxString& sUpdate, const wxString& sLoca
 
 bool UpdateManager::UpdateVersionIsNewer(const wxString& sUpdateVersion, const wxString& sLocalVersion)
 {
+    return true;
+
+
     wxArrayString asUpdate(wxStringTokenize(sUpdateVersion, wxT(".")));
 
     wxArrayString asLocal(wxStringTokenize(sLocalVersion, wxT(".")));

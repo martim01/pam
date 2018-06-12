@@ -88,7 +88,6 @@ void LissajouMeter::OnPaint(wxPaintEvent& event)
         if(m_nType == STARS || m_nType == JOINT)
         {
             DrawStars(dc);
-            dc.DrawBitmap(m_bmpScreen,m_rectGrid.GetLeft()+1+m_pntRotateOffset.x, m_rectGrid.GetTop()+1+m_pntRotateOffset.y);
         }
         if(m_nType == PHASEOMETER || m_nType == JOINT)
         {
@@ -316,7 +315,8 @@ void LissajouMeter::DrawStars(wxDC& dc)
     m_pntRotateOffset = wxPoint(0,0);
 
 
-    m_bmpScreen = wxBitmap(img);
+    dc.DrawBitmap(wxBitmap(img),m_rectGrid.GetLeft()+1+m_pntRotateOffset.x, m_rectGrid.GetTop()+1+m_pntRotateOffset.y);
+
 }
 
 void LissajouMeter::DrawPeaks(wxDC&  dc)
