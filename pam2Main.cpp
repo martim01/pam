@@ -542,7 +542,7 @@ void pam2Dialog::CreateAudioInputDevice()
         m_pAudio->Init();
 
         session aSession(wxEmptyString, m_pAudio->GetDeviceName(), wxT("Soundcard"));
-        aSession.lstSubsession.push_back(subsession(wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, m_pAudio->GetDevice(), m_pAudio->GetSampleRate(), m_pAudio->GetNumberOfChannels(), wxEmptyString, 0, make_pair(0,0), refclk()));
+        aSession.lstSubsession.push_back(subsession(wxEmptyString, m_pAudio->GetDeviceName(), wxEmptyString, wxT("L24"), wxEmptyString, m_pAudio->GetDevice(), m_pAudio->GetSampleRate(), m_pAudio->GetNumberOfChannels(), wxEmptyString, 0, make_pair(0,0), refclk()));
         aSession.itCurrentSubsession = aSession.lstSubsession.begin();
 
 
@@ -770,8 +770,17 @@ void pam2Dialog::OpenFileForReading()
         wmLog::Get()->Log(wxString::Format(wxT("SampleRate = %d"), m_pSoundfile->GetSampleRate()));
         wmLog::Get()->Log(wxString::Format(wxT("Channels = %d"), m_pSoundfile->GetChannels()));
 
+        wxString sCodec;
+        if((m_pSoundfile->GetFormat() & 0x0002))
+        {
+            sCodec = wxT("L16");
+        }
+        else if((m_pSoundfile->GetFormat() & 0x0003))
+        {
+            sCodec = wxT("L24");
+        }
         session aSession(wxEmptyString, Settings::Get().Read(wxT("Input"), wxT("File"), wxEmptyString), wxT("File"));
-        aSession.lstSubsession.push_back(subsession(wxEmptyString, Settings::Get().Read(wxT("Input"), wxT("File"), wxEmptyString), wxEmptyString, wxEmptyString, wxEmptyString, 0, m_pSoundfile->GetSampleRate(), m_pSoundfile->GetChannels(), wxEmptyString, 0, make_pair(0,0), refclk()));
+        aSession.lstSubsession.push_back(subsession(wxEmptyString, Settings::Get().Read(wxT("Input"), wxT("File"), wxEmptyString), wxEmptyString, sCodec, wxEmptyString, 0, m_pSoundfile->GetSampleRate(), m_pSoundfile->GetChannels(), wxEmptyString, 0, make_pair(0,0), refclk()));
         aSession.itCurrentSubsession = aSession.lstSubsession.begin();
         m_Session = aSession;
 
@@ -958,6 +967,7 @@ void pam2Dialog::ReadSoundFile(unsigned int nSize)
     timedbuffer* pData = new timedbuffer(nSize);
     if(m_pSoundfile->ReadAudio(pData->GetWritableBuffer(), pData->GetBufferSize(), 1))
     {
+        pData->SetDuration(pData->GetBufferSize()*(m_pSoundfile->GetFormat()&0x0F));
         wxCommandEvent event(wxEVT_DATA);
         event.SetId(0);
         event.SetClientData(reinterpret_cast<void*>(pData));

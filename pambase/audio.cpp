@@ -108,7 +108,7 @@ void Audio::Callback(const float* pBuffer, size_t nFrameCount)
 
     timedbuffer* pData = new timedbuffer(nFrameCount*2);
     pData->SetBuffer(pBuffer);
-
+    pData->SetDuration(pData->GetBufferSize()*3);
 
     wxCommandEvent event(wxEVT_DATA);
     event.SetId(0);
