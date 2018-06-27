@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlHelp">
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmList" name="ID_M_PLST1" variable="m_plstHelp" member="yes">
+			<button_gap>1,2</button_gap>
+			<button_size>-1,30</button_size>
+			<items />
+			<pos>0,0</pos>
+			<size>100,436</size>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstHelpSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+		<object class="wxPanel" name="ID_PANEL1" variable="Panel1" member="yes">
+			<pos>0,436</pos>
+			<size>100,44</size>
+			<bg>#FFFFFF</bg>
+			<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnClose" member="yes">
+				<label>Close</label>
+				<pos>2,2</pos>
+				<size>96,40</size>
+				<bg>#008000</bg>
+				<handler function="OnbtnCloseClick" entry="EVT_BUTTON" />
+			</object>
+		</object>
+		<object class="wxHtmlWindow" name="ID_HTMLWINDOW1" subclass="wxTouchScreenHtml" variable="m_pHtml" member="yes">
+			<pos>101,0</pos>
+			<size>720,480</size>
+		</object>
+	</object>
+</wxsmith>

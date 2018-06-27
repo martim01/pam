@@ -35,6 +35,7 @@
 #include "wxpammclient.h"
 #include "images/splash.xpm"
 #include "updatemanager.h"
+#include "pnlHelp.h"
 
 //(*InternalHeaders(pam2Dialog)
 #include <wx/bitmap.h>
@@ -193,6 +194,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Connect(wxID_ANY, wxEVT_PLUGINS_APPLY, (wxObjectEventFunction)&pam2Dialog::OnPluginsReload);
 
 
+    Connect(wxID_ANY, wxEVT_HELP_CLOSE, (wxObjectEventFunction)&pam2Dialog::OnHelpClose);
 
 
 
@@ -290,6 +292,8 @@ void pam2Dialog::LoadMonitorPanels()
     m_ppnlSettings = new pnlSettings(m_pswpMain);
     m_pswpMain->AddPage(m_ppnlSettings, wxT("Settings"));
 
+    m_ppnlHelp =  new pnlHelp(m_pswpMain);
+    m_pswpMain->AddPage(m_ppnlHelp, wxT("Help"));
 
     pnlLogControl* pnlControl = new pnlLogControl(m_pswpOptions, m_ppnlLog);
     m_ppnlLog->SetLogControl(pnlControl);
@@ -355,20 +359,27 @@ void pam2Dialog::ShowMonitorList()
 
 void pam2Dialog::OnlstScreensSelected(wxCommandEvent& event)
 {
-
-    Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
     if(event.GetString() == wxT("Settings"))
     {
+        Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
         m_pSelectedMonitor = 0;
         ShowSettingsPanel();
     }
+    else if(event.GetString() == wxT("Help"))
+    {
+        ShowHelpPanel();
+        m_pSelectedMonitor = 0;
+        Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
+    }
     else if(event.GetString() == wxT("Log"))
     {
+        Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
         m_pSelectedMonitor = 0;
         ShowLogPanel();
     }
     else if(event.GetString() == wxT("Tests"))
     {
+        Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
         m_pSelectedMonitor = 0;
         ShowTestPanels();
     }
@@ -384,9 +395,10 @@ void pam2Dialog::OnlstScreensSelected(wxCommandEvent& event)
     }
     else
     {
-
-       ShowMonitorPanel(event.GetString());
+        Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
+        ShowMonitorPanel(event.GetString());
     }
+
     m_pswpSplash->ChangeSelection(1);
 }
 
@@ -491,6 +503,29 @@ void pam2Dialog::ShowLogPanel()
     m_pswpOptions->ChangeSelection(wxT("Log|Control"));
 }
 
+void pam2Dialog::ShowHelpPanel()
+{
+    wxString sHelp = Settings::Get().Read(wxT("Main"), wxT("Monitor"), wxEmptyString);
+    if(sHelp == wxT("Tests"))
+    {
+        sHelp = m_plstOptions->GetButtonText(Settings::Get().Read(wxT("Tests"), wxT("_Panel"),0));
+    }
+    else if(sHelp == wxT("Log") || sHelp == wxT("Settings") || sHelp == wxEmptyString)
+    {
+        sHelp = wxT("Pam");
+    }
+
+    wxLogDebug(wxT("Help = %s"), sHelp.c_str());
+    m_ppnlHelp->SelectHelp(sHelp);
+    m_pswpMain->ChangeSelection(wxT("Help"));
+
+    m_plstOptions->Freeze();
+    m_plstOptions->Clear();
+    m_plstOptions->Thaw();
+
+    MaximizeMonitor(true);
+}
+
 
 void pam2Dialog::ShowOptionsPanel(const wxString& sPanel)
 {
@@ -498,7 +533,7 @@ void pam2Dialog::ShowOptionsPanel(const wxString& sPanel)
     {
         m_ppnlSettings->m_pswpSettings->ChangeSelection(sPanel);
     }
-    else if(m_pswpMain->GetSelectionName() == wxT("Tests"))
+    else if(m_pswpMain->GetSelectionName() == wxT("Help") ||m_pswpMain->GetSelectionName() == wxT("Tests"))
     {
 
     }
@@ -1028,4 +1063,33 @@ void pam2Dialog::RemoveOldFiles()
         wxRemoveFile(asRemove[i]);
     }
     Settings::Get().Write(wxT("Startup"), wxT("Remove"), wxEmptyString);
+}
+
+void pam2Dialog::OnHelpClose(wxCommandEvent& event)
+{
+    wxLogDebug(event.GetString());
+    MaximizeMonitor(false);
+    map<wxString, MonitorPluginBuilder*>::iterator itPlugin = MonitorPluginFactory::Get()->FindPlugin(event.GetString());
+    if(itPlugin != MonitorPluginFactory::Get()->GetPluginEnd())
+    {
+        m_plstScreens->SelectButton(event.GetString(), false);
+        Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
+        ShowMonitorPanel(event.GetString());
+    }
+    else
+    {
+        map<wxString, TestPluginBuilder*>::iterator itPlugin = TestPluginFactory::Get()->FindPlugin(event.GetString());
+        if(itPlugin != TestPluginFactory::Get()->GetPluginEnd())
+        {
+            m_plstScreens->SelectButton(wxT("Tests"), false);
+            Settings::Get().Write(wxT("Main"), wxT("Monitor"), wxT("Tests"));
+            ShowTestPanels();
+        }
+        else
+        {
+            m_plstScreens->SelectButton(wxT("Settings"), false);
+            Settings::Get().Write(wxT("Main"), wxT("Monitor"), wxT("Settings"));
+            ShowSettingsPanel();
+        }
+    }
 }

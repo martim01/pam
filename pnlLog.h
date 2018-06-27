@@ -1,10 +1,11 @@
 #ifndef PNLLOG_H
 #define PNLLOG_H
 #include <vector>
+#include "wxtouchscreenhtml.h"
 
 //(*Headers(pnlLog)
 #include <wx/panel.h>
-#include "wmlist.h"
+#include <wx/html/htmlwin.h>
 //*)
 
 class pnlLogControl;
@@ -20,7 +21,7 @@ class pnlLog: public wxPanel
 		void SetLogControl(pnlLogControl* pCtrl);
 
 		//(*Declarations(pnlLog)
-		wmList* m_plstLog;
+		wxTouchScreenHtml* m_phtmlLog;
 		//*)
 
 
@@ -28,11 +29,11 @@ class pnlLog: public wxPanel
 	protected:
 
         void OnLog(wmLogEvent& event);
-        void Log(const wxString& sLogEntry);
+        void Log(wxString sLogEntry);
         friend class pnlLogControl;
 
 		//(*Identifiers(pnlLog)
-		static const long ID_M_PLST1;
+		static const long ID_HTMLWINDOW1;
 		//*)
 
 		void Home();
@@ -42,33 +43,19 @@ class pnlLog: public wxPanel
 		void ScrollLock(bool bLock);
 		void Clear();
 
-		size_t GetCurrentPage() const;
-		size_t GetPageCount() const;
 
 	private:
 	    void ShowLog();
 
 		//(*Handlers(pnlLog)
 		//		void OnlclLogColumnEndDrag(wxListEvent& event);
-		void OnlstLogSelected(wxCommandEvent& event);
 		//*)
 
         long m_nPosition;
-        bool m_bScrollLock;
 
-        struct logPage
-        {
-            logPage() : nLines(0), nEntries(0){}
-            wxString sTime[23];
-            wxString sEntry[23];
-            unsigned int nId[23];
-
-            unsigned int nEntries;
-            unsigned int nLines;
-        };
-        std::vector<logPage> m_vLogPages;
-        size_t m_nPage;
-
+        wxString m_sTableStart;
+        wxString m_sTableMiddle;
+        wxString m_sTableEnd;
         pnlLogControl* m_pControl;
 		DECLARE_EVENT_TABLE()
 };

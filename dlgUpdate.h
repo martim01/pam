@@ -12,6 +12,7 @@
 #include <wx/html/htmlwin.h>
 #include "wmlist.h"
 //*)
+#include "wxtouchscreenhtml.h"
 
 class dlgUpdate: public wxDialog
 {
@@ -33,14 +34,14 @@ class dlgUpdate: public wxDialog
 		wxPanel* Panel3;
 		wmLabel* m_pLbl5;
 		wmLabel* m_plblSettings;
-		wxHtmlWindow* m_phtmlDependencies;
 		wmList* m_plstUpdates;
-		wxHtmlWindow* m_phtmlChangelog;
 		wxTimer m_timerUpdate;
 		wmLabel* m_pLbl2;
 		wmButton* m_pbtnChangelog;
 		wmButton* m_pbtnUpdate;
+		wxTouchScreenHtml* m_phtmlChangelog;
 		wxPanel* Panel2;
+		wxTouchScreenHtml* m_phtmlDependencies;
 		wmSwitcherPanel* m_pswpMain;
 		wmButton* m_pbtnClose;
 		//*)

@@ -137,16 +137,17 @@
 			</object>
 			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL2" variable="Panel2" member="yes">
-					<object class="wxHtmlWindow" name="ID_HTMLWINDOW1" variable="m_phtmlChangelog" member="yes">
+					<object class="wxHtmlWindow" name="ID_HTMLWINDOW1" subclass="wxTouchScreenHtml" variable="m_phtmlChangelog" member="yes">
 						<pos>0,0</pos>
 						<size>650,430</size>
+						<style>0</style>
 					</object>
 				</object>
 				<label>Changelog</label>
 			</object>
 			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL3" variable="Panel3" member="yes">
-					<object class="wxHtmlWindow" name="ID_HTMLWINDOW2" variable="m_phtmlDependencies" member="yes">
+					<object class="wxHtmlWindow" name="ID_HTMLWINDOW2" subclass="wxTouchScreenHtml" variable="m_phtmlDependencies" member="yes">
 						<pos>0,0</pos>
 						<size>650,430</size>
 					</object>

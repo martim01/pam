@@ -34,7 +34,7 @@ class SettingEvent;
 class pnlTests;
 class pnlLog;
 class SoundFile;
-
+class pnlHelp;
 class MonitorEvent;
 struct session;
 class PammClient;
@@ -106,6 +106,7 @@ class pam2Dialog: public wxDialog
         void ShowSettingsPanel();
         void ShowTestPanels();
         void ShowLogPanel();
+        void ShowHelpPanel();
 
         void RemoveOldFiles();
 
@@ -116,6 +117,7 @@ class pam2Dialog: public wxDialog
         void OnPluginsReload(wxCommandEvent& event);
         void InputSession(const session& aSession);
 
+        void OnHelpClose(wxCommandEvent& event);
         void CreateAudioInputDevice();
         void CreateAudioOutputDevice(unsigned long nSampleRate=0, unsigned long nChannels=0);
 
@@ -143,6 +145,7 @@ class pam2Dialog: public wxDialog
 
         pnlSettings* m_ppnlSettings;
         pnlTests* m_ppnlTests;
+        pnlHelp* m_ppnlHelp;
         pnlLog* m_ppnlLog;
         MonitorPluginBuilder* m_pSelectedMonitor;
 

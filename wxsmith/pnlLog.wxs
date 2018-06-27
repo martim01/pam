@@ -4,27 +4,10 @@
 		<bg>#000000</bg>
 		<pos_arg>1</pos_arg>
 		<size_arg>1</size_arg>
-		<object class="wmList" name="ID_M_PLST1" variable="m_plstLog" member="yes">
-			<scrolling>None</scrolling>
-			<button_gap>0,0</button_gap>
-			<button_size>-1,20</button_size>
-			<button>#FFFFFF</button>
-			<button_pressed>#FFFFFF</button_pressed>
-			<button_selected>#8080FF</button_selected>
-			<text>#000000</text>
-			<items />
-			<pos>5,5</pos>
-			<size>590,470</size>
-			<font>
-				<size>8</size>
-				<style>normal</style>
-				<weight>normal</weight>
-				<underlined>0</underlined>
-				<family>swiss</family>
-				<face>Courier New</face>
-			</font>
-			<style>wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI</style>
-			<handler function="OnlstLogSelected" entry="EVT_LIST_SELECTED" />
+		<object class="wxHtmlWindow" name="ID_HTMLWINDOW1" subclass="wxTouchScreenHtml" variable="m_phtmlLog" member="yes">
+			<pos>0,0</pos>
+			<size>620,480</size>
+			<style>0</style>
 		</object>
 	</object>
 </wxsmith>

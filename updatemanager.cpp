@@ -220,7 +220,11 @@ void UpdateManager::AddUpdateToList(wxXmlNode* pUpdateNode)
             {
                 anUpdate.nType = UpdateObject::PLUGIN_TEST;
             }
-            if(pNode->GetNodeContent().CmpNoCase(wxT("docs")) == 0)
+            else if(pNode->GetNodeContent().CmpNoCase(wxT("lib")) == 0)
+            {
+                anUpdate.nType = UpdateObject::PLUGIN_MONITOR;
+            }
+            else if(pNode->GetNodeContent().CmpNoCase(wxT("docs")) == 0)
             {
                 anUpdate.nType = UpdateObject::DOCUMENTATION;
             }

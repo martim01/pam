@@ -107,9 +107,9 @@ dlgUpdate::dlgUpdate(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 	m_plstUpdates->SetSelectedButtonColour(wxColour(wxT("#0080C0")));
 	m_plstUpdates->SetTextButtonColour(wxColour(wxT("#000000")));
 	Panel2 = new wxPanel(m_pswpMain, ID_PANEL2, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL2"));
-	m_phtmlChangelog = new wxHtmlWindow(Panel2, ID_HTMLWINDOW1, wxPoint(0,0), wxSize(650,430), wxHW_SCROLLBAR_AUTO, _T("ID_HTMLWINDOW1"));
+	m_phtmlChangelog = new wxTouchScreenHtml(Panel2, ID_HTMLWINDOW1, wxPoint(0,0), wxSize(650,430), 0, _T("ID_HTMLWINDOW1"));
 	Panel3 = new wxPanel(m_pswpMain, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
-	m_phtmlDependencies = new wxHtmlWindow(Panel3, ID_HTMLWINDOW2, wxPoint(0,0), wxSize(650,430), wxHW_SCROLLBAR_AUTO, _T("ID_HTMLWINDOW2"));
+	m_phtmlDependencies = new wxTouchScreenHtml(Panel3, ID_HTMLWINDOW2, wxPoint(0,0), wxSize(650,430), wxHW_SCROLLBAR_AUTO, _T("ID_HTMLWINDOW2"));
 	Panel4 = new wxPanel(m_pswpMain, ID_PANEL4, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL4"));
 	Panel4->SetBackgroundColour(wxColour(0,0,0));
 	m_pLbl5 = new wmLabel(Panel4, ID_M_PLBL5, _("Update Log"), wxPoint(2,0), wxSize(641,30), 0, _T("ID_M_PLBL5"));
@@ -176,7 +176,7 @@ dlgUpdate::dlgUpdate(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
             break;
         }
 
-        if(UpdateManager::Get().UpdateVersionIsNewer(itObject->second.sVersion, sLocalVersion))
+       /// if(UpdateManager::Get().UpdateVersionIsNewer(itObject->second.sVersion, sLocalVersion))
         {
             m_plstUpdates->AddButton(itObject->first);
             m_plstUpdates->AddButton(sType);
@@ -245,7 +245,7 @@ void dlgUpdate::OnbtnChangelogClick(wxCommandEvent& event)
             sText << wxT("<h3>") << m_plstUpdates->GetButtonText(aiButtons[i]) << wxT("   (") << UpdateManager::Get().GetVersion(m_plstUpdates->GetButtonText(aiButtons[i])) << wxT(")</h3>");
             sText << UpdateManager::Get().GetChangelog(m_plstUpdates->GetButtonText(aiButtons[i])) << wxT("</br>");
         }
-        m_phtmlChangelog->SetPage(sText);
+        m_phtmlChangelog->SetPageTouch(sText);
     }
     else
     {
@@ -277,7 +277,8 @@ void dlgUpdate::OnbtnDependenciesClick(wxCommandEvent& event)
                 sText << wxT("</table>");
             }
         }
-        m_phtmlDependencies->SetPage(sText);
+        m_phtmlDependencies->SetPageTouch(sText);
+
     }
     else
     {
