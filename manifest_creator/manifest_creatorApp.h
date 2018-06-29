@@ -28,6 +28,7 @@ class manifest_creatorApp
     wxString m_sType;
     wxString m_sPath;
     wxString m_sVersion;
+    wxString m_sDefinedType;
     std::list<wxString> m_lstDependencies;
     std::list<std::pair<wxString, wxString> >m_lstChangelog;
 };

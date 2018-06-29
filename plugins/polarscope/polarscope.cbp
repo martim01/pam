@@ -115,6 +115,7 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-D_monitor_" />
 			<Add directory="../../pambase" />
 		</Compiler>
 		<Linker>

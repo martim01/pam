@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="pamplugin" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="default">
+				<Option output="PAM" prefix_auto="1" extension_auto="1" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option host_application="$(#cb)/devel/codeblocks.exe" />
+				<Option run_host_application_in_terminal="0" />
+				<Compiler>
+					<Add option="-DBUILDING_PLUGIN" />
+					<Add option="-DHAVE_W32API_H" />
+					<Add option="-D__WXMSW__" />
+					<Add option="-DWXUSINGDLL" />
+					<Add option="-DcbDEBUG" />
+					<Add option="-DCB_PRECOMP" />
+					<Add option="-DWX_PRECOMP" />
+					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-pipe" />
+					<Add option="-mthreads" />
+					<Add option="-fmessage-length=0" />
+					<Add option="-fexceptions" />
+					<Add option="-Winvalid-pch" />
+					<Add option="-g" />
+					<Add directory="$(#cb)/include" />
+					<Add directory="$(#cb)/sdk/wxscintilla/include" />
+					<Add directory="$(#wx.include)" />
+					<Add directory="$(#wx.lib)/gcc_dll/mswu" />
+				</Compiler>
+				<Linker>
+					<Add option="-mthreads" />
+					<Add library="codeblocks" />
+					<Add directory="$(#cb)/devel" />
+					<Add directory="$(#wx.lib)/gcc_dll" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="zip -j9 PAM.zip manifest.xml" />
+					<Add after="zip -j9 PAM.cbplugin PAM.dll PAM.zip" />
+				</ExtraCommands>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add directory="$(#cb.include)" />
+			<Add directory="$(#cb.include)/wxscintilla/include" />
+			<Add directory="$(wx.inlucde)" />
+			<Add directory="$(#wx)/lib/gcc_dll/mswu/wx" />
+		</Compiler>
+		<Linker>
+			<Add library="wxmsw28u_gcc_cb" />
+			<Add library="codeblocks" />
+			<Add directory="$(#wx.lib)" />
+			<Add directory="$(#cb.lib)" />
+			<Add directory="$(#wxsmith.lib)" />
+		</Linker>
+		<Unit filename="PAM.cpp" />
+		<Unit filename="PAM.h" />
+		<Unit filename="dlgWizard.cpp" />
+		<Unit filename="dlgWizard.h" />
+		<Unit filename="manifest.xml" />
+		<Unit filename="wxsmith/dlgWizard.wxs" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+			<wxsmith version="1">
+				<resources>
+					<wxDialog wxs="wxsmith/dlgWizard.wxs" src="dlgWizard.cpp" hdr="dlgWizard.h" fwddecl="0" i18n="1" name="dlgWizard" language="CPP" />
+				</resources>
+			</wxsmith>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

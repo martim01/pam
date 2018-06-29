@@ -48,12 +48,17 @@ void wxTouchScreenHtml::OnMouseMove(wxMouseEvent& event)
 
         int x = event.GetPosition().x - m_pntDown.x;
         int y = event.GetPosition().y - m_pntDown.y;
-        m_pntDown = event.GetPosition();
 
-        wxLogDebug(wxT("Diff %d. Start was %d now %d"), y, yStart, yStart-y);
 
-        Scroll(xStart-x,yStart-y);
-
+        int xUnit, yUnit;
+        GetScrollPixelsPerUnit(&xUnit, &yUnit);
+        x/=xUnit;
+        y/=yUnit;
+        if(y != 0)
+        {
+            Scroll(xStart-x,yStart-y);
+            m_pntDown = event.GetPosition();
+        }
     }
     else
     {

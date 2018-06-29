@@ -118,6 +118,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-DCREATING_LEVELDLL" />
+			<Add option="-D_core_" />
 			<Add directory="../pambase" />
 			<Add directory="$(#src.include)" />
 		</Compiler>

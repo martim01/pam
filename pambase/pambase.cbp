@@ -137,6 +137,7 @@
 		<Compiler>
 			<Add option="-D_pambase_" />
 			<Add option="-DCREATING_DLL" />
+			<Add option="-D_core_" />
 		</Compiler>
 		<Unit filename="anglemeter.cpp" />
 		<Unit filename="anglemeter.h" />

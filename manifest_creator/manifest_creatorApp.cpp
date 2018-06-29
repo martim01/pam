@@ -110,7 +110,32 @@ void manifest_creatorApp::ReadProjectFile()
                                     break;
                                 }
                             }
-                            break;
+                        }
+                        else if(pBuildNode->GetName().CmpNoCase(wxT("Compiler")) == 0)
+                        {
+                            for(wxXmlNode* pComNode = pBuildNode->GetChildren(); pComNode; pComNode = pComNode->GetNext())
+                            {
+                                if(pComNode->GetName().CmpNoCase(wxT("Add")) == 0 && pComNode->HasAttribute(wxT("option")))
+                                {
+                                    wxString sOption = pComNode->GetAttribute(wxT("option"), wxEmptyString);
+                                    if(sOption == wxT("-D_core_"))
+                                    {
+                                        m_sDefinedType = wxT("core");
+                                    }
+                                    else if(sOption == wxT("-D_app_"))
+                                    {
+                                        m_sDefinedType = wxT("app");
+                                    }
+                                    else if(sOption == wxT("-D_monitor_"))
+                                    {
+                                        m_sDefinedType = wxT("monitor");
+                                    }
+                                    else if(sOption == wxT("-D_test_"))
+                                    {
+                                        m_sDefinedType = wxT("test");
+                                    }
+                                }
+                            }
                         }
                     }
                     break;
@@ -160,7 +185,7 @@ void manifest_creatorApp::WriteManifest()
 
 
     wxXmlNode* pTypeNode = new wxXmlNode(wxXML_ELEMENT_NODE, wxT("type"));
-    pTypeNode->AddChild(new wxXmlNode(wxXML_TEXT_NODE, wxEmptyString, m_sType));
+    pTypeNode->AddChild(new wxXmlNode(wxXML_TEXT_NODE, wxEmptyString, m_sDefinedType));
 
     wxXmlNode* pVersionNode = new wxXmlNode(wxXML_ELEMENT_NODE, wxT("version"));
     pVersionNode->AddChild(new wxXmlNode(wxXML_TEXT_NODE, wxEmptyString, m_sVersion));

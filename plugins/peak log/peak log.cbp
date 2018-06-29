@@ -114,6 +114,7 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-D_test_" />
 			<Add directory="../../pambase" />
 			<Add directory="$(#kiss.include)" />
 			<Add directory="$(#kiss.include)/tools" />

@@ -114,6 +114,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-DCREATING_FFTDLL" />
+			<Add option="-D_core_" />
 			<Add directory="../pambase" />
 			<Add directory="$(#kiss.include)" />
 			<Add directory="$(#kiss.include)/tools" />

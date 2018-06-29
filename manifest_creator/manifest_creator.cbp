@@ -14,16 +14,25 @@
 				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
-					<Add option="-g" />
-					<Add option="-D__WXDEBUG__" />
-					<Add directory="C:/wxWidgets-3.0.2/lib/gcc_dll/mswud" />
+					<Add option="-O3" />
+					<Add option="-Wall" />
+					<Add option="-DWIN32" />
+					<Add option="-D__WXMSW__" />
+					<Add option="-DWXUSINGDLL" />
+					<Add option="-DUNICODE" />
+					<Add option="-D__WINDOWS__" />
+					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-DWXDEBUG" />
+					<Add directory="$(#wx3_0.include)" />
+					<Add directory="$(#wx3_0.include)/mswu" />
 				</Compiler>
 				<ResourceCompiler>
-					<Add directory="C:/wxWidgets-3.0.2/lib/gcc_dll/mswud" />
+					<Add directory="$(#wx3_0.include)/mswu" />
 				</ResourceCompiler>
 				<Linker>
-					<Add library="libwxmsw30ud.a" />
-					<Add directory="C:/wxWidgets-3.0.2/lib/gcc_dll" />
+					<Add option="-s" />
+					<Add library="wxmsw30u_gcc_wammacs" />
+					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 			</Target>
 			<Target title="Windows Release">
@@ -34,16 +43,25 @@
 				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
-					<Add option="-O2" />
-					<Add directory="C:/wxWidgets-3.0.2/lib/gcc_dll/mswu" />
+					<Add option="-O3" />
+					<Add option="-Wall" />
+					<Add option="-DWIN32" />
+					<Add option="-D__WXMSW__" />
+					<Add option="-DWXUSINGDLL" />
+					<Add option="-DUNICODE" />
+					<Add option="-D__WINDOWS__" />
+					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-DWXDEBUG" />
+					<Add directory="$(#wx3_0.include)" />
+					<Add directory="$(#wx3_0.include)/mswu" />
 				</Compiler>
 				<ResourceCompiler>
-					<Add directory="C:/wxWidgets-3.0.2/lib/gcc_dll/mswu" />
+					<Add directory="$(#wx3_0.include)/mswu" />
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="libwxmsw30u.a" />
-					<Add directory="C:/wxWidgets-3.0.2/lib/gcc_dll" />
+					<Add library="wxmsw30u_gcc_wammacs" />
+					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 			</Target>
 			<Target title="Linux Release">
