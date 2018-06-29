@@ -154,6 +154,11 @@ void dlgWizard::OnbtnCreateClick(wxCommandEvent& event)
         Manager::Get()->GetConfigManager(_T("pam"))->Write(wxT("author"), m_ptxtAuthor->GetValue());
         Manager::Get()->GetConfigManager(_T("pam"))->Write(wxT("email"), m_ptxtEmail->GetValue());
 
+        wxString sName(m_ptxtName->GetValue());
+        sName << wxT(".cbp");
+        wxFileName fnProject(wxString::Format(wxT("%s/plugins/%s"), m_pdpcPath->GetPath().c_str(), m_ptxtName->GetValue().c_str()), sName);
+        m_sProjectPath = fnProject.GetFullPath();
+
 
         wxFileName::Mkdir(wxString::Format(wxT("%s/plugins/%s"), m_pdpcPath->GetPath().c_str(), m_ptxtName->GetValue().c_str()), wxPATH_MKDIR_FULL);
 
@@ -219,8 +224,7 @@ void dlgWizard::CreateFiles(const wxArrayString& asFiles, const wxString& sSub)
         {
             sName << m_ptxtName->GetValue() << fileFrom.GetFullName();
 
-            wxFileName fnProject(sPath, sName);
-            m_sProjectPath = fnProject.GetFullPath();
+
         }
 
 
