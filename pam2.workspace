@@ -6,8 +6,8 @@
 		<Project filename="pamfft/pamfft.cbp" />
 		<Project filename="pamlevel/pamlevel.cbp" />
 		<Project filename="plugins/fft/fft.cbp">
-			<Depends filename="pamfft/pamfft.cbp" />
 			<Depends filename="pambase/pambase.cbp" />
+			<Depends filename="pamfft/pamfft.cbp" />
 		</Project>
 		<Project filename="plugins/spectogram/spectogram.cbp" />
 		<Project filename="plugins/lissajou/lissajou.cbp">
@@ -34,12 +34,12 @@
 			<Depends filename="pamlevel/pamlevel.cbp" />
 		</Project>
 		<Project filename="plugins/channel delay/channel delay.cbp">
-			<Depends filename="pamfft/pamfft.cbp" />
 			<Depends filename="pambase/pambase.cbp" />
+			<Depends filename="pamfft/pamfft.cbp" />
 		</Project>
 		<Project filename="plugins/distortion/distortion.cbp">
-			<Depends filename="pamfft/pamfft.cbp" />
 			<Depends filename="pambase/pambase.cbp" />
+			<Depends filename="pamfft/pamfft.cbp" />
 		</Project>
 		<Project filename="plugins/levels/levels.cbp">
 			<Depends filename="pambase/pambase.cbp" />
@@ -50,6 +50,7 @@
 		<Project filename="plugins/peak log/peak log.cbp" />
 		<Project filename="plugins/peak count/peakcount.cbp" />
 		<Project filename="plugins/record/record.cbp" />
+		<Project filename="plugins/waveform/waveform.cbp" />
 		<Project filename="pam2.cbp">
 			<Depends filename="pambase/pambase.cbp" />
 			<Depends filename="pamfft/pamfft.cbp" />

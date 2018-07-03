@@ -103,9 +103,9 @@ bool UpdateManager::GetUpdateListFromWebServer()
     {
         wxString sPage;
         #ifdef __WXMSW__
-        sPage.Printf(wxT("%s/updatelist/windows"), Settings::Get().Read(wxT("Update"), wxT("Server"), wxT("127.0.0.1")).c_str());
+        sPage.Printf(wxT("%s:8080/updatelist/windows"), Settings::Get().Read(wxT("Update"), wxT("Server"), wxT("127.0.0.1")).c_str());
         #else
-        sPage.Printf(wxT("%s/updatelist/pi"), Settings::Get().Read(wxT("Update"), wxT("Server"), wxT("127.0.0.1")).c_str());
+        sPage.Printf(wxT("%s:8080/updatelist/linux"), Settings::Get().Read(wxT("Update"), wxT("Server"), wxT("127.0.0.1")).c_str());
         #endif
 
         std::string url(sPage.mb_str());

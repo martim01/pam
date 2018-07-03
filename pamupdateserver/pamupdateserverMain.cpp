@@ -89,7 +89,7 @@ BEGIN_EVENT_TABLE(pamupdateserverDialog,wxDialog)
     //*)
 END_EVENT_TABLE()
 
-pamupdateserverDialog::pamupdateserverDialog(wxWindow* parent,wxWindowID id) : m_sPath(wxT(".")), m_nPort(80)
+pamupdateserverDialog::pamupdateserverDialog(wxWindow* parent,wxWindowID id) : m_sPath(wxT("/home/pi/update")), m_nPort(8080)
 {
     //(*Initialize(pamupdateserverDialog)
     Create(parent, id, _("PAM Update Web Server"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, _T("id"));
@@ -100,6 +100,14 @@ pamupdateserverDialog::pamupdateserverDialog(wxWindow* parent,wxWindowID id) : m
     m_plstLog->InsertColumn(1, wxT("Message"), wxLIST_FORMAT_LEFT, 400);
 
     m_pmhd = MHD_start_daemon (MHD_USE_SELECT_INTERNALLY, m_nPort, NULL, NULL, &ahc_echo, this, MHD_OPTION_END);
+    if(m_pmhd)
+    {
+        Log(wxT("MicroHTTP started"));
+    }
+    else
+    {
+        Log(wxT("Failed to start MicroHTTP"));
+    }
 }
 
 pamupdateserverDialog::~pamupdateserverDialog()
@@ -137,11 +145,11 @@ int pamupdateserverDialog::Connection(struct MHD_Connection *pConnection, const 
     }
 
 
-    if(sUrl.BeforeLast(wxT('/')).CmpNoCase(wxT("/updatelist")) == 0)
+    if(sUrl.Find(wxT("/updatelist/")) != wxNOT_FOUND)
     {
         return SendUpdateList(pConnection, sUrl.AfterLast(wxT('/')), ptr);
     }
-    else if(sUrl.BeforeLast(wxT('/')).CmpNoCase(wxT("/update")) == 0)
+    else if(sUrl.Find(wxT("/update/")) != wxNOT_FOUND)
     {
         return SendUpdateFile(pConnection, sUrl.AfterLast(wxT('/')), ptr);
     }
@@ -152,13 +160,12 @@ int pamupdateserverDialog::Connection(struct MHD_Connection *pConnection, const 
 
 int pamupdateserverDialog::SendUpdateList(MHD_Connection *pConnection, const wxString& sPlatform, void** ptr)
 {
-    wxString sXml(GetUpdateManifests(sPlatform).mb_str());
+    wxString sXml(GetUpdateManifests(sPlatform).AfterFirst(wxT('\n')));//.AfterFirst(wxT('>')));
 
     Log(wxString::Format(wxT("Send update list for platform '%s'"), sPlatform.c_str()));
 
 
-
-    std::string sPost(sXml);
+    std::string sPost(sXml.mb_str());
     const char *pResponse = sPost.c_str();
 
     MHD_Response *response;
@@ -238,9 +245,10 @@ wxString pamupdateserverDialog::GetUpdateManifests(const wxString& sPlatform)
         AppendManifest(doc.GetRoot(), asFiles[i]);
     }
 
+    doc.SetFileEncoding(wxT("UTF-8"));
     wxStringOutputStream oss;
     doc.Save(oss);
-    return oss.GetString();
+    return wxString::Format(wxT("\n%s"),oss.GetString().c_str());
 }
 
 
@@ -253,6 +261,7 @@ void pamupdateserverDialog::AppendManifest(wxXmlNode* pRoot, const wxString& sFi
         {
             if(pNode->GetName().CmpNoCase(wxT("update")) == 0)
             {
+                Log(wxString::Format(wxT("Append manifest %s"), sFile.c_str()));
                 pRoot->AddChild(new wxXmlNode(*pNode));
             }
         }
