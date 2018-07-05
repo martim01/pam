@@ -14,6 +14,7 @@
 				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
 					<Add option="-Wall" />
+					<Add option="-std=c++0x" />
 					<Add option="-g" />
 					<Add option="-DWIN32" />
 					<Add option="-D__WXMSW__" />

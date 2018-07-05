@@ -207,7 +207,7 @@ void Playback::Callback(float* pBuffer, size_t nFrameCount)
 
 
     wxCommandEvent event(wxEVT_DATA);
-    event.SetId(1);
+    event.SetId(timedbuffer::OUTPUT);
     event.SetClientData(reinterpret_cast<void*>(pTimedBuffer));
     event.SetInt(nFrameCount);
     event.SetExtraLong(m_nSampleRate);

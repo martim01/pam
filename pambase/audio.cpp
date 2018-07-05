@@ -111,7 +111,7 @@ void Audio::Callback(const float* pBuffer, size_t nFrameCount)
     pData->SetDuration(pData->GetBufferSize()*3);
 
     wxCommandEvent event(wxEVT_DATA);
-    event.SetId(0);
+    event.SetId(timedbuffer::SOUNDCARD);
     event.SetClientData(reinterpret_cast<void*>(pData));
     event.SetInt(nFrameCount);
     event.SetExtraLong(m_nSampleRate);

@@ -145,6 +145,8 @@
 		<Unit filename="audio.h" />
 		<Unit filename="dlldefine.h" />
 		<Unit filename="freq_mag.h" />
+		<Unit filename="generator.cpp" />
+		<Unit filename="generator.h" />
 		<Unit filename="inimanager.cpp" />
 		<Unit filename="inimanager.h" />
 		<Unit filename="inisection.cpp" />
@@ -204,6 +206,8 @@
 		<Unit filename="wmlist.h" />
 		<Unit filename="wmlogevent.cpp" />
 		<Unit filename="wmlogevent.h" />
+		<Unit filename="wmslider.cpp" />
+		<Unit filename="wmslider.h" />
 		<Unit filename="wmslidewnd.cpp" />
 		<Unit filename="wmslidewnd.h" />
 		<Unit filename="wmswipebutton.cpp" />

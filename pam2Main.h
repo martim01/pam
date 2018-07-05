@@ -38,6 +38,7 @@ class pnlHelp;
 class MonitorEvent;
 struct session;
 class PammClient;
+class Generator;
 
 class pam2Dialog: public wxDialog
 {
@@ -138,10 +139,15 @@ class pam2Dialog: public wxDialog
 
         void ReadSoundFile(unsigned int nSize);
 
+        void InitGenerator(const wxString& sSequence);
+        void InitGenerator();
+
         Audio* m_pAudio;
         Playback* m_pPlayback;
 
         SoundFile* m_pSoundfile;
+        Generator* m_pGenerator;
+        Generator* m_pSequenceGenerator;
 
         pnlSettings* m_ppnlSettings;
         pnlTests* m_ppnlTests;
@@ -152,9 +158,12 @@ class pam2Dialog: public wxDialog
         std::map<wxString, RtpThread*> m_mRtp;
         std::set<wxString> m_setRtpOrphan;
         wxString m_sCurrentRtp;
+        wxString m_sCurrentSequence;
 
         session m_Session;
 
+        unsigned int m_nMonitorSource;
+        unsigned int m_nPlaybackSource;
 
         std::multimap<size_t, wxString> m_mmMonitorPlugins;
         size_t m_nCurrentMonitorPage;
