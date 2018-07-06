@@ -760,7 +760,7 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
     {
         if(m_pGenerator)
         {
-            m_pGenerator->SetFrequency(Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000), Settings::Get().Read(wxT("Generator"), wxT("Amplitude"), -18), Settings::Get().Read(wxT("Generator"), wxT("Shape"), 0));
+            m_pGenerator->SetFrequency(Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000), Settings::Get().Read(wxT("Generator"), wxT("Amplitude"), -18.0), Settings::Get().Read(wxT("Generator"), wxT("Shape"), 0));
         }
     }
 }

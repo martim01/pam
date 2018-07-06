@@ -5,6 +5,7 @@
 #include <wx/notebook.h>
 #include "wmbutton.h"
 #include "wmlabel.h"
+#include <wx/statbox.h>
 #include "wmswitcherpanel.h"
 #include <wx/panel.h>
 #include "wmslider.h"
@@ -29,6 +30,7 @@ class pnlSettings: public wxPanel
 		wmLabel* m_pLbl3;
 		wxPanel* Panel5;
 		wxPanel* pnlGenerator;
+		wmButton* m_pbtn900;
 		wmList* m_plstDevices;
 		wmSwitcherPanel* m_pswpSettings;
 		wmList* m_plstAogFiles;
@@ -43,18 +45,22 @@ class pnlSettings: public wxPanel
 		pnlNetworkSetup* pnlSettingsNetwork;
 		wmButton* m_pbtnPlus1;
 		wmButton* m_pbtnNext;
+		wmButton* m_pbtn10000;
 		wmList* m_plstPlayback;
 		wmSwitcherPanel* m_pswpAog;
+		wxStaticBox* StaticBox1;
+		wmButton* m_pbtn1000;
 		wmList* m_plstBuffer;
 		wxPanel* Panel3;
 		wmButton* m_pbtnAogNext;
 		wmLabel* m_pLbl5;
+		wxStaticBox* StaticBox2;
 		wmLabel* m_plblSettings;
 		wmList* m_plstInput;
 		wmList* m_plstAudioSources;
 		wmButton* m_pbtnMinus10;
 		wmSlider* m_pAmplitude;
-		wmLabel* m_pLbl6;
+		wmButton* m_pbtn450;
 		wxPanel* pnlThreads;
 		wmLabel* m_pLbl2;
 		wmButton* m_pbtnAogPrev;
@@ -63,10 +69,12 @@ class pnlSettings: public wxPanel
 		wmList* m_plstShape;
 		wmButton* m_pbtnHome;
 		wxPanel* pnlOutput;
+		wmButton* m_pbtn5000;
 		wmButton* m_pbtnPlus10;
 		pnlRTP* pnlSettingsRTP;
 		wmList* m_plstThreads;
 		wxPanel* pnlInput;
+		wmButton* m_pbtn0dbu;
 		wmButton* m_pbtnEnd;
 		wmLabel* m_plblFrequency;
 		pnlUpdate* Panel1;
@@ -106,15 +114,22 @@ class pnlSettings: public wxPanel
 		static const long ID_M_PBTN9;
 		static const long ID_PANEL9;
 		static const long ID_SLIDER;
-		static const long ID_M_PLBL8;
 		static const long ID_M_PLBL7;
 		static const long ID_M_PBTN12;
 		static const long ID_M_PBTN11;
 		static const long ID_M_PBTN10;
 		static const long ID_M_PBTN13;
+		static const long ID_M_PBTN14;
+		static const long ID_M_PBTN15;
+		static const long ID_M_PBTN16;
+		static const long ID_M_PBTN17;
+		static const long ID_M_PBTN18;
 		static const long ID_CUSTOM1;
 		static const long ID_M_PLBL9;
+		static const long ID_M_PBTN19;
 		static const long ID_M_PLST9;
+		static const long ID_STATICBOX1;
+		static const long ID_STATICBOX2;
 		static const long ID_PANEL10;
 		static const long ID_M_PSWP2;
 		static const long ID_PANEL8;
@@ -160,6 +175,12 @@ class pnlSettings: public wxPanel
 		void OnbtnPlus10Click(wxCommandEvent& event);
 		void OnbtnMinus10Click(wxCommandEvent& event);
 		void OnlstShapeSelected(wxCommandEvent& event);
+		void Onbtn450Click(wxCommandEvent& event);
+		void Onbtn900Click(wxCommandEvent& event);
+		void Onbtn1000Click(wxCommandEvent& event);
+		void Onbtn5000Click(wxCommandEvent& event);
+		void Onbtn10000Click(wxCommandEvent& event);
+		void Onbtn0dbuClick(wxCommandEvent& event);
 		//*)
 
         void RefreshInputs();
