@@ -201,6 +201,7 @@ void Generator::GenerateFrequency(float* pBuffer, unsigned int nSize)
             }
         }
     }
+
 }
 
 float Generator::GenerateSin(const genfreq& gfreq)

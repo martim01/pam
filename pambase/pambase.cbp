@@ -111,8 +111,8 @@
 					<Add option="`wx-config --libs`" />
 					<Add library="libportaudio" />
 					<Add library="libsndfile.a" />
-					<Add library="libBasicUsageEnvironment.a" />
 					<Add library="libliveMedia.a" />
+					<Add library="libBasicUsageEnvironment.a" />
 					<Add library="libUsageEnvironment.a" />
 					<Add library="libgroupsock.a" />
 				</Linker>
