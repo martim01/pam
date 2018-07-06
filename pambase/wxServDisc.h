@@ -55,14 +55,15 @@ typedef int SOCKET;       // under windows, SOCKET is unsigned
 #endif
 
 
+#include "dlldefine.h"
 
 
 // make available custom notify event if getResults() would yield sth new
-#if wxVERSION_NUMBER < 2900
+//#if wxVERSION_NUMBER < 2900
 DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxServDiscNOTIFY, -1);
-#else
-wxDECLARE_EVENT(wxServDiscNOTIFY, wxCommandEvent);
-#endif
+//#else
+//wxDECLARE_EVENT(wxServDiscNOTIFY, wxCommandEvent);
+//#endif
 
 
 
@@ -81,7 +82,7 @@ struct wxSDEntry
 
 
 // our main class
-class wxServDisc: public wxObject, public wxThreadHelper
+class PAMBASE_IMPEXPORT wxServDisc: public wxObject, public wxThreadHelper
 {
 public:
   // type can be one of QTYPE_A, QTYPE_NS, QTYPE_CNAME, QTYPE_PTR or QTYPE_SRV

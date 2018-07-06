@@ -1,8 +1,9 @@
 #pragma once
 
 #include <wx/event.h>
+#include "dlldefine.h"
 
-class SapWatchThread : public wxThread
+class PAMBASE_IMPEXPORT SapWatchThread : public wxThread
 {
     public:
         SapWatchThread(wxEvtHandler* pParent);

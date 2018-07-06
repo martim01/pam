@@ -3,6 +3,7 @@
 #include "audio.h"
 #include <wx/log.h>
 #include <iterator>
+#include "playout.h"
 
 using namespace std;
 
@@ -53,8 +54,8 @@ void Sequence::AdvanceSequence()
 }
 
 
-Generator::Generator(wxEvtHandler* pHandler) :
-    m_pHandler(pHandler),
+Generator::Generator(Playback* pPlayback) :
+    m_pPlayback(pPlayback),
     m_dSampleRate(48000),
     m_nPhase(0)
 {
@@ -104,12 +105,8 @@ void Generator::Generate(unsigned int nSize)
     pData->SetBuffer(pBuffer);
 
     pData->SetDuration(pData->GetBufferSize()*3);
-    wxCommandEvent event(wxEVT_DATA);
-    event.SetId(timedbuffer::GENERATOR);
-    event.SetClientData(reinterpret_cast<void*>(pData));
-    event.SetInt(pData->GetBufferSize()/2);
-    event.SetExtraLong(m_dSampleRate);
-    wxPostEvent(m_pHandler, event);
+
+    m_pPlayback->AddSamples(pData);
 }
 
 void Generator::GenerateSequence(Sequence* pSeq, float* pBuffer, unsigned int nSize)

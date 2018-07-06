@@ -680,11 +680,7 @@ void pam2Dialog::OnAudioData(wxCommandEvent& event)
 
     if(m_pPlayback && m_pPlayback->IsStreamOpen())
     {
-        if(event.GetId() == m_nPlaybackSource)
-        {
-            m_pPlayback->AddSamples(pTimedBuffer);
-        }
-        else if(event.GetId() == timedbuffer::OUTPUT)
+        if(event.GetId() == timedbuffer::OUTPUT)
         {
             if(m_pSoundfile)
             {
@@ -918,7 +914,7 @@ void pam2Dialog::InitGenerator(const wxString& sSequence)
             delete m_pSequenceGenerator;
         }
 
-        m_pSequenceGenerator = new Generator(this);
+        m_pSequenceGenerator = new Generator(m_pPlayback);
         m_pSequenceGenerator->SetSampleRate(48000);
 
         wxXmlDocument doc;
@@ -970,7 +966,7 @@ void pam2Dialog::InitGenerator(const wxString& sSequence)
 
 void pam2Dialog::InitGenerator()
 {
-    m_pGenerator = new Generator(this);
+    m_pGenerator = new Generator(m_pPlayback);
     m_pGenerator->SetSampleRate(48000);
 
     m_pGenerator->SetFrequency(Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000), Settings::Get().Read(wxT("Generator"), wxT("Amplitude"), -18), Settings::Get().Read(wxT("Generator"), wxT("Shape"), 0));
@@ -1235,12 +1231,7 @@ void pam2Dialog::ReadSoundFile(unsigned int nSize)
     if(m_pSoundfile->ReadAudio(pData->GetWritableBuffer(), pData->GetBufferSize(), 1))
     {
         pData->SetDuration(pData->GetBufferSize()*(m_pSoundfile->GetFormat()&0x0F));
-        wxCommandEvent event(wxEVT_DATA);
-        event.SetId(timedbuffer::FILE);
-        event.SetClientData(reinterpret_cast<void*>(pData));
-        event.SetInt(pData->GetBufferSize()/2);
-        event.SetExtraLong(m_pSoundfile->GetSampleRate());
-        wxPostEvent(this, event);
+        m_pPlayback->AddSamples(pData);
     }
 
 }

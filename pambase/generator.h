@@ -40,11 +40,12 @@ class PAMBASE_IMPEXPORT Sequence
 
 };
 
+class Playback;
 
 class PAMBASE_IMPEXPORT Generator
 {
     public:
-        Generator(wxEvtHandler* pHandler);
+        Generator(Playback* pPlayback);
         ~Generator();
         void SetSampleRate(unsigned int nSampleRate);
 
@@ -73,7 +74,7 @@ class PAMBASE_IMPEXPORT Generator
         float GenerateSaw(const genfreq& gfreq);
         float GenerateTriangle(const genfreq& gfreq);
 
-        wxEvtHandler* m_pHandler;
+        Playback* m_pPlayback;
 
         std::map<wxString, Sequence*> m_mSequences;
 

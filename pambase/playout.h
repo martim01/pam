@@ -6,11 +6,11 @@
 #include <wx/thread.h>
 #include "timedbuffer.h"
 #include <vector>
-
+#include "dlldefine.h"
 
 class wxEvtHandler;
 
-class Playback
+class PAMBASE_IMPEXPORT Playback
 {
     public:
         Playback();

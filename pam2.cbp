@@ -37,12 +37,6 @@
 					<Add library="wxmsw30ud_gcc_wammacs" />
 					<Add library="pambased" />
 					<Add library="portaudiod" />
-					<Add library="libliveMedia.a" />
-					<Add library="libBasicUsageEnvironment.a" />
-					<Add library="libUsageEnvironment.a" />
-					<Add library="libgroupsock.a" />
-					<Add library="Ws2_32" />
-					<Add library="iphlpapi" />
 					<Add library="libcurl" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#portaudio.lib)" />
@@ -77,14 +71,10 @@
 					<Add option="-Wl,--enable-auto-import,-Map=pam2.map" />
 					<Add library="wxmsw30u_gcc_wammacs" />
 					<Add library="portaudio" />
-					<Add library="libliveMedia" />
-					<Add library="libBasicUsageEnvironment.a" />
-					<Add library="libUsageEnvironment.a" />
-					<Add library="libgroupsock.a" />
-					<Add library="Ws2_32" />
-					<Add library="iphlpapi" />
 					<Add library="pambase" />
 					<Add library="libcurl" />
+					<Add library="Ws2_32" />
+					<Add library="iphlpapi" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#portaudio.lib)" />
 					<Add directory="$(#curl.lib)" />
@@ -107,10 +97,6 @@
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add library="libportaudio" />
-					<Add library="libliveMedia.a" />
-					<Add library="libBasicUsageEnvironment.a" />
-					<Add library="libUsageEnvironment.a" />
-					<Add library="libgroupsock.a" />
 					<Add library="pambase" />
 					<Add library="libcurl" />
 				</Linker>
@@ -135,10 +121,6 @@
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add library="libportaudio" />
-					<Add library="libliveMedia.a" />
-					<Add library="libBasicUsageEnvironment.a" />
-					<Add library="libUsageEnvironment.a" />
-					<Add library="libgroupsock.a" />
 					<Add library="pambased" />
 					<Add library="libcurl" />
 				</Linker>
@@ -165,31 +147,12 @@
 			<Add directory="$(#live_usage.lib)" />
 			<Add directory="$(#live_basicusage.lib)" />
 		</Linker>
-		<Unit filename="1035.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="1035.h" />
-		<Unit filename="PamMediaSession.h" />
-		<Unit filename="PamTaskScheduler.cpp" />
-		<Unit filename="PamTaskScheduler.h" />
-		<Unit filename="PamUsageEnvironment.cpp" />
-		<Unit filename="PamUsageEnvironment.h" />
-		<Unit filename="aes67mediasession.cpp" />
-		<Unit filename="aes67mediasession.h" />
-		<Unit filename="aes67source.cpp" />
-		<Unit filename="aes67source.h" />
 		<Unit filename="dlgUpdate.cpp" />
 		<Unit filename="dlgUpdate.h" />
 		<Unit filename="dlgmask.cpp" />
 		<Unit filename="dlgmask.h" />
-		<Unit filename="mdnsd.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="mdnsd.h" />
 		<Unit filename="networkcontrol.cpp" />
 		<Unit filename="networkcontrol.h" />
-		<Unit filename="ourRTSPClient.cpp" />
-		<Unit filename="ourRTSPClient.h" />
 		<Unit filename="pam2App.cpp" />
 		<Unit filename="pam2App.h" />
 		<Unit filename="pam2Main.cpp" />
@@ -197,8 +160,6 @@
 		<Unit filename="pam2resource.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>
-		<Unit filename="playout.cpp" />
-		<Unit filename="playout.h" />
 		<Unit filename="pnlHelp.cpp" />
 		<Unit filename="pnlHelp.h" />
 		<Unit filename="pnlLog.cpp" />
@@ -221,32 +182,13 @@
 		<Unit filename="pnlTests.h" />
 		<Unit filename="pnlUpdate.cpp" />
 		<Unit filename="pnlUpdate.h" />
-		<Unit filename="qos.cpp" />
-		<Unit filename="qos.h" />
-		<Unit filename="rawvideosource.cpp" />
-		<Unit filename="rawvideosource.h" />
-		<Unit filename="rtpthread.cpp" />
-		<Unit filename="rtpthread.h" />
-		<Unit filename="rtsputil.cpp" />
-		<Unit filename="rtsputil.h" />
-		<Unit filename="sapwatchthread.cpp" />
-		<Unit filename="sapwatchthread.h" />
-		<Unit filename="smpte2110mediasession.cpp" />
-		<Unit filename="smpte2110mediasession.h" />
-		<Unit filename="streamclientstate.cpp" />
-		<Unit filename="streamclientstate.h" />
 		<Unit filename="updatemanager.cpp" />
 		<Unit filename="updatemanager.h" />
 		<Unit filename="version.h" />
-		<Unit filename="wxServDisc.cpp" />
-		<Unit filename="wxServDisc.h" />
 		<Unit filename="wxpammclient.cpp" />
 		<Unit filename="wxpammclient.h" />
 		<Unit filename="wxpammconnection.cpp" />
 		<Unit filename="wxpammconnection.h" />
-		<Unit filename="wxsink.cpp" />
-		<Unit filename="wxsink.h" />
-		<Unit filename="wxsmith/dlgHelp.wxs" />
 		<Unit filename="wxsmith/dlgMask.wxs" />
 		<Unit filename="wxsmith/dlgUpdate.wxs" />
 		<Unit filename="wxsmith/pnlAoIPInfo.wxs" />

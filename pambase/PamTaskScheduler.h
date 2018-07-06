@@ -1,8 +1,9 @@
 #pragma once
 
 #include "BasicUsageEnvironment0.hh"
+#include "dlldefine.h"
 
-class PamTaskScheduler: public BasicTaskScheduler0 {
+class PAMBASE_IMPEXPORT PamTaskScheduler: public BasicTaskScheduler0 {
 public:
   static PamTaskScheduler* createNew(unsigned maxSchedulerGranularity = 10000/*microseconds*/);
     // "maxSchedulerGranularity" (default value: 10 ms) specifies the maximum time that we wait (in "select()") before

@@ -55,11 +55,11 @@
 
 
 // define our new notify event!
-#if wxVERSION_NUMBER < 2900
+//#if wxVERSION_NUMBER < 2900
 DEFINE_EVENT_TYPE(wxServDiscNOTIFY);
-#else
-wxDEFINE_EVENT(wxServDiscNOTIFY, wxCommandEvent);
-#endif
+//#else
+//wxDEFINE_EVENT(wxServDiscNOTIFY, wxCommandEvent);
+//#endif
 
 
 

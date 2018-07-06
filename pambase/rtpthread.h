@@ -8,11 +8,12 @@
 #include "wxsink.h"
 #include <queue>
 #include "session.h"
+#include "dlldefine.h"
 
 struct qosData;
 class Smpte2110MediaSession;
 
-class RtpThread : public wxThread
+class PAMBASE_IMPEXPORT RtpThread : public wxThread
 {
     public:
         RtpThread(wxEvtHandler* pHandler, const wxString& sProg, const wxString& sUrl, unsigned int nBufferSize, bool bSaveSDPOnly = false);

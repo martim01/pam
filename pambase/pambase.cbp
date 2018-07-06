@@ -12,8 +12,6 @@
 				<Option object_output="obj/release3" />
 				<Option type="3" />
 				<Option compiler="gcc" />
-				<Option projectIncludeDirsRelation="1" />
-				<Option projectLibDirsRelation="1" />
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-Wall" />
@@ -35,9 +33,14 @@
 				<Linker>
 					<Add option="-s" />
 					<Add option="-Wl,--enable-auto-import,-Map=pambase.map" />
-					<Add library="wxmsw30u_gcc_wammacs" />
+					<Add library="libliveMedia.a" />
+					<Add library="libBasicUsageEnvironment.a" />
+					<Add library="libUsageEnvironment.a" />
+					<Add library="libgroupsock.a" />
+					<Add library="Ws2_32" />
 					<Add library="portaudio" />
 					<Add library="libsndfile-1" />
+					<Add library="wxmsw30u_gcc_wammacs" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#portaudio.lib)" />
 					<Add directory="$(#libsndfile.lib)" />
@@ -52,8 +55,6 @@
 				<Option object_output="obj/debug" />
 				<Option type="3" />
 				<Option compiler="gcc" />
-				<Option projectIncludeDirsRelation="1" />
-				<Option projectLibDirsRelation="1" />
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
@@ -79,6 +80,12 @@
 					<Add library="wxmsw30ud_gcc_wammacs" />
 					<Add library="portaudio" />
 					<Add library="libsndfile-1" />
+					<Add library="libBasicUsageEnvironment.a" />
+					<Add library="libliveMedia.a" />
+					<Add library="libUsageEnvironment.a" />
+					<Add library="libgroupsock.a" />
+					<Add library="Ws2_32" />
+					<Add library="iphlpapi" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#portaudio.lib)" />
 					<Add directory="$(#libsndfile.lib)" />
@@ -104,6 +111,10 @@
 					<Add option="`wx-config --libs`" />
 					<Add library="libportaudio" />
 					<Add library="libsndfile.a" />
+					<Add library="libBasicUsageEnvironment.a" />
+					<Add library="libliveMedia.a" />
+					<Add library="libUsageEnvironment.a" />
+					<Add library="libgroupsock.a" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />
@@ -131,6 +142,10 @@
 					<Add option="`wx-config --libs`" />
 					<Add library="libportaudio" />
 					<Add library="libsndfile" />
+					<Add library="libBasicUsageEnvironment.a" />
+					<Add library="libliveMedia.a" />
+					<Add library="libUsageEnvironment.a" />
+					<Add library="libgroupsock.a" />
 				</Linker>
 			</Target>
 		</Build>
@@ -138,7 +153,32 @@
 			<Add option="-D_pambase_" />
 			<Add option="-DCREATING_DLL" />
 			<Add option="-D_core_" />
+			<Add directory="$(#live_media.include)" />
+			<Add directory="$(#live_group.include)" />
+			<Add directory="$(#live_usage.include)" />
+			<Add directory="$(#live_basicusage.include)" />
 		</Compiler>
+		<Linker>
+			<Add directory="$(#live_group.lib)" />
+			<Add directory="$(#live_media.lib)" />
+			<Add directory="$(#live_usage.lib)" />
+			<Add directory="$(#live_basicusage.lib)" />
+		</Linker>
+		<Unit filename="1035.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="1035.h" />
+		<Unit filename="PamMediaSession.h" />
+		<Unit filename="PamTaskScheduler.cpp" />
+		<Unit filename="PamTaskScheduler.h" />
+		<Unit filename="PamUsageEnvironment.cpp" />
+		<Unit filename="PamUsageEnvironment.h" />
+		<Unit filename="aes67client.cpp" />
+		<Unit filename="aes67client.h" />
+		<Unit filename="aes67mediasession.cpp" />
+		<Unit filename="aes67mediasession.h" />
+		<Unit filename="aes67source.cpp" />
+		<Unit filename="aes67source.h" />
 		<Unit filename="anglemeter.cpp" />
 		<Unit filename="anglemeter.h" />
 		<Unit filename="audio.cpp" />
@@ -157,6 +197,10 @@
 		<Unit filename="levelmeter.h" />
 		<Unit filename="loud.cpp" />
 		<Unit filename="loud.h" />
+		<Unit filename="mdnsd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="mdnsd.h" />
 		<Unit filename="meter.h" />
 		<Unit filename="monitorevent.cpp" />
 		<Unit filename="monitorevent.h" />
@@ -164,20 +208,38 @@
 		<Unit filename="monitorpluginbuilder.h" />
 		<Unit filename="monitorpluginfactory.cpp" />
 		<Unit filename="monitorpluginfactory.h" />
+		<Unit filename="ourRTSPClient.cpp" />
+		<Unit filename="ourRTSPClient.h" />
+		<Unit filename="playout.cpp" />
+		<Unit filename="playout.h" />
 		<Unit filename="plugin.h" />
 		<Unit filename="ppm.cpp" />
 		<Unit filename="ppm.h" />
+		<Unit filename="qos.cpp" />
+		<Unit filename="qos.h" />
 		<Unit filename="r128calculator.cpp" />
 		<Unit filename="r128calculator.h" />
 		<Unit filename="r128thread.cpp" />
 		<Unit filename="r128thread.h" />
+		<Unit filename="rawvideosource.cpp" />
+		<Unit filename="rawvideosource.h" />
+		<Unit filename="rtpthread.cpp" />
+		<Unit filename="rtpthread.h" />
+		<Unit filename="rtsputil.cpp" />
+		<Unit filename="rtsputil.h" />
+		<Unit filename="sapwatchthread.cpp" />
+		<Unit filename="sapwatchthread.h" />
 		<Unit filename="session.h" />
 		<Unit filename="settingevent.cpp" />
 		<Unit filename="settingevent.h" />
 		<Unit filename="settings.cpp" />
 		<Unit filename="settings.h" />
+		<Unit filename="smpte2110mediasession.cpp" />
+		<Unit filename="smpte2110mediasession.h" />
 		<Unit filename="soundfile.cpp" />
 		<Unit filename="soundfile.h" />
+		<Unit filename="streamclientstate.cpp" />
+		<Unit filename="streamclientstate.h" />
 		<Unit filename="testpluginbuilder.cpp" />
 		<Unit filename="testpluginbuilder.h" />
 		<Unit filename="testpluginfactory.cpp" />
@@ -218,6 +280,10 @@
 		<Unit filename="wmtestlog.h" />
 		<Unit filename="wmtimeedit.cpp" />
 		<Unit filename="wmtimeedit.h" />
+		<Unit filename="wxServDisc.cpp" />
+		<Unit filename="wxServDisc.h" />
+		<Unit filename="wxsink.cpp" />
+		<Unit filename="wxsink.h" />
 		<Unit filename="wxsmith/wmipeditpnl.wxs" />
 		<Extensions>
 			<code_completion />
