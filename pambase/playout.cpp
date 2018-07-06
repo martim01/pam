@@ -96,7 +96,7 @@ bool Playback::OpenStream(unsigned long nDevice, unsigned long nSampleRate, PaSt
     outputParameters.device = nDevice;
     outputParameters.hostApiSpecificStreamInfo = NULL;
     outputParameters.sampleFormat = paFloat32;
-    outputParameters.suggestedLatency = 0;//Pa_GetDeviceInfo(m_nDevice)->defaultHighOutputLatency;
+    outputParameters.suggestedLatency = Pa_GetDeviceInfo(m_nDevice)->defaultHighOutputLatency;
     outputParameters.hostApiSpecificStreamInfo = NULL;
     PaError err = Pa_OpenStream(&m_pStream, 0, &outputParameters, nSampleRate, m_nBufferSize, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
     if(err == paNoError)
@@ -137,7 +137,7 @@ void Playback::Callback(float* pBuffer, size_t nFrameCount)
 {
 
     wxMutexLocker ml(m_mutex);
-
+    //wxLogDebug(wxT("Playback q = %d"), m_qBuffer.size());
     int nSamples = 0;
 
     if(m_bFirst)
