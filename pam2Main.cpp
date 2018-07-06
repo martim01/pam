@@ -675,7 +675,6 @@ void pam2Dialog::InputSession(const session& aSession)
 void pam2Dialog::OnAudioData(wxCommandEvent& event)
 {
     //m_timerAES.Stop();
-    wxLogDebug(wxT("Audio Data %d [In=%d, Out=%d]"),event.GetId(), m_nMonitorSource, m_nPlaybackSource);
 
     timedbuffer* pTimedBuffer = reinterpret_cast<timedbuffer*>(event.GetClientData());
 

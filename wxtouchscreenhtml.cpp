@@ -58,6 +58,8 @@ void wxTouchScreenHtml::OnMouseMove(wxMouseEvent& event)
         {
             Scroll(xStart-x,yStart-y);
             m_pntDown = event.GetPosition();
+            Refresh();
+            Update();
         }
     }
     else

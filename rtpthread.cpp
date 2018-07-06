@@ -298,7 +298,7 @@ void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const p
                         pTimedBuffer->SetDuration(nDuration);
 
                         wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_DATA);
-                        pEvent->SetId(0);
+                        pEvent->SetId(timedbuffer::RTP);
                         pEvent->SetClientData(reinterpret_cast<void*>(pTimedBuffer));
                         pEvent->SetInt(m_nBufferSize);
                         pEvent->SetExtraLong(48000);  //@todo sample rate

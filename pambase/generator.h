@@ -8,14 +8,14 @@
 
 struct genfreq
 {
-    genfreq() : dFrequency(0.0), dAmplitude(0.0), nCycles(0), dCycleCount(0.0), nType(0), dPhase(0.0){}
-    genfreq(double dF, double dA, int nC, int nT) : dFrequency(dF), dAmplitude(dA), nCycles(nC), dCycleCount(0), nType(nT){}
-    double dFrequency;
-    double dAmplitude;
+    genfreq() : dFrequency(0.0), dAmplitude(0.0), nCycles(0), dCycleCount(0.0), nType(0), nPhase(0){}
+    genfreq(float dF, float dA, int nC, int nT) : dFrequency(dF), dAmplitude(dA), nCycles(nC), dCycleCount(0), nType(nT){}
+    float dFrequency;
+    float dAmplitude;
     int nCycles;
-    double dCycleCount;
+    float dCycleCount;
     int nType;
-    double dPhase;
+    int nPhase;
 };
 
 class PAMBASE_IMPEXPORT Sequence
@@ -24,7 +24,7 @@ class PAMBASE_IMPEXPORT Sequence
         Sequence(int nChannels);
         int GetChannels() const
         {   return m_nChannels; }
-        void AppendGenFreq(double dFrequency, double ddBFS, int nCycles, int nType);
+        void AppendGenFreq(float dFrequency, float ddBFS, int nCycles, int nType);
 
         std::list<genfreq>::iterator GetSequenceBegin();
         std::list<genfreq>::iterator GetSequenceEnd();
@@ -48,7 +48,7 @@ class PAMBASE_IMPEXPORT Generator
         ~Generator();
         void SetSampleRate(unsigned int nSampleRate);
 
-        void SetFrequency(double dFrequency, double ddBFS, int nType);
+        void SetFrequency(float dFrequency, float ddBFS, int nType);
 
 
         void Generate(unsigned int nSize);
@@ -68,17 +68,17 @@ class PAMBASE_IMPEXPORT Generator
         void GenerateSequence(Sequence* pSeq, float* pBuffer, unsigned int nSize);
         void GenerateFrequency(float* pBuffer, unsigned int nSize);
 
-        float GenerateSin(const genfreq& gfreq, double dPhase);
-        float GenerateSquare(const genfreq& gfreq, double dPhase);
-        float GenerateSaw(const genfreq& gfreq, double dPhase);
-        float GenerateTriangle(const genfreq& gfreq, double dPhase);
+        float GenerateSin(const genfreq& gfreq);
+        float GenerateSquare(const genfreq& gfreq);
+        float GenerateSaw(const genfreq& gfreq);
+        float GenerateTriangle(const genfreq& gfreq);
 
         wxEvtHandler* m_pHandler;
 
         std::map<wxString, Sequence*> m_mSequences;
 
         std::queue<genfreq> m_queueFreq;
-        double m_dSampleRate;
+        float m_dSampleRate;
         size_t m_nPhase;
 
 

@@ -10,10 +10,10 @@ Sequence::Sequence(int nChannels) : m_nChannels(nChannels)
 {
     m_itPosition = m_lstSequence.end();
 }
-void Sequence::AppendGenFreq(double dFrequency, double ddBFS, int nCycles, int nType)
+void Sequence::AppendGenFreq(float dFrequency, float ddBFS, int nCycles, int nType)
 {
 
-    double dAmplitude(0.0);
+    float dAmplitude(0.0);
     if(ddBFS > -80.0)
     {
         dAmplitude = pow(10.0, ddBFS/20.0);
@@ -44,7 +44,7 @@ const std::list<genfreq>::iterator& Sequence::GetSequencePosition()
 void Sequence::AdvanceSequence()
 {
     (*m_itPosition).dCycleCount = 0.0;
-    (*m_itPosition).dPhase = 0.0;
+    (*m_itPosition).nPhase = 0;
     ++m_itPosition;
     if(m_itPosition == m_lstSequence.end())
     {
@@ -77,16 +77,18 @@ void Generator::Generate(unsigned int nSize)
 {
 
     float* pBuffer = new float[nSize];
-    for(int i = 0; i < nSize; i++)
-    {
-        pBuffer[i] = 0.0;
-    }
+
 
     timedbuffer* pData = new timedbuffer(nSize);
-    double dSize(m_mSequences.size());
+    float dSize(m_mSequences.size());
 
     if(m_mSequences.empty() == false)
     {
+        for(int i = 0; i < nSize; i++)
+        {
+            pBuffer[i] = 0.0;
+        }
+
         for(map<wxString, Sequence*>::iterator itSequence = m_mSequences.begin(); itSequence != m_mSequences.end(); ++itSequence)
         {
             GenerateSequence(itSequence->second, pBuffer, nSize);
@@ -98,7 +100,6 @@ void Generator::Generate(unsigned int nSize)
     }
 
 
-    m_nPhase += nSize/2;//(m_nPhase+nSize)%static_cast<int>(m_dSampleRate);
 
     pData->SetBuffer(pBuffer);
 
@@ -116,20 +117,20 @@ void Generator::GenerateSequence(Sequence* pSeq, float* pBuffer, unsigned int nS
 
     for(int i = 0; i < nSize; i+=2)
     {
-        double dAmplitude(0.0);
+        float dAmplitude(0.0);
         switch(pSeq->GetSequencePosition()->nType)
         {
             case SINE:
-                dAmplitude = GenerateSin((*pSeq->GetSequencePosition()), pSeq->GetSequencePosition()->dPhase);
+                dAmplitude = GenerateSin((*pSeq->GetSequencePosition()));
                 break;
             case SQUARE:
-                dAmplitude = GenerateSquare((*pSeq->GetSequencePosition()), pSeq->GetSequencePosition()->dPhase);
+                dAmplitude = GenerateSquare((*pSeq->GetSequencePosition()));
                 break;
             case SAW:
-                dAmplitude = GenerateSaw((*pSeq->GetSequencePosition()), pSeq->GetSequencePosition()->dPhase);
+                dAmplitude = GenerateSaw((*pSeq->GetSequencePosition()));
                 break;
             case TRIANGLE:
-                dAmplitude = GenerateTriangle((*pSeq->GetSequencePosition()), pSeq->GetSequencePosition()->dPhase);
+                dAmplitude = GenerateTriangle((*pSeq->GetSequencePosition()));
                 break;
         }
         if((pSeq->GetChannels() & Sequence::LEFT))
@@ -141,6 +142,13 @@ void Generator::GenerateSequence(Sequence* pSeq, float* pBuffer, unsigned int nS
             pBuffer[i+1] += dAmplitude;
         }
 
+        pSeq->GetSequencePosition()->nPhase++;
+        if(pSeq->GetSequencePosition()->nPhase == static_cast<unsigned long>(m_dSampleRate))
+        {
+            pSeq->GetSequencePosition()->nPhase = 0;
+        }
+
+
         if(pSeq->GetSequencePosition()->nCycles > 0)
         {
             pSeq->GetSequencePosition()->dCycleCount+= (pSeq->GetSequencePosition()->dFrequency/m_dSampleRate);
@@ -149,57 +157,65 @@ void Generator::GenerateSequence(Sequence* pSeq, float* pBuffer, unsigned int nS
                 pSeq->AdvanceSequence();
             }
         }
-        pSeq->GetSequencePosition()->dPhase++;
+
     }
 }
 
 void Generator::GenerateFrequency(float* pBuffer, unsigned int nSize)
 {
 
+
     for(int i = 0; i < nSize; i+=2)
     {
-        double dAmplitude(0.0);
+
+        float dAmplitude(0.0);
         switch(m_queueFreq.front().nType)
         {
             case SINE:
-                dAmplitude = GenerateSin(m_queueFreq.front(), m_queueFreq.front().dPhase);
+                dAmplitude = GenerateSin(m_queueFreq.front());
                 break;
             case SQUARE:
-                dAmplitude = GenerateSquare(m_queueFreq.front(), m_queueFreq.front().dPhase);
+                dAmplitude = GenerateSquare(m_queueFreq.front());
                 break;
             case SAW:
-                dAmplitude = GenerateSaw(m_queueFreq.front(), m_queueFreq.front().dPhase);
+                dAmplitude = GenerateSaw(m_queueFreq.front());
                 break;
             case TRIANGLE:
-                dAmplitude = GenerateTriangle(m_queueFreq.front(), m_queueFreq.front().dPhase);
+                dAmplitude = GenerateTriangle(m_queueFreq.front());
                 break;
         }
-        pBuffer[i] += dAmplitude;
-        pBuffer[i+1] += dAmplitude;
 
-        m_queueFreq.front().dPhase++;
+        pBuffer[i] = dAmplitude;
+        pBuffer[i+1] = dAmplitude;
+
+        m_queueFreq.front().nPhase++;
+        if(m_queueFreq.front().nPhase == static_cast<unsigned long>(m_dSampleRate))
+        {
+            m_queueFreq.front().nPhase = 0;
+        }
 
         m_queueFreq.front().dCycleCount+= (m_queueFreq.front().dFrequency/m_dSampleRate);
         if(m_queueFreq.front().dCycleCount >= 1.0)
         {
-            m_queueFreq.front().dCycleCount -= 1.0;
+           m_queueFreq.front().dCycleCount -= 1.0;
             if(m_queueFreq.size() > 1)
             {
                 m_queueFreq.pop();
             }
         }
-
     }
 }
 
-float Generator::GenerateSin(const genfreq& gfreq, double dPhase)
+float Generator::GenerateSin(const genfreq& gfreq)
 {
-    return sin(2 * M_PI * gfreq.dFrequency*(dPhase/m_dSampleRate)) * gfreq.dAmplitude;
+    float dIn(2.0 * M_PI * gfreq.dFrequency*(static_cast<float>(gfreq.nPhase)/m_dSampleRate));
+    float dSin = sin(dIn) * gfreq.dAmplitude;
+    return dSin;
 }
 
-float Generator::GenerateSquare(const genfreq& gfreq, double dPhase)
+float Generator::GenerateSquare(const genfreq& gfreq)
 {
-    double dAmp(sin(2 * M_PI * gfreq.dFrequency*(dPhase/m_dSampleRate)));
+    float dAmp(sin(2.0 * M_PI * gfreq.dFrequency*(static_cast<float>(gfreq.nPhase)/m_dSampleRate)));
     if(dAmp >0 )
     {
         return gfreq.dAmplitude ;
@@ -211,14 +227,14 @@ float Generator::GenerateSquare(const genfreq& gfreq, double dPhase)
     return 0;
 }
 
-float Generator::GenerateSaw(const genfreq& gfreq, double dPhase)
+float Generator::GenerateSaw(const genfreq& gfreq)
 {
-    return - (2.0*gfreq.dAmplitude*atan(tan(M_PI_2 - (M_PI * gfreq.dFrequency*(dPhase/m_dSampleRate)) )))/M_PI;
+    return - (2.0*gfreq.dAmplitude*atan(tan(M_PI_2 - (M_PI * gfreq.dFrequency*(static_cast<float>(gfreq.nPhase)/m_dSampleRate)) )))/M_PI;
 }
 
-float Generator::GenerateTriangle(const genfreq& gfreq, double dPhase)
+float Generator::GenerateTriangle(const genfreq& gfreq)
 {
-    return (2.0*gfreq.dAmplitude*asin(sin(2 * M_PI * gfreq.dFrequency*(dPhase/m_dSampleRate))))/M_PI;
+    return (2.0*gfreq.dAmplitude*asin(sin(2 * M_PI * gfreq.dFrequency*(static_cast<float>(gfreq.nPhase)/m_dSampleRate))))/M_PI;
 }
 
 
@@ -247,10 +263,10 @@ void Generator::DeleteSequence(const wxString& sName)
 }
 
 
-void Generator::SetFrequency(double dFrequency, double ddBFS, int nType)
+void Generator::SetFrequency(float dFrequency, float ddBFS, int nType)
 {
     ClearSequences();
-    double dAmplitude = 0.0;
+    float dAmplitude = 0.0;
     if(ddBFS > -80.0)
     {
         dAmplitude = pow(10.0, ddBFS/20.0);

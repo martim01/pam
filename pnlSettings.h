@@ -14,7 +14,7 @@
 #include "pnlRTP.h"
 #include "pnlSettingsPlugins.h"
 #include "pnlUpdate.h"
-#include "pnlGenerator.h"
+
 
 class pnlSettings: public wxPanel
 {
