@@ -19,7 +19,8 @@ m_pScope(0)
     RegisterForSettingsUpdates(wxT("Trigger"), this);
     RegisterForSettingsUpdates(wxT("Autotrigger"), this);
     RegisterForSettingsUpdates(wxT("Mode"), this);
-    RegisterForSettingsUpdates(wxT("Routing"), this);
+    RegisterForSettingsUpdates(wxT("Routing1"), this);
+    RegisterForSettingsUpdates(wxT("Routing2"), this);
     RegisterForSettingsUpdates(wxT("Vertical"), this);
     RegisterForSettingsUpdates(wxT("Timeframe"), this);
 
@@ -111,9 +112,13 @@ void ScopeBuilder::OnSettingChanged(SettingEvent& event)
         m_pScope->SetMode(ReadSetting(wxT("Mode"),0));
 
     }
-    else if(event.GetKey() == wxT("Routing"))
+    else if(event.GetKey() == wxT("Routing1"))
     {
-        m_pScope->SetRouting(ReadSetting(wxT("Routing"), 0));
+        m_pScope->SetRouting(ReadSetting(wxT("Routing1"), 0), 0);
+    }
+    else if(event.GetKey() == wxT("Routing2"))
+    {
+        m_pScope->SetRouting(ReadSetting(wxT("Routing2"), 0), 1);
     }
     else if(event.GetKey() == wxT("Timeframe"))
     {

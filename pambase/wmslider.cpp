@@ -60,7 +60,7 @@ void wmSlider::OnSize(wxSizeEvent& event)
 
 void wmSlider::CreateRects()
 {
-    m_uiSlider.SetRect(25,10,GetClientSize().x-20, GetClientSize().y-20);
+    m_uiSlider.SetRect(25,10,GetClientSize().x-50, GetClientSize().y-20);
     m_uiSlider.SetGradient(wxSOUTH);
     m_uiButton.SetRect(0,0,50,GetClientSize().y);
     m_uiButton.SetGradient(wxEAST);
@@ -79,7 +79,7 @@ void wmSlider::Draw(wxDC& dc)
     dc.DrawRectangle(GetClientRect());
 
 
-    m_uiSlider.Draw(dc, uiRect::BORDER_FLAT);
+    m_uiSlider.Draw(dc, uiRect::BORDER_DOWN);
     m_uiButton.Draw(dc, uiRect::BORDER_UP);
 
 
@@ -177,11 +177,11 @@ void wmSlider::OnCaptureLost(wxMouseCaptureLostEvent& event)
 
 bool wmSlider::SetSliderColour(const wxColour &colour)
 {
-    m_uiSlider.SetBackgroundColour(colour, colour);
+    m_uiSlider.SetBackgroundColour(colour);
     Refresh();
 }
 bool wmSlider::SetButtonColour(const wxColour &colour)
 {
-    m_uiButton.SetBackgroundColour(colour, colour);
+    m_uiButton.SetBackgroundColour(colour);
     Refresh();
 }

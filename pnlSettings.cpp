@@ -39,8 +39,6 @@ const long pnlSettings::ID_M_PBTN4 = wxNewId();
 const long pnlSettings::ID_M_PBTN5 = wxNewId();
 const long pnlSettings::ID_PANEL1 = wxNewId();
 const long pnlSettings::ID_M_PLBL4 = wxNewId();
-const long pnlSettings::ID_M_PLBL1 = wxNewId();
-const long pnlSettings::ID_M_PLST5 = wxNewId();
 const long pnlSettings::ID_M_PBTN3 = wxNewId();
 const long pnlSettings::ID_M_PLST6 = wxNewId();
 const long pnlSettings::ID_M_PLST4 = wxNewId();
@@ -56,6 +54,7 @@ const long pnlSettings::ID_M_PBTN7 = wxNewId();
 const long pnlSettings::ID_M_PBTN8 = wxNewId();
 const long pnlSettings::ID_M_PBTN9 = wxNewId();
 const long pnlSettings::ID_PANEL9 = wxNewId();
+const long pnlSettings::ID_STATICBOX1 = wxNewId();
 const long pnlSettings::ID_SLIDER = wxNewId();
 const long pnlSettings::ID_M_PLBL7 = wxNewId();
 const long pnlSettings::ID_M_PBTN12 = wxNewId();
@@ -71,7 +70,6 @@ const long pnlSettings::ID_CUSTOM1 = wxNewId();
 const long pnlSettings::ID_M_PLBL9 = wxNewId();
 const long pnlSettings::ID_M_PBTN19 = wxNewId();
 const long pnlSettings::ID_M_PLST9 = wxNewId();
-const long pnlSettings::ID_STATICBOX1 = wxNewId();
 const long pnlSettings::ID_STATICBOX2 = wxNewId();
 const long pnlSettings::ID_PANEL10 = wxNewId();
 const long pnlSettings::ID_M_PSWP2 = wxNewId();
@@ -134,16 +132,6 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pLbl4->SetBackgroundColour(wxColour(0,64,0));
     wxFont m_pLbl4Font(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
     m_pLbl4->SetFont(m_pLbl4Font);
-    m_pLbl1 = new wmLabel(pnlOutput, ID_M_PLBL1, _("Play Buffer"), wxPoint(0,280), wxSize(80,30), 0, _T("ID_M_PLBL1"));
-    m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
-    m_pLbl1->SetForegroundColour(wxColour(255,255,255));
-    m_pLbl1->SetBackgroundColour(wxColour(144,144,144));
-    m_pLbl1->GetUiRect().SetGradient(0);
-    m_plstBuffer = new wmList(pnlOutput, ID_M_PLST5, wxPoint(80,280), wxSize(520,30), wmList::STYLE_SELECT, 0, wxSize(-1,26), 4, wxSize(5,1));
-    m_plstBuffer->Disable();
-    m_plstBuffer->SetBackgroundColour(wxColour(144,144,144));
-    m_plstBuffer->SetButtonColour(wxColour(wxT("#008040")));
-    m_plstBuffer->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
     m_pbtnOutput = new wmButton(pnlOutput, ID_M_PBTN3, _("Playback"), wxPoint(0,40), wxSize(200,30), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
     m_pbtnOutput->SetBackgroundColour(wxColour(64,0,64));
     m_plstLatency = new wmList(pnlOutput, ID_M_PLST6, wxPoint(80,320), wxSize(520,30), wmList::STYLE_SELECT, 0, wxSize(-1,26), 10, wxSize(5,1));
@@ -159,7 +147,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pLbl5->SetBorderState(uiRect::BORDER_NONE);
     m_pLbl5->SetForegroundColour(wxColour(255,255,255));
     m_pLbl5->SetBackgroundColour(wxColour(144,144,144));
-    m_pLbl1->GetUiRect().SetGradient(0);
+
     pnlGenerator = new wxPanel(m_pswpSettings, ID_PANEL8, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL8"));
     pnlGenerator->SetBackgroundColour(wxColour(0,0,0));
     m_pLbl2 = new wmLabel(pnlGenerator, ID_M_PLBL2, _("Audio Output Generation"), wxPoint(0,5), wxSize(600,30), 0, _T("ID_M_PLBL2"));
@@ -197,6 +185,8 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     Panel4->SetBackgroundColour(wxColour(0,0,0));
     wxFont Panel4Font(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
     Panel4->SetFont(Panel4Font);
+    StaticBox1 = new wxStaticBox(Panel4, ID_STATICBOX1, _("Frequency"), wxPoint(5,5), wxSize(590,200), 0, _T("ID_STATICBOX1"));
+    StaticBox1->SetForegroundColour(wxColour(255,255,255));
     m_pSlider = new wmSlider(Panel4,ID_SLIDER,wxT("Frequency"),wxPoint(10,30),wxSize(580,50),5,_T("ID_SLIDER"));
     m_plblFrequency = new wmLabel(Panel4, ID_M_PLBL7, _("Hz"), wxPoint(200,90), wxSize(200,50), 0, _T("ID_M_PLBL7"));
     m_plblFrequency->SetBorderState(uiRect::BORDER_FLAT);
@@ -204,10 +194,10 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_plblFrequency->SetBackgroundColour(wxColour(255,255,255));
     wxFont m_plblFrequencyFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
     m_plblFrequency->SetFont(m_plblFrequencyFont);
-    m_pbtnMinus10 = new wmButton(Panel4, ID_M_PBTN12, _("-10 Hz"), wxPoint(30,90), wxSize(80,50), 0, wxDefaultValidator, _T("ID_M_PBTN12"));
-    m_pbtnMinus1 = new wmButton(Panel4, ID_M_PBTN11, _("-1 Hz"), wxPoint(115,90), wxSize(80,50), 0, wxDefaultValidator, _T("ID_M_PBTN11"));
-    m_pbtnPlus1 = new wmButton(Panel4, ID_M_PBTN10, _("+1 Hz"), wxPoint(405,90), wxSize(80,50), 0, wxDefaultValidator, _T("ID_M_PBTN10"));
-    m_pbtnPlus10 = new wmButton(Panel4, ID_M_PBTN13, _("+10 Hz"), wxPoint(490,90), wxSize(80,50), 0, wxDefaultValidator, _T("ID_M_PBTN13"));
+    m_pbtnMinus10 = new wmButton(Panel4, ID_M_PBTN12, _("-10 Hz"), wxPoint(30,90), wxSize(80,50), wmButton::STYLE_REPEAT, wxDefaultValidator, _T("ID_M_PBTN12"));
+    m_pbtnMinus1 = new wmButton(Panel4, ID_M_PBTN11, _("-1 Hz"), wxPoint(115,90), wxSize(80,50), wmButton::STYLE_REPEAT, wxDefaultValidator, _T("ID_M_PBTN11"));
+    m_pbtnPlus1 = new wmButton(Panel4, ID_M_PBTN10, _("+1 Hz"), wxPoint(405,90), wxSize(80,50), wmButton::STYLE_REPEAT, wxDefaultValidator, _T("ID_M_PBTN10"));
+    m_pbtnPlus10 = new wmButton(Panel4, ID_M_PBTN13, _("+10 Hz"), wxPoint(490,90), wxSize(80,50), wmButton::STYLE_REPEAT, wxDefaultValidator, _T("ID_M_PBTN13"));
     m_pbtn450 = new wmButton(Panel4, ID_M_PBTN14, _("450 Hz"), wxPoint(115,145), wxSize(80,50), 0, wxDefaultValidator, _T("ID_M_PBTN14"));
     m_pbtn900 = new wmButton(Panel4, ID_M_PBTN15, _("900 Hz"), wxPoint(200,145), wxSize(80,50), 0, wxDefaultValidator, _T("ID_M_PBTN15"));
     m_pbtn1000 = new wmButton(Panel4, ID_M_PBTN16, _("1 kHz"), wxPoint(285,145), wxSize(80,50), 0, wxDefaultValidator, _T("ID_M_PBTN16"));
@@ -221,8 +211,6 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pbtn0dbu = new wmButton(Panel4, ID_M_PBTN19, _("-18 dBFS"), wxPoint(480,250), wxSize(80,40), 0, wxDefaultValidator, _T("ID_M_PBTN19"));
     m_plstShape = new wmList(Panel4, ID_M_PLST9, wxPoint(150,320), wxSize(300,44), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 4, wxSize(5,1));
     m_plstShape->SetBackgroundColour(wxColour(0,0,0));
-    StaticBox1 = new wxStaticBox(Panel4, ID_STATICBOX1, _("Frequency"), wxPoint(5,5), wxSize(590,200), 0, _T("ID_STATICBOX1"));
-    StaticBox1->SetForegroundColour(wxColour(255,255,255));
     StaticBox2 = new wxStaticBox(Panel4, ID_STATICBOX2, _("Amplitude"), wxPoint(5,210), wxSize(590,105), 0, _T("ID_STATICBOX2"));
     StaticBox2->SetForegroundColour(wxColour(255,255,255));
     StaticBox2->SetBackgroundColour(wxColour(0,0,0));
@@ -252,7 +240,6 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnPreviousClick);
     Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnNextClick);
     Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnEndClick);
-    Connect(ID_M_PLST5,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstBufferSelected);
     Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnOutputClick);
     Connect(ID_M_PLST6,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlblLatencySelected);
     Connect(ID_M_PLST4,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstPlaybackSelected);
@@ -291,7 +278,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
     for(unsigned int i = 0; i < 10; i++)
     {
-        m_plstLatency->AddButton(wxString::Format(wxT("%u ms"), i*20));
+        m_plstLatency->AddButton(wxString::Format(wxT("%u ms"), i*40));
     }
 
     m_plstInput->Freeze();
@@ -314,14 +301,8 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
     ShowRTPDefined();
 
-    m_plstBuffer->AddButton(wxT("1024"));
-    m_plstBuffer->AddButton(wxT("2048"));
-    m_plstBuffer->AddButton(wxT("4096"));
-    m_plstBuffer->AddButton(wxT("8192"));
 
-    m_plstBuffer->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Buffer"), wxT("2048")), false);
-
-    m_plstLatency->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Latency"), 0)/20, false);
+    m_plstLatency->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Latency"), 0)/40, false);
 
     m_plblSettings->SetLabel(wxString::Format(wxT("Settings: %ld.%ld.%ld.%ld"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
 
@@ -603,10 +584,6 @@ void pnlSettings::OnbtnDeleteSourceHeld(wxCommandEvent& event)
 
 }
 
-void pnlSettings::OnlstBufferSelected(wxCommandEvent& event)
-{
-    Settings::Get().Write(wxT("Output"), wxT("Buffer"), event.GetString());
-}
 
 void pnlSettings::OnbtnMeterShadingClick(wxCommandEvent& event)
 {
@@ -615,7 +592,7 @@ void pnlSettings::OnbtnMeterShadingClick(wxCommandEvent& event)
 
 void pnlSettings::OnlblLatencySelected(wxCommandEvent& event)
 {
-    Settings::Get().Write(wxT("Output"), wxT("Latency"), event.GetInt()*20);
+    Settings::Get().Write(wxT("Output"), wxT("Latency"), event.GetInt()*40);
 }
 
 void pnlSettings::OnlstInputSelected(wxCommandEvent& event)

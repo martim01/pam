@@ -47,10 +47,11 @@ class PAMBASE_IMPEXPORT Generator
     public:
         Generator(Playback* pPlayback);
         ~Generator();
+
+
         void SetSampleRate(unsigned int nSampleRate);
-
         void SetFrequency(float dFrequency, float ddBFS, int nType);
-
+        void SetFile(const wxString& sFile);
 
         void Generate(unsigned int nSize);
 
@@ -69,10 +70,10 @@ class PAMBASE_IMPEXPORT Generator
         void GenerateSequence(Sequence* pSeq, float* pBuffer, unsigned int nSize);
         void GenerateFrequency(float* pBuffer, unsigned int nSize);
 
-        float GenerateSin(const genfreq& gfreq);
-        float GenerateSquare(const genfreq& gfreq);
-        float GenerateSaw(const genfreq& gfreq);
-        float GenerateTriangle(const genfreq& gfreq);
+        float GenerateSin(const genfreq& gfreq, float dPhase);
+        float GenerateSquare(const genfreq& gfreq, float dPhase);
+        float GenerateSaw(const genfreq& gfreq, float dPhase);
+        float GenerateTriangle(const genfreq& gfreq, float dPhase);
 
         Playback* m_pPlayback;
 

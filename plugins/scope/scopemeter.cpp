@@ -40,7 +40,8 @@ bool Scope::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wx
 
     SetMinSize(size);
 
-    m_nRouting = LEFT;
+    m_nRouting[0] = LEFT;
+    m_nRouting[1] = RIGHT;
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
 
@@ -76,7 +77,6 @@ Scope::~Scope()
 
 void Scope::OnPaint(wxPaintEvent& event)
 {
-    //wxAutoBufferedPaintDC dc(this);
     wxAutoBufferedPaintDC dc(this);
 
     wxBrush br(*wxBLACK);
@@ -105,105 +105,61 @@ void Scope::OnPaint(wxPaintEvent& event)
 
 
 
-    switch(m_nRouting)
-    {
-        case LEFT:
-            memDC.SetPen(wxPen(wxColour(0,255,0)));
-            break;
-        case RIGHT:
-            memDC.SetPen(wxPen(wxColour(255,0,0)));
-            break;
-        case MIDDLE:
-            memDC.SetPen(wxPen(wxColour(255,255,255)));
-            break;
-        case SIDE:
-            memDC.SetPen(wxPen(wxColour(200,200,0)));
-            break;
-        default:
-            memDC.SetPen(wxPen(wxColour(255,255,255)));
-            break;
-
-    }
-
-    bool bTriggered = false;
-
-    m_dMaxY = 0;
-    float dMinY(0);
-    float dLast(0);
     float dCursorAmp(0);
-    if(m_lstBuffer.size() >= m_nFrameRefresh)
+
+    for(int nPlot = 0; nPlot < 2; ++nPlot)
     {
+        switch(m_nRouting[nPlot])
+        {
+            case LEFT:
+                memDC.SetPen(wxPen(wxColour(0,255,0)));
+                break;
+            case RIGHT:
+                memDC.SetPen(wxPen(wxColour(255,0,0)));
+                break;
+            case MIDDLE:
+                memDC.SetPen(wxPen(wxColour(255,255,255)));
+                break;
+            case SIDE:
+                memDC.SetPen(wxPen(wxColour(200,200,0)));
+                break;
+            default:
+                memDC.SetPen(wxPen(wxColour(255,255,255)));
+                break;
+
+        }
+
+
+
         float x = 0;
         int x_old(0), y_old(pntCenter.y);
         float dy_old = -80;
 
-        list<float>::iterator itSample = m_lstBuffer.begin();
-
-
-        for(; itSample != m_lstBuffer.end();)
+        for(list<float>::iterator itSample = m_lstPlot[nPlot].begin(); itSample != m_lstPlot[nPlot].end(); ++itSample)
         {
-            for(int nChannel = 0; nChannel < m_vChannels.size(); nChannel++)
-            {
-                if(itSample != m_lstBuffer.end())
-                {
-                    m_vChannels[nChannel] = *(itSample);
-                    itSample++;
-                }
-            }
-
             float y;
             int nY;
-            float dAmplitude;
-            switch(m_nRouting)
-            {
-                case MIDDLE:
-                    dAmplitude = (m_vChannels[0]+m_vChannels[1])/2.0;
-                    break;
-                case SIDE:
-                    dAmplitude = (m_vChannels[0]-m_vChannels[1])/2.0;
-                    break;
-                default:
-                    dAmplitude = m_vChannels[m_nRouting];
-            }
             if(x > (m_dSampleX-1)*m_dStep && x < (m_dSampleX + 1)*m_dStep)
             {
-                dCursorAmp = dAmplitude;
+                dCursorAmp = (*itSample);
             }
 
-            m_dMaxY = max(dAmplitude, m_dMaxY);
-            dMinY = min(dAmplitude, dMinY);
-            y = dAmplitude*m_dResolution;
+            y = (*itSample)*m_dResolution;
             nY = pntCenter.y-y;
 
-            //bTriggered = ((m_dTrigger >= 0 && dAmplitude >= m_dTrigger && dLast < m_dTrigger)  || (m_dTrigger < 0 && dAmplitude <= m_dTrigger) && dLast > m_dTrigger);
-            if(!bTriggered)
-            {
-                bTriggered = ((m_dTrigger >= 0 && dAmplitude >= m_dTrigger && dLast < dAmplitude)  || (m_dTrigger < 0 && dAmplitude <= m_dTrigger && dLast > dAmplitude));
-            }
-            dLast = m_dMaxY;
 
             int nX = min(static_cast<int>(x), m_rectGrid.GetWidth());
 
-
-            if(bTriggered)
+            if((x_old != nX || y_old != nY) && nX+m_pntSlide.x < m_rectGrid.GetRight())
             {
-                if((x_old != nX || y_old != nY) && nX+m_pntSlide.x < m_rectGrid.GetRight())
-                {
-                    memDC.DrawLine(x_old+m_pntSlide.x, y_old+m_pntSlide.y, nX+m_pntSlide.x,nY+m_pntSlide.y);
-                }
-                x_old = nX;
-                y_old = nY;
-                x+=m_dStep;
+                memDC.DrawLine(x_old+m_pntSlide.x, y_old+m_pntSlide.y, nX+m_pntSlide.x,nY+m_pntSlide.y);
             }
-
+            x_old = nX;
+            y_old = nY;
+            x+=m_dStep;
         }
     }
-
-    if(bTriggered)
-    {
-        dc.Blit(m_rectGrid.GetLeft(),m_rectGrid.GetTop(),m_rectGrid.GetWidth(), m_rectGrid.GetHeight(), &memDC,0,0);
-    }
-
+    dc.Blit(m_rectGrid.GetLeft(),m_rectGrid.GetTop(),m_rectGrid.GetWidth(), m_rectGrid.GetHeight(), &memDC,0,0);
 
     float dGap = static_cast<float>(m_rectGrid.GetHeight())/16.0;
     for(float i = 0; i < 8; i++)
@@ -264,7 +220,7 @@ void Scope::OnPaint(wxPaintEvent& event)
     uiLabel.SetBackgroundColour(wxColour(80,80,120));
 
     uiLabel.SetRect(wxRect(uiLabel.GetRight()+10, uiLabel.GetTop(), 200,20));
-    uiLabel.Draw(dc, wxString::Format(wxT("%.05f [%.05f]"), m_dMaxY, m_dTrigger), uiRect::BORDER_NONE);
+    uiLabel.Draw(dc, wxString::Format(wxT("%.05f [%.05f]"), m_dMaxY[0], m_dTrigger), uiRect::BORDER_NONE);
     uiLabel.SetRect(wxRect(uiLabel.GetRight()+10, uiLabel.GetTop(), 80,20));
     if(m_pntSlide.x != 0 || m_pntSlide.y != 0)
     {
@@ -281,10 +237,7 @@ void Scope::OnPaint(wxPaintEvent& event)
         uiLabel.Draw(dc, wxString::Format(wxT("%.2fms"), dMs*static_cast<double>(i)), uiRect::BORDER_NONE);
     }
 
-    if(m_bAutotrigger)
-    {
-        Autotrigger();
-    }
+
 
     if(m_nMode != MODE_NORMAL)
     {
@@ -301,7 +254,7 @@ void Scope::OnPaint(wxPaintEvent& event)
         }
     }
 
-    m_lstBuffer.clear();
+
 }
 
 void Scope::OnSize(wxSizeEvent& event)
@@ -345,15 +298,86 @@ void Scope::SetData(const timedbuffer* pBuffer)
     }
     if(m_lstBuffer.size() >= m_nFrameRefresh*m_vChannels.size())
     {
-        Refresh();
-        //Update();
+        bool bShow = WorkoutPlot();
+
+        if(m_bAutotrigger)
+        {
+            Autotrigger();
+            wxLogDebug(wxT("Autotrigger = %.2f"), m_dTrigger);
+            bShow = WorkoutPlot();
+        }
+        if(bShow)
+        {
+            wxLogDebug(wxT("Triggered"));
+            Refresh();
+        }
+        m_lstBuffer.clear();
     }
 }
 
 
-void Scope::SetRouting(short nRouting)
+bool Scope::WorkoutPlot()
 {
-    m_nRouting = nRouting;
+    bool bTriggered(false);
+    m_lstPlot[0].clear();
+    m_lstPlot[1].clear();
+    m_dMaxY[0] = 0;
+    m_dMaxY[1] = 0;
+
+
+    list<float>::iterator itSample = m_lstBuffer.begin();
+    float dLast[2] = {0.0,0.0};
+    for(; itSample != m_lstBuffer.end();)
+    {
+        for(int nChannel = 0; nChannel < m_vChannels.size(); nChannel++)
+        {
+            if(itSample != m_lstBuffer.end())
+            {
+                m_vChannels[nChannel] = *(itSample);
+                itSample++;
+            }
+        }
+
+        float dAmplitude[2];
+
+
+        for(int i = 0; i < 2; i++)
+        {
+            switch(m_nRouting[i])
+            {
+                case MIDDLE:
+                    dAmplitude[i] = (m_vChannels[0]+m_vChannels[1])/2.0;
+                    break;
+                case SIDE:
+                    dAmplitude[i] = (m_vChannels[0]-m_vChannels[1])/2.0;
+                    break;
+                default:
+                    dAmplitude[i] = m_vChannels[m_nRouting[i]];
+            }
+            m_dMaxY[i] = max(dAmplitude[i], m_dMaxY[i]);
+        }
+
+        if(!bTriggered)
+        {
+            bTriggered = ((m_dTrigger >= 0 && dAmplitude[0] >= m_dTrigger && dLast[0] < dAmplitude[0])  || (m_dTrigger < 0 && dAmplitude[0] <= m_dTrigger && dLast[0] > dAmplitude[0]));
+        }
+        dLast[0] = dAmplitude[0];
+        dLast[1] = dAmplitude[1];
+
+        if(bTriggered)
+        {
+            m_lstPlot[0].push_back(dAmplitude[0]);
+            m_lstPlot[1].push_back(dAmplitude[1]);
+        }
+    }
+
+
+
+    return bTriggered;
+}
+void Scope::SetRouting(short nRouting, int nPlot)
+{
+    m_nRouting[nPlot%2] = nRouting;
 }
 
 
@@ -436,7 +460,7 @@ void Scope::OnMotion(wxMouseEvent& event)
 
 void Scope::Autotrigger()
 {
-    m_dTrigger = m_dMaxY;
+    m_dTrigger = m_dMaxY[0];
     if(m_dTrigger > 0)
     {
         m_dTrigger -= 0.001;

@@ -3,6 +3,7 @@
 #include <iostream>
 #include "audio.h"
 #include "settings.h"
+#include "wmlogevent.h"
 
 using namespace std;
 
@@ -89,29 +90,31 @@ bool Playback::OpenPlayback(unsigned long nDevice, unsigned long nSampleRate, un
 
 bool Playback::OpenStream(unsigned long nDevice, unsigned long nSampleRate, PaStreamCallback *streamCallback)
 {
-//    wxLogDebug(wxT("Playback::OpenStream"));
+    double dLatency(.04);
+    dLatency = Settings::Get().Read(wxT("Output"), wxT("Latency"), 0.0)/1000.0;
+
 
     PaStreamParameters outputParameters;
     outputParameters.channelCount = m_nOutputChannels;
     outputParameters.device = nDevice;
     outputParameters.hostApiSpecificStreamInfo = NULL;
     outputParameters.sampleFormat = paFloat32;
-    outputParameters.suggestedLatency = Pa_GetDeviceInfo(m_nDevice)->defaultHighOutputLatency;
+    outputParameters.suggestedLatency = dLatency;
     outputParameters.hostApiSpecificStreamInfo = NULL;
-    PaError err = Pa_OpenStream(&m_pStream, 0, &outputParameters, nSampleRate, m_nBufferSize, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
+    PaError err = Pa_OpenStream(&m_pStream, 0, &outputParameters, nSampleRate, 0, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
     if(err == paNoError)
     {
         err = Pa_StartStream(m_pStream);
         if(err == paNoError)
         {
-
             m_bDone = true;
             m_bFirst = true;
+            wmLog::Get()->Log(wxString::Format(wxT("Playback::OpenStream - Latency %.2f ms"), dLatency*1000.0));
             return true;
         }
         else
         {
-            //wxLogDebug(wxT("Playback::OpenStream - Could not start stream %s"), wxString::FromAscii(Pa_GetErrorText(err)).c_str());
+            wmLog::Get()->Log(wxString::Format(wxT("Playback::OpenStream - Could not start stream %s"), wxString::FromAscii(Pa_GetErrorText(err)).c_str()));
         }
     }
     else
@@ -122,8 +125,22 @@ bool Playback::OpenStream(unsigned long nDevice, unsigned long nSampleRate, PaSt
         {
             nChannels = pInfo->maxInputChannels;
         }
+        wmLog::Get()->Log(wxString::Format(wxT("Playback::OpenStream - Could not open stream %s"), wxString::FromAscii(Pa_GetErrorText(err)).c_str()));
     }
     return false;
+}
+
+unsigned int Playback::GetLatency()
+{
+    if(m_pStream)
+    {
+        const PaStreamInfo* pInfo = Pa_GetStreamInfo(m_pStream);
+        if(pInfo)
+        {
+            return pInfo->outputLatency;
+        }
+    }
+    return -1;
 }
 
 pairTime_t Playback::ConvertDoubleToPairTime(double dTime)
@@ -133,13 +150,12 @@ pairTime_t Playback::ConvertDoubleToPairTime(double dTime)
     return make_pair(static_cast<unsigned int>(dInt), static_cast<unsigned int>(dDec*1000000.0));
 }
 
-void Playback::Callback(float* pBuffer, size_t nFrameCount)
+void Playback::Callback(float* pBuffer, size_t nFrameCount, double dPlayoutLatency)
 {
 
-    wxMutexLocker ml(m_mutex);
-    //wxLogDebug(wxT("Playback q = %d"), m_qBuffer.size());
+    //wxMutexLocker ml(m_mutex);
     int nSamples = 0;
-
+/*
     if(m_bFirst)
     {
         pairTime_t tvNow;
@@ -168,12 +184,11 @@ void Playback::Callback(float* pBuffer, size_t nFrameCount)
     {
         pairTime_t tvNow;
         gettimeofday(tvNow, NULL);
-        double dNow = ConvertPairTimeToDouble(tvNow);
+        double dNow = ConvertPairTimeToDouble(tvNow)+(dPlayoutLatency*1000.0);
         m_dLatency = (dNow-m_qBuffer.front().dPresentation)*1000.0;
-
         m_nBuffer = m_qBuffer.size();
     }
-
+*/
     timedSample tsBuffer;
     if(m_qBuffer.empty() == false)
     {
@@ -196,14 +211,13 @@ void Playback::Callback(float* pBuffer, size_t nFrameCount)
     }
 
 
-
     //double dOffsetMicro = static_cast<double>(m_qBuffer.size()/m_nOutputChannels)/static_cast<double>(m_nSampleRate)*1000000.0;
     timedbuffer* pTimedBuffer = new timedbuffer(nFrameCount*m_nOutputChannels, ConvertDoubleToPairTime(tsBuffer.dPresentation), tsBuffer.nTimestamp);
     pTimedBuffer->SetTransmissionTime(ConvertDoubleToPairTime(tsBuffer.dTransmission));
     pTimedBuffer->SetBuffer(pBuffer);
-    pTimedBuffer->SetPlaybackOffset(m_dLatency*1000.0);
+    pTimedBuffer->SetPlaybackOffset(dPlayoutLatency*1000000.0);//*1000.0);
     pTimedBuffer->SetBufferDepth(m_qBuffer.size()/m_nOutputChannels);
-
+    pTimedBuffer->SetDuration(pTimedBuffer->GetBufferSize()*4);
 
 
     wxCommandEvent event(wxEVT_DATA);
@@ -223,7 +237,7 @@ double Playback::ConvertPairTimeToDouble(const pairTime_t& tv)
 
 void Playback::AddSamples(const timedbuffer* pTimedBuffer)
 {
-    wxMutexLocker ml(m_mutex);
+    //wxMutexLocker ml(m_mutex);
     if(m_nInputChannels > 0)
     {
         double dModifier(0.0);
@@ -241,6 +255,22 @@ void Playback::AddSamples(const timedbuffer* pTimedBuffer)
             }
         }
     }
+
+//    if(m_nInputChannels > 0)
+//    {
+//        double dTransmission(ConvertPairTimeToDouble(pTimedBuffer->GetTransmissionTime()));
+//        double dPresentation(ConvertPairTimeToDouble(pTimedBuffer->GetTimeVal()));
+//
+//        for(unsigned int i =0; i < pTimedBuffer->GetBufferSize(); i+=m_nInputChannels)
+//        {
+//            int nSample = i/m_nInputChannels;
+//
+//            for(size_t j = 0; j < m_vMixer.size(); j++)
+//            {
+//                m_qBuffer.push(timedSample(0, 0, pTimedBuffer->GetTimestamp()+nSample, pTimedBuffer->GetBuffer()[i+m_vMixer[j]]));
+//            }
+//        }
+//    }
 }
 
 bool Playback::IsStreamOpen()
@@ -253,9 +283,17 @@ int playbackCallback( const void *input, void *output, unsigned long frameCount,
 {
     if(userData && output)
     {
-        //cout << statusFlags << endl;
+        if((statusFlags & paOutputOverflow))
+        {
+            wmLog::Get()->Log(wxT("Playback:  Buffer overflow"));
+        }
+        if((statusFlags & paOutputUnderflow))
+        {
+            wmLog::Get()->Log(wxT("Playback:  Buffer underflow"));
+        }
+
         Playback* pPlayer = reinterpret_cast<Playback*>(userData);
-        pPlayer->Callback(reinterpret_cast<float*>(output), frameCount);
+        pPlayer->Callback(reinterpret_cast<float*>(output), frameCount,timeInfo->outputBufferDacTime-timeInfo->currentTime);
     }
     return 0;
 }

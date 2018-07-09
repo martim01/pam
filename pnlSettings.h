@@ -39,7 +39,6 @@ class pnlSettings: public wxPanel
 		wmLabel* m_plbldB;
 		wmButton* m_pbtnAogHome;
 		wmButton* m_pbtnOutput;
-		wmLabel* m_pLbl1;
 		wmButton* m_pbtnAogEnd;
 		pnlSettingsPlugins* m_ppnlPlugins;
 		pnlNetworkSetup* pnlSettingsNetwork;
@@ -50,7 +49,6 @@ class pnlSettings: public wxPanel
 		wmSwitcherPanel* m_pswpAog;
 		wxStaticBox* StaticBox1;
 		wmButton* m_pbtn1000;
-		wmList* m_plstBuffer;
 		wxPanel* Panel3;
 		wmButton* m_pbtnAogNext;
 		wmLabel* m_pLbl5;
@@ -96,8 +94,6 @@ class pnlSettings: public wxPanel
 		static const long ID_M_PBTN5;
 		static const long ID_PANEL1;
 		static const long ID_M_PLBL4;
-		static const long ID_M_PLBL1;
-		static const long ID_M_PLST5;
 		static const long ID_M_PBTN3;
 		static const long ID_M_PLST6;
 		static const long ID_M_PLST4;
@@ -113,6 +109,7 @@ class pnlSettings: public wxPanel
 		static const long ID_M_PBTN8;
 		static const long ID_M_PBTN9;
 		static const long ID_PANEL9;
+		static const long ID_STATICBOX1;
 		static const long ID_SLIDER;
 		static const long ID_M_PLBL7;
 		static const long ID_M_PBTN12;
@@ -128,7 +125,6 @@ class pnlSettings: public wxPanel
 		static const long ID_M_PLBL9;
 		static const long ID_M_PBTN19;
 		static const long ID_M_PLST9;
-		static const long ID_STATICBOX1;
 		static const long ID_STATICBOX2;
 		static const long ID_PANEL10;
 		static const long ID_M_PSWP2;
@@ -155,7 +151,6 @@ class pnlSettings: public wxPanel
 		void OnlstPlaybackSelected(wxCommandEvent& event);
 		void OnbtnDeleteSourceClick(wxCommandEvent& event);
 		void OnbtnDeleteSourceHeld(wxCommandEvent& event);
-		void OnlstBufferSelected(wxCommandEvent& event);
 		void OnbtnMeterShadingClick(wxCommandEvent& event);
 		void OnlblLatencySelected(wxCommandEvent& event);
 		void OnlstInputSelected(wxCommandEvent& event);

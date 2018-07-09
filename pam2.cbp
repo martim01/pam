@@ -38,6 +38,8 @@
 					<Add library="pambased" />
 					<Add library="portaudiod" />
 					<Add library="libcurl" />
+					<Add library="Ws2_32" />
+					<Add library="iphlpapi" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#portaudio.lib)" />
 					<Add directory="$(#curl.lib)" />

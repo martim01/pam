@@ -3,16 +3,27 @@
 	<object class="wxPanel" name="pnlRouting">
 		<pos_arg>1</pos_arg>
 		<size_arg>1</size_arg>
-		<object class="wmList" name="ID_M_PLST16" variable="m_plstScope_Routing" member="yes">
+		<object class="wmList" name="ID_M_PLST16" variable="m_plstRouting1" member="yes">
 			<scrolling>None</scrolling>
 			<button_gap>5,5</button_gap>
 			<columns>2</columns>
 			<items />
 			<pos>0,0</pos>
-			<size>190,210</size>
+			<size>190,88</size>
 			<bg>#000000</bg>
 			<style>wmList::STYLE_SELECT</style>
 			<handler function="OnlstScope_RoutingSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+		<object class="wmList" name="ID_M_PLST1" variable="m_plstRouting2" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>5,5</button_gap>
+			<columns>2</columns>
+			<items />
+			<pos>0,100</pos>
+			<size>190,88</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstRouting2Selected" entry="EVT_LIST_SELECTED" />
 		</object>
 	</object>
 </wxsmith>

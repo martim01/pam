@@ -24,6 +24,7 @@ class PAMBASE_IMPEXPORT Playback
         }
 
 
+
         void Run();
 
         void SetMixer(const std::vector<char>& vChannels, unsigned int nTotalChannels);
@@ -44,6 +45,7 @@ class PAMBASE_IMPEXPORT Playback
             return m_nOutputChannels;
         }
 
+        unsigned int GetLatency();
 
         void AddSamples(const timedbuffer* pTimedBuffer);
 
@@ -53,7 +55,7 @@ class PAMBASE_IMPEXPORT Playback
         *   @param pBuffer pointer to the buffer containing the audio samples
         *   @param nFrameCount the number of audio frames (2 x number of samples)
         **/
-        void Callback(float* pBuffer, size_t nFrameCount);
+        void Callback(float* pBuffer, size_t nFrameCount, double dPlayoutTime);
 
     protected:
 

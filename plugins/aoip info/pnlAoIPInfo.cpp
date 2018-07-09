@@ -731,6 +731,10 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
         {
             m_nFrameSize*=2;
         }
+        else if(aSession.itCurrentSubsession->sCodec == wxT("F32"))
+        {
+            m_nFrameSize*=4;
+        }
 
         m_plblSubSyncType->SetLabel(aSession.itCurrentSubsession->refClock.sType);
         m_plblSubSyncVersion->SetLabel(aSession.itCurrentSubsession->refClock.sVersion);

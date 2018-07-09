@@ -74,7 +74,7 @@ class Scope : public wxWindow
         void TurnoffNudge();
 
         void SetDisplayType(short nType);
-        void SetRouting(short nRouting);
+        void SetRouting(short nRouting, int nPlot);
 
         int GetTimeFrame()
         {
@@ -134,6 +134,8 @@ class Scope : public wxWindow
         void OnLeftUp(wxMouseEvent& event);
         void OnMotion(wxMouseEvent& event);
 
+        bool WorkoutPlot();
+
         wxPoint m_pntMouse;
 
         wxRect m_rectGrid;
@@ -145,14 +147,14 @@ class Scope : public wxWindow
         uiRect m_uiNudgeDown;
 
         short m_nType;
-        short m_nRouting;
+        short m_nRouting[2];
 
         size_t m_nFrameRefresh;
         float m_dResolution;
 
         float m_dVerticalZoom;
         float m_dTrigger;
-        float m_dMaxY;
+        float m_dMaxY[2];
         std::list<float> m_lstBuffer;
         wxBitmap m_bmpScreen;
 
@@ -171,6 +173,9 @@ class Scope : public wxWindow
 
         ScopeBuilder* m_pBuilder;
         std::vector<float> m_vChannels;
+
+        std::list<float> m_lstPlot[2];
+
         //std::vector<float> m_vChannels:
 
 };

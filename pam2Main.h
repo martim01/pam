@@ -142,6 +142,8 @@ class pam2Dialog: public wxDialog
         void InitGenerator(const wxString& sSequence);
         void InitGenerator();
 
+        void CreateSessionFromOutput(const wxString& sSource);
+
         Audio* m_pAudio;
         Playback* m_pPlayback;
 

@@ -110,29 +110,6 @@
 							<face>Arial</face>
 						</font>
 					</object>
-					<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
-						<label>Play Buffer</label>
-						<pos>0,280</pos>
-						<size>80,30</size>
-						<fg>#FFFFFF</fg>
-						<bg>#909090</bg>
-						<extra_code>m__pLbl1-&gt;GetUiRect().SetGradient(0);</extra_code>
-					</object>
-					<object class="wmList" name="ID_M_PLST5" variable="m_plstBuffer" member="yes">
-						<scrolling>None</scrolling>
-						<button_gap>5,1</button_gap>
-						<button_size>-1,26</button_size>
-						<columns>4</columns>
-						<button>#008040</button>
-						<button_selected>#FF8000</button_selected>
-						<items />
-						<pos>80,280</pos>
-						<size>520,30</size>
-						<enabled>0</enabled>
-						<bg>#909090</bg>
-						<style>wmList::STYLE_SELECT</style>
-						<handler function="OnlstBufferSelected" entry="EVT_LIST_SELECTED" />
-					</object>
 					<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnOutput" member="yes">
 						<label>Playback</label>
 						<pos>0,40</pos>
@@ -289,6 +266,12 @@
 									<family>swiss</family>
 									<face>Arial</face>
 								</font>
+								<object class="wxStaticBox" name="ID_STATICBOX1" variable="StaticBox1" member="yes">
+									<label>Frequency</label>
+									<pos>5,5</pos>
+									<size>590,200</size>
+									<fg>#FFFFFF</fg>
+								</object>
 								<object class="Custom" name="ID_SLIDER" subclass="wmSlider" variable="m_pSlider" member="yes">
 									<creating_code>$(THIS) = new $(CLASS)($(PARENT),$(ID),wxT(&quot;Frequency&quot;),$(POS),$(SIZE),$(STYLE),$(NAME));</creating_code>
 									<include_file>wmslider.h</include_file>
@@ -317,24 +300,28 @@
 									<label>-10 Hz</label>
 									<pos>30,90</pos>
 									<size>80,50</size>
+									<style>wmButton::STYLE_REPEAT</style>
 									<handler function="OnbtnMinus10Click" entry="EVT_BUTTON" />
 								</object>
 								<object class="wmButton" name="ID_M_PBTN11" variable="m_pbtnMinus1" member="yes">
 									<label>-1 Hz</label>
 									<pos>115,90</pos>
 									<size>80,50</size>
+									<style>wmButton::STYLE_REPEAT</style>
 									<handler function="OnbtnMinus1Click" entry="EVT_BUTTON" />
 								</object>
 								<object class="wmButton" name="ID_M_PBTN10" variable="m_pbtnPlus1" member="yes">
 									<label>+1 Hz</label>
 									<pos>405,90</pos>
 									<size>80,50</size>
+									<style>wmButton::STYLE_REPEAT</style>
 									<handler function="OnbtnPlus1Click" entry="EVT_BUTTON" />
 								</object>
 								<object class="wmButton" name="ID_M_PBTN13" variable="m_pbtnPlus10" member="yes">
 									<label>+10 Hz</label>
 									<pos>490,90</pos>
 									<size>80,50</size>
+									<style>wmButton::STYLE_REPEAT</style>
 									<handler function="OnbtnPlus10Click" entry="EVT_BUTTON" />
 								</object>
 								<object class="wmButton" name="ID_M_PBTN14" variable="m_pbtn450" member="yes">
@@ -398,12 +385,6 @@
 									<bg>#000000</bg>
 									<style>wmList::STYLE_SELECT</style>
 									<handler function="OnlstShapeSelected" entry="EVT_LIST_SELECTED" />
-								</object>
-								<object class="wxStaticBox" name="ID_STATICBOX1" variable="StaticBox1" member="yes">
-									<label>Frequency</label>
-									<pos>5,5</pos>
-									<size>590,200</size>
-									<fg>#FFFFFF</fg>
 								</object>
 								<object class="wxStaticBox" name="ID_STATICBOX2" variable="StaticBox2" member="yes">
 									<label>Amplitude</label>

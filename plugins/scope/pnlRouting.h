@@ -16,7 +16,8 @@ class pnlRouting: public wxPanel
 		virtual ~pnlRouting();
 
 		//(*Declarations(pnlRouting)
-		wmList* m_plstScope_Routing;
+		wmList* m_plstRouting2;
+		wmList* m_plstRouting1;
 		//*)
 
 		void SetNumberOfChannels(unsigned int nChannels);
@@ -25,14 +26,17 @@ class pnlRouting: public wxPanel
 
 		//(*Identifiers(pnlRouting)
 		static const long ID_M_PLST16;
+		static const long ID_M_PLST1;
 		//*)
 
 	private:
 
 		//(*Handlers(pnlRouting)
 		void OnlstScope_RoutingSelected(wxCommandEvent& event);
+		void OnlstRouting2Selected(wxCommandEvent& event);
 		//*)
 
+		void ShowRouting(wmList* pLst, unsigned int nPlot, unsigned int nChannels);
 		ScopeBuilder* m_pBuilder;
 
 		DECLARE_EVENT_TABLE()

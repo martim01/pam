@@ -13,14 +13,17 @@
 #include "pam2Main.h"
 #include <wx/image.h>
 //*)
+#include "portaudio.h"
 
 IMPLEMENT_APP(pam2App);
 
 bool pam2App::OnInit()
 {
+    Pa_Initialize();
     //(*AppInitialize
     bool wxsOK = true;
     wxInitAllImageHandlers();
+
     if ( wxsOK )
     {
     	pam2Dialog Dlg(0);
