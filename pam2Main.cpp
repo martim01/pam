@@ -709,6 +709,10 @@ void pam2Dialog::OnAudioData(wxCommandEvent& event)
                 m_pSequenceGenerator->Generate(pTimedBuffer->GetBufferSize());
             }
         }
+        else if(event.GetId() == m_nPlaybackSource)
+        {
+            m_pPlayback->AddSamples(pTimedBuffer);
+        }
     }
     if(event.GetId() == m_nMonitorSource)
     {

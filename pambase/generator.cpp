@@ -227,6 +227,7 @@ float Generator::GenerateSin(const genfreq& gfreq, float dPhase)
 {
     float dIn(2.0 * M_PI * gfreq.dFrequency*(dPhase/m_dSampleRate));
     float dSin = sin(dIn) * gfreq.dAmplitude;
+
     return dSin;
 }
 
