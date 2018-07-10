@@ -886,40 +886,31 @@ void pam2Dialog::OpenFileForReading()
         wmLog::Get()->Log(wxT("Close sound file"));
         delete m_pSoundfile;
     }
-
-    m_pSoundfile = new SoundFile();
-    if(m_pSoundfile->OpenToRead(sFilePath))
+    //Does the file exist
+    if(wxFileExists(sFilePath))
     {
-        wmLog::Get()->Log(wxString::Format(wxT("Opened file '%s'"), sFilePath.c_str()));
-        wmLog::Get()->Log(wxString::Format(wxT("SampleRate = %d"), m_pSoundfile->GetSampleRate()));
-        wmLog::Get()->Log(wxString::Format(wxT("Channels = %d"), m_pSoundfile->GetChannels()));
+        m_pSoundfile = new SoundFile();
+        if(m_pSoundfile->OpenToRead(sFilePath))
+        {
+            wmLog::Get()->Log(wxString::Format(wxT("Opened file '%s'"), sFilePath.c_str()));
+            wmLog::Get()->Log(wxString::Format(wxT("SampleRate = %d"), m_pSoundfile->GetSampleRate()));
+            wmLog::Get()->Log(wxString::Format(wxT("Channels = %d"), m_pSoundfile->GetChannels()));
 
-//        wxString sCodec;
-//        if((m_pSoundfile->GetFormat() & 0x0002))
-//        {
-//            sCodec = wxT("L16");
-//        }
-//        else if((m_pSoundfile->GetFormat() & 0x0003))
-//        {
-//            sCodec = wxT("L24");
-//        }
-//        session aSession(wxEmptyString, Settings::Get().Read(wxT("Input"), wxT("File"), wxEmptyString), wxT("File"));
-//        aSession.lstSubsession.push_back(subsession(wxEmptyString, Settings::Get().Read(wxT("Input"), wxT("File"), wxEmptyString), wxEmptyString, sCodec, wxEmptyString, 0, m_pSoundfile->GetSampleRate(), m_pSoundfile->GetChannels(), wxEmptyString, 0, make_pair(0,0), refclk()));
-//        aSession.itCurrentSubsession = aSession.lstSubsession.begin();
-//        m_Session = aSession;
-//
-//        InputSession(aSession);
-
-        ReadSoundFile(8192);
-        CheckPlayback(m_pSoundfile->GetSampleRate(), m_pSoundfile->GetChannels());
-        m_dtLastRead = wxDateTime::UNow();
-        CreateSessionFromOutput(Settings::Get().Read(wxT("Output"), wxT("File"), wxEmptyString));
+            ReadSoundFile(8192);
+            CheckPlayback(m_pSoundfile->GetSampleRate(), m_pSoundfile->GetChannels());
+            m_dtLastRead = wxDateTime::UNow();
+            CreateSessionFromOutput(Settings::Get().Read(wxT("Output"), wxT("File"), wxEmptyString));
+        }
+        else
+        {
+            wmLog::Get()->Log(wxString::Format(wxT("Failed to open file '%s'"), sFilePath.c_str()));
+            delete m_pSoundfile;
+            m_pSoundfile = 0;
+        }
     }
     else
     {
-        wmLog::Get()->Log(wxString::Format(wxT("Failed to opend file '%s'"), sFilePath.c_str()));
-        delete m_pSoundfile;
-        m_pSoundfile = 0;
+        wmLog::Get()->Log(wxString::Format(wxT("File '%s' does not exist"), sFilePath.c_str()));
     }
 }
 
