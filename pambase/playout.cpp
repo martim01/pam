@@ -153,7 +153,7 @@ pairTime_t Playback::ConvertDoubleToPairTime(double dTime)
 void Playback::Callback(float* pBuffer, size_t nFrameCount, double dPlayoutLatency)
 {
 
-    //wxMutexLocker ml(m_mutex);
+    wxMutexLocker ml(m_mutex);
     int nSamples = 0;
 /*
     if(m_bFirst)
@@ -237,7 +237,7 @@ double Playback::ConvertPairTimeToDouble(const pairTime_t& tv)
 
 void Playback::AddSamples(const timedbuffer* pTimedBuffer)
 {
-    //wxMutexLocker ml(m_mutex);
+    wxMutexLocker ml(m_mutex);
     if(m_nInputChannels > 0)
     {
         double dModifier(0.0);
