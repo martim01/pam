@@ -76,6 +76,7 @@ class pnlSettings: public wxPanel
 		wmButton* m_pbtnEnd;
 		wmLabel* m_plblFrequency;
 		pnlUpdate* Panel1;
+		wmButton* m_pbtnSequences;
 		wmLabel* m_plblInput;
 		//*)
 
@@ -128,6 +129,7 @@ class pnlSettings: public wxPanel
 		static const long ID_STATICBOX2;
 		static const long ID_PANEL10;
 		static const long ID_M_PSWP2;
+		static const long ID_M_PBTN20;
 		static const long ID_PANEL8;
 		static const long ID_PANEL4;
 		static const long ID_PANEL5;
@@ -176,6 +178,7 @@ class pnlSettings: public wxPanel
 		void Onbtn5000Click(wxCommandEvent& event);
 		void Onbtn10000Click(wxCommandEvent& event);
 		void Onbtn0dbuClick(wxCommandEvent& event);
+		void OnbtnSequencesClick(wxCommandEvent& event);
 		//*)
 
         void RefreshInputs();

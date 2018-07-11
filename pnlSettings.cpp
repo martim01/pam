@@ -9,7 +9,7 @@
 #include "settings.h"
 //#include "meter.h"
 #include "version.h"
-
+#include "dlgSequence.h"
 //(*InternalHeaders(pnlSettings)
 #include <wx/settings.h>
 #include <wx/font.h>
@@ -73,6 +73,7 @@ const long pnlSettings::ID_M_PLST9 = wxNewId();
 const long pnlSettings::ID_STATICBOX2 = wxNewId();
 const long pnlSettings::ID_PANEL10 = wxNewId();
 const long pnlSettings::ID_M_PSWP2 = wxNewId();
+const long pnlSettings::ID_M_PBTN20 = wxNewId();
 const long pnlSettings::ID_PANEL8 = wxNewId();
 const long pnlSettings::ID_PANEL4 = wxNewId();
 const long pnlSettings::ID_PANEL5 = wxNewId();
@@ -156,7 +157,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pLbl2->SetBackgroundColour(wxColour(0,64,0));
     wxFont m_pLbl2Font(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
     m_pLbl2->SetFont(m_pLbl2Font);
-    m_plstAudioSources = new wmList(pnlGenerator, ID_M_PLST8, wxPoint(0,36), wxSize(600,34), wmList::STYLE_SELECT, 0, wxSize(100,30), 3, wxSize(-1,-1));
+    m_plstAudioSources = new wmList(pnlGenerator, ID_M_PLST8, wxPoint(0,36), wxSize(400,34), wmList::STYLE_SELECT, 0, wxSize(100,30), 3, wxSize(-1,-1));
     m_plstAudioSources->SetButtonColour(wxColour(wxT("#400080")));
     m_plstAudioSources->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
     m_pswpAog = new wmSwitcherPanel(pnlGenerator, ID_M_PSWP2, wxPoint(0,70), wxSize(600,380), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP2"));
@@ -217,6 +218,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pswpAog->AddPage(Panel5, _("Input"), false);
     m_pswpAog->AddPage(Panel3, _("Files"), false);
     m_pswpAog->AddPage(Panel4, _("Generator"), false);
+    m_pbtnSequences = new wmButton(pnlGenerator, ID_M_PBTN20, _("Edit Sequences"), wxPoint(410,39), wxSize(100,30), 0, wxDefaultValidator, _T("ID_M_PBTN20"));
     pnlSettingsRTP = new pnlRTP(m_pswpSettings, ID_PANEL4, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL4"));
     pnlSettingsNetwork = new pnlNetworkSetup(m_pswpSettings, ID_PANEL5, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL5"));
     m_ppnlPlugins = new pnlSettingsPlugins(m_pswpSettings, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
@@ -225,9 +227,9 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     pnlThreads->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
     m_plstThreads = new wmList(pnlThreads, ID_M_PLST3, wxDefaultPosition, wxSize(600,480), 0, 0, wxSize(-1,-1), 3, wxSize(-1,-1));
     m_plstThreads->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
-    m_pswpSettings->AddPage(pnlInput, _("Audio Input"), false);
-    m_pswpSettings->AddPage(pnlOutput, _("Audio Output"), false);
-    m_pswpSettings->AddPage(pnlGenerator, _("Audio Generator"), false);
+    m_pswpSettings->AddPage(pnlInput, _("Input"), false);
+    m_pswpSettings->AddPage(pnlOutput, _("Output Device"), false);
+    m_pswpSettings->AddPage(pnlGenerator, _("Output Source"), false);
     m_pswpSettings->AddPage(pnlSettingsRTP, _("AoIP"), false);
     m_pswpSettings->AddPage(pnlSettingsNetwork, _("Network"), false);
     m_pswpSettings->AddPage(m_ppnlPlugins, _("Plugins"), false);
@@ -260,6 +262,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     Connect(ID_M_PBTN18,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::Onbtn10000Click);
     Connect(ID_M_PBTN19,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::Onbtn0dbuClick);
     Connect(ID_M_PLST9,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstShapeSelected);
+    Connect(ID_M_PBTN20,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnSequencesClick);
     //*)
 
     m_pbtnEnd->SetBitmapLabel(wxBitmap(end_hz_xpm));
@@ -783,4 +786,10 @@ void pnlSettings::Onbtn10000Click(wxCommandEvent& event)
 void pnlSettings::Onbtn0dbuClick(wxCommandEvent& event)
 {
     m_pAmplitude->SetSliderPosition(62, true);
+}
+
+void pnlSettings::OnbtnSequencesClick(wxCommandEvent& event)
+{
+    dlgSequence aDlg(this);
+    aDlg.ShowModal();
 }

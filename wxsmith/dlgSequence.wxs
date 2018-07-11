@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxDialog" name="dlgSequence">
+		<pos>0,0</pos>
+		<size>800,480</size>
+		<id_arg>0</id_arg>
+		<style>wxNO_BORDER</style>
+		<object class="wxPanel" name="ID_PANEL1" variable="pnlFile" member="yes">
+			<pos>0,0</pos>
+			<size>190,480</size>
+			<bg>#000000</bg>
+			<object class="wxStaticBox" name="ID_STATICBOX1" variable="StaticBox1" member="yes">
+				<label>Files</label>
+				<pos>0,0</pos>
+				<size>190,480</size>
+				<fg>#FFFFFF</fg>
+			</object>
+			<object class="wmList" name="ID_M_PLST1" variable="m_plstFiles" member="yes">
+				<button>#FFFFFF</button>
+				<button_pressed>#FF8040</button_pressed>
+				<button_selected>#FF8040</button_selected>
+				<text>#000000</text>
+				<items />
+				<pos>10,20</pos>
+				<size>170,360</size>
+				<fg>#FFFFFF</fg>
+				<bg>#FFFFFF</bg>
+				<style>wmList::STYLE_SELECT</style>
+				<handler function="OnlstFilesSelected" entry="EVT_LIST_SELECTED" />
+			</object>
+			<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnFileRename" member="yes">
+				<label>Rename</label>
+				<button_pressed>#0000FF</button_pressed>
+				<button_disabled>#909090</button_disabled>
+				<pos>10,385</pos>
+				<size>50,40</size>
+				<enabled>0</enabled>
+				<bg>#0000A0</bg>
+				<handler function="OnbtnFileRenameClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmButton" name="ID_M_PBTN13" variable="m_pbtnFileCopy" member="yes">
+				<label>Copy</label>
+				<button_pressed>#0000FF</button_pressed>
+				<button_disabled>#909090</button_disabled>
+				<pos>65,385</pos>
+				<size>50,40</size>
+				<enabled>0</enabled>
+				<bg>#0000A0</bg>
+				<handler function="OnbtnFileCopyClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnFileDelete" member="yes">
+				<label>Delete</label>
+				<button_pressed>#B00000</button_pressed>
+				<button_disabled>#909090</button_disabled>
+				<pos>120,385</pos>
+				<size>50,40</size>
+				<enabled>0</enabled>
+				<bg>#800000</bg>
+				<handler function="OntbnFileDeleteClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmButton" name="ID_M_PBTN3" variable="m_ptbnFileCreate" member="yes">
+				<label>Create</label>
+				<button_pressed>#00C600</button_pressed>
+				<pos>65,430</pos>
+				<size>50,40</size>
+				<bg>#008000</bg>
+				<handler function="OntbnFileCreateClick" entry="EVT_BUTTON" />
+			</object>
+		</object>
+		<object class="wxPanel" name="ID_PANEL2" variable="pnlSequences" member="yes">
+			<pos>200,0</pos>
+			<size>190,480</size>
+			<fg>#FFFFFF</fg>
+			<bg>#000000</bg>
+			<object class="wxStaticBox" name="ID_STATICBOX2" variable="StaticBox2" member="yes">
+				<label>Sequences</label>
+				<pos>0,0</pos>
+				<size>220,480</size>
+			</object>
+			<object class="wmList" name="ID_M_PLST2" variable="m_plstSequences" member="yes">
+				<button>#FFFFFF</button>
+				<button_pressed>#FF8040</button_pressed>
+				<button_selected>#FF8040</button_selected>
+				<text>#000000</text>
+				<items />
+				<pos>10,20</pos>
+				<size>170,360</size>
+				<fg>#FFFFFF</fg>
+				<bg>#FFFFFF</bg>
+				<style>wmList::STYLE_SELECT</style>
+				<handler function="OnlstSequencesSelected" entry="EVT_LIST_SELECTED" />
+			</object>
+			<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnSequenceRename" member="yes">
+				<label>Edit</label>
+				<button_pressed>#0000FF</button_pressed>
+				<button_disabled>#909090</button_disabled>
+				<pos>10,385</pos>
+				<size>50,40</size>
+				<enabled>0</enabled>
+				<bg>#0000A0</bg>
+				<handler function="OnbtnSequenceRenameClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmButton" name="ID_M_PBTN14" variable="m_pbtnSequenceCopy" member="yes">
+				<label>Copy</label>
+				<button_pressed>#0000FF</button_pressed>
+				<button_disabled>#909090</button_disabled>
+				<pos>65,385</pos>
+				<size>50,40</size>
+				<enabled>0</enabled>
+				<bg>#0000A0</bg>
+				<handler function="OnbtnSequencyCopyClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnSequenceDelete" member="yes">
+				<label>Delete</label>
+				<button_pressed>#B00000</button_pressed>
+				<button_disabled>#909090</button_disabled>
+				<pos>120,385</pos>
+				<size>50,40</size>
+				<enabled>0</enabled>
+				<bg>#800000</bg>
+				<handler function="OnbtnSequenceDeleteClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmButton" name="ID_M_PBTN6" variable="m_pbtnSequenceCreate" member="yes">
+				<label>Create</label>
+				<button_pressed>#00C600</button_pressed>
+				<pos>65,430</pos>
+				<size>50,40</size>
+				<enabled>0</enabled>
+				<bg>#008000</bg>
+				<handler function="OnbtnSequenceCreateClick" entry="EVT_BUTTON" />
+			</object>
+		</object>
+		<object class="wxPanel" name="ID_PANEL3" variable="pnlFrequencies" member="yes">
+			<pos>400,0</pos>
+			<size>400,480</size>
+			<fg>#FFFFFF</fg>
+			<bg>#000000</bg>
+			<object class="wxStaticBox" name="ID_STATICBOX3" variable="StaticBox3" member="yes">
+				<label>Frequencies</label>
+				<pos>0,0</pos>
+				<size>400,480</size>
+			</object>
+			<object class="wmList" name="ID_M_PLST3" variable="m_plstFrequency" member="yes">
+				<button>#FFFFFF</button>
+				<button_pressed>#FF8040</button_pressed>
+				<button_selected>#FF8040</button_selected>
+				<text>#000000</text>
+				<items />
+				<pos>10,20</pos>
+				<size>170,405</size>
+				<fg>#FFFFFF</fg>
+				<bg>#FFFFFF</bg>
+				<style>wmList::STYLE_SELECT</style>
+				<handler function="OnlstFrequencySelected" entry="EVT_LIST_SELECTED" />
+			</object>
+			<object class="wmButton" name="ID_M_PBTN8" variable="m_pbtnFrequencyDelete" member="yes">
+				<label>Delete</label>
+				<button_pressed>#B00000</button_pressed>
+				<button_disabled>#909090</button_disabled>
+				<pos>10,430</pos>
+				<size>50,40</size>
+				<enabled>0</enabled>
+				<bg>#800000</bg>
+				<handler function="OnbtnFrequencyDeleteClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmButton" name="ID_M_PBTN10" variable="m_pbtnFrequencyUp" member="yes">
+				<label>Move&#x0A;Up</label>
+				<button_pressed>#808000</button_pressed>
+				<button_disabled>#909090</button_disabled>
+				<pos>65,430</pos>
+				<size>50,40</size>
+				<enabled>0</enabled>
+				<bg>#808040</bg>
+				<handler function="OnbtnFrequencyUpClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmButton" name="ID_M_PBTN11" variable="m_pbtnFrequencyDown" member="yes">
+				<label>Move Down</label>
+				<button_pressed>#808000</button_pressed>
+				<button_disabled>#909090</button_disabled>
+				<pos>120,430</pos>
+				<size>50,40</size>
+				<enabled>0</enabled>
+				<bg>#808040</bg>
+				<handler function="OnbtnFrequencyDownClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+				<label>Frequency</label>
+				<pos>200,20</pos>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
+				<label>Amplitude</label>
+				<pos>200,50</pos>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
+				<label>Cycles</label>
+				<pos>200,80</pos>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl4" member="yes">
+				<label>Shape</label>
+				<pos>250,110</pos>
+			</object>
+			<object class="wmEdit" name="ID_M_PEDT1" variable="m_pedtFrequency" member="yes">
+				<validation>Integer</validation>
+				<border>uiRect::BORDER_DOWN</border>
+				<border_focused>uiRect::BORDER_DOWN</border_focused>
+				<background_focused>#FFFF80</background_focused>
+				<pos>260,20</pos>
+				<size>80,-1</size>
+				<handler function="OnCheckFrequency" entry="EVT_TEXT" />
+				<handler function="OnedtFrequencyTextEnter" entry="EVT_TEXT_ENTER" />
+			</object>
+			<object class="wmEdit" name="ID_M_PEDT2" variable="m_pedtAmplitude" member="yes">
+				<validation>Real</validation>
+				<border>uiRect::BORDER_DOWN</border>
+				<border_focused>uiRect::BORDER_DOWN</border_focused>
+				<background_focused>#FFFF80</background_focused>
+				<pos>260,50</pos>
+				<size>80,-1</size>
+				<handler function="OnCheckFrequency" entry="EVT_TEXT" />
+				<handler function="OnedtAmplitudeTextEnter" entry="EVT_TEXT_ENTER" />
+			</object>
+			<object class="wmEdit" name="ID_M_PEDT3" variable="m_pedtCycles" member="yes">
+				<validation>Integer</validation>
+				<border>uiRect::BORDER_DOWN</border>
+				<border_focused>uiRect::BORDER_DOWN</border_focused>
+				<background_focused>#FFFF80</background_focused>
+				<pos>260,80</pos>
+				<size>80,-1</size>
+				<handler function="OnCheckFrequency" entry="EVT_TEXT" />
+				<handler function="OnedtCyclesTextEnter" entry="EVT_TEXT_ENTER" />
+			</object>
+			<object class="wmList" name="ID_M_PLST4" variable="m_plstFrequencyShape" member="yes">
+				<scrolling>None</scrolling>
+				<columns>4</columns>
+				<button_selected>#FF8040</button_selected>
+				<button_disabled>#909090</button_disabled>
+				<items />
+				<pos>200,135</pos>
+				<size>180,44</size>
+				<enabled>0</enabled>
+				<bg>#000000</bg>
+				<style>wmList::STYLE_SELECT</style>
+				<handler function="OnlstFrequencyShapeSelected" entry="EVT_LIST_SELECTED" />
+			</object>
+			<object class="wmButton" name="ID_M_PBTN7" variable="m_pbtnFrequencyAppend" member="yes">
+				<label>Append</label>
+				<button_pressed>#00C600</button_pressed>
+				<pos>200,190</pos>
+				<size>80,40</size>
+				<enabled>0</enabled>
+				<bg>#008000</bg>
+				<handler function="OnbtnFrequencyAppendClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmButton" name="ID_M_PBTN9" variable="m_pbtnFrequencyUpdate" member="yes">
+				<label>Update</label>
+				<button_pressed>#0000FF</button_pressed>
+				<button_disabled>#909090</button_disabled>
+				<pos>285,190</pos>
+				<size>80,40</size>
+				<enabled>0</enabled>
+				<bg>#000080</bg>
+				<handler function="OnbtnFrequencyUpdateClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmKeyboard" name="ID_M_PKBD1" variable="m_pkbd" member="yes">
+				<type>Calc</type>
+				<pos>190,235</pos>
+				<size>200,200</size>
+				<fg>#FFFFFF</fg>
+			</object>
+			<object class="wmButton" name="ID_M_PBTN12" variable="m_pbtnFinished" member="yes">
+				<label>Close Sequence Creator</label>
+				<pos>190,435</pos>
+				<size>200,35</size>
+				<bg>#0080FF</bg>
+				<handler function="OnbtnFinishedClick" entry="EVT_BUTTON" />
+			</object>
+		</object>
+	</object>
+</wxsmith>

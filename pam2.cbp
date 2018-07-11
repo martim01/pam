@@ -130,7 +130,6 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-std=c++11" />
 			<Add option="-Wall" />
 			<Add option="-D_core_" />
 			<Add directory="C:/wxWidgets-3.0.2/include" />
@@ -151,6 +150,10 @@
 			<Add directory="$(#live_usage.lib)" />
 			<Add directory="$(#live_basicusage.lib)" />
 		</Linker>
+		<Unit filename="dlgEditName.cpp" />
+		<Unit filename="dlgEditName.h" />
+		<Unit filename="dlgSequence.cpp" />
+		<Unit filename="dlgSequence.h" />
 		<Unit filename="dlgUpdate.cpp" />
 		<Unit filename="dlgUpdate.h" />
 		<Unit filename="dlgmask.cpp" />
@@ -193,7 +196,9 @@
 		<Unit filename="wxpammclient.h" />
 		<Unit filename="wxpammconnection.cpp" />
 		<Unit filename="wxpammconnection.h" />
+		<Unit filename="wxsmith/dlgEditName.wxs" />
 		<Unit filename="wxsmith/dlgMask.wxs" />
+		<Unit filename="wxsmith/dlgSequence.wxs" />
 		<Unit filename="wxsmith/dlgUpdate.wxs" />
 		<Unit filename="wxsmith/pnlAoIPInfo.wxs" />
 		<Unit filename="wxsmith/pnlHelp.wxs" />
@@ -228,6 +233,8 @@
 					<wxDialog wxs="wxsmith/dlgUpdate.wxs" src="dlgUpdate.cpp" hdr="dlgUpdate.h" fwddecl="0" i18n="1" name="dlgUpdate" language="CPP" />
 					<wxDialog wxs="wxsmith/dlgHelp.wxs" src="dlgHelp.cpp" hdr="dlgHelp.h" fwddecl="0" i18n="1" name="dlgHelp" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlHelp.wxs" src="pnlHelp.cpp" hdr="pnlHelp.h" fwddecl="0" i18n="1" name="pnlHelp" language="CPP" />
+					<wxDialog wxs="wxsmith/dlgSequence.wxs" src="dlgSequence.cpp" hdr="dlgSequence.h" fwddecl="0" i18n="1" name="dlgSequence" language="CPP" />
+					<wxDialog wxs="wxsmith/dlgEditName.wxs" src="dlgEditName.cpp" hdr="dlgEditName.h" fwddecl="0" i18n="1" name="dlgEditName" language="CPP" />
 				</resources>
 			</wxsmith>
 			<AutoVersioning>

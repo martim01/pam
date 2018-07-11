@@ -90,7 +90,7 @@
 						<handler function="OnbtnEndClick" entry="EVT_BUTTON" />
 					</object>
 				</object>
-				<label>Audio Input</label>
+				<label>Input</label>
 			</object>
 			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL2" variable="pnlOutput" member="yes">
@@ -156,7 +156,7 @@
 						<extra_code>m__pLbl1-&gt;GetUiRect().SetGradient(0);</extra_code>
 					</object>
 				</object>
-				<label>Audio Output</label>
+				<label>Output Device</label>
 			</object>
 			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL8" variable="pnlGenerator" member="yes">
@@ -184,7 +184,7 @@
 						<button_selected>#FF8000</button_selected>
 						<items />
 						<pos>0,36</pos>
-						<size>600,34</size>
+						<size>400,34</size>
 						<style>wmList::STYLE_SELECT</style>
 						<handler function="OnlstAudioSourcesSelected" entry="EVT_LIST_SELECTED" />
 					</object>
@@ -397,8 +397,14 @@
 							<label>Generator</label>
 						</object>
 					</object>
+					<object class="wmButton" name="ID_M_PBTN20" variable="m_pbtnSequences" member="yes">
+						<label>Edit Sequences</label>
+						<pos>410,39</pos>
+						<size>100,30</size>
+						<handler function="OnbtnSequencesClick" entry="EVT_BUTTON" />
+					</object>
 				</object>
-				<label>Audio Generator</label>
+				<label>Output Source</label>
 			</object>
 			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL4" subclass="pnlRTP" variable="pnlSettingsRTP" member="yes" />

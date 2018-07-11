@@ -21,6 +21,7 @@ pnlRouting::pnlRouting(wxWindow* parent,ScopeBuilder* pBuilder, wxWindowID id,co
 {
 	//(*Initialize(pnlRouting)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
+	SetBackgroundColour(wxColour(0,0,0));
 	m_plstRouting1 = new wmList(this, ID_M_PLST16, wxPoint(0,0), wxSize(190,88), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 2, wxSize(5,5));
 	m_plstRouting1->SetBackgroundColour(wxColour(0,0,0));
 	m_plstRouting2 = new wmList(this, ID_M_PLST1, wxPoint(0,100), wxSize(190,88), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 2, wxSize(5,5));

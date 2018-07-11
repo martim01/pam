@@ -137,7 +137,6 @@ class pam2Dialog: public wxDialog
 
         void ClearSession();
 
-        void ReadSoundFile(unsigned int nSize);
 
         void InitGenerator(const wxString& sSequence);
         void InitGenerator();
@@ -147,9 +146,7 @@ class pam2Dialog: public wxDialog
         Audio* m_pAudio;
         Playback* m_pPlayback;
 
-        SoundFile* m_pSoundfile;
         Generator* m_pGenerator;
-        Generator* m_pSequenceGenerator;
 
         pnlSettings* m_ppnlSettings;
         pnlTests* m_ppnlTests;

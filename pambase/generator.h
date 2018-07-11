@@ -18,6 +18,8 @@ struct genfreq
     int nPhase;
 };
 
+class SoundFile;
+
 class PAMBASE_IMPEXPORT Sequence
 {
     public:
@@ -51,13 +53,20 @@ class PAMBASE_IMPEXPORT Generator
 
         void SetSampleRate(unsigned int nSampleRate);
         void SetFrequency(float dFrequency, float ddBFS, int nType);
-        void SetFile(const wxString& sFile);
+        bool SetFile(const wxString& sFile);
 
         void Generate(unsigned int nSize);
 
         void AddSequence(const wxString& sName, Sequence* pSeq);
         void DeleteSequence(const wxString& sName);
         void ClearSequences();
+        void ClearFrequences();
+        void CloseFile();
+
+
+
+        unsigned int GetSampleRate();
+        unsigned int GetChannels();
 
         enum {SINE=0, SQUARE, SAW, TRIANGLE};
 
@@ -66,7 +75,7 @@ class PAMBASE_IMPEXPORT Generator
 
     protected:
 
-
+        void ReadSoundFile(unsigned int nSize);
         void GenerateSequence(Sequence* pSeq, float* pBuffer, unsigned int nSize);
         void GenerateFrequency(float* pBuffer, unsigned int nSize);
 
@@ -83,5 +92,6 @@ class PAMBASE_IMPEXPORT Generator
         float m_dSampleRate;
         size_t m_nPhase;
 
+        SoundFile* m_pSoundfile;
 
 };

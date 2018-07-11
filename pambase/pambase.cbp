@@ -149,7 +149,6 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-std=c++11" />
 			<Add option="-D_pambase_" />
 			<Add option="-DCREATING_DLL" />
 			<Add option="-D_core_" />

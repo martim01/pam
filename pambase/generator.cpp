@@ -4,6 +4,7 @@
 #include <wx/log.h>
 #include <iterator>
 #include "playout.h"
+#include "soundfile.h"
 
 using namespace std;
 
@@ -57,7 +58,8 @@ void Sequence::AdvanceSequence()
 Generator::Generator(Playback* pPlayback) :
     m_pPlayback(pPlayback),
     m_dSampleRate(48000),
-    m_nPhase(0)
+    m_nPhase(0),
+    m_pSoundfile(0)
 {
 
 }
@@ -65,6 +67,8 @@ Generator::Generator(Playback* pPlayback) :
 Generator::~Generator()
 {
     ClearSequences();
+    ClearFrequences();
+    CloseFile();
 }
 
 void Generator::SetSampleRate(unsigned int nSampleRate)
@@ -76,41 +80,41 @@ void Generator::SetSampleRate(unsigned int nSampleRate)
 
 void Generator::Generate(unsigned int nSize)
 {
-
-    float* pBuffer = new float[nSize];
-
-
-    timedbuffer* pData = new timedbuffer(nSize);
-    float dSize(m_mSequences.size());
-
-    if(m_mSequences.empty() == false)
+    if(m_pSoundfile)
     {
-        for(int i = 0; i < nSize; i++)
-        {
-            pBuffer[i] = 0.0;
-        }
-
-
-        for(map<wxString, Sequence*>::iterator itSequence = m_mSequences.begin(); itSequence != m_mSequences.end(); ++itSequence)
-        {
-            GenerateSequence(itSequence->second, pBuffer, nSize);
-        }
-
-        m_nPhase += (nSize/2);
-        if(m_nPhase >= static_cast<unsigned long>(m_dSampleRate))
-        {
-            m_nPhase -= static_cast<unsigned long>(m_dSampleRate);
-        }
+        ReadSoundFile(nSize);
     }
-    else if(m_queueFreq.empty() == false)
+    else
     {
-        GenerateFrequency(pBuffer, nSize);
+        timedbuffer* pData = new timedbuffer(nSize);
+        float dSize(m_mSequences.size());
+
+        if(m_mSequences.empty() == false)
+        {
+            for(int i = 0; i < nSize; i++)
+            {
+                pData->GetWritableBuffer()[i] = 0.0;
+            }
+
+            for(map<wxString, Sequence*>::iterator itSequence = m_mSequences.begin(); itSequence != m_mSequences.end(); ++itSequence)
+            {
+                GenerateSequence(itSequence->second, pData->GetWritableBuffer(), nSize);
+            }
+
+            m_nPhase += (nSize/2);
+            if(m_nPhase >= static_cast<unsigned long>(m_dSampleRate))
+            {
+                m_nPhase -= static_cast<unsigned long>(m_dSampleRate);
+            }
+        }
+        else if(m_queueFreq.empty() == false)
+        {
+            GenerateFrequency(pData->GetWritableBuffer(), nSize);
+        }
+
+        pData->SetDuration(pData->GetBufferSize()*4);
+        m_pPlayback->AddSamples(pData);
     }
-
-    pData->SetBuffer(pBuffer);
-    pData->SetDuration(pData->GetBufferSize()*4);
-
-    m_pPlayback->AddSamples(pData);
 }
 
 void Generator::GenerateSequence(Sequence* pSeq, float* pBuffer, unsigned int nSize)
@@ -150,14 +154,6 @@ void Generator::GenerateSequence(Sequence* pSeq, float* pBuffer, unsigned int nS
             nPhase = 0;
         }
 
-//        pSeq->GetSequencePosition()->nPhase++;
-//        if(pSeq->GetSequencePosition()->nPhase == static_cast<unsigned long>(m_dSampleRate))
-//        {
-//
-//            pSeq->GetSequencePosition()->nPhase = 0;
-//        }
-
-
         if(pSeq->GetSequencePosition()->nCycles > 0)
         {
             pSeq->GetSequencePosition()->dCycleCount+= (pSeq->GetSequencePosition()->dFrequency/m_dSampleRate);
@@ -173,10 +169,8 @@ void Generator::GenerateSequence(Sequence* pSeq, float* pBuffer, unsigned int nS
 void Generator::GenerateFrequency(float* pBuffer, unsigned int nSize)
 {
 
-
     for(int i = 0; i < nSize; i+=2)
     {
-
         float dAmplitude(0.0);
         switch(m_queueFreq.front().nType)
         {
@@ -291,4 +285,71 @@ void Generator::SetFrequency(float dFrequency, float ddBFS, int nType)
     }
 
     m_queueFreq.push(genfreq(dFrequency, dAmplitude, 1, nType));
+}
+
+void Generator::ClearFrequences()
+{
+    while(m_queueFreq.empty() == false)
+    {
+        m_queueFreq.pop();
+    }
+}
+
+void Generator::CloseFile()
+{
+    if(m_pSoundfile)
+    {
+        delete m_pSoundfile;
+        m_pSoundfile = 0;
+    }
+}
+
+bool Generator::SetFile(const wxString& sFilePath)
+{
+    ClearSequences();
+    ClearFrequences();
+
+    CloseFile();
+
+    m_pSoundfile = new SoundFile();
+    bool bOk(m_pSoundfile->OpenToRead(sFilePath));
+    if(bOk == false)
+    {
+        CloseFile();
+    }
+
+    return bOk;
+
+}
+
+unsigned int Generator::GetSampleRate()
+{
+    if(m_pSoundfile)
+    {
+        return m_pSoundfile->GetSampleRate();
+    }
+    return m_dSampleRate;
+}
+
+unsigned int Generator::GetChannels()
+{
+    if(m_pSoundfile)
+    {
+        return m_pSoundfile->GetChannels();
+    }
+    return 2;
+}
+
+
+void Generator::ReadSoundFile(unsigned int nSize)
+{
+    if(m_pSoundfile)
+    {
+        timedbuffer* pData = new timedbuffer(nSize);
+        if(m_pSoundfile->ReadAudio(pData->GetWritableBuffer(), pData->GetBufferSize(), 1))
+        {
+            pData->SetDuration(pData->GetBufferSize()*(m_pSoundfile->GetFormat()&0x0F));
+            m_pPlayback->AddSamples(pData);
+        }
+    }
 }

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxDialog" name="dlgEditName">
+		<pos>0,0</pos>
+		<size>800,480</size>
+		<fg>#FFFFFF</fg>
+		<bg>#000000</bg>
+		<font>
+			<size>12</size>
+			<style>normal</style>
+			<weight>normal</weight>
+			<underlined>0</underlined>
+			<family>swiss</family>
+			<face>Arial</face>
+		</font>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<style>wxNO_BORDER</style>
+		<object class="wmKeyboard" name="ID_M_PKBD1" variable="m_pKbd1" member="yes">
+			<pos>10,90</pos>
+			<fg>#FFFFFF</fg>
+		</object>
+		<object class="wmEdit" name="ID_M_PEDT1" variable="m_pedtName" member="yes">
+			<validation>Alphanumeric</validation>
+			<border>uiRect::BORDER_DOWN</border>
+			<border_focused>uiRect::BORDER_DOWN</border_focused>
+			<pos>10,30</pos>
+			<size>600,50</size>
+			<bg>#FFFFFF</bg>
+			<handler function="OnedtNameText" entry="EVT_TEXT" />
+			<handler function="OnedtNameTextEnter" entry="EVT_TEXT_ENTER" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnSave" member="yes">
+			<label>Save</label>
+			<pos>160,400</pos>
+			<size>100,60</size>
+			<enabled>0</enabled>
+			<handler function="OnbtnSaveClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnCancel" member="yes">
+			<label>Cancel</label>
+			<pos>500,400</pos>
+			<size>100,0</size>
+			<handler function="OnbtnCancelClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wxPanel" name="ID_PANEL1" variable="m_ppnlChannel" member="yes">
+			<pos>664,30</pos>
+			<size>90,140</size>
+			<hidden>1</hidden>
+			<bg>#000000</bg>
+			<object class="wmList" name="ID_M_PLST1" variable="m_plstChannels" member="yes">
+				<scrolling>None</scrolling>
+				<items />
+				<pos>0,0</pos>
+				<size>84,130</size>
+				<bg>#000000</bg>
+				<style>wmList::STYLE_SELECT</style>
+				<handler function="OnlstChannelsSelected" entry="EVT_LIST_SELECTED" />
+			</object>
+		</object>
+	</object>
+</wxsmith>

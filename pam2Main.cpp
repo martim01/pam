@@ -96,7 +96,6 @@ END_EVENT_TABLE()
 pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_pAudio(0),
     m_pPlayback(0),
-    m_pSoundfile(0),
     m_pSelectedMonitor(0),
     m_ppnlLog(0)
 {
@@ -218,7 +217,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_pPlayback = 0;
 
     m_pGenerator = 0;
-    m_pSequenceGenerator = 0;
+
 }
 
 pam2Dialog::~pam2Dialog()
@@ -245,10 +244,6 @@ pam2Dialog::~pam2Dialog()
     {
         delete m_pGenerator;
     }
-    if(m_pSequenceGenerator)
-    {
-        delete m_pSequenceGenerator;
-    }
     if(m_pPlayback)
     {
         m_pPlayback->ClosePlayback();
@@ -256,11 +251,6 @@ pam2Dialog::~pam2Dialog()
         delete m_pPlayback;
     }
 
-    if(m_pSoundfile)
-    {
-        delete m_pSoundfile;
-        m_pSoundfile = 0;
-    }
 
     Pa_Terminate();
 
@@ -483,9 +473,9 @@ void pam2Dialog::ShowSettingsPanel()
     m_plstOptions->Freeze();
     m_plstOptions->Clear();
 
-    m_plstOptions->AddButton(wxT("Audio Input"));
-    m_plstOptions->AddButton(wxT("Audio Output"));
-    m_plstOptions->AddButton(wxT("Audio Generator"));
+    m_plstOptions->AddButton(wxT("Input"));
+    m_plstOptions->AddButton(wxT("Output Device"));
+    m_plstOptions->AddButton(wxT("Output Source"));
     m_plstOptions->AddButton(wxT("AoIP"));
     m_plstOptions->AddButton(wxT("Network"));
     m_plstOptions->AddButton(wxT("Plugins"));
@@ -696,17 +686,9 @@ void pam2Dialog::OnAudioData(wxCommandEvent& event)
     {
         if(event.GetId() == timedbuffer::OUTPUT)
         {
-            if(m_pSoundfile)
-            {
-                ReadSoundFile(pTimedBuffer->GetBufferSize());
-            }
-            else if(m_pGenerator)
+            if(m_pGenerator && m_nPlaybackSource != m_nMonitorSource)
             {
                 m_pGenerator->Generate(pTimedBuffer->GetBufferSize());
-            }
-            else if(m_pSequenceGenerator)
-            {
-                m_pSequenceGenerator->Generate(pTimedBuffer->GetBufferSize());
             }
         }
         else if(event.GetId() == m_nPlaybackSource)
@@ -861,51 +843,30 @@ void pam2Dialog::InputChanged(const wxString& sKey)
             CreateAudioInputDevice();
         }
     }
-    else if(sKey == wxT("File"))
-    {
-        OpenFileForReading();
-    }
-    else if(sKey == wxT("Generator"))
-    {
-        if(m_pSequenceGenerator)
-        {
-            wmLog::Get()->Log(wxT("Change generator sequence"));
-            delete m_pSequenceGenerator;
-            m_pSequenceGenerator = 0;
-        }
-        InitGenerator(Settings::Get().Read(wxT("Input"), wxT("Generator"), wxT("glits")));
-    }
 }
 
 void pam2Dialog::OpenFileForReading()
 {
     wxString sFilePath;
     sFilePath << Settings::Get().GetDocumentDirectory() << wxT("/") << Settings::Get().Read(wxT("Output"), wxT("File"), wxEmptyString) << wxT(".wav");
-    if(m_pSoundfile)
-    {
-        wmLog::Get()->Log(wxT("Close sound file"));
-        delete m_pSoundfile;
-    }
     //Does the file exist
     if(wxFileExists(sFilePath))
     {
-        m_pSoundfile = new SoundFile();
-        if(m_pSoundfile->OpenToRead(sFilePath))
+        if(m_pGenerator->SetFile(sFilePath))
         {
             wmLog::Get()->Log(wxString::Format(wxT("Opened file '%s'"), sFilePath.c_str()));
-            wmLog::Get()->Log(wxString::Format(wxT("SampleRate = %d"), m_pSoundfile->GetSampleRate()));
-            wmLog::Get()->Log(wxString::Format(wxT("Channels = %d"), m_pSoundfile->GetChannels()));
+            wmLog::Get()->Log(wxString::Format(wxT("SampleRate = %d"), m_pGenerator->GetSampleRate()));
+            wmLog::Get()->Log(wxString::Format(wxT("Channels = %d"), m_pGenerator->GetChannels()));
 
-            ReadSoundFile(8192);
-            CheckPlayback(m_pSoundfile->GetSampleRate(), m_pSoundfile->GetChannels());
+            CheckPlayback(m_pGenerator->GetSampleRate(), m_pGenerator->GetChannels());
             m_dtLastRead = wxDateTime::UNow();
             CreateSessionFromOutput(Settings::Get().Read(wxT("Output"), wxT("File"), wxEmptyString));
+
+            m_pGenerator->Generate(8192);
         }
         else
         {
             wmLog::Get()->Log(wxString::Format(wxT("Failed to open file '%s'"), sFilePath.c_str()));
-            delete m_pSoundfile;
-            m_pSoundfile = 0;
         }
     }
     else
@@ -916,71 +877,70 @@ void pam2Dialog::OpenFileForReading()
 
 void pam2Dialog::InitGenerator(const wxString& sSequence)
 {
-    if(sSequence != m_sCurrentSequence)
+    if(m_pGenerator)
     {
-        m_sCurrentSequence = sSequence;
-        if(m_pSequenceGenerator)
+        if(sSequence != m_sCurrentSequence)
         {
-            delete m_pSequenceGenerator;
-        }
+            m_pGenerator->ClearSequences();
 
-        m_pSequenceGenerator = new Generator(m_pPlayback);
-        m_pSequenceGenerator->SetSampleRate(48000);
+            m_sCurrentSequence = sSequence;
 
-        wxXmlDocument doc;
-        if(doc.Load(wxString::Format(wxT("%s/generator/%s.xml"), Settings::Get().GetDocumentDirectory().c_str(), sSequence.c_str())) && doc.GetRoot())
-        {
-            for(wxXmlNode* pSequenceNode = doc.GetRoot()->GetChildren(); pSequenceNode; pSequenceNode = pSequenceNode->GetNext())
+            wxXmlDocument doc;
+            if(doc.Load(wxString::Format(wxT("%s/generator/%s.xml"), Settings::Get().GetDocumentDirectory().c_str(), sSequence.c_str())) && doc.GetRoot())
             {
-                if(pSequenceNode->GetName().CmpNoCase(wxT("sequence")) == 0)
+                for(wxXmlNode* pSequenceNode = doc.GetRoot()->GetChildren(); pSequenceNode; pSequenceNode = pSequenceNode->GetNext())
                 {
-                    unsigned long nChannels(0);
-                    pSequenceNode->GetAttribute(wxT("channels"), wxT("0")).ToULong(&nChannels);
-                    Sequence* pSequence = new Sequence(nChannels);
-
-                    for(wxXmlNode* pFreqGenNode = pSequenceNode->GetChildren(); pFreqGenNode; pFreqGenNode = pFreqGenNode->GetNext())
+                    if(pSequenceNode->GetName().CmpNoCase(wxT("sequence")) == 0)
                     {
-                        if(pFreqGenNode->GetName().CmpNoCase(wxT("genfreq")) == 0)
+                        unsigned long nChannels(0);
+                        pSequenceNode->GetAttribute(wxT("channels"), wxT("0")).ToULong(&nChannels);
+                        Sequence* pSequence = new Sequence(nChannels);
+
+                        for(wxXmlNode* pFreqGenNode = pSequenceNode->GetChildren(); pFreqGenNode; pFreqGenNode = pFreqGenNode->GetNext())
                         {
-                            double dFrequency, ddBFS;
-                            long nCycles(0), nType(0);
-                            if(pFreqGenNode->GetAttribute(wxT("frequency"), wxEmptyString).ToDouble(&dFrequency) && pFreqGenNode->GetAttribute(wxT("dBFS"), wxEmptyString).ToDouble(&ddBFS) && pFreqGenNode->GetAttribute(wxT("cycles"), wxEmptyString).ToLong(&nCycles) && pFreqGenNode->GetAttribute(wxT("type"), wxT("0")).ToLong(&nType))
+                            if(pFreqGenNode->GetName().CmpNoCase(wxT("genfreq")) == 0)
                             {
-                                pSequence->AppendGenFreq(dFrequency, ddBFS, nCycles, nType);
+                                double dFrequency, ddBFS;
+                                long nCycles(0), nType(0);
+                                if(pFreqGenNode->GetAttribute(wxT("frequency"), wxEmptyString).ToDouble(&dFrequency) && pFreqGenNode->GetAttribute(wxT("dBFS"), wxEmptyString).ToDouble(&ddBFS) && pFreqGenNode->GetAttribute(wxT("cycles"), wxEmptyString).ToLong(&nCycles) && pFreqGenNode->GetAttribute(wxT("type"), wxT("0")).ToLong(&nType))
+                                {
+                                    pSequence->AppendGenFreq(dFrequency, ddBFS, nCycles, nType);
+                                }
                             }
                         }
+                        m_pGenerator->AddSequence(pSequenceNode->GetAttribute(wxT("name"), wxEmptyString), pSequence);
                     }
-                    m_pSequenceGenerator->AddSequence(pSequenceNode->GetAttribute(wxT("name"), wxEmptyString), pSequence);
                 }
+                wmLog::Get()->Log(wxString::Format(wxT("Generating sequence file %s"), sSequence.c_str()));
             }
-            wmLog::Get()->Log(wxString::Format(wxT("Generating sequence file %s"), sSequence.c_str()));
-        }
-        else
-        {
-            wmLog::Get()->Log(wxString::Format(wxT("Could not open sequence file %s"), sSequence.c_str()));
-        }
+            else
+            {
+                wmLog::Get()->Log(wxString::Format(wxT("Could not open sequence file %s"), sSequence.c_str()));
+            }
 
-        CreateSessionFromOutput(Settings::Get().Read(wxT("Output"), wxT("Sequence"), wxT("glits")));
-        CheckPlayback(48000,2);
+            CreateSessionFromOutput(Settings::Get().Read(wxT("Output"), wxT("Sequence"), wxT("glits")));
+            CheckPlayback(48000,2);
 
-        m_pSequenceGenerator->Generate(8192);
+            m_pGenerator->Generate(8192);
+        }
     }
 }
 
 
 void pam2Dialog::InitGenerator()
 {
-    m_pGenerator = new Generator(m_pPlayback);
-    m_pGenerator->SetSampleRate(48000);
+    if(m_pGenerator)
+    {
+        m_pGenerator->ClearSequences();
+        m_pGenerator->SetFrequency(Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000), Settings::Get().Read(wxT("Generator"), wxT("Amplitude"), -18.0), Settings::Get().Read(wxT("Generator"), wxT("Shape"), 0));
 
-    m_pGenerator->SetFrequency(Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000), Settings::Get().Read(wxT("Generator"), wxT("Amplitude"), -18.0), Settings::Get().Read(wxT("Generator"), wxT("Shape"), 0));
+        wmLog::Get()->Log(wxString::Format(wxT("Generating fixed frequency %dHz at %.1fdB"),Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000), Settings::Get().Read(wxT("Generator"), wxT("Amplitude"), -18.0)));
 
-    wmLog::Get()->Log(wxString::Format(wxT("Generating fixed frequency %dHz at %.1fdB"),Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000), Settings::Get().Read(wxT("Generator"), wxT("Amplitude"), -18.0)));
+        CreateSessionFromOutput(wxString::Format(wxT("%dHz %.1fdBFS"), Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000), Settings::Get().Read(wxT("Generator"), wxT("Amplitude"), -18.0)));
+        CheckPlayback(48000,2);
 
-    CreateSessionFromOutput(wxString::Format(wxT("%dHz %.1fdBFS"), Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000), Settings::Get().Read(wxT("Generator"), wxT("Amplitude"), -18.0)));
-    CheckPlayback(48000,2);
-
-    m_pGenerator->Generate(8192);
+        m_pGenerator->Generate(8192);
+    }
 }
 
 void pam2Dialog::OutputChanged(const wxString& sKey)
@@ -1002,50 +962,18 @@ void pam2Dialog::OutputChanged(const wxString& sKey)
     else if(sKey == wxT("Source"))
     {
         wxString sType(Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")));
-        if(sType != wxT("File"))
-        {
-            if(m_pSoundfile)
-            {
-                wmLog::Get()->Log(wxT("Close sound file"));
-                delete m_pSoundfile;
-                m_pSoundfile = 0;
-            }
-        }
-        if(sType != wxT("Sequence"))
-        {
-            if(m_pSequenceGenerator)
-            {
-                wmLog::Get()->Log(wxT("Close sequence generator"));
-                delete m_pSequenceGenerator;
-                m_pSequenceGenerator = 0;
-            }
-        }
-        if(sType != wxT("Generator"))
-        {
-            if(m_pGenerator)
-            {
-                wmLog::Get()->Log(wxT("Close generator"));
-                delete m_pGenerator;
-                m_pGenerator = 0;
-            }
-        }
-
 
         if(sType == wxT("File"))
         {
             m_nPlaybackSource = timedbuffer::FILE;
             wmLog::Get()->Log(wxT("Create Audio Output Generator: File"));
             OpenFileForReading();
-
-
         }
         else if(sType == wxT("Sequence"))
         {
             m_nPlaybackSource = timedbuffer::GENERATOR;
             wmLog::Get()->Log(wxT("Create Audio Output Generator: Sequence"));
             InitGenerator(Settings::Get().Read(wxT("Output"), wxT("Sequence"), wxT("glits")));
-
-
         }
         else if(sType == wxT("Generator"))
         {
@@ -1057,6 +985,8 @@ void pam2Dialog::OutputChanged(const wxString& sKey)
         else if(sType == wxT("Input"))
         {
             m_nPlaybackSource = m_nMonitorSource;
+
+
         }
 
     }
@@ -1220,6 +1150,10 @@ void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
     CreateAudioInputDevice();
     m_pPlayback = new Playback();
     m_pPlayback->Init(this, 2048);
+
+    m_pGenerator = new Generator(m_pPlayback);
+    m_pGenerator->SetSampleRate(48000);
+
     OutputChanged(wxT("Enabled"));
     OutputChanged(wxT("Source"));
 
@@ -1230,16 +1164,7 @@ void pam2Dialog::Onm_timerFileTrigger(wxTimerEvent& event)
 {
 }
 
-void pam2Dialog::ReadSoundFile(unsigned int nSize)
-{
-    timedbuffer* pData = new timedbuffer(nSize);
-    if(m_pSoundfile->ReadAudio(pData->GetWritableBuffer(), pData->GetBufferSize(), 1))
-    {
-        pData->SetDuration(pData->GetBufferSize()*(m_pSoundfile->GetFormat()&0x0F));
-        m_pPlayback->AddSamples(pData);
-    }
 
-}
 
 void pam2Dialog::PopulateThreadList()
 {
