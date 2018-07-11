@@ -99,6 +99,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_pSelectedMonitor(0),
     m_ppnlLog(0)
 {
+    Pa_Initialize();
 
     //(*Initialize(pam2Dialog)
     Create(parent, id, _("wxWidgets app"), wxDefaultPosition, wxDefaultSize, wxNO_BORDER, _T("id"));

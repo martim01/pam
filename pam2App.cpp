@@ -19,7 +19,7 @@ IMPLEMENT_APP(pam2App);
 
 bool pam2App::OnInit()
 {
-    Pa_Initialize();
+
     //(*AppInitialize
     bool wxsOK = true;
     wxInitAllImageHandlers();

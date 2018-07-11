@@ -27,14 +27,6 @@ Audio::Audio(wxEvtHandler* pHandler, unsigned int nDevice) :
     m_nSampleRate = 48000;
     m_nBufferSize = 2048;
 
-    wmLog::Get()->Log(wxT("Init PortAudio"));
-    PaError err = Pa_Initialize();
-    if(err != paNoError)
-    {
-        wmLog::Get()->Log(wxString::Format(wxT("Failed to init PortAudio: %s"), wxString::FromAscii(Pa_GetErrorText(err)).c_str()));
-    }
-
-
  }
 
  bool Audio::Init()
@@ -73,12 +65,12 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
         err = Pa_StartStream(m_pStream);
         if(err == paNoError)
         {
-            wmLog::Get()->Log(wxString::Format(wxT("Device %d opened"), m_nDevice));
+            wmLog::Get()->Log(wxString::Format(wxT("Input Device %d opened"), m_nDevice));
             return true;
         }
     }
     m_pStream = 0;
-    wmLog::Get()->Log(wxString::Format(wxT("Failed to open device %d %s %d %d,"), m_nDevice, wxString::FromAscii(Pa_GetErrorText(err)).c_str(), m_nSampleRate, m_nChannels));
+    wmLog::Get()->Log(wxString::Format(wxT("Failed to open input device %d %s %d %d,"), m_nDevice, wxString::FromAscii(Pa_GetErrorText(err)).c_str(), m_nSampleRate, m_nChannels));
     return false;
 }
 
@@ -93,12 +85,6 @@ Audio::~Audio()
         {
             wmLog::Get()->Log(wxString::Format(wxT("Failed to stop PortAudio input stream: %s"), wxString::FromAscii(Pa_GetErrorText(err)).c_str()));
         }
-    }
-    wmLog::Get()->Log(wxT("Terminate PortAudio"));
-    PaError err = Pa_Terminate();
-    if(err != paNoError)
-    {
-        wmLog::Get()->Log(wxString::Format(wxT("Failed to terminate PortAudio: %s"), wxString::FromAscii(Pa_GetErrorText(err)).c_str()));
     }
 
 }

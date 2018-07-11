@@ -106,20 +106,27 @@ void wxTouchScreenHtml::OnPaint(wxPaintEvent& event)
 
 void wxTouchScreenHtml::SetPageTouch(const wxString& sCode)
 {
+//    int xView,yView;
+//    GetViewStart(&xView,&yView);
+//    SetPage(sCode);
+//    int x,y;
+//    GetVirtualSize(&x,&y);
+//    SetScrollbars(1,1, x,y);
+//    if(m_bScrollLock)
+//    {
+//        Scroll(xView,yView);
+//    }
+//    else
+//    {
+//        Scroll(0,y-GetClientSize().y);
+//    }
+
     int xView,yView;
     GetViewStart(&xView,&yView);
     SetPage(sCode);
     int x,y;
     GetVirtualSize(&x,&y);
     SetScrollbars(1,1, x,y);
-    if(m_bScrollLock)
-    {
-        Scroll(xView,yView);
-    }
-    else
-    {
-        Scroll(0,y-GetClientSize().y);
-    }
 }
 
 void wxTouchScreenHtml::LoadFileTouch(const wxString& sFile)
