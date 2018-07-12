@@ -1,7 +1,7 @@
 #pragma once
 #include <wx/window.h>
 #include <wx/bitmap.h>
-#include "audio.h"
+#include <list>
 #include "uirect.h"
 #include "SimpleComp.h"
 

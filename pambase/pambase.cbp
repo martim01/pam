@@ -235,6 +235,8 @@
 		<Unit filename="settings.h" />
 		<Unit filename="smpte2110mediasession.cpp" />
 		<Unit filename="smpte2110mediasession.h" />
+		<Unit filename="soundcardmanager.cpp" />
+		<Unit filename="soundcardmanager.h" />
 		<Unit filename="soundfile.cpp" />
 		<Unit filename="soundfile.h" />
 		<Unit filename="streamclientstate.cpp" />

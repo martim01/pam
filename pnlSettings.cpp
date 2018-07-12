@@ -105,7 +105,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pswpSettings->SetPageNameStyle(0);
     pnlInput = new wxPanel(m_pswpSettings, ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL1"));
     pnlInput->SetBackgroundColour(wxColour(0,0,0));
-    m_pLbl3 = new wmLabel(pnlInput, ID_M_PLBL3, _("Audio Input"), wxPoint(0,5), wxSize(600,30), 0, _T("ID_M_PLBL3"));
+    m_pLbl3 = new wmLabel(pnlInput, ID_M_PLBL3, _("Audio Monitoring Source"), wxPoint(0,5), wxSize(600,30), 0, _T("ID_M_PLBL3"));
     m_pLbl3->SetBorderState(uiRect::BORDER_NONE);
     m_pLbl3->SetForegroundColour(wxColour(255,255,255));
     m_pLbl3->SetBackgroundColour(wxColour(0,64,0));
@@ -127,7 +127,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pbtnEnd->SetColourDisabled(wxColour(wxT("#808080")));
     pnlOutput = new wxPanel(m_pswpSettings, ID_PANEL2, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL2"));
     pnlOutput->SetBackgroundColour(wxColour(0,0,0));
-    m_pLbl4 = new wmLabel(pnlOutput, ID_M_PLBL4, _("Audio Output"), wxPoint(0,5), wxSize(600,30), 0, _T("ID_M_PLBL4"));
+    m_pLbl4 = new wmLabel(pnlOutput, ID_M_PLBL4, _("Audio Output Device"), wxPoint(0,5), wxSize(600,30), 0, _T("ID_M_PLBL4"));
     m_pLbl4->SetBorderState(uiRect::BORDER_NONE);
     m_pLbl4->SetForegroundColour(wxColour(255,255,255));
     m_pLbl4->SetBackgroundColour(wxColour(0,64,0));
@@ -148,7 +148,6 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pLbl5->SetBorderState(uiRect::BORDER_NONE);
     m_pLbl5->SetForegroundColour(wxColour(255,255,255));
     m_pLbl5->SetBackgroundColour(wxColour(144,144,144));
-
     pnlGenerator = new wxPanel(m_pswpSettings, ID_PANEL8, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL8"));
     pnlGenerator->SetBackgroundColour(wxColour(0,0,0));
     m_pLbl2 = new wmLabel(pnlGenerator, ID_M_PLBL2, _("Audio Output Generation"), wxPoint(0,5), wxSize(600,30), 0, _T("ID_M_PLBL2"));
@@ -227,7 +226,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     pnlThreads->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
     m_plstThreads = new wmList(pnlThreads, ID_M_PLST3, wxDefaultPosition, wxSize(600,480), 0, 0, wxSize(-1,-1), 3, wxSize(-1,-1));
     m_plstThreads->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
-    m_pswpSettings->AddPage(pnlInput, _("Input"), false);
+    m_pswpSettings->AddPage(pnlInput, _("Monitor"), false);
     m_pswpSettings->AddPage(pnlOutput, _("Output Device"), false);
     m_pswpSettings->AddPage(pnlGenerator, _("Output Source"), false);
     m_pswpSettings->AddPage(pnlSettingsRTP, _("AoIP"), false);
@@ -444,13 +443,19 @@ void pnlSettings::ShowSoundcardInputs()
     m_plstDevices->Freeze();
     m_plstDevices->Clear();
 
+    Pa_Initialize();
     int nDevices =  Pa_GetDeviceCount();
+    if(nDevices < 0)
+    {
+        wxLogDebug(wxString::FromAscii(Pa_GetErrorText(nDevices)));
+    }
+
     for(int i = 0; i < nDevices; i++)
     {
         const PaDeviceInfo* pInfo = Pa_GetDeviceInfo(i);
         if(pInfo && pInfo->maxInputChannels > 0)
         {
-            m_plstDevices->AddButton(wxString::Format(wxT("%s %d"), wxString::FromAscii(pInfo->name).c_str(), i), wxNullBitmap, (void*)i);
+            m_plstDevices->AddButton(wxString::Format(wxT("[%d] %s [%d]"),i, wxString::FromAscii(pInfo->name).c_str(), pInfo->maxInputChannels), wxNullBitmap, (void*)i);
         }
     }
 
@@ -465,23 +470,38 @@ void pnlSettings::ShowSoundcardInputs()
         nDevice = 0;
     }
     m_plstDevices->SelectButton(nDevice);
+
+    Pa_Terminate();
 }
 
 
 void pnlSettings::ShowSoundcardOutputs()
 {
-
+    Pa_Initialize();
     int nDevices =  Pa_GetDeviceCount();
+    if(nDevices < 0)
+    {
+        wxLogDebug(wxString::FromAscii(Pa_GetErrorText(nDevices)));
+    }
     for(int i = 0; i < nDevices; i++)
     {
         const PaDeviceInfo* pInfo = Pa_GetDeviceInfo(i);
         if(pInfo && pInfo->maxOutputChannels > 0)
         {
-            m_plstPlayback->AddButton(wxString::Format(wxT("%s %d"), wxString::FromAscii(pInfo->name).c_str(), i), wxNullBitmap, (void*)i);
+            m_plstPlayback->AddButton(wxString::Format(wxT("[%d]%s [%d]"), i, wxString::FromAscii(pInfo->name).c_str(), pInfo->maxOutputChannels), wxNullBitmap, (void*)i);
         }
     }
 
-    m_plstPlayback->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Device"), (int)Pa_GetDefaultOutputDevice()));
+    unsigned int nOutput(Settings::Get().Read(wxT("Output"), wxT("Device"), (int)Pa_GetDefaultOutputDevice()));
+    int nDevice = m_plstPlayback->FindButton(reinterpret_cast<void*>(nOutput));
+    if(nDevice == wmList::NOT_FOUND)
+    {
+        nDevice = 0;
+    }
+    m_plstPlayback->SelectButton(nDevice);
+
+
+    Pa_Terminate();
 }
 
 void pnlSettings::ShowRTPDefined()

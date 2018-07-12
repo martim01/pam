@@ -24,8 +24,6 @@
 #include "wmlist.h"
 #include "session.h"
 
-class Audio;
-class Playback;
 struct timedbuffer;
 class MonitorPluginBuilder;
 class pnlSettings;
@@ -119,8 +117,9 @@ class pam2Dialog: public wxDialog
         void InputSession(const session& aSession);
 
         void OnHelpClose(wxCommandEvent& event);
+        void CreateAudioDevice(unsigned long nOutputSampleRate);
         void CreateAudioInputDevice();
-        void CreateAudioOutputDevice(unsigned long nSampleRate=0, unsigned long nChannels=0);
+
 
         void PassDataToPanels(timedbuffer* pTimerBuffer);
 
@@ -142,9 +141,6 @@ class pam2Dialog: public wxDialog
         void InitGenerator();
 
         void CreateSessionFromOutput(const wxString& sSource);
-
-        Audio* m_pAudio;
-        Playback* m_pPlayback;
 
         Generator* m_pGenerator;
 

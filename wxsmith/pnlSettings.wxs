@@ -26,7 +26,7 @@
 				<object class="wxPanel" name="ID_PANEL1" variable="pnlInput" member="yes">
 					<bg>#000000</bg>
 					<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
-						<label>Audio Input</label>
+						<label>Audio Monitoring Source</label>
 						<pos>0,5</pos>
 						<size>600,30</size>
 						<fg>#FFFFFF</fg>
@@ -90,13 +90,13 @@
 						<handler function="OnbtnEndClick" entry="EVT_BUTTON" />
 					</object>
 				</object>
-				<label>Input</label>
+				<label>Monitor</label>
 			</object>
 			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL2" variable="pnlOutput" member="yes">
 					<bg>#000000</bg>
 					<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl4" member="yes">
-						<label>Audio Output</label>
+						<label>Audio Output Device</label>
 						<pos>0,5</pos>
 						<size>600,30</size>
 						<fg>#FFFFFF</fg>
@@ -153,7 +153,6 @@
 						<size>80,30</size>
 						<fg>#FFFFFF</fg>
 						<bg>#909090</bg>
-						<extra_code>m__pLbl1-&gt;GetUiRect().SetGradient(0);</extra_code>
 					</object>
 				</object>
 				<label>Output Device</label>

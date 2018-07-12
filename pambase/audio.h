@@ -2,11 +2,11 @@
 #include <wx/event.h>
 #include <queue>
 #include "portaudio.h"
-//#include "kiss_fftr.h"
 #include <list>
 #include <wx/datetime.h>
 #include "dlldefine.h"
 #include "freq_mag.h"
+#include "timedbuffer.h"
 
 class SoundFile;
 
@@ -21,14 +21,15 @@ public:
     *   @param pHandler the wxEvtHandler to send the results of the comparison to
     *   @param nDevice the id of the sound card input
     **/
-    Audio(wxEvtHandler* pHandler, unsigned int nDevice);
+    Audio(wxEvtHandler* pHandler, unsigned int nDevice, int nType);
 
+    enum {INPUT, OUTPUT, DUPLEX};
     ///< Destructor
     ~Audio();
 
     /** Initializes portaudio
     **/
-    bool Init();
+    bool Init(unsigned int nSampleRate);
 
     unsigned int GetDevice() const
     {
@@ -47,7 +48,8 @@ public:
     *   @param pBuffer pointer to the buffer containing the audio samples
     *   @param nFrameCount the number of audio frames (2 x number of samples)
     **/
-    void Callback(const float* pBuffer, size_t nFrameCount);
+    void InputCallback(const float* pBuffer, size_t nFrameCount);
+    void OutputCallback(float* pBuffer, size_t nFrameCount, double dLatency);
 
     void RecordAudio(bool bRecord);
 
@@ -60,13 +62,21 @@ public:
 
     double GetLastPeak(int nType);
 
-    unsigned int GetNumberOfChannels();
+    unsigned int GetInputNumberOfChannels();
+    unsigned int GetOutputNumberOfChannels();
     unsigned int GetSampleRate();
 
 
+    void SetMixer(const std::vector<char>& vChannels, unsigned int nTotalChannels);
+    bool IsStreamOpen();
+    void FlushBuffer();
+    double GetInputLatency();
+    double GetOutputLatency();
+
+    void AddSamples(const timedbuffer* pTimedBuffer);
+    const std::vector<char>& GetOutputChannels();
 
 
-    void SaveSamples(const float* pBuffer, size_t nFrameCount);
 
 private:
 
@@ -88,20 +98,48 @@ private:
     PaStream* m_pStream;                ///< pointer to the PaStream tha reads in the audio
 
     int m_nDevice;
+    int m_nType;
     double m_dGain;
     double m_dPeakdB;
     bool m_bRecord;
 
-    SoundFile* m_pFile;
     wxDateTime m_dtFile;
     const PaDeviceInfo* m_pInfo;
 
     unsigned int m_nSampleRate;
     unsigned int m_nBufferSize;
 
-    unsigned int m_nChannels;
+    unsigned int m_nChannelsIn;
+    unsigned int m_nChannelsOut;
 
 
+    wxMutex m_mutex;
+    pairTime_t ConvertDoubleToPairTime(double dTime);
+    double ConvertPairTimeToDouble(const pairTime_t& tv);
+
+    struct timedSample
+    {
+        timedSample(){}
+        timedSample(double dT, double dP, unsigned int nT, float dS) : dTransmission(dT), dPresentation(dP), nTimestamp(nT), dSample(dS){}
+        double dTransmission;
+        double dPresentation;
+        unsigned int nTimestamp;
+        float dSample;
+    };
+
+    std::queue<timedSample> m_qBuffer;
+    std::vector<char> m_vMixer;
+
+    bool m_bDone;
+
+    size_t m_nBuffer;
+    bool m_bFirst;
+
+    bool m_bOpen;
+    bool m_bClose;
+    double m_dLatency;
+
+    unsigned int m_nTotalChannels;
 };
 
 /** PaStreamCallback function - simply calls wmComparitor::Callback using userData to get the wmComparitor object

@@ -1,11 +1,10 @@
 #pragma once
 #include <wx/window.h>
 #include <wx/bitmap.h>
-#include "audio.h"
 #include "uirect.h"
 #include <wx/timer.h>
 #include <queue>
-//#include "wmscroller.h"
+#include <list>
 
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/

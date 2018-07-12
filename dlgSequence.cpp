@@ -6,6 +6,7 @@
 #include <map>
 
 //(*InternalHeaders(dlgSequence)
+#include <wx/settings.h>
 #include <wx/intl.h>
 #include <wx/string.h>
 //*)
@@ -124,7 +125,7 @@ dlgSequence::dlgSequence(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_pbtnSequenceCreate->SetColourSelected(wxColour(wxT("#00C600")));
 	pnlFrequencies = new wxPanel(this, ID_PANEL3, wxPoint(400,0), wxSize(400,480), wxTAB_TRAVERSAL, _T("ID_PANEL3"));
 	pnlFrequencies->SetForegroundColour(wxColour(255,255,255));
-	pnlFrequencies->SetBackgroundColour(wxColour(0,0,0));
+	pnlFrequencies->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INACTIVECAPTION));
 	StaticBox3 = new wxStaticBox(pnlFrequencies, ID_STATICBOX3, _("Frequencies"), wxPoint(0,0), wxSize(400,480), 0, _T("ID_STATICBOX3"));
 	m_plstFrequency = new wmList(pnlFrequencies, ID_M_PLST3, wxPoint(10,20), wxSize(170,405), wmList::STYLE_SELECT, 1, wxSize(-1,-1), 1, wxSize(-1,-1));
 	m_plstFrequency->SetForegroundColour(wxColour(255,255,255));
@@ -168,7 +169,7 @@ dlgSequence::dlgSequence(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_pedtCycles->SetValidation(4);
 	m_pedtCycles->SetFocusedBackground(wxColour(wxT("#FFFF80")));
 	m_pedtCycles->SetBorderStyle(1,1);
-	m_plstFrequencyShape = new wmList(pnlFrequencies, ID_M_PLST4, wxPoint(200,135), wxSize(180,44), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 4, wxSize(-1,-1));
+	m_plstFrequencyShape = new wmList(pnlFrequencies, ID_M_PLST4, wxPoint(200,135), wxSize(180,44), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 4, wxSize(2,-1));
 	m_plstFrequencyShape->Disable();
 	m_plstFrequencyShape->SetBackgroundColour(wxColour(0,0,0));
 	m_plstFrequencyShape->SetSelectedButtonColour(wxColour(wxT("#FF8040")));

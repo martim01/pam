@@ -5,6 +5,7 @@
 #include <iterator>
 #include "playout.h"
 #include "soundfile.h"
+#include "soundcardmanager.h"
 
 using namespace std;
 
@@ -35,7 +36,7 @@ list<genfreq>::iterator Sequence::GetSequenceBegin()
 
 list<genfreq>::iterator Sequence::GetSequenceEnd()
 {
-    m_lstSequence.end();
+    return m_lstSequence.end();
 }
 
 const std::list<genfreq>::iterator& Sequence::GetSequencePosition()
@@ -55,8 +56,7 @@ void Sequence::AdvanceSequence()
 }
 
 
-Generator::Generator(Playback* pPlayback) :
-    m_pPlayback(pPlayback),
+Generator::Generator() :
     m_dSampleRate(48000),
     m_nPhase(0),
     m_pSoundfile(0)
@@ -80,6 +80,7 @@ void Generator::SetSampleRate(unsigned int nSampleRate)
 
 void Generator::Generate(unsigned int nSize)
 {
+
     if(m_pSoundfile)
     {
         ReadSoundFile(nSize);
@@ -113,7 +114,7 @@ void Generator::Generate(unsigned int nSize)
         }
 
         pData->SetDuration(pData->GetBufferSize()*4);
-        m_pPlayback->AddSamples(pData);
+        SoundcardManager::Get().AddOutputSamples(pData);
     }
 }
 
@@ -214,7 +215,6 @@ void Generator::GenerateFrequency(float* pBuffer, unsigned int nSize)
             }
         }
     }
-
 }
 
 float Generator::GenerateSin(const genfreq& gfreq, float dPhase)
@@ -252,6 +252,9 @@ float Generator::GenerateTriangle(const genfreq& gfreq, float dPhase)
 
 void Generator::AddSequence(const wxString& sName, Sequence* pSeq)
 {
+    CloseFile();
+    ClearFrequences();
+
     m_mSequences.insert(make_pair(sName, pSeq));
 }
 
@@ -278,6 +281,8 @@ void Generator::DeleteSequence(const wxString& sName)
 void Generator::SetFrequency(float dFrequency, float ddBFS, int nType)
 {
     ClearSequences();
+    CloseFile();
+
     float dAmplitude = 0.0;
     if(ddBFS > -80.0)
     {
@@ -349,7 +354,9 @@ void Generator::ReadSoundFile(unsigned int nSize)
         if(m_pSoundfile->ReadAudio(pData->GetWritableBuffer(), pData->GetBufferSize(), 1))
         {
             pData->SetDuration(pData->GetBufferSize()*(m_pSoundfile->GetFormat()&0x0F));
-            m_pPlayback->AddSamples(pData);
+            SoundcardManager::Get().AddOutputSamples(pData);
         }
     }
 }
+
+

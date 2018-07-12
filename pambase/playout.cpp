@@ -155,40 +155,7 @@ void Playback::Callback(float* pBuffer, size_t nFrameCount, double dPlayoutLaten
 
     wxMutexLocker ml(m_mutex);
     int nSamples = 0;
-/*
-    if(m_bFirst)
-    {
-        pairTime_t tvNow;
-        gettimeofday(tvNow, NULL);
-        double dNow = ConvertPairTimeToDouble(tvNow);
-        double dLatency = (dNow-m_qBuffer.front().dPresentation)*1000.0;
-        while(dLatency < Settings::Get().Read(wxT("Playback"), wxT("Latency"), 0) && nSamples < nFrameCount*m_nOutputChannels)
-        {
-            for(int i = 0; i < m_nOutputChannels; i++)
-            {
-                pBuffer[nSamples] = 0.0;
-                nSamples++;
-            }
-            dLatency += (1000.0/48000.0);
-        }
 
-        m_dLatency = dLatency;
-
-        if(nSamples < nFrameCount*m_nOutputChannels)
-        {
-            m_bFirst = false;
-        }
-        m_nBuffer = m_qBuffer.size();
-    }
-    else if(m_qBuffer.size() != m_nBuffer)
-    {
-        pairTime_t tvNow;
-        gettimeofday(tvNow, NULL);
-        double dNow = ConvertPairTimeToDouble(tvNow)+(dPlayoutLatency*1000.0);
-        m_dLatency = (dNow-m_qBuffer.front().dPresentation)*1000.0;
-        m_nBuffer = m_qBuffer.size();
-    }
-*/
     timedSample tsBuffer;
     if(m_qBuffer.empty() == false)
     {

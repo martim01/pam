@@ -134,7 +134,7 @@
 			<pos>400,0</pos>
 			<size>400,480</size>
 			<fg>#FFFFFF</fg>
-			<bg>#000000</bg>
+			<bg>wxSYS_COLOUR_INACTIVECAPTION</bg>
 			<object class="wxStaticBox" name="ID_STATICBOX3" variable="StaticBox3" member="yes">
 				<label>Frequencies</label>
 				<pos>0,0</pos>
@@ -231,6 +231,7 @@
 			</object>
 			<object class="wmList" name="ID_M_PLST4" variable="m_plstFrequencyShape" member="yes">
 				<scrolling>None</scrolling>
+				<button_gap>2,-1</button_gap>
 				<columns>4</columns>
 				<button_selected>#FF8040</button_selected>
 				<button_disabled>#909090</button_disabled>

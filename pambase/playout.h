@@ -26,15 +26,8 @@ class PAMBASE_IMPEXPORT Playback
 
 
         void Run();
-
-        void SetMixer(const std::vector<char>& vChannels, unsigned int nTotalChannels);
         bool OpenPlayback(unsigned long nDevice, unsigned long nSampleRate, unsigned long nChannels, unsigned long nBufferSize);
         void ClosePlayback();
-
-        bool IsStreamOpen();
-
-        void FlushBuffer();
-
         unsigned long GetSampleRate() const
         {
             return m_nSampleRate;
@@ -45,10 +38,12 @@ class PAMBASE_IMPEXPORT Playback
             return m_nOutputChannels;
         }
 
+
+        void SetMixer(const std::vector<char>& vChannels, unsigned int nTotalChannels);
+        bool IsStreamOpen();
+        void FlushBuffer();
         unsigned int GetLatency();
-
         void AddSamples(const timedbuffer* pTimedBuffer);
-
         const std::vector<char>& GetOutputChannels();
 
         /** Function called by portaudio when it has received a buffer worth of audio. Checks whether enough audio has been collected and if so does the comparison
@@ -59,10 +54,7 @@ class PAMBASE_IMPEXPORT Playback
 
     protected:
 
-        wxMutex m_mutex;
         bool OpenStream(unsigned long nDevice, unsigned long nSampleRate, PaStreamCallback *streamCallback);
-        pairTime_t ConvertDoubleToPairTime(double dTime);
-        double ConvertPairTimeToDouble(const pairTime_t& tv);
         void Close();
 
         wxEvtHandler* m_pManager;
@@ -75,6 +67,11 @@ class PAMBASE_IMPEXPORT Playback
         unsigned long m_nOutputChannels;
 
         float* m_pBuffer;
+
+        wxMutex m_mutex;
+        pairTime_t ConvertDoubleToPairTime(double dTime);
+        double ConvertPairTimeToDouble(const pairTime_t& tv);
+
         struct timedSample
         {
             timedSample(){}

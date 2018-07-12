@@ -38,6 +38,9 @@
 #include "pnlHelp.h"
 #include "generator.h"
 
+#include "soundcardmanager.h"
+
+
 //(*InternalHeaders(pam2Dialog)
 #include <wx/bitmap.h>
 #include <wx/intl.h>
@@ -94,12 +97,9 @@ BEGIN_EVENT_TABLE(pam2Dialog,wxDialog)
 END_EVENT_TABLE()
 
 pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
-    m_pAudio(0),
-    m_pPlayback(0),
     m_pSelectedMonitor(0),
     m_ppnlLog(0)
 {
-    Pa_Initialize();
 
     //(*Initialize(pam2Dialog)
     Create(parent, id, _("wxWidgets app"), wxDefaultPosition, wxDefaultSize, wxNO_BORDER, _T("id"));
@@ -176,9 +176,6 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
 
 
-
-
-
     Settings::Get().AddHandler(wxT("Input"),wxT("Type"), this);
     Settings::Get().AddHandler(wxT("Input"),wxT("RTP"), this);
     Settings::Get().AddHandler(wxT("Input"),wxT("Device"), this);
@@ -198,12 +195,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Settings::Get().AddHandler(wxT("Generator"),wxT("Frequency"), this);
     Settings::Get().AddHandler(wxT("Generator"),wxT("Amplitude"), this);
     Settings::Get().AddHandler(wxT("Generator"),wxT("Shape"), this);
-
-
-
-
     Settings::Get().AddHandler(wxT("QoS"),wxT("Interval"), this);
-
     Settings::Get().AddHandler(wxT("Test"), wxT("Lock"), this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pam2Dialog::OnSettingChanged);
@@ -212,10 +204,6 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
 
     Connect(wxID_ANY, wxEVT_HELP_CLOSE, (wxObjectEventFunction)&pam2Dialog::OnHelpClose);
-
-
-
-    m_pPlayback = 0;
 
     m_pGenerator = 0;
 
@@ -245,15 +233,9 @@ pam2Dialog::~pam2Dialog()
     {
         delete m_pGenerator;
     }
-    if(m_pPlayback)
-    {
-        m_pPlayback->ClosePlayback();
-    //    m_pPlayback->Delete();
-        delete m_pPlayback;
-    }
 
+    SoundcardManager::Get().Terminate();
 
-    Pa_Terminate();
 
 }
 
@@ -474,7 +456,7 @@ void pam2Dialog::ShowSettingsPanel()
     m_plstOptions->Freeze();
     m_plstOptions->Clear();
 
-    m_plstOptions->AddButton(wxT("Input"));
+    m_plstOptions->AddButton(wxT("Monitor"));
     m_plstOptions->AddButton(wxT("Output Device"));
     m_plstOptions->AddButton(wxT("Output Source"));
     m_plstOptions->AddButton(wxT("AoIP"));
@@ -583,33 +565,54 @@ void pam2Dialog::MaximizeMonitor(bool bMax)
     }
 }
 
+void pam2Dialog::CreateAudioDevice(unsigned long nOutputSampleRate)
+{
+    wmLog::Get()->Log(wxT("Create Audio Device: Soundcard"));
+
+    int nInput(-1);
+    if(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")) == wxT("Soundcard"))
+    {
+        nInput = Settings::Get().Read(wxT("Input"), wxT("Device"), 0);
+    }
+
+    int nOutput(-1);
+    if(Settings::Get().Read(wxT("Output"), wxT("Enabled"), 1) == 1)
+    {
+         nOutput = Settings::Get().Read(wxT("Output"), wxT("Device"), 0);
+    }
+
+    if(SoundcardManager::Get().Init(this, nInput, nOutput, nOutputSampleRate))
+    {
+        wmLog::Get()->Log(wxString::Format(wxT("Audio Device Created: Input [%d][%s] Latency %.2f"), SoundcardManager::Get().GetInputDevice(), SoundcardManager::Get().GetInputDeviceName().c_str(), SoundcardManager::Get().GetInputLatency()));
+        wmLog::Get()->Log(wxString::Format(wxT("Audio Device Created: Output [%d][%s] Latency %.2f"), SoundcardManager::Get().GetOutputDevice(), SoundcardManager::Get().GetOutputDeviceName().c_str(), SoundcardManager::Get().GetOutputLatency()));
+    }
+
+}
+
 void pam2Dialog::CreateAudioInputDevice()
 {
     wxString sType(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")));
 
     if(sType == wxT("Soundcard"))
     {
+        CreateAudioDevice(SoundcardManager::Get().GetOutputSampleRate());
+
         m_nMonitorSource = timedbuffer::SOUNDCARD;
         if(m_nPlaybackSource == timedbuffer::RTP)
         {
             m_nPlaybackSource = timedbuffer::SOUNDCARD;
         }
 
-        wmLog::Get()->Log(wxT("Create Audio Input Device: Soundcard"));
 
-        m_pAudio = new Audio(this, Settings::Get().Read(wxT("Input"), wxT("Device"), 0));
-        m_pAudio->Init();
 
-        session aSession(wxEmptyString, m_pAudio->GetDeviceName(), wxT("Soundcard"));
-        aSession.lstSubsession.push_back(subsession(wxEmptyString, m_pAudio->GetDeviceName(), wxEmptyString, wxT("L24"), wxEmptyString, m_pAudio->GetDevice(), m_pAudio->GetSampleRate(), m_pAudio->GetNumberOfChannels(), wxEmptyString, 0, make_pair(0,0), refclk()));
+
+        session aSession(wxEmptyString, SoundcardManager::Get().GetInputDeviceName(), wxT("Soundcard"));
+        aSession.lstSubsession.push_back(subsession(wxEmptyString, SoundcardManager::Get().GetInputDeviceName(), wxEmptyString, wxT("L24"), wxEmptyString, SoundcardManager::Get().GetInputDevice(), SoundcardManager::Get().GetInputSampleRate(), SoundcardManager::Get().GetInputNumberOfChannels(), wxEmptyString, 0, make_pair(0,0), refclk()));
         aSession.itCurrentSubsession = aSession.lstSubsession.begin();
-
 
         InputSession(aSession);
 
-        CheckPlayback(m_pAudio->GetSampleRate(), m_pAudio->GetNumberOfChannels());
-
-
+        CheckPlayback(SoundcardManager::Get().GetInputSampleRate(), SoundcardManager::Get().GetInputNumberOfChannels());
     }
     else if(sType == wxT("RTP"))
     {
@@ -650,11 +653,7 @@ void pam2Dialog::CreateSessionFromOutput(const wxString& sSource)
 {
     session aSession(wxEmptyString, wxT("Output"), Settings::Get().Read(wxT("Output"), wxT("Source"), wxEmptyString));
     //we need to get the info from the output...
-    unsigned int nSampleRate(48000);
-    if(m_pPlayback)
-    {
-        nSampleRate = m_pPlayback->GetSampleRate();
-    }
+    unsigned int nSampleRate = SoundcardManager::Get().GetOutputSampleRate();
 
     aSession.lstSubsession.push_back(subsession(Settings::Get().Read(wxT("Output"), wxT("Source"),wxEmptyString), sSource, wxEmptyString, wxT("F32"), wxEmptyString, 0, nSampleRate, 2, wxEmptyString, 0, make_pair(0,0), refclk()));
     aSession.itCurrentSubsession = aSession.lstSubsession.begin();
@@ -683,7 +682,7 @@ void pam2Dialog::OnAudioData(wxCommandEvent& event)
 
     timedbuffer* pTimedBuffer = reinterpret_cast<timedbuffer*>(event.GetClientData());
 
-    if(m_pPlayback && m_pPlayback->IsStreamOpen())
+    if(SoundcardManager::Get().IsOutputStreamOpen())
     {
         if(event.GetId() == timedbuffer::OUTPUT)
         {
@@ -694,9 +693,10 @@ void pam2Dialog::OnAudioData(wxCommandEvent& event)
         }
         else if(event.GetId() == m_nPlaybackSource)
         {
-            m_pPlayback->AddSamples(pTimedBuffer);
+            SoundcardManager::Get().AddOutputSamples(pTimedBuffer);
         }
     }
+    wxLogDebug(wxT("OnAudioData: %d [%d]"), event.GetId(), m_nMonitorSource);
     if(event.GetId() == m_nMonitorSource)
     {
         PassDataToPanels(pTimedBuffer);
@@ -775,12 +775,7 @@ void pam2Dialog::InputChanged(const wxString& sKey)
         wxString sType(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")));
         if(sType != wxT("Soundcard"))
         {
-            if(m_pAudio)
-            {
-                wmLog::Get()->Log(wxT("Audio Input Device Changed: Close Soundcard"));
-                delete m_pAudio;
-                m_pAudio = 0;
-            }
+            CreateAudioDevice(SoundcardManager::Get().GetOutputSampleRate());    //this will remove the input stream
         }
         if(sType != wxT("RTP"))
         {
@@ -809,7 +804,6 @@ void pam2Dialog::InputChanged(const wxString& sKey)
             m_nMonitorSource = timedbuffer::OUTPUT;
         }
 
-        //CreateAudioInputDevice();
     }
     else if(sKey == wxT("RTP"))
     {
@@ -832,17 +826,7 @@ void pam2Dialog::InputChanged(const wxString& sKey)
     }
     else if(sKey == wxT("Device"))
     {
-        if(m_pAudio && m_pAudio->GetDevice() != Settings::Get().Read(wxT("Input"), wxT("Device"),0))
-        {
-            wmLog::Get()->Log(wxT("Audio Input Device Changed: Close Device"));
-            delete m_pAudio;
-            m_pAudio = 0;
-            CreateAudioInputDevice();
-        }
-        else if(!m_pAudio)
-        {
-            CreateAudioInputDevice();
-        }
+        CreateAudioInputDevice();
     }
 }
 
@@ -920,7 +904,7 @@ void pam2Dialog::InitGenerator(const wxString& sSequence)
             }
 
             CreateSessionFromOutput(Settings::Get().Read(wxT("Output"), wxT("Sequence"), wxT("glits")));
-            CheckPlayback(48000,2);
+            CheckPlayback(m_pGenerator->GetSampleRate(), m_pGenerator->GetChannels());
 
             m_pGenerator->Generate(8192);
         }
@@ -938,7 +922,7 @@ void pam2Dialog::InitGenerator()
         wmLog::Get()->Log(wxString::Format(wxT("Generating fixed frequency %dHz at %.1fdB"),Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000), Settings::Get().Read(wxT("Generator"), wxT("Amplitude"), -18.0)));
 
         CreateSessionFromOutput(wxString::Format(wxT("%dHz %.1fdBFS"), Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000), Settings::Get().Read(wxT("Generator"), wxT("Amplitude"), -18.0)));
-        CheckPlayback(48000,2);
+        CheckPlayback(m_pGenerator->GetSampleRate(), m_pGenerator->GetChannels());
 
         m_pGenerator->Generate(8192);
     }
@@ -948,17 +932,12 @@ void pam2Dialog::OutputChanged(const wxString& sKey)
 {
     if(sKey == wxT("Enabled"))
     {
-        if(Settings::Get().Read(wxT("Output"), wxT("Enabled"), int(1)) == 0)
-        {
-            if(m_pPlayback)
-            {
-                m_pPlayback->ClosePlayback();
-            }
-        }
-        else
-        {
-            CreateAudioOutputDevice();
-        }
+        CreateAudioDevice(SoundcardManager::Get().GetOutputSampleRate());
+
+//        if(m_nPlaybackSource != timedbuffer::SOUNDCARD && m_nPlaybackSource !=timedbuffer::RTP)
+//        {
+//            m_pGenerator->Generate(8192);
+//        }
     }
     else if(sKey == wxT("Source"))
     {
@@ -981,15 +960,11 @@ void pam2Dialog::OutputChanged(const wxString& sKey)
             m_nPlaybackSource = timedbuffer::GENERATOR;
             wmLog::Get()->Log(wxT("Create Audio Output Generator: Generator"));
             InitGenerator();
-
         }
         else if(sType == wxT("Input"))
         {
             m_nPlaybackSource = m_nMonitorSource;
-
-
         }
-
     }
     else if(sKey == wxT("File") && Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")) == wxT("File"))
     {
@@ -1001,9 +976,6 @@ void pam2Dialog::OutputChanged(const wxString& sKey)
         wmLog::Get()->Log(wxT("Change Audio Output Generator: Sequence"));
         InitGenerator(Settings::Get().Read(wxT("Output"), wxT("Sequence"), wxT("glits")));
     }
-
-
-
 }
 
 void pam2Dialog::OnRTPSessionClosed(wxCommandEvent& event)
@@ -1042,55 +1014,59 @@ void pam2Dialog::CheckPlayback(unsigned long nSampleRate, unsigned long nChannel
     if(m_nPlaybackSource == timedbuffer::RTP || m_nPlaybackSource == timedbuffer::SOUNDCARD)
     {
         //check the stream details against the playing details...
-        if((m_pPlayback) && (m_pPlayback->GetSampleRate() != nSampleRate || m_pPlayback->GetChannels() != nChannels))
+        if(SoundcardManager::Get().IsOutputStreamOpen() && (SoundcardManager::Get().GetOutputSampleRate() != nSampleRate || SoundcardManager::Get().GetOutputNumberOfChannels() != nChannels))
         {
             vector<char> vChannels;
             vChannels.push_back(Settings::Get().Read(wxT("Output"), wxT("Left"), 0));
             vChannels.push_back(Settings::Get().Read(wxT("Output"), wxT("Right"), 1));
-            m_pPlayback->SetMixer(vChannels, nChannels);
+            SoundcardManager::Get().SetOutputMixer(vChannels, nChannels);
             TellPluginsAboutOutputChannels();
 
-            if(Settings::Get().Read(wxT("Output"), wxT("enabled"), int(1)) == 1)
-            {
-                m_pPlayback->ClosePlayback();
-                CreateAudioOutputDevice(nSampleRate, 2);    // @todo should we allow multichannel cards here??
-            }
+            CreateAudioDevice(nSampleRate);    // @todo should we allow multichannel cards here??
         }
     }
-}
-
-
-void pam2Dialog::CreateAudioOutputDevice(unsigned long nSampleRate, unsigned long nChannels)
-{
-    if(Settings::Get().Read(wxT("Output"), wxT("enabled"), int(1)) == 1)
+    else
     {
-        if(nSampleRate == 0)
-        {
-            nSampleRate = m_pPlayback->GetSampleRate();
-        }
-        if(nChannels == 0)
-        {
-            nChannels = m_pPlayback->GetChannels();
-        }
-        if(m_pPlayback->OpenPlayback(Settings::Get().Read(wxT("Output"), wxT("Device"),0), nSampleRate, nChannels, Settings::Get().Read(wxT("Output"), wxT("Buffer"), (int)0)) == true)
-        {
-            wmLog::Get()->Log(wxString::Format(wxT("Playback started: Latency %d"), m_pPlayback->GetLatency()));
-        }
+        vector<char> vChannels;
+        vChannels.push_back(Settings::Get().Read(wxT("Output"), wxT("Left"), 0));
+        vChannels.push_back(Settings::Get().Read(wxT("Output"), wxT("Right"), 1));
+        SoundcardManager::Get().SetOutputMixer(vChannels, nChannels);
+        TellPluginsAboutOutputChannels();
     }
 }
+
+
+//void pam2Dialog::CreateAudioOutputDevice(unsigned long nSampleRate, unsigned long nChannels)
+//{
+//    if(Settings::Get().Read(wxT("Output"), wxT("enabled"), int(1)) == 1)
+//    {
+//        if(nSampleRate == 0)
+//        {
+//            nSampleRate = m_pPlayback->GetSampleRate();
+//        }
+//        if(nChannels == 0)
+//        {
+//            nChannels = m_pPlayback->GetChannels();
+//        }
+//        if(m_pPlayback->OpenPlayback(Settings::Get().Read(wxT("Output"), wxT("Device"),0), nSampleRate, nChannels, Settings::Get().Read(wxT("Output"), wxT("Buffer"), (int)0)) == true)
+//        {
+//            wmLog::Get()->Log(wxString::Format(wxT("Playback started: Latency %d"), m_pPlayback->GetLatency()));
+//        }
+//    }
+//}
 
 
 void pam2Dialog::OnMonitorRequest(MonitorEvent& event)
 {
 
-    if(m_pPlayback && event.GetChannels().size() >=2)
+    if(event.GetChannels().size() >=2)
     {
         unsigned int nInputChannels(0);
         if(m_Session.itCurrentSubsession != m_Session.lstSubsession.end())
         {
             nInputChannels = m_Session.itCurrentSubsession->nChannels;
         }
-        m_pPlayback->SetMixer(event.GetChannels(), nInputChannels);
+        SoundcardManager::Get().SetOutputMixer(event.GetChannels(), nInputChannels);
         //@todo make this multichannel
         Settings::Get().Write(wxT("Output"), wxT("Left"), event.GetChannels()[0]);
         Settings::Get().Write(wxT("Output"), wxT("Right"), event.GetChannels()[1]);
@@ -1105,12 +1081,12 @@ void pam2Dialog::TellPluginsAboutOutputChannels()
     //now tell all the monitor panels etc...
     for(map<wxString, MonitorPluginBuilder*>::iterator itMonitor = MonitorPluginFactory::Get()->GetPluginBegin(); itMonitor != MonitorPluginFactory::Get()->GetPluginEnd(); ++itMonitor)
     {
-        itMonitor->second->OutputChannels(m_pPlayback->GetOutputChannels());
+        itMonitor->second->OutputChannels(SoundcardManager::Get().GetOutputChannels());
     }
 
     for(map<wxString, TestPluginBuilder*>::iterator itTest = TestPluginFactory::Get()->GetPluginBegin(); itTest != TestPluginFactory::Get()->GetPluginEnd(); ++itTest)
     {
-        itTest->second->OutputChannels(m_pPlayback->GetOutputChannels());
+        itTest->second->OutputChannels(SoundcardManager::Get().GetOutputChannels());
     }
 
 }
@@ -1148,17 +1124,15 @@ void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
 
 
     m_plstScreens->SelectButton(sPanel);
-    CreateAudioInputDevice();
-    m_pPlayback = new Playback();
-    m_pPlayback->Init(this, 2048);
 
-    m_pGenerator = new Generator(m_pPlayback);
-    m_pGenerator->SetSampleRate(48000);
 
     OutputChanged(wxT("Enabled"));
     OutputChanged(wxT("Source"));
 
+    m_pGenerator = new Generator();
+    m_pGenerator->SetSampleRate(48000);
 
+    CreateAudioInputDevice();
 }
 
 void pam2Dialog::Onm_timerFileTrigger(wxTimerEvent& event)

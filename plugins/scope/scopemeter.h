@@ -1,10 +1,11 @@
 #pragma once
 #include <wx/window.h>
 #include <wx/bitmap.h>
-#include "audio.h"
 #include "uirect.h"
 #include <wx/timer.h>
 #include <vector>
+#include <list>
+
 
 //#include "wmscroller.h"
 class ScopeBuilder;

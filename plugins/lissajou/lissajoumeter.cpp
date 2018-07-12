@@ -4,7 +4,7 @@
 #include <wx/log.h>
 #include <wx/image.h>
 #include "settings.h"
-
+#include "audio.h"
 
 using namespace std;
 

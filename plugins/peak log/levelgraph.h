@@ -2,7 +2,6 @@
 #include <wx/window.h>
 
 #include <map>
-//#include "audio.h"
 #include <list>
 
 /** @class a class that draws a button on the screen, derives from wxWindow

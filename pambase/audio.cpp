@@ -4,9 +4,10 @@
 #include <wx/msgdlg.h>
 #include "soundfile.h"
 #include <wx/datetime.h>
-//#include "kaiserwindow.h"
 #include "timedbuffer.h"
 #include "wmlogevent.h"
+#include "settings.h"
+
 
 DEFINE_EVENT_TYPE(wxEVT_FFT)
 DEFINE_EVENT_TYPE(wxEVT_DATA)
@@ -14,14 +15,15 @@ DEFINE_EVENT_TYPE(wxEVT_DATA)
 using namespace std;
 
 
-Audio::Audio(wxEvtHandler* pHandler, unsigned int nDevice) :
+Audio::Audio(wxEvtHandler* pHandler, unsigned int nDevice, int nType) :
  m_pManager(pHandler),
  m_pStream(0),
  m_nDevice(nDevice),
+ m_nType(nType),
  m_dGain(1),
  m_dPeakdB(-50),
- m_pFile(0),
- m_pInfo(Pa_GetDeviceInfo(nDevice))
+ m_pInfo(Pa_GetDeviceInfo(nDevice)),
+ m_nTotalChannels(2)
  {
 
     m_nSampleRate = 48000;
@@ -29,9 +31,9 @@ Audio::Audio(wxEvtHandler* pHandler, unsigned int nDevice) :
 
  }
 
- bool Audio::Init()
- {
-
+bool Audio::Init(unsigned int nSampleRate)
+{
+    m_nSampleRate = nSampleRate;
     return (OpenStream(paCallback));
 }
 bool Audio::OpenStream(PaStreamCallback *streamCallback)
@@ -39,38 +41,84 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
     wmLog::Get()->Log(wxString::Format(wxT("Attempt to open device %d"), m_nDevice));
 
     PaStreamParameters inputParameters;
+    PaStreamParameters outputParameters;
 
     const PaDeviceInfo* pInfo = Pa_GetDeviceInfo(m_nDevice);
-    if(pInfo && pInfo->maxInputChannels < 2)
+    if(pInfo)
     {
-        m_nChannels = pInfo->maxInputChannels;
+        if(pInfo->maxInputChannels < 2)
+        {
+            m_nChannelsIn = pInfo->maxInputChannels;
+            wmLog::Get()->Log(wxString::Format(wxT("Input channels changed to %d"), m_nChannelsIn));
+        }
+        else
+        {
+            m_nChannelsIn = 2;
+        }
+
+        if(pInfo->maxOutputChannels < 2)
+        {
+            m_nChannelsOut = pInfo->maxInputChannels;
+            wmLog::Get()->Log(wxString::Format(wxT("Output channels changed to %d"), m_nChannelsOut));
+        }
+        else
+        {
+            m_nChannelsOut = 2;
+        }
     }
     else
     {
-        m_nChannels = 2;
+        m_nChannelsIn = 2;
+        m_nChannelsOut = 2;
     }
 
 
-
-    inputParameters.channelCount = m_nChannels;
+    inputParameters.channelCount = m_nChannelsIn;
     inputParameters.device = m_nDevice;
     inputParameters.hostApiSpecificStreamInfo = NULL;
     inputParameters.sampleFormat = paFloat32;
     inputParameters.suggestedLatency = 0;
     inputParameters.hostApiSpecificStreamInfo = NULL;
-    PaError err = Pa_OpenStream(&m_pStream, &inputParameters, 0, m_nSampleRate, m_nBufferSize, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
+
+    double dLatency(.04);
+    dLatency = Settings::Get().Read(wxT("Output"), wxT("Latency"), 0.0)/1000.0;
+
+    outputParameters.channelCount = m_nChannelsOut;
+    outputParameters.device = m_nDevice;
+    outputParameters.hostApiSpecificStreamInfo = NULL;
+    outputParameters.sampleFormat = paFloat32;
+    outputParameters.suggestedLatency = dLatency;
+    outputParameters.hostApiSpecificStreamInfo = NULL;
+
+    PaError err;
+
+    switch(m_nType)
+    {
+        case INPUT:
+            wmLog::Get()->Log(wxString::Format(wxT("Attempt to open INPUT stream on device %d"), m_nDevice));
+            err = Pa_OpenStream(&m_pStream, &inputParameters, 0, m_nSampleRate, 2048, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
+            break;
+        case OUTPUT:
+            wmLog::Get()->Log(wxString::Format(wxT("Attempt to open OUTPUT stream on device %d"), m_nDevice));
+            err = Pa_OpenStream(&m_pStream, 0, &outputParameters, m_nSampleRate, 4096, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
+            break;
+        case DUPLEX:
+            wmLog::Get()->Log(wxString::Format(wxT("Attempt to open DUPLEX stream on device %d"), m_nDevice));
+            err = Pa_OpenStream(&m_pStream, &inputParameters, &outputParameters, m_nSampleRate, 0, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
+            break;
+    }
 
     if(err == paNoError)
     {
         err = Pa_StartStream(m_pStream);
         if(err == paNoError)
         {
-            wmLog::Get()->Log(wxString::Format(wxT("Input Device %d opened"), m_nDevice));
+            wmLog::Get()->Log(wxString::Format(wxT("Device %d opened: Mode %d"), m_nDevice, m_nType));
             return true;
         }
     }
     m_pStream = 0;
-    wmLog::Get()->Log(wxString::Format(wxT("Failed to open input device %d %s %d %d,"), m_nDevice, wxString::FromAscii(Pa_GetErrorText(err)).c_str(), m_nSampleRate, m_nChannels));
+    wmLog::Get()->Log(wxString::Format(wxT("Failed to open device %d %s %d %d,"), m_nDevice, wxString::FromAscii(Pa_GetErrorText(err)).c_str(), m_nSampleRate, m_nChannelsIn));
     return false;
 }
 
@@ -79,17 +127,17 @@ Audio::~Audio()
 {
     if(m_pStream)
     {
-        wmLog::Get()->Log(wxT("Stop PortAudio input stream"));
+        wmLog::Get()->Log(wxT("Stop PortAudio stream"));
         PaError err = Pa_StopStream(m_pStream);
         if(err != paNoError)
         {
-            wmLog::Get()->Log(wxString::Format(wxT("Failed to stop PortAudio input stream: %s"), wxString::FromAscii(Pa_GetErrorText(err)).c_str()));
+            wmLog::Get()->Log(wxString::Format(wxT("Failed to stop PortAudio stream: %s"), wxString::FromAscii(Pa_GetErrorText(err)).c_str()));
         }
     }
 
 }
 
-void Audio::Callback(const float* pBuffer, size_t nFrameCount)
+void Audio::InputCallback(const float* pBuffer, size_t nFrameCount)
 {
 
     timedbuffer* pData = new timedbuffer(nFrameCount*2);
@@ -99,6 +147,52 @@ void Audio::Callback(const float* pBuffer, size_t nFrameCount)
     wxCommandEvent event(wxEVT_DATA);
     event.SetId(timedbuffer::SOUNDCARD);
     event.SetClientData(reinterpret_cast<void*>(pData));
+    event.SetInt(nFrameCount);
+    event.SetExtraLong(m_nSampleRate);
+    wxPostEvent(m_pManager, event);
+}
+
+void Audio::OutputCallback(float* pBuffer, size_t nFrameCount, double dPlayoutLatency)
+{
+
+    wxMutexLocker ml(m_mutex);
+
+    int nSamples = 0;
+
+    timedSample tsBuffer;
+    if(m_qBuffer.empty() == false)
+    {
+        tsBuffer = m_qBuffer.front();
+    }
+
+
+    for(size_t i = nSamples; i < nFrameCount*m_nChannelsOut; i++)
+    {
+        if(m_qBuffer.size() > 0)
+        {
+            float d(m_qBuffer.front().dSample);
+            pBuffer[i] = m_qBuffer.front().dSample;
+            m_qBuffer.pop();
+        }
+        else
+        {
+            pBuffer[i] = 0.0;
+        }
+    }
+
+
+    //double dOffsetMicro = static_cast<double>(m_qBuffer.size()/m_nChannelsOut)/static_cast<double>(m_nSampleRate)*1000000.0;
+    timedbuffer* pTimedBuffer = new timedbuffer(nFrameCount*m_nChannelsOut, ConvertDoubleToPairTime(tsBuffer.dPresentation), tsBuffer.nTimestamp);
+    pTimedBuffer->SetTransmissionTime(ConvertDoubleToPairTime(tsBuffer.dTransmission));
+    pTimedBuffer->SetBuffer(pBuffer);
+    pTimedBuffer->SetPlaybackOffset(dPlayoutLatency*1000000.0);//*1000.0);
+    pTimedBuffer->SetBufferDepth(m_qBuffer.size()/m_nChannelsOut);
+    pTimedBuffer->SetDuration(pTimedBuffer->GetBufferSize()*4);
+
+
+    wxCommandEvent event(wxEVT_DATA);
+    event.SetId(timedbuffer::OUTPUT);
+    event.SetClientData(reinterpret_cast<void*>(pTimedBuffer));
     event.SetInt(nFrameCount);
     event.SetExtraLong(m_nSampleRate);
     wxPostEvent(m_pManager, event);
@@ -115,11 +209,37 @@ void Audio::SetGain(int nGain)
 
 int paCallback( const void *input, void *output, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void *userData )
 {
-    if(userData && input)
+
+    if((statusFlags & paInputOverflow))
+    {
+        wmLog::Get()->Log(wxT("Playback:  Buffer overflow"));
+    }
+    if((statusFlags & paInputUnderflow))
+    {
+        wmLog::Get()->Log(wxT("Playback:  Buffer underflow"));
+    }
+    if((statusFlags & paOutputOverflow))
+    {
+        wmLog::Get()->Log(wxT("Playback:  Buffer overflow"));
+    }
+    if((statusFlags & paOutputUnderflow))
+    {
+        wmLog::Get()->Log(wxT("Playback:  Buffer underflow"));
+    }
+
+    if(userData)
     {
         Audio* pComp = reinterpret_cast<Audio*>(userData);
-        pComp->Callback(reinterpret_cast<const float*>(input), frameCount);
+        if(input)
+        {
+            pComp->InputCallback(reinterpret_cast<const float*>(input), frameCount);
+        }
+        if(output)
+        {
+            pComp->OutputCallback(reinterpret_cast<float*>(output), frameCount,timeInfo->outputBufferDacTime-timeInfo->currentTime);
+        }
     }
+
     return 0;
 }
 
@@ -132,9 +252,14 @@ void Audio::SetBufferSize(size_t nFrames)
 }
 
 
-unsigned int Audio::GetNumberOfChannels()
+unsigned int Audio::GetInputNumberOfChannels()
 {
-    return m_nChannels;
+    return m_nChannelsIn;
+}
+
+unsigned int Audio::GetOutputNumberOfChannels()
+{
+    return m_nChannelsIn;
 }
 
 unsigned int Audio::GetSampleRate()
@@ -159,4 +284,98 @@ wxString Audio::GetDeviceName() const
 unsigned int Audio::GetBitDepth() const
 {
     return 32;
+}
+
+
+double Audio::GetOutputLatency()
+{
+    if(m_pStream)
+    {
+        const PaStreamInfo* pInfo = Pa_GetStreamInfo(m_pStream);
+        if(pInfo)
+        {
+            return pInfo->outputLatency;
+        }
+    }
+    return -1;
+}
+
+double Audio::GetInputLatency()
+{
+    if(m_pStream)
+    {
+        const PaStreamInfo* pInfo = Pa_GetStreamInfo(m_pStream);
+        if(pInfo)
+        {
+            return pInfo->inputLatency;
+        }
+    }
+    return -1;
+}
+
+pairTime_t Audio::ConvertDoubleToPairTime(double dTime)
+{
+    double dInt, dDec;
+    dDec = modf(dTime, &dInt);
+    return make_pair(static_cast<unsigned int>(dInt), static_cast<unsigned int>(dDec*1000000.0));
+}
+
+
+double Audio::ConvertPairTimeToDouble(const pairTime_t& tv)
+{
+    return static_cast<double>(tv.second)/1000000.0 + static_cast<double>(tv.first);
+}
+
+void Audio::AddSamples(const timedbuffer* pTimedBuffer)
+{
+    wxMutexLocker ml(m_mutex);
+    if(m_nTotalChannels  > 0 && m_vMixer.size() > 0)
+    {
+        double dModifier(0.0);
+        double dTransmission(ConvertPairTimeToDouble(pTimedBuffer->GetTransmissionTime()));
+        double dPresentation(ConvertPairTimeToDouble(pTimedBuffer->GetTimeVal()));
+
+        for(unsigned int i =0; i < pTimedBuffer->GetBufferSize(); i+=m_nTotalChannels)
+        {
+            int nSample = i/m_nTotalChannels;
+            dModifier = static_cast<double>(nSample)/static_cast<double>(m_nSampleRate);
+
+            for(size_t j = 0; j < m_vMixer.size(); j++)
+            {
+                m_qBuffer.push(timedSample(dTransmission+dModifier, dPresentation+dModifier, pTimedBuffer->GetTimestamp()+nSample, pTimedBuffer->GetBuffer()[i+m_vMixer[j]]));
+            }
+        }
+    }
+    else
+    {
+        wxLogDebug(wxT("TotalChannels = %d: Mixer = %d"), m_nTotalChannels, m_vMixer.size());
+    }
+}
+
+bool Audio::IsStreamOpen()
+{
+    return (m_pStream && Pa_IsStreamActive(m_pStream));
+}
+
+
+
+void Audio::FlushBuffer()
+{
+    while(m_qBuffer.empty() == false)
+    {
+        m_qBuffer.pop();
+    }
+}
+
+void Audio::SetMixer(const vector<char>& vChannels, unsigned int nTotalChannels)
+{
+    m_vMixer = vChannels;
+    m_nTotalChannels = nTotalChannels;
+
+    wxLogDebug(wxT("Audio::GetMixer: Total = %d"), nTotalChannels);
+}
+
+const std::vector<char>& Audio::GetOutputChannels()
+{
+    return m_vMixer;
 }
