@@ -340,7 +340,7 @@ void wmSwitcherPanel::OnPaint(wxPaintEvent& event)
     else
     {
         dc.SetPen(*wxTRANSPARENT_PEN);
-        dc.SetBrush(wxBrush(GetBackgroundColour()));
+        dc.SetBrush(*wxBLACK_BRUSH);//wxBrush(GetBackgroundColour()));
         dc.DrawRectangle(0,0,GetClientSize().GetWidth(), GetClientSize().GetHeight());
 
         int nGap = 0;
@@ -348,7 +348,7 @@ void wmSwitcherPanel::OnPaint(wxPaintEvent& event)
         {
             nGap = (m_vPages.size()-1)*5;
         }
-        int nWidth = min(100, int((GetClientSize().GetWidth()-nGap)/m_vPages.size()));
+        int nWidth = min(100, int((GetClientSize().GetWidth()-nGap-4)/m_vPages.size()));
 
         if(m_nNameHeight > 0)
         {
@@ -357,11 +357,11 @@ void wmSwitcherPanel::OnPaint(wxPaintEvent& event)
                 if(m_nPageNameStyle == PAGE_BUTTON)
                 {
                     m_vPages[i].uiLabel.SetTextAlign(wxALIGN_CENTER);
-                    m_vPages[i].uiLabel.SetRect((nWidth+5)*i,0,nWidth, m_nNameHeight);
+                    m_vPages[i].uiLabel.SetRect((nWidth+5)*i+2,2,nWidth, m_nNameHeight);
                 }
                 else
                 {
-                    m_vPages[i].uiLabel.SetRect(nWidth*i,0,nWidth, m_nNameHeight);
+                    m_vPages[i].uiLabel.SetRect(nWidth*i+2,2,nWidth, m_nNameHeight);
                     m_vPages[i].uiLabel.SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
                 }
 
@@ -534,7 +534,7 @@ void wmSwitcherPanel::SetPageNameStyle(unsigned long nStyle)
             m_nSwipeHeight = 10;
             break;
         case PAGE_BUTTON:
-            m_nNameHeight = 30;
+            m_nNameHeight = 26;
             m_nSwipeHeight = 0;
             break;
     }

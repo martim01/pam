@@ -49,10 +49,13 @@ class pnlSettings: public wxPanel
 		wmSwitcherPanel* m_pswpAog;
 		wxStaticBox* StaticBox1;
 		wmButton* m_pbtn1000;
+		wmButton* m_pbtnNoise0dBu;
 		wxPanel* Panel3;
+		wmSlider* m_pNoiseAmplitude;
 		wmButton* m_pbtnAogNext;
 		wmLabel* m_pLbl5;
 		wxStaticBox* StaticBox2;
+		wmLabel* m_plblNoisedB;
 		wmLabel* m_plblSettings;
 		wmList* m_plstInput;
 		wmList* m_plstAudioSources;
@@ -64,9 +67,11 @@ class pnlSettings: public wxPanel
 		wmButton* m_pbtnAogPrev;
 		wmButton* m_pbtnMinus1;
 		wmSlider* m_pSlider;
+		wxStaticBox* StaticBox3;
 		wmList* m_plstShape;
 		wmButton* m_pbtnHome;
 		wxPanel* pnlOutput;
+		wxPanel* Panel2;
 		wmButton* m_pbtn5000;
 		wmButton* m_pbtnPlus10;
 		pnlRTP* pnlSettingsRTP;
@@ -75,6 +80,7 @@ class pnlSettings: public wxPanel
 		wmButton* m_pbtn0dbu;
 		wmButton* m_pbtnEnd;
 		wmLabel* m_plblFrequency;
+		wmList* m_plstColour;
 		pnlUpdate* Panel1;
 		wmButton* m_pbtnSequences;
 		wmLabel* m_plblInput;
@@ -110,6 +116,7 @@ class pnlSettings: public wxPanel
 		static const long ID_M_PBTN8;
 		static const long ID_M_PBTN9;
 		static const long ID_PANEL9;
+		static const long ID_STATICBOX2;
 		static const long ID_STATICBOX1;
 		static const long ID_SLIDER;
 		static const long ID_M_PLBL7;
@@ -126,8 +133,13 @@ class pnlSettings: public wxPanel
 		static const long ID_M_PLBL9;
 		static const long ID_M_PBTN19;
 		static const long ID_M_PLST9;
-		static const long ID_STATICBOX2;
 		static const long ID_PANEL10;
+		static const long ID_M_PLST5;
+		static const long ID_STATICBOX3;
+		static const long ID_CUSTOM2;
+		static const long ID_M_PLBL1;
+		static const long ID_M_PBTN21;
+		static const long ID_PANEL12;
 		static const long ID_M_PSWP2;
 		static const long ID_M_PBTN20;
 		static const long ID_PANEL8;
@@ -179,6 +191,8 @@ class pnlSettings: public wxPanel
 		void Onbtn10000Click(wxCommandEvent& event);
 		void Onbtn0dbuClick(wxCommandEvent& event);
 		void OnbtnSequencesClick(wxCommandEvent& event);
+		void OnlstColourSelected(wxCommandEvent& event);
+		void OnbtnNoise0dBuClick(wxCommandEvent& event);
 		//*)
 
         void RefreshInputs();
@@ -193,6 +207,7 @@ class pnlSettings: public wxPanel
 
         void OnSliderMove(wxCommandEvent& event);
         void OnAmplitudeMove(wxCommandEvent& event);
+        void OnNoiseAmplitudeMove(wxCommandEvent& event);
 
 		DECLARE_EVENT_TABLE()
 };

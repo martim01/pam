@@ -79,9 +79,13 @@ const long pam2Dialog::ID_BITMAPBUTTON1 = wxNewId();
 const long pam2Dialog::ID_PANEL4 = wxNewId();
 const long pam2Dialog::ID_M_PSWP1 = wxNewId();
 const long pam2Dialog::ID_M_PLST1 = wxNewId();
+const long pam2Dialog::ID_M_PLST3 = wxNewId();
+const long pam2Dialog::ID_PANEL5 = wxNewId();
 const long pam2Dialog::ID_M_PLST2 = wxNewId();
 const long pam2Dialog::ID_PANEL2 = wxNewId();
 const long pam2Dialog::ID_M_PSWP2 = wxNewId();
+const long pam2Dialog::ID_PANEL6 = wxNewId();
+const long pam2Dialog::ID_M_PSWP4 = wxNewId();
 const long pam2Dialog::ID_PANEL1 = wxNewId();
 const long pam2Dialog::ID_PANEL3 = wxNewId();
 const long pam2Dialog::ID_M_PSWP3 = wxNewId();
@@ -116,20 +120,35 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_pswpMain = new wmSwitcherPanel(pnlMain, ID_M_PSWP1, wxPoint(0,0), wxSize(600,480), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
     m_pswpMain->SetPageNameStyle(0);
     pnlLists = new wxPanel(pnlMain, ID_PANEL1, wxPoint(600,0), wxSize(200,480), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
-    m_plstScreens = new wmList(pnlLists, ID_M_PLST1, wxPoint(0,0), wxSize(200,139), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
+    pnlLists->SetBackgroundColour(wxColour(0,0,0));
+    m_pswpScreens = new wmSwitcherPanel(pnlLists, ID_M_PSWP4, wxDefaultPosition, wxSize(200,480), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP4"));
+    m_pswpScreens->SetPageNameStyle(3);
+    Panel2 = new wxPanel(m_pswpScreens, ID_PANEL5, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL5"));
+    Panel2->SetBackgroundColour(wxColour(0,0,0));
+    m_plstScreens = new wmList(Panel2, ID_M_PLST1, wxPoint(0,5), wxSize(200,390), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
     m_plstScreens->SetBackgroundColour(wxColour(0,0,0));
     m_plstScreens->SetButtonColour(wxColour(wxT("#008000")));
     m_plstScreens->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
-    m_plstOptions = new wmList(pnlLists, ID_M_PLST2, wxPoint(0,140), wxSize(200,130), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
+    m_plstInbuilt = new wmList(Panel2, ID_M_PLST3, wxPoint(0,400), wxSize(200,44), wmList::STYLE_SELECT, 0, wxSize(-1,40), 3, wxSize(5,5));
+    m_plstInbuilt->SetForegroundColour(wxColour(0,0,0));
+    m_plstInbuilt->SetBackgroundColour(wxColour(0,0,0));
+    m_plstInbuilt->SetButtonColour(wxColour(wxT("#3DBEAB")));
+    m_plstInbuilt->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
+    m_plstInbuilt->SetTextButtonColour(wxColour(wxT("#000000")));
+    Panel3 = new wxPanel(m_pswpScreens, ID_PANEL6, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL6"));
+    Panel3->SetBackgroundColour(wxColour(0,0,0));
+    m_plstOptions = new wmList(Panel3, ID_M_PLST2, wxPoint(0,5), wxSize(200,200), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
     m_plstOptions->SetBackgroundColour(wxColour(0,0,0));
     m_plstOptions->SetButtonColour(wxColour(wxT("#000080")));
     m_plstOptions->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
-    m_pswpOptions = new wmSwitcherPanel(pnlLists, ID_M_PSWP2, wxPoint(0,270), wxSize(200,210), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP2"));
+    m_pswpOptions = new wmSwitcherPanel(Panel3, ID_M_PSWP2, wxPoint(0,210), wxSize(200,230), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP2"));
     m_pswpOptions->SetPageNameStyle(0);
     m_pswpOptions->SetBackgroundColour(wxColour(0,0,0));
     Panel1 = new wxPanel(m_pswpOptions, ID_PANEL2, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL2"));
     Panel1->SetBackgroundColour(wxColour(0,0,0));
     m_pswpOptions->AddPage(Panel1, _("Blank"), false);
+    m_pswpScreens->AddPage(Panel2, _("Screens"), false);
+    m_pswpScreens->AddPage(Panel3, _("Options"), false);
     m_pswpSplash->AddPage(pnlSplash, _("Splash"), true);
     m_pswpSplash->AddPage(pnlMain, _("Main"), false);
     timerStart.SetOwner(this, ID_TIMER1);
@@ -140,6 +159,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
     Connect(ID_BITMAPBUTTON1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pam2Dialog::OnbmpSplashClick);
     Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnlstScreensSelected);
+    Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnlstScreensSelected);
     Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnplstOptionsSelected);
     Connect(ID_TIMER1,wxEVT_TIMER,(wxObjectEventFunction)&pam2Dialog::OntimerStartTrigger);
     Connect(ID_TIMER2,wxEVT_TIMER,(wxObjectEventFunction)&pam2Dialog::Onm_timerFileTrigger);
@@ -195,6 +215,10 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Settings::Get().AddHandler(wxT("Generator"),wxT("Frequency"), this);
     Settings::Get().AddHandler(wxT("Generator"),wxT("Amplitude"), this);
     Settings::Get().AddHandler(wxT("Generator"),wxT("Shape"), this);
+    Settings::Get().AddHandler(wxT("Noise"),wxT("Colour"), this);
+    Settings::Get().AddHandler(wxT("Noise"),wxT("Amplitude"), this);
+
+
     Settings::Get().AddHandler(wxT("QoS"),wxT("Interval"), this);
     Settings::Get().AddHandler(wxT("Test"), wxT("Lock"), this);
 
@@ -283,10 +307,26 @@ void pam2Dialog::LoadMonitorPanels()
     m_pswpMain->AddPage(m_ppnlTests, wxT("Tests"));
     m_ppnlTests->LoadTestPanels();
 
+
+
+
+
+    size_t nPage = 0;
+    for(size_t i = 0; i < m_pswpMain->GetPageCount(); i++)
+    {
+        if(m_pswpMain->GetPageCount() > 24)
+        {
+            if(i!=0 && i%24 ==0)
+            {
+                nPage++;
+            }
+        }
+        m_mmMonitorPlugins.insert(make_pair(nPage, m_pswpMain->GetPageText(i)));
+    }
+    m_nCurrentMonitorPage = 0;
+
     m_ppnlLog = new pnlLog(m_pswpMain);
     m_pswpMain->AddPage(m_ppnlLog, wxT("Log"));
-
-
 
     m_ppnlSettings = new pnlSettings(m_pswpMain);
     m_pswpMain->AddPage(m_ppnlSettings, wxT("Settings"));
@@ -300,20 +340,9 @@ void pam2Dialog::LoadMonitorPanels()
     m_pswpOptions->AddPage(new pnlSettingsOptions(m_pswpOptions), wxT("Settings|Options"));
     m_pswpOptions->AddPage(pnlControl, wxT("Log|Control"));
 
-
-    size_t nPage = 0;
-    for(size_t i = 0; i < m_pswpMain->GetPageCount(); i++)
-    {
-        if(m_pswpMain->GetPageCount() > 9)
-        {
-            if(i!=0 && i%8 ==0)
-            {
-                nPage++;
-            }
-        }
-        m_mmMonitorPlugins.insert(make_pair(nPage, m_pswpMain->GetPageText(i)));
-    }
-    m_nCurrentMonitorPage = 0;
+    m_plstInbuilt->AddButton(wxT("Log"));
+    m_plstInbuilt->AddButton(wxT("Settings"));
+    m_plstInbuilt->AddButton(wxT("Help"));
 
     ShowMonitorList();
 }
@@ -360,44 +389,53 @@ void pam2Dialog::OnlstScreensSelected(wxCommandEvent& event)
 {
     if(event.GetString() == wxT("Settings"))
     {
+        m_plstScreens->SelectAll(false,false);
         Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
         m_pSelectedMonitor = 0;
         ShowSettingsPanel();
     }
     else if(event.GetString() == wxT("Help"))
     {
+        m_plstScreens->SelectAll(false,false);
         ShowHelpPanel();
         m_pSelectedMonitor = 0;
         Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
     }
     else if(event.GetString() == wxT("Log"))
     {
+        m_plstScreens->SelectAll(false,false);
         Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
         m_pSelectedMonitor = 0;
         ShowLogPanel();
     }
-    else if(event.GetString() == wxT("Tests"))
-    {
-        Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
-        m_pSelectedMonitor = 0;
-        ShowTestPanels();
-    }
-    else if(event.GetString() == wxT("Next Page"))
-    {
-        m_nCurrentMonitorPage++;
-        ShowMonitorList();
-    }
-    else if(event.GetString() == wxT("Prev Page"))
-    {
-        m_nCurrentMonitorPage--;
-        ShowMonitorList();
-    }
     else
     {
-        Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
-        ShowMonitorPanel(event.GetString());
-    }
+        m_plstInbuilt->SelectAll(false, false);
 
+        if(event.GetString() == wxT("Tests"))
+        {
+
+
+            Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
+            m_pSelectedMonitor = 0;
+            ShowTestPanels();
+        }
+        else if(event.GetString() == wxT("Next Page"))
+        {
+            m_nCurrentMonitorPage++;
+            ShowMonitorList();
+        }
+        else if(event.GetString() == wxT("Prev Page"))
+        {
+            m_nCurrentMonitorPage--;
+            ShowMonitorList();
+        }
+        else
+        {
+            Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
+            ShowMonitorPanel(event.GetString());
+        }
+    }
     m_pswpSplash->ChangeSelection(1);
 }
 
@@ -418,6 +456,7 @@ void pam2Dialog::OnplstOptionsSelected(wxCommandEvent& event)
 void pam2Dialog::ShowMonitorPanel(const wxString& sPanel)
 {
     m_pswpMain->ChangeSelection(sPanel);
+    m_pswpScreens->ChangeSelection(wxT("Options"));
 
 
     m_plstOptions->Freeze();
@@ -470,6 +509,7 @@ void pam2Dialog::ShowSettingsPanel()
     m_plstOptions->Thaw();
 
     m_pswpOptions->ChangeSelection(wxT("Settings|Options"));
+    m_pswpScreens->ChangeSelection(wxT("Options"));
 }
 
 
@@ -489,6 +529,7 @@ void pam2Dialog::ShowTestPanels()
     m_plstOptions->Thaw();
 
     m_pswpOptions->ChangeSelection(wxT("Settings|Options"));
+    m_pswpScreens->ChangeSelection(wxT("Options"));
 }
 
 
@@ -501,6 +542,8 @@ void pam2Dialog::ShowLogPanel()
     m_plstOptions->Thaw();
 
     m_pswpOptions->ChangeSelection(wxT("Log|Control"));
+
+    m_pswpScreens->ChangeSelection(wxT("Options"));
 }
 
 void pam2Dialog::ShowHelpPanel()
@@ -757,12 +800,17 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
             m_plstOptions->Enable((Settings::Get().Read(event.GetSection(), event.GetKey(), 0) == 0));
         }
     }
-    else if(event.GetSection() == wxT("Generator"))
+    else if(event.GetSection() == wxT("Generator") && Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")) == wxT("Generator"))
     {
         if(m_pGenerator)
         {
             m_pGenerator->SetFrequency(Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000), Settings::Get().Read(wxT("Generator"), wxT("Amplitude"), -18.0), Settings::Get().Read(wxT("Generator"), wxT("Shape"), 0));
         }
+    }
+    else if(event.GetSection() == wxT("Noise") && Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")) == wxT("Noise"))
+    {
+        wmLog::Get()->Log(wxT("Change Audio Output Generator: Noise"));
+        InitNoiseGenerator();
     }
 }
 
@@ -916,7 +964,6 @@ void pam2Dialog::InitGenerator()
 {
     if(m_pGenerator)
     {
-        m_pGenerator->ClearSequences();
         m_pGenerator->SetFrequency(Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000), Settings::Get().Read(wxT("Generator"), wxT("Amplitude"), -18.0), Settings::Get().Read(wxT("Generator"), wxT("Shape"), 0));
 
         wmLog::Get()->Log(wxString::Format(wxT("Generating fixed frequency %dHz at %.1fdB"),Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000), Settings::Get().Read(wxT("Generator"), wxT("Amplitude"), -18.0)));
@@ -961,6 +1008,11 @@ void pam2Dialog::OutputChanged(const wxString& sKey)
             wmLog::Get()->Log(wxT("Create Audio Output Generator: Generator"));
             InitGenerator();
         }
+        else  if(sType == wxT("Noise"))
+        {
+            m_nPlaybackSource = timedbuffer::GENERATOR;
+            InitNoiseGenerator();
+        }
         else if(sType == wxT("Input"))
         {
             m_nPlaybackSource = m_nMonitorSource;
@@ -976,6 +1028,7 @@ void pam2Dialog::OutputChanged(const wxString& sKey)
         wmLog::Get()->Log(wxT("Change Audio Output Generator: Sequence"));
         InitGenerator(Settings::Get().Read(wxT("Output"), wxT("Sequence"), wxT("glits")));
     }
+
 }
 
 void pam2Dialog::OnRTPSessionClosed(wxCommandEvent& event)
@@ -1122,8 +1175,14 @@ void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
         }
     }
 
-
-    m_plstScreens->SelectButton(sPanel);
+    if(sPanel != wxT("Settings") && sPanel != wxT("Log") && sPanel != wxT("Help"))
+    {
+        m_plstScreens->SelectButton(sPanel);
+    }
+    else
+    {
+        m_plstInbuilt->SelectButton(sPanel);
+    }
 
 
     OutputChanged(wxT("Enabled"));
@@ -1221,5 +1280,14 @@ void pam2Dialog::OnHelpClose(wxCommandEvent& event)
         }
     }
 }
-
+void pam2Dialog::InitNoiseGenerator()
+{
+    if(m_pGenerator)
+    {
+        m_pGenerator->SetNoise(Settings::Get().Read(wxT("Noise"), wxT("Colour"), 0), Settings::Get().Read(wxT("Noise"), wxT("Amplitude"), -18.0));
+        CreateSessionFromOutput(wxT("Noise"));
+        CheckPlayback(m_pGenerator->GetSampleRate(), m_pGenerator->GetChannels());
+        m_pGenerator->Generate(8192);
+    }
+}
 

@@ -3,6 +3,7 @@
 	<object class="wxDialog" name="dlgSequence">
 		<pos>0,0</pos>
 		<size>800,480</size>
+		<bg>#000000</bg>
 		<id_arg>0</id_arg>
 		<style>wxNO_BORDER</style>
 		<object class="wxPanel" name="ID_PANEL1" variable="pnlFile" member="yes">
@@ -16,7 +17,7 @@
 				<fg>#FFFFFF</fg>
 			</object>
 			<object class="wmList" name="ID_M_PLST1" variable="m_plstFiles" member="yes">
-				<button>#FFFFFF</button>
+				<button>#C2CEF5</button>
 				<button_pressed>#FF8040</button_pressed>
 				<button_selected>#FF8040</button_selected>
 				<text>#000000</text>
@@ -78,7 +79,7 @@
 				<size>220,480</size>
 			</object>
 			<object class="wmList" name="ID_M_PLST2" variable="m_plstSequences" member="yes">
-				<button>#FFFFFF</button>
+				<button>#ECF099</button>
 				<button_pressed>#FF8040</button_pressed>
 				<button_selected>#FF8040</button_selected>
 				<text>#000000</text>
@@ -134,14 +135,15 @@
 			<pos>400,0</pos>
 			<size>400,480</size>
 			<fg>#FFFFFF</fg>
-			<bg>wxSYS_COLOUR_INACTIVECAPTION</bg>
+			<bg>#000000</bg>
 			<object class="wxStaticBox" name="ID_STATICBOX3" variable="StaticBox3" member="yes">
 				<label>Frequencies</label>
 				<pos>0,0</pos>
 				<size>400,480</size>
+				<bg>#000000</bg>
 			</object>
 			<object class="wmList" name="ID_M_PLST3" variable="m_plstFrequency" member="yes">
-				<button>#FFFFFF</button>
+				<button>#B9B5CC</button>
 				<button_pressed>#FF8040</button_pressed>
 				<button_selected>#FF8040</button_selected>
 				<text>#000000</text>

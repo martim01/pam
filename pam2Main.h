@@ -64,9 +64,13 @@ class pam2Dialog: public wxDialog
         static const long ID_PANEL4;
         static const long ID_M_PSWP1;
         static const long ID_M_PLST1;
+        static const long ID_M_PLST3;
+        static const long ID_PANEL5;
         static const long ID_M_PLST2;
         static const long ID_PANEL2;
         static const long ID_M_PSWP2;
+        static const long ID_PANEL6;
+        static const long ID_M_PSWP4;
         static const long ID_PANEL1;
         static const long ID_PANEL3;
         static const long ID_M_PSWP3;
@@ -77,15 +81,19 @@ class pam2Dialog: public wxDialog
 
         //(*Declarations(pam2Dialog)
         wmList* m_plstScreens;
+        wmList* m_plstInbuilt;
         wxPanel* pnlMain;
         wxBitmapButton* m_pbmpSplash;
         wxPanel* pnlLists;
         wmList* m_plstOptions;
         wxPanel* Panel1;
+        wxPanel* Panel3;
         wxTimer m_timerIpc;
+        wmSwitcherPanel* m_pswpScreens;
         wxTimer m_timerFile;
         wmSwitcherPanel* m_pswpOptions;
         wxTimer timerStart;
+        wxPanel* Panel2;
         wmSwitcherPanel* m_pswpMain;
         wxPanel* pnlSplash;
         wmSwitcherPanel* m_pswpSplash;
@@ -139,6 +147,7 @@ class pam2Dialog: public wxDialog
 
         void InitGenerator(const wxString& sSequence);
         void InitGenerator();
+        void InitNoiseGenerator();
 
         void CreateSessionFromOutput(const wxString& sSource);
 

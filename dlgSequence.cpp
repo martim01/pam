@@ -6,7 +6,6 @@
 #include <map>
 
 //(*InternalHeaders(dlgSequence)
-#include <wx/settings.h>
 #include <wx/intl.h>
 #include <wx/string.h>
 //*)
@@ -64,6 +63,7 @@ dlgSequence::dlgSequence(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	Create(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxNO_BORDER, _T("wxID_ANY"));
 	SetClientSize(wxSize(800,480));
 	Move(wxPoint(0,0));
+	SetBackgroundColour(wxColour(0,0,0));
 	pnlFile = new wxPanel(this, ID_PANEL1, wxPoint(0,0), wxSize(190,480), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
 	pnlFile->SetBackgroundColour(wxColour(0,0,0));
 	StaticBox1 = new wxStaticBox(pnlFile, ID_STATICBOX1, _("Files"), wxPoint(0,0), wxSize(190,480), 0, _T("ID_STATICBOX1"));
@@ -71,7 +71,7 @@ dlgSequence::dlgSequence(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_plstFiles = new wmList(pnlFile, ID_M_PLST1, wxPoint(10,20), wxSize(170,360), wmList::STYLE_SELECT, 1, wxSize(-1,-1), 1, wxSize(-1,-1));
 	m_plstFiles->SetForegroundColour(wxColour(255,255,255));
 	m_plstFiles->SetBackgroundColour(wxColour(255,255,255));
-	m_plstFiles->SetButtonColour(wxColour(wxT("#FFFFFF")));
+	m_plstFiles->SetButtonColour(wxColour(wxT("#C2CEF5")));
 	m_plstFiles->SetPressedButtonColour(wxColour(wxT("#FF8040")));
 	m_plstFiles->SetSelectedButtonColour(wxColour(wxT("#FF8040")));
 	m_plstFiles->SetTextButtonColour(wxColour(wxT("#000000")));
@@ -100,7 +100,7 @@ dlgSequence::dlgSequence(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_plstSequences = new wmList(pnlSequences, ID_M_PLST2, wxPoint(10,20), wxSize(170,360), wmList::STYLE_SELECT, 1, wxSize(-1,-1), 1, wxSize(-1,-1));
 	m_plstSequences->SetForegroundColour(wxColour(255,255,255));
 	m_plstSequences->SetBackgroundColour(wxColour(255,255,255));
-	m_plstSequences->SetButtonColour(wxColour(wxT("#FFFFFF")));
+	m_plstSequences->SetButtonColour(wxColour(wxT("#ECF099")));
 	m_plstSequences->SetPressedButtonColour(wxColour(wxT("#FF8040")));
 	m_plstSequences->SetSelectedButtonColour(wxColour(wxT("#FF8040")));
 	m_plstSequences->SetTextButtonColour(wxColour(wxT("#000000")));
@@ -125,12 +125,13 @@ dlgSequence::dlgSequence(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_pbtnSequenceCreate->SetColourSelected(wxColour(wxT("#00C600")));
 	pnlFrequencies = new wxPanel(this, ID_PANEL3, wxPoint(400,0), wxSize(400,480), wxTAB_TRAVERSAL, _T("ID_PANEL3"));
 	pnlFrequencies->SetForegroundColour(wxColour(255,255,255));
-	pnlFrequencies->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INACTIVECAPTION));
+	pnlFrequencies->SetBackgroundColour(wxColour(0,0,0));
 	StaticBox3 = new wxStaticBox(pnlFrequencies, ID_STATICBOX3, _("Frequencies"), wxPoint(0,0), wxSize(400,480), 0, _T("ID_STATICBOX3"));
+	StaticBox3->SetBackgroundColour(wxColour(0,0,0));
 	m_plstFrequency = new wmList(pnlFrequencies, ID_M_PLST3, wxPoint(10,20), wxSize(170,405), wmList::STYLE_SELECT, 1, wxSize(-1,-1), 1, wxSize(-1,-1));
 	m_plstFrequency->SetForegroundColour(wxColour(255,255,255));
 	m_plstFrequency->SetBackgroundColour(wxColour(255,255,255));
-	m_plstFrequency->SetButtonColour(wxColour(wxT("#FFFFFF")));
+	m_plstFrequency->SetButtonColour(wxColour(wxT("#B9B5CC")));
 	m_plstFrequency->SetPressedButtonColour(wxColour(wxT("#FF8040")));
 	m_plstFrequency->SetSelectedButtonColour(wxColour(wxT("#FF8040")));
 	m_plstFrequency->SetTextButtonColour(wxColour(wxT("#000000")));
@@ -228,6 +229,7 @@ dlgSequence::dlgSequence(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     {
         m_plstFrequencyShape->AddButton(STR_SHAPE[i]);
     }
+    m_plstFrequencyShape->SelectButton(0,false);
 }
 
 dlgSequence::~dlgSequence()

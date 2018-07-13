@@ -54,6 +54,7 @@ const long pnlSettings::ID_M_PBTN7 = wxNewId();
 const long pnlSettings::ID_M_PBTN8 = wxNewId();
 const long pnlSettings::ID_M_PBTN9 = wxNewId();
 const long pnlSettings::ID_PANEL9 = wxNewId();
+const long pnlSettings::ID_STATICBOX2 = wxNewId();
 const long pnlSettings::ID_STATICBOX1 = wxNewId();
 const long pnlSettings::ID_SLIDER = wxNewId();
 const long pnlSettings::ID_M_PLBL7 = wxNewId();
@@ -70,8 +71,13 @@ const long pnlSettings::ID_CUSTOM1 = wxNewId();
 const long pnlSettings::ID_M_PLBL9 = wxNewId();
 const long pnlSettings::ID_M_PBTN19 = wxNewId();
 const long pnlSettings::ID_M_PLST9 = wxNewId();
-const long pnlSettings::ID_STATICBOX2 = wxNewId();
 const long pnlSettings::ID_PANEL10 = wxNewId();
+const long pnlSettings::ID_M_PLST5 = wxNewId();
+const long pnlSettings::ID_STATICBOX3 = wxNewId();
+const long pnlSettings::ID_CUSTOM2 = wxNewId();
+const long pnlSettings::ID_M_PLBL1 = wxNewId();
+const long pnlSettings::ID_M_PBTN21 = wxNewId();
+const long pnlSettings::ID_PANEL12 = wxNewId();
 const long pnlSettings::ID_M_PSWP2 = wxNewId();
 const long pnlSettings::ID_M_PBTN20 = wxNewId();
 const long pnlSettings::ID_PANEL8 = wxNewId();
@@ -156,7 +162,8 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pLbl2->SetBackgroundColour(wxColour(0,64,0));
     wxFont m_pLbl2Font(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
     m_pLbl2->SetFont(m_pLbl2Font);
-    m_plstAudioSources = new wmList(pnlGenerator, ID_M_PLST8, wxPoint(0,36), wxSize(400,34), wmList::STYLE_SELECT, 0, wxSize(100,30), 3, wxSize(-1,-1));
+    m_plstAudioSources = new wmList(pnlGenerator, ID_M_PLST8, wxPoint(0,36), wxSize(480,34), wmList::STYLE_SELECT, 0, wxSize(-1,30), 5, wxSize(2,-1));
+    m_plstAudioSources->SetBackgroundColour(wxColour(0,0,0));
     m_plstAudioSources->SetButtonColour(wxColour(wxT("#400080")));
     m_plstAudioSources->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
     m_pswpAog = new wmSwitcherPanel(pnlGenerator, ID_M_PSWP2, wxPoint(0,70), wxSize(600,380), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP2"));
@@ -185,6 +192,9 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     Panel4->SetBackgroundColour(wxColour(0,0,0));
     wxFont Panel4Font(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
     Panel4->SetFont(Panel4Font);
+    StaticBox2 = new wxStaticBox(Panel4, ID_STATICBOX2, _("Amplitude"), wxPoint(5,210), wxSize(590,105), 0, _T("ID_STATICBOX2"));
+    StaticBox2->SetForegroundColour(wxColour(255,255,255));
+    StaticBox2->SetBackgroundColour(wxColour(0,0,0));
     StaticBox1 = new wxStaticBox(Panel4, ID_STATICBOX1, _("Frequency"), wxPoint(5,5), wxSize(590,200), 0, _T("ID_STATICBOX1"));
     StaticBox1->SetForegroundColour(wxColour(255,255,255));
     m_pSlider = new wmSlider(Panel4,ID_SLIDER,wxT("Frequency"),wxPoint(10,30),wxSize(580,50),5,_T("ID_SLIDER"));
@@ -211,13 +221,25 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pbtn0dbu = new wmButton(Panel4, ID_M_PBTN19, _("-18 dBFS"), wxPoint(480,250), wxSize(80,40), 0, wxDefaultValidator, _T("ID_M_PBTN19"));
     m_plstShape = new wmList(Panel4, ID_M_PLST9, wxPoint(150,320), wxSize(300,44), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 4, wxSize(5,1));
     m_plstShape->SetBackgroundColour(wxColour(0,0,0));
-    StaticBox2 = new wxStaticBox(Panel4, ID_STATICBOX2, _("Amplitude"), wxPoint(5,210), wxSize(590,105), 0, _T("ID_STATICBOX2"));
-    StaticBox2->SetForegroundColour(wxColour(255,255,255));
-    StaticBox2->SetBackgroundColour(wxColour(0,0,0));
+    Panel2 = new wxPanel(m_pswpAog, ID_PANEL12, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL12"));
+    Panel2->SetBackgroundColour(wxColour(0,0,0));
+    m_plstColour = new wmList(Panel2, ID_M_PLST5, wxPoint(10,10), wxSize(580,44), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 4, wxSize(5,1));
+    m_plstColour->SetBackgroundColour(wxColour(0,0,0));
+    StaticBox3 = new wxStaticBox(Panel2, ID_STATICBOX3, _("Amplitude"), wxPoint(5,210), wxSize(590,105), 0, _T("ID_STATICBOX3"));
+    StaticBox3->SetForegroundColour(wxColour(255,255,255));
+    StaticBox3->SetBackgroundColour(wxColour(0,0,0));
+    m_pNoiseAmplitude = new wmSlider(Panel2,ID_CUSTOM2,wxT("Frequency"),wxPoint(10,250),wxSize(400,40),5,_T("ID_CUSTOM2"));
+    m_plblNoisedB = new wmLabel(Panel2, ID_M_PLBL1, _("dB"), wxPoint(415,250), wxSize(60,40), 0, _T("ID_M_PLBL1"));
+    m_plblNoisedB->SetBorderState(uiRect::BORDER_NONE);
+    m_plblNoisedB->SetForegroundColour(wxColour(0,0,0));
+    m_plblNoisedB->SetBackgroundColour(wxColour(255,255,255));
+    m_pbtnNoise0dBu = new wmButton(Panel2, ID_M_PBTN21, _("-18 dBFS"), wxPoint(480,250), wxSize(80,40), 0, wxDefaultValidator, _T("ID_M_PBTN21"));
     m_pswpAog->AddPage(Panel5, _("Input"), false);
     m_pswpAog->AddPage(Panel3, _("Files"), false);
     m_pswpAog->AddPage(Panel4, _("Generator"), false);
-    m_pbtnSequences = new wmButton(pnlGenerator, ID_M_PBTN20, _("Edit Sequences"), wxPoint(410,39), wxSize(100,30), 0, wxDefaultValidator, _T("ID_M_PBTN20"));
+    m_pswpAog->AddPage(Panel2, _("Noise"), false);
+    m_pbtnSequences = new wmButton(pnlGenerator, ID_M_PBTN20, _("Edit Sequences"), wxPoint(485,39), wxSize(105,30), 0, wxDefaultValidator, _T("ID_M_PBTN20"));
+    m_pbtnSequences->Hide();
     pnlSettingsRTP = new pnlRTP(m_pswpSettings, ID_PANEL4, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL4"));
     pnlSettingsNetwork = new pnlNetworkSetup(m_pswpSettings, ID_PANEL5, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL5"));
     m_ppnlPlugins = new pnlSettingsPlugins(m_pswpSettings, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
@@ -261,6 +283,8 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     Connect(ID_M_PBTN18,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::Onbtn10000Click);
     Connect(ID_M_PBTN19,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::Onbtn0dbuClick);
     Connect(ID_M_PLST9,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstShapeSelected);
+    Connect(ID_M_PLST5,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstColourSelected);
+    Connect(ID_M_PBTN21,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnNoise0dBuClick);
     Connect(ID_M_PBTN20,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnSequencesClick);
     //*)
 
@@ -272,6 +296,16 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pbtnPrevious->SetBitmapSelected(wxBitmap(pageup_press_xpm));
     m_pbtnNext->SetBitmapLabel(wxBitmap(pagedown_xpm));
     m_pbtnNext->SetBitmapSelected(wxBitmap(pagedown_press_xpm));
+
+    m_pbtnAogEnd->SetBitmapLabel(wxBitmap(end_hz_xpm));
+    m_pbtnAogEnd->SetBitmapSelected(wxBitmap(end_hz_press_xpm));
+    m_pbtnAogHome->SetBitmapLabel(wxBitmap(home_hz_xpm));
+    m_pbtnAogHome->SetBitmapSelected(wxBitmap(home_hz_press_xpm));
+    m_pbtnAogPrev->SetBitmapLabel(wxBitmap(pageup_xpm));
+    m_pbtnAogPrev->SetBitmapSelected(wxBitmap(pageup_press_xpm));
+    m_pbtnAogNext->SetBitmapLabel(wxBitmap(pagedown_xpm));
+    m_pbtnAogNext->SetBitmapSelected(wxBitmap(pagedown_press_xpm));
+
 
     m_pswpSettings->Connect(wxID_ANY, wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, (wxObjectEventFunction)&pnlSettings::OnswpSettingsPageChanged, NULL, this);
     SetSize(size);
@@ -312,6 +346,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_plstAudioSources->AddButton(wxT("File"));
     m_plstAudioSources->AddButton(wxT("Sequence"));
     m_plstAudioSources->AddButton(wxT("Generator"));
+    m_plstAudioSources->AddButton(wxT("Noise"));
     m_plstAudioSources->Enable((Settings::Get().Read(wxT("Output"), wxT("Enabled"), 1) == 1));
     if((Settings::Get().Read(wxT("Output"), wxT("Enabled"), 1) != 1))
     {
@@ -341,8 +376,18 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
     m_plstShape->SelectButton(Settings::Get().Read(wxT("Generator"), wxT("Shape"), 0), true);
 
+    m_plstColour->AddButton(wxT("White"));
+    m_plstColour->AddButton(wxT("Pink"));
+    m_plstColour->SelectButton(Settings::Get().Read(wxT("Noise"), wxT("Colour"), 0));
+
+    m_pNoiseAmplitude->Init(0,80, 80+Settings::Get().Read(wxT("Noise"), wxT("Amplitude"), -18.0));
+    m_pNoiseAmplitude->SetSliderColour(wxColour(128,128,128));
+    m_pNoiseAmplitude->SetButtonColour(wxColour(100,255,100));
+    m_plblNoisedB->SetLabel(wxString::Format(wxT("%.1f dBFS"),m_pNoiseAmplitude->GetPosition()-80.0));
+
     Connect(m_pSlider->GetId(), wxEVT_SLIDER_MOVE, (wxObjectEventFunction)&pnlSettings::OnSliderMove);
     Connect(m_pAmplitude->GetId(), wxEVT_SLIDER_MOVE, (wxObjectEventFunction)&pnlSettings::OnAmplitudeMove);
+    Connect(m_pNoiseAmplitude->GetId(), wxEVT_SLIDER_MOVE, (wxObjectEventFunction)&pnlSettings::OnNoiseAmplitudeMove);
 }
 
 pnlSettings::~pnlSettings()
@@ -695,6 +740,11 @@ void pnlSettings::OnlstAudioSourcesSelected(wxCommandEvent& event)
     {
         m_pswpAog->ChangeSelection(wxT("Generator"));
     }
+    else if(event.GetString() == wxT("Noise"))
+    {
+        m_pswpAog->ChangeSelection(wxT("Noise"));
+    }
+    m_pbtnSequences->Show(event.GetString() == wxT("Sequence"));
 }
 
 void pnlSettings::OnlstAogFilesSelected(wxCommandEvent& event)
@@ -740,6 +790,12 @@ void pnlSettings::OnAmplitudeMove(wxCommandEvent& event)
 {
     m_plbldB->SetLabel(wxString::Format(wxT("%.1f dBFS"),m_pAmplitude->GetPosition()-80.0));
     Settings::Get().Write(wxT("Generator"), wxT("Amplitude"), wxString::Format(wxT("%.1f"),m_pAmplitude->GetPosition()-80.0));
+}
+
+void pnlSettings::OnNoiseAmplitudeMove(wxCommandEvent& event)
+{
+    m_plblNoisedB->SetLabel(wxString::Format(wxT("%.1f dBFS"),m_pNoiseAmplitude->GetPosition()-80.0));
+    Settings::Get().Write(wxT("Noise"), wxT("Amplitude"), wxString::Format(wxT("%.1f"),m_pNoiseAmplitude->GetPosition()-80.0));
 }
 
 void pnlSettings::OnbtnMinus1Click(wxCommandEvent& event)
@@ -812,4 +868,15 @@ void pnlSettings::OnbtnSequencesClick(wxCommandEvent& event)
 {
     dlgSequence aDlg(this);
     aDlg.ShowModal();
+    ShowSequences();
+}
+
+void pnlSettings::OnlstColourSelected(wxCommandEvent& event)
+{
+    Settings::Get().Write(wxT("Noise"), wxT("Colour"), event.GetInt());
+}
+
+void pnlSettings::OnbtnNoise0dBuClick(wxCommandEvent& event)
+{
+    m_pNoiseAmplitude->SetSliderPosition(62, true);
 }
