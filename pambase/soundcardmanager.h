@@ -43,11 +43,12 @@ class PAMBASE_IMPEXPORT SoundcardManager
         SoundcardManager();
         ~SoundcardManager();
 
+        Audio* m_pInput;
+        Audio* m_pOutput;
+
         std::vector<char> m_vOutputMixer;
         unsigned int m_nTotalMixerChannels;
 
-        Audio* m_pInput;
-        Audio* m_pOutput;
 
 
 };

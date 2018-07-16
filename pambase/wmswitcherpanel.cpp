@@ -72,7 +72,7 @@ bool wmSwitcherPanel::Create(wxWindow* pParent, wxWindowID id, const wxPoint& po
     }
 
     m_nSwipeHeight = 10;
-    m_nNameHeight = 20;
+    m_nNameHeight = 30;
     m_nSwipePage = 0;
 
     return true;
@@ -185,7 +185,7 @@ void wmSwitcherPanel::InsertPage(size_t nPage, wxWindow* pPage, const wxString& 
         bSelect = true;
 
     pPage->SetPosition(wxPoint(0, m_nSwipeHeight+m_nNameHeight));
-    pPage->SetSize(wxSize(GetClientSize().GetWidth(), GetClientSize().GetHeight()-(m_nSwipeHeight+m_nNameHeight)));
+    pPage->SetSize(wxSize(GetClientSize().GetWidth(), GetClientSize().GetHeight()-(m_nSwipeHeight+m_nNameHeight+4)));
 
     if(nPage < m_vPages.size())
     {
@@ -234,7 +234,7 @@ size_t wmSwitcherPanel::ChangeSelection(size_t nPage)
         m_nSwipeLeft = 0;
         if(nPage < m_nSelectedPage)
         {
-            m_vPages[m_nSwipePage].pPanel->SetPosition(wxPoint(-GetClientSize().GetWidth(), m_nSwipeHeight+m_nNameHeight));
+            m_vPages[m_nSwipePage].pPanel->SetPosition(wxPoint(-GetClientSize().GetWidth(), m_nSwipeHeight+m_nNameHeight+4));
             m_vPages[m_nSwipePage].pPanel->Show();
             m_nScrolling = SCROLL_HORIZONTAL;
 
@@ -242,7 +242,7 @@ size_t wmSwitcherPanel::ChangeSelection(size_t nPage)
         }
         else
         {
-            m_vPages[m_nSwipePage].pPanel->SetPosition(wxPoint(GetClientSize().GetWidth(), m_nSwipeHeight+m_nNameHeight));
+            m_vPages[m_nSwipePage].pPanel->SetPosition(wxPoint(GetClientSize().GetWidth(), m_nSwipeHeight+m_nNameHeight+4));
             m_vPages[m_nSwipePage].pPanel->Show();
             m_nScrolling = SCROLL_HORIZONTAL_RIGHT;
 
@@ -263,7 +263,7 @@ size_t wmSwitcherPanel::ChangeSelection(size_t nPage)
         m_nSwipeLeft = 0;
         if(nPage < m_nSelectedPage)
         {
-            m_vPages[m_nSwipePage].pPanel->SetPosition(wxPoint(0, -GetClientSize().GetHeight()+m_nSwipeHeight+m_nNameHeight));
+            m_vPages[m_nSwipePage].pPanel->SetPosition(wxPoint(0, -GetClientSize().GetHeight()+m_nSwipeHeight+m_nNameHeight+4));
             m_vPages[m_nSwipePage].pPanel->Show();
             m_nScrolling = SCROLL_VERTICAL_DOWN;
 
@@ -271,7 +271,7 @@ size_t wmSwitcherPanel::ChangeSelection(size_t nPage)
         }
         else
         {
-            m_vPages[m_nSwipePage].pPanel->SetPosition(wxPoint(0, GetClientSize().GetHeight()+m_nSwipeHeight+m_nNameHeight));
+            m_vPages[m_nSwipePage].pPanel->SetPosition(wxPoint(0, GetClientSize().GetHeight()+m_nSwipeHeight+m_nNameHeight+4));
             m_vPages[m_nSwipePage].pPanel->Show();
             m_nScrolling = SCROLL_VERTICAL;
 

@@ -227,7 +227,7 @@ const vector<char>& SoundcardManager::GetOutputChannels()
     {
         return m_pOutput->GetOutputChannels();
     }
-    return vector<char>();
+    return vector<char>(0);
 }
 
 

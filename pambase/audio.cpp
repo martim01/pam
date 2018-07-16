@@ -100,11 +100,11 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
             break;
         case OUTPUT:
             wmLog::Get()->Log(wxString::Format(wxT("Attempt to open OUTPUT stream on device %d"), m_nDevice));
-            err = Pa_OpenStream(&m_pStream, 0, &outputParameters, m_nSampleRate, 4096, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
+            err = Pa_OpenStream(&m_pStream, 0, &outputParameters, m_nSampleRate, 0, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
             break;
         case DUPLEX:
             wmLog::Get()->Log(wxString::Format(wxT("Attempt to open DUPLEX stream on device %d"), m_nDevice));
-            err = Pa_OpenStream(&m_pStream, &inputParameters, &outputParameters, m_nSampleRate, 0, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
+            err = Pa_OpenStream(&m_pStream, &inputParameters, &outputParameters, m_nSampleRate, 8192, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
             break;
     }
 
@@ -212,19 +212,19 @@ int paCallback( const void *input, void *output, unsigned long frameCount, const
 
     if((statusFlags & paInputOverflow))
     {
-        wmLog::Get()->Log(wxT("Playback:  Buffer overflow"));
+        wmLog::Get()->Log(wxT("Input:  Buffer overflow"));
     }
     if((statusFlags & paInputUnderflow))
     {
-        wmLog::Get()->Log(wxT("Playback:  Buffer underflow"));
+        wmLog::Get()->Log(wxT("Input:  Buffer underflow"));
     }
     if((statusFlags & paOutputOverflow))
     {
-        wmLog::Get()->Log(wxT("Playback:  Buffer overflow"));
+        wmLog::Get()->Log(wxT("Output:  Buffer overflow"));
     }
     if((statusFlags & paOutputUnderflow))
     {
-        wmLog::Get()->Log(wxT("Playback:  Buffer underflow"));
+        wmLog::Get()->Log(wxT("Output:  Buffer underflow"));
     }
 
     if(userData)

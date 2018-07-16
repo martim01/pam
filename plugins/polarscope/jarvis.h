@@ -1,7 +1,7 @@
 #pragma once
 #include <wx/gdicmn.h>
 #include <stack>
-
+#include <vector>
 
 // A globle point needed for  sorting points with reference
 // to  the first point Used in compare function of qsort()

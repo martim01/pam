@@ -456,7 +456,11 @@ void pam2Dialog::OnplstOptionsSelected(wxCommandEvent& event)
 void pam2Dialog::ShowMonitorPanel(const wxString& sPanel)
 {
     m_pswpMain->ChangeSelection(sPanel);
-    m_pswpScreens->ChangeSelection(wxT("Options"));
+
+    if(Settings::Get().Read(wxT("General"), wxT("ShowOptions"),0) == 1)
+    {
+        m_pswpScreens->ChangeSelection(wxT("Options"));
+    }
 
 
     m_plstOptions->Freeze();
@@ -739,7 +743,7 @@ void pam2Dialog::OnAudioData(wxCommandEvent& event)
             SoundcardManager::Get().AddOutputSamples(pTimedBuffer);
         }
     }
-    wxLogDebug(wxT("OnAudioData: %d [%d]"), event.GetId(), m_nMonitorSource);
+    //wxLogDebug(wxT("OnAudioData: %d [%d]"), event.GetId(), m_nMonitorSource);
     if(event.GetId() == m_nMonitorSource)
     {
         PassDataToPanels(pTimedBuffer);
