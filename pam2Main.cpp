@@ -37,7 +37,7 @@
 #include "updatemanager.h"
 #include "pnlHelp.h"
 #include "generator.h"
-
+#include "audioevent.h"
 #include "soundcardmanager.h"
 
 
@@ -80,6 +80,11 @@ const long pam2Dialog::ID_PANEL4 = wxNewId();
 const long pam2Dialog::ID_M_PSWP1 = wxNewId();
 const long pam2Dialog::ID_M_PLST1 = wxNewId();
 const long pam2Dialog::ID_M_PLST3 = wxNewId();
+const long pam2Dialog::ID_M_PLBL3 = wxNewId();
+const long pam2Dialog::ID_M_PLBL1 = wxNewId();
+const long pam2Dialog::ID_M_PLBL4 = wxNewId();
+const long pam2Dialog::ID_M_PLBL2 = wxNewId();
+const long pam2Dialog::ID_PANEL7 = wxNewId();
 const long pam2Dialog::ID_PANEL5 = wxNewId();
 const long pam2Dialog::ID_M_PLST2 = wxNewId();
 const long pam2Dialog::ID_PANEL2 = wxNewId();
@@ -125,16 +130,34 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_pswpScreens->SetPageNameStyle(3);
     Panel2 = new wxPanel(m_pswpScreens, ID_PANEL5, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL5"));
     Panel2->SetBackgroundColour(wxColour(0,0,0));
-    m_plstScreens = new wmList(Panel2, ID_M_PLST1, wxPoint(0,5), wxSize(200,390), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
+    m_plstScreens = new wmList(Panel2, ID_M_PLST1, wxPoint(0,5), wxSize(200,350), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
     m_plstScreens->SetBackgroundColour(wxColour(0,0,0));
     m_plstScreens->SetButtonColour(wxColour(wxT("#008000")));
     m_plstScreens->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
-    m_plstInbuilt = new wmList(Panel2, ID_M_PLST3, wxPoint(0,400), wxSize(200,44), wmList::STYLE_SELECT, 0, wxSize(-1,40), 3, wxSize(5,5));
+    m_plstInbuilt = new wmList(Panel2, ID_M_PLST3, wxPoint(0,355), wxSize(200,44), wmList::STYLE_SELECT, 0, wxSize(-1,40), 3, wxSize(5,5));
     m_plstInbuilt->SetForegroundColour(wxColour(0,0,0));
     m_plstInbuilt->SetBackgroundColour(wxColour(0,0,0));
     m_plstInbuilt->SetButtonColour(wxColour(wxT("#3DBEAB")));
     m_plstInbuilt->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
     m_plstInbuilt->SetTextButtonColour(wxColour(wxT("#000000")));
+    Panel4 = new wxPanel(Panel2, ID_PANEL7, wxPoint(4,400), wxSize(193,50), wxTAB_TRAVERSAL, _T("ID_PANEL7"));
+    Panel4->SetBackgroundColour(wxColour(255,255,255));
+    m_pLbl1 = new wmLabel(Panel4, ID_M_PLBL3, _("Monitor"), wxPoint(1,1), wxSize(95,23), 0, _T("ID_M_PLBL3"));
+    m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
+    m_pLbl1->SetForegroundColour(wxColour(255,255,255));
+    m_pLbl1->SetBackgroundColour(wxColour(0,0,0));
+    m_plblInput = new wmLabel(Panel4, ID_M_PLBL1, _("Input"), wxPoint(1,25), wxSize(95,24), 0, _T("ID_M_PLBL1"));
+    m_plblInput->SetBorderState(uiRect::BORDER_NONE);
+    m_plblInput->SetForegroundColour(wxColour(255,255,255));
+    m_plblInput->SetBackgroundColour(wxColour(0,128,0));
+    m_pLbl2 = new wmLabel(Panel4, ID_M_PLBL4, _("Output"), wxPoint(97,1), wxSize(95,23), 0, _T("ID_M_PLBL4"));
+    m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
+    m_pLbl2->SetForegroundColour(wxColour(255,255,255));
+    m_pLbl2->SetBackgroundColour(wxColour(0,0,0));
+    m_plblOutput = new wmLabel(Panel4, ID_M_PLBL2, _("Output"), wxPoint(97,25), wxSize(95,24), 0, _T("ID_M_PLBL2"));
+    m_plblOutput->SetBorderState(uiRect::BORDER_NONE);
+    m_plblOutput->SetForegroundColour(wxColour(255,255,255));
+    m_plblOutput->SetBackgroundColour(wxColour(0,128,0));
     Panel3 = new wxPanel(m_pswpScreens, ID_PANEL6, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL6"));
     Panel3->SetBackgroundColour(wxColour(0,0,0));
     m_plstOptions = new wmList(Panel3, ID_M_PLST2, wxPoint(0,5), wxSize(200,200), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
@@ -644,10 +667,12 @@ void pam2Dialog::CreateAudioInputDevice()
     {
         CreateAudioDevice(SoundcardManager::Get().GetOutputSampleRate());
 
-        m_nMonitorSource = timedbuffer::SOUNDCARD;
-        if(m_nPlaybackSource == timedbuffer::RTP)
+        m_nMonitorSource = AudioEvent::SOUNDCARD;
+        m_plblInput->SetLabel(wxT("Soundcard"));
+
+        if(m_nPlaybackSource == AudioEvent::RTP)
         {
-            m_nPlaybackSource = timedbuffer::SOUNDCARD;
+            m_nPlaybackSource = AudioEvent::SOUNDCARD;
         }
 
 
@@ -663,10 +688,11 @@ void pam2Dialog::CreateAudioInputDevice()
     }
     else if(sType == wxT("RTP"))
     {
-        m_nMonitorSource = timedbuffer::RTP;
-        if(m_nPlaybackSource == timedbuffer::SOUNDCARD)
+        m_nMonitorSource = AudioEvent::RTP;
+        m_plblInput->SetLabel(wxT("RTP"));
+        if(m_nPlaybackSource == AudioEvent::SOUNDCARD)
         {
-            m_nPlaybackSource = timedbuffer::RTP;
+            m_nPlaybackSource = AudioEvent::RTP;
         }
         wmLog::Get()->Log(wxT("Create Audio Input Device: AoIP"));
         wxString sRtp(Settings::Get().Read(wxT("Input"), wxT("RTP"), wxEmptyString));
@@ -689,7 +715,8 @@ void pam2Dialog::CreateAudioInputDevice()
     }
     else if(sType == wxT("Output"))
     {
-        m_nMonitorSource = timedbuffer::OUTPUT;
+        m_nMonitorSource = AudioEvent::OUTPUT;
+        m_plblInput->SetLabel(wxT("Output"));
         wmLog::Get()->Log(wxT("Monitoring output"));
 
         CreateSessionFromOutput(wxEmptyString);
@@ -723,33 +750,61 @@ void pam2Dialog::InputSession(const session& aSession)
 
 }
 
-void pam2Dialog::OnAudioData(wxCommandEvent& event)
+void pam2Dialog::OnAudioData(AudioEvent& event)
 {
     //m_timerAES.Stop();
 
-    timedbuffer* pTimedBuffer = reinterpret_cast<timedbuffer*>(event.GetClientData());
-
     if(SoundcardManager::Get().IsOutputStreamOpen())
     {
-        if(event.GetId() == timedbuffer::OUTPUT)
+        if(event.GetCreator() == AudioEvent::OUTPUT)
         {
             if(m_pGenerator && m_nPlaybackSource != m_nMonitorSource)
             {
-                m_pGenerator->Generate(pTimedBuffer->GetBufferSize());
+                m_pGenerator->Generate(event.GetBuffer()->GetBufferSize());
             }
+
+            switch(event.GetStatus())
+            {
+                case AudioEvent::OK:
+                    m_plblOutput->SetBackgroundColour(wxColour(0,128,0));
+                    break;
+                case AudioEvent::UNDERRUN:
+                    m_plblOutput->SetBackgroundColour(wxColour(128,0,0));
+                    break;
+                case AudioEvent::OVERRUN:
+                    m_plblOutput->SetBackgroundColour(wxColour(255,128,0));
+                    break;
+            }
+
         }
-        else if(event.GetId() == m_nPlaybackSource)
+        else if(event.GetCreator() == m_nPlaybackSource)
         {
-            SoundcardManager::Get().AddOutputSamples(pTimedBuffer);
+            SoundcardManager::Get().AddOutputSamples(event.GetBuffer());
         }
-    }
-    //wxLogDebug(wxT("OnAudioData: %d [%d]"), event.GetId(), m_nMonitorSource);
-    if(event.GetId() == m_nMonitorSource)
-    {
-        PassDataToPanels(pTimedBuffer);
     }
 
-    delete pTimedBuffer;
+    if(event.GetCreator() != AudioEvent::OUTPUT)
+    {
+        switch(event.GetStatus())
+        {
+            case AudioEvent::OK:
+                m_plblInput->SetBackgroundColour(wxColour(0,128,0));
+                break;
+            case AudioEvent::UNDERRUN:
+                m_plblInput->SetBackgroundColour(wxColour(128,0,0));
+                break;
+            case AudioEvent::OVERRUN:
+                m_plblInput->SetBackgroundColour(wxColour(255,128,0));
+                break;
+        }
+    }
+
+    if(event.GetCreator() == m_nMonitorSource)
+    {
+        PassDataToPanels(event.GetBuffer());
+    }
+
+    delete event.GetBuffer();
 }
 
 void pam2Dialog::OnQoS(wxCommandEvent& event)
@@ -845,16 +900,18 @@ void pam2Dialog::InputChanged(const wxString& sKey)
 
         if(sType == wxT("Soundcard"))
         {
-            m_nMonitorSource = timedbuffer::SOUNDCARD;
+            m_nMonitorSource = AudioEvent::SOUNDCARD;
+
         }
         else if(sType == wxT("RTP"))
         {
-            m_nMonitorSource = timedbuffer::RTP;
+            m_nMonitorSource = AudioEvent::RTP;
         }
         else if(sType == wxT("Output"))
         {
-            m_nMonitorSource = timedbuffer::OUTPUT;
+            m_nMonitorSource = AudioEvent::OUTPUT;
         }
+        m_plblInput->SetLabel(sType);
 
     }
     else if(sKey == wxT("RTP"))
@@ -985,7 +1042,7 @@ void pam2Dialog::OutputChanged(const wxString& sKey)
     {
         CreateAudioDevice(SoundcardManager::Get().GetOutputSampleRate());
 
-//        if(m_nPlaybackSource != timedbuffer::SOUNDCARD && m_nPlaybackSource !=timedbuffer::RTP)
+//        if(m_nPlaybackSource != AudioEvent::SOUNDCARD && m_nPlaybackSource !=AudioEvent::RTP)
 //        {
 //            m_pGenerator->Generate(8192);
 //        }
@@ -996,31 +1053,32 @@ void pam2Dialog::OutputChanged(const wxString& sKey)
 
         if(sType == wxT("File"))
         {
-            m_nPlaybackSource = timedbuffer::FILE;
+            m_nPlaybackSource = AudioEvent::FILE;
             wmLog::Get()->Log(wxT("Create Audio Output Generator: File"));
             OpenFileForReading();
         }
         else if(sType == wxT("Sequence"))
         {
-            m_nPlaybackSource = timedbuffer::GENERATOR;
+            m_nPlaybackSource = AudioEvent::GENERATOR;
             wmLog::Get()->Log(wxT("Create Audio Output Generator: Sequence"));
             InitGenerator(Settings::Get().Read(wxT("Output"), wxT("Sequence"), wxT("glits")));
         }
         else if(sType == wxT("Generator"))
         {
-            m_nPlaybackSource = timedbuffer::GENERATOR;
+            m_nPlaybackSource = AudioEvent::GENERATOR;
             wmLog::Get()->Log(wxT("Create Audio Output Generator: Generator"));
             InitGenerator();
         }
         else  if(sType == wxT("Noise"))
         {
-            m_nPlaybackSource = timedbuffer::GENERATOR;
+            m_nPlaybackSource = AudioEvent::GENERATOR;
             InitNoiseGenerator();
         }
         else if(sType == wxT("Input"))
         {
             m_nPlaybackSource = m_nMonitorSource;
         }
+        m_plblOutput->SetLabel(sType);
     }
     else if(sKey == wxT("File") && Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")) == wxT("File"))
     {
@@ -1068,7 +1126,7 @@ void pam2Dialog::OnRTPSession(wxCommandEvent& event)
 
 void pam2Dialog::CheckPlayback(unsigned long nSampleRate, unsigned long nChannels)
 {
-    if(m_nPlaybackSource == timedbuffer::RTP || m_nPlaybackSource == timedbuffer::SOUNDCARD)
+    if(m_nPlaybackSource == AudioEvent::RTP || m_nPlaybackSource == AudioEvent::SOUNDCARD)
     {
         //check the stream details against the playing details...
         if(SoundcardManager::Get().IsOutputStreamOpen() && (SoundcardManager::Get().GetOutputSampleRate() != nSampleRate || SoundcardManager::Get().GetOutputNumberOfChannels() != nChannels))

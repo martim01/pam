@@ -92,6 +92,7 @@ class pnlAoIPInfo: public wxPanel
 		wmLabel* m_plblQoSJitter;
 		wmLabel* m_plblSyncTimestamp;
 		wmLabel* m_plblSubSyncType;
+		wmLabel* m_pLbl44;
 		wmLabel* m_pLbl14;
 		wmLabel* m_plblSessionSource;
 		wmLabel* m_plblQoSLost;
@@ -110,6 +111,7 @@ class pnlAoIPInfo: public wxPanel
 		wxPanel* pnlSession;
 		wmLabel* m_plblFrameDuration;
 		LevelGraph* m_pGraph;
+		wmLabel* m_plblPlaybackQueue;
 		wmLabel* m_plblSessionName;
 		wmLabel* m_plblSyncDomain;
 		wmLabel* m_plblSubSyncDomain;
@@ -184,8 +186,10 @@ class pnlAoIPInfo: public wxPanel
 		static const long ID_M_PLBL4;
 		static const long ID_M_PLBL61;
 		static const long ID_M_PLBL81;
+		static const long ID_M_PLBL87;
 		static const long ID_M_PLBL82;
 		static const long ID_M_PLBL83;
+		static const long ID_M_PLBL88;
 		static const long ID_M_PLBL6;
 		static const long ID_M_PLBL2;
 		static const long ID_M_PLBL56;

@@ -185,7 +185,7 @@ class PAMBASE_IMPEXPORT timedbuffer
         return m_nBufferDepth;
     }
 
-    enum {SOUNDCARD = 0, RTP, OUTPUT, FILE, GENERATOR };
+
 
     private:
 

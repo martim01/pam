@@ -66,8 +66,10 @@ const long pnlAoIPInfo::ID_M_PLBL53 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL4 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL61 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL81 = wxNewId();
+const long pnlAoIPInfo::ID_M_PLBL87 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL82 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL83 = wxNewId();
+const long pnlAoIPInfo::ID_M_PLBL88 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL6 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL2 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL56 = wxNewId();
@@ -377,6 +379,10 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_pLbl43->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl43->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl43->SetBackgroundColour(wxColour(0,0,255));
+	m_pLbl44 = new wmLabel(pnlSubsession, ID_M_PLBL87, _("Playback Queue"), wxPoint(450,300), wxSize(144,20), 0, _T("ID_M_PLBL87"));
+	m_pLbl44->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl44->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl44->SetBackgroundColour(wxColour(0,0,255));
 	m_plblFrameSize = new wmLabel(pnlSubsession, ID_M_PLBL82, wxEmptyString, wxPoint(5,321), wxSize(144,25), 0, _T("ID_M_PLBL82"));
 	m_plblFrameSize->SetBorderState(uiRect::BORDER_NONE);
 	m_plblFrameSize->SetForegroundColour(wxColour(0,128,0));
@@ -389,6 +395,12 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_plblFrameDuration->SetBackgroundColour(wxColour(255,255,255));
 	wxFont m_plblFrameDurationFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
 	m_plblFrameDuration->SetFont(m_plblFrameDurationFont);
+	m_plblPlaybackQueue = new wmLabel(pnlSubsession, ID_M_PLBL88, wxEmptyString, wxPoint(450,321), wxSize(144,25), 0, _T("ID_M_PLBL88"));
+	m_plblPlaybackQueue->SetBorderState(uiRect::BORDER_NONE);
+	m_plblPlaybackQueue->SetForegroundColour(wxColour(0,128,0));
+	m_plblPlaybackQueue->SetBackgroundColour(wxColour(255,255,255));
+	wxFont m_plblPlaybackQueueFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
+	m_plblPlaybackQueue->SetFont(m_plblPlaybackQueueFont);
 	m_pLbl4 = new wmLabel(pnlSubsession, ID_M_PLBL6, _("Playback Latency"), wxPoint(238,240), wxSize(100,20), 0, _T("ID_M_PLBL6"));
 	m_pLbl4->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl4->SetForegroundColour(wxColour(255,255,255));
@@ -671,6 +683,8 @@ void pnlAoIPInfo::SetAudioData(const timedbuffer* pTimedBuffer)
     double dDuration = static_cast<double>(pTimedBuffer->GetDuration())/static_cast<double>(m_nSampleRate*m_nFrameSize);
 
     m_plblFrameDuration->SetLabel(wxString::Format(wxT("%.2f ms"), dDuration*1000.0));
+
+    m_plblPlaybackQueue->SetLabel(wxString::Format(wxT("%d"), pTimedBuffer->GetBufferDepth()));
 }
 
 

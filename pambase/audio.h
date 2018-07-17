@@ -48,8 +48,8 @@ public:
     *   @param pBuffer pointer to the buffer containing the audio samples
     *   @param nFrameCount the number of audio frames (2 x number of samples)
     **/
-    void InputCallback(const float* pBuffer, size_t nFrameCount);
-    void OutputCallback(float* pBuffer, size_t nFrameCount, double dLatency);
+    void InputCallback(const float* pBuffer, size_t nFrameCount, int nFlags);
+    void OutputCallback(float* pBuffer, size_t nFrameCount, double dLatency, int nFlags);
 
     void RecordAudio(bool bRecord);
 
@@ -148,5 +148,4 @@ int paCallback( const void *input, void *output, unsigned long frameCount, const
 //int paCallbackB( const void *input, void *output, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void *userData );
 
 
-DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_DATA, -1)
 

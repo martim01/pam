@@ -12,6 +12,7 @@
 
 //(*Headers(pam2Dialog)
 #include <wx/notebook.h>
+#include "wmlabel.h"
 #include "wmswitcherpanel.h"
 #include <wx/panel.h>
 #include <wx/bmpbuttn.h>
@@ -37,6 +38,8 @@ class MonitorEvent;
 struct session;
 class PammClient;
 class Generator;
+class AudioEvent;
+
 
 class pam2Dialog: public wxDialog
 {
@@ -65,6 +68,11 @@ class pam2Dialog: public wxDialog
         static const long ID_M_PSWP1;
         static const long ID_M_PLST1;
         static const long ID_M_PLST3;
+        static const long ID_M_PLBL3;
+        static const long ID_M_PLBL1;
+        static const long ID_M_PLBL4;
+        static const long ID_M_PLBL2;
+        static const long ID_PANEL7;
         static const long ID_PANEL5;
         static const long ID_M_PLST2;
         static const long ID_PANEL2;
@@ -84,12 +92,16 @@ class pam2Dialog: public wxDialog
         wmList* m_plstInbuilt;
         wxPanel* pnlMain;
         wxBitmapButton* m_pbmpSplash;
+        wxPanel* Panel4;
+        wmLabel* m_pLbl1;
+        wmLabel* m_plblOutput;
         wxPanel* pnlLists;
         wmList* m_plstOptions;
         wxPanel* Panel1;
         wxPanel* Panel3;
         wxTimer m_timerIpc;
         wmSwitcherPanel* m_pswpScreens;
+        wmLabel* m_pLbl2;
         wxTimer m_timerFile;
         wmSwitcherPanel* m_pswpOptions;
         wxTimer timerStart;
@@ -97,6 +109,7 @@ class pam2Dialog: public wxDialog
         wmSwitcherPanel* m_pswpMain;
         wxPanel* pnlSplash;
         wmSwitcherPanel* m_pswpSplash;
+        wmLabel* m_plblInput;
         //*)
 
         void OnSettingChanged(SettingEvent& event);
@@ -118,7 +131,7 @@ class pam2Dialog: public wxDialog
         void RemoveOldFiles();
 
         void OnMonitorMax(wxCommandEvent& event);
-        void OnAudioData(wxCommandEvent& event);
+        void OnAudioData(AudioEvent& event);
         void OnQoS(wxCommandEvent& event);
 
         void OnPluginsReload(wxCommandEvent& event);

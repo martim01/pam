@@ -7,10 +7,8 @@
 #include "timedbuffer.h"
 #include "wmlogevent.h"
 #include "settings.h"
+#include "audioevent.h"
 
-
-DEFINE_EVENT_TYPE(wxEVT_FFT)
-DEFINE_EVENT_TYPE(wxEVT_DATA)
 
 using namespace std;
 
@@ -137,22 +135,18 @@ Audio::~Audio()
 
 }
 
-void Audio::InputCallback(const float* pBuffer, size_t nFrameCount)
+void Audio::InputCallback(const float* pBuffer, size_t nFrameCount, int nFlags)
 {
 
     timedbuffer* pData = new timedbuffer(nFrameCount*2);
     pData->SetBuffer(pBuffer);
     pData->SetDuration(pData->GetBufferSize()*3);
 
-    wxCommandEvent event(wxEVT_DATA);
-    event.SetId(timedbuffer::SOUNDCARD);
-    event.SetClientData(reinterpret_cast<void*>(pData));
-    event.SetInt(nFrameCount);
-    event.SetExtraLong(m_nSampleRate);
-    wxPostEvent(m_pManager, event);
+    AudioEvent(pData, AudioEvent::SOUNDCARD, nFrameCount, m_nSampleRate, nFlags&paInputOverflow, nFlags&paInputOverflow);
+
 }
 
-void Audio::OutputCallback(float* pBuffer, size_t nFrameCount, double dPlayoutLatency)
+void Audio::OutputCallback(float* pBuffer, size_t nFrameCount, double dPlayoutLatency, int nFlags)
 {
 
     wxMutexLocker ml(m_mutex);
@@ -189,12 +183,7 @@ void Audio::OutputCallback(float* pBuffer, size_t nFrameCount, double dPlayoutLa
     pTimedBuffer->SetBufferDepth(m_qBuffer.size()/m_nChannelsOut);
     pTimedBuffer->SetDuration(pTimedBuffer->GetBufferSize()*4);
 
-
-    wxCommandEvent event(wxEVT_DATA);
-    event.SetId(timedbuffer::OUTPUT);
-    event.SetClientData(reinterpret_cast<void*>(pTimedBuffer));
-    event.SetInt(nFrameCount);
-    event.SetExtraLong(m_nSampleRate);
+    AudioEvent event(pTimedBuffer, AudioEvent::OUTPUT, nFrameCount, m_nSampleRate, nFlags&paOutputUnderflow, nFlags&paOutputOverflow);
     wxPostEvent(m_pManager, event);
 
 }
@@ -210,33 +199,16 @@ void Audio::SetGain(int nGain)
 int paCallback( const void *input, void *output, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void *userData )
 {
 
-    if((statusFlags & paInputOverflow))
-    {
-        wmLog::Get()->Log(wxT("Input:  Buffer overflow"));
-    }
-    if((statusFlags & paInputUnderflow))
-    {
-        wmLog::Get()->Log(wxT("Input:  Buffer underflow"));
-    }
-    if((statusFlags & paOutputOverflow))
-    {
-        wmLog::Get()->Log(wxT("Output:  Buffer overflow"));
-    }
-    if((statusFlags & paOutputUnderflow))
-    {
-        wmLog::Get()->Log(wxT("Output:  Buffer underflow"));
-    }
-
     if(userData)
     {
         Audio* pComp = reinterpret_cast<Audio*>(userData);
         if(input)
         {
-            pComp->InputCallback(reinterpret_cast<const float*>(input), frameCount);
+            pComp->InputCallback(reinterpret_cast<const float*>(input), frameCount, statusFlags);
         }
         if(output)
         {
-            pComp->OutputCallback(reinterpret_cast<float*>(output), frameCount,timeInfo->outputBufferDacTime-timeInfo->currentTime);
+            pComp->OutputCallback(reinterpret_cast<float*>(output), frameCount,timeInfo->outputBufferDacTime-timeInfo->currentTime, statusFlags);
         }
     }
 

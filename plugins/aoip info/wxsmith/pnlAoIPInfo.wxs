@@ -558,6 +558,13 @@
 						<fg>#FFFFFF</fg>
 						<bg>#0000FF</bg>
 					</object>
+					<object class="wmLabel" name="ID_M_PLBL87" variable="m_pLbl44" member="yes">
+						<label>Playback Queue</label>
+						<pos>450,300</pos>
+						<size>144,20</size>
+						<fg>#FFFFFF</fg>
+						<bg>#0000FF</bg>
+					</object>
 					<object class="wmLabel" name="ID_M_PLBL82" variable="m_plblFrameSize" member="yes">
 						<label></label>
 						<pos>5,321</pos>
@@ -576,6 +583,21 @@
 					<object class="wmLabel" name="ID_M_PLBL83" variable="m_plblFrameDuration" member="yes">
 						<label></label>
 						<pos>150,321</pos>
+						<size>144,25</size>
+						<fg>#008000</fg>
+						<bg>#FFFFFF</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Consolas</face>
+						</font>
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL88" variable="m_plblPlaybackQueue" member="yes">
+						<label></label>
+						<pos>450,321</pos>
 						<size>144,25</size>
 						<fg>#008000</fg>
 						<bg>#FFFFFF</bg>

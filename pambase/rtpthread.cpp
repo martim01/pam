@@ -8,6 +8,7 @@
 #include "timedbuffer.h"
 #include "smpte2110mediasession.h"
 #include "wxsink.h"
+#include "audioevent.h"
 
 using namespace std;
 
@@ -241,20 +242,13 @@ void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const p
 
                     if(m_nSampleBufferSize == m_nBufferSize*m_nInputChannels)   //filled up buffer
                     {
-
-
-
                         timedbuffer* pTimedBuffer = new timedbuffer(m_nBufferSize*m_nInputChannels, ConvertDoubleToPairTime(m_dPresentation), m_nTimestamp);
                         pTimedBuffer->SetBuffer(m_pCurrentBuffer);
 
                         pTimedBuffer->SetTransmissionTime(ConvertDoubleToPairTime(m_dTransmission));
                         pTimedBuffer->SetDuration(nDuration);
 
-                        wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_DATA);
-                        pEvent->SetId(timedbuffer::RTP);
-                        pEvent->SetClientData(reinterpret_cast<void*>(pTimedBuffer));
-                        pEvent->SetInt(m_nBufferSize);
-                        pEvent->SetExtraLong(48000);  //@todo sample rate
+                        AudioEvent* pEvent = new AudioEvent(pTimedBuffer, AudioEvent::RTP, m_nBufferSize, 48000, false, false);
                         wxQueueEvent(m_pHandler, pEvent);
 
                         m_nSampleBufferSize = 0;
@@ -297,11 +291,8 @@ void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const p
 
                         pTimedBuffer->SetDuration(nDuration);
 
-                        wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_DATA);
-                        pEvent->SetId(timedbuffer::RTP);
-                        pEvent->SetClientData(reinterpret_cast<void*>(pTimedBuffer));
-                        pEvent->SetInt(m_nBufferSize);
-                        pEvent->SetExtraLong(48000);  //@todo sample rate
+                        AudioEvent* pEvent = new AudioEvent(pTimedBuffer, AudioEvent::RTP, m_nBufferSize, 48000, false, false);
+
                         wxQueueEvent(m_pHandler, pEvent);
 
                         m_nSampleBufferSize = 0;

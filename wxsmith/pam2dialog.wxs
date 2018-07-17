@@ -52,7 +52,7 @@
 										<button_selected>#FF8000</button_selected>
 										<items />
 										<pos>0,5</pos>
-										<size>200,390</size>
+										<size>200,350</size>
 										<bg>#000000</bg>
 										<style>wmList::STYLE_SELECT</style>
 										<handler function="OnlstScreensSelected" entry="EVT_LIST_SELECTED" />
@@ -66,12 +66,45 @@
 										<button_selected>#FF8000</button_selected>
 										<text>#000000</text>
 										<items />
-										<pos>0,400</pos>
+										<pos>0,355</pos>
 										<size>200,44</size>
 										<fg>#000000</fg>
 										<bg>#000000</bg>
 										<style>wmList::STYLE_SELECT</style>
 										<handler function="OnlstScreensSelected" entry="EVT_LIST_SELECTED" />
+									</object>
+									<object class="wxPanel" name="ID_PANEL7" variable="Panel4" member="yes">
+										<pos>4,400</pos>
+										<size>193,50</size>
+										<bg>#FFFFFF</bg>
+										<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl1" member="yes">
+											<label>Monitor</label>
+											<pos>1,1</pos>
+											<size>95,23</size>
+											<fg>#FFFFFF</fg>
+											<bg>#000000</bg>
+										</object>
+										<object class="wmLabel" name="ID_M_PLBL1" variable="m_plblInput" member="yes">
+											<label>Input</label>
+											<pos>1,25</pos>
+											<size>95,24</size>
+											<fg>#FFFFFF</fg>
+											<bg>#008000</bg>
+										</object>
+										<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl2" member="yes">
+											<label>Output</label>
+											<pos>97,1</pos>
+											<size>95,23</size>
+											<fg>#FFFFFF</fg>
+											<bg>#000000</bg>
+										</object>
+										<object class="wmLabel" name="ID_M_PLBL2" variable="m_plblOutput" member="yes">
+											<label>Output</label>
+											<pos>97,25</pos>
+											<size>95,24</size>
+											<fg>#FFFFFF</fg>
+											<bg>#008000</bg>
+										</object>
 									</object>
 								</object>
 								<label>Screens</label>

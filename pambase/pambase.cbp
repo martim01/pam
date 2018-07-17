@@ -182,6 +182,8 @@
 		<Unit filename="anglemeter.h" />
 		<Unit filename="audio.cpp" />
 		<Unit filename="audio.h" />
+		<Unit filename="audioevent.cpp" />
+		<Unit filename="audioevent.h" />
 		<Unit filename="dlldefine.h" />
 		<Unit filename="freq_mag.h" />
 		<Unit filename="generator.cpp" />
@@ -209,8 +211,6 @@
 		<Unit filename="monitorpluginfactory.h" />
 		<Unit filename="ourRTSPClient.cpp" />
 		<Unit filename="ourRTSPClient.h" />
-		<Unit filename="playout.cpp" />
-		<Unit filename="playout.h" />
 		<Unit filename="plugin.h" />
 		<Unit filename="ppm.cpp" />
 		<Unit filename="ppm.h" />
