@@ -887,7 +887,7 @@ void pam2Dialog::OpenFileForReading()
     wxString sFilePath;
     sFilePath << Settings::Get().GetDocumentDirectory() << wxT("/") << Settings::Get().Read(wxT("Output"), wxT("File"), wxEmptyString) << wxT(".wav");
     //Does the file exist
-    if(wxFileExists(sFilePath))
+    if(wxFileExists(sFilePath) && m_pGenerator)
     {
         if(m_pGenerator->SetFile(sFilePath))
         {
@@ -908,7 +908,7 @@ void pam2Dialog::OpenFileForReading()
     }
     else
     {
-        wmLog::Get()->Log(wxString::Format(wxT("File '%s' does not exist"), sFilePath.c_str()));
+        wmLog::Get()->Log(wxString::Format(wxT("File '%s' does not exist or generator not established"), sFilePath.c_str()));
     }
 }
 

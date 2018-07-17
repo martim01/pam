@@ -47,7 +47,12 @@ void TruePeakCalculator::InputSession(const session& aSession)
     {
         m_nChannels = aSession.itCurrentSubsession->nChannels;
         int nError;
+        #ifdef __WXMSW__
+        m_pSrc->pState = src_new (SRC_SINC_BEST_QUALITY, aSession.itCurrentSubsession->nChannels, &nError);
+        #else
         m_pSrc->pState = src_new (SRC_SINC_FASTEST, aSession.itCurrentSubsession->nChannels, &nError);
+        #endif // __WXMSW__
+
         if(m_pSrc->pState)
         {
             src_set_ratio(m_pSrc->pState, 4.0);
@@ -61,6 +66,10 @@ void TruePeakCalculator::InputSession(const session& aSession)
             {
                 delete m_vFilter[i];
                 m_vFilter[i] = 0;
+            }
+            else
+            {
+                m_vFilter[i]->write_freqres_to_file("C:\\taps.txt");
             }
         }
         m_vCurrentPeak.resize(m_nChannels);
