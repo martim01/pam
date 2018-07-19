@@ -68,7 +68,17 @@ list<pairOptionPanel_t> ScopeBuilder::CreateOptionPanels(wxWindow* pParent)
 
 void ScopeBuilder::LoadSettings()
 {
-
+    if(m_pScope)
+    {
+        m_pScope->SetTrigger(ReadSetting(wxT("Trigger"), 1.0));
+        m_pScope->SetAutotrigger((ReadSetting(wxT("Autotrigger"), 0) == 1));
+        m_pTrigger->EnableButtons((ReadSetting(wxT("Autotrigger"), 0) == 0));
+        m_pScope->SetMode(ReadSetting(wxT("Mode"),0));
+        m_pScope->SetRouting(ReadSetting(wxT("Routing1"), 0), 0);
+        m_pScope->SetRouting(ReadSetting(wxT("Routing2"), 0), 1);
+        m_pScope->SetTimeFrame(ReadSetting(wxT("Timeframe"), 1.0));
+        m_pScope->SetVerticalZoom(ReadSetting(wxT("Vertical"),1.0));
+    }
 
 }
 

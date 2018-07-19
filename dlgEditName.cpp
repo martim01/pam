@@ -62,6 +62,7 @@ dlgEditName::dlgEditName(wxWindow* parent,wxString sName, long nChannel, wxWindo
         m_ppnlChannel->Show();
         m_plstChannels->SelectButton(nChannel-1, true);
 	}
+	m_pbtnSave->Enable(m_pedtName->GetValue().empty()==false);
 }
 
 dlgEditName::~dlgEditName()

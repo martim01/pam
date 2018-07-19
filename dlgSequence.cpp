@@ -229,7 +229,7 @@ dlgSequence::dlgSequence(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     {
         m_plstFrequencyShape->AddButton(STR_SHAPE[i]);
     }
-    m_plstFrequencyShape->SelectButton(0,false);
+    m_plstFrequencyShape->SelectButton(0,true);
 }
 
 dlgSequence::~dlgSequence()
