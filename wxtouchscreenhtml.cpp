@@ -71,63 +71,11 @@ void wxTouchScreenHtml::OnMouseMove(wxMouseEvent& event)
 
 void wxTouchScreenHtml::OnPaint(wxPaintEvent& event)
 {
-    wxAutoBufferedPaintDC dc(this);
-
-    if (m_Cell == NULL)
-        return;
-
-    int x, y;
-    GetViewStart(&x, &y);
-    const wxRect rect = GetUpdateRegion().GetBox();
-    const wxSize sz = GetClientSize();
-
-    PrepareDC(dc);
-
-    dc.SetBackground(GetBackgroundColour());
-    dc.Clear();
-
-
-    // draw the HTML window contents
-    dc.SetMapMode(wxMM_TEXT);
-    dc.SetBackgroundMode(wxTRANSPARENT);
-    dc.SetLayoutDirection(GetLayoutDirection());
-
-    wxHtmlRenderingInfo rinfo;
-    wxDefaultHtmlRenderingStyle rstyle;
-    rinfo.SetSelection(m_selection);
-    rinfo.SetStyle(&rstyle);
-    m_Cell->Draw(dc, 0, 0,
-                 y  + rect.GetTop(),
-                 y  + rect.GetBottom(),
-                 rinfo);
+    wxHtmlWindow::OnPaint(event);
 
 }
 
 
-void wxTouchScreenHtml::SetPageTouch(const wxString& sCode)
-{
-//    int xView,yView;
-//    GetViewStart(&xView,&yView);
-//    SetPage(sCode);
-//    int x,y;
-//    GetVirtualSize(&x,&y);
-//    SetScrollbars(1,1, x,y);
-//    if(m_bScrollLock)
-//    {
-//        Scroll(xView,yView);
-//    }
-//    else
-//    {
-//        Scroll(0,y-GetClientSize().y);
-//    }
-
-    int xView,yView;
-    GetViewStart(&xView,&yView);
-    SetPage(sCode);
-    int x,y;
-    GetVirtualSize(&x,&y);
-    SetScrollbars(1,1, x,y);
-}
 
 void wxTouchScreenHtml::LoadFileTouch(const wxString& sFile)
 {
@@ -155,12 +103,22 @@ void wxTouchScreenHtml::PageUp()
 {
     int x,y;
     GetViewStart(&x,&y);
+    int xUnit, yUnit;
+    GetScrollPixelsPerUnit(&xUnit, &yUnit);
+    x/=xUnit;
+    y/=yUnit;
+
     Scroll(0,std::max(0,y-GetClientSize().y));
 }
 void wxTouchScreenHtml::PageDown()
 {
     int x,y;
     GetViewStart(&x,&y);
+
+    int xUnit, yUnit;
+    GetScrollPixelsPerUnit(&xUnit, &yUnit);
+    x/=xUnit;
+    y/=yUnit;
 
     int yBottom;
     GetVirtualSize(&x,&yBottom);

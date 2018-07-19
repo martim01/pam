@@ -245,7 +245,7 @@ void dlgUpdate::OnbtnChangelogClick(wxCommandEvent& event)
             sText << wxT("<h3>") << m_plstUpdates->GetButtonText(aiButtons[i]) << wxT("   (") << UpdateManager::Get().GetVersion(m_plstUpdates->GetButtonText(aiButtons[i])) << wxT(")</h3>");
             sText << UpdateManager::Get().GetChangelog(m_plstUpdates->GetButtonText(aiButtons[i])) << wxT("</br>");
         }
-        m_phtmlChangelog->SetPageTouch(sText);
+        m_phtmlChangelog->SetPage(sText);
     }
     else
     {
@@ -277,7 +277,7 @@ void dlgUpdate::OnbtnDependenciesClick(wxCommandEvent& event)
                 sText << wxT("</table>");
             }
         }
-        m_phtmlDependencies->SetPageTouch(sText);
+        m_phtmlDependencies->SetPage(sText);
 
     }
     else

@@ -8,7 +8,6 @@ class wxTouchScreenHtml : public wxHtmlWindow
 
         wxTouchScreenHtml(wxWindow *parent, wxWindowID id = -1, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxHW_DEFAULT_STYLE, const wxString& name = wxT("touchScreenHtml"));
 
-        void SetPageTouch(const wxString& sCode);
         void LoadFileTouch(const wxString& sFile);
         void SetScrollLock(bool bLock);
 

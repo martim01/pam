@@ -22,6 +22,7 @@ class pnlLog: public wxPanel
 
 		//(*Declarations(pnlLog)
 		wxTouchScreenHtml* m_phtmlLog;
+		//wxHtmlWindow* m_phtmlLog;
 		//*)
 
 
@@ -57,6 +58,8 @@ class pnlLog: public wxPanel
         wxString m_sTableMiddle;
         wxString m_sTableEnd;
         pnlLogControl* m_pControl;
+
+        bool m_bScrollLock;
 		DECLARE_EVENT_TABLE()
 };
 

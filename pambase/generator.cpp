@@ -114,6 +114,7 @@ void Generator::Generate(unsigned int nSize)
 
         pData->SetDuration(pData->GetBufferSize()*4);
         SoundcardManager::Get().AddOutputSamples(pData);
+        delete pData;
     }
 }
 
