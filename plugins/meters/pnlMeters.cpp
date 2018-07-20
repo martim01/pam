@@ -371,7 +371,7 @@ void pnlMeters::OutputChannels(const std::vector<char>& vChannels)
         m_vMonitor[i]->SetBackgroundColour(wxColour(80,70,180));
     }
 
-    wxLogDebug(wxT("OutputChannels %d %d"), vChannels[0], vChannels[1]);
+//    wxLogDebug(wxT("OutputChannels %d %d"), vChannels[0], vChannels[1]);
     if(vChannels.size() ==2)
     {
 
