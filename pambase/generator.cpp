@@ -491,6 +491,7 @@ void Generator::ClosePink()
         m_pPink[0] = 0;
         m_pPink[1] = 0;
     }
+
 }
 
 

@@ -8,6 +8,7 @@
 #include "wmlogevent.h"
 #include "settings.h"
 #include "audioevent.h"
+#include "pa_linux_alsa.h"
 
 
 using namespace std;
@@ -26,8 +27,7 @@ Audio::Audio(wxEvtHandler* pHandler, unsigned int nDevice, int nType) :
 
     m_nSampleRate = 48000;
     m_nBufferSize = 2048;
-
- }
+}
 
 bool Audio::Init(unsigned int nSampleRate)
 {
@@ -38,12 +38,14 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
 {
     wmLog::Get()->Log(wxString::Format(wxT("Attempt to open device %d"), m_nDevice));
 
+
     PaStreamParameters inputParameters;
     PaStreamParameters outputParameters;
 
     const PaDeviceInfo* pInfo = Pa_GetDeviceInfo(m_nDevice);
     if(pInfo)
     {
+        wxLogDebug(wxT("Device %s host %d Input %d Output %d"), wxString::FromAscii(pInfo->name).c_str(), pInfo->hostApi, pInfo->maxInputChannels, pInfo->maxOutputChannels);
         if(pInfo->maxInputChannels < 2)
         {
             m_nChannelsIn = pInfo->maxInputChannels;
@@ -93,16 +95,16 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
     switch(m_nType)
     {
         case INPUT:
-            wmLog::Get()->Log(wxString::Format(wxT("Attempt to open INPUT stream on device %d"), m_nDevice));
+            wmLog::Get()->Log(wxString::Format(wxT("Attempt to open %d channel INPUT stream on device %d"), m_nChannelsIn, m_nDevice));
             err = Pa_OpenStream(&m_pStream, &inputParameters, 0, m_nSampleRate, 2048, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
             break;
         case OUTPUT:
-            wmLog::Get()->Log(wxString::Format(wxT("Attempt to open OUTPUT stream on device %d"), m_nDevice));
+            wmLog::Get()->Log(wxString::Format(wxT("Attempt to open %d channel OUTPUT stream on device %d"), m_nChannelsOut, m_nDevice));
             err = Pa_OpenStream(&m_pStream, 0, &outputParameters, m_nSampleRate, 0, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
             break;
         case DUPLEX:
-            wmLog::Get()->Log(wxString::Format(wxT("Attempt to open DUPLEX stream on device %d"), m_nDevice));
-            err = Pa_OpenStream(&m_pStream, &inputParameters, &outputParameters, m_nSampleRate, 8192, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
+            wmLog::Get()->Log(wxString::Format(wxT("Attempt to open %d in and %d out DUPLEX stream on device %d"), m_nChannelsIn, m_nChannelsOut,  m_nDevice));
+            err = Pa_OpenStream(&m_pStream, &inputParameters, &outputParameters, m_nSampleRate, 2048, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
             break;
     }
 
@@ -111,12 +113,23 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
         err = Pa_StartStream(m_pStream);
         if(err == paNoError)
         {
+            PaAlsa_EnableRealtimeScheduling(m_pStream,1);
             wmLog::Get()->Log(wxString::Format(wxT("Device %d opened: Mode %d"), m_nDevice, m_nType));
+            const PaStreamInfo* pStreamInfo = Pa_GetStreamInfo(m_pStream);
+            if(pStreamInfo)
+            {
+                wmLog::Get()->Log(wxString::Format(wxT("StreamInfo: Input Latency %.2f Output Latency %.2f Sample Rate %.2f"), pStreamInfo->inputLatency, pStreamInfo->outputLatency, pStreamInfo->sampleRate));
+            }
+
             return true;
         }
     }
     m_pStream = 0;
-    wmLog::Get()->Log(wxString::Format(wxT("Failed to open device %d %s %d %d,"), m_nDevice, wxString::FromAscii(Pa_GetErrorText(err)).c_str(), m_nSampleRate, m_nChannelsIn));
+    wmLog::Get()->Log(wxString::Format(wxT("Failed to open device %d %s %d %d, %d"), m_nDevice, wxString::FromAscii(Pa_GetErrorText(err)).c_str(), m_nSampleRate, m_nChannelsIn, m_nChannelsOut));
+
+
+
+
     return false;
 }
 
@@ -125,8 +138,8 @@ Audio::~Audio()
 {
     if(m_pStream)
     {
-        wmLog::Get()->Log(wxT("Stop PortAudio stream"));
-        PaError err = Pa_StopStream(m_pStream);
+        wxLogDebug(wxT("Stop PortAudio stream"));
+        PaError err = Pa_AbortStream(m_pStream);
         if(err != paNoError)
         {
             wmLog::Get()->Log(wxString::Format(wxT("Failed to stop PortAudio stream: %s"), wxString::FromAscii(Pa_GetErrorText(err)).c_str()));
@@ -198,6 +211,7 @@ void Audio::SetGain(int nGain)
 
 int paCallback( const void *input, void *output, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void *userData )
 {
+    wxLogDebug(wxT("Callback: %d"), frameCount);
 
     if(userData)
     {

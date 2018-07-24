@@ -3,6 +3,7 @@
 #include "timedbuffer.h"
 #include "portaudio.h"
 #include "wmlogevent.h"
+#include <wx/log.h>
 
 using namespace std;
 
@@ -14,50 +15,46 @@ SoundcardManager& SoundcardManager::Get()
 
 bool SoundcardManager::Init(wxEvtHandler* pHandler, int nInputDevice, int nOutputDevice, unsigned int nOutputSampleRate)
 {
-    if(m_pInput && m_pOutput && m_pInput == m_pOutput)
+
+    if(m_pInput)
     {
-        if(nInputDevice != m_pInput->GetDevice() || nOutputDevice != m_pOutput->GetDevice())
+        wxLogDebug(wxT("SoundcardManager: Input already open"));
+        if(m_pInput->GetDevice() != nInputDevice || (m_pInput != m_pOutput && m_pInput->GetDevice() == nOutputDevice))
         {
+            wxLogDebug(wxT("SoundcardManager: Input changed or output changed to input device"));
+            if(m_pInput == m_pOutput)
+            {
+                m_pOutput = 0;
+            }
             delete m_pInput;
             m_pInput = 0;
+        }
+    }
+
+    if(m_pOutput)
+    {
+        wxLogDebug(wxT("SoundcardManager: Output already open"));
+        if(m_pOutput->GetDevice() != nOutputDevice || (m_pOutput != m_pInput && m_pOutput->GetDevice() == nInputDevice))
+        {
+            wxLogDebug(wxT("SoundcardManager: Output changed or input changed to output device"));
+            if(m_pInput == m_pOutput)
+            {
+                m_pInput = 0;
+            }
+            delete m_pOutput;
             m_pOutput = 0;
         }
     }
-    else
-    {
-        if(m_pInput && nInputDevice != m_pInput->GetDevice())
-        {
-            if(!m_pOutput || nInputDevice != m_pOutput->GetDevice())
-            {
-                delete m_pInput;
-                m_pInput = 0;
-            }
-            else if(nInputDevice == m_pOutput->GetDevice())
-            {
-                delete m_pInput;
-                delete m_pOutput;
-                m_pInput = 0;
-                m_pOutput = 0;
-            }
-        }
-        if(m_pOutput && nOutputDevice != m_pOutput->GetDevice())
-        {
-            if(!m_pInput || nOutputDevice != m_pInput->GetDevice())
-            {
-                delete m_pOutput;
-                m_pOutput = 0;
-            }
-            else if(nOutputDevice == m_pInput->GetDevice())
-            {
-                delete m_pInput;
-                delete m_pOutput;
-                m_pInput = 0;
-                m_pOutput = 0;
-            }
-        }
 
+    wxLogDebug(wxT("InputDevice 0x%X OutputDevice 0x%X"), (int)m_pInput, (int)m_pOutput);
+
+    wxLogDebug(wxString::Format(wxT("SoundcardManager: Input device =%d Output device =%d"), nInputDevice, nOutputDevice));
+
+    if(m_pInput == NULL && m_pOutput == NULL)
+    {
+        Pa_Terminate();
+        Pa_Initialize();
     }
-    wmLog::Get()->Log(wxString::Format(wxT("SoundcardManager: Input device =%d Output device =%d"), nInputDevice, nOutputDevice));
 
     if(nInputDevice == nOutputDevice)
     {
@@ -65,11 +62,19 @@ bool SoundcardManager::Init(wxEvtHandler* pHandler, int nInputDevice, int nOutpu
         {
             if(!m_pInput && !m_pOutput)
             {
+                wxLogDebug(wxT("SoundcardManager: Create duplex audio stream"));
                 m_pInput = new Audio(pHandler, nInputDevice, Audio::DUPLEX);
                 m_pOutput = m_pInput;
                 m_pOutput->SetMixer(m_vOutputMixer, m_nTotalMixerChannels);
 
-                return m_pInput->Init(nOutputSampleRate);
+                if(m_pInput->Init(nOutputSampleRate) == false)
+                {
+                    delete m_pInput;
+                    m_pInput = 0;
+                    m_pOutput = 0;
+                    return false;
+                }
+                return true;
             }
             return false;
         }
@@ -80,14 +85,26 @@ bool SoundcardManager::Init(wxEvtHandler* pHandler, int nInputDevice, int nOutpu
     if(!m_pInput && nInputDevice != -1)
     {
         m_pInput = new Audio(pHandler, nInputDevice, Audio::INPUT);
-        bSuccess = m_pInput->Init(48000);
+        if(m_pInput->Init(48000) == false)
+        {
+            delete m_pInput;
+            m_pInput = 0;
+            bSuccess = false;
+        }
+
     }
 
     if(!m_pOutput && nOutputDevice != -1)
     {
         m_pOutput = new Audio(pHandler, nOutputDevice, Audio::OUTPUT);
         m_pOutput->SetMixer(m_vOutputMixer, m_nTotalMixerChannels);
-        bSuccess &= m_pOutput->Init(nOutputSampleRate);
+        if(m_pOutput->Init(nOutputSampleRate) == false)
+        {
+            delete m_pOutput;
+            m_pOutput = 0;
+            bSuccess = false;
+        }
+
     }
 
     return bSuccess;
@@ -250,6 +267,11 @@ void SoundcardManager::Initialize()
 void SoundcardManager::Terminate()
 {
     delete m_pInput;
-    delete m_pOutput;
+    if(m_pOutput != m_pInput)
+    {
+        delete m_pOutput;
+    }
+    m_pInput = 0;
+    m_pOutput = 0;
     Pa_Terminate();
 }

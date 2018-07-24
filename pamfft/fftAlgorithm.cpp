@@ -96,42 +96,48 @@ void FFTAlgorithm::CopyChannelIntoFFT(std::list<float>& lstBuffer, unsigned long
 
 void FFTAlgorithm::CopyLeftPlusRightIntoFFT(list<float>& lstBuffer, unsigned int nBufferToDelete, int nWindow)
 {
-    list<float>::iterator itSample = lstBuffer.begin();
-    for(size_t i = 0; i < m_vfft_in.size(); i++)
+    if(lstBuffer.empty() == false)
     {
-        list<float>::iterator itRight(itSample);
-        ++itRight;
-
-        m_vfft_in[i] = ApplyWindow(nWindow, ((*itSample)+(*itRight))/2, i);
-
-        if(i < nBufferToDelete)
+        list<float>::iterator itSample = lstBuffer.begin();
+        for(size_t i = 0; i < m_vfft_in.size(); i++)
         {
-            itSample = lstBuffer.erase(lstBuffer.erase(itSample));  //erase the left
-        }
-        else
-        {
-            ++(++itSample);
+            list<float>::iterator itRight(itSample);
+            ++itRight;
+
+            m_vfft_in[i] = ApplyWindow(nWindow, ((*itSample)+(*itRight))/2, i);
+
+            if(i < nBufferToDelete)
+            {
+                itSample = lstBuffer.erase(lstBuffer.erase(itSample));  //erase the left
+            }
+            else
+            {
+                ++(++itSample);
+            }
         }
     }
 }
 
 void FFTAlgorithm::CopyLeftMinusRightIntoFFT(list<float>& lstBuffer, unsigned int nBufferToDelete, int nWindow)
 {
-    list<float>::iterator itSample = lstBuffer.begin();
-    for(size_t i = 0; i < m_vfft_in.size(); i++)
+    if(lstBuffer.empty() == false)
     {
-        list<float>::iterator itRight(itSample);
-        ++itRight;
-
-        m_vfft_in[i] = ApplyWindow(nWindow, ((*itSample)-(*itRight))/2, i);
-
-        if(i < nBufferToDelete)
+        list<float>::iterator itSample = lstBuffer.begin();
+        for(size_t i = 0; i < m_vfft_in.size(); i++)
         {
-            itSample = lstBuffer.erase(lstBuffer.erase(itSample));
-        }
-        else
-        {
-            ++(++itSample);
+            list<float>::iterator itRight(itSample);
+            ++itRight;
+
+            m_vfft_in[i] = ApplyWindow(nWindow, ((*itSample)-(*itRight))/2, i);
+
+            if(i < nBufferToDelete)
+            {
+                itSample = lstBuffer.erase(lstBuffer.erase(itSample));
+            }
+            else
+            {
+                ++(++itSample);
+            }
         }
     }
 }
