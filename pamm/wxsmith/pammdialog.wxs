@@ -39,9 +39,17 @@
 			<style>wmButton::STYLE_HOLD</style>
 			<handler function="OnbtnKillHeld" entry="EVT_BUTTON_HELD" />
 		</object>
+		<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnTerminal" member="yes">
+			<label>Terminal Emulator</label>
+			<pos>450,360</pos>
+			<size>100,100</size>
+			<bg>#408080</bg>
+			<style>wmButton::STYLE_NORMAL</style>
+			<handler function="OnbtnTerminalClick" entry="EVT_BUTTON" />
+		</object>
 		<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnReboot" member="yes">
 			<label>Hold To Reboot</label>
-			<pos>450,360</pos>
+			<pos>570,360</pos>
 			<size>100,100</size>
 			<bg>#800000</bg>
 			<style>wmButton::STYLE_HOLD</style>
@@ -49,7 +57,7 @@
 		</object>
 		<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnShutdown" member="yes">
 			<label>Hold To Shutdown</label>
-			<pos>600,360</pos>
+			<pos>690,360</pos>
 			<size>100,100</size>
 			<bg>#800000</bg>
 			<style>wmButton::STYLE_HOLD</style>

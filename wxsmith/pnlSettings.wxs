@@ -470,17 +470,24 @@
 				<label>Update</label>
 			</object>
 			<object class="wmSwitcherPanelpage">
-				<object class="wxPanel" name="ID_PANEL6" variable="pnlThreads" member="yes">
+				<object class="wxPanel" name="ID_PANEL6" variable="pnlGeneral" member="yes">
 					<bg>wxSYS_COLOUR_BACKGROUND</bg>
-					<object class="wmList" name="ID_M_PLST3" variable="m_plstThreads" member="yes">
-						<scrolling>None</scrolling>
-						<columns>3</columns>
-						<items />
-						<size>600,480</size>
-						<bg>wxSYS_COLOUR_BACKGROUND</bg>
+					<object class="wmButton" name="ID_M_PBTN22" variable="m_pbtnCursor" member="yes">
+						<label>Cursor</label>
+						<pos>10,10</pos>
+						<size>200,40</size>
+						<style>wmButton::STYLE_SELECT</style>
+						<handler function="OnbtnCursorClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN23" variable="m_ptbnOptions" member="yes">
+						<label>View</label>
+						<pos>10,60</pos>
+						<size>200,40</size>
+						<style>wmButton::STYLE_SELECT</style>
+						<handler function="OnbtnOptionsClick" entry="EVT_BUTTON" />
 					</object>
 				</object>
-				<label>Threads</label>
+				<label>General</label>
 			</object>
 		</object>
 	</object>

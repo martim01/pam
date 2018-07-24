@@ -179,8 +179,6 @@
 		<Unit filename="pnlRTP.h" />
 		<Unit filename="pnlSettings.cpp" />
 		<Unit filename="pnlSettings.h" />
-		<Unit filename="pnlSettingsInput.cpp" />
-		<Unit filename="pnlSettingsInput.h" />
 		<Unit filename="pnlSettingsOptions.cpp" />
 		<Unit filename="pnlSettingsOptions.h" />
 		<Unit filename="pnlSettingsPlugins.cpp" />

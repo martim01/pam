@@ -69,7 +69,7 @@ void pnlHelp::SelectHelp(const wxString& sHelp)
 
 void pnlHelp::OnlstHelpSelected(wxCommandEvent& event)
 {
-    m_pHtml->LoadFileTouch(wxString::Format(wxT("%s/help/%s.html"), Settings::Get().GetDocumentDirectory().c_str(), event.GetString().c_str()));
+    m_pHtml->LoadFile(wxString::Format(wxT("%s/help/%s.html"), Settings::Get().GetDocumentDirectory().c_str(), event.GetString().c_str()));
 }
 
 void pnlHelp::OnbtnCloseClick(wxCommandEvent& event)

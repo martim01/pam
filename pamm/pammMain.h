@@ -46,6 +46,7 @@ class pammDialog: public wxDialog
         void OnbtnShutdownHeld(wxCommandEvent& event);
         void OnSecondTrigger(wxTimerEvent& event);
         void OnbtnKillHeld(wxCommandEvent& event);
+        void OnbtnTerminalClick(wxCommandEvent& event);
         //*)
 
         void LaunchPam();
@@ -58,6 +59,7 @@ class pammDialog: public wxDialog
         static const long ID_M_PLBL1;
         static const long ID_M_PBTN1;
         static const long ID_M_PBTN4;
+        static const long ID_M_PBTN5;
         static const long ID_M_PBTN2;
         static const long ID_M_PBTN3;
         static const long ID_LISTBOX1;
@@ -67,6 +69,7 @@ class pammDialog: public wxDialog
         //*)
 
         //(*Declarations(pammDialog)
+        wmButton* m_pbtnTerminal;
         wxListBox* m_plbxLog;
         wmButton* m_pbtnReboot;
         wmLabel* m_plblTitle;

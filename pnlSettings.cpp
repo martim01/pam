@@ -85,7 +85,8 @@ const long pnlSettings::ID_PANEL4 = wxNewId();
 const long pnlSettings::ID_PANEL5 = wxNewId();
 const long pnlSettings::ID_PANEL3 = wxNewId();
 const long pnlSettings::ID_PANEL7 = wxNewId();
-const long pnlSettings::ID_M_PLST3 = wxNewId();
+const long pnlSettings::ID_M_PBTN22 = wxNewId();
+const long pnlSettings::ID_M_PBTN23 = wxNewId();
 const long pnlSettings::ID_PANEL6 = wxNewId();
 const long pnlSettings::ID_M_PSWP1 = wxNewId();
 //*)
@@ -244,10 +245,10 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     pnlSettingsNetwork = new pnlNetworkSetup(m_pswpSettings, ID_PANEL5, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL5"));
     m_ppnlPlugins = new pnlSettingsPlugins(m_pswpSettings, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
     Panel1 = new pnlUpdate(m_pswpSettings, ID_PANEL7, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL7"));
-    pnlThreads = new wxPanel(m_pswpSettings, ID_PANEL6, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL6"));
-    pnlThreads->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
-    m_plstThreads = new wmList(pnlThreads, ID_M_PLST3, wxDefaultPosition, wxSize(600,480), 0, 0, wxSize(-1,-1), 3, wxSize(-1,-1));
-    m_plstThreads->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
+    pnlGeneral = new wxPanel(m_pswpSettings, ID_PANEL6, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL6"));
+    pnlGeneral->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
+    m_pbtnCursor = new wmButton(pnlGeneral, ID_M_PBTN22, _("Cursor"), wxPoint(10,10), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN22"));
+    m_ptbnOptions = new wmButton(pnlGeneral, ID_M_PBTN23, _("View"), wxPoint(10,60), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN23"));
     m_pswpSettings->AddPage(pnlInput, _("Monitor"), false);
     m_pswpSettings->AddPage(pnlOutput, _("Output Device"), false);
     m_pswpSettings->AddPage(pnlGenerator, _("Output Source"), false);
@@ -255,7 +256,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pswpSettings->AddPage(pnlSettingsNetwork, _("Network"), false);
     m_pswpSettings->AddPage(m_ppnlPlugins, _("Plugins"), false);
     m_pswpSettings->AddPage(Panel1, _("Update"), false);
-    m_pswpSettings->AddPage(pnlThreads, _("Threads"), false);
+    m_pswpSettings->AddPage(pnlGeneral, _("General"), false);
 
     Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstDevicesSelected);
     Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstInputSelected);
@@ -286,7 +287,15 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     Connect(ID_M_PLST5,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstColourSelected);
     Connect(ID_M_PBTN21,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnNoise0dBuClick);
     Connect(ID_M_PBTN20,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnSequencesClick);
+    Connect(ID_M_PBTN22,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnCursorClick);
+    Connect(ID_M_PBTN23,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnOptionsClick);
     //*)
+
+    m_pbtnCursor->SetToggleLook(true, wxT("Hide"), wxT("Show"), 40);
+    m_ptbnOptions->SetToggleLook(true, wxT("Screens"), wxT("Options"), 40);
+
+    m_pbtnCursor->ToggleSelection((Settings::Get().Read(wxT("General"), wxT("Cursor"), 1) == 1), true);
+    m_ptbnOptions->ToggleSelection((Settings::Get().Read(wxT("General"), wxT("ShowOptions"), 1) == 1), true);
 
     m_pbtnEnd->SetBitmapLabel(wxBitmap(end_hz_xpm));
     m_pbtnEnd->SetBitmapSelected(wxBitmap(end_hz_press_xpm));
@@ -388,6 +397,9 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     Connect(m_pSlider->GetId(), wxEVT_SLIDER_MOVE, (wxObjectEventFunction)&pnlSettings::OnSliderMove);
     Connect(m_pAmplitude->GetId(), wxEVT_SLIDER_MOVE, (wxObjectEventFunction)&pnlSettings::OnAmplitudeMove);
     Connect(m_pNoiseAmplitude->GetId(), wxEVT_SLIDER_MOVE, (wxObjectEventFunction)&pnlSettings::OnNoiseAmplitudeMove);
+
+
+
 }
 
 pnlSettings::~pnlSettings()
@@ -402,6 +414,12 @@ void pnlSettings::OnlstDevicesSelected(wxCommandEvent& event)
     wxString sDevice(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")));
     if(sDevice == wxT("Soundcard"))
     {
+        #ifdef __WXGTK__
+        if(Settings.Get().Read(wxT("Output"), wxT("Device"),0 ) == (int)event.GetClientData())
+        {
+            Settings.Get().Write(wxT("Output"), wxT("Enabled"), wxT("0"));
+        }
+        #endif // __WXGTK__
         Settings::Get().Write(wxT("Input"), wxT("Device"), (int)event.GetClientData());
     }
     else if(sDevice == wxT("RTP"))
@@ -476,7 +494,12 @@ void pnlSettings::OnbtnOutputClick(wxCommandEvent& event)
 
 void pnlSettings::OnlstPlaybackSelected(wxCommandEvent& event)
 {
-
+    #ifdef __WXGTK__
+    if(Settings.Get().Read(wxT("Input"), wxT("Type"), wxT("RTP")) == wxT("Soundcard") && Settings.Get().Read(wxT("Input"), wxT("Device"),0 ) == (int)event.GetClientData())
+    {
+        Settings.Get().Write(wxT("Input"), wxT("Type"), wxT("Output"));
+    }
+    #endif // __WXGTK__
     Settings::Get().Write(wxT("Output"), wxT("Device"), (int)event.GetClientData());
 
 }
@@ -879,4 +902,14 @@ void pnlSettings::OnlstColourSelected(wxCommandEvent& event)
 void pnlSettings::OnbtnNoise0dBuClick(wxCommandEvent& event)
 {
     m_pNoiseAmplitude->SetSliderPosition(62, true);
+}
+
+void pnlSettings::OnbtnCursorClick(wxCommandEvent& event)
+{
+    Settings::Get().Write(wxT("General"), wxT("Cursor"), event.IsChecked());
+}
+
+void pnlSettings::OnbtnOptionsClick(wxCommandEvent& event)
+{
+    Settings::Get().Write(wxT("General"), wxT("ShowOptions"), event.IsChecked());
 }

@@ -529,7 +529,7 @@ void pam2Dialog::ShowSettingsPanel()
     m_plstOptions->AddButton(wxT("Network"));
     m_plstOptions->AddButton(wxT("Plugins"));
     m_plstOptions->AddButton(wxT("Update"));
-    m_plstOptions->AddButton(wxT("Threads"));
+    m_plstOptions->AddButton(wxT("General"));
 
 
     m_plstOptions->SelectButton(Settings::Get().Read(wxT("Settings"), wxT("_Options"), 0));
@@ -1264,17 +1264,17 @@ void pam2Dialog::Onm_timerFileTrigger(wxTimerEvent& event)
 
 void pam2Dialog::PopulateThreadList()
 {
-    m_ppnlSettings->m_plstThreads->Freeze();
-    m_ppnlSettings->m_plstThreads->Clear();
-    for(map<wxString, RtpThread*>::iterator itThread = m_mRtp.begin(); itThread != m_mRtp.end(); ++itThread)
-    {
-        int nButton = m_ppnlSettings->m_plstThreads->AddButton(itThread->first);
-        if(m_setRtpOrphan.find(itThread->first) != m_setRtpOrphan.end())
-        {
-            m_ppnlSettings->m_plstThreads->SetButtonColour(nButton, wxColour(200,0,0));
-        }
-    }
-    m_ppnlSettings->m_plstThreads->Thaw();
+//    m_ppnlSettings->m_plstThreads->Freeze();
+//    m_ppnlSettings->m_plstThreads->Clear();
+//    for(map<wxString, RtpThread*>::iterator itThread = m_mRtp.begin(); itThread != m_mRtp.end(); ++itThread)
+//    {
+//        int nButton = m_ppnlSettings->m_plstThreads->AddButton(itThread->first);
+//        if(m_setRtpOrphan.find(itThread->first) != m_setRtpOrphan.end())
+//        {
+//            m_ppnlSettings->m_plstThreads->SetButtonColour(nButton, wxColour(200,0,0));
+//        }
+//    }
+//    m_ppnlSettings->m_plstThreads->Thaw();
 }
 
 void pam2Dialog::OntimerIpcTrigger(wxTimerEvent& event)

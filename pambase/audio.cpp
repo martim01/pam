@@ -113,7 +113,9 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
         err = Pa_StartStream(m_pStream);
         if(err == paNoError)
         {
+            #ifdef __WXGTK__
             PaAlsa_EnableRealtimeScheduling(m_pStream,1);
+            #endif
             wmLog::Get()->Log(wxString::Format(wxT("Device %d opened: Mode %d"), m_nDevice, m_nType));
             const PaStreamInfo* pStreamInfo = Pa_GetStreamInfo(m_pStream);
             if(pStreamInfo)

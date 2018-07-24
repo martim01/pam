@@ -52,6 +52,7 @@ wxString wxbuildinfo(wxbuildinfoformat format)
 const long pammDialog::ID_M_PLBL1 = wxNewId();
 const long pammDialog::ID_M_PBTN1 = wxNewId();
 const long pammDialog::ID_M_PBTN4 = wxNewId();
+const long pammDialog::ID_M_PBTN5 = wxNewId();
 const long pammDialog::ID_M_PBTN2 = wxNewId();
 const long pammDialog::ID_M_PBTN3 = wxNewId();
 const long pammDialog::ID_LISTBOX1 = wxNewId();
@@ -88,9 +89,11 @@ pammDialog::pammDialog(wxWindow* parent,wxWindowID id) :
     m_pbtnKill->SetForegroundColour(wxColour(0,0,0));
     m_pbtnKill->SetBackgroundColour(wxColour(255,0,0));
     m_pbtnKill->SetColourDisabled(wxColour(wxT("#A0A0A0")));
-    m_pbtnReboot = new wmButton(this, ID_M_PBTN2, _("Hold To Reboot"), wxPoint(450,360), wxSize(100,100), wmButton::STYLE_HOLD, wxDefaultValidator, _T("ID_M_PBTN2"));
+    m_pbtnTerminal = new wmButton(this, ID_M_PBTN5, _("Terminal Emulator"), wxPoint(450,360), wxSize(100,100), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN5"));
+    m_pbtnTerminal->SetBackgroundColour(wxColour(64,128,128));
+    m_pbtnReboot = new wmButton(this, ID_M_PBTN2, _("Hold To Reboot"), wxPoint(570,360), wxSize(100,100), wmButton::STYLE_HOLD, wxDefaultValidator, _T("ID_M_PBTN2"));
     m_pbtnReboot->SetBackgroundColour(wxColour(128,0,0));
-    m_pbtnShutdown = new wmButton(this, ID_M_PBTN3, _("Hold To Shutdown"), wxPoint(600,360), wxSize(100,100), wmButton::STYLE_HOLD, wxDefaultValidator, _T("ID_M_PBTN3"));
+    m_pbtnShutdown = new wmButton(this, ID_M_PBTN3, _("Hold To Shutdown"), wxPoint(690,360), wxSize(100,100), wmButton::STYLE_HOLD, wxDefaultValidator, _T("ID_M_PBTN3"));
     m_pbtnShutdown->SetBackgroundColour(wxColour(128,0,0));
     m_plbxLog = new wxListBox(this, ID_LISTBOX1, wxPoint(10,50), wxSize(780,300), 0, 0, 0, wxDefaultValidator, _T("ID_LISTBOX1"));
     wxFont m_plbxLogFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
@@ -105,6 +108,7 @@ pammDialog::pammDialog(wxWindow* parent,wxWindowID id) :
 
     Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pammDialog::OnbtnLaunchClick);
     Connect(ID_M_PBTN4,wxEVT_BUTTON_HELD,(wxObjectEventFunction)&pammDialog::OnbtnKillHeld);
+    Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pammDialog::OnbtnTerminalClick);
     Connect(ID_M_PBTN2,wxEVT_BUTTON_HELD,(wxObjectEventFunction)&pammDialog::OnbtnRebootHeld);
     Connect(ID_M_PBTN3,wxEVT_BUTTON_HELD,(wxObjectEventFunction)&pammDialog::OnbtnShutdownHeld);
     Connect(ID_TIMER1,wxEVT_TIMER,(wxObjectEventFunction)&pammDialog::OnSecondTrigger);
@@ -277,4 +281,14 @@ void pammDialog::OnPamRestart(wxCommandEvent& event)
     Log(wxT("Pam wants to restart"));
     m_bRestart = true;
     wxKill(m_pProcess->GetPid());
+}
+
+void pammDialog::OnbtnTerminalClick(wxCommandEvent& event)
+{
+    #ifdef __WXGTK__
+    wxExecute("xterm -fullscreen");
+    #else
+    wxExecute("cmd");
+    #endif // __WXGTK__
+
 }

@@ -14,10 +14,13 @@ wxTouchScreenHtml::wxTouchScreenHtml(wxWindow *parent, wxWindowID id, const wxPo
     m_bScrollLock = false;
     m_bDown = false;
     SetScrollbars(1,1,1200,1200);
+    m_timerScroll.SetOwner(this, wxNewId());
+
     Connect(wxEVT_LEFT_DOWN, (wxObjectEventFunction)&wxTouchScreenHtml::OnMouseDown);
     Connect(wxEVT_LEFT_UP, (wxObjectEventFunction)&wxTouchScreenHtml::OnMouseUp);
     Connect(wxEVT_MOTION, (wxObjectEventFunction)&wxTouchScreenHtml::OnMouseMove);
     Connect(wxEVT_PAINT, (wxObjectEventFunction)&wxTouchScreenHtml::OnPaint);
+    Connect(m_timerScroll.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&wxTouchScreenHtml::OntimerScroll);
 }
 
 void wxTouchScreenHtml::SetScrollLock(bool bLock)
@@ -35,6 +38,10 @@ void wxTouchScreenHtml::OnMouseDown(wxMouseEvent& event)
 void wxTouchScreenHtml::OnMouseUp(wxMouseEvent& event)
 {
     m_bDown = false;
+    if(m_nScrollOffset != 0)
+    {
+        m_timerScroll.Start(50);
+    }
     event.Skip();
 }
 
@@ -42,25 +49,27 @@ void wxTouchScreenHtml::OnMouseMove(wxMouseEvent& event)
 {
     if(m_bDown)
     {
-        wxClientDC dc(this);
-        int xStart,yStart;
-        GetViewStart(&xStart, &yStart);
-
         int x = event.GetPosition().x - m_pntDown.x;
         int y = event.GetPosition().y - m_pntDown.y;
-
 
         int xUnit, yUnit;
         GetScrollPixelsPerUnit(&xUnit, &yUnit);
         x/=xUnit;
         y/=yUnit;
+
+        m_nScrollOffset =  event.GetPosition().y-m_pntDown.y;
+
         if(y != 0)
         {
+            int xStart,yStart;
+            GetViewStart(&xStart, &yStart);
             Scroll(xStart-x,yStart-y);
             m_pntDown = event.GetPosition();
             Refresh();
             Update();
         }
+
+
     }
     else
     {
@@ -125,4 +134,40 @@ void wxTouchScreenHtml::PageDown()
     yBottom-=GetClientSize().y;
 
     Scroll(0, std::min(yBottom, y+GetClientSize().y));
+}
+
+
+void wxTouchScreenHtml::OntimerScroll(wxTimerEvent& event)
+{
+    int xUnit, yUnit;
+    GetScrollPixelsPerUnit(&xUnit, &yUnit);
+
+    int y = m_nScrollOffset/yUnit;
+
+    if(y != 0)
+    {
+        int xStart,yStart;
+        GetViewStart(&xStart, &yStart);
+        Scroll(xStart,yStart-y);
+        Refresh();
+        Update();
+
+
+        if(m_nScrollOffset < 0)
+        {
+            m_nScrollOffset++;
+        }
+        else if(m_nScrollOffset > 0)
+        {
+            --m_nScrollOffset;
+        }
+        else
+        {
+            m_timerScroll.Stop();
+        }
+    }
+    else
+    {
+        m_timerScroll.Stop();
+    }
 }

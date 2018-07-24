@@ -1,5 +1,6 @@
 #pragma once
 #include <wx/html/htmlwin.h>
+#include <wx/timer.h>
 
 class wxTouchScreenHtml : public wxHtmlWindow
 {
@@ -22,7 +23,11 @@ class wxTouchScreenHtml : public wxHtmlWindow
         void OnMouseMove(wxMouseEvent& event);
         void OnPaint(wxPaintEvent& event);
 
+        void OntimerScroll(wxTimerEvent& event);
+
         bool m_bScrollLock;
         bool m_bDown;
         wxPoint m_pntDown;
+        int m_nScrollOffset;
+        wxTimer m_timerScroll;
 };

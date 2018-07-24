@@ -27,6 +27,7 @@ class pnlSettings: public wxPanel
 		//(*Declarations(pnlSettings)
 		wmLabel* m_pLbl4;
 		wmList* m_plstLatency;
+		wxPanel* pnlGeneral;
 		wmLabel* m_pLbl3;
 		wxPanel* Panel5;
 		wxPanel* pnlGenerator;
@@ -40,6 +41,7 @@ class pnlSettings: public wxPanel
 		wmButton* m_pbtnAogHome;
 		wmButton* m_pbtnOutput;
 		wmButton* m_pbtnAogEnd;
+		wmButton* m_pbtnCursor;
 		pnlSettingsPlugins* m_ppnlPlugins;
 		pnlNetworkSetup* pnlSettingsNetwork;
 		wmButton* m_pbtnPlus1;
@@ -61,8 +63,8 @@ class pnlSettings: public wxPanel
 		wmList* m_plstAudioSources;
 		wmButton* m_pbtnMinus10;
 		wmSlider* m_pAmplitude;
+		wmButton* m_ptbnOptions;
 		wmButton* m_pbtn450;
-		wxPanel* pnlThreads;
 		wmLabel* m_pLbl2;
 		wmButton* m_pbtnAogPrev;
 		wmButton* m_pbtnMinus1;
@@ -75,7 +77,6 @@ class pnlSettings: public wxPanel
 		wmButton* m_pbtn5000;
 		wmButton* m_pbtnPlus10;
 		pnlRTP* pnlSettingsRTP;
-		wmList* m_plstThreads;
 		wxPanel* pnlInput;
 		wmButton* m_pbtn0dbu;
 		wmButton* m_pbtnEnd;
@@ -147,7 +148,8 @@ class pnlSettings: public wxPanel
 		static const long ID_PANEL5;
 		static const long ID_PANEL3;
 		static const long ID_PANEL7;
-		static const long ID_M_PLST3;
+		static const long ID_M_PBTN22;
+		static const long ID_M_PBTN23;
 		static const long ID_PANEL6;
 		static const long ID_M_PSWP1;
 		//*)
@@ -193,6 +195,8 @@ class pnlSettings: public wxPanel
 		void OnbtnSequencesClick(wxCommandEvent& event);
 		void OnlstColourSelected(wxCommandEvent& event);
 		void OnbtnNoise0dBuClick(wxCommandEvent& event);
+		void OnbtnCursorClick(wxCommandEvent& event);
+		void OnbtnOptionsClick(wxCommandEvent& event);
 		//*)
 
         void RefreshInputs();
