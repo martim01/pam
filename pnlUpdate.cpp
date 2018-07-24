@@ -30,7 +30,10 @@ const long pnlUpdate::ID_M_PBTN4 = wxNewId();
 const long pnlUpdate::ID_PANEL1 = wxNewId();
 const long pnlUpdate::ID_M_PKBD2 = wxNewId();
 const long pnlUpdate::ID_M_PLBL2 = wxNewId();
+const long pnlUpdate::ID_M_PLBL10 = wxNewId();
 const long pnlUpdate::ID_M_PEDT2 = wxNewId();
+const long pnlUpdate::ID_M_PLBL11 = wxNewId();
+const long pnlUpdate::ID_M_PBTN5 = wxNewId();
 const long pnlUpdate::ID_PANEL3 = wxNewId();
 const long pnlUpdate::ID_M_PLST1 = wxNewId();
 const long pnlUpdate::ID_M_PBTN2 = wxNewId();
@@ -83,6 +86,7 @@ pnlUpdate::pnlUpdate(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 	m_pedtHTTP->SetValidation(0);
 	m_pedtHTTP->SetForegroundColour(wxColour(0,0,0));
 	m_pedtHTTP->SetBackgroundColour(wxColour(255,255,255));
+	m_pedtHTTP->SetFocusedBackground(wxColour(wxT("#FFFF80")));
 	m_pedtHTTP->SetBorderStyle(1,1);
 	m_plblHTTPCurrent = new wmLabel(Panel1, ID_M_PLBL6, wxEmptyString, wxPoint(105,5), wxSize(350,30), 0, _T("ID_M_PLBL6"));
 	m_plblHTTPCurrent->SetBorderState(uiRect::BORDER_NONE);
@@ -91,21 +95,33 @@ pnlUpdate::pnlUpdate(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 	m_pbtnSetHttp->SetBackgroundColour(wxColour(128,64,0));
 	wxFont m_pbtnSetHttpFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	m_pbtnSetHttp->SetFont(m_pbtnSetHttpFont);
-	Panel3 = new wxPanel(m_pswpType, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
-	Panel3->SetBackgroundColour(wxColour(0,0,0));
-	m_pKbd2 = new wmKeyboard(Panel3, ID_M_PKBD2, wxPoint(0,60), wxSize(600,240), 0, 0);
+	pnlShare = new wxPanel(m_pswpType, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
+	pnlShare->SetBackgroundColour(wxColour(0,0,0));
+	m_pKbd2 = new wmKeyboard(pnlShare, ID_M_PKBD2, wxPoint(0,75), wxSize(600,240), 0, 0);
 	m_pKbd2->SetForegroundColour(wxColour(255,255,255));
 	wxFont m_pKbd2Font(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	m_pKbd2->SetFont(m_pKbd2Font);
-	m_pLbl2 = new wmLabel(Panel3, ID_M_PLBL2, _("FTP://"), wxPoint(5,5), wxSize(100,40), 0, _T("ID_M_PLBL2"));
-	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
-	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
-	m_pLbl2->SetBackgroundColour(wxColour(0,0,160));
-	m_pEdt2 = new wmEdit(Panel3, ID_M_PEDT2, wxEmptyString, wxPoint(105,5), wxSize(460,40), 0, wxDefaultValidator, _T("ID_M_PEDT2"));
-	m_pEdt2->SetValidation(0);
-	m_pEdt2->SetForegroundColour(wxColour(0,0,0));
-	m_pEdt2->SetBackgroundColour(wxColour(255,255,255));
-	m_pEdt2->SetBorderStyle(1,1);
+	m_plblShareCurrent = new wmLabel(pnlShare, ID_M_PLBL2, _("Current:"), wxPoint(5,5), wxSize(100,30), 0, _T("ID_M_PLBL2"));
+	m_plblShareCurrent->SetBorderState(uiRect::BORDER_NONE);
+	m_plblShareCurrent->SetForegroundColour(wxColour(255,255,255));
+	m_plblShareCurrent->SetBackgroundColour(wxColour(0,0,160));
+	m_plblShareSet = new wmLabel(pnlShare, ID_M_PLBL10, _("Set To:"), wxPoint(5,40), wxSize(100,30), 0, _T("ID_M_PLBL10"));
+	m_plblShareSet->SetBorderState(uiRect::BORDER_NONE);
+	m_plblShareSet->SetForegroundColour(wxColour(255,255,255));
+	m_plblShareSet->SetBackgroundColour(wxColour(0,0,160));
+	m_pedtShare = new wmEdit(pnlShare, ID_M_PEDT2, wxEmptyString, wxPoint(105,40), wxSize(350,30), 0, wxDefaultValidator, _T("ID_M_PEDT2"));
+	m_pedtShare->SetValidation(0);
+	m_pedtShare->SetForegroundColour(wxColour(0,0,0));
+	m_pedtShare->SetBackgroundColour(wxColour(255,255,255));
+	m_pedtShare->SetFocusedBackground(wxColour(wxT("#FFFF80")));
+	m_pedtShare->SetBorderStyle(1,1);
+	m_pLbl8 = new wmLabel(pnlShare, ID_M_PLBL11, wxEmptyString, wxPoint(105,5), wxSize(350,30), 0, _T("ID_M_PLBL11"));
+	m_pLbl8->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl8->SetBackgroundColour(wxColour(255,255,255));
+	m_pbtnShareSet = new wmButton(pnlShare, ID_M_PBTN5, _("Set"), wxPoint(470,15), wxSize(90,40), 0, wxDefaultValidator, _T("ID_M_PBTN5"));
+	m_pbtnShareSet->SetBackgroundColour(wxColour(128,64,0));
+	wxFont m_pbtnShareSetFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
+	m_pbtnShareSet->SetFont(m_pbtnShareSetFont);
 	Panel2 = new wxPanel(m_pswpType, ID_PANEL2, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL2"));
 	Panel2->SetBackgroundColour(wxColour(0,0,0));
 	m_plstFolders = new wmList(Panel2, ID_M_PLST1, wxPoint(0,75), wxSize(600,240), 0, 1, wxSize(-1,50), 5, wxSize(5,5));
@@ -132,7 +148,7 @@ pnlUpdate::pnlUpdate(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 	m_plblLocation->SetForegroundColour(wxColour(0,0,0));
 	m_plblLocation->SetBackgroundColour(wxColour(255,255,255));
 	m_pswpType->AddPage(Panel1, _("HTTP"), false);
-	m_pswpType->AddPage(Panel3, _("FTP"), false);
+	m_pswpType->AddPage(pnlShare, _("Share"), false);
 	m_pswpType->AddPage(Panel2, _("Local"), false);
 	m_pbtnCheck = new wmButton(this, ID_M_PBTN1, _("Check For Updates"), wxPoint(200,390), wxSize(200,40), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnCheck->SetBackgroundColour(wxColour(67,167,69));
@@ -141,6 +157,7 @@ pnlUpdate::pnlUpdate(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 
 	Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlUpdate::OnlstTypeSelected);
 	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlUpdate::OnbtnSetHttpClick);
+	Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlUpdate::OnbtnShareSetClick);
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlUpdate::OnlstFoldersSelected);
 	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlUpdate::OnbtnUpClick);
 	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlUpdate::OnbtnSelectClick);
@@ -166,6 +183,7 @@ pnlUpdate::pnlUpdate(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
     m_plblLocalCurrent->SetLabel(m_sLocation);
 
     m_plblHTTPCurrent->SetLabel(Settings::Get().Read(wxT("Update"), wxT("HTTP"), wxEmptyString));
+    m_plblShareCurrent->SetLabel(Settings::Get().Read(wxT("Update"), wxT("Share"), wxEmptyString));
 
 
 	if(m_sLocation.empty() == false)
@@ -281,4 +299,10 @@ void pnlUpdate::OnbtnSetHttpClick(wxCommandEvent& event)
 {
     Settings::Get().Write(wxT("Update"), wxT("HTTP"), m_pedtHTTP->GetValue());
     m_plblHTTPCurrent->SetLabel(Settings::Get().Read(wxT("Update"), wxT("HTTP"), wxEmptyString));
+}
+
+void pnlUpdate::OnbtnShareSetClick(wxCommandEvent& event)
+{
+    Settings::Get().Write(wxT("Update"), wxT("Share"), m_pedtShare->GetValue());
+    m_plblShareCurrent->SetLabel(Settings::Get().Read(wxT("Update"), wxT("Share"), wxEmptyString));
 }

@@ -160,7 +160,19 @@ bool UpdateManager::GetUpdateListFromWebServer()
 
 bool UpdateManager::GetUpdateListFromShare()
 {
+    //unmount any previous share
+#ifdef __WXGNU__
+    if(wxDirExists(wxT("/mnt/share")) == false)
+    {
+        wxMkdir(wxT("/mnt/share"))
+    }
+    wxExecute(wxT("sudo umount /mnt/share"));
+    wxExecute(wxString::Format(wxT("sudo mount -t cifs user=pam,password=10653045 %s /mnt/share"), Settings::Get().Read(wxT("Update"), wxT("Share"), wxEmptyString)));
+
+    return DecodeUpdateList(wxT("/mnt/share"));
+#else
     return DecodeUpdateList(wxString::Format(wxT("%s/manifest.xml"), Settings::Get().Read(wxT("Update"), wxT("Share"), wxT(".")).c_str()));
+#endif
 }
 
 bool UpdateManager::GetUpdateListFromLocal()
