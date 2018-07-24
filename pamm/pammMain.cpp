@@ -121,8 +121,9 @@ pammDialog::pammDialog(wxWindow* parent,wxWindowID id) :
 
     m_nCrashRestarts = 0;
 
-    m_pServer = new PamServer();
-    m_pServer->Create(wxT("/tmp/pamm.ipc"));
+    m_pServer = 0;
+    //m_pServer = new PamServer();
+    //m_pServer->Create(wxT("/tmp/pamm.ipc"));
     Connect(wxID_ANY, wxEVT_PROCESS_FINISHED, (wxObjectEventFunction)&pammDialog::OnPamClosed);
 
     Connect(wxID_ANY, wxEVT_IPC_RESTART, (wxObjectEventFunction)&pammDialog::OnPamRestart);
@@ -252,7 +253,7 @@ void pammDialog::OnbtnShutdownHeld(wxCommandEvent& event)
 
 void pammDialog::OnSecondTrigger(wxTimerEvent& event)
 {
-    if(m_pServer->IsConnected())
+    if(m_pServer && m_pServer->IsConnected())
     {
         wxTimeSpan tsPoke(wxDateTime::Now()-m_pServer->GetLastPoke());
         m_plblHeartbeat->SetLabel(tsPoke.Format(wxT("%H:%M:%S")));

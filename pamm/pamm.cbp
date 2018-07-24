@@ -69,7 +69,7 @@
 				</ExtraCommands>
 			</Target>
 			<Target title="Linux Release">
-				<Option output="bin/Linux Release/pamm" prefix_auto="1" extension_auto="1" />
+				<Option output="../lib/pamm" prefix_auto="1" extension_auto="1" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>

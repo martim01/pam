@@ -206,6 +206,8 @@ class pnlSettings: public wxPanel
 		void ShowSequences();
         void ShowSoundcardOutputs();
 
+        void CheckDuplex(bool bInput, int nInput, int nOutput);
+
         void ShowPagingButtons();
         void ShowAogPagingButtons();
 

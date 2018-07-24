@@ -21,6 +21,7 @@ using namespace std;
 
 int main()
 {
+
     manifest_creatorApp anApp;
     return 0;
 }

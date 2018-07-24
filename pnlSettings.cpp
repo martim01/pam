@@ -414,12 +414,7 @@ void pnlSettings::OnlstDevicesSelected(wxCommandEvent& event)
     wxString sDevice(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")));
     if(sDevice == wxT("Soundcard"))
     {
-        #ifdef __WXGTK__
-        if(Settings.Get().Read(wxT("Output"), wxT("Device"),0 ) == (int)event.GetClientData())
-        {
-            Settings.Get().Write(wxT("Output"), wxT("Enabled"), wxT("0"));
-        }
-        #endif // __WXGTK__
+        CheckDuplex(true, (int)event.GetClientData(), Settings::Get().Read(wxT("Output"), wxT("Device"), 0));
         Settings::Get().Write(wxT("Input"), wxT("Device"), (int)event.GetClientData());
     }
     else if(sDevice == wxT("RTP"))
@@ -492,14 +487,32 @@ void pnlSettings::OnbtnOutputClick(wxCommandEvent& event)
 
 }
 
-void pnlSettings::OnlstPlaybackSelected(wxCommandEvent& event)
+void pnlSettings::CheckDuplex(bool bInput, int nInput, int nOutput)
 {
     #ifdef __WXGTK__
-    if(Settings.Get().Read(wxT("Input"), wxT("Type"), wxT("RTP")) == wxT("Soundcard") && Settings.Get().Read(wxT("Input"), wxT("Device"),0 ) == (int)event.GetClientData())
+    if(bInput)
     {
-        Settings.Get().Write(wxT("Input"), wxT("Type"), wxT("Output"));
+        #ifdef __WXGTK__
+        if(nInput == nOutput)
+        {
+            Settings::Get().Write(wxT("Output"), wxT("Enabled"), wxT("0"));
+        }
+        #endif // __WXGTK__
+    }
+    else
+    {
+
+        if(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")) == wxT("Soundcard") && nInput==nOutput)
+        {
+            Settings::Get().Write(wxT("Input"), wxT("Type"), wxT("Output"));
+        }
     }
     #endif // __WXGTK__
+}
+
+void pnlSettings::OnlstPlaybackSelected(wxCommandEvent& event)
+{
+    CheckDuplex(false, Settings::Get().Read(wxT("Input"), wxT("Device"),0), (int)event.GetClientData());
     Settings::Get().Write(wxT("Output"), wxT("Device"), (int)event.GetClientData());
 
 }
@@ -688,6 +701,8 @@ void pnlSettings::OnlblLatencySelected(wxCommandEvent& event)
 
 void pnlSettings::OnlstInputSelected(wxCommandEvent& event)
 {
+    CheckDuplex(true, Settings::Get().Read(wxT("Input"), wxT("Device"),0), Settings::Get().Read(wxT("Output"), wxT("Device"), 0));
+
     Settings::Get().Write(wxT("Input"), wxT("Type"),event.GetString());
     RefreshInputs();
 

@@ -168,6 +168,8 @@ int pamupdateserverDialog::SendUpdateList(MHD_Connection *pConnection, const wxS
     std::string sPost(sXml.mb_str());
     const char *pResponse = sPost.c_str();
 
+    Log(wxString::FromAscii(pResponse));
+
     MHD_Response *response;
 
     *ptr = NULL;                  /* reset when done */
@@ -179,7 +181,7 @@ int pamupdateserverDialog::SendUpdateList(MHD_Connection *pConnection, const wxS
 
 int pamupdateserverDialog::SendUpdateFile(MHD_Connection *pConnection, const wxString& sPlatform, void** ptr)
 {
-    wxString sFile(wxString::FromAscii(MHD_lookup_connection_value (pConnection, MHD_GET_ARGUMENT_KIND, "update")));
+    wxStng sFile(wxString::FromAscii(MHD_lookup_connection_value (pConnection, MHD_GET_ARGUMENT_KIND, "update")));
     wxString sFilePath(wxString::Format(wxT("%s/%s/%s"), m_sPath.c_str(), sPlatform.c_str(), sFile));
 
     Log(wxString::Format(wxT("Send file '%s' for platform '%s'"), sFile.c_str(), sPlatform.c_str()));
