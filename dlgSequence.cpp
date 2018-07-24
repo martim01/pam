@@ -215,6 +215,10 @@ dlgSequence::dlgSequence(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	Connect(ID_M_PBTN12,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&dlgSequence::OnbtnFinishedClick);
 	//*)
 
+	if(wxDir::Exists(wxString::Format(wxT("%s/generator"), Settings::Get().GetDocumentDirectory().c_str())) == false)
+    {
+        ::wxMkdir(wxString::Format(wxT("%s/generator"), Settings::Get().GetDocumentDirectory().c_str()));
+    }
     m_pDoc = 0;
     wxArrayString asFiles;
     wxDir::GetAllFiles(wxString::Format(wxT("%s/generator"), Settings::Get().GetDocumentDirectory().c_str()), &asFiles, wxT("*.xml"), wxDIR_FILES);

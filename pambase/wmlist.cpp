@@ -1926,9 +1926,11 @@ void wmList::ShowPreviousPage(bool bSelect, bool bEvent)
 {
     if(m_nScrollAllowed == SCROLL_HORIZONTAL)
     {
+        m_itSwipe = m_setPages.end();
         set<std::list<button*>::iterator>::iterator itPage = m_setPages.find(m_itTop);
         if(itPage != m_setPages.end())
         {
+
             if(itPage != m_setPages.begin())
             {
                 --itPage;
@@ -1942,11 +1944,15 @@ void wmList::ShowPreviousPage(bool bSelect, bool bEvent)
                 m_nScrolling = SCROLL_HORIZONTAL;
             }
         }
+
         m_nSwipeLeft = 0;//GetClientRect().GetWidth();
         m_timerHold.Stop();
-        m_nSwipeOffset = 50;// max(1, (GetClientRect().GetWidth()-m_nSwipeLeft)/10);
-        CreateSwipeBitmaps();
-        m_timerScroll.Start(10);
+        if(m_itSwipe != m_setPages.end())
+        {
+            m_nSwipeOffset = 50;// max(1, (GetClientRect().GetWidth()-m_nSwipeLeft)/10);
+            CreateSwipeBitmaps();
+            m_timerScroll.Start(10);
+        }
     }
     else
     {
@@ -2046,6 +2052,8 @@ void wmList::ShowNextPage(bool bSelect, bool bEvent)
 {
     if(m_nScrollAllowed == SCROLL_HORIZONTAL)
     {
+        m_itSwipe = m_setPages.end();
+
         set<std::list<button*>::iterator>::iterator itPage = m_setPages.find(m_itTop);
         if(itPage != m_setPages.end())
         {
@@ -2063,10 +2071,15 @@ void wmList::ShowNextPage(bool bSelect, bool bEvent)
         }
 
         m_timerHold.Stop();
-        CreateSwipeBitmaps();
         m_nSwipeOffset = -50;
         m_nSwipeLeft = 0;
-        m_timerScroll.Start(10);
+        if(m_itSwipe != m_setPages.end())
+        {
+            CreateSwipeBitmaps();
+            m_timerScroll.Start(10);
+        }
+
+
     }
     else
     {

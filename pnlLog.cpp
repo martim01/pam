@@ -33,7 +33,7 @@ pnlLog::pnlLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	m_sTableStart = wxT("<table border=\"1\" width=\"100%\"><tr><td width=\"20%\"><b>Time</b></td><td width=\"80%\"><b>Message</b></td></tr>");
 	m_sTableEnd = wxT("<\table>");
 
-	m_phtmlLog->SetPageTouch(m_sTableStart+m_sTableEnd);
+	m_phtmlLog->SetPage(m_sTableStart+m_sTableEnd);
 
 	wmLog::Get()->SetTarget(this);
 	Connect(wxID_ANY,wxEVT_WMLOG,(wxObjectEventFunction)&pnlLog::OnLog);
@@ -60,7 +60,7 @@ void pnlLog::Log(wxString sLogEntry)
     m_sTableMiddle << wxT("<tr><td>") << wxDateTime::UNow().Format(wxT("%H:%M:%S:%l")) << wxT("</td><td>") << sLogEntry << wxT("</td></tr>");
 
     m_phtmlLog->Freeze();
-    m_phtmlLog->SetPageTouch(m_sTableStart+m_sTableMiddle+m_sTableEnd);
+    m_phtmlLog->SetPage(m_sTableStart+m_sTableMiddle+m_sTableEnd);
     m_phtmlLog->Thaw();
 
 }
@@ -88,13 +88,20 @@ void pnlLog::PageDown()
 
 void pnlLog::ScrollLock(bool bLock)
 {
-    m_phtmlLog->SetScrollLock(bLock);
+    m_bScrollLock = bLock;
 }
 
 void pnlLog::Clear()
 {
     m_sTableMiddle = wxEmptyString;
-    m_phtmlLog->SetPageTouch(m_sTableStart+m_sTableMiddle+m_sTableEnd);
+    m_phtmlLog->SetPage(m_sTableStart+m_sTableMiddle+m_sTableEnd);
+    if(!m_bScrollLock)
+    {
+        m_phtmlLog->Refresh();
+        m_phtmlLog->Update();
+        m_phtmlLog->End();
+    }
+    //@todo at the moment it will go back to the beginning which is not what we want...
 }
 
 
