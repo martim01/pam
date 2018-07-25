@@ -78,7 +78,7 @@ bool UpdateManager::GetUpdateList()
     }
     else if(Settings::Get().Read(wxT("Update"), wxT("Type"), wxT("Share")) == wxT("Local"))
     {
-        return GetUpdateListFromLocal();
+        return GetUpdateListFromLocal(Settings::Get().Read(wxT("Update"), wxT("Local"), wxT(".")));
     }
     else if(Settings::Get().Read(wxT("Update"), wxT("Type"), wxT("Share")) == wxT("FTP"))
     {
@@ -164,21 +164,21 @@ bool UpdateManager::GetUpdateListFromShare()
 #ifdef __WXGNU__
     if(wxDirExists(wxT("/mnt/share")) == false)
     {
-        wxMkdir(wxT("/mnt/share"))
+        wxMkdir(wxT("/mnt/share"));
     }
     wxExecute(wxT("sudo umount /mnt/share"));
     wxExecute(wxString::Format(wxT("sudo mount -t cifs user=pam,password=10653045 %s /mnt/share"), Settings::Get().Read(wxT("Update"), wxT("Share"), wxEmptyString)));
 
-    return DecodeUpdateList(wxT("/mnt/share"));
+    return GetUpdateListFromLocal(wxT("/mnt/share"));
 #else
     return DecodeUpdateList(wxString::Format(wxT("%s/manifest.xml"), Settings::Get().Read(wxT("Update"), wxT("Share"), wxT(".")).c_str()));
 #endif
 }
 
-bool UpdateManager::GetUpdateListFromLocal()
+bool UpdateManager::GetUpdateListFromLocal(const wxString& sPath)
 {
     wxArrayString asFiles;
-    wxDir::GetAllFiles(Settings::Get().Read(wxT("Update"), wxT("Local"), wxT(".")), &asFiles, wxT("*_manifest.xml"));
+    wxDir::GetAllFiles(sPath, &asFiles, wxT("*_manifest.xml"));
     for(size_t i = 0; i < asFiles.GetCount(); i++)
     {
         DecodeUpdateList(asFiles[i]);

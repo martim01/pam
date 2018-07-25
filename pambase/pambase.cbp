@@ -211,6 +211,8 @@
 		<Unit filename="monitorpluginfactory.h" />
 		<Unit filename="ourRTSPClient.cpp" />
 		<Unit filename="ourRTSPClient.h" />
+		<Unit filename="pcstats.cpp" />
+		<Unit filename="pcstats.h" />
 		<Unit filename="plugin.h" />
 		<Unit filename="ppm.cpp" />
 		<Unit filename="ppm.h" />

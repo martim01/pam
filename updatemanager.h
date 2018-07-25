@@ -72,7 +72,7 @@ class UpdateManager
 
         bool GetUpdateListFromWebServer();
         bool GetUpdateListFromShare();
-        bool GetUpdateListFromLocal();
+        bool GetUpdateListFromLocal(const wxString& sPath);
         bool GetUpdateListFromFTP();
 
         bool UpdateFromWebServer(const wxString& sName, const wxString& sTempFile);
