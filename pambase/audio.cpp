@@ -213,7 +213,6 @@ void Audio::SetGain(int nGain)
 
 int paCallback( const void *input, void *output, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void *userData )
 {
-    wxLogDebug(wxT("Callback: %d"), frameCount);
 
     if(userData)
     {
@@ -360,7 +359,7 @@ void Audio::SetMixer(const vector<char>& vChannels, unsigned int nTotalChannels)
     m_vMixer = vChannels;
     m_nTotalChannels = nTotalChannels;
 
-    wxLogDebug(wxT("Audio::GetMixer: Total = %d"), nTotalChannels);
+    wxLogDebug(wxT("Audio::SetMixer: Total = %d"), nTotalChannels);
 }
 
 const std::vector<char>& Audio::GetOutputChannels()

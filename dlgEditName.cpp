@@ -20,7 +20,7 @@ BEGIN_EVENT_TABLE(dlgEditName,wxDialog)
 	//*)
 END_EVENT_TABLE()
 
-dlgEditName::dlgEditName(wxWindow* parent,wxString sName, long nChannel, wxWindowID id,const wxPoint& pos,const wxSize& size)
+dlgEditName::dlgEditName(wxWindow* parent,wxString sName, long nChannel, wxWindowID id,const wxPoint& pos,const wxSize& size) : m_nChannels(0)
 {
 	//(*Initialize(dlgEditName)
 	Create(parent, id, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxNO_BORDER, _T("id"));

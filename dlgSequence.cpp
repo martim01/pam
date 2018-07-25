@@ -57,7 +57,12 @@ BEGIN_EVENT_TABLE(dlgSequence,wxDialog)
 	//*)
 END_EVENT_TABLE()
 
-dlgSequence::dlgSequence(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
+dlgSequence::dlgSequence(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size) : m_pSequenceNode(0),
+m_pFrequencyNode(0),
+m_nFileButton(-1),
+m_nSequenceButton(-1),
+m_nFrequencyButton(-1),
+m_nWaveShape(0)
 {
 	//(*Initialize(dlgSequence)
 	Create(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxNO_BORDER, _T("wxID_ANY"));

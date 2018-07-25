@@ -167,7 +167,7 @@ bool UpdateManager::GetUpdateListFromShare()
         wxMkdir(wxT("/mnt/share"));
     }
     wxExecute(wxT("sudo umount /mnt/share"));
-    wxExecute(wxString::Format(wxT("sudo mount -t cifs user=pam,password=10653045 %s /mnt/share"), Settings::Get().Read(wxT("Update"), wxT("Share"), wxEmptyString)));
+    wxExecute(wxString::Format(wxT("sudo mount -t cifs -o user=pam,password=10653045 %s /mnt/share"), Settings::Get().Read(wxT("Update"), wxT("Share"), wxEmptyString)));
 
     return GetUpdateListFromLocal(wxT("/mnt/share"));
 #else

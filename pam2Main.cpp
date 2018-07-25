@@ -192,18 +192,18 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     //*)
 
 
+    m_pClient = 0;
 
+    //m_pClient = new PammClient();
+    //if(m_pClient->Connect(wxT("localhost"), wxT("/tmp/pamm.ipc"), wxT("pam")))
+    //{
 
-    m_pClient = new PammClient();
-    if(m_pClient->Connect(wxT("localhost"), wxT("/tmp/pamm.ipc"), wxT("pam")))
-    {
-
-    }
-    else
-    {
-        delete m_pClient;
-        m_pClient = 0;
-    }
+    //}
+    //else
+   // {
+    //    delete m_pClient;
+    //    m_pClient = 0;
+    //}
 
     m_plstScreens->SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
     m_plstOptions->SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
@@ -1143,6 +1143,7 @@ void pam2Dialog::CheckPlayback(unsigned long nSampleRate, unsigned long nChannel
     }
     else
     {
+        wxLogDebug(wxT("Channels from playback"));
         vector<char> vChannels;
         vChannels.push_back(Settings::Get().Read(wxT("Output"), wxT("Left"), 0));
         vChannels.push_back(Settings::Get().Read(wxT("Output"), wxT("Right"), 1));
@@ -1175,7 +1176,7 @@ void pam2Dialog::CheckPlayback(unsigned long nSampleRate, unsigned long nChannel
 void pam2Dialog::OnMonitorRequest(MonitorEvent& event)
 {
 
-    if(event.GetChannels().size() >=2)
+    if((m_nMonitorSource == AudioEvent::RTP || m_nMonitorSource == AudioEvent::SOUNDCARD) && event.GetChannels().size() >=2)
     {
         unsigned int nInputChannels(0);
         if(m_Session.itCurrentSubsession != m_Session.lstSubsession.end())
@@ -1286,7 +1287,7 @@ void pam2Dialog::OntimerIpcTrigger(wxTimerEvent& event)
     }
 
     pcStats::Get().CalculateCpuStats();
-    m_plblCpu->SetLabel(wxString::Format(wxT("CPU: %.0f"), pcStats::Get().GetTotalCpuUsage()*100.0));
+    m_plblCpu->SetLabel(wxString::Format(wxT("CPU: %.0f%%"), pcStats::Get().GetTotalCpuUsage()*100.0));
 
 }
 

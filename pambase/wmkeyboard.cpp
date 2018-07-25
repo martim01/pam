@@ -31,7 +31,10 @@ wmKeyboard::wmKeyboard() : wxWindow()
 
 wmKeyboard::~wmKeyboard()
 {
-
+    if(HasCapture())
+    {
+        ReleaseMouse();
+    }
 }
 
 wmKeyboard::wmKeyboard(wxWindow* pParent, wxWindowID id, const wxPoint& pos, const wxSize& size, unsigned int nStyle, bool bHints)

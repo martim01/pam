@@ -238,7 +238,7 @@ void SoundcardManager::AddOutputSamples(const timedbuffer* pTimedBuffer)
     }
 }
 
-const vector<char>& SoundcardManager::GetOutputChannels()
+vector<char> SoundcardManager::GetOutputChannels()
 {
     if(m_pOutput)
     {

@@ -35,7 +35,7 @@ class PAMBASE_IMPEXPORT SoundcardManager
 
         void AddOutputSamples(const timedbuffer* pTimedBuffer);
 
-        const std::vector<char>& GetOutputChannels();
+        std::vector<char> GetOutputChannels();
 
 
     private:

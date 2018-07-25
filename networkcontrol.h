@@ -17,7 +17,7 @@ class NetworkControl
 //        bool HasAdminRights();
 
     protected:
-        NetworkControl() : m_nNTEContext(0)
+        NetworkControl() : m_nMask(0), m_nNTEContext(0)
         {
             GetCurrentSettings();
         }

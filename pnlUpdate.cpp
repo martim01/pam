@@ -170,7 +170,7 @@ pnlUpdate::pnlUpdate(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 	SetPosition(pos);
 
 	m_plstType->AddButton(wxT("HTTP"));
-	m_plstType->AddButton(wxT("FTP"));
+	//m_plstType->AddButton(wxT("FTP"));
     m_plstType->AddButton(wxT("Share"));
     m_plstType->AddButton(wxT("Local"));
 
@@ -183,7 +183,7 @@ pnlUpdate::pnlUpdate(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
     m_plblLocalCurrent->SetLabel(m_sLocation);
 
     m_plblHTTPCurrent->SetLabel(Settings::Get().Read(wxT("Update"), wxT("HTTP"), wxEmptyString));
-    m_plblShareCurrent->SetLabel(Settings::Get().Read(wxT("Update"), wxT("Share"), wxEmptyString));
+    m_pLbl8->SetLabel(Settings::Get().Read(wxT("Update"), wxT("Share"), wxEmptyString));
 
 
 	if(m_sLocation.empty() == false)
@@ -304,5 +304,5 @@ void pnlUpdate::OnbtnSetHttpClick(wxCommandEvent& event)
 void pnlUpdate::OnbtnShareSetClick(wxCommandEvent& event)
 {
     Settings::Get().Write(wxT("Update"), wxT("Share"), m_pedtShare->GetValue());
-    m_plblShareCurrent->SetLabel(Settings::Get().Read(wxT("Update"), wxT("Share"), wxEmptyString));
+    m_pLbl8->SetLabel(Settings::Get().Read(wxT("Update"), wxT("Share"), wxEmptyString));
 }
