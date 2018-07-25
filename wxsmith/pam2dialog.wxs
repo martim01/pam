@@ -77,8 +77,8 @@
 										<pos>4,400</pos>
 										<size>193,50</size>
 										<bg>#FFFFFF</bg>
-										<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl1" member="yes">
-											<label>Monitor</label>
+										<object class="wmLabel" name="ID_M_PLBL3" variable="m_plblCpu" member="yes">
+											<label>CPU:</label>
 											<pos>1,1</pos>
 											<size>95,23</size>
 											<fg>#FFFFFF</fg>
@@ -91,8 +91,8 @@
 											<fg>#FFFFFF</fg>
 											<bg>#008000</bg>
 										</object>
-										<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl2" member="yes">
-											<label>Output</label>
+										<object class="wmLabel" name="ID_M_PLBL4" variable="m_plblNetwork" member="yes">
+											<label></label>
 											<pos>97,1</pos>
 											<size>95,23</size>
 											<fg>#FFFFFF</fg>

@@ -93,15 +93,15 @@ class pam2Dialog: public wxDialog
         wxPanel* pnlMain;
         wxBitmapButton* m_pbmpSplash;
         wxPanel* Panel4;
-        wmLabel* m_pLbl1;
+        wmLabel* m_plblNetwork;
         wmLabel* m_plblOutput;
         wxPanel* pnlLists;
         wmList* m_plstOptions;
         wxPanel* Panel1;
         wxPanel* Panel3;
+        wmLabel* m_plblCpu;
         wxTimer m_timerIpc;
         wmSwitcherPanel* m_pswpScreens;
-        wmLabel* m_pLbl2;
         wxTimer m_timerFile;
         wmSwitcherPanel* m_pswpOptions;
         wxTimer timerStart;

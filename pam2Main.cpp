@@ -39,6 +39,7 @@
 #include "generator.h"
 #include "audioevent.h"
 #include "soundcardmanager.h"
+#include "pcstats.h"
 
 
 //(*InternalHeaders(pam2Dialog)
@@ -142,18 +143,18 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_plstInbuilt->SetTextButtonColour(wxColour(wxT("#000000")));
     Panel4 = new wxPanel(Panel2, ID_PANEL7, wxPoint(4,400), wxSize(193,50), wxTAB_TRAVERSAL, _T("ID_PANEL7"));
     Panel4->SetBackgroundColour(wxColour(255,255,255));
-    m_pLbl1 = new wmLabel(Panel4, ID_M_PLBL3, _("Monitor"), wxPoint(1,1), wxSize(95,23), 0, _T("ID_M_PLBL3"));
-    m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
-    m_pLbl1->SetForegroundColour(wxColour(255,255,255));
-    m_pLbl1->SetBackgroundColour(wxColour(0,0,0));
+    m_plblCpu = new wmLabel(Panel4, ID_M_PLBL3, _("CPU:"), wxPoint(1,1), wxSize(95,23), 0, _T("ID_M_PLBL3"));
+    m_plblCpu->SetBorderState(uiRect::BORDER_NONE);
+    m_plblCpu->SetForegroundColour(wxColour(255,255,255));
+    m_plblCpu->SetBackgroundColour(wxColour(0,0,0));
     m_plblInput = new wmLabel(Panel4, ID_M_PLBL1, _("Input"), wxPoint(1,25), wxSize(95,24), 0, _T("ID_M_PLBL1"));
     m_plblInput->SetBorderState(uiRect::BORDER_NONE);
     m_plblInput->SetForegroundColour(wxColour(255,255,255));
     m_plblInput->SetBackgroundColour(wxColour(0,128,0));
-    m_pLbl2 = new wmLabel(Panel4, ID_M_PLBL4, _("Output"), wxPoint(97,1), wxSize(95,23), 0, _T("ID_M_PLBL4"));
-    m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
-    m_pLbl2->SetForegroundColour(wxColour(255,255,255));
-    m_pLbl2->SetBackgroundColour(wxColour(0,0,0));
+    m_plblNetwork = new wmLabel(Panel4, ID_M_PLBL4, wxEmptyString, wxPoint(97,1), wxSize(95,23), 0, _T("ID_M_PLBL4"));
+    m_plblNetwork->SetBorderState(uiRect::BORDER_NONE);
+    m_plblNetwork->SetForegroundColour(wxColour(255,255,255));
+    m_plblNetwork->SetBackgroundColour(wxColour(0,0,0));
     m_plblOutput = new wmLabel(Panel4, ID_M_PLBL2, _("Output"), wxPoint(97,25), wxSize(95,24), 0, _T("ID_M_PLBL2"));
     m_plblOutput->SetBorderState(uiRect::BORDER_NONE);
     m_plblOutput->SetForegroundColour(wxColour(255,255,255));
@@ -1283,6 +1284,10 @@ void pam2Dialog::OntimerIpcTrigger(wxTimerEvent& event)
     {
         m_pClient->Poke();
     }
+
+    pcStats::Get().CalculateCpuStats();
+    m_plblCpu->SetLabel(wxString::Format(wxT("CPU: %.0f"), pcStats::Get().GetTotalCpuUsage()*100.0));
+
 }
 
 void pam2Dialog::OnClose(wxCloseEvent& event)
