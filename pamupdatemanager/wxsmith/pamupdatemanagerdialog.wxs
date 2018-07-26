@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <wxsmith>
-	<object class="wxDialog" name="pamupdatemanagerdialog">
+	<object class="wxDialog" name="pamupdatemanagerDialog">
 		<size>800,480</size>
 		<bg>#000000</bg>
 		<font>
@@ -130,7 +130,7 @@
 						<size>645,400</size>
 						<bg>#000000</bg>
 						<style>wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI|wmList::STYLE_SELECT_ROW</style>
-						<handler function="OnlstUpdatesSelected" entry="EVT_LIST_SELECTED" />
+						<handler function="Onm_plstUpdatesSelected" entry="EVT_LIST_SELECTED" />
 					</object>
 				</object>
 				<label>List</label>

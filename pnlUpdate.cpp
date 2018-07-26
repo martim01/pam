@@ -9,8 +9,6 @@
 #include "settings.h"
 #include <wx/dir.h>
 #include "folder.xpm"
-#include "updatemanager.h"
-
 
 
 #ifdef __WXMSW__
@@ -291,8 +289,17 @@ void pnlUpdate::OnbtnSelectClick(wxCommandEvent& event)
 
 void pnlUpdate::OnbtnCheckClick(wxCommandEvent& event)
 {
-    dlgUpdate aDlg(this);
-    aDlg.ShowModal();
+     #ifdef __WXDEBUG__
+        #ifdef __WXMSW__
+            wxString sUpdate = wxT("C:\\developer\\matt\\pam2\\pamupdatemanager\\bin\\Debug\\pamupdatemanager");
+        #else
+          wxString sUpdate = wxT("pamupdatemanager");
+        #endif
+    #else
+        wxString Update = wxT("sudo pamupdatemanager");
+    #endif
+
+    wxExecute(sUpdate);
 }
 
 void pnlUpdate::OnbtnSetHttpClick(wxCommandEvent& event)

@@ -74,5 +74,8 @@
 		</Project>
 		<Project filename="pamm/pamm.cbp" />
 		<Project filename="pamupdateserver/pamupdateserver.cbp" />
+		<Project filename="pamupdatemanager/pamupdatemanager.cbp">
+			<Depends filename="pambase/pambase.cbp" />
+		</Project>
 	</Workspace>
 </CodeBlocks_workspace_file>

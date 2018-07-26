@@ -34,13 +34,12 @@
 #include "soundfile.h"
 #include "wxpammclient.h"
 #include "images/splash.xpm"
-#include "updatemanager.h"
 #include "pnlHelp.h"
 #include "generator.h"
 #include "audioevent.h"
 #include "soundcardmanager.h"
 #include "pcstats.h"
-
+#include <wx/xml/xml.h>
 
 //(*InternalHeaders(pam2Dialog)
 #include <wx/bitmap.h>
