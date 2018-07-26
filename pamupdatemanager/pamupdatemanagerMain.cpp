@@ -138,6 +138,8 @@ pamupdatemanagerDialog::pamupdatemanagerDialog(wxWindow* parent,wxWindowID id,co
 	Connect(ID_TIMER1,wxEVT_TIMER,(wxObjectEventFunction)&pamupdatemanagerDialog::OntimerUpdateTrigger);
 	//*)
 
+	m_plblSettings->SetLabel(wxString::Format(wxT("[%s]   Available Updates"), Settings::Get().Read(wxT("Update"), wxT("Type"), wxT("Share")).c_str()));
+
 	SetPosition(wxPoint(0,0));
 
 	m_plstUpdates->SetGradient(0);
@@ -176,7 +178,7 @@ pamupdatemanagerDialog::pamupdatemanagerDialog(wxWindow* parent,wxWindowID id,co
             break;
         }
 
-       /// if(UpdateManager::Get().UpdateVersionIsNewer(itObject->second.sVersion, sLocalVersion))
+        if(UpdateManager::Get().UpdateVersionIsNewer(itObject->second.sVersion, sLocalVersion))
         {
             m_plstUpdates->AddButton(itObject->first);
             m_plstUpdates->AddButton(sType);
@@ -314,7 +316,7 @@ void pamupdatemanagerDialog::OnbtnUpdateClick(wxCommandEvent& event)
         {   //different version in list
             if(ins.first->second != sVersion)
             {
-                m_plstLog->AddButton(wxString::Format(wxT("'%s' cannot be updated to version %s as it is already begin updating to version %s"), sUpdate.c_str(), sVersion.c_str(), ins.first->second.c_str()));
+                m_plstLog->AddButton(wxString::Format(wxT("'%s' cannot be updated to version '%s' as it is already being updating to version '%s'"), sUpdate.c_str(), sVersion.c_str(), ins.first->second.c_str()));
             }
             else
             {
