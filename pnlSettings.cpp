@@ -414,8 +414,10 @@ void pnlSettings::OnlstDevicesSelected(wxCommandEvent& event)
     wxString sDevice(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")));
     if(sDevice == wxT("Soundcard"))
     {
-        CheckDuplex(true, (int)event.GetClientData(), Settings::Get().Read(wxT("Output"), wxT("Device"), 0));
         Settings::Get().Write(wxT("Input"), wxT("Device"), (int)event.GetClientData());
+
+        ShowSoundcardOutputs();
+
     }
     else if(sDevice == wxT("RTP"))
     {
@@ -487,33 +489,11 @@ void pnlSettings::OnbtnOutputClick(wxCommandEvent& event)
 
 }
 
-void pnlSettings::CheckDuplex(bool bInput, int nInput, int nOutput)
-{
-    #ifdef __WXGTK__
-    if(bInput)
-    {
-        #ifdef __WXGTK__
-        if(nInput == nOutput)
-        {
-            Settings::Get().Write(wxT("Output"), wxT("Enabled"), wxT("0"));
-        }
-        #endif // __WXGTK__
-    }
-    else
-    {
-
-        if(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")) == wxT("Soundcard") && nInput==nOutput)
-        {
-            Settings::Get().Write(wxT("Input"), wxT("Type"), wxT("Output"));
-        }
-    }
-    #endif // __WXGTK__
-}
 
 void pnlSettings::OnlstPlaybackSelected(wxCommandEvent& event)
 {
-    CheckDuplex(false, Settings::Get().Read(wxT("Input"), wxT("Device"),0), (int)event.GetClientData());
     Settings::Get().Write(wxT("Output"), wxT("Device"), (int)event.GetClientData());
+    RefreshInputs();
 
 }
 
@@ -536,7 +516,15 @@ void pnlSettings::ShowSoundcardInputs()
         const PaDeviceInfo* pInfo = Pa_GetDeviceInfo(i);
         if(pInfo && pInfo->maxInputChannels > 0)
         {
-            m_plstDevices->AddButton(wxString::Format(wxT("[%d] %s [%d]"),i, wxString::FromAscii(pInfo->name).c_str(), pInfo->maxInputChannels), wxNullBitmap, (void*)i);
+            short nEnabled = wmList::wmENABLED;
+            #ifdef __WXGTK__
+            if((Settings::Get().Read(wxT("Output"), wxT("Enabled"),1) == 1) && Settings::Get().Read(wxT("Output"), wxT("Device"), 0) == i)
+            {
+                nEnabled = wmList::wmDISABLED;
+            }
+            #endif // __WXGTK__
+
+            m_plstDevices->AddButton(wxString::Format(wxT("[%d] %s [%d]"),i, wxString::FromAscii(pInfo->name).c_str(), pInfo->maxInputChannels), wxNullBitmap, (void*)i, nEnabled);
         }
     }
 
@@ -559,6 +547,8 @@ void pnlSettings::ShowSoundcardInputs()
 void pnlSettings::ShowSoundcardOutputs()
 {
     Pa_Initialize();
+    m_plstPlayback->Clear();
+
     int nDevices =  Pa_GetDeviceCount();
     if(nDevices < 0)
     {
@@ -569,7 +559,14 @@ void pnlSettings::ShowSoundcardOutputs()
         const PaDeviceInfo* pInfo = Pa_GetDeviceInfo(i);
         if(pInfo && pInfo->maxOutputChannels > 0)
         {
-            m_plstPlayback->AddButton(wxString::Format(wxT("[%d]%s [%d]"), i, wxString::FromAscii(pInfo->name).c_str(), pInfo->maxOutputChannels), wxNullBitmap, (void*)i);
+            short nEnabled = wmList::wmENABLED;
+            #ifdef __WXGTK__
+            if(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")) == wxT("Soundcard") && Settings::Get().Read(wxT("Input"), wxT("Device"),0) == i)
+            {
+                nEnabled = wmList::wmDISABLED;
+            }
+            #endif // __WXGTK__
+            m_plstPlayback->AddButton(wxString::Format(wxT("[%d]%s [%d]"), i, wxString::FromAscii(pInfo->name).c_str(), pInfo->maxOutputChannels), wxNullBitmap, (void*)i, nEnabled);
         }
     }
 
@@ -701,8 +698,6 @@ void pnlSettings::OnlblLatencySelected(wxCommandEvent& event)
 
 void pnlSettings::OnlstInputSelected(wxCommandEvent& event)
 {
-    CheckDuplex(true, Settings::Get().Read(wxT("Input"), wxT("Device"),0), Settings::Get().Read(wxT("Output"), wxT("Device"), 0));
-
     Settings::Get().Write(wxT("Input"), wxT("Type"),event.GetString());
     RefreshInputs();
 
