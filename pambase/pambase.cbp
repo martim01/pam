@@ -288,6 +288,8 @@
 		<Unit filename="wxsink.cpp" />
 		<Unit filename="wxsink.h" />
 		<Unit filename="wxsmith/wmipeditpnl.wxs" />
+		<Unit filename="wxtouchscreenhtml.cpp" />
+		<Unit filename="wxtouchscreenhtml.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

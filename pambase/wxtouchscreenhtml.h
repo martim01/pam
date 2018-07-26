@@ -1,8 +1,9 @@
 #pragma once
 #include <wx/html/htmlwin.h>
 #include <wx/timer.h>
+#include "dlldefine.h"
 
-class wxTouchScreenHtml : public wxHtmlWindow
+class PAMBASE_IMPEXPORT wxTouchScreenHtml : public wxHtmlWindow
 {
     public:
         wxTouchScreenHtml();

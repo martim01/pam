@@ -154,8 +154,6 @@
 		<Unit filename="dlgEditName.h" />
 		<Unit filename="dlgSequence.cpp" />
 		<Unit filename="dlgSequence.h" />
-		<Unit filename="dlgUpdate.cpp" />
-		<Unit filename="dlgUpdate.h" />
 		<Unit filename="dlgmask.cpp" />
 		<Unit filename="dlgmask.h" />
 		<Unit filename="networkcontrol.cpp" />
@@ -187,8 +185,6 @@
 		<Unit filename="pnlTests.h" />
 		<Unit filename="pnlUpdate.cpp" />
 		<Unit filename="pnlUpdate.h" />
-		<Unit filename="updatemanager.cpp" />
-		<Unit filename="updatemanager.h" />
 		<Unit filename="version.h" />
 		<Unit filename="wxpammclient.cpp" />
 		<Unit filename="wxpammclient.h" />
@@ -206,8 +202,6 @@
 		<Unit filename="wxsmith/pnlSettingsPlugins.wxs" />
 		<Unit filename="wxsmith/pnlTests.wxs" />
 		<Unit filename="wxsmith/pnlUpdate.wxs" />
-		<Unit filename="wxtouchscreenhtml.cpp" />
-		<Unit filename="wxtouchscreenhtml.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

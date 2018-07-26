@@ -10,20 +10,20 @@ namespace AutoVersion{
 	static const char UBUNTU_VERSION_STYLE[] =  "18.07";
 	
 	//Software Status
-	static const char STATUS[] =  "Release";
-	static const char STATUS_SHORT[] =  "r";
+	static const char STATUS[] =  "Alpha";
+	static const char STATUS_SHORT[] =  "a";
 	
 	//Standard Version Type
 	static const long MAJOR  = 1;
 	static const long MINOR  = 0;
-	static const long BUILD  = 59;
-	static const long REVISION  = 301;
+	static const long BUILD  = 1;
+	static const long REVISION  = 3;
 	
 	//Miscellaneous Version Types
-	static const long BUILDS_COUNT  = 68;
-	#define RC_FILEVERSION 1,0,59,301
-	#define RC_FILEVERSION_STRING "1, 0, 59, 301\0"
-	static const char FULLVERSION_STRING [] = "1.0.59.301";
+	static const long BUILDS_COUNT  = 1;
+	#define RC_FILEVERSION 1,0,1,3
+	#define RC_FILEVERSION_STRING "1, 0, 1, 3\0"
+	static const char FULLVERSION_STRING [] = "1.0.1.3";
 	
 	//These values are to keep track of your versioning state, don't modify them.
 	static const long BUILD_HISTORY  = 0;

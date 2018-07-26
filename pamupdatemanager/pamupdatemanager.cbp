@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="pamupdatemanager" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Windows Debug">
+				<Option output="bin/Debug/pamupdatemanager" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Option projectLinkerOptionsRelation="2" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-DWIN32" />
+					<Add option="-D__WXMSW__" />
+					<Add option="-DWXUSINGDLL" />
+					<Add option="-DUNICODE" />
+					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-D__WXDEBUG__" />
+					<Add option="-D__WINDOWS__" />
+					<Add option="-DPAMBASE_DEBUG" />
+					<Add directory="$(#wx3_0.include)" />
+					<Add directory="$(#wx3_0.include)/mswu" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="$(#wx3_0.include)/mswu" />
+				</ResourceCompiler>
+				<Linker>
+					<Add option="-Wl,--enable-auto-import,-Map=pamupdatemanagerd.map" />
+					<Add library="wxmsw30ud_gcc_wammacs" />
+					<Add library="pambased" />
+					<Add directory="$(#wx3_0.lib)" />
+				</Linker>
+			</Target>
+			<Target title="Windows Release">
+				<Option output="bin/Release/pamupdatemanager" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Option projectLinkerOptionsRelation="2" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+					<Add option="-DWIN32" />
+					<Add option="-D__WXMSW__" />
+					<Add option="-DWXUSINGDLL" />
+					<Add option="-DUNICODE" />
+					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-D__WINDOWS__" />
+					<Add directory="$(#wx3_0.include)" />
+					<Add directory="$(#wx3_0.include)/mswu" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="$(#wx3_0.include)/mswu" />
+				</ResourceCompiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-Wl,--enable-auto-import,-Map=pamupdatemanager.map" />
+					<Add library="wxmsw30u_gcc_wammacs" />
+					<Add library="pambase" />
+					<Add directory="$(#wx3_0.lib)" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="C:\developer\matt\pam2\manifest_creator\bin\Release\manifest_creator.exe" />
+				</ExtraCommands>
+			</Target>
+			<Target title="Linux Release">
+				<Option output="../lib/pamupdatemanager" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="`wx-config --cxxflags`" />
+					<Add option="-fpermissive" />
+					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-D__WXGNU__" />
+				</Compiler>
+				<Linker>
+					<Add option="`wx-config --libs`" />
+					<Add library="pambase" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />
+				</ExtraCommands>
+			</Target>
+			<Target title="Linux Debug">
+				<Option output="bin/Linux Debug/pamupdatemanager" prefix_auto="1" extension_auto="1" />
+				<Option object_output=".objs/debug" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="`wx-config --cxxflags`" />
+					<Add option="-fpermissive" />
+					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-D__WXGNU__" />
+					<Add option="-DPAMBASE_DEBUG" />
+					<Add option="-D__WXDEBUG__" />
+				</Compiler>
+				<Linker>
+					<Add option="`wx-config --libs`" />
+					<Add library="pambased" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-D_core_" />
+			<Add directory="C:/wxWidgets-3.0.2/include" />
+			<Add directory="../pambase" />
+		</Compiler>
+		<ResourceCompiler>
+			<Add directory="C:/wxWidgets-3.0.2/include" />
+		</ResourceCompiler>
+		<Linker>
+			<Add directory="../lib" />
+		</Linker>
+		<Unit filename="pamupdatemanagerApp.cpp" />
+		<Unit filename="pamupdatemanagerApp.h" />
+		<Unit filename="pamupdatemanagerMain.cpp" />
+		<Unit filename="pamupdatemanagerMain.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<wxsmith version="1">
+				<gui name="wxWidgets" src="pamupdatemanagerApp.cpp" main="pamupdatemanagerDialog" init_handlers="necessary" language="CPP" />
+				<resources>
+					<wxDialog wxs="wxsmith/pamupdatemanagerdialog.wxs" src="pamupdatemanagerMain.cpp" hdr="pamupdatemanagerMain.h" fwddecl="0" i18n="1" name="pamupdatemanagerDialog" language="CPP" />
+				</resources>
+			</wxsmith>
+			<AutoVersioning>
+				<Scheme minor_max="10" build_max="0" rev_max="0" rev_rand_max="10" build_times_to_increment_minor="100" />
+				<Settings autoincrement="0" date_declarations="1" use_define="0" update_manifest="1" do_auto_increment="1" ask_to_increment="0" language="C++" svn="0" svn_directory="" header_path="version.h" />
+				<Changes_Log show_changes_editor="1" app_title="released version %M.%m.%b of %p" changeslog_path="ChangesLog.txt" />
+				<Code header_guard="VERSION_H" namespace="AutoVersion" prefix="" />
+			</AutoVersioning>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
