@@ -46,6 +46,7 @@
 						<button_size>-1,40</button_size>
 						<columns>3</columns>
 						<button_selected>#008000</button_selected>
+						<button_disabled>#808080</button_disabled>
 						<items />
 						<pos>0,70</pos>
 						<size>600,315</size>

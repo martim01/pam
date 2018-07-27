@@ -534,7 +534,7 @@ void wmSwitcherPanel::SetPageNameStyle(unsigned long nStyle)
             m_nSwipeHeight = 10;
             break;
         case PAGE_BUTTON:
-            m_nNameHeight = 26;
+            m_nNameHeight = 35;
             m_nSwipeHeight = 0;
             break;
     }

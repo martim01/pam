@@ -4,8 +4,10 @@
 #include <wx/log.h>
 #include <iterator>
 #include "playout.h"
+#include "settings.h"
 #include "soundfile.h"
 #include "soundcardmanager.h"
+#include <wx/xml/xml.h>
 
 using namespace std;
 
@@ -269,11 +271,7 @@ float Generator::GenerateTriangle(const genfreq& gfreq, float dPhase)
 
 void Generator::AddSequence(const wxString& sName, Sequence* pSeq)
 {
-    CloseFile();
-    ClearFrequences();
-    ClosePink();
 
-    m_nGenerator = SEQUENCE;
 
     m_mSequences.insert(make_pair(sName, pSeq));
 }
@@ -514,3 +512,43 @@ void Generator::GenerateWhiteNoise(float* pBuffer, unsigned int nSize)
 
 
 
+bool Generator::LoadSequence(const wxString& sFile)
+{
+    ClearSequences();
+    ClearFrequences();
+    CloseFile();
+    ClosePink();
+
+    m_nGenerator = SEQUENCE;
+
+    wxXmlDocument doc;
+    if(doc.Load(wxString::Format(wxT("%s/generator/%s.xml"), Settings::Get().GetDocumentDirectory().c_str(), sFile.c_str())) && doc.GetRoot())
+    {
+        for(wxXmlNode* pSequenceNode = doc.GetRoot()->GetChildren(); pSequenceNode; pSequenceNode = pSequenceNode->GetNext())
+        {
+            if(pSequenceNode->GetName().CmpNoCase(wxT("sequence")) == 0)
+            {
+                unsigned long nChannels(0);
+                pSequenceNode->GetAttribute(wxT("channels"), wxT("0")).ToULong(&nChannels);
+                Sequence* pSequence = new Sequence(nChannels);
+
+                for(wxXmlNode* pFreqGenNode = pSequenceNode->GetChildren(); pFreqGenNode; pFreqGenNode = pFreqGenNode->GetNext())
+                {
+                    if(pFreqGenNode->GetName().CmpNoCase(wxT("genfreq")) == 0)
+                    {
+                        double dFrequency, ddBFS;
+                        long nCycles(0), nType(0);
+                        if(pFreqGenNode->GetAttribute(wxT("frequency"), wxEmptyString).ToDouble(&dFrequency) && pFreqGenNode->GetAttribute(wxT("dBFS"), wxEmptyString).ToDouble(&ddBFS) && pFreqGenNode->GetAttribute(wxT("cycles"), wxEmptyString).ToLong(&nCycles) && pFreqGenNode->GetAttribute(wxT("type"), wxT("0")).ToLong(&nType))
+                        {
+                            pSequence->AppendGenFreq(dFrequency, ddBFS, nCycles, nType);
+                        }
+                    }
+                }
+                AddSequence(pSequenceNode->GetAttribute(wxT("name"), wxEmptyString), pSequence);
+            }
+        }
+        return true;
+    }
+    return false;
+
+}

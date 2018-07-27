@@ -115,12 +115,13 @@ class PAMBASE_IMPEXPORT Generator
         void SetFrequency(float dFrequency, float ddBFS, int nType);
         bool SetFile(const wxString& sFile);
 
+        bool LoadSequence(const wxString& sFile);
+
         void SetNoise(int nColour, float ddBFS);
 
         void Generate(unsigned int nSize);
 
-        void AddSequence(const wxString& sName, Sequence* pSeq);
-        void DeleteSequence(const wxString& sName);
+
 
         void ClearSequences();
         void ClearFrequences();
@@ -137,6 +138,9 @@ class PAMBASE_IMPEXPORT Generator
 
 
     protected:
+
+        void AddSequence(const wxString& sName, Sequence* pSeq);
+        void DeleteSequence(const wxString& sName);
 
         void InitPinkNoise();
 

@@ -52,7 +52,7 @@
 										<button_selected>#FF8000</button_selected>
 										<items />
 										<pos>0,5</pos>
-										<size>200,350</size>
+										<size>200,340</size>
 										<bg>#000000</bg>
 										<style>wmList::STYLE_SELECT</style>
 										<handler function="OnlstScreensSelected" entry="EVT_LIST_SELECTED" />
@@ -66,7 +66,7 @@
 										<button_selected>#FF8000</button_selected>
 										<text>#000000</text>
 										<items />
-										<pos>0,355</pos>
+										<pos>0,345</pos>
 										<size>200,44</size>
 										<fg>#000000</fg>
 										<bg>#000000</bg>
@@ -74,7 +74,7 @@
 										<handler function="OnlstScreensSelected" entry="EVT_LIST_SELECTED" />
 									</object>
 									<object class="wxPanel" name="ID_PANEL7" variable="Panel4" member="yes">
-										<pos>4,400</pos>
+										<pos>4,390</pos>
 										<size>193,50</size>
 										<bg>#FFFFFF</bg>
 										<object class="wmLabel" name="ID_M_PLBL3" variable="m_plblCpu" member="yes">

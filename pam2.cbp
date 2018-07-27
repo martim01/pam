@@ -193,7 +193,6 @@
 		<Unit filename="wxsmith/dlgEditName.wxs" />
 		<Unit filename="wxsmith/dlgMask.wxs" />
 		<Unit filename="wxsmith/dlgSequence.wxs" />
-		<Unit filename="wxsmith/dlgUpdate.wxs" />
 		<Unit filename="wxsmith/pnlAoIPInfo.wxs" />
 		<Unit filename="wxsmith/pnlHelp.wxs" />
 		<Unit filename="wxsmith/pnlLog.wxs" />
@@ -222,7 +221,6 @@
 					<wxPanel wxs="wxsmith/pnlLogControl.wxs" src="pnlLogControl.cpp" hdr="pnlLogControl.h" fwddecl="0" i18n="1" name="pnlLogControl" language="CPP" />
 					<wxDialog wxs="wxsmith/dlgMask.wxs" src="dlgmask.cpp" hdr="dlgmask.h" fwddecl="0" i18n="1" name="dlgMask" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlUpdate.wxs" src="pnlUpdate.cpp" hdr="pnlUpdate.h" fwddecl="0" i18n="1" name="pnlUpdate" language="CPP" />
-					<wxDialog wxs="wxsmith/dlgUpdate.wxs" src="dlgUpdate.cpp" hdr="dlgUpdate.h" fwddecl="0" i18n="1" name="dlgUpdate" language="CPP" />
 					<wxDialog wxs="wxsmith/dlgHelp.wxs" src="dlgHelp.cpp" hdr="dlgHelp.h" fwddecl="0" i18n="1" name="dlgHelp" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlHelp.wxs" src="pnlHelp.cpp" hdr="pnlHelp.h" fwddecl="0" i18n="1" name="pnlHelp" language="CPP" />
 					<wxDialog wxs="wxsmith/dlgSequence.wxs" src="dlgSequence.cpp" hdr="dlgSequence.h" fwddecl="0" i18n="1" name="dlgSequence" language="CPP" />

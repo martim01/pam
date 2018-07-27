@@ -121,6 +121,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_plstDevices = new wmList(pnlInput, ID_M_PLST1, wxPoint(0,70), wxSize(600,315), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
     m_plstDevices->SetBackgroundColour(wxColour(0,0,0));
     m_plstDevices->SetSelectedButtonColour(wxColour(wxT("#008000")));
+    m_plstDevices->SetDisabledColour(wxColour(wxT("#808080")));
     m_plstInput = new wmList(pnlInput, ID_M_PLST2, wxPoint(0,36), wxSize(600,34), wmList::STYLE_SELECT, 0, wxSize(100,30), 3, wxSize(-1,-1));
     m_plstInput->SetButtonColour(wxColour(wxT("#400080")));
     m_plstInput->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
@@ -493,8 +494,6 @@ void pnlSettings::OnbtnOutputClick(wxCommandEvent& event)
 void pnlSettings::OnlstPlaybackSelected(wxCommandEvent& event)
 {
     Settings::Get().Write(wxT("Output"), wxT("Device"), (int)event.GetClientData());
-    RefreshInputs();
-
 }
 
 
@@ -729,6 +728,10 @@ void pnlSettings::OnswpSettingsPageChanged(wxNotebookEvent& event)
     if(m_pswpSettings->GetPageText(m_pswpSettings->GetSelection()) == wxT("Audio Input"))
     {
        RefreshInputs();
+    }
+    else if(m_pswpSettings->GetPageText(m_pswpSettings->GetSelection()) == wxT("Audio Output"))
+    {
+        ShowSoundcardOutputs();
     }
 }
 

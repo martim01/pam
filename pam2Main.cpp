@@ -39,7 +39,7 @@
 #include "audioevent.h"
 #include "soundcardmanager.h"
 #include "pcstats.h"
-#include <wx/xml/xml.h>
+
 
 //(*InternalHeaders(pam2Dialog)
 #include <wx/bitmap.h>
@@ -130,17 +130,17 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_pswpScreens->SetPageNameStyle(3);
     Panel2 = new wxPanel(m_pswpScreens, ID_PANEL5, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL5"));
     Panel2->SetBackgroundColour(wxColour(0,0,0));
-    m_plstScreens = new wmList(Panel2, ID_M_PLST1, wxPoint(0,5), wxSize(200,350), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
+    m_plstScreens = new wmList(Panel2, ID_M_PLST1, wxPoint(0,5), wxSize(200,340), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
     m_plstScreens->SetBackgroundColour(wxColour(0,0,0));
     m_plstScreens->SetButtonColour(wxColour(wxT("#008000")));
     m_plstScreens->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
-    m_plstInbuilt = new wmList(Panel2, ID_M_PLST3, wxPoint(0,355), wxSize(200,44), wmList::STYLE_SELECT, 0, wxSize(-1,40), 3, wxSize(5,5));
+    m_plstInbuilt = new wmList(Panel2, ID_M_PLST3, wxPoint(0,345), wxSize(200,44), wmList::STYLE_SELECT, 0, wxSize(-1,40), 3, wxSize(5,5));
     m_plstInbuilt->SetForegroundColour(wxColour(0,0,0));
     m_plstInbuilt->SetBackgroundColour(wxColour(0,0,0));
     m_plstInbuilt->SetButtonColour(wxColour(wxT("#3DBEAB")));
     m_plstInbuilt->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
     m_plstInbuilt->SetTextButtonColour(wxColour(wxT("#000000")));
-    Panel4 = new wxPanel(Panel2, ID_PANEL7, wxPoint(4,400), wxSize(193,50), wxTAB_TRAVERSAL, _T("ID_PANEL7"));
+    Panel4 = new wxPanel(Panel2, ID_PANEL7, wxPoint(4,390), wxSize(193,50), wxTAB_TRAVERSAL, _T("ID_PANEL7"));
     Panel4->SetBackgroundColour(wxColour(255,255,255));
     m_plblCpu = new wmLabel(Panel4, ID_M_PLBL3, _("CPU:"), wxPoint(1,1), wxSize(95,23), 0, _T("ID_M_PLBL3"));
     m_plblCpu->SetBorderState(uiRect::BORDER_NONE);
@@ -975,47 +975,24 @@ void pam2Dialog::InitGenerator(const wxString& sSequence)
     {
         if(sSequence != m_sCurrentSequence)
         {
-            m_pGenerator->ClearSequences();
-
-            m_sCurrentSequence = sSequence;
-
-            wxXmlDocument doc;
-            if(doc.Load(wxString::Format(wxT("%s/generator/%s.xml"), Settings::Get().GetDocumentDirectory().c_str(), sSequence.c_str())) && doc.GetRoot())
+            if(m_pGenerator->LoadSequence(sSequence))
             {
-                for(wxXmlNode* pSequenceNode = doc.GetRoot()->GetChildren(); pSequenceNode; pSequenceNode = pSequenceNode->GetNext())
-                {
-                    if(pSequenceNode->GetName().CmpNoCase(wxT("sequence")) == 0)
-                    {
-                        unsigned long nChannels(0);
-                        pSequenceNode->GetAttribute(wxT("channels"), wxT("0")).ToULong(&nChannels);
-                        Sequence* pSequence = new Sequence(nChannels);
-
-                        for(wxXmlNode* pFreqGenNode = pSequenceNode->GetChildren(); pFreqGenNode; pFreqGenNode = pFreqGenNode->GetNext())
-                        {
-                            if(pFreqGenNode->GetName().CmpNoCase(wxT("genfreq")) == 0)
-                            {
-                                double dFrequency, ddBFS;
-                                long nCycles(0), nType(0);
-                                if(pFreqGenNode->GetAttribute(wxT("frequency"), wxEmptyString).ToDouble(&dFrequency) && pFreqGenNode->GetAttribute(wxT("dBFS"), wxEmptyString).ToDouble(&ddBFS) && pFreqGenNode->GetAttribute(wxT("cycles"), wxEmptyString).ToLong(&nCycles) && pFreqGenNode->GetAttribute(wxT("type"), wxT("0")).ToLong(&nType))
-                                {
-                                    pSequence->AppendGenFreq(dFrequency, ddBFS, nCycles, nType);
-                                }
-                            }
-                        }
-                        m_pGenerator->AddSequence(pSequenceNode->GetAttribute(wxT("name"), wxEmptyString), pSequence);
-                    }
-                }
                 wmLog::Get()->Log(wxString::Format(wxT("Generating sequence file %s"), sSequence.c_str()));
+                m_sCurrentSequence = sSequence;
+
+                CreateSessionFromOutput(Settings::Get().Read(wxT("Output"), wxT("Sequence"), wxT("glits")));
+                CheckPlayback(m_pGenerator->GetSampleRate(), m_pGenerator->GetChannels());
+
+                m_pGenerator->Generate(8192);
             }
             else
             {
                 wmLog::Get()->Log(wxString::Format(wxT("Could not open sequence file %s"), sSequence.c_str()));
+                m_sCurrentSequence = wxEmptyString;
+
+                CreateSessionFromOutput(wxEmptyString);
+                CheckPlayback(48000,0);
             }
-
-            CreateSessionFromOutput(Settings::Get().Read(wxT("Output"), wxT("Sequence"), wxT("glits")));
-            CheckPlayback(m_pGenerator->GetSampleRate(), m_pGenerator->GetChannels());
-
-            m_pGenerator->Generate(8192);
         }
     }
 }

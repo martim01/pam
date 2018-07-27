@@ -208,6 +208,7 @@ void manifest_creatorApp::WriteManifest()
             sVersion.Trim();
             sContent << wxT("</ul>");
             sContent << wxT("<b><u>") << sVersion << wxT("</u></b>");
+            sContent << wxT("<ul>");
         }
         sContent << wxT("<li>") << (*itVersion).second << wxT("</li>");
     }

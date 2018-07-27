@@ -5,7 +5,6 @@
 #include <wx/intl.h>
 #include <wx/string.h>
 //*)
-#include "dlgUpdate.h"
 #include "settings.h"
 #include <wx/dir.h>
 #include "folder.xpm"

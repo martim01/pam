@@ -59,9 +59,23 @@ void pnlLog::Log(wxString sLogEntry)
 
     m_sTableMiddle << wxT("<tr><td>") << wxDateTime::UNow().Format(wxT("%H:%M:%S:%l")) << wxT("</td><td>") << sLogEntry << wxT("</td></tr>");
 
+    wxPoint pntView = m_phtmlLog->GetViewStart();
+
     m_phtmlLog->Freeze();
     m_phtmlLog->SetPage(m_sTableStart+m_sTableMiddle+m_sTableEnd);
     m_phtmlLog->Thaw();
+
+
+    if(!m_bScrollLock)
+    {
+        m_phtmlLog->Refresh();
+        m_phtmlLog->Update();
+        m_phtmlLog->End();
+    }
+    else
+    {
+        m_phtmlLog->Scroll(pntView);
+    }
 
 }
 
@@ -95,13 +109,6 @@ void pnlLog::Clear()
 {
     m_sTableMiddle = wxEmptyString;
     m_phtmlLog->SetPage(m_sTableStart+m_sTableMiddle+m_sTableEnd);
-    if(!m_bScrollLock)
-    {
-        m_phtmlLog->Refresh();
-        m_phtmlLog->Update();
-        m_phtmlLog->End();
-    }
-    //@todo at the moment it will go back to the beginning which is not what we want...
 }
 
 
