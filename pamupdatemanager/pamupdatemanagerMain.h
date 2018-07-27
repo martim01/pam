@@ -25,14 +25,19 @@ class pamupdatemanagerDialog: public wxDialog
 		wmButton* m_pbtnDependencies;
 		wmLabel* m_pLbl3;
 		wmButton* m_pbtnSelectNone;
+		wxPanel* Panel5;
+		wmLabel* m_pLbl7;
+		wxPanel* pnlMain;
 		wmButton* m_pbtnSelectAll;
 		wxPanel* Panel4;
 		wmLabel* m_pLbl1;
 		wmList* m_plstLog;
 		wxPanel* Panel1;
+		wxTimer m_timerStart;
 		wxPanel* Panel3;
 		wmLabel* m_pLbl5;
 		wmLabel* m_plblSettings;
+		wmLabel* m_pLbl6;
 		wmList* m_plstUpdates;
 		wxTimer m_timerUpdate;
 		wmLabel* m_pLbl2;
@@ -43,6 +48,7 @@ class pamupdatemanagerDialog: public wxDialog
 		wxTouchScreenHtml* m_phtmlDependencies;
 		wmSwitcherPanel* m_pswpMain;
 		wmButton* m_pbtnClose;
+		wmSwitcherPanel* m_pswpSplash;
 		//*)
 
 	protected:
@@ -68,8 +74,14 @@ class pamupdatemanagerDialog: public wxDialog
 		static const long ID_M_PLBL5;
 		static const long ID_M_PLST2;
 		static const long ID_PANEL4;
+		static const long ID_M_PSWP2;
+		static const long ID_PANEL5;
+		static const long ID_M_PLBL6;
+		static const long ID_M_PLBL7;
+		static const long ID_PANEL6;
 		static const long ID_M_PSWP1;
 		static const long ID_TIMER1;
+		static const long ID_TIMER2;
 		//*)
 
 	private:
@@ -83,6 +95,7 @@ class pamupdatemanagerDialog: public wxDialog
 		void OnbtnUpdateClick(wxCommandEvent& event);
 		void OnlstUpdatesSelected(wxCommandEvent& event);
 		void OntimerUpdateTrigger(wxTimerEvent& event);
+		void Onm_timerStartTrigger(wxTimerEvent& event);
 		//*)
 
         wxString GetMonitorPluginVersion(const wxString& sPlugin);
