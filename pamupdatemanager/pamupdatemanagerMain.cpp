@@ -418,13 +418,24 @@ void pamupdatemanagerDialog::Onm_timerStartTrigger(wxTimerEvent& event)
         {
         case UpdateObject::APP:
             sType = wxT("App");
-            sLocalVersion = Settings::Get().Read(wxT("General"), wxT("Version"), wxT("????"));
+            if(itObject->first == wxT("pam2"))
+            {
+                sLocalVersion = Settings::Get().Read(wxT("General"), wxT("Version"), wxT("0.0.0.0"));
+            }
+            else
+            {
+                sLocalVersion = wxT("0.0.0.0"); //@todo get app version
+            }
             break;
         case UpdateObject::CORE_DLL:
             sType = wxT("Core Lib");
             if(itObject->first == wxT("pambase"))
             {
                 sLocalVersion  = Settings::Get().GetLibraryVersion();
+            }
+            else
+            {
+                sLocalVersion = wxT("0.0.0.0"); //@todo get core lib version
             }
             break;
         case UpdateObject::DOCUMENTATION:

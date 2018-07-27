@@ -54,7 +54,7 @@ void manifest_creatorApp::ReadProjectFile()
         if(doc.Load(asFiles[i]) && doc.GetRoot())
         {
             wxFileName filename(asFiles[i]);
-            m_sName = filename.GetName();
+            //m_sName = filename.GetName();
 
             for(wxXmlNode* pProjectNode = doc.GetRoot()->GetChildren(); pProjectNode; pProjectNode = pProjectNode->GetNext())
             {
@@ -74,6 +74,20 @@ void manifest_creatorApp::ReadProjectFile()
                                 {
                                     for(wxXmlNode* pLinkerNode = pTargetNode->GetChildren(); pLinkerNode; pLinkerNode = pLinkerNode->GetNext())
                                     {
+                                        if(pLinkerNode->GetName().CmpNoCase(wxT("option")) == 0 && pLinkerNode->HasAttribute(wxT("output")))
+                                        {
+                                            m_sName = pLinkerNode->GetAttribute(wxT("output"), wxEmptyString).AfterLast(wxT('/'));
+                                            if(m_sName.Find(wxT(".")) != wxNOT_FOUND)
+                                            {
+                                                m_sName = m_sName.BeforeLast(wxT('.'));
+                                            }
+                                            #ifdef __WXGTK__
+                                            if(m_sName.Left(3) == wxT("lib"))
+                                            {
+                                                m_sName = m_sName.Mid(3);
+                                            }
+                                            #endif // __WXGTK__
+                                        }
                                         if(pLinkerNode->GetName().CmpNoCase(wxT("Linker")) == 0)
                                         {
                                             for(wxXmlNode* pAddNode = pLinkerNode->GetChildren(); pAddNode; pAddNode = pAddNode->GetNext())

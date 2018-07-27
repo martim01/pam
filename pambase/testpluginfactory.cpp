@@ -140,14 +140,27 @@ map<wxString, TestPluginBuilder*>::iterator TestPluginFactory::FindPlugin(const 
 
 plugin TestPluginFactory::GetPluginDetails(const wxString& sDir, const wxString& sLibrary)
 {
-    wxLogNull ln;
+
 
     plugin aPlugin;
     aPlugin.sLibrary = sLibrary;
 
-    map<wxString, wxDynamicLibrary*>::const_iterator itLib = m_mLibraries.find(sLibrary);
+    map<wxString, wxDynamicLibrary*>::const_iterator itLib = m_mLibraries.begin();
+    for(; itLib != m_mLibraries.end(); ++itLib)
+    {
+        if(itLib->first.CmpNoCase(sLibrary) == 0)
+        {
+            break;
+        }
+    }
+
+
+
+    wxLogNull ln;
     if(itLib != m_mLibraries.end())
     {
+        wxLogDebug(wxT("GotPlugin Details %s"), sLibrary.c_str());
+
         if(itLib->second->HasSymbol(wxT("GetTestPluginName")))
         {
             typedef wxString (*RegPtr)();
@@ -184,10 +197,10 @@ plugin TestPluginFactory::GetPluginDetails(const wxString& sDir, const wxString&
                     {
                         aPlugin.sName = (*ptr)();
                     }
-                    if(pLib->HasSymbol(wxT("GetVersion")))
+                    if(pLib->HasSymbol(wxT("GetPluginVersion")))
                     {
                         typedef wxString (*RegPtr)();
-                        RegPtr ptr = (RegPtr)pLib->GetSymbol(wxT("GetVersion"));
+                        RegPtr ptr = (RegPtr)pLib->GetSymbol(wxT("GetPluginVersion"));
                         aPlugin.sVersion = (*ptr)();
                     }
                     if(pLib->HasSymbol(wxT("GetDetails")))

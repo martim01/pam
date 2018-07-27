@@ -173,7 +173,14 @@ plugin MonitorPluginFactory::GetPluginDetails(const wxString& sDir, const wxStri
     plugin aPlugin;
     aPlugin.sLibrary = sLibrary;
 
-    map<wxString, wxDynamicLibrary*>::const_iterator itLib = m_mLibraries.find(sLibrary);
+    map<wxString, wxDynamicLibrary*>::const_iterator itLib = m_mLibraries.begin();
+    for(; itLib != m_mLibraries.end(); ++itLib)
+    {
+        if(itLib->first.CmpNoCase(sLibrary) == 0)
+        {
+            break;
+        }
+    }
     if(itLib != m_mLibraries.end())
     {
         if(itLib->second->HasSymbol(wxT("GetPluginName")))

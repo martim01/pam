@@ -14,6 +14,7 @@ PeakLogBuilder::~PeakLogBuilder()
 
 void PeakLogBuilder::InputSession(const session& aSession)
 {
+
     m_ppnlPeakLog->InputSession(aSession);
 }
 

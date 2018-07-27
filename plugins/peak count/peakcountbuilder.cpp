@@ -25,6 +25,7 @@ void PeakCountBuilder::OutputChannels(const std::vector<char>& vChannels)
 void PeakCountBuilder::SetAudioData(const timedbuffer* pBuffer)
 {
     m_ppnlPeakCount->SetAudioData(pBuffer);
+
 }
 
 wxString PeakCountBuilder::GetName() const

@@ -443,7 +443,6 @@ bool UpdateManager::UpdateFromWebServer(const wxString& sName, const wxString& s
                 m_sCurlErrorBuffer = wxString::FromAscii(chError);
 
                 wxLogMessage(m_sCurlError+wxT("\n")+m_sCurlErrorBuffer);
-
             }
             else
             {
@@ -484,7 +483,6 @@ bool UpdateManager::UpdateFromShare(const wxString& sName, const wxString& sTemp
 
     }
     wxFileName fileFrom(sPath, sName);
-
     //Copy the file from the share to our temp location
     return wxCopyFile(fileFrom.GetFullPath(), sTempFile);
 }
@@ -547,8 +545,7 @@ bool UpdateManager::UpdateIsNewer(const wxString& sUpdate, const wxString& sLoca
 
 bool UpdateManager::UpdateVersionIsNewer(const wxString& sUpdateVersion, const wxString& sLocalVersion)
 {
-    return true;
-
+    //return true;
 
     wxArrayString asUpdate(wxStringTokenize(sUpdateVersion, wxT(".")));
 

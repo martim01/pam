@@ -12,6 +12,7 @@ void CreateMonitorBuilder()
 wxString GetPluginName()
 {
     return wxT("AoIP Info");
+
 }
 
 

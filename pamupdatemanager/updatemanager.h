@@ -37,6 +37,7 @@ struct UpdateObject
     wxString sVersion;
     wxString sChangelog;
     wxString sFullPath;
+    wxString sFilename;
     int nType;
 
     std::map<wxString, wxString> mDependsOn;
