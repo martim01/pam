@@ -327,7 +327,7 @@ bool UpdateManager::Update(wxString sName)
                 #endif // __WXMSW__
                 fileOld.SetPath(Settings::Get().GetMonitorPluginDirectory());
                 fileOld.SetName(sName);
-
+                break;
             case UpdateObject::PLUGIN_TEST:
                 #ifdef __WXMSW__
                 sName << wxT(".dll");
@@ -459,7 +459,7 @@ bool UpdateManager::UpdateFromWebServer(const wxString& sName, const wxString& s
 
 bool UpdateManager::UpdateFromShare(const wxString& sName, const wxString& sTempFile)
 {
-    wxFileName fileFrom(Settings::Get().Read(wxT("Update"), wxT("Share"), wxT(".")), sName);
+    wxFileName fileFrom(wxT("/mnt/share"), sName);
 
     //Copy the file from the share to our temp location
     return wxCopyFile(fileFrom.GetFullPath(), sTempFile);

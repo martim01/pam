@@ -942,7 +942,7 @@ void pam2Dialog::InputChanged(const wxString& sKey)
 void pam2Dialog::OpenFileForReading()
 {
     wxString sFilePath;
-    sFilePath << Settings::Get().GetDocumentDirectory() << wxT("/") << Settings::Get().Read(wxT("Output"), wxT("File"), wxEmptyString) << wxT(".wav");
+    sFilePath << Settings::Get().GetWavDirectory() << wxT("/") << Settings::Get().Read(wxT("Output"), wxT("File"), wxEmptyString) << wxT(".wav");
     //Does the file exist
     if(wxFileExists(sFilePath) && m_pGenerator)
     {

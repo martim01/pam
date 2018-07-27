@@ -35,6 +35,7 @@ class PAMBASE_IMPEXPORT Settings
         wxString GetCoreLibDirectory() const;
         wxString GetTestPluginDirectory() const;
         wxString GetLogDirectory() const;
+        wxString GetWavDirectory() const;
         wxString GetTempDirectory() const;
 
         wxString GetLibraryVersion() const;

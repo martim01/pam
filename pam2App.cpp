@@ -14,11 +14,15 @@
 #include <wx/image.h>
 //*)
 #include "soundcardmanager.h"
+#include <wx/log.h>
 
 IMPLEMENT_APP(pam2App);
 
 bool pam2App::OnInit()
 {
+    #ifndef __WXDEBUG__
+    wxLog::SetLogLevel(0);
+    #endif
     SoundcardManager::Get().Initialize();
     //(*AppInitialize
     bool wxsOK = true;

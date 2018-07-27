@@ -151,6 +151,11 @@ wxString Settings::GetLogDirectory() const
     return wxString::Format(wxT("%s/logs"), GetDocumentDirectory().c_str());
 }
 
+wxString Settings::GetWavDirectory() const
+{
+    return wxString::Format(wxT("%s/wav"), GetDocumentDirectory().c_str());
+}
+
 wxString Settings::GetTempDirectory() const
 {
     return m_iniManager.GetIniString(wxT("Paths"), wxT("Temp"), wxStandardPaths::Get().GetTempDir());

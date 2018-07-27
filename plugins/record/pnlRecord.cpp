@@ -96,7 +96,7 @@ void pnlRecord::OnbtnRecordClick(wxCommandEvent& event)
 {
     if(!m_bRecording)
     {
-        if(m_sf.OpenToWrite(wxString::Format(wxT("%s/%s.wav"), Settings::Get().GetDocumentDirectory().c_str(), m_pedtFile->GetValue().c_str()), m_nInputChannels, m_nSampleRate, 16))
+        if(m_sf.OpenToWrite(wxString::Format(wxT("%s/%s.wav"), Settings::Get().GetWavDirectory().c_str(), m_pedtFile->GetValue().c_str()), m_nInputChannels, m_nSampleRate, 16))
         {
             m_pbtnRecord->SetLabel(wxT("STOP"));
             m_dtRecording = wxDateTime::Now();
