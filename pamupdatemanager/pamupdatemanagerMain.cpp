@@ -155,7 +155,7 @@ pamupdatemanagerDialog::pamupdatemanagerDialog(wxWindow* parent,wxWindowID id,co
         {
         case UpdateObject::APP:
             sType = wxT("App");
-            sLocalVersion = wxString::Format(wxT("%d.%d.%d.%d"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION);
+            sLocalVersion = Settings::Get().Read(wxT("General"), wxT("Version"), wxT("????"));
             break;
         case UpdateObject::CORE_DLL:
             sType = wxT("Core Lib");
@@ -367,7 +367,6 @@ void pamupdatemanagerDialog::OntimerUpdateTrigger(wxTimerEvent& event)
     map<wxString, wxString>::iterator itUpdate = m_mUpdate.begin();
     if(itUpdate != m_mUpdate.end())
     {
-        m_plstLog->Freeze();
         if(!m_bUpdate)
         {
             m_plstLog->AddButton(wxString::Format(wxT("Update '%s' to %s"), itUpdate->first.c_str(), itUpdate->second.c_str()));
@@ -388,6 +387,6 @@ void pamupdatemanagerDialog::OntimerUpdateTrigger(wxTimerEvent& event)
             m_mUpdate.erase(itUpdate);
             m_timerUpdate.Start(100,true);
         }
-        m_plstLog->Thaw();
+        m_plstLog->Update();
     }
 }

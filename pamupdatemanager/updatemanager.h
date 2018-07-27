@@ -36,6 +36,7 @@ struct UpdateObject
     wxString sName;
     wxString sVersion;
     wxString sChangelog;
+    wxString sFullPath;
     int nType;
 
     std::map<wxString, wxString> mDependsOn;
@@ -76,8 +77,8 @@ class UpdateManager
         bool GetUpdateListFromFTP();
 
         bool UpdateFromWebServer(const wxString& sName, const wxString& sTempFile);
-        bool UpdateFromShare(const wxString& sName, const wxString& sTempFile);
-        bool UpdateFromLocal(const wxString& sName, const wxString& sTempFile);
+        bool UpdateFromShare(const wxString& sName, const wxString& sTempFile, int nType);
+        bool UpdateFromLocal(const wxString& sName, const wxString& sTempFile, int nType);
         bool UpdateFromFTP(const wxString& sName, const wxString& sTempFile);
 
         bool DecodeUpdateList(const wxXmlDocument& xmlDoc);

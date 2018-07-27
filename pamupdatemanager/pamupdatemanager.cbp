@@ -75,7 +75,7 @@
 				</ExtraCommands>
 			</Target>
 			<Target title="Linux Release">
-				<Option output="../lib/pamupdatemanager" prefix_auto="1" extension_auto="1" />
+				<Option output="../bin/pamupdatemanager" prefix_auto="1" extension_auto="1" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -84,6 +84,7 @@
 					<Add option="-fpermissive" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
+					<Add option="-D_app_" />
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
@@ -117,7 +118,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add option="-D_core_" />
+			<Add option="-D_app_" />
 			<Add directory="C:/wxWidgets-3.0.2/include" />
 			<Add directory="../pambase" />
 		</Compiler>

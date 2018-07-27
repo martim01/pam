@@ -69,7 +69,7 @@
 				</ExtraCommands>
 			</Target>
 			<Target title="Linux Release">
-				<Option output="../lib/pamm" prefix_auto="1" extension_auto="1" />
+				<Option output="../bin/pamm" prefix_auto="1" extension_auto="1" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -109,7 +109,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add option="-D_core_" />
+			<Add option="-D_app_" />
 			<Add directory="C:/wxWidgets-3.0.2/include" />
 			<Add directory="../pambase" />
 		</Compiler>

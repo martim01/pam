@@ -240,6 +240,10 @@ void UpdateManager::AddUpdateToList(wxXmlNode* pUpdateNode)
             {
                 anUpdate.nType = UpdateObject::DOCUMENTATION;
             }
+            else
+            {
+                anUpdate.nType = UpdateObject::UNKNOWN;
+            }
         }
         else if(pNode->GetName().CmpNoCase(wxT("version")) == 0)
         {
@@ -353,11 +357,11 @@ bool UpdateManager::Update(wxString sName)
         }
         else if(Settings::Get().Read(wxT("Update"), wxT("Type"), wxT("Share")) == wxT("Share"))
         {
-            bCopied = UpdateFromShare(sName, fileTo.GetFullPath());
+            bCopied = UpdateFromShare(sName, fileTo.GetFullPath(), itUpdate->second.nType);
         }
         else if(Settings::Get().Read(wxT("Update"), wxT("Type"), wxT("Share")) == wxT("Local"))
         {
-            bCopied = UpdateFromLocal(sName, fileTo.GetFullPath());
+            bCopied = UpdateFromLocal(sName, fileTo.GetFullPath(), itUpdate->second.nType);
         }
 
         if(bCopied)
@@ -457,15 +461,35 @@ bool UpdateManager::UpdateFromWebServer(const wxString& sName, const wxString& s
     return ((res == CURLE_OK)&(m_nCurlResponseCode==200));
 }
 
-bool UpdateManager::UpdateFromShare(const wxString& sName, const wxString& sTempFile)
+bool UpdateManager::UpdateFromShare(const wxString& sName, const wxString& sTempFile, int nType)
 {
-    wxFileName fileFrom(wxT("/mnt/share"), sName);
+    wxString sPath(wxT("/mnt/share/"));
+    switch(nType)
+    {
+    case UpdateObject::APP:
+        sPath << wxT("bin");
+        break;
+    case UpdateObject::CORE_DLL:
+        sPath << wxT("lib");
+        break;
+    case UpdateObject::DOCUMENTATION:
+        sPath << wxT("docs");
+        break;
+    case UpdateObject::PLUGIN_MONITOR:
+        sPath << wxT("lib/monitor");
+        break;
+    case UpdateObject::PLUGIN_TEST:
+        sPath << wxT("lib/test");
+        break;
+
+    }
+    wxFileName fileFrom(sPath, sName);
 
     //Copy the file from the share to our temp location
     return wxCopyFile(fileFrom.GetFullPath(), sTempFile);
 }
 
-bool UpdateManager::UpdateFromLocal(const wxString& sName, const wxString& sTempFile)
+bool UpdateManager::UpdateFromLocal(const wxString& sName, const wxString& sTempFile, int nType)
 {
     wxFileName fileFrom(Settings::Get().Read(wxT("Update"), wxT("Local"), wxT(".")), sName);
 

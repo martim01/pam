@@ -39,6 +39,7 @@
 #include "audioevent.h"
 #include "soundcardmanager.h"
 #include "pcstats.h"
+#include "version.h"
 
 
 //(*InternalHeaders(pam2Dialog)
@@ -253,6 +254,8 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Connect(wxID_ANY, wxEVT_HELP_CLOSE, (wxObjectEventFunction)&pam2Dialog::OnHelpClose);
 
     m_pGenerator = 0;
+
+    Settings::Get().Write(wxT("General"), wxT("Version"), wxString::Format(wxT("%d.%d.%d.%d"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
 
 }
 

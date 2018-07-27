@@ -129,7 +129,7 @@ bool Settings::RemoveSection(const wxString& sSection)
 wxString Settings::GetExecutableDirectory() const
 {
     #ifdef __WXGNU__
-    return m_iniManager.GetIniString(wxT("Paths"), wxT("Executable"), wxT("/usr/bin"));
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("Executable"), wxString::Format(wxT("%s/bin"), GetDocumentDirectory().c_str()));
     #else
     return m_iniManager.GetIniString(wxT("Paths"), wxT("Executable"), wxT("C:\\Progam Files\\pam2"));
     #endif // __WXGNU__
@@ -164,7 +164,7 @@ wxString Settings::GetTempDirectory() const
 wxString Settings::GetCoreLibDirectory() const
 {
      #ifdef __WXGNU__
-    return m_iniManager.GetIniString(wxT("Paths"), wxT("Core"), wxT("/usr/lib/pam2"));
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("Core"), wxString::Format(wxT("%s/lib"), GetDocumentDirectory().c_str()));
     #else
     return m_iniManager.GetIniString(wxT("Paths"), wxT("Core"), wxStandardPaths::Get().GetExecutablePath().BeforeLast(wxT('\\')));
     #endif // __WXGNU__
@@ -173,7 +173,7 @@ wxString Settings::GetCoreLibDirectory() const
 wxString Settings::GetMonitorPluginDirectory() const
 {
     #ifdef __WXGNU__
-    return m_iniManager.GetIniString(wxT("Paths"), wxT("MonitorPlugins"), wxT("/usr/lib/pam2/monitor"));
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("MonitorPlugins"), wxString::Format(wxT("%s/monitor"), GetCoreLibDirectory().c_str()));
     #else
     return m_iniManager.GetIniString(wxT("Paths"), wxT("MonitorPlugins"), wxStandardPaths::Get().GetPluginsDir());
     #endif // __WXGNU__
@@ -182,7 +182,7 @@ wxString Settings::GetMonitorPluginDirectory() const
 wxString Settings::GetTestPluginDirectory() const
 {
     #ifdef __WXGNU__
-    return m_iniManager.GetIniString(wxT("Paths"), wxT("TestPlugins"), wxT("/usr/lib/pam2/test"));
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("TestPlugins"), wxString::Format(wxT("%s/monitor"), GetCoreLibDirectory().c_str()));
     #else
     return m_iniManager.GetIniString(wxT("Paths"), wxT("TestPlugins"), wxStandardPaths::Get().GetPluginsDir());
     #endif // __WXGNU__
