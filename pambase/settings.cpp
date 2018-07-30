@@ -40,16 +40,20 @@ double Settings::Read(const wxString& sSection, const wxString& sKey, double dDe
 
 bool Settings::Write(const wxString& sSection, const wxString& sKey, const wxString& sValue)
 {
-    m_iniManager.SetSectionValue(sSection, sKey,sValue);
-    bool bDone = m_iniManager.WriteIniFile(wxString::Format(wxT("%s/pam/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
-
-    if(bDone)
+    bool bDone(true);
+    if(m_iniManager.GetIniString(sSection, sKey, wxEmptyString) != sValue)
     {
-        wxString sHandler(wxString::Format(wxT("%s/%s"),sSection.c_str(),sKey.c_str()));
-        for(multimap<wxString, wxEvtHandler*>::const_iterator itHandler = m_mmHandlers.lower_bound(sHandler); itHandler != m_mmHandlers.upper_bound(sHandler); ++itHandler)
+        m_iniManager.SetSectionValue(sSection, sKey,sValue);
+        bDone = m_iniManager.WriteIniFile(wxString::Format(wxT("%s/pam/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
+
+        if(bDone)
         {
-            SettingEvent event(sSection, sKey);
-            wxPostEvent(itHandler->second, event);
+            wxString sHandler(wxString::Format(wxT("%s/%s"),sSection.c_str(),sKey.c_str()));
+            for(multimap<wxString, wxEvtHandler*>::const_iterator itHandler = m_mmHandlers.lower_bound(sHandler); itHandler != m_mmHandlers.upper_bound(sHandler); ++itHandler)
+            {
+                SettingEvent event(sSection, sKey);
+                wxPostEvent(itHandler->second, event);
+            }
         }
     }
     return bDone;

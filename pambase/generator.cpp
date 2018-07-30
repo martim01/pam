@@ -8,6 +8,8 @@
 #include "soundfile.h"
 #include "soundcardmanager.h"
 #include <wx/xml/xml.h>
+#include "wmlogevent.h"
+
 
 using namespace std;
 
@@ -311,6 +313,8 @@ void Generator::SetFrequency(float dFrequency, float ddBFS, int nType)
     }
 
     m_queueFreq.push(genfreq(dFrequency, dAmplitude, 48000.0/dFrequency, nType));
+
+
 }
 
 void Generator::ClearFrequences()
@@ -330,7 +334,7 @@ void Generator::CloseFile()
     }
 }
 
-bool Generator::SetFile(const wxString& sFilePath)
+bool Generator::SetFile()
 {
     ClearSequences();
     ClearFrequences();
@@ -339,11 +343,33 @@ bool Generator::SetFile(const wxString& sFilePath)
 
     m_nGenerator = FILE;
 
-    m_pSoundfile = new SoundFile();
-    bool bOk(m_pSoundfile->OpenToRead(sFilePath));
-    if(bOk == false)
+    wxString sFilePath;
+    sFilePath << Settings::Get().GetWavDirectory() << wxT("/") << Settings::Get().Read(wxT("Output"), wxT("File"), wxEmptyString) << wxT(".wav");
+
+    bool bOk(false);
+
+    //Does the file exist
+    if(wxFileExists(sFilePath))
     {
-        CloseFile();
+        m_pSoundfile = new SoundFile();
+        bOk = m_pSoundfile->OpenToRead(sFilePath);
+        if(bOk == false)
+        {
+            CloseFile();
+            wmLog::Get()->Log(wxString::Format(wxT("Failed to open file '%s'"), sFilePath.c_str()));
+        }
+        else
+        {
+            wmLog::Get()->Log(wxString::Format(wxT("Opened file '%s'"), sFilePath.c_str()));
+            wmLog::Get()->Log(wxString::Format(wxT("SampleRate = %d"), GetSampleRate()));
+            wmLog::Get()->Log(wxString::Format(wxT("Channels = %d"), GetChannels()));
+
+            Generate(8192);
+        }
+    }
+    else
+    {
+        wmLog::Get()->Log(wxString::Format(wxT("File '%s' does not exist or generator not established"), sFilePath.c_str()));
     }
 
     return bOk;
@@ -399,6 +425,7 @@ void Generator::SetNoise(int nColour, float ddBFS)
         m_nGenerator = NOISE_WHITE;
         break;
     }
+    Generate(8192);
 }
 
 
@@ -547,6 +574,7 @@ bool Generator::LoadSequence(const wxString& sFile)
                 AddSequence(pSequenceNode->GetAttribute(wxT("name"), wxEmptyString), pSequence);
             }
         }
+        Generate(8192);
         return true;
     }
     return false;

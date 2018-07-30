@@ -157,7 +157,8 @@ void Audio::InputCallback(const float* pBuffer, size_t nFrameCount, int nFlags)
     pData->SetBuffer(pBuffer);
     pData->SetDuration(pData->GetBufferSize()*3);
 
-    AudioEvent(pData, AudioEvent::SOUNDCARD, nFrameCount, m_nSampleRate, nFlags&paInputOverflow, nFlags&paInputOverflow);
+    AudioEvent event(pData, AudioEvent::SOUNDCARD, nFrameCount, m_nSampleRate, nFlags&paInputOverflow, nFlags&paInputOverflow);
+    wxPostEvent(m_pManager, event);
 
 }
 
@@ -219,6 +220,7 @@ int paCallback( const void *input, void *output, unsigned long frameCount, const
         Audio* pComp = reinterpret_cast<Audio*>(userData);
         if(input)
         {
+
             pComp->InputCallback(reinterpret_cast<const float*>(input), frameCount, statusFlags);
         }
         if(output)

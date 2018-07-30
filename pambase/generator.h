@@ -113,7 +113,7 @@ class PAMBASE_IMPEXPORT Generator
 
         void SetSampleRate(unsigned int nSampleRate);
         void SetFrequency(float dFrequency, float ddBFS, int nType);
-        bool SetFile(const wxString& sFile);
+        bool SetFile();
 
         bool LoadSequence(const wxString& sFile);
 

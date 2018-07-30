@@ -113,8 +113,6 @@ class pam2Dialog: public wxDialog
         //*)
 
         void OnSettingChanged(SettingEvent& event);
-        void OnRTPSession(wxCommandEvent& event);
-        void OnRTPSessionClosed(wxCommandEvent& event);
         void OnMonitorRequest(MonitorEvent& event);
 
         void LoadMonitorPanels();
@@ -132,6 +130,8 @@ class pam2Dialog: public wxDialog
 
         void OnMonitorMax(wxCommandEvent& event);
         void OnAudioData(AudioEvent& event);
+        void OnSession(wxCommandEvent& event);
+        void OnPlaybackChannels(wxCommandEvent& event);
         void OnQoS(wxCommandEvent& event);
 
         void OnPluginsReload(wxCommandEvent& event);
@@ -151,20 +151,8 @@ class pam2Dialog: public wxDialog
         void MaximizeMonitor(bool bMax);
 
         void TellPluginsAboutOutputChannels();
-        void OpenFileForReading();
-
-        void PopulateThreadList();
-
-        void ClearSession();
 
 
-        void InitGenerator(const wxString& sSequence);
-        void InitGenerator();
-        void InitNoiseGenerator();
-
-        void CreateSessionFromOutput(const wxString& sSource);
-
-        Generator* m_pGenerator;
 
         pnlSettings* m_ppnlSettings;
         pnlTests* m_ppnlTests;
@@ -172,22 +160,12 @@ class pam2Dialog: public wxDialog
         pnlLog* m_ppnlLog;
         MonitorPluginBuilder* m_pSelectedMonitor;
 
-        std::map<wxString, RtpThread*> m_mRtp;
-        std::set<wxString> m_setRtpOrphan;
-        wxString m_sCurrentRtp;
-        wxString m_sCurrentSequence;
-
-        session m_Session;
-
-        unsigned int m_nMonitorSource;
-        unsigned int m_nPlaybackSource;
 
         std::multimap<size_t, wxString> m_mmMonitorPlugins;
         size_t m_nCurrentMonitorPage;
 
         wxDateTime m_dtLastRead;
 
-        PammClient* m_pClient;
         DECLARE_EVENT_TABLE()
 };
 

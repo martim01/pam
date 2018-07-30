@@ -62,7 +62,26 @@ list<pairOptionPanel_t> LissajouBuilder::CreateOptionPanels(wxWindow* pParent)
 
 void LissajouBuilder::LoadSettings()
 {
+    if(m_pLissajou)
+    {
+        m_pLissajou->SetScale(ReadSetting(wxT("Scale"),1));
+        m_pLissajou->Rotate(ReadSetting(wxT("Rotate"),1));
+        m_pLissajou->ShowLevels(ReadSetting(wxT("Levels"),1));
+        m_pLissajou->SetAxis(ReadSetting(wxT("Axis_X"),0), ReadSetting(wxT("Axis_Y"),1));
 
+        if(ReadSetting(wxT("Monitor"),0) == 1)  //force the output
+        {
+            vector<char> vChannels;
+            vChannels.push_back(ReadSetting(wxT("Axis_X"),0));
+            vChannels.push_back(ReadSetting(wxT("Axis_Y"),1));
+            AskToMonitor(vChannels);
+        }
+        m_pLissajou->SetMeterMode(ReadSetting(wxT("MeterMode"),1));
+        if(ReadSetting(wxT("Monitor"),0) == 0)  //follow
+        {
+            m_pLissajou->Follow();
+        }
+    }
 
 }
 

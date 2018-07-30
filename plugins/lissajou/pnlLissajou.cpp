@@ -88,6 +88,8 @@ void pnlLissajou::SetSession(const session& aSession)
     m_pMeterLeft->SetNumberOfChannels(m_nChannels);
     m_pMeterRight->SetNumberOfChannels(m_nChannels);
 
+    SetAxis(m_nChannelX, m_nChannelY);
+
     m_pCalculator->InputSession(aSession);
 }
 
