@@ -86,7 +86,7 @@
 				</ExtraCommands>
 			</Target>
 			<Target title="Linux Release">
-				<Option output="bin/pam2" prefix_auto="1" extension_auto="1" />
+				<Option output="../bin/pam2" prefix_auto="1" extension_auto="1" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -133,7 +133,7 @@
 			<Add option="-Wall" />
 			<Add option="-D_app_" />
 			<Add directory="C:/wxWidgets-3.0.2/include" />
-			<Add directory="pambase" />
+			<Add directory="../pambase" />
 			<Add directory="$(#live_media.include)" />
 			<Add directory="$(#live_group.include)" />
 			<Add directory="$(#live_usage.include)" />
@@ -144,7 +144,7 @@
 			<Add directory="C:/wxWidgets-3.0.2/include" />
 		</ResourceCompiler>
 		<Linker>
-			<Add directory="lib" />
+			<Add directory="../lib" />
 			<Add directory="$(#live_media.lib)" />
 			<Add directory="$(#live_group.lib)" />
 			<Add directory="$(#live_usage.lib)" />
