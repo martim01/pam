@@ -21,6 +21,7 @@ wxString GetPluginVersion()
 
 wxString GetDetails()
 {
+
     return wxT("Displays a lissajou image created from two input channels.\nAlso display linear level meters of these two channels");
 }
 
