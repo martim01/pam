@@ -196,10 +196,11 @@
 						<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
 						<object class="wmSwitcherPanelpage">
 							<object class="wxPanel" name="ID_PANEL11" variable="Panel5" member="yes">
+								<bg>#000000</bg>
 								<object class="wmLabel" name="ID_M_PLBL6" variable="m_plblInput" member="yes">
 									<label>Audio output taken from incoming audio siganl.&#x0A;See Audio Input page</label>
 									<pos>0,0</pos>
-									<size>600,370</size>
+									<size>600,100</size>
 									<fg>#80FF00</fg>
 									<bg>#000000</bg>
 									<font>
@@ -209,6 +210,77 @@
 										<underlined>0</underlined>
 										<family>swiss</family>
 										<face>Arial</face>
+									</font>
+								</object>
+								<object class="wmLabel" name="ID_M_PLBL8" variable="m_pLbl1" member="yes">
+									<label>Input-Output Channel Mapping</label>
+									<pos>0,100</pos>
+									<size>600,30</size>
+									<fg>#FFFFFF</fg>
+									<bg>#004000</bg>
+									<font>
+										<size>10</size>
+										<style>normal</style>
+										<weight>bold</weight>
+										<underlined>0</underlined>
+										<family>swiss</family>
+										<face>Arial</face>
+									</font>
+								</object>
+								<object class="wmList" name="ID_M_PLST3" variable="m_plstOutputLeft" member="yes">
+									<scrolling>None</scrolling>
+									<button_gap>2,-1</button_gap>
+									<columns>8</columns>
+									<button>#A0A0A0</button>
+									<button_selected>#008000</button_selected>
+									<items />
+									<pos>60,140</pos>
+									<size>540,44</size>
+									<bg>#000000</bg>
+									<style>wmList::STYLE_SELECT</style>
+									<handler function="OnlstOutputLeftSelected" entry="EVT_LIST_SELECTED" />
+								</object>
+								<object class="wmList" name="ID_M_PLST10" variable="m_plstOutputRight" member="yes">
+									<scrolling>None</scrolling>
+									<button_gap>2,-1</button_gap>
+									<columns>8</columns>
+									<button>#A0A0A0</button>
+									<button_selected>#008000</button_selected>
+									<items />
+									<pos>60,200</pos>
+									<size>540,44</size>
+									<bg>#000000</bg>
+									<style>wmList::STYLE_SELECT</style>
+									<handler function="OnlstOutputRightSelected" entry="EVT_LIST_SELECTED" />
+								</object>
+								<object class="wmLabel" name="ID_M_PLBL10" variable="m_pLbl6" member="yes">
+									<label>LEFT:</label>
+									<pos>0,140</pos>
+									<size>60,44</size>
+									<fg>#FFFFFF</fg>
+									<bg>#000000</bg>
+									<font>
+										<size>10</size>
+										<style>normal</style>
+										<weight>bold</weight>
+										<underlined>0</underlined>
+										<family>swiss</family>
+										<face>Verdana</face>
+									</font>
+								</object>
+								<object class="wmLabel" name="ID_M_PLBL11" variable="m_pLbl7" member="yes">
+									<label>RIGHT:</label>
+									<pos>0,200</pos>
+									<size>60,44</size>
+									<fg>#FFFFFF</fg>
+									<bg>#000000</bg>
+									<font>
+										<size>10</size>
+										<style>normal</style>
+										<weight>bold</weight>
+										<underlined>0</underlined>
+										<family>swiss</family>
+										<face>Verdana</face>
 									</font>
 								</object>
 							</object>

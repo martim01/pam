@@ -11,7 +11,7 @@ void CreateMonitorBuilder()
 
 wxString GetPluginName()
 {
-    return wxT("AoIP Info");
+    return wxT("Session Info");
 
 }
 

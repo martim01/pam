@@ -30,6 +30,7 @@ class pnlSettings: public wxPanel
 		wxPanel* pnlGeneral;
 		wmLabel* m_pLbl3;
 		wxPanel* Panel5;
+		wmLabel* m_pLbl7;
 		wxPanel* pnlGenerator;
 		wmButton* m_pbtn900;
 		wmList* m_plstDevices;
@@ -40,6 +41,7 @@ class pnlSettings: public wxPanel
 		wmLabel* m_plbldB;
 		wmButton* m_pbtnAogHome;
 		wmButton* m_pbtnOutput;
+		wmLabel* m_pLbl1;
 		wmButton* m_pbtnAogEnd;
 		wmButton* m_pbtnCursor;
 		pnlSettingsPlugins* m_ppnlPlugins;
@@ -63,6 +65,7 @@ class pnlSettings: public wxPanel
 		wmList* m_plstAudioSources;
 		wmButton* m_pbtnMinus10;
 		wmSlider* m_pAmplitude;
+		wmLabel* m_pLbl6;
 		wmButton* m_ptbnOptions;
 		wmButton* m_pbtn450;
 		wmLabel* m_pLbl2;
@@ -77,9 +80,11 @@ class pnlSettings: public wxPanel
 		wmButton* m_pbtn5000;
 		wmButton* m_pbtnPlus10;
 		pnlRTP* pnlSettingsRTP;
+		wmList* m_plstOutputRight;
 		wxPanel* pnlInput;
 		wmButton* m_pbtn0dbu;
 		wmButton* m_pbtnEnd;
+		wmList* m_plstOutputLeft;
 		wmLabel* m_plblFrequency;
 		wmList* m_plstColour;
 		pnlUpdate* Panel1;
@@ -88,6 +93,8 @@ class pnlSettings: public wxPanel
 		//*)
 
 		void ReloadRTP();
+
+		void InputSessionChanged();
 
 	protected:
 
@@ -110,6 +117,11 @@ class pnlSettings: public wxPanel
 		static const long ID_M_PLBL2;
 		static const long ID_M_PLST8;
 		static const long ID_M_PLBL6;
+		static const long ID_M_PLBL8;
+		static const long ID_M_PLST3;
+		static const long ID_M_PLST10;
+		static const long ID_M_PLBL10;
+		static const long ID_M_PLBL11;
 		static const long ID_PANEL11;
 		static const long ID_M_PLST7;
 		static const long ID_M_PBTN6;
@@ -197,6 +209,8 @@ class pnlSettings: public wxPanel
 		void OnbtnNoise0dBuClick(wxCommandEvent& event);
 		void OnbtnCursorClick(wxCommandEvent& event);
 		void OnbtnOptionsClick(wxCommandEvent& event);
+		void OnlstOutputLeftSelected(wxCommandEvent& event);
+		void OnlstOutputRightSelected(wxCommandEvent& event);
 		//*)
 
         void RefreshInputs();
@@ -212,6 +226,8 @@ class pnlSettings: public wxPanel
         void OnSliderMove(wxCommandEvent& event);
         void OnAmplitudeMove(wxCommandEvent& event);
         void OnNoiseAmplitudeMove(wxCommandEvent& event);
+
+        void PopulateChannelList(wmList* pList, int nSelected);
 
 		DECLARE_EVENT_TABLE()
 };

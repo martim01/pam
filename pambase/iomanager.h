@@ -49,6 +49,8 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         void InitAudioInputDevice();
         void OpenSoundcardDevice(unsigned long nOutputSampleRate);
 
+        void OutputChannelsChanged();
+
         void ClearSession();
         void InputSession(const session& aSession);
 

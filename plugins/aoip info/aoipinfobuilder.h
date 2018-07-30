@@ -14,7 +14,7 @@ class WXEXPORT AoIPInfoBuilder : public MonitorPluginBuilder
 
         wxString GetName() const
         {
-            return wxT("AoIP Info");
+            return wxT("Session Info");
         }
 
 

@@ -684,21 +684,8 @@ void pam2Dialog::OutputChanged(const wxString& sKey)
 
 void pam2Dialog::OnMonitorRequest(MonitorEvent& event)
 {
-    //@todo monitor changing...
-//    if((m_nMonitorSource == AudioEvent::RTP || m_nMonitorSource == AudioEvent::SOUNDCARD) && event.GetChannels().size() >=2)
-//    {
-//        unsigned int nInputChannels(0);
-//        if(IOManager::Get().GetSession().itCurrentSubsession != IOManager::Get().GetSession().lstSubsession.end())
-//        {
-//            nInputChannels = IOManager::Get().GetSession().itCurrentSubsession->nChannels;
-//        }
-//        SoundcardManager::Get().SetOutputMixer(event.GetChannels(), nInputChannels);
-//        //@todo make this multichannel
-//        Settings::Get().Write(wxT("Output"), wxT("Left"), event.GetChannels()[0]);
-//        Settings::Get().Write(wxT("Output"), wxT("Right"), event.GetChannels()[1]);
-//
-//        TellPluginsAboutOutputChannels();
-//    }
+    Settings::Get().Write(wxT("Output"), wxT("Left"), event.GetChannels()[0]);
+    Settings::Get().Write(wxT("Output"), wxT("Right"), event.GetChannels()[1]);
 }
 
 void pam2Dialog::OnPlaybackChannels(wxCommandEvent& event)
@@ -833,4 +820,6 @@ void pam2Dialog::OnSession(wxCommandEvent& event)
     {
         itTest->second->InputSession(IOManager::Get().GetSession());
     }
+
+    m_ppnlSettings->InputSessionChanged();
 }

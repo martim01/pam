@@ -52,13 +52,13 @@ IOManager::IOManager() :
 
     Settings::Get().AddHandler(wxT("Output"),wxT("Device"), this);
     Settings::Get().AddHandler(wxT("Output"),wxT("Enabled"), this);
-    Settings::Get().AddHandler(wxT("Output"),wxT("Buffer"), this);
     Settings::Get().AddHandler(wxT("Output"),wxT("Latency"), this);
+    Settings::Get().AddHandler(wxT("Output"),wxT("Left"), this);
+    Settings::Get().AddHandler(wxT("Output"),wxT("Right"), this);
 
     Settings::Get().AddHandler(wxT("Output"),wxT("Source"), this);
     Settings::Get().AddHandler(wxT("Output"),wxT("File"), this);
     Settings::Get().AddHandler(wxT("Output"),wxT("Sequence"), this);
-    Settings::Get().AddHandler(wxT("Output"),wxT("Generator"), this);
 
     Settings::Get().AddHandler(wxT("Generator"),wxT("Frequency"), this);
     Settings::Get().AddHandler(wxT("Generator"),wxT("Amplitude"), this);
@@ -259,7 +259,15 @@ void IOManager::OutputChanged(const wxString& sKey)
         {
             m_nPlaybackSource = m_nMonitorSource;
         }
-
+    }
+    else if(sKey == wxT("Device"))
+    {
+        wmLog::Get()->Log(wxT("Soundcard output device changed"));
+        OpenSoundcardDevice(SoundcardManager::Get().GetOutputSampleRate());
+    }
+    else if(sKey == wxT("Latency"))
+    {
+        // @todo change the latency by closing outpt and open agin
     }
     else if(sKey == wxT("File") && Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")) == wxT("File"))
     {
@@ -271,7 +279,10 @@ void IOManager::OutputChanged(const wxString& sKey)
         wmLog::Get()->Log(wxT("Change Audio Output Generator: Sequence"));
         InitGeneratorSequence();
     }
-
+    else if(sKey == wxT("Left") || sKey == wxT("Right"))
+    {
+        OutputChannelsChanged();
+    }
 }
 
 void IOManager::GeneratorToneChanged()
@@ -299,9 +310,8 @@ void IOManager::InitGeneratorFile()
 {
     if(m_pGenerator && m_pGenerator->SetFile())
     {
-        CheckPlayback(m_pGenerator->GetSampleRate(), m_pGenerator->GetChannels());
-        //m_dtLastRead = wxDateTime::UNow();
         CreateSessionFromOutput(Settings::Get().Read(wxT("Output"), wxT("File"), wxEmptyString));
+        CheckPlayback(m_pGenerator->GetSampleRate(), m_pGenerator->GetChannels());
     }
 }
 
@@ -456,14 +466,17 @@ void IOManager::InitAudioInputDevice()
 
 void IOManager::CreateSessionFromOutput(const wxString& sSource)
 {
-    session aSession(wxEmptyString, wxT("Output"), Settings::Get().Read(wxT("Output"), wxT("Source"), wxEmptyString));
-    //we need to get the info from the output...
-    unsigned int nSampleRate = SoundcardManager::Get().GetOutputSampleRate();
+    if(m_nMonitorSource == AudioEvent::OUTPUT)
+    {
+        session aSession(wxEmptyString, wxT("Output"), Settings::Get().Read(wxT("Output"), wxT("Source"), wxEmptyString));
+        //we need to get the info from the output...
+        unsigned int nSampleRate = SoundcardManager::Get().GetOutputSampleRate();
 
-    aSession.lstSubsession.push_back(subsession(Settings::Get().Read(wxT("Output"), wxT("Source"),wxEmptyString), sSource, wxEmptyString, wxT("F32"), wxEmptyString, 0, nSampleRate, 2, wxEmptyString, 0, make_pair(0,0), refclk()));
-    aSession.itCurrentSubsession = aSession.lstSubsession.begin();
+        aSession.lstSubsession.push_back(subsession(Settings::Get().Read(wxT("Output"), wxT("Source"),wxEmptyString), sSource, wxEmptyString, wxT("F32"), wxEmptyString, 0, nSampleRate, 2, wxEmptyString, 0, make_pair(0,0), refclk()));
+        aSession.itCurrentSubsession = aSession.lstSubsession.begin();
 
-    InputSession(aSession);
+        InputSession(aSession);
+    }
 }
 
 void IOManager::InputSession(const session& aSession)
@@ -517,33 +530,13 @@ void IOManager::CheckPlayback(unsigned long nSampleRate, unsigned long nChannels
         //check the stream details against the playing details...
         if(SoundcardManager::Get().IsOutputStreamOpen() && (SoundcardManager::Get().GetOutputSampleRate() != nSampleRate || SoundcardManager::Get().GetOutputNumberOfChannels() != nChannels))
         {
-            vector<char> vChannels;
-            vChannels.push_back(Settings::Get().Read(wxT("Output"), wxT("Left"), 0));
-            vChannels.push_back(Settings::Get().Read(wxT("Output"), wxT("Right"), 1));
-            SoundcardManager::Get().SetOutputMixer(vChannels, nChannels);
-
-            for(set<wxEvtHandler*>::iterator itHandler = m_setHandlers.begin(); itHandler != m_setHandlers.end(); ++itHandler)
-            {
-                wxCommandEvent event(wxEVT_PLAYBACK_CHANNELS);
-                (*itHandler)->ProcessEvent(event);
-            }
-
-            OpenSoundcardDevice(nSampleRate);    // @todo should we allow multichannel cards here??
+            OutputChannelsChanged();
+            OpenSoundcardDevice(nSampleRate);
         }
     }
     else
     {
-        vector<char> vChannels;
-        vChannels.push_back(Settings::Get().Read(wxT("Output"), wxT("Left"), 0));
-        vChannels.push_back(Settings::Get().Read(wxT("Output"), wxT("Right"), 1));
-        SoundcardManager::Get().SetOutputMixer(vChannels, nChannels);
-
-        for(set<wxEvtHandler*>::iterator itHandler = m_setHandlers.begin(); itHandler != m_setHandlers.end(); ++itHandler)
-        {
-            wxCommandEvent event(wxEVT_PLAYBACK_CHANNELS);
-            (*itHandler)->ProcessEvent(event);
-        }
-
+        OutputChannelsChanged();
     }
 }
 
@@ -566,4 +559,25 @@ void IOManager::Start()
     OutputChanged(wxT("Source"));
 
     InitAudioInputDevice();
+}
+
+void IOManager::OutputChannelsChanged()
+{
+    unsigned int nInputChannels(0);
+    if(m_Session.itCurrentSubsession != m_Session.lstSubsession.end())
+    {
+        nInputChannels = m_Session.itCurrentSubsession->nChannels;
+    }
+
+    vector<char> vChannels;
+    vChannels.push_back(Settings::Get().Read(wxT("Output"), wxT("Left"), 0));
+    vChannels.push_back(Settings::Get().Read(wxT("Output"), wxT("Right"), 1));
+    SoundcardManager::Get().SetOutputMixer(vChannels, nInputChannels);
+
+    for(set<wxEvtHandler*>::iterator itHandler = m_setHandlers.begin(); itHandler != m_setHandlers.end(); ++itHandler)
+    {
+        wxCommandEvent event(wxEVT_PLAYBACK_CHANNELS);
+        (*itHandler)->ProcessEvent(event);
+    }
+
 }
