@@ -67,10 +67,6 @@ void TruePeakCalculator::InputSession(const session& aSession)
                 delete m_vFilter[i];
                 m_vFilter[i] = 0;
             }
-            else
-            {
-                m_vFilter[i]->write_freqres_to_file("C:\\taps.txt");
-            }
         }
         m_vCurrentPeak.resize(m_nChannels);
         m_vTruePeak.resize(m_nChannels);
