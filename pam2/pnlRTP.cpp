@@ -208,10 +208,10 @@ void pnlRTP::OnbtnConfirmClick(wxCommandEvent& event)
 {
     if(m_sSelectedSource != wxEmptyString)
     {
-        Settings::Get().RemoveKey(wxT("RTP"), m_sSelectedSource);
+        Settings::Get().RemoveKey(wxT("AoIP"), m_sSelectedSource);
     }
 
-    Settings::Get().Write(wxT("RTP"), m_pedtName->GetValue(), m_pedtUrl->GetValue());
+    Settings::Get().Write(wxT("AoIP"), m_pedtName->GetValue(), m_pedtUrl->GetValue());
 
     ListSources();
     m_pSwp1->ChangeSelection(0);
@@ -234,7 +234,7 @@ void pnlRTP::OnbtnUpdateClick(wxCommandEvent& event)
 
 void pnlRTP::OnbtnDeleteClick(wxCommandEvent& event)
 {
-    Settings::Get().RemoveKey(wxT("RTP"), m_sSelectedSource);
+    Settings::Get().RemoveKey(wxT("AoIP"), m_sSelectedSource);
 
     m_sSelectedSource = wxEmptyString;
     ListSources();
@@ -249,7 +249,7 @@ void pnlRTP::ListSources()
     m_plstSources->Clear();
 
     map<wxString, wxString>::const_iterator itBegin, itEnd;
-    if(Settings::Get().GetSectionDataBegin(wxT("RTP"), itBegin) && Settings::Get().GetSectionDataEnd(wxT("RTP"), itEnd))
+    if(Settings::Get().GetSectionDataBegin(wxT("AoIP"), itBegin) && Settings::Get().GetSectionDataEnd(wxT("AoIP"), itEnd))
     {
         for(map<wxString, wxString>::const_iterator itSource = itBegin; itSource != itEnd; ++itSource)
         {
@@ -333,7 +333,7 @@ void pnlRTP::OnDiscovery(wxCommandEvent& event)
             wxString sAddress(wxString::Format(wxT("rtsp://%s/by-name/%s"), m_pServscan->getResults()[i].ipFrom.c_str(), sSession.c_str()));
             GetSDP(sAddress);
 
-            Settings::Get().Write(wxT("RTP"), wxString::Format(wxT("%s(%s)"), sName.c_str(), m_pServscan->getResults()[i].ipFrom.c_str()), sAddress);
+            Settings::Get().Write(wxT("AoIP"), wxString::Format(wxT("%s(%s)"), sName.c_str(), m_pServscan->getResults()[i].ipFrom.c_str()), sAddress);
 
 
             ListSources();
@@ -376,7 +376,7 @@ void pnlRTP::OnSap(wxCommandEvent& event)
             m_pbtnDiscover->SetLabel(wxString::Format(wxT("Discovering...\n%04d Found"), m_nDiscovered));
             wmLog::Get()->Log(wxString::Format(wxT("SAP response from %s\n%s"), sIpAddress.c_str(), sSDP.c_str()));
             sSDP.Replace(wxT("\n"), wxT("`"));
-            Settings::Get().Write(wxT("RTP"), sName, wxString::Format(wxT("sap:%s [%s]"), sIpAddress.c_str(), sSDP.c_str()));
+            Settings::Get().Write(wxT("AoIP"), sName, wxString::Format(wxT("sap:%s [%s]"), sIpAddress.c_str(), sSDP.c_str()));
             ListSources();
         }
     }
@@ -385,7 +385,7 @@ void pnlRTP::OnSap(wxCommandEvent& event)
 void pnlRTP::OnbtnDeleteAllHeld(wxCommandEvent& event)
 {
     // @todo Delete all RTP Sources
-    Settings::Get().RemoveSection(wxT("RTP"));
+    Settings::Get().RemoveSection(wxT("AoIP"));
     m_sSelectedSource = wxEmptyString;
     ListSources();
     m_pbtnDelete->Disable();

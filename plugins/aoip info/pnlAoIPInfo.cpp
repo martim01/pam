@@ -710,9 +710,9 @@ void pnlAoIPInfo::ShowLatency(const timedbuffer* pTimedBuffer)
 void pnlAoIPInfo::SessionStarted(const session& aSession)
 {
     m_plblSessionName->SetLabel(aSession.sName);
-    if(Settings::Get().Read(wxT("Input"), wxT("Type"), wxEmptyString) == wxT("RTP"))
+    if(Settings::Get().Read(wxT("Input"), wxT("Type"), wxEmptyString) == wxT("AoIP"))
     {
-        m_plblInput->SetLabel(Settings::Get().Read(wxT("Input"), wxT("RTP"), wxEmptyString));
+        m_plblInput->SetLabel(Settings::Get().Read(wxT("Input"), wxT("AoIP"), wxEmptyString));
     }
     else
     {

@@ -304,16 +304,19 @@ void pamupdatemanagerDialog::OnbtnUpdateClick(wxCommandEvent& event)
             {   //different version in list
                 if(ins.first->second != sVersion)
                 {
-                    m_plstLog->AddButton(wxString::Format(wxT("'%s' cannot be updated to version '%s' as it is already being updating to version '%s'"), sUpdate.c_str(), sVersion.c_str(), ins.first->second.c_str()));
+                    size_t nIndex = m_plstLog->AddButton(wxString::Format(wxT("'%s' cannot be updated to version '%s' as it is already being updating to version '%s'"), sUpdate.c_str(), sVersion.c_str(), ins.first->second.c_str()));
+                    m_plstLog->ShowButton(nIndex, wmList::BOTTOM, false);
                 }
                 else
                 {
-                    m_plstLog->AddButton(wxString::Format(wxT("Selected '%s' already a dependency"), sUpdate.c_str()), wxNullBitmap, 0, wmList::wmENABLED, wxColour(100,200,100));
+                    size_t nIndex = m_plstLog->AddButton(wxString::Format(wxT("Selected '%s' already a dependency"), sUpdate.c_str()), wxNullBitmap, 0, wmList::wmENABLED, wxColour(100,200,100));
+                    m_plstLog->ShowButton(nIndex, wmList::BOTTOM, false);
                 }
             }
             else
             {
-                m_plstLog->AddButton(wxString::Format(wxT("Selected '%s'"), sUpdate.c_str()), wxNullBitmap, 0, wmList::wmENABLED, wxColour(100,200,100));
+                size_t nIndex = m_plstLog->AddButton(wxString::Format(wxT("Selected '%s'"), sUpdate.c_str()), wxNullBitmap, 0, wmList::wmENABLED, wxColour(100,200,100));
+                m_plstLog->ShowButton(nIndex, wmList::BOTTOM, false);
             }
 
             map<wxString,wxString> mDependsOn(UpdateManager::Get().GetDependencies(sUpdate));
@@ -324,18 +327,22 @@ void pamupdatemanagerDialog::OnbtnUpdateClick(wxCommandEvent& event)
                 {
                     if(ins.first->second != itDependsOn->second)//different version in list
                     {
-                        m_plstLog->AddButton(wxString::Format(wxT("Dependency '%s' cannot be updated to version %s as it is already begin updating to version %s"), itDependsOn->first.c_str(), itDependsOn->second.c_str(), ins.first->second.c_str()));
+                        size_t nIndex = m_plstLog->AddButton(wxString::Format(wxT("Dependency '%s' cannot be updated to version %s as it is already begin updating to version %s"), itDependsOn->first.c_str(), itDependsOn->second.c_str(), ins.first->second.c_str()));
+                        m_plstLog->ShowButton(nIndex, wmList::BOTTOM, false);
                     }
                 }
                 else
                 {
-                    m_plstLog->AddButton(wxString::Format(wxT("Dependency '%s'"), itDependsOn->first.c_str()), wxNullBitmap, 0, wmList::wmENABLED, wxColour(100,200,100));
+                    size_t nIndex = m_plstLog->AddButton(wxString::Format(wxT("Dependency '%s'"), itDependsOn->first.c_str()), wxNullBitmap, 0, wmList::wmENABLED, wxColour(100,200,100));
+                    m_plstLog->ShowButton(nIndex, wmList::BOTTOM, false);
                 }
             }
         }
 
         m_plstLog->AddButton(wxEmptyString);
-        m_plstLog->AddButton(wxT("Updating..."));
+        size_t nIndex = m_plstLog->AddButton(wxT("Updating..."));
+        m_plstLog->ShowButton(nIndex, wmList::BOTTOM, false);
+
 
         m_bUpdate = false;
         m_timerUpdate.Start(10,true);
@@ -370,7 +377,9 @@ void pamupdatemanagerDialog::OntimerUpdateTrigger(wxTimerEvent& event)
     {
         if(!m_bUpdate)
         {
-            m_plstLog->AddButton(wxString::Format(wxT("Update '%s' to %s"), itUpdate->first.c_str(), itUpdate->second.c_str()));
+            size_t nIndex = m_plstLog->AddButton(wxString::Format(wxT("Update '%s' to %s"), itUpdate->first.c_str(), itUpdate->second.c_str()));
+            m_plstLog->ShowButton(nIndex, wmList::BOTTOM, false);
+
             m_bUpdate = true;
             m_timerUpdate.Start(100,true);
             m_plstLog->Refresh();
@@ -379,11 +388,13 @@ void pamupdatemanagerDialog::OntimerUpdateTrigger(wxTimerEvent& event)
         {
             if(UpdateManager::Get().Update(itUpdate->first) == false)
             {
-                m_plstLog->AddButton(wxString::Format(wxT("Failed to update '%s'"), itUpdate->first.c_str()), wxNullBitmap, 0, wmList::wmENABLED, wxColour(200,100,100));
+                size_t nIndex = m_plstLog->AddButton(wxString::Format(wxT("Failed to update '%s'"), itUpdate->first.c_str()), wxNullBitmap, 0, wmList::wmENABLED, wxColour(200,100,100));
+                m_plstLog->ShowButton(nIndex, wmList::BOTTOM, false);
             }
             else
             {
-                m_plstLog->AddButton(wxString::Format(wxT("Updated '%s'"), itUpdate->first.c_str()), wxNullBitmap, 0, wmList::wmENABLED, wxColour(100,200,100));
+                size_t nIndex = m_plstLog->AddButton(wxString::Format(wxT("Updated '%s'"), itUpdate->first.c_str()), wxNullBitmap, 0, wmList::wmENABLED, wxColour(100,200,100));
+                m_plstLog->ShowButton(nIndex, wmList::BOTTOM, false);
             }
             m_bUpdate = false;
             m_mUpdate.erase(itUpdate);

@@ -121,6 +121,8 @@ class PAMBASE_IMPEXPORT Generator
 
         void Generate(unsigned int nSize);
 
+        void Stop();
+
 
 
         void ClearSequences();

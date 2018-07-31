@@ -458,9 +458,9 @@ void pnlSettings::OnlstDevicesSelected(wxCommandEvent& event)
         ShowSoundcardOutputs();
 
     }
-    else if(sDevice == wxT("RTP"))
+    else if(sDevice == wxT("AoIP"))
     {
-        Settings::Get().Write(wxT("Input"), wxT("RTP"), event.GetString());
+        Settings::Get().Write(wxT("Input"), wxT("AoIP"), event.GetString());
     }
 
 }
@@ -630,7 +630,7 @@ void pnlSettings::ShowRTPDefined()
 
 
     map<wxString, wxString>::const_iterator itBegin, itEnd;
-    if(Settings::Get().GetSectionDataBegin(wxT("RTP"), itBegin) && Settings::Get().GetSectionDataEnd(wxT("RTP"), itEnd))
+    if(Settings::Get().GetSectionDataBegin(wxT("AoIP"), itBegin) && Settings::Get().GetSectionDataEnd(wxT("AoIP"), itEnd))
     {
         for(map<wxString, wxString>::const_iterator itSource = itBegin; itSource != itEnd; ++itSource)
         {
@@ -642,7 +642,7 @@ void pnlSettings::ShowRTPDefined()
 
     ShowPagingButtons();
 
-    m_plstDevices->SelectButton(Settings::Get().Read(wxT("Input"), wxT("RTP"), wxEmptyString));
+    m_plstDevices->SelectButton(Settings::Get().Read(wxT("Input"), wxT("AoIP"), wxEmptyString));
 
 
 }
@@ -709,7 +709,7 @@ void pnlSettings::ShowAogPagingButtons()
 
 void pnlSettings::ReloadRTP()
 {
-    if(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")) == wxT("RTP"))
+    if(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")) == wxT("AoIP"))
     {
         ShowRTPDefined();
     }
@@ -749,7 +749,7 @@ void pnlSettings::RefreshInputs()
     {
         ShowSoundcardInputs();
     }
-    else if(sType == wxT("RTP"))
+    else if(sType == wxT("AoIP"))
     {
         ShowRTPDefined();
     }
@@ -987,17 +987,22 @@ void pnlSettings::PopulateChannelList(wmList* pList, int nSelected)
     if(IOManager::Get().GetSession().itCurrentSubsession != IOManager::Get().GetSession().lstSubsession.end())
     {
         nChannels = IOManager::Get().GetSession().itCurrentSubsession->nChannels;
+        wxLogDebug(wxT("pnlSettings:: %d channels"), nChannels);
+    }
+    else
+    {
+        wxLogDebug(wxT("pnlSettings:: No subsession"));
     }
     if(nChannels > 0)
     {
-        if(SoundcardManager::Get().GetInputNumberOfChannels() == 2)
+        if(nChannels)
         {
             pList->AddButton(wxT("Left"));
             pList->AddButton(wxT("Right"));
         }
         else
         {
-            for(int i = 0; i < SoundcardManager::Get().GetInputNumberOfChannels(); ++i)
+            for(int i = 0; i < nChannels; ++i)
             {
             pList->AddButton(wxString::Format(wxT("Ch %d"), i));
             }
@@ -1009,6 +1014,7 @@ void pnlSettings::PopulateChannelList(wmList* pList, int nSelected)
 
 void pnlSettings::InputSessionChanged()
 {
+    wxLogDebug(wxT("pnlSettings::InputSessionChanged"));
     PopulateChannelList(m_plstOutputLeft, Settings::Get().Read(wxT("Output"), wxT("Left"), 0));
     PopulateChannelList(m_plstOutputRight, Settings::Get().Read(wxT("Output"), wxT("Right"), 0));
 }

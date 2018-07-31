@@ -580,3 +580,11 @@ bool Generator::LoadSequence(const wxString& sFile)
     return false;
 
 }
+
+void Generator::Stop()
+{
+    ClearFrequences();
+    ClearSequences();
+    CloseFile();
+    ClosePink();
+}

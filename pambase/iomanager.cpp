@@ -45,7 +45,7 @@ IOManager::IOManager() :
 {
 
     Settings::Get().AddHandler(wxT("Input"),wxT("Type"), this);
-    Settings::Get().AddHandler(wxT("Input"),wxT("RTP"), this);
+    Settings::Get().AddHandler(wxT("Input"),wxT("AoIP"), this);
     Settings::Get().AddHandler(wxT("Input"),wxT("Device"), this);
     Settings::Get().AddHandler(wxT("Input"),wxT("File"), this);
 
@@ -72,6 +72,8 @@ IOManager::IOManager() :
     Connect(wxID_ANY,wxEVT_RTP_SESSION,(wxObjectEventFunction)&IOManager::OnRTPSession);
     Connect(wxID_ANY,wxEVT_RTP_SESSION_CLOSED,(wxObjectEventFunction)&IOManager::OnRTPSessionClosed);
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&IOManager::OnSettingEvent);
+
+    Connect(wxID_ANY,wxEVT_QOS_UPDATED,(wxObjectEventFunction)&IOManager::OnQoS);
 
     m_pGenerator = new Generator();
     m_pGenerator->SetSampleRate(48000);
@@ -141,20 +143,18 @@ void IOManager::OnSettingEvent(SettingEvent& event)
 
 void IOManager::OnAudioEvent(AudioEvent& event)
 {
-    wxLogDebug(wxT("IOManager::OnAudioEvent"));
-
     if(SoundcardManager::Get().IsOutputStreamOpen())
     {
-        if(event.GetCreator() == AudioEvent::OUTPUT)
+        if(event.GetCreator() == m_nPlaybackSource)
+        {
+            SoundcardManager::Get().AddOutputSamples(event.GetBuffer());
+        }
+        else if(event.GetCreator() == AudioEvent::OUTPUT)
         {
             if(m_pGenerator && m_nPlaybackSource != m_nMonitorSource)
             {
                 m_pGenerator->Generate(event.GetBuffer()->GetBufferSize());
             }
-        }
-        else if(event.GetCreator() == m_nPlaybackSource)
-        {
-            SoundcardManager::Get().AddOutputSamples(event.GetBuffer());
         }
     }
 
@@ -172,9 +172,9 @@ void IOManager::OnAudioEvent(AudioEvent& event)
 
 void IOManager::InputChanged(const wxString& sKey)
 {
-    if(sKey == wxT("RTP"))
+    if(sKey == wxT("AoIP"))
     {
-        wxString sUrl = Settings::Get().Read(wxT("RTP"), Settings::Get().Read(wxT("Input"), wxT("RTP"), wxEmptyString), wxEmptyString);
+        wxString sUrl = Settings::Get().Read(wxT("AoIP"), Settings::Get().Read(wxT("Input"), wxT("AoIP"), wxEmptyString), wxEmptyString);
         if(sUrl != m_sCurrentRtp)
         {
             wmLog::Get()->Log(wxT("Audio Input Device Changed: Close AoIP Session"));
@@ -258,6 +258,7 @@ void IOManager::OutputChanged(const wxString& sKey)
         else if(sType == wxT("Input"))
         {
             m_nPlaybackSource = m_nMonitorSource;
+            m_pGenerator->Stop();
         }
     }
     else if(sKey == wxT("Device"))
@@ -430,7 +431,7 @@ void IOManager::InitAudioInputDevice()
 
         CheckPlayback(SoundcardManager::Get().GetInputSampleRate(), SoundcardManager::Get().GetInputNumberOfChannels());
     }
-    else if(sType == wxT("RTP"))
+    else if(sType == wxT("AoIP"))
     {
         m_nMonitorSource = AudioEvent::RTP;
         if(m_nPlaybackSource == AudioEvent::SOUNDCARD)
@@ -438,8 +439,8 @@ void IOManager::InitAudioInputDevice()
             m_nPlaybackSource = AudioEvent::RTP;
         }
         wmLog::Get()->Log(wxT("Create Audio Input Device: AoIP"));
-        wxString sRtp(Settings::Get().Read(wxT("Input"), wxT("RTP"), wxEmptyString));
-        sRtp = Settings::Get().Read(wxT("RTP"), sRtp, wxEmptyString);
+        wxString sRtp(Settings::Get().Read(wxT("Input"), wxT("AoIP"), wxEmptyString));
+        sRtp = Settings::Get().Read(wxT("AoIP"), sRtp, wxEmptyString);
 
         if(sRtp.empty() == false && m_mRtp.find(sRtp) == m_mRtp.end())
         {
@@ -580,4 +581,15 @@ void IOManager::OutputChannelsChanged()
         (*itHandler)->ProcessEvent(event);
     }
 
+}
+
+
+void IOManager::OnQoS(wxCommandEvent& event)
+{
+    for(set<wxEvtHandler*>::iterator itHandler = m_setHandlers.begin(); itHandler != m_setHandlers.end(); ++itHandler)
+    {
+        wxCommandEvent eventUp(wxEVT_QOS_UPDATED);
+        eventUp.SetClientData(event.GetClientData());
+        (*itHandler)->ProcessEvent(eventUp);
+    }
 }

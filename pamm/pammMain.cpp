@@ -121,7 +121,7 @@ pammDialog::pammDialog(wxWindow* parent,wxWindowID id) :
 
     m_nCrashRestarts = 0;
 
-    m_pServer = 0;
+    //m_pServer = 0;
     //m_pServer = new PamServer();
     //m_pServer->Create(wxT("/tmp/pamm.ipc"));
     Connect(wxID_ANY, wxEVT_PROCESS_FINISHED, (wxObjectEventFunction)&pammDialog::OnPamClosed);
@@ -143,7 +143,7 @@ pammDialog::~pammDialog()
 {
     //(*Destroy(pammDialog)
     //*)
-    delete m_pServer;
+    //delete m_pServer;
     //wxRemove(wxT("/tmp/pamm.ipc"));
 }
 
@@ -205,7 +205,7 @@ void pammDialog::LaunchPam()
               wxString sPam = wxT("pam2");
             #endif
         #else
-            wxString sPam = wxT("/home/pi/pam/bin/Linux Release/pam2");
+            wxString sPam = wxT("pam2");
         #endif
 
         if ( wxExecute(sPam, wxEXEC_ASYNC, m_pProcess) <= 0)
@@ -253,21 +253,7 @@ void pammDialog::OnbtnShutdownHeld(wxCommandEvent& event)
 
 void pammDialog::OnSecondTrigger(wxTimerEvent& event)
 {
-    if(m_pServer && m_pServer->IsConnected())
-    {
-        wxTimeSpan tsPoke(wxDateTime::Now()-m_pServer->GetLastPoke());
-        m_plblHeartbeat->SetLabel(tsPoke.Format(wxT("%H:%M:%S")));
 
-        if(tsPoke.GetSeconds().ToLong() > 40)
-        {
-            Log(wxT("PAM has stalled. Kill it"));
-            //wxKill(m_pProcess->GetPid(), wxSIGKILL);
-        }
-    }
-    else
-    {
-        m_plblHeartbeat->SetLabel(wxT("Not connected to PAM"));
-    }
 }
 
 void pammDialog::OnbtnKillHeld(wxCommandEvent& event)

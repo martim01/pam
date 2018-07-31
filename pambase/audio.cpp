@@ -335,10 +335,6 @@ void Audio::AddSamples(const timedbuffer* pTimedBuffer)
             }
         }
     }
-    else
-    {
-        wxLogDebug(wxT("TotalChannels = %d: Mixer = %d"), m_nTotalChannels, m_vMixer.size());
-    }
 }
 
 bool Audio::IsStreamOpen()

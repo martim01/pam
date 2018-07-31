@@ -33,6 +33,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
 
          void OnRTPSession(wxCommandEvent& event);
         void OnRTPSessionClosed(wxCommandEvent& event);
+        void OnQoS(wxCommandEvent& event);
 
         void InputTypeChanged();
         void InputChanged(const wxString& sKey);
