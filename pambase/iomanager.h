@@ -66,6 +66,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
 
         int m_nMonitorSource;
         int m_nPlaybackSource;
+        bool m_bPlaybackInput;
 
         Generator* m_pGenerator;
         std::map<wxString, RtpThread*> m_mRtp;

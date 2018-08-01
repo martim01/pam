@@ -72,6 +72,7 @@ bool RadarMeter::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, con
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
     m_nChannels = 2;
+    m_nChannel = 0;
 
     int nX = min(GetClientRect().GetWidth()-2, GetClientRect().GetHeight()-2);
     m_rectGrid = wxRect(5, 0, nX, nX);

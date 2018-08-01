@@ -18,10 +18,8 @@ bool SoundcardManager::Init(wxEvtHandler* pHandler, int nInputDevice, int nOutpu
 
     if(m_pInput)
     {
-        wxLogDebug(wxT("SoundcardManager: Input already open"));
         if(m_pInput->GetDevice() != nInputDevice || (m_pInput != m_pOutput && m_pInput->GetDevice() == nOutputDevice))
         {
-            wxLogDebug(wxT("SoundcardManager: Input changed or output changed to input device"));
             if(m_pInput == m_pOutput)
             {
                 m_pOutput = 0;
@@ -33,10 +31,8 @@ bool SoundcardManager::Init(wxEvtHandler* pHandler, int nInputDevice, int nOutpu
 
     if(m_pOutput)
     {
-        wxLogDebug(wxT("SoundcardManager: Output already open"));
         if(m_pOutput->GetDevice() != nOutputDevice || (m_pOutput != m_pInput && m_pOutput->GetDevice() == nInputDevice))
         {
-            wxLogDebug(wxT("SoundcardManager: Output changed or input changed to output device"));
             if(m_pInput == m_pOutput)
             {
                 m_pInput = 0;
@@ -46,9 +42,6 @@ bool SoundcardManager::Init(wxEvtHandler* pHandler, int nInputDevice, int nOutpu
         }
     }
 
-    wxLogDebug(wxT("InputDevice 0x%X OutputDevice 0x%X"), (int)m_pInput, (int)m_pOutput);
-
-    wxLogDebug(wxString::Format(wxT("SoundcardManager: Input device =%d Output device =%d"), nInputDevice, nOutputDevice));
 
     if(m_pInput == NULL && m_pOutput == NULL)
     {
@@ -58,11 +51,12 @@ bool SoundcardManager::Init(wxEvtHandler* pHandler, int nInputDevice, int nOutpu
 
     if(nInputDevice == nOutputDevice)
     {
+        #ifndef __WXGTK__
         if(nInputDevice != -1)
         {
             if(!m_pInput && !m_pOutput)
             {
-                wxLogDebug(wxT("SoundcardManager: Create duplex audio stream"));
+
                 m_pInput = new Audio(pHandler, nInputDevice, Audio::DUPLEX);
                 m_pOutput = m_pInput;
                 m_pOutput->SetMixer(m_vOutputMixer, m_nTotalMixerChannels);
@@ -79,6 +73,10 @@ bool SoundcardManager::Init(wxEvtHandler* pHandler, int nInputDevice, int nOutpu
             return false;
         }
         return true;
+        #else
+        wmLog::Get()->Log(wxT("Pi build currently does not support duplex streams"));
+        return false;
+        #endif
     }
 
     bool bSuccess(true);
@@ -162,7 +160,7 @@ unsigned int SoundcardManager::GetOutputNumberOfChannels()
 {
     if(m_pOutput)
     {
-        return m_pInput->GetOutputNumberOfChannels();
+        return m_pOutput->GetOutputNumberOfChannels();
     }
     return 0;
 }

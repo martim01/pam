@@ -41,6 +41,7 @@ IOManager::IOManager() :
     m_Session(session()),
     m_nMonitorSource(-1),
     m_nPlaybackSource(-1),
+    m_bPlaybackInput(false),
     m_pGenerator(0)
 {
 
@@ -231,6 +232,7 @@ void IOManager::OutputChanged(const wxString& sKey)
     else if(sKey == wxT("Source"))
     {
         wxString sType(Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")));
+        m_bPlaybackInput = false;
 
         if(sType == wxT("File"))
         {
@@ -257,7 +259,9 @@ void IOManager::OutputChanged(const wxString& sKey)
         }
         else if(sType == wxT("Input"))
         {
+            wmLog::Get()->Log(wxT("Output source is input"));
             m_nPlaybackSource = m_nMonitorSource;
+            m_bPlaybackInput = true;
             m_pGenerator->Stop();
         }
     }
@@ -418,10 +422,7 @@ void IOManager::InitAudioInputDevice()
         OpenSoundcardDevice(SoundcardManager::Get().GetOutputSampleRate());
 
         m_nMonitorSource = AudioEvent::SOUNDCARD;
-        if(m_nPlaybackSource == AudioEvent::RTP)
-        {
-            m_nPlaybackSource = AudioEvent::SOUNDCARD;
-        }
+
 
         session aSession(wxEmptyString, wxT("Soundcard"), SoundcardManager::Get().GetInputDeviceName());
         aSession.lstSubsession.push_back(subsession(wxEmptyString, SoundcardManager::Get().GetInputDeviceName(), wxEmptyString, wxT("L24"), wxEmptyString, SoundcardManager::Get().GetInputDevice(), SoundcardManager::Get().GetInputSampleRate(), SoundcardManager::Get().GetInputNumberOfChannels(), wxEmptyString, 0, make_pair(0,0), refclk()));
@@ -434,10 +435,6 @@ void IOManager::InitAudioInputDevice()
     else if(sType == wxT("AoIP"))
     {
         m_nMonitorSource = AudioEvent::RTP;
-        if(m_nPlaybackSource == AudioEvent::SOUNDCARD)
-        {
-            m_nPlaybackSource = AudioEvent::RTP;
-        }
         wmLog::Get()->Log(wxT("Create Audio Input Device: AoIP"));
         wxString sRtp(Settings::Get().Read(wxT("Input"), wxT("AoIP"), wxEmptyString));
         sRtp = Settings::Get().Read(wxT("AoIP"), sRtp, wxEmptyString);
@@ -462,6 +459,11 @@ void IOManager::InitAudioInputDevice()
         wmLog::Get()->Log(wxT("Monitoring output"));
 
         CreateSessionFromOutput(wxEmptyString);
+    }
+
+    if(m_bPlaybackInput)
+    {
+        m_nPlaybackSource = m_nMonitorSource;
     }
 }
 

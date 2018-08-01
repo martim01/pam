@@ -169,8 +169,13 @@ class PAMBASE_IMPEXPORT timedbuffer
             m_tvPlayback.first++;
             m_tvPlayback.second -= 1000000;
         }
+        m_dPlaybackLatency = dMicro;
     }
 
+    double GetPlaybackLatency() const
+    {
+        return m_dPlaybackLatency;
+    }
     const pairTime_t& GetPlaybackTime() const
     {
         return m_tvPlayback;
@@ -199,6 +204,7 @@ class PAMBASE_IMPEXPORT timedbuffer
 
     unsigned int m_nDuration;
     unsigned int m_nBufferDepth;
+    double m_dPlaybackLatency;
 };
 
 

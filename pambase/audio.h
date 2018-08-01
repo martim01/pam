@@ -140,6 +140,8 @@ private:
     double m_dLatency;
 
     unsigned int m_nTotalChannels;
+
+    bool m_bPlaying;
 };
 
 /** PaStreamCallback function - simply calls wmComparitor::Callback using userData to get the wmComparitor object

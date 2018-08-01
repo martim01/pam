@@ -22,7 +22,8 @@ Audio::Audio(wxEvtHandler* pHandler, unsigned int nDevice, int nType) :
  m_dGain(1),
  m_dPeakdB(-50),
  m_pInfo(Pa_GetDeviceInfo(nDevice)),
- m_nTotalChannels(2)
+ m_nTotalChannels(2),
+ m_bPlaying(false)
  {
 
     m_nSampleRate = 48000;
@@ -141,7 +142,9 @@ Audio::~Audio()
     if(m_pStream)
     {
         wxLogDebug(wxT("Stop PortAudio stream"));
+
         PaError err = Pa_AbortStream(m_pStream);
+        err = Pa_CloseStream(m_pStream);
         if(err != paNoError)
         {
             wmLog::Get()->Log(wxString::Format(wxT("Failed to stop PortAudio stream: %s"), wxString::FromAscii(Pa_GetErrorText(err)).c_str()));
@@ -167,6 +170,15 @@ void Audio::OutputCallback(float* pBuffer, size_t nFrameCount, double dPlayoutLa
 
     wxMutexLocker ml(m_mutex);
 
+    if(m_bPlaying == false)
+    {
+        while(m_qBuffer.size() > nFrameCount*m_nChannelsOut)
+        {
+            m_qBuffer.pop();
+        }
+        m_bPlaying = true;
+    }
+
     int nSamples = 0;
 
     timedSample tsBuffer;
@@ -175,12 +187,12 @@ void Audio::OutputCallback(float* pBuffer, size_t nFrameCount, double dPlayoutLa
         tsBuffer = m_qBuffer.front();
     }
 
+    size_t nSize(m_qBuffer.size());
 
     for(size_t i = nSamples; i < nFrameCount*m_nChannelsOut; i++)
     {
         if(m_qBuffer.size() > 0)
         {
-            float d(m_qBuffer.front().dSample);
             pBuffer[i] = m_qBuffer.front().dSample;
             m_qBuffer.pop();
         }
@@ -190,8 +202,9 @@ void Audio::OutputCallback(float* pBuffer, size_t nFrameCount, double dPlayoutLa
         }
     }
 
+    wxLogDebug(wxT("%f %d -> %d [%d]"), dPlayoutLatency, nSize, m_qBuffer.size(), (m_qBuffer.size()-nSize));
 
-    //double dOffsetMicro = static_cast<double>(m_qBuffer.size()/m_nChannelsOut)/static_cast<double>(m_nSampleRate)*1000000.0;
+
     timedbuffer* pTimedBuffer = new timedbuffer(nFrameCount*m_nChannelsOut, ConvertDoubleToPairTime(tsBuffer.dPresentation), tsBuffer.nTimestamp);
     pTimedBuffer->SetTransmissionTime(ConvertDoubleToPairTime(tsBuffer.dTransmission));
     pTimedBuffer->SetBuffer(pBuffer);
@@ -317,7 +330,10 @@ double Audio::ConvertPairTimeToDouble(const pairTime_t& tv)
 
 void Audio::AddSamples(const timedbuffer* pTimedBuffer)
 {
+    wxLogDebug(wxT("AddSamples"));
     wxMutexLocker ml(m_mutex);
+
+    wxLogDebug(wxT("Adding: Size is %d"), m_qBuffer.size());
     if(m_nTotalChannels  > 0 && m_vMixer.size() > 0)
     {
         double dModifier(0.0);
@@ -334,6 +350,7 @@ void Audio::AddSamples(const timedbuffer* pTimedBuffer)
                 m_qBuffer.push(timedSample(dTransmission+dModifier, dPresentation+dModifier, pTimedBuffer->GetTimestamp()+nSample, pTimedBuffer->GetBuffer()[i+m_vMixer[j]]));
             }
         }
+        wxLogDebug(wxT("Added: Size now %d"), m_qBuffer.size());
     }
 }
 

@@ -29,7 +29,7 @@ class WXEXPORT SpectogramBuilder : public MonitorPluginBuilder
         friend class pnlWindow;
         friend class pnlColours;
 
-        void LoadSettings(){}
+        void LoadSettings();
 
         void OnSettingChanged(SettingEvent& event);
 

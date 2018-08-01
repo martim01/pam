@@ -99,7 +99,17 @@ list<pairOptionPanel_t> RadarBuilder::CreateOptionPanels(wxWindow* pParent)
 
 void RadarBuilder::LoadSettings()
 {
-
+    if(m_pRadar)
+    {
+        m_nDisplayChannel = ReadSetting(wxT("Routing"),0);
+        m_pRadar->SetChannel(m_nDisplayChannel);
+        m_pRadar->SetTimespan(ReadSetting(wxT("Timeframe"),60));
+        m_pRadar->SetRefreshRate(ReadSetting(wxT("RefreshRate"),250));
+        m_nMode = ReadSetting(wxT("MeterMode"), 0);
+        m_pCalculator->SetMode(m_nMode);
+        m_pRadar->SetMode(m_nMode);
+        ClearMeter();
+    }
 
 }
 

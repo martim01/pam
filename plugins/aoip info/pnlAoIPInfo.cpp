@@ -698,11 +698,11 @@ void pnlAoIPInfo::SetTimestamp(const pairTime_t& tv, wmLabel* pLabel)
 
 void pnlAoIPInfo::ShowLatency(const timedbuffer* pTimedBuffer)
 {
-    double dPlayback = static_cast<double>(pTimedBuffer->GetPlaybackTime().second)/1000000.0 + static_cast<double>(pTimedBuffer->GetPlaybackTime().first);
+    double dPlayback = pTimedBuffer->GetPlaybackLatency();
     double dTransmission = static_cast<double>(pTimedBuffer->GetTransmissionTime().second)/1000000.0 + static_cast<double>(pTimedBuffer->GetTransmissionTime().first);
     double dPresentation = static_cast<double>(pTimedBuffer->GetTimeVal().second)/1000000.0 + static_cast<double>(pTimedBuffer->GetTimeVal().first);
 
-    m_plblLatency->SetLabel(wxString::Format(wxT("%.03f s"), (dPlayback-dPresentation)));//+(dPresentation-dTransmission)));
+    m_plblLatency->SetLabel(wxString::Format(wxT("%.03f s"), dPlayback));//+(dPresentation-dTransmission)));
     m_plblLatencyNetwork->SetLabel(wxString::Format(wxT("%.03f s"), (dPresentation-dTransmission)));
 }
 

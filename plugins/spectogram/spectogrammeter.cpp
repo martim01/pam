@@ -115,6 +115,7 @@ void SpectogramMeter::OnPaint(wxPaintEvent& event)
     wxPen penLine(wxColour(120,120,120),1,wxDOT);
     uiRect uiLabel(wxRect(m_rectGrid.GetLeft()-50, 0, m_rectGrid.GetLeft(), 0));
 
+    dc.SetFont(wxFont(7,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Verdana"),wxFONTENCODING_DEFAULT));
     for(size_t i = 1; i < m_vfft_out.size()-1; i++)
     {
         dc.SetPen(penLine);

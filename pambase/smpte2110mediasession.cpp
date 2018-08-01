@@ -236,7 +236,7 @@ Boolean Smpte2110MediaSubsession::createSourceObjects(int useSpecialRTPoffset)
     parseSDPAttribute_ExtMap();    //Header extension mapping
     parseSDPAttribute_Mid();        //Group if any
 
-    AnalyzeAttributes();
+
 
     if (strcmp(fCodecName, "L16") == 0 || strcmp(fCodecName, "L24") == 0) // 16 or 24-bit linear audio (RFC 3190)
     {
@@ -251,6 +251,8 @@ Boolean Smpte2110MediaSubsession::createSourceObjects(int useSpecialRTPoffset)
     }
     else if(strcmp(fCodecName,"RAW") == 0)
     {
+        AnalyzeAttributes();
+
         m_sEndpoint = wxString::FromAscii(fConnectionEndpointName);
 
         char* mimeType = new char[strlen(mediumName()) + strlen(codecName()) + 2] ;

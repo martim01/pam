@@ -46,7 +46,10 @@ list<pairOptionPanel_t> AoIPInfoBuilder::CreateOptionPanels(wxWindow* pParent)
 
 void AoIPInfoBuilder::LoadSettings()
 {
-
+    if(m_pInfo)
+    {
+        m_pInfo->ShowGraph(ReadSetting(wxT("Graph"), wxT("kBit/s")));
+    }
 
 }
 

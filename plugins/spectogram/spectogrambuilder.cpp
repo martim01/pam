@@ -112,3 +112,16 @@ void SpectogramBuilder::OnSettingChanged(SettingEvent& event)
     }
 
 }
+
+
+void SpectogramBuilder::LoadSettings()
+{
+    if(m_pMeter)
+    {
+        m_pMeter->SetAnalyseMode(ReadSetting(wxT("Routing"), 0));
+        m_pMeter->SetWindowType(ReadSetting(wxT("Window"), 3));
+        m_pMeter->SetOverlap(ReadSetting(wxT("Overlap"), 50));
+        m_pMeter->SetNumberOfBins(ReadSetting(wxT("Bins"), 1024));
+        m_pMeter->SetHeatMap(ReadSetting(wxT("HeatMap"), SpectogramMeter::MAP_FIVE));
+    }
+}

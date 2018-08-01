@@ -995,7 +995,7 @@ void pnlSettings::PopulateChannelList(wmList* pList, int nSelected)
     }
     if(nChannels > 0)
     {
-        if(nChannels)
+        if(nChannels==2)
         {
             pList->AddButton(wxT("Left"));
             pList->AddButton(wxT("Right"));
