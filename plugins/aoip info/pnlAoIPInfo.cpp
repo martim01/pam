@@ -702,7 +702,7 @@ void pnlAoIPInfo::ShowLatency(const timedbuffer* pTimedBuffer)
     double dTransmission = static_cast<double>(pTimedBuffer->GetTransmissionTime().second)/1000000.0 + static_cast<double>(pTimedBuffer->GetTransmissionTime().first);
     double dPresentation = static_cast<double>(pTimedBuffer->GetTimeVal().second)/1000000.0 + static_cast<double>(pTimedBuffer->GetTimeVal().first);
 
-    m_plblLatency->SetLabel(wxString::Format(wxT("%.03f s"), dPlayback));//+(dPresentation-dTransmission)));
+    m_plblLatency->SetLabel(wxString::Format(wxT("%.03f s"), dPlayback/1000000.0));//+(dPresentation-dTransmission)));
     m_plblLatencyNetwork->SetLabel(wxString::Format(wxT("%.03f s"), (dPresentation-dTransmission)));
 }
 

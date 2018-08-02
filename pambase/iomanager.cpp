@@ -38,10 +38,12 @@ void IOManager::DeregisterHandler(wxEvtHandler* pHandler)
 
 IOManager::IOManager() :
     m_bSingleHandler(true),
-    m_Session(session()),
-    m_nMonitorSource(-1),
+    m_SessionIn(session()),
+    m_SessionOut(session()),
+    m_nInputSource(-1),
     m_nPlaybackSource(-1),
     m_bPlaybackInput(false),
+    m_bMonitorOutput(false),
     m_pGenerator(0)
 {
 
@@ -66,6 +68,8 @@ IOManager::IOManager() :
     Settings::Get().AddHandler(wxT("Generator"),wxT("Shape"), this);
     Settings::Get().AddHandler(wxT("Noise"),wxT("Colour"), this);
     Settings::Get().AddHandler(wxT("Noise"),wxT("Amplitude"), this);
+
+    Settings::Get().AddHandler(wxT("Monitor"), wxT("Source"), this);
 
     Settings::Get().AddHandler(wxT("QoS"),wxT("Interval"), this);
 
@@ -106,7 +110,15 @@ void IOManager::Stop()
 
 void IOManager::OnSettingEvent(SettingEvent& event)
 {
-    if(event.GetSection() == wxT("Input"))
+    if(event.GetSection() == wxT("Monitor"))
+    {
+        if(event.GetKey() == wxT("Source") && m_bMonitorOutput != (Settings::Get().Read(wxT("Monitor"), wxT("Source"), 0)==1))
+        {
+            m_bMonitorOutput = (Settings::Get().Read(wxT("Monitor"), wxT("Source"), 0)==1);
+            SessionChanged();
+        }
+    }
+    else if(event.GetSection() == wxT("Input"))
     {
         if(event.GetKey() == wxT("Type"))
         {
@@ -152,22 +164,33 @@ void IOManager::OnAudioEvent(AudioEvent& event)
         }
         else if(event.GetCreator() == AudioEvent::OUTPUT)
         {
-            if(m_pGenerator && m_nPlaybackSource != m_nMonitorSource)
+            if(m_bMonitorOutput == true)
+            {   //monitoring the output
+               PassOnAudio(event);
+            }
+            if(m_nPlaybackSource != m_nInputSource)
             {
                 m_pGenerator->Generate(event.GetBuffer()->GetBufferSize());
             }
         }
     }
 
-    if(event.GetCreator() == m_nMonitorSource)
+
+    if(!m_bMonitorOutput && event.GetCreator() == m_nInputSource)
     {
-        for(set<wxEvtHandler*>::iterator itHandler = m_setHandlers.begin(); itHandler != m_setHandlers.end(); ++itHandler)
-        {
-            (*itHandler)->ProcessEvent(event);
-        }
+        PassOnAudio(event);
     }
 
+
     delete event.GetBuffer();
+}
+
+void IOManager::PassOnAudio(AudioEvent& event)
+{
+    for(set<wxEvtHandler*>::iterator itHandler = m_setHandlers.begin(); itHandler != m_setHandlers.end(); ++itHandler)
+    {
+        (*itHandler)->ProcessEvent(event);
+    }
 }
 
 
@@ -201,7 +224,7 @@ void IOManager::InputChanged(const wxString& sKey)
 void IOManager::InputTypeChanged()
 {
     //Stop the current monitoring...
-    switch(m_nMonitorSource)
+    switch(m_nInputSource)
     {
         case AudioEvent::SOUNDCARD:
             OpenSoundcardDevice(SoundcardManager::Get().GetOutputSampleRate());    //this will remove the input stream
@@ -234,6 +257,7 @@ void IOManager::OutputChanged(const wxString& sKey)
         wxString sType(Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")));
         m_bPlaybackInput = false;
 
+        SoundcardManager::Get().FlushOutputQueue();
         if(sType == wxT("File"))
         {
             m_nPlaybackSource = AudioEvent::FILE;
@@ -260,7 +284,7 @@ void IOManager::OutputChanged(const wxString& sKey)
         else if(sType == wxT("Input"))
         {
             wmLog::Get()->Log(wxT("Output source is input"));
-            m_nPlaybackSource = m_nMonitorSource;
+            m_nPlaybackSource = m_nInputSource;
             m_bPlaybackInput = true;
             m_pGenerator->Stop();
         }
@@ -421,20 +445,20 @@ void IOManager::InitAudioInputDevice()
     {
         OpenSoundcardDevice(SoundcardManager::Get().GetOutputSampleRate());
 
-        m_nMonitorSource = AudioEvent::SOUNDCARD;
+        m_nInputSource = AudioEvent::SOUNDCARD;
 
 
-        session aSession(wxEmptyString, wxT("Soundcard"), SoundcardManager::Get().GetInputDeviceName());
-        aSession.lstSubsession.push_back(subsession(wxEmptyString, SoundcardManager::Get().GetInputDeviceName(), wxEmptyString, wxT("L24"), wxEmptyString, SoundcardManager::Get().GetInputDevice(), SoundcardManager::Get().GetInputSampleRate(), SoundcardManager::Get().GetInputNumberOfChannels(), wxEmptyString, 0, make_pair(0,0), refclk()));
-        aSession.itCurrentSubsession = aSession.lstSubsession.begin();
+        m_SessionIn = session(wxEmptyString, wxT("Soundcard"), SoundcardManager::Get().GetInputDeviceName());
+        m_SessionIn.lstSubsession.push_back(subsession(wxEmptyString, SoundcardManager::Get().GetInputDeviceName(), wxEmptyString, wxT("L24"), wxEmptyString, SoundcardManager::Get().GetInputDevice(), SoundcardManager::Get().GetInputSampleRate(), SoundcardManager::Get().GetInputNumberOfChannels(), wxEmptyString, 0, make_pair(0,0), refclk()));
+        m_SessionIn.itCurrentSubsession = m_SessionIn.lstSubsession.begin();
 
-        InputSession(aSession);
+        SessionChanged();
 
         CheckPlayback(SoundcardManager::Get().GetInputSampleRate(), SoundcardManager::Get().GetInputNumberOfChannels());
     }
     else if(sType == wxT("AoIP"))
     {
-        m_nMonitorSource = AudioEvent::RTP;
+        m_nInputSource = AudioEvent::RTP;
         wmLog::Get()->Log(wxT("Create Audio Input Device: AoIP"));
         wxString sRtp(Settings::Get().Read(wxT("Input"), wxT("AoIP"), wxEmptyString));
         sRtp = Settings::Get().Read(wxT("AoIP"), sRtp, wxEmptyString);
@@ -455,7 +479,7 @@ void IOManager::InitAudioInputDevice()
     }
     else if(sType == wxT("Output"))
     {
-        m_nMonitorSource = AudioEvent::OUTPUT;
+        m_nInputSource = AudioEvent::OUTPUT;
         wmLog::Get()->Log(wxT("Monitoring output"));
 
         CreateSessionFromOutput(wxEmptyString);
@@ -463,28 +487,25 @@ void IOManager::InitAudioInputDevice()
 
     if(m_bPlaybackInput)
     {
-        m_nPlaybackSource = m_nMonitorSource;
+        m_nPlaybackSource = m_nInputSource;
     }
 }
 
 void IOManager::CreateSessionFromOutput(const wxString& sSource)
 {
-    if(m_nMonitorSource == AudioEvent::OUTPUT)
-    {
-        session aSession(wxEmptyString, wxT("Output"), Settings::Get().Read(wxT("Output"), wxT("Source"), wxEmptyString));
-        //we need to get the info from the output...
-        unsigned int nSampleRate = SoundcardManager::Get().GetOutputSampleRate();
+    m_SessionOut = session(wxEmptyString, wxT("Output"), Settings::Get().Read(wxT("Output"), wxT("Source"), wxEmptyString));
+    //we need to get the info from the output...
+    unsigned int nSampleRate = SoundcardManager::Get().GetOutputSampleRate();
 
-        aSession.lstSubsession.push_back(subsession(Settings::Get().Read(wxT("Output"), wxT("Source"),wxEmptyString), sSource, wxEmptyString, wxT("F32"), wxEmptyString, 0, nSampleRate, 2, wxEmptyString, 0, make_pair(0,0), refclk()));
-        aSession.itCurrentSubsession = aSession.lstSubsession.begin();
+    m_SessionOut.lstSubsession.push_back(subsession(Settings::Get().Read(wxT("Output"), wxT("Source"),wxEmptyString), sSource, wxEmptyString, wxT("F32"), wxEmptyString, 0, nSampleRate, 2, wxEmptyString, 0, make_pair(0,0), refclk()));
+    m_SessionOut.itCurrentSubsession = m_SessionOut.lstSubsession.begin();
 
-        InputSession(aSession);
-    }
+    SessionChanged();
+
 }
 
-void IOManager::InputSession(const session& aSession)
+void IOManager::SessionChanged()
 {
-    m_Session = aSession;
     //tell our handler that we have changed the session....
     for(set<wxEvtHandler*>::iterator itHandler = m_setHandlers.begin(); itHandler != m_setHandlers.end(); ++itHandler)
     {
@@ -512,13 +533,13 @@ void IOManager::OnRTPSessionClosed(wxCommandEvent& event)
 
 void IOManager::OnRTPSession(wxCommandEvent& event)
 {
-    m_Session = *reinterpret_cast<session*>(event.GetClientData());
+    m_SessionIn = *reinterpret_cast<session*>(event.GetClientData());
 
-    InputSession(m_Session);
+    SessionChanged();
 
-    if(m_Session.itCurrentSubsession != m_Session.lstSubsession.end())
+    if(m_SessionIn.itCurrentSubsession != m_SessionIn.lstSubsession.end())
     {
-        CheckPlayback(m_Session.itCurrentSubsession->nSampleRate, m_Session.itCurrentSubsession->nChannels);
+        CheckPlayback(m_SessionIn.itCurrentSubsession->nSampleRate, m_SessionIn.itCurrentSubsession->nChannels);
     }
     else
     {
@@ -545,19 +566,26 @@ void IOManager::CheckPlayback(unsigned long nSampleRate, unsigned long nChannels
 
 void IOManager::ClearSession()
 {
-    InputSession(session());
+    m_SessionIn = session();
+    SessionChanged();
     CheckPlayback(48000,0);
 }
 
 
 const session& IOManager::GetSession()
 {
-    return m_Session;
+    if(m_bMonitorOutput == false)
+    {
+        return m_SessionIn;
+    }
+    return m_SessionOut;
 }
 
 
 void IOManager::Start()
 {
+    m_bMonitorOutput = (Settings::Get().Read(wxT("Monitor"), wxT("Source"), 0)==1);
+
     OutputChanged(wxT("Enabled"));
     OutputChanged(wxT("Source"));
 
@@ -567,9 +595,9 @@ void IOManager::Start()
 void IOManager::OutputChannelsChanged()
 {
     unsigned int nInputChannels(0);
-    if(m_Session.itCurrentSubsession != m_Session.lstSubsession.end())
+    if(m_SessionIn.itCurrentSubsession != m_SessionIn.lstSubsession.end())
     {
-        nInputChannels = m_Session.itCurrentSubsession->nChannels;
+        nInputChannels = m_SessionIn.itCurrentSubsession->nChannels;
     }
 
     vector<char> vChannels;
@@ -595,3 +623,5 @@ void IOManager::OnQoS(wxCommandEvent& event)
         (*itHandler)->ProcessEvent(eventUp);
     }
 }
+
+

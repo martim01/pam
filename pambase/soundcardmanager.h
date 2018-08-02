@@ -5,6 +5,7 @@
 
 class Audio;
 class timedbuffer;
+class PaDeviceInfo;
 
 class PAMBASE_IMPEXPORT SoundcardManager
 {
@@ -37,11 +38,17 @@ class PAMBASE_IMPEXPORT SoundcardManager
 
         std::vector<char> GetOutputChannels();
 
+        size_t GetNumberOfDevices();
+        const PaDeviceInfo* GetDeviceInfo(int nDevice);
+
+        void FlushOutputQueue();
 
     private:
 
         SoundcardManager();
         ~SoundcardManager();
+
+        void EnumerateDevices();
 
         Audio* m_pInput;
         Audio* m_pOutput;
@@ -49,6 +56,7 @@ class PAMBASE_IMPEXPORT SoundcardManager
         std::vector<char> m_vOutputMixer;
         unsigned int m_nTotalMixerChannels;
 
+        std::vector<const PaDeviceInfo*> m_vDevices;
 
 
 };

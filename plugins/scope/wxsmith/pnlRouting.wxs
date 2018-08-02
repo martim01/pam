@@ -6,8 +6,8 @@
 		<size_arg>1</size_arg>
 		<object class="wmList" name="ID_M_PLST16" variable="m_plstRouting1" member="yes">
 			<scrolling>None</scrolling>
-			<button_gap>5,5</button_gap>
-			<columns>2</columns>
+			<button_gap>0,0</button_gap>
+			<columns>4</columns>
 			<items />
 			<pos>0,0</pos>
 			<size>190,88</size>
@@ -17,8 +17,8 @@
 		</object>
 		<object class="wmList" name="ID_M_PLST1" variable="m_plstRouting2" member="yes">
 			<scrolling>None</scrolling>
-			<button_gap>5,5</button_gap>
-			<columns>2</columns>
+			<button_gap>0,0</button_gap>
+			<columns>4</columns>
 			<items />
 			<pos>0,100</pos>
 			<size>190,88</size>

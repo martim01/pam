@@ -170,14 +170,6 @@ void Audio::OutputCallback(float* pBuffer, size_t nFrameCount, double dPlayoutLa
 
     wxMutexLocker ml(m_mutex);
 
-    if(m_bPlaying == false)
-    {
-        while(m_qBuffer.size() > nFrameCount*m_nChannelsOut)
-        {
-            m_qBuffer.pop();
-        }
-        m_bPlaying = true;
-    }
 
     int nSamples = 0;
 
@@ -202,19 +194,24 @@ void Audio::OutputCallback(float* pBuffer, size_t nFrameCount, double dPlayoutLa
         }
     }
 
-    wxLogDebug(wxT("%f %d -> %d [%d]"), dPlayoutLatency, nSize, m_qBuffer.size(), (m_qBuffer.size()-nSize));
+    m_sLog << wxString::Format(wxT("Playout %d -> %d [%d]\n"), nSize, m_qBuffer.size(), (m_qBuffer.size()-nSize));
+    wxLogDebug(m_sLog);
+    m_sLog = wxEmptyString;
 
+    if(m_bPlaying == false || nSize != 0)
+    {
+        m_bPlaying = true;
 
-    timedbuffer* pTimedBuffer = new timedbuffer(nFrameCount*m_nChannelsOut, ConvertDoubleToPairTime(tsBuffer.dPresentation), tsBuffer.nTimestamp);
-    pTimedBuffer->SetTransmissionTime(ConvertDoubleToPairTime(tsBuffer.dTransmission));
-    pTimedBuffer->SetBuffer(pBuffer);
-    pTimedBuffer->SetPlaybackOffset(dPlayoutLatency*1000000.0);//*1000.0);
-    pTimedBuffer->SetBufferDepth(m_qBuffer.size()/m_nChannelsOut);
-    pTimedBuffer->SetDuration(pTimedBuffer->GetBufferSize()*4);
+        timedbuffer* pTimedBuffer = new timedbuffer(nFrameCount*m_nChannelsOut, ConvertDoubleToPairTime(tsBuffer.dPresentation), tsBuffer.nTimestamp);
+        pTimedBuffer->SetTransmissionTime(ConvertDoubleToPairTime(tsBuffer.dTransmission));
+        pTimedBuffer->SetBuffer(pBuffer);
+        pTimedBuffer->SetPlaybackOffset(dPlayoutLatency*1000000.0);//*1000.0);
+        pTimedBuffer->SetBufferDepth(m_qBuffer.size()/m_nChannelsOut);
+        pTimedBuffer->SetDuration(pTimedBuffer->GetBufferSize()*4);
 
-    AudioEvent event(pTimedBuffer, AudioEvent::OUTPUT, nFrameCount, m_nSampleRate, nFlags&paOutputUnderflow, nFlags&paOutputOverflow);
-    wxPostEvent(m_pManager, event);
-
+        AudioEvent event(pTimedBuffer, AudioEvent::OUTPUT, nFrameCount, m_nSampleRate, nFlags&paOutputUnderflow, nFlags&paOutputOverflow);
+        wxPostEvent(m_pManager, event);
+    }
 }
 
 
@@ -330,27 +327,28 @@ double Audio::ConvertPairTimeToDouble(const pairTime_t& tv)
 
 void Audio::AddSamples(const timedbuffer* pTimedBuffer)
 {
-    wxLogDebug(wxT("AddSamples"));
     wxMutexLocker ml(m_mutex);
-
-    wxLogDebug(wxT("Adding: Size is %d"), m_qBuffer.size());
-    if(m_nTotalChannels  > 0 && m_vMixer.size() > 0)
+    if(m_bPlaying)
     {
-        double dModifier(0.0);
-        double dTransmission(ConvertPairTimeToDouble(pTimedBuffer->GetTransmissionTime()));
-        double dPresentation(ConvertPairTimeToDouble(pTimedBuffer->GetTimeVal()));
-
-        for(unsigned int i =0; i < pTimedBuffer->GetBufferSize(); i+=m_nTotalChannels)
+        m_sLog << wxString::Format(wxT("Adding: Size is %d\n"), m_qBuffer.size());
+        if(m_nTotalChannels  > 0 && m_vMixer.size() > 0)
         {
-            int nSample = i/m_nTotalChannels;
-            dModifier = static_cast<double>(nSample)/static_cast<double>(m_nSampleRate);
+            double dModifier(0.0);
+            double dTransmission(ConvertPairTimeToDouble(pTimedBuffer->GetTransmissionTime()));
+            double dPresentation(ConvertPairTimeToDouble(pTimedBuffer->GetTimeVal()));
 
-            for(size_t j = 0; j < m_vMixer.size(); j++)
+            for(unsigned int i =0; i < pTimedBuffer->GetBufferSize(); i+=m_nTotalChannels)
             {
-                m_qBuffer.push(timedSample(dTransmission+dModifier, dPresentation+dModifier, pTimedBuffer->GetTimestamp()+nSample, pTimedBuffer->GetBuffer()[i+m_vMixer[j]]));
+                int nSample = i/m_nTotalChannels;
+                dModifier = static_cast<double>(nSample)/static_cast<double>(m_nSampleRate);
+
+                for(size_t j = 0; j < m_vMixer.size(); j++)
+                {
+                    m_qBuffer.push(timedSample(dTransmission+dModifier, dPresentation+dModifier, pTimedBuffer->GetTimestamp()+nSample, pTimedBuffer->GetBuffer()[i+m_vMixer[j]]));
+                }
             }
+            m_sLog << wxString::Format(wxT("Added: Size now %d\n"), m_qBuffer.size());
         }
-        wxLogDebug(wxT("Added: Size now %d"), m_qBuffer.size());
     }
 }
 

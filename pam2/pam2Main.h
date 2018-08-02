@@ -12,6 +12,7 @@
 
 //(*Headers(pam2Dialog)
 #include <wx/notebook.h>
+#include "wmbutton.h"
 #include "wmlabel.h"
 #include "wmswitcherpanel.h"
 #include <wx/panel.h>
@@ -60,6 +61,7 @@ class pam2Dialog: public wxDialog
         void OntimerIpcTrigger(wxTimerEvent& event);
         void OnClose(wxCloseEvent& event);
         void OnbmpSplashClick(wxCommandEvent& event);
+        void OnbtnMonitorClick(wxCommandEvent& event);
         //*)
 
         //(*Identifiers(pam2Dialog)
@@ -73,6 +75,7 @@ class pam2Dialog: public wxDialog
         static const long ID_M_PLBL4;
         static const long ID_M_PLBL2;
         static const long ID_PANEL7;
+        static const long ID_M_PBTN1;
         static const long ID_PANEL5;
         static const long ID_M_PLST2;
         static const long ID_PANEL2;
@@ -102,6 +105,7 @@ class pam2Dialog: public wxDialog
         wmLabel* m_plblCpu;
         wxTimer m_timerIpc;
         wmSwitcherPanel* m_pswpScreens;
+        wmButton* m_pbtnMonitor;
         wxTimer m_timerFile;
         wmSwitcherPanel* m_pswpOptions;
         wxTimer timerStart;

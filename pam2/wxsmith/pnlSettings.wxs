@@ -91,7 +91,7 @@
 						<handler function="OnbtnEndClick" entry="EVT_BUTTON" />
 					</object>
 				</object>
-				<label>Monitor</label>
+				<label>Input Device</label>
 			</object>
 			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL2" variable="pnlOutput" member="yes">

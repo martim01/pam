@@ -47,6 +47,7 @@ bool SoundcardManager::Init(wxEvtHandler* pHandler, int nInputDevice, int nOutpu
     {
         Pa_Terminate();
         Pa_Initialize();
+        EnumerateDevices();
     }
 
     if(nInputDevice == nOutputDevice)
@@ -260,6 +261,7 @@ SoundcardManager::~SoundcardManager()
 void SoundcardManager::Initialize()
 {
     Pa_Initialize();
+    EnumerateDevices();
 }
 
 void SoundcardManager::Terminate()
@@ -272,4 +274,48 @@ void SoundcardManager::Terminate()
     m_pInput = 0;
     m_pOutput = 0;
     Pa_Terminate();
+}
+
+void SoundcardManager::EnumerateDevices()
+{
+    m_vDevices.clear();
+
+    int nDevices =  Pa_GetDeviceCount();
+    if(nDevices < 0)
+    {
+        wxLogDebug(wxString::FromAscii(Pa_GetErrorText(nDevices)));
+
+    }
+    else
+    {
+        m_vDevices.resize(nDevices);
+        for(int i = 0; i < nDevices; i++)
+        {
+            m_vDevices[i] = Pa_GetDeviceInfo(i);
+        }
+    }
+}
+
+
+size_t SoundcardManager::GetNumberOfDevices()
+{
+    return m_vDevices.size();
+}
+
+const PaDeviceInfo* SoundcardManager::GetDeviceInfo(int nDevice)
+{
+    if(m_vDevices.size() > nDevice)
+    {
+        return m_vDevices[nDevice];
+    }
+    return NULL;
+}
+
+
+void SoundcardManager::FlushOutputQueue()
+{
+    if(m_pOutput)
+    {
+        m_pOutput->FlushBuffer();
+    }
 }

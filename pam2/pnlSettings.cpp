@@ -193,7 +193,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pLbl1->SetBackgroundColour(wxColour(0,64,0));
     wxFont m_pLbl1Font(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
     m_pLbl1->SetFont(m_pLbl1Font);
-    m_plstOutputLeft = new wmList(Panel5, ID_M_PLST3, wxPoint(60,140), wxSize(540,44), wmList::STYLE_SELECT, 0, wxSize(-1,30), 8, wxSize(2,-1));
+    m_plstOutputLeft = new wmList(Panel5, ID_M_PLST3, wxPoint(60,140), wxSize(540,44), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 8, wxSize(2,-1));
     m_plstOutputLeft->SetBackgroundColour(wxColour(0,0,0));
     m_plstOutputLeft->SetButtonColour(wxColour(wxT("#A0A0A0")));
     m_plstOutputLeft->SetSelectedButtonColour(wxColour(wxT("#008000")));
@@ -286,7 +286,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     pnlGeneral->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
     m_pbtnCursor = new wmButton(pnlGeneral, ID_M_PBTN22, _("Cursor"), wxPoint(10,10), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN22"));
     m_ptbnOptions = new wmButton(pnlGeneral, ID_M_PBTN23, _("View"), wxPoint(10,60), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN23"));
-    m_pswpSettings->AddPage(pnlInput, _("Monitor"), false);
+    m_pswpSettings->AddPage(pnlInput, _("Input Device"), false);
     m_pswpSettings->AddPage(pnlOutput, _("Output Device"), false);
     m_pswpSettings->AddPage(pnlGenerator, _("Output Source"), false);
     m_pswpSettings->AddPage(pnlSettingsRTP, _("AoIP"), false);
@@ -368,7 +368,6 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_plstInput->Freeze();
     m_plstInput->AddButton(wxT("Soundcard"));
     m_plstInput->AddButton(wxT("AoIP"));
-    m_plstInput->AddButton(wxT("Output"));
 
     m_plstInput->Thaw();
 
@@ -543,16 +542,11 @@ void pnlSettings::ShowSoundcardInputs()
     m_plstDevices->Freeze();
     m_plstDevices->Clear();
 
-    Pa_Initialize();
-    int nDevices =  Pa_GetDeviceCount();
-    if(nDevices < 0)
-    {
-        wxLogDebug(wxString::FromAscii(Pa_GetErrorText(nDevices)));
-    }
+    int nDevices =  SoundcardManager::Get().GetNumberOfDevices();
 
     for(int i = 0; i < nDevices; i++)
     {
-        const PaDeviceInfo* pInfo = Pa_GetDeviceInfo(i);
+        const PaDeviceInfo* pInfo = SoundcardManager::Get().GetDeviceInfo(i);
         if(pInfo && pInfo->maxInputChannels > 0)
         {
             short nEnabled = wmList::wmENABLED;
@@ -579,23 +573,17 @@ void pnlSettings::ShowSoundcardInputs()
     }
     m_plstDevices->SelectButton(nDevice);
 
-    Pa_Terminate();
 }
 
 
 void pnlSettings::ShowSoundcardOutputs()
 {
-    Pa_Initialize();
     m_plstPlayback->Clear();
 
-    int nDevices =  Pa_GetDeviceCount();
-    if(nDevices < 0)
-    {
-        wxLogDebug(wxString::FromAscii(Pa_GetErrorText(nDevices)));
-    }
+    int nDevices =  SoundcardManager::Get().GetNumberOfDevices();
     for(int i = 0; i < nDevices; i++)
     {
-        const PaDeviceInfo* pInfo = Pa_GetDeviceInfo(i);
+        const PaDeviceInfo* pInfo = SoundcardManager::Get().GetDeviceInfo(i);
         if(pInfo && pInfo->maxOutputChannels > 0)
         {
             short nEnabled = wmList::wmENABLED;
@@ -618,7 +606,6 @@ void pnlSettings::ShowSoundcardOutputs()
     m_plstPlayback->SelectButton(nDevice);
 
 
-    Pa_Terminate();
 }
 
 void pnlSettings::ShowRTPDefined()

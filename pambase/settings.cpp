@@ -96,7 +96,10 @@ bool Settings::GetSectionDataEnd(const wxString& sSection, std::map<wxString, wx
 
 void Settings::AddHandler(const wxString& sSection, const wxString& sKey, wxEvtHandler* pHandler)
 {
-    m_mmHandlers.insert(make_pair(wxString::Format(wxT("%s/%s"), sSection.c_str(), sKey.c_str()), pHandler));
+    if(pHandler)
+    {
+        m_mmHandlers.insert(make_pair(wxString::Format(wxT("%s/%s"), sSection.c_str(), sKey.c_str()), pHandler));
+    }
 }
 
 void Settings::RemoveHandler(wxEvtHandler* pHandler)

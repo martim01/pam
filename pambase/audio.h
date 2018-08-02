@@ -14,7 +14,7 @@ class SoundFile;
 
 /** Class the reads in stereo audio from the sound card and compares the A and B leg to see if they sound the same. This class uses portaudio to read in the audio and pHash to do the comparison
 **/
-class PAMBASE_IMPEXPORT Audio  : public wxEvtHandler
+class Audio  : public wxEvtHandler
 {
 public:
     /** Constructor
@@ -142,6 +142,8 @@ private:
     unsigned int m_nTotalChannels;
 
     bool m_bPlaying;
+
+    wxString m_sLog;
 };
 
 /** PaStreamCallback function - simply calls wmComparitor::Callback using userData to get the wmComparitor object

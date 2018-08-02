@@ -30,6 +30,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
 
         void OnSettingEvent(SettingEvent& event);
         void OnAudioEvent(AudioEvent& event);
+        void PassOnAudio(AudioEvent& event);
 
          void OnRTPSession(wxCommandEvent& event);
         void OnRTPSessionClosed(wxCommandEvent& event);
@@ -53,25 +54,30 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         void OutputChannelsChanged();
 
         void ClearSession();
-        void InputSession(const session& aSession);
+        void SessionChanged();
 
         void CheckPlayback(unsigned long nSampleRate, unsigned long nChannels);
         void CreateSessionFromOutput(const wxString& sSource);
 
 
+
         std::set<wxEvtHandler*> m_setHandlers;
         bool m_bSingleHandler;
 
-        session m_Session;
+        session m_SessionIn;
+        session m_SessionOut;
 
-        int m_nMonitorSource;
+        int m_nInputSource;
         int m_nPlaybackSource;
         bool m_bPlaybackInput;
+        bool  m_bMonitorOutput;
 
         Generator* m_pGenerator;
         std::map<wxString, RtpThread*> m_mRtp;
         std::set<wxString> m_setRtpOrphan;
         wxString m_sCurrentRtp;
+
+
         //wxString m_sCurrentSequence;
 };
 

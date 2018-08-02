@@ -86,6 +86,7 @@ const long pam2Dialog::ID_M_PLBL1 = wxNewId();
 const long pam2Dialog::ID_M_PLBL4 = wxNewId();
 const long pam2Dialog::ID_M_PLBL2 = wxNewId();
 const long pam2Dialog::ID_PANEL7 = wxNewId();
+const long pam2Dialog::ID_M_PBTN1 = wxNewId();
 const long pam2Dialog::ID_PANEL5 = wxNewId();
 const long pam2Dialog::ID_M_PLST2 = wxNewId();
 const long pam2Dialog::ID_PANEL2 = wxNewId();
@@ -131,11 +132,11 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_pswpScreens->SetPageNameStyle(3);
     Panel2 = new wxPanel(m_pswpScreens, ID_PANEL5, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL5"));
     Panel2->SetBackgroundColour(wxColour(0,0,0));
-    m_plstScreens = new wmList(Panel2, ID_M_PLST1, wxPoint(0,5), wxSize(200,340), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
+    m_plstScreens = new wmList(Panel2, ID_M_PLST1, wxPoint(0,5), wxSize(200,290), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
     m_plstScreens->SetBackgroundColour(wxColour(0,0,0));
     m_plstScreens->SetButtonColour(wxColour(wxT("#008000")));
     m_plstScreens->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
-    m_plstInbuilt = new wmList(Panel2, ID_M_PLST3, wxPoint(0,345), wxSize(200,44), wmList::STYLE_SELECT, 0, wxSize(-1,40), 3, wxSize(5,5));
+    m_plstInbuilt = new wmList(Panel2, ID_M_PLST3, wxPoint(0,295), wxSize(200,44), wmList::STYLE_SELECT, 0, wxSize(-1,40), 3, wxSize(5,5));
     m_plstInbuilt->SetForegroundColour(wxColour(0,0,0));
     m_plstInbuilt->SetBackgroundColour(wxColour(0,0,0));
     m_plstInbuilt->SetButtonColour(wxColour(wxT("#3DBEAB")));
@@ -159,6 +160,8 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_plblOutput->SetBorderState(uiRect::BORDER_NONE);
     m_plblOutput->SetForegroundColour(wxColour(255,255,255));
     m_plblOutput->SetBackgroundColour(wxColour(0,128,0));
+    m_pbtnMonitor = new wmButton(Panel2, ID_M_PBTN1, _("Monitor"), wxPoint(5,345), wxSize(190,37), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
+    m_pbtnMonitor->SetBackgroundColour(wxColour(128,0,128));
     Panel3 = new wxPanel(m_pswpScreens, ID_PANEL6, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL6"));
     Panel3->SetBackgroundColour(wxColour(0,0,0));
     m_plstOptions = new wmList(Panel3, ID_M_PLST2, wxPoint(0,5), wxSize(200,200), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
@@ -184,6 +187,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Connect(ID_BITMAPBUTTON1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pam2Dialog::OnbmpSplashClick);
     Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnlstScreensSelected);
     Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnlstScreensSelected);
+    Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pam2Dialog::OnbtnMonitorClick);
     Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnplstOptionsSelected);
     Connect(ID_TIMER1,wxEVT_TIMER,(wxObjectEventFunction)&pam2Dialog::OntimerStartTrigger);
     Connect(ID_TIMER2,wxEVT_TIMER,(wxObjectEventFunction)&pam2Dialog::Onm_timerFileTrigger);
@@ -191,7 +195,8 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Connect(wxID_ANY,wxEVT_CLOSE_WINDOW,(wxObjectEventFunction)&pam2Dialog::OnClose);
     //*)
 
-
+    m_pbtnMonitor->SetToggleLook(true, wxT("Input"), wxT("Output"), 45);
+    m_pbtnMonitor->ToggleSelection(Settings::Get().Read(wxT("Monitor"), wxT("Source"), 0), true);
 
     m_plstScreens->SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
     m_plstOptions->SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
@@ -473,7 +478,7 @@ void pam2Dialog::ShowSettingsPanel()
     m_plstOptions->Freeze();
     m_plstOptions->Clear();
 
-    m_plstOptions->AddButton(wxT("Monitor"));
+    m_plstOptions->AddButton(wxT("Input Device"));
     m_plstOptions->AddButton(wxT("Output Device"));
     m_plstOptions->AddButton(wxT("Output Source"));
     m_plstOptions->AddButton(wxT("AoIP"));
@@ -822,4 +827,9 @@ void pam2Dialog::OnSession(wxCommandEvent& event)
     }
 
     m_ppnlSettings->InputSessionChanged();
+}
+
+void pam2Dialog::OnbtnMonitorClick(wxCommandEvent& event)
+{
+    Settings::Get().Write(wxT("Monitor"), wxT("Source"), event.IsChecked());
 }
