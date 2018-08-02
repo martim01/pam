@@ -46,7 +46,6 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
     const PaDeviceInfo* pInfo = Pa_GetDeviceInfo(m_nDevice);
     if(pInfo)
     {
-        wxLogDebug(wxT("Device %s host %d Input %d Output %d"), wxString::FromAscii(pInfo->name).c_str(), pInfo->hostApi, pInfo->maxInputChannels, pInfo->maxOutputChannels);
         if(pInfo->maxInputChannels < 2)
         {
             m_nChannelsIn = pInfo->maxInputChannels;
@@ -141,7 +140,6 @@ Audio::~Audio()
 {
     if(m_pStream)
     {
-        wxLogDebug(wxT("Stop PortAudio stream"));
 
         PaError err = Pa_AbortStream(m_pStream);
         err = Pa_CloseStream(m_pStream);
@@ -194,9 +192,9 @@ void Audio::OutputCallback(float* pBuffer, size_t nFrameCount, double dPlayoutLa
         }
     }
 
-    m_sLog << wxString::Format(wxT("Playout %d -> %d [%d]\n"), nSize, m_qBuffer.size(), (m_qBuffer.size()-nSize));
-    wxLogDebug(m_sLog);
-    m_sLog = wxEmptyString;
+//    m_sLog << wxString::Format(wxT("Playout %d -> %d [%d]\n"), nSize, m_qBuffer.size(), (m_qBuffer.size()-nSize));
+//    wxLogDebug(m_sLog);
+//    m_sLog = wxEmptyString;
 
     if(m_bPlaying == false || nSize != 0)
     {
@@ -330,7 +328,7 @@ void Audio::AddSamples(const timedbuffer* pTimedBuffer)
     wxMutexLocker ml(m_mutex);
     if(m_bPlaying)
     {
-        m_sLog << wxString::Format(wxT("Adding: Size is %d\n"), m_qBuffer.size());
+        //m_sLog << wxString::Format(wxT("Adding: Size is %d\n"), m_qBuffer.size());
         if(m_nTotalChannels  > 0 && m_vMixer.size() > 0)
         {
             double dModifier(0.0);
@@ -347,7 +345,7 @@ void Audio::AddSamples(const timedbuffer* pTimedBuffer)
                     m_qBuffer.push(timedSample(dTransmission+dModifier, dPresentation+dModifier, pTimedBuffer->GetTimestamp()+nSample, pTimedBuffer->GetBuffer()[i+m_vMixer[j]]));
                 }
             }
-            m_sLog << wxString::Format(wxT("Added: Size now %d\n"), m_qBuffer.size());
+            //m_sLog << wxString::Format(wxT("Added: Size now %d\n"), m_qBuffer.size());
         }
     }
 }
@@ -373,7 +371,6 @@ void Audio::SetMixer(const vector<char>& vChannels, unsigned int nTotalChannels)
     m_vMixer = vChannels;
     m_nTotalChannels = nTotalChannels;
 
-    wxLogDebug(wxT("Audio::SetMixer: Total = %d"), nTotalChannels);
 }
 
 const std::vector<char>& Audio::GetOutputChannels()

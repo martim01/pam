@@ -3,6 +3,8 @@
 #include "identifybuilder.h"
 #include "settings.h"
 #include "soundfile.h"
+#include <wx/log.h>
+
 
 //(*InternalHeaders(pnlIdentify)
 #include <wx/font.h>
@@ -178,7 +180,7 @@ pnlIdentify::~pnlIdentify()
 
 void pnlIdentify::OnbtnIdentifyClick(wxCommandEvent& event)
 {
-    wxString sWavFile = m_pBuilder->ReadSetting(wxT("Wav"), wxString::Format(wxT("%s/identify.wav"), Settings::Get().GetDocumentDirectory().c_str()));
+    wxString sWavFile = m_pBuilder->ReadSetting(wxT("Wav"), wxString::Format(wxT("%s/identify.wav"), Settings::Get().GetWavDirectory().c_str()));
 
 
     if(m_pSf->OpenToWrite(sWavFile, 2, m_nSampleRate, 16))
@@ -228,9 +230,9 @@ void pnlIdentify::LaunchGracenote()
         m_plblStatus->SetLabel(wxT("Querying Gracenote"));
 
 
-        wxString sApp = m_pBuilder->ReadSetting(wxT("Application"), wxT("./identify/musicid_stream"));
+        wxString sApp = m_pBuilder->ReadSetting(wxT("Application"), wxString::Format(wxT("%s/musicid_stream"),Settings::Get().GetExecutableDirectory().c_str()));
         wxString sLicence = m_pBuilder->ReadSetting(wxT("Licence"), wxString::Format(wxT("%s/licence.txt"),Settings::Get().GetDocumentDirectory().c_str()));
-        wxString sWavFile = m_pBuilder->ReadSetting(wxT("Wav"), wxString::Format(wxT("%s/identify.wav"), Settings::Get().GetDocumentDirectory().c_str()));
+        wxString sWavFile = m_pBuilder->ReadSetting(wxT("Wav"), wxString::Format(wxT("%s/identify.wav"), Settings::Get().GetWavDirectory().c_str()));
         wxString sPass = m_pBuilder->ReadSetting(wxT("Pass"), wxT("350638583 21062C0B56DC5C080DAC1693D997F576"));
 
         wxString sCmd;
@@ -240,6 +242,7 @@ void pnlIdentify::LaunchGracenote()
 //        sWavFile.Replace(wxT("/"), wxT("\\"));
         sCmd << sApp << wxT(" ") << sPass << wxT(" ") << sLicence << wxT(" online ") << sWavFile;
 
+        wxLogMessage(sCmd);
         m_pProcess = new MyProcess(this, sCmd);
         if ( !wxExecute(sCmd, wxEXEC_ASYNC, m_pProcess) )
         {
