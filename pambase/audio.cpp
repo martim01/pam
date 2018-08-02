@@ -183,7 +183,7 @@ void Audio::OutputCallback(float* pBuffer, size_t nFrameCount, double dPlayoutLa
 
     for(size_t i = nSamples; i < nFrameCount*m_nChannelsOut; i++)
     {
-        if(m_qBuffer.size() > 0)
+        if(m_qBuffer.empty() == false)
         {
             pBuffer[i] = m_qBuffer.front().dSample;
             m_qBuffer.pop();
@@ -361,6 +361,7 @@ bool Audio::IsStreamOpen()
 
 void Audio::FlushBuffer()
 {
+    wxMutexLocker ml(m_mutex);
     while(m_qBuffer.empty() == false)
     {
         m_qBuffer.pop();
