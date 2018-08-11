@@ -210,6 +210,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Connect(wxID_ANY,wxEVT_QOS_UPDATED,(wxObjectEventFunction)&pam2Dialog::OnQoS);
 
 
+
     Settings::Get().AddHandler(wxT("Input"),wxT("Type"), this);
     Settings::Get().AddHandler(wxT("Output"),wxT("Enabled"), this);
     Settings::Get().AddHandler(wxT("Output"),wxT("Source"), this);
