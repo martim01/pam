@@ -97,6 +97,7 @@ void Generator::Generate(unsigned int nSize)
     }
     else
     {
+
         timedbuffer* pData = new timedbuffer(nSize);
         float dSize(m_mSequences.size());
 
@@ -117,6 +118,8 @@ void Generator::Generate(unsigned int nSize)
         }
 
         pData->SetDuration(pData->GetBufferSize()*4);
+
+        wxLogDebug(wxT("Generated: %d"), pData->GetBufferSize());
         SoundcardManager::Get().AddOutputSamples(pData);
         delete pData;
     }
@@ -141,6 +144,8 @@ void Generator::GenerateSequences(timedbuffer* pData)
 
 void Generator::GenerateSequence(Sequence* pSeq, float* pBuffer, unsigned int nSize)
 {
+    wxLogDebug(wxT("Geneate: Sequence"));
+
     unsigned int nPhase = m_nPhase;
 
     for(int i = 0; i < nSize; i+=2)

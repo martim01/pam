@@ -211,6 +211,8 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
 
     Settings::Get().AddHandler(wxT("Input"),wxT("Type"), this);
+    Settings::Get().AddHandler(wxT("Output"),wxT("Enabled"), this);
+    Settings::Get().AddHandler(wxT("Output"),wxT("Source"), this);
 
     Settings::Get().AddHandler(wxT("Test"), wxT("Lock"), this);
 
@@ -660,6 +662,10 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
     {
         m_plblInput->SetLabel(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")));
     }
+    else if(event.GetSection() == wxT("Output"))
+    {
+        OutputChanged(event.GetKey());
+    }
 
     else if(event.GetSection() == wxT("Test"))
     {
@@ -825,6 +831,8 @@ void pam2Dialog::OnSession(wxCommandEvent& event)
     {
         itTest->second->InputSession(IOManager::Get().GetSession());
     }
+
+
 
     m_ppnlSettings->InputSessionChanged();
 }

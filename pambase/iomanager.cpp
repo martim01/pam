@@ -594,10 +594,13 @@ void IOManager::Start()
 
 void IOManager::OutputChannelsChanged()
 {
-    unsigned int nInputChannels(0);
-    if(m_SessionIn.itCurrentSubsession != m_SessionIn.lstSubsession.end())
+    unsigned int nInputChannels(2);
+    if(m_bPlaybackInput)
     {
-        nInputChannels = m_SessionIn.itCurrentSubsession->nChannels;
+        if(m_SessionIn.itCurrentSubsession != m_SessionIn.lstSubsession.end())
+        {
+            nInputChannels = m_SessionIn.itCurrentSubsession->nChannels;
+        }
     }
 
     vector<char> vChannels;

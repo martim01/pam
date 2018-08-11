@@ -366,6 +366,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     }
 
     m_plstInput->Freeze();
+    m_plstInput->AddButton(wxT("Disabled"));
     m_plstInput->AddButton(wxT("Soundcard"));
     m_plstInput->AddButton(wxT("AoIP"));
 
@@ -740,7 +741,7 @@ void pnlSettings::RefreshInputs()
     {
         ShowRTPDefined();
     }
-    else if(sType == wxT("Output"))
+    else if(sType == wxT("Disabled"))
     {
         m_plstDevices->Freeze();
         m_plstDevices->Clear();
