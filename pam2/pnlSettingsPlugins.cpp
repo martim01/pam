@@ -332,7 +332,7 @@ void pnlSettingsPlugins::ShowMonitorPlugins()
 
     wxFileName fnDir(sLibDir);
     fnDir.MakeAbsolute();
-    wmLog::Get()->Log(wxString::Format(wxT("Lib Directory: %s"), fnDir.GetFullPath().c_str()));
+    wmLog::Get()->Log(wxString::Format(wxT("Monitor Lib Directory: %s"), fnDir.GetFullPath().c_str()));
     wxArrayString asLibs;
     #ifdef __WXMSW__
         wxDir::GetAllFiles(fnDir.GetFullPath(), &asLibs, wxT("*.dll"));

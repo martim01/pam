@@ -10,7 +10,12 @@ using   namespace std;
 
 Settings::Settings()
 {
-    m_iniManager.ReadIniFile(wxString::Format(wxT("%s/pam/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
+    //wxString::Format(wxT("%s/pam/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str())
+}
+
+void Settings::ReadSettings(const wxString& sFullPath)
+{
+    m_iniManager.ReadIniFile(sFullPath);
 
     CreatePaths();
 }
@@ -173,7 +178,7 @@ wxString Settings::GetCoreLibDirectory() const
      #ifdef __WXGNU__
     return m_iniManager.GetIniString(wxT("Paths"), wxT("Core"), wxString::Format(wxT("%s/lib"), GetDocumentDirectory().c_str()));
     #else
-    return m_iniManager.GetIniString(wxT("Paths"), wxT("Core"), wxStandardPaths::Get().GetExecutablePath().BeforeLast(wxT('\\')));
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("Core"),  wxString::Format(wxT("%s/lib"), wxStandardPaths::Get().GetExecutablePath().BeforeLast(wxT('\\')).c_str()));
     #endif // __WXGNU__
 }
 
@@ -182,7 +187,7 @@ wxString Settings::GetMonitorPluginDirectory() const
     #ifdef __WXGNU__
     return m_iniManager.GetIniString(wxT("Paths"), wxT("MonitorPlugins"), wxString::Format(wxT("%s/monitor"), GetCoreLibDirectory().c_str()));
     #else
-    return m_iniManager.GetIniString(wxT("Paths"), wxT("MonitorPlugins"), wxStandardPaths::Get().GetPluginsDir());
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("MonitorPlugins"), wxString::Format(wxT("%s/monitor"), GetCoreLibDirectory().c_str()));
     #endif // __WXGNU__
 }
 
@@ -191,7 +196,7 @@ wxString Settings::GetTestPluginDirectory() const
     #ifdef __WXGNU__
     return m_iniManager.GetIniString(wxT("Paths"), wxT("TestPlugins"), wxString::Format(wxT("%s/test"), GetCoreLibDirectory().c_str()));
     #else
-    return m_iniManager.GetIniString(wxT("Paths"), wxT("TestPlugins"), wxStandardPaths::Get().GetPluginsDir());
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("TestPlugins"), wxString::Format(wxT("%s/monitor"), GetCoreLibDirectory().c_str()));
     #endif // __WXGNU__
 }
 

@@ -14,6 +14,8 @@
 #include <wx/image.h>
 //*)
 #include "soundcardmanager.h"
+#include "settings.h"
+#include <wx/stdpaths.h>
 #include <wx/log.h>
 
 IMPLEMENT_APP(pam2App);
@@ -24,6 +26,8 @@ bool pam2App::OnInit()
     wxLog::SetLogLevel(0);
     #endif
     SoundcardManager::Get().Initialize();
+
+    Settings::Get().ReadSettings(wxString::Format(wxT("%s/pam/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
     //(*AppInitialize
     bool wxsOK = true;
     wxInitAllImageHandlers();

@@ -52,6 +52,11 @@ void wmLog::OpenLogFile(bool bOpen)
     }
 	if(bOpen)
 	{
+	    if(wxDirExists(Settings::Get().GetLogDirectory()) == false)
+        {
+            wxMkdir(Settings::Get().GetLogDirectory());
+        }
+
 		m_pFileLog = new wxFile(wxString::Format(wxT("%s/%s.log"), Settings::Get().GetLogDirectory().c_str(), wxDateTime::Now().FormatISODate().c_str()), wxFile::write_append);
 		m_dtLog = wxDateTime::Today();
 		Log(wxT("--Start logging to file--"));

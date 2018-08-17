@@ -10,6 +10,8 @@ class PAMBASE_IMPEXPORT Settings
     public:
         static Settings& Get();
 
+        void ReadSettings(const wxString& sFullPath);
+
         wxString Read(const wxString& sSection, const wxString& sKey, const wxString& sDefault);
         int Read(const wxString& sSection, const wxString& sKey, int nDefault);
         double Read(const wxString& sSection, const wxString& sKey, double dDefault);

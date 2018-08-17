@@ -506,9 +506,11 @@ void IOManager::CreateSessionFromOutput(const wxString& sSource)
 
 void IOManager::SessionChanged()
 {
+    wmLog::Get()->Log(wxString::Format(wxT("Session Changed: %d"), m_setHandlers.size()));
     //tell our handler that we have changed the session....
     for(set<wxEvtHandler*>::iterator itHandler = m_setHandlers.begin(); itHandler != m_setHandlers.end(); ++itHandler)
     {
+
         wxCommandEvent event(wxEVT_SESSION);
         (*itHandler)->ProcessEvent(event);
     }
