@@ -16,7 +16,7 @@ Settings::Settings()
 void Settings::ReadSettings(const wxString& sFullPath)
 {
     m_iniManager.ReadIniFile(sFullPath);
-
+    m_sFullPath = sFullPath;
     CreatePaths();
 }
 
@@ -49,7 +49,7 @@ bool Settings::Write(const wxString& sSection, const wxString& sKey, const wxStr
     if(m_iniManager.GetIniString(sSection, sKey, wxEmptyString) != sValue)
     {
         m_iniManager.SetSectionValue(sSection, sKey,sValue);
-        bDone = m_iniManager.WriteIniFile(wxString::Format(wxT("%s/pam/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
+        bDone = m_iniManager.WriteIniFile(m_sFullPath);
 
         if(bDone)
         {
@@ -128,13 +128,13 @@ void Settings::RemoveHandler(wxEvtHandler* pHandler)
 bool Settings::RemoveKey(const wxString& sSection, const wxString& sKey)
 {
     m_iniManager.RemoveSectionValue(sSection, sKey);
-    return m_iniManager.WriteIniFile(wxString::Format(wxT("%s/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
+    return m_iniManager.WriteIniFile(m_sFullPath);
 }
 
 bool Settings::RemoveSection(const wxString& sSection)
 {
     m_iniManager.RemoveSection(sSection);
-    return m_iniManager.WriteIniFile(wxString::Format(wxT("%s/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
+    return m_iniManager.WriteIniFile(m_sFullPath);
 }
 
 
@@ -143,7 +143,7 @@ wxString Settings::GetExecutableDirectory() const
     #ifdef __WXGNU__
     return m_iniManager.GetIniString(wxT("Paths"), wxT("Executable"), wxString::Format(wxT("%s/bin"), GetDocumentDirectory().c_str()));
     #else
-    return m_iniManager.GetIniString(wxT("Paths"), wxT("Executable"), wxT("C:\\Progam Files\\pam2"));
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("Executable"), wxStandardPaths::Get().GetExecutablePath().BeforeLast(wxT('\\')));
     #endif // __WXGNU__
 }
 
@@ -155,6 +155,7 @@ wxString Settings::GetConfigDirectory() const
 
 wxString Settings::GetDocumentDirectory() const
 {
+
     return m_iniManager.GetIniString(wxT("Paths"), wxT("Docs"), wxString::Format(wxT("%s/pam"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
 }
 
@@ -178,7 +179,7 @@ wxString Settings::GetCoreLibDirectory() const
      #ifdef __WXGNU__
     return m_iniManager.GetIniString(wxT("Paths"), wxT("Core"), wxString::Format(wxT("%s/lib"), GetDocumentDirectory().c_str()));
     #else
-    return m_iniManager.GetIniString(wxT("Paths"), wxT("Core"),  wxString::Format(wxT("%s/lib"), wxStandardPaths::Get().GetExecutablePath().BeforeLast(wxT('\\')).c_str()));
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("Core"),  wxString::Format(wxT("%s/lib"), GetExecutableDirectory().c_str()));
     #endif // __WXGNU__
 }
 

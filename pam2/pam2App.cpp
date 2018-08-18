@@ -27,7 +27,11 @@ bool pam2App::OnInit()
     #endif
     SoundcardManager::Get().Initialize();
 
+    //#ifdef __WXGNU__
     Settings::Get().ReadSettings(wxString::Format(wxT("%s/pam/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
+    //#else
+   // Settings::Get().ReadSettings(wxString::Format(wxT("%s/documents/pam2.ini"), wxStandardPaths::Get().GetExecutablePath().c_str()));
+   // #endif
     //(*AppInitialize
     bool wxsOK = true;
     wxInitAllImageHandlers();

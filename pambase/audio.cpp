@@ -81,7 +81,7 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
     inputParameters.hostApiSpecificStreamInfo = NULL;
 
     double dLatency(.04);
-    dLatency = Settings::Get().Read(wxT("Output"), wxT("Latency"), 0.0)/1000.0;
+    dLatency = Settings::Get().Read(wxT("Output"), wxT("Latency"), 200.0)/1000.0;
 
     outputParameters.channelCount = m_nChannelsOut;
     outputParameters.device = m_nDevice;

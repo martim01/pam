@@ -286,10 +286,17 @@ void pam2Dialog::LoadMonitorPanels()
 
     //Add the test and settings panels
     m_ppnlTests = new pnlTests(m_pswpMain);
-    m_pswpMain->AddPage(m_ppnlTests, wxT("Tests"));
+
     m_ppnlTests->LoadTestPanels();
 
-
+    if(m_ppnlTests->m_pswpTests->GetPageCount() > 0)
+    {
+        m_pswpMain->AddPage(m_ppnlTests, wxT("Tests"));
+    }
+    else
+    {
+        delete m_ppnlTests;
+    }
 
 
 
@@ -724,6 +731,15 @@ void pam2Dialog::TellPluginsAboutOutputChannels()
 void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
 {
     wmLog::Get();
+
+    wmLog::Get()->Log(wxString::Format(wxT("Executable Path = %s"), Settings::Get().GetExecutableDirectory().c_str()));
+    wmLog::Get()->Log(wxString::Format(wxT("Core Lib Path = %s"), Settings::Get().GetCoreLibDirectory().c_str()));
+    wmLog::Get()->Log(wxString::Format(wxT("Plugin Monitor Path = %s"), Settings::Get().GetMonitorPluginDirectory().c_str()));
+    wmLog::Get()->Log(wxString::Format(wxT("Plugin Test Path = %s"), Settings::Get().GetTestPluginDirectory().c_str()));
+    wmLog::Get()->Log(wxString::Format(wxT("Documents Path = %s"), Settings::Get().GetDocumentDirectory().c_str()));
+    wmLog::Get()->Log(wxString::Format(wxT("Logs Path = %s"), Settings::Get().GetLogDirectory().c_str()));
+    wmLog::Get()->Log(wxString::Format(wxT("Wav Files Path = %s"), Settings::Get().GetWavDirectory().c_str()));
+    wmLog::Get()->Log(wxString::Format(wxT("Temp Path = %s"), Settings::Get().GetTempDirectory().c_str()));
 
     RemoveOldFiles();
 

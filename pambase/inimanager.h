@@ -136,6 +136,7 @@ protected:
 	std::ofstream m_of;
 
 
+
     void DeleteSections();
 public:
 

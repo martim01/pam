@@ -48,6 +48,7 @@ class PAMBASE_IMPEXPORT Settings
         Settings();
         void CreatePaths();
         iniManager m_iniManager;
+        wxString m_sFullPath;
 
         std::multimap<wxString, wxEvtHandler*> m_mmHandlers;
 };
