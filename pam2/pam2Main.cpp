@@ -296,6 +296,7 @@ void pam2Dialog::LoadMonitorPanels()
     else
     {
         delete m_ppnlTests;
+        m_ppnlTests = 0;
     }
 
 
@@ -657,7 +658,7 @@ void pam2Dialog::PassDataToPanels(timedbuffer* pTimedBuffer)
     {
         m_pSelectedMonitor->SetAudioData(pTimedBuffer);
     }
-    else
+    else if(m_ppnlTests)
     {
         m_ppnlTests->SetAudioData(pTimedBuffer);
     }

@@ -25,6 +25,10 @@ bool pam2App::OnInit()
     #ifndef __WXDEBUG__
     wxLog::SetLogLevel(0);
     #endif
+    #ifdef __WXGNU__
+    wxExecute(wxT("sudo route add -net 224.0.0.0 netmask 240.0.0.0 eth0"));
+    #endif // __WXGNU__
+
     SoundcardManager::Get().Initialize();
 
     //#ifdef __WXGNU__

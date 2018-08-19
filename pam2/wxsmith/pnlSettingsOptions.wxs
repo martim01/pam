@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <wxsmith>
 	<object class="wxPanel" name="pnlSettingsOptions">
+		<bg>#000000</bg>
 		<pos_arg>1</pos_arg>
 		<size_arg>1</size_arg>
 		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnExit" member="yes">
 			<label>Hold to Exit</label>
-			<pos>50,140</pos>
+			<pos>50,20</pos>
 			<size>100,60</size>
 			<bg>#800000</bg>
 			<font>
@@ -18,6 +19,38 @@
 			</font>
 			<style>wmButton::STYLE_HOLD</style>
 			<handler function="OnbtnExitHeld" entry="EVT_BUTTON_HELD" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnReboot" member="yes">
+			<label>Hold To Reboot</label>
+			<pos>50,90</pos>
+			<size>100,60</size>
+			<bg>#800000</bg>
+			<font>
+				<size>12</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+			<style>wmButton::STYLE_HOLD</style>
+			<handler function="OnbtnRebootHeld" entry="EVT_BUTTON_HELD" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnShutdown" member="yes">
+			<label>Hold to Shutdown</label>
+			<pos>50,160</pos>
+			<size>100,60</size>
+			<bg>#800000</bg>
+			<font>
+				<size>12</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+			<style>wmButton::STYLE_HOLD</style>
+			<handler function="OnbtnShutdownHeld" entry="EVT_BUTTON_HELD" />
 		</object>
 	</object>
 </wxsmith>
