@@ -14,6 +14,7 @@ class pnlSettingsOptions: public wxPanel
 		virtual ~pnlSettingsOptions();
 
 		//(*Declarations(pnlSettingsOptions)
+		wmButton* m_pbtnTerminal;
 		wmButton* m_pbtnReboot;
 		wmButton* m_pbtnShutdown;
 		wmButton* m_pbtnExit;
@@ -22,6 +23,7 @@ class pnlSettingsOptions: public wxPanel
 	protected:
 
 		//(*Identifiers(pnlSettingsOptions)
+		static const long ID_M_PBTN4;
 		static const long ID_M_PBTN1;
 		static const long ID_M_PBTN2;
 		static const long ID_M_PBTN3;
@@ -34,6 +36,7 @@ class pnlSettingsOptions: public wxPanel
 		void OnbtnExitHeld(wxCommandEvent& event);
 		void OnbtnRebootHeld(wxCommandEvent& event);
 		void OnbtnShutdownHeld(wxCommandEvent& event);
+		void OnbtnTerminalClick(wxCommandEvent& event);
 		//*)
 
 		DECLARE_EVENT_TABLE()
