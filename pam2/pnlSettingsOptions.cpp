@@ -41,6 +41,10 @@ pnlSettingsOptions::pnlSettingsOptions(wxWindow* parent,wxWindowID id,const wxPo
 	Connect(ID_M_PBTN3,wxEVT_BUTTON_HELD,(wxObjectEventFunction)&pnlSettingsOptions::OnbtnShutdownHeld);
 	//*)
 	SetBackgroundColour(*wxBLACK);
+	#ifdef __WXMSW__
+	m_pbtnShutdown->Hide();
+	m_pbtnReboot->Hide();
+	#endif // __WXMSW__
 }
 
 pnlSettingsOptions::~pnlSettingsOptions()
