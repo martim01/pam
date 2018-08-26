@@ -23,6 +23,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "Locale.hh"
 #include "GroupsockHelper.hh"
 #include <ctype.h>
+#include <iostream>
 
 ////////// MediaSession //////////
 
@@ -553,6 +554,7 @@ Boolean MediaSession
 MediaSubsessionIterator::MediaSubsessionIterator(MediaSession const& session)
   : fOurSession(session) {
   reset();
+
 }
 
 MediaSubsessionIterator::~MediaSubsessionIterator() {

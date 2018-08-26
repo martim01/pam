@@ -36,6 +36,7 @@ extern "C" int initializeWinsockIfNecessary();
 #define USE_SIGNALS 1
 #endif
 #include <stdio.h>
+#include <iostream>
 
 // By default, use INADDR_ANY for the sending and receiving interfaces:
 netAddressBits SendingInterfaceAddr = INADDR_ANY;
@@ -283,8 +284,11 @@ int setupStreamSocket(UsageEnvironment& env,
 }
 
 int readSocket(UsageEnvironment& env,
-	       int socket, unsigned char* buffer, unsigned bufferSize,
+	       int socket, unsigned char* buffer,
+ unsigned bufferSize,
 	       struct sockaddr_in& fromAddress) {
+
+
   SOCKLEN_T addressSize = sizeof fromAddress;
   int bytesRead = recvfrom(socket, (char*)buffer, bufferSize, 0,
 			   (struct sockaddr*)&fromAddress,
@@ -306,14 +310,17 @@ int readSocket(UsageEnvironment& env,
 #endif
 	|| err == 113 /*EHOSTUNREACH (Linux)*/) { // Why does Linux return this for datagram sock?
       fromAddress.sin_addr.s_addr = 0;
+
       return 0;
     }
     //##### END HACK
     socketErr(env, "recvfrom() error: ");
   } else if (bytesRead == 0) {
     // "recvfrom()" on a stream socket can return 0 if the remote end has closed the connection.  Treat this as an error:
+
     return -1;
   }
+
 
   return bytesRead;
 }
@@ -351,7 +358,7 @@ Boolean writeSocket(UsageEnvironment& env,
       socketErr(env, tmpBuf);
       break;
     }
-    
+
     return True;
   } while (0);
 
@@ -600,7 +607,7 @@ netAddressBits ourIPAddress(UsageEnvironment& env) {
   struct in_addr testAddr;
 
   if (ReceivingInterfaceAddr != INADDR_ANY) {
-    // Hack: If we were told to receive on a specific interface address, then 
+    // Hack: If we were told to receive on a specific interface address, then
     // define this to be our ip address:
     ourAddress = ReceivingInterfaceAddr;
   }
@@ -686,7 +693,7 @@ netAddressBits ourIPAddress(UsageEnvironment& env) {
 	}
       }
 
-      // Assign the address that we found to "fromAddr" (as if the 'loopback' method had worked), to simplify the code below: 
+      // Assign the address that we found to "fromAddr" (as if the 'loopback' method had worked), to simplify the code below:
       fromAddr.sin_addr.s_addr = addr;
     } while (0);
 
@@ -757,7 +764,7 @@ char const* timestampString() {
 // For Windoze, we need to implement our own gettimeofday()
 
 // used to make sure that static variables in gettimeofday() aren't initialized simultaneously by multiple threads
-static LONG initializeLock_gettimeofday = 0;  
+static LONG initializeLock_gettimeofday = 0;
 
 #if !defined(_WIN32_WCE)
 #include <sys/timeb.h>
@@ -775,7 +782,7 @@ int gettimeofday(struct timeval* tp, int* /*tz*/) {
 #else
   tickNow.QuadPart = GetTickCount();
 #endif
- 
+
   if (!isInitialized) {
     if(1 == InterlockedIncrement(&initializeLock_gettimeofday)) {
 #if !defined(_WIN32_WCE)
@@ -811,13 +818,13 @@ int gettimeofday(struct timeval* tp, int* /*tz*/) {
 
       // resolution of GetTickCounter() is always milliseconds
       tickFrequency.QuadPart = 1000;
-#endif     
+#endif
       // compute an offset to add to subsequent counter times, so we get a proper epoch:
       epochOffset.QuadPart
           = tp->tv_sec * tickFrequency.QuadPart + (tp->tv_usec * tickFrequency.QuadPart) / 1000000L - tickNow.QuadPart;
-      
+
       // next caller can use ticks for time calculation
-      isInitialized = True; 
+      isInitialized = True;
       return 0;
     } else {
         InterlockedDecrement(&initializeLock_gettimeofday);

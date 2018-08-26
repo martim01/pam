@@ -7,7 +7,7 @@
 #include <cmath>
 #include "timedbuffer.h"
 #include <wx/log.h>
-
+#include <iostream>
 using namespace std;
 
 const wxString Smpte2110MediaSubsession::STR_SAMPLING[13] = { wxT("YCbCr-4:4:4"), wxT("YCbCr-4:2:2"), wxT("YCbCr-4:2:0"), wxT("CLYCbCr-4:4:4"), wxT("CLYCbCr-4:2:2"), wxT("CLYCbCr-4:2:0"), wxT("ICtCp-4:4:4"), wxT("ICtCp-4:2:2"), wxT("ICtCp-4:2:0"), wxT("RGB"), wxT("XYZ"), wxT("KEY"), wxT("Unknown")};
@@ -20,6 +20,7 @@ const wxString Smpte2110MediaSubsession::STR_PACKING[2] = {wxT("General"), wxT("
 Smpte2110MediaSession* Smpte2110MediaSession::createNew(UsageEnvironment& env,
         char const* sdpDescription)
 {
+    cout << "2110" << endl;
     Smpte2110MediaSession* newSession = new Smpte2110MediaSession(env);
     if (newSession != NULL)
     {
@@ -32,12 +33,13 @@ Smpte2110MediaSession* Smpte2110MediaSession::createNew(UsageEnvironment& env,
         }
 
     }
-
+    cout << "2110: done" << endl;
     return newSession;
 }
 
 void Smpte2110MediaSession::initializeSMPTE_SDP(char const* sdpDescription)
 {
+    cout << "2110 SMPTE" << endl;
     if (sdpDescription == NULL)
     {
         return;
@@ -77,6 +79,7 @@ void Smpte2110MediaSession::initializeSMPTE_SDP(char const* sdpDescription)
 
 Boolean Smpte2110MediaSession::parseSDPAttribute_RefClk(char const* sdpLine)
 {
+    cout << "2110: SDP" << endl;
     wxString sSdp(wxString::FromAscii(sdpLine));
 
     wxString sFind(wxT("a=ts-refclk:"));

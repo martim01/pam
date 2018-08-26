@@ -37,32 +37,37 @@ RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sProg, const wxStri
 {
     m_eventLoopWatchVariable = 0;
     m_pCondition = new wxCondition(m_mutex);
+
 }
 
 
 void* RtpThread::Entry()
 {
-
+    std::cout << "RtpThread: 1" << std::endl;
     // Begin by setting up our usage environment:
     TaskScheduler* scheduler = PamTaskScheduler::createNew();
     m_penv = PamUsageEnvironment::createNew(*scheduler, m_pHandler);
-
+    std::cout << "RtpThread: 2" << std::endl;
 
     if(m_sUrl.Before(wxT(':')) == wxT("rtsp"))
     {
+        std::cout << "RtpThread: 3" << std::endl;
         if(openURL())
         {
+            std::cout << "RtpThread: 4" << std::endl;
             // All subsequent activity takes place within the event loop:
             while(TestDestroy() == false && m_eventLoopWatchVariable == 0)
             {
                 m_penv->taskScheduler().doEventLoop(&m_eventLoopWatchVariable);
             }
+
             wxLogDebug(wxT("TEST DESTROY = true"));
             m_bClosing = true;
             if(m_pRtspClient && m_eventLoopWatchVariable == 0)  //0 means stream has shutdown and is telling us to stop
             {
                 shutdownStream(m_pRtspClient, 0);
             }
+            std::cout << "RtpThread: 6" << std::endl;
         }
     }
     else

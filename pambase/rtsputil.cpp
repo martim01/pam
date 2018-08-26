@@ -3,6 +3,7 @@
 #include "timedbuffer.h"
 #include "qos.h"
 #include <wx/log.h>
+#include <iostream>
 #include "smpte2110mediasession.h"
 
 UsageEnvironment& operator<<(UsageEnvironment& env, const RTSPClient& rtspClient)
@@ -24,9 +25,11 @@ qosMeasurementRecord* g_pRecord = NULL;
 
 void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultString)
 {
+    std::cout << "----1-----" << std::endl;
     bool bSuccess(true);
     UsageEnvironment& env = rtspClient->envir(); // alias
     StreamClientState& scs = ((ourRTSPClient*)rtspClient)->scs; // alias
+
 
     if (resultCode != 0)
     {
@@ -77,10 +80,12 @@ void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultS
         // An unrecoverable error occurred with this stream.
         shutdownStream(rtspClient);
     }
+    std::cout << "+++++1+++++" << std::endl;
 }
 
 void saveAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultString)
 {
+    std::cout << "----2-----" << std::endl;
     bool bSuccess(true);
     ourRTSPClient* pClient = dynamic_cast<ourRTSPClient*>(rtspClient);
     if(pClient)
@@ -91,6 +96,7 @@ void saveAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultStrin
     delete[] resultString;
     // An unrecoverable error occurred with this stream.
     shutdownStream(rtspClient);
+    std::cout << "+++++2+++++" << std::endl;
 }
 
 
@@ -98,6 +104,7 @@ void saveAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultStrin
 
 void setupNextSubsession(RTSPClient* rtspClient)
 {
+    std::cout << "----3-----" << std::endl;
     UsageEnvironment& env = rtspClient->envir(); // alias
     StreamClientState& scs = ((ourRTSPClient*)rtspClient)->scs; // alias
 
@@ -126,6 +133,7 @@ void setupNextSubsession(RTSPClient* rtspClient)
             // Continue setting up this subsession, by sending a RTSP "SETUP" command:
             rtspClient->sendSetupCommand(*scs.subsession, continueAfterSETUP, False, False);
         }
+        std::cout << "+++++3+++++" << std::endl;
         return;
     }
 
@@ -139,11 +147,12 @@ void setupNextSubsession(RTSPClient* rtspClient)
         //Start the first subsession
         pClient->PlaySubsession(wxT("0"), continueAfterPLAY);
     }
-
+    std::cout << "+++++3+++++" << std::endl;
 }
 
 void continueAfterSETUP(RTSPClient* rtspClient, int resultCode, char* resultString)
 {
+    std::cout << "----4-----" << std::endl;
     do
     {
         UsageEnvironment& env = rtspClient->envir(); // alias
@@ -197,10 +206,12 @@ void continueAfterSETUP(RTSPClient* rtspClient, int resultCode, char* resultStri
 
     // @todo decide how we are going to let user choose different subsessions
     setupNextSubsession(rtspClient);
+    std::cout << "+++++4+++++" << std::endl;
 }
 
 void continueAfterPLAY(RTSPClient* rtspClient, int resultCode, char* resultString)
 {
+    std::cout << "----5-----" << std::endl;
     Boolean success = False;
 
     UsageEnvironment& env = rtspClient->envir(); // alias
@@ -247,6 +258,7 @@ void continueAfterPLAY(RTSPClient* rtspClient, int resultCode, char* resultStrin
         // Begin periodic QOS measurements:
         beginQOSMeasurement(env, ((ourRTSPClient*)rtspClient)->scs.session, ((ourRTSPClient*)rtspClient)->GetHandler());
     }
+    std::cout << "+++++5+++++" << std::endl;
 }
 
 
@@ -254,6 +266,7 @@ void continueAfterPLAY(RTSPClient* rtspClient, int resultCode, char* resultStrin
 
 void subsessionAfterPlaying(void* clientData)
 {
+    std::cout << "----6-----" << std::endl;
     MediaSubsession* subsession = (MediaSubsession*)clientData;
     RTSPClient* rtspClient = (RTSPClient*)(subsession->miscPtr);
 

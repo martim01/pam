@@ -467,7 +467,7 @@ void IOManager::InitAudioInputDevice()
         {
 
             m_sCurrentRtp = sRtp;
-
+            wxLogDebug(wxT("New RTP"));
             RtpThread* pThread = new RtpThread(this, wxT("pam"), sRtp, 2048);
             pThread->Create();
             pThread->Run();

@@ -23,7 +23,7 @@ IMPLEMENT_APP(pam2App);
 bool pam2App::OnInit()
 {
     #ifndef __WXDEBUG__
-    wxLog::SetLogLevel(0);
+    //wxLog::SetLogLevel(0);
     #endif
     #ifdef __WXGNU__
     wxExecute(wxT("sudo route add -net 224.0.0.0 netmask 240.0.0.0 eth0"));

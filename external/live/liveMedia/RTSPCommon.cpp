@@ -22,6 +22,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "Locale.hh"
 #include <string.h>
 #include <stdio.h>
+#include <iostream>
 #include <ctype.h> // for "isxdigit()
 #include <time.h> // for "strftime()" and "gmtime()"
 
@@ -44,7 +45,7 @@ static void decodeURL(char* url) {
       *url++ = *cursor++;
     }
   }
-  
+
   *url = '\0';
 }
 
@@ -259,7 +260,6 @@ Boolean parseRangeParam(char const* paramStr,
   } else {
     return False; // The header is malformed
   }
-
   return True;
 }
 

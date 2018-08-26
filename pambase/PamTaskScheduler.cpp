@@ -22,6 +22,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "BasicUsageEnvironment.hh"
 #include "HandlerSet.hh"
 #include <stdio.h>
+#include <iostream>
 #if defined(_QNX4)
 #include <sys/select.h>
 #include <unix.h>
@@ -42,6 +43,7 @@ PamTaskScheduler::PamTaskScheduler(unsigned maxSchedulerGranularity)
   FD_ZERO(&fReadSet);
   FD_ZERO(&fWriteSet);
   FD_ZERO(&fExceptionSet);
+
 
   if (maxSchedulerGranularity > 0) schedulerTickTask(); // ensures that we handle events frequently
 }
@@ -147,12 +149,13 @@ void PamTaskScheduler::SingleStep(unsigned maxDelayTime) {
     if (FD_ISSET(sock, &readSet) && FD_ISSET(sock, &fReadSet)/*sanity check*/) resultConditionSet |= SOCKET_READABLE;
     if (FD_ISSET(sock, &writeSet) && FD_ISSET(sock, &fWriteSet)/*sanity check*/) resultConditionSet |= SOCKET_WRITABLE;
     if (FD_ISSET(sock, &exceptionSet) && FD_ISSET(sock, &fExceptionSet)/*sanity check*/) resultConditionSet |= SOCKET_EXCEPTION;
-    if ((resultConditionSet&handler->conditionSet) != 0 && handler->handlerProc != NULL) {
+    if ((resultConditionSet&handler->conditionSet) != 0 && handler->handlerProc != NULL)
+        {
       fLastHandledSocketNum = sock;
           // Note: we set "fLastHandledSocketNum" before calling the handler,
           // in case the handler calls "doEventLoop()" reentrantly.
-      (*handler->handlerProc)(handler->clientData, resultConditionSet);
-      break;
+            (*handler->handlerProc)(handler->clientData, resultConditionSet);
+            break;
     }
   }
   if (handler == NULL && fLastHandledSocketNum >= 0) {
@@ -169,7 +172,7 @@ void PamTaskScheduler::SingleStep(unsigned maxDelayTime) {
 	fLastHandledSocketNum = sock;
 	    // Note: we set "fLastHandledSocketNum" before calling the handler,
             // in case the handler calls "doEventLoop()" reentrantly.
-	(*handler->handlerProc)(handler->clientData, resultConditionSet);
+    (*handler->handlerProc)(handler->clientData, resultConditionSet);
 	break;
       }
     }

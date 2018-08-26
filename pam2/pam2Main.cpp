@@ -853,6 +853,7 @@ void pam2Dialog::OnSession(wxCommandEvent& event)
 
 
     m_ppnlSettings->InputSessionChanged();
+    wxLogDebug(wxT("Session change done"));
 }
 
 void pam2Dialog::OnbtnMonitorClick(wxCommandEvent& event)
