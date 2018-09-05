@@ -2,6 +2,7 @@
 #include "dlldefine.h"
 #include "timedbuffer.h"
 #include <list>
+#include <algorithm>
 
 
 struct PAMBASE_IMPEXPORT frameBuffer
@@ -31,7 +32,7 @@ struct PAMBASE_IMPEXPORT subsession
 {
 
     subsession(const wxString& sI, const wxString& sourceaddress, const wxString& medium, const wxString& codec, const wxString& protocol, unsigned int port, unsigned int samplerate, unsigned int channels, const wxString& channelnames, unsigned int synctimestamp, const pairTime_t& epoch, const refclk& clk) :
-    sId(sI), sSourceAddress(sourceaddress), sMedium(medium), sCodec(codec), sProtocol(protocol), nPort(port), nSampleRate(samplerate),nChannels(channels),sChannelNames(channelnames),nSyncTimestamp(synctimestamp), tvEpoch(epoch),refClock(clk){}
+    sId(sI), sSourceAddress(sourceaddress), sMedium(medium), sCodec(codec), sProtocol(protocol), nPort(port), nSampleRate(samplerate),nChannels(std::min((unsigned int)256, channels)),sChannelNames(channelnames),nSyncTimestamp(synctimestamp), tvEpoch(epoch),refClock(clk){}
 
     wxString sId;
     wxString sSourceAddress;

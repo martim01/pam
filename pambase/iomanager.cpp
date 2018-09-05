@@ -115,7 +115,7 @@ void IOManager::OnSettingEvent(SettingEvent& event)
         if(event.GetKey() == wxT("Source") && m_bMonitorOutput != (Settings::Get().Read(wxT("Monitor"), wxT("Source"), 0)==1))
         {
             m_bMonitorOutput = (Settings::Get().Read(wxT("Monitor"), wxT("Source"), 0)==1);
-            SessionChanged();
+         //   SessionChanged();
         }
     }
     else if(event.GetSection() == wxT("Input"))
