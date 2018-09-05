@@ -31,10 +31,10 @@ R128Calculator::~R128Calculator()
 
 void R128Calculator::InputSession(const session& aSession)
 {
-    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_nInputChannels = aSession.itCurrentSubsession->nChannels;
-        m_nChunkFrames = aSession.itCurrentSubsession->nSampleRate/10;
+        m_nInputChannels = min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels);
+        m_nChunkFrames = aSession.GetCurrentSubsession()->nSampleRate/10;
         m_nChunkSize = m_nInputChannels*m_nChunkFrames;
 
     }

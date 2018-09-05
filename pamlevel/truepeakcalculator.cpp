@@ -43,14 +43,14 @@ void TruePeakCalculator::InputSession(const session& aSession)
     m_vTruePeak.clear();
     m_vCurrentPeak.clear();
 
-    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_nChannels = aSession.itCurrentSubsession->nChannels;
+        m_nChannels = min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels);
         int nError;
         #ifdef __WXMSW__
-        m_pSrc->pState = src_new (SRC_SINC_BEST_QUALITY, aSession.itCurrentSubsession->nChannels, &nError);
+        m_pSrc->pState = src_new (SRC_SINC_BEST_QUALITY, min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels), &nError);
         #else
-        m_pSrc->pState = src_new (SRC_SINC_FASTEST, aSession.itCurrentSubsession->nChannels, &nError);
+        m_pSrc->pState = src_new (SRC_SINC_FASTEST, min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels), &nError);
         #endif // __WXMSW__
 
         if(m_pSrc->pState)
@@ -58,10 +58,10 @@ void TruePeakCalculator::InputSession(const session& aSession)
             src_set_ratio(m_pSrc->pState, 4.0);
         }
 
-        m_vFilter.resize(aSession.itCurrentSubsession->nChannels);
+        m_vFilter.resize(min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels));
         for(size_t i = 0; i < m_vFilter.size(); i++)
         {
-            m_vFilter[i] = new Filter(LPF, 48, (aSession.itCurrentSubsession->nSampleRate*4)/1000, (aSession.itCurrentSubsession->nSampleRate/2)/1000);
+            m_vFilter[i] = new Filter(LPF, 48, (aSession.GetCurrentSubsession()->nSampleRate*4)/1000, (aSession.GetCurrentSubsession()->nSampleRate/2)/1000);
             if(m_vFilter[i]->get_error_flag() != 0)
             {
                 delete m_vFilter[i];

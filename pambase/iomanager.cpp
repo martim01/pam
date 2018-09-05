@@ -450,7 +450,7 @@ void IOManager::InitAudioInputDevice()
 
         m_SessionIn = session(wxEmptyString, wxT("Soundcard"), SoundcardManager::Get().GetInputDeviceName());
         m_SessionIn.lstSubsession.push_back(subsession(wxEmptyString, SoundcardManager::Get().GetInputDeviceName(), wxEmptyString, wxT("L24"), wxEmptyString, SoundcardManager::Get().GetInputDevice(), SoundcardManager::Get().GetInputSampleRate(), SoundcardManager::Get().GetInputNumberOfChannels(), wxEmptyString, 0, make_pair(0,0), refclk()));
-        m_SessionIn.itCurrentSubsession = m_SessionIn.lstSubsession.begin();
+        m_SessionIn.SetCurrentSubsession();
 
         SessionChanged();
 
@@ -498,7 +498,7 @@ void IOManager::CreateSessionFromOutput(const wxString& sSource)
     unsigned int nSampleRate = SoundcardManager::Get().GetOutputSampleRate();
 
     m_SessionOut.lstSubsession.push_back(subsession(Settings::Get().Read(wxT("Output"), wxT("Source"),wxEmptyString), sSource, wxEmptyString, wxT("F32"), wxEmptyString, 0, nSampleRate, 2, wxEmptyString, 0, make_pair(0,0), refclk()));
-    m_SessionOut.itCurrentSubsession = m_SessionOut.lstSubsession.begin();
+    m_SessionOut.SetCurrentSubsession();
 
     SessionChanged();
 
@@ -535,13 +535,20 @@ void IOManager::OnRTPSessionClosed(wxCommandEvent& event)
 
 void IOManager::OnRTPSession(wxCommandEvent& event)
 {
-    m_SessionIn = *reinterpret_cast<session*>(event.GetClientData());
+    session* pSession = reinterpret_cast<session*>(event.GetClientData());
+
+    m_SessionIn = session(pSession->sRawSDP, pSession->sName, pSession->sType, pSession->sDescription, pSession->sGroups);
+    for(list<subsession>::iterator itSub = pSession->lstSubsession.begin(); itSub != pSession->lstSubsession.end(); ++itSub)
+    {
+        m_SessionIn.lstSubsession.push_back((*itSub));
+    }
+    m_SessionIn.SetCurrentSubsession();
 
     SessionChanged();
 
-    if(m_SessionIn.itCurrentSubsession != m_SessionIn.lstSubsession.end())
+    if(m_SessionIn.GetCurrentSubsession() != m_SessionIn.lstSubsession.end())
     {
-        CheckPlayback(m_SessionIn.itCurrentSubsession->nSampleRate, m_SessionIn.itCurrentSubsession->nChannels);
+        CheckPlayback(m_SessionIn.GetCurrentSubsession()->nSampleRate, min((unsigned int)256 ,m_SessionIn.GetCurrentSubsession()->nChannels));
     }
     else
     {
@@ -599,9 +606,9 @@ void IOManager::OutputChannelsChanged()
     unsigned int nInputChannels(2);
     if(m_bPlaybackInput)
     {
-        if(m_SessionIn.itCurrentSubsession != m_SessionIn.lstSubsession.end())
+        if(m_SessionIn.GetCurrentSubsession() != m_SessionIn.lstSubsession.end())
         {
-            nInputChannels = m_SessionIn.itCurrentSubsession->nChannels;
+            nInputChannels = min((unsigned int)256 ,m_SessionIn.GetCurrentSubsession()->nChannels);
         }
     }
 

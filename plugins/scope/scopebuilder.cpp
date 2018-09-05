@@ -85,10 +85,10 @@ void ScopeBuilder::LoadSettings()
 
 void ScopeBuilder::InputSession(const session& aSession)
 {
-    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_pScope->SetNumberOfChannels(aSession.itCurrentSubsession->nChannels);
-        m_pRouting->SetNumberOfChannels(aSession.itCurrentSubsession->nChannels);
+        m_pScope->SetNumberOfChannels(min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels));
+        m_pRouting->SetNumberOfChannels(min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels));
     }
     else
 

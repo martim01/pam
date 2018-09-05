@@ -725,35 +725,35 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
     m_plblSessionType->SetLabel(aSession.sType);
     m_ptxtSDP->SetValue(aSession.sRawSDP);
 
-    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_plblSubsessionId->SetLabel(aSession.itCurrentSubsession->sId);
-        m_plblSessionSource->SetLabel(aSession.itCurrentSubsession->sSourceAddress);
-        m_plblSessionBits->SetLabel(aSession.itCurrentSubsession->sCodec);
-        m_plblSessionFrequency->SetLabel(wxString::Format(wxT("%.1fkHz"), aSession.itCurrentSubsession->nSampleRate/1000.0));
-        m_plblSessionChannels->SetLabel(wxString::Format(wxT("%d"), aSession.itCurrentSubsession->nChannels));
+        m_plblSubsessionId->SetLabel(aSession.GetCurrentSubsession()->sId);
+        m_plblSessionSource->SetLabel(aSession.GetCurrentSubsession()->sSourceAddress);
+        m_plblSessionBits->SetLabel(aSession.GetCurrentSubsession()->sCodec);
+        m_plblSessionFrequency->SetLabel(wxString::Format(wxT("%.1fkHz"), aSession.GetCurrentSubsession()->nSampleRate/1000.0));
+        m_plblSessionChannels->SetLabel(wxString::Format(wxT("%d"), aSession.GetCurrentSubsession()->nChannels));
 
-        m_plblSyncTimestamp->SetLabel(wxString::Format(wxT("%u"), aSession.itCurrentSubsession->nSyncTimestamp));
+        m_plblSyncTimestamp->SetLabel(wxString::Format(wxT("%u"), aSession.GetCurrentSubsession()->nSyncTimestamp));
 
-        m_nSampleRate = aSession.itCurrentSubsession->nSampleRate;
-        m_nFrameSize = aSession.itCurrentSubsession->nChannels;
-        if(aSession.itCurrentSubsession->sCodec == wxT("L24"))
+        m_nSampleRate = aSession.GetCurrentSubsession()->nSampleRate;
+        m_nFrameSize = min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels);
+        if(aSession.GetCurrentSubsession()->sCodec == wxT("L24"))
         {
             m_nFrameSize*=3;
         }
-        else if(aSession.itCurrentSubsession->sCodec == wxT("L16"))
+        else if(aSession.GetCurrentSubsession()->sCodec == wxT("L16"))
         {
             m_nFrameSize*=2;
         }
-        else if(aSession.itCurrentSubsession->sCodec == wxT("F32"))
+        else if(aSession.GetCurrentSubsession()->sCodec == wxT("F32"))
         {
             m_nFrameSize*=4;
         }
 
-        m_plblSubSyncType->SetLabel(aSession.itCurrentSubsession->refClock.sType);
-        m_plblSubSyncVersion->SetLabel(aSession.itCurrentSubsession->refClock.sVersion);
-        m_plblSubSyncId->SetLabel(aSession.itCurrentSubsession->refClock.sId);
-        m_plblSubSyncDomain->SetLabel(wxString::Format(wxT("%u"), aSession.itCurrentSubsession->refClock.nDomain));
+        m_plblSubSyncType->SetLabel(aSession.GetCurrentSubsession()->refClock.sType);
+        m_plblSubSyncVersion->SetLabel(aSession.GetCurrentSubsession()->refClock.sVersion);
+        m_plblSubSyncId->SetLabel(aSession.GetCurrentSubsession()->refClock.sId);
+        m_plblSubSyncDomain->SetLabel(wxString::Format(wxT("%u"), aSession.GetCurrentSubsession()->refClock.nDomain));
     }
     else
     {

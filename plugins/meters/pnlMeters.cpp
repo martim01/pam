@@ -157,14 +157,14 @@ void pnlMeters::SetSession(const session& aSession)
     m_plblSessionType->SetLabel(aSession.sType);
     m_plblSessionName->SetLabel(aSession.sName);
 
-    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_plblInput->SetLabel(aSession.itCurrentSubsession->sProtocol);
-        m_plblSessionSource->SetLabel(aSession.itCurrentSubsession->sSourceAddress);
-        m_plblSessionChannels->SetLabel(wxString::Format(wxT("%u"), aSession.itCurrentSubsession->nChannels));
-        m_plblSessionFrequency->SetLabel(wxString::Format(wxT("%u"), aSession.itCurrentSubsession->nSampleRate));
-        m_plblSessionBits->SetLabel(aSession.itCurrentSubsession->sCodec);
-        m_nInputChannels = aSession.itCurrentSubsession->nChannels;
+        m_plblInput->SetLabel(aSession.GetCurrentSubsession()->sProtocol);
+        m_plblSessionSource->SetLabel(aSession.GetCurrentSubsession()->sSourceAddress);
+        m_plblSessionChannels->SetLabel(wxString::Format(wxT("%u"), aSession.GetCurrentSubsession()->nChannels));
+        m_plblSessionFrequency->SetLabel(wxString::Format(wxT("%u"), aSession.GetCurrentSubsession()->nSampleRate));
+        m_plblSessionBits->SetLabel(aSession.GetCurrentSubsession()->sCodec);
+        m_nInputChannels = min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels);
     }
     else
     {

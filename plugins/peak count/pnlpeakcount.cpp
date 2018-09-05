@@ -103,9 +103,9 @@ void pnlPeakCount::InputSession(const session& aSession)
     }
     m_vChannels.clear();
 
-    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_vChannels.resize(aSession.itCurrentSubsession->nChannels);
+        m_vChannels.resize(min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels));
     }
 
     for(size_t i = 0; i < m_vChannels.size(); i++)

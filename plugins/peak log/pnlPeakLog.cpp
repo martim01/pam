@@ -102,9 +102,9 @@ void pnlPeakLog::InputSession(const session& aSession)
         delete m_ploud;
     }
     m_nChannels = 0;
-    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_nChannels = aSession.itCurrentSubsession->nChannels;
+        m_nChannels = min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels);
     }
     m_ploud = new loud(m_nChannels);
 

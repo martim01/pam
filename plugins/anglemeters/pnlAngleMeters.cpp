@@ -49,9 +49,9 @@ pnlAngleMeters::~pnlAngleMeters()
 
 void pnlAngleMeters::SetSession(const session& aSession)
 {
-    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_nInputChannels = min((unsigned int)256, aSession.itCurrentSubsession->nChannels);
+        m_nInputChannels = min((unsigned int)256, aSession.GetCurrentSubsession()->nChannels);
     }
     else
     {

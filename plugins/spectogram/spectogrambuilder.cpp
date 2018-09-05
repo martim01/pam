@@ -65,11 +65,11 @@ list<pairOptionPanel_t> SpectogramBuilder::CreateOptionPanels(wxWindow* pParent)
 
 void SpectogramBuilder::InputSession(const session& aSession)
 {
-    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_pMeter->SetSampleRate(aSession.itCurrentSubsession->nSampleRate);
-        m_pMeter->SetNumberOfChannels(aSession.itCurrentSubsession->nChannels);
-        m_ppnlRouting->SetNumberOfChannels(aSession.itCurrentSubsession->nChannels);
+        m_pMeter->SetSampleRate(aSession.GetCurrentSubsession()->nSampleRate);
+        m_pMeter->SetNumberOfChannels(min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels));
+        m_ppnlRouting->SetNumberOfChannels(min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels));
     }
     else
     {

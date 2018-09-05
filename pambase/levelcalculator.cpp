@@ -53,9 +53,9 @@ void LevelCalculator::DeletePpmLoud()
 }
 void LevelCalculator::InputSession(const session& aSession)
 {
-    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_nChannels = aSession.itCurrentSubsession->nChannels;
+        m_nChannels = min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels);
     }
     else
     {

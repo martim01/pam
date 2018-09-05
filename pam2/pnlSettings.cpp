@@ -972,9 +972,9 @@ void pnlSettings::PopulateChannelList(wmList* pList, int nSelected)
 {
     pList->Clear();
     int nChannels(0);
-    if(IOManager::Get().GetSession().itCurrentSubsession != IOManager::Get().GetSession().lstSubsession.end())
+    if(IOManager::Get().GetSession().GetCurrentSubsession() != IOManager::Get().GetSession().lstSubsession.end())
     {
-        nChannels = IOManager::Get().GetSession().itCurrentSubsession->nChannels;
+        nChannels = IOManager::Get().GetSession().GetCurrentSubsession()->nChannels;
         wxLogDebug(wxT("pnlSettings:: %d channels"), nChannels);
     }
     else

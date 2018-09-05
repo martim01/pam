@@ -210,7 +210,7 @@ void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const p
 {
     if(!m_bClosing)
     {
-        if(m_Session.itCurrentSubsession != m_Session.lstSubsession.end() && m_Session.itCurrentSubsession->sSourceAddress == sEndpoint)
+        if(m_Session.GetCurrentSubsession() != m_Session.lstSubsession.end() && m_Session.GetCurrentSubsession()->sSourceAddress == sEndpoint)
         {
 
             if(m_pCurrentBuffer == 0)
@@ -368,10 +368,10 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
                                                      pSubsession->GetRefClock()));
     }
 
-    m_Session.itCurrentSubsession = m_Session.lstSubsession.begin();
-    if(m_Session.itCurrentSubsession != m_Session.lstSubsession.end())
+    m_Session.SetCurrentSubsession();
+    if(m_Session.GetCurrentSubsession() != m_Session.lstSubsession.end())
     {
-        m_nInputChannels = m_Session.itCurrentSubsession->nChannels;
+        m_nInputChannels = min((unsigned int)256 ,m_Session.GetCurrentSubsession()->nChannels);
     }
     else
     {

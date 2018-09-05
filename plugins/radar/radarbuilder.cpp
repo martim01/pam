@@ -117,11 +117,11 @@ void RadarBuilder::LoadSettings()
 void RadarBuilder::InputSession(const session& aSession)
 {
     m_pCalculator->InputSession(aSession);
-    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_pRadar->SetSampleRate(aSession.itCurrentSubsession->nSampleRate);
-        m_nInputChannels = aSession.itCurrentSubsession->nChannels;
-        m_ppnlRouting->SetNumberOfChannels(aSession.itCurrentSubsession->nChannels);
+        m_pRadar->SetSampleRate(min((unsigned int)256 ,aSession.GetCurrentSubsession()->nSampleRate));
+        m_nInputChannels = min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels);
+        m_ppnlRouting->SetNumberOfChannels(m_nInputChannels);
     }
     else
     {

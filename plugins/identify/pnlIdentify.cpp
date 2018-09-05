@@ -314,10 +314,10 @@ void pnlIdentify::OutputChannels(const vector<char>& vChannels)
 
 void pnlIdentify::InputSession(const session& aSession)
 {
-    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_nInputChannels = aSession.itCurrentSubsession->nChannels;
-        m_nSampleRate = aSession.itCurrentSubsession->nSampleRate;
+        m_nInputChannels = min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels);
+        m_nSampleRate = aSession.GetCurrentSubsession()->nSampleRate;
     }
     else
     {

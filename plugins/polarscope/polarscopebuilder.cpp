@@ -66,10 +66,10 @@ void PolarScopeBuilder::LoadSettings()
 
 void PolarScopeBuilder::InputSession(const session& aSession)
 {
-    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_pPolarScope->SetNumberOfInputChannels(aSession.itCurrentSubsession->nChannels);
-        m_nInputChannels = aSession.itCurrentSubsession->nChannels;
+        m_pPolarScope->SetNumberOfInputChannels(min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels));
+        m_nInputChannels = min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels);
     }
     else
     {

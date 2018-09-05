@@ -145,10 +145,10 @@ void pnlRecord::OnbtnDateClick(wxCommandEvent& event)
 
 void pnlRecord::InputSession(const session& aSession)
 {
-    if(aSession.itCurrentSubsession != aSession.lstSubsession.end())
+    if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_nInputChannels = aSession.itCurrentSubsession->nChannels;
-        m_nSampleRate = aSession.itCurrentSubsession->nSampleRate;
+        m_nInputChannels = std::min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels);
+        m_nSampleRate = aSession.GetCurrentSubsession()->nSampleRate;
     }
     else
     {

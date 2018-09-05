@@ -51,7 +51,25 @@ struct PAMBASE_IMPEXPORT subsession
 
 struct PAMBASE_IMPEXPORT session
 {
-    session(const wxString& sRaw=wxEmptyString, const wxString& sn=wxEmptyString, const wxString& st=wxEmptyString, const wxString& sD=wxEmptyString, const wxString& sGr=wxEmptyString) : sRawSDP(sRaw), sName(sn), sType(st), sDescription(sD), sGroups(sGr), itCurrentSubsession(lstSubsession.end()){}
+    session(const wxString& sRaw=wxEmptyString, const wxString& sn=wxEmptyString, const wxString& st=wxEmptyString, const wxString& sD=wxEmptyString, const wxString& sGr=wxEmptyString) : sRawSDP(sRaw), sName(sn), sType(st), sDescription(sD), sGroups(sGr), lstSubsession(std::list<subsession>())
+    {
+
+        itCurrentSubsession = lstSubsession.end();
+    }
+
+    std::list<subsession>::const_iterator GetCurrentSubsession() const
+    {
+        if(lstSubsession.empty())
+        {
+            return lstSubsession.end();
+        }
+        return itCurrentSubsession;
+    }
+
+    void SetCurrentSubsession()
+    {
+        itCurrentSubsession = lstSubsession.begin();
+    }
 
     wxString sRawSDP;
     wxString sName;
@@ -61,7 +79,10 @@ struct PAMBASE_IMPEXPORT session
     refclk refClock;
 
     std::list<subsession> lstSubsession;
-    std::list<subsession>::iterator itCurrentSubsession;
+
+    private:
+        std::list<subsession>::const_iterator itCurrentSubsession;
+
 };
 
 
