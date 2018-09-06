@@ -18,7 +18,7 @@ END_EVENT_TABLE()
 R128Meter::R128Meter()
     : m_dMin(-70)
     , m_dMax(0)
-    , m_bShading(true)
+    , m_bShading(false)
 {
     //create our font
     Connect(wxEVT_PAINT, (wxObjectEventFunction)&R128Meter::OnPaint);

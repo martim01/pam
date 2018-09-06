@@ -113,7 +113,8 @@ void pnlEbuMeter::CreateMeters()
 
 
 
-
+    m_pPeakLeft->SetShading(false);
+    m_pPeakRight->SetShading(false);
     m_pPeakLeft->SetLightColours(-8,wxColour(0,220,0), 0,wxColour(0,240,0),  wxColour(255,100,100));
     m_pPeakRight->SetLightColours(-8,wxColour(0,220,0), 0,wxColour(0,240,0),  wxColour(255,100,100));
     m_pPeakLevels->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlEbuMeter::OnInfoLeftUp,0,this);
@@ -186,6 +187,7 @@ void pnlEbuMeter::CreateMeters()
         m_aMeters[i]->SetShading(false);//m_pBuilder->ReadSetting(wxT("Shading"),0)==1);
         m_aMeters[i]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlEbuMeter::OnInfoLeftUp,0,this);
     }
+
 
     m_aMeters[0]->SetLightColours(-26,wxColour(0,0,100), -20, wxColour(50,255,50), wxColour(0,0,100));
     m_aMeters[1]->SetLightColours(-26,wxColour(0,0,100), -20, wxColour(50,255,50), wxColour(0,0,100));
