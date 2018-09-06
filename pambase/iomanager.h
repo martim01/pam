@@ -2,6 +2,7 @@
 #include <wx/event.h>
 #include <set>
 #include <map>
+#include <wx/timer.h>
 #include "session.h"
 #include "dlldefine.h"
 
@@ -60,6 +61,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         void CreateSessionFromOutput(const wxString& sSource);
 
 
+        void OnTimerSilence(wxTimerEvent& event);
 
         std::set<wxEvtHandler*> m_setHandlers;
         bool m_bSingleHandler;
@@ -78,6 +80,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         wxString m_sCurrentRtp;
 
 
+        wxTimer m_timerSilence;
         //wxString m_sCurrentSequence;
 };
 

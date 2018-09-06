@@ -32,6 +32,7 @@ class WXEXPORT R128Builder : public MonitorPluginBuilder
         friend class pnlEbuMeter;
         friend class pnlControl;
         friend class pnlScale;
+        friend class pnlDisplay;
 
         void ClearMeter();
         void OnSettingChanged(SettingEvent& event);

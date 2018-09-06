@@ -17,6 +17,7 @@ class wmButton;
 class R128Builder;
 class R128Calculator;
 class TruePeakCalculator;
+class CorrelationBar;
 
 class pnlEbuMeter: public wxPanel
 {
@@ -63,6 +64,8 @@ class pnlEbuMeter: public wxPanel
 
         void ChangeScale();
 
+        void LoadSettings();
+
 	protected:
 
 		static const long ID_M_PLBL59;
@@ -98,6 +101,8 @@ class pnlEbuMeter: public wxPanel
         void SetPeakColour(wmLabel* pLabel, double dValue);
 		void CreateMeters();
 
+
+
         R128Builder* m_pBuilder;
         R128Meter* m_pLevels;
 		std::array<R128Meter*, 3> m_aMeters;
@@ -105,6 +110,8 @@ class pnlEbuMeter: public wxPanel
         R128Meter* m_pPeakLevels;
         R128Meter* m_pPeakLeft;
         R128Meter* m_pPeakRight;
+
+        CorrelationBar* m_pBar;
 
         double m_dPeak[2];
         R128Calculator* m_pR128;

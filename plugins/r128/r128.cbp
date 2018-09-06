@@ -134,6 +134,10 @@
 		<Linker>
 			<Add directory="../../lib" />
 		</Linker>
+		<Unit filename="correlationbar.cpp" />
+		<Unit filename="correlationbar.h" />
+		<Unit filename="pnlDisplay.cpp" />
+		<Unit filename="pnlDisplay.h" />
 		<Unit filename="pnlEbuMeter.cpp" />
 		<Unit filename="pnlEbuMeter.h" />
 		<Unit filename="pnlScale.cpp" />
@@ -144,6 +148,7 @@
 		<Unit filename="r128builder.h" />
 		<Unit filename="r128meter.cpp" />
 		<Unit filename="r128meter.h" />
+		<Unit filename="wxsmith/pnlDisplay.wxs" />
 		<Unit filename="wxsmith/pnlScale.wxs" />
 		<Extensions>
 			<code_completion />
@@ -157,10 +162,8 @@
 			</AutoVersioning>
 			<wxsmith version="1">
 				<resources>
-					<wxPanel wxs="wxsmith/pnlDisplay.wxs" src="pnlDisplay.cpp" hdr="pnlDisplay.h" fwddecl="0" i18n="1" name="pnlDisplay" language="CPP" />
-					<wxPanel wxs="wxsmith/pnlMeters.wxs" src="pnlMeters.cpp" hdr="pnlMeters.h" fwddecl="0" i18n="1" name="pnlMeters" language="CPP" />
-					<wxPanel wxs="wxsmith/pnlRouting.wxs" src="pnlRouting.cpp" hdr="pnlRouting.h" fwddecl="0" i18n="1" name="pnlRouting" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlScale.wxs" src="pnlScale.cpp" hdr="pnlScale.h" fwddecl="0" i18n="1" name="pnlScale" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlDisplay.wxs" src="pnlDisplay.cpp" hdr="pnlDisplay.h" fwddecl="0" i18n="1" name="pnlDisplay" language="CPP" />
 				</resources>
 			</wxsmith>
 		</Extensions>

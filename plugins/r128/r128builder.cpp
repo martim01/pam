@@ -7,6 +7,7 @@
 #include "version.h"
 #include "pnlControl.h"
 #include "pnlScale.h"
+#include "pnlDisplay.h"
 
 using namespace std;
 
@@ -17,6 +18,11 @@ m_pMeters(0)
     RegisterForSettingsUpdates(wxT("Calculate"), this);
     RegisterForSettingsUpdates(wxT("Scale"), this);
     RegisterForSettingsUpdates(wxT("Zero"), this);
+    RegisterForSettingsUpdates(wxT("Show_Short"), this);
+    RegisterForSettingsUpdates(wxT("Show_Momentary"), this);
+    RegisterForSettingsUpdates(wxT("Show_Live"), this);
+    RegisterForSettingsUpdates(wxT("Show_True"), this);
+    RegisterForSettingsUpdates(wxT("Show_Phase"), this);
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&R128Builder::OnSettingChanged);
     m_nInputChannels = 1;
     m_nDisplayChannel = 0;
@@ -46,7 +52,9 @@ list<pairOptionPanel_t> R128Builder::CreateOptionPanels(wxWindow* pParent)
     list<pairOptionPanel_t> lstOptionPanels;
 
 
+    lstOptionPanels.push_back(make_pair(wxT("Display"), new pnlDisplay(pParent, this)));
     lstOptionPanels.push_back(make_pair(wxT("Scale"), new pnlScale(pParent, this)));
+
    // lstOptionPanels.push_back(make_pair(wxT("Time"), new pnlDisplay(pParent, this)));
    // lstOptionPanels.push_back(make_pair(wxT("Meter"), new pnlMeters(pParent, this)));
 //    lstOptionPanels.push_back(make_pair(wxT("Options"), pOptions));
@@ -59,7 +67,6 @@ list<pairOptionPanel_t> R128Builder::CreateOptionPanels(wxWindow* pParent)
 
 void R128Builder::LoadSettings()
 {
-
 
 }
 
@@ -88,6 +95,10 @@ void R128Builder::OnSettingChanged(SettingEvent& event)
     else if(event.GetKey() == wxT("Zero"))
     {
         m_pMeters->ChangeScale();
+    }
+    else
+    {
+        m_pMeters->LoadSettings();
     }
 }
 

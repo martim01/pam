@@ -44,6 +44,9 @@ pnlLissajou::pnlLissajou(wxWindow* parent,LissajouBuilder* pBuilder,wxWindowID i
 
 	m_pBuilder = pBuilder;
 
+	m_pMeterLeft->SetLightColours(-8,wxColour(220,0,0), -8,wxColour(240,0,0),  wxColour(255,100,100));
+        m_pMeterRight->SetLightColours(-8,wxColour(0,220,0), -8, wxColour(0,240,0), wxColour(255,100,100));
+
 //	m_pJellyfish->Connect(wxEVT_COMMAND_LEFT_CLICK,(wxObjectEventFunction)&pnlLissajou::OnLeftUp);
 
 	double dLevels[15] = {0,-3, -6, -9, -12, -15, -18, -21, -24, -30, -36, -42, -48, -54, -60};

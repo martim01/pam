@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlDisplay">
+		<size>200,30</size>
+		<fg>#FFFFFF</fg>
+		<bg>#000000</bg>
+		<font>
+			<size>11</size>
+			<style>normal</style>
+			<weight>normal</weight>
+			<underlined>0</underlined>
+			<family>swiss</family>
+			<face>Tahoma</face>
+		</font>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+			<label>Meters To Show</label>
+			<pos>0,0</pos>
+			<size>200,30</size>
+			<bg>#004000</bg>
+		</object>
+		<object class="wmList" name="ID_M_PLST1" variable="m_plstShow" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>5,5</button_gap>
+			<columns>2</columns>
+			<button_pressed>#00FF00</button_pressed>
+			<button_selected>#00D500</button_selected>
+			<items />
+			<pos>0,30</pos>
+			<size>200,200</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI</style>
+			<handler function="OnlstShowSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+	</object>
+</wxsmith>

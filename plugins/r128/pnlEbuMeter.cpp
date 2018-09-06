@@ -15,6 +15,8 @@
 #include <wx/string.h>
 #include "maxmingraph.h"
 #include "settings.h"
+#include "correlationbar.h"
+
 using namespace std;
 
 
@@ -78,6 +80,8 @@ pnlEbuMeter::pnlEbuMeter(wxWindow* parent,R128Builder* pBuilder, wxWindowID id,c
 
     m_pR128 = new R128Calculator();
     m_pTrue = new TruePeakCalculator();
+
+    LoadSettings();
 }
 
 pnlEbuMeter::~pnlEbuMeter()
@@ -106,15 +110,24 @@ void pnlEbuMeter::CreateMeters()
     m_pPeakLevels = new R128Meter(this, wxID_ANY, wxEmptyString, -40,0,  true, wxPoint(630,0), wxSize(50,481));
     m_pPeakLeft = new R128Meter(this, wxID_ANY, wxT("Left"), -40, 0, false, wxPoint(685,0), wxSize(50,481));
     m_pPeakRight = new R128Meter(this, wxID_ANY, wxT("Right"), -40, 0, false, wxPoint(740,0), wxSize(50,481));
-    m_pPeakLeft->SetLightColours(-8,wxColour(220,0,0), 0,wxColour(240,0,0),  wxColour(255,100,100));
+
+
+
+
+    m_pPeakLeft->SetLightColours(-8,wxColour(0,220,0), 0,wxColour(0,240,0),  wxColour(255,100,100));
     m_pPeakRight->SetLightColours(-8,wxColour(0,220,0), 0,wxColour(0,240,0),  wxColour(255,100,100));
     m_pPeakLevels->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlEbuMeter::OnInfoLeftUp,0,this);
     m_pPeakLeft->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlEbuMeter::OnInfoLeftUp,0,this);
     m_pPeakRight->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlEbuMeter::OnInfoLeftUp,0,this);
 
+
+
+
     m_pPeakLevels->SetMinMax(-40.0, 5.0);
     m_pPeakLeft->SetMinMax(-40.0, 5.0);
     m_pPeakRight->SetMinMax(-40.0, 5.0);
+    m_pPeakLeft->SetFall(0.3);
+    m_pPeakRight->SetFall(0.3);
 
     m_pPeakLeft->SetTargetLevel(0, wxPen(wxColour(255,255,255)));
     m_pPeakRight->SetTargetLevel(0, wxPen(wxColour(255,255,255)));
@@ -134,9 +147,11 @@ void pnlEbuMeter::CreateMeters()
     m_plblRangeTitle = new wmLabel(this, wxID_ANY, wxT("Range"), wxPoint(350,150), wxSize(100,40));
     InitLabel(m_plblRangeTitle, CLR_LUFS);
 
-    m_plblPeakLeftTitle = new wmLabel(this, wxID_ANY, wxT("TP Left"), wxPoint(350,250), wxSize(100,40));
+
+
+    m_plblPeakLeftTitle = new wmLabel(this, wxID_ANY, wxT("TP Left"), wxPoint(350,210), wxSize(100,40));
     InitLabel(m_plblPeakLeftTitle, CLR_PEAK);
-    m_plblPeakRightTitle = new wmLabel(this, wxID_ANY, wxT("TP Right"), wxPoint(350,300), wxSize(100,40));
+    m_plblPeakRightTitle = new wmLabel(this, wxID_ANY, wxT("TP Right"), wxPoint(350,260), wxSize(100,40));
     InitLabel(m_plblPeakRightTitle, CLR_PEAK);
 
     m_plblMomentary = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,0), wxSize(100,40));
@@ -147,9 +162,9 @@ void pnlEbuMeter::CreateMeters()
     InitLabel(m_plblLufs, CLR_LUFS);
     m_plblRange = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,150), wxSize(145,40));
     InitLabel(m_plblRange, CLR_LUFS);
-    m_plblPeakLeft = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,250), wxSize(100,40));
+    m_plblPeakLeft = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,210), wxSize(100,40));
     InitLabel(m_plblPeakLeft, CLR_PEAK);
-    m_plblPeakRight = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,300), wxSize(100,40));
+    m_plblPeakRight = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,260), wxSize(100,40));
     InitLabel(m_plblPeakRight, CLR_PEAK);
 
 
@@ -158,11 +173,12 @@ void pnlEbuMeter::CreateMeters()
     m_plblShortMax = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(552, 50), wxSize(45,40));
     InitLabel(m_plblShortMax, CLR_SHORT,8);
 
-    m_plblPeakLeftMax = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(552, 250), wxSize(45,40));
+    m_plblPeakLeftMax = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(552, 210), wxSize(45,40));
     InitLabel(m_plblPeakLeftMax, CLR_PEAK,8);
-    m_plblPeakRightMax = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(552, 300), wxSize(45,40));
+    m_plblPeakRightMax = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(552, 260), wxSize(45,40));
     InitLabel(m_plblPeakRightMax, CLR_PEAK,8);
 
+    m_pBar = new CorrelationBar(this, wxID_ANY, wxPoint(350,330), wxSize(250,40));
 
     for(size_t i = 0; i < 3; i++)
     {
@@ -171,9 +187,9 @@ void pnlEbuMeter::CreateMeters()
         m_aMeters[i]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlEbuMeter::OnInfoLeftUp,0,this);
     }
 
-    m_aMeters[0]->SetLightColours(-26,wxColour(0,0,100), -20, wxColour(50,255,50), wxColour(255,100,100));
-    m_aMeters[1]->SetLightColours(-26,wxColour(0,0,100), -20, wxColour(50,255,50), wxColour(255,100,100));
-    m_aMeters[2]->SetLightColours(-26,wxColour(0,0,100), -20, wxColour(50,255,50), wxColour(255,100,100));
+    m_aMeters[0]->SetLightColours(-26,wxColour(0,0,100), -20, wxColour(50,255,50), wxColour(0,0,100));
+    m_aMeters[1]->SetLightColours(-26,wxColour(0,0,100), -20, wxColour(50,255,50), wxColour(0,0,100));
+    m_aMeters[2]->SetLightColours(-24,wxColour(0,0,100), -22, wxColour(50,255,50), wxColour(0,0,100));
 
     ChangeScale();
     m_pLevels->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlEbuMeter::OnInfoLeftUp,0,this);
@@ -195,6 +211,7 @@ void pnlEbuMeter::SetAudioData(const timedbuffer* pBuffer)
 {
     m_pR128->CalculateLevel(pBuffer);
     m_pTrue->CalculateLevel(pBuffer);
+    m_pBar->SetAudioData(pBuffer);
     UpdateMeters();
 }
 
@@ -226,8 +243,8 @@ void pnlEbuMeter::UpdateMeters()
     m_plblMomentaryMax->SetLabel(wxString::Format(wxT("%.1f"), m_pR128->GetMomentaryMax()));
     m_plblShortMax->SetLabel(wxString::Format(wxT("%.1f"), m_pR128->GetShortMax()));
 
-    SetPeakColour(m_plblPeakLeft, m_pTrue->GetLevel(0));
-    SetPeakColour(m_plblPeakRight, m_pTrue->GetLevel(1));
+    SetPeakColour(m_plblPeakLeft, m_pPeakLeft->GetValue());
+    SetPeakColour(m_plblPeakRight, m_pPeakRight->GetValue());
     SetPeakColour(m_plblPeakLeftMax, m_dPeak[0]);
     SetPeakColour(m_plblPeakRightMax, m_dPeak[1]);
 
@@ -271,6 +288,7 @@ void pnlEbuMeter::ClearMeters()
     m_dPeak[0] = -80;
     m_dPeak[1] = -80;
     m_pR128->ResetMeter();
+    m_pBar->ClearMeter();
     UpdateMeters();
 }
 
@@ -347,4 +365,43 @@ void pnlEbuMeter::OnbtnCalculateClick(wxCommandEvent& event)
 void pnlEbuMeter::OnbtnResetClick(wxCommandEvent& event)
 {
     ClearMeters();
+}
+
+
+void pnlEbuMeter::LoadSettings()
+{
+    bool bShort((m_pBuilder->ReadSetting(wxT("Show_Short"), wxT("1")) == wxT("1")));
+    bool bMomentary((m_pBuilder->ReadSetting(wxT("Show_Momentary"), wxT("1")) == wxT("1")));
+    bool bIntegrated((m_pBuilder->ReadSetting(wxT("Show_Live"), wxT("1")) == wxT("1")));
+    bool bTrue(m_pBuilder->ReadSetting(wxT("Show_True"), wxT("1")) == wxT("1"));
+
+    m_aMeters[0]->Show(bMomentary);
+    m_aMeters[1]->Show(bShort);
+    m_aMeters[2]->Show(bIntegrated);
+
+    m_plblShortTitle->Show(bShort);
+    m_plblShort->Show(bShort);
+    m_plblShortMax->Show(bShort);
+
+    m_plblMomentaryTitle->Show(bMomentary);
+    m_plblMomentary->Show(bMomentary);
+    m_plblMomentaryMax->Show(bMomentary);
+
+    m_plblLufs->Show(bIntegrated);
+    m_plblLufsTitle->Show(bIntegrated);
+    m_plblRange->Show(bIntegrated);
+    m_plblRangeTitle->Show(bIntegrated);
+
+    m_pPeakLevels->Show(bTrue);
+    m_pPeakLeft->Show(bTrue);
+    m_pPeakRight->Show(bTrue);
+
+    m_plblPeakLeft->Show(bTrue);
+    m_plblPeakLeftMax->Show(bTrue);
+    m_plblPeakLeftTitle->Show(bTrue);
+    m_plblPeakRight->Show(bTrue);
+    m_plblPeakRightMax->Show(bTrue);
+    m_plblPeakRightTitle->Show(bTrue);
+
+    m_pBar->Show(m_pBuilder->ReadSetting(wxT("Show_Phase"), wxT("1")) == wxT("1"));
 }

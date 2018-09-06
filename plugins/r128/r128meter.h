@@ -38,6 +38,15 @@ public:
     void FreezeMeter(bool bFreeze);
     void SetShading(bool bShading);
 
+    void SetFall(double dFall)
+    {
+        m_dFall = dFall;
+    }
+
+    double GetValue()
+    {
+        return m_dLastValue;
+    }
 
     enum {PEAK_HIDE, PEAK_SHOW, PEAK_HOLD};
 protected:

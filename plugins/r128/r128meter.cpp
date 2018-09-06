@@ -27,7 +27,8 @@ R128Meter::R128Meter()
 }
 
 R128Meter::R128Meter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, double dMax, bool bLevelDisplay, const wxPoint& pos, const wxSize& size) :
-    m_dMax(0)
+    m_dMax(0),
+    m_dFall(80)
 {
     m_dLastValue = -180;
     wxSize szInit(size);
@@ -234,7 +235,15 @@ void R128Meter::ShowValue(double dValue)
 {
     if(!m_bFreeze)
     {
-        m_dLastValue = dValue;
+        if(dValue > m_dLastValue-m_dFall)
+        {
+            m_dLastValue = dValue;
+        }
+        else
+        {
+            m_dLastValue -= m_dFall;
+        }
+
 
         if(m_nPeakMode != PEAK_HOLD)
         {
@@ -242,7 +251,7 @@ void R128Meter::ShowValue(double dValue)
         }
         if(m_nPeakCounter >= 10 || dValue >= m_dPeakValue)
         {
-            m_dPeakValue = min(dValue, m_dMax);
+            m_dPeakValue = min(m_dLastValue, m_dMax);
             if(m_dLevelOffset == 0.0)
             {
                 if(m_dMax <= 0)

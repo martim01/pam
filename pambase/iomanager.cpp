@@ -82,6 +82,11 @@ IOManager::IOManager() :
 
     m_pGenerator = new Generator();
     m_pGenerator->SetSampleRate(48000);
+
+    m_timerSilence.SetOwner(this, wxNewId());
+    Connect(m_timerSilence.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&IOManager::OnTimerSilence);
+
+    m_timerSilence.Start(250, true);
 }
 
 
@@ -187,6 +192,9 @@ void IOManager::OnAudioEvent(AudioEvent& event)
 
 void IOManager::PassOnAudio(AudioEvent& event)
 {
+    m_timerSilence.Stop();
+    m_timerSilence.Start(250,true);
+
     for(set<wxEvtHandler*>::iterator itHandler = m_setHandlers.begin(); itHandler != m_setHandlers.end(); ++itHandler)
     {
         (*itHandler)->ProcessEvent(event);
@@ -637,3 +645,23 @@ void IOManager::OnQoS(wxCommandEvent& event)
 }
 
 
+void IOManager::OnTimerSilence(wxTimerEvent& event)
+{
+    //getting here means we've had no audio event for 250ms
+    timedbuffer* pData = new timedbuffer(8192);
+    for(size_t i = 0; i < 8192; i++)
+    {
+        pData->GetWritableBuffer()[i] = 0.0;
+    }
+
+    pData->SetDuration(pData->GetBufferSize()*4);
+
+    int nSource(m_nInputSource);
+    if(m_bMonitorOutput == true)
+    {
+        nSource = m_nPlaybackSource;
+    }
+    AudioEvent eventAudio(pData, nSource, 4096, 480000, true, false);
+    PassOnAudio(eventAudio);
+
+}
