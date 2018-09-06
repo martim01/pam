@@ -62,6 +62,9 @@ class pam2Dialog: public wxDialog
         void OnClose(wxCloseEvent& event);
         void OnbmpSplashClick(wxCommandEvent& event);
         void OnbtnMonitorClick(wxCommandEvent& event);
+        void OnswpScreensPageChanged(wxNotebookEvent& event);
+        void OnswpMainPageChanged(wxNotebookEvent& event);
+        void OnswpSplashPageChanged(wxNotebookEvent& event);
         //*)
 
         //(*Identifiers(pam2Dialog)

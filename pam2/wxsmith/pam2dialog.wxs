@@ -9,6 +9,7 @@
 		<object class="wmSwitcherPanel" name="ID_M_PSWP3" variable="m_pswpSplash" member="yes">
 			<size>800,480</size>
 			<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
+			<handler function="OnswpSplashPageChanged" entry="EVT_NOTEBOOK_PAGE_CHANGED" />
 			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL4" variable="pnlSplash" member="yes">
 					<bg>#000000</bg>
@@ -31,6 +32,7 @@
 						<pos>0,0</pos>
 						<size>600,480</size>
 						<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
+						<handler function="OnswpMainPageChanged" entry="EVT_NOTEBOOK_PAGE_CHANGED" />
 					</object>
 					<object class="wxPanel" name="ID_PANEL1" variable="pnlLists" member="yes">
 						<pos>600,0</pos>

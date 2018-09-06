@@ -221,9 +221,13 @@ size_t wmSwitcherPanel::ChangeSelection(size_t nPage)
         size_t nReturn = m_nSelectedPage;
         SwipeFinished();
 
-        wxBookCtrlEvent event(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED);
+
+        wxBookCtrlEvent event(wxEVT_NOTEBOOK_PAGE_CHANGED, GetId());
         event.SetSelection(nReturn);
-        wxPostEvent(GetEventHandler(), event);
+        event.SetEventObject(this);
+
+        //HandleWindowEvent(event);
+        GetEventHandler()->ProcessEvent(event);
         return nReturn;
     }
     else if((m_nStyle & STYLE_VERTICAL) ==0)
@@ -250,9 +254,9 @@ size_t wmSwitcherPanel::ChangeSelection(size_t nPage)
         }
         m_timerScroll.Start(10);
 
-        wxBookCtrlEvent event(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED);
+        wxBookCtrlEvent event(wxEVT_NOTEBOOK_PAGE_CHANGED, GetId());
         event.SetSelection(m_nSelectedPage);
-        wxPostEvent(GetParent(), event);
+        GetEventHandler()->ProcessEvent(event);
         return m_nSelectedPage;
     }
     else
@@ -278,9 +282,9 @@ size_t wmSwitcherPanel::ChangeSelection(size_t nPage)
             m_nSwipeOffset = min(-1, -(GetClientRect().GetHeight())/10);
         }
         m_timerScroll.Start(10);
-        wxBookCtrlEvent event(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED);
+        wxBookCtrlEvent event(wxEVT_NOTEBOOK_PAGE_CHANGED, GetId());
         event.SetSelection(m_nSelectedPage);
-        wxPostEvent(GetParent(), event);
+        GetEventHandler()->ProcessEvent(event);
         return m_nSelectedPage;
     }
 

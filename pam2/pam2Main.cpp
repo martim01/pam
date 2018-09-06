@@ -185,15 +185,20 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_timerIpc.Start(1000, false);
 
     Connect(ID_BITMAPBUTTON1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pam2Dialog::OnbmpSplashClick);
+    Connect(ID_M_PSWP1,wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,(wxObjectEventFunction)&pam2Dialog::OnswpMainPageChanged);
     Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnlstScreensSelected);
     Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnlstScreensSelected);
     Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pam2Dialog::OnbtnMonitorClick);
     Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnplstOptionsSelected);
+    Connect(ID_M_PSWP3,wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,(wxObjectEventFunction)&pam2Dialog::OnswpSplashPageChanged);
     Connect(ID_TIMER1,wxEVT_TIMER,(wxObjectEventFunction)&pam2Dialog::OntimerStartTrigger);
     Connect(ID_TIMER2,wxEVT_TIMER,(wxObjectEventFunction)&pam2Dialog::Onm_timerFileTrigger);
     Connect(ID_TIMER3,wxEVT_TIMER,(wxObjectEventFunction)&pam2Dialog::OntimerIpcTrigger);
     Connect(wxID_ANY,wxEVT_CLOSE_WINDOW,(wxObjectEventFunction)&pam2Dialog::OnClose);
     //*)
+
+    //m_pswpScreens->SetEventHandler(this);
+    Connect(ID_M_PSWP4,wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,(wxObjectEventFunction)&pam2Dialog::OnswpScreensPageChanged);
 
     m_pbtnMonitor->SetToggleLook(true, wxT("Input"), wxT("Output"), 45);
     m_pbtnMonitor->ToggleSelection(Settings::Get().Read(wxT("Monitor"), wxT("Source"), 0), true);
@@ -380,7 +385,9 @@ void pam2Dialog::OnlstScreensSelected(wxCommandEvent& event)
     if(event.GetString() == wxT("Settings"))
     {
         m_plstScreens->SelectAll(false,false);
+
         Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
+
         m_pSelectedMonitor = 0;
         ShowSettingsPanel();
     }
@@ -402,11 +409,11 @@ void pam2Dialog::OnlstScreensSelected(wxCommandEvent& event)
     {
         m_plstInbuilt->SelectAll(false, false);
 
+
         if(event.GetString() == wxT("Tests"))
         {
-
-
             Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
+            Settings::Get().Write(wxT("Main"), wxT("Last"),event.GetString());
             m_pSelectedMonitor = 0;
             ShowTestPanels();
         }
@@ -423,6 +430,7 @@ void pam2Dialog::OnlstScreensSelected(wxCommandEvent& event)
         else
         {
             Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
+            Settings::Get().Write(wxT("Main"), wxT("Last"),event.GetString());
             ShowMonitorPanel(event.GetString());
         }
     }
@@ -859,4 +867,25 @@ void pam2Dialog::OnSession(wxCommandEvent& event)
 void pam2Dialog::OnbtnMonitorClick(wxCommandEvent& event)
 {
     Settings::Get().Write(wxT("Monitor"), wxT("Source"), event.IsChecked());
+}
+
+void pam2Dialog::OnswpScreensPageChanged(wxNotebookEvent& event)
+{
+    if(m_pswpScreens->GetSelectionName() == wxT("Screens"))
+    {
+        wxString sLast(Settings::Get().Read(wxT("Main"), wxT("Monitor"), wxEmptyString));
+        if(sLast == wxT("Log") || sLast == wxT("Settings") || sLast == wxT("Help"))
+        {
+            m_plstScreens->SelectButton(Settings::Get().Read(wxT("Main"), wxT("Last"), wxEmptyString));
+        }
+    }
+}
+
+void pam2Dialog::OnswpMainPageChanged(wxNotebookEvent& event)
+{
+
+}
+
+void pam2Dialog::OnswpSplashPageChanged(wxNotebookEvent& event)
+{
 }
