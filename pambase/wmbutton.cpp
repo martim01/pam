@@ -92,7 +92,7 @@ void wmButton::CreateRects()
     double dLabelWidth = (GetClientRect().GetWidth()-dButtonWidth)/2;
 
     m_uiToggleLeft.SetRect(GetClientRect().GetLeft(), GetClientRect().GetTop(), dLabelWidth, GetClientRect().GetHeight());
-    m_uiGroove.SetRect(m_uiToggleLeft.GetRight(), m_uiToggleLeft.GetTop(), dButtonWidth, GetClientRect().GetHeight());
+    m_uiGroove.SetRect(m_uiToggleLeft.GetRight(), m_uiToggleLeft.GetTop()+2, dButtonWidth, GetClientRect().GetHeight()-4);
     m_uiToggleRight.SetRect(m_uiGroove.GetRight(), GetClientRect().GetTop(), GetClientRect().GetRight()-m_uiGroove.GetRight()+1, GetClientRect().GetHeight());
 
     m_uiToggleLeft.Pad(5,0);
@@ -429,9 +429,11 @@ void wmButton::DrawToggle(wxDC& dc)
 
 
     //draw groove
+    dc.SetBackground(wxBrush(wxColour(wxColour(180,180,180))));
+    dc.Clear();
 
     m_uiGroove.SetBackgroundColour(wxColour(140,140,140));
-    m_uiGroove.Draw(dc, wxEmptyString, uiRect::BORDER_DOWN);
+    m_uiGroove.Draw(dc, wxEmptyString, uiRect::BORDER_NONE);
 
     m_uiToggleLeft.SetBackgroundColour(wxColour(180,180,180));
     m_uiToggleRight.SetBackgroundColour(wxColour(180,180,180));
