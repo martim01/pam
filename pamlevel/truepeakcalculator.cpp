@@ -42,6 +42,7 @@ void TruePeakCalculator::InputSession(const session& aSession)
 
     m_vTruePeak.clear();
     m_vCurrentPeak.clear();
+    m_vSamplePeak.clear();
 
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
@@ -69,6 +70,7 @@ void TruePeakCalculator::InputSession(const session& aSession)
             }
         }
         m_vCurrentPeak.resize(m_nChannels);
+        m_vSamplePeak.resize(m_nChannels);
         m_vTruePeak.resize(m_nChannels);
     }
     else
@@ -80,6 +82,22 @@ void TruePeakCalculator::InputSession(const session& aSession)
 
 void TruePeakCalculator::CalculateLevel(const timedbuffer* pBuffer)
 {
+
+    for(int i = 0; i < m_vCurrentPeak.size();i++)
+    {
+        m_vCurrentPeak[i] = -80.0;
+        m_vSamplePeak[i] = -80.0;
+    }
+
+    //work out sample peak...
+    for(int i = 0; i < pBuffer->GetBufferSize(); i+= m_nChannels)
+    {
+        for(int j = 0; j < m_nChannels; j++)
+        {
+            m_vSamplePeak[j] = max(m_vSamplePeak[j], pBuffer->GetBuffer()[i+j]);
+        }
+    }
+
     if(m_pSrc->pState && m_vFilter.empty() == false)
     {
         m_pSrc->data.data_out = new float[pBuffer->GetBufferSize()*4];
@@ -96,10 +114,7 @@ void TruePeakCalculator::CalculateLevel(const timedbuffer* pBuffer)
         }
         else
         {//Now filter
-            for(int i = 0; i < m_vCurrentPeak.size();i++)
-            {
-                m_vCurrentPeak[i] = -80.0;
-            }
+
             for(int i = 0; i < m_pSrc->data.output_frames_gen*m_nChannels; i+= m_nChannels)
             {
                 for(int j = 0; j < m_nChannels; j++)
@@ -123,7 +138,7 @@ void TruePeakCalculator::CalculateLevel(const timedbuffer* pBuffer)
             }
             for(int j = 0; j < m_nChannels; j++)
             {
-                m_vTruePeak[j] = 20 * log10(m_vCurrentPeak[j]);
+                m_vTruePeak[j] = 20 * log10(max(m_vSamplePeak[j], m_vCurrentPeak[j]));
             }
         }
         delete[] m_pSrc->data.data_out;

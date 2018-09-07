@@ -166,7 +166,7 @@ class pam2Dialog: public wxDialog
         pnlHelp* m_ppnlHelp;
         pnlLog* m_ppnlLog;
         MonitorPluginBuilder* m_pSelectedMonitor;
-
+        std::set<MonitorPluginBuilder*> m_setAlwaysPassAudio;
 
         std::multimap<size_t, wxString> m_mmMonitorPlugins;
         size_t m_nCurrentMonitorPage;

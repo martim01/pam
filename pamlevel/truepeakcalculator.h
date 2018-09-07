@@ -25,6 +25,7 @@ class PAMLEVEL_IMPEXPORT TruePeakCalculator
         std::vector<Filter*> m_vFilter;
         std::vector<float> m_vTruePeak;
         std::vector<float> m_vCurrentPeak;
+        std::vector<float> m_vSamplePeak;
 
         unsigned int m_nChannels;
 };

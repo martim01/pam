@@ -288,6 +288,15 @@ void pam2Dialog::LoadMonitorPanels()
         }
     }
 
+    //now store the plugins that always want audio....
+    for(map<wxString, MonitorPluginBuilder*>::iterator itPlugin = MonitorPluginFactory::Get()->GetPluginBegin(); itPlugin != MonitorPluginFactory::Get()->GetPluginEnd(); ++itPlugin)
+    {
+        if(itPlugin->second->WantsAudioAlways())
+        {
+            m_setAlwaysPassAudio.insert(itPlugin->second);
+        }
+    }
+
 
     //Add the test and settings panels
     m_ppnlTests = new pnlTests(m_pswpMain);
@@ -669,6 +678,14 @@ void pam2Dialog::PassDataToPanels(timedbuffer* pTimedBuffer)
     else if(m_ppnlTests)
     {
         m_ppnlTests->SetAudioData(pTimedBuffer);
+    }
+
+    for(set<MonitorPluginBuilder*>::iterator itPlugin = m_setAlwaysPassAudio.begin(); itPlugin != m_setAlwaysPassAudio.end(); ++itPlugin)
+    {
+        if((*itPlugin) != m_pSelectedMonitor)
+        {
+            (*itPlugin)->SetAudioData(pTimedBuffer);
+        }
     }
 }
 

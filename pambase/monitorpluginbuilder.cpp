@@ -9,7 +9,8 @@ using namespace std;
 DEFINE_EVENT_TYPE(wxEVT_MONITOR_MAX)
 
 MonitorPluginBuilder::MonitorPluginBuilder() :
-    m_pHandler(0)
+    m_pHandler(0),
+    m_bWantsAudioAlways(false)
 {
 
 }

@@ -22,15 +22,17 @@ class PAMBASE_IMPEXPORT MonitorPluginBuilder : public wxEvtHandler
 
         virtual void InputSession(const session& aSession)=0;
         virtual void OutputChannels(const std::vector<char>& vChannels)=0;
-
         virtual void SetAudioData(const timedbuffer* pBuffer)=0;
         virtual wxString GetName() const=0;
-
         virtual void SetQoSData(qosData* pData){};
-
         virtual bool CanBeMaximized() const;
 
         void DeletePanels();
+
+        bool WantsAudioAlways()
+        {
+            return m_bWantsAudioAlways;
+        }
 
     protected:
 
@@ -56,6 +58,8 @@ class PAMBASE_IMPEXPORT MonitorPluginBuilder : public wxEvtHandler
 
         void AskToMonitor(const std::vector<char>& vChannels);
         wxEvtHandler* m_pHandler;
+
+        bool m_bWantsAudioAlways;
 
     private:
         wmSwitcherPanel* m_pswpMonitor;

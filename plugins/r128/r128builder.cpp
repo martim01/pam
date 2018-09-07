@@ -15,6 +15,7 @@ R128Builder::R128Builder() : MonitorPluginBuilder(),
 m_pMeters(0)
 {
 
+    m_bWantsAudioAlways = true;
     RegisterForSettingsUpdates(wxT("Calculate"), this);
     RegisterForSettingsUpdates(wxT("Scale"), this);
     RegisterForSettingsUpdates(wxT("Zero"), this);
