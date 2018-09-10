@@ -89,7 +89,7 @@ void TruePeakCalculator::CalculateLevel(const timedbuffer* pBuffer)
         m_vSamplePeak[i] = -80.0;
     }
 
-    //work out sample peak...
+    //work ouF+t sample peak...
     for(int i = 0; i < pBuffer->GetBufferSize(); i+= m_nChannels)
     {
         for(int j = 0; j < m_nChannels; j++)
