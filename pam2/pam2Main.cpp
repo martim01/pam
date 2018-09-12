@@ -671,6 +671,7 @@ void pam2Dialog::OnQoS(wxCommandEvent& event)
 
 void pam2Dialog::PassDataToPanels(timedbuffer* pTimedBuffer)
 {
+
     if(m_pSelectedMonitor)
     {
         m_pSelectedMonitor->SetAudioData(pTimedBuffer);

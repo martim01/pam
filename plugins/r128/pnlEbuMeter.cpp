@@ -97,6 +97,15 @@ void pnlEbuMeter::SetSession(const session& aSession)
 {
     m_pR128->InputSession(aSession);
     m_pTrue->InputSession(aSession);
+
+    if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
+    {
+        m_nChannels = aSession.GetCurrentSubsession()->nChannels;
+    }
+    else
+    {
+        m_nChannels = 0;
+    }
 }
 
 void pnlEbuMeter::CreateMeters()
@@ -211,9 +220,18 @@ void pnlEbuMeter::InitLabel(wmLabel* pLabel, const wxColour clrBack, int nFontSi
 
 void pnlEbuMeter::SetAudioData(const timedbuffer* pBuffer)
 {
-    m_pR128->CalculateLevel(pBuffer);
-    m_pTrue->CalculateLevel(pBuffer);
-    m_pBar->SetAudioData(pBuffer);
+    if(m_nChannels > 0)
+    {
+        m_pR128->CalculateLevel(pBuffer);
+        if(m_bTrue)
+        {
+            m_pTrue->CalculateLevel(pBuffer);
+        }
+        if(m_bBar)
+        {
+            m_pBar->SetAudioData(pBuffer);
+        }
+    }
     UpdateMeters();
 }
 
@@ -375,7 +393,7 @@ void pnlEbuMeter::LoadSettings()
     bool bShort((m_pBuilder->ReadSetting(wxT("Show_Short"), wxT("1")) == wxT("1")));
     bool bMomentary((m_pBuilder->ReadSetting(wxT("Show_Momentary"), wxT("1")) == wxT("1")));
     bool bIntegrated((m_pBuilder->ReadSetting(wxT("Show_Live"), wxT("1")) == wxT("1")));
-    bool bTrue(m_pBuilder->ReadSetting(wxT("Show_True"), wxT("1")) == wxT("1"));
+    m_bTrue = (m_pBuilder->ReadSetting(wxT("Show_True"), wxT("1")) == wxT("1"));
 
     m_aMeters[0]->Show(bMomentary);
     m_aMeters[1]->Show(bShort);
@@ -394,16 +412,17 @@ void pnlEbuMeter::LoadSettings()
     m_plblRange->Show(bIntegrated);
     m_plblRangeTitle->Show(bIntegrated);
 
-    m_pPeakLevels->Show(bTrue);
-    m_pPeakLeft->Show(bTrue);
-    m_pPeakRight->Show(bTrue);
+    m_pPeakLevels->Show(m_bTrue);
+    m_pPeakLeft->Show(m_bTrue);
+    m_pPeakRight->Show(m_bTrue);
 
-    m_plblPeakLeft->Show(bTrue);
-    m_plblPeakLeftMax->Show(bTrue);
-    m_plblPeakLeftTitle->Show(bTrue);
-    m_plblPeakRight->Show(bTrue);
-    m_plblPeakRightMax->Show(bTrue);
-    m_plblPeakRightTitle->Show(bTrue);
+    m_plblPeakLeft->Show(m_bTrue);
+    m_plblPeakLeftMax->Show(m_bTrue);
+    m_plblPeakLeftTitle->Show(m_bTrue);
+    m_plblPeakRight->Show(m_bTrue);
+    m_plblPeakRightMax->Show(m_bTrue);
+    m_plblPeakRightTitle->Show(m_bTrue);
 
-    m_pBar->Show(m_pBuilder->ReadSetting(wxT("Show_Phase"), wxT("1")) == wxT("1"));
+    m_bBar = m_pBuilder->ReadSetting(wxT("Show_Phase"), wxT("1")) == wxT("1");
+    m_pBar->Show(m_bBar);
 }

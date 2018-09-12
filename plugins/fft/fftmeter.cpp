@@ -336,7 +336,7 @@ void FftMeter::SetNumberOfChannels(unsigned int nChannels)
 
 void FftMeter::SetData(const timedbuffer* pBuffer)
 {
-    if(!m_bHold)
+    if(!m_bHold && m_nChannels != 0)
     {
         for(size_t i = 0; i < pBuffer->GetBufferSize(); i++)
         {

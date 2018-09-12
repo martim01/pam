@@ -30,6 +30,7 @@ PolarScopeBuilder::~PolarScopeBuilder()
 
 void PolarScopeBuilder::SetAudioData(const timedbuffer* pBuffer)
 {
+    wxLogDebug(wxT("PSB:: SetAuiodData"));
     m_pPolarScope->SetAudioData(pBuffer);
 }
 
@@ -44,12 +45,8 @@ list<pairOptionPanel_t> PolarScopeBuilder::CreateOptionPanels(wxWindow* pParent)
     list<pairOptionPanel_t> lstOptionPanels;
 
 
-//    m_ppnlRouting = new pnlRouting(pParent, this);
 
     lstOptionPanels.push_back(make_pair(wxT("Mode"), new pnlOptionsMode(pParent, this)));
-//    lstOptionPanels.push_back(make_pair(wxT("Time"), new pnlDisplay(pParent, this)));
-//    lstOptionPanels.push_back(make_pair(wxT("Meter"), new pnlMeters(pParent, this)));
-//    lstOptionPanels.push_back(make_pair(wxT("Options"), pOptions));
 //
     return lstOptionPanels;
 }
@@ -68,8 +65,8 @@ void PolarScopeBuilder::InputSession(const session& aSession)
 {
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_pPolarScope->SetNumberOfInputChannels(min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels));
-        m_nInputChannels = min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels);
+        m_nInputChannels = aSession.GetCurrentSubsession()->nChannels;
+        m_pPolarScope->SetNumberOfInputChannels(m_nInputChannels);
     }
     else
     {
@@ -90,27 +87,6 @@ void PolarScopeBuilder::OnSettingChanged(SettingEvent& event)
     {
         m_pPolarScope->SetMode(ReadSetting(wxT("Mode"),0));
     }
-//    if(event.GetKey() == wxT("Routing"))
-//    {
-//        m_nDisplayChannel = ReadSetting(wxT("Routing"),0);
-//        m_pPolarScope->SetChannel(m_nDisplayChannel);
-//        ClearMeter();
-//    }
-//    else if(event.GetKey() == wxT("Timeframe"))
-//    {
-//        m_pPolarScope->SetTimespan(ReadSetting(wxT("Timeframe"),60));
-//    }
-//    else if(event.GetKey() == wxT("RefreshRate"))
-//    {
-//        m_pPolarScope->SetRefreshRate(ReadSetting(wxT("RefreshRate"),250));
-//    }
-//    else if(event.GetKey() == wxT("MeterMode"))
-//    {
-//        m_nMode = ReadSetting(wxT("MeterMode"), 0);
-//        m_pCalculator->SetMode(m_nMode);
-//        m_pPolarScope->SetMode(m_nMode);
-//
-//    }
 }
 
 

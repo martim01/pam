@@ -467,26 +467,29 @@ void LissajouMeter::SetLissajouData(const float* pBuffer, int nBufferSize)
         delete[] m_pBuffer;
         m_pBuffer = 0;
     }
-    m_nBufferSize = (nBufferSize);
-    m_pBuffer = new float[m_nBufferSize];
-    memcpy(m_pBuffer, pBuffer, m_nBufferSize*sizeof(float));
-
-    if(m_nScaling == SCALE_AUTO)
+    if(m_nChannels != 0)
     {
-        double dMax[2] = {0.0,0.0};
-        for(int i = 0; i < nBufferSize; i+=m_nChannels)
+        m_nBufferSize = (nBufferSize);
+        m_pBuffer = new float[m_nBufferSize];
+        memcpy(m_pBuffer, pBuffer, m_nBufferSize*sizeof(float));
+
+        if(m_nScaling == SCALE_AUTO)
         {
-            dMax[0] = max((double)dMax[0], (double)fabs(pBuffer[i+m_nAxis[0]]));
-            dMax[1] = max((double)dMax[1], (double)fabs(pBuffer[i+m_nAxis[1]]));
+            double dMax[2] = {0.0,0.0};
+            for(int i = 0; i < nBufferSize; i+=m_nChannels)
+            {
+                dMax[0] = max((double)dMax[0], (double)fabs(pBuffer[i+m_nAxis[0]]));
+                dMax[1] = max((double)dMax[1], (double)fabs(pBuffer[i+m_nAxis[1]]));
+            }
+            m_dAutoScale = m_Compressor.getRatio()/m_Compressor.process(dMax[0],dMax[1]);
         }
-        m_dAutoScale = m_Compressor.getRatio()/m_Compressor.process(dMax[0],dMax[1]);
-    }
-    else
-    {
-        m_dAutoScale = 1.0;
-    }
+        else
+        {
+            m_dAutoScale = 1.0;
+        }
 
-    Refresh();
+        Refresh();
+    }
 }
 
 

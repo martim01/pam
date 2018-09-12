@@ -111,12 +111,19 @@ class pnlEbuMeter: public wxPanel
         R128Meter* m_pPeakLeft;
         R128Meter* m_pPeakRight;
 
+
         CorrelationBar* m_pBar;
 
         double m_dPeak[2];
         R128Calculator* m_pR128;
         TruePeakCalculator* m_pTrue;
         double m_dOffset;
+        unsigned int m_nChannels;
+
+        bool m_bTrue;
+        bool m_bBar;
+
+
         static const wxColour CLR_LUFS;
         static const wxColour CLR_SHORT;
         static const wxColour CLR_PEAK;
