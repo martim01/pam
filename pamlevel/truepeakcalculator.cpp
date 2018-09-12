@@ -7,7 +7,7 @@
 
 using namespace std;
 
-TruePeakCalculator::TruePeakCalculator() : m_pSrc(0)
+TruePeakCalculator::TruePeakCalculator() : m_pSrc(0), m_nChannels(0)
 {
     m_pSrc = new SrcWrapper();
 }
@@ -89,6 +89,7 @@ void TruePeakCalculator::CalculateLevel(const timedbuffer* pBuffer)
         m_vSamplePeak[i] = -80.0;
     }
 
+
     //work ouF+t sample peak...
     for(int i = 0; i < pBuffer->GetBufferSize(); i+= m_nChannels)
     {
@@ -98,6 +99,7 @@ void TruePeakCalculator::CalculateLevel(const timedbuffer* pBuffer)
         }
     }
 
+    #ifndef __WXDEBUG__
     if(m_pSrc->pState && m_vFilter.empty() == false)
     {
         m_pSrc->data.data_out = new float[pBuffer->GetBufferSize()*4];
@@ -143,6 +145,13 @@ void TruePeakCalculator::CalculateLevel(const timedbuffer* pBuffer)
         }
         delete[] m_pSrc->data.data_out;
     }
+    #else
+    for(int j = 0; j < m_nChannels; j++)
+        {
+            m_vTruePeak[j] = 20 * log10(m_vSamplePeak[j]);
+        }
+    #endif // __WXDEBUG__
+
 }
 
 double TruePeakCalculator::GetLevel(unsigned int nChannel)
