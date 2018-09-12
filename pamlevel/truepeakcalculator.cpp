@@ -152,12 +152,6 @@ void TruePeakCalculator::CalculateLevel(const timedbuffer* pBuffer)
             m_vTruePeak[j] = 20 * log10(max(m_vSamplePeak[j], m_vCurrentPeak[j]));
         }
     }
-    #else
-    for(int j = 0; j < m_nChannels; j++)
-        {
-            m_vTruePeak[j] = 20 * log10(m_vSamplePeak[j]);
-        }
-    #endif // __WXDEBUG__
 
 }
 
