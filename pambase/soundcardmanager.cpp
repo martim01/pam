@@ -15,7 +15,6 @@ SoundcardManager& SoundcardManager::Get()
 
 bool SoundcardManager::Init(wxEvtHandler* pHandler, int nInputDevice, int nOutputDevice, unsigned int nOutputSampleRate)
 {
-
     if(m_pInput)
     {
         if(m_pInput->GetDevice() != nInputDevice || (m_pInput != m_pOutput && m_pInput->GetDevice() == nOutputDevice))

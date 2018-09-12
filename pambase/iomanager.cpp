@@ -442,7 +442,17 @@ void IOManager::OpenSoundcardDevice(unsigned long nOutputSampleRate)
         wmLog::Get()->Log(wxString::Format(wxT("Audio Device Created: Input [%d][%s] Latency %.2f"), SoundcardManager::Get().GetInputDevice(), SoundcardManager::Get().GetInputDeviceName().c_str(), SoundcardManager::Get().GetInputLatency()));
         wmLog::Get()->Log(wxString::Format(wxT("Audio Device Created: Output [%d][%s] Latency %.2f"), SoundcardManager::Get().GetOutputDevice(), SoundcardManager::Get().GetOutputDeviceName().c_str(), SoundcardManager::Get().GetOutputLatency()));
     }
-
+    else
+    {
+//        if(SoundcardManager::Get().GetInputDevice() < 0)
+//        {
+//            Settings::Get().Write(wxT("Input"), wxT("Type"), wxT("Disabled"));
+//        }
+//        if(SoundcardManager::Get().GetOutputDevice() < 0)
+//        {
+//            Settings::Get().Write(wxT("Output"), wxT("Enabled"), 0);
+//        }
+    }
 }
 
 void IOManager::InitAudioInputDevice()
@@ -647,21 +657,23 @@ void IOManager::OnQoS(wxCommandEvent& event)
 
 void IOManager::OnTimerSilence(wxTimerEvent& event)
 {
-    //getting here means we've had no audio event for 250ms
-    timedbuffer* pData = new timedbuffer(8192);
-    for(size_t i = 0; i < 8192; i++)
+    if(m_SessionIn.GetCurrentSubsession() != m_SessionIn.lstSubsession.end() && m_SessionIn.GetCurrentSubsession()->nChannels != 0)
     {
-        pData->GetWritableBuffer()[i] = 0.0;
+        //getting here means we've had no audio event for 250ms
+        timedbuffer* pData = new timedbuffer(8192);
+        for(size_t i = 0; i < 8192; i++)
+        {
+            pData->GetWritableBuffer()[i] = 0.0;
+        }
+
+        pData->SetDuration(pData->GetBufferSize()*4);
+
+        int nSource(m_nInputSource);
+        if(m_bMonitorOutput == true)
+        {
+            nSource = m_nPlaybackSource;
+        }
+        AudioEvent eventAudio(pData, nSource, 4096, 480000, true, false);
+        PassOnAudio(eventAudio);
     }
-
-    pData->SetDuration(pData->GetBufferSize()*4);
-
-    int nSource(m_nInputSource);
-    if(m_bMonitorOutput == true)
-    {
-        nSource = m_nPlaybackSource;
-    }
-    AudioEvent eventAudio(pData, nSource, 4096, 480000, true, false);
-    PassOnAudio(eventAudio);
-
 }

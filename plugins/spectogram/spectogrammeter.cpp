@@ -230,7 +230,7 @@ void SpectogramMeter::SetNumberOfChannels(unsigned int nChannels)
 
 void SpectogramMeter::SetData(const timedbuffer* pBuffer)
 {
-    if(!m_bHold)
+    if(!m_bHold && m_nChannels != 0)
     {
         for(size_t i = 0; i < pBuffer->GetBufferSize(); i++)
         {
