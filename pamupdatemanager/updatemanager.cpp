@@ -142,7 +142,6 @@ bool UpdateManager::GetUpdateListFromWebServer()
         {
             std::string sBuff;
             sBuff.assign(chunk.pMemory, chunk.nSize);
-            wxLogDebug(wxT("UpdateManager Got UpdateList %s"), wxString::FromAscii(sBuff.c_str()).c_str());
 
             wxStringInputStream sis(wxString::FromAscii(sBuff.c_str()));
             DecodeUpdateList(wxXmlDocument(sis));
@@ -189,7 +188,6 @@ bool UpdateManager::DecodeUpdateList(const wxXmlDocument& xmlDoc)
 {
     if(xmlDoc.IsOk() && xmlDoc.GetRoot())
     {
-        wxLogDebug(wxT("UpdateManager Xml Correct"));
         for(wxXmlNode* pNode = xmlDoc.GetRoot()->GetChildren(); pNode; pNode = pNode->GetNext())
         {
             if(pNode->GetName().CmpNoCase(wxT("update")) == 0)

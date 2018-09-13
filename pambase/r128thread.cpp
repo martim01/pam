@@ -158,5 +158,6 @@ void R128Thread::Reset()
 
 size_t R128Thread::GetIntegrationTime()
 {
+    wxMutexLocker ml(m_mutex);
     return m_lstLive.size();
 }

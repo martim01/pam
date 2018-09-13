@@ -505,7 +505,6 @@ void Smpte2110MediaSubsession::parseSDPAttribute_Mid()
         size_t nEnd = sSdp.find(wxT("\n"), nFront);
         nEnd -= nFront;
         m_sGroup = sSdp.substr(nFront+sFind.length(), (nEnd-sFind.length()));
-        wxLogDebug(wxT("Group = %s"), m_sGroup.c_str());
     }
 }
 

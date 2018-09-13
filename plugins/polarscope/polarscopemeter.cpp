@@ -430,7 +430,6 @@ void PolarScope::ClearMeter()
 
 void PolarScope::SetAudioData(const timedbuffer* pBuffer)
 {
-    wxLogDebug(wxT("PS: SetAudioData %d"), m_nInputChannels);
     if(m_pBuffer)
     {
         delete[] m_pBuffer;
@@ -439,7 +438,6 @@ void PolarScope::SetAudioData(const timedbuffer* pBuffer)
 
     if(m_nInputChannels != 0)
     {
-        wxLogDebug(wxT("PolarScope Channels %d"), m_nInputChannels);
         m_nBufferSize = (pBuffer->GetBufferSize());
         m_pBuffer = new float[m_nBufferSize];
         memcpy(m_pBuffer, pBuffer->GetBuffer(), m_nBufferSize*sizeof(float));

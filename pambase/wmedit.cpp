@@ -202,7 +202,6 @@ void wmEdit::Capitalize(bool bCapitalize)
 
 void wmEdit::OnChar(wxKeyEvent& event)
 {
-    wxLogDebug(wxT("OnChar"));
     if(IsEnabled() == false)
         return;
 
@@ -569,7 +568,6 @@ wxPoint wmEdit::GetCaretPos() const
 
 bool wmEdit::Validate(const wxChar& ch)
 {
-    wxLogDebug(wxT("Validate '%c'"), ch);
     switch(m_nValidation)
     {
         case ASCII:

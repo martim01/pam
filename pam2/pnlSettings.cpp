@@ -975,11 +975,6 @@ void pnlSettings::PopulateChannelList(wmList* pList, int nSelected)
     if(IOManager::Get().GetSession().GetCurrentSubsession() != IOManager::Get().GetSession().lstSubsession.end())
     {
         nChannels = IOManager::Get().GetSession().GetCurrentSubsession()->nChannels;
-        wxLogDebug(wxT("pnlSettings:: %d channels"), nChannels);
-    }
-    else
-    {
-        wxLogDebug(wxT("pnlSettings:: No subsession"));
     }
     if(nChannels > 0)
     {
@@ -1002,7 +997,6 @@ void pnlSettings::PopulateChannelList(wmList* pList, int nSelected)
 
 void pnlSettings::InputSessionChanged()
 {
-    wxLogDebug(wxT("pnlSettings::InputSessionChanged"));
     PopulateChannelList(m_plstOutputLeft, Settings::Get().Read(wxT("Output"), wxT("Left"), 0));
     PopulateChannelList(m_plstOutputRight, Settings::Get().Read(wxT("Output"), wxT("Right"), 0));
 }

@@ -40,6 +40,7 @@ const long pnlEbuMeter::ID_M_PBTN1 = wxNewId();
 const long pnlEbuMeter::ID_M_PBTN2 = wxNewId();
 //*)
 const wxColour pnlEbuMeter::CLR_LUFS = wxColour(110,207,169);
+const wxColour pnlEbuMeter::CLR_TIME = wxColour(100,200,159);
 const wxColour pnlEbuMeter::CLR_SHORT = wxColour(110,169,207);
 const wxColour pnlEbuMeter::CLR_PEAK = wxColour(110,169,169);
 const wxColour pnlEbuMeter::CLR_PEAK_ALARM = wxColour(207,110,110);
@@ -81,6 +82,7 @@ pnlEbuMeter::pnlEbuMeter(wxWindow* parent,R128Builder* pBuilder, wxWindowID id,c
     m_pR128 = new R128Calculator();
     m_pTrue = new TruePeakCalculator();
 
+    m_dtStart = wxDateTime::Now();
     LoadSettings();
 }
 
@@ -152,16 +154,19 @@ void pnlEbuMeter::CreateMeters()
     InitLabel(m_plblMomentaryTitle, CLR_SHORT);
     m_plblShortTitle = new wmLabel(this, wxID_ANY, wxT("Short"), wxPoint(350,50), wxSize(100,40));
     InitLabel(m_plblShortTitle, CLR_SHORT);
+
     m_plblLufsTitle = new wmLabel(this, wxID_ANY, wxT("Integrated"), wxPoint(350,100), wxSize(100,40));
     InitLabel(m_plblLufsTitle, CLR_LUFS);
-    m_plblRangeTitle = new wmLabel(this, wxID_ANY, wxT("Range"), wxPoint(350,150), wxSize(100,40));
+    m_plblRangeTitle = new wmLabel(this, wxID_ANY, wxT("Range"), wxPoint(350,145), wxSize(100,40));
     InitLabel(m_plblRangeTitle, CLR_LUFS);
+    m_plblTimeTitle = new wmLabel(this, wxID_ANY, wxT("Time"), wxPoint(350,190), wxSize(100,30));
+    InitLabel(m_plblTimeTitle, CLR_TIME);
 
 
 
-    m_plblPeakLeftTitle = new wmLabel(this, wxID_ANY, wxT("TP Left"), wxPoint(350,210), wxSize(100,40));
+    m_plblPeakLeftTitle = new wmLabel(this, wxID_ANY, wxT("TP Left"), wxPoint(350,230), wxSize(100,40));
     InitLabel(m_plblPeakLeftTitle, CLR_PEAK);
-    m_plblPeakRightTitle = new wmLabel(this, wxID_ANY, wxT("TP Right"), wxPoint(350,260), wxSize(100,40));
+    m_plblPeakRightTitle = new wmLabel(this, wxID_ANY, wxT("TP Right"), wxPoint(350,280), wxSize(100,40));
     InitLabel(m_plblPeakRightTitle, CLR_PEAK);
 
     m_plblMomentary = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,0), wxSize(100,40));
@@ -170,11 +175,13 @@ void pnlEbuMeter::CreateMeters()
     InitLabel(m_plblShort, CLR_SHORT);
     m_plblLufs = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,100), wxSize(145,40));
     InitLabel(m_plblLufs, CLR_LUFS);
-    m_plblRange = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,150), wxSize(145,40));
+    m_plblRange = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,145), wxSize(145,40));
     InitLabel(m_plblRange, CLR_LUFS);
-    m_plblPeakLeft = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,210), wxSize(100,40));
+    m_plblTime = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,190), wxSize(145,30));
+    InitLabel(m_plblTime, CLR_TIME);
+    m_plblPeakLeft = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,230), wxSize(100,40));
     InitLabel(m_plblPeakLeft, CLR_PEAK);
-    m_plblPeakRight = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,260), wxSize(100,40));
+    m_plblPeakRight = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(452,280), wxSize(100,40));
     InitLabel(m_plblPeakRight, CLR_PEAK);
 
 
@@ -183,9 +190,9 @@ void pnlEbuMeter::CreateMeters()
     m_plblShortMax = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(552, 50), wxSize(45,40));
     InitLabel(m_plblShortMax, CLR_SHORT,8);
 
-    m_plblPeakLeftMax = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(552, 210), wxSize(45,40));
+    m_plblPeakLeftMax = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(552, 230), wxSize(45,40));
     InitLabel(m_plblPeakLeftMax, CLR_PEAK,8);
-    m_plblPeakRightMax = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(552, 260), wxSize(45,40));
+    m_plblPeakRightMax = new wmLabel(this, wxID_ANY, wxT(""), wxPoint(552, 280), wxSize(45,40));
     InitLabel(m_plblPeakRightMax, CLR_PEAK,8);
 
     m_pBar = new CorrelationBar(this, wxID_ANY, wxPoint(350,330), wxSize(250,40));
@@ -268,6 +275,7 @@ void pnlEbuMeter::UpdateMeters()
     SetPeakColour(m_plblPeakLeftMax, m_dPeak[0]);
     SetPeakColour(m_plblPeakRightMax, m_dPeak[1]);
 
+    m_plblTime->SetLabel((wxTimeSpan(0,0,m_pR128->GetIntegrationTime()/10,0)).Format(wxT("%H:%M:%S")));
 }
 
 void pnlEbuMeter::SetPeakColour(wmLabel* pLabel, double dValue)
@@ -301,6 +309,7 @@ void pnlEbuMeter::ShowPeaks(unsigned int nMode)
 
 void pnlEbuMeter::ClearMeters()
 {
+    m_dtStart = wxDateTime::Now();
     for(size_t i = 0; i < m_aMeters.size(); i++)
     {
         m_aMeters[i]->ResetMeter();
@@ -411,6 +420,8 @@ void pnlEbuMeter::LoadSettings()
     m_plblLufsTitle->Show(bIntegrated);
     m_plblRange->Show(bIntegrated);
     m_plblRangeTitle->Show(bIntegrated);
+    m_plblTime->Show(bIntegrated);
+    m_plblTimeTitle->Show(bIntegrated);
 
     m_pPeakLevels->Show(m_bTrue);
     m_pPeakLeft->Show(m_bTrue);

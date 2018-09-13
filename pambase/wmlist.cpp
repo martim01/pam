@@ -257,7 +257,6 @@ void wmList::OnLeftUp(wxMouseEvent& event)
                 }
                 if(nSlid != SLID_NONE)
                 {
-                    wxLogDebug(wxT("BUTTON SLID"));
                     wxCommandEvent eventSlid(wxEVT_LIST_SLID, GetId());
                     eventSlid.SetEventObject(this);
                     eventSlid.SetString((*m_itDown)->pUi->GetLabel());

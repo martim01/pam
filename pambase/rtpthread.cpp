@@ -61,7 +61,6 @@ void* RtpThread::Entry()
                 m_penv->taskScheduler().doEventLoop(&m_eventLoopWatchVariable);
             }
 
-            wxLogDebug(wxT("TEST DESTROY = true"));
             m_bClosing = true;
             if(m_pRtspClient && m_eventLoopWatchVariable == 0)  //0 means stream has shutdown and is telling us to stop
             {
@@ -160,7 +159,6 @@ void* RtpThread::Entry()
 
     delete[] m_pCurrentBuffer;
 
-    wxLogDebug(wxT("SEND Close event %s"), m_sUrl.c_str());
     wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_RTP_SESSION_CLOSED);
     pEvent->SetString(m_sUrl);
     wxQueueEvent(m_pHandler, pEvent);
@@ -353,7 +351,6 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
     while ((pSubsession = dynamic_cast<Smpte2110MediaSubsession*>(iterSub.next())) != NULL)
     {
         refclk clock = pSubsession->GetRefClock();
-        wxLogDebug(wxT("Subsession: %s  %s"), wxString::FromAscii(pSubsession->mediumName()).c_str(), wxString::FromAscii(pSubsession->protocolName()).c_str());
         m_Session.lstSubsession.push_back(subsession(wxString::FromAscii(pSubsession->sessionId()),
                                                      wxString::FromAscii(pSubsession->GetEndpoint()),
                                                      wxString::FromAscii(pSubsession->mediumName()),

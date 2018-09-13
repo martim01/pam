@@ -25,7 +25,7 @@
 			<button_gap>5,5</button_gap>
 			<columns>2</columns>
 			<button_pressed>#00FF00</button_pressed>
-			<button_selected>#00D500</button_selected>
+			<button_selected>#009300</button_selected>
 			<items />
 			<pos>0,30</pos>
 			<size>200,200</size>

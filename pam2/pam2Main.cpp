@@ -837,7 +837,6 @@ void pam2Dialog::RemoveOldFiles()
 
 void pam2Dialog::OnHelpClose(wxCommandEvent& event)
 {
-    wxLogDebug(event.GetString());
     MaximizeMonitor(false);
     map<wxString, MonitorPluginBuilder*>::iterator itPlugin = MonitorPluginFactory::Get()->FindPlugin(event.GetString());
     if(itPlugin != MonitorPluginFactory::Get()->GetPluginEnd())
@@ -879,7 +878,6 @@ void pam2Dialog::OnSession(wxCommandEvent& event)
 
 
     m_ppnlSettings->InputSessionChanged();
-    wxLogDebug(wxT("Session change done"));
 }
 
 void pam2Dialog::OnbtnMonitorClick(wxCommandEvent& event)

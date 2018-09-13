@@ -159,7 +159,6 @@ plugin TestPluginFactory::GetPluginDetails(const wxString& sDir, const wxString&
     wxLogNull ln;
     if(itLib != m_mLibraries.end())
     {
-        wxLogDebug(wxT("GotPlugin Details %s"), sLibrary.c_str());
 
         if(itLib->second->HasSymbol(wxT("GetTestPluginName")))
         {

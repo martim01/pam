@@ -105,7 +105,6 @@ void MonitorPluginBuilder::RegisterForSettingsUpdates(const wxString& sSetting, 
 
 void MonitorPluginBuilder::AskToMonitor(const vector<char>& vChannels)
 {
-    wxLogDebug(wxT("AskToMonitor"));
     if(m_pHandler)
     {
         MonitorEvent event(vChannels);

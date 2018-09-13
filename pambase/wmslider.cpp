@@ -117,7 +117,6 @@ void wmSlider::MoveSlider(int x)
     m_uiButton.SetRect((m_dResolution*m_dPosition)-25, 0, 50, GetClientSize().y);
     Refresh();
 
-    wxLogDebug(wxT("X= %d Postion = %.2f Rect = %d"),x, m_dPosition, m_uiButton.GetLeft());
 
     wxCommandEvent event(wxEVT_SLIDER_MOVE);
     event.SetId(GetId());
@@ -150,7 +149,6 @@ void wmSlider::Init(double dMin, double dMax, double dStart)
 
     m_uiButton.SetRect((m_dResolution*m_dPosition)-25, 0, 50, GetClientSize().y);
 
-    wxLogDebug(wxT("Min = %.2f Max = %.2f Position= %.2f Resolution = %.2f Rect = %d"), m_dMin, m_dMax, m_dPosition, m_dResolution, m_uiButton.GetLeft());
 
     Refresh();
 

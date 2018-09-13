@@ -163,7 +163,6 @@ void pnlLissajou::SetAxis(unsigned int nChannelX, unsigned int nChannelY)
 
 void pnlLissajou::OnResize(wxSizeEvent& event)
 {
-    wxLogDebug(wxT("Size = %d"), GetSize().x);
     if(event.GetSize().x == 600)
     {
         pnlLissajou_Meters->Hide();

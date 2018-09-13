@@ -566,7 +566,6 @@ void FftMeter::SetHold(bool bHold)
 
 void FftMeter::SetCursorMode(bool bSet)
 {
-    wxLogDebug(wxT("FFTMeter::SetCursorMode %d"), bSet);
     m_bCursorMode = bSet;
     if(m_bCursorMode == true)
     {
@@ -640,7 +639,6 @@ void FftMeter::TurnoffNudge()
 
 void FftMeter::OnLeftUp(wxMouseEvent& event)
 {
-    wxLogDebug(wxT("OnLeftUp"));
     if(m_bCursorMode == false)
     {
         m_pBuilder->Maximize((GetSize().x<=600));

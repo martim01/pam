@@ -36,6 +36,8 @@ class pnlEbuMeter: public wxPanel
 
 		wmLabel* m_plblLufsTitle;
 		wmLabel* m_plblLufs;
+		wmLabel* m_plblTimeTitle;
+		wmLabel* m_plblTime;
 
 		wmLabel* m_plblRange;
 		wmLabel* m_plblRangeTitle;
@@ -123,10 +125,13 @@ class pnlEbuMeter: public wxPanel
         bool m_bTrue;
         bool m_bBar;
 
+        wxDateTime m_dtStart;
+
 
         static const wxColour CLR_LUFS;
         static const wxColour CLR_SHORT;
         static const wxColour CLR_PEAK;
+        static const wxColour CLR_TIME;
         static const wxColour CLR_PEAK_ALARM;
 		DECLARE_EVENT_TABLE()
 };

@@ -30,7 +30,6 @@ PolarScopeBuilder::~PolarScopeBuilder()
 
 void PolarScopeBuilder::SetAudioData(const timedbuffer* pBuffer)
 {
-    wxLogDebug(wxT("PSB:: SetAuiodData"));
     m_pPolarScope->SetAudioData(pBuffer);
 }
 

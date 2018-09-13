@@ -116,7 +116,6 @@ Boolean wxSink::continuePlaying()
 
 void wxSink::rtpExtensionCallback(unsigned int nDefinedByProfile, unsigned char* pExtHdrData, unsigned nExtHdrDataLen, struct timeval& presentationTime, unsigned short nRtpSeqNo, unsigned nRtpTimestamp, bool bRtpMarkerBitSet)
 {
-    wxLogDebug(wxT("Extension"));
 
     // the DefinedByProfile should be 0xBEDE
     if(nDefinedByProfile == 0xBEDE) //one byte extension

@@ -392,7 +392,6 @@ void SpectogramMeter::SetHold(bool bHold)
 
 void SpectogramMeter::SetCursorMode(bool bSet)
 {
-    wxLogDebug(wxT("SpectogramMeter::SetCursorMode %d"), bSet);
     m_bCursorMode = bSet;
     if(m_bCursorMode == true)
     {
@@ -466,7 +465,6 @@ void SpectogramMeter::TurnoffNudge()
 
 void SpectogramMeter::OnLeftUp(wxMouseEvent& event)
 {
-    wxLogDebug(wxT("OnLeftUp"));
     if(m_bCursorMode == false)
     {
         m_pBuilder->Maximize((GetSize().x<=600));

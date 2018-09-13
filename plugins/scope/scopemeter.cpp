@@ -77,7 +77,6 @@ Scope::~Scope()
 
 void Scope::OnPaint(wxPaintEvent& event)
 {
-    wxLogDebug(wxT("Scope::Paint start"));
     wxAutoBufferedPaintDC dc(this);
 
     wxBrush br(*wxBLACK);
@@ -255,7 +254,6 @@ void Scope::OnPaint(wxPaintEvent& event)
         }
     }
 
-    wxLogDebug(wxT("Scope::Paint End"));
 }
 
 void Scope::OnSize(wxSizeEvent& event)
@@ -293,9 +291,8 @@ void Scope::SetTimeFrame(int nFrames)
 
 void Scope::SetData(const timedbuffer* pBuffer)
 {
-    wxLogDebug(wxT("Scope::SetData start"));
 
-    if(m_vChannels.size() > 2)
+    //if(m_vChannels.size() > 2)
     {
         for(int i = 0; i < pBuffer->GetBufferSize(); i++)
         {
@@ -308,18 +305,15 @@ void Scope::SetData(const timedbuffer* pBuffer)
             if(m_bAutotrigger)
             {
                 Autotrigger();
-                wxLogDebug(wxT("Autotrigger = %.2f"), m_dTrigger);
                 bShow = WorkoutPlot();
             }
             if(bShow)
             {
-                wxLogDebug(wxT("Triggered"));
                 Refresh();
             }
             m_lstBuffer.clear();
         }
     }
-    wxLogDebug(wxT("Scope::SetData End"));
 }
 
 
@@ -412,7 +406,6 @@ void Scope::SetVerticalZoom(double dZoom)
 
 void Scope::OnLeftDown(wxMouseEvent& event)
 {
-    wxLogDebug(wxT("OnLeftDown"));
     if(m_uiExit.Contains(event.GetPosition()))
     {
 
@@ -441,7 +434,6 @@ void Scope::OnLeftDown(wxMouseEvent& event)
         }
     }
     event.Skip();
-    wxLogDebug(wxT("OnLeftDown: Done"));
 }
 
 void Scope::OnTimerNudge(wxTimerEvent& event)
@@ -512,7 +504,6 @@ void Scope::TurnoffNudge()
 
 void Scope::OnLeftUp(wxMouseEvent& event)
 {
-    wxLogDebug(wxT("OnLeftUp"));
     //m_plstScope_Mode->SelectButton(m_pScope->GetMode(), false);
     if(GetMode() == Scope::MODE_NORMAL)
     {
@@ -535,12 +526,10 @@ void Scope::OnLeftUp(wxMouseEvent& event)
 
         TurnoffNudge();
     }
-    wxLogDebug(wxT("OnLeftUp Done"));
 }
 
 
 void Scope::SetNumberOfChannels(unsigned int nChannels)
 {
-    wxLogDebug(wxT("Scope::Channels = %d"), nChannels);
     m_vChannels.resize(nChannels);
 }

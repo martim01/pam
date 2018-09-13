@@ -212,3 +212,10 @@ double R128Calculator::ApplyFilter(double dSample, unsigned int nChannel)
 }
 
 
+size_t R128Calculator::GetIntegrationTime()
+{
+    if(m_pThread)
+    {
+        return m_pThread->GetIntegrationTime();
+    }
+}

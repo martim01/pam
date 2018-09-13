@@ -36,7 +36,6 @@ int ahc_echo (void *cls, struct MHD_Connection *connection, const char *url, con
 
 static ssize_t file_reader (void *cls, uint64_t pos, char *buf, size_t nMax)
 {
-    wxLogDebug(wxT("Read %d"), nMax);
     wxFile* pFile = reinterpret_cast<wxFile*>(cls);
 
     pFile->Seek(pos);

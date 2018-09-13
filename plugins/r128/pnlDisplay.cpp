@@ -32,7 +32,7 @@ pnlDisplay::pnlDisplay(wxWindow* parent,R128Builder* pBuilder,wxWindowID id,cons
 	m_plstShow = new wmList(this, ID_M_PLST1, wxPoint(0,30), wxSize(200,200), wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI, 0, wxSize(-1,-1), 2, wxSize(5,5));
 	m_plstShow->SetBackgroundColour(wxColour(0,0,0));
 	m_plstShow->SetPressedButtonColour(wxColour(wxT("#00FF00")));
-	m_plstShow->SetSelectedButtonColour(wxColour(wxT("#00D500")));
+	m_plstShow->SetSelectedButtonColour(wxColour(wxT("#009300")));
 
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlDisplay::OnlstShowSelected);
 	//*)

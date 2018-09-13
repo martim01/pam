@@ -24,6 +24,8 @@ class PAMBASE_IMPEXPORT R128Calculator
 
         void ResetMeter();
 
+        size_t GetIntegrationTime();
+
     protected:
 
         double ApplyFilter(double dSample, unsigned int nChannel);
