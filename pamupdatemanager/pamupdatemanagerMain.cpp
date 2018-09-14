@@ -168,6 +168,7 @@ pamupdatemanagerDialog::pamupdatemanagerDialog(wxWindow* parent,wxWindowID id,co
 	Connect(ID_TIMER2,wxEVT_TIMER,(wxObjectEventFunction)&pamupdatemanagerDialog::Onm_timerStartTrigger);
 	//*)
 
+	 Settings::Get().Write(wxT("Version"), wxT("pamupdatemanager"), wxString::Format(wxT("%d.%d.%d.%d"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
 
 }
 
@@ -429,14 +430,8 @@ void pamupdatemanagerDialog::Onm_timerStartTrigger(wxTimerEvent& event)
         {
         case UpdateObject::APP:
             sType = wxT("App");
-            if(itObject->first == wxT("pam2"))
-            {
-                sLocalVersion = Settings::Get().Read(wxT("General"), wxT("Version"), wxT("0.0.0.0"));
-            }
-            else
-            {
-                sLocalVersion = wxT("0.0.0.0"); //@todo get app version
-            }
+            sLocalVersion = Settings::Get().Read(wxT("Version"), itObject->first, wxT("0.0.0.0"));
+
             break;
         case UpdateObject::CORE_DLL:
             sType = wxT("Core Lib");
