@@ -132,6 +132,9 @@
 		<Unit filename="pamupdatemanagerApp.h" />
 		<Unit filename="pamupdatemanagerMain.cpp" />
 		<Unit filename="pamupdatemanagerMain.h" />
+		<Unit filename="pamupdatemanagerresource.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
 		<Unit filename="updatemanager.cpp" />
 		<Unit filename="updatemanager.h" />
 		<Extensions>

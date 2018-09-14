@@ -27,6 +27,7 @@
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="$(#wx3_0.include)/mswu" />
+					<Add directory="$(#wx3_0.include)" />
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-s" />
@@ -60,6 +61,7 @@
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="$(#wx3_0.include)/mswu" />
+					<Add directory="$(#wx3_0.include)" />
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-Wl,--enable-auto-import,-Map=pamlevel.map" />
@@ -129,6 +131,9 @@
 		<Unit filename="filt.cpp" />
 		<Unit filename="filt.h" />
 		<Unit filename="pamleveldll.h" />
+		<Unit filename="pamlevelresource.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
 		<Unit filename="srcwrapper.h" />
 		<Unit filename="truepeakcalculator.cpp" />
 		<Unit filename="truepeakcalculator.h" />

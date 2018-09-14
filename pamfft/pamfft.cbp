@@ -27,6 +27,7 @@
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="$(#wx3_0.include)/mswu" />
+					<Add directory="$(#wx3_0.include)" />
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-s" />
@@ -59,6 +60,7 @@
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="$(#wx3_0.include)/mswu" />
+					<Add directory="$(#wx3_0.include)" />
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-Wl,--enable-auto-import,-Map=pamfft.map" />
@@ -148,6 +150,9 @@
 		<Unit filename="offsetcalculator.cpp" />
 		<Unit filename="offsetcalculator.h" />
 		<Unit filename="pamfftdll.h" />
+		<Unit filename="pamfftresource.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<envvars />
