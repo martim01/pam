@@ -6,6 +6,10 @@
 #include <list>
 #include <queue>
 
+#ifdef __WXGTK__
+#include <random>
+#endif
+
 /** @file paex_pink.c
 	@ingroup examples_src
 	@brief Generate Pink Noise using Gardner method.
@@ -189,4 +193,9 @@ class PAMBASE_IMPEXPORT Generator
         float m_dNoiseAmplitude;
         int m_nGenerator;
         enum {FILE, FREQUENCY, SEQUENCE, NOISE_WHITE, NOISE_PINK};
+
+        #ifdef __WXGTK__
+        std::default_random_engine* m_pGenerator;
+        std::uniform_real_distribution<double>* m_pDistribution;
+        #endif
 };

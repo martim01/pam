@@ -71,6 +71,12 @@ Generator::Generator() :
     m_pPink[0] = 0;
     m_pPink[1] = 0;
     srand(time(0));
+
+    #ifdef __WXGTK__
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    m_pGenerator = new default_random_engine(seed);
+    m_pDistribution = new uniform_real_distribution<double>(0.0,2.0);
+    #endif // __WXGTK__
 }
 
 Generator::~Generator()
@@ -79,6 +85,11 @@ Generator::~Generator()
     ClearFrequences();
     CloseFile();
     ClosePink();
+
+    #ifdef __WXGTK__
+    delete m_pDistribution;
+    delete m_pGenerator;
+    #endif // __WXGTK__
 }
 
 void Generator::SetSampleRate(unsigned int nSampleRate)
@@ -265,7 +276,7 @@ float Generator::GenerateSquare(const genfreq& gfreq, float dPhase)
 
 float Generator::GenerateSaw(const genfreq& gfreq, float dPhase)
 {
-    return - (2.0*gfreq.dAmplitude*atan(tan(M_PI_2 - (M_PI * gfreq.dFrequency*(dPhase/m_dSampleRate)) )))/M_PI;
+    return - (2.0*gfreq.dAmplitude*atan(tan((M_PI/2.0) - (M_PI * gfreq.dFrequency*(dPhase/m_dSampleRate)) )))/M_PI;
 }
 
 float Generator::GenerateTriangle(const genfreq& gfreq, float dPhase)
@@ -525,19 +536,20 @@ void Generator::ClosePink()
 
 void Generator::GenerateWhiteNoise(float* pBuffer, unsigned int nSize)
 {
-    int q = 15;
-    float c1 = (1 << q) - 1;
-    float c2 = ((int)(c1 / 3)) + 1;
-    float c3 = 1.f / c1;
 
-    /* random number in range 0 - 1 not including 1 */
-    /* the white noise */
+
+
+
     for (int i = 0; i < nSize; i++)
     {
+        #ifdef __WXGTK__
+        pBuffer[i] = ((*m_pDistribution(*m_pGenerator))-1.0)*m_dNoiseAmplitude);
+        #else
         float random1 = ((float)rand() / (float)(RAND_MAX + 1));
-        float random2 = ((float)rand() / (float)(RAND_MAX + 1));
-        pBuffer[i] = ((2.0 * ((random1 * c2) + (random2 * c2) + (random2 * c2)) - 3.0 * (c2 - 1.0)) * c3)*m_dNoiseAmplitude;
-    }
+        pBuffer[i] = ((2.0*random1)-1.0)*m_dNoiseAmplitude;
+        #endif // __WXGTK__
+        }
+
 }
 
 

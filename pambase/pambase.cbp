@@ -15,6 +15,7 @@
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-Wall" />
+					<Add option="-std=c++0x" />
 					<Add option="-DWIN32" />
 					<Add option="-D_USRDLL" />
 					<Add option="-DDLL_EXPORTS" />
