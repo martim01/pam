@@ -359,6 +359,9 @@ void dlgSequence::OnbtnSequencyCopyClick(wxCommandEvent& event)
         pNode->DeleteAttribute(wxT("name"));
         pNode->AddAttribute(wxT("name"), aDlg.m_pedtName->GetValue());
 
+        pNode->DeleteAttribute(wxT("channels"));
+        pNode->AddAttribute(wxT("channels"), wxString::Format(wxT("%d"), aDlg.m_nChannels));
+
         m_pDoc->GetRoot()->AddChild(pNode);
         SaveDoc();
 
