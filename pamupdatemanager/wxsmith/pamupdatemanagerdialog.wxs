@@ -46,14 +46,14 @@
 					</object>
 					<object class="wmButton" name="ID_M_PBTN6" variable="m_pbtnSelectAll" member="yes">
 						<label>Select All</label>
-						<pos>650,50</pos>
+						<pos>650,105</pos>
 						<size>120,50</size>
 						<bg>#B0B0B0</bg>
 						<handler function="OnbtnSelectAllClick" entry="EVT_BUTTON" />
 					</object>
 					<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnSelectNone" member="yes">
 						<label>Deselect All</label>
-						<pos>650,105</pos>
+						<pos>650,160</pos>
 						<size>120,50</size>
 						<bg>#B0B0B0</bg>
 						<handler function="OnbtnSelectNoneClick" entry="EVT_BUTTON" />
@@ -72,7 +72,7 @@
 						<label>View Changelog</label>
 						<button_pressed>#FF8000</button_pressed>
 						<button_disabled>#808080</button_disabled>
-						<pos>650,180</pos>
+						<pos>650,235</pos>
 						<size>120,50</size>
 						<enabled>0</enabled>
 						<bg>#007D7D</bg>
@@ -83,7 +83,7 @@
 						<label>View Dependencies</label>
 						<button_pressed>#FF8000</button_pressed>
 						<button_disabled>#808080</button_disabled>
-						<pos>650,240</pos>
+						<pos>650,290</pos>
 						<size>120,50</size>
 						<enabled>0</enabled>
 						<bg>#007D7D</bg>
@@ -188,6 +188,14 @@
 							</object>
 							<label>Log</label>
 						</object>
+					</object>
+					<object class="wmButton" name="ID_M_PBTN7" variable="m_pbtnShow" member="yes">
+						<label>Show</label>
+						<pos>645,45</pos>
+						<size>150,30</size>
+						<bg>#000080</bg>
+						<style>wmButton::STYLE_SELECT</style>
+						<handler function="OnbtnShowClick" entry="EVT_BUTTON" />
 					</object>
 				</object>
 				<label>Main</label>

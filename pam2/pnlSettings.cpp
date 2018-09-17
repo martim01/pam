@@ -786,6 +786,7 @@ void pnlSettings::OnbtnEndClick(wxCommandEvent& event)
 void pnlSettings::OnlstAudioSourcesSelected(wxCommandEvent& event)
 {
     Settings::Get().Write(wxT("Output"), wxT("Source"), event.GetString());
+    m_pbtnSequences->Show(false);
     if(event.GetString() == wxT("Input"))
     {
         m_pswpAog->ChangeSelection(wxT("Input"));
@@ -796,11 +797,15 @@ void pnlSettings::OnlstAudioSourcesSelected(wxCommandEvent& event)
     {
         ShowFiles();
         m_pswpAog->ChangeSelection(wxT("Files"));
+        m_pbtnSequences->Show(true);
+        m_pbtnSequences->SetLabel(wxT("Manage Files"));
     }
     else if(event.GetString() == wxT("Sequence"))
     {
         ShowSequences();
         m_pswpAog->ChangeSelection(wxT("Files"));
+        m_pbtnSequences->Show(true);
+        m_pbtnSequences->SetLabel(wxT("Edit Sequences"));
     }
     else if(event.GetString() == wxT("Generator"))
     {
@@ -810,7 +815,7 @@ void pnlSettings::OnlstAudioSourcesSelected(wxCommandEvent& event)
     {
         m_pswpAog->ChangeSelection(wxT("Noise"));
     }
-    m_pbtnSequences->Show(event.GetString() == wxT("Sequence"));
+
 }
 
 void pnlSettings::OnlstAogFilesSelected(wxCommandEvent& event)
@@ -932,9 +937,16 @@ void pnlSettings::Onbtn0dbuClick(wxCommandEvent& event)
 
 void pnlSettings::OnbtnSequencesClick(wxCommandEvent& event)
 {
-    dlgSequence aDlg(this);
-    aDlg.ShowModal();
-    ShowSequences();
+    if(Settings::Get().Read(wxT("Output"), wxT("Source"), wxEmptyString) == wxT("Sequence"))
+    {
+        dlgSequence aDlg(this);
+        aDlg.ShowModal();
+        ShowSequences();
+    }
+    else
+    {
+
+    }
 }
 
 void pnlSettings::OnlstColourSelected(wxCommandEvent& event)

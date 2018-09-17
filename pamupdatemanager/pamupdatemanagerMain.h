@@ -27,6 +27,7 @@ class pamupdatemanagerDialog: public wxDialog
 		wmButton* m_pbtnSelectNone;
 		wxPanel* Panel5;
 		wmLabel* m_pLbl7;
+		wmButton* m_pbtnShow;
 		wxPanel* pnlMain;
 		wmButton* m_pbtnSelectAll;
 		wxPanel* Panel4;
@@ -75,6 +76,7 @@ class pamupdatemanagerDialog: public wxDialog
 		static const long ID_M_PLST2;
 		static const long ID_PANEL4;
 		static const long ID_M_PSWP2;
+		static const long ID_M_PBTN7;
 		static const long ID_PANEL5;
 		static const long ID_M_PLBL6;
 		static const long ID_M_PLBL7;
@@ -96,11 +98,15 @@ class pamupdatemanagerDialog: public wxDialog
 		void OnlstUpdatesSelected(wxCommandEvent& event);
 		void OntimerUpdateTrigger(wxTimerEvent& event);
 		void Onm_timerStartTrigger(wxTimerEvent& event);
+		void OnbtnShowClick(wxCommandEvent& event);
 		//*)
 
         wxString GetMonitorPluginVersion(const wxString& sPlugin);
         wxString GetTestPluginVersion(const wxString& sPlugin);
 
+        void PopulateUpdateList();
+
+        bool m_bShowAll;
         std::map<wxString, wxString> m_mUpdate;
         bool m_bUpdate;
 		DECLARE_EVENT_TABLE()
