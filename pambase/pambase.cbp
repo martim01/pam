@@ -212,6 +212,8 @@
 		<Unit filename="monitorpluginbuilder.h" />
 		<Unit filename="monitorpluginfactory.cpp" />
 		<Unit filename="monitorpluginfactory.h" />
+		<Unit filename="niir.cpp" />
+		<Unit filename="niir.h" />
 		<Unit filename="ourRTSPClient.cpp" />
 		<Unit filename="ourRTSPClient.h" />
 		<Unit filename="pcstats.cpp" />

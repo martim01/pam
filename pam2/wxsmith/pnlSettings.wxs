@@ -479,7 +479,7 @@
 									<columns>4</columns>
 									<items />
 									<pos>10,10</pos>
-									<size>580,44</size>
+									<size>580,200</size>
 									<bg>#000000</bg>
 									<style>wmList::STYLE_SELECT</style>
 									<handler function="OnlstColourSelected" entry="EVT_LIST_SELECTED" />

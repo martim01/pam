@@ -81,6 +81,8 @@ struct genfreq
 };
 
 class SoundFile;
+class IIR;
+class KFilter;
 
 class PAMBASE_IMPEXPORT Sequence
 {
@@ -140,7 +142,7 @@ class PAMBASE_IMPEXPORT Generator
 
         enum {SINE=0, SQUARE, SAW, TRIANGLE};
 
-        enum {WHITE=0, PINK};
+        enum {WHITE=0, PINK, GREY, GREY_A, GREY_K, BROWN};
 
 
     protected:
@@ -159,6 +161,8 @@ class PAMBASE_IMPEXPORT Generator
         float GenerateSquare(const genfreq& gfreq, float dPhase);
         float GenerateSaw(const genfreq& gfreq, float dPhase);
         float GenerateTriangle(const genfreq& gfreq, float dPhase);
+
+        double AWGN_generator();
 
 
         void ClosePink();
@@ -189,10 +193,27 @@ class PAMBASE_IMPEXPORT Generator
         void InitializePinkNoise(int numRows );
         void GeneratePinkNoise(float* pBuffer, unsigned int nSize);
         void GenerateWhiteNoise(float* pBuffer, unsigned int nSize);
+        void GenerateGreyNoise(float* pBuffer, unsigned int nSize);
+        void GenerateGreyANoise(float* pBuffer, unsigned int nSize);
+        void GenerateGreyKNoise(float* pBuffer, unsigned int nSize);
+        void GenerateBrownNoise(float* pBuffer, unsigned int nSize);
 
         float m_dNoiseAmplitude;
         int m_nGenerator;
-        enum {FILE, FREQUENCY, SEQUENCE, NOISE_WHITE, NOISE_PINK};
 
+        KFilter* m_pKFilter[2];
+        IIR* m_pAFilter[2];
+        IIR* m_pGreyFilter[2];
+
+        enum {FILE, FREQUENCY, SEQUENCE, NOISE_WHITE, NOISE_PINK, NOISE_GREY, NOISE_A, NOISE_K, NOISE_BROWN};
+
+
+        static const double AFILTER_B[7];
+        static const double AFILTER_A[6];
+
+        static const double ANFILTER_B[3];
+        static const double ANFILTER_A[2];
 
 };
+
+

@@ -261,7 +261,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_plstShape->SetBackgroundColour(wxColour(0,0,0));
     Panel2 = new wxPanel(m_pswpAog, ID_PANEL12, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL12"));
     Panel2->SetBackgroundColour(wxColour(0,0,0));
-    m_plstColour = new wmList(Panel2, ID_M_PLST5, wxPoint(10,10), wxSize(580,44), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 4, wxSize(5,1));
+    m_plstColour = new wmList(Panel2, ID_M_PLST5, wxPoint(10,10), wxSize(580,200), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 4, wxSize(5,1));
     m_plstColour->SetBackgroundColour(wxColour(0,0,0));
     StaticBox3 = new wxStaticBox(Panel2, ID_STATICBOX3, _("Amplitude"), wxPoint(5,210), wxSize(590,105), 0, _T("ID_STATICBOX3"));
     StaticBox3->SetForegroundColour(wxColour(255,255,255));
@@ -426,6 +426,9 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
     m_plstColour->AddButton(wxT("White"));
     m_plstColour->AddButton(wxT("Pink"));
+    m_plstColour->AddButton(wxT("Grey"));
+    m_plstColour->AddButton(wxT("A"));
+    m_plstColour->AddButton(wxT("K"));
     m_plstColour->SelectButton(Settings::Get().Read(wxT("Noise"), wxT("Colour"), 0));
 
     m_pNoiseAmplitude->Init(0,80, 80+Settings::Get().Read(wxT("Noise"), wxT("Amplitude"), -18.0));

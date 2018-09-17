@@ -409,6 +409,13 @@ void IOManager::InitGeneratorNoise()
             case 1:
                 CreateSessionFromOutput(wxT("Pink"));
                 break;
+            case 2:
+                CreateSessionFromOutput(wxT("Grey A"));
+                break;
+            case 3:
+                CreateSessionFromOutput(wxT("Grey K"));
+                break;
+
         }
         CheckPlayback(m_pGenerator->GetSampleRate(), m_pGenerator->GetChannels());
 

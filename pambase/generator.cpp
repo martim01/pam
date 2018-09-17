@@ -9,9 +9,15 @@
 #include "soundcardmanager.h"
 #include <wx/xml/xml.h>
 #include "wmlogevent.h"
-
-
+#include "niir.h"
 using namespace std;
+
+const double Generator::AFILTER_B[7] = {0.234301792299513,  -0.468603584599026,  -0.234301792299513, 0.937207169198054,  -0.234301792299515,  -0.468603584599025,   0.234301792299513};
+const double Generator::AFILTER_A[6] = {-4.113043408775871,   6.553121752655047, -4.990849294163381,1.785737302937573,  -0.246190595319487,   0.011224250033231};
+
+const double Generator::ANFILTER_B[3] = { 0.23614050038447681, -0.3682612669579237, 0.14511161746470033};
+const double Generator::ANFILTER_A[2] = {-0.3682612669579237, -0.6187478821508299};
+
 
 Sequence::Sequence(int nChannels) : m_nChannels(nChannels)
 {
@@ -72,7 +78,13 @@ Generator::Generator() :
     m_pPink[1] = 0;
     srand(time(0));
 
+    m_pKFilter[0] = new KFilter();
+    m_pKFilter[1] = new KFilter();
+    m_pGreyFilter[0] = new IIR(ANFILTER_A, ANFILTER_B, 2, 3);
+    m_pGreyFilter[1] = new IIR(ANFILTER_A, ANFILTER_B, 2, 3);
 
+    m_pAFilter[0] = new IIR(AFILTER_A, AFILTER_B, 6, 7);
+    m_pAFilter[1] = new IIR(AFILTER_A, AFILTER_B, 6, 7);
 }
 
 Generator::~Generator()
@@ -82,7 +94,12 @@ Generator::~Generator()
     CloseFile();
     ClosePink();
 
-
+    delete m_pKFilter[0];
+    delete m_pKFilter[1];
+    delete m_pAFilter[0];
+    delete m_pAFilter[1];
+    delete m_pGreyFilter[0];
+    delete m_pGreyFilter[1];
 }
 
 void Generator::SetSampleRate(unsigned int nSampleRate)
@@ -118,6 +135,18 @@ void Generator::Generate(unsigned int nSize)
                 break;
             case NOISE_WHITE:
                 GenerateWhiteNoise(pData->GetWritableBuffer(), nSize);
+                break;
+            case NOISE_GREY:
+                GenerateGreyNoise(pData->GetWritableBuffer(), nSize);
+                break;
+            case NOISE_A:
+                GenerateGreyANoise(pData->GetWritableBuffer(), nSize);
+                break;
+            case NOISE_K:
+                GenerateGreyKNoise(pData->GetWritableBuffer(), nSize);
+                break;
+            case NOISE_BROWN:
+                GenerateBrownNoise(pData->GetWritableBuffer(), nSize);
                 break;
         }
 
@@ -431,6 +460,18 @@ void Generator::SetNoise(int nColour, float ddBFS)
     case WHITE:
         m_nGenerator = NOISE_WHITE;
         break;
+    case GREY:
+        m_nGenerator = NOISE_GREY;
+        break;
+    case GREY_A:
+        m_nGenerator = NOISE_A;
+        break;
+    case GREY_K:
+        m_nGenerator = NOISE_K;
+        break;
+    case BROWN:
+        m_nGenerator = NOISE_BROWN;
+        break;
     }
     Generate(8192);
 }
@@ -529,16 +570,50 @@ void Generator::ClosePink()
 
 void Generator::GenerateWhiteNoise(float* pBuffer, unsigned int nSize)
 {
-
-
-
-
     for (int i = 0; i < nSize; i++)
     {
-        float random1 = ((float)rand() / (float)(RAND_MAX + 1));
-        pBuffer[i] = ((2.0*random1)-1.0)*m_dNoiseAmplitude;
+        //float random1 = ((float)rand() / (float)(RAND_MAX + 1));
+
+        float random1 = AWGN_generator();
+        pBuffer[i] = random1*m_dNoiseAmplitude;
+
+        //pBuffer[i] = ((2.0*random1)-1.0)*m_dNoiseAmplitude;
 
    }
+}
+
+void Generator::GenerateGreyANoise(float* pBuffer, unsigned int nSize)
+{
+    GenerateWhiteNoise(pBuffer, nSize);
+    for(int i = 0; i < nSize; i+=2)
+    {
+        pBuffer[i] = m_pAFilter[0]->Filter(pBuffer[i]);
+        pBuffer[i+1] = m_pAFilter[1]->Filter(pBuffer[i+1]);
+    }
+}
+
+void Generator::GenerateGreyNoise(float* pBuffer, unsigned int nSize)
+{
+    GenerateWhiteNoise(pBuffer, nSize);
+    for(int i = 0; i < nSize; i+=2)
+    {
+        pBuffer[i] = m_pGreyFilter[0]->Filter(pBuffer[i]);
+        pBuffer[i+1] = m_pGreyFilter[1]->Filter(pBuffer[i+1]);
+    }
+}
+
+void Generator::GenerateGreyKNoise(float* pBuffer, unsigned int nSize)
+{
+    GenerateWhiteNoise(pBuffer, nSize);
+    for(int i = 0; i < nSize; i+=2)
+    {
+        pBuffer[i] = m_pKFilter[0]->Filter(pBuffer[i]);
+        pBuffer[i+1] = m_pKFilter[1]->Filter(pBuffer[i+1]);
+    }
+}
+
+void Generator::GenerateBrownNoise(float* pBuffer, unsigned int nSize)
+{
 
 }
 
@@ -593,3 +668,43 @@ void Generator::Stop()
     CloseFile();
     ClosePink();
 }
+
+
+
+
+
+double Generator::AWGN_generator()
+{/* Generates additive white Gaussian Noise samples with zero mean and a standard deviation of 1. */
+
+  double temp1;
+  double temp2;
+  double result;
+  int p;
+
+  p = 1;
+
+  while( p > 0 )
+  {
+	temp2 = ( rand() / ( (double)RAND_MAX ) ); /*  rand() function generates an
+                                                       integer between 0 and  RAND_MAX,
+                                                       which is defined in stdlib.h.
+                                                   */
+
+    if ( temp2 == 0 )
+    {// temp2 is >= (RAND_MAX / 2)
+      p = 1;
+    }// end if
+    else
+    {// temp2 is < (RAND_MAX / 2)
+       p = -1;
+    }// end else
+
+  }// end while()
+
+  temp1 = cos( ( 2.0 * (double)M_PI ) * rand() / ( (double)RAND_MAX ) );
+  result = sqrt( -2.0 * log( temp2 ) ) * temp1;
+
+  return result;	// return the generated random sample to the caller
+
+}// end AWGN_generator(
+
