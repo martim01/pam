@@ -28,6 +28,7 @@ class PAMBASE_IMPEXPORT TestPluginBuilder : public wxEvtHandler
 
         friend class TestPluginFactory;
 
+        bool IsLogActive();
 
         void SetHandler(wxEvtHandler* pHandler);
         void CreatePanels(wmSwitcherPanel* pswpTestsTest);

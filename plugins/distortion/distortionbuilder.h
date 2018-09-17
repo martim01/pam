@@ -18,6 +18,8 @@ class DistortionBuilder : public TestPluginBuilder
     protected:
 
         friend class pnlDistortion;
+        friend class pnlDistortionChannel;
+
         virtual wxWindow* CreateTestPanel(wxWindow* pParent);
         virtual void LoadSettings();
 

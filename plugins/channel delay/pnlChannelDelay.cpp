@@ -4,7 +4,7 @@
 #include "session.h"
 #include "channeldelaybuilder.h"
 #include <wx/log.h>
-
+#include "wmlogevent.h"
 
 //(*InternalHeaders(pnlChannelDelay)
 #include <wx/font.h>
@@ -166,6 +166,11 @@ void pnlChannelDelay::OnOffsetDone(wxCommandEvent& event)
     SetTotalSamples(m_nTotalSamples);
 
     m_pGraph->AddOffset(event.GetInt());
+
+    if(m_pBuilder->IsLogActive())
+    {
+        wmLog::Get()->Log(wxString::Format(wxT("**TESTS** Channel Delay %dms"), event.GetInt()));
+    }
 
 }
 

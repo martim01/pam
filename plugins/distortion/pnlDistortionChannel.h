@@ -8,12 +8,13 @@
 //*)
 
 class timedbuffer;
+class DistortionBuilder;
 
 class pnlDistortionChannel: public wxPanel
 {
 	public:
 
-		pnlDistortionChannel(wxWindow* parent,unsigned int nChannel, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+		pnlDistortionChannel(wxWindow* parent,unsigned int nChannel,DistortionBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pnlDistortionChannel();
 
 		void AddAudioData(float dValue);
@@ -48,6 +49,7 @@ class pnlDistortionChannel: public wxPanel
 		//(*Handlers(pnlDistortionChannel)
 		//*)
 		unsigned int m_nChannel;
+		DistortionBuilder* m_pBuilder;
         double m_dMax;
         std::list<float> m_lstBuffer;
 		DECLARE_EVENT_TABLE()

@@ -13,12 +13,13 @@
 class timedbuffer;
 class pnlDistortionChannel;
 struct session;
+class DistortionBuilder;
 
 class pnlDistortion: public wxPanel
 {
 	public:
 
-		pnlDistortion(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+		pnlDistortion(wxWindow* parent,DistortionBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pnlDistortion();
 
 		void SetAudioData(const timedbuffer* pBuffer);
@@ -65,7 +66,7 @@ class pnlDistortion: public wxPanel
 
         void RunTest();
 
-
+        DistortionBuilder* m_pBuilder;
 
 		std::vector<pnlDistortionChannel*> m_vChannels;
         //double m_dMax[2];

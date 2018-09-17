@@ -1,5 +1,7 @@
 #include "pnlDistortionChannel.h"
 #include "fftAlgorithm.h"
+#include "distortionbuilder.h"
+#include "wmlogevent.h"
 
 //(*InternalHeaders(pnlDistortionChannel)
 #include <wx/font.h>
@@ -22,7 +24,8 @@ BEGIN_EVENT_TABLE(pnlDistortionChannel,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlDistortionChannel::pnlDistortionChannel(wxWindow* parent,unsigned int nChannel,wxWindowID id,const wxPoint& pos,const wxSize& size) : m_nChannel(nChannel)
+pnlDistortionChannel::pnlDistortionChannel(wxWindow* parent,  unsigned int nChannel,DistortionBuilder* pBuilder,wxWindowID id,const wxPoint& pos,const wxSize& size) : m_nChannel(nChannel),
+m_pBuilder(pBuilder)
 {
 	//(*Initialize(pnlDistortionChannel)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
@@ -105,6 +108,13 @@ void pnlDistortionChannel::RunTest()
             m_plblMax->SetLabel(wxString::Format(wxT("%.2f%"), m_dMax));
             m_plblTime->SetLabel(wxDateTime::UNow().Format(wxT("%Y-%m-%d %H:%M:%S.%l")));
 
+       }
+       if(fft.GetNumberOfPeaks() > 1)
+       {
+           if(m_pBuilder->IsLogActive())
+           {
+               wmLog::Get()->Log(wxString::Format(wxT("**TESTS** Distortion Ch%d. Peaks=%d Distortion=%.2f%"), m_nChannel, fft.GetNumberOfPeaks(), dDistortion));
+           }
        }
     //    if(fft.GetNumberOfPeaks() > 1)
     //    {

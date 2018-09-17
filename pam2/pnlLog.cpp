@@ -57,7 +57,15 @@ void pnlLog::Log(wxString sLogEntry)
 
     sLogEntry.Replace(wxT("\n"), wxT("<br>"));
 
-    m_sTableMiddle << wxT("<tr><td>") << wxDateTime::UNow().Format(wxT("%H:%M:%S:%l")) << wxT("</td><td>") << sLogEntry << wxT("</td></tr>");
+    wxString sTab(wxT("<td>"));
+
+    if(sLogEntry.Find(wxT("**TESTS**")) != wxNOT_FOUND)
+    {
+        sLogEntry = sLogEntry.Mid(9);
+        sTab = wxT("<td bgcolor=\"#ffaaaa\">");
+    }
+
+    m_sTableMiddle << wxT("<tr><td>") << wxDateTime::UNow().Format(wxT("%H:%M:%S:%l")) << wxT("</td>") << sTab << sLogEntry << wxT("</td></tr>");
 
     wxPoint pntView = m_phtmlLog->GetViewStart();
 

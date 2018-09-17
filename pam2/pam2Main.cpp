@@ -42,6 +42,7 @@
 #include "pcstats.h"
 #include "version.h"
 #include "iomanager.h"
+#include "pnlTestOptions.h"
 
 //(*InternalHeaders(pam2Dialog)
 #include <wx/bitmap.h>
@@ -344,6 +345,7 @@ void pam2Dialog::LoadMonitorPanels()
 
     m_pswpOptions->AddPage(new pnlSettingsOptions(m_pswpOptions), wxT("Settings|Options"));
     m_pswpOptions->AddPage(pnlControl, wxT("Log|Control"));
+    m_pswpOptions->AddPage(new pnlTestOptions(m_pswpOptions), wxT("Tests|Options"));
 
     m_plstInbuilt->AddButton(wxT("Log"));
     m_plstInbuilt->AddButton(wxT("Settings"));
@@ -540,7 +542,7 @@ void pam2Dialog::ShowTestPanels()
     m_plstOptions->SelectButton(Settings::Get().Read(wxT("Tests"), wxT("_Panel"), 0));
     m_plstOptions->Thaw();
 
-    m_pswpOptions->ChangeSelection(wxT("Settings|Options"));
+    m_pswpOptions->ChangeSelection(wxT("Tests|Options"));
     m_pswpScreens->ChangeSelection(wxT("Options"));
 }
 

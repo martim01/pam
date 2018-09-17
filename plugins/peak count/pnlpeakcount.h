@@ -11,14 +11,16 @@
 
 #include "timedbuffer.h"
 #include "session.h"
+#include <wx/timer.h>
+
 
 class pnlPeakCountChannel;
-
+class PeakCountBuilder;
 class pnlPeakCount: public wxPanel
 {
 	public:
 
-		pnlPeakCount(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+		pnlPeakCount(wxWindow* parent,PeakCountBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pnlPeakCount();
 
 				void SetAudioData(const timedbuffer* pBuffer);
@@ -65,6 +67,11 @@ class pnlPeakCount: public wxPanel
 		void OnbtnResetClick(wxCommandEvent& event);
 		void OnedtLimitTextEnter(wxCommandEvent& event);
 		//*)
+
+		void OnTimerLog(wxTimerEvent& event);
+
+		PeakCountBuilder* m_pBuilder;
+		wxTimer m_timerLog;
 
 		double m_dLimit;
 		std::vector<pnlPeakCountChannel*> m_vChannels;

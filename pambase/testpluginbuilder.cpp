@@ -61,3 +61,9 @@ void TestPluginBuilder::RegisterForSettingsUpdates(const wxString& sSetting, wxE
 {
     Settings::Get().AddHandler(wxString::Format(wxT("Test %s"), GetName().c_str()), sSetting, pHandler);
 }
+
+
+bool TestPluginBuilder::IsLogActive()
+{
+    return (Settings::Get().Read(wxT("Tests"), wxT("Log"), 0) == 1);
+}

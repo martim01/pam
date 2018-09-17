@@ -25,6 +25,8 @@ class pnlPeakCountChannel: public wxPanel
             m_dLastAmplitude = dAmplitude;
         }
 
+        int SamplesSinceLastCheck();
+
 		//(*Declarations(pnlPeakCountChannel)
 		wmLabel* m_plbLChannel;
 		wmLabel* m_plblPeaks;
@@ -50,6 +52,8 @@ class pnlPeakCountChannel: public wxPanel
 		unsigned int m_nPeaks;
 		unsigned int m_nSamples;
 		unsigned int m_nTotal;
+
+		unsigned int m_nLastTotal;
 
 		double m_dLastAmplitude;
 

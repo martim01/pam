@@ -6,7 +6,7 @@
 #include <wx/string.h>
 //*)
 #include "session.h"
-
+#include "distortionbuilder.h"
 
 //(*IdInit(pnlDistortion)
 const long pnlDistortion::ID_M_PLBL37 = wxNewId();
@@ -26,7 +26,8 @@ BEGIN_EVENT_TABLE(pnlDistortion,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlDistortion::pnlDistortion(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
+pnlDistortion::pnlDistortion(wxWindow* parent, DistortionBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) :
+    m_pBuilder(pBuilder)
 {
 	//(*Initialize(pnlDistortion)
 	Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("wxID_ANY"));
@@ -94,7 +95,7 @@ void pnlDistortion::InputSession(const session& aSession)
 
     for(size_t i = 0; i < m_vChannels.size(); i++)
     {
-        m_vChannels[i] = new pnlDistortionChannel(pnlLeft, i, wxID_ANY, wxPoint(38+(71*i), 0));
+        m_vChannels[i] = new pnlDistortionChannel(pnlLeft, i,m_pBuilder,  wxID_ANY, wxPoint(38+(71*i), 0));
     }
 }
 

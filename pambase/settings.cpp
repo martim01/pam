@@ -197,7 +197,7 @@ wxString Settings::GetTestPluginDirectory() const
     #ifdef __WXGNU__
     return m_iniManager.GetIniString(wxT("Paths"), wxT("TestPlugins"), wxString::Format(wxT("%s/test"), GetCoreLibDirectory().c_str()));
     #else
-    return m_iniManager.GetIniString(wxT("Paths"), wxT("TestPlugins"), wxString::Format(wxT("%s/monitor"), GetCoreLibDirectory().c_str()));
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("TestPlugins"), wxString::Format(wxT("%s/test"), GetCoreLibDirectory().c_str()));
     #endif // __WXGNU__
 }
 

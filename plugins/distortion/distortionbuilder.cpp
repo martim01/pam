@@ -35,7 +35,7 @@ wxString DistortionBuilder::GetName() const
 
 wxWindow* DistortionBuilder::CreateTestPanel(wxWindow* pParent)
 {
-    m_ppnlDistortion = new pnlDistortion(pParent);
+    m_ppnlDistortion = new pnlDistortion(pParent, this);
     return m_ppnlDistortion;
 }
 

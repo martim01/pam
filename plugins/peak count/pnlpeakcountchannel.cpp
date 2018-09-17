@@ -90,6 +90,15 @@ void pnlPeakCountChannel::ResetTest()
     m_nPeaks = 0;
     m_nSamples = 0;
     m_nTotal = 0;
+    m_nLastTotal = 0;
     m_dLastAmplitude = -80.0;
     UpdateLabels();
+}
+
+int pnlPeakCountChannel::SamplesSinceLastCheck()
+{
+    int nTotal(m_nSamples-m_nLastTotal);
+    m_nLastTotal = m_nSamples;
+
+    return nTotal;
 }

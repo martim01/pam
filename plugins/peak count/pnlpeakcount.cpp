@@ -1,5 +1,7 @@
 #include "pnlpeakcount.h"
 #include "pnlpeakcountchannel.h"
+#include "peakcountbuilder.h"
+#include "wmlogevent.h"
 
 //(*InternalHeaders(pnlPeakCount)
 #include <wx/font.h>
@@ -29,7 +31,9 @@ BEGIN_EVENT_TABLE(pnlPeakCount,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlPeakCount::pnlPeakCount(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size) : m_dLimit(-8.0)
+pnlPeakCount::pnlPeakCount(wxWindow* parent,PeakCountBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) :
+    m_pBuilder(pBuilder),
+    m_dLimit(-8.0)
 {
 	//(*Initialize(pnlPeakCount)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
@@ -87,6 +91,10 @@ pnlPeakCount::pnlPeakCount(wxWindow* parent,wxWindowID id,const wxPoint& pos,con
 	//*)
     m_pedtLimit->SetFocus();
     m_plblLimit->SetLabel(wxString::Format(wxT("%.2f"), m_dLimit));
+
+    m_timerLog.SetOwner(this, wxNewId());
+    m_timerLog.Start(1000);
+    Connect(m_timerLog.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&pnlPeakCount::OnTimerLog);
 }
 
 pnlPeakCount::~pnlPeakCount()
@@ -168,4 +176,20 @@ void pnlPeakCount::OnedtLimitTextEnter(wxCommandEvent& event)
     m_plblLimit->SetLabel(wxString::Format(wxT("%.2f"), m_dLimit));
     m_pedtLimit->SetValue(wxEmptyString);
     ResetTest();
+}
+
+
+void pnlPeakCount::OnTimerLog(wxTimerEvent& event)
+{
+    if(m_pBuilder->IsLogActive())
+    {
+        for(size_t i = 0; i < m_vChannels.size(); i++)
+        {
+            int nTotal(m_vChannels[i]->SamplesSinceLastCheck());
+            if(nTotal > 0)
+            {
+                wmLog::Get()->Log(wxString::Format(wxT("**TESTS** PeakCount Ch%d %d samples over %.2fdB in last second"), i, nTotal, m_dLimit));
+            }
+        }
+    }
 }

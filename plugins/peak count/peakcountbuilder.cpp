@@ -36,7 +36,7 @@ wxString PeakCountBuilder::GetName() const
 
 wxWindow* PeakCountBuilder::CreateTestPanel(wxWindow* pParent)
 {
-    m_ppnlPeakCount = new pnlPeakCount(pParent);
+    m_ppnlPeakCount = new pnlPeakCount(pParent, this);
     return m_ppnlPeakCount;
 }
 

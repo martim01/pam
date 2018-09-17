@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlTestOptions">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnLog" member="yes">
+			<label>Log</label>
+			<pos>10,5</pos>
+			<size>180,40</size>
+			<bg>#346969</bg>
+			<font>
+				<size>12</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+			<style>wmButton::STYLE_SELECT</style>
+			<handler function="OnbtnLogClick" entry="EVT_BUTTON" />
+		</object>
+	</object>
+</wxsmith>
