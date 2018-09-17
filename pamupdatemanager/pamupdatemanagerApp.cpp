@@ -8,6 +8,8 @@
  **************************************************************/
 
 #include "pamupdatemanagerApp.h"
+#include "settings.h"
+#include <wx/stdpaths.h>
 
 //(*AppHeaders
 #include "pamupdatemanagerMain.h"
@@ -18,6 +20,7 @@ IMPLEMENT_APP(pamupdatemanagerApp);
 
 bool pamupdatemanagerApp::OnInit()
 {
+    Settings::Get().ReadSettings(wxString::Format(wxT("%s/pam/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
     //(*AppInitialize
     bool wxsOK = true;
     wxInitAllImageHandlers();

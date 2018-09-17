@@ -72,11 +72,7 @@ Generator::Generator() :
     m_pPink[1] = 0;
     srand(time(0));
 
-    #ifdef __WXGTK__
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-    m_pGenerator = new default_random_engine(seed);
-    m_pDistribution = new uniform_real_distribution<double>(0.0,2.0);
-    #endif // __WXGTK__
+
 }
 
 Generator::~Generator()
@@ -86,10 +82,7 @@ Generator::~Generator()
     CloseFile();
     ClosePink();
 
-    #ifdef __WXGTK__
-    delete m_pDistribution;
-    delete m_pGenerator;
-    #endif // __WXGTK__
+
 }
 
 void Generator::SetSampleRate(unsigned int nSampleRate)
@@ -542,13 +535,10 @@ void Generator::GenerateWhiteNoise(float* pBuffer, unsigned int nSize)
 
     for (int i = 0; i < nSize; i++)
     {
-        #ifdef __WXGTK__
-        pBuffer[i] = ((*m_pDistribution(*m_pGenerator))-1.0)*m_dNoiseAmplitude);
-        #else
         float random1 = ((float)rand() / (float)(RAND_MAX + 1));
         pBuffer[i] = ((2.0*random1)-1.0)*m_dNoiseAmplitude;
-        #endif // __WXGTK__
-        }
+
+   }
 
 }
 

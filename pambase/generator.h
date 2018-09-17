@@ -194,8 +194,5 @@ class PAMBASE_IMPEXPORT Generator
         int m_nGenerator;
         enum {FILE, FREQUENCY, SEQUENCE, NOISE_WHITE, NOISE_PINK};
 
-        #ifdef __WXGTK__
-        std::default_random_engine* m_pGenerator;
-        std::uniform_real_distribution<double>* m_pDistribution;
-        #endif
+
 };
