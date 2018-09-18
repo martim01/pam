@@ -23,8 +23,37 @@
 		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnReset" member="yes">
 			<label>Reset</label>
 			<pos>5,420</pos>
-			<size>90,50</size>
+			<size>80,50</size>
 			<handler function="OnbtnResetClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmList" name="ID_M_PLST1" variable="m_plstMontor" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>3,1</button_gap>
+			<button_size>-1,50</button_size>
+			<columns>2</columns>
+			<button>#808040</button>
+			<button_selected>#EC7600</button_selected>
+			<items />
+			<pos>95,418</pos>
+			<size>165,52</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstMontorSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+		<object class="Custom" name="ID_CUSTOM1" subclass="wmSlider" variable="m_pAmplitude" member="yes">
+			<creating_code>$(THIS) = new $(CLASS)($(PARENT),$(ID),wxT(&quot;Range&quot;),$(POS),$(SIZE),$(STYLE),$(NAME));</creating_code>
+			<include_file>wmslider.h</include_file>
+			<local_include>1</local_include>
+			<style>5</style>
+			<pos>270,425</pos>
+			<size>265,40</size>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL9" variable="m_plbldB" member="yes">
+			<label>dB</label>
+			<pos>540,425</pos>
+			<size>60,40</size>
+			<fg>#000000</fg>
+			<bg>#FFFFFF</bg>
 		</object>
 	</object>
 </wxsmith>

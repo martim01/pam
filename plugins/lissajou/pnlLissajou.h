@@ -39,6 +39,7 @@ class pnlLissajou: public wxPanel
 
 		void OutputChannels(const std::vector<char>& vChannels);
 		void Follow();
+		void SetDisplayType(unsigned int nType);
 
 	protected:
 

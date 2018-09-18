@@ -223,3 +223,9 @@ void pnlLissajou::Follow()
         m_pBuilder->WriteSetting(wxT("Axis_Y"), m_vOutputs[1]);
     }
 }
+
+
+void pnlLissajou::SetDisplayType(unsigned int nType)
+{
+    m_pJellyfish->SetDisplayType(nType);
+}

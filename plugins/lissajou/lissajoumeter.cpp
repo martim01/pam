@@ -5,6 +5,7 @@
 #include <wx/image.h>
 #include "settings.h"
 #include "audio.h"
+#include "jarvis.h"
 
 using namespace std;
 
@@ -85,13 +86,13 @@ void LissajouMeter::OnPaint(wxPaintEvent& event)
 
     if(m_pBuffer)
     {
-        if(m_nType == STARS || m_nType == JOINT)
+        if(m_nType == STARS)
         {
             DrawStars(dc);
         }
-        if(m_nType == PHASEOMETER || m_nType == JOINT)
+        if(m_nType == PHASEOMETER)
         {
-            DrawPeaks(dc);
+            DrawHull(dc);
         }
 
         delete[] m_pBuffer;
@@ -313,8 +314,6 @@ void LissajouMeter::DrawStars(wxDC& dc)
 
     }
     m_pntRotateOffset = wxPoint(0,0);
-
-
     dc.DrawBitmap(wxBitmap(img),m_rectGrid.GetLeft()+1+m_pntRotateOffset.x, m_rectGrid.GetTop()+1+m_pntRotateOffset.y);
 
 }
@@ -435,6 +434,47 @@ void LissajouMeter::DrawPeaks(wxDC&  dc)
     dc.DrawPolygon(4, pntPoly);
 }
 
+
+void LissajouMeter::DrawHull(wxDC& dc)
+{
+    wxPoint pntCenter(m_bmpScreen.GetWidth()/2, m_bmpScreen.GetHeight()/2);
+    wxImage img(m_bmpScreen.GetWidth(), m_bmpScreen.GetHeight());
+    DrawLines(img, pntCenter);
+
+    vector<wxPoint> pntList(m_nBufferSize/m_nChannels, pntCenter);
+
+    size_t i = 0;
+    for(size_t nSample = 0; nSample < m_nBufferSize; nSample+=m_nChannels)
+    {
+        float x;
+        float y;
+
+        Scale(m_pBuffer[nSample+m_nAxis[1]], m_pBuffer[nSample+m_nAxis[0]], x, y, pntCenter);
+
+       if(m_bRotate)
+       {
+           Rotate(x,y,pntCenter);
+       }
+
+        int nX(static_cast<int>(x));
+        int nY(static_cast<int>(y));
+
+        pntList[i] = wxPoint(m_rectGrid.GetLeft()+1+nX,m_rectGrid.GetTop()+1+nY);
+        i++;
+
+        //img.GetData()[nY*m_bmpScreen.GetWidth()*3+(nX*3)] = 0x00;
+        //img.GetData()[nY*m_bmpScreen.GetWidth()*3+(nX*3)+1] = 0xFF;
+        //img.GetData()[nY*m_bmpScreen.GetWidth()*3+(nX*3)+2] = 0x00;
+
+    }
+    m_pntRotateOffset = wxPoint(0,0);
+    dc.DrawBitmap(wxBitmap(img),m_rectGrid.GetLeft()+1+m_pntRotateOffset.x, m_rectGrid.GetTop()+1+m_pntRotateOffset.y);
+
+    dc.SetBrush(*wxTRANSPARENT_BRUSH);
+    dc.SetPen(wxPen(wxColour(50,250,50)));
+    vector<wxPoint> pntHull(convexHull(&pntList[0], pntList.size()));
+    dc.DrawPolygon(pntHull.size(), &pntHull[0]);
+}
 
 void LissajouMeter::OnSize(wxSizeEvent& event)
 {

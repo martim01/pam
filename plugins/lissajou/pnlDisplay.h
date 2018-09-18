@@ -18,6 +18,7 @@ class pnlDisplay: public wxPanel
 		//(*Declarations(pnlDisplay)
 		wmButton* m_pbtnLevels;
 		wmList* m_plstScaling;
+		wmButton* m_pbtnDisplay;
 		wmButton* m_pbtnRotate;
 		//*)
 
@@ -27,6 +28,7 @@ class pnlDisplay: public wxPanel
 		static const long ID_M_PLST24;
 		static const long ID_M_PBTN36;
 		static const long ID_M_PBTN37;
+		static const long ID_M_PBTN1;
 		//*)
 
 	private:
@@ -35,6 +37,7 @@ class pnlDisplay: public wxPanel
 		void OnlstScalingSelected(wxCommandEvent& event);
 		void OnbtnRotateClick(wxCommandEvent& event);
 		void OnbtnLevelsClick(wxCommandEvent& event);
+		void OnbtnDisplayClick(wxCommandEvent& event);
 		//*)
 		LissajouBuilder* m_pBuilder;
 

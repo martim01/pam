@@ -201,7 +201,7 @@ void Scope::OnPaint(wxPaintEvent& event)
 
 
     double dMs = (1/48.0)*static_cast<double>(m_nFrameRefresh/2);
-    uiRect uiLabel(wxRect(m_rectGrid.GetLeft(),GetClientSize().y-20, 80,20));
+    uiRect uiLabel(wxRect(m_rectGrid.GetLeft(),GetClientSize().y-22, 80,20));
     uiLabel.SetBackgroundColour(wxColour(80,80,120));
     uiLabel.Draw(dc, wxString::Format(wxT("%.02f ms"), dMs), uiRect::BORDER_NONE);
 

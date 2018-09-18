@@ -444,6 +444,11 @@ void Generator::ReadSoundFile(unsigned int nSize)
     }
 }
 
+void Generator::SetNoiseAmplitude(float ddBFS)
+{
+    m_dNoiseAmplitude = pow(10.0, ddBFS/20.0);
+}
+
 void Generator::SetNoise(int nColour, float ddBFS)
 {
     ClosePink();
@@ -574,7 +579,7 @@ void Generator::GenerateWhiteNoise(float* pBuffer, unsigned int nSize)
     {
         //float random1 = ((float)rand() / (float)(RAND_MAX + 1));
 
-        float random1 = AWGN_generator();
+        float random1 = randn();
         pBuffer[i] = random1*m_dNoiseAmplitude;
 
         //pBuffer[i] = ((2.0*random1)-1.0)*m_dNoiseAmplitude;
@@ -673,38 +678,33 @@ void Generator::Stop()
 
 
 
-double Generator::AWGN_generator()
+double Generator::randn(double mu, double sigma)
 {/* Generates additive white Gaussian Noise samples with zero mean and a standard deviation of 1. */
 
-  double temp1;
-  double temp2;
-  double result;
-  int p;
+  double U1, U2, W, mult;
+  static double X1, X2;
+  static int call = 0;
 
-  p = 1;
+  if (call == 1)
+    {
+      call = !call;
+      return (mu + sigma * (double) X2);
+    }
 
-  while( p > 0 )
-  {
-	temp2 = ( rand() / ( (double)RAND_MAX ) ); /*  rand() function generates an
-                                                       integer between 0 and  RAND_MAX,
-                                                       which is defined in stdlib.h.
-                                                   */
+  do
+    {
+      U1 = -1 + ((double) rand () / RAND_MAX) * 2;
+      U2 = -1 + ((double) rand () / RAND_MAX) * 2;
+      W = pow (U1, 2) + pow (U2, 2);
+    }
+  while (W >= 1 || W == 0);
 
-    if ( temp2 == 0 )
-    {// temp2 is >= (RAND_MAX / 2)
-      p = 1;
-    }// end if
-    else
-    {// temp2 is < (RAND_MAX / 2)
-       p = -1;
-    }// end else
+  mult = sqrt ((-2 * log (W)) / W);
+  X1 = U1 * mult;
+  X2 = U2 * mult;
 
-  }// end while()
+  call = !call;
 
-  temp1 = cos( ( 2.0 * (double)M_PI ) * rand() / ( (double)RAND_MAX ) );
-  result = sqrt( -2.0 * log( temp2 ) ) * temp1;
-
-  return result;	// return the generated random sample to the caller
-
-}// end AWGN_generator(
+  return (mu + sigma * (double) X1);
+}
 

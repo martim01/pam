@@ -25,6 +25,7 @@ m_ppnlRouting(0)
     RegisterForSettingsUpdates(wxT("Axis_Y"), this);
     RegisterForSettingsUpdates(wxT("MeterMode"), this);
     RegisterForSettingsUpdates(wxT("Monitor"), this);
+    RegisterForSettingsUpdates(wxT("Display"), this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&LissajouBuilder::OnSettingChanged);
 
@@ -68,7 +69,7 @@ void LissajouBuilder::LoadSettings()
         m_pLissajou->Rotate(ReadSetting(wxT("Rotate"),1));
         m_pLissajou->ShowLevels(ReadSetting(wxT("Levels"),1));
         m_pLissajou->SetAxis(ReadSetting(wxT("Axis_X"),0), ReadSetting(wxT("Axis_Y"),1));
-
+        m_pLissajou->SetDisplayType(ReadSetting(wxT("Display"), 0));
         if(ReadSetting(wxT("Monitor"),0) == 1)  //force the output
         {
             vector<char> vChannels;
@@ -163,6 +164,10 @@ void LissajouBuilder::OnSettingChanged(SettingEvent& event)
         {
             m_pLissajou->Follow();
         }
+    }
+    else if(event.GetKey() == wxT("Display"))
+    {
+        m_pLissajou->SetDisplayType(ReadSetting(wxT("Display"), 0));
     }
 }
 

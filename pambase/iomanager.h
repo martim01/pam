@@ -41,7 +41,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         void InputChanged(const wxString& sKey);
         void OutputChanged(const wxString& sKey);
         void GeneratorToneChanged();
-        void GeneratorNoiseChanged();
+        void GeneratorNoiseChanged(const wxString& sKey);
 
 
         void InitGeneratorFile();

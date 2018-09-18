@@ -144,7 +144,7 @@ void IOManager::OnSettingEvent(SettingEvent& event)
     }
     else if(event.GetSection() == wxT("Noise"))
     {
-        GeneratorNoiseChanged();
+        GeneratorNoiseChanged(event.GetKey());
     }
     else if(event.GetSection() == wxT("QoS"))
     {
@@ -333,9 +333,13 @@ void IOManager::GeneratorToneChanged()
     }
 }
 
-void IOManager::GeneratorNoiseChanged()
+void IOManager::GeneratorNoiseChanged(const wxString& sKey)
 {
-    if(Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")) == wxT("Noise"))
+    if(sKey == wxT("Amplitude"))
+    {
+        m_pGenerator->SetNoiseAmplitude(Settings::Get().Read(wxT("Noise"), wxT("Amplitude"), -18.0));
+    }
+    else if(Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")) == wxT("Noise"))
     {
         wmLog::Get()->Log(wxT("Change Audio Output Generator: Noise"));
         InitGeneratorNoise();

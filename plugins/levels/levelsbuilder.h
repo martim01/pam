@@ -18,6 +18,7 @@ class LevelsBuilder : public TestPluginBuilder
     protected:
 
         friend class pnlLevels;
+        friend class MaxMinGraph;
         virtual wxWindow* CreateTestPanel(wxWindow* pParent);
         virtual void LoadSettings();
 

@@ -5,6 +5,7 @@
 #include "uirect.h"
 #include <list>
 
+class LevelsBuilder;
 //#include "wmscroller.h"
 
 /** @class a class that draws a button on the screen, derives from wxWindow
@@ -29,7 +30,7 @@ class MaxMinGraph : public wxWindow
         *   @param validator not used - just here to have same structure as wxButton
         *   @param name not used - just here to have same structure as wxButton
         **/
-        MaxMinGraph(wxWindow *parent,
+        MaxMinGraph(wxWindow *parent, LevelsBuilder* pBuilder,
                  wxWindowID id,
                  const wxPoint& pos = wxDefaultPosition,
                  const wxSize& size = wxDefaultSize);
@@ -55,6 +56,7 @@ class MaxMinGraph : public wxWindow
 
         void SetLevels(double dMax, double dMin, double dCurrent, bool bConvertToDb = true);
 
+        void SetMaxRange(double dRange);
 
         /** @brief returns the default size of the button for sizers
         **/
@@ -77,7 +79,7 @@ class MaxMinGraph : public wxWindow
         **/
         virtual void OnSize(wxSizeEvent& event);
 
-
+        LevelsBuilder* m_pBuilder;
         wxRect m_rectGraph;
         uiRect m_uiMax;
         uiRect m_uiMin;
@@ -86,6 +88,9 @@ class MaxMinGraph : public wxWindow
         double m_dMax;
         double m_dMin;
         double m_dCurrent;
+
+        double m_dMaxRange;
+        double m_dLastLevel;
 
         double m_dResolution;
 };

@@ -33,5 +33,14 @@
 			<style>wmButton::STYLE_SELECT</style>
 			<handler function="OnbtnLevelsClick" entry="EVT_BUTTON" />
 		</object>
+		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnDisplay" member="yes">
+			<label>Display</label>
+			<button_pressed>#008080</button_pressed>
+			<pos>2,130</pos>
+			<size>196,35</size>
+			<bg>#004000</bg>
+			<style>wmButton::STYLE_SELECT</style>
+			<handler function="OnbtnDisplayClick" entry="EVT_BUTTON" />
+		</object>
 	</object>
 </wxsmith>

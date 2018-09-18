@@ -35,7 +35,7 @@ wxString LevelsBuilder::GetName() const
 
 wxWindow* LevelsBuilder::CreateTestPanel(wxWindow* pParent)
 {
-    m_ppnlLevels = new pnlLevels(pParent);
+    m_ppnlLevels = new pnlLevels(pParent, this);
     return m_ppnlLevels;
 }
 

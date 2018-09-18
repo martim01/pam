@@ -5,7 +5,8 @@
 #include <wx/image.h>
 #include "uirect.h"
 #include "settings.h"
-
+#include "levelsbuilder.h"
+#include "wmlogevent.h"
 //#include "testlog.h"
 
 using namespace std;
@@ -17,7 +18,10 @@ END_EVENT_TABLE()
 
 
 
-MaxMinGraph::MaxMinGraph(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size)
+MaxMinGraph::MaxMinGraph(wxWindow *parent,LevelsBuilder* pBuilder, wxWindowID id, const wxPoint& pos, const wxSize& size) :
+    m_pBuilder(pBuilder),
+    m_dMaxRange(80.0),
+    m_dLastLevel(-80.0)
 {
     Create(parent, id, pos, size);
 }
@@ -135,11 +139,46 @@ void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bCon
         m_dCurrent = dCurrent;
     }
 
+    double dRange(m_dMax-m_dMin);
+
     m_uiCurrent.SetLabel(wxString::Format(wxT("%.1fdB"), m_dCurrent));
     m_uiMax.SetLabel(wxString::Format(wxT("%.1fdB"), m_dMax));
     m_uiMin.SetLabel(wxString::Format(wxT("%.1fdB"),m_dMin));
-    m_uiRange.SetLabel(wxString::Format(wxT("%.1fdB"), (m_dMax-m_dMin)));
+    m_uiRange.SetLabel(wxString::Format(wxT("%.1fdB"), dRange));
 
+
+    if(m_dCurrent != m_dLastLevel && m_pBuilder->ReadSetting(wxT("Monitor"),0) == 0)
+    {
+        if(m_pBuilder->IsLogActive())
+        {
+            wmLog::Get()->Log(wxString::Format(wxT("**TESTS** Levels - level changed from %.2fdB to %.2fdB"), m_dLastLevel, m_dCurrent));
+        }
+        m_uiCurrent.SetBackgroundColour(wxColour(255,100,100));
+    }
+    else
+    {
+        m_uiCurrent.SetBackgroundColour(wxColour(91,91,0));
+    }
+
+    if(dRange > m_dMaxRange && m_pBuilder->ReadSetting(wxT("Monitor"),0) == 1)
+    {
+        if(m_pBuilder->IsLogActive())
+        {
+            wmLog::Get()->Log(wxString::Format(wxT("**TESTS** Levels - range %.2fdB > max set %.2fdB"), dRange, m_dMaxRange));
+        }
+        m_uiRange.SetBackgroundColour(wxColour(255,100,100));
+    }
+    else
+    {
+        m_uiRange.SetBackgroundColour(wxColour(91,91,0));
+    }
+
+    m_dLastLevel = m_dCurrent;
     Refresh();
 }
 
+
+void MaxMinGraph::SetMaxRange(double dRange)
+{
+    m_dMaxRange = dRange;
+}

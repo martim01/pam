@@ -251,7 +251,7 @@ void LevelCalculator::CalculateEnergy(const timedbuffer* pBuffer)
     {
         m_dLevel[i%m_nChannels] += pow(pBuffer->GetBuffer()[i],2);
     }
-    if(m_nChannels == 2)
+    /*if(m_nChannels == 2)
     {
         for(unsigned int i=0; i < pBuffer->GetBufferSize(); i++)
         {
@@ -270,10 +270,24 @@ void LevelCalculator::CalculateEnergy(const timedbuffer* pBuffer)
         m_dMS[0] = sqrt(m_dMS[0]/(pBuffer->GetBufferSize()/2));
         m_dMS[1] = sqrt(m_dMS[1]/(pBuffer->GetBufferSize()/2));
     }
-
+    */
     for(int i = 0; i < 8; i++)
     {
         m_dLevel[i] = sqrt(m_dLevel[i]/(pBuffer->GetBufferSize()/m_nChannels));
+    }
+
+    if(m_nChannels == 2)
+    {
+        if(m_nMSMode == meter::M6)
+        {
+            m_dMS[0] = (m_dLevel[0]+m_dLevel[1])/2;
+            m_dMS[1] = (m_dLevel[0]-m_dLevel[1])/2;
+        }
+        else
+        {
+            m_dMS[0] = (m_dLevel[0]+m_dLevel[1]);
+            m_dMS[1] = (m_dLevel[0]-m_dLevel[1]);
+        }
     }
 
 }

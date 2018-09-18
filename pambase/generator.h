@@ -124,6 +124,7 @@ class PAMBASE_IMPEXPORT Generator
         bool LoadSequence(const wxString& sFile);
 
         void SetNoise(int nColour, float ddBFS);
+        void SetNoiseAmplitude(float ddBFS);
 
         void Generate(unsigned int nSize);
 
@@ -162,7 +163,7 @@ class PAMBASE_IMPEXPORT Generator
         float GenerateSaw(const genfreq& gfreq, float dPhase);
         float GenerateTriangle(const genfreq& gfreq, float dPhase);
 
-        double AWGN_generator();
+        double randn(double mu=0.0, double sigma=1.0);
 
 
         void ClosePink();

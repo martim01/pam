@@ -113,6 +113,7 @@ class LissajouMeter : public wxWindow
 
         void DrawStars(wxDC& dc);
         void DrawPeaks(wxDC& dc);
+        void DrawHull(wxDC& dc);
 
         void DrawLines(wxImage& img, const wxPoint& pntCenter);
 
