@@ -84,10 +84,12 @@ bool UpdateManager::GetUpdateList()
     {
         return GetUpdateListFromFTP();
     }
+
+    return false;
 }
 bool UpdateManager::GetUpdateListFromFTP()
 {
-
+    return false;
 }
 
 
@@ -165,9 +167,8 @@ bool UpdateManager::GetUpdateListFromShare()
     {
         wxMkdir(wxT("/mnt/share"));
     }
-    wxExecute(wxT("sudo umount /mnt/share"));
-    wxLogDebug(wxString::Format(wxT("sudo mount -t cifs -o user=pam,password=10653045 %s /mnt/share"), Settings::Get().Read(wxT("Update"), wxT("Share"), wxEmptyString)));
-    wxExecute(wxString::Format(wxT("sudo mount -t cifs -o user=pam,password=10653045 %s /mnt/share"), Settings::Get().Read(wxT("Update"), wxT("Share"), wxEmptyString)));
+    wxExecute(wxT("sudo umount /mnt/share"), wxEXEC_SYNC);
+    wxExecute(wxString::Format(wxT("sudo mount -t cifs -o user=pam,password=10653045 %s /mnt/share"), Settings::Get().Read(wxT("Update"), wxT("Share"), wxEmptyString)), wxEXEC_SYNC);
 
     return GetUpdateListFromLocal(wxT("/mnt/share"));
 #else
@@ -183,6 +184,7 @@ bool UpdateManager::GetUpdateListFromLocal(const wxString& sPath)
     {
         DecodeUpdateList(asFiles[i]);
     }
+    return true;
 }
 
 bool UpdateManager::DecodeUpdateList(const wxXmlDocument& xmlDoc)
@@ -314,8 +316,10 @@ bool UpdateManager::Update(wxString sName)
             case UpdateObject::CORE_DLL:
                 #ifdef __WXMSW__
                 sName << wxT(".dll");
-                #else ifdef __WXGNU__
-                sName  = wxT("lib")+sName+wxT(".so");
+                #else
+                    #ifdef __WXGNU__
+                    sName  = wxT("lib")+sName+wxT(".so");
+                    #endif // __WXGNU__
                 #endif // __WXMSW__
 
                 fileOld.SetPath(Settings::Get().GetCoreLibDirectory());
@@ -325,17 +329,22 @@ bool UpdateManager::Update(wxString sName)
             case UpdateObject::PLUGIN_MONITOR:
                 #ifdef __WXMSW__
                 sName << wxT(".dll");
-                #else ifdef __WXGNU__
+                #else
+                #ifdef __WXGNU__
                 sName  = wxT("lib")+sName+wxT(".so");
+                #endif
                 #endif // __WXMSW__
+
                 fileOld.SetPath(Settings::Get().GetMonitorPluginDirectory());
                 fileOld.SetName(sName);
                 break;
             case UpdateObject::PLUGIN_TEST:
                 #ifdef __WXMSW__
                 sName << wxT(".dll");
-                #else ifdef __WXGNU__
+                #else
+                #ifdef __WXGNU__
                 sName  = wxT("lib")+sName+wxT(".so");
+                #endif // __WXGNU__
                 #endif // __WXMSW__
                 fileOld.SetPath(Settings::Get().GetTestPluginDirectory());
                 fileOld.SetName(sName);
