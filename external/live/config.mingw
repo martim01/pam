@@ -1,6 +1,6 @@
 COMPILE_OPTS =         $(INCLUDES) -I. -O -DSOCKLEN_T=int -DLOCALE_NOT_USED
 C =                    c
-C_COMPILER =           $(GCC)
+C_COMPILER =           $(CC)
 C_FLAGS =              $(COMPILE_OPTS) -DUSE_OUR_BZERO=1 -D__MINGW32__
 CPP =                  cpp
 CPLUSPLUS_COMPILER =   $(CXX)

@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2018 Live Networks, Inc.  All rights reserved.
 // A data structure that represents a session that consists of
 // potentially multiple (audio and/or video) sub-sessions
 // Implementation
@@ -23,7 +23,6 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "Locale.hh"
 #include "GroupsockHelper.hh"
 #include <ctype.h>
-#include <iostream>
 
 ////////// MediaSession //////////
 
@@ -948,17 +947,14 @@ double MediaSubsession::getNormalPlayTime(struct timeval const& presentationTime
 
   // First, check whether our "RTPSource" object has already been synchronized using RTCP.
   // If it hasn't, then - as a special case - we need to use the RTP timestamp to compute the NPT.
-  if (!rtpSource()->hasBeenSynchronizedUsingRTCP())
-    {
+  if (!rtpSource()->hasBeenSynchronizedUsingRTCP()) {
     if (!rtpInfo.infoIsNew) return 0.0; // the "rtpInfo" structure has not been filled in
     u_int32_t timestampOffset = rtpSource()->curPacketRTPTimestamp() - rtpInfo.timestamp;
     double nptOffset = (timestampOffset/(double)(rtpSource()->timestampFrequency()))*scale();
     double npt = playStartTime() + nptOffset;
 
     return npt;
-  }
-  else
-    {
+  } else {
     // Common case: We have been synchronized using RTCP.  This means that the "presentationTime" parameter
     // will be accurate, and so we should use this to compute the NPT.
     double ptsDouble = (double)(presentationTime.tv_sec + presentationTime.tv_usec/1000000.0);
@@ -1111,8 +1107,6 @@ Boolean MediaSubsession::parseSDPAttribute_fmtp(char const* sdpLine) {
     if (strncmp(sdpLine, "a=fmtp:", 7) != 0) break; sdpLine += 7;
     while (isdigit(*sdpLine)) ++sdpLine;
 
-    env() << "fmtp: " << sdpLine << "\n";
-
     // The remaining "sdpLine" should be a sequence of
     //     <name>=<value>;
     // or
@@ -1130,14 +1124,11 @@ Boolean MediaSubsession::parseSDPAttribute_fmtp(char const* sdpLine) {
 	Locale l("POSIX");
 	for (char* c = nameStr; *c != '\0'; ++c) *c = tolower(*c);
 
-	if (sscanfResult == 1)
-        {
+	if (sscanfResult == 1) {
 	  // <name>
 	  setAttribute(nameStr);
-    env() << "switch: " << nameStr << "\n";
 	} else {
 	  // <name>=<value>
-	  env() << "param: " << nameStr << "=" << valueStr << "\n";
 	  setAttribute(nameStr, valueStr);
 	}
       }
@@ -1277,6 +1268,9 @@ Boolean MediaSubsession::createSourceObjects(int useSpecialRTPoffset) {
       } else if (strcmp(fCodecName, "THEORA") == 0) { // Theora video
 	fReadSource = fRTPSource
 	  = TheoraVideoRTPSource::createNew(env(), fRTPSocket, fRTPPayloadFormat);
+      } else if (strcmp(fCodecName, "RAW") == 0) { // Uncompressed raw video (RFC 4175)
+	fReadSource = fRTPSource
+	  = RawVideoRTPSource::createNew(env(), fRTPSocket, fRTPPayloadFormat, fRTPTimestampFrequency);
       } else if (strcmp(fCodecName, "VP8") == 0) { // VP8 video
 	fReadSource = fRTPSource
 	  = VP8VideoRTPSource::createNew(env(), fRTPSocket,

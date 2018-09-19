@@ -20,6 +20,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // A generic SIP client
 // Implementation
 
+#include <strings.h>
 #include "aes67client.h"
 #include "GroupsockHelper.hh"
 
@@ -758,10 +759,10 @@ Boolean AES67Client::parseSIPURL(UsageEnvironment& env, char const* url,
     // Also, skip over any "<username>[:<password>]@" preceding <address>
     char const* prefix = "sip:";
     unsigned const prefixLength = 4;
-    if (_strncasecmp(url, prefix, prefixLength) != 0) {
-      env.setResultMsg("URL is not of the form \"", prefix, "\"");
-      break;
-    }
+//    if (_strncasecmp(url, prefix, prefixLength) != 0) {
+//      env.setResultMsg("URL is not of the form \"", prefix, "\"");
+//      break;
+//    }
 
     unsigned const parseBufferSize = 100;
     char parseBuffer[parseBufferSize];
@@ -832,7 +833,7 @@ Boolean AES67Client::parseSIPURLUsernamePassword(char const* url,
     // Parse the URL as "sip:<username>[:<password>]@<whatever>"
     char const* prefix = "sip:";
     unsigned const prefixLength = 4;
-    if (_strncasecmp(url, prefix, prefixLength) != 0) break;
+//    if (_strncasecmp(url, prefix, prefixLength) != 0) break;
 
     // Look for the ':' and '@':
     unsigned usernameIndex = prefixLength;

@@ -206,6 +206,8 @@
 		<Unit filename="RTSPServer.cpp" />
 		<Unit filename="RTSPServerRegister.cpp" />
 		<Unit filename="RTSPServerSupportingHTTPStreaming.cpp" />
+		<Unit filename="RawVideoRTPSink.cpp" />
+		<Unit filename="RawVideoRTPSource.cpp" />
 		<Unit filename="SIPClient.cpp" />
 		<Unit filename="ServerMediaSession.cpp" />
 		<Unit filename="SimpleRTPSink.cpp" />

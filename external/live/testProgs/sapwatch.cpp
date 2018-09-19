@@ -13,7 +13,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
-// Copyright (c) 1996-2017, Live Networks, Inc.  All rights reserved
+// Copyright (c) 1996-2018, Live Networks, Inc.  All rights reserved
 // A program that receives and prints SDP/SAP announcements
 // (on the default SDP/SAP directory: 224.2.127.254/9875)
 
@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
 
 
   // Create a 'groupsock' for the input multicast group,port:
-  char const* sessionAddressStr = "239.255.255.255";
+  char const* sessionAddressStr = "224.2.127.254";
   struct in_addr sessionAddress;
   sessionAddress.s_addr = our_inet_addr(sessionAddressStr);
 
