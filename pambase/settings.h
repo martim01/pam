@@ -3,9 +3,10 @@
 #include "inimanager.h"
 #include "inisection.h"
 #include <map>
+#include <wx/timer.h>
 #include <wx/event.h>
 
-class PAMBASE_IMPEXPORT Settings
+class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
 {
     public:
         static Settings& Get();
@@ -47,10 +48,14 @@ class PAMBASE_IMPEXPORT Settings
     protected:
         Settings();
         void CreatePaths();
+
+        void OnTimerSave(wxTimerEvent& event);
         iniManager m_iniManager;
         wxString m_sFullPath;
 
         std::multimap<wxString, wxEvtHandler*> m_mmHandlers;
+
+        wxTimer m_timerSave;
 };
 
 

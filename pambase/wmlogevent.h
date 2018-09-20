@@ -1,9 +1,11 @@
 #pragma once
 
 #include <wx/event.h>
+#include <wx/timer.h>
 #include <wx/datetime.h>
 #include "dlldefine.h"
 #include <queue>
+#include <wx/thread.h>
 class wxFile;
 
 class PAMBASE_IMPEXPORT wmLogEvent : public wxCommandEvent
@@ -52,7 +54,7 @@ private:
 
 /** Singleton class that is called to send wmLogEvents
 **/
-class PAMBASE_IMPEXPORT wmLog
+class PAMBASE_IMPEXPORT wmLog : public wxEvtHandler
 {
     public:
         static wmLog* Get();
@@ -63,13 +65,20 @@ class PAMBASE_IMPEXPORT wmLog
 
     private:
         ~wmLog();
-        wmLog() : m_pHandler(0),m_pFileLog(0){}
+        wmLog();
         void OpenLogFile(bool bOpen);
+
+        void OnTimerSave(wxTimerEvent& event);
         wxEvtHandler* m_pHandler;
 
         std::queue<wmLogEvent*> m_queueEvents;
         wxFile* m_pFileLog;
         wxDateTime m_dtLog;
+
+        std::queue<wxString> m_queueFile;
+        wxTimer m_timerSave;
+
+        wxMutex m_mutex;
 };
 
 

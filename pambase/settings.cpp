@@ -11,6 +11,8 @@ using   namespace std;
 Settings::Settings()
 {
     //wxString::Format(wxT("%s/pam/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str())
+    m_timerSave.SetOwner(this, wxNewId());
+    Connect(m_timerSave.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&Settings::OnTimerSave);
 }
 
 void Settings::ReadSettings(const wxString& sFullPath)
@@ -49,17 +51,19 @@ bool Settings::Write(const wxString& sSection, const wxString& sKey, const wxStr
     if(m_iniManager.GetIniString(sSection, sKey, wxEmptyString) != sValue)
     {
         m_iniManager.SetSectionValue(sSection, sKey,sValue);
-        bDone = m_iniManager.WriteIniFile(m_sFullPath);
 
-        if(bDone)
+        if(m_timerSave.IsRunning() == false)
         {
-            wxString sHandler(wxString::Format(wxT("%s/%s"),sSection.c_str(),sKey.c_str()));
-            for(multimap<wxString, wxEvtHandler*>::const_iterator itHandler = m_mmHandlers.lower_bound(sHandler); itHandler != m_mmHandlers.upper_bound(sHandler); ++itHandler)
-            {
-                SettingEvent event(sSection, sKey);
-                wxPostEvent(itHandler->second, event);
-            }
+            m_timerSave.Start(500, true);
         }
+
+        wxString sHandler(wxString::Format(wxT("%s/%s"),sSection.c_str(),sKey.c_str()));
+        for(multimap<wxString, wxEvtHandler*>::const_iterator itHandler = m_mmHandlers.lower_bound(sHandler); itHandler != m_mmHandlers.upper_bound(sHandler); ++itHandler)
+        {
+            SettingEvent event(sSection, sKey);
+            wxPostEvent(itHandler->second, event);
+        }
+
     }
     return bDone;
 }
@@ -223,10 +227,21 @@ void Settings::CreatePaths()
     {
         wxFileName::Mkdir(GetLogDirectory(), 0777, wxPATH_MKDIR_FULL);
     }
+
+    if(!wxFileName::DirExists(GetWavDirectory()))
+    {
+        wxFileName::Mkdir(GetWavDirectory(), 0777, wxPATH_MKDIR_FULL);
+    }
 }
 
 
 wxString Settings::GetLibraryVersion() const
 {
     return wxString::Format(wxT("%d.%d.%d.%d"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION);
+}
+
+
+void Settings::OnTimerSave(wxTimerEvent& event)
+{
+    m_iniManager.WriteIniFile(m_sFullPath);
 }

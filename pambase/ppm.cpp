@@ -29,7 +29,7 @@
  */
 
 #include "ppm.h"
-
+#include <wx/log.h>
 
 
 //! Calculate latest intermediate value
@@ -44,7 +44,6 @@
 
 void ppm::calcIntermediate(int nChannels, int nSamples, const float* samples)
 {
-
 
     int i;	// sample counter
     int ch; // channel counter
@@ -102,8 +101,6 @@ void ppm::calcIntermediate(int nChannels, int nSamples, const float* samples)
                             intermediateValue[ch];
 
         }
-
-
     }
 }
 
@@ -212,6 +209,7 @@ bool ppm::setParam(meter::params i, double f)
         if (f>0.0)
         {
             lockonfract = f;
+            wxLogDebug(wxT("Rise %f"), f);
         }
         else
             return false;
@@ -221,6 +219,7 @@ bool ppm::setParam(meter::params i, double f)
         if (f >0.0)
         {
             drop = f;
+            wxLogDebug(wxT("Drop %f"), f);
         }
         else
             return false;

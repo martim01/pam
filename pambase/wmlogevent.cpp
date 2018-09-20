@@ -10,6 +10,13 @@ wmLog* wmLog::Get()
     return &lg;
 }
 
+wmLog::wmLog() : m_pHandler(0),m_pFileLog(0)
+{
+    m_timerSave.SetOwner(this, wxNewId());
+    Connect(m_timerSave.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&wmLog::OnTimerSave);
+
+}
+
 void wmLog::SetTarget(wxEvtHandler* pHandler)
 {
     m_pHandler = pHandler;
@@ -22,6 +29,7 @@ void wmLog::SetTarget(wxEvtHandler* pHandler)
 
 void wmLog::Log(wxString sDevice, wxString sMessage, bool bSend)
 {
+    wxMutexLocker ml(m_mutex);
     wmLogEvent* plge = new wmLogEvent(sDevice, sMessage, false);
     if(bSend == true)
     {
@@ -34,13 +42,13 @@ void wmLog::Log(wxString sDevice, wxString sMessage, bool bSend)
             m_queueEvents.push(plge);
         }
     }
+    m_queueFile.push(wxString::Format(wxT("%s\t%s\t%s\r\n"), wxDateTime::Now().Format(wxT("%H:%M:%S:%l")).c_str(), sDevice.Trim().c_str(), sMessage.Trim().c_str()));
+    if(m_timerSave.IsRunning() == false)
+    {
+        m_timerSave.Start(1000,true);
+    }
 
-    if(m_dtLog.IsValid() == false || m_dtLog != wxDateTime::Today())
-	{
-		//Create new log file by closing and re-opening
-		OpenLogFile(true);
-	}
-	m_pFileLog->Write(wxString::Format(wxT("%s\t%s\t%s\r\n"), wxDateTime::Now().Format(wxT("%H:%M:%S")).c_str(), sDevice.Trim().c_str(), sMessage.Trim().c_str()));
+
 }
 
 void wmLog::OpenLogFile(bool bOpen)
@@ -74,6 +82,20 @@ wmLog::~wmLog()
     if(m_pFileLog)
     {
         delete m_pFileLog;
+    }
+}
+
+void wmLog::OnTimerSave(wxTimerEvent& event)
+{
+    if(m_dtLog.IsValid() == false || m_dtLog != wxDateTime::Today())
+	{
+		//Create new log file by closing and re-opening
+		OpenLogFile(true);
+	}
+	while(m_queueFile.empty() == false)
+    {
+        m_pFileLog->Write(m_queueFile.front());
+        m_queueFile.pop();
     }
 }
 
