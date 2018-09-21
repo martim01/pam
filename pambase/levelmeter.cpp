@@ -480,12 +480,12 @@ void LevelMeter::SetSpeed(long nSpeed)
     switch(nSpeed)
     {
         case meter::SLOW:
-            m_dFall = 0.15;
+            m_dFall = 0.8;
             break;
         case meter::NORMAL:
-            m_dFall = 0.3;
+            m_dFall = 1.6;
             break;
         case meter::FAST:
-            m_dFall = 0.6;
+            m_dFall = 3.2;
     }
 }

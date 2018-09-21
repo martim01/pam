@@ -66,8 +66,11 @@ void wmLog::OpenLogFile(bool bOpen)
         }
 
 		m_pFileLog = new wxFile(wxString::Format(wxT("%s/%s.log"), Settings::Get().GetLogDirectory().c_str(), wxDateTime::Now().FormatISODate().c_str()), wxFile::write_append);
+
+
+
 		m_dtLog = wxDateTime::Today();
-		Log(wxT("--Start logging to file--"));
+		m_pFileLog->Write(wxString::Format(wxT("%s\t\t--Start logging to file ---\r\n"), wxDateTime::Now().Format(wxT("%H:%M:%S:%l")).c_str()));
 	}
 }
 

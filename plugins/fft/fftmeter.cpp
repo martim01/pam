@@ -507,6 +507,8 @@ void FftMeter::SetOverlap(double dPercent)
     m_dOverlapPercent = max(0.0, min(100.0, dPercent));
     m_nOverlap = m_nSampleSize - static_cast<size_t>(m_dOverlapPercent * static_cast<double>(m_nSampleSize)/100);
 
+    m_dFall = 0.000195 * static_cast<double>(m_nNumberOfSetBins)*(100-m_dOverlapPercent)/100.0;
+
     m_uiSettingsOverlap.SetLabel(wxString::Format(wxT("Overlap: %.2f%"), m_dOverlapPercent));
     RefreshRect(m_uiSettingsOverlap.GetRect());
 
@@ -519,7 +521,7 @@ void FftMeter::SetNumberOfBins(size_t nBins)
     m_vfft_out.resize(nBins+1);
     m_vAmplitude = vector<float>(m_vfft_out.size(), -80.0);
 
-    m_dFall = 0.000195 * static_cast<double>(nBins);
+    m_dFall = 0.000195 * static_cast<double>(nBins)*(100-m_dOverlapPercent)/100.0;
     //store here so we can get back
     if(m_nMeterType != OCTAVE)
     {

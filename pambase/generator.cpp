@@ -579,7 +579,7 @@ void Generator::GenerateWhiteNoise(float* pBuffer, unsigned int nSize)
     {
         //float random1 = ((float)rand() / (float)(RAND_MAX + 1));
 
-        float random1 = randn();
+        float random1 = randn(0,0.4);
         pBuffer[i] = random1*m_dNoiseAmplitude;
 
         //pBuffer[i] = ((2.0*random1)-1.0)*m_dNoiseAmplitude;
@@ -602,8 +602,8 @@ void Generator::GenerateGreyNoise(float* pBuffer, unsigned int nSize)
     GenerateWhiteNoise(pBuffer, nSize);
     for(int i = 0; i < nSize; i+=2)
     {
-        pBuffer[i] = m_pGreyFilter[0]->Filter(pBuffer[i]);
-        pBuffer[i+1] = m_pGreyFilter[1]->Filter(pBuffer[i+1]);
+        pBuffer[i] = m_pGreyFilter[0]->Filter(pBuffer[i])*2.0;
+        pBuffer[i+1] = m_pGreyFilter[1]->Filter(pBuffer[i+1])*2.0;
     }
 }
 

@@ -68,11 +68,12 @@ pnlLissajou::~pnlLissajou()
 void pnlLissajou::SetAudioData(const timedbuffer* pBuffer)
 {
     m_pCalculator->CalculateLevel(pBuffer);
+    m_pMeterLeft->ShowValue(m_pCalculator->GetLevel(m_nChannelX));
+    m_pMeterRight->ShowValue(m_pCalculator->GetLevel(m_nChannelY));
 
     m_pJellyfish->SetLissajouData(pBuffer->GetBuffer(), pBuffer->GetBufferSize());
 
-    m_pMeterLeft->ShowValue(m_pCalculator->GetLevel(m_nChannelX));
-    m_pMeterRight->ShowValue(m_pCalculator->GetLevel(m_nChannelY));
+
 
 }
 
@@ -179,6 +180,17 @@ void pnlLissajou::SetMeterMode(unsigned int nMode)
     m_pMeterLeft->SetMeterDisplay(nMode);
     m_pMeterRight->SetMeterDisplay(nMode);
     m_pMeterLevels->SetMeterDisplay(nMode);
+
+    if(nMode != LevelMeter::PPM && nMode != LevelMeter::LOUD)
+    {
+        m_pMeterLeft->SetSpeed(meter::FAST);
+        m_pMeterRight->SetSpeed(meter::FAST);
+    }
+    else
+    {
+        m_pMeterLeft->SetSpeed(meter::NORMAL);
+        m_pMeterRight->SetSpeed(meter::NORMAL);
+    }
     m_pCalculator->SetMode(nMode);
 }
 
@@ -195,6 +207,10 @@ void pnlLissajou::CheckAxis()
     //if the output channels are the same as our axis we colour the meters red and green...
     if(m_vOutputs.size() > 1)
     {
+        m_pMeterLeft->SetLightColours(-8,wxColour(0,220,0), -8, wxColour(240,0,0), wxColour(255,100,100));
+        m_pMeterRight->SetLightColours(-8,wxColour(0,220,0), -8, wxColour(240,0,0), wxColour(255,100,100));
+
+        /*
         if(m_vOutputs[0] == m_pBuilder->ReadSetting(wxT("Axis_X"),0) || m_nChannels == 2)
         {
             m_pMeterLeft->SetLightColours(-8,wxColour(220,0,0), -8,wxColour(240,0,0),  wxColour(255,100,100));
@@ -212,6 +228,7 @@ void pnlLissajou::CheckAxis()
         {
             m_pMeterRight->SetLightColours(-8,wxColour(255,255,255), -8,wxColour(255,255,255), wxColour(255,100,100));
         }
+        */
     }
 }
 
