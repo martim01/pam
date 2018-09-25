@@ -3,14 +3,14 @@
 
 struct networkInterface
 {
-    networkInterface() : nMask(0), bStatic(false), bWireless(false), bUp(false){}
+    networkInterface() : nMask(0), bStatic(false), bWireless(false), bConnected(false){}
     wxString sAddress;
     unsigned long nMask;
     wxString sGateway;
     wxString sDNS;
     bool bStatic;
     bool bWireless;
-    bool bUp;
+    bool bConnected;
     wxString sEssid;
     wxString sPassword;
 };

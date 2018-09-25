@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <wxsmith>
 	<object class="wxPanel" name="pnlNetworkSetup">
-		<bg>#000000</bg>
-		<pos_arg>1</pos_arg>
-		<size_arg>1</size_arg>
+		<bg>wxSYS_COLOUR_SCROLLBAR</bg>
+		<id_arg>0</id_arg>
 		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnStaticDHCP" member="yes">
 			<label>Type</label>
 			<pos>350,85</pos>
@@ -11,6 +10,27 @@
 			<bg>#0080C0</bg>
 			<style>wmButton::STYLE_SELECT</style>
 			<handler function="OntnStaticDHCPClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL6" variable="m_plblConnected" member="yes">
+			<label>Connected</label>
+			<pos>350,130</pos>
+			<size>200,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#008000</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL7" variable="m_pLbl5" member="yes">
+			<label>Type</label>
+			<pos>350,175</pos>
+			<size>60,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400080</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL8" variable="m_plblType" member="yes">
+			<label></label>
+			<pos>410,175</pos>
+			<size>140,40</size>
+			<fg>#000000</fg>
+			<bg>#FFFFFF</bg>
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
 			<label>IP Address</label>
@@ -77,18 +97,18 @@
 			<handler function="OnbtnMaskClick" entry="EVT_BUTTON" />
 		</object>
 		<object class="wmSwitcherPanel" name="ID_M_PSWP1" variable="m_pSwp1" member="yes">
-			<pos>310,128</pos>
-			<size>280,297</size>
+			<pos>310,230</pos>
+			<size>280,200</size>
 			<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
 			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL1" variable="Panel1" member="yes">
-					<pos>0,47</pos>
-					<size>280,293</size>
+					<pos>0,50</pos>
+					<size>280,247</size>
 					<bg>#000000</bg>
 					<object class="wmLabel" name="ID_M_PLBL5" variable="m_plblResult" member="yes">
-						<label>Gateway</label>
-						<pos>0,145</pos>
-						<size>280,200</size>
+						<label></label>
+						<pos>0,50</pos>
+						<size>280,150</size>
 						<fg>#FF0000</fg>
 						<bg>#000000</bg>
 						<font>
@@ -103,7 +123,7 @@
 					</object>
 					<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnApply" member="yes">
 						<label>Apply</label>
-						<pos>0,90</pos>
+						<pos>40,0</pos>
 						<size>100,40</size>
 					</object>
 				</object>

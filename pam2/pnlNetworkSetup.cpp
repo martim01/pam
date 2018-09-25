@@ -6,6 +6,7 @@
 using namespace std;
 
 //(*InternalHeaders(pnlNetworkSetup)
+#include <wx/settings.h>
 #include <wx/font.h>
 #include <wx/intl.h>
 #include <wx/string.h>
@@ -13,6 +14,9 @@ using namespace std;
 
 //(*IdInit(pnlNetworkSetup)
 const long pnlNetworkSetup::ID_M_PBTN1 = wxNewId();
+const long pnlNetworkSetup::ID_M_PLBL6 = wxNewId();
+const long pnlNetworkSetup::ID_M_PLBL7 = wxNewId();
+const long pnlNetworkSetup::ID_M_PLBL8 = wxNewId();
 const long pnlNetworkSetup::ID_M_PLBL1 = wxNewId();
 const long pnlNetworkSetup::ID_M_PLBL2 = wxNewId();
 const long pnlNetworkSetup::ID_M_PLBL4 = wxNewId();
@@ -36,10 +40,22 @@ END_EVENT_TABLE()
 pnlNetworkSetup::pnlNetworkSetup(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size, long nStyle, const wxString& sEmpty)
 {
 	//(*Initialize(pnlNetworkSetup)
-	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
-	SetBackgroundColour(wxColour(0,0,0));
+	Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("wxID_ANY"));
+	SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_SCROLLBAR));
 	m_pbtnStaticDHCP = new wmButton(this, ID_M_PBTN1, _("Type"), wxPoint(350,85), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnStaticDHCP->SetBackgroundColour(wxColour(0,128,192));
+	m_plblConnected = new wmLabel(this, ID_M_PLBL6, _("Connected"), wxPoint(350,130), wxSize(200,40), 0, _T("ID_M_PLBL6"));
+	m_plblConnected->SetBorderState(uiRect::BORDER_NONE);
+	m_plblConnected->SetForegroundColour(wxColour(255,255,255));
+	m_plblConnected->SetBackgroundColour(wxColour(0,128,0));
+	m_pLbl5 = new wmLabel(this, ID_M_PLBL7, _("Type"), wxPoint(350,175), wxSize(60,40), 0, _T("ID_M_PLBL7"));
+	m_pLbl5->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl5->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl5->SetBackgroundColour(wxColour(64,0,128));
+	m_plblType = new wmLabel(this, ID_M_PLBL8, wxEmptyString, wxPoint(410,175), wxSize(140,40), 0, _T("ID_M_PLBL8"));
+	m_plblType->SetBorderState(uiRect::BORDER_NONE);
+	m_plblType->SetForegroundColour(wxColour(0,0,0));
+	m_plblType->SetBackgroundColour(wxColour(255,255,255));
 	m_pLbl1 = new wmLabel(this, ID_M_PLBL1, _("IP Address"), wxPoint(0,85), wxSize(100,40), 0, _T("ID_M_PLBL1"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl1->SetForegroundColour(wxColour(255,255,255));
@@ -69,23 +85,23 @@ pnlNetworkSetup::pnlNetworkSetup(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_pbtnMask->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnMask->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnMask->SetColourDisabled(wxColour(wxT("#909090")));
-	m_pSwp1 = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(310,128), wxSize(280,297), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
+	m_pSwp1 = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(310,230), wxSize(280,200), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
 	m_pSwp1->SetPageNameStyle(0);
-	Panel1 = new wxPanel(m_pSwp1, ID_PANEL1, wxPoint(0,47), wxSize(280,293), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
+	Panel1 = new wxPanel(m_pSwp1, ID_PANEL1, wxPoint(0,50), wxSize(280,247), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
 	Panel1->SetBackgroundColour(wxColour(0,0,0));
-	m_plblResult = new wmLabel(Panel1, ID_M_PLBL5, _("Gateway"), wxPoint(0,145), wxSize(280,200), 0, _T("ID_M_PLBL5"));
+	m_plblResult = new wmLabel(Panel1, ID_M_PLBL5, wxEmptyString, wxPoint(0,50), wxSize(280,150), 0, _T("ID_M_PLBL5"));
 	m_plblResult->SetBorderState(uiRect::BORDER_NONE);
 	m_plblResult->SetForegroundColour(wxColour(255,0,0));
 	m_plblResult->SetBackgroundColour(wxColour(0,0,0));
 	wxFont m_plblResultFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	m_plblResult->SetFont(m_plblResultFont);
 	m_plblResult->SetTextAlign(wxALIGN_LEFT | wxALIGN_TOP);
-	m_pbtnApply = new wmButton(Panel1, ID_M_PBTN2, _("Apply"), wxPoint(0,90), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
+	m_pbtnApply = new wmButton(Panel1, ID_M_PBTN2, _("Apply"), wxPoint(40,0), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
 	m_pSwp1->AddPage(Panel1, _("Page1"), false);
 	m_ppnlAddress = new wmipeditpnl(this, ID_PANEL2, wxPoint(100,85), wxSize(200,40), wxTAB_TRAVERSAL, _T("ID_PANEL2"));
 	m_ppnlAddress->SetForegroundColour(wxColour(0,0,0));
 	m_ppnlAddress->SetBackgroundColour(wxColour(255,255,255));
-	m_plstInterfaces = new wmList(this, ID_M_PLST1, wxPoint(0,36), wxSize(600,44), wmList::STYLE_SELECT, 0, wxSize(-1,40), 5, wxSize(5,1));
+	m_plstInterfaces = new wmList(this, ID_M_PLST1, wxPoint(0,36), wxSize(600,44), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 5, wxSize(5,1));
 	m_plstInterfaces->SetBackgroundColour(wxColour(0,0,0));
 	m_plstInterfaces->SetSelectedButtonColour(wxColour(wxT("#EA7500")));
 
@@ -202,11 +218,34 @@ void pnlNetworkSetup::OnlstInterfacesSelected(wxCommandEvent& event)
         m_ppnlAddress->SetValue(itInterface->second.sAddress);
         m_ppnlGateway->SetValue(itInterface->second.sGateway);
         m_pbtnMask->SetLabel(wxString::Format(wxT("/%d (%s)"), itInterface->second.nMask, NetworkControl::Get().ConvertMaskToAddress(itInterface->second.nMask)));
+
+        if(itInterface->second.bConnected)
+        {
+            m_plblConnected->SetLabel(wxT("Connected"));
+            m_plblConnected->SetBackgroundColour(wxColour(0,128,0));
+        }
+        else
+        {
+            m_plblConnected->SetLabel(wxT("No Connection"));
+            m_plblConnected->SetBackgroundColour(wxColour(128,128,128));
+        }
+
+        if(itInterface->second.bWireless)
+        {
+            m_plblType->SetLabel(wxT("WiFi"));
+        }
+        else
+        {
+            m_plblType->SetLabel(wxT("Ethernet"));
+        }
     }
     else
     {
         m_ppnlAddress->SetValue(wxEmptyString);
         m_ppnlGateway->SetValue(wxEmptyString);
         m_pbtnMask->SetLabel(wxEmptyString);
+        m_plblConnected->SetLabel(wxT("No Connection"));
+        m_plblConnected->SetBackgroundColour(wxColour(128,128,128));
+        m_plblType->SetLabel(wxEmptyString);
     }
 }

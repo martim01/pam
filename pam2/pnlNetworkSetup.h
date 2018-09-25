@@ -31,8 +31,11 @@ class pnlNetworkSetup: public wxPanel
 		wmLabel* m_pLbl1;
 		wmSwitcherPanel* m_pSwp1;
 		wxPanel* Panel1;
+		wmLabel* m_pLbl5;
+		wmLabel* m_plblConnected;
 		wmButton* m_pbtnApply;
 		wmLabel* m_pLbl2;
+		wmLabel* m_plblType;
 		wmList* m_plstInterfaces;
 		//*)
 
@@ -40,6 +43,9 @@ class pnlNetworkSetup: public wxPanel
 
 		//(*Identifiers(pnlNetworkSetup)
 		static const long ID_M_PBTN1;
+		static const long ID_M_PLBL6;
+		static const long ID_M_PLBL7;
+		static const long ID_M_PLBL8;
 		static const long ID_M_PLBL1;
 		static const long ID_M_PLBL2;
 		static const long ID_M_PLBL4;

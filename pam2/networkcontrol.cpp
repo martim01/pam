@@ -310,7 +310,7 @@ void NetworkControl::GetCurrentSettings()
             wxExecute(wxString::Format(wxT("sh -c \"ifconfig %s | grep netmask\""), asInterfaces[nLine].c_str()), asOutput);
             if(asOutput.GetCount() != 0)
             {
-                anInterface.bUp = true;
+                anInterface.bConnected = true;
                 anInterface.sAddress = asOutput[0].AfterFirst(wxT('t')).BeforeFirst(wxT('n'));
                 anInterface.sAddress.Trim().Trim(false);
                 wxString sMask = asOutput[0].AfterFirst(wxT('k')).BeforeFirst(wxT('b'));
