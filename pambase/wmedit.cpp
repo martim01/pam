@@ -355,10 +355,10 @@ bool wmEdit::Enable(bool bEnable)
     {
         HideCaret();
     }
-    else
-    {
-        CreateCaret();
-    }
+    //else
+    //{
+    //    CreateCaret();
+    //}
     Refresh();
     return bReturn;
 }

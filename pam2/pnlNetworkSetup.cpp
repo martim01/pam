@@ -131,9 +131,9 @@ void pnlNetworkSetup::OntnStaticDHCPClick(wxCommandEvent& event)
 
     if(event.IsChecked())
     {
-        m_ppnlAddress->SetValue(wxEmptyString);
-        m_pbtnMask->SetLabel(wxEmptyString);
-        m_ppnlGateway->SetValue(wxEmptyString);
+        //m_ppnlAddress->SetValue(wxEmptyString);
+        //m_pbtnMask->SetLabel(wxEmptyString);
+        //m_ppnlGateway->SetValue(wxEmptyString);
         m_pLbl1->SetBackgroundColour(wxColour(128,128,128));
         m_pLbl2->SetBackgroundColour(wxColour(128,128,128));
         m_pLbl4->SetBackgroundColour(wxColour(128,128,128));

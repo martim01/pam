@@ -15,7 +15,7 @@ NetworkControl& NetworkControl::Get()
     return nc;
 }
 
-const wxString& NetworkControl::GetAddress(const wxString& sInterface) const
+wxString NetworkControl::GetAddress(const wxString& sInterface) const
 {
     map<wxString, networkInterface>::const_iterator itInterface = m_mInterfaces.find(sInterface);
     if(itInterface != m_mInterfaces.end())
@@ -25,7 +25,7 @@ const wxString& NetworkControl::GetAddress(const wxString& sInterface) const
     return wxEmptyString;
 }
 
-const wxString& NetworkControl::GetGateway(const wxString& sInterface) const
+wxString NetworkControl::GetGateway(const wxString& sInterface) const
 {
     map<wxString, networkInterface>::const_iterator itInterface = m_mInterfaces.find(sInterface);
     if(itInterface != m_mInterfaces.end())
@@ -198,7 +198,7 @@ wxString NetworkControl::SetupNetworking(const wxString& sInterface, const wxStr
     {
         if(bDHCP)
         {
-            for(int i = 0; i < configFile.GetLineCount(); i++)
+            for(size_t i = 0; i < configFile.GetLineCount(); i++)
             {
                 if(configFile.GetLine(i).Left(sInterfaceLine.length()) == sInterfaceLine)
                 {
@@ -225,7 +225,7 @@ wxString NetworkControl::SetupNetworking(const wxString& sInterface, const wxStr
         else
         {
             bool bReplace(false);
-            for(int i = 0; i < configFile.GetLineCount(); i++)
+            for(size_t i = 0; i < configFile.GetLineCount(); i++)
             {
                 if(configFile.GetLine(i).Left(sInterfaceLine.length()) == sInterfaceLine)
                 {
@@ -262,7 +262,7 @@ wxString NetworkControl::SetupNetworking(const wxString& sInterface, const wxStr
         outFile.open("/etc/dhcpcd.conf", std::ofstream::out | std::ofstream::trunc);
         if(outFile.is_open())
         {
-            for(int i = 0; i < configFile.GetLineCount(); i++)
+            for(size_t i = 0; i < configFile.GetLineCount(); i++)
             {
                 outFile << configFile.GetLine(i).mb_str() << std::endl;
             }
@@ -297,7 +297,8 @@ void NetworkControl::GetCurrentSettings()
     //run iwconfig interface to find out whether wireless and essid
     //then read config file to see if static
     wxArrayString asInterfaces;
-    wxExecute(wxT("ifconfig | grep flags"), asInterfaces);
+    long nResult = wxExecute(wxT("sh -c \"ifconfig | grep flags \""), asInterfaces);
+
     for(size_t nLine = 0; nLine < asInterfaces.GetCount(); nLine++)
     {
         asInterfaces[nLine] = asInterfaces[nLine].BeforeFirst(wxT(':'));
@@ -306,7 +307,7 @@ void NetworkControl::GetCurrentSettings()
             networkInterface anInterface;
             //if have inet entry then connected - else not
             wxArrayString asOutput;
-            wxExecute(wxString::Format(wxT("ifconfig %s | grep netmask"), asInterfaces[nLine].c_str(), asOutput));
+            wxExecute(wxString::Format(wxT("sh -c \"ifconfig %s | grep netmask\""), asInterfaces[nLine].c_str()), asOutput);
             if(asOutput.GetCount() != 0)
             {
                 anInterface.bUp = true;
@@ -318,7 +319,7 @@ void NetworkControl::GetCurrentSettings()
 
             }
 
-            wxExecute(wxString::Format(wxT("iwconfig %s | grep ESSID"), asOutput));
+            wxExecute(wxString::Format(wxT("sh -c \"iwconfig %s | grep ESSID\""),asInterfaces[nLine].c_str()), asOutput);
             if(asOutput.GetCount() == 0 || asOutput[0].Find(wxT("no wireless")) != wxNOT_FOUND)
             {
                 anInterface.bWireless = false;
@@ -332,11 +333,11 @@ void NetworkControl::GetCurrentSettings()
         }
     }
 
-    map<wxString, interface>::iterator itInterface = m_mInterfaces.end();
+    map<wxString, networkInterface>::iterator itInterface = m_mInterfaces.end();
     wxTextFile configFile;
     if(configFile.Open(wxT("/etc/dhcpcd.conf")))
     {
-        for(int i = 0; i < configFile.GetLineCount(); i++)
+        for(size_t i = 0; i < configFile.GetLineCount(); i++)
         {
             if(configFile.GetLine(i).Left(STR_INTERFACE.length()) == STR_INTERFACE)
             {
@@ -346,6 +347,7 @@ void NetworkControl::GetCurrentSettings()
             {
                 if(configFile.GetLine(i).Left(STR_ADDRESS.length()) == STR_ADDRESS)
                 {
+                    itInterface->second.bStatic = true;
                     itInterface->second.sAddress = configFile.GetLine(i).AfterFirst(wxT('=')).BeforeFirst(wxT('/'));
                     configFile.GetLine(i).AfterFirst(wxT('/')).ToULong(&itInterface->second.nMask);
                 }

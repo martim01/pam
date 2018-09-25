@@ -23,8 +23,8 @@ class NetworkControl
         wxString SetupNetworking(const wxString& sInterface, const wxString& sAddress, unsigned long nMask, wxString sGateway);
         bool DeleteNetworking();
 
-        const wxString& GetAddress(const wxString& sInterface) const;
-        const wxString& GetGateway(const wxString& sInterface) const;
+        wxString GetAddress(const wxString& sInterface) const;
+        wxString GetGateway(const wxString& sInterface) const;
         unsigned long GetMask(const wxString& sInterface) const;
 
         wxString ConvertMaskToAddress(unsigned long nMask);
