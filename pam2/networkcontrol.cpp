@@ -319,14 +319,16 @@ void NetworkControl::GetCurrentSettings()
 
             }
 
-            wxExecute(wxString::Format(wxT("sh -c \"iwconfig %s | grep ESSID\""),asInterfaces[nLine].c_str()), asOutput);
-            if(asOutput.GetCount() == 0 || asOutput[0].Find(wxT("no wireless")) != wxNOT_FOUND)
+            wxArrayString asOutput2;
+            wxExecute(wxString::Format(wxT("sh -c \"iwconfig %s | grep ESSID\""),asInterfaces[nLine].c_str()), asOutput2);
+            if(asOutput2.GetCount() == 0 || asOutput2[0].Find(wxT("no wireless")) != wxNOT_FOUND)
             {
                 anInterface.bWireless = false;
             }
             else
             {
-                anInterface.sEssid = asOutput[0].AfterFirst(wxT('"')).BeforeFirst(wxT('"'));
+                anInterface.bWireless = true;
+                anInterface.sEssid = asOutput2[0].AfterFirst(wxT('"')).BeforeFirst(wxT('"'));
             }
 
             m_mInterfaces.insert(make_pair(asInterfaces[nLine], anInterface));
