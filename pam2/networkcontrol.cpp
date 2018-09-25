@@ -159,12 +159,17 @@ void NetworkControl::GetCurrentSettings()
 #include <iostream>
 #include <fstream>
 
+const wxString NetworkControl::STR_INTERFACE = wxT("interface eth0");
 const wxString NetworkControl::STR_ADDRESS = wxT("static ip_address=");
 const wxString NetworkControl::STR_GATEWAY = wxT("static routers=");
 const wxString NetworkControl::STR_DNS = wxT("static domain_name_servers=");
 
-wxString NetworkControl::SetupNetworking(const wxString& sAddress, unsigned long nMask, const wxString& sGateway)
+wxString NetworkControl::SetupNetworking(const wxString& sAddress, unsigned long nMask, wxString sGateway)
 {
+    if(sGateway == wxT("..."))
+    {
+        sGateway = wxEmptyString;
+    }
 
     wxTextFile configFile;
     bool bEth0(false);
@@ -176,10 +181,10 @@ wxString NetworkControl::SetupNetworking(const wxString& sAddress, unsigned long
         {
             for(int i = 0; i < configFile.GetLineCount(); i++)
             {
-                if(configFile.GetLine(i) == wxT("interface eth0"))
+                if(configFile.GetLine(i).Left(STR_INTERFACE.length()) == STR_INTERFACE)
                 {
                     bEth0 = true;
-                    configFile.GetLine(i) == wxT("#interface eth0");
+                    configFile.GetLine(i) = wxT("#") + STR_INTERFACE;
                 }
                 else if(configFile.GetLine(i).Left(9) == wxT("interface"))
                 {
@@ -203,7 +208,7 @@ wxString NetworkControl::SetupNetworking(const wxString& sAddress, unsigned long
             bool bReplace(false);
             for(int i = 0; i < configFile.GetLineCount(); i++)
             {
-                if(configFile.GetLine(i) == wxT("interface eth0"))
+                if(configFile.GetLine(i).Left(STR_INTERFACE.length()) == STR_INTERFACE)
                 {
                     bEth0 = true;
                     bReplace = true;
@@ -218,7 +223,7 @@ wxString NetworkControl::SetupNetworking(const wxString& sAddress, unsigned long
                     {
                         configFile.GetLine(i) = wxString::Format(wxT("%s%s/%d"), STR_ADDRESS.c_str(), sAddress.c_str(), nMask);
                     }
-                    else if(configFile.GetLine(i).Left(STR_GATEWAY.length()) == STR_GATEWAY)
+                    else if(configFile.GetLine(i).Left(STR_GATEWAY.length()) == STR_GATEWAY )
                     {
                         configFile.GetLine(i) = STR_GATEWAY+sGateway;
                     }
@@ -227,8 +232,9 @@ wxString NetworkControl::SetupNetworking(const wxString& sAddress, unsigned long
 
             if(bReplace == false)
             {
-                configFile.AddLine(wxT("interace eth0"));
-                configFile.AddLine(STR_ADDRESS+sAddress);
+                configFile.AddLine(STR_INTERFACE);
+                configFile.AddLine(wxString::Format(wxT("%s%s/%d"), STR_ADDRESS.c_str(), sAddress.c_str(), nMask));
+
                 configFile.AddLine(STR_GATEWAY+sGateway);
             }
         }
@@ -273,7 +279,7 @@ void NetworkControl::GetCurrentSettings()
     {
         for(int i = 0; i < configFile.GetLineCount(); i++)
         {
-            if(configFile.GetLine(i) == wxT("interface eth0"))
+            if(configFile.GetLine(i).Left(STR_INTERFACE.length()) == STR_INTERFACE)
             {
                 bEth0 = true;
             }

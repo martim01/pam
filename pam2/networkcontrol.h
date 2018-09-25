@@ -5,7 +5,7 @@ class NetworkControl
     public:
         static NetworkControl& Get();
 
-        wxString SetupNetworking(const wxString& sAddress, unsigned long nMask, const wxString& sGateway);
+        wxString SetupNetworking(const wxString& sAddress, unsigned long nMask, wxString sGateway);
         bool DeleteNetworking();
 
         const wxString& GetAddress() const;
@@ -32,6 +32,7 @@ class NetworkControl
         wxString m_sDNS;
 
         #ifdef __WXGNU__
+        static const wxString STR_INTERFACE;
         static const wxString STR_ADDRESS;
         static const wxString STR_GATEWAY;
         static const wxString STR_DNS;
