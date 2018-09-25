@@ -8,6 +8,7 @@
 #include "wmlabel.h"
 #include "wmswitcherpanel.h"
 #include <wx/panel.h>
+#include "wmlist.h"
 //*)
 #include "wmipeditpnl.h"
 
@@ -32,6 +33,7 @@ class pnlNetworkSetup: public wxPanel
 		wxPanel* Panel1;
 		wmButton* m_pbtnApply;
 		wmLabel* m_pLbl2;
+		wmList* m_plstInterfaces;
 		//*)
 
 	protected:
@@ -50,6 +52,7 @@ class pnlNetworkSetup: public wxPanel
 		static const long ID_PANEL1;
 		static const long ID_M_PSWP1;
 		static const long ID_PANEL2;
+		static const long ID_M_PLST1;
 		//*)
 
 	private:
@@ -64,7 +67,10 @@ class pnlNetworkSetup: public wxPanel
 		void OnedtGatewayTextEnter(wxCommandEvent& event);
 		void OnbtnMaskClick(wxCommandEvent& event);
 		void OnlstSubnetSelected(wxCommandEvent& event);
+		void OnlstInterfacesSelected(wxCommandEvent& event);
 		//*)
+
+		wxString m_sInterface;
 
 		DECLARE_EVENT_TABLE()
 };

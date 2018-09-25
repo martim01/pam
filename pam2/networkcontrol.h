@@ -1,23 +1,42 @@
 #pragma once
+#include <map>
+
+struct networkInterface
+{
+    networkInterface() : nMask(0), bStatic(false), bWireless(false), bUp(false){}
+    wxString sAddress;
+    unsigned long nMask;
+    wxString sGateway;
+    wxString sDNS;
+    bool bStatic;
+    bool bWireless;
+    bool bUp;
+    wxString sEssid;
+    wxString sPassword;
+};
 
 class NetworkControl
 {
     public:
         static NetworkControl& Get();
 
-        wxString SetupNetworking(const wxString& sAddress, unsigned long nMask, wxString sGateway);
+        wxString SetupNetworking(const wxString& sInterface, const wxString& sAddress, unsigned long nMask, wxString sGateway);
         bool DeleteNetworking();
 
-        const wxString& GetAddress() const;
-        const wxString& GetGateway() const;
-        unsigned long GetMask() const;
+        const wxString& GetAddress(const wxString& sInterface) const;
+        const wxString& GetGateway(const wxString& sInterface) const;
+        unsigned long GetMask(const wxString& sInterface) const;
 
         wxString ConvertMaskToAddress(unsigned long nMask);
+        unsigned long ConvertAddressToMask(wxString sAddress);
 
+        std::map<wxString, networkInterface>::const_iterator GetInterfaceBegin();
+        std::map<wxString, networkInterface>::const_iterator GetInterfaceEnd();
+        std::map<wxString, networkInterface>::const_iterator FindInterface(wxString sInterface);
 //        bool HasAdminRights();
 
     protected:
-        NetworkControl() : m_nMask(0), m_nNTEContext(0)
+        NetworkControl() : m_nNTEContext(0)
         {
             GetCurrentSettings();
         }
@@ -26,10 +45,9 @@ class NetworkControl
 
         unsigned long m_nNTEContext;
 
-        wxString m_sAddress;
-        unsigned long m_nMask;
-        wxString m_sGateway;
-        wxString m_sDNS;
+
+
+        std::map<wxString, networkInterface> m_mInterfaces;
 
         #ifdef __WXGNU__
         static const wxString STR_INTERFACE;
@@ -38,4 +56,5 @@ class NetworkControl
         static const wxString STR_DNS;
         #endif
 
+        static const wxString STR_MASK[33];
 };

@@ -4,7 +4,10 @@
 #include <wx/msgdlg.h>
 #include "settings.h"
 #include "networkcontrol.h"
+using namespace std;
 
+
+const wxString NetworkControl::STR_MASK[33] = {wxT("0.0.0.0"), wxT("128.0.0.0"), wxT("192.0.0.0"), wxT("224.0.0.0"), wxT("240.0.0.0"), wxT("248.0.0.0"), wxT("252.0.0.0"), wxT("254.0.0.0"), wxT("255.0.0.0"), wxT("255.128.0.0"), wxT("255.192.0.0"), wxT("255.224.0.0"),wxT("255.240.0.0"),wxT("255.248.0.0"),wxT("255.252.0.0"),wxT("255.254.0.0"),wxT("255.255.0.0"),wxT("255.255.128.0"),wxT("255.255.192.0"),wxT("255.255.224.0"),wxT("255.255.240.0"),wxT("255.255.248.0"),wxT("255.255.252.0"),wxT("255.255.254.0"),wxT("255.255.255.0"),wxT("255.255.255.128"),wxT("255.255.255.192"),wxT("255.255.255.224"),wxT("255.255.255.240"),wxT("255.255.255.248"),wxT("255.255.255.252"),wxT("255.255.255.254"),wxT("255.255.255.255")};
 
 NetworkControl& NetworkControl::Get()
 {
@@ -12,19 +15,34 @@ NetworkControl& NetworkControl::Get()
     return nc;
 }
 
-const wxString& NetworkControl::GetAddress() const
+const wxString& NetworkControl::GetAddress(const wxString& sInterface) const
 {
-    return m_sAddress;
+    map<wxString, networkInterface>::const_iterator itInterface = m_mInterfaces.find(sInterface);
+    if(itInterface != m_mInterfaces.end())
+    {
+        return itInterface->second.sAddress;
+    }
+    return wxEmptyString;
 }
 
-const wxString& NetworkControl::GetGateway() const
+const wxString& NetworkControl::GetGateway(const wxString& sInterface) const
 {
-    return m_sGateway;
+    map<wxString, networkInterface>::const_iterator itInterface = m_mInterfaces.find(sInterface);
+    if(itInterface != m_mInterfaces.end())
+    {
+        return itInterface->second.sGateway;
+    }
+    return wxEmptyString;
 }
 
-unsigned long NetworkControl::GetMask() const
+unsigned long NetworkControl::GetMask(const wxString& sInterface) const
 {
-    return m_nMask;
+    map<wxString, networkInterface>::const_iterator itInterface = m_mInterfaces.find(sInterface);
+    if(itInterface != m_mInterfaces.end())
+    {
+        return itInterface->second.nMask;
+    }
+    return 0;
 }
 
 
@@ -37,7 +55,7 @@ unsigned long NetworkControl::GetMask() const
 #include <stdio.h>
 #include <winnt.h>
 
-wxString NetworkControl::SetupNetworking(const wxString& sAddress, unsigned long nMask, const wxString& sGateway)
+wxString NetworkControl::SetupNetworking(const wxString& sInterface, const wxString& sAddress, unsigned long nMask, wxString sGateway)
 {
     wxString sCommand;
     if(m_nNTEContext != 0)
@@ -159,18 +177,19 @@ void NetworkControl::GetCurrentSettings()
 #include <iostream>
 #include <fstream>
 
-const wxString NetworkControl::STR_INTERFACE = wxT("interface eth0");
+const wxString NetworkControl::STR_INTERFACE = wxT("interface");
 const wxString NetworkControl::STR_ADDRESS = wxT("static ip_address=");
 const wxString NetworkControl::STR_GATEWAY = wxT("static routers=");
 const wxString NetworkControl::STR_DNS = wxT("static domain_name_servers=");
 
-wxString NetworkControl::SetupNetworking(const wxString& sAddress, unsigned long nMask, wxString sGateway)
+wxString NetworkControl::SetupNetworking(const wxString& sInterface, const wxString& sAddress, unsigned long nMask, wxString sGateway)
 {
     if(sGateway == wxT("..."))
     {
         sGateway = wxEmptyString;
     }
 
+    wxString sInterfaceLine(wxString::Format(wxT("%s %s"), STR_INTERFACE.c_str(), sInterface.c_str()));
     wxTextFile configFile;
     bool bEth0(false);
     bool bDHCP((sAddress.empty() == true));
@@ -181,10 +200,10 @@ wxString NetworkControl::SetupNetworking(const wxString& sAddress, unsigned long
         {
             for(int i = 0; i < configFile.GetLineCount(); i++)
             {
-                if(configFile.GetLine(i).Left(STR_INTERFACE.length()) == STR_INTERFACE)
+                if(configFile.GetLine(i).Left(sInterfaceLine.length()) == sInterfaceLine)
                 {
                     bEth0 = true;
-                    configFile.GetLine(i) = wxT("#") + STR_INTERFACE;
+                    configFile.GetLine(i) = wxT("#") + sInterfaceLine;
                 }
                 else if(configFile.GetLine(i).Left(9) == wxT("interface"))
                 {
@@ -208,7 +227,7 @@ wxString NetworkControl::SetupNetworking(const wxString& sAddress, unsigned long
             bool bReplace(false);
             for(int i = 0; i < configFile.GetLineCount(); i++)
             {
-                if(configFile.GetLine(i).Left(STR_INTERFACE.length()) == STR_INTERFACE)
+                if(configFile.GetLine(i).Left(sInterfaceLine.length()) == sInterfaceLine)
                 {
                     bEth0 = true;
                     bReplace = true;
@@ -232,7 +251,7 @@ wxString NetworkControl::SetupNetworking(const wxString& sAddress, unsigned long
 
             if(bReplace == false)
             {
-                configFile.AddLine(STR_INTERFACE);
+                configFile.AddLine(sInterfaceLine);
                 configFile.AddLine(wxString::Format(wxT("%s%s/%d"), STR_ADDRESS.c_str(), sAddress.c_str(), nMask));
 
                 configFile.AddLine(STR_GATEWAY+sGateway);
@@ -273,7 +292,47 @@ bool NetworkControl::DeleteNetworking()
 void NetworkControl::GetCurrentSettings()
 {
 
-    bool bEth0(false);
+    //run ifconfig to get list of interfaces
+
+    //run iwconfig interface to find out whether wireless and essid
+    //then read config file to see if static
+    wxArrayString asInterfaces;
+    wxExecute(wxT("ifconfig | grep flags"), asInterfaces);
+    for(size_t nLine = 0; nLine < asInterfaces.GetCount(); nLine++)
+    {
+        asInterfaces[nLine] = asInterfaces[nLine].BeforeFirst(wxT(':'));
+        if(asInterfaces[nLine] != wxT("lo"))
+        {
+            networkInterface anInterface;
+            //if have inet entry then connected - else not
+            wxArrayString asOutput;
+            wxExecute(wxString::Format(wxT("ifconfig %s | grep netmask"), asInterfaces[nLine].c_str(), asOutput));
+            if(asOutput.GetCount() != 0)
+            {
+                anInterface.bUp = true;
+                anInterface.sAddress = asOutput[0].AfterFirst(wxT('t')).BeforeFirst(wxT('n'));
+                anInterface.sAddress.Trim().Trim(false);
+                wxString sMask = asOutput[0].AfterFirst(wxT('k')).BeforeFirst(wxT('b'));
+                sMask.Trim().Trim(false);
+                anInterface.nMask = ConvertAddressToMask(sMask);
+
+            }
+
+            wxExecute(wxString::Format(wxT("iwconfig %s | grep ESSID"), asOutput));
+            if(asOutput.GetCount() == 0 || asOutput[0].Find(wxT("no wireless")) != wxNOT_FOUND)
+            {
+                anInterface.bWireless = false;
+            }
+            else
+            {
+                anInterface.sEssid = asOutput[0].AfterFirst(wxT('"')).BeforeFirst(wxT('"'));
+            }
+
+            m_mInterfaces.insert(make_pair(asInterfaces[nLine], anInterface));
+        }
+    }
+
+    map<wxString, interface>::iterator itInterface = m_mInterfaces.end();
     wxTextFile configFile;
     if(configFile.Open(wxT("/etc/dhcpcd.conf")))
     {
@@ -281,24 +340,19 @@ void NetworkControl::GetCurrentSettings()
         {
             if(configFile.GetLine(i).Left(STR_INTERFACE.length()) == STR_INTERFACE)
             {
-                bEth0 = true;
+                itInterface = m_mInterfaces.find(configFile.GetLine(i).AfterFirst(wxT(' ')));
             }
-            else if(configFile.GetLine(i).Left(9) == wxT("interface"))
-            {
-                bEth0 = false;
-            }
-            else if(bEth0)
+            else if(itInterface != m_mInterfaces.end())
             {
                 if(configFile.GetLine(i).Left(STR_ADDRESS.length()) == STR_ADDRESS)
                 {
-                    m_sAddress = configFile.GetLine(i).AfterFirst(wxT('=')).BeforeFirst(wxT('/'));
-                    configFile.GetLine(i).AfterFirst(wxT('/')).ToULong(&m_nMask);
+                    itInterface->second.sAddress = configFile.GetLine(i).AfterFirst(wxT('=')).BeforeFirst(wxT('/'));
+                    configFile.GetLine(i).AfterFirst(wxT('/')).ToULong(&itInterface->second.nMask);
                 }
                 else if(configFile.GetLine(i).Left(STR_GATEWAY.length()) == STR_GATEWAY)
                 {
-                    m_sGateway = configFile.GetLine(i).AfterFirst(wxT('='));
+                    itInterface->second.sGateway = configFile.GetLine(i).AfterFirst(wxT('='));
                 }
-
             }
 
         }
@@ -311,73 +365,36 @@ void NetworkControl::GetCurrentSettings()
 
 wxString NetworkControl::ConvertMaskToAddress(unsigned long nMask)
 {
-    switch(nMask)
+    if(nMask < 33)
     {
-       case 32:
-           return wxT("255.255.255.255");
-
-        case 31:
-                return wxT("255.255.255.254");
-        case 30:
-                return wxT("255.255.255.252");
-        case 29:
-                return wxT("255.255.255.248");
-        case 28:
-                return wxT("255.255.255.240");
-        case 27:
-                return wxT("255.255.255.224");
-        case 26:
-                return wxT("255.255.255.192");
-        case 25:
-                return wxT("255.255.255.128");
-        case 24:
-                return wxT("255.255.255.0");
-        case 23:
-                return wxT("255.255.254.0");
-        case 22:
-                return wxT("255.255.252.0");
-        case 21:
-                return wxT("255.255.248.0");
-        case 20:
-                return wxT("255.255.240.0");
-        case 19:
-                return wxT("255.255.224.0");
-        case 18:
-                return wxT("255.255.192.0");
-        case 17:
-                return wxT("255.255.128.0");
-        case 16:
-                return wxT("255.255.0.0");
-        case 15:
-                return wxT("255.254.0.0");
-        case 14:
-                return wxT("255.252.0.0");
-        case 13:
-                return wxT("255.248.0.0");
-        case 12:
-                return wxT("255.240.0.0");
-        case 11:
-                return wxT("255.224.0.0");
-        case 10:
-                return wxT("255.192.0.0");
-        case 9:
-                return wxT("255.128.0.0");
-        case 8:
-                return wxT("255.0.0.0");
-        case 7:
-                return wxT("254.0.0.0");
-        case 6:
-                return wxT("252.0.0.0");
-        case 5:
-                return wxT("248.0.0.0");
-        case 4:
-                return wxT("240.0.0.0");
-        case 3:
-                return wxT("224.0.0.0");
-        case 2:
-                return wxT("192.0.0.0");
-        case 1:
-                return wxT("128.0.0.0");
+        return STR_MASK[nMask];
     }
     return wxEmptyString;
+}
+
+
+unsigned long NetworkControl::ConvertAddressToMask(wxString sAddress)
+{
+    for(unsigned int i = 0; i < 33; i++)
+    {
+        if(STR_MASK[i] == sAddress)
+            return i;
+    }
+    return 0;
+}
+
+
+map<wxString, networkInterface>::const_iterator NetworkControl::GetInterfaceBegin()
+{
+    return m_mInterfaces.begin();
+}
+
+map<wxString, networkInterface>::const_iterator NetworkControl::GetInterfaceEnd()
+{
+    return m_mInterfaces.end();
+}
+
+map<wxString, networkInterface>::const_iterator NetworkControl::FindInterface(wxString sInterface)
+{
+    return m_mInterfaces.find(sInterface);
 }

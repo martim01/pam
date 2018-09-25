@@ -3,6 +3,8 @@
 #include "networkcontrol.h"
 #include "dlgmask.h"
 
+using namespace std;
+
 //(*InternalHeaders(pnlNetworkSetup)
 #include <wx/font.h>
 #include <wx/intl.h>
@@ -23,6 +25,7 @@ const long pnlNetworkSetup::ID_M_PBTN2 = wxNewId();
 const long pnlNetworkSetup::ID_PANEL1 = wxNewId();
 const long pnlNetworkSetup::ID_M_PSWP1 = wxNewId();
 const long pnlNetworkSetup::ID_PANEL2 = wxNewId();
+const long pnlNetworkSetup::ID_M_PLST1 = wxNewId();
 //*)
 
 BEGIN_EVENT_TABLE(pnlNetworkSetup,wxPanel)
@@ -35,7 +38,7 @@ pnlNetworkSetup::pnlNetworkSetup(wxWindow* parent,wxWindowID id,const wxPoint& p
 	//(*Initialize(pnlNetworkSetup)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
-	m_pbtnStaticDHCP = new wmButton(this, ID_M_PBTN1, _("Type"), wxPoint(0,40), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
+	m_pbtnStaticDHCP = new wmButton(this, ID_M_PBTN1, _("Type"), wxPoint(350,85), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnStaticDHCP->SetBackgroundColour(wxColour(0,128,192));
 	m_pLbl1 = new wmLabel(this, ID_M_PLBL1, _("IP Address"), wxPoint(0,85), wxSize(100,40), 0, _T("ID_M_PLBL1"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
@@ -66,9 +69,9 @@ pnlNetworkSetup::pnlNetworkSetup(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_pbtnMask->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnMask->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnMask->SetColourDisabled(wxColour(wxT("#909090")));
-	m_pSwp1 = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(310,85), wxSize(280,340), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
+	m_pSwp1 = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(310,128), wxSize(280,297), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
 	m_pSwp1->SetPageNameStyle(0);
-	Panel1 = new wxPanel(m_pSwp1, ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL1"));
+	Panel1 = new wxPanel(m_pSwp1, ID_PANEL1, wxPoint(0,47), wxSize(280,293), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
 	Panel1->SetBackgroundColour(wxColour(0,0,0));
 	m_plblResult = new wmLabel(Panel1, ID_M_PLBL5, _("Gateway"), wxPoint(0,145), wxSize(280,200), 0, _T("ID_M_PLBL5"));
 	m_plblResult->SetBorderState(uiRect::BORDER_NONE);
@@ -82,28 +85,32 @@ pnlNetworkSetup::pnlNetworkSetup(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_ppnlAddress = new wmipeditpnl(this, ID_PANEL2, wxPoint(100,85), wxSize(200,40), wxTAB_TRAVERSAL, _T("ID_PANEL2"));
 	m_ppnlAddress->SetForegroundColour(wxColour(0,0,0));
 	m_ppnlAddress->SetBackgroundColour(wxColour(255,255,255));
+	m_plstInterfaces = new wmList(this, ID_M_PLST1, wxPoint(0,36), wxSize(600,44), wmList::STYLE_SELECT, 0, wxSize(-1,40), 5, wxSize(5,1));
+	m_plstInterfaces->SetBackgroundColour(wxColour(0,0,0));
+	m_plstInterfaces->SetSelectedButtonColour(wxColour(wxT("#EA7500")));
 
 	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlNetworkSetup::OntnStaticDHCPClick);
 	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlNetworkSetup::OnbtnMaskClick);
+	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlNetworkSetup::OnlstInterfacesSelected);
 	//*)
 	Connect(ID_M_PBTN2, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&pnlNetworkSetup::OnbtnApplyClick);
 
 
-
 	m_pbtnStaticDHCP->SetToggleLook(true, wxT("Static"), wxT("DHCP"), 40);
+
+	for(map<wxString, networkInterface>::const_iterator itInterface = NetworkControl::Get().GetInterfaceBegin(); itInterface != NetworkControl::Get().GetInterfaceEnd(); ++itInterface)
+    {
+        m_plstInterfaces->AddButton(itInterface->first);
+    }
+    m_plstInterfaces->SelectButton(0, true);
+
+
 
 
     m_pkbd->SetReturnString(wxT("-->|"));
 	SetSize(size);
 	SetPosition(pos);
 
-    bool bDHCP((NetworkControl::Get().GetAddress() == wxEmptyString));
-	m_pbtnStaticDHCP->ToggleSelection(bDHCP, true);
-
-	m_ppnlAddress->SetValue(NetworkControl::Get().GetAddress());
-	m_ppnlGateway->SetValue(NetworkControl::Get().GetGateway());
-
-    m_pbtnMask->SetLabel(wxString::Format(wxT("/%d (%s)"), NetworkControl::Get().GetMask(), NetworkControl::Get().ConvertMaskToAddress(NetworkControl::Get().GetMask())));
 
 
 }
@@ -159,8 +166,7 @@ void pnlNetworkSetup::OnbtnApplyClick(wxCommandEvent& event)
 {
     unsigned long nMask(0);
     m_pbtnMask->GetLabel().AfterFirst(wxT('/')).BeforeFirst(wxT(' ')).ToULong(&nMask);
-    //m_pchMask->GetString(m_pchMask->GetSelection()).AfterFirst(wxT('/')).BeforeFirst(wxT(' ')).ToULong(&nMask);
-    m_plblResult->SetLabel(NetworkControl::Get().SetupNetworking(m_ppnlAddress->GetValue(), nMask, m_ppnlGateway->GetValue()));
+    m_plblResult->SetLabel(NetworkControl::Get().SetupNetworking(m_sInterface, m_ppnlAddress->GetValue(), nMask, m_ppnlGateway->GetValue()));
 
 }
 
@@ -184,3 +190,23 @@ void pnlNetworkSetup::OnbtnMaskClick(wxCommandEvent& event)
     }
 }
 
+
+void pnlNetworkSetup::OnlstInterfacesSelected(wxCommandEvent& event)
+{
+    m_sInterface = event.GetString();
+
+    map<wxString, networkInterface>::const_iterator itInterface= NetworkControl::Get().FindInterface(event.GetString());
+    if(itInterface != NetworkControl::Get().GetInterfaceEnd())
+    {
+        m_pbtnStaticDHCP->ToggleSelection((itInterface->second.bStatic==false), true);
+        m_ppnlAddress->SetValue(itInterface->second.sAddress);
+        m_ppnlGateway->SetValue(itInterface->second.sGateway);
+        m_pbtnMask->SetLabel(wxString::Format(wxT("/%d (%s)"), itInterface->second.nMask, NetworkControl::Get().ConvertMaskToAddress(itInterface->second.nMask)));
+    }
+    else
+    {
+        m_ppnlAddress->SetValue(wxEmptyString);
+        m_ppnlGateway->SetValue(wxEmptyString);
+        m_pbtnMask->SetLabel(wxEmptyString);
+    }
+}

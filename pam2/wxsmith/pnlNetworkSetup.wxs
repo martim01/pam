@@ -6,7 +6,7 @@
 		<size_arg>1</size_arg>
 		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnStaticDHCP" member="yes">
 			<label>Type</label>
-			<pos>0,40</pos>
+			<pos>350,85</pos>
 			<size>200,40</size>
 			<bg>#0080C0</bg>
 			<style>wmButton::STYLE_SELECT</style>
@@ -77,11 +77,13 @@
 			<handler function="OnbtnMaskClick" entry="EVT_BUTTON" />
 		</object>
 		<object class="wmSwitcherPanel" name="ID_M_PSWP1" variable="m_pSwp1" member="yes">
-			<pos>310,85</pos>
-			<size>280,340</size>
+			<pos>310,128</pos>
+			<size>280,297</size>
 			<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
 			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL1" variable="Panel1" member="yes">
+					<pos>0,47</pos>
+					<size>280,293</size>
 					<bg>#000000</bg>
 					<object class="wmLabel" name="ID_M_PLBL5" variable="m_plblResult" member="yes">
 						<label>Gateway</label>
@@ -113,6 +115,18 @@
 			<size>200,40</size>
 			<fg>#000000</fg>
 			<bg>#FFFFFF</bg>
+		</object>
+		<object class="wmList" name="ID_M_PLST1" variable="m_plstInterfaces" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>5,1</button_gap>
+			<columns>5</columns>
+			<button_selected>#EA7500</button_selected>
+			<items />
+			<pos>0,36</pos>
+			<size>600,44</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstInterfacesSelected" entry="EVT_LIST_SELECTED" />
 		</object>
 	</object>
 </wxsmith>
