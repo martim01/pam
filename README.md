@@ -6,7 +6,7 @@ Open Source Audio Monitoring Software designed for (but not limited to) a Raspbe
 ### Core libraries required
 
 * wxWidgets   https://www.wxwidgets.org/
-* PortAudio
+* PortAudio   http://www.portaudio.com/download.html
 * libsndfile   http://www.mega-nerd.com/libsndfile/
 * Secret Rabit Code  http://www.mega-nerd.com/SRC/
 
