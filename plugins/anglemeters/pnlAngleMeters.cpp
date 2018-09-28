@@ -5,6 +5,7 @@
 #include "session.h"
 #include "timedbuffer.h"
 #include "levelcalculator.h"
+#include "ppmtypes.h"
 
 //(*InternalHeaders(pnlAngleMeters)
 #include <wx/intl.h>
@@ -150,11 +151,10 @@ void pnlAngleMeters::CreateMeters()
     }
     for(size_t i = 0; i < m_vMeters.size(); i++)
     {
-        m_vMeters[i]->SetMeterDisplay(m_pBuilder->ReadSetting(wxT("Mode"),0));
         m_vMeters[i]->SetPeakMode(m_pBuilder->ReadSetting(wxT("Peaks"),0));
-        m_vMeters[i]->SetMeterSpeed(m_pBuilder->ReadSetting(wxT("Speed"),1));
         m_vMeters[i]->SetMeterMSMode(m_pBuilder->ReadSetting(wxT("M3M6"),2));
     }
+    SetMode(wxT("BBC"));
     ColourMonitorButtons();
 }
 
@@ -204,13 +204,18 @@ void pnlAngleMeters::SetAudioData(const timedbuffer* pBuffer)
 }
 
 
-void pnlAngleMeters::SetMode(unsigned int nMode)
+void pnlAngleMeters::SetMode(const wxString& sMode)
 {
-    for(size_t i = 0; i < m_vMeters.size(); i++)
+    map<wxString, ppmtype>::const_iterator itType = PPMTypeManager::Get().FindType(sMode);
+    if(itType != PPMTypeManager::Get().GetTypeEnd())
     {
-        m_vMeters[i]->SetMeterDisplay(nMode);
+        m_pCalculator->SetMode(itType->second.nType);
+        m_pCalculator->SetDynamicResponse(itType->second.dRiseTime, itType->second.dRisedB, itType->second.dFallTime, itType->second.dFalldB);
+        for(size_t i = 0; i < m_vMeters.size(); i++)
+        {
+            m_vMeters[i]->SetLevels(itType->second.vLevels,itType->second.dOffset, itType->second.dScaling, itType->first, itType->second.sUnit);
+        }
     }
-    m_pCalculator->SetMode(nMode);
 }
 
 void pnlAngleMeters::Freeze(bool bFreeze)
@@ -240,10 +245,6 @@ void pnlAngleMeters::ClearMeters()
 
 void pnlAngleMeters::SetSpeed(unsigned long nSpeed)
 {
-    for(size_t i = 0; i < m_vMeters.size(); i++)
-    {
-        m_vMeters[i]->SetMeterSpeed(nSpeed);
-    }
     m_pCalculator->SetSpeed(nSpeed);
 }
 

@@ -36,6 +36,7 @@ class WXEXPORT RadarBuilder : public MonitorPluginBuilder
 
         void ClearMeter();
         void OnSettingChanged(SettingEvent& event);
+        void SetMeterMode();
 
         virtual wxWindow* CreateMonitorPanel(wxWindow* pParent);
         virtual std::list<pairOptionPanel_t>CreateOptionPanels(wxWindow* pParent);
@@ -47,7 +48,7 @@ class WXEXPORT RadarBuilder : public MonitorPluginBuilder
         pnlRouting* m_ppnlRouting;
         unsigned int m_nInputChannels;
         unsigned int m_nDisplayChannel;
-        unsigned int m_nMode;
+        wxString m_sMode;
 };
 
 

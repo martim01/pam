@@ -77,7 +77,7 @@ void LissajouBuilder::LoadSettings()
             vChannels.push_back(ReadSetting(wxT("Axis_Y"),1));
             AskToMonitor(vChannels);
         }
-        m_pLissajou->SetMeterMode(ReadSetting(wxT("MeterMode"),1));
+        m_pLissajou->SetMeterMode(ReadSetting(wxT("MeterMode"),wxT("BBC")));
         if(ReadSetting(wxT("Monitor"),0) == 0)  //follow
         {
             m_pLissajou->Follow();
@@ -156,7 +156,7 @@ void LissajouBuilder::OnSettingChanged(SettingEvent& event)
     }
     else if(event.GetKey() == wxT("MeterMode"))
     {
-        m_pLissajou->SetMeterMode(ReadSetting(wxT("MeterMode"),1));
+        m_pLissajou->SetMeterMode(ReadSetting(wxT("MeterMode"),wxT("BBC")));
     }
     else if(event.GetKey() == wxT("Monitor"))
     {

@@ -7,7 +7,6 @@
 #include "settings.h"
 
 
-const wxString RadarMeter::STR_MODE[4] = {wxT("PPM"), wxT("Peak"), wxT("Energy"), wxT("LUFS") };
 const wxString RadarMeter::STR_CHANNEL[11] = {wxT("L"), wxT("R"), wxT("3"), wxT("4"), wxT("5"), wxT("6"), wxT("7"), wxT("8"), wxEmptyString, wxT("M"), wxT("S")};
 
 using namespace std;
@@ -47,7 +46,7 @@ RadarMeter::RadarMeter(wxWindow *parent, wxWindowID id, const wxPoint& pos, cons
 
     m_dtStart = wxDateTime::Now();
     m_nSamples = 0;
-    m_nMode = LevelCalculator::PEAK;
+    m_sMode = wxT("BBC");
 
     SetForegroundColour(*wxWHITE);
     SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
@@ -158,28 +157,9 @@ void RadarMeter::DrawRadar(wxDC& dc)
     memDC.SetBrush(*wxTRANSPARENT_BRUSH);
     memDC.SetPen(wxPen(wxColour(wxT("#354e61"))));
 
-    if(m_nMode != LevelCalculator::PPM)
+    for(size_t i = 0; i < m_vLevels.size(); i++)
     {
-        for(int i = m_dMindB; i > 0; i-= 10)
-        {
-            memDC.DrawCircle(m_pntCenter, i*m_dResolution);
-        }
-    }
-    else
-    {
-        for(size_t i = 0; i < 9; i++)
-        {
-            int nPPM = (i*4)-34;
-            if(i == 4)
-            {
-                memDC.SetPen(wxPen(wxColour(wxT("#654e61"))));
-            }
-            else
-            {
-                memDC.SetPen(wxPen(wxColour(wxT("#354e61"))));
-            }
-            memDC.DrawCircle(m_pntCenter, (m_dMindB+nPPM)*m_dResolution);
-        }
+        memDC.DrawCircle(m_pntCenter, (-m_vLevels[i]-m_dMindB)*m_dResolution);
     }
 
     for(size_t i = 0; i < 12; i++)
@@ -199,7 +179,7 @@ void RadarMeter::DrawRadar(wxDC& dc)
 
     dc.SetTextForeground(*wxWHITE);
     dc.SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
-    dc.DrawText(wxString::Format(wxT("Mode: %s"), STR_MODE[m_nMode].c_str()), wxPoint(400,430));
+    dc.DrawText(wxString::Format(wxT("Mode: %s"), m_sMode.c_str()), wxPoint(400,430));
     dc.DrawText(wxString::Format(wxT("Ch: %s"), STR_CHANNEL[m_nChannel].c_str()), wxPoint(400,450));
 
     dc.DrawText(wxString::Format(wxT("%ds / %dms"), m_nTimespan/1000, m_nRefreshRate), wxPoint(10,430));
@@ -265,28 +245,9 @@ void RadarMeter::CreateBackgroundBitmap()
 
     memDC.SetPen(wxPen(wxColour(wxT("#354e61"))));
 
-    if(m_nMode != LevelCalculator::PPM)
+    for(size_t i = 0; i < m_vLevels.size(); i++)
     {
-        for(int i = m_dMindB; i > 0; i-= 10)
-        {
-            memDC.DrawCircle(m_pntCenter, i*m_dResolution);
-        }
-    }
-    else
-    {
-        for(size_t i = 0; i < 8; i++)
-        {
-            int nPPM = (i*4)-34;
-            if(i == 4)
-            {
-                memDC.SetPen(wxPen(wxColour(wxT("#654e61"))));
-            }
-            else
-            {
-                memDC.SetPen(wxPen(wxColour(wxT("#354e61"))));
-            }
-            memDC.DrawCircle(m_pntCenter, (m_dMindB+nPPM)*m_dResolution);
-        }
+       // memDC.DrawCircle(m_pntCenter, (m_dMindB-m_vLevels[i])*m_dResolution);
     }
 
 
@@ -311,28 +272,9 @@ void RadarMeter::CreateBackgroundBitmap()
     memDC.SetBrush(*wxTRANSPARENT_BRUSH);
 
     memDC.SetPen(wxPen(wxColour(wxT("#354e61"))));
-    if(m_nMode != LevelCalculator::PPM)
+    for(size_t i = 0; i < m_vLevels.size(); i++)
     {
-        for(int i = m_dMindB; i > 0; i-= 10)
-        {
-            memDC.DrawCircle(m_pntCenter, i*m_dResolution);
-        }
-    }
-    else
-    {
-        for(size_t i = 0; i < 8; i++)
-        {
-            int nPPM = (i*4)-34;
-            if(i == 4)
-            {
-                memDC.SetPen(wxPen(wxColour(wxT("#654e61"))));
-            }
-            else
-            {
-                memDC.SetPen(wxPen(wxColour(wxT("#354e61"))));
-            }
-            memDC.DrawCircle(m_pntCenter, (m_dMindB+nPPM)*m_dResolution);
-        }
+        memDC.DrawCircle(m_pntCenter, (-m_vLevels[i]-m_dMindB)*m_dResolution);
     }
 
 
@@ -346,23 +288,11 @@ void RadarMeter::SetMindB(float dMin)
 
 void RadarMeter::SetRadarLevel(double dLevel, unsigned int nSamples, bool bInDBAlready)
 {
-    if(!bInDBAlready)
-    {
-        dLevel = 20*log10(dLevel);
-    }
 
     dLevel = max(dLevel, -m_dMindB);
 
     m_dLevel = max(m_dLevel, -(-m_dMindB - dLevel));
 
-
-//    m_nSamples += nSamples;
-//    if(m_nSamples > m_nTimespan)
-//    {
-//        m_nSamples -= m_nTimespan;
-//        Refresh();
-//        Update();
-//    }
 }
 
 void RadarMeter::OnTimer(wxTimerEvent& event)
@@ -432,17 +362,12 @@ void RadarMeter::ClearMeter()
     m_dtStart = wxDateTime::Now();
 }
 
-void RadarMeter::SetMode(unsigned int nMode)
+
+void RadarMeter::SetScale(const std::vector<double>& vLevels, const wxString& sTitle)
 {
-    m_nMode = nMode;
-    if(m_nMode == LevelCalculator::PPM)
-    {
-        SetMindB(34.0);
-    }
-    else
-    {
-        SetMindB(70.0);
-    }
+    m_sMode = sTitle;
+    m_vLevels = vLevels;
+    SetMindB(-vLevels[0]);
     CreateBackgroundBitmap();
     ClearMeter();
 }

@@ -7,6 +7,7 @@
 class session;
 class LevelMeter;
 class timedbuffer;
+struct ppmtype;
 
 //(*Headers(pnlMeters)
 #include "wmlabel.h"
@@ -47,7 +48,7 @@ class pnlMeters: public wxPanel
 
 		void SetAudioData(const timedbuffer* pBuffer);
 
-		void SetMode(unsigned int nMode);
+		void SetMode(const wxString& sMode);
         void Freeze(bool bFreeze);
         void ShowPeaks(unsigned int nMode);
         void ClearMeters();
@@ -56,7 +57,8 @@ class pnlMeters: public wxPanel
         void SetShading(bool bShaded);
         void OutputChannels(const std::vector<char>& vChannels);
 
-        void SetScale(const wxString& sScale);
+
+        void SetScale(const wxString& sTitle, const ppmtype& aType);
 
 	protected:
 
@@ -96,6 +98,9 @@ class pnlMeters: public wxPanel
 		unsigned int m_nInputChannels;
 
         double m_dOffset;
+
+
+
 		DECLARE_EVENT_TABLE()
 };
 

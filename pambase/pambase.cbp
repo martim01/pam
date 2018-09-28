@@ -199,13 +199,10 @@
 		<Unit filename="levelcalculator.h" />
 		<Unit filename="levelmeter.cpp" />
 		<Unit filename="levelmeter.h" />
-		<Unit filename="loud.cpp" />
-		<Unit filename="loud.h" />
 		<Unit filename="mdnsd.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="mdnsd.h" />
-		<Unit filename="meter.h" />
 		<Unit filename="monitorevent.cpp" />
 		<Unit filename="monitorevent.h" />
 		<Unit filename="monitorpluginbuilder.cpp" />
@@ -219,8 +216,8 @@
 		<Unit filename="pcstats.cpp" />
 		<Unit filename="pcstats.h" />
 		<Unit filename="plugin.h" />
-		<Unit filename="ppm.cpp" />
-		<Unit filename="ppm.h" />
+		<Unit filename="ppmtypes.cpp" />
+		<Unit filename="ppmtypes.h" />
 		<Unit filename="qos.cpp" />
 		<Unit filename="qos.h" />
 		<Unit filename="r128calculator.cpp" />

@@ -1,16 +1,16 @@
 #pragma once
 #include "dlldefine.h"
 
-class ppm;
-class loud;
 
 struct session;
 class timedbuffer;
 
+
+
 class PAMBASE_IMPEXPORT LevelCalculator
 {
     public:
-        LevelCalculator(float dMin);
+        LevelCalculator(double dMin);
         ~LevelCalculator();
 
         void InputSession(const session& aSession);
@@ -19,40 +19,55 @@ class PAMBASE_IMPEXPORT LevelCalculator
         void SetSpeed(long nSpeed);
         void CalculateLevel(const timedbuffer* pBuffer);
 
+        void SetDynamicResponse(double dRiseTime, double dRisedB, double dFallTime, double dFalldB);
+
+
+
         double GetLevel(unsigned int nChannel);
         double GetMSLevel(bool bStereo);
 
-        enum {PPM, PEAK, ENERGY, LOUD, TOTAL, AVERAGE};
+        enum {PPM, PEAK, ENERGY, TOTAL, AVERAGE};
+        enum speeds { SLOW, NORMAL, FAST };
 
 
     private:
 
-        void CreatePpm();
-        void CreateLoud();
 
         void CalculatePpm(const timedbuffer* pBuffer);
-        void CalculateLoud(const timedbuffer* pBuffer);
         void CalculatePeak(const timedbuffer* pBuffer);
         void CalculateEnergy(const timedbuffer* pBuffer);
         void CalculateTotal(const timedbuffer* pBuffer);
         void CalculateAverage(const timedbuffer* pBuffer);
-        void ResetLevels(float dLevel);
+        void ResetLevels(double dLevel);
 
-        void DeletePpmLoud();
+
+        void CalculateRiseFall(unsigned long nSamples);
+
+        void CalculateRiseFall(double& dCurrent, double& dLast,double dFalldB, double dRisedB, bool bDebug=false);
+
+        void ConvertToDb(double& dSample);
+        void CalculateDynamicRepsonse();
 
         unsigned int m_nChannels;
+        unsigned int m_nSampleRate;
         unsigned int m_nMode;
         bool m_bMS;
         long m_nMSMode;
-        long m_nSpeed;
 
-        ppm* m_pPpm;
-        loud* m_pLoud;
+        double m_dSpeed;
 
-        ppm* m_pPpmMS;
-        loud* m_pLoudMS;
+        double m_dLevel[8];
+        double m_dMS[2];
+        double m_dMin;
 
-        float m_dLevel[8];
-        float m_dMS[2];
-        float m_dMin;
+        double m_dLastLevel[8];
+        double m_dLastMS[8];
+
+        double m_dRisedB;
+        double m_dFalldB;
+        double m_dRiseMs;
+        double m_dFallMs;
+        double m_dRiseSample;
+        double m_dFallSample;
+
 };

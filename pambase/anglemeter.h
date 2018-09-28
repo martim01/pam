@@ -19,7 +19,7 @@ public:
 
     void InitMeter(const wxString & sText,double dMin);
 
-    void SetLevels(const double dLevels[], size_t nSize);
+    void SetLevels(const std::vector<double>& vLevels, double dOffset, double dScaling, const wxString& sTitle, const wxString& sUnits);
 
 
     bool SetMeterColour(const wxColour& clrMeter1, const wxColour& clrMeter2);
@@ -43,12 +43,10 @@ public:
     void FreezeMeter(bool bFreeze);
 
     void SetMeterMSMode(long nMode);
-    void SetMeterSpeed(long nSpeed);
 
     void SetInputChannels(unsigned int nInputChannels)
     {
         m_nInputChannels = nInputChannels;
-        SetMeterDisplay(m_nMeterDisplay);
     }
 
     enum {PEAK_HIDE, PEAK_SHOW, PEAK_HOLD};
@@ -59,9 +57,8 @@ protected:
 
 
 
-    void WorkoutAngles(int i);
+    void WorkoutAngles(double dLevel, double& dAngle);
 
-    std::vector<double> m_vLevels;
 
     uiRect m_uiLabel;
     uiRect m_uiLevelText[2];
@@ -73,6 +70,7 @@ protected:
     double m_dMin;
     double m_dMax;
     unsigned short m_nLightGap;
+    double m_dAngleRatio;
 
     wxPen m_penText;
     wxColour m_clrText;
@@ -108,7 +106,12 @@ protected:
 
 
     long m_nMeterMSMode;
-    long m_nMeterSpeed;
+
+    double m_dOffset;
+    std::vector<double> m_vLevels;
+    std::vector<double> m_vLevelAngles;
+    wxString m_sUnit;
+    double m_dScalingFactor;
 };
 
 

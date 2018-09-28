@@ -12,6 +12,7 @@ class timedbuffer;
 class session;
 class LissajouBuilder;
 class LevelCalculator;
+struct ppmtype;
 
 class pnlLissajou: public wxPanel
 {
@@ -35,7 +36,7 @@ class pnlLissajou: public wxPanel
 		void ShowLevels(bool bShow);
 
 		void SetAxis(unsigned int nChannelX, unsigned int nChannelY);
-		void SetMeterMode(unsigned int nMode);
+		void SetMeterMode(const wxString& sMode);
 
 		void OutputChannels(const std::vector<char>& vChannels);
 		void Follow();
@@ -58,7 +59,12 @@ class pnlLissajou: public wxPanel
 		void OnResize(wxSizeEvent& event);
 		//*)
         void CheckAxis();
+
+		void SetScale(const wxString& sTitle, const ppmtype& aType);
+
 		static LissajouBuilder* m_pBuilder;
+
+
 
 		LevelCalculator* m_pCalculator;
 

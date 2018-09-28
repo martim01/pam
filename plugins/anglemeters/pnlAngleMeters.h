@@ -28,7 +28,7 @@ class pnlAngleMeters: public wxPanel
 
 		void SetAudioData(const timedbuffer* pBuffer);
 
-		void SetMode(unsigned int nMode);
+		void SetMode(const wxString& sMode);
         void Freeze(bool bFreeze);
         void ShowPeaks(unsigned int nMode);
         void ClearMeters();

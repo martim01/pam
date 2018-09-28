@@ -1,61 +1,44 @@
+#include <wx/log.h>
 #include "levelcalculator.h"
 #include "timedbuffer.h"
 #include "session.h"
 #include "ppm.h"
 #include "loud.h"
 
+
+
 using namespace std;
 
- LevelCalculator::LevelCalculator(float dMin) :
+
+ LevelCalculator::LevelCalculator(double dMin) :
   m_nChannels(2),
+  m_nSampleRate(48000),
   m_nMode(PPM),
   m_bMS(false),
   m_nMSMode(meter::M6),
-  m_nSpeed(meter::NORMAL),
-  m_pPpm(0),
-  m_pLoud(0),
-  m_pPpmMS(0),
-  m_pLoudMS(0),
-  m_dMin(dMin)
+  m_dSpeed(1.0)
  {
+     for(int i = 0; i < 8; i++)
+    {
+        m_dLastLevel[i] = -80.0;
+    }
+    m_dLastMS[0] = -80.0;
+    m_dLastMS[1] = -80.0;
+
+    SetDynamicResponse(1,78, 1200, 20);
 
  }
 
 LevelCalculator::~LevelCalculator()
 {
-    DeletePpmLoud();
 }
 
-
-void LevelCalculator::DeletePpmLoud()
-{
-    if(m_pPpm)
-    {
-        delete m_pPpm;
-    }
-    m_pPpm = 0;
-    if(m_pLoud)
-    {
-        delete m_pLoud;
-    }
-    m_pLoud = 0;
-
-    if(m_pPpmMS)
-    {
-        delete m_pPpmMS;
-    }
-    m_pPpmMS = 0;
-    if(m_pLoudMS)
-    {
-        delete m_pLoudMS;
-    }
-    m_pLoudMS = 0;
-}
 void LevelCalculator::InputSession(const session& aSession)
 {
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_nChannels = min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels);
+        m_nChannels = min((unsigned int)8 ,aSession.GetCurrentSubsession()->nChannels);
+        m_nSampleRate = aSession.GetCurrentSubsession()->nSampleRate;
     }
     else
     {
@@ -66,84 +49,60 @@ void LevelCalculator::InputSession(const session& aSession)
 
 void LevelCalculator::SetMode(unsigned int nMode)
 {
-    DeletePpmLoud();
-
     m_nMode = nMode;
-    switch(nMode)
-    {
-        case PPM:
-            CreatePpm();
-            break;
-        case LOUD:
-            CreateLoud();
-            break;
-    }
 }
 
 
-void LevelCalculator::CreatePpm()
-{
-    if(m_nChannels != 0)
-    {
-        m_pPpm = new ppm(m_nChannels);
-        m_pPpm->setMode(meter::AB);
-        m_pPpm->setSpeed(m_nSpeed);
-
-        m_pPpmMS = new ppm(m_nChannels);
-        m_pPpmMS->setMode(m_nMSMode);
-        m_pPpmMS->setSpeed(m_nSpeed);
-    }
-}
-
-void LevelCalculator::CreateLoud()
-{
-    if(m_nChannels != 0)
-    {
-        m_pLoud = new loud(m_nChannels);
-        m_pLoud->setIntegrationTime(8);
-        m_pLoud->setMode(meter::AB);
-        m_pLoud->setSpeed(m_nSpeed);
-
-        m_pLoudMS = new loud(m_nChannels);
-        m_pLoudMS->setIntegrationTime(8);
-        m_pLoudMS->setMode(m_nMSMode);
-        m_pLoudMS->setSpeed(m_nSpeed);
-    }
-}
 
 
 void LevelCalculator::SetMSMode(long nMode)
 {
     m_nMSMode = nMode;
-    if(m_pPpmMS)
-    {
-        m_pPpmMS->setMode(nMode);
-    }
-    else if(m_pLoudMS)
-    {
-        m_pLoudMS->setMode(nMode);
-    }
 }
 
 void LevelCalculator::SetSpeed(long nSpeed)
 {
-    m_nSpeed = nSpeed;
-    if(m_pPpm)
+    switch(nSpeed)
     {
-        m_pPpm->setSpeed(nSpeed);
+        case SLOW:
+            m_dSpeed = 0.5;
+            break;
+        case NORMAL:
+            m_dSpeed = 1.0;
+            break;
+        case FAST:
+            m_dSpeed = 2.0;
+            break;
     }
-    if(m_pLoud)
+    CalculateDynamicRepsonse();
+}
+
+
+void LevelCalculator::SetDynamicResponse(double dRiseTime, double dRisedB, double dFallTime, double dFalldB)
+{
+    m_dRiseMs = dRiseTime;
+    m_dRisedB = dRisedB;
+    m_dFallMs = dFallTime;
+    m_dFalldB = dFalldB;
+
+    CalculateDynamicRepsonse();
+}
+
+void LevelCalculator::CalculateDynamicRepsonse()
+{
+    double dInterval = (1.0/static_cast<double>(m_nSampleRate))*1000.0;
+    double dFallInterval = dInterval/m_dFallMs;
+    double dRiseInterval(0.0);
+    if(m_dRiseMs != 0.0)
     {
-        m_pLoud->setSpeed(nSpeed);
+        dRiseInterval=dInterval/m_dRiseMs;
     }
 
-    if(m_pPpmMS)
+    m_dFallSample = m_dFalldB*dFallInterval*m_dSpeed;
+    m_dRiseSample = 0.0;
+    if(dRiseInterval > 0.0)
     {
-        m_pPpmMS->setSpeed(nSpeed);
-    }
-    if(m_pLoudMS)
-    {
-        m_pLoudMS->setSpeed(nSpeed);
+        m_dRiseSample = m_dRisedB*dRiseInterval*m_dSpeed;
     }
 }
 
@@ -154,9 +113,6 @@ void LevelCalculator::CalculateLevel(const timedbuffer* pBuffer)
         case PPM:
              CalculatePpm(pBuffer);
              break;
-        case LOUD:
-            CalculateLoud(pBuffer);
-            break;
         case PEAK:
             CalculatePeak(pBuffer);
             break;
@@ -170,35 +126,70 @@ void LevelCalculator::CalculateLevel(const timedbuffer* pBuffer)
             CalculateAverage(pBuffer);
             break;
     }
+
+    wxLogDebug(wxT("Left = %f dB"), m_dLevel[0]);
 }
 
 
 void LevelCalculator::CalculatePpm(const timedbuffer* pBuffer)
 {
-    if(m_pPpm)
+    ResetLevels(0.0);
+
+
+    for(unsigned int i=0; i < pBuffer->GetBufferSize(); i+=m_nChannels)
     {
-        m_pPpm->calcIntermediate(m_nChannels, pBuffer->GetBufferSize()/m_nChannels, pBuffer->GetBuffer());
+        for(unsigned int j = 0; j < m_nChannels; j++)
+        {
+            m_dLevel[j] = fabs(pBuffer->GetBuffer()[i+j]);
+            ConvertToDb(m_dLevel[j]);
+            if(m_dLevel[j] > m_dLastLevel[j])
+            {
+                m_dLevel[j] = min(m_dLevel[j], m_dLastLevel[j]+m_dRiseSample);
+            }
+            else if(m_dLevel[j] < m_dLastLevel[j])
+            {
+                m_dLevel[j] = max(m_dLevel[j], m_dLastLevel[j]-m_dFallSample);
+            }
+            m_dLastLevel[j] = m_dLevel[j];
+        }
     }
+
     if(m_nChannels == 2)
     {
-        m_pPpmMS->calcIntermediate(m_nChannels, pBuffer->GetBufferSize()/m_nChannels, pBuffer->GetBuffer());
+        for(unsigned int i=0; i < pBuffer->GetBufferSize(); i+=2)
+        {
+            m_dMS[0] = (fabs(pBuffer->GetBuffer()[i]+pBuffer->GetBuffer()[i+1]));
+            m_dMS[1] = (fabs(pBuffer->GetBuffer()[i]-pBuffer->GetBuffer()[i+1]));
+            if(m_nMSMode == meter::M6)
+            {
+                m_dMS[0]*=0.5;
+                m_dMS[1]*=0.5;
+            }
+            else
+            {
+                m_dMS[0]*=0.707;
+                m_dMS[1]*=0.707;
+            }
+
+            for(int j = 0; j < 2; j++)
+            {
+                ConvertToDb(m_dMS[j]);
+                if(m_dMS[j] > m_dLastMS[j])
+                {
+                    m_dMS[j] = min(m_dMS[j], m_dLastMS[j]+m_dRiseSample);
+                }
+                else if(m_dMS[j] < m_dLastMS[j])
+                {
+                    m_dMS[j] = max(m_dMS[j], m_dLastMS[j]-m_dFallSample);
+                }
+                m_dLastMS[j] = m_dMS[j];
+            }
+        }
     }
 }
 
-void LevelCalculator::CalculateLoud(const timedbuffer* pBuffer)
-{
-    if(m_pLoud)
-    {
-        m_pLoud->calcIntermediate(m_nChannels, pBuffer->GetBufferSize()/m_nChannels, pBuffer->GetBuffer());
-    }
 
-    if(m_nChannels == 2)
-    {
-        m_pLoudMS->calcIntermediate(m_nChannels, pBuffer->GetBufferSize()/m_nChannels, pBuffer->GetBuffer());
-    }
-}
-
-void LevelCalculator::ResetLevels(float dLevel)
+void LevelCalculator::ResetLevels(double dLevel)
 {
     for(int i = 0; i < 8; i++)
     {
@@ -206,6 +197,8 @@ void LevelCalculator::ResetLevels(float dLevel)
     }
     m_dMS[0] = dLevel;
     m_dMS[1] = dLevel;
+
+
 }
 
 void LevelCalculator::CalculatePeak(const timedbuffer* pBuffer)
@@ -217,16 +210,17 @@ void LevelCalculator::CalculatePeak(const timedbuffer* pBuffer)
     {
         for(unsigned int j = 0; j < m_nChannels; j++)
         {
-            float dSample(fabs(pBuffer->GetBuffer()[i+j]));
+            double dSample(fabs(pBuffer->GetBuffer()[i+j]));
             m_dLevel[j] = max(m_dLevel[j],dSample);
         }
     }
+
     if(m_nChannels == 2)
     {
         for(unsigned int i=0; i < pBuffer->GetBufferSize(); i+=2)
         {
-            float dSampleM(fabs(pBuffer->GetBuffer()[i]+pBuffer->GetBuffer()[i+1]));
-            float dSampleS(fabs(pBuffer->GetBuffer()[i]-pBuffer->GetBuffer()[i+1]));
+            double dSampleM(fabs(pBuffer->GetBuffer()[i]+pBuffer->GetBuffer()[i+1]));
+            double dSampleS(fabs(pBuffer->GetBuffer()[i]-pBuffer->GetBuffer()[i+1]));
             if(m_nMSMode == meter::M6)
             {
                 dSampleM*=0.5;
@@ -241,6 +235,8 @@ void LevelCalculator::CalculatePeak(const timedbuffer* pBuffer)
             m_dMS[1] = max(m_dMS[1],dSampleS);
         }
     }
+
+    CalculateRiseFall(pBuffer->GetBufferSize()/m_nChannels);
 }
 
 void LevelCalculator::CalculateEnergy(const timedbuffer* pBuffer)
@@ -251,26 +247,6 @@ void LevelCalculator::CalculateEnergy(const timedbuffer* pBuffer)
     {
         m_dLevel[i%m_nChannels] += pow(pBuffer->GetBuffer()[i],2);
     }
-    /*if(m_nChannels == 2)
-    {
-        for(unsigned int i=0; i < pBuffer->GetBufferSize(); i++)
-        {
-            if(m_nMSMode == meter::M6)
-            {
-                m_dMS[0] += pow((pBuffer->GetBuffer()[i]+pBuffer->GetBuffer()[i+1])/2,2);
-                m_dMS[1] += pow((pBuffer->GetBuffer()[i]-pBuffer->GetBuffer()[i+1])/2,2);
-            }
-            else
-            {
-                m_dMS[0] += pow((pBuffer->GetBuffer()[i]+pBuffer->GetBuffer()[i+1]),2);
-                m_dMS[1] += pow((pBuffer->GetBuffer()[i]-pBuffer->GetBuffer()[i+1]),2);
-            }
-        }
-
-        m_dMS[0] = sqrt(m_dMS[0]/(pBuffer->GetBufferSize()/2));
-        m_dMS[1] = sqrt(m_dMS[1]/(pBuffer->GetBufferSize()/2));
-    }
-    */
     for(int i = 0; i < 8; i++)
     {
         m_dLevel[i] = sqrt(m_dLevel[i]/(pBuffer->GetBufferSize()/m_nChannels));
@@ -289,7 +265,7 @@ void LevelCalculator::CalculateEnergy(const timedbuffer* pBuffer)
             m_dMS[1] = (m_dLevel[0]-m_dLevel[1]);
         }
     }
-
+    CalculateRiseFall(pBuffer->GetBufferSize()/m_nChannels);
 }
 
 void LevelCalculator::CalculateTotal(const timedbuffer* pBuffer)
@@ -316,7 +292,7 @@ void LevelCalculator::CalculateTotal(const timedbuffer* pBuffer)
             }
         }
     }
-
+    CalculateRiseFall(pBuffer->GetBufferSize()/m_nChannels);
 }
 
 void LevelCalculator::CalculateAverage(const timedbuffer* pBuffer)
@@ -328,6 +304,8 @@ void LevelCalculator::CalculateAverage(const timedbuffer* pBuffer)
     }
     m_dMS[0] /= (pBuffer->GetBufferSize()/m_nChannels);
     m_dMS[1] /= (pBuffer->GetBufferSize()/m_nChannels);
+
+    CalculateRiseFall(pBuffer->GetBufferSize()/m_nChannels);
 }
 
 
@@ -335,15 +313,7 @@ double LevelCalculator::GetLevel(unsigned int nChannel)
 {
     if(nChannel < 8 && m_nChannels > 0)
     {
-        switch(m_nMode)
-        {
-        case PPM:
-            return m_pPpm->getValue(nChannel);
-        case LOUD:
-            return m_pLoud->getValue(nChannel);
-        default:
-            return m_dLevel[nChannel];
-        }
+        return m_dLevel[nChannel];
     }
     return m_dMin;
 }
@@ -351,12 +321,53 @@ double LevelCalculator::GetLevel(unsigned int nChannel)
 
 double LevelCalculator::GetMSLevel(bool bStereo)
 {
-    switch(m_nMode)
-    {
-        case PPM:
-            return m_pPpmMS->getValue(bStereo);
-        case LOUD:
-            return m_pLoudMS->getValue(bStereo);
-    }
     return m_dMS[bStereo];
+}
+
+
+void LevelCalculator::CalculateRiseFall(unsigned long nSamples)
+{
+    double dFalldB(m_dFallSample*static_cast<double>(nSamples));
+    double dRisedB(m_dRiseSample*static_cast<double>(nSamples));
+
+    wxLogDebug(wxT("Fall = %f db/Buffer Rise = %f db/Buffer"), dFalldB, dRisedB);
+    for(int i = 0; i < 8; i++)
+    {
+        CalculateRiseFall(m_dLevel[i], m_dLastLevel[i],dFalldB,dRisedB,(i==0));
+    }
+
+    CalculateRiseFall(m_dMS[0], m_dLastMS[0],dFalldB,dRisedB);
+    CalculateRiseFall(m_dMS[1], m_dLastMS[1],dFalldB,dRisedB);
+
+}
+
+void LevelCalculator::CalculateRiseFall(double& dCurrent, double& dLast, double dFalldB, double dRisedB, bool bDebug)
+{
+    ConvertToDb(dCurrent);
+    if(dLast > dCurrent)
+    {
+        dCurrent = max(dCurrent, dLast-dFalldB);
+    }
+    else if(dLast < dCurrent)
+    {
+        if(dRisedB > 0.0)
+        {
+            dCurrent = min(dCurrent, dLast+dRisedB);
+        }
+    }
+
+    dLast = dCurrent;
+}
+
+
+void LevelCalculator::ConvertToDb(double& dSample)
+{
+    if(dSample > 0.0)
+    {
+        dSample =  20*log10(dSample);
+    }
+    else
+    {
+        dSample =  -90.0;
+    }
 }

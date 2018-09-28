@@ -2,6 +2,7 @@
 #include "session.h"
 #include "lissajoubuilder.h"
 #include "levelcalculator.h"
+#include "ppmtypes.h"
 
 //(*InternalHeaders(pnlLissajou)
 #include <wx/intl.h>
@@ -47,12 +48,10 @@ pnlLissajou::pnlLissajou(wxWindow* parent,LissajouBuilder* pBuilder,wxWindowID i
 	m_pMeterLeft->SetLightColours(-8,wxColour(220,0,0), -8,wxColour(240,0,0),  wxColour(255,100,100));
         m_pMeterRight->SetLightColours(-8,wxColour(0,220,0), -8, wxColour(0,240,0), wxColour(255,100,100));
 
-//	m_pJellyfish->Connect(wxEVT_COMMAND_LEFT_CLICK,(wxObjectEventFunction)&pnlLissajou::OnLeftUp);
-
 	double dLevels[15] = {0,-3, -6, -9, -12, -15, -18, -21, -24, -30, -36, -42, -48, -54, -60};
-	m_pMeterLeft->SetLevels(dLevels,15,0.0);
-    m_pMeterRight->SetLevels(dLevels,15,0.0);
-    m_pMeterLevels->SetLevels(dLevels,15,0.0);
+	m_pMeterLeft->SetLevels(dLevels,15,0.0, wxT("dbFS"), wxT("Peak"));
+    m_pMeterRight->SetLevels(dLevels,15,0.0, wxT("dbFS"), wxT("Peak"));
+    m_pMeterLevels->SetLevels(dLevels,15,0.0, wxT("dbFS"), wxT("Peak"));
 
     m_pCalculator = new LevelCalculator(0);
 }
@@ -175,23 +174,15 @@ void pnlLissajou::OnResize(wxSizeEvent& event)
 }
 
 
-void pnlLissajou::SetMeterMode(unsigned int nMode)
+void pnlLissajou::SetMeterMode(const wxString& sMode)
 {
-    m_pMeterLeft->SetMeterDisplay(nMode);
-    m_pMeterRight->SetMeterDisplay(nMode);
-    m_pMeterLevels->SetMeterDisplay(nMode);
-
-    if(nMode != LevelMeter::PPM && nMode != LevelMeter::LOUD)
+    map<wxString, ppmtype>::const_iterator itType = PPMTypeManager::Get().FindType(sMode);
+    if(itType != PPMTypeManager::Get().GetTypeEnd())
     {
-        m_pMeterLeft->SetSpeed(meter::FAST);
-        m_pMeterRight->SetSpeed(meter::FAST);
+        m_pCalculator->SetMode(itType->second.nType);
+        m_pCalculator->SetDynamicResponse(itType->second.dRiseTime, itType->second.dRisedB, itType->second.dFallTime, itType->second.dFalldB);
+        SetScale(itType->first, itType->second);
     }
-    else
-    {
-        m_pMeterLeft->SetSpeed(meter::NORMAL);
-        m_pMeterRight->SetSpeed(meter::NORMAL);
-    }
-    m_pCalculator->SetMode(nMode);
 }
 
 
@@ -245,4 +236,12 @@ void pnlLissajou::Follow()
 void pnlLissajou::SetDisplayType(unsigned int nType)
 {
     m_pJellyfish->SetDisplayType(nType);
+}
+
+
+void pnlLissajou::SetScale(const wxString& sTitle, const ppmtype& aType)
+{
+    m_pMeterLeft->SetLevels(aType.vLevels, aType.dOffset, aType.sUnit, sTitle, aType.dScaling);
+    m_pMeterRight->SetLevels(aType.vLevels, aType.dOffset, aType.sUnit, sTitle, aType.dScaling);
+    m_pMeterLevels->SetLevels(aType.vLevels, aType.dOffset, aType.sUnit, sTitle, aType.dScaling);
 }

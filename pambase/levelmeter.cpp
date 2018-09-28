@@ -17,7 +17,6 @@ END_EVENT_TABLE()
 LevelMeter::LevelMeter()
     : m_dMin(-70)
     , m_dMax(0)
-    , m_nMeterDisplay(PEAK)
     , m_bShading(true)
 {
     //create our font
@@ -27,8 +26,7 @@ LevelMeter::LevelMeter()
 }
 
 LevelMeter::LevelMeter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, bool bLevelDisplay, const wxPoint& pos, const wxSize& size) :
-    m_dMax(0),
-    m_nMeterDisplay(PEAK)
+    m_dMax(0)
 {
     m_dLastValue = -180;
     wxSize szInit(size);
@@ -52,9 +50,6 @@ LevelMeter::LevelMeter(wxWindow *parent, wxWindowID id, const wxString & sText,d
     m_bFreeze = false;
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
-
-//    SetMeterSpeed(meter::NORMAL);
-//    SetMeterMSMode(meter::M6);
 
     m_bLevelDisplay = bLevelDisplay;
 
@@ -100,20 +95,10 @@ void LevelMeter::OnPaint(wxPaintEvent& event)
         }
         dc.SetPen(wxPen(wxColour(200,200,200),1, wxDOT));
 
-        if(m_nMeterDisplay != PPM)
+
+        for(size_t i = 0; i < m_vLevels.size(); i++)
         {
-            for(size_t i = 0; i < m_vLevels.size(); i++)
-            {
-                dc.DrawLine(0, m_uiLevelText.GetBottom()-(m_dPixelsPerdB*m_vLevels[i]), GetClientRect().GetWidth(), m_uiLevelText.GetBottom()-(m_dPixelsPerdB*m_vLevels[i]));
-            }
-        }
-        else
-        {
-            for(size_t i = 0; i < 8; i++)
-            {
-                int nY(m_uiLevelText.GetBottom()+(m_dPixelsPerPPM*(8-i)));
-                dc.DrawLine(0, nY, GetClientRect().GetWidth(), nY);
-            }
+            dc.DrawLine(0, m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])), GetClientRect().GetWidth(), m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])));
         }
 
         dc.SetPen(wxNullPen);
@@ -124,39 +109,19 @@ void LevelMeter::OnPaint(wxPaintEvent& event)
     else
     {
 
-        if(m_nMeterDisplay != PPM)
+        for(size_t i = 0; i < m_vLevels.size(); i++)
         {
-                for(size_t i = 0; i < m_vLevels.size(); i++)
-                {
-                    int nY(m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])));
+                int nY(m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])));
 
 
-                    dc.SetPen(wxPen(wxColour(200,200,200),1, wxDOT));
-                    dc.DrawLine(0, m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])), GetClientRect().GetWidth(), m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])));
-                    uiRect uiLevel(wxRect(15, nY-10,GetClientSize().x-30, 20));
-                    uiLevel.SetBackgroundColour(*wxBLACK);
-                    uiLevel.SetForegroundColour(*wxWHITE);
-                    uiLevel.Draw(dc, wxString::Format(wxT("%.0f"), m_vLevels[i]-m_dLevelOffset), uiRect::BORDER_NONE);
-                }
-        }
-        else
-        {
-            for(size_t i = 0; i < 8; i++)
-            {
-                int nY(m_uiLevelText.GetBottom()+(m_dPixelsPerPPM*(8-i)));
                 dc.SetPen(wxPen(wxColour(200,200,200),1, wxDOT));
-
-                dc.DrawLine(0, nY, GetClientRect().GetWidth(), nY);
+                dc.DrawLine(0, m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])), GetClientRect().GetWidth(), m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])));
                 uiRect uiLevel(wxRect(15, nY-10,GetClientSize().x-30, 20));
                 uiLevel.SetBackgroundColour(*wxBLACK);
                 uiLevel.SetForegroundColour(*wxWHITE);
-                #ifdef __WXMSW__
-                uiLevel.Draw(dc, wxString::Format(wxT("%u"), i), uiRect::BORDER_NONE);
-                #else
-                uiLevel.Draw(dc, wxString::Format(wxT("%zu"), i), uiRect::BORDER_NONE);
-                #endif
-            }
+                uiLevel.Draw(dc, wxString::Format(wxT("%.0f"), (m_vLevels[i]-m_dLevelOffset)/m_dScalingFactor), uiRect::BORDER_NONE);
         }
+        m_uiLevelText.Draw(dc, uiRect::BORDER_NONE);
     }
 }
 
@@ -240,99 +205,53 @@ bool LevelMeter::SetLightColours(double dLow, wxColour clrLow, double dMid, wxCo
 void LevelMeter::ResetMeter(void)
 {
     m_nPeakCounter = 0;
-    switch(m_nMeterDisplay)
-    {
-        case PEAK:
-        case ENERGY:
-        case TOTAL:
-        case AVERAGE:
-        case LOUD:
-        case TRUEPEAK:
-            m_dLastValue = -80;
-            m_dPeakValue = -80;
-            break;
-        case PPM:
-            m_dLastValue = 0;
-            m_dPeakValue = 0;
-            break;
-
-    }
+    m_dLastValue = -80;
+    m_dPeakValue = -80;
     Refresh();
 }
 void LevelMeter::ShowValue(double dValue)
 {
-    if(m_nMeterDisplay == PPM)
+    if(!m_bFreeze)
     {
-        ShowPPM(dValue);
+        m_dLastValue = dValue;
     }
-    else
+
+    if(m_nPeakMode != PEAK_HOLD)
     {
-        if(!m_bFreeze)
-        {
-            if(m_nMeterDisplay != LOUD && m_nMeterDisplay != TRUEPEAK)
-            {
-                if(dValue != 0)
-                {
-                    dValue = 20*log10(dValue);
-                }
-                else
-                {
-                    dValue = -1e10;
-                }
-            }
-            if(dValue > m_dLastValue-m_dFall)
-            {
-                m_dLastValue = dValue;
-            }
-            else
-            {
-                m_dLastValue -= m_dFall;
-            }
-        }
-
-        if(m_nPeakMode != PEAK_HOLD)
-        {
-            m_nPeakCounter++;
-        }
-        if(m_nPeakCounter >= 96 || dValue >= m_dPeakValue)
-        {
-            m_dPeakValue = min(dValue, m_dMax);
-            if(m_nMeterDisplay != LOUD)
-            {
-                m_uiLevelText.SetLabel(wxString::Format(wxT("%.1fdB"), m_dPeakValue-m_dLevelOffset));
-            }
-            else
-            {
-                m_uiLevelText.SetLabel(wxString::Format(wxT("%.1f L"), m_dPeakValue));
-            }
-            m_nPeakCounter = 0;
-            RefreshRect(m_uiLevelText.GetRect());
-        }
-
-        int ndB = m_dPixelsPerdB*m_dLastValue;
-        ndB = max(ndB, -(m_uiLabel.GetTop()-m_uiLevelText.GetHeight()));
-
-        int nPeakdB = m_dPixelsPerdB*m_dPeakValue;
-        nPeakdB = max(nPeakdB, -(m_uiLabel.GetTop()-m_uiLevelText.GetHeight()));
-
-        m_uiBlack.SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), -ndB);
-        m_uiPeak.SetRect(0,m_uiLevelText.GetBottom()-(nPeakdB)-1, GetClientRect().GetWidth(), 3);
-
-        if(m_uiBlack.GetBottom() != m_rectLastBlack.GetBottom())    //level change
-        {
-            RefreshRect(wxRect(0,m_uiLevelText.GetBottom(), GetClientSize().x, max(m_uiBlack.GetBottom(), m_rectLastBlack.GetBottom())+1-m_uiLevelText.GetBottom()));
-        }
-
-        if(m_uiPeak.GetBottom() != m_rectLastPeak.GetBottom())
-        {
-            RefreshRect(m_uiPeak.GetRect());
-            RefreshRect(m_rectLastPeak);
-        }
-
-        m_rectLastBlack = m_uiBlack.GetRect();
-        m_rectLastBlack = m_uiBlack.GetRect();
-        m_rectLastPeak = m_uiPeak.GetRect();
+        m_nPeakCounter++;
     }
+    if(m_nPeakCounter >= 96 || dValue >= m_dPeakValue)
+    {
+        m_dPeakValue = min(dValue, m_dMax);
+        m_uiLevelText.SetLabel(wxString::Format(wxT("%.1f%s"), (m_dPeakValue-m_dLevelOffset)/m_dScalingFactor, m_sUnit.c_str()));
+
+        m_nPeakCounter = 0;
+        RefreshRect(m_uiLevelText.GetRect());
+    }
+
+    int ndB = m_dPixelsPerdB*m_dLastValue;
+    ndB = max(ndB, -(m_uiLabel.GetTop()-m_uiLevelText.GetHeight()));
+
+    int nPeakdB = m_dPixelsPerdB*m_dPeakValue;
+    nPeakdB = max(nPeakdB, -(m_uiLabel.GetTop()-m_uiLevelText.GetHeight()));
+
+    m_uiBlack.SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), -ndB);
+    m_uiPeak.SetRect(0,m_uiLevelText.GetBottom()-(nPeakdB)-1, GetClientRect().GetWidth(), 3);
+
+    if(m_uiBlack.GetBottom() != m_rectLastBlack.GetBottom())    //level change
+    {
+        RefreshRect(wxRect(0,m_uiLevelText.GetBottom(), GetClientSize().x, max(m_uiBlack.GetBottom(), m_rectLastBlack.GetBottom())+1-m_uiLevelText.GetBottom()));
+    }
+
+    if(m_uiPeak.GetBottom() != m_rectLastPeak.GetBottom())
+    {
+        RefreshRect(m_uiPeak.GetRect());
+        RefreshRect(m_rectLastPeak);
+    }
+
+    m_rectLastBlack = m_uiBlack.GetRect();
+    m_rectLastBlack = m_uiBlack.GetRect();
+    m_rectLastPeak = m_uiPeak.GetRect();
 }
 
 
@@ -353,20 +272,14 @@ void LevelMeter::SetLevelDisplay(bool bLevel)
 void LevelMeter::SetNumberOfChannels(unsigned int nChannels)
 {
     m_nChannels = nChannels;
-    SetMeterDisplay(m_nMeterDisplay);
 }
 
 
-void LevelMeter::SetMeterDisplay(short nDisplay)
+
+
+void LevelMeter::SetLevels(const double dLevels[], size_t nSize, double dOffset, wxString sUnit, wxString sTitle, double dScalingFactor)
 {
-    m_nMeterDisplay = nDisplay;
-
-    ResetMeter();
-}
-
-
-void LevelMeter::SetLevels(const double dLevels[], size_t nSize, double dOffset)
-{
+    m_dScalingFactor = dScalingFactor;
     m_dLevelOffset = dOffset;
     m_vLevels.clear();
     m_vLevels.resize(nSize);
@@ -374,7 +287,33 @@ void LevelMeter::SetLevels(const double dLevels[], size_t nSize, double dOffset)
     {
         m_vLevels[i] = dLevels[i];
     }
-    RefreshRect(m_uiLabel.GetRect());
+    m_sUnit = sUnit;
+
+    if(m_bLevelDisplay)
+    {
+        m_uiLevelText.SetLabel(sTitle);
+        m_uiLevelText.SetBackgroundColour(wxColour(0,64,128));
+    }
+
+    InitMeter(m_uiLabel.GetLabel(), dLevels[0]);
+    Refresh();
+}
+
+void LevelMeter::SetLevels(const std::vector<double>& vLevels, double dOffset, wxString sUnit, wxString sTitle, double dScalingFactor)
+{
+    m_dScalingFactor = dScalingFactor;
+    m_dLevelOffset = dOffset;
+    m_vLevels = vLevels;
+    m_sUnit = sUnit;
+
+    if(m_bLevelDisplay)
+    {
+        m_uiLevelText.SetLabel(sTitle);
+        m_uiLevelText.SetBackgroundColour(wxColour(0,64,128));
+    }
+
+    InitMeter(m_uiLabel.GetLabel(), m_vLevels[0]);
+    Refresh();
 }
 
 void LevelMeter::SetLabel(const wxString& sLabel)
@@ -397,6 +336,10 @@ void LevelMeter::FreezeMeter(bool bFreeze)
 
 void LevelMeter::ShowPPM(double dValue)
 {
+    //convert dValue to PPM
+    dValue += 18.0;
+    dValue /= 4.0;
+    dValue += 4.0;
 
     if(!m_bFreeze)
     {

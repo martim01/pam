@@ -63,7 +63,7 @@ void AngleMetersBuilder::LoadSettings()
 void AngleMetersBuilder::InputSession(const session& aSession)
 {
     m_pAngleMeters->SetSession(aSession);
-    m_pAngleMeters->SetMode(ReadSetting(wxT("Mode"),0));
+    m_pAngleMeters->SetMode(ReadSetting(wxT("Mode"),wxT("BBC")));
 }
 
 void AngleMetersBuilder::OutputChannels(const std::vector<char>& vChannels)
@@ -76,7 +76,7 @@ void AngleMetersBuilder::OnSettingChanged(SettingEvent& event)
 {
     if(event.GetKey() == wxT("Mode"))
     {
-        m_pAngleMeters->SetMode(ReadSetting(wxT("Mode"),0));
+        m_pAngleMeters->SetMode(ReadSetting(wxT("Mode"),wxT("BBC")));
     }
     else if(event.GetKey() == wxT("Freeze"))
     {

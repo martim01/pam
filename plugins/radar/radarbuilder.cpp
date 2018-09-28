@@ -9,6 +9,7 @@
 #include "pnlMeters.h"
 #include <wx/log.h>
 #include "version.h"
+#include "ppmtypes.h"
 
 using namespace std;
 
@@ -24,9 +25,7 @@ m_pRadar(0)
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&RadarBuilder::OnSettingChanged);
 
     m_pCalculator = new LevelCalculator(0);
-    m_nMode = ReadSetting(wxT("MeterMode"), 0);
-    m_pCalculator->SetMode(m_nMode);
-
+    SetMeterMode();
 
     m_nInputChannels = 1;
     m_nDisplayChannel = 0;
@@ -56,27 +55,17 @@ void RadarBuilder::SetAudioData(const timedbuffer* pBuffer)
                dLevel = m_pCalculator->GetLevel(m_nDisplayChannel);
         }
 
-        switch(m_nMode)
-        {
-            case LevelCalculator::PPM:
-                dLevel *= 4.0;
-                dLevel -= 34.0;
-                m_pRadar->SetRadarLevel(dLevel, pBuffer->GetBufferSize()/m_nInputChannels, true);
-                break;
-            case LevelCalculator::LOUD:
-                m_pRadar->SetRadarLevel(dLevel, pBuffer->GetBufferSize()/m_nInputChannels, true);
-                break;
-            default:
+//            case LevelCalculator::PPM:
+//                dLevel *= 4.0;
+//                dLevel -= 34.0;
+//                m_pRadar->SetRadarLevel(dLevel, pBuffer->GetBufferSize()/m_nInputChannels, true);
                 m_pRadar->SetRadarLevel(dLevel, pBuffer->GetBufferSize()/m_nInputChannels, false);
-        }
     }
 }
 
 wxWindow* RadarBuilder::CreateMonitorPanel(wxWindow* pParent)
 {
     m_pRadar = new RadarMeter(pParent);
-    //m_pRadar->SetTimespan(ReadSetting(wxT("Timeframe"),60));
-    //m_pRadar->SetMode(m_nMode);
     return m_pRadar;
 }
 
@@ -105,9 +94,7 @@ void RadarBuilder::LoadSettings()
         m_pRadar->SetChannel(m_nDisplayChannel);
         m_pRadar->SetTimespan(ReadSetting(wxT("Timeframe"),60));
         m_pRadar->SetRefreshRate(ReadSetting(wxT("RefreshRate"),250));
-        m_nMode = ReadSetting(wxT("MeterMode"), 0);
-        m_pCalculator->SetMode(m_nMode);
-        m_pRadar->SetMode(m_nMode);
+        SetMeterMode();
         ClearMeter();
     }
 
@@ -155,13 +142,24 @@ void RadarBuilder::OnSettingChanged(SettingEvent& event)
     }
     else if(event.GetKey() == wxT("MeterMode"))
     {
-        m_nMode = ReadSetting(wxT("MeterMode"), 0);
-        m_pCalculator->SetMode(m_nMode);
-        m_pRadar->SetMode(m_nMode);
-
+        SetMeterMode();
     }
 }
 
+void RadarBuilder::SetMeterMode()
+{
+    m_sMode = ReadSetting(wxT("MeterMode"), wxT("BBC"));
+    map<wxString, ppmtype>::const_iterator itType = PPMTypeManager::Get().FindType(m_sMode);
+    if(itType != PPMTypeManager::Get().GetTypeEnd())
+    {
+        m_pCalculator->SetMode(itType->second.nType);
+        m_pCalculator->SetDynamicResponse(itType->second.dRiseTime, itType->second.dRisedB, itType->second.dFallTime, itType->second.dFalldB);
+        if(m_pRadar)
+        {
+            m_pRadar->SetScale(itType->second.vLevels, itType->first);
+        }
+    }
+}
 
 void RadarBuilder::ClearMeter()
 {

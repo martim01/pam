@@ -53,7 +53,6 @@ AngleMeter::AngleMeter(wxWindow *parent, wxWindowID id, const wxString & sText,d
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
-    SetMeterSpeed(meter::NORMAL);
     SetMeterMSMode(meter::M6);
 
     m_nRouting = nRouting;
@@ -109,10 +108,10 @@ void AngleMeter::OnPaint(wxPaintEvent& event)
 
     double dRatio = 15.0;
     //Draw the text
-    for(int i = 1; i < 8; i++)
+    for(int i = 0; i < m_vLevels.size(); i++)
     {
-        double dAngle = (dRatio*(i-4.0))*M_PI/180.0;
-        double dAngleDeg = (dRatio*(i-4.0));
+        double dAngle = m_vLevelAngles[i];
+        double dAngleDeg = 0;//(dRatio*(i-4.0));
         double dX = dHT*sin(dAngle);
         double dXTo = dHL*sin(dAngle);
         double dY = dHT*cos(dAngle);
@@ -121,18 +120,13 @@ void AngleMeter::OnPaint(wxPaintEvent& event)
         double dTextX = (dHT+15.0)*sin(dAngle);
         double dTextY = (dHT+15.0)*cos(dAngle);
 
-        dc.SetPen(wxPen(wxColour(120,120,120),1, wxDOT));
+
+        dc.SetPen(wxPen(wxColour(180,180,180),1, wxDOT));
+        dc.SetTextForeground(wxColour(255,255,255));
+
         dc.DrawLine(pntBottom.x+dXTo, pntBottom.y-dYTo, pntBottom.x+static_cast<int>(dX), pntBottom.y-static_cast<int>(dY));
 
-        switch(m_nMeterDisplay)
-        {
-            case PPM:
-                dc.DrawRotatedText(wxString::Format(wxT("%d"),i), wxPoint(pntBottom.x+static_cast<int>(dTextX)-5, pntBottom.y-static_cast<int>(dTextY)), -dAngleDeg);
-                break;
-            default:
-                dc.DrawRotatedText(wxString::Format(wxT("%d"),((i-4)*4)-18), wxPoint(pntBottom.x+static_cast<int>(dTextX), pntBottom.y-static_cast<int>(dTextY)), -dAngleDeg);
-                break;
-        }
+        dc.DrawRotatedText(wxString::Format(wxT("%.0f"),(m_vLevels[i]-m_dOffset)/m_dScalingFactor), wxPoint(pntBottom.x+static_cast<int>(dTextX), pntBottom.y-static_cast<int>(dTextY)), -dAngleDeg);
     }
 
     m_uiType.Draw(dc, uiRect::BORDER_NONE);
@@ -227,66 +221,23 @@ void AngleMeter::ResetMeter(void)
     m_nPeakCounter[0] = 0;
     m_nPeakCounter[1] = 0;
 
-    switch(m_nMeterDisplay)
-    {
-        case PEAK:
-        case ENERGY:
-        case TOTAL:
-        case AVERAGE:
-            m_dLastValue[0] = 0;
-            m_dLastValue[1] = 0;
-            m_dPeakValue[0] = -80.0;
-            m_dPeakValue[1] = -80.0;
-            ShowValue(m_dLastValue);
-            break;
-        case PPM:
-            m_dLastValue[0] = 0.0;
-            m_dLastValue[1] = 0.0;
-            m_dPeakValue[0] = 0.0;
-            m_dPeakValue[1] = 0.0;
-            ShowValue(m_dLastValue);
-            break;
-        case LOUD:
-            m_dLastValue[0] = -80.0;
-            m_dLastValue[1] = -80.0;
-            m_dPeakValue[0] = -80.0;
-            m_dPeakValue[1] = -80.0;
-            ShowValue(m_dLastValue);
-            break;
-    }
+    m_dLastValue[0] = 0;
+    m_dLastValue[1] = 0;
+    m_dPeakValue[0] = -80.0;
+    m_dPeakValue[1] = -80.0;
+    ShowValue(m_dLastValue);
 
 
 }
 void AngleMeter::ShowValue(double dValue[2])
 {
-    bool bdB = false;
-    if(m_nMeterDisplay == PPM || m_nMeterDisplay == LOUD)
-    {
-        bdB = true;
-    }
+    bool bdB = true;
     for(int i = 0; i < 2; i++)
     {
         if(!m_bFreeze)
         {
-            if(!bdB)
-            {
-                if(dValue[i] != 0)
-                {
-                    dValue[i] = 20*log10(dValue[i]);
-                }
-                else
-                {
-                    dValue[i] = -1e10;
-                }
-            }
-            if(dValue[i] > m_dLastValue[i]-m_dFall || m_nMeterDisplay == PPM || m_nMeterDisplay == LOUD)
-            {
-                m_dLastValue[i] = dValue[i];
-            }
-            else
-            {
-                m_dLastValue[i] -= m_dFall;
-            }
+            m_dLastValue[i] = dValue[i];
+
         }
         if(m_nPeakMode == PEAK_SHOW)
         {
@@ -298,37 +249,25 @@ void AngleMeter::ShowValue(double dValue[2])
             m_nPeakCounter[i] = 0;
         }
 
-        WorkoutAngles(i);
+        WorkoutAngles(m_dLastValue[i], m_dAngle[i]);
+        WorkoutAngles(m_dPeakValue[i], m_dAngleMax[i]);
 
-        m_uiLevelText[i].SetLabel(wxString::Format(wxT("%.1f [%.1f]"), m_dLastValue[i], m_dPeakValue[i]));
+        m_uiLevelText[i].SetLabel(wxString::Format(wxT("%.1f [%.1f]"), (m_dLastValue[i]-m_dOffset)/m_dScalingFactor, (m_dPeakValue[i]-m_dOffset)/m_dScalingFactor));
     }
     Refresh();
 }
 
-void AngleMeter::WorkoutAngles(int i)
+void AngleMeter::WorkoutAngles(double dLevel, double& dAngle)
 {
-    // convert the reading to an angle on the scale
-    switch (m_nMeterDisplay)
-    {
-        case PPM:
-            m_dAngle[i] = (15.0*(m_dLastValue[i]-4.0));
-            m_dAngleMax[i] = (15.0*(m_dPeakValue[i]-4.0));
-            break;
-        default:
-            // Add 18 to put -18 at 0 degrees.
-            // Divide by 4 because it is 4dB per 15degree interval.
-            m_dAngle[i] = (15.0*(m_dLastValue[i]+18.0)/4.0);
-            m_dAngleMax[i] = (15.0*(m_dPeakValue[i]+18.0)/4.0);
-            break;
-    }
-    m_dAngle[i] = max(-55.0, min(55.0, m_dAngle[i]))*M_PI/180.0;
-    m_dAngleMax[i] = max(-55.0, min(55.0, m_dAngleMax[i]))*M_PI/180.0;
+
+    dAngle = ((dLevel-(m_dMin/2.0))*m_dAngleRatio);
+    dAngle = max(-55.0, min(55.0, dAngle))*M_PI/180.0;
 
 }
 
 void AngleMeter::OnSize(wxSizeEvent& event)
 {
-    InitMeter(m_uiLabel.GetLabel(), m_dMin);
+    InitMeter(m_uiLabel.GetLabel(), 3);
 
     Refresh();
 }
@@ -343,44 +282,33 @@ void AngleMeter::SetRouting(short nRouting)
 void AngleMeter::SetMeterDisplay(short nDisplay)
 {
     m_nMeterDisplay = nDisplay;
-    switch(m_nMeterDisplay)
-    {
-        case PPM:
-            m_dMax = 7.0;
-            m_uiType.SetLabel(wxT("PPM"));
-            break;
-        case PEAK:
-            m_dMax = 0.0;
-            m_uiType.SetLabel(wxT("dB Peak"));
-            break;
-        case ENERGY:
-            m_dMax = 0.0;
-            m_uiType.SetLabel(wxT("dB Energy"));
-            break;
-        case LOUD:
-            m_dMax = 0.0;
-            m_uiType.SetLabel(wxT("LUFS"));
-            break;
-    }
-
+    m_dMax = 0.0;
     ResetMeter();
 }
 
 
-void AngleMeter::SetLevels(const double dLevels[], size_t nSize)
+void AngleMeter::SetLevels(const std::vector<double>& vLevels, double dOffset, double dScaling, const wxString& sTitle, const wxString& sUnits)
 {
-    m_vLevels.clear();
-    m_vLevels.resize(nSize);
-    for(size_t i = 0 ; i < nSize; i++)
+    m_vLevels = vLevels;
+    m_vLevelAngles = vLevels;
+
+    m_dOffset = dOffset;
+    m_dScalingFactor = dScaling;
+    m_dMin = vLevels[0];
+
+    m_dAngleRatio = 110/(-m_dMin);
+
+    for(size_t i = 0 ; i < m_vLevels.size(); i++)
     {
-        m_vLevels[i] = dLevels[i];
+        WorkoutAngles(m_vLevels[i], m_vLevelAngles[i]);
     }
-    RefreshRect(m_uiLabel.GetRect());
+    m_uiLabel.SetLabel(wxString::Format(wxT("%s %s"), sTitle.c_str(), sUnits.c_str()));
+    Refresh();
 }
 
 void AngleMeter::SetLabel(const wxString& sLabel)
 {
-    m_uiLabel.SetLabel(sLabel);
+    //m_uiLabel.SetLabel(sLabel);
     RefreshRect(m_uiLabel.GetRect());
 }
 
@@ -403,19 +331,3 @@ void AngleMeter::SetMeterMSMode(long nMode)
     m_nMeterMSMode = nMode;
 }
 
-void AngleMeter::SetMeterSpeed(long nSpeed)
-{
-    m_nMeterSpeed = nSpeed;
-
-    switch(m_nMeterSpeed)
-    {
-        case meter::SLOW:
-            m_dFall = 0.15;
-            break;
-        case meter::NORMAL:
-            m_dFall = 0.3;
-            break;
-        case meter::FAST:
-            m_dFall = 0.6;
-    }
-}

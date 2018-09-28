@@ -9,7 +9,7 @@
 			<columns>2</columns>
 			<items />
 			<pos>0,0</pos>
-			<size>190,90</size>
+			<size>190,240</size>
 			<bg>#000000</bg>
 			<style>wmList::STYLE_SELECT</style>
 			<handler function="OnlstMeterTypeSelected" entry="EVT_LIST_SELECTED" />

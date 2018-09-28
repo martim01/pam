@@ -3,8 +3,6 @@
 #include <vector>
 #include "uirect.h"
 #include <wx/bitmap.h>
-#include "ppm.h"
-#include "loud.h"
 #include "dlldefine.h"
 
 class PAMBASE_IMPEXPORT LevelMeter : public wxWindow
@@ -18,7 +16,8 @@ public:
 
     void InitMeter(const wxString & sText,double dMin);
 
-    void SetLevels(const double dLevels[], size_t nSize, double dOffset);
+    void SetLevels(const double dLevels[], size_t nSize, double dOffset, wxString sUnit, wxString sTitle, double dScalingFactor=1.0);
+    void SetLevels(const std::vector<double>& vLevels, double dOffset, wxString sUnit, wxString sTitle, double dScalingFactor=1.0);
 
     bool SetLightColours(double dLow, wxColour clrLow, double dMid, wxColour clrMid,  wxColour clrHigh);
     void ResetMeter(void);
@@ -107,6 +106,8 @@ protected:
     bool m_bShading;
 
     double m_dLevelOffset;
+    wxString m_sUnit;
+    double m_dScalingFactor;
 
     unsigned int m_nChannels;
 };

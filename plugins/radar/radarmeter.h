@@ -5,6 +5,7 @@
 #include <wx/timer.h>
 #include <queue>
 #include <list>
+#include <vector>
 
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/
@@ -88,7 +89,9 @@ class RadarMeter : public wxWindow
         void ClearMeter();
 
         void SetRefreshRate(unsigned int nMilliseconds);
-        void SetMode(unsigned int nMode);
+
+        void SetScale(const std::vector<double>& vLevels, const wxString& sTitle);
+
         void SetChannel(unsigned int nChannel)
         {
             m_nChannel = nChannel;
@@ -163,10 +166,11 @@ class RadarMeter : public wxWindow
         unsigned int m_nRefreshRate;
         unsigned int m_nPoints;
 
-        unsigned int m_nMode;
+        wxString m_sMode;
+        std::vector<double> m_vLevels;
+
         wxDateTime m_dtStart;
 
-        static const wxString STR_MODE[4];
         static const wxString STR_CHANNEL[11];
 };
 

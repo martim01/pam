@@ -11,7 +11,7 @@
 			<text>#FFFFFF</text>
 			<items />
 			<pos>0,0</pos>
-			<size>190,140</size>
+			<size>190,240</size>
 			<bg>#000000</bg>
 			<style>wmList::STYLE_SELECT</style>
 			<handler function="OnlstMeters_DisplaySelected" entry="EVT_LIST_SELECTED" />

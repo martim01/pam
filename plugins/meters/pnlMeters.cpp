@@ -7,7 +7,7 @@
 #include "wmbutton.h"
 #include "levelcalculator.h"
 #include <array>
-
+#include "ppmtypes.h"
 //(*InternalHeaders(pnlMeters)
 #include <wx/font.h>
 #include <wx/intl.h>
@@ -15,6 +15,9 @@
 //*)
 
 using namespace std;
+
+
+
 
 
 //(*IdInit(pnlMeters)
@@ -237,22 +240,18 @@ void pnlMeters::SetSession(const session& aSession)
 
         m_pLevels = new LevelMeter(this, wxID_ANY, wxEmptyString, -70, true, wxPoint(5,0), wxSize(50,481));
     }
-    double dLevels[15] = {0,-3, -6, -9, -12, -15, -18, -21, -24, -30, -36, -42, -48, -54, -60};
+
+
+
 
     for(size_t i = 0; i < m_vMeters.size(); i++)
     {
         m_vMeters[i]->SetNumberOfChannels(m_nInputChannels);
-        m_vMeters[i]->SetLevels(dLevels,15, m_dOffset);
         m_vMeters[i]->SetShading(m_pBuilder->ReadSetting(wxT("Shading"),0)==1);
         m_vMeters[i]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlMeters::OnInfoLeftUp,0,this);
-
-    }
-    if(m_pLevels)
-    {
-        m_pLevels->SetLevels(dLevels,15,m_dOffset);
-        m_pLevels->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlMeters::OnInfoLeftUp,0,this);
     }
 
+    SetMode(m_pBuilder->ReadSetting(wxT("Mode"),wxT("BBC")));
     SetSpeed(m_pBuilder->ReadSetting(wxT("Speed"),1));
     SetM3M6(m_pBuilder->ReadSetting(wxT("M3M6"),1));
 }
@@ -282,17 +281,14 @@ void pnlMeters::SetAudioData(const timedbuffer* pBuffer)
 }
 
 
-void pnlMeters::SetMode(unsigned int nMode)
+void pnlMeters::SetMode(const wxString& sMode)
 {
-    m_pCalculator->SetMode(nMode);
-
-    if(m_pLevels)
+    map<wxString, ppmtype>::const_iterator itType = PPMTypeManager::Get().FindType(sMode);
+    if(itType != PPMTypeManager::Get().GetTypeEnd())
     {
-        m_pLevels->SetMeterDisplay(nMode);
-    }
-    for(size_t i = 0; i < m_vMeters.size(); i++)
-    {
-        m_vMeters[i]->SetMeterDisplay(nMode);
+        m_pCalculator->SetMode(itType->second.nType);
+        m_pCalculator->SetDynamicResponse(itType->second.dRiseTime, itType->second.dRisedB, itType->second.dFallTime, itType->second.dFalldB);
+        SetScale(itType->first, itType->second);
     }
 
 }
@@ -371,7 +367,6 @@ void pnlMeters::OutputChannels(const std::vector<char>& vChannels)
         m_vMonitor[i]->SetBackgroundColour(wxColour(80,70,180));
     }
 
-//    wxLogDebug(wxT("OutputChannels %d %d"), vChannels[0], vChannels[1]);
     if(vChannels.size() ==2)
     {
 
@@ -408,46 +403,15 @@ void pnlMeters::OnInfoLeftUp(wxMouseEvent& event)
 }
 
 
-void pnlMeters::SetScale(const wxString& sScale)
+void pnlMeters::SetScale(const wxString& sTitle, const ppmtype& aType)
 {
-    #ifdef __WXGNU__
-    array<double,15> dLevels;
-    #else
-    double dLevels[15];
-    #endif
-
-    if(sScale == wxT("dBFS"))
-    {
-        m_dOffset = 0.0;
-        dLevels = {0.0,-3.0, -6.0, -9.0, -12.0, -15.0, -18.0, -21.0, -24.0, -30.0, -36.0, -42.0, -48.0, -54.0, -60.0};
-    }
-    else if(sScale == wxT("dBu (-18dBFS)"))
-    {
-        m_dOffset = -18.0;
-        dLevels = {0,-6, -12, -15, -18, -21, -24, -27, -30, -33, -36, -42, -48, -54, -60};
-    }
-    else if(sScale == wxT("dBu (-13dBFS)"))
-    {
-        m_dOffset = -13.0;
-        dLevels = {0, -6, -13, -16, -19, -22, -25, -28, -31, -37, -43, -49, -55, -61, -57};
-    }
-
-
-
     for(size_t i = 0; i < m_vMeters.size(); i++)
     {
-        #ifdef __WXGNU__
-        m_vMeters[i]->SetLevels(dLevels.data(),15, m_dOffset);
-        #else
-        m_vMeters[i]->SetLevels(dLevels,15, m_dOffset);
-        #endif
+        m_vMeters[i]->SetLevels(aType.vLevels, aType.dOffset, aType.sUnit, sTitle, aType.dScaling);
     }
     if(m_pLevels)
     {
-        #ifdef __WXGNU__
-        m_pLevels->SetLevels(dLevels.data(),15,m_dOffset);
-        #else
-        m_pLevels->SetLevels(dLevels,15, m_dOffset);
-        #endif
+        m_pLevels->SetLevels(aType.vLevels, aType.dOffset, aType.sUnit, sTitle, aType.dScaling);
     }
 }
+

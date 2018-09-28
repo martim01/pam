@@ -22,7 +22,6 @@ m_pMeters(0)
     RegisterForSettingsUpdates(wxT("Speed"), this);
     RegisterForSettingsUpdates(wxT("M3M6"), this);
     RegisterForSettingsUpdates(wxT("Shading"), this);
-    RegisterForSettingsUpdates(wxT("Scale"), this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&MetersBuilder::OnSettingChanged);
 
@@ -49,7 +48,6 @@ list<pairOptionPanel_t> MetersBuilder::CreateOptionPanels(wxWindow* pParent)
     lstOptionPanels.push_back(make_pair(wxT("Mode"), pMode));
     lstOptionPanels.push_back(make_pair(wxT("Meters"), new pnlMeterSettings(pParent, this)));
     lstOptionPanels.push_back(make_pair(wxT("Options"), pOptions));
-    lstOptionPanels.push_back(make_pair(wxT("Scale"), new pnlScale(pParent, this)));
 
     return lstOptionPanels;
 }
@@ -67,7 +65,7 @@ void MetersBuilder::LoadSettings()
 void MetersBuilder::InputSession(const session& aSession)
 {
     m_pMeters->SetSession(aSession);
-    m_pMeters->SetMode(ReadSetting(wxT("Mode"),0));
+    m_pMeters->SetMode(ReadSetting(wxT("Mode"),wxT("BBC")));
 }
 
 void MetersBuilder::OutputChannels(const std::vector<char>& vChannels)
@@ -80,7 +78,7 @@ void MetersBuilder::OnSettingChanged(SettingEvent& event)
 {
     if(event.GetKey() == wxT("Mode"))
     {
-        m_pMeters->SetMode(ReadSetting(wxT("Mode"),0));
+        m_pMeters->SetMode(ReadSetting(wxT("Mode"),wxT("BBC")));
     }
     else if(event.GetKey() == wxT("Freeze"))
     {
@@ -101,13 +99,6 @@ void MetersBuilder::OnSettingChanged(SettingEvent& event)
     else if(event.GetKey() == wxT("Shading"))
     {
         m_pMeters->SetShading(ReadSetting(wxT("Shading"),0));
-    }
-    else if(event.GetKey() == wxT("Scale"))
-    {
-        if(ReadSetting(wxT("Mode"),0) == LevelCalculator::ENERGY || ReadSetting(wxT("Mode"),0) == LevelCalculator::PEAK)
-        {
-            m_pMeters->SetScale(ReadSetting(wxT("Scale"), wxT("dBFS")));
-        }
     }
 
 }
