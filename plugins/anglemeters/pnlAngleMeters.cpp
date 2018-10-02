@@ -213,10 +213,11 @@ void pnlAngleMeters::SetMode(const wxString& sMode)
         m_pCalculator->SetDynamicResponse(itType->second.dRiseTime, itType->second.dRisedB, itType->second.dFallTime, itType->second.dFalldB);
         for(size_t i = 0; i < m_vMeters.size(); i++)
         {
-            m_vMeters[i]->SetLevels(itType->second.vLevels,itType->second.dOffset, itType->second.dScaling, itType->first, itType->second.sUnit);
+            m_vMeters[i]->SetLevels(itType->second.vLevels,itType->second.dOffset, itType->second.dScaling, itType->first, itType->second.sUnit, itType->second.dOverMod, itType->second.sReference);
         }
     }
 }
+
 
 void pnlAngleMeters::Freeze(bool bFreeze)
 {

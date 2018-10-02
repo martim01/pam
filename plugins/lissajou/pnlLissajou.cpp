@@ -45,13 +45,14 @@ pnlLissajou::pnlLissajou(wxWindow* parent,LissajouBuilder* pBuilder,wxWindowID i
 
 	m_pBuilder = pBuilder;
 
-	m_pMeterLeft->SetLightColours(-8,wxColour(220,0,0), -8,wxColour(240,0,0),  wxColour(255,100,100));
-        m_pMeterRight->SetLightColours(-8,wxColour(0,220,0), -8, wxColour(0,240,0), wxColour(255,100,100));
+	m_pMeterLeft->SetLightColours(wxColour(220,0,0), -8, wxColour(255,100,100));
+    m_pMeterRight->SetLightColours(wxColour(0,220,0), -8, wxColour(255,100,100));
 
-	double dLevels[15] = {0,-3, -6, -9, -12, -15, -18, -21, -24, -30, -36, -42, -48, -54, -60};
-	m_pMeterLeft->SetLevels(dLevels,15,0.0, wxT("dbFS"), wxT("Peak"));
-    m_pMeterRight->SetLevels(dLevels,15,0.0, wxT("dbFS"), wxT("Peak"));
-    m_pMeterLevels->SetLevels(dLevels,15,0.0, wxT("dbFS"), wxT("Peak"));
+
+//	double dLevels[15] = {0,-3, -6, -9, -12, -15, -18, -21, -24, -30, -36, -42, -48, -54, -60};
+//	m_pMeterLeft->SetLevels(dLevels,15,0.0, wxT("dbFS"), wxT("Peak"));
+//    m_pMeterRight->SetLevels(dLevels,15,0.0, wxT("dbFS"), wxT("Peak"));
+//    m_pMeterLevels->SetLevels(dLevels,15,0.0, wxT("dbFS"), wxT("Peak"));
 
     m_pCalculator = new LevelCalculator(0);
 }
@@ -195,11 +196,12 @@ void pnlLissajou::OutputChannels(const std::vector<char>& vChannels)
 void pnlLissajou::CheckAxis()
 {
 
+
     //if the output channels are the same as our axis we colour the meters red and green...
     if(m_vOutputs.size() > 1)
     {
-        m_pMeterLeft->SetLightColours(-8,wxColour(0,220,0), -8, wxColour(240,0,0), wxColour(255,100,100));
-        m_pMeterRight->SetLightColours(-8,wxColour(0,220,0), -8, wxColour(240,0,0), wxColour(255,100,100));
+        m_pMeterLeft->SetLightColours(wxColour(0,220,0), -8,  wxColour(255,100,100));
+        m_pMeterRight->SetLightColours(wxColour(0,220,0), -8, wxColour(255,100,100));
 
         /*
         if(m_vOutputs[0] == m_pBuilder->ReadSetting(wxT("Axis_X"),0) || m_nChannels == 2)
@@ -241,7 +243,7 @@ void pnlLissajou::SetDisplayType(unsigned int nType)
 
 void pnlLissajou::SetScale(const wxString& sTitle, const ppmtype& aType)
 {
-    m_pMeterLeft->SetLevels(aType.vLevels, aType.dOffset, aType.sUnit, sTitle, aType.dScaling);
-    m_pMeterRight->SetLevels(aType.vLevels, aType.dOffset, aType.sUnit, sTitle, aType.dScaling);
-    m_pMeterLevels->SetLevels(aType.vLevels, aType.dOffset, aType.sUnit, sTitle, aType.dScaling);
+    m_pMeterLeft->SetLevels(aType.vLevels, aType.dOffset, aType.sUnit, sTitle, aType.sReference, aType.dScaling);
+    m_pMeterRight->SetLevels(aType.vLevels, aType.dOffset, aType.sUnit, sTitle, aType.sReference,aType.dScaling);
+    m_pMeterLevels->SetLevels(aType.vLevels, aType.dOffset, aType.sUnit, sTitle,aType.sReference, aType.dScaling);
 }

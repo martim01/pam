@@ -19,7 +19,7 @@ public:
 
     void InitMeter(const wxString & sText,double dMin);
 
-    void SetLevels(const std::vector<double>& vLevels, double dOffset, double dScaling, const wxString& sTitle, const wxString& sUnits);
+    void SetLevels(const std::vector<double>& vLevels, double dOffset, double dScaling, const wxString& sTitle, const wxString& sUnits, double dOverMod, wxString sReference=wxEmptyString);
 
 
     bool SetMeterColour(const wxColour& clrMeter1, const wxColour& clrMeter2);
@@ -112,6 +112,10 @@ protected:
     std::vector<double> m_vLevelAngles;
     wxString m_sUnit;
     double m_dScalingFactor;
+
+    double m_dOverMod
+    ;
+    wxString m_sReference;
 };
 
 

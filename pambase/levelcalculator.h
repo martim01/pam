@@ -48,6 +48,7 @@ class PAMBASE_IMPEXPORT LevelCalculator
         void ConvertToDb(double& dSample);
         void CalculateDynamicRepsonse();
 
+
         unsigned int m_nChannels;
         unsigned int m_nSampleRate;
         unsigned int m_nMode;
@@ -61,7 +62,9 @@ class PAMBASE_IMPEXPORT LevelCalculator
         double m_dMin;
 
         double m_dLastLevel[8];
-        double m_dLastMS[8];
+        double m_dLastMS[2];
+        double m_dInterim[8];
+        double m_dInterimMS[2];
 
         double m_dRisedB;
         double m_dFalldB;

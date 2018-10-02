@@ -90,7 +90,14 @@ void PPMTypeManager::LoadTypes()
                     {
                         atype.sUnit = pNode->GetNodeContent();
                     }
-
+                    else if(pNode->GetName().CmpNoCase(wxT("label_ref")) == 0)
+                    {
+                        atype.sReference = pNode->GetNodeContent();
+                    }
+                    else if(pNode->GetName().CmpNoCase(wxT("overmod")) == 0)
+                    {
+                        pNode->GetNodeContent().ToDouble(&atype.dOverMod);
+                    }
                  }
                  if(sName.empty() == false)
                  {

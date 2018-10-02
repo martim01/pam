@@ -59,7 +59,6 @@ LevelMeter::LevelMeter(wxWindow *parent, wxWindowID id, const wxString & sText,d
 
     m_pairColour[0] = make_pair(m_dMin/2, GetBackgroundColour());
     m_pairColour[1] = make_pair(m_dMin/4, GetBackgroundColour());
-    m_pairColour[2] = make_pair(m_dMax, GetBackgroundColour());
 
     m_uiBlack.SetBackgroundColour(*wxBLACK);
     InitMeter(sText, dMin);
@@ -108,18 +107,25 @@ void LevelMeter::OnPaint(wxPaintEvent& event)
     }
     else
     {
-
         for(size_t i = 0; i < m_vLevels.size(); i++)
         {
-                int nY(m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])));
+            int nY(m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])));
 
 
-                dc.SetPen(wxPen(wxColour(200,200,200),1, wxDOT));
-                dc.DrawLine(0, m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])), GetClientRect().GetWidth(), m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])));
-                uiRect uiLevel(wxRect(15, nY-10,GetClientSize().x-30, 20));
-                uiLevel.SetBackgroundColour(*wxBLACK);
-                uiLevel.SetForegroundColour(*wxWHITE);
+            dc.SetPen(wxPen(wxColour(160,160,160),1, wxDOT));
+            dc.DrawLine(0, m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])), GetClientRect().GetWidth(), m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])));
+            uiRect uiLevel(wxRect(10, nY-10,GetClientSize().x-25, 20));
+            uiLevel.SetBackgroundColour(*wxBLACK);
+            uiLevel.SetForegroundColour(*wxWHITE);
+
+            if((m_vLevels[i]-m_dLevelOffset) < -0.5 || (m_vLevels[i]-m_dLevelOffset) > 0.5 || m_sReference.empty())
+            {
                 uiLevel.Draw(dc, wxString::Format(wxT("%.0f"), (m_vLevels[i]-m_dLevelOffset)/m_dScalingFactor), uiRect::BORDER_NONE);
+            }
+            else
+            {
+                uiLevel.Draw(dc, m_sReference, uiRect::BORDER_NONE);
+            }
         }
         m_uiLevelText.Draw(dc, uiRect::BORDER_NONE);
     }
@@ -145,14 +151,12 @@ void LevelMeter::InitMeter(const wxString& sText,double dMin)
     m_dPixelsPerPPM = (GetClientRect().GetHeight()-40)/8.0;
 
 
-    int nLow = -m_pairColour[0].first*m_dPixelsPerdB;
     int nMid = -m_pairColour[1].first*m_dPixelsPerdB;
 
 
+    m_uiLevel[0].SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), GetClientRect().GetHeight()-m_uiLevelText.GetHeight()-m_uiLabel.GetHeight());
+    m_uiLevel[1].SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), nMid-m_uiLevelText.GetHeight());
 
-    m_uiLevel[0].SetRect(0, m_uiLevelText.GetBottom()+nLow, GetClientRect().GetWidth(), GetClientRect().GetHeight()-m_uiLevelText.GetHeight()-nLow-m_uiLabel.GetHeight());
-    m_uiLevel[1].SetRect(0, m_uiLevelText.GetBottom()+nMid, GetClientRect().GetWidth(), m_uiLevel[0].GetTop()-nMid);
-    m_uiLevel[2].SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), nMid);
 
 
 
@@ -162,40 +166,38 @@ void LevelMeter::InitMeter(const wxString& sText,double dMin)
     dc.SelectObject(m_bmpMeter);
     if(m_bShading)
     {
-        for(int i= 0; i < 3; i++)
+        for(int i= 0; i < 2; i++)
         {
             m_uiLevel[i].SetGradient(wxSOUTH);
         }
     }
     else
     {
-        for(int i= 0; i < 3; i++)
+        for(int i= 0; i < 2; i++)
         {
             m_uiLevel[i].SetGradient(0);
         }
     }
 
-    m_uiLevel[2].Draw(dc, uiRect::BORDER_NONE);
-    m_uiLevel[1].Draw(dc, uiRect::BORDER_NONE);
     m_uiLevel[0].Draw(dc, uiRect::BORDER_NONE);
+    m_uiLevel[1].Draw(dc, uiRect::BORDER_NONE);
 
 
-    m_uiPeak.SetBackgroundColour(m_pairColour[2].second);
+
+    m_uiPeak.SetBackgroundColour(m_pairColour[1].second);
 
 }
 
-bool LevelMeter::SetLightColours(double dLow, wxColour clrLow, double dMid, wxColour clrMid,  wxColour clrHigh)
+bool LevelMeter::SetLightColours(wxColour clrLow, double dOverMod, wxColour clrOver)
 {
 
-    m_pairColour[0] = make_pair(dLow, clrLow);
-    m_pairColour[1] = make_pair(dMid, clrMid);
-    m_pairColour[2] = make_pair(m_dMax, clrHigh);
+    m_pairColour[0] = make_pair(-80, clrLow);
+    m_pairColour[1] = make_pair(dOverMod, clrOver);
 
     m_uiSimple.SetBackgroundColour(clrLow,clrLow);
 
     m_uiLevel[0].SetBackgroundColour(wxNullColour, clrLow);
-    m_uiLevel[1].SetBackgroundColour(clrLow, clrMid);
-    m_uiLevel[2].SetBackgroundColour(clrMid, clrHigh);
+    m_uiLevel[1].SetBackgroundColour(clrOver, clrOver);
 
     InitMeter(m_uiLabel.GetLabel(), m_dMin);
 
@@ -277,29 +279,29 @@ void LevelMeter::SetNumberOfChannels(unsigned int nChannels)
 
 
 
-void LevelMeter::SetLevels(const double dLevels[], size_t nSize, double dOffset, wxString sUnit, wxString sTitle, double dScalingFactor)
-{
-    m_dScalingFactor = dScalingFactor;
-    m_dLevelOffset = dOffset;
-    m_vLevels.clear();
-    m_vLevels.resize(nSize);
-    for(size_t i = 0 ; i < nSize; i++)
-    {
-        m_vLevels[i] = dLevels[i];
-    }
-    m_sUnit = sUnit;
+//void LevelMeter::SetLevels(const double dLevels[], size_t nSize, double dOffset, wxString sUnit, wxString sTitle, double dScalingFactor)
+//{
+//    m_dScalingFactor = dScalingFactor;
+//    m_dLevelOffset = dOffset;
+//    m_vLevels.clear();
+//    m_vLevels.resize(nSize);
+//    for(size_t i = 0 ; i < nSize; i++)
+//    {
+//        m_vLevels[i] = dLevels[i];
+//    }
+//    m_sUnit = sUnit;
+//
+//    if(m_bLevelDisplay)
+//    {
+//        m_uiLevelText.SetLabel(sTitle);
+//        m_uiLevelText.SetBackgroundColour(wxColour(0,64,128));
+//    }
+//
+//    InitMeter(m_uiLabel.GetLabel(), dLevels[0]);
+//    Refresh();
+//}
 
-    if(m_bLevelDisplay)
-    {
-        m_uiLevelText.SetLabel(sTitle);
-        m_uiLevelText.SetBackgroundColour(wxColour(0,64,128));
-    }
-
-    InitMeter(m_uiLabel.GetLabel(), dLevels[0]);
-    Refresh();
-}
-
-void LevelMeter::SetLevels(const std::vector<double>& vLevels, double dOffset, wxString sUnit, wxString sTitle, double dScalingFactor)
+void LevelMeter::SetLevels(const std::vector<double>& vLevels, double dOffset, wxString sUnit, wxString sTitle,wxString sReference,  double dScalingFactor)
 {
     m_dScalingFactor = dScalingFactor;
     m_dLevelOffset = dOffset;
@@ -311,7 +313,7 @@ void LevelMeter::SetLevels(const std::vector<double>& vLevels, double dOffset, w
         m_uiLevelText.SetLabel(sTitle);
         m_uiLevelText.SetBackgroundColour(wxColour(0,64,128));
     }
-
+    m_sReference = sReference;
     InitMeter(m_uiLabel.GetLabel(), m_vLevels[0]);
     Refresh();
 }

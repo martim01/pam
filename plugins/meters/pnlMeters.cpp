@@ -126,6 +126,7 @@ pnlMeters::pnlMeters(wxWindow* parent,MetersBuilder* pBuilder, wxWindowID id,con
 	Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlMeters::OnLeftUp);
 	//*)
 	m_pLevels = 0;
+    m_dOvermod = -10.0;
 
 	m_pLbl33->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlMeters::OnInfoLeftUp,0,this);
 	m_pLbl20->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlMeters::OnInfoLeftUp,0,this);
@@ -145,6 +146,7 @@ pnlMeters::pnlMeters(wxWindow* parent,MetersBuilder* pBuilder, wxWindowID id,con
 
     Connect(wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&pnlMeters::OnMonitorClicked);
 
+    m_vOutputChannels.resize(2);
     m_pCalculator = new LevelCalculator(-70.0);
 }
 
@@ -212,7 +214,7 @@ void pnlMeters::SetSession(const session& aSession)
         {
             m_vMeters[i] = new LevelMeter(this,wxID_ANY, wxString::Format(wxT("%lu"), i+1), -70, false, wxPoint(x, 0), wxSize(50, 440));
 
-            m_vMeters[i]->SetLightColours(-8,wxColour(0,220,0), -8, wxColour(0,240,0), wxColour(255,100,100));
+
 
             if(i%2 == 0)
             {
@@ -232,10 +234,7 @@ void pnlMeters::SetSession(const session& aSession)
         m_vMeters[2] = new LevelMeter(this,wxID_ANY, wxT("M"), -70, false, wxPoint(200, 0), wxSize(50, 480));
         m_vMeters[3] = new LevelMeter(this,wxID_ANY, wxT("S"), -70, false, wxPoint(260, 0), wxSize(50, 480));
 
-        m_vMeters[0]->SetLightColours(-8,wxColour(220,0,0), -8,wxColour(240,0,0),  wxColour(255,100,100));
-        m_vMeters[1]->SetLightColours(-8,wxColour(0,220,0), -8, wxColour(0,240,0), wxColour(255,100,100));
-        m_vMeters[2]->SetLightColours(-8,wxColour(255,255,255), -8, wxColour(255,255,255), wxColour(255,100,100));
-        m_vMeters[3]->SetLightColours(-8,wxColour(255,128,0), -8, wxColour(255,128,0), wxColour(255,100,100));
+
 
 
         m_pLevels = new LevelMeter(this, wxID_ANY, wxEmptyString, -70, true, wxPoint(5,0), wxSize(50,481));
@@ -361,6 +360,7 @@ void pnlMeters::OnMonitorClicked(wxCommandEvent& event)
 
 void pnlMeters::OutputChannels(const std::vector<char>& vChannels)
 {
+    m_vOutputChannels = vChannels;
 
     for(size_t i = 0; i < m_vMonitor.size(); i++)
     {
@@ -369,32 +369,15 @@ void pnlMeters::OutputChannels(const std::vector<char>& vChannels)
 
     if(vChannels.size() ==2)
     {
-
         if(vChannels[0] % 2 == 0 && vChannels[1] == vChannels[0] + 1 && vChannels[0]/2 < m_vMonitor.size())   //monitoring subsequent channels
         {
             m_vMonitor[vChannels[0]/2]->SetBackgroundColour(wxColour(255,200,0));
         }
     }
 
-    if(m_nInputChannels != 2)
-    {
-        for(size_t i = 0; i < m_vMeters.size(); i++)
-        {
-            if(vChannels[0] == i)
-            {
-                m_vMeters[i]->SetLightColours(-8,wxColour(220,0,0), -8,wxColour(240,0,0),  wxColour(255,100,100));
-            }
-            else if(vChannels[1] == i)
-            {
-                m_vMeters[i]->SetLightColours(-8,wxColour(0,220,0), -8, wxColour(0,240,0), wxColour(255,100,100));
-            }
-            else
-            {
-                m_vMeters[i]->SetLightColours(-8,wxColour(245,255,245), -8,wxColour(255,255,255), wxColour(255,100,100));
-            }
-            m_vMeters[i]->ResetMeter();
-        }
-    }
+    SetLightColours();
+
+
 }
 
 void pnlMeters::OnInfoLeftUp(wxMouseEvent& event)
@@ -405,13 +388,48 @@ void pnlMeters::OnInfoLeftUp(wxMouseEvent& event)
 
 void pnlMeters::SetScale(const wxString& sTitle, const ppmtype& aType)
 {
+    m_dOvermod = aType.dOverMod;
+    wxLogDebug(wxT("Overmod = %.f"), m_dOvermod);
+
     for(size_t i = 0; i < m_vMeters.size(); i++)
     {
-        m_vMeters[i]->SetLevels(aType.vLevels, aType.dOffset, aType.sUnit, sTitle, aType.dScaling);
+        m_vMeters[i]->SetLevels(aType.vLevels, aType.dOffset, aType.sUnit, sTitle, aType.sReference, aType.dScaling);
     }
     if(m_pLevels)
     {
-        m_pLevels->SetLevels(aType.vLevels, aType.dOffset, aType.sUnit, sTitle, aType.dScaling);
+        m_pLevels->SetLevels(aType.vLevels, aType.dOffset, aType.sUnit, sTitle, aType.sReference, aType.dScaling);
     }
+    SetLightColours();
 }
 
+void pnlMeters::SetLightColours()
+{
+
+    if(m_nInputChannels == 2)
+    {
+        m_vMeters[0]->SetLightColours(wxColour(220,0,0), m_dOvermod, wxColour(255,50,50));
+        m_vMeters[1]->SetLightColours(wxColour(0,220,0), m_dOvermod, wxColour(255,50,50));
+        m_vMeters[2]->SetLightColours(wxColour(255,255,255), m_dOvermod, wxColour(255,50,50));
+        m_vMeters[3]->SetLightColours(wxColour(255,128,0), m_dOvermod, wxColour(255,50,50));
+    }
+    else
+    {
+        for(size_t i = 0; i < m_vMeters.size(); i++)
+        {
+            if(m_vOutputChannels[0] == i)
+            {
+                m_vMeters[i]->SetLightColours(wxColour(220,0,0), m_dOvermod,wxColour(255,50,50));
+            }
+            else if(m_vOutputChannels[1] == i)
+            {
+                m_vMeters[i]->SetLightColours(wxColour(0,220,0), m_dOvermod, wxColour(255,50,50));
+            }
+            else
+            {
+                m_vMeters[i]->SetLightColours(wxColour(245,255,245), m_dOvermod, wxColour(255,50,50));
+            }
+            m_vMeters[i]->ResetMeter();
+        }
+    }
+
+}

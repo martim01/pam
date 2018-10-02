@@ -127,30 +127,30 @@ void LevelCalculator::CalculateLevel(const timedbuffer* pBuffer)
             break;
     }
 
-
+    wxLogDebug(wxT("Left = %f dB"), m_dLevel[0]);
 }
 
 
 void LevelCalculator::CalculatePpm(const timedbuffer* pBuffer)
 {
-    ResetLevels(0.0);
-
+    ResetLevels(-80.0);
 
     for(unsigned int i=0; i < pBuffer->GetBufferSize(); i+=m_nChannels)
     {
         for(unsigned int j = 0; j < m_nChannels; j++)
         {
-            m_dLevel[j] = fabs(pBuffer->GetBuffer()[i+j]);
-            ConvertToDb(m_dLevel[j]);
-            if(m_dLevel[j] > m_dLastLevel[j])
+            m_dInterim[j] = fabs(pBuffer->GetBuffer()[i+j]);
+            ConvertToDb(m_dInterim[j]);
+            if(m_dInterim[j] > m_dLastLevel[j])
             {
-                m_dLevel[j] = min(m_dLevel[j], m_dLastLevel[j]+m_dRiseSample);
+                m_dInterim[j] = min(m_dInterim[j], m_dLastLevel[j]+m_dRiseSample);
             }
-            else if(m_dLevel[j] < m_dLastLevel[j])
+            else if(m_dInterim[j] < m_dLastLevel[j])
             {
-                m_dLevel[j] = max(m_dLevel[j], m_dLastLevel[j]-m_dFallSample);
+                m_dInterim[j] = max(m_dInterim[j], m_dLastLevel[j]-m_dFallSample);
             }
-            m_dLastLevel[j] = m_dLevel[j];
+            m_dLastLevel[j] = m_dInterim[j];
+            m_dLevel[j] = max(m_dLevel[j], m_dInterim[j]);
         }
     }
 
@@ -158,31 +158,34 @@ void LevelCalculator::CalculatePpm(const timedbuffer* pBuffer)
     {
         for(unsigned int i=0; i < pBuffer->GetBufferSize(); i+=2)
         {
-            m_dMS[0] = (fabs(pBuffer->GetBuffer()[i]+pBuffer->GetBuffer()[i+1]));
-            m_dMS[1] = (fabs(pBuffer->GetBuffer()[i]-pBuffer->GetBuffer()[i+1]));
+            m_dInterimMS[0] = (fabs(pBuffer->GetBuffer()[i]+pBuffer->GetBuffer()[i+1]));
+            m_dInterimMS[1] = (fabs(pBuffer->GetBuffer()[i]-pBuffer->GetBuffer()[i+1]));
             if(m_nMSMode == meter::M6)
             {
-                m_dMS[0]*=0.5;
-                m_dMS[1]*=0.5;
+                m_dInterimMS[0]*=0.5;
+                m_dInterimMS[1]*=0.5;
             }
             else
             {
-                m_dMS[0]*=0.707;
-                m_dMS[1]*=0.707;
+                m_dInterimMS[0]*=0.707;
+                m_dInterimMS[1]*=0.707;
             }
+
 
             for(int j = 0; j < 2; j++)
             {
-                ConvertToDb(m_dMS[j]);
-                if(m_dMS[j] > m_dLastMS[j])
+                ConvertToDb(m_dInterimMS[j]);
+                if(m_dInterimMS[j] > m_dLastMS[j])
                 {
-                    m_dMS[j] = min(m_dMS[j], m_dLastMS[j]+m_dRiseSample);
+                    m_dInterimMS[j] = min(m_dInterimMS[j], m_dLastMS[j]+m_dRiseSample);
                 }
-                else if(m_dMS[j] < m_dLastMS[j])
+                else if(m_dInterimMS[j] < m_dLastMS[j])
                 {
-                    m_dMS[j] = max(m_dMS[j], m_dLastMS[j]-m_dFallSample);
+                    m_dInterimMS[j] = max(m_dInterimMS[j], m_dLastMS[j]-m_dFallSample);
                 }
-                m_dLastMS[j] = m_dMS[j];
+                m_dLastMS[j] = m_dInterimMS[j];
+
+                m_dMS[j] = max(m_dMS[j], m_dInterimMS[j]);
             }
         }
     }
@@ -330,7 +333,7 @@ void LevelCalculator::CalculateRiseFall(unsigned long nSamples)
     double dFalldB(m_dFallSample*static_cast<double>(nSamples));
     double dRisedB(m_dRiseSample*static_cast<double>(nSamples));
 
-
+    wxLogDebug(wxT("Fall = %f db/Buffer Rise = %f db/Buffer"), dFalldB, dRisedB);
     for(int i = 0; i < 8; i++)
     {
         CalculateRiseFall(m_dLevel[i], m_dLastLevel[i],dFalldB,dRisedB,(i==0));

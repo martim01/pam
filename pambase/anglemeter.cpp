@@ -27,7 +27,8 @@ AngleMeter::AngleMeter()
 AngleMeter::AngleMeter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, unsigned int nRouting, unsigned int nChannel, const wxPoint& pos, const wxSize& size) :
     m_dMax(0),
     m_nMeterDisplay(PEAK),
-    m_nChannel(nChannel)
+    m_nChannel(nChannel),
+    m_dOverMod(0.0)
 {
     m_dLastValue[0] = -180;
     m_dLastValue[1] = -180;
@@ -111,7 +112,7 @@ void AngleMeter::OnPaint(wxPaintEvent& event)
     for(int i = 0; i < m_vLevels.size(); i++)
     {
         double dAngle = m_vLevelAngles[i];
-        double dAngleDeg = 0;//(dRatio*(i-4.0));
+        double dAngleDeg = m_vLevelAngles[i];
         double dX = dHT*sin(dAngle);
         double dXTo = dHL*sin(dAngle);
         double dY = dHT*cos(dAngle);
@@ -121,12 +122,24 @@ void AngleMeter::OnPaint(wxPaintEvent& event)
         double dTextY = (dHT+15.0)*cos(dAngle);
 
 
-        dc.SetPen(wxPen(wxColour(180,180,180),1, wxDOT));
-        dc.SetTextForeground(wxColour(255,255,255));
+        dc.SetPen(wxPen(wxColour(180,180,180),1, wxSOLID));
+        if(m_vLevels[i] < m_dOverMod)
+        {
+            dc.SetTextForeground(wxColour(255,255,255));
+        }
+        else
+        {
+            dc.SetTextForeground(wxColour(255,0,0));
+        }
 
         dc.DrawLine(pntBottom.x+dXTo, pntBottom.y-dYTo, pntBottom.x+static_cast<int>(dX), pntBottom.y-static_cast<int>(dY));
+        wxString sText(wxString::Format(wxT("%.0f"),(m_vLevels[i]-m_dOffset)/m_dScalingFactor));
+        if(m_vLevels[i]-m_dOffset == 0.0 && m_sReference.empty()==false)
+        {
+            sText = m_sReference;
+        }
+        dc.DrawRotatedText(sText, wxPoint(pntBottom.x+static_cast<int>(dTextX)-((sText.length()-1)*5), pntBottom.y-static_cast<int>(dTextY)), -dAngleDeg);
 
-        dc.DrawRotatedText(wxString::Format(wxT("%.0f"),(m_vLevels[i]-m_dOffset)/m_dScalingFactor), wxPoint(pntBottom.x+static_cast<int>(dTextX), pntBottom.y-static_cast<int>(dTextY)), -dAngleDeg);
     }
 
     m_uiType.Draw(dc, uiRect::BORDER_NONE);
@@ -287,7 +300,7 @@ void AngleMeter::SetMeterDisplay(short nDisplay)
 }
 
 
-void AngleMeter::SetLevels(const std::vector<double>& vLevels, double dOffset, double dScaling, const wxString& sTitle, const wxString& sUnits)
+void AngleMeter::SetLevels(const std::vector<double>& vLevels, double dOffset, double dScaling, const wxString& sTitle, const wxString& sUnits, double dOverMod, wxString sReference)
 {
     m_vLevels = vLevels;
     m_vLevelAngles = vLevels;
@@ -297,6 +310,9 @@ void AngleMeter::SetLevels(const std::vector<double>& vLevels, double dOffset, d
     m_dMin = vLevels[0];
 
     m_dAngleRatio = 110/(-m_dMin);
+
+    m_dOverMod = dOverMod;
+    m_sReference = sReference;
 
     for(size_t i = 0 ; i < m_vLevels.size(); i++)
     {

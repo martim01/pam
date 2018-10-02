@@ -184,6 +184,12 @@ bool UpdateManager::GetUpdateListFromLocal(const wxString& sPath)
     {
         DecodeUpdateList(asFiles[i]);
     }
+
+    UpdateObject ppmObject;
+    ppmObject.sName = wxT("ppmtypes.xml");
+    m_mUpdates.insert(make_pair(anUpdate.sName, anUpdate));
+
+
     return true;
 }
 
@@ -354,6 +360,11 @@ bool UpdateManager::Update(wxString sName)
                 fileOld.SetPath(Settings::Get().GetDocumentDirectory());
                 fileOld.SetName(sName);
                 break;
+            case UpdateObject::UNKNOWN:
+                fileOld.SetPath(Settings::Get().GetDocumentDirectory());
+                fileOld.SetName(sName);
+                break;
+
 
         }
         wxFileName fileTo(Settings::Get().GetTempDirectory(), sName);

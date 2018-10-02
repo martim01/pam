@@ -16,10 +16,11 @@ public:
 
     void InitMeter(const wxString & sText,double dMin);
 
-    void SetLevels(const double dLevels[], size_t nSize, double dOffset, wxString sUnit, wxString sTitle, double dScalingFactor=1.0);
-    void SetLevels(const std::vector<double>& vLevels, double dOffset, wxString sUnit, wxString sTitle, double dScalingFactor=1.0);
+    //void SetLevels(const double dLevels[], size_t nSize, double dOffset, wxString sUnit, wxString sTitle, double dScalingFactor=1.0);
+    void SetLevels(const std::vector<double>& vLevels, double dOffset, wxString sUnit, wxString sTitle, wxString sReference=wxEmptyString, double dScalingFactor=1.0);
 
-    bool SetLightColours(double dLow, wxColour clrLow, double dMid, wxColour clrMid,  wxColour clrHigh);
+
+    bool SetLightColours(wxColour clrLow, double dOverMod, wxColour clrOver);
     void ResetMeter(void);
     void OnPaint(wxPaintEvent& event);
 
@@ -58,7 +59,7 @@ protected:
     void ShowPPM(double dValue);
 
     uiRect m_uiSimple;
-    uiRect m_uiLevel[3];
+    uiRect m_uiLevel[2];
     uiRect m_uiBlack;
     uiRect m_uiPeak;
     std::vector<uiRect>	m_vLevelText;
@@ -96,7 +97,7 @@ protected:
     wxRect m_rectLastPeak;
     wxRect m_rectLastBlack;
 
-    std::pair<double, wxColour> m_pairColour[3];
+    std::pair<double, wxColour> m_pairColour[2];
 
     int m_nPeakCounter;
 
@@ -108,6 +109,7 @@ protected:
     double m_dLevelOffset;
     wxString m_sUnit;
     double m_dScalingFactor;
+    wxString m_sReference;
 
     unsigned int m_nChannels;
 };

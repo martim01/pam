@@ -18,6 +18,7 @@ class LevelMeter;
 class wmButton;
 class MetersBuilder;
 class LevelCalculator;
+struct ppmtype;
 
 class pnlMeters: public wxPanel
 {
@@ -82,12 +83,15 @@ class pnlMeters: public wxPanel
 
 	private:
 
+
 		//(*Handlers(pnlMeters)
 		void OnLeftUp(wxMouseEvent& event);
 		void OnInfoLeftUp(wxMouseEvent& event);
 		//*)
 
 		void OnMonitorClicked(wxCommandEvent& event);
+
+		void SetLightColours();
 
         LevelMeter* m_pLevels;
 		std::vector<LevelMeter*> m_vMeters;
@@ -99,7 +103,9 @@ class pnlMeters: public wxPanel
 
         double m_dOffset;
 
+        double m_dOvermod;
 
+        std::vector<char> m_vOutputChannels;
 
 		DECLARE_EVENT_TABLE()
 };
