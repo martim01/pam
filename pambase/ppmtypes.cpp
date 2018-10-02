@@ -2,7 +2,7 @@
 #include "settings.h"
 #include <wx/xml/xml.h>
 #include <wx/tokenzr.h>
-
+#include <wx/stdpaths.h>
 using namespace std;
 
 PPMTypeManager& PPMTypeManager::Get()
@@ -33,7 +33,7 @@ PPMTypeManager::PPMTypeManager()
 void PPMTypeManager::LoadTypes()
 {
     wxXmlDocument xmlDoc;
-    wxString sFile = wxT("C:\\Users\\matt\\Documents\\pam\\ppmtypes.xml");//wxString::Format(wxT("%s/ppmtypes.xml"), Settings::Get().GetDocumentDirectory().c_str());
+    wxString sFile = wxString::Format(wxT("%s/pam/ppmtypes.xml"), wxStandardPaths::Get().GetDocumentsDir().c_str());
     if(xmlDoc.Load(sFile) && xmlDoc.GetRoot())
     {
         for(wxXmlNode* pTopNode = xmlDoc.GetRoot()->GetChildren(); pTopNode; pTopNode = pTopNode->GetNext())

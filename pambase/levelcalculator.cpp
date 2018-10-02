@@ -127,7 +127,7 @@ void LevelCalculator::CalculateLevel(const timedbuffer* pBuffer)
             break;
     }
 
-    wxLogDebug(wxT("Left = %f dB"), m_dLevel[0]);
+
 }
 
 
@@ -330,7 +330,7 @@ void LevelCalculator::CalculateRiseFall(unsigned long nSamples)
     double dFalldB(m_dFallSample*static_cast<double>(nSamples));
     double dRisedB(m_dRiseSample*static_cast<double>(nSamples));
 
-    wxLogDebug(wxT("Fall = %f db/Buffer Rise = %f db/Buffer"), dFalldB, dRisedB);
+
     for(int i = 0; i < 8; i++)
     {
         CalculateRiseFall(m_dLevel[i], m_dLastLevel[i],dFalldB,dRisedB,(i==0));
