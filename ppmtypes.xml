@@ -9,6 +9,7 @@
 		<falldb>24</falldb>
 		<units></units>
 		<scaling>4</scaling>
+		<overmod>-10</overmod>
 	</ppm_type>
 	<ppm_type>
 		<name>EBU</name>
@@ -19,6 +20,8 @@
 		<falltime>2800</falltime>
 		<falldb>24</falldb>
 		<units>dB</units>
+		<overmod>-9</overmod>
+		<label_ref>TEST</label_ref>
 	</ppm_type>
 	<ppm_type>
 		<name>DIN</name>
@@ -29,6 +32,7 @@
 		<falltime>1700</falltime>
 		<falldb>20</falldb>
 		<units>dB</units>
+		<overmod>-12</overmod>
 	</ppm_type>
 	<ppm_type>
 		<name>Nordic</name>
@@ -39,6 +43,8 @@
 		<falltime>1700</falltime>
 		<falldb>20</falldb>
 		<units>dB</units>
+		<overmod>-12</overmod>
+		<label_ref>TEST</label_ref>
 	</ppm_type>
 	<ppm_type>
 		<name>Digital</name>
@@ -49,16 +55,18 @@
 		<falltime>1700</falltime>
 		<falldb>20</falldb>
 		<units>dBFS</units>
+		<overmod>-10</overmod>
 	</ppm_type>
 	<ppm_type>
 		<name>VU</name>
 		<scale>-34, -24, -21, -19, -17, -14, -11,-6,-3</scale>
 		<offset>-14</offset>
 		<risetime>300</risetime>
-		<risedb>40</risedb>
+		<risedb>30</risedb>
 		<falltime>300</falltime>
-		<falldb>40</falldb>
+		<falldb>30</falldb>
 		<units>VU</units>
+		<overmod>-14</overmod>
 	</ppm_type>
 	<ppm_type>
 		<name>Peak</name>
@@ -70,6 +78,7 @@
 		<falldb>20</falldb>
 		<units>dBFS</units>
 		<type>1</type>
+		<overmod>-10</overmod>
 	</ppm_type>
 	<ppm_type>
 		<name>dBU</name>
@@ -81,6 +90,7 @@
 		<falldb>20</falldb>
 		<units>dBFS</units>
 		<type>1</type>
+		<overmod>-10</overmod>
 	</ppm_type>
 	<ppm_type>
 		<name>Nicam</name>
@@ -92,6 +102,7 @@
 		<falldb>20</falldb>
 		<units>dBFS</units>
 		<type>1</type>
+		<overmod>-10</overmod>
 	</ppm_type>
 	<ppm_type>
 		<name>Energy</name>
@@ -103,5 +114,6 @@
 		<falldb>20</falldb>
 		<units>dBFS</units>
 		<type>2</type>
+		<overmod>-10</overmod>
 	</ppm_type>
 </pam>
