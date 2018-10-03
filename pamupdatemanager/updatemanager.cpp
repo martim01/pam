@@ -187,7 +187,7 @@ bool UpdateManager::GetUpdateListFromLocal(const wxString& sPath)
 
     UpdateObject ppmObject;
     ppmObject.sName = wxT("ppmtypes.xml");
-    m_mUpdates.insert(make_pair(anUpdate.sName, anUpdate));
+    m_mUpdates.insert(make_pair(ppmObject=.sName, ppmObject));
 
 
     return true;

@@ -2,6 +2,7 @@
 #include "portaudio.h"
 #include <wx/app.h>
 #include <wx/log.h>
+#include <wx/utils.h>
 #include <wx/dir.h>
 #include <wx/filename.h>
 #include <wx/msgdlg.h>
@@ -388,7 +389,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
     m_plstLatency->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Latency"), 0)/40, false);
 
-    m_plblSettings->SetLabel(wxString::Format(wxT("Settings: %ld.%ld.%ld.%ld"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
+    m_plblSettings->SetLabel(wxString::Format(wxT("'%s': %ld.%ld.%ld.%ld"), wxGetHostName().c_str(), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
 
     m_plstAudioSources->AddButton(wxT("Input"));
     m_plstAudioSources->AddButton(wxT("File"));
