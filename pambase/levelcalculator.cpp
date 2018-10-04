@@ -2,9 +2,7 @@
 #include "levelcalculator.h"
 #include "timedbuffer.h"
 #include "session.h"
-#include "ppm.h"
-#include "loud.h"
-
+#include <cmath>
 
 
 using namespace std;
@@ -15,7 +13,7 @@ using namespace std;
   m_nSampleRate(48000),
   m_nMode(PPM),
   m_bMS(false),
-  m_nMSMode(meter::M6),
+  m_nMSMode(M6),
   m_dSpeed(1.0)
  {
      for(int i = 0; i < 8; i++)
@@ -160,7 +158,7 @@ void LevelCalculator::CalculatePpm(const timedbuffer* pBuffer)
         {
             m_dInterimMS[0] = (fabs(pBuffer->GetBuffer()[i]+pBuffer->GetBuffer()[i+1]));
             m_dInterimMS[1] = (fabs(pBuffer->GetBuffer()[i]-pBuffer->GetBuffer()[i+1]));
-            if(m_nMSMode == meter::M6)
+            if(m_nMSMode == M6)
             {
                 m_dInterimMS[0]*=0.5;
                 m_dInterimMS[1]*=0.5;
@@ -224,7 +222,7 @@ void LevelCalculator::CalculatePeak(const timedbuffer* pBuffer)
         {
             double dSampleM(fabs(pBuffer->GetBuffer()[i]+pBuffer->GetBuffer()[i+1]));
             double dSampleS(fabs(pBuffer->GetBuffer()[i]-pBuffer->GetBuffer()[i+1]));
-            if(m_nMSMode == meter::M6)
+            if(m_nMSMode == M6)
             {
                 dSampleM*=0.5;
                 dSampleS*=0.5;
@@ -257,7 +255,7 @@ void LevelCalculator::CalculateEnergy(const timedbuffer* pBuffer)
 
     if(m_nChannels == 2)
     {
-        if(m_nMSMode == meter::M6)
+        if(m_nMSMode == M6)
         {
             m_dMS[0] = (m_dLevel[0]+m_dLevel[1])/2;
             m_dMS[1] = (m_dLevel[0]-m_dLevel[1])/2;
@@ -283,7 +281,7 @@ void LevelCalculator::CalculateTotal(const timedbuffer* pBuffer)
     {
         for(unsigned int i=0; i < pBuffer->GetBufferSize(); i++)
         {
-            if(m_nMSMode == meter::M6)
+            if(m_nMSMode == M6)
             {
                 m_dMS[0] += fabs((pBuffer->GetBuffer()[i]+pBuffer->GetBuffer()[i+1])/2);
                 m_dMS[1] += fabs((pBuffer->GetBuffer()[i]-pBuffer->GetBuffer()[i+1])/2);

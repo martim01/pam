@@ -28,7 +28,7 @@ class PAMBASE_IMPEXPORT LevelCalculator
 
         enum {PPM, PEAK, ENERGY, TOTAL, AVERAGE};
         enum speeds { SLOW, NORMAL, FAST };
-
+        enum {M3, M6};
 
     private:
 

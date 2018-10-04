@@ -4,9 +4,8 @@
 #include <list>
 #include <wx/dcmemory.h>
 #include <algorithm>
-#include "meter.h"
 #include "settings.h"
-
+#include "levelcalculator.h"
 using namespace std;
 
 // AngleMeter
@@ -54,7 +53,7 @@ AngleMeter::AngleMeter(wxWindow *parent, wxWindowID id, const wxString & sText,d
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
-    SetMeterMSMode(meter::M6);
+    SetMeterMSMode(LevelCalculator::M6);
 
     m_nRouting = nRouting;
 

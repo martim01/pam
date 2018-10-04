@@ -139,6 +139,7 @@
 			<Add directory="$(#live_usage.include)" />
 			<Add directory="$(#live_basicusage.include)" />
 			<Add directory="./images" />
+			<Add directory="../external/wxservdisc" />
 		</Compiler>
 		<ResourceCompiler>
 			<Add directory="C:/wxWidgets-3.0.2/include" />

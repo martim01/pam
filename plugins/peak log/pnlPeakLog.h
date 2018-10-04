@@ -70,7 +70,7 @@ class pnlPeakLog: public wxPanel
 		static const wxColour COLOUR_LINES[8];
 
 		bool m_bLoudness;
-		loud* m_ploud;
+//		loud* m_ploud;
 		unsigned int m_nChannels;
 
 		DECLARE_EVENT_TABLE()

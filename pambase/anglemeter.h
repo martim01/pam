@@ -5,8 +5,6 @@
 #include <wx/bitmap.h>
 #include "dlldefine.h"
 
-#include "ppm.h"
-#include "loud.h"
 
 class PAMBASE_IMPEXPORT AngleMeter : public wxWindow
 {

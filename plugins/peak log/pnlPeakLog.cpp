@@ -1,5 +1,4 @@
 #include "pnlPeakLog.h"
-#include "loud.h"
 #include "session.h"
 #include "timedbuffer.h"
 
@@ -33,7 +32,7 @@ BEGIN_EVENT_TABLE(pnlPeakLog,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlPeakLog::pnlPeakLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size) : m_ploud(0)
+pnlPeakLog::pnlPeakLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size) //: m_ploud(0)
 {
 	//(*Initialize(pnlPeakLog)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
@@ -91,22 +90,22 @@ pnlPeakLog::~pnlPeakLog()
 {
 	//(*Destroy(pnlPeakLog)
 	//*)
-	delete m_ploud;
+//	delete m_ploud;
 }
 
 
 void pnlPeakLog::InputSession(const session& aSession)
 {
-    if(m_ploud)
-    {
-        delete m_ploud;
-    }
+//    if(m_ploud)
+//    {
+//        delete m_ploud;
+//    }
     m_nChannels = 0;
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
         m_nChannels = min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels);
     }
-    m_ploud = new loud(m_nChannels);
+//    m_ploud = new loud(m_nChannels);
 
     m_pLevelGraph_Day->DeleteAllGraphs();
     m_pLevelGraph_Hour->DeleteAllGraphs();
@@ -170,14 +169,14 @@ void pnlPeakLog::SetAudioData(const timedbuffer* pBuffer)
     }
     else
     {
-        if(m_ploud)
-        {
-            m_ploud->calcIntermediate(m_nChannels, pBuffer->GetBufferSize()/m_nChannels, pBuffer->GetBuffer());
-            for(int j=0; j < vPeak.size(); j++)
-            {
-                vPeak[j] = m_ploud->getValue(j);
-            }
-        }
+//        if(m_ploud)
+//        {
+//            m_ploud->calcIntermediate(m_nChannels, pBuffer->GetBufferSize()/m_nChannels, pBuffer->GetBuffer());
+//            for(int j=0; j < vPeak.size(); j++)
+//            {
+//                vPeak[j] = m_ploud->getValue(j);
+//            }
+//        }
     }
     for(int j=0; j < vPeak.size(); j++)
     {

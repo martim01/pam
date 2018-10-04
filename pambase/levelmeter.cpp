@@ -4,10 +4,9 @@
 #include <wx/dcbuffer.h>
 #include <list>
 #include <wx/dcmemory.h>
-#include "meter.h"
 #include <algorithm>
 #include "settings.h"
-
+#include "levelcalculator.h"
 using namespace std;
 
 // LevelMeter
@@ -424,13 +423,13 @@ void LevelMeter::SetSpeed(long nSpeed)
 {
     switch(nSpeed)
     {
-        case meter::SLOW:
+        case LevelCalculator::SLOW:
             m_dFall = 0.8;
             break;
-        case meter::NORMAL:
+        case LevelCalculator::NORMAL:
             m_dFall = 1.6;
             break;
-        case meter::FAST:
+        case LevelCalculator::FAST:
             m_dFall = 3.2;
     }
 }
