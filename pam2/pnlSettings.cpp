@@ -35,6 +35,8 @@ using namespace std;
 
 //(*IdInit(pnlSettings)
 const long pnlSettings::ID_M_PLBL37 = wxNewId();
+const long pnlSettings::ID_M_PLBL13 = wxNewId();
+const long pnlSettings::ID_M_PLBL14 = wxNewId();
 const long pnlSettings::ID_M_PLBL3 = wxNewId();
 const long pnlSettings::ID_M_PLST1 = wxNewId();
 const long pnlSettings::ID_M_PLST2 = wxNewId();
@@ -95,8 +97,13 @@ const long pnlSettings::ID_PANEL4 = wxNewId();
 const long pnlSettings::ID_PANEL5 = wxNewId();
 const long pnlSettings::ID_PANEL3 = wxNewId();
 const long pnlSettings::ID_PANEL7 = wxNewId();
+const long pnlSettings::ID_PANEL13 = wxNewId();
 const long pnlSettings::ID_M_PBTN22 = wxNewId();
 const long pnlSettings::ID_M_PBTN23 = wxNewId();
+const long pnlSettings::ID_M_PBTN24 = wxNewId();
+const long pnlSettings::ID_M_PEDT1 = wxNewId();
+const long pnlSettings::ID_M_PKBD1 = wxNewId();
+const long pnlSettings::ID_M_PLBL12 = wxNewId();
 const long pnlSettings::ID_PANEL6 = wxNewId();
 const long pnlSettings::ID_M_PSWP1 = wxNewId();
 //*)
@@ -112,12 +119,24 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     //(*Initialize(pnlSettings)
     Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("wxID_ANY"));
     SetBackgroundColour(wxColour(0,0,0));
-    m_plblSettings = new wmLabel(this, ID_M_PLBL37, _("Settings"), wxPoint(0,0), wxSize(600,40), 0, _T("ID_M_PLBL37"));
-    m_plblSettings->SetBorderState(uiRect::BORDER_NONE);
-    m_plblSettings->SetForegroundColour(wxColour(255,255,255));
-    m_plblSettings->SetBackgroundColour(wxColour(61,146,146));
-    wxFont m_plblSettingsFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
-    m_plblSettings->SetFont(m_plblSettingsFont);
+    m_plblHostname = new wmLabel(this, ID_M_PLBL37, _("Settings"), wxPoint(0,0), wxSize(200,40), 0, _T("ID_M_PLBL37"));
+    m_plblHostname->SetBorderState(uiRect::BORDER_NONE);
+    m_plblHostname->SetForegroundColour(wxColour(255,255,255));
+    m_plblHostname->SetBackgroundColour(wxColour(61,146,146));
+    wxFont m_plblHostnameFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
+    m_plblHostname->SetFont(m_plblHostnameFont);
+    m_pLbl8 = new wmLabel(this, ID_M_PLBL13, _("Settings"), wxPoint(200,0), wxSize(200,40), 0, _T("ID_M_PLBL13"));
+    m_pLbl8->SetBorderState(uiRect::BORDER_NONE);
+    m_pLbl8->SetForegroundColour(wxColour(255,255,255));
+    m_pLbl8->SetBackgroundColour(wxColour(61,146,146));
+    wxFont m_pLbl8Font(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
+    m_pLbl8->SetFont(m_pLbl8Font);
+    m_plblVersion = new wmLabel(this, ID_M_PLBL14, wxEmptyString, wxPoint(400,0), wxSize(200,40), 0, _T("ID_M_PLBL14"));
+    m_plblVersion->SetBorderState(uiRect::BORDER_NONE);
+    m_plblVersion->SetForegroundColour(wxColour(255,255,255));
+    m_plblVersion->SetBackgroundColour(wxColour(61,146,146));
+    wxFont m_plblVersionFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
+    m_plblVersion->SetFont(m_plblVersionFont);
     m_pswpSettings = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(0,40), wxSize(600,440), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
     m_pswpSettings->SetPageNameStyle(0);
     pnlInput = new wxPanel(m_pswpSettings, ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL1"));
@@ -282,18 +301,35 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     pnlSettingsRTP = new pnlRTP(m_pswpSettings, ID_PANEL4, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL4"));
     pnlSettingsNetwork = new pnlNetworkSetup(m_pswpSettings, ID_PANEL5, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL5"));
     m_ppnlPlugins = new pnlSettingsPlugins(m_pswpSettings, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
-    Panel1 = new pnlUpdate(m_pswpSettings, ID_PANEL7, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL7"));
+    m_ppnlUpdate = new pnlUpdate(m_pswpSettings, ID_PANEL7, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL7"));
+    m_ppnlProfiles = new pnlSettingsProfiles(m_pswpSettings, ID_PANEL13, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL13"));
     pnlGeneral = new wxPanel(m_pswpSettings, ID_PANEL6, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL6"));
     pnlGeneral->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
     m_pbtnCursor = new wmButton(pnlGeneral, ID_M_PBTN22, _("Cursor"), wxPoint(10,10), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN22"));
     m_ptbnOptions = new wmButton(pnlGeneral, ID_M_PBTN23, _("View"), wxPoint(10,60), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN23"));
+    m_pbtnPin = new wmButton(pnlGeneral, ID_M_PBTN24, _("PIN"), wxPoint(10,110), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN24"));
+    m_pedtPin = new wmEdit(pnlGeneral, ID_M_PEDT1, wxEmptyString, wxPoint(40,200), wxSize(250,25), 0, wxDefaultValidator, _T("ID_M_PEDT1"));
+    m_pedtPin->SetMaxLength(8);
+    m_pedtPin->SetValidation(4);
+    m_pedtPin->Hide();
+    m_pedtPin->SetBorderStyle(1,1);
+    m_pkbdPin = new wmKeyboard(pnlGeneral, ID_M_PKBD1, wxPoint(10,230), wxSize(360,204), 5, 0);
+    m_pkbdPin->Hide();
+    m_pkbdPin->SetForegroundColour(wxColour(255,255,255));
+    wxFont m_pkbdPinFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
+    m_pkbdPin->SetFont(m_pkbdPinFont);
+    m_plblCurrentPIN = new wmLabel(pnlGeneral, ID_M_PLBL12, _("Current PIN: "), wxPoint(40,170), wxSize(250,-1), 0, _T("ID_M_PLBL12"));
+    m_plblCurrentPIN->SetBorderState(uiRect::BORDER_NONE);
+    m_plblCurrentPIN->Hide();
+    m_plblCurrentPIN->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
     m_pswpSettings->AddPage(pnlInput, _("Input Device"), false);
     m_pswpSettings->AddPage(pnlOutput, _("Output Device"), false);
     m_pswpSettings->AddPage(pnlGenerator, _("Output Source"), false);
     m_pswpSettings->AddPage(pnlSettingsRTP, _("AoIP"), false);
     m_pswpSettings->AddPage(pnlSettingsNetwork, _("Network"), false);
     m_pswpSettings->AddPage(m_ppnlPlugins, _("Plugins"), false);
-    m_pswpSettings->AddPage(Panel1, _("Update"), false);
+    m_pswpSettings->AddPage(m_ppnlUpdate, _("Update"), false);
+    m_pswpSettings->AddPage(m_ppnlProfiles, _("Profiles"), false);
     m_pswpSettings->AddPage(pnlGeneral, _("General"), false);
 
     Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstDevicesSelected);
@@ -329,13 +365,18 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     Connect(ID_M_PBTN20,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnSequencesClick);
     Connect(ID_M_PBTN22,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnCursorClick);
     Connect(ID_M_PBTN23,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnOptionsClick);
+    Connect(ID_M_PBTN24,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnPinClick);
+    Connect(ID_M_PEDT1,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&pnlSettings::OnedtPinTextEnter);
     //*)
 
     m_pbtnCursor->SetToggleLook(true, wxT("Hide"), wxT("Show"), 40);
     m_ptbnOptions->SetToggleLook(true, wxT("Screens"), wxT("Options"), 40);
+    m_pbtnPin->SetToggleLook(true, wxT("Off"), wxT("On"), 40);
+    m_plblCurrentPIN->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 
     m_pbtnCursor->ToggleSelection((Settings::Get().Read(wxT("General"), wxT("Cursor"), 1) == 1), true);
     m_ptbnOptions->ToggleSelection((Settings::Get().Read(wxT("General"), wxT("ShowOptions"), 1) == 1), true);
+    m_pbtnPin->ToggleSelection((Settings::Get().Read(wxT("General"), wxT("Pin"), 0)==1), true);
 
     m_pbtnEnd->SetBitmapLabel(wxBitmap(end_hz_xpm));
     m_pbtnEnd->SetBitmapSelected(wxBitmap(end_hz_press_xpm));
@@ -389,7 +430,9 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
     m_plstLatency->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Latency"), 0)/40, false);
 
-    m_plblSettings->SetLabel(wxString::Format(wxT("'%s': %ld.%ld.%ld.%ld"), wxGetHostName().c_str(), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
+    m_plblVersion->SetLabel(wxString::Format(wxT("%ld.%ld.%ld.%ld"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
+    m_plblHostname->SetLabel(wxGetHostName());
+
 
     m_plstAudioSources->AddButton(wxT("Input"));
     m_plstAudioSources->AddButton(wxT("File"));
@@ -1015,4 +1058,24 @@ void pnlSettings::InputSessionChanged()
 {
     PopulateChannelList(m_plstOutputLeft, Settings::Get().Read(wxT("Output"), wxT("Left"), 0));
     PopulateChannelList(m_plstOutputRight, Settings::Get().Read(wxT("Output"), wxT("Right"), 0));
+}
+
+void pnlSettings::OnbtnPinClick(wxCommandEvent& event)
+{
+    Settings::Get().Write(wxT("General"), wxT("Pin"), event.IsChecked());
+    m_pedtPin->Show(event.IsChecked());
+    m_pkbdPin->Show(event.IsChecked());
+    m_plblCurrentPIN->Show(event.IsChecked());
+    if(event.IsChecked())
+    {
+        m_plblCurrentPIN->SetLabel(wxString::Format(wxT("Current PIN: %s"), Settings::Get().Read(wxT("General"), wxT("Pin_Value"), wxEmptyString).c_str()));
+        m_pedtPin->SetValue(wxEmptyString);
+        m_pedtPin->SetFocus();
+    }
+}
+
+void pnlSettings::OnedtPinTextEnter(wxCommandEvent& event)
+{
+    Settings::Get().Write(wxT("General"), wxT("Pin_Value"), m_pedtPin->GetValue());
+    m_plblCurrentPIN->SetLabel(wxString::Format(wxT("Current PIN: %s"), Settings::Get().Read(wxT("General"), wxT("Pin_Value"), wxEmptyString).c_str()));
 }

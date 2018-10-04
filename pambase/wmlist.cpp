@@ -1727,8 +1727,20 @@ wxArrayInt wmList::GetSelectedButtons() const
         ai.Add((*(*itSel))->pUi->GetIndex());
     }
     return ai;
-
 }
+
+bool wmList::IsSelected(size_t nButton) const
+{
+    for(set<list<button*>::iterator>::const_iterator itSel = m_setitSelected.begin(); itSel != m_setitSelected.end(); ++itSel)
+    {
+        if((*(*itSel))->pUi->GetIndex() == nButton)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 void wmList::SetButtonText(size_t nButton, const wxString& sText)
 {

@@ -38,6 +38,7 @@ const long pamupdatemanagerDialog::ID_M_PLST2 = wxNewId();
 const long pamupdatemanagerDialog::ID_PANEL4 = wxNewId();
 const long pamupdatemanagerDialog::ID_M_PSWP2 = wxNewId();
 const long pamupdatemanagerDialog::ID_M_PBTN7 = wxNewId();
+const long pamupdatemanagerDialog::ID_M_PLST3 = wxNewId();
 const long pamupdatemanagerDialog::ID_PANEL5 = wxNewId();
 const long pamupdatemanagerDialog::ID_M_PLBL6 = wxNewId();
 const long pamupdatemanagerDialog::ID_M_PLBL7 = wxNewId();
@@ -71,22 +72,22 @@ pamupdatemanagerDialog::pamupdatemanagerDialog(wxWindow* parent,wxWindowID id,co
 	m_plblSettings->SetBackgroundColour(wxColour(61,146,146));
 	wxFont m_plblSettingsFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	m_plblSettings->SetFont(m_plblSettingsFont);
-	m_pbtnClose = new wmButton(pnlMain, ID_M_PBTN1, _("Close Update Manager"), wxPoint(650,425), wxSize(120,50), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
-	m_pbtnSelectAll = new wmButton(pnlMain, ID_M_PBTN6, _("Select All"), wxPoint(650,105), wxSize(120,50), 0, wxDefaultValidator, _T("ID_M_PBTN6"));
+	m_pbtnClose = new wmButton(pnlMain, ID_M_PBTN1, _("Close"), wxPoint(645,425), wxSize(150,50), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
+	m_pbtnSelectAll = new wmButton(pnlMain, ID_M_PBTN6, _("Select All"), wxPoint(645,185), wxSize(150,40), 0, wxDefaultValidator, _T("ID_M_PBTN6"));
 	m_pbtnSelectAll->SetBackgroundColour(wxColour(176,176,176));
-	m_pbtnSelectNone = new wmButton(pnlMain, ID_M_PBTN5, _("Deselect All"), wxPoint(650,160), wxSize(120,50), 0, wxDefaultValidator, _T("ID_M_PBTN5"));
+	m_pbtnSelectNone = new wmButton(pnlMain, ID_M_PBTN5, _("Deselect All"), wxPoint(645,230), wxSize(150,40), 0, wxDefaultValidator, _T("ID_M_PBTN5"));
 	m_pbtnSelectNone->SetBackgroundColour(wxColour(176,176,176));
-	m_pbtnUpdate = new wmButton(pnlMain, ID_M_PBTN4, _("Update Selected"), wxPoint(650,360), wxSize(120,50), 0, wxDefaultValidator, _T("ID_M_PBTN4"));
+	m_pbtnUpdate = new wmButton(pnlMain, ID_M_PBTN4, _("Update Selected"), wxPoint(645,370), wxSize(150,50), 0, wxDefaultValidator, _T("ID_M_PBTN4"));
 	m_pbtnUpdate->Disable();
 	m_pbtnUpdate->SetBackgroundColour(wxColour(0,128,0));
 	m_pbtnUpdate->SetColourSelected(wxColour(wxT("#008040")));
 	m_pbtnUpdate->SetColourDisabled(wxColour(wxT("#808080")));
-	m_pbtnChangelog = new wmButton(pnlMain, ID_M_PBTN2, _("View Changelog"), wxPoint(650,235), wxSize(120,50), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN2"));
+	m_pbtnChangelog = new wmButton(pnlMain, ID_M_PBTN2, _("View Changelog"), wxPoint(645,280), wxSize(150,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN2"));
 	m_pbtnChangelog->Disable();
 	m_pbtnChangelog->SetBackgroundColour(wxColour(0,125,125));
 	m_pbtnChangelog->SetColourSelected(wxColour(wxT("#FF8000")));
 	m_pbtnChangelog->SetColourDisabled(wxColour(wxT("#808080")));
-	m_pbtnDependencies = new wmButton(pnlMain, ID_M_PBTN3, _("View Dependencies"), wxPoint(650,290), wxSize(120,50), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
+	m_pbtnDependencies = new wmButton(pnlMain, ID_M_PBTN3, _("View Dependencies"), wxPoint(645,325), wxSize(150,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
 	m_pbtnDependencies->Disable();
 	m_pbtnDependencies->SetBackgroundColour(wxColour(0,125,125));
 	m_pbtnDependencies->SetColourSelected(wxColour(wxT("#FF8000")));
@@ -139,6 +140,11 @@ pamupdatemanagerDialog::pamupdatemanagerDialog(wxWindow* parent,wxWindowID id,co
 	m_pswpMain->AddPage(Panel4, _("Log"), false);
 	m_pbtnShow = new wmButton(pnlMain, ID_M_PBTN7, _("Show"), wxPoint(645,45), wxSize(150,30), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN7"));
 	m_pbtnShow->SetBackgroundColour(wxColour(0,0,128));
+	m_plstShow = new wmList(pnlMain, ID_M_PLST3, wxPoint(645,80), wxSize(150,100), wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI, 0, wxSize(-1,33), 3, wxSize(-1,-1));
+	m_plstShow->SetBackgroundColour(wxColour(0,0,0));
+	wxFont m_plstShowFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
+	m_plstShow->SetFont(m_plstShowFont);
+	m_plstShow->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
 	Panel5 = new wxPanel(m_pswpSplash, ID_PANEL6, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL6"));
 	Panel5->SetBackgroundColour(wxColour(0,0,0));
 	m_pLbl6 = new wmLabel(Panel5, ID_M_PLBL6, _("Please wait retrieving update list..."), wxPoint(0,40), wxSize(800,440), 0, _T("ID_M_PLBL6"));
@@ -168,6 +174,7 @@ pamupdatemanagerDialog::pamupdatemanagerDialog(wxWindow* parent,wxWindowID id,co
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pamupdatemanagerDialog::OnlstUpdatesSelected);
 	Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pamupdatemanagerDialog::OnlstUpdatesSelected);
 	Connect(ID_M_PBTN7,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pamupdatemanagerDialog::OnbtnShowClick);
+	Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pamupdatemanagerDialog::OnlstShowSelected);
 	Connect(ID_TIMER1,wxEVT_TIMER,(wxObjectEventFunction)&pamupdatemanagerDialog::OntimerUpdateTrigger);
 	Connect(ID_TIMER2,wxEVT_TIMER,(wxObjectEventFunction)&pamupdatemanagerDialog::Onm_timerStartTrigger);
 	//*)
@@ -176,6 +183,15 @@ pamupdatemanagerDialog::pamupdatemanagerDialog(wxWindow* parent,wxWindowID id,co
 
 	 m_pbtnShow->SetToggleLook(true, wxT("New"), wxT("All"), 40);
 	 m_pbtnShow->ToggleSelection(Settings::Get().Read(wxT("Update"), wxT("ShowAll"), 0), false);
+
+	 m_plstShow->AddButton(wxT("App"));
+	 m_plstShow->AddButton(wxT("Lib"));
+	 m_plstShow->AddButton(wxT("Monitor"));
+	 m_plstShow->AddButton(wxT("Tests"));
+	 m_plstShow->AddButton(wxT("Docs"));
+	 m_plstShow->AddButton(wxT("Profiles"));
+	 m_plstShow->AddButton(wxT("Config"));
+	 m_plstShow->SelectAll(true, false);
 
 }
 
@@ -439,16 +455,17 @@ void pamupdatemanagerDialog::PopulateUpdateList()
 {
     m_plstUpdates->Freeze();
     m_plstUpdates->Clear();
+
     for(map<wxString, UpdateObject>::const_iterator itObject = UpdateManager::Get().GetUpdateListBegin(); itObject != UpdateManager::Get().GetUpdateListEnd(); ++itObject)
     {
         wxString sLocalVersion;
         wxString sType;
+
         switch(itObject->second.nType)
         {
         case UpdateObject::APP:
             sType = wxT("App");
             sLocalVersion = Settings::Get().Read(wxT("Version"), itObject->first, wxT("0.0.0.0"));
-
             break;
         case UpdateObject::CORE_DLL:
             sType = wxT("Core Lib");
@@ -460,6 +477,7 @@ void pamupdatemanagerDialog::PopulateUpdateList()
             {
                 sLocalVersion = wxT("0.0.0.0"); //@todo get core lib version
             }
+
             break;
         case UpdateObject::DOCUMENTATION:
             sType = wxT("Doc");
@@ -473,14 +491,25 @@ void pamupdatemanagerDialog::PopulateUpdateList()
             sType = wxT("Test");
             sLocalVersion = GetTestPluginVersion(itObject->first);
             break;
+        case UpdateObject::PROFILES:
+            sType = wxT("Profile");
+            sLocalVersion = wxEmptyString;
+            break;
+        case UpdateObject::CONFIG:
+            sType = wxT("Config");
+            sLocalVersion = wxEmptyString;
+            break;
         }
 
         if(UpdateManager::Get().UpdateVersionIsNewer(itObject->second.sVersion, sLocalVersion) || Settings::Get().Read(wxT("Update"), wxT("ShowAll"), 0))
         {
-            m_plstUpdates->AddButton(itObject->first);
-            m_plstUpdates->AddButton(sType);
-            m_plstUpdates->AddButton(sLocalVersion);
-            m_plstUpdates->AddButton(itObject->second.sVersion);
+            if(m_plstShow->IsSelected(itObject->second.nType-1))
+            {
+                m_plstUpdates->AddButton(itObject->first);
+                m_plstUpdates->AddButton(sType);
+                m_plstUpdates->AddButton(sLocalVersion);
+                m_plstUpdates->AddButton(itObject->second.sVersion);
+            }
         }
     }
     m_plstUpdates->Thaw();
@@ -490,4 +519,8 @@ void pamupdatemanagerDialog::OnbtnShowClick(wxCommandEvent& event)
 {
     Settings::Get().Write(wxT("Update"), wxT("ShowAll"), event.IsChecked());
     PopulateUpdateList();
+}
+
+void pamupdatemanagerDialog::OnlstShowSelected(wxCommandEvent& event)
+{
 }

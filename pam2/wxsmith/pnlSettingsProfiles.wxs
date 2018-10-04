@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlSettingsProfiles">
+		<size>600,480</size>
+		<font>
+			<size>10</size>
+			<style>normal</style>
+			<weight>normal</weight>
+			<underlined>0</underlined>
+			<family>swiss</family>
+			<face>Arial</face>
+		</font>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmList" name="ID_M_PLST1" variable="m_plstProfiles" member="yes">
+			<button_gap>1,3</button_gap>
+			<items />
+			<pos>10,10</pos>
+			<size>200,420</size>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstProfilesSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnLoad" member="yes">
+			<label>Hold To Load Selected</label>
+			<button_disabled>#808080</button_disabled>
+			<pos>230,10</pos>
+			<size>120,50</size>
+			<enabled>0</enabled>
+			<bg>#008000</bg>
+			<style>wmButton::STYLE_HOLD</style>
+			<handler function="OnbtnLoadClick" entry="EVT_BUTTON_HELD" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnRename" member="yes">
+			<label>Rename Selected</label>
+			<button_disabled>#808080</button_disabled>
+			<pos>230,70</pos>
+			<size>120,50</size>
+			<enabled>0</enabled>
+			<bg>#0000A0</bg>
+			<handler function="OnbtnRenameClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnDelete" member="yes">
+			<label>Delete Selected</label>
+			<button_disabled>#808080</button_disabled>
+			<pos>230,130</pos>
+			<size>120,50</size>
+			<enabled>0</enabled>
+			<bg>#800000</bg>
+			<handler function="OnbtnDeleteClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnSave" member="yes">
+			<label>Save Active Settings</label>
+			<button_disabled>#808080</button_disabled>
+			<pos>230,380</pos>
+			<size>120,50</size>
+			<bg>#008000</bg>
+			<handler function="OnbtnSaveClick" entry="EVT_BUTTON" />
+		</object>
+	</object>
+</wxsmith>

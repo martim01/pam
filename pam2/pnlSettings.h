@@ -4,18 +4,20 @@
 //(*Headers(pnlSettings)
 #include <wx/notebook.h>
 #include "wmbutton.h"
+#include "wmkeyboard.h"
 #include "wmlabel.h"
 #include <wx/statbox.h>
 #include "wmswitcherpanel.h"
 #include <wx/panel.h>
 #include "wmslider.h"
+#include "wmedit.h"
 #include "wmlist.h"
 //*)
 #include "pnlNetworkSetup.h"
 #include "pnlRTP.h"
 #include "pnlSettingsPlugins.h"
 #include "pnlUpdate.h"
-
+#include "pnlSettingsProfiles.h"
 
 class pnlSettings: public wxPanel
 {
@@ -29,14 +31,17 @@ class pnlSettings: public wxPanel
 		wmList* m_plstLatency;
 		wxPanel* pnlGeneral;
 		wmLabel* m_pLbl3;
+		wmLabel* m_plblHostname;
 		wxPanel* Panel5;
 		wmLabel* m_pLbl7;
 		wxPanel* pnlGenerator;
+		wmEdit* m_pedtPin;
 		wmButton* m_pbtn900;
 		wmList* m_plstDevices;
 		wmSwitcherPanel* m_pswpSettings;
 		wmList* m_plstAogFiles;
 		wmButton* m_pbtnPrevious;
+		wmLabel* m_plblCurrentPIN;
 		wxPanel* Panel4;
 		wmLabel* m_plbldB;
 		wmButton* m_pbtnAogHome;
@@ -47,6 +52,7 @@ class pnlSettings: public wxPanel
 		pnlSettingsPlugins* m_ppnlPlugins;
 		pnlNetworkSetup* pnlSettingsNetwork;
 		wmButton* m_pbtnPlus1;
+		wmButton* m_pbtnPin;
 		wmButton* m_pbtnNext;
 		wmButton* m_pbtn10000;
 		wmList* m_plstPlayback;
@@ -60,7 +66,6 @@ class pnlSettings: public wxPanel
 		wmLabel* m_pLbl5;
 		wxStaticBox* StaticBox2;
 		wmLabel* m_plblNoisedB;
-		wmLabel* m_plblSettings;
 		wmList* m_plstInput;
 		wmList* m_plstAudioSources;
 		wmButton* m_pbtnMinus10;
@@ -68,6 +73,7 @@ class pnlSettings: public wxPanel
 		wmLabel* m_pLbl6;
 		wmButton* m_ptbnOptions;
 		wmButton* m_pbtn450;
+		wmLabel* m_pLbl8;
 		wmLabel* m_pLbl2;
 		wmButton* m_pbtnAogPrev;
 		wmButton* m_pbtnMinus1;
@@ -80,6 +86,7 @@ class pnlSettings: public wxPanel
 		wmButton* m_pbtn5000;
 		wmButton* m_pbtnPlus10;
 		pnlRTP* pnlSettingsRTP;
+		wmLabel* m_plblVersion;
 		wmList* m_plstOutputRight;
 		wxPanel* pnlInput;
 		wmButton* m_pbtn0dbu;
@@ -87,7 +94,9 @@ class pnlSettings: public wxPanel
 		wmList* m_plstOutputLeft;
 		wmLabel* m_plblFrequency;
 		wmList* m_plstColour;
-		pnlUpdate* Panel1;
+		pnlSettingsProfiles* m_ppnlProfiles;
+		wmKeyboard* m_pkbdPin;
+		pnlUpdate* m_ppnlUpdate;
 		wmButton* m_pbtnSequences;
 		wmLabel* m_plblInput;
 		//*)
@@ -100,6 +109,8 @@ class pnlSettings: public wxPanel
 
 		//(*Identifiers(pnlSettings)
 		static const long ID_M_PLBL37;
+		static const long ID_M_PLBL13;
+		static const long ID_M_PLBL14;
 		static const long ID_M_PLBL3;
 		static const long ID_M_PLST1;
 		static const long ID_M_PLST2;
@@ -160,8 +171,13 @@ class pnlSettings: public wxPanel
 		static const long ID_PANEL5;
 		static const long ID_PANEL3;
 		static const long ID_PANEL7;
+		static const long ID_PANEL13;
 		static const long ID_M_PBTN22;
 		static const long ID_M_PBTN23;
+		static const long ID_M_PBTN24;
+		static const long ID_M_PEDT1;
+		static const long ID_M_PKBD1;
+		static const long ID_M_PLBL12;
 		static const long ID_PANEL6;
 		static const long ID_M_PSWP1;
 		//*)
@@ -211,6 +227,8 @@ class pnlSettings: public wxPanel
 		void OnbtnOptionsClick(wxCommandEvent& event);
 		void OnlstOutputLeftSelected(wxCommandEvent& event);
 		void OnlstOutputRightSelected(wxCommandEvent& event);
+		void OnbtnPinClick(wxCommandEvent& event);
+		void OnedtPinTextEnter(wxCommandEvent& event);
 		//*)
 
         void RefreshInputs();

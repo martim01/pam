@@ -31,6 +31,7 @@ class pamupdatemanagerDialog: public wxDialog
 		wxPanel* pnlMain;
 		wmButton* m_pbtnSelectAll;
 		wxPanel* Panel4;
+		wmList* m_plstShow;
 		wmLabel* m_pLbl1;
 		wmList* m_plstLog;
 		wxPanel* Panel1;
@@ -77,6 +78,7 @@ class pamupdatemanagerDialog: public wxDialog
 		static const long ID_PANEL4;
 		static const long ID_M_PSWP2;
 		static const long ID_M_PBTN7;
+		static const long ID_M_PLST3;
 		static const long ID_PANEL5;
 		static const long ID_M_PLBL6;
 		static const long ID_M_PLBL7;
@@ -99,6 +101,7 @@ class pamupdatemanagerDialog: public wxDialog
 		void OntimerUpdateTrigger(wxTimerEvent& event);
 		void Onm_timerStartTrigger(wxTimerEvent& event);
 		void OnbtnShowClick(wxCommandEvent& event);
+		void OnlstShowSelected(wxCommandEvent& event);
 		//*)
 
         wxString GetMonitorPluginVersion(const wxString& sPlugin);

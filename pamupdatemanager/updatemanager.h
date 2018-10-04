@@ -42,7 +42,7 @@ struct UpdateObject
 
     std::map<wxString, wxString> mDependsOn;
 
-    enum {UNKNOWN, APP, CORE_DLL, PLUGIN_MONITOR, PLUGIN_TEST, DOCUMENTATION};
+    enum {UNKNOWN, APP, CORE_DLL, PLUGIN_MONITOR, PLUGIN_TEST, DOCUMENTATION, PROFILES, CONFIG};
 };
 
 class wxXmlNode;

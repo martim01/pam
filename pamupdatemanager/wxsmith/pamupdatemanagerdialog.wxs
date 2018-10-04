@@ -39,22 +39,22 @@
 						</font>
 					</object>
 					<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnClose" member="yes">
-						<label>Close Update Manager</label>
-						<pos>650,425</pos>
-						<size>120,50</size>
+						<label>Close</label>
+						<pos>645,425</pos>
+						<size>150,50</size>
 						<handler function="OnbtnCloseClick" entry="EVT_BUTTON" />
 					</object>
 					<object class="wmButton" name="ID_M_PBTN6" variable="m_pbtnSelectAll" member="yes">
 						<label>Select All</label>
-						<pos>650,105</pos>
-						<size>120,50</size>
+						<pos>645,185</pos>
+						<size>150,40</size>
 						<bg>#B0B0B0</bg>
 						<handler function="OnbtnSelectAllClick" entry="EVT_BUTTON" />
 					</object>
 					<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnSelectNone" member="yes">
 						<label>Deselect All</label>
-						<pos>650,160</pos>
-						<size>120,50</size>
+						<pos>645,230</pos>
+						<size>150,40</size>
 						<bg>#B0B0B0</bg>
 						<handler function="OnbtnSelectNoneClick" entry="EVT_BUTTON" />
 					</object>
@@ -62,8 +62,8 @@
 						<label>Update Selected</label>
 						<button_pressed>#008040</button_pressed>
 						<button_disabled>#808080</button_disabled>
-						<pos>650,360</pos>
-						<size>120,50</size>
+						<pos>645,370</pos>
+						<size>150,50</size>
 						<enabled>0</enabled>
 						<bg>#008000</bg>
 						<handler function="OnbtnUpdateClick" entry="EVT_BUTTON" />
@@ -72,8 +72,8 @@
 						<label>View Changelog</label>
 						<button_pressed>#FF8000</button_pressed>
 						<button_disabled>#808080</button_disabled>
-						<pos>650,235</pos>
-						<size>120,50</size>
+						<pos>645,280</pos>
+						<size>150,40</size>
 						<enabled>0</enabled>
 						<bg>#007D7D</bg>
 						<style>wmButton::STYLE_SELECT</style>
@@ -83,8 +83,8 @@
 						<label>View Dependencies</label>
 						<button_pressed>#FF8000</button_pressed>
 						<button_disabled>#808080</button_disabled>
-						<pos>650,290</pos>
-						<size>120,50</size>
+						<pos>645,325</pos>
+						<size>150,40</size>
 						<enabled>0</enabled>
 						<bg>#007D7D</bg>
 						<style>wmButton::STYLE_SELECT</style>
@@ -196,6 +196,26 @@
 						<bg>#000080</bg>
 						<style>wmButton::STYLE_SELECT</style>
 						<handler function="OnbtnShowClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmList" name="ID_M_PLST3" variable="m_plstShow" member="yes">
+						<scrolling>None</scrolling>
+						<button_size>-1,33</button_size>
+						<columns>3</columns>
+						<button_selected>#FF8000</button_selected>
+						<items />
+						<pos>645,80</pos>
+						<size>150,100</size>
+						<bg>#000000</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Arial</face>
+						</font>
+						<style>wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI</style>
+						<handler function="OnlstShowSelected" entry="EVT_LIST_SELECTED" />
 					</object>
 				</object>
 				<label>Main</label>

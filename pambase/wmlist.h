@@ -428,6 +428,12 @@ class PAMBASE_IMPEXPORT wmList : public wxWindow
         **/
         wxArrayInt GetSelectedButtons() const;
 
+        /** @brief Returns true if the given button is selected
+        *   @param nButton the index of the button
+        *   @return <i>bool</i>
+        **/
+        bool IsSelected(size_t nButton) const;
+
         /** @brief Returns an array containing the indices of all the buttons in the list
         *   @param bIncludeHidden if false then buttons which are wmList::wmHIDDEN will be ignored
         *   @param bIncludeDisable if false the buttons which are disabled wll be ignored

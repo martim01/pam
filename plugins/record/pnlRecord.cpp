@@ -4,6 +4,7 @@
 #include <wx/stdpaths.h>
 #include "session.h"
 #include "settings.h"
+#include "recordthread.h"
 
 //(*InternalHeaders(pnlRecord)
 #include <wx/font.h>
@@ -82,35 +83,46 @@ pnlRecord::pnlRecord(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 	//*)
 	m_pedtFile->SetFocus();
 	m_pbtnRecord->Enable(false);
-	m_bRecording = false;
+	m_pRecorder = 0;
 }
 
 pnlRecord::~pnlRecord()
 {
 	//(*Destroy(pnlRecord)
 	//*)
+	m_pRecorder->Delete();
 }
 
 
 void pnlRecord::OnbtnRecordClick(wxCommandEvent& event)
 {
-    if(!m_bRecording)
+    if(!m_pRecorder)
     {
-        if(m_sf.OpenToWrite(wxString::Format(wxT("%s/%s.wav"), Settings::Get().GetWavDirectory().c_str(), m_pedtFile->GetValue().c_str()), m_nInputChannels, m_nSampleRate, 16))
+        m_pRecorder = new RecordThread();
+
+        if(m_pRecorder->Init(wxString::Format(wxT("%s/%s.wav"), Settings::Get().GetWavDirectory().c_str(), m_pedtFile->GetValue().c_str()), m_nInputChannels, m_nSampleRate, 16))
         {
             m_pbtnRecord->SetLabel(wxT("STOP"));
             m_dtRecording = wxDateTime::Now();
-            m_bRecording = true;
             m_pKbd1->Disable();
             m_pedtFile->Disable();
             Settings::Get().Write(wxT("Test"), wxT("Lock"), 1);
-           }
+            m_pRecorder->Create();
+            m_pRecorder->SetPriority(WXTHREAD_MIN_PRIORITY);
+            m_pRecorder->Run();
+        }
+        else
+        {
+            delete m_pRecorder;
+            m_pRecorder = 0;
+        }
     }
     else
     {
-        m_sf.Close();
+        m_pRecorder->Delete();
+        m_pRecorder = 0;
+
         m_pbtnRecord->SetLabel(wxT("Record"));
-        m_bRecording = false;
         m_plblTime->SetLabel(wxEmptyString);
         m_pKbd1->Enable();
         m_pedtFile->Enable();
@@ -121,16 +133,15 @@ void pnlRecord::OnbtnRecordClick(wxCommandEvent& event)
 
 void pnlRecord::SetAudioData(const timedbuffer* pBuffer)
 {
-    if(m_bRecording)
+    if(m_pRecorder)
     {
-        m_sf.WriteAudio(pBuffer);//->GetBuffer(), pBuffer->GetBufferSize());
-
+        m_pRecorder->AddToBuffer(pBuffer);
     }
 }
 
 void pnlRecord::OntimerSecondTrigger(wxTimerEvent& event)
 {
-    if(m_bRecording)
+    if(m_pRecorder)
     {
         m_plblTime->SetLabel((wxDateTime::Now()-m_dtRecording).Format(wxT("%H:%M:%S")));
     }

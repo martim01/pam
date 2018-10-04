@@ -3,10 +3,40 @@
 	<object class="wxPanel" name="pnlSettings">
 		<bg>#000000</bg>
 		<id_arg>0</id_arg>
-		<object class="wmLabel" name="ID_M_PLBL37" variable="m_plblSettings" member="yes">
+		<object class="wmLabel" name="ID_M_PLBL37" variable="m_plblHostname" member="yes">
 			<label>Settings</label>
 			<pos>0,0</pos>
-			<size>600,40</size>
+			<size>200,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#3D9292</bg>
+			<font>
+				<size>12</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL13" variable="m_pLbl8" member="yes">
+			<label>Settings</label>
+			<pos>200,0</pos>
+			<size>200,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#3D9292</bg>
+			<font>
+				<size>12</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL14" variable="m_plblVersion" member="yes">
+			<label></label>
+			<pos>400,0</pos>
+			<size>200,40</size>
 			<fg>#FFFFFF</fg>
 			<bg>#3D9292</bg>
 			<font>
@@ -539,8 +569,12 @@
 				<label>Plugins</label>
 			</object>
 			<object class="wmSwitcherPanelpage">
-				<object class="wxPanel" name="ID_PANEL7" subclass="pnlUpdate" variable="Panel1" member="yes" />
+				<object class="wxPanel" name="ID_PANEL7" subclass="pnlUpdate" variable="m_ppnlUpdate" member="yes" />
 				<label>Update</label>
+			</object>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL13" subclass="pnlSettingsProfiles" variable="m_ppnlProfiles" member="yes" />
+				<label>Profiles</label>
 			</object>
 			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL6" variable="pnlGeneral" member="yes">
@@ -558,6 +592,45 @@
 						<size>200,40</size>
 						<style>wmButton::STYLE_SELECT</style>
 						<handler function="OnbtnOptionsClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN24" variable="m_pbtnPin" member="yes">
+						<label>PIN</label>
+						<pos>10,110</pos>
+						<size>200,40</size>
+						<style>wmButton::STYLE_SELECT</style>
+						<handler function="OnbtnPinClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmEdit" name="ID_M_PEDT1" variable="m_pedtPin" member="yes">
+						<maxlength>8</maxlength>
+						<validation>Integer</validation>
+						<border>uiRect::BORDER_DOWN</border>
+						<border_focused>uiRect::BORDER_DOWN</border_focused>
+						<pos>40,200</pos>
+						<size>250,25</size>
+						<hidden>1</hidden>
+						<handler function="OnedtPinTextEnter" entry="EVT_TEXT_ENTER" />
+					</object>
+					<object class="wmKeyboard" name="ID_M_PKBD1" variable="m_pkbdPin" member="yes">
+						<type>Calc</type>
+						<pos>10,230</pos>
+						<size>360,204</size>
+						<hidden>1</hidden>
+						<fg>#FFFFFF</fg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Arial</face>
+						</font>
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL12" variable="m_plblCurrentPIN" member="yes">
+						<label>Current PIN: </label>
+						<pos>40,170</pos>
+						<size>250,-1</size>
+						<hidden>1</hidden>
+						<bg>wxSYS_COLOUR_ACTIVECAPTION</bg>
 					</object>
 				</object>
 				<label>General</label>

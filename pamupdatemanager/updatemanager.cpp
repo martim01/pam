@@ -70,6 +70,7 @@ bool UpdateManager::GetUpdateList()
     m_mUpdates.clear();
     if(Settings::Get().Read(wxT("Update"), wxT("Type"), wxT("Share")) == wxT("HTTP"))
     {
+        // @todo add the profiles
         return GetUpdateListFromWebServer();
     }
     else if(Settings::Get().Read(wxT("Update"), wxT("Type"), wxT("Share")) == wxT("Share"))
@@ -82,6 +83,7 @@ bool UpdateManager::GetUpdateList()
     }
     else if(Settings::Get().Read(wxT("Update"), wxT("Type"), wxT("Share")) == wxT("FTP"))
     {
+        // @todo add the profiles and the rest...
         return GetUpdateListFromFTP();
     }
 
@@ -186,8 +188,21 @@ bool UpdateManager::GetUpdateListFromLocal(const wxString& sPath)
     }
 
     UpdateObject ppmObject;
-    ppmObject.sName = wxT("ppmtypes.xml");
-    m_mUpdates.insert(make_pair(ppmObject=.sName, ppmObject));
+    ppmObject.sName = wxT("ppmtypes");
+    ppmObject.nType = UpdateObject::CONFIG;
+    m_mUpdates.insert(make_pair(ppmObject.sName, ppmObject));
+
+    //Add the profiles
+    wxArrayString asProfiles;
+    wxDir::GetAllFiles(sPath, &asProfiles, wxT("*.ini"));
+    for(size_t i = 0; i < asProfiles.GetCount(); i++)
+    {
+        wxFileName fn(asProfiles[i]);
+        UpdateObject anObject;
+        anObject.sName = fn.GetName();
+        anObject.nType = UpdateObject::PROFILES;
+        m_mUpdates.insert(make_pair(anObject.sName, anObject));
+    }
 
 
     return true;
@@ -357,6 +372,16 @@ bool UpdateManager::Update(wxString sName)
                 break;
             case UpdateObject::DOCUMENTATION:
                 sName << wxT(".html");
+                fileOld.SetPath(Settings::Get().GetDocumentDirectory());
+                fileOld.SetName(sName);
+                break;
+            case UpdateObject::PROFILES:
+                sName << wxT(".ini");
+                fileOld.SetPath(Settings::Get().GetDocumentDirectory());
+                fileOld.SetName(sName);
+                break;
+            case UpdateObject::CONFIG:
+                sName << wxT(".xml");
                 fileOld.SetPath(Settings::Get().GetDocumentDirectory());
                 fileOld.SetName(sName);
                 break;

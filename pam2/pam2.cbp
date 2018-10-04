@@ -152,6 +152,8 @@
 		</Linker>
 		<Unit filename="dlgEditName.cpp" />
 		<Unit filename="dlgEditName.h" />
+		<Unit filename="dlgPin.cpp" />
+		<Unit filename="dlgPin.h" />
 		<Unit filename="dlgSequence.cpp" />
 		<Unit filename="dlgSequence.h" />
 		<Unit filename="dlgmask.cpp" />
@@ -181,6 +183,8 @@
 		<Unit filename="pnlSettingsOptions.h" />
 		<Unit filename="pnlSettingsPlugins.cpp" />
 		<Unit filename="pnlSettingsPlugins.h" />
+		<Unit filename="pnlSettingsProfiles.cpp" />
+		<Unit filename="pnlSettingsProfiles.h" />
 		<Unit filename="pnlTestOptions.cpp" />
 		<Unit filename="pnlTestOptions.h" />
 		<Unit filename="pnlTests.cpp" />
@@ -194,6 +198,7 @@
 		<Unit filename="wxpammconnection.h" />
 		<Unit filename="wxsmith/dlgEditName.wxs" />
 		<Unit filename="wxsmith/dlgMask.wxs" />
+		<Unit filename="wxsmith/dlgPin.wxs" />
 		<Unit filename="wxsmith/dlgSequence.wxs" />
 		<Unit filename="wxsmith/pnlAoIPInfo.wxs" />
 		<Unit filename="wxsmith/pnlHelp.wxs" />
@@ -201,6 +206,7 @@
 		<Unit filename="wxsmith/pnlLogControl.wxs" />
 		<Unit filename="wxsmith/pnlSettingsOptions.wxs" />
 		<Unit filename="wxsmith/pnlSettingsPlugins.wxs" />
+		<Unit filename="wxsmith/pnlSettingsProfiles.wxs" />
 		<Unit filename="wxsmith/pnlTestOptions.wxs" />
 		<Unit filename="wxsmith/pnlTests.wxs" />
 		<Unit filename="wxsmith/pnlUpdate.wxs" />
@@ -229,6 +235,8 @@
 					<wxDialog wxs="wxsmith/dlgSequence.wxs" src="dlgSequence.cpp" hdr="dlgSequence.h" fwddecl="0" i18n="1" name="dlgSequence" language="CPP" />
 					<wxDialog wxs="wxsmith/dlgEditName.wxs" src="dlgEditName.cpp" hdr="dlgEditName.h" fwddecl="0" i18n="1" name="dlgEditName" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlTestOptions.wxs" src="pnlTestOptions.cpp" hdr="pnlTestOptions.h" fwddecl="0" i18n="1" name="pnlTestOptions" language="CPP" />
+					<wxDialog wxs="wxsmith/dlgPin.wxs" src="dlgPin.cpp" hdr="dlgPin.h" fwddecl="0" i18n="1" name="dlgPin" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlSettingsProfiles.wxs" src="pnlSettingsProfiles.cpp" hdr="pnlSettingsProfiles.h" fwddecl="0" i18n="1" name="pnlSettingsProfiles" language="CPP" />
 				</resources>
 			</wxsmith>
 			<AutoVersioning>

@@ -2,6 +2,7 @@
 <wxsmith>
 	<object class="wxDialog" name="pam2Dialog">
 		<title>wxWidgets app</title>
+		<pos>0,0</pos>
 		<size>800,480</size>
 		<bg>#000000</bg>
 		<style>wxNO_BORDER</style>

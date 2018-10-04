@@ -28,7 +28,7 @@ dlgEditName::dlgEditName(wxWindow* parent,wxString sName, long nChannel, wxWindo
 	Move(wxPoint(0,0));
 	SetForegroundColour(wxColour(255,255,255));
 	SetBackgroundColour(wxColour(0,0,0));
-	wxFont thisFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
+	wxFont thisFont(14,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	SetFont(thisFont);
 	m_pKbd1 = new wmKeyboard(this, ID_M_PKBD1, wxPoint(10,90), wxDefaultSize, 0, 0);
 	m_pKbd1->SetForegroundColour(wxColour(255,255,255));
@@ -42,7 +42,7 @@ dlgEditName::dlgEditName(wxWindow* parent,wxString sName, long nChannel, wxWindo
 	m_ppnlChannel = new wxPanel(this, ID_PANEL1, wxPoint(664,30), wxSize(90,140), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
 	m_ppnlChannel->Hide();
 	m_ppnlChannel->SetBackgroundColour(wxColour(0,0,0));
-	m_plstChannels = new wmList(m_ppnlChannel, ID_M_PLST1, wxPoint(0,0), wxSize(84,130), wmList::STYLE_SELECT, 0, wxSize(-1,40), 1, wxSize(1,1));
+	m_plstChannels = new wmList(m_ppnlChannel, ID_M_PLST1, wxPoint(0,0), wxSize(84,130), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 1, wxSize(-1,-1));
 	m_plstChannels->SetBackgroundColour(wxColour(0,0,0));
 
 	Connect(ID_M_PEDT1,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&dlgEditName::OnedtNameText);

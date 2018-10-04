@@ -43,6 +43,7 @@
 #include "version.h"
 #include "iomanager.h"
 #include "pnlTestOptions.h"
+#include "dlgPin.h"
 
 //(*InternalHeaders(pam2Dialog)
 #include <wx/bitmap.h>
@@ -117,6 +118,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     //(*Initialize(pam2Dialog)
     Create(parent, id, _("wxWidgets app"), wxDefaultPosition, wxDefaultSize, wxNO_BORDER, _T("id"));
     SetClientSize(wxSize(800,480));
+    Move(wxPoint(0,0));
     SetBackgroundColour(wxColour(0,0,0));
     m_pswpSplash = new wmSwitcherPanel(this, ID_M_PSWP3, wxDefaultPosition, wxSize(800,480), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP3"));
     m_pswpSplash->SetPageNameStyle(0);
@@ -504,6 +506,15 @@ void pam2Dialog::ShowMonitorPanel(const wxString& sPanel)
 
 void pam2Dialog::ShowSettingsPanel()
 {
+    if(Settings::Get().Read(wxT("General"), wxT("Pin"),0) == 1)
+    {
+        dlgPin aDlg(this);
+        if(aDlg.ShowModal() == wxID_CANCEL)
+        {
+            return;
+        }
+    }
+
     m_pswpMain->ChangeSelection(wxT("Settings"));
 
     m_plstOptions->Freeze();
@@ -516,6 +527,7 @@ void pam2Dialog::ShowSettingsPanel()
     m_plstOptions->AddButton(wxT("Network"));
     m_plstOptions->AddButton(wxT("Plugins"));
     m_plstOptions->AddButton(wxT("Update"));
+    m_plstOptions->AddButton(wxT("Profiles"));
     m_plstOptions->AddButton(wxT("General"));
 
 

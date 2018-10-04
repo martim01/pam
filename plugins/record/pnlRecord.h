@@ -13,6 +13,7 @@
 
 class timedbuffer;
 class session;
+class RecordThread;
 
 class pnlRecord: public wxPanel
 {
@@ -61,10 +62,9 @@ class pnlRecord: public wxPanel
 		void OnbtnClearClick(wxCommandEvent& event);
 		//*)
 
-        bool m_bRecording;
         wxDateTime m_dtRecording;
-        SoundFile m_sf;
 
+        RecordThread* m_pRecorder;
         unsigned int m_nInputChannels;
         unsigned int m_nSampleRate;
 

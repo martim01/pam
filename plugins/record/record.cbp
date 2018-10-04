@@ -130,6 +130,8 @@
 		<Unit filename="record.h" />
 		<Unit filename="recordbuilder.cpp" />
 		<Unit filename="recordbuilder.h" />
+		<Unit filename="recordthread.cpp" />
+		<Unit filename="recordthread.h" />
 		<Unit filename="wxsmith/pnlRecord.wxs" />
 		<Extensions>
 			<code_completion />
