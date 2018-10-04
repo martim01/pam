@@ -43,7 +43,7 @@
 
 
 #include "wxServDisc.h"
-#include "wmlogevent.h"
+#include "../../pambase/wmlogevent.h"
 
 // Compatability defines
 #ifdef __APPLE__

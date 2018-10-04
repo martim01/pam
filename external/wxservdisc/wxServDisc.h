@@ -55,7 +55,7 @@ typedef int SOCKET;       // under windows, SOCKET is unsigned
 #endif
 
 
-#include "dlldefine.h"
+#include "../../pambase/dlldefine.h"
 
 
 // make available custom notify event if getResults() would yield sth new

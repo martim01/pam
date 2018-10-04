@@ -157,6 +157,7 @@
 			<Add directory="$(#live_group.include)" />
 			<Add directory="$(#live_usage.include)" />
 			<Add directory="$(#live_basicusage.include)" />
+			<Add directory="../external/wxservdisc" />
 		</Compiler>
 		<Linker>
 			<Add directory="$(#live_group.lib)" />
@@ -164,10 +165,16 @@
 			<Add directory="$(#live_usage.lib)" />
 			<Add directory="$(#live_basicusage.lib)" />
 		</Linker>
-		<Unit filename="1035.c">
+		<Unit filename="../external/wxservdisc/1035.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="1035.h" />
+		<Unit filename="../external/wxservdisc/1035.h" />
+		<Unit filename="../external/wxservdisc/mdnsd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../external/wxservdisc/mdnsd.h" />
+		<Unit filename="../external/wxservdisc/wxServDisc.cpp" />
+		<Unit filename="../external/wxservdisc/wxServDisc.h" />
 		<Unit filename="PamMediaSession.h" />
 		<Unit filename="PamTaskScheduler.cpp" />
 		<Unit filename="PamTaskScheduler.h" />
@@ -199,10 +206,6 @@
 		<Unit filename="levelcalculator.h" />
 		<Unit filename="levelmeter.cpp" />
 		<Unit filename="levelmeter.h" />
-		<Unit filename="mdnsd.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="mdnsd.h" />
 		<Unit filename="monitorevent.cpp" />
 		<Unit filename="monitorevent.h" />
 		<Unit filename="monitorpluginbuilder.cpp" />
@@ -285,8 +288,6 @@
 		<Unit filename="wmtestlog.h" />
 		<Unit filename="wmtimeedit.cpp" />
 		<Unit filename="wmtimeedit.h" />
-		<Unit filename="wxServDisc.cpp" />
-		<Unit filename="wxServDisc.h" />
 		<Unit filename="wxsink.cpp" />
 		<Unit filename="wxsink.h" />
 		<Unit filename="wxsmith/wmipeditpnl.wxs" />
