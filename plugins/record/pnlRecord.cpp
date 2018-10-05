@@ -90,7 +90,8 @@ pnlRecord::~pnlRecord()
 {
 	//(*Destroy(pnlRecord)
 	//*)
-	m_pRecorder->Delete();
+	if(m_pRecorder)
+        m_pRecorder->Delete();
 }
 
 
@@ -107,8 +108,8 @@ void pnlRecord::OnbtnRecordClick(wxCommandEvent& event)
             m_pKbd1->Disable();
             m_pedtFile->Disable();
             Settings::Get().Write(wxT("Test"), wxT("Lock"), 1);
-            m_pRecorder->Create();
-            m_pRecorder->SetPriority(WXTHREAD_MIN_PRIORITY);
+            //m_pRecorder->Create();
+            //m_pRecorder->SetPriority(WXTHREAD_MIN_PRIORITY);
             m_pRecorder->Run();
         }
         else

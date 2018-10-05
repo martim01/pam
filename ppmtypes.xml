@@ -16,7 +16,7 @@
 		<scale>-34,-30,-26,-22,-18,-14,-10,-6,-2</scale>
 		<offset>-18</offset>
 		<risetime>10</risetime>
-		<risedb>78</risedb>
+		<risedb>87</risedb>
 		<falltime>2800</falltime>
 		<falldb>24</falldb>
 		<units>dB</units>

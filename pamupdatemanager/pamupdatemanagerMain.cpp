@@ -523,4 +523,5 @@ void pamupdatemanagerDialog::OnbtnShowClick(wxCommandEvent& event)
 
 void pamupdatemanagerDialog::OnlstShowSelected(wxCommandEvent& event)
 {
+    PopulateUpdateList();
 }

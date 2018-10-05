@@ -58,7 +58,7 @@ pnlSettingsProfiles::pnlSettingsProfiles(wxWindow* parent,wxWindowID id,const wx
 	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsProfiles::OnbtnDeleteClick);
 	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsProfiles::OnbtnSaveClick);
 	//*)
-
+    SetBackgroundColour(*wxBLACK);
     PopulateList();
 }
 
