@@ -4,7 +4,6 @@
 		<scale>-34,-30,-26,-22,-18,-14,-10,-6,-2</scale>
 		<offset>-34</offset>
 		<risetime>10</risetime>
-		<risedb>78</risedb>
 		<falltime>2800</falltime>
 		<falldb>24</falldb>
 		<units></units>
@@ -16,7 +15,6 @@
 		<scale>-34,-30,-26,-22,-18,-14,-10,-6,-2</scale>
 		<offset>-18</offset>
 		<risetime>10</risetime>
-		<risedb>87</risedb>
 		<falltime>2800</falltime>
 		<falldb>24</falldb>
 		<units>dB</units>
@@ -28,7 +26,6 @@
 		<scale>-62,-52,-42,-32,-22,-17,-12,-7,-2</scale>
 		<offset>-12</offset>
 		<risetime>5</risetime>
-		<risedb>78</risedb>
 		<falltime>1700</falltime>
 		<falldb>20</falldb>
 		<units>dB</units>
@@ -39,7 +36,6 @@
 		<scale>-54,-48,-42,-36,-30,-24,-18,-12,-9,-6</scale>
 		<offset>-18</offset>
 		<risetime>5</risetime>
-		<risedb>78</risedb>
 		<falltime>1700</falltime>
 		<falldb>20</falldb>
 		<units>dB</units>
@@ -51,7 +47,6 @@
 		<scale>-60,-50,-40,-35,-30,-25,-20,-15,-10,-5</scale>
 		<offset>0</offset>
 		<risetime>1</risetime>
-		<risedb>78</risedb>
 		<falltime>1700</falltime>
 		<falldb>20</falldb>
 		<units>dBFS</units>
@@ -61,8 +56,7 @@
 		<name>VU</name>
 		<scale>-34, -24, -21, -19, -17, -14, -11,-6,-3</scale>
 		<offset>-14</offset>
-		<risetime>300</risetime>
-		<risedb>30</risedb>
+		<risetime>165</risetime>
 		<falltime>300</falltime>
 		<falldb>30</falldb>
 		<units>VU</units>
@@ -73,7 +67,6 @@
 		<scale>-60,-54,-48,-42,-36,-30,-24,-21,-18,-15,-12,-9,-6,-3</scale>
 		<offset>0</offset>
 		<risetime>1</risetime>
-		<risedb>78</risedb>
 		<falltime>1700</falltime>
 		<falldb>20</falldb>
 		<units>dBFS</units>
@@ -85,7 +78,6 @@
 		<scale>-60,-54,-48,-42,-36,-30,-24,-21,-18,-15,-12,-9,-6,-3</scale>
 		<offset>-18</offset>
 		<risetime>1</risetime>
-		<risedb>78</risedb>
 		<falltime>1700</falltime>
 		<falldb>20</falldb>
 		<units>dBFS</units>
@@ -97,7 +89,6 @@
 		<scale>-49, -43, -37, -31, -28, -25, -22, -19, -16, -13, -6</scale>
 		<offset>-13</offset>
 		<risetime>1</risetime>
-		<risedb>78</risedb>
 		<falltime>1700</falltime>
 		<falldb>20</falldb>
 		<units>dBFS</units>
@@ -109,7 +100,6 @@
 		<scale>-60,-54,-48,-42,-36,-30,-24,-21,-18,-15,-12,-9,-6,-3</scale>
 		<offset>0</offset>
 		<risetime>1</risetime>
-		<risedb>78</risedb>
 		<falltime>1700</falltime>
 		<falldb>20</falldb>
 		<units>dBFS</units>
