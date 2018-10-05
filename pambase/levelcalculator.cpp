@@ -83,6 +83,8 @@ void LevelCalculator::SetDynamicResponse(double dRiseTime, double dRisedB, doubl
     m_dFallMs = dFallTime;
     m_dFalldB = dFalldB;
 
+    m_dDropFactor = pow(10.0, -dFalldB/20.0);
+
     CalculateDynamicRepsonse();
 }
 
@@ -102,6 +104,13 @@ void LevelCalculator::CalculateDynamicRepsonse()
     {
         m_dRiseSample = m_dRisedB*dRiseInterval*m_dSpeed;
     }
+
+    m_dDropRatio = pow(m_dDropFactor, dFallInterval);
+
+    m_dRiseRatio = 1.0 - pow(0.4, 1.0/(static_cast<double>(m_nSampleRate)*0.0025));
+
+    m_dRiseRatio = m_dRiseRatio*(10.0/m_dRiseMs);
+    wxLogDebug(wxT("Drop Ratio = %f  Rise Ratio = %f"), m_dDropRatio, m_dRiseRatio);
 }
 
 void LevelCalculator::CalculateLevel(const timedbuffer* pBuffer)
@@ -138,18 +147,24 @@ void LevelCalculator::CalculatePpm(const timedbuffer* pBuffer)
         for(unsigned int j = 0; j < m_nChannels; j++)
         {
             m_dInterim[j] = fabs(pBuffer->GetBuffer()[i+j]);
-            ConvertToDb(m_dInterim[j]);
             if(m_dInterim[j] > m_dLastLevel[j])
             {
-                m_dInterim[j] = min(m_dInterim[j], m_dLastLevel[j]+m_dRiseSample);
+                m_dInterim[j] = m_dLastLevel[j] + m_dRiseRatio*(m_dInterim[j]-m_dLastLevel[j]);
             }
             else if(m_dInterim[j] < m_dLastLevel[j])
             {
-                m_dInterim[j] = max(m_dInterim[j], m_dLastLevel[j]-m_dFallSample);
+                m_dInterim[j] = max(m_dInterim[j], m_dLastLevel[j]*m_dDropRatio);
             }
             m_dLastLevel[j] = m_dInterim[j];
+
             m_dLevel[j] = max(m_dLevel[j], m_dInterim[j]);
         }
+
+    }
+
+    for(unsigned int j = 0; j < m_nChannels; j++)
+    {
+        ConvertToDb(m_dLevel[j]);
     }
 
     if(m_nChannels == 2)
@@ -172,20 +187,22 @@ void LevelCalculator::CalculatePpm(const timedbuffer* pBuffer)
 
             for(int j = 0; j < 2; j++)
             {
-                ConvertToDb(m_dInterimMS[j]);
                 if(m_dInterimMS[j] > m_dLastMS[j])
                 {
-                    m_dInterimMS[j] = min(m_dInterimMS[j], m_dLastMS[j]+m_dRiseSample);
+                    m_dInterimMS[j] = m_dLastMS[j] + m_dRiseRatio*(m_dInterimMS[j]-m_dLastMS[j]);
+
                 }
                 else if(m_dInterimMS[j] < m_dLastMS[j])
                 {
-                    m_dInterimMS[j] = max(m_dInterimMS[j], m_dLastMS[j]-m_dFallSample);
+                    m_dInterimMS[j] = max(m_dInterimMS[j], m_dLastMS[j]*m_dDropRatio);
                 }
                 m_dLastMS[j] = m_dInterimMS[j];
 
                 m_dMS[j] = max(m_dMS[j], m_dInterimMS[j]);
             }
         }
+        ConvertToDb(m_dMS[0]);
+        ConvertToDb(m_dMS[1]);
     }
 }
 

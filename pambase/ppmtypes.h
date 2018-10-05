@@ -5,7 +5,7 @@
 
 struct PAMBASE_IMPEXPORT ppmtype
 {
-    ppmtype() : dOffset(0), dRiseTime(0), dRisedB(80), dFallTime(0), dFalldB(20), dScaling(1), nType(0), dOverMod(0.0){}
+    ppmtype() : dOffset(0), dRiseTime(0), dRisedB(90), dFallTime(0), dFalldB(20), dScaling(1), nType(0), dOverMod(0.0){}
     std::vector<double> vLevels;
     double dOffset;
     double dRiseTime;
