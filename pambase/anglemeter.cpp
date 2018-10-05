@@ -164,10 +164,21 @@ void AngleMeter::OnPaint(wxPaintEvent& event)
     }
     dc.DestroyClippingRegion();
 
-    m_uiLevelText[0].Draw(dc, uiRect::BORDER_DOWN);
-    if(m_nRouting != MONO)
+    if(m_bTextCurrent)
     {
-        m_uiLevelText[1].Draw(dc, uiRect::BORDER_DOWN);
+        m_uiLevelText[0].Draw(dc, uiRect::BORDER_FLAT);
+        if(m_nRouting != MONO)
+        {
+            m_uiLevelText[1].Draw(dc, uiRect::BORDER_FLAT);
+        }
+    }
+    if(m_bTextPeak)
+    {
+        m_uiPeakText[0].Draw(dc, uiRect::BORDER_FLAT);
+        if(m_nRouting != MONO)
+        {
+            m_uiPeakText[1].Draw(dc, uiRect::BORDER_FLAT);
+        }
     }
 
         dc.SetPen(*wxBLACK_PEN);
@@ -207,16 +218,22 @@ void AngleMeter::InitMeter(const wxString& sText,double dMin)
     m_uiType.SetRect(m_rectGrid.GetRight()-80, m_rectGrid.GetBottom()-40, 70, 30);
     m_uiType.SetBackgroundColour(*wxBLACK);
 
-    m_uiLevelText[0].SetRect(m_rectGrid.GetLeft()+5,GetClientRect().GetBottom()-23-m_nBevel, m_rectGrid.GetWidth()/2-5, 20);
+    m_uiLevelText[0].SetRect(m_rectGrid.GetLeft()+5,GetClientRect().GetBottom()-23-m_nBevel, m_rectGrid.GetWidth()/4-2, 20);
+    m_uiPeakText[0].SetRect(m_uiLevelText[0].GetRight()+2,GetClientRect().GetBottom()-23-m_nBevel, m_rectGrid.GetWidth()/4-5, 20);
 
     int nLeft(m_rectGrid.GetLeft()+m_rectGrid.GetWidth()/2+5);
-    m_uiLevelText[1].SetRect(nLeft,GetClientRect().GetBottom()-23-m_nBevel, m_rectGrid.GetRight()-5-nLeft, 20);
+    m_uiLevelText[1].SetRect(nLeft,GetClientRect().GetBottom()-23-m_nBevel, m_rectGrid.GetWidth()/4-2, 20);
+    m_uiPeakText[1].SetRect(m_uiLevelText[1].GetRight()+2,GetClientRect().GetBottom()-23-m_nBevel, m_rectGrid.GetWidth()/4-5, 20);
 
     m_uiLevelText[0].SetGradient(0);
-    m_uiLevelText[0].SetBackgroundColour(wxColour(0,0,100));
+    m_uiLevelText[0].SetBackgroundColour(wxColour(0,0,150));
+    m_uiPeakText[0].SetGradient(0);
+    m_uiPeakText[0].SetBackgroundColour(wxColour(0,0,100));
 
     m_uiLevelText[1].SetGradient(0);
-    m_uiLevelText[1].SetBackgroundColour(wxColour(0,0,100));
+    m_uiLevelText[1].SetBackgroundColour(wxColour(0,0,150));
+    m_uiPeakText[1].SetGradient(0);
+    m_uiPeakText[1].SetBackgroundColour(wxColour(0,0,100));
 }
 
 bool AngleMeter::SetMeterColour(const wxColour& clrMeter1, const wxColour& clrMeter2)
@@ -264,7 +281,8 @@ void AngleMeter::ShowValue(double dValue[2])
         WorkoutAngles(m_dLastValue[i], m_dAngle[i]);
         WorkoutAngles(m_dPeakValue[i], m_dAngleMax[i]);
 
-        m_uiLevelText[i].SetLabel(wxString::Format(wxT("%.1f [%.1f]"), (m_dLastValue[i]-m_dOffset)/m_dScalingFactor, (m_dPeakValue[i]-m_dOffset)/m_dScalingFactor));
+        m_uiLevelText[i].SetLabel(wxString::Format(wxT("%.1f"), (m_dLastValue[i]-m_dOffset)/m_dScalingFactor));
+        m_uiPeakText[i].SetLabel(wxString::Format(wxT("%.1f"), (m_dPeakValue[i]-m_dOffset)/m_dScalingFactor));
     }
     Refresh();
 }
@@ -346,3 +364,14 @@ void AngleMeter::SetMeterMSMode(long nMode)
     m_nMeterMSMode = nMode;
 }
 
+void AngleMeter::DisplayCurrentLevelAsText(bool bShow)
+{
+    m_bTextCurrent = bShow;
+    Refresh();
+}
+
+void AngleMeter::DisplayPeakLevelAsText(bool bShow)
+{
+    m_bTextPeak = bShow;
+    Refresh();
+}

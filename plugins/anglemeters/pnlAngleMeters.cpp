@@ -153,6 +153,8 @@ void pnlAngleMeters::CreateMeters()
     {
         m_vMeters[i]->SetPeakMode(m_pBuilder->ReadSetting(wxT("Peaks"),0));
         m_vMeters[i]->SetMeterMSMode(m_pBuilder->ReadSetting(wxT("M3M6"),2));
+        m_vMeters[i]->DisplayCurrentLevelAsText(m_pBuilder->ReadSetting(wxT("DisplayText_Current"),1));
+        m_vMeters[i]->DisplayPeakLevelAsText(m_pBuilder->ReadSetting(wxT("DisplayText_Peak"),1));
     }
     SetMode(wxT("BBC"));
     ColourMonitorButtons();
@@ -320,4 +322,20 @@ void pnlAngleMeters::ColourMonitorButtons()
 void pnlAngleMeters::OnLeftUp(wxMouseEvent& event)
 {
     m_pBuilder->Maximize((GetClientSize().x <=600));
+}
+
+
+void pnlAngleMeters::DisplayCurrentLevelAsText(bool bShow)
+{
+    for(size_t i= 0; i < m_vMeters.size(); i++)
+    {
+        m_vMeters[i]->DisplayCurrentLevelAsText(bShow);
+    }
+}
+void pnlAngleMeters::DisplayPeakLevelAsText(bool bShow)
+{
+    for(size_t i= 0; i < m_vMeters.size(); i++)
+    {
+        m_vMeters[i]->DisplayPeakLevelAsText(bShow);
+    }
 }

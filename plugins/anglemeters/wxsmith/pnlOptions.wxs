@@ -31,5 +31,23 @@
 			<style>wmList::STYLE_SELECT</style>
 			<handler function="OnlstMeter_PeaksSelected" entry="EVT_LIST_SELECTED" />
 		</object>
+		<object class="wmList" name="ID_M_PLST1" variable="m_plstText" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>5,5</button_gap>
+			<columns>3</columns>
+			<items />
+			<pos>0,80</pos>
+			<size>190,42</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI</style>
+			<handler function="OnlstTextSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+			<label>Display Level As Text</label>
+			<pos>0,50</pos>
+			<size>200,0</size>
+			<fg>#FFFFFF</fg>
+			<bg>#8000FF</bg>
+		</object>
 	</object>
 </wxsmith>

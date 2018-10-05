@@ -37,6 +37,8 @@ class pnlAngleMeters: public wxPanel
         void OutputChannels(const std::vector<char>& vChannels);
 
         void UpdateMeterStereo();
+        void DisplayCurrentLevelAsText(bool bShow);
+        void DisplayPeakLevelAsText(bool bShow);
 
 	protected:
 

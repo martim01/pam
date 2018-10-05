@@ -47,6 +47,9 @@ public:
         m_nInputChannels = nInputChannels;
     }
 
+    void DisplayCurrentLevelAsText(bool bShow);
+    void DisplayPeakLevelAsText(bool bShow);
+
     enum {PEAK_HIDE, PEAK_SHOW, PEAK_HOLD};
     enum {MONO, LEFT_RIGHT, MONO_STEREO};
 
@@ -111,9 +114,11 @@ protected:
     wxString m_sUnit;
     double m_dScalingFactor;
 
-    double m_dOverMod
-    ;
+    double m_dOverMod;
     wxString m_sReference;
+
+    bool m_bTextCurrent;
+    bool m_bTextPeak;
 };
 
 

@@ -20,6 +20,8 @@ m_pAngleMeters(0)
     RegisterForSettingsUpdates(wxT("Speed"), this);
     RegisterForSettingsUpdates(wxT("M3M6"), this);
     RegisterForSettingsUpdates(wxT("Stereo"), this);
+    RegisterForSettingsUpdates(wxT("DisplayText_Current"), this);
+    RegisterForSettingsUpdates(wxT("DisplayText_Peak"), this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&AngleMetersBuilder::OnSettingChanged);
 
@@ -55,7 +57,6 @@ list<pairOptionPanel_t> AngleMetersBuilder::CreateOptionPanels(wxWindow* pParent
 
 void AngleMetersBuilder::LoadSettings()
 {
-
 
 }
 
@@ -97,6 +98,14 @@ void AngleMetersBuilder::OnSettingChanged(SettingEvent& event)
     else if(event.GetKey() == wxT("Stereo"))
     {
         m_pAngleMeters->UpdateMeterStereo();
+    }
+    else if(event.GetKey() == wxT("DisplayText_Current"))
+    {
+        m_pAngleMeters->DisplayCurrentLevelAsText(ReadSetting(wxT("DisplayText_Current"),1));
+    }
+    else if(event.GetKey() == wxT("DisplayText_Peak"))
+    {
+        m_pAngleMeters->DisplayPeakLevelAsText(ReadSetting(wxT("DisplayText_Peak"),1));
     }
 
 }

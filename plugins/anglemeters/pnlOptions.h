@@ -3,6 +3,7 @@
 
 //(*Headers(pnlOptions)
 #include "wmbutton.h"
+#include "wmlabel.h"
 #include <wx/panel.h>
 #include "wmlist.h"
 //*)
@@ -17,8 +18,10 @@ class pnlOptions: public wxPanel
 		virtual ~pnlOptions();
 
 		//(*Declarations(pnlOptions)
+		wmLabel* m_pLbl1;
 		wmList* m_plstMeter_Peaks;
 		wmButton* m_pbnFreeze;
+		wmList* m_plstText;
 		wmButton* m_pbtnMeterClear;
 		//*)
 
@@ -28,6 +31,8 @@ class pnlOptions: public wxPanel
 		static const long ID_M_PBTN11;
 		static const long ID_M_PBTN12;
 		static const long ID_M_PLST25;
+		static const long ID_M_PLST1;
+		static const long ID_M_PLBL1;
 		//*)
 
 	private:
@@ -40,6 +45,7 @@ class pnlOptions: public wxPanel
 		void OnlstSpeedSelected(wxCommandEvent& event);
 		void OnbtnM3M6Click(wxCommandEvent& event);
 		void OnbtnShadingClick(wxCommandEvent& event);
+		void OnlstTextSelected(wxCommandEvent& event);
 		//*)
 
 		AngleMetersBuilder* m_pBuilder;
