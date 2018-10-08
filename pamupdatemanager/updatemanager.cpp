@@ -77,6 +77,10 @@ bool UpdateManager::GetUpdateList()
     {
         return GetUpdateListFromShare();
     }
+    else if(Settings::Get().Read(wxT("Update"), wxT("Type"), wxT("Share")) == wxT("USB"))
+    {
+        return GetUpdateListFromUSB();
+    }
     else if(Settings::Get().Read(wxT("Update"), wxT("Type"), wxT("Share")) == wxT("Local"))
     {
         return GetUpdateListFromLocal(Settings::Get().Read(wxT("Update"), wxT("Local"), wxT(".")));
@@ -171,6 +175,23 @@ bool UpdateManager::GetUpdateListFromShare()
     }
     wxExecute(wxT("sudo umount /mnt/share"), wxEXEC_SYNC);
     wxExecute(wxString::Format(wxT("sudo mount -t cifs -o user=pam,password=10653045 %s /mnt/share"), Settings::Get().Read(wxT("Update"), wxT("Share"), wxEmptyString)), wxEXEC_SYNC);
+
+    return GetUpdateListFromLocal(wxT("/mnt/share"));
+#else
+    return DecodeUpdateList(wxString::Format(wxT("%s/manifest.xml"), Settings::Get().Read(wxT("Update"), wxT("Share"), wxT(".")).c_str()));
+#endif
+}
+
+bool UpdateManager::GetUpdateListFromUSB()
+{
+    //unmount any previous share
+#ifdef __WXGNU__
+    if(wxDirExists(wxT("/mnt/share")) == false)
+    {
+        wxMkdir(wxT("/mnt/share"));
+    }
+    wxExecute(wxT("sudo umount /mnt/share"), wxEXEC_SYNC);
+    wxExecute(wxString::Format(wxT("sudo mount %s /mnt/share"), Settings::Get().Read(wxT("Update"), wxT("USB"), wxEmptyString)), wxEXEC_SYNC);
 
     return GetUpdateListFromLocal(wxT("/mnt/share"));
 #else
@@ -502,6 +523,11 @@ bool UpdateManager::UpdateFromWebServer(const wxString& sName, const wxString& s
     curl_easy_cleanup(pCurl);
 
     return ((res == CURLE_OK)&(m_nCurlResponseCode==200));
+}
+
+bool UpdateManager::UpdateFromUSB(const wxString& sName, const wxString& sTempFile, int nType)
+{
+    UpdateFromShare(sName, sTempFile, nType);
 }
 
 bool UpdateManager::UpdateFromShare(const wxString& sName, const wxString& sTempFile, int nType)

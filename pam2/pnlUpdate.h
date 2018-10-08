@@ -12,6 +12,7 @@
 #include "wmlist.h"
 //*)
 #include <wx/dir.h>
+#include <map>
 
 class pnlUpdate: public wxPanel
 {
@@ -26,9 +27,12 @@ class pnlUpdate: public wxPanel
 		wmLabel* m_pLbl3;
 		wmButton* m_pbtnCheck;
 		wmList* m_plstType;
+		wmLabel* m_pLbl7;
 		wmButton* m_pbtnShareSet;
 		wmEdit* m_pedtHTTP;
+		wmLabel* m_plblUSB;
 		wxPanel* pnlShare;
+		wmButton* m_pbtnDetect;
 		wmLabel* m_plblShareSet;
 		wmLabel* m_plblLocation;
 		wmKeyboard* m_pKbd1;
@@ -43,6 +47,8 @@ class pnlUpdate: public wxPanel
 		wmSwitcherPanel* m_pswpType;
 		wmLabel* m_plblHTTPCurrent;
 		wmLabel* m_plblLocalCurrent;
+		wxPanel* pnlUSB;
+		wmList* m_plstUsb;
 		wxPanel* Panel2;
 		wmButton* m_pbtnSelect;
 		wmEdit* m_pedtShare;
@@ -76,6 +82,11 @@ class pnlUpdate: public wxPanel
 		static const long ID_M_PLBL9;
 		static const long ID_M_PLBL4;
 		static const long ID_PANEL2;
+		static const long ID_M_PLBL13;
+		static const long ID_M_PBTN6;
+		static const long ID_M_PLST3;
+		static const long ID_M_PLBL12;
+		static const long ID_PANEL4;
 		static const long ID_M_PSWP1;
 		static const long ID_M_PBTN1;
 		//*)
@@ -90,12 +101,15 @@ class pnlUpdate: public wxPanel
 		void OnbtnCheckClick(wxCommandEvent& event);
 		void OnbtnSetHttpClick(wxCommandEvent& event);
 		void OnbtnShareSetClick(wxCommandEvent& event);
+		void OnbtnDetectClick(wxCommandEvent& event);
+		void OnlstUsbSelected(wxCommandEvent& event);
 		//*)
 
 		void ShowDirectories();
 
 		void ShowDrives();
 		wxString m_sLocation;
+		std::map<wxString, wxString> m_mUsb;
 		DECLARE_EVENT_TABLE()
 };
 

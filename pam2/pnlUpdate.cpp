@@ -1,6 +1,7 @@
 #include "pnlUpdate.h"
 
 //(*InternalHeaders(pnlUpdate)
+#include <wx/settings.h>
 #include <wx/font.h>
 #include <wx/intl.h>
 #include <wx/string.h>
@@ -14,6 +15,7 @@
 #include <wx/volume.h>
 #endif // __WXMSW__
 
+using namespace std;
 
 //(*IdInit(pnlUpdate)
 const long pnlUpdate::ID_M_PLBL3 = wxNewId();
@@ -40,6 +42,11 @@ const long pnlUpdate::ID_M_PLBL8 = wxNewId();
 const long pnlUpdate::ID_M_PLBL9 = wxNewId();
 const long pnlUpdate::ID_M_PLBL4 = wxNewId();
 const long pnlUpdate::ID_PANEL2 = wxNewId();
+const long pnlUpdate::ID_M_PLBL13 = wxNewId();
+const long pnlUpdate::ID_M_PBTN6 = wxNewId();
+const long pnlUpdate::ID_M_PLST3 = wxNewId();
+const long pnlUpdate::ID_M_PLBL12 = wxNewId();
+const long pnlUpdate::ID_PANEL4 = wxNewId();
 const long pnlUpdate::ID_M_PSWP1 = wxNewId();
 const long pnlUpdate::ID_M_PBTN1 = wxNewId();
 //*)
@@ -144,9 +151,30 @@ pnlUpdate::pnlUpdate(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 	m_plblLocation->SetBorderState(uiRect::BORDER_NONE);
 	m_plblLocation->SetForegroundColour(wxColour(0,0,0));
 	m_plblLocation->SetBackgroundColour(wxColour(255,255,255));
+	pnlUSB = new wxPanel(m_pswpType, ID_PANEL4, wxPoint(0,0), wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL4"));
+	pnlUSB->SetBackgroundColour(wxColour(0,0,0));
+	m_pLbl7 = new wmLabel(pnlUSB, ID_M_PLBL13, _("Connect a USB Drive and press Detect button"), wxPoint(0,0), wxSize(600,60), 0, _T("ID_M_PLBL13"));
+	m_pLbl7->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl7->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl7->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
+	wxFont m_pLbl7Font(18,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pLbl7->SetFont(m_pLbl7Font);
+	m_pbtnDetect = new wmButton(pnlUSB, ID_M_PBTN6, _("Detect USB Drive"), wxPoint(200,60), wxSize(200,40), 0, wxDefaultValidator, _T("ID_M_PBTN6"));
+	m_pbtnDetect->SetBackgroundColour(wxColour(0,0,255));
+	wxFont m_pbtnDetectFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pbtnDetect->SetFont(m_pbtnDetectFont);
+	m_plstUsb = new wmList(pnlUSB, ID_M_PLST3, wxPoint(0,200), wxSize(600,120), wmList::STYLE_SELECT, 0, wxSize(-1,40), 6, wxSize(5,5));
+	m_plstUsb->SetBackgroundColour(wxColour(0,0,0));
+	m_plblUSB = new wmLabel(pnlUSB, ID_M_PLBL12, wxEmptyString, wxPoint(0,100), wxSize(600,100), 0, _T("ID_M_PLBL12"));
+	m_plblUSB->SetBorderState(uiRect::BORDER_NONE);
+	m_plblUSB->SetForegroundColour(wxColour(0,255,0));
+	m_plblUSB->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
+	wxFont m_plblUSBFont(18,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_plblUSB->SetFont(m_plblUSBFont);
 	m_pswpType->AddPage(Panel1, _("HTTP"), false);
 	m_pswpType->AddPage(pnlShare, _("Share"), false);
 	m_pswpType->AddPage(Panel2, _("Local"), false);
+	m_pswpType->AddPage(pnlUSB, _("USB"), false);
 	m_pbtnCheck = new wmButton(this, ID_M_PBTN1, _("Check For Updates"), wxPoint(200,390), wxSize(200,40), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnCheck->SetBackgroundColour(wxColour(67,167,69));
 	wxFont m_pbtnCheckFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
@@ -158,6 +186,8 @@ pnlUpdate::pnlUpdate(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlUpdate::OnlstFoldersSelected);
 	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlUpdate::OnbtnUpClick);
 	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlUpdate::OnbtnSelectClick);
+	Connect(ID_M_PBTN6,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlUpdate::OnbtnDetectClick);
+	Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlUpdate::OnlstUsbSelected);
 	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlUpdate::OnbtnCheckClick);
 	//*)
     m_plstFolders->SetGradient(0);
@@ -170,6 +200,7 @@ pnlUpdate::pnlUpdate(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 	//m_plstType->AddButton(wxT("FTP"));
     m_plstType->AddButton(wxT("Share"));
     m_plstType->AddButton(wxT("Local"));
+    m_plstType->AddButton(wxT("USB"));
 
 	m_plstType->SelectButton(Settings::Get().Read(wxT("Update"), wxT("Type"), wxT("Share")), true);
 
@@ -295,7 +326,11 @@ void pnlUpdate::OnbtnCheckClick(wxCommandEvent& event)
           wxString sUpdate = wxT("pamupdatemanager");
         #endif
     #else
+        #ifdef __WXMSW__
+            wxString sUpdate = wxT("pamupdatemanager");
+        #else
         wxString Update = wxT("sudo pamupdatemanager");
+        #endif // __WXMSW__
     #endif
 
     wxExecute(sUpdate);
@@ -311,4 +346,50 @@ void pnlUpdate::OnbtnShareSetClick(wxCommandEvent& event)
 {
     Settings::Get().Write(wxT("Update"), wxT("Share"), m_pedtShare->GetValue());
     m_pLbl8->SetLabel(Settings::Get().Read(wxT("Update"), wxT("Share"), wxEmptyString));
+}
+
+void pnlUpdate::OnbtnDetectClick(wxCommandEvent& event)
+{
+    m_plstUsb->Freeze();
+    m_plstUsb->Clear();
+    wxArrayString asFiles;
+    wxExecute(wxT("sh -c \"lsblk -o name,label | grep sda \""), asFiles);
+    for(size_t i = 0; i < asFiles.GetCount(); i++)
+    {
+        if(asFiles[i].Find(wxT("-")) != wxNOT_FOUND)
+        {
+            wxString sDevice = asFiles[i].BeforeFirst(wxT(' ')).AfterLast(wxT('-'));
+            wxString sLabel = asFiles[i].AfterFirst(wxT(' ')).Trim();
+            m_mUsb.insert(make_pair(sLabel, sDevice));
+            m_plstUsb->AddButton(sLabel);
+        }
+    }
+    if(m_plstUsb->GetItemCount() == 0)
+    {
+        m_plblUSB->SetLabel(wxT("No USB Drives Detected"));
+        m_plblUSB->SetForegroundColour(*wxRED);
+    }
+    else if(m_plstUsb->GetItemCount() == 1)
+    {
+        m_plblUSB->SetLabel(wxT("USB Drive Detected"));
+        m_plblUSB->SetForegroundColour(*wxGREEN);
+        m_plstUsb->SelectButton(0, true);
+        m_plstUsb->Hide();
+    }
+    else
+    {
+        m_plblUSB->SetLabel(wxString::Format(wxT("% USB Drives Detected.\nPlease select from the list."), m_plstUsb->GetItemCount()));
+        m_plblUSB->SetForegroundColour(*wxGREEN);
+        m_plstUsb->Show();
+    }
+    m_plstUsb->Thaw();
+}
+
+void pnlUpdate::OnlstUsbSelected(wxCommandEvent& event)
+{
+    map<wxString, wxString>::iterator itDevice = m_mUsb.find(event.GetString());
+    if(itDevice != m_mUsb.end())
+    {
+        Settings::Get().Write(wxT("Update"), wxT("USB"), itDevice->second);
+    }
 }

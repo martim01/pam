@@ -74,6 +74,7 @@ class UpdateManager
 
         bool GetUpdateListFromWebServer();
         bool GetUpdateListFromShare();
+        bool GetUpdateListFromUSB();
         bool GetUpdateListFromLocal(const wxString& sPath);
         bool GetUpdateListFromFTP();
 
@@ -81,6 +82,7 @@ class UpdateManager
         bool UpdateFromShare(const wxString& sName, const wxString& sTempFile, int nType);
         bool UpdateFromLocal(const wxString& sName, const wxString& sTempFile, int nType);
         bool UpdateFromFTP(const wxString& sName, const wxString& sTempFile);
+        bool UpdateFromUSB(const wxString& sName, const wxString& sTempFile, int nType);
 
         bool DecodeUpdateList(const wxXmlDocument& xmlDoc);
         void AddUpdateToList(wxXmlNode* pUpdateNode);
