@@ -110,7 +110,7 @@ void LevelCalculator::CalculateDynamicRepsonse()
     m_dRiseRatio = 1.0 - pow(0.4, 1.0/(static_cast<double>(m_nSampleRate)*0.0025));
 
     m_dRiseRatio = m_dRiseRatio*(10.0/m_dRiseMs)*m_dSpeed;
-    wxLogDebug(wxT("Drop Ratio = %f  Rise Ratio = %f"), m_dDropRatio, m_dRiseRatio);
+
 }
 
 void LevelCalculator::CalculateLevel(const timedbuffer* pBuffer)
@@ -134,7 +134,7 @@ void LevelCalculator::CalculateLevel(const timedbuffer* pBuffer)
             break;
     }
 
-    wxLogDebug(wxT("Left = %f dB"), m_dLevel[0]);
+
 }
 
 
@@ -348,7 +348,7 @@ void LevelCalculator::CalculateRiseFall(unsigned long nSamples)
     double dFalldB(m_dFallSample*static_cast<double>(nSamples));
     double dRisedB(m_dRiseSample*static_cast<double>(nSamples));
 
-    wxLogDebug(wxT("Fall = %f db/Buffer Rise = %f db/Buffer"), dFalldB, dRisedB);
+
     for(int i = 0; i < 8; i++)
     {
         CalculateRiseFall(m_dLevel[i], m_dLastLevel[i],dFalldB,dRisedB,(i==0));

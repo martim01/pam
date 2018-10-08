@@ -37,7 +37,9 @@ pnlAngleMeters::pnlAngleMeters(wxWindow* parent,AngleMetersBuilder* pBuilder,wxW
 
     SetBackgroundColour(*wxBLACK);
     Connect(wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&pnlAngleMeters::OnMonitorClicked);
-    m_pCalculator = new LevelCalculator(0);
+    m_pCalculator = new LevelCalculator(-70.0);
+    CreateMeters();
+
 }
 
 pnlAngleMeters::~pnlAngleMeters()
@@ -56,7 +58,7 @@ void pnlAngleMeters::SetSession(const session& aSession)
     }
     else
     {
-        m_nInputChannels = 0;
+        m_nInputChannels = 2;
     }
 
     m_pCalculator->InputSession(aSession);
@@ -156,7 +158,7 @@ void pnlAngleMeters::CreateMeters()
         m_vMeters[i]->DisplayCurrentLevelAsText(m_pBuilder->ReadSetting(wxT("DisplayText_Current"),1));
         m_vMeters[i]->DisplayPeakLevelAsText(m_pBuilder->ReadSetting(wxT("DisplayText_Peak"),1));
     }
-    SetMode(wxT("BBC"));
+    SetMode(m_pBuilder->ReadSetting(wxT("Mode"), wxT("BBC")));
     ColourMonitorButtons();
 }
 

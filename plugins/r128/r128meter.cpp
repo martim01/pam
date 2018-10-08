@@ -4,7 +4,6 @@
 #include <wx/dcbuffer.h>
 #include <list>
 #include <wx/dcmemory.h>
-#include "meter.h"
 #include <algorithm>
 #include "settings.h"
 

@@ -51,7 +51,7 @@ pnlMeterSettings::pnlMeterSettings(wxWindow* parent,AngleMetersBuilder* pBuilder
 	m_pbtnStereo->SetToggleLook(true, wxT("Mono"), wxT("Stereo"), 50.0);
 
 	m_plstSpeed->SelectButton((m_pBuilder->ReadSetting(wxT("Speed"),1) == 1),true);
-	m_pbtnM3M6->ToggleSelection(m_pBuilder->ReadSetting(wxT("M3M6"),2) == 2, true);
+	m_pbtnM3M6->ToggleSelection(m_pBuilder->ReadSetting(wxT("M3M6"),1) == 1, true);
 	m_pbtnStereo->ToggleSelection(m_pBuilder->ReadSetting(wxT("Stereo"),0) == 1, true);
 
 }
@@ -67,11 +67,11 @@ void pnlMeterSettings::OnbtnM3M6Click(wxCommandEvent& event)
 {
     if(event.IsChecked())
     {
-        m_pBuilder->WriteSetting(wxT("M3M6"),2);
+        m_pBuilder->WriteSetting(wxT("M3M6"),1);
     }
     else
     {
-        m_pBuilder->WriteSetting(wxT("M3M6"),1);
+        m_pBuilder->WriteSetting(wxT("M3M6"),0);
     }
 }
 
