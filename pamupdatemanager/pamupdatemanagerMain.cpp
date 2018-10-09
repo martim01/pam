@@ -199,6 +199,9 @@ pamupdatemanagerDialog::~pamupdatemanagerDialog()
 {
 	//(*Destroy(pamupdatemanagerDialog)
 	//*)
+	#ifdef __WXGNU__
+	wxExecute(wxT("sudo umount /mnt/share"), wxEXEC_SYNC);
+	#endif // __WXGNU__
 }
 
 

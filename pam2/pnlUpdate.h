@@ -13,7 +13,7 @@
 //*)
 #include <wx/dir.h>
 #include <map>
-
+#include <wx/timer.h>
 class pnlUpdate: public wxPanel
 {
 	public:
@@ -104,10 +104,14 @@ class pnlUpdate: public wxPanel
 		void OnbtnDetectClick(wxCommandEvent& event);
 		void OnlstUsbSelected(wxCommandEvent& event);
 		//*)
-
+        void OnShown(wxShowEvent& event);
+		void OnTimerUSB(wxTimerEvent& event);
 		void ShowDirectories();
-
 		void ShowDrives();
+
+		void CheckUSB();
+
+		wxTimer m_timerUSB;
 		wxString m_sLocation;
 		std::map<wxString, wxString> m_mUsb;
 		DECLARE_EVENT_TABLE()
