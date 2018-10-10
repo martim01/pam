@@ -79,4 +79,5 @@ class PAMBASE_IMPEXPORT LevelCalculator
         double m_dRiseFactor;
         double m_dRiseTime;
         double m_dRiseRatio;
+
 };

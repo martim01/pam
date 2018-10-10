@@ -240,14 +240,18 @@ pnlUpdate::~pnlUpdate()
 void pnlUpdate::OnlstTypeSelected(wxCommandEvent& event)
 {
     m_pswpType->ChangeSelection(event.GetString());
-    if(event.GetString() == wxT("USB") && IsShownOnScreen())
+    if(event.GetString() == wxT("USB"))
     {
-        CheckUSB();
-        m_timerUSB.Start(1000, true);
+        if(IsShownOnScreen())
+        {
+            CheckUSB();
+            m_timerUSB.Start(2000, true);
+        }
     }
     else
     {
         m_timerUSB.Stop();
+        m_pbtnCheck->Enable();
     }
 
     Settings::Get().Write(wxT("Update"), wxT("Type"), event.GetString());
@@ -430,7 +434,7 @@ void pnlUpdate::CheckUSB()
 
     if(IsShownOnScreen())
     {
-        m_timerUSB.Start(1000, true);
+        m_timerUSB.Start(2000, true);
     }
 }
 
@@ -453,6 +457,6 @@ void pnlUpdate::OnShown(wxShowEvent& event)
     }
     else if(Settings::Get().Read(wxT("Update"), wxT("Type"), wxT("Shared")) == wxT("USB"))
     {
-        m_timerUSB.Start(1000, true);
+        m_timerUSB.Start(2000, true);
     }
 }

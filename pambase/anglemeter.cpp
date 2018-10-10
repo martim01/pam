@@ -29,8 +29,11 @@ AngleMeter::AngleMeter(wxWindow *parent, wxWindowID id, const wxString & sText,d
     m_nChannel(nChannel),
     m_dOverMod(0.0)
 {
-    m_dLastValue[0] = -180;
-    m_dLastValue[1] = -180;
+    m_dLastValue[0] = dMin;
+    m_dLastValue[1] = dMin;
+    m_dPeakValue[0] = dMin;
+    m_dPeakValue[1] = dMin;
+
     wxSize szInit(size);
     wxSize bestSize = DoGetBestSize();
     if(size.x<=0)
@@ -193,7 +196,7 @@ void AngleMeter::OnPaint(wxPaintEvent& event)
     dc.DrawPolygon(4,pntLeft);
     dc.DrawPolygon(4,pntBottoms);
 
-
+    m_uiLabel.Draw(dc,uiRect::BORDER_NONE);
 }
 
 
@@ -202,6 +205,7 @@ void AngleMeter::InitMeter(const wxString& sText,double dMin)
     m_dMin = dMin;
     m_dPeakValue[0] = m_dMin;
     m_dPeakValue[1] = m_dMin;
+    m_dAngleRatio = 110/(-m_dMin);
 
     //work out size of rects
     wxString sLevel;
@@ -210,8 +214,9 @@ void AngleMeter::InitMeter(const wxString& sText,double dMin)
 
     m_nBevel = GetClientSize().x/15;
 
-    m_uiLabel.SetRect(0,GetClientRect().GetBottom()-20, GetClientRect().GetWidth(), 20);
-
+    m_uiLabel.SetRect(30,GetClientRect().GetBottom()-m_nBevel, GetClientRect().GetWidth()-60, m_nBevel);
+    m_uiLabel.SetBackgroundColour(wxColour(50,50,50));
+    m_uiLabel.SetGradient(0);
 
     m_rectGrid = wxRect(m_nBevel, m_nBevel, GetClientSize().x-2-(m_nBevel*2), GetClientSize().y-25-(m_nBevel*2));
 
@@ -250,10 +255,10 @@ void AngleMeter::ResetMeter(void)
     m_nPeakCounter[0] = 0;
     m_nPeakCounter[1] = 0;
 
-    m_dLastValue[0] = 0;
-    m_dLastValue[1] = 0;
-    m_dPeakValue[0] = -80.0;
-    m_dPeakValue[1] = -80.0;
+    m_dLastValue[0] = m_dMin;
+    m_dLastValue[1] = m_dMin;
+    m_dPeakValue[0] = m_dMin;
+    m_dPeakValue[1] = m_dMin;
     ShowValue(m_dLastValue);
 
 
@@ -297,7 +302,7 @@ void AngleMeter::WorkoutAngles(double dLevel, double& dAngle)
 
 void AngleMeter::OnSize(wxSizeEvent& event)
 {
-    InitMeter(m_uiLabel.GetLabel(), 3);
+    InitMeter(m_uiLabel.GetLabel(), m_dMin);
 
     Refresh();
 }
@@ -335,7 +340,9 @@ void AngleMeter::SetLevels(const std::vector<double>& vLevels, double dOffset, d
     {
         WorkoutAngles(m_vLevels[i], m_vLevelAngles[i]);
     }
-    m_uiLabel.SetLabel(wxString::Format(wxT("%s %s"), sTitle.c_str(), sUnits.c_str()));
+    m_uiLabel.SetLabel(wxString::Format(wxT("%s"), sTitle.c_str()));
+    m_uiType.SetLabel(sUnits);
+
     Refresh();
 }
 

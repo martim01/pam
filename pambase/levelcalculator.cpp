@@ -14,8 +14,9 @@ using namespace std;
   m_nMode(PPM),
   m_bMS(false),
   m_nMSMode(M6),
-  m_dSpeed(1.0)
- {
+  m_dSpeed(1.0),
+  m_dMin(-138.0)
+   {
      for(int i = 0; i < 8; i++)
     {
         m_dLastLevel[i] = -80.0;
@@ -37,6 +38,21 @@ void LevelCalculator::InputSession(const session& aSession)
     {
         m_nChannels = min((unsigned int)8 ,aSession.GetCurrentSubsession()->nChannels);
         m_nSampleRate = aSession.GetCurrentSubsession()->nSampleRate;
+        double dBits;
+        if(aSession.GetCurrentSubsession()->sCodec == wxT("L16"))
+        {
+            dBits = 16;
+        }
+        else if(aSession.GetCurrentSubsession()->sCodec == wxT("L24"))
+        {
+            dBits = 24;
+        }
+        else
+        {
+            dBits = 32;
+        }
+        m_dMin = 20 * log10(1/(pow(2.0,dBits)));
+
     }
     else
     {
@@ -382,10 +398,10 @@ void LevelCalculator::ConvertToDb(double& dSample)
 {
     if(dSample > 0.0)
     {
-        dSample =  20*log10(dSample);
+        dSample =  max(m_dMin, 20*log10(dSample));
     }
     else
     {
-        dSample =  -90.0;
+        dSample =  m_dMin;
     }
 }

@@ -191,7 +191,7 @@ bool UpdateManager::GetUpdateListFromUSB()
         wxMkdir(wxT("/mnt/share"));
     }
     wxExecute(wxT("sudo umount /mnt/share"), wxEXEC_SYNC);
-    wxExecute(wxString::Format(wxT("sudo mount /dev/%s /mnt/share"), Settings::Get().Read(wxT("Update"), wxT("USB"), wxEmptyString)), wxEXEC_SYNC);
+    wxExecute(wxString::Format(wxT("sudo mount -o umask=000 /dev/%s /mnt/share"), Settings::Get().Read(wxT("Update"), wxT("USB"), wxEmptyString)), wxEXEC_SYNC);
 
     return GetUpdateListFromLocal(wxT("/mnt/share"));
 #else
