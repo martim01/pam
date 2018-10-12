@@ -173,7 +173,7 @@ void wmKeyboard::SendKeyEvent(wxEventType evType)
 
 void wmKeyboard::SendKeyEvent(wxEventType evType, unsigned int nKeyCode)
 {
-    wxKeyEvent eventDown(evType, GetId());
+    wxKeyEvent eventDown(evType);//, GetId());
     eventDown.m_keyCode = nKeyCode;
     eventDown.m_shiftDown = (m_nMode == MODE_SHIFT);
     wxWindow* pWNd = wxWindow::FindFocus();

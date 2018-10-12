@@ -7,7 +7,9 @@
 #include "icons/left16.xpm"
 #include "icons/up16.xpm"
 #include "icons/down16.xpm"
+#ifdef __pambase__
 #include "settings.h"
+#endif // __pambase__
 
 using namespace std;
 
@@ -71,10 +73,12 @@ bool wmList::Create(wxWindow* pParent, wxWindowID id, const wxPoint& pos, const 
     if(!wxWindow::Create(pParent,id,pos,szInit,wxWANTS_CHARS, wxEmptyString))
         return false;
 
+    #ifdef __pambase__
     if(Settings::Get().HideCursor())
     {
         SetCursor(wxCURSOR_BLANK);
     }
+    #endif // __pambase__
 
     m_nGradient = wxEAST;
 
@@ -2346,4 +2350,12 @@ wxColour wmList::GetButtonsTextFlashColour() const
 wxColour wmList::GetButtonsDisabledColour() const
 {
     return m_clrDisabledButton;
+}
+
+
+void wmList::SetColumns(unsigned int nColumns)
+{
+    m_nColumns = nColumns;
+    CreateRects();
+    Refresh();
 }

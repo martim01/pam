@@ -570,3 +570,8 @@ void wmIpEdit::SetValue(const wxString& sIpAddress)
     }
     Refresh();
 }
+
+const wmIpEdit::wxString& GetValue() const
+{
+    return m_sText;
+}

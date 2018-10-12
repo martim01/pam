@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="wxspam" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="default">
+				<Option output="wxspam" prefix_auto="1" extension_auto="1" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option host_application="$(#cb)/devel/codeblocks.exe" />
+				<Option run_host_application_in_terminal="0" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-pipe" />
+					<Add option="-mthreads" />
+					<Add option="-fmessage-length=0" />
+					<Add option="-fexceptions" />
+					<Add option="-Winvalid-pch" />
+					<Add option="-DBUILDING_PLUGIN" />
+					<Add option="-DHAVE_W32API_H" />
+					<Add option="-D__WXMSW__" />
+					<Add option="-DWXUSINGDLL" />
+					<Add option="-DcbDEBUG" />
+					<Add option="-DCB_PRECOMP" />
+					<Add option="-DWX_PRECOMP" />
+					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-DCREATING_DLL" />
+					<Add directory="$(#cb)/include" />
+					<Add directory="$(#cb)/sdk/wxscintilla/include" />
+					<Add directory="$(#wx.include)" />
+					<Add directory="$(#wx.lib)/gcc_dll/mswu" />
+					<Add directory="../pambase" />
+				</Compiler>
+				<Linker>
+					<Add option="-mthreads" />
+					<Add library="codeblocks" />
+					<Add library="wxmsw28u" />
+					<Add directory="$(#cb)/devel" />
+					<Add directory="$(#wx.lib)/gcc_dll" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="zip -j9 wxspam.zip manifest.xml" />
+					<Add after="zip -j9 wxspam.cbplugin wxspam.dll wxspam.zip" />
+				</ExtraCommands>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add directory="$(#cb.include)" />
+			<Add directory="$(#cb.include)/wxscintilla/include" />
+			<Add directory="$(wx.inlucde)" />
+			<Add directory="$(#wx)/lib/gcc_dll/mswu/wx" />
+			<Add directory="$(#wxsmith.include)" />
+			<Add directory="$(propgird.include)" />
+			<Add directory="../pambase" />
+		</Compiler>
+		<Linker>
+			<Add library="wxsmithlib" />
+			<Add library="wxmsw28u_gcc_cb" />
+			<Add library="codeblocks" />
+			<Add library="wxpropgrid" />
+			<Add directory="$(#wx.lib)" />
+			<Add directory="$(#cb.lib)" />
+			<Add directory="$(#wxsmith.lib)" />
+		</Linker>
+		<Unit filename="../pambase/anglemeter.cpp" />
+		<Unit filename="../pambase/anglemeter.h" />
+		<Unit filename="../pambase/levelmeter.cpp" />
+		<Unit filename="../pambase/levelmeter.h" />
+		<Unit filename="../pambase/uirect.cpp" />
+		<Unit filename="../pambase/uirect.h" />
+		<Unit filename="../pambase/wmbutton.cpp" />
+		<Unit filename="../pambase/wmbutton.h" />
+		<Unit filename="../pambase/wmedit.cpp" />
+		<Unit filename="../pambase/wmedit.h" />
+		<Unit filename="../pambase/wmfocusmanager.cpp" />
+		<Unit filename="../pambase/wmfocusmanager.h" />
+		<Unit filename="../pambase/wmipeditpnl.cpp" />
+		<Unit filename="../pambase/wmipeditpnl.h" />
+		<Unit filename="../pambase/wmkeyboard.cpp" />
+		<Unit filename="../pambase/wmkeyboard.h" />
+		<Unit filename="../pambase/wmlabel.cpp" />
+		<Unit filename="../pambase/wmlabel.h" />
+		<Unit filename="../pambase/wmline.cpp" />
+		<Unit filename="../pambase/wmline.h" />
+		<Unit filename="../pambase/wmlist.cpp" />
+		<Unit filename="../pambase/wmlist.h" />
+		<Unit filename="../pambase/wmslider.cpp" />
+		<Unit filename="../pambase/wmslider.h" />
+		<Unit filename="../pambase/wmslidewnd.cpp" />
+		<Unit filename="../pambase/wmslidewnd.h" />
+		<Unit filename="../pambase/wmswitcherpanel.cpp" />
+		<Unit filename="../pambase/wmswitcherpanel.h" />
+		<Unit filename="../pambase/wmtimeedit.h" />
+		<Unit filename="../pambase/wxtouchscreenhtml.cpp" />
+		<Unit filename="../pambase/wxtouchscreenhtml.h" />
+		<Unit filename="dlgLevels.cpp" />
+		<Unit filename="dlgLevels.h" />
+		<Unit filename="dlgadditems.cpp" />
+		<Unit filename="dlgadditems.h" />
+		<Unit filename="dlgaddlines.cpp" />
+		<Unit filename="dlgaddlines.h" />
+		<Unit filename="manifest.xml" />
+		<Unit filename="wxsanglemeter.cpp" />
+		<Unit filename="wxsanglemeter.h" />
+		<Unit filename="wxslevelmeter.cpp" />
+		<Unit filename="wxslevelmeter.h" />
+		<Unit filename="wxsmith/dlgAddItems.wxs" />
+		<Unit filename="wxsmith/dlgAddLines.wxs" />
+		<Unit filename="wxsmith/dlgLevels.wxs" />
+		<Unit filename="wxspam.cpp" />
+		<Unit filename="wxspam.h" />
+		<Unit filename="wxspropertyadditems.cpp" />
+		<Unit filename="wxspropertyadditems.h" />
+		<Unit filename="wxspropertyaddlines.cpp" />
+		<Unit filename="wxspropertyaddlines.h" />
+		<Unit filename="wxspropertylevels.cpp" />
+		<Unit filename="wxspropertylevels.h" />
+		<Unit filename="wxswmbutton.cpp" />
+		<Unit filename="wxswmbutton.h" />
+		<Unit filename="wxswmedit.cpp" />
+		<Unit filename="wxswmedit.h" />
+		<Unit filename="wxswmipeditpnl.cpp" />
+		<Unit filename="wxswmipeditpnl.h" />
+		<Unit filename="wxswmkeyboard.cpp" />
+		<Unit filename="wxswmkeyboard.h" />
+		<Unit filename="wxswmlabel.cpp" />
+		<Unit filename="wxswmlabel.h" />
+		<Unit filename="wxswmlines.cpp" />
+		<Unit filename="wxswmlines.h" />
+		<Unit filename="wxswmlist.cpp" />
+		<Unit filename="wxswmlist.h" />
+		<Unit filename="wxswmslider.cpp" />
+		<Unit filename="wxswmslider.h" />
+		<Unit filename="wxswmswitcherpanel.cpp" />
+		<Unit filename="wxswmswitcherpanel.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+			<wxsmith version="1">
+				<resources>
+					<wxDialog wxs="wxsmith/dlgAddLines.wxs" src="dlgaddlines.cpp" hdr="dlgaddlines.h" fwddecl="0" i18n="1" name="dlgAddLines" language="CPP" />
+					<wxDialog wxs="wxsmith/dlgAddItems.wxs" src="dlgadditems.cpp" hdr="dlgadditems.h" fwddecl="0" i18n="1" name="dlgAddItems" language="CPP" />
+					<wxDialog wxs="wxsmith/dlgLevels.wxs" src="dlgLevels.cpp" hdr="dlgLevels.h" fwddecl="0" i18n="1" name="dlgLevels" language="CPP" />
+				</resources>
+			</wxsmith>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

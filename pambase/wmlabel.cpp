@@ -1,7 +1,10 @@
 #include "wmlabel.h"
 #include <wx/dcbuffer.h>
 #include <wx/log.h>
+#ifdef __pambase__
 #include "settings.h"
+#endif // __pambase__
+
 using namespace std;
 
 const int wmLabel::ID_TIMER_FLASH  = wxNewId();
@@ -34,10 +37,12 @@ bool wmLabel::Create(wxWindow *parent, wxWindowID id, const wxString& sLabel , c
     if(!wxWindow::Create(parent,id,pos,szInit,wxWANTS_CHARS, wxEmptyString))
         return false;
 
+    #ifdef __pambase__
     if(Settings::Get().HideCursor())
     {
         SetCursor(wxCURSOR_BLANK);
     }
+    #endif // __pambase__
 
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);

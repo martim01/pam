@@ -58,10 +58,7 @@ class  PAMBASE_IMPEXPORT wmIpEdit : public wxControl
         wxSize DoGetBestSize() const;
 
         void SetValue(const wxString& sIpAddress);
-        const wxString& GetValue() const
-        {
-            return m_sText;
-        }
+        const wxString& GetValue() const;
 
         void SetValidation(unsigned short nValidation){}
 

@@ -4,7 +4,9 @@
 #include <list>
 #include <wx/dcmemory.h>
 #include <algorithm>
+#ifdef __pambase__
 #include "settings.h"
+#endif // __pambase__
 #include "levelcalculator.h"
 using namespace std;
 
@@ -44,10 +46,12 @@ AngleMeter::AngleMeter(wxWindow *parent, wxWindowID id, const wxString & sText,d
 
     wxWindow::Create(parent,id,pos,szInit,wxWANTS_CHARS, wxT("AngleMeter"));
 
+    #ifdef __pambase__
     if(Settings::Get().HideCursor())
     {
         SetCursor(wxCURSOR_BLANK);
     }
+    #endif // __pambase__
 
     SetMinSize(size);
 

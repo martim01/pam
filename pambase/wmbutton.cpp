@@ -2,7 +2,9 @@
 #include <wx/dcbuffer.h>
 #include <wx/log.h>
 #include <algorithm>
+#ifdef __pambase__
 #include "settings.h"
+#endif // __pambase__
 
 using namespace std;
 
@@ -52,10 +54,12 @@ bool wmButton::Create(wxWindow *parent, wxWindowID id, const wxString& sLabel , 
 
     m_nStyle = nStyle;
 
+    #ifdef __pambase__
     if(Settings::Get().HideCursor())
     {
         SetCursor(wxCURSOR_BLANK);
     }
+    #endif // __pambase__
 
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);

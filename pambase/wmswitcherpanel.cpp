@@ -4,7 +4,9 @@
 #include <wx/settings.h>
 #include <wx/log.h>
 #include <wx/bookctrl.h>
+#ifdef __pambase__
 #include "settings.h"
+#endif // __pambase__
 
 using namespace std;
 
@@ -66,10 +68,13 @@ bool wmSwitcherPanel::Create(wxWindow* pParent, wxWindowID id, const wxPoint& po
     }
 
     m_bDownInWindow = false;
+
+    #ifdef __pambase__
     if(Settings::Get().HideCursor())
     {
         SetCursor(wxCURSOR_BLANK);
     }
+    #endif // __pambase__
 
     m_nSwipeHeight = 10;
     m_nNameHeight = 30;
@@ -221,13 +226,15 @@ size_t wmSwitcherPanel::ChangeSelection(size_t nPage)
         size_t nReturn = m_nSelectedPage;
         SwipeFinished();
 
-
+        #ifdef __pambase__
         wxBookCtrlEvent event(wxEVT_NOTEBOOK_PAGE_CHANGED, GetId());
         event.SetSelection(nReturn);
         event.SetEventObject(this);
 
         //HandleWindowEvent(event);
         GetEventHandler()->ProcessEvent(event);
+        #endif // __pambase__
+
         return nReturn;
     }
     else if((m_nStyle & STYLE_VERTICAL) ==0)
@@ -254,9 +261,11 @@ size_t wmSwitcherPanel::ChangeSelection(size_t nPage)
         }
         m_timerScroll.Start(10);
 
+        #ifdef __pambase__
         wxBookCtrlEvent event(wxEVT_NOTEBOOK_PAGE_CHANGED, GetId());
         event.SetSelection(m_nSelectedPage);
         GetEventHandler()->ProcessEvent(event);
+        #endif // __pambase__
         return m_nSelectedPage;
     }
     else
@@ -282,9 +291,12 @@ size_t wmSwitcherPanel::ChangeSelection(size_t nPage)
             m_nSwipeOffset = min(-1, -(GetClientRect().GetHeight())/10);
         }
         m_timerScroll.Start(10);
+
+        #ifdef __pambase__
         wxBookCtrlEvent event(wxEVT_NOTEBOOK_PAGE_CHANGED, GetId());
         event.SetSelection(m_nSelectedPage);
         GetEventHandler()->ProcessEvent(event);
+        #endif // __pambase__
         return m_nSelectedPage;
     }
 
