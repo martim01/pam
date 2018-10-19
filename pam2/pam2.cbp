@@ -98,9 +98,9 @@
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
-					<Add library="libportaudio" />
+					<Add library="portaudio" />
 					<Add library="pambase" />
-					<Add library="libcurl" />
+					<Add library="curl" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />
@@ -123,9 +123,9 @@
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add option="-Wl,-Map=pam2.map" />
-					<Add library="libportaudio" />
+					<Add library="portaudio" />
 					<Add library="pambased" />
-					<Add library="libcurl" />
+					<Add library="curl" />
 				</Linker>
 			</Target>
 		</Build>
@@ -167,6 +167,8 @@
 		<Unit filename="pam2Main.h" />
 		<Unit filename="pam2resource.rc">
 			<Option compilerVar="WINDRES" />
+			<Option target="Windows Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="pnlHelp.cpp" />
 		<Unit filename="pnlHelp.h" />

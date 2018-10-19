@@ -88,7 +88,7 @@
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add library="pambase" />
-					<Add library="libsamplerate.a" />
+					<Add library="samplerate" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />
@@ -133,6 +133,8 @@
 		<Unit filename="pamleveldll.h" />
 		<Unit filename="pamlevelresource.rc">
 			<Option compilerVar="WINDRES" />
+			<Option target="Windows Release" />
+			<Option target="Windows Debug" />
 		</Unit>
 		<Unit filename="srcwrapper.h" />
 		<Unit filename="truepeakcalculator.cpp" />

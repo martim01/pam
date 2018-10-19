@@ -295,9 +295,9 @@ void pnlRTP::OnbtnDiscoverClick(wxCommandEvent& event)
             m_pSapWatch = 0;
         }
         // @todo work out how to make the sapwatchthread non-blocking then we can use this....
-//        m_pSapWatch = new SapWatchThread(this);
-//        m_pSapWatch->Create();
-//        m_pSapWatch->Run();
+        m_pSapWatch = new SapWatchThread(this);
+        m_pSapWatch->Create();
+        m_pSapWatch->Run();
     }
     else
     {
@@ -330,8 +330,8 @@ void pnlRTP::OnDiscovery(wxCommandEvent& event)
             }
             wxString sName(sSession.BeforeLast(wxT('@')));
 
-            wxString sAddress(wxString::Format(wxT("rtsp://%s/by-name/%s"), m_pServscan->getResults()[i].ipFrom.c_str(), sSession.c_str()));
-            GetSDP(sAddress);
+           wxString sAddress(wxString::Format(wxT("rtsp://%s/by-name/%s"), m_pServscan->getResults()[i].ipFrom.c_str(), sSession.c_str()));
+           // GetSDP(sAddress);
 
             Settings::Get().Write(wxT("AoIP"), wxString::Format(wxT("%s(%s)"), sName.c_str(), m_pServscan->getResults()[i].ipFrom.c_str()), sAddress);
 

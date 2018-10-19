@@ -70,10 +70,8 @@
 			<Depends filename="plugins/peak count/peakcount.cbp" />
 			<Depends filename="plugins/record/record.cbp" />
 		</Project>
-		<Project filename="pamupdateserver/pamupdateserver.cbp" />
 		<Project filename="pamupdatemanager/pamupdatemanager.cbp">
 			<Depends filename="pambase/pambase.cbp" />
 		</Project>
-		<Project filename="pamm/pamm.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

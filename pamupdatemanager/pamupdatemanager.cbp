@@ -89,7 +89,7 @@
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add library="pambase" />
-					<Add library="libcurl" />
+					<Add library="curl" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />
@@ -112,7 +112,7 @@
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add library="pambased" />
-					<Add library="libcurl" />
+					<Add library="curl" />
 				</Linker>
 			</Target>
 		</Build>
@@ -134,6 +134,8 @@
 		<Unit filename="pamupdatemanagerMain.h" />
 		<Unit filename="pamupdatemanagerresource.rc">
 			<Option compilerVar="WINDRES" />
+			<Option target="Windows Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="updatemanager.cpp" />
 		<Unit filename="updatemanager.h" />

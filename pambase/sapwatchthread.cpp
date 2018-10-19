@@ -34,7 +34,7 @@ void* SapWatchThread::Entry()
 
     Groupsock inputGroupsock(*env, sessionAddress, port, ttl);
     int nResult = makeSocketBlocking(inputGroupsock.socketNum(), 1000);
-    wxLogMessage(wxT("Blocking %d"), nResult);
+    //wxLogMessage(wxT("Blocking %d"), nResult);
 
     // Start reading and printing incoming packets
     // (Because this is the only thing we do, we can just do this

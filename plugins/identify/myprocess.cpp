@@ -48,7 +48,7 @@ bool MyProcess::GetInput()
         wxString msg;
         msg << m_sCmd << _T(" (stderr): ") << tis.ReadLine();
 
-        wxLogMessage(msg);
+        wxLogDebug(msg);
 
         hasInput = true;
     }

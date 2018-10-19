@@ -118,8 +118,8 @@
 			<Add option="-DCREATING_FFTDLL" />
 			<Add option="-D_core_" />
 			<Add directory="../pambase" />
-			<Add directory="$(#kiss.include)" />
-			<Add directory="$(#kiss.include)/tools" />
+			<Add directory="../external/kiss_fft130/tools" />
+			<Add directory="../external/kiss_fft130" />
 		</Compiler>
 		<Linker>
 			<Add directory="../lib" />
@@ -152,6 +152,8 @@
 		<Unit filename="pamfftdll.h" />
 		<Unit filename="pamfftresource.rc">
 			<Option compilerVar="WINDRES" />
+			<Option target="Windows Release" />
+			<Option target="Windows Debug" />
 		</Unit>
 		<Extensions>
 			<code_completion />

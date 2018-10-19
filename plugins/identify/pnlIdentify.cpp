@@ -242,7 +242,7 @@ void pnlIdentify::LaunchGracenote()
 //        sWavFile.Replace(wxT("/"), wxT("\\"));
         sCmd << sApp << wxT(" ") << sPass << wxT(" ") << sLicence << wxT(" online ") << sWavFile;
 
-        wxLogMessage(sCmd);
+        wxLogDebug(sCmd);
         m_pProcess = new MyProcess(this, sCmd);
         if ( !wxExecute(sCmd, wxEXEC_ASYNC, m_pProcess) )
         {

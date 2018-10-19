@@ -109,12 +109,13 @@
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
-					<Add library="libportaudio" />
-					<Add library="libsndfile.a" />
-					<Add library="libliveMedia.a" />
-					<Add library="libBasicUsageEnvironment.a" />
-					<Add library="libUsageEnvironment.a" />
-					<Add library="libgroupsock.a" />
+					<Add library="portaudio" />
+					<Add library="sndfile" />
+					<Add library="liveMedia" />
+					<Add library="BasicUsageEnvironment" />
+					<Add library="UsageEnvironment" />
+					<Add library="groupsock" />
+					<Add directory="/usr/lib/arm-linux-gnueabihf/" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />
@@ -153,17 +154,17 @@
 			<Add option="-D_pambase_" />
 			<Add option="-DCREATING_DLL" />
 			<Add option="-D_core_" />
-			<Add directory="$(#live_media.include)" />
-			<Add directory="$(#live_group.include)" />
-			<Add directory="$(#live_usage.include)" />
-			<Add directory="$(#live_basicusage.include)" />
+			<Add directory="../external/live/BasicUsageEnvironment/include" />
+			<Add directory="../external/live/UsageEnvironment/include" />
+			<Add directory="../external/live/groupsock/include" />
+			<Add directory="../external/live/liveMedia/include" />
 			<Add directory="../external/wxservdisc" />
 		</Compiler>
 		<Linker>
-			<Add directory="$(#live_group.lib)" />
-			<Add directory="$(#live_media.lib)" />
-			<Add directory="$(#live_usage.lib)" />
-			<Add directory="$(#live_basicusage.lib)" />
+			<Add directory="../external/live/liveMedia" />
+			<Add directory="../external/live/BasicUsageEnvironment" />
+			<Add directory="../external/live/UsageEnvironment" />
+			<Add directory="../external/live/groupsock" />
 		</Linker>
 		<Unit filename="../external/wxservdisc/1035.c">
 			<Option compilerVar="CC" />
