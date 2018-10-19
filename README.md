@@ -36,5 +36,9 @@ Codeblocks  http://www.codeblocks.org/
 * Fill in the necssary global variables
 * Build the workspace
 
+### To build using make
 
+There is a makefile for Linux which will build the pam2 libraries but not the live555 libraries.
+
+make -f makeall_linux
 
