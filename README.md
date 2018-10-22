@@ -38,7 +38,9 @@ Codeblocks  http://www.codeblocks.org/
 
 ### To build using make
 
-There is a makefile for Linux which will build the pam2 libraries but not the live555 libraries.
+Details on how to build the live555 libraries can be found at http://www.live555.com/liveMedia/#config-unix
+
+There is a makefile (makeall_linx) for Linux which will build the pam2 libraries. 
 
 make -f makeall_linux
 
