@@ -3,10 +3,12 @@
 #include <vector>
 #include "uirect.h"
 #include <wx/bitmap.h>
-
-class R128Meter : public wxWindow
+#include "pmcontrol.h"
+class R128Meter : public pmControl
 {
     DECLARE_EVENT_TABLE()
+    wxDECLARE_DYNAMIC_CLASS(R128Meter);
+
 public:
     R128Meter();
     virtual ~R128Meter();

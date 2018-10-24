@@ -10,15 +10,15 @@
 
 using namespace std;
 
-BEGIN_EVENT_TABLE(PolarScope, wxWindow)
+BEGIN_EVENT_TABLE(PolarScope, pmControl)
     EVT_PAINT(PolarScope::OnPaint)
     EVT_SIZE(PolarScope::OnSize)
     EVT_LEFT_UP(PolarScope::OnLeftUp)
 END_EVENT_TABLE()
 
+ wxIMPLEMENT_DYNAMIC_CLASS(PolarScope, pmControl);
 
-
-PolarScope::PolarScope(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size) :
+PolarScope::PolarScope(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size) : pmControl(),
     m_pntPole(0,0),
     m_dResolution(1.0),
     m_dResolutionCorrelation(1.0),
@@ -35,10 +35,6 @@ PolarScope::PolarScope(wxWindow *parent, wxWindowID id, const wxPoint& pos, cons
     m_pBmpCorrelationIn(0)
 {
     Create(parent, id, pos, size);
-    if(Settings::Get().HideCursor())
-    {
-        SetCursor(wxCURSOR_BLANK);
-    }
 
     SetForegroundColour(*wxWHITE);
     SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));

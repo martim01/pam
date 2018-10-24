@@ -10,16 +10,17 @@
 
 using namespace std;
 
-BEGIN_EVENT_TABLE([CLASS_PREFIX]Meter, wxWindow)
+BEGIN_EVENT_TABLE([CLASS_PREFIX]Meter, pmControl)
     EVT_PAINT([CLASS_PREFIX]Meter::OnPaint)
     EVT_SIZE([CLASS_PREFIX]Meter::OnSize)
     EVT_LEFT_UP([CLASS_PREFIX]Meter::OnLeftUp)
 END_EVENT_TABLE()
 
+wxIMPLEMENT_DYNAMIC_CAST([CLASS_PREFIX]Meter, pmControl);
 
 
 
-[CLASS_PREFIX]Meter::[CLASS_PREFIX]Meter(wxWindow *parent, [CLASS_PREFIX]Builder* pBuilder, wxWindowID id, const wxPoint& pos, const wxSize& size) :
+[CLASS_PREFIX]Meter::[CLASS_PREFIX]Meter(wxWindow *parent, [CLASS_PREFIX]Builder* pBuilder, wxWindowID id, const wxPoint& pos, const wxSize& size) : pmControl(),
     m_pBuilder(pBuilder)
 {
     Create(parent, id, pos, size);

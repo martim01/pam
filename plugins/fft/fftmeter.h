@@ -5,21 +5,21 @@
 #include <wx/timer.h>
 #include "kiss_fft.h"
 #include <queue>
-
+#include "pmcontrol.h"
 class timedbuffer;
 class FFTBuilder;
 
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/
-class FftMeter : public wxWindow
+class FftMeter : public pmControl
 {
-    DECLARE_EVENT_TABLE()
-
     public:
+        DECLARE_EVENT_TABLE()
+        wxDECLARE_DYNAMIC_CLASS(FftMeter);
 
         /** @brief default constructor
         **/
-        FftMeter() { }
+        FftMeter() : pmControl(){ }
 
         /** @brief Constructor - made to be the same as a wxButton
         *   @param parent pointer to the parent window

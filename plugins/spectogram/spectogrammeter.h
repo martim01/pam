@@ -1,5 +1,5 @@
 #pragma once
-#include <wx/window.h>
+//#include <wx/window.h>
 #include "uirect.h"
 #include "freq_mag.h"
 #include <wx/timer.h>
@@ -7,6 +7,7 @@
 #include <queue>
 #include <list>
 #include "colourgradient.h"
+#include "pmcontrol.h"
 
 class wxImage;
 class timedbuffer;
@@ -14,15 +15,16 @@ class SpectogramBuilder;
 
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/
-class SpectogramMeter : public wxWindow
+class SpectogramMeter : public pmControl
 {
     DECLARE_EVENT_TABLE()
+    wxDECLARE_DYNAMIC_CLASS(SpectogramMeter);
 
     public:
 
         /** @brief default constructor
         **/
-        SpectogramMeter() { }
+        SpectogramMeter() : pmControl(){ }
 
         /** @brief Constructor - made to be the same as a wxButton
         *   @param parent pointer to the parent window

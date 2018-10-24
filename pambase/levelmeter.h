@@ -3,11 +3,13 @@
 #include <vector>
 #include "uirect.h"
 #include <wx/bitmap.h>
-#include "dlldefine.h"
+#include "pmcontrol.h"
 
-class PAMBASE_IMPEXPORT LevelMeter : public wxWindow
+
+class PAMBASE_IMPEXPORT LevelMeter : public pmControl
 {
-    DECLARE_EVENT_TABLE()
+    wxDECLARE_DYNAMIC_CLASS(LevelMeter);
+    //DECLARE_EVENT_TABLE()
 public:
     LevelMeter();
     virtual ~LevelMeter();

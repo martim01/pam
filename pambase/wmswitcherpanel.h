@@ -1,9 +1,10 @@
 #pragma once
-#include "dlldefine.h"
 #include <wx/panel.h>
 #include <vector>
 #include <wx/timer.h>
 #include "uirect.h"
+#include "pmpanel.h"
+
 /**
 *   @brief wxWidgets control which allows switching between different pages
 *   @author Matthew Martin
@@ -15,9 +16,9 @@
 **/
 
 
-class PAMBASE_IMPEXPORT wmSwitcherPanel : public wxPanel
+class PAMBASE_IMPEXPORT wmSwitcherPanel : public pmPanel
 {
-    DECLARE_DYNAMIC_CLASS(wmSwitcherPanel)
+    wxDECLARE_DYNAMIC_CLASS(wmSwitcherPanel);
     DECLARE_EVENT_TABLE()
     public:
         wmSwitcherPanel();

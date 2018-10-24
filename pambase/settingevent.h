@@ -14,7 +14,7 @@ public:
     *   @param commandType should be wxEVT_NI...
     *   @param id the ID of the button list control
     **/
-    SettingEvent(const wxString& sSection, const wxString& sKey);
+    SettingEvent(const wxString& sSection, const wxString& sKey, const wxString& sValue);
 
     SettingEvent();
     /** @brief	Copy Constructor
@@ -31,15 +31,21 @@ public:
     **/
     virtual wxEvent *Clone() const { return new SettingEvent(*this); }
 
-    //DECLARE_DYNAMIC_CLASS(SettingEvent)
+    //wxDECLARE_DYNAMIC_CLASS(SettingEvent)
 
     const wxString& GetSection() const;
     const wxString& GetKey() const;
+    wxString GetValue() const;
+    long GetValue(long nDefault) const;
+    double GetValue(double dDefault) const;
+    bool GetValue(bool bDefault) const;
+
 
 protected:
 
     wxString m_sSection;
     wxString m_sKey;
+    wxString m_sValue;
 };
 
 typedef void (wxEvtHandler::*SettingEventFunction)(SettingEvent&);

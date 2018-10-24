@@ -13,7 +13,7 @@
 
 using namespace std;
 
-BEGIN_EVENT_TABLE(wmKeyboard, wxWindow)
+BEGIN_EVENT_TABLE(wmKeyboard, pmControl)
     EVT_PAINT(wmKeyboard::OnPaint)
     EVT_SIZE(wmKeyboard::OnSize)
     EVT_LEFT_DOWN(wmKeyboard::OnLeftDown)
@@ -23,8 +23,9 @@ BEGIN_EVENT_TABLE(wmKeyboard, wxWindow)
     EVT_TIMER(wxID_ANY, wmKeyboard::OnTimer)
 END_EVENT_TABLE()
 
+ wxIMPLEMENT_DYNAMIC_CLASS(wmKeyboard, pmControl);
 
-wmKeyboard::wmKeyboard() : wxWindow()
+wmKeyboard::wmKeyboard() : pmControl()
 {
 
 }
@@ -37,7 +38,7 @@ wmKeyboard::~wmKeyboard()
     }
 }
 
-wmKeyboard::wmKeyboard(wxWindow* pParent, wxWindowID id, const wxPoint& pos, const wxSize& size, unsigned int nStyle, bool bHints)
+wmKeyboard::wmKeyboard(wxWindow* pParent, wxWindowID id, const wxPoint& pos, const wxSize& size, unsigned int nStyle, bool bHints) : pmControl()
 {
     Create(pParent,id,pos,size, nStyle, bHints);
 }

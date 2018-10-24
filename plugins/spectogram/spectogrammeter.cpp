@@ -7,18 +7,20 @@
 #include "fftAlgorithm.h"
 #include "timedbuffer.h"
 #include "spectogrambuilder.h"
+
 #include "settings.h"
 
 
 using namespace std;
 
-BEGIN_EVENT_TABLE(SpectogramMeter, wxWindow)
+BEGIN_EVENT_TABLE(SpectogramMeter, pmControl)
     EVT_PAINT(SpectogramMeter::OnPaint)
     EVT_SIZE(SpectogramMeter::OnSize)
     EVT_LEFT_DOWN(SpectogramMeter::OnLeftDown)
     EVT_LEFT_UP(SpectogramMeter::OnLeftUp)
 END_EVENT_TABLE()
 
+ wxIMPLEMENT_DYNAMIC_CLASS(SpectogramMeter, pmControl);
 
 const wxString SpectogramMeter::LABEL_DISPLAY[3] = {wxT("Graph"), wxT("Lines"), wxT("EQ")};
 const wxString SpectogramMeter::LABEL_ANALYSE[10] = {wxT("CH 1"), wxT("CH 2"), wxT("CH 3"), wxT("CH 4"), wxT("CH 5"), wxT("CH 6"), wxT("CH 7"), wxT("CH 8"), wxT("Middle"), wxT("Side")};
@@ -30,7 +32,7 @@ const double SpectogramMeter::OCTAVE_LOW_2 = 11.05;
 const double SpectogramMeter::OCTAVE_LOW_3 = 13.9;
 
 
-SpectogramMeter::SpectogramMeter(wxWindow *parent, SpectogramBuilder* pBuilder, wxWindowID id, const wxPoint& pos, const wxSize& size) :
+SpectogramMeter::SpectogramMeter(wxWindow *parent, SpectogramBuilder* pBuilder, wxWindowID id, const wxPoint& pos, const wxSize& size) : pmControl(),
     m_pBuilder(pBuilder)
 {
     Create(parent, id, pos, size);
@@ -45,10 +47,6 @@ SpectogramMeter::SpectogramMeter(wxWindow *parent, SpectogramBuilder* pBuilder, 
 
     m_nChannels = 2;
     m_nSampleRate = 48000;
-    if(Settings::Get().HideCursor())
-    {
-        SetCursor(wxCURSOR_BLANK);
-    }
 
     m_nNudge = NONE;
 

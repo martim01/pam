@@ -11,7 +11,7 @@
 
 using namespace std;
 
-BEGIN_EVENT_TABLE(Scope, wxWindow)
+BEGIN_EVENT_TABLE(Scope, pmControl)
     EVT_PAINT(Scope::OnPaint)
     EVT_SIZE(Scope::OnSize)
     EVT_LEFT_DOWN(Scope::OnLeftDown)
@@ -19,9 +19,9 @@ BEGIN_EVENT_TABLE(Scope, wxWindow)
     EVT_MOTION(Scope::OnMotion)
 END_EVENT_TABLE()
 
+ wxIMPLEMENT_DYNAMIC_CLASS(Scope, pmControl);
 
-
-Scope::Scope(wxWindow *parent,ScopeBuilder* pBuilder, wxWindowID id, const wxPoint& pos, const wxSize& size) : m_pBuilder(pBuilder)
+Scope::Scope(wxWindow *parent,ScopeBuilder* pBuilder, wxWindowID id, const wxPoint& pos, const wxSize& size) : pmControl(), m_pBuilder(pBuilder)
 {
     Create(parent, id, pos, size);
 }
@@ -45,10 +45,6 @@ bool Scope::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wx
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
 
-    if(Settings::Get().HideCursor())
-    {
-        SetCursor(wxCURSOR_BLANK);
-    }
 
     m_bMemory = false;
 

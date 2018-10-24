@@ -1,18 +1,15 @@
 #pragma once
-#include "dlldefine.h"
-#include <wx/control.h>
 #include <vector>
 #include <wx/textctrl.h>
 #include "uirect.h"
-
+#include "pmcontrol.h"
 /** @brief An edit control that allows easy editing of time and dates. It has a number of different time and date formats and allows the user to enter them without having to worry about validation
 **/
-class PAMBASE_IMPEXPORT wmTimeEdit : public wxControl
+class PAMBASE_IMPEXPORT wmTimeEdit : public pmControl
 {
-    DECLARE_DYNAMIC_CLASS(wmTimeEdit)
-    DECLARE_EVENT_TABLE()
-
     public:
+        wxDECLARE_DYNAMIC_CLASS(wmTimeEdit);
+        DECLARE_EVENT_TABLE()
         ///< @brief Default Constructor
         wmTimeEdit();
 

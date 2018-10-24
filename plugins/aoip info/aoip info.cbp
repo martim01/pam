@@ -39,7 +39,7 @@
 				</ExtraCommands>
 			</Target>
 			<Target title="Windows Debug">
-				<Option output="../../lib/monitor/debug/aoipinfo.dll" prefix_auto="1" extension_auto="0" />
+				<Option output="../../lib/monitor/debug/aoipinfo.dll" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/debug" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -123,8 +123,6 @@
 		<Linker>
 			<Add directory="../../lib" />
 		</Linker>
-		<Unit filename="../peak log/levelgraph.cpp" />
-		<Unit filename="../peak log/levelgraph.h" />
 		<Unit filename="aoipinfo.cpp" />
 		<Unit filename="aoipinfo.h" />
 		<Unit filename="aoipinfobuilder.cpp" />

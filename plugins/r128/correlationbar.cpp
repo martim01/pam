@@ -9,15 +9,15 @@
 
 using namespace std;
 
-BEGIN_EVENT_TABLE(CorrelationBar, wxWindow)
+BEGIN_EVENT_TABLE(CorrelationBar, pmControl)
     EVT_PAINT(CorrelationBar::OnPaint)
     EVT_SIZE(CorrelationBar::OnSize)
     EVT_LEFT_UP(CorrelationBar::OnLeftUp)
 END_EVENT_TABLE()
 
+ wxIMPLEMENT_DYNAMIC_CLASS(CorrelationBar, pmControl);
 
-
-CorrelationBar::CorrelationBar(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size) :
+CorrelationBar::CorrelationBar(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size) : pmControl(),
     m_pntPole(0,0),
     m_dResolution(1.0),
     m_dResolutionCorrelation(1.0),
@@ -32,10 +32,6 @@ CorrelationBar::CorrelationBar(wxWindow *parent, wxWindowID id, const wxPoint& p
     m_pBmpCorrelationIn(0)
 {
     Create(parent, id, pos, size);
-    if(Settings::Get().HideCursor())
-    {
-        SetCursor(wxCURSOR_BLANK);
-    }
 
     SetForegroundColour(*wxWHITE);
     SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));

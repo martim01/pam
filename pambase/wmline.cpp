@@ -5,13 +5,15 @@
 using namespace std;
 
 
-BEGIN_EVENT_TABLE(wmLineWnd, wxWindow)
+BEGIN_EVENT_TABLE(wmLineWnd, pmControl)
     EVT_PAINT(wmLineWnd::OnPaint)
     EVT_SIZE(wmLineWnd::OnSize)
 END_EVENT_TABLE()
 
+ wxIMPLEMENT_DYNAMIC_CLASS(wmLineWnd, pmControl);
 
-wmLineWnd::wmLineWnd(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long nStyle)
+
+wmLineWnd::wmLineWnd(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long nStyle) : pmControl()
 {
     Create(parent, id,  pos, size, nStyle);
 }

@@ -6,6 +6,7 @@
 #else
 #include "winsock2.h"
 #include "windows.h"
+#include <wx/msw/winundef.h>
 #endif // __WXGNU__
 
 typedef std::pair<unsigned int, unsigned int> pairTime_t;

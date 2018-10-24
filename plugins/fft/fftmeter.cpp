@@ -7,17 +7,20 @@
 #include "fftAlgorithm.h"
 #include "timedbuffer.h"
 #include "fftbuilder.h"
-#include "settings.h"
+//#include "settings.h"
 
 
 using namespace std;
 
-BEGIN_EVENT_TABLE(FftMeter, wxWindow)
+ wxIMPLEMENT_DYNAMIC_CLASS(FftMeter, pmControl);
+
+BEGIN_EVENT_TABLE(FftMeter, pmControl)
     EVT_PAINT(FftMeter::OnPaint)
     EVT_SIZE(FftMeter::OnSize)
     EVT_LEFT_DOWN(FftMeter::OnLeftDown)
     EVT_LEFT_UP(FftMeter::OnLeftUp)
 END_EVENT_TABLE()
+
 
 
 const wxString FftMeter::LABEL_DISPLAY[3] = {wxT("Graph"), wxT("Lines"), wxT("EQ")};
@@ -30,7 +33,7 @@ const double FftMeter::OCTAVE_LOW_2 = 11.05;
 const double FftMeter::OCTAVE_LOW_3 = 13.9;
 
 
-FftMeter::FftMeter(wxWindow *parent, FFTBuilder* pBuilder, wxWindowID id, const wxPoint& pos, const wxSize& size) :
+FftMeter::FftMeter(wxWindow *parent, FFTBuilder* pBuilder, wxWindowID id, const wxPoint& pos, const wxSize& size) : pmControl(),
     m_pBuilder(pBuilder)
 {
     Create(parent, id, pos, size);
@@ -47,10 +50,6 @@ FftMeter::FftMeter(wxWindow *parent, FFTBuilder* pBuilder, wxWindowID id, const 
 
     m_nChannels = 2;
     m_nSampleRate = 48000;
-    if(Settings::Get().HideCursor())
-    {
-        SetCursor(wxCURSOR_BLANK);
-    }
 
     m_nNudge = NONE;
 

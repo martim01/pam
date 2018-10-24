@@ -6,7 +6,9 @@
 		<Project filename="pamfft/pamfft.cbp" />
 		<Project filename="pamlevel/pamlevel.cbp" />
 		<Project filename="plugins/fft/fft.cbp" />
-		<Project filename="plugins/spectogram/spectogram.cbp" />
+		<Project filename="plugins/spectogram/spectogram.cbp">
+			<Depends filename="pamfft/pamfft.cbp" />
+		</Project>
 		<Project filename="plugins/lissajou/lissajou.cbp">
 			<Depends filename="pambase/pambase.cbp" />
 		</Project>
@@ -19,9 +21,7 @@
 		<Project filename="plugins/scope/scope.cbp">
 			<Depends filename="pambase/pambase.cbp" />
 		</Project>
-		<Project filename="plugins/aoip info/aoip info.cbp">
-			<Depends filename="pambase/pambase.cbp" />
-		</Project>
+		<Project filename="plugins/aoip info/aoip info.cbp" />
 		<Project filename="plugins/radar/radar.cbp">
 			<Depends filename="pambase/pambase.cbp" />
 		</Project>

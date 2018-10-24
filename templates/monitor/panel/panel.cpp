@@ -11,12 +11,15 @@
 //(*IdInit([CLASS_PREFIX]Panel)
 //*)
 
-BEGIN_EVENT_TABLE([CLASS_PREFIX]Panel,wxPanel)
+wxIMPLEMENT_DYNAMIC_CAST([CLASS_PREFIX]Panel, pmPanel)
+
+BEGIN_EVENT_TABLE([CLASS_PREFIX]Panel,pmPanel)
 	//(*EventTable([CLASS_PREFIX]Panel)
 	//*)
 END_EVENT_TABLE()
 
-[CLASS_PREFIX]Panel::[CLASS_PREFIX]Panel(wxWindow* parent,[CLASS_PREFIX]Builder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) :
+
+[CLASS_PREFIX]Panel::[CLASS_PREFIX]Panel(wxWindow* parent,[CLASS_PREFIX]Builder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) : pmPanel(),
     m_pBuilder(pBuilder)
 {
 	//(*Initialize(pnlTest)

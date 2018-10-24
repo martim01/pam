@@ -4,15 +4,12 @@
 #include <wx/settings.h>
 #include <wx/log.h>
 #include <wx/bookctrl.h>
-#ifdef __pambase__
-#include "settings.h"
-#endif // __pambase__
 
 using namespace std;
 
 const long wmSwitcherPanel::ID_SCROLLING     = wxNewId();
 
-BEGIN_EVENT_TABLE(wmSwitcherPanel, wxPanel)
+BEGIN_EVENT_TABLE(wmSwitcherPanel, pmPanel)
     EVT_SIZE(wmSwitcherPanel::OnSize)
     EVT_PAINT(wmSwitcherPanel::OnPaint)
     EVT_LEFT_DOWN(wmSwitcherPanel::OnLeftDown)
@@ -20,10 +17,10 @@ BEGIN_EVENT_TABLE(wmSwitcherPanel, wxPanel)
     EVT_TIMER(ID_SCROLLING, wmSwitcherPanel::OnScroll)
 END_EVENT_TABLE()
 
-IMPLEMENT_DYNAMIC_CLASS(wmSwitcherPanel, wxPanel)
+ wxIMPLEMENT_DYNAMIC_CLASS(wmSwitcherPanel, pmPanel);
 
 
-wmSwitcherPanel::wmSwitcherPanel() : wxPanel()
+wmSwitcherPanel::wmSwitcherPanel() : pmPanel()
 , m_nSelectedPage(0)
 , m_nPageNameStyle(PAGE_NONE)
 , m_nStyle(0)
@@ -37,7 +34,7 @@ wmSwitcherPanel::~wmSwitcherPanel()
 }
 
 wmSwitcherPanel::wmSwitcherPanel(wxWindow* pParent, wxWindowID id, const wxPoint& pos, const wxSize& size, long nStyle, const wxString& sName)
-: wxPanel()
+: pmPanel()
 , m_nSelectedPage(0)
 , m_nPageNameStyle(PAGE_NONE)
 {
@@ -69,12 +66,6 @@ bool wmSwitcherPanel::Create(wxWindow* pParent, wxWindowID id, const wxPoint& po
 
     m_bDownInWindow = false;
 
-    #ifdef __pambase__
-    if(Settings::Get().HideCursor())
-    {
-        SetCursor(wxCURSOR_BLANK);
-    }
-    #endif // __pambase__
 
     m_nSwipeHeight = 10;
     m_nNameHeight = 30;
@@ -226,7 +217,7 @@ size_t wmSwitcherPanel::ChangeSelection(size_t nPage)
         size_t nReturn = m_nSelectedPage;
         SwipeFinished();
 
-        #ifdef __pambase__
+        #ifdef __PAMBASE__
         wxBookCtrlEvent event(wxEVT_NOTEBOOK_PAGE_CHANGED, GetId());
         event.SetSelection(nReturn);
         event.SetEventObject(this);
@@ -261,7 +252,7 @@ size_t wmSwitcherPanel::ChangeSelection(size_t nPage)
         }
         m_timerScroll.Start(10);
 
-        #ifdef __pambase__
+        #ifdef __PAMBASE__
         wxBookCtrlEvent event(wxEVT_NOTEBOOK_PAGE_CHANGED, GetId());
         event.SetSelection(m_nSelectedPage);
         GetEventHandler()->ProcessEvent(event);
@@ -292,7 +283,7 @@ size_t wmSwitcherPanel::ChangeSelection(size_t nPage)
         }
         m_timerScroll.Start(10);
 
-        #ifdef __pambase__
+        #ifdef __PAMBASE__
         wxBookCtrlEvent event(wxEVT_NOTEBOOK_PAGE_CHANGED, GetId());
         event.SetSelection(m_nSelectedPage);
         GetEventHandler()->ProcessEvent(event);

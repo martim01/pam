@@ -3,20 +3,21 @@
 #include <wx/bitmap.h>
 #include "uirect.h"
 #include <list>
-
+#include "pmcontrol.h"
 //#include "wmscroller.h"
 
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/
-class OffsetGraph : public wxWindow
+class OffsetGraph : public pmControl
 {
     DECLARE_EVENT_TABLE()
+    wxDECLARE_DYNAMIC_CLASS(OffsetGraph);
 
     public:
 
         /** @brief default constructor
         **/
-        OffsetGraph(){}
+        OffsetGraph():pmControl(){}
 
         /** @brief Constructor - made to be the same as a wxButton
         *   @param parent pointer to the parent window

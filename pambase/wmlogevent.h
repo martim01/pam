@@ -39,7 +39,7 @@ public:
     const wxString& GetLogMessage() const;
     bool IsDebug() const;
 
-    DECLARE_DYNAMIC_CLASS(wmLogEvent)
+    wxDECLARE_DYNAMIC_CLASS(wmLogEvent);
 
 
 

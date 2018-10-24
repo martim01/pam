@@ -6,14 +6,16 @@
 
 using namespace std;
 
-BEGIN_EVENT_TABLE(LevelGraph, wxWindow)
+BEGIN_EVENT_TABLE(LevelGraph, pmControl)
     EVT_PAINT(LevelGraph::OnPaint)
     EVT_SIZE(LevelGraph::OnSize)
 END_EVENT_TABLE()
 
+ wxIMPLEMENT_DYNAMIC_CLASS(LevelGraph, pmControl);
 
 
-LevelGraph::LevelGraph(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size, size_t nDataSize, double dMax, double dMin) :
+
+LevelGraph::LevelGraph(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size, size_t nDataSize, double dMax, double dMin) : pmControl(),
     m_nDataSize(nDataSize),
     m_dMax(dMax),
     m_dMin(dMin)

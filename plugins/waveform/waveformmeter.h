@@ -3,22 +3,23 @@
 #include "uirect.h"
 #include <vector>
 #include <list>
-
+#include "pmcontrol.h"
 class waveformBuilder;
 class session;
 class timedbuffer;
 
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/
-class waveformMeter : public wxWindow
+class waveformMeter : public pmControl
 {
     DECLARE_EVENT_TABLE()
+    wxDECLARE_DYNAMIC_CLASS(waveformMeter);
 
     public:
 
         /** @brief default constructor
         **/
-        waveformMeter() { }
+        waveformMeter() : pmControl(){ }
 
         /** @brief Constructor - made to be the same as a wxButton
         *   @param parent pointer to the parent window

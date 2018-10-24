@@ -9,23 +9,21 @@
 
 using namespace std;
 
-BEGIN_EVENT_TABLE(LissajouMeter, wxWindow)
+BEGIN_EVENT_TABLE(LissajouMeter, pmControl)
     EVT_PAINT(LissajouMeter::OnPaint)
     EVT_SIZE(LissajouMeter::OnSize)
     EVT_LEFT_UP(LissajouMeter::OnLeftUp)
 END_EVENT_TABLE()
 
+ wxIMPLEMENT_DYNAMIC_CLASS(LissajouMeter, pmControl);
+
 
 const float LissajouMeter::LEVEL_PPM[7] = {0.031, 0.05, 0.079, 0.126, 0.199, 0.316, 0.501};
 const wxString LissajouMeter::LABEL_SCALE[3] = {wxT("dB"), wxT("Linear"), wxT("Auto")};
 
-LissajouMeter::LissajouMeter(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size)
+LissajouMeter::LissajouMeter(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size) : pmControl()
 {
     Create(parent, id, pos, size);
-    if(Settings::Get().HideCursor())
-    {
-        SetCursor(wxCURSOR_BLANK);
-    }
     m_pBuffer = 0;
     m_bRotate = false;
     m_nScaling = SCALE_DB;

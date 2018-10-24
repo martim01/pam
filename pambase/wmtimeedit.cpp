@@ -63,9 +63,9 @@ const wxString wmTimeEdit::HMSmS = wxT("HMSmS");
 const wxString wmTimeEdit::HMSFr = wxT("HMSFr");
 
 
-IMPLEMENT_DYNAMIC_CLASS(wmTimeEdit, wxControl)
+ wxIMPLEMENT_DYNAMIC_CLASS(wmTimeEdit, pmControl);
 
-BEGIN_EVENT_TABLE(wmTimeEdit, wxControl)
+BEGIN_EVENT_TABLE(wmTimeEdit, pmControl)
     EVT_PAINT(wmTimeEdit::OnPaint)
     EVT_SIZE(wmTimeEdit::OnSize)
     EVT_MOUSE_EVENTS(wmTimeEdit::OnMouse)
@@ -75,7 +75,7 @@ BEGIN_EVENT_TABLE(wmTimeEdit, wxControl)
     EVT_CHAR(wmTimeEdit::OnChar)
 END_EVENT_TABLE()
 
-wmTimeEdit::wmTimeEdit() : wxControl(),
+wmTimeEdit::wmTimeEdit() : pmControl(),
     m_bFocus(false),
     m_pCaret(0),
     m_nInsert(0),
@@ -89,7 +89,7 @@ wmTimeEdit::~wmTimeEdit()
 }
 
 
-wmTimeEdit::wmTimeEdit(wxWindow * pParent, wxWindowID id, const wxString& value, const wxPoint& pos, const wxSize& size,long style, const wxValidator& validator, const wxString& name) : wxControl(),
+wmTimeEdit::wmTimeEdit(wxWindow * pParent, wxWindowID id, const wxString& value, const wxPoint& pos, const wxSize& size,long style, const wxValidator& validator, const wxString& name) : pmControl(),
     m_bFocus(false),
     m_pCaret(0),
     m_nInsert(0),
@@ -192,7 +192,7 @@ bool wmTimeEdit::Create(wxWindow* pParent, wxWindowID id, unsigned int nDateForm
         szInit.SetHeight(bestSize.y);
 
 
-    if(!wxControl::Create(pParent,id,pos,szInit, wxWANTS_CHARS ,wxDefaultValidator,wxEmptyString))
+    if(!wxWindow::Create(pParent,id,pos,szInit, wxWANTS_CHARS))
         return false;
 
     SetSize(szInit);
@@ -552,7 +552,7 @@ void wmTimeEdit::OnChar(wxKeyEvent& event)
 
 bool wmTimeEdit::Enable(bool bEnable)
 {
-    bool bReturn(wxControl::Enable(bEnable));
+    bool bReturn(wxWindow::Enable(bEnable));
     Refresh();
     return bReturn;
 }

@@ -379,12 +379,14 @@ void pnlUpdate::OnbtnDetectClick(wxCommandEvent& event)
 
 void pnlUpdate::CheckUSB()
 {
-    wxLogDebug(wxT("CheckUSB"));
     m_plstUsb->Freeze();
     m_plstUsb->Clear();
     m_pbtnCheck->Enable(false);
     wxArrayString asFiles;
+    #ifdef __WXGNU__
     wxExecute(wxT("sh -c \"lsblk -l -o name,label | grep sd \""), asFiles);
+    #endif // __WXGNU__
+
     for(size_t i = 0; i < asFiles.GetCount(); i++)
     {
         //NAME="sda1" LABEL="KINGSTON"

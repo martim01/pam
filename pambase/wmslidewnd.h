@@ -1,5 +1,4 @@
 #pragma once
-#include "dlldefine.h"
 #include <wx/stattext.h>
 #include <wx/dialog.h>
 #include "wmlabel.h"

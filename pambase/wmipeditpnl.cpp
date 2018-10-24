@@ -13,12 +13,14 @@ const long wmipeditpnl::ID_M_PEDT3 = wxNewId();
 const long wmipeditpnl::ID_M_PEDT4 = wxNewId();
 //*)
 
-BEGIN_EVENT_TABLE(wmipeditpnl,wxPanel)
+BEGIN_EVENT_TABLE(wmipeditpnl,pmPanel)
 	//(*EventTable(wmipeditpnl)
 	//*)
 END_EVENT_TABLE()
 
-wmipeditpnl::wmipeditpnl(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size, unsigned long nStyle, const wxString& sEmpty) :
+ wxIMPLEMENT_DYNAMIC_CLASS(wmipeditpnl, pmPanel);
+
+wmipeditpnl::wmipeditpnl(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size, unsigned long nStyle, const wxString& sEmpty) : pmPanel(),
     m_pEdt1(0),
     m_pEdt2(0),
     m_pEdt3(0),

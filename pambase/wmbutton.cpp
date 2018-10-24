@@ -2,16 +2,13 @@
 #include <wx/dcbuffer.h>
 #include <wx/log.h>
 #include <algorithm>
-#ifdef __pambase__
-#include "settings.h"
-#endif // __pambase__
 
 using namespace std;
 
 const int wmButton::ID_TIMER_HOLD   = wxNewId();
 const int wmButton::ID_TIMER_FLASH  = wxNewId();
 
-BEGIN_EVENT_TABLE(wmButton, wxWindow)
+BEGIN_EVENT_TABLE(wmButton, pmControl)
     EVT_PAINT(wmButton::OnPaint)
     EVT_SIZE(wmButton::OnSize)
     EVT_LEFT_DOWN(wmButton::OnLeftDown)
@@ -23,6 +20,8 @@ BEGIN_EVENT_TABLE(wmButton, wxWindow)
     EVT_TIMER(ID_TIMER_FLASH, wmButton::OnFlash)
 END_EVENT_TABLE()
 
+ wxIMPLEMENT_DYNAMIC_CLASS(wmButton, pmControl);
+
 DEFINE_EVENT_TYPE(wxEVT_BUTTON_PRESSED)
 DEFINE_EVENT_TYPE(wxEVT_BUTTON_RELEASED)
 DEFINE_EVENT_TYPE(wxEVT_BUTTON_HELD)
@@ -30,7 +29,7 @@ DEFINE_EVENT_TYPE(wxEVT_BUTTON_HELD)
 
 
 
-wmButton::wmButton(wxWindow *parent, wxWindowID id, const wxString& sLabel, const wxPoint& pos, const wxSize& size, long nStyle,const wxValidator& validator, const wxString& name)
+wmButton::wmButton(wxWindow *parent, wxWindowID id, const wxString& sLabel, const wxPoint& pos, const wxSize& size, long nStyle,const wxValidator& validator, const wxString& name) : pmControl()
 {
     Create(parent, id, sLabel, pos, size, nStyle, validator, name);
 }
@@ -54,12 +53,6 @@ bool wmButton::Create(wxWindow *parent, wxWindowID id, const wxString& sLabel , 
 
     m_nStyle = nStyle;
 
-    #ifdef __pambase__
-    if(Settings::Get().HideCursor())
-    {
-        SetCursor(wxCURSOR_BLANK);
-    }
-    #endif // __pambase__
 
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
@@ -109,7 +102,7 @@ void wmButton::CreateRects()
 
 }
 
-wmButton::wmButton( wxWindow* parent, wxWindowID id, const wxBitmap& bitmap, const wxPoint& pos, const wxSize& size, long style, const wxValidator& validator, const wxString& name)
+wmButton::wmButton( wxWindow* parent, wxWindowID id, const wxBitmap& bitmap, const wxPoint& pos, const wxSize& size, long style, const wxValidator& validator, const wxString& name) : pmControl()
 {
     Create(parent, id, bitmap, pos, size, style, validator, name);
 }

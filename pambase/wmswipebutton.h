@@ -1,5 +1,4 @@
 #pragma once
-#include "dlldefine.h"
 #include <wx/window.h>
 #include "wmbutton.h"
 
@@ -9,6 +8,7 @@
 class PAMBASE_IMPEXPORT wmSwipeButton : public wmButton
 {
     DECLARE_EVENT_TABLE()
+    wxDECLARE_DYNAMIC_CLASS(wmSwipeButton);
 
     public:
         ///< @brief Default constructor

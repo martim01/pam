@@ -5,11 +5,16 @@
 #include <wx/panel.h>
 #include "wmedit.h"
 //*)
-#include "dlldefine.h"
+#include "pmpanel.h"
 
-class PAMBASE_IMPEXPORT wmipeditpnl: public wxPanel
+
+class PAMBASE_IMPEXPORT wmipeditpnl: public pmPanel
 {
+    wxDECLARE_DYNAMIC_CLASS(wmipeditpnl);
+
 	public:
+
+	    wmipeditpnl() : pmPanel() {}
 
 		wmipeditpnl(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, unsigned long nStyle=0, const wxString& sEmpty=wxEmptyString);
 		virtual ~wmipeditpnl();

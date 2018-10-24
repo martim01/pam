@@ -43,7 +43,6 @@ class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
 
         wxString GetLibraryVersion() const;
 
-        bool HideCursor();
 
     protected:
         Settings();

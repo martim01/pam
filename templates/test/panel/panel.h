@@ -5,14 +5,17 @@
 //*)
 
 #include <vector>
+#include "pmpanel.h"
 
 class [CLASS_PREFIX]Builder;
 class timedbuffer;
 class session;
 
-class [CLASS_PREFIX]Panel: public wxPanel
+class [CLASS_PREFIX]Panel: public pmPanel
 {
 	public:
+		
+		wxDECLARE_DYNAMIC_CLASS([CLASS_PREFIX]Panel);
 
 		[CLASS_PREFIX]Panel(wxWindow* parent,[CLASS_PREFIX]Builder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~[CLASS_PREFIX]Panel();

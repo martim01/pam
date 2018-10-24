@@ -11,11 +11,13 @@
 using namespace std;
 
 // R128Meter
-BEGIN_EVENT_TABLE(R128Meter, wxWindow)
+BEGIN_EVENT_TABLE(R128Meter, pmControl)
 END_EVENT_TABLE()
 
-R128Meter::R128Meter()
-    : m_dMin(-70)
+ wxIMPLEMENT_DYNAMIC_CLASS(R128Meter, pmControl);
+
+R128Meter::R128Meter() : pmControl()
+    , m_dMin(-70)
     , m_dMax(0)
     , m_bShading(false)
 {
@@ -25,7 +27,7 @@ R128Meter::R128Meter()
     m_clrText = wxColour(200,180,255);
 }
 
-R128Meter::R128Meter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, double dMax, bool bLevelDisplay, const wxPoint& pos, const wxSize& size) :
+R128Meter::R128Meter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, double dMax, bool bLevelDisplay, const wxPoint& pos, const wxSize& size) : pmControl(),
     m_dMax(0),
     m_dFall(80)
 {
@@ -41,10 +43,6 @@ R128Meter::R128Meter(wxWindow *parent, wxWindowID id, const wxString & sText,dou
     m_dLevelOffset = 0.0;
     wxWindow::Create(parent,id,pos,szInit,wxWANTS_CHARS, wxT("R128Meter"));
 
-    if(Settings::Get().HideCursor())
-    {
-        SetCursor(wxCURSOR_BLANK);
-    }
     SetMinSize(size);
 
     m_nPeakMode = PEAK_SHOW;

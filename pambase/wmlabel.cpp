@@ -1,25 +1,24 @@
 #include "wmlabel.h"
 #include <wx/dcbuffer.h>
 #include <wx/log.h>
-#ifdef __pambase__
-#include "settings.h"
-#endif // __pambase__
 
 using namespace std;
 
 const int wmLabel::ID_TIMER_FLASH  = wxNewId();
 
-BEGIN_EVENT_TABLE(wmLabel, wxWindow)
+BEGIN_EVENT_TABLE(wmLabel, pmControl)
     EVT_PAINT(wmLabel::OnPaint)
     EVT_SIZE(wmLabel::OnSize)
     EVT_TIMER(ID_TIMER_FLASH, wmLabel::OnFlash)
 END_EVENT_TABLE()
 
+ wxIMPLEMENT_DYNAMIC_CLASS(wmLabel, pmControl);
 
 
 
 
-wmLabel::wmLabel(wxWindow *parent, wxWindowID id, const wxString& sLabel, const wxPoint& pos, const wxSize& size, long nStyle,const wxString& name)
+
+wmLabel::wmLabel(wxWindow *parent, wxWindowID id, const wxString& sLabel, const wxPoint& pos, const wxSize& size, long nStyle,const wxString& name) : pmControl()
 {
     Create(parent, id, sLabel, pos, size, nStyle, name);
 }
@@ -37,12 +36,6 @@ bool wmLabel::Create(wxWindow *parent, wxWindowID id, const wxString& sLabel , c
     if(!wxWindow::Create(parent,id,pos,szInit,wxWANTS_CHARS, wxEmptyString))
         return false;
 
-    #ifdef __pambase__
-    if(Settings::Get().HideCursor())
-    {
-        SetCursor(wxCURSOR_BLANK);
-    }
-    #endif // __pambase__
 
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);

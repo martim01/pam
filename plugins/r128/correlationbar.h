@@ -5,6 +5,7 @@
 #include <wx/timer.h>
 #include <list>
 #include "uirect.h"
+#include "pmcontrol.h"
 
 class timedbuffer;
 
@@ -25,15 +26,16 @@ struct hsv
 
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/
-class CorrelationBar : public wxWindow
+class CorrelationBar : public pmControl
 {
     DECLARE_EVENT_TABLE()
+    wxDECLARE_DYNAMIC_CLASS(CorrelationBar);
 
     public:
 
         /** @brief default constructor
         **/
-        CorrelationBar(){}
+        CorrelationBar() : pmControl() {}
 
         /** @brief Constructor - made to be the same as a wxButton
         *   @param parent pointer to the parent window

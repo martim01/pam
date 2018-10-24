@@ -4,6 +4,7 @@
 #ifdef __WXMSW__
 #ifdef CREATING_DLL
   	#define PAMBASE_IMPEXPORT __declspec(dllexport)
+  	#define __PAMBASE__ 1
 #else
     #ifdef WXUSINGDLL
         #define PAMBASE_IMPEXPORT __declspec(dllimport)

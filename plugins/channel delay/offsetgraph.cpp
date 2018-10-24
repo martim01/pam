@@ -10,14 +10,14 @@
 
 using namespace std;
 
-BEGIN_EVENT_TABLE(OffsetGraph, wxWindow)
+BEGIN_EVENT_TABLE(OffsetGraph, pmControl)
     EVT_PAINT(OffsetGraph::OnPaint)
     EVT_SIZE(OffsetGraph::OnSize)
 END_EVENT_TABLE()
+ wxIMPLEMENT_DYNAMIC_CLASS(OffsetGraph, pmControl);
 
 
-
-OffsetGraph::OffsetGraph(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size) : m_nMaxSamples(1), m_nOffset(0), m_nLastOffset(-1)
+OffsetGraph::OffsetGraph(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size) : pmControl(), m_nMaxSamples(1), m_nOffset(0), m_nLastOffset(-1)
 {
     Create(parent, id, pos, size);
 }
@@ -41,10 +41,6 @@ bool OffsetGraph::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, co
     m_bCalculating = false;
     m_dSampleRate = 48.0;
 
-    if(Settings::Get().HideCursor())
-    {
-        SetCursor(wxCURSOR_BLANK);
-    }
 
     SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
 

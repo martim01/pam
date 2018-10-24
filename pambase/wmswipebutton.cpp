@@ -12,6 +12,7 @@ BEGIN_EVENT_TABLE(wmSwipeButton, wmButton)
     EVT_MOUSE_CAPTURE_LOST(wmSwipeButton::OnCaptureLost)
 END_EVENT_TABLE()
 
+ wxIMPLEMENT_DYNAMIC_CLASS(wmSwipeButton, wmButton);
 
 wmSwipeButton::wmSwipeButton(wxWindow *parent, wxWindowID id, const wxString& sLabel, const wxPoint& pos, const wxSize& size, long nStyle,const wxValidator& validator, const wxString& name) :
     wmButton(parent, id, sLabel, pos, size, nStyle, validator, name)

@@ -2,6 +2,7 @@
 #include <wx/window.h>
 #include "uirect.h"
 #include <vector>
+#include "pmcontrol.h"
 
 class [CLASS_PREFIX]Builder;
 class session;
@@ -9,15 +10,16 @@ class timedbuffer;
 
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/
-class [CLASS_PREFIX]Meter : public wxWindow
+class [CLASS_PREFIX]Meter : public pmControl
 {
     DECLARE_EVENT_TABLE()
+	wxDECLARE_DYNAMIC_CLASS([CLASS_PREFIX]Meter);
 
     public:
 
         /** @brief default constructor
         **/
-        [CLASS_PREFIX]Meter() { }
+        [CLASS_PREFIX]Meter() : pmControl() { }
 
         /** @brief Constructor - made to be the same as a wxButton
         *   @param parent pointer to the parent window

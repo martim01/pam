@@ -4,21 +4,23 @@
 #include <wx/bitmap.h>
 #include "uirect.h"
 #include <list>
-
+#include "pmcontrol.h"
 class LevelsBuilder;
 //#include "wmscroller.h"
 
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/
-class MaxMinGraph : public wxWindow
+class MaxMinGraph : public pmControl
 {
     DECLARE_EVENT_TABLE()
+
+    wxDECLARE_DYNAMIC_CLASS(MaxMinGraph);
 
     public:
 
         /** @brief default constructor
         **/
-        MaxMinGraph(){}
+        MaxMinGraph(): pmControl(){}
 
         /** @brief Constructor - made to be the same as a wxButton
         *   @param parent pointer to the parent window

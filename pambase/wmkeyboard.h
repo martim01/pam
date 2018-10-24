@@ -7,15 +7,14 @@
 #include <queue>
 #include <wx/timer.h>
 #include <wx/bitmap.h>
-#include "dlldefine.h"
-
+#include "pmcontrol.h"
 #include "uirect.h"
 
 /** @brief Control that displays a touchscreen keyboard. It is possible to show a full QWERTY, Number Pad, Phone or Navigational keyaoard.
 **/
-class PAMBASE_IMPEXPORT wmKeyboard : public wxWindow
+class PAMBASE_IMPEXPORT wmKeyboard : public pmControl
 {
-    //DECLARE_DYNAMIC_CLASS(wmRouterList)
+    wxDECLARE_DYNAMIC_CLASS(wmKeyboard);
     DECLARE_EVENT_TABLE()
 
    public:

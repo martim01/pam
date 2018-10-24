@@ -5,22 +5,23 @@
 #include <wx/timer.h>
 #include <vector>
 #include <list>
-
+#include "pmcontrol.h"
 
 //#include "wmscroller.h"
 class ScopeBuilder;
 class timedbuffer;
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/
-class Scope : public wxWindow
+class Scope : public pmControl
 {
     DECLARE_EVENT_TABLE()
+    wxDECLARE_DYNAMIC_CLASS(Scope);
 
     public:
 
         /** @brief default constructor
         **/
-        Scope(){}
+        Scope(): pmControl(){}
 
         /** @brief Constructor - made to be the same as a wxButton
         *   @param parent pointer to the parent window

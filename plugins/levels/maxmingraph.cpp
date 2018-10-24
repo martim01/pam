@@ -11,14 +11,15 @@
 
 using namespace std;
 
-BEGIN_EVENT_TABLE(MaxMinGraph, wxWindow)
+BEGIN_EVENT_TABLE(MaxMinGraph, pmControl)
     EVT_PAINT(MaxMinGraph::OnPaint)
     EVT_SIZE(MaxMinGraph::OnSize)
 END_EVENT_TABLE()
 
+ wxIMPLEMENT_DYNAMIC_CLASS(MaxMinGraph, pmControl);
 
 
-MaxMinGraph::MaxMinGraph(wxWindow *parent,LevelsBuilder* pBuilder, wxWindowID id, const wxPoint& pos, const wxSize& size) :
+MaxMinGraph::MaxMinGraph(wxWindow *parent,LevelsBuilder* pBuilder, wxWindowID id, const wxPoint& pos, const wxSize& size) : pmControl(),
     m_pBuilder(pBuilder),
     m_dMaxRange(80.0),
     m_dLastLevel(-80.0)
@@ -60,10 +61,6 @@ bool MaxMinGraph::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, co
     SetSize(size);
     SetPosition(pos);
 
-    if(Settings::Get().HideCursor())
-    {
-        SetCursor(wxCURSOR_BLANK);
-    }
 
     SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
     return true;

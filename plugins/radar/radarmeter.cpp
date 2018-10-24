@@ -11,23 +11,21 @@ const wxString RadarMeter::STR_CHANNEL[11] = {wxT("L"), wxT("R"), wxT("3"), wxT(
 
 using namespace std;
 
-BEGIN_EVENT_TABLE(RadarMeter, wxWindow)
+BEGIN_EVENT_TABLE(RadarMeter, pmControl)
     EVT_PAINT(RadarMeter::OnPaint)
     EVT_SIZE(RadarMeter::OnSize)
     EVT_LEFT_UP(RadarMeter::OnLeftUp)
 END_EVENT_TABLE()
 
+ wxIMPLEMENT_DYNAMIC_CLASS(RadarMeter, pmControl);
+
 
 const float RadarMeter::LEVEL_PPM[7] = {0.031, 0.05, 0.079, 0.126, 0.199, 0.316, 0.501};
 const wxString RadarMeter::LABEL_SCALE[3] = {wxT("dB"), wxT("Linear"), wxT("Auto")};
 
-RadarMeter::RadarMeter(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size)
+RadarMeter::RadarMeter(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size) : pmControl()
 {
     Create(parent, id, pos, size);
-    if(Settings::Get().HideCursor())
-    {
-        SetCursor(wxCURSOR_BLANK);
-    }
     m_bRotate = false;
     m_nScaling = SCALE_DB;
     m_bShowLevels = false;

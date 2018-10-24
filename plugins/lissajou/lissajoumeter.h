@@ -4,20 +4,21 @@
 #include <list>
 #include "uirect.h"
 #include "SimpleComp.h"
-
+#include "pmcontrol.h"
 //#include "wmscroller.h"
 
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/
-class LissajouMeter : public wxWindow
+class LissajouMeter : public pmControl
 {
     DECLARE_EVENT_TABLE()
+    wxDECLARE_DYNAMIC_CLASS(LissajouMeter);
 
     public:
 
         /** @brief default constructor
         **/
-        LissajouMeter(){}
+        LissajouMeter(): pmControl(){}
 
         /** @brief Constructor - made to be the same as a wxButton
         *   @param parent pointer to the parent window

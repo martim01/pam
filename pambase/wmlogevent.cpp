@@ -104,7 +104,7 @@ void wmLog::OnTimerSave(wxTimerEvent& event)
 
 DEFINE_EVENT_TYPE(wxEVT_WMLOG)
 
-IMPLEMENT_DYNAMIC_CLASS(wmLogEvent, wxCommandEvent)
+ wxIMPLEMENT_DYNAMIC_CLASS(wmLogEvent, wxCommandEvent);
 
 wmLogEvent::wmLogEvent(const wmLogEvent& event) : wxCommandEvent(event)
 {

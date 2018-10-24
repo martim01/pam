@@ -1,13 +1,10 @@
 #include "wmslider.h"
 #include <wx/dcbuffer.h>
 #include <wx/log.h>
-#ifdef __pambase__
-#include "settings.h"
-#endif // __pambase__
 
 using namespace std;
 
-BEGIN_EVENT_TABLE(wmSlider, wxWindow)
+BEGIN_EVENT_TABLE(wmSlider, pmControl)
     EVT_MOTION(wmSlider::OnMouseMove)
     EVT_LEFT_DOWN(wmSlider::OnLeftDown)
     EVT_LEFT_UP(wmSlider::OnLeftUp)
@@ -15,9 +12,10 @@ BEGIN_EVENT_TABLE(wmSlider, wxWindow)
     EVT_PAINT(wmSlider::OnPaint)
 END_EVENT_TABLE()
 
+ wxIMPLEMENT_DYNAMIC_CLASS(wmSlider, pmControl);
 DEFINE_EVENT_TYPE(wxEVT_SLIDER_MOVE)
 
-wmSlider::wmSlider(wxWindow *parent, wxWindowID id, const wxString& sLabel, const wxPoint& pos, const wxSize& size, long nStyle, const wxString& name)
+wmSlider::wmSlider(wxWindow *parent, wxWindowID id, const wxString& sLabel, const wxPoint& pos, const wxSize& size, long nStyle, const wxString& name) : pmControl()
 {
 
     wxSize szInit(size);
@@ -30,13 +28,6 @@ wmSlider::wmSlider(wxWindow *parent, wxWindowID id, const wxString& sLabel, cons
     wxWindow::Create(parent,id,pos,szInit,wxWANTS_CHARS, name);
 
     SetMinSize(size);
-
-    #ifdef __pambase__
-    if(Settings::Get().HideCursor())
-    {
-        SetCursor(wxCURSOR_BLANK);
-    }
-    #endif // __pambase__
 
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);

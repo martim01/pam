@@ -3,12 +3,12 @@
 #include <vector>
 #include "uirect.h"
 #include <wx/bitmap.h>
-#include "dlldefine.h"
+#include "pmcontrol.h"
 
-
-class PAMBASE_IMPEXPORT AngleMeter : public wxWindow
+class PAMBASE_IMPEXPORT AngleMeter : public pmControl
 {
     DECLARE_EVENT_TABLE()
+    wxDECLARE_DYNAMIC_CLASS(AngleMeter);
 public:
     AngleMeter();
     virtual ~AngleMeter();

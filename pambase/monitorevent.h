@@ -31,7 +31,7 @@ public:
     **/
     virtual wxEvent *Clone() const { return new MonitorEvent(*this); }
 
-    //DECLARE_DYNAMIC_CLASS(MonitorEvent)
+    //wxDECLARE_DYNAMIC_CLASS(MonitorEvent)
 
     const std::vector<char>& GetChannels() const;
 

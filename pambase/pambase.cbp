@@ -205,6 +205,8 @@
 		<Unit filename="iomanager.h" />
 		<Unit filename="levelcalculator.cpp" />
 		<Unit filename="levelcalculator.h" />
+		<Unit filename="levelgraph.cpp" />
+		<Unit filename="levelgraph.h" />
 		<Unit filename="levelmeter.cpp" />
 		<Unit filename="levelmeter.h" />
 		<Unit filename="monitorevent.cpp" />
@@ -220,6 +222,10 @@
 		<Unit filename="pcstats.cpp" />
 		<Unit filename="pcstats.h" />
 		<Unit filename="plugin.h" />
+		<Unit filename="pmcontrol.cpp" />
+		<Unit filename="pmcontrol.h" />
+		<Unit filename="pmpanel.cpp" />
+		<Unit filename="pmpanel.h" />
 		<Unit filename="ppmtypes.cpp" />
 		<Unit filename="ppmtypes.h" />
 		<Unit filename="qos.cpp" />

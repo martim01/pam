@@ -19,9 +19,9 @@ DEFINE_EVENT_TYPE(wxEVT_TEXT_ESCAPE)
 DEFINE_EVENT_TYPE(wxEVT_TEXT_TAB)
 DEFINE_EVENT_TYPE(wxEVT_TEXT_BACKSPACE)
 
-IMPLEMENT_DYNAMIC_CLASS(wmEdit, wxControl)
+ wxIMPLEMENT_DYNAMIC_CLASS(wmEdit, pmControl);
 
-BEGIN_EVENT_TABLE(wmEdit, wxControl)
+BEGIN_EVENT_TABLE(wmEdit, pmControl)
     EVT_PAINT(wmEdit::OnPaint)
     EVT_SIZE(wmEdit::OnSize)
     EVT_MOUSE_EVENTS(wmEdit::OnMouse)
@@ -33,7 +33,7 @@ BEGIN_EVENT_TABLE(wmEdit, wxControl)
     //EVT_KEY_UP(wmEdit::OnKeyUp)
 END_EVENT_TABLE()
 
-wmEdit::wmEdit() : wxControl(),
+wmEdit::wmEdit() : pmControl(),
     m_nStyle(0),
     m_bFocus(false),
     m_pCaret(0),
@@ -53,7 +53,7 @@ wmEdit::~wmEdit()
 }
 
 
-wmEdit::wmEdit(wxWindow * pParent, wxWindowID id, const wxString& value, const wxPoint& pos, const wxSize& size,long style, const wxValidator& validator, const wxString& name) : wxControl(),
+wmEdit::wmEdit(wxWindow * pParent, wxWindowID id, const wxString& value, const wxPoint& pos, const wxSize& size,long style, const wxValidator& validator, const wxString& name) : pmControl(),
     m_nStyle(style),
     m_bFocus(false),
     m_pCaret(0),
@@ -82,7 +82,7 @@ bool wmEdit::Create(wxWindow* pParent, wxWindowID id,const wxString& sValue, con
 
 
 
-    if(!wxControl::Create(pParent,id,pos,szInit, wxWANTS_CHARS ,wxDefaultValidator,wxEmptyString))
+    if(!wxWindow::Create(pParent,id,pos,szInit, wxWANTS_CHARS))
         return false;
 
     SetSize(szInit);
@@ -350,7 +350,7 @@ void wmEdit::OnChar(wxKeyEvent& event)
 
 bool wmEdit::Enable(bool bEnable)
 {
-    bool bReturn(wxControl::Enable(bEnable));
+    bool bReturn(wxWindow::Enable(bEnable));
     if(!bEnable)
     {
         HideCaret();

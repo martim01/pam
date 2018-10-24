@@ -4,15 +4,14 @@
 #include <vector>
 #include <wx/textctrl.h>
 #include <set>
-#include "dlldefine.h"
 #include "uirect.h"
-//#include "wmscroller.h"
+#include "pmcontrol.h"
 
 /** @brief Class that provides an alternative text edit control
 **/
-class PAMBASE_IMPEXPORT wmEdit : public wxControl
+class PAMBASE_IMPEXPORT wmEdit : public pmControl
 {
-    DECLARE_DYNAMIC_CLASS(wmEdit)
+    wxDECLARE_DYNAMIC_CLASS(wmEdit);
     DECLARE_EVENT_TABLE()
 
     public:

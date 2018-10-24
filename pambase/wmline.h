@@ -1,8 +1,8 @@
 #pragma once
-#include "dlldefine.h"
 #include <wx/window.h>
 #include <map>
 #include <wx/pen.h>
+#include "pmcontrol.h"
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/
 
@@ -44,15 +44,16 @@ struct PAMBASE_IMPEXPORT wmLine
 typedef std::map<wxString, wmLine> mLines_t;
 
 
-class PAMBASE_IMPEXPORT wmLineWnd : public wxWindow
+class PAMBASE_IMPEXPORT wmLineWnd : public pmControl
 {
     DECLARE_EVENT_TABLE()
+    wxDECLARE_DYNAMIC_CLASS(wmLineWnd);
 
     public:
 
         /** @brief default constructor
         **/
-        wmLineWnd() { }
+        wmLineWnd() : pmControl() { }
 
         /** @brief Constructor - made to be the same as a wxButton
         *   @param parent pointer to the parent window

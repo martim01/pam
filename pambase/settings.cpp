@@ -4,6 +4,8 @@
 #include "settingevent.h"
 #include <wx/filename.h>
 #include "version.h"
+#include "pmcontrol.h"
+#include "pmpanel.h"
 
 using   namespace std;
 
@@ -60,8 +62,8 @@ bool Settings::Write(const wxString& sSection, const wxString& sKey, const wxStr
         wxString sHandler(wxString::Format(wxT("%s/%s"),sSection.c_str(),sKey.c_str()));
         for(multimap<wxString, wxEvtHandler*>::const_iterator itHandler = m_mmHandlers.lower_bound(sHandler); itHandler != m_mmHandlers.upper_bound(sHandler); ++itHandler)
         {
-            SettingEvent event(sSection, sKey);
-            wxPostEvent(itHandler->second, event);
+            SettingEvent* pEvent = new SettingEvent(sSection, sKey, sValue);
+            wxQueueEvent(itHandler->second, pEvent);
         }
 
     }
@@ -206,10 +208,6 @@ wxString Settings::GetTestPluginDirectory() const
 }
 
 
-bool Settings::HideCursor()
-{
-    return (m_iniManager.GetIniInt(wxT("General"), wxT("Cursor"), 1) == 0);
-}
 
 void Settings::CreatePaths()
 {

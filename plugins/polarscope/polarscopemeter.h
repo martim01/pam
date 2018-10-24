@@ -5,7 +5,7 @@
 #include <wx/timer.h>
 #include <list>
 #include "uirect.h"
-
+#include "pmcontrol.h"
 class timedbuffer;
 
 struct rgb
@@ -25,15 +25,17 @@ struct hsv
 
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/
-class PolarScope : public wxWindow
+class PolarScope : public pmControl
 {
     DECLARE_EVENT_TABLE()
+
+    wxDECLARE_DYNAMIC_CLASS(PolarScope);
 
     public:
 
         /** @brief default constructor
         **/
-        PolarScope(){}
+        PolarScope():pmControl(){}
 
         /** @brief Constructor - made to be the same as a wxButton
         *   @param parent pointer to the parent window

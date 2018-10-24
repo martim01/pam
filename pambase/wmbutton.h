@@ -3,21 +3,21 @@
 #include <wx/timer.h>
 #include "uirect.h"
 #include <wx/bitmap.h>
-#include "dlldefine.h"
-
+#include "pmcontrol.h"
 //#include "wmscroller.h"
 
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/
-class PAMBASE_IMPEXPORT wmButton : public wxWindow
+class PAMBASE_IMPEXPORT wmButton : public pmControl
 {
     DECLARE_EVENT_TABLE()
+    wxDECLARE_DYNAMIC_CLASS(wmButton);
 
     public:
 
         /** @brief default constructor
         **/
-        wmButton() { }
+        wmButton() : pmControl(){ }
 
         /** @brief Constructor - made to be the same as a wxButton
         *   @param parent pointer to the parent window

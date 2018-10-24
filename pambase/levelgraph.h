@@ -3,18 +3,21 @@
 
 #include <map>
 #include <list>
+#include "pmcontrol.h"
 
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/
-class LevelGraph : public wxWindow
+class PAMBASE_IMPEXPORT LevelGraph : public pmControl
 {
     DECLARE_EVENT_TABLE()
+
+    wxDECLARE_DYNAMIC_CLASS(LevelGraph);
 
     public:
 
         /** @brief default constructor
         **/
-        LevelGraph() { }
+        LevelGraph() : pmControl(){ }
 
         /** @brief Constructor - made to be the same as a wxButton
         *   @param parent pointer to the parent window

@@ -6,18 +6,20 @@
 #include <queue>
 #include <list>
 #include <vector>
+#include "pmcontrol.h"
 
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/
-class RadarMeter : public wxWindow
+class RadarMeter : public pmControl
 {
     DECLARE_EVENT_TABLE()
+    wxDECLARE_DYNAMIC_CLASS(RadarMeter);
 
     public:
 
         /** @brief default constructor
         **/
-        RadarMeter(){}
+        RadarMeter() : pmControl(){}
 
         /** @brief Constructor - made to be the same as a wxButton
         *   @param parent pointer to the parent window

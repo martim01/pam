@@ -2,19 +2,20 @@
 #include <wx/window.h>
 #include <wx/timer.h>
 #include "uirect.h"
-#include "dlldefine.h"
+#include "pmcontrol.h"
 
 /** @class a class that draws a lable on the screen, derives from wxWindow
 **/
-class PAMBASE_IMPEXPORT wmSlider : public wxWindow
+class PAMBASE_IMPEXPORT wmSlider : public pmControl
 {
     DECLARE_EVENT_TABLE()
+    wxDECLARE_DYNAMIC_CLASS(wmSlider);
 
     public:
 
         /** @brief default constructor
         **/
-        wmSlider() { }
+        wmSlider() : pmControl() { }
 
         /** @brief Constructor - made to be the same as a wxStaticText
         *   @param parent pointer to the parent window

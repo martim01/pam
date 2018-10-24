@@ -122,8 +122,6 @@
 		<Linker>
 			<Add directory="../../lib" />
 		</Linker>
-		<Unit filename="levelgraph.cpp" />
-		<Unit filename="levelgraph.h" />
 		<Unit filename="peaklog.cpp" />
 		<Unit filename="peaklog.h" />
 		<Unit filename="peaklogbuilder.cpp" />

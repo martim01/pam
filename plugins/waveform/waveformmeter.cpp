@@ -10,23 +10,21 @@
 
 using namespace std;
 
-BEGIN_EVENT_TABLE(waveformMeter, wxWindow)
+BEGIN_EVENT_TABLE(waveformMeter, pmControl)
     EVT_PAINT(waveformMeter::OnPaint)
     EVT_SIZE(waveformMeter::OnSize)
     EVT_LEFT_UP(waveformMeter::OnLeftUp)
 END_EVENT_TABLE()
 
 
+ wxIMPLEMENT_DYNAMIC_CLASS(waveformMeter, pmControl);
 
 
-waveformMeter::waveformMeter(wxWindow *parent, waveformBuilder* pBuilder, wxWindowID id, const wxPoint& pos, const wxSize& size) :
+
+waveformMeter::waveformMeter(wxWindow *parent, waveformBuilder* pBuilder, wxWindowID id, const wxPoint& pos, const wxSize& size) : pmControl(),
     m_pBuilder(pBuilder)
 {
     Create(parent, id, pos, size);
-    if(Settings::Get().HideCursor())
-    {
-        SetCursor(wxCURSOR_BLANK);
-    }
 
 }
 

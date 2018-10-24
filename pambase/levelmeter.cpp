@@ -5,18 +5,16 @@
 #include <list>
 #include <wx/dcmemory.h>
 #include <algorithm>
-#ifdef __pambase__
-#include "settings.h"
-#endif // __pambase__
 #include "levelcalculator.h"
 using namespace std;
 
 // LevelMeter
-BEGIN_EVENT_TABLE(LevelMeter, wxWindow)
-END_EVENT_TABLE()
+wxIMPLEMENT_DYNAMIC_CLASS(LevelMeter, pmControl);
+//BEGIN_EVENT_TABLE(LevelMeter, wxWindow)
+//END_EVENT_TABLE()
 
-LevelMeter::LevelMeter()
-    : m_dMin(-70)
+LevelMeter::LevelMeter() : pmControl()
+    , m_dMin(-70)
     , m_dMax(0)
     , m_bShading(true)
 {
@@ -26,7 +24,7 @@ LevelMeter::LevelMeter()
     m_clrText = wxColour(200,180,255);
 }
 
-LevelMeter::LevelMeter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, bool bLevelDisplay, const wxPoint& pos, const wxSize& size) :
+LevelMeter::LevelMeter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, bool bLevelDisplay, const wxPoint& pos, const wxSize& size) : pmControl(),
     m_dMax(0)
 {
     m_dLastValue = -180;
@@ -41,12 +39,6 @@ LevelMeter::LevelMeter(wxWindow *parent, wxWindowID id, const wxString & sText,d
     m_dLevelOffset = 0.0;
     wxWindow::Create(parent,id,pos,szInit,wxWANTS_CHARS, wxT("levelmeter"));
 
-    #ifdef __pambase__
-    if(Settings::Get().HideCursor())
-    {
-        SetCursor(wxCURSOR_BLANK);
-    }
-    #endif // __pambase__
     SetMinSize(size);
 
     m_nPeakMode = PEAK_SHOW;

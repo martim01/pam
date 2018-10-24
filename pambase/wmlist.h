@@ -1,14 +1,13 @@
 #pragma once
 #include <wx/window.h>
 #include <map>
-#include "dlldefine.h"
 #include <vector>
 #include <set>
 #include <list>
 #include <queue>
 #include <wx/timer.h>
 #include "uirect.h"
-
+#include "pmcontrol.h"
 #include "wmbuttonfactory.h"
 
 class wmSlideWnd;
@@ -16,9 +15,9 @@ class wmSlideWnd;
 
 /** @brief Window which displays a list or grid of buttons
 **/
-class PAMBASE_IMPEXPORT wmList : public wxWindow
+class PAMBASE_IMPEXPORT wmList : public pmControl
 {
-    //DECLARE_DYNAMIC_CLASS(wmRouterList)
+    wxDECLARE_DYNAMIC_CLASS(wmList);
     DECLARE_EVENT_TABLE()
 
    public:

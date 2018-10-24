@@ -7,9 +7,6 @@
 #include "icons/left16.xpm"
 #include "icons/up16.xpm"
 #include "icons/down16.xpm"
-#ifdef __pambase__
-#include "settings.h"
-#endif // __pambase__
 
 using namespace std;
 
@@ -17,7 +14,7 @@ const long wmList::ID_HOLDING       = wxNewId();
 const long wmList::ID_SCROLLING     = wxNewId();
 const long wmList::ID_FLASHING     = wxNewId();
 
-BEGIN_EVENT_TABLE(wmList, wxWindow)
+BEGIN_EVENT_TABLE(wmList, pmControl)
     EVT_PAINT(wmList::OnPaint)
     EVT_SIZE(wmList::OnSize)
     EVT_LEFT_DOWN(wmList::OnLeftDown)
@@ -30,12 +27,14 @@ BEGIN_EVENT_TABLE(wmList, wxWindow)
     EVT_SET_FOCUS(wmList::OnFocus)
 END_EVENT_TABLE()
 
+ wxIMPLEMENT_DYNAMIC_CLASS(wmList, pmControl);
+
 DEFINE_EVENT_TYPE(wxEVT_LIST_SELECTED)
 DEFINE_EVENT_TYPE(wxEVT_LIST_HELD)
 DEFINE_EVENT_TYPE(wxEVT_LIST_PAGED)
 DEFINE_EVENT_TYPE(wxEVT_LIST_SLID)
 
-wmList::wmList() : wxWindow()
+wmList::wmList() : pmControl()
 {
 
 }
@@ -54,7 +53,7 @@ wmList::~wmList()
     delete m_pFactory;
 }
 
-wmList::wmList(wxWindow* pParent, wxWindowID id, const wxPoint& pos, const wxSize& size, unsigned int nStyle, unsigned short nScroll, const wxSize& szButtons, unsigned int nColumns, const wxSize& szGap) : wxWindow()
+wmList::wmList(wxWindow* pParent, wxWindowID id, const wxPoint& pos, const wxSize& size, unsigned int nStyle, unsigned short nScroll, const wxSize& szButtons, unsigned int nColumns, const wxSize& szGap) : pmControl()
 {
     Create(pParent,id,pos,size, nStyle, nScroll, szButtons, nColumns,szGap);
 }
@@ -73,12 +72,6 @@ bool wmList::Create(wxWindow* pParent, wxWindowID id, const wxPoint& pos, const 
     if(!wxWindow::Create(pParent,id,pos,szInit,wxWANTS_CHARS, wxEmptyString))
         return false;
 
-    #ifdef __pambase__
-    if(Settings::Get().HideCursor())
-    {
-        SetCursor(wxCURSOR_BLANK);
-    }
-    #endif // __pambase__
 
     m_nGradient = wxEAST;
 
