@@ -41,31 +41,37 @@ pnlNetworkSetup::pnlNetworkSetup(wxWindow* parent,wxWindowID id,const wxPoint& p
 {
 	//(*Initialize(pnlNetworkSetup)
 	Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("wxID_ANY"));
-	SetBackgroundColour(*wxBLACK);
+	SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_SCROLLBAR));
 	m_pbtnStaticDHCP = new wmButton(this, ID_M_PBTN1, _("Type"), wxPoint(350,85), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnStaticDHCP->SetBackgroundColour(wxColour(0,128,192));
 	m_plblConnected = new wmLabel(this, ID_M_PLBL6, _("Connected"), wxPoint(350,130), wxSize(200,40), 0, _T("ID_M_PLBL6"));
 	m_plblConnected->SetBorderState(uiRect::BORDER_NONE);
+	m_plblConnected->GetUiRect().SetGradient(0);
 	m_plblConnected->SetForegroundColour(wxColour(255,255,255));
 	m_plblConnected->SetBackgroundColour(wxColour(0,128,0));
 	m_pLbl5 = new wmLabel(this, ID_M_PLBL7, _("Type"), wxPoint(350,175), wxSize(60,40), 0, _T("ID_M_PLBL7"));
 	m_pLbl5->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl5->GetUiRect().SetGradient(0);
 	m_pLbl5->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl5->SetBackgroundColour(wxColour(64,0,128));
 	m_plblType = new wmLabel(this, ID_M_PLBL8, wxEmptyString, wxPoint(410,175), wxSize(140,40), 0, _T("ID_M_PLBL8"));
 	m_plblType->SetBorderState(uiRect::BORDER_NONE);
+	m_plblType->GetUiRect().SetGradient(0);
 	m_plblType->SetForegroundColour(wxColour(0,0,0));
 	m_plblType->SetBackgroundColour(wxColour(255,255,255));
 	m_pLbl1 = new wmLabel(this, ID_M_PLBL1, _("IP Address"), wxPoint(0,85), wxSize(100,40), 0, _T("ID_M_PLBL1"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl1->GetUiRect().SetGradient(0);
 	m_pLbl1->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl1->SetBackgroundColour(wxColour(64,0,128));
 	m_pLbl2 = new wmLabel(this, ID_M_PLBL2, _("Subnet Mask"), wxPoint(0,130), wxSize(100,40), 0, _T("ID_M_PLBL2"));
 	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl2->GetUiRect().SetGradient(0);
 	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl2->SetBackgroundColour(wxColour(64,0,128));
 	m_pLbl4 = new wmLabel(this, ID_M_PLBL4, _("Gateway"), wxPoint(0,175), wxSize(100,40), 0, _T("ID_M_PLBL4"));
 	m_pLbl4->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl4->GetUiRect().SetGradient(0);
 	m_pLbl4->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl4->SetBackgroundColour(wxColour(64,0,128));
 	m_ppnlGateway = new wmipeditpnl(this, ID_PANEL3, wxPoint(100,175), wxSize(200,40), wxTAB_TRAVERSAL, _T("ID_PANEL3"));
@@ -77,6 +83,7 @@ pnlNetworkSetup::pnlNetworkSetup(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_pkbd->SetFont(m_pkbdFont);
 	m_pLbl3 = new wmLabel(this, ID_M_PLBL3, _("Manage Network Settings"), wxPoint(0,5), wxSize(600,30), 0, _T("ID_M_PLBL3"));
 	m_pLbl3->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl3->GetUiRect().SetGradient(0);
 	m_pLbl3->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl3->SetBackgroundColour(wxColour(0,64,0));
 	wxFont m_pLbl3Font(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
@@ -91,6 +98,7 @@ pnlNetworkSetup::pnlNetworkSetup(wxWindow* parent,wxWindowID id,const wxPoint& p
 	Panel1->SetBackgroundColour(wxColour(0,0,0));
 	m_plblResult = new wmLabel(Panel1, ID_M_PLBL5, wxEmptyString, wxPoint(0,50), wxSize(280,150), 0, _T("ID_M_PLBL5"));
 	m_plblResult->SetBorderState(uiRect::BORDER_NONE);
+	m_plblResult->GetUiRect().SetGradient(0);
 	m_plblResult->SetForegroundColour(wxColour(255,0,0));
 	m_plblResult->SetBackgroundColour(wxColour(0,0,0));
 	wxFont m_plblResultFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);

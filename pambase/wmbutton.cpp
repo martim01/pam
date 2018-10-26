@@ -467,6 +467,8 @@ void wmButton::DrawToggle(wxDC& dc)
     }
     else
     {
+        m_uiRect.SetBackgroundColour(m_clrBackground[STATE_DISABLED]);
+        m_uiRect.SetForegroundColour(m_clrForeground[STATE_DISABLED]);
         m_uiRect.Draw(dc, m_uiRect.GetLabel(), uiRect::BORDER_FLAT, bmp);
     }
 }

@@ -150,22 +150,27 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Panel4->SetBackgroundColour(wxColour(255,255,255));
     m_plblCpu = new wmLabel(Panel4, ID_M_PLBL3, _("CPU:"), wxPoint(1,1), wxSize(95,23), 0, _T("ID_M_PLBL3"));
     m_plblCpu->SetBorderState(uiRect::BORDER_NONE);
+    m_plblCpu->GetUiRect().SetGradient(0);
     m_plblCpu->SetForegroundColour(wxColour(255,255,255));
     m_plblCpu->SetBackgroundColour(wxColour(0,0,0));
     m_plblInput = new wmLabel(Panel4, ID_M_PLBL1, _("Input"), wxPoint(1,25), wxSize(95,24), 0, _T("ID_M_PLBL1"));
     m_plblInput->SetBorderState(uiRect::BORDER_NONE);
+    m_plblInput->GetUiRect().SetGradient(0);
     m_plblInput->SetForegroundColour(wxColour(255,255,255));
     m_plblInput->SetBackgroundColour(wxColour(0,128,0));
     m_plblNetwork = new wmLabel(Panel4, ID_M_PLBL4, wxEmptyString, wxPoint(97,1), wxSize(95,23), 0, _T("ID_M_PLBL4"));
     m_plblNetwork->SetBorderState(uiRect::BORDER_NONE);
+    m_plblNetwork->GetUiRect().SetGradient(0);
     m_plblNetwork->SetForegroundColour(wxColour(255,255,255));
     m_plblNetwork->SetBackgroundColour(wxColour(0,0,0));
     m_plblOutput = new wmLabel(Panel4, ID_M_PLBL2, _("Output"), wxPoint(97,25), wxSize(95,24), 0, _T("ID_M_PLBL2"));
     m_plblOutput->SetBorderState(uiRect::BORDER_NONE);
+    m_plblOutput->GetUiRect().SetGradient(0);
     m_plblOutput->SetForegroundColour(wxColour(255,255,255));
     m_plblOutput->SetBackgroundColour(wxColour(0,128,0));
     m_pbtnMonitor = new wmButton(Panel2, ID_M_PBTN1, _("Monitor"), wxPoint(5,345), wxSize(190,37), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
     m_pbtnMonitor->SetBackgroundColour(wxColour(128,0,128));
+    m_pbtnMonitor->SetColourDisabled(wxColour(wxT("#909090")));
     Panel3 = new wxPanel(m_pswpScreens, ID_PANEL6, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL6"));
     Panel3->SetBackgroundColour(wxColour(0,0,0));
     m_plstOptions = new wmList(Panel3, ID_M_PLST2, wxPoint(0,5), wxSize(200,200), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
@@ -206,6 +211,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
     m_pbtnMonitor->SetToggleLook(true, wxT("Input"), wxT("Output"), 45);
     m_pbtnMonitor->ToggleSelection(Settings::Get().Read(wxT("Monitor"), wxT("Source"), 0), true);
+    m_pbtnMonitor->Enable((Settings::Get().Read(wxT("Output"), wxT("Enabled"),1) == 1));
 
     m_plstScreens->SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
     m_plstOptions->SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
@@ -734,7 +740,14 @@ void pam2Dialog::OutputChanged(const wxString& sKey)
 {
     if(sKey == wxT("Enabled"))
     {
-        m_plblOutput->Show(Settings::Get().Read(wxT("Output"), wxT("Enabled"),1)==1);
+        bool bEnabled(Settings::Get().Read(wxT("Output"), wxT("Enabled"),1)==1);
+        m_plblOutput->Show(bEnabled);
+        if(!bEnabled)
+        {
+            m_pbtnMonitor->ToggleSelection(false, true);
+        }
+        m_pbtnMonitor->Enable(bEnabled);
+
     }
     else if(sKey == wxT("Source"))
     {

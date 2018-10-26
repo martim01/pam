@@ -214,18 +214,7 @@ void wmEdit::OnChar(wxKeyEvent& event)
         switch(event.GetKeyCode())
         {
         case 8:		//backspace
-            if(m_sText.empty() == false && m_nInsert >0)
-            {
-                wxString sStr(m_sText.Left(m_nInsert-1));
-                sStr += m_sText.Mid(m_nInsert);
-                UpdateText(sStr);
-                --m_nInsert;
-            }
-            if(m_nInsert == 0)
-            {
-                wxCommandEvent eventUp(wxEVT_TEXT_BACKSPACE, GetId());
-                wxPostEvent(GetParent(), eventUp);
-            }
+            DeleteChar();
             break;
         case 9:		//tab
             if((m_nStyle & wxTE_PROCESS_TAB)  && m_sText.length() < m_nMaxCharacters)
@@ -546,6 +535,7 @@ void wmEdit::SetCaretPos(wxDC& dc, const wxString& sText)
 void wmEdit::SetInsertPos(int nPos)
 {
     m_nInsert = nPos;
+    Refresh();
 }
 
 unsigned int wmEdit::GetInsertPos() const
@@ -697,3 +687,20 @@ bool wmEdit::SetForegroundColour(const wxColour& clr)
 //{
 //    event.Skip();
 //}
+
+
+void wmEdit::DeleteChar()
+{
+    if(m_sText.empty() == false && m_nInsert >0)
+    {
+        wxString sStr(m_sText.Left(m_nInsert-1));
+        sStr += m_sText.Mid(m_nInsert);
+        UpdateText(sStr);
+        --m_nInsert;
+    }
+    else if(m_nInsert == 0)
+    {
+        wxCommandEvent eventUp(wxEVT_TEXT_BACKSPACE, GetId());
+        wxPostEvent(GetParent(), eventUp);
+    }
+}

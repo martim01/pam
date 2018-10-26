@@ -33,19 +33,19 @@ wmipeditpnl::wmipeditpnl(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_pEdt1 = new wmEdit(this, ID_M_PEDT1, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_M_PEDT1"));
 	m_pEdt1->SetMaxLength(3);
 	m_pEdt1->SetValidation(5);
-	m_pEdt1->SetBorderStyle(3,3);
+	m_pEdt1->SetBorderStyle(2,3);
 	m_pEdt2 = new wmEdit(this, ID_M_PEDT2, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_M_PEDT2"));
 	m_pEdt2->SetMaxLength(3);
 	m_pEdt2->SetValidation(5);
-	m_pEdt2->SetBorderStyle(3,3);
+	m_pEdt2->SetBorderStyle(2,3);
 	m_pEdt3 = new wmEdit(this, ID_M_PEDT3, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_M_PEDT3"));
 	m_pEdt3->SetMaxLength(3);
 	m_pEdt3->SetValidation(5);
-	m_pEdt3->SetBorderStyle(3,3);
+	m_pEdt3->SetBorderStyle(2,3);
 	m_pEdt4 = new wmEdit(this, ID_M_PEDT4, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_M_PEDT4"));
 	m_pEdt4->SetMaxLength(3);
 	m_pEdt4->SetValidation(5);
-	m_pEdt4->SetBorderStyle(3,3);
+	m_pEdt4->SetBorderStyle(2,3);
 
 	Connect(ID_M_PEDT1,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&wmipeditpnl::Onm_pEdt1Text);
 	Connect(ID_M_PEDT2,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&wmipeditpnl::Onm_pEdt2Text);
@@ -60,6 +60,10 @@ wmipeditpnl::wmipeditpnl(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	Connect(ID_M_PEDT3,wxEVT_TEXT_BACKSPACE,(wxObjectEventFunction)&wmipeditpnl::Onm_pEdt3TextBack);
 	Connect(ID_M_PEDT4,wxEVT_TEXT_BACKSPACE,(wxObjectEventFunction)&wmipeditpnl::Onm_pEdt4TextBack);
 
+	m_pEdt1->SetFocusedBackground(wxColour(255,255,100));
+	m_pEdt2->SetFocusedBackground(wxColour(255,255,100));
+	m_pEdt3->SetFocusedBackground(wxColour(255,255,100));
+	m_pEdt4->SetFocusedBackground(wxColour(255,255,100));
 
 
 	m_pEdt1->SetValidation(wmEdit::IP);
@@ -110,6 +114,7 @@ void wmipeditpnl::CheckEdit(wmEdit* pCurrent, wmEdit* pNext)
         if(pNext)
         {
             pNext->SetFocus();
+            pNext->SetInsertPos(0);
         }
     }
     else
@@ -124,6 +129,7 @@ void wmipeditpnl::CheckEdit(wmEdit* pCurrent, wmEdit* pNext)
         if(pCurrent->GetValue().length() == 3 && pNext)
         {
             pNext->SetFocus();
+            pNext->SetInsertPos(0);
         }
     }
 }
@@ -176,16 +182,19 @@ void wmipeditpnl::Onm_pEdt1TextBack(wxCommandEvent& event)
 void wmipeditpnl::Onm_pEdt2TextBack(wxCommandEvent& event)
 {
     m_pEdt1->SetFocus();
+    m_pEdt1->DeleteChar();
 }
 
 void wmipeditpnl::Onm_pEdt3TextBack(wxCommandEvent& event)
 {
     m_pEdt2->SetFocus();
+    m_pEdt2->DeleteChar();
 }
 
 void wmipeditpnl::Onm_pEdt4TextBack(wxCommandEvent& event)
 {
     m_pEdt3->SetFocus();
+    m_pEdt3->DeleteChar();
 }
 
 void wmipeditpnl::OnResize(wxSizeEvent& event)

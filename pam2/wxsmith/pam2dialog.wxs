@@ -111,6 +111,7 @@
 									</object>
 									<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnMonitor" member="yes">
 										<label>Monitor</label>
+										<button_disabled>#909090</button_disabled>
 										<pos>5,345</pos>
 										<size>190,37</size>
 										<bg>#800080</bg>
