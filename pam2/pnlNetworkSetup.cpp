@@ -6,7 +6,6 @@
 using namespace std;
 
 //(*InternalHeaders(pnlNetworkSetup)
-#include <wx/settings.h>
 #include <wx/font.h>
 #include <wx/intl.h>
 #include <wx/string.h>
@@ -41,7 +40,7 @@ pnlNetworkSetup::pnlNetworkSetup(wxWindow* parent,wxWindowID id,const wxPoint& p
 {
 	//(*Initialize(pnlNetworkSetup)
 	Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("wxID_ANY"));
-	SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_SCROLLBAR));
+	SetBackgroundColour(wxColour(0,0,0));
 	m_pbtnStaticDHCP = new wmButton(this, ID_M_PBTN1, _("Type"), wxPoint(350,85), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnStaticDHCP->SetBackgroundColour(wxColour(0,128,192));
 	m_plblConnected = new wmLabel(this, ID_M_PLBL6, _("Connected"), wxPoint(350,130), wxSize(200,40), 0, _T("ID_M_PLBL6"));

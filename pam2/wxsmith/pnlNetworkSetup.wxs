@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <wxsmith>
 	<object class="wxPanel" name="pnlNetworkSetup">
-		<bg>wxSYS_COLOUR_SCROLLBAR</bg>
+		<bg>#000000</bg>
 		<id_arg>0</id_arg>
 		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnStaticDHCP" member="yes">
 			<label>Type</label>
