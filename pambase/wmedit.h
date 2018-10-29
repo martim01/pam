@@ -102,7 +102,9 @@ class PAMBASE_IMPEXPORT wmEdit : public pmControl
         }
 
         void SetInsertPos(int nPos);
+        unsigned int GetInsertPos() const;
         void DeleteChar();
+        void ChangeInsertMode(bool bInsert);
 
         virtual bool SetBackgroundColour(const wxColour& clr);
         virtual bool SetForegroundColour(const wxColour& clr);
@@ -148,7 +150,7 @@ class PAMBASE_IMPEXPORT wmEdit : public pmControl
         void HideCaret();
         void ChangeInsertMode(bool bInsert, wxDC& dc);
 
-        unsigned int GetInsertPos() const;
+
         bool Insert() const;
         wxPoint GetCaretPos() const;
         void ReleaseCaret();

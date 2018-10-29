@@ -60,6 +60,11 @@ wmipeditpnl::wmipeditpnl(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	Connect(ID_M_PEDT3,wxEVT_TEXT_BACKSPACE,(wxObjectEventFunction)&wmipeditpnl::Onm_pEdt3TextBack);
 	Connect(ID_M_PEDT4,wxEVT_TEXT_BACKSPACE,(wxObjectEventFunction)&wmipeditpnl::Onm_pEdt4TextBack);
 
+	Connect(ID_M_PEDT1,wxEVT_TEXT_TAB,(wxObjectEventFunction)&wmipeditpnl::Onm_pEdt1TextTab);
+	Connect(ID_M_PEDT2,wxEVT_TEXT_TAB,(wxObjectEventFunction)&wmipeditpnl::Onm_pEdt2TextTab);
+	Connect(ID_M_PEDT3,wxEVT_TEXT_TAB,(wxObjectEventFunction)&wmipeditpnl::Onm_pEdt3TextTab);
+	Connect(ID_M_PEDT4,wxEVT_TEXT_TAB,(wxObjectEventFunction)&wmipeditpnl::Onm_pEdt4TextTab);
+
 	m_pEdt1->SetFocusedBackground(wxColour(255,255,100));
 	m_pEdt2->SetFocusedBackground(wxColour(255,255,100));
 	m_pEdt3->SetFocusedBackground(wxColour(255,255,100));
@@ -70,6 +75,7 @@ wmipeditpnl::wmipeditpnl(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_pEdt2->SetValidation(wmEdit::IP);
 	m_pEdt3->SetValidation(wmEdit::IP);
 	m_pEdt4->SetValidation(wmEdit::IP);
+
 
 	SetSize(size);
 	SetPosition(pos);
@@ -126,7 +132,7 @@ void wmipeditpnl::CheckEdit(wmEdit* pCurrent, wmEdit* pNext)
             pCurrent->SetValue(wxEmptyString);
         }
 
-        if(pCurrent->GetValue().length() == 3 && pNext)
+        if(pCurrent->GetInsertPos() == 3 && pNext)
         {
             pNext->SetFocus();
             pNext->SetInsertPos(0);
@@ -195,6 +201,63 @@ void wmipeditpnl::Onm_pEdt4TextBack(wxCommandEvent& event)
 {
     m_pEdt3->SetFocus();
     m_pEdt3->DeleteChar();
+}
+
+
+void wmipeditpnl::Onm_pEdt1TextTab(wxCommandEvent& event)
+{
+    if(event.GetInt() == 0)
+    {
+        m_pEdt2->SetFocus();
+        m_pEdt2->SetInsertPos(0);
+    }
+}
+
+void wmipeditpnl::Onm_pEdt2TextTab(wxCommandEvent& event)
+{
+    if(event.GetInt() == 0)
+    {
+        m_pEdt3->SetFocus();
+        m_pEdt3->SetInsertPos(0);
+    }
+    else
+    {
+        m_pEdt1->SetFocus();
+        m_pEdt1->SetInsertPos(0);
+    }
+
+}
+
+void wmipeditpnl::Onm_pEdt3TextTab(wxCommandEvent& event)
+{
+    if(event.GetInt() == 0)
+    {
+        m_pEdt4->SetFocus();
+        m_pEdt4->SetInsertPos(0);
+    }
+    else
+    {if(event.GetInt() == 0)
+    {
+        m_pEdt2->SetFocus();
+        m_pEdt2->SetInsertPos(0);
+    }
+    else
+    {
+        m_pEdt1->SetFocus();
+        m_pEdt1->SetInsertPos(0);
+    }
+        m_pEdt2->SetFocus();
+        m_pEdt2->SetInsertPos(0);
+    }
+}
+
+void wmipeditpnl::Onm_pEdt4TextTab(wxCommandEvent& event)
+{
+    if(event.GetInt() != 0)
+    {
+        m_pEdt3->SetFocus();
+        m_pEdt3->SetInsertPos(0);
+    }
 }
 
 void wmipeditpnl::OnResize(wxSizeEvent& event)

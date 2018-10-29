@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxDialog" name="dlgNoInput">
+		<pos>40,400</pos>
+		<size>520,50</size>
+		<fg>#FF0000</fg>
+		<bg>#000000</bg>
+		<font>
+			<size>24</size>
+			<style>normal</style>
+			<weight>normal</weight>
+			<underlined>0</underlined>
+			<family>swiss</family>
+			<face>Tahoma</face>
+		</font>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<style>wxNO_BORDER</style>
+		<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+			<label>No Valid AES Input</label>
+			<pos>0,0</pos>
+			<size>560,50</size>
+			<font>
+				<size>28</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+		</object>
+	</object>
+</wxsmith>

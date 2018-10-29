@@ -40,6 +40,7 @@ struct session;
 class PammClient;
 class Generator;
 class AudioEvent;
+class dlgNoInput;
 
 
 class pam2Dialog: public wxDialog
@@ -137,6 +138,7 @@ class pam2Dialog: public wxDialog
 
         void OnMonitorMax(wxCommandEvent& event);
         void OnAudioData(AudioEvent& event);
+        void OnInputFailed(wxCommandEvent& event);
         void OnSession(wxCommandEvent& event);
         void OnPlaybackChannels(wxCommandEvent& event);
         void OnQoS(wxCommandEvent& event);
@@ -165,6 +167,7 @@ class pam2Dialog: public wxDialog
         pnlTests* m_ppnlTests;
         pnlHelp* m_ppnlHelp;
         pnlLog* m_ppnlLog;
+        dlgNoInput* m_pdlgNoInput;
         MonitorPluginBuilder* m_pSelectedMonitor;
         std::set<MonitorPluginBuilder*> m_setAlwaysPassAudio;
 

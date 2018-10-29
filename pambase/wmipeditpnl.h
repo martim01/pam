@@ -57,6 +57,11 @@ class PAMBASE_IMPEXPORT wmipeditpnl: public pmPanel
 		void Onm_pEdt3TextBack(wxCommandEvent& event);
 		void Onm_pEdt4TextBack(wxCommandEvent& event);
 
+		void Onm_pEdt1TextTab(wxCommandEvent& event);
+		void Onm_pEdt2TextTab(wxCommandEvent& event);
+		void Onm_pEdt3TextTab(wxCommandEvent& event);
+		void Onm_pEdt4TextTab(wxCommandEvent& event);
+
 		void CheckEdit(wmEdit* pCurrent, wmEdit* pNext);
 
 		void SizeRects();

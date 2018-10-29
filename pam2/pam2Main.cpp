@@ -44,6 +44,7 @@
 #include "iomanager.h"
 #include "pnlTestOptions.h"
 #include "dlgPin.h"
+#include "dlgNoInput.h"
 
 //(*InternalHeaders(pam2Dialog)
 #include <wx/bitmap.h>
@@ -205,6 +206,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Connect(ID_TIMER3,wxEVT_TIMER,(wxObjectEventFunction)&pam2Dialog::OntimerIpcTrigger);
     Connect(wxID_ANY,wxEVT_CLOSE_WINDOW,(wxObjectEventFunction)&pam2Dialog::OnClose);
     //*)
+    m_pdlgNoInput = 0;
 
     //m_pswpScreens->SetEventHandler(this);
     Connect(ID_M_PSWP4,wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,(wxObjectEventFunction)&pam2Dialog::OnswpScreensPageChanged);
@@ -241,6 +243,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
     IOManager::Get().RegisterHandler(this);
     Connect(wxID_ANY,wxEVT_DATA,(wxObjectEventFunction)&pam2Dialog::OnAudioData);
+    Connect(wxID_ANY,wxEVT_INPUT_FAILED,(wxObjectEventFunction)&pam2Dialog::OnInputFailed);
     Connect(wxID_ANY,wxEVT_SESSION,(wxObjectEventFunction)&pam2Dialog::OnSession);
     Connect(wxID_ANY,wxEVT_PLAYBACK_CHANNELS,(wxObjectEventFunction)&pam2Dialog::OnPlaybackChannels);
 
@@ -260,7 +263,10 @@ pam2Dialog::~pam2Dialog()
     //(*Destroy(pam2Dialog)
     //*)
     IOManager::Get().Stop();
-
+    if(m_pdlgNoInput)
+    {
+        delete m_pdlgNoInput;
+    }
 }
 
 void pam2Dialog::OnQuit(wxCommandEvent& event)
@@ -644,6 +650,10 @@ void pam2Dialog::MaximizeMonitor(bool bMax)
 void pam2Dialog::OnAudioData(AudioEvent& event)
 {
     //m_timerAES.Stop();
+    if(m_pdlgNoInput)
+    {
+        m_pdlgNoInput->Show(false);
+    }
 
     if(SoundcardManager::Get().IsOutputStreamOpen())
     {
@@ -932,4 +942,14 @@ void pam2Dialog::OnswpMainPageChanged(wxNotebookEvent& event)
 
 void pam2Dialog::OnswpSplashPageChanged(wxNotebookEvent& event)
 {
+}
+
+
+void pam2Dialog::OnInputFailed(wxCommandEvent& event)
+{
+    if(!m_pdlgNoInput)
+    {
+        m_pdlgNoInput = new dlgNoInput(this, wxNewId(), wxPoint(0,425));
+    }
+    m_pdlgNoInput->Show();
 }

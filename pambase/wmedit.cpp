@@ -118,6 +118,12 @@ bool wmEdit::Create(wxWindow* pParent, wxWindowID id,const wxString& sValue, con
     return true;
 }
 
+void wmEdit::ChangeInsertMode(bool bInsert)
+{
+    wxClientDC dc(this);
+    ChangeInsertMode(bInsert, dc);
+}
+
 void wmEdit::SetNonFocusedStyle(const wxColour& clrBack, const wxColour& clrText, unsigned int nBorder)
 {
     if(clrBack.IsOk())
@@ -224,9 +230,10 @@ void wmEdit::OnChar(wxKeyEvent& event)
             }
             else
             {
-                wxCommandEvent event(wxEVT_TEXT_TAB, GetId());
-                event.SetString(m_sText);
-                wxPostEvent(GetParent(), event);
+                wxCommandEvent eventTab(wxEVT_TEXT_TAB, GetId());
+                eventTab.SetString(m_sText);
+                eventTab.SetInt(event.ShiftDown());
+                wxPostEvent(GetParent(), eventTab);
             }
 
             break;
@@ -308,14 +315,14 @@ void wmEdit::OnChar(wxKeyEvent& event)
         case WXK_NUMPAD7:
         case WXK_NUMPAD8:
         case WXK_NUMPAD9:
-            if(Validate(static_cast<wxChar>(event.GetKeyCode()-276)) && m_sText.length() < m_nMaxCharacters)
+            if(Validate(static_cast<wxChar>(event.GetKeyCode()-276)) && (m_sText.length() < m_nMaxCharacters || m_bInsert))
             {
                 UpdateText(AddChar(static_cast<wxChar>(event.GetKeyCode()-276)));
                 ++m_nInsert;
             }
             break;
         default:
-            if(Validate(static_cast<wxChar>(event.GetKeyCode())) && m_sText.length() < m_nMaxCharacters)
+            if(Validate(static_cast<wxChar>(event.GetKeyCode())) && (m_sText.length() < m_nMaxCharacters || m_bInsert))
             {
                 UpdateText(AddChar(static_cast<wxChar>(event.GetKeyCode())));
 
@@ -590,7 +597,11 @@ bool wmEdit::Validate(const wxChar& ch)
 
             if(ch==wxT('.') || ch >= wxT('0') && ch <= wxT('9'))
             {
-                return true;
+                unsigned long nIP;
+                if(m_sText.empty() || (m_sText.ToULong(&nIP) && nIP <= 255))
+                {
+                    return true;
+                }
             }
             return false;
         }

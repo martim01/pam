@@ -14,6 +14,7 @@ using namespace std;
 
 DEFINE_EVENT_TYPE(wxEVT_SESSION)
 DEFINE_EVENT_TYPE(wxEVT_PLAYBACK_CHANNELS)
+DEFINE_EVENT_TYPE(wxEVT_INPUT_FAILED)
 
 IOManager& IOManager::Get()
 {
@@ -667,23 +668,10 @@ void IOManager::OnQoS(wxCommandEvent& event)
 
 void IOManager::OnTimerSilence(wxTimerEvent& event)
 {
-    if(m_SessionIn.GetCurrentSubsession() != m_SessionIn.lstSubsession.end() && m_SessionIn.GetCurrentSubsession()->nChannels != 0)
+    wxCommandEvent eventInput(wxEVT_INPUT_FAILED);
+
+    for(set<wxEvtHandler*>::iterator itHandler = m_setHandlers.begin(); itHandler != m_setHandlers.end(); ++itHandler)
     {
-        //getting here means we've had no audio event for 250ms
-        timedbuffer* pData = new timedbuffer(8192);
-        for(size_t i = 0; i < 8192; i++)
-        {
-            pData->GetWritableBuffer()[i] = 0.0;
-        }
-
-        pData->SetDuration(pData->GetBufferSize()*4);
-
-        int nSource(m_nInputSource);
-        if(m_bMonitorOutput == true)
-        {
-            nSource = m_nPlaybackSource;
-        }
-        AudioEvent eventAudio(pData, nSource, 4096, 480000, true, false);
-        PassOnAudio(eventAudio);
+        (*itHandler)->ProcessEvent(eventInput);
     }
 }

@@ -153,6 +153,8 @@
 		</Linker>
 		<Unit filename="dlgEditName.cpp" />
 		<Unit filename="dlgEditName.h" />
+		<Unit filename="dlgNoInput.cpp" />
+		<Unit filename="dlgNoInput.h" />
 		<Unit filename="dlgPin.cpp" />
 		<Unit filename="dlgPin.h" />
 		<Unit filename="dlgSequence.cpp" />
@@ -239,6 +241,7 @@
 					<wxDialog wxs="wxsmith/dlgEditName.wxs" src="dlgEditName.cpp" hdr="dlgEditName.h" fwddecl="0" i18n="1" name="dlgEditName" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlTestOptions.wxs" src="pnlTestOptions.cpp" hdr="pnlTestOptions.h" fwddecl="0" i18n="1" name="pnlTestOptions" language="CPP" />
 					<wxDialog wxs="wxsmith/dlgPin.wxs" src="dlgPin.cpp" hdr="dlgPin.h" fwddecl="0" i18n="1" name="dlgPin" language="CPP" />
+					<wxDialog wxs="wxsmith/dlgNoInput.wxs" src="dlgNoInput.cpp" hdr="dlgNoInput.h" fwddecl="0" i18n="1" name="dlgNoInput" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlSettingsProfiles.wxs" src="pnlSettingsProfiles.cpp" hdr="pnlSettingsProfiles.h" fwddecl="0" i18n="1" name="pnlSettingsProfiles" language="CPP" />
 				</resources>
 			</wxsmith>
