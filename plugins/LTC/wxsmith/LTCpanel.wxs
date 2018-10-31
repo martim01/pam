@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="LTCPanel">
+		<size>600,480</size>
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmLabel" name="ID_M_PLBL6" variable="m_pLbl1" member="yes">
+			<label>LTC Decoder</label>
+			<gradient>wxNORTH</gradient>
+			<pos>0,0</pos>
+			<size>600,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#804000</bg>
+			<font>
+				<size>22</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Oxygen</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL1" variable="m_plblLTCDate" member="yes">
+			<label>2018-10-31</label>
+			<pos>0,50</pos>
+			<size>600,50</size>
+			<fg>#00FF00</fg>
+			<font>
+				<size>36</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Courier New</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL2" variable="m_plblLTCTime" member="yes">
+			<label>10:18:00.12</label>
+			<pos>0,100</pos>
+			<size>600,50</size>
+			<fg>#00FF00</fg>
+			<font>
+				<size>36</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Courier New</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL7" variable="m_pLbl2" member="yes">
+			<label>LTC Frame Start and End</label>
+			<pos>0,270</pos>
+			<size>600,50</size>
+			<fg>#FFFFFF</fg>
+			<bg>#000080</bg>
+			<font>
+				<size>22</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Oxygen</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL3" variable="m_plblLTCFrameStart" member="yes">
+			<label>123123</label>
+			<pos>0,320</pos>
+			<size>300,50</size>
+			<fg>#00FF00</fg>
+			<font>
+				<size>36</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Courier New</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL4" variable="m_plblLTCFrameEnd" member="yes">
+			<label>12312</label>
+			<pos>300,320</pos>
+			<size>300,50</size>
+			<fg>#00FF00</fg>
+			<font>
+				<size>36</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Courier New</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL8" variable="m_pLbl3" member="yes">
+			<label>LTC Amplitude:</label>
+			<pos>0,200</pos>
+			<size>300,50</size>
+			<fg>#FFFFFF</fg>
+			<bg>#000000</bg>
+			<font>
+				<size>22</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Courier New</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL5" variable="m_plblLTCVolume" member="yes">
+			<label>-1.4 dbFS</label>
+			<pos>300,200</pos>
+			<size>300,50</size>
+			<fg>#F2FC83</fg>
+			<font>
+				<size>22</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Courier New</face>
+			</font>
+			<style>wxALIGN_LEFT</style>
+		</object>
+	</object>
+</wxsmith>

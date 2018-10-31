@@ -21,3 +21,10 @@
 /bin/*
 *.gdb
 /gracenote/*
+/manifest_creator/wxsmith/manifest_creatordialog.wxs
+/pambase/pambase_ui.cbp
+/pamlevel/*.tmp
+/pamplugin/*.cbplugin
+/wxspam/*.save-failed
+/wxspam/*.cbplugin
+*.zip
