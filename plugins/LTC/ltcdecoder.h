@@ -18,8 +18,12 @@ class LtcDecoder
         const wxString& GetAmplitude() const;
         const wxString& GetRaw() const;
         const wxString& GetFPS() const;
+        const wxString& GetMode() const;
 
     private:
+
+        void CreateRaw();
+        void ltc_frame_to_time_bbc(SMPTETimecode* stime, LTCFrame* frame);
 
         LTCDecoder* m_pDecoder;
         LTCFrameExt m_Frame;
@@ -30,6 +34,7 @@ class LtcDecoder
         wxString m_sAmpltitude;
         wxString m_sFPS;
         wxString m_sRaw;
+        wxString m_sMode;
 
         size_t m_nTotal;
         unsigned char m_nFPS;

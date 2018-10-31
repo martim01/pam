@@ -209,8 +209,20 @@ plugin TestPluginFactory::GetPluginDetails(const wxString& sDir, const wxString&
                         aPlugin.sDetails = (*ptr)();
                     }
                 }
+                else
+                {
+                    wmLog::Get()->Log(wxString::Format(wxT("Could not find correct symbols in lib %s"), sLib.c_str()));
+                }
+            }
+            else
+            {
+                wmLog::Get()->Log(wxString::Format(wxT("Could not load lib %s"), sLib.c_str()));
             }
             delete pLib;
+        }
+        else
+        {
+            wmLog::Get()->Log(wxString::Format(wxT("Could not create lib %s"), sLib.c_str()));
         }
     }
     return aPlugin;

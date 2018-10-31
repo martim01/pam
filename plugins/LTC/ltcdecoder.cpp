@@ -2,6 +2,8 @@
 #include <wx/datetime.h>
 #include "timedbuffer.h"
 #include <bitset>
+#include <wx/log.h>
+#include <algorithm>
 
 LtcDecoder::LtcDecoder()
 {
@@ -14,6 +16,7 @@ LtcDecoder::~LtcDecoder()
 {
     ltc_decoder_free(m_pDecoder);
 }
+
 
 bool LtcDecoder::DecodeLtc(const timedbuffer* pBuffer, unsigned int nTotalChannels, unsigned int nChannel)
 {
@@ -36,7 +39,24 @@ bool LtcDecoder::DecodeLtc(const timedbuffer* pBuffer, unsigned int nTotalChanne
             bFrame = true;
 
             SMPTETimecode stime;
-            ltc_frame_to_time(&stime, &m_Frame.ltc, 1);
+
+
+            if(m_Frame.ltc.binary_group_flag_bit0 == 1)
+            {
+                ltc_frame_to_time(&stime, &m_Frame.ltc, 1);
+                m_sMode = wxT("LTC 309M");
+            }
+            else if(m_Frame.ltc.binary_group_flag_bit0 == 0)
+            {
+                ltc_frame_to_time_bbc(&stime, &m_Frame.ltc);
+                m_sMode = wxT("EBU/Leitch");
+            }
+            else
+            {
+                wxLogDebug(wxT("%u %u"),m_Frame.ltc.binary_group_flag_bit0, m_Frame.ltc.binary_group_flag_bit2);
+            }
+            wxLogDebug(m_sMode);
+
             m_sDate.Printf(wxT("%04d-%02d-%02d %s"),
                             ((stime.years < 67) ? 2000+stime.years : 1900+stime.years),
                             stime.months,
@@ -56,33 +76,7 @@ bool LtcDecoder::DecodeLtc(const timedbuffer* pBuffer, unsigned int nTotalChanne
             m_nFPS = std::max(stime.frame, m_nFPS);
             m_sFPS.Printf(wxT("%u"), (m_nFPS+1));
 
-            std::string sRaw;
-
-            sRaw += std::bitset<4>(m_Frame.ltc.frame_units).to_string();
-            sRaw += std::bitset<4>(m_Frame.ltc.user1).to_string();
-            sRaw += std::bitset<2>(m_Frame.ltc.frame_tens).to_string();
-            sRaw += std::bitset<1>(m_Frame.ltc.dfbit).to_string();
-            sRaw += std::bitset<1>(m_Frame.ltc.col_frame).to_string();
-            sRaw += std::bitset<4>(m_Frame.ltc.user2).to_string();
-            sRaw += std::bitset<4>(m_Frame.ltc.secs_units).to_string();
-            sRaw += std::bitset<4>(m_Frame.ltc.user3).to_string();
-            sRaw += std::bitset<3>(m_Frame.ltc.secs_tens).to_string();
-            sRaw += std::bitset<1>(m_Frame.ltc.biphase_mark_phase_correction).to_string();
-            sRaw += std::bitset<4>(m_Frame.ltc.user4).to_string();
-            sRaw += std::bitset<4>(m_Frame.ltc.mins_units).to_string();
-            sRaw += std::bitset<4>(m_Frame.ltc.user5).to_string();
-            sRaw += std::bitset<3>(m_Frame.ltc.mins_tens).to_string();
-            sRaw += std::bitset<1>(m_Frame.ltc.binary_group_flag_bit0).to_string();
-            sRaw += std::bitset<4>(m_Frame.ltc.user6).to_string();
-            sRaw += std::bitset<4>(m_Frame.ltc.hours_units).to_string();
-            sRaw += std::bitset<4>(m_Frame.ltc.user7).to_string();
-            sRaw += std::bitset<2>(m_Frame.ltc.hours_tens).to_string();
-            sRaw += std::bitset<1>(m_Frame.ltc.binary_group_flag_bit1).to_string();
-            sRaw += std::bitset<1>(m_Frame.ltc.binary_group_flag_bit2).to_string();
-            sRaw += std::bitset<4>(m_Frame.ltc.user8).to_string();
-            sRaw += std::bitset<16>(m_Frame.ltc.sync_word).to_string();
-
-            m_sRaw = wxString::FromAscii(sRaw.c_str());
+            CreateRaw();
 
         }
         delete[] pSamples;
@@ -124,4 +118,128 @@ const wxString& LtcDecoder::GetRaw() const
 const wxString& LtcDecoder::GetFPS() const
 {
     return m_sFPS;
+}
+
+
+void LtcDecoder::CreateRaw()
+{
+    std::string sRaw;
+    std::string str;
+
+    str = std::bitset<4>(m_Frame.ltc.frame_units).to_string();
+    std::reverse(str.begin(), str.end());
+    sRaw+=str;
+    sRaw+= " ";
+    str = std::bitset<4>(m_Frame.ltc.user1).to_string();
+    std::reverse(str.begin(), str.end());
+    sRaw+=str;
+    sRaw+= " ";
+    str = std::bitset<2>(m_Frame.ltc.frame_tens).to_string();
+    std::reverse(str.begin(), str.end());
+    sRaw+=str;
+    sRaw+= " ";
+    str = std::bitset<1>(m_Frame.ltc.dfbit).to_string();
+    std::reverse(str.begin(), str.end());
+    sRaw+=str;
+    sRaw+= " ";
+    str = std::bitset<1>(m_Frame.ltc.col_frame).to_string();
+    std::reverse(str.begin(), str.end());
+    sRaw+=str;
+    sRaw+= " ";
+    str = std::bitset<4>(m_Frame.ltc.user2).to_string();
+    std::reverse(str.begin(), str.end());
+    sRaw+=str;
+    sRaw+= " ";
+    str = std::bitset<4>(m_Frame.ltc.secs_units).to_string();
+    std::reverse(str.begin(), str.end());
+    sRaw+=str;
+    sRaw+= " ";
+    str = std::bitset<4>(m_Frame.ltc.user3).to_string();
+    std::reverse(str.begin(), str.end());
+    sRaw+=str;
+    sRaw+= " ";
+    str = std::bitset<3>(m_Frame.ltc.secs_tens).to_string();
+    std::reverse(str.begin(), str.end());
+    sRaw+=str;
+    sRaw+= " ";
+    str = std::bitset<1>(m_Frame.ltc.biphase_mark_phase_correction).to_string();
+    std::reverse(str.begin(), str.end());
+    sRaw+=str;
+    sRaw+= " ";
+    str = std::bitset<4>(m_Frame.ltc.user4).to_string();
+    std::reverse(str.begin(), str.end());
+    sRaw+=str;
+    sRaw+= " ";
+    str = std::bitset<4>(m_Frame.ltc.mins_units).to_string();
+    std::reverse(str.begin(), str.end());
+    sRaw+=str;
+    sRaw+= " ";
+    str = std::bitset<4>(m_Frame.ltc.user5).to_string();
+    std::reverse(str.begin(), str.end());
+    sRaw+=str;
+    sRaw+= " ";
+    str = std::bitset<3>(m_Frame.ltc.mins_tens).to_string();
+    std::reverse(str.begin(), str.end());
+    sRaw+=str;
+    sRaw+= " ";
+    str = std::bitset<1>(m_Frame.ltc.binary_group_flag_bit0).to_string();
+    std::reverse(str.begin(), str.end());
+    sRaw+=str;
+    sRaw+= " ";
+    str = std::bitset<4>(m_Frame.ltc.user6).to_string();
+    std::reverse(str.begin(), str.end());
+    sRaw+=str;
+    sRaw+= " ";
+    str = std::bitset<4>(m_Frame.ltc.hours_units).to_string();
+    std::reverse(str.begin(), str.end());
+    sRaw+=str;
+    sRaw+= " ";
+    str = std::bitset<4>(m_Frame.ltc.user7).to_string();
+    std::reverse(str.begin(), str.end());
+    sRaw+=str;
+    sRaw+= " ";
+    str = std::bitset<2>(m_Frame.ltc.hours_tens).to_string();
+    std::reverse(str.begin(), str.end());
+    sRaw+=str;
+    sRaw+= " ";
+    str = std::bitset<1>(m_Frame.ltc.binary_group_flag_bit1).to_string();
+    std::reverse(str.begin(), str.end());
+    sRaw+=str;
+    sRaw+= " ";
+    str = std::bitset<1>(m_Frame.ltc.binary_group_flag_bit2).to_string();
+    std::reverse(str.begin(), str.end());
+    sRaw+=str;
+    sRaw+= " ";
+    str = std::bitset<4>(m_Frame.ltc.user8).to_string();
+    std::reverse(str.begin(), str.end());
+    sRaw+=str;
+    sRaw+= " ";
+    str = std::bitset<16>(m_Frame.ltc.sync_word).to_string();
+    std::reverse(str.begin(), str.end());
+    sRaw+=str;
+
+
+    m_sRaw = wxString::FromAscii(sRaw.c_str());
+}
+
+
+void LtcDecoder::ltc_frame_to_time_bbc(SMPTETimecode* stime, LTCFrame* frame)
+{
+    if(stime)
+    {
+       stime->years = frame->user6 + frame->user8*10;
+       stime->months = frame->user3;
+       if((frame->user4&0x4)!=0)
+       {
+            stime->months += 10;
+       }
+        stime->days = frame->user2 + (frame->user4&0x3)*10;
+
+        stime->hours = frame->hours_units + frame->hours_tens*10;
+        stime->mins  = frame->mins_units  + frame->mins_tens*10;
+        stime->secs  = frame->secs_units  + frame->secs_tens*10;
+        stime->frame = frame->frame_units + frame->frame_tens*10;
+
+        sprintf(stime->timezone,"+0000");
+    }
 }
