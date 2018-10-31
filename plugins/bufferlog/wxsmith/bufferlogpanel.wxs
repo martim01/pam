@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="bufferlogPanel">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmList" name="ID_M_PLST1" variable="m_plstBuffer" member="yes">
+			<button_gap>0,0</button_gap>
+			<button_size>-1,25</button_size>
+			<item_border>None</item_border>
+			<button>#000000</button>
+			<items />
+			<pos>0,0</pos>
+			<size>200,480</size>
+			<bg>#000000</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+			<label>Default Buffer</label>
+			<pos>220,0</pos>
+			<size>100,25</size>
+			<fg>#0080FF</fg>
+			<bg>#000000</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL2" variable="m_plblBuffer" member="yes">
+			<label></label>
+			<pos>320,0</pos>
+			<size>100,25</size>
+			<fg>#0080FF</fg>
+			<bg>#000000</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl2" member="yes">
+			<label>Buffers Less</label>
+			<pos>220,50</pos>
+			<size>100,25</size>
+			<fg>#0080FF</fg>
+			<bg>#000000</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL3" variable="m_plblLess" member="yes">
+			<label></label>
+			<pos>320,50</pos>
+			<size>100,25</size>
+			<fg>#0080FF</fg>
+			<bg>#000000</bg>
+		</object>
+	</object>
+</wxsmith>
