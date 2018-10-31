@@ -13,40 +13,48 @@ LtcDecoder::~LtcDecoder()
     ltc_decoder_free(m_pDecoder);
 }
 
-bool LtcDecoder::DecodeLtc(const timedbuffer* pBuffer)
+bool LtcDecoder::DecodeLtc(const timedbuffer* pBuffer, unsigned int nTotalChannels, unsigned int nChannel)
 {
+
     bool bFrame(false);
-
-    float* pSamples = new float[pBuffer->GetBufferSize()];
-    memcpy(pSamples, pBuffer->GetBuffer(), pBuffer->GetBufferSize()*sizeof(float));
-
-
-    ltc_decoder_write_float(m_pDecoder, pSamples, pBuffer->GetBufferSize(), m_nTotal);
-    while (ltc_decoder_read(m_pDecoder, &m_Frame))
+    if(nTotalChannels != 0)
     {
-        bFrame = true;
+        size_t nSize = pBuffer->GetBufferSize()/nTotalChannels;
+        float* pSamples = new float[nSize];
+        int nSample = 0;
+        for(size_t i = nChannel; i < pBuffer->GetBufferSize(); i+=nTotalChannels)
+        {
+            pSamples[nSample] = pBuffer->GetBuffer()[i];
+            nSample++;
+        }
 
-        SMPTETimecode stime;
-        ltc_frame_to_time(&stime, &m_Frame.ltc, 1);
-        m_sDate.Printf(wxT("%04d-%02d-%02d %s"),
-                        ((stime.years < 67) ? 2000+stime.years : 1900+stime.years),
-                        stime.months,
-                        stime.days,
-                        stime.timezone);
-        m_sTime.Printf(wxT("%02d:%02d:%02d%c%02d"),
-                        stime.hours,
-                        stime.mins,
-                        stime.secs,
-                        (m_Frame.ltc.dfbit) ? '.' : ':',
-                        stime.frame);
-        m_sFrameStart.Printf(wxT("%8lld"),m_Frame.off_end - m_Frame.off_start);
-        m_sFrameEnd.Printf(wxT("%8lld"),m_Frame.off_end);
+        ltc_decoder_write_float(m_pDecoder, pSamples, nSize, m_nTotal);
+        while (ltc_decoder_read(m_pDecoder, &m_Frame))
+        {
+            bFrame = true;
 
-        m_sAmpltitude.Printf(wxT("%.2f dBFS"), m_Frame.volume);
+            SMPTETimecode stime;
+            ltc_frame_to_time(&stime, &m_Frame.ltc, 1);
+            m_sDate.Printf(wxT("%04d-%02d-%02d %s"),
+                            ((stime.years < 67) ? 2000+stime.years : 1900+stime.years),
+                            stime.months,
+                            stime.days,
+                            stime.timezone);
+            m_sTime.Printf(wxT("%02d:%02d:%02d%c%02d"),
+                            stime.hours,
+                            stime.mins,
+                            stime.secs,
+                            (m_Frame.ltc.dfbit) ? '.' : ':',
+                            stime.frame);
+            m_sFrameStart.Printf(wxT("%8lld"),m_Frame.off_end - m_Frame.off_start);
+            m_sFrameEnd.Printf(wxT("%8lld"),m_Frame.off_end);
 
+            m_sAmpltitude.Printf(wxT("%.2f dBFS"), m_Frame.volume);
+
+        }
+        delete[] pSamples;
+        m_nTotal += nSize;
     }
-    delete[] pSamples;
-    m_nTotal += pBuffer->GetBufferSize();
     return bFrame;
 }
 

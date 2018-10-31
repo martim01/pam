@@ -94,6 +94,7 @@ LTCPanel::LTCPanel(wxWindow* parent,LTCBuilder* pBuilder, wxWindowID id,const wx
 	SetSize(size);
 	SetPosition(pos);
 
+	m_nInputChannels = 0;
 	m_pDecoder = new LtcDecoder();
 }
 
@@ -105,7 +106,7 @@ LTCPanel::~LTCPanel()
 
 void LTCPanel::SetAudioData(const timedbuffer* pBuffer)
 {
-    if(m_pDecoder->DecodeLtc(pBuffer))
+    if(m_pDecoder->DecodeLtc(pBuffer, m_nInputChannels,0))
     {
         m_plblLTCDate->SetLabel(m_pDecoder->GetDate());
         m_plblLTCTime->SetLabel(m_pDecoder->GetTime());
@@ -117,7 +118,14 @@ void LTCPanel::SetAudioData(const timedbuffer* pBuffer)
 
 void LTCPanel::InputSession(const session& aSession)
 {
-
+    if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
+    {
+        m_nInputChannels = aSession.GetCurrentSubsession()->nChannels;
+    }
+    else
+    {
+        m_nInputChannels = 0;
+    }
 }
 
 void LTCPanel::OutputChannels(const std::vector<char>& vChannels)

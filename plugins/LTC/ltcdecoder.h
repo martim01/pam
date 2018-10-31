@@ -9,7 +9,7 @@ class LtcDecoder
     public:
         LtcDecoder();
         ~LtcDecoder();
-        bool DecodeLtc(const timedbuffer* pBuffer);
+        bool DecodeLtc(const timedbuffer* pBuffer, unsigned int nTotalChannels, unsigned int nChannel);
 
         const wxString& GetDate() const;
         const wxString& GetTime() const;

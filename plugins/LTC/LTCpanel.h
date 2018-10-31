@@ -61,6 +61,7 @@ class LTCPanel: public pmPanel
 		LTCBuilder* m_pBuilder;
 		LtcDecoder* m_pDecoder;
 
+		unsigned int m_nInputChannels;
 		DECLARE_EVENT_TABLE()
 };
 

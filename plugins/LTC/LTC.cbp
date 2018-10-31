@@ -91,6 +91,7 @@
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add library="pambase" />
+					<Add library="libltc" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="../../manifest_creator/bin/LinuxRelease/manifest_creator" />
