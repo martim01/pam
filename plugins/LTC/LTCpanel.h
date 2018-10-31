@@ -24,14 +24,15 @@ class LTCPanel: public pmPanel
 		virtual ~LTCPanel();
 
 		//(*Declarations(LTCPanel)
+		wmLabel* m_pLbl4;
 		wmLabel* m_pLbl3;
 		wmLabel* m_plblLTCTime;
 		wmLabel* m_pLbl1;
+		wmLabel* m_plblFPS;
 		wmLabel* m_plblLTCVolume;
 		wmLabel* m_pLbl2;
+		wmLabel* m_plblRaw;
 		wmLabel* m_plblLTCDate;
-		wmLabel* m_plblLTCFrameStart;
-		wmLabel* m_plblLTCFrameEnd;
 		//*)
 
 		void SetAudioData(const timedbuffer* pBuffer);
@@ -44,10 +45,11 @@ class LTCPanel: public pmPanel
 		static const long ID_M_PLBL6;
 		static const long ID_M_PLBL1;
 		static const long ID_M_PLBL2;
-		static const long ID_M_PLBL7;
+		static const long ID_M_PLBL9;
+		static const long ID_M_PLBL10;
+		static const long ID_M_PLBL8;
 		static const long ID_M_PLBL3;
 		static const long ID_M_PLBL4;
-		static const long ID_M_PLBL8;
 		static const long ID_M_PLBL5;
 		//*)
 

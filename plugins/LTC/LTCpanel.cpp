@@ -14,10 +14,11 @@
 const long LTCPanel::ID_M_PLBL6 = wxNewId();
 const long LTCPanel::ID_M_PLBL1 = wxNewId();
 const long LTCPanel::ID_M_PLBL2 = wxNewId();
-const long LTCPanel::ID_M_PLBL7 = wxNewId();
+const long LTCPanel::ID_M_PLBL9 = wxNewId();
+const long LTCPanel::ID_M_PLBL10 = wxNewId();
+const long LTCPanel::ID_M_PLBL8 = wxNewId();
 const long LTCPanel::ID_M_PLBL3 = wxNewId();
 const long LTCPanel::ID_M_PLBL4 = wxNewId();
-const long LTCPanel::ID_M_PLBL8 = wxNewId();
 const long LTCPanel::ID_M_PLBL5 = wxNewId();
 //*)
 
@@ -53,25 +54,19 @@ LTCPanel::LTCPanel(wxWindow* parent,LTCBuilder* pBuilder, wxWindowID id,const wx
 	m_plblLTCTime->SetForegroundColour(wxColour(0,255,0));
 	wxFont m_plblLTCTimeFont(36,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Courier New"),wxFONTENCODING_DEFAULT);
 	m_plblLTCTime->SetFont(m_plblLTCTimeFont);
-	m_pLbl2 = new wmLabel(this, ID_M_PLBL7, _("LTC Frame Start and End"), wxPoint(0,270), wxSize(600,50), 0, _T("ID_M_PLBL7"));
-	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
-	m_pLbl2->GetUiRect().SetGradient(0);
-	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
-	m_pLbl2->SetBackgroundColour(wxColour(0,0,128));
-	wxFont m_pLbl2Font(22,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Oxygen"),wxFONTENCODING_DEFAULT);
-	m_pLbl2->SetFont(m_pLbl2Font);
-	m_plblLTCFrameStart = new wmLabel(this, ID_M_PLBL3, _("123123"), wxPoint(0,320), wxSize(300,50), 0, _T("ID_M_PLBL3"));
-	m_plblLTCFrameStart->SetBorderState(uiRect::BORDER_NONE);
-	m_plblLTCFrameStart->GetUiRect().SetGradient(0);
-	m_plblLTCFrameStart->SetForegroundColour(wxColour(0,255,0));
-	wxFont m_plblLTCFrameStartFont(36,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Courier New"),wxFONTENCODING_DEFAULT);
-	m_plblLTCFrameStart->SetFont(m_plblLTCFrameStartFont);
-	m_plblLTCFrameEnd = new wmLabel(this, ID_M_PLBL4, _("12312"), wxPoint(300,320), wxSize(300,50), 0, _T("ID_M_PLBL4"));
-	m_plblLTCFrameEnd->SetBorderState(uiRect::BORDER_NONE);
-	m_plblLTCFrameEnd->GetUiRect().SetGradient(0);
-	m_plblLTCFrameEnd->SetForegroundColour(wxColour(0,255,0));
-	wxFont m_plblLTCFrameEndFont(36,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Courier New"),wxFONTENCODING_DEFAULT);
-	m_plblLTCFrameEnd->SetFont(m_plblLTCFrameEndFont);
+	m_pLbl4 = new wmLabel(this, ID_M_PLBL9, _("Raw Data"), wxPoint(0,370), wxSize(600,50), 0, _T("ID_M_PLBL9"));
+	m_pLbl4->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl4->GetUiRect().SetGradient(0);
+	m_pLbl4->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl4->SetBackgroundColour(wxColour(0,0,128));
+	wxFont m_pLbl4Font(22,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Oxygen"),wxFONTENCODING_DEFAULT);
+	m_pLbl4->SetFont(m_pLbl4Font);
+	m_plblRaw = new wmLabel(this, ID_M_PLBL10, _("10:18:00.12"), wxPoint(0,420), wxSize(600,50), 0, _T("ID_M_PLBL10"));
+	m_plblRaw->SetBorderState(uiRect::BORDER_NONE);
+	m_plblRaw->GetUiRect().SetGradient(0);
+	m_plblRaw->SetForegroundColour(wxColour(0,255,0));
+	wxFont m_plblRawFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Courier New"),wxFONTENCODING_DEFAULT);
+	m_plblRaw->SetFont(m_plblRawFont);
 	m_pLbl3 = new wmLabel(this, ID_M_PLBL8, _("LTC Amplitude:"), wxPoint(0,200), wxSize(300,50), 0, _T("ID_M_PLBL8"));
 	m_pLbl3->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl3->GetUiRect().SetGradient(0);
@@ -79,6 +74,19 @@ LTCPanel::LTCPanel(wxWindow* parent,LTCBuilder* pBuilder, wxWindowID id,const wx
 	m_pLbl3->SetBackgroundColour(wxColour(0,0,0));
 	wxFont m_pLbl3Font(22,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Courier New"),wxFONTENCODING_DEFAULT);
 	m_pLbl3->SetFont(m_pLbl3Font);
+	m_pLbl2 = new wmLabel(this, ID_M_PLBL3, _("Frames/Second"), wxPoint(0,250), wxSize(300,50), 0, _T("ID_M_PLBL3"));
+	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl2->GetUiRect().SetGradient(0);
+	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl2->SetBackgroundColour(wxColour(0,0,0));
+	wxFont m_pLbl2Font(22,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Courier New"),wxFONTENCODING_DEFAULT);
+	m_pLbl2->SetFont(m_pLbl2Font);
+	m_plblFPS = new wmLabel(this, ID_M_PLBL4, _("-1.4 dbFS"), wxPoint(300,250), wxSize(300,50), wxALIGN_LEFT, _T("ID_M_PLBL4"));
+	m_plblFPS->SetBorderState(uiRect::BORDER_NONE);
+	m_plblFPS->GetUiRect().SetGradient(0);
+	m_plblFPS->SetForegroundColour(wxColour(242,252,131));
+	wxFont m_plblFPSFont(22,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Courier New"),wxFONTENCODING_DEFAULT);
+	m_plblFPS->SetFont(m_plblFPSFont);
 	m_plblLTCVolume = new wmLabel(this, ID_M_PLBL5, _("-1.4 dbFS"), wxPoint(300,200), wxSize(300,50), wxALIGN_LEFT, _T("ID_M_PLBL5"));
 	m_plblLTCVolume->SetBorderState(uiRect::BORDER_NONE);
 	m_plblLTCVolume->GetUiRect().SetGradient(0);
@@ -110,9 +118,10 @@ void LTCPanel::SetAudioData(const timedbuffer* pBuffer)
     {
         m_plblLTCDate->SetLabel(m_pDecoder->GetDate());
         m_plblLTCTime->SetLabel(m_pDecoder->GetTime());
-        m_plblLTCFrameStart->SetLabel(m_pDecoder->GetFrameStart());
-        m_plblLTCFrameEnd->SetLabel(m_pDecoder->GetFrameEnd());
+
         m_plblLTCVolume->SetLabel(m_pDecoder->GetAmplitude());
+        m_plblRaw->SetLabel(m_pDecoder->GetRaw());
+        m_plblFPS->SetLabel(m_pDecoder->GetFPS());
     }
 }
 

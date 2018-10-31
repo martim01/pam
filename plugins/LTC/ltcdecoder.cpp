@@ -1,11 +1,13 @@
 #include "ltcdecoder.h"
 #include <wx/datetime.h>
 #include "timedbuffer.h"
+#include <bitset>
 
 LtcDecoder::LtcDecoder()
 {
     m_pDecoder = ltc_decoder_create(APV, 32);
     m_nTotal = 0;
+    m_nFPS = 0;
 }
 
 LtcDecoder::~LtcDecoder()
@@ -51,6 +53,37 @@ bool LtcDecoder::DecodeLtc(const timedbuffer* pBuffer, unsigned int nTotalChanne
 
             m_sAmpltitude.Printf(wxT("%.2f dBFS"), m_Frame.volume);
 
+            m_nFPS = std::max(stime.frame, m_nFPS);
+            m_sFPS.Printf(wxT("%u"), (m_nFPS+1));
+
+            std::string sRaw;
+
+            sRaw += std::bitset<4>(m_Frame.ltc.frame_units).to_string();
+            sRaw += std::bitset<4>(m_Frame.ltc.user1).to_string();
+            sRaw += std::bitset<2>(m_Frame.ltc.frame_tens).to_string();
+            sRaw += std::bitset<1>(m_Frame.ltc.dfbit).to_string();
+            sRaw += std::bitset<1>(m_Frame.ltc.col_frame).to_string();
+            sRaw += std::bitset<4>(m_Frame.ltc.user2).to_string();
+            sRaw += std::bitset<4>(m_Frame.ltc.secs_units).to_string();
+            sRaw += std::bitset<4>(m_Frame.ltc.user3).to_string();
+            sRaw += std::bitset<3>(m_Frame.ltc.secs_tens).to_string();
+            sRaw += std::bitset<1>(m_Frame.ltc.biphase_mark_phase_correction).to_string();
+            sRaw += std::bitset<4>(m_Frame.ltc.user4).to_string();
+            sRaw += std::bitset<4>(m_Frame.ltc.mins_units).to_string();
+            sRaw += std::bitset<4>(m_Frame.ltc.user5).to_string();
+            sRaw += std::bitset<3>(m_Frame.ltc.mins_tens).to_string();
+            sRaw += std::bitset<1>(m_Frame.ltc.binary_group_flag_bit0).to_string();
+            sRaw += std::bitset<4>(m_Frame.ltc.user6).to_string();
+            sRaw += std::bitset<4>(m_Frame.ltc.hours_units).to_string();
+            sRaw += std::bitset<4>(m_Frame.ltc.user7).to_string();
+            sRaw += std::bitset<2>(m_Frame.ltc.hours_tens).to_string();
+            sRaw += std::bitset<1>(m_Frame.ltc.binary_group_flag_bit1).to_string();
+            sRaw += std::bitset<1>(m_Frame.ltc.binary_group_flag_bit2).to_string();
+            sRaw += std::bitset<4>(m_Frame.ltc.user8).to_string();
+            sRaw += std::bitset<16>(m_Frame.ltc.sync_word).to_string();
+
+            m_sRaw = wxString::FromAscii(sRaw.c_str());
+
         }
         delete[] pSamples;
         m_nTotal += nSize;
@@ -81,4 +114,14 @@ const wxString& LtcDecoder::GetFrameEnd() const
 const wxString& LtcDecoder::GetAmplitude() const
 {
     return m_sAmpltitude;
+}
+
+const wxString& LtcDecoder::GetRaw() const
+{
+    return m_sRaw;
+}
+
+const wxString& LtcDecoder::GetFPS() const
+{
+    return m_sFPS;
 }
