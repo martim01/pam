@@ -16,6 +16,7 @@ class pam2App : public wxApp
 {
     public:
         virtual bool OnInit();
+
 };
 
 #endif // PAM2APP_H

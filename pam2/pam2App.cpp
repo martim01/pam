@@ -17,6 +17,7 @@
 #include "settings.h"
 #include <wx/stdpaths.h>
 #include <wx/log.h>
+#include "iomanager.h"
 
 IMPLEMENT_APP(pam2App);
 
@@ -50,3 +51,4 @@ bool pam2App::OnInit()
     return wxsOK;
 
 }
+
