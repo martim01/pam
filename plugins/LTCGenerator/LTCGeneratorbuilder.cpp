@@ -7,7 +7,7 @@
 #include <wx/datetime.h>
 #include <wx/log.h>
 #include <cmath>
-
+#include <bitset>
 
 using namespace std;
 
@@ -75,8 +75,14 @@ void LTCGeneratorBuilder::CreateFrame()
             dSample /= 128.0;
             m_queueSamples.push(dSample);
         }
-
-        ltc_encoder_inc_timecode(m_pEncoder);
+        m_nFrame++;
+        if(m_nFrame == round(m_dFPS))
+        {
+            m_nFrame = 0;
+            m_dtFrame+=wxTimeSpan(0,0,1,0);
+        }
+        SetFrameTime();
+//        ltc_encoder_inc_timecode(m_pEncoder);
     }
     else
     {
@@ -117,74 +123,45 @@ void LTCGeneratorBuilder::Init()
 
     }
 
-    wxDateTime dtStart;
 
     switch(ReadSetting(wxT("Time"), 0))
     {
         case LIVE:
-            dtStart = wxDateTime::UNow();
+            m_dtFrame = wxDateTime::UNow();
             break;
         case OFFSET:
             {
-                dtStart = wxDateTime::UNow();
+                m_dtFrame = wxDateTime::UNow();
                 wxDateSpan dsOffset(ReadSetting(wxT("OffsetYear"), 0),ReadSetting(wxT("OffsetMonth"), 0),0,ReadSetting(wxT("OffsetDay"), 0));
                 wxTimeSpan  tsOffset(ReadSetting(wxT("OffsetHour"), 0),ReadSetting(wxT("OffsetMinute"), 0),ReadSetting(wxT("OffsetSecond"),0));
-                dtStart += dsOffset;
-                dtStart += tsOffset;
+                m_dtFrame += dsOffset;
+                m_dtFrame += tsOffset;
             }
             break;
         case ABS:
-            dtStart = wxDateTime(min(31, max(1,ReadSetting(wxT("AbsDay"), 1))), wxDateTime::Month(max(0, ReadSetting(wxT("AbsMonth"), 1)-1)), ReadSetting(wxT("AbsYear"), 2018), ReadSetting(wxT("AbsHour"), 0),ReadSetting(wxT("AbsMinute"), 0),ReadSetting(wxT("AbsSecond"),0));
+            m_dtFrame = wxDateTime(min(31, max(1,ReadSetting(wxT("AbsDay"), 1))), wxDateTime::Month(max(0, ReadSetting(wxT("AbsMonth"), 1)-1)), ReadSetting(wxT("AbsYear"), 2018), ReadSetting(wxT("AbsHour"), 0),ReadSetting(wxT("AbsMinute"), 0),ReadSetting(wxT("AbsSecond"),0));
             break;
 
     }
 
+    m_nDateType = ReadSetting(wxT("DateFormat"),0);
 
-    double dFPS = ReadSetting(wxT("FPS"), 25.0);
+    m_dFPS = ReadSetting(wxT("FPS"), 25.0);
     double dSampleRate = ReadSetting(wxT("SampleRate"), 48000.0);
     double dAmplitude = ReadSetting(wxT("Amplitude"), -18.0);
+
 
 	int total = 0;
 
 
-	SMPTETimecode stime;
-
-	const char timezone[6] = "+000";//ReadSetting(wxT("TimeZone"), wxT("+000")).c_str();
-
-	strcpy(stime.timezone, timezone);
-
-
-
-
-	stime.years = dtStart.GetYear();
-	if(stime.years > 2000 && stime.years < 2067)
-    {
-        stime.years-=2000;
-    }
-    else
-    {
-        stime.years-=1900;
-    }
-	stime.months = dtStart.GetMonth()+1;
-	stime.days = dtStart.GetDay();
-    stime.hours = dtStart.GetHour();
-    stime.mins = dtStart.GetMinute();
-    stime.secs = dtStart.GetSecond();
-    stime.frame = round((dFPS/1000.0)* static_cast<double>(dtStart.GetMillisecond()));
-
-    //@todo type of date
-
-
-	m_pEncoder = ltc_encoder_create(1, 1,  dFPS==25?LTC_TV_625_50:LTC_TV_525_60, LTC_USE_DATE);
-	ltc_encoder_set_bufsize(m_pEncoder, dSampleRate, dFPS);
-
-	ltc_encoder_reinit(m_pEncoder, dSampleRate, dFPS, dFPS==25?LTC_TV_625_50:LTC_TV_525_60, LTC_USE_DATE);
-
+	m_pEncoder = ltc_encoder_create(1, 1,  static_cast<int>(round(m_dFPS))==25?LTC_TV_625_50:LTC_TV_525_60, LTC_USE_DATE);
+	ltc_encoder_set_bufsize(m_pEncoder, dSampleRate, m_dFPS);
+	ltc_encoder_reinit(m_pEncoder, dSampleRate, m_dFPS, static_cast<int>(round(m_dFPS))==25?LTC_TV_625_50:LTC_TV_525_60, LTC_USE_DATE);
 	ltc_encoder_set_filter(m_pEncoder, 0);
 	ltc_encoder_set_volume(m_pEncoder, dAmplitude);
 
-	ltc_encoder_set_timecode(m_pEncoder, &stime);
-
+    m_nFrame = round((m_dFPS/1000.0)* static_cast<double>(m_dtFrame.GetMillisecond()));
+	SetFrameTime();
 
 
 
@@ -197,4 +174,137 @@ void LTCGeneratorBuilder::Stop()
         ltc_encoder_free(m_pEncoder);
     }
     m_pEncoder = 0;
+}
+
+
+void LTCGeneratorBuilder::SetFrameTime()
+{
+    SMPTETimecode stime;
+
+	const char timezone[6] = "+000";//ReadSetting(wxT("TimeZone"), wxT("+000")).c_str();
+	strcpy(stime.timezone, timezone);
+
+	stime.years = m_dtFrame.GetYear();
+	if(stime.years > 2000 && stime.years < 2067)
+    {
+        stime.years-=2000;
+    }
+    else
+    {
+        stime.years-=1900;
+    }
+	stime.months = m_dtFrame.GetMonth()+1;
+	stime.days = m_dtFrame.GetDay();
+    stime.hours = m_dtFrame.GetHour();
+    stime.mins = m_dtFrame.GetMinute();
+    stime.secs = m_dtFrame.GetSecond();
+    stime.frame = m_nFrame;
+
+    ltc_encoder_set_timecode(m_pEncoder, &stime);
+
+    //@todo type of date
+    switch(m_nDateType)
+    {
+        case BBC:
+            CreateBBCTime();
+            break;
+        case TVE:
+            CreateTVETime();
+            break;
+        case MTD:
+            CreateMTDTime();
+            break;
+    }
+}
+
+
+void LTCGeneratorBuilder::CreateBBCTime()
+{
+    int nYears = m_dtFrame.GetYear();
+	if(nYears > 2000 && nYears < 2067)
+    {
+        nYears-=2000;
+    }
+    else
+    {
+        nYears-=1900;
+    }
+
+    unsigned int nBits(0);
+    unsigned int nYear10 = nYears/10;
+    unsigned int nYear = nYears%10;
+    unsigned int nMonth10 = (m_dtFrame.GetMonth()+1)/10;
+    unsigned int nDay10 = (m_dtFrame.GetDay())/10;
+    unsigned int nMonth = (m_dtFrame.GetMonth()+1)%10;
+    unsigned int nDay = (m_dtFrame.GetDay())%10;
+
+    nBits = nYear10 << 28;
+    nBits+= nYear << 20;
+    nBits+= nMonth10 << 14;
+    nBits+= nDay10 << 12;
+    nBits+= nMonth << 8;
+    nBits+= nDay << 4;
+
+    ltc_encoder_set_user_bits(m_pEncoder, nBits);
+}
+
+void LTCGeneratorBuilder::CreateTVETime()
+{
+    int nYears = m_dtFrame.GetYear();
+	if(nYears > 2000 && nYears < 2067)
+    {
+        nYears-=2000;
+    }
+    else
+    {
+        nYears-=1900;
+    }
+
+    unsigned int nYear10 = nYears/10;
+    unsigned int nYear = nYears%10;
+    unsigned int nMonth10 = (m_dtFrame.GetMonth()+1)/10;
+    unsigned int nDay10 = (m_dtFrame.GetDay())/10;
+    unsigned int nMonth = (m_dtFrame.GetMonth()+1)%10;
+    unsigned int nDay = (m_dtFrame.GetDay())%10;
+
+
+    unsigned int nBits(nDay << 4);
+    nBits += nDay10 << 8;
+    nBits += nMonth << 12;
+    nBits += nMonth10 << 16;
+    nBits += nYear << 20;
+    nBits += nYear10 << 24;
+
+    ltc_encoder_set_user_bits(m_pEncoder, nBits);
+}
+
+void LTCGeneratorBuilder::CreateMTDTime()
+{
+    int nYears = m_dtFrame.GetYear();
+	if(nYears > 2000 && nYears < 2067)
+    {
+        nYears-=2000;
+    }
+    else
+    {
+        nYears-=1900;
+    }
+
+    unsigned int nYear10 = nYears/10;
+    unsigned int nYear = nYears%10;
+    unsigned int nMonth10 = (m_dtFrame.GetMonth()+1)/10;
+    unsigned int nDay10 = (m_dtFrame.GetDay())/10;
+    unsigned int nMonth = (m_dtFrame.GetMonth()+1)%10;
+    unsigned int nDay = (m_dtFrame.GetDay())%10;
+
+
+
+    unsigned int nBits(nDay << 4);
+    nBits += nDay10 << 8;
+    nBits += nMonth << 12;
+    nBits += nMonth10 << 16;
+    nBits += nYear << 20;
+    nBits += nYear10 << 24;
+
+    ltc_encoder_set_user_bits(m_pEncoder, nBits);
 }

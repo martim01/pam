@@ -951,6 +951,6 @@ void pam2Dialog::OnInputFailed(wxCommandEvent& event)
     {
         m_pdlgNoInput = new dlgNoInput(this, wxNewId(), wxPoint(0,425));
     }
-    m_pdlgNoInput->SetPosition(wxPoint(0,425));
+    m_pdlgNoInput->SetPosition(wxPoint(0,30));
     m_pdlgNoInput->Show();
 }
