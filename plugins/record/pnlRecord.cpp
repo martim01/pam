@@ -39,6 +39,7 @@ pnlRecord::pnlRecord(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 	SetFont(thisFont);
 	m_pLbl12 = new wmLabel(this, ID_M_PLBL37, _("Recorder"), wxPoint(0,0), wxSize(600,40), 0, _T("ID_M_PLBL37"));
 	m_pLbl12->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl12->GetUiRect().SetGradient(0);
 	m_pLbl12->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl12->SetBackgroundColour(wxColour(91,149,57));
 	wxFont m_pLbl12Font(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
@@ -49,6 +50,7 @@ pnlRecord::pnlRecord(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 	m_pKbd1->SetFont(m_pKbd1Font);
 	m_pLbl1 = new wmLabel(this, ID_M_PLBL1, _("Filename"), wxPoint(0,50), wxSize(100,40), 0, _T("ID_M_PLBL1"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl1->GetUiRect().SetGradient(0);
 	m_pLbl1->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl1->SetBackgroundColour(wxColour(0,0,0));
 	m_pbtnRecord = new wmButton(this, ID_M_PBTN1, _("Record"), wxPoint(110,100), wxSize(100,80), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
@@ -57,10 +59,12 @@ pnlRecord::pnlRecord(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 	m_pbtnRecord->SetColourDisabled(wxColour(wxT("#909090")));
 	m_pLbl2 = new wmLabel(this, ID_M_PLBL2, _("File Length"), wxPoint(240,100), wxSize(150,30), 0, _T("ID_M_PLBL2"));
 	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl2->GetUiRect().SetGradient(0);
 	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl2->SetBackgroundColour(wxColour(0,0,0));
 	m_plblTime = new wmLabel(this, ID_M_PLBL3, _("00:00:00"), wxPoint(390,100), wxSize(150,30), 0, _T("ID_M_PLBL3"));
 	m_plblTime->SetBorderState(uiRect::BORDER_NONE);
+	m_plblTime->GetUiRect().SetGradient(0);
 	m_plblTime->SetForegroundColour(wxColour(0,255,128));
 	m_plblTime->SetBackgroundColour(wxColour(0,0,0));
 	m_pedtFile = new wmEdit(this, ID_M_PEDT1, wxEmptyString, wxPoint(101,50), wxSize(270,40), 0, wxDefaultValidator, _T("ID_M_PEDT1"));

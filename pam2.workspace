@@ -50,6 +50,7 @@
 		<Project filename="plugins/waveform/waveform.cbp" />
 		<Project filename="plugins/bufferlog/bufferlog.cbp" />
 		<Project filename="plugins/LTC/LTC.cbp" />
+		<Project filename="plugins/LTCGenerator/LTCGenerator.cbp" />
 		<Project filename="pam2/pam2.cbp">
 			<Depends filename="pambase/pambase.cbp" />
 			<Depends filename="pamfft/pamfft.cbp" />
@@ -73,6 +74,7 @@
 			<Depends filename="plugins/record/record.cbp" />
 			<Depends filename="plugins/bufferlog/bufferlog.cbp" />
 			<Depends filename="plugins/LTC/LTC.cbp" />
+			<Depends filename="plugins/LTCGenerator/LTCGenerator.cbp" />
 		</Project>
 		<Project filename="pamupdatemanager/pamupdatemanager.cbp">
 			<Depends filename="pambase/pambase.cbp" />

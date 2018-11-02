@@ -67,6 +67,7 @@
  */
 
 class timedbuffer;
+class GeneratorPluginBuilder;
 
 struct genfreq
 {
@@ -120,6 +121,7 @@ class PAMBASE_IMPEXPORT Generator
         void SetSampleRate(unsigned int nSampleRate);
         void SetFrequency(float dFrequency, float ddBFS, int nType);
         bool SetFile();
+        bool SetPlugin(const wxString& sPlugin);
 
         bool LoadSequence(const wxString& sFile);
 
@@ -198,15 +200,18 @@ class PAMBASE_IMPEXPORT Generator
         void GenerateGreyANoise(float* pBuffer, unsigned int nSize);
         void GenerateGreyKNoise(float* pBuffer, unsigned int nSize);
         void GenerateBrownNoise(float* pBuffer, unsigned int nSize);
-
+        void GeneratePlugin(timedbuffer* pBuffer);
         float m_dNoiseAmplitude;
         int m_nGenerator;
+
+
+        GeneratorPluginBuilder* m_pPlugin;
 
         KFilter* m_pKFilter[2];
         IIR* m_pAFilter[2];
         IIR* m_pGreyFilter[2];
 
-        enum {FILE, FREQUENCY, SEQUENCE, NOISE_WHITE, NOISE_PINK, NOISE_GREY, NOISE_A, NOISE_K, NOISE_BROWN};
+        enum {FILE, FREQUENCY, SEQUENCE, NOISE_WHITE, NOISE_PINK, NOISE_GREY, NOISE_A, NOISE_K, NOISE_BROWN,PLUGIN};
 
 
         static const double AFILTER_B[7];

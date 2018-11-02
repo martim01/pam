@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlSettingsGenerators">
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wxPanel" name="ID_PANEL8" variable="pnlGenerator" member="yes">
+			<size>600,440</size>
+			<bg>#000000</bg>
+			<object class="wmList" name="ID_M_PLST8" variable="m_plstAudioSources" member="yes">
+				<scrolling>None</scrolling>
+				<button_gap>2,-1</button_gap>
+				<button_size>-1,30</button_size>
+				<columns>8</columns>
+				<button>#400080</button>
+				<button_selected>#FF8000</button_selected>
+				<items />
+				<pos>0,0</pos>
+				<size>600,64</size>
+				<bg>#000000</bg>
+				<style>wmList::STYLE_SELECT</style>
+				<handler function="OnlstAudioSourcesSelected" entry="EVT_LIST_SELECTED" />
+			</object>
+			<object class="wmSwitcherPanel" name="ID_M_PSWP2" variable="m_pswpAog" member="yes">
+				<pos>0,70</pos>
+				<size>600,380</size>
+				<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
+				<object class="wmSwitcherPanelpage">
+					<object class="wxPanel" name="ID_PANEL11" variable="Panel5" member="yes">
+						<bg>#000000</bg>
+						<object class="wmLabel" name="ID_M_PLBL6" variable="m_plblInput" member="yes">
+							<label>Audio output taken from incoming audio siganl.&#x0A;See Audio Input page</label>
+							<pos>0,0</pos>
+							<size>600,100</size>
+							<fg>#80FF00</fg>
+							<bg>#000000</bg>
+							<font>
+								<size>14</size>
+								<style>normal</style>
+								<weight>bold</weight>
+								<underlined>0</underlined>
+								<family>swiss</family>
+								<face>Arial</face>
+							</font>
+						</object>
+						<object class="wmLabel" name="ID_M_PLBL8" variable="m_pLbl1" member="yes">
+							<label>Input-Output Channel Mapping</label>
+							<pos>0,100</pos>
+							<size>600,30</size>
+							<fg>#FFFFFF</fg>
+							<bg>#004000</bg>
+							<font>
+								<size>10</size>
+								<style>normal</style>
+								<weight>bold</weight>
+								<underlined>0</underlined>
+								<family>swiss</family>
+								<face>Arial</face>
+							</font>
+						</object>
+						<object class="wmList" name="ID_M_PLST3" variable="m_plstOutputLeft" member="yes">
+							<scrolling>None</scrolling>
+							<button_gap>2,-1</button_gap>
+							<columns>8</columns>
+							<button>#A0A0A0</button>
+							<button_selected>#008000</button_selected>
+							<items />
+							<pos>60,140</pos>
+							<size>540,44</size>
+							<bg>#000000</bg>
+							<style>wmList::STYLE_SELECT</style>
+							<handler function="OnlstOutputLeftSelected" entry="EVT_LIST_SELECTED" />
+						</object>
+						<object class="wmList" name="ID_M_PLST10" variable="m_plstOutputRight" member="yes">
+							<scrolling>None</scrolling>
+							<button_gap>2,-1</button_gap>
+							<columns>8</columns>
+							<button>#A0A0A0</button>
+							<button_selected>#008000</button_selected>
+							<items />
+							<pos>60,200</pos>
+							<size>540,44</size>
+							<bg>#000000</bg>
+							<style>wmList::STYLE_SELECT</style>
+							<handler function="OnlstOutputRightSelected" entry="EVT_LIST_SELECTED" />
+						</object>
+						<object class="wmLabel" name="ID_M_PLBL10" variable="m_pLbl6" member="yes">
+							<label>LEFT:</label>
+							<pos>0,140</pos>
+							<size>60,44</size>
+							<fg>#FFFFFF</fg>
+							<bg>#000000</bg>
+							<font>
+								<size>10</size>
+								<style>normal</style>
+								<weight>bold</weight>
+								<underlined>0</underlined>
+								<family>swiss</family>
+								<face>Verdana</face>
+							</font>
+						</object>
+						<object class="wmLabel" name="ID_M_PLBL11" variable="m_pLbl7" member="yes">
+							<label>RIGHT:</label>
+							<pos>0,200</pos>
+							<size>60,44</size>
+							<fg>#FFFFFF</fg>
+							<bg>#000000</bg>
+							<font>
+								<size>10</size>
+								<style>normal</style>
+								<weight>bold</weight>
+								<underlined>0</underlined>
+								<family>swiss</family>
+								<face>Verdana</face>
+							</font>
+						</object>
+					</object>
+					<label>Input</label>
+				</object>
+				<object class="wmSwitcherPanelpage">
+					<object class="wxPanel" name="ID_PANEL9" variable="Panel3" member="yes">
+						<bg>#000000</bg>
+						<object class="wmList" name="ID_M_PLST7" variable="m_plstAogFiles" member="yes">
+							<scrolling>Horizontal</scrolling>
+							<button_gap>5,5</button_gap>
+							<button_size>-1,40</button_size>
+							<columns>3</columns>
+							<button_selected>#008000</button_selected>
+							<items />
+							<pos>0,0</pos>
+							<size>600,315</size>
+							<bg>#000000</bg>
+							<style>wmList::STYLE_SELECT</style>
+							<handler function="OnlstAogFilesSelected" entry="EVT_LIST_SELECTED" />
+						</object>
+						<object class="wmButton" name="ID_M_PBTN6" variable="m_pbtnAogHome" member="yes">
+							<button_disabled>#808080</button_disabled>
+							<pos>10,325</pos>
+							<size>100,40</size>
+							<handler function="OnbtnAogHomeClick" entry="EVT_BUTTON" />
+						</object>
+						<object class="wmButton" name="ID_M_PBTN7" variable="m_pbtnAogPrev" member="yes">
+							<button_disabled>#808080</button_disabled>
+							<pos>130,325</pos>
+							<size>100,40</size>
+							<handler function="OnbtnAogPrevClick" entry="EVT_BUTTON" />
+						</object>
+						<object class="wmButton" name="ID_M_PBTN8" variable="m_pbtnAogNext" member="yes">
+							<button_disabled>#808080</button_disabled>
+							<pos>250,325</pos>
+							<size>100,40</size>
+							<handler function="OnbtnAogNextClick" entry="EVT_BUTTON" />
+						</object>
+						<object class="wmButton" name="ID_M_PBTN9" variable="m_pbtnAogEnd" member="yes">
+							<button_disabled>#808080</button_disabled>
+							<pos>370,325</pos>
+							<size>100,40</size>
+							<handler function="OnbtnAogEndClick" entry="EVT_BUTTON" />
+						</object>
+						<object class="wmButton" name="ID_M_PBTN20" variable="m_pbtnSequences" member="yes">
+							<label>Edit Sequences</label>
+							<pos>490,325</pos>
+							<size>105,40</size>
+							<hidden>1</hidden>
+							<handler function="OnbtnSequencesClick" entry="EVT_BUTTON" />
+						</object>
+					</object>
+					<label>Files</label>
+				</object>
+				<object class="wmSwitcherPanelpage">
+					<object class="wxPanel" name="ID_PANEL10" variable="Panel4" member="yes">
+						<bg>#000000</bg>
+						<font>
+							<size>12</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Arial</face>
+						</font>
+						<object class="wxStaticBox" name="ID_STATICBOX2" variable="StaticBox2" member="yes">
+							<label>Amplitude</label>
+							<pos>5,210</pos>
+							<size>590,105</size>
+							<fg>#FFFFFF</fg>
+							<bg>#000000</bg>
+						</object>
+						<object class="wxStaticBox" name="ID_STATICBOX1" variable="StaticBox1" member="yes">
+							<label>Frequency</label>
+							<pos>5,5</pos>
+							<size>590,200</size>
+							<fg>#FFFFFF</fg>
+						</object>
+						<object class="Custom" name="ID_SLIDER" subclass="wmSlider" variable="m_pSlider" member="yes">
+							<creating_code>$(THIS) = new $(CLASS)($(PARENT),$(ID),wxT(&quot;Frequency&quot;),$(POS),$(SIZE),$(STYLE),$(NAME));</creating_code>
+							<include_file>wmslider.h</include_file>
+							<local_include>1</local_include>
+							<style>5</style>
+							<pos>10,30</pos>
+							<size>580,50</size>
+						</object>
+						<object class="wmLabel" name="ID_M_PLBL7" variable="m_plblFrequency" member="yes">
+							<label>Hz</label>
+							<border>uiRect::BORDER_FLAT</border>
+							<pos>200,90</pos>
+							<size>200,50</size>
+							<fg>#000000</fg>
+							<bg>#FFFFFF</bg>
+							<font>
+								<size>12</size>
+								<style>normal</style>
+								<weight>normal</weight>
+								<underlined>0</underlined>
+								<family>swiss</family>
+								<face>Arial</face>
+							</font>
+						</object>
+						<object class="wmButton" name="ID_M_PBTN12" variable="m_pbtnMinus10" member="yes">
+							<label>-10 Hz</label>
+							<pos>30,90</pos>
+							<size>80,50</size>
+							<style>wmButton::STYLE_REPEAT</style>
+							<handler function="OnbtnMinus10Click" entry="EVT_BUTTON" />
+						</object>
+						<object class="wmButton" name="ID_M_PBTN11" variable="m_pbtnMinus1" member="yes">
+							<label>-1 Hz</label>
+							<pos>115,90</pos>
+							<size>80,50</size>
+							<style>wmButton::STYLE_REPEAT</style>
+							<handler function="OnbtnMinus1Click" entry="EVT_BUTTON" />
+						</object>
+						<object class="wmButton" name="ID_M_PBTN10" variable="m_pbtnPlus1" member="yes">
+							<label>+1 Hz</label>
+							<pos>405,90</pos>
+							<size>80,50</size>
+							<style>wmButton::STYLE_REPEAT</style>
+							<handler function="OnbtnPlus1Click" entry="EVT_BUTTON" />
+						</object>
+						<object class="wmButton" name="ID_M_PBTN13" variable="m_pbtnPlus10" member="yes">
+							<label>+10 Hz</label>
+							<pos>490,90</pos>
+							<size>80,50</size>
+							<style>wmButton::STYLE_REPEAT</style>
+							<handler function="OnbtnPlus10Click" entry="EVT_BUTTON" />
+						</object>
+						<object class="wmButton" name="ID_M_PBTN14" variable="m_pbtn450" member="yes">
+							<label>450 Hz</label>
+							<pos>115,145</pos>
+							<size>80,50</size>
+							<handler function="Onbtn450Click" entry="EVT_BUTTON" />
+						</object>
+						<object class="wmButton" name="ID_M_PBTN15" variable="m_pbtn900" member="yes">
+							<label>900 Hz</label>
+							<pos>200,145</pos>
+							<size>80,50</size>
+							<handler function="Onbtn900Click" entry="EVT_BUTTON" />
+						</object>
+						<object class="wmButton" name="ID_M_PBTN16" variable="m_pbtn1000" member="yes">
+							<label>1 kHz</label>
+							<pos>285,145</pos>
+							<size>80,50</size>
+							<handler function="Onbtn1000Click" entry="EVT_BUTTON" />
+						</object>
+						<object class="wmButton" name="ID_M_PBTN17" variable="m_pbtn5000" member="yes">
+							<label>5 kHz</label>
+							<pos>370,145</pos>
+							<size>80,50</size>
+							<handler function="Onbtn5000Click" entry="EVT_BUTTON" />
+						</object>
+						<object class="wmButton" name="ID_M_PBTN18" variable="m_pbtn10000" member="yes">
+							<label>10 kHz</label>
+							<pos>455,145</pos>
+							<size>80,50</size>
+							<handler function="Onbtn10000Click" entry="EVT_BUTTON" />
+						</object>
+						<object class="Custom" name="ID_CUSTOM1" subclass="wmSlider" variable="m_pAmplitude" member="yes">
+							<creating_code>$(THIS) = new $(CLASS)($(PARENT),$(ID),wxT(&quot;Frequency&quot;),$(POS),$(SIZE),$(STYLE),$(NAME));</creating_code>
+							<include_file>wmslider.h</include_file>
+							<local_include>1</local_include>
+							<style>5</style>
+							<pos>10,250</pos>
+							<size>400,40</size>
+						</object>
+						<object class="wmLabel" name="ID_M_PLBL9" variable="m_plbldB" member="yes">
+							<label>dB</label>
+							<pos>415,250</pos>
+							<size>60,40</size>
+							<fg>#000000</fg>
+							<bg>#FFFFFF</bg>
+						</object>
+						<object class="wmButton" name="ID_M_PBTN19" variable="m_pbtn0dbu" member="yes">
+							<label>-18 dBFS</label>
+							<pos>480,250</pos>
+							<size>80,40</size>
+							<handler function="Onbtn0dbuClick" entry="EVT_BUTTON" />
+						</object>
+						<object class="wmList" name="ID_M_PLST9" variable="m_plstShape" member="yes">
+							<scrolling>None</scrolling>
+							<button_gap>5,1</button_gap>
+							<columns>4</columns>
+							<items />
+							<pos>150,320</pos>
+							<size>300,44</size>
+							<bg>#000000</bg>
+							<style>wmList::STYLE_SELECT</style>
+							<handler function="OnlstShapeSelected" entry="EVT_LIST_SELECTED" />
+						</object>
+					</object>
+					<label>Generator</label>
+				</object>
+				<object class="wmSwitcherPanelpage">
+					<object class="wxPanel" name="ID_PANEL12" variable="Panel2" member="yes">
+						<bg>#000000</bg>
+						<object class="wmList" name="ID_M_PLST5" variable="m_plstColour" member="yes">
+							<scrolling>None</scrolling>
+							<button_gap>5,1</button_gap>
+							<columns>4</columns>
+							<items />
+							<pos>10,10</pos>
+							<size>580,200</size>
+							<bg>#000000</bg>
+							<style>wmList::STYLE_SELECT</style>
+							<handler function="OnlstColourSelected" entry="EVT_LIST_SELECTED" />
+						</object>
+						<object class="wxStaticBox" name="ID_STATICBOX3" variable="StaticBox3" member="yes">
+							<label>Amplitude</label>
+							<pos>5,210</pos>
+							<size>590,105</size>
+							<fg>#FFFFFF</fg>
+							<bg>#000000</bg>
+						</object>
+						<object class="Custom" name="ID_CUSTOM2" subclass="wmSlider" variable="m_pNoiseAmplitude" member="yes">
+							<creating_code>$(THIS) = new $(CLASS)($(PARENT),$(ID),wxT(&quot;Frequency&quot;),$(POS),$(SIZE),$(STYLE),$(NAME));</creating_code>
+							<include_file>wmslider.h</include_file>
+							<local_include>1</local_include>
+							<style>5</style>
+							<pos>10,250</pos>
+							<size>400,40</size>
+						</object>
+						<object class="wmLabel" name="ID_M_PLBL1" variable="m_plblNoisedB" member="yes">
+							<label>dB</label>
+							<pos>415,250</pos>
+							<size>60,40</size>
+							<fg>#000000</fg>
+							<bg>#FFFFFF</bg>
+						</object>
+						<object class="wmButton" name="ID_M_PBTN21" variable="m_pbtnNoise0dBu" member="yes">
+							<label>-18 dBFS</label>
+							<pos>480,250</pos>
+							<size>80,40</size>
+							<handler function="OnbtnNoise0dBuClick" entry="EVT_BUTTON" />
+						</object>
+					</object>
+					<label>Noise</label>
+				</object>
+			</object>
+		</object>
+	</object>
+</wxsmith>

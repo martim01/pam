@@ -197,6 +197,10 @@
 		<Unit filename="freq_mag.h" />
 		<Unit filename="generator.cpp" />
 		<Unit filename="generator.h" />
+		<Unit filename="generatorpluginbuilder.cpp" />
+		<Unit filename="generatorpluginbuilder.h" />
+		<Unit filename="generatorpluginfactory.cpp" />
+		<Unit filename="generatorpluginfactory.h" />
 		<Unit filename="inimanager.cpp" />
 		<Unit filename="inimanager.h" />
 		<Unit filename="inisection.cpp" />

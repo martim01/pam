@@ -5,11 +5,17 @@
 #include <wx/log.h>
 #include <algorithm>
 
-LtcDecoder::LtcDecoder()
+const wxString LtcDecoder::STR_MODE[4] = {wxT("Not specified"), wxT("8-bit"), wxT("Date"), wxT("Page/Line")};
+const wxString LtcDecoder::STR_DATE_MODE[5] = {wxT("Unknown"), wxT("SMPTE"), wxT("BBC"), wxT("TVE"), wxT("MTD")};
+
+
+LtcDecoder::LtcDecoder() :
+    m_pDecoder(ltc_decoder_create(APV, 32)),
+    m_nTotal(0),
+    m_nFPS(0),
+    m_nLastFrame(0),
+    m_nDateMode(UNKNOWN)
 {
-    m_pDecoder = ltc_decoder_create(APV, 32);
-    m_nTotal = 0;
-    m_nFPS = 0;
 }
 
 LtcDecoder::~LtcDecoder()
@@ -38,43 +44,25 @@ bool LtcDecoder::DecodeLtc(const timedbuffer* pBuffer, unsigned int nTotalChanne
         {
             bFrame = true;
 
-            SMPTETimecode stime;
+            int nMode = WorkoutUserMode();
+            DecodeDateAndTime(nMode);
 
-
-            if(m_Frame.ltc.binary_group_flag_bit0 == 1)
-            {
-                ltc_frame_to_time(&stime, &m_Frame.ltc, 1);
-                m_sMode = wxT("LTC 309M");
-            }
-            else if(m_Frame.ltc.binary_group_flag_bit0 == 0)
-            {
-                ltc_frame_to_time_bbc(&stime, &m_Frame.ltc);
-                m_sMode = wxT("EBU/Leitch");
-            }
-            else
-            {
-                wxLogDebug(wxT("%u %u"),m_Frame.ltc.binary_group_flag_bit0, m_Frame.ltc.binary_group_flag_bit2);
-            }
-            wxLogDebug(m_sMode);
-
-            m_sDate.Printf(wxT("%04d-%02d-%02d %s"),
-                            ((stime.years < 67) ? 2000+stime.years : 1900+stime.years),
-                            stime.months,
-                            stime.days,
-                            stime.timezone);
-            m_sTime.Printf(wxT("%02d:%02d:%02d%c%02d"),
-                            stime.hours,
-                            stime.mins,
-                            stime.secs,
-                            (m_Frame.ltc.dfbit) ? '.' : ':',
-                            stime.frame);
             m_sFrameStart.Printf(wxT("%8lld"),m_Frame.off_end - m_Frame.off_start);
             m_sFrameEnd.Printf(wxT("%8lld"),m_Frame.off_end);
 
             m_sAmpltitude.Printf(wxT("%.2f dBFS"), m_Frame.volume);
 
-            m_nFPS = std::max(stime.frame, m_nFPS);
-            m_sFPS.Printf(wxT("%u"), (m_nFPS+1));
+
+            if(m_Frame.ltc.dfbit == 0)
+            {
+                m_sFPS.Printf(wxT("%u"), (m_nFPS+1));
+            }
+            else
+            {
+                double dFPS = m_nFPS+1;
+                dFPS -= (1.0/dFPS);
+                m_sFPS.Printf(wxT("%.2f"), dFPS);
+            }
 
             CreateRaw();
 
@@ -118,6 +106,16 @@ const wxString& LtcDecoder::GetRaw() const
 const wxString& LtcDecoder::GetFPS() const
 {
     return m_sFPS;
+}
+
+const wxString& LtcDecoder::GetFormat() const
+{
+    return m_sDateFormat;
+}
+
+void LtcDecoder::SetDateMode(int nMode)
+{
+    m_nDateMode = nMode%5;
 }
 
 
@@ -222,24 +220,158 @@ void LtcDecoder::CreateRaw()
     m_sRaw = wxString::FromAscii(sRaw.c_str());
 }
 
-
-void LtcDecoder::ltc_frame_to_time_bbc(SMPTETimecode* stime, LTCFrame* frame)
+int LtcDecoder::WorkoutUserMode()
 {
-    if(stime)
+    int nbit0 = m_Frame.ltc.binary_group_flag_bit0;
+    int nbit1 = m_Frame.ltc.binary_group_flag_bit1;
+    int nbit2 = m_Frame.ltc.binary_group_flag_bit2;
+    if(m_nFPS == 24)
     {
-       stime->years = frame->user6 + frame->user8*10;
-       stime->months = frame->user3;
-       if((frame->user4&0x4)!=0)
-       {
-            stime->months += 10;
-       }
-        stime->days = frame->user2 + (frame->user4&0x3)*10;
+        nbit0 = m_Frame.ltc.biphase_mark_phase_correction;
+        nbit2 = m_Frame.ltc.binary_group_flag_bit0;
+    }
 
-        stime->hours = frame->hours_units + frame->hours_tens*10;
-        stime->mins  = frame->mins_units  + frame->mins_tens*10;
-        stime->secs  = frame->secs_units  + frame->secs_tens*10;
-        stime->frame = frame->frame_units + frame->frame_tens*10;
+    int nMode = nbit0+(nbit2*2);
 
-        sprintf(stime->timezone,"+0000");
+
+    m_sMode = STR_MODE[nMode%4];
+
+    return nMode;
+}
+
+void LtcDecoder::DecodeDateAndTime(int nUserMode)
+{
+    SMPTETimecode stime;
+
+    ltc_frame_to_time_only(stime);
+
+    if(nUserMode == 0 || nUserMode == 2)
+    {
+        int nDateMode =  m_nDateMode;
+        if(nDateMode == UNKNOWN)
+        {
+            while(nDateMode != MTD)
+            {
+                nDateMode++;
+                if(DecodeDateAndTime(stime, nDateMode))
+                    break;
+            }
+        }
+        else
+        {
+            DecodeDateAndTime(stime, nDateMode);
+        }
+        m_sDate.Printf(wxT("%04d-%02d-%02d %s"), ((stime.years < 67) ? 2000+stime.years : 1900+stime.years),stime.months, stime.days, stime.timezone);
+
+        m_sDateFormat = STR_DATE_MODE[nDateMode];
+    }
+    else
+    {
+        m_sDate = wxT("0000-00-00 +0");
+    }
+
+    m_sTime.Printf(wxT("%02d:%02d:%02d%c%02d"),stime.hours,stime.mins,stime.secs,(m_Frame.ltc.dfbit) ? '.' : ':',stime.frame);
+
+
+}
+
+
+bool LtcDecoder::DecodeDateAndTime(SMPTETimecode& stime, int nDateMode)
+{
+    switch(nDateMode)
+    {
+        case SMPTE:
+            ltc_frame_to_time(&stime, &m_Frame.ltc, 1);
+            break;
+        case BBC:
+            ltc_frame_to_time_bbc(stime);
+            break;
+        case TVE:
+            ltc_frame_to_time_tve(stime);
+            break;
+        case MTD:
+            ltc_frame_to_time_mtd(stime);
+            break;
+
+    }
+    if(stime.days < 1 || stime.days > 31 || stime.months < 1 || stime.months > 12)
+    {
+        return false;
+    }
+    return true;
+}
+
+void LtcDecoder::ltc_frame_to_time_only(SMPTETimecode& stime)
+{
+    stime.hours = m_Frame.ltc.hours_units + m_Frame.ltc.hours_tens*10;
+    stime.mins  = m_Frame.ltc.mins_units  + m_Frame.ltc.mins_tens*10;
+    stime.secs  = m_Frame.ltc.secs_units  + m_Frame.ltc.secs_tens*10;
+    stime.frame = m_Frame.ltc.frame_units + m_Frame.ltc.frame_tens*10;
+
+    if(stime.frame == 0 && m_nLastFrame != 0)
+    {
+        m_nFPS = m_nLastFrame;
+    }
+    m_nLastFrame = stime.frame;
+}
+
+
+void LtcDecoder::ltc_frame_to_time_bbc(SMPTETimecode& stime)
+{
+   stime.years = m_Frame.ltc.user6 + m_Frame.ltc.user8*10;
+   stime.months = m_Frame.ltc.user3;
+   if((m_Frame.ltc.user4&0x4)!=0)
+   {
+        stime.months += 10;
+   }
+    stime.days = m_Frame.ltc.user2 + (m_Frame.ltc.user4&0x3)*10;
+
+    sprintf(stime.timezone,"+0");
+}
+
+void LtcDecoder::ltc_frame_to_time_tve(SMPTETimecode& stime)
+{
+    stime.years  = m_Frame.ltc.user6 + m_Frame.ltc.user7*10;
+    stime.months = m_Frame.ltc.user4 + m_Frame.ltc.user5*10;
+    stime.days   = m_Frame.ltc.user2 + m_Frame.ltc.user3*10;
+
+    sprintf(stime.timezone,"+0");
+}
+
+
+void LtcDecoder::ltc_frame_to_time_mtd(SMPTETimecode& stime)
+{
+    stime.years  = m_Frame.ltc.user2 + m_Frame.ltc.user1*10;
+    stime.months = m_Frame.ltc.user4 + m_Frame.ltc.user3*10;
+    stime.days   = m_Frame.ltc.user6 + m_Frame.ltc.user5*10;
+
+    switch((m_Frame.ltc.user7 & 0x3))
+    {
+        case 0:
+        case 3:
+            sprintf(stime.timezone,"+0");
+            break;
+        case 1:
+            sprintf(stime.timezone,"+1");
+            break;
+        case 2:
+            sprintf(stime.timezone,"+2");
+            break;
     }
 }
+
+const wxString& LtcDecoder::GetMode() const
+{
+    return m_sMode;
+}
+
+bool LtcDecoder::IsColourFlagSet() const
+{
+    return (m_Frame.ltc.col_frame!=0);
+}
+
+bool LtcDecoder::IsClockFlagSet() const
+{
+    return (m_Frame.ltc.binary_group_flag_bit1!=0);
+}
+

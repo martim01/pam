@@ -24,10 +24,10 @@
 		<object class="wmLabel" name="ID_M_PLBL1" variable="m_plblLTCDate" member="yes">
 			<label>2018-10-31</label>
 			<pos>0,50</pos>
-			<size>600,50</size>
+			<size>600,30</size>
 			<fg>#00FF00</fg>
 			<font>
-				<size>36</size>
+				<size>22</size>
 				<style>normal</style>
 				<weight>normal</weight>
 				<underlined>0</underlined>
@@ -37,11 +37,11 @@
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL2" variable="m_plblLTCTime" member="yes">
 			<label>10:18:00.12</label>
-			<pos>0,100</pos>
-			<size>600,50</size>
+			<pos>0,80</pos>
+			<size>600,30</size>
 			<fg>#00FF00</fg>
 			<font>
-				<size>36</size>
+				<size>22</size>
 				<style>normal</style>
 				<weight>normal</weight>
 				<underlined>0</underlined>
@@ -51,12 +51,12 @@
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL9" variable="m_pLbl4" member="yes">
 			<label>Raw Data</label>
-			<pos>0,370</pos>
-			<size>600,50</size>
+			<pos>0,390</pos>
+			<size>600,30</size>
 			<fg>#FFFFFF</fg>
 			<bg>#000080</bg>
 			<font>
-				<size>22</size>
+				<size>18</size>
 				<style>normal</style>
 				<weight>normal</weight>
 				<underlined>0</underlined>
@@ -78,10 +78,10 @@
 				<face>Courier New</face>
 			</font>
 		</object>
-		<object class="wmLabel" name="ID_M_PLBL8" variable="m_pLbl3" member="yes">
-			<label>LTC Amplitude:</label>
-			<pos>0,200</pos>
-			<size>300,50</size>
+		<object class="wmLabel" name="ID_M_PLBL7" variable="m_pLblModeTitle" member="yes">
+			<label>UserData:</label>
+			<pos>0,120</pos>
+			<size>200,30</size>
 			<fg>#FFFFFF</fg>
 			<bg>#000000</bg>
 			<font>
@@ -93,10 +93,10 @@
 				<face>Courier New</face>
 			</font>
 		</object>
-		<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl2" member="yes">
-			<label>Frames/Second</label>
-			<pos>0,250</pos>
-			<size>300,50</size>
+		<object class="wmLabel" name="ID_M_PLBL16" variable="m_pLblDateTitle" member="yes">
+			<label>Date Format:</label>
+			<pos>0,150</pos>
+			<size>200,30</size>
 			<fg>#FFFFFF</fg>
 			<bg>#000000</bg>
 			<font>
@@ -107,11 +107,159 @@
 				<family>swiss</family>
 				<face>Courier New</face>
 			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL17" variable="m_plblDateFormat" member="yes">
+			<label>BBC</label>
+			<pos>200,150</pos>
+			<size>400,30</size>
+			<fg>#F2FC83</fg>
+			<font>
+				<size>22</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Courier New</face>
+			</font>
+			<style>wxALIGN_LEFT</style>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL11" variable="m_plblMode" member="yes">
+			<label>BBC</label>
+			<pos>200,120</pos>
+			<size>400,30</size>
+			<fg>#F2FC83</fg>
+			<font>
+				<size>22</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Courier New</face>
+			</font>
+			<style>wxALIGN_LEFT</style>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL8" variable="m_pLblVolumeTitle" member="yes">
+			<label>Amplitude:</label>
+			<pos>0,180</pos>
+			<size>200,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#000000</bg>
+			<font>
+				<size>22</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Courier New</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLblFPSTitle" member="yes">
+			<label>FPS:</label>
+			<pos>0,210</pos>
+			<size>200,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#000000</bg>
+			<font>
+				<size>22</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Courier New</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL12" variable="m_pLblColourTitle" member="yes">
+			<label>Colour:</label>
+			<pos>0,240</pos>
+			<size>200,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#000000</bg>
+			<font>
+				<size>22</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Courier New</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL14" variable="m_plblColour" member="yes">
+			<label>-1.4 dbFS</label>
+			<pos>200,240</pos>
+			<size>300,30</size>
+			<fg>#F2FC83</fg>
+			<font>
+				<size>22</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Courier New</face>
+			</font>
+			<style>wxALIGN_LEFT</style>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL13" variable="m_plblListTitle" member="yes">
+			<label>Set Date:</label>
+			<pos>0,340</pos>
+			<size>200,44</size>
+			<fg>#FFFFFF</fg>
+			<bg>#000000</bg>
+			<font>
+				<size>22</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Courier New</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL18" variable="m_plblClockTitle" member="yes">
+			<label>Clock:</label>
+			<pos>0,270</pos>
+			<size>200,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#000000</bg>
+			<font>
+				<size>22</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Courier New</face>
+			</font>
+		</object>
+		<object class="wmList" name="ID_M_PLST1" variable="m_plstDate" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>3,1</button_gap>
+			<columns>5</columns>
+			<button>#004000</button>
+			<button_selected>#FF8000</button_selected>
+			<items />
+			<pos>200,340</pos>
+			<size>400,44</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstDateSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL15" variable="m_plblClock" member="yes">
+			<label>-1.4 dbFS</label>
+			<pos>200,270</pos>
+			<size>300,30</size>
+			<fg>#F2FC83</fg>
+			<font>
+				<size>22</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Courier New</face>
+			</font>
+			<style>wxALIGN_LEFT</style>
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL4" variable="m_plblFPS" member="yes">
 			<label>-1.4 dbFS</label>
-			<pos>300,250</pos>
-			<size>300,50</size>
+			<pos>200,210</pos>
+			<size>300,30</size>
 			<fg>#F2FC83</fg>
 			<font>
 				<size>22</size>
@@ -125,8 +273,8 @@
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL5" variable="m_plblLTCVolume" member="yes">
 			<label>-1.4 dbFS</label>
-			<pos>300,200</pos>
-			<size>300,50</size>
+			<pos>200,180</pos>
+			<size>300,30</size>
 			<fg>#F2FC83</fg>
 			<font>
 				<size>22</size>

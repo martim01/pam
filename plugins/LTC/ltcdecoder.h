@@ -19,11 +19,27 @@ class LtcDecoder
         const wxString& GetRaw() const;
         const wxString& GetFPS() const;
         const wxString& GetMode() const;
+        const wxString& GetFormat() const;
+
+        bool IsColourFlagSet() const;
+        bool IsClockFlagSet() const;
+
+        void SetDateMode(int nMode);
+
+        enum {UNKNOWN, SMPTE, BBC, TVE, MTD};
 
     private:
 
         void CreateRaw();
-        void ltc_frame_to_time_bbc(SMPTETimecode* stime, LTCFrame* frame);
+
+        int WorkoutUserMode();
+        void DecodeDateAndTime(int nUserMode);
+        bool DecodeDateAndTime(SMPTETimecode& stime, int nDateMode);
+
+        void ltc_frame_to_time_bbc(SMPTETimecode& stime);
+        void ltc_frame_to_time_tve(SMPTETimecode& stime);
+        void ltc_frame_to_time_mtd(SMPTETimecode& stime);
+        void ltc_frame_to_time_only(SMPTETimecode& stime);
 
         LTCDecoder* m_pDecoder;
         LTCFrameExt m_Frame;
@@ -35,9 +51,19 @@ class LtcDecoder
         wxString m_sFPS;
         wxString m_sRaw;
         wxString m_sMode;
+        wxString m_sDateFormat;
+
+
+
 
         size_t m_nTotal;
         unsigned char m_nFPS;
+        unsigned char m_nLastFrame;
+        unsigned char m_nLastFPS;
+        unsigned int m_nDateMode;
 
         static const int APV = 1920;
+
+        static const wxString STR_MODE[4];
+        static const wxString STR_DATE_MODE[5];
 };

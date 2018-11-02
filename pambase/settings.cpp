@@ -207,6 +207,14 @@ wxString Settings::GetTestPluginDirectory() const
     #endif // __WXGNU__
 }
 
+wxString Settings::GetGeneratorPluginDirectory() const
+{
+    #ifdef __WXGNU__
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("GeneratorPlugins"), wxString::Format(wxT("%s/generator"), GetCoreLibDirectory().c_str()));
+    #else
+    return m_iniManager.GetIniString(wxT("Paths"), wxT("GeneratorPlugins"), wxString::Format(wxT("%s/generator"), GetCoreLibDirectory().c_str()));
+    #endif // __WXGNU__
+}
 
 
 void Settings::CreatePaths()

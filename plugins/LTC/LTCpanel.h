@@ -3,11 +3,13 @@
 //(*Headers(LTCPanel)
 #include "wmlabel.h"
 #include <wx/panel.h>
+#include "wmlist.h"
 //*)
 
 #include <vector>
 #include "pmpanel.h"
 
+class SettingEvent;
 class LTCBuilder;
 class timedbuffer;
 class session;
@@ -25,14 +27,24 @@ class LTCPanel: public pmPanel
 
 		//(*Declarations(LTCPanel)
 		wmLabel* m_pLbl4;
-		wmLabel* m_pLbl3;
 		wmLabel* m_plblLTCTime;
+		wmLabel* m_pLblColourTitle;
+		wmLabel* m_plblMode;
 		wmLabel* m_pLbl1;
+		wmList* m_plstDate;
+		wmLabel* m_pLblDateTitle;
 		wmLabel* m_plblFPS;
+		wmLabel* m_plblClock;
 		wmLabel* m_plblLTCVolume;
-		wmLabel* m_pLbl2;
+		wmLabel* m_pLblModeTitle;
+		wmLabel* m_plblColour;
+		wmLabel* m_plblClockTitle;
+		wmLabel* m_plblListTitle;
+		wmLabel* m_pLblFPSTitle;
 		wmLabel* m_plblRaw;
 		wmLabel* m_plblLTCDate;
+		wmLabel* m_pLblVolumeTitle;
+		wmLabel* m_plblDateFormat;
 		//*)
 
 		void SetAudioData(const timedbuffer* pBuffer);
@@ -47,8 +59,18 @@ class LTCPanel: public pmPanel
 		static const long ID_M_PLBL2;
 		static const long ID_M_PLBL9;
 		static const long ID_M_PLBL10;
+		static const long ID_M_PLBL7;
+		static const long ID_M_PLBL16;
+		static const long ID_M_PLBL17;
+		static const long ID_M_PLBL11;
 		static const long ID_M_PLBL8;
 		static const long ID_M_PLBL3;
+		static const long ID_M_PLBL12;
+		static const long ID_M_PLBL14;
+		static const long ID_M_PLBL13;
+		static const long ID_M_PLBL18;
+		static const long ID_M_PLST1;
+		static const long ID_M_PLBL15;
 		static const long ID_M_PLBL4;
 		static const long ID_M_PLBL5;
 		//*)
@@ -58,7 +80,10 @@ class LTCPanel: public pmPanel
 	private:
 
 		//(*Handlers(LTCPanel)
+		void OnlstDateSelected(wxCommandEvent& event);
 		//*)
+
+		void OnSettingEvent(SettingEvent& event);
 
 		LTCBuilder* m_pBuilder;
 		LtcDecoder* m_pDecoder;

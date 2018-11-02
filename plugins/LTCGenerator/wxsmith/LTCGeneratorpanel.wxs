@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="LTCGeneratorPanel">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+			<label>Frames Per Second</label>
+			<gradient>wxNORTH</gradient>
+			<pos>0,0</pos>
+			<size>300,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#00005A</bg>
+		</object>
+		<object class="wmList" name="ID_M_PLST1" variable="m_plstFPS" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>5,1</button_gap>
+			<button_size>-1,30</button_size>
+			<columns>5</columns>
+			<button_selected>#FF8000</button_selected>
+			<items />
+			<pos>0,30</pos>
+			<size>300,34</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstFPSSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
+			<label>User Data Mode</label>
+			<gradient>wxNORTH</gradient>
+			<pos>0,70</pos>
+			<size>295,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#00005A</bg>
+		</object>
+		<object class="wmList" name="ID_M_PLST2" variable="m_plstUserData" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>5,1</button_gap>
+			<button_size>-1,30</button_size>
+			<columns>5</columns>
+			<button_selected>#FF8000</button_selected>
+			<items />
+			<pos>0,100</pos>
+			<size>295,34</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstUserDataSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
+			<label>Date Format</label>
+			<gradient>wxNORTH</gradient>
+			<pos>305,70</pos>
+			<size>295,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#00005A</bg>
+		</object>
+		<object class="wmList" name="ID_M_PLST3" variable="m_plstData" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>5,1</button_gap>
+			<button_size>-1,30</button_size>
+			<columns>5</columns>
+			<button_selected>#FF8000</button_selected>
+			<items />
+			<pos>305,100</pos>
+			<size>295,34</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstDataSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl4" member="yes">
+			<label>Time Settings</label>
+			<gradient>wxNORTH</gradient>
+			<pos>0,210</pos>
+			<size>300,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#00005A</bg>
+		</object>
+		<object class="wmList" name="ID_M_PLST4" variable="m_plstTime" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>5,1</button_gap>
+			<button_size>-1,30</button_size>
+			<columns>3</columns>
+			<button_selected>#FF8000</button_selected>
+			<items />
+			<pos>300,208</pos>
+			<size>295,34</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstTimeSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+		<object class="wxPanel" name="ID_PANEL1" variable="pnlTime" member="yes">
+			<pos>0,245</pos>
+			<size>600,100</size>
+			<bg>#000000</bg>
+			<object class="wmLabel" name="ID_M_PLBL5" variable="m_pLbl5" member="yes">
+				<label>Years</label>
+				<gradient>wxNORTH</gradient>
+				<pos>0,0</pos>
+				<size>100,30</size>
+				<fg>#FFFFFF</fg>
+				<bg>#000040</bg>
+			</object>
+			<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnYearMinus" member="yes">
+				<label>-1</label>
+				<pos>110,0</pos>
+				<size>50,30</size>
+				<handler function="OnbtnYearMinusClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL11" variable="m_plblYears" member="yes">
+				<label>0</label>
+				<border>uiRect::BORDER_DOWN</border>
+				<pos>165,0</pos>
+				<size>60,30</size>
+				<fg>#000000</fg>
+				<bg>#FFFFFF</bg>
+			</object>
+			<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnYearPlus" member="yes">
+				<label>+1</label>
+				<pos>230,0</pos>
+				<size>50,30</size>
+				<handler function="OnbtnYearPlusClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL8" variable="m_pLbl8" member="yes">
+				<label>Hours</label>
+				<gradient>wxNORTH</gradient>
+				<pos>300,0</pos>
+				<size>100,30</size>
+				<fg>#FFFFFF</fg>
+				<bg>#000040</bg>
+			</object>
+			<object class="wmButton" name="ID_M_PBTN7" variable="m_pbtnHourMinus" member="yes">
+				<label>-1</label>
+				<pos>410,0</pos>
+				<size>50,30</size>
+				<handler function="OnbtnHourMinusClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL14" variable="m_plblHours" member="yes">
+				<label>0</label>
+				<border>uiRect::BORDER_DOWN</border>
+				<pos>465,0</pos>
+				<size>60,30</size>
+				<fg>#000000</fg>
+				<bg>#FFFFFF</bg>
+			</object>
+			<object class="wmButton" name="ID_M_PBTN8" variable="m_pbtnHourPlus" member="yes">
+				<label>+1</label>
+				<pos>530,0</pos>
+				<size>50,30</size>
+				<handler function="OnbtnHourPlusClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL6" variable="m_pLbl6" member="yes">
+				<label>Months</label>
+				<gradient>wxNORTH</gradient>
+				<pos>0,35</pos>
+				<size>100,30</size>
+				<fg>#FFFFFF</fg>
+				<bg>#000040</bg>
+			</object>
+			<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnMonthMinus" member="yes">
+				<label>-1</label>
+				<pos>110,35</pos>
+				<size>50,30</size>
+				<handler function="OnbtnMonthMinusClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL12" variable="m_plblMonths" member="yes">
+				<label>0</label>
+				<border>uiRect::BORDER_DOWN</border>
+				<pos>165,35</pos>
+				<size>60,30</size>
+				<fg>#000000</fg>
+				<bg>#FFFFFF</bg>
+			</object>
+			<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnMonthPlus" member="yes">
+				<label>+1</label>
+				<pos>230,35</pos>
+				<size>50,30</size>
+				<handler function="OnbtnMonthPlusClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL9" variable="m_pLbl9" member="yes">
+				<label>Minutes</label>
+				<gradient>wxNORTH</gradient>
+				<pos>300,35</pos>
+				<size>100,30</size>
+				<fg>#FFFFFF</fg>
+				<bg>#000040</bg>
+			</object>
+			<object class="wmButton" name="ID_M_PBTN9" variable="m_pbtnMinuteMinus" member="yes">
+				<label>-1</label>
+				<pos>410,35</pos>
+				<size>50,30</size>
+				<handler function="OnbtnMinuteMinusClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL15" variable="m_plblMinutes" member="yes">
+				<label>0</label>
+				<border>uiRect::BORDER_DOWN</border>
+				<pos>465,35</pos>
+				<size>60,30</size>
+				<fg>#000000</fg>
+				<bg>#FFFFFF</bg>
+			</object>
+			<object class="wmButton" name="ID_M_PBTN10" variable="m_ptbnMinutePlus" member="yes">
+				<label>+1</label>
+				<pos>530,35</pos>
+				<size>50,30</size>
+				<handler function="OnbtnMinutePlusClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL7" variable="m_pLbl7" member="yes">
+				<label>Days</label>
+				<gradient>wxNORTH</gradient>
+				<pos>0,70</pos>
+				<size>100,30</size>
+				<fg>#FFFFFF</fg>
+				<bg>#000040</bg>
+			</object>
+			<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnDayMinus" member="yes">
+				<label>-1</label>
+				<pos>110,70</pos>
+				<size>50,30</size>
+				<handler function="OnbtnDayMinusClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL13" variable="m_plblDays" member="yes">
+				<label>0</label>
+				<border>uiRect::BORDER_DOWN</border>
+				<pos>165,70</pos>
+				<size>60,30</size>
+				<fg>#000000</fg>
+				<bg>#FFFFFF</bg>
+			</object>
+			<object class="wmButton" name="ID_M_PBTN6" variable="m_pbtnDayPlus" member="yes">
+				<label>+1</label>
+				<pos>230,70</pos>
+				<size>50,30</size>
+				<handler function="OnbtnDayPlusClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL10" variable="m_pLbl10" member="yes">
+				<label>Seconds</label>
+				<gradient>wxNORTH</gradient>
+				<pos>300,70</pos>
+				<size>100,30</size>
+				<fg>#FFFFFF</fg>
+				<bg>#000040</bg>
+			</object>
+			<object class="wmButton" name="ID_M_PBTN11" variable="m_ptbnSecondMinus" member="yes">
+				<label>-1</label>
+				<pos>410,70</pos>
+				<size>50,30</size>
+				<handler function="OnbtnSecondMinusClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL16" variable="m_plblSeconds" member="yes">
+				<label>0</label>
+				<border>uiRect::BORDER_DOWN</border>
+				<pos>465,70</pos>
+				<size>60,30</size>
+				<fg>#000000</fg>
+				<bg>#FFFFFF</bg>
+			</object>
+			<object class="wmButton" name="ID_M_PBTN12" variable="m_pbtnSecondPlus" member="yes">
+				<label>+1</label>
+				<pos>530,70</pos>
+				<size>50,30</size>
+				<handler function="OnbtnSecondPlusClick" entry="EVT_BUTTON" />
+			</object>
+		</object>
+	</object>
+</wxsmith>

@@ -10,6 +10,9 @@
 #include <wx/xml/xml.h>
 #include "wmlogevent.h"
 #include "niir.h"
+#include "generatorpluginfactory.h"
+#include "generatorpluginbuilder.h"
+
 using namespace std;
 
 const double Generator::AFILTER_B[7] = {0.234301792299513,  -0.468603584599026,  -0.234301792299513, 0.937207169198054,  -0.234301792299515,  -0.468603584599025,   0.234301792299513};
@@ -72,7 +75,8 @@ void Sequence::AdvanceSequence()
 Generator::Generator() :
     m_dSampleRate(48000),
     m_nPhase(0),
-    m_pSoundfile(0)
+    m_pSoundfile(0),
+    m_pPlugin(0)
 {
     m_pPink[0] = 0;
     m_pPink[1] = 0;
@@ -148,6 +152,8 @@ void Generator::Generate(unsigned int nSize)
             case NOISE_BROWN:
                 GenerateBrownNoise(pData->GetWritableBuffer(), nSize);
                 break;
+            case PLUGIN:
+                GeneratePlugin(pData);
         }
 
         pData->SetDuration(pData->GetBufferSize()*4);
@@ -370,12 +376,26 @@ void Generator::CloseFile()
     }
 }
 
+bool Generator::SetPlugin(const wxString& sPlugin)
+{
+    Stop();
+    m_nGenerator = PLUGIN;
+
+    map<wxString, GeneratorPluginBuilder*>::iterator itPlugin = GeneratorPluginFactory::Get()->FindPlugin(sPlugin);
+    if(itPlugin != GeneratorPluginFactory::Get()->GetPluginEnd())
+    {
+        m_pPlugin = itPlugin->second;
+        m_pPlugin->Init();
+        return true;
+    }
+    m_pPlugin = NULL;
+    return false;
+}
+
+
 bool Generator::SetFile()
 {
-    ClearSequences();
-    ClearFrequences();
-    CloseFile();
-    ClosePink();
+    Stop();
 
     m_nGenerator = FILE;
 
@@ -672,10 +692,21 @@ void Generator::Stop()
     ClearSequences();
     CloseFile();
     ClosePink();
+    if(m_pPlugin)
+    {
+        m_pPlugin->Stop();
+    }
+    m_pPlugin = NULL;
 }
 
 
-
+void Generator::GeneratePlugin(timedbuffer* pData)
+{
+    if(m_pPlugin)
+    {
+        m_pPlugin->GetAudioData(pData);
+    }
+}
 
 
 double Generator::randn(double mu, double sigma)

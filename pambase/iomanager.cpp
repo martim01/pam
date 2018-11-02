@@ -297,6 +297,11 @@ void IOManager::OutputChanged(const wxString& sKey)
             m_bPlaybackInput = true;
             m_pGenerator->Stop();
         }
+        else
+        {   //plugin
+            m_nPlaybackSource = AudioEvent::GENERATOR;
+            InitGeneratorPlugin(sType);
+        }
     }
     else if(sKey == wxT("Device"))
     {
@@ -395,6 +400,20 @@ void IOManager::InitGeneratorTone()
         CreateSessionFromOutput(wxString::Format(wxT("%dHz %.1fdBFS"), Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000), Settings::Get().Read(wxT("Generator"), wxT("Amplitude"), -18.0)));
         CheckPlayback(m_pGenerator->GetSampleRate(), m_pGenerator->GetChannels());
 
+
+    }
+}
+
+
+void IOManager::InitGeneratorPlugin(const wxString& sPlugin)
+{
+    if(m_pGenerator)
+    {
+        m_pGenerator->SetPlugin(sPlugin);
+         CreateSessionFromOutput(sPlugin);
+    }
+    else
+    {
 
     }
 }

@@ -37,6 +37,7 @@ class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
         wxString GetMonitorPluginDirectory() const;
         wxString GetCoreLibDirectory() const;
         wxString GetTestPluginDirectory() const;
+        wxString GetGeneratorPluginDirectory() const;
         wxString GetLogDirectory() const;
         wxString GetWavDirectory() const;
         wxString GetTempDirectory() const;
