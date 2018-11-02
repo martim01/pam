@@ -34,7 +34,6 @@
 					<Add option="-Wl,--enable-auto-import,-Map=LTCGenerator.map" />
 					<Add library="wxmsw30u_gcc_wammacs" />
 					<Add library="pambase" />
-					<Add library="libltc" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#libltc.lib)/Release" />
 				</Linker>
@@ -70,7 +69,6 @@
 					<Add option="-Wl,--enable-auto-import,-Map=LTCGenerator.map" />
 					<Add library="wxmsw30ud_gcc_wammacs" />
 					<Add library="pambased" />
-					<Add library="libltc" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#libltc.lib)/Debug" />
 				</Linker>
@@ -128,6 +126,21 @@
 		<Linker>
 			<Add directory="../../lib" />
 		</Linker>
+		<Unit filename="../../external/libltc/decoder.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../external/libltc/decoder.h" />
+		<Unit filename="../../external/libltc/encoder.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../external/libltc/encoder.h" />
+		<Unit filename="../../external/libltc/ltc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../external/libltc/ltc.h" />
+		<Unit filename="../../external/libltc/timecode.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="LTCGeneratorbuilder.cpp" />
 		<Unit filename="LTCGeneratorbuilder.h" />
 		<Unit filename="LTCGeneratorpanel.cpp" />
