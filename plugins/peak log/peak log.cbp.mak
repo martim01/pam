@@ -29,7 +29,7 @@ OBJDIR_LINUX_RELEASE = obj/linux
 DEP_LINUX_RELEASE = 
 OUT_LINUX_RELEASE = ../../lib/test/libpeaklog.so
 
-OBJ_LINUX_RELEASE = $(OBJDIR_LINUX_RELEASE)/levelgraph.o $(OBJDIR_LINUX_RELEASE)/peaklog.o $(OBJDIR_LINUX_RELEASE)/peaklogbuilder.o $(OBJDIR_LINUX_RELEASE)/pnlPeakLog.o
+OBJ_LINUX_RELEASE = $(OBJDIR_LINUX_RELEASE)/peaklog.o $(OBJDIR_LINUX_RELEASE)/peaklogbuilder.o $(OBJDIR_LINUX_RELEASE)/pnlPeakLog.o
 
 all: linux_release
 
@@ -46,9 +46,6 @@ linux_release: before_linux_release out_linux_release after_linux_release
 
 out_linux_release: before_linux_release $(OBJ_LINUX_RELEASE) $(DEP_LINUX_RELEASE)
 	$(LD) -shared $(LIBDIR_LINUX_RELEASE) $(OBJ_LINUX_RELEASE)  -o $(OUT_LINUX_RELEASE) $(LDFLAGS_LINUX_RELEASE) $(LIB_LINUX_RELEASE)
-
-$(OBJDIR_LINUX_RELEASE)/levelgraph.o: levelgraph.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c levelgraph.cpp -o $(OBJDIR_LINUX_RELEASE)/levelgraph.o
 
 $(OBJDIR_LINUX_RELEASE)/peaklog.o: peaklog.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c peaklog.cpp -o $(OBJDIR_LINUX_RELEASE)/peaklog.o

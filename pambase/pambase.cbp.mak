@@ -29,7 +29,7 @@ OBJDIR_LINUX_RELEASE = obj/linux
 DEP_LINUX_RELEASE = 
 OUT_LINUX_RELEASE = ../lib/libpambase.so
 
-OBJ_LINUX_RELEASE = $(OBJDIR_LINUX_RELEASE)/streamclientstate.o $(OBJDIR_LINUX_RELEASE)/wmedit.o $(OBJDIR_LINUX_RELEASE)/wmbutton.o $(OBJDIR_LINUX_RELEASE)/uirect.o $(OBJDIR_LINUX_RELEASE)/testpluginfactory.o $(OBJDIR_LINUX_RELEASE)/testpluginbuilder.o $(OBJDIR_LINUX_RELEASE)/wmfocusmanager.o $(OBJDIR_LINUX_RELEASE)/soundfile.o $(OBJDIR_LINUX_RELEASE)/soundcardmanager.o $(OBJDIR_LINUX_RELEASE)/smpte2110mediasession.o $(OBJDIR_LINUX_RELEASE)/settings.o $(OBJDIR_LINUX_RELEASE)/settingevent.o $(OBJDIR_LINUX_RELEASE)/sapwatchthread.o $(OBJDIR_LINUX_RELEASE)/wxtouchscreenhtml.o $(OBJDIR_LINUX_RELEASE)/wxsink.o $(OBJDIR_LINUX_RELEASE)/wmtimeedit.o $(OBJDIR_LINUX_RELEASE)/wmtestlog.o $(OBJDIR_LINUX_RELEASE)/wmswitcherpanel.o $(OBJDIR_LINUX_RELEASE)/wmswipebutton.o $(OBJDIR_LINUX_RELEASE)/wmslidewnd.o $(OBJDIR_LINUX_RELEASE)/rtsputil.o $(OBJDIR_LINUX_RELEASE)/wmslider.o $(OBJDIR_LINUX_RELEASE)/wmlogevent.o $(OBJDIR_LINUX_RELEASE)/wmlist.o $(OBJDIR_LINUX_RELEASE)/wmline.o $(OBJDIR_LINUX_RELEASE)/wmlabel.o $(OBJDIR_LINUX_RELEASE)/wmkeyboard.o $(OBJDIR_LINUX_RELEASE)/wmipeditpnl.o $(OBJDIR_LINUX_RELEASE)/aes67source.o $(OBJDIR_LINUX_RELEASE)/inisection.o $(OBJDIR_LINUX_RELEASE)/inimanager.o $(OBJDIR_LINUX_RELEASE)/generator.o $(OBJDIR_LINUX_RELEASE)/audioevent.o $(OBJDIR_LINUX_RELEASE)/audio.o $(OBJDIR_LINUX_RELEASE)/anglemeter.o $(OBJDIR_LINUX_RELEASE)/iomanager.o $(OBJDIR_LINUX_RELEASE)/aes67mediasession.o $(OBJDIR_LINUX_RELEASE)/aes67client.o $(OBJDIR_LINUX_RELEASE)/PamUsageEnvironment.o $(OBJDIR_LINUX_RELEASE)/PamTaskScheduler.o $(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc/wxServDisc.o $(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc/mdnsd.o $(OBJDIR_LINUX_RELEASE)/rtpthread.o $(OBJDIR_LINUX_RELEASE)/rawvideosource.o $(OBJDIR_LINUX_RELEASE)/r128thread.o $(OBJDIR_LINUX_RELEASE)/r128calculator.o $(OBJDIR_LINUX_RELEASE)/qos.o $(OBJDIR_LINUX_RELEASE)/ppmtypes.o $(OBJDIR_LINUX_RELEASE)/pcstats.o $(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc/1035.o $(OBJDIR_LINUX_RELEASE)/ourRTSPClient.o $(OBJDIR_LINUX_RELEASE)/niir.o $(OBJDIR_LINUX_RELEASE)/monitorpluginfactory.o $(OBJDIR_LINUX_RELEASE)/monitorpluginbuilder.o $(OBJDIR_LINUX_RELEASE)/monitorevent.o $(OBJDIR_LINUX_RELEASE)/levelmeter.o $(OBJDIR_LINUX_RELEASE)/levelcalculator.o
+OBJ_LINUX_RELEASE = $(OBJDIR_LINUX_RELEASE)/soundfile.o $(OBJDIR_LINUX_RELEASE)/streamclientstate.o $(OBJDIR_LINUX_RELEASE)/testpluginbuilder.o $(OBJDIR_LINUX_RELEASE)/testpluginfactory.o $(OBJDIR_LINUX_RELEASE)/uirect.o $(OBJDIR_LINUX_RELEASE)/wmbutton.o $(OBJDIR_LINUX_RELEASE)/rawvideosource.o $(OBJDIR_LINUX_RELEASE)/rtpthread.o $(OBJDIR_LINUX_RELEASE)/rtsputil.o $(OBJDIR_LINUX_RELEASE)/sapwatchthread.o $(OBJDIR_LINUX_RELEASE)/wmedit.o $(OBJDIR_LINUX_RELEASE)/settingevent.o $(OBJDIR_LINUX_RELEASE)/settings.o $(OBJDIR_LINUX_RELEASE)/smpte2110mediasession.o $(OBJDIR_LINUX_RELEASE)/soundcardmanager.o $(OBJDIR_LINUX_RELEASE)/wmslidewnd.o $(OBJDIR_LINUX_RELEASE)/wmswipebutton.o $(OBJDIR_LINUX_RELEASE)/wmswitcherpanel.o $(OBJDIR_LINUX_RELEASE)/wmtestlog.o $(OBJDIR_LINUX_RELEASE)/wmslider.o $(OBJDIR_LINUX_RELEASE)/wmtimeedit.o $(OBJDIR_LINUX_RELEASE)/wxsink.o $(OBJDIR_LINUX_RELEASE)/wxtouchscreenhtml.o $(OBJDIR_LINUX_RELEASE)/wmlogevent.o $(OBJDIR_LINUX_RELEASE)/wmlist.o $(OBJDIR_LINUX_RELEASE)/wmline.o $(OBJDIR_LINUX_RELEASE)/wmlabel.o $(OBJDIR_LINUX_RELEASE)/wmkeyboard.o $(OBJDIR_LINUX_RELEASE)/wmipeditpnl.o $(OBJDIR_LINUX_RELEASE)/wmfocusmanager.o $(OBJDIR_LINUX_RELEASE)/audio.o $(OBJDIR_LINUX_RELEASE)/audioevent.o $(OBJDIR_LINUX_RELEASE)/generator.o $(OBJDIR_LINUX_RELEASE)/anglemeter.o $(OBJDIR_LINUX_RELEASE)/generatorpluginbuilder.o $(OBJDIR_LINUX_RELEASE)/generatorpluginfactory.o $(OBJDIR_LINUX_RELEASE)/inimanager.o $(OBJDIR_LINUX_RELEASE)/inisection.o $(OBJDIR_LINUX_RELEASE)/PamUsageEnvironment.o $(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc/mdnsd.o $(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc/wxServDisc.o $(OBJDIR_LINUX_RELEASE)/PamTaskScheduler.o $(OBJDIR_LINUX_RELEASE)/aes67client.o $(OBJDIR_LINUX_RELEASE)/aes67mediasession.o $(OBJDIR_LINUX_RELEASE)/aes67source.o $(OBJDIR_LINUX_RELEASE)/ourRTSPClient.o $(OBJDIR_LINUX_RELEASE)/pcstats.o $(OBJDIR_LINUX_RELEASE)/pmcontrol.o $(OBJDIR_LINUX_RELEASE)/pmpanel.o $(OBJDIR_LINUX_RELEASE)/ppmtypes.o $(OBJDIR_LINUX_RELEASE)/qos.o $(OBJDIR_LINUX_RELEASE)/r128calculator.o $(OBJDIR_LINUX_RELEASE)/r128thread.o $(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc/1035.o $(OBJDIR_LINUX_RELEASE)/niir.o $(OBJDIR_LINUX_RELEASE)/monitorpluginfactory.o $(OBJDIR_LINUX_RELEASE)/monitorpluginbuilder.o $(OBJDIR_LINUX_RELEASE)/monitorevent.o $(OBJDIR_LINUX_RELEASE)/levelmeter.o $(OBJDIR_LINUX_RELEASE)/levelgraph.o $(OBJDIR_LINUX_RELEASE)/levelcalculator.o $(OBJDIR_LINUX_RELEASE)/iomanager.o
 
 all: linux_release
 
@@ -48,71 +48,74 @@ linux_release: before_linux_release out_linux_release after_linux_release
 out_linux_release: before_linux_release $(OBJ_LINUX_RELEASE) $(DEP_LINUX_RELEASE)
 	$(LD) -shared $(LIBDIR_LINUX_RELEASE) $(OBJ_LINUX_RELEASE)  -o $(OUT_LINUX_RELEASE) $(LDFLAGS_LINUX_RELEASE) $(LIB_LINUX_RELEASE)
 
+$(OBJDIR_LINUX_RELEASE)/soundfile.o: soundfile.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c soundfile.cpp -o $(OBJDIR_LINUX_RELEASE)/soundfile.o
+
 $(OBJDIR_LINUX_RELEASE)/streamclientstate.o: streamclientstate.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c streamclientstate.cpp -o $(OBJDIR_LINUX_RELEASE)/streamclientstate.o
-
-$(OBJDIR_LINUX_RELEASE)/wmedit.o: wmedit.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmedit.cpp -o $(OBJDIR_LINUX_RELEASE)/wmedit.o
-
-$(OBJDIR_LINUX_RELEASE)/wmbutton.o: wmbutton.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmbutton.cpp -o $(OBJDIR_LINUX_RELEASE)/wmbutton.o
-
-$(OBJDIR_LINUX_RELEASE)/uirect.o: uirect.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c uirect.cpp -o $(OBJDIR_LINUX_RELEASE)/uirect.o
-
-$(OBJDIR_LINUX_RELEASE)/testpluginfactory.o: testpluginfactory.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c testpluginfactory.cpp -o $(OBJDIR_LINUX_RELEASE)/testpluginfactory.o
 
 $(OBJDIR_LINUX_RELEASE)/testpluginbuilder.o: testpluginbuilder.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c testpluginbuilder.cpp -o $(OBJDIR_LINUX_RELEASE)/testpluginbuilder.o
 
-$(OBJDIR_LINUX_RELEASE)/wmfocusmanager.o: wmfocusmanager.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmfocusmanager.cpp -o $(OBJDIR_LINUX_RELEASE)/wmfocusmanager.o
+$(OBJDIR_LINUX_RELEASE)/testpluginfactory.o: testpluginfactory.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c testpluginfactory.cpp -o $(OBJDIR_LINUX_RELEASE)/testpluginfactory.o
 
-$(OBJDIR_LINUX_RELEASE)/soundfile.o: soundfile.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c soundfile.cpp -o $(OBJDIR_LINUX_RELEASE)/soundfile.o
+$(OBJDIR_LINUX_RELEASE)/uirect.o: uirect.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c uirect.cpp -o $(OBJDIR_LINUX_RELEASE)/uirect.o
 
-$(OBJDIR_LINUX_RELEASE)/soundcardmanager.o: soundcardmanager.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c soundcardmanager.cpp -o $(OBJDIR_LINUX_RELEASE)/soundcardmanager.o
+$(OBJDIR_LINUX_RELEASE)/wmbutton.o: wmbutton.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmbutton.cpp -o $(OBJDIR_LINUX_RELEASE)/wmbutton.o
 
-$(OBJDIR_LINUX_RELEASE)/smpte2110mediasession.o: smpte2110mediasession.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c smpte2110mediasession.cpp -o $(OBJDIR_LINUX_RELEASE)/smpte2110mediasession.o
+$(OBJDIR_LINUX_RELEASE)/rawvideosource.o: rawvideosource.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c rawvideosource.cpp -o $(OBJDIR_LINUX_RELEASE)/rawvideosource.o
 
-$(OBJDIR_LINUX_RELEASE)/settings.o: settings.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c settings.cpp -o $(OBJDIR_LINUX_RELEASE)/settings.o
-
-$(OBJDIR_LINUX_RELEASE)/settingevent.o: settingevent.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c settingevent.cpp -o $(OBJDIR_LINUX_RELEASE)/settingevent.o
-
-$(OBJDIR_LINUX_RELEASE)/sapwatchthread.o: sapwatchthread.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c sapwatchthread.cpp -o $(OBJDIR_LINUX_RELEASE)/sapwatchthread.o
-
-$(OBJDIR_LINUX_RELEASE)/wxtouchscreenhtml.o: wxtouchscreenhtml.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wxtouchscreenhtml.cpp -o $(OBJDIR_LINUX_RELEASE)/wxtouchscreenhtml.o
-
-$(OBJDIR_LINUX_RELEASE)/wxsink.o: wxsink.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wxsink.cpp -o $(OBJDIR_LINUX_RELEASE)/wxsink.o
-
-$(OBJDIR_LINUX_RELEASE)/wmtimeedit.o: wmtimeedit.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmtimeedit.cpp -o $(OBJDIR_LINUX_RELEASE)/wmtimeedit.o
-
-$(OBJDIR_LINUX_RELEASE)/wmtestlog.o: wmtestlog.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmtestlog.cpp -o $(OBJDIR_LINUX_RELEASE)/wmtestlog.o
-
-$(OBJDIR_LINUX_RELEASE)/wmswitcherpanel.o: wmswitcherpanel.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmswitcherpanel.cpp -o $(OBJDIR_LINUX_RELEASE)/wmswitcherpanel.o
-
-$(OBJDIR_LINUX_RELEASE)/wmswipebutton.o: wmswipebutton.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmswipebutton.cpp -o $(OBJDIR_LINUX_RELEASE)/wmswipebutton.o
-
-$(OBJDIR_LINUX_RELEASE)/wmslidewnd.o: wmslidewnd.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmslidewnd.cpp -o $(OBJDIR_LINUX_RELEASE)/wmslidewnd.o
+$(OBJDIR_LINUX_RELEASE)/rtpthread.o: rtpthread.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c rtpthread.cpp -o $(OBJDIR_LINUX_RELEASE)/rtpthread.o
 
 $(OBJDIR_LINUX_RELEASE)/rtsputil.o: rtsputil.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c rtsputil.cpp -o $(OBJDIR_LINUX_RELEASE)/rtsputil.o
 
+$(OBJDIR_LINUX_RELEASE)/sapwatchthread.o: sapwatchthread.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c sapwatchthread.cpp -o $(OBJDIR_LINUX_RELEASE)/sapwatchthread.o
+
+$(OBJDIR_LINUX_RELEASE)/wmedit.o: wmedit.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmedit.cpp -o $(OBJDIR_LINUX_RELEASE)/wmedit.o
+
+$(OBJDIR_LINUX_RELEASE)/settingevent.o: settingevent.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c settingevent.cpp -o $(OBJDIR_LINUX_RELEASE)/settingevent.o
+
+$(OBJDIR_LINUX_RELEASE)/settings.o: settings.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c settings.cpp -o $(OBJDIR_LINUX_RELEASE)/settings.o
+
+$(OBJDIR_LINUX_RELEASE)/smpte2110mediasession.o: smpte2110mediasession.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c smpte2110mediasession.cpp -o $(OBJDIR_LINUX_RELEASE)/smpte2110mediasession.o
+
+$(OBJDIR_LINUX_RELEASE)/soundcardmanager.o: soundcardmanager.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c soundcardmanager.cpp -o $(OBJDIR_LINUX_RELEASE)/soundcardmanager.o
+
+$(OBJDIR_LINUX_RELEASE)/wmslidewnd.o: wmslidewnd.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmslidewnd.cpp -o $(OBJDIR_LINUX_RELEASE)/wmslidewnd.o
+
+$(OBJDIR_LINUX_RELEASE)/wmswipebutton.o: wmswipebutton.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmswipebutton.cpp -o $(OBJDIR_LINUX_RELEASE)/wmswipebutton.o
+
+$(OBJDIR_LINUX_RELEASE)/wmswitcherpanel.o: wmswitcherpanel.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmswitcherpanel.cpp -o $(OBJDIR_LINUX_RELEASE)/wmswitcherpanel.o
+
+$(OBJDIR_LINUX_RELEASE)/wmtestlog.o: wmtestlog.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmtestlog.cpp -o $(OBJDIR_LINUX_RELEASE)/wmtestlog.o
+
 $(OBJDIR_LINUX_RELEASE)/wmslider.o: wmslider.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmslider.cpp -o $(OBJDIR_LINUX_RELEASE)/wmslider.o
+
+$(OBJDIR_LINUX_RELEASE)/wmtimeedit.o: wmtimeedit.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmtimeedit.cpp -o $(OBJDIR_LINUX_RELEASE)/wmtimeedit.o
+
+$(OBJDIR_LINUX_RELEASE)/wxsink.o: wxsink.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wxsink.cpp -o $(OBJDIR_LINUX_RELEASE)/wxsink.o
+
+$(OBJDIR_LINUX_RELEASE)/wxtouchscreenhtml.o: wxtouchscreenhtml.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wxtouchscreenhtml.cpp -o $(OBJDIR_LINUX_RELEASE)/wxtouchscreenhtml.o
 
 $(OBJDIR_LINUX_RELEASE)/wmlogevent.o: wmlogevent.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmlogevent.cpp -o $(OBJDIR_LINUX_RELEASE)/wmlogevent.o
@@ -132,74 +135,80 @@ $(OBJDIR_LINUX_RELEASE)/wmkeyboard.o: wmkeyboard.cpp
 $(OBJDIR_LINUX_RELEASE)/wmipeditpnl.o: wmipeditpnl.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmipeditpnl.cpp -o $(OBJDIR_LINUX_RELEASE)/wmipeditpnl.o
 
-$(OBJDIR_LINUX_RELEASE)/aes67source.o: aes67source.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c aes67source.cpp -o $(OBJDIR_LINUX_RELEASE)/aes67source.o
-
-$(OBJDIR_LINUX_RELEASE)/inisection.o: inisection.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c inisection.cpp -o $(OBJDIR_LINUX_RELEASE)/inisection.o
-
-$(OBJDIR_LINUX_RELEASE)/inimanager.o: inimanager.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c inimanager.cpp -o $(OBJDIR_LINUX_RELEASE)/inimanager.o
-
-$(OBJDIR_LINUX_RELEASE)/generator.o: generator.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c generator.cpp -o $(OBJDIR_LINUX_RELEASE)/generator.o
-
-$(OBJDIR_LINUX_RELEASE)/audioevent.o: audioevent.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c audioevent.cpp -o $(OBJDIR_LINUX_RELEASE)/audioevent.o
+$(OBJDIR_LINUX_RELEASE)/wmfocusmanager.o: wmfocusmanager.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmfocusmanager.cpp -o $(OBJDIR_LINUX_RELEASE)/wmfocusmanager.o
 
 $(OBJDIR_LINUX_RELEASE)/audio.o: audio.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c audio.cpp -o $(OBJDIR_LINUX_RELEASE)/audio.o
 
+$(OBJDIR_LINUX_RELEASE)/audioevent.o: audioevent.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c audioevent.cpp -o $(OBJDIR_LINUX_RELEASE)/audioevent.o
+
+$(OBJDIR_LINUX_RELEASE)/generator.o: generator.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c generator.cpp -o $(OBJDIR_LINUX_RELEASE)/generator.o
+
 $(OBJDIR_LINUX_RELEASE)/anglemeter.o: anglemeter.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c anglemeter.cpp -o $(OBJDIR_LINUX_RELEASE)/anglemeter.o
 
-$(OBJDIR_LINUX_RELEASE)/iomanager.o: iomanager.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c iomanager.cpp -o $(OBJDIR_LINUX_RELEASE)/iomanager.o
+$(OBJDIR_LINUX_RELEASE)/generatorpluginbuilder.o: generatorpluginbuilder.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c generatorpluginbuilder.cpp -o $(OBJDIR_LINUX_RELEASE)/generatorpluginbuilder.o
 
-$(OBJDIR_LINUX_RELEASE)/aes67mediasession.o: aes67mediasession.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c aes67mediasession.cpp -o $(OBJDIR_LINUX_RELEASE)/aes67mediasession.o
+$(OBJDIR_LINUX_RELEASE)/generatorpluginfactory.o: generatorpluginfactory.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c generatorpluginfactory.cpp -o $(OBJDIR_LINUX_RELEASE)/generatorpluginfactory.o
 
-$(OBJDIR_LINUX_RELEASE)/aes67client.o: aes67client.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c aes67client.cpp -o $(OBJDIR_LINUX_RELEASE)/aes67client.o
+$(OBJDIR_LINUX_RELEASE)/inimanager.o: inimanager.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c inimanager.cpp -o $(OBJDIR_LINUX_RELEASE)/inimanager.o
+
+$(OBJDIR_LINUX_RELEASE)/inisection.o: inisection.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c inisection.cpp -o $(OBJDIR_LINUX_RELEASE)/inisection.o
 
 $(OBJDIR_LINUX_RELEASE)/PamUsageEnvironment.o: PamUsageEnvironment.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c PamUsageEnvironment.cpp -o $(OBJDIR_LINUX_RELEASE)/PamUsageEnvironment.o
 
-$(OBJDIR_LINUX_RELEASE)/PamTaskScheduler.o: PamTaskScheduler.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c PamTaskScheduler.cpp -o $(OBJDIR_LINUX_RELEASE)/PamTaskScheduler.o
+$(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc/mdnsd.o: ../external/wxservdisc/mdnsd.c
+	$(CC) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c ../external/wxservdisc/mdnsd.c -o $(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc/mdnsd.o
 
 $(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc/wxServDisc.o: ../external/wxservdisc/wxServDisc.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c ../external/wxservdisc/wxServDisc.cpp -o $(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc/wxServDisc.o
 
-$(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc/mdnsd.o: ../external/wxservdisc/mdnsd.c
-	$(CC) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c ../external/wxservdisc/mdnsd.c -o $(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc/mdnsd.o
+$(OBJDIR_LINUX_RELEASE)/PamTaskScheduler.o: PamTaskScheduler.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c PamTaskScheduler.cpp -o $(OBJDIR_LINUX_RELEASE)/PamTaskScheduler.o
 
-$(OBJDIR_LINUX_RELEASE)/rtpthread.o: rtpthread.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c rtpthread.cpp -o $(OBJDIR_LINUX_RELEASE)/rtpthread.o
+$(OBJDIR_LINUX_RELEASE)/aes67client.o: aes67client.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c aes67client.cpp -o $(OBJDIR_LINUX_RELEASE)/aes67client.o
 
-$(OBJDIR_LINUX_RELEASE)/rawvideosource.o: rawvideosource.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c rawvideosource.cpp -o $(OBJDIR_LINUX_RELEASE)/rawvideosource.o
+$(OBJDIR_LINUX_RELEASE)/aes67mediasession.o: aes67mediasession.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c aes67mediasession.cpp -o $(OBJDIR_LINUX_RELEASE)/aes67mediasession.o
 
-$(OBJDIR_LINUX_RELEASE)/r128thread.o: r128thread.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c r128thread.cpp -o $(OBJDIR_LINUX_RELEASE)/r128thread.o
+$(OBJDIR_LINUX_RELEASE)/aes67source.o: aes67source.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c aes67source.cpp -o $(OBJDIR_LINUX_RELEASE)/aes67source.o
 
-$(OBJDIR_LINUX_RELEASE)/r128calculator.o: r128calculator.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c r128calculator.cpp -o $(OBJDIR_LINUX_RELEASE)/r128calculator.o
-
-$(OBJDIR_LINUX_RELEASE)/qos.o: qos.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c qos.cpp -o $(OBJDIR_LINUX_RELEASE)/qos.o
-
-$(OBJDIR_LINUX_RELEASE)/ppmtypes.o: ppmtypes.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c ppmtypes.cpp -o $(OBJDIR_LINUX_RELEASE)/ppmtypes.o
+$(OBJDIR_LINUX_RELEASE)/ourRTSPClient.o: ourRTSPClient.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c ourRTSPClient.cpp -o $(OBJDIR_LINUX_RELEASE)/ourRTSPClient.o
 
 $(OBJDIR_LINUX_RELEASE)/pcstats.o: pcstats.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c pcstats.cpp -o $(OBJDIR_LINUX_RELEASE)/pcstats.o
 
+$(OBJDIR_LINUX_RELEASE)/pmcontrol.o: pmcontrol.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c pmcontrol.cpp -o $(OBJDIR_LINUX_RELEASE)/pmcontrol.o
+
+$(OBJDIR_LINUX_RELEASE)/pmpanel.o: pmpanel.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c pmpanel.cpp -o $(OBJDIR_LINUX_RELEASE)/pmpanel.o
+
+$(OBJDIR_LINUX_RELEASE)/ppmtypes.o: ppmtypes.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c ppmtypes.cpp -o $(OBJDIR_LINUX_RELEASE)/ppmtypes.o
+
+$(OBJDIR_LINUX_RELEASE)/qos.o: qos.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c qos.cpp -o $(OBJDIR_LINUX_RELEASE)/qos.o
+
+$(OBJDIR_LINUX_RELEASE)/r128calculator.o: r128calculator.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c r128calculator.cpp -o $(OBJDIR_LINUX_RELEASE)/r128calculator.o
+
+$(OBJDIR_LINUX_RELEASE)/r128thread.o: r128thread.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c r128thread.cpp -o $(OBJDIR_LINUX_RELEASE)/r128thread.o
+
 $(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc/1035.o: ../external/wxservdisc/1035.c
 	$(CC) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c ../external/wxservdisc/1035.c -o $(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc/1035.o
-
-$(OBJDIR_LINUX_RELEASE)/ourRTSPClient.o: ourRTSPClient.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c ourRTSPClient.cpp -o $(OBJDIR_LINUX_RELEASE)/ourRTSPClient.o
 
 $(OBJDIR_LINUX_RELEASE)/niir.o: niir.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c niir.cpp -o $(OBJDIR_LINUX_RELEASE)/niir.o
@@ -216,8 +225,14 @@ $(OBJDIR_LINUX_RELEASE)/monitorevent.o: monitorevent.cpp
 $(OBJDIR_LINUX_RELEASE)/levelmeter.o: levelmeter.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c levelmeter.cpp -o $(OBJDIR_LINUX_RELEASE)/levelmeter.o
 
+$(OBJDIR_LINUX_RELEASE)/levelgraph.o: levelgraph.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c levelgraph.cpp -o $(OBJDIR_LINUX_RELEASE)/levelgraph.o
+
 $(OBJDIR_LINUX_RELEASE)/levelcalculator.o: levelcalculator.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c levelcalculator.cpp -o $(OBJDIR_LINUX_RELEASE)/levelcalculator.o
+
+$(OBJDIR_LINUX_RELEASE)/iomanager.o: iomanager.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c iomanager.cpp -o $(OBJDIR_LINUX_RELEASE)/iomanager.o
 
 clean_linux_release: 
 	rm -f $(OBJ_LINUX_RELEASE) $(OUT_LINUX_RELEASE)

@@ -29,7 +29,7 @@ OBJDIR_LINUX_RELEASE = obj/linux
 DEP_LINUX_RELEASE = 
 OUT_LINUX_RELEASE = ../../lib/monitor/libaoipinfo.so
 
-OBJ_LINUX_RELEASE = $(OBJDIR_LINUX_RELEASE)/__/peak\ log/levelgraph.o $(OBJDIR_LINUX_RELEASE)/aoipinfo.o $(OBJDIR_LINUX_RELEASE)/aoipinfobuilder.o $(OBJDIR_LINUX_RELEASE)/pnlAoIPInfo.o $(OBJDIR_LINUX_RELEASE)/pnlGraph.o $(OBJDIR_LINUX_RELEASE)/pnlSettings.o
+OBJ_LINUX_RELEASE = $(OBJDIR_LINUX_RELEASE)/aoipinfo.o $(OBJDIR_LINUX_RELEASE)/aoipinfobuilder.o $(OBJDIR_LINUX_RELEASE)/pnlAoIPInfo.o $(OBJDIR_LINUX_RELEASE)/pnlGraph.o $(OBJDIR_LINUX_RELEASE)/pnlSettings.o
 
 all: linux_release
 
@@ -37,7 +37,6 @@ clean: clean_linux_release
 
 before_linux_release: 
 	test -d ../../lib/monitor || mkdir -p ../../lib/monitor
-	test -d $(OBJDIR_LINUX_RELEASE)/__/peak\ log || mkdir -p $(OBJDIR_LINUX_RELEASE)/__/peak\ log
 	test -d $(OBJDIR_LINUX_RELEASE) || mkdir -p $(OBJDIR_LINUX_RELEASE)
 
 after_linux_release: 
@@ -47,9 +46,6 @@ linux_release: before_linux_release out_linux_release after_linux_release
 
 out_linux_release: before_linux_release $(OBJ_LINUX_RELEASE) $(DEP_LINUX_RELEASE)
 	$(LD) -shared $(LIBDIR_LINUX_RELEASE) $(OBJ_LINUX_RELEASE)  -o $(OUT_LINUX_RELEASE) $(LDFLAGS_LINUX_RELEASE) $(LIB_LINUX_RELEASE)
-
-$(OBJDIR_LINUX_RELEASE)/__/peak\ log/levelgraph.o: ../peak\ log/levelgraph.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c ../peak\ log/levelgraph.cpp -o $(OBJDIR_LINUX_RELEASE)/__/peak\ log/levelgraph.o
 
 $(OBJDIR_LINUX_RELEASE)/aoipinfo.o: aoipinfo.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c aoipinfo.cpp -o $(OBJDIR_LINUX_RELEASE)/aoipinfo.o
@@ -69,7 +65,6 @@ $(OBJDIR_LINUX_RELEASE)/pnlSettings.o: pnlSettings.cpp
 clean_linux_release: 
 	rm -f $(OBJ_LINUX_RELEASE) $(OUT_LINUX_RELEASE)
 	rm -rf ../../lib/monitor
-	rm -rf $(OBJDIR_LINUX_RELEASE)/__/peak\ log
 	rm -rf $(OBJDIR_LINUX_RELEASE)
 
 .PHONY: before_linux_release after_linux_release clean_linux_release

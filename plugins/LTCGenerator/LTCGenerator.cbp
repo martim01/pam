@@ -87,6 +87,7 @@
 					<Add option="-DDLL_EXPORTS" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
+					<Add directory="../../external/libltc" />
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />

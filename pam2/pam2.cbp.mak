@@ -29,7 +29,7 @@ OBJDIR_LINUX_RELEASE = .objs
 DEP_LINUX_RELEASE = 
 OUT_LINUX_RELEASE = ../bin/pam2
 
-OBJ_LINUX_RELEASE = $(OBJDIR_LINUX_RELEASE)/pnlSettingsProfiles.o $(OBJDIR_LINUX_RELEASE)/pnlTestOptions.o $(OBJDIR_LINUX_RELEASE)/pnlTests.o $(OBJDIR_LINUX_RELEASE)/pnlUpdate.o $(OBJDIR_LINUX_RELEASE)/wxpammclient.o $(OBJDIR_LINUX_RELEASE)/wxpammconnection.o $(OBJDIR_LINUX_RELEASE)/pnlSettingsPlugins.o $(OBJDIR_LINUX_RELEASE)/pnlHelp.o $(OBJDIR_LINUX_RELEASE)/dlgPin.o $(OBJDIR_LINUX_RELEASE)/dlgSequence.o $(OBJDIR_LINUX_RELEASE)/dlgmask.o $(OBJDIR_LINUX_RELEASE)/networkcontrol.o $(OBJDIR_LINUX_RELEASE)/pam2App.o $(OBJDIR_LINUX_RELEASE)/pam2Main.o $(OBJDIR_LINUX_RELEASE)/dlgEditName.o $(OBJDIR_LINUX_RELEASE)/pnlLog.o $(OBJDIR_LINUX_RELEASE)/pnlLogControl.o $(OBJDIR_LINUX_RELEASE)/pnlNetworkSetup.o $(OBJDIR_LINUX_RELEASE)/pnlRTP.o $(OBJDIR_LINUX_RELEASE)/pnlSettings.o $(OBJDIR_LINUX_RELEASE)/pnlSettingsOptions.o
+OBJ_LINUX_RELEASE = $(OBJDIR_LINUX_RELEASE)/pnlSettingsPlugins.o $(OBJDIR_LINUX_RELEASE)/pnlSettingsProfiles.o $(OBJDIR_LINUX_RELEASE)/pnlTestOptions.o $(OBJDIR_LINUX_RELEASE)/pnlTests.o $(OBJDIR_LINUX_RELEASE)/pnlUpdate.o $(OBJDIR_LINUX_RELEASE)/wxpammclient.o $(OBJDIR_LINUX_RELEASE)/wxpammconnection.o $(OBJDIR_LINUX_RELEASE)/pnlSettingsOptions.o $(OBJDIR_LINUX_RELEASE)/dlgNoInput.o $(OBJDIR_LINUX_RELEASE)/dlgPin.o $(OBJDIR_LINUX_RELEASE)/dlgSequence.o $(OBJDIR_LINUX_RELEASE)/dlgmask.o $(OBJDIR_LINUX_RELEASE)/networkcontrol.o $(OBJDIR_LINUX_RELEASE)/pam2App.o $(OBJDIR_LINUX_RELEASE)/pam2Main.o $(OBJDIR_LINUX_RELEASE)/dlgEditName.o $(OBJDIR_LINUX_RELEASE)/pnlHelp.o $(OBJDIR_LINUX_RELEASE)/pnlLog.o $(OBJDIR_LINUX_RELEASE)/pnlLogControl.o $(OBJDIR_LINUX_RELEASE)/pnlNetworkSetup.o $(OBJDIR_LINUX_RELEASE)/pnlRTP.o $(OBJDIR_LINUX_RELEASE)/pnlSettings.o $(OBJDIR_LINUX_RELEASE)/pnlSettingsGenerators.o
 
 all: linux_release
 
@@ -46,6 +46,9 @@ linux_release: before_linux_release out_linux_release after_linux_release
 
 out_linux_release: before_linux_release $(OBJ_LINUX_RELEASE) $(DEP_LINUX_RELEASE)
 	$(LD) $(LIBDIR_LINUX_RELEASE) -o $(OUT_LINUX_RELEASE) $(OBJ_LINUX_RELEASE)  $(LDFLAGS_LINUX_RELEASE) $(LIB_LINUX_RELEASE)
+
+$(OBJDIR_LINUX_RELEASE)/pnlSettingsPlugins.o: pnlSettingsPlugins.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c pnlSettingsPlugins.cpp -o $(OBJDIR_LINUX_RELEASE)/pnlSettingsPlugins.o
 
 $(OBJDIR_LINUX_RELEASE)/pnlSettingsProfiles.o: pnlSettingsProfiles.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c pnlSettingsProfiles.cpp -o $(OBJDIR_LINUX_RELEASE)/pnlSettingsProfiles.o
@@ -65,11 +68,11 @@ $(OBJDIR_LINUX_RELEASE)/wxpammclient.o: wxpammclient.cpp
 $(OBJDIR_LINUX_RELEASE)/wxpammconnection.o: wxpammconnection.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wxpammconnection.cpp -o $(OBJDIR_LINUX_RELEASE)/wxpammconnection.o
 
-$(OBJDIR_LINUX_RELEASE)/pnlSettingsPlugins.o: pnlSettingsPlugins.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c pnlSettingsPlugins.cpp -o $(OBJDIR_LINUX_RELEASE)/pnlSettingsPlugins.o
+$(OBJDIR_LINUX_RELEASE)/pnlSettingsOptions.o: pnlSettingsOptions.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c pnlSettingsOptions.cpp -o $(OBJDIR_LINUX_RELEASE)/pnlSettingsOptions.o
 
-$(OBJDIR_LINUX_RELEASE)/pnlHelp.o: pnlHelp.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c pnlHelp.cpp -o $(OBJDIR_LINUX_RELEASE)/pnlHelp.o
+$(OBJDIR_LINUX_RELEASE)/dlgNoInput.o: dlgNoInput.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c dlgNoInput.cpp -o $(OBJDIR_LINUX_RELEASE)/dlgNoInput.o
 
 $(OBJDIR_LINUX_RELEASE)/dlgPin.o: dlgPin.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c dlgPin.cpp -o $(OBJDIR_LINUX_RELEASE)/dlgPin.o
@@ -92,6 +95,9 @@ $(OBJDIR_LINUX_RELEASE)/pam2Main.o: pam2Main.cpp
 $(OBJDIR_LINUX_RELEASE)/dlgEditName.o: dlgEditName.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c dlgEditName.cpp -o $(OBJDIR_LINUX_RELEASE)/dlgEditName.o
 
+$(OBJDIR_LINUX_RELEASE)/pnlHelp.o: pnlHelp.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c pnlHelp.cpp -o $(OBJDIR_LINUX_RELEASE)/pnlHelp.o
+
 $(OBJDIR_LINUX_RELEASE)/pnlLog.o: pnlLog.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c pnlLog.cpp -o $(OBJDIR_LINUX_RELEASE)/pnlLog.o
 
@@ -107,8 +113,8 @@ $(OBJDIR_LINUX_RELEASE)/pnlRTP.o: pnlRTP.cpp
 $(OBJDIR_LINUX_RELEASE)/pnlSettings.o: pnlSettings.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c pnlSettings.cpp -o $(OBJDIR_LINUX_RELEASE)/pnlSettings.o
 
-$(OBJDIR_LINUX_RELEASE)/pnlSettingsOptions.o: pnlSettingsOptions.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c pnlSettingsOptions.cpp -o $(OBJDIR_LINUX_RELEASE)/pnlSettingsOptions.o
+$(OBJDIR_LINUX_RELEASE)/pnlSettingsGenerators.o: pnlSettingsGenerators.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c pnlSettingsGenerators.cpp -o $(OBJDIR_LINUX_RELEASE)/pnlSettingsGenerators.o
 
 clean_linux_release: 
 	rm -f $(OBJ_LINUX_RELEASE) $(OUT_LINUX_RELEASE)
