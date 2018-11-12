@@ -113,7 +113,8 @@ END_EVENT_TABLE()
 
 pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_pSelectedMonitor(0),
-    m_ppnlLog(0)
+    m_ppnlLog(0),
+    m_bInputFailed(false)
 {
 
     //(*Initialize(pam2Dialog)
@@ -365,6 +366,8 @@ void pam2Dialog::LoadMonitorPanels()
     m_plstInbuilt->AddButton(wxT("Settings"));
     m_plstInbuilt->AddButton(wxT("Help"));
 
+
+
     ShowMonitorList();
 }
 
@@ -527,6 +530,7 @@ void pam2Dialog::ShowSettingsPanel()
         }
     }
 
+
     m_pswpMain->ChangeSelection(wxT("Settings"));
 
     m_plstOptions->Freeze();
@@ -652,6 +656,8 @@ void pam2Dialog::OnAudioData(AudioEvent& event)
     //m_timerAES.Stop();
     if(m_pdlgNoInput)
     {
+
+        m_bInputFailed = false;
         m_pdlgNoInput->Show(false);
     }
 
@@ -925,6 +931,7 @@ void pam2Dialog::OnbtnMonitorClick(wxCommandEvent& event)
 
 void pam2Dialog::OnswpScreensPageChanged(wxNotebookEvent& event)
 {
+
     if(m_pswpScreens->GetSelectionName() == wxT("Screens"))
     {
         wxString sLast(Settings::Get().Read(wxT("Main"), wxT("Monitor"), wxEmptyString));
@@ -937,7 +944,10 @@ void pam2Dialog::OnswpScreensPageChanged(wxNotebookEvent& event)
 
 void pam2Dialog::OnswpMainPageChanged(wxNotebookEvent& event)
 {
-
+    if(m_pdlgNoInput && m_bInputFailed)
+    {
+        m_pdlgNoInput->Show((m_pswpMain->GetSelectionName() != wxT("Settings")));
+    }
 }
 
 void pam2Dialog::OnswpSplashPageChanged(wxNotebookEvent& event)
@@ -951,6 +961,8 @@ void pam2Dialog::OnInputFailed(wxCommandEvent& event)
     {
         m_pdlgNoInput = new dlgNoInput(this, wxNewId(), wxPoint(0,425));
     }
-    m_pdlgNoInput->SetPosition(wxPoint(0,30));
-    m_pdlgNoInput->Show();
+    m_bInputFailed = true;
+
+    m_pdlgNoInput->SetPosition(wxPoint(0,425));
+    m_pdlgNoInput->Show((m_pswpMain->GetSelectionName() != wxT("Settings")));
 }

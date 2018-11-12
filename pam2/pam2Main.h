@@ -175,6 +175,7 @@ class pam2Dialog: public wxDialog
         size_t m_nCurrentMonitorPage;
 
         wxDateTime m_dtLastRead;
+        bool m_bInputFailed;
 
         DECLARE_EVENT_TABLE()
 };

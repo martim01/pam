@@ -217,7 +217,7 @@ size_t wmSwitcherPanel::ChangeSelection(size_t nPage)
         size_t nReturn = m_nSelectedPage;
         SwipeFinished();
 
-        #ifdef __PAMBASE__
+        #ifdef _pambase_
         wxBookCtrlEvent event(wxEVT_NOTEBOOK_PAGE_CHANGED, GetId());
         event.SetSelection(nReturn);
         event.SetEventObject(this);
@@ -252,7 +252,7 @@ size_t wmSwitcherPanel::ChangeSelection(size_t nPage)
         }
         m_timerScroll.Start(10);
 
-        #ifdef __PAMBASE__
+        #ifdef _pambase_
         wxBookCtrlEvent event(wxEVT_NOTEBOOK_PAGE_CHANGED, GetId());
         event.SetSelection(m_nSelectedPage);
         GetEventHandler()->ProcessEvent(event);
@@ -283,7 +283,7 @@ size_t wmSwitcherPanel::ChangeSelection(size_t nPage)
         }
         m_timerScroll.Start(10);
 
-        #ifdef __PAMBASE__
+        #ifdef _pambase_
         wxBookCtrlEvent event(wxEVT_NOTEBOOK_PAGE_CHANGED, GetId());
         event.SetSelection(m_nSelectedPage);
         GetEventHandler()->ProcessEvent(event);
