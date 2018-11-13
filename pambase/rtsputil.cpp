@@ -183,8 +183,11 @@ void continueAfterSETUP(RTSPClient* rtspClient, int resultCode, char* resultStri
 
         env << *rtspClient << "Created a data sink for the \"" << *scs.subsession << "\" subsession\n";
         scs.subsession->miscPtr = rtspClient; // a hack to let subsession handler functions get the "RTSPClient" from the subsession
-        scs.subsession->sink->startPlaying(*(scs.subsession->readSource()),
-                                           subsessionAfterPlaying, scs.subsession);
+        scs.subsession->sink->startPlaying(*(scs.subsession->readSource()), subsessionAfterPlaying, scs.subsession);
+
+        // Begin periodic QOS measurements:
+        beginQOSMeasurement(env, ((ourRTSPClient*)rtspClient)->scs.session, ((ourRTSPClient*)rtspClient)->GetHandler());
+
         // Also set a handler to be called if a RTCP "BYE" arrives for this subsession:
         if (scs.subsession->rtcpInstance() != NULL)
         {
@@ -202,10 +205,14 @@ void continueAfterSETUP(RTSPClient* rtspClient, int resultCode, char* resultStri
 
 void continueAfterPLAY(RTSPClient* rtspClient, int resultCode, char* resultString)
 {
+
+
     Boolean success = False;
 
     UsageEnvironment& env = rtspClient->envir(); // alias
     StreamClientState& scs = ((ourRTSPClient*)rtspClient)->scs; // alias
+
+    env << *rtspClient << "Continue after play: " << resultString << "\n";
 
     if (resultCode != 0)
     {
@@ -245,8 +252,7 @@ void continueAfterPLAY(RTSPClient* rtspClient, int resultCode, char* resultStrin
     }
     else
     {
-        // Begin periodic QOS measurements:
-        beginQOSMeasurement(env, ((ourRTSPClient*)rtspClient)->scs.session, ((ourRTSPClient*)rtspClient)->GetHandler());
+
     }
 }
 
@@ -358,6 +364,7 @@ void shutdownStream(RTSPClient* rtspClient, int exitCode)
 
 void beginQOSMeasurement(UsageEnvironment& env, MediaSession* session, RtpThread* pThread)
 {
+    env << "Begin QOS\n";
 
     // Set up a measurement record for each active subsession:
     struct timeval startTime;

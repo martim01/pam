@@ -49,7 +49,10 @@ void* RtpThread::Entry()
     m_penv = PamUsageEnvironment::createNew(*scheduler, m_pHandler);
     std::cout << "RtpThread: 2" << std::endl;
 
-    if(m_sUrl.Before(wxT(':')) == wxT("rtsp"))
+    std::cout << m_sUrl.mb_str() << std::endl;
+    std::cout << m_sUrl.BeforeFirst(wxT(':')).mb_str() << std::endl;
+
+    if(m_sUrl.BeforeFirst(wxT(':')).CmpNoCase(wxT("rtsp")) == 0)
     {
         std::cout << "RtpThread: 3" << std::endl;
         if(openURL())
