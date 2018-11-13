@@ -21,14 +21,15 @@ END_EVENT_TABLE()
 dlgPin::dlgPin(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
 {
 	//(*Initialize(dlgPin)
-	Create(parent, id, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxNO_BORDER, _T("id"));
+	Create(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxNO_BORDER, _T("wxID_ANY"));
 	SetClientSize(wxSize(800,480));
 	Move(wxPoint(0,0));
 	SetBackgroundColour(wxColour(0,0,0));
 	wxFont thisFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	SetFont(thisFont);
-	m_pLbl1 = new wmLabel(this, ID_M_PLBL1, _("Enter PIN to access Settings"), wxPoint(10,60), wxSize(780,50), 0, _T("ID_M_PLBL1"));
+	m_pLbl1 = new wmLabel(this, ID_M_PLBL1, _("Enter PIN to access Settings"), wxPoint(0,60), wxSize(780,50), 0, _T("ID_M_PLBL1"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl1->GetUiRect().SetGradient(0);
 	m_pLbl1->SetForegroundColour(wxColour(0,255,0));
 	wxFont m_pLbl1Font(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	m_pLbl1->SetFont(m_pLbl1Font);

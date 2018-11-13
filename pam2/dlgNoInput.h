@@ -2,6 +2,7 @@
 #define DLGNOINPUT_H
 
 //(*Headers(dlgNoInput)
+#include "wmbutton.h"
 #include "wmlabel.h"
 #include <wx/dialog.h>
 //*)
@@ -14,6 +15,7 @@ class dlgNoInput: public wxDialog
 		virtual ~dlgNoInput();
 
 		//(*Declarations(dlgNoInput)
+		wmButton* m_pbtnInput;
 		wmLabel* m_pLbl1;
 		//*)
 
@@ -21,11 +23,13 @@ class dlgNoInput: public wxDialog
 
 		//(*Identifiers(dlgNoInput)
 		static const long ID_M_PLBL1;
+		static const long ID_M_PBTN1;
 		//*)
 
 	private:
 
 		//(*Handlers(dlgNoInput)
+		void OnbtnInputClick(wxCommandEvent& event);
 		//*)
 
 		DECLARE_EVENT_TABLE()

@@ -17,17 +17,34 @@
 		<size_arg>1</size_arg>
 		<style>wxNO_BORDER</style>
 		<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
-			<label>No Valid AES Input</label>
-			<pos>0,0</pos>
-			<size>560,50</size>
+			<label>No AES Detected</label>
+			<pos>10,0</pos>
+			<size>420,50</size>
+			<fg>#FF0000</fg>
 			<font>
-				<size>28</size>
+				<size>22</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnInput" member="yes">
+			<label>Reset</label>
+			<pos>420,0</pos>
+			<size>100,50</size>
+			<fg>#FFFFFF</fg>
+			<bg>#000080</bg>
+			<font>
+				<size>18</size>
 				<style>normal</style>
 				<weight>normal</weight>
 				<underlined>0</underlined>
 				<family>swiss</family>
 				<face>Tahoma</face>
 			</font>
+			<handler function="OnbtnInputClick" entry="EVT_BUTTON" />
 		</object>
 	</object>
 </wxsmith>

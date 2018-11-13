@@ -12,12 +12,11 @@
 			<family>swiss</family>
 			<face>Arial</face>
 		</font>
-		<pos_arg>1</pos_arg>
-		<size_arg>1</size_arg>
+		<id_arg>0</id_arg>
 		<style>wxNO_BORDER</style>
 		<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
 			<label>Enter PIN to access Settings</label>
-			<pos>10,60</pos>
+			<pos>0,60</pos>
 			<size>780,50</size>
 			<fg>#00FF00</fg>
 			<font>
