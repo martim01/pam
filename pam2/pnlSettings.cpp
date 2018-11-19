@@ -46,10 +46,24 @@ const long pnlSettings::ID_M_PBTN4 = wxNewId();
 const long pnlSettings::ID_M_PBTN5 = wxNewId();
 const long pnlSettings::ID_PANEL1 = wxNewId();
 const long pnlSettings::ID_M_PLBL4 = wxNewId();
-const long pnlSettings::ID_M_PBTN3 = wxNewId();
-const long pnlSettings::ID_M_PLST6 = wxNewId();
+const long pnlSettings::ID_M_PLST3 = wxNewId();
+const long pnlSettings::ID_PANEL9 = wxNewId();
 const long pnlSettings::ID_M_PLST4 = wxNewId();
 const long pnlSettings::ID_M_PLBL5 = wxNewId();
+const long pnlSettings::ID_M_PLST6 = wxNewId();
+const long pnlSettings::ID_PANEL10 = wxNewId();
+const long pnlSettings::ID_M_PLBL1 = wxNewId();
+const long pnlSettings::ID_PANEL12 = wxNewId();
+const long pnlSettings::ID_M_PLBL2 = wxNewId();
+const long pnlSettings::ID_M_PLBL6 = wxNewId();
+const long pnlSettings::ID_M_PEDT3 = wxNewId();
+const long pnlSettings::ID_M_PLBL7 = wxNewId();
+const long pnlSettings::ID_M_PLST5 = wxNewId();
+const long pnlSettings::ID_M_PEDT2 = wxNewId();
+const long pnlSettings::ID_M_PKBD2 = wxNewId();
+const long pnlSettings::ID_M_PBTN3 = wxNewId();
+const long pnlSettings::ID_PANEL11 = wxNewId();
+const long pnlSettings::ID_M_PSWP2 = wxNewId();
 const long pnlSettings::ID_PANEL2 = wxNewId();
 const long pnlSettings::ID_PANEL8 = wxNewId();
 const long pnlSettings::ID_PANEL4 = wxNewId();
@@ -134,22 +148,74 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pLbl4->SetBackgroundColour(wxColour(0,64,0));
     wxFont m_pLbl4Font(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
     m_pLbl4->SetFont(m_pLbl4Font);
-    m_pbtnOutput = new wmButton(pnlOutput, ID_M_PBTN3, _("Playback"), wxPoint(0,40), wxSize(200,30), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
-    m_pbtnOutput->SetBackgroundColour(wxColour(64,0,64));
-    m_plstLatency = new wmList(pnlOutput, ID_M_PLST6, wxPoint(80,320), wxSize(520,30), wmList::STYLE_SELECT, 0, wxSize(-1,26), 10, wxSize(5,1));
-    m_plstLatency->Disable();
-    m_plstLatency->SetBackgroundColour(wxColour(144,144,144));
-    m_plstLatency->SetButtonColour(wxColour(wxT("#008040")));
-    m_plstLatency->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
-    m_plstPlayback = new wmList(pnlOutput, ID_M_PLST4, wxPoint(0,70), wxSize(600,200), wmList::STYLE_SELECT, 0, wxSize(-1,60), 4, wxSize(5,1));
+    m_plstDestination = new wmList(pnlOutput, ID_M_PLST3, wxPoint(0,36), wxSize(600,34), wmList::STYLE_SELECT, 0, wxSize(100,30), 3, wxSize(-1,-1));
+    m_plstDestination->SetButtonColour(wxColour(wxT("#400080")));
+    m_plstDestination->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
+    m_pswpDestination = new wmSwitcherPanel(pnlOutput, ID_M_PSWP2, wxPoint(0,70), wxSize(600,380), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP2"));
+    m_pswpDestination->SetPageNameStyle(0);
+    Panel1 = new wxPanel(m_pswpDestination, ID_PANEL9, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL9"));
+    Panel1->SetBackgroundColour(wxColour(0,0,0));
+    Panel2 = new wxPanel(m_pswpDestination, ID_PANEL10, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL10"));
+    Panel2->SetBackgroundColour(wxColour(0,0,0));
+    m_plstPlayback = new wmList(Panel2, ID_M_PLST4, wxPoint(0,0), wxSize(600,200), wmList::STYLE_SELECT, 0, wxSize(-1,60), 4, wxSize(5,1));
     m_plstPlayback->Disable();
     m_plstPlayback->SetBackgroundColour(wxColour(0,0,0));
     m_plstPlayback->SetSelectedButtonColour(wxColour(wxT("#008000")));
-    m_pLbl5 = new wmLabel(pnlOutput, ID_M_PLBL5, _("Latency"), wxPoint(0,320), wxSize(80,30), 0, _T("ID_M_PLBL5"));
+    m_pLbl5 = new wmLabel(Panel2, ID_M_PLBL5, _("Latency"), wxPoint(0,250), wxSize(80,30), 0, _T("ID_M_PLBL5"));
     m_pLbl5->SetBorderState(uiRect::BORDER_NONE);
     m_pLbl5->GetUiRect().SetGradient(0);
     m_pLbl5->SetForegroundColour(wxColour(255,255,255));
     m_pLbl5->SetBackgroundColour(wxColour(144,144,144));
+    m_plstLatency = new wmList(Panel2, ID_M_PLST6, wxPoint(80,250), wxSize(520,30), wmList::STYLE_SELECT, 0, wxSize(-1,26), 10, wxSize(5,1));
+    m_plstLatency->Disable();
+    m_plstLatency->SetBackgroundColour(wxColour(144,144,144));
+    m_plstLatency->SetButtonColour(wxColour(wxT("#008040")));
+    m_plstLatency->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
+    Panel3 = new wxPanel(m_pswpDestination, ID_PANEL11, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL11"));
+    Panel3->SetBackgroundColour(wxColour(0,0,0));
+    m_pLbl1 = new wmLabel(Panel3, ID_M_PLBL1, _("Multicast"), wxPoint(0,10), wxSize(100,40), 0, _T("ID_M_PLBL1"));
+    m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
+    m_pLbl1->GetUiRect().SetGradient(0);
+    m_pLbl1->SetForegroundColour(wxColour(255,255,255));
+    m_pLbl1->SetBackgroundColour(wxColour(64,0,128));
+    m_ppnlAddress = new wmipeditpnl(Panel3, ID_PANEL12, wxPoint(100,10), wxSize(200,40), wxTAB_TRAVERSAL, _T("ID_PANEL12"));
+    m_ppnlAddress->SetForegroundColour(wxColour(0,0,0));
+    m_ppnlAddress->SetBackgroundColour(wxColour(255,255,255));
+    m_pLbl2 = new wmLabel(Panel3, ID_M_PLBL2, _("Port"), wxPoint(300,10), wxSize(50,40), 0, _T("ID_M_PLBL2"));
+    m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
+    m_pLbl2->GetUiRect().SetGradient(0);
+    m_pLbl2->SetForegroundColour(wxColour(255,255,255));
+    m_pLbl2->SetBackgroundColour(wxColour(64,0,128));
+    m_pLbl6 = new wmLabel(Panel3, ID_M_PLBL6, _("RTSP Port"), wxPoint(0,60), wxSize(100,40), 0, _T("ID_M_PLBL6"));
+    m_pLbl6->SetBorderState(uiRect::BORDER_NONE);
+    m_pLbl6->GetUiRect().SetGradient(0);
+    m_pLbl6->SetForegroundColour(wxColour(255,255,255));
+    m_pLbl6->SetBackgroundColour(wxColour(64,0,128));
+    m_pedtRTSPPort = new wmEdit(Panel3, ID_M_PEDT3, wxEmptyString, wxPoint(100,60), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PEDT3"));
+    m_pedtRTSPPort->SetValidation(4);
+    m_pedtRTSPPort->SetBorderStyle(1,1);
+    m_pLbl7 = new wmLabel(Panel3, ID_M_PLBL7, _("Packet Time"), wxPoint(0,110), wxSize(100,40), 0, _T("ID_M_PLBL7"));
+    m_pLbl7->SetBorderState(uiRect::BORDER_NONE);
+    m_pLbl7->GetUiRect().SetGradient(0);
+    m_pLbl7->SetForegroundColour(wxColour(255,255,255));
+    m_pLbl7->SetBackgroundColour(wxColour(64,0,128));
+    m_plstPacket = new wmList(Panel3, ID_M_PLST5, wxPoint(105,109), wxSize(490,44), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 5, wxSize(5,-1));
+    m_plstPacket->SetBackgroundColour(wxColour(0,0,0));
+    m_plstPacket->SetButtonColour(wxColour(wxT("#004040")));
+    m_plstPacket->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
+    m_pedtRTPPort = new wmEdit(Panel3, ID_M_PEDT2, wxEmptyString, wxPoint(350,10), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PEDT2"));
+    m_pedtRTPPort->SetValidation(4);
+    m_pedtRTPPort->SetBorderStyle(1,1);
+    m_pkbd = new wmKeyboard(Panel3, ID_M_PKBD2, wxPoint(10,160), wxSize(240,200), 5, 0);
+    m_pkbd->SetForegroundColour(wxColour(255,255,255));
+    wxFont m_pkbdFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
+    m_pkbd->SetFont(m_pkbdFont);
+    m_pbtnStream = new wmButton(Panel3, ID_M_PBTN3, _("Stream"), wxPoint(300,320), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
+    m_pbtnStream->SetBackgroundColour(wxColour(213,0,0));
+    m_pbtnStream->SetToggleLook(true, wxT("Stop"), wxT("Start"), 50);
+    m_pswpDestination->AddPage(Panel1, _("Disabled"), false);
+    m_pswpDestination->AddPage(Panel2, _("Soundcard"), false);
+    m_pswpDestination->AddPage(Panel3, _("AoIP"), false);
     m_ppnlGenerators = new pnlSettingsGenerators(m_pswpSettings, ID_PANEL8, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL8"));
     pnlSettingsRTP = new pnlRTP(m_pswpSettings, ID_PANEL4, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL4"));
     pnlSettingsNetwork = new pnlNetworkSetup(m_pswpSettings, ID_PANEL5, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL5"));
@@ -192,9 +258,13 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnPreviousClick);
     Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnNextClick);
     Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnEndClick);
-    Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnOutputClick);
-    Connect(ID_M_PLST6,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlblLatencySelected);
+    Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstDestinationSelected);
     Connect(ID_M_PLST4,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstPlaybackSelected);
+    Connect(ID_M_PLST6,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlblLatencySelected);
+    Connect(ID_M_PEDT3,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&pnlSettings::OnedtRTSPPortText);
+    Connect(ID_M_PLST5,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstPacketSelected);
+    Connect(ID_M_PEDT2,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&pnlSettings::OnedtRTPPortText);
+    Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnStreamClick);
     Connect(ID_M_PBTN22,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnCursorClick);
     Connect(ID_M_PBTN23,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnOptionsClick);
     Connect(ID_M_PBTN24,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnPinClick);
@@ -238,7 +308,15 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
     m_plstInput->Thaw();
 
-    m_pbtnOutput->SetToggleLook(true, wxT("OFF"), wxT("ON"),50.0);
+    m_plstDestination->AddButton(wxT("Disabled"));
+    m_plstDestination->AddButton(wxT("Soundcard"));
+    m_plstDestination->AddButton(wxT("AoIP"));
+    m_plstPacket->AddButton(wxT("125us"), wxNullBitmap, (void*)125);
+    m_plstPacket->AddButton(wxT("250us"), wxNullBitmap, (void*)250);
+    m_plstPacket->AddButton(wxT("333us"), wxNullBitmap, (void*)333);
+    m_plstPacket->AddButton(wxT("1ms"), wxNullBitmap, (void*)1000);
+    m_plstPacket->AddButton(wxT("4ms"), wxNullBitmap, (void*)4000);
+
 
     ShowSoundcardOutputs();
 
@@ -247,7 +325,14 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
 
     m_plstInput->SelectButton(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")), true);
-    m_pbtnOutput->ToggleSelection(Settings::Get().Read(wxT("Output"), wxT("Enabled"), 1), true);
+    m_plstDestination->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Destination"), wxT("Disabled")), true);
+
+    m_plstPacket->SelectButton(m_plstPacket->FindButton(reinterpret_cast<void*>(Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 4000))));
+
+    m_pedtRTPPort->SetValue(Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), wxT("6970")));
+    m_pedtRTSPPort->SetValue(Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), wxT("5555")));
+    m_ppnlAddress->SetValue(Settings::Get().Read(wxT("Server"), wxT("Multicast"), wxEmptyString));
+    m_pbtnStream->ToggleSelection(false);
 
     ShowRTPDefined();
 
@@ -256,8 +341,6 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
     m_plblVersion->SetLabel(wxString::Format(wxT("%ld.%ld.%ld.%ld"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
     m_plblHostname->SetLabel(wxGetHostName());
-
-
 
 
 
@@ -525,4 +608,47 @@ void pnlSettings::OnbtnCursorClick(wxCommandEvent& event)
 void pnlSettings::OnbtnOptionsClick(wxCommandEvent& event)
 {
     Settings::Get().Write(wxT("General"), wxT("ShowOptions"), event.IsChecked());
+}
+
+void pnlSettings::OnlstDestinationSelected(wxCommandEvent& event)
+{
+    Settings::Get().Write(wxT("Output"), wxT("Destination"), event.GetString());
+    m_pswpDestination->ChangeSelection(event.GetString());
+}
+
+
+void pnlSettings::OnbtnStreamClick(wxCommandEvent& event)
+{
+    if(event.IsChecked() == false)
+    {
+        //@todo stop the stream
+        Settings::Get().Write(wxT("Server"), wxT("Stream"), 0);
+    }
+    else
+    {
+        //@todo create the new session
+        Settings::Get().Write(wxT("Server"), wxT("Multicast"), m_ppnlAddress->GetValue());
+        Settings::Get().Write(wxT("Server"), wxT("Stream"), 1);
+    }
+    m_ppnlAddress->Enable((event.IsChecked() == false));
+    m_pedtRTSPPort->Enable((event.IsChecked() == false));
+    m_pedtRTPPort->Enable((event.IsChecked() == false));
+    m_plstPacket->Enable((event.IsChecked() == false));
+    m_pkbd->Enable((event.IsChecked() == false));
+
+}
+
+void pnlSettings::OnlstPacketSelected(wxCommandEvent& event)
+{
+    Settings::Get().Write(wxT("Server"), wxT("PacketTime"), reinterpret_cast<int>(event.GetClientData()));
+}
+
+void pnlSettings::OnedtRTSPPortText(wxCommandEvent& event)
+{
+    Settings::Get().Write(wxT("Server"), wxT("RTSP_Port"), m_pedtRTSPPort->GetValue());
+}
+
+void pnlSettings::OnedtRTPPortText(wxCommandEvent& event)
+{
+    Settings::Get().Write(wxT("Server"), wxT("RTP_Port"), m_pedtRTPPort->GetValue());
 }

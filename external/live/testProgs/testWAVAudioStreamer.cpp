@@ -21,6 +21,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "GroupsockHelper.hh"
 
 #include "BasicUsageEnvironment.hh"
+#include "AES67ServerMediaSubsession.h"
 
 // To convert 16-bit samples to 8-bit u-law ("u" is the Greek letter "mu")
 // encoding, before streaming, uncomment the following line:
@@ -98,22 +99,6 @@ void play()
         if (bitsPerSample == 16)
         {
             // Note that samples in the WAV audio file are in little-endian order.
-#ifdef CONVERT_TO_ULAW
-            // Add a filter that converts from raw 16-bit PCM audio (in little-endian order) to 8-bit u-law audio:
-            sessionState.source = uLawFromPCMAudioSource::createNew(*env, wavSource, 1/*little-endian*/);
-            if (sessionState.source == NULL)
-            {
-                *env << "Unable to create a u-law filter from the PCM audio source: " << env->getResultMsg() << "\n";
-                exit(1);
-            }
-            bitsPerSecond /= 2;
-            *env << "Converting to 8-bit u-law audio for streaming => " << bitsPerSecond << " bits-per-second\n";
-            mimeType = "PCMU";
-            if (samplingFrequency == 8000 && numChannels == 1)
-            {
-                payloadFormatCode = 0; // a static RTP payload type
-            }
-#else
             // Add a filter that converts from little-endian to network (big-endian) order:
             sessionState.source = EndianSwap16::createNew(*env, wavSource);
             if (sessionState.source == NULL)
@@ -131,7 +116,6 @@ void play()
             {
                 payloadFormatCode = 11; // a static RTP payload type
             }
-#endif
         }
         else if (bitsPerSample == 20 || bitsPerSample == 24)
         {
@@ -151,83 +135,21 @@ void play()
             mimeType = "L8";
         }
     }
-    else if (audioFormat == WA_PCMU)
-    {
-        mimeType = "PCMU";
-        if (samplingFrequency == 8000 && numChannels == 1)
-        {
-            payloadFormatCode = 0; // a static RTP payload type
-        }
-    }
-    else if (audioFormat == WA_PCMA)
-    {
-        mimeType = "PCMA";
-        if (samplingFrequency == 8000 && numChannels == 1)
-        {
-            payloadFormatCode = 8; // a static RTP payload type
-        }
-    }
-    else if (audioFormat == WA_IMA_ADPCM)
-    {
-        mimeType = "DVI4";
-        // Use a static payload type, if one is defined:
-        if (numChannels == 1)
-        {
-            if (samplingFrequency == 8000)
-            {
-                payloadFormatCode = 5; // a static RTP payload type
-            }
-            else if (samplingFrequency == 16000)
-            {
-                payloadFormatCode = 6; // a static RTP payload type
-            }
-            else if (samplingFrequency == 11025)
-            {
-                payloadFormatCode = 16; // a static RTP payload type
-            }
-            else if (samplingFrequency == 22050)
-            {
-                payloadFormatCode = 17; // a static RTP payload type
-            }
-        }
-    }
-    else     //unknown format
-    {
-        *env << "Unknown audio format code \"" << audioFormat << "\" in WAV file header\n";
-        exit(1);
-    }
 
     // Create 'groupsocks' for RTP and RTCP:
     struct in_addr destinationAddress;
-    destinationAddress.s_addr = chooseRandomIPv4SSMAddress(*env);
-    // Note: This is a multicast address.  If you wish instead to stream
-    // using unicast, then you should use the "testOnDemandRTSPServer" demo application,
-    // or the "LIVE555 Media Server" - not this application - as a model.
-
-    const unsigned short rtpPortNum = 2222;
-    const unsigned short rtcpPortNum = rtpPortNum+1;
+    destinationAddress.s_addr = chooseRandomIPv4SSMAddress(*env);   //THIS IS THE MULTICAST ADDRESS
+    const unsigned short rtpPortNum = 2222; //THIS IS THE RTP PORT
     const unsigned char ttl = 255;
 
     const Port rtpPort(rtpPortNum);
-    const Port rtcpPort(rtcpPortNum);
 
     sessionState.rtpGroupsock = new Groupsock(*env, destinationAddress, rtpPort, ttl);
     sessionState.rtpGroupsock->multicastSendOnly(); // we're a SSM source
-    //sessionState.rtcpGroupsock = new Groupsock(*env, destinationAddress, rtcpPort, ttl);
-    //sessionState.rtcpGroupsock->multicastSendOnly(); // we're a SSM source
 
     // Create an appropriate audio RTP sink (using "SimpleRTPSink") from the RTP 'groupsock':
     sessionState.sink = SimpleRTPSink::createNew(*env, sessionState.rtpGroupsock, payloadFormatCode, samplingFrequency, "audio", mimeType, numChannels);
-    sessionState.sink->setPacketSizes(72,72);
-
-    // Create (and start) a 'RTCP instance' for this RTP sink:
-    //const unsigned estimatedSessionBandwidth = (bitsPerSecond + 500)/1000; // in kbps; for RTCP b/w share
-    //const unsigned maxCNAMElen = 100;
-    //unsigned char CNAME[maxCNAMElen+1];
-    //gethostname((char*)CNAME, maxCNAMElen);
-    //CNAME[maxCNAMElen] = '\0'; // just in case
-    //sessionState.rtcpInstance = RTCPInstance::createNew(*env, sessionState.rtcpGroupsock, estimatedSessionBandwidth, CNAME, sessionState.sink, NULL /* we're a server */,          True /* we're a SSM source*/);
-    // Note: This starts RTCP running automatically
+    sessionState.sink->setPacketSizes(84,84);   //THIS IS FOR 72 byte package
 
     // Create and start a RTSP server to serve this stream:
     sessionState.rtspServer = RTSPServer::createNew(*env, 8554);
@@ -237,7 +159,7 @@ void play()
         exit(1);
     }
     ServerMediaSession* sms = ServerMediaSession::createNew(*env, "testStream", inputFileName, "Session streamed by \"testWAVAudiotreamer\"", True/*SSM*/);
-    sms->addSubsession(PassiveServerMediaSubsession::createNew(*sessionState.sink, sessionState.rtcpInstance));
+    sms->addSubsession(AES67ServerMediaSubsession::createNew(*sessionState.sink, NULL));
     sessionState.rtspServer->addServerMediaSession(sms);
 
     char* url = sessionState.rtspServer->rtspURL(sms);

@@ -1,23 +1,23 @@
-W<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="testsdp" />
+		<Option title="testwavserver" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/Debug/testsdp" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Debug/testwavserver" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="rtsp://10.10.11.200/by-id/2" />
+				<Option parameters="C:\Users\matt\Documents\pam\wav\radio3b.wav" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/Release/testsdp" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Release/testwavserver" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -39,16 +39,18 @@ W<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 		</Compiler>
 		<Linker>
 			<Add library="libliveMedia.a" />
-			<Add library="libgroupsock.a" />
 			<Add library="libBasicUsageEnvironment.a" />
-			<Add library="Ws2_32" />
 			<Add library="libUsageEnvironment.a" />
+			<Add library="libgroupsock.a" />
+			<Add library="Ws2_32" />
 			<Add directory="$(#live_media.lib)" />
 			<Add directory="$(#live_group.lib)" />
 			<Add directory="$(#live_usage.lib)" />
 			<Add directory="$(#live_basicusage.lib)" />
 		</Linker>
-		<Unit filename="testsdp.cpp" />
+		<Unit filename="AES67ServerMediaSubsession.cpp" />
+		<Unit filename="AES67ServerMediaSubsession.h" />
+		<Unit filename="testWAVAudioStreamer.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

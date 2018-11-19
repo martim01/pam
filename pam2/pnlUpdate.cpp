@@ -234,7 +234,7 @@ pnlUpdate::pnlUpdate(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 	}
 	else
     {
-        ShowDrives();
+     //   ShowDrives();
     }
 
     m_timerUSB.SetOwner(this, wxNewId());

@@ -9,6 +9,7 @@
 class SettingEvent;
 class AudioEvent;
 class RtpThread;
+class RtpServerThread;
 
 class Generator;
 
@@ -39,6 +40,8 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
 
         void InputTypeChanged();
         void InputChanged(const wxString& sKey);
+
+        void OutputDestinationChanged();
         void OutputChanged(const wxString& sKey);
         void GeneratorToneChanged();
         void GeneratorNoiseChanged(const wxString& sKey);
@@ -51,6 +54,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         void InitGeneratorPlugin(const wxString& sPlugin);
 
         void InitAudioInputDevice();
+        void InitAudioOutputDevice();
         void OpenSoundcardDevice(unsigned long nOutputSampleRate);
 
         void OutputChannelsChanged();
@@ -71,16 +75,18 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         session m_SessionOut;
 
         int m_nInputSource;
+        int m_nOutputDestination;
         int m_nPlaybackSource;
         bool m_bPlaybackInput;
         bool  m_bMonitorOutput;
+        bool m_bStream;
 
         Generator* m_pGenerator;
         std::map<wxString, RtpThread*> m_mRtp;
         std::set<wxString> m_setRtpOrphan;
         wxString m_sCurrentRtp;
 
-
+        RtpServerThread* m_pRtpServer;
         wxTimer m_timerSilence;
         //wxString m_sCurrentSequence;
 };

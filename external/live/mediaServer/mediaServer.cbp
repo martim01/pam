@@ -31,7 +31,22 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
+			<Add directory="$(#live_media.include)" />
+			<Add directory="$(#live_group.include)" />
+			<Add directory="$(#live_usage.include)" />
+			<Add directory="$(#live_basicusage.include)" />
 		</Compiler>
+		<Linker>
+			<Add library="libliveMedia.a" />
+			<Add library="libBasicUsageEnvironment.a" />
+			<Add library="libUsageEnvironment.a" />
+			<Add library="libgroupsock.a" />
+			<Add library="Ws2_32" />
+			<Add directory="$(#live_media.lib)" />
+			<Add directory="$(#live_group.lib)" />
+			<Add directory="$(#live_usage.lib)" />
+			<Add directory="$(#live_basicusage.lib)" />
+		</Linker>
 		<Unit filename="DynamicRTSPServer.cpp" />
 		<Unit filename="DynamicRTSPServer.hh" />
 		<Unit filename="live555MediaServer.cpp" />

@@ -192,9 +192,6 @@ void Audio::OutputCallback(float* pBuffer, size_t nFrameCount, double dPlayoutLa
         }
     }
 
-//    m_sLog << wxString::Format(wxT("Playout %d -> %d [%d]\n"), nSize, m_qBuffer.size(), (m_qBuffer.size()-nSize));
-//    m_sLog = wxEmptyString;
-
     if(m_bPlaying == false || nSize != 0)
     {
         m_bPlaying = true;
@@ -205,7 +202,6 @@ void Audio::OutputCallback(float* pBuffer, size_t nFrameCount, double dPlayoutLa
         pTimedBuffer->SetPlaybackOffset(dPlayoutLatency*1000000.0);//*1000.0);
         pTimedBuffer->SetBufferDepth(m_qBuffer.size()/m_nChannelsOut);
         pTimedBuffer->SetDuration(pTimedBuffer->GetBufferSize()*4);
-
 
         AudioEvent event(pTimedBuffer, AudioEvent::OUTPUT, nFrameCount, m_nSampleRate, nFlags&paOutputUnderflow, nFlags&paOutputOverflow);
         wxPostEvent(m_pManager, event);

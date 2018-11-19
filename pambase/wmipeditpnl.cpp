@@ -148,7 +148,18 @@ void wmipeditpnl::OnSetFocus(wxFocusEvent& event)
 
 wxString wmipeditpnl::GetValue()
 {
-    return wxString::Format(wxT("%s.%s.%s.%s"), m_pEdt1->GetValue().c_str(), m_pEdt2->GetValue().c_str(),m_pEdt3->GetValue().c_str(),m_pEdt4->GetValue().c_str());
+    unsigned long nValue;
+    if(m_pEdt1->GetValue().ToULong(&nValue) && nValue < 255 &&
+       m_pEdt2->GetValue().ToULong(&nValue) && nValue < 255 &&
+       m_pEdt3->GetValue().ToULong(&nValue) && nValue < 255 &&
+       m_pEdt4->GetValue().ToULong(&nValue) && nValue < 255)
+    {
+        return wxString::Format(wxT("%s.%s.%s.%s"), m_pEdt1->GetValue().c_str(), m_pEdt2->GetValue().c_str(),m_pEdt3->GetValue().c_str(),m_pEdt4->GetValue().c_str());
+    }
+    else
+    {
+        return wxEmptyString;
+    }
 }
 
 void wmipeditpnl::SetValue(const wxString& sValue)

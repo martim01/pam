@@ -113,54 +113,50 @@ void Generator::SetSampleRate(unsigned int nSampleRate)
 }
 
 
-void Generator::Generate(unsigned int nSize)
+timedbuffer* Generator::Generate(unsigned int nSize)
 {
 
     if(m_nGenerator == FILE)
     {
-        ReadSoundFile(nSize);
+        return ReadSoundFile(nSize);
     }
-    else
+
+    timedbuffer* pData = new timedbuffer(nSize);
+    float dSize(m_mSequences.size());
+
+    switch(m_nGenerator)
     {
-
-        timedbuffer* pData = new timedbuffer(nSize);
-        float dSize(m_mSequences.size());
-
-        switch(m_nGenerator)
-        {
-            case SEQUENCE:
-                GenerateSequences(pData);
-                break;
-            case FREQUENCY:
-                GenerateFrequency(pData->GetWritableBuffer(), nSize);
-                break;
-            case NOISE_PINK:
-                GeneratePinkNoise(pData->GetWritableBuffer(), nSize);
-                break;
-            case NOISE_WHITE:
-                GenerateWhiteNoise(pData->GetWritableBuffer(), nSize);
-                break;
-            case NOISE_GREY:
-                GenerateGreyNoise(pData->GetWritableBuffer(), nSize);
-                break;
-            case NOISE_A:
-                GenerateGreyANoise(pData->GetWritableBuffer(), nSize);
-                break;
-            case NOISE_K:
-                GenerateGreyKNoise(pData->GetWritableBuffer(), nSize);
-                break;
-            case NOISE_BROWN:
-                GenerateBrownNoise(pData->GetWritableBuffer(), nSize);
-                break;
-            case PLUGIN:
-                GeneratePlugin(pData);
-        }
-
-        pData->SetDuration(pData->GetBufferSize()*4);
-
-        SoundcardManager::Get().AddOutputSamples(pData);
-        delete pData;
+        case SEQUENCE:
+            GenerateSequences(pData);
+            break;
+        case FREQUENCY:
+            GenerateFrequency(pData->GetWritableBuffer(), nSize);
+            break;
+        case NOISE_PINK:
+            GeneratePinkNoise(pData->GetWritableBuffer(), nSize);
+            break;
+        case NOISE_WHITE:
+            GenerateWhiteNoise(pData->GetWritableBuffer(), nSize);
+            break;
+        case NOISE_GREY:
+            GenerateGreyNoise(pData->GetWritableBuffer(), nSize);
+            break;
+        case NOISE_A:
+            GenerateGreyANoise(pData->GetWritableBuffer(), nSize);
+            break;
+        case NOISE_K:
+            GenerateGreyKNoise(pData->GetWritableBuffer(), nSize);
+            break;
+        case NOISE_BROWN:
+            GenerateBrownNoise(pData->GetWritableBuffer(), nSize);
+            break;
+        case PLUGIN:
+            GeneratePlugin(pData);
     }
+
+    pData->SetDuration(pData->GetBufferSize()*4);
+
+    return pData;
 }
 
 void Generator::GenerateSequences(timedbuffer* pData)
@@ -451,17 +447,18 @@ unsigned int Generator::GetChannels()
 }
 
 
-void Generator::ReadSoundFile(unsigned int nSize)
+timedbuffer* Generator::ReadSoundFile(unsigned int nSize)
 {
+    timedbuffer* pData = new timedbuffer(nSize);
     if(m_pSoundfile)
     {
-        timedbuffer* pData = new timedbuffer(nSize);
         if(m_pSoundfile->ReadAudio(pData->GetWritableBuffer(), pData->GetBufferSize(), 1))
         {
             pData->SetDuration(pData->GetBufferSize()*(m_pSoundfile->GetFormat()&0x0F));
             SoundcardManager::Get().AddOutputSamples(pData);
         }
     }
+    return pData;
 }
 
 void Generator::SetNoiseAmplitude(float ddBFS)

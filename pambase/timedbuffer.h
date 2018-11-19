@@ -12,7 +12,7 @@
 typedef std::pair<unsigned int, unsigned int> pairTime_t;
 
 #ifdef  __WXMSW__
-
+#ifndef _SYS_TIME_H_
 static int gettimeofday(struct timeval * tp, struct timezone * tzp)
 {
     // Note: some broken versions only have 8 trailing zero's, the correct epoch has 9 trailing zero's
@@ -33,7 +33,7 @@ static int gettimeofday(struct timeval * tp, struct timezone * tzp)
     tp->tv_usec = (long) (system_time.wMilliseconds * 1000);
     return 0;
 }
-
+#endif
 
 static int gettimeofday(pairTime_t& tp, struct timezone * tzp)
 {

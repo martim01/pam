@@ -13,6 +13,7 @@ wmLog* wmLog::Get()
 wmLog::wmLog() : m_pHandler(0),m_pFileLog(0)
 {
     m_timerSave.SetOwner(this, wxNewId());
+    m_timerSave.Start(1000);
     Connect(m_timerSave.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&wmLog::OnTimerSave);
 
 }
@@ -43,10 +44,6 @@ void wmLog::Log(wxString sDevice, wxString sMessage, bool bSend)
         }
     }
     m_queueFile.push(wxString::Format(wxT("%s\t%s\t%s\r\n"), wxDateTime::Now().Format(wxT("%H:%M:%S:%l")).c_str(), sDevice.Trim().c_str(), sMessage.Trim().c_str()));
-    if(m_timerSave.IsRunning() == false)
-    {
-        m_timerSave.Start(1000,true);
-    }
 
 
 }

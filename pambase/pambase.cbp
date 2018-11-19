@@ -176,6 +176,8 @@
 		<Unit filename="../external/wxservdisc/mdnsd.h" />
 		<Unit filename="../external/wxservdisc/wxServDisc.cpp" />
 		<Unit filename="../external/wxservdisc/wxServDisc.h" />
+		<Unit filename="AES67ServerMediaSubsession.cpp" />
+		<Unit filename="AES67ServerMediaSubsession.h" />
 		<Unit filename="PamMediaSession.h" />
 		<Unit filename="PamTaskScheduler.cpp" />
 		<Unit filename="PamTaskScheduler.h" />
@@ -213,6 +215,8 @@
 		<Unit filename="levelgraph.h" />
 		<Unit filename="levelmeter.cpp" />
 		<Unit filename="levelmeter.h" />
+		<Unit filename="liveaudiosource.cpp" />
+		<Unit filename="liveaudiosource.h" />
 		<Unit filename="monitorevent.cpp" />
 		<Unit filename="monitorevent.h" />
 		<Unit filename="monitorpluginbuilder.cpp" />
@@ -240,6 +244,8 @@
 		<Unit filename="r128thread.h" />
 		<Unit filename="rawvideosource.cpp" />
 		<Unit filename="rawvideosource.h" />
+		<Unit filename="rtpserverthread.cpp" />
+		<Unit filename="rtpserverthread.h" />
 		<Unit filename="rtpthread.cpp" />
 		<Unit filename="rtpthread.h" />
 		<Unit filename="rtsputil.cpp" />

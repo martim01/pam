@@ -37,7 +37,7 @@ public:
     unsigned long GetSampleRate() const;
     int GetStatus() const;
     enum {OK, UNDERRUN, OVERRUN};
-    enum {SOUNDCARD = 0, RTP, OUTPUT, FILE, GENERATOR };
+    enum {DISABLED=-1, SOUNDCARD = 0, RTP, OUTPUT, FILE, GENERATOR };
 protected:
 
     timedbuffer* m_pBuffer;

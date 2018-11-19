@@ -74,7 +74,6 @@ void pnlLissajou::SetAudioData(const timedbuffer* pBuffer)
     m_pJellyfish->SetLissajouData(pBuffer->GetBuffer(), pBuffer->GetBufferSize());
 
 
-
 }
 
 
