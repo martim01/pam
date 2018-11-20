@@ -145,8 +145,20 @@
 		</Compiler>
 		<Unit filename="anglemeter.cpp" />
 		<Unit filename="anglemeter.h" />
+		<Unit filename="inimanager.cpp" />
+		<Unit filename="inimanager.h" />
+		<Unit filename="inisection.cpp" />
+		<Unit filename="inisection.h" />
 		<Unit filename="levelmeter.cpp" />
 		<Unit filename="levelmeter.h" />
+		<Unit filename="pmcontrol.cpp" />
+		<Unit filename="pmcontrol.h" />
+		<Unit filename="pmpanel.cpp" />
+		<Unit filename="pmpanel.h" />
+		<Unit filename="settingevent.cpp" />
+		<Unit filename="settingevent.h" />
+		<Unit filename="settings.cpp" />
+		<Unit filename="settings.h" />
 		<Unit filename="uirect.cpp" />
 		<Unit filename="uirect.h" />
 		<Unit filename="wmbutton.cpp" />
