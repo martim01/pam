@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="pambaseui" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Windows Release">
+				<Option platforms="Windows;" />
+				<Option output="../lib/pambaseui.dll" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/release3" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+					<Add option="-std=c++0x" />
+					<Add option="-DWIN32" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DDLL_EXPORTS" />
+					<Add option="-D__WXMSW__" />
+					<Add option="-DWXUSINGDLL" />
+					<Add option="-DUNICODE" />
+					<Add option="-DwxUSE_UNICODE" />
+					<Add directory="$(#wx3_0.include)" />
+					<Add directory="$(#wx3_0.include)/mswu" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="$(#wx3_0.include)/mswu" />
+				</ResourceCompiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-Wl,--enable-auto-import,-Map=pambaseui.map" />
+					<Add library="wxmsw30u_gcc_wammacs" />
+					<Add directory="$(#wx3_0.lib)" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="C:\developer\matt\pam2\manifest_creator\bin\Release\manifest_creator.exe" />
+				</ExtraCommands>
+			</Target>
+			<Target title="Windows Debug">
+				<Option platforms="Windows;" />
+				<Option output="../lib/pambaseuid.dll" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/debug" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-DWIN32" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DDLL_EXPORTS" />
+					<Add option="-D__WXMSW__" />
+					<Add option="-DWXUSINGDLL" />
+					<Add option="-DUNICODE" />
+					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-DPAMBASE_DEBUG" />
+					<Add option="-D__WXDEBUG__" />
+					<Add directory="$(#wx3_0.include)" />
+					<Add directory="$(#wx3_0.include)/mswu" />
+					<Add directory="$(#portaudio.include)" />
+					<Add directory="$(#libsndfile.include)" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="$(#wx3_0.include)/mswu" />
+				</ResourceCompiler>
+				<Linker>
+					<Add option="-Wl,--enable-auto-import,-Map=pambaseui.map" />
+					<Add library="libliveMedia.a" />
+					<Add library="libBasicUsageEnvironment.a" />
+					<Add library="libUsageEnvironment.a" />
+					<Add library="libgroupsock.a" />
+					<Add library="Ws2_32" />
+					<Add library="portaudio" />
+					<Add library="libsndfile-1" />
+					<Add library="wxmsw30ud_gcc_wammacs" />
+					<Add directory="$(#wx3_0.lib)" />
+					<Add directory="$(#portaudio.lib)" />
+					<Add directory="$(#libsndfile.lib)" />
+				</Linker>
+			</Target>
+			<Target title="Linux Release">
+				<Option platforms="Unix;" />
+				<Option output="../lib/libpambaseui.so" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/linux" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="`wx-config --cxxflags`" />
+					<Add option="-fPIC" />
+					<Add option="-fpermissive" />
+					<Add option="-DNDEBUG" />
+					<Add option="-DDLL_EXPORTS" />
+					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-D__WXGNU__" />
+				</Compiler>
+				<Linker>
+					<Add option="`wx-config --libs`" />
+					<Add library="libportaudio" />
+					<Add library="libsndfile.a" />
+					<Add library="libliveMedia.a" />
+					<Add library="libBasicUsageEnvironment.a" />
+					<Add library="libUsageEnvironment.a" />
+					<Add library="libgroupsock.a" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />
+				</ExtraCommands>
+			</Target>
+			<Target title="Linux Debug">
+				<Option platforms="Unix;" />
+				<Option output="../lib/libpambaseuid.so" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/linux/debug" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="`wx-config --cxxflags`" />
+					<Add option="-fPIC" />
+					<Add option="-fpermissive" />
+					<Add option="-DNDEBUG" />
+					<Add option="-DDLL_EXPORTS" />
+					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-D__WXGNU__" />
+					<Add option="-DPAMBASE_DEBUG" />
+					<Add option="-D__WXDEBUG__" />
+				</Compiler>
+				<Linker>
+					<Add option="`wx-config --libs`" />
+					<Add library="libportaudio" />
+					<Add library="libsndfile" />
+					<Add library="libliveMedia.a" />
+					<Add library="libBasicUsageEnvironment.a" />
+					<Add library="libUsageEnvironment.a" />
+					<Add library="libgroupsock.a" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-D_pambaseui_" />
+			<Add option="-DCREATING_DLL" />
+			<Add option="-D_core_" />
+		</Compiler>
+		<Unit filename="anglemeter.cpp" />
+		<Unit filename="anglemeter.h" />
+		<Unit filename="levelmeter.cpp" />
+		<Unit filename="levelmeter.h" />
+		<Unit filename="uirect.cpp" />
+		<Unit filename="uirect.h" />
+		<Unit filename="wmbutton.cpp" />
+		<Unit filename="wmbutton.h" />
+		<Unit filename="wmbuttonfactory.h" />
+		<Unit filename="wmcore.map" />
+		<Unit filename="wmedit.cpp" />
+		<Unit filename="wmedit.h" />
+		<Unit filename="wmfocusmanager.cpp" />
+		<Unit filename="wmfocusmanager.h" />
+		<Unit filename="wmipeditpnl.cpp" />
+		<Unit filename="wmipeditpnl.h" />
+		<Unit filename="wmkeyboard.cpp" />
+		<Unit filename="wmkeyboard.h" />
+		<Unit filename="wmlabel.cpp" />
+		<Unit filename="wmlabel.h" />
+		<Unit filename="wmline.cpp" />
+		<Unit filename="wmline.h" />
+		<Unit filename="wmlist.cpp" />
+		<Unit filename="wmlist.h" />
+		<Unit filename="wmslider.cpp" />
+		<Unit filename="wmslider.h" />
+		<Unit filename="wmslidewnd.cpp" />
+		<Unit filename="wmslidewnd.h" />
+		<Unit filename="wmswipebutton.cpp" />
+		<Unit filename="wmswipebutton.h" />
+		<Unit filename="wmswitcherpanel.cpp" />
+		<Unit filename="wmswitcherpanel.h" />
+		<Unit filename="wmtimeedit.cpp" />
+		<Unit filename="wmtimeedit.h" />
+		<Unit filename="wxsmith/wmipeditpnl.wxs" />
+		<Unit filename="wxtouchscreenhtml.cpp" />
+		<Unit filename="wxtouchscreenhtml.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<AutoVersioning>
+				<Scheme minor_max="10" build_max="0" rev_max="0" rev_rand_max="10" build_times_to_increment_minor="100" />
+				<Settings autoincrement="0" date_declarations="1" use_define="0" update_manifest="0" do_auto_increment="1" ask_to_increment="0" language="C++" svn="0" svn_directory="" header_path="version.h" />
+				<Changes_Log show_changes_editor="1" app_title="released version %M.%m.%b of %p" changeslog_path="ChangesLog.txt" />
+				<Code header_guard="VERSION_H" namespace="AutoVersion" prefix="" />
+			</AutoVersioning>
+			<wxsmith version="1">
+				<resources>
+					<wxPanel wxs="wxsmith/wmipeditpnl.wxs" src="wmipeditpnl.cpp" hdr="wmipeditpnl.h" fwddecl="0" i18n="1" name="wmipeditpnl" language="CPP" />
+				</resources>
+			</wxsmith>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
