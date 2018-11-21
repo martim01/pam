@@ -1,6 +1,7 @@
 #include "recordthread.h"
 #include "settings.h"
 #include "timedbuffer.h"
+#include <wx/log.h>
 
 using namespace std;
 
@@ -20,23 +21,27 @@ void* RecordThread::Entry()
 {
     while(TestDestroy() == false)
     {
-        m_mutex.Lock();
-        if(m_queueBuffer.empty() == false)
+        timedbuffer* pBuffer(0);
+        if(m_mutex.IsOk())
         {
-            timedbuffer* pBuffer = CopyBuffer(m_queueBuffer.front());
-            delete m_queueBuffer.front();
-            m_queueBuffer.pop();
+            m_mutex.Lock();
+            if(m_queueBuffer.empty() == false)
+            {
+                pBuffer = CopyBuffer(m_queueBuffer.front());
+                delete m_queueBuffer.front();
+                m_queueBuffer.pop();
+            }
             m_mutex.Unlock();
-
-            m_sf.WriteAudio(pBuffer);
-            delete pBuffer;
+            if(pBuffer)
+            {
+                m_sf.WriteAudio(pBuffer);
+                delete pBuffer;
+            }
+            else
+            {
+                wxMilliSleep(100);  //sleep for 100ms
+            }
         }
-        else
-        {
-            m_mutex.Unlock();
-            break;
-        }
-        wxMilliSleep(100);  //sleep for 100ms
     }
     ClearQueue();
     return NULL;
@@ -44,8 +49,11 @@ void* RecordThread::Entry()
 
 void RecordThread::AddToBuffer(const timedbuffer* pBuffer)
 {
-    wxMutexLocker ml(m_mutex);
-    m_queueBuffer.push(CopyBuffer(pBuffer));
+    if(m_mutex.IsOk())
+    {
+        wxMutexLocker ml(m_mutex);
+        m_queueBuffer.push(CopyBuffer(pBuffer));
+    }
 
 }
 

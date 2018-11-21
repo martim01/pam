@@ -216,25 +216,28 @@ void IOManager::OnAudioEvent(AudioEvent& event)
         }
         if(m_nPlaybackSource != m_nInputSource)
         {
-            wxLogDebug(wxT("Generate %d"),event.GetBuffer()->GetBufferSize());
-            timedbuffer* pBuffer(m_pGenerator->Generate(event.GetBuffer()->GetBufferSize()));
-            switch(m_nOutputDestination)
+            //wxLogDebug(wxT("Generate %d"),event.GetBuffer()->GetBufferSize());
+            if(m_pGenerator)
             {
-                case AudioEvent::SOUNDCARD:
-                    wxLogDebug(wxT("SOUNDCARD %d"), pBuffer->GetBufferSize());
-                    SoundcardManager::Get().AddOutputSamples(pBuffer);
-                    break;
-                case AudioEvent::RTP:
-                    wxLogDebug(wxT("RTP %d"), pBuffer->GetBufferSize());
-                    if(m_pRtpServer)
-                    {
-                        m_pRtpServer->AddSamples(pBuffer);
-                    }
-                    break;
-                default:
-                    wxLogDebug(wxT("Output=%d"), m_nOutputDestination);
+                timedbuffer* pBuffer(m_pGenerator->Generate(event.GetBuffer()->GetBufferSize()));
+                switch(m_nOutputDestination)
+                {
+                    case AudioEvent::SOUNDCARD:
+                      //  wxLogDebug(wxT("SOUNDCARD %d"), pBuffer->GetBufferSize());
+                        SoundcardManager::Get().AddOutputSamples(pBuffer);
+                        break;
+                    case AudioEvent::RTP:
+                     //   wxLogDebug(wxT("RTP %d"), pBuffer->GetBufferSize());
+                        if(m_pRtpServer)
+                        {
+                            m_pRtpServer->AddSamples(pBuffer);
+                        }
+                        break;
+                    default:
+                        wxLogDebug(wxT("Output=%d"), m_nOutputDestination);
+                }
+                delete pBuffer;
             }
-            delete pBuffer;
         }
     }
 

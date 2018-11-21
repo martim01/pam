@@ -155,7 +155,7 @@ class PAMBASE_IMPEXPORT Generator
 
         void InitPinkNoise();
 
-        timedbuffer* ReadSoundFile(unsigned int nSize);
+        void ReadSoundFile(timedbuffer* pData);
         void GenerateSequences(timedbuffer* pData);
         void GenerateSequence(Sequence* pSeq, float* pBuffer, unsigned int nSize);
         void GenerateFrequency(float* pBuffer, unsigned int nSize);

@@ -6,7 +6,6 @@
 #include "playout.h"
 #include "settings.h"
 #include "soundfile.h"
-#include "soundcardmanager.h"
 #include <wx/xml/xml.h>
 #include "wmlogevent.h"
 #include "niir.h"
@@ -116,16 +115,14 @@ void Generator::SetSampleRate(unsigned int nSampleRate)
 timedbuffer* Generator::Generate(unsigned int nSize)
 {
 
-    if(m_nGenerator == FILE)
-    {
-        return ReadSoundFile(nSize);
-    }
-
     timedbuffer* pData = new timedbuffer(nSize);
     float dSize(m_mSequences.size());
 
     switch(m_nGenerator)
     {
+        case FILE:
+            ReadSoundFile(pData);
+            break;
         case SEQUENCE:
             GenerateSequences(pData);
             break;
@@ -447,18 +444,15 @@ unsigned int Generator::GetChannels()
 }
 
 
-timedbuffer* Generator::ReadSoundFile(unsigned int nSize)
+void Generator::ReadSoundFile(timedbuffer* pData)
 {
-    timedbuffer* pData = new timedbuffer(nSize);
     if(m_pSoundfile)
     {
         if(m_pSoundfile->ReadAudio(pData->GetWritableBuffer(), pData->GetBufferSize(), 1))
         {
             pData->SetDuration(pData->GetBufferSize()*(m_pSoundfile->GetFormat()&0x0F));
-            SoundcardManager::Get().AddOutputSamples(pData);
         }
     }
-    return pData;
 }
 
 void Generator::SetNoiseAmplitude(float ddBFS)

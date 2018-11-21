@@ -535,8 +535,8 @@ void pnlSettingsGenerators::OnSettingChanged(SettingEvent& event)
 {
     if(event.GetSection()==wxT("Output") && event.GetKey() == wxT("Destination"))
     {
-        m_plstAudioSources->Enable(event.GetValue(wxT("Disabled"))!=wxT("Disabled"));
-        if(event.GetValue(wxT("Disabled")) == wxT("Disabled"))
+        m_plstAudioSources->Enable(event.GetValue()!=wxT("Disabled"));
+        if(event.GetValue() == wxT("Disabled"))
         {
             m_plblInput->SetLabel(wxT("Audio output disabled"));
             m_pswpAog->ChangeSelection(wxT("Input"));
