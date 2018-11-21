@@ -2,6 +2,7 @@
 #include "timedbuffer.h"
 #include "settings.h"
 #include <wx/stdpaths.h>
+#include <wx/filename.h>
 #include "session.h"
 #include "settings.h"
 #include "recordthread.h"
@@ -104,7 +105,10 @@ void pnlRecord::OnbtnRecordClick(wxCommandEvent& event)
     if(!m_pRecorder)
     {
         m_pRecorder = new RecordThread();
-
+        if(wxFileName::DirExists(Settings::Get().GetWavDirectory()) == false)
+        {
+            wxFileName::Mkdir(Settings::Get().GetWavDirectory());
+        }
         if(m_pRecorder->Init(wxString::Format(wxT("%s/%s.wav"), Settings::Get().GetWavDirectory().c_str(), m_pedtFile->GetValue().c_str()), m_nInputChannels, m_nSampleRate, 16))
         {
             m_pbtnRecord->SetLabel(wxT("STOP"));

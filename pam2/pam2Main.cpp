@@ -214,7 +214,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
     m_pbtnMonitor->SetToggleLook(true, wxT("Input"), wxT("Output"), 45);
     m_pbtnMonitor->ToggleSelection(Settings::Get().Read(wxT("Monitor"), wxT("Source"), 0), true);
-    m_pbtnMonitor->Enable((Settings::Get().Read(wxT("Output"), wxT("Enabled"),1) == 1));
+    m_pbtnMonitor->Enable((Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled")) != wxT("Disabled")));
 
     m_plstScreens->SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
     m_plstOptions->SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
@@ -230,7 +230,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
 
     Settings::Get().AddHandler(wxT("Input"),wxT("Type"), this);
-    Settings::Get().AddHandler(wxT("Output"),wxT("Enabled"), this);
+    Settings::Get().AddHandler(wxT("Output"),wxT("Destination"), this);
     Settings::Get().AddHandler(wxT("Output"),wxT("Source"), this);
 
     Settings::Get().AddHandler(wxT("Test"), wxT("Lock"), this);
@@ -255,7 +255,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_plblOutput->SetLabel(Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")));
 
 
-    m_plblOutput->Show(Settings::Get().Read(wxT("Output"), wxT("Enabled"),1)==1);
+    m_plblOutput->Show(Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled"))!=wxT("Disabled"));
 
 }
 
@@ -754,9 +754,9 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
 
 void pam2Dialog::OutputChanged(const wxString& sKey)
 {
-    if(sKey == wxT("Enabled"))
+    if(sKey == wxT("Destination"))
     {
-        bool bEnabled(Settings::Get().Read(wxT("Output"), wxT("Enabled"),1)==1);
+        bool bEnabled(Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled"))!=wxT("Disabled"));
         m_plblOutput->Show(bEnabled);
         if(!bEnabled)
         {

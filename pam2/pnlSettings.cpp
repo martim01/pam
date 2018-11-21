@@ -377,7 +377,7 @@ void pnlSettings::OnBtnExit(wxCommandEvent& event)
 
 void pnlSettings::OnbtnOutputClick(wxCommandEvent& event)
 {
-    m_plstPlayback->Enable(event.IsChecked());
+    m_plstPlayback->Enable(Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled"))!=wxT("Disabled"));
 
     Settings::Get().Write(wxT("Output"), wxT("Enabled"), event.IsChecked());
 
@@ -405,7 +405,8 @@ void pnlSettings::ShowSoundcardInputs()
         {
             short nEnabled = wmList::wmENABLED;
             #ifdef __WXGTK__
-            if((Settings::Get().Read(wxT("Output"), wxT("Enabled"),1) == 1) && Settings::Get().Read(wxT("Output"), wxT("Device"), 0) == i)
+
+            if((Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled"))!=wxT("Disabled")) && Settings::Get().Read(wxT("Output"), wxT("Device"), 0) == i)
             {
                 nEnabled = wmList::wmDISABLED;
             }
@@ -613,6 +614,7 @@ void pnlSettings::OnbtnOptionsClick(wxCommandEvent& event)
 void pnlSettings::OnlstDestinationSelected(wxCommandEvent& event)
 {
     Settings::Get().Write(wxT("Output"), wxT("Destination"), event.GetString());
+    m_plstPlayback->Enable(event.GetString()!=wxT("Disabled"));
     m_pswpDestination->ChangeSelection(event.GetString());
 }
 

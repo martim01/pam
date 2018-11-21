@@ -219,7 +219,7 @@ pnlSettingsGenerators::pnlSettingsGenerators(wxWindow* parent,wxWindowID id,cons
 	SetSize(size);
 	SetPosition(pos);
 
-	if((Settings::Get().Read(wxT("Output"), wxT("Enabled"), 1) != 1))
+	if(Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled"))!=wxT("Disabled"))
     {
         m_plblInput->SetLabel(wxT("Audio output disabled"));
     }
@@ -242,11 +242,11 @@ pnlSettingsGenerators::pnlSettingsGenerators(wxWindow* parent,wxWindowID id,cons
     m_plstAudioSources->AddButton(wxT("Sequence"));
     m_plstAudioSources->AddButton(wxT("Generator"));
     m_plstAudioSources->AddButton(wxT("Noise"));
-    m_plstAudioSources->Enable((Settings::Get().Read(wxT("Output"), wxT("Enabled"), 1) == 1));
+    m_plstAudioSources->Enable(Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled"))!=wxT("Disabled"));
 
     LoadPlugins();
 
-    if((Settings::Get().Read(wxT("Output"), wxT("Enabled"), 1) != 1))
+    if(Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled"))!=wxT("Disabled"))
     {
         m_pswpAog->ChangeSelection(wxT("Input"));
     }
@@ -289,7 +289,7 @@ pnlSettingsGenerators::pnlSettingsGenerators(wxWindow* parent,wxWindowID id,cons
     Connect(m_pAmplitude->GetId(), wxEVT_SLIDER_MOVE, (wxObjectEventFunction)&pnlSettingsGenerators::OnAmplitudeMove);
     Connect(m_pNoiseAmplitude->GetId(), wxEVT_SLIDER_MOVE, (wxObjectEventFunction)&pnlSettingsGenerators::OnNoiseAmplitudeMove);
 
-    Settings::Get().AddHandler(wxT("Output"), wxT("Enable"), this);
+    Settings::Get().AddHandler(wxT("Output"), wxT("Destination"), this);
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pnlSettingsGenerators::OnSettingChanged);
 
 
@@ -533,10 +533,10 @@ void pnlSettingsGenerators::InputSessionChanged()
 
 void pnlSettingsGenerators::OnSettingChanged(SettingEvent& event)
 {
-    if(event.GetSection()==wxT("Output") && event.GetKey() == wxT("Enabled"))
+    if(event.GetSection()==wxT("Output") && event.GetKey() == wxT("Destination"))
     {
-        m_plstAudioSources->Enable(event.GetValue(false));
-        if(event.GetValue(false) == false)
+        m_plstAudioSources->Enable(event.GetValue(wxT("Disabled"))!=wxT("Disabled"));
+        if(event.GetValue(wxT("Disabled")) == wxT("Disabled"))
         {
             m_plblInput->SetLabel(wxT("Audio output disabled"));
             m_pswpAog->ChangeSelection(wxT("Input"));
