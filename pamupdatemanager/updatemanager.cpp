@@ -527,7 +527,7 @@ bool UpdateManager::UpdateFromWebServer(const wxString& sName, const wxString& s
 
 bool UpdateManager::UpdateFromUSB(const wxString& sName, const wxString& sTempFile, int nType)
 {
-    UpdateFromShare(sName, sTempFile, nType);
+    return UpdateFromShare(sName, sTempFile, nType);
 }
 
 bool UpdateManager::UpdateFromShare(const wxString& sName, const wxString& sTempFile, int nType)

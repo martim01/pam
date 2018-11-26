@@ -113,6 +113,7 @@
 					<Add option="-D__WXGNU__" />
 					<Add option="-DPAMBASE_DEBUG" />
 					<Add option="-D__WXDEBUG__" />
+					<Add directory="../../external/libltc" />
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
