@@ -4,8 +4,9 @@
 #include <wx/log.h>
 
 
-RtpServerThread::RtpServerThread(wxEvtHandler* pHandler, unsigned int nRTSPPort, const wxString& sMulticast, unsigned int nRTPPort, LiveAudioSource::enumPacketTime ePacketTime) :
+RtpServerThread::RtpServerThread(wxEvtHandler* pHandler, const wxString& sRTSP, unsigned int nRTSPPort, const wxString& sMulticast, unsigned int nRTPPort, LiveAudioSource::enumPacketTime ePacketTime) :
     m_pHandler(pHandler),
+    m_sRTSP(sRTSP),
     m_nRTSPPort(nRTSPPort),
     m_sMulticast(sMulticast),
     m_nRTPPort(nRTPPort),
@@ -23,6 +24,7 @@ RtpServerThread::RtpServerThread(wxEvtHandler* pHandler, unsigned int nRTSPPort,
 
 void* RtpServerThread::Entry()
 {
+    SendingInterfaceAddr = our_inet_addr(std::string(m_sRTSP.mb_str()).c_str());
     wxLogDebug(wxT("RtpServerThread::Entry() %d"), m_ePacketTime);
     TaskScheduler* scheduler = PamTaskScheduler::createNew();
     m_penv = PamUsageEnvironment::createNew(*scheduler, m_pHandler);
@@ -50,9 +52,16 @@ bool RtpServerThread::CreateStream()
     char const* mimeType = "L24";
     unsigned char payloadFormatCode = 96; // by default, unless a static RTP payload type can be used
 
-    // Create 'groupsocks' for RTP and RTCP:
+    // Create 'groupsocks' for RTP:
     struct in_addr destinationAddress;
-    destinationAddress.s_addr = chooseRandomIPv4SSMAddress(*m_penv);   //THIS IS THE MULTICAST ADDRESS
+    if(m_sMulticast.empty() == false)
+    {
+        destinationAddress.s_addr = inet_addr(std::string(m_sMulticast.mb_str()).c_str());
+    }
+    else
+    {
+        destinationAddress.s_addr = chooseRandomIPv4SSMAddress(*m_penv);   //THIS IS THE MULTICAST ADDRESS
+    }
 
     const unsigned char ttl = 255;
 
@@ -65,7 +74,7 @@ bool RtpServerThread::CreateStream()
     m_pSink = SimpleRTPSink::createNew(*m_penv, m_pRtpGroupsock, payloadFormatCode, m_pSource->samplingFrequency(), "audio", mimeType, m_pSource->numChannels());
 
     // @todo do we need to set this here as well as in the source??
-    m_pSink->setPacketSizes(m_pSource->GetPreferredFrameSize()+12,m_pSource->GetPreferredFrameSize()+12);   //THIS IS FOR 72 byte package
+    m_pSink->setPacketSizes(m_pSource->GetPreferredFrameSize()+12,m_pSource->GetPreferredFrameSize()+12);
 
     // Create and start a RTSP server to serve this stream:
     m_pRtspServer = RTSPServer::createNew(*m_penv, m_nRTSPPort);
@@ -74,13 +83,15 @@ bool RtpServerThread::CreateStream()
         *m_penv << "Failed to create RTSP server: " << m_penv->getResultMsg() << "\n";
         return true;
     }
-    ServerMediaSession* sms = ServerMediaSession::createNew(*m_penv, "liveStream", "AES67", "", True/*SSM*/);
+    ServerMediaSession* sms = ServerMediaSession::createNew(*m_penv, "PAM", "AES67", "", True/*SSM*/);
     sms->addSubsession(AES67ServerMediaSubsession::createNew(*m_pSink, NULL));
     m_pRtspServer->addServerMediaSession(sms);
 
     // Finally, start the streaming:
     *m_penv << "Beginning streaming...\n";
     *m_penv << m_pRtspServer->rtspURL(sms) << "\n";
+
+    wxLogDebug(m_pRtspServer->rtspURL(sms));
 
     m_pSink->startPlaying(*m_pSource, afterPlaying, reinterpret_cast<void*>(this));
 

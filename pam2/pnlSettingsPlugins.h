@@ -26,6 +26,7 @@ class pnlSettingsPlugins: public wxPanel
 		wmList* m_plstCurrent;
 		wmButton* m_pbtnUp;
 		wmButton* m_pbtnPossibleNext;
+		wmList* m_plstPluginType;
 		wmLabel* m_plblDetails;
 		wmButton* m_pbtnApply;
 		wmLabel* m_pLbl2;
@@ -36,12 +37,12 @@ class pnlSettingsPlugins: public wxPanel
 		wmButton* m_pbtnCurrentNext;
 		wmButton* m_pbtnSet;
 		wmLabel* m_plblCurrentDetails;
-		wmButton* m_pbtnPlugin;
 		//*)
 
 	protected:
 
 		//(*Identifiers(pnlSettingsPlugins)
+		static const long ID_M_PLST3;
 		static const long ID_M_PLST1;
 		static const long ID_M_PLBL1;
 		static const long ID_M_PLBL2;
@@ -60,7 +61,6 @@ class pnlSettingsPlugins: public wxPanel
 		static const long ID_M_PBTN7;
 		static const long ID_M_PBTN8;
 		static const long ID_PANEL1;
-		static const long ID_M_PBTN5;
 		//*)
 
 	private:
@@ -81,10 +81,12 @@ class pnlSettingsPlugins: public wxPanel
 		void OnbtnPossibleNextClick(wxCommandEvent& event);
 		void OnbtnCurrentPreviousClick(wxCommandEvent& event);
 		void OnbtnCurrentNextClick(wxCommandEvent& event);
+		void OnlstPluginTypeSelected(wxCommandEvent& event);
 		//*)
 
 		void ShowMonitorPlugins();
 		void ShowTestPlugins();
+		void ShowGeneratorPlugins();
 
 		void ClearLists();
 
@@ -97,7 +99,7 @@ class pnlSettingsPlugins: public wxPanel
         std::map<wxString, plugin>::iterator m_itPossible;
         unsigned int m_nPossible;
 
-        bool m_bTests;
+        int m_nType;
         wxString m_sSection;
 		DECLARE_EVENT_TABLE()
 };

@@ -15,7 +15,7 @@ BEGIN_EVENT_TABLE(dlgMask,wxDialog)
 	EVT_MOUSE_CAPTURE_LOST(dlgMask::OnCaptureLost)
 END_EVENT_TABLE()
 
-dlgMask::dlgMask(wxWindow* parent,const wxString& sSelected, wxWindowID id,const wxPoint& pos,const wxSize& size)
+dlgMask::dlgMask(wxWindow* parent, const wxArrayString& asButtons, const wxString& sSelected, wxWindowID id,const wxPoint& pos,const wxSize& size)
 {
 	//(*Initialize(dlgMask)
 	Create(parent, id, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxNO_BORDER, _T("id"));
@@ -37,42 +37,14 @@ dlgMask::dlgMask(wxWindow* parent,const wxString& sSelected, wxWindowID id,const
 	SetPosition(pos);
 	SetSize(200,300);
 
-	m_plstSubnet->AddButton(wxT("/32 (255.255.255.255)"));
-    m_plstSubnet->AddButton(wxT("/31 (255.255.255.254)"));
-    m_plstSubnet->AddButton(wxT("/30 (255.255.255.252)"));
-    m_plstSubnet->AddButton(wxT("/29 (255.255.255.248)"));
-    m_plstSubnet->AddButton(wxT("/28 (255.255.255.240)"));
-    m_plstSubnet->AddButton(wxT("/27 (255.255.255.224)"));
-    m_plstSubnet->AddButton(wxT("/26 (255.255.255.192)"));
-    m_plstSubnet->AddButton(wxT("/25 (255.255.255.128)"));
-    m_plstSubnet->AddButton(wxT("/24 (255.255.255.0)"));
-    m_plstSubnet->AddButton(wxT("/23 (255.255.254.0)"));
-    m_plstSubnet->AddButton(wxT("/22 (255.255.252.0)"));
-    m_plstSubnet->AddButton(wxT("/21 (255.255.248.0)"));
-    m_plstSubnet->AddButton(wxT("/20 (255.255.240.0)"));
-    m_plstSubnet->AddButton(wxT("/19 (255.255.224.0)"));
-    m_plstSubnet->AddButton(wxT("/18 (255.255.192.0)"));
-    m_plstSubnet->AddButton(wxT("/17 (255.255.128.0)"));
-    m_plstSubnet->AddButton(wxT("/16 (255.255.0.0)"));
-    m_plstSubnet->AddButton(wxT("/15 (255.254.0.0)"));
-    m_plstSubnet->AddButton(wxT("/14 (255.252.0.0)"));
-    m_plstSubnet->AddButton(wxT("/13 (255.248.0.0)"));
-    m_plstSubnet->AddButton(wxT("/12 (255.240.0.0)"));
-    m_plstSubnet->AddButton(wxT("/11 (255.224.0.0)"));
-    m_plstSubnet->AddButton(wxT("/10 (255.192.0.0)"));
-    m_plstSubnet->AddButton(wxT("/9 (255.128.0.0)"));
-    m_plstSubnet->AddButton(wxT("/8 (255.0.0.0)"));
-    m_plstSubnet->AddButton(wxT("/7 (254.0.0.0)"));
-    m_plstSubnet->AddButton(wxT("/6 (252.0.0.0)"));
-    m_plstSubnet->AddButton(wxT("/5 (248.0.0.0)"));
-    m_plstSubnet->AddButton(wxT("/4 (240.0.0.0)"));
-    m_plstSubnet->AddButton(wxT("/3 (224.0.0.0)"));
-    m_plstSubnet->AddButton(wxT("/2 (192.0.0.0)"));
-    m_plstSubnet->AddButton(wxT("/1 (128.0.0.0)"));
+	for(size_t i = 0; i < asButtons.GetCount(); i++)
+    {
+        m_plstSubnet->AddButton(asButtons[i]);
+    }
 
     m_plstSubnet->SelectButton(sSelected, false);
     m_plstSubnet->ShowButton(m_plstSubnet->FindButton(sSelected), wmList::TOP, false);
-    //CaptureMouse();
+    CaptureMouse();
 }
 
 dlgMask::~dlgMask()

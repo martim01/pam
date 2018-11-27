@@ -12,7 +12,7 @@
 #include "version.h"
 #include "dlgSequence.h"
 #include "iomanager.h"
-
+#include "dlgmask.h"
 //(*InternalHeaders(pnlSettings)
 #include <wx/settings.h>
 #include <wx/font.h>
@@ -29,7 +29,16 @@
 #include "images/pageup.xpm"
 #include "images/pageup_press.xpm"
 #include "soundcardmanager.h"
-
+#ifdef __WXMSW__
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <iphlpapi.h>
+#else
+#include <sys/types.h>
+#include <ifaddrs.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#endif
 
 using namespace std;
 
@@ -55,6 +64,8 @@ const long pnlSettings::ID_PANEL10 = wxNewId();
 const long pnlSettings::ID_M_PLBL1 = wxNewId();
 const long pnlSettings::ID_PANEL12 = wxNewId();
 const long pnlSettings::ID_M_PLBL2 = wxNewId();
+const long pnlSettings::ID_M_PLBL8 = wxNewId();
+const long pnlSettings::ID_M_PBTN6 = wxNewId();
 const long pnlSettings::ID_M_PLBL6 = wxNewId();
 const long pnlSettings::ID_M_PEDT3 = wxNewId();
 const long pnlSettings::ID_M_PLBL7 = wxNewId();
@@ -173,25 +184,33 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_plstLatency->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
     Panel3 = new wxPanel(m_pswpDestination, ID_PANEL11, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL11"));
     Panel3->SetBackgroundColour(wxColour(0,0,0));
-    m_pLbl1 = new wmLabel(Panel3, ID_M_PLBL1, _("Multicast"), wxPoint(0,10), wxSize(100,40), 0, _T("ID_M_PLBL1"));
+    m_pLbl1 = new wmLabel(Panel3, ID_M_PLBL1, _("RTP"), wxPoint(0,60), wxSize(100,40), 0, _T("ID_M_PLBL1"));
     m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
     m_pLbl1->GetUiRect().SetGradient(0);
     m_pLbl1->SetForegroundColour(wxColour(255,255,255));
     m_pLbl1->SetBackgroundColour(wxColour(64,0,128));
-    m_ppnlAddress = new wmipeditpnl(Panel3, ID_PANEL12, wxPoint(100,10), wxSize(200,40), wxTAB_TRAVERSAL, _T("ID_PANEL12"));
+    m_ppnlAddress = new wmipeditpnl(Panel3, ID_PANEL12, wxPoint(100,60), wxSize(200,40), wxTAB_TRAVERSAL, _T("ID_PANEL12"));
     m_ppnlAddress->SetForegroundColour(wxColour(0,0,0));
     m_ppnlAddress->SetBackgroundColour(wxColour(255,255,255));
-    m_pLbl2 = new wmLabel(Panel3, ID_M_PLBL2, _("Port"), wxPoint(300,10), wxSize(50,40), 0, _T("ID_M_PLBL2"));
+    m_pLbl2 = new wmLabel(Panel3, ID_M_PLBL2, _("Port"), wxPoint(300,60), wxSize(50,40), 0, _T("ID_M_PLBL2"));
     m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
     m_pLbl2->GetUiRect().SetGradient(0);
     m_pLbl2->SetForegroundColour(wxColour(255,255,255));
     m_pLbl2->SetBackgroundColour(wxColour(64,0,128));
-    m_pLbl6 = new wmLabel(Panel3, ID_M_PLBL6, _("RTSP Port"), wxPoint(0,60), wxSize(100,40), 0, _T("ID_M_PLBL6"));
+    m_pLbl9 = new wmLabel(Panel3, ID_M_PLBL8, _("RTSP"), wxPoint(0,10), wxSize(100,40), 0, _T("ID_M_PLBL8"));
+    m_pLbl9->SetBorderState(uiRect::BORDER_NONE);
+    m_pLbl9->GetUiRect().SetGradient(0);
+    m_pLbl9->SetForegroundColour(wxColour(255,255,255));
+    m_pLbl9->SetBackgroundColour(wxColour(64,0,128));
+    m_pbtnRTSP = new wmButton(Panel3, ID_M_PBTN6, _("Stream"), wxPoint(100,10), wxSize(200,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN6"));
+    m_pbtnRTSP->SetForegroundColour(wxColour(0,0,0));
+    m_pbtnRTSP->SetBackgroundColour(wxColour(255,255,255));
+    m_pLbl6 = new wmLabel(Panel3, ID_M_PLBL6, _("Port"), wxPoint(300,10), wxSize(50,40), 0, _T("ID_M_PLBL6"));
     m_pLbl6->SetBorderState(uiRect::BORDER_NONE);
     m_pLbl6->GetUiRect().SetGradient(0);
     m_pLbl6->SetForegroundColour(wxColour(255,255,255));
     m_pLbl6->SetBackgroundColour(wxColour(64,0,128));
-    m_pedtRTSPPort = new wmEdit(Panel3, ID_M_PEDT3, wxEmptyString, wxPoint(100,60), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PEDT3"));
+    m_pedtRTSPPort = new wmEdit(Panel3, ID_M_PEDT3, wxEmptyString, wxPoint(350,10), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PEDT3"));
     m_pedtRTSPPort->SetValidation(4);
     m_pedtRTSPPort->SetBorderStyle(1,1);
     m_pLbl7 = new wmLabel(Panel3, ID_M_PLBL7, _("Packet Time"), wxPoint(0,110), wxSize(100,40), 0, _T("ID_M_PLBL7"));
@@ -203,7 +222,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_plstPacket->SetBackgroundColour(wxColour(0,0,0));
     m_plstPacket->SetButtonColour(wxColour(wxT("#004040")));
     m_plstPacket->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
-    m_pedtRTPPort = new wmEdit(Panel3, ID_M_PEDT2, wxEmptyString, wxPoint(350,10), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PEDT2"));
+    m_pedtRTPPort = new wmEdit(Panel3, ID_M_PEDT2, wxEmptyString, wxPoint(350,60), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PEDT2"));
     m_pedtRTPPort->SetValidation(4);
     m_pedtRTPPort->SetBorderStyle(1,1);
     m_pkbd = new wmKeyboard(Panel3, ID_M_PKBD2, wxPoint(10,160), wxSize(240,200), 5, 0);
@@ -261,6 +280,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstDestinationSelected);
     Connect(ID_M_PLST4,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstPlaybackSelected);
     Connect(ID_M_PLST6,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlblLatencySelected);
+    Connect(ID_M_PBTN6,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnRTSPClick);
     Connect(ID_M_PEDT3,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&pnlSettings::OnedtRTSPPortText);
     Connect(ID_M_PLST5,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstPacketSelected);
     Connect(ID_M_PEDT2,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&pnlSettings::OnedtRTPPortText);
@@ -343,6 +363,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_plblHostname->SetLabel(wxGetHostName());
 
 
+    m_pbtnRTSP->SetLabel(Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString));
 
 }
 
@@ -623,7 +644,7 @@ void pnlSettings::OnbtnStreamClick(wxCommandEvent& event)
 {
     if(event.IsChecked() == false)
     {
-        //@todo stop the stream
+        //Stop the stream
         Settings::Get().Write(wxT("Server"), wxT("Stream"), 0);
     }
     else
@@ -654,3 +675,124 @@ void pnlSettings::OnedtRTPPortText(wxCommandEvent& event)
 {
     Settings::Get().Write(wxT("Server"), wxT("RTP_Port"), m_pedtRTPPort->GetValue());
 }
+
+void pnlSettings::OnbtnRTSPClick(wxCommandEvent& event)
+{
+    wxArrayString asButtons;
+
+    #ifdef __WXMSW__
+
+    DWORD dwSize = 0;
+    unsigned int i = 0;
+    // Set the flags to pass to GetAdaptersAddresses
+    // default to unspecified address family (both)
+    PIP_ADAPTER_ADDRESSES pAddresses = NULL;
+    DWORD dwRetVal = 0;
+    ULONG outBufLen = 15000;
+    ULONG Iterations = 0;
+    PIP_ADAPTER_ADDRESSES pCurrAddresses = NULL;
+    PIP_ADAPTER_UNICAST_ADDRESS pUnicast = NULL;
+    do
+    {
+        pAddresses = (IP_ADAPTER_ADDRESSES *) HeapAlloc(GetProcessHeap(), 0, outBufLen);
+        if (pAddresses == NULL)
+        {
+            return;
+        }
+
+        dwRetVal = GetAdaptersAddresses(AF_INET, GAA_FLAG_INCLUDE_PREFIX, NULL, pAddresses, &outBufLen);
+
+        if (dwRetVal == ERROR_BUFFER_OVERFLOW)
+        {
+            HeapFree(GetProcessHeap(),0, pAddresses);
+            pAddresses = NULL;
+        }
+        else
+        {
+            break;
+        }
+        Iterations++;
+    } while ((dwRetVal == ERROR_BUFFER_OVERFLOW) && (Iterations < 3));
+
+    if (dwRetVal == NO_ERROR)
+    {
+        // If successful, output some information from the data we received
+        pCurrAddresses = pAddresses;
+        while (pCurrAddresses)
+        {
+            if (pCurrAddresses->PhysicalAddressLength != 0)
+            {
+                pUnicast = pCurrAddresses->FirstUnicastAddress;
+                if (pUnicast != NULL)
+                {
+                    for (i = 0; pUnicast != NULL; i++)
+                    {
+                        if (pUnicast->Address.lpSockaddr->sa_family == AF_INET)
+                        {
+                            char buff[100];
+                            sockaddr_in *sa_in = (sockaddr_in *)pUnicast->Address.lpSockaddr;
+                            asButtons.Add(wxString::Format(wxT("%s"), wxString::FromAscii(inet_ntoa(sa_in->sin_addr)).c_str()));
+                        }
+                        pUnicast = pUnicast->Next;
+                    }
+                }
+            }
+
+            pCurrAddresses = pCurrAddresses->Next;
+        }
+    }
+    if (pAddresses)
+    {
+        HeapFree(GetProcessHeap(),0, pAddresses);
+    }
+    #else
+    ifaddrs * ifAddrStruct=NULL;
+    ifaddrs * ifa=NULL;
+    void * tmpAddrPtr=NULL;
+
+    getifaddrs(&ifAddrStruct);
+
+    for (ifa = ifAddrStruct; ifa != NULL; ifa = ifa->ifa_next)
+    {
+        if (!ifa->ifa_addr)
+        {
+            continue;
+        }
+        if (ifa->ifa_addr->sa_family == AF_INET)
+        { // check it is IP4
+            // is a valid IP4 Address
+            tmpAddrPtr=&((sockaddr_in *)ifa->ifa_addr)->sin_addr;
+            char addressBuffer[INET_ADDRSTRLEN];
+            inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
+            asButtons.Add(wxString::FromAscii(addressBuffer));
+            //printf("%s IP Address %s\n", ifa->ifa_name, addressBuffer);
+        }
+    }
+    if (ifAddrStruct!=NULL)
+    {
+        freeifaddrs(ifAddrStruct);
+    }
+    #endif // __WXMSW__
+
+    dlgMask aDlg(NULL, asButtons, m_pbtnRTSP->GetLabel(), wxNewId(), ClientToScreen(m_pbtnRTSP->GetPosition()));
+    if(aDlg.ShowModal()== wxID_OK)
+    {
+        m_pbtnRTSP->SetLabel(aDlg.m_sSelected);
+        Settings::Get().Write(wxT("Server"), wxT("RTSP_Address"), aDlg.m_sSelected);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

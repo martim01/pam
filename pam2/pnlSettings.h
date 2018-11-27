@@ -53,6 +53,7 @@ class pnlSettings: public wxPanel
 		wmButton* m_pbtnNext;
 		wmList* m_plstPlayback;
 		wmList* m_plstDestination;
+		wmButton* m_pbtnRTSP;
 		wxPanel* Panel3;
 		wmLabel* m_pLbl5;
 		wmEdit* m_pedtRTSPPort;
@@ -61,6 +62,7 @@ class pnlSettings: public wxPanel
 		wmButton* m_ptbnOptions;
 		wmLabel* m_pLbl8;
 		wmLabel* m_pLbl2;
+		wmLabel* m_pLbl9;
 		wmButton* m_pbtnHome;
 		wxPanel* pnlOutput;
 		wxPanel* Panel2;
@@ -101,6 +103,8 @@ class pnlSettings: public wxPanel
 		static const long ID_M_PLBL1;
 		static const long ID_PANEL12;
 		static const long ID_M_PLBL2;
+		static const long ID_M_PLBL8;
+		static const long ID_M_PBTN6;
 		static const long ID_M_PLBL6;
 		static const long ID_M_PEDT3;
 		static const long ID_M_PLBL7;
@@ -179,6 +183,7 @@ class pnlSettings: public wxPanel
 		void OnlstPacketSelected(wxCommandEvent& event);
 		void OnedtRTSPPortText(wxCommandEvent& event);
 		void OnedtRTPPortText(wxCommandEvent& event);
+		void OnbtnRTSPClick(wxCommandEvent& event);
 		//*)
 
         void RefreshInputs();

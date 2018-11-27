@@ -661,7 +661,7 @@ void IOManager::InitAudioOutputDevice()
         }
         if(m_bStream)
         {
-            m_pRtpServer = new RtpServerThread(this, Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555), Settings::Get().Read(wxT("Server"), wxT("Multicast"), wxEmptyString), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 6970), (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000));
+            m_pRtpServer = new RtpServerThread(this, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString), Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555), Settings::Get().Read(wxT("Server"), wxT("Multicast"), wxEmptyString), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 6970), (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000));
             m_pRtpServer->Run();
         }
 

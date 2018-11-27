@@ -204,8 +204,42 @@ void pnlNetworkSetup::OnedtGatewayTextEnter(wxCommandEvent& event)
 
 void pnlNetworkSetup::OnbtnMaskClick(wxCommandEvent& event)
 {
+    wxArrayString asButtons;
+	asButtons.Add(wxT("/32 (255.255.255.255)"));
+    asButtons.Add(wxT("/31 (255.255.255.254)"));
+    asButtons.Add(wxT("/30 (255.255.255.252)"));
+    asButtons.Add(wxT("/29 (255.255.255.248)"));
+    asButtons.Add(wxT("/28 (255.255.255.240)"));
+    asButtons.Add(wxT("/27 (255.255.255.224)"));
+    asButtons.Add(wxT("/26 (255.255.255.192)"));
+    asButtons.Add(wxT("/25 (255.255.255.128)"));
+    asButtons.Add(wxT("/24 (255.255.255.0)"));
+    asButtons.Add(wxT("/23 (255.255.254.0)"));
+    asButtons.Add(wxT("/22 (255.255.252.0)"));
+    asButtons.Add(wxT("/21 (255.255.248.0)"));
+    asButtons.Add(wxT("/20 (255.255.240.0)"));
+    asButtons.Add(wxT("/19 (255.255.224.0)"));
+    asButtons.Add(wxT("/18 (255.255.192.0)"));
+    asButtons.Add(wxT("/17 (255.255.128.0)"));
+    asButtons.Add(wxT("/16 (255.255.0.0)"));
+    asButtons.Add(wxT("/15 (255.254.0.0)"));
+    asButtons.Add(wxT("/14 (255.252.0.0)"));
+    asButtons.Add(wxT("/13 (255.248.0.0)"));
+    asButtons.Add(wxT("/12 (255.240.0.0)"));
+    asButtons.Add(wxT("/11 (255.224.0.0)"));
+    asButtons.Add(wxT("/10 (255.192.0.0)"));
+    asButtons.Add(wxT("/9 (255.128.0.0)"));
+    asButtons.Add(wxT("/8 (255.0.0.0)"));
+    asButtons.Add(wxT("/7 (254.0.0.0)"));
+    asButtons.Add(wxT("/6 (252.0.0.0)"));
+    asButtons.Add(wxT("/5 (248.0.0.0)"));
+    asButtons.Add(wxT("/4 (240.0.0.0)"));
+    asButtons.Add(wxT("/3 (224.0.0.0)"));
+    asButtons.Add(wxT("/2 (192.0.0.0)"));
+    asButtons.Add(wxT("/1 (128.0.0.0)"));
 
-    dlgMask aDlg(this, m_pbtnMask->GetLabel(), wxNewId(), ClientToScreen(m_pbtnMask->GetPosition()));
+
+    dlgMask aDlg(this, asButtons, m_pbtnMask->GetLabel(), wxNewId(), ClientToScreen(m_pbtnMask->GetPosition()));
     if(aDlg.ShowModal()== wxID_OK)
     {
         m_pbtnMask->SetLabel(aDlg.m_sSelected);

@@ -228,3 +228,7 @@ plugin GeneratorPluginFactory::GetPluginDetails(const wxString& sDir, const wxSt
     return aPlugin;
 }
 
+wxString GeneratorPluginFactory::GetPluginDirectory()
+{
+     return Settings::Get().GetGeneratorPluginDirectory();
+}

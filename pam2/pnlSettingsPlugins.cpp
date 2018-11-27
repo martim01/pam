@@ -5,6 +5,7 @@
 #include <wx/dynlib.h>
 #include "monitorpluginfactory.h"
 #include "testpluginfactory.h"
+#include "generatorpluginfactory.h"
 #include <wx/filename.h>
 #include <wx/log.h>
 #include "wmlogevent.h"
@@ -16,6 +17,7 @@
 using   namespace std;
 
 //(*IdInit(pnlSettingsPlugins)
+const long pnlSettingsPlugins::ID_M_PLST3 = wxNewId();
 const long pnlSettingsPlugins::ID_M_PLST1 = wxNewId();
 const long pnlSettingsPlugins::ID_M_PLBL1 = wxNewId();
 const long pnlSettingsPlugins::ID_M_PLBL2 = wxNewId();
@@ -34,7 +36,6 @@ const long pnlSettingsPlugins::ID_M_PLBL4 = wxNewId();
 const long pnlSettingsPlugins::ID_M_PBTN7 = wxNewId();
 const long pnlSettingsPlugins::ID_M_PBTN8 = wxNewId();
 const long pnlSettingsPlugins::ID_PANEL1 = wxNewId();
-const long pnlSettingsPlugins::ID_M_PBTN5 = wxNewId();
 //*)
 
 DEFINE_EVENT_TYPE(wxEVT_PLUGINS_APPLY)
@@ -49,7 +50,11 @@ pnlSettingsPlugins::pnlSettingsPlugins(wxWindow* parent,wxWindowID id,const wxPo
 	//(*Initialize(pnlSettingsPlugins)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
-	Panel1 = new wxPanel(this, ID_PANEL1, wxPoint(0,30), wxSize(600,420), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
+	m_plstPluginType = new wmList(this, ID_M_PLST3, wxPoint(150,5), wxSize(300,45), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,0));
+	m_plstPluginType->SetBackgroundColour(wxColour(0,0,0));
+	m_plstPluginType->SetButtonColour(wxColour(wxT("#681766")));
+	m_plstPluginType->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
+	Panel1 = new wxPanel(this, ID_PANEL1, wxPoint(0,45), wxSize(600,405), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
 	Panel1->SetBackgroundColour(wxColour(0,0,0));
 	m_plstPossible = new wmList(Panel1, ID_M_PLST1, wxPoint(10,40), wxSize(200,180), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
 	m_plstPossible->SetBackgroundColour(wxColour(0,0,0));
@@ -57,10 +62,12 @@ pnlSettingsPlugins::pnlSettingsPlugins(wxWindow* parent,wxWindowID id,const wxPo
 	m_plstPossible->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
 	m_pLbl1 = new wmLabel(Panel1, ID_M_PLBL1, _("Possible Plugins"), wxPoint(10,10), wxSize(200,30), 0, _T("ID_M_PLBL1"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl1->GetUiRect().SetGradient(0);
 	m_pLbl1->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl1->SetBackgroundColour(wxColour(0,0,160));
 	m_pLbl2 = new wmLabel(Panel1, ID_M_PLBL2, _("Current Plugins"), wxPoint(390,10), wxSize(200,30), 0, _T("ID_M_PLBL2"));
 	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl2->GetUiRect().SetGradient(0);
 	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl2->SetBackgroundColour(wxColour(0,0,160));
 	m_plstCurrent = new wmList(Panel1, ID_M_PLST2, wxPoint(390,40), wxSize(200,180), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
@@ -75,10 +82,12 @@ pnlSettingsPlugins::pnlSettingsPlugins(wxWindow* parent,wxWindowID id,const wxPo
 	m_pbtnCurrentNext->SetTextColourDisabled(wxColour(wxT("#000000")));
 	m_plblCurrentVersion = new wmLabel(Panel1, ID_M_PLBL5, _("Version:"), wxPoint(390,270), wxSize(200,25), 0, _T("ID_M_PLBL5"));
 	m_plblCurrentVersion->SetBorderState(uiRect::BORDER_NONE);
+	m_plblCurrentVersion->GetUiRect().SetGradient(0);
 	m_plblCurrentVersion->SetForegroundColour(wxColour(0,0,0));
 	m_plblCurrentVersion->SetBackgroundColour(wxColour(255,255,255));
 	m_plblCurrentDetails = new wmLabel(Panel1, ID_M_PLBL6, wxEmptyString, wxPoint(390,300), wxSize(200,100), 0, _T("ID_M_PLBL6"));
 	m_plblCurrentDetails->SetBorderState(uiRect::BORDER_NONE);
+	m_plblCurrentDetails->GetUiRect().SetGradient(0);
 	m_plblCurrentDetails->SetForegroundColour(wxColour(0,0,0));
 	m_plblCurrentDetails->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnSet = new wmButton(Panel1, ID_M_PBTN1, _("Hold To Add"), wxPoint(250,30), wxSize(100,50), wmButton::STYLE_HOLD, wxDefaultValidator, _T("ID_M_PBTN1"));
@@ -102,10 +111,12 @@ pnlSettingsPlugins::pnlSettingsPlugins(wxWindow* parent,wxWindowID id,const wxPo
 	m_pbtnApply->SetColourDisabled(wxColour(wxT("#B0B0B0")));
 	m_plblVersion = new wmLabel(Panel1, ID_M_PLBL3, _("Version:"), wxPoint(10,270), wxSize(200,25), 0, _T("ID_M_PLBL3"));
 	m_plblVersion->SetBorderState(uiRect::BORDER_NONE);
+	m_plblVersion->GetUiRect().SetGradient(0);
 	m_plblVersion->SetForegroundColour(wxColour(0,0,0));
 	m_plblVersion->SetBackgroundColour(wxColour(255,255,255));
 	m_plblDetails = new wmLabel(Panel1, ID_M_PLBL4, wxEmptyString, wxPoint(10,300), wxSize(200,100), 0, _T("ID_M_PLBL4"));
 	m_plblDetails->SetBorderState(uiRect::BORDER_NONE);
+	m_plblDetails->GetUiRect().SetGradient(0);
 	m_plblDetails->SetForegroundColour(wxColour(0,0,0));
 	m_plblDetails->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnPossiblePrevious = new wmButton(Panel1, ID_M_PBTN7, _("Previous Page"), wxPoint(10,224), wxSize(90,40), 0, wxDefaultValidator, _T("ID_M_PBTN7"));
@@ -114,9 +125,8 @@ pnlSettingsPlugins::pnlSettingsPlugins(wxWindow* parent,wxWindowID id,const wxPo
 	m_pbtnPossibleNext = new wmButton(Panel1, ID_M_PBTN8, _("Next Page"), wxPoint(120,224), wxSize(90,40), 0, wxDefaultValidator, _T("ID_M_PBTN8"));
 	m_pbtnPossibleNext->SetColourDisabled(wxColour(wxT("#000000")));
 	m_pbtnPossibleNext->SetTextColourDisabled(wxColour(wxT("#000000")));
-	m_pbtnPlugin = new wmButton(this, ID_M_PBTN5, _("Plugins"), wxPoint(175,5), wxSize(250,30), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN5"));
-	m_pbtnPlugin->SetBackgroundColour(wxColour(84,140,203));
 
+	Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsPlugins::OnlstPluginTypeSelected);
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsPlugins::OnlstPossibleSelected);
 	Connect(ID_M_PLST1,wxEVT_LIST_PAGED,(wxObjectEventFunction)&pnlSettingsPlugins::OnlstPossiblePaged);
 	Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsPlugins::OnlstCurrentSelected);
@@ -130,7 +140,6 @@ pnlSettingsPlugins::pnlSettingsPlugins(wxWindow* parent,wxWindowID id,const wxPo
 	Connect(ID_M_PBTN6,wxEVT_BUTTON_HELD,(wxObjectEventFunction)&pnlSettingsPlugins::OnbtnApplyHeld);
 	Connect(ID_M_PBTN7,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsPlugins::OnbtnPossiblePreviousClick);
 	Connect(ID_M_PBTN8,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsPlugins::OnbtnPossibleNextClick);
-	Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsPlugins::OnbtnPluginClick);
 	//*)
     SetBackgroundColour(*wxBLACK);
 
@@ -139,8 +148,12 @@ pnlSettingsPlugins::pnlSettingsPlugins(wxWindow* parent,wxWindowID id,const wxPo
     m_plblVersion->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
     m_plblCurrentVersion->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 
-    m_pbtnPlugin->SetToggleLook(true, wxT("Monitors"), wxT("Tests"), 33.0);
+    m_plstPluginType->AddButton(wxT("Monitors"));
+    m_plstPluginType->AddButton(wxT("Tests"));
+    m_plstPluginType->AddButton(wxT("Generators"));
+    m_plstPluginType->SelectButton(0,false);
     m_sSection = wxT("Monitor Plugins");
+    m_nType = 0;
     ShowMonitorPlugins();
 }
 
@@ -274,18 +287,7 @@ void pnlSettingsPlugins::OnbtnDownClick(wxCommandEvent& event)
 
 void pnlSettingsPlugins::OnbtnPluginClick(wxCommandEvent& event)
 {
-    m_bTests = event.IsChecked();
 
-    if(m_bTests)
-    {
-        m_sSection = wxT("Test Plugins");
-        ShowTestPlugins();
-    }
-    else
-    {
-        m_sSection = wxT("Monitor Plugins");
-        ShowMonitorPlugins();
-    }
 }
 
 void pnlSettingsPlugins::ClearLists()
@@ -306,9 +308,7 @@ void pnlSettingsPlugins::ClearLists()
 
 void pnlSettingsPlugins::ShowMonitorPlugins()
 {
-
     ClearLists();
-
     wxString sLibDir = MonitorPluginFactory::Get()->GetPluginDirectory();
 
     size_t nButton = 0;
@@ -409,6 +409,61 @@ void pnlSettingsPlugins::ShowTestPlugins()
     EnablePageButtons();
 }
 
+
+void pnlSettingsPlugins::ShowGeneratorPlugins()
+{
+    ClearLists();
+    wxString sLibDir = GeneratorPluginFactory::Get()->GetPluginDirectory();
+
+    size_t nButton = 0;
+    map<wxString, wxString>::const_iterator itBegin, itEnd;
+    if(Settings::Get().GetSectionDataBegin(m_sSection, itBegin) && Settings::Get().GetSectionDataEnd(m_sSection, itEnd))
+    {
+        for(; itBegin != itEnd; ++itBegin)
+        {
+            plugin aPlugin = GeneratorPluginFactory::Get()->GetPluginDetails(sLibDir, itBegin->second);
+            if(aPlugin.sName != wxEmptyString)
+            {
+                #ifdef __WXGNU__
+                    aPlugin.sLibrary = aPlugin.sLibrary.Mid(3);
+                #endif // __WXGNU__
+                m_mPossible.insert(make_pair(aPlugin.sName, aPlugin));
+
+                m_plstCurrent->AddButton(aPlugin.sName);
+            }
+        }
+    }
+
+    wxFileName fnDir(sLibDir);
+    fnDir.MakeAbsolute();
+    wmLog::Get()->Log(wxString::Format(wxT("Generator Lib Directory: %s"), fnDir.GetFullPath().c_str()));
+    wxArrayString asLibs;
+    #ifdef __WXMSW__
+        wxDir::GetAllFiles(fnDir.GetFullPath(), &asLibs, wxT("*.dll"));
+    #else
+        wxDir::GetAllFiles(fnDir.GetFullPath(), &asLibs, wxT("*.so"));
+    #endif
+
+    for(size_t i = 0; i < asLibs.GetCount(); i++)
+    {
+        wxFileName fnLib(asLibs[i]);
+        wxString sLibToLoad(fnLib.GetName());
+        #ifdef __WXGNU__
+            sLibToLoad = sLibToLoad.Mid(3);
+        #endif // __WXGNU__
+        wmLog::Get()->Log(wxString::Format(wxT("Lib : %s"), sLibToLoad.c_str()));
+        plugin aPlugin = GeneratorPluginFactory::Get()->GetPluginDetails(fnDir.GetFullPath(), sLibToLoad);
+        if(aPlugin.sName != wxEmptyString)
+        {
+            if(m_mPossible.insert(make_pair(aPlugin.sName, aPlugin)).second)
+            {
+                m_plstPossible->AddButton(aPlugin.sName);
+            }
+        }
+    }
+    EnablePageButtons();
+}
+
 void pnlSettingsPlugins::OnbtnApplyHeld(wxCommandEvent& event)
 {
     //tell the main window to reload all plugins
@@ -471,5 +526,24 @@ void pnlSettingsPlugins::EnablePageButtons()
         m_pbtnCurrentNext->Disable();
         m_pbtnCurrentPrevious->Disable();
 
+    }
+}
+
+void pnlSettingsPlugins::OnlstPluginTypeSelected(wxCommandEvent& event)
+{
+    m_nType = event.GetInt();
+    switch(m_nType)
+    {
+        case 0:
+            m_sSection = wxT("Monitor Plugins");
+            ShowMonitorPlugins();
+            break;
+        case 1:
+            m_sSection = wxT("Test Plugins");
+            ShowTestPlugins();
+            break;
+        case 2:
+            m_sSection = wxT("Generator Plugins");
+            ShowGeneratorPlugins();
     }
 }

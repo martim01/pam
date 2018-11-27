@@ -4,9 +4,23 @@
 		<bg>#000000</bg>
 		<pos_arg>1</pos_arg>
 		<size_arg>1</size_arg>
+		<object class="wmList" name="ID_M_PLST3" variable="m_plstPluginType" member="yes">
+			<scrolling>Horizontal</scrolling>
+			<button_gap>5,0</button_gap>
+			<button_size>-1,40</button_size>
+			<columns>3</columns>
+			<button>#681766</button>
+			<button_selected>#FF8000</button_selected>
+			<items />
+			<pos>150,5</pos>
+			<size>300,45</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstPluginTypeSelected" entry="EVT_LIST_SELECTED" />
+		</object>
 		<object class="wxPanel" name="ID_PANEL1" variable="Panel1" member="yes">
-			<pos>0,30</pos>
-			<size>600,420</size>
+			<pos>0,45</pos>
+			<size>600,405</size>
 			<bg>#000000</bg>
 			<object class="wmList" name="ID_M_PLST1" variable="m_plstPossible" member="yes">
 				<scrolling>Horizontal</scrolling>
@@ -159,14 +173,6 @@
 				<size>90,40</size>
 				<handler function="OnbtnPossibleNextClick" entry="EVT_BUTTON" />
 			</object>
-		</object>
-		<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnPlugin" member="yes">
-			<label>Plugins</label>
-			<pos>175,5</pos>
-			<size>250,30</size>
-			<bg>#548CCB</bg>
-			<style>wmButton::STYLE_SELECT</style>
-			<handler function="OnbtnPluginClick" entry="EVT_BUTTON" />
 		</object>
 	</object>
 </wxsmith>
