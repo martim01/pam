@@ -25,6 +25,7 @@ class dlgMask: public wxDialog
 		static const long ID_M_PLST1;
 		//*)
 
+		void OnActivate(wxActivateEvent& event);
 	private:
 
 		//(*Handlers(dlgMask)
@@ -33,6 +34,8 @@ class dlgMask: public wxDialog
 		//*)
 
 		void OnCaptureLost(wxMouseCaptureLostEvent& event);
+		wxPoint m_pntWindow;
+
 
 		DECLARE_EVENT_TABLE()
 };

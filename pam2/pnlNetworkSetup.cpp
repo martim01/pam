@@ -239,7 +239,7 @@ void pnlNetworkSetup::OnbtnMaskClick(wxCommandEvent& event)
     asButtons.Add(wxT("/1 (128.0.0.0)"));
 
 
-    dlgMask aDlg(this, asButtons, m_pbtnMask->GetLabel(), wxNewId(), ClientToScreen(m_pbtnMask->GetPosition()));
+    dlgMask aDlg(this, asButtons, m_pbtnMask->GetLabel(), wxNewId(), ClientToScreen(m_pbtnMask->GetPosition()), m_pbtnMask->GetSize());
     if(aDlg.ShowModal()== wxID_OK)
     {
         m_pbtnMask->SetLabel(aDlg.m_sSelected);

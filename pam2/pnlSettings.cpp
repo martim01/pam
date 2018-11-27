@@ -774,7 +774,7 @@ void pnlSettings::OnbtnRTSPClick(wxCommandEvent& event)
     }
     #endif // __WXMSW__
 
-    dlgMask aDlg(NULL, asButtons, m_pbtnRTSP->GetLabel(), wxNewId(), ClientToScreen(m_pbtnRTSP->GetPosition()));
+    dlgMask aDlg(this, asButtons, m_pbtnRTSP->GetLabel(), wxNewId(), ClientToScreen(m_pbtnRTSP->GetPosition()), m_pbtnRTSP->GetSize());
     if(aDlg.ShowModal()== wxID_OK)
     {
         m_pbtnRTSP->SetLabel(aDlg.m_sSelected);

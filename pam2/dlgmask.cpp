@@ -17,11 +17,11 @@ END_EVENT_TABLE()
 
 dlgMask::dlgMask(wxWindow* parent, const wxArrayString& asButtons, const wxString& sSelected, wxWindowID id,const wxPoint& pos,const wxSize& size)
 {
-	//(*Initialize(dlgMask)
-	Create(parent, id, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxNO_BORDER, _T("id"));
-	SetClientSize(wxDefaultSize);
-	Move(wxDefaultPosition);
-	m_plstSubnet = new wmList(this, ID_M_PLST1, wxPoint(0,0), wxSize(100,300), wmList::STYLE_SELECT, 1, wxSize(-1,40), 1, wxSize(2,2));
+	unsigned long nHeight = asButtons.GetCount()*41;
+
+
+	Create(parent, id, wxEmptyString, pos, wxSize(size.x, std::min((unsigned long)300, nHeight+4)), wxNO_BORDER, _T("id"));
+    m_plstSubnet = new wmList(this, ID_M_PLST1, wxPoint(2,2), wxSize(size.x-4,GetSize().y-4), wmList::STYLE_SELECT, 1, wxSize(-1,40), 1, wxSize(2,2));
 	m_plstSubnet->SetBackgroundColour(wxColour(0,0,0));
 	m_plstSubnet->SetGradient(128);
 	m_plstSubnet->SetButtonColour(wxColour(wxT("#FFFFFF")));
@@ -32,19 +32,18 @@ dlgMask::dlgMask(wxWindow* parent, const wxArrayString& asButtons, const wxStrin
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&dlgMask::OnlstSubnetSelected);
 	Connect(wxEVT_LEFT_DOWN,(wxObjectEventFunction)&dlgMask::OnLeftDown);
 	//*)
+    Connect(wxEVT_ACTIVATE, (wxObjectEventFunction)&dlgMask::OnActivate);
 
-
-	SetPosition(pos);
-	SetSize(200,300);
-
-	for(size_t i = 0; i < asButtons.GetCount(); i++)
+    for(size_t i = 0; i < asButtons.GetCount(); i++)
     {
         m_plstSubnet->AddButton(asButtons[i]);
     }
+    m_sSelected = sSelected;
 
-    m_plstSubnet->SelectButton(sSelected, false);
-    m_plstSubnet->ShowButton(m_plstSubnet->FindButton(sSelected), wmList::TOP, false);
-    CaptureMouse();
+    m_plstSubnet->SelectButton(m_sSelected, false);
+    //m_plstSubnet->ShowButton(m_plstSubnet->FindButton(m_sSelected), wmList::MIDDLE, false);
+    //m_plstSubnet->Refresh();
+
 }
 
 dlgMask::~dlgMask()
@@ -57,7 +56,12 @@ dlgMask::~dlgMask()
     }
 }
 
+void dlgMask::OnActivate(wxActivateEvent& event)
+{
+    CaptureMouse();
 
+
+}
 void dlgMask::OnlstSubnetSelected(wxCommandEvent& event)
 {
     m_sSelected = event.GetString();
