@@ -8,6 +8,7 @@
 #include <wx/log.h>
 #include <cmath>
 #include <bitset>
+#include "ltc.h"
 
 using namespace std;
 
