@@ -28,6 +28,7 @@ const long pnlRTP::ID_M_PBTN4 = wxNewId();
 const long pnlRTP::ID_M_PBTN5 = wxNewId();
 const long pnlRTP::ID_M_PBTN7 = wxNewId();
 const long pnlRTP::ID_M_PBTN6 = wxNewId();
+const long pnlRTP::ID_M_PLBL7 = wxNewId();
 const long pnlRTP::ID_M_PLBL4 = wxNewId();
 const long pnlRTP::ID_M_PLBL5 = wxNewId();
 const long pnlRTP::ID_M_PLBL3 = wxNewId();
@@ -56,11 +57,11 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	SetBackgroundColour(wxColour(0,0,0));
 	wxFont thisFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	SetFont(thisFont);
-	m_pSwp1 = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(0,0), wxSize(600,480), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
+	m_pSwp1 = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(0,0), wxSize(800,440), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
 	m_pSwp1->SetPageNameStyle(0);
 	Panel1 = new wxPanel(m_pSwp1, ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL1"));
 	Panel1->SetBackgroundColour(wxColour(0,0,0));
-	m_plstSources = new wmList(Panel1, ID_M_PLST1, wxPoint(0,65), wxSize(600,319), wmList::STYLE_SELECT|wmList::STYLE_SELECT_ROW, 1, wxSize(-1,30), 2, wxSize(-1,-1));
+	m_plstSources = new wmList(Panel1, ID_M_PLST1, wxPoint(0,65), wxSize(800,319), wmList::STYLE_SELECT|wmList::STYLE_SELECT_ROW, 1, wxSize(-1,30), 2, wxSize(-1,-1));
 	m_plstSources->SetBackgroundColour(wxColour(255,255,255));
 	m_plstSources->SetGradient(128);
 	m_plstSources->SetBorderStyle(3);
@@ -82,56 +83,67 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	m_pbtnDiscover = new wmButton(Panel1, ID_M_PBTN6, _("Discover"), wxPoint(490,390), wxSize(100,45), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN6"));
 	m_pbtnDiscover->SetBackgroundColour(wxColour(0,128,0));
 	m_pbtnDiscover->SetColourSelected(wxColour(wxT("#F07800")));
-	m_pLbl4 = new wmLabel(Panel1, ID_M_PLBL4, _("Name"), wxPoint(0,35), wxSize(300,30), 0, _T("ID_M_PLBL4"));
+	m_plblDiscovering = new wmLabel(Panel1, ID_M_PLBL7, wxEmptyString, wxPoint(600,390), wxSize(190,40), 0, _T("ID_M_PLBL7"));
+	m_plblDiscovering->SetBorderState(uiRect::BORDER_NONE);
+	m_plblDiscovering->GetUiRect().SetGradient(0);
+	m_plblDiscovering->SetForegroundColour(wxColour(255,255,255));
+	m_plblDiscovering->SetBackgroundColour(wxColour(0,0,0));
+	m_pLbl4 = new wmLabel(Panel1, ID_M_PLBL4, _("Name"), wxPoint(0,35), wxSize(400,30), 0, _T("ID_M_PLBL4"));
 	m_pLbl4->SetBorderState(uiRect::BORDER_UP);
+	m_pLbl4->GetUiRect().SetGradient(0);
 	m_pLbl4->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl4->SetBackgroundColour(wxColour(64,200,128));
-	m_pLbl5 = new wmLabel(Panel1, ID_M_PLBL5, _("URL"), wxPoint(300,35), wxSize(300,30), 0, _T("ID_M_PLBL5"));
+	m_pLbl5 = new wmLabel(Panel1, ID_M_PLBL5, _("URL"), wxPoint(400,35), wxSize(400,30), 0, _T("ID_M_PLBL5"));
 	m_pLbl5->SetBorderState(uiRect::BORDER_UP);
+	m_pLbl5->GetUiRect().SetGradient(0);
 	m_pLbl5->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl5->SetBackgroundColour(wxColour(64,200,128));
-	m_pLbl3 = new wmLabel(Panel1, ID_M_PLBL3, _("Manage AoIP"), wxPoint(0,5), wxSize(600,30), 0, _T("ID_M_PLBL3"));
+	m_pLbl3 = new wmLabel(Panel1, ID_M_PLBL3, _("Manage AoIP"), wxPoint(0,5), wxSize(800,30), 0, _T("ID_M_PLBL3"));
 	m_pLbl3->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl3->GetUiRect().SetGradient(0);
 	m_pLbl3->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl3->SetBackgroundColour(wxColour(0,64,0));
 	wxFont m_pLbl3Font(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	m_pLbl3->SetFont(m_pLbl3Font);
 	Panel2 = new wxPanel(m_pSwp1, ID_PANEL2, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL2"));
 	Panel2->SetBackgroundColour(wxColour(0,0,0));
-	m_pLbl1 = new wmLabel(Panel2, ID_M_PLBL1, _("Name"), wxPoint(0,40), wxSize(60,30), 0, _T("ID_M_PLBL1"));
+	m_pLbl1 = new wmLabel(Panel2, ID_M_PLBL1, _("Name"), wxPoint(10,40), wxSize(60,30), 0, _T("ID_M_PLBL1"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl1->GetUiRect().SetGradient(0);
 	m_pLbl1->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl1->SetBackgroundColour(wxColour(0,0,255));
-	m_pedtName = new wmEdit(Panel2, ID_M_PEDT1, _("Text"), wxPoint(61,40), wxSize(411,30), 0, wxDefaultValidator, _T("ID_M_PEDT1"));
+	m_pedtName = new wmEdit(Panel2, ID_M_PEDT1, _("Text"), wxPoint(71,40), wxSize(611,30), 0, wxDefaultValidator, _T("ID_M_PEDT1"));
 	m_pedtName->SetValidation(0);
 	m_pedtName->SetForegroundColour(wxColour(0,0,0));
 	m_pedtName->SetBackgroundColour(wxColour(255,255,255));
 	m_pedtName->SetFocusedBackground(wxColour(wxT("#FFFF9D")));
 	m_pedtName->SetFocusedForeground(wxColour(wxT("#000000")));
 	m_pedtName->SetBorderStyle(1,1);
-	m_pLbl2 = new wmLabel(Panel2, ID_M_PLBL2, _("URL"), wxPoint(0,80), wxSize(60,30), 0, _T("ID_M_PLBL2"));
+	m_pLbl2 = new wmLabel(Panel2, ID_M_PLBL2, _("URL"), wxPoint(10,80), wxSize(60,30), 0, _T("ID_M_PLBL2"));
 	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl2->GetUiRect().SetGradient(0);
 	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl2->SetBackgroundColour(wxColour(0,0,255));
-	m_pedtUrl = new wmEdit(Panel2, ID_M_PEDT2, _("Text"), wxPoint(61,80), wxSize(411,30), 0, wxDefaultValidator, _T("ID_M_PEDT2"));
+	m_pedtUrl = new wmEdit(Panel2, ID_M_PEDT2, _("Text"), wxPoint(71,80), wxSize(611,30), 0, wxDefaultValidator, _T("ID_M_PEDT2"));
 	m_pedtUrl->SetValidation(0);
 	m_pedtUrl->SetForegroundColour(wxColour(0,0,0));
 	m_pedtUrl->SetBackgroundColour(wxColour(255,255,255));
 	m_pedtUrl->SetFocusedBackground(wxColour(wxT("#FFFF9D")));
 	m_pedtUrl->SetFocusedForeground(wxColour(wxT("#000000")));
 	m_pedtUrl->SetBorderStyle(1,1);
-	m_pbtnConfirm = new wmButton(Panel2, ID_M_PBTN1, _("Add"), wxPoint(61,120), wxSize(100,45), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
+	m_pbtnConfirm = new wmButton(Panel2, ID_M_PBTN1, _("Add"), wxPoint(290,120), wxSize(100,45), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnConfirm->SetBackgroundColour(wxColour(0,128,0));
 	m_pbtnConfirm->SetColourSelected(wxColour(wxT("#006F00")));
-	m_pbtnCancel = new wmButton(Panel2, ID_M_PBTN2, _("Cancel"), wxPoint(170,120), wxSize(100,45), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
+	m_pbtnCancel = new wmButton(Panel2, ID_M_PBTN2, _("Cancel"), wxPoint(410,120), wxSize(100,45), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
 	m_pbtnCancel->SetBackgroundColour(wxColour(128,0,0));
 	m_pbtnCancel->SetColourSelected(wxColour(wxT("#6F0000")));
-	m_pkeyboard = new wmKeyboard(Panel2, ID_M_PKBD1, wxPoint(0,180), wxSize(600,250), 0, 0);
+	m_pkeyboard = new wmKeyboard(Panel2, ID_M_PKBD1, wxPoint(100,180), wxSize(600,250), 0, 0);
 	m_pkeyboard->SetForegroundColour(wxColour(255,255,255));
 	wxFont m_pkeyboardFont(14,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	m_pkeyboard->SetFont(m_pkeyboardFont);
-	m_pLbl6 = new wmLabel(Panel2, ID_M_PLBL6, _("Add AoIP Source"), wxPoint(0,5), wxSize(600,30), 0, _T("ID_M_PLBL6"));
+	m_pLbl6 = new wmLabel(Panel2, ID_M_PLBL6, _("Add AoIP Source"), wxPoint(0,5), wxSize(800,30), 0, _T("ID_M_PLBL6"));
 	m_pLbl6->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl6->GetUiRect().SetGradient(0);
 	m_pLbl6->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl6->SetBackgroundColour(wxColour(0,64,0));
 	wxFont m_pLbl6Font(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
@@ -281,7 +293,8 @@ void pnlRTP::OnbtnDiscoverClick(wxCommandEvent& event)
     {
         m_setDiscover.clear();
         m_nDiscovered = 0;
-        m_pbtnDiscover->SetLabel(wxString::Format(wxT("Discovering...\n%04d Found"), m_nDiscovered));
+        m_plblDiscovering->SetLabel(wxString::Format(wxT("Discovering...\n%04d Found"), m_nDiscovered));
+        m_pbtnDiscover->SetLabel(wxT("Stop Discovery"));
         if(m_pServscan)
         {
             delete m_pServscan;
@@ -295,13 +308,14 @@ void pnlRTP::OnbtnDiscoverClick(wxCommandEvent& event)
             m_pSapWatch = 0;
         }
         // @todo work out how to make the sapwatchthread non-blocking then we can use this....
-        m_pSapWatch = new SapWatchThread(this);
-        m_pSapWatch->Create();
-        m_pSapWatch->Run();
+        //m_pSapWatch = new SapWatchThread(this);
+        //m_pSapWatch->Create();
+        //m_pSapWatch->Run();
     }
     else
     {
         m_pbtnDiscover->SetLabel(wxT("Discover"));
+        m_plblDiscovering->SetLabel(wxEmptyString);
         if(m_pServscan)
         {
             delete m_pServscan;
@@ -339,8 +353,8 @@ void pnlRTP::OnDiscovery(wxCommandEvent& event)
             ListSources();
 
             m_nDiscovered++;
-            m_pbtnDiscover->SetLabel(wxString::Format(wxT("Discovering...\n%04d Found"), m_nDiscovered));
-            m_pbtnDiscover->Update();
+            m_plblDiscovering->SetLabel(wxString::Format(wxT("Discovering...\n%04d Found"), m_nDiscovered));
+            m_plblDiscovering->Update();
         }
     }
 }
@@ -373,7 +387,7 @@ void pnlRTP::OnSap(wxCommandEvent& event)
         if(m_setDiscover.insert(make_pair(sName, sIpAddress)).second)
         {
             m_nDiscovered++;
-            m_pbtnDiscover->SetLabel(wxString::Format(wxT("Discovering...\n%04d Found"), m_nDiscovered));
+            m_plblDiscovering->SetLabel(wxString::Format(wxT("Discovering...\n%04d Found"), m_nDiscovered));
             wmLog::Get()->Log(wxString::Format(wxT("SAP response from %s\n%s"), sIpAddress.c_str(), sSDP.c_str()));
             sSDP.Replace(wxT("\n"), wxT("`"));
             Settings::Get().Write(wxT("AoIP"), sName, wxString::Format(wxT("sap:%s [%s]"), sIpAddress.c_str(), sSDP.c_str()));

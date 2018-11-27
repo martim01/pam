@@ -29,6 +29,9 @@
 #include "images/pageup.xpm"
 #include "images/pageup_press.xpm"
 #include "soundcardmanager.h"
+#include "dlgAoIP.h"
+
+
 #ifdef __WXMSW__
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -49,6 +52,7 @@ const long pnlSettings::ID_M_PLBL14 = wxNewId();
 const long pnlSettings::ID_M_PLBL3 = wxNewId();
 const long pnlSettings::ID_M_PLST1 = wxNewId();
 const long pnlSettings::ID_M_PLST2 = wxNewId();
+const long pnlSettings::ID_M_PBTN7 = wxNewId();
 const long pnlSettings::ID_M_PBTN1 = wxNewId();
 const long pnlSettings::ID_M_PBTN2 = wxNewId();
 const long pnlSettings::ID_M_PBTN4 = wxNewId();
@@ -77,7 +81,6 @@ const long pnlSettings::ID_PANEL11 = wxNewId();
 const long pnlSettings::ID_M_PSWP2 = wxNewId();
 const long pnlSettings::ID_PANEL2 = wxNewId();
 const long pnlSettings::ID_PANEL8 = wxNewId();
-const long pnlSettings::ID_PANEL4 = wxNewId();
 const long pnlSettings::ID_PANEL5 = wxNewId();
 const long pnlSettings::ID_PANEL3 = wxNewId();
 const long pnlSettings::ID_PANEL7 = wxNewId();
@@ -139,9 +142,11 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_plstDevices->SetBackgroundColour(wxColour(0,0,0));
     m_plstDevices->SetSelectedButtonColour(wxColour(wxT("#008000")));
     m_plstDevices->SetDisabledColour(wxColour(wxT("#808080")));
-    m_plstInput = new wmList(pnlInput, ID_M_PLST2, wxPoint(0,36), wxSize(600,34), wmList::STYLE_SELECT, 0, wxSize(100,30), 3, wxSize(-1,-1));
+    m_plstInput = new wmList(pnlInput, ID_M_PLST2, wxPoint(0,36), wxSize(500,34), wmList::STYLE_SELECT, 0, wxSize(100,30), 3, wxSize(-1,-1));
     m_plstInput->SetButtonColour(wxColour(wxT("#400080")));
     m_plstInput->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
+    m_pbtnManage = new wmButton(pnlInput, ID_M_PBTN7, _("Manage"), wxPoint(510,38), wxSize(80,30), 0, wxDefaultValidator, _T("ID_M_PBTN7"));
+    m_pbtnManage->SetColourDisabled(wxColour(wxT("#808080")));
     m_pbtnHome = new wmButton(pnlInput, ID_M_PBTN1, wxEmptyString, wxPoint(70,395), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
     m_pbtnHome->SetColourDisabled(wxColour(wxT("#808080")));
     m_pbtnPrevious = new wmButton(pnlInput, ID_M_PBTN2, wxEmptyString, wxPoint(190,395), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
@@ -236,7 +241,6 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pswpDestination->AddPage(Panel2, _("Soundcard"), false);
     m_pswpDestination->AddPage(Panel3, _("AoIP"), false);
     m_ppnlGenerators = new pnlSettingsGenerators(m_pswpSettings, ID_PANEL8, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL8"));
-    pnlSettingsRTP = new pnlRTP(m_pswpSettings, ID_PANEL4, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL4"));
     pnlSettingsNetwork = new pnlNetworkSetup(m_pswpSettings, ID_PANEL5, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL5"));
     m_ppnlPlugins = new pnlSettingsPlugins(m_pswpSettings, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
     m_ppnlUpdate = new pnlUpdate(m_pswpSettings, ID_PANEL7, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL7"));
@@ -264,7 +268,6 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pswpSettings->AddPage(pnlInput, _("Input Device"), false);
     m_pswpSettings->AddPage(pnlOutput, _("Output Device"), false);
     m_pswpSettings->AddPage(m_ppnlGenerators, _("Output Source"), false);
-    m_pswpSettings->AddPage(pnlSettingsRTP, _("AoIP"), false);
     m_pswpSettings->AddPage(pnlSettingsNetwork, _("Network"), false);
     m_pswpSettings->AddPage(m_ppnlPlugins, _("Plugins"), false);
     m_pswpSettings->AddPage(m_ppnlUpdate, _("Update"), false);
@@ -273,6 +276,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
     Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstDevicesSelected);
     Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstInputSelected);
+    Connect(ID_M_PBTN7,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnManageClick);
     Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnHomeClick);
     Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnPreviousClick);
     Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnNextClick);
@@ -546,14 +550,17 @@ void pnlSettings::RefreshInputs()
     wxString sType = Settings::Get().Read(wxT("Input"), wxT("Type"), wxEmptyString);
     if(sType == wxT("Soundcard"))
     {
+        m_pbtnManage->Hide();
         ShowSoundcardInputs();
     }
     else if(sType == wxT("AoIP"))
     {
+        m_pbtnManage->Show();
         ShowRTPDefined();
     }
     else if(sType == wxT("Disabled"))
     {
+        m_pbtnManage->Hide();
         m_plstDevices->Freeze();
         m_plstDevices->Clear();
         m_plstDevices->Thaw();
@@ -782,17 +789,9 @@ void pnlSettings::OnbtnRTSPClick(wxCommandEvent& event)
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void pnlSettings::OnbtnManageClick(wxCommandEvent& event)
+{
+    dlgAoIP aDlg(this);
+    aDlg.ShowModal();
+    ReloadRTP();
+}

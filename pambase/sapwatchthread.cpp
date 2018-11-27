@@ -33,7 +33,8 @@ void* SapWatchThread::Entry()
     const unsigned char ttl = 0; // we're only reading from this mcast group
 
     Groupsock inputGroupsock(*env, sessionAddress, port, ttl);
-    int nResult = makeSocketBlocking(inputGroupsock.socketNum(), 1000);
+    int nResult = makeSocketNonBlocking(inputGroupsock.socketNum());
+    //int nResult = makeSocketBlocking(inputGroupsock.socketNum(), 1000);
     //wxLogMessage(wxT("Blocking %d"), nResult);
 
     // Start reading and printing incoming packets
@@ -42,39 +43,38 @@ void* SapWatchThread::Entry()
     // event handler like we do in most of the other test programs.)
     unsigned packetSize;
     struct sockaddr_in fromAddress;
-    while (inputGroupsock.handleRead(m_packet, 65536, packetSize, fromAddress))
+    while(!TestDestroy())
     {
-        if(TestDestroy())
+        while (inputGroupsock.handleRead(m_packet, 65536, packetSize, fromAddress))
         {
-            break;
-        }
 
-        wxLogMessage(wxT("SAP INSIDE"));
-        // Ignore the first 8 bytes (SAP header).
-        if (packetSize >= 8)
-        {
-            // convert "application/sdp\0" -> "application/sdp\0x20"
-            // or all other nonprintable characters to blank, except new line
-            unsigned idx = 8;
-            while (idx < packetSize)
+            wxLogMessage(wxT("SAP INSIDE"));
+            // Ignore the first 8 bytes (SAP header).
+            if (packetSize >= 8)
             {
-                if (m_packet[idx] < 0x20 && m_packet[idx] != '\n')
-                    m_packet[idx] = 0x20;
-                idx++;
-            }
-            m_packet[packetSize] = '\0'; // just in case
+                // convert "application/sdp\0" -> "application/sdp\0x20"
+                // or all other nonprintable characters to blank, except new line
+                unsigned idx = 8;
+                while (idx < packetSize)
+                {
+                    if (m_packet[idx] < 0x20 && m_packet[idx] != '\n')
+                        m_packet[idx] = 0x20;
+                    idx++;
+                }
+                m_packet[packetSize] = '\0'; // just in case
 
-            wxString sSDP;
-            sSDP.Printf(wxT("%s\n%s"), wxString::FromAscii(AddressString(fromAddress).val()).c_str(), wxString::FromAscii((char*)(m_packet+8)).c_str());
+                wxString sSDP;
+                sSDP.Printf(wxT("%s\n%s"), wxString::FromAscii(AddressString(fromAddress).val()).c_str(), wxString::FromAscii((char*)(m_packet+8)).c_str());
 
-            if(m_pParent)
-            {
-                wxCommandEvent event(wxEVT_SAP);
-                event.SetString(sSDP);
-                wxPostEvent(m_pParent, event);
+                if(m_pParent)
+                {
+                    wxCommandEvent event(wxEVT_SAP);
+                    event.SetString(sSDP);
+                    wxPostEvent(m_pParent, event);
+                }
             }
+            ::wxMilliSleep(10);
         }
-        ::wxMilliSleep(10);
     }
     wxLogMessage(wxT("SAP EXIT"));
     return NULL;

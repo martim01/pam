@@ -151,6 +151,8 @@
 			<Add directory="$(#live_usage.lib)" />
 			<Add directory="$(#live_basicusage.lib)" />
 		</Linker>
+		<Unit filename="dlgAoIP.cpp" />
+		<Unit filename="dlgAoIP.h" />
 		<Unit filename="dlgEditName.cpp" />
 		<Unit filename="dlgEditName.h" />
 		<Unit filename="dlgNoInput.cpp" />
@@ -203,6 +205,7 @@
 		<Unit filename="wxpammclient.h" />
 		<Unit filename="wxpammconnection.cpp" />
 		<Unit filename="wxpammconnection.h" />
+		<Unit filename="wxsmith/dlgAoIP.wxs" />
 		<Unit filename="wxsmith/dlgEditName.wxs" />
 		<Unit filename="wxsmith/dlgMask.wxs" />
 		<Unit filename="wxsmith/dlgPin.wxs" />
@@ -247,6 +250,7 @@
 					<wxDialog wxs="wxsmith/dlgNoInput.wxs" src="dlgNoInput.cpp" hdr="dlgNoInput.h" fwddecl="0" i18n="1" name="dlgNoInput" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlSettingsProfiles.wxs" src="pnlSettingsProfiles.cpp" hdr="pnlSettingsProfiles.h" fwddecl="0" i18n="1" name="pnlSettingsProfiles" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlSettingsGenerators.wxs" src="pnlSettingsGenerators.cpp" hdr="pnlSettingsGenerators.h" fwddecl="0" i18n="1" name="pnlSettingsGenerators" language="CPP" />
+					<wxDialog wxs="wxsmith/dlgAoIP.wxs" src="dlgAoIP.cpp" hdr="dlgAoIP.h" fwddecl="0" i18n="1" name="dlgAoIP" language="CPP" />
 				</resources>
 			</wxsmith>
 			<AutoVersioning>

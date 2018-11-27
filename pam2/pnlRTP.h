@@ -47,6 +47,7 @@ class pnlRTP: public wxPanel
 		wmKeyboard* m_pkeyboard;
 		wmButton* m_pbtnDeleteAll;
 		wxPanel* Panel2;
+		wmLabel* m_plblDiscovering;
 		//*)
 
 		void ListSources();
@@ -60,6 +61,7 @@ class pnlRTP: public wxPanel
 		static const long ID_M_PBTN5;
 		static const long ID_M_PBTN7;
 		static const long ID_M_PBTN6;
+		static const long ID_M_PLBL7;
 		static const long ID_M_PLBL4;
 		static const long ID_M_PLBL5;
 		static const long ID_M_PLBL3;

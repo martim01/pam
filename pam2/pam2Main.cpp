@@ -539,7 +539,6 @@ void pam2Dialog::ShowSettingsPanel()
     m_plstOptions->AddButton(wxT("Input Device"));
     m_plstOptions->AddButton(wxT("Output Device"));
     m_plstOptions->AddButton(wxT("Output Source"));
-    m_plstOptions->AddButton(wxT("AoIP"));
     m_plstOptions->AddButton(wxT("Network"));
     m_plstOptions->AddButton(wxT("Plugins"));
     m_plstOptions->AddButton(wxT("Update"));

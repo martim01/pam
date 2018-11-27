@@ -14,7 +14,7 @@
 		<size_arg>1</size_arg>
 		<object class="wmSwitcherPanel" name="ID_M_PSWP1" variable="m_pSwp1" member="yes">
 			<pos>0,0</pos>
-			<size>600,480</size>
+			<size>800,440</size>
 			<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
 			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL1" variable="Panel1" member="yes">
@@ -32,7 +32,7 @@
 						<text_selected>#000000</text_selected>
 						<items />
 						<pos>0,65</pos>
-						<size>600,319</size>
+						<size>800,319</size>
 						<bg>#FFFFFF</bg>
 						<style>wmList::STYLE_SELECT|wmList::STYLE_SELECT_ROW</style>
 						<handler function="OnlstSourcesSelected" entry="EVT_LIST_SELECTED" />
@@ -76,26 +76,33 @@
 						<style>wmButton::STYLE_SELECT</style>
 						<handler function="OnbtnDiscoverClick" entry="EVT_BUTTON" />
 					</object>
+					<object class="wmLabel" name="ID_M_PLBL7" variable="m_plblDiscovering" member="yes">
+						<label></label>
+						<pos>600,390</pos>
+						<size>190,40</size>
+						<fg>#FFFFFF</fg>
+						<bg>#000000</bg>
+					</object>
 					<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl4" member="yes">
 						<label>Name</label>
 						<border>uiRect::BORDER_UP</border>
 						<pos>0,35</pos>
-						<size>300,30</size>
+						<size>400,30</size>
 						<fg>#FFFFFF</fg>
 						<bg>#40C880</bg>
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL5" variable="m_pLbl5" member="yes">
 						<label>URL</label>
 						<border>uiRect::BORDER_UP</border>
-						<pos>300,35</pos>
-						<size>300,30</size>
+						<pos>400,35</pos>
+						<size>400,30</size>
 						<fg>#FFFFFF</fg>
 						<bg>#40C880</bg>
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
 						<label>Manage AoIP</label>
 						<pos>0,5</pos>
-						<size>600,30</size>
+						<size>800,30</size>
 						<fg>#FFFFFF</fg>
 						<bg>#004000</bg>
 						<font>
@@ -115,7 +122,7 @@
 					<bg>#000000</bg>
 					<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
 						<label>Name</label>
-						<pos>0,40</pos>
+						<pos>10,40</pos>
 						<size>60,30</size>
 						<fg>#FFFFFF</fg>
 						<bg>#0000FF</bg>
@@ -126,15 +133,15 @@
 						<border_focused>uiRect::BORDER_DOWN</border_focused>
 						<background_focused>#FFFF9D</background_focused>
 						<foreground_focused>#000000</foreground_focused>
-						<pos>61,40</pos>
-						<size>411,30</size>
+						<pos>71,40</pos>
+						<size>611,30</size>
 						<fg>#000000</fg>
 						<bg>#FFFFFF</bg>
 						<handler function="OnedtNameTextEnter" entry="EVT_TEXT_ENTER" />
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
 						<label>URL</label>
-						<pos>0,80</pos>
+						<pos>10,80</pos>
 						<size>60,30</size>
 						<fg>#FFFFFF</fg>
 						<bg>#0000FF</bg>
@@ -145,8 +152,8 @@
 						<border_focused>uiRect::BORDER_DOWN</border_focused>
 						<background_focused>#FFFF9D</background_focused>
 						<foreground_focused>#000000</foreground_focused>
-						<pos>61,80</pos>
-						<size>411,30</size>
+						<pos>71,80</pos>
+						<size>611,30</size>
 						<fg>#000000</fg>
 						<bg>#FFFFFF</bg>
 						<handler function="OnedtUrlTextEnter" entry="EVT_TEXT_ENTER" />
@@ -154,7 +161,7 @@
 					<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnConfirm" member="yes">
 						<label>Add</label>
 						<button_pressed>#006F00</button_pressed>
-						<pos>61,120</pos>
+						<pos>290,120</pos>
 						<size>100,45</size>
 						<bg>#008000</bg>
 						<handler function="OnbtnConfirmClick" entry="EVT_BUTTON" />
@@ -162,13 +169,13 @@
 					<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnCancel" member="yes">
 						<label>Cancel</label>
 						<button_pressed>#6F0000</button_pressed>
-						<pos>170,120</pos>
+						<pos>410,120</pos>
 						<size>100,45</size>
 						<bg>#800000</bg>
 						<handler function="OnbtnCancelClick" entry="EVT_BUTTON" />
 					</object>
 					<object class="wmKeyboard" name="ID_M_PKBD1" variable="m_pkeyboard" member="yes">
-						<pos>0,180</pos>
+						<pos>100,180</pos>
 						<size>600,250</size>
 						<fg>#FFFFFF</fg>
 						<font>
@@ -183,7 +190,7 @@
 					<object class="wmLabel" name="ID_M_PLBL6" variable="m_pLbl6" member="yes">
 						<label>Add AoIP Source</label>
 						<pos>0,5</pos>
-						<size>600,30</size>
+						<size>800,30</size>
 						<fg>#FFFFFF</fg>
 						<bg>#004000</bg>
 						<font>
