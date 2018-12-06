@@ -53,6 +53,8 @@ IOManager::IOManager() :
 
 {
 
+    Settings::Get().Write(wxT("Server"), wxT("Stream"), 0); //can't be streaming at startup so set to 0 in case we exited whilst streaming
+
     Settings::Get().AddHandler(wxT("Input"),wxT("Type"), this);
     Settings::Get().AddHandler(wxT("Input"),wxT("AoIP"), this);
     Settings::Get().AddHandler(wxT("Input"),wxT("Device"), this);

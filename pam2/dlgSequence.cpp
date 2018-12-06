@@ -157,12 +157,16 @@ m_nWaveShape(0)
 	m_pbtnFrequencyDown->SetColourDisabled(wxColour(wxT("#909090")));
 	m_pLbl1 = new wmLabel(pnlFrequencies, ID_M_PLBL1, _("Frequency"), wxPoint(200,20), wxDefaultSize, 0, _T("ID_M_PLBL1"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl1->GetUiRect().SetGradient(0);
 	m_pLbl2 = new wmLabel(pnlFrequencies, ID_M_PLBL2, _("Amplitude"), wxPoint(200,50), wxDefaultSize, 0, _T("ID_M_PLBL2"));
 	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl2->GetUiRect().SetGradient(0);
 	m_pLbl3 = new wmLabel(pnlFrequencies, ID_M_PLBL3, _("Cycles"), wxPoint(200,80), wxDefaultSize, 0, _T("ID_M_PLBL3"));
 	m_pLbl3->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl3->GetUiRect().SetGradient(0);
 	m_pLbl4 = new wmLabel(pnlFrequencies, ID_M_PLBL4, _("Shape"), wxPoint(250,110), wxDefaultSize, 0, _T("ID_M_PLBL4"));
 	m_pLbl4->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl4->GetUiRect().SetGradient(0);
 	m_pedtFrequency = new wmEdit(pnlFrequencies, ID_M_PEDT1, wxEmptyString, wxPoint(260,20), wxSize(80,-1), 0, wxDefaultValidator, _T("ID_M_PEDT1"));
 	m_pedtFrequency->SetValidation(4);
 	m_pedtFrequency->SetFocusedBackground(wxColour(wxT("#FFFF80")));

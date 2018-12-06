@@ -41,7 +41,7 @@ typedef std::map<wxString,iniSection*>::const_iterator itConstSection;
 *   iniManager reads in an ini file and stores the sections, keys and values
 *
 **/
-class iniManager{
+class PAMBASE_IMPEXPORT iniManager{
 public:
     /** @brief Constructor
     **/

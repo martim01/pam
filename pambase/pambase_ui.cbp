@@ -67,13 +67,6 @@
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-Wl,--enable-auto-import,-Map=pambaseui.map" />
-					<Add library="libliveMedia.a" />
-					<Add library="libBasicUsageEnvironment.a" />
-					<Add library="libUsageEnvironment.a" />
-					<Add library="libgroupsock.a" />
-					<Add library="Ws2_32" />
-					<Add library="portaudio" />
-					<Add library="libsndfile-1" />
 					<Add library="wxmsw30ud_gcc_wammacs" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#portaudio.lib)" />

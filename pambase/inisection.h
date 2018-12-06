@@ -35,7 +35,7 @@
 typedef std::map<wxString,wxString> mapIniData;
 typedef std::map<wxString,wxString>::iterator itIniData;
 
-class iniSection{
+class PAMBASE_IMPEXPORT iniSection{
     friend class iniManager;
 
 public:
