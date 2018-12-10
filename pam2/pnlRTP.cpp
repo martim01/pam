@@ -9,7 +9,7 @@
 #include "settings.h"
 #include <wx/log.h>
 #include <wx/tokenzr.h>
-#include "wxServDisc.h"
+#include "dnssdbrowser.h"
 #include "sapwatchthread.h"
 #include "settings.h"
 #include "wmlogevent.h"
@@ -173,9 +173,10 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	SetSize(size);
 	SetPosition(pos);
 
-	m_pServscan = 0;
+	m_pBrowser = 0;
 	m_pSapWatch = 0;
-	Connect(wxID_ANY, wxServDiscNOTIFY, (wxObjectEventFunction)&pnlRTP::OnDiscovery);
+	Connect(wxID_ANY, wxEVT_BROWSE_RESOLVED, (wxObjectEventFunction)&pnlRTP::OnDiscovery);
+	Connect(wxID_ANY, wxEVT_BROWSE_FINISHED, (wxObjectEventFunction)&pnlRTP::OnDiscoveryFinished);
 	Connect(wxID_ANY, wxEVT_SAP, (wxObjectEventFunction)&pnlRTP::OnSap);
 	ListSources();
 }
@@ -184,9 +185,9 @@ pnlRTP::~pnlRTP()
 {
 	//(*Destroy(pnlRTP)
 	//*)
-	if(m_pServscan)
+	if(m_pBrowser)
     {
-        delete m_pServscan;
+        delete m_pBrowser;
     }
     if(m_pSapWatch)
     {
@@ -295,12 +296,14 @@ void pnlRTP::OnbtnDiscoverClick(wxCommandEvent& event)
         m_nDiscovered = 0;
         m_plblDiscovering->SetLabel(wxString::Format(wxT("Discovering...\n%04d Found"), m_nDiscovered));
         m_pbtnDiscover->SetLabel(wxT("Stop Discovery"));
-        if(m_pServscan)
+        if(m_pBrowser)
         {
-            delete m_pServscan;
-            m_pServscan = 0;
+            delete m_pBrowser;
+            m_pBrowser = 0;
         }
-        m_pServscan = new wxServDisc(this, wxT("_ravenna_session._sub._rtsp._tcp.local."), QTYPE_PTR);
+        m_pBrowser = new DNSServiceBrowser(this);
+        m_pBrowser->Start();
+        //m_pServscan = new wxServDisc(this, wxT("_ravenna_session._sub._rtsp._tcp.local."), QTYPE_PTR);
 
         if(m_pSapWatch)
         {
@@ -316,10 +319,10 @@ void pnlRTP::OnbtnDiscoverClick(wxCommandEvent& event)
     {
         m_pbtnDiscover->SetLabel(wxT("Discover"));
         m_plblDiscovering->SetLabel(wxEmptyString);
-        if(m_pServscan)
+        if(m_pBrowser)
         {
-            delete m_pServscan;
-            m_pServscan = 0;
+            delete m_pBrowser;
+            m_pBrowser = 0;
         }
         if(m_pSapWatch)
         {
@@ -332,22 +335,16 @@ void pnlRTP::OnbtnDiscoverClick(wxCommandEvent& event)
 
 void pnlRTP::OnDiscovery(wxCommandEvent& event)
 {
-    for(size_t i = 0; i < m_pServscan->getResults().size(); i++)
+    wxLogDebug(wxT("Discover"));
+    dnsInstance* pInstance = reinterpret_cast<dnsInstance*>(event.GetClientData());
+    if(pInstance->sService.Find(wxT("rtsp")) != wxNOT_FOUND)
     {
-        if(m_setDiscover.insert(make_pair(m_pServscan->getResults()[i].name, m_pServscan->getResults()[i].ipFrom)).second)
+        if(m_setDiscover.insert(make_pair(pInstance->sName, pInstance->sHostIP)).second)
         {
-            wxString sSession(m_pServscan->getResults()[i].name);
-            int nEnd = sSession.Find(wxT("._rtsp._tcp.local."));
-            if(nEnd != wxNOT_FOUND)
-            {
-               sSession = sSession.Left(nEnd);
-            }
-            wxString sName(sSession.BeforeLast(wxT('@')));
-
-           wxString sAddress(wxString::Format(wxT("rtsp://%s/by-name/%s"), m_pServscan->getResults()[i].ipFrom.c_str(), sSession.c_str()));
+            wxString sAddress(wxString::Format(wxT("rtsp://%s/by-name/%s"), pInstance->sHostIP.c_str(), pInstance->sName.c_str()));
            // GetSDP(sAddress);
 
-            Settings::Get().Write(wxT("AoIP"), wxString::Format(wxT("%s(%s)"), sName.c_str(), m_pServscan->getResults()[i].ipFrom.c_str()), sAddress);
+            Settings::Get().Write(wxT("AoIP"), wxString::Format(wxT("%s(%s)"), pInstance->sName.BeforeFirst(wxT('@')).c_str(), pInstance->sHostIP.c_str()), sAddress);
 
 
             ListSources();
@@ -357,6 +354,7 @@ void pnlRTP::OnDiscovery(wxCommandEvent& event)
             m_plblDiscovering->Update();
         }
     }
+    wxLogDebug(wxT("Discover Done"));
 }
 
 void pnlRTP::OnSap(wxCommandEvent& event)
@@ -394,6 +392,12 @@ void pnlRTP::OnSap(wxCommandEvent& event)
             ListSources();
         }
     }
+}
+
+void pnlRTP::OnDiscoveryFinished(wxCommandEvent& event)
+{
+    wxLogDebug(wxT("Discover Finished"));
+    m_plblDiscovering->SetLabel(wxString::Format(wxT("DNS_SD Discovery finished...\n%04d Found"), m_nDiscovered));
 }
 
 void pnlRTP::OnbtnDeleteAllHeld(wxCommandEvent& event)

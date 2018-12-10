@@ -28,3 +28,8 @@
 /wxspam/*.save-failed
 /wxspam/*.cbplugin
 *.zip
+/pambase/servicetestApp.cpp
+/pambase/servicetestApp.h
+/pambase/servicetestMain.cpp
+/pambase/servicetestMain.h
+/pambase/wxsmith/servicetestdialog.wxs

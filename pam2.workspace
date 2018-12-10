@@ -79,5 +79,6 @@
 		<Project filename="pamupdatemanager/pamupdatemanager.cbp">
 			<Depends filename="pambase/pambase.cbp" />
 		</Project>
+		<Project filename="external/live/liveMedia/liveMedia.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

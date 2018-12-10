@@ -23,6 +23,7 @@ TaskToken qosMeasurementTimerTask = NULL;
 
 qosMeasurementRecord* g_pRecord = NULL;
 
+
 void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultString)
 {
     bool bSuccess(true);
@@ -83,10 +84,12 @@ void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultS
 
 void saveAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultString)
 {
+    wxLogDebug(wxT("saveAfterDescribe = %s"), wxString::FromAscii(resultString).c_str());
     bool bSuccess(true);
     ourRTSPClient* pClient = dynamic_cast<ourRTSPClient*>(rtspClient);
     if(pClient)
     {
+
         pClient->GetHandler()->SaveSDP(resultCode, wxString::FromAscii(resultString));
     }
 
@@ -131,15 +134,23 @@ void setupNextSubsession(RTSPClient* rtspClient)
         return;
     }
 
-    ourRTSPClient* pClient = dynamic_cast<ourRTSPClient*>(rtspClient);
-    if(pClient)
-    {
-        pClient->GetHandler()->PassSessionDetails(dynamic_cast<Smpte2110MediaSession*>(scs.session));
+    if(scs.sFirstSubSessionId.empty() == false)
+    {   //managed to setup at least 1 subsession
+        ourRTSPClient* pClient = dynamic_cast<ourRTSPClient*>(rtspClient);
+        if(pClient)
+        {
+            pClient->GetHandler()->PassSessionDetails(dynamic_cast<Smpte2110MediaSession*>(scs.session));
 
-        // We've finished setting up all of the subsessions.  Now, send a RTSP "PLAY" command to start the streaming:
-        scs.duration = scs.session->playEndTime() - scs.session->playStartTime();
-        //Start the first subsession
-        pClient->PlaySubsession(wxT("0"), continueAfterPLAY);
+            // We've finished setting up all of the subsessions.  Now, send a RTSP "PLAY" command to start the streaming:
+            scs.duration = scs.session->playEndTime() - scs.session->playStartTime();
+            //Start the first subsession
+            pClient->PlaySubsession(scs.sFirstSubSessionId, continueAfterPLAY);
+        }
+    }
+    else
+    {
+        env << "Failed to create any subsessions\n";
+
     }
 }
 
@@ -192,6 +203,11 @@ void continueAfterSETUP(RTSPClient* rtspClient, int resultCode, char* resultStri
         if (scs.subsession->rtcpInstance() != NULL)
         {
             scs.subsession->rtcpInstance()->setByeHandler(subsessionByeHandler, scs.subsession);
+        }
+
+        if(scs.sFirstSubSessionId.empty())
+        {
+            scs.sFirstSubSessionId = scs.subsession->sessionId();
         }
 
     }while (0);

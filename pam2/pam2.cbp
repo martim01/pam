@@ -54,6 +54,7 @@
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-Wall" />
+					<Add option="-std=c++0x" />
 					<Add option="-DWIN32" />
 					<Add option="-D__WXMSW__" />
 					<Add option="-DWXUSINGDLL" />

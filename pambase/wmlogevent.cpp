@@ -43,6 +43,7 @@ void wmLog::Log(wxString sDevice, wxString sMessage, bool bSend)
             m_queueEvents.push(plge);
         }
     }
+    wxLogDebug(sMessage);
     m_queueFile.push(wxString::Format(wxT("%s\t%s\t%s\r\n"), wxDateTime::Now().Format(wxT("%H:%M:%S:%l")).c_str(), sDevice.Trim().c_str(), sMessage.Trim().c_str()));
 
 

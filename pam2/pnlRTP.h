@@ -15,7 +15,7 @@
 #include <set>
 #include <queue>
 
-class wxServDisc;
+class DNSServiceBrowser;
 class SapWatchThread;
 class RtpThread;
 
@@ -94,6 +94,7 @@ class pnlRTP: public wxPanel
 		//*)
 
 		void OnDiscovery(wxCommandEvent& event);
+		void OnDiscoveryFinished(wxCommandEvent& event);
 		void OnSap(wxCommandEvent& event);
 		void OnSDPReceived(wxCommandEvent& event);
 		void GetSDP(const wxString& sUrl);
@@ -102,7 +103,7 @@ class pnlRTP: public wxPanel
 		wxString m_sSelectedSource;
 		wxString m_sSelectedUrl;
 
-        wxServDisc* m_pServscan;
+        DNSServiceBrowser* m_pBrowser;
         SapWatchThread* m_pSapWatch;
         size_t m_nDiscovered;
         std::set<std::pair<wxString, wxString> > m_setDiscover;

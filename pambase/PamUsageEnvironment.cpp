@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <wx/log.h>
 #include "wmlogevent.h"
+#include <iostream>
 
 ////////// PamUsageEnvironment //////////
 
@@ -47,14 +48,16 @@ int PamUsageEnvironment::getErrno() const
 
 UsageEnvironment& PamUsageEnvironment::operator<<(char const* str)
 {
-    if (str == NULL) str = "(NULL)"; // sanity check
-    m_sLog << wxString::FromAscii(str);
-
-
-    if(m_sLog.Find(wxT("\n")) != wxNOT_FOUND)
+    if (str != NULL)
     {
-        wmLog::Get()->Log(wxT("AoIP"), m_sLog);
-        m_sLog = wxEmptyString;
+        m_sLog << wxString::FromAscii(str);
+        std::cout << str;
+
+        if(m_sLog.Find(wxT("\n")) != wxNOT_FOUND)
+        {
+            wmLog::Get()->Log(wxT("AoIP"), m_sLog);
+            m_sLog = wxEmptyString;
+        }
     }
     return *this;
 }

@@ -29,6 +29,8 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
             m_eventLoopWatchVariable = 1;
         }
 
+        void StreamFromSDP();
+
         void SetQosMeasurementIntervalMS(unsigned long nMilliseconds);
         unsigned long GetQosMeasurementIntervalMS();
 
@@ -77,6 +79,7 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
         bool m_bSaveSDP;
         session m_Session;
 
+        wxString m_sDescriptor;
         unsigned long m_nQosMeasurementIntervalMS;
 };
 

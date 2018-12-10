@@ -57,106 +57,29 @@ void* RtpThread::Entry()
         std::cout << "RtpThread: 3" << std::endl;
         if(openURL())
         {
-            std::cout << "RtpThread: 4" << std::endl;
-            // All subsequent activity takes place within the event loop:
+
+//
+//            //std::cout << "RtpThread: 4" << std::endl;
+//            // All subsequent activity takes place within the event loop:
             while(TestDestroy() == false && m_eventLoopWatchVariable == 0)
             {
                 m_penv->taskScheduler().doEventLoop(&m_eventLoopWatchVariable);
             }
 
-            m_bClosing = true;
-            if(m_pRtspClient && m_eventLoopWatchVariable == 0)  //0 means stream has shutdown and is telling us to stop
-            {
-                shutdownStream(m_pRtspClient, 0);
-            }
-            std::cout << "RtpThread: 6" << std::endl;
+//            m_bClosing = true;
+//            if(m_pRtspClient && m_eventLoopWatchVariable == 0)  //0 means stream has shutdown and is telling us to stop
+//            {
+//                shutdownStream(m_pRtspClient, 0);
+//            }
+//            std::cout << "RtpThread: 6" << std::endl;
         }
     }
     else
     {
-
-        wxString sDescriptor(m_sUrl.AfterFirst(wxT('[')).BeforeFirst(wxT(']')));
-        sDescriptor.Replace(wxT("`"), wxT("\n"));
-        sDescriptor = sDescriptor.AfterFirst(wxT('\n'));
-        string sSDP(sDescriptor.mb_str());
-
-        *m_penv << "\nUsing SDP passed via SAP \n" << sSDP.c_str() << "\n";
-
-        Smpte2110MediaSession* pSession = Smpte2110MediaSession::createNew(*m_penv, sSDP.c_str());
-        if (pSession == NULL)
-        {
-            *m_penv << "Failed to create a MediaSession object from the SDP description: " << m_penv->getResultMsg() << "\n";
-            return 0;
-        }
-        else
-        {
-            *m_penv << "Created MediaSession object\n";
-        }
-
-        //count number of subsessions
-        unsigned int nCountAudio(0);
-        unsigned int nCountVideo(0);
-        MediaSubsessionIterator iterCount(*pSession);
-        MediaSubsession* pSubsessionCount = NULL;
-        while ((pSubsessionCount = iterCount.next()) != NULL)
-        {
-            if (strcmp(pSubsessionCount->codecName(), "L16") == 0 || strcmp(pSubsessionCount->codecName(), "L24") == 0) // 16 or 24-bit linear audio (RFC 3190)
-            {
-                nCountAudio++;
-            }
-            else if (strcmp(pSubsessionCount->codecName(), "RAW") == 0)
-            {
-                nCountVideo++;
-            }
-        }
-        *m_penv << "---------------------------------------\n";
-        *m_penv << "Number of AES67 Subsessions: " << nCountAudio << "\n";
-        *m_penv << "Number of Video Subsessions: " << nCountVideo << "\n";
-        *m_penv << "---------------------------------------\n";
-
-        MediaSubsessionIterator iter(*pSession);
-        Smpte2110MediaSubsession* subsession = NULL;
-        while ((subsession = dynamic_cast<Smpte2110MediaSubsession*>(iter.next())) != NULL)
-        {
-            if (!subsession->initiate (0))
-            {
-                *m_penv << "Failed to initiate the subsession: " << m_penv->getResultMsg() << "\n";
-            }
-            else
-            {
-                subsession->sink = wxSink::createNew(*m_penv, *subsession, this);
-                *m_penv << "Initiated the \"" << *subsession << "\" subsession (";
-                if (subsession->rtcpIsMuxed())
-                {
-                    *m_penv << "client port " << subsession->clientPortNum();
-                }
-                else
-                {
-                    *m_penv << "client ports " << subsession->clientPortNum() << "-" << subsession->clientPortNum()+1;
-                }
-                *m_penv << ")\n";
-
-                *m_penv << "SessionId: " << subsession->GetEndpoint() << "\n";
-                if (subsession->sink == NULL)
-                {
-                    *m_penv << "Failed to create a data sink for the subsession: " << m_penv->getResultMsg() << "\n";
-                }
-                else
-                {
-                    *m_penv << "Created a data sink for the \"" << *subsession << "\" subsession\n";
-
-                    // @todo move the startPlaying to later??
-                    subsession->sink->startPlaying(*subsession->readSource(), NULL, NULL);
-                    beginQOSMeasurement(*m_penv, pSession, this);
-                }
-            }
-        }
-        PassSessionDetails(pSession);
-
-        while(TestDestroy() == false && m_eventLoopWatchVariable == 0)
-        {
-            m_penv->taskScheduler().doEventLoop(&m_eventLoopWatchVariable);
-        }
+        m_sDescriptor = m_sUrl.AfterFirst(wxT('[')).BeforeFirst(wxT(']'));
+        m_sDescriptor.Replace(wxT("`"), wxT("\n"));
+        m_sDescriptor = m_sDescriptor.AfterFirst(wxT('\n'));
+        StreamFromSDP();
     }
 
 
@@ -172,6 +95,89 @@ void* RtpThread::Entry()
 
 }
 
+void RtpThread::StreamFromSDP()
+{
+
+    string sSDP(m_sDescriptor.mb_str());
+
+    *m_penv << "\nUsing SDP passed via SAP \n" << sSDP.c_str() << "\n";
+
+    Smpte2110MediaSession* pSession = Smpte2110MediaSession::createNew(*m_penv, sSDP.c_str());
+    if (pSession == NULL)
+    {
+        *m_penv << "Failed to create a MediaSession object from the SDP description: " << m_penv->getResultMsg() << "\n";
+        return;
+    }
+    else
+    {
+        *m_penv << "Created MediaSession object\n";
+    }
+
+    //count number of subsessions
+    unsigned int nCountAudio(0);
+    unsigned int nCountVideo(0);
+    MediaSubsessionIterator iterCount(*pSession);
+    MediaSubsession* pSubsessionCount = NULL;
+    while ((pSubsessionCount = iterCount.next()) != NULL)
+    {
+        if (strcmp(pSubsessionCount->codecName(), "L16") == 0 || strcmp(pSubsessionCount->codecName(), "L24") == 0) // 16 or 24-bit linear audio (RFC 3190)
+        {
+            nCountAudio++;
+        }
+        else if (strcmp(pSubsessionCount->codecName(), "RAW") == 0)
+        {
+            nCountVideo++;
+        }
+    }
+    *m_penv << "---------------------------------------\n";
+    *m_penv << "Number of AES67 Subsessions: " << nCountAudio << "\n";
+    *m_penv << "Number of Video Subsessions: " << nCountVideo << "\n";
+    *m_penv << "---------------------------------------\n";
+
+    MediaSubsessionIterator iter(*pSession);
+    Smpte2110MediaSubsession* subsession = NULL;
+    while ((subsession = dynamic_cast<Smpte2110MediaSubsession*>(iter.next())) != NULL)
+    {
+        if (!subsession->initiate (0))
+        {
+            *m_penv << "Failed to initiate the subsession: " << m_penv->getResultMsg() << "\n";
+        }
+        else
+        {
+            subsession->sink = wxSink::createNew(*m_penv, *subsession, this);
+            *m_penv << "Initiated the \"" << *subsession << "\" subsession (";
+            if (subsession->rtcpIsMuxed())
+            {
+                *m_penv << "client port " << subsession->clientPortNum();
+            }
+            else
+            {
+                *m_penv << "client ports " << subsession->clientPortNum() << "-" << subsession->clientPortNum()+1;
+            }
+            *m_penv << ")\n";
+
+            *m_penv << "SessionId: " << subsession->GetEndpoint() << "\n";
+            if (subsession->sink == NULL)
+            {
+                *m_penv << "Failed to create a data sink for the subsession: " << m_penv->getResultMsg() << "\n";
+            }
+            else
+            {
+                *m_penv << "Created a data sink for the \"" << *subsession << "\" subsession\n";
+
+                // @todo move the startPlaying to later??
+                subsession->sink->startPlaying(*subsession->readSource(), NULL, NULL);
+                beginQOSMeasurement(*m_penv, pSession, this);
+            }
+        }
+    }
+    PassSessionDetails(pSession);
+
+    while(TestDestroy() == false && m_eventLoopWatchVariable == 0)
+    {
+        m_penv->taskScheduler().doEventLoop(&m_eventLoopWatchVariable);
+    }
+}
 
 bool RtpThread::openURL()
 {
@@ -189,14 +195,14 @@ bool RtpThread::openURL()
     // Next, send a RTSP "DESCRIBE" command, to get a SDP description for the stream.
     // Note that this command - like all RTSP commands - is sent asynchronously; we do not block, waiting for a response.
     // Instead, the following function call returns immediately, and we handle the RTSP response later, from within the event loop:
-    if(m_bSaveSDP)
-    {
-        m_pRtspClient->sendDescribeCommand(saveAfterDESCRIBE);
-    }
-    else
-    {
-        m_pRtspClient->sendDescribeCommand(continueAfterDESCRIBE);
-    }
+   // if(m_bSaveSDP)
+    //{
+    m_pRtspClient->sendDescribeCommand(saveAfterDESCRIBE);
+    //}
+    //else
+    //{
+    //    m_pRtspClient->sendDescribeCommand(continueAfterDESCRIBE);
+   // }
     return true;
 }
 
@@ -390,6 +396,8 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
 
 void RtpThread::SaveSDP(unsigned int nResult, const wxString& sResult)
 {
+    m_sDescriptor = sResult;
+    StreamFromSDP();
     if(m_pHandler)
     {
         wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_SDP);

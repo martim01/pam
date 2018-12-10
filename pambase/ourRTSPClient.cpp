@@ -1,5 +1,7 @@
 #include "ourRTSPClient.h"
 #include <wx/string.h>
+#include <wx/log.h>
+
 
 ourRTSPClient* ourRTSPClient::createNew(UsageEnvironment& env, char const* rtspURL,RtpThread* pThread,
                                         int verbosityLevel, char const* applicationName, portNumBits tunnelOverHTTPPortNum)
@@ -37,7 +39,9 @@ void ourRTSPClient::PlaySubsession(const wxString& sId, responseHandler* respons
     MediaSubsession* pSubsession = NULL;
     while ((pSubsession = iterCount.next()) != NULL)
     {
-        if(strcmp(pSubsession->sessionId(), sId.mb_str()) == 0)
+        wxLogDebug(wxString::Format(wxT("Subsession = %s"), wxString::FromAscii(pSubsession->sessionId()).c_str()));
+
+        if(sId == wxT("0") || strcmp(pSubsession->sessionId(), sId.mb_str()) == 0)
         {
             break;
         }

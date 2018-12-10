@@ -1,5 +1,5 @@
 #pragma once
-
+#include <string>
 #include "liveMedia.hh"
 #include "BasicUsageEnvironment.hh"
 
@@ -12,6 +12,7 @@ public:
     virtual ~StreamClientState();
 
 public:
+    std::string sFirstSubSessionId;
     MediaSubsessionIterator* iter;
     MediaSession* session;
     MediaSubsession* subsession;

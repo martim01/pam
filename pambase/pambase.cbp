@@ -27,6 +27,7 @@
 					<Add directory="$(#wx3_0.include)/mswu" />
 					<Add directory="$(#portaudio.include)" />
 					<Add directory="$(#libsndfile.include)" />
+					<Add directory="../external/mdnssd" />
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="$(#wx3_0.include)/mswu" />
@@ -42,9 +43,12 @@
 					<Add library="portaudio" />
 					<Add library="libsndfile-1" />
 					<Add library="wxmsw30u_gcc_wammacs" />
+					<Add library="dnssd" />
+					<Add library="Iphlpapi" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#portaudio.lib)" />
 					<Add directory="$(#libsndfile.lib)" />
+					<Add directory="../external/mdnssd/windows" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="C:\developer\matt\pam2\manifest_creator\bin\Release\manifest_creator.exe" />
@@ -58,6 +62,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-Wall" />
+					<Add option="-std=c++0x" />
 					<Add option="-g" />
 					<Add option="-DWIN32" />
 					<Add option="-D_USRDLL" />
@@ -72,23 +77,27 @@
 					<Add directory="$(#wx3_0.include)/mswu" />
 					<Add directory="$(#portaudio.include)" />
 					<Add directory="$(#libsndfile.include)" />
+					<Add directory="../external/mdnssd" />
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="$(#wx3_0.include)/mswu" />
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-Wl,--enable-auto-import,-Map=pambase.map" />
-					<Add library="libliveMedia.a" />
-					<Add library="libBasicUsageEnvironment.a" />
-					<Add library="libUsageEnvironment.a" />
-					<Add library="libgroupsock.a" />
+					<Add library="libliveMediad.a" />
+					<Add library="libBasicUsageEnvironmentd.a" />
+					<Add library="libUsageEnvironmentd.a" />
+					<Add library="libgroupsockd.a" />
 					<Add library="Ws2_32" />
 					<Add library="portaudio" />
 					<Add library="libsndfile-1" />
 					<Add library="wxmsw30ud_gcc_wammacs" />
+					<Add library="dnssd" />
+					<Add library="Iphlpapi" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#portaudio.lib)" />
 					<Add directory="$(#libsndfile.lib)" />
+					<Add directory="../external/mdnssd/windows" />
 				</Linker>
 			</Target>
 			<Target title="Linux Release">
@@ -154,6 +163,7 @@
 			<Add option="-D_pambase_" />
 			<Add option="-DCREATING_DLL" />
 			<Add option="-D_core_" />
+			<Add option="-D_MSL_STDINT_H" />
 			<Add directory="../external/live/BasicUsageEnvironment/include" />
 			<Add directory="../external/live/UsageEnvironment/include" />
 			<Add directory="../external/live/groupsock/include" />
@@ -166,16 +176,6 @@
 			<Add directory="../external/live/UsageEnvironment" />
 			<Add directory="../external/live/groupsock" />
 		</Linker>
-		<Unit filename="../external/wxservdisc/1035.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../external/wxservdisc/1035.h" />
-		<Unit filename="../external/wxservdisc/mdnsd.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../external/wxservdisc/mdnsd.h" />
-		<Unit filename="../external/wxservdisc/wxServDisc.cpp" />
-		<Unit filename="../external/wxservdisc/wxServDisc.h" />
 		<Unit filename="AES67ServerMediaSubsession.cpp" />
 		<Unit filename="AES67ServerMediaSubsession.h" />
 		<Unit filename="PamMediaSession.h" />
@@ -196,6 +196,8 @@
 		<Unit filename="audioevent.cpp" />
 		<Unit filename="audioevent.h" />
 		<Unit filename="dlldefine.h" />
+		<Unit filename="dnssdbrowser.cpp" />
+		<Unit filename="dnssdbrowser.h" />
 		<Unit filename="freq_mag.h" />
 		<Unit filename="generator.cpp" />
 		<Unit filename="generator.h" />
@@ -252,6 +254,8 @@
 		<Unit filename="rtsputil.h" />
 		<Unit filename="sapwatchthread.cpp" />
 		<Unit filename="sapwatchthread.h" />
+		<Unit filename="servicebrowser.cpp" />
+		<Unit filename="servicebrowser.h" />
 		<Unit filename="session.h" />
 		<Unit filename="settingevent.cpp" />
 		<Unit filename="settingevent.h" />
