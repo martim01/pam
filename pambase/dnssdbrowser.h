@@ -47,10 +47,11 @@ class PAMBASE_IMPEXPORT DNSServiceBrowser
         ~DNSServiceBrowser();
         bool Start();
 
+        #ifdef __WXMSW__
         std::map<wxString, dnsService*>::const_iterator GetServiceBegin() const;
         std::map<wxString, dnsService*>::const_iterator GetServiceEnd() const;
         std::map<wxString, dnsService*>::const_iterator FindService(wxString sService) const;
-
+        #endif // __WXMSW__
     private:
         ServiceBrowser* m_pBrowser;
 };

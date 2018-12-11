@@ -1,9 +1,10 @@
-#include "servicebrowser.h"
 #ifdef __WXMSW__
+#include "servicebrowser.h"
+
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <iphlpapi.h>
-#endif // __WXMSW__
+#include <iostream>
 
 using namespace std;
 
@@ -64,6 +65,7 @@ bool ServiceBrowser::StartBrowser()
 		m_timerBrowser.Start(250,false);
 		return true;
 	}
+	wxLogDebug(wxT("Failed to start browser"));
     return false;
 }
 
@@ -85,14 +87,24 @@ void ServiceBrowser::OnTimer(wxTimerEvent& event)
         }
 		fd_set readfds;
 		FD_ZERO(&readfds);
+		int nfds = 0;
 		for ( auto itClient = m_mClientToFd.cbegin() ; itClient != m_mClientToFd.cend() ; itClient++ )
 		{
 			FD_SET(itClient->second, &readfds);
+			std::cout << itClient->second << std::endl;
+			nfds = max((int)itClient->second, nfds);
 		}
+
+
+		std::cout << "SeviceBrowser: Start select: fd =" << m_mClientToFd.size() << " nfds =" << nfds << std::endl;
 		struct timeval tv = { 0, 1000 };
-		int result = select(0, &readfds, (fd_set*)NULL, (fd_set*)NULL, &tv);
+
+		//mDNSPosixGetFDSet(m, &nfds, &readfds, &tv);
+		int result = select(nfds, &readfds, (fd_set*)NULL, (fd_set*)NULL, &tv);
+
 		if ( result > 0 )
 		{
+		    std::cout << "SeviceBrowser: Select done"  << std::endl;
             //
             // While iterating through the loop, the callback functions might delete
             // the client pointed to by the current iterator, so I have to increment
@@ -113,6 +125,7 @@ void ServiceBrowser::OnTimer(wxTimerEvent& event)
 		}
 		else
 		{
+		    std::cout << "Result = " << result << std::endl;
 			break;
 		}
         if ( count > 10 )
@@ -225,13 +238,19 @@ void DNSSD_API ServiceBrowser::Resolve( DNSServiceRef sdRef, DNSServiceFlags fla
 		    itInstance->second->sHostName = wxString::FromAscii(hosttarget);
 
             DNSServiceRef client = NULL;
+            #ifdef __WXMSW__
 			MIB_IFROW IfRow;
 			IfRow.dwIndex = interfaceIndex;
 			DWORD result  = GetIfEntry ( &IfRow );
+			#else
+			int result = 0;
+            #endif
 			wxString sAdapter = _T("Unknown");
 			if ( result == 0 )
 			{
+			    #ifdef __WXMSW__
 				sAdapter =wxString::FromAscii( (char*)IfRow.bDescr );
+				#endif
                 DNSServiceErrorType err = DNSServiceGetAddrInfo( &client, kDNSServiceFlagsTimeout, interfaceIndex, kDNSServiceProtocol_IPv4, hosttarget, GetAddress, context );
                 if ( err == 0 )
 				{
@@ -298,7 +317,7 @@ void DNSSD_API ServiceBrowser::Address( DNSServiceRef sdRef, DNSServiceFlags fla
         auto itInstance = m_mInstances.find( sdRef );
         if ( itInstance != m_mInstances.end() )
 		{
-            const sockaddr_in *in = (const sockaddr_in *) address;
+		    const sockaddr_in *in = (const sockaddr_in *) address;
             char *ip = inet_ntoa( in->sin_addr );
             itInstance->second->sHostIP = wxString::FromAscii(ip);
         }
@@ -329,3 +348,4 @@ ServiceBrowser::~ServiceBrowser()
         delete itService->second;
     }
 }
+#endif

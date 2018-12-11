@@ -335,13 +335,21 @@ void pnlRTP::OnbtnDiscoverClick(wxCommandEvent& event)
 
 void pnlRTP::OnDiscovery(wxCommandEvent& event)
 {
-    wxLogDebug(wxT("Discover"));
+
     dnsInstance* pInstance = reinterpret_cast<dnsInstance*>(event.GetClientData());
     if(pInstance->sService.Find(wxT("rtsp")) != wxNOT_FOUND)
     {
         if(m_setDiscover.insert(make_pair(pInstance->sName, pInstance->sHostIP)).second)
         {
-            wxString sAddress(wxString::Format(wxT("rtsp://%s/by-name/%s"), pInstance->sHostIP.c_str(), pInstance->sName.c_str()));
+            wxString sAddress;
+            if(pInstance->nPort == 554)
+            {
+                sAddress = (wxString::Format(wxT("rtsp://%s/by-name/%s"), pInstance->sHostIP.c_str(), pInstance->sName.c_str()));
+            }
+            else
+            {
+                sAddress = (wxString::Format(wxT("rtsp://%s:%d/by-name/%s"), pInstance->sHostIP.c_str(), pInstance->nPort, pInstance->sName.c_str()));
+            }
            // GetSDP(sAddress);
 
             Settings::Get().Write(wxT("AoIP"), wxString::Format(wxT("%s(%s)"), pInstance->sName.BeforeFirst(wxT('@')).c_str(), pInstance->sHostIP.c_str()), sAddress);

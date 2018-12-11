@@ -118,12 +118,14 @@
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
+					<Add option="`pkg-config --libs avahi-client`" />
 					<Add library="portaudio" />
 					<Add library="sndfile" />
 					<Add library="liveMedia" />
 					<Add library="BasicUsageEnvironment" />
 					<Add library="UsageEnvironment" />
 					<Add library="groupsock" />
+					<Add library="dns_sd" />
 					<Add directory="/usr/lib/arm-linux-gnueabihf/" />
 				</Linker>
 				<ExtraCommands>
@@ -150,12 +152,14 @@
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
+					<Add option="`pkg-config --libs avahi-client`" />
 					<Add library="libportaudio" />
 					<Add library="libsndfile" />
 					<Add library="libliveMedia.a" />
 					<Add library="libBasicUsageEnvironment.a" />
 					<Add library="libUsageEnvironment.a" />
 					<Add library="libgroupsock.a" />
+					<Add library="dns_sd" />
 				</Linker>
 			</Target>
 		</Build>
@@ -195,6 +199,14 @@
 		<Unit filename="audio.h" />
 		<Unit filename="audioevent.cpp" />
 		<Unit filename="audioevent.h" />
+		<Unit filename="avahibrowser.cpp">
+			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
+		</Unit>
+		<Unit filename="avahibrowser.h">
+			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
+		</Unit>
 		<Unit filename="dlldefine.h" />
 		<Unit filename="dnssdbrowser.cpp" />
 		<Unit filename="dnssdbrowser.h" />

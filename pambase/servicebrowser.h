@@ -1,4 +1,5 @@
 #pragma once
+#ifdef __WXMSW__
 #include <string>
 #include <wx/wx.h>
 #include "dns_sd.h"
@@ -49,6 +50,6 @@ public:
 	wxEvtHandler* m_pHandler;
 	wxTimer m_timerBrowser;
 };
-
+#endif
 
 

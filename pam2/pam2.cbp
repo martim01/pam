@@ -99,6 +99,7 @@
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
+					<Add option="`pkg-config --libs avahi-client`" />
 					<Add library="portaudio" />
 					<Add library="pambase" />
 					<Add library="curl" />
@@ -124,6 +125,7 @@
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add option="-Wl,-Map=pam2.map" />
+					<Add option="`pkg-config --libs avahi-client`" />
 					<Add library="portaudio" />
 					<Add library="pambased" />
 					<Add library="curl" />
