@@ -27,16 +27,16 @@
 		</Project>
 		<Project filename="plugins/polarscope/polarscope.cbp" />
 		<Project filename="plugins/r128/r128.cbp">
-			<Depends filename="pambase/pambase.cbp" />
 			<Depends filename="pamlevel/pamlevel.cbp" />
+			<Depends filename="pambase/pambase.cbp" />
 		</Project>
 		<Project filename="plugins/channel delay/channel delay.cbp">
-			<Depends filename="pambase/pambase.cbp" />
 			<Depends filename="pamfft/pamfft.cbp" />
+			<Depends filename="pambase/pambase.cbp" />
 		</Project>
 		<Project filename="plugins/distortion/distortion.cbp">
-			<Depends filename="pambase/pambase.cbp" />
 			<Depends filename="pamfft/pamfft.cbp" />
+			<Depends filename="pambase/pambase.cbp" />
 		</Project>
 		<Project filename="plugins/levels/levels.cbp">
 			<Depends filename="pambase/pambase.cbp" />
@@ -52,7 +52,6 @@
 		<Project filename="plugins/LTC/LTC.cbp" />
 		<Project filename="plugins/LTCGenerator/LTCGenerator.cbp" />
 		<Project filename="pam2/pam2.cbp">
-			<Depends filename="pambase/pambase.cbp" />
 			<Depends filename="pamfft/pamfft.cbp" />
 			<Depends filename="pamlevel/pamlevel.cbp" />
 			<Depends filename="plugins/fft/fft.cbp" />
@@ -75,6 +74,7 @@
 			<Depends filename="plugins/bufferlog/bufferlog.cbp" />
 			<Depends filename="plugins/LTC/LTC.cbp" />
 			<Depends filename="plugins/LTCGenerator/LTCGenerator.cbp" />
+			<Depends filename="pambase/pambase.cbp" />
 		</Project>
 		<Project filename="pamupdatemanager/pamupdatemanager.cbp">
 			<Depends filename="pambase/pambase.cbp" />

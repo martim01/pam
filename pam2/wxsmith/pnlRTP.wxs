@@ -31,8 +31,8 @@
 						<text_pressed>#000000</text_pressed>
 						<text_selected>#000000</text_selected>
 						<items />
-						<pos>0,65</pos>
-						<size>800,319</size>
+						<pos>0,36</pos>
+						<size>800,349</size>
 						<bg>#FFFFFF</bg>
 						<style>wmList::STYLE_SELECT|wmList::STYLE_SELECT_ROW</style>
 						<handler function="OnlstSourcesSelected" entry="EVT_LIST_SELECTED" />
@@ -68,25 +68,18 @@
 						<handler function="OnbtnDeleteAllHeld" entry="EVT_BUTTON_HELD" />
 					</object>
 					<object class="wmButton" name="ID_M_PBTN6" variable="m_pbtnDiscover" member="yes">
-						<label>Discover</label>
+						<label>Discovery</label>
 						<button_pressed>#F07800</button_pressed>
-						<pos>490,390</pos>
+						<pos>690,390</pos>
 						<size>100,45</size>
 						<bg>#008000</bg>
 						<style>wmButton::STYLE_SELECT</style>
 						<handler function="OnbtnDiscoverClick" entry="EVT_BUTTON" />
 					</object>
-					<object class="wmLabel" name="ID_M_PLBL7" variable="m_plblDiscovering" member="yes">
-						<label></label>
-						<pos>600,390</pos>
-						<size>190,40</size>
-						<fg>#FFFFFF</fg>
-						<bg>#000000</bg>
-					</object>
 					<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl4" member="yes">
 						<label>Name</label>
 						<border>uiRect::BORDER_UP</border>
-						<pos>0,35</pos>
+						<pos>0,5</pos>
 						<size>400,30</size>
 						<fg>#FFFFFF</fg>
 						<bg>#40C880</bg>
@@ -94,28 +87,13 @@
 					<object class="wmLabel" name="ID_M_PLBL5" variable="m_pLbl5" member="yes">
 						<label>URL</label>
 						<border>uiRect::BORDER_UP</border>
-						<pos>400,35</pos>
+						<pos>400,5</pos>
 						<size>400,30</size>
 						<fg>#FFFFFF</fg>
 						<bg>#40C880</bg>
 					</object>
-					<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
-						<label>Manage AoIP</label>
-						<pos>0,5</pos>
-						<size>800,30</size>
-						<fg>#FFFFFF</fg>
-						<bg>#004000</bg>
-						<font>
-							<size>10</size>
-							<style>normal</style>
-							<weight>bold</weight>
-							<underlined>0</underlined>
-							<family>swiss</family>
-							<face>Arial</face>
-						</font>
-					</object>
 				</object>
-				<label>List</label>
+				<label>Manual</label>
 			</object>
 			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL2" variable="Panel2" member="yes">
@@ -188,7 +166,7 @@
 						</font>
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL6" variable="m_pLbl6" member="yes">
-						<label>Add AoIP Source</label>
+						<label>Add/Edit AoIP Source</label>
 						<pos>0,5</pos>
 						<size>800,30</size>
 						<fg>#FFFFFF</fg>
@@ -203,7 +181,84 @@
 						</font>
 					</object>
 				</object>
-				<label>Add</label>
+				<label>Edit</label>
+			</object>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL3" variable="pnlDiscovery" member="yes">
+					<bg>#000000</bg>
+					<object class="wmLabel" name="ID_M_PLBL7" variable="m_plblDiscovering" member="yes">
+						<label></label>
+						<pos>210,395</pos>
+						<size>250,45</size>
+						<fg>#FFFFFF</fg>
+						<bg>#000000</bg>
+					</object>
+					<object class="wmButton" name="ID_M_PBTN8" variable="m_pbtnSAP" member="yes">
+						<label>SAP</label>
+						<toggle_look>1</toggle_look>
+						<toggle_left>No</toggle_left>
+						<toggle_right>Yes</toggle_right>
+						<toggle_percent>50</toggle_percent>
+						<pos>5,230</pos>
+						<size>130,45</size>
+						<fg>#FFFFFF</fg>
+						<bg>#000040</bg>
+						<style>wmButton::STYLE_SELECT</style>
+						<handler function="OnbtnSAPClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN9" variable="m_pbtnStartDiscovery" member="yes">
+						<label>Discovery</label>
+						<toggle_look>1</toggle_look>
+						<toggle_left>Stop</toggle_left>
+						<toggle_right>Start</toggle_right>
+						<toggle_percent>50</toggle_percent>
+						<pos>5,390</pos>
+						<size>200,45</size>
+						<fg>#FFFFFF</fg>
+						<bg>#0000A0</bg>
+						<style>wmButton::STYLE_SELECT</style>
+						<handler function="OnbtnStartDiscoveryClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL9" variable="m_pLbl8" member="yes">
+						<label>Options</label>
+						<pos>5,3</pos>
+						<size>130,30</size>
+						<fg>#FFFFFF</fg>
+						<bg>#008040</bg>
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL8" variable="m_pLbl7" member="yes">
+						<label>DNS-SD</label>
+						<pos>5,35</pos>
+						<size>130,30</size>
+						<fg>#FFFFFF</fg>
+						<bg>#000040</bg>
+					</object>
+					<object class="wmList" name="ID_M_PLST2" variable="m_plstServices" member="yes">
+						<scrolling>None</scrolling>
+						<button_gap>1,5</button_gap>
+						<items />
+						<pos>5,65</pos>
+						<size>130,160</size>
+						<bg>#000000</bg>
+						<style>wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI</style>
+						<handler function="OnlstServicesSelected" entry="EVT_LIST_SELECTED" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN10" variable="m_pbtnManual" member="yes">
+						<label>Manual</label>
+						<button_pressed>#F07800</button_pressed>
+						<pos>690,390</pos>
+						<size>100,45</size>
+						<bg>#008000</bg>
+						<style>wmButton::STYLE_SELECT</style>
+						<handler function="OnbtnManualClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wxHtmlWindow" name="ID_HTMLWINDOW1" subclass="wxTouchScreenHtml" variable="m_phtmlResults" member="yes">
+						<pos>140,0</pos>
+						<size>650,385</size>
+						<style>0</style>
+					</object>
+				</object>
+				<label>Discovery</label>
 			</object>
 		</object>
 	</object>

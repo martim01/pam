@@ -22,7 +22,6 @@ class pnlLog: public wxPanel
 
 		//(*Declarations(pnlLog)
 		wxTouchScreenHtml* m_phtmlLog;
-		//wxHtmlWindow* m_phtmlLog;
 		//*)
 
 

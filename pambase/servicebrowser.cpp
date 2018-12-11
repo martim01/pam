@@ -266,7 +266,9 @@ void DNSSD_API ServiceBrowser::Resolve( DNSServiceRef sdRef, DNSServiceFlags fla
 					wxLogDebug( wxT("Error looking up address info for %s"), wxString::FromAscii( hosttarget).c_str() );
                 }
 			}
-			itInstance->second->nPort = port;
+			uint8_t lolo = (port >> 0) & 0xFF;
+            uint8_t lohi = (port >> 8) & 0xFF;
+			itInstance->second->nPort = (lolo << 8) | (lohi << 0);
 			itInstance->second->sInterface = sAdapter;
 
             if  ( errorCode == 0 )

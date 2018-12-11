@@ -12,10 +12,10 @@
 			<size>800,440</size>
 		</object>
 		<object class="wmButton" name="ID_M_PBTN7" variable="m_pbtnFinished" member="yes">
-			<label>Finished</label>
+			<label>Close Manager</label>
 			<button_disabled>#909090</button_disabled>
-			<pos>350,445</pos>
-			<size>100,30</size>
+			<pos>335,443</pos>
+			<size>120,35</size>
 			<fg>#000000</fg>
 			<bg>#80FF00</bg>
 			<style>wmButton::STYLE_NORMAL</style>

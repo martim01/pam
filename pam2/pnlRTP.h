@@ -9,11 +9,13 @@
 #include "wmswitcherpanel.h"
 #include <wx/panel.h>
 #include "wmedit.h"
+#include <wx/html/htmlwin.h>
 #include "wmlist.h"
 //*)
 
 #include <set>
 #include <queue>
+#include "wxtouchscreenhtml.h"
 
 class DNSServiceBrowser;
 class SapWatchThread;
@@ -28,7 +30,8 @@ class pnlRTP: public wxPanel
 
 		//(*Declarations(pnlRTP)
 		wmLabel* m_pLbl4;
-		wmLabel* m_pLbl3;
+		wmLabel* m_pLbl7;
+		wmButton* m_pbtnStartDiscovery;
 		wmButton* m_pbtnConfirm;
 		wmLabel* m_pLbl1;
 		wmSwitcherPanel* m_pSwp1;
@@ -36,16 +39,22 @@ class pnlRTP: public wxPanel
 		wxPanel* Panel1;
 		wmButton* m_pbtnAdd;
 		wmEdit* m_pedtName;
+		wxPanel* pnlDiscovery;
 		wmButton* m_pbtnCancel;
 		wmLabel* m_pLbl5;
 		wmButton* m_pbtnDelete;
+		wmButton* m_pbtnManual;
 		wmList* m_plstSources;
 		wmEdit* m_pedtUrl;
 		wmLabel* m_pLbl6;
+		wmLabel* m_pLbl8;
 		wmLabel* m_pLbl2;
 		wmButton* m_pbtnUpdate;
+		wxTouchScreenHtml* m_phtmlResults;
 		wmKeyboard* m_pkeyboard;
 		wmButton* m_pbtnDeleteAll;
+		wmButton* m_pbtnSAP;
+		wmList* m_plstServices;
 		wxPanel* Panel2;
 		wmLabel* m_plblDiscovering;
 		//*)
@@ -61,10 +70,8 @@ class pnlRTP: public wxPanel
 		static const long ID_M_PBTN5;
 		static const long ID_M_PBTN7;
 		static const long ID_M_PBTN6;
-		static const long ID_M_PLBL7;
 		static const long ID_M_PLBL4;
 		static const long ID_M_PLBL5;
-		static const long ID_M_PLBL3;
 		static const long ID_PANEL1;
 		static const long ID_M_PLBL1;
 		static const long ID_M_PEDT1;
@@ -75,6 +82,15 @@ class pnlRTP: public wxPanel
 		static const long ID_M_PKBD1;
 		static const long ID_M_PLBL6;
 		static const long ID_PANEL2;
+		static const long ID_M_PLBL7;
+		static const long ID_M_PBTN8;
+		static const long ID_M_PBTN9;
+		static const long ID_M_PLBL9;
+		static const long ID_M_PLBL8;
+		static const long ID_M_PLST2;
+		static const long ID_M_PBTN10;
+		static const long ID_HTMLWINDOW1;
+		static const long ID_PANEL3;
 		static const long ID_M_PSWP1;
 		//*)
 
@@ -91,6 +107,10 @@ class pnlRTP: public wxPanel
 		void OnbtnCancelClick(wxCommandEvent& event);
 		void OnbtnDiscoverClick(wxCommandEvent& event);
 		void OnbtnDeleteAllHeld(wxCommandEvent& event);
+		void OnlstServicesSelected(wxCommandEvent& event);
+		void OnbtnSAPClick(wxCommandEvent& event);
+		void OnbtnStartDiscoveryClick(wxCommandEvent& event);
+		void OnbtnManualClick(wxCommandEvent& event);
 		//*)
 
 		void OnDiscovery(wxCommandEvent& event);
@@ -111,6 +131,11 @@ class pnlRTP: public wxPanel
         std::queue<wxString> m_queueUrl;
 
         RtpThread* m_pThread;
+
+        wxString m_sTableMiddle;
+        wxArrayString m_asServices;
+        static const wxString STR_TABLE;
+
 		DECLARE_EVENT_TABLE()
 };
 

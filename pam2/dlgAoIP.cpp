@@ -23,7 +23,7 @@ dlgAoIP::dlgAoIP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize&
 	Move(wxPoint(0,0));
 	SetBackgroundColour(wxColour(0,0,0));
 	m_ppnlRTP = new pnlRTP(this, ID_PANEL1, wxPoint(0,0), wxSize(800,440), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
-	m_pbtnFinished = new wmButton(this, ID_M_PBTN7, _("Finished"), wxPoint(350,445), wxSize(100,30), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN7"));
+	m_pbtnFinished = new wmButton(this, ID_M_PBTN7, _("Close Manager"), wxPoint(335,443), wxSize(120,35), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN7"));
 	m_pbtnFinished->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnFinished->SetBackgroundColour(wxColour(128,255,0));
 	m_pbtnFinished->SetColourDisabled(wxColour(wxT("#909090")));

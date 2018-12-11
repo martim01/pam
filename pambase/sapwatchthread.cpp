@@ -45,10 +45,8 @@ void* SapWatchThread::Entry()
     struct sockaddr_in fromAddress;
     while(!TestDestroy())
     {
-        while (inputGroupsock.handleRead(m_packet, 65536, packetSize, fromAddress))
+        if(inputGroupsock.handleRead(m_packet, 65536, packetSize, fromAddress))
         {
-
-            wxLogMessage(wxT("SAP INSIDE"));
             // Ignore the first 8 bytes (SAP header).
             if (packetSize >= 8)
             {
@@ -73,9 +71,8 @@ void* SapWatchThread::Entry()
                     wxPostEvent(m_pParent, event);
                 }
             }
-            ::wxMilliSleep(10);
         }
+        ::wxMilliSleep(10);
     }
-    wxLogMessage(wxT("SAP EXIT"));
     return NULL;
 }
