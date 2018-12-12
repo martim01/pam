@@ -33,8 +33,13 @@ void* SapWatchThread::Entry()
     const unsigned char ttl = 0; // we're only reading from this mcast group
 
     Groupsock inputGroupsock(*env, sessionAddress, port, ttl);
-    int nResult = makeSocketNonBlocking(inputGroupsock.socketNum());
-    //int nResult = makeSocketBlocking(inputGroupsock.socketNum(), 1000);
+    //int nResult = makeSocketNonBlocking(inputGroupsock.socketNum());
+    int nResult = makeSocketBlocking(inputGroupsock.socketNum(), 1000);
+
+    timeval tv;
+    tv.tv_sec = 1000;
+    tv.tv_usec = 0;
+    setsockopt(inputGroupsock.socketNum(), SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
     //wxLogMessage(wxT("Blocking %d"), nResult);
 
     // Start reading and printing incoming packets
@@ -72,7 +77,7 @@ void* SapWatchThread::Entry()
                 }
             }
         }
-        ::wxMilliSleep(10);
+        //::wxMilliSleep(10);
     }
     return NULL;
 }

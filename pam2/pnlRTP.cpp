@@ -353,47 +353,30 @@ void pnlRTP::OnbtnDiscoverClick(wxCommandEvent& event)
 void pnlRTP::OnDiscovery(wxCommandEvent& event)
 {
     dnsInstance* pInstance = reinterpret_cast<dnsInstance*>(event.GetClientData());
-    bool bFound(false);
-    for(size_t i = 0; i < m_plstServices->GetItemCount(); i++)
+    if(m_setDiscover.insert(make_pair(pInstance->sName, pInstance->sHostIP)).second)
     {
-        if(m_plstServices->IsSelected(i))
+        wxString sAddress;
+        if(pInstance->nPort == 554)
         {
-            wxString sName = m_plstServices->GetButtonText(i);
-            sName.MakeLower();
-            if(pInstance->sService.Find(sName) != wxNOT_FOUND)
-            {
-                bFound = true;
-                break;
-            }
+            sAddress = (wxString::Format(wxT("rtsp://%s/by-name/%s"), pInstance->sHostIP.c_str(), pInstance->sName.c_str()));
         }
-    }
-    if(bFound)
-    {
-        if(m_setDiscover.insert(make_pair(pInstance->sName, pInstance->sHostIP)).second)
+        else
         {
-            wxString sAddress;
-            if(pInstance->nPort == 554)
-            {
-                sAddress = (wxString::Format(wxT("rtsp://%s/by-name/%s"), pInstance->sHostIP.c_str(), pInstance->sName.c_str()));
-            }
-            else
-            {
-                sAddress = (wxString::Format(wxT("rtsp://%s:%d/by-name/%s"), pInstance->sHostIP.c_str(), pInstance->nPort, pInstance->sName.c_str()));
-            }
-           // GetSDP(sAddress);
-
-            Settings::Get().Write(wxT("AoIP"), wxString::Format(wxT("%s(%s)"), pInstance->sName.BeforeFirst(wxT('@')).c_str(), pInstance->sHostIP.c_str()), sAddress);
-
-            m_sTableMiddle << (wxString::Format(wxT("<tr><td>%s</td><td>%s</td><td>%s:%d</td></tr>"), pInstance->sService.c_str(), pInstance->sName.c_str(), pInstance->sHostIP.c_str(), pInstance->nPort));
-
-            m_phtmlResults->SetPage(STR_TABLE+m_sTableMiddle+wxT("</table>"));
-            m_phtmlResults->End();
-
-
-            m_nDiscovered++;
-            m_plblDiscovering->SetLabel(wxString::Format(wxT("Discovering...\n%04d Found"), m_nDiscovered));
-            m_plblDiscovering->Update();
+            sAddress = (wxString::Format(wxT("rtsp://%s:%d/by-name/%s"), pInstance->sHostIP.c_str(), pInstance->nPort, pInstance->sName.c_str()));
         }
+       // GetSDP(sAddress);
+
+        Settings::Get().Write(wxT("AoIP"), wxString::Format(wxT("%s(%s)"), pInstance->sName.BeforeFirst(wxT('@')).c_str(), pInstance->sHostIP.c_str()), sAddress);
+
+        m_sTableMiddle << (wxString::Format(wxT("<tr><td>%s</td><td>%s</td><td>%s:%d</td></tr>"), pInstance->sService.c_str(), pInstance->sName.c_str(), pInstance->sHostIP.c_str(), pInstance->nPort));
+
+        m_phtmlResults->SetPage(STR_TABLE+m_sTableMiddle+wxT("</table>"));
+        m_phtmlResults->End();
+
+
+        m_nDiscovered++;
+        m_plblDiscovering->SetLabel(wxString::Format(wxT("Discovering...\n%04d Found"), m_nDiscovered));
+        m_plblDiscovering->Update();
     }
     wxLogDebug(wxT("Discover Done"));
 }
@@ -509,6 +492,21 @@ void pnlRTP::OnbtnStartDiscoveryClick(wxCommandEvent& event)
 
     if(event.IsChecked())
     {
+        set<wxString> setServices;
+        if(m_plstServices->IsSelected(0))   //RTSP
+        {
+            setServices.insert(wxT("_rtsp._tcp"));
+        }
+        if(m_plstServices->IsSelected(1))   //SIP
+        {
+            setServices.insert(wxT("_sipuri._udp"));
+        }
+        if(m_plstServices->IsSelected(2))   //NMOS
+        {
+            setServices.insert(wxT("_nmos-query._tcp"));
+            setServices.insert(wxT("_nmos-node._tcp"));
+        }
+
         for(int i = 0; i < m_plstServices->GetItemCount(); i++)
         {
             Settings::Get().Write(wxT("Discovery"), m_plstServices->GetButtonText(i), m_plstServices->IsSelected(i));
@@ -529,7 +527,7 @@ void pnlRTP::OnbtnStartDiscoveryClick(wxCommandEvent& event)
             m_pBrowser = 0;
         }
         m_pBrowser = new DNSServiceBrowser(this);
-        m_pBrowser->Start();
+        m_pBrowser->Start(setServices);
 
         if(m_pSapWatch)
         {

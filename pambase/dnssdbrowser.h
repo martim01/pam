@@ -3,7 +3,7 @@
 #include <wx/event.h>
 #include <map>
 #include <list>
-
+#include <set>
 class ServiceBrowser;
 struct PAMBASE_IMPEXPORT dnsInstance
 {
@@ -45,7 +45,7 @@ class PAMBASE_IMPEXPORT DNSServiceBrowser
     public:
         DNSServiceBrowser(wxEvtHandler* pHandler);
         ~DNSServiceBrowser();
-        bool Start();
+        bool Start(const std::set<wxString>& setServices);
 
         #ifdef __WXMSW__
         std::map<wxString, dnsService*>::const_iterator GetServiceBegin() const;

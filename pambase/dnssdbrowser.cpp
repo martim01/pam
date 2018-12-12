@@ -16,16 +16,13 @@ DNSServiceBrowser::DNSServiceBrowser(wxEvtHandler* pHandler) :
 
 DNSServiceBrowser::~DNSServiceBrowser()
 {
-    #ifdef __WXMSW__
     delete m_pBrowser;
-    #else
-    m_pBrowser->Delete();
-    #endif
+
 }
 
-bool DNSServiceBrowser::Start()
+bool DNSServiceBrowser::Start(const std::set<wxString>& setServices)
 {
-    return m_pBrowser->StartBrowser();
+    return m_pBrowser->StartBrowser(setServices);
 }
 
 #ifdef __WXMSW__

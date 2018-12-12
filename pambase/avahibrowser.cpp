@@ -12,7 +12,7 @@ using namespace std;
 void client_callback(AvahiClient * pClient, AvahiClientState state, AVAHI_GCC_UNUSED void * userdata)
 {
     ServiceBrowser* pBrowser = reinterpret_cast<ServiceBrowser*>(userdata);
-    pBrowser->ClientCallback(state);
+    pBrowser->ClientCallback(pClient, state);
 }
 
 void type_callback(AvahiServiceTypeBrowser* stb, AvahiIfIndex interface, AvahiProtocol protocol, AvahiBrowserEvent event, const char* type, const char* domain, AvahiLookupResultFlags flags, void* userdata)
@@ -42,65 +42,55 @@ void resolve_callback(AvahiServiceResolver *r, AVAHI_GCC_UNUSED AvahiIfIndex int
 
 ServiceBrowser::ServiceBrowser(wxEvtHandler* pHandler) :
     m_pHandler(pHandler),
-    m_pSimplePoll(0),
+    m_pThreadedPoll(0),
     m_pClient(0),
     m_pTypeBrowser(0),
-    m_bLoop(true)
-{
+    m_bBrowsing(false)
 
+{
+    Connect(wxID_ANY, wxEVT_BROWSE_FINISHED, (wxObjectEventFunction)&ServiceBrowser::OnStop);
 }
 
 ServiceBrowser::~ServiceBrowser()
+{
+    Stop();
+    DeleteAllServices();
+}
+
+void ServiceBrowser::DeleteAllServices()
 {
     for(map<wxString, dnsService*>::iterator itService = m_mServices.begin(); itService != m_mServices.end(); ++itService)
     {
         delete itService->second;
     }
+    m_mServices.clear();
 }
 
 
-bool ServiceBrowser::StartBrowser()
+bool ServiceBrowser::StartBrowser(const std::set<wxString>& setServices)
 {
+    m_setServices = setServices;
     int error;
     int ret = 1;
     /* Allocate main loop object */
-    if (!(m_pSimplePoll = avahi_simple_poll_new()))
+    if (!(m_pThreadedPoll = avahi_threaded_poll_new()))
     {
-        wmLog::Get()->Log(wxT("Failed to create simple poll object."));
+        wmLog::Get()->Log(wxT("Failed to create Threaded poll object."));
         return false;
     }
 
     /* Allocate a new client */
-    m_pClient = avahi_client_new(avahi_simple_poll_get(m_pSimplePoll), (AvahiClientFlags)0, client_callback, reinterpret_cast<void*>(this), &error);
-    /* Check wether creating the client object succeeded */
-    if (!m_pClient)
-    {
-        LogError(wxT("Failed to create client"));
-        avahi_simple_poll_free(m_pSimplePoll);
-        return false;
-    }
-
-    if(!(m_pTypeBrowser = avahi_service_type_browser_new(m_pClient, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, NULL, (AvahiLookupFlags)0, type_callback, reinterpret_cast<void*>(this))))
-    {
-        LogError(wxT("Failed to create service type browser"));
-        avahi_client_free(m_pClient);
-        avahi_simple_poll_free(m_pSimplePoll);
-        return false;
-
-    }
-
-    Run();
-
+    avahi_client_new(avahi_threaded_poll_get(m_pThreadedPoll), AVAHI_CLIENT_NO_FAIL, client_callback, reinterpret_cast<void*>(this), &error);
+    avahi_threaded_poll_start(m_pThreadedPoll);
 
     return true;
 }
 
-void* ServiceBrowser::Entry()
+void ServiceBrowser::Stop()
 {
-    /* Run the main loop */
-    while(TestDestroy() == false && m_bLoop)
+    if(m_pThreadedPoll)
     {
-        avahi_simple_poll_iterate(m_pSimplePoll, 100);
+        avahi_threaded_poll_stop(m_pThreadedPoll);
     }
 
     for(set<AvahiServiceBrowser*>::iterator itBrowser = m_setBrowser.begin(); itBrowser != m_setBrowser.end(); ++itBrowser)
@@ -108,23 +98,92 @@ void* ServiceBrowser::Entry()
         avahi_service_browser_free((*itBrowser));
     }
 
-    avahi_service_type_browser_free(m_pTypeBrowser);
-    avahi_client_free(m_pClient);
-    avahi_simple_poll_free(m_pSimplePoll);
-    return NULL;
-}
-
-void ServiceBrowser::ClientCallback(AvahiClientState state)
-{
+    if(m_pTypeBrowser)
+    {
+        avahi_service_type_browser_free(m_pTypeBrowser);
+        m_pTypeBrowser = 0;
+    }
     if(m_pClient)
     {
-        /* Called whenever the client or server state changes */
-        if (state == AVAHI_CLIENT_FAILURE)
-        {
-            LogError(wxT("Server connection failure"));
-            m_bLoop = false;
+        avahi_client_free(m_pClient);
+        m_pClient = 0;
+    }
+    if(m_pThreadedPoll)
+    {
+        avahi_threaded_poll_free(m_pThreadedPoll);
+        m_pThreadedPoll = 0;
+
+        if(m_pHandler)
+        {   //only send if we are actually stopping not already stopped and now deleting
+            wxCommandEvent event(wxEVT_BROWSE_FINISHED);
+            wxPostEvent(m_pHandler, event);
         }
     }
+    m_nWaitingOn = 0;
+}
+
+
+bool ServiceBrowser::Start(AvahiClient* pClient)
+{
+    if(!m_bBrowsing)
+    {
+        m_pClient = pClient;
+        if(!(m_pTypeBrowser = avahi_service_type_browser_new(pClient, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, NULL, (AvahiLookupFlags)0, type_callback, reinterpret_cast<void*>(this))))
+        {
+            LogError(wxT("Failed to create service type browser"));
+            return false;
+        }
+        m_nWaitingOn = 1;
+
+    }
+    return true;
+}
+
+void ServiceBrowser::ClientCallback(AvahiClient * pClient, AvahiClientState state)
+{
+    wmLog::Get()->Log(wxT("ClientCallback"));
+    switch (state)
+    {
+        case AVAHI_CLIENT_FAILURE:
+            wmLog::Get()->Log(wxT("ClientCallback: failure"));
+            if (avahi_client_errno(pClient) == AVAHI_ERR_DISCONNECTED)
+            {
+                int error;
+                /* We have been disconnected, so let reconnect */
+                wmLog::Get()->Log(wxT("Avahi: Disconnected, reconnecting ..."));
+
+                avahi_client_free(pClient);
+                m_pClient = NULL;
+
+                DeleteAllServices();
+
+                if (!(avahi_client_new(avahi_threaded_poll_get(m_pThreadedPoll), AVAHI_CLIENT_NO_FAIL, client_callback, reinterpret_cast<void*>(this), &error)))
+                {
+                    LogError(wxT("Failed to create client object: "));
+                    Stop();
+
+                }
+            }
+            else
+            {
+                LogError(wxT("Server connection failure"));
+                Stop();
+            }
+            break;
+        case AVAHI_CLIENT_S_REGISTERING:
+        case AVAHI_CLIENT_S_RUNNING:
+        case AVAHI_CLIENT_S_COLLISION:
+            wmLog::Get()->Log(wxT("S_"));
+            if (!m_bBrowsing)
+            {
+                Start(pClient);
+            }
+            break;
+        case AVAHI_CLIENT_CONNECTING:
+            wmLog::Get()->Log(wxT("Waiting for daemon ..."));
+            break;
+    }
+
 }
 
 void ServiceBrowser::TypeCallback(AvahiIfIndex interface, AvahiProtocol protocol, AvahiBrowserEvent event, const char* type, const char* domain)
@@ -132,22 +191,46 @@ void ServiceBrowser::TypeCallback(AvahiIfIndex interface, AvahiProtocol protocol
     switch(event)
     {
         case AVAHI_BROWSER_NEW:
-        {
-            wxString sService(wxString::FromAscii(type));
-            wmLog::Get()->Log(wxString::Format(wxT("Service %s found"), sService.c_str()));
-
-            m_mServices.insert(make_pair(sService, new dnsService(sService)));
-
-            AvahiServiceBrowser* psb = NULL;
-
-            /* Create the service browser */
-            if (!(psb = avahi_service_browser_new(m_pClient, interface, protocol, type, domain, (AvahiLookupFlags)0, browse_callback, reinterpret_cast<void*>(this))))
             {
-                LogError(wxT("Failed to create service browser"));
+                wxString sService(wxString::FromAscii(type));
+
+                if(m_setServices.find(sService) != m_setServices.end())
+                {
+                    wmLog::Get()->Log(wxString::Format(wxT("Service %s found"), sService.c_str()));
+                    m_mServices.insert(make_pair(sService, new dnsService(sService)));
+
+                    AvahiServiceBrowser* psb = NULL;
+                    /* Create the service browser */
+                    if (!(psb = avahi_service_browser_new(m_pClient, interface, protocol, type, domain, (AvahiLookupFlags)0, browse_callback, reinterpret_cast<void*>(this))))
+                    {
+                        LogError(wxT("Failed to create service browser"));
+                    }
+                    else
+                    {
+                        m_setBrowser.insert(psb);
+                        m_nWaitingOn++;
+                    }
+                }
+                else
+                {
+                    wmLog::Get()->Log(wxString::Format(wxT("Service %s not for us"), sService.c_str()));
+                }
             }
-            m_setBrowser.insert(psb);
             break;
-        }
+             case AVAHI_BROWSER_REMOVE:
+                /* We're dirty and never remove the browser again */
+                break;
+        case AVAHI_BROWSER_FAILURE:
+            LogError(wxT("service_type_browser failed"));
+            Stop();
+            break;
+        case AVAHI_BROWSER_CACHE_EXHAUSTED:
+            wmLog::Get()->Log(wxT("(TypeBrowser) CACHE_EXHAUSTED"));
+            break;
+        case AVAHI_BROWSER_ALL_FOR_NOW:
+            wmLog::Get()->Log(wxT("(TypeBrowser) ALL_FOR_NOW"));
+            CheckStop();
+            break;
     }
 }
 
@@ -158,7 +241,7 @@ void ServiceBrowser::BrowseCallback(AvahiServiceBrowser* pBrowser, AvahiIfIndex 
     {
         case AVAHI_BROWSER_FAILURE:
             LogError(wxT("Browser"));
-            m_bLoop = false;
+            Stop();
             break;
         case AVAHI_BROWSER_NEW:
             {
@@ -166,11 +249,6 @@ void ServiceBrowser::BrowseCallback(AvahiServiceBrowser* pBrowser, AvahiIfIndex 
                 wxString sName(wxString::FromAscii(name));
 
                 wmLog::Get()->Log(wxString::Format(wxT("(Browser) NEW: service '%s' of type '%s' in domain '%s'"), sName.c_str(), sService.c_str(), wxString::FromAscii(domain).c_str()));
-//                map<wxString, dnsService>::iterator itService = m_mService.find(sService);
-//                if(itService != m_mService.end())
-//                {
-//                    itService->second->lstInstances.push_back(new dnsInstance(sName));
-//                }
 
                 /* We ignore the returned resolver object. In the callback
                    function we free it. If the server is terminated before
@@ -180,19 +258,30 @@ void ServiceBrowser::BrowseCallback(AvahiServiceBrowser* pBrowser, AvahiIfIndex 
                 {
                     LogError(wxString::Format(wxT("Failed to resolve service '%s'"), wxString::FromAscii(name).c_str()));
                 }
+                else
+                {
+                    m_nWaitingOn++;
+                }
             }
             break;
         case AVAHI_BROWSER_REMOVE:
             wmLog::Get()->Log(wxString::Format(wxT("(Browser) REMOVE: service '%s' of type '%s' in domain '%s"), wxString::FromAscii(name).c_str(), wxString::FromAscii(type).c_str(), wxString::FromAscii(domain).c_str()));
             break;
         case AVAHI_BROWSER_ALL_FOR_NOW:
-        case AVAHI_BROWSER_CACHE_EXHAUSTED:
-            wmLog::Get()->Log(wxString::Format("(Browser) ALL_FOR_NOW"));
-            set<AvahiServiceBrowser*>::iterator itBrowser = m_setBrowser.find(pBrowser);
-            if(itBrowser != m_setBrowser.end())
             {
-                avahi_service_browser_free((*itBrowser));
-                m_setBrowser.erase(itBrowser);
+                wmLog::Get()->Log(wxString::Format("(Browser) ALL_FOR_NOW"));
+                set<AvahiServiceBrowser*>::iterator itBrowser = m_setBrowser.find(pBrowser);
+                if(itBrowser != m_setBrowser.end())
+                {
+                    avahi_service_browser_free((*itBrowser));
+                    m_setBrowser.erase(itBrowser);
+                }
+                CheckStop();
+            }
+            break;
+        case AVAHI_BROWSER_CACHE_EXHAUSTED:
+            {
+                wmLog::Get()->Log(wxString::Format("(Browser) CACHE_EXHAUSTED"));
             }
             break;
     }
@@ -243,6 +332,22 @@ void ServiceBrowser::ResolveCallback(AvahiServiceResolver* pResolver, AvahiResol
         }
     }
     avahi_service_resolver_free(pResolver);
+    CheckStop();
+}
+
+void ServiceBrowser::CheckStop()
+{
+    --m_nWaitingOn;
+    if(m_nWaitingOn == 0)
+    {
+        wxCommandEvent event(wxEVT_BROWSE_FINISHED);
+        wxPostEvent(this, event);
+    }
+}
+
+void ServiceBrowser::OnStop(wxCommandEvent& event)
+{
+    Stop();
 }
 
 void ServiceBrowser::LogError(const wxString& sError)
