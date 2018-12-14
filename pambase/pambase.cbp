@@ -125,7 +125,6 @@
 					<Add library="BasicUsageEnvironment" />
 					<Add library="UsageEnvironment" />
 					<Add library="groupsock" />
-					<Add library="dns_sd" />
 					<Add directory="/usr/lib/arm-linux-gnueabihf/" />
 				</Linker>
 				<ExtraCommands>
@@ -159,7 +158,6 @@
 					<Add library="libBasicUsageEnvironment.a" />
 					<Add library="libUsageEnvironment.a" />
 					<Add library="libgroupsock.a" />
-					<Add library="dns_sd" />
 				</Linker>
 			</Target>
 		</Build>

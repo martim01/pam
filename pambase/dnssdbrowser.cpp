@@ -17,7 +17,6 @@ DNSServiceBrowser::DNSServiceBrowser(wxEvtHandler* pHandler) :
 DNSServiceBrowser::~DNSServiceBrowser()
 {
     delete m_pBrowser;
-
 }
 
 bool DNSServiceBrowser::Start(const std::set<wxString>& setServices)
