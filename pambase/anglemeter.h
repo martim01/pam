@@ -28,6 +28,8 @@ public:
 
     void ShowValue(double dValue[2]);
 
+    void ShowSurround(bool bSurround);
+
 
     void SetRouting(short nRouting);
     void SetMeterDisplay(short nDisplay);
@@ -59,7 +61,7 @@ protected:
 
 
     void WorkoutAngles(double dLevel, double& dAngle);
-
+    bool m_bSurround;
 
     uiRect m_uiLabel;
     uiRect m_uiLevelText[2];

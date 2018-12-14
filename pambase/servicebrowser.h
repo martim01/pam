@@ -26,7 +26,7 @@ class ServiceBrowser : public wxEvtHandler
 public:
 	ServiceBrowser(wxEvtHandler* pHandler);
     ~ServiceBrowser();
-	bool StartBrowser();
+	bool StartBrowser(const std::set<wxString>& setServices);
 
 
 	std::map<wxString, dnsService*> m_mServices;
@@ -46,6 +46,7 @@ public:
 
 
 	void OnTimer(wxTimerEvent& event);
+    std::set<wxString> m_setServices;
 
 	wxEvtHandler* m_pHandler;
 	wxTimer m_timerBrowser;

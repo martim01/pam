@@ -53,8 +53,9 @@ ServiceBrowser::ServiceBrowser(wxEvtHandler* pHandler)
 }
 
 
-bool ServiceBrowser::StartBrowser()
+bool ServiceBrowser::StartBrowser(const std::set<wxString>& setServices)
 {
+    m_setServices = setServices;
 	DNSServiceRef client = NULL;
 	DNSServiceErrorType err = DNSServiceBrowse(&client, 0, 0, "_services._dns-sd._udp", "", IterateServiceTypes, this );
 	if ( err == 0 )
@@ -153,24 +154,27 @@ void DNSSD_API ServiceBrowser::IterateTypes( DNSServiceRef sdRef, DNSServiceFlag
 		std::string service_type = serviceName;
         service_type += '.';
 		service_type += r.c_str();
-        auto itService = m_setServiceTypes.find( service_type );
-        if ( itService == m_setServiceTypes.end() )
+		if(m_setServices.find(wxString::FromAscii(service_type.c_str())) != m_setServices.end())
         {
-            m_setServiceTypes.insert( service_type );
-            dnsService* pService = new dnsService(wxString::FromAscii(service_type.c_str()));
+            auto itService = m_setServiceTypes.find( service_type );
+            if ( itService == m_setServiceTypes.end() )
+            {
+                m_setServiceTypes.insert( service_type );
+                dnsService* pService = new dnsService(wxString::FromAscii(service_type.c_str()));
 
-            DNSServiceRef client = NULL;
-	        DNSServiceErrorType err = DNSServiceBrowse( &client,  0,  0,  service_type.c_str(),  "",  IterateServiceInstances,  context );
+                DNSServiceRef client = NULL;
+                DNSServiceErrorType err = DNSServiceBrowse( &client,  0,  0,  service_type.c_str(),  "",  IterateServiceInstances,  context );
 
-            if ( err == 0 )
-			{
-                m_mClientToFd[client] = DNSServiceRefSockFD(client);
-                m_mServRefToString[client] = pService->sService;
-                m_mServices.insert(make_pair(pService->sService, pService));
-            }
-            else
-			{
-				wxLogDebug(wxT("Error trying to browse service type: %s"), wxString::FromAscii(service_type.c_str()).c_str());
+                if ( err == 0 )
+                {
+                    m_mClientToFd[client] = DNSServiceRefSockFD(client);
+                    m_mServRefToString[client] = pService->sService;
+                    m_mServices.insert(make_pair(pService->sService, pService));
+                }
+                else
+                {
+                    wxLogDebug(wxT("Error trying to browse service type: %s"), wxString::FromAscii(service_type.c_str()).c_str());
+                }
             }
         }
 	}

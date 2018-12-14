@@ -96,7 +96,7 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
     {
         case INPUT:
             wmLog::Get()->Log(wxString::Format(wxT("Attempt to open %d channel INPUT stream on device %d"), m_nChannelsIn, m_nDevice));
-            err = Pa_OpenStream(&m_pStream, &inputParameters, 0, m_nSampleRate, 2048, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
+            err = Pa_OpenStream(&m_pStream, &inputParameters, 0, m_nSampleRate, 1024, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
             break;
         case OUTPUT:
             wmLog::Get()->Log(wxString::Format(wxT("Attempt to open %d channel OUTPUT stream on device %d"), m_nChannelsOut, m_nDevice));

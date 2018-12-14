@@ -145,8 +145,8 @@ void pnlAngleMeters::CreateMeters()
         else
         {
             m_vMeters.resize(2);
-            m_vMeters[0] = new AngleMeter(this, wxID_ANY, wxT("Left/Right"), -70.0, AngleMeter::LEFT_RIGHT, 0, wxPoint(10,60), wxSize(380,200));
-            m_vMeters[1] = new AngleMeter(this, wxID_ANY, wxT("Mono/Stereo"), -70.0, AngleMeter::MONO_STEREO, 0, wxPoint(400,60), wxSize(380,200));
+            m_vMeters[0] = new AngleMeter(this, wxID_ANY, wxT("Left/Right"), -70.0, AngleMeter::LEFT_RIGHT, 0, wxPoint(10,60), wxSize(380,250));
+            m_vMeters[1] = new AngleMeter(this, wxID_ANY, wxT("Mono/Stereo"), -70.0, AngleMeter::MONO_STEREO, 0, wxPoint(400,60), wxSize(380,250));
             m_vMeters[0]->SetInputChannels(2);
             m_vMeters[1]->SetInputChannels(2);
         }
@@ -339,5 +339,13 @@ void pnlAngleMeters::DisplayPeakLevelAsText(bool bShow)
     for(size_t i= 0; i < m_vMeters.size(); i++)
     {
         m_vMeters[i]->DisplayPeakLevelAsText(bShow);
+    }
+}
+
+void pnlAngleMeters::ShowSurround(bool bShow)
+{
+    for(size_t i= 0; i < m_vMeters.size(); i++)
+    {
+        m_vMeters[i]->ShowSurround(bShow);
     }
 }

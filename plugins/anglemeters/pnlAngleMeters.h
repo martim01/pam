@@ -39,6 +39,7 @@ class pnlAngleMeters: public wxPanel
         void UpdateMeterStereo();
         void DisplayCurrentLevelAsText(bool bShow);
         void DisplayPeakLevelAsText(bool bShow);
+        void ShowSurround(bool bShow);
 
 	protected:
 
