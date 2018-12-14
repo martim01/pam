@@ -3,6 +3,7 @@
 #include <wx/dcbuffer.h>
 #include <list>
 #include <wx/dcmemory.h>
+#include <wx/log.h>
 #include <algorithm>
 #include "levelcalculator.h"
 using namespace std;
@@ -15,6 +16,7 @@ END_EVENT_TABLE()
 
 AngleMeter::AngleMeter()
     : pmControl()
+    , m_bSurround(true)
     , m_dMin(-70)
     , m_dMax(0)
     , m_nMeterDisplay(PEAK)
@@ -199,6 +201,12 @@ void AngleMeter::OnPaint(wxPaintEvent& event)
 }
 
 
+void AngleMeter::ShowSurround(bool bSurround)
+{
+    m_bSurround = bSurround;
+    InitMeter(m_uiLabel.GetLabel(), m_dMin);
+}
+
 void AngleMeter::InitMeter(const wxString& sText,double dMin)
 {
     m_dMin = dMin;
@@ -211,23 +219,33 @@ void AngleMeter::InitMeter(const wxString& sText,double dMin)
 
     m_uiLabel.SetLabel(sText);
 
-    m_nBevel = GetClientSize().x/15;
+    //m_bSurround= false;
+    if(m_bSurround)
+    {
+        m_nBevel = GetClientSize().x/15;
+    }
+    else
+    {
+        m_nBevel = 3;
+    }
 
-    m_uiLabel.SetRect(30,GetClientRect().GetBottom()-m_nBevel, GetClientRect().GetWidth()-60, m_nBevel);
-    m_uiLabel.SetBackgroundColour(wxColour(50,50,50));
-    m_uiLabel.SetGradient(0);
+
 
     m_rectGrid = wxRect(m_nBevel, m_nBevel, GetClientSize().x-2-(m_nBevel*2), GetClientSize().y-25-(m_nBevel*2));
 
-    m_uiType.SetRect(m_rectGrid.GetRight()-80, m_rectGrid.GetBottom()-40, 70, 30);
+    m_uiLabel.SetRect(m_rectGrid.GetLeft()+10,m_rectGrid.GetBottom()-30, 70, 25);
+    m_uiLabel.SetBackgroundColour(*wxBLACK);
+    m_uiLabel.SetGradient(0);
+
+    m_uiType.SetRect(m_rectGrid.GetRight()-80, m_rectGrid.GetBottom()-30, 70, 25);
     m_uiType.SetBackgroundColour(*wxBLACK);
 
-    m_uiLevelText[0].SetRect(m_rectGrid.GetLeft()+5,GetClientRect().GetBottom()-23-m_nBevel, m_rectGrid.GetWidth()/4-2, 20);
-    m_uiPeakText[0].SetRect(m_uiLevelText[0].GetRight()+2,GetClientRect().GetBottom()-23-m_nBevel, m_rectGrid.GetWidth()/4-5, 20);
+    m_uiLevelText[0].SetRect(m_rectGrid.GetLeft()+5, m_rectGrid.GetBottom(), m_rectGrid.GetWidth()/4-2, 20);
+    m_uiPeakText[0].SetRect(m_uiLevelText[0].GetRight()+2, m_uiLevelText[0].GetTop(), m_rectGrid.GetWidth()/4-5, 20);
 
     int nLeft(m_rectGrid.GetLeft()+m_rectGrid.GetWidth()/2+5);
-    m_uiLevelText[1].SetRect(nLeft,GetClientRect().GetBottom()-23-m_nBevel, m_rectGrid.GetWidth()/4-2, 20);
-    m_uiPeakText[1].SetRect(m_uiLevelText[1].GetRight()+2,GetClientRect().GetBottom()-23-m_nBevel, m_rectGrid.GetWidth()/4-5, 20);
+    m_uiLevelText[1].SetRect(nLeft, m_uiLevelText[0].GetTop(), m_rectGrid.GetWidth()/4-2, 20);
+    m_uiPeakText[1].SetRect(m_uiLevelText[1].GetRight()+2, m_uiLevelText[0].GetTop(), m_rectGrid.GetWidth()/4-5, 20);
 
     m_uiLevelText[0].SetGradient(0);
     m_uiLevelText[0].SetBackgroundColour(wxColour(0,0,150));
@@ -293,9 +311,9 @@ void AngleMeter::ShowValue(double dValue[2])
 
 void AngleMeter::WorkoutAngles(double dLevel, double& dAngle)
 {
-
-    dAngle = ((dLevel-(m_dMin/2.0))*m_dAngleRatio);
-    dAngle = max(-55.0, min(55.0, dAngle))*M_PI/180.0;
+    dAngle = -45 + (max(dLevel, m_dMin)-m_dMin)*m_dAngleRatio;
+    dAngle *= M_PI/180.0;
+    //dAngle = max(-45.0, min(45.0, dAngle))*M_PI/180.0;
 
 }
 
@@ -329,8 +347,11 @@ void AngleMeter::SetLevels(const std::vector<double>& vLevels, double dOffset, d
     m_dOffset = dOffset;
     m_dScalingFactor = dScaling;
     m_dMin = vLevels[0];
+    m_dMax = vLevels[vLevels.size()-1];
 
-    m_dAngleRatio = 110/(-m_dMin);
+
+    m_dAngleRatio = 90/(m_dMax-m_dMin);
+
 
     m_dOverMod = dOverMod;
     m_sReference = sReference;

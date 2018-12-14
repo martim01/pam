@@ -8,6 +8,7 @@
 
 //(*IdInit(pnlOptions)
 const long pnlOptions::ID_M_PBTN11 = wxNewId();
+const long pnlOptions::ID_M_PBTN1 = wxNewId();
 const long pnlOptions::ID_M_PBTN12 = wxNewId();
 const long pnlOptions::ID_M_PLST25 = wxNewId();
 const long pnlOptions::ID_M_PLST1 = wxNewId();
@@ -27,6 +28,9 @@ pnlOptions::pnlOptions(wxWindow* parent,AngleMetersBuilder* pBuilder, wxWindowID
 	SetBackgroundColour(wxColour(0,0,0));
 	m_pbnFreeze = new wmButton(this, ID_M_PBTN11, _("Freeze Meter"), wxPoint(95,165), wxSize(90,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN11"));
 	m_pbnFreeze->SetColourSelected(wxColour(wxT("#800000")));
+	m_pbtnSurround = new wmButton(this, ID_M_PBTN1, _("Surround"), wxPoint(2,130), wxSize(195,30), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
+	m_pbtnSurround->SetColourSelected(wxColour(wxT("#800000")));
+	m_pbtnSurround->SetToggleLook(true, wxT("Hide"), wxT("Show"), 55);
 	m_pbtnMeterClear = new wmButton(this, ID_M_PBTN12, _("Clear"), wxPoint(2,165), wxSize(90,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN12"));
 	m_pbtnMeterClear->SetColourSelected(wxColour(wxT("#800000")));
 	m_plstMeter_Peaks = new wmList(this, ID_M_PLST25, wxPoint(0,0), wxSize(190,42), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 3, wxSize(5,5));
@@ -35,10 +39,12 @@ pnlOptions::pnlOptions(wxWindow* parent,AngleMetersBuilder* pBuilder, wxWindowID
 	m_plstText->SetBackgroundColour(wxColour(0,0,0));
 	m_pLbl1 = new wmLabel(this, ID_M_PLBL1, _("Display Level As Text"), wxPoint(0,50), wxSize(200,0), 0, _T("ID_M_PLBL1"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl1->GetUiRect().SetGradient(0);
 	m_pLbl1->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl1->SetBackgroundColour(wxColour(128,0,255));
 
 	Connect(ID_M_PBTN11,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlOptions::OnbnFreezeClick);
+	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlOptions::OnbtnSurroundClick);
 	Connect(ID_M_PBTN12,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlOptions::OnbtnMeterClearClick);
 	Connect(ID_M_PLST25,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlOptions::OnlstMeter_PeaksSelected);
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlOptions::OnlstTextSelected);
@@ -52,7 +58,7 @@ pnlOptions::pnlOptions(wxWindow* parent,AngleMetersBuilder* pBuilder, wxWindowID
 	m_plstText->AddButton(wxT("Peak"));
 
 
-
+    m_pbtnSurround->ToggleSelection(m_pBuilder->ReadSetting(wxT("Surround"), 1), true);
 	//m_pbtnMeterShading->SetToggleLook(true, wxT("Solid"), wxT("Graded"), 50.0);
 
 	m_plstMeter_Peaks->SelectButton(m_pBuilder->ReadSetting(wxT("Peaks"), 1), true);
@@ -95,4 +101,9 @@ void pnlOptions::OnlstTextSelected(wxCommandEvent& event)
 {
     m_pBuilder->WriteSetting(wxT("DisplayText_Current"), m_plstText->IsSelected(0));
     m_pBuilder->WriteSetting(wxT("DisplayText_Peak"), m_plstText->IsSelected(1));
+}
+
+void pnlOptions::OnbtnSurroundClick(wxCommandEvent& event)
+{
+    m_pBuilder->WriteSetting(wxT("Surround"), event.IsChecked());
 }

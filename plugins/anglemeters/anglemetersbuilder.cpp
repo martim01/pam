@@ -22,6 +22,7 @@ m_pAngleMeters(0)
     RegisterForSettingsUpdates(wxT("Stereo"), this);
     RegisterForSettingsUpdates(wxT("DisplayText_Current"), this);
     RegisterForSettingsUpdates(wxT("DisplayText_Peak"), this);
+    RegisterForSettingsUpdates(wxT("Surround"), this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&AngleMetersBuilder::OnSettingChanged);
 
@@ -114,7 +115,10 @@ void AngleMetersBuilder::OnSettingChanged(SettingEvent& event)
     {
         m_pAngleMeters->DisplayPeakLevelAsText(ReadSetting(wxT("DisplayText_Peak"),1));
     }
-
+    else if(event.GetKey() == wxT("Surround"))
+    {
+        m_pAngleMeters->ShowSurround(event.GetValue(true));
+    }
 }
 
 

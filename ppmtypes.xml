@@ -12,7 +12,7 @@
 	</ppm_type>
 	<ppm_type>
 		<name>EBU</name>
-		<scale>-34,-30,-26,-22,-18,-14,-10,-6,-2</scale>
+		<scale>-30,-26,-22,-18,-14,-10,-6</scale>
 		<offset>-18</offset>
 		<risetime>10</risetime>
 		<falltime>2800</falltime>

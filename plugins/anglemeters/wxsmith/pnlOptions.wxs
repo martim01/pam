@@ -12,6 +12,18 @@
 			<style>wmButton::STYLE_SELECT</style>
 			<handler function="OnbnFreezeClick" entry="EVT_BUTTON" />
 		</object>
+		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnSurround" member="yes">
+			<label>Surround</label>
+			<button_pressed>#800000</button_pressed>
+			<toggle_look>1</toggle_look>
+			<toggle_left>Hide</toggle_left>
+			<toggle_right>Show</toggle_right>
+			<toggle_percent>55</toggle_percent>
+			<pos>2,130</pos>
+			<size>195,30</size>
+			<style>wmButton::STYLE_SELECT</style>
+			<handler function="OnbtnSurroundClick" entry="EVT_BUTTON" />
+		</object>
 		<object class="wmButton" name="ID_M_PBTN12" variable="m_pbtnMeterClear" member="yes">
 			<label>Clear</label>
 			<button_pressed>#800000</button_pressed>

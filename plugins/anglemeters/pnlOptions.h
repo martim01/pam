@@ -21,6 +21,7 @@ class pnlOptions: public wxPanel
 		wmLabel* m_pLbl1;
 		wmList* m_plstMeter_Peaks;
 		wmButton* m_pbnFreeze;
+		wmButton* m_pbtnSurround;
 		wmList* m_plstText;
 		wmButton* m_pbtnMeterClear;
 		//*)
@@ -29,6 +30,7 @@ class pnlOptions: public wxPanel
 
 		//(*Identifiers(pnlOptions)
 		static const long ID_M_PBTN11;
+		static const long ID_M_PBTN1;
 		static const long ID_M_PBTN12;
 		static const long ID_M_PLST25;
 		static const long ID_M_PLST1;
@@ -46,6 +48,7 @@ class pnlOptions: public wxPanel
 		void OnbtnM3M6Click(wxCommandEvent& event);
 		void OnbtnShadingClick(wxCommandEvent& event);
 		void OnlstTextSelected(wxCommandEvent& event);
+		void OnbtnSurroundClick(wxCommandEvent& event);
 		//*)
 
 		AngleMetersBuilder* m_pBuilder;
