@@ -207,8 +207,8 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	SetPosition(pos);
 
 	m_plstServices->AddButton(wxT("RTSP"));
-	m_plstServices->AddButton(wxT("SIP"));
-	m_plstServices->AddButton(wxT("NMOS"));
+	//m_plstServices->AddButton(wxT("SIP"));
+	//m_plstServices->AddButton(wxT("NMOS"));
 
 	m_pBrowser = 0;
 	m_pSapWatch = 0;

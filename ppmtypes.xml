@@ -1,14 +1,14 @@
 <pam>
 	<ppm_type>
 		<name>BBC</name>
-		<scale>-34,-30,-26,-22,-18,-14,-10,-6,-2</scale>
+		<scale>-30,-26,-22,-18,-14,-10,-6</scale>
 		<offset>-34</offset>
 		<risetime>10</risetime>
 		<falltime>2800</falltime>
 		<falldb>24</falldb>
 		<units></units>
 		<scaling>4</scaling>
-		<overmod>-10</overmod>
+		<overmod>0</overmod>
 	</ppm_type>
 	<ppm_type>
 		<name>EBU</name>

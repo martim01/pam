@@ -311,7 +311,8 @@ void AngleMeter::ShowValue(double dValue[2])
 
 void AngleMeter::WorkoutAngles(double dLevel, double& dAngle)
 {
-    dAngle = -45 + (max(dLevel, m_dMin)-m_dMin)*m_dAngleRatio;
+    dAngle = -40 + (max(dLevel, m_dMin-6)-m_dMin)*m_dAngleRatio;
+    dAngle = max(min(dAngle, 45.0), -45.0);
     dAngle *= M_PI/180.0;
     //dAngle = max(-45.0, min(45.0, dAngle))*M_PI/180.0;
 
@@ -350,7 +351,7 @@ void AngleMeter::SetLevels(const std::vector<double>& vLevels, double dOffset, d
     m_dMax = vLevels[vLevels.size()-1];
 
 
-    m_dAngleRatio = 90/(m_dMax-m_dMin);
+    m_dAngleRatio = 80/(m_dMax-m_dMin);
 
 
     m_dOverMod = dOverMod;
