@@ -33,6 +33,7 @@ pnlLevels::pnlLevels(wxWindow* parent,LevelsBuilder* pBuilder, wxWindowID id,con
 	SetBackgroundColour(wxColour(0,0,0));
 	m_pLbl12 = new wmLabel(this, ID_M_PLBL37, _("Level Measurements"), wxPoint(0,0), wxSize(600,40), 0, _T("ID_M_PLBL37"));
 	m_pLbl12->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl12->GetUiRect().SetGradient(0);
 	m_pLbl12->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl12->SetBackgroundColour(wxColour(91,149,57));
 	wxFont m_pLbl12Font(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
@@ -45,6 +46,7 @@ pnlLevels::pnlLevels(wxWindow* parent,LevelsBuilder* pBuilder, wxWindowID id,con
 	m_pAmplitude = new wmSlider(this,ID_CUSTOM1,wxT("Range"),wxPoint(270,425),wxSize(265,40),5,_T("ID_CUSTOM1"));
 	m_plbldB = new wmLabel(this, ID_M_PLBL9, _("dB"), wxPoint(540,425), wxSize(60,40), 0, _T("ID_M_PLBL9"));
 	m_plbldB->SetBorderState(uiRect::BORDER_NONE);
+	m_plbldB->GetUiRect().SetGradient(0);
 	m_plbldB->SetForegroundColour(wxColour(0,0,0));
 	m_plbldB->SetBackgroundColour(wxColour(255,255,255));
 

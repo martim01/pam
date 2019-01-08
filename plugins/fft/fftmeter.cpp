@@ -370,9 +370,6 @@ void FftMeter::DoFFT()
 void FftMeter::FFTRoutine()
 {
     FFTAlgorithm fft;
-
-
-
     m_vfft_out = fft.DoFFT(m_lstBuffer, m_nSampleRate, m_nChannels, m_nFFTAnalyse, m_nWindowType, m_vfft_out.size(), m_nOverlap);
     m_dBinSize = static_cast<double>(m_nSampleRate)/static_cast<double>((m_vfft_out.size()-1)*2);
     float dMax(-80);

@@ -51,7 +51,14 @@
 		<Project filename="plugins/bufferlog/bufferlog.cbp" />
 		<Project filename="plugins/LTC/LTC.cbp" />
 		<Project filename="plugins/LTCGenerator/LTCGenerator.cbp" />
+		<Project filename="plugins/lineup/lineup.cbp">
+			<Depends filename="manifest_creator/manifest_creator.cbp" />
+			<Depends filename="pambase/pambase.cbp" />
+			<Depends filename="pamfft/pamfft.cbp" />
+			<Depends filename="pamlevel/pamlevel.cbp" />
+		</Project>
 		<Project filename="pam2/pam2.cbp">
+			<Depends filename="pambase/pambase.cbp" />
 			<Depends filename="pamfft/pamfft.cbp" />
 			<Depends filename="pamlevel/pamlevel.cbp" />
 			<Depends filename="plugins/fft/fft.cbp" />
@@ -74,7 +81,7 @@
 			<Depends filename="plugins/bufferlog/bufferlog.cbp" />
 			<Depends filename="plugins/LTC/LTC.cbp" />
 			<Depends filename="plugins/LTCGenerator/LTCGenerator.cbp" />
-			<Depends filename="pambase/pambase.cbp" />
+			<Depends filename="plugins/lineup/lineup.cbp" />
 		</Project>
 		<Project filename="pamupdatemanager/pamupdatemanager.cbp">
 			<Depends filename="pambase/pambase.cbp" />

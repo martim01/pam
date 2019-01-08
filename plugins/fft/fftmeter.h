@@ -133,8 +133,6 @@ class FftMeter : public pmControl
         void OnTimerNudge(wxTimerEvent& event);
 
         std::list<float> m_lstBuffer;      ///< vector containing the a-leg samples
-
-        //std::vector<kiss_fft_scalar> m_vfft_in;
         std::vector<kiss_fft_cpx> m_vfft_out;
 
         std::queue<freq_mag> m_qResult;

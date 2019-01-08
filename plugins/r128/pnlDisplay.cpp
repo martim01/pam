@@ -28,6 +28,7 @@ pnlDisplay::pnlDisplay(wxWindow* parent,R128Builder* pBuilder,wxWindowID id,cons
 	SetFont(thisFont);
 	m_pLbl1 = new wmLabel(this, ID_M_PLBL1, _("Meters To Show"), wxPoint(0,0), wxSize(200,30), 0, _T("ID_M_PLBL1"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl1->GetUiRect().SetGradient(0);
 	m_pLbl1->SetBackgroundColour(wxColour(0,64,0));
 	m_plstShow = new wmList(this, ID_M_PLST1, wxPoint(0,30), wxSize(200,200), wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI, 0, wxSize(-1,-1), 2, wxSize(5,5));
 	m_plstShow->SetBackgroundColour(wxColour(0,0,0));
