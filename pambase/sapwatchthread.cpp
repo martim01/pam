@@ -26,6 +26,7 @@ void* SapWatchThread::Entry()
 
     // Create a 'groupsock' for the input multicast group,port:
     char const* sessionAddressStr = "239.255.255.255";
+    //char const* sessionAddressStr = "224.0.0.233";
     struct in_addr sessionAddress;
     sessionAddress.s_addr = our_inet_addr(sessionAddressStr);
 

@@ -374,6 +374,9 @@ void FftMeter::FFTRoutine()
     m_dBinSize = static_cast<double>(m_nSampleRate)/static_cast<double>((m_vfft_out.size()-1)*2);
     float dMax(-80);
     double dMaxBin(0);
+    vector<double> vAmp;
+    vAmp.resize(m_vAmplitude.size());
+
     for(size_t i = 0; i < m_vfft_out.size(); i++)
     {
         float dAmplitude(sqrt( (m_vfft_out[i].r*m_vfft_out[i].r) + (m_vfft_out[i].i*m_vfft_out[i].i)));
@@ -382,6 +385,7 @@ void FftMeter::FFTRoutine()
             dAmplitude=-dAmplitude;
         }
         dAmplitude /= static_cast<float>(m_vfft_out.size());
+        vAmp[i] = dAmplitude;
         double dLog = WindowMod(20*log10(dAmplitude));
         dLog = max(dLog, -80.0);
 
@@ -392,8 +396,9 @@ void FftMeter::FFTRoutine()
             dMaxBin = i;
         }
     }
+    double dQ = (vAmp[dMaxBin+1]-vAmp[dMaxBin-1])/(2*(2*vAmp[dMaxBin]-vAmp[dMaxBin-1]-vAmp[dMaxBin+1]));
     m_uiPeakLevel.SetLabel(wxString::Format(wxT("%.1f"),dMax));
-    m_uiPeakFrequency.SetLabel(wxString::Format(wxT("%.0fHz"),dMaxBin*m_dBinSize));
+    m_uiPeakFrequency.SetLabel(wxString::Format(wxT("%.0fHz"),(dQ+dMaxBin)*m_dBinSize));
 }
 
 float FftMeter::WindowMod(float dAmplitude)

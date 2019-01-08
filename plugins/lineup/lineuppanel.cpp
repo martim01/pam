@@ -5,7 +5,7 @@
 #include "fftAlgorithm.h"
 #include "levelcalculator.h"
 #include "ppmtypes.h"
-
+#include <wx/log.h>
 //(*InternalHeaders(lineupPanel)
 #include <wx/font.h>
 #include <wx/intl.h>
@@ -123,16 +123,17 @@ lineupPanel::lineupPanel(wxWindow* parent,lineupBuilder* pBuilder, wxWindowID id
 	SetSize(size);
 	SetPosition(pos);
 
+	m_nChannels = 2;
     m_nChannel[0] = 0;
 	m_nChannel[1] = 1;
 
 	m_vBufferL.reserve(4096);
     m_vBufferR.reserve(4096);
 
-    m_nSampleSize = 4096;
-    m_vfft_out.resize((m_nSampleSize/2)+1);
+    long nBins = 4096;
+    m_vfft_out.resize(nBins+1);
 
-
+    m_nSampleSize = (m_vfft_out.size()-1)*2*m_nChannels;
     m_pLevelCalc = new LevelCalculator(-70.0);
 
 	m_pCalc = 0;
@@ -155,13 +156,18 @@ lineupPanel::~lineupPanel()
 void lineupPanel::SetAudioData(const timedbuffer* pBuffer)
 {
     m_pLevelCalc->CalculateLevel(pBuffer);
-    m_plblLevelL->SetLabel(wxString::Format(wxT("%.2f dbFS"), m_pLevelCalc->GetLevel(0)));
-    m_plblLevelR->SetLabel(wxString::Format(wxT("%.2f dbFS"), m_pLevelCalc->GetLevel(1)));
+    m_plblLevelL->SetLabel(wxString::Format(wxT("%.2f dBFS"), m_pLevelCalc->GetLevel(0)));
+    m_plblLevelR->SetLabel(wxString::Format(wxT("%.2f dBFS"), m_pLevelCalc->GetLevel(1)));
 
+
+    for(size_t i = 0; i < pBuffer->GetBufferSize(); i++)
+    {
+        m_lstBuffer.push_back(pBuffer->GetBuffer()[i]);
+    }
 
     for(size_t i = 0; i < pBuffer->GetBufferSize(); i+=m_nChannels)
     {
-        if(m_vBufferL.size() == 48000)
+        if(m_vBufferL.size() == 4096)
         {
             if(m_pCalc == 0)
             {
@@ -171,7 +177,7 @@ void lineupPanel::SetAudioData(const timedbuffer* pBuffer)
             }
             break;
         }
-        else
+        else if(m_pCalc == 0)
         {
             m_vBufferL.push_back(pBuffer->GetBuffer()[i+m_nChannel[0]]);
             m_vBufferR.push_back(pBuffer->GetBuffer()[i+m_nChannel[1]]);
@@ -191,6 +197,8 @@ void lineupPanel::InputSession(const session& aSession)
         m_nSampleRate = 48000;
         m_nChannels = 2;
     }
+
+    m_nSampleSize = (m_vfft_out.size()-1)*2*m_nChannels;
 
     m_pLevelCalc->InputSession(aSession);
 }
@@ -212,22 +220,11 @@ void lineupPanel::OnOffsetDone(wxCommandEvent& event)
     m_pCalc = 0;
 
     //copy the data in to the buffer and do the fft
-    m_lstBuffer.clear();
-    for(size_t i = 0; i < m_vBufferL.size(); i++)
+    while(m_lstBuffer.size() > m_nSampleSize)
     {
-        if(m_lstBuffer.size() < m_nSampleSize)
-        {
-            m_lstBuffer.push_back(m_vBufferL[i]);
-            m_lstBuffer.push_back(m_vBufferR[i]);
-        }
-        else
-        {
-            break;
-        }
+        DoFFT(false);
     }
-    DoFFT(false);
-    DoFFT(true);
-
+    //DoFFT(true);
 
     m_vBufferL.clear();
     m_vBufferR.clear();
@@ -236,13 +233,12 @@ void lineupPanel::OnOffsetDone(wxCommandEvent& event)
 
     m_dOffsetSamples = event.GetInt();
 
-    double dPhase = (480000.0/m_dDominantFrequency[0])*m_dOffsetSamples;
+    double dDegPerSample = 360.0/(48000.0/m_dDominantFrequency[0]);
+    double dPhase = dDegPerSample*m_dOffsetSamples;
 
     m_plblDominantHzL->SetLabel(wxString::Format(wxT("%.f Hz"), m_dDominantFrequency[0]));
-    m_plblDominantdBL->SetLabel(wxString::Format(wxT("%.2f dbFS"), m_dDominantLevel[0]));
+    m_plblDominantdBL->SetLabel(wxString::Format(wxT("%.2f dBFS"), m_dDominantLevel[0]));
 
-    m_plblDominantHzR->SetLabel(wxString::Format(wxT("%.f Hz"), m_dDominantFrequency[1]));
-    m_plblDominantdBR->SetLabel(wxString::Format(wxT("%.2f dbFS"), m_dDominantLevel[1]));
 
     m_plblPhaseSamples->SetLabel(wxString::Format(wxT("%.0f"), m_dOffsetSamples));
     m_plblPhaseDegrees->SetLabel(wxString::Format(wxT("%.2f'"), dPhase));
@@ -251,10 +247,13 @@ void lineupPanel::OnOffsetDone(wxCommandEvent& event)
 void lineupPanel::DoFFT(bool bRight)
 {
     FFTAlgorithm fft;
-    m_vfft_out = fft.DoFFT(m_lstBuffer, m_nSampleRate, m_nChannels, bRight, 4, m_vfft_out.size(), 50.0);
+    m_vfft_out = fft.DoFFT(m_lstBuffer, m_nSampleRate, m_nChannels, bRight, 5, m_vfft_out.size(), m_nSampleSize/2);
     double dBinSize = static_cast<double>(m_nSampleRate)/static_cast<double>((m_vfft_out.size()-1)*2);
     float dMax(-80);
     double dMaxBin(0);
+
+    std::vector<double> vAmplitude;
+    vAmplitude.resize(m_vfft_out.size());
     for(size_t i = 0; i < m_vfft_out.size(); i++)
     {
         float dAmplitude(sqrt( (m_vfft_out[i].r*m_vfft_out[i].r) + (m_vfft_out[i].i*m_vfft_out[i].i)));
@@ -263,15 +262,38 @@ void lineupPanel::DoFFT(bool bRight)
             dAmplitude=-dAmplitude;
         }
         dAmplitude /= static_cast<float>(m_vfft_out.size());
-        double dLog = (20*log10(dAmplitude))* 0.724;
-        dLog = std::max(dLog, -80.0);
+        vAmplitude[i] = dAmplitude;
 
-        if(dMax <dLog)
+        if(dMax <vAmplitude[i])
         {
-            dMax =dLog;
+            dMax =vAmplitude[i];
             dMaxBin = i;
         }
     }
-    m_dDominantFrequency[bRight] = dMaxBin*dBinSize;
-    m_dDominantLevel[bRight] = dMax;
+
+    //Quinn estimator
+    /*
+    double ap = (m_vfft_out[dMaxBin+1].r*m_vfft_out[dMaxBin].r + m_vfft_out[dMaxBin+1].i*m_vfft_out[dMaxBin].i)/(m_vfft_out[dMaxBin].r*m_vfft_out[dMaxBin].r+m_vfft_out[dMaxBin].i*m_vfft_out[dMaxBin].i);
+    double am = (m_vfft_out[dMaxBin-1].r*m_vfft_out[dMaxBin].r + m_vfft_out[dMaxBin-1].i*m_vfft_out[dMaxBin].i)/(m_vfft_out[dMaxBin].r*m_vfft_out[dMaxBin].r+m_vfft_out[dMaxBin].i*m_vfft_out[dMaxBin].i);
+
+    double dp = -ap/(1-ap);
+    double dm = am/(1-am);
+
+    if(dp >0 && dm > 0)
+    {
+        m_dDominantFrequency[bRight] = (dMaxBin+dp)*dBinSize;
+    }
+    else
+    {
+        m_dDominantFrequency[bRight] = (dMaxBin+dm)*dBinSize;
+    }
+    */
+
+
+    //double dB = (vAmplitude[dMaxBin+1]-vAmplitude[dMaxBin-1])/(vAmplitude[dMaxBin+1]+vAmplitude[dMaxBin-1]+vAmplitude[dMaxBin]);
+    double dQ = (vAmplitude[dMaxBin+1]-vAmplitude[dMaxBin-1])/(2*(2*vAmplitude[dMaxBin]-vAmplitude[dMaxBin-1]-vAmplitude[dMaxBin+1]));
+
+    m_dDominantFrequency[bRight] = round((dMaxBin+dQ)*dBinSize);
+    m_dDominantLevel[bRight] = 20*log10(dMax)*0.714;
+
 }
