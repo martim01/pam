@@ -5,7 +5,7 @@
 		<pos_arg>1</pos_arg>
 		<size_arg>1</size_arg>
 		<object class="wmLabel" name="ID_M_PLBL8" variable="m_pLbl2" member="yes">
-			<label>Level:</label>
+			<label>Level &amp; Range</label>
 			<pos>5,5</pos>
 			<size>120,81</size>
 			<fg>#FFFFFF</fg>
@@ -34,6 +34,21 @@
 				<face>Tahoma</face>
 			</font>
 		</object>
+		<object class="wmLabel" name="ID_M_PLBL6" variable="m_plblRangeL" member="yes">
+			<label>-12dBFS</label>
+			<pos>277,5</pos>
+			<size>150,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#008040</bg>
+			<font>
+				<size>16</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+		</object>
 		<object class="wmLabel" name="ID_M_PLBL10" variable="m_plblLevelR" member="yes">
 			<label>1000 kHz</label>
 			<pos>126,46</pos>
@@ -49,10 +64,25 @@
 				<face>Tahoma</face>
 			</font>
 		</object>
+		<object class="wmLabel" name="ID_M_PLBL7" variable="m_plblRangeR" member="yes">
+			<label>-12dBFS</label>
+			<pos>277,46</pos>
+			<size>150,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#008040</bg>
+			<font>
+				<size>16</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+		</object>
 		<object class="wmLabel" name="ID_M_PLBL60" variable="m_plblInput" member="yes">
-			<label>Dominant:</label>
+			<label>Frequency:</label>
 			<pos>5,100</pos>
-			<size>120,81</size>
+			<size>120,40</size>
 			<fg>#FFFFFF</fg>
 			<bg>#008040</bg>
 			<font>
@@ -82,36 +112,6 @@
 		<object class="wmLabel" name="ID_M_PLBL2" variable="m_plblDominantdBL" member="yes">
 			<label>-12dBFS</label>
 			<pos>277,100</pos>
-			<size>150,40</size>
-			<fg>#FFFFFF</fg>
-			<bg>#008040</bg>
-			<font>
-				<size>16</size>
-				<style>normal</style>
-				<weight>normal</weight>
-				<underlined>0</underlined>
-				<family>swiss</family>
-				<face>Tahoma</face>
-			</font>
-		</object>
-		<object class="wmLabel" name="ID_M_PLBL6" variable="m_plblDominantHzR" member="yes">
-			<label>1000 kHz</label>
-			<pos>126,141</pos>
-			<size>150,40</size>
-			<fg>#FFFFFF</fg>
-			<bg>#008040</bg>
-			<font>
-				<size>16</size>
-				<style>normal</style>
-				<weight>normal</weight>
-				<underlined>0</underlined>
-				<family>swiss</family>
-				<face>Tahoma</face>
-			</font>
-		</object>
-		<object class="wmLabel" name="ID_M_PLBL7" variable="m_plblDominantdBR" member="yes">
-			<label>-12dBFS</label>
-			<pos>277,141</pos>
 			<size>150,40</size>
 			<fg>#FFFFFF</fg>
 			<bg>#008040</bg>

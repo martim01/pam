@@ -15,12 +15,12 @@
 //(*IdInit(lineupPanel)
 const long lineupPanel::ID_M_PLBL8 = wxNewId();
 const long lineupPanel::ID_M_PLBL9 = wxNewId();
+const long lineupPanel::ID_M_PLBL6 = wxNewId();
 const long lineupPanel::ID_M_PLBL10 = wxNewId();
+const long lineupPanel::ID_M_PLBL7 = wxNewId();
 const long lineupPanel::ID_M_PLBL60 = wxNewId();
 const long lineupPanel::ID_M_PLBL1 = wxNewId();
 const long lineupPanel::ID_M_PLBL2 = wxNewId();
-const long lineupPanel::ID_M_PLBL6 = wxNewId();
-const long lineupPanel::ID_M_PLBL7 = wxNewId();
 const long lineupPanel::ID_M_PLBL3 = wxNewId();
 const long lineupPanel::ID_M_PLBL4 = wxNewId();
 const long lineupPanel::ID_M_PLBL5 = wxNewId();
@@ -39,7 +39,7 @@ lineupPanel::lineupPanel(wxWindow* parent,lineupBuilder* pBuilder, wxWindowID id
 	//(*Initialize(lineupPanel)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
-	m_pLbl2 = new wmLabel(this, ID_M_PLBL8, _("Level:"), wxPoint(5,5), wxSize(120,81), 0, _T("ID_M_PLBL8"));
+	m_pLbl2 = new wmLabel(this, ID_M_PLBL8, _("Level & Range"), wxPoint(5,5), wxSize(120,81), 0, _T("ID_M_PLBL8"));
 	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl2->GetUiRect().SetGradient(0);
 	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
@@ -53,6 +53,13 @@ lineupPanel::lineupPanel(wxWindow* parent,lineupBuilder* pBuilder, wxWindowID id
 	m_plblLevelL->SetBackgroundColour(wxColour(0,128,64));
 	wxFont m_plblLevelLFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_plblLevelL->SetFont(m_plblLevelLFont);
+	m_plblRangeL = new wmLabel(this, ID_M_PLBL6, _("-12dBFS"), wxPoint(277,5), wxSize(150,40), 0, _T("ID_M_PLBL6"));
+	m_plblRangeL->SetBorderState(uiRect::BORDER_NONE);
+	m_plblRangeL->GetUiRect().SetGradient(0);
+	m_plblRangeL->SetForegroundColour(wxColour(255,255,255));
+	m_plblRangeL->SetBackgroundColour(wxColour(0,128,64));
+	wxFont m_plblRangeLFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_plblRangeL->SetFont(m_plblRangeLFont);
 	m_plblLevelR = new wmLabel(this, ID_M_PLBL10, _("1000 kHz"), wxPoint(126,46), wxSize(150,40), 0, _T("ID_M_PLBL10"));
 	m_plblLevelR->SetBorderState(uiRect::BORDER_NONE);
 	m_plblLevelR->GetUiRect().SetGradient(0);
@@ -60,7 +67,14 @@ lineupPanel::lineupPanel(wxWindow* parent,lineupBuilder* pBuilder, wxWindowID id
 	m_plblLevelR->SetBackgroundColour(wxColour(0,128,64));
 	wxFont m_plblLevelRFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_plblLevelR->SetFont(m_plblLevelRFont);
-	m_plblInput = new wmLabel(this, ID_M_PLBL60, _("Dominant:"), wxPoint(5,100), wxSize(120,81), 0, _T("ID_M_PLBL60"));
+	m_plblRangeR = new wmLabel(this, ID_M_PLBL7, _("-12dBFS"), wxPoint(277,46), wxSize(150,40), 0, _T("ID_M_PLBL7"));
+	m_plblRangeR->SetBorderState(uiRect::BORDER_NONE);
+	m_plblRangeR->GetUiRect().SetGradient(0);
+	m_plblRangeR->SetForegroundColour(wxColour(255,255,255));
+	m_plblRangeR->SetBackgroundColour(wxColour(0,128,64));
+	wxFont m_plblRangeRFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_plblRangeR->SetFont(m_plblRangeRFont);
+	m_plblInput = new wmLabel(this, ID_M_PLBL60, _("Frequency:"), wxPoint(5,100), wxSize(120,40), 0, _T("ID_M_PLBL60"));
 	m_plblInput->SetBorderState(uiRect::BORDER_NONE);
 	m_plblInput->GetUiRect().SetGradient(0);
 	m_plblInput->SetForegroundColour(wxColour(255,255,255));
@@ -81,20 +95,6 @@ lineupPanel::lineupPanel(wxWindow* parent,lineupBuilder* pBuilder, wxWindowID id
 	m_plblDominantdBL->SetBackgroundColour(wxColour(0,128,64));
 	wxFont m_plblDominantdBLFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_plblDominantdBL->SetFont(m_plblDominantdBLFont);
-	m_plblDominantHzR = new wmLabel(this, ID_M_PLBL6, _("1000 kHz"), wxPoint(126,141), wxSize(150,40), 0, _T("ID_M_PLBL6"));
-	m_plblDominantHzR->SetBorderState(uiRect::BORDER_NONE);
-	m_plblDominantHzR->GetUiRect().SetGradient(0);
-	m_plblDominantHzR->SetForegroundColour(wxColour(255,255,255));
-	m_plblDominantHzR->SetBackgroundColour(wxColour(0,128,64));
-	wxFont m_plblDominantHzRFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
-	m_plblDominantHzR->SetFont(m_plblDominantHzRFont);
-	m_plblDominantdBR = new wmLabel(this, ID_M_PLBL7, _("-12dBFS"), wxPoint(277,141), wxSize(150,40), 0, _T("ID_M_PLBL7"));
-	m_plblDominantdBR->SetBorderState(uiRect::BORDER_NONE);
-	m_plblDominantdBR->GetUiRect().SetGradient(0);
-	m_plblDominantdBR->SetForegroundColour(wxColour(255,255,255));
-	m_plblDominantdBR->SetBackgroundColour(wxColour(0,128,64));
-	wxFont m_plblDominantdBRFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
-	m_plblDominantdBR->SetFont(m_plblDominantdBRFont);
 	m_pLbl1 = new wmLabel(this, ID_M_PLBL3, _("Phase:"), wxPoint(5,200), wxSize(120,40), 0, _T("ID_M_PLBL3"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl1->GetUiRect().SetGradient(0);
@@ -136,6 +136,8 @@ lineupPanel::lineupPanel(wxWindow* parent,lineupBuilder* pBuilder, wxWindowID id
     m_nSampleSize = (m_vfft_out.size()-1)*2*m_nChannels;
     m_pLevelCalc = new LevelCalculator(-70.0);
 
+
+    m_bFirst = true;
 	m_pCalc = 0;
 	std::map<wxString, ppmtype>::const_iterator itType = PPMTypeManager::Get().FindType(wxT("Digital"));
     if(itType != PPMTypeManager::Get().GetTypeEnd())
@@ -159,6 +161,24 @@ void lineupPanel::SetAudioData(const timedbuffer* pBuffer)
     m_plblLevelL->SetLabel(wxString::Format(wxT("%.2f dBFS"), m_pLevelCalc->GetLevel(0)));
     m_plblLevelR->SetLabel(wxString::Format(wxT("%.2f dBFS"), m_pLevelCalc->GetLevel(1)));
 
+    if(m_bFirst)
+    {
+        m_dLevelMax[0] = m_pLevelCalc->GetLevel(0);
+        m_dLevelMax[1] = m_pLevelCalc->GetLevel(1);
+        m_dLevelMin[0] = m_pLevelCalc->GetLevel(0);
+        m_dLevelMin[1] = m_pLevelCalc->GetLevel(1);
+        m_bFirst = false;
+    }
+    else
+    {
+        m_dLevelMax[0] = std::max(m_pLevelCalc->GetLevel(0), m_dLevelMax[0]);
+        m_dLevelMax[1] = std::max(m_pLevelCalc->GetLevel(1), m_dLevelMax[1]);
+        m_dLevelMin[0] = std::min(m_pLevelCalc->GetLevel(0), m_dLevelMin[0]);
+        m_dLevelMin[1] = std::min(m_pLevelCalc->GetLevel(1), m_dLevelMin[1]);
+    }
+
+    m_plblRangeL->SetLabel(wxString::Format(wxT("%.3f dB"), -(m_dLevelMax[0]-m_dLevelMin[0])));
+    m_plblRangeR->SetLabel(wxString::Format(wxT("%.3f dB"), -(m_dLevelMax[1]-m_dLevelMin[1])));
 
     for(size_t i = 0; i < pBuffer->GetBufferSize(); i++)
     {

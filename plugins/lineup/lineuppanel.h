@@ -26,16 +26,16 @@ class lineupPanel: public pmPanel
 		virtual ~lineupPanel();
 
 		//(*Declarations(lineupPanel)
-		wmLabel* m_plblDominantdBR;
+		wmLabel* m_plblRangeL;
 		wmLabel* m_pLbl1;
 		wmLabel* m_plblLevelL;
+		wmLabel* m_plblRangeR;
 		wmLabel* m_plblPhaseSamples;
 		wmLabel* m_plblPhaseDegrees;
 		wmLabel* m_plblLevelR;
 		wmLabel* m_plblDominantdBL;
 		wmLabel* m_pLbl2;
 		wmLabel* m_plblDominantHzL;
-		wmLabel* m_plblDominantHzR;
 		wmLabel* m_plblInput;
 		//*)
 
@@ -48,12 +48,12 @@ class lineupPanel: public pmPanel
 		//(*Identifiers(lineupPanel)
 		static const long ID_M_PLBL8;
 		static const long ID_M_PLBL9;
+		static const long ID_M_PLBL6;
 		static const long ID_M_PLBL10;
+		static const long ID_M_PLBL7;
 		static const long ID_M_PLBL60;
 		static const long ID_M_PLBL1;
 		static const long ID_M_PLBL2;
-		static const long ID_M_PLBL6;
-		static const long ID_M_PLBL7;
 		static const long ID_M_PLBL3;
 		static const long ID_M_PLBL4;
 		static const long ID_M_PLBL5;
@@ -87,7 +87,11 @@ class lineupPanel: public pmPanel
         double m_dDominantLevel[2];
 
         LevelCalculator* m_pLevelCalc;
+
+        double m_dLevelMin[2];
+        double m_dLevelMax[2];
         double m_dLevel[2];
+        bool m_bFirst;
 		DECLARE_EVENT_TABLE()
 };
 
