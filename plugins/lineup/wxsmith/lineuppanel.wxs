@@ -2,10 +2,9 @@
 <wxsmith>
 	<object class="wxPanel" name="lineupPanel">
 		<bg>#000000</bg>
-		<pos_arg>1</pos_arg>
-		<size_arg>1</size_arg>
+		<id_arg>0</id_arg>
 		<object class="wmLabel" name="ID_M_PLBL8" variable="m_pLbl2" member="yes">
-			<label>Level &amp; Range</label>
+			<label>Level &amp; Range:</label>
 			<pos>5,5</pos>
 			<size>120,81</size>
 			<fg>#FFFFFF</fg>
@@ -19,9 +18,24 @@
 				<face>Tahoma</face>
 			</font>
 		</object>
+		<object class="wmLabel" name="ID_M_PLBL16" variable="m_pLbl4" member="yes">
+			<label>L</label>
+			<pos>125,5</pos>
+			<size>20,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#008040</bg>
+			<font>
+				<size>16</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+		</object>
 		<object class="wmLabel" name="ID_M_PLBL9" variable="m_plblLevelL" member="yes">
 			<label>1000 kHz</label>
-			<pos>126,5</pos>
+			<pos>146,5</pos>
 			<size>150,40</size>
 			<fg>#FFFFFF</fg>
 			<bg>#008040</bg>
@@ -36,8 +50,39 @@
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL6" variable="m_plblRangeL" member="yes">
 			<label>-12dBFS</label>
-			<pos>277,5</pos>
+			<pos>297,5</pos>
 			<size>150,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#008040</bg>
+			<font>
+				<size>16</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnReset" member="yes">
+			<label>Reset</label>
+			<pos>450,5</pos>
+			<size>110,82</size>
+			<bg>#0000A0</bg>
+			<font>
+				<size>16</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+			<style>wmButton::STYLE_SELECT</style>
+			<handler function="OnbtnResetClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL17" variable="m_pLbl5" member="yes">
+			<label>R</label>
+			<pos>125,46</pos>
+			<size>20,40</size>
 			<fg>#FFFFFF</fg>
 			<bg>#008040</bg>
 			<font>
@@ -51,7 +96,7 @@
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL10" variable="m_plblLevelR" member="yes">
 			<label>1000 kHz</label>
-			<pos>126,46</pos>
+			<pos>146,46</pos>
 			<size>150,40</size>
 			<fg>#FFFFFF</fg>
 			<bg>#008040</bg>
@@ -66,7 +111,7 @@
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL7" variable="m_plblRangeR" member="yes">
 			<label>-12dBFS</label>
-			<pos>277,46</pos>
+			<pos>297,46</pos>
 			<size>150,40</size>
 			<fg>#FFFFFF</fg>
 			<bg>#008040</bg>
@@ -82,7 +127,67 @@
 		<object class="wmLabel" name="ID_M_PLBL60" variable="m_plblInput" member="yes">
 			<label>Frequency:</label>
 			<pos>5,100</pos>
-			<size>120,40</size>
+			<size>120,81</size>
+			<fg>#FFFFFF</fg>
+			<bg>#008040</bg>
+			<font>
+				<size>16</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL21" variable="m_pLbl9" member="yes">
+			<label>R</label>
+			<pos>125,141</pos>
+			<size>20,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#008040</bg>
+			<font>
+				<size>16</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL13" variable="m_plblDominantHzR" member="yes">
+			<label>1000 kHz</label>
+			<pos>146,141</pos>
+			<size>150,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#008040</bg>
+			<font>
+				<size>16</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL14" variable="m_plblDominantdBR" member="yes">
+			<label>-12dBFS</label>
+			<pos>297,141</pos>
+			<size>150,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#008040</bg>
+			<font>
+				<size>16</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL18" variable="m_pLbl6" member="yes">
+			<label>L</label>
+			<pos>125,100</pos>
+			<size>20,40</size>
 			<fg>#FFFFFF</fg>
 			<bg>#008040</bg>
 			<font>
@@ -96,7 +201,7 @@
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL1" variable="m_plblDominantHzL" member="yes">
 			<label>1000 kHz</label>
-			<pos>126,100</pos>
+			<pos>146,100</pos>
 			<size>150,40</size>
 			<fg>#FFFFFF</fg>
 			<bg>#008040</bg>
@@ -111,7 +216,112 @@
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL2" variable="m_plblDominantdBL" member="yes">
 			<label>-12dBFS</label>
-			<pos>277,100</pos>
+			<pos>297,100</pos>
+			<size>150,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#008040</bg>
+			<font>
+				<size>16</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL11" variable="m_pLbl3" member="yes">
+			<label>Distortion:</label>
+			<pos>5,190</pos>
+			<size>120,81</size>
+			<fg>#FFFFFF</fg>
+			<bg>#008040</bg>
+			<font>
+				<size>16</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL19" variable="m_pLbl7" member="yes">
+			<label>L</label>
+			<pos>125,190</pos>
+			<size>20,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#008040</bg>
+			<font>
+				<size>16</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL12" variable="m_plblDistortionL" member="yes">
+			<label></label>
+			<pos>146,190</pos>
+			<size>150,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#008040</bg>
+			<font>
+				<size>16</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL23" variable="m_plblDistortionMaxL" member="yes">
+			<label></label>
+			<pos>297,190</pos>
+			<size>150,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#008040</bg>
+			<font>
+				<size>16</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL22" variable="m_pLbl10" member="yes">
+			<label>R</label>
+			<pos>125,231</pos>
+			<size>20,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#008040</bg>
+			<font>
+				<size>16</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL15" variable="m_plblDistortionR" member="yes">
+			<label></label>
+			<pos>146,231</pos>
+			<size>150,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#008040</bg>
+			<font>
+				<size>16</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL24" variable="m_plblDistortionMaxR" member="yes">
+			<label></label>
+			<pos>297,231</pos>
 			<size>150,40</size>
 			<fg>#FFFFFF</fg>
 			<bg>#008040</bg>
@@ -126,8 +336,23 @@
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl1" member="yes">
 			<label>Phase:</label>
-			<pos>5,200</pos>
+			<pos>5,290</pos>
 			<size>120,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#008040</bg>
+			<font>
+				<size>16</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL20" variable="m_pLbl8" member="yes">
+			<label></label>
+			<pos>125,290</pos>
+			<size>20,40</size>
 			<fg>#FFFFFF</fg>
 			<bg>#008040</bg>
 			<font>
@@ -141,7 +366,7 @@
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL4" variable="m_plblPhaseSamples" member="yes">
 			<label>Samples</label>
-			<pos>126,200</pos>
+			<pos>146,290</pos>
 			<size>150,40</size>
 			<fg>#FFFFFF</fg>
 			<bg>#008040</bg>
@@ -156,7 +381,7 @@
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL5" variable="m_plblPhaseDegrees" member="yes">
 			<label>Degrees</label>
-			<pos>277,200</pos>
+			<pos>297,290</pos>
 			<size>150,40</size>
 			<fg>#FFFFFF</fg>
 			<bg>#008040</bg>

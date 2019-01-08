@@ -258,6 +258,9 @@ double FFTAlgorithm::GetTHDistortion(list<float>& lstBuffer, unsigned long nSamp
     double dMaxPeak(0);
     size_t nMaxBin;
 
+    vector<double> vAmp;
+    vAmp.resize(vfft_out.size());
+
     for(size_t i = 0; i < vfft_out.size(); i++)
     {
         float dAmplitude(sqrt( (vfft_out[i].r*vfft_out[i].r) + (vfft_out[i].i*vfft_out[i].i)));
@@ -266,6 +269,8 @@ double FFTAlgorithm::GetTHDistortion(list<float>& lstBuffer, unsigned long nSamp
             dAmplitude=-dAmplitude;
         }
         dAmplitude /= static_cast<float>(vfft_out.size());
+        vAmp[i] = dAmplitude;
+
         if(dAmplitude < dLastBin)
         {
             if(bDown == false)  //we were going up, now we are going down so the last bin must be a peak
@@ -290,7 +295,9 @@ double FFTAlgorithm::GetTHDistortion(list<float>& lstBuffer, unsigned long nSamp
         dLastBin = dAmplitude;
     }
 
-    m_dFundamentalBinFrequency = static_cast<double>(nMaxBin)*dBinSize;
+    double dQ = (vAmp[nMaxBin+1]-vAmp[nMaxBin-1])/(2*(2*vAmp[nMaxBin]-vAmp[nMaxBin-1]-vAmp[nMaxBin+1]));
+
+    m_dFundamentalBinFrequency = (static_cast<double>(nMaxBin)+dQ)*dBinSize;
     m_dFundamentalAmplitude = 20*log10(dMaxPeak);
 
     if(mPeaks.size() > 0)

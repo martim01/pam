@@ -14,14 +14,29 @@
 
 //(*IdInit(lineupPanel)
 const long lineupPanel::ID_M_PLBL8 = wxNewId();
+const long lineupPanel::ID_M_PLBL16 = wxNewId();
 const long lineupPanel::ID_M_PLBL9 = wxNewId();
 const long lineupPanel::ID_M_PLBL6 = wxNewId();
+const long lineupPanel::ID_M_PBTN1 = wxNewId();
+const long lineupPanel::ID_M_PLBL17 = wxNewId();
 const long lineupPanel::ID_M_PLBL10 = wxNewId();
 const long lineupPanel::ID_M_PLBL7 = wxNewId();
 const long lineupPanel::ID_M_PLBL60 = wxNewId();
+const long lineupPanel::ID_M_PLBL21 = wxNewId();
+const long lineupPanel::ID_M_PLBL13 = wxNewId();
+const long lineupPanel::ID_M_PLBL14 = wxNewId();
+const long lineupPanel::ID_M_PLBL18 = wxNewId();
 const long lineupPanel::ID_M_PLBL1 = wxNewId();
 const long lineupPanel::ID_M_PLBL2 = wxNewId();
+const long lineupPanel::ID_M_PLBL11 = wxNewId();
+const long lineupPanel::ID_M_PLBL19 = wxNewId();
+const long lineupPanel::ID_M_PLBL12 = wxNewId();
+const long lineupPanel::ID_M_PLBL23 = wxNewId();
+const long lineupPanel::ID_M_PLBL22 = wxNewId();
+const long lineupPanel::ID_M_PLBL15 = wxNewId();
+const long lineupPanel::ID_M_PLBL24 = wxNewId();
 const long lineupPanel::ID_M_PLBL3 = wxNewId();
+const long lineupPanel::ID_M_PLBL20 = wxNewId();
 const long lineupPanel::ID_M_PLBL4 = wxNewId();
 const long lineupPanel::ID_M_PLBL5 = wxNewId();
 //*)
@@ -37,85 +52,189 @@ lineupPanel::lineupPanel(wxWindow* parent,lineupBuilder* pBuilder, wxWindowID id
     m_pBuilder(pBuilder)
 {
 	//(*Initialize(lineupPanel)
-	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
+	Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("wxID_ANY"));
 	SetBackgroundColour(wxColour(0,0,0));
-	m_pLbl2 = new wmLabel(this, ID_M_PLBL8, _("Level & Range"), wxPoint(5,5), wxSize(120,81), 0, _T("ID_M_PLBL8"));
+	m_pLbl2 = new wmLabel(this, ID_M_PLBL8, _("Level & Range:"), wxPoint(5,5), wxSize(120,81), 0, _T("ID_M_PLBL8"));
 	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl2->GetUiRect().SetGradient(0);
 	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl2->SetBackgroundColour(wxColour(0,128,64));
 	wxFont m_pLbl2Font(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pLbl2->SetFont(m_pLbl2Font);
-	m_plblLevelL = new wmLabel(this, ID_M_PLBL9, _("1000 kHz"), wxPoint(126,5), wxSize(150,40), 0, _T("ID_M_PLBL9"));
+	m_pLbl4 = new wmLabel(this, ID_M_PLBL16, _("L"), wxPoint(125,5), wxSize(20,40), 0, _T("ID_M_PLBL16"));
+	m_pLbl4->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl4->GetUiRect().SetGradient(0);
+	m_pLbl4->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl4->SetBackgroundColour(wxColour(0,128,64));
+	wxFont m_pLbl4Font(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pLbl4->SetFont(m_pLbl4Font);
+	m_plblLevelL = new wmLabel(this, ID_M_PLBL9, _("1000 kHz"), wxPoint(146,5), wxSize(150,40), 0, _T("ID_M_PLBL9"));
 	m_plblLevelL->SetBorderState(uiRect::BORDER_NONE);
 	m_plblLevelL->GetUiRect().SetGradient(0);
 	m_plblLevelL->SetForegroundColour(wxColour(255,255,255));
 	m_plblLevelL->SetBackgroundColour(wxColour(0,128,64));
 	wxFont m_plblLevelLFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_plblLevelL->SetFont(m_plblLevelLFont);
-	m_plblRangeL = new wmLabel(this, ID_M_PLBL6, _("-12dBFS"), wxPoint(277,5), wxSize(150,40), 0, _T("ID_M_PLBL6"));
+	m_plblRangeL = new wmLabel(this, ID_M_PLBL6, _("-12dBFS"), wxPoint(297,5), wxSize(150,40), 0, _T("ID_M_PLBL6"));
 	m_plblRangeL->SetBorderState(uiRect::BORDER_NONE);
 	m_plblRangeL->GetUiRect().SetGradient(0);
 	m_plblRangeL->SetForegroundColour(wxColour(255,255,255));
 	m_plblRangeL->SetBackgroundColour(wxColour(0,128,64));
 	wxFont m_plblRangeLFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_plblRangeL->SetFont(m_plblRangeLFont);
-	m_plblLevelR = new wmLabel(this, ID_M_PLBL10, _("1000 kHz"), wxPoint(126,46), wxSize(150,40), 0, _T("ID_M_PLBL10"));
+	m_pbtnReset = new wmButton(this, ID_M_PBTN1, _("Reset"), wxPoint(450,5), wxSize(110,82), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
+	m_pbtnReset->SetBackgroundColour(wxColour(0,0,160));
+	wxFont m_pbtnResetFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pbtnReset->SetFont(m_pbtnResetFont);
+	m_pLbl5 = new wmLabel(this, ID_M_PLBL17, _("R"), wxPoint(125,46), wxSize(20,40), 0, _T("ID_M_PLBL17"));
+	m_pLbl5->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl5->GetUiRect().SetGradient(0);
+	m_pLbl5->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl5->SetBackgroundColour(wxColour(0,128,64));
+	wxFont m_pLbl5Font(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pLbl5->SetFont(m_pLbl5Font);
+	m_plblLevelR = new wmLabel(this, ID_M_PLBL10, _("1000 kHz"), wxPoint(146,46), wxSize(150,40), 0, _T("ID_M_PLBL10"));
 	m_plblLevelR->SetBorderState(uiRect::BORDER_NONE);
 	m_plblLevelR->GetUiRect().SetGradient(0);
 	m_plblLevelR->SetForegroundColour(wxColour(255,255,255));
 	m_plblLevelR->SetBackgroundColour(wxColour(0,128,64));
 	wxFont m_plblLevelRFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_plblLevelR->SetFont(m_plblLevelRFont);
-	m_plblRangeR = new wmLabel(this, ID_M_PLBL7, _("-12dBFS"), wxPoint(277,46), wxSize(150,40), 0, _T("ID_M_PLBL7"));
+	m_plblRangeR = new wmLabel(this, ID_M_PLBL7, _("-12dBFS"), wxPoint(297,46), wxSize(150,40), 0, _T("ID_M_PLBL7"));
 	m_plblRangeR->SetBorderState(uiRect::BORDER_NONE);
 	m_plblRangeR->GetUiRect().SetGradient(0);
 	m_plblRangeR->SetForegroundColour(wxColour(255,255,255));
 	m_plblRangeR->SetBackgroundColour(wxColour(0,128,64));
 	wxFont m_plblRangeRFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_plblRangeR->SetFont(m_plblRangeRFont);
-	m_plblInput = new wmLabel(this, ID_M_PLBL60, _("Frequency:"), wxPoint(5,100), wxSize(120,40), 0, _T("ID_M_PLBL60"));
+	m_plblInput = new wmLabel(this, ID_M_PLBL60, _("Frequency:"), wxPoint(5,100), wxSize(120,81), 0, _T("ID_M_PLBL60"));
 	m_plblInput->SetBorderState(uiRect::BORDER_NONE);
 	m_plblInput->GetUiRect().SetGradient(0);
 	m_plblInput->SetForegroundColour(wxColour(255,255,255));
 	m_plblInput->SetBackgroundColour(wxColour(0,128,64));
 	wxFont m_plblInputFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_plblInput->SetFont(m_plblInputFont);
-	m_plblDominantHzL = new wmLabel(this, ID_M_PLBL1, _("1000 kHz"), wxPoint(126,100), wxSize(150,40), 0, _T("ID_M_PLBL1"));
+	m_pLbl9 = new wmLabel(this, ID_M_PLBL21, _("R"), wxPoint(125,141), wxSize(20,40), 0, _T("ID_M_PLBL21"));
+	m_pLbl9->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl9->GetUiRect().SetGradient(0);
+	m_pLbl9->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl9->SetBackgroundColour(wxColour(0,128,64));
+	wxFont m_pLbl9Font(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pLbl9->SetFont(m_pLbl9Font);
+	m_plblDominantHzR = new wmLabel(this, ID_M_PLBL13, _("1000 kHz"), wxPoint(146,141), wxSize(150,40), 0, _T("ID_M_PLBL13"));
+	m_plblDominantHzR->SetBorderState(uiRect::BORDER_NONE);
+	m_plblDominantHzR->GetUiRect().SetGradient(0);
+	m_plblDominantHzR->SetForegroundColour(wxColour(255,255,255));
+	m_plblDominantHzR->SetBackgroundColour(wxColour(0,128,64));
+	wxFont m_plblDominantHzRFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_plblDominantHzR->SetFont(m_plblDominantHzRFont);
+	m_plblDominantdBR = new wmLabel(this, ID_M_PLBL14, _("-12dBFS"), wxPoint(297,141), wxSize(150,40), 0, _T("ID_M_PLBL14"));
+	m_plblDominantdBR->SetBorderState(uiRect::BORDER_NONE);
+	m_plblDominantdBR->GetUiRect().SetGradient(0);
+	m_plblDominantdBR->SetForegroundColour(wxColour(255,255,255));
+	m_plblDominantdBR->SetBackgroundColour(wxColour(0,128,64));
+	wxFont m_plblDominantdBRFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_plblDominantdBR->SetFont(m_plblDominantdBRFont);
+	m_pLbl6 = new wmLabel(this, ID_M_PLBL18, _("L"), wxPoint(125,100), wxSize(20,40), 0, _T("ID_M_PLBL18"));
+	m_pLbl6->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl6->GetUiRect().SetGradient(0);
+	m_pLbl6->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl6->SetBackgroundColour(wxColour(0,128,64));
+	wxFont m_pLbl6Font(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pLbl6->SetFont(m_pLbl6Font);
+	m_plblDominantHzL = new wmLabel(this, ID_M_PLBL1, _("1000 kHz"), wxPoint(146,100), wxSize(150,40), 0, _T("ID_M_PLBL1"));
 	m_plblDominantHzL->SetBorderState(uiRect::BORDER_NONE);
 	m_plblDominantHzL->GetUiRect().SetGradient(0);
 	m_plblDominantHzL->SetForegroundColour(wxColour(255,255,255));
 	m_plblDominantHzL->SetBackgroundColour(wxColour(0,128,64));
 	wxFont m_plblDominantHzLFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_plblDominantHzL->SetFont(m_plblDominantHzLFont);
-	m_plblDominantdBL = new wmLabel(this, ID_M_PLBL2, _("-12dBFS"), wxPoint(277,100), wxSize(150,40), 0, _T("ID_M_PLBL2"));
+	m_plblDominantdBL = new wmLabel(this, ID_M_PLBL2, _("-12dBFS"), wxPoint(297,100), wxSize(150,40), 0, _T("ID_M_PLBL2"));
 	m_plblDominantdBL->SetBorderState(uiRect::BORDER_NONE);
 	m_plblDominantdBL->GetUiRect().SetGradient(0);
 	m_plblDominantdBL->SetForegroundColour(wxColour(255,255,255));
 	m_plblDominantdBL->SetBackgroundColour(wxColour(0,128,64));
 	wxFont m_plblDominantdBLFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_plblDominantdBL->SetFont(m_plblDominantdBLFont);
-	m_pLbl1 = new wmLabel(this, ID_M_PLBL3, _("Phase:"), wxPoint(5,200), wxSize(120,40), 0, _T("ID_M_PLBL3"));
+	m_pLbl3 = new wmLabel(this, ID_M_PLBL11, _("Distortion:"), wxPoint(5,190), wxSize(120,81), 0, _T("ID_M_PLBL11"));
+	m_pLbl3->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl3->GetUiRect().SetGradient(0);
+	m_pLbl3->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl3->SetBackgroundColour(wxColour(0,128,64));
+	wxFont m_pLbl3Font(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pLbl3->SetFont(m_pLbl3Font);
+	m_pLbl7 = new wmLabel(this, ID_M_PLBL19, _("L"), wxPoint(125,190), wxSize(20,40), 0, _T("ID_M_PLBL19"));
+	m_pLbl7->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl7->GetUiRect().SetGradient(0);
+	m_pLbl7->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl7->SetBackgroundColour(wxColour(0,128,64));
+	wxFont m_pLbl7Font(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pLbl7->SetFont(m_pLbl7Font);
+	m_plblDistortionL = new wmLabel(this, ID_M_PLBL12, wxEmptyString, wxPoint(146,190), wxSize(150,40), 0, _T("ID_M_PLBL12"));
+	m_plblDistortionL->SetBorderState(uiRect::BORDER_NONE);
+	m_plblDistortionL->GetUiRect().SetGradient(0);
+	m_plblDistortionL->SetForegroundColour(wxColour(255,255,255));
+	m_plblDistortionL->SetBackgroundColour(wxColour(0,128,64));
+	wxFont m_plblDistortionLFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_plblDistortionL->SetFont(m_plblDistortionLFont);
+	m_plblDistortionMaxL = new wmLabel(this, ID_M_PLBL23, wxEmptyString, wxPoint(297,190), wxSize(150,40), 0, _T("ID_M_PLBL23"));
+	m_plblDistortionMaxL->SetBorderState(uiRect::BORDER_NONE);
+	m_plblDistortionMaxL->GetUiRect().SetGradient(0);
+	m_plblDistortionMaxL->SetForegroundColour(wxColour(255,255,255));
+	m_plblDistortionMaxL->SetBackgroundColour(wxColour(0,128,64));
+	wxFont m_plblDistortionMaxLFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_plblDistortionMaxL->SetFont(m_plblDistortionMaxLFont);
+	m_pLbl10 = new wmLabel(this, ID_M_PLBL22, _("R"), wxPoint(125,231), wxSize(20,40), 0, _T("ID_M_PLBL22"));
+	m_pLbl10->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl10->GetUiRect().SetGradient(0);
+	m_pLbl10->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl10->SetBackgroundColour(wxColour(0,128,64));
+	wxFont m_pLbl10Font(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pLbl10->SetFont(m_pLbl10Font);
+	m_plblDistortionR = new wmLabel(this, ID_M_PLBL15, wxEmptyString, wxPoint(146,231), wxSize(150,40), 0, _T("ID_M_PLBL15"));
+	m_plblDistortionR->SetBorderState(uiRect::BORDER_NONE);
+	m_plblDistortionR->GetUiRect().SetGradient(0);
+	m_plblDistortionR->SetForegroundColour(wxColour(255,255,255));
+	m_plblDistortionR->SetBackgroundColour(wxColour(0,128,64));
+	wxFont m_plblDistortionRFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_plblDistortionR->SetFont(m_plblDistortionRFont);
+	m_plblDistortionMaxR = new wmLabel(this, ID_M_PLBL24, wxEmptyString, wxPoint(297,231), wxSize(150,40), 0, _T("ID_M_PLBL24"));
+	m_plblDistortionMaxR->SetBorderState(uiRect::BORDER_NONE);
+	m_plblDistortionMaxR->GetUiRect().SetGradient(0);
+	m_plblDistortionMaxR->SetForegroundColour(wxColour(255,255,255));
+	m_plblDistortionMaxR->SetBackgroundColour(wxColour(0,128,64));
+	wxFont m_plblDistortionMaxRFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_plblDistortionMaxR->SetFont(m_plblDistortionMaxRFont);
+	m_pLbl1 = new wmLabel(this, ID_M_PLBL3, _("Phase:"), wxPoint(5,290), wxSize(120,40), 0, _T("ID_M_PLBL3"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl1->GetUiRect().SetGradient(0);
 	m_pLbl1->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl1->SetBackgroundColour(wxColour(0,128,64));
 	wxFont m_pLbl1Font(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pLbl1->SetFont(m_pLbl1Font);
-	m_plblPhaseSamples = new wmLabel(this, ID_M_PLBL4, _("Samples"), wxPoint(126,200), wxSize(150,40), 0, _T("ID_M_PLBL4"));
+	m_pLbl8 = new wmLabel(this, ID_M_PLBL20, wxEmptyString, wxPoint(125,290), wxSize(20,40), 0, _T("ID_M_PLBL20"));
+	m_pLbl8->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl8->GetUiRect().SetGradient(0);
+	m_pLbl8->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl8->SetBackgroundColour(wxColour(0,128,64));
+	wxFont m_pLbl8Font(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pLbl8->SetFont(m_pLbl8Font);
+	m_plblPhaseSamples = new wmLabel(this, ID_M_PLBL4, _("Samples"), wxPoint(146,290), wxSize(150,40), 0, _T("ID_M_PLBL4"));
 	m_plblPhaseSamples->SetBorderState(uiRect::BORDER_NONE);
 	m_plblPhaseSamples->GetUiRect().SetGradient(0);
 	m_plblPhaseSamples->SetForegroundColour(wxColour(255,255,255));
 	m_plblPhaseSamples->SetBackgroundColour(wxColour(0,128,64));
 	wxFont m_plblPhaseSamplesFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_plblPhaseSamples->SetFont(m_plblPhaseSamplesFont);
-	m_plblPhaseDegrees = new wmLabel(this, ID_M_PLBL5, _("Degrees"), wxPoint(277,200), wxSize(150,40), 0, _T("ID_M_PLBL5"));
+	m_plblPhaseDegrees = new wmLabel(this, ID_M_PLBL5, _("Degrees"), wxPoint(297,290), wxSize(150,40), 0, _T("ID_M_PLBL5"));
 	m_plblPhaseDegrees->SetBorderState(uiRect::BORDER_NONE);
 	m_plblPhaseDegrees->GetUiRect().SetGradient(0);
 	m_plblPhaseDegrees->SetForegroundColour(wxColour(255,255,255));
 	m_plblPhaseDegrees->SetBackgroundColour(wxColour(0,128,64));
 	wxFont m_plblPhaseDegreesFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_plblPhaseDegrees->SetFont(m_plblPhaseDegreesFont);
+
+	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&lineupPanel::OnbtnResetClick);
 	//*)
 
 	Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&lineupPanel::OnLeftUp);
@@ -137,7 +256,8 @@ lineupPanel::lineupPanel(wxWindow* parent,lineupBuilder* pBuilder, wxWindowID id
     m_pLevelCalc = new LevelCalculator(-70.0);
 
 
-    m_bFirst = true;
+    m_bFirstLevel = true;
+    m_bFirstDistortion = true;
 	m_pCalc = 0;
 	std::map<wxString, ppmtype>::const_iterator itType = PPMTypeManager::Get().FindType(wxT("Digital"));
     if(itType != PPMTypeManager::Get().GetTypeEnd())
@@ -161,13 +281,13 @@ void lineupPanel::SetAudioData(const timedbuffer* pBuffer)
     m_plblLevelL->SetLabel(wxString::Format(wxT("%.2f dBFS"), m_pLevelCalc->GetLevel(0)));
     m_plblLevelR->SetLabel(wxString::Format(wxT("%.2f dBFS"), m_pLevelCalc->GetLevel(1)));
 
-    if(m_bFirst)
+    if(m_bFirstLevel)
     {
         m_dLevelMax[0] = m_pLevelCalc->GetLevel(0);
         m_dLevelMax[1] = m_pLevelCalc->GetLevel(1);
         m_dLevelMin[0] = m_pLevelCalc->GetLevel(0);
         m_dLevelMin[1] = m_pLevelCalc->GetLevel(1);
-        m_bFirst = false;
+        m_bFirstLevel = false;
     }
     else
     {
@@ -177,12 +297,13 @@ void lineupPanel::SetAudioData(const timedbuffer* pBuffer)
         m_dLevelMin[1] = std::min(m_pLevelCalc->GetLevel(1), m_dLevelMin[1]);
     }
 
-    m_plblRangeL->SetLabel(wxString::Format(wxT("%.3f dB"), -(m_dLevelMax[0]-m_dLevelMin[0])));
-    m_plblRangeR->SetLabel(wxString::Format(wxT("%.3f dB"), -(m_dLevelMax[1]-m_dLevelMin[1])));
+    m_plblRangeL->SetLabel(wxString::Format(wxT("%.3f dB"), (m_dLevelMax[0]-m_dLevelMin[0])));
+    m_plblRangeR->SetLabel(wxString::Format(wxT("%.3f dB"), (m_dLevelMax[1]-m_dLevelMin[1])));
 
     for(size_t i = 0; i < pBuffer->GetBufferSize(); i++)
     {
-        m_lstBuffer.push_back(pBuffer->GetBuffer()[i]);
+        m_lstBufferL.push_back(pBuffer->GetBuffer()[i]);
+        m_lstBufferR.push_back(pBuffer->GetBuffer()[i]);
     }
 
     for(size_t i = 0; i < pBuffer->GetBufferSize(); i+=m_nChannels)
@@ -240,11 +361,10 @@ void lineupPanel::OnOffsetDone(wxCommandEvent& event)
     m_pCalc = 0;
 
     //copy the data in to the buffer and do the fft
-    while(m_lstBuffer.size() > m_nSampleSize)
+    while(m_lstBufferL.size() > m_nSampleSize)
     {
-        DoFFT(false);
+        DoFFT();
     }
-    //DoFFT(true);
 
     m_vBufferL.clear();
     m_vBufferR.clear();
@@ -259,61 +379,55 @@ void lineupPanel::OnOffsetDone(wxCommandEvent& event)
     m_plblDominantHzL->SetLabel(wxString::Format(wxT("%.f Hz"), m_dDominantFrequency[0]));
     m_plblDominantdBL->SetLabel(wxString::Format(wxT("%.2f dBFS"), m_dDominantLevel[0]));
 
+    m_plblDominantHzR->SetLabel(wxString::Format(wxT("%.f Hz"), m_dDominantFrequency[1]));
+    m_plblDominantdBR->SetLabel(wxString::Format(wxT("%.2f dBFS"), m_dDominantLevel[1]));
+
 
     m_plblPhaseSamples->SetLabel(wxString::Format(wxT("%.0f"), m_dOffsetSamples));
     m_plblPhaseDegrees->SetLabel(wxString::Format(wxT("%.2f'"), dPhase));
 }
 
-void lineupPanel::DoFFT(bool bRight)
+void lineupPanel::DoFFT()
 {
     FFTAlgorithm fft;
-    m_vfft_out = fft.DoFFT(m_lstBuffer, m_nSampleRate, m_nChannels, bRight, 5, m_vfft_out.size(), m_nSampleSize/2);
-    double dBinSize = static_cast<double>(m_nSampleRate)/static_cast<double>((m_vfft_out.size()-1)*2);
-    float dMax(-80);
-    double dMaxBin(0);
-
-    std::vector<double> vAmplitude;
-    vAmplitude.resize(m_vfft_out.size());
-    for(size_t i = 0; i < m_vfft_out.size(); i++)
+    double dDistortion = fft.GetTHDistortion(m_lstBufferL, m_nSampleRate, m_nChannels, false, 5, m_vfft_out.size(), m_nSampleSize/2);
+    if(m_bFirstDistortion)
     {
-        float dAmplitude(sqrt( (m_vfft_out[i].r*m_vfft_out[i].r) + (m_vfft_out[i].i*m_vfft_out[i].i)));
-        if(dAmplitude<0)
-        {
-            dAmplitude=-dAmplitude;
-        }
-        dAmplitude /= static_cast<float>(m_vfft_out.size());
-        vAmplitude[i] = dAmplitude;
-
-        if(dMax <vAmplitude[i])
-        {
-            dMax =vAmplitude[i];
-            dMaxBin = i;
-        }
-    }
-
-    //Quinn estimator
-    /*
-    double ap = (m_vfft_out[dMaxBin+1].r*m_vfft_out[dMaxBin].r + m_vfft_out[dMaxBin+1].i*m_vfft_out[dMaxBin].i)/(m_vfft_out[dMaxBin].r*m_vfft_out[dMaxBin].r+m_vfft_out[dMaxBin].i*m_vfft_out[dMaxBin].i);
-    double am = (m_vfft_out[dMaxBin-1].r*m_vfft_out[dMaxBin].r + m_vfft_out[dMaxBin-1].i*m_vfft_out[dMaxBin].i)/(m_vfft_out[dMaxBin].r*m_vfft_out[dMaxBin].r+m_vfft_out[dMaxBin].i*m_vfft_out[dMaxBin].i);
-
-    double dp = -ap/(1-ap);
-    double dm = am/(1-am);
-
-    if(dp >0 && dm > 0)
-    {
-        m_dDominantFrequency[bRight] = (dMaxBin+dp)*dBinSize;
+        m_dDistortionMax[0] = dDistortion;
     }
     else
     {
-        m_dDominantFrequency[bRight] = (dMaxBin+dm)*dBinSize;
+        m_dDistortionMax[0] = std::max(dDistortion, m_dDistortionMax[0]);
     }
-    */
+
+    m_dDominantFrequency[0] = fft.GetFundamentalBinFrequency();
+    m_dDominantLevel[0] = fft.GetFundamentalAmplitude()*0.714;
+
+    m_plblDistortionL->SetLabel(wxString::Format(wxT("%.2f%"), dDistortion));
 
 
-    //double dB = (vAmplitude[dMaxBin+1]-vAmplitude[dMaxBin-1])/(vAmplitude[dMaxBin+1]+vAmplitude[dMaxBin-1]+vAmplitude[dMaxBin]);
-    double dQ = (vAmplitude[dMaxBin+1]-vAmplitude[dMaxBin-1])/(2*(2*vAmplitude[dMaxBin]-vAmplitude[dMaxBin-1]-vAmplitude[dMaxBin+1]));
+    dDistortion = fft.GetTHDistortion(m_lstBufferR, m_nSampleRate, m_nChannels, true, 5, m_vfft_out.size(), m_nSampleSize/2);
 
-    m_dDominantFrequency[bRight] = round((dMaxBin+dQ)*dBinSize);
-    m_dDominantLevel[bRight] = 20*log10(dMax)*0.714;
+    m_dDominantFrequency[1] = fft.GetFundamentalBinFrequency();
+    m_dDominantLevel[1] = fft.GetFundamentalAmplitude()*0.714;
 
+    m_plblDistortionR->SetLabel(wxString::Format(wxT("%.2f%"), dDistortion));
+    if(m_bFirstDistortion)
+    {
+        m_dDistortionMax[1] = dDistortion;
+        m_bFirstDistortion = false;
+    }
+    else
+    {
+        m_dDistortionMax[1] = std::max(dDistortion, m_dDistortionMax[1]);
+    }
+
+    m_plblDistortionMaxL->SetLabel(wxString::Format(wxT("%.2f%"), m_dDistortionMax[0]));
+    m_plblDistortionMaxR->SetLabel(wxString::Format(wxT("%.2f%"), m_dDistortionMax[1]));
+}
+
+void lineupPanel::OnbtnResetClick(wxCommandEvent& event)
+{
+    m_bFirstLevel = true;
+    m_bFirstDistortion = true;
 }
