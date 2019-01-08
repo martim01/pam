@@ -248,82 +248,96 @@ double FFTAlgorithm::GetTHDistortion(list<float>& lstBuffer, unsigned long nSamp
 {
     vector<kiss_fft_cpx> vfft_out(DoFFT(lstBuffer, nSampleRate,nChannels, nRouting, nWindow, nBins, nBufferToDelete));
 
-    map<int, double> mPeaks;
-
-    double dBinSize = static_cast<double>(nSampleRate)/static_cast<double>((vfft_out.size()-1)*2);
-
-    double dLastBin(0);
-    int nPeaks(0);
-    bool bDown(false);
-    double dMaxPeak(0);
-    size_t nMaxBin;
-
-    vector<double> vAmp;
-    vAmp.resize(vfft_out.size());
-
-    for(size_t i = 0; i < vfft_out.size(); i++)
+    if(vfft_out.size() > 1)
     {
-        float dAmplitude(sqrt( (vfft_out[i].r*vfft_out[i].r) + (vfft_out[i].i*vfft_out[i].i)));
-        if(dAmplitude<0)
-        {
-            dAmplitude=-dAmplitude;
-        }
-        dAmplitude /= static_cast<float>(vfft_out.size());
-        vAmp[i] = dAmplitude;
+        map<int, double> mPeaks;
 
-        if(dAmplitude < dLastBin)
+        double dBinSize = static_cast<double>(nSampleRate)/static_cast<double>((vfft_out.size()-1)*2);
+
+        double dLastBin(0);
+        int nPeaks(0);
+        bool bDown(false);
+        double dMaxPeak(0);
+        size_t nMaxBin;
+
+        vector<double> vAmp;
+        vAmp.resize(vfft_out.size());
+
+        for(size_t i = 0; i < vfft_out.size(); i++)
         {
-            if(bDown == false)  //we were going up, now we are going down so the last bin must be a peak
+            float dAmplitude(sqrt( (vfft_out[i].r*vfft_out[i].r) + (vfft_out[i].i*vfft_out[i].i)));
+            if(dAmplitude<0)
             {
-                if(dAmplitude > 0.001)
+                dAmplitude=-dAmplitude;
+            }
+            dAmplitude /= static_cast<float>(vfft_out.size());
+            vAmp[i] = dAmplitude;
+
+            if(dAmplitude < dLastBin)
+            {
+                if(bDown == false)  //we were going up, now we are going down so the last bin must be a peak
                 {
-                    mPeaks.insert(make_pair(i-1, dLastBin));
-                    if(dLastBin > dMaxPeak)
+                    if(dAmplitude > 0.001)
                     {
-                        nMaxBin = i-1;
-                        dMaxPeak = dLastBin;
+                        mPeaks.insert(make_pair(i-1, dLastBin));
+                        if(dLastBin > dMaxPeak)
+                        {
+                            nMaxBin = i-1;
+                            dMaxPeak = dLastBin;
+                        }
                     }
                 }
+                bDown = true;
             }
-            bDown = true;
+            else
+            {
+                bDown = false;
+            }
+
+            dLastBin = dAmplitude;
+        }
+
+
+        if(dMaxPeak > 0.0)
+        {
+            double dQ = (vAmp[nMaxBin+1]-vAmp[nMaxBin-1])/(2*(2*vAmp[nMaxBin]-vAmp[nMaxBin-1]-vAmp[nMaxBin+1]));
+            m_dFundamentalBinFrequency = (static_cast<double>(nMaxBin)+dQ)*dBinSize;
+            m_dFundamentalAmplitude = 20*log10(dMaxPeak);
+
+            if(mPeaks.size() > 0)
+            {
+                float dPower1(pow(dMaxPeak,2));
+                float dPower(0);
+                for(map<int,double>::iterator itPeak = mPeaks.begin(); itPeak != mPeaks.end(); ++itPeak)
+                {
+                    if(itPeak->first != nMaxBin)
+                    {
+                        float dPow = pow(itPeak->second,2);
+                        dPower +=dPow;
+                    }
+                }
+                m_dTHD = 100.0 * sqrt(dPower/dPower1);
+
+            }
+            else
+            {
+                m_dFundamentalAmplitude=-1000;
+                m_dFundamentalBinFrequency=0;
+                m_nPeaks = 0;
+                return 0;
+            }
+
+            m_nPeaks = mPeaks.size();
         }
         else
         {
-            bDown = false;
+            m_dTHD = 0.0;
         }
-
-        dLastBin = dAmplitude;
-    }
-
-    double dQ = (vAmp[nMaxBin+1]-vAmp[nMaxBin-1])/(2*(2*vAmp[nMaxBin]-vAmp[nMaxBin-1]-vAmp[nMaxBin+1]));
-
-    m_dFundamentalBinFrequency = (static_cast<double>(nMaxBin)+dQ)*dBinSize;
-    m_dFundamentalAmplitude = 20*log10(dMaxPeak);
-
-    if(mPeaks.size() > 0)
-    {
-        float dPower1(pow(dMaxPeak,2));
-        float dPower(0);
-        for(map<int,double>::iterator itPeak = mPeaks.begin(); itPeak != mPeaks.end(); ++itPeak)
-        {
-            if(itPeak->first != nMaxBin)
-            {
-                float dPow = pow(itPeak->second,2);
-                dPower +=dPow;
-            }
-        }
-        m_dTHD = 100.0 * sqrt(dPower/dPower1);
-
     }
     else
     {
-        m_dFundamentalAmplitude=-1000;
-        m_dFundamentalBinFrequency=0;
-        m_nPeaks = 0;
-        return 0;
+        m_dTHD = 0.0;
     }
-
-    m_nPeaks = mPeaks.size();
     return m_dTHD;
 }
 

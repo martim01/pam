@@ -219,7 +219,7 @@ pnlSettingsGenerators::pnlSettingsGenerators(wxWindow* parent,wxWindowID id,cons
 	SetSize(size);
 	SetPosition(pos);
 
-	if(Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled"))!=wxT("Disabled"))
+	if(Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled"))==wxT("Disabled"))
     {
         m_plblInput->SetLabel(wxT("Audio output disabled"));
     }
@@ -246,7 +246,7 @@ pnlSettingsGenerators::pnlSettingsGenerators(wxWindow* parent,wxWindowID id,cons
 
     LoadPlugins();
 
-    if(Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled"))!=wxT("Disabled"))
+    if(Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled"))==wxT("Disabled"))
     {
         m_pswpAog->ChangeSelection(wxT("Input"));
     }
