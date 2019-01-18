@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlSettingsNmos">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmButton" name="ID_M_PBTN22" variable="m_pbtnNmos" member="yes">
+			<label>NMOS</label>
+			<toggle_look>1</toggle_look>
+			<toggle_left>OFF</toggle_left>
+			<toggle_right>ON</toggle_right>
+			<toggle_percent>50</toggle_percent>
+			<pos>10,10</pos>
+			<size>200,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#008000</bg>
+			<style>wmButton::STYLE_SELECT</style>
+			<handler function="OnbtnNmosClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnClient" member="yes">
+			<label>Client</label>
+			<toggle_look>1</toggle_look>
+			<toggle_left>OFF</toggle_left>
+			<toggle_right>ON</toggle_right>
+			<toggle_percent>50</toggle_percent>
+			<pos>10,60</pos>
+			<size>200,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#008000</bg>
+			<style>wmButton::STYLE_SELECT</style>
+			<handler function="OnbtnClientClick" entry="EVT_BUTTON" />
+		</object>
+	</object>
+</wxsmith>
