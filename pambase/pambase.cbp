@@ -43,7 +43,7 @@
 					<Add library="Ws2_32" />
 					<Add library="portaudio" />
 					<Add library="libsndfile-1" />
-					<Add library="wxmsw30u_gcc_wammacs" />
+					<Add library="wxmsw30u_gcc_custom" />
 					<Add library="dnssd" />
 					<Add library="Iphlpapi" />
 					<Add directory="$(#wx3_0.lib)" />
@@ -93,7 +93,7 @@
 					<Add library="Ws2_32" />
 					<Add library="portaudio" />
 					<Add library="libsndfile-1" />
-					<Add library="wxmsw30ud_gcc_wammacs" />
+					<Add library="wxmsw30ud_gcc_custom" />
 					<Add library="dnssd" />
 					<Add library="Iphlpapi" />
 					<Add directory="$(#wx3_0.lib)" />

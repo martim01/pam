@@ -31,7 +31,7 @@
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-Wl,--enable-auto-import,-Map=pammd.map" />
-					<Add library="wxmsw30ud_gcc_wammacs" />
+					<Add library="wxmsw30ud_gcc_custom" />
 					<Add library="pambased" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
@@ -60,7 +60,7 @@
 				<Linker>
 					<Add option="-s" />
 					<Add option="-Wl,--enable-auto-import,-Map=pamm.map" />
-					<Add library="wxmsw30u_gcc_wammacs" />
+					<Add library="wxmsw30u_gcc_custom" />
 					<Add library="pambase" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>

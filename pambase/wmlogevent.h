@@ -86,7 +86,7 @@ typedef void (wxEvtHandler::*wmLogEventFunction)(wmLogEvent&);
 
 
 BEGIN_DECLARE_EVENT_TYPES()
-    DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT,wxEVT_WMLOG,-1)
+    DECLARE_EXPORTED_EVENT_TYPE(PAMBASE_IMPEXPORT,wxEVT_WMLOG,-1)
 END_DECLARE_EVENT_TYPES()
 
 #define wmLogEventHandler(func) \

@@ -28,7 +28,7 @@
 					<Add directory="C:/wxWidgets-3.0.2/lib/gcc_dll/mswud" />
 				</ResourceCompiler>
 				<Linker>
-					<Add library="wxmsw30ud_gcc_wammacs" />
+					<Add library="wxmsw30ud_gcc_custom" />
 					<Add library="libmicrohttpd-12" />
 					<Add directory="C:/wxWidgets-3.0.2/lib" />
 					<Add directory="$(#microhttp.lib)" />
@@ -56,7 +56,7 @@
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="wxmsw30u_gcc_wammacs" />
+					<Add library="wxmsw30u_gcc_custom" />
 					<Add library="libmicrohttpd-12" />
 					<Add directory="C:/wxWidgets-3.0.2/lib" />
 					<Add directory="$(#microhttp.lib)" />

@@ -4,7 +4,7 @@
 #include <wx/event.h>
 #include "kiss_xcorr.h"
 
-DEFINE_EVENT_TYPE(wxEVT_OFFSET_DONE)
+wxDEFINE_EVENT(wxEVT_OFFSET_DONE, wxCommandEvent);
 
 using namespace std;
 

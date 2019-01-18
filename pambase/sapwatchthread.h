@@ -16,4 +16,4 @@ class PAMBASE_IMPEXPORT SapWatchThread : public wxThread
         unsigned char m_packet[65536];
 };
 
-DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_SAP, -1)
+DECLARE_EXPORTED_EVENT_TYPE(PAMBASE_IMPEXPORT, wxEVT_SAP, -1)
