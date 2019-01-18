@@ -5,6 +5,7 @@
 #include <wx/log.h>
 #include "audioevent.h"
 
+const double LiveAudioSource::TWENTYFOURBIT = 8388608.0;
 
 ////////// LiveAudioSource //////////
 

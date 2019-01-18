@@ -17,6 +17,7 @@
 #include "pnlUpdate.h"
 #include "pnlSettingsProfiles.h"
 #include "pnlSettingsGenerators.h"
+#include "pnlSettingsNmos.h"
 
 class pnlSettings: public wxPanel
 {
@@ -63,6 +64,7 @@ class pnlSettings: public wxPanel
 		wmLabel* m_pLbl8;
 		wmButton* m_pbtnManage;
 		wmLabel* m_pLbl2;
+		pnlSettingsNmos* m_ppnlNmos;
 		wmLabel* m_pLbl9;
 		wmButton* m_pbtnHome;
 		wxPanel* pnlOutput;
@@ -121,6 +123,7 @@ class pnlSettings: public wxPanel
 		static const long ID_PANEL3;
 		static const long ID_PANEL7;
 		static const long ID_PANEL13;
+		static const long ID_PANEL4;
 		static const long ID_M_PBTN22;
 		static const long ID_M_PBTN23;
 		static const long ID_M_PBTN24;

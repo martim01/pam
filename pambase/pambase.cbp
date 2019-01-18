@@ -11,11 +11,12 @@
 				<Option output="../lib/pambase.dll" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/release3" />
 				<Option type="3" />
-				<Option compiler="gcc" />
+				<Option compiler="new_gnu_gcc_compiler" />
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-Wall" />
 					<Add option="-std=c++0x" />
+					<Add option="-std=c++11" />
 					<Add option="-DWIN32" />
 					<Add option="-D_USRDLL" />
 					<Add option="-DDLL_EXPORTS" />
@@ -59,11 +60,12 @@
 				<Option output="../lib/pambased.dll" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/debug" />
 				<Option type="3" />
-				<Option compiler="gcc" />
+				<Option compiler="new_gnu_gcc_compiler" />
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-std=c++0x" />
 					<Add option="-g" />
+					<Add option="-std=c++11" />
 					<Add option="-DWIN32" />
 					<Add option="-D_USRDLL" />
 					<Add option="-DDLL_EXPORTS" />

@@ -351,6 +351,10 @@
 				<label>Profiles</label>
 			</object>
 			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL4" subclass="pnlSettingsNmos" variable="m_ppnlNmos" member="yes" />
+				<label>NMOS</label>
+			</object>
+			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL6" variable="pnlGeneral" member="yes">
 					<bg>wxSYS_COLOUR_BACKGROUND</bg>
 					<object class="wmButton" name="ID_M_PBTN22" variable="m_pbtnCursor" member="yes">

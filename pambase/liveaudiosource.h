@@ -60,7 +60,7 @@ class LiveAudioSource: public AudioInputDevice
             unsigned long m_nBufferWritten;
             timedbuffer* m_pAudioBuffer;
 
-            static const double TWENTYFOURBIT = 8388608.0;
+            static const double TWENTYFOURBIT;
 };
 
 

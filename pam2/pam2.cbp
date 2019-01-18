@@ -10,12 +10,14 @@
 				<Option output="bin/Debug/pam2" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="0" />
-				<Option compiler="gcc" />
+				<Option compiler="new_gnu_gcc_compiler" />
 				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-std=c++0x" />
+					<Add option="-std=c11" />
 					<Add option="-g" />
+					<Add option="-std=c++11" />
 					<Add option="-DWIN32" />
 					<Add option="-D__WXMSW__" />
 					<Add option="-DWXUSINGDLL" />
@@ -28,6 +30,8 @@
 					<Add directory="$(#wx3_0.include)/mswu" />
 					<Add directory="$(#portaudio.include)" />
 					<Add directory="$(#curl.include)" />
+					<Add directory="$(#nmos.INCLUDE)" />
+					<Add directory="$(#json.INCLUDE)" />
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="$(#wx3_0.include)/mswu" />
@@ -43,18 +47,21 @@
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#portaudio.lib)" />
 					<Add directory="$(#curl.lib)" />
+					<Add directory="$(#nmos.LIB)" />
 				</Linker>
 			</Target>
 			<Target title="Windows Release">
 				<Option output="bin/Release/pam2" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="0" />
-				<Option compiler="gcc" />
+				<Option compiler="new_gnu_gcc_compiler" />
 				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-Wall" />
 					<Add option="-std=c++0x" />
+					<Add option="-std=c11" />
+					<Add option="-std=c++11" />
 					<Add option="-DWIN32" />
 					<Add option="-D__WXMSW__" />
 					<Add option="-DWXUSINGDLL" />
@@ -65,6 +72,8 @@
 					<Add directory="$(#wx3_0.include)/mswu" />
 					<Add directory="$(#portaudio.include)" />
 					<Add directory="$(#curl.include)" />
+					<Add directory="$(#nmos.INCLUDE)" />
+					<Add directory="$(#json.INCLUDE)" />
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="$(#wx3_0.include)/mswu" />
@@ -81,6 +90,7 @@
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#portaudio.lib)" />
 					<Add directory="$(#curl.lib)" />
+					<Add directory="$(#nmos.LIB)" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="C:\developer\matt\pam2\manifest_creator\bin\Release\manifest_creator.exe" />
@@ -191,6 +201,8 @@
 		<Unit filename="pnlSettings.h" />
 		<Unit filename="pnlSettingsGenerators.cpp" />
 		<Unit filename="pnlSettingsGenerators.h" />
+		<Unit filename="pnlSettingsNmos.cpp" />
+		<Unit filename="pnlSettingsNmos.h" />
 		<Unit filename="pnlSettingsOptions.cpp" />
 		<Unit filename="pnlSettingsOptions.h" />
 		<Unit filename="pnlSettingsPlugins.cpp" />
@@ -204,6 +216,10 @@
 		<Unit filename="pnlUpdate.cpp" />
 		<Unit filename="pnlUpdate.h" />
 		<Unit filename="version.h" />
+		<Unit filename="wxeventposter.cpp" />
+		<Unit filename="wxeventposter.h" />
+		<Unit filename="wxlogoutput.cpp" />
+		<Unit filename="wxlogoutput.h" />
 		<Unit filename="wxpammclient.cpp" />
 		<Unit filename="wxpammclient.h" />
 		<Unit filename="wxpammconnection.cpp" />
@@ -218,6 +234,7 @@
 		<Unit filename="wxsmith/pnlLog.wxs" />
 		<Unit filename="wxsmith/pnlLogControl.wxs" />
 		<Unit filename="wxsmith/pnlSettingsGenerators.wxs" />
+		<Unit filename="wxsmith/pnlSettingsNmos.wxs" />
 		<Unit filename="wxsmith/pnlSettingsOptions.wxs" />
 		<Unit filename="wxsmith/pnlSettingsPlugins.wxs" />
 		<Unit filename="wxsmith/pnlSettingsProfiles.wxs" />
@@ -254,6 +271,7 @@
 					<wxPanel wxs="wxsmith/pnlSettingsProfiles.wxs" src="pnlSettingsProfiles.cpp" hdr="pnlSettingsProfiles.h" fwddecl="0" i18n="1" name="pnlSettingsProfiles" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlSettingsGenerators.wxs" src="pnlSettingsGenerators.cpp" hdr="pnlSettingsGenerators.h" fwddecl="0" i18n="1" name="pnlSettingsGenerators" language="CPP" />
 					<wxDialog wxs="wxsmith/dlgAoIP.wxs" src="dlgAoIP.cpp" hdr="dlgAoIP.h" fwddecl="0" i18n="1" name="dlgAoIP" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlSettingsNmos.wxs" src="pnlSettingsNmos.cpp" hdr="pnlSettingsNmos.h" fwddecl="0" i18n="1" name="pnlSettingsNmos" language="CPP" />
 				</resources>
 			</wxsmith>
 			<AutoVersioning>

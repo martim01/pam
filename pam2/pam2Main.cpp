@@ -45,6 +45,9 @@
 #include "pnlTestOptions.h"
 #include "dlgPin.h"
 #include "dlgNoInput.h"
+#include "libnmos.h"
+#include "wxlogoutput.h"
+#include "wxeventposter.h"
 
 //(*InternalHeaders(pam2Dialog)
 #include <wx/bitmap.h>
@@ -234,6 +237,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Settings::Get().AddHandler(wxT("Output"),wxT("Source"), this);
 
     Settings::Get().AddHandler(wxT("Test"), wxT("Lock"), this);
+    Settings::Get().AddHandler(wxT("NMOS"), wxT("Activate"), this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pam2Dialog::OnSettingChanged);
     Connect(wxID_ANY, wxEVT_MONITOR_REQUEST, (wxObjectEventFunction)&pam2Dialog::OnMonitorRequest);
@@ -257,6 +261,19 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
     m_plblOutput->Show(Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled"))!=wxT("Disabled"));
 
+    //NMOS
+    Connect(wxID_ANY, wxEVT_NMOS_TARGET, (wxObjectEventFunction)&pam2Dialog::OnTarget);
+    Connect(wxID_ANY, wxEVT_NMOS_PATCH_SENDER, (wxObjectEventFunction)&pam2Dialog::OnPatchSender);
+    Connect(wxID_ANY, wxEVT_NMOS_PATCH_RECEIVER, (wxObjectEventFunction)&pam2Dialog::OnPatchReceiver);
+    Connect(wxID_ANY, wxEVT_NMOS_ACTIVATE_RECEIVER, (wxObjectEventFunction)&pam2Dialog::OnActivateSender);
+    Connect(wxID_ANY, wxEVT_NMOS_ACTIVATE_SENDER, (wxObjectEventFunction)&pam2Dialog::OnActivateReceiver);
+
+    SetupNmos();
+
+    if(Settings::Get().Read(wxT("NMOS"), wxT("Activate"),false) == true)
+    {
+        StartNmos();
+    }
 }
 
 pam2Dialog::~pam2Dialog()
@@ -540,10 +557,13 @@ void pam2Dialog::ShowSettingsPanel()
     m_plstOptions->AddButton(wxT("Output Device"));
     m_plstOptions->AddButton(wxT("Output Source"));
     m_plstOptions->AddButton(wxT("Network"));
+    m_plstOptions->AddButton(wxT("NMOS"));
     m_plstOptions->AddButton(wxT("Plugins"));
-    m_plstOptions->AddButton(wxT("Update"));
     m_plstOptions->AddButton(wxT("Profiles"));
     m_plstOptions->AddButton(wxT("General"));
+    m_plstOptions->AddButton(wxT("Update"));
+
+
 
 
     m_plstOptions->SelectButton(Settings::Get().Read(wxT("Settings"), wxT("_Options"), 0));
@@ -744,6 +764,20 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
         {
             m_plstScreens->Enable((Settings::Get().Read(event.GetSection(), event.GetKey(), 0) == 0));
             m_plstOptions->Enable((Settings::Get().Read(event.GetSection(), event.GetKey(), 0) == 0));
+        }
+    }
+    else if(event.GetSection() == wxT("NMOS"))
+    {
+        if(event.GetKey() == wxT("Activate"))
+        {
+            if(event.GetValue(false))
+            {
+                StartNmos();
+            }
+            else
+            {
+                StopNmos();
+            }
         }
     }
 
@@ -964,4 +998,99 @@ void pam2Dialog::OnInputFailed(wxCommandEvent& event)
 
     m_pdlgNoInput->SetPosition(wxPoint(0,425));
     m_pdlgNoInput->Show((m_pswpMain->GetSelectionName() != wxT("Settings") && m_pswpMain->GetSelectionName() != wxT("Log")));
+}
+
+
+void pam2Dialog::SetupNmos()
+{
+    Log::Get().SetOutput(new wxLogOutput());
+
+    NodeApi::Get().Init(Settings::Get().Read(wxT("NMOS"), wxT("Port_Discovery"), 8080),
+                        Settings::Get().Read(wxT("NMOS"), wxT("Port_Connection"), 8081),
+                        Settings::Get().Read(wxT("NMOS"), wxT("HostLabel"), wxEmptyString),
+                        Settings::Get().Read(wxT("NMOS"), wxT("HostDescription"), wxT("PAM")));
+    NodeApi::Get().GetSelf().AddApiVersion("v1.2");
+    NodeApi::Get().GetSelf().AddInternalClock("clk0");
+    NodeApi::Get().GetSelf().AddInterface("eth0");
+
+    shared_ptr<Device> pDevice = make_shared<Device>("PAM", "Live555", Device::GENERIC,NodeApi::Get().GetSelf().GetId());
+    shared_ptr<SourceAudio> pSource = make_shared<SourceAudio>("PAM", "Live555", pDevice->GetId());
+    pSource->AddChannel("Left", "L");
+    pSource->AddChannel("Right", "R");
+
+    shared_ptr<FlowAudioRaw> pFlow = make_shared<FlowAudioRaw>("PAM", "Live555", pSource->GetId(), pDevice->GetId(),48000, FlowAudioRaw::L24);
+    pFlow->SetPacketTime(FlowAudioRaw::US_125);
+    pFlow->SetMediaClkOffset(129122110);    //@todo get this from Live555
+
+    shared_ptr<Sender> pSender = make_shared<Sender>("Live555", "Live555 sender", pFlow->GetId(), Sender::RTP_MCAST, pDevice->GetId(), "eth0");
+    shared_ptr<Receiver> pReceiver = make_shared<Receiver>("Live555", "Live555 receiver", Receiver::RTP_MCAST, pDevice->GetId(), Receiver::AUDIO);
+    pReceiver->AddCap("audio/L24");
+    pReceiver->AddCap("audio/L16");
+    pReceiver->AddInterfaceBinding("eth0");
+
+    if(NodeApi::Get().AddDevice(pDevice) == false)
+    {
+        wmLog::Get()->Log(wxT("NMOS: Failed to add Device"));
+    }
+    if(NodeApi::Get().AddSource(pSource) == false)
+    {
+        wmLog::Get()->Log(wxT("NMOS: Failed to add Source"));
+    }
+    if(NodeApi::Get().AddFlow(pFlow) == false)
+    {
+        wmLog::Get()->Log(wxT("NMOS: Failed to add Flow"));
+    }
+    if(NodeApi::Get().AddReceiver(pReceiver) == false)
+    {
+        wmLog::Get()->Log(wxT("NMOS: Failed to add Receiver"));
+    }
+    if(NodeApi::Get().AddSender(pSender) == false)
+    {
+        wmLog::Get()->Log(wxT("NMOS: Failed to add Sender"));
+    }
+    NodeApi::Get().Commit();
+
+}
+
+void pam2Dialog::StartNmos()
+{
+    std::shared_ptr<ThreadPoster> pPoster = std::make_shared<ThreadPoster>();
+    NodeApi::Get().StartServices(pPoster);
+}
+
+
+
+
+void pam2Dialog::OnTarget(wxNmosEvent& event)
+{
+    // @todo Set the input to be AoIP
+    // @todo Set the source to be the place the sdp file is
+    NodeApi::Get().TargetTaken(event.GetPort(), true);
+}
+
+void pam2Dialog::OnPatchSender(wxNmosEvent& event)
+{
+    // @todo Set the sender stuff - maybe changes the Live555 settings
+    NodeApi::Get().SenderPatchAllowed(event.GetPort(), true);
+}
+
+void pam2Dialog::OnPatchReceiver(wxNmosEvent& event)
+{
+    // @todo set the
+}
+
+void pam2Dialog::OnActivateSender(wxNmosEvent& event)
+{
+    // @todo set the output to be AoIP
+}
+
+void pam2Dialog::OnActivateReceiver(wxNmosEvent& event)
+{
+    // @todo set the receiver to be AoIP
+    // @todo connect using the SDP file that the receiver has
+}
+
+void pam2Dialog::StopNmos()
+{
+    NodeApi::Get().StopServices();
 }

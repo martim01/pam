@@ -41,7 +41,7 @@ class PammClient;
 class Generator;
 class AudioEvent;
 class dlgNoInput;
-
+class wxNmosEvent;
 
 class pam2Dialog: public wxDialog
 {
@@ -120,6 +120,10 @@ class pam2Dialog: public wxDialog
         wmLabel* m_plblInput;
         //*)
 
+        void SetupNmos();
+        void StartNmos();
+        void StopNmos();
+
         void OnSettingChanged(SettingEvent& event);
         void OnMonitorRequest(MonitorEvent& event);
 
@@ -161,6 +165,12 @@ class pam2Dialog: public wxDialog
 
         void TellPluginsAboutOutputChannels();
 
+
+        void OnTarget(wxNmosEvent& event);
+        void OnPatchSender(wxNmosEvent& event);
+        void OnPatchReceiver(wxNmosEvent& event);
+        void OnActivateSender(wxNmosEvent& event);
+        void OnActivateReceiver(wxNmosEvent& event);
 
 
         pnlSettings* m_ppnlSettings;
