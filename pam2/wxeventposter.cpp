@@ -1,7 +1,7 @@
 #include "wxeventposter.h"
 #include "log.h"
 #include "mdns.h"
-
+#include <wx/log.h>
 
 DEFINE_EVENT_TYPE(wxEVT_NMOS_MDNS_ALLFORNOW)
 DEFINE_EVENT_TYPE(wxEVT_NMOS_MDNS_FINISHED)
@@ -26,6 +26,7 @@ void wxEventPoster::InstanceResolved(std::shared_ptr<dnsInstance> pInstance)
 {
     if(m_pHandler)
     {
+        wxLogDebug(wxT("Instance resolved"));
         wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_MDNS_RESOLVED);
         pEvent->SetDnsInstance(pInstance);
         wxQueueEvent(m_pHandler, pEvent);
@@ -36,6 +37,7 @@ void wxEventPoster::InstanceRemoved(const std::string& sInstance)
 {
     if(m_pHandler)
     {
+        wxLogDebug(wxT("Instance removed"));
         wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_MDNS_REMOVED);
         pEvent->SetString(wxString::FromAscii(sInstance.c_str()));
         wxQueueEvent(m_pHandler, pEvent);
@@ -46,6 +48,7 @@ void wxEventPoster::AllForNow(const std::string& sService)
 {
     if(m_pHandler)
     {
+        wxLogDebug(wxT("All for now"));
         wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_MDNS_ALLFORNOW);
         pEvent->SetString(wxString::FromAscii(sService.c_str()));
         wxQueueEvent(m_pHandler, pEvent);
@@ -56,6 +59,7 @@ void wxEventPoster::Finished()
 {
     if(m_pHandler)
     {
+        wxLogDebug(wxT("Finished"));
         wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_MDNS_FINISHED);
         wxQueueEvent(m_pHandler, pEvent);
     }
@@ -65,6 +69,7 @@ void wxEventPoster::CurlDone(unsigned long nResult, const std::string& sResult, 
 {
     if(m_pHandler)
     {
+        wxLogDebug(wxT("Curl done"));
         wxNmosEvent* pEvent(new wxNmosEvent(wxEVT_NMOS_CURL_DONE));
         pEvent->SetInt(nResult);
         pEvent->SetString(wxString::FromAscii(sResult.c_str()));
@@ -77,6 +82,7 @@ void wxEventPoster::RegistrationNodeError()
 {
     if(m_pHandler)
     {
+        wxLogDebug(wxT("RegistrationNodeError"));
         wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_REG_ERROR);
         wxQueueEvent(m_pHandler, pEvent);
     }

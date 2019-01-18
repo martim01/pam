@@ -77,8 +77,6 @@
 			<Depends filename="plugins/peak log/peak log.cbp" />
 			<Depends filename="plugins/peak count/peakcount.cbp" />
 			<Depends filename="plugins/record/record.cbp" />
-			<Depends filename="plugins/LTC/LTC.cbp" />
-			<Depends filename="plugins/LTCGenerator/LTCGenerator.cbp" />
 			<Depends filename="plugins/lineup/lineup.cbp" />
 		</Project>
 		<Project filename="pamupdatemanager/pamupdatemanager.cbp">

@@ -1007,8 +1007,8 @@ void pam2Dialog::SetupNmos()
 
     NodeApi::Get().Init(Settings::Get().Read(wxT("NMOS"), wxT("Port_Discovery"), 8080),
                         Settings::Get().Read(wxT("NMOS"), wxT("Port_Connection"), 8081),
-                        Settings::Get().Read(wxT("NMOS"), wxT("HostLabel"), wxEmptyString),
-                        Settings::Get().Read(wxT("NMOS"), wxT("HostDescription"), wxT("PAM")));
+                        string(Settings::Get().Read(wxT("NMOS"), wxT("HostLabel"), wxEmptyString).mb_str()),
+                        string(Settings::Get().Read(wxT("NMOS"), wxT("HostDescription"), wxT("PAM")).mb_str()));
     NodeApi::Get().GetSelf().AddApiVersion("v1.2");
     NodeApi::Get().GetSelf().AddInternalClock("clk0");
     NodeApi::Get().GetSelf().AddInterface("eth0");
@@ -1054,7 +1054,7 @@ void pam2Dialog::SetupNmos()
 
 void pam2Dialog::StartNmos()
 {
-    std::shared_ptr<ThreadPoster> pPoster = std::make_shared<ThreadPoster>();
+    std::shared_ptr<wxEventPoster> pPoster = std::make_shared<wxEventPoster>(this);
     NodeApi::Get().StartServices(pPoster);
 }
 
