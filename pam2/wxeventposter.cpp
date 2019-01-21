@@ -89,13 +89,13 @@ void wxEventPoster::RegistrationNodeError()
 }
 
 
-void wxEventPoster::Target(const std::string& sReceiverId, std::shared_ptr<Sender> pSender, unsigned short nPort)
+void wxEventPoster::Target(const std::string& sReceiverId, const std::string& sTransportFile, unsigned short nPort)
 {
     if(m_pHandler)
     {
         wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_TARGET);
         pEvent->SetString(wxString::FromAscii(sReceiverId.c_str()));
-        pEvent->SetSender(pSender);
+        pEvent->SetTransportFile(sTransportFile);
         pEvent->SetInt(nPort);
         wxQueueEvent(m_pHandler, pEvent);
     }
@@ -148,27 +148,26 @@ void wxEventPoster::ActivateReceiver(const std::string& sReceiverId)
 
 IMPLEMENT_DYNAMIC_CLASS(wxNmosEvent, wxCommandEvent)
 
-wxNmosEvent::wxNmosEvent(wxEventType type) : wxCommandEvent(type),
-m_pSender(0)
+wxNmosEvent::wxNmosEvent(wxEventType type) : wxCommandEvent(type)
 {
 
 }
 
 wxNmosEvent::wxNmosEvent(const wxNmosEvent& event) : wxCommandEvent(event),
-m_pSender(event.GetSender())
+m_sTransportFile(event.GetTransportFile())
 {
     m_conSender = event.GetSenderConnection();
     m_conReceiver = event.GetReceiverConnection();
 }
 
-void wxNmosEvent::SetSender(std::shared_ptr<Sender> pSender)
+void wxNmosEvent::SetTransportFile(const std::string& sTransportFile)
 {
-    m_pSender = pSender;
+    m_sTransportFile = sTransportFile;
 }
 
-const std::shared_ptr<Sender> wxNmosEvent::GetSender() const
+const wxString& wxNmosEvent::GetTransportFile() const
 {
-    return m_pSender;
+    return m_sTransportFile;
 }
 
 void wxNmosEvent::SetSenderConnection(const connectionSender& con)

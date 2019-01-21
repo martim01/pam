@@ -4,7 +4,7 @@
 #include <map>
 #include <list>
 #include <set>
-class ServiceBrowser;
+class wxServiceBrowser;
 struct PAMBASE_IMPEXPORT dnsInstance
 {
     dnsInstance(){}
@@ -53,7 +53,7 @@ class PAMBASE_IMPEXPORT DNSServiceBrowser
         std::map<wxString, dnsService*>::const_iterator FindService(wxString sService) const;
         #endif // __WXMSW__
     private:
-        ServiceBrowser* m_pBrowser;
+        wxServiceBrowser* m_pBrowser;
 };
 
 DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_BROWSE_FINISHED, -1)

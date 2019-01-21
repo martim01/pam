@@ -271,7 +271,7 @@ void IOManager::InputChanged(const wxString& sKey)
     if(sKey == wxT("AoIP"))
     {
         wxString sUrl = Settings::Get().Read(wxT("AoIP"), Settings::Get().Read(wxT("Input"), wxT("AoIP"), wxEmptyString), wxEmptyString);
-        if(sUrl != m_sCurrentRtp)
+        if(sUrl != m_sCurrentRtp || sUrl == wxT("NMOS_IS-04"))
         {
             wmLog::Get()->Log(wxT("Audio Input Device Changed: Close AoIP Session"));
             ClearSession();
@@ -609,7 +609,14 @@ void IOManager::InitAudioInputDevice()
         m_nInputSource = AudioEvent::RTP;
         wmLog::Get()->Log(wxT("Create Audio Input Device: AoIP"));
         wxString sRtp(Settings::Get().Read(wxT("Input"), wxT("AoIP"), wxEmptyString));
-        sRtp = Settings::Get().Read(wxT("AoIP"), sRtp, wxEmptyString);
+        if(sRtp != wxT("NMOS_IS-04") && sRtp != wxT("NMOS_IS-05"))
+        {
+            sRtp = Settings::Get().Read(wxT("AoIP"), sRtp, wxEmptyString);
+        }
+        else if(sRtp == wxT("NMOS_IS-05"))
+        {
+            sRtp = Settings::Get().Read(wxT("NMOS"), wxT("IS-04"), wxEmptyString);
+        }
 
         if(sRtp.empty() == false && m_mRtp.find(sRtp) == m_mRtp.end())
         {

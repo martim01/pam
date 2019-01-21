@@ -17,12 +17,12 @@ static void type_callback(AvahiServiceTypeBrowser* stb, AvahiIfIndex interface, 
 static void resolve_callback(AvahiServiceResolver *r, AVAHI_GCC_UNUSED AvahiIfIndex interface, AVAHI_GCC_UNUSED AvahiProtocol protocol, AvahiResolverEvent event,const char *name, const char *type, const char *domain, const char *host_name, const AvahiAddress *address, uint16_t port, AvahiStringList *txt,AvahiLookupResultFlags flags,AVAHI_GCC_UNUSED void* userdata);
 static void browse_callback(AvahiServiceBrowser *b, AvahiIfIndex interface, AvahiProtocol protocol, AvahiBrowserEvent event, const char *name, const char *type, const char *domain, AVAHI_GCC_UNUSED AvahiLookupResultFlags flags, void* userdata);
 // CServiceBrowserDlg dialog
-class ServiceBrowser : public wxEvtHandler
+class wxServiceBrowser : public wxEvtHandler
 {
 // Construction
     public:
-        ServiceBrowser(wxEvtHandler* pHandler);
-        ~ServiceBrowser();
+        wxServiceBrowser(wxEvtHandler* pHandler);
+        ~wxServiceBrowser();
 
 
         bool StartBrowser(const std::set<wxString>& setServices);

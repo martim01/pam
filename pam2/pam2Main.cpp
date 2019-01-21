@@ -1009,7 +1009,6 @@ void pam2Dialog::SetupNmos()
                         Settings::Get().Read(wxT("NMOS"), wxT("Port_Connection"), 8081),
                         string(Settings::Get().Read(wxT("NMOS"), wxT("HostLabel"), wxEmptyString).mb_str()),
                         string(Settings::Get().Read(wxT("NMOS"), wxT("HostDescription"), wxT("PAM")).mb_str()));
-    NodeApi::Get().GetSelf().AddApiVersion("v1.2");
     NodeApi::Get().GetSelf().AddInternalClock("clk0");
     NodeApi::Get().GetSelf().AddInterface("eth0");
 
@@ -1022,8 +1021,8 @@ void pam2Dialog::SetupNmos()
     pFlow->SetPacketTime(FlowAudioRaw::US_125);
     pFlow->SetMediaClkOffset(129122110);    //@todo get this from Live555
 
-    shared_ptr<Sender> pSender = make_shared<Sender>("Live555", "Live555 sender", pFlow->GetId(), Sender::RTP_MCAST, pDevice->GetId(), "eth0");
-    shared_ptr<Receiver> pReceiver = make_shared<Receiver>("Live555", "Live555 receiver", Receiver::RTP_MCAST, pDevice->GetId(), Receiver::AUDIO);
+    shared_ptr<Sender> pSender = make_shared<Sender>("PAM Out", "Live555 sender", pFlow->GetId(), Sender::RTP_MCAST, pDevice->GetId(), "eth0");
+    shared_ptr<Receiver> pReceiver = make_shared<Receiver>("PAM In", "Live555 receiver", Receiver::RTP_MCAST, pDevice->GetId(), Receiver::AUDIO);
     pReceiver->AddCap("audio/L24");
     pReceiver->AddCap("audio/L16");
     pReceiver->AddInterfaceBinding("eth0");
@@ -1054,6 +1053,7 @@ void pam2Dialog::SetupNmos()
 
 void pam2Dialog::StartNmos()
 {
+    wmLog::Get()->Log(wxT("Start NMOS Services"));
     std::shared_ptr<wxEventPoster> pPoster = std::make_shared<wxEventPoster>(this);
     NodeApi::Get().StartServices(pPoster);
 }
@@ -1063,8 +1063,14 @@ void pam2Dialog::StartNmos()
 
 void pam2Dialog::OnTarget(wxNmosEvent& event)
 {
-    // @todo Set the input to be AoIP
-    // @todo Set the source to be the place the sdp file is
+    wxString sSdp = event.GetTransportFile();
+    sSdp.Replace(wxT("\n"), wxT("`"));
+
+    Settings::Get().Write(wxT("NMOS"), wxT("IS-04"), wxString::Format(wxT("NMOS[%s]"),sSdp.c_str()));
+
+    Settings::Get().Write(wxT("Input"), wxT("AoIP"), wxT("NMOS_IS-04"));
+    Settings::Get().Write(wxT("Input"), wxT("Type"), wxT("AoIP"));
+
     NodeApi::Get().TargetTaken(event.GetPort(), true);
 }
 
@@ -1092,5 +1098,6 @@ void pam2Dialog::OnActivateReceiver(wxNmosEvent& event)
 
 void pam2Dialog::StopNmos()
 {
+    wmLog::Get()->Log(wxT("Stop NMOS Services"));
     NodeApi::Get().StopServices();
 }

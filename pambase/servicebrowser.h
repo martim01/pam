@@ -20,12 +20,12 @@ static void DNSSD_API GetAddress( DNSServiceRef sdRef, DNSServiceFlags flags, ui
 
 
 // CServiceBrowserDlg dialog
-class ServiceBrowser : public wxEvtHandler
+class wxServiceBrowser : public wxEvtHandler
 {
 // Construction
 public:
-	ServiceBrowser(wxEvtHandler* pHandler);
-    ~ServiceBrowser();
+	wxServiceBrowser(wxEvtHandler* pHandler);
+    ~wxServiceBrowser();
 	bool StartBrowser(const std::set<wxString>& setServices);
 
 

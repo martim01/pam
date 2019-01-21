@@ -11,25 +11,25 @@ using namespace std;
 
 void client_callback(AvahiClient * pClient, AvahiClientState state, AVAHI_GCC_UNUSED void * userdata)
 {
-    ServiceBrowser* pBrowser = reinterpret_cast<ServiceBrowser*>(userdata);
+    wxServiceBrowser* pBrowser = reinterpret_cast<wxServiceBrowser*>(userdata);
     pBrowser->ClientCallback(pClient, state);
 }
 
 void type_callback(AvahiServiceTypeBrowser* stb, AvahiIfIndex interface, AvahiProtocol protocol, AvahiBrowserEvent event, const char* type, const char* domain, AvahiLookupResultFlags flags, void* userdata)
 {
-    ServiceBrowser* pBrowser = reinterpret_cast<ServiceBrowser*>(userdata);
+    wxServiceBrowser* pBrowser = reinterpret_cast<wxServiceBrowser*>(userdata);
     pBrowser->TypeCallback(interface, protocol, event, type, domain);
 }
 
 void browse_callback(AvahiServiceBrowser *b, AvahiIfIndex interface, AvahiProtocol protocol, AvahiBrowserEvent event, const char *name, const char *type, const char *domain, AVAHI_GCC_UNUSED AvahiLookupResultFlags flags, void* userdata)
 {
-    ServiceBrowser* pBrowser = reinterpret_cast<ServiceBrowser*>(userdata);
+    wxServiceBrowser* pBrowser = reinterpret_cast<wxServiceBrowser*>(userdata);
     pBrowser->BrowseCallback(b, interface, protocol, event, name, type, domain);
 }
 
 void resolve_callback(AvahiServiceResolver *r, AVAHI_GCC_UNUSED AvahiIfIndex interface, AVAHI_GCC_UNUSED AvahiProtocol protocol, AvahiResolverEvent event,const char *name, const char *type, const char *domain, const char *host_name, const AvahiAddress *address, uint16_t port, AvahiStringList *txt,AvahiLookupResultFlags flags,AVAHI_GCC_UNUSED void* userdata)
 {
-    ServiceBrowser* pBrowser = reinterpret_cast<ServiceBrowser*>(userdata);
+    wxServiceBrowser* pBrowser = reinterpret_cast<wxServiceBrowser*>(userdata);
     pBrowser->ResolveCallback(r, event, name, type, domain,host_name, address,port,txt);
 
 }
@@ -40,7 +40,7 @@ void resolve_callback(AvahiServiceResolver *r, AVAHI_GCC_UNUSED AvahiIfIndex int
 
 
 
-ServiceBrowser::ServiceBrowser(wxEvtHandler* pHandler) :
+wxServiceBrowser::wxServiceBrowser(wxEvtHandler* pHandler) :
     m_pHandler(pHandler),
     m_pThreadedPoll(0),
     m_pClient(0),
@@ -48,16 +48,16 @@ ServiceBrowser::ServiceBrowser(wxEvtHandler* pHandler) :
     m_bBrowsing(false)
 
 {
-    Connect(wxID_ANY, wxEVT_BROWSE_FINISHED, (wxObjectEventFunction)&ServiceBrowser::OnStop);
+    Connect(wxID_ANY, wxEVT_BROWSE_FINISHED, (wxObjectEventFunction)&wxServiceBrowser::OnStop);
 }
 
-ServiceBrowser::~ServiceBrowser()
+wxServiceBrowser::~wxServiceBrowser()
 {
     Stop();
     DeleteAllServices();
 }
 
-void ServiceBrowser::DeleteAllServices()
+void wxServiceBrowser::DeleteAllServices()
 {
     for(map<wxString, dnsService*>::iterator itService = m_mServices.begin(); itService != m_mServices.end(); ++itService)
     {
@@ -67,7 +67,7 @@ void ServiceBrowser::DeleteAllServices()
 }
 
 
-bool ServiceBrowser::StartBrowser(const std::set<wxString>& setServices)
+bool wxServiceBrowser::StartBrowser(const std::set<wxString>& setServices)
 {
     m_setServices = setServices;
     int error;
@@ -86,7 +86,7 @@ bool ServiceBrowser::StartBrowser(const std::set<wxString>& setServices)
     return true;
 }
 
-void ServiceBrowser::Stop()
+void wxServiceBrowser::Stop()
 {
     if(m_pThreadedPoll)
     {
@@ -123,7 +123,7 @@ void ServiceBrowser::Stop()
 }
 
 
-bool ServiceBrowser::Start(AvahiClient* pClient)
+bool wxServiceBrowser::Start(AvahiClient* pClient)
 {
     if(!m_bBrowsing)
     {
@@ -139,7 +139,7 @@ bool ServiceBrowser::Start(AvahiClient* pClient)
     return true;
 }
 
-void ServiceBrowser::ClientCallback(AvahiClient * pClient, AvahiClientState state)
+void wxServiceBrowser::ClientCallback(AvahiClient * pClient, AvahiClientState state)
 {
     wmLog::Get()->Log(wxT("ClientCallback"));
     switch (state)
@@ -186,7 +186,7 @@ void ServiceBrowser::ClientCallback(AvahiClient * pClient, AvahiClientState stat
 
 }
 
-void ServiceBrowser::TypeCallback(AvahiIfIndex interface, AvahiProtocol protocol, AvahiBrowserEvent event, const char* type, const char* domain)
+void wxServiceBrowser::TypeCallback(AvahiIfIndex interface, AvahiProtocol protocol, AvahiBrowserEvent event, const char* type, const char* domain)
 {
     switch(event)
     {
@@ -234,7 +234,7 @@ void ServiceBrowser::TypeCallback(AvahiIfIndex interface, AvahiProtocol protocol
     }
 }
 
-void ServiceBrowser::BrowseCallback(AvahiServiceBrowser* pBrowser, AvahiIfIndex interface, AvahiProtocol protocol, AvahiBrowserEvent event, const char *name, const char *type, const char *domain)
+void wxServiceBrowser::BrowseCallback(AvahiServiceBrowser* pBrowser, AvahiIfIndex interface, AvahiProtocol protocol, AvahiBrowserEvent event, const char *name, const char *type, const char *domain)
 {
     /* Called whenever a new services becomes available on the LAN or is removed from the LAN */
     switch (event)
@@ -287,7 +287,7 @@ void ServiceBrowser::BrowseCallback(AvahiServiceBrowser* pBrowser, AvahiIfIndex 
     }
 }
 
-void ServiceBrowser::ResolveCallback(AvahiServiceResolver* pResolver, AvahiResolverEvent event,const char *name, const char *type, const char *domain, const char *host_name, const AvahiAddress *address, uint16_t port, AvahiStringList *txt)
+void wxServiceBrowser::ResolveCallback(AvahiServiceResolver* pResolver, AvahiResolverEvent event,const char *name, const char *type, const char *domain, const char *host_name, const AvahiAddress *address, uint16_t port, AvahiStringList *txt)
 {
     if(pResolver)
     {
@@ -335,7 +335,7 @@ void ServiceBrowser::ResolveCallback(AvahiServiceResolver* pResolver, AvahiResol
     CheckStop();
 }
 
-void ServiceBrowser::CheckStop()
+void wxServiceBrowser::CheckStop()
 {
     --m_nWaitingOn;
     if(m_nWaitingOn == 0)
@@ -345,12 +345,12 @@ void ServiceBrowser::CheckStop()
     }
 }
 
-void ServiceBrowser::OnStop(wxCommandEvent& event)
+void wxServiceBrowser::OnStop(wxCommandEvent& event)
 {
     Stop();
 }
 
-void ServiceBrowser::LogError(const wxString& sError)
+void wxServiceBrowser::LogError(const wxString& sError)
 {
     wmLog::Get()->Log(wxString::Format(wxT("%s: %s"),sError.c_str(), wxString::FromAscii(avahi_strerror(avahi_client_errno(m_pClient))).c_str()));
 }

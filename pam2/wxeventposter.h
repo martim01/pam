@@ -17,7 +17,7 @@ class wxEventPoster : public EventPoster
         void RegistrationNodeError();
         void InstanceRemoved(const std::string& sInstance);
 
-        void Target(const std::string& sReceiverId, std::shared_ptr<Sender> pSender, unsigned short nPort);
+        void Target(const std::string& sReceiverId, const std::string& sTransportFile, unsigned short nPort);
         void PatchSender(const std::string& sSenderId, const connectionSender& conPatch, unsigned short nPort);
         void PatchReceiver(const std::string& sReceiverId, const connectionReceiver& conPatch, unsigned short nPort);
         void ActivateSender(const std::string& sSenderId);
@@ -57,8 +57,8 @@ public:
     void SetDnsInstance(std::shared_ptr<dnsInstance> pInstance);
     const std::shared_ptr<dnsInstance> GetDnsInstance() const;
 
-    void SetSender(std::shared_ptr<Sender> pSender);
-    const std::shared_ptr<Sender> GetSender() const;
+    void SetTransportFile(const std::string& sTransportFile);
+    const wxString& GetTransportFile() const;
 
     void SetSenderConnection(const connectionSender& con);
     const connectionSender& GetSenderConnection() const;
@@ -82,7 +82,7 @@ public:
 private:
 
     std::shared_ptr<dnsInstance> m_pDnsInstance;
-    std::shared_ptr<Sender> m_pSender;
+    wxString m_sTransportFile;
     connectionSender m_conSender;
     connectionReceiver m_conReceiver;
 

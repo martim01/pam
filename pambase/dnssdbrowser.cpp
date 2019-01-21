@@ -9,7 +9,7 @@ DEFINE_EVENT_TYPE(wxEVT_BROWSE_FINISHED)
 DEFINE_EVENT_TYPE(wxEVT_BROWSE_RESOLVED)
 
 DNSServiceBrowser::DNSServiceBrowser(wxEvtHandler* pHandler) :
-    m_pBrowser(new ServiceBrowser(pHandler))
+    m_pBrowser(new wxServiceBrowser(pHandler))
 {
 
 }

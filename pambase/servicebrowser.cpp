@@ -43,17 +43,17 @@ void DNSSD_API GetAddress( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t 
 
 
 
-ServiceBrowser::ServiceBrowser(wxEvtHandler* pHandler)
+wxServiceBrowser::wxServiceBrowser(wxEvtHandler* pHandler)
 	: m_pHandler(pHandler)
 {
 
 	m_timerBrowser.SetOwner(this, wxNewId());
-	Connect(m_timerBrowser.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&ServiceBrowser::OnTimer);
+	Connect(m_timerBrowser.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&wxServiceBrowser::OnTimer);
 
 }
 
 
-bool ServiceBrowser::StartBrowser(const std::set<wxString>& setServices)
+bool wxServiceBrowser::StartBrowser(const std::set<wxString>& setServices)
 {
     m_setServices = setServices;
 	DNSServiceRef client = NULL;
@@ -68,7 +68,7 @@ bool ServiceBrowser::StartBrowser(const std::set<wxString>& setServices)
     return false;
 }
 
-void ServiceBrowser::OnTimer(wxTimerEvent& event)
+void wxServiceBrowser::OnTimer(wxTimerEvent& event)
 {
     int count = 0;
 	for ( ; ; )
@@ -134,7 +134,7 @@ void ServiceBrowser::OnTimer(wxTimerEvent& event)
 	}
 }
 
-void DNSSD_API ServiceBrowser::IterateTypes( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *serviceName, const char *regtype, const char *replyDomain, void *context )
+void DNSSD_API wxServiceBrowser::IterateTypes( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *serviceName, const char *regtype, const char *replyDomain, void *context )
 {
 	// Service types are added to the top level of the tree
 	//
@@ -189,7 +189,7 @@ void DNSSD_API ServiceBrowser::IterateTypes( DNSServiceRef sdRef, DNSServiceFlag
     }
 }
 
-void DNSSD_API ServiceBrowser::IterateInstances( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *serviceName, const char *regtype, const char *replyDomain, void *context )
+void DNSSD_API wxServiceBrowser::IterateInstances( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *serviceName, const char *regtype, const char *replyDomain, void *context )
 {
 	if ( (flags & kDNSServiceFlagsAdd) && !errorCode )
 	{
@@ -230,7 +230,7 @@ void DNSSD_API ServiceBrowser::IterateInstances( DNSServiceRef sdRef, DNSService
     }
 }
 
-void DNSSD_API ServiceBrowser::Resolve( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const unsigned char *txtRecord, void *context )
+void DNSSD_API wxServiceBrowser::Resolve( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const unsigned char *txtRecord, void *context )
 {
     if ( !errorCode )
 	{
@@ -314,7 +314,7 @@ void DNSSD_API ServiceBrowser::Resolve( DNSServiceRef sdRef, DNSServiceFlags fla
 		m_mInstances.erase(sdRef);
     }
 }
-void DNSSD_API ServiceBrowser::Address( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *hostname, const struct sockaddr *address, uint32_t ttl, void *context )
+void DNSSD_API wxServiceBrowser::Address( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *hostname, const struct sockaddr *address, uint32_t ttl, void *context )
 {
     if ( !errorCode )
 	{
@@ -345,7 +345,7 @@ void DNSSD_API ServiceBrowser::Address( DNSServiceRef sdRef, DNSServiceFlags fla
 }
 
 
-ServiceBrowser::~ServiceBrowser()
+wxServiceBrowser::~ServiceBrowser()
 {
     for(map<wxString, dnsService*>::iterator itService = m_mServices.begin(); itService != m_mServices.end(); ++itService)
     {

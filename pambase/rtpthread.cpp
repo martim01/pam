@@ -100,7 +100,7 @@ void RtpThread::StreamFromSDP()
 
     string sSDP(m_sDescriptor.mb_str());
 
-    *m_penv << "\nUsing SDP passed via SAP \n" << sSDP.c_str() << "\n";
+    *m_penv << "\nUsing SDP \n" << sSDP.c_str() << "\n";
 
     Smpte2110MediaSession* pSession = Smpte2110MediaSession::createNew(*m_penv, sSDP.c_str());
     if (pSession == NULL)
