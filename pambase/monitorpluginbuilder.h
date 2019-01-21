@@ -69,4 +69,4 @@ class PAMBASE_IMPEXPORT MonitorPluginBuilder : public wxEvtHandler
         std::set<wxEvtHandler*> m_setHandlers;
 };
 
-DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_MONITOR_MAX, -1)
+DECLARE_EXPORTED_EVENT_TYPE(PAMBASE_IMPEXPORT, wxEVT_MONITOR_MAX, -1)

@@ -15,6 +15,7 @@
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-Wall" />
+					<Add option="-std=c++11" />
 					<Add option="-DWIN32" />
 					<Add option="-D_USRDLL" />
 					<Add option="-DDLL_EXPORTS" />
@@ -32,7 +33,7 @@
 				<Linker>
 					<Add option="-s" />
 					<Add option="-Wl,--enable-auto-import,-Map=pamlevel.map" />
-					<Add library="wxmsw30u_gcc_wammacs" />
+					<Add library="wxmsw30u_gcc_custom" />
 					<Add library="libsamplerate.a" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
@@ -49,6 +50,7 @@
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
+					<Add option="-std=c++11" />
 					<Add option="-DWIN32" />
 					<Add option="-D_USRDLL" />
 					<Add option="-D__WXMSW__" />
@@ -65,7 +67,7 @@
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-Wl,--enable-auto-import,-Map=pamlevel.map" />
-					<Add library="wxmsw30ud_gcc_wammacs" />
+					<Add library="wxmsw30ud_gcc_custom" />
 					<Add library="libsamplerated.a" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>

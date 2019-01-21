@@ -13,7 +13,7 @@ BEGIN_EVENT_TABLE(wmSlider, pmControl)
 END_EVENT_TABLE()
 
  wxIMPLEMENT_DYNAMIC_CLASS(wmSlider, pmControl);
-DEFINE_EVENT_TYPE(wxEVT_SLIDER_MOVE)
+wxDEFINE_EVENT(wxEVT_SLIDER_MOVE, wxCommandEvent);
 
 wmSlider::wmSlider(wxWindow *parent, wxWindowID id, const wxString& sLabel, const wxPoint& pos, const wxSize& size, long nStyle, const wxString& name) : pmControl()
 {

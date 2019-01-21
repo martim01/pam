@@ -38,7 +38,7 @@
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-Wl,--enable-auto-import,-Map=pam2d.map" />
-					<Add library="wxmsw30ud_gcc_wammacs" />
+					<Add library="wxmsw30ud_gcc_custom" />
 					<Add library="pambased" />
 					<Add library="portaudiod" />
 					<Add library="libcurl" />
@@ -81,7 +81,7 @@
 				<Linker>
 					<Add option="-s" />
 					<Add option="-Wl,--enable-auto-import,-Map=pam2.map" />
-					<Add library="wxmsw30u_gcc_wammacs" />
+					<Add library="wxmsw30u_gcc_custom" />
 					<Add library="portaudio" />
 					<Add library="pambase" />
 					<Add library="libcurl" />

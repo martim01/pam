@@ -88,4 +88,4 @@ class PAMBASE_IMPEXPORT wmSlider : public pmControl
         double m_dPosition;
 };
 
-DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_SLIDER_MOVE,-1)
+wxDECLARE_EXPORTED_EVENT(PAMBASE_IMPEXPORT, wxEVT_SLIDER_MOVE,wxCommandEvent);

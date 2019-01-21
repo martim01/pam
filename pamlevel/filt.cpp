@@ -37,6 +37,10 @@
  * SUCH DAMAGE.
  */
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif // M_PI
+
 #include "filt.h"
 #define ECODE(x) {m_error_flag = x; return;}
 

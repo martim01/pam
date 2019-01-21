@@ -4,7 +4,7 @@
 #include "dlldefine.h"
 #include <vector>
 
-DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT,wxEVT_MONITOR_REQUEST,-1)
+DECLARE_EXPORTED_EVENT_TYPE(PAMBASE_IMPEXPORT,wxEVT_MONITOR_REQUEST,-1)
 
 class PAMBASE_IMPEXPORT MonitorEvent : public wxCommandEvent
 {

@@ -32,7 +32,7 @@
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="wxmsw30u_gcc_wammacs" />
+					<Add library="wxmsw30u_gcc_custom" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 			</Target>
@@ -62,7 +62,7 @@
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="wxmsw30u_gcc_wammacs" />
+					<Add library="wxmsw30u_gcc_custom" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 			</Target>
