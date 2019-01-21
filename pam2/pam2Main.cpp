@@ -1004,6 +1004,8 @@ void pam2Dialog::OnInputFailed(wxCommandEvent& event)
 void pam2Dialog::SetupNmos()
 {
     Log::Get().SetOutput(new wxLogOutput());
+    char chHost[256];
+    gethostname(chHost, 256);
 
     NodeApi::Get().Init(Settings::Get().Read(wxT("NMOS"), wxT("Port_Discovery"), 8080),
                         Settings::Get().Read(wxT("NMOS"), wxT("Port_Connection"), 8081),
@@ -1012,17 +1014,17 @@ void pam2Dialog::SetupNmos()
     NodeApi::Get().GetSelf().AddInternalClock("clk0");
     NodeApi::Get().GetSelf().AddInterface("eth0");
 
-    shared_ptr<Device> pDevice = make_shared<Device>("PAM", "Live555", Device::GENERIC,NodeApi::Get().GetSelf().GetId());
-    shared_ptr<SourceAudio> pSource = make_shared<SourceAudio>("PAM", "Live555", pDevice->GetId());
+    shared_ptr<Device> pDevice = make_shared<Device>(chHost, "Live555", Device::GENERIC,NodeApi::Get().GetSelf().GetId());
+    shared_ptr<SourceAudio> pSource = make_shared<SourceAudio>(chHost, "Live555", pDevice->GetId());
     pSource->AddChannel("Left", "L");
     pSource->AddChannel("Right", "R");
 
-    shared_ptr<FlowAudioRaw> pFlow = make_shared<FlowAudioRaw>("PAM", "Live555", pSource->GetId(), pDevice->GetId(),48000, FlowAudioRaw::L24);
+    shared_ptr<FlowAudioRaw> pFlow = make_shared<FlowAudioRaw>(chHost, "Live555", pSource->GetId(), pDevice->GetId(),48000, FlowAudioRaw::L24);
     pFlow->SetPacketTime(FlowAudioRaw::US_125);
     pFlow->SetMediaClkOffset(129122110);    //@todo get this from Live555
 
-    shared_ptr<Sender> pSender = make_shared<Sender>("PAM Out", "Live555 sender", pFlow->GetId(), Sender::RTP_MCAST, pDevice->GetId(), "eth0");
-    shared_ptr<Receiver> pReceiver = make_shared<Receiver>("PAM In", "Live555 receiver", Receiver::RTP_MCAST, pDevice->GetId(), Receiver::AUDIO);
+    shared_ptr<Sender> pSender = make_shared<Sender>(chHost, "Live555 sender", pFlow->GetId(), Sender::RTP_MCAST, pDevice->GetId(), "eth0");
+    shared_ptr<Receiver> pReceiver = make_shared<Receiver>(chHost, "Live555 receiver", Receiver::RTP_MCAST, pDevice->GetId(), Receiver::AUDIO);
     pReceiver->AddCap("audio/L24");
     pReceiver->AddCap("audio/L16");
     pReceiver->AddInterfaceBinding("eth0");
