@@ -13,7 +13,7 @@ using namespace std;
 void DNSSD_API IterateServiceTypes( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *serviceName, const char *regtype, const char *replyDomain, void *context )
 {
     wxLogDebug(wxT("IterateServiceTypes"));
-	ServiceBrowser* pBrowser = (ServiceBrowser *) context;
+	wxServiceBrowser* pBrowser = (wxServiceBrowser *) context;
     pBrowser->IterateTypes(sdRef, flags, interfaceIndex, errorCode, serviceName, regtype, replyDomain, context);
 }
 
@@ -21,14 +21,14 @@ void DNSSD_API IterateServiceTypes( DNSServiceRef sdRef, DNSServiceFlags flags, 
 void DNSSD_API IterateServiceInstances( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *serviceName, const char *regtype, const char *replyDomain, void *context )
 {
     wxLogDebug(wxT("IterateServiceInstances"));
-	ServiceBrowser* pBrowser = (ServiceBrowser *) context;
+	wxServiceBrowser* pBrowser = (wxServiceBrowser *) context;
 	pBrowser->IterateInstances(sdRef, flags, interfaceIndex, errorCode, serviceName, regtype, replyDomain, context );
 }
 
 void DNSSD_API ResolveInstance( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const unsigned char *txtRecord, void *context )
 {
     wxLogDebug(wxT("ResolveInstance"));
-	ServiceBrowser* pBrowser = (ServiceBrowser *) context;
+	wxServiceBrowser* pBrowser = (wxServiceBrowser *) context;
 	pBrowser->Resolve(sdRef, flags, interfaceIndex, errorCode, fullname, hosttarget, port, txtLen, txtRecord, context );
 }
 
@@ -36,7 +36,7 @@ void DNSSD_API ResolveInstance( DNSServiceRef sdRef, DNSServiceFlags flags, uint
 void DNSSD_API GetAddress( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *hostname, const struct sockaddr *address, uint32_t ttl, void *context )
 {
     wxLogDebug(wxT("GetAddress"));
-	ServiceBrowser* pBrowser = (ServiceBrowser *) context;
+	wxServiceBrowser* pBrowser = (wxServiceBrowser *) context;
 	pBrowser->Address(sdRef, flags, interfaceIndex, errorCode, hostname, address, ttl, context );
 }
 
@@ -345,7 +345,7 @@ void DNSSD_API wxServiceBrowser::Address( DNSServiceRef sdRef, DNSServiceFlags f
 }
 
 
-wxServiceBrowser::~ServiceBrowser()
+wxServiceBrowser::~wxServiceBrowser()
 {
     for(map<wxString, dnsService*>::iterator itService = m_mServices.begin(); itService != m_mServices.end(); ++itService)
     {

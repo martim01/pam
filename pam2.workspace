@@ -82,5 +82,6 @@
 		<Project filename="pamupdatemanager/pamupdatemanager.cbp">
 			<Depends filename="pambase/pambase.cbp" />
 		</Project>
+		<Project filename="../nmos/libnmos.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

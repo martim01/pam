@@ -1007,6 +1007,7 @@ void pam2Dialog::SetupNmos()
     char chHost[256];
     gethostname(chHost, 256);
 
+
     NodeApi::Get().Init(Settings::Get().Read(wxT("NMOS"), wxT("Port_Discovery"), 8080),
                         Settings::Get().Read(wxT("NMOS"), wxT("Port_Connection"), 8081),
                         string(Settings::Get().Read(wxT("NMOS"), wxT("HostLabel"), wxEmptyString).mb_str()),
