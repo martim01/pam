@@ -15,7 +15,6 @@
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-Wall" />
-					<Add option="-std=c++0x" />
 					<Add option="-std=c++11" />
 					<Add option="-DWIN32" />
 					<Add option="-D_USRDLL" />
@@ -63,7 +62,6 @@
 				<Option compiler="new_gnu_gcc_compiler" />
 				<Compiler>
 					<Add option="-Wall" />
-					<Add option="-std=c++0x" />
 					<Add option="-g" />
 					<Add option="-std=c++11" />
 					<Add option="-DWIN32" />

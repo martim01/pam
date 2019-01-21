@@ -1005,12 +1005,14 @@ void pam2Dialog::SetupNmos()
 {
     Log::Get().SetOutput(new wxLogOutput());
 
+
     NodeApi::Get().Init(Settings::Get().Read(wxT("NMOS"), wxT("Port_Discovery"), 8080),
                         Settings::Get().Read(wxT("NMOS"), wxT("Port_Connection"), 8081),
                         string(Settings::Get().Read(wxT("NMOS"), wxT("HostLabel"), wxEmptyString).mb_str()),
                         string(Settings::Get().Read(wxT("NMOS"), wxT("HostDescription"), wxT("PAM")).mb_str()));
     NodeApi::Get().GetSelf().AddInternalClock("clk0");
     NodeApi::Get().GetSelf().AddInterface("eth0");
+
 
     shared_ptr<Device> pDevice = make_shared<Device>("PAM", "Live555", Device::GENERIC,NodeApi::Get().GetSelf().GetId());
     shared_ptr<SourceAudio> pSource = make_shared<SourceAudio>("PAM", "Live555", pDevice->GetId());
