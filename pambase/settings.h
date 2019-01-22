@@ -44,7 +44,6 @@ class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
 
         wxString GetLibraryVersion() const;
 
-
     protected:
         Settings();
         void CreatePaths();

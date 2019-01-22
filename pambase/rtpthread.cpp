@@ -77,8 +77,14 @@ void* RtpThread::Entry()
     else
     {
         m_sDescriptor = m_sUrl.AfterFirst(wxT('[')).BeforeFirst(wxT(']'));
+        std::cout << "SDP 1: " << m_sDescriptor.mb_str() << std::endl;
+
         m_sDescriptor.Replace(wxT("`"), wxT("\n"));
+        std::cout << "SDP 2: " << m_sDescriptor.mb_str() << std::endl;
+
         m_sDescriptor = m_sDescriptor.AfterFirst(wxT('\n'));
+
+        std::cout << "SDP 3: " << m_sDescriptor.mb_str() << std::endl;
         StreamFromSDP();
     }
 

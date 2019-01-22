@@ -5,14 +5,15 @@
 
 ////////// AES67ServerMediaSubsession //////////
 
-AES67ServerMediaSubsession* AES67ServerMediaSubsession::createNew(RTPSink& rtpSink, RTCPInstance* rtcpInstance)
+AES67ServerMediaSubsession* AES67ServerMediaSubsession::createNew(RTPSink& rtpSink, RTCPInstance* rtcpInstance, int nPacketTime)
 {
-    return new AES67ServerMediaSubsession(rtpSink, rtcpInstance);
+    return new AES67ServerMediaSubsession(rtpSink, rtcpInstance, nPacketTime);
 }
 
-AES67ServerMediaSubsession::AES67ServerMediaSubsession(RTPSink& rtpSink, RTCPInstance* rtcpInstance)
+AES67ServerMediaSubsession::AES67ServerMediaSubsession(RTPSink& rtpSink, RTCPInstance* rtcpInstance, int nPacketTime)
     : ServerMediaSubsession(rtpSink.envir()),
-    fSDPLines(NULL), fRTPSink(rtpSink), fRTCPInstance(rtcpInstance)
+    fSDPLines(NULL), fRTPSink(rtpSink), fRTCPInstance(rtcpInstance),
+    m_nPacketTime(nPacketTime)
 {
   //fClientRTCPSourceRecords = HashTable::create(ONE_WORD_HASH_KEYS);
 }
@@ -49,11 +50,10 @@ char const* AES67ServerMediaSubsession::sdpLines()
         char const* rangeLine = rangeSDPLine();
         char const* auxSDPLine = fRTPSink.auxSDPLine();
 
-        char const* ptime = "a=ptime:1\r\n";
-        char const* maxptime = "a=maxptime:1\r\n";
-        char const* tsref = "a=ts-refclk:ptp=IEEE1588-2008:39-A7-94-FF-FE-07-CB-D0:0\r\n";
-
         std::stringstream ss;
+        ss << "a=ptime:" << m_nPacketTime << "\r\n";
+        ss << "a=maxptime:" << m_nPacketTime << "\r\n";
+        ss << "a=ts-refclk:" << "\r\n";
         ss << "a=mediaclk:direct=" << GetEpochTimestamp() << "\r\n";
         std::string sMedia(ss.str());
 
@@ -67,9 +67,6 @@ char const* AES67ServerMediaSubsession::sdpLines()
             "%s"
             "%s"
             "%s"
-            "%s"    //ptime
-            "%s"    //maxptime
-            "%s"    //ts-refclk
             "%s"    //mediaclk
             "a=control:%s\r\n";
         unsigned sdpFmtSize = strlen(sdpFmt)
@@ -80,9 +77,6 @@ char const* AES67ServerMediaSubsession::sdpLines()
                               + strlen(rtcpmuxLine)
                               + strlen(rangeLine)
                               + strlen(auxSDPLine)
-                              + strlen(ptime)
-                              + strlen(maxptime)
-                              + strlen(tsref)
                               + strlen(sMedia.c_str())
                               + strlen(trackId());
         char* sdpLines = new char[sdpFmtSize];
@@ -97,9 +91,6 @@ char const* AES67ServerMediaSubsession::sdpLines()
                 rtcpmuxLine, // a=rtcp-mux:... (if present)
                 rangeLine, // a=range:... (if present)
                 auxSDPLine, // optional extra SDP line
-                ptime,      // a=ptime:
-                maxptime,   // a=maxptime:
-                tsref,      // a=ts-refclk
                 sMedia.c_str(),  // a=mediaclk
                 trackId());  // a=control:<track-id>
         delete[] (char*)rangeLine;

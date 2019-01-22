@@ -1020,11 +1020,39 @@ void pam2Dialog::SetupNmos()
     pSource->AddChannel("Left", "L");
     pSource->AddChannel("Right", "R");
 
-    shared_ptr<FlowAudioRaw> pFlow = make_shared<FlowAudioRaw>(chHost, "Live555", pSource->GetId(), pDevice->GetId(),48000, FlowAudioRaw::L24);
-    pFlow->SetPacketTime(FlowAudioRaw::US_125);
+    shared_ptr<FlowAudioRaw> pFlow = make_shared<FlowAudioRaw>(chHost, "Live555", pSource->GetId(), pDevice->GetId(), 48000, FlowAudioRaw::L24);
+
+    int nPackeTime = Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000);
+    switch(nPackeTime)
+    {
+    case 125:
+        pFlow->SetPacketTime(FlowAudioRaw::US_125);
+        break;
+    case 250:
+        pFlow->SetPacketTime(FlowAudioRaw::US_250);
+        break;
+    case 333:
+        pFlow->SetPacketTime(FlowAudioRaw::US_333);
+        break;
+    case 4000:
+        pFlow->SetPacketTime(FlowAudioRaw::US_4000);
+        break;
+    default:
+        pFlow->SetPacketTime(FlowAudioRaw::US_1000);
+        break;
+    }
+
+
     pFlow->SetMediaClkOffset(129122110);    //@todo get this from Live555
 
+    if(Settings::Get().Read(wxT("Server"), wxT("Multicast"),wxEmptyString) == wxEmptyString)
+    {
+        Settings::Get().Write(wxT("Server"), wxT("Multicast"), IOManager::Get().GetRandomMulticastAddress());
+    }
+
     shared_ptr<Sender> pSender = make_shared<Sender>(chHost, "Live555 sender", pFlow->GetId(), Sender::RTP_MCAST, pDevice->GetId(), "eth0");
+    pSender->SetDestinationDetails(std::string(Settings::Get().Read(wxT("Server"), wxT("Multicast"),wxEmptyString).mbc_str()), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
+
     shared_ptr<Receiver> pReceiver = make_shared<Receiver>(chHost, "Live555 receiver", Receiver::RTP_MCAST, pDevice->GetId(), Receiver::AUDIO);
     pReceiver->AddCap("audio/L24");
     pReceiver->AddCap("audio/L16");
@@ -1070,11 +1098,14 @@ void pam2Dialog::OnTarget(wxNmosEvent& event)
     sSdp.Replace(wxT("\n"), wxT("`"));
     sSdp.Replace(wxT("\r"), wxT(""));
 
+    //Save the SDP file details
     Settings::Get().Write(wxT("AoIP"), wxT("NMOS_IS-04"), wxString::Format(wxT("NMOS:[%s]"),sSdp.c_str()));
-
+    //Chage the AOIP source to be NMOS IS-04
     Settings::Get().Write(wxT("Input"), wxT("AoIP"), wxT("NMOS_IS-04"));
+    //Make sure the input type is AoIP
     Settings::Get().Write(wxT("Input"), wxT("Type"), wxT("AoIP"));
 
+    //Now tell NMOS that we have taken the target
     NodeApi::Get().TargetTaken(event.GetPort(), true);
 }
 

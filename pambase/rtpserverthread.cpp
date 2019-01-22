@@ -17,36 +17,18 @@ RtpServerThread::RtpServerThread(wxEvtHandler* pHandler, const wxString& sRTSP, 
     m_pRtcpInstance(0),
     m_pRtpGroupsock(0),
     m_pRtspServer(0),
+    m_pSms(0),
     m_bStreaming(false)
 {
 
 }
 
-void* RtpServerThread::Entry()
+bool RtpServerThread::SetupStream(const wxString& sStreamName, const wxString& sInfo, const wxString& sDescription)
 {
     SendingInterfaceAddr = our_inet_addr(std::string(m_sRTSP.mb_str()).c_str());
-    wxLogDebug(wxT("RtpServerThread::Entry() %d"), m_ePacketTime);
     TaskScheduler* scheduler = PamTaskScheduler::createNew();
     m_penv = PamUsageEnvironment::createNew(*scheduler, m_pHandler);
-    CreateStream();
 
-    while(m_eventLoopWatchVariable == 0)
-    {
-        m_penv->taskScheduler().doEventLoop(&m_eventLoopWatchVariable);
-    }
-    CloseStream();
-    wxLogDebug(wxT("RtpServerThread::Entry() Finished"));
-    return NULL;
-}
-
-
-
-bool RtpServerThread::CreateStream()
-{
-    wxLogDebug(wxT("RtpServerThread::CreateStream()"));
-
-    wxMutexLocker lock(m_mutex);
-    // Open the file as a 'WAV' file:
     m_pSource = LiveAudioSource::createNew(m_pHandler, m_mutex, *m_penv, 2, m_ePacketTime);
 
     char const* mimeType = "L24";
@@ -77,25 +59,54 @@ bool RtpServerThread::CreateStream()
     m_pSink->setPacketSizes(m_pSource->GetPreferredFrameSize()+12,m_pSource->GetPreferredFrameSize()+12);
 
     // Create and start a RTSP server to serve this stream:
+
+    m_pSms = ServerMediaSession::createNew(*m_penv, sStreamName.mbc_str(), sInfo.mbc_str(), sDescription.mbc_str(), True/*SSM*/);
+    if(m_pSms)
+    {
+        m_pSms->addSubsession(AES67ServerMediaSubsession::createNew(*m_pSink, NULL, m_ePacketTime));
+    }
+
+}
+
+void* RtpServerThread::Entry()
+{
+    StartStream();
+
+    while(m_eventLoopWatchVariable == 0)
+    {
+        m_penv->taskScheduler().doEventLoop(&m_eventLoopWatchVariable);
+    }
+    CloseStream();
+    wxLogDebug(wxT("RtpServerThread::Entry() Finished"));
+    return NULL;
+}
+
+
+
+bool RtpServerThread::StartStream()
+{
+    wxMutexLocker lock(m_mutex);
+
     m_pRtspServer = RTSPServer::createNew(*m_penv, m_nRTSPPort);
     if (m_pRtspServer == NULL)
     {
         *m_penv << "Failed to create RTSP server: " << m_penv->getResultMsg() << "\n";
         return true;
     }
-    ServerMediaSession* sms = ServerMediaSession::createNew(*m_penv, "PAM", "AES67", "", True/*SSM*/);
-    sms->addSubsession(AES67ServerMediaSubsession::createNew(*m_pSink, NULL));
-    m_pRtspServer->addServerMediaSession(sms);
+    m_pRtspServer->addServerMediaSession(m_pSms);
 
     // Finally, start the streaming:
     *m_penv << "Beginning streaming...\n";
-    *m_penv << m_pRtspServer->rtspURL(sms) << "\n";
+    *m_penv << m_pRtspServer->rtspURL(m_pSms) << "\n";
 
-    wxLogDebug(m_pRtspServer->rtspURL(sms));
+    char* pChar = m_pSms->generateSDPDescription();
+    *m_penv << pChar << "\n";
+    delete pChar;
+
+    wxLogDebug(m_pRtspServer->rtspURL(m_pSms));
 
     m_pSink->startPlaying(*m_pSource, afterPlaying, reinterpret_cast<void*>(this));
 
-    wxLogDebug(wxT("RtpServerThread::CreateStream() Done"));
     m_bStreaming = true;
 
     return true;

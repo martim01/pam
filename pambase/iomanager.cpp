@@ -9,6 +9,7 @@
 #include "rtpthread.h"
 #include <wx/log.h>
 #include "rtpserverthread.h"
+#include <ctime>
 
 using namespace std;
 
@@ -97,6 +98,8 @@ IOManager::IOManager() :
     Connect(m_timerSilence.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&IOManager::OnTimerSilence);
 
     m_timerSilence.Start(250, true);
+
+    srand(time(NULL));
 }
 
 
@@ -273,7 +276,7 @@ void IOManager::InputChanged(const wxString& sKey)
         wmLog::Get()->Log(wxT("IOManager::InputChanged: AoIP"));
 
         wxString sUrl = Settings::Get().Read(wxT("AoIP"), Settings::Get().Read(wxT("Input"), wxT("AoIP"), wxEmptyString), wxEmptyString);
-        if(sUrl != m_sCurrentRtp || sUrl == wxT("NMOS_IS-04"))
+        if(sUrl != m_sCurrentRtp)
         {
             wmLog::Get()->Log(wxT("Audio Input Device Changed: Close AoIP Session"));
             ClearSession();
@@ -611,14 +614,7 @@ void IOManager::InitAudioInputDevice()
         m_nInputSource = AudioEvent::RTP;
         wmLog::Get()->Log(wxT("Create Audio Input Device: AoIP"));
         wxString sRtp(Settings::Get().Read(wxT("Input"), wxT("AoIP"), wxEmptyString));
-        if(sRtp != wxT("NMOS_IS-04") && sRtp != wxT("NMOS_IS-05"))
-        {
-            sRtp = Settings::Get().Read(wxT("AoIP"), sRtp, wxEmptyString);
-        }
-        else if(sRtp == wxT("NMOS_IS-05"))
-        {
-            sRtp = Settings::Get().Read(wxT("NMOS"), wxT("IS-04"), wxEmptyString);
-        }
+        sRtp = Settings::Get().Read(wxT("AoIP"), sRtp, wxEmptyString);
 
         if(sRtp.empty() == false && m_mRtp.find(sRtp) == m_mRtp.end())
         {
@@ -673,6 +669,7 @@ void IOManager::InitAudioOutputDevice()
         if(m_bStream)
         {
             m_pRtpServer = new RtpServerThread(this, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString), Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555), Settings::Get().Read(wxT("Server"), wxT("Multicast"), wxEmptyString), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004), (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000));
+            m_pRtpServer->SetupStream(wxT("PAM"), wxT("Info"), wxT("Description"));
             m_pRtpServer->Run();
         }
 
@@ -840,4 +837,15 @@ void IOManager::OnTimerSilence(wxTimerEvent& event)
     {
         (*itHandler)->ProcessEvent(eventInput);
     }
+}
+
+
+wxString IOManager::GetRandomMulticastAddress()
+{
+    wxString sAddress(wxT("239."));
+    for(int i = 0; i < 3; i++)
+    {
+        sAddress += wxString::Format(wxT(".%d"), rand()%256);
+    }
+    return sAddress;
 }

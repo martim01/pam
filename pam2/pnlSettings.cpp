@@ -358,7 +358,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
     m_pedtRTPPort->SetValue(Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), wxT("6970")));
     m_pedtRTSPPort->SetValue(Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), wxT("5555")));
-    m_ppnlAddress->SetValue(Settings::Get().Read(wxT("Server"), wxT("Multicast"), wxEmptyString));
+    m_ppnlAddress->SetValue(Settings::Get().Read(wxT("Server"), wxT("Multicast"), IOManager::Get().GetRandomMulticastAddress()));
     m_pbtnStream->ToggleSelection(false);
 
     ShowRTPDefined();
