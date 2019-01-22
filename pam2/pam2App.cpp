@@ -34,6 +34,8 @@ bool pam2App::OnInit()
 
     //#ifdef __WXGNU__
     Settings::Get().ReadSettings(wxString::Format(wxT("%s/pam/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
+    Settings::Get().RemoveKey(wxT("AoIP"), wxT("NMOS_IS-04"));
+
     //#else
    // Settings::Get().ReadSettings(wxString::Format(wxT("%s/documents/pam2.ini"), wxStandardPaths::Get().GetExecutablePath().c_str()));
    // #endif

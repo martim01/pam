@@ -285,6 +285,7 @@ pam2Dialog::~pam2Dialog()
     {
         delete m_pdlgNoInput;
     }
+    StopNmos();
 }
 
 void pam2Dialog::OnQuit(wxCommandEvent& event)
@@ -1135,4 +1136,5 @@ void pam2Dialog::StopNmos()
 {
     wmLog::Get()->Log(wxT("Stop NMOS Services"));
     NodeApi::Get().StopServices();
+    Settings::Get().RemoveKey(wxT("AoIP"), wxT("NMOS_IS-04"));
 }
