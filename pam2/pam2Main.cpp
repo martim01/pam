@@ -1068,8 +1068,9 @@ void pam2Dialog::OnTarget(wxNmosEvent& event)
 {
     wxString sSdp = event.GetTransportFile();
     sSdp.Replace(wxT("\n"), wxT("`"));
+    sSdp.Replace(wxT("\r"), wxT(""));
 
-    Settings::Get().Write(wxT("NMOS"), wxT("IS-04"), wxString::Format(wxT("NMOS[%s]"),sSdp.c_str()));
+    Settings::Get().Write(wxT("AoIP"), wxT("NMOS_IS-04"), wxString::Format(wxT("NMOS:[%s]"),sSdp.c_str()));
 
     Settings::Get().Write(wxT("Input"), wxT("AoIP"), wxT("NMOS_IS-04"));
     Settings::Get().Write(wxT("Input"), wxT("Type"), wxT("AoIP"));

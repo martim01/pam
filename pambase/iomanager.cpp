@@ -270,6 +270,8 @@ void IOManager::InputChanged(const wxString& sKey)
 {
     if(sKey == wxT("AoIP"))
     {
+        wmLog::Get()->Log(wxT("IOManager::InputChanged: AoIP"));
+
         wxString sUrl = Settings::Get().Read(wxT("AoIP"), Settings::Get().Read(wxT("Input"), wxT("AoIP"), wxEmptyString), wxEmptyString);
         if(sUrl != m_sCurrentRtp || sUrl == wxT("NMOS_IS-04"))
         {
