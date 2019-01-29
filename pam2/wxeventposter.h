@@ -15,7 +15,7 @@ class wxEventPoster : public EventPoster
         void AllForNow(const std::string& sService);
         void Finished();
         void RegistrationNodeError();
-        void InstanceRemoved(const std::string& sInstance);
+        void InstanceRemoved(std::shared_ptr<dnsInstance> pInstance);
 
         void Target(const std::string& sReceiverId, const std::string& sTransportFile, unsigned short nPort);
         void PatchSender(const std::string& sSenderId, const connectionSender& conPatch, unsigned short nPort);

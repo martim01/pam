@@ -843,6 +843,7 @@ void IOManager::OnTimerSilence(wxTimerEvent& event)
 wxString IOManager::GetRandomMulticastAddress()
 {
     wxString sAddress(wxT("239"));
+
     for(int i = 0; i < 3; i++)
     {
         sAddress += wxString::Format(wxT(".%d"), rand()%256);

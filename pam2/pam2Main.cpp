@@ -48,6 +48,7 @@
 #include "libnmos.h"
 #include "wxlogoutput.h"
 #include "wxeventposter.h"
+#include "wxclientapiposter.h"
 
 //(*InternalHeaders(pam2Dialog)
 #include <wx/bitmap.h>
@@ -238,6 +239,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
     Settings::Get().AddHandler(wxT("Test"), wxT("Lock"), this);
     Settings::Get().AddHandler(wxT("NMOS"), wxT("Activate"), this);
+    Settings::Get().AddHandler(wxT("NMOS"), wxT("Client"), this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pam2Dialog::OnSettingChanged);
     Connect(wxID_ANY, wxEVT_MONITOR_REQUEST, (wxObjectEventFunction)&pam2Dialog::OnMonitorRequest);
@@ -273,6 +275,10 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     if(Settings::Get().Read(wxT("NMOS"), wxT("Activate"),false) == true)
     {
         StartNmos();
+    }
+    if(Settings::Get().Read(wxT("NMOS"), wxT("Client"),false) == true)
+    {
+        StartNmosClient();
     }
 }
 
@@ -780,6 +786,17 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
                 StopNmos();
             }
         }
+        else if(event.GetKey() == wxT("Client"))
+        {
+            if(event.GetValue(false))
+            {
+                StartNmosClient();
+            }
+            else
+            {
+                StopNmosClient();
+            }
+        }
     }
 
 }
@@ -1137,4 +1154,16 @@ void pam2Dialog::StopNmos()
     wmLog::Get()->Log(wxT("Stop NMOS Services"));
     NodeApi::Get().StopServices();
     Settings::Get().RemoveKey(wxT("AoIP"), wxT("NMOS_IS-04"));
+}
+
+
+void pam2Dialog::StartNmosClient()
+{
+    ClientApi::Get().SetPoster(make_shared<wxClientApiPoster>(this));
+    ClientApi::Get().Start(ClientApi::SENDERS);
+}
+
+void pam2Dialog::StopNmosClient()
+{
+    ClientApi::Get().Stop();
 }
