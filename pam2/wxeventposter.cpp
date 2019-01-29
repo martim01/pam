@@ -33,13 +33,13 @@ void wxEventPoster::InstanceResolved(std::shared_ptr<dnsInstance> pInstance)
     }
 }
 
-void wxEventPoster::InstanceRemoved(const std::string& sInstance)
+void wxEventPoster::InstanceRemoved(std::shared_ptr<dnsInstance> pInstance)
 {
     if(m_pHandler)
     {
         wxLogDebug(wxT("Instance removed"));
         wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_MDNS_REMOVED);
-        pEvent->SetString(wxString::FromAscii(sInstance.c_str()));
+        pEvent->SetDnsInstance(pInstance);
         wxQueueEvent(m_pHandler, pEvent);
     }
 }

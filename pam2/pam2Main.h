@@ -123,6 +123,8 @@ class pam2Dialog: public wxDialog
         void SetupNmos();
         void StartNmos();
         void StopNmos();
+        void StartNmosClient();
+        void StopNmosClient();
 
         void OnSettingChanged(SettingEvent& event);
         void OnMonitorRequest(MonitorEvent& event);
