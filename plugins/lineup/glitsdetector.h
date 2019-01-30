@@ -3,6 +3,9 @@
 
 typedef std::pair<unsigned long, bool > pairTransition_t;
 
+class timedbuffer;
+class session;
+
 class GlitsDetector
 {
     public:
@@ -19,17 +22,20 @@ class GlitsDetector
 
         void WorkoutSignal();
 
-        bool IsGlits(const std::vector<pairTransition_t>& vLeft, const std::vector<pairTransition_t>& vRight);
+        bool IsGlits(const std::vector<bool>& vLeft, const std::vector<bool>& vRight);
         bool CheckLength(unsigned long nStart, unsigned long nEnd, double dTarget, double dBand);
 
         bool IsSignal(float fLevel);
 
-        std::vector<pairTransition_t> m_vTransitions[2];
+        std::vector<pairTransition_t> CreateTransition(const std::vector<bool>& vLevel);
+        void CountTransitions(const std::vector<pairTransition_t>& vTransition, std::size_t& nSilenceCount, std::size_t& nSilenceTime, std::size_t& nSignalCount, std::size_t& nSignalTime);
+        std::vector<bool> m_vBuffer[2];
 
-        bool m_bLast[2];
+        float m_dLastLeft;
+        float m_dLastRight;
         bool m_bLocked;
-        unsigned long m_nCount;
-        unsigned long m_nSamples;
+        unsigned long m_nSampleCount;
+        unsigned long m_nSineCount;
         unsigned long m_nSize;
         unsigned long m_nSampleRate;
         unsigned long m_nChannels;

@@ -263,7 +263,7 @@ lineupPanel::lineupPanel(wxWindow* parent,lineupBuilder* pBuilder, wxWindowID id
     if(itType != PPMTypeManager::Get().GetTypeEnd())
     {
         m_pLevelCalc->SetMode(itType->second.nType);
-        m_pLevelCalc->SetDynamicResponse(itType->second.dRiseTime, itType->second.dRisedB, 1, itType->second.dFalldB);
+        m_pLevelCalc->SetDynamicResponse(itType->second.dRiseTime, itType->second.dRisedB, itType->second.dFallTime, itType->second.dFalldB);
     }
 
 	Connect(wxID_ANY, wxEVT_OFFSET_DONE, (wxObjectEventFunction)&lineupPanel::OnOffsetDone);
@@ -281,7 +281,7 @@ void lineupPanel::SetAudioData(const timedbuffer* pBuffer)
     m_plblLevelL->SetLabel(wxString::Format(wxT("%.2f dBFS"), m_pLevelCalc->GetLevel(0)));
     m_plblLevelR->SetLabel(wxString::Format(wxT("%.2f dBFS"), m_pLevelCalc->GetLevel(1)));
 
-    m_glitsDetector.SetLevel(m_pLevelCalc->GetLevel(0), m_pLevelCalc->GetLevel(1), pBuffer->GetBufferSize()/m_nChannels);
+    m_glitsDetector.SetAudioData(pBuffer);
 
     if(m_bFirstLevel)
     {
