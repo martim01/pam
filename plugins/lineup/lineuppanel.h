@@ -10,11 +10,13 @@
 #include "pmpanel.h"
 #include "offsetcalculator.h"
 #include "kiss_fft.h"
+#include "glitsdetector.h"
 
 class lineupBuilder;
 class timedbuffer;
 class session;
 class LevelCalculator;
+
 
 class lineupPanel: public pmPanel
 {
@@ -120,6 +122,7 @@ class lineupPanel: public pmPanel
         double m_dDominantLevel[2];
 
         LevelCalculator* m_pLevelCalc;
+        GlitsDetector m_glitsDetector;
 
         double m_dLevelMin[2];
         double m_dLevelMax[2];

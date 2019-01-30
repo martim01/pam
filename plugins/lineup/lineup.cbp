@@ -43,7 +43,7 @@
 				</ExtraCommands>
 			</Target>
 			<Target title="Windows Debug">
-				<Option output="../../lib/test/debug/lineup.dll" prefix_auto="1" extension_auto="0" />
+				<Option output="../../lib/test/debug/liblineup.dll" prefix_auto="1" extension_auto="0" />
 				<Option object_output="obj/debug" />
 				<Option type="3" />
 				<Option compiler="new_gnu_gcc_compiler" />
@@ -136,6 +136,8 @@
 		<Linker>
 			<Add directory="../../lib" />
 		</Linker>
+		<Unit filename="glitsdetector.cpp" />
+		<Unit filename="glitsdetector.h" />
 		<Unit filename="lineupbuilder.cpp" />
 		<Unit filename="lineupbuilder.h" />
 		<Unit filename="lineuppanel.cpp" />
