@@ -1,4 +1,5 @@
 #pragma once
+#ifdef __NMOS__
 #include "log.h"
 #include <wx/event.h>
 
@@ -10,6 +11,6 @@ class wxLogOutput : public LogOutput
     private:
 };
 
-
+#endif // __NMOS__
 
 

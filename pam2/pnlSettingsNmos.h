@@ -1,6 +1,7 @@
 #ifndef PNLSETTINGSNMOS_H
 #define PNLSETTINGSNMOS_H
 
+#ifdef __NMOS__
 //(*Headers(pnlSettingsNmos)
 #include "wmbutton.h"
 #include <wx/panel.h>
@@ -35,4 +36,5 @@ class pnlSettingsNmos: public wxPanel
 		DECLARE_EVENT_TABLE()
 };
 
+#endif
 #endif

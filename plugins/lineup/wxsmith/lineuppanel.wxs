@@ -4,7 +4,7 @@
 		<bg>#000000</bg>
 		<id_arg>0</id_arg>
 		<object class="wmLabel" name="ID_M_PLBL8" variable="m_pLbl2" member="yes">
-			<label>Level &amp; Range:</label>
+			<label>Level:</label>
 			<pos>5,5</pos>
 			<size>120,81</size>
 			<fg>#FFFFFF</fg>
@@ -383,6 +383,51 @@
 			<label>Degrees</label>
 			<pos>297,290</pos>
 			<size>150,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#008040</bg>
+			<font>
+				<size>16</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL25" variable="m_pLbl11" member="yes">
+			<label>LineUp:</label>
+			<pos>5,350</pos>
+			<size>120,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#008040</bg>
+			<font>
+				<size>16</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL26" variable="m_pLbl12" member="yes">
+			<label></label>
+			<pos>125,350</pos>
+			<size>20,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#008040</bg>
+			<font>
+				<size>16</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL27" variable="m_plblAudio" member="yes">
+			<label></label>
+			<pos>146,350</pos>
+			<size>301,40</size>
 			<fg>#FFFFFF</fg>
 			<bg>#008040</bg>
 			<font>

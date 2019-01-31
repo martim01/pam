@@ -34,10 +34,13 @@ class lineupPanel: public pmPanel
 		wmLabel* m_pLbl3;
 		wmLabel* m_pLbl7;
 		wmLabel* m_plblDistortionR;
+		wmLabel* m_plblAudio;
+		wmLabel* m_pLbl11;
 		wmLabel* m_plblRangeL;
 		wmLabel* m_pLbl1;
 		wmLabel* m_plblLevelL;
 		wmLabel* m_plblDistortionMaxL;
+		wmLabel* m_pLbl12;
 		wmLabel* m_plblRangeR;
 		wmLabel* m_pLbl10;
 		wmLabel* m_plblPhaseSamples;
@@ -90,6 +93,9 @@ class lineupPanel: public pmPanel
 		static const long ID_M_PLBL20;
 		static const long ID_M_PLBL4;
 		static const long ID_M_PLBL5;
+		static const long ID_M_PLBL25;
+		static const long ID_M_PLBL26;
+		static const long ID_M_PLBL27;
 		//*)
 
 		void OnLeftUp(wxMouseEvent& event);
@@ -119,6 +125,8 @@ class lineupPanel: public pmPanel
 
         double m_dOffsetSamples;
         double m_dDominantFrequency[2];
+        double m_dDominantFrequencyMax[2];
+        double m_dDominantFrequencyMin[2];
         double m_dDominantLevel[2];
 
         LevelCalculator* m_pLevelCalc;

@@ -1,3 +1,4 @@
+#ifdef __NMOS__
 #include "wxclientapiposter.h"
 
 DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENT_NODE)
@@ -228,3 +229,4 @@ std::set<std::string>::const_iterator wxNmosClientEvent::GetRemovedEnd() const
     return m_setRemoved.end();
 }
 
+#endif

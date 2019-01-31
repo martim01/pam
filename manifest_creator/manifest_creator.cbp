@@ -11,12 +11,12 @@
 				<Option output="bin/Debug/manifest_creator" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="0" />
-				<Option compiler="new_gnu_gcc_compiler" />
+				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-Wall" />
-					<Add option="-std=c++11" />
+					<Add option="-std=c++0x" />
 					<Add option="-DWIN32" />
 					<Add option="-D__WXMSW__" />
 					<Add option="-DWXUSINGDLL" />
@@ -32,7 +32,7 @@
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="wxmsw30u_gcc_custom" />
+					<Add library="wxmsw30ud_gcc_wammacs" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 			</Target>
@@ -41,12 +41,11 @@
 				<Option output="bin/Release/manifest_creator" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="0" />
-				<Option compiler="new_gnu_gcc_compiler" />
+				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-Wall" />
-					<Add option="-std=c++11" />
 					<Add option="-DWIN32" />
 					<Add option="-D__WXMSW__" />
 					<Add option="-DWXUSINGDLL" />
@@ -62,7 +61,7 @@
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="wxmsw30u_gcc_custom" />
+					<Add library="wxmsw30u_gcc_wammacs" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 			</Target>

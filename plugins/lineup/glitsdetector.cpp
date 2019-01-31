@@ -74,11 +74,34 @@ GlitsDetector::enumType GlitsDetector::GetType()
 
 void GlitsDetector::WorkoutSignal()
 {
-    if(IsGlits(m_vBuffer[0], m_vBuffer[1]))
+    size_t nSignalTimeL(0), nSilenceTimeL(0), nSilenceCountL(0), nSignalCountL(0);
+    vector<pairTransition_t> vTransitionL(CreateTransition(m_vBuffer[0]));
+    CountTransitions(vTransitionL, nSilenceCountL, nSilenceTimeL, nSignalCountL, nSignalTimeL);
+
+    size_t nSignalTimeR(0), nSilenceTimeR(0), nSilenceCountR(0), nSignalCountR(0);
+    vector<pairTransition_t> vTransitionR(CreateTransition(m_vBuffer[1]));
+    CountTransitions(vTransitionR, nSilenceCountR, nSilenceTimeR, nSignalCountR, nSignalTimeR);
+
+    //check if glits
+    if(nSilenceCountL == 0 && nSilenceCountR == 0)
+    {
+        m_eType = GD_MONO;
+    }
+    else if(nSilenceCountR == 0 && nSilenceCountL < 3 && nSilenceTimeL > 200 && nSilenceTimeL < 550)
+    {
+        m_eType = GD_EBU_LR;
+    }
+    else if(nSilenceCountR == 0 && nSilenceCountL < 3 && nSilenceTimeR > 200 && nSilenceTimeR < 550)
+    {
+        m_eType = GD_EBU_RL;
+    }
+    else if(nSilenceTimeL > 200 && nSilenceTimeL < 300 && nSilenceCountL <= 2 && nSignalTimeL > 3700 && nSignalTimeL < 3800 && nSignalCountL <= 2 &&
+       nSilenceTimeR > 450 && nSilenceTimeR < 550 && nSilenceCountR <= 3 && nSignalTimeR > 3450 && nSignalTimeR < 3550 && nSignalCountR <= 4)
     {
         m_eType = GD_GLITS_LR;
     }
-    else if(IsGlits(m_vBuffer[1], m_vBuffer[0]))
+    else if(nSilenceTimeR > 200 && nSilenceTimeR < 300 && nSilenceCountR <= 2 && nSignalTimeR > 3700 && nSignalTimeR < 3800 && nSignalCountR <= 2 &&
+       nSilenceTimeL > 450 && nSilenceTimeL < 550 && nSilenceCountL <= 3 && nSignalTimeL > 3450 && nSignalTimeL < 3550 && nSignalCountL <= 4)
     {
         m_eType = GD_GLITS_RL;
     }
@@ -154,40 +177,8 @@ void GlitsDetector::CountTransitions(const std::vector<pairTransition_t>& vTrans
 
 bool GlitsDetector::IsGlits(const std::vector<bool>& vLeft, const std::vector<bool>& vRight)
 {
-    size_t nSignalTime(0), nSilenceTime(0), nSilenceCount(0), nSignalCount(0);
-    vector<pairTransition_t> vTransitionL(CreateTransition(vLeft));
-    CountTransitions(vTransitionL, nSilenceCount, nSilenceTime, nSignalCount, nSignalTime);
 
-    wxLogDebug(wxT("Total %d Silence: %d"), nSilenceCount, nSilenceTime);
-    wxLogDebug(wxT("Total %d Signal: %d"), nSignalCount, nSignalTime);
 
-    if(nSilenceTime < 200 || nSilenceTime > 300 || nSilenceCount > 2)
-    {
-        return false;
-    }
-
-    if(nSignalTime < 3700 || nSignalTime > 3800 || nSignalCount > 2)
-    {
-        return false;
-    }
-
-    //check the right leg
-    nSignalTime=nSilenceTime=nSilenceCount=nSignalCount = 0;
-    vector<pairTransition_t> vTransitionR(CreateTransition(vRight));
-    CountTransitions(vTransitionR, nSilenceCount, nSilenceTime, nSignalCount, nSignalTime);
-
-    wxLogDebug(wxT("Total %d Silence: %d"), nSilenceCount, nSilenceTime);
-    wxLogDebug(wxT("Total %d Signal: %d"), nSignalCount, nSignalTime);
-
-    if(nSilenceTime < 450 || nSilenceTime > 550 || nSilenceCount > 3)
-    {
-        return false;
-    }
-
-    if(nSignalTime < 3450 || nSignalTime > 3550 || nSignalCount > 4)
-    {
-        return false;
-    }
 
     return true;
 }
@@ -216,4 +207,14 @@ void GlitsDetector::InputSession(const session& aSession)
         m_nSampleRate = 48000;
         m_nChannels = 2;
     }
+}
+
+
+void GlitsDetector::Unlock()
+{
+    m_bLocked = false;
+    m_dLastLeft = 0.0;
+    m_dLastRight = 0.0;
+    m_nSampleCount = 0;
+    m_nSineCount = 0;
 }

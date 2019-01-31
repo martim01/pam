@@ -1,3 +1,4 @@
+#ifdef __NMOS__
 #include "wxeventposter.h"
 #include "log.h"
 #include "mdns.h"
@@ -230,3 +231,4 @@ const std::shared_ptr<dnsInstance> wxNmosEvent::GetDnsInstance() const
 {
     return m_pDnsInstance;
 }
+#endif

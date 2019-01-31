@@ -10,16 +10,15 @@
 				<Option output="bin/Debug/pam2" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="0" />
-				<Option compiler="new_gnu_gcc_compiler" />
+				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
 					<Add option="-Wall" />
-					<Add option="-std=c11" />
+					<Add option="-std=c++0x" />
 					<Add option="-g" />
 					<Add option="-pipe" />
 					<Add option="-mthreads" />
 					<Add option='[[if (PLATFORM == PLATFORM_MSW &amp;&amp; (GetCompilerFactory().GetCompilerVersionString(_T(&quot;gcc&quot;)) &gt;= _T(&quot;4.0.0&quot;))) print(_T(&quot;-Wno-attributes&quot;));]]' />
-					<Add option="-std=c++11" />
 					<Add option="-fexceptions" />
 					<Add option="-DWIN32" />
 					<Add option="-D__WXMSW__" />
@@ -43,8 +42,7 @@
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-Wl,--enable-auto-import,-Map=pam2d.map" />
-					<Add library="libnmosd" />
-					<Add library="wxmsw30ud_gcc_custom" />
+					<Add library="wxmsw30ud_gcc_wammacs" />
 					<Add library="pambased" />
 					<Add library="portaudiod" />
 					<Add library="libcurl" />
@@ -60,17 +58,15 @@
 				<Option output="bin/Release/pam2" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="0" />
-				<Option compiler="new_gnu_gcc_compiler" />
+				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-Wall" />
 					<Add option="-std=c++0x" />
-					<Add option="-std=c11" />
 					<Add option="-pipe" />
 					<Add option="-mthreads" />
 					<Add option='[[if (PLATFORM == PLATFORM_MSW &amp;&amp; (GetCompilerFactory().GetCompilerVersionString(_T(&quot;gcc&quot;)) &gt;= _T(&quot;4.0.0&quot;))) print(_T(&quot;-Wno-attributes&quot;));]]' />
-					<Add option="-std=c++11" />
 					<Add option="-DWIN32" />
 					<Add option="-D__WXMSW__" />
 					<Add option="-DWXUSINGDLL" />
@@ -91,13 +87,12 @@
 				<Linker>
 					<Add option="-s" />
 					<Add option="-Wl,--enable-auto-import,-Map=pam2.map" />
-					<Add library="wxmsw30u_gcc_custom" />
+					<Add library="wxmsw30u_gcc_wammacs" />
 					<Add library="portaudio" />
 					<Add library="pambase" />
 					<Add library="libcurl" />
 					<Add library="Ws2_32" />
 					<Add library="iphlpapi" />
-					<Add library="libnmos" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#portaudio.lib)" />
 					<Add directory="$(#curl.lib)" />
@@ -117,6 +112,7 @@
 					<Add option="-fpermissive" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
+					<Add option="-D__NMOS__" />
 					<Add directory="$(#nmos.include)" />
 					<Add directory="$(#json.include)" />
 				</Compiler>
@@ -146,6 +142,7 @@
 					<Add option="-D__WXGNU__" />
 					<Add option="-DPAMBASE_DEBUG" />
 					<Add option="-D__WXDEBUG__" />
+					<Add option="-D__NMOS__" />
 					<Add directory="$(#nmos.include)" />
 					<Add directory="$(#json.include)" />
 				</Compiler>

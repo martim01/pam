@@ -34,6 +34,7 @@ dlgMask::dlgMask(wxWindow* parent, const wxArrayString& asButtons, const wxStrin
 	//*)
     Connect(wxEVT_ACTIVATE, (wxObjectEventFunction)&dlgMask::OnActivate);
 
+
     for(size_t i = 0; i < asButtons.GetCount(); i++)
     {
         m_plstSubnet->AddButton(asButtons[i]);

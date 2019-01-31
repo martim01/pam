@@ -58,6 +58,7 @@ class PAMBASE_IMPEXPORT R128Calculator
 
         R128Thread* m_pThread;
 
+        #ifdef __NMOS__
         /* pre-filter coefficients */
         static constexpr double PF_A1 = -1.69065929318241;
         static constexpr double PF_A2 = 0.73248077421585;
@@ -71,5 +72,19 @@ class PAMBASE_IMPEXPORT R128Calculator
         static constexpr double F_B0 = 1.0;
         static constexpr double F_B1 = -2.0;
         static constexpr double F_B2 = 1.0;
+        #else
+        static const double PF_A1 = -1.69065929318241;
+        static const double PF_A2 = 0.73248077421585;
+        static const double PF_B0 = 1.53512485958679;
+        static const double PF_B1 = -2.691696189403638;
+        static const double PF_B2 = 1.19839281085285;
 
+        /* filter coefficients */
+        static const double F_A1 = -1.99004745483398;
+        static const double F_A2 = 0.99007225036621;
+        static const double F_B0 = 1.0;
+        static const double F_B1 = -2.0;
+        static const double F_B2 = 1.0;
+
+        #endif
 };

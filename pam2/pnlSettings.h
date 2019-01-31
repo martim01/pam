@@ -64,7 +64,9 @@ class pnlSettings: public wxPanel
 		wmLabel* m_pLbl8;
 		wmButton* m_pbtnManage;
 		wmLabel* m_pLbl2;
+		#ifdef __NMOS__
 		pnlSettingsNmos* m_ppnlNmos;
+		#endif
 		wmLabel* m_pLbl9;
 		wmButton* m_pbtnHome;
 		wxPanel* pnlOutput;

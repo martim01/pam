@@ -1,3 +1,4 @@
+#ifdef __NMOS__
 #include "wxlogoutput.h"
 #include "wmlogevent.h"
 #include <wx/log.h>
@@ -10,3 +11,5 @@ void wxLogOutput::Flush(int nLogLevel, const std::stringstream&  logStream)
 
     wmLog::Get()->Log(sLog);
 }
+#endif
+

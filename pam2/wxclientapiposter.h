@@ -1,4 +1,5 @@
 #pragma once
+#ifdef __NMOS__
 #include "clientapiposter.h"
 #include <wx/event.h>
 #include <memory>
@@ -111,6 +112,6 @@ END_DECLARE_EVENT_TYPES()
 
 
 
-
+#endif
 
 

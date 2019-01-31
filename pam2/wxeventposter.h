@@ -1,4 +1,5 @@
 #pragma once
+#ifdef __NMOS__
 #include "eventposter.h"
 #include "connection.h"
 #include <wx/event.h>
@@ -123,3 +124,4 @@ END_DECLARE_EVENT_TYPES()
 
 
 
+#endif

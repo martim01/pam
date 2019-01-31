@@ -1,3 +1,4 @@
+#ifdef __NMOS__
 #include "pnlSettingsNmos.h"
 #include "settings.h"
 #include "settingevent.h"
@@ -57,3 +58,5 @@ void pnlSettingsNmos::OnbtnClientClick(wxCommandEvent& event)
 {
     Settings::Get().Write(wxT("NMOS"), wxT("Client"), event.IsChecked());
 }
+
+#endif

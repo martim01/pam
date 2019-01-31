@@ -12,6 +12,7 @@
 #include <wx/string.h>
 //*)
 
+using namespace std;
 //(*IdInit(lineupPanel)
 const long lineupPanel::ID_M_PLBL8 = wxNewId();
 const long lineupPanel::ID_M_PLBL16 = wxNewId();
@@ -39,6 +40,9 @@ const long lineupPanel::ID_M_PLBL3 = wxNewId();
 const long lineupPanel::ID_M_PLBL20 = wxNewId();
 const long lineupPanel::ID_M_PLBL4 = wxNewId();
 const long lineupPanel::ID_M_PLBL5 = wxNewId();
+const long lineupPanel::ID_M_PLBL25 = wxNewId();
+const long lineupPanel::ID_M_PLBL26 = wxNewId();
+const long lineupPanel::ID_M_PLBL27 = wxNewId();
 //*)
 
 wxIMPLEMENT_DYNAMIC_CLASS(lineupPanel,pmPanel);
@@ -54,7 +58,7 @@ lineupPanel::lineupPanel(wxWindow* parent,lineupBuilder* pBuilder, wxWindowID id
 	//(*Initialize(lineupPanel)
 	Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("wxID_ANY"));
 	SetBackgroundColour(wxColour(0,0,0));
-	m_pLbl2 = new wmLabel(this, ID_M_PLBL8, _("Level & Range:"), wxPoint(5,5), wxSize(120,81), 0, _T("ID_M_PLBL8"));
+	m_pLbl2 = new wmLabel(this, ID_M_PLBL8, _("Level:"), wxPoint(5,5), wxSize(120,81), 0, _T("ID_M_PLBL8"));
 	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl2->GetUiRect().SetGradient(0);
 	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
@@ -233,6 +237,27 @@ lineupPanel::lineupPanel(wxWindow* parent,lineupBuilder* pBuilder, wxWindowID id
 	m_plblPhaseDegrees->SetBackgroundColour(wxColour(0,128,64));
 	wxFont m_plblPhaseDegreesFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_plblPhaseDegrees->SetFont(m_plblPhaseDegreesFont);
+	m_pLbl11 = new wmLabel(this, ID_M_PLBL25, _("LineUp:"), wxPoint(5,350), wxSize(120,40), 0, _T("ID_M_PLBL25"));
+	m_pLbl11->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl11->GetUiRect().SetGradient(0);
+	m_pLbl11->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl11->SetBackgroundColour(wxColour(0,128,64));
+	wxFont m_pLbl11Font(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pLbl11->SetFont(m_pLbl11Font);
+	m_pLbl12 = new wmLabel(this, ID_M_PLBL26, wxEmptyString, wxPoint(125,350), wxSize(20,40), 0, _T("ID_M_PLBL26"));
+	m_pLbl12->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl12->GetUiRect().SetGradient(0);
+	m_pLbl12->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl12->SetBackgroundColour(wxColour(0,128,64));
+	wxFont m_pLbl12Font(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pLbl12->SetFont(m_pLbl12Font);
+	m_plblAudio = new wmLabel(this, ID_M_PLBL27, wxEmptyString, wxPoint(146,350), wxSize(301,40), 0, _T("ID_M_PLBL27"));
+	m_plblAudio->SetBorderState(uiRect::BORDER_NONE);
+	m_plblAudio->GetUiRect().SetGradient(0);
+	m_plblAudio->SetForegroundColour(wxColour(255,255,255));
+	m_plblAudio->SetBackgroundColour(wxColour(0,128,64));
+	wxFont m_plblAudioFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_plblAudio->SetFont(m_plblAudioFont);
 
 	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&lineupPanel::OnbtnResetClick);
 	//*)
@@ -255,6 +280,10 @@ lineupPanel::lineupPanel(wxWindow* parent,lineupBuilder* pBuilder, wxWindowID id
     m_nSampleSize = (m_vfft_out.size()-1)*2*m_nChannels;
     m_pLevelCalc = new LevelCalculator(-70.0);
 
+    m_dDominantFrequencyMax[0] = 0.0;
+    m_dDominantFrequencyMax[1] = 0.0;
+    m_dDominantFrequencyMin[0] = 48000.0;
+    m_dDominantFrequencyMin[1] = 48000.0;
 
     m_bFirstLevel = true;
     m_bFirstDistortion = true;
@@ -263,7 +292,7 @@ lineupPanel::lineupPanel(wxWindow* parent,lineupBuilder* pBuilder, wxWindowID id
     if(itType != PPMTypeManager::Get().GetTypeEnd())
     {
         m_pLevelCalc->SetMode(itType->second.nType);
-        m_pLevelCalc->SetDynamicResponse(itType->second.dRiseTime, itType->second.dRisedB, itType->second.dFallTime, itType->second.dFalldB);
+        m_pLevelCalc->SetDynamicResponse(itType->second.dRiseTime, itType->second.dRisedB, 200, itType->second.dFalldB);
     }
 
 	Connect(wxID_ANY, wxEVT_OFFSET_DONE, (wxObjectEventFunction)&lineupPanel::OnOffsetDone);
@@ -280,6 +309,7 @@ void lineupPanel::SetAudioData(const timedbuffer* pBuffer)
     m_pLevelCalc->CalculateLevel(pBuffer);
     m_plblLevelL->SetLabel(wxString::Format(wxT("%.2f dBFS"), m_pLevelCalc->GetLevel(0)));
     m_plblLevelR->SetLabel(wxString::Format(wxT("%.2f dBFS"), m_pLevelCalc->GetLevel(1)));
+
 
     m_glitsDetector.SetAudioData(pBuffer);
 
@@ -325,6 +355,42 @@ void lineupPanel::SetAudioData(const timedbuffer* pBuffer)
             m_vBufferL.push_back(pBuffer->GetBuffer()[i+m_nChannel[0]]);
             m_vBufferR.push_back(pBuffer->GetBuffer()[i+m_nChannel[1]]);
         }
+    }
+
+    switch(m_glitsDetector.GetType())
+    {
+    case GlitsDetector::GD_GLITS_LR:
+        m_plblAudio->SetBackgroundColour(wxColour(0,128,64));
+        m_plblAudio->SetLabel(wxT("GLITS"));
+        break;
+    case GlitsDetector::GD_GLITS_RL:
+        m_plblAudio->SetBackgroundColour(wxColour(128,0,0));
+        m_plblAudio->SetLabel(wxT("GLITS Legs Reversed"));
+        break;
+    case GlitsDetector::GD_MONO:
+        if(m_dDistortionMax[0] == 0.0 && m_dDistortionMax[1] == 0.0)
+        {
+            m_plblAudio->SetBackgroundColour(wxColour(0,128,64));
+            m_plblAudio->SetLabel(wxT("Mono Tone"));
+        }
+        else
+        {
+            m_plblAudio->SetBackgroundColour(wxColour(255,128,0));
+            m_plblAudio->SetLabel(wxT("Unknown"));
+        }
+        break;
+    case GlitsDetector::GD_EBU_LR:
+        m_plblAudio->SetBackgroundColour(wxColour(0,128,64));
+        m_plblAudio->SetLabel(wxT("EBU"));
+        break;
+    case GlitsDetector::GD_EBU_RL:
+        m_plblAudio->SetBackgroundColour(wxColour(128,0,0));
+        m_plblAudio->SetLabel(wxT("EBU Legs Reversed"));
+        break;
+    default:
+        m_plblAudio->SetBackgroundColour(wxColour(255,128,0));
+        m_plblAudio->SetLabel(wxT("Unknown"));
+        break;
     }
 }
 
@@ -379,10 +445,11 @@ void lineupPanel::OnOffsetDone(wxCommandEvent& event)
     double dPhase = dDegPerSample*m_dOffsetSamples;
 
     m_plblDominantHzL->SetLabel(wxString::Format(wxT("%.f Hz"), m_dDominantFrequency[0]));
-    m_plblDominantdBL->SetLabel(wxString::Format(wxT("%.2f dBFS"), m_dDominantLevel[0]));
+
+    m_plblDominantdBL->SetLabel(wxString::Format(wxT("%.2f Hz"), m_dDominantFrequencyMax[0]-m_dDominantFrequencyMin[0]));
 
     m_plblDominantHzR->SetLabel(wxString::Format(wxT("%.f Hz"), m_dDominantFrequency[1]));
-    m_plblDominantdBR->SetLabel(wxString::Format(wxT("%.2f dBFS"), m_dDominantLevel[1]));
+    m_plblDominantdBR->SetLabel(wxString::Format(wxT("%.2f Hz"), m_dDominantFrequencyMax[1]-m_dDominantFrequencyMin[1]));
 
 
     m_plblPhaseSamples->SetLabel(wxString::Format(wxT("%.0f"), m_dOffsetSamples));
@@ -403,7 +470,11 @@ void lineupPanel::DoFFT()
     }
 
     m_dDominantFrequency[0] = fft.GetFundamentalBinFrequency();
-    m_dDominantLevel[0] = fft.GetFundamentalAmplitude()*0.714;
+    if(fft.GetFundamentalAmplitude() > -60.0)
+    {
+        m_dDominantFrequencyMax[0] = max(m_dDominantFrequencyMax[0], m_dDominantFrequency[0]);
+        m_dDominantFrequencyMin[0] = min(m_dDominantFrequencyMin[0], m_dDominantFrequency[0]);
+    }
 
     m_plblDistortionL->SetLabel(wxString::Format(wxT("%.2f%"), dDistortion));
 
@@ -411,7 +482,11 @@ void lineupPanel::DoFFT()
     dDistortion = fft.GetTHDistortion(m_lstBufferR, m_nSampleRate, m_nChannels, true, 5, m_vfft_out.size(), m_nSampleSize/2);
 
     m_dDominantFrequency[1] = fft.GetFundamentalBinFrequency();
-    m_dDominantLevel[1] = fft.GetFundamentalAmplitude()*0.714;
+    if(fft.GetFundamentalAmplitude() > -60.0)
+    {
+        m_dDominantFrequencyMax[1] = max(m_dDominantFrequencyMax[1], m_dDominantFrequency[1]);
+        m_dDominantFrequencyMin[1] = min(m_dDominantFrequencyMin[1], m_dDominantFrequency[1]);
+    }
 
     m_plblDistortionR->SetLabel(wxString::Format(wxT("%.2f%"), dDistortion));
     if(m_bFirstDistortion)
@@ -432,4 +507,10 @@ void lineupPanel::OnbtnResetClick(wxCommandEvent& event)
 {
     m_bFirstLevel = true;
     m_bFirstDistortion = true;
+
+    m_dDominantFrequencyMax[0] = 0.0;
+    m_dDominantFrequencyMax[1] = 0.0;
+    m_dDominantFrequencyMin[0] = 48000.0;
+    m_dDominantFrequencyMin[1] = 48000.0;
+
 }

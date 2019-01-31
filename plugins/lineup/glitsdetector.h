@@ -9,13 +9,14 @@ class session;
 class GlitsDetector
 {
     public:
-        enum enumType{GD_UNKNOWN, GD_GLITS_LR, GD_GLITS_RL, GD_EBU_LR, GD_EBU_RL};
+        enum enumType{GD_UNKNOWN, GD_GLITS_LR, GD_GLITS_RL, GD_EBU_LR, GD_EBU_RL, GD_MONO};
 
         GlitsDetector();
         ~GlitsDetector();
         void SetAudioData(const timedbuffer* pBuffer);
 		void InputSession(const session& aSession);
 
+		void Unlock();
         enumType GetType();
 
     private:

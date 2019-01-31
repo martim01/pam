@@ -10,11 +10,11 @@
 				<Option output="../../lib/test/distortion.dll" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/release3" />
 				<Option type="3" />
-				<Option compiler="new_gnu_gcc_compiler" />
+				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-Wall" />
-					<Add option="-std=c++11" />
+					<Add option="-std=c++0x" />
 					<Add option="-DWIN32" />
 					<Add option="-D_USRDLL" />
 					<Add option="-DDLL_EXPORTS" />
@@ -31,7 +31,7 @@
 				<Linker>
 					<Add option="-s" />
 					<Add option="-Wl,--enable-auto-import,-Map=distortion.map" />
-					<Add library="wxmsw30u_gcc_custom" />
+					<Add library="wxmsw30u_gcc_wammacs" />
 					<Add library="pambase" />
 					<Add library="pamfft" />
 					<Add directory="$(#wx3_0.lib)" />
@@ -44,11 +44,11 @@
 				<Option output="../../lib/test/debug/distortion.dll" prefix_auto="1" extension_auto="0" />
 				<Option object_output="obj/debug" />
 				<Option type="3" />
-				<Option compiler="new_gnu_gcc_compiler" />
+				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-Wall" />
+					<Add option="-std=c++0x" />
 					<Add option="-g" />
-					<Add option="-std=c++11" />
 					<Add option="-DWIN32" />
 					<Add option="-D_USRDLL" />
 					<Add option="-DDLL_EXPORTS" />
@@ -65,7 +65,7 @@
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-Wl,--enable-auto-import,-Map=distortion.map" />
-					<Add library="wxmsw30ud_gcc_custom" />
+					<Add library="wxmsw30ud_gcc_wammacs" />
 					<Add library="pambased" />
 					<Add library="pamfftd" />
 					<Add directory="$(#wx3_0.lib)" />

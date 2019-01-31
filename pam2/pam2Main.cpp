@@ -45,10 +45,12 @@
 #include "pnlTestOptions.h"
 #include "dlgPin.h"
 #include "dlgNoInput.h"
+#ifdef __NMOS__
 #include "libnmos.h"
 #include "wxlogoutput.h"
 #include "wxeventposter.h"
 #include "wxclientapiposter.h"
+#endif // __WXMSW__
 
 //(*InternalHeaders(pam2Dialog)
 #include <wx/bitmap.h>
@@ -264,6 +266,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_plblOutput->Show(Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled"))!=wxT("Disabled"));
 
     //NMOS
+    #ifdef __NMOS__
     Connect(wxID_ANY, wxEVT_NMOS_TARGET, (wxObjectEventFunction)&pam2Dialog::OnTarget);
     Connect(wxID_ANY, wxEVT_NMOS_PATCH_SENDER, (wxObjectEventFunction)&pam2Dialog::OnPatchSender);
     Connect(wxID_ANY, wxEVT_NMOS_PATCH_RECEIVER, (wxObjectEventFunction)&pam2Dialog::OnPatchReceiver);
@@ -280,6 +283,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     {
         StartNmosClient();
     }
+    #endif // __NMOS__
 }
 
 pam2Dialog::~pam2Dialog()
@@ -564,7 +568,9 @@ void pam2Dialog::ShowSettingsPanel()
     m_plstOptions->AddButton(wxT("Output Device"));
     m_plstOptions->AddButton(wxT("Output Source"));
     m_plstOptions->AddButton(wxT("Network"));
+    #ifdef __NMOS__
     m_plstOptions->AddButton(wxT("NMOS"));
+    #endif // __NMOS__
     m_plstOptions->AddButton(wxT("Plugins"));
     m_plstOptions->AddButton(wxT("Profiles"));
     m_plstOptions->AddButton(wxT("General"));
@@ -1021,6 +1027,7 @@ void pam2Dialog::OnInputFailed(wxCommandEvent& event)
 
 void pam2Dialog::SetupNmos()
 {
+    #ifdef __NMOS__
     Log::Get().SetOutput(new wxLogOutput());
     char chHost[256];
     gethostname(chHost, 256);
@@ -1097,14 +1104,16 @@ void pam2Dialog::SetupNmos()
         wmLog::Get()->Log(wxT("NMOS: Failed to add Sender"));
     }
     NodeApi::Get().Commit();
-
+    #endif // __NMOS__
 }
 
 void pam2Dialog::StartNmos()
 {
+    #ifdef __NMOS__
     wmLog::Get()->Log(wxT("Start NMOS Services"));
     std::shared_ptr<wxEventPoster> pPoster = std::make_shared<wxEventPoster>(this);
     NodeApi::Get().StartServices(pPoster);
+    #endif // __NMOS__
 }
 
 
@@ -1112,6 +1121,7 @@ void pam2Dialog::StartNmos()
 
 void pam2Dialog::OnTarget(wxNmosEvent& event)
 {
+    #ifdef __NMOS__
     wxString sSdp = event.GetTransportFile();
     sSdp.Replace(wxT("\n"), wxT("`"));
     sSdp.Replace(wxT("\r"), wxT(""));
@@ -1125,12 +1135,15 @@ void pam2Dialog::OnTarget(wxNmosEvent& event)
 
     //Now tell NMOS that we have taken the target
     NodeApi::Get().TargetTaken(event.GetPort(), true);
+    #endif // __NMOS__
 }
 
 void pam2Dialog::OnPatchSender(wxNmosEvent& event)
 {
+    #ifdef __NMOS__
     // @todo Set the sender stuff - maybe changes the Live555 settings
     NodeApi::Get().SenderPatchAllowed(event.GetPort(), true);
+    #endif // __NMOS__
 }
 
 void pam2Dialog::OnPatchReceiver(wxNmosEvent& event)
@@ -1151,19 +1164,25 @@ void pam2Dialog::OnActivateReceiver(wxNmosEvent& event)
 
 void pam2Dialog::StopNmos()
 {
+    #ifdef __NMOS__
     wmLog::Get()->Log(wxT("Stop NMOS Services"));
     NodeApi::Get().StopServices();
     Settings::Get().RemoveKey(wxT("AoIP"), wxT("NMOS_IS-04"));
+    #endif // __NMOS__
 }
 
 
 void pam2Dialog::StartNmosClient()
 {
+    #ifdef __NMOS__
     ClientApi::Get().SetPoster(make_shared<wxClientApiPoster>(this));
     ClientApi::Get().Start(ClientApi::SENDERS);
+    #endif // __NMOS__
 }
 
 void pam2Dialog::StopNmosClient()
 {
+    #ifdef __NMOS__
     ClientApi::Get().Stop();
+    #endif // __NMOS__
 }
