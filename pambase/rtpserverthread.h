@@ -20,9 +20,6 @@ class PAMBASE_IMPEXPORT RtpServerThread : public wxThread
 {
     public:
         RtpServerThread(wxEvtHandler* pHandler, const wxString& sRTSP, unsigned int nRTSPPort, const wxString& sMulticast, unsigned int RTPPort, LiveAudioSource::enumPacketTime ePacketTime);
-
-        bool SetupStream(const wxString& sStreamName, const wxString& sInfo, const wxString& sDescription);
-
         void* Entry();
 
         void StopStream();
@@ -34,7 +31,7 @@ class PAMBASE_IMPEXPORT RtpServerThread : public wxThread
 
     private:
 
-        bool StartStream();
+        bool CreateStream();
         void CloseStream();
 
 
@@ -54,7 +51,6 @@ class PAMBASE_IMPEXPORT RtpServerThread : public wxThread
         RTCPInstance* m_pRtcpInstance;
         Groupsock* m_pRtpGroupsock;
         RTSPServer* m_pRtspServer;
-        ServerMediaSession* m_pSms;
 
         bool m_bStreaming;
 };
