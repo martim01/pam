@@ -276,6 +276,7 @@ void IOManager::InputChanged(const wxString& sKey)
         wmLog::Get()->Log(wxT("IOManager::InputChanged: AoIP"));
 
         wxString sUrl = Settings::Get().Read(wxT("AoIP"), Settings::Get().Read(wxT("Input"), wxT("AoIP"), wxEmptyString), wxEmptyString);
+        wxLogDebug(wxT("IOManager::InputChanged: Url = %s"), sUrl.c_str());
         if(sUrl != m_sCurrentRtp)
         {
             wmLog::Get()->Log(wxT("Audio Input Device Changed: Close AoIP Session"));
@@ -300,6 +301,7 @@ void IOManager::InputChanged(const wxString& sKey)
 
 void IOManager::InputTypeChanged()
 {
+    wxLogDebug(wxT("IOManager::InputTypeChanged"));
     //Stop the current monitoring...
     switch(m_nInputSource)
     {
@@ -611,6 +613,7 @@ void IOManager::InitAudioInputDevice()
     }
     else if(sType == wxT("AoIP"))
     {
+        wxLogDebug(wxT("IOManager::InitAudioInputDevice: AoIP"));
         m_nInputSource = AudioEvent::RTP;
         wmLog::Get()->Log(wxT("Create Audio Input Device: AoIP"));
         wxString sRtp(Settings::Get().Read(wxT("Input"), wxT("AoIP"), wxEmptyString));
@@ -636,7 +639,10 @@ void IOManager::InitAudioInputDevice()
 
         CreateSessionFromOutput(wxEmptyString);
     }
-
+    else
+    {
+        wxLogDebug(wxT("IOManager::InitAudioInputDevice: Unknown"));
+    }
     if(m_bPlaybackInput)
     {
         m_nPlaybackSource = m_nInputSource;
@@ -669,7 +675,7 @@ void IOManager::InitAudioOutputDevice()
         if(m_bStream)
         {
             m_pRtpServer = new RtpServerThread(this, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString), Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555), Settings::Get().Read(wxT("Server"), wxT("Multicast"), wxEmptyString), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004), (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000));
-            m_pRtpServer->SetupStream(wxT("PAM"), wxT("Info"), wxT("Description"));
+           // m_pRtpServer->SetupStream(wxT("PAM"), wxT("Info"), wxT("Description"));
             m_pRtpServer->Run();
         }
 

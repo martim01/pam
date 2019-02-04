@@ -9,7 +9,7 @@ class session;
 class GlitsDetector
 {
     public:
-        enum enumType{GD_UNKNOWN, GD_GLITS_LR, GD_GLITS_RL, GD_EBU_LR, GD_EBU_RL, GD_MONO};
+        enum enumType{GD_UNKNOWN, GD_GLITS_LR, GD_GLITS_RL, GD_EBU_LR, GD_EBU_RL, GD_MONO, GD_VALID_LR, GD_VALID_RL};
 
         GlitsDetector();
         ~GlitsDetector();

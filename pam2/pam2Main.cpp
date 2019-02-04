@@ -1001,9 +1001,16 @@ void pam2Dialog::OnswpScreensPageChanged(wxNotebookEvent& event)
 
 void pam2Dialog::OnswpMainPageChanged(wxNotebookEvent& event)
 {
-    if(m_pdlgNoInput && m_bInputFailed)
+    if(m_pdlgNoInput)
     {
-        m_pdlgNoInput->Show((m_pswpMain->GetSelectionName() != wxT("Settings") && m_pswpMain->GetSelectionName() != wxT("Log")));
+        if(m_bInputFailed)
+        {
+            m_pdlgNoInput->Show((m_pswpMain->GetSelectionName() != wxT("Settings") && m_pswpMain->GetSelectionName() != wxT("Log")));
+        }
+        else
+        {
+            m_pdlgNoInput->Show(false);
+        }
     }
 }
 
@@ -1122,16 +1129,23 @@ void pam2Dialog::StartNmos()
 void pam2Dialog::OnTarget(wxNmosEvent& event)
 {
     #ifdef __NMOS__
+    wxLogDebug(wxT("pam2Dialog::TARGET"));
     wxString sSdp = event.GetTransportFile();
     sSdp.Replace(wxT("\n"), wxT("`"));
     sSdp.Replace(wxT("\r"), wxT(""));
 
+    wxString sInput(wxT("NMOS_IS-04_A"));
     //Save the SDP file details
-    Settings::Get().Write(wxT("AoIP"), wxT("NMOS_IS-04"), wxString::Format(wxT("NMOS:[%s]"),sSdp.c_str()));
-    //Chage the AOIP source to be NMOS IS-04
-    Settings::Get().Write(wxT("Input"), wxT("AoIP"), wxT("NMOS_IS-04"));
+    if(Settings::Get().Read(wxT("Input"), wxT("AoIP"), wxEmptyString) == sInput)
+    {
+        sInput = wxT("NMOS_IS-04_B");
+    }
+    Settings::Get().Write(wxT("AoIP"), sInput, wxString::Format(wxT("NMOS:[%s]"),sSdp.c_str()));
     //Make sure the input type is AoIP
     Settings::Get().Write(wxT("Input"), wxT("Type"), wxT("AoIP"));
+    //Chage the AOIP source to be NMOS IS-04
+    Settings::Get().Write(wxT("Input"), wxT("AoIP"), sInput);
+
 
     //Now tell NMOS that we have taken the target
     NodeApi::Get().TargetTaken(event.GetPort(), true);

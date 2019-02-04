@@ -387,6 +387,15 @@ void lineupPanel::SetAudioData(const timedbuffer* pBuffer)
         m_plblAudio->SetBackgroundColour(wxColour(128,0,0));
         m_plblAudio->SetLabel(wxT("EBU Legs Reversed"));
         break;
+    case GlitsDetector::GD_VALID_LR:
+        m_plblAudio->SetBackgroundColour(wxColour(0,128,64));
+        m_plblAudio->SetLabel(wxT("VALID"));
+        break;
+    case GlitsDetector::GD_VALID_RL:
+        m_plblAudio->SetBackgroundColour(wxColour(128,0,0));
+        m_plblAudio->SetLabel(wxT("VALID Legs Reversed"));
+        break;
+
     default:
         m_plblAudio->SetBackgroundColour(wxColour(255,128,0));
         m_plblAudio->SetLabel(wxT("Unknown"));

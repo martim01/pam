@@ -70,7 +70,8 @@ bool RtpServerThread::SetupStream(const wxString& sStreamName, const wxString& s
 
 void* RtpServerThread::Entry()
 {
-    StartStream();
+    SetupStream(wxT("Pam"), wxT("Info"), wxT("Description"))
+;    StartStream();
 
     while(m_eventLoopWatchVariable == 0)
     {

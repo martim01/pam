@@ -44,7 +44,7 @@ void GlitsDetector::SetAudioData(const timedbuffer* pBuffer)
             dLeft = max(dLeft, abs(pBuffer->GetBuffer()[i]));
             dRight = max(dRight, abs(pBuffer->GetBuffer()[i+1]));
             m_nSampleCount++;
-            if(m_nSampleCount == 48)
+            if(m_nSampleCount == 49)
             {
                 m_vBuffer[0][m_nSineCount] = (dLeft > 0.003);
                 m_vBuffer[1][m_nSineCount] = (dRight > 0.003);
@@ -82,6 +82,8 @@ void GlitsDetector::WorkoutSignal()
     vector<pairTransition_t> vTransitionR(CreateTransition(m_vBuffer[1]));
     CountTransitions(vTransitionR, nSilenceCountR, nSilenceTimeR, nSignalCountR, nSignalTimeR);
 
+    wxLogDebug(wxT("LEFT : Silences = %d time = %d. Signals = %d time = %d"), nSilenceCountL, nSilenceTimeL, nSignalCountL, nSignalTimeL);
+    wxLogDebug(wxT("RIGHT: Silences = %d time = %d. Signals = %d time = %d"), nSilenceCountR, nSilenceTimeR, nSignalCountR, nSignalTimeR);
     //check if glits
     if(nSilenceCountL == 0 && nSilenceCountR == 0)
     {
@@ -104,6 +106,16 @@ void GlitsDetector::WorkoutSignal()
        nSilenceTimeL > 450 && nSilenceTimeL < 550 && nSilenceCountL <= 3 && nSignalTimeL > 3450 && nSignalTimeL < 3550 && nSignalCountL <= 4)
     {
         m_eType = GD_GLITS_RL;
+    }
+    else if(nSilenceTimeL > 300 && nSilenceTimeL < 500 && nSilenceCountL <= 2 && nSignalTimeL > 3500 && nSignalTimeL < 3700 && nSignalCountL <= 2 &&
+       nSilenceTimeR > 600 && nSilenceTimeR < 800 && nSilenceCountR <= 3 && nSignalTimeR > 3200 && nSignalTimeR < 3400 && nSignalCountR <= 4)
+    {
+        m_eType = GD_VALID_LR;
+    }
+    else if(nSilenceTimeR > 300 && nSilenceTimeR < 500 && nSilenceCountR <= 2 && nSignalTimeR > 3500 && nSignalTimeR < 3700 && nSignalCountR <= 2 &&
+       nSilenceTimeL > 600 && nSilenceTimeL < 800 && nSilenceCountL <= 3 && nSignalTimeL > 3200 && nSignalTimeL < 3400 && nSignalCountL <= 4)
+    {
+        m_eType = GD_VALID_RL;
     }
     else
     {
