@@ -78,8 +78,6 @@
 			<Depends filename="plugins/peak count/peakcount.cbp" />
 			<Depends filename="plugins/record/record.cbp" />
 			<Depends filename="plugins/waveform/waveform.cbp" />
-			<Depends filename="plugins/LTC/LTC.cbp" />
-			<Depends filename="plugins/LTCGenerator/LTCGenerator.cbp" />
 			<Depends filename="plugins/lineup/lineup.cbp" />
 			<Depends filename="pamupdatemanager/pamupdatemanager.cbp" />
 		</Project>
