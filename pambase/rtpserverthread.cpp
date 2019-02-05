@@ -2,7 +2,7 @@
 #include "PamTaskScheduler.h"
 #include "PamUsageEnvironment.h"
 #include <wx/log.h>
-
+#include "settings.h"
 
 RtpServerThread::RtpServerThread(wxEvtHandler* pHandler, const wxString& sRTSP, unsigned int nRTSPPort, const wxString& sMulticast, unsigned int nRTPPort, LiveAudioSource::enumPacketTime ePacketTime) :
     m_pHandler(pHandler),
@@ -84,7 +84,8 @@ bool RtpServerThread::CreateStream()
         return true;
     }
     ServerMediaSession* sms = ServerMediaSession::createNew(*m_penv, "PAM", "AES67", "", True/*SSM*/);
-    sms->addSubsession(AES67ServerMediaSubsession::createNew(*m_pSink, NULL, m_ePacketTime));
+    AES67ServerMediaSubsession* pSmss =  AES67ServerMediaSubsession::createNew(*m_pSink, NULL, m_ePacketTime);
+    sms->addSubsession(pSmss);
     m_pRtspServer->addServerMediaSession(sms);
 
     // Finally, start the streaming:
@@ -97,6 +98,8 @@ bool RtpServerThread::CreateStream()
 
     wxLogDebug(wxT("RtpServerThread::CreateStream() Done"));
     m_bStreaming = true;
+
+    Settings::Get().Write(wxT("AoIP"), wxT("Epoch"), pSmss->GetEpochTimestamp());
 
     return true;
 }

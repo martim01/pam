@@ -6,6 +6,7 @@ class AES67ServerMediaSubsession: public ServerMediaSubsession
     public:
         static AES67ServerMediaSubsession* createNew(RTPSink& rtpSink, RTCPInstance* rtcpInstance, int nPacketTime);
 
+        int GetEpochTimestamp();
     protected:
         AES67ServerMediaSubsession(RTPSink& rtpSink, RTCPInstance* rtcpInstance, int nPacketTime);
         // called only by createNew();
@@ -29,7 +30,7 @@ class AES67ServerMediaSubsession: public ServerMediaSubsession
       RTPSink& fRTPSink;
       RTCPInstance* fRTCPInstance;
         int m_nPacketTime;
-      int GetEpochTimestamp();
+
         //HashTable* fClientRTCPSourceRecords; // indexed by client session id; used to implement RTCP "RR" handling
 
 };

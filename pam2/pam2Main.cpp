@@ -238,10 +238,15 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Settings::Get().AddHandler(wxT("Input"),wxT("Type"), this);
     Settings::Get().AddHandler(wxT("Output"),wxT("Destination"), this);
     Settings::Get().AddHandler(wxT("Output"),wxT("Source"), this);
+    Settings::Get().AddHandler(wxT("AoIP"),wxT("Epoch"), this);
 
     Settings::Get().AddHandler(wxT("Test"), wxT("Lock"), this);
     Settings::Get().AddHandler(wxT("NMOS"), wxT("Activate"), this);
     Settings::Get().AddHandler(wxT("NMOS"), wxT("Client"), this);
+    Settings::Get().AddHandler(wxT("Server"), wxT("Multicast"), this);
+    Settings::Get().AddHandler(wxT("Server"), wxT("RTP_Port"), this);
+    Settings::Get().AddHandler(wxT("Server"), wxT("PacketTime"), this);
+
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pam2Dialog::OnSettingChanged);
     Connect(wxID_ANY, wxEVT_MONITOR_REQUEST, (wxObjectEventFunction)&pam2Dialog::OnMonitorRequest);
@@ -804,6 +809,48 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
             }
         }
     }
+    else if(event.GetSection() == wxT("AoIP") && event.GetKey() == wxT("Epoch"))
+    {
+        #ifdef __NMOS__
+        if(m_pFlow && m_pSender)
+        {
+            m_pFlow->SetMediaClkOffset(event.GetValue((long(0))));
+            m_pSender->CreateSDP();
+        }
+        #endif // __NMOS__
+    }
+    else if(event.GetSection() == wxT("Server"))
+    {
+        #ifdef __NMOS__
+        if(m_pSender && (event.GetKey() == wxT("Multicast") || event.GetKey() == wxT("RTP_Port")))
+        {
+            m_pSender->SetDestinationDetails(std::string(Settings::Get().Read(wxT("Server"), wxT("Multicast"),wxEmptyString).mbc_str()), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
+            NodeApi::Get().Commit();
+        }
+        if(m_pFlow && event.GetKey() == wxT("PacketTime"))
+        {
+            switch(event.GetValue(long(1000)))
+            {
+            case 125:
+                m_pFlow->SetPacketTime(FlowAudioRaw::US_125);
+                break;
+            case 250:
+                m_pFlow->SetPacketTime(FlowAudioRaw::US_250);
+                break;
+            case 333:
+                m_pFlow->SetPacketTime(FlowAudioRaw::US_333);
+                break;
+            case 4000:
+                m_pFlow->SetPacketTime(FlowAudioRaw::US_4000);
+                break;
+            default:
+                m_pFlow->SetPacketTime(FlowAudioRaw::US_1000);
+                break;
+            }
+            NodeApi::Get().Commit();
+        }
+        #endif // __NMOS__
+    }
 
 }
 
@@ -813,13 +860,24 @@ void pam2Dialog::OutputChanged(const wxString& sKey)
 {
     if(sKey == wxT("Destination"))
     {
-        bool bEnabled(Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled"))!=wxT("Disabled"));
+        wxString sDestination(Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled")));
+        bool bEnabled(sDestination!=wxT("Disabled"));
         m_plblOutput->Show(bEnabled);
         if(!bEnabled)
         {
             m_pbtnMonitor->ToggleSelection(false, true);
         }
         m_pbtnMonitor->Enable(bEnabled);
+
+        #ifdef __NMOS__
+        if(sDestination == wxT("AoIP"))
+        {
+            if(m_pSender && m_pFlow)
+            {
+            //    m_pSender->
+            }
+        }
+        #endif // __NMOS__
 
     }
     else if(sKey == wxT("Source"))
@@ -1048,42 +1106,41 @@ void pam2Dialog::SetupNmos()
     NodeApi::Get().GetSelf().AddInterface("eth0");
 
     shared_ptr<Device> pDevice = make_shared<Device>(chHost, "Live555", Device::GENERIC,NodeApi::Get().GetSelf().GetId());
+
     shared_ptr<SourceAudio> pSource = make_shared<SourceAudio>(chHost, "Live555", pDevice->GetId());
     pSource->AddChannel("Left", "L");
     pSource->AddChannel("Right", "R");
-
-    shared_ptr<FlowAudioRaw> pFlow = make_shared<FlowAudioRaw>(chHost, "Live555", pSource->GetId(), pDevice->GetId(), 48000, FlowAudioRaw::L24);
-
+    m_pFlow = make_shared<FlowAudioRaw>(chHost, "Live555", pSource->GetId(), pDevice->GetId(), 48000, FlowAudioRaw::L24);
     int nPackeTime = Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000);
     switch(nPackeTime)
     {
     case 125:
-        pFlow->SetPacketTime(FlowAudioRaw::US_125);
+        m_pFlow->SetPacketTime(FlowAudioRaw::US_125);
         break;
     case 250:
-        pFlow->SetPacketTime(FlowAudioRaw::US_250);
+        m_pFlow->SetPacketTime(FlowAudioRaw::US_250);
         break;
     case 333:
-        pFlow->SetPacketTime(FlowAudioRaw::US_333);
+        m_pFlow->SetPacketTime(FlowAudioRaw::US_333);
         break;
     case 4000:
-        pFlow->SetPacketTime(FlowAudioRaw::US_4000);
+        m_pFlow->SetPacketTime(FlowAudioRaw::US_4000);
         break;
     default:
-        pFlow->SetPacketTime(FlowAudioRaw::US_1000);
+        m_pFlow->SetPacketTime(FlowAudioRaw::US_1000);
         break;
     }
 
 
-    pFlow->SetMediaClkOffset(129122110);    //@todo get this from Live555
+    m_pFlow->SetMediaClkOffset(Settings::Get().Read(wxT("AoIP"), wxT("Epoch"), 0));    //@todo get this from Live555
 
     if(Settings::Get().Read(wxT("Server"), wxT("Multicast"),wxEmptyString) == wxEmptyString)
     {
         Settings::Get().Write(wxT("Server"), wxT("Multicast"), IOManager::Get().GetRandomMulticastAddress());
     }
 
-    shared_ptr<Sender> pSender = make_shared<Sender>(chHost, "Live555 sender", pFlow->GetId(), Sender::RTP_MCAST, pDevice->GetId(), "eth0");
-    pSender->SetDestinationDetails(std::string(Settings::Get().Read(wxT("Server"), wxT("Multicast"),wxEmptyString).mbc_str()), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
+    m_pSender = make_shared<Sender>(chHost, "Live555 sender", m_pFlow->GetId(), Sender::RTP_MCAST, pDevice->GetId(), "eth0");
+    m_pSender->SetDestinationDetails(std::string(Settings::Get().Read(wxT("Server"), wxT("Multicast"),wxEmptyString).mbc_str()), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
 
     shared_ptr<Receiver> pReceiver = make_shared<Receiver>(chHost, "Live555 receiver", Receiver::RTP_MCAST, pDevice->GetId(), Receiver::AUDIO);
     pReceiver->AddCap("audio/L24");
@@ -1098,7 +1155,7 @@ void pam2Dialog::SetupNmos()
     {
         wmLog::Get()->Log(wxT("NMOS: Failed to add Source"));
     }
-    if(NodeApi::Get().AddFlow(pFlow) == false)
+    if(NodeApi::Get().AddFlow(m_pFlow) == false)
     {
         wmLog::Get()->Log(wxT("NMOS: Failed to add Flow"));
     }
@@ -1106,7 +1163,7 @@ void pam2Dialog::SetupNmos()
     {
         wmLog::Get()->Log(wxT("NMOS: Failed to add Receiver"));
     }
-    if(NodeApi::Get().AddSender(pSender) == false)
+    if(NodeApi::Get().AddSender(m_pSender) == false)
     {
         wmLog::Get()->Log(wxT("NMOS: Failed to add Sender"));
     }

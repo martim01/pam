@@ -25,6 +25,7 @@
 #include "wmswitcherpanel.h"
 #include "wmlist.h"
 #include "session.h"
+#include <memory>
 
 struct timedbuffer;
 class MonitorPluginBuilder;
@@ -42,6 +43,8 @@ class Generator;
 class AudioEvent;
 class dlgNoInput;
 class wxNmosEvent;
+class FlowAudioRaw;
+class Sender;
 
 class pam2Dialog: public wxDialog
 {
@@ -175,6 +178,8 @@ class pam2Dialog: public wxDialog
         void OnActivateReceiver(wxNmosEvent& event);
 
 
+
+
         pnlSettings* m_ppnlSettings;
         pnlTests* m_ppnlTests;
         pnlHelp* m_ppnlHelp;
@@ -189,6 +194,10 @@ class pam2Dialog: public wxDialog
         wxDateTime m_dtLastRead;
         bool m_bInputFailed;
 
+        #ifdef __NMOS__
+        std::shared_ptr<FlowAudioRaw> m_pFlow;
+        std::shared_ptr<Sender> m_pSender;
+        #endif // __NMOS__
         DECLARE_EVENT_TABLE()
 };
 
