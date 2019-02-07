@@ -16,7 +16,7 @@ class Smpte2110MediaSession;
 class PAMBASE_IMPEXPORT RtpThread : public wxThread
 {
     public:
-        RtpThread(wxEvtHandler* pHandler, const wxString& sProg, const wxString& sUrl, unsigned int nBufferSize, bool bSaveSDPOnly = false);
+        RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface, const wxString& sProg, const wxString& sUrl, unsigned int nBufferSize, bool bSaveSDPOnly = false);
         void* Entry();
         void AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const pairTime_t& timePresentation, unsigned long nFrameSize, u_int8_t* pBuffer, u_int8_t nBits, const pairTime_t& timeTransmission, unsigned int nTimestamp,unsigned int nDuration, mExtension_t* pExt);
 

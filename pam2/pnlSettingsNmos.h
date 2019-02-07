@@ -6,6 +6,10 @@
 #include "wmbutton.h"
 #include <wx/panel.h>
 //*)
+#include "wmlist.h"
+#include <memory>
+
+class Sender;
 
 class pnlSettingsNmos: public wxPanel
 {
@@ -18,6 +22,21 @@ class pnlSettingsNmos: public wxPanel
 		wmButton* m_pbtnClient;
 		wmButton* m_pbtnNmos;
 		//*)
+
+        void SetReceiverId(const wxString& sReceiverId)
+        {
+            m_sReceiverId = sReceiverId;
+        }
+        const wxString& GetReceiverId() const
+        {
+            return m_sReceiverId;
+        }
+
+        void SetSender(const wxString& sSenderId);
+
+		void AddSender(std::shared_ptr<Sender> pSender);
+		void UpdateSender(std::shared_ptr<Sender> pSender);
+		void RemoveSenders();
 
 	protected:
 
@@ -33,6 +52,9 @@ class pnlSettingsNmos: public wxPanel
 		void OnbtnClientClick(wxCommandEvent& event);
 		//*)
 
+		void OnSenderSelected(wxCommandEvent& event);
+		wmList* m_plstSenders;
+        wxString m_sReceiverId;
 		DECLARE_EVENT_TABLE()
 };
 

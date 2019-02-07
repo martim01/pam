@@ -623,7 +623,7 @@ void IOManager::InitAudioInputDevice()
         {
 
             m_sCurrentRtp = sRtp;
-            RtpThread* pThread = new RtpThread(this, wxT("pam"), sRtp, 2048);
+            RtpThread* pThread = new RtpThread(this, Settings::Get().Read(wxT("AoIP"), wxT("Interface"), wxEmptyString), wxT("pam"), sRtp, 2048);
             pThread->Create();
             pThread->Run();
 

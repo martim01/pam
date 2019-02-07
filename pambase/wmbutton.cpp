@@ -641,3 +641,14 @@ bool wmButton::IsChecked() const
 {
     return m_bChecked;
 }
+
+
+void wmButton::SetAuxillaryText(const wxString& sText)
+{
+    m_sAuxillary = sText;
+}
+
+const wxString& wmButton::GetAuxillaryText() const
+{
+    return m_sAuxillary;
+}

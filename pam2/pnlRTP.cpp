@@ -449,7 +449,7 @@ void pnlRTP::GetSDP()
 {
     if(m_pThread == 0 && m_queueUrl.empty() == false)
     {
-        m_pThread = new RtpThread(this, wxEmptyString, m_queueUrl.front(), 4096, true);
+        m_pThread = new RtpThread(this, Settings::Get().Read(wxT("AoIP"), wxT("Interface"), wxEmptyString), wxEmptyString, m_queueUrl.front(), 4096, true);
         m_pThread->Create();
         m_pThread->Run();
     }

@@ -9,6 +9,7 @@
 #include "smpte2110mediasession.h"
 #include "wxsink.h"
 #include "audioevent.h"
+#include "GroupsockHelper.hh"
 
 using namespace std;
 
@@ -24,7 +25,7 @@ DEFINE_EVENT_TYPE(wxEVT_RTP_SESSION)
 DEFINE_EVENT_TYPE(wxEVT_RTP_SESSION_CLOSED)
 DEFINE_EVENT_TYPE(wxEVT_SDP)
 
-RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sProg, const wxString& sUrl, unsigned int nBufferSize, bool bSaveSDPOnly) :
+RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface, const wxString& sProg, const wxString& sUrl, unsigned int nBufferSize, bool bSaveSDPOnly) :
     m_pHandler(pHandler),
     m_sProgName(sProg),
     m_sUrl(sUrl),
@@ -38,53 +39,41 @@ RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sProg, const wxStri
     m_eventLoopWatchVariable = 0;
     m_pCondition = new wxCondition(m_mutex);
 
+    //set the receivinginterface to eth0 or whatever the user choose
+    if(sReceivingInterface.empty() == false)
+    {
+        ReceivingInterfaceAddr = our_inet_addr(std::string(sReceivingInterface.mb_str()).c_str());
+    }
+    else
+    {
+        ReceivingInterfaceAddr = INADDR_ANY;
+    }
 }
 
 
 void* RtpThread::Entry()
 {
-    std::cout << "RtpThread: 1" << std::endl;
     // Begin by setting up our usage environment:
     TaskScheduler* scheduler = PamTaskScheduler::createNew();
     m_penv = PamUsageEnvironment::createNew(*scheduler, m_pHandler);
-    std::cout << "RtpThread: 2" << std::endl;
-
-    std::cout << m_sUrl.mb_str() << std::endl;
-    std::cout << m_sUrl.BeforeFirst(wxT(':')).mb_str() << std::endl;
 
     if(m_sUrl.BeforeFirst(wxT(':')).CmpNoCase(wxT("rtsp")) == 0)
     {
-        std::cout << "RtpThread: 3" << std::endl;
         if(openURL())
         {
 
-//
-//            //std::cout << "RtpThread: 4" << std::endl;
-//            // All subsequent activity takes place within the event loop:
             while(TestDestroy() == false && m_eventLoopWatchVariable == 0)
             {
                 m_penv->taskScheduler().doEventLoop(&m_eventLoopWatchVariable);
             }
 
-//            m_bClosing = true;
-//            if(m_pRtspClient && m_eventLoopWatchVariable == 0)  //0 means stream has shutdown and is telling us to stop
-//            {
-//                shutdownStream(m_pRtspClient, 0);
-//            }
-//            std::cout << "RtpThread: 6" << std::endl;
         }
     }
     else
     {
         m_sDescriptor = m_sUrl.AfterFirst(wxT('[')).BeforeFirst(wxT(']'));
-        std::cout << "SDP 1: " << m_sDescriptor.mb_str() << std::endl;
-
         m_sDescriptor.Replace(wxT("`"), wxT("\n"));
-        std::cout << "SDP 2: " << m_sDescriptor.mb_str() << std::endl;
-
         m_sDescriptor = m_sDescriptor.AfterFirst(wxT('\n'));
-
-        std::cout << "SDP 3: " << m_sDescriptor.mb_str() << std::endl;
         StreamFromSDP();
     }
 

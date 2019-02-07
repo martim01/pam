@@ -40,6 +40,9 @@ dlgNoInput::dlgNoInput(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 
 	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&dlgNoInput::OnbtnInputClick);
 	//*)
+	m_pbtnInput->SetColourDisabled(wxColour(128,128,128));
+	m_timerReset.SetOwner(this, wxNewId());
+	Connect(m_timerReset.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&dlgNoInput::OnTimerReset);
 }
 
 dlgNoInput::~dlgNoInput()
@@ -51,7 +54,14 @@ dlgNoInput::~dlgNoInput()
 
 void dlgNoInput::OnbtnInputClick(wxCommandEvent& event)
 {
-    wxString sInput = Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard"));
+    m_sInput = Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard"));
     Settings::Get().Write(wxT("Input"), wxT("Type"), wxT("Disabled"));
-    Settings::Get().Write(wxT("Input"), wxT("Type"), sInput);
+    m_pbtnInput->Enable(false);
+    m_timerReset.Start(2000,true);
+}
+
+void dlgNoInput::OnTimerReset(wxTimerEvent& event)
+{
+    Settings::Get().Write(wxT("Input"), wxT("Type"), m_sInput);
+    m_pbtnInput->Enable(true);
 }

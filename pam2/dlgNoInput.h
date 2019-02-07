@@ -6,6 +6,7 @@
 #include "wmlabel.h"
 #include <wx/dialog.h>
 //*)
+#include <wx/timer.h>
 
 class dlgNoInput: public wxDialog
 {
@@ -25,13 +26,15 @@ class dlgNoInput: public wxDialog
 		static const long ID_M_PLBL1;
 		static const long ID_M_PBTN1;
 		//*)
-
+        void OnTimerReset(wxTimerEvent& event);
 	private:
 
 		//(*Handlers(dlgNoInput)
 		void OnbtnInputClick(wxCommandEvent& event);
 		//*)
 
+		wxTimer m_timerReset;
+		wxString m_sInput;
 		DECLARE_EVENT_TABLE()
 };
 

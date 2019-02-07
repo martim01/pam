@@ -8,8 +8,12 @@ DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENT_DEVICE)
 DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENT_SENDER)
 DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENT_RECEIVER)
 DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENT_RESOURCES_REMOVED)
+DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENTCURL_SUBSCRIBE)
+DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENTCURL_PATCH_SENDER)
+DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENTCURL_PATCH_RECEIVER)
 
 IMPLEMENT_DYNAMIC_CLASS(wxNmosClientEvent, wxCommandEvent)
+IMPLEMENT_DYNAMIC_CLASS(wxNmosClientCurlEvent, wxCommandEvent)
 
 wxClientApiPoster::wxClientApiPoster(wxEvtHandler* pHandler) : ClientApiPoster(),
     m_pHandler(pHandler)
@@ -48,6 +52,7 @@ void wxClientApiPoster::FlowChanged(std::shared_ptr<Flow> pFlow, enumChange eCha
 
 void wxClientApiPoster::SenderChanged(std::shared_ptr<Sender> pSender, enumChange eChange)
 {
+//    wxLogDebug(wxT("wxClientApiPoster::SenderChanged"));
     wxNmosClientEvent* pEvent(new wxNmosClientEvent(pSender, eChange));
     wxQueueEvent(m_pHandler, pEvent);
 }
@@ -95,7 +100,23 @@ void wxClientApiPoster::ReceiversRemoved(const std::set<std::string>& setRemoved
 }
 
 
+void wxClientApiPoster::RequestTargetResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId)
+{
+    wxNmosClientCurlEvent* pEvent = new wxNmosClientCurlEvent(wxEVT_NMOS_CLIENTCURL_SUBSCRIBE, nResult, wxString::FromAscii(sResponse.c_str()), wxString::FromAscii(sResourceId.c_str()));
+    wxQueueEvent(m_pHandler, pEvent);
+}
 
+void wxClientApiPoster::RequestPatchSenderResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId)
+{
+    wxNmosClientCurlEvent* pEvent = new wxNmosClientCurlEvent(wxEVT_NMOS_CLIENTCURL_PATCH_SENDER, nResult, wxString::FromAscii(sResponse.c_str()), wxString::FromAscii(sResourceId.c_str()));
+    wxQueueEvent(m_pHandler, pEvent);
+}
+
+void wxClientApiPoster::RequestPatchReceiverResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId)
+{
+    wxNmosClientCurlEvent* pEvent = new wxNmosClientCurlEvent(wxEVT_NMOS_CLIENTCURL_PATCH_RECEIVER, nResult, wxString::FromAscii(sResponse.c_str()), wxString::FromAscii(sResourceId.c_str()));
+    wxQueueEvent(m_pHandler, pEvent);
+}
 
 
 wxNmosClientEvent::wxNmosClientEvent(std::shared_ptr<Self> pNode, ClientApiPoster::enumChange eChange) : wxCommandEvent(wxEVT_NMOS_CLIENT_NODE),
@@ -228,5 +249,37 @@ std::set<std::string>::const_iterator wxNmosClientEvent::GetRemovedEnd() const
 {
     return m_setRemoved.end();
 }
+
+
+wxNmosClientCurlEvent::wxNmosClientCurlEvent(wxEventType type, unsigned long nResult, const wxString& sResponse, const wxString& sResourceId) : wxCommandEvent(type)
+{
+    SetInt(nResult);
+    SetString(sResponse);
+    m_sResourceId = sResourceId;
+}
+
+wxNmosClientCurlEvent::wxNmosClientCurlEvent(const wxNmosClientCurlEvent& event) : wxCommandEvent(event),
+m_sResourceId(event.GetResourceId())
+{
+
+}
+
+
+unsigned long wxNmosClientCurlEvent::GetResult()
+{
+    return GetInt();
+}
+
+const wxString& wxNmosClientCurlEvent::GetResponse()
+{
+    return GetString();
+}
+
+const wxString& wxNmosClientCurlEvent::GetResourceId()
+{
+    return m_sResourceId;
+}
+
+
 
 #endif

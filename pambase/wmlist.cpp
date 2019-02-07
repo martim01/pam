@@ -2353,3 +2353,23 @@ void wmList::SetColumns(unsigned int nColumns)
     CreateRects();
     Refresh();
 }
+
+
+void wmList::SetButtonAuxillaryText(size_t nIndex, const wxString& sText)
+{
+    list<button*>::iterator itButton = GetButton(nIndex);
+    if(itButton != m_lstButtons.end())
+    {
+        (*itButton)->sAuxillary = sText;
+    }
+}
+
+const wxString& wmList::GetButtonAuxillaryText(size_t nIndex) const
+{
+    list<button*>::iterator itButton = GetButton(nIndex);
+    if(itButton != m_lstButtons.end())
+    {
+        return (*itButton)->sAuxillary;
+    }
+    return wxEmptyString;
+}

@@ -231,6 +231,9 @@ class PAMBASE_IMPEXPORT wmButton : public pmControl
             return m_uiRect.GetLabel();
         }
 
+        void SetAuxillaryText(const wxString& sText);
+        const wxString& GetAuxillaryText() const;
+
         /** @brief Changes the selected state of the button
         *   @param bSelected true to select, false to unselect
         *   @param bEvent true to generate a button clicked event (if bSelected = true)
@@ -371,6 +374,8 @@ class PAMBASE_IMPEXPORT wmButton : public pmControl
         uiRect m_uiToggleLeft;
         uiRect m_uiToggleRight;
         double m_dToggleWidth;
+
+        wxString m_sAuxillary;
 
 //        wmScroller* m_pScroller;
 

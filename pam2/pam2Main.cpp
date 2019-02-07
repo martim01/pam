@@ -118,9 +118,15 @@ BEGIN_EVENT_TABLE(pam2Dialog,wxDialog)
 END_EVENT_TABLE()
 
 pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
-    m_pSelectedMonitor(0),
+    m_ppnlSettings(0),
+    m_ppnlTests(0),
+    m_ppnlHelp(0),
     m_ppnlLog(0),
-    m_bInputFailed(false)
+    m_pdlgNoInput(0),
+    m_pSelectedMonitor(0),
+    m_bInputFailed(false),
+    m_pFlow(0),
+    m_pSender(0)
 {
 
     //(*Initialize(pam2Dialog)
@@ -270,25 +276,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
     m_plblOutput->Show(Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled"))!=wxT("Disabled"));
 
-    //NMOS
-    #ifdef __NMOS__
-    Connect(wxID_ANY, wxEVT_NMOS_TARGET, (wxObjectEventFunction)&pam2Dialog::OnTarget);
-    Connect(wxID_ANY, wxEVT_NMOS_PATCH_SENDER, (wxObjectEventFunction)&pam2Dialog::OnPatchSender);
-    Connect(wxID_ANY, wxEVT_NMOS_PATCH_RECEIVER, (wxObjectEventFunction)&pam2Dialog::OnPatchReceiver);
-    Connect(wxID_ANY, wxEVT_NMOS_ACTIVATE_RECEIVER, (wxObjectEventFunction)&pam2Dialog::OnActivateSender);
-    Connect(wxID_ANY, wxEVT_NMOS_ACTIVATE_SENDER, (wxObjectEventFunction)&pam2Dialog::OnActivateReceiver);
 
-    SetupNmos();
-
-    if(Settings::Get().Read(wxT("NMOS"), wxT("Activate"),false) == true)
-    {
-        StartNmos();
-    }
-    if(Settings::Get().Read(wxT("NMOS"), wxT("Client"),false) == true)
-    {
-        StartNmosClient();
-    }
-    #endif // __NMOS__
 }
 
 pam2Dialog::~pam2Dialog()
@@ -953,6 +941,29 @@ void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
         m_plstInbuilt->SelectButton(sPanel);
     }
 
+    //NMOS
+    #ifdef __NMOS__
+    SetupNmos();
+    Connect(wxID_ANY, wxEVT_NMOS_TARGET, (wxObjectEventFunction)&pam2Dialog::OnTarget);
+    Connect(wxID_ANY, wxEVT_NMOS_PATCH_SENDER, (wxObjectEventFunction)&pam2Dialog::OnPatchSender);
+    Connect(wxID_ANY, wxEVT_NMOS_PATCH_RECEIVER, (wxObjectEventFunction)&pam2Dialog::OnPatchReceiver);
+    Connect(wxID_ANY, wxEVT_NMOS_ACTIVATE_RECEIVER, (wxObjectEventFunction)&pam2Dialog::OnActivateSender);
+    Connect(wxID_ANY, wxEVT_NMOS_ACTIVATE_SENDER, (wxObjectEventFunction)&pam2Dialog::OnActivateReceiver);
+    Connect(wxID_ANY, wxEVT_NMOS_CLIENT_SENDER, (wxObjectEventFunction)&pam2Dialog::OnNmosSenderChanged);
+    Connect(wxID_ANY, wxEVT_NMOS_CLIENT_RECEIVER, (wxObjectEventFunction)&pam2Dialog::OnNmosReceiverChanged);
+    Connect(wxID_ANY, wxEVT_NMOS_CLIENT_FLOW, (wxObjectEventFunction)&pam2Dialog::OnNmosFlowChanged);
+    Connect(wxID_ANY, wxEVT_NMOS_CLIENT_RESOURCES_REMOVED, (wxObjectEventFunction)&pam2Dialog::OnNmosResourcesRemoved);
+
+
+    if(Settings::Get().Read(wxT("NMOS"), wxT("Activate"),false) == true)
+    {
+        StartNmos();
+    }
+    if(Settings::Get().Read(wxT("NMOS"), wxT("Client"),false) == true)
+    {
+        StartNmosClient();
+    }
+    #endif // __NMOS__
 
     IOManager::Get().Start();
 }
@@ -1105,11 +1116,15 @@ void pam2Dialog::SetupNmos()
     NodeApi::Get().GetSelf().AddInternalClock("clk0");
     NodeApi::Get().GetSelf().AddInterface("eth0");
 
+    wxLogDebug(wxT("Make Device"));
     shared_ptr<Device> pDevice = make_shared<Device>(chHost, "Live555", Device::GENERIC,NodeApi::Get().GetSelf().GetId());
 
+    wxLogDebug(wxT("Make Source"));
     shared_ptr<SourceAudio> pSource = make_shared<SourceAudio>(chHost, "Live555", pDevice->GetId());
     pSource->AddChannel("Left", "L");
     pSource->AddChannel("Right", "R");
+
+    wxLogDebug(wxT("Make Flow"));
     m_pFlow = make_shared<FlowAudioRaw>(chHost, "Live555", pSource->GetId(), pDevice->GetId(), 48000, FlowAudioRaw::L24);
     int nPackeTime = Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000);
     switch(nPackeTime)
@@ -1134,34 +1149,45 @@ void pam2Dialog::SetupNmos()
 
     m_pFlow->SetMediaClkOffset(Settings::Get().Read(wxT("AoIP"), wxT("Epoch"), 0));    //@todo get this from Live555
 
+
     if(Settings::Get().Read(wxT("Server"), wxT("Multicast"),wxEmptyString) == wxEmptyString)
     {
         Settings::Get().Write(wxT("Server"), wxT("Multicast"), IOManager::Get().GetRandomMulticastAddress());
     }
 
+    wxLogDebug(wxT("Make Sender"));
     m_pSender = make_shared<Sender>(chHost, "Live555 sender", m_pFlow->GetId(), Sender::RTP_MCAST, pDevice->GetId(), "eth0");
     m_pSender->SetDestinationDetails(std::string(Settings::Get().Read(wxT("Server"), wxT("Multicast"),wxEmptyString).mbc_str()), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
 
+    wxLogDebug(wxT("Make Receiver"));
     shared_ptr<Receiver> pReceiver = make_shared<Receiver>(chHost, "Live555 receiver", Receiver::RTP_MCAST, pDevice->GetId(), Receiver::AUDIO);
     pReceiver->AddCap("audio/L24");
     pReceiver->AddCap("audio/L16");
     pReceiver->AddInterfaceBinding("eth0");
 
+    wxLogDebug(wxT("AddDevice"));
     if(NodeApi::Get().AddDevice(pDevice) == false)
     {
         wmLog::Get()->Log(wxT("NMOS: Failed to add Device"));
     }
+    wxLogDebug(wxT("AddSource"));
     if(NodeApi::Get().AddSource(pSource) == false)
     {
         wmLog::Get()->Log(wxT("NMOS: Failed to add Source"));
     }
+    wxLogDebug(wxT("AddFlow"));
     if(NodeApi::Get().AddFlow(m_pFlow) == false)
     {
         wmLog::Get()->Log(wxT("NMOS: Failed to add Flow"));
     }
+    wxLogDebug(wxT("AddReceiver"));
     if(NodeApi::Get().AddReceiver(pReceiver) == false)
     {
         wmLog::Get()->Log(wxT("NMOS: Failed to add Receiver"));
+    }
+    else
+    {
+        m_ppnlSettings->m_ppnlNmos->SetReceiverId(wxString::FromAscii(pReceiver->GetId().c_str()));
     }
     if(NodeApi::Get().AddSender(m_pSender) == false)
     {
@@ -1247,7 +1273,7 @@ void pam2Dialog::StartNmosClient()
 {
     #ifdef __NMOS__
     ClientApi::Get().SetPoster(make_shared<wxClientApiPoster>(this));
-    ClientApi::Get().Start(ClientApi::SENDERS);
+    ClientApi::Get().Start(ClientApi::ALL);
     #endif // __NMOS__
 }
 
@@ -1255,5 +1281,84 @@ void pam2Dialog::StopNmosClient()
 {
     #ifdef __NMOS__
     ClientApi::Get().Stop();
+    #endif // __NMOS__
+}
+
+void pam2Dialog::OnNmosReceiverChanged(wxNmosClientEvent& event)
+{
+    #ifdef __NMOS__
+    wxLogDebug(wxT("pam2Dialog::OnNmosReceiverChanged"));
+    if(event.GetReceiver() && event.GetInt() == ClientApiPoster::RESOURCE_UPDATED && m_ppnlSettings && event.GetReceiver()->GetId() == m_ppnlSettings->m_ppnlNmos->GetReceiverId())
+    {
+        //is the receiver one of ours??
+        if(event.GetReceiver()->GetSender().empty() == false)
+        {
+            m_ppnlSettings->m_ppnlNmos->SetSender(wxString::FromAscii(event.GetReceiver()->GetSender().c_str()));
+        }
+        else
+        {
+            m_ppnlSettings->m_ppnlNmos->SetSender(wxEmptyString);
+        }
+    }
+    #endif // __NMOS__
+}
+
+void pam2Dialog::OnNmosSenderChanged(wxNmosClientEvent& event)
+{
+    #ifdef __NMOS__
+    if(event.GetSender() && m_ppnlSettings && NodeApi::Get().GetSender(event.GetSender()->GetId()) == 0)
+    {
+        map<string, shared_ptr<Flow> >::const_iterator itFlow = ClientApi::Get().FindFlow(event.GetSender()->GetFlowId());
+        if(itFlow != ClientApi::Get().GetFlowEnd())
+        {
+            if(itFlow->second->GetFormat().find("urn:x-nmos:format:audio") != string::npos)
+            {
+                switch(event.GetInt())
+                {
+                    case ClientApiPoster::RESOURCE_ADDED:
+                        m_ppnlSettings->m_ppnlNmos->AddSender(event.GetSender());
+                        break;
+                    case ClientApiPoster::RESOURCE_UPDATED:
+                        m_ppnlSettings->m_ppnlNmos->UpdateSender(event.GetSender());
+                        break;
+                }
+            }
+
+        }
+        else
+        {
+            wxLogDebug(wxT("pam2Dialog::OnNmosSenderChanged Flow not found"));
+            //Store the sender for checking once we get a flow...
+            if(event.GetInt() == ClientApiPoster::RESOURCE_ADDED)
+            {
+                m_mmLonelySender.insert(make_pair(event.GetSender()->GetFlowId(), event.GetSender()));
+            }
+        }
+    }
+    #endif // __NMOS__
+}
+
+void pam2Dialog::OnNmosFlowChanged(wxNmosClientEvent& event)
+{
+    #ifdef __NMOS__
+    if(event.GetFlow() && event.GetInt() == ClientApiPoster::RESOURCE_ADDED && m_ppnlSettings)
+    {
+        for(multimap<string, shared_ptr<Sender> >::const_iterator itSender = m_mmLonelySender.lower_bound(event.GetFlow()->GetId()); itSender != m_mmLonelySender.upper_bound(event.GetFlow()->GetId()); ++itSender)
+        {
+            if(event.GetFlow()->GetFormat().find("urn:x-nmos:format:audio") != string::npos)
+            {
+                m_ppnlSettings->m_ppnlNmos->AddSender(itSender->second);
+            }
+        }
+        //remove the senders which are no longer lonely
+        m_mmLonelySender.erase(event.GetFlow()->GetId());
+    }
+    #endif // __NMOS__
+}
+
+void pam2Dialog::OnNmosResourcesRemoved(wxNmosClientEvent& event)
+{
+    #ifdef __NMOS__
+
     #endif // __NMOS__
 }

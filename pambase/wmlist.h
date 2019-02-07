@@ -278,7 +278,8 @@ class PAMBASE_IMPEXPORT wmList : public pmControl
         **/
         void SetButtonData(size_t nIndex, void* pData);
 
-
+        void SetButtonAuxillaryText(size_t nIndex, const wxString& sText);
+        const wxString& GetButtonAuxillaryText(size_t nIndex) const;
 
 
         /** @brief enum to decide where to show a button - top, middle, button or simply onscreen
@@ -634,7 +635,7 @@ class PAMBASE_IMPEXPORT wmList : public pmControl
             bool bFlashing;
             short nSlideAllowed;
             wxString sSlide;
-
+            wxString sAuxillary;
         };
     protected:
         /** Called to draw the control

@@ -66,7 +66,7 @@ void wxEventPoster::Finished()
     }
 }
 
-void wxEventPoster::CurlDone(unsigned long nResult, const std::string& sResult, long nUserType)
+void wxEventPoster::CurlDone(unsigned long nResult, const std::string& sResult, long nUserType, const std::string& sResourceId)
 {
     if(m_pHandler)
     {

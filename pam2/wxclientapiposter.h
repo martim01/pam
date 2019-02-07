@@ -27,11 +27,15 @@ class wxClientApiPoster : public ClientApiPoster
         void SendersRemoved(const std::set<std::string>& setRemoved);
         void ReceiversRemoved(const std::set<std::string>& setRemoved);
 
+        void RequestTargetResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId);
+        void RequestPatchSenderResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId);
+        void RequestPatchReceiverResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId);
+
+
     private:
         wxEvtHandler* m_pHandler;
 
 };
-
 
 
 class wxNmosClientEvent : public wxCommandEvent
@@ -110,6 +114,56 @@ END_DECLARE_EVENT_TYPES()
 #define EVT_NMOS_CLIENT_RECEIVER(id,fn) DECLARE_EVENT_TABLE_ENTRY(wxEVT_NMOS_CLIENT_RECEIVER,id,-1,(wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) (wxNmosClientEventFunction) &fn, (wxObject*) NULL),
 #define EVT_NMOS_CLIENT_RESOURCES_REMOVED(id,fn) DECLARE_EVENT_TABLE_ENTRY(wxEVT_NMOS_CLIENT_RESOURCES_REMOVED,id,-1,(wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) (wxNmosClientEventFunction) &fn, (wxObject*) NULL),
 
+
+class wxNmosClientCurlEvent : public wxCommandEvent
+{
+
+public:
+
+    wxNmosClientCurlEvent(wxEventType type, unsigned long nResult, const wxString& sResponse, const wxString& sResourceId);
+
+    wxNmosClientCurlEvent() : wxCommandEvent(){}
+
+    /** Copy Constructor
+    *   @param event a wxNIEvent
+    **/
+    wxNmosClientCurlEvent(const wxNmosClientCurlEvent& event);
+
+    /** Destructor
+    **/
+    ~wxNmosClientCurlEvent(){}
+
+    /** Creates a copy of the wxNmosClientEvent
+    *   @return <i>wxNmosClientEvent</i>
+    **/
+    virtual wxEvent *Clone() const { return new wxNmosClientCurlEvent(*this); }
+
+    unsigned long GetResult();
+    const wxString& GetResponse();
+    const wxString& GetResourceId();
+
+
+    DECLARE_DYNAMIC_CLASS(wxNmosClientCurlEvent)
+
+    private:
+        wxString m_sResourceId;
+};
+
+typedef void (wxEvtHandler::*wxNmosClientCurlEventFunction)(wxNmosClientCurlEvent&);
+
+
+BEGIN_DECLARE_EVENT_TYPES()
+    DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_NMOS_CLIENTCURL_SUBSCRIBE, -1)
+    DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_NMOS_CLIENTCURL_PATCH_SENDER, -1)
+    DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_NMOS_CLIENTCURL_PATCH_RECEIVER, -1)
+END_DECLARE_EVENT_TYPES()
+
+#define wxNmosClientCurlEventHandler(func) \
+    (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxNmosClientCurlEventFunction, &func)
+
+#define EVT_NMOS_CLIENTCURL_SUBSCRIBE(id,fn) DECLARE_EVENT_TABLE_ENTRY(wxEVT_NMOS_CLIENTCURL_SUBSCRIBE,id,-1,(wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) (wxNmosClientCurlEventFunction) &fn, (wxObject*) NULL),
+#define EVT_NMOS_CLIENTCURL_PATCH_SENDER(id,fn) DECLARE_EVENT_TABLE_ENTRY(wxEVT_NMOS_CLIENTCURL_PATCH_SENDER,id,-1,(wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) (wxNmosClientCurlEventFunction) &fn, (wxObject*) NULL),
+#define EVT_NMOS_CLIENTCURL_PATCH_RECEIVER(id,fn) DECLARE_EVENT_TABLE_ENTRY(wxEVT_NMOS_CLIENTCURL_PATCH_RECEIVER,id,-1,(wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) (wxNmosClientCurlEventFunction) &fn, (wxObject*) NULL),
 
 
 #endif
