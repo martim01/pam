@@ -146,7 +146,9 @@ public:
     DECLARE_DYNAMIC_CLASS(wxNmosClientCurlEvent)
 
     private:
+        wxString m_sResponse;
         wxString m_sResourceId;
+
 };
 
 typedef void (wxEvtHandler::*wxNmosClientCurlEventFunction)(wxNmosClientCurlEvent&);

@@ -5,6 +5,8 @@
 #include "sender.h"
 #include <wx/log.h>
 #include "clientapi.h"
+#include <wx/msgdlg.h>
+#include "senderbuttonfactory.h"
 
 //(*InternalHeaders(pnlSettingsNmos)
 #include <wx/intl.h>
@@ -41,6 +43,7 @@ pnlSettingsNmos::pnlSettingsNmos(wxWindow* parent,wxWindowID id,const wxPoint& p
 	//*)
 
 	m_plstSenders = new wmList(this, wxNewId(), wxPoint(0,110), wxSize(600,260), wmList::STYLE_NORMAL, 2, wxSize(-1,40), 3, wxSize(2,2));
+	m_plstSenders->SetButtonFactory(new wmSenderButtonFactory());
     m_plstSenders->SetBackgroundColour(wxColour(0,0,0));
 
     m_plstSenders->SetSelectedButtonColour(wxColour(wxT("#008000")));
@@ -75,15 +78,23 @@ void pnlSettingsNmos::OnbtnClientClick(wxCommandEvent& event)
 
 void pnlSettingsNmos::OnSenderSelected(wxCommandEvent& event)
 {
-    wxLogDebug(wxT("Sender selected: %d=%s"), event.GetInt(), m_plstSenders->GetButtonAuxillaryText(event.GetInt()).c_str());
-
     if(ClientApi::Get().Subscribe(std::string(m_plstSenders->GetButtonAuxillaryText(event.GetInt()).mb_str()),std::string(m_sReceiverId.mb_str())))
     {
-        m_plstSenders->SetButtonColour(event.GetInt(), wxColour(100,100,255));
+        uiSender* pSender = dynamic_cast<uiSender*>(m_plstSenders->GetButtonuiRect(event.GetInt()));
+        if(pSender)
+        {
+            pSender->SetState(uiSender::STATE_ASKED);
+            m_plstSenders->Refresh();
+        }
     }
     else
     {
-        m_plstSenders->SetButtonColour(event.GetInt(), wxColour(128,128,128));
+        uiSender* pSender = dynamic_cast<uiSender*>(m_plstSenders->GetButtonuiRect(event.GetInt()));
+        if(pSender)
+        {
+            pSender->SetState(uiSender::STATE_ERROR);
+            m_plstSenders->Refresh();
+        }
     }
 }
 
@@ -102,19 +113,59 @@ void pnlSettingsNmos::UpdateSender(std::shared_ptr<Sender> pSender)
 
 void pnlSettingsNmos::SetSender(const wxString& sSenderId)
 {
-    wxLogDebug(wxT("pnlSettingsNmos::SetSender '%s'"), sSenderId.c_str());
-
     for(size_t i = 0; i < m_plstSenders->GetItemCount(); i++)
     {
         if(m_plstSenders->GetButtonAuxillaryText(i) == sSenderId)
         {
-            m_plstSenders->SetButtonColour(i, wxColour(0,128,0));
+            uiSender* pSender = dynamic_cast<uiSender*>(m_plstSenders->GetButtonuiRect(i));
+            if(pSender)
+            {
+                pSender->SetState(uiSender::STATE_ACTIVE);
+            }
         }
         else
         {
-            m_plstSenders->SetButtonColour(i, wxColour(128,128,128));
+            uiSender* pSender = dynamic_cast<uiSender*>(m_plstSenders->GetButtonuiRect(i));
+            if(pSender)
+            {
+                pSender->SetState(uiSender::STATE_IDLE);
+            }
         }
     }
+    m_plstSenders->Refresh();
 }
 
+void pnlSettingsNmos::SubscriptionRequest(const wxString& sReceiverId, const wxString& sResponse, unsigned long nResult)
+{
+    wxLogDebug(sResponse);
+    if(nResult == 202)  //success
+    {
+        for(size_t i = 0; i < m_plstSenders->GetItemCount(); i++)
+        {
+            if(m_plstSenders->GetButtonAuxillaryText(i) == sResponse)
+            {
+                uiSender* pSender = dynamic_cast<uiSender*>(m_plstSenders->GetButtonuiRect(i));
+                if(pSender)
+                {
+                    pSender->SetState(uiSender::STATE_REPLIED);
+                }
+                m_plstSenders->Refresh();
+                break;
+            }
+        }
+    }
+    else    //not worked
+    {
+        for(size_t i = 0; i < m_plstSenders->GetItemCount(); i++)
+        {
+            uiSender* pSender = dynamic_cast<uiSender*>(m_plstSenders->GetButtonuiRect(i));
+            if(pSender)
+            {
+                pSender->SetState(uiSender::STATE_ERROR);
+            }
+            m_plstSenders->Refresh();
+        }
+        wxMessageBox(sResponse);
+    }
+}
 #endif

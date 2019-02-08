@@ -46,6 +46,7 @@ class wxNmosEvent;
 class FlowAudioRaw;
 class Sender;
 class wxNmosClientEvent;
+class wxNmosClientCurlEvent;
 
 class pam2Dialog: public wxDialog
 {
@@ -183,6 +184,8 @@ class pam2Dialog: public wxDialog
         void OnNmosReceiverChanged(wxNmosClientEvent& event);
         void OnNmosFlowChanged(wxNmosClientEvent& event);
         void OnNmosResourcesRemoved(wxNmosClientEvent& event);
+
+        void OnNmosSubscribeRequest(wxNmosClientCurlEvent& event);
 
 
 

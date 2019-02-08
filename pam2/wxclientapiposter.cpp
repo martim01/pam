@@ -1,5 +1,7 @@
 #ifdef __NMOS__
 #include "wxclientapiposter.h"
+#include <wx/log.h>
+
 
 DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENT_NODE)
 DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENT_SOURCE)
@@ -102,6 +104,8 @@ void wxClientApiPoster::ReceiversRemoved(const std::set<std::string>& setRemoved
 
 void wxClientApiPoster::RequestTargetResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId)
 {
+    //@todo work out why this is causing it to crash
+    //wxLogMessage(wxT("%s %s"), wxString::FromAscii(sResponse.c_str()).c_str(), wxString::FromAscii(sResourceId.c_str()).c_str());
     wxNmosClientCurlEvent* pEvent = new wxNmosClientCurlEvent(wxEVT_NMOS_CLIENTCURL_SUBSCRIBE, nResult, wxString::FromAscii(sResponse.c_str()), wxString::FromAscii(sResourceId.c_str()));
     wxQueueEvent(m_pHandler, pEvent);
 }
@@ -251,15 +255,17 @@ std::set<std::string>::const_iterator wxNmosClientEvent::GetRemovedEnd() const
 }
 
 
-wxNmosClientCurlEvent::wxNmosClientCurlEvent(wxEventType type, unsigned long nResult, const wxString& sResponse, const wxString& sResourceId) : wxCommandEvent(type)
+wxNmosClientCurlEvent::wxNmosClientCurlEvent(wxEventType type, unsigned long nResult, const wxString& sResponse, const wxString& sResourceId) : wxCommandEvent(type),
+    m_sResponse(sResponse.c_str()),
+    m_sResourceId(sResourceId.c_str())
 {
     SetInt(nResult);
-    SetString(sResponse);
-    m_sResourceId = sResourceId;
+
 }
 
 wxNmosClientCurlEvent::wxNmosClientCurlEvent(const wxNmosClientCurlEvent& event) : wxCommandEvent(event),
-m_sResourceId(event.GetResourceId())
+m_sResponse(event.GetResponse().c_str()),
+m_sResourceId(event.GetResourceId().c_str())
 {
 
 }
@@ -272,7 +278,7 @@ unsigned long wxNmosClientCurlEvent::GetResult()
 
 const wxString& wxNmosClientCurlEvent::GetResponse()
 {
-    return GetString();
+    return m_sResponse;
 }
 
 const wxString& wxNmosClientCurlEvent::GetResourceId()

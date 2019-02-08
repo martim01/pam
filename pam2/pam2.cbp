@@ -231,6 +231,8 @@
 		<Unit filename="pnlTests.h" />
 		<Unit filename="pnlUpdate.cpp" />
 		<Unit filename="pnlUpdate.h" />
+		<Unit filename="senderbuttonfactory.cpp" />
+		<Unit filename="senderbuttonfactory.h" />
 		<Unit filename="version.h" />
 		<Unit filename="wxclientapiposter.cpp" />
 		<Unit filename="wxclientapiposter.h" />

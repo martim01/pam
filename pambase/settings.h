@@ -44,6 +44,8 @@ class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
 
         wxString GetLibraryVersion() const;
 
+        std::multimap<wxString, wxString> GetInterfaces() const;
+
     protected:
         Settings();
         void CreatePaths();

@@ -2373,3 +2373,14 @@ const wxString& wmList::GetButtonAuxillaryText(size_t nIndex) const
     }
     return wxEmptyString;
 }
+
+
+uiRect* wmList::GetButtonuiRect(size_t nButton)
+{
+    list<button*>::iterator itButton = GetButton(nButton);
+    if(itButton != m_lstButtons.end())
+    {
+        return (*itButton)->pUi;
+    }
+    return 0;
+}

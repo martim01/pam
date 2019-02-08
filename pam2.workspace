@@ -56,30 +56,7 @@
 			<Depends filename="pamlevel/pamlevel.cbp" />
 		</Project>
 		<Project filename="pam2/pam2.cbp">
-			<Depends filename="manifest_creator/manifest_creator.cbp" />
 			<Depends filename="pambase/pambase.cbp" />
-			<Depends filename="pamfft/pamfft.cbp" />
-			<Depends filename="pamlevel/pamlevel.cbp" />
-			<Depends filename="plugins/fft/fft.cbp" />
-			<Depends filename="plugins/spectogram/spectogram.cbp" />
-			<Depends filename="plugins/lissajou/lissajou.cbp" />
-			<Depends filename="plugins/meters/meters.cbp" />
-			<Depends filename="plugins/anglemeters/anglemeters.cbp" />
-			<Depends filename="plugins/scope/scope.cbp" />
-			<Depends filename="plugins/aoip info/aoip info.cbp" />
-			<Depends filename="plugins/radar/radar.cbp" />
-			<Depends filename="plugins/polarscope/polarscope.cbp" />
-			<Depends filename="plugins/r128/r128.cbp" />
-			<Depends filename="plugins/channel delay/channel delay.cbp" />
-			<Depends filename="plugins/distortion/distortion.cbp" />
-			<Depends filename="plugins/levels/levels.cbp" />
-			<Depends filename="plugins/identify/identify.cbp" />
-			<Depends filename="plugins/peak log/peak log.cbp" />
-			<Depends filename="plugins/peak count/peakcount.cbp" />
-			<Depends filename="plugins/record/record.cbp" />
-			<Depends filename="plugins/waveform/waveform.cbp" />
-			<Depends filename="plugins/lineup/lineup.cbp" />
-			<Depends filename="pamupdatemanager/pamupdatemanager.cbp" />
 		</Project>
 		<Project filename="pamupdatemanager/pamupdatemanager.cbp">
 			<Depends filename="manifest_creator/manifest_creator.cbp" />

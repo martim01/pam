@@ -953,6 +953,7 @@ void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
     Connect(wxID_ANY, wxEVT_NMOS_CLIENT_RECEIVER, (wxObjectEventFunction)&pam2Dialog::OnNmosReceiverChanged);
     Connect(wxID_ANY, wxEVT_NMOS_CLIENT_FLOW, (wxObjectEventFunction)&pam2Dialog::OnNmosFlowChanged);
     Connect(wxID_ANY, wxEVT_NMOS_CLIENT_RESOURCES_REMOVED, (wxObjectEventFunction)&pam2Dialog::OnNmosResourcesRemoved);
+    Connect(wxID_ANY, wxEVT_NMOS_CLIENTCURL_SUBSCRIBE, (wxObjectEventFunction)&pam2Dialog::OnNmosSubscribeRequest);
 
 
     if(Settings::Get().Read(wxT("NMOS"), wxT("Activate"),false) == true)
@@ -1212,26 +1213,32 @@ void pam2Dialog::StartNmos()
 void pam2Dialog::OnTarget(wxNmosEvent& event)
 {
     #ifdef __NMOS__
-    wxLogDebug(wxT("pam2Dialog::TARGET"));
-    wxString sSdp = event.GetTransportFile();
-    sSdp.Replace(wxT("\n"), wxT("`"));
-    sSdp.Replace(wxT("\r"), wxT(""));
-
-    wxString sInput(wxT("NMOS_IS-04_A"));
-    //Save the SDP file details
-    if(Settings::Get().Read(wxT("Input"), wxT("AoIP"), wxEmptyString) == sInput)
+    // @todo move this somewhere else...
+    multimap<wxString, wxString> mmButtons(Settings::Get().GetInterfaces());
+    multimap<wxString, wxString>::iterator itInterface = mmButtons.find(wxT("eth0"));
+    if(itInterface != mmButtons.end())
     {
-        sInput = wxT("NMOS_IS-04_B");
+
+        wxLogDebug(wxT("pam2Dialog::TARGET"));
+        wxString sSdp = event.GetTransportFile();
+        sSdp.Replace(wxT("\n"), wxT("`"));
+        sSdp.Replace(wxT("\r"), wxT(""));
+
+        wxString sInput(wxT("NMOS_IS-04_A"));
+        //Save the SDP file details
+        if(Settings::Get().Read(wxT("Input"), wxT("AoIP"), wxEmptyString) == sInput)
+        {
+            sInput = wxT("NMOS_IS-04_B");
+        }
+        Settings::Get().Write(wxT("AoIP"), sInput, wxString::Format(wxT("NMOS:[%s]"),sSdp.c_str()));
+        //Make sure the input type is AoIP
+        Settings::Get().Write(wxT("Input"), wxT("Type"), wxT("AoIP"));
+        //Chage the AOIP source to be NMOS IS-04
+        Settings::Get().Write(wxT("Input"), wxT("AoIP"), sInput);
+
+        //Now tell NMOS that we have taken the target
+        NodeApi::Get().TargetTaken(string(itInterface->second.mb_str()), event.GetPort(), true);
     }
-    Settings::Get().Write(wxT("AoIP"), sInput, wxString::Format(wxT("NMOS:[%s]"),sSdp.c_str()));
-    //Make sure the input type is AoIP
-    Settings::Get().Write(wxT("Input"), wxT("Type"), wxT("AoIP"));
-    //Chage the AOIP source to be NMOS IS-04
-    Settings::Get().Write(wxT("Input"), wxT("AoIP"), sInput);
-
-
-    //Now tell NMOS that we have taken the target
-    NodeApi::Get().TargetTaken(event.GetPort(), true);
     #endif // __NMOS__
 }
 
@@ -1287,7 +1294,6 @@ void pam2Dialog::StopNmosClient()
 void pam2Dialog::OnNmosReceiverChanged(wxNmosClientEvent& event)
 {
     #ifdef __NMOS__
-    wxLogDebug(wxT("pam2Dialog::OnNmosReceiverChanged"));
     if(event.GetReceiver() && event.GetInt() == ClientApiPoster::RESOURCE_UPDATED && m_ppnlSettings && event.GetReceiver()->GetId() == m_ppnlSettings->m_ppnlNmos->GetReceiverId())
     {
         //is the receiver one of ours??
@@ -1327,7 +1333,6 @@ void pam2Dialog::OnNmosSenderChanged(wxNmosClientEvent& event)
         }
         else
         {
-            wxLogDebug(wxT("pam2Dialog::OnNmosSenderChanged Flow not found"));
             //Store the sender for checking once we get a flow...
             if(event.GetInt() == ClientApiPoster::RESOURCE_ADDED)
             {
@@ -1360,5 +1365,16 @@ void pam2Dialog::OnNmosResourcesRemoved(wxNmosClientEvent& event)
 {
     #ifdef __NMOS__
 
+    #endif // __NMOS__
+}
+
+
+void pam2Dialog::OnNmosSubscribeRequest(wxNmosClientCurlEvent& event)
+{
+    #ifdef __NMOS__
+    if(m_ppnlSettings->m_ppnlNmos)
+    {
+        m_ppnlSettings->m_ppnlNmos->SubscriptionRequest(event.GetResourceId(), event.GetResponse(), event.GetResult());
+    }
     #endif // __NMOS__
 }

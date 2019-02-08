@@ -7,6 +7,18 @@
 #include "pmcontrol.h"
 #include "pmpanel.h"
 
+#ifdef __WXMSW__
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <iphlpapi.h>
+#else
+#include <sys/types.h>
+#include <ifaddrs.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#endif
+
+
 using   namespace std;
 
 
@@ -250,4 +262,104 @@ wxString Settings::GetLibraryVersion() const
 void Settings::OnTimerSave(wxTimerEvent& event)
 {
     m_iniManager.WriteIniFile(m_sFullPath);
+}
+
+
+multimap<wxString, wxString> Settings::GetInterfaces() const
+{
+    multimap<wxString, wxString> mmInterfaces;
+
+    #ifdef __WXMSW__
+
+    DWORD dwSize = 0;
+    unsigned int i = 0;
+    // Set the flags to pass to GetAdaptersAddresses
+    // default to unspecified address family (both)
+    PIP_ADAPTER_ADDRESSES pAddresses = NULL;
+    DWORD dwRetVal = 0;
+    ULONG outBufLen = 15000;
+    ULONG Iterations = 0;
+    PIP_ADAPTER_ADDRESSES pCurrAddresses = NULL;
+    PIP_ADAPTER_UNICAST_ADDRESS pUnicast = NULL;
+    do
+    {
+        pAddresses = (IP_ADAPTER_ADDRESSES *) HeapAlloc(GetProcessHeap(), 0, outBufLen);
+        if (pAddresses == NULL)
+        {
+            return;
+        }
+
+        dwRetVal = GetAdaptersAddresses(AF_INET, GAA_FLAG_INCLUDE_PREFIX, NULL, pAddresses, &outBufLen);
+
+        if (dwRetVal == ERROR_BUFFER_OVERFLOW)
+        {
+            HeapFree(GetProcessHeap(),0, pAddresses);
+            pAddresses = NULL;
+        }
+        else
+        {
+            break;
+        }
+        Iterations++;
+    } while ((dwRetVal == ERROR_BUFFER_OVERFLOW) && (Iterations < 3));
+
+    if (dwRetVal == NO_ERROR)
+    {
+        // If successful, output some information from the data we received
+        pCurrAddresses = pAddresses;
+        while (pCurrAddresses)
+        {
+            if (pCurrAddresses->PhysicalAddressLength != 0)
+            {
+                pUnicast = pCurrAddresses->FirstUnicastAddress;
+                if (pUnicast != NULL)
+                {
+                    for (i = 0; pUnicast != NULL; i++)
+                    {
+                        if (pUnicast->Address.lpSockaddr->sa_family == AF_INET)
+                        {
+                            char buff[100];
+                            sockaddr_in *sa_in = (sockaddr_in *)pUnicast->Address.lpSockaddr;
+                            mmInterfaces.insert(make_pair(wxString::FromAscii(pCurrAddresses->AdapterName), wxString::FromAscii(inet_ntoa(sa_in->sin_addr))));
+                        }
+                        pUnicast = pUnicast->Next;
+                    }
+                }
+            }
+
+            pCurrAddresses = pCurrAddresses->Next;
+        }
+    }
+    if (pAddresses)
+    {
+        HeapFree(GetProcessHeap(),0, pAddresses);
+    }
+    #else
+    ifaddrs * ifAddrStruct=NULL;
+    ifaddrs * ifa=NULL;
+    void * tmpAddrPtr=NULL;
+
+    getifaddrs(&ifAddrStruct);
+
+    for (ifa = ifAddrStruct; ifa != NULL; ifa = ifa->ifa_next)
+    {
+        if (!ifa->ifa_addr)
+        {
+            continue;
+        }
+        if (ifa->ifa_addr->sa_family == AF_INET)
+        { // check it is IP4
+            // is a valid IP4 Address
+            tmpAddrPtr=&((sockaddr_in *)ifa->ifa_addr)->sin_addr;
+            char addressBuffer[INET_ADDRSTRLEN];
+            inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
+            mmInterfaces.insert(make_pair(wxString::FromAscii(ifa->ifa_name), wxString::FromAscii(addressBuffer)));
+        }
+    }
+    if (ifAddrStruct!=NULL)
+    {
+        freeifaddrs(ifAddrStruct);
+    }
+    #endif // __WXMSW__
+    return mmInterfaces;
 }

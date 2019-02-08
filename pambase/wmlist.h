@@ -400,6 +400,8 @@ class PAMBASE_IMPEXPORT wmList : public pmControl
         **/
         void SetButtonFactory(wmButtonFactory* pFactory);
 
+        uiRect* GetButtonuiRect(size_t nButton);
+
         /** @brief Set the colouring gradient direction for the buttons
         *   @param nGradient one of wxEAST, wxWEST, wxNORTH, wxSOUTH
         **/

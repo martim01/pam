@@ -4,7 +4,7 @@
 namespace AutoVersion{
 	
 	//Date Version Types
-	static const char DATE[] = "07";
+	static const char DATE[] = "08";
 	static const char MONTH[] = "02";
 	static const char YEAR[] = "2019";
 	static const char UBUNTU_VERSION_STYLE[] =  "19.02";
@@ -16,14 +16,14 @@ namespace AutoVersion{
 	//Standard Version Type
 	static const long MAJOR  = 1;
 	static const long MINOR  = 0;
-	static const long BUILD  = 965;
-	static const long REVISION  = 5425;
+	static const long BUILD  = 987;
+	static const long REVISION  = 5552;
 	
 	//Miscellaneous Version Types
-	static const long BUILDS_COUNT  = 2698;
-	#define RC_FILEVERSION 1,0,965,5425
-	#define RC_FILEVERSION_STRING "1, 0, 965, 5425\0"
-	static const char FULLVERSION_STRING [] = "1.0.965.5425";
+	static const long BUILDS_COUNT  = 2729;
+	#define RC_FILEVERSION 1,0,987,5552
+	#define RC_FILEVERSION_STRING "1, 0, 987, 5552\0"
+	static const char FULLVERSION_STRING [] = "1.0.987.5552";
 	
 	//These values are to keep track of your versioning state, don't modify them.
 	static const long BUILD_HISTORY  = 0;
