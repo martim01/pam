@@ -23,6 +23,8 @@ class pnlSettingsNmos: public wxPanel
 		wmButton* m_pbtnNmos;
 		//*)
 
+		wmButton* m_pbtnConnection;
+
         void SetReceiverId(const wxString& sReceiverId)
         {
             m_sReceiverId = sReceiverId;
@@ -54,7 +56,11 @@ class pnlSettingsNmos: public wxPanel
 		void OnbtnClientClick(wxCommandEvent& event);
 		//*)
 
+		void OnbtnConnectionClick(wxCommandEvent& event);
 		void OnSenderSelected(wxCommandEvent& event);
+
+		bool ConnectionIS04(size_t nSenderButton);
+		bool ConnectionIS05(size_t nSenderButton);
 		wmList* m_plstSenders;
         wxString m_sReceiverId;
 		DECLARE_EVENT_TABLE()

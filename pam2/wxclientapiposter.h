@@ -31,6 +31,7 @@ class wxClientApiPoster : public ClientApiPoster
         void RequestPatchSenderResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId);
         void RequestPatchReceiverResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId);
 
+        void RequestConnectResult(const std::string& sSenderId, const std::string& sReceiverId, bool bSuccess, const std::string& sResponse);
 
     private:
         wxEvtHandler* m_pHandler;
@@ -158,6 +159,7 @@ BEGIN_DECLARE_EVENT_TYPES()
     DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_NMOS_CLIENTCURL_SUBSCRIBE, -1)
     DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_NMOS_CLIENTCURL_PATCH_SENDER, -1)
     DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_NMOS_CLIENTCURL_PATCH_RECEIVER, -1)
+    DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_NMOS_CLIENTCURL_CONNECT, -1)
 END_DECLARE_EVENT_TYPES()
 
 #define wxNmosClientCurlEventHandler(func) \
@@ -166,6 +168,7 @@ END_DECLARE_EVENT_TYPES()
 #define EVT_NMOS_CLIENTCURL_SUBSCRIBE(id,fn) DECLARE_EVENT_TABLE_ENTRY(wxEVT_NMOS_CLIENTCURL_SUBSCRIBE,id,-1,(wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) (wxNmosClientCurlEventFunction) &fn, (wxObject*) NULL),
 #define EVT_NMOS_CLIENTCURL_PATCH_SENDER(id,fn) DECLARE_EVENT_TABLE_ENTRY(wxEVT_NMOS_CLIENTCURL_PATCH_SENDER,id,-1,(wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) (wxNmosClientCurlEventFunction) &fn, (wxObject*) NULL),
 #define EVT_NMOS_CLIENTCURL_PATCH_RECEIVER(id,fn) DECLARE_EVENT_TABLE_ENTRY(wxEVT_NMOS_CLIENTCURL_PATCH_RECEIVER,id,-1,(wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) (wxNmosClientCurlEventFunction) &fn, (wxObject*) NULL),
+#define EVT_NMOS_CLIENTCURL_CONNECT(id,fn) DECLARE_EVENT_TABLE_ENTRY(wxEVT_NMOS_CLIENTCURL_CONNECT,id,-1,(wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) (wxNmosClientCurlEventFunction) &fn, (wxObject*) NULL),
 
 
 #endif

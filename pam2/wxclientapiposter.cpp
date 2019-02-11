@@ -13,6 +13,7 @@ DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENT_RESOURCES_REMOVED)
 DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENTCURL_SUBSCRIBE)
 DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENTCURL_PATCH_SENDER)
 DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENTCURL_PATCH_RECEIVER)
+DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENTCURL_CONNECT)
 
 IMPLEMENT_DYNAMIC_CLASS(wxNmosClientEvent, wxCommandEvent)
 IMPLEMENT_DYNAMIC_CLASS(wxNmosClientCurlEvent, wxCommandEvent)
@@ -122,6 +123,11 @@ void wxClientApiPoster::RequestPatchReceiverResult(unsigned long nResult, const 
     wxQueueEvent(m_pHandler, pEvent);
 }
 
+void wxClientApiPoster::RequestConnectResult(const std::string& sSenderId, const std::string& sReceiverId, bool bSuccess, const std::string& sResponse)
+{
+    wxNmosClientCurlEvent* pEvent = new wxNmosClientCurlEvent(wxEVT_NMOS_CLIENTCURL_CONNECT, bSuccess, wxString::FromAscii(sResponse.c_str()), wxString::FromAscii(sReceiverId.c_str()));
+    wxQueueEvent(m_pHandler, pEvent);
+}
 
 wxNmosClientEvent::wxNmosClientEvent(std::shared_ptr<Self> pNode, ClientApiPoster::enumChange eChange) : wxCommandEvent(wxEVT_NMOS_CLIENT_NODE),
     m_pNode(pNode),
