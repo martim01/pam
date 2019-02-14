@@ -252,6 +252,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Settings::Get().AddHandler(wxT("Server"), wxT("DestinationIp"), this);
     Settings::Get().AddHandler(wxT("Server"), wxT("RTP_Port"), this);
     Settings::Get().AddHandler(wxT("Server"), wxT("PacketTime"), this);
+    Settings::Get().AddHandler(wxT("Server"), wxT("Stream"), this);
 
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pam2Dialog::OnSettingChanged);
@@ -838,6 +839,11 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
             }
             NodeApi::Get().Commit();
         }
+        if(m_pSender && event.GetKey()==wxT("Stream"))
+        {
+            m_pSender->MasterEnable(event.GetValue(false));
+            NodeApi::Get().Commit();
+        }
         #endif // __NMOS__
     }
 
@@ -861,10 +867,7 @@ void pam2Dialog::OutputChanged(const wxString& sKey)
         #ifdef __NMOS__
         if(sDestination == wxT("AoIP"))
         {
-            if(m_pSender && m_pFlow)
-            {
-            //    m_pSender->
-            }
+
         }
         #endif // __NMOS__
 

@@ -19,12 +19,16 @@
 #include "pnlSettingsGenerators.h"
 #include "pnlSettingsNmos.h"
 
+class SettingEvent;
+
 class pnlSettings: public wxPanel
 {
 	public:
 
 		pnlSettings(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pnlSettings();
+
+		void UpdateDisplayedSettings();
 
 		//(*Declarations(pnlSettings)
 		wmLabel* m_pLbl4;
@@ -135,6 +139,8 @@ class pnlSettings: public wxPanel
 		static const long ID_PANEL6;
 		static const long ID_M_PSWP1;
 		//*)
+
+		void OnSettingChanged(SettingEvent& event);
 
 	private:
 

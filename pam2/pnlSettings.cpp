@@ -30,6 +30,7 @@
 #include "images/pageup_press.xpm"
 #include "soundcardmanager.h"
 #include "dlgAoIP.h"
+#include "settingevent.h"
 
 
 
@@ -298,9 +299,6 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pbtnPin->SetToggleLook(true, wxT("Off"), wxT("On"), 40);
     m_plblCurrentPIN->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 
-    m_pbtnCursor->ToggleSelection((Settings::Get().Read(wxT("General"), wxT("Cursor"), 1) == 1), true);
-    m_ptbnOptions->ToggleSelection((Settings::Get().Read(wxT("General"), wxT("ShowOptions"), 1) == 1), true);
-    m_pbtnPin->ToggleSelection((Settings::Get().Read(wxT("General"), wxT("Pin"), 0)==1), true);
 
     m_pbtnEnd->SetBitmapLabel(wxBitmap(end_hz_xpm));
     m_pbtnEnd->SetBitmapSelected(wxBitmap(end_hz_press_xpm));
@@ -346,26 +344,25 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
 
 
-    m_plstInput->SelectButton(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")), true);
-    m_plstDestination->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Destination"), wxT("Disabled")), true);
-
-    m_plstPacket->SelectButton(m_plstPacket->FindButton(reinterpret_cast<void*>(Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 4000))));
-
-    m_pedtRTPPort->SetValue(Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), wxT("5004")));
-    m_pedtRTSPPort->SetValue(Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), wxT("5555")));
-    m_ppnlAddress->SetValue(Settings::Get().Read(wxT("Server"), wxT("DestinationIp"), IOManager::Get().GetRandomMulticastAddress()));
+    UpdateDisplayedSettings();
     m_pbtnStream->ToggleSelection(false);
 
     ShowRTPDefined();
 
 
-    m_plstLatency->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Latency"), 0)/40, false);
 
     m_plblVersion->SetLabel(wxString::Format(wxT("%ld.%ld.%ld.%ld"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
     m_plblHostname->SetLabel(wxGetHostName());
 
 
-    m_pbtnRTSP->SetLabel(Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString));
+    Settings::Get().AddHandler(wxT("Server"), wxT("RTP_Port"), this);
+    Settings::Get().AddHandler(wxT("Server"), wxT("RTSP_Port"), this);
+    Settings::Get().AddHandler(wxT("Server"), wxT("DestinationIp"), this);
+    Settings::Get().AddHandler(wxT("Server"), wxT("Latency"), this);
+    Settings::Get().AddHandler(wxT("Server"), wxT("RTSP_Address"), this);
+    Settings::Get().AddHandler(wxT("Server"), wxT("Stream"), this);
+
+    Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pnlSettings::OnSettingChanged);
 
 }
 
@@ -375,6 +372,57 @@ pnlSettings::~pnlSettings()
 	//*)
 }
 
+
+void pnlSettings::UpdateDisplayedSettings()
+{
+    m_pbtnCursor->ToggleSelection((Settings::Get().Read(wxT("General"), wxT("Cursor"), 1) == 1), true);
+    m_ptbnOptions->ToggleSelection((Settings::Get().Read(wxT("General"), wxT("ShowOptions"), 1) == 1), true);
+    m_pbtnPin->ToggleSelection((Settings::Get().Read(wxT("General"), wxT("Pin"), 0)==1), true);
+
+    m_plstInput->SelectButton(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")), true);
+    m_plstDestination->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Destination"), wxT("Disabled")), true);
+    m_plstPacket->SelectButton(m_plstPacket->FindButton(reinterpret_cast<void*>(Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 4000))));
+
+    m_pedtRTPPort->SetValue(Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), wxT("5004")));
+    m_pedtRTSPPort->SetValue(Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), wxT("5555")));
+    m_ppnlAddress->SetValue(Settings::Get().Read(wxT("Server"), wxT("DestinationIp"), IOManager::Get().GetRandomMulticastAddress()));
+    m_plstLatency->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Latency"), 0)/40, false);
+    m_pbtnRTSP->SetLabel(Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString));
+
+    m_pbtnStream->ToggleSelection(Settings::Get().Read(wxT("Server"), wxT("Stream"), 0) == 1);
+}
+
+void pnlSettings::OnSettingChanged(SettingEvent& event)
+{
+    wxLogDebug(wxT("pnlSettings::OnSettingChanged %s,%s = %s"), event.GetSection().c_str(), event.GetKey().c_str(), event.GetValue().c_str());
+    if(event.GetSection() == wxT("Server"))
+    {
+        if(event.GetKey() == wxT("RTP_Port"))
+        {
+            m_pedtRTPPort->SetValue(Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), wxT("5004")));
+        }
+        else if(event.GetKey() == wxT("RTSP_Port"))
+        {
+            m_pedtRTSPPort->SetValue(Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), wxT("5555")));
+        }
+        else if(event.GetKey() == wxT("DestinationIp"))
+        {
+            m_ppnlAddress->SetValue(Settings::Get().Read(wxT("Server"), wxT("DestinationIp"), IOManager::Get().GetRandomMulticastAddress()));
+        }
+        else if(event.GetKey() == wxT("Latency"))
+        {
+            m_plstLatency->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Latency"), 0)/40, false);
+        }
+        else if(event.GetKey() == wxT("RTSP_Address"))
+        {
+            m_pbtnRTSP->SetLabel(Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString));
+        }
+        else if(event.GetKey() == wxT("Stream"))
+        {
+            m_pbtnStream->ToggleSelection(Settings::Get().Read(wxT("Server"), wxT("Stream"), 0) == 1);
+        }
+    }
+}
 
 void pnlSettings::OnlstDevicesSelected(wxCommandEvent& event)
 {
