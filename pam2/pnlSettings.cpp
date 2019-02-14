@@ -351,9 +351,9 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
     m_plstPacket->SelectButton(m_plstPacket->FindButton(reinterpret_cast<void*>(Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 4000))));
 
-    m_pedtRTPPort->SetValue(Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), wxT("6970")));
+    m_pedtRTPPort->SetValue(Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), wxT("5004")));
     m_pedtRTSPPort->SetValue(Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), wxT("5555")));
-    m_ppnlAddress->SetValue(Settings::Get().Read(wxT("Server"), wxT("Multicast"), IOManager::Get().GetRandomMulticastAddress()));
+    m_ppnlAddress->SetValue(Settings::Get().Read(wxT("Server"), wxT("DestinationIp"), IOManager::Get().GetRandomMulticastAddress()));
     m_pbtnStream->ToggleSelection(false);
 
     ShowRTPDefined();
@@ -655,7 +655,7 @@ void pnlSettings::OnbtnStreamClick(wxCommandEvent& event)
     else
     {
         //@todo create the new session
-        Settings::Get().Write(wxT("Server"), wxT("Multicast"), m_ppnlAddress->GetValue());
+        Settings::Get().Write(wxT("Server"), wxT("DestinationIp"), m_ppnlAddress->GetValue());
         Settings::Get().Write(wxT("Server"), wxT("Stream"), 1);
     }
     m_ppnlAddress->Enable((event.IsChecked() == false));

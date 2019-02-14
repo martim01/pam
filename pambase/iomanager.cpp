@@ -674,7 +674,16 @@ void IOManager::InitAudioOutputDevice()
         }
         if(m_bStream)
         {
-            m_pRtpServer = new RtpServerThread(this, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString), Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555), Settings::Get().Read(wxT("Server"), wxT("Multicast"), wxEmptyString), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004), (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000));
+            wxString sDestinationIp = Settings::Get().Read(wxT("Server"), wxT("DestinationIp"), wxEmptyString);
+            unsigned long nByte;
+            bool bSSM(sDestinationIp.BeforeFirst(wxT('.')).ToULong(&nByte) && nByte >= 224 && nByte <= 239);
+
+            m_pRtpServer = new RtpServerThread(this, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString),
+                                                     Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555),
+                                                     sDestinationIp,
+                                                     Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004),
+                                                     bSSM,
+                                                     (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000));
            // m_pRtpServer->SetupStream(wxT("PAM"), wxT("Info"), wxT("Description"));
             m_pRtpServer->Run();
         }

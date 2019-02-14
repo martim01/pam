@@ -4,12 +4,13 @@
 #include <wx/log.h>
 #include "settings.h"
 
-RtpServerThread::RtpServerThread(wxEvtHandler* pHandler, const wxString& sRTSP, unsigned int nRTSPPort, const wxString& sMulticast, unsigned int nRTPPort, LiveAudioSource::enumPacketTime ePacketTime) :
+RtpServerThread::RtpServerThread(wxEvtHandler* pHandler, const wxString& sRTSP, unsigned int nRTSPPort, const wxString& sSourceIp, unsigned int nRTPPort, bool bSSM, LiveAudioSource::enumPacketTime ePacketTime) :
     m_pHandler(pHandler),
     m_sRTSP(sRTSP),
     m_nRTSPPort(nRTSPPort),
-    m_sMulticast(sMulticast),
+    m_sSourceIp(sSourceIp),
     m_nRTPPort(nRTPPort),
+    m_bSSM(bSSM),
     m_ePacketTime(ePacketTime),
     m_eventLoopWatchVariable(0),
     m_pSource(0),
@@ -54,13 +55,17 @@ bool RtpServerThread::CreateStream()
 
     // Create 'groupsocks' for RTP:
     struct in_addr destinationAddress;
-    if(m_sMulticast.empty() == false)
+    if(m_sSourceIp.empty() == false)
     {
-        destinationAddress.s_addr = inet_addr(std::string(m_sMulticast.mb_str()).c_str());
+        destinationAddress.s_addr = inet_addr(std::string(m_sSourceIp.mb_str()).c_str());
+    }
+    else if(m_bSSM)
+    {
+        destinationAddress.s_addr = chooseRandomIPv4SSMAddress(*m_penv);   //THIS IS THE MULTICAST ADDRESS
     }
     else
     {
-        destinationAddress.s_addr = chooseRandomIPv4SSMAddress(*m_penv);   //THIS IS THE MULTICAST ADDRESS
+        return false;
     }
 
     const unsigned char ttl = 255;
@@ -68,7 +73,10 @@ bool RtpServerThread::CreateStream()
     const Port rtpPort(m_nRTPPort);
 
     m_pRtpGroupsock = new Groupsock(*m_penv, destinationAddress, rtpPort, ttl);
-    m_pRtpGroupsock->multicastSendOnly(); // we're a SSM source
+    if(m_bSSM)
+    {
+        m_pRtpGroupsock->multicastSendOnly(); // we're a SSM source
+    }
 
     // Create an appropriate audio RTP sink (using "SimpleRTPSink") from the RTP 'groupsock':
     m_pSink = SimpleRTPSink::createNew(*m_penv, m_pRtpGroupsock, payloadFormatCode, m_pSource->samplingFrequency(), "audio", mimeType, m_pSource->numChannels());

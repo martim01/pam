@@ -249,7 +249,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Settings::Get().AddHandler(wxT("Test"), wxT("Lock"), this);
     Settings::Get().AddHandler(wxT("NMOS"), wxT("Activate"), this);
     Settings::Get().AddHandler(wxT("NMOS"), wxT("Client"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("Multicast"), this);
+    Settings::Get().AddHandler(wxT("Server"), wxT("DestinationIp"), this);
     Settings::Get().AddHandler(wxT("Server"), wxT("RTP_Port"), this);
     Settings::Get().AddHandler(wxT("Server"), wxT("PacketTime"), this);
 
@@ -810,9 +810,10 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
     else if(event.GetSection() == wxT("Server"))
     {
         #ifdef __NMOS__
-        if(m_pSender && (event.GetKey() == wxT("Multicast") || event.GetKey() == wxT("RTP_Port")))
+        if(m_pSender && (event.GetKey() == wxT("DestinationIp") || event.GetKey() == wxT("RTP_Port")))
         {
-            m_pSender->SetDestinationDetails(std::string(Settings::Get().Read(wxT("Server"), wxT("Multicast"),wxEmptyString).mbc_str()), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
+            m_pSender->SetDestinationDetails(std::string(Settings::Get().Read(wxT("Server"), wxT("DestinationIp"),wxEmptyString).mbc_str()),
+                                             Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
             NodeApi::Get().Commit();
         }
         if(m_pFlow && event.GetKey() == wxT("PacketTime"))
@@ -1151,14 +1152,14 @@ void pam2Dialog::SetupNmos()
     m_pFlow->SetMediaClkOffset(Settings::Get().Read(wxT("AoIP"), wxT("Epoch"), 0));    //@todo get this from Live555
 
 
-    if(Settings::Get().Read(wxT("Server"), wxT("Multicast"),wxEmptyString) == wxEmptyString)
-    {
-        Settings::Get().Write(wxT("Server"), wxT("Multicast"), IOManager::Get().GetRandomMulticastAddress());
-    }
+    //if(Settings::Get().Read(wxT("Server"), wxT("DestinationIp"),wxEmptyString) == wxEmptyString)
+    //{
+    //    Settings::Get().Write(wxT("Server"), wxT("DestinationIp"), IOManager::Get().GetRandomMulticastAddress());
+    //}
 
     wxLogDebug(wxT("Make Sender"));
     m_pSender = make_shared<Sender>(chHost, "Live555 sender", m_pFlow->GetId(), Sender::RTP_MCAST, pDevice->GetId(), "eth0");
-    m_pSender->SetDestinationDetails(std::string(Settings::Get().Read(wxT("Server"), wxT("Multicast"),wxEmptyString).mbc_str()), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
+    m_pSender->SetDestinationDetails(std::string(Settings::Get().Read(wxT("Server"), wxT("DestinationIp"),wxEmptyString).mbc_str()), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
 
     wxLogDebug(wxT("Make Receiver"));
     shared_ptr<Receiver> pReceiver = make_shared<Receiver>(chHost, "Live555 receiver", Receiver::RTP_MCAST, pDevice->GetId(), Receiver::AUDIO, TransportParamsRTP::CORE | TransportParamsRTP::MULTICAST);
@@ -1260,7 +1261,71 @@ void pam2Dialog::OnPatchReceiver(wxNmosEvent& event)
 
 void pam2Dialog::OnActivateSender(wxNmosEvent& event)
 {
-    // @todo set the output to be AoIP
+    #ifdef __NMOS__
+    shared_ptr<Sender> pSender = NodeApi::Get().GetSender(string(event.GetString().mb_str()));
+    if(pSender)
+    {
+
+        if(pSender->GetStaged().sReceiverId.empty())
+        {   //no receiver so multicast
+            if(pSender->GetStaged().tpSender.sDestinationIp.empty() == false && pSender->GetStaged().tpSender.sDestinationIp != "auto")
+            {   //address has been chosen by nmos
+                Settings::Get().Write(wxT("Server"), wxT("DestinationIp"), wxString::FromAscii(pSender->GetStaged().tpSender.sDestinationIp.c_str()));
+            }
+            else if(Settings::Get().Read(wxT("Server"), wxT("DestinationIp"), wxEmptyString).empty())
+            {   //address not chosen by nmos and pam hasn't chosen one yet. create rando,
+                Settings::Get().Write(wxT("Server"), wxT("DestinationIp"), IOManager::Get().GetRandomMulticastAddress());
+            }
+        }
+        else
+        {   //receiverid so unicast. -- @todo if we are already multicasting what do we do here????
+            if(pSender->GetStaged().tpSender.sDestinationIp.empty() == false && pSender->GetStaged().tpSender.sDestinationIp != "auto")
+            {   //one would hope ip has been set. so set the live555 address to it
+                Settings::Get().Write(wxT("Server"), wxT("DestinationIp"), wxString::FromAscii(pSender->GetStaged().tpSender.sDestinationIp.c_str()));
+            }
+            else
+            {   // @todo no ip address set. Should we try to find what the receiver ip address is from the clientapi??
+
+            }
+        }
+
+        //if the source interface is set then change our source ip. else do the opposites
+        string sSourceIp(pSender->GetStaged().tpSender.sSourceIp);
+        if(sSourceIp.empty() == false && sSourceIp != "auto")
+        {   //sourceip set by nmos
+            Settings::Get().Write(wxT("Server"), wxT("RTSP_Address"), wxString::FromAscii(sSourceIp.c_str()));
+        }
+        else
+        {
+            sSourceIp = string(Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString).mb_str());
+            if(sSourceIp.empty())
+            {
+                 multimap<wxString, wxString> mmButtons(Settings::Get().GetInterfaces());
+                 if(mmButtons.empty() == false)
+                 {
+                     sSourceIp = string(mmButtons.begin()->second.mb_str());
+                     Settings::Get().Write(wxT("Server"), wxT("RTSP_Address"), mmButtons.begin()->second);
+                 }
+            }
+        }
+
+        if(pSender->GetStaged().tpSender.nDestinationPort != 0)
+        {
+            Settings::Get().Write(wxT("Server"), wxT("RTP_Port"), pSender->GetStaged().tpSender.nDestinationPort);
+        }
+
+        if(pSender->GetStaged().bMasterEnable == true)
+        {
+            Settings::Get().Write(wxT("Output"), wxT("Destination"), wxT("AoIP"));
+        }
+        Settings::Get().Write(wxT("Server"), wxT("Stream"), pSender->GetStaged().bMasterEnable);
+
+        NodeApi::Get().ActivateSender(pSender->GetId(),
+                                      sSourceIp,
+                                      string(Settings::Get().Read(wxT("Server"), wxT("DestinationIp"), wxEmptyString).mb_str()));
+    }
+    #endif
+
 }
 
 void pam2Dialog::OnActivateReceiver(wxNmosEvent& event)
