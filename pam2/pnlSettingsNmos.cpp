@@ -145,6 +145,7 @@ void pnlSettingsNmos::AddSender(std::shared_ptr<Sender> pSender)
 {
     size_t nIndex = m_plstSenders->AddButton(wxString::FromAscii(pSender->GetLabel().c_str()));
     m_plstSenders->SetButtonAuxillaryText(nIndex, wxString::FromAscii(pSender->GetId().c_str()));
+    m_plstSenders->Refresh();
 }
 
 void pnlSettingsNmos::UpdateSender(std::shared_ptr<Sender> pSender)
@@ -152,22 +153,43 @@ void pnlSettingsNmos::UpdateSender(std::shared_ptr<Sender> pSender)
 
 }
 
+void pnlSettingsNmos::RemoveSenders(const std::set<std::string>::const_iterator& itBegin, const std::set<std::string>::const_iterator& itEnd)
+{
+ //   m_plstSenders->Freeze()
+
+    for(std::set<std::string>::const_iterator itSender = itBegin; itSender != itEnd; ++itSender)
+    {
+        if((*itSender).empty() == false)
+        {
+            for(size_t i = 0; i < m_plstSenders->GetMaxIndex(); i++)
+            {
+                wxLogDebug(wxT("Remove %d?"), i);
+                if(m_plstSenders->GetButtonAuxillaryText(i) == (*itSender))
+                {
+                    wxLogDebug(wxT("Delete %d"), i);
+                    m_plstSenders->DeleteButton(i);
+                    wxLogDebug(wxT("Deleted %d"), i);
+                    break;
+                }
+                wxLogDebug(wxT("Remove %d No"), i);
+            }
+        }
+    }
+    //m_plstSenders->Thaw();
+}
+
 void pnlSettingsNmos::SetSender(const wxString& sSenderId)
 {
-    for(size_t i = 0; i < m_plstSenders->GetItemCount(); i++)
+    for(size_t i = 0; i < m_plstSenders->GetMaxIndex(); i++)
     {
-        if(m_plstSenders->GetButtonAuxillaryText(i) == sSenderId)
+        uiSender* pSender = dynamic_cast<uiSender*>(m_plstSenders->GetButtonuiRect(i));
+        if(pSender)
         {
-            uiSender* pSender = dynamic_cast<uiSender*>(m_plstSenders->GetButtonuiRect(i));
-            if(pSender)
+            if(m_plstSenders->GetButtonAuxillaryText(i) == sSenderId)
             {
                 pSender->SetState(uiSender::STATE_ACTIVE);
             }
-        }
-        else
-        {
-            uiSender* pSender = dynamic_cast<uiSender*>(m_plstSenders->GetButtonuiRect(i));
-            if(pSender)
+            else
             {
                 pSender->SetState(uiSender::STATE_IDLE);
             }
@@ -180,23 +202,23 @@ void pnlSettingsNmos::SubscriptionRequest(const wxString& sReceiverId, const wxS
 {
     if(nResult == 202)  //success
     {
-        for(size_t i = 0; i < m_plstSenders->GetItemCount(); i++)
+        for(size_t i = 0; i < m_plstSenders->GetMaxIndex(); i++)
         {
-            if(m_plstSenders->GetButtonAuxillaryText(i) == sResponse)
+            uiSender* pSender = dynamic_cast<uiSender*>(m_plstSenders->GetButtonuiRect(i));
+            if(pSender)
             {
-                uiSender* pSender = dynamic_cast<uiSender*>(m_plstSenders->GetButtonuiRect(i));
-                if(pSender)
+                if(m_plstSenders->GetButtonAuxillaryText(i) == sResponse)
                 {
                     pSender->SetState(uiSender::STATE_REPLIED);
+                    m_plstSenders->Refresh();
+                    break;
                 }
-                m_plstSenders->Refresh();
-                break;
             }
         }
     }
     else    //not worked
     {
-        for(size_t i = 0; i < m_plstSenders->GetItemCount(); i++)
+        for(size_t i = 0; i < m_plstSenders->GetMaxIndex(); i++)
         {
             uiSender* pSender = dynamic_cast<uiSender*>(m_plstSenders->GetButtonuiRect(i));
             if(pSender)

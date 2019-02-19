@@ -279,7 +279,7 @@ class PAMBASE_IMPEXPORT wmList : public pmControl
         void SetButtonData(size_t nIndex, void* pData);
 
         void SetButtonAuxillaryText(size_t nIndex, const wxString& sText);
-        const wxString& GetButtonAuxillaryText(size_t nIndex) const;
+        wxString GetButtonAuxillaryText(size_t nIndex) const;
 
 
         /** @brief enum to decide where to show a button - top, middle, button or simply onscreen
@@ -424,6 +424,11 @@ class PAMBASE_IMPEXPORT wmList : public pmControl
         *   @return <i>size_t</i>
         **/
         size_t GetItemCount() const;
+
+        /** @brief Returns the max index of the buttons in the list - this may be greater than the size of the list if buttons have been deleted
+        *   @return <i>size_t</i>
+        **/
+        size_t GetMaxIndex() const;
 
         /** @brief Returns an array of indices of the buttons that are currently selected
         *   @return <i>wxArrayInt</i>

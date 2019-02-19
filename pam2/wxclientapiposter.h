@@ -28,9 +28,15 @@ class wxClientApiPoster : public ClientApiPoster
         void ReceiversRemoved(const std::set<std::string>& setRemoved);
 
         void RequestTargetResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId);
+
+        void RequestGetSenderStagedResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId);
+        void RequestGetSenderActiveResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId);
+        void RequestGetSenderTransportFileResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId);
+        void RequestGetReceiverStagedResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId);
+        void RequestGetReceiverActiveResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId);
+
         void RequestPatchSenderResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId);
         void RequestPatchReceiverResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId);
-
         void RequestConnectResult(const std::string& sSenderId, const std::string& sReceiverId, bool bSuccess, const std::string& sResponse);
 
     private:
@@ -139,9 +145,9 @@ public:
     **/
     virtual wxEvent *Clone() const { return new wxNmosClientCurlEvent(*this); }
 
-    unsigned long GetResult();
-    const wxString& GetResponse();
-    const wxString& GetResourceId();
+    unsigned long GetResult() const;
+    const wxString& GetResponse() const;
+    const wxString& GetResourceId() const;
 
 
     DECLARE_DYNAMIC_CLASS(wxNmosClientCurlEvent)

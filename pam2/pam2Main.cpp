@@ -1479,7 +1479,13 @@ void pam2Dialog::OnNmosFlowChanged(wxNmosClientEvent& event)
 void pam2Dialog::OnNmosResourcesRemoved(wxNmosClientEvent& event)
 {
     #ifdef __NMOS__
-
+    if(event.GetInt() == ClientApi::flagResource::SENDERS)
+    {
+        if(m_ppnlSettings->m_ppnlNmos)
+        {
+            m_ppnlSettings->m_ppnlNmos->RemoveSenders(event.GetRemovedBegin(), event.GetRemovedEnd());
+        }
+    }
     #endif // __NMOS__
 }
 

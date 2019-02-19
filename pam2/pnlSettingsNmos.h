@@ -38,7 +38,7 @@ class pnlSettingsNmos: public wxPanel
 
 		void AddSender(std::shared_ptr<Sender> pSender);
 		void UpdateSender(std::shared_ptr<Sender> pSender);
-		void RemoveSenders();
+		void RemoveSenders(const std::set<std::string>::const_iterator& itBegin, const std::set<std::string>::const_iterator& itEnd);
 
 		void SubscriptionRequest(const wxString& sReceiverId, const wxString& sResponse, unsigned long nResult);
 

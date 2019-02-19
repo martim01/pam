@@ -129,6 +129,55 @@ void wxClientApiPoster::RequestConnectResult(const std::string& sSenderId, const
     wxQueueEvent(m_pHandler, pEvent);
 }
 
+
+void wxClientApiPoster::RequestGetSenderStagedResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId)
+{
+
+}
+
+void wxClientApiPoster::RequestGetSenderActiveResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId)
+{
+
+}
+
+void wxClientApiPoster::RequestGetSenderTransportFileResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId)
+{
+
+}
+
+void wxClientApiPoster::RequestGetReceiverStagedResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId)
+{
+
+}
+
+void wxClientApiPoster::RequestGetReceiverActiveResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId)
+{
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 wxNmosClientEvent::wxNmosClientEvent(std::shared_ptr<Self> pNode, ClientApiPoster::enumChange eChange) : wxCommandEvent(wxEVT_NMOS_CLIENT_NODE),
     m_pNode(pNode),
     m_pDevice(0),
@@ -277,17 +326,17 @@ m_sResourceId(event.GetResourceId().c_str())
 }
 
 
-unsigned long wxNmosClientCurlEvent::GetResult()
+unsigned long wxNmosClientCurlEvent::GetResult() const
 {
     return GetInt();
 }
 
-const wxString& wxNmosClientCurlEvent::GetResponse()
+const wxString& wxNmosClientCurlEvent::GetResponse() const
 {
     return m_sResponse;
 }
 
-const wxString& wxNmosClientCurlEvent::GetResourceId()
+const wxString& wxNmosClientCurlEvent::GetResourceId() const
 {
     return m_sResourceId;
 }

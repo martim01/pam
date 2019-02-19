@@ -1857,6 +1857,11 @@ size_t wmList::GetItemCount() const
     return m_lstButtons.size();
 }
 
+size_t wmList::GetMaxIndex() const
+{
+    return m_nIndex;
+}
+
 void wmList::SetDisabledColour(const wxColour& clr)
 {
     m_clrDisabledButton = clr;
@@ -2147,6 +2152,7 @@ void wmList::DeleteButton(size_t nIndex)
         }
         m_setitSelected.erase(itButton);
         m_setitFlash.erase(itButton);
+        delete (*itButton);
         m_lstButtons.erase(itButton);
         CreateRects();
         Refresh();
@@ -2358,16 +2364,16 @@ void wmList::SetColumns(unsigned int nColumns)
 void wmList::SetButtonAuxillaryText(size_t nIndex, const wxString& sText)
 {
     list<button*>::iterator itButton = GetButton(nIndex);
-    if(itButton != m_lstButtons.end())
+    if(itButton != m_lstButtons.end() && (*itButton))
     {
         (*itButton)->sAuxillary = sText;
     }
 }
 
-const wxString& wmList::GetButtonAuxillaryText(size_t nIndex) const
+wxString wmList::GetButtonAuxillaryText(size_t nIndex) const
 {
     list<button*>::iterator itButton = GetButton(nIndex);
-    if(itButton != m_lstButtons.end())
+    if(itButton != m_lstButtons.end() && (*itButton))
     {
         return (*itButton)->sAuxillary;
     }
@@ -2378,7 +2384,7 @@ const wxString& wmList::GetButtonAuxillaryText(size_t nIndex) const
 uiRect* wmList::GetButtonuiRect(size_t nButton)
 {
     list<button*>::iterator itButton = GetButton(nButton);
-    if(itButton != m_lstButtons.end())
+    if(itButton != m_lstButtons.end() && (*itButton))
     {
         return (*itButton)->pUi;
     }
