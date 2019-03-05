@@ -58,7 +58,7 @@ list<pairOptionPanel_t> AngleMetersBuilder::CreateOptionPanels(wxWindow* pParent
 
 void AngleMetersBuilder::LoadSettings()
 {
-    m_pAngleMeters->SetMode(ReadSetting(wxT("Mode"),wxT("BBC")));
+
     m_pAngleMeters->Freeze((ReadSetting(wxT("Freeze"),0)==1));
     m_pAngleMeters->ShowPeaks(ReadSetting(wxT("Peaks"),0));
     m_pAngleMeters->SetSpeed(ReadSetting(wxT("Speed"),1));
@@ -66,6 +66,8 @@ void AngleMetersBuilder::LoadSettings()
     m_pAngleMeters->UpdateMeterStereo();
     m_pAngleMeters->DisplayCurrentLevelAsText(ReadSetting(wxT("DisplayText_Current"),1));
     m_pAngleMeters->DisplayPeakLevelAsText(ReadSetting(wxT("DisplayText_Peak"),1));
+    //m_pAngleMeters->SetMode(wxT("EBU"));
+    //m_pAngleMeters->SetMode(ReadSetting(wxT("Mode"),wxT("BBC")));
 }
 
 

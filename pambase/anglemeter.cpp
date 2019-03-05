@@ -212,7 +212,7 @@ void AngleMeter::InitMeter(const wxString& sText,double dMin)
     m_dMin = dMin;
     m_dPeakValue[0] = m_dMin;
     m_dPeakValue[1] = m_dMin;
-    m_dAngleRatio = 110/(-m_dMin);
+    m_dAngleRatio = 80/(m_dMax-m_dMin);
 
     //work out size of rects
     wxString sLevel;
@@ -321,6 +321,7 @@ void AngleMeter::WorkoutAngles(double dLevel, double& dAngle)
 void AngleMeter::OnSize(wxSizeEvent& event)
 {
     InitMeter(m_uiLabel.GetLabel(), m_dMin);
+
 
     Refresh();
 }

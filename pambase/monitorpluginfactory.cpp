@@ -27,6 +27,7 @@ void MonitorPluginFactory::Register(MonitorPluginBuilder* pBuilder)
     if(m_pswpMonitor && m_pswpOptions)
     {
         pBuilder->CreatePanels(m_pswpMonitor, m_pswpOptions);
+        pBuilder->LoadSettings();
     }
 
     m_mBuilders.insert(make_pair(pBuilder->GetName(), pBuilder));

@@ -45,8 +45,13 @@ class dlgNoInput;
 class wxNmosEvent;
 class FlowAudioRaw;
 class Sender;
-class wxNmosClientEvent;
 class wxNmosClientCurlEvent;
+class wxNmosClientNodeEvent;
+class wxNmosClientDeviceEvent;
+class wxNmosClientSourceEvent;
+class wxNmosClientFlowEvent;
+class wxNmosClientSenderEvent;
+class wxNmosClientReceiverEvent;
 
 class pam2Dialog: public wxDialog
 {
@@ -180,10 +185,9 @@ class pam2Dialog: public wxDialog
         void OnActivateSender(wxNmosEvent& event);
         void OnActivateReceiver(wxNmosEvent& event);
 
-        void OnNmosSenderChanged(wxNmosClientEvent& event);
-        void OnNmosReceiverChanged(wxNmosClientEvent& event);
-        void OnNmosFlowChanged(wxNmosClientEvent& event);
-        void OnNmosResourcesRemoved(wxNmosClientEvent& event);
+        void OnNmosSenderChanged(wxNmosClientSenderEvent& event);
+        void OnNmosReceiverChanged(wxNmosClientReceiverEvent& event);
+        void OnNmosFlowChanged(wxNmosClientFlowEvent& event);
 
         void OnNmosSubscribeRequest(wxNmosClientCurlEvent& event);
 

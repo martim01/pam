@@ -1,5 +1,6 @@
 #ifdef __NMOS__
 #include "wxclientapiposter.h"
+#include "wxnmosclientevent.h"
 #include <wx/log.h>
 
 
@@ -9,13 +10,18 @@ DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENT_FLOW)
 DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENT_DEVICE)
 DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENT_SENDER)
 DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENT_RECEIVER)
-DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENT_RESOURCES_REMOVED)
+
 DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENTCURL_SUBSCRIBE)
 DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENTCURL_PATCH_SENDER)
 DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENTCURL_PATCH_RECEIVER)
 DEFINE_EVENT_TYPE(wxEVT_NMOS_CLIENTCURL_CONNECT)
 
-IMPLEMENT_DYNAMIC_CLASS(wxNmosClientEvent, wxCommandEvent)
+IMPLEMENT_DYNAMIC_CLASS(wxNmosClientNodeEvent, wxCommandEvent)
+IMPLEMENT_DYNAMIC_CLASS(wxNmosClientDeviceEvent, wxCommandEvent)
+IMPLEMENT_DYNAMIC_CLASS(wxNmosClientSourceEvent, wxCommandEvent)
+IMPLEMENT_DYNAMIC_CLASS(wxNmosClientFlowEvent, wxCommandEvent)
+IMPLEMENT_DYNAMIC_CLASS(wxNmosClientSenderEvent, wxCommandEvent)
+IMPLEMENT_DYNAMIC_CLASS(wxNmosClientReceiverEvent, wxCommandEvent)
 IMPLEMENT_DYNAMIC_CLASS(wxNmosClientCurlEvent, wxCommandEvent)
 
 wxClientApiPoster::wxClientApiPoster(wxEvtHandler* pHandler) : ClientApiPoster(),
@@ -29,79 +35,57 @@ wxClientApiPoster::~wxClientApiPoster()
 
 }
 
-void wxClientApiPoster::NodeChanged(std::shared_ptr<Self> pNode, enumChange eChange)
+void wxClientApiPoster::ModeChanged(bool bQueryApi)
 {
-    wxNmosClientEvent* pEvent(new wxNmosClientEvent(pNode, eChange));
+    // @todo wxClientApiPoster::ModeChanged
+}
+
+void wxClientApiPoster::QuerySubscription(const std::string& sSubscriptionId, int nResource, const std::string& sQuery)
+{
+    //@todo wxClientApiPoster::QuerySubscription
+}
+
+void wxClientApiPoster::QuerySubscriptionRemoved(const std::string& sSubscriptionId)
+{
+    //@todo wxClientApiPoster::QuerySubscriptionRemoved
+}
+
+
+void wxClientApiPoster::NodeChanged(const std::list<std::shared_ptr<Self> >& lstNodesAdded, const std::list<std::shared_ptr<Self> >& lstNodesUpdated, const std::list<std::shared_ptr<Self> >& lstNodesRemoved)
+{
+    wxNmosClientNodeEvent* pEvent = new wxNmosClientNodeEvent(lstNodesAdded, lstNodesUpdated, lstNodesRemoved);
     wxQueueEvent(m_pHandler, pEvent);
 }
 
-void wxClientApiPoster::DeviceChanged(std::shared_ptr<Device> pDevice, enumChange eChange)
+void wxClientApiPoster::DeviceChanged(const std::list<std::shared_ptr<Device> >& lstDevicesAdded, const std::list<std::shared_ptr<Device> >& lstDevicesUpdated, const std::list<std::shared_ptr<Device> >& lstDevicesRemoved)
 {
-    wxNmosClientEvent* pEvent(new wxNmosClientEvent(pDevice, eChange));
+    wxNmosClientDeviceEvent* pEvent = new wxNmosClientDeviceEvent(lstDevicesAdded, lstDevicesUpdated, lstDevicesRemoved);
     wxQueueEvent(m_pHandler, pEvent);
 }
 
-void wxClientApiPoster::SourceChanged(std::shared_ptr<Source> pSource, enumChange eChange)
+void wxClientApiPoster::SourceChanged(const std::list<std::shared_ptr<Source> >& lstSourcesAdded, const std::list<std::shared_ptr<Source> >& lstSourcesUpdated, const std::list<std::shared_ptr<Source> >& lstSourcesRemoved)
 {
-    wxNmosClientEvent* pEvent(new wxNmosClientEvent(pSource, eChange));
+    wxNmosClientSourceEvent* pEvent = new wxNmosClientSourceEvent(lstSourcesAdded, lstSourcesUpdated, lstSourcesRemoved);
     wxQueueEvent(m_pHandler, pEvent);
 }
 
-void wxClientApiPoster::FlowChanged(std::shared_ptr<Flow> pFlow, enumChange eChange)
+void wxClientApiPoster::FlowChanged(const std::list<std::shared_ptr<Flow> >& lstFlowsAdded, const std::list<std::shared_ptr<Flow> >& lstFlowsUpdated, const std::list<std::shared_ptr<Flow> >& lstFlowsRemoved)
 {
-    wxNmosClientEvent* pEvent(new wxNmosClientEvent(pFlow, eChange));
+    wxNmosClientFlowEvent* pEvent = new wxNmosClientFlowEvent(lstFlowsAdded, lstFlowsUpdated, lstFlowsRemoved);
     wxQueueEvent(m_pHandler, pEvent);
 }
 
-void wxClientApiPoster::SenderChanged(std::shared_ptr<Sender> pSender, enumChange eChange)
+void wxClientApiPoster::SenderChanged(const std::list<std::shared_ptr<Sender> >& lstSendersAdded, const std::list<std::shared_ptr<Sender> >& lstSendersUpdated, const std::list<std::shared_ptr<Sender> >& lstSendersRemoved)
 {
-//    wxLogDebug(wxT("wxClientApiPoster::SenderChanged"));
-    wxNmosClientEvent* pEvent(new wxNmosClientEvent(pSender, eChange));
+    wxNmosClientSenderEvent* pEvent = new wxNmosClientSenderEvent(lstSendersAdded, lstSendersUpdated, lstSendersRemoved);
     wxQueueEvent(m_pHandler, pEvent);
 }
 
-void wxClientApiPoster::ReceiverChanged(std::shared_ptr<Receiver> pReceiver, enumChange eChange)
+void wxClientApiPoster::ReceiverChanged(const std::list<std::shared_ptr<Receiver> >& lstReceiversAdded, const std::list<std::shared_ptr<Receiver> >& lstReceiversUpdated, const std::list<std::shared_ptr<Receiver> >& lstReceiversRemoved)
 {
-    wxNmosClientEvent* pEvent(new wxNmosClientEvent(pReceiver, eChange));
+    wxNmosClientReceiverEvent* pEvent = new wxNmosClientReceiverEvent(lstReceiversAdded, lstReceiversUpdated, lstReceiversRemoved);
     wxQueueEvent(m_pHandler, pEvent);
 }
-
-void wxClientApiPoster::NodesRemoved(const std::set<std::string>& setRemoved)
-{
-    wxNmosClientEvent* pEvent(new wxNmosClientEvent(setRemoved, ClientApi::NODES));
-    wxQueueEvent(m_pHandler, pEvent);
-}
-
-void wxClientApiPoster::DevicesRemoved(const std::set<std::string>& setRemoved)
-{
-    wxNmosClientEvent* pEvent(new wxNmosClientEvent(setRemoved, ClientApi::DEVICES));
-    wxQueueEvent(m_pHandler, pEvent);
-}
-
-void wxClientApiPoster::SourcesRemoved(const std::set<std::string>& setRemoved)
-{
-    wxNmosClientEvent* pEvent(new wxNmosClientEvent(setRemoved, ClientApi::SOURCES));
-    wxQueueEvent(m_pHandler, pEvent);
-}
-
-void wxClientApiPoster::FlowsRemoved(const std::set<std::string>& setRemoved)
-{
-    wxNmosClientEvent* pEvent(new wxNmosClientEvent(setRemoved, ClientApi::FLOWS));
-    wxQueueEvent(m_pHandler, pEvent);
-}
-
-void wxClientApiPoster::SendersRemoved(const std::set<std::string>& setRemoved)
-{
-    wxNmosClientEvent* pEvent(new wxNmosClientEvent(setRemoved, ClientApi::SENDERS));
-    wxQueueEvent(m_pHandler, pEvent);
-}
-
-void wxClientApiPoster::ReceiversRemoved(const std::set<std::string>& setRemoved)
-{
-    wxNmosClientEvent* pEvent(new wxNmosClientEvent(setRemoved, ClientApi::RECEIVERS));
-    wxQueueEvent(m_pHandler, pEvent);
-}
-
 
 void wxClientApiPoster::RequestTargetResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId)
 {
@@ -156,160 +140,6 @@ void wxClientApiPoster::RequestGetReceiverActiveResult(unsigned long nResult, co
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-wxNmosClientEvent::wxNmosClientEvent(std::shared_ptr<Self> pNode, ClientApiPoster::enumChange eChange) : wxCommandEvent(wxEVT_NMOS_CLIENT_NODE),
-    m_pNode(pNode),
-    m_pDevice(0),
-    m_pSource(0),
-    m_pFlow(0),
-    m_pSender(0),
-    m_pReceiver(0)
-{
-    SetInt(eChange);
-}
-
-wxNmosClientEvent::wxNmosClientEvent(std::shared_ptr<Device> pDevice, ClientApiPoster::enumChange eChange) : wxCommandEvent(wxEVT_NMOS_CLIENT_DEVICE),
-    m_pNode(0),
-    m_pDevice(pDevice),
-    m_pSource(0),
-    m_pFlow(0),
-    m_pSender(0),
-    m_pReceiver(0)
-{
-    SetInt(eChange);
-}
-
-wxNmosClientEvent::wxNmosClientEvent(std::shared_ptr<Source> pSource, ClientApiPoster::enumChange eChange) : wxCommandEvent(wxEVT_NMOS_CLIENT_SOURCE),
-    m_pNode(0),
-    m_pDevice(0),
-    m_pSource(pSource),
-    m_pFlow(0),
-    m_pSender(0),
-    m_pReceiver(0)
-{
-    SetInt(eChange);
-}
-
-wxNmosClientEvent::wxNmosClientEvent(std::shared_ptr<Flow> pFlow, ClientApiPoster::enumChange eChange) : wxCommandEvent(wxEVT_NMOS_CLIENT_FLOW),
-    m_pNode(0),
-    m_pDevice(0),
-    m_pSource(0),
-    m_pFlow(pFlow),
-    m_pSender(0),
-    m_pReceiver(0)
-{
-    SetInt(eChange);
-}
-
-wxNmosClientEvent::wxNmosClientEvent(std::shared_ptr<Sender> pSender, ClientApiPoster::enumChange eChange) : wxCommandEvent(wxEVT_NMOS_CLIENT_SENDER),
-    m_pNode(0),
-    m_pDevice(0),
-    m_pSource(0),
-    m_pFlow(0),
-    m_pSender(pSender),
-    m_pReceiver(0)
-{
-    SetInt(eChange);
-}
-
-wxNmosClientEvent::wxNmosClientEvent(std::shared_ptr<Receiver> pReceiver, ClientApiPoster::enumChange eChange) : wxCommandEvent(wxEVT_NMOS_CLIENT_RECEIVER),
-    m_pNode(0),
-    m_pDevice(0),
-    m_pSource(0),
-    m_pFlow(0),
-    m_pSender(0),
-    m_pReceiver(pReceiver)
-{
-    SetInt(eChange);
-}
-
-wxNmosClientEvent::wxNmosClientEvent(const std::set<std::string>& setRemoved, ClientApi::flagResource eResource) : wxCommandEvent(wxEVT_NMOS_CLIENT_RESOURCES_REMOVED),
-    m_pNode(0),
-    m_pDevice(0),
-    m_pSource(0),
-    m_pFlow(0),
-    m_pSender(0),
-    m_pReceiver(0),
-    m_setRemoved(setRemoved)
-{
-    SetInt(eResource);
-}
-
-wxNmosClientEvent::wxNmosClientEvent(const wxNmosClientEvent& event) : wxCommandEvent(event),
-    m_pNode(event.GetNode()),
-    m_pDevice(event.GetDevice()),
-    m_pSource(event.GetSource()),
-    m_pFlow(event.GetFlow()),
-    m_pSender(event.GetSender()),
-    m_pReceiver(event.GetReceiver()),
-    m_setRemoved(event.GetRemovedBegin(), event.GetRemovedEnd())
-{
-    SetInt(event.GetInt());
-}
-
-
-std::shared_ptr<Self> wxNmosClientEvent::GetNode() const
-{
-    return m_pNode;
-}
-
-std::shared_ptr<Device> wxNmosClientEvent::GetDevice() const
-{
-    return m_pDevice;
-}
-
-std::shared_ptr<Source> wxNmosClientEvent::GetSource() const
-{
-    return m_pSource;
-}
-
-std::shared_ptr<Flow> wxNmosClientEvent::GetFlow() const
-{
-    return m_pFlow;
-}
-
-std::shared_ptr<Sender> wxNmosClientEvent::GetSender() const
-{
-    return m_pSender;
-}
-
-std::shared_ptr<Receiver> wxNmosClientEvent::GetReceiver() const
-{
-    return m_pReceiver;
-}
-
-std::set<std::string>::const_iterator wxNmosClientEvent::GetRemovedBegin() const
-{
-    return m_setRemoved.begin();
-}
-
-std::set<std::string>::const_iterator wxNmosClientEvent::GetRemovedEnd() const
-{
-    return m_setRemoved.end();
-}
-
-
 wxNmosClientCurlEvent::wxNmosClientCurlEvent(wxEventType type, unsigned long nResult, const wxString& sResponse, const wxString& sResourceId) : wxCommandEvent(type),
     m_sResponse(sResponse.c_str()),
     m_sResourceId(sResourceId.c_str())
@@ -340,6 +170,8 @@ const wxString& wxNmosClientCurlEvent::GetResourceId() const
 {
     return m_sResourceId;
 }
+
+
 
 
 

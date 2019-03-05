@@ -50,6 +50,7 @@
 #include "wxlogoutput.h"
 #include "wxeventposter.h"
 #include "wxclientapiposter.h"
+#include "wxnmosclientevent.h"
 #endif // __WXMSW__
 
 //(*InternalHeaders(pam2Dialog)
@@ -956,7 +957,6 @@ void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
     Connect(wxID_ANY, wxEVT_NMOS_CLIENT_SENDER, (wxObjectEventFunction)&pam2Dialog::OnNmosSenderChanged);
     Connect(wxID_ANY, wxEVT_NMOS_CLIENT_RECEIVER, (wxObjectEventFunction)&pam2Dialog::OnNmosReceiverChanged);
     Connect(wxID_ANY, wxEVT_NMOS_CLIENT_FLOW, (wxObjectEventFunction)&pam2Dialog::OnNmosFlowChanged);
-    Connect(wxID_ANY, wxEVT_NMOS_CLIENT_RESOURCES_REMOVED, (wxObjectEventFunction)&pam2Dialog::OnNmosResourcesRemoved);
     Connect(wxID_ANY, wxEVT_NMOS_CLIENTCURL_SUBSCRIBE, (wxObjectEventFunction)&pam2Dialog::OnNmosSubscribeRequest);
 
 
@@ -1395,7 +1395,8 @@ void pam2Dialog::StartNmosClient()
 {
     #ifdef __NMOS__
     ClientApi::Get().SetPoster(make_shared<wxClientApiPoster>(this));
-    ClientApi::Get().Start(ClientApi::ALL);
+    ClientApi::Get().AddQuerySubscription(ClientApi::ALL, "",0);
+    ClientApi::Get().Start();
     #endif // __NMOS__
 }
 
@@ -1406,88 +1407,99 @@ void pam2Dialog::StopNmosClient()
     #endif // __NMOS__
 }
 
-void pam2Dialog::OnNmosReceiverChanged(wxNmosClientEvent& event)
+
+
+void pam2Dialog::OnNmosReceiverChanged(wxNmosClientReceiverEvent& event)
 {
     #ifdef __NMOS__
-    if(event.GetReceiver() && event.GetInt() == ClientApiPoster::RESOURCE_UPDATED && m_ppnlSettings && event.GetReceiver()->GetId() == m_ppnlSettings->m_ppnlNmos->GetReceiverId())
+    if(m_ppnlSettings && m_ppnlSettings->m_ppnlNmos)
     {
-        //is the receiver one of ours??
-        if(event.GetReceiver()->GetSender().empty() == false)
+        for(list<shared_ptr<Receiver> >::const_iterator itUpdated = event.GetUpdated().begin(); itUpdated != event.GetUpdated().end(); ++itUpdated)
         {
-            m_ppnlSettings->m_ppnlNmos->SetSender(wxString::FromAscii(event.GetReceiver()->GetSender().c_str()));
-        }
-        else
-        {
-            m_ppnlSettings->m_ppnlNmos->SetSender(wxEmptyString);
+            if((*itUpdated)->GetId() == m_ppnlSettings->m_ppnlNmos->GetReceiverId())
+            {
+                //is the receiver one of ours??
+                if((*itUpdated)->GetSender().empty() == false)
+                {
+                    m_ppnlSettings->m_ppnlNmos->SetSender(wxString::FromAscii((*itUpdated)->GetSender().c_str()));
+                }
+                else
+                {
+                    m_ppnlSettings->m_ppnlNmos->SetSender(wxEmptyString);
+                }
+                break;
+            }
         }
     }
     #endif // __NMOS__
 }
 
-void pam2Dialog::OnNmosSenderChanged(wxNmosClientEvent& event)
+void pam2Dialog::OnNmosSenderChanged(wxNmosClientSenderEvent& event)
 {
     #ifdef __NMOS__
-    if(event.GetSender() && m_ppnlSettings && NodeApi::Get().GetSender(event.GetSender()->GetId()) == 0)
+    if(m_ppnlSettings)
     {
-        map<string, shared_ptr<Flow> >::const_iterator itFlow = ClientApi::Get().FindFlow(event.GetSender()->GetFlowId());
-        if(itFlow != ClientApi::Get().GetFlowEnd())
+        for(list<shared_ptr<Sender> >::const_iterator itAdded = event.GetAdded().begin(); itAdded != event.GetAdded().end(); ++itAdded)
         {
-            if(itFlow->second->GetFormat().find("urn:x-nmos:format:audio") != string::npos)
-            {
-                switch(event.GetInt())
+            if(NodeApi::Get().GetSender((*itAdded)->GetId()) == 0)
+            {  //not one of our senders
+                map<string, shared_ptr<Flow> >::const_iterator itFlow = ClientApi::Get().FindFlow((*itAdded)->GetFlowId());
+                if(itFlow != ClientApi::Get().GetFlowEnd())
                 {
-                    case ClientApiPoster::RESOURCE_ADDED:
-                        m_ppnlSettings->m_ppnlNmos->AddSender(event.GetSender());
-                        break;
-                    case ClientApiPoster::RESOURCE_UPDATED:
-                        m_ppnlSettings->m_ppnlNmos->UpdateSender(event.GetSender());
-                        break;
+                    if(itFlow->second->GetFormat().find("urn:x-nmos:format:audio") != string::npos)
+                    {
+                        m_ppnlSettings->m_ppnlNmos->AddSender((*itAdded));
+                    }
                 }
             }
-
-        }
-        else
-        {
-            //Store the sender for checking once we get a flow...
-            if(event.GetInt() == ClientApiPoster::RESOURCE_ADDED)
+            else
             {
-                m_mmLonelySender.insert(make_pair(event.GetSender()->GetFlowId(), event.GetSender()));
+                //Store the sender for checking once we get a flow...
+                m_mmLonelySender.insert(make_pair((*itAdded)->GetFlowId(), (*itAdded)));
             }
         }
-    }
-    #endif // __NMOS__
-}
-
-void pam2Dialog::OnNmosFlowChanged(wxNmosClientEvent& event)
-{
-    #ifdef __NMOS__
-    if(event.GetFlow() && event.GetInt() == ClientApiPoster::RESOURCE_ADDED && m_ppnlSettings)
-    {
-        for(multimap<string, shared_ptr<Sender> >::const_iterator itSender = m_mmLonelySender.lower_bound(event.GetFlow()->GetId()); itSender != m_mmLonelySender.upper_bound(event.GetFlow()->GetId()); ++itSender)
+        for(list<shared_ptr<Sender> >::const_iterator itUpdated = event.GetUpdated().begin(); itUpdated != event.GetUpdated().end(); ++itUpdated)
         {
-            if(event.GetFlow()->GetFormat().find("urn:x-nmos:format:audio") != string::npos)
-            {
-                m_ppnlSettings->m_ppnlNmos->AddSender(itSender->second);
+            if(NodeApi::Get().GetSender((*itUpdated)->GetId()) == 0)
+            {   //not one of our senders
+                map<string, shared_ptr<Flow> >::const_iterator itFlow = ClientApi::Get().FindFlow((*itUpdated)->GetFlowId());
+                if(itFlow != ClientApi::Get().GetFlowEnd())
+                {
+                    if(itFlow->second->GetFormat().find("urn:x-nmos:format:audio") != string::npos)
+                    {
+                        m_ppnlSettings->m_ppnlNmos->UpdateSender((*itUpdated));
+                    }
+                }
             }
         }
-        //remove the senders which are no longer lonely
-        m_mmLonelySender.erase(event.GetFlow()->GetId());
+        // @todo remove senders
     }
     #endif // __NMOS__
 }
 
-void pam2Dialog::OnNmosResourcesRemoved(wxNmosClientEvent& event)
+void pam2Dialog::OnNmosFlowChanged(wxNmosClientFlowEvent& event)
 {
     #ifdef __NMOS__
-    if(event.GetInt() == ClientApi::flagResource::SENDERS)
+    if(m_ppnlSettings)
     {
-        if(m_ppnlSettings->m_ppnlNmos)
+        for(list<shared_ptr<Flow> >::const_iterator itAdded = event.GetAdded().begin(); itAdded != event.GetAdded().end(); ++itAdded)
         {
-            m_ppnlSettings->m_ppnlNmos->RemoveSenders(event.GetRemovedBegin(), event.GetRemovedEnd());
+            if((*itAdded)->GetFormat().find("urn:x-nmos:format:audio") != string::npos)
+            {
+                for(multimap<string, shared_ptr<Sender> >::const_iterator itSender = m_mmLonelySender.lower_bound((*itAdded)->GetId()); itSender != m_mmLonelySender.upper_bound((*itAdded)->GetId()); ++itSender)
+                {
+                    m_ppnlSettings->m_ppnlNmos->AddSender(itSender->second);
+                }
+                //remove the senders which are no longer lonely
+                m_mmLonelySender.erase((*itAdded)->GetId());
+            }
         }
+
     }
     #endif // __NMOS__
 }
+
+
 
 
 void pam2Dialog::OnNmosSubscribeRequest(wxNmosClientCurlEvent& event)
