@@ -97,6 +97,7 @@ void LiveAudioSource::doReadFromQueue()
         if(m_qBuffer.empty() == false)
         {
             dValue = m_qBuffer.front();
+
             m_qBuffer.pop();
         }
         nValue = static_cast<long>(dValue*TWENTYFOURBIT);

@@ -16,7 +16,7 @@ END_EVENT_TABLE()
 
 AngleMeter::AngleMeter()
     : pmControl()
-    , m_bSurround(true)
+    , m_bSurround(false)
     , m_dMin(-70)
     , m_dMax(0)
     , m_nMeterDisplay(PEAK)
