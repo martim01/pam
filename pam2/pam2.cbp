@@ -240,6 +240,7 @@
 		<Unit filename="wxeventposter.h" />
 		<Unit filename="wxlogoutput.cpp" />
 		<Unit filename="wxlogoutput.h" />
+		<Unit filename="wxnmosclientevent.h" />
 		<Unit filename="wxpammclient.cpp" />
 		<Unit filename="wxpammclient.h" />
 		<Unit filename="wxpammconnection.cpp" />
