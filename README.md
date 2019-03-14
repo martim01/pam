@@ -21,7 +21,9 @@ Open Source Audio Monitoring Software designed for (but not limited to) a Raspbe
 ## Building PAM
 
 Workspace and project files are supplied for Code::Blocks IDE. There are Debug and Release builds for Windows and Linux
-Coming soon: CMake files
+
+There is an intention to use CMake, though this currently is a work in progress.
+
 Codeblocks  http://www.codeblocks.org/
 
 ### To build in Code::Blocks
