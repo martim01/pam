@@ -33,3 +33,4 @@
 /pambase/servicetestMain.cpp
 /pambase/servicetestMain.h
 /pambase/wxsmith/servicetestdialog.wxs
+!CMakeLists.txt
