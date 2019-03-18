@@ -13,7 +13,6 @@
 #include <wx/font.h>
 #include <wx/intl.h>
 #include <wx/string.h>
-#include "maxmingraph.h"
 #include "settings.h"
 #include "correlationbar.h"
 

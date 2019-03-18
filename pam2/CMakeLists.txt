@@ -14,7 +14,7 @@ link_directories("../lib")
 
 file(GLOB SOURCES "*.cpp")
 
-add_library(pam2 SHARED ${SOURCES})
+add_executable(pam2 ${SOURCES})
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(pam2 PRIVATE ${flags})
