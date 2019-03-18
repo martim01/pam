@@ -22,6 +22,8 @@ Open Source Audio Monitoring Software designed for (but not limited to) a Raspbe
 
 Workspace and project files are supplied for Code::Blocks IDE. There are Debug and Release builds for Windows and Linux
 
+There is an intention to use CMake, though this currently is a work in progress.
+
 Codeblocks  http://www.codeblocks.org/
 
 ### To build in Code::Blocks
@@ -35,12 +37,4 @@ Codeblocks  http://www.codeblocks.org/
 * Open pam2.workspace in Codeblocks
 * Fill in the necssary global variables
 * Build the workspace
-
-### To build using make
-
-Details on how to build the live555 libraries can be found at http://www.live555.com/liveMedia/#config-unix
-
-There is a makefile (makeall_linx) for Linux which will build the pam2 libraries. 
-
-make -f makeall_linux
 
