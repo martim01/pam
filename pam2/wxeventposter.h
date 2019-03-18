@@ -21,8 +21,8 @@ class wxEventPoster : public EventPoster
         void Target(const std::string& sReceiverId, const std::string& sTransportFile, unsigned short nPort);
         void PatchSender(const std::string& sSenderId, const connectionSender& conPatch, unsigned short nPort);
         void PatchReceiver(const std::string& sReceiverId, const connectionReceiver& conPatch, unsigned short nPort);
-        void ActivateSender(const std::string& sSenderId);
-        void ActivateReceiver(const std::string& sReceiverId);
+        void SenderActivated(const std::string& sSenderId);
+        void ReceiverActivated(const std::string& sReceiverId);
 
     private:
         wxEvtHandler* m_pHandler;

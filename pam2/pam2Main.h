@@ -45,6 +45,7 @@ class dlgNoInput;
 class wxNmosEvent;
 class FlowAudioRaw;
 class Sender;
+class Receiver;
 class wxNmosClientCurlEvent;
 class wxNmosClientNodeEvent;
 class wxNmosClientDeviceEvent;
@@ -182,14 +183,15 @@ class pam2Dialog: public wxDialog
         void OnTarget(wxNmosEvent& event);
         void OnPatchSender(wxNmosEvent& event);
         void OnPatchReceiver(wxNmosEvent& event);
-        void OnActivateSender(wxNmosEvent& event);
-        void OnActivateReceiver(wxNmosEvent& event);
+        void OnSenderActivated(wxNmosEvent& event);
+        void OnReceiverActivated(wxNmosEvent& event);
 
         void OnNmosSenderChanged(wxNmosClientSenderEvent& event);
         void OnNmosReceiverChanged(wxNmosClientReceiverEvent& event);
         void OnNmosFlowChanged(wxNmosClientFlowEvent& event);
 
         void OnNmosSubscribeRequest(wxNmosClientCurlEvent& event);
+
 
 
 
@@ -208,6 +210,8 @@ class pam2Dialog: public wxDialog
         bool m_bInputFailed;
 
         #ifdef __NMOS__
+        void ActivateSender(std::shared_ptr<Sender> pSender);
+        void ActivateReceiver(std::shared_ptr<Receiver> pReceiver);
         std::shared_ptr<FlowAudioRaw> m_pFlow;
         std::shared_ptr<Sender> m_pSender;
         std::multimap<std::string, std::shared_ptr<Sender> > m_mmLonelySender;

@@ -7,7 +7,7 @@
 
 class PAMBASE_IMPEXPORT AngleMeter : public pmControl
 {
-    DECLARE_EVENT_TABLE()
+
     wxDECLARE_DYNAMIC_CLASS(AngleMeter);
 public:
     AngleMeter();

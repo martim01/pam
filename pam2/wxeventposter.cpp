@@ -126,7 +126,7 @@ void wxEventPoster::PatchReceiver(const std::string& sReceiverId, const connecti
     }
 }
 
-void wxEventPoster::ActivateSender(const std::string& sSenderId)
+void wxEventPoster::SenderActivated(const std::string& sSenderId)
 {
     if(m_pHandler)
     {
@@ -136,7 +136,7 @@ void wxEventPoster::ActivateSender(const std::string& sSenderId)
     }
 }
 
-void wxEventPoster::ActivateReceiver(const std::string& sReceiverId)
+void wxEventPoster::ReceiverActivated(const std::string& sReceiverId)
 {
     if(m_pHandler)
     {

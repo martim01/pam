@@ -3,7 +3,6 @@
 #include "audio.h"
 #include <wx/log.h>
 #include <iterator>
-#include "playout.h"
 #include "settings.h"
 #include "soundfile.h"
 #include <wx/xml/xml.h>
