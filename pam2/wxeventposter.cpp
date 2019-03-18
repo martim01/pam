@@ -192,7 +192,7 @@ const connectionReceiver& wxNmosEvent::GetReceiverConnection() const
 }
 
 
-wxString wxNmosEvent::GetId() const
+wxString wxNmosEvent::GetResourceId() const
 {
     return GetString();
 }

@@ -11,8 +11,7 @@ using namespace std;
 // AngleMeter
  wxIMPLEMENT_DYNAMIC_CLASS(AngleMeter, pmControl);
 
-BEGIN_EVENT_TABLE(AngleMeter, wxWindow)
-END_EVENT_TABLE()
+
 
 AngleMeter::AngleMeter()
     : pmControl()

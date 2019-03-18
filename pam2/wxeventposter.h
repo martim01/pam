@@ -67,7 +67,7 @@ public:
     void SetReceiverConnection(const connectionReceiver& con);
     const connectionReceiver& GetReceiverConnection() const;
 
-    wxString GetId() const;
+    wxString GetResourceId() const;
     wxString GetCurlResponse() const;
     wxString GetService() const;
     int GetPort() const;
