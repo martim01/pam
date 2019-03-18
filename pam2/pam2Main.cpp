@@ -124,9 +124,12 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_ppnlLog(0),
     m_pdlgNoInput(0),
     m_pSelectedMonitor(0),
-    m_bInputFailed(false),
+    m_bInputFailed(false)
+    #ifdef __NMOS__
+    ,
     m_pFlow(0),
     m_pSender(0)
+    #endif // __NMOS__
 {
 
     //(*Initialize(pam2Dialog)
