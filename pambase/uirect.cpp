@@ -205,7 +205,7 @@ void uiRect::Draw(wxDC& dc, const wxString& sLabel, unsigned short nState, const
         dc.SetClippingRegion(m_rectText);
     }
 
-    DrawText(dc, sLabel, m_rectText, m_nAlign);
+    DrawText(dc, sLabel, m_rectText, m_nAlign, true, true, true, m_bClip);
 
     if(m_bClip)
     {
@@ -255,10 +255,15 @@ void uiRect::ClipText(bool bClip)
     m_bClip = bClip;
 }
 
-wxSize uiRect::DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int nAlign, bool bWrap, bool bDraw, bool bClip)
+wxSize uiRect::GetSizeOfText(wxDC& dc, const wxString& sText, const wxRect& rect)
+{
+    return DrawText(dc,sText, rect, wxALIGN_TOP | wxALIGN_LEFT, true, false, true, false);
+}
+
+wxSize uiRect::DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int nAlign, bool bWrap, bool bDraw, bool bClip, bool bClippingRegion)
 {
 
-    if(bDraw && m_bClip)
+    if(bDraw && bClippingRegion)
         dc.SetClippingRegion(rect);
 
     wxString sOutput;
@@ -355,7 +360,7 @@ wxSize uiRect::DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int 
     {
        // dc.DrawRectangle(rect);
         dc.DrawLabel(sOutput,rect,nAlign);
-        if(m_bClip)
+        if(bClippingRegion)
             dc.DestroyClippingRegion();
     }
 

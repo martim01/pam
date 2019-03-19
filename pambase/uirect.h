@@ -251,6 +251,7 @@ class PAMBASE_IMPEXPORT uiRect
 
         void Pad(unsigned long nHorizontal, unsigned long nVertical);
 
+        static wxSize GetSizeOfText(wxDC& dc, const wxString& sText, const wxRect& rect);
 
         wxSize GetSize() const;
 
@@ -280,7 +281,7 @@ class PAMBASE_IMPEXPORT uiRect
         *   @param bClip whether to clip the text if it does not fix
         *   @return <i>wxSize</i> returns the height (and width) in pixels that the text will take up
         **/
-        wxSize DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int nAlign, bool bWrap=true, bool bDraw=true, bool bClip=true);
+        static wxSize DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int nAlign, bool bWrap=true, bool bDraw=true, bool bClip=true, bool bClippingRegion=true);
 
         ///< @brief Creates the text rect (which is slightly smaller than the enclosing rect
         void SetTextRect();

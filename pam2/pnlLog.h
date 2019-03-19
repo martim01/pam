@@ -1,7 +1,8 @@
 #ifndef PNLLOG_H
 #define PNLLOG_H
 #include <list>
-#include "wxtouchscreenhtml.h"
+#include "wmlistadv.h"
+
 
 //(*Headers(pnlLog)
 #include <wx/panel.h>
@@ -20,10 +21,7 @@ class pnlLog: public wxPanel
 
 		void SetLogControl(pnlLogControl* pCtrl);
 
-		//(*Declarations(pnlLog)
-		wxTouchScreenHtml* m_phtmlLog;
-		//*)
-
+        wmListAdv* m_pLogList;
 
 
 	protected:
@@ -31,10 +29,6 @@ class pnlLog: public wxPanel
         void OnLog(wmLogEvent& event);
         void Log(wxString sLogEntry);
         friend class pnlLogControl;
-
-		//(*Identifiers(pnlLog)
-		static const long ID_HTMLWINDOW1;
-		//*)
 
 		void Home();
 		void End();
@@ -45,16 +39,8 @@ class pnlLog: public wxPanel
 
 
 	private:
-	    void ShowLog();
-
-		//(*Handlers(pnlLog)
-		//		void OnlclLogColumnEndDrag(wxListEvent& event);
-		//*)
 
         long m_nPosition;
-
-        std::list<wxString> m_lstLog;
-        std::list<wxString> m_lstLogFiltered;
 
         pnlLogControl* m_pControl;
 
