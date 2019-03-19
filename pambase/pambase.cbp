@@ -185,6 +185,8 @@
 		<Unit filename="PamTaskScheduler.h" />
 		<Unit filename="PamUsageEnvironment.cpp" />
 		<Unit filename="PamUsageEnvironment.h" />
+		<Unit filename="advelement.cpp" />
+		<Unit filename="advelement.h" />
 		<Unit filename="aes67client.cpp" />
 		<Unit filename="aes67client.h" />
 		<Unit filename="aes67mediasession.cpp" />
@@ -305,6 +307,8 @@
 		<Unit filename="wmline.h" />
 		<Unit filename="wmlist.cpp" />
 		<Unit filename="wmlist.h" />
+		<Unit filename="wmlistadv.cpp" />
+		<Unit filename="wmlistadv.h" />
 		<Unit filename="wmlogevent.cpp" />
 		<Unit filename="wmlogevent.h" />
 		<Unit filename="wmslider.cpp" />

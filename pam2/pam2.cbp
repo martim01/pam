@@ -192,6 +192,8 @@
 		<Unit filename="dlgSequence.h" />
 		<Unit filename="dlgmask.cpp" />
 		<Unit filename="dlgmask.h" />
+		<Unit filename="logelement.cpp" />
+		<Unit filename="logelement.h" />
 		<Unit filename="networkcontrol.cpp" />
 		<Unit filename="networkcontrol.h" />
 		<Unit filename="nmos.cpp" />
