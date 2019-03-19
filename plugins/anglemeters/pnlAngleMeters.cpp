@@ -96,6 +96,7 @@ void pnlAngleMeters::CreateMeters()
             {
                 m_vMeters[i] = new AngleMeter(this, wxID_ANY, wxString::Format(wxT("Channel %lu"),i), -70.0, AngleMeter::MONO, i, wxPoint(x,y), wxSize(180,150));
                 m_vMeters[i]->SetInputChannels(m_nInputChannels);
+
                 m_vMonitor[i] = new wmButton(this, wxNewId(), wxT("Monitor"), wxPoint(x, y+155), wxSize(180, 35));
                 m_vMonitor[i]->SetBackgroundColour(wxColour(80,70,180));
                 m_vMonitor[i]->SetIntData(i);
@@ -157,6 +158,7 @@ void pnlAngleMeters::CreateMeters()
         m_vMeters[i]->SetMeterMSMode(m_pBuilder->ReadSetting(wxT("M3M6"),2));
         m_vMeters[i]->DisplayCurrentLevelAsText(m_pBuilder->ReadSetting(wxT("DisplayText_Current"),1));
         m_vMeters[i]->DisplayPeakLevelAsText(m_pBuilder->ReadSetting(wxT("DisplayText_Peak"),1));
+        m_vMeters[i]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlAngleMeters::OnLeftUp,0,this);
     }
     SetMode(m_pBuilder->ReadSetting(wxT("Mode"), wxT("BBC")));
     ColourMonitorButtons();

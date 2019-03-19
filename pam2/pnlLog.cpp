@@ -30,10 +30,7 @@ pnlLog::pnlLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	//*)
 
 
-	m_sTableStart = wxT("<table border=\"1\" width=\"100%\"><tr><td width=\"20%\"><b>Time</b></td><td width=\"80%\"><b>Message</b></td></tr>");
-	m_sTableEnd = wxT("<\table>");
-
-	m_phtmlLog->SetPage(m_sTableStart+m_sTableEnd);
+	m_phtmlLog->SetPage(wxEmptyString);
 
 	wmLog::Get()->SetTarget(this);
 	Connect(wxID_ANY,wxEVT_WMLOG,(wxObjectEventFunction)&pnlLog::OnLog);
@@ -55,35 +52,9 @@ void pnlLog::Log(wxString sLogEntry)
         cout << sLogEntry.mb_str() << endl;
     #endif // __WXDEBUG__
 
-    sLogEntry.Replace(wxT("\n"), wxT("<br>"));
+    m_lstLog.push_back(sLogEntry);
 
-    wxString sTab(wxT("<td>"));
-
-    if(sLogEntry.Find(wxT("**TESTS**")) != wxNOT_FOUND)
-    {
-        sLogEntry = sLogEntry.Mid(9);
-        sTab = wxT("<td bgcolor=\"#ffaaaa\">");
-    }
-
-    m_sTableMiddle << wxT("<tr><td>") << wxDateTime::UNow().Format(wxT("%H:%M:%S:%l")) << wxT("</td>") << sTab << sLogEntry << wxT("</td></tr>");
-
-    wxPoint pntView = m_phtmlLog->GetViewStart();
-
-    m_phtmlLog->Freeze();
-    m_phtmlLog->SetPage(m_sTableStart+m_sTableMiddle+m_sTableEnd);
-    m_phtmlLog->Thaw();
-
-
-    if(!m_bScrollLock)
-    {
-        m_phtmlLog->Refresh();
-        m_phtmlLog->Update();
-        m_phtmlLog->End();
-    }
-    else
-    {
-        m_phtmlLog->Scroll(pntView);
-    }
+    ShowLog();
 
 }
 
@@ -115,8 +86,7 @@ void pnlLog::ScrollLock(bool bLock)
 
 void pnlLog::Clear()
 {
-    m_sTableMiddle = wxEmptyString;
-    m_phtmlLog->SetPage(m_sTableStart+m_sTableMiddle+m_sTableEnd);
+    m_phtmlLog->SetPage(wxEmptyString  );
 }
 
 
@@ -127,3 +97,40 @@ void pnlLog::OnLog(wmLogEvent& event)
     Log(event.GetLogMessage());
 }
 
+
+void pnlLog::ShowLog()
+{
+    wxString sLog;
+    for(std::list<wxString>::iterator itLog = m_lstLog.begin(); itLog != m_lstLog.end(); ++itLog)
+    {
+        wxString sLogEntry(*itLog);
+
+        sLogEntry.Replace(wxT("\n"), wxT("<br>"));
+        wxString sTab(wxT("<p style='font-size: small'>"));
+
+        if(sLogEntry.Find(wxT("**TESTS**")) != wxNOT_FOUND)
+        {
+            sLogEntry = sLogEntry.Mid(9);
+            sTab = wxT("<p bgcolor=\"#ffaaaa\">");
+        }
+
+        sLog <<  sTab << wxDateTime::UNow().Format(wxT("%H:%M:%S:%l")) << wxT("&nbsp;&nbsp;&nbsp;") << sLogEntry << wxT("</p><hr>");
+    }
+    wxPoint pntView = m_phtmlLog->GetViewStart();
+
+    m_phtmlLog->Freeze();
+    m_phtmlLog->SetPage(sLog);
+    m_phtmlLog->Thaw();
+
+
+    if(!m_bScrollLock)
+    {
+        m_phtmlLog->Refresh();
+        m_phtmlLog->Update();
+        m_phtmlLog->End();
+    }
+    else
+    {
+        m_phtmlLog->Scroll(pntView);
+    }
+}

@@ -1,6 +1,6 @@
 #ifndef PNLLOG_H
 #define PNLLOG_H
-#include <vector>
+#include <list>
 #include "wxtouchscreenhtml.h"
 
 //(*Headers(pnlLog)
@@ -53,9 +53,9 @@ class pnlLog: public wxPanel
 
         long m_nPosition;
 
-        wxString m_sTableStart;
-        wxString m_sTableMiddle;
-        wxString m_sTableEnd;
+        std::list<wxString> m_lstLog;
+        std::list<wxString> m_lstLogFiltered;
+
         pnlLogControl* m_pControl;
 
         bool m_bScrollLock;

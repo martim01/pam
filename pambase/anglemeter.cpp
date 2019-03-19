@@ -28,6 +28,7 @@ AngleMeter::AngleMeter()
 
 AngleMeter::AngleMeter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, unsigned int nRouting, unsigned int nChannel, const wxPoint& pos, const wxSize& size) :
     pmControl(),
+    m_bSurround(false),
     m_dMax(0),
     m_nMeterDisplay(PEAK),
     m_nChannel(nChannel),

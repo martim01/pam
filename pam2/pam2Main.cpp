@@ -604,17 +604,20 @@ void pam2Dialog::ShowTestPanels()
 }
 
 
-void pam2Dialog::ShowLogPanel()
+void pam2Dialog::ShowLogPanel(bool bTests)
 {
     m_pswpMain->ChangeSelection(wxT("Log"));
 
-    m_plstOptions->Freeze();
-    m_plstOptions->Clear();
-    m_plstOptions->Thaw();
+    if(!bTests)
+    {
+        m_plstOptions->Freeze();
+        m_plstOptions->Clear();
+        m_plstOptions->Thaw();
 
-    m_pswpOptions->ChangeSelection(wxT("Log|Control"));
+        m_pswpOptions->ChangeSelection(wxT("Log|Control"));
 
-    m_pswpScreens->ChangeSelection(wxT("Options"));
+        m_pswpScreens->ChangeSelection(wxT("Options"));
+    }
 }
 
 void pam2Dialog::ShowHelpPanel()
@@ -774,6 +777,13 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
         {
             m_plstScreens->Enable((Settings::Get().Read(event.GetSection(), event.GetKey(), 0) == 0));
             m_plstOptions->Enable((Settings::Get().Read(event.GetSection(), event.GetKey(), 0) == 0));
+        }
+        if(event.GetKey() == wxT("ShowLog"))
+        {
+            if(event.GetValue(false))
+            {
+                ShowLogPanel(true);
+            }
         }
     }
     else if(event.GetSection() == wxT("NMOS"))

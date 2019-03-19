@@ -148,7 +148,7 @@ class pam2Dialog: public wxDialog
 
         void ShowSettingsPanel();
         void ShowTestPanels();
-        void ShowLogPanel();
+        void ShowLogPanel(bool bTests=false);
         void ShowHelpPanel();
 
         void RemoveOldFiles();

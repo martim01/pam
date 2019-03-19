@@ -17,6 +17,8 @@ class pnlTestOptions: public wxPanel
 		wmButton* m_pbtnLog;
 		//*)
 
+		wmButton* m_pbtnLogView;
+
 	protected:
 
 		//(*Identifiers(pnlTestOptions)
@@ -28,6 +30,7 @@ class pnlTestOptions: public wxPanel
 		//(*Handlers(pnlTestOptions)
 		void OnbtnLogClick(wxCommandEvent& event);
 		//*)
+		void OnbtnLogViewClick(wxCommandEvent& event);
 
 		DECLARE_EVENT_TABLE()
 };
