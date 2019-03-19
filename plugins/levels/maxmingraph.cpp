@@ -19,12 +19,21 @@ END_EVENT_TABLE()
  wxIMPLEMENT_DYNAMIC_CLASS(MaxMinGraph, pmControl);
 
 
-MaxMinGraph::MaxMinGraph(wxWindow *parent,LevelsBuilder* pBuilder, wxWindowID id, const wxPoint& pos, const wxSize& size) : pmControl(),
+MaxMinGraph::MaxMinGraph(int nChannel, wxWindow *parent,LevelsBuilder* pBuilder, wxWindowID id, const wxPoint& pos, const wxSize& size) : pmControl(),
+    m_nChannel(nChannel),
     m_pBuilder(pBuilder),
     m_dMaxRange(80.0),
-    m_dLastLevel(-80.0)
+    m_dLastLevel(-80.0),
+    m_dAmplitudeMax(0.0),
+    m_dAmplitudeMin(-70.0),
+    m_bOutOfRange(false)
 {
     Create(parent, id, pos, size);
+
+    if(m_pBuilder->IsLogActive() )
+    {
+        wmLog::Get()->Log(wxString::Format(wxT("**TESTS** Levels (Channel %d) - Meter Reset"), m_nChannel));
+    }
 }
 
 bool MaxMinGraph::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size)
@@ -104,6 +113,10 @@ void MaxMinGraph::OnPaint(wxPaintEvent& event)
     m_uiMax.Draw(dc, uiRect::BORDER_DOWN);
     m_uiMin.Draw(dc, uiRect::BORDER_DOWN);
     m_uiRange.Draw(dc, uiRect::BORDER_DOWN);
+
+    dc.SetPen(wxPen(*wxWHITE, 1, wxPENSTYLE_DOT));
+    dc.DrawLine(1, m_rectGraph.GetBottom()-1-(70+m_dAmplitudeMin)*m_dResolution, m_rectGraph.GetWidth()-2, m_rectGraph.GetBottom()-1-(70+m_dAmplitudeMin)*m_dResolution);
+    dc.DrawLine(1, m_rectGraph.GetBottom()-1-(70+m_dAmplitudeMax)*m_dResolution, m_rectGraph.GetWidth()-2, m_rectGraph.GetBottom()-1-(70+m_dAmplitudeMax)*m_dResolution);
 }
 
 void MaxMinGraph::OnSize(wxSizeEvent& event)
@@ -144,30 +157,65 @@ void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bCon
     m_uiRange.SetLabel(wxString::Format(wxT("%.1fdB"), dRange));
 
 
-    if(m_dCurrent != m_dLastLevel && m_pBuilder->ReadSetting(wxT("Monitor"),0) == 0)
+    switch(m_pBuilder->ReadSetting(wxT("Monitor"),0))
     {
-        if(m_pBuilder->IsLogActive())
-        {
-            wmLog::Get()->Log(wxString::Format(wxT("**TESTS** Levels - level changed from %.2fdB to %.2fdB"), m_dLastLevel, m_dCurrent));
-        }
-        m_uiCurrent.SetBackgroundColour(wxColour(255,100,100));
-    }
-    else
-    {
-        m_uiCurrent.SetBackgroundColour(wxColour(91,91,0));
-    }
+        case 0: //looking for any level change
+            if(m_dCurrent != m_dLastLevel)
+            {
+                if(m_pBuilder->IsLogActive())
+                {
+                    wmLog::Get()->Log(wxString::Format(wxT("**TESTS** Levels (Channel %d) - level changed from %.2fdB to %.2fdB"), m_nChannel, m_dLastLevel, m_dCurrent));
+                }
+                m_uiCurrent.SetBackgroundColour(wxColour(255,100,100));
+            }
+            else
+            {
+                m_uiCurrent.SetBackgroundColour(wxColour(91,91,0));
+            }
+            break;
+        case 1: //looking to see if range goes over a certain value
+            if(dRange > m_dMaxRange)
+            {
+                if(m_pBuilder->IsLogActive() && m_bOutOfRange == false)
+                {
+                    wmLog::Get()->Log(wxString::Format(wxT("**TESTS** Levels (Channel %d) - range %.2fdB > max set %.2fdB"), m_nChannel, dRange, m_dMaxRange));
+                    m_bOutOfRange = true;
+                }
 
-    if(dRange > m_dMaxRange && m_pBuilder->ReadSetting(wxT("Monitor"),0) == 1)
-    {
-        if(m_pBuilder->IsLogActive())
-        {
-            wmLog::Get()->Log(wxString::Format(wxT("**TESTS** Levels - range %.2fdB > max set %.2fdB"), dRange, m_dMaxRange));
-        }
-        m_uiRange.SetBackgroundColour(wxColour(255,100,100));
-    }
-    else
-    {
-        m_uiRange.SetBackgroundColour(wxColour(91,91,0));
+                m_uiRange.SetBackgroundColour(wxColour(255,100,100));
+            }
+            else
+            {
+                if(m_pBuilder->IsLogActive() && m_bOutOfRange == true)
+                {
+                    wmLog::Get()->Log(wxString::Format(wxT("**TESTS** Levels (Channel %d) - range %.2fdB < max set %.2fdB"), m_nChannel, dRange, m_dMaxRange));
+                    m_bOutOfRange = false;
+                }
+
+                m_uiRange.SetBackgroundColour(wxColour(91,91,0));
+            }
+            break;
+        case 2: //looking to see if value goes over the range from the set amplitude
+            if(m_dCurrent > m_dAmplitudeMax || m_dCurrent < m_dAmplitudeMin)
+            {
+                m_uiCurrent.SetBackgroundColour(wxColour(255,100,100));
+                if(m_pBuilder->IsLogActive() && m_bOutOfRange == false)
+                {
+                    wmLog::Get()->Log(wxString::Format(wxT("**TESTS** Levels (Channel %d) - level %.2fdB outside guide range [%.2fdB,%.2fdB]"), m_nChannel, m_dCurrent, m_dAmplitudeMin, m_dAmplitudeMax));
+                    m_bOutOfRange = true;
+                }
+
+            }
+            else
+            {
+                m_uiCurrent.SetBackgroundColour(wxColour(91,91,0));
+                if(m_pBuilder->IsLogActive() && m_bOutOfRange == true)
+                {
+                    wmLog::Get()->Log(wxString::Format(wxT("**TESTS** Levels (Channel %d) - level %.2fdB inside guide range [%.2fdB,%.2fdB]"), m_nChannel, m_dCurrent, m_dAmplitudeMin, m_dAmplitudeMax));
+                    m_bOutOfRange = false;
+                }
+
+            }
     }
 
     m_dLastLevel = m_dCurrent;
@@ -179,3 +227,16 @@ void MaxMinGraph::SetMaxRange(double dRange)
 {
     m_dMaxRange = dRange;
 }
+
+void MaxMinGraph::SetMaxAmplitude(double dAmplitude)
+{
+    m_dAmplitudeMax = dAmplitude;
+    Refresh();
+}
+
+void MaxMinGraph::SetMinAmplitude(double dAmplitude)
+{
+    m_dAmplitudeMin = dAmplitude;
+    Refresh();
+}
+

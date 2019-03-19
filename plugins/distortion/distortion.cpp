@@ -12,6 +12,7 @@ void CreateTestBuilder()
 wxString GetTestPluginName()
 {
     return wxT("Distortion");
+
 }
 
 

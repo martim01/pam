@@ -32,7 +32,7 @@ class MaxMinGraph : public pmControl
         *   @param validator not used - just here to have same structure as wxButton
         *   @param name not used - just here to have same structure as wxButton
         **/
-        MaxMinGraph(wxWindow *parent, LevelsBuilder* pBuilder,
+        MaxMinGraph(int nChannel, wxWindow *parent, LevelsBuilder* pBuilder,
                  wxWindowID id,
                  const wxPoint& pos = wxDefaultPosition,
                  const wxSize& size = wxDefaultSize);
@@ -60,6 +60,9 @@ class MaxMinGraph : public pmControl
 
         void SetMaxRange(double dRange);
 
+        void SetMaxAmplitude(double dAmplitude);
+        void SetMinAmplitude(double dAmplitude);
+
         /** @brief returns the default size of the button for sizers
         **/
         wxSize DoGetBestSize() const
@@ -81,6 +84,7 @@ class MaxMinGraph : public pmControl
         **/
         virtual void OnSize(wxSizeEvent& event);
 
+        int m_nChannel;
         LevelsBuilder* m_pBuilder;
         wxRect m_rectGraph;
         uiRect m_uiMax;
@@ -93,8 +97,11 @@ class MaxMinGraph : public pmControl
 
         double m_dMaxRange;
         double m_dLastLevel;
-
+        double m_dAmplitudeMax;
+        double m_dAmplitudeMin;
         double m_dResolution;
+
+        bool m_bOutOfRange;
 };
 
 

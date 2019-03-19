@@ -23,14 +23,14 @@ class pnlLevels: public wxPanel
 		pnlLevels(wxWindow* parent,LevelsBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pnlLevels();
 
-		//(*Declarations(pnlLevels)
 		wmList* m_plstMontor;
-		wmLabel* m_plbldB;
+		wmButton* m_pbtndB;
 		wmLabel* m_pLbl12;
 		wmSlider* m_pAmplitude;
 		wmButton* m_pbtnReset;
-		//*)
 
+		wmButton* m_pbtnRangedB;
+        wmSlider* m_pRange;
         void SetAudioData(const timedbuffer* pBuffer);
 		void ResetTest();
 
@@ -38,24 +38,23 @@ class pnlLevels: public wxPanel
 
 	protected:
 
-		//(*Identifiers(pnlLevels)
 		static const long ID_M_PLBL37;
 		static const long ID_M_PBTN1;
 		static const long ID_M_PLST1;
 		static const long ID_CUSTOM1;
 		static const long ID_M_PLBL9;
-		//*)
 
 	private:
 
-		//(*Handlers(pnlLevels)
 		void OnbtnResetClick(wxCommandEvent& event);
 		void OnlstMontorSelected(wxCommandEvent& event);
-		//*)
+        void OnbtndBClick(wxCommandEvent& event);
+        void OnbtnRangedBClick(wxCommandEvent& event);
 
 		void CreateGraphs(unsigned int nChannels);
 
 		void OnSliderMove(wxCommandEvent& event);
+		void OnRangeSliderMove(wxCommandEvent& event);
 
 		std::vector<MaxMinGraph*> m_vGraph;
 		std::vector<wmLabel*> m_vLabel;
