@@ -188,7 +188,7 @@ void pnlPeakCount::OnTimerLog(wxTimerEvent& event)
             int nTotal(m_vChannels[i]->SamplesSinceLastCheck());
             if(nTotal > 0)
             {
-                wmLog::Get()->Log(wxString::Format(wxT("**TESTS** PeakCount Ch%d %d samples over %.2fdB in last second"), i, nTotal, m_dLimit));
+                wmLog::Get()->Log(wxString::Format(wxT("PeakCount Ch%d %d samples over %.2fdB in last second"), i, nTotal, m_dLimit), wmLog::LOG_TEST_ALARM);
             }
         }
     }

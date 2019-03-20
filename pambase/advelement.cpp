@@ -250,7 +250,7 @@ void advElement::RefreshMe()
     }
 }
 
-void advElement::GrowMe(bool bGrow, bool bAnimate)
+void advElement::GrowMe(bool bGrow, bool bAnimate) const
 {
     if(m_pParent)
     {

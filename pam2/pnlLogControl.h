@@ -5,6 +5,7 @@
 #include "wmbutton.h"
 #include <wx/panel.h>
 //*)
+#include "wmlist.h"
 
 class pnlLog;
 
@@ -23,7 +24,7 @@ class pnlLogControl: public wxPanel
 		wmButton* m_ptbnClear;
 		wmButton* m_ptbnPageDown;
 		//*)
-
+        wmList* m_plstFilter;
 	protected:
 
 	    friend class pnlLog;
@@ -49,6 +50,8 @@ class pnlLogControl: public wxPanel
 		void OnbtnScrollClick(wxCommandEvent& event);
 		void OntbnClearClick(wxCommandEvent& event);
 		//*)
+
+		void OnlstFilterSelected(wxCommandEvent& event);
 
 		pnlLog* m_ppnlLog;
 		DECLARE_EVENT_TABLE()

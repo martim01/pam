@@ -113,7 +113,7 @@ void pnlDistortionChannel::RunTest()
        {
            if(m_pBuilder->IsLogActive())
            {
-               wmLog::Get()->Log(wxString::Format(wxT("**TESTS** Distortion Ch%d. Peaks=%d Distortion=%.2f%"), m_nChannel, fft.GetNumberOfPeaks(), dDistortion));
+               wmLog::Get()->Log(wxString::Format(wxT("Distortion Ch%d. Peaks=%d Distortion=%.2f%"), m_nChannel, fft.GetNumberOfPeaks(), dDistortion), wmLog::LOG_TEST_ALARM);
            }
        }
     //    if(fft.GetNumberOfPeaks() > 1)

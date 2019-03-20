@@ -29,6 +29,7 @@ pnlLog::pnlLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	m_pLogList->SetBackgroundColour(wxColour(100,100,180));
 	//*)
 
+    m_nFilter = 15;
 
 
 	wmLog::Get()->SetTarget(this);
@@ -44,29 +45,6 @@ pnlLog::~pnlLog()
 void pnlLog::SetLogControl(pnlLogControl* pControl)
 {
     m_pControl = pControl;
-}
-void pnlLog::Log(wxString sLogEntry)
-{
-    #ifdef __WXDEBUG__
-        cout << sLogEntry.mb_str() << endl;
-    #endif // __WXDEBUG__
-
-    wxClientDC dc(this);
-    dc.SetFont(m_pLogList->GetFont());
-
-    bool bTest(false);
-    if(sLogEntry.Find(wxT("**TESTS**")) != wxNOT_FOUND)
-    {
-        sLogEntry = sLogEntry.Mid(9);
-        bTest = true;
-    }
-
-    m_pLogList->AddElement(new LogElement(dc, GetClientSize().x, sLogEntry, bTest));
-    //m_pLogList->Refresh();
-    if(!m_bScrollLock)
-    {
-        End();
-    }
 }
 
 
@@ -105,7 +83,36 @@ void pnlLog::Clear()
 
 void pnlLog::OnLog(wmLogEvent& event)
 {
-    Log(event.GetLogMessage());
+    #ifdef __WXDEBUG__
+        cout << event.GetLogMessage().mb_str() << endl;
+    #endif // __WXDEBUG__
+
+    wxClientDC dc(this);
+    dc.SetFont(m_pLogList->GetFont());
+
+    bool bTest(false);
+
+
+    LogElement* pElement(new LogElement(dc, GetClientSize().x, event.GetLogMessage(), event.GetLogType()));
+    m_pLogList->AddElement(pElement);
+    pElement->Filter(m_nFilter);
+    m_pLogList->Refresh();
+
+    //m_pLogList->Refresh();
+    if(!m_bScrollLock)
+    {
+        End();
+    }
 }
 
 
+void pnlLog::Filter(int nFilter)
+{
+    m_pLogList->Freeze();
+    for(list<advElement*>::const_iterator itElement = m_pLogList->GetElementBegin(); itElement != m_pLogList->GetElementEnd(); ++itElement)
+    {
+        dynamic_cast<LogElement*>((*itElement))->Filter(nFilter);
+    }
+    m_pLogList->Thaw();
+    m_pLogList->Refresh();
+}

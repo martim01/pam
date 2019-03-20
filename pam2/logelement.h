@@ -6,7 +6,7 @@ class  LogElement : public advElement
 {
     public:
 
-        LogElement(wxDC& dc, unsigned int nWidth, const wxString& sMessage, bool bTest);
+        LogElement(wxDC& dc, unsigned int nWidth, const wxString& sMessage, int nTest);
         virtual ~LogElement(){}
 
         virtual void Destroy();
@@ -14,10 +14,12 @@ class  LogElement : public advElement
         virtual void SelectSubElement(size_t nSub);
         void EnableSubElement(size_t nSub, bool bEnable);
 
-        bool IsTestMessage()
+        int GetMessageType() const
         {
-            return m_bTest;
+            return m_nType;
         }
+
+        void Filter(int nFilter) const;
 
     protected:
 
@@ -31,7 +33,7 @@ class  LogElement : public advElement
         virtual void ElementMoved();
         static const unsigned int COLUMN_TIME = 100;
         unsigned long m_nHeight;
-        bool m_bTest;
+        int m_nType;
 };
 
 

@@ -32,7 +32,7 @@ MaxMinGraph::MaxMinGraph(int nChannel, wxWindow *parent,LevelsBuilder* pBuilder,
 
     if(m_pBuilder->IsLogActive() )
     {
-        wmLog::Get()->Log(wxString::Format(wxT("**TESTS** Levels (Channel %d) - Meter Reset"), m_nChannel));
+        wmLog::Get()->Log(wxString::Format(wxT("Levels (Channel %d) - Meter Reset"), m_nChannel), wmLog::LOG_TEST_INFO);
     }
 }
 
@@ -164,7 +164,7 @@ void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bCon
             {
                 if(m_pBuilder->IsLogActive())
                 {
-                    wmLog::Get()->Log(wxString::Format(wxT("**TESTS** Levels (Channel %d) - level changed from %.2fdB to %.2fdB"), m_nChannel, m_dLastLevel, m_dCurrent));
+                    wmLog::Get()->Log(wxString::Format(wxT("Levels (Channel %d) - level changed from %.2fdB to %.2fdB"), m_nChannel, m_dLastLevel, m_dCurrent), wmLog::LOG_TEST_ALARM);
                 }
                 m_uiCurrent.SetBackgroundColour(wxColour(255,100,100));
             }
@@ -178,7 +178,7 @@ void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bCon
             {
                 if(m_pBuilder->IsLogActive() && m_bOutOfRange == false)
                 {
-                    wmLog::Get()->Log(wxString::Format(wxT("**TESTS** Levels (Channel %d) - range %.2fdB > max set %.2fdB"), m_nChannel, dRange, m_dMaxRange));
+                    wmLog::Get()->Log(wxString::Format(wxT("Levels (Channel %d) - range %.2fdB > max set %.2fdB"), m_nChannel, dRange, m_dMaxRange), wmLog::LOG_TEST_ALARM);
                     m_bOutOfRange = true;
                 }
 
@@ -188,7 +188,7 @@ void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bCon
             {
                 if(m_pBuilder->IsLogActive() && m_bOutOfRange == true)
                 {
-                    wmLog::Get()->Log(wxString::Format(wxT("**TESTS** Levels (Channel %d) - range %.2fdB < max set %.2fdB"), m_nChannel, dRange, m_dMaxRange));
+                    wmLog::Get()->Log(wxString::Format(wxT("Levels (Channel %d) - range %.2fdB < max set %.2fdB"), m_nChannel, dRange, m_dMaxRange), wmLog::LOG_TEST_OK);
                     m_bOutOfRange = false;
                 }
 
@@ -201,7 +201,7 @@ void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bCon
                 m_uiCurrent.SetBackgroundColour(wxColour(255,100,100));
                 if(m_pBuilder->IsLogActive() && m_bOutOfRange == false)
                 {
-                    wmLog::Get()->Log(wxString::Format(wxT("**TESTS** Levels (Channel %d) - level %.2fdB outside guide range [%.2fdB,%.2fdB]"), m_nChannel, m_dCurrent, m_dAmplitudeMin, m_dAmplitudeMax));
+                    wmLog::Get()->Log(wxString::Format(wxT("Levels (Channel %d) - level %.2fdB outside guide range [%.2fdB,%.2fdB]"), m_nChannel, m_dCurrent, m_dAmplitudeMin, m_dAmplitudeMax), wmLog::LOG_TEST_ALARM);
                     m_bOutOfRange = true;
                 }
 
@@ -211,7 +211,7 @@ void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bCon
                 m_uiCurrent.SetBackgroundColour(wxColour(91,91,0));
                 if(m_pBuilder->IsLogActive() && m_bOutOfRange == true)
                 {
-                    wmLog::Get()->Log(wxString::Format(wxT("**TESTS** Levels (Channel %d) - level %.2fdB inside guide range [%.2fdB,%.2fdB]"), m_nChannel, m_dCurrent, m_dAmplitudeMin, m_dAmplitudeMax));
+                    wmLog::Get()->Log(wxString::Format(wxT("Levels (Channel %d) - level %.2fdB inside guide range [%.2fdB,%.2fdB]"), m_nChannel, m_dCurrent, m_dAmplitudeMin, m_dAmplitudeMax), wmLog::LOG_TEST_OK);
                     m_bOutOfRange = false;
                 }
 

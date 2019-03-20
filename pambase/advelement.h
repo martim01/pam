@@ -187,7 +187,7 @@ class PAMBASE_IMPEXPORT advElement : public wxEvtHandler
         static const unsigned int ELEMENT_ENABLED = 1;
         void RefreshMe();
         void ResizeMe();
-        void GrowMe(bool bGrow, bool bAnimate=true);
+        void GrowMe(bool bGrow, bool bAnimate=true) const;
         virtual bool SubElementDown(const wxPoint& pnt)=0;
         virtual bool SubElementUp(const wxPoint& pnt, bool bIn)=0;
         virtual bool SubElementMove(const wxPoint& pnt)=0;

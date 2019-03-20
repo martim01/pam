@@ -687,9 +687,10 @@ void wmListAdv::Draw(wxDC& dc, const std::list<advElement*>::iterator& itTop)
     if(m_lstElements.empty() == false)
     {
         unsigned int nColumn(0);
+        unsigned int nElements(0);
         for(list<advElement*>::iterator itButton = itTop; itButton != m_lstElements.end(); ++itButton)
         {
-
+            ++nElements;
             DrawElement(dc, itButton);
 
             //only draw to the end of the screen...
@@ -699,9 +700,12 @@ void wmListAdv::Draw(wxDC& dc, const std::list<advElement*>::iterator& itTop)
                 break;
             }
         }
-    }
 
-    m_uiScroll.Draw(dc, uiRect::BORDER_UP);
+        double dPosition = static_cast<double>(nElements)/static_cast<double>(m_lstElements.size());
+        dPosition *= static_cast<double>(GetClientSize().y);
+        m_uiScroll.SetHeight(dPosition);
+        m_uiScroll.Draw(dc, uiRect::BORDER_UP);
+    }
 }
 
 void wmListAdv::DrawElement(wxDC& dc, const std::list<advElement*>::iterator& itButton)

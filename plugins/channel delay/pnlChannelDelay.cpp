@@ -177,7 +177,7 @@ void pnlChannelDelay::OnOffsetDone(wxCommandEvent& event)
 
     if(m_pBuilder->IsLogActive())
     {
-        wmLog::Get()->Log(wxString::Format(wxT("**TESTS** Channel Delay %dms"), event.GetInt()));
+        wmLog::Get()->Log(wxString::Format(wxT("Channel Delay %dms"), event.GetInt()), wmLog::LOG_TEST_INFO);
     }
 
 }

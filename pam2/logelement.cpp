@@ -1,8 +1,9 @@
 #include "logelement.h"
 #include <wx/dc.h>
 #include <wx/log.h>
+#include "wmlogevent.h"
 
-LogElement::LogElement(wxDC& dc, unsigned int nWidth, const wxString& sMessage, bool bTest) : m_bTest(bTest)
+LogElement::LogElement(wxDC& dc, unsigned int nWidth, const wxString& sMessage, int nType) : m_nType(nType)
 {
     wxSize sz = uiRect::GetSizeOfText(dc, sMessage, wxRect(0,0,nWidth-COLUMN_TIME, 25));
 
@@ -11,10 +12,11 @@ LogElement::LogElement(wxDC& dc, unsigned int nWidth, const wxString& sMessage, 
     CreateHitRects();
     m_mHitRects[1].SetLabel(sMessage);
 
-    SetMinSize(sz.x, m_nHeight);
-    SetMaxSize(sz.x, m_nHeight);
+    SetMinSize(nWidth, -1);
+    SetMaxSize(nWidth, m_nHeight);
 
     m_rectEnclosing = wxRect(0, 0, nWidth, m_nHeight);
+
 }
 
 
@@ -72,20 +74,27 @@ void LogElement::CreateHitRects()
     m_mHitRects[0].SetLabel(wxDateTime::UNow().Format(wxT("%H:%M:%S:%l")));
     m_mHitRects[0].SetTextAlign(wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
 
-    if(!m_bTest)
+    switch(m_nType)
     {
-        m_mHitRects[0].SetBackgroundColour(*wxBLACK);
-        m_mHitRects[1].SetBackgroundColour(*wxBLACK);
-    }
-    else
-    {
-        m_mHitRects[0].SetBackgroundColour(wxColour(255,100,100));
-        m_mHitRects[1].SetBackgroundColour(wxColour(255,100,100));
+        case wmLog::LOG_SYSTEM:
+            m_mHitRects[0].SetBackgroundColour(*wxBLACK);
+            m_mHitRects[1].SetBackgroundColour(*wxBLACK);
+            break;
+        case wmLog::LOG_TEST_INFO:
+            m_mHitRects[0].SetBackgroundColour(wxColour(100,100,255));
+            m_mHitRects[1].SetBackgroundColour(wxColour(100,100,255));
+            break;
+        case wmLog::LOG_TEST_ALARM:
+            m_mHitRects[0].SetBackgroundColour(wxColour(255,100,100));
+            m_mHitRects[1].SetBackgroundColour(wxColour(255,100,100));
+            break;
+        case wmLog::LOG_TEST_OK:
+            m_mHitRects[0].SetBackgroundColour(wxColour(100,255,100));
+            m_mHitRects[1].SetBackgroundColour(wxColour(100,255,100));
+            break;
     }
     m_mHitRects[1].SetWidth(m_rectEnclosing.GetWidth()-COLUMN_TIME);
-
     m_mHitRects[1].SetTextAlign(wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
-
 
 }
 
@@ -96,3 +105,14 @@ void LogElement::ElementMoved()
 }
 
 
+void LogElement::Filter(int nFilter) const
+{
+    if((nFilter&m_nType))
+    {
+        GrowMe(true, false);
+    }
+    else
+    {
+        GrowMe(false, false);
+    }
+}

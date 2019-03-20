@@ -16,7 +16,7 @@ public:
     *   @param commandType should be wxEVT_NI
     *   @param id the ID of the button list control
     **/
-    wmLogEvent(const wxString& sDevice, const wxString& sMessage, bool bDebug=false);
+    wmLogEvent(const wxString& sDevice, const wxString& sMessage, int nType, bool bDebug=false);
 
     wmLogEvent() : wxCommandEvent(){}
 
@@ -38,6 +38,7 @@ public:
     const wxString& GetDevice() const;
     const wxString& GetLogMessage() const;
     bool IsDebug() const;
+    int GetLogType() const;
 
     wxDECLARE_DYNAMIC_CLASS(wmLogEvent);
 
@@ -57,10 +58,11 @@ private:
 class PAMBASE_IMPEXPORT wmLog : public wxEvtHandler
 {
     public:
+        enum {LOG_SYSTEM=1, LOG_TEST_INFO=2, LOG_TEST_ALARM=4, LOG_TEST_OK=8};
         static wmLog* Get();
         void SetTarget(wxEvtHandler* pHandler);
-        void Log(wxString sDevice, wxString sMessage, bool bSend=true);
-        void Log(const wxString& sMessage);
+        void Log(wxString sDevice, wxString sMessage, int nType=LOG_SYSTEM, bool bSend=true);
+        void Log(const wxString& sMessage, int nType=LOG_SYSTEM);
 
 
     private:

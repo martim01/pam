@@ -28,10 +28,10 @@ void wmLog::SetTarget(wxEvtHandler* pHandler)
     }
 }
 
-void wmLog::Log(wxString sDevice, wxString sMessage, bool bSend)
+void wmLog::Log(wxString sDevice, wxString sMessage, int nType, bool bSend)
 {
     wxMutexLocker ml(m_mutex);
-    wmLogEvent* plge = new wmLogEvent(sDevice, sMessage, false);
+    wmLogEvent* plge = new wmLogEvent(sDevice, sMessage, nType, false);
     if(bSend == true)
     {
         if(m_pHandler)
@@ -73,9 +73,9 @@ void wmLog::OpenLogFile(bool bOpen)
 }
 
 
-void wmLog::Log(const wxString& sMessage)
+void wmLog::Log(const wxString& sMessage, int nType)
 {
-    Log(wxEmptyString, sMessage, true);
+    Log(wxEmptyString, sMessage, nType, true);
 }
 
 wmLog::~wmLog()
@@ -112,13 +112,13 @@ wmLogEvent::wmLogEvent(const wmLogEvent& event) : wxCommandEvent(event)
     m_bDebug = event.IsDebug();
 }
 
-wmLogEvent::wmLogEvent(const wxString& sDevice, const wxString& sMessage, bool bDebug) : wxCommandEvent(wxEVT_WMLOG,0),
+wmLogEvent::wmLogEvent(const wxString& sDevice, const wxString& sMessage, int nType, bool bDebug) : wxCommandEvent(wxEVT_WMLOG,0),
 m_dtTimestamp(wxDateTime::Now()),
 m_sDevice(sDevice.c_str()),
 m_sMessage(sMessage.c_str()),
 m_bDebug(bDebug)
 {
-
+    SetInt(nType);
 }
 
 const wxDateTime& wmLogEvent::GetTimestamp() const
@@ -141,3 +141,7 @@ bool wmLogEvent::IsDebug() const
     return m_bDebug;
 }
 
+int wmLogEvent::GetLogType() const
+{
+    return GetInt();
+}

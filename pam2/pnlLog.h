@@ -21,13 +21,13 @@ class pnlLog: public wxPanel
 
 		void SetLogControl(pnlLogControl* pCtrl);
 
-        wmListAdv* m_pLogList;
+        void Filter(int nFilter);
 
 
 	protected:
 
+        wmListAdv* m_pLogList;
         void OnLog(wmLogEvent& event);
-        void Log(wxString sLogEntry);
         friend class pnlLogControl;
 
 		void Home();
@@ -41,7 +41,7 @@ class pnlLog: public wxPanel
 	private:
 
         long m_nPosition;
-
+        int m_nFilter;
         pnlLogControl* m_pControl;
 
         bool m_bScrollLock;
