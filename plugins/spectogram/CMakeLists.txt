@@ -29,5 +29,8 @@ target_link_libraries(spectogram pamfft)
 
 set_target_properties(spectogram PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/monitor")
 
-
+#linux specific
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	install(TARGETS spectogram LIBRARY DESTINATION /usr/lib/pam2/monitor)
+endif()
 		

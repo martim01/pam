@@ -25,5 +25,8 @@ target_link_libraries(lissajou pambase)
 
 set_target_properties(lissajou PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/monitor")
 
-
+#linux specific
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	install(TARGETS lissajou LIBRARY DESTINATION /usr/lib/pam2/monitor)
+endif()
 		

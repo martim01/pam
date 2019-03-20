@@ -34,5 +34,8 @@ target_link_libraries(pamlevel pambase)
 
 set_target_properties(pamlevel PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../lib/")
 
-
+#linux specific
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	install(TARGETS pamlevel LIBRARY DESTINATION /usr/lib/pam2)
+endif()
 		

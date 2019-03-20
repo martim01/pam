@@ -25,5 +25,8 @@ target_link_libraries(waveform pambase)
 
 set_target_properties(waveform PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/monitor")
 
-
+#linux specific
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	install(TARGETS waveform LIBRARY DESTINATION /usr/lib/pam2/monitor)
+endif()
 		

@@ -26,4 +26,7 @@ target_link_libraries(record pambase)
 set_target_properties(record PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/test")
 
 
-		
+#linux specific
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	install(TARGETS record LIBRARY DESTINATION /usr/lib/pam2/monitor)
+endif()		

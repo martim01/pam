@@ -25,5 +25,8 @@ target_link_libraries(polarscope pambase)
 
 set_target_properties(polarscope PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/monitor")
 
-
+#linux specific
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	install(TARGETS polarscope LIBRARY DESTINATION /usr/lib/pam2/monitor)
+endif()
 		

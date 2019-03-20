@@ -53,7 +53,9 @@ endif()
 target_link_libraries(pam2 ${wxWidgets_LIBRARIES})
 target_link_libraries(pam2 pambase)
 
-set_target_properties(pam2 PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../bin/")
+set_target_properties(pam2 PROPERTIES RUNTIME_OUTPUT_DIRECTORY "../../bin/")
 
-
-		
+#linux specific
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+install(TARGETS pam2 RUNTIME DESTINATION /usr/bin)
+endif()

@@ -25,5 +25,8 @@ target_link_libraries(radar pambase)
 
 set_target_properties(radar PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/monitor")
 
-
+#linux specific
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	install(TARGETS radar LIBRARY DESTINATION /usr/lib/pam2/monitor)
+endif()
 		

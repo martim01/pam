@@ -27,5 +27,8 @@ target_link_libraries(channeldelay pamfft)
 
 set_target_properties(channeldelay PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/test")
 
-
+#linux specific
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	install(TARGETS channeldelay LIBRARY DESTINATION /usr/lib/pam2/test)
+endif()
 		

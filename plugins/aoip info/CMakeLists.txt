@@ -25,5 +25,8 @@ target_link_libraries(aoipinfo pambase)
 
 set_target_properties(aoipinfo PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/monitor")
 
-
+#linux specific
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	install(TARGETS aoipinfo LIBRARY DESTINATION /usr/lib/pam2/monitor)
+endif()
 		

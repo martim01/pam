@@ -25,5 +25,8 @@ target_link_libraries(scope pambase)
 
 set_target_properties(scope PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/monitor")
 
-
+#linux specific
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	install(TARGETS scope LIBRARY DESTINATION /usr/lib/pam2/monitor)
+endif()
 		

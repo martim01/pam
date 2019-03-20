@@ -29,5 +29,8 @@ target_link_libraries(distortion pamfft)
 
 set_target_properties(distortion PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/test")
 
-
+#linux specific
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	install(TARGETS distortion LIBRARY DESTINATION /usr/lib/pam2/test)
+endif()
 		

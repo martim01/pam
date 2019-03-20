@@ -30,4 +30,7 @@ target_link_libraries(lineup pamfft)
 set_target_properties(lineup PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/test")
 
 
-		
+#linux specific
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	install(TARGETS linueup LIBRARY DESTINATION /usr/lib/pam2/test)
+endif()	

@@ -25,5 +25,8 @@ target_link_libraries(peaklog pambase)
 
 set_target_properties(peaklog PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/test")
 
-
+#linux specific
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	install(TARGETS peaklog LIBRARY DESTINATION /usr/lib/pam2/monitor)
+endif()
 		

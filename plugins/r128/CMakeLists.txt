@@ -28,4 +28,7 @@ target_link_libraries(r128 pamlevel)
 set_target_properties(r128 PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/monitor")
 
 
-		
+#linux specific
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	install(TARGETS r128 LIBRARY DESTINATION /usr/lib/pam2/monitor)
+endif()	

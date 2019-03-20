@@ -25,5 +25,8 @@ target_link_libraries(pamfft pambase)
 
 set_target_properties(pamfft PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../lib/")
 
-
+#linux specific
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	install(TARGETS pamfft LIBRARY DESTINATION /usr/lib/pam2)
+endif()
 		

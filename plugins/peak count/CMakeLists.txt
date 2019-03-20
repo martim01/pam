@@ -26,4 +26,7 @@ target_link_libraries(peakcount pambase)
 set_target_properties(peakcount PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/test")
 
 
-		
+#linux specific
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	install(TARGETS peakcount LIBRARY DESTINATION /usr/lib/pam2/monitor)
+endif()		
