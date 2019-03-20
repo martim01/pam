@@ -9,7 +9,7 @@ link_directories("../../lib")
 
 file(GLOB SOURCES "*.cpp")
 
-add_library(aoipinfo SHARED ${SOURCES})
+add_library(aoipinfo MODULE ${SOURCES})
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(aoipinfo PRIVATE ${flags})

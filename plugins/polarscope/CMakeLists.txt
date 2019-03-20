@@ -9,7 +9,7 @@ link_directories("../../lib")
 
 file(GLOB SOURCES "*.cpp")
 
-add_library(polarscope SHARED ${SOURCES})
+add_library(polarscope MODULE ${SOURCES})
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(polarscope PRIVATE ${flags})

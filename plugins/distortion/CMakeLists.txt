@@ -12,7 +12,7 @@ link_directories("../../lib")
 
 file(GLOB SOURCES "*.cpp")
 
-add_library(distortion SHARED ${SOURCES})
+add_library(distortion MODULE ${SOURCES})
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(distortion PRIVATE ${flags})

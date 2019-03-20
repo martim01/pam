@@ -9,7 +9,7 @@ link_directories("../../lib")
 
 file(GLOB SOURCES "*.cpp")
 
-add_library(record SHARED ${SOURCES})
+add_library(record MODULE ${SOURCES})
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(record PRIVATE ${flags})

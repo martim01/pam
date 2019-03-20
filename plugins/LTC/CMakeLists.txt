@@ -15,7 +15,7 @@ list(APPEND LTC_SOURCES  "../../external/libltc/decoder.c"
 						 "../../external/libltc/timecode.c")
 		
 
-add_library(LTC SHARED ${SOURCES} ${LTC_SOURCES} )
+add_library(LTC MODULE ${SOURCES} ${LTC_SOURCES} )
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(LTC PRIVATE ${flags})

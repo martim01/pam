@@ -9,7 +9,7 @@ link_directories("../../lib")
 
 file(GLOB SOURCES "*.cpp")
 
-add_library(meters SHARED ${SOURCES})
+add_library(meters MODULE ${SOURCES})
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(meters PRIVATE ${flags})

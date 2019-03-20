@@ -9,7 +9,7 @@ link_directories("../../lib")
 
 file(GLOB SOURCES "*.cpp")
 
-add_library(waveform SHARED ${SOURCES})
+add_library(waveform MODULE ${SOURCES})
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(waveform PRIVATE ${flags})
@@ -23,7 +23,7 @@ include(${wxWidgets_USE_FILE})
 target_link_libraries(waveform ${wxWidgets_LIBRARIES})
 target_link_libraries(waveform pambase)
 
-set_target_properties(waveform PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../lib/monitor")
+set_target_properties(waveform PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/monitor")
 
 
 		

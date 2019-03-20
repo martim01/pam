@@ -10,7 +10,7 @@ link_directories("../../lib")
 
 file(GLOB SOURCES "*.cpp")
 
-add_library(channeldelay SHARED ${SOURCES})
+add_library(channeldelay MODULE ${SOURCES})
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(channeldelay PRIVATE ${flags})
