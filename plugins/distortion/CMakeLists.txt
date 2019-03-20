@@ -25,6 +25,7 @@ include(${wxWidgets_USE_FILE})
 
 target_link_libraries(distortion ${wxWidgets_LIBRARIES})
 target_link_libraries(distortion pambase)
+target_link_libraries(distortion pamfft)
 
 set_target_properties(distortion PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/test")
 

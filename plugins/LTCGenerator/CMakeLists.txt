@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
-project(LTC LANGUAGES CXX)
+project(LTC LANGUAGES CXX C)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 include_directories("../../pambase/")
