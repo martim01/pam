@@ -59,8 +59,8 @@ cmake ..
 cmake --build .
 cmake --build . --target install
 ```
-* Edit /etc/ld.si.conf.d/libc.conf 
-* Add the line /usr/lib/pam2
+* Edit /etc/ld.so.conf.d/libc.conf 
+** Add the line /usr/lib/pam2
 * Reload the symbolic lins
 ```
 sudo ldconfig
