@@ -57,6 +57,12 @@ Codeblocks  http://www.codeblocks.org/
 cd {pam directory}/build
 cmake ..
 cmake --build .
+cmake --build . --target install
 ```
 
+### Setting Up
+
+PAM expects a few files to live in a specific directory
+* If it doesn't exist create a pam director in your home folder
+* Copy pam2.ini and ppmtypes.xml to this directory
 
