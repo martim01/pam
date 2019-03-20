@@ -57,6 +57,18 @@ Codeblocks  http://www.codeblocks.org/
 cd {pam directory}/build
 cmake ..
 cmake --build .
+cmake --build . --target install
+```
+* Edit /etc/ld.so.conf.d/libc.conf 
+** Add the line /usr/lib/pam2
+* Reload the symbolic lins
+```
+sudo ldconfig
 ```
 
+### Setting Up
+
+PAM expects a few files to live in a specific directory
+* If it doesn't exist create a pam director in your home folder
+* Copy pam2.ini and ppmtypes.xml to this directory
 
