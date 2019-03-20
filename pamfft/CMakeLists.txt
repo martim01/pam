@@ -3,8 +3,8 @@ project(pamfft LANGUAGES CXX C)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 include_directories("../pambase/")
-include_directories("../externak/kiss_fft130")
-include_directories("../externak/kiss_fft130/tools")
+include_directories("../external/kiss_fft130")
+include_directories("../external/kiss_fft130/tools")
 link_directories("../lib")
 
 

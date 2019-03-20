@@ -25,6 +25,7 @@ include(${wxWidgets_USE_FILE})
 
 target_link_libraries(lineup ${wxWidgets_LIBRARIES})
 target_link_libraries(lineup pambase)
+target_link_libraries(lineup pamfft)
 
 set_target_properties(lineup PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/test")
 
