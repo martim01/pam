@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
-project(LTC LANGUAGES CXX C)
+project(LTCGenerator LANGUAGES CXX C)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 include_directories("../../pambase/")
@@ -18,18 +18,18 @@ list(APPEND LTC_SOURCES  "../../external/libltc/decoder.c"
 add_library(LTC SHARED ${SOURCES} ${LTC_SOURCES} )
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
-target_compile_options(LTC PRIVATE ${flags})
-target_compile_definitions(LTC PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __WXGNU__ _generator_ _MSL_STDINT_H)
+target_compile_options(LTCGenerator PRIVATE ${flags})
+target_compile_definitions(LTCGenerator PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __WXGNU__ _generator_ _MSL_STDINT_H)
 
 #find external libraries
 find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
 
-target_link_libraries(LTC ${wxWidgets_LIBRARIES})
-target_link_libraries(LTC pambase)
+target_link_libraries(LTCGenerator ${wxWidgets_LIBRARIES})
+target_link_libraries(LTCGenerator pambase)
 
-set_target_properties(LTC PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/generator")
+set_target_properties(LTCGenerator PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/generator")
 
 
 		
