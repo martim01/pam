@@ -17,6 +17,7 @@
 /*.mp3
 *.xml
 *.txt
+*.ini
 /lib/*
 /bin/*
 *.gdb
