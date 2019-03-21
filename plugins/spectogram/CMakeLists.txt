@@ -31,6 +31,6 @@ set_target_properties(spectogram PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../l
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS spectogram LIBRARY DESTINATION /usr/lib/pam2/monitor)
+	install(TARGETS spectogram LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
 endif()
 		

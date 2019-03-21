@@ -28,5 +28,5 @@ set_target_properties(meters PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/m
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS meters LIBRARY DESTINATION /usr/lib/pam2/monitor)
+	install(TARGETS meters LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
 endif()		

@@ -27,6 +27,6 @@ set_target_properties(scope PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/mo
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS scope LIBRARY DESTINATION /usr/lib/pam2/monitor)
+	install(TARGETS scope LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
 endif()
 		

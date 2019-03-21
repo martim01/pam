@@ -31,7 +31,7 @@ set_target_properties(fft PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/moni
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS fft LIBRARY DESTINATION /usr/lib/pam2/monitor)
+	install(TARGETS fft LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
 endif()
 
 		

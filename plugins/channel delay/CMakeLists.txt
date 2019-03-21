@@ -29,6 +29,6 @@ set_target_properties(channeldelay PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../..
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS channeldelay LIBRARY DESTINATION /usr/lib/pam2/test)
+	install(TARGETS channeldelay LIBRARY DESTINATION /usr/local/lib/pam2/test)
 endif()
 		

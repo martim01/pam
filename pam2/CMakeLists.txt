@@ -57,5 +57,5 @@ set_target_properties(pam2 PROPERTIES RUNTIME_OUTPUT_DIRECTORY "../../bin/")
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-install(TARGETS pam2 RUNTIME DESTINATION /usr/bin)
+install(TARGETS pam2 RUNTIME DESTINATION /usr/local/bin)
 endif()

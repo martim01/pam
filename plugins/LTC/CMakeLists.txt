@@ -34,5 +34,5 @@ set_target_properties(LTC PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/test
 
 	#linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS LTC LIBRARY DESTINATION /usr/lib/pam2/monitor)
+	install(TARGETS LTC LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
 endif()	

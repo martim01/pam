@@ -30,5 +30,5 @@ set_target_properties(r128 PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/mon
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS r128 LIBRARY DESTINATION /usr/lib/pam2/monitor)
+	install(TARGETS r128 LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
 endif()	

@@ -34,5 +34,5 @@ set_target_properties(LTCGenerator PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../..
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS LTCGenerator LIBRARY DESTINATION /usr/lib/pam2/monitor)
+	install(TARGETS LTCGenerator LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
 endif()	

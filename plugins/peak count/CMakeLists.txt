@@ -28,5 +28,5 @@ set_target_properties(peakcount PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../li
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS peakcount LIBRARY DESTINATION /usr/lib/pam2/monitor)
+	install(TARGETS peakcount LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
 endif()		

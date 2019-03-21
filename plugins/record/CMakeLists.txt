@@ -28,5 +28,5 @@ set_target_properties(record PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/t
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS record LIBRARY DESTINATION /usr/lib/pam2/monitor)
+	install(TARGETS record LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
 endif()		

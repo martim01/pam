@@ -27,6 +27,6 @@ set_target_properties(anglemeters PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS anglemeters LIBRARY DESTINATION /usr/lib/pam2/monitor)
+	install(TARGETS anglemeters LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
 endif()
 		

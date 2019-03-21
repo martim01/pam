@@ -31,6 +31,6 @@ set_target_properties(distortion PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../l
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS distortion LIBRARY DESTINATION /usr/lib/pam2/test)
+	install(TARGETS distortion LIBRARY DESTINATION /usr/local/lib/pam2/test)
 endif()
 		

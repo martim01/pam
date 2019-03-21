@@ -27,6 +27,6 @@ set_target_properties(lissajou PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS lissajou LIBRARY DESTINATION /usr/lib/pam2/monitor)
+	install(TARGETS lissajou LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
 endif()
 		

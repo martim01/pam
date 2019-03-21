@@ -32,5 +32,5 @@ set_target_properties(lineup PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/t
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS lineup LIBRARY DESTINATION /usr/lib/pam2/test)
+	install(TARGETS lineup LIBRARY DESTINATION /usr/local/lib/pam2/test)
 endif()	
