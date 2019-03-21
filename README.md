@@ -1,6 +1,31 @@
 # pam
-Open Source Audio Monitoring Software designed for (but not limited to) a Raspberry Pi with touchscreen.
+Open Source Audio Monitoring Software designed for (but not limited to) a Raspberry Pi with touchscreen. 
+The application provides:
 
+* A number of useful audio monitoring tools, including:
+  * Digital meters of various flavours (BBC PPM, EBU, Nordic, VU etc)
+  * "Moving Coil" meters of various flavours
+  * Lissajou
+  * Spectrum Analyser
+  * R128 Loudness
+  * Scope
+* A number of audio test tools, including:
+  * Channel delay measurement
+  * Distortion measurements
+  * Level monitoring
+  * Peak Sample Count
+  * Recording of incoming audio
+  * LTC detection
+* An audio generator that can output audio from a number of sources, including:
+  * The input source
+  * A file
+  * A simple tone
+  * A tone sequence
+  * LTC
+  
+PAM can take in audio from a soundcard or Pi HAT or from an AES67 stream. There is both DNS-SD and SAP discovery of AES67 streams and also an NMOS version which complies to IS04/IS05.
+
+For more information please look at the help files contained in the __documents__ director
 ## Prerequisites
 
 ### Core libraries required
@@ -52,23 +77,18 @@ Codeblocks  http://www.codeblocks.org/
 * Build the workspace
 
 
-### To build using CMake
+### To build using CMake (currently on Linux only)
 ```
 cd {pam directory}/build
 cmake ..
 cmake --build .
 cmake --build . --target install
 ```
-* Edit /etc/ld.so.conf.d/libc.conf 
-** Add the line /usr/lib/pam2
-* Reload the symbolic lins
-```
-sudo ldconfig
-```
+This will install the executable __pam2__ in __/usr/local/bin__ and all necessary libraries in __/usr/local/lib/pam2__
 
 ### Setting Up
 
-PAM expects a few files to live in a specific directory
-* If it doesn't exist create a pam director in your home folder
-* Copy pam2.ini and ppmtypes.xml to this directory
+PAM expects a few files to live in a specific directory:
+* If it doesn't exist create a directory called __pam__ in your home directory.
+* Copy the contents of the __document__ directory to the __pam__ directory.
 
