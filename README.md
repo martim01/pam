@@ -25,7 +25,7 @@ The application provides:
   
 PAM can take in audio from a soundcard or Pi HAT or from an AES67 stream. There is both DNS-SD and SAP discovery of AES67 streams and also an NMOS version which complies to IS04/IS05.
 
-For more information please look at the help files contained in the __documents__ director
+For more information please look at the help files contained in the __documents__ directory
 ## Prerequisites
 
 ### Core libraries required
