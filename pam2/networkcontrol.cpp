@@ -291,7 +291,7 @@ bool NetworkControl::DeleteNetworking()
 
 void NetworkControl::GetCurrentSettings()
 {
-
+    m_mInterfaces.clear();
     //run ifconfig to get list of interfaces
 
     //run iwconfig interface to find out whether wireless and essid
@@ -306,31 +306,9 @@ void NetworkControl::GetCurrentSettings()
         {
             networkInterface anInterface;
             //if have inet entry then connected - else not
-            wxArrayString asOutput;
-            wxExecute(wxString::Format(wxT("sh -c \"ifconfig %s | grep netmask\""), asInterfaces[nLine].c_str()), asOutput);
-            if(asOutput.GetCount() != 0)
-            {
-                anInterface.bConnected = true;
-                anInterface.sAddress = asOutput[0].AfterFirst(wxT('t')).BeforeFirst(wxT('n'));
-                anInterface.sAddress.Trim().Trim(false);
-                wxString sMask = asOutput[0].AfterFirst(wxT('k')).BeforeFirst(wxT('b'));
-                sMask.Trim().Trim(false);
-                anInterface.nMask = ConvertAddressToMask(sMask);
 
-            }
 
-            wxArrayString asOutput2;
-            wxExecute(wxString::Format(wxT("sh -c \"iwconfig %s | grep ESSID\""),asInterfaces[nLine].c_str()), asOutput2);
-            if(asOutput2.GetCount() == 0 || asOutput2[0].Find(wxT("no wireless")) != wxNOT_FOUND)
-            {
-                anInterface.bWireless = false;
-            }
-            else
-            {
-                anInterface.bWireless = true;
-                anInterface.sEssid = asOutput2[0].AfterFirst(wxT('"')).BeforeFirst(wxT('"'));
-            }
-
+            CheckConnection(asInterfaces[nLine], anInterface);
             m_mInterfaces.insert(make_pair(asInterfaces[nLine], anInterface));
         }
     }
@@ -363,9 +341,42 @@ void NetworkControl::GetCurrentSettings()
     }
 }
 
+void NetworkControl::CheckConnection(const wxString& sInterface, networkInterface& anInterface)
+{
+    wxArrayString asOutput;
+    wxExecute(wxString::Format(wxT("sh -c \"ifconfig %s | grep netmask\""), sInterface.c_str()), asOutput);
+    if(asOutput.GetCount() != 0)
+    {
+        anInterface.bConnected = true;
+        anInterface.sAddress = asOutput[0].AfterFirst(wxT('t')).BeforeFirst(wxT('n'));
+        anInterface.sAddress.Trim().Trim(false);
+        wxString sMask = asOutput[0].AfterFirst(wxT('k')).BeforeFirst(wxT('b'));
+        sMask.Trim().Trim(false);
+        anInterface.nMask = ConvertAddressToMask(sMask);
+
+    }
+    wxArrayString asOutput2;
+    wxExecute(wxString::Format(wxT("sh -c \"iwconfig %s | grep ESSID\""),sInterface.c_str()), asOutput2);
+    if(asOutput2.GetCount() == 0 || asOutput2[0].Find(wxT("no wireless")) != wxNOT_FOUND)
+    {
+        anInterface.bWireless = false;
+    }
+    else
+    {
+        anInterface.bWireless = true;
+        anInterface.sEssid = asOutput2[0].AfterFirst(wxT('"')).BeforeFirst(wxT('"'));
+    }
+}
 #endif // __WXMSW__
 
-
+void NetworkControl::CheckConnection(const wxString& sInterface)
+{
+    map<wxString, networkInterface>::iterator itInterface = m_mInterfaces.find(sInterface);
+    if(itInterface != m_mInterfaces.end())
+    {
+        CheckConnection(itInterface->first, itInterface->second);
+    }
+}
 
 wxString NetworkControl::ConvertMaskToAddress(unsigned long nMask)
 {

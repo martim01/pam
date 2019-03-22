@@ -34,7 +34,7 @@ class NetworkControl
         std::map<wxString, networkInterface>::const_iterator GetInterfaceEnd();
         std::map<wxString, networkInterface>::const_iterator FindInterface(wxString sInterface);
 //        bool HasAdminRights();
-
+        void CheckConnection(const wxString& sInterface);
     protected:
         NetworkControl() : m_nNTEContext(0)
         {
@@ -42,7 +42,7 @@ class NetworkControl
         }
 
         void GetCurrentSettings();
-
+        void CheckConnection(const wxString& sInterface, networkInterface& anInterface);
         unsigned long m_nNTEContext;
 
 

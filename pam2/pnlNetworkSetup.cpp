@@ -2,7 +2,7 @@
 #include <wx/log.h>
 #include "networkcontrol.h"
 #include "dlgmask.h"
-
+#include "dlgWiFi.h"
 using namespace std;
 
 //(*InternalHeaders(pnlNetworkSetup)
@@ -116,7 +116,12 @@ pnlNetworkSetup::pnlNetworkSetup(wxWindow* parent,wxWindowID id,const wxPoint& p
 	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlNetworkSetup::OnbtnMaskClick);
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlNetworkSetup::OnlstInterfacesSelected);
 	//*)
+
+	m_pbtnScan  = new wmButton(Panel1, wxNewId(), _("Scan"), wxPoint(150,0), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
+    m_pbtnScan->Show(false);
+
 	Connect(ID_M_PBTN2, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&pnlNetworkSetup::OnbtnApplyClick);
+	Connect(m_pbtnScan->GetId(), wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&pnlNetworkSetup::OnbtnScanClick);
 
 
 	m_pbtnStaticDHCP->SetToggleLook(true, wxT("Static"), wxT("DHCP"), 40);
@@ -133,6 +138,10 @@ pnlNetworkSetup::pnlNetworkSetup(wxWindow* parent,wxWindowID id,const wxPoint& p
     m_pkbd->SetReturnString(wxT("-->|"));
 	SetSize(size);
 	SetPosition(pos);
+
+	m_timerRefresh.SetOwner(this, wxNewId());
+	m_timerRefresh.Start(5000);
+	Connect(m_timerRefresh.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&pnlNetworkSetup::OnTimerRefresh);
 
 
 
@@ -251,7 +260,6 @@ void pnlNetworkSetup::OnbtnMaskClick(wxCommandEvent& event)
 void pnlNetworkSetup::OnlstInterfacesSelected(wxCommandEvent& event)
 {
     m_sInterface = event.GetString();
-
     map<wxString, networkInterface>::const_iterator itInterface= NetworkControl::Get().FindInterface(event.GetString());
     if(itInterface != NetworkControl::Get().GetInterfaceEnd())
     {
@@ -259,6 +267,43 @@ void pnlNetworkSetup::OnlstInterfacesSelected(wxCommandEvent& event)
         m_ppnlAddress->SetValue(itInterface->second.sAddress);
         m_ppnlGateway->SetValue(itInterface->second.sGateway);
         m_pbtnMask->SetLabel(wxString::Format(wxT("/%d (%s)"), itInterface->second.nMask, NetworkControl::Get().ConvertMaskToAddress(itInterface->second.nMask)));
+
+        if(itInterface->second.bWireless)
+        {
+            if(itInterface->second.sEssid != wxEmptyString)
+            {
+                m_plblType->SetLabel(itInterface->second.sEssid);
+            }
+            else
+            {
+                m_plblType->SetLabel(wxT("WiFi"));
+            }
+            m_pbtnScan->Show(true);
+        }
+        else
+        {
+            m_plblType->SetLabel(wxT("Ethernet"));
+            m_pbtnScan->Show(false);
+        }
+    }
+    else
+    {
+        m_ppnlAddress->SetValue(wxEmptyString);
+        m_ppnlGateway->SetValue(wxEmptyString);
+        m_pbtnMask->SetLabel(wxEmptyString);
+        m_plblConnected->SetLabel(wxT("No Connection"));
+        m_plblConnected->SetBackgroundColour(wxColour(128,128,128));
+        m_plblType->SetLabel(wxEmptyString);
+    }
+    ShowConnectionDetails();
+}
+
+void pnlNetworkSetup::ShowConnectionDetails()
+{
+    NetworkControl::Get().CheckConnection(m_sInterface);    //refresh the connetion details
+    map<wxString, networkInterface>::const_iterator itInterface= NetworkControl::Get().FindInterface(m_sInterface);
+    if(itInterface != NetworkControl::Get().GetInterfaceEnd())
+    {
 
         if(itInterface->second.bConnected)
         {
@@ -282,18 +327,21 @@ void pnlNetworkSetup::OnlstInterfacesSelected(wxCommandEvent& event)
                 m_plblType->SetLabel(wxT("WiFi"));
             }
         }
-        else
-        {
-            m_plblType->SetLabel(wxT("Ethernet"));
-        }
     }
-    else
+}
+
+void pnlNetworkSetup::OnbtnScanClick(wxCommandEvent& event)
+{
+    dlgWiFi aDlg(NULL, m_sInterface);
+    if(aDlg.ShowModal() == wxID_OK)
     {
-        m_ppnlAddress->SetValue(wxEmptyString);
-        m_ppnlGateway->SetValue(wxEmptyString);
-        m_pbtnMask->SetLabel(wxEmptyString);
-        m_plblConnected->SetLabel(wxT("No Connection"));
-        m_plblConnected->SetBackgroundColour(wxColour(128,128,128));
-        m_plblType->SetLabel(wxEmptyString);
+        m_plstInterfaces->SelectButton(m_sInterface, true); //refresh the connection settings
     }
+
+}
+
+void pnlNetworkSetup::OnTimerRefresh(wxTimerEvent& event)
+{
+    NetworkControl::Get().CheckConnection(m_sInterface);    //refresh the connetion details
+    ShowConnectionDetails();
 }

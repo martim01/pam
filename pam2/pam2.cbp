@@ -190,6 +190,8 @@
 		<Unit filename="dlgPin.h" />
 		<Unit filename="dlgSequence.cpp" />
 		<Unit filename="dlgSequence.h" />
+		<Unit filename="dlgWiFi.cpp" />
+		<Unit filename="dlgWiFi.h" />
 		<Unit filename="dlgmask.cpp" />
 		<Unit filename="dlgmask.h" />
 		<Unit filename="logelement.cpp" />

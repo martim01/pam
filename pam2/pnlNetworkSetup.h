@@ -11,6 +11,7 @@
 #include "wmlist.h"
 //*)
 #include "wmipeditpnl.h"
+#include <wx/timer.h>
 
 class pnlNetworkSetup: public wxPanel
 {
@@ -39,6 +40,7 @@ class pnlNetworkSetup: public wxPanel
 		wmList* m_plstInterfaces;
 		//*)
 
+		wmButton* m_pbtnScan;
 	protected:
 
 		//(*Identifiers(pnlNetworkSetup)
@@ -75,9 +77,12 @@ class pnlNetworkSetup: public wxPanel
 		void OnlstSubnetSelected(wxCommandEvent& event);
 		void OnlstInterfacesSelected(wxCommandEvent& event);
 		//*)
+        void OnbtnScanClick(wxCommandEvent& event);
+        void OnTimerRefresh(wxTimerEvent& event);
+        void ShowConnectionDetails();
 
 		wxString m_sInterface;
-
+		wxTimer m_timerRefresh;
 		DECLARE_EVENT_TABLE()
 };
 
