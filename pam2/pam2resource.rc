@@ -1,7 +1,7 @@
 aaaa ICON "app.ico"
 
-#include "wx/msw/wx.rc"
-#include <wx/version.h>
+#include <wx/msw/wx.rc>
+//#include <wx/version.h>
 #include "version.h"
 
 1 VERSIONINFO

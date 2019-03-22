@@ -279,7 +279,7 @@ class PAMBASE_IMPEXPORT wmList : public pmControl
         void SetButtonData(size_t nIndex, void* pData);
 
         void SetButtonAuxillaryText(size_t nIndex, const wxString& sText);
-        wxString GetButtonAuxillaryText(size_t nIndex) const;
+        wxString GetButtonAuxillaryText(size_t nIndex);
 
 
         /** @brief enum to decide where to show a button - top, middle, button or simply onscreen

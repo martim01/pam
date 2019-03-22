@@ -42,7 +42,7 @@
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-Wl,--enable-auto-import,-Map=pam2d.map" />
-					<Add library="wxmsw30ud_gcc_wammacs" />
+					<Add library="wxmsw30ud_gcc_custom" />
 					<Add library="pambased" />
 					<Add library="portaudiod" />
 					<Add library="libcurl" />
@@ -87,7 +87,7 @@
 				<Linker>
 					<Add option="-s" />
 					<Add option="-Wl,--enable-auto-import,-Map=pam2.map" />
-					<Add library="wxmsw30u_gcc_wammacs" />
+					<Add library="wxmsw30u_gcc_custom" />
 					<Add library="portaudio" />
 					<Add library="pambase" />
 					<Add library="libcurl" />
@@ -206,8 +206,7 @@
 		<Unit filename="pam2Main.h" />
 		<Unit filename="pam2resource.rc">
 			<Option compilerVar="WINDRES" />
-			<Option target="Windows Debug" />
-			<Option target="Windows Release" />
+			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="pnlHelp.cpp" />
 		<Unit filename="pnlHelp.h" />

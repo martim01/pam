@@ -33,7 +33,7 @@
 				<Linker>
 					<Add option="-s" />
 					<Add option="-Wl,--enable-auto-import,-Map=pamfft.map" />
-					<Add library="wxmsw30u_gcc_wammacs" />
+					<Add library="wxmsw30u_gcc_custom" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 				<ExtraCommands>
@@ -66,7 +66,7 @@
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-Wl,--enable-auto-import,-Map=pamfft.map" />
-					<Add library="wxmsw30ud_gcc_wammacs" />
+					<Add library="wxmsw30ud_gcc_custom" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 			</Target>

@@ -286,7 +286,7 @@ multimap<wxString, wxString> Settings::GetInterfaces() const
         pAddresses = (IP_ADAPTER_ADDRESSES *) HeapAlloc(GetProcessHeap(), 0, outBufLen);
         if (pAddresses == NULL)
         {
-            return;
+            return multimap<wxString, wxString>();
         }
 
         dwRetVal = GetAdaptersAddresses(AF_INET, GAA_FLAG_INCLUDE_PREFIX, NULL, pAddresses, &outBufLen);

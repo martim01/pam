@@ -2370,7 +2370,7 @@ void wmList::SetButtonAuxillaryText(size_t nIndex, const wxString& sText)
     }
 }
 
-wxString wmList::GetButtonAuxillaryText(size_t nIndex) const
+wxString wmList::GetButtonAuxillaryText(size_t nIndex)
 {
     list<button*>::iterator itButton = GetButton(nIndex);
     if(itButton != m_lstButtons.end() && (*itButton))
