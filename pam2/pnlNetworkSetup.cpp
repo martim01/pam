@@ -332,16 +332,20 @@ void pnlNetworkSetup::ShowConnectionDetails()
 
 void pnlNetworkSetup::OnbtnScanClick(wxCommandEvent& event)
 {
+    m_timerRefresh.Stop();
     dlgWiFi aDlg(NULL, m_sInterface);
     if(aDlg.ShowModal() == wxID_OK)
     {
         m_plstInterfaces->SelectButton(m_sInterface, true); //refresh the connection settings
     }
-
+    m_timerRefresh.Start(5000);
 }
 
 void pnlNetworkSetup::OnTimerRefresh(wxTimerEvent& event)
 {
-    NetworkControl::Get().CheckConnection(m_sInterface);    //refresh the connetion details
-    ShowConnectionDetails();
+    if(IsShownOnScreen())
+    {
+        NetworkControl::Get().CheckConnection(m_sInterface);    //refresh the connetion details
+        ShowConnectionDetails();
+    }
 }

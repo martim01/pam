@@ -283,6 +283,58 @@ wxString NetworkControl::SetupNetworking(const wxString& sInterface, const wxStr
     return wxT("Could not read file");
 }
 
+void NetworkControl::ChangeWiFiNetwork(const wxString& sAccessPoint, const wxString& sPassword)
+{
+    wxTextFile configFile;
+    if(configFile.Open(wxT("/etc/wpa_supplicant/wpa_supplicant.conf")))
+    {
+        int nSsid(-1);
+        bool bPsk(false);
+        for(size_t i = 0; i < configFile.GetLineCount(); i++)
+        {
+            if(configFile.GetLine(i).Find(wxT("ssid=")) != wxNOT_FOUND)
+            {
+                nSsid = i;
+                configFile.GetLine(i) = configFile.GetLine(i).BeforeFirst(wxT('"');
+                configFile.GetLine(i) << sAccessPoint << wxT("\"");
+            }
+            if(configFile.GetLine(i).Find(wxT("psk=")) != wxNOT_FOUND)
+            {
+                bPsk = true;
+                configFile.GetLine(i) = configFile.GetLine(i).BeforeFirst(wxT('"');
+                configFile.GetLine(i) << sPassword << wxT("\"");
+            }
+        }
+        if(nSsid >= 0 && !bPsk)
+        {
+            configFile.InsertLine(wxString::Format(wxT("\tpsk=\"%s\"")), sPassword.c_str(), nSsid+1);
+        }
+        else if(nSsid == -1)
+        {
+            configFile.AddLine(wxT("network={"));
+            configFile.AddLine(wxString::Format(wxT("\tssid=\"%s\""), sAccessPoint.c_str());
+            configFile.AddLine(wxString::Format(wxT("\tpsk=\"%s\"")), sPassword.c_str());
+            configFile.AddLine(wxT("key"));
+            configFile.AddLine(wxT("}"));
+        }
+    }
+    std::ofstream outFile;
+    outFile.open("/etc/wpa_supplicant.conf", std::ofstream::out | std::ofstream::trunc);
+    if(outFile.is_open())
+    {
+        for(size_t i = 0; i < configFile.GetLineCount(); i++)
+        {
+            outFile << configFile.GetLine(i).mb_str() << std::endl;
+        }
+        outFile.close();
+        configFile.Close();
+    }
+    else
+    {
+        configFile.Close();
+    }
+}
+
 bool NetworkControl::DeleteNetworking()
 {
     return true;

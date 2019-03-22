@@ -30,6 +30,7 @@ class NetworkControl
         wxString ConvertMaskToAddress(unsigned long nMask);
         unsigned long ConvertAddressToMask(wxString sAddress);
 
+        void ChangeWiFiNetwork(const wxString& sAccessPoint, const wxString& sPassword);
         std::map<wxString, networkInterface>::const_iterator GetInterfaceBegin();
         std::map<wxString, networkInterface>::const_iterator GetInterfaceEnd();
         std::map<wxString, networkInterface>::const_iterator FindInterface(wxString sInterface);

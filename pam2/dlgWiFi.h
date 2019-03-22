@@ -6,6 +6,7 @@
 #include <wx/dialog.h>
 #include "wmedit.h"
 #include "wmlist.h"
+#include "wmlabel.h"
 
 class dlgWiFi : public wxDialog
 {
@@ -20,7 +21,7 @@ class dlgWiFi : public wxDialog
 		wmList* m_plstWiFi;
 		wmButton* m_pbtnSave;
 		//*)
-
+        wmLabel* m_plblPassword;
 		unsigned long m_nChannels;
 
 	protected:

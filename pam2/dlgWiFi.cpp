@@ -19,21 +19,25 @@ dlgWiFi::dlgWiFi(wxWindow* parent,const wxString& sWiFi, wxWindowID id,const wxP
 	SetFont(thisFont);
 	m_pKbd1 = new wmKeyboard(this, wxNewId(), wxPoint(10,190), wxDefaultSize, 0, 0);
 	m_pKbd1->SetForegroundColour(wxColour(255,255,255));
-	m_pedtPassword = new wmEdit(this, wxNewId(), wxEmptyString, wxPoint(10,140), wxSize(600,40), 0, wxDefaultValidator, _T("ID_M_PEDT1"));
+	m_plblPassword= new wmLabel(this, wxNewId(), wxT("Password"), wxPoint(10, 140), wxSize(80,40));
+	m_plblPassword->SetForegroundColour(*wxWHITE);
+
+	m_pedtPassword = new wmEdit(this, wxNewId(), wxEmptyString, wxPoint(90,140), wxSize(400,40), 0, wxDefaultValidator, _T("ID_M_PEDT1"));
 	m_pedtPassword->SetBackgroundColour(wxColour(255,255,255));
 	m_pedtPassword->SetBorderStyle(1,1);
-	m_pbtnSave = new wmButton(this, wxNewId(), _("Save"), wxPoint(160,430), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
-	m_pbtnSave->Disable();
-	m_pbtnCancel = new wmButton(this, wxNewId(), _("Cancel"), wxPoint(500,430), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
 
-	m_plstWiFi = new wmList(this, wxNewId(), wxPoint(10,10), wxSize(580,120), wmList::STYLE_SELECT, 6, wxSize(-1,-1), 1, wxSize(-1,-1));
+	m_pbtnSave = new wmButton(this, wxNewId(), _("Save"), wxPoint(690,380), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
+	m_pbtnSave->Disable();
+	m_pbtnCancel = new wmButton(this, wxNewId(), _("Cancel"), wxPoint(690,430), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
+
+	m_plstWiFi = new wmList(this, wxNewId(), wxPoint(10,10), wxSize(780,120), wmList::STYLE_SELECT, wmList::SCROLL_VERTICAL, wxSize(-1,30), 8, wxSize(-1,-1));
 	m_plstWiFi->SetBackgroundColour(wxColour(0,0,0));
 
 	Connect(m_pedtPassword->GetId(),wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&dlgWiFi::OnedtPasswordText);
 	Connect(m_pedtPassword->GetId(),wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&dlgWiFi::OnedtPasswordTextEnter);
 	Connect(m_pbtnSave->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&dlgWiFi::OnbtnSaveClick);
 	Connect(m_pbtnCancel->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&dlgWiFi::OnbtnCancelClick);
-	Connect(m_plstWiFi,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&dlgWiFi::OnlstWiFiSelected);
+	Connect(m_plstWiFi->GetId(),wxEVT_LIST_SELECTED,(wxObjectEventFunction)&dlgWiFi::OnlstWiFiSelected);
 	//*)
 
 	m_pbtnSave->Enable(false);
@@ -50,10 +54,6 @@ dlgWiFi::dlgWiFi(wxWindow* parent,const wxString& sWiFi, wxWindowID id,const wxP
         }
     }
 
-    for(size_t i = 0 ; i < 20; i++)
-    {
-        m_plstWiFi->AddButton(wxString::Format(wxT("WiFi %02d"),i));
-    }
 
     m_plstWiFi->SelectButton(sWiFi);
 
@@ -82,6 +82,7 @@ void dlgWiFi::OnedtPasswordTextEnter(wxCommandEvent& event)
 void dlgWiFi::OnbtnSaveClick(wxCommandEvent& event)
 {
     //@todo save the settings
+
     EndModal(wxID_OK);
 }
 
@@ -92,6 +93,6 @@ void dlgWiFi::OnbtnCancelClick(wxCommandEvent& event)
 
 void dlgWiFi::OnlstWiFiSelected(wxCommandEvent& event)
 {
-    m_pedtPassword->Enable();
+    m_pedtPassword->Enable(true);
     m_pedtPassword->SetFocus();
 }
