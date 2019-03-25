@@ -15,6 +15,16 @@ struct networkInterface
     wxString sPassword;
 };
 
+struct wifi_cell
+{
+    wifi_cell() : bEncryption(false), nNetwork(-1){}
+    wxString sESSID;
+    bool bEncryption;
+    wxString sEncType;
+    wxString sPassword;
+    long nNetwork;
+};
+
 class NetworkControl
 {
     public:
@@ -30,12 +40,19 @@ class NetworkControl
         wxString ConvertMaskToAddress(unsigned long nMask);
         unsigned long ConvertAddressToMask(wxString sAddress);
 
-        void ChangeWiFiNetwork(const wxString& sAccessPoint, const wxString& sPassword);
+        void ChangeWiFiNetwork(const wxString& sAccessPoint, const wxString& sPassword, const wxString& sInterface);
         std::map<wxString, networkInterface>::const_iterator GetInterfaceBegin();
         std::map<wxString, networkInterface>::const_iterator GetInterfaceEnd();
         std::map<wxString, networkInterface>::const_iterator FindInterface(wxString sInterface);
 //        bool HasAdminRights();
         void CheckConnection(const wxString& sInterface);
+
+        std::map<wxString, wifi_cell>::const_iterator GetWiFiCellBegin();
+        std::map<wxString, wifi_cell>::const_iterator GetWiFiCellEnd();
+        std::map<wxString, wifi_cell>::const_iterator FindWiFiCell(const wxString& sSsid);
+        void ScanWiFi(const wxString& sInterface);
+
+
     protected:
         NetworkControl() : m_nNTEContext(0)
         {
@@ -45,6 +62,10 @@ class NetworkControl
         void GetCurrentSettings();
         void CheckConnection(const wxString& sInterface, networkInterface& anInterface);
         unsigned long m_nNTEContext;
+
+
+        std::map<wxString, wifi_cell> m_mCells;
+
 
 
 

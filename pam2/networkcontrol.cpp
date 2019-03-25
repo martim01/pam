@@ -4,6 +4,9 @@
 #include <wx/msgdlg.h>
 #include "settings.h"
 #include "networkcontrol.h"
+#include "wmlogevent.h"
+#include <wx/tokenzr.h>
+
 using namespace std;
 
 
@@ -283,55 +286,82 @@ wxString NetworkControl::SetupNetworking(const wxString& sInterface, const wxStr
     return wxT("Could not read file");
 }
 
-void NetworkControl::ChangeWiFiNetwork(const wxString& sAccessPoint, const wxString& sPassword)
+void NetworkControl::ChangeWiFiNetwork(const wxString& sAccessPoint, const wxString& sPassword, const wxString& sInterface)
 {
-    wxTextFile configFile;
-    if(configFile.Open(wxT("/etc/wpa_supplicant/wpa_supplicant.conf")))
+    map<wxString, wifi_cell>::iterator itCell = m_mCells.find(sAccessPoint);
+    if(itCell != m_mCells.end())
     {
-        int nSsid(-1);
-        bool bPsk(false);
-        for(size_t i = 0; i < configFile.GetLineCount(); i++)
+        wxArrayString asResult;
+        if(itCell->second.nNetwork == -1)
         {
-            if(configFile.GetLine(i).Find(wxT("ssid=")) != wxNOT_FOUND)
+
+            wxExecute(wxString::Format(wxT("wpa_cli -i %s add_network"), sInterface.c_str()), asResult);
+            if(asResult.GetCount() > 0)
             {
-                nSsid = i;
-                configFile.GetLine(i) = configFile.GetLine(i).BeforeFirst(wxT('"');
-                configFile.GetLine(i) << sAccessPoint << wxT("\"");
+                for(size_t i = 0; i < asResult.GetCount(); i++)
+                {
+                    if(asResult[i].ToLong(&itCell->second.nNetwork))
+                    {
+                        break;
+                    }
+                }
             }
-            if(configFile.GetLine(i).Find(wxT("psk=")) != wxNOT_FOUND)
+        }
+
+        if(itCell->second.nNetwork != -1)
+        {
+            wxExecute(wxString::Format(wxT("wpa_cli -i %s set_network %d ssid '\"%s\"'"), sInterface.c_str(), itCell->second.nNetwork, sAccessPoint.c_str()), asResult);
+            if(asResult.GetCount() == 0 || asResult[0] == "FAIL")
             {
-                bPsk = true;
-                configFile.GetLine(i) = configFile.GetLine(i).BeforeFirst(wxT('"');
-                configFile.GetLine(i) << sPassword << wxT("\"");
+                wmLog::Get()->Log(wxT("Unable to change WiFi"));
+                return;
             }
+            if(itCell->second.bEncryption)
+            {
+                wxExecute(wxString::Format(wxT("wpa_cli -i %s set_network %d psk '\"%s\"'"), sInterface.c_str(), itCell->second.nNetwork, sPassword.c_str()), asResult);
+                if(asResult.GetCount() == 0 || asResult[0] == "FAIL")
+                {
+                    wmLog::Get()->Log(wxT("Unable to change WiFi passworkd"));
+                    return;
+                }
+                if(itCell->second.sEncType.Find(wxT("WPA")) != wxNOT_FOUND)
+                {
+                    wxExecute(wxString::Format(wxT("wpa_cli -i %s set_network %d key_mgmt WPA-PSK"), sInterface.c_str(), itCell->second.nNetwork), asResult);
+                    if(asResult.GetCount() == 0 || asResult[0] == "FAIL")
+                    {
+                        wmLog::Get()->Log(wxT("Unable to change WiFi key management"));
+                        return;
+                    }
+                }
+            }
+            wxExecute(wxString::Format(wxT("wpa_cli -i %s enable_network %d"), sInterface.c_str(), itCell->second.nNetwork), asResult);
+            if(asResult.GetCount() == 0 || asResult[0] == "FAIL")
+            {
+                wmLog::Get()->Log(wxT("Unable to enable WiFi network"));
+                return;
+            }
+            wxExecute(wxString::Format(wxT("wpa_cli -i %s select_network %d"), sInterface.c_str(), itCell->second.nNetwork), asResult);
+            if(asResult.GetCount() == 0 || asResult[0] == "FAIL")
+            {
+                wmLog::Get()->Log(wxT("Unable to enable WiFi network"));
+                return;
+            }
+            wxExecute(wxT("wpa_cli save_config"), asResult);
+            if(asResult.GetCount() == 0 || asResult[0] == "FAIL")
+            {
+                wmLog::Get()->Log(wxT("Unable to save WiFi config"));
+                return;
+            }
+            wxExecute(wxT("wpa_cli reconfigure"));
+
+
+            wmLog::Get()->Log(wxString::Format(wxT("WiFi '%s' setup: network %d"), itCell->first.c_str(), itCell->second.nNetwork));
+            Settings::Get().Write(wxT("WiFi"), sAccessPoint, sPassword);
         }
-        if(nSsid >= 0 && !bPsk)
+        else
         {
-            configFile.InsertLine(wxString::Format(wxT("\tpsk=\"%s\"")), sPassword.c_str(), nSsid+1);
+            wmLog::Get()->Log(wxT("Unable to add WiFi network"));
         }
-        else if(nSsid == -1)
-        {
-            configFile.AddLine(wxT("network={"));
-            configFile.AddLine(wxString::Format(wxT("\tssid=\"%s\""), sAccessPoint.c_str());
-            configFile.AddLine(wxString::Format(wxT("\tpsk=\"%s\"")), sPassword.c_str());
-            configFile.AddLine(wxT("key"));
-            configFile.AddLine(wxT("}"));
-        }
-    }
-    std::ofstream outFile;
-    outFile.open("/etc/wpa_supplicant.conf", std::ofstream::out | std::ofstream::trunc);
-    if(outFile.is_open())
-    {
-        for(size_t i = 0; i < configFile.GetLineCount(); i++)
-        {
-            outFile << configFile.GetLine(i).mb_str() << std::endl;
-        }
-        outFile.close();
-        configFile.Close();
-    }
-    else
-    {
-        configFile.Close();
     }
 }
 
@@ -464,4 +494,77 @@ map<wxString, networkInterface>::const_iterator NetworkControl::GetInterfaceEnd(
 map<wxString, networkInterface>::const_iterator NetworkControl::FindInterface(wxString sInterface)
 {
     return m_mInterfaces.find(sInterface);
+}
+
+
+std::map<wxString, wifi_cell>::const_iterator NetworkControl::GetWiFiCellBegin()
+{
+    return m_mCells.begin();
+}
+std::map<wxString, wifi_cell>::const_iterator NetworkControl::GetWiFiCellEnd()
+{
+    return m_mCells.end();
+}
+
+std::map<wxString, wifi_cell>::const_iterator NetworkControl::FindWiFiCell(const wxString& sSsid)
+{
+    return m_mCells.find(sSsid);
+}
+
+void NetworkControl::ScanWiFi(const wxString& sInterface)
+{
+    m_mCells.clear();
+
+    wxExecute(wxString::Format(wxT("wpa_cli -i %s scan"), sInterface.c_str()));
+
+    wxArrayString asResults;
+    wxExecute(wxString::Format(wxT("wpa_cli scan_results")), asResults);
+    if(asResults.GetCount() > 0)
+    {
+        for(size_t nLine = 1; nLine < asResults.GetCount(); nLine++)
+        {
+            wxLogDebug(asResults[nLine]);
+
+            wxArrayString asLine(wxStringTokenize(asResults[nLine], wxT("\t")));
+            if(asLine.GetCount() > 4)
+            {
+                wifi_cell aCell;
+                aCell.sESSID = asLine[4];
+                size_t nStart = asLine[3].Find(wxT("WPA"));
+                if(nStart == wxNOT_FOUND)
+                {
+                    nStart = asLine[3].Find(wxT("WEP"));
+                }
+
+                if(nStart != wxNOT_FOUND)
+                {
+                    aCell.bEncryption = true;
+                    aCell.sEncType = asLine[3].Mid(nStart).BeforeFirst(wxT(']'));
+                }
+                else
+                {
+                    aCell.bEncryption = false;
+                }
+                m_mCells.insert(make_pair(aCell.sESSID, aCell));
+            }
+        }
+
+        wxExecute(wxString::Format(wxT("wpa_cli list_networks")), asResults);
+        for(size_t nLine = 0; nLine < asResults.GetCount(); nLine++)
+        {
+            wxLogDebug(asResults[nLine]);
+            wxArrayString asLine(wxStringTokenize(asResults[nLine], wxT("\t")));
+            wxLogDebug(wxT("Split %d"), asLine.GetCount());
+            if(asLine.GetCount() >= 2)
+            {
+                map<wxString, wifi_cell>::iterator itCell = m_mCells.find(asLine[1]);
+                if(itCell != m_mCells.end())
+                {
+                    wxLogDebug(wxT("Cell Found "));
+                    asLine[0].ToLong(&itCell->second.nNetwork);
+                }
+            }
+        }
+    }
+    wxLogDebug(wxT("Scan done-----------------------"));
 }

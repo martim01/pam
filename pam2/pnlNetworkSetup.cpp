@@ -117,7 +117,7 @@ pnlNetworkSetup::pnlNetworkSetup(wxWindow* parent,wxWindowID id,const wxPoint& p
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlNetworkSetup::OnlstInterfacesSelected);
 	//*)
 
-	m_pbtnScan  = new wmButton(Panel1, wxNewId(), _("Scan"), wxPoint(150,0), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
+	m_pbtnScan  = new wmButton(Panel1, wxNewId(), _("Change"), wxPoint(150,0), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
     m_pbtnScan->Show(false);
 
 	Connect(ID_M_PBTN2, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&pnlNetworkSetup::OnbtnApplyClick);
@@ -333,7 +333,7 @@ void pnlNetworkSetup::ShowConnectionDetails()
 void pnlNetworkSetup::OnbtnScanClick(wxCommandEvent& event)
 {
     m_timerRefresh.Stop();
-    dlgWiFi aDlg(NULL, m_sInterface);
+    dlgWiFi aDlg(NULL, m_plblType->GetLabel(), m_sInterface);
     if(aDlg.ShowModal() == wxID_OK)
     {
         m_plstInterfaces->SelectButton(m_sInterface, true); //refresh the connection settings
