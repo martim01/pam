@@ -260,6 +260,7 @@ void pnlNetworkSetup::OnbtnMaskClick(wxCommandEvent& event)
 void pnlNetworkSetup::OnlstInterfacesSelected(wxCommandEvent& event)
 {
     m_sInterface = event.GetString();
+    NetworkControl::Get().CheckConnection(m_sInterface);
     map<wxString, networkInterface>::const_iterator itInterface= NetworkControl::Get().FindInterface(event.GetString());
     if(itInterface != NetworkControl::Get().GetInterfaceEnd())
     {
@@ -304,16 +305,17 @@ void pnlNetworkSetup::ShowConnectionDetails()
     map<wxString, networkInterface>::const_iterator itInterface= NetworkControl::Get().FindInterface(m_sInterface);
     if(itInterface != NetworkControl::Get().GetInterfaceEnd())
     {
-
         if(itInterface->second.bConnected)
         {
             m_plblConnected->SetLabel(wxT("Connected"));
             m_plblConnected->SetBackgroundColour(wxColour(0,128,0));
+            m_pLbl1->SetBackgroundColour(wxColour(0,128,0));
         }
         else
         {
             m_plblConnected->SetLabel(wxT("No Connection"));
             m_plblConnected->SetBackgroundColour(wxColour(128,128,128));
+            m_pLbl1->SetBackgroundColour(wxColour(128,128,128));
         }
 
         if(itInterface->second.bWireless)
@@ -343,9 +345,9 @@ void pnlNetworkSetup::OnbtnScanClick(wxCommandEvent& event)
 
 void pnlNetworkSetup::OnTimerRefresh(wxTimerEvent& event)
 {
-    if(IsShownOnScreen())
-    {
-        NetworkControl::Get().CheckConnection(m_sInterface);    //refresh the connetion details
-        ShowConnectionDetails();
-    }
+ //   if(IsShownOnScreen())
+ //   {
+ //       NetworkControl::Get().CheckConnection(m_sInterface);    //refresh the connetion details
+ //       ShowConnectionDetails();
+ //   }
 }

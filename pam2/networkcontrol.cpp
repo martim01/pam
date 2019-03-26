@@ -340,20 +340,16 @@ void NetworkControl::ChangeWiFiNetwork(const wxString& sAccessPoint, const wxStr
                 wmLog::Get()->Log(wxT("Unable to enable WiFi network"));
                 return;
             }
-            wxExecute(wxString::Format(wxT("wpa_cli -i %s select_network %d"), sInterface.c_str(), itCell->second.nNetwork), asResult);
-            if(asResult.GetCount() == 0 || asResult[0] == "FAIL")
-            {
-                wmLog::Get()->Log(wxT("Unable to enable WiFi network"));
-                return;
-            }
-            wxExecute(wxT("wpa_cli save_config"), asResult);
+
+            wxExecute(wxString::Format(wxT("wpa_cli -i %s save_config"), sInterface.c_str()), asResult);
             if(asResult.GetCount() == 0 || asResult[0] == "FAIL")
             {
                 wmLog::Get()->Log(wxT("Unable to save WiFi config"));
                 return;
             }
-            wxExecute(wxT("wpa_cli reconfigure"));
+            //wxExecute(wxT("wpa_cli reconfigure"));
 
+            wxExecute(wxString::Format(wxT("wpa_cli -i %s select_network %d"), sInterface.c_str(), itCell->second.nNetwork), asResult);
 
             wmLog::Get()->Log(wxString::Format(wxT("WiFi '%s' setup: network %d"), itCell->first.c_str(), itCell->second.nNetwork));
             Settings::Get().Write(wxT("WiFi"), sAccessPoint, sPassword);
@@ -388,7 +384,6 @@ void NetworkControl::GetCurrentSettings()
         {
             networkInterface anInterface;
             //if have inet entry then connected - else not
-
 
             CheckConnection(asInterfaces[nLine], anInterface);
             m_mInterfaces.insert(make_pair(asInterfaces[nLine], anInterface));
@@ -435,7 +430,11 @@ void NetworkControl::CheckConnection(const wxString& sInterface, networkInterfac
         wxString sMask = asOutput[0].AfterFirst(wxT('k')).BeforeFirst(wxT('b'));
         sMask.Trim().Trim(false);
         anInterface.nMask = ConvertAddressToMask(sMask);
-
+    }
+    else
+    {
+        anInterface.bConnected = false;
+        anInterface.sAddress.clear();
     }
     wxArrayString asOutput2;
     wxExecute(wxString::Format(wxT("sh -c \"iwconfig %s | grep ESSID\""),sInterface.c_str()), asOutput2);

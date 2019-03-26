@@ -83,6 +83,7 @@ class pnlNetworkSetup: public wxPanel
 
 		wxString m_sInterface;
 		wxTimer m_timerRefresh;
+
 		DECLARE_EVENT_TABLE()
 };
 
