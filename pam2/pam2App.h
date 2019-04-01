@@ -11,12 +11,20 @@
 #define PAM2APP_H
 
 #include <wx/app.h>
+#include <wx/timer.h>
 
 class pam2App : public wxApp
 {
     public:
         virtual bool OnInit();
 
+        /**  Captures events allowing modification or filtering before passing to normal application event handlers */
+        int FilterEvent(wxEvent& event);
+
+        void OnTimerHold(wxTimerEvent& event);
+        wxTimer m_timerHold;
+        bool m_bReset;
+        wxString m_sInput;
 };
 
 #endif // PAM2APP_H

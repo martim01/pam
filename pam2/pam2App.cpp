@@ -23,6 +23,7 @@ IMPLEMENT_APP(pam2App);
 
 bool pam2App::OnInit()
 {
+    m_bReset = false;
     #ifndef __WXDEBUG__
     //wxLog::SetLogLevel(0);
     #endif
@@ -36,6 +37,8 @@ bool pam2App::OnInit()
     Settings::Get().ReadSettings(wxString::Format(wxT("%s/pam/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
     Settings::Get().RemoveKey(wxT("AoIP"), wxT("NMOS_IS-04"));
 
+    m_timerHold.SetOwner(this, wxNewId());
+    Connect(m_timerHold.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&pam2App::OnTimerHold);
     //#else
    // Settings::Get().ReadSettings(wxString::Format(wxT("%s/documents/pam2.ini"), wxStandardPaths::Get().GetExecutablePath().c_str()));
    // #endif
@@ -54,3 +57,37 @@ bool pam2App::OnInit()
 
 }
 
+int pam2App::FilterEvent(wxEvent& event)
+{
+    if(event.GetEventType() == wxEVT_LEFT_DOWN)
+    {
+        if(!m_bReset)
+    	{
+    	    m_timerHold.Start(2000,true);
+    	}
+    }
+    if(event.GetEventType() == wxEVT_LEFT_UP)
+    {
+        if(!m_bReset)
+    	{
+    	    m_timerHold.Stop();
+    	}
+    }
+
+    return -1;
+}
+
+void pam2App::OnTimerHold(wxTimerEvent& event)
+{
+    if(!m_bReset)
+    {
+        m_sInput = Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard"));
+        Settings::Get().Write(wxT("Input"), wxT("Type"), wxT("Disabled"));
+        m_timerHold.Start(2000,true);
+        m_bReset = true;
+    }
+    else
+    {
+        Settings::Get().Write(wxT("Input"), wxT("Type"), m_sInput);
+    }
+}
