@@ -43,6 +43,11 @@ dlgNoInput::dlgNoInput(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	m_pbtnInput->SetColourDisabled(wxColour(128,128,128));
 	m_timerReset.SetOwner(this, wxNewId());
 	Connect(m_timerReset.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&dlgNoInput::OnTimerReset);
+
+	if(Settings::Get().Read(wxT("Input"), wxT("Reset"), false) == true)
+	{
+	    m_pbtnInput->Hide();
+	}
 }
 
 dlgNoInput::~dlgNoInput()

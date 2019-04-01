@@ -664,7 +664,10 @@ void pam2Dialog::ShowOptionsPanel(const wxString& sPanel)
 
 void pam2Dialog::OnMonitorMax(wxCommandEvent& event)
 {
-    MaximizeMonitor((event.GetInt()) == 1);
+    if(Settings::Get().Read(wxT("Input"), wxT("Reset"), false) == false)
+    {
+        MaximizeMonitor((event.GetInt()) == 1);
+    }
 
 }
 

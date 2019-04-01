@@ -83,11 +83,14 @@ void pam2App::OnTimerHold(wxTimerEvent& event)
     {
         m_sInput = Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard"));
         Settings::Get().Write(wxT("Input"), wxT("Type"), wxT("Disabled"));
+        Settings::Get().Write(wxT("Input"), wxT("Reset"), true);
         m_timerHold.Start(2000,true);
         m_bReset = true;
     }
     else
     {
         Settings::Get().Write(wxT("Input"), wxT("Type"), m_sInput);
+        Settings::Get().Write(wxT("Input"), wxT("Reset"), false);
+        m_bReset = false;
     }
 }
