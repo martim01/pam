@@ -144,6 +144,7 @@ private:
     bool m_bPlaying;
 
     wxString m_sLog;
+    unsigned long long m_nTimeStamp;
 };
 
 /** PaStreamCallback function - simply calls wmComparitor::Callback using userData to get the wmComparitor object

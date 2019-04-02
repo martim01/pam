@@ -63,7 +63,7 @@ int pam2App::FilterEvent(wxEvent& event)
     {
         if(!m_bReset)
     	{
-    	    m_timerHold.Start(2000,true);
+    	    m_timerHold.Start(1000,true);
     	}
     }
     if(event.GetEventType() == wxEVT_LEFT_UP)
@@ -82,9 +82,10 @@ void pam2App::OnTimerHold(wxTimerEvent& event)
     if(!m_bReset)
     {
         m_sInput = Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard"));
-        Settings::Get().Write(wxT("Input"), wxT("Type"), wxT("Disabled"));
         Settings::Get().Write(wxT("Input"), wxT("Reset"), true);
-        m_timerHold.Start(2000,true);
+        Settings::Get().Write(wxT("Input"), wxT("Type"), wxT("Disabled"));
+
+        m_timerHold.Start(4000,true);
         m_bReset = true;
     }
     else
