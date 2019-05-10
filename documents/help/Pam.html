@@ -13,10 +13,11 @@
 <p>On powering on the Raspberry Pi the PAM software will be automatically started.</p>
 <h2>Software</h2>
 <p>PAM is based on a plugin infrastructure. There is a core application which deals with audio input and output and hosts plugins that display the monitoring metrics.</p>
-<p>There are two types of plugin</p>
+<p>There are three types of plugin</p>
 <ul>
 <li>Monitoring - these are screens which are intended to show the real time state of the audio (e.g. PPM meters, FFT, Lissajou)</li>
 <li>Test - these are screens which are intended to allow the user to run specific tests on the audio (e.g. Channel Delay, Distortion)</li>
+<li>Generator - these are plugins that are used by PAM to generate audio output.</li>
 </ul>
 <p><img src="images/2813_splash.JPG" border="0" alt="splash" width="400" height="240" /></p>
 <p>The application will startup with the splash screen above whilst the plugins are loaded.</p>
@@ -55,12 +56,12 @@
 <li>Input Device</li>
 <li>Output Device</li>
 <li>Output Source</li>
-<li>AoIP</li>
 <li>Network</li>
+<li>NMOS (optional)</li>
 <li>Plugins</li>
-<li>Update</li>
 <li>Profiles</li>
 <li>General</li>
+<li>Update</li>
 </ul>
 <p>The stop strap of the page shows the hostname of the unit and the current version number of the core application.</p>
 <h4>Input Device</h4>
@@ -77,16 +78,30 @@
 <h5>Soundcard</h5>
 <p>Selecting this will list all possible physical audio inputs to the raspberry pi. If you have the HifiBerry digi+ hat connected then you should select <span style="color: #3333ff;">snd_rpi_hifiberry_digi:</span></p>
 <h5>AoIP</h5>
-<p>Selecting this will list all discovered or manually entered AES67/Livewire/Ravenna sources. You can edit this list by selecting the AoIP settings</p>
+<p>Selecting this will list all discovered or manually entered AES67/Livewire/Ravenna sources. You can edit this list by pressing the Manage button. This will bring up the AoIP screen</p>
+<p><img src="images/2813_aoip.png" border="0" alt="" width="400" height="240" /></p>
+<p>From here you can manually add/edit/delete AoIP sources</p>
+<p><img src="images/2813_aoip_edit.png" border="0" alt="" width="400" height="239" /></p>
+<p>Or press Discovery to bring up the mDNS/SAP discovery dialog</p>
+<p><img src="images/2813_aoip_discovery.png" border="0" alt="" width="400" height="243" /></p>
+<p>From here the user can choose to listen from RTSP mDNS messages and/or SAP messages. Press the Discovery toggle button to Start/Stop discovery. Any AoIP sources advertised will appear in the listbox.</p>
 <h4>Audio Output</h4>
-<p><img src="images/2813_audio_output.JPG" border="0" alt="audio output" width="401" height="240" /></p>
-<p>The audio output page allows the user to turn off or on audio output from the unit.</p>
-<p>If on then the list of available soundcard outputs is listed along with the audio buffer delay.</p>
+<p><img src="images/2813_ouput_soundcard.png" border="0" alt="" width="400" height="223" /></p>
+<p>The audio output page allows the user to choose what audio output device to use if any. The options are "Disabled", "Soundcard" or AoIP.</p>
+<p><span style="text-decoration: underline;">Soundcard (as shown above):</span></p>
+<p>The list of available soundcard outputs is listed along with the audio buffer delay.</p>
+<p><img src="images/2813_ouput_aoip.png" border="0" alt="" width="400" height="240" /></p>
+<p><span style="text-decoration: underline;">AoIP (as shown above):</span></p>
+<p>From here the user can select the interface to use for the RTSP server and the multicast address to use when sending RTP packages.&nbsp;</p>
+<p>The user can also select the length that each sent packet should be. Options are as in the AES67 standard.</p>
+<p>To start/stop streaming press the Stream toggle button.</p>
+<p>Note: If the optional NMOS module is active then these settings may be overwritten via NMOS.</p>
 <p>&nbsp;</p>
 <p><strong>Output Source</strong></p>
 <p><img src="images/2813_input.jpg" border="0" alt="" width="400" height="241" /></p>
+<p>&nbsp;</p>
 <p>The output source page allows the user to choose the source of audio that the PAM will output. Playback must be set to "On" from the Audio Output setting page to enable this panel.</p>
-<p>There are 5 possible source options</p>
+<p>There are 5 inbuilt possible source options</p>
 <p><span style="text-decoration: underline;">Input</span></p>
 <p>See screen above. The audio output is taken from the audio input to the PAM. The user can choose what audio channel is output on the Left and Right legs of the output/</p>
 <p><span style="text-decoration: underline;">File</span></p>
@@ -100,25 +115,19 @@
 <p><span style="text-decoration: underline;"><img src="images/2813_generator.jpg" border="0" alt="" width="400" height="240" /></span></p>
 <p>If the Generator option is selected the PAM will output a single frequency tone. The Generator panel allows the user to select the Frequency, Amplitude and shape of the wave form.</p>
 <p><span style="text-decoration: underline;">Noise<br /><img src="images/2813_noise.jpg" border="0" alt="" width="400" height="240" /></span></p>
-<p>Finally the PAM can output different colours of Noise. The user can select the noise type and amplitude.</p>
-<h4>AoIP</h4>
-<p><img src="images/2813_aoip.JPG" border="0" alt="aoip" width="402" height="240" /></p>
-<p>The AoIP page allows the user to manage the Audio over IP sources that the unit can connect to.</p>
-<p>The top of the page lists the sources, showing a user friendly name and the URL.</p>
-<p>The buttons on the bottom allow the user to manually Add a new source, Update the currently selected source and Delete the current selected source.</p>
-<p>The user can also press and hold the "Hold To Delete All" button to clear the list.</p>
-<p>Finally if the Discover button is pressed then the unit will attempt to find AoIP sources that are advertising themselves using DNS-SD or SAP. Press the button again to stop the discovery process.</p>
-<p>&nbsp;</p>
-<p>Pressing the Add Source or Update Selected button will show the AoIP edit page.</p>
-<p><img src="images/2813_aoip_edit.JPG" border="0" alt="aoip edit" width="402" height="240" />&nbsp;</p>
-<p>The user should enter a friendly Name for the source and the full URL/IP Adress of the source.</p>
+<p>The PAM can output different colours of Noise. The user can select the noise type and amplitude.</p>
+<p><span style="text-decoration: underline;">Generator Plugins</span></p>
+<p>It is possible to write plugins to act as output sources. Any loaded plugins will appear in the options list. Selecting the plugin will bring up the settings page for that plugin and use it to generate audio samples. The screenshot below shows the LTC plugin</p>
+<p><img src="images/2813_output_source.png" border="0" alt="" width="400" height="221" /></p>
+<p>Information on generator plugins can be found on their individual pages.</p>
 <h4>&nbsp;Network</h4>
 <p><img src="images/2813_network.JPG" border="0" alt="network" width="402" height="240" /></p>
 <p>The Network page allows the user to set the properties of the wired and wifi connections of the Pi. It also shows whether each network device is connected or not.</p>
+<p>It is also possible from this screen to bring up the WiFi manager.</p>
 <h4>Plugins</h4>
-<p><img src="images/2813_plugins.JPG" border="0" alt="plugins" width="402" height="240" /></p>
-<p>The plugins page allows the user to decide which Monitor and Test plugins he wishes to have running in the application and the order that they will appear.</p>
-<p>The switch at the top of the screen decides whether the user is looking at Monitor or Test Plugins.</p>
+<p><img src="images/2813_plugins.png" border="0" alt="" width="400" height="280" /></p>
+<p>The plugins page allows the user to decide which Monitor,Test and Generator plugins he wishes to have running in the application and the order that they will appear.</p>
+<p>The list at the top of the screen decides whether the user is looking at Monitor, Test or Generator Plugins.</p>
 <p>The left hand side of the screen lists all plugins of the relevant type that have not currently been assigned to run in the application. The section below shows the version number and a brief description of the selected plugin.</p>
 <p>The right hand side of the screen lists all the plugins of the relevan type that are currently assigned to run in the application. They are listed in the order that they appear on the Screen Selection buttons. The section below shows the version number and a brief description of the plugin.</p>
 <p><u>To Add A New Plugin</u></p>
@@ -188,9 +197,9 @@
 <p>Pressing the Help page button will bring up the help for the currently selected plugin.</p>
 <p>Pressing the Close button will return the user to the selected plugin.</p>
 <h3>Log</h3>
-<p><img src="images/2813_log.JPG" border="0" alt="log" width="400" height="240" /></p>
+<p><img src="images/2813_log.png" border="0" alt="" width="400" height="243" /></p>
 <p>The Log page is built in to the core application.</p>
-<p>The log page shows a detailed log of what the application has been up to since it last started. The user can use the <span style="color: #996600;">Home</span>, <span style="color: #996600;">Page Up</span>, <span style="color: #996600;">Page Down </span>and <span style="color: #996600;">End </span><br />to navigate through the log.</p>
+<p>The log page shows a detailed log of what the application has been up to since it last started. The user can use the <span style="color: #996600;">Home</span>, <span style="color: #996600;">Page Up</span>, <span style="color: #996600;">Page Down </span>and <span style="color: #996600;">End </span><br />to navigate through the log. The user can also swipe on the screen to scroll the log.</p>
 <p>If the <span style="color: #996600;">Scroll Lock</span> switch is set to Scroll then the log will keep refreshing. If set to Lock then the currently display page will remain.</p>
 <p>Pressing <span style="color: #996600;">Clear Log </span>will clear all the log pages.</p>
 <p>&nbsp;</p>
