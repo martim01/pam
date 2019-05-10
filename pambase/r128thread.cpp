@@ -101,10 +101,13 @@ void R128Thread::CalculateRange()
         double dCount(0);
         for(list<double>::iterator itRange = m_lstRange.begin(); itRange != itEnd; ++itRange)
         {
-            double dValue = -0.691 + 10*log10((*itRange));
-            if(dRangeAbs-dValue < 20.0)
+            if((*itRange) > 0)
             {
-                lstRangeGate.push_back(dValue);
+                double dValue = -0.691 + 10*log10((*itRange));
+                if(dRangeAbs-dValue < 20.0)
+                {
+                    lstRangeGate.push_back(dValue);
+                }
             }
         }
         lstRangeGate.sort();

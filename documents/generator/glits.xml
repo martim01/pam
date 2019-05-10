@@ -2,7 +2,7 @@
 <generator>
   <sequence name="LEFT" channels="1">
     <genfreq frequency="1000" dBFS="-80.00" cycles="250" type="0"/>
-    <genfreq frequency="1000" dBFS="-18.00" cycles="2503750" type="0"/>
+    <genfreq frequency="1000" dBFS="-18.00" cycles="3750" type="0"/>
   </sequence>
   <sequence name="RIGHT" channels="2">
     <genfreq frequency="1000" dBFS="-18.00" cycles="500" type="0"/>

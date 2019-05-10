@@ -31,12 +31,12 @@
 				<Linker>
 					<Add option="-s" />
 					<Add option="-Wl,--enable-auto-import,-Map=levels.map" />
-					<Add library="wxmsw30u_gcc_wammacs" />
+					<Add library="wxmsw30u_gcc_custom" />
 					<Add library="pambase" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 				<ExtraCommands>
-					<Add after="C:\developer\matt\pam2\manifest_creator\bin\Release\manifest_creator.exe" />
+					<Add after="C:\developer\pam\manifest_creator\bin\Release\manifest_creator.exe" />
 				</ExtraCommands>
 			</Target>
 			<Target title="Windows Debug">
@@ -64,7 +64,7 @@
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-Wl,--enable-auto-import,-Map=levels.map" />
-					<Add library="wxmsw30ud_gcc_wammacs" />
+					<Add library="wxmsw30ud_gcc_custom" />
 					<Add library="pambased" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>

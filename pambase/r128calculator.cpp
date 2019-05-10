@@ -113,6 +113,7 @@ void R128Calculator::CalculateShort()
             ++itShort;
         }
         dShortValue/=30.0;
+
         m_dShort = -0.691 + 10 * log10(dShortValue);
         m_dShortMax = max(m_dShort, m_dShortMax);
 

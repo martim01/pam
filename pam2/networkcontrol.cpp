@@ -174,6 +174,15 @@ void NetworkControl::GetCurrentSettings()
 {
 
 }
+void NetworkControl::ChangeWiFiNetwork(const wxString& sAccessPoint, const wxString& sPassword, const wxString& sInterface)
+{
+
+
+}
+void NetworkControl::CheckConnection(const wxString& sInterface)
+{
+
+}
 
 #else
 #include <wx/textfile.h>
@@ -450,14 +459,6 @@ void NetworkControl::CheckConnection(const wxString& sInterface, networkInterfac
 }
 #endif // __WXMSW__
 
-void NetworkControl::CheckConnection(const wxString& sInterface)
-{
-    map<wxString, networkInterface>::iterator itInterface = m_mInterfaces.find(sInterface);
-    if(itInterface != m_mInterfaces.end())
-    {
-        CheckConnection(itInterface->first, itInterface->second);
-    }
-}
 
 wxString NetworkControl::ConvertMaskToAddress(unsigned long nMask)
 {

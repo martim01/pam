@@ -1,5 +1,5 @@
 
-#include "wx/msw/wx.rc"
+#include <wx/msw/wx.rc>
 #include <wx/version.h>
 #include "version.h"
 

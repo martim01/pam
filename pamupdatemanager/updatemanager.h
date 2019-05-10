@@ -1,6 +1,6 @@
 #pragma once
 #include <wx/xml/xml.h>
-#include <curl/curl.h>
+#include "curl/curl.h"
 #include <map>
 #include <list>
 

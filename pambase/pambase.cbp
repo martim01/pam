@@ -51,7 +51,7 @@
 					<Add directory="../external/mdnssd/windows" />
 				</Linker>
 				<ExtraCommands>
-					<Add after="C:\developer\matt\pam2\manifest_creator\bin\Release\manifest_creator.exe" />
+					<Add after="C:\developer\pam\manifest_creator\bin\Release\manifest_creator.exe" />
 				</ExtraCommands>
 			</Target>
 			<Target title="Windows Debug">
