@@ -62,6 +62,7 @@
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="$(#wx3_0.include)/mswu" />
+					<Add directory="$(#wx3_0.include)" />
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-s" />

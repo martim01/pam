@@ -55,14 +55,13 @@ void* R128Thread::Entry()
 
 void R128Thread::CalculateLive()
 {
-    m_mutex.Lock();
+    wxMutexLocker ml(m_mutex);
     if(m_lstLive.empty() == false)
     {
         list<double>::iterator itEnd = m_lstLive.end();
         --itEnd;
 
         double dLiveAbs = -0.691 + 10*log10(m_dLiveTotal/static_cast<double>(m_lstLive.size()));
-        m_mutex.Unlock();
 
         double dLiveGate(0.0);
         double dCount(0);
@@ -77,23 +76,18 @@ void R128Thread::CalculateLive()
         }
         m_dLive = -0.691 + 10*log10(dLiveGate/dCount);
     }
-    else
-    {
-        m_mutex.Unlock();
-    }
 }
 
 
 void R128Thread::CalculateRange()
 {
-    m_mutex.Lock();
+    wxMutexLocker ml(m_mutex);
     if(m_lstRange.empty() == false)
     {
         list<double>::iterator itEnd = m_lstRange.end();
         --itEnd;
 
         double dRangeAbs = -0.691 + 10*log10(m_dRangeTotal/static_cast<double>(m_lstRange.size()));
-        m_mutex.Unlock();
 
         //@todo try using a vector rather than a list to see if faster...
         list<double> lstRangeGate;
@@ -126,10 +120,6 @@ void R128Thread::CalculateRange()
         }
         dRange95 = (*itValue);
         m_dRange = dRange95-dRange10;
-    }
-    else
-    {
-        m_mutex.Unlock();
     }
 }
 

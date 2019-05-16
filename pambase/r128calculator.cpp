@@ -82,7 +82,14 @@ void R128Calculator::CalculateMomentary()
             ++itChunk;
         }
         dMomentaryValue /=4.0;
-        m_dMomentary = -0.691 + 10 * log10(dMomentaryValue);
+        if(dMomentaryValue > 0.0)
+        {
+            m_dMomentary = -0.691 + 10 * log10(dMomentaryValue);
+        }
+        else
+        {
+            dMomentaryValue = -80.0;
+        }
         m_dMomentaryMax = max(m_dMomentary, m_dMomentaryMax);
 
 
@@ -114,7 +121,14 @@ void R128Calculator::CalculateShort()
         }
         dShortValue/=30.0;
 
-        m_dShort = -0.691 + 10 * log10(dShortValue);
+        if(dShortValue > 0.0)
+        {
+            m_dShort = -0.691 + 10 * log10(dShortValue);
+        }
+        else
+        {
+            m_dShort = -80.0;
+        }
         m_dShortMax = max(m_dShort, m_dShortMax);
 
         if(m_dShort > -70)
