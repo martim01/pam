@@ -568,3 +568,9 @@ void NetworkControl::ScanWiFi(const wxString& sInterface)
     }
     wxLogDebug(wxT("Scan done-----------------------"));
 }
+
+
+void NetworkControl::CheckConnection(const wxString& sInterface)
+{
+
+}

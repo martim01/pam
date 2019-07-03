@@ -197,6 +197,7 @@ wxString Settings::GetCoreLibDirectory() const
      #ifdef __WXGNU__
     return m_iniManager.GetIniString(wxT("Paths"), wxT("Core"), wxT("/usr/local/lib/pam2"));
     #else
+
     return m_iniManager.GetIniString(wxT("Paths"), wxT("Core"),  wxString::Format(wxT("%s/lib"), GetExecutableDirectory().c_str()));
     #endif // __WXGNU__
 }
