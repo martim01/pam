@@ -208,11 +208,10 @@ void FftMeter::DrawFFT(wxDC& dc)
     dc.SetTextForeground(GetForegroundColour());
 
     uiRect uiLabel;
+    wxPen penLine(wxColour(120,120,120),1,wxDOT);
     for(size_t i = 1; i < m_vfft_out.size()-1; i*= 2)
     {
-        float r,g,b;
-        m_HeatMap.getColourAtValue(static_cast<float>(m_vfft_out.size())/static_cast<float>(i), r,g,b);
-        dc.SetPen(penLine(wxColour(r,g,b),1,wxDOT));
+        dc.SetPen(penLine);
         int x = static_cast<int>( (static_cast<double>(m_rectGrid.GetWidth())/(log(m_vfft_out.size()))) * log(static_cast<double>(i))) + m_rectGrid.GetLeft();
         dc.DrawLine(x, 0, x, m_rectGrid.GetHeight());
         uiLabel.SetRect(wxRect(x-20, m_rectGrid.GetBottom()+1, 40, 20));
@@ -239,6 +238,11 @@ void FftMeter::DrawFFT(wxDC& dc)
             y_old = min(y, m_rectGrid.GetBottom());
         }
 
+        float r,g,b;
+        m_HeatMap.getColourAtValue(static_cast<float>(x)/static_cast<float>(m_rectGrid.GetWidth()), r,g,b);
+        dc.SetPen(wxPen(wxColour( static_cast<unsigned char>(r*255.0),
+                                    static_cast<unsigned char>(g*255.0),
+                                  static_cast<unsigned char>(b*255.0))));
 
 
         switch(m_nDisplayType)
