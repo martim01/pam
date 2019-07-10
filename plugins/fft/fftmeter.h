@@ -6,6 +6,8 @@
 #include "kiss_fft.h"
 #include <queue>
 #include "pmcontrol.h"
+#include "colourgradient.h"
+
 class timedbuffer;
 class FFTBuilder;
 
@@ -205,6 +207,8 @@ class FftMeter : public pmControl
 
         unsigned long m_nSampleRate;
         unsigned long m_nChannels;
+
+        ColourGradient m_HeatMap;
 
 };
 

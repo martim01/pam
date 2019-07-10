@@ -53,6 +53,7 @@ FftMeter::FftMeter(wxWindow *parent, FFTBuilder* pBuilder, wxWindowID id, const 
 
     m_nNudge = NONE;
 
+    m_HeatMap.createDefaultHeatMapGradient();
 
     SetNumberOfBins(1024);
 }
@@ -205,11 +206,13 @@ void FftMeter::DrawThirds(wxDC& dc)
 void FftMeter::DrawFFT(wxDC& dc)
 {
     dc.SetTextForeground(GetForegroundColour());
-    wxPen penLine(wxColour(120,120,120),1,wxDOT);
+
     uiRect uiLabel;
     for(size_t i = 1; i < m_vfft_out.size()-1; i*= 2)
     {
-        dc.SetPen(penLine);
+        float r,g,b;
+        m_HeatMap.getColourAtValue(static_cast<float>(m_vfft_out.size())/static_cast<float>(i), r,g,b);
+        dc.SetPen(penLine(wxColour(r,g,b),1,wxDOT));
         int x = static_cast<int>( (static_cast<double>(m_rectGrid.GetWidth())/(log(m_vfft_out.size()))) * log(static_cast<double>(i))) + m_rectGrid.GetLeft();
         dc.DrawLine(x, 0, x, m_rectGrid.GetHeight());
         uiLabel.SetRect(wxRect(x-20, m_rectGrid.GetBottom()+1, 40, 20));
