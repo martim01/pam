@@ -102,6 +102,11 @@ class FftMeter : public pmControl
         bool GetCursorMode()
         {   return m_bCursorMode;   }
 
+        void SetColourMode(bool bOn)
+        {
+            m_bColour = bOn;
+        }
+
         void TurnoffNudge();
 
         enum {DISPLAY_GRAPH, DISPLAY_LINES, DISPLAY_EQ};
@@ -209,6 +214,7 @@ class FftMeter : public pmControl
         unsigned long m_nChannels;
 
         ColourGradient m_HeatMap;
+        bool m_bColour;
 
 };
 

@@ -134,6 +134,7 @@
 		<Linker>
 			<Add directory="../../lib" />
 		</Linker>
+		<Unit filename="colourgradient.h" />
 		<Unit filename="fft.cpp" />
 		<Unit filename="fft.h" />
 		<Unit filename="fftbuilder.cpp" />

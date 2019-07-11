@@ -61,6 +61,7 @@
 		</Project>
 		<Project filename="pam2/pam2.cbp">
 			<Depends filename="pambase/pambase.cbp" />
+			<Depends filename="plugins/fft/fft.cbp" />
 		</Project>
 	</Workspace>
 </CodeBlocks_workspace_file>

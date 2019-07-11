@@ -52,6 +52,7 @@ FftMeter::FftMeter(wxWindow *parent, FFTBuilder* pBuilder, wxWindowID id, const 
     m_nSampleRate = 48000;
 
     m_nNudge = NONE;
+    m_bColour = (pBuilder->ReadSetting(wxT("Colour"), 0)==1);
 
     m_HeatMap.createDefaultHeatMapGradient();
 
@@ -238,12 +239,14 @@ void FftMeter::DrawFFT(wxDC& dc)
             y_old = min(y, m_rectGrid.GetBottom());
         }
 
-        float r,g,b;
-        m_HeatMap.getColourAtValue(static_cast<float>(x)/static_cast<float>(m_rectGrid.GetWidth()), r,g,b);
-        dc.SetPen(wxPen(wxColour( static_cast<unsigned char>(r*255.0),
-                                    static_cast<unsigned char>(g*255.0),
-                                  static_cast<unsigned char>(b*255.0))));
-
+        if(m_bColour)
+        {
+            float r,g,b;
+            m_HeatMap.getColourAtValue(static_cast<float>(i)/static_cast<float>(m_vAmplitude.size()), r,g,b);
+            dc.SetPen(wxPen(wxColour( static_cast<unsigned char>(r*255.0),
+                                        static_cast<unsigned char>(g*255.0),
+                                      static_cast<unsigned char>(b*255.0))));
+        }
 
         switch(m_nDisplayType)
         {
