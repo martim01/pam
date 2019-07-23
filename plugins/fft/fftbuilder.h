@@ -32,7 +32,7 @@ class WXEXPORT FFTBuilder : public MonitorPluginBuilder
         friend class pnlRoutiing;
         friend class pnlType;
         friend class pnlWindow;
-
+        friend class FftMeter;
 
 
         virtual wxWindow* CreateMonitorPanel(wxWindow* pParent);
@@ -46,7 +46,7 @@ class WXEXPORT FFTBuilder : public MonitorPluginBuilder
         void OnRoutingChanged(wxCommandEvent& event);
         void OnTypeChanged(wxCommandEvent& event);
         void OnHoldClicked(wxCommandEvent& event);
-
+        void ColourSelected(bool bSelected);
 
     private:
         FftMeter* m_pMeter;

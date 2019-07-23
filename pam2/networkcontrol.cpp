@@ -426,7 +426,10 @@ void NetworkControl::GetCurrentSettings()
         }
     }
 }
+void NetworkControl::CheckConnection(const wxString& sInterface)
+{
 
+}
 void NetworkControl::CheckConnection(const wxString& sInterface, networkInterface& anInterface)
 {
     wxArrayString asOutput;
@@ -570,7 +573,4 @@ void NetworkControl::ScanWiFi(const wxString& sInterface)
 }
 
 
-void NetworkControl::CheckConnection(const wxString& sInterface)
-{
 
-}

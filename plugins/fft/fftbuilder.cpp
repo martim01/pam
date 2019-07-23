@@ -118,6 +118,12 @@ void FFTBuilder::OnCursorMode(bool bOn)
     WriteSetting(wxT("Cursor"), bOn);
 }
 
+void FFTBuilder::ColourSelected(bool bSelected)
+{
+    WriteSetting(wxT("Colour"), bSelected);
+    m_pMeter->SetColourMode(bSelected);
+}
+
 
 void FFTBuilder::LoadSettings()
 {

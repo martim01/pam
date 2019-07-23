@@ -5,6 +5,8 @@
 #include <wx/panel.h>
 #include "wmlist.h"
 //*)
+#include "wmbutton.h"
+
 class FFTBuilder;
 
 class pnlDisplay: public wxPanel
@@ -17,6 +19,7 @@ class pnlDisplay: public wxPanel
 		//(*Declarations(pnlDisplay)
 		wmList* m_plstFFT_Display;
 		//*)
+        wmButton* m_pbtnColour;
 
 	protected:
 
@@ -29,7 +32,7 @@ class pnlDisplay: public wxPanel
 		//(*Handlers(pnlDisplay)
 		void OnlstFFT_DisplaySelected(wxCommandEvent& event);
 		//*)
-
+        void OnbtnColour(wxCommandEvent& event);
         FFTBuilder* m_pBuilder;
 		DECLARE_EVENT_TABLE()
 };

@@ -27,6 +27,12 @@ pnlDisplay::pnlDisplay(wxWindow* parent,FFTBuilder* pBuilder, wxWindowID id,cons
 
 	Connect(ID_M_PLST4,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlDisplay::OnlstFFT_DisplaySelected);
 	//*)
+	m_pbtnColour = new wmButton(this,wxNewId(), wxT("Colour"), wxPoint(0,150), wxSize(200, 40),wmButton::STYLE_SELECT);
+	m_pbtnColour->SetToggleLook(true, wxT("Off"), wxT("On"), 45);
+    m_pbtnColour->ToggleSelection(pBuilder->ReadSetting(wxT("Colour"), 0), true);
+
+    Connect(m_pbtnColour->GetId(), wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&pnlDisplay::OnbtnColour);
+
     m_plstFFT_Display->AddButton(wxT("Graph"));
     m_plstFFT_Display->AddButton(wxT("Lines"));
     m_plstFFT_Display->AddButton(wxT("EQ"));
@@ -44,4 +50,9 @@ pnlDisplay::~pnlDisplay()
 void pnlDisplay::OnlstFFT_DisplaySelected(wxCommandEvent& event)
 {
     m_pBuilder->OnDisplayChanged(event);
+}
+
+void pnlDisplay::OnbtnColour(wxCommandEvent& event)
+{
+    m_pBuilder->ColourSelected(event.IsChecked());
 }
