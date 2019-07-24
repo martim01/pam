@@ -9,8 +9,11 @@
 using namespace std;
 
 // AngleMeter
- wxIMPLEMENT_DYNAMIC_CLASS(AngleMeter, pmControl);
-
+#ifdef WXSPAM
+IMPLEMENT_DYNAMIC_CLASS(AngleMeter, pmControl)
+#else
+wxIMPLEMENT_DYNAMIC_CLASS(AngleMeter, pmControl);
+#endif // WXSPAM
 
 
 AngleMeter::AngleMeter()

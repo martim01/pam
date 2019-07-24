@@ -11,8 +11,11 @@
 class PAMBASE_IMPEXPORT wmButton : public pmControl
 {
     DECLARE_EVENT_TABLE()
+    #ifdef WXSPAM
+    DECLARE_DYNAMIC_CLASS(wmButton)
+    #else
     wxDECLARE_DYNAMIC_CLASS(wmButton);
-
+    #endif
     public:
 
         /** @brief default constructor

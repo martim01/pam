@@ -23,7 +23,11 @@ BEGIN_EVENT_TABLE(wmKeyboard, pmControl)
     EVT_TIMER(wxID_ANY, wmKeyboard::OnTimer)
 END_EVENT_TABLE()
 
- wxIMPLEMENT_DYNAMIC_CLASS(wmKeyboard, pmControl);
+#ifdef WXSPAM
+IMPLEMENT_DYNAMIC_CLASS(wmKeyboard, pmControl)
+#else
+wxIMPLEMENT_DYNAMIC_CLASS(wmKeyboard, pmControl);
+#endif // WXSPAM
 
 wmKeyboard::wmKeyboard() : pmControl()
 {

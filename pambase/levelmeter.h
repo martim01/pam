@@ -8,7 +8,11 @@
 
 class PAMBASE_IMPEXPORT LevelMeter : public pmControl
 {
+    #ifdef WXSPAM
+    DECLARE_DYNAMIC_CLASS(LevelMeter)
+    #else
     wxDECLARE_DYNAMIC_CLASS(LevelMeter);
+    #endif // WXSPAM
     //DECLARE_EVENT_TABLE()
 public:
     LevelMeter();

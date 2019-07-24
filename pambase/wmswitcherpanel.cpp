@@ -17,8 +17,11 @@ BEGIN_EVENT_TABLE(wmSwitcherPanel, pmPanel)
     EVT_TIMER(ID_SCROLLING, wmSwitcherPanel::OnScroll)
 END_EVENT_TABLE()
 
- wxIMPLEMENT_DYNAMIC_CLASS(wmSwitcherPanel, pmPanel);
-
+#ifdef WXSPAM
+IMPLEMENT_DYNAMIC_CLASS(wmSwitcherPanel, pmPanel)
+#else
+wxIMPLEMENT_DYNAMIC_CLASS(wmSwitcherPanel, pmPanel);
+#endif // WXSPAM
 
 wmSwitcherPanel::wmSwitcherPanel() : pmPanel()
 , m_nSelectedPage(0)

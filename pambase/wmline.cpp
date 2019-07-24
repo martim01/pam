@@ -10,8 +10,11 @@ BEGIN_EVENT_TABLE(wmLineWnd, pmControl)
     EVT_SIZE(wmLineWnd::OnSize)
 END_EVENT_TABLE()
 
+#ifdef WXSPAM
+IMPLEMENT_DYNAMIC_CLASS(wmLineWnd, pmControl)
+#else
  wxIMPLEMENT_DYNAMIC_CLASS(wmLineWnd, pmControl);
-
+#endif // WXSPAM
 
 wmLineWnd::wmLineWnd(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long nStyle) : pmControl()
 {

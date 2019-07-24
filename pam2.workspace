@@ -55,6 +55,7 @@
 			<Depends filename="pamfft/pamfft.cbp" />
 			<Depends filename="pamlevel/pamlevel.cbp" />
 		</Project>
+		<Project filename="plugins/battery/battery.cbp" />
 		<Project filename="pamupdatemanager/pamupdatemanager.cbp">
 			<Depends filename="manifest_creator/manifest_creator.cbp" />
 			<Depends filename="pambase/pambase.cbp" />
@@ -62,6 +63,7 @@
 		<Project filename="pam2/pam2.cbp">
 			<Depends filename="pambase/pambase.cbp" />
 			<Depends filename="plugins/fft/fft.cbp" />
+			<Depends filename="plugins/battery/battery.cbp" />
 		</Project>
 	</Workspace>
 </CodeBlocks_workspace_file>

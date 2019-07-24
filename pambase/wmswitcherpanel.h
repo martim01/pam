@@ -18,7 +18,11 @@
 
 class PAMBASE_IMPEXPORT wmSwitcherPanel : public pmPanel
 {
+    #ifdef WXSPAM
+    DECLARE_DYNAMIC_CLASS(wmSwitcherPanel)
+    #else
     wxDECLARE_DYNAMIC_CLASS(wmSwitcherPanel);
+    #endif // WXSPAM
     DECLARE_EVENT_TABLE()
     public:
         wmSwitcherPanel();

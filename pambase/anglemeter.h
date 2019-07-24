@@ -7,8 +7,11 @@
 
 class PAMBASE_IMPEXPORT AngleMeter : public pmControl
 {
-
+    #ifdef WXSPAM
+    DECLARE_DYNAMIC_CLASS(AngleMeter)
+    #else
     wxDECLARE_DYNAMIC_CLASS(AngleMeter);
+    #endif // WXSPAM
 public:
     AngleMeter();
     virtual ~AngleMeter();

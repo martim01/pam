@@ -10,8 +10,11 @@
 class PAMBASE_IMPEXPORT wmLabel : public pmControl
 {
     DECLARE_EVENT_TABLE()
-    wxDECLARE_DYNAMIC_CLASS(wmLabel);
-
+    #ifdef WXSPAM
+    DECLARE_DYNAMIC_CLASS(wmLabel)
+    #else
+        wxDECLARE_DYNAMIC_CLASS(wmLabel);
+    #endif
     public:
 
         /** @brief default constructor

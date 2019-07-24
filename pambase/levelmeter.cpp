@@ -9,7 +9,12 @@
 using namespace std;
 
 // LevelMeter
+#ifdef WXSPAM
+IMPLEMENT_DYNAMIC_CLASS(LevelMeter, pmControl)
+#else
 wxIMPLEMENT_DYNAMIC_CLASS(LevelMeter, pmControl);
+#endif // WXSPAM
+
 //BEGIN_EVENT_TABLE(LevelMeter, wxWindow)
 //END_EVENT_TABLE()
 

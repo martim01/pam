@@ -47,8 +47,11 @@ typedef std::map<wxString, wmLine> mLines_t;
 class PAMBASE_IMPEXPORT wmLineWnd : public pmControl
 {
     DECLARE_EVENT_TABLE()
+    #ifdef WXSPAM
+    DECLARE_DYNAMIC_CLASS(wmLineWnd)
+    #else
     wxDECLARE_DYNAMIC_CLASS(wmLineWnd);
-
+    #endif // WXSPAM
     public:
 
         /** @brief default constructor

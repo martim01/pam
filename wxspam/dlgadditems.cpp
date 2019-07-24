@@ -47,25 +47,24 @@ END_EVENT_TABLE()
 dlgAddItems::dlgAddItems(wxWindow* parent,const lItems_t& lItems, const wxString& sDefaultColours,wxWindowID id,const wxPoint& pos,const wxSize& size) : m_lstItems(lItems)
 {
 	//(*Initialize(dlgAddItems)
-	wxBoxSizer* BoxSizer4;
-	wxStaticBoxSizer* StaticBoxSizer2;
-	wxBoxSizer* BoxSizer6;
-	wxBoxSizer* BoxSizer5;
-	wxStaticBoxSizer* StaticBoxSizer4;
-	wxFlexGridSizer* FlexGridSizer2;
-	wxBoxSizer* BoxSizer2;
-	wxStaticBoxSizer* StaticBoxSizer3;
 	wxBoxSizer* BoxSizer1;
-	wxStaticBoxSizer* StaticBoxSizer1;
-	wxFlexGridSizer* FlexGridSizer1;
+	wxBoxSizer* BoxSizer2;
 	wxBoxSizer* BoxSizer3;
+	wxBoxSizer* BoxSizer4;
+	wxBoxSizer* BoxSizer5;
+	wxBoxSizer* BoxSizer6;
+	wxFlexGridSizer* FlexGridSizer1;
+	wxFlexGridSizer* FlexGridSizer2;
+	wxStaticBoxSizer* StaticBoxSizer1;
+	wxStaticBoxSizer* StaticBoxSizer2;
+	wxStaticBoxSizer* StaticBoxSizer3;
+	wxStaticBoxSizer* StaticBoxSizer4;
 
 	Create(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE, _T("wxID_ANY"));
 	BoxSizer1 = new wxBoxSizer(wxVERTICAL);
 	BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
 	StaticBoxSizer1 = new wxStaticBoxSizer(wxHORIZONTAL, this, _("Items Preview"));
-	m_pLst = new wmList(this, ID_M_PLST1, wxDefaultPosition, wxSize(100,400), wmList::STYLE_SELECT, 1, wxSize(-1,20), 1, wxSize(-1,-1));
-	m_pLst->SetMaxSize(wxSize(100,400));
+
 	StaticBoxSizer1->Add(m_pLst, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 2);
 	BoxSizer2->Add(StaticBoxSizer1, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 2);
 	StaticBoxSizer2 = new wxStaticBoxSizer(wxVERTICAL, this, _("Item Details"));
@@ -169,7 +168,6 @@ dlgAddItems::dlgAddItems(wxWindow* parent,const lItems_t& lItems, const wxString
 	BoxSizer1->Fit(this);
 	BoxSizer1->SetSizeHints(this);
 
-	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&dlgAddItems::OnLstItemSelected);
 	Connect(ID_CHECKBOX2,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&dlgAddItems::OnchbxButtonClick);
 	Connect(ID_CHECKBOX3,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&dlgAddItems::OnchbxButtonPressedClick);
 	Connect(ID_CHECKBOX4,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&dlgAddItems::OnchbxButtonSelectedClick);

@@ -17,7 +17,11 @@ class wmSlideWnd;
 **/
 class PAMBASE_IMPEXPORT wmList : public pmControl
 {
+    #ifdef WXSPAM
+    DECLARE_DYNAMIC_CLASS(wmList)
+    #else
     wxDECLARE_DYNAMIC_CLASS(wmList);
+    #endif // WXSPAM
     DECLARE_EVENT_TABLE()
 
    public:
@@ -778,8 +782,14 @@ inline bool operator<(std::list<wmList::button*>::iterator it1, std::list<wmList
     return ((*it1)->pUi->GetIndex() < (*it2)->pUi->GetIndex());
 }
 
+#ifdef WXSPAM
+DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_LIST_SELECTED, -1)
+DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_LIST_HELD, -1)
+DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_LIST_PAGED, -1)
+DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_LIST_SLID, -1)
+#else
 wxDECLARE_EXPORTED_EVENT(PAMBASE_IMPEXPORT, wxEVT_LIST_SELECTED, wxCommandEvent);
 wxDECLARE_EXPORTED_EVENT(PAMBASE_IMPEXPORT, wxEVT_LIST_HELD, wxCommandEvent);
 wxDECLARE_EXPORTED_EVENT(PAMBASE_IMPEXPORT, wxEVT_LIST_PAGED, wxCommandEvent);
 wxDECLARE_EXPORTED_EVENT(PAMBASE_IMPEXPORT, wxEVT_LIST_SLID, wxCommandEvent);
-
+#endif // WXSPAM

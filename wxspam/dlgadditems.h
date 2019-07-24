@@ -2,7 +2,7 @@
 #define DLGADDITEMS_H
 
 #include <list>
-#include "wmlist.h"
+#include "../pambase/wmlist.h"
 
 //(*Headers(dlgAddItems)
 #include <wx/sizer.h>
@@ -13,7 +13,7 @@
 #include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/clrpicker.h>
-#include "wmlist.h"
+#include "../pambase/wmlist.h"
 //*)
 
 

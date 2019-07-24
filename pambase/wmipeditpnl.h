@@ -10,8 +10,11 @@
 
 class PAMBASE_IMPEXPORT wmipeditpnl: public pmPanel
 {
+    #ifdef WXSPAM
+    DECLARE_DYNAMIC_CLASS(wmipeditpnl)
+    #else
     wxDECLARE_DYNAMIC_CLASS(wmipeditpnl);
-
+    #endif // WXSPAM
 	public:
 
 	    wmipeditpnl() : pmPanel() {}

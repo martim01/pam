@@ -12,8 +12,11 @@ BEGIN_EVENT_TABLE(wmLabel, pmControl)
     EVT_TIMER(ID_TIMER_FLASH, wmLabel::OnFlash)
 END_EVENT_TABLE()
 
- wxIMPLEMENT_DYNAMIC_CLASS(wmLabel, pmControl);
-
+#ifdef WXSPAM
+IMPLEMENT_DYNAMIC_CLASS(wmLabel, pmControl)
+#else
+wxIMPLEMENT_DYNAMIC_CLASS(wmLabel, pmControl);
+#endif
 
 
 

@@ -9,8 +9,11 @@
 class PAMBASE_IMPEXPORT wmSlider : public pmControl
 {
     DECLARE_EVENT_TABLE()
+    #ifdef WXSPAM
+    DECLARE_DYNAMIC_CLASS(wmSlider)
+    #else
     wxDECLARE_DYNAMIC_CLASS(wmSlider);
-
+    #endif // WXSPAM
     public:
 
         /** @brief default constructor
@@ -88,4 +91,8 @@ class PAMBASE_IMPEXPORT wmSlider : public pmControl
         double m_dPosition;
 };
 
+#ifdef WXSPAM
+DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_SLIDER_MOVE, -1)
+#else
 wxDECLARE_EXPORTED_EVENT(PAMBASE_IMPEXPORT, wxEVT_SLIDER_MOVE,wxCommandEvent);
+#endif

@@ -1,7 +1,7 @@
 #ifndef DLGADDLINES_H
 #define DLGADDLINES_H
 
-#include "wmline.h"
+#include "../pambase/wmline.h"
 
 //(*Headers(dlgAddLines)
 #include <wx/sizer.h>
@@ -16,7 +16,8 @@
 #include <wx/clrpicker.h>
 //*)
 
-#include "wmline.h"
+#include "../pambase/wmline.h"
+
 class dlgAddLines: public wxDialog
 {
 	public:

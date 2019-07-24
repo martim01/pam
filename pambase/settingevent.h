@@ -51,6 +51,9 @@ protected:
 typedef void (wxEvtHandler::*SettingEventFunction)(SettingEvent&);
 
 
+#ifdef WXSPAM
+DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_SETTING_CHANGED, -1)
+#else
 wxDECLARE_EXPORTED_EVENT(PAMBASE_IMPEXPORT, wxEVT_SETTING_CHANGED,SettingEvent);
-
+#endif
 

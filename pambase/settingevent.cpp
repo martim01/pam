@@ -1,6 +1,12 @@
 #include "settingevent.h"
 
+
+#ifdef WXSPAM
+DEFINE_EVENT_TYPE(wxEVT_SETTING_CHANGED)
+#else
 wxDEFINE_EVENT(wxEVT_SETTING_CHANGED, SettingEvent);
+#endif // WXSPAM
+
 //wxDECLARE_DYNAMIC_CLASS(SettingEvent, wxCommandEvent)
 
 SettingEvent::SettingEvent() : wxCommandEvent(wxEVT_SETTING_CHANGED, wxID_ANY)

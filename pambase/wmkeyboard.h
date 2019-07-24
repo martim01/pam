@@ -14,7 +14,11 @@
 **/
 class PAMBASE_IMPEXPORT wmKeyboard : public pmControl
 {
+    #ifdef WXSPAM
+    DECLARE_DYNAMIC_CLASS(wmKeyboard)
+    #else
     wxDECLARE_DYNAMIC_CLASS(wmKeyboard);
+    #endif // WXSPAM
     DECLARE_EVENT_TABLE()
 
    public:

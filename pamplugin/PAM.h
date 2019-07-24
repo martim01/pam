@@ -10,6 +10,7 @@
 #ifndef PAM_H_INCLUDED
 #define PAM_H_INCLUDED
 
+
 // For compilers that support precompilation, includes <wx/wx.h>
 #include <wx/wxprec.h>
 

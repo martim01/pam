@@ -11,7 +11,12 @@
 **/
 class PAMBASE_IMPEXPORT wmEdit : public pmControl
 {
+    #ifdef WXSPAM
+    DECLARE_DYNAMIC_CLASS(wmEdit)
+    #else
     wxDECLARE_DYNAMIC_CLASS(wmEdit);
+    #endif // WXSPAM
+
     DECLARE_EVENT_TABLE()
 
     public:

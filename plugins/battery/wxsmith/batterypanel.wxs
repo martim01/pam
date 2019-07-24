@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="batteryPanel">
+		<size>105,361</size>
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="LevelMeter" name="ID_M_PMETER1" variable="m_pMeter1" member="yes">
+			<label>Charge</label>
+			<meter_min>-100</meter_min>
+			<meter_normal>#FF8040</meter_normal>
+			<meter_over>#00FF00</meter_over>
+			<level title="battery" units="%" offset="0" scaling="1" reference="-15" overmod="-70">
+				<level>100</level>
+				<level>90</level>
+				<level>80</level>
+				<level>70</level>
+				<level>60</level>
+				<level>50</level>
+				<level>40</level>
+				<level>30</level>
+				<level>20</level>
+				<level>10</level>
+				<level>0</level>
+			</level>
+			<pos>250,30</pos>
+			<size>60,300</size>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+			<label>Battery Status</label>
+			<border>uiRect::BORDER_FLAT</border>
+			<pos>20,30</pos>
+			<size>100,25</size>
+			<fg>#FFFFFF</fg>
+			<bg>#2CA954</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL4" variable="m_plblStatus" member="yes">
+			<label>Charging</label>
+			<border>uiRect::BORDER_FLAT</border>
+			<pos>121,30</pos>
+			<size>100,25</size>
+			<fg>#000000</fg>
+			<bg>#FFFFFF</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
+			<label>Power Input</label>
+			<border>uiRect::BORDER_FLAT</border>
+			<pos>20,60</pos>
+			<size>100,25</size>
+			<fg>#FFFFFF</fg>
+			<bg>#2CA954</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL5" variable="m_plblInput" member="yes">
+			<label>WEAK</label>
+			<border>uiRect::BORDER_FLAT</border>
+			<pos>121,60</pos>
+			<size>100,25</size>
+			<fg>#000000</fg>
+			<bg>#FFFFFF</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
+			<label>Error</label>
+			<border>uiRect::BORDER_FLAT</border>
+			<pos>20,90</pos>
+			<size>100,25</size>
+			<fg>#FFFFFF</fg>
+			<bg>#2CA954</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL6" variable="m_plblError" member="yes">
+			<label>No Error</label>
+			<border>uiRect::BORDER_FLAT</border>
+			<pos>121,90</pos>
+			<size>100,25</size>
+			<fg>#000000</fg>
+			<bg>#FFFFFF</bg>
+		</object>
+		<object class="wxTimer" name="ID_TIMER_CHECK" variable="m_timerCheck" member="yes">
+			<interval>10000</interval>
+			<handler function="OntimerCheckTrigger" entry="EVT_TIMER" />
+		</object>
+	</object>
+</wxsmith>

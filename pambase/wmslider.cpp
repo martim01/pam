@@ -12,8 +12,13 @@ BEGIN_EVENT_TABLE(wmSlider, pmControl)
     EVT_PAINT(wmSlider::OnPaint)
 END_EVENT_TABLE()
 
- wxIMPLEMENT_DYNAMIC_CLASS(wmSlider, pmControl);
+#ifdef WXSPAM
+IMPLEMENT_DYNAMIC_CLASS(wmSlider, pmControl)
+DEFINE_EVENT_TYPE(wxEVT_SLIDER_MOVE)
+#else
+wxIMPLEMENT_DYNAMIC_CLASS(wmSlider, pmControl);
 wxDEFINE_EVENT(wxEVT_SLIDER_MOVE, wxCommandEvent);
+#endif // WXSPAM
 
 wmSlider::wmSlider(wxWindow *parent, wxWindowID id, const wxString& sLabel, const wxPoint& pos, const wxSize& size, long nStyle, const wxString& name) : pmControl()
 {

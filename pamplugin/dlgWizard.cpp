@@ -146,7 +146,7 @@ void dlgWizard::OnbtnCreateClick(wxCommandEvent& event)
 
     if(wxFileName::FileExists(wxString::Format(wxT("%s/templates/%s/project.xml"), m_pdpcPath->GetPath().c_str(), STR_TYPE[m_pchType->GetSelection()].c_str())) == false)
     {
-        wxMessageBox(wxT("Can't find the correct files in the given directory"));
+        wxMessageBox(wxT("Can't find the correct files in the given directory:\n"+wxString::Format(wxT("%s/templates/%s/project.xml"), m_pdpcPath->GetPath().c_str(), STR_TYPE[m_pchType->GetSelection()].c_str())));
     }
     else
     {
