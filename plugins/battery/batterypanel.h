@@ -15,7 +15,7 @@ class batteryBuilder;
 class timedbuffer;
 class session;
 
-class batteryPanel: public pmPanel
+class batteryPanel: public wxPanel
 {
 	public:
         wxDECLARE_DYNAMIC_CLASS(batteryPanel);

@@ -21,13 +21,63 @@ const long batteryPanel::ID_M_PLBL6 = wxNewId();
 const long batteryPanel::ID_TIMER_CHECK = wxNewId();
 //*)
 
-wxIMPLEMENT_DYNAMIC_CLASS(batteryPanel, pmPanel);
+wxIMPLEMENT_DYNAMIC_CLASS(batteryPanel, wxPanel);
 
-batteryPanel::batteryPanel(wxWindow* parent,batteryBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) : pmPanel(),
+batteryPanel::batteryPanel(wxWindow* parent,batteryBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) : wxPanel(),
     m_pBuilder(pBuilder)
 {
-	//(*Initialize(pnlTest)
-	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
+	//(*Initialize(batteryPanel)
+	Create(parent, id, wxDefaultPosition, wxSize(105,361), wxTAB_TRAVERSAL, _T("id"));
+	SetBackgroundColour(wxColour(0,0,0));
+	m_pMeter1 = new LevelMeter(this, ID_M_PMETER1, _("Charge"), -100, 0, wxPoint(250,30), wxSize(60,300));
+	m_pMeter1->SetLightColours(wxColour(wxT("#FF8040")), -70, wxColour(wxT("#00FF00")));
+	std::vector<double> vLevels;
+	vLevels.push_back(100);
+	vLevels.push_back(90);
+	vLevels.push_back(80);
+	vLevels.push_back(70);
+	vLevels.push_back(60);
+	vLevels.push_back(50);
+	vLevels.push_back(40);
+	vLevels.push_back(30);
+	vLevels.push_back(20);
+	vLevels.push_back(10);
+	vLevels.push_back(0);
+	m_pMeter1->SetLevels(vLevels, 0, _("%"), _("battery"), _("-15"), 1);
+	m_pLbl1 = new wmLabel(this, ID_M_PLBL1, _("Battery Status"), wxPoint(20,30), wxSize(100,25), 0, _T("ID_M_PLBL1"));
+	m_pLbl1->SetBorderState(uiRect::BORDER_FLAT);
+	m_pLbl1->GetUiRect().SetGradient(0);
+	m_pLbl1->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl1->SetBackgroundColour(wxColour(44,169,84));
+	m_plblStatus = new wmLabel(this, ID_M_PLBL4, _("Charging"), wxPoint(121,30), wxSize(100,25), 0, _T("ID_M_PLBL4"));
+	m_plblStatus->SetBorderState(uiRect::BORDER_FLAT);
+	m_plblStatus->GetUiRect().SetGradient(0);
+	m_plblStatus->SetForegroundColour(wxColour(0,0,0));
+	m_plblStatus->SetBackgroundColour(wxColour(255,255,255));
+	m_pLbl2 = new wmLabel(this, ID_M_PLBL2, _("Power Input"), wxPoint(20,60), wxSize(100,25), 0, _T("ID_M_PLBL2"));
+	m_pLbl2->SetBorderState(uiRect::BORDER_FLAT);
+	m_pLbl2->GetUiRect().SetGradient(0);
+	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl2->SetBackgroundColour(wxColour(44,169,84));
+	m_plblInput = new wmLabel(this, ID_M_PLBL5, _("WEAK"), wxPoint(121,60), wxSize(100,25), 0, _T("ID_M_PLBL5"));
+	m_plblInput->SetBorderState(uiRect::BORDER_FLAT);
+	m_plblInput->GetUiRect().SetGradient(0);
+	m_plblInput->SetForegroundColour(wxColour(0,0,0));
+	m_plblInput->SetBackgroundColour(wxColour(255,255,255));
+	m_pLbl3 = new wmLabel(this, ID_M_PLBL3, _("Error"), wxPoint(20,90), wxSize(100,25), 0, _T("ID_M_PLBL3"));
+	m_pLbl3->SetBorderState(uiRect::BORDER_FLAT);
+	m_pLbl3->GetUiRect().SetGradient(0);
+	m_pLbl3->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl3->SetBackgroundColour(wxColour(44,169,84));
+	m_plblError = new wmLabel(this, ID_M_PLBL6, _("No Error"), wxPoint(121,90), wxSize(100,25), 0, _T("ID_M_PLBL6"));
+	m_plblError->SetBorderState(uiRect::BORDER_FLAT);
+	m_plblError->GetUiRect().SetGradient(0);
+	m_plblError->SetForegroundColour(wxColour(0,0,0));
+	m_plblError->SetBackgroundColour(wxColour(255,255,255));
+	m_timerCheck.SetOwner(this, ID_TIMER_CHECK);
+	m_timerCheck.Start(10000, false);
+
+	Connect(ID_TIMER_CHECK,wxEVT_TIMER,(wxObjectEventFunction)&batteryPanel::OntimerCheckTrigger);
 	//*)
 
 	Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&batteryPanel::OnLeftUp);
