@@ -29,8 +29,8 @@ batteryPanel::batteryPanel(wxWindow* parent,batteryBuilder* pBuilder, wxWindowID
 	//(*Initialize(batteryPanel)
 	Create(parent, id, wxDefaultPosition, wxSize(105,361), wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
-	m_pMeter1 = new LevelMeter(this, ID_M_PMETER1, _("Charge"), -100, 0, wxPoint(250,30), wxSize(60,300));
-	m_pMeter1->SetLightColours(wxColour(wxT("#FF8040")), -70, wxColour(wxT("#00FF00")));
+	m_pMeter1 = new LevelMeter(this, ID_M_PMETER1, _("Charge"), -100, 0, wxPoint(350,30), wxSize(60,300));
+	m_pMeter1->SetLightColours(wxColour(wxT("#00FF00")), -70, wxColour(wxT("#00FF00")));
 	std::vector<double> vLevels;
 	vLevels.push_back(100);
 	vLevels.push_back(90);
@@ -49,7 +49,7 @@ batteryPanel::batteryPanel(wxWindow* parent,batteryBuilder* pBuilder, wxWindowID
 	m_pLbl1->GetUiRect().SetGradient(0);
 	m_pLbl1->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl1->SetBackgroundColour(wxColour(44,169,84));
-	m_plblStatus = new wmLabel(this, ID_M_PLBL4, _("Charging"), wxPoint(121,30), wxSize(100,25), 0, _T("ID_M_PLBL4"));
+	m_plblStatus = new wmLabel(this, ID_M_PLBL4, _("Charging"), wxPoint(121,30), wxSize(200,25), 0, _T("ID_M_PLBL4"));
 	m_plblStatus->SetBorderState(uiRect::BORDER_FLAT);
 	m_plblStatus->GetUiRect().SetGradient(0);
 	m_plblStatus->SetForegroundColour(wxColour(0,0,0));
@@ -59,7 +59,7 @@ batteryPanel::batteryPanel(wxWindow* parent,batteryBuilder* pBuilder, wxWindowID
 	m_pLbl2->GetUiRect().SetGradient(0);
 	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl2->SetBackgroundColour(wxColour(44,169,84));
-	m_plblInput = new wmLabel(this, ID_M_PLBL5, _("WEAK"), wxPoint(121,60), wxSize(100,25), 0, _T("ID_M_PLBL5"));
+	m_plblInput = new wmLabel(this, ID_M_PLBL5, _("WEAK"), wxPoint(121,60), wxSize(200,25), 0, _T("ID_M_PLBL5"));
 	m_plblInput->SetBorderState(uiRect::BORDER_FLAT);
 	m_plblInput->GetUiRect().SetGradient(0);
 	m_plblInput->SetForegroundColour(wxColour(0,0,0));
@@ -69,7 +69,7 @@ batteryPanel::batteryPanel(wxWindow* parent,batteryBuilder* pBuilder, wxWindowID
 	m_pLbl3->GetUiRect().SetGradient(0);
 	m_pLbl3->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl3->SetBackgroundColour(wxColour(44,169,84));
-	m_plblError = new wmLabel(this, ID_M_PLBL6, _("No Error"), wxPoint(121,90), wxSize(100,25), 0, _T("ID_M_PLBL6"));
+	m_plblError = new wmLabel(this, ID_M_PLBL6, _("No Error"), wxPoint(121,90), wxSize(200,25), 0, _T("ID_M_PLBL6"));
 	m_plblError->SetBorderState(uiRect::BORDER_FLAT);
 	m_plblError->GetUiRect().SetGradient(0);
 	m_plblError->SetForegroundColour(wxColour(0,0,0));
@@ -79,12 +79,30 @@ batteryPanel::batteryPanel(wxWindow* parent,batteryBuilder* pBuilder, wxWindowID
 
 	Connect(ID_TIMER_CHECK,wxEVT_TIMER,(wxObjectEventFunction)&batteryPanel::OntimerCheckTrigger);
 	//*)
+	m_pLbl4 = new wmLabel(this, wxNewId(), _("Charge"), wxPoint(20,90), wxSize(100,25), 0, _T("ID_M_PLBL3"));
+	m_pLbl4->SetBorderState(uiRect::BORDER_FLAT);
+	m_pLbl4->GetUiRect().SetGradient(0);
+	m_pLbl4->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl4->SetBackgroundColour(wxColour(44,169,84));
+	m_plblCharge = new wmLabel(this, wxNewId(), _("0"), wxPoint(121,90), wxSize(200,25), 0, _T("ID_M_PLBL6"));
+	m_plblCharge->SetBorderState(uiRect::BORDER_FLAT);
+	m_plblCharge->GetUiRect().SetGradient(0);
+	m_plblCharge->SetForegroundColour(wxColour(0,0,0));
+	m_plblCharge->SetBackgroundColour(wxColour(255,255,255));
+
+	m_plblRaw = new wmLabel(this, wxNewId(), _(""), wxPoint(20,150), wxSize(301,200), 0, _T("ID_M_PLBL6"));
+	m_plblRaw->SetBorderState(uiRect::BORDER_FLAT);
+	m_plblRaw->GetUiRect().SetGradient(0);
+	m_plblRaw->SetForegroundColour(wxColour(0,0,0));
+	m_plblRaw->SetBackgroundColour(wxColour(255,255,255));
+    m_plblRaw->Hide();
+
 
 	Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&batteryPanel::OnLeftUp);
 
 	Connect(wxID_ANY, wxEVT_PROCESS_FINISHED, (wxObjectEventFunction)&batteryPanel::OnProcess);
-
-	SetSize(size);
+    CheckStatus();
+	SetSize(wxSize(800,480));
 	SetPosition(pos);
 }
 
@@ -119,18 +137,42 @@ void batteryPanel::OnLeftUp(wxMouseEvent& event)
 
 void batteryPanel::OntimerCheckTrigger(wxTimerEvent& event)
 {
-    //run the script
-   // m_pProcess = new MyProcess(this);
-    //if(!wxExecute("sudo ./status.py", wxEXEC_ASYNC, m_pProcess))
-    //{
-     //   delete m_pProcess;
-      //  m_pProcess = 0;
-       // m_plblError->SetLabel(wxT("Process Failed!"));
-    //}
+    if(IsShown())
+    {
+        CheckStatus();
+    }
+}
+
+void batteryPanel::CheckStatus()
+{
+    m_pProcess = new MyProcess(this);
+    if(!wxExecute("sudo status.py", wxEXEC_ASYNC, m_pProcess))
+    {
+        delete m_pProcess;
+        m_pProcess = 0;
+        m_plblError->SetLabel(wxT("Process Failed!"));
+    }
 }
 
 
 void batteryPanel::OnProcess(wxCommandEvent& event)
 {
-
+    if(m_pProcess->IsProcessOk())
+    {
+        m_plblRaw->SetLabel(m_pProcess->GetRaw());
+        m_plblError->SetLabel(m_pProcess->GetError());
+        m_plblStatus->SetLabel(m_pProcess->GetStatus());
+        m_plblInput->SetLabel(m_pProcess->GetPower());
+        m_pMeter1->ShowValue(100-m_pProcess->GetCharge());
+        m_plblCharge->SetLabel(wxString::Format(wxT("%.0f%%"), m_pProcess->GetCharge()));
+    }
+    else
+    {
+        m_plblError->SetLabel(m_pProcess->GetError());
+        m_plblStatus->SetLabel(wxEmptyString);
+        m_plblInput->SetLabel(wxEmptyString);
+        m_pMeter1->ShowValue(-100);
+    }
+    delete m_pProcess;
+        m_pProcess = 0;
 }

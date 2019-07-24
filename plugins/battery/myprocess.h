@@ -23,6 +23,7 @@ public:
     wxString GetError();
     double GetCharge();
     bool IsProcessOk();
+    wxString GetRaw() { return m_sRaw;}
 
 protected:
 
@@ -34,6 +35,7 @@ protected:
     Json::Value m_jsStatus;
     Json::Value m_jsCharge;
     bool m_bErrors;
+    wxString m_sRaw;
 };
 
 

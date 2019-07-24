@@ -17,7 +17,7 @@ void MyProcess::OnTerminate(int pid, int status)
         wxCommandEvent event(wxEVT_PROCESS_FINISHED);
         wxPostEvent(m_pHandler, event);
     }
-
+    m_bErrors = false;
 }
 
 
@@ -29,23 +29,44 @@ bool MyProcess::GetInput()
         wxTextInputStream tis(*GetInputStream());
 
         Json::Reader jsRead;
-        jsRead.parse(std::string(tis.ReadLine().mb_str()), m_jsStatus);
-        jsRead.parse(std::string(tis.ReadLine().mb_str()), m_jsCharge);
+
+        wxString sLine(tis.ReadLine());
+        sLine.Replace("'","\"");
+        sLine.MakeLower();
+        m_sRaw << sLine;
+
+
+        if(jsRead.parse(std::string(sLine.mb_str()), m_jsStatus) == false)
+        {
+            m_sRaw << "\n" << wxString::FromAscii(jsRead.getFormatedErrorMessages().c_str());
+        }
+
+        sLine = tis.ReadLine();
+        sLine.Replace("'","\"");
+        sLine.MakeLower();
+        m_sRaw << sLine;
+
+
+        if(jsRead.parse(std::string(sLine.mb_str()), m_jsCharge) == false)
+        {
+            m_sRaw << "\n" << wxString::FromAscii(jsRead.getFormatedErrorMessages().c_str());
+        }
         m_bErrors = false;
     }
 
-    if ( IsErrorAvailable() )
+    else if ( IsErrorAvailable() )
     {
         wxTextInputStream tis(*GetErrorStream());
 
         // this assumes that the output is always line buffered
         wxString msg;
-        msg << _T(" (stderr): ") << tis.ReadLine();
+
+        m_jsStatus["error"] = std::string(tis.ReadLine().mb_str());
 
         wxLogDebug(msg);
-
+        m_bErrors = true;
     }
-    m_bErrors = true;
+
 
     return true;
 }
@@ -62,18 +83,18 @@ wxString MyProcess::GetStatus()
 
 wxString MyProcess::GetPower()
 {
-    if(m_jsStatus["data"]["powerInput"].isString())
+    if(m_jsStatus["data"]["powerinput"].isString())
     {
-        return wxString::FromAscii(m_jsStatus["data"]["powerInput"].asString().c_str());
+        return wxString::FromAscii(m_jsStatus["data"]["powerinput"].asString().c_str());
     }
     return wxT("Unknown");
 }
 
 wxString MyProcess::GetError()
 {
-    if(m_jsStatus["data"]["error"].isString())
+    if(m_jsStatus["error"].isString())
     {
-        return wxString::FromAscii(m_jsStatus["data"]["error"].asString().c_str());
+        return wxString::FromAscii(m_jsStatus["error"].asString().c_str());
     }
     return wxT("Unknown");
 }

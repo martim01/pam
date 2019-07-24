@@ -273,6 +273,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
 
     Settings::Get().Write(wxT("Version"), wxT("pam2"), wxString::Format(wxT("%d.%d.%d.%d"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
+    Settings::Get().Write(wxT("Input"), wxT("reset"), false);
 
     m_plblInput->SetLabel(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")));
     m_plblOutput->SetLabel(Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")));
@@ -664,6 +665,7 @@ void pam2Dialog::ShowOptionsPanel(const wxString& sPanel)
 
 void pam2Dialog::OnMonitorMax(wxCommandEvent& event)
 {
+    cout << "MaximizeMon" << endl;
     if(Settings::Get().Read(wxT("Input"), wxT("Reset"), false) == false)
     {
         MaximizeMonitor((event.GetInt()) == 1);

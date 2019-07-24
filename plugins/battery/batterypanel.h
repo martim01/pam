@@ -34,6 +34,9 @@ class batteryPanel: public wxPanel
 		wmLabel* m_plblStatus;
 		wxTimer m_timerCheck;
 		//*)
+		wmLabel* m_pLbl4;
+		wmLabel* m_plblCharge;
+		wmLabel* m_plblRaw;
 
 		void SetAudioData(const timedbuffer* pBuffer);
 		void InputSession(const session& aSession);
@@ -60,6 +63,8 @@ class batteryPanel: public wxPanel
 		void OntimerCheckTrigger(wxTimerEvent& event);
 		//*)
         void OnProcess(wxCommandEvent& event);
+
+        void CheckStatus();
 		batteryBuilder* m_pBuilder;
 		MyProcess*  m_pProcess;
 
