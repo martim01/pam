@@ -49,9 +49,19 @@ class [CLASS_PREFIX]Meter : public pmControl
 
         virtual ~[CLASS_PREFIX]Meter();
 
-
+		/**	@brief Called when there is some audio data to pass to the meter
+		*	@param pBuffer const pointer to the timedbuffer containing the audio data
+		**/
         void SetAudioData(const timedbuffer* pBuffer);
+		
+		/** @brief Called when there is a change to an input session (e.g. samplerate, bit depth, number of channels)
+		*	@param aSession session object containing the new session information
+		**/
 		void InputSession(const session& aSession);
+		
+		/** @brief Called when the output channel mapping changes
+		*	@param vChannels vector containing the output channels. The size of the vector reflects the number of output channels and each entry represents the particular channel
+		**/
 		void OutputChannels(const std::vector<char>& vChannels);
         
 

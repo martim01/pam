@@ -21,12 +21,12 @@
 					<Add option="-DWXUSINGDLL" />
 					<Add option="-DUNICODE" />
 					<Add option="-DwxUSE_UNICODE" />
-					<Add directory="$(#wx3_0.include)" />
-					<Add directory="$(#wx3_0.include)/mswu" />
+					<Add directory="$(#wx.include)" />
+					<Add directory="$(#wx.include)/mswu" />
 					<Add directory="$(#portaudio.include)" />
 				</Compiler>
 				<ResourceCompiler>
-					<Add directory="$(#wx3_0.include)/mswu" />
+					<Add directory="$(#wx.include)/mswu" />
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-s" />
@@ -35,7 +35,7 @@
 					<Add library="pambase" />
 !pamfft				<Add library="pamfft" />
 !pamlevel				<Add library="pamlevel" />
-					<Add directory="$(#wx3_0.lib)" />
+					<Add directory="$(#wx.lib)" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="C:\developer\matt\pam2\manifest_creator\bin\Release\manifest_creator.exe" />
@@ -57,12 +57,12 @@
 					<Add option="-DUNICODE" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXDEBUG__" />
-					<Add directory="$(#wx3_0.include)" />
-					<Add directory="$(#wx3_0.include)/mswu" />
+					<Add directory="$(#wx.include)" />
+					<Add directory="$(#wx.include)/mswu" />
 					<Add directory="$(#portaudio.include)" />
 				</Compiler>
 				<ResourceCompiler>
-					<Add directory="$(#wx3_0.include)/mswu" />
+					<Add directory="$(#wx.include)/mswu" />
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-Wl,--enable-auto-import,-Map=[CLASS_PREFIX].map" />
@@ -70,7 +70,7 @@
 					<Add library="pambased" />
 !pamfft				<Add library="pamfftd" />
 !pamlevel				<Add library="pamleveld" />
-					<Add directory="$(#wx3_0.lib)" />
+					<Add directory="$(#wx.lib)" />
 				</Linker>
 			</Target>
 			<Target title="Linux Release">
