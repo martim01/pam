@@ -16,7 +16,7 @@ BEGIN_EVENT_TABLE([CLASS_PREFIX]Meter, pmControl)
     EVT_LEFT_UP([CLASS_PREFIX]Meter::OnLeftUp)
 END_EVENT_TABLE()
 
-wxIMPLEMENT_DYNAMIC_CAST([CLASS_PREFIX]Meter, pmControl);
+wxIMPLEMENT_DYNAMIC_CLASS([CLASS_PREFIX]Meter, pmControl);
 
 
 
@@ -24,10 +24,7 @@ wxIMPLEMENT_DYNAMIC_CAST([CLASS_PREFIX]Meter, pmControl);
     m_pBuilder(pBuilder)
 {
     Create(parent, id, pos, size);
-    if(Settings::Get().HideCursor())
-    {
-        SetCursor(wxCURSOR_BLANK);
-    }
+   
 
 }
 

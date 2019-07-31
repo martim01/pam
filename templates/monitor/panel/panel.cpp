@@ -11,7 +11,7 @@
 //(*IdInit([CLASS_PREFIX]Panel)
 //*)
 
-wxIMPLEMENT_DYNAMIC_CAST([CLASS_PREFIX]Panel, pmPanel)
+wxIMPLEMENT_DYNAMIC_CLASS([CLASS_PREFIX]Panel, pmPanel)
 
 BEGIN_EVENT_TABLE([CLASS_PREFIX]Panel,pmPanel)
 	//(*EventTable([CLASS_PREFIX]Panel)

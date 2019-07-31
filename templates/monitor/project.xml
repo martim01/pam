@@ -31,7 +31,7 @@
 				<Linker>
 					<Add option="-s" />
 					<Add option="-Wl,--enable-auto-import,-Map=[CLASS_PREFIX].map" />
-					<Add library="wxmsw30u_gcc_wammacs" />
+					<Add library="wxmsw30u_gcc_custom" />
 					<Add library="pambase" />
 !pamfft				<Add library="pamfft" />
 !pamlevel				<Add library="pamlevel" />
@@ -66,7 +66,7 @@
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-Wl,--enable-auto-import,-Map=[CLASS_PREFIX].map" />
-					<Add library="wxmsw30ud_gcc_wammacs" />
+					<Add library="wxmsw30ud_gcc_custom" />
 					<Add library="pambased" />
 !pamfft				<Add library="pamfftd" />
 !pamlevel				<Add library="pamleveld" />

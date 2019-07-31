@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlOverlap">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmList" name="ID_M_PLST10" variable="m_plstFFT_Overlap" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>5,5</button_gap>
+			<columns>2</columns>
+			<items />
+			<pos>0,0</pos>
+			<size>190,140</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstFFT_OverlapSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+	</object>
+</wxsmith>

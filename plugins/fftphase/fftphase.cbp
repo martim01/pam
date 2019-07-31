@@ -2,12 +2,12 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="[CLASS_PREFIX]" />
+		<Option title="fftphase" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Windows Release">
-				<Option output="../../lib/test/[CLASS_PREFIX].dll" prefix_auto="0" extension_auto="0" />
+				<Option output="../../lib/monitor/fftphase.dll" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/release3" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -30,11 +30,10 @@
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-s" />
-					<Add option="-Wl,--enable-auto-import,-Map=[CLASS_PREFIX].map" />
+					<Add option="-Wl,--enable-auto-import,-Map=fftphase.map" />
 					<Add library="wxmsw30u_gcc_custom" />
 					<Add library="pambase" />
-!pamfft				<Add library="pamfft" />
-!pamlevel				<Add library="pamlevel" />
+					<Add library="pamfft" />
 					<Add directory="$(#wx.lib)" />
 				</Linker>
 				<ExtraCommands>
@@ -42,7 +41,7 @@
 				</ExtraCommands>
 			</Target>
 			<Target title="Windows Debug">
-				<Option output="../../lib/test/debug/[CLASS_PREFIX].dll" prefix_auto="1" extension_auto="0" />
+				<Option output="../../lib/monitor/debug/fftphase.dll" prefix_auto="1" extension_auto="0" />
 				<Option object_output="obj/debug" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -65,17 +64,16 @@
 					<Add directory="$(#wx.include)/mswu" />
 				</ResourceCompiler>
 				<Linker>
-					<Add option="-Wl,--enable-auto-import,-Map=[CLASS_PREFIX].map" />
+					<Add option="-Wl,--enable-auto-import,-Map=fftphase.map" />
 					<Add library="wxmsw30ud_gcc_custom" />
 					<Add library="pambased" />
-!pamfft				<Add library="pamfftd" />
-!pamlevel				<Add library="pamleveld" />
+					<Add library="pamfftd" />
 					<Add directory="$(#wx.lib)" />
 				</Linker>
 			</Target>
 			<Target title="Linux Release">
 				<Option platforms="Unix;" />
-				<Option output="../../lib/test/lib[CLASS_PREFIX].so" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="0" extension_auto="0" />
+				<Option output="../../lib/monitor/libfftphase.so" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/linux" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -91,8 +89,7 @@
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add library="pambase" />
-!pamfft				<Add library="pamfft" />
-!pamlevel				<Add library="pamlevel" />
+					<Add library="pamfft" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="../../manifest_creator/bin/LinuxRelease/manifest_creator" />
@@ -100,7 +97,7 @@
 			</Target>
 			<Target title="Linux Debug">
 				<Option platforms="Unix;" />
-				<Option output="../../lib/test/debug/lib[CLASS_PREFIX].so" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="0" extension_auto="0" />
+				<Option output="../../lib/monitor/debug/libfftphase.so" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/linux/debug" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -118,30 +115,35 @@
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add library="pambased" />
-!pamfft				<Add library="pamfftd" />
-!pamlevel				<Add library="pamlevel" />
+					<Add library="pamfftd" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-D_test_" />
+			<Add option="-D_monitor_" />
 			<Add directory="../../pambase" />
-!pamfft		<Add directory="$(#kiss.include)" />
-!pamfft		<Add directory="$(#kiss.include)/tools" />
-!pamfft		<Add directory="../../pamfft" />
-!pamlevel		<Add directory="../../pamlevel" />
+			<Add directory="$(#kiss.include)" />
+			<Add directory="$(#kiss.include)/tools" />
+			<Add directory="../../pamfft" />
 		</Compiler>
 		<Linker>
 			<Add directory="../../lib" />
 		</Linker>
-		<Unit filename="[CLASS_PREFIX]register.cpp" />
-		<Unit filename="[CLASS_PREFIX]register.h" />
-		<Unit filename="[CLASS_PREFIX]builder.cpp" />
-		<Unit filename="[CLASS_PREFIX]builder.h" />
-@panel	<Unit filename="[CLASS_PREFIX]panel.cpp" />
-@panel	<Unit filename="[CLASS_PREFIX]panel.h" />
-@meter	<Unit filename="[CLASS_PREFIX]meter.cpp" />
-@meter	<Unit filename="[CLASS_PREFIX]meter.h" />
+		<Unit filename="colourgradient.h" />
+		<Unit filename="fftphasebuilder.cpp" />
+		<Unit filename="fftphasebuilder.h" />
+		<Unit filename="fftphasemeter.cpp" />
+		<Unit filename="fftphasemeter.h" />
+		<Unit filename="fftphaseregister.cpp" />
+		<Unit filename="fftphaseregister.h" />
+		<Unit filename="pnlbins.cpp" />
+		<Unit filename="pnlbins.h" />
+		<Unit filename="pnldisplay.cpp" />
+		<Unit filename="pnldisplay.h" />
+		<Unit filename="pnloverlap.cpp" />
+		<Unit filename="pnloverlap.h" />
+		<Unit filename="pnlwindow.cpp" />
+		<Unit filename="pnlwindow.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
@@ -152,11 +154,6 @@
 				<Changes_Log show_changes_editor="1" app_title="released version %M.%m.%b of %p" changeslog_path="ChangesLog.txt" />
 				<Code header_guard="VERSION_H" namespace="AutoVersion" prefix="" />
 			</AutoVersioning>
-@panel			<wxsmith version="1">
-@panel				<resources>
-@panel					<wxPanel wxs="wxsmith/[CLASS_PREFIX]panel.wxs" src="[CLASS_PREFIX]panel.cpp" hdr="[CLASS_PREFIX]panel.h" fwddecl="0" i18n="1" name="[CLASS_PREFIX]Panel" language="CPP" />
-@panel				</resources>
-@panel			</wxsmith>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
