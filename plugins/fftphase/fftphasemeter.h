@@ -126,6 +126,7 @@ class fftphaseMeter : public pmControl
         uiRect m_uiPeakLevel;
         uiRect m_uiAmplitude;
         uiRect m_uiBin;
+        static const wxString LABEL_WINDOW[6];
 
 };
 
