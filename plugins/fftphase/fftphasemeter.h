@@ -86,6 +86,7 @@ class fftphaseMeter : public pmControl
         void DoFFT(int nChannel);
 
         void OnPaint(wxPaintEvent& event);
+        void DrawPhase(wxDC& dc);
         void DrawStars(wxDC& dc);
         void DrawGraph(wxDC& dc);
         virtual void OnSize(wxSizeEvent& event);
@@ -99,6 +100,7 @@ class fftphaseMeter : public pmControl
         std::list<float> m_lstBuffer[2];      ///< vector containing the a-leg samples
         std::vector<kiss_fft_cpx> m_vfft_out[2];
         std::vector<float> m_vAmplitude[2];
+        std::vector<float> m_vPhase[2];
         std::vector<wxColour> m_vColour;
 
         unsigned long m_nSampleRate;
@@ -111,7 +113,7 @@ class fftphaseMeter : public pmControl
         size_t m_nSampleSize;
         size_t m_nNumberOfSetBins;
         int m_nDisplayType;
-        enum {GRAPH=0, STARS};
+        enum {GRAPH=0, STARS, PHASE};
         wxRect m_rectGrid;
         ColourGradient m_HeatMap;
         bool m_bFall;

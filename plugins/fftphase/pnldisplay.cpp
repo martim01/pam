@@ -35,6 +35,7 @@ pnlDisplay::pnlDisplay(wxWindow* parent,fftphaseBuilder* pBuilder, wxWindowID id
 
     m_plstFFT_Display->AddButton(wxT("Graph"));
     m_plstFFT_Display->AddButton(wxT("Stars"));
+    m_plstFFT_Display->AddButton(wxT("Phase"));
     m_plstFFT_Display->SelectButton(0,false);
 
 }

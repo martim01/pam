@@ -70,13 +70,16 @@ void fftphaseMeter::OnPaint(wxPaintEvent& event)
 
     dc.SetTextForeground(GetForegroundColour());
 
-    if(m_nDisplayType == STARS)
+    switch(m_nDisplayType)
     {
-        DrawStars(dc);
-    }
-    else
-    {
-        DrawGraph(dc);
+        case STARS:
+            DrawStars(dc);
+            break;
+        case PHASE:
+            DrawPhase(dc);
+            break;
+        default:
+            DrawGraph(dc);
     }
     m_uiSettingsAnalyse.Draw(dc, uiRect::BORDER_DOWN);
     m_uiSettingsWindow.Draw(dc, uiRect::BORDER_FLAT);
@@ -115,9 +118,81 @@ void fftphaseMeter::DrawStars(wxDC& dc)
     }
 }
 
+void fftphaseMeter::DrawPhase(wxDC& dc)
+{
+    uiRect uiLabel;
+    wxPen penLine(wxColour(120,120,120),1,wxDOT);
+    for(size_t i = 1; i < m_vfft_out[0].size()-1; i*= 2)
+    {
+        dc.SetPen(penLine);
+        int x = static_cast<int>( (static_cast<double>(m_rectGrid.GetWidth())/(log(m_vfft_out[0].size()))) * log(static_cast<double>(i))) + m_rectGrid.GetLeft();
+        dc.DrawLine(x, 0, x, m_rectGrid.GetHeight());
+        uiLabel.SetRect(wxRect(x-20, m_rectGrid.GetBottom()+1, 40, 20));
+        uiLabel.Draw(dc, wxString::Format(wxT("%.0f"), m_dBinSize*static_cast<double>(i)), uiRect::BORDER_NONE);
+
+    }
+
+    dc.SetPen(*wxWHITE_PEN);
+    dc.SetBrush(wxBrush(wxColour(90,60,200)));
+
+    //draw the 1025 FFT points
+    int x_old(m_rectGrid.GetLeft());
+    int nCenter = m_rectGrid.GetHeight()/2+m_rectGrid.GetTop();
+    int y_old(nCenter);
+    double dRes = m_rectGrid.GetHeight()/(M_PI*4);
+
+    int nLeftCenter = nCenter-(dRes*M_PI);
+    int nRightCenter = nCenter+(dRes*M_PI);
+
+    for(size_t i = 1; i < m_vPhase[0].size(); i++)
+    {
+        double dDiff(0.0);
+        if(m_vPhase[0][i] < 0.0 && m_vPhase[1][i] > 0.0)
+        {
+            dDiff = -m_vPhase[1][i];
+        }
+        else if(m_vPhase[1][i] < 0.0 && m_vPhase[0][i] > 0.0)
+        {
+            dDiff = m_vPhase[0][i];
+        }
+        else if(m_vPhase[0][i] > 0.0 && m_vPhase[1][i] > 0.0)
+        {
+            dDiff = m_vPhase[0][i]-m_vPhase[1][i];
+        }
+
+        int x = static_cast<int>( (static_cast<double>(m_rectGrid.GetWidth())/log(m_vPhase[0].size())) * static_cast<double>(log(i)))+m_rectGrid.GetLeft();
+        int y = nCenter-static_cast<int>(dRes * dDiff);
+
+        dc.SetPen(wxPen(m_vColour[i]));
+        dc.DrawLine(x, nCenter, x, y);
+
+    }
+
+/*
+    x_old = m_rectGrid.GetLeft();
+    y_old = nCenter;
+    for(size_t i = 1; i < m_vPhase[1].size(); i++)
+    {
+        if(m_vPhase[1][i] >= 0.0)
+        {
+            int x = static_cast<int>( (static_cast<double>(m_rectGrid.GetWidth())/log(m_vPhase[1].size())) * static_cast<double>(log(i)))+m_rectGrid.GetLeft();
+            int y = nCenter+static_cast<int>(  dRes * m_vPhase[1][i]);
+            if(i == 1)
+            {
+                y_old = max(y, nCenter);
+            }
+            dc.SetPen(wxPen(m_vColour[i]));
+
+            dc.DrawLine(x, nRightCenter, x, max(y, nCenter));
+            x_old = x;
+            y_old = y;
+        }
+    }
+*/
+}
+
 void fftphaseMeter::DrawGraph(wxDC& dc)
 {
-
     uiRect uiLabel;
     wxPen penLine(wxColour(120,120,120),1,wxDOT);
     for(size_t i = 1; i < m_vfft_out[0].size()-1; i*= 2)
@@ -257,6 +332,16 @@ void fftphaseMeter::DoFFT(int nChannel)
             m_vAmplitude[nChannel][i] = min(0.0, (max((double)m_vAmplitude[nChannel][i]-m_dFall, (double)dLog)));
         }
 
+        if(dLog > -70.0)
+        {
+            m_vPhase[nChannel][i] = atan2(m_vfft_out[nChannel][i].i,m_vfft_out[nChannel][i].r)+M_PI;
+          //  wxLogDebug(wxT("%d:%d = %.2f"), nChannel,i, m_vPhase[nChannel][i]);
+        }
+        else
+        {
+            m_vPhase[nChannel][i] = -M_PI*3;    //this will hide it
+        }
+
         if(dMax < m_vAmplitude[nChannel][i])
         {
             dMax = m_vAmplitude[nChannel][i];
@@ -330,6 +415,8 @@ void fftphaseMeter::SetNumberOfBins(size_t nBins)
     m_vfft_out[1].resize(nBins+1);
     m_vAmplitude[0] = vector<float>(m_vfft_out[0].size(), -80.0);
     m_vAmplitude[1] = vector<float>(m_vfft_out[1].size(), -80.0);
+    m_vPhase[0] = vector<float>(m_vfft_out[0].size(), M_PI);
+    m_vPhase[1] = vector<float>(m_vfft_out[1].size(), M_PI);
 
     m_vColour.resize(m_vAmplitude[0].size());
 
@@ -369,6 +456,6 @@ void fftphaseMeter::SetFall(bool bOn)
 
 void fftphaseMeter::SetDisplayType(int nType)
 {
-    m_nDisplayType = nType%2;
+    m_nDisplayType = nType%3;
     Refresh();
 }
