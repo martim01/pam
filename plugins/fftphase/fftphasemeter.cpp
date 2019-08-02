@@ -19,6 +19,7 @@ END_EVENT_TABLE()
 
 wxIMPLEMENT_DYNAMIC_CLASS(fftphaseMeter, pmControl);
 
+const wxString fftphaseMeter::LABEL_WINDOW[6] = {wxT("None"), wxT("Hann"), wxT("Hamming"), wxT("Blackman"), wxT("Kaiser"), wxT("KaiserBessel")};
 
 
 fftphaseMeter::fftphaseMeter(wxWindow *parent, fftphaseBuilder* pBuilder, wxWindowID id, const wxPoint& pos, const wxSize& size) : pmControl(),
@@ -445,7 +446,7 @@ void fftphaseMeter::SetWindowType(int nType)
     m_lstBuffer[0].clear();
     m_lstBuffer[1].clear();
     m_nWindowType = nType;
-//    m_uiSettingsWindow.SetLabel(LABEL_WINDOW[nType]);
+    m_uiSettingsWindow.SetLabel(LABEL_WINDOW[nType]);
     RefreshRect(m_uiSettingsWindow.GetRect());
 }
 

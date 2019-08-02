@@ -5,7 +5,7 @@
 #include <wx/string.h>
 //*)
 
-#include "fftphaseBuilder.h"
+#include "fftphasebuilder.h"
 
 //(*IdInit(pnlWindow)
 const long pnlWindow::ID_M_PLST5 = wxNewId();
