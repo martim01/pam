@@ -46,13 +46,7 @@ For more information please look at the help files contained in the __documents_
 ##### To install these libraries on Raspbian
 ```
 sudo apt-get update
-sudo apt-get install libwxgtk3.0-dev
-sudo apt-get install portaudio19-dev
-sudo apt-get install libsndfile1-dev
-sudo apt-get install libsamplerate0-dev
-sudo apt-get install libavahi-client-dev
-sudo apt-get install libcurl4-openssl-dev
-sudo apt-get install libmicrohttpd-dev
+sudo apt-get install libwxgtk3.0-dev portaudio19-dev libsndfile1-dev libsamplerate0-dev libavahi-client-dev libcurl4-openssl-dev libmicrohttpd-dev
 ```
 
 
