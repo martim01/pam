@@ -255,15 +255,17 @@ pnlSettingsGenerators::pnlSettingsGenerators(wxWindow* parent,wxWindowID id,cons
         m_plblInput->SetLabel(wxT("Audio output taken from incoming audio siganl.\nSee Audio Input page"));
         m_plstAudioSources->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")), true);
     }
-
+    std::cout << "InitSlider" << std::endl;
     m_pSlider->Init(0,20*log10(22000), 20*log10(Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000)));
-    m_pSlider->SetSliderColour(wxColour(128,128,128));
-    m_pSlider->SetButtonColour(wxColour(100,100,255));
+    //m_pSlider->SetSliderColour(wxColour(128,128,128));
+    //m_pSlider->SetButtonColour(wxColour(100,100,255));
+    std::cout << "InitSlider:Done" << std::endl;
     m_plblFrequency->SetLabel(wxString::Format(wxT("%.0f Hz"), pow(10,(m_pSlider->GetPosition()/20.0))));
 
+    std::cout << "InitAmp" << std::endl;
     m_pAmplitude->Init(0,80, 80+Settings::Get().Read(wxT("Generator"), wxT("Amplitude"), -18.0));
-    m_pAmplitude->SetSliderColour(wxColour(128,128,128));
-    m_pAmplitude->SetButtonColour(wxColour(100,255,100));
+    //m_pAmplitude->SetSliderColour(wxColour(128,128,128));
+    //m_pAmplitude->SetButtonColour(wxColour(100,200,100));
     m_plbldB->SetLabel(wxString::Format(wxT("%.1f dBFS"),m_pAmplitude->GetPosition()-80.0));
 
     m_plstShape->AddButton(wxT("Sine"));
@@ -280,9 +282,10 @@ pnlSettingsGenerators::pnlSettingsGenerators(wxWindow* parent,wxWindowID id,cons
     m_plstColour->AddButton(wxT("K"));
     m_plstColour->SelectButton(Settings::Get().Read(wxT("Noise"), wxT("Colour"), 0));
 
+    std::cout << "InitNoiseAmp" << std::endl;
     m_pNoiseAmplitude->Init(0,80, 80+Settings::Get().Read(wxT("Noise"), wxT("Amplitude"), -18.0));
-    m_pNoiseAmplitude->SetSliderColour(wxColour(128,128,128));
-    m_pNoiseAmplitude->SetButtonColour(wxColour(100,255,100));
+    //m_pNoiseAmplitude->SetSliderColour(wxColour(128,128,128));
+    //m_pNoiseAmplitude->SetButtonColour(wxColour(100,255,100));
     m_plblNoisedB->SetLabel(wxString::Format(wxT("%.1f dBFS"),m_pNoiseAmplitude->GetPosition()-80.0));
 
     Connect(m_pSlider->GetId(), wxEVT_SLIDER_MOVE, (wxObjectEventFunction)&pnlSettingsGenerators::OnSliderMove);

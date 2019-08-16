@@ -178,6 +178,7 @@ bool wmSlider::SetSliderColour(const wxColour &colour)
     m_uiSlider.SetBackgroundColour(colour);
     Refresh();
 }
+
 bool wmSlider::SetButtonColour(const wxColour &colour)
 {
     m_uiButton.SetBackgroundColour(colour);

@@ -100,24 +100,31 @@ void uiRect::SetBackgroundColour(const wxColour &colour, const wxColour& clrLow)
         m_clrBackgroundHigh = clrLow;
 
     }
-
+    if(m_clrBackgroundHigh.IsOk() == false)
+    {
+        return;
+    }
     if(clrLow.IsOk() == false)
     {
-        m_clrBackgroundLow = wxColour(max(0, m_clrBackgroundHigh.Red()-20),
-                                    max(0, m_clrBackgroundHigh.Green()-20),
-                                    max(0, m_clrBackgroundHigh.Blue()-20));
+        m_clrBackgroundLow = wxColour(max(0, (int)m_clrBackgroundHigh.Red()-20),
+                                    max(0, (int)m_clrBackgroundHigh.Green()-20),
+                                    max(0, (int)m_clrBackgroundHigh.Blue()-20));
     }
     else
     {
+
         m_clrBackgroundLow = clrLow;
     }
-
-    m_clrBorderHigh = wxColour(min(255, m_clrBackgroundHigh.Red()+40),
-                               min(255, m_clrBackgroundHigh.Green()+40),
-                               min(255, m_clrBackgroundHigh.Blue()+40));
-    m_clrBorderLow = wxColour(max(0, m_clrBackgroundLow.Red()-20),
-                                  max(0, m_clrBackgroundLow.Green()-20),
-                                  max(0, m_clrBackgroundLow.Blue()-20));
+    if(m_clrBackgroundLow.IsOk() == false)
+    {
+        return;
+    }
+    m_clrBorderHigh = wxColour(min(255, (int)m_clrBackgroundHigh.Red()+40),
+                               min(255, (int)m_clrBackgroundHigh.Green()+40),
+                               min(255, (int)m_clrBackgroundHigh.Blue()+40));
+    m_clrBorderLow = wxColour(max(0, (int)m_clrBackgroundLow.Red()-20),
+                                  max(0, (int)m_clrBackgroundLow.Green()-20),
+                                  max(0, (int)m_clrBackgroundLow.Blue()-20));
 }
 
 void uiRect::SetForegroundColour(const wxColour &colour)

@@ -3,6 +3,7 @@
 #include "timedbuffer.h"
 #include "portaudio.h"
 #include "wmlogevent.h"
+#include <iostream>
 #include <wx/log.h>
 
 using namespace std;
@@ -111,10 +112,12 @@ bool SoundcardManager::Init(wxEvtHandler* pHandler, int nInputDevice, int nOutpu
 
 int SoundcardManager::GetInputDevice() const
 {
+
     if(m_pInput)
     {
         return m_pInput->GetDevice();
     }
+    std::cout << "GetInputDevice: Done" <<std::endl;
     return -1;
 }
 
@@ -214,10 +217,12 @@ bool SoundcardManager::IsOutputStreamOpen()
 
 double SoundcardManager::GetInputLatency()
 {
+    std::cout << "GetInputLatency" << (int)m_pInput <<std::endl;
     if(m_pInput)
     {
         return m_pInput->GetInputLatency();
     }
+    return -1.0;
 }
 
 double SoundcardManager::GetOutputLatency()
@@ -226,6 +231,7 @@ double SoundcardManager::GetOutputLatency()
     {
         return m_pOutput->GetOutputLatency();
     }
+    return -1.0;
 }
 
 void SoundcardManager::AddOutputSamples(const timedbuffer* pTimedBuffer)

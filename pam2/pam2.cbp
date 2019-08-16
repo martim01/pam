@@ -113,7 +113,6 @@
 					<Add option="-fpermissive" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
-					<Add option="-D__NMOS__" />
 					<Add directory="$(#nmos.include)" />
 					<Add directory="$(#json.include)" />
 				</Compiler>
@@ -123,7 +122,6 @@
 					<Add library="portaudio" />
 					<Add library="pambase" />
 					<Add library="curl" />
-					<Add library="nmos" />
 					<Add directory="$(#nmos.lib)" />
 				</Linker>
 				<ExtraCommands>
@@ -143,7 +141,6 @@
 					<Add option="-D__WXGNU__" />
 					<Add option="-DPAMBASE_DEBUG" />
 					<Add option="-D__WXDEBUG__" />
-					<Add option="-D__NMOS__" />
 					<Add directory="$(#nmos.include)" />
 					<Add directory="$(#json.include)" />
 				</Compiler>
@@ -154,7 +151,6 @@
 					<Add library="portaudio" />
 					<Add library="pambased" />
 					<Add library="curl" />
-					<Add library="nmosd" />
 					<Add directory="$(#nmos.lib)" />
 				</Linker>
 			</Target>

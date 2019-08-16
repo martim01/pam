@@ -205,7 +205,12 @@ plugin MonitorPluginFactory::GetPluginDetails(const wxString& sDir, const wxStri
     }
     else
     {
+        #ifdef PAMBASE_DEBUG
+        wxString sLib = sDir + wxT("/debug/") + wxDynamicLibrary::CanonicalizeName(sLibrary);
+        #else
         wxString sLib = sDir + wxT("/") + wxDynamicLibrary::CanonicalizeName(sLibrary);
+        #endif // PAMBASE_DEBUG
+
         wxDynamicLibrary* pLib = new wxDynamicLibrary(sLib);
         if(pLib)
         {

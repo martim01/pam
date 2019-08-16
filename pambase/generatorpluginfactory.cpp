@@ -51,7 +51,6 @@ bool GeneratorPluginFactory::LoadGeneratorLibrary(const wxString& sLibrary)
 
         wxString sDir(Settings::Get().GetGeneratorPluginDirectory());
 
-
         #ifdef PAMBASE_DEBUG
             wxString sLib(wxString::Format(wxT("%s/debug/%s"),sDir.c_str(), sCan.c_str()));
         #else
