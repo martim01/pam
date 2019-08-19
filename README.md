@@ -76,7 +76,7 @@ Codeblocks  http://www.codeblocks.org/
 cd {pam directory}/build
 cmake ..
 cmake --build .
-cmake --build . --target install
+sudo cmake --build . --target install
 ```
 This will install the executable __pam2__ in __/usr/local/bin__ and all necessary libraries in __/usr/local/lib/pam2__
 
