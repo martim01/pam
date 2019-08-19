@@ -17,9 +17,8 @@ m_vChannels(vChannels)
 }
 
 
-MonitorEvent::MonitorEvent(const MonitorEvent& event) : wxCommandEvent(event)
+MonitorEvent::MonitorEvent(const MonitorEvent& event) : wxCommandEvent(event), m_vChannels(event.GetChannels())
 {
-    m_vChannels = event.GetChannels();
 
 }
 

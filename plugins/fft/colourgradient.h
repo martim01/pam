@@ -23,7 +23,7 @@ public:
     //-- Inserts a new Colour point into its correct position:
     void addColourPoint(float red, float green, float blue, float value)
     {
-        for(int i=0; i<m_vColour.size(); i++)
+        for(size_t i=0; i<m_vColour.size(); i++)
         {
             if(value < m_vColour[i].val)
             {
@@ -97,7 +97,7 @@ public:
         if(m_vColour.size()==0)
             return;
 
-        for(int i=0; i<m_vColour.size(); i++)
+        for(size_t i=0; i<m_vColour.size(); i++)
         {
             ColourPoint &currC = m_vColour[i];
             if(value < currC.val)

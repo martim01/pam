@@ -8,7 +8,7 @@ class wxServiceBrowser;
 struct PAMBASE_IMPEXPORT dnsInstance
 {
     dnsInstance(){}
-    dnsInstance(wxString sN) : sName(sN){}
+    dnsInstance(wxString sN) : sName(sN), nPort(0){}
 
     wxString sName;
     wxString sHostName;

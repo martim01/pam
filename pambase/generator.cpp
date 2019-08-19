@@ -74,6 +74,8 @@ Generator::Generator() :
     m_dSampleRate(48000),
     m_nPhase(0),
     m_pSoundfile(0),
+	m_dNoiseAmplitude(-18.0),
+	m_nGenerator(FREQUENCY),
     m_pPlugin(0)
 {
     m_pPink[0] = 0;

@@ -10,7 +10,9 @@ DEFINE_EVENT_TYPE(wxEVT_MONITOR_MAX)
 
 MonitorPluginBuilder::MonitorPluginBuilder() :
     m_pHandler(0),
-    m_bWantsAudioAlways(false)
+    m_bWantsAudioAlways(false),
+	m_pswpMonitor(0),
+	m_pswpOptions(0)
 {
 
 }

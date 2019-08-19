@@ -272,7 +272,7 @@ multimap<wxString, wxString> Settings::GetInterfaces() const
 
     #ifdef __WXMSW__
 
-    DWORD dwSize = 0;
+    //DWORD dwSize = 0;
     unsigned int i = 0;
     // Set the flags to pass to GetAdaptersAddresses
     // default to unspecified address family (both)
@@ -319,7 +319,7 @@ multimap<wxString, wxString> Settings::GetInterfaces() const
                     {
                         if (pUnicast->Address.lpSockaddr->sa_family == AF_INET)
                         {
-                            char buff[100];
+                            //char buff[100];
                             sockaddr_in *sa_in = (sockaddr_in *)pUnicast->Address.lpSockaddr;
                             mmInterfaces.insert(make_pair(wxString::FromAscii(pCurrAddresses->AdapterName), wxString::FromAscii(inet_ntoa(sa_in->sin_addr))));
                         }

@@ -19,23 +19,65 @@ wxIMPLEMENT_DYNAMIC_CLASS(AngleMeter, pmControl);
 AngleMeter::AngleMeter()
     : pmControl()
     , m_bSurround(false)
+	, m_nBevel(0)
     , m_dMin(-70)
     , m_dMax(0)
+	, m_nLightGap(0)
+	, m_dAngleRatio(0.0)
+	, m_bInit(false)
+	, m_dLastValue{-80.0,-80.0}
+	, m_nRouting(0)
+	, m_dPeakValue{-80.0,-80.0}
+	, m_dFall(0.0)
     , m_nMeterDisplay(PEAK)
+	, m_nPeakMode(0)
+	, m_bFreeze(false)
+	, m_dAngle{0.0,0.0}
+	, m_dAngleMax{0.0,0.0}
+	, m_nPeakCounter{0,0}
+	, m_nChannel(0)
+	, m_nInputChannels(2)
+	, m_nMeterMSMode(0)
+	, m_dOffset(0.0)
+	, m_dScalingFactor(0.0)
+	, m_dOverMod(0.0)
+	, m_bTextCurrent(false)
+	, m_bTextPeak(false)
+
 {
     //create our font
     Connect(wxEVT_PAINT, (wxObjectEventFunction)&AngleMeter::OnPaint);
     Connect(wxEVT_SIZE, (wxObjectEventFunction)&AngleMeter::OnSize);
     m_clrText = wxColour(200,180,255);
+
+
 }
 
 AngleMeter::AngleMeter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, unsigned int nRouting, unsigned int nChannel, const wxPoint& pos, const wxSize& size) :
     pmControl(),
-    m_bSurround(false),
-    m_dMax(0),
-    m_nMeterDisplay(PEAK),
-    m_nChannel(nChannel),
-    m_dOverMod(0.0)
+    m_bSurround(false)
+	, m_nBevel(0)
+    , m_dMin(dMin)
+    , m_dMax(-80.0)
+	, m_nLightGap(0)
+	, m_dAngleRatio(0.0)
+	, m_bInit(false)
+	, m_nRouting(nRouting)
+	, m_dFall(0.0)
+    , m_nMeterDisplay(PEAK)
+	, m_nPeakMode(0)
+	, m_bFreeze(false)
+	, m_dAngle{0.0,0.0}
+	, m_dAngleMax{0,0}
+	, m_nPeakCounter{0,0}
+	, m_nChannel(nChannel)
+	, m_nInputChannels(2)
+	, m_nMeterMSMode(0)
+	, m_dOffset(0.0)
+	, m_dScalingFactor(0.0)
+	, m_dOverMod(0.0)
+	, m_bTextCurrent(false)
+	, m_bTextPeak(false)
 {
     m_dLastValue[0] = dMin;
     m_dLastValue[1] = dMin;
@@ -113,7 +155,6 @@ void AngleMeter::OnPaint(wxPaintEvent& event)
     double dHT = m_rectGrid.GetHeight()+30;
     double dHL = m_rectGrid.GetHeight()+10;
 
-    double dRatio = 15.0;
     //Draw the text
     for(int i = 0; i < m_vLevels.size(); i++)
     {
@@ -285,7 +326,6 @@ void AngleMeter::ResetMeter(void)
 }
 void AngleMeter::ShowValue(double dValue[2])
 {
-    bool bdB = true;
     for(int i = 0; i < 2; i++)
     {
         if(!m_bFreeze)

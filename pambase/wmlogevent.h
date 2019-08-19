@@ -18,7 +18,7 @@ public:
     **/
     wmLogEvent(const wxString& sDevice, const wxString& sMessage, int nType, bool bDebug=false);
 
-    wmLogEvent() : wxCommandEvent(){}
+    wmLogEvent() : wxCommandEvent(), m_bDebug(false){}
 
     /** Copy Constructor
     *   @param event a wxNIEvent

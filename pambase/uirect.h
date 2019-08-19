@@ -40,12 +40,12 @@ class PAMBASE_IMPEXPORT uiRect
         /** @brief Set the backround colour of the rectangle
         *   @param colour
         **/
-        virtual void SetBackgroundColour(const wxColour &colour=wxNullColour, const wxColour& clrLow=wxNullColour);
+        void SetBackgroundColour(const wxColour &colour=wxNullColour, const wxColour& clrLow=wxNullColour);
 
         /** @brief Set the text colour of the rectangle
         *   @param colour
         **/
-        virtual void SetForegroundColour(const wxColour &colour);
+        void SetForegroundColour(const wxColour &colour);
 
         /** @brief Set the alignment of the text in the rectangle
         *   @param nAlign, a union of one of wxALIGN_LEFT,wxALIGN_CENTER_HORIZONTAL, wxALIGN_RIGHT and one of wxALIGN_TOP, wxALIGN_BOTTOM, wxALIGN_CENTER_VERTICAL

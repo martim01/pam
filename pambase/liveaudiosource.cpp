@@ -23,6 +23,7 @@ LiveAudioSource::LiveAudioSource(wxEvtHandler* pHandler, wxMutex& mutex, UsageEn
     m_nLastPlayTime(0),
     m_bLimitNumBytesToStream(False),
     m_nNumBytesToStream(0),
+	m_nAudioFormat(0),
     m_nPacketTime(ePacketTime),
     m_nLastBufferSize(8192),
     m_nBufferWritten(0),

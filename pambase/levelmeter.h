@@ -65,7 +65,7 @@ protected:
     void ShowPPM(double dValue);
 
     uiRect m_uiSimple;
-    uiRect m_uiLevel[2];
+    uiRect m_uiLevel[3];
     uiRect m_uiBlack;
     uiRect m_uiPeak;
     std::vector<uiRect>	m_vLevelText;

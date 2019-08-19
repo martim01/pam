@@ -53,7 +53,7 @@ class PAMBASE_IMPEXPORT wmListAdv : public pmControl
         *   @param nColumns the number of columns in the list
         *   @param szGap the size of the gap between buttons and columns
         **/
-        virtual bool Create(wxWindow* pParent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
+        bool Create(wxWindow* pParent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
             const wxSize& size = wxDefaultSize, unsigned int nStyle=0, unsigned short nScroll = SCROLL_NONE, const wxSize& szButtons=wxSize(-1,40), unsigned int nColumns=1, const wxSize& szGap=wxSize(1,1));
 
         /** @brief Returns the best size for the control for wxSizer

@@ -72,7 +72,7 @@ class GeneratorPluginBuilder;
 struct genfreq
 {
     genfreq() : dFrequency(0.0), dAmplitude(0.0), nSamplesToPlay(0), nSampleCount(0), nType(0), nPhase(0){}
-    genfreq(float dF, float dA, int nC, int nT) : dFrequency(dF), dAmplitude(dA), nSamplesToPlay(nC), nSampleCount(0), nType(nT){}
+    genfreq(float dF, float dA, int nC, int nT) : dFrequency(dF), dAmplitude(dA), nSamplesToPlay(nC), nSampleCount(0), nType(nT), nPhase(0){}
     float dFrequency;
     float dAmplitude;
     int nSamplesToPlay;

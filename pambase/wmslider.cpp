@@ -20,7 +20,21 @@ wxIMPLEMENT_DYNAMIC_CLASS(wmSlider, pmControl);
 wxDEFINE_EVENT(wxEVT_SLIDER_MOVE, wxCommandEvent);
 #endif // WXSPAM
 
-wmSlider::wmSlider(wxWindow *parent, wxWindowID id, const wxString& sLabel, const wxPoint& pos, const wxSize& size, long nStyle, const wxString& name) : pmControl()
+wmSlider::wmSlider() : pmControl(),
+	m_bDown(false),
+	m_dResolution(0),
+	m_dMin(0),
+	m_dMax(0),
+	m_dPosition(0)
+{
+}
+
+wmSlider::wmSlider(wxWindow *parent, wxWindowID id, const wxString& sLabel, const wxPoint& pos, const wxSize& size, long nStyle, const wxString& name) : pmControl(),
+	m_bDown(false),
+	m_dResolution(0),
+	m_dMin(0),
+	m_dMax(0),
+	m_dPosition(0)
 {
 
     wxSize szInit(size);

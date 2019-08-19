@@ -21,14 +21,24 @@ Audio::Audio(wxEvtHandler* pHandler, unsigned int nDevice, int nType) :
  m_nType(nType),
  m_dGain(1),
  m_dPeakdB(-50),
+ m_bRecord(false),
  m_pInfo(Pa_GetDeviceInfo(nDevice)),
+ m_nSampleRate(48000),
+ m_nBufferSize(2048),
+ m_nChannelsIn(2),
+ m_nChannelsOut(0),
+ m_bDone(false),
+ m_nBuffer(0),
+ m_bFirst(false),
+ m_bOpen(false),
+ m_bClose(false),
+ m_dLatency(0.2),
+ m_nTimeStamp(0),
  m_nTotalChannels(2),
  m_bPlaying(false)
  {
 
-    m_nSampleRate = 48000;
-    m_nBufferSize = 2048;
-}
+ }
 
 bool Audio::Init(unsigned int nSampleRate)
 {

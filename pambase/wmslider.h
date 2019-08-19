@@ -18,7 +18,7 @@ class PAMBASE_IMPEXPORT wmSlider : public pmControl
 
         /** @brief default constructor
         **/
-        wmSlider() : pmControl() { }
+        wmSlider();
 
         /** @brief Constructor - made to be the same as a wxStaticText
         *   @param parent pointer to the parent window
@@ -66,12 +66,12 @@ class PAMBASE_IMPEXPORT wmSlider : public pmControl
         /** Called when the console resizes
         *   @param event
         **/
-        virtual void OnSize(wxSizeEvent& event);
+        void OnSize(wxSizeEvent& event);
 
         void OnFlash(wxTimerEvent& event);
 
-        virtual void CreateRects();
-        virtual void Draw(wxDC& dc);
+        void CreateRects();
+        void Draw(wxDC& dc);
 
         void OnLeftDown(wxMouseEvent& event);
         void OnLeftUp(wxMouseEvent& event);

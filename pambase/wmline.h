@@ -56,7 +56,7 @@ class PAMBASE_IMPEXPORT wmLineWnd : public pmControl
 
         /** @brief default constructor
         **/
-        wmLineWnd() : pmControl() { }
+        wmLineWnd() : pmControl(), m_nStyle(0) { }
 
         /** @brief Constructor - made to be the same as a wxButton
         *   @param parent pointer to the parent window

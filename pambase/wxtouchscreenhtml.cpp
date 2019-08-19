@@ -4,7 +4,10 @@
 #include <wx/dcmemory.h>
 #include <wx/dcbuffer.h>
 
-wxTouchScreenHtml::wxTouchScreenHtml() : wxHtmlWindow()
+wxTouchScreenHtml::wxTouchScreenHtml() : wxHtmlWindow(),
+	m_bScrollLock(false),
+	m_bDown(false),
+	m_nScrollOffset(0)
 {
 
 }

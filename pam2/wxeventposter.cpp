@@ -155,10 +155,11 @@ wxNmosEvent::wxNmosEvent(wxEventType type) : wxCommandEvent(type)
 }
 
 wxNmosEvent::wxNmosEvent(const wxNmosEvent& event) : wxCommandEvent(event),
-m_sTransportFile(event.GetTransportFile())
+m_sTransportFile(event.GetTransportFile()),
+m_conSender(event.GetSenderConnection()),
+m_conReceiver(event.GetReceiverConnection())
 {
-    m_conSender = event.GetSenderConnection();
-    m_conReceiver = event.GetReceiverConnection();
+    
 }
 
 void wxNmosEvent::SetTransportFile(const std::string& sTransportFile)

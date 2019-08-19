@@ -45,7 +45,9 @@
 #define ECODE(x) {m_error_flag = x; return;}
 
 // Handles LPF and HPF case
-Filter::Filter(filterType filt_t, int num_taps, double Fs, double Fx)
+Filter::Filter(filterType filt_t, int num_taps, double Fs, double Fx) :
+m_Fu(0.0),
+m_phi(0.0)
 {
     m_error_flag = 0;
     m_filt_t = filt_t;

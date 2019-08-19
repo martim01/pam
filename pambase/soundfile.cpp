@@ -17,6 +17,10 @@ SoundFile::~SoundFile(void)
 
 bool SoundFile::OpenToRead(const wxString& sFileName)
 {
+	if(m_pHandle)
+	{
+		Close();
+	}
     m_pHandle = new SndfileHandle(sFileName.mb_str(), SFM_READ, 0,0,0);
     return (m_pHandle);
 }

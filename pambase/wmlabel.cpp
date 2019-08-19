@@ -19,9 +19,29 @@ wxIMPLEMENT_DYNAMIC_CLASS(wmLabel, pmControl);
 #endif
 
 
+wmLabel::wmLabel() : pmControl(),
+	m_nStyle(0),
+	m_nHoldCount(0),
+	m_nHoldTrigger(0),
+	m_bFlashState(false),
+	m_nBorderState(0),
+	m_nState(0),
+	m_bChecked(false),
+	m_nBitmapAlign(0)
+{
+
+}
 
 
-wmLabel::wmLabel(wxWindow *parent, wxWindowID id, const wxString& sLabel, const wxPoint& pos, const wxSize& size, long nStyle,const wxString& name) : pmControl()
+wmLabel::wmLabel(wxWindow *parent, wxWindowID id, const wxString& sLabel, const wxPoint& pos, const wxSize& size, long nStyle,const wxString& name) : pmControl(),
+	m_nStyle(0),
+	m_nHoldCount(0),
+	m_nHoldTrigger(0),
+	m_bFlashState(false),
+	m_nBorderState(0),
+	m_nState(0),
+	m_bChecked(false),
+	m_nBitmapAlign(0)
 {
     Create(parent, id, sLabel, pos, size, nStyle, name);
 }
@@ -66,7 +86,15 @@ void wmLabel::CreateRects()
 
 }
 
-wmLabel::wmLabel( wxWindow* parent, wxWindowID id, const wxBitmap& bitmap, const wxPoint& pos, const wxSize& size, long style,  const wxString& name)
+wmLabel::wmLabel( wxWindow* parent, wxWindowID id, const wxBitmap& bitmap, const wxPoint& pos, const wxSize& size, long style,  const wxString& name)  : pmControl(),
+	m_nStyle(0),
+	m_nHoldCount(0),
+	m_nHoldTrigger(0),
+	m_bFlashState(false),
+	m_nBorderState(0),
+	m_nState(0),
+	m_bChecked(false),
+	m_nBitmapAlign(0)
 {
     Create(parent, id, bitmap, pos, size, style,  name);
 }

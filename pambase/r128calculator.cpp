@@ -12,6 +12,8 @@ using namespace std;
 R128Calculator::R128Calculator() :
     m_dMomentary(-80),
     m_dShort(-80),
+	m_dMomentaryMax(-80.0),
+	m_dShortMax(-80.0),
     m_nInputChannels(0),
     m_nChunkFrames(0),
     m_nChunkSize(0),

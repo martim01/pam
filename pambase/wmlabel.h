@@ -19,7 +19,7 @@ class PAMBASE_IMPEXPORT wmLabel : public pmControl
 
         /** @brief default constructor
         **/
-        wmLabel() : pmControl() { }
+        wmLabel();
 
         /** @brief Constructor - made to be the same as a wxStaticText
         *   @param parent pointer to the parent window
@@ -46,7 +46,7 @@ class PAMBASE_IMPEXPORT wmLabel : public pmControl
         *   @param style not currently used
         *   @param name not currently used
         **/
-        virtual bool Create(wxWindow *parent,
+        bool Create(wxWindow *parent,
                     wxWindowID id,
                     const wxString& label = wxEmptyString,
                     const wxPoint& pos = wxDefaultPosition,
@@ -76,7 +76,7 @@ class PAMBASE_IMPEXPORT wmLabel : public pmControl
         *   @param validator not used
         *   @param name not used
         **/
-        virtual bool  Create(wxWindow* parent, wxWindowID id, const wxBitmap& bitmap, const wxPoint& pos, const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxT("label"));
+        bool  Create(wxWindow* parent, wxWindowID id, const wxBitmap& bitmap, const wxPoint& pos, const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxT("label"));
 
         virtual ~wmLabel();
 
@@ -180,12 +180,12 @@ class PAMBASE_IMPEXPORT wmLabel : public pmControl
         /** Called when the console resizes
         *   @param event
         **/
-        virtual void OnSize(wxSizeEvent& event);
+        void OnSize(wxSizeEvent& event);
 
         void OnFlash(wxTimerEvent& event);
 
-        virtual void CreateRects();
-        virtual void Draw(wxDC& dc);
+        void CreateRects();
+        void Draw(wxDC& dc);
 
         uiRect m_uiRect;
         unsigned int m_nStyle;

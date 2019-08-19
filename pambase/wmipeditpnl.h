@@ -17,7 +17,7 @@ class PAMBASE_IMPEXPORT wmipeditpnl: public pmPanel
     #endif // WXSPAM
 	public:
 
-	    wmipeditpnl() : pmPanel() {}
+	    wmipeditpnl();
 
 		wmipeditpnl(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, unsigned long nStyle=0, const wxString& sEmpty=wxEmptyString);
 		virtual ~wmipeditpnl();

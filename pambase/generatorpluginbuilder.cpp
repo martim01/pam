@@ -7,7 +7,8 @@ using namespace std;
 
 
 GeneratorPluginBuilder::GeneratorPluginBuilder() :
-    m_pHandler(0)
+    m_pHandler(0),
+	m_pswpGenerators(0)
 {
 
 }

@@ -14,12 +14,16 @@ public:
         : m_pSource(src), m_pNext(NULL),
           m_pEnv(&env),
           m_pThread(pThread),
+		  m_tvMeasurementEnd(startTime),
+		  m_tvMeasurementStart(startTime),
           m_dkbits_per_second_min(1e20), m_dkbits_per_second_max(0),
           m_dkBytesTotal(0.0),
+		  m_kBytesDeltaNow(0.0),
+		  m_dkbpsNow(0.0),
           m_dPacket_loss_fraction_min(1.0), m_dPacket_loss_fraction_max(0.0),
           m_nTotNumPacketsReceived(0), m_nTotNumPacketsExpected(0)
     {
-        m_tvMeasurementEnd = m_tvMeasurementStart = startTime;
+        
 
         RTPReceptionStatsDB::Iterator statsIter(src->receptionStatsDB());
         // Assume that there's only one SSRC source (usually the case):

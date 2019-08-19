@@ -3,7 +3,12 @@
 
 wxDEFINE_EVENT(wxEVT_DATA, AudioEvent);
 
-AudioEvent::AudioEvent() : wxCommandEvent(wxEVT_DATA, wxID_ANY)
+AudioEvent::AudioEvent() : wxCommandEvent(wxEVT_DATA, wxID_ANY),
+m_pBuffer(0),
+m_nCreator(0),
+m_nFrameCount(0),
+m_nSampleRate(0),
+m_nStatus(OK)
 {
 
 }

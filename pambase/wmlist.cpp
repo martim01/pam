@@ -1303,6 +1303,8 @@ void wmList::DeleteButtons(void* pData)
         if((*itButton)->pUi->GetClientData() == pData)
         {
             list<button*>::iterator itDelete(itButton);
+            list<button*>::iterator itDelete2(itButton);
+            list<button*>::iterator itDelete3(itButton);
             if(m_itTop == itButton)
             {
                 ++m_itTop;
@@ -1312,9 +1314,10 @@ void wmList::DeleteButtons(void* pData)
                 m_itDown = m_lstButtons.end();
             }
             ++itButton;
-            m_lstButtons.erase(itDelete);
             m_setitSelected.erase(itDelete);
-            m_setitFlash.erase(itDelete);
+            m_setitFlash.erase(itDelete2);
+			m_lstButtons.erase(itDelete3);
+            
         }
         else
         {

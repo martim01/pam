@@ -7,7 +7,8 @@ using namespace std;
 
 
 TestPluginBuilder::TestPluginBuilder() :
-    m_pHandler(0)
+    m_pHandler(0),
+	m_pswpTests(0)
 {
 
 }

@@ -15,14 +15,22 @@ using namespace std;
   m_bMS(false),
   m_nMSMode(M6),
   m_dSpeed(1.0),
-  m_dMin(-138.0)
+  m_dMin(-138.0),
+  m_dRiseFactor(0.0),
+  m_dRiseTime(0.0)
    {
      for(int i = 0; i < 8; i++)
     {
         m_dLastLevel[i] = -80.0;
+		m_dLevel[i] = -80.0;
+		m_dInterim[i] = -80.0;
     }
     m_dLastMS[0] = -80.0;
     m_dLastMS[1] = -80.0;
+	m_dMS[0] = -80.0;
+	m_dMS[1] = -80.0;
+	m_dInterimMS[0] = -80.0;
+	m_dInterimMS[1] = -80.0;
 
     SetDynamicResponse(1,78, 1200, 20);
 

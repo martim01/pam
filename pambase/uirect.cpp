@@ -16,10 +16,12 @@ m_nGradient(nGradient),
 m_nAlign(wxALIGN_CENTER),
 m_nBitmapAlign(wxALIGN_CENTER),
 m_pData(0),
+m_nData(0),
+m_nIndex(0),
 m_bClip(true)
 {
     SetTextRect();
-    RectSet();
+    //RectSet();
 }
 
 uiRect::~uiRect()

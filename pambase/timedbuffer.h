@@ -72,9 +72,12 @@ class PAMBASE_IMPEXPORT timedbuffer
 {
     public:
     timedbuffer(unsigned int nBs) :
-        m_nBufferSize(nBs),
-        m_nTimestamp(0)
-    {
+	m_nBufferSize(nBs),
+    m_nTimestamp(0),
+    m_nDuration(0),
+    m_nBufferDepth(0),
+    m_dPlaybackLatency(0.0)
+	{
         gettimeofday(m_tvStamp,NULL);
 
         m_tvTransmissionStamp = m_tvStamp;
@@ -87,10 +90,15 @@ class PAMBASE_IMPEXPORT timedbuffer
         m_nBufferSize(nBs),
         m_nTimestamp(nTimestamp),
         m_tvStamp(tv),
-        m_tvPlayback(tv)
+        m_tvPlayback(tv),
+		m_nDuration(0),
+		m_nBufferDepth(0),
+		m_dPlaybackLatency(0.0)
         {
             m_pBuffer = new float[m_nBufferSize];
         }
+
+		
 
     ~timedbuffer()
     {

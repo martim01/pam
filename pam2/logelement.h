@@ -9,9 +9,9 @@ class  LogElement : public advElement
         LogElement(wxDC& dc, unsigned int nWidth, const wxString& sMessage, int nTest);
         virtual ~LogElement(){}
 
-        virtual void Destroy();
+        void Destroy();
 
-        virtual void SelectSubElement(size_t nSub);
+        void SelectSubElement(size_t nSub);
         void EnableSubElement(size_t nSub, bool bEnable);
 
         int GetMessageType() const
@@ -23,14 +23,14 @@ class  LogElement : public advElement
 
     protected:
 
-        virtual bool SubElementDown(const wxPoint& pnt);
-        virtual bool SubElementUp(const wxPoint& pnt, bool bIn);
-        virtual bool SubElementMove(const wxPoint& pnt);
-        virtual int SubElementHeld();
-        virtual void Draw(wxDC& dc, bool bSelected);
+        bool SubElementDown(const wxPoint& pnt);
+        bool SubElementUp(const wxPoint& pnt, bool bIn);
+        bool SubElementMove(const wxPoint& pnt);
+        int SubElementHeld();
+        void Draw(wxDC& dc, bool bSelected);
 
-        virtual void CreateHitRects();
-        virtual void ElementMoved();
+        void CreateHitRects();
+        void ElementMoved();
         static const unsigned int COLUMN_TIME = 100;
         unsigned long m_nHeight;
         int m_nType;

@@ -442,10 +442,10 @@ void FftMeter::Octave()
     //work out the third octave bands
     double dBins[3] = {3,4,5};
     int nBin(1);
-    int n = 0;
+    size_t n = 0;
     while(n < m_vThirdOctave.size())
     {
-        for(int i = 0; i < 3 && n<m_vThirdOctave.size(); i++)
+        for(size_t i = 0; i < 3 && n<m_vThirdOctave.size(); i++)
         {
             double dEnergy = 0.0;
             for(int j = 0; j < dBins[i]; j++)

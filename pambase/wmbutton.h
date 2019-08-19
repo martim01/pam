@@ -20,7 +20,7 @@ class PAMBASE_IMPEXPORT wmButton : public pmControl
 
         /** @brief default constructor
         **/
-        wmButton() : pmControl(){ }
+        wmButton();
 
         /** @brief Constructor - made to be the same as a wxButton
         *   @param parent pointer to the parent window
@@ -49,7 +49,7 @@ class PAMBASE_IMPEXPORT wmButton : public pmControl
         *   @param validator not used - just here to have same structure as wxButton
         *   @param name not used - just here to have same structure as wxButton
         **/
-        virtual bool Create(wxWindow *parent,
+        bool Create(wxWindow *parent,
                     wxWindowID id,
                     const wxString& label = wxEmptyString,
                     const wxPoint& pos = wxDefaultPosition,
@@ -79,7 +79,7 @@ class PAMBASE_IMPEXPORT wmButton : public pmControl
         *   @param validator not used - just here to have same structure as wxBitmapButton
         *   @param name not used - just here to have same structure as wxBitmapButton
         **/
-        virtual bool  Create(wxWindow* parent, wxWindowID id, const wxBitmap& bitmap, const wxPoint& pos, const wxSize& size = wxDefaultSize, long style = 0, const wxValidator& validator = wxDefaultValidator, const wxString& name = wxT("button"));
+        bool  Create(wxWindow* parent, wxWindowID id, const wxBitmap& bitmap, const wxPoint& pos, const wxSize& size = wxDefaultSize, long style = 0, const wxValidator& validator = wxDefaultValidator, const wxString& name = wxT("button"));
 
         virtual ~wmButton();
 
@@ -346,7 +346,7 @@ class PAMBASE_IMPEXPORT wmButton : public pmControl
         void SendEvent(wxEventType eventType);
 
         ///< @brief Creates the rectangles for the button
-        virtual void CreateRects();
+        void CreateRects();
         ///< @brief Draws the button
         virtual void Draw(wxDC& dc);
         virtual void DrawToggle(wxDC& dc);

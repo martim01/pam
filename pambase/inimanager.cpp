@@ -42,7 +42,7 @@ void iniManager::DeleteSections()
 	while(it != m_mSections.end())
 	{
 		delete it->second;
-		it++;
+		++it;
 	}
 	m_mSections.clear();
 }

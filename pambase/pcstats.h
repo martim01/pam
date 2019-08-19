@@ -45,7 +45,7 @@ class PAMBASE_IMPEXPORT pcStats
 
         struct netdev
         {
-            netdev(){}
+            netdev() : nStats{0,0,0,0}{}
             unsigned long nStats[4];
         };
 

@@ -651,7 +651,7 @@ void Smpte2110MediaSubsession::AnalyzeAttributes()
     env() << "Frame Rate: "   << (int)m_pairFrameRate.first << "/" << (int)m_pairFrameRate.second << "\n";
 
     str = wxString::FromAscii(attrVal_str("colorimetry"));
-    for(m_nColorimetry = 0; m_nColorimetry < 8; m_nColorimetry++)
+    for(m_nColorimetry = 0; m_nColorimetry < 7; m_nColorimetry++)
     {
         if(str.CmpNoCase(STR_COLORIMETRY[m_nColorimetry]) == 0)
             break;

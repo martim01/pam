@@ -23,11 +23,11 @@ m_sValue(sValue)
 }
 
 
-SettingEvent::SettingEvent(const SettingEvent& event) : wxCommandEvent(event)
+SettingEvent::SettingEvent(const SettingEvent& event) : wxCommandEvent(event), 
+	m_sSection(event.GetSection()),
+	m_sKey(event.GetKey()),
+	m_sValue(event.GetValue())
 {
-    m_sSection = event.GetSection();
-    m_sKey = event.GetKey();
-    m_sValue = event.GetValue();
 }
 
 
