@@ -102,7 +102,7 @@ public:
             ColourPoint &currC = m_vColour[i];
             if(value < currC.val)
             {
-                ColourPoint &prevC  = m_vColour[std::max(0,i-1) ];
+                ColourPoint &prevC  = m_vColour[std::max(size_t(0),i-1) ];
                 float valueDiff    = (prevC.val - currC.val);
                 float fractBetween = (valueDiff==0) ? 0 : (value - currC.val) / valueDiff;
                 red   = (prevC.r - currC.r)*fractBetween + currC.r;
