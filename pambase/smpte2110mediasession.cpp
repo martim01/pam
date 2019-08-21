@@ -65,6 +65,8 @@ void Smpte2110MediaSession::initializeSMPTE_SDP(char const* sdpDescription)
         {
             break; // there are no m= lines at all
         }
+        cout << "Line: " << endl;
+        cout << sdpLine << endl;
 
         // Check for various special SMPTE 2110 and AES56 and Ravenna SDP lines that we understand:
         if (parseSDPAttribute_RefClk(sdpLine)) continue;
@@ -88,43 +90,48 @@ Boolean Smpte2110MediaSession::parseSDPAttribute_RefClk(char const* sdpLine)
     {
         size_t nEnd = sSdp.find(wxT("\n"), nFront);
         nEnd -= nFront;
-        wxString sLine = sSdp.substr(nFront+sFind.length(), (nEnd-sFind.length()));
-        m_refclk.sType = sLine.BeforeFirst(wxT('='));
+        if(nFront+sFind.length() < (nEnd-sFind.length()))
+        {
+            wxString sLine = sSdp.substr(nFront+sFind.length(), (nEnd-sFind.length()));
+            m_refclk.sType = sLine.BeforeFirst(wxT('='));
 
 
-        if(m_refclk.sType.CmpNoCase(wxT("ntp")) == 0)
-        {
-            m_refclk.sId = sLine.AfterFirst(wxT('='));
-        }
-        else if(m_refclk.sType.CmpNoCase(wxT("localmac")) == 0)
-        {
-            m_refclk.sId = sLine.AfterFirst(wxT('='));
-        }
-        else if(m_refclk.sType.CmpNoCase(wxT("ptp")) == 0)
-        {
-            wxString sDetails = sLine.AfterFirst(wxT('='));
-            if(sDetails.CmpNoCase(wxT("traceable")) == 0)
+            if(m_refclk.sType.CmpNoCase(wxT("ntp")) == 0)
             {
-                m_refclk.sId = sDetails;
+                m_refclk.sId = sLine.AfterFirst(wxT('='));
             }
-            else
+            else if(m_refclk.sType.CmpNoCase(wxT("localmac")) == 0)
             {
-                wxArrayString asDetails(wxStringTokenize(sDetails, wxT(":")));
-                if(asDetails.Count() >= 3)
+                m_refclk.sId = sLine.AfterFirst(wxT('='));
+            }
+            else if(m_refclk.sType.CmpNoCase(wxT("ptp")) == 0)
+            {
+                wxString sDetails = sLine.AfterFirst(wxT('='));
+                if(sDetails.CmpNoCase(wxT("traceable")) == 0)
                 {
-                    asDetails[2].ToULong(&m_refclk.nDomain);
+                    m_refclk.sId = sDetails;
                 }
-                if(asDetails.Count() >= 2)
+                else
                 {
-                    m_refclk.sId = asDetails[1];
-                }
-                if(asDetails.Count() >= 1)
-                {
-                    m_refclk.sVersion = asDetails[0];
+                    wxArrayString asDetails(wxStringTokenize(sDetails, wxT(":")));
+                    if(asDetails.Count() >= 3)
+                    {
+                        asDetails[2].ToULong(&m_refclk.nDomain);
+                    }
+                    if(asDetails.Count() >= 2)
+                    {
+                        m_refclk.sId = asDetails[1];
+                    }
+                    if(asDetails.Count() >= 1)
+                    {
+                        m_refclk.sVersion = asDetails[0];
+                    }
                 }
             }
         }
+        return True;
     }
+    return False;
 }
 
 
@@ -337,6 +344,7 @@ const pairTime_t& Smpte2110MediaSubsession::GetLastEpoch()
     {
         return dynamic_cast<Aes67Source*>(rtpSource())->GetLastEpoch();
     }
+    return pairTime_t(0,0);
 }
 
 
