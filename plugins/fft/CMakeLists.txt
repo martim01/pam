@@ -9,6 +9,11 @@ include_directories("../../external/kiss_fft130/tools")
 
 link_directories("../../lib")
 
+if(NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+endif()
+
+message(STATUS, "Build Type: ${CMAKE_BUILD_TYPE}")
 
 file(GLOB SOURCES "*.cpp")
 
