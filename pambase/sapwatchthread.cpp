@@ -23,6 +23,7 @@ void* SapWatchThread::Entry()
     TaskScheduler* scheduler = PamTaskScheduler::createNew();
     UsageEnvironment* env = BasicUsageEnvironment::createNew(*scheduler);
 
+    wmLog::Get()->Log(wxT("Start SapWatch"));
 
     // Create a 'groupsock' for the input multicast group,port:
     char const* sessionAddressStr = "239.255.255.255";
@@ -53,6 +54,7 @@ void* SapWatchThread::Entry()
     {
         if(inputGroupsock.handleRead(m_packet, 65536, packetSize, fromAddress))
         {
+            wmLog::Get()->Log(wxString::Format(wxT("SapWatch: read %d"), packetSize));
             // Ignore the first 8 bytes (SAP header).
             if (packetSize >= 8)
             {
@@ -69,7 +71,7 @@ void* SapWatchThread::Entry()
 
                 wxString sSDP;
                 sSDP.Printf(wxT("%s\n%s"), wxString::FromAscii(AddressString(fromAddress).val()).c_str(), wxString::FromAscii((char*)(m_packet+8)).c_str());
-
+                wmLog::Get()->Log(wxString::Format(wxT("SapWatch: read %s"),sSDP.c_str()));
                 if(m_pParent)
                 {
                     wxCommandEvent event(wxEVT_SAP);

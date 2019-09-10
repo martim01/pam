@@ -387,8 +387,27 @@ void pnlRTP::OnSap(wxCommandEvent& event)
     wxString sSDP = event.GetString().AfterFirst(wxT('\n'));
     wxString sName;
 
+    wmLog::Get()->Log(wxT("OnSAP"));
+
     //is it an L24 or L16 session
-    if(sSDP.Find(wxT("a=rtpmap:96 L24")) != wxNOT_FOUND || sSDP.Find(wxT("a=rtpmap:96 L16")) != wxNOT_FOUND)
+    bool bCanDecode(false);
+    wxArrayString asLines(wxStringTokenize(sSDP, wxT("\n")));
+    for(size_t i = 0; i < asLines.size(); i++)
+    {
+        if(asLines[i].Find(wxT("a=rtpmap:")) != wxNOT_FOUND)
+        {
+            unsigned long nCodec;
+            if(asLines[i].AfterFirst(wxT(':')).BeforeFirst(wxT(' ')).ToULong(&nCodec) && nCodec > 95 && nCodec < 127)   //dynamic
+            {
+                if(asLines[i].Find(wxT("L24")) || asLines[i].Find(wxT("L16")))
+                {
+                    bCanDecode = true;
+                    break;
+                }
+            }
+        }
+    }
+    if(bCanDecode)
     {
         //find the source name:
         int nStart = sSDP.Find(wxT("s="));
