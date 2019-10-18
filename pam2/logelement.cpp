@@ -79,18 +79,26 @@ void LogElement::CreateHitRects()
         case wmLog::LOG_SYSTEM:
             m_mHitRects[0].SetBackgroundColour(*wxBLACK);
             m_mHitRects[1].SetBackgroundColour(*wxBLACK);
+            m_mHitRects[0].SetForegroundColour(*wxWHITE);
+            m_mHitRects[1].SetForegroundColour(*wxWHITE);
             break;
         case wmLog::LOG_TEST_INFO:
             m_mHitRects[0].SetBackgroundColour(wxColour(100,100,255));
             m_mHitRects[1].SetBackgroundColour(wxColour(100,100,255));
+            m_mHitRects[0].SetForegroundColour(*wxBLACK);
+            m_mHitRects[1].SetForegroundColour(*wxBLACK);
             break;
         case wmLog::LOG_TEST_ALARM:
             m_mHitRects[0].SetBackgroundColour(wxColour(255,100,100));
             m_mHitRects[1].SetBackgroundColour(wxColour(255,100,100));
+            m_mHitRects[0].SetForegroundColour(*wxBLACK);
+            m_mHitRects[1].SetForegroundColour(*wxBLACK);
             break;
         case wmLog::LOG_TEST_OK:
             m_mHitRects[0].SetBackgroundColour(wxColour(100,255,100));
             m_mHitRects[1].SetBackgroundColour(wxColour(100,255,100));
+            m_mHitRects[0].SetForegroundColour(*wxBLACK);
+            m_mHitRects[1].SetForegroundColour(*wxBLACK);
             break;
     }
     m_mHitRects[1].SetWidth(m_rectEnclosing.GetWidth()-COLUMN_TIME);

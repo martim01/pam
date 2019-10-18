@@ -177,7 +177,7 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	m_pbtnManual->SetColourSelected(wxColour(wxT("#F07800")));
 	m_pList = new wmListAdv(pnlDiscovery, wxNewId(), wxPoint(140,0), wxSize(650,385), 0, wmListAdv::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(0,1));
 	m_pList->SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT));
-	m_pList->SetBackgroundColour(wxColour(100,100,180));
+	m_pList->SetBackgroundColour(wxColour(0,0,0));
 
 	m_pSwp1->AddPage(Panel1, _("Manual"), false);
 	m_pSwp1->AddPage(Panel2, _("Edit"), false);
@@ -370,9 +370,9 @@ void pnlRTP::OnDiscovery(wxCommandEvent& event)
 
         wxClientDC dc(this);
         dc.SetFont(m_pList->GetFont());
-        LogElement* pElement(new LogElement(dc, GetClientSize().x, wxString::Format(wxT("[%s] %s = s:%d"), pInstance->sService.c_str(), pInstance->sName.c_str(), pInstance->sHostIP.c_str(), pInstance->nPort), 1));
+        LogElement* pElement(new LogElement(dc, GetClientSize().x, wxString::Format(wxT("[%s] %s = s:%d"), pInstance->sService.c_str(), pInstance->sName.c_str(), pInstance->sHostIP.c_str(), pInstance->nPort), wmLog::LOG_TEST_OK));
         m_pList->AddElement(pElement);
-        pElement->Filter(1);
+        pElement->Filter(255);
         m_pList->Refresh();
 
         m_nDiscovered++;
@@ -387,9 +387,27 @@ void pnlRTP::OnSap(wxCommandEvent& event)
     wxString sIpAddress = event.GetString().BeforeFirst(wxT('\n'));
     wxString sSDP = event.GetString().AfterFirst(wxT('\n'));
     wxString sName;
+    wmLog::Get()->Log(wxT("OnSAP"));
 
     //is it an L24 or L16 session
-    if(sSDP.Find(wxT("a=rtpmap:96 L24")) != wxNOT_FOUND || sSDP.Find(wxT("a=rtpmap:96 L16")) != wxNOT_FOUND)
+    bool bCanDecode(false);
+    wxArrayString asLines(wxStringTokenize(sSDP, wxT("\n")));
+    for(size_t i = 0; i < asLines.size(); i++)
+    {
+        if(asLines[i].find(wxT("a=rtpmap:")) != wxNOT_FOUND)
+        {
+            unsigned long nCodec;
+            if(asLines[i].AfterFirst(wxT(':')).BeforeFirst(wxT(' ')).ToULong(&nCodec) && nCodec > 95 && nCodec < 127)
+            {
+                if(asLines[i].find(wxT("L24")) != wxNOT_FOUND || asLines[i].find(wxT("L16")) != wxNOT_FOUND)
+                {
+                    bCanDecode = true;
+                    break;
+                }
+            }
+        }
+    }
+    if(bCanDecode)
     {
         //find the source name:
         int nStart = sSDP.Find(wxT("s="));
@@ -417,9 +435,9 @@ void pnlRTP::OnSap(wxCommandEvent& event)
 
             wxClientDC dc(this);
             dc.SetFont(m_pList->GetFont());
-            LogElement* pElement(new LogElement(dc, GetClientSize().x, wxString::Format(wxT("[SAP] %s = s"), sName.c_str(), sIpAddress.c_str()), 1));
+            LogElement* pElement(new LogElement(dc, GetClientSize().x, wxString::Format(wxT("[SAP] %s = s"), sName.c_str(), sIpAddress.c_str()), wmLog::LOG_TEST_OK));
             m_pList->AddElement(pElement);
-            pElement->Filter(1);
+            pElement->Filter(255);
             m_pList->Refresh();
 
         }
@@ -519,6 +537,13 @@ void pnlRTP::OnbtnStartDiscoveryClick(wxCommandEvent& event)
         m_setDiscover.clear();
         m_pList->Clear();
 
+        wxClientDC dc(this);
+        dc.SetFont(m_pList->GetFont());
+        LogElement* pElement(new LogElement(dc, GetClientSize().x, wxT("Discovery started"), 1));
+        m_pList->AddElement(pElement);
+        pElement->Filter(255);
+        m_pList->Refresh();
+        m_pList->Update();
 
         m_nDiscovered = 0;
         m_plblDiscovering->SetLabel(wxString::Format(wxT("Discovering...\n%04d Found"), m_nDiscovered));
@@ -546,6 +571,14 @@ void pnlRTP::OnbtnStartDiscoveryClick(wxCommandEvent& event)
     }
     else
     {
+        wxClientDC dc(this);
+        dc.SetFont(m_pList->GetFont());
+        LogElement* pElement(new LogElement(dc, GetClientSize().x, wxT("Discovery stopped"), 1));
+        m_pList->AddElement(pElement);
+        pElement->Filter(255);
+        m_pList->Refresh();
+
+
         m_pbtnDiscover->SetLabel(wxT("Discover"));
         m_plblDiscovering->SetLabel(wxEmptyString);
         if(m_pBrowser)
