@@ -64,5 +64,6 @@
 			<Depends filename="plugins/fft/fft.cbp" />
 		</Project>
 		<Project filename="plugins/battery/battery.cbp" />
+		<Project filename="plugins/fftphase/fftphase.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
