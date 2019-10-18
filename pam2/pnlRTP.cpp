@@ -16,8 +16,9 @@
 #include "PamUsageEnvironment.h"
 #include "PamTaskScheduler.h"
 #include "rtpthread.h"
-
-
+#include "wmlistadv.h"
+#include "logelement.h"
+#include <wx/dcclient.h>
 using namespace std;
 
 
@@ -52,7 +53,7 @@ const long pnlRTP::ID_PANEL3 = wxNewId();
 const long pnlRTP::ID_M_PSWP1 = wxNewId();
 //*)
 
-const wxString pnlRTP::STR_TABLE = wxT("<table border=\"1\" width=\"100%\"><tr><td width=\"20%\"><b>Service</b></td><td width=\"40%\"><b>Name</b></td><td width=\"40%\"><b>Host IP</b></td></tr>");
+
 
 BEGIN_EVENT_TABLE(pnlRTP,wxPanel)
 	//(*EventTable(pnlRTP)
@@ -61,7 +62,6 @@ END_EVENT_TABLE()
 
 pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size, long nStyle, const wxString& sId) : m_pThread(0)
 {
-	//(*Initialize(pnlRTP)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
 	wxFont thisFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
@@ -175,7 +175,10 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	m_pbtnManual = new wmButton(pnlDiscovery, ID_M_PBTN10, _("Manual"), wxPoint(690,390), wxSize(100,45), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN10"));
 	m_pbtnManual->SetBackgroundColour(wxColour(0,128,0));
 	m_pbtnManual->SetColourSelected(wxColour(wxT("#F07800")));
-	m_phtmlResults = new wxTouchScreenHtml(pnlDiscovery, ID_HTMLWINDOW1, wxPoint(140,0), wxSize(650,385), 0, _T("ID_HTMLWINDOW1"));
+	m_pList = new wmListAdv(pnlDiscovery, wxNewId(), wxPoint(140,0), wxSize(650,385), 0, wmListAdv::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(0,1));
+	m_pList->SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT));
+	m_pList->SetBackgroundColour(wxColour(100,100,180));
+
 	m_pSwp1->AddPage(Panel1, _("Manual"), false);
 	m_pSwp1->AddPage(Panel2, _("Edit"), false);
 	m_pSwp1->AddPage(pnlDiscovery, _("Discovery"), false);
@@ -194,7 +197,6 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	Connect(ID_M_PBTN9,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlRTP::OnbtnStartDiscoveryClick);
 	Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlRTP::OnlstServicesSelected);
 	Connect(ID_M_PBTN10,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlRTP::OnbtnManualClick);
-	//*)
 
 	Connect(wxID_ANY, wxEVT_SDP, (wxObjectEventFunction)&pnlRTP::OnSDPReceived);
 	Connect(wxID_ANY, wxEVT_RTP_SESSION_CLOSED, (wxObjectEventFunction)&pnlRTP::OnRTPClosed);
@@ -216,8 +218,6 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	Connect(wxID_ANY, wxEVT_BROWSE_FINISHED, (wxObjectEventFunction)&pnlRTP::OnDiscoveryFinished);
 	Connect(wxID_ANY, wxEVT_SAP, (wxObjectEventFunction)&pnlRTP::OnSap);
 
-	m_phtmlResults->SetPage(STR_TABLE+m_sTableMiddle+wxT("</table>"));
-	m_phtmlResults->End();
 
 	if(Settings::Get().Read(wxT("Discovery"), wxT("RTSP"),1) == 1)
     {
@@ -368,11 +368,12 @@ void pnlRTP::OnDiscovery(wxCommandEvent& event)
 
         Settings::Get().Write(wxT("AoIP"), wxString::Format(wxT("%s(%s)"), pInstance->sName.BeforeFirst(wxT('@')).c_str(), pInstance->sHostIP.c_str()), sAddress);
 
-        m_sTableMiddle << (wxString::Format(wxT("<tr><td>%s</td><td>%s</td><td>%s:%d</td></tr>"), pInstance->sService.c_str(), pInstance->sName.c_str(), pInstance->sHostIP.c_str(), pInstance->nPort));
-
-        m_phtmlResults->SetPage(STR_TABLE+m_sTableMiddle+wxT("</table>"));
-        m_phtmlResults->End();
-
+        wxClientDC dc(this);
+        dc.SetFont(m_pList->GetFont());
+        LogElement* pElement(new LogElement(dc, GetClientSize().x, wxString::Format(wxT("[%s] %s = s:%d"), pInstance->sService.c_str(), pInstance->sName.c_str(), pInstance->sHostIP.c_str(), pInstance->nPort), 1));
+        m_pList->AddElement(pElement);
+        pElement->Filter(1);
+        m_pList->Refresh();
 
         m_nDiscovered++;
         m_plblDiscovering->SetLabel(wxString::Format(wxT("Discovering...\n%04d Found"), m_nDiscovered));
@@ -387,27 +388,8 @@ void pnlRTP::OnSap(wxCommandEvent& event)
     wxString sSDP = event.GetString().AfterFirst(wxT('\n'));
     wxString sName;
 
-    wmLog::Get()->Log(wxT("OnSAP"));
-
     //is it an L24 or L16 session
-    bool bCanDecode(false);
-    wxArrayString asLines(wxStringTokenize(sSDP, wxT("\n")));
-    for(size_t i = 0; i < asLines.size(); i++)
-    {
-        if(asLines[i].Find(wxT("a=rtpmap:")) != wxNOT_FOUND)
-        {
-            unsigned long nCodec;
-            if(asLines[i].AfterFirst(wxT(':')).BeforeFirst(wxT(' ')).ToULong(&nCodec) && nCodec > 95 && nCodec < 127)   //dynamic
-            {
-                if(asLines[i].Find(wxT("L24")) || asLines[i].Find(wxT("L16")))
-                {
-                    bCanDecode = true;
-                    break;
-                }
-            }
-        }
-    }
-    if(bCanDecode)
+    if(sSDP.Find(wxT("a=rtpmap:96 L24")) != wxNOT_FOUND || sSDP.Find(wxT("a=rtpmap:96 L16")) != wxNOT_FOUND)
     {
         //find the source name:
         int nStart = sSDP.Find(wxT("s="));
@@ -433,10 +415,13 @@ void pnlRTP::OnSap(wxCommandEvent& event)
             sSDP.Replace(wxT("\n"), wxT("`"));
             Settings::Get().Write(wxT("AoIP"), sName, wxString::Format(wxT("sap:%s [%s]"), sIpAddress.c_str(), sSDP.c_str()));
 
-            m_sTableMiddle << (wxString::Format(wxT("<tr><td>SAP</td><td>%s</td><td>%s</td></tr>"), sName.c_str(), sIpAddress.c_str()));
+            wxClientDC dc(this);
+            dc.SetFont(m_pList->GetFont());
+            LogElement* pElement(new LogElement(dc, GetClientSize().x, wxString::Format(wxT("[SAP] %s = s"), sName.c_str(), sIpAddress.c_str()), 1));
+            m_pList->AddElement(pElement);
+            pElement->Filter(1);
+            m_pList->Refresh();
 
-            m_phtmlResults->SetPage(STR_TABLE+m_sTableMiddle+wxT("</table>"));
-            m_phtmlResults->End();
         }
     }
 }
@@ -532,9 +517,8 @@ void pnlRTP::OnbtnStartDiscoveryClick(wxCommandEvent& event)
         }
 
         m_setDiscover.clear();
-        m_sTableMiddle = wxEmptyString;
-        m_phtmlResults->SetPage(STR_TABLE+m_sTableMiddle+wxT("</table>"));
-        m_phtmlResults->End();
+        m_pList->Clear();
+
 
         m_nDiscovered = 0;
         m_plblDiscovering->SetLabel(wxString::Format(wxT("Discovering...\n%04d Found"), m_nDiscovered));

@@ -300,12 +300,12 @@ double Audio::GetOutputLatency()
             return pInfo->outputLatency;
         }
     }
+
     return -1;
 }
 
 double Audio::GetInputLatency()
 {
-  //  wxLogDebug(wxT("Stream 0x%x"), m_pStream);
     if(m_pStream)
     {
         const PaStreamInfo* pInfo = Pa_GetStreamInfo(m_pStream);
