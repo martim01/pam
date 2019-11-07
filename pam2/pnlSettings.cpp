@@ -379,7 +379,7 @@ void pnlSettings::UpdateDisplayedSettings()
     m_ptbnOptions->ToggleSelection((Settings::Get().Read(wxT("General"), wxT("ShowOptions"), 1) == 1), false);
     m_pbtnPin->ToggleSelection((Settings::Get().Read(wxT("General"), wxT("Pin"), 0)==1), false);
 
-    m_plstInput->SelectButton(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")), false);
+    m_plstInput->SelectButton(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")), true);
     m_plstDestination->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Destination"), wxT("Disabled")), false);
     m_plstPacket->SelectButton(m_plstPacket->FindButton(reinterpret_cast<void*>(Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 4000))));
 
