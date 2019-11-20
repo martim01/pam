@@ -97,3 +97,6 @@ PAM expects a few files to live in a specific directory:
 * If it doesn't exist create a directory called __pam__ in your home directory.
 * Copy the contents of the __document__ directory to the __pam__ directory.
 
+
+## Prebuilt Images
+Links to these can be found [here](https://github.com/martim01/pam/releases) with the associated Releaes
