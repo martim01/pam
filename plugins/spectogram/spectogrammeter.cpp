@@ -177,7 +177,7 @@ void SpectogramMeter::DrawSpectogram(wxDC& dc)
 
 void SpectogramMeter::OnSize(wxSizeEvent& event)
 {
-    m_rectGrid = wxRect(GetClientRect().GetLeft()+10, GetClientRect().GetTop()+5, GetClientRect().GetWidth()-70, GetClientRect().GetHeight()-55);
+    m_rectGrid = wxRect(GetClientRect().GetLeft()+10, GetClientRect().GetTop(), GetClientRect().GetWidth()-70, GetClientRect().GetHeight()-55);
 
     CreateScaleBitmap();
 
