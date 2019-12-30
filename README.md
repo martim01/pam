@@ -81,7 +81,7 @@ sudo cmake --build . --target install
 This will install the executable __pam2__ in __/usr/local/bin__ and all necessary libraries in __/usr/local/lib/pam2__
 
 It is possible that __/usr/local/lib__ is not in your path. If so then do the following:
-* Create a file called __pam2.config__ in directory __/etc/ld.so.conf.d__
+* Create a file called __pam2.conf__ in directory __/etc/ld.so.conf.d__
 * Add the following line to the file
 ```
 /usr/local/lib/pam2
