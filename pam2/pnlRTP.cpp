@@ -370,13 +370,13 @@ void pnlRTP::OnDiscovery(wxCommandEvent& event)
 
         wxClientDC dc(this);
         dc.SetFont(m_pList->GetFont());
-        LogElement* pElement(new LogElement(dc, GetClientSize().x, wxString::Format(wxT("[%s] %s = s:%d"), pInstance->sService.c_str(), pInstance->sName.c_str(), pInstance->sHostIP.c_str(), pInstance->nPort), wmLog::LOG_TEST_OK));
+        LogElement* pElement(new LogElement(dc, GetClientSize().x, wxString::Format(wxT("[%s] %s = %s:%lu"), pInstance->sService.c_str(), pInstance->sName.c_str(), pInstance->sHostIP.c_str(), pInstance->nPort), wmLog::LOG_TEST_OK));
         m_pList->AddElement(pElement);
         pElement->Filter(255);
         m_pList->Refresh();
 
         m_nDiscovered++;
-        m_plblDiscovering->SetLabel(wxString::Format(wxT("Discovering...\n%04d Found"), m_nDiscovered));
+        m_plblDiscovering->SetLabel(wxString::Format(wxT("Discovering...\n%04zu Found"), m_nDiscovered));
         m_plblDiscovering->Update();
     }
     wxLogDebug(wxT("Discover Done"));
@@ -428,7 +428,7 @@ void pnlRTP::OnSap(wxCommandEvent& event)
         if(m_setDiscover.insert(make_pair(sName, sIpAddress)).second)
         {
             m_nDiscovered++;
-            m_plblDiscovering->SetLabel(wxString::Format(wxT("Discovering...\n%04d Found"), m_nDiscovered));
+            m_plblDiscovering->SetLabel(wxString::Format(wxT("Discovering...\n%04uz Found"), m_nDiscovered));
             wmLog::Get()->Log(wxString::Format(wxT("SAP response from %s\n%s"), sIpAddress.c_str(), sSDP.c_str()));
             sSDP.Replace(wxT("\n"), wxT("`"));
             Settings::Get().Write(wxT("AoIP"), sName, wxString::Format(wxT("sap:%s [%s]"), sIpAddress.c_str(), sSDP.c_str()));
@@ -446,8 +446,8 @@ void pnlRTP::OnSap(wxCommandEvent& event)
 
 void pnlRTP::OnDiscoveryFinished(wxCommandEvent& event)
 {
-    wxLogDebug(wxT("Discover Finished"));
-    m_plblDiscovering->SetLabel(wxString::Format(wxT("DNS_SD Discovery finished...\n%04d Found"), m_nDiscovered));
+
+    m_plblDiscovering->SetLabel(wxT("DNS_SD Discovery finished..."));
 }
 
 void pnlRTP::OnbtnDeleteAllHeld(wxCommandEvent& event)
