@@ -3,7 +3,7 @@
 #include "timedbuffer.h"
 #include "settings.h"
 #include <wx/log.h>
-
+#include "wxptp.h"
 
 //(*InternalHeaders(pnlAoIPInfo)
 #include <wx/font.h>
@@ -117,7 +117,7 @@ BEGIN_EVENT_TABLE(pnlAoIPInfo,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
+pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size) : m_pSession(0)
 {
 	//(*Initialize(pnlAoIPInfo)
 	Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("wxID_ANY"));
@@ -671,6 +671,20 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_pswpInfo->AddPage(pnlSDP, _("Raw SDP"), false);
 	//*)
 
+	wxPtp::Get().AddHandler(this);
+
+	Connect(wxID_ANY, wxEVT_CLOCK_MASTER, (wxObjectEventFunction)&pnlAoIPInfo::OnPtpEvent);
+	Connect(wxID_ANY, wxEVT_CLOCK_SLAVE, (wxObjectEventFunction)&pnlAoIPInfo::OnPtpEvent);
+    Connect(wxID_ANY, wxEVT_CLOCK_UPDATED, (wxObjectEventFunction)&pnlAoIPInfo::OnPtpEvent);
+
+	m_plblEpoch = new wmLabel(pnlSubsession, wxNewId(), wxEmptyString, wxPoint(305,151), wxSize(249,25), 0, _T("ID_M_PLBL57"));
+	m_plblEpoch->SetBorderState(uiRect::BORDER_NONE);
+	m_plblEpoch->GetUiRect().SetGradient(0);
+	m_plblEpoch->SetForegroundColour(wxColour(0,128,0));
+	m_plblEpoch->SetBackgroundColour(wxColour(255,255,255));
+	wxFont m_plblEpochFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
+	m_plblEpoch->SetFont(m_plblEpochFont);
+
     m_pswpInfo->SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
     m_pGraph->SetFont(wxFont(7,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
 
@@ -760,7 +774,7 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
 
 void pnlAoIPInfo::SetAudioData(const timedbuffer* pTimedBuffer)
 {
-    SetTimestamp(pTimedBuffer->GetTransmissionTime(), m_plblTransmissionTime);
+    SetTimestamp(pTimedBuffer->GetTransmissionTime(), m_plblTransmissionTime, false);
     SetTimestamp(pTimedBuffer->GetTimeVal(), m_plblTimestampIn);
     SetTimestamp(pTimedBuffer->GetPlaybackTime(), m_plblTimestampOut);
     m_plblCurrentTimestamp->SetLabel(wxString::Format(wxT("%u"), pTimedBuffer->GetTimestamp()));
@@ -777,10 +791,17 @@ void pnlAoIPInfo::SetAudioData(const timedbuffer* pTimedBuffer)
 
 
 
-void pnlAoIPInfo::SetTimestamp(const pairTime_t& tv, wmLabel* pLabel)
+void pnlAoIPInfo::SetTimestamp(const pairTime_t& tv, wmLabel* pLabel, bool bDate)
 {
     wxDateTime dt(time_t(tv.first));
-    pLabel->SetLabel(wxString::Format(wxT("%s:%03d"), dt.Format(wxT("%H:%M:%S")).c_str(), tv.second/1000));
+    if(!bDate)
+    {
+        pLabel->SetLabel(wxString::Format(wxT("%s:%03d"), dt.Format(wxT("%H:%M:%S")).c_str(), tv.second/1000));
+    }
+    else
+    {
+        pLabel->SetLabel(wxString::Format(wxT("%s:%03d"), dt.Format(wxT("%Y-%m-%d %H:%M:%S")).c_str(), tv.second/1000));
+    }
 }
 
 
@@ -797,6 +818,7 @@ void pnlAoIPInfo::ShowLatency(const timedbuffer* pTimedBuffer)
 
 void pnlAoIPInfo::SessionStarted(const session& aSession)
 {
+    m_pSession = &aSession;
     m_plblSessionName->SetLabel(aSession.sName);
     if(Settings::Get().Read(wxT("Input"), wxT("Type"), wxEmptyString) == wxT("AoIP"))
     {
@@ -809,6 +831,8 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
     m_plblSyncType->SetLabel(aSession.refClock.sType);
     m_plblSyncVersion->SetLabel(aSession.refClock.sVersion);
     m_plblSyncId->SetLabel(aSession.refClock.sId);
+
+
     m_plblSyncDomain->SetLabel(wxString::Format(wxT("%u"), aSession.refClock.nDomain));
     m_plblSessionType->SetLabel(aSession.sType);
     m_ptxtSDP->SetValue(aSession.sRawSDP);
@@ -841,7 +865,18 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
         m_plblSubSyncType->SetLabel(aSession.GetCurrentSubsession()->refClock.sType);
         m_plblSubSyncVersion->SetLabel(aSession.GetCurrentSubsession()->refClock.sVersion);
         m_plblSubSyncId->SetLabel(aSession.GetCurrentSubsession()->refClock.sId);
+        if(m_plblSubSyncId->GetLabel().MakeLower() == wxPtp::Get().GetMasterClockId(0))
+        {
+            m_plblSubSyncId->SetBackgroundColour(wxColour(255,255,255));
+        }
+        else
+        {
+            m_plblSubSyncId->SetBackgroundColour(wxColour(255,100,100));
+        }
         m_plblSubSyncDomain->SetLabel(wxString::Format(wxT("%u"), aSession.GetCurrentSubsession()->refClock.nDomain));
+
+        SetTimestamp(aSession.GetCurrentSubsession()->tvEpoch, m_plblEpoch, true);
+
     }
     else
     {
@@ -891,4 +926,21 @@ void pnlAoIPInfo::ShowGraph(const wxString& sGraph)
 void pnlAoIPInfo::ClearGraphs()
 {
     m_pGraph->ClearGraphs();
+}
+
+void pnlAoIPInfo::OnPtpEvent(wxCommandEvent& event)
+{
+
+    if(m_plblSubSyncId->GetLabel().MakeLower() == wxPtp::Get().GetMasterClockId(0))
+    {
+        m_plblSubSyncId->SetBackgroundColour(wxColour(255,255,255));
+    }
+    else
+    {
+        m_plblSubSyncId->SetBackgroundColour(wxColour(255,100,100));
+    }
+    if(m_pSession)
+    {
+        SetTimestamp(m_pSession->GetCurrentSubsession()->tvEpoch, m_plblEpoch, true);
+    }
 }

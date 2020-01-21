@@ -108,13 +108,15 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O3" />
-					<Add option="`wx-config --cxxflags`" />
 					<Add option="-fPIC" />
+					<Add option="`wx-config --cxxflags`" />
 					<Add option="-fpermissive" />
 					<Add option="-DNDEBUG" />
 					<Add option="-DDLL_EXPORTS" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
+					<Add option="-D__GNU__" />
+					<Add option="-DPTPMONKEY" />
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
@@ -125,6 +127,7 @@
 					<Add library="BasicUsageEnvironment" />
 					<Add library="UsageEnvironment" />
 					<Add library="groupsock" />
+					<Add library="ptpmonkey" />
 					<Add directory="/usr/lib/arm-linux-gnueabihf/" />
 				</Linker>
 				<ExtraCommands>
@@ -138,9 +141,9 @@
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-fPIC" />
 					<Add option="-g" />
 					<Add option="`wx-config --cxxflags`" />
-					<Add option="-fPIC" />
 					<Add option="-fpermissive" />
 					<Add option="-DNDEBUG" />
 					<Add option="-DDLL_EXPORTS" />
@@ -148,6 +151,7 @@
 					<Add option="-D__WXGNU__" />
 					<Add option="-DPAMBASE_DEBUG" />
 					<Add option="-D__WXDEBUG__" />
+					<Add option="-D__GNU__" />
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
@@ -166,11 +170,13 @@
 			<Add option="-DCREATING_DLL" />
 			<Add option="-D_core_" />
 			<Add option="-D_MSL_STDINT_H" />
+			<Add option="-DASIO_STANDALONE" />
 			<Add directory="../external/live/BasicUsageEnvironment/include" />
 			<Add directory="../external/live/UsageEnvironment/include" />
 			<Add directory="../external/live/groupsock/include" />
 			<Add directory="../external/live/liveMedia/include" />
 			<Add directory="../external/wxservdisc" />
+			<Add directory="../../ptpmonkey/include" />
 		</Compiler>
 		<Linker>
 			<Add directory="../external/live/liveMedia" />
@@ -323,6 +329,9 @@
 		<Unit filename="wmtestlog.h" />
 		<Unit filename="wmtimeedit.cpp" />
 		<Unit filename="wmtimeedit.h" />
+		<Unit filename="wxptp.cpp" />
+		<Unit filename="wxptp.h" />
+		<Unit filename="wxptpeventhandler.h" />
 		<Unit filename="wxsink.cpp" />
 		<Unit filename="wxsink.h" />
 		<Unit filename="wxsmith/wmipeditpnl.wxs" />

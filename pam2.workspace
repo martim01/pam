@@ -65,5 +65,6 @@
 		</Project>
 		<Project filename="plugins/battery/battery.cbp" />
 		<Project filename="plugins/fftphase/fftphase.cbp" />
+		<Project filename="../ptpmonkey/ptpmonkey.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

@@ -121,6 +121,8 @@
 			<Add directory="$(#kiss.include)" />
 			<Add directory="$(#kiss.include)/tools" />
 			<Add directory="../peak log" />
+			<Add directory="../../external/live/groupsock/include" />
+			<Add directory="../../external/live/liveMedia/include" />
 		</Compiler>
 		<Linker>
 			<Add directory="../../lib" />

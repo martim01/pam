@@ -35,6 +35,8 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         void OnAudioEvent(AudioEvent& event);
         void PassOnAudio(AudioEvent& event);
 
+        void OnPtpEvent(wxCommandEvent& event);
+
          void OnRTPSession(wxCommandEvent& event);
         void OnRTPSessionClosed(wxCommandEvent& event);
         void OnQoS(wxCommandEvent& event);

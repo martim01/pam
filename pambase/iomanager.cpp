@@ -10,6 +10,7 @@
 #include <wx/log.h>
 #include "rtpserverthread.h"
 #include <ctime>
+#include "wxptp.h"
 
 using namespace std;
 
@@ -91,6 +92,11 @@ IOManager::IOManager() :
 
     Connect(wxID_ANY,wxEVT_QOS_UPDATED,(wxObjectEventFunction)&IOManager::OnQoS);
 
+    #ifdef PTPMONKEY
+    wxPtp::Get().AddHandler(this);
+    Connect(wxID_ANY, wxEVT_CLOCK_MASTER, (wxObjectEventFunction)&IOManager::OnPtpEvent);
+    Connect(wxID_ANY, wxEVT_CLOCK_SLAVE, (wxObjectEventFunction)&IOManager::OnPtpEvent);
+    #endif // PTPMONKEY
     m_pGenerator = new Generator();
     m_pGenerator->SetSampleRate(48000);
 
@@ -623,7 +629,7 @@ void IOManager::InitAudioInputDevice()
         {
 
             m_sCurrentRtp = sRtp;
-            RtpThread* pThread = new RtpThread(this, Settings::Get().Read(wxT("AoIP"), wxT("Interface"), wxEmptyString), wxT("pam"), sRtp, 2048);
+            RtpThread* pThread = new RtpThread(this, Settings::Get().Read(wxT("AoIP_Settings"), wxT("Interface"), wxEmptyString), wxT("pam"), sRtp, 2048);
             pThread->Create();
             pThread->Run();
 
@@ -835,11 +841,11 @@ void IOManager::OutputChannelsChanged()
 
 void IOManager::OnQoS(wxCommandEvent& event)
 {
-    for(set<wxEvtHandler*>::iterator itHandler = m_setHandlers.begin(); itHandler != m_setHandlers.end(); ++itHandler)
+    for(auto pHandler : m_setHandlers)
     {
         wxCommandEvent eventUp(wxEVT_QOS_UPDATED);
         eventUp.SetClientData(event.GetClientData());
-        (*itHandler)->ProcessEvent(eventUp);
+        pHandler->ProcessEvent(eventUp);
     }
 }
 
@@ -848,9 +854,9 @@ void IOManager::OnTimerSilence(wxTimerEvent& event)
 {
     wxCommandEvent eventInput(wxEVT_INPUT_FAILED);
 
-    for(set<wxEvtHandler*>::iterator itHandler = m_setHandlers.begin(); itHandler != m_setHandlers.end(); ++itHandler)
+    for(auto pHandler : m_setHandlers)
     {
-        (*itHandler)->ProcessEvent(eventInput);
+        pHandler->ProcessEvent(eventInput);
     }
 }
 
@@ -864,4 +870,14 @@ wxString IOManager::GetRandomMulticastAddress()
         sAddress += wxString::Format(wxT(".%d"), rand()%256);
     }
     return sAddress;
+}
+
+
+void IOManager::OnPtpEvent(wxCommandEvent& event)
+{
+    auto itThread = m_mRtp.find(m_sCurrentRtp);
+    if(itThread != m_mRtp.end())
+    {
+        itThread->second->MasterClockChanged();
+    }
 }

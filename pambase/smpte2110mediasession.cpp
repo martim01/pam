@@ -8,6 +8,8 @@
 #include "timedbuffer.h"
 #include <wx/log.h>
 #include <iostream>
+#include "wxptp.h"
+
 using namespace std;
 
 const wxString Smpte2110MediaSubsession::STR_SAMPLING[13] = { wxT("YCbCr-4:4:4"), wxT("YCbCr-4:2:2"), wxT("YCbCr-4:2:0"), wxT("CLYCbCr-4:4:4"), wxT("CLYCbCr-4:2:2"), wxT("CLYCbCr-4:2:0"), wxT("ICtCp-4:4:4"), wxT("ICtCp-4:2:2"), wxT("ICtCp-4:2:0"), wxT("RGB"), wxT("XYZ"), wxT("KEY"), wxT("Unknown")};
@@ -226,7 +228,7 @@ MediaSubsession* Smpte2110MediaSession::createNewMediaSubsession()
 }
 
 
-Smpte2110MediaSubsession::Smpte2110MediaSubsession(MediaSession& parent) : MediaSubsession(parent)
+Smpte2110MediaSubsession::Smpte2110MediaSubsession(MediaSession& parent) : MediaSubsession(parent), m_nSyncTime(0)
 {
 
 }
@@ -287,14 +289,18 @@ void Smpte2110MediaSubsession::parseSDPAttribute_Sync()
 
     wxString sFind(wxT("a=sync-time:"));
     size_t nFront = sSdp.find(sFind);
+    size_t nDante = sSdp.Find(wxT("Dante"));
+
+    m_nSyncTime = 0;
 
     if(nFront == wxNOT_FOUND)   //not found try the mediaclk:direct
     {
-        sFind = wxT("a=mediaclk:direct=");
+
+        sFind = wxT("a=mediaclk:direct");
         nFront = sSdp.find(sFind);
     }
 
-    if(nFront != wxNOT_FOUND)
+    if(nFront != wxNOT_FOUND && nDante == wxNOT_FOUND)
     {
         size_t nEnd = sSdp.find(wxT("\n"), nFront);
         nEnd -= nFront;
@@ -303,10 +309,7 @@ void Smpte2110MediaSubsession::parseSDPAttribute_Sync()
         //might possibly have clock rate after sync time. Ignore for now
         sTime.BeforeFirst(wxT(' ')).ToULong(&m_nSyncTime);
     }
-    else
-    {
-        m_nSyncTime = 0;
-    }
+
 }
 
 void Smpte2110MediaSubsession::parseSDPAttribute_Deviation()

@@ -29,9 +29,33 @@ target_compile_options(liveMedia PRIVATE ${flags})
 
 #pambase settubgs
 
-file(GLOB SOURCES "*.cpp")
 
-add_library(pambase SHARED ${SOURCES} )
+file(GLOB SOURCES "*.cpp")
+add_library(pambase SHARED ${SOURCES})
+
+option(optionPTP "Use PTPMonkey library" OFF)
+message (${PROJECT_SOURCE_DIR})
+if(optionPTP)
+	find_path(PTPMONKEY_LIB_DIR NAMES "libptpmonkey.so" PATHS ${PROJECT_SOURCE_DIR}/../external/ptpmonkey)
+	
+	if((NOT PTPMONKEY_LIB_DIR) OR (NOT EXISTS ${PTPMONKEY_LIB_DIR}))
+    # we couldn't find the header files for FOO or they don't exist
+    message("Unable to find PtpMonkey")
+    
+
+    # we have a submodule setup for asio, assume it is under external/asio
+    # now we need to clone this submodule
+    execute_process(COMMAND git submodule update --init -- ../external/ptpmonkey
+                    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+    
+	add_subdirectory(${PROJECT_SOURCE_DIR}/../external/ptpmonkey ${CMAKE_CURRENT_BINARY_DIR}/ptpmonkey)
+    else()
+		message("Found ptpmonkey")
+	endif()
+	target_compile_definitions(pambase PUBLIC PTPMONKEY)
+	target_link_libraries(pambase ptpmonkey)
+endif()
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(pambase PRIVATE ${flags})

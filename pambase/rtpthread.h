@@ -20,6 +20,7 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
         void* Entry();
         void AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const pairTime_t& timePresentation, unsigned long nFrameSize, u_int8_t* pBuffer, u_int8_t nBits, const pairTime_t& timeTransmission, unsigned int nTimestamp,unsigned int nDuration, mExtension_t* pExt);
 
+        void MasterClockChanged();
 
 
         void StopStream();
@@ -58,7 +59,7 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
         wxMutex m_mutex;
         wxCondition* m_pCondition;
 
-
+        wxString m_sReceivingInterface;
         std::queue<frameBuffer> m_qBufferFrames;
 
         float* m_pCurrentBuffer;
@@ -88,4 +89,5 @@ DECLARE_EXPORTED_EVENT_TYPE(PAMBASE_IMPEXPORT, wxEVT_QOS_UPDATED,-1)
 DECLARE_EXPORTED_EVENT_TYPE(PAMBASE_IMPEXPORT, wxEVT_RTP_SESSION,-1)
 DECLARE_EXPORTED_EVENT_TYPE(PAMBASE_IMPEXPORT, wxEVT_RTP_SESSION_CLOSED,-1)
 DECLARE_EXPORTED_EVENT_TYPE(PAMBASE_IMPEXPORT, wxEVT_SDP,-1)
+DECLARE_EXPORTED_EVENT_TYPE(PAMBASE_IMPEXPORT, wxEVT_RPT_SESSION_EPOCH,-1)
 

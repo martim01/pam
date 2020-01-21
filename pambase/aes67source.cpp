@@ -3,10 +3,9 @@
 #include "aes67source.h"
 #include <string>
 #include <cmath>
-#include <cmath>
 #include <wx/datetime.h>
 #include <wx/log.h>
-
+#include "wxptp.h"
 
 Aes67Source*
 Aes67Source::createNew(UsageEnvironment& env,
@@ -43,9 +42,12 @@ void Aes67Source::WorkoutLastEpoch()
     //dTime *= 1000000.0;
 
     //get the current time
+    #ifdef PTPMONKEY
+    timeval tvNow = wxPtp::Get().GetPtpTime(0); //need to set the domain
+    #else
     timeval tvNow;
-    gettimeofday(&tvNow, 0);
-
+    gettimeofday(&tvNow, nullptr);
+    #endif // PTPMONKEY
 
     double dNow = static_cast<double>(tvNow.tv_sec);//*1000000.0;
     dNow += static_cast<double>(tvNow.tv_usec) / 1000000.0;
@@ -86,6 +88,7 @@ pairTime_t Aes67Source::GetTransmissionTime()
         tvTransmision.second -= 1000000.0;
         tvTransmision.first ++;
     }
+
 
     return tvTransmision;
 }

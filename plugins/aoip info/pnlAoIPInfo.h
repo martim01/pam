@@ -121,6 +121,7 @@ class pnlAoIPInfo: public wxPanel
 		wmLabel* m_pLbl21;
 		wmLabel* m_pLbl13;
 		//*)
+		wmLabel* m_plblEpoch;
 
 		void QoSUpdated(qosData* pData);
 		void SessionStarted(const session& aSession);
@@ -237,7 +238,9 @@ class pnlAoIPInfo: public wxPanel
 		//(*Handlers(pnlAoIPInfo)
 		//*)
 
-		void SetTimestamp(const pairTime_t& tv, wmLabel* pLabel);
+		void OnPtpEvent(wxCommandEvent& event);
+
+		void SetTimestamp(const pairTime_t& tv, wmLabel* pLabel, bool bDate = false);
         void ShowLatency(const timedbuffer* pTimedBuffer);
         pairTime_t m_tvTransmission;
         pairTime_t m_tvPresentation;
@@ -245,7 +248,7 @@ class pnlAoIPInfo: public wxPanel
 
         unsigned int m_nSampleRate;
         unsigned int m_nFrameSize;
-
+        const session* m_pSession;
 		DECLARE_EVENT_TABLE()
 };
 

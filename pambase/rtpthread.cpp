@@ -10,6 +10,8 @@
 #include "wxsink.h"
 #include "audioevent.h"
 #include "GroupsockHelper.hh"
+#include "wxptp.h"
+#include "aes67source.h"
 
 using namespace std;
 
@@ -39,6 +41,7 @@ RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface
     m_eventLoopWatchVariable = 0;
     m_pCondition = new wxCondition(m_mutex);
 
+    m_sReceivingInterface = sReceivingInterface;
     //set the receivinginterface to eth0 or whatever the user choose
     if(sReceivingInterface.empty() == false)
     {
@@ -47,6 +50,7 @@ RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface
     else
     {
         ReceivingInterfaceAddr = INADDR_ANY;
+
     }
 }
 
@@ -97,8 +101,8 @@ void RtpThread::StreamFromSDP()
 
     *m_penv << "\nUsing SDP \n" << sSDP.c_str() << "\n";
 
-    Smpte2110MediaSession* pSession = Smpte2110MediaSession::createNew(*m_penv, sSDP.c_str());
-    if (pSession == NULL)
+    m_pSession = Smpte2110MediaSession::createNew(*m_penv, sSDP.c_str());
+    if (m_pSession == NULL)
     {
         *m_penv << "Failed to create a MediaSession object from the SDP description: " << m_penv->getResultMsg() << "\n";
         return;
@@ -111,7 +115,7 @@ void RtpThread::StreamFromSDP()
     //count number of subsessions
     unsigned int nCountAudio(0);
     unsigned int nCountVideo(0);
-    MediaSubsessionIterator iterCount(*pSession);
+    MediaSubsessionIterator iterCount(*m_pSession);
     MediaSubsession* pSubsessionCount = NULL;
     while ((pSubsessionCount = iterCount.next()) != NULL)
     {
@@ -129,7 +133,7 @@ void RtpThread::StreamFromSDP()
     *m_penv << "Number of Video Subsessions: " << nCountVideo << "\n";
     *m_penv << "---------------------------------------\n";
 
-    MediaSubsessionIterator iter(*pSession);
+    MediaSubsessionIterator iter(*m_pSession);
     Smpte2110MediaSubsession* subsession = NULL;
     while ((subsession = dynamic_cast<Smpte2110MediaSubsession*>(iter.next())) != NULL)
     {
@@ -162,11 +166,11 @@ void RtpThread::StreamFromSDP()
 
                 // @todo move the startPlaying to later??
                 subsession->sink->startPlaying(*subsession->readSource(), NULL, NULL);
-                beginQOSMeasurement(*m_penv, pSession, this);
+                beginQOSMeasurement(*m_penv, m_pSession, this);
             }
         }
     }
-    PassSessionDetails(pSession);
+    PassSessionDetails(m_pSession);
 
     while(TestDestroy() == false && m_eventLoopWatchVariable == 0)
     {
@@ -233,7 +237,14 @@ void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const p
                     if(m_nSampleBufferSize == 0)
                     {
                         m_dTransmission = timeTransmission.first + (static_cast<double>(timeTransmission.second))/1000000.0;
-                        m_dPresentation = timePresentation.first + (static_cast<double>(timePresentation.second))/1000000.0;
+                        #ifdef PTPMONKEY
+                        timeval tv = wxPtp::Get().GetPtpOffset(0);
+                        double dOffset = tv.tv_sec + (static_cast<double>(tv.tv_usec))/1000000.0;
+                        #else
+                        double dOffset = 0.0;
+                        #endif
+                        m_dPresentation = (timePresentation.first + (static_cast<double>(timePresentation.second))/1000000.0) - dOffset;
+
 
                         m_nTimestamp = nTimestamp;
                     }
@@ -274,7 +285,15 @@ void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const p
                     if(m_nSampleBufferSize == 0)
                     {
                         m_dTransmission = timeTransmission.first + (static_cast<double>(timeTransmission.second))/1000000.0;
-                        m_dPresentation = timePresentation.first + (static_cast<double>(timePresentation.second))/1000000.0;
+                        #ifdef PTPMONKEY
+                        timeval tv = wxPtp::Get().GetPtpOffset(0);
+                        double dOffset = tv.tv_sec + (static_cast<double>(tv.tv_usec))/1000000.0;
+                        #else
+                        double dOffset = 0.0;
+                        #endif
+
+                        m_dPresentation = (timePresentation.first + (static_cast<double>(timePresentation.second))/1000000.0) - dOffset;
+
                         m_nTimestamp = nTimestamp;
 
                     }
@@ -367,11 +386,18 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
                                                      pSubsession->GetSyncTime(),
                                                      pSubsession->GetLastEpoch(),
                                                      pSubsession->GetRefClock()));
+        #ifdef PTPMONKEY
+        if(pSubsession->GetRefClock().sType.CmpNoCase(wxT("PTP")) == 0)
+        {
+            wxPtp::Get().RunDomain(std::string(m_sReceivingInterface.mb_str()), pSubsession->GetRefClock().nDomain);
+        }
+        #endif // PTPMONKEY
     }
 
     m_Session.SetCurrentSubsession();
     if(m_Session.GetCurrentSubsession() != m_Session.lstSubsession.end())
     {
+
         m_nInputChannels = min((unsigned int)256 ,m_Session.GetCurrentSubsession()->nChannels);
     }
     else
@@ -413,4 +439,22 @@ unsigned long RtpThread::GetQosMeasurementIntervalMS()
 {
     wxMutexLocker ml(m_mutex);
     return m_nQosMeasurementIntervalMS;
+}
+
+void RtpThread::MasterClockChanged()
+{
+    wxLogDebug(wxT("MasterClockChanged"));
+    MediaSubsessionIterator iter(*m_pSession);
+    Smpte2110MediaSubsession* subsession = NULL;
+    while ((subsession = dynamic_cast<Smpte2110MediaSubsession*>(iter.next())) != NULL)
+    {
+        Aes67Source* pSource = dynamic_cast<Aes67Source*>(subsession->readSource());
+        if(pSource)
+        {
+            wxLogDebug(wxT("MasterClockChanged: WorkoutLastEpoch"));
+            pSource->WorkoutLastEpoch();
+
+        }
+    }
+
 }
