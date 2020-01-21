@@ -91,6 +91,22 @@ It is possible that __/usr/local/lib__ is not in your path. If so then do the fo
 sudo ldconfig
 ```
 
+#### PTPMonkey support
+If you wish to include [PTPMonkey](https://github.com/martim01/ptpmonkey) in the application then run ``` cmake .. -DoptionPTP=ON ``` instead of ``` cmake ...```
+
+The CMake project will clone the PTPMonkey code from GitHub to __external/ptpmonkey__ and build and install the library.
+
+When subscribing to an AoIP stream whose SDP defines a PTP reference PTPMonkey will listen for a Master Clock on the relevant domain and use the Master Clock's time for timestamping incoming RTP packets. The __forthcoming__ PTP plugin will also depend on this library being part of the base build
+
+#### NMOS support
+__forthcoming__ 
+
+[NMOS](https://github.com/AMWA-TV/nmos/wiki) support can be build in to __PAM__ allowing control of AoIP streams in to and out of the software from external devices. It is also possible to select and route NMOS compliant sources to the software for monitoring. 
+
+If you wish to include [nmos](https://github.com/martim01/nmos) in the application then run ``` cmake .. -DoptionNMOS=ON ``` instead of ``` cmake ...```
+
+The CMake project will clone the nmos code from GitHub to __external/nmos__ and build and install the library.
+
 ### Setting Up
 
 PAM expects a few files to live in a specific directory:
