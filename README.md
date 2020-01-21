@@ -98,6 +98,8 @@ The CMake project will clone the PTPMonkey code from GitHub to __external/ptpmon
 
 When subscribing to an AoIP stream whose SDP defines a PTP reference PTPMonkey will listen for a Master Clock on the relevant domain and use the Master Clock's time for timestamping incoming RTP packets. The __forthcoming__ PTP plugin will also depend on this library being part of the base build
 
+**__Note: If you wish to use PTPMonkey with PAM on Linux then you will need to run PAM using [authbind](https://en.wikipedia.org/wiki/Authbind) or with higher privileges as the application will need to open network ports 319 and 320__**
+
 #### NMOS support
 __forthcoming__ 
 
