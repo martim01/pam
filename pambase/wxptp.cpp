@@ -87,7 +87,7 @@ void wxPtp::RunDomain(const wxString& sIpAddress, unsigned char nDomain)
     auto itMonkey = m_mDomain.find(nDomain);
     if(itMonkey == m_mDomain.end())
     {
-        itMonkey = m_mDomain.insert(std::make_pair(nDomain, std::make_shared<PtpMonkey>(std::string(sIpAddress.mb_str()), nDomain))).first;
+        itMonkey = m_mDomain.insert(std::make_pair(nDomain, std::make_shared<PtpMonkey>(IpAddress(std::string(sIpAddress.mb_str())), nDomain))).first;
         itMonkey->second->AddEventHandler(m_pNotifier);
         if(itMonkey->second->Run())
         {
