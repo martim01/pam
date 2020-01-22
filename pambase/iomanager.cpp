@@ -96,6 +96,7 @@ IOManager::IOManager() :
     wxPtp::Get().AddHandler(this);
     Connect(wxID_ANY, wxEVT_CLOCK_MASTER, (wxObjectEventFunction)&IOManager::OnPtpEvent);
     Connect(wxID_ANY, wxEVT_CLOCK_SLAVE, (wxObjectEventFunction)&IOManager::OnPtpEvent);
+    wxPtp::Get().RunDomain(std::string(Settings::Get().Read(wxT("AoIP_Settings"), wxT("Interface"), wxEmptyString).mb_str()), pSubsession->GetRefClock().nDomain);
     #endif // PTPMONKEY
     m_pGenerator = new Generator();
     m_pGenerator->SetSampleRate(48000);

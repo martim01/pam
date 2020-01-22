@@ -2,6 +2,8 @@
 #include <GroupsockHelper.hh>
 #include <sstream>
 #include <iostream>
+#include "wxptp.h"
+
 
 ////////// AES67ServerMediaSubsession //////////
 
@@ -53,7 +55,12 @@ char const* AES67ServerMediaSubsession::sdpLines()
         std::stringstream ss;
         ss << "a=ptime:" << m_nPacketTime << "\r\n";
         ss << "a=maxptime:" << m_nPacketTime << "\r\n";
+#ifdef PTPMONKEY
+        ss << "a=ts-refclk:ptp=IEEE1588-2008:" << wxPtp::Get().GetMasterClockId(0) << ":0\r\n";
+#else
         ss << "a=ts-refclk:" << "\r\n";
+#endif // PTPMONKEY
+
         ss << "a=mediaclk:direct=" << GetEpochTimestamp() << "\r\n";
         std::string sMedia(ss.str());
 
@@ -190,7 +197,12 @@ float AES67ServerMediaSubsession::getCurrentNPT(void* streamToken)
     struct timeval const& creationTime  = fRTPSink.creationTime(); // alias
 
     struct timeval timeNow;
+    //#ifdef PTPMONKEY
+    //timeNow = wxPtp::Get().GetPtpTime(0);
+    //#else
     gettimeofday(&timeNow, NULL);
+    //#endif // PTPMONKEY
+
 
     return (float)(timeNow.tv_sec - creationTime.tv_sec + (timeNow.tv_usec - creationTime.tv_usec)/1000000.0);
 }
@@ -228,7 +240,12 @@ int AES67ServerMediaSubsession::GetEpochTimestamp()
 
     //get the current time
     timeval tvNow;
+    #ifdef PTPMONKEY
+    tvNow = wxPtp::Get().GetPtpTime(0);
+    #else
     gettimeofday(&tvNow, 0);
+    #endif // PTPMONKEY
+
 
     double dNow = static_cast<double>(tvNow.tv_sec);//*1000000.0;
     dNow += static_cast<double>(tvNow.tv_usec) / 1000000.0;
