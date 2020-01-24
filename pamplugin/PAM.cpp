@@ -52,6 +52,7 @@ pam::~pam()
 
 void pam::OnAttach()
 {
+    Manager::Get()->GetLogManager()->DebugLog(wxT("PAM OnAttach"));
 	m_FileNewMenu = 0;
 	cbPlugin::OnAttach();
 }

@@ -21,7 +21,7 @@ class PAMBASE_IMPEXPORT wxPtp : public wxEvtHandler
         wxString GetMasterClockId(unsigned char nDomain);
         timeval GetPtpTime(unsigned char nDomain);
         timeval GetPtpOffset(unsigned char nDomain);
-
+        std::shared_ptr<PtpMonkey> GetPtpMonkey(nDomain);
         void AddHandler(wxEvtHandler* pHandler);
 
     private:

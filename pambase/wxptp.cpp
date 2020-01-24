@@ -119,6 +119,16 @@ void wxPtp::StopDomain(unsigned char nDomain)
     }
 }
 
+std::shared_ptr<PtpMonkey> wxPtp::GetPtpMonkey(nDomain)
+{
+    auto itMonkey = m_mDomain.find(nDomain);
+    if(itMonkey != m_mDomain.end())
+    {
+        return itMonkey->second;
+    }
+    return nullptr;
+}
+
 wxString wxPtp::GetMasterClockId(unsigned char nDomain)
 {
     auto itMonkey = m_mDomain.find(nDomain);
