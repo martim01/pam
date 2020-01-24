@@ -43,15 +43,15 @@ RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface
 
     m_sReceivingInterface = sReceivingInterface;
     //set the receivinginterface to eth0 or whatever the user choose
-    if(sReceivingInterface.empty() == false)
-    {
-        ReceivingInterfaceAddr = our_inet_addr(std::string(sReceivingInterface.mb_str()).c_str());
-    }
-    else
-    {
+   // if(sReceivingInterface.empty() == false)
+   // {
+   //     ReceivingInterfaceAddr = our_inet_addr(std::string(sReceivingInterface.mb_str()).c_str());
+   // }
+   // else
+   // {
         ReceivingInterfaceAddr = INADDR_ANY;
 
-    }
+    //}
 }
 
 

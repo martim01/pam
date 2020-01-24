@@ -96,7 +96,8 @@ IOManager::IOManager() :
     wxPtp::Get().AddHandler(this);
     Connect(wxID_ANY, wxEVT_CLOCK_MASTER, (wxObjectEventFunction)&IOManager::OnPtpEvent);
     Connect(wxID_ANY, wxEVT_CLOCK_SLAVE, (wxObjectEventFunction)&IOManager::OnPtpEvent);
-    wxPtp::Get().RunDomain(std::string(Settings::Get().Read(wxT("AoIP_Settings"), wxT("Interface"), wxEmptyString).mb_str()), pSubsession->GetRefClock().nDomain);
+    wxPtp::Get().RunDomain(std::string(Settings::Get().Read(wxT("AoIP_Settings"), wxT("Interface"), wxT("eth0")).mb_str()),
+    Settings::Get().Read(wxT("AoIP_Settings"), wxT("Domain"), 0));
     #endif // PTPMONKEY
     m_pGenerator = new Generator();
     m_pGenerator->SetSampleRate(48000);
@@ -630,7 +631,7 @@ void IOManager::InitAudioInputDevice()
         {
 
             m_sCurrentRtp = sRtp;
-            RtpThread* pThread = new RtpThread(this, Settings::Get().Read(wxT("AoIP_Settings"), wxT("Interface"), wxEmptyString), wxT("pam"), sRtp, 2048);
+            RtpThread* pThread = new RtpThread(this, Settings::Get().Read(wxT("AoIP_Settings"), wxT("Interface"), "eth0"), wxT("pam"), sRtp, 2048);
             pThread->Create();
             pThread->Run();
 

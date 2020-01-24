@@ -82,20 +82,20 @@ wxPtp::wxPtp() : m_pNotifier(std::make_shared<wxPtpEventHandler>())
 {
 }
 
-void wxPtp::RunDomain(const wxString& sIpAddress, unsigned char nDomain)
+void wxPtp::RunDomain(const wxString& sInterface, unsigned char nDomain)
 {
     auto itMonkey = m_mDomain.find(nDomain);
     if(itMonkey == m_mDomain.end())
     {
-        itMonkey = m_mDomain.insert(std::make_pair(nDomain, std::make_shared<PtpMonkey>(IpAddress(std::string(sIpAddress.mb_str())), nDomain))).first;
+        itMonkey = m_mDomain.insert(std::make_pair(nDomain, std::make_shared<PtpMonkey>(IpInterface(std::string(sInterface.mb_str())), nDomain))).first;
         itMonkey->second->AddEventHandler(m_pNotifier);
         if(itMonkey->second->Run())
         {
-            wmLog::Get()->Log(wxString::Format(wxT("PTPMonkey listening on interface %s for domain %u"), sIpAddress.c_str(), nDomain));
+            wmLog::Get()->Log(wxString::Format(wxT("PTPMonkey listening on interface %s for domain %u"), sInterface.c_str(), nDomain));
         }
         else
         {
-            wmLog::Get()->Log(wxString::Format(wxT("PTPMonkey failed to listen on interface %s for domain %u"), sIpAddress.c_str(), nDomain));
+            wmLog::Get()->Log(wxString::Format(wxT("PTPMonkey failed to listen on interface %s for domain %u"), sInterface.c_str(), nDomain));
         }
 
     }

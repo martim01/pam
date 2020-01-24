@@ -15,7 +15,7 @@ class PAMBASE_IMPEXPORT wxPtp : public wxEvtHandler
     public:
         static wxPtp& Get();
 
-        void RunDomain(const wxString& sIpAddress, unsigned char nDomain);
+        void RunDomain(const wxString& sInterface, unsigned char nDomain);
         void StopDomain(unsigned char nDomain);
 
         wxString GetMasterClockId(unsigned char nDomain);
