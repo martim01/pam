@@ -10,7 +10,7 @@
 			<button_selected>#FF8000</button_selected>
 			<items />
 			<pos>5,5</pos>
-			<size>150,470</size>
+			<size>190,470</size>
 			<bg>wxSYS_COLOUR_BACKGROUND</bg>
 			<style>wmList::STYLE_SELECT</style>
 			<handler function="OnlstClocksSelected" entry="EVT_LIST_SELECTED" />
@@ -19,7 +19,7 @@
 			<label>Port Identitiy</label>
 			<border>uiRect::BORDER_FLAT</border>
 			<gradient>wxWEST</gradient>
-			<pos>160,5</pos>
+			<pos>200,5</pos>
 			<size>100,30</size>
 			<fg>#FFFFFF</fg>
 			<bg>#5C7AE0</bg>
@@ -27,7 +27,7 @@
 		<object class="wmLabel" name="ID_M_PLBL2" variable="m_ptitleAddress" member="yes">
 			<label>Address</label>
 			<gradient>wxWEST</gradient>
-			<pos>160,40</pos>
+			<pos>200,40</pos>
 			<size>100,30</size>
 			<fg>#FFFFFF</fg>
 			<bg>#5C7AE0</bg>
@@ -35,7 +35,7 @@
 		<object class="wmLabel" name="ID_M_PLBL3" variable="m_ptitleState" member="yes">
 			<label>State</label>
 			<gradient>wxWEST</gradient>
-			<pos>160,75</pos>
+			<pos>200,75</pos>
 			<size>100,30</size>
 			<fg>#FFFFFF</fg>
 			<bg>#5C7AE0</bg>
@@ -43,36 +43,36 @@
 		<object class="wmLabel" name="ID_M_PLBL12" variable="m_plblIdentity" member="yes">
 			<label></label>
 			<border>uiRect::BORDER_DOWN</border>
-			<pos>260,5</pos>
-			<size>200,30</size>
+			<pos>300,5</pos>
+			<size>180,30</size>
 			<fg>#000000</fg>
 			<bg>#FFFFFF</bg>
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL13" variable="m_pblAddress" member="yes">
 			<label></label>
 			<border>uiRect::BORDER_DOWN</border>
-			<pos>260,40</pos>
-			<size>200,30</size>
+			<pos>300,40</pos>
+			<size>180,30</size>
 			<fg>#000000</fg>
 			<bg>#FFFFFF</bg>
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL14" variable="m_plblState" member="yes">
 			<label></label>
 			<border>uiRect::BORDER_DOWN</border>
-			<pos>260,75</pos>
-			<size>200,30</size>
+			<pos>300,75</pos>
+			<size>180,30</size>
 			<fg>#000000</fg>
 			<bg>#FFFFFF</bg>
 		</object>
 		<object class="wxPanel" name="ID_PANEL1" variable="m_ppnlAnnouncements" member="yes">
-			<pos>160,110</pos>
-			<size>300,360</size>
+			<pos>200,110</pos>
+			<size>280,360</size>
 			<bg>#000000</bg>
 			<object class="wmLabel" name="ID_M_PLBL30" variable="m_ptitleAnnouncements" member="yes">
 				<label>Announcements</label>
 				<gradient>wxWEST</gradient>
 				<pos>0,0</pos>
-				<size>300,30</size>
+				<size>280,30</size>
 				<fg>#FFFFFF</fg>
 				<bg>#62DB65</bg>
 				<font>
@@ -111,7 +111,7 @@
 				<label></label>
 				<border>uiRect::BORDER_DOWN</border>
 				<pos>150,35</pos>
-				<size>150,30</size>
+				<size>130,30</size>
 				<fg>#000000</fg>
 				<bg>#FFFFFF</bg>
 			</object>
@@ -127,7 +127,7 @@
 				<label></label>
 				<border>uiRect::BORDER_DOWN</border>
 				<pos>100,70</pos>
-				<size>200,30</size>
+				<size>180,30</size>
 				<fg>#000000</fg>
 				<bg>#FFFFFF</bg>
 			</object>
@@ -143,7 +143,7 @@
 				<label></label>
 				<border>uiRect::BORDER_DOWN</border>
 				<pos>100,105</pos>
-				<size>200,30</size>
+				<size>180,30</size>
 				<fg>#000000</fg>
 				<bg>#FFFFFF</bg>
 			</object>
@@ -159,7 +159,7 @@
 				<label></label>
 				<border>uiRect::BORDER_DOWN</border>
 				<pos>100,140</pos>
-				<size>200,30</size>
+				<size>180,30</size>
 				<fg>#000000</fg>
 				<bg>#FFFFFF</bg>
 			</object>
@@ -175,7 +175,7 @@
 				<label></label>
 				<border>uiRect::BORDER_DOWN</border>
 				<pos>100,175</pos>
-				<size>200,30</size>
+				<size>180,30</size>
 				<fg>#000000</fg>
 				<bg>#FFFFFF</bg>
 			</object>
@@ -191,7 +191,7 @@
 				<label></label>
 				<border>uiRect::BORDER_DOWN</border>
 				<pos>100,210</pos>
-				<size>200,30</size>
+				<size>180,30</size>
 				<fg>#000000</fg>
 				<bg>#FFFFFF</bg>
 			</object>
@@ -207,7 +207,7 @@
 				<label></label>
 				<border>uiRect::BORDER_DOWN</border>
 				<pos>100,245</pos>
-				<size>200,30</size>
+				<size>180,30</size>
 				<fg>#000000</fg>
 				<bg>#FFFFFF</bg>
 			</object>
@@ -223,7 +223,7 @@
 				<label></label>
 				<border>uiRect::BORDER_DOWN</border>
 				<pos>100,280</pos>
-				<size>200,30</size>
+				<size>180,30</size>
 				<fg>#000000</fg>
 				<bg>#FFFFFF</bg>
 			</object>
@@ -239,14 +239,14 @@
 				<label></label>
 				<border>uiRect::BORDER_DOWN</border>
 				<pos>100,315</pos>
-				<size>200,30</size>
+				<size>180,30</size>
 				<fg>#000000</fg>
 				<bg>#FFFFFF</bg>
 			</object>
 		</object>
 		<object class="wmSwitcherPanel" name="ID_M_PSWP1" variable="m_pswp" member="yes">
-			<pos>470,5</pos>
-			<size>300,245</size>
+			<pos>490,5</pos>
+			<size>280,245</size>
 			<bg>#000000</bg>
 			<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
 			<object class="wmSwitcherPanelpage">
@@ -254,13 +254,13 @@
 					<bg>#000000</bg>
 					<object class="wxPanel" name="ID_PANEL2" variable="m_ppnlSync" member="yes">
 						<pos>0,0</pos>
-						<size>300,105</size>
+						<size>280,105</size>
 						<bg>#000000</bg>
 						<object class="wmLabel" name="ID_M_PLBL23" variable="m_ptitleSync" member="yes">
 							<label>Sync</label>
 							<gradient>wxWEST</gradient>
 							<pos>0,0</pos>
-							<size>300,30</size>
+							<size>280,30</size>
 							<fg>#FFFFFF</fg>
 							<bg>#62DB65</bg>
 							<font>
@@ -299,7 +299,7 @@
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
 							<pos>150,35</pos>
-							<size>150,30</size>
+							<size>130,30</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
 						</object>
@@ -307,20 +307,20 @@
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
 							<pos>0,70</pos>
-							<size>300,30</size>
+							<size>280,30</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
 						</object>
 					</object>
 					<object class="wxPanel" name="ID_PANEL3" variable="m_ppnlFollowUp" member="yes">
 						<pos>0,105</pos>
-						<size>300,105</size>
+						<size>280,105</size>
 						<bg>#000000</bg>
 						<object class="wmLabel" name="ID_M_PLBL28" variable="m_ptitleFollowUp" member="yes">
 							<label>Follow Up</label>
 							<gradient>wxWEST</gradient>
 							<pos>0,0</pos>
-							<size>300,30</size>
+							<size>280,30</size>
 							<fg>#FFFFFF</fg>
 							<bg>#62DB65</bg>
 							<font>
@@ -359,7 +359,7 @@
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
 							<pos>150,35</pos>
-							<size>150,30</size>
+							<size>130,30</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
 						</object>
@@ -367,7 +367,7 @@
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
 							<pos>0,70</pos>
-							<size>300,30</size>
+							<size>280,30</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
 						</object>
@@ -380,13 +380,13 @@
 					<bg>#000000</bg>
 					<object class="wxPanel" name="ID_PANEL4" variable="m_ppnlRequests" member="yes">
 						<pos>0,0</pos>
-						<size>300,140</size>
+						<size>280,140</size>
 						<bg>#000000</bg>
 						<object class="wmLabel" name="ID_M_PLBL40" variable="m_ptitleDelay" member="yes">
 							<label>Delay Requests</label>
 							<gradient>wxWEST</gradient>
 							<pos>0,0</pos>
-							<size>300,30</size>
+							<size>280,30</size>
 							<fg>#FFFFFF</fg>
 							<bg>#62DB65</bg>
 							<font>
@@ -425,7 +425,7 @@
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
 							<pos>150,35</pos>
-							<size>150,30</size>
+							<size>130,30</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
 						</object>
@@ -433,7 +433,7 @@
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
 							<pos>0,70</pos>
-							<size>300,30</size>
+							<size>280,30</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
 						</object>
@@ -449,20 +449,20 @@
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
 							<pos>100,105</pos>
-							<size>200,30</size>
+							<size>180,30</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
 						</object>
 					</object>
 					<object class="wxPanel" name="ID_PANEL7" variable="m_ppnlResponses" member="yes">
 						<pos>0,140</pos>
-						<size>300,140</size>
+						<size>280,140</size>
 						<bg>#000000</bg>
 						<object class="wmLabel" name="ID_M_PLBL48" variable="m_pLbl1" member="yes">
 							<label>Delay Responses Received</label>
 							<gradient>wxWEST</gradient>
 							<pos>0,0</pos>
-							<size>300,30</size>
+							<size>280,30</size>
 							<fg>#FFFFFF</fg>
 							<bg>#62DB65</bg>
 							<font>
@@ -501,7 +501,7 @@
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
 							<pos>150,35</pos>
-							<size>150,30</size>
+							<size>130,30</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
 						</object>
@@ -509,7 +509,7 @@
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
 							<pos>0,70</pos>
-							<size>300,30</size>
+							<size>280,30</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
 						</object>
@@ -519,14 +519,14 @@
 			</object>
 		</object>
 		<object class="wxPanel" name="ID_PANEL8" variable="m_ppnlLocal" member="yes">
-			<pos>470,250</pos>
-			<size>300,205</size>
+			<pos>490,250</pos>
+			<size>280,205</size>
 			<bg>#000000</bg>
 			<object class="wmLabel" name="ID_M_PLBL54" variable="m_ptitlePam" member="yes">
 				<label>PAM</label>
 				<gradient>wxWEST</gradient>
 				<pos>0,0</pos>
-				<size>300,30</size>
+				<size>280,30</size>
 				<fg>#FFFFFF</fg>
 				<bg>#D98A64</bg>
 				<font>
@@ -549,7 +549,7 @@
 				<label></label>
 				<border>uiRect::BORDER_DOWN</border>
 				<pos>100,35</pos>
-				<size>200,30</size>
+				<size>180,30</size>
 				<fg>#000000</fg>
 				<bg>#FFFFFF</bg>
 			</object>
@@ -565,7 +565,7 @@
 				<label></label>
 				<border>uiRect::BORDER_DOWN</border>
 				<pos>100,70</pos>
-				<size>200,30</size>
+				<size>180,30</size>
 				<fg>#000000</fg>
 				<bg>#FFFFFF</bg>
 			</object>
@@ -581,7 +581,7 @@
 				<label></label>
 				<border>uiRect::BORDER_DOWN</border>
 				<pos>100,105</pos>
-				<size>200,30</size>
+				<size>180,30</size>
 				<fg>#000000</fg>
 				<bg>#FFFFFF</bg>
 			</object>
@@ -597,7 +597,7 @@
 				<label></label>
 				<border>uiRect::BORDER_DOWN</border>
 				<pos>100,140</pos>
-				<size>200,30</size>
+				<size>180,30</size>
 				<fg>#000000</fg>
 				<bg>#FFFFFF</bg>
 			</object>
@@ -613,7 +613,7 @@
 				<label></label>
 				<border>uiRect::BORDER_DOWN</border>
 				<pos>100,175</pos>
-				<size>200,30</size>
+				<size>180,30</size>
 				<fg>#000000</fg>
 				<bg>#FFFFFF</bg>
 			</object>
