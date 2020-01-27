@@ -1,6 +1,7 @@
 #include "macdb.h"
 #include <wx/xml/xml.h>
 #include "settings.h"
+#include "wmlogevent.h"
 
 bool MacDb::LoadXml()
 {
@@ -22,13 +23,20 @@ bool MacDb::LoadXml()
                     {
                         sVendor = pEntry->GetNodeContent();
                     }
-                    if(sMac.empty() == false)
-                    {
-                        m_mVendors.insert(std::make_pair(sMac, sVendor));
-                    }
+                }
+                if(sMac.empty() == false)
+                {
+                    m_mVendors.insert(std::make_pair(sMac.MakeLower(), sVendor));
                 }
             }
         }
+        wmLog::Get()->Log(wxString::Format("Vendoers: %zu", m_mVendors.size()));
+        return true;
+    }
+    else
+    {
+        wmLog::Get()->Log("Failed to open file");
+        return false;
     }
 }
 
@@ -36,19 +44,23 @@ bool MacDb::LoadXml()
 wxString MacDb::GetVendor(const wxString& sMac) const
 {
     auto itMac = m_mVendors.find(sMac.Left(8));
+
+
     if(itMac != m_mVendors.end())
     {
         if(itMac->first.length() == 8)
         {
-            return itMac->second+sMac.Mid(8);
+            return itMac->second.BeforeFirst(' ')+"\n";
         }
         else
         {
+            return wxEmptyString;
             //@todo
         }
     }
     else
     {
-        return sMac;
+        wmLog::Get()->Log(wxString::Format("GetVendor %s: Not Found", sMac.Left(8).c_str()));
+        return wxEmptyString;
     }
 }

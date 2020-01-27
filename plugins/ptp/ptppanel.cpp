@@ -8,6 +8,8 @@
 #include "ptpstructs.h"
 #include "wmlogevent.h"
 #include <wx/log.h>
+#include "macdb.h"
+
 
 //(*InternalHeaders(ptpPanel)
 #include <wx/font.h>
@@ -93,10 +95,11 @@ const long ptpPanel::ID_M_PLBL64 = wxNewId();
 const long ptpPanel::ID_PANEL8 = wxNewId();
 //*)
 
-const wxColour CLR_MASTER           = wxColour(50,128,50);
-const wxColour CLR_MASTER_SELECTED  = wxColour(150,228,150)
-const wxColour CLR_SLAVE            = wxColour(50,50,50);
-const wxColour CLR_SLAVE_SELECTED   = wxColour(150,150,150)
+const wxColour ptpPanel::CLR_MASTER           = wxColour(50,128,50);
+const wxColour ptpPanel::CLR_MASTER_SELECTED  = wxColour(150,228,150);
+const wxColour ptpPanel::CLR_SLAVE            = wxColour(50,50,50);
+const wxColour ptpPanel::CLR_SLAVE_SELECTED   = wxColour(150,150,150);
+
 
 wxIMPLEMENT_DYNAMIC_CLASS(ptpPanel, pmPanel)
 
@@ -106,7 +109,7 @@ BEGIN_EVENT_TABLE(ptpPanel,pmPanel)
 END_EVENT_TABLE()
 
 
-ptpPanel::ptpPanel(wxWindow* parent,ptpBuilder* pBuilder, wxWindow*ID id,const wxPoint& pos,const wxSize& size) : pmPanel(),
+ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) : pmPanel(),
     m_pBuilder(pBuilder),
     m_nDomain(0),
     m_mAccuracy({ { ptpAnnounce::ACC_25NS,  "Within 25ns"},
@@ -571,7 +574,8 @@ void ptpPanel::OnClockAdded(wxCommandEvent& event)
 
 void ptpPanel::OnClockUpdated(wxCommandEvent& event)
 {
-    if(event.GetString() == m_sSelectedClock)
+    wxString sClock(m_dbMac.GetVendor(event.GetString())+event.GetString());
+    if(sClock == m_sSelectedClock)
     {
         ShowClockDetails();
     }
@@ -579,16 +583,18 @@ void ptpPanel::OnClockUpdated(wxCommandEvent& event)
 
 void ptpPanel::OnClockRemoved(wxCommandEvent& event)
 {
-    if(m_sSelectedClock == event.GetString())
+    wxString sClock(m_dbMac.GetVendor(event.GetString())+event.GetString());
+    if(m_sSelectedClock == sClock)
     {
         ClearClockDetails();
     }
-    m_plstClocks->DeleteButton(m_plstClocks->FindButton(event.GetString()));
+    m_plstClocks->DeleteButton(m_plstClocks->FindButton(sClock));
 }
 
 void ptpPanel::OnClockTime(wxCommandEvent& event)
 {
-    if(m_sSelectedClock == event.GetString())
+    wxString sClock(m_dbMac.GetVendor(event.GetString())+event.GetString());
+    if(m_sSelectedClock == sClock)
     {
         ShowTime();
     }
@@ -596,13 +602,15 @@ void ptpPanel::OnClockTime(wxCommandEvent& event)
 
 void ptpPanel::OnClockMaster(wxCommandEvent& event)
 {
-    if(m_sSelectedClock == event.GetString())
+    wxString sClock(m_dbMac.GetVendor(event.GetString())+event.GetString());
+    if(m_sSelectedClock == sClock)
     {
         m_pswp->ChangeSelection("Master");
         m_plblState->SetLabel("Master");
     }
-    wxLogDebug(wxT("OnClockMaster"));
-    size_t nButton = m_plstClocks->FindButton(event.GetString());
+
+
+    size_t nButton = m_plstClocks->FindButton(sClock);
     if(nButton != wmList::NOT_FOUND)
     {
         m_plstClocks->SetButtonColour(nButton, CLR_MASTER);
@@ -612,12 +620,14 @@ void ptpPanel::OnClockMaster(wxCommandEvent& event)
 
 void ptpPanel::OnClockSlave(wxCommandEvent& event)
 {
-    if(m_sSelectedClock == event.GetString())
+    wxString sClock(m_dbMac.GetVendor(event.GetString())+event.GetString());
+
+    if(m_sSelectedClock == sClock)
     {
         m_pswp->ChangeSelection("Slave");
         m_plblState->SetLabel("Slave");
     }
-    size_t nButton = m_plstClocks->FindButton(event.GetString());
+    size_t nButton = m_plstClocks->FindButton(sClock);
     if(nButton != wmList::NOT_FOUND)
     {
         m_plstClocks->SetButtonColour(nButton, CLR_SLAVE);
@@ -628,7 +638,7 @@ void ptpPanel::OnClockSlave(wxCommandEvent& event)
 
 void ptpPanel::ShowClockDetails()
 {
-    std::shared_ptr<const PtpV2Clock> pClock = wxPtp::Get().GetPtpClock(m_nDomain, m_sSelectedClock);
+    std::shared_ptr<const PtpV2Clock> pClock = wxPtp::Get().GetPtpClock(m_nDomain, m_sSelectedClock.AfterFirst('\n'));
     if(!pClock) return;
 
 
@@ -640,6 +650,14 @@ void ptpPanel::ShowClockDetails()
     m_pswp->ChangeSelection(pClock->IsMaster() ? "Master" : "Slave");
     m_plblState->SetLabel(pClock->IsMaster() ? "Master" : "Slave");
     m_ppnlLocal->Show(pClock->IsMaster());
+
+    size_t nButton = m_plstClocks->FindButton(m_sSelectedClock);
+    if(nButton != wmList::NOT_FOUND)
+    {
+        m_plstClocks->SetButtonColour(nButton, pClock->IsMaster() ? CLR_MASTER : CLR_SLAVE);
+        m_plstClocks->SetSelectedButtonColour(nButton, pClock->IsMaster() ? CLR_MASTER_SELECTED : CLR_SLAVE_SELECTED);
+    }
+
 
     if((pClock->GetCount(ptpV2Header::ANNOUNCE) != 0))
     {
@@ -786,12 +804,13 @@ void ptpPanel::OnTimer(wxTimerEvent& event)
         }
     }
     ShowClockDetails();
-    //ShowTime();
+    ShowTime();
 }
 
 void ptpPanel::AddClock(wxString sClock)
 {
-    sClock = m_dbMac.GetVendor(sClock);
+    sClock = m_dbMac.GetVendor(sClock)+sClock;
+
     if(m_plstClocks->FindButton(sClock) == wmList::NOT_FOUND)
     {
         size_t nButton;

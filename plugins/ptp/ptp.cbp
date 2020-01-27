@@ -116,6 +116,7 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-std=c++1y" />
 			<Add option="-D_monitor_" />
 			<Add option="-DPTPMONKEY" />
 			<Add directory="../../pambase" />

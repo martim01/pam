@@ -12,10 +12,10 @@
 #include <wx/timer.h>
 #include "pmpanel.h"
 #include "macdb.h"
-
 class ptpBuilder;
 class timedbuffer;
 class session;
+
 
 class ptpPanel: public pmPanel
 {
