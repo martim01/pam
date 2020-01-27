@@ -538,18 +538,18 @@
 				</font>
 			</object>
 			<object class="wmLabel" name="ID_M_PLBL55" variable="m_ptitleTime" member="yes">
-				<label>PTP Time</label>
+				<label>Time</label>
 				<gradient>wxWEST</gradient>
 				<pos>0,35</pos>
-				<size>100,30</size>
+				<size>50,30</size>
 				<fg>#FFFFFF</fg>
 				<bg>#5C7AE0</bg>
 			</object>
 			<object class="wmLabel" name="ID_M_PLBL56" variable="m_plblTime" member="yes">
 				<label></label>
 				<border>uiRect::BORDER_DOWN</border>
-				<pos>100,35</pos>
-				<size>180,30</size>
+				<pos>50,35</pos>
+				<size>230,30</size>
 				<fg>#000000</fg>
 				<bg>#FFFFFF</bg>
 			</object>

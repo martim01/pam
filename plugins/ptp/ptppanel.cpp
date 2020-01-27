@@ -463,12 +463,12 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_ptitlePam->SetBackgroundColour(wxColour(217,138,100));
 	wxFont m_ptitlePamFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,wxEmptyString,wxFONTENCODING_DEFAULT);
 	m_ptitlePam->SetFont(m_ptitlePamFont);
-	m_ptitleTime = new wmLabel(m_ppnlLocal, ID_M_PLBL55, _("PTP Time"), wxPoint(0,35), wxSize(100,30), 0, _T("ID_M_PLBL55"));
+	m_ptitleTime = new wmLabel(m_ppnlLocal, ID_M_PLBL55, _("Time"), wxPoint(0,35), wxSize(50,30), 0, _T("ID_M_PLBL55"));
 	m_ptitleTime->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleTime->GetUiRect().SetGradient(wxWEST);
 	m_ptitleTime->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleTime->SetBackgroundColour(wxColour(92,122,224));
-	m_plblTime = new wmLabel(m_ppnlLocal, ID_M_PLBL56, wxEmptyString, wxPoint(100,35), wxSize(180,30), 0, _T("ID_M_PLBL56"));
+	m_plblTime = new wmLabel(m_ppnlLocal, ID_M_PLBL56, wxEmptyString, wxPoint(50,35), wxSize(230,30), 0, _T("ID_M_PLBL56"));
 	m_plblTime->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblTime->GetUiRect().SetGradient(0);
 	m_plblTime->SetForegroundColour(wxColour(0,0,0));
@@ -593,11 +593,11 @@ void ptpPanel::OnClockRemoved(wxCommandEvent& event)
 
 void ptpPanel::OnClockTime(wxCommandEvent& event)
 {
-    wxString sClock(m_dbMac.GetVendor(event.GetString())+event.GetString());
-    if(m_sSelectedClock == sClock)
-    {
+//    wxString sClock(m_dbMac.GetVendor(event.GetString())+event.GetString());
+//    if(m_sSelectedClock == sClock)
+//    {
         ShowTime();
-    }
+//    }
 }
 
 void ptpPanel::OnClockMaster(wxCommandEvent& event)
