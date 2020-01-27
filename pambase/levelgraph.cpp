@@ -118,7 +118,7 @@ void LevelGraph::OnPaint(wxPaintEvent& event)
     dc.DrawLine(0,0, GetClientRect().GetRight(), 0);
     dc.DrawLine(0,GetClientRect().GetBottom(), GetClientRect().GetWidth(), GetClientRect().GetBottom());
 
-    dc.SetPen(wxPen(wxColour(200,200,200), 1, wxDOT));
+    dc.SetPen(wxPen(wxColour(120,120,120), 1));
     dc.DrawLine(0,0, 0, GetClientRect().GetBottom());
     dc.DrawLine(GetClientRect().GetRight(),0, GetClientRect().GetRight(), GetClientRect().GetBottom());
 }

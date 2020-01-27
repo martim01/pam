@@ -139,11 +139,11 @@ void pnlPeakLog::InputSession(const session& aSession)
 void pnlPeakLog::AddLines(LevelGraph* pGraph)
 {
     pGraph->ClearLines();
-    pGraph->AddLine(-36.0, wxPen(*wxWHITE, 1, wxPENSTYLE_DOT));
-    pGraph->AddLine(-24.0, wxPen(*wxWHITE, 1, wxPENSTYLE_DOT));
-    pGraph->AddLine(-18.0, wxPen(wxColour(0,0,255), 1, wxPENSTYLE_DOT));
-    pGraph->AddLine(-12.0, wxPen(wxColour(255,200,0), 1, wxPENSTYLE_DOT));
-    pGraph->AddLine(-6.0, wxPen(wxColour(255,0,0), 1, wxPENSTYLE_DOT));
+    pGraph->AddLine(-36.0, wxPen(*wxWHITE, 1));
+    pGraph->AddLine(-24.0, wxPen(*wxWHITE, 1));
+    pGraph->AddLine(-18.0, wxPen(wxColour(0,0,255), 1));
+    pGraph->AddLine(-12.0, wxPen(wxColour(255,200,0), 1));
+    pGraph->AddLine(-6.0, wxPen(wxColour(255,0,0), 1));
 
 }
 

@@ -1,0 +1,61 @@
+<h1>Introduction</h1>
+<p><img src="images/2823_main.JPG" border="0" alt="main" width="402" height="240" /></p>
+<p>The Scope plugin simulates an Osciloscope. It shows a representation of the waveform of two channels of audio. The y-axis represents the level of the signal and the x-axis time.</p>
+<p>The vertical scale of the Scope is from -1.0 to 1.0. </p>
+<p>The Scope can operate in three main modes selectable from the Option page:</p>
+<p><u>Normal</u></p>
+<p>Shows the waveform. There is no user interaction</p>
+<p><u>Slide</u></p>
+<p>Shows the waveform. By touching the screen and dragging the user can mode the waveform relative to the axis. </p>
+<p><img src="images/2823_slide.JPG" border="0" alt="slide" width="403" height="240" /></p>
+<p>To exit from this mode press the Exit button at the top right of the screen.</p>
+<p>Pressing the Reset Slide button in the Options page will reset the position of the waveform. </p>
+<p><u>Cursor</u></p>
+<p>Shows the waveform and a vertical red line. The value of the waveform where it intersects the vertical red line is shown in the right hand label.</p>
+<p><img src="images/2823_cursor.JPG" border="0" alt="cursor" width="398" height="240" /></p>
+<p>The user can move the vertical line by touching the screen or by pressing the - and + buttons. The position of the line, relative to the start of the trace is also shown between these buttons.</p>
+<p>Press the Exit button to exit from cursor mode.</p>
+<p>&nbsp;</p>
+<h1>Options</h1>
+<h2>Routing</h2>
+<p><img src="images/2823_routing.JPG" border="0" alt="routing" width="401" height="240" /></p>
+<p>The plugin shows the waveform for a single channel of audio. The Routing options page allows you to select which channel you wish to display.</p>
+<p>In stereo mode the user is also allowed to select</p>
+<ul>
+<li>Middle (L+R)</li>
+<li>Side (L-R)</li>
+</ul>
+<p>&nbsp;In stereo mode the waveform changes colour depending on the selected channel:</p>
+<ul>
+<li>Left = green</li>
+<li>Right = red</li>
+<li>Middle = white</li>
+<li>Side = orange </li>
+</ul>
+<h2>Timeframe</h2>
+<p><img src="images/2823_timeframe.JPG" border="0" alt="timeframe" width="401" height="240" /></p>
+<p>The Timeframe option page allows the user to change the number of samples that the Scope will display.&nbsp;</p>
+<p>The left label at the bottom of the screen shows the current timespan.&nbsp; </p>
+<h2>Vertical</h2>
+<p><img src="images/2823_vertical.JPG" border="0" alt="vertical" width="402" height="240" /></p>
+<p>The Vertical option page allows the user to change the vertical scale be zooming in or out multiples of the current scale. </p>
+<h2>Trigger</h2>
+<p><img src="images/2823_trigger.JPG" border="0" alt="trigger" width="402" height="240" /></p>
+<p>In order for the scope to know where to start drawing the waveform a trigger must be set. Once the audio gets higher than this value the scope then draws samples until the end of the timeframe.</p>
+<p>The Trigger option page allows the user to change the value of this trigger.</p>
+<p>The trigger value is shown on the scope as a dotted red line and also as a value in [] in the right most label.</p>
+<p>Note - it is possible to set the Scope to Autotrigger (see below). If this is the case then all the buttons on the Trigger option page will be disabled. </p>
+<p>Note - the trigger is always taken from Channel 1 of the scope.</p>
+<h2>Options</h2>
+<p><img src="images/2823_options.JPG" border="0" alt="options" width="401" height="240" /></p>
+<p>The Options option page allows the user to:</p>
+<p>Select the mode the scope is running in (see above).</p>
+<p>Decide whether to use a manual trigger or Autotrigger. In Autotrigger mode the first timeframe of samples are analysed and the maximum value is used as the trigger for the rest of the samples in the Scope buffer.</p>
+<p>Set the Scope to Memory mode</p>
+<p><u>Memory</u></p>
+<p><img src="images/2823_memory.JPG" border="0" alt="memory" width="401" height="240" /></p>
+<p>Usually the Scope will clear the graph before drawing the waveform. In memory mode this does not happen so waveforms are laid on top of each other.</p>
+<p>This makes it easy to look for anomolies in simple waveforms (e.g. distortion in tone etc).</p>
+<p>The user can toggle Memory mode by pressing the Memory button in the Options page.</p>
+<p>It is also possible to Clear the Memory from the Options page. </p>
+<p>&nbsp;</p>

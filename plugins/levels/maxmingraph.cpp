@@ -114,7 +114,7 @@ void MaxMinGraph::OnPaint(wxPaintEvent& event)
     m_uiMin.Draw(dc, uiRect::BORDER_DOWN);
     m_uiRange.Draw(dc, uiRect::BORDER_DOWN);
 
-    dc.SetPen(wxPen(*wxWHITE, 1, wxPENSTYLE_DOT));
+    dc.SetPen(wxPen(*wxWHITE, 1));
     dc.DrawLine(1, m_rectGraph.GetBottom()-1-(70+m_dAmplitudeMin)*m_dResolution, m_rectGraph.GetWidth()-2, m_rectGraph.GetBottom()-1-(70+m_dAmplitudeMin)*m_dResolution);
     dc.DrawLine(1, m_rectGraph.GetBottom()-1-(70+m_dAmplitudeMax)*m_dResolution, m_rectGraph.GetWidth()-2, m_rectGraph.GetBottom()-1-(70+m_dAmplitudeMax)*m_dResolution);
 }

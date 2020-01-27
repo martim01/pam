@@ -97,7 +97,7 @@ void fftphaseMeter::DrawStars(wxDC& dc)
     double dX = 450.0/80.0;
     double dY = 450.0/80.0;
 
-    dc.SetPen(wxPen(wxColour(150,150,150), 1, wxPENSTYLE_DOT));
+    dc.SetPen(wxPen(wxColour(150,150,150), 1));
     for(int i = 0; i <= 80; i+=10)
     {
         dc.DrawLine(20+(i*dX), 0, 20+(i*dX), 450);
@@ -122,7 +122,7 @@ void fftphaseMeter::DrawStars(wxDC& dc)
 void fftphaseMeter::DrawPhase(wxDC& dc)
 {
     uiRect uiLabel;
-    wxPen penLine(wxColour(120,120,120),1,wxDOT);
+    wxPen penLine(wxColour(120,120,120),1);
     for(size_t i = 1; i < m_vfft_out[0].size()-1; i*= 2)
     {
         dc.SetPen(penLine);
@@ -195,7 +195,7 @@ void fftphaseMeter::DrawPhase(wxDC& dc)
 void fftphaseMeter::DrawGraph(wxDC& dc)
 {
     uiRect uiLabel;
-    wxPen penLine(wxColour(120,120,120),1,wxDOT);
+    wxPen penLine(wxColour(120,120,120),1);
     for(size_t i = 1; i < m_vfft_out[0].size()-1; i*= 2)
     {
         dc.SetPen(penLine);

@@ -1,0 +1,209 @@
+<h1>Introduction</h1>
+<p><strong>P</strong>i<strong>A</strong>udio<strong>M</strong>onitor is a suite of audio monitoring tools designed to run on a Raspberry Pi with the official Pi Touchscreen. The software will also run on other flavours of Linux and Windows.</p>
+<p>&nbsp;</p>
+<h2>Hardware and OS</h2>
+<p>The hardware parts that make up the unit can mostly be purchased from RS</p>
+<ul>
+<li><a href="https://uk.rs-online.com/web/p/processor-microcontroller-development-kits/1373331/?sra=pmpn">Raspberry Pi</a></li>
+<li><a href="https://uk.rs-online.com/web/p/graphics-display-development-kits/8997466/">Touchscree</a></li>
+<li><a href="https://uk.rs-online.com/web/p/development-board-enclosures/9064665/">Case</a></li>
+<li><a href="http://cpc.farnell.com/hifiberry/4260439550453/digi-i-o-digi-audio-i-p-o-p-hat/dp/SC14724">Soundcard - HifiBerry digi+ I/O</a></li>
+</ul>
+<p>There is an img file available which contains the OS and a preinstalled version of PAM. This is the easiest way of getting started.</p>
+<p>On powering on the Raspberry Pi the PAM software will be automatically started.</p>
+<h2>Software</h2>
+<p>PAM is based on a plugin infrastructure. There is a core application which deals with audio input and output and hosts plugins that display the monitoring metrics.</p>
+<p>There are three types of plugin</p>
+<ul>
+<li>Monitoring - these are screens which are intended to show the real time state of the audio (e.g. PPM meters, FFT, Lissajou)</li>
+<li>Test - these are screens which are intended to allow the user to run specific tests on the audio (e.g. Channel Delay, Distortion)</li>
+<li>Generator - these are plugins that are used by PAM to generate audio output.</li>
+</ul>
+<p><img src="images/2813_splash.JPG" border="0" alt="splash" width="400" height="240" /></p>
+<p>The application will startup with the splash screen above whilst the plugins are loaded.</p>
+<p>Once eveything is loaded the application will default to the display that it was on when it closed.</p>
+<p><img src="images/2813_mode.JPG" border="0" alt="main screen" width="399" height="240" /></p>
+<p>The screen is divided in to 4 areas.</p>
+<ul>
+<li>The left hand side shows the audio monitoring (above is showing the meters plugin).</li>
+<li>The two tab buttons on the right hand side allow the user to:
+<ul>
+<li>Show the&nbsp;<strong><span style="color: #33cccc;">Screen Selection</span></strong> buttons. These list all the Monitor and Test plugins and allow the user to change what screen they are looking at</li>
+<li>Show the <strong><span style="color: #33ccff;">Option Selection</span></strong> buttons. These list the different settings that apply to the plugin that the user is currently looking at</li>
+</ul>
+</li>
+<li>If <strong><span style="color: #33cccc;">Screens&nbsp;</span></strong>is selected the space below the <strong><span style="color: #33cccc;">Screen Selection</span></strong>&nbsp;buttons allows the user to:<br />
+<ul>
+<li>Select the Log</li>
+<li>Select the Global Settings</li>
+<li>Select Help for the plugin they are currently looking at.</li>
+<li>Select whether the plugins are showing the audio from the input to the PAM or the audio the PAM is outputting.</li>
+<li>See the status of the CPU and input and output devices.</li>
+</ul>
+</li>
+<li>If&nbsp;<strong><span style="color: #33ccff;">Options&nbsp;</span></strong><span style="color: #000000;">is selected the space below the&nbsp;<strong><span style="color: #33ccff;">Option Selection</span></strong> shows the possible options for the selected plugin.</span></li>
+</ul>
+<p><img src="images/2813_main.JPG" border="0" alt="fft_full" width="406" height="240" /></p>
+<p>Most plugins have the ability to go full screen, hiding the selection buttons as can be seen above with the FFT plugin. Touching the screen will switch between full screen and half screen mode.</p>
+<p>There is one built in <strong><span style="color: #33cccc;">Screen Selection </span></strong>buttons.</p>
+<ul>
+<li>Test - selecting this screen will show all the possible Test plugins</li>
+</ul>
+<h3>Settings</h3>
+<p>The settings page is built in to the core application. It is can be found by choosing the <strong><span style="color: #33cccc;">Screens&nbsp;</span></strong>tab. Note: it is possible to set a PIN to protect entry to the Settings screens</p>
+<p>It consists of a number of sub-pages which can be selected by pressing one of the <strong><span style="color: #33ccff;">Option Selection </span></strong>buttons:</p>
+<ul>
+<li>Input Device</li>
+<li>Output Device</li>
+<li>Output Source</li>
+<li>Network</li>
+<li>NMOS (optional)</li>
+<li>Plugins</li>
+<li>Profiles</li>
+<li>General</li>
+<li>Update</li>
+</ul>
+<p>The stop strap of the page shows the hostname of the unit and the current version number of the core application.</p>
+<h4>Input Device</h4>
+<p><img src="images/2813_audio_input.JPG" border="0" alt="audio input" width="402" height="240" /></p>
+<p>The audio input page allows the user to select what audio source he is monitoring. The page is divided in to two sections. The top list shows the input types and the list below shows all possible inputs of the selected type. The buttons at the bottom are (from left to right) <span style="color: #996600;">Home</span>, <span style="color: #996600;">Previous Page</span>, <span style="color: #996600;">Next Page</span>, <span style="color: #996600;">End</span></p>
+<p>There are 3 input types</p>
+<ul>
+<li>Disable</li>
+<li>Soundcard</li>
+<li>AoIP</li>
+</ul>
+<h5><strong>Disabled</strong></h5>
+<p>Turns off the audio input</p>
+<h5>Soundcard</h5>
+<p>Selecting this will list all possible physical audio inputs to the raspberry pi. If you have the HifiBerry digi+ hat connected then you should select <span style="color: #3333ff;">snd_rpi_hifiberry_digi:</span></p>
+<h5>AoIP</h5>
+<p>Selecting this will list all discovered or manually entered AES67/Livewire/Ravenna sources. You can edit this list by pressing the Manage button. This will bring up the AoIP screen</p>
+<p><img src="images/2813_aoip.png" border="0" alt="" width="400" height="240" /></p>
+<p>From here you can manually add/edit/delete AoIP sources</p>
+<p><img src="images/2813_aoip_edit.png" border="0" alt="" width="400" height="239" /></p>
+<p>Or press Discovery to bring up the mDNS/SAP discovery dialog</p>
+<p><img src="images/2813_aoip_discovery.png" border="0" alt="" width="400" height="243" /></p>
+<p>From here the user can choose to listen from RTSP mDNS messages and/or SAP messages. Press the Discovery toggle button to Start/Stop discovery. Any AoIP sources advertised will appear in the listbox.</p>
+<h4>Audio Output</h4>
+<p><img src="images/2813_ouput_soundcard.png" border="0" alt="" width="400" height="223" /></p>
+<p>The audio output page allows the user to choose what audio output device to use if any. The options are "Disabled", "Soundcard" or AoIP.</p>
+<p><span style="text-decoration: underline;">Soundcard (as shown above):</span></p>
+<p>The list of available soundcard outputs is listed along with the audio buffer delay.</p>
+<p><img src="images/2813_ouput_aoip.png" border="0" alt="" width="400" height="240" /></p>
+<p><span style="text-decoration: underline;">AoIP (as shown above):</span></p>
+<p>From here the user can select the interface to use for the RTSP server and the multicast address to use when sending RTP packages.&nbsp;</p>
+<p>The user can also select the length that each sent packet should be. Options are as in the AES67 standard.</p>
+<p>To start/stop streaming press the Stream toggle button.</p>
+<p>Note: If the optional NMOS module is active then these settings may be overwritten via NMOS.</p>
+<p>&nbsp;</p>
+<p><strong>Output Source</strong></p>
+<p><img src="images/2813_input.jpg" border="0" alt="" width="400" height="241" /></p>
+<p>&nbsp;</p>
+<p>The output source page allows the user to choose the source of audio that the PAM will output. Playback must be set to "On" from the Audio Output setting page to enable this panel.</p>
+<p>There are 5 inbuilt possible source options</p>
+<p><span style="text-decoration: underline;">Input</span></p>
+<p>See screen above. The audio output is taken from the audio input to the PAM. The user can choose what audio channel is output on the Left and Right legs of the output/</p>
+<p><span style="text-decoration: underline;">File</span></p>
+<p><img src="images/2813_file.jpg" border="0" alt="" width="400" height="241" /></p>
+<p>Audio is played back from a wav file. The panel lists all the wav files found on the PAM. The wav file is looped.</p>
+<p><span style="text-decoration: underline;">Sequence</span></p>
+<p><span style="text-decoration: underline;"><img src="images/2813_sequence.jpg" border="0" alt="" width="400" height="239" /></span></p>
+<p>The PAM can play back a sequence of tones. These can be created/edited using the Sequence Editor.&nbsp;</p>
+<p>The panel shows the sequences that have been created.</p>
+<p><span style="text-decoration: underline;">Generator</span></p>
+<p><span style="text-decoration: underline;"><img src="images/2813_generator.jpg" border="0" alt="" width="400" height="240" /></span></p>
+<p>If the Generator option is selected the PAM will output a single frequency tone. The Generator panel allows the user to select the Frequency, Amplitude and shape of the wave form.</p>
+<p><span style="text-decoration: underline;">Noise<br /><img src="images/2813_noise.jpg" border="0" alt="" width="400" height="240" /></span></p>
+<p>The PAM can output different colours of Noise. The user can select the noise type and amplitude.</p>
+<p><span style="text-decoration: underline;">Generator Plugins</span></p>
+<p>It is possible to write plugins to act as output sources. Any loaded plugins will appear in the options list. Selecting the plugin will bring up the settings page for that plugin and use it to generate audio samples. The screenshot below shows the LTC plugin</p>
+<p><img src="images/2813_output_source.png" border="0" alt="" width="400" height="221" /></p>
+<p>Information on generator plugins can be found on their individual pages.</p>
+<h4>&nbsp;Network</h4>
+<p><img src="images/2813_network.JPG" border="0" alt="network" width="402" height="240" /></p>
+<p>The Network page allows the user to set the properties of the wired and wifi connections of the Pi. It also shows whether each network device is connected or not.</p>
+<p>It is also possible from this screen to bring up the WiFi manager.</p>
+<h4>Plugins</h4>
+<p><img src="images/2813_plugins.png" border="0" alt="" width="400" height="280" /></p>
+<p>The plugins page allows the user to decide which Monitor,Test and Generator plugins he wishes to have running in the application and the order that they will appear.</p>
+<p>The list at the top of the screen decides whether the user is looking at Monitor, Test or Generator Plugins.</p>
+<p>The left hand side of the screen lists all plugins of the relevant type that have not currently been assigned to run in the application. The section below shows the version number and a brief description of the selected plugin.</p>
+<p>The right hand side of the screen lists all the plugins of the relevan type that are currently assigned to run in the application. They are listed in the order that they appear on the Screen Selection buttons. The section below shows the version number and a brief description of the plugin.</p>
+<p><u>To Add A New Plugin</u></p>
+<ul>
+<li>Select the plugin from the list of Possible Plugins.</li>
+<li>Press and hold the "Hold To Add" button until the plugin appears at the end of the list of Current Plugins. The plugin will disappear from the list of Possible Plugins.</li>
+<li>Press and hold the "Hold to Apply" button to apply the changes.</li>
+</ul>
+<p><u>To Remove A Plugin</u></p>
+<ul>
+<li>Select the plugin from the list of Current Plugins</li>
+<li>Press and hold the "Hold To Remove" button until the plugin appears at the end of the list of Possible Plugins. The plugin will disappear from the list of Current Plugins.</li>
+<li>Press and hold the "Hold to Apply" button to apply the changes.</li>
+</ul>
+<p><u>To Change The Position Of A Plugin</u></p>
+<ul>
+<li>Select the plugin from the list of Current Plugins</li>
+<li>Use the Move Up and Move Down buttons to change the plugin position.</li>
+<li>Press and hold the "Hold to Apply" button to apply the changes.</li>
+</ul>
+<h4>Update</h4>
+<p><img src="images/2813_update_http.JPG" border="0" alt="update" width="403" height="240" /></p>
+<p>The Update screen allows the user to decide in where updates should be retrieved from. There are 4 options</p>
+<ul>
+<li>HTTP - the unit will connect to a web server (e.g. the pamupdateserver standalone web server). The user should enter the URL or IP address of the web server</li>
+<li>Share - the unit will connect to a Samba share. The user should enter the address of the share.</li>
+<li>Local - the unit will look in a local directory for its updates. Selecting this allows the user to select the local folder.</li>
+<li>USB&nbsp; - the unit will attempt to detect a connected USB device and use this for the update.</li>
+</ul>
+<p>Once the method of updating has been decided the user can press the Check For Updates button to launch the Update Manager.</p>
+<p><img src="images/2813_update_manager_available.JPG" border="0" alt="updatemanager_available" width="394" height="240" /></p>
+<p>The Update Manager lists all plugins, core applications and libraries, profiles and documentation.</p>
+<p>The user can select whether he wishes to see all the types of updates or a subsection and also whether the manager should only show updates that are newer than the installed ones.</p>
+<p>The user can select one or more items (or use the (De)Select All buttons) and then View the Changelogs for the items, View the Dependencies for the items or simply Update the Selected items.</p>
+<p>On pressing Update Selected all the selected items and any dependencies will be updated. <span style="color: #ff0000;">Note the application must be restarted for the update to finally take effect.</span></p>
+<p><u>Changelog</u></p>
+<p><img src="images/2813_update_manager_available_changelog.JPG" border="0" alt="updatemanager_changelog" width="400" height="240" /></p>
+<p>On pressing the View Changelog button the user is presented with a page that lists all the selected items and the changes that have been made to each item.</p>
+<p>Pressing the View Changelog button will return the user to the Update Manager screen.</p>
+<p><u>Dependencies</u></p>
+<p><img src="images/2813_update_manager_available_dependencies.JPG" border="0" alt="updatemanager_dependencies" width="397" height="240" /></p>
+<p>On pressing the View Dependencies button the user is presented with a page that lists all the selected items. Underneath each item is a table showing the libraries (with version number) that this item depends on. Should the user choose to update the item then the depencies will also be updated.</p>
+<p>Pressing the View Dependencies button will return the user to the Update Manager screen.</p>
+<p>&nbsp;</p>
+<p><strong>Profiles</strong></p>
+<p><strong><img src="images/2813_profiles.jpg" border="0" alt="" width="400" height="240" /></strong></p>
+<p>It is possible to save the state of the PAM (including all Setting values and Plugin option values) as a Profile for reloading at a later date.</p>
+<p>The above panel lists all the saved profiles and allows the user to:</p>
+<ul>
+<li>Load a selected profile</li>
+<li>Rename a selected profile</li>
+<li>Delete a selected profile</li>
+<li>Save the current settings to a profile</li>
+</ul>
+<p><span style="color: #ff0000;">Note: Loading a profile will restart the PAM application and overwrite all the current Settngs and Options</span></p>
+<p>&nbsp;</p>
+<p><strong><span style="color: #000000;">General</span></strong></p>
+<p><span style="color: #000000;"><strong><img src="images/2813_general.jpg" border="0" alt="" width="400" height="239" /></strong></span></p>
+<p><span style="color: #000000;">The General settings page has a number of miscellaneous options:</span></p>
+<ul>
+<li><span style="color: #000000;">Whether a cursor should be shown or not on the PAM.</span></li>
+<li><span style="color: #000000;">When touching or clicking on the screen should the right hand pane default to&nbsp;<strong><span style="color: #33cccc;">Screen Selection</span></strong> or <strong><span style="color: #33ccff;">Option Selection</span></strong></span></li>
+<li><span style="color: #000000;">Whether the Settings menu should be protected by a PIN and if so what the PIN is.</span></li>
+</ul>
+<h3>Help</h3>
+<p>The Help page is built in to the core application.&nbsp;</p>
+<p>Pressing the Help page button will bring up the help for the currently selected plugin.</p>
+<p>Pressing the Close button will return the user to the selected plugin.</p>
+<h3>Log</h3>
+<p><img src="images/2813_log.png" border="0" alt="" width="400" height="243" /></p>
+<p>The Log page is built in to the core application.</p>
+<p>The log page shows a detailed log of what the application has been up to since it last started. The user can use the <span style="color: #996600;">Home</span>, <span style="color: #996600;">Page Up</span>, <span style="color: #996600;">Page Down </span>and <span style="color: #996600;">End </span><br />to navigate through the log. The user can also swipe on the screen to scroll the log.</p>
+<p>If the <span style="color: #996600;">Scroll Lock</span> switch is set to Scroll then the log will keep refreshing. If set to Lock then the currently display page will remain.</p>
+<p>Pressing <span style="color: #996600;">Clear Log </span>will clear all the log pages.</p>
+<p>&nbsp;</p>
+<h3>Test</h3>
+<p>The Test page is built in to the core application. It is always the fourth to last <strong><span style="color: #33cccc;">Screen Selection </span></strong>button.</p>
+<p>The page simply acts as a host page for all Test plugins. When the user selects the Test page the&nbsp; <strong><span style="color: #33cccc;">Option Selection </span></strong>buttons will list all the loaded Test plugins and the last selected one will be displayed.</p>
+<p>&nbsp;</p> 

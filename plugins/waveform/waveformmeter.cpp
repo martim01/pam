@@ -80,7 +80,7 @@ void waveformMeter::OnPaint(wxPaintEvent& event)
         ++x;
     }
 
-    dc.SetPen(wxPen(*wxWHITE, 1, wxPENSTYLE_DOT));
+    dc.SetPen(wxPen(*wxWHITE, 1));
     dc.DrawLine(0,nLeft-m_dResolution, GetClientSize().x, nLeft-m_dResolution);
     dc.DrawLine(0,nLeft, GetClientSize().x, nLeft);
     dc.DrawLine(0,nLeft+m_dResolution, GetClientSize().x, nLeft+m_dResolution);

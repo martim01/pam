@@ -92,7 +92,7 @@ void R128Meter::OnPaint(wxPaintEvent& event)
         {
             m_uiPeak.Draw(dc,uiRect::BORDER_FLAT);
         }
-        dc.SetPen(wxPen(wxColour(200,200,200),1, wxDOT));
+        dc.SetPen(wxPen(wxColour(120,120,120),1));
 
         for(size_t i = 0; i < m_vLevels.size(); i++)
         {
@@ -116,7 +116,7 @@ void R128Meter::OnPaint(wxPaintEvent& event)
         for(size_t i = 0; i < m_vLevels.size(); i++)
         {
             int nY(m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i]-m_dMax)));
-            dc.SetPen(wxPen(wxColour(200,200,200),1, wxDOT));
+            dc.SetPen(wxPen(wxColour(120,120,120),1));
             dc.DrawLine(0, m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i]-m_dMax)), GetClientRect().GetWidth(), m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i]-m_dMax)));
             uiRect uiLevel(wxRect(15, nY-10,GetClientSize().x-30, 20));
             uiLevel.SetBackgroundColour(*wxBLACK);

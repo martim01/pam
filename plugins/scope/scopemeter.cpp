@@ -97,7 +97,7 @@ void Scope::OnPaint(wxPaintEvent& event)
 
 
     wxPoint pntCenter(m_rectGrid.GetWidth()/2, m_rectGrid.GetHeight()/2);
-    memDC.SetPen(wxPen(wxColour(120,120,120),1, wxLONG_DASH));
+    memDC.SetPen(wxPen(wxColour(120,120,120),1));
 
 
 
@@ -171,7 +171,7 @@ void Scope::OnPaint(wxPaintEvent& event)
         }
         else
         {
-            dc.SetPen(wxPen(wxColour(120,120,120),1, wxLONG_DASH));
+            dc.SetPen(wxPen(wxColour(120,120,120),1));
             dc.DrawLine(m_rectGrid.GetLeft(),pntCenter.y-dY, m_rectGrid.GetRight(), pntCenter.y-dY);
             dc.DrawLine(m_rectGrid.GetLeft(),pntCenter.y+dY, m_rectGrid.GetRight(), pntCenter.y+dY);
             double dValue = (i*m_dVerticalZoom/8.0);
@@ -183,10 +183,10 @@ void Scope::OnPaint(wxPaintEvent& event)
             rectLabel2.Draw(dc, wxString::Format(wxT("%.3f"), -dValue), uiRect::BORDER_NONE);
         }
     }
-    dc.SetPen(wxPen(wxColour(200,50,50),1, wxDOT));
+    dc.SetPen(wxPen(wxColour(200,50,50),1));
     dc.DrawLine(m_rectGrid.GetLeft(), pntCenter.y-(m_dResolution*m_dTrigger), m_rectGrid.GetRight(),pntCenter.y-(m_dResolution*m_dTrigger));
 
-    dc.SetPen(wxPen(wxColour(120,120,120),1, wxLONG_DASH));
+    dc.SetPen(wxPen(wxColour(120,120,120),1));
     for(int i = 0; i < 10; i++)
     {
         dc.DrawLine(m_rectGrid.GetLeft()+(m_rectGrid.GetWidth()/10)*i,m_rectGrid.GetTop(), m_rectGrid.GetLeft()+(m_rectGrid.GetWidth()/10)*i, m_rectGrid.GetBottom());
@@ -240,7 +240,7 @@ void Scope::OnPaint(wxPaintEvent& event)
         m_uiExit.Draw(dc, wxT("Exit"), uiRect::BORDER_UP);
         if(m_nMode == MODE_CURSOR)
         {
-            dc.SetPen(wxPen(wxColour(255,100,00), 1, wxDOT));
+            dc.SetPen(wxPen(wxColour(255,100,00), 1));
             dc.DrawLine(m_dSampleX*m_dStep  + m_rectGrid.GetLeft(), m_rectGrid.GetTop(), m_dSampleX*m_dStep + m_rectGrid.GetLeft(), m_rectGrid.GetBottom());
 
             m_uiValue.Draw(dc, wxString::Format(wxT("%.3f"), dCursorAmp), uiRect::BORDER_NONE);

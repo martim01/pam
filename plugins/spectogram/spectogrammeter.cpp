@@ -110,7 +110,7 @@ void SpectogramMeter::OnPaint(wxPaintEvent& event)
 
 
     dc.SetTextForeground(GetForegroundColour());
-    wxPen penLine(wxColour(120,120,120),1,wxDOT);
+    wxPen penLine(wxColour(120,120,120),1);
     uiRect uiLabel(wxRect(m_rectGrid.GetLeft()-50, 0, m_rectGrid.GetLeft(), 0));
 
     dc.SetFont(wxFont(7,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Verdana"),wxFONTENCODING_DEFAULT));
@@ -130,23 +130,23 @@ void SpectogramMeter::OnPaint(wxPaintEvent& event)
     dc.DrawBitmap(m_bmpScale, m_rectGrid.GetRight()+10, m_rectGrid.GetTop());
 
     double dPos = static_cast<double>(m_rectGrid.GetHeight())/80.0;
-    dc.SetPen(wxPen(*wxWHITE,1,wxDOT));
+    dc.SetPen(wxPen(*wxWHITE,1));
 
     dc.DrawLine(m_rectGrid.GetRight()+10, m_rectGrid.GetTop()+ (dPos*6.0), m_rectGrid.GetRight()+60, m_rectGrid.GetTop()+ (dPos*6.0));
     uiLabel.SetRect(wxRect(m_rectGrid.GetRight()+25,  m_rectGrid.GetTop()+(dPos*6.0)-7, 20,14));
     uiLabel.Draw(dc, wxT("7"), uiRect::BORDER_NONE);
 
-    dc.SetPen(wxPen(*wxWHITE,1,wxDOT));
+    dc.SetPen(wxPen(*wxWHITE,1));
     dc.DrawLine(m_rectGrid.GetRight()+10, m_rectGrid.GetTop()+ (dPos*10.0), m_rectGrid.GetRight()+60, m_rectGrid.GetTop()+ (dPos*10.0));
     uiLabel.SetRect(wxRect(m_rectGrid.GetRight()+25,  m_rectGrid.GetTop()+(dPos*10.0)-7, 20,14));
     uiLabel.Draw(dc, wxT("6"), uiRect::BORDER_NONE);
 
-    dc.SetPen(wxPen(*wxWHITE,1,wxDOT));
+    dc.SetPen(wxPen(*wxWHITE,1));
     dc.DrawLine(m_rectGrid.GetRight()+10, m_rectGrid.GetTop()+ (dPos*18.0), m_rectGrid.GetRight()+60, m_rectGrid.GetTop()+ (dPos*18.0));
     uiLabel.SetRect(wxRect(m_rectGrid.GetRight()+25,  m_rectGrid.GetTop()+(dPos*18.0)-7, 20,14));
     uiLabel.Draw(dc, wxT("4"), uiRect::BORDER_NONE);
 
-    dc.SetPen(wxPen(*wxWHITE,1,wxDOT));
+    dc.SetPen(wxPen(*wxWHITE,1));
     dc.DrawLine(m_rectGrid.GetRight()+10, m_rectGrid.GetTop()+ (dPos*26.0), m_rectGrid.GetRight()+60, m_rectGrid.GetTop()+ (dPos*26.0));
     uiLabel.SetRect(wxRect(m_rectGrid.GetRight()+25,  m_rectGrid.GetTop()+(dPos*26.0)-7, 20,14));
     uiLabel.Draw(dc, wxT("2"), uiRect::BORDER_NONE);

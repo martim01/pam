@@ -74,7 +74,7 @@ void OffsetGraph::OnPaint(wxPaintEvent& event)
 
     int nCenter =(m_rectGrid.GetLeft()+m_rectGrid.GetWidth()/2);
 
-    dc.SetPen(wxPen(wxColour(120,120,120),1, wxDOT));
+    dc.SetPen(wxPen(wxColour(120,120,120)));
     double dGap = m_rectGrid.GetWidth()/10;
 
     for(int i = 0; i < 10; i++)
@@ -84,7 +84,7 @@ void OffsetGraph::OnPaint(wxPaintEvent& event)
         rectLead.Draw(dc, wxString::Format(wxT("%.0fms"), (m_dTimeFrame/5)*i), uiRect::BORDER_NONE);
 
 
-        dc.SetPen(wxPen(wxColour(120,120,120),1, wxDOT));
+        dc.SetPen(wxPen(wxColour(120,120,120),1));
         dc.DrawLine(m_rectGrid.GetLeft()+(dGap*i), m_rectGrid.GetTop(), m_rectGrid.GetLeft()+(dGap*i), rectLead.GetTop());
     }
 

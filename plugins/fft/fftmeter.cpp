@@ -124,7 +124,7 @@ void FftMeter::OnPaint(wxPaintEvent& event)
         uiLevel.SetRect(5, nDB-10, m_rectGrid.GetLeft()-5, 20);
         uiLevel.SetLabel(wxString::Format(wxT("%.0f"),(-i)));
         uiLevel.Draw(dc,uiRect::BORDER_NONE);
-        dc.SetPen(wxPen(wxColour(100,100,100),1, wxDOT));
+        dc.SetPen(wxPen(wxColour(100,100,100),1 ));
         dc.DrawLine(m_rectGrid.GetLeft(), nDB, m_rectGrid.GetWidth()+m_rectGrid.GetLeft(), nDB);
 
     }
@@ -209,7 +209,7 @@ void FftMeter::DrawFFT(wxDC& dc)
     dc.SetTextForeground(GetForegroundColour());
 
     uiRect uiLabel;
-    wxPen penLine(wxColour(120,120,120),1,wxDOT);
+    wxPen penLine(wxColour(120,120,120),1);
     for(size_t i = 1; i < m_vfft_out.size()-1; i*= 2)
     {
         dc.SetPen(penLine);
@@ -279,7 +279,7 @@ void FftMeter::DrawFFT(wxDC& dc)
     if(m_bCursorMode)
     {
         int x = static_cast<int>( (static_cast<double>(m_rectGrid.GetWidth())/log(m_vAmplitude.size())) * static_cast<double>(log(m_nBinSelected)))+m_rectGrid.GetLeft();
-        dc.SetPen(wxPen(wxColour(255,100,00), 1, wxDOT));
+        dc.SetPen(wxPen(wxColour(255,100,00), 1));
         dc.DrawLine(x, m_rectGrid.GetTop(), x, m_rectGrid.GetBottom());
 
         m_uiClose.Draw(dc, wxT("Exit"), uiRect::BORDER_UP);

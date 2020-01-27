@@ -51,20 +51,20 @@
 		<Project filename="plugins/LTC/LTC.cbp" />
 		<Project filename="plugins/LTCGenerator/LTCGenerator.cbp" />
 		<Project filename="plugins/lineup/lineup.cbp">
-			<Depends filename="pambase/pambase.cbp" />
 			<Depends filename="pamfft/pamfft.cbp" />
 			<Depends filename="pamlevel/pamlevel.cbp" />
+			<Depends filename="pambase/pambase.cbp" />
 		</Project>
+		<Project filename="plugins/fftphase/fftphase.cbp" />
+		<Project filename="plugins/ptp/ptp.cbp" />
 		<Project filename="pamupdatemanager/pamupdatemanager.cbp">
 			<Depends filename="manifest_creator/manifest_creator.cbp" />
 			<Depends filename="pambase/pambase.cbp" />
 		</Project>
 		<Project filename="pam2/pam2.cbp">
-			<Depends filename="pambase/pambase.cbp" />
 			<Depends filename="plugins/fft/fft.cbp" />
+			<Depends filename="pambase/pambase.cbp" />
 		</Project>
 		<Project filename="plugins/battery/battery.cbp" />
-		<Project filename="plugins/fftphase/fftphase.cbp" />
-		<Project filename="plugins/ptp/ptp.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

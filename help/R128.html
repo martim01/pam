@@ -1,0 +1,26 @@
+<h1>Introduction</h1>
+<p>&nbsp;<img src="images/2821_r128.JPG" border="0" alt="main" width="399" height="240" /></p>
+<p>The R128 meter plugin shows a number of meters that conform to the <a href="https://tech.ebu.ch/docs/r/r128.pdf">EBU R128 standard</a>.</p>
+<p>The left hand meter shows the Momentary loudness - this is the K-weighted LUFS value of 10ms of audio</p>
+<p>The next meter shows the Short loudness - the is the K-weighted LUFS value of 400ms of audio where each chunk has a 300ms overlap</p>
+<p>The third meter shows the Integrated loudness</p>
+<p>The meters are coloured blue if the level is too low, green if in range and orange if too high. </p>
+<p>The middle of the screen show the Momentary, Short and Integrated loudness as values and the loudness range. The small text in the Momentary and Short labels shows the maximum loudness.</p>
+<p>Below this are the True Peak level values for the two channels. These labels will flash red any time the true peak level goes over 0dBFS. The small text in the label shows the maximum true peak level.</p>
+<p>Below the True Peak levels is a "Phaseometer". This shows how in phase the two legs of the audio are (from -1=fully out of phase to +1=mono)</p>
+<p>At the bottom is a switch that enables the user to Pause the measurements and a button to Reset them.</p>
+<p>Note - leaving the page will also pause the measurements.</p>
+<p>The meters on the right hand side show the true peak level of the audio - this is calculated by 4x oversampling the audio and then passing the resultant audio through a 22kHz Low Pass Filter.</p>
+<h1>Options</h1>
+<h2>Display</h2>
+<p><img src="images/2821_display.jpg" border="0" alt="" width="400" height="240" /></p>
+<p>The Display panel allows the user to hide and show each of the meters that appears on the R128 panel.</p>
+<h2>Scale</h2>
+<p><img src="images/2821_scale.JPG" border="0" alt="scale" width="403" height="240" /></p>
+<p>There are two standard R128 scales</p>
+<ul>
+<li>+9</li>
+<li>+18</li>
+</ul>
+<p>The meters can aslo be absolute or relative. In relative mode 0LU = -23LUFS </p>
+<p>&nbsp;</p>
