@@ -9,8 +9,8 @@
 			<button>wxSYS_COLOUR_BACKGROUND</button>
 			<button_selected>#FF8000</button_selected>
 			<items />
-			<pos>0,0</pos>
-			<size>150,480</size>
+			<pos>5,5</pos>
+			<size>150,470</size>
 			<bg>wxSYS_COLOUR_BACKGROUND</bg>
 			<style>wmList::STYLE_SELECT</style>
 			<handler function="OnlstClocksSelected" entry="EVT_LIST_SELECTED" />
@@ -19,7 +19,7 @@
 			<label>Port Identitiy</label>
 			<border>uiRect::BORDER_FLAT</border>
 			<gradient>wxWEST</gradient>
-			<pos>160,0</pos>
+			<pos>160,5</pos>
 			<size>100,30</size>
 			<fg>#FFFFFF</fg>
 			<bg>#5C7AE0</bg>
@@ -27,7 +27,7 @@
 		<object class="wmLabel" name="ID_M_PLBL2" variable="m_ptitleAddress" member="yes">
 			<label>Address</label>
 			<gradient>wxWEST</gradient>
-			<pos>160,35</pos>
+			<pos>160,40</pos>
 			<size>100,30</size>
 			<fg>#FFFFFF</fg>
 			<bg>#5C7AE0</bg>
@@ -35,7 +35,7 @@
 		<object class="wmLabel" name="ID_M_PLBL3" variable="m_ptitleState" member="yes">
 			<label>State</label>
 			<gradient>wxWEST</gradient>
-			<pos>160,70</pos>
+			<pos>160,75</pos>
 			<size>100,30</size>
 			<fg>#FFFFFF</fg>
 			<bg>#5C7AE0</bg>
@@ -43,7 +43,7 @@
 		<object class="wmLabel" name="ID_M_PLBL12" variable="m_plblIdentity" member="yes">
 			<label></label>
 			<border>uiRect::BORDER_DOWN</border>
-			<pos>260,0</pos>
+			<pos>260,5</pos>
 			<size>200,30</size>
 			<fg>#000000</fg>
 			<bg>#FFFFFF</bg>
@@ -51,7 +51,7 @@
 		<object class="wmLabel" name="ID_M_PLBL13" variable="m_pblAddress" member="yes">
 			<label></label>
 			<border>uiRect::BORDER_DOWN</border>
-			<pos>260,35</pos>
+			<pos>260,40</pos>
 			<size>200,30</size>
 			<fg>#000000</fg>
 			<bg>#FFFFFF</bg>
@@ -59,13 +59,13 @@
 		<object class="wmLabel" name="ID_M_PLBL14" variable="m_plblState" member="yes">
 			<label></label>
 			<border>uiRect::BORDER_DOWN</border>
-			<pos>260,70</pos>
+			<pos>260,75</pos>
 			<size>200,30</size>
 			<fg>#000000</fg>
 			<bg>#FFFFFF</bg>
 		</object>
 		<object class="wxPanel" name="ID_PANEL1" variable="m_ppnlAnnouncements" member="yes">
-			<pos>160,105</pos>
+			<pos>160,110</pos>
 			<size>300,360</size>
 			<bg>#000000</bg>
 			<object class="wmLabel" name="ID_M_PLBL30" variable="m_ptitleAnnouncements" member="yes">
@@ -81,7 +81,6 @@
 					<weight>bold</weight>
 					<underlined>0</underlined>
 					<family>swiss</family>
-					<face></face>
 				</font>
 			</object>
 			<object class="wmLabel" name="ID_M_PLBL24" variable="m_ptitleAnnRate" member="yes">
@@ -246,7 +245,7 @@
 			</object>
 		</object>
 		<object class="wmSwitcherPanel" name="ID_M_PSWP1" variable="m_pswp" member="yes">
-			<pos>470,0</pos>
+			<pos>470,5</pos>
 			<size>300,245</size>
 			<bg>#000000</bg>
 			<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
@@ -270,7 +269,6 @@
 								<weight>bold</weight>
 								<underlined>0</underlined>
 								<family>swiss</family>
-								<face></face>
 							</font>
 						</object>
 						<object class="wmLabel" name="ID_M_PLBL31" variable="m_ptitleSyncRate" member="yes">
@@ -331,7 +329,6 @@
 								<weight>bold</weight>
 								<underlined>0</underlined>
 								<family>swiss</family>
-								<face></face>
 							</font>
 						</object>
 						<object class="wmLabel" name="ID_M_PLBL29" variable="m_ptitleFollowRate" member="yes">
@@ -398,7 +395,6 @@
 								<weight>bold</weight>
 								<underlined>0</underlined>
 								<family>swiss</family>
-								<face></face>
 							</font>
 						</object>
 						<object class="wmLabel" name="ID_M_PLBL41" variable="m_ptitleDelayRate" member="yes">
@@ -475,7 +471,6 @@
 								<weight>bold</weight>
 								<underlined>0</underlined>
 								<family>swiss</family>
-								<face></face>
 							</font>
 						</object>
 						<object class="wmLabel" name="ID_M_PLBL49" variable="m_ptitleResponseRate" member="yes">
@@ -524,7 +519,7 @@
 			</object>
 		</object>
 		<object class="wxPanel" name="ID_PANEL8" variable="m_ppnlLocal" member="yes">
-			<pos>470,245</pos>
+			<pos>470,250</pos>
 			<size>300,205</size>
 			<bg>#000000</bg>
 			<object class="wmLabel" name="ID_M_PLBL54" variable="m_ptitlePam" member="yes">
@@ -540,7 +535,6 @@
 					<weight>bold</weight>
 					<underlined>0</underlined>
 					<family>swiss</family>
-					<face></face>
 				</font>
 			</object>
 			<object class="wmLabel" name="ID_M_PLBL55" variable="m_ptitleTime" member="yes">

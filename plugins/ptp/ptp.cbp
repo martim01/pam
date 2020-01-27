@@ -125,6 +125,8 @@
 			<Add library="ptpmonkey" />
 			<Add directory="../../lib" />
 		</Linker>
+		<Unit filename="macdb.cpp" />
+		<Unit filename="macdb.h" />
 		<Unit filename="ptpbuilder.cpp" />
 		<Unit filename="ptpbuilder.h" />
 		<Unit filename="ptppanel.cpp" />

@@ -11,6 +11,7 @@
 #include <vector>
 #include <wx/timer.h>
 #include "pmpanel.h"
+#include "macdb.h"
 
 class ptpBuilder;
 class timedbuffer;
@@ -227,7 +228,7 @@ class ptpPanel: public pmPanel
         void OnClockMaster(wxCommandEvent& event);
         void OnClockSlave(wxCommandEvent& event);
 
-        void AddClock(const wxString& sClock);
+        void AddClock(wxString sClock);
         wxString ConvertRate(unsigned char nRate);
 
         ptpBuilder* m_pBuilder;
@@ -241,6 +242,14 @@ class ptpPanel: public pmPanel
 
         wxTimer m_timer;
         bool m_bRunning;
+
+        MacDb m_dbMac;
+
+        static const wxColour CLR_MASTER;
+        static const wxColour CLR_MASTER_SELECTED;
+        static const wxColour CLR_SLAVE;
+        static const wxColour CLR_SLAVE_SELECTED;
+
 		DECLARE_EVENT_TABLE()
 };
 

@@ -93,6 +93,11 @@ const long ptpPanel::ID_M_PLBL64 = wxNewId();
 const long ptpPanel::ID_PANEL8 = wxNewId();
 //*)
 
+const wxColour CLR_MASTER           = wxColour(50,128,50);
+const wxColour CLR_MASTER_SELECTED  = wxColour(150,228,150)
+const wxColour CLR_SLAVE            = wxColour(50,50,50);
+const wxColour CLR_SLAVE_SELECTED   = wxColour(150,150,150)
+
 wxIMPLEMENT_DYNAMIC_CLASS(ptpPanel, pmPanel)
 
 BEGIN_EVENT_TABLE(ptpPanel,pmPanel)
@@ -101,7 +106,7 @@ BEGIN_EVENT_TABLE(ptpPanel,pmPanel)
 END_EVENT_TABLE()
 
 
-ptpPanel::ptpPanel(wxWindow* parent,ptpBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) : pmPanel(),
+ptpPanel::ptpPanel(wxWindow* parent,ptpBuilder* pBuilder, wxWindow*ID id,const wxPoint& pos,const wxSize& size) : pmPanel(),
     m_pBuilder(pBuilder),
     m_nDomain(0),
     m_mAccuracy({ { ptpAnnounce::ACC_25NS,  "Within 25ns"},
@@ -148,41 +153,41 @@ ptpPanel::ptpPanel(wxWindow* parent,ptpBuilder* pBuilder, wxWindowID id,const wx
 	//(*Initialize(ptpPanel)
 	Create(parent, id, wxDefaultPosition, wxSize(800,480), wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
-	m_plstClocks = new wmList(this, ID_M_PLST1, wxPoint(0,0), wxSize(150,480), wmList::STYLE_SELECT, 1, wxSize(-1,-1), 1, wxSize(-1,-1));
-	m_plstClocks->SetBackgroundColour(wxColour(0,0,0));
+	m_plstClocks = new wmList(this, ID_M_PLST1, wxPoint(5,5), wxSize(150,470), wmList::STYLE_SELECT, 1, wxSize(-1,-1), 1, wxSize(-1,-1));
+	m_plstClocks->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
 	m_plstClocks->SetButtonColour(wxColour(wxT("#000000")));
-
-	m_ptitleIdentity = new wmLabel(this, ID_M_PLBL1, _("Port Identitiy"), wxPoint(160,0), wxSize(100,30), 0, _T("ID_M_PLBL1"));
+	m_plstClocks->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
+	m_ptitleIdentity = new wmLabel(this, ID_M_PLBL1, _("Port Identitiy"), wxPoint(160,5), wxSize(100,30), 0, _T("ID_M_PLBL1"));
 	m_ptitleIdentity->SetBorderState(uiRect::BORDER_FLAT);
 	m_ptitleIdentity->GetUiRect().SetGradient(wxWEST);
 	m_ptitleIdentity->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleIdentity->SetBackgroundColour(wxColour(92,122,224));
-	m_ptitleAddress = new wmLabel(this, ID_M_PLBL2, _("Address"), wxPoint(160,35), wxSize(100,30), 0, _T("ID_M_PLBL2"));
+	m_ptitleAddress = new wmLabel(this, ID_M_PLBL2, _("Address"), wxPoint(160,40), wxSize(100,30), 0, _T("ID_M_PLBL2"));
 	m_ptitleAddress->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleAddress->GetUiRect().SetGradient(wxWEST);
 	m_ptitleAddress->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleAddress->SetBackgroundColour(wxColour(92,122,224));
-	m_ptitleState = new wmLabel(this, ID_M_PLBL3, _("State"), wxPoint(160,70), wxSize(100,30), 0, _T("ID_M_PLBL3"));
+	m_ptitleState = new wmLabel(this, ID_M_PLBL3, _("State"), wxPoint(160,75), wxSize(100,30), 0, _T("ID_M_PLBL3"));
 	m_ptitleState->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleState->GetUiRect().SetGradient(wxWEST);
 	m_ptitleState->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleState->SetBackgroundColour(wxColour(92,122,224));
-	m_plblIdentity = new wmLabel(this, ID_M_PLBL12, wxEmptyString, wxPoint(260,0), wxSize(200,30), 0, _T("ID_M_PLBL12"));
+	m_plblIdentity = new wmLabel(this, ID_M_PLBL12, wxEmptyString, wxPoint(260,5), wxSize(200,30), 0, _T("ID_M_PLBL12"));
 	m_plblIdentity->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblIdentity->GetUiRect().SetGradient(0);
 	m_plblIdentity->SetForegroundColour(wxColour(0,0,0));
 	m_plblIdentity->SetBackgroundColour(wxColour(255,255,255));
-	m_pblAddress = new wmLabel(this, ID_M_PLBL13, wxEmptyString, wxPoint(260,35), wxSize(200,30), 0, _T("ID_M_PLBL13"));
+	m_pblAddress = new wmLabel(this, ID_M_PLBL13, wxEmptyString, wxPoint(260,40), wxSize(200,30), 0, _T("ID_M_PLBL13"));
 	m_pblAddress->SetBorderState(uiRect::BORDER_DOWN);
 	m_pblAddress->GetUiRect().SetGradient(0);
 	m_pblAddress->SetForegroundColour(wxColour(0,0,0));
 	m_pblAddress->SetBackgroundColour(wxColour(255,255,255));
-	m_plblState = new wmLabel(this, ID_M_PLBL14, wxEmptyString, wxPoint(260,70), wxSize(200,30), 0, _T("ID_M_PLBL14"));
+	m_plblState = new wmLabel(this, ID_M_PLBL14, wxEmptyString, wxPoint(260,75), wxSize(200,30), 0, _T("ID_M_PLBL14"));
 	m_plblState->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblState->GetUiRect().SetGradient(0);
 	m_plblState->SetForegroundColour(wxColour(0,0,0));
 	m_plblState->SetBackgroundColour(wxColour(255,255,255));
-	m_ppnlAnnouncements = new wxPanel(this, ID_PANEL1, wxPoint(160,105), wxSize(300,360), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
+	m_ppnlAnnouncements = new wxPanel(this, ID_PANEL1, wxPoint(160,110), wxSize(300,360), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
 	m_ppnlAnnouncements->SetBackgroundColour(wxColour(0,0,0));
 	m_ptitleAnnouncements = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL30, _("Announcements"), wxPoint(0,0), wxSize(300,30), 0, _T("ID_M_PLBL30"));
 	m_ptitleAnnouncements->SetBorderState(uiRect::BORDER_NONE);
@@ -291,7 +296,7 @@ ptpPanel::ptpPanel(wxWindow* parent,ptpBuilder* pBuilder, wxWindowID id,const wx
 	m_plblSource->GetUiRect().SetGradient(0);
 	m_plblSource->SetForegroundColour(wxColour(0,0,0));
 	m_plblSource->SetBackgroundColour(wxColour(255,255,255));
-	m_pswp = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(470,0), wxSize(300,245), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
+	m_pswp = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(470,5), wxSize(300,245), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
 	m_pswp->SetPageNameStyle(0);
 	m_pswp->SetBackgroundColour(wxColour(0,0,0));
 	m_ppnlMaster = new wxPanel(m_pswp, ID_PANEL5, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL5"));
@@ -446,9 +451,9 @@ ptpPanel::ptpPanel(wxWindow* parent,ptpBuilder* pBuilder, wxWindowID id,const wx
 	m_plblResponseMessage->SetBackgroundColour(wxColour(255,255,255));
 	m_pswp->AddPage(m_ppnlMaster, _("Master"), false);
 	m_pswp->AddPage(m_ppnlSlave, _("Slave"), false);
-	m_ppnlLocal = new wxPanel(this, ID_PANEL8, wxPoint(470,245), wxSize(300,205), wxTAB_TRAVERSAL, _T("ID_PANEL8"));
+	m_ppnlLocal = new wxPanel(this, ID_PANEL8, wxPoint(470,250), wxSize(300,205), wxTAB_TRAVERSAL, _T("ID_PANEL8"));
 	m_ppnlLocal->SetBackgroundColour(wxColour(0,0,0));
-	m_ptitlePam = new wmLabel(m_ppnlLocal, ID_M_PLBL54, _("Time as seen from PAM"), wxPoint(0,0), wxSize(300,30), 0, _T("ID_M_PLBL54"));
+	m_ptitlePam = new wmLabel(m_ppnlLocal, ID_M_PLBL54, _("PAM"), wxPoint(0,0), wxSize(300,30), 0, _T("ID_M_PLBL54"));
 	m_ptitlePam->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitlePam->GetUiRect().SetGradient(wxWEST);
 	m_ptitlePam->SetForegroundColour(wxColour(255,255,255));
@@ -514,12 +519,9 @@ ptpPanel::ptpPanel(wxWindow* parent,ptpBuilder* pBuilder, wxWindowID id,const wx
 
 	m_timer.SetOwner(this, wxNewId());
 	Connect(m_timer.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&ptpPanel::OnTimer);
-	m_timer.Start(500);
+	m_timer.Start(500, false);
 
-
-
-
-
+	m_dbMac.LoadXml();
 
 	SetSize(size);
 	SetPosition(pos);
@@ -579,7 +581,7 @@ void ptpPanel::OnClockRemoved(wxCommandEvent& event)
 {
     if(m_sSelectedClock == event.GetString())
     {
-        //@todo clear clock details
+        ClearClockDetails();
     }
     m_plstClocks->DeleteButton(m_plstClocks->FindButton(event.GetString()));
 }
@@ -588,7 +590,7 @@ void ptpPanel::OnClockTime(wxCommandEvent& event)
 {
     if(m_sSelectedClock == event.GetString())
     {
-        //@todo update the time and offset stuff
+        ShowTime();
     }
 }
 
@@ -603,8 +605,8 @@ void ptpPanel::OnClockMaster(wxCommandEvent& event)
     size_t nButton = m_plstClocks->FindButton(event.GetString());
     if(nButton != wmList::NOT_FOUND)
     {
-        m_plstClocks->SetButtonColour(nButton, wxColour(50,128,50));
-        m_plstClocks->SetSelectedButtonColour(nButton, wxColour(50,128,50));
+        m_plstClocks->SetButtonColour(nButton, CLR_MASTER);
+        m_plstClocks->SetSelectedButtonColour(nButton, CLR_MASTER_SELECTED);
     }
 }
 
@@ -618,8 +620,8 @@ void ptpPanel::OnClockSlave(wxCommandEvent& event)
     size_t nButton = m_plstClocks->FindButton(event.GetString());
     if(nButton != wmList::NOT_FOUND)
     {
-        m_plstClocks->SetButtonColour(nButton, wxColour(50,50,50));
-        m_plstClocks->SetSelectedButtonColour(nButton, wxColour(50,50,50));
+        m_plstClocks->SetButtonColour(nButton, CLR_SLAVE);
+        m_plstClocks->SetSelectedButtonColour(nButton, CLR_SLAVE_SELECTED);
     }
 }
 
@@ -632,9 +634,6 @@ void ptpPanel::ShowClockDetails()
 
     m_pblAddress->SetLabel(wxString(pClock->GetIpAddress()));
     m_plblIdentity->SetLabel(wxString(pClock->GetClockId()));
-    //time_s_ns GetPtpTime(enumCalc eCalc = MEAN);
-    //time_s_ns GetOffset(enumCalc eCalc = MEAN);
-    //time_s_ns GetDelay(enumCalc eCalc = MEAN);
 
     m_ppnlAnnouncements->Show((pClock->GetCount(ptpV2Header::ANNOUNCE) != 0));
 
@@ -696,16 +695,6 @@ void ptpPanel::ShowClockDetails()
         m_plblResponseRate->SetLabel(ConvertRate(pClock->GetInterval(ptpV2Header::DELAY_RESP)));
     }
 
-    //if this is us
-    /*
-    m_plblDelayAverage->SetLabel
-    m_plblDelayRange->SetLabel
-    m_plblOffsetAverage->SetLabel
-    m_plblOffsetRange->SetLabel
-    m_plblTime->SetLabel
-    //    unsigned short GetFlags() const
-    //    time_s_ns GetLastMessageTime() const
-*/
 }
 
 void ptpPanel::ShowTime()
@@ -797,23 +786,24 @@ void ptpPanel::OnTimer(wxTimerEvent& event)
         }
     }
     ShowClockDetails();
-    ShowTime();
+    //ShowTime();
 }
 
-void ptpPanel::AddClock(const wxString& sClock)
+void ptpPanel::AddClock(wxString sClock)
 {
+    sClock = m_dbMac.GetVendor(sClock);
     if(m_plstClocks->FindButton(sClock) == wmList::NOT_FOUND)
     {
         size_t nButton;
         if(wxPtp::Get().GetMasterClockId(m_nDomain) == sClock)
         {
-            nButton = m_plstClocks->AddButton(sClock, wxNullBitmap, 0, wmList::wmENABLED, wxColour(50,128,50));
-            m_plstClocks->SetSelectedButtonColour(nButton, wxColour(50,128,50));
+            nButton = m_plstClocks->AddButton(sClock, wxNullBitmap, 0, wmList::wmENABLED, CLR_MASTER);
+            m_plstClocks->SetSelectedButtonColour(nButton, CLR_MASTER_SELECTED);
         }
         else
         {
-            nButton = m_plstClocks->AddButton(sClock, wxNullBitmap, 0, wmList::wmENABLED, wxColour(50,50,50));
-            m_plstClocks->SetSelectedButtonColour(nButton, wxColour(50,50,50));
+            nButton = m_plstClocks->AddButton(sClock, wxNullBitmap, 0, wmList::wmENABLED, CLR_SLAVE);
+            m_plstClocks->SetSelectedButtonColour(nButton, CLR_SLAVE_SELECTED);
         }
 
     }
