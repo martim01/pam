@@ -778,7 +778,7 @@ wxString ptpPanel::ConvertRate(unsigned char nRate)
     }
     else
     {
-        return "-";
+        return wxString::Format("0x%X", nRate);
     }
 }
 
