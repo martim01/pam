@@ -77,9 +77,9 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O3" />
+					<Add option="-fPIC" />
 					<Add option="`wx-config --cxxflags`" />
 					<Add option="-fpermissive" />
-					<Add option="-fPIC" />
 					<Add option="-DDLL_EXPORTS" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
@@ -119,8 +119,10 @@
 			<Add option="-D_monitor_" />
 			<Add option="-DPTPMONKEY" />
 			<Add directory="../../pambase" />
+			<Add directory="../../external/ptpmonkey/include" />
 		</Compiler>
 		<Linker>
+			<Add library="ptpmonkey" />
 			<Add directory="../../lib" />
 		</Linker>
 		<Unit filename="ptpbuilder.cpp" />

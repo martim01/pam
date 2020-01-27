@@ -4,6 +4,8 @@
 #include "settingevent.h"
 #include "version.h"
 #include "ptppanel.h"
+#include <wx/log.h>
+
 
 using namespace std;
 
@@ -11,18 +13,19 @@ ptpBuilder::ptpBuilder() : MonitorPluginBuilder()
 {
 
     //RegisterForSettingsUpdates(wxT("Mode"), this);
-    
+
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&ptpBuilder::OnSettingChanged);
 
 }
 
 void ptpBuilder::SetAudioData(const timedbuffer* pBuffer)
 {
-	m_pMeter->SetAudioData(pBuffer);
+//	m_pMeter->SetAudioData(pBuffer);
 }
 
 wxWindow* ptpBuilder::CreateMonitorPanel(wxWindow* pParent)
 {
+
 	m_pMeter = new ptpPanel(pParent, this);
 	return m_pMeter;
 
@@ -47,12 +50,12 @@ void ptpBuilder::LoadSettings()
 
 void ptpBuilder::InputSession(const session& aSession)
 {
-	m_pMeter->InputSession(aSession);
+	//m_pMeter->InputSession(aSession);
 }
 
 void ptpBuilder::OutputChannels(const std::vector<char>& vChannels)
 {
-	m_pMeter->OutputChannels(vChannels);
+	//m_pMeter->OutputChannels(vChannels);
 }
 
 

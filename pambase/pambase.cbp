@@ -176,7 +176,7 @@
 			<Add directory="../external/live/groupsock/include" />
 			<Add directory="../external/live/liveMedia/include" />
 			<Add directory="../external/wxservdisc" />
-			<Add directory="../../ptpmonkey/include" />
+			<Add directory="../external/ptpmonkey/include" />
 		</Compiler>
 		<Linker>
 			<Add directory="../external/live/liveMedia" />

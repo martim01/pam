@@ -9,6 +9,7 @@
 #ifdef PTPMONKEY
 class PtpMonkey;
 class wxPtpEventHandler;
+class PtpV2Clock;
 
 class PAMBASE_IMPEXPORT wxPtp : public wxEvtHandler
 {
@@ -21,13 +22,18 @@ class PAMBASE_IMPEXPORT wxPtp : public wxEvtHandler
         wxString GetMasterClockId(unsigned char nDomain);
         timeval GetPtpTime(unsigned char nDomain);
         timeval GetPtpOffset(unsigned char nDomain);
-        std::shared_ptr<PtpMonkey> GetPtpMonkey(nDomain);
+        std::shared_ptr<const PtpV2Clock> GetPtpClock(unsigned char nDomain, const wxString& sClockId);
+        std::shared_ptr<const PtpV2Clock> GetMasterClock(unsigned char nDomain);
+        std::map<std::string, std::shared_ptr<PtpV2Clock> >::const_iterator GetClocksBegin(unsigned char nDomain) const;
+        std::map<std::string, std::shared_ptr<PtpV2Clock> >::const_iterator GetClocksEnd(unsigned char nDomain) const;
+
         void AddHandler(wxEvtHandler* pHandler);
 
     private:
         wxPtp();
         std::shared_ptr<wxPtpEventHandler> m_pNotifier;
         std::map<unsigned char, std::shared_ptr<PtpMonkey>> m_mDomain;
+        std::map<std::string, std::shared_ptr<PtpV2Clock> > m_mEmpty;
 };
 
 

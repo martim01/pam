@@ -36,19 +36,19 @@ void wxPtpEventHandler::NotifyHandlers(wxEventType type, const wxString& sClockI
 
 void wxPtpEventHandler::ClockAdded(std::shared_ptr<PtpV2Clock> pClock)
 {
-    wmLog::Get()->Log(wxT("PTP"), wxString::Format("New Clock %s", wxString::FromUTF8(pClock->GetId().c_str()).c_str()));
+    //wmLog::Get()->Log(wxT("PTP"), wxString::Format("New Clock %s", wxString::FromUTF8(pClock->GetId().c_str()).c_str()));
     NotifyHandlers(wxEVT_CLOCK_ADDED, wxString::FromUTF8(pClock->GetId().c_str()));
 }
 
 void wxPtpEventHandler::ClockUpdated(std::shared_ptr<PtpV2Clock> pClock)
 {
-    wmLog::Get()->Log(wxT("PTP"), wxString::Format("Updated Clock %s", wxString::FromUTF8(pClock->GetId().c_str()).c_str()));
+    //wmLog::Get()->Log(wxT("PTP"), wxString::Format("Updated Clock %s", wxString::FromUTF8(pClock->GetId().c_str()).c_str()));
     NotifyHandlers(wxEVT_CLOCK_UPDATED, wxString::FromUTF8(pClock->GetId().c_str()));
 }
 
 void wxPtpEventHandler::ClockBecomeMaster(std::shared_ptr<PtpV2Clock> pClock)
 {
-    wmLog::Get()->Log(wxT("PTP"), wxString::Format("%s changed to master", wxString::FromUTF8(pClock->GetId().c_str()).c_str()));
+    //wmLog::Get()->Log(wxT("PTP"), wxString::Format("%s changed to master", wxString::FromUTF8(pClock->GetId().c_str()).c_str()));
     NotifyHandlers(wxEVT_CLOCK_MASTER, wxString::FromUTF8(pClock->GetId().c_str()));
 }
 
@@ -119,12 +119,12 @@ void wxPtp::StopDomain(unsigned char nDomain)
     }
 }
 
-std::shared_ptr<PtpMonkey> wxPtp::GetPtpMonkey(nDomain)
+std::shared_ptr<const PtpV2Clock> wxPtp::GetPtpClock(unsigned char nDomain, const wxString& sClockId)
 {
     auto itMonkey = m_mDomain.find(nDomain);
     if(itMonkey != m_mDomain.end())
     {
-        return itMonkey->second;
+        return itMonkey->second->GetClock(std::string(sClockId.mb_str()));
     }
     return nullptr;
 }
@@ -138,6 +138,17 @@ wxString wxPtp::GetMasterClockId(unsigned char nDomain)
     }
     return wxEmptyString;
 }
+
+std::shared_ptr<const PtpV2Clock> wxPtp::GetMasterClock(unsigned char nDomain)
+{
+    auto itMonkey = m_mDomain.find(nDomain);
+    if(itMonkey != m_mDomain.end())
+    {
+        return itMonkey->second->GetMasterClock();
+    }
+    return nullptr;
+}
+
 
 timeval wxPtp::GetPtpTime(unsigned char nDomain)
 {
@@ -155,6 +166,32 @@ timeval wxPtp::GetPtpTime(unsigned char nDomain)
     {
         gettimeofday(&tv, nullptr);
         return tv;
+    }
+}
+
+std::map<std::string, std::shared_ptr<PtpV2Clock> >::const_iterator wxPtp::GetClocksBegin(unsigned char nDomain) const
+{
+    auto itMonkey = m_mDomain.find(nDomain);
+    if(itMonkey != m_mDomain.end())
+    {
+        return itMonkey->second->GetClocksBegin();
+    }
+    else
+    {
+        return m_mEmpty.end();
+    }
+}
+
+std::map<std::string, std::shared_ptr<PtpV2Clock> >::const_iterator wxPtp::GetClocksEnd(unsigned char nDomain) const
+{
+    auto itMonkey = m_mDomain.find(nDomain);
+    if(itMonkey != m_mDomain.end())
+    {
+        return itMonkey->second->GetClocksEnd();
+    }
+    else
+    {
+        return m_mEmpty.end();
     }
 }
 

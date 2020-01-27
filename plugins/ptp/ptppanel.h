@@ -7,8 +7,9 @@
 #include <wx/notebook.h>
 #include <wx/panel.h>
 //*)
-
+#include <ctype.h>
 #include <vector>
+#include <wx/timer.h>
 #include "pmpanel.h"
 
 class ptpBuilder;
@@ -214,7 +215,11 @@ class ptpPanel: public pmPanel
 		void OnlstClocksSelected(wxCommandEvent& event);
 		//*)
 
+		void OnTimer(wxTimerEvent& event);
+
 		void ShowClockDetails();
+		void ClearClockDetails();
+		void ShowTime();
         void OnClockAdded(wxCommandEvent& event);
         void OnClockUpdated(wxCommandEvent& event);
         void OnClockRemoved(wxCommandEvent& event);
@@ -222,12 +227,20 @@ class ptpPanel: public pmPanel
         void OnClockMaster(wxCommandEvent& event);
         void OnClockSlave(wxCommandEvent& event);
 
+        void AddClock(const wxString& sClock);
+        wxString ConvertRate(unsigned char nRate);
+
         ptpBuilder* m_pBuilder;
 
-        unsigned int m_nDomain;
+        unsigned char m_nDomain;
 		wxString m_sSelectedClock;
 
+        std::map<unsigned char, wxString> m_mAccuracy;
+        std::map<unsigned char, wxString> m_mTimeSource;
+        std::map<std::int8_t, wxString> m_mRate;
 
+        wxTimer m_timer;
+        bool m_bRunning;
 		DECLARE_EVENT_TABLE()
 };
 

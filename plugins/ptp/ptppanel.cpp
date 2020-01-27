@@ -3,6 +3,11 @@
 #include "timedbuffer.h"
 #include "session.h"
 #include "wxptp.h"
+#include "settings.h"
+#include "ptpclock.h"
+#include "ptpstructs.h"
+#include "wmlogevent.h"
+#include <wx/log.h>
 
 //(*InternalHeaders(ptpPanel)
 #include <wx/font.h>
@@ -98,15 +103,55 @@ END_EVENT_TABLE()
 
 ptpPanel::ptpPanel(wxWindow* parent,ptpBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) : pmPanel(),
     m_pBuilder(pBuilder),
-    m_nDomain(0)
+    m_nDomain(0),
+    m_mAccuracy({ { ptpAnnounce::ACC_25NS,  "Within 25ns"},
+                  { ptpAnnounce::ACC_100NS, "Within 100ns"},
+                  { ptpAnnounce::ACC_250NS, "Within 250ns" },
+                  { ptpAnnounce::ACC_1US,   "Within 1us"},
+                  { ptpAnnounce::ACC_2_5US, "Within 2.5us"},
+                  { ptpAnnounce::ACC_10US,  "Within 10us"},
+                  { ptpAnnounce::ACC_25US,  "Within 25us"},
+                  { ptpAnnounce::ACC_100US, "Within 100us"},
+                  { ptpAnnounce::ACC_250US, "Within 250us"},
+                  { ptpAnnounce::ACC_1MS,   "Within 1ms"},
+                  { ptpAnnounce::ACC_2_5MS, "Within 2.5ms"},
+                  { ptpAnnounce::ACC_10MS,  "Within 10ms"},
+                  { ptpAnnounce::ACC_25MS,  "Within 25ms"},
+                  { ptpAnnounce::ACC_100MS, "Within 100ms"},
+                  { ptpAnnounce::ACC_250MS, "Within 250ms"},
+                  { ptpAnnounce::ACC_1S,    "Within 1s"},
+                  { ptpAnnounce::ACC_10S,   "Within 10s"},
+                  { ptpAnnounce::ACC_OVER,  "Over 10ss"},
+                  { ptpAnnounce::ACC_UNKNOWN,"Unknown" }}),
+    m_mTimeSource({ { ptpAnnounce::ATOMIC, "Atomic"},
+                    { ptpAnnounce::GPS, "GPS"},
+                    { ptpAnnounce::RADIO,"Radio"},
+                    { ptpAnnounce::PTP, "PTP"},
+                    { ptpAnnounce::NTP, "NTP"},
+                    { ptpAnnounce::HANDSET, "Handset"},
+                    { ptpAnnounce::OTHER, "Other"},
+                    { ptpAnnounce::INTERNAL, "Internal"}}),
+    m_mRate({{static_cast<std::int8_t>(Rate::PER_SEC_128), "128/s"},
+             {static_cast<std::int8_t>(Rate::PER_SEC_64), "64/s"},
+             {static_cast<std::int8_t>(Rate::PER_SEC_32), "32/s"},
+             {static_cast<std::int8_t>(Rate::PER_SEC_16), "16/s"},
+             {static_cast<std::int8_t>(Rate::PER_SEC_8), "8/s"},
+             {static_cast<std::int8_t>(Rate::PER_SEC_4), "4/s"},
+             {static_cast<std::int8_t>(Rate::PER_SEC_2), "2/s"},
+             {static_cast<std::int8_t>(Rate::EVERY_1_SEC), "1/s"},
+             {static_cast<std::int8_t>(Rate::EVERY_2_SEC), "1/2s"},
+             {static_cast<std::int8_t>(Rate::EVERY_4_SEC), "1/4s"},
+             {static_cast<std::int8_t>(Rate::EVERY_8_SEC), "1/8s"},
+             {static_cast<std::int8_t>(Rate::EVERY_16_SEC), "1/16s"}}),
+    m_bRunning(false)
 {
 	//(*Initialize(ptpPanel)
 	Create(parent, id, wxDefaultPosition, wxSize(800,480), wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
 	m_plstClocks = new wmList(this, ID_M_PLST1, wxPoint(0,0), wxSize(150,480), wmList::STYLE_SELECT, 1, wxSize(-1,-1), 1, wxSize(-1,-1));
-	m_plstClocks->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
+	m_plstClocks->SetBackgroundColour(wxColour(0,0,0));
 	m_plstClocks->SetButtonColour(wxColour(wxT("#000000")));
-	m_plstClocks->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
+
 	m_ptitleIdentity = new wmLabel(this, ID_M_PLBL1, _("Port Identitiy"), wxPoint(160,0), wxSize(100,30), 0, _T("ID_M_PLBL1"));
 	m_ptitleIdentity->SetBorderState(uiRect::BORDER_FLAT);
 	m_ptitleIdentity->GetUiRect().SetGradient(wxWEST);
@@ -403,7 +448,7 @@ ptpPanel::ptpPanel(wxWindow* parent,ptpBuilder* pBuilder, wxWindowID id,const wx
 	m_pswp->AddPage(m_ppnlSlave, _("Slave"), false);
 	m_ppnlLocal = new wxPanel(this, ID_PANEL8, wxPoint(470,245), wxSize(300,205), wxTAB_TRAVERSAL, _T("ID_PANEL8"));
 	m_ppnlLocal->SetBackgroundColour(wxColour(0,0,0));
-	m_ptitlePam = new wmLabel(m_ppnlLocal, ID_M_PLBL54, _("PAM"), wxPoint(0,0), wxSize(300,30), 0, _T("ID_M_PLBL54"));
+	m_ptitlePam = new wmLabel(m_ppnlLocal, ID_M_PLBL54, _("Time as seen from PAM"), wxPoint(0,0), wxSize(300,30), 0, _T("ID_M_PLBL54"));
 	m_ptitlePam->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitlePam->GetUiRect().SetGradient(wxWEST);
 	m_ptitlePam->SetForegroundColour(wxColour(255,255,255));
@@ -463,20 +508,19 @@ ptpPanel::ptpPanel(wxWindow* parent,ptpBuilder* pBuilder, wxWindowID id,const wx
 
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&ptpPanel::OnlstClocksSelected);
 	//*)
+	m_plstClocks->SetTextSelectedButtonColour(*wxBLACK);
 
 	Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&ptpPanel::OnLeftUp);
 
+	m_timer.SetOwner(this, wxNewId());
+	Connect(m_timer.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&ptpPanel::OnTimer);
+	m_timer.Start(500);
 
-	wxPtp::Get().AddHandler(this);
 
-    Connect(wxID_ANY, wxEVT_CLOCK_ADDED,(wxObjectEventFunction)&ptpPanel::OnClockAdded);
-    Connect(wxID_ANY, wxEVT_CLOCK_UPDATED,(wxObjectEventFunction)&ptpPanel::OnClockUpdated);
-    Connect(wxID_ANY, xEVT_CLOCK_REMOVED,(wxObjectEventFunction)&ptpPanel::OnClockRemoved);
-    Connect(wxID_ANY, wxEVT_CLOCK_TIME,(wxObjectEventFunction)&ptpPanel::OnClockTime);
-    Connect(wxID_ANY, wxEVT_CLOCK_MASTER,(wxObjectEventFunction)&ptpPanel::OnClockMaster);
-    Connect(wxID_ANY, wxEVT_CLOCK_SLAVE,(wxObjectEventFunction)&ptpPanel::OnClockSlave);
 
-    wxPtp::Get.Run(Settings::Get().Read("AoIP_Settings", "Interface", "eth0"), m_nDomain);
+
+
+
 	SetSize(size);
 	SetPosition(pos);
 }
@@ -519,7 +563,8 @@ void ptpPanel::OnlstClocksSelected(wxCommandEvent& event)
 
 void ptpPanel::OnClockAdded(wxCommandEvent& event)
 {
-    m_plstClocks->AddButton(event.GetString());
+    wxLogDebug(wxString::Format("Clock added %s"), event.GetString().c_str());
+    AddClock(event.GetString());
 }
 
 void ptpPanel::OnClockUpdated(wxCommandEvent& event)
@@ -552,7 +597,14 @@ void ptpPanel::OnClockMaster(wxCommandEvent& event)
     if(m_sSelectedClock == event.GetString())
     {
         m_pswp->ChangeSelection("Master");
-        m_plblState = "Master";
+        m_plblState->SetLabel("Master");
+    }
+    wxLogDebug(wxT("OnClockMaster"));
+    size_t nButton = m_plstClocks->FindButton(event.GetString());
+    if(nButton != wmList::NOT_FOUND)
+    {
+        m_plstClocks->SetButtonColour(nButton, wxColour(50,128,50));
+        m_plstClocks->SetSelectedButtonColour(nButton, wxColour(50,128,50));
     }
 }
 
@@ -561,8 +613,208 @@ void ptpPanel::OnClockSlave(wxCommandEvent& event)
     if(m_sSelectedClock == event.GetString())
     {
         m_pswp->ChangeSelection("Slave");
-        m_plblState = "Slave";
+        m_plblState->SetLabel("Slave");
+    }
+    size_t nButton = m_plstClocks->FindButton(event.GetString());
+    if(nButton != wmList::NOT_FOUND)
+    {
+        m_plstClocks->SetButtonColour(nButton, wxColour(50,50,50));
+        m_plstClocks->SetSelectedButtonColour(nButton, wxColour(50,50,50));
     }
 }
 
 
+void ptpPanel::ShowClockDetails()
+{
+    std::shared_ptr<const PtpV2Clock> pClock = wxPtp::Get().GetPtpClock(m_nDomain, m_sSelectedClock);
+    if(!pClock) return;
+
+
+    m_pblAddress->SetLabel(wxString(pClock->GetIpAddress()));
+    m_plblIdentity->SetLabel(wxString(pClock->GetClockId()));
+    //time_s_ns GetPtpTime(enumCalc eCalc = MEAN);
+    //time_s_ns GetOffset(enumCalc eCalc = MEAN);
+    //time_s_ns GetDelay(enumCalc eCalc = MEAN);
+
+    m_ppnlAnnouncements->Show((pClock->GetCount(ptpV2Header::ANNOUNCE) != 0));
+
+    m_pswp->ChangeSelection(pClock->IsMaster() ? "Master" : "Slave");
+    m_plblState->SetLabel(pClock->IsMaster() ? "Master" : "Slave");
+    m_ppnlLocal->Show(pClock->IsMaster());
+
+    if((pClock->GetCount(ptpV2Header::ANNOUNCE) != 0))
+    {
+        auto itAccuracy = m_mAccuracy.find(pClock->GetAccuracy());
+        if(itAccuracy != m_mAccuracy.end())
+        {
+            m_plblAccuracy->SetLabel(itAccuracy->second);
+        }
+        else
+        {
+            m_plblAccuracy->SetLabel("Unknown");
+        }
+        m_plblAnnCount->SetLabel(wxString::Format("%llu", pClock->GetCount(ptpV2Header::ANNOUNCE)));
+        m_plblAnnRate->SetLabel(ConvertRate(pClock->GetInterval(ptpV2Header::ANNOUNCE)));
+
+        m_plblClass->SetLabel(wxString::Format("%u", static_cast<unsigned int>(pClock->GetClass())));
+
+        auto itSource = m_mTimeSource.find(pClock->GetTimeSource());
+        if(itSource != m_mTimeSource.end())
+        {
+            m_plblSource->SetLabel(itSource->second);
+        }
+        else
+        {
+            m_plblSource->SetLabel(wxString::Format("Unknown 0x%X", static_cast<unsigned int>(pClock->GetTimeSource())));
+        }
+
+        m_plblSteps->SetLabel(wxString::Format("%u", static_cast<unsigned int>(pClock->GetStepsRemoved())));
+        m_plblUTC->SetLabel(wxString::Format("%u", static_cast<unsigned int>(pClock->GetUtcOffset())));
+        m_plblVariance->SetLabel(wxString::Format("%u", static_cast<unsigned int>(pClock->GetVariance())));
+        m_plblPriority1->SetLabel(wxString::Format("%u", static_cast<unsigned int>(pClock->GetPriority1())));
+        m_plblPriority2->SetLabel(wxString::Format("%u", static_cast<unsigned int>(pClock->GetPriority2())));
+    }
+
+    if(pClock->IsMaster())
+    {
+        m_plblSyncCount->SetLabel(wxString::Format("%llu", pClock->GetCount(ptpV2Header::SYNC)));
+        m_plblSyncRate->SetLabel(ConvertRate(pClock->GetInterval(ptpV2Header::SYNC)));
+
+        m_plblFollowCount->SetLabel(wxString::Format("%llu", pClock->GetCount(ptpV2Header::FOLLOW_UP)));
+        m_plblFollowRate->SetLabel(ConvertRate(pClock->GetInterval(ptpV2Header::FOLLOW_UP)));
+    }
+    else
+    {
+        m_plblDelayMech->SetLabel("E-E");
+
+        //m_plblDelayMessage->SetLabel
+        m_plblDelayCount->SetLabel(wxString::Format("%llu", pClock->GetCount(ptpV2Header::DELAY_REQ)));
+        m_plblDelayRate->SetLabel(ConvertRate(pClock->GetInterval(ptpV2Header::DELAY_REQ)));
+
+
+        m_plblResponseCount->SetLabel(wxString::Format("%llu", pClock->GetCount(ptpV2Header::DELAY_RESP)));
+        m_plblResponseRate->SetLabel(ConvertRate(pClock->GetInterval(ptpV2Header::DELAY_RESP)));
+    }
+
+    //if this is us
+    /*
+    m_plblDelayAverage->SetLabel
+    m_plblDelayRange->SetLabel
+    m_plblOffsetAverage->SetLabel
+    m_plblOffsetRange->SetLabel
+    m_plblTime->SetLabel
+    //    unsigned short GetFlags() const
+    //    time_s_ns GetLastMessageTime() const
+*/
+}
+
+void ptpPanel::ShowTime()
+{
+    std::shared_ptr<const PtpV2Clock> pClock = wxPtp::Get().GetMasterClock(m_nDomain);
+    if(pClock)
+    {
+        m_plblTime->SetLabel(wxString(TimeToIsoString(pClock->GetPtpTime())));
+
+        m_plblOffsetAverage->SetLabel(wxString::Format("%llu.%09llu", pClock->GetOffset().first.count(), pClock->GetOffset().second.count()));
+        m_plblDelayAverage->SetLabel(wxString::Format("%llu.%09llu", pClock->GetDelay().first.count(), pClock->GetDelay().second.count()));
+
+        time_s_ns rangeOffset = pClock->GetOffset(PtpV2Clock::MAX) - pClock->GetOffset(PtpV2Clock::MIN);
+        time_s_ns rangeDelay = pClock->GetDelay(PtpV2Clock::MAX) - pClock->GetDelay(PtpV2Clock::MIN);
+
+        m_plblOffsetRange->SetLabel(wxString::Format("%llu.%09llu", rangeOffset.first.count(), rangeOffset.second.count()));
+        m_plblDelayRange->SetLabel(wxString::Format("%llu.%09llu", rangeDelay.first.count(), rangeDelay.second.count()));
+    }
+}
+
+void ptpPanel::ClearClockDetails()
+{
+    m_pblAddress->SetLabel(wxEmptyString);
+    m_plblAccuracy->SetLabel(wxEmptyString);
+    m_plblAnnCount->SetLabel(wxEmptyString);
+    m_plblAnnRate->SetLabel(wxEmptyString);
+    m_plblClass->SetLabel(wxEmptyString);
+    m_plblDelayAverage->SetLabel(wxEmptyString);
+    m_plblDelayCount->SetLabel(wxEmptyString);
+    m_plblDelayMech->SetLabel(wxEmptyString);
+    m_plblDelayMessage->SetLabel(wxEmptyString);
+    m_plblDelayRange->SetLabel(wxEmptyString);
+    m_plblDelayRate->SetLabel(wxEmptyString);
+    m_plblFollowCount->SetLabel(wxEmptyString);
+    m_plblFollowMessage->SetLabel(wxEmptyString);
+    m_plblFollowRate->SetLabel(wxEmptyString);
+    m_plblIdentity->SetLabel(wxEmptyString);
+    m_plblOffsetAverage->SetLabel(wxEmptyString);
+    m_plblOffsetRange->SetLabel(wxEmptyString);
+    m_plblPriority1->SetLabel(wxEmptyString);
+    m_plblPriority2->SetLabel(wxEmptyString);
+    m_plblResponseCount->SetLabel(wxEmptyString);
+    m_plblResponseMessage->SetLabel(wxEmptyString);
+    m_plblResponseRate->SetLabel(wxEmptyString);
+    m_plblSource->SetLabel(wxEmptyString);
+    m_plblState->SetLabel(wxEmptyString);
+    m_plblSteps->SetLabel(wxEmptyString);
+    m_plblSyncCount->SetLabel(wxEmptyString);
+    m_plblSyncMessage->SetLabel(wxEmptyString);
+    m_plblSyncRate->SetLabel(wxEmptyString);
+    m_plblTime->SetLabel(wxEmptyString);
+    m_plblUTC->SetLabel(wxEmptyString);
+    m_plblVariance->SetLabel(wxEmptyString);
+
+}
+
+wxString ptpPanel::ConvertRate(unsigned char nRate)
+{
+    auto itRate = m_mRate.find(nRate);
+    if(itRate != m_mRate.end())
+    {
+        return itRate->second;
+    }
+    else
+    {
+        return "-";
+    }
+}
+
+void ptpPanel::OnTimer(wxTimerEvent& event)
+{
+    if(m_bRunning == false)
+    {
+        m_bRunning = true;
+        wxPtp::Get().AddHandler(this);
+
+        Connect(wxID_ANY, wxEVT_CLOCK_ADDED,(wxObjectEventFunction)&ptpPanel::OnClockAdded);
+        Connect(wxID_ANY, wxEVT_CLOCK_UPDATED,(wxObjectEventFunction)&ptpPanel::OnClockUpdated);
+        Connect(wxID_ANY, wxEVT_CLOCK_REMOVED,(wxObjectEventFunction)&ptpPanel::OnClockRemoved);
+        Connect(wxID_ANY, wxEVT_CLOCK_TIME,(wxObjectEventFunction)&ptpPanel::OnClockTime);
+        Connect(wxID_ANY, wxEVT_CLOCK_MASTER,(wxObjectEventFunction)&ptpPanel::OnClockMaster);
+        Connect(wxID_ANY, wxEVT_CLOCK_SLAVE,(wxObjectEventFunction)&ptpPanel::OnClockSlave);
+
+        wxPtp::Get().RunDomain(Settings::Get().Read("AoIP_Settings", "Interface", "eth0"), m_nDomain);
+
+        for(auto itClock = wxPtp::Get().GetClocksBegin(m_nDomain); itClock != wxPtp::Get().GetClocksEnd(m_nDomain); ++itClock)
+        {
+            AddClock(wxString(itClock->first));
+        }
+    }
+    ShowClockDetails();
+    ShowTime();
+}
+
+void ptpPanel::AddClock(const wxString& sClock)
+{
+    if(m_plstClocks->FindButton(sClock) == wmList::NOT_FOUND)
+    {
+        size_t nButton;
+        if(wxPtp::Get().GetMasterClockId(m_nDomain) == sClock)
+        {
+            nButton = m_plstClocks->AddButton(sClock, wxNullBitmap, 0, wmList::wmENABLED, wxColour(50,128,50));
+            m_plstClocks->SetSelectedButtonColour(nButton, wxColour(50,128,50));
+        }
+        else
+        {
+            nButton = m_plstClocks->AddButton(sClock, wxNullBitmap, 0, wmList::wmENABLED, wxColour(50,50,50));
+            m_plstClocks->SetSelectedButtonColour(nButton, wxColour(50,50,50));
+        }
+
+    }
+}
