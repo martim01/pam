@@ -9,7 +9,7 @@
 			<button>wxSYS_COLOUR_BACKGROUND</button>
 			<button_selected>#FF8000</button_selected>
 			<items />
-			<pos>5,5</pos>
+			<pos>605,5</pos>
 			<size>190,470</size>
 			<bg>wxSYS_COLOUR_BACKGROUND</bg>
 			<style>wmList::STYLE_SELECT</style>
@@ -19,7 +19,7 @@
 			<label>Port Identitiy</label>
 			<border>uiRect::BORDER_FLAT</border>
 			<gradient>wxWEST</gradient>
-			<pos>200,5</pos>
+			<pos>5,5</pos>
 			<size>100,30</size>
 			<fg>#FFFFFF</fg>
 			<bg>#5C7AE0</bg>
@@ -27,7 +27,7 @@
 		<object class="wmLabel" name="ID_M_PLBL2" variable="m_ptitleAddress" member="yes">
 			<label>Address</label>
 			<gradient>wxWEST</gradient>
-			<pos>200,40</pos>
+			<pos>5,40</pos>
 			<size>100,30</size>
 			<fg>#FFFFFF</fg>
 			<bg>#5C7AE0</bg>
@@ -35,7 +35,7 @@
 		<object class="wmLabel" name="ID_M_PLBL3" variable="m_ptitleState" member="yes">
 			<label>State</label>
 			<gradient>wxWEST</gradient>
-			<pos>200,75</pos>
+			<pos>5,75</pos>
 			<size>100,30</size>
 			<fg>#FFFFFF</fg>
 			<bg>#5C7AE0</bg>
@@ -43,7 +43,7 @@
 		<object class="wmLabel" name="ID_M_PLBL12" variable="m_plblIdentity" member="yes">
 			<label></label>
 			<border>uiRect::BORDER_DOWN</border>
-			<pos>300,5</pos>
+			<pos>105,5</pos>
 			<size>180,30</size>
 			<fg>#000000</fg>
 			<bg>#FFFFFF</bg>
@@ -51,7 +51,7 @@
 		<object class="wmLabel" name="ID_M_PLBL13" variable="m_pblAddress" member="yes">
 			<label></label>
 			<border>uiRect::BORDER_DOWN</border>
-			<pos>300,40</pos>
+			<pos>105,40</pos>
 			<size>180,30</size>
 			<fg>#000000</fg>
 			<bg>#FFFFFF</bg>
@@ -59,13 +59,13 @@
 		<object class="wmLabel" name="ID_M_PLBL14" variable="m_plblState" member="yes">
 			<label></label>
 			<border>uiRect::BORDER_DOWN</border>
-			<pos>300,75</pos>
+			<pos>105,75</pos>
 			<size>180,30</size>
 			<fg>#000000</fg>
 			<bg>#FFFFFF</bg>
 		</object>
 		<object class="wxPanel" name="ID_PANEL1" variable="m_ppnlAnnouncements" member="yes">
-			<pos>200,110</pos>
+			<pos>5,110</pos>
 			<size>280,360</size>
 			<bg>#000000</bg>
 			<object class="wmLabel" name="ID_M_PLBL30" variable="m_ptitleAnnouncements" member="yes">
@@ -245,7 +245,7 @@
 			</object>
 		</object>
 		<object class="wmSwitcherPanel" name="ID_M_PSWP1" variable="m_pswp" member="yes">
-			<pos>490,5</pos>
+			<pos>295,5</pos>
 			<size>280,245</size>
 			<bg>#000000</bg>
 			<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
@@ -519,7 +519,7 @@
 			</object>
 		</object>
 		<object class="wxPanel" name="ID_PANEL8" variable="m_ppnlLocal" member="yes">
-			<pos>490,250</pos>
+			<pos>295,250</pos>
 			<size>280,205</size>
 			<bg>#000000</bg>
 			<object class="wmLabel" name="ID_M_PLBL54" variable="m_ptitlePam" member="yes">
