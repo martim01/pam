@@ -804,7 +804,7 @@ void ptpPanel::OnTimer(wxTimerEvent& event)
         }
     }
     ShowClockDetails();
-    ShowTime();
+    //ShowTime();
 }
 
 void ptpPanel::AddClock(wxString sClock)
