@@ -101,6 +101,9 @@ const wxColour ptpPanel::CLR_SLAVE            = wxColour(50,50,50);
 const wxColour ptpPanel::CLR_SLAVE_SELECTED   = wxColour(150,150,150);
 
 
+using namespace ptpmonkey;
+
+
 wxIMPLEMENT_DYNAMIC_CLASS(ptpPanel, pmPanel)
 
 BEGIN_EVENT_TABLE(ptpPanel,pmPanel)

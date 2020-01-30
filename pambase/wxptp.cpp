@@ -18,6 +18,7 @@ wxDEFINE_EVENT(wxEVT_CLOCK_MASTER,wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CLOCK_SLAVE,wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CLOCK_REMOVED,wxCommandEvent);
 
+using namespace ptpmonkey;
 
 void wxPtpEventHandler::AddHandler(wxEvtHandler* pHandler)
 {
