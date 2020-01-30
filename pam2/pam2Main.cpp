@@ -816,7 +816,7 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
             }
         }
     }
-    else if(event.GetSection() == wxT("AoIP") && event.GetKey() == wxT("Epoch"))
+    else if(event.GetSection() == wxT("AoIP_Settings") && event.GetKey() == wxT("Epoch"))
     {
         #ifdef __NMOS__
         if(m_pFlow && m_pSender)
@@ -1169,7 +1169,7 @@ void pam2Dialog::SetupNmos()
     }
 
 
-    m_pFlow->SetMediaClkOffset(Settings::Get().Read(wxT("AoIP"), wxT("Epoch"), 0));    //@todo get this from Live555
+    m_pFlow->SetMediaClkOffset(Settings::Get().Read(wxT("AoIP_Settings"), wxT("Epoch"), 0));    //@todo get this from Live555
 
     m_pSender = make_shared<Sender>(chHost, "Live555 sender", m_pFlow->GetId(), Sender::RTP_MCAST, pDevice->GetId(), "eth0");
     m_pSender->SetDestinationDetails(std::string(Settings::Get().Read(wxT("Server"), wxT("DestinationIp"),wxEmptyString).mbc_str()), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));

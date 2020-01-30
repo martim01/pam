@@ -154,6 +154,34 @@
 					<Add directory="$(#nmos.lib)" />
 				</Linker>
 			</Target>
+			<Target title="Linux Release+NMOS">
+				<Option output="../bin/pam2" prefix_auto="1" extension_auto="1" />
+				<Option object_output=".objs/nmos" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="`wx-config --cxxflags`" />
+					<Add option="-fpermissive" />
+					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-D__WXGNU__" />
+					<Add option="-D__NMOS__" />
+					<Add directory="$(#nmos.include)" />
+					<Add directory="$(#json.include)" />
+				</Compiler>
+				<Linker>
+					<Add option="`wx-config --libs`" />
+					<Add option="`pkg-config --libs avahi-client`" />
+					<Add library="portaudio" />
+					<Add library="pambase" />
+					<Add library="curl" />
+					<Add library="nmos" />
+					<Add directory="$(#nmos.lib)" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />
+				</ExtraCommands>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
