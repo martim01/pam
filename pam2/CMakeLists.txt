@@ -46,7 +46,30 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 		message(STATUS "Found portaudio")
 		target_link_libraries(pam2 PkgConfig::portaudio)
 	endif()	
+endif()
+
+option(optionNMOS "Use nmos library" OFF)
+message (${PROJECT_SOURCE_DIR})
+if(optionNMOS)
+	find_path(NMOS_LIB_DIR NAMES "libnmos.so" PATHS ${PROJECT_SOURCE_DIR}/../external/nmos)
 	
+	if((NOT NMOS_LIB_DIR) OR (NOT EXISTS ${NMOS_LIB_DIR}))
+    # we couldn't find the header files for nmos or they don't exist
+    message("Unable to find nmos")
+    
+
+    # we have a submodule setup for nmos, assume it is under external/nmos
+    # now we need to clone this submodule
+    execute_process(COMMAND git submodule update --init -- ../external/nmos
+                    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+    
+	add_subdirectory(${PROJECT_SOURCE_DIR}/../external/nmos ${CMAKE_CURRENT_BINARY_DIR}/nmos)
+    else()
+		message("Found nmos")
+	endif()
+	target_compile_definitions(pam2 PUBLIC __NMOS__)
+	target_link_libraries(pam2 nmos)
 endif()
 
 
