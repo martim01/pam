@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlFlags">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmLabel" name="ID_M_PLBL35" variable="m_plblFlagsProfile1" member="yes">
+			<label>Profile 1</label>
+			<gradient>wxWEST</gradient>
+			<pos>0,0</pos>
+			<size>69,20</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5C7AE0</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL39" variable="m_plblFlagsProfile2" member="yes">
+			<label>Profile 2</label>
+			<gradient>wxWEST</gradient>
+			<pos>70,0</pos>
+			<size>69,20</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5C7AE0</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL45" variable="m_plblFlagsUnicast" member="yes">
+			<label>Unicast</label>
+			<gradient>wxWEST</gradient>
+			<pos>140,0</pos>
+			<size>69,20</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5C7AE0</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL53" variable="m_plblFlags2Step" member="yes">
+			<label>2-Step</label>
+			<gradient>wxWEST</gradient>
+			<pos>210,0</pos>
+			<size>69,20</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5C7AE0</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL65" variable="m_plblFlagsAlternate" member="yes">
+			<label>Alternate</label>
+			<gradient>wxWEST</gradient>
+			<pos>0,22</pos>
+			<size>69,20</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5C7AE0</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL66" variable="m_plblFlagsFreq" member="yes">
+			<label>Freq Trace</label>
+			<gradient>wxWEST</gradient>
+			<pos>70,22</pos>
+			<size>69,20</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5C7AE0</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL67" variable="m_plblFlagsTime" member="yes">
+			<label>Time Trace</label>
+			<gradient>wxWEST</gradient>
+			<pos>140,22</pos>
+			<size>69,20</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5C7AE0</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL68" variable="m_plblFlagsScale" member="yes">
+			<label>TimeScale</label>
+			<gradient>wxWEST</gradient>
+			<pos>210,22</pos>
+			<size>69,20</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5C7AE0</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL69" variable="m_plblFlagsUTC" member="yes">
+			<label>UTC Rble</label>
+			<gradient>wxWEST</gradient>
+			<pos>0,44</pos>
+			<size>69,20</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5C7AE0</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL70" variable="m_plblFlags59" member="yes">
+			<label>LI 59</label>
+			<gradient>wxWEST</gradient>
+			<pos>70,44</pos>
+			<size>69,20</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5C7AE0</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL71" variable="m_plblFlags61" member="yes">
+			<label>LI 61</label>
+			<gradient>wxWEST</gradient>
+			<pos>140,44</pos>
+			<size>69,20</size>
+			<fg>#FFFFFF</fg>
+			<bg>#5C7AE0</bg>
+		</object>
+	</object>
+</wxsmith>
