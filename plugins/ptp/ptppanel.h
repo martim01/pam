@@ -12,6 +12,8 @@
 #include <wx/timer.h>
 #include "pmpanel.h"
 #include "macdb.h"
+#include "pnlFlags.h"
+
 class ptpBuilder;
 class timedbuffer;
 class session;
@@ -38,7 +40,11 @@ class ptpPanel: public pmPanel
 		virtual ~ptpPanel();
 
 		//(*Declarations(ptpPanel)
-		wmLabel* m_pLbl1;
+		pnlFlags* m_ppnlAnnounceFlags;
+		pnlFlags* m_ppnlFollowFlags;
+		pnlFlags* m_ppnlRequestFlags;
+		pnlFlags* m_ppnlResponseFlags;
+		pnlFlags* m_ppnlSyncFlags;
 		wmLabel* m_pblAddress;
 		wmLabel* m_plblAccuracy;
 		wmLabel* m_plblAnnCount;
@@ -47,11 +53,9 @@ class ptpPanel: public pmPanel
 		wmLabel* m_plblDelayAverage;
 		wmLabel* m_plblDelayCount;
 		wmLabel* m_plblDelayMech;
-		wmLabel* m_plblDelayMessage;
 		wmLabel* m_plblDelayRange;
 		wmLabel* m_plblDelayRate;
 		wmLabel* m_plblFollowCount;
-		wmLabel* m_plblFollowMessage;
 		wmLabel* m_plblFollowRate;
 		wmLabel* m_plblIdentity;
 		wmLabel* m_plblOffsetAverage;
@@ -59,13 +63,11 @@ class ptpPanel: public pmPanel
 		wmLabel* m_plblPriority1;
 		wmLabel* m_plblPriority2;
 		wmLabel* m_plblResponseCount;
-		wmLabel* m_plblResponseMessage;
 		wmLabel* m_plblResponseRate;
 		wmLabel* m_plblSource;
 		wmLabel* m_plblState;
 		wmLabel* m_plblSteps;
 		wmLabel* m_plblSyncCount;
-		wmLabel* m_plblSyncMessage;
 		wmLabel* m_plblSyncRate;
 		wmLabel* m_plblTime;
 		wmLabel* m_plblUTC;
@@ -82,6 +84,7 @@ class ptpPanel: public pmPanel
 		wmLabel* m_ptitleDelayMech;
 		wmLabel* m_ptitleDelayRange;
 		wmLabel* m_ptitleDelayRate;
+		wmLabel* m_ptitleDelayResponses;
 		wmLabel* m_ptitleFollowCount;
 		wmLabel* m_ptitleFollowRate;
 		wmLabel* m_ptitleFollowUp;
@@ -160,20 +163,21 @@ class ptpPanel: public pmPanel
 		static const long ID_M_PLBL21;
 		static const long ID_M_PLBL10;
 		static const long ID_M_PLBL22;
+		static const long ID_PANEL9;
 		static const long ID_PANEL1;
 		static const long ID_M_PLBL23;
 		static const long ID_M_PLBL31;
 		static const long ID_M_PLBL32;
 		static const long ID_M_PLBL33;
 		static const long ID_M_PLBL34;
-		static const long ID_M_PLBL35;
+		static const long ID_PANEL10;
 		static const long ID_PANEL2;
 		static const long ID_M_PLBL28;
 		static const long ID_M_PLBL29;
 		static const long ID_M_PLBL36;
 		static const long ID_M_PLBL37;
 		static const long ID_M_PLBL38;
-		static const long ID_M_PLBL39;
+		static const long ID_PANEL11;
 		static const long ID_PANEL3;
 		static const long ID_PANEL5;
 		static const long ID_M_PLBL40;
@@ -181,16 +185,16 @@ class ptpPanel: public pmPanel
 		static const long ID_M_PLBL42;
 		static const long ID_M_PLBL43;
 		static const long ID_M_PLBL44;
-		static const long ID_M_PLBL45;
 		static const long ID_M_PLBL46;
 		static const long ID_M_PLBL47;
+		static const long ID_PANEL13;
 		static const long ID_PANEL4;
 		static const long ID_M_PLBL48;
 		static const long ID_M_PLBL49;
 		static const long ID_M_PLBL50;
 		static const long ID_M_PLBL51;
 		static const long ID_M_PLBL52;
-		static const long ID_M_PLBL53;
+		static const long ID_PANEL12;
 		static const long ID_PANEL7;
 		static const long ID_PANEL6;
 		static const long ID_M_PSWP1;
@@ -227,7 +231,7 @@ class ptpPanel: public pmPanel
         void OnClockTime(wxCommandEvent& event);
         void OnClockMaster(wxCommandEvent& event);
         void OnClockSlave(wxCommandEvent& event);
-
+        void OnClockMessage(wxCommandEvent& event);
         void AddClock(wxString sClock);
         wxString ConvertRate(unsigned char nRate);
 

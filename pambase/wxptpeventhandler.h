@@ -13,6 +13,12 @@ class wxPtpEventHandler : public ptpmonkey::PtpEventHandler
         void ClockBecomeMaster(std::shared_ptr<ptpmonkey::PtpV2Clock> pClock) override;
         void ClockBecomeSlave(std::shared_ptr<ptpmonkey::PtpV2Clock> pClock) override;
 
+        void AnnounceSent(std::shared_ptr<PtpV2Clock> pClock) override;
+        void SyncSent(std::shared_ptr<PtpV2Clock> pClock) override;
+        void FollowUpSent(std::shared_ptr<PtpV2Clock> pClock) override;
+        void DelayRequestSent(std::shared_ptr<PtpV2Clock> pClock) override;
+        void DelayResponseSent(std::shared_ptr<PtpV2Clock> pClock) override;
+
     protected:
         void NotifyHandlers(wxEventType type, const wxString& sClockId);
         std::list<wxEvtHandler*> m_lstHandlers;

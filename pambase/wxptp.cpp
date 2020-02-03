@@ -17,6 +17,11 @@ wxDEFINE_EVENT(wxEVT_CLOCK_TIME,wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CLOCK_MASTER,wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CLOCK_SLAVE,wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CLOCK_REMOVED,wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_CLOCK_MSG_ANNOUNCE,wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_CLOCK_MSG_SYNC,wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_CLOCK_MSG_FOLLOWUP,wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_CLOCK_MSG_DELAY_REQUEST,wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_CLOCK_MSG_DELAY_RESPONSE,wxCommandEvent);
 
 using namespace ptpmonkey;
 
@@ -67,6 +72,31 @@ void wxPtpEventHandler::ClockRemoved(std::shared_ptr<PtpV2Clock> pClock)
 void wxPtpEventHandler::ClockTimeCalculated(std::shared_ptr<PtpV2Clock> pClock)
 {
     NotifyHandlers(wxEVT_CLOCK_TIME, wxString::FromUTF8(pClock->GetId().c_str()));
+}
+
+void wxPtpEventHandler::AnnounceSent(std::shared_ptr<PtpV2Clock> pClock)
+{
+    NotifyHandlers(wxEVT_CLOCK_MSG_ANNOUNCE, wxString::FromUTF8(pClock->GetId().c_str()));
+}
+
+void wxPtpEventHandler::SyncSent(std::shared_ptr<PtpV2Clock> pClock)
+{
+    NotifyHandlers(wxEVT_CLOCK_MSG_SYNC, wxString::FromUTF8(pClock->GetId().c_str()));
+}
+
+void wxPtpEventHandler::FollowUpSent(std::shared_ptr<PtpV2Clock> pClock)
+{
+    NotifyHandlers(wxEVT_CLOCK_MSG_FOLLOWUP, wxString::FromUTF8(pClock->GetId().c_str()));
+}
+
+void wxPtpEventHandler::DelayRequestSent(std::shared_ptr<PtpV2Clock> pClock)
+{
+    NotifyHandlers(wxEVT_CLOCK_MSG_DELAY_REQUEST, wxString::FromUTF8(pClock->GetId().c_str()));
+}
+
+void wxPtpEventHandler::DelayResponseSent(std::shared_ptr<PtpV2Clock> pClock)
+{
+    NotifyHandlers(wxEVT_CLOCK_MSG_DELAY_RESPONSE, wxString::FromUTF8(pClock->GetId().c_str()));
 }
 
 

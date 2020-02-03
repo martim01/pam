@@ -128,12 +128,15 @@
 		</Linker>
 		<Unit filename="macdb.cpp" />
 		<Unit filename="macdb.h" />
+		<Unit filename="pnlFlags.cpp" />
+		<Unit filename="pnlFlags.h" />
 		<Unit filename="ptpbuilder.cpp" />
 		<Unit filename="ptpbuilder.h" />
 		<Unit filename="ptppanel.cpp" />
 		<Unit filename="ptppanel.h" />
 		<Unit filename="ptpregister.cpp" />
 		<Unit filename="ptpregister.h" />
+		<Unit filename="wxsmith/pnlFlags.wxs" />
 		<Extensions>
 			<code_completion />
 			<envvars />
@@ -147,6 +150,7 @@
 			<wxsmith version="1">
 				<resources>
 					<wxPanel wxs="wxsmith/ptppanel.wxs" src="ptppanel.cpp" hdr="ptppanel.h" fwddecl="0" i18n="1" name="ptpPanel" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlFlags.wxs" src="pnlFlags.cpp" hdr="pnlFlags.h" fwddecl="0" i18n="1" name="pnlFlags" language="CPP" />
 				</resources>
 			</wxsmith>
 		</Extensions>
