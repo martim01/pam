@@ -9,6 +9,7 @@
 #include <iomanip>
 #include "ptpclock.h"
 #include "wxptpeventhandler.h"
+#include "ptpeventloghandler.h"
 
 wxDEFINE_EVENT(wxEVT_CLOCK_ADDED,wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CLOCK_UPDATED,wxCommandEvent);
@@ -118,8 +119,9 @@ void wxPtp::RunDomain(const wxString& sInterface, unsigned char nDomain)
     auto itMonkey = m_mDomain.find(nDomain);
     if(itMonkey == m_mDomain.end())
     {
-        itMonkey = m_mDomain.insert(std::make_pair(nDomain, std::make_shared<PtpMonkey>(IpInterface(std::string(sInterface.mb_str())), nDomain))).first;
+        itMonkey = m_mDomain.insert(std::make_pair(nDomain, std::make_shared<PtpMonkey>(IpInterface(std::string(sInterface.mb_str())), nDomain, 10))).first;
         itMonkey->second->AddEventHandler(m_pNotifier);
+        //itMonkey->second->AddEventHandler(std::make_shared<ptpmonkey::PtpEventLogHandler>());
         if(itMonkey->second->Run())
         {
             wmLog::Get()->Log(wxString::Format(wxT("PTPMonkey listening on interface %s for domain %u"), sInterface.c_str(), nDomain));
@@ -160,6 +162,21 @@ std::shared_ptr<const PtpV2Clock> wxPtp::GetPtpClock(unsigned char nDomain, cons
     return nullptr;
 }
 
+bool wxPtp::IsSyncedToMaster(unsigned char nDomain) const
+{
+    auto itMonkey = m_mDomain.find(nDomain);
+    return (itMonkey != m_mDomain.end() && itMonkey->second->IsSyncedToMaster());
+}
+
+void wxPtp::ResyncToMaster(unsigned char nDomain)
+{
+    auto itMonkey = m_mDomain.find(nDomain);
+    if(itMonkey != m_mDomain.end())
+    {
+        itMonkey->second->ResyncToMaster();
+    }
+}
+
 wxString wxPtp::GetMasterClockId(unsigned char nDomain)
 {
     auto itMonkey = m_mDomain.find(nDomain);
@@ -180,6 +197,15 @@ std::shared_ptr<const PtpV2Clock> wxPtp::GetMasterClock(unsigned char nDomain)
     return nullptr;
 }
 
+std::shared_ptr<const PtpV2Clock> wxPtp::GetLocalClock(unsigned char nDomain)
+{
+    auto itMonkey = m_mDomain.find(nDomain);
+    if(itMonkey != m_mDomain.end())
+    {
+        return itMonkey->second->GetLocalClock();
+    }
+    return nullptr;
+}
 
 timeval wxPtp::GetPtpTime(unsigned char nDomain)
 {
@@ -234,6 +260,26 @@ timeval wxPtp::GetPtpOffset(unsigned char nDomain)
     {
 
         time_s_ns ptp = itMonkey->second->GetPtpOffset();
+        tv.tv_sec = ptp.first.count();
+        tv.tv_usec = ptp.second.count()/1000;
+        return tv;
+    }
+    else
+    {
+        tv.tv_sec = 0;
+        tv.tv_usec = 0;
+        return tv;
+    }
+}
+
+timeval wxPtp::GetLastPtpOffset(unsigned char nDomain)
+{
+    timeval tv;
+    auto itMonkey = m_mDomain.find(nDomain);
+    if(itMonkey != m_mDomain.end())
+    {
+
+        time_s_ns ptp = itMonkey->second->GetLastPtpOffset();
         tv.tv_sec = ptp.first.count();
         tv.tv_usec = ptp.second.count()/1000;
         return tv;

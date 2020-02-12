@@ -813,6 +813,12 @@ void pnlAoIPInfo::ShowLatency(const timedbuffer* pTimedBuffer)
 
     m_plblLatency->SetLabel(wxString::Format(wxT("%.03f s"), dPlayback/1000000.0));//+(dPresentation-dTransmission)));
     m_plblLatencyNetwork->SetLabel(wxString::Format(wxT("%.03f s"), (dPresentation-dTransmission)));
+
+    timeval tv(wxPtp::Get().GetLastPtpOffset(0));
+    timeval tvSet(wxPtp::Get().GetPtpOffset(0));
+    long long int nLast = static_cast<long long int>(tv.tv_sec)*1e6 + static_cast<long long int>(tv.tv_usec);
+    long long int nSet = static_cast<long long int>(tvSet.tv_sec)*1e6 + static_cast<long long int>(tvSet.tv_usec);
+    m_plblEpoch->SetLabel(wxString::Format("%lld us", nLast-nSet));
 }
 
 
@@ -875,7 +881,7 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
         }
         m_plblSubSyncDomain->SetLabel(wxString::Format(wxT("%u"), aSession.GetCurrentSubsession()->refClock.nDomain));
 
-        SetTimestamp(aSession.GetCurrentSubsession()->tvEpoch, m_plblEpoch, true);
+
 
     }
     else
@@ -939,8 +945,5 @@ void pnlAoIPInfo::OnPtpEvent(wxCommandEvent& event)
     {
         m_plblSubSyncId->SetBackgroundColour(wxColour(255,100,100));
     }
-    if(m_pSession)
-    {
-        SetTimestamp(m_pSession->GetCurrentSubsession()->tvEpoch, m_plblEpoch, true);
-    }
+
 }

@@ -13,10 +13,16 @@
 #include "pmpanel.h"
 #include "macdb.h"
 #include "pnlFlags.h"
+#include <memory>
 
 class ptpBuilder;
 class timedbuffer;
 class session;
+
+namespace ptpmonkey
+{
+    class PtpV2Clock;
+};
 
 
 class ptpPanel: public pmPanel
@@ -239,6 +245,8 @@ class ptpPanel: public pmPanel
 
         unsigned char m_nDomain;
 		wxString m_sSelectedClock;
+		std::shared_ptr<const ptpmonkey::PtpV2Clock> m_pClock;
+		std::shared_ptr<const ptpmonkey::PtpV2Clock> m_pLocalClock;
 
         std::map<unsigned char, wxString> m_mAccuracy;
         std::map<unsigned char, wxString> m_mTimeSource;

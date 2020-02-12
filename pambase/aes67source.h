@@ -48,7 +48,7 @@ private:
 
 
     pairTime_t m_tvLastEpoch;
-
+    bool m_bEpochWorkedOut;
 
     unsigned int m_nTimestampFrequency;
     unsigned int m_nSyncTimestamp;

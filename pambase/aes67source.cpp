@@ -29,9 +29,13 @@ Aes67Source
 		  unsigned offset, Boolean doNormalMBitRule,
 		  unsigned int nSync)
   : SimpleRTPSource(env, RTPgs, rtpPayloadFormat, rtpTimestampFrequency, mimeTypeString,offset, doNormalMBitRule),
+  m_bEpochWorkedOut(false),
   m_nTimestampFrequency(rtpTimestampFrequency),
   m_nSyncTimestamp(nSync)
   {
+      #ifdef PTPMONKEY
+      wxPtp::Get().ResyncToMaster(0);
+      #endif // PTPMONKEY
       WorkoutLastEpoch();
   }
 
@@ -42,11 +46,22 @@ void Aes67Source::WorkoutLastEpoch()
     //dTime *= 1000000.0;
 
     //get the current time
-    #ifdef PTPMONKEY
-    timeval tvNow = wxPtp::Get().GetPtpTime(0); //need to set the domain
-    #else
     timeval tvNow;
+    #ifdef PTPMONKEY
+
+    if(wxPtp::Get().IsSyncedToMaster(0))
+    {
+        tvNow = wxPtp::Get().GetPtpTime(0); //need to set the domain
+        m_bEpochWorkedOut = true;
+    }
+    else
+    {
+
+        gettimeofday(&tvNow, nullptr);
+    }
+    #else
     gettimeofday(&tvNow, nullptr);
+    m_bEpochWorkedOut = true;
     #endif // PTPMONKEY
 
     double dNow = static_cast<double>(tvNow.tv_sec);//*1000000.0;
@@ -74,6 +89,10 @@ pairTime_t Aes67Source::GetTransmissionTime()
 
     double dSeconds = static_cast<double>(fCurPacketRTPTimestamp)/static_cast<double>(m_nTimestampFrequency);
 
+    if(!m_bEpochWorkedOut)
+    {
+        WorkoutLastEpoch();
+    }
     pairTime_t tvTransmision;
     tvTransmision.first = m_tvLastEpoch.first;
     tvTransmision.second = m_tvLastEpoch.second;

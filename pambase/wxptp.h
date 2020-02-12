@@ -6,6 +6,7 @@
 #include <list>
 #include "dlldefine.h"
 
+
 #ifdef PTPMONKEY
 namespace ptpmonkey
 {
@@ -26,8 +27,12 @@ class PAMBASE_IMPEXPORT wxPtp : public wxEvtHandler
         wxString GetMasterClockId(unsigned char nDomain);
         timeval GetPtpTime(unsigned char nDomain);
         timeval GetPtpOffset(unsigned char nDomain);
+        timeval GetLastPtpOffset(unsigned char nDomain);
+        bool IsSyncedToMaster(unsigned char nDomain) const;
+        void ResyncToMaster(unsigned char nDomain);
         std::shared_ptr<const ptpmonkey::PtpV2Clock> GetPtpClock(unsigned char nDomain, const wxString& sClockId);
         std::shared_ptr<const ptpmonkey::PtpV2Clock> GetMasterClock(unsigned char nDomain);
+        std::shared_ptr<const ptpmonkey::PtpV2Clock> GetLocalClock(unsigned char nDomain);
         std::map<std::string, std::shared_ptr<ptpmonkey::PtpV2Clock> >::const_iterator GetClocksBegin(unsigned char nDomain) const;
         std::map<std::string, std::shared_ptr<ptpmonkey::PtpV2Clock> >::const_iterator GetClocksEnd(unsigned char nDomain) const;
 
