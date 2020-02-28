@@ -171,6 +171,7 @@
 			<Add option="-D_core_" />
 			<Add option="-D_MSL_STDINT_H" />
 			<Add option="-DASIO_STANDALONE" />
+			<Add option="-DNO_OPENSSL" />
 			<Add directory="../external/live/BasicUsageEnvironment/include" />
 			<Add directory="../external/live/UsageEnvironment/include" />
 			<Add directory="../external/live/groupsock/include" />
