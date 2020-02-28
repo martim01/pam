@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2018 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2020 Live Networks, Inc.  All rights reserved.
 // RTP Sources
 // Implementation
 
@@ -54,7 +54,7 @@ RTPSource::RTPSource(UsageEnvironment& env, Groupsock* RTPgs,
   : FramedSource(env),
     fRTPInterface(this, RTPgs),
     fCurPacketHasBeenSynchronizedUsingRTCP(False), fLastReceivedSSRC(0),
-    fRTCPInstanceForMultiplexedRTCPPackets(NULL),
+    fRTCPInstanceForMultiplexedRTCPPackets(NULL), fCrypto(NULL),
     fRTPPayloadFormat(rtpPayloadFormat), fTimestampFrequency(rtpTimestampFrequency),
     fSSRC(our_random32()), fEnableRTCPReports(True) {
   fReceptionStatsDB = new RTPReceptionStatsDB();
@@ -117,7 +117,6 @@ void RTPReceptionStatsDB
   if (stats->numPacketsReceivedSinceLastReset() == 0) {
     ++fNumActiveSourcesSinceLastReset;
   }
-
 
   stats->noteIncomingPacket(seqNum, rtpTimestamp, timestampFrequency,
 			    useForJitterCalculation,
@@ -213,7 +212,7 @@ void RTPReceptionStats::init(u_int32_t SSRC) {
   fLastPacketReceptionTime.tv_sec = fLastPacketReceptionTime.tv_usec = 0;
   fMinInterPacketGapUS = 0x7FFFFFFF;
   fMaxInterPacketGapUS = 0;
-  fCurrentInterPacketGapUs = 0;
+  fCurrentInterPacketGapUS = 0;
   fTotalInterPacketGaps.tv_sec = fTotalInterPacketGaps.tv_usec = 0;
   fHasBeenSynchronized = False;
   fSyncTime.tv_sec = fSyncTime.tv_usec = 0;
@@ -246,7 +245,6 @@ void RTPReceptionStats
   if (fTotBytesReceived_lo < prevTotBytesReceived_lo) { // wrap-around
     ++fTotBytesReceived_hi;
   }
-
 
   // Check whether the new sequence number is the highest yet seen:
   unsigned oldSeqNum = (fHighestExtSeqNumReceived&0xFFFF);
@@ -284,16 +282,16 @@ void RTPReceptionStats
   gettimeofday(&timeNow, NULL);
   if (fLastPacketReceptionTime.tv_sec != 0
       || fLastPacketReceptionTime.tv_usec != 0) {
-    fCurrentInterPacketGapUs
+    fCurrentInterPacketGapUS
       = (timeNow.tv_sec - fLastPacketReceptionTime.tv_sec)*MILLION
       + timeNow.tv_usec - fLastPacketReceptionTime.tv_usec;
-    if (fCurrentInterPacketGapUs > fMaxInterPacketGapUS) {
-      fMaxInterPacketGapUS = fCurrentInterPacketGapUs;
+    if (fCurrentInterPacketGapUS > fMaxInterPacketGapUS) {
+      fMaxInterPacketGapUS = fCurrentInterPacketGapUS;
     }
-    if (fCurrentInterPacketGapUs < fMinInterPacketGapUS) {
-      fMinInterPacketGapUS = fCurrentInterPacketGapUs;
+    if (fCurrentInterPacketGapUS < fMinInterPacketGapUS) {
+      fMinInterPacketGapUS = fCurrentInterPacketGapUS;
     }
-    fTotalInterPacketGaps.tv_usec += fCurrentInterPacketGapUs;
+    fTotalInterPacketGaps.tv_usec += fCurrentInterPacketGapUS;
     if (fTotalInterPacketGaps.tv_usec >= MILLION) {
       ++fTotalInterPacketGaps.tv_sec;
       fTotalInterPacketGaps.tv_usec -= MILLION;
@@ -340,23 +338,20 @@ void RTPReceptionStats
   // Add this to the 'sync time' to get our result:
   unsigned const million = 1000000;
   unsigned seconds, uSeconds;
-  if (timeDiff >= 0.0)
-    {
+  if (timeDiff >= 0.0) {
     seconds = fSyncTime.tv_sec + (unsigned)(timeDiff);
-    uSeconds = fSyncTime.tv_usec + (unsigned)((timeDiff - (unsigned)timeDiff)*million);
-    if (uSeconds >= million)
-    {
+    uSeconds = fSyncTime.tv_usec
+      + (unsigned)((timeDiff - (unsigned)timeDiff)*million);
+    if (uSeconds >= million) {
       uSeconds -= million;
       ++seconds;
     }
-  }
-  else
-    {
+  } else {
     timeDiff = -timeDiff;
     seconds = fSyncTime.tv_sec - (unsigned)(timeDiff);
-    uSeconds = fSyncTime.tv_usec - (unsigned)((timeDiff - (unsigned)timeDiff)*million);
-    if ((int)uSeconds < 0)
-    {
+    uSeconds = fSyncTime.tv_usec
+      - (unsigned)((timeDiff - (unsigned)timeDiff)*million);
+    if ((int)uSeconds < 0) {
       uSeconds += million;
       --seconds;
     }

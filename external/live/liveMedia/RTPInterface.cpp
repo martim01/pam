@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2018 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2020 Live Networks, Inc.  All rights reserved.
 // An abstraction of a network interface used for RTP (or RTCP).
 // (This allows the RTP-over-TCP hack (RFC 2326, section 10.12) to
 // be implemented transparently.)
@@ -28,6 +28,18 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 // Helper routines and data structures, used to implement
 // sending/receiving RTP/RTCP over a TCP socket:
+
+class tcpStreamRecord {
+  public:
+  tcpStreamRecord(int streamSocketNum, unsigned char streamChannelId,
+                  tcpStreamRecord* next);
+  virtual ~tcpStreamRecord();
+
+public:
+  tcpStreamRecord* fNext;
+  int fStreamSocketNum;
+  unsigned char fStreamChannelId;
+};
 
 // Reading RTP-over-TCP is implemented using two levels of hash tables.
 // The top-level hash table maps TCP socket numbers to a
@@ -175,7 +187,7 @@ void RTPInterface::removeStreamSocket(int sockNum,
   // Remove - from our list of 'TCP streams' - the record of the (sockNum,streamChannelId) pair.
   // (However "streamChannelId" == 0xFF is a special case, meaning remove all
   //  (sockNum,*) pairs.)
-
+  
   while (1) {
     tcpStreamRecord** streamsPtr = &fTCPStreams;
 
@@ -476,14 +488,11 @@ void SocketDescriptor
 
 void SocketDescriptor::tcpReadHandler(SocketDescriptor* socketDescriptor, int mask) {
   // Call the read handler until it returns false, with a limit to avoid starving other sockets
-
   unsigned count = 2000;
   socketDescriptor->fAreInReadHandlerLoop = True;
   while (!socketDescriptor->fDeleteMyselfNext && socketDescriptor->tcpReadHandler1(mask) && --count > 0) {}
   socketDescriptor->fAreInReadHandlerLoop = False;
   if (socketDescriptor->fDeleteMyselfNext) delete socketDescriptor;
-
-
 }
 
 Boolean SocketDescriptor::tcpReadHandler1(int mask) {
@@ -494,7 +503,7 @@ Boolean SocketDescriptor::tcpReadHandler1(int mask) {
   //   a 2-byte packet size (in network byte order)
   //   the packet data.
   // However, because the socket is being read asynchronously, this data might arrive in pieces.
-
+  
   u_int8_t c;
   struct sockaddr_in fromAddress;
   if (fTCPReadingState != AWAITING_PACKET_DATA) {
@@ -551,7 +560,7 @@ Boolean SocketDescriptor::tcpReadHandler1(int mask) {
     case AWAITING_SIZE2: {
       // The byte that we read is the second (low) byte of the 16-bit RTP or RTCP packet 'size'.
       unsigned short size = (fSizeByte1<<8)|c;
-
+      
       // Record the information about the packet data that will be read next:
       RTPInterface* rtpInterface = lookupRTPInterface(fStreamChannelId);
       if (rtpInterface != NULL) {

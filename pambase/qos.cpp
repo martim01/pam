@@ -108,7 +108,7 @@ void qosMeasurementRecord::printQOSData()
         RTPReceptionStats* stats = statsIter.next(True);
         if (stats != NULL)
         {
-            pData->dInter_packet_gap_ms_Now = stats->currentInterPacketGapUS()/1000.0;
+         //   pData->dInter_packet_gap_ms_Now = stats->currentInterPacketGapUS()/1000.0;
             pData->dInter_packet_gap_ms_min = stats->minInterPacketGapUS()/1000.0;
             struct timeval totalGaps = stats->totalInterPacketGaps();
             double totalGapsMS = totalGaps.tv_sec*1000.0 + totalGaps.tv_usec/1000.0;

@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "mTunnel" multicast access service
-// Copyright (c) 1996-2018 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2020 Live Networks, Inc.  All rights reserved.
 // Helper routines to implement 'group sockets'
 // Implementation
 
@@ -29,6 +29,10 @@ extern "C" int initializeWinsockIfNecessary();
 #include <sys/time.h>
 #if !defined(_WIN32)
 #include <netinet/tcp.h>
+#ifdef __ANDROID_NDK__
+#include <android/ndk-version.h>
+#define ANDROID_OLD_NDK __NDK_MAJOR__ < 17
+#endif
 #endif
 #include <fcntl.h>
 #define initializeWinsockIfNecessary() 1
@@ -236,15 +240,19 @@ Boolean setSocketKeepAlive(int sock) {
   }
 #endif
 
+#ifdef TCP_KEEPCNT
   int const keepalive_count = 5;
   if (setsockopt(sock, IPPROTO_TCP, TCP_KEEPCNT, (void*)&keepalive_count, sizeof keepalive_count) < 0) {
     return False;
   }
+#endif
 
+#ifdef TCP_KEEPINTVL
   int const keepalive_interval = 20;
   if (setsockopt(sock, IPPROTO_TCP, TCP_KEEPINTVL, (void*)&keepalive_interval, sizeof keepalive_interval) < 0) {
     return False;
   }
+#endif
 #endif
 
   return True;
@@ -333,8 +341,6 @@ int setupStreamSocket(UsageEnvironment& env,
 int readSocket(UsageEnvironment& env,
 	       int socket, unsigned char* buffer, unsigned bufferSize,
 	       struct sockaddr_in& fromAddress) {
-
-
   SOCKLEN_T addressSize = sizeof fromAddress;
   int bytesRead = recvfrom(socket, (char*)buffer, bufferSize, 0,
 			   (struct sockaddr*)&fromAddress,
@@ -356,17 +362,14 @@ int readSocket(UsageEnvironment& env,
 #endif
 	|| err == 113 /*EHOSTUNREACH (Linux)*/) { // Why does Linux return this for datagram sock?
       fromAddress.sin_addr.s_addr = 0;
-
       return 0;
     }
     //##### END HACK
     socketErr(env, "recvfrom() error: ");
   } else if (bytesRead == 0) {
     // "recvfrom()" on a stream socket can return 0 if the remote end has closed the connection.  Treat this as an error:
-
     return -1;
   }
-
 
   return bytesRead;
 }
@@ -404,7 +407,7 @@ Boolean writeSocket(UsageEnvironment& env,
       socketErr(env, tmpBuf);
       break;
     }
-
+    
     return True;
   } while (0);
 
@@ -568,7 +571,7 @@ Boolean socketJoinGroupSSM(UsageEnvironment& env, int socket,
   if (!IsMulticastAddress(groupAddress)) return True; // ignore this case
 
   struct ip_mreq_source imr;
-#ifdef __ANDROID__
+#if ANDROID_OLD_NDK
     imr.imr_multiaddr = groupAddress;
     imr.imr_sourceaddr = sourceFilterAddr;
     imr.imr_interface = ReceivingInterfaceAddr;
@@ -594,7 +597,7 @@ Boolean socketLeaveGroupSSM(UsageEnvironment& /*env*/, int socket,
   if (!IsMulticastAddress(groupAddress)) return True; // ignore this case
 
   struct ip_mreq_source imr;
-#ifdef __ANDROID__
+#if ANDROID_OLD_NDK
     imr.imr_multiaddr = groupAddress;
     imr.imr_sourceaddr = sourceFilterAddr;
     imr.imr_interface = ReceivingInterfaceAddr;
@@ -653,7 +656,7 @@ netAddressBits ourIPAddress(UsageEnvironment& env) {
   struct in_addr testAddr;
 
   if (ReceivingInterfaceAddr != INADDR_ANY) {
-    // Hack: If we were told to receive on a specific interface address, then
+    // Hack: If we were told to receive on a specific interface address, then 
     // define this to be our ip address:
     ourAddress = ReceivingInterfaceAddr;
   }
@@ -670,6 +673,7 @@ netAddressBits ourIPAddress(UsageEnvironment& env) {
     do {
       loopbackWorks = 0; // until we learn otherwise
 
+#ifndef DISABLE_LOOPBACK_IP_ADDRESS_CHECK
       testAddr.s_addr = our_inet_addr("228.67.43.91"); // arbitrary
       Port testPort(15947); // ditto
 
@@ -706,6 +710,7 @@ netAddressBits ourIPAddress(UsageEnvironment& env) {
 
       // We use this packet's source address, if it's good:
       loopbackWorks = !badAddressForUs(fromAddr.sin_addr.s_addr);
+#endif
     } while (0);
 
     if (sock >= 0) {
@@ -739,7 +744,7 @@ netAddressBits ourIPAddress(UsageEnvironment& env) {
 	}
       }
 
-      // Assign the address that we found to "fromAddr" (as if the 'loopback' method had worked), to simplify the code below:
+      // Assign the address that we found to "fromAddr" (as if the 'loopback' method had worked), to simplify the code below: 
       fromAddr.sin_addr.s_addr = addr;
     } while (0);
 
@@ -810,7 +815,7 @@ char const* timestampString() {
 // For Windoze, we need to implement our own gettimeofday()
 
 // used to make sure that static variables in gettimeofday() aren't initialized simultaneously by multiple threads
-static LONG initializeLock_gettimeofday = 0;
+static LONG initializeLock_gettimeofday = 0;  
 
 #if !defined(_WIN32_WCE)
 #include <sys/timeb.h>
@@ -828,7 +833,7 @@ int gettimeofday(struct timeval* tp, int* /*tz*/) {
 #else
   tickNow.QuadPart = GetTickCount();
 #endif
-
+ 
   if (!isInitialized) {
     if(1 == InterlockedIncrement(&initializeLock_gettimeofday)) {
 #if !defined(_WIN32_WCE)
@@ -864,13 +869,13 @@ int gettimeofday(struct timeval* tp, int* /*tz*/) {
 
       // resolution of GetTickCounter() is always milliseconds
       tickFrequency.QuadPart = 1000;
-#endif
+#endif     
       // compute an offset to add to subsequent counter times, so we get a proper epoch:
       epochOffset.QuadPart
           = tp->tv_sec * tickFrequency.QuadPart + (tp->tv_usec * tickFrequency.QuadPart) / 1000000L - tickNow.QuadPart;
-
+      
       // next caller can use ticks for time calculation
-      isInitialized = True;
+      isInitialized = True; 
       return 0;
     } else {
         InterlockedDecrement(&initializeLock_gettimeofday);
@@ -890,3 +895,4 @@ int gettimeofday(struct timeval* tp, int* /*tz*/) {
   return 0;
 }
 #endif
+#undef ANDROID_OLD_NDK

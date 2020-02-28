@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2018 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2020 Live Networks, Inc.  All rights reserved.
 // RTP Sources
 // C++ header
 
@@ -26,6 +26,9 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #endif
 #ifndef _RTP_INTERFACE_HH
 #include "RTPInterface.hh"
+#endif
+#ifndef _SRTP_CRYPTOGRAPHIC_CONTEXT_HH
+#include "SRTPCryptographicContext.hh"
 #endif
 
 class RTPReceptionStatsDB; // forward
@@ -44,6 +47,8 @@ public:
   Groupsock* RTPgs() const { return fRTPInterface.gs(); }
 
   virtual void setPacketReorderingThresholdTime(unsigned uSeconds) = 0;
+
+  void setCrypto(SRTPCryptographicContext* crypto) { fCrypto = crypto; }
 
   // used by RTCP:
   u_int32_t SSRC() const { return fSSRC; }
@@ -81,12 +86,6 @@ public:
   // RTP sequence numbers and timestamps are usually not useful to receivers.
   // (Our implementation of RTP reception already does all needed handling of RTP sequence numbers and timestamps.)
   u_int16_t curPacketRTPSeqNum() const { return fCurPacketRTPSeqNum; }
-
-  // Taken from: http://lists.live555.com/pipermail/live-devel/2009-April/010424.html
-  // This is used to set a callback to retrieve the RTP Header Extension data
-  typedef void (*RtpExtHdrCallback_t)(unsigned definedByProfile, unsigned char* extHdrData, unsigned extHdrDataLen, struct timeval& presentationTime, unsigned short rtpSeqNo, unsigned rtpTimestamp, bool rtpMarkerBitSet, void* pPriv);
-  void setRtpExtHdrCallback( RtpExtHdrCallback_t callback, void* pPriv ) { fRtpExtHdrCallback = callback; fRtpExtHdrCallbackPrivData = pPriv;}
-
 private: friend class MediaSubsession; // "MediaSubsession" is the only outside class that ever needs to see RTP timestamps!
   u_int32_t curPacketRTPTimestamp() const { return fCurPacketRTPTimestamp; }
 
@@ -104,9 +103,7 @@ protected:
   Boolean fCurPacketHasBeenSynchronizedUsingRTCP;
   u_int32_t fLastReceivedSSRC;
   class RTCPInstance* fRTCPInstanceForMultiplexedRTCPPackets;
-
-  RtpExtHdrCallback_t fRtpExtHdrCallback;
-  void* fRtpExtHdrCallbackPrivData;
+  SRTPCryptographicContext* fCrypto;
 
 private:
   // redefined virtual functions:
@@ -215,7 +212,7 @@ public:
 
   unsigned minInterPacketGapUS() const { return fMinInterPacketGapUS; }
   unsigned maxInterPacketGapUS() const { return fMaxInterPacketGapUS; }
-  unsigned currentInterPacketGapUS() const { return fCurrentInterPacketGapUs; }
+  unsigned currentInterPacketGapUS() const { return fCurrentInterPacketGapUS; }
   struct timeval const& totalInterPacketGaps() const {
     return fTotalInterPacketGaps;
   }
@@ -259,7 +256,7 @@ protected:
   unsigned fLastReceivedSR_NTPlsw; // NTP timestamp (from SR), least-signif
   struct timeval fLastReceivedSR_time;
   struct timeval fLastPacketReceptionTime;
-  unsigned fMinInterPacketGapUS, fMaxInterPacketGapUS, fCurrentInterPacketGapUs;
+  unsigned fMinInterPacketGapUS, fMaxInterPacketGapUS, fCurrentInterPacketGapUS;
   struct timeval fTotalInterPacketGaps;
 
 private:

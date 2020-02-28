@@ -99,7 +99,7 @@ Boolean wxSink::continuePlaying()
         Aes67Source* pSource = dynamic_cast<Aes67Source*>(fSource);
         if(pSource)
         {
-            pSource->setRtpExtHdrCallback(rtpExtensionCallback, this);
+            //pSource->setRtpExtHdrCallback(rtpExtensionCallback, this); @TODO ??
         }
             // Request the next frame of data from our input source.  "afterGettingFrame()" will get called later, when it arrives:
         fSource->getNextFrame(fReceiveBuffer, DUMMY_SINK_RECEIVE_BUFFER_SIZE,
