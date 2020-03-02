@@ -1,13 +1,13 @@
-#ifdef __NMOS__
 #include "pnlSettingsNmos.h"
 #include "settings.h"
 #include "settingevent.h"
-#include "sender.h"
 #include <wx/log.h>
-#include "clientapi.h"
 #include <wx/msgdlg.h>
+#ifdef __NMOS__
+#include "sender.h"
+#include "clientapi.h"
 #include "senderbuttonfactory.h"
-
+#endif // __NMOS__
 //(*InternalHeaders(pnlSettingsNmos)
 #include <wx/intl.h>
 #include <wx/string.h>
@@ -49,7 +49,9 @@ pnlSettingsNmos::pnlSettingsNmos(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_pbtnConnection->SetToggleLook(true, wxT("IS-04"), wxT("IS-05"), 50);
 
 	m_plstSenders = new wmList(this, wxNewId(), wxPoint(0,110), wxSize(600,260), wmList::STYLE_NORMAL, 2, wxSize(-1,40), 3, wxSize(2,2));
+	#ifdef __NMOS__
 	m_plstSenders->SetButtonFactory(new wmSenderButtonFactory());
+	#endif // __NMOS__
     m_plstSenders->SetBackgroundColour(wxColour(0,0,0));
 
     m_plstSenders->SetSelectedButtonColour(wxColour(wxT("#008000")));
@@ -96,6 +98,7 @@ void pnlSettingsNmos::OnbtnConnectionClick(wxCommandEvent& event)
 
 void pnlSettingsNmos::OnSenderSelected(wxCommandEvent& event)
 {
+    #ifdef __NMOS__
     bool bAsked(false);
     if(Settings::Get().Read(wxT("NMOS"), wxT("Connection_05"), false) == false)
     {
@@ -119,33 +122,46 @@ void pnlSettingsNmos::OnSenderSelected(wxCommandEvent& event)
         }
         m_plstSenders->Refresh();
     }
+    #endif // __NMOS__
 }
 
 bool pnlSettingsNmos::ConnectionIS04(size_t nSenderButton)
 {
+    #ifdef __NMOS__
     if(m_plstSenders->GetButtonAuxillaryText(nSenderButton).empty() == false)
     {
         return ClientApi::Get().Subscribe(std::string(m_plstSenders->GetButtonAuxillaryText(nSenderButton).mb_str()),std::string(m_sReceiverId.mb_str()));
     }
 
     return ClientApi::Get().Unsubscribe(std::string(m_sReceiverId.mb_str()));
+    #else
+    return false;
+    #endif // __NMOS__
+
 }
 
 bool pnlSettingsNmos::ConnectionIS05(size_t nSenderButton)
 {
+    #ifdef __NMOS__
     if(m_plstSenders->GetButtonAuxillaryText(nSenderButton).empty() == false)
     {
         return ClientApi::Get().Connect(std::string(m_plstSenders->GetButtonAuxillaryText(nSenderButton).mb_str()),std::string(m_sReceiverId.mb_str()));
     }
 
     return ClientApi::Get().Disconnect(std::string(m_sReceiverId.mb_str()));
+    #else
+    return false;
+    #endif // __NMOS__
 }
 
+#ifdef __NMOS__
 void pnlSettingsNmos::AddSender(std::shared_ptr<Sender> pSender)
 {
+
     size_t nIndex = m_plstSenders->AddButton(wxString::FromAscii(pSender->GetLabel().c_str()));
     m_plstSenders->SetButtonAuxillaryText(nIndex, wxString::FromAscii(pSender->GetId().c_str()));
     m_plstSenders->Refresh();
+
 }
 
 void pnlSettingsNmos::UpdateSender(std::shared_ptr<Sender> pSender)

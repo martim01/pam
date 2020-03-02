@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
 	<Workspace title="Workspace">
-		<Project filename="manifest_creator/manifest_creator.cbp" />
 		<Project filename="pambase/pambase.cbp" />
 		<Project filename="pamfft/pamfft.cbp" />
 		<Project filename="pamlevel/pamlevel.cbp" />
@@ -58,7 +57,6 @@
 		<Project filename="plugins/fftphase/fftphase.cbp" />
 		<Project filename="plugins/ptp/ptp.cbp" />
 		<Project filename="pamupdatemanager/pamupdatemanager.cbp">
-			<Depends filename="manifest_creator/manifest_creator.cbp" />
 			<Depends filename="pambase/pambase.cbp" />
 		</Project>
 		<Project filename="pam2/pam2.cbp">

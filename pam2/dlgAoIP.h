@@ -3,8 +3,8 @@
 
 //(*Headers(dlgAoIP)
 #include "wmbutton.h"
-#include <wx/panel.h>
 #include <wx/dialog.h>
+#include <wx/panel.h>
 //*)
 #include "pnlRTP.h"
 

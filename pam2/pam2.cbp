@@ -186,6 +186,7 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-D_app_" />
+			<Add option="-DNO_OPENSSL" />
 			<Add directory="C:/wxWidgets-3.0.2/include" />
 			<Add directory="../pambase" />
 			<Add directory="$(#live_media.include)" />
@@ -259,6 +260,8 @@
 		<Unit filename="pnlTestOptions.h" />
 		<Unit filename="pnlTests.cpp" />
 		<Unit filename="pnlTests.h" />
+		<Unit filename="pnlUSB.cpp" />
+		<Unit filename="pnlUSB.h" />
 		<Unit filename="pnlUpdate.cpp" />
 		<Unit filename="pnlUpdate.h" />
 		<Unit filename="senderbuttonfactory.cpp" />
@@ -291,6 +294,7 @@
 		<Unit filename="wxsmith/pnlSettingsProfiles.wxs" />
 		<Unit filename="wxsmith/pnlTestOptions.wxs" />
 		<Unit filename="wxsmith/pnlTests.wxs" />
+		<Unit filename="wxsmith/pnlUSB.wxs" />
 		<Unit filename="wxsmith/pnlUpdate.wxs" />
 		<Extensions>
 			<code_completion />
@@ -323,6 +327,7 @@
 					<wxPanel wxs="wxsmith/pnlSettingsGenerators.wxs" src="pnlSettingsGenerators.cpp" hdr="pnlSettingsGenerators.h" fwddecl="0" i18n="1" name="pnlSettingsGenerators" language="CPP" />
 					<wxDialog wxs="wxsmith/dlgAoIP.wxs" src="dlgAoIP.cpp" hdr="dlgAoIP.h" fwddecl="0" i18n="1" name="dlgAoIP" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlSettingsNmos.wxs" src="pnlSettingsNmos.cpp" hdr="pnlSettingsNmos.h" fwddecl="0" i18n="1" name="pnlSettingsNmos" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlUSB.wxs" src="pnlUSB.cpp" hdr="pnlUSB.h" fwddecl="0" i18n="1" name="pnlUSB" language="CPP" />
 				</resources>
 			</wxsmith>
 			<AutoVersioning>

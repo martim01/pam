@@ -2,14 +2,14 @@
 #define PNLSETTINGS_H
 
 //(*Headers(pnlSettings)
-#include <wx/notebook.h>
 #include "wmbutton.h"
+#include "wmedit.h"
 #include "wmkeyboard.h"
 #include "wmlabel.h"
-#include "wmswitcherpanel.h"
-#include <wx/panel.h>
-#include "wmedit.h"
 #include "wmlist.h"
+#include "wmswitcherpanel.h"
+#include <wx/notebook.h>
+#include <wx/panel.h>
 //*)
 #include "pnlNetworkSetup.h"
 #include "pnlRTP.h"
@@ -31,56 +31,54 @@ class pnlSettings: public wxPanel
 		void UpdateDisplayedSettings();
 
 		//(*Declarations(pnlSettings)
-		wmLabel* m_pLbl4;
-		wmList* m_plstLatency;
-		wxPanel* pnlGeneral;
-		wmEdit* m_pedtRTPPort;
-		wmLabel* m_pLbl3;
-		wmLabel* m_plblHostname;
-		wmLabel* m_pLbl7;
-		wmEdit* m_pedtPin;
-		wmSwitcherPanel* m_pswpDestination;
-		wmList* m_plstDevices;
+		pnlNetworkSetup* pnlSettingsNetwork;
 		pnlSettingsGenerators* m_ppnlGenerators;
+		pnlSettingsNmos* m_ppnlNmos;
+		pnlSettingsPlugins* m_ppnlPlugins;
+		pnlSettingsProfiles* m_ppnlProfiles;
+		pnlUpdate* m_ppnlUpdate;
+		wmButton* m_pbtnCursor;
+		wmButton* m_pbtnEnd;
+		wmButton* m_pbtnHome;
+		wmButton* m_pbtnManage;
+		wmButton* m_pbtnNext;
+		wmButton* m_pbtnPin;
+		wmButton* m_pbtnPrevious;
+		wmButton* m_pbtnRTSP;
+		wmButton* m_pbtnStream;
+		wmButton* m_ptbnOptions;
+		wmEdit* m_pedtPin;
+		wmEdit* m_pedtRTPPort;
+		wmEdit* m_pedtRTSPPort;
+		wmKeyboard* m_pkbd;
+		wmKeyboard* m_pkbdPin;
+		wmLabel* m_pLbl1;
+		wmLabel* m_pLbl2;
+		wmLabel* m_pLbl3;
+		wmLabel* m_pLbl4;
+		wmLabel* m_pLbl5;
+		wmLabel* m_pLbl6;
+		wmLabel* m_pLbl7;
+		wmLabel* m_pLbl8;
+		wmLabel* m_pLbl9;
+		wmLabel* m_plblCurrentPIN;
+		wmLabel* m_plblHostname;
+		wmLabel* m_plblVersion;
+		wmList* m_plstDestination;
+		wmList* m_plstDevices;
+		wmList* m_plstInput;
+		wmList* m_plstLatency;
+		wmList* m_plstPacket;
+		wmList* m_plstPlayback;
+		wmSwitcherPanel* m_pswpDestination;
 		wmSwitcherPanel* m_pswpSettings;
 		wmipeditpnl* m_ppnlAddress;
-		wmButton* m_pbtnPrevious;
-		wmLabel* m_plblCurrentPIN;
-		wmList* m_plstPacket;
-		wmKeyboard* m_pkbd;
-		wmLabel* m_pLbl1;
-		wmButton* m_pbtnCursor;
-		pnlSettingsPlugins* m_ppnlPlugins;
-		pnlNetworkSetup* pnlSettingsNetwork;
-		wmButton* m_pbtnPin;
-		wmButton* m_pbtnStream;
 		wxPanel* Panel1;
-		wmButton* m_pbtnNext;
-		wmList* m_plstPlayback;
-		wmList* m_plstDestination;
-		wmButton* m_pbtnRTSP;
-		wxPanel* Panel3;
-		wmLabel* m_pLbl5;
-		wmEdit* m_pedtRTSPPort;
-		wmList* m_plstInput;
-		wmLabel* m_pLbl6;
-		wmButton* m_ptbnOptions;
-		wmLabel* m_pLbl8;
-		wmButton* m_pbtnManage;
-		wmLabel* m_pLbl2;
-		#ifdef __NMOS__
-		pnlSettingsNmos* m_ppnlNmos;
-		#endif
-		wmLabel* m_pLbl9;
-		wmButton* m_pbtnHome;
-		wxPanel* pnlOutput;
 		wxPanel* Panel2;
-		wmLabel* m_plblVersion;
+		wxPanel* Panel3;
+		wxPanel* pnlGeneral;
 		wxPanel* pnlInput;
-		wmButton* m_pbtnEnd;
-		pnlSettingsProfiles* m_ppnlProfiles;
-		wmKeyboard* m_pkbdPin;
-		pnlUpdate* m_ppnlUpdate;
+		wxPanel* pnlOutput;
 		//*)
 
 		void ReloadRTP();

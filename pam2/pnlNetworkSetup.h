@@ -2,13 +2,13 @@
 #define PNLNETWORKSETUP_H
 
 //(*Headers(pnlNetworkSetup)
-#include <wx/notebook.h>
 #include "wmbutton.h"
 #include "wmkeyboard.h"
 #include "wmlabel.h"
-#include "wmswitcherpanel.h"
-#include <wx/panel.h>
 #include "wmlist.h"
+#include "wmswitcherpanel.h"
+#include <wx/notebook.h>
+#include <wx/panel.h>
 //*)
 #include "wmipeditpnl.h"
 #include <wx/timer.h>
@@ -21,23 +21,23 @@ class pnlNetworkSetup: public wxPanel
 		virtual ~pnlNetworkSetup();
 
 		//(*Declarations(pnlNetworkSetup)
-		wmLabel* m_pLbl4;
-		wmButton* m_pbtnStaticDHCP;
-		wmLabel* m_pLbl3;
+		wmButton* m_pbtnApply;
 		wmButton* m_pbtnMask;
-		wmipeditpnl* m_ppnlAddress;
-		wmLabel* m_plblResult;
+		wmButton* m_pbtnStaticDHCP;
 		wmKeyboard* m_pkbd;
-		wmipeditpnl* m_ppnlGateway;
 		wmLabel* m_pLbl1;
-		wmSwitcherPanel* m_pSwp1;
-		wxPanel* Panel1;
+		wmLabel* m_pLbl2;
+		wmLabel* m_pLbl3;
+		wmLabel* m_pLbl4;
 		wmLabel* m_pLbl5;
 		wmLabel* m_plblConnected;
-		wmButton* m_pbtnApply;
-		wmLabel* m_pLbl2;
+		wmLabel* m_plblResult;
 		wmLabel* m_plblType;
 		wmList* m_plstInterfaces;
+		wmSwitcherPanel* m_pSwp1;
+		wmipeditpnl* m_ppnlAddress;
+		wmipeditpnl* m_ppnlGateway;
+		wxPanel* Panel1;
 		//*)
 
 		wmButton* m_pbtnScan;
@@ -76,6 +76,7 @@ class pnlNetworkSetup: public wxPanel
 		void OnbtnMaskClick(wxCommandEvent& event);
 		void OnlstSubnetSelected(wxCommandEvent& event);
 		void OnlstInterfacesSelected(wxCommandEvent& event);
+		void Onm_pbtnApplyClick(wxCommandEvent& event);
 		//*)
         void OnbtnScanClick(wxCommandEvent& event);
         void OnTimerRefresh(wxTimerEvent& event);

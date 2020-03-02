@@ -2,62 +2,73 @@
 #define PNLRTP_H
 
 //(*Headers(pnlRTP)
-#include <wx/notebook.h>
 #include "wmbutton.h"
+#include "wmedit.h"
 #include "wmkeyboard.h"
 #include "wmlabel.h"
-#include "wmswitcherpanel.h"
-#include <wx/panel.h>
-#include "wmedit.h"
-#include <wx/html/htmlwin.h>
 #include "wmlist.h"
+#include "wmswitcherpanel.h"
+#include <wx/html/htmlwin.h>
+#include <wx/notebook.h>
+#include <wx/panel.h>
 //*)
 
 #include <set>
 #include <queue>
 #include "wxtouchscreenhtml.h"
+#include "pnlUSB.h"
 
 class DNSServiceBrowser;
 class SapWatchThread;
 class RtpThread;
 class wmListAdv;
+class SettingEvent;
+
 
 class pnlRTP: public wxPanel
 {
 	public:
 
-
 		pnlRTP(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, long nStyle=0, const wxString& sId=wxEmptyString);
 		virtual ~pnlRTP();
 
 		//(*Declarations(pnlRTP)
-		wmLabel* m_pLbl4;
-		wmLabel* m_pLbl7;
-		wmButton* m_pbtnStartDiscovery;
-		wmButton* m_pbtnConfirm;
-		wmLabel* m_pLbl1;
-		wmSwitcherPanel* m_pSwp1;
-		wmButton* m_pbtnDiscover;
-		wxPanel* Panel1;
+		pnlUSB* m_pnlUSB;
 		wmButton* m_pbtnAdd;
-		wmEdit* m_pedtName;
-		wxPanel* pnlDiscovery;
 		wmButton* m_pbtnCancel;
-		wmLabel* m_pLbl5;
+		wmButton* m_pbtnConfirm;
 		wmButton* m_pbtnDelete;
-		wmButton* m_pbtnManual;
-		wmList* m_plstSources;
-		wmEdit* m_pedtUrl;
-		wmLabel* m_pLbl6;
-		wmLabel* m_pLbl8;
-		wmLabel* m_pLbl2;
-		wmButton* m_pbtnUpdate;
-		wmKeyboard* m_pkeyboard;
 		wmButton* m_pbtnDeleteAll;
+		wmButton* m_pbtnDiscover;
+		wmButton* m_pbtnImport;
+		wmButton* m_pbtnImportBack;
+		wmButton* m_pbtnImportImport;
+		wmButton* m_pbtnManual;
 		wmButton* m_pbtnSAP;
-		wmList* m_plstServices;
-		wxPanel* Panel2;
+		wmButton* m_pbtnStartDiscovery;
+		wmButton* m_pbtnUpdate;
+		wmEdit* m_pedtName;
+		wmEdit* m_pedtUrl;
+		wmKeyboard* m_pkeyboard;
+		wmLabel* m_pLbl1;
+		wmLabel* m_pLbl2;
+		wmLabel* m_pLbl3;
+		wmLabel* m_pLbl4;
+		wmLabel* m_pLbl5;
+		wmLabel* m_pLbl6;
+		wmLabel* m_pLbl7;
+		wmLabel* m_pLbl8;
 		wmLabel* m_plblDiscovering;
+		wmLabel* m_plblImportProgress;
+		wmList* m_plstFiles;
+		wmList* m_plstServices;
+		wmList* m_plstSources;
+		wmSwitcherPanel* m_pSwp1;
+		wxPanel* Panel1;
+		wxPanel* Panel2;
+		wxPanel* Panel3;
+		wxPanel* pnlDiscovery;
+		wxTouchScreenHtml* m_phtmlResults;
 		//*)
 
 		wmListAdv* m_pList;
@@ -73,6 +84,7 @@ class pnlRTP: public wxPanel
 		static const long ID_M_PBTN4;
 		static const long ID_M_PBTN5;
 		static const long ID_M_PBTN7;
+		static const long ID_M_PBTN11;
 		static const long ID_M_PBTN6;
 		static const long ID_M_PLBL4;
 		static const long ID_M_PLBL5;
@@ -95,6 +107,13 @@ class pnlRTP: public wxPanel
 		static const long ID_M_PBTN10;
 		static const long ID_HTMLWINDOW1;
 		static const long ID_PANEL3;
+		static const long ID_PANEL5;
+		static const long ID_M_PLBL3;
+		static const long ID_M_PLST3;
+		static const long ID_M_PBTN12;
+		static const long ID_M_PBTN13;
+		static const long ID_M_PLBL10;
+		static const long ID_PANEL4;
 		static const long ID_M_PSWP1;
 		//*)
 
@@ -115,15 +134,24 @@ class pnlRTP: public wxPanel
 		void OnbtnSAPClick(wxCommandEvent& event);
 		void OnbtnStartDiscoveryClick(wxCommandEvent& event);
 		void OnbtnManualClick(wxCommandEvent& event);
+		void OnbtnImportClick(wxCommandEvent& event);
+		void OnlstImportFilesSelected(wxCommandEvent& event);
+		void OnbtnImportImportClick(wxCommandEvent& event);
 		//*)
 
 		void OnDiscovery(wxCommandEvent& event);
 		void OnDiscoveryFinished(wxCommandEvent& event);
 		void OnSap(wxCommandEvent& event);
 		void OnSDPReceived(wxCommandEvent& event);
+
+		void DecodeSap(const wxString& sData);
+
 		void GetSDP(const wxString& sUrl);
 		void GetSDP();
 		void OnRTPClosed(wxCommandEvent& event);
+		void OnSettingEvent(SettingEvent& event);
+
+        void ImportSources(const wxString& sFileName);
 		wxString m_sSelectedSource;
 		wxString m_sSelectedUrl;
 

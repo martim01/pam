@@ -1,7 +1,7 @@
 #ifndef PNLSETTINGSNMOS_H
 #define PNLSETTINGSNMOS_H
 
-#ifdef __NMOS__
+
 //(*Headers(pnlSettingsNmos)
 #include "wmbutton.h"
 #include <wx/panel.h>
@@ -35,11 +35,11 @@ class pnlSettingsNmos: public wxPanel
         }
 
         void SetSender(const wxString& sSenderId);
-
+#ifdef __NMOS__
 		void AddSender(std::shared_ptr<Sender> pSender);
 		void UpdateSender(std::shared_ptr<Sender> pSender);
 		void RemoveSenders(const std::set<std::string>::const_iterator& itBegin, const std::set<std::string>::const_iterator& itEnd);
-
+#endif // __NMOS__
 		void SubscriptionRequest(const wxString& sReceiverId, const wxString& sResponse, unsigned long nResult);
 
 	protected:
@@ -66,5 +66,4 @@ class pnlSettingsNmos: public wxPanel
 		DECLARE_EVENT_TABLE()
 };
 
-#endif
 #endif

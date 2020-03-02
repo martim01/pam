@@ -83,11 +83,19 @@
 		</Build>
 		<Unit filename="manifest_creatorApp.cpp" />
 		<Unit filename="manifest_creatorApp.h" />
+		<Unit filename="pnlUSB.cpp" />
+		<Unit filename="pnlUSB.h" />
 		<Unit filename="version.h" />
+		<Unit filename="wxsmith/pnlUSB.wxs" />
 		<Extensions>
 			<code_completion />
 			<debugger />
 			<envvars />
+			<wxsmith version="1">
+				<resources>
+					<wxPanel wxs="wxsmith/pnlUSB.wxs" src="pnlUSB.cpp" hdr="pnlUSB.h" fwddecl="0" i18n="1" name="pnlUSB" language="CPP" />
+				</resources>
+			</wxsmith>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

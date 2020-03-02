@@ -221,66 +221,9 @@
 				<label>Local</label>
 			</object>
 			<object class="wmSwitcherPanelpage">
-				<object class="wxPanel" name="ID_PANEL4" variable="pnlUSB" member="yes">
+				<object class="wxPanel" name="ID_PANEL4" subclass="pnlUSB" variable="m_pnlUSB" member="yes">
 					<pos>0,0</pos>
 					<bg>#000000</bg>
-					<object class="wmLabel" name="ID_M_PLBL13" variable="m_pLbl7" member="yes">
-						<label>Connect a USB Drive and press Detect button</label>
-						<pos>0,0</pos>
-						<size>600,60</size>
-						<fg>#FFFFFF</fg>
-						<bg>wxSYS_COLOUR_BACKGROUND</bg>
-						<font>
-							<size>18</size>
-							<style>normal</style>
-							<weight>normal</weight>
-							<underlined>0</underlined>
-							<family>swiss</family>
-							<face>Tahoma</face>
-						</font>
-					</object>
-					<object class="wmButton" name="ID_M_PBTN6" variable="m_pbtnDetect" member="yes">
-						<label>Detect USB Drive</label>
-						<pos>200,60</pos>
-						<size>200,40</size>
-						<bg>#0000FF</bg>
-						<font>
-							<size>12</size>
-							<style>normal</style>
-							<weight>normal</weight>
-							<underlined>0</underlined>
-							<family>swiss</family>
-							<face>Tahoma</face>
-						</font>
-						<handler function="OnbtnDetectClick" entry="EVT_BUTTON" />
-					</object>
-					<object class="wmList" name="ID_M_PLST3" variable="m_plstUsb" member="yes">
-						<scrolling>None</scrolling>
-						<button_gap>5,5</button_gap>
-						<button_size>-1,40</button_size>
-						<columns>6</columns>
-						<items />
-						<pos>0,200</pos>
-						<size>600,120</size>
-						<bg>#000000</bg>
-						<style>wmList::STYLE_SELECT</style>
-						<handler function="OnlstUsbSelected" entry="EVT_LIST_SELECTED" />
-					</object>
-					<object class="wmLabel" name="ID_M_PLBL12" variable="m_plblUSB" member="yes">
-						<label></label>
-						<pos>0,100</pos>
-						<size>600,100</size>
-						<fg>#00FF00</fg>
-						<bg>wxSYS_COLOUR_BACKGROUND</bg>
-						<font>
-							<size>18</size>
-							<style>normal</style>
-							<weight>normal</weight>
-							<underlined>0</underlined>
-							<family>swiss</family>
-							<face>Tahoma</face>
-						</font>
-					</object>
 				</object>
 				<label>USB</label>
 			</object>
