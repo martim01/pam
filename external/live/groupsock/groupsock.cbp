@@ -44,6 +44,7 @@
 		<Compiler>
 			<Add option="-D_UNICODE" />
 			<Add option="-DUNICODE" />
+			<Add option="-DNO_OPENSSL" />
 			<Add directory="include" />
 			<Add directory="$(#live_usage.include)" />
 		</Compiler>

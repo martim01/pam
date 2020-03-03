@@ -84,6 +84,7 @@
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
 					<Add option="-DPTPMONKEY" />
+					<Add option="-D__GNU__" />
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
@@ -109,6 +110,7 @@
 					<Add option="-D__WXGNU__" />
 					<Add option="-DPAMBASE_DEBUG" />
 					<Add option="-D__WXDEBUG__" />
+					<Add option="-D__GNU__" />
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
