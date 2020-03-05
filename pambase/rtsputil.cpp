@@ -5,6 +5,7 @@
 #include <wx/log.h>
 #include <iostream>
 #include "smpte2110mediasession.h"
+#include "SIPClient.hh"
 
 UsageEnvironment& operator<<(UsageEnvironment& env, const RTSPClient& rtspClient)
 {
@@ -23,7 +24,7 @@ TaskToken qosMeasurementTimerTask = NULL;
 
 qosMeasurementRecord* g_pRecord = NULL;
 
-
+/*
 void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultString)
 {
     bool bSuccess(true);
@@ -81,6 +82,7 @@ void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultS
         shutdownStream(rtspClient);
     }
 }
+*/
 
 void saveAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultString)
 {
@@ -90,7 +92,7 @@ void saveAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultStrin
     if(pClient)
     {
 
-        pClient->GetHandler()->SaveSDP(resultCode, wxString::FromAscii(resultString));
+        pClient->GetHandler()->SaveSDP(resultCode, wxString::FromUTF8(resultString));
     }
 
     delete[] resultString;
@@ -99,7 +101,7 @@ void saveAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultStrin
 }
 
 
-
+/*
 
 void setupNextSubsession(RTSPClient* rtspClient)
 {
@@ -116,7 +118,7 @@ void setupNextSubsession(RTSPClient* rtspClient)
         }
         else
         {
-            env << *rtspClient << "Initiated the \"" <<scs.subsession->sessionId()<< /*<< *scs.subsession <<*/ "\" subsession (";
+            env << *rtspClient << "Initiated the \"" <<scs.subsession->sessionId()<<  "\" subsession (";
             if (scs.subsession->rtcpIsMuxed())
             {
                 env << "client port " << scs.subsession->clientPortNum();
@@ -219,6 +221,7 @@ void continueAfterSETUP(RTSPClient* rtspClient, int resultCode, char* resultStri
     setupNextSubsession(rtspClient);
 }
 
+
 void continueAfterPLAY(RTSPClient* rtspClient, int resultCode, char* resultString)
 {
 
@@ -272,7 +275,7 @@ void continueAfterPLAY(RTSPClient* rtspClient, int resultCode, char* resultStrin
     }
 }
 
-
+*/
 // Implementation of the other event handlers:
 
 void subsessionAfterPlaying(void* clientData)
@@ -431,3 +434,5 @@ void periodicQOSMeasurement(UsageEnvironment& env, void* clientData)
     // Do this again later:
     scheduleNextQOSMeasurement();
 }
+
+

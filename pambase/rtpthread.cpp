@@ -34,6 +34,7 @@ RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface
     m_nBufferSize(nBufferSize),
     m_pCurrentBuffer(0),
     m_pRtspClient(0),
+    m_pSipClient(0),
     m_bClosing(false),
     m_bSaveSDP(bSaveSDPOnly),
     m_nQosMeasurementIntervalMS(1000)
@@ -61,16 +62,25 @@ void* RtpThread::Entry()
     TaskScheduler* scheduler = PamTaskScheduler::createNew();
     m_penv = PamUsageEnvironment::createNew(*scheduler, m_pHandler);
 
-    if(m_sUrl.BeforeFirst(wxT(':')).CmpNoCase(wxT("rtsp")) == 0)
+    wxString sProtocol(m_sUrl.BeforeFirst(wxT(':')));
+    if(sProtocol.CmpNoCase(wxT("rtsp")) == 0)
     {
-        if(openURL())
+        if(DoRTSP())
         {
-
             while(TestDestroy() == false && m_eventLoopWatchVariable == 0)
             {
                 m_penv->taskScheduler().doEventLoop(&m_eventLoopWatchVariable);
             }
-
+        }
+    }
+    else if(sProtocol.CmpNoCase(wxT("sip")) == 0)
+    {
+        if(DoSIP())
+        {
+            while(TestDestroy() == false && m_eventLoopWatchVariable == 0)
+            {
+                m_penv->taskScheduler().doEventLoop(&m_eventLoopWatchVariable);
+            }
         }
     }
     else
@@ -88,7 +98,7 @@ void* RtpThread::Entry()
     pEvent->SetString(m_sUrl);
     wxQueueEvent(m_pHandler, pEvent);
 
-
+    // @todo do we need to delete clients etc?
 
     return 0;
 
@@ -164,6 +174,16 @@ void RtpThread::StreamFromSDP()
             {
                 *m_penv << "Created a data sink for the \"" << *subsession << "\" subsession\n";
 
+                if(m_pRtspClient)
+                {   //@todo do we need any setup here??
+//                    m_pRtspClient->SetupSubsession(subsession);
+                }
+                else if(m_pSipClient)
+                {
+                    m_pSipClient->SetupSubsession(subsession);
+                }
+                // @todo do we need to send a Start Playing /ACK here??
+
                 // @todo move the startPlaying to later??
                 subsession->sink->startPlaying(*subsession->readSource(), NULL, NULL);
                 beginQOSMeasurement(*m_penv, m_pSession, this);
@@ -178,7 +198,7 @@ void RtpThread::StreamFromSDP()
     }
 }
 
-bool RtpThread::openURL()
+bool RtpThread::DoRTSP()
 {
     // Begin by creating a "RTSPClient" object.  Note that there is a separate "RTSPClient" object for each stream that we wish
     // to receive (even if more than stream uses the same "rtsp://" URL).
@@ -190,18 +210,20 @@ bool RtpThread::openURL()
         return false;
     }
 
-
-    // Next, send a RTSP "DESCRIBE" command, to get a SDP description for the stream.
-    // Note that this command - like all RTSP commands - is sent asynchronously; we do not block, waiting for a response.
-    // Instead, the following function call returns immediately, and we handle the RTSP response later, from within the event loop:
-   // if(m_bSaveSDP)
-    //{
     m_pRtspClient->sendDescribeCommand(saveAfterDESCRIBE);
-    //}
-    //else
-    //{
-    //    m_pRtspClient->sendDescribeCommand(continueAfterDESCRIBE);
-   // }
+    return true;
+}
+
+bool RtpThread::DoSIP()
+{
+    m_sUrl.Replace(wxT(" "), wxT("%20"));
+    m_pSipClient = ourSIPClient::createNew((*m_penv), m_sUrl.mb_str(), this, 1, m_sProgName.mb_str());
+    if (m_pRtspClient == NULL)
+    {
+        (*m_penv) << "Failed to create a RTSP client for URL \"" << m_sUrl.mb_str() << "\": " << (*m_penv).getResultMsg() << "\n";
+        return false;
+    }
+    m_pSipClient->GetSDPDescription();
     return true;
 }
 
@@ -418,7 +440,12 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
 void RtpThread::SaveSDP(unsigned int nResult, const wxString& sResult)
 {
     m_sDescriptor = sResult;
+
+    //Start playing
     StreamFromSDP();
+
+
+
     if(m_pHandler)
     {
         wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_SDP);

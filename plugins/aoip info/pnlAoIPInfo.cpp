@@ -671,11 +671,13 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_pswpInfo->AddPage(pnlSDP, _("Raw SDP"), false);
 	//*)
 
+	#ifdef _PTPMONKEY_
 	wxPtp::Get().AddHandler(this);
 
 	Connect(wxID_ANY, wxEVT_CLOCK_MASTER, (wxObjectEventFunction)&pnlAoIPInfo::OnPtpEvent);
 	Connect(wxID_ANY, wxEVT_CLOCK_SLAVE, (wxObjectEventFunction)&pnlAoIPInfo::OnPtpEvent);
     Connect(wxID_ANY, wxEVT_CLOCK_UPDATED, (wxObjectEventFunction)&pnlAoIPInfo::OnPtpEvent);
+    #endif // _PTPMONKEY_
 
 	m_plblEpoch = new wmLabel(pnlSubsession, wxNewId(), wxEmptyString, wxPoint(305,151), wxSize(249,25), 0, _T("ID_M_PLBL57"));
 	m_plblEpoch->SetBorderState(uiRect::BORDER_NONE);

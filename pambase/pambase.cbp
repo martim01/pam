@@ -248,6 +248,8 @@
 		<Unit filename="niir.h" />
 		<Unit filename="ourRTSPClient.cpp" />
 		<Unit filename="ourRTSPClient.h" />
+		<Unit filename="ourSIPClient.cpp" />
+		<Unit filename="ourSIPClient.h" />
 		<Unit filename="pcstats.cpp" />
 		<Unit filename="pcstats.h" />
 		<Unit filename="plugin.h" />

@@ -5,6 +5,7 @@
 #include <wx/event.h>
 #include "streamclientstate.h"
 #include "ourRTSPClient.h"
+#include "ourSIPClient.h"
 #include "wxsink.h"
 #include <queue>
 #include "session.h"
@@ -45,7 +46,8 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
         void PassSessionDetails(Smpte2110MediaSession* pSession);
 
 
-        bool openURL();
+        bool DoRTSP();
+        bool DoSIP();
 
         void SaveSDP(unsigned int nResult, const wxString& sResult);
 
@@ -71,6 +73,7 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
         UsageEnvironment* m_penv;
 
         RTSPClient* m_pRtspClient;
+        ourSIPClient* m_pSipClient;
         Smpte2110MediaSession* m_pSession;
         unsigned int m_nInputChannels;
 

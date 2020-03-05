@@ -16,8 +16,8 @@ static unsigned nextQOSMeasurementUSecs;
 
 
 // RTSP 'response handlers':
-void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultString);
-void continueAfterSETUP(RTSPClient* rtspClient, int resultCode, char* resultString);
+//void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultString);
+//void continueAfterSETUP(RTSPClient* rtspClient, int resultCode, char* resultString);
 void continueAfterPLAY(RTSPClient* rtspClient, int resultCode, char* resultString);
 
 void saveAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultString);
@@ -31,7 +31,7 @@ void streamTimerHandler(void* clientData);
 
 
 // Used to iterate through each stream's 'subsessions', setting up each one:
-void setupNextSubsession(RTSPClient* rtspClient);
+//void setupNextSubsession(RTSPClient* rtspClient);
 
 // Used to shut down and close a stream (including its "RTSPClient" object):
 void shutdownStream(RTSPClient* rtspClient, int exitCode = 1);
