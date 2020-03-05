@@ -269,6 +269,8 @@
 		<Unit filename="version.h" />
 		<Unit filename="wxclientapiposter.cpp" />
 		<Unit filename="wxclientapiposter.h" />
+		<Unit filename="wxdirtraverseusb.cpp" />
+		<Unit filename="wxdirtraverseusb.h" />
 		<Unit filename="wxeventposter.cpp" />
 		<Unit filename="wxeventposter.h" />
 		<Unit filename="wxlogoutput.cpp" />

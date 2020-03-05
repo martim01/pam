@@ -59,10 +59,7 @@
 		<Project filename="pamupdatemanager/pamupdatemanager.cbp">
 			<Depends filename="pambase/pambase.cbp" />
 		</Project>
-		<Project filename="pam2/pam2.cbp">
-			<Depends filename="plugins/fft/fft.cbp" />
-			<Depends filename="pambase/pambase.cbp" />
-		</Project>
+		<Project filename="pam2/pam2.cbp" />
 		<Project filename="plugins/battery/battery.cbp" />
 		<Project filename="../ptpmonkey/ptpmonkey.cbp" />
 	</Workspace>

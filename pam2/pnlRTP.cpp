@@ -23,6 +23,7 @@
 #include "inisection.h"
 #include "settingevent.h"
 #include <wx/dir.h>
+#include "wxdirtraverseusb.h"
 
 using namespace std;
 
@@ -242,6 +243,7 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	m_plstSources->SetGradient(0);
 	m_plstSources->SetTextAlign(wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
 
+	m_pbtnImportImport->SetColourDisabled(wxColour(180,180,180));
 	m_pkeyboard->SetBlankString(wxT(":"));
     m_pkeyboard->SetReturnString(wxT("-->|"));
 	SetSize(size);
@@ -250,6 +252,8 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	m_plstServices->AddButton(wxT("RTSP"));
 	//m_plstServices->AddButton(wxT("SIP"));
 	//m_plstServices->AddButton(wxT("NMOS"));
+
+	Panel3->SetBackgroundColour(*wxBLACK);
 
 	m_pBrowser = 0;
 	m_pSapWatch = 0;
@@ -656,7 +660,7 @@ void pnlRTP::OnbtnImportClick(wxCommandEvent& event)
 
 void pnlRTP::OnlstImportFilesSelected(wxCommandEvent& event)
 {
-    m_pbtnImportBack->Enable(m_plstFiles->GetSelectionCount() >0);
+    m_pbtnImportImport->Enable(m_plstFiles->GetSelectionCount() >0);
 }
 
 void pnlRTP::OnbtnImportImportClick(wxCommandEvent& event)
@@ -678,6 +682,7 @@ void pnlRTP::OnSettingEvent(SettingEvent& event)
 {
     if(event.GetSection() == "ImportAoIP" && event.GetKey() == "USB" && m_pSwp1->GetSelectionName() == "Import")
     {
+        wxLogDebug(wxT("Reading USB drive"));
         m_plblImportProgress->SetLabel("Reading USB drive...");
         m_plblImportProgress->Update();
 
@@ -701,16 +706,14 @@ void pnlRTP::OnSettingEvent(SettingEvent& event)
         sPath = Settings::Get().Read(wxT("ImportAoIP"), wxT("USB"), wxEmptyString);
         #endif // __WXGNU__
 
-        wxArrayString asFiles;
-        wxDir::GetAllFiles(sPath, &asFiles, wxT("*.pii"));
-        for(size_t i = 0; i < asFiles.GetCount(); i++)
-        {
-            m_plstFiles->AddButton(asFiles[i]);
-        }
+        wxDirTraverseUsb traverser(m_plblImportProgress, m_plstFiles);
+        wxDir dir(sPath);
+        dir.Traverse(traverser, "*.pii");
+
 
 
         m_plstFiles->Thaw();
-
+        wxLogDebug(wxT("USB drive read."));
         m_plblImportProgress->SetLabel("USB drive read.");
         m_plblImportProgress->Update();
     }
@@ -718,24 +721,39 @@ void pnlRTP::OnSettingEvent(SettingEvent& event)
 
 void pnlRTP::ImportSources(const wxString& sFileName)
 {
+    m_plblImportProgress->SetLabel(wxString::Format("Reading '%s'", sFileName.c_str()));
+    m_plblImportProgress->Update();
     iniManager ini;
     if(ini.ReadIniFile(sFileName))
     {
-
-        const iniSection* pSection = ini.GetSection("import");
-        for(auto itData = pSection->GetDataBegin(); itData != pSection->GetDataEnd(); ++itData)
+        const iniSection* pSection = ini.GetSection("Import");
+        if(pSection)
         {
-            if(itData->second.Left(3).CmpNoCase("sap") == 0)
+            for(auto itData = pSection->GetDataBegin(); itData != pSection->GetDataEnd(); ++itData)
             {
-                Settings::Get().Write(wxT("AoIP"), itData->first, itData->second);
+                if(itData->second.Left(3).CmpNoCase("sap") == 0)
+                {
+                    Settings::Get().Write(wxT("AoIP"), itData->first, itData->second);
 
+                }
+                else if(itData->second.Left(4).CmpNoCase("rtsp") == 0)
+                {
+                    Settings::Get().Write(wxT("AoIP"), itData->first, itData->second);
+                }
             }
-            else if(itData->second.Left(4).CmpNoCase("rtsp") == 0)
-            {
-                Settings::Get().Write(wxT("AoIP"), itData->first, itData->second);
-            }
+            wmLog::Get()->Log(wxString::Format("Import AoIP: Read '%s'", sFileName.c_str()));
         }
-
+        else
+        {
+            wmLog::Get()->Log(wxString::Format("Import AoIP: Reading '%s' invalid file", sFileName.c_str()));
+            m_plblImportProgress->SetLabel(wxString::Format("Reading '%s' invalid file", sFileName.c_str()));
+            m_plblImportProgress->Update();
+        }
+    }
+    else
+    {
+        wmLog::Get()->Log(wxString::Format("Import AoIP: Reading '%s' failed", sFileName.c_str()));
+        m_plblImportProgress->SetLabel(wxString::Format("Reading '%s' failed", sFileName.c_str()));
         m_plblImportProgress->Update();
     }
 }

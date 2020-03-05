@@ -52,8 +52,9 @@ pnlUSB::pnlUSB(wxWindow* parent, wxWindowID id,const wxPoint& pos,const wxSize& 
 	Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlUSB::OnlstUsbSelected);
 	//*)
 	SetPosition(pos);
+    m_plblUSB->SetBackgroundColour(*wxBLACK);
 	SetSize(size);
-
+    SetBackgroundColour(*wxBLACK);
 	m_timerUSB.SetOwner(this, wxNewId());
     Connect(m_timerUSB.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&pnlUSB::OnTimerUSB);
 }
@@ -81,6 +82,7 @@ void pnlUSB::StartCheck()
 {
     if(IsShownOnScreen())
     {
+        Settings::Get().Write(m_sSection, wxT("USB"), wxEmptyString);
         CheckUSB();
         m_timerUSB.Start(2000, true);
     }

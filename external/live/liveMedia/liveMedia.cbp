@@ -155,12 +155,14 @@
 		<Unit filename="MPEG2TransportStreamAccumulator.cpp" />
 		<Unit filename="MPEG2TransportStreamDemux.cpp" />
 		<Unit filename="MPEG2TransportStreamDemuxedTrack.cpp" />
+		<Unit filename="MPEG2TransportStreamDemuxedTrack.hh" />
 		<Unit filename="MPEG2TransportStreamFramer.cpp" />
 		<Unit filename="MPEG2TransportStreamFromESSource.cpp" />
 		<Unit filename="MPEG2TransportStreamFromPESSource.cpp" />
 		<Unit filename="MPEG2TransportStreamIndexFile.cpp" />
 		<Unit filename="MPEG2TransportStreamMultiplexor.cpp" />
 		<Unit filename="MPEG2TransportStreamParser.cpp" />
+		<Unit filename="MPEG2TransportStreamParser.hh" />
 		<Unit filename="MPEG2TransportStreamParser_PAT.cpp" />
 		<Unit filename="MPEG2TransportStreamParser_PMT.cpp" />
 		<Unit filename="MPEG2TransportStreamParser_STREAM.cpp" />
