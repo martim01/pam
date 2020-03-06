@@ -42,7 +42,6 @@
 			<Add library="libBasicUsageEnvironment.a" />
 			<Add library="libUsageEnvironment.a" />
 			<Add library="libgroupsock.a" />
-			<Add library="Ws2_32" />
 			<Add directory="$(#live_media.lib)" />
 			<Add directory="$(#live_group.lib)" />
 			<Add directory="$(#live_usage.lib)" />

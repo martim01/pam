@@ -224,6 +224,9 @@ void pnlEbuMeter::SetAudioData(const timedbuffer* pBuffer)
 {
     if(m_nChannels > 0)
     {
+
+
+
         m_pR128->CalculateLevel(pBuffer);
         if(m_bTrue)
         {

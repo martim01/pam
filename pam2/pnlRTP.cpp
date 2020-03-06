@@ -255,7 +255,7 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	SetPosition(pos);
     m_pnlUSB->SetSection(wxT("ImportAoIP"));
 	m_plstServices->AddButton(wxT("RTSP"));
-	//m_plstServices->AddButton(wxT("SIP"));
+	m_plstServices->AddButton(wxT("SIP"));
 	//m_plstServices->AddButton(wxT("NMOS"));
 
 	Panel3->SetBackgroundColour(*wxBLACK);
@@ -404,16 +404,24 @@ void pnlRTP::OnbtnDiscoverClick(wxCommandEvent& event)
 void pnlRTP::OnDiscovery(wxCommandEvent& event)
 {
     dnsInstance* pInstance = reinterpret_cast<dnsInstance*>(event.GetClientData());
+    wxLogDebug(pInstance->sService);
     if(m_setDiscover.insert(make_pair(pInstance->sName, pInstance->sHostIP)).second)
     {
         wxString sAddress;
-        if(pInstance->nPort == 554)
+        if(pInstance->sService == "_rtsp._tcp")
         {
-            sAddress = (wxString::Format(wxT("rtsp://%s/by-name/%s"), pInstance->sHostIP.c_str(), pInstance->sName.c_str()));
+            if(pInstance->nPort == 554)
+            {
+                sAddress = (wxString::Format(wxT("rtsp://%s/by-name/%s"), pInstance->sHostIP.c_str(), pInstance->sName.c_str()));
+            }
+            else
+            {
+                sAddress = (wxString::Format(wxT("rtsp://%s:%d/by-name/%s"), pInstance->sHostIP.c_str(), pInstance->nPort, pInstance->sName.c_str()));
+            }
         }
-        else
+        else if(pInstance->sService == "_sipuri._udp")
         {
-            sAddress = (wxString::Format(wxT("rtsp://%s:%d/by-name/%s"), pInstance->sHostIP.c_str(), pInstance->nPort, pInstance->sName.c_str()));
+            sAddress = pInstance->sName;
         }
        // GetSDP(sAddress);
 

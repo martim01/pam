@@ -289,6 +289,8 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     Connect(ID_M_PEDT1,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&pnlSettings::OnedtPinTextEnter);
     //*)
 
+    Connect(ID_M_PLST1,wxEVT_LIST_PAGED,(wxObjectEventFunction)&pnlSettings::OnlstDevicesPaged);
+
     m_pbtnCursor->SetToggleLook(true, wxT("Hide"), wxT("Show"), 40);
     m_ptbnOptions->SetToggleLook(true, wxT("Screens"), wxT("Options"), 40);
     m_pbtnPin->SetToggleLook(true, wxT("Off"), wxT("On"), 40);
@@ -558,13 +560,16 @@ void pnlSettings::ShowRTPDefined()
 
 void pnlSettings::ShowPagingButtons()
 {
-    m_pbtnEnd->Show(m_plstDevices->GetPageCount() > 1);
-    m_pbtnHome->Show(m_plstDevices->GetPageCount() > 1);
-    m_pbtnPrevious->Show(m_plstDevices->GetPageCount() > 1);
-    m_pbtnNext->Show(m_plstDevices->GetPageCount() > 1);
+    m_pbtnEnd->Show(m_plstDevices->GetPageCount() > 1 && m_plstDevices->GetCurrentPageNumber() < m_plstDevices->GetPageCount());
+    m_pbtnHome->Show(m_plstDevices->GetPageCount() > 1 && m_plstDevices->GetCurrentPageNumber() > 1);
+    m_pbtnPrevious->Show(m_plstDevices->GetPageCount() > 1 && m_plstDevices->GetCurrentPageNumber() > 1);
+    m_pbtnNext->Show(m_plstDevices->GetPageCount() > 1 && m_plstDevices->GetCurrentPageNumber() < m_plstDevices->GetPageCount());
 }
 
-
+void pnlSettings::OnlstDevicesPaged(wxCommandEvent& event)
+{
+    ShowPagingButtons();
+}
 
 void pnlSettings::ReloadRTP()
 {

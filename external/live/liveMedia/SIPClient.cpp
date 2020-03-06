@@ -211,7 +211,7 @@ char* SIPClient::invite1(Authenticator* authenticator) {
     unsigned rtpmapLineSize;
     if (fMIMESubtypeSize > 0) {
       char const* const rtpmapFmt =
-	"a=rtpmap:%u %s/8000\r\n";
+	"a=rtpmap:%u %s/48000\r\n";
       unsigned rtpmapFmtSize = strlen(rtpmapFmt)
 	+ 3 /* max char len */ + fMIMESubtypeSize;
       rtpmapLine = new char[rtpmapFmtSize];

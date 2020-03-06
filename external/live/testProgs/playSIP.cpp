@@ -97,7 +97,7 @@ void getSDPDescription(RTSPClient::responseHandler* afterFunc)
     extern unsigned short desiredPortNum;
     unsigned short clientStartPortNum = desiredPortNum;
     if (clientStartPortNum == 0)
-        clientStartPortNum = 8000; // default
+        clientStartPortNum = 48000; // default
     ourSIPClient->setClientStartPortNum(clientStartPortNum);
 
     extern char const* streamURL;
