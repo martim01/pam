@@ -573,10 +573,8 @@ void pnlSettings::OnlstDevicesPaged(wxCommandEvent& event)
 
 void pnlSettings::ReloadRTP()
 {
-    if(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")) == wxT("AoIP"))
-    {
-        ShowRTPDefined();
-    }
+    ShowRTPDefined();
+
 }
 
 void pnlSettings::OnlblLatencySelected(wxCommandEvent& event)

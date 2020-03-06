@@ -448,7 +448,7 @@ void pnlRTP::OnDiscovery(wxCommandEvent& event)
         m_pList->Refresh();
 
         m_nDiscovered++;
-        m_plblDiscovering->SetLabel(wxString::Format(wxT("Discovering...\n%04zu Found"), m_nDiscovered));
+        m_plblDiscovering->SetLabel(wxString::Format(wxT("Discovering...\n%zu Found"), m_nDiscovered));
         m_plblDiscovering->Update();
     }
     wxLogDebug(wxT("Discover Done"));

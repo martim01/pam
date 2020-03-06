@@ -568,7 +568,7 @@ void IOManager::InitGeneratorNoise()
 
 void IOManager::OpenSoundcardDevice(unsigned long nOutputSampleRate)
 {
-    wmLog::Get()->Log(wxT("Opene Audio Device: Soundcard"));
+    wmLog::Get()->Log(wxT("Open Audio Device: Soundcard"));
 
     int nInput(-1);
     if(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")) == wxT("Soundcard"))

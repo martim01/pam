@@ -3,6 +3,15 @@
 #include <wx/app.h>
 #include "pam2Main.h"
 
+#include "images/end_hz.xpm"
+#include "images/end_hz_press.xpm"
+#include "images/home_hz_press.xpm"
+#include "images/home_hz.xpm"
+#include "images/pagedown.xpm"
+#include "images/pagedown_press.xpm"
+#include "images/pageup.xpm"
+#include "images/pageup_press.xpm"
+
 //(*InternalHeaders(pnlAoIPSelection)
 #include <wx/font.h>
 #include <wx/intl.h>
@@ -38,7 +47,7 @@ pnlAoIPSelection::pnlAoIPSelection(wxWindow* parent,wxWindowID id,const wxPoint&
 	m_pLbl3->SetBackgroundColour(wxColour(0,64,0));
 	wxFont m_pLbl3Font(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	m_pLbl3->SetFont(m_pLbl3Font);
-	m_plstDevices = new wmList(this, ID_M_PLST1, wxPoint(0,40), wxSize(800,390), wmList::STYLE_SELECT, 2, wxSize(-1,40), 5, wxSize(5,5));
+	m_plstDevices = new wmList(this, ID_M_PLST1, wxPoint(0,40), wxSize(800,360), wmList::STYLE_SELECT, 2, wxSize(-1,40), 5, wxSize(5,5));
 	m_plstDevices->SetBackgroundColour(wxColour(0,0,0));
 	m_plstDevices->SetSelectedButtonColour(wxColour(wxT("#008000")));
 	m_plstDevices->SetDisabledColour(wxColour(wxT("#808080")));
@@ -65,6 +74,16 @@ pnlAoIPSelection::pnlAoIPSelection(wxWindow* parent,wxWindowID id,const wxPoint&
 	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoIPSelection::OnbtnBackClick);
 	//*)
 	Connect(wxEVT_SHOW, (wxObjectEventFunction)&pnlAoIPSelection::OnShown);
+
+	m_pbtnEnd->SetBitmapLabel(wxBitmap(end_hz_xpm));
+    m_pbtnEnd->SetBitmapSelected(wxBitmap(end_hz_press_xpm));
+    m_pbtnHome->SetBitmapLabel(wxBitmap(home_hz_xpm));
+    m_pbtnHome->SetBitmapSelected(wxBitmap(home_hz_press_xpm));
+    m_pbtnPrevious->SetBitmapLabel(wxBitmap(pageup_xpm));
+    m_pbtnPrevious->SetBitmapSelected(wxBitmap(pageup_press_xpm));
+    m_pbtnNext->SetBitmapLabel(wxBitmap(pagedown_xpm));
+    m_pbtnNext->SetBitmapSelected(wxBitmap(pagedown_press_xpm));
+
 
 	SetPosition(pos);
 	SetSize(size);
@@ -131,10 +150,10 @@ void pnlAoIPSelection::OnbtnEndClick(wxCommandEvent& event)
 
 void pnlAoIPSelection::ShowPagingButtons()
 {
-    m_pbtnEnd->Show(m_plstDevices->GetPageCount() > 1);
-    m_pbtnHome->Show(m_plstDevices->GetPageCount() > 1);
-    m_pbtnPrevious->Show(m_plstDevices->GetPageCount() > 1);
-    m_pbtnNext->Show(m_plstDevices->GetPageCount() > 1);
+    m_pbtnEnd->Show(m_plstDevices->GetPageCount() > 1 && m_plstDevices->GetCurrentPageNumber() < m_plstDevices->GetPageCount());
+    m_pbtnHome->Show(m_plstDevices->GetPageCount() > 1 && m_plstDevices->GetCurrentPageNumber() > 1);
+    m_pbtnPrevious->Show(m_plstDevices->GetPageCount() > 1 && m_plstDevices->GetCurrentPageNumber() > 1);
+    m_pbtnNext->Show(m_plstDevices->GetPageCount() > 1 && m_plstDevices->GetCurrentPageNumber() < m_plstDevices->GetPageCount());
 }
 
 void pnlAoIPSelection::OnbtnBackClick(wxCommandEvent& event)

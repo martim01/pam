@@ -28,7 +28,7 @@
 			<button_disabled>#808080</button_disabled>
 			<items />
 			<pos>0,40</pos>
-			<size>800,390</size>
+			<size>800,370</size>
 			<bg>#000000</bg>
 			<style>wmList::STYLE_SELECT</style>
 			<handler function="OnlstDevicesSelected" entry="EVT_LIST_SELECTED" />
