@@ -193,7 +193,7 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
     m_pbtnManual = new wmButton(pnlDiscovery, ID_M_PBTN10, _("Back"), wxPoint(690,390), wxSize(100,45), 0, wxDefaultValidator, _T("ID_M_PBTN10"));
     m_pbtnManual->SetBackgroundColour(wxColour(0,128,0));
     m_pbtnManual->SetColourSelected(wxColour(wxT("#F07800")));
-    m_phtmlResults = new wxTouchScreenHtml(pnlDiscovery, ID_HTMLWINDOW1, wxPoint(140,0), wxSize(650,385), 0, _T("ID_HTMLWINDOW1"));
+
     Panel3 = new wxPanel(m_pSwp1, ID_PANEL4, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL4"));
     m_pnlUSB = new pnlUSB(Panel3, ID_PANEL5, wxPoint(0,0), wxSize(600,315), wxTAB_TRAVERSAL, _T("ID_PANEL5"));
     m_pnlUSB->SetBackgroundColour(wxColour(0,0,0));
@@ -238,6 +238,11 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
     Connect(ID_M_PBTN12,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlRTP::OnbtnImportImportClick);
     Connect(ID_M_PBTN13,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlRTP::OnbtnManualClick);
     //*)
+
+    m_pList = new wmListAdv(pnlDiscovery, wxNewId(), wxPoint(140,0), wxSize(650,385),0, wmListAdv::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(0,1));
+    m_pList->SetFont(wxFont(8,wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, "Arial", wxFONTENCODING_DEFAULT));
+    m_pList->SetBackgroundColour(wxColour(100,100,100));
+
 	Connect(wxID_ANY, wxEVT_SDP, (wxObjectEventFunction)&pnlRTP::OnSDPReceived);
 	Connect(wxID_ANY, wxEVT_RTP_SESSION_CLOSED, (wxObjectEventFunction)&pnlRTP::OnRTPClosed);
 	m_plstSources->SetGradient(0);

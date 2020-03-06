@@ -190,6 +190,7 @@ void pnlMeters::SetSession(const session& aSession)
     {
         m_vMonitor[i]->Destroy();
     }
+    m_vMonitor.resize(0);
     if(m_pLevels)
     {
         m_pLevels->Destroy();
@@ -229,6 +230,7 @@ void pnlMeters::SetSession(const session& aSession)
     else
     {
         m_vMeters.resize(4);
+        m_vMonitor.resize(0);
         m_vMeters[0] = new LevelMeter(this,wxID_ANY, wxT("L"), -70, false, wxPoint(55, 0), wxSize(50, 480));
         m_vMeters[1] = new LevelMeter(this,wxID_ANY, wxT("R"), -70, false, wxPoint(110, 0), wxSize(50, 480));
         m_vMeters[2] = new LevelMeter(this,wxID_ANY, wxT("M"), -70, false, wxPoint(200, 0), wxSize(50, 480));
