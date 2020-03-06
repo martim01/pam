@@ -44,7 +44,7 @@
 					<Add option="-Wl,--enable-auto-import,-Map=pam2d.map" />
 					<Add library="wxmsw30ud_gcc_custom" />
 					<Add library="pambased" />
-					<Add library="portaudiod" />
+					<Add library="portaudio" />
 					<Add library="libcurl" />
 					<Add library="Ws2_32" />
 					<Add library="iphlpapi" />
@@ -234,6 +234,8 @@
 			<Option compilerVar="WINDRES" />
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="pnlAoIPSelection.cpp" />
+		<Unit filename="pnlAoIPSelection.h" />
 		<Unit filename="pnlHelp.cpp" />
 		<Unit filename="pnlHelp.h" />
 		<Unit filename="pnlLog.cpp" />
@@ -286,6 +288,7 @@
 		<Unit filename="wxsmith/dlgPin.wxs" />
 		<Unit filename="wxsmith/dlgSequence.wxs" />
 		<Unit filename="wxsmith/pnlAoIPInfo.wxs" />
+		<Unit filename="wxsmith/pnlAoIPSelection.wxs" />
 		<Unit filename="wxsmith/pnlHelp.wxs" />
 		<Unit filename="wxsmith/pnlLog.wxs" />
 		<Unit filename="wxsmith/pnlLogControl.wxs" />
@@ -309,7 +312,6 @@
 					<wxPanel wxs="wxsmith/pnlSettings.wxs" src="pnlSettings.cpp" hdr="pnlSettings.h" fwddecl="0" i18n="1" name="pnlSettings" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlRTP.wxs" src="pnlRTP.cpp" hdr="pnlRTP.h" fwddecl="0" i18n="1" name="pnlRTP" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlNetworkSetup.wxs" src="pnlNetworkSetup.cpp" hdr="pnlNetworkSetup.h" fwddecl="0" i18n="1" name="pnlNetworkSetup" language="CPP" />
-					<wxPanel wxs="wxsmith/pnlSettingsInput.wxs" src="pnlSettingsInput.cpp" hdr="pnlSettingsInput.h" fwddecl="0" i18n="1" name="pnlSettingsInput" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlSettingsOptions.wxs" src="pnlSettingsOptions.cpp" hdr="pnlSettingsOptions.h" fwddecl="0" i18n="1" name="pnlSettingsOptions" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlTests.wxs" src="pnlTests.cpp" hdr="pnlTests.h" fwddecl="0" i18n="1" name="pnlTests" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlAoIPInfo.wxs" src="pnlAoIPInfo.cpp" hdr="pnlAoIPInfo.h" fwddecl="0" i18n="1" name="pnlAoIPInfo" language="CPP" />
@@ -330,6 +332,7 @@
 					<wxDialog wxs="wxsmith/dlgAoIP.wxs" src="dlgAoIP.cpp" hdr="dlgAoIP.h" fwddecl="0" i18n="1" name="dlgAoIP" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlSettingsNmos.wxs" src="pnlSettingsNmos.cpp" hdr="pnlSettingsNmos.h" fwddecl="0" i18n="1" name="pnlSettingsNmos" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlUSB.wxs" src="pnlUSB.cpp" hdr="pnlUSB.h" fwddecl="0" i18n="1" name="pnlUSB" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlAoIPSelection.wxs" src="pnlAoIPSelection.cpp" hdr="pnlAoIPSelection.h" fwddecl="0" i18n="1" name="pnlAoIPSelection" language="CPP" />
 				</resources>
 			</wxsmith>
 			<AutoVersioning>

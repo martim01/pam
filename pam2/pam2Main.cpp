@@ -54,8 +54,8 @@
 
 //(*InternalHeaders(pam2Dialog)
 #include <wx/bitmap.h>
-#include <wx/intl.h>
 #include <wx/image.h>
+#include <wx/intl.h>
 #include <wx/string.h>
 //*)
 
@@ -91,9 +91,9 @@ const long pam2Dialog::ID_PANEL4 = wxNewId();
 const long pam2Dialog::ID_M_PSWP1 = wxNewId();
 const long pam2Dialog::ID_M_PLST1 = wxNewId();
 const long pam2Dialog::ID_M_PLST3 = wxNewId();
-const long pam2Dialog::ID_M_PLBL3 = wxNewId();
-const long pam2Dialog::ID_M_PLBL1 = wxNewId();
+const long pam2Dialog::ID_M_PBTN2 = wxNewId();
 const long pam2Dialog::ID_M_PLBL4 = wxNewId();
+const long pam2Dialog::ID_M_PBTN3 = wxNewId();
 const long pam2Dialog::ID_M_PLBL2 = wxNewId();
 const long pam2Dialog::ID_PANEL7 = wxNewId();
 const long pam2Dialog::ID_M_PBTN1 = wxNewId();
@@ -105,6 +105,7 @@ const long pam2Dialog::ID_PANEL6 = wxNewId();
 const long pam2Dialog::ID_M_PSWP4 = wxNewId();
 const long pam2Dialog::ID_PANEL1 = wxNewId();
 const long pam2Dialog::ID_PANEL3 = wxNewId();
+const long pam2Dialog::ID_PANEL8 = wxNewId();
 const long pam2Dialog::ID_M_PSWP3 = wxNewId();
 const long pam2Dialog::ID_TIMER1 = wxNewId();
 const long pam2Dialog::ID_TIMER2 = wxNewId();
@@ -165,21 +166,15 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_plstInbuilt->SetTextButtonColour(wxColour(wxT("#000000")));
     Panel4 = new wxPanel(Panel2, ID_PANEL7, wxPoint(4,390), wxSize(193,50), wxTAB_TRAVERSAL, _T("ID_PANEL7"));
     Panel4->SetBackgroundColour(wxColour(255,255,255));
-    m_plblCpu = new wmLabel(Panel4, ID_M_PLBL3, _("CPU:"), wxPoint(1,1), wxSize(95,23), 0, _T("ID_M_PLBL3"));
-    m_plblCpu->SetBorderState(uiRect::BORDER_NONE);
-    m_plblCpu->GetUiRect().SetGradient(0);
-    m_plblCpu->SetForegroundColour(wxColour(255,255,255));
-    m_plblCpu->SetBackgroundColour(wxColour(0,0,0));
-    m_plblInput = new wmLabel(Panel4, ID_M_PLBL1, _("Input"), wxPoint(1,25), wxSize(95,24), 0, _T("ID_M_PLBL1"));
-    m_plblInput->SetBorderState(uiRect::BORDER_NONE);
-    m_plblInput->GetUiRect().SetGradient(0);
-    m_plblInput->SetForegroundColour(wxColour(255,255,255));
-    m_plblInput->SetBackgroundColour(wxColour(0,128,0));
+    m_pbtnCPU = new wmButton(Panel4, ID_M_PBTN2, _("Monitor"), wxPoint(1,1), wxSize(95,23), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN2"));
+    m_pbtnCPU->SetBackgroundColour(wxColour(0,0,0));
     m_plblNetwork = new wmLabel(Panel4, ID_M_PLBL4, wxEmptyString, wxPoint(97,1), wxSize(95,23), 0, _T("ID_M_PLBL4"));
     m_plblNetwork->SetBorderState(uiRect::BORDER_NONE);
     m_plblNetwork->GetUiRect().SetGradient(0);
     m_plblNetwork->SetForegroundColour(wxColour(255,255,255));
     m_plblNetwork->SetBackgroundColour(wxColour(0,0,0));
+    m_pbtnInput = new wmButton(Panel4, ID_M_PBTN3, _("Input"), wxPoint(1,25), wxSize(95,24), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
+    m_pbtnInput->SetBackgroundColour(wxColour(0,128,0));
     m_plblOutput = new wmLabel(Panel4, ID_M_PLBL2, _("Output"), wxPoint(97,25), wxSize(95,24), 0, _T("ID_M_PLBL2"));
     m_plblOutput->SetBorderState(uiRect::BORDER_NONE);
     m_plblOutput->GetUiRect().SetGradient(0);
@@ -202,8 +197,10 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_pswpOptions->AddPage(Panel1, _("Blank"), false);
     m_pswpScreens->AddPage(Panel2, _("Screens"), false);
     m_pswpScreens->AddPage(Panel3, _("Options"), false);
+    pnlAoip = new pnlAoIPSelection(m_pswpSplash, ID_PANEL8, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL8"));
     m_pswpSplash->AddPage(pnlSplash, _("Splash"), true);
     m_pswpSplash->AddPage(pnlMain, _("Main"), false);
+    m_pswpSplash->AddPage(pnlAoip, _("AoIP"), false);
     timerStart.SetOwner(this, ID_TIMER1);
     timerStart.Start(10, true);
     m_timerFile.SetOwner(this, ID_TIMER2);
@@ -214,6 +211,8 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Connect(ID_M_PSWP1,wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,(wxObjectEventFunction)&pam2Dialog::OnswpMainPageChanged);
     Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnlstScreensSelected);
     Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnlstScreensSelected);
+    Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pam2Dialog::OnbtnInputClick);
+    Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pam2Dialog::OnbtnInputClick);
     Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pam2Dialog::OnbtnMonitorClick);
     Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnplstOptionsSelected);
     Connect(ID_M_PSWP3,wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,(wxObjectEventFunction)&pam2Dialog::OnswpSplashPageChanged);
@@ -275,7 +274,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Settings::Get().Write(wxT("Version"), wxT("pam2"), wxString::Format(wxT("%d.%d.%d.%d"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
     Settings::Get().Write(wxT("Input"), wxT("reset"), false);
 
-    m_plblInput->SetLabel(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")));
+    m_pbtnInput->SetLabel(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")));
     m_plblOutput->SetLabel(Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")));
 
 
@@ -719,13 +718,13 @@ void pam2Dialog::OnAudioData(AudioEvent& event)
         switch(event.GetStatus())
         {
             case AudioEvent::OK:
-                m_plblInput->SetBackgroundColour(wxColour(0,128,0));
+                m_pbtnInput->SetBackgroundColour(wxColour(0,128,0));
                 break;
             case AudioEvent::UNDERRUN:
-                m_plblInput->SetBackgroundColour(wxColour(128,0,0));
+                m_pbtnInput->SetBackgroundColour(wxColour(128,0,0));
                 break;
             case AudioEvent::OVERRUN:
-                m_plblInput->SetBackgroundColour(wxColour(255,128,0));
+                m_pbtnInput->SetBackgroundColour(wxColour(255,128,0));
                 break;
         }
     }
@@ -769,7 +768,7 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
 {
     if(event.GetSection() == wxT("Input") && event.GetKey() == wxT("Type"))
     {
-        m_plblInput->SetLabel(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")));
+        m_pbtnInput->SetLabel(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")));
     }
     else if(event.GetSection() == wxT("Output"))
     {
@@ -999,7 +998,7 @@ void pam2Dialog::Onm_timerFileTrigger(wxTimerEvent& event)
 void pam2Dialog::OntimerIpcTrigger(wxTimerEvent& event)
 {
     pcStats::Get().CalculateCpuStats();
-    m_plblCpu->SetLabel(wxString::Format(wxT("CPU: %.0f%%"), pcStats::Get().GetTotalCpuUsage()*100.0));
+    m_pbtnCPU->SetLabel(wxString::Format(wxT("CPU: %.0f%%"), pcStats::Get().GetTotalCpuUsage()*100.0));
 
 }
 
@@ -1612,4 +1611,13 @@ void pam2Dialog::OnNmosSubscribeRequest(wxNmosClientCurlEvent& event)
         m_ppnlSettings->m_ppnlNmos->SubscriptionRequest(event.GetResourceId(), event.GetResponse(), event.GetResult());
     }
     #endif // __NMOS__
+}
+
+void pam2Dialog::OnbtnInputClick(wxCommandEvent& event)
+{
+    if(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")) == "AoIP")
+    {
+        //Show AoIP
+        m_pswpSplash->ChangeSelection("AoIP");
+    }
 }

@@ -11,22 +11,22 @@
 #define PAM2MAIN_H
 
 //(*Headers(pam2Dialog)
-#include <wx/notebook.h>
 #include "wmbutton.h"
 #include "wmlabel.h"
+#include "wmlist.h"
 #include "wmswitcherpanel.h"
-#include <wx/panel.h>
 #include <wx/bmpbuttn.h>
 #include <wx/dialog.h>
+#include <wx/notebook.h>
+#include <wx/panel.h>
 #include <wx/timer.h>
-#include "wmlist.h"
 //*)
 
 #include "wmswitcherpanel.h"
 #include "wmlist.h"
 #include "session.h"
 #include <memory>
-
+#include "pnlAoIPSelection.h"
 struct timedbuffer;
 class MonitorPluginBuilder;
 class pnlSettings;
@@ -77,6 +77,7 @@ class pam2Dialog: public wxDialog
         void OnswpScreensPageChanged(wxNotebookEvent& event);
         void OnswpMainPageChanged(wxNotebookEvent& event);
         void OnswpSplashPageChanged(wxNotebookEvent& event);
+        void OnbtnInputClick(wxCommandEvent& event);
         //*)
 
         //(*Identifiers(pam2Dialog)
@@ -85,9 +86,9 @@ class pam2Dialog: public wxDialog
         static const long ID_M_PSWP1;
         static const long ID_M_PLST1;
         static const long ID_M_PLST3;
-        static const long ID_M_PLBL3;
-        static const long ID_M_PLBL1;
+        static const long ID_M_PBTN2;
         static const long ID_M_PLBL4;
+        static const long ID_M_PBTN3;
         static const long ID_M_PLBL2;
         static const long ID_PANEL7;
         static const long ID_M_PBTN1;
@@ -99,6 +100,7 @@ class pam2Dialog: public wxDialog
         static const long ID_M_PSWP4;
         static const long ID_PANEL1;
         static const long ID_PANEL3;
+        static const long ID_PANEL8;
         static const long ID_M_PSWP3;
         static const long ID_TIMER1;
         static const long ID_TIMER2;
@@ -106,29 +108,30 @@ class pam2Dialog: public wxDialog
         //*)
 
         //(*Declarations(pam2Dialog)
-        wmList* m_plstScreens;
-        wmList* m_plstInbuilt;
-        wxPanel* pnlMain;
-        wxBitmapButton* m_pbmpSplash;
-        wxPanel* Panel4;
+        pnlAoIPSelection* pnlAoip;
+        wmButton* m_pbtnCPU;
+        wmButton* m_pbtnInput;
+        wmButton* m_pbtnMonitor;
         wmLabel* m_plblNetwork;
         wmLabel* m_plblOutput;
-        wxPanel* pnlLists;
+        wmList* m_plstInbuilt;
         wmList* m_plstOptions;
-        wxPanel* Panel1;
-        wxPanel* Panel3;
-        wmLabel* m_plblCpu;
-        wxTimer m_timerIpc;
-        wmSwitcherPanel* m_pswpScreens;
-        wmButton* m_pbtnMonitor;
-        wxTimer m_timerFile;
-        wmSwitcherPanel* m_pswpOptions;
-        wxTimer timerStart;
-        wxPanel* Panel2;
+        wmList* m_plstScreens;
         wmSwitcherPanel* m_pswpMain;
-        wxPanel* pnlSplash;
+        wmSwitcherPanel* m_pswpOptions;
+        wmSwitcherPanel* m_pswpScreens;
         wmSwitcherPanel* m_pswpSplash;
-        wmLabel* m_plblInput;
+        wxBitmapButton* m_pbmpSplash;
+        wxPanel* Panel1;
+        wxPanel* Panel2;
+        wxPanel* Panel3;
+        wxPanel* Panel4;
+        wxPanel* pnlLists;
+        wxPanel* pnlMain;
+        wxPanel* pnlSplash;
+        wxTimer m_timerFile;
+        wxTimer m_timerIpc;
+        wxTimer timerStart;
         //*)
 
         void SetupNmos();

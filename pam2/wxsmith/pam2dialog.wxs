@@ -80,19 +80,14 @@
 										<pos>4,390</pos>
 										<size>193,50</size>
 										<bg>#FFFFFF</bg>
-										<object class="wmLabel" name="ID_M_PLBL3" variable="m_plblCpu" member="yes">
-											<label>CPU:</label>
+										<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnCPU" member="yes">
+											<label>Monitor</label>
+											<toggle_percent>0</toggle_percent>
 											<pos>1,1</pos>
 											<size>95,23</size>
-											<fg>#FFFFFF</fg>
 											<bg>#000000</bg>
-										</object>
-										<object class="wmLabel" name="ID_M_PLBL1" variable="m_plblInput" member="yes">
-											<label>Input</label>
-											<pos>1,25</pos>
-											<size>95,24</size>
-											<fg>#FFFFFF</fg>
-											<bg>#008000</bg>
+											<style>wmButton::STYLE_SELECT</style>
+											<handler function="OnbtnInputClick" entry="EVT_BUTTON" />
 										</object>
 										<object class="wmLabel" name="ID_M_PLBL4" variable="m_plblNetwork" member="yes">
 											<label></label>
@@ -100,6 +95,15 @@
 											<size>95,23</size>
 											<fg>#FFFFFF</fg>
 											<bg>#000000</bg>
+										</object>
+										<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnInput" member="yes">
+											<label>Input</label>
+											<toggle_percent>0</toggle_percent>
+											<pos>1,25</pos>
+											<size>95,24</size>
+											<bg>#008000</bg>
+											<style>wmButton::STYLE_SELECT</style>
+											<handler function="OnbtnInputClick" entry="EVT_BUTTON" />
 										</object>
 										<object class="wmLabel" name="ID_M_PLBL2" variable="m_plblOutput" member="yes">
 											<label>Output</label>
@@ -157,6 +161,10 @@
 					</object>
 				</object>
 				<label>Main</label>
+			</object>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL8" subclass="pnlAoIPSelection" variable="pnlAoip" member="yes" />
+				<label>AoIP</label>
 			</object>
 		</object>
 		<object class="wxTimer" name="ID_TIMER1" variable="timerStart" member="yes">
