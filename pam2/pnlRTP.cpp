@@ -404,8 +404,19 @@ void pnlRTP::OnbtnDiscoverClick(wxCommandEvent& event)
 void pnlRTP::OnDiscovery(wxCommandEvent& event)
 {
     dnsInstance* pInstance = reinterpret_cast<dnsInstance*>(event.GetClientData());
-    wxLogDebug(pInstance->sService);
-    if(m_setDiscover.insert(make_pair(pInstance->sName, pInstance->sHostIP)).second)
+
+    wxString sIdentifier;
+    if(pInstance->sService == "_rtsp._tcp")
+    {
+        sIdentifier = ("{"+pInstance->sService.AfterFirst('_').BeforeFirst('.')+"} "+pInstance->sName.BeforeFirst('('));
+    }
+    else if(pInstance->sService == "_sipuri._udp")
+    {
+        sIdentifier = ("{"+pInstance->sService.AfterFirst('_').BeforeFirst('.')+"} "+pInstance->sName.AfterFirst(' ').BeforeFirst('('));
+    }
+
+
+    if(m_setDiscover.insert(make_pair(sIdentifier, pInstance->sHostIP)).second)
     {
         wxString sAddress;
         if(pInstance->sService == "_rtsp._tcp")
@@ -418,14 +429,16 @@ void pnlRTP::OnDiscovery(wxCommandEvent& event)
             {
                 sAddress = (wxString::Format(wxT("rtsp://%s:%d/by-name/%s"), pInstance->sHostIP.c_str(), pInstance->nPort, pInstance->sName.c_str()));
             }
+            Settings::Get().Write(wxT("AoIP"), wxString::Format(wxT("%s(%s)"), sIdentifier.c_str(), pInstance->sHostIP.c_str()), sAddress);
         }
         else if(pInstance->sService == "_sipuri._udp")
         {
-            sAddress = pInstance->sName;
+            sAddress = pInstance->sName.BeforeFirst(' ');
+            Settings::Get().Write(wxT("AoIP"), wxString::Format(wxT("%s(%s)"), sIdentifier.c_str(), pInstance->sHostIP.c_str()), sAddress);
         }
        // GetSDP(sAddress);
 
-        Settings::Get().Write(wxT("AoIP"), wxString::Format(wxT("%s(%s)"), pInstance->sName.BeforeFirst(wxT('@')).c_str(), pInstance->sHostIP.c_str()), sAddress);
+
 
         wxClientDC dc(this);
         dc.SetFont(m_pList->GetFont());

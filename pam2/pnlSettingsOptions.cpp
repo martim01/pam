@@ -24,7 +24,7 @@ pnlSettingsOptions::pnlSettingsOptions(wxWindow* parent,wxWindowID id,const wxPo
 	//(*Initialize(pnlSettingsOptions)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
-	m_pbtnTerminal = new wmButton(this, ID_M_PBTN4, _("Launch Terminal"), wxPoint(50,5), wxSize(100,60), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN4"));
+	m_pbtnTerminal = new wmButton(this, ID_M_PBTN4, _("Hold To Launch Terminal"), wxPoint(50,5), wxSize(100,60), wmButton::STYLE_HOLD, wxDefaultValidator, _T("ID_M_PBTN4"));
 	m_pbtnTerminal->SetBackgroundColour(wxColour(52,105,105));
 	wxFont m_pbtnTerminalFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	m_pbtnTerminal->SetFont(m_pbtnTerminalFont);
@@ -41,7 +41,7 @@ pnlSettingsOptions::pnlSettingsOptions(wxWindow* parent,wxWindowID id,const wxPo
 	wxFont m_pbtnShutdownFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	m_pbtnShutdown->SetFont(m_pbtnShutdownFont);
 
-	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOptions::OnbtnTerminalClick);
+	Connect(ID_M_PBTN4,wxEVT_BUTTON_HELD,(wxObjectEventFunction)&pnlSettingsOptions::OnbtnTerminalClick);
 	Connect(ID_M_PBTN1,wxEVT_BUTTON_HELD,(wxObjectEventFunction)&pnlSettingsOptions::OnbtnExitHeld);
 	Connect(ID_M_PBTN2,wxEVT_BUTTON_HELD,(wxObjectEventFunction)&pnlSettingsOptions::OnbtnRebootHeld);
 	Connect(ID_M_PBTN3,wxEVT_BUTTON_HELD,(wxObjectEventFunction)&pnlSettingsOptions::OnbtnShutdownHeld);
