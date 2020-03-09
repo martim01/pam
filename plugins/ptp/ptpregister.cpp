@@ -10,7 +10,7 @@ void CreateMonitorBuilder()
 
 wxString GetPluginName()
 {
-    return wxT("ptp");
+    return wxT("PTP Monkey");
 }
 
 wxString GetPluginVersion()

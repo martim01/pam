@@ -768,7 +768,12 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
 {
     if(event.GetSection() == wxT("Input") && event.GetKey() == wxT("Type"))
     {
-        m_pbtnInput->SetLabel(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")));
+        m_pbtnInput->SetLabel(event.GetValue());
+
+        if(event.GetValue() == "Disabled" && m_pdlgNoInput)
+        {
+            m_pdlgNoInput->Show(false);
+        }
     }
     else if(event.GetSection() == wxT("Output"))
     {
@@ -1096,7 +1101,7 @@ void pam2Dialog::OnswpMainPageChanged(wxNotebookEvent& event)
         if(m_bInputFailed)
         {
             m_pdlgNoInput->Show((m_pswpMain->GetSelectionName() != wxT("Settings") && m_pswpMain->GetSelectionName() != wxT("Log") &&
-                                  m_pswpMain->GetSelectionName() != wxT("Help")));
+                                  m_pswpMain->GetSelectionName() != wxT("Help") && Settings::Get().Read("Input","Type","Soundcard")!="Disabled"));
         }
         else
         {
@@ -1120,7 +1125,7 @@ void pam2Dialog::OnInputFailed(wxCommandEvent& event)
 
     m_pdlgNoInput->SetPosition(wxPoint(0,425));
     m_pdlgNoInput->Show((m_pswpMain->GetSelectionName() != wxT("Settings") && m_pswpMain->GetSelectionName() != wxT("Log")  &&
-                                  m_pswpMain->GetSelectionName() != wxT("Help")));
+                                  m_pswpMain->GetSelectionName() != wxT("Help") && Settings::Get().Read("Input","Type","Soundcard")!="Disabled") );
 }
 
 

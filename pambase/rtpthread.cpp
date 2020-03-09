@@ -32,9 +32,10 @@ RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface
     m_sProgName(sProg),
     m_sUrl(sUrl),
     m_nBufferSize(nBufferSize),
-    m_pCurrentBuffer(0),
-    m_pRtspClient(0),
-    m_pSipClient(0),
+    m_pCurrentBuffer(nullptr),
+    m_pRtspClient(nullptr),
+    m_pSipClient(nullptr),
+    m_pSession(nullptr),
     m_bClosing(false),
     m_bSaveSDP(bSaveSDPOnly),
     m_nQosMeasurementIntervalMS(1000)
@@ -471,17 +472,19 @@ unsigned long RtpThread::GetQosMeasurementIntervalMS()
 void RtpThread::MasterClockChanged()
 {
     wxLogDebug(wxT("MasterClockChanged"));
-    MediaSubsessionIterator iter(*m_pSession);
-    Smpte2110MediaSubsession* subsession = NULL;
-    while ((subsession = dynamic_cast<Smpte2110MediaSubsession*>(iter.next())) != NULL)
+    if(m_pSession)
     {
-        Aes67Source* pSource = dynamic_cast<Aes67Source*>(subsession->readSource());
-        if(pSource)
+        MediaSubsessionIterator iter(*m_pSession);
+        Smpte2110MediaSubsession* subsession = NULL;
+        while ((subsession = dynamic_cast<Smpte2110MediaSubsession*>(iter.next())) != NULL)
         {
-            wxLogDebug(wxT("MasterClockChanged: WorkoutLastEpoch"));
-            pSource->WorkoutLastEpoch();
+            Aes67Source* pSource = dynamic_cast<Aes67Source*>(subsession->readSource());
+            if(pSource)
+            {
+                wxLogDebug(wxT("MasterClockChanged: WorkoutLastEpoch"));
+                pSource->WorkoutLastEpoch();
 
+            }
         }
     }
-
 }

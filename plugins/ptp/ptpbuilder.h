@@ -14,7 +14,7 @@ class WXEXPORT ptpBuilder : public MonitorPluginBuilder
 
         wxString GetName() const
         {
-            return wxT("ptp");
+            return wxT("PTP Monkey");
         }
 
 
@@ -22,7 +22,7 @@ class WXEXPORT ptpBuilder : public MonitorPluginBuilder
         virtual void OutputChannels(const std::vector<char>& vChannels);
 
     protected:
-		
+
 	friend class ptpPanel;
         void OnSettingChanged(SettingEvent& event);
 
