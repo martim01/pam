@@ -7,7 +7,6 @@
 //*)
 
 //(*IdInit(dlgNoInput)
-const long dlgNoInput::ID_M_PLBL1 = wxNewId();
 const long dlgNoInput::ID_M_PBTN1 = wxNewId();
 //*)
 
@@ -20,22 +19,16 @@ dlgNoInput::dlgNoInput(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 {
 	//(*Initialize(dlgNoInput)
 	Create(parent, id, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxNO_BORDER, _T("id"));
-	SetClientSize(wxSize(520,50));
+	SetClientSize(wxSize(100,50));
 	Move(wxPoint(40,400));
 	SetForegroundColour(wxColour(255,0,0));
 	SetBackgroundColour(wxColour(0,0,0));
 	wxFont thisFont(24,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	SetFont(thisFont);
-	m_pLbl1 = new wmLabel(this, ID_M_PLBL1, _("No AES Detected"), wxPoint(10,0), wxSize(420,50), 0, _T("ID_M_PLBL1"));
-	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
-	m_pLbl1->GetUiRect().SetGradient(0);
-	m_pLbl1->SetForegroundColour(wxColour(255,0,0));
-	wxFont m_pLbl1Font(22,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
-	m_pLbl1->SetFont(m_pLbl1Font);
-	m_pbtnInput = new wmButton(this, ID_M_PBTN1, _("Reset"), wxPoint(420,0), wxSize(100,50), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
+	m_pbtnInput = new wmButton(this, ID_M_PBTN1, _("No AES! Reset"), wxPoint(0,0), wxSize(100,50), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnInput->SetForegroundColour(wxColour(255,255,255));
-	m_pbtnInput->SetBackgroundColour(wxColour(0,0,128));
-	wxFont m_pbtnInputFont(18,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pbtnInput->SetBackgroundColour(wxColour(236,0,0));
+	wxFont m_pbtnInputFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pbtnInput->SetFont(m_pbtnInputFont);
 
 	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&dlgNoInput::OnbtnInputClick);

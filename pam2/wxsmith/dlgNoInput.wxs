@@ -2,7 +2,7 @@
 <wxsmith>
 	<object class="wxDialog" name="dlgNoInput">
 		<pos>40,400</pos>
-		<size>520,50</size>
+		<size>100,50</size>
 		<fg>#FF0000</fg>
 		<bg>#000000</bg>
 		<font>
@@ -16,30 +16,16 @@
 		<pos_arg>1</pos_arg>
 		<size_arg>1</size_arg>
 		<style>wxNO_BORDER</style>
-		<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
-			<label>No AES Detected</label>
-			<pos>10,0</pos>
-			<size>420,50</size>
-			<fg>#FF0000</fg>
-			<font>
-				<size>22</size>
-				<style>normal</style>
-				<weight>normal</weight>
-				<underlined>0</underlined>
-				<family>swiss</family>
-				<face>Arial</face>
-			</font>
-		</object>
 		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnInput" member="yes">
-			<label>Reset</label>
-			<pos>420,0</pos>
+			<label>No AES! Reset</label>
+			<pos>0,0</pos>
 			<size>100,50</size>
 			<fg>#FFFFFF</fg>
-			<bg>#000080</bg>
+			<bg>#EC0000</bg>
 			<font>
-				<size>18</size>
+				<size>12</size>
 				<style>normal</style>
-				<weight>normal</weight>
+				<weight>bold</weight>
 				<underlined>0</underlined>
 				<family>swiss</family>
 				<face>Tahoma</face>
