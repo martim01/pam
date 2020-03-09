@@ -759,7 +759,9 @@ void pnlRTP::ImportSources(const wxString& sFileName)
             {
                 if(itData->second.Left(3).CmpNoCase("sap") == 0)
                 {
-                    Settings::Get().Write(wxT("AoIP"), itData->first, itData->second);
+                    wxString sSDP(itData->second);
+                    sSDP.Replace("|", "\n");
+                    Settings::Get().Write(wxT("AoIP"), itData->first, sSDP);
 
                 }
                 else if(itData->second.Left(4).CmpNoCase("rtsp") == 0)

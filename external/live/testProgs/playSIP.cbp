@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="-a -M L24 sip:2@10.10.11.200" />
+				<Option parameters="-a -p 5060 -M L24 sip:1@192.168.0.201" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>

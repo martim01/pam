@@ -288,6 +288,7 @@ int main(int argc, char** argv)
             break;
         }
 
+
         case 'c':   // play continuously
         {
             playContinuously = True;

@@ -1095,7 +1095,8 @@ void pam2Dialog::OnswpMainPageChanged(wxNotebookEvent& event)
     {
         if(m_bInputFailed)
         {
-            m_pdlgNoInput->Show((m_pswpMain->GetSelectionName() != wxT("Settings") && m_pswpMain->GetSelectionName() != wxT("Log")));
+            m_pdlgNoInput->Show((m_pswpMain->GetSelectionName() != wxT("Settings") && m_pswpMain->GetSelectionName() != wxT("Log") &&
+                                  m_pswpMain->GetSelectionName() != wxT("Help")));
         }
         else
         {
@@ -1118,7 +1119,8 @@ void pam2Dialog::OnInputFailed(wxCommandEvent& event)
     m_bInputFailed = true;
 
     m_pdlgNoInput->SetPosition(wxPoint(0,425));
-    m_pdlgNoInput->Show((m_pswpMain->GetSelectionName() != wxT("Settings") && m_pswpMain->GetSelectionName() != wxT("Log")));
+    m_pdlgNoInput->Show((m_pswpMain->GetSelectionName() != wxT("Settings") && m_pswpMain->GetSelectionName() != wxT("Log")  &&
+                                  m_pswpMain->GetSelectionName() != wxT("Help")));
 }
 
 
