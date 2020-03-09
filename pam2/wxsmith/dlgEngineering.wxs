@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxDialog" name="dlgEngineering">
+		<size>800,480</size>
+		<bg>#800000</bg>
+		<font>
+			<size>14</size>
+			<style>normal</style>
+			<weight>normal</weight>
+			<underlined>0</underlined>
+			<family>swiss</family>
+			<face>Arial</face>
+		</font>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<style>wxNO_BORDER</style>
+		<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+			<label>PAM Engineering Menu</label>
+			<pos>0,0</pos>
+			<size>780,50</size>
+			<fg>#FFFFFF</fg>
+			<font>
+				<size>18</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnReset" member="yes">
+			<label>Reset Settings</label>
+			<pos>350,100</pos>
+			<size>100,60</size>
+			<enabled>0</enabled>
+			<font>
+				<size>12</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+			<handler function="OnbtnResetClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnClose" member="yes">
+			<label>Close</label>
+			<pos>350,410</pos>
+			<size>100,60</size>
+			<enabled>0</enabled>
+			<font>
+				<size>12</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+			<handler function="OnbtnCloseClick" entry="EVT_BUTTON" />
+		</object>
+	</object>
+</wxsmith>
