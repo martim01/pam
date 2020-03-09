@@ -156,6 +156,30 @@ bool Settings::RemoveSection(const wxString& sSection)
 }
 
 
+void Settings::ResetFile()
+{
+    m_iniManager.RemoveAllSections();
+    m_iniManager.SetSectionValue("Discovery", "RTSP","1");
+    m_iniManager.SetSectionValue("Discovery", "SAP","0");
+    m_iniManager.SetSectionValue("General", "ShowOptions","0");
+    m_iniManager.SetSectionValue("Generator", "Shape","0");
+    m_iniManager.SetSectionValue("Input", "Device","0");
+    m_iniManager.SetSectionValue("Input", "Reset","0");
+    m_iniManager.SetSectionValue("Input", "Type","Disabled");
+    m_iniManager.SetSectionValue("Main", "Monitor","Settings");
+    m_iniManager.SetSectionValue("Noise", "Colour","0");
+    m_iniManager.SetSectionValue("Output", "Destination", "Disabled");
+    m_iniManager.SetSectionValue("Output", "Device","3");
+    m_iniManager.SetSectionValue("Output", "Left", "0");
+    m_iniManager.SetSectionValue("Output", "Right", "0");
+    m_iniManager.SetSectionValue("Output", "Source", "Input");
+    m_iniManager.SetSectionValue("Settings", "_Options", "0");
+    m_iniManager.SetSectionValue("Update", "Type", "USB");
+
+    m_iniManager.WriteIniFile(m_sFullPath);
+
+}
+
 wxString Settings::GetExecutableDirectory() const
 {
     #ifdef __WXGNU__

@@ -105,6 +105,7 @@ public:
 	void RemoveSectionValue(const wxString& sSectionName, const wxString& sKey);
 
 	void RemoveSection(const wxString& sSectionName);
+	void RemoveAllSections();
 
 	/** @brief Returns the number of entries in a given section
 	*   @param sSectionName the name of the section

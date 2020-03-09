@@ -235,6 +235,15 @@ void iniManager::RemoveSection(const wxString& sSectionName)
     }
 }
 
+void iniManager::RemoveAllSections()
+{
+    for(auto itSection : m_mSections)
+    {
+        delete itSection.second;
+    }
+    m_mSections.clear();
+}
+
 size_t iniManager::GetNumberOfSectionEntries(const wxString& sSectionName)
 {
 	itSection it = m_mSections.find(sSectionName);

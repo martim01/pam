@@ -498,6 +498,7 @@ void pam2Dialog::OnlstScreensSelected(wxCommandEvent& event)
             ShowMonitorPanel(event.GetString());
         }
     }
+    Settings::Get().Write("Startup", "Starting",0);
     m_pswpSplash->ChangeSelection(1);
 }
 
@@ -1026,6 +1027,7 @@ void pam2Dialog::OnClose(wxCloseEvent& event)
 
 void pam2Dialog::OnbmpSplashClick(wxCommandEvent& event)
 {
+    Settings::Get().Write("Startup", "Starting",0);
     m_pswpSplash->ChangeSelection(1);
 }
 

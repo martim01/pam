@@ -25,6 +25,8 @@ class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
         bool RemoveSection(const wxString& sSection);
 
 
+        void ResetFile();
+
         bool GetSectionDataBegin(const wxString& sSection, std::map<wxString, wxString>::const_iterator& itBegin) const;
         bool GetSectionDataEnd(const wxString& sSection, std::map<wxString, wxString>::const_iterator& itEnd) const;
 

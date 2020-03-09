@@ -2,10 +2,10 @@
 #define DLGPIN_H
 
 //(*Headers(dlgPin)
+#include "wmedit.h"
 #include "wmkeyboard.h"
 #include "wmlabel.h"
 #include <wx/dialog.h>
-#include "wmedit.h"
 //*)
 
 class dlgPin: public wxDialog

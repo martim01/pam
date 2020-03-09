@@ -3,11 +3,11 @@
 
 //(*Headers(dlgEditName)
 #include "wmbutton.h"
-#include "wmkeyboard.h"
-#include <wx/panel.h>
-#include <wx/dialog.h>
 #include "wmedit.h"
+#include "wmkeyboard.h"
 #include "wmlist.h"
+#include <wx/dialog.h>
+#include <wx/panel.h>
 //*)
 
 class dlgEditName: public wxDialog
@@ -18,12 +18,12 @@ class dlgEditName: public wxDialog
 		virtual ~dlgEditName();
 
 		//(*Declarations(dlgEditName)
-		wxPanel* m_ppnlChannel;
-		wmKeyboard* m_pKbd1;
-		wmEdit* m_pedtName;
 		wmButton* m_pbtnCancel;
-		wmList* m_plstChannels;
 		wmButton* m_pbtnSave;
+		wmEdit* m_pedtName;
+		wmKeyboard* m_pKbd1;
+		wmList* m_plstChannels;
+		wxPanel* m_ppnlChannel;
 		//*)
 
 		unsigned long m_nChannels;
