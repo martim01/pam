@@ -272,7 +272,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
 
     Settings::Get().Write(wxT("Version"), wxT("pam2"), wxString::Format(wxT("%d.%d.%d.%d"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
-    Settings::Get().Write(wxT("Input"), wxT("reset"), false);
+    Settings::Get().Write(wxT("Input"), wxT("Reset"), false);
 
     m_pbtnInput->SetLabel(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")));
     m_plblOutput->SetLabel(Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")));
@@ -322,13 +322,23 @@ void pam2Dialog::LoadMonitorPanels()
     Connect(wxID_ANY, wxEVT_MONITOR_MAX, (wxObjectEventFunction)&pam2Dialog::OnMonitorMax);
 
     map<wxString, wxString>::const_iterator itBegin, itEnd;
+    std::vector<wxString> vPanels;
     if(Settings::Get().GetSectionDataBegin(wxT("Monitor Plugins"), itBegin) && Settings::Get().GetSectionDataEnd(wxT("Monitor Plugins"), itEnd))
     {
         for(; itBegin != itEnd; ++itBegin)
         {
             MonitorPluginFactory::Get()->LoadLibrary(itBegin->second);
+            vPanels.push_back(itBegin->second);
         }
     }
+
+    //write the settings back so we clear any issues with numbering
+    Settings::Get().RemoveSection("Monitor Plugins");
+    for(unsigned long i =0; i < vPanels.size(); i++)
+    {
+        Settings::Get().Write("Monitor Plugins", wxString::Format("%04u", i), vPanels[i]);
+    }
+
 
     //now store the plugins that always want audio....
     for(map<wxString, MonitorPluginBuilder*>::iterator itPlugin = MonitorPluginFactory::Get()->GetPluginBegin(); itPlugin != MonitorPluginFactory::Get()->GetPluginEnd(); ++itPlugin)

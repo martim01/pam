@@ -31,7 +31,7 @@ bool pam2App::OnInit()
     wxExecute(wxT("sudo route add -net 224.0.0.0 netmask 240.0.0.0 eth0"));
     #endif // __WXGNU__
 
-    SoundcardManager::Get().Initialize();
+
 
     //#ifdef __WXGNU__
     Settings::Get().ReadSettings(wxString::Format(wxT("%s/pam/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
@@ -39,6 +39,9 @@ bool pam2App::OnInit()
 
     m_timerHold.SetOwner(this, wxNewId());
     Connect(m_timerHold.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&pam2App::OnTimerHold);
+
+    SoundcardManager::Get().Initialize();
+
     //#else
    // Settings::Get().ReadSettings(wxString::Format(wxT("%s/documents/pam2.ini"), wxStandardPaths::Get().GetExecutablePath().c_str()));
    // #endif
@@ -79,19 +82,26 @@ int pam2App::FilterEvent(wxEvent& event)
 
 void pam2App::OnTimerHold(wxTimerEvent& event)
 {
-    if(!m_bReset)
+    if(Settings::Get().Read("Startup", "Starting", 0))
     {
-        m_sInput = Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard"));
-        Settings::Get().Write(wxT("Input"), wxT("Reset"), true);
-        Settings::Get().Write(wxT("Input"), wxT("Type"), wxT("Disabled"));
-
-        m_timerHold.Start(4000,true);
-        m_bReset = true;
+        //@todo show deep settings screen
     }
     else
     {
-        Settings::Get().Write(wxT("Input"), wxT("Type"), m_sInput);
-        Settings::Get().Write(wxT("Input"), wxT("Reset"), false);
-        m_bReset = false;
+        if(!m_bReset)
+        {
+            m_sInput = Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard"));
+            Settings::Get().Write(wxT("Input"), wxT("Reset"), true);
+            Settings::Get().Write(wxT("Input"), wxT("Type"), wxT("Disabled"));
+
+            m_timerHold.Start(4000,true);
+            m_bReset = true;
+        }
+        else
+        {
+            Settings::Get().Write(wxT("Input"), wxT("Type"), m_sInput);
+            Settings::Get().Write(wxT("Input"), wxT("Reset"), false);
+            m_bReset = false;
+        }
     }
 }

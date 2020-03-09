@@ -249,6 +249,13 @@ class pnlAoIPInfo: public wxPanel
         unsigned int m_nSampleRate;
         unsigned int m_nFrameSize;
         const session* m_pSession;
+
+        double m_dKbps[2];
+        double m_dJitter[2];
+        double m_dGap[2];
+        double m_dLoss[2];
+
+        enum {GRAPH_MIN=0, GRAPH_MAX};
 		DECLARE_EVENT_TABLE()
 };
 

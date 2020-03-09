@@ -138,6 +138,7 @@
 		<Unit filename="ptppanel.h" />
 		<Unit filename="ptpregister.cpp" />
 		<Unit filename="ptpregister.h" />
+		<Unit filename="version.h" />
 		<Unit filename="wxsmith/pnlFlags.wxs" />
 		<Extensions>
 			<code_completion />
