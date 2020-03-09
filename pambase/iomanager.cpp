@@ -229,28 +229,7 @@ void IOManager::OnAudioEvent(AudioEvent& event)
         }
         if(m_nPlaybackSource != m_nInputSource)
         {
-            //wxLogDebug(wxT("Generate %d"),event.GetBuffer()->GetBufferSize());
-            if(m_pGenerator)
-            {
-                timedbuffer* pBuffer(m_pGenerator->Generate(event.GetBuffer()->GetBufferSize()));
-                switch(m_nOutputDestination)
-                {
-                    case AudioEvent::SOUNDCARD:
-                      //  wxLogDebug(wxT("SOUNDCARD %d"), pBuffer->GetBufferSize());
-                        SoundcardManager::Get().AddOutputSamples(pBuffer);
-                        break;
-                    case AudioEvent::RTP:
-                     //   wxLogDebug(wxT("RTP %d"), pBuffer->GetBufferSize());
-                        if(m_pRtpServer)
-                        {
-                            m_pRtpServer->AddSamples(pBuffer);
-                        }
-                        break;
-                    default:
-                        wxLogDebug(wxT("Output=%d"), m_nOutputDestination);
-                }
-                delete pBuffer;
-            }
+            AddOutputSamples(event.GetBuffer()->GetBufferSize());
         }
     }
 
@@ -263,6 +242,29 @@ void IOManager::OnAudioEvent(AudioEvent& event)
 
 
     delete event.GetBuffer();
+}
+
+void IOManager::AddOutputSamples(size_t nSize)
+{
+    if(m_pGenerator)
+    {
+        timedbuffer* pBuffer(m_pGenerator->Generate(nSize));
+        switch(m_nOutputDestination)
+        {
+            case AudioEvent::SOUNDCARD:
+                SoundcardManager::Get().AddOutputSamples(pBuffer);
+                break;
+            case AudioEvent::RTP:
+                if(m_pRtpServer)
+                {
+                    m_pRtpServer->AddSamples(pBuffer);
+                }
+                break;
+            default:
+                wxLogDebug(wxT("Output=%d"), m_nOutputDestination);
+        }
+        delete pBuffer;
+    }
 }
 
 void IOManager::PassOnAudio(AudioEvent& event)
@@ -409,12 +411,14 @@ void IOManager::OutputChanged(const wxString& sKey)
             m_nPlaybackSource = m_nInputSource;
             m_bPlaybackInput = true;
             m_pGenerator->Stop();
+            return;     //rturn here as we dont want to genareate sampless
         }
         else
         {   //plugin
             m_nPlaybackSource = AudioEvent::GENERATOR;
             InitGeneratorPlugin(sType);
         }
+        AddOutputSamples(8192);
     }
     else if(sKey == wxT("Device"))
     {
@@ -775,7 +779,8 @@ void IOManager::CheckPlayback(unsigned long nSampleRate, unsigned long nChannels
     if(m_nPlaybackSource == AudioEvent::RTP || m_nPlaybackSource == AudioEvent::SOUNDCARD)
     {
         //check the stream details against the playing details...
-        if(SoundcardManager::Get().IsOutputStreamOpen() && (SoundcardManager::Get().GetOutputSampleRate() != nSampleRate || SoundcardManager::Get().GetOutputNumberOfChannels() != nChannels))
+        if(SoundcardManager::Get().IsOutputStreamOpen() && (SoundcardManager::Get().GetOutputSampleRate() != nSampleRate ||
+                                                            SoundcardManager::Get().GetOutputNumberOfChannels() != nChannels))
         {
             OutputChannelsChanged();
             OpenSoundcardDevice(nSampleRate);

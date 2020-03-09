@@ -355,6 +355,10 @@ void Audio::AddSamples(const timedbuffer* pTimedBuffer)
             //m_sLog << wxString::Format(wxT("Added: Size now %d\n"), m_qBuffer.size());
         }
     }
+    else
+    {
+        wxLogDebug("AddSamples: Notplayig");
+    }
 }
 
 bool Audio::IsStreamOpen()
