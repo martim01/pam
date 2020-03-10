@@ -976,6 +976,28 @@
 							<face>Consolas</face>
 						</font>
 					</object>
+					<object class="wmLabel" name="ID_M_PLBL89" variable="m_pLbl45" member="yes">
+						<label>TS-DF</label>
+						<pos>200,225</pos>
+						<size>194,20</size>
+						<fg>#FFFFFF</fg>
+						<bg>#0000FF</bg>
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL90" variable="m_plblTSDF" member="yes">
+						<label></label>
+						<pos>200,246</pos>
+						<size>194,25</size>
+						<fg>#008000</fg>
+						<bg>#FFFFFF</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Consolas</face>
+						</font>
+					</object>
 					<object class="wmLabel" name="ID_M_PLBL86" variable="m_plblGraph" member="yes">
 						<label></label>
 						<pos>400,246</pos>

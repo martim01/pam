@@ -35,6 +35,7 @@ pnlGraph::pnlGraph(wxWindow* parent,AoIPInfoBuilder* pBuilder, wxWindowID id,con
 	m_plstGraph->AddButton(wxT("Packet Gap"));
 	m_plstGraph->AddButton(wxT("Packet Loss"));
 	m_plstGraph->AddButton(wxT("Jitter"));
+	m_plstGraph->AddButton(wxT("TS-DF"));
 
 
 	m_plstGraph->SelectButton(m_pBuilder->ReadSetting(wxT("Graph"), wxT("kBit/s")), true);

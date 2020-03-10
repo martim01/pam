@@ -103,6 +103,8 @@ const long pnlAoIPInfo::ID_M_PLBL31 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL32 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL85 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL35 = wxNewId();
+const long pnlAoIPInfo::ID_M_PLBL89 = wxNewId();
+const long pnlAoIPInfo::ID_M_PLBL90 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL86 = wxNewId();
 const long pnlAoIPInfo::ID_CUSTOM12 = wxNewId();
 const long pnlAoIPInfo::ID_PANEL4 = wxNewId();
@@ -652,6 +654,18 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_plblQoSJitter->SetBackgroundColour(wxColour(255,255,255));
 	wxFont m_plblQoSJitterFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
 	m_plblQoSJitter->SetFont(m_plblQoSJitterFont);
+	m_pLbl45 = new wmLabel(pnlQoS, ID_M_PLBL89, _("TS-DF"), wxPoint(200,225), wxSize(194,20), 0, _T("ID_M_PLBL89"));
+	m_pLbl45->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl45->GetUiRect().SetGradient(0);
+	m_pLbl45->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl45->SetBackgroundColour(wxColour(0,0,255));
+	m_plblTSDF = new wmLabel(pnlQoS, ID_M_PLBL90, wxEmptyString, wxPoint(200,246), wxSize(194,25), 0, _T("ID_M_PLBL90"));
+	m_plblTSDF->SetBorderState(uiRect::BORDER_NONE);
+	m_plblTSDF->GetUiRect().SetGradient(0);
+	m_plblTSDF->SetForegroundColour(wxColour(0,128,0));
+	m_plblTSDF->SetBackgroundColour(wxColour(255,255,255));
+	wxFont m_plblTSDFFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
+	m_plblTSDF->SetFont(m_plblTSDFFont);
 	m_plblGraph = new wmLabel(pnlQoS, ID_M_PLBL86, wxEmptyString, wxPoint(400,246), wxSize(194,25), 0, _T("ID_M_PLBL86"));
 	m_plblGraph->SetBorderState(uiRect::BORDER_NONE);
 	m_plblGraph->GetUiRect().SetGradient(0);
@@ -697,10 +711,10 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_pGraph->ShowRange(wxT("kBit/s"), true);
 	m_pGraph->SetLimit(wxT("kBit/s"), 2310.0, 2300.0);
 
-	m_pGraph->AddGraph(wxT("kBit/s Av"), wxColour(255,255,255));
-	m_pGraph->ShowGraph(wxT("kBit/s Av"), false);
-	m_pGraph->ShowRange(wxT("kBit/s Av"), true);
-	m_pGraph->SetLimit(wxT("kBit/s Av"), 2310.0, 2300.0);
+	m_pGraph->AddGraph(wxT("TS-DF"), wxColour(255,255,255));
+	m_pGraph->ShowGraph(wxT("TS-DF"), false);
+	m_pGraph->ShowRange(wxT("TS-DF"), true);
+	m_pGraph->SetLimit(wxT("TS-DF"), 0, 1);
 
 	m_pGraph->AddGraph(wxT("Packet Gap"), wxColour(0,0,255));
 	m_pGraph->ShowGraph(wxT("Packet Gap"), false);
@@ -748,6 +762,8 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
     m_plblQoSInterMax->SetLabel(wxString::Format(wxT("%f ms"), pData->dInter_packet_gap_ms_max));
 
     m_plblQoSJitter->SetLabel(wxString::Format(wxT("%f ms"),pData->dJitter));
+    m_plblTSDF->SetLabel(wxString::Format(wxT("%f"), pData->dTSDF));
+
 
     m_dKbps[GRAPH_MIN] = std::min(pData->dkbits_per_second_Now, m_dKbps[GRAPH_MIN]);
     m_dKbps[GRAPH_MAX] = std::max(pData->dkbits_per_second_Now, m_dKbps[GRAPH_MAX]);
@@ -761,12 +777,14 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
     m_dLoss[GRAPH_MIN] = std::min(pData->dPacket_loss_fraction_av, m_dLoss[GRAPH_MIN]);
     m_dLoss[GRAPH_MAX] = std::max(pData->dPacket_loss_fraction_av, m_dLoss[GRAPH_MAX]);
 
+    m_dTSDF[GRAPH_MIN] = std::min(pData->dTSDF, m_dTSDF[GRAPH_MIN]);
+    m_dTSDF[GRAPH_MAX] = std::max(pData->dTSDF, m_dTSDF[GRAPH_MAX]);
+
     m_pGraph->SetLimit(wxT("kBit/s"), m_dKbps[GRAPH_MAX], m_dKbps[GRAPH_MIN]);
     m_pGraph->AddPeak(wxT("kBit/s"), pData->dkbits_per_second_Now);
 
     m_pGraph->SetLimit(wxT("Packet Gap"),m_dGap[GRAPH_MAX], m_dGap[GRAPH_MIN]);
     m_pGraph->AddPeak(wxT("Packet Gap"), pData->dInter_packet_gap_ms_Now);
-
 
     m_pGraph->SetLimit(wxT("Packet Loss"), m_dLoss[GRAPH_MAX], m_dLoss[GRAPH_MIN]);
     m_pGraph->AddPeak(wxT("Packet Loss"), pData->dPacket_loss_fraction_av);
@@ -774,6 +792,9 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
 
     m_pGraph->SetLimit(wxT("Jitter"), m_dJitter[GRAPH_MAX], m_dJitter[GRAPH_MIN]);
     m_pGraph->AddPeak(wxT("Jitter"), pData->dJitter);
+
+    m_pGraph->SetLimit(wxT("TS-DF"), m_dTSDF[GRAPH_MAX], m_dTSDF[GRAPH_MIN]);
+    m_pGraph->AddPeak(wxT("TS-DF"), pData->dTSDF);
 
 
 }
@@ -949,6 +970,9 @@ void pnlAoIPInfo::ClearGraphs()
 
     m_dLoss[GRAPH_MIN] = 0xFFFFFF;;
     m_dLoss[GRAPH_MAX] = -1;
+
+    m_dTSDF[GRAPH_MIN] = 0xFFFFFF;;
+    m_dTSDF[GRAPH_MAX] = -1;
 
     m_pGraph->ClearGraphs();
 }

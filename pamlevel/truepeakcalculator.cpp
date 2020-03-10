@@ -109,7 +109,7 @@ void TruePeakCalculator::CalculateLevel(const timedbuffer* pBuffer)
         if(m_pSrc->pState && m_vFilter.empty() == false)
         {
             m_pSrc->data.data_out = new float[pBuffer->GetBufferSize()*4];
-            m_pSrc->data.data_in = pBuffer->GetBuffer();
+            m_pSrc->data.data_in = const_cast<float*>(pBuffer->GetBuffer());    //annoying but src is float*
 
             m_pSrc->data.input_frames	= pBuffer->GetBufferSize() / m_nChannels ;
             m_pSrc->data.output_frames	= m_pSrc->data.input_frames*4;

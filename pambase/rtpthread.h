@@ -45,6 +45,7 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
 
         void PassSessionDetails(Smpte2110MediaSession* pSession);
 
+        float ConvertFrameBufferToSample(u_int8_t* pFrameBuffer, u_int8_t nBytesPerSample);
 
         bool DoRTSP();
         bool DoSIP();
@@ -67,6 +68,11 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
         float* m_pCurrentBuffer;
         double m_dTransmission;
         double m_dPresentation;
+
+        double m_dDelay0;
+        double m_dTSDFMax;
+        double m_dTSDFMin;
+
         unsigned long m_nTimestamp;
         unsigned long m_nSampleBufferSize;
 
@@ -85,6 +91,8 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
 
         wxString m_sDescriptor;
         unsigned long m_nQosMeasurementIntervalMS;
+
+
 };
 
 

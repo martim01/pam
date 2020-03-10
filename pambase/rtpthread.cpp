@@ -235,119 +235,70 @@ pairTime_t RtpThread::ConvertDoubleToPairTime(double dTime)
     return make_pair(static_cast<unsigned int>(dInt), static_cast<unsigned int>(dDec*1000000.0));
 }
 
+float RtpThread::ConvertFrameBufferToSample(u_int8_t* pFrameBuffer, u_int8_t nBytesPerSample)
+{
+    int nSample(0);
+    if(nBytesPerSample == 2)
+    {
+        nSample = (static_cast<int>(pFrameBuffer[1]) << 16) | (static_cast<int>(pFrameBuffer[0]) << 24);
+    }
+    else if(nBytesPerSample == 3)
+    {
+        nSample = (static_cast<int>(pFrameBuffer[2]) << 8) | (static_cast<int>(pFrameBuffer[1]) << 16) | (static_cast<int>(pFrameBuffer[0]) << 24);
+    }
+    return static_cast<float>(nSample)/ 2147483648.0;
+}
+
 void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const pairTime_t& timePresentation, unsigned long nFrameSize, u_int8_t* pFrameBuffer, u_int8_t nBytesPerSample, const pairTime_t& timeTransmission, unsigned int nTimestamp,unsigned int nDuration, mExtension_t* pExt)
 {
-    if(!m_bClosing)
+    if(m_bClosing || m_Session.GetCurrentSubsession() == m_Session.lstSubsession.end() || m_Session.GetCurrentSubsession()->sSourceAddress != sEndpoint)
+        return;
+
+    if(m_pCurrentBuffer == 0)
     {
-        if(m_Session.GetCurrentSubsession() != m_Session.lstSubsession.end() && m_Session.GetCurrentSubsession()->sSourceAddress == sEndpoint)
+        m_pCurrentBuffer = new float[m_nBufferSize*m_nInputChannels];
+        m_nSampleBufferSize = 0;
+    }
+
+    for(int i = 0; i < nFrameSize; i+=nBytesPerSample)
+    {
+        float dSample(ConvertFrameBufferToSample(&pFrameBuffer[i], nBytesPerSample));
+
+        if(m_nSampleBufferSize == 0)
         {
+            m_dTransmission = timeTransmission.first + (static_cast<double>(timeTransmission.second))/1000000.0;
+            #ifdef PTPMONKEY
+            timeval tv = wxPtp::Get().GetPtpOffset(0);
+            double dOffset = tv.tv_sec + (static_cast<double>(tv.tv_usec))/1000000.0;
+            #else
+            double dOffset = 0.0;
+            #endif
+            m_dPresentation = (timePresentation.first + (static_cast<double>(timePresentation.second))/1000000.0) - dOffset;
+            m_nTimestamp = nTimestamp;
 
-            if(m_pCurrentBuffer == 0)
-            {
-                m_pCurrentBuffer = new float[m_nBufferSize*m_nInputChannels];
-                m_nSampleBufferSize = 0;
-            }
+            double dTSDF = m_dPresentation-m_dTransmission+m_dDelay0;
+            m_dTSDFMax = max(m_dTSDFMax, dTSDF);
+            m_dTSDFMin = min(m_dTSDFMin, dTSDF);
+        }
+        else
+        {
+            ++m_nTimestamp; //timestamp goes up 1 per sample
+            m_dTransmission += (1.0 / 48000.0); //@todo assuming 48K here
+            m_dPresentation += (1.0 / 48000.0); //@todo assuming 48K here
+        }
 
+        m_pCurrentBuffer[m_nSampleBufferSize] = dSample;
+        ++m_nSampleBufferSize;
 
-            if(nBytesPerSample == 2)    //16 bit
-            {
-                for(int i = 0; i < nFrameSize; i+=2)
-                {
-                    int nSample = (static_cast<int>(pFrameBuffer[i+1]) << 16) | (static_cast<int>(pFrameBuffer[i]) << 24);
-                    float dSample = static_cast<float>(nSample);
-                    dSample /= 2147483648.0;
-
-                    if(m_nSampleBufferSize == 0)
-                    {
-                        m_dTransmission = timeTransmission.first + (static_cast<double>(timeTransmission.second))/1000000.0;
-                        #ifdef PTPMONKEY
-                        timeval tv = wxPtp::Get().GetPtpOffset(0);
-                        double dOffset = tv.tv_sec + (static_cast<double>(tv.tv_usec))/1000000.0;
-                        #else
-                        double dOffset = 0.0;
-                        #endif
-                        m_dPresentation = (timePresentation.first + (static_cast<double>(timePresentation.second))/1000000.0) - dOffset;
-
-
-                        m_nTimestamp = nTimestamp;
-                    }
-                    else
-                    {
-                        ++m_nTimestamp; //timestamp goes up 1 per sample
-                        m_dTransmission += (1.0 / 48000.0); //@todo assuming 48K here
-                        m_dPresentation += (1.0 / 48000.0); //@todo assuming 48K here
-                    }
-
-                    m_pCurrentBuffer[m_nSampleBufferSize] = dSample;
-                    ++m_nSampleBufferSize;
-
-                    if(m_nSampleBufferSize == m_nBufferSize*m_nInputChannels)   //filled up buffer
-                    {
-                        timedbuffer* pTimedBuffer = new timedbuffer(m_nBufferSize*m_nInputChannels, ConvertDoubleToPairTime(m_dPresentation), m_nTimestamp);
-                        pTimedBuffer->SetBuffer(m_pCurrentBuffer);
-
-                        pTimedBuffer->SetTransmissionTime(ConvertDoubleToPairTime(m_dTransmission));
-                        pTimedBuffer->SetDuration(nDuration);
-
-                        AudioEvent* pEvent = new AudioEvent(pTimedBuffer, AudioEvent::RTP, m_nBufferSize, 48000, false, false);
-                        wxQueueEvent(m_pHandler, pEvent);
-
-                        m_nSampleBufferSize = 0;
-
-                    }
-                }
-            }
-            else if(nBytesPerSample == 3)   //24 bit
-            {
-                for(int i = 0; i < nFrameSize; i+=3)
-                {
-                    int nSample = (static_cast<int>(pFrameBuffer[i+2]) << 8) | (static_cast<int>(pFrameBuffer[i+1]) << 16) | (static_cast<int>(pFrameBuffer[i]) << 24);
-                    float dSample = static_cast<float>(nSample);
-                    dSample /= 2147483648.0;
-
-                    if(m_nSampleBufferSize == 0)
-                    {
-                        m_dTransmission = timeTransmission.first + (static_cast<double>(timeTransmission.second))/1000000.0;
-                        #ifdef PTPMONKEY
-                        timeval tv = wxPtp::Get().GetPtpOffset(0);
-                        double dOffset = tv.tv_sec + (static_cast<double>(tv.tv_usec))/1000000.0;
-                        #else
-                        double dOffset = 0.0;
-                        #endif
-
-                        m_dPresentation = (timePresentation.first + (static_cast<double>(timePresentation.second))/1000000.0) - dOffset;
-
-                        m_nTimestamp = nTimestamp;
-
-                    }
-                    else
-                    {
-                        ++m_nTimestamp; //timestamp goes up 1 per sample
-                        m_dTransmission += (1.0/ 48000.0);
-                        m_dPresentation += (1.0/ 48000.0);
-
-                    }
-
-                    m_pCurrentBuffer[m_nSampleBufferSize] = dSample;
-                    ++m_nSampleBufferSize;
-
-                    if(m_nSampleBufferSize == m_nBufferSize*m_nInputChannels)   //filled up buffer assuming two channels
-                    {
-
-                        timedbuffer* pTimedBuffer = new timedbuffer(m_nBufferSize*m_nInputChannels, ConvertDoubleToPairTime(m_dPresentation), m_nTimestamp);
-                        pTimedBuffer->SetBuffer(m_pCurrentBuffer);
-                        pTimedBuffer->SetTransmissionTime(ConvertDoubleToPairTime(m_dTransmission));
-
-                        pTimedBuffer->SetDuration(nDuration);
-
-                        AudioEvent* pEvent = new AudioEvent(pTimedBuffer, AudioEvent::RTP, m_nBufferSize, 48000, false, false);
-
-                        wxQueueEvent(m_pHandler, pEvent);
-
-                        m_nSampleBufferSize = 0;
-                    }
-                }
-            }
+        if(m_nSampleBufferSize == m_nBufferSize*m_nInputChannels)   //filled up buffer
+        {
+            timedbuffer* pTimedBuffer = new timedbuffer(m_nBufferSize*m_nInputChannels, ConvertDoubleToPairTime(m_dPresentation), m_nTimestamp);
+            pTimedBuffer->SetBuffer(m_pCurrentBuffer);
+            pTimedBuffer->SetTransmissionTime(ConvertDoubleToPairTime(m_dTransmission));
+            pTimedBuffer->SetDuration(nDuration);
+            AudioEvent* pEvent = new AudioEvent(pTimedBuffer, AudioEvent::RTP, m_nBufferSize, 48000, false, false);
+            wxQueueEvent(m_pHandler, pEvent);
+            m_nSampleBufferSize = 0;
         }
     }
 }
@@ -371,12 +322,18 @@ void RtpThread::StopStream()
 
 void RtpThread::QosUpdated(qosData* pData)
 {
+    pData->dTSDF = m_dTSDFMax-m_dTSDFMin;
     if(m_pHandler)
     {
         wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_QOS_UPDATED);
         pEvent->SetClientData((void*)pData);
         wxQueueEvent(m_pHandler, pEvent);
     }
+    //set out transmission0 and presentation0 ready for next lot of ts-df
+    m_dDelay0 = m_dTransmission-m_dPresentation;
+    m_dTSDFMax = -1000000000000;
+    m_dTSDFMin = 1000000000000;
+
 }
 
 

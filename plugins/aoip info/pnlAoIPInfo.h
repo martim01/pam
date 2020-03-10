@@ -2,12 +2,12 @@
 #define PNLAOIPINFO_H
 
 //(*Headers(pnlAoIPInfo)
-#include <wx/notebook.h>
-#include <wx/textctrl.h>
+#include "levelgraph.h"
 #include "wmlabel.h"
 #include "wmswitcherpanel.h"
-#include "levelgraph.h"
+#include <wx/notebook.h>
 #include <wx/panel.h>
+#include <wx/textctrl.h>
 //*)
 
 #include "timedbuffer.h"
@@ -24,102 +24,104 @@ class pnlAoIPInfo: public wxPanel
 		virtual ~pnlAoIPInfo();
 
 		//(*Declarations(pnlAoIPInfo)
-		wmLabel* m_pLbl4;
-		wmLabel* m_pLbl23;
-		wmLabel* m_pLbl25;
-		wmLabel* m_pLbl3;
-		wmLabel* m_pLbl17;
-		wmLabel* m_plblQoSTime;
-		wxPanel* pnlSDP;
-		wmLabel* m_pLbl7;
-		wmLabel* m_plblSubSyncId;
-		wmLabel* m_plblQoSInterMin;
-		wmLabel* m_plblQoSPacketsAv;
-		wmLabel* m_pLbl39;
-		wmLabel* m_pLbl24;
-		wmLabel* m_plblSessionChannels;
-		wmLabel* m_plblSubsessionId;
-		wmLabel* m_pLbl38;
-		wmLabel* m_plblQoSReceived;
-		wmLabel* m_plblSubsessionVideo;
-		wmLabel* m_plblQoSPacketsMax;
-		wmLabel* m_pLbl11;
-		wmLabel* m_plblLatency;
-		wxPanel* pnlSubsession;
-		wmLabel* m_plblSessionBits;
-		wmLabel* m_plblQoSKbMin;
-		wmLabel* m_plblCurrentTimestamp;
-		wmLabel* m_pLbl16;
-		wxTextCtrl* m_ptxtSDP;
-		wmLabel* m_pLbl1;
-		wmLabel* m_pLbl43;
-		wmLabel* m_pLbl30;
-		wmLabel* m_plblTimestampOut;
-		wmLabel* m_pLbl32;
-		wmLabel* m_pLbl28;
-		wmLabel* m_plblQoSKbMax;
-		wmLabel* m_plblQoSKbAv;
-		wxPanel* Panel1;
-		wmLabel* m_pLbl12;
-		wmLabel* m_plblSessionFrequency;
-		wmLabel* m_pLbl20;
-		wmLabel* m_pLbl27;
-		wmLabel* m_pLbl26;
-		wmLabel* m_plblQoSInterMax;
-		wmLabel* m_pLbl10;
-		wmLabel* m_plblSyncId;
-		wmLabel* m_pLbl42;
-		wmLabel* m_pLbl22;
-		wmLabel* m_pLbl40;
-		wmLabel* m_plblGraph;
-		wmLabel* m_pLbl41;
-		wmLabel* m_pLbl5;
-		wmLabel* m_plblSessionType;
-		wxPanel* pnlQoS;
-		wmLabel* m_plblTransmissionTime;
-		wmLabel* m_plblTimestampIn;
-		wmLabel* m_pLbl36;
-		wmLabel* m_pLbl6;
-		wmLabel* m_plblSubsessionsAudio;
-		wmLabel* m_pLbl29;
-		wmLabel* m_pLbl8;
-		wmSwitcherPanel* m_pswpInfo;
-		wmLabel* m_plblSubSyncVersion;
-		wmLabel* m_pLbl35;
-		wmLabel* m_plblLatencyNetwork;
-		wmLabel* m_pLbl2;
-		wmLabel* m_pLbl37;
-		wmLabel* m_plblQoSJitter;
-		wmLabel* m_plblSyncTimestamp;
-		wmLabel* m_plblSubSyncType;
-		wmLabel* m_pLbl44;
-		wmLabel* m_pLbl14;
-		wmLabel* m_plblSessionSource;
-		wmLabel* m_plblQoSLost;
-		wmLabel* m_plblFrameSize;
-		wmLabel* m_pLbl33;
-		wmLabel* m_pLbl9;
-		wmLabel* m_pLbl34;
-		wmLabel* m_plblGroups;
-		wmLabel* m_pLbl19;
-		wmLabel* m_plblQoSInterAv;
-		wmLabel* m_pLbl15;
-		wmLabel* m_pLbl31;
-		wmLabel* m_plblSyncType;
-		wmLabel* m_pLbl18;
-		wmLabel* m_plblQoSPacketsMin;
-		wxPanel* pnlSession;
-		wmLabel* m_plblFrameDuration;
 		LevelGraph* m_pGraph;
-		wmLabel* m_plblPlaybackQueue;
-		wmLabel* m_plblSessionName;
-		wmLabel* m_plblSyncDomain;
-		wmLabel* m_plblSubSyncDomain;
-		wmLabel* m_plblDescription;
-		wmLabel* m_plblSyncVersion;
-		wmLabel* m_plblInput;
-		wmLabel* m_pLbl21;
+		wmLabel* m_pLbl10;
+		wmLabel* m_pLbl11;
+		wmLabel* m_pLbl12;
 		wmLabel* m_pLbl13;
+		wmLabel* m_pLbl14;
+		wmLabel* m_pLbl15;
+		wmLabel* m_pLbl16;
+		wmLabel* m_pLbl17;
+		wmLabel* m_pLbl18;
+		wmLabel* m_pLbl19;
+		wmLabel* m_pLbl1;
+		wmLabel* m_pLbl20;
+		wmLabel* m_pLbl21;
+		wmLabel* m_pLbl22;
+		wmLabel* m_pLbl23;
+		wmLabel* m_pLbl24;
+		wmLabel* m_pLbl25;
+		wmLabel* m_pLbl26;
+		wmLabel* m_pLbl27;
+		wmLabel* m_pLbl28;
+		wmLabel* m_pLbl29;
+		wmLabel* m_pLbl2;
+		wmLabel* m_pLbl30;
+		wmLabel* m_pLbl31;
+		wmLabel* m_pLbl32;
+		wmLabel* m_pLbl33;
+		wmLabel* m_pLbl34;
+		wmLabel* m_pLbl35;
+		wmLabel* m_pLbl36;
+		wmLabel* m_pLbl37;
+		wmLabel* m_pLbl38;
+		wmLabel* m_pLbl39;
+		wmLabel* m_pLbl3;
+		wmLabel* m_pLbl40;
+		wmLabel* m_pLbl41;
+		wmLabel* m_pLbl42;
+		wmLabel* m_pLbl43;
+		wmLabel* m_pLbl44;
+		wmLabel* m_pLbl45;
+		wmLabel* m_pLbl4;
+		wmLabel* m_pLbl5;
+		wmLabel* m_pLbl6;
+		wmLabel* m_pLbl7;
+		wmLabel* m_pLbl8;
+		wmLabel* m_pLbl9;
+		wmLabel* m_plblCurrentTimestamp;
+		wmLabel* m_plblDescription;
+		wmLabel* m_plblFrameDuration;
+		wmLabel* m_plblFrameSize;
+		wmLabel* m_plblGraph;
+		wmLabel* m_plblGroups;
+		wmLabel* m_plblInput;
+		wmLabel* m_plblLatency;
+		wmLabel* m_plblLatencyNetwork;
+		wmLabel* m_plblPlaybackQueue;
+		wmLabel* m_plblQoSInterAv;
+		wmLabel* m_plblQoSInterMax;
+		wmLabel* m_plblQoSInterMin;
+		wmLabel* m_plblQoSJitter;
+		wmLabel* m_plblQoSKbAv;
+		wmLabel* m_plblQoSKbMax;
+		wmLabel* m_plblQoSKbMin;
+		wmLabel* m_plblQoSLost;
+		wmLabel* m_plblQoSPacketsAv;
+		wmLabel* m_plblQoSPacketsMax;
+		wmLabel* m_plblQoSPacketsMin;
+		wmLabel* m_plblQoSReceived;
+		wmLabel* m_plblQoSTime;
+		wmLabel* m_plblSessionBits;
+		wmLabel* m_plblSessionChannels;
+		wmLabel* m_plblSessionFrequency;
+		wmLabel* m_plblSessionName;
+		wmLabel* m_plblSessionSource;
+		wmLabel* m_plblSessionType;
+		wmLabel* m_plblSubSyncDomain;
+		wmLabel* m_plblSubSyncId;
+		wmLabel* m_plblSubSyncType;
+		wmLabel* m_plblSubSyncVersion;
+		wmLabel* m_plblSubsessionId;
+		wmLabel* m_plblSubsessionVideo;
+		wmLabel* m_plblSubsessionsAudio;
+		wmLabel* m_plblSyncDomain;
+		wmLabel* m_plblSyncId;
+		wmLabel* m_plblSyncTimestamp;
+		wmLabel* m_plblSyncType;
+		wmLabel* m_plblSyncVersion;
+		wmLabel* m_plblTSDF;
+		wmLabel* m_plblTimestampIn;
+		wmLabel* m_plblTimestampOut;
+		wmLabel* m_plblTransmissionTime;
+		wmSwitcherPanel* m_pswpInfo;
+		wxPanel* Panel1;
+		wxPanel* pnlQoS;
+		wxPanel* pnlSDP;
+		wxPanel* pnlSession;
+		wxPanel* pnlSubsession;
+		wxTextCtrl* m_ptxtSDP;
 		//*)
 		wmLabel* m_plblEpoch;
 
@@ -224,6 +226,8 @@ class pnlAoIPInfo: public wxPanel
 		static const long ID_M_PLBL32;
 		static const long ID_M_PLBL85;
 		static const long ID_M_PLBL35;
+		static const long ID_M_PLBL89;
+		static const long ID_M_PLBL90;
 		static const long ID_M_PLBL86;
 		static const long ID_CUSTOM12;
 		static const long ID_PANEL4;
@@ -254,6 +258,7 @@ class pnlAoIPInfo: public wxPanel
         double m_dJitter[2];
         double m_dGap[2];
         double m_dLoss[2];
+        double m_dTSDF[2];
 
         enum {GRAPH_MIN=0, GRAPH_MAX};
 		DECLARE_EVENT_TABLE()

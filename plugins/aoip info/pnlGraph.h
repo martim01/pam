@@ -3,8 +3,8 @@
 
 //(*Headers(pnlGraph)
 #include "wmbutton.h"
-#include <wx/panel.h>
 #include "wmlist.h"
+#include <wx/panel.h>
 //*)
 
 class AoIPInfoBuilder;
