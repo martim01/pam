@@ -18,6 +18,7 @@
 #include <wx/stdpaths.h>
 #include <wx/log.h>
 #include "iomanager.h"
+#include "dlgEngineering.h"
 
 IMPLEMENT_APP(pam2App);
 
@@ -63,8 +64,10 @@ bool pam2App::OnInit()
 
 int pam2App::FilterEvent(wxEvent& event)
 {
+
     if(event.GetEventType() == wxEVT_LEFT_DOWN)
     {
+        wxLogDebug("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!FilterEvent");
         if(!m_bReset)
     	{
     	    m_timerHold.Start(1000,true);
@@ -83,9 +86,11 @@ int pam2App::FilterEvent(wxEvent& event)
 
 void pam2App::OnTimerHold(wxTimerEvent& event)
 {
+    wxLogDebug("ONTIMERHOLD!!!!!!!!!!!!!!!!!!!!");
     if(Settings::Get().Read("Startup", "Starting", 0))
     {
-        //@todo show deep settings screen
+        dlgEngineering aDlg(NULL);
+        aDlg.ShowModal();
     }
     else
     {
