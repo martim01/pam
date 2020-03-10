@@ -721,10 +721,6 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_pGraph->ShowRange(wxT("Packet Gap"), true);
 	m_pGraph->SetLimit(wxT("Packet Gap"), 1, 0.1);
 
-	m_pGraph->AddGraph(wxT("Packet Gap Av"), wxColour(255,255,255));
-	m_pGraph->ShowGraph(wxT("Packet Gap Av"), false);
-	m_pGraph->ShowRange(wxT("Packet Gap Av"), true);
-	m_pGraph->SetLimit(wxT("Packet Gap Av"), 1, 0.1);
 
 	m_pGraph->AddGraph(wxT("Packet Loss"), wxColour(0,255,0));
 	m_pGraph->ShowGraph(wxT("Packet Loss"), false);
@@ -810,11 +806,17 @@ void pnlAoIPInfo::SetAudioData(const timedbuffer* pTimedBuffer)
 
     m_plblFrameSize->SetLabel(wxString::Format(wxT("%d bytes"), pTimedBuffer->GetDuration()));
 
-    double dDuration = static_cast<double>(pTimedBuffer->GetDuration())/static_cast<double>(m_nSampleRate*m_nFrameSize);
+    m_dFrameDuration = static_cast<double>(pTimedBuffer->GetDuration())/static_cast<double>(m_nSampleRate*m_nFrameSize)*1e6;
 
-    m_plblFrameDuration->SetLabel(wxString::Format(wxT("%.2f ms"), dDuration*1000.0));
+    m_plblFrameDuration->SetLabel(wxString::Format(wxT("%.2f us"), m_dFrameDuration));
 
     m_plblPlaybackQueue->SetLabel(wxString::Format(wxT("%d"), pTimedBuffer->GetBufferDepth()));
+
+    #ifdef PTPMONKEY
+    m_plblTransmissionTime->SetBackgroundColour(wxPtp::Get().IsSyncedToMaster(0) ? *wxWHITE : wxColour(255,100,100));
+    m_plblTimestampIn->SetBackgroundColour(wxPtp::Get().IsSyncedToMaster(0) ? *wxWHITE : wxColour(255,100,100));
+    m_plblLatencyNetwork->SetBackgroundColour(wxPtp::Get().IsSyncedToMaster(0) ? *wxWHITE : wxColour(255,100,100));
+    #endif // PTPMONKEY
 }
 
 
@@ -836,11 +838,12 @@ void pnlAoIPInfo::SetTimestamp(const pairTime_t& tv, wmLabel* pLabel, bool bDate
 void pnlAoIPInfo::ShowLatency(const timedbuffer* pTimedBuffer)
 {
     double dPlayback = pTimedBuffer->GetPlaybackLatency();
-    double dTransmission = static_cast<double>(pTimedBuffer->GetTransmissionTime().second)/1000000.0 + static_cast<double>(pTimedBuffer->GetTransmissionTime().first);
-    double dPresentation = static_cast<double>(pTimedBuffer->GetTimeVal().second)/1000000.0 + static_cast<double>(pTimedBuffer->GetTimeVal().first);
+    double dTransmission = static_cast<double>(pTimedBuffer->GetTransmissionTime().second) + (static_cast<double>(pTimedBuffer->GetTransmissionTime().first)*1000000.0);
+    double dPresentation = static_cast<double>(pTimedBuffer->GetTimeVal().second) + (static_cast<double>(pTimedBuffer->GetTimeVal().first)*1000000.0);
 
-    m_plblLatency->SetLabel(wxString::Format(wxT("%.03f s"), dPlayback/1000000.0));//+(dPresentation-dTransmission)));
-    m_plblLatencyNetwork->SetLabel(wxString::Format(wxT("%.03f s"), (dPresentation-dTransmission)));
+    dTransmission += m_dFrameDuration;   //we add the duration on because the transmission time is first sample not last sample of frane
+    m_plblLatency->SetLabel(wxString::Format(wxT("%.0f us"), dPlayback));//+(dPresentation-dTransmission)));
+    m_plblLatencyNetwork->SetLabel(wxString::Format(wxT("%.0f us"), (dPresentation-dTransmission)));
 
     timeval tv(wxPtp::Get().GetLastPtpOffset(0));
     timeval tvSet(wxPtp::Get().GetPtpOffset(0));
@@ -948,11 +951,11 @@ void pnlAoIPInfo::ShowGraph(const wxString& sGraph)
     m_pGraph->ShowGraph(sGraph);
     if(sGraph == wxT("kBit/s"))
     {
-        m_pGraph->ShowGraph(wxT("kBit/s Av"));
+        m_pGraph->ShowGraph(wxT("kBit/s"));
     }
     else if(sGraph == wxT("Packet Gap"))
     {
-        m_pGraph->ShowGraph(wxT("Packet Gap Av"));
+        m_pGraph->ShowGraph(wxT("Packet Gap"));
     }
     m_plblGraph->SetLabel(sGraph);
 }

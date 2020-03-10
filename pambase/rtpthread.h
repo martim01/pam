@@ -19,7 +19,7 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
     public:
         RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface, const wxString& sProg, const wxString& sUrl, unsigned int nBufferSize, bool bSaveSDPOnly = false);
         void* Entry();
-        void AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const pairTime_t& timePresentation, unsigned long nFrameSize, u_int8_t* pBuffer, u_int8_t nBits, const pairTime_t& timeTransmission, unsigned int nTimestamp,unsigned int nDuration, mExtension_t* pExt);
+        void AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const pairTime_t& timePresentation, unsigned long nFrameSize, u_int8_t* pBuffer, u_int8_t nBits, const pairTime_t& timeTransmission, unsigned int nTimestamp,unsigned int nDuration, int nTimestampDifference, mExtension_t* pExt);
 
         void MasterClockChanged();
 
@@ -72,6 +72,9 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
         double m_dDelay0;
         double m_dTSDFMax;
         double m_dTSDFMin;
+        unsigned int m_nSampleRate;
+        unsigned int m_nTimestampErrors;
+        unsigned int m_nTimestampErrorsTotal;
 
         unsigned long m_nTimestamp;
         unsigned long m_nSampleBufferSize;

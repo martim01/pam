@@ -61,6 +61,8 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
         {
             pSource->WorkoutLastEpoch();
         }
+
+        int nDifference = pSource->GetRTPTimestamp()-m_nLastTimestamp;
         m_nLastTimestamp = pSource->GetRTPTimestamp();
 
         //do we have an associated header ext??
@@ -73,14 +75,20 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
         }
 
         //fSubsession.rtpSource()->hasBeenSynchronizedUsingRTCP()
+        unsigned int nBytesPerSample = 0;
 
         if(strcmp(m_pSubsession->codecName(),"L16") == 0)
         {
-            m_pHandler->AddFrame(m_pSubsession->GetEndpoint(),  pSource->lastReceivedSSRC(), presentationTime, frameSize, fReceiveBuffer, 2, pSource->GetTransmissionTime(), pSource->GetRTPTimestamp(),frameSize, mExt);
+            nBytesPerSample = 2;
+
         }
         else if(strcmp(m_pSubsession->codecName(),"L24") == 0)
         {
-            m_pHandler->AddFrame(m_pSubsession->GetEndpoint(), pSource->lastReceivedSSRC(), presentationTime, frameSize, fReceiveBuffer, 3, pSource->GetTransmissionTime(), pSource->GetRTPTimestamp(),frameSize, mExt);
+            nBytesPerSample = 3;
+        }
+        if(nBytesPerSample != 0)
+        {
+            m_pHandler->AddFrame(m_pSubsession->GetEndpoint(), pSource->lastReceivedSSRC(), presentationTime, frameSize, fReceiveBuffer, nBytesPerSample, pSource->GetTransmissionTime(), pSource->GetRTPTimestamp(),frameSize, nDifference, mExt);
         }
     }
     else if(strcmp(m_pSubsession->mediumName(), "video") == 0)

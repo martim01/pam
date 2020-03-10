@@ -67,7 +67,6 @@ int pam2App::FilterEvent(wxEvent& event)
 
     if(event.GetEventType() == wxEVT_LEFT_DOWN)
     {
-        wxLogDebug("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!FilterEvent");
         if(!m_bReset)
     	{
     	    m_timerHold.Start(1000,true);

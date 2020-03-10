@@ -38,7 +38,9 @@ RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface
     m_pSession(nullptr),
     m_bClosing(false),
     m_bSaveSDP(bSaveSDPOnly),
-    m_nQosMeasurementIntervalMS(1000)
+    m_nQosMeasurementIntervalMS(1000),
+    m_nTimestampErrors(0),
+    m_nTimestampErrorsTotal(0)
 {
     m_eventLoopWatchVariable = 0;
     m_pCondition = new wxCondition(m_mutex);
@@ -249,16 +251,24 @@ float RtpThread::ConvertFrameBufferToSample(u_int8_t* pFrameBuffer, u_int8_t nBy
     return static_cast<float>(nSample)/ 2147483648.0;
 }
 
-void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const pairTime_t& timePresentation, unsigned long nFrameSize, u_int8_t* pFrameBuffer, u_int8_t nBytesPerSample, const pairTime_t& timeTransmission, unsigned int nTimestamp,unsigned int nDuration, mExtension_t* pExt)
+void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const pairTime_t& timePresentation, unsigned long nFrameSize, u_int8_t* pFrameBuffer, u_int8_t nBytesPerSample, const pairTime_t& timeTransmission, unsigned int nTimestamp,unsigned int nDuration, int nTimestampDifference, mExtension_t* pExt)
 {
     if(m_bClosing || m_Session.GetCurrentSubsession() == m_Session.lstSubsession.end() || m_Session.GetCurrentSubsession()->sSourceAddress != sEndpoint)
         return;
+
 
     if(m_pCurrentBuffer == 0)
     {
         m_pCurrentBuffer = new float[m_nBufferSize*m_nInputChannels];
         m_nSampleBufferSize = 0;
     }
+
+    #ifdef PTPMONKEY
+    timeval tv = wxPtp::Get().GetPtpOffset(0);
+    double dOffset = tv.tv_sec + (static_cast<double>(tv.tv_usec))/1000000.0;
+    #else
+    double dOffset = 0.0;
+    #endif
 
     for(int i = 0; i < nFrameSize; i+=nBytesPerSample)
     {
@@ -267,24 +277,16 @@ void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const p
         if(m_nSampleBufferSize == 0)
         {
             m_dTransmission = timeTransmission.first + (static_cast<double>(timeTransmission.second))/1000000.0;
-            #ifdef PTPMONKEY
-            timeval tv = wxPtp::Get().GetPtpOffset(0);
-            double dOffset = tv.tv_sec + (static_cast<double>(tv.tv_usec))/1000000.0;
-            #else
-            double dOffset = 0.0;
-            #endif
             m_dPresentation = (timePresentation.first + (static_cast<double>(timePresentation.second))/1000000.0) - dOffset;
+            //is the timestamp what we'd expect??
             m_nTimestamp = nTimestamp;
 
-            double dTSDF = m_dPresentation-m_dTransmission+m_dDelay0;
-            m_dTSDFMax = max(m_dTSDFMax, dTSDF);
-            m_dTSDFMin = min(m_dTSDFMin, dTSDF);
         }
-        else
+        else if(i%m_nInputChannels ==0)
         {
             ++m_nTimestamp; //timestamp goes up 1 per sample
-            m_dTransmission += (1.0 / 48000.0); //@todo assuming 48K here
-            m_dPresentation += (1.0 / 48000.0); //@todo assuming 48K here
+            m_dTransmission += (1.0 / static_cast<double>(m_nSampleRate));
+            m_dPresentation += (1.0 / static_cast<double>(m_nSampleRate)); //@todo assuming 48K here
         }
 
         m_pCurrentBuffer[m_nSampleBufferSize] = dSample;
@@ -296,11 +298,29 @@ void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const p
             pTimedBuffer->SetBuffer(m_pCurrentBuffer);
             pTimedBuffer->SetTransmissionTime(ConvertDoubleToPairTime(m_dTransmission));
             pTimedBuffer->SetDuration(nDuration);
-            AudioEvent* pEvent = new AudioEvent(pTimedBuffer, AudioEvent::RTP, m_nBufferSize, 48000, false, false);
+            AudioEvent* pEvent = new AudioEvent(pTimedBuffer, AudioEvent::RTP, m_nBufferSize, m_nSampleRate, false, false);
             wxQueueEvent(m_pHandler, pEvent);
             m_nSampleBufferSize = 0;
         }
     }
+
+
+    //QOS
+    unsigned int nExpectedDifference = nFrameSize/(m_nInputChannels*nBytesPerSample);
+    if(nExpectedDifference != nTimestampDifference)
+    {
+        m_nTimestampErrors++;
+        m_nTimestampErrorsTotal++;
+    }
+
+    double dTSDF = (timePresentation.first*1000000.0 + (static_cast<double>(timePresentation.second))) - (dOffset*1000000.0);
+    dTSDF -= (timeTransmission.first*1000000.0 + (static_cast<double>(timeTransmission.second)));
+
+    dTSDF += m_dDelay0;
+
+    m_dTSDFMax = max(m_dTSDFMax, dTSDF);
+    m_dTSDFMin = min(m_dTSDFMin, dTSDF);
+
 }
 
 
@@ -322,17 +342,22 @@ void RtpThread::StopStream()
 
 void RtpThread::QosUpdated(qosData* pData)
 {
-    pData->dTSDF = m_dTSDFMax-m_dTSDFMin;
+
+    pData->nTimestampErrors = m_nTimestampErrors;
+    pData->nTimestampErrorsTotal = m_nTimestampErrorsTotal;
+    pData->dTSDF = (m_dTSDFMax-m_dTSDFMin);
     if(m_pHandler)
     {
         wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_QOS_UPDATED);
         pEvent->SetClientData((void*)pData);
         wxQueueEvent(m_pHandler, pEvent);
     }
+
+    m_nTimestampErrors = 0;
     //set out transmission0 and presentation0 ready for next lot of ts-df
-    m_dDelay0 = m_dTransmission-m_dPresentation;
-    m_dTSDFMax = -1000000000000;
-    m_dTSDFMin = 1000000000000;
+    m_dDelay0 = (m_dTransmission-m_dPresentation)*1e6;
+    m_dTSDFMax = -10000000000000;
+    m_dTSDFMin = 10000000000000;
 
 }
 
@@ -377,12 +402,12 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
     m_Session.SetCurrentSubsession();
     if(m_Session.GetCurrentSubsession() != m_Session.lstSubsession.end())
     {
-
+        m_nSampleRate = m_Session.GetCurrentSubsession()->nSampleRate;
         m_nInputChannels = min((unsigned int)256 ,m_Session.GetCurrentSubsession()->nChannels);
     }
     else
     {
-
+        m_nSampleRate = 48000;
         m_nInputChannels = 0;
     }
 

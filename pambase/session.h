@@ -115,5 +115,7 @@ struct PAMBASE_IMPEXPORT qosData
     unsigned int nSSRC;
 
     double dTSDF;
+    unsigned int nTimestampErrors;
+    unsigned int nTimestampErrorsTotal;
 };
 

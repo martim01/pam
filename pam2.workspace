@@ -20,7 +20,9 @@
 		<Project filename="plugins/scope/scope.cbp">
 			<Depends filename="pambase/pambase.cbp" />
 		</Project>
-		<Project filename="plugins/aoip info/aoip info.cbp" />
+		<Project filename="plugins/aoip info/aoip info.cbp">
+			<Depends filename="pambase/pambase.cbp" />
+		</Project>
 		<Project filename="plugins/radar/radar.cbp">
 			<Depends filename="pambase/pambase.cbp" />
 		</Project>

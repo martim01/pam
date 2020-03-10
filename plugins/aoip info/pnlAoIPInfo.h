@@ -260,6 +260,8 @@ class pnlAoIPInfo: public wxPanel
         double m_dLoss[2];
         double m_dTSDF[2];
 
+        double m_dFrameDuration;
+
         enum {GRAPH_MIN=0, GRAPH_MAX};
 		DECLARE_EVENT_TABLE()
 };
