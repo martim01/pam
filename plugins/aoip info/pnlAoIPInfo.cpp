@@ -731,7 +731,20 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	m_pGraph->ShowGraph(wxT("Jitter"), false);
 	m_pGraph->ShowRange(wxT("Jitter"), true);
 	m_pGraph->SetLimit(wxT("Jitter"), 1, 0.1);
+
+	m_pGraph->AddGraph(wxT("Timestamp"), wxColour(0,0,255));
+	m_pGraph->ShowGraph(wxT("Timestamp"), false);
+	m_pGraph->ShowRange(wxT("Timestamp"), true);
+	m_pGraph->SetLimit(wxT("Timestamp"), (2e32)-1,0);
+
+    m_pGraph->AddGraph(wxT("Timestamp Errors"), wxColour(0,0,255));
+	m_pGraph->ShowGraph(wxT("Timestamp Errors"), false);
+	m_pGraph->ShowRange(wxT("Timestamp Errors"), true);
+	m_pGraph->SetLimit(wxT("Timestamp Errors"), 1, 0.1);
+
 }
+
+
 
 pnlAoIPInfo::~pnlAoIPInfo()
 {
@@ -776,6 +789,9 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
     m_dTSDF[GRAPH_MIN] = std::min(pData->dTSDF, m_dTSDF[GRAPH_MIN]);
     m_dTSDF[GRAPH_MAX] = std::max(pData->dTSDF, m_dTSDF[GRAPH_MAX]);
 
+    m_dTimestampErrors[GRAPH_MIN] = std::min(pData->nTimestampErrors, m_dTimestampErrors[GRAPH_MIN]);
+    m_dTimestampErrors[GRAPH_MAX] = std::max(pData->nTimestampErrors, m_dTimestampErrors[GRAPH_MAX]);
+
     m_pGraph->SetLimit(wxT("kBit/s"), m_dKbps[GRAPH_MAX], m_dKbps[GRAPH_MIN]);
     m_pGraph->AddPeak(wxT("kBit/s"), pData->dkbits_per_second_Now);
 
@@ -792,6 +808,8 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
     m_pGraph->SetLimit(wxT("TS-DF"), m_dTSDF[GRAPH_MAX], m_dTSDF[GRAPH_MIN]);
     m_pGraph->AddPeak(wxT("TS-DF"), pData->dTSDF);
 
+    m_pGraph->SetLimit(wxT("Timestamp Errors"), m_dTimestampErrors[GRAPH_MAX], m_dTimestampErrors[GRAPH_MIN]);
+    m_pGraph->AddPeak(wxT("Timestamp Errors"), pData->nTimestampErrors);
 
 }
 
@@ -811,6 +829,8 @@ void pnlAoIPInfo::SetAudioData(const timedbuffer* pTimedBuffer)
     m_plblFrameDuration->SetLabel(wxString::Format(wxT("%.2f us"), m_dFrameDuration));
 
     m_plblPlaybackQueue->SetLabel(wxString::Format(wxT("%d"), pTimedBuffer->GetBufferDepth()));
+
+    m_pGraph->AddPeak(wxT("Timestamp"), pTimedBuffer->GetTimestamp());
 
     #ifdef PTPMONKEY
     m_plblTransmissionTime->SetBackgroundColour(wxPtp::Get().IsSyncedToMaster(0) ? *wxWHITE : wxColour(255,100,100));
@@ -976,6 +996,9 @@ void pnlAoIPInfo::ClearGraphs()
 
     m_dTSDF[GRAPH_MIN] = 0xFFFFFF;;
     m_dTSDF[GRAPH_MAX] = -1;
+
+    m_dTimestampErrors[GRAPH_MIN] = 0xFFFFFF;;
+    m_dTimestampErrors[GRAPH_MAX] = -1;
 
     m_pGraph->ClearGraphs();
 }

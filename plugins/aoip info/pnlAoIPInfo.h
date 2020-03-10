@@ -258,6 +258,7 @@ class pnlAoIPInfo: public wxPanel
         double m_dJitter[2];
         double m_dGap[2];
         double m_dLoss[2];
+        double m_dTimestampErrors[2];
         double m_dTSDF[2];
 
         double m_dFrameDuration;

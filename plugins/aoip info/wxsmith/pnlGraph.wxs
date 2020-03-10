@@ -10,7 +10,7 @@
 			<columns>2</columns>
 			<items />
 			<pos>0,0</pos>
-			<size>190,128</size>
+			<size>190,168</size>
 			<bg>#000000</bg>
 			<style>wmList::STYLE_SELECT</style>
 			<handler function="OnlstGraphSelected" entry="EVT_LIST_SELECTED" />
@@ -18,7 +18,7 @@
 		<object class="wmButton" name="ID_M_PBTN29" variable="m_pbtnClear" member="yes">
 			<label>Clear Graphs</label>
 			<button_pressed>#800000</button_pressed>
-			<pos>100,135</pos>
+			<pos>100,175</pos>
 			<size>90,40</size>
 			<style>wmButton::STYLE_NORMAL</style>
 			<handler function="OnbtnClearClick" entry="EVT_BUTTON" />
