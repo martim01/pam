@@ -48,6 +48,9 @@ pnlLissajou::pnlLissajou(wxWindow* parent,LissajouBuilder* pBuilder,wxWindowID i
 	m_pMeterLeft->SetLightColours(wxColour(220,0,0), -8, wxColour(255,100,100));
     m_pMeterRight->SetLightColours(wxColour(0,220,0), -8, wxColour(255,100,100));
 
+    m_pMeterLeft->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlLissajou::OnLeftUp,0,this);
+    m_pMeterRight->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlLissajou::OnLeftUp,0,this);
+
 
 //	double dLevels[15] = {0,-3, -6, -9, -12, -15, -18, -21, -24, -30, -36, -42, -48, -54, -60};
 //	m_pMeterLeft->SetLevels(dLevels,15,0.0, wxT("dbFS"), wxT("Peak"));

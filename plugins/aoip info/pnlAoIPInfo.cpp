@@ -4,6 +4,7 @@
 #include "settings.h"
 #include <wx/log.h>
 #include "wxptp.h"
+#include "aoipinfobuilder.h"
 
 //(*InternalHeaders(pnlAoIPInfo)
 #include <wx/font.h>
@@ -119,7 +120,9 @@ BEGIN_EVENT_TABLE(pnlAoIPInfo,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size) : m_pSession(0)
+pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,AoIPInfoBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) :
+    m_pBuilder(pBuilder),
+    m_pSession(0)
 {
 	//(*Initialize(pnlAoIPInfo)
 	Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("wxID_ANY"));
@@ -734,16 +737,43 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
 	m_pGraph->AddGraph(wxT("Timestamp"), wxColour(0,0,255));
 	m_pGraph->ShowGraph(wxT("Timestamp"), false);
-	m_pGraph->ShowRange(wxT("Timestamp"), true);
-	m_pGraph->SetLimit(wxT("Timestamp"), (2e32)-1,0);
+	m_pGraph->ShowRange(wxT("Timestamp"), false);
+	m_pGraph->SetLimit(wxT("Timestamp"), 1,0);
 
-    m_pGraph->AddGraph(wxT("Timestamp Errors"), wxColour(0,0,255));
+    m_pGraph->AddGraph(wxT("Timestamp Errors"), wxColour(255,0,0));
 	m_pGraph->ShowGraph(wxT("Timestamp Errors"), false);
 	m_pGraph->ShowRange(wxT("Timestamp Errors"), true);
 	m_pGraph->SetLimit(wxT("Timestamp Errors"), 1, 0.1);
 
+	//ConnectLeftUp();
+
 }
 
+void pnlAoIPInfo::ConnectLeftUp()
+{
+    wxWindowList lst = GetChildren();
+	for(auto pWnd : lst)
+    {
+        wxPanel* pPanel = dynamic_cast<wxPanel*>(pWnd);
+        if(pPanel)
+        {
+            pPanel->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlAoIPInfo::OnInfoLeftUp,0,this);
+        }
+        else
+        {
+            wmLabel* pLabel = dynamic_cast<wmLabel*>(pWnd);
+            if(pLabel)
+            {
+                pLabel->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlAoIPInfo::OnInfoLeftUp,0,this);
+            }
+        }
+    }
+}
+
+void pnlAoIPInfo::OnInfoLeftUp(wxMouseEvent& event)
+{
+    m_pBuilder->Maximize((GetSize().x <= 600));
+}
 
 
 pnlAoIPInfo::~pnlAoIPInfo()
@@ -789,8 +819,8 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
     m_dTSDF[GRAPH_MIN] = std::min(pData->dTSDF, m_dTSDF[GRAPH_MIN]);
     m_dTSDF[GRAPH_MAX] = std::max(pData->dTSDF, m_dTSDF[GRAPH_MAX]);
 
-    m_dTimestampErrors[GRAPH_MIN] = std::min(pData->nTimestampErrors, m_dTimestampErrors[GRAPH_MIN]);
-    m_dTimestampErrors[GRAPH_MAX] = std::max(pData->nTimestampErrors, m_dTimestampErrors[GRAPH_MAX]);
+    m_nTimestampErrors[GRAPH_MIN] = std::min(pData->nTimestampErrors, m_nTimestampErrors[GRAPH_MIN]);
+    m_nTimestampErrors[GRAPH_MAX] = std::max(pData->nTimestampErrors, m_nTimestampErrors[GRAPH_MAX]);
 
     m_pGraph->SetLimit(wxT("kBit/s"), m_dKbps[GRAPH_MAX], m_dKbps[GRAPH_MIN]);
     m_pGraph->AddPeak(wxT("kBit/s"), pData->dkbits_per_second_Now);
@@ -808,8 +838,9 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
     m_pGraph->SetLimit(wxT("TS-DF"), m_dTSDF[GRAPH_MAX], m_dTSDF[GRAPH_MIN]);
     m_pGraph->AddPeak(wxT("TS-DF"), pData->dTSDF);
 
-    m_pGraph->SetLimit(wxT("Timestamp Errors"), m_dTimestampErrors[GRAPH_MAX], m_dTimestampErrors[GRAPH_MIN]);
+    m_pGraph->SetLimit(wxT("Timestamp Errors"), 10,0);
     m_pGraph->AddPeak(wxT("Timestamp Errors"), pData->nTimestampErrors);
+    wxLogDebug("Timetsmp errors %u", pData->nTimestampErrors);
 
 }
 
@@ -830,7 +861,9 @@ void pnlAoIPInfo::SetAudioData(const timedbuffer* pTimedBuffer)
 
     m_plblPlaybackQueue->SetLabel(wxString::Format(wxT("%d"), pTimedBuffer->GetBufferDepth()));
 
-    m_pGraph->AddPeak(wxT("Timestamp"), pTimedBuffer->GetTimestamp());
+    m_pGraph->SetLimit("Timestamp", 1, 0);
+    double dTimestamp(static_cast<double>(pTimedBuffer->GetTimestamp())/4294967296.0);
+    m_pGraph->AddPeak("Timestamp",dTimestamp);//static_cast<double>(pTimedBuffer->GetTimestamp())/2e32);
 
     #ifdef PTPMONKEY
     m_plblTransmissionTime->SetBackgroundColour(wxPtp::Get().IsSyncedToMaster(0) ? *wxWHITE : wxColour(255,100,100));
@@ -969,14 +1002,6 @@ void pnlAoIPInfo::ShowGraph(const wxString& sGraph)
 {
     m_pGraph->HideAllGraphs();
     m_pGraph->ShowGraph(sGraph);
-    if(sGraph == wxT("kBit/s"))
-    {
-        m_pGraph->ShowGraph(wxT("kBit/s"));
-    }
-    else if(sGraph == wxT("Packet Gap"))
-    {
-        m_pGraph->ShowGraph(wxT("Packet Gap"));
-    }
     m_plblGraph->SetLabel(sGraph);
 }
 
@@ -997,8 +1022,8 @@ void pnlAoIPInfo::ClearGraphs()
     m_dTSDF[GRAPH_MIN] = 0xFFFFFF;;
     m_dTSDF[GRAPH_MAX] = -1;
 
-    m_dTimestampErrors[GRAPH_MIN] = 0xFFFFFF;;
-    m_dTimestampErrors[GRAPH_MAX] = -1;
+    m_nTimestampErrors[GRAPH_MIN] = 0xFFFFFFFF;
+    m_nTimestampErrors[GRAPH_MAX] = -1;
 
     m_pGraph->ClearGraphs();
 }

@@ -27,7 +27,7 @@ void AoIPInfoBuilder::SetAudioData(const timedbuffer* pBuffer)
 
 wxWindow* AoIPInfoBuilder::CreateMonitorPanel(wxWindow* pParent)
 {
-    m_pInfo = new pnlAoIPInfo(pParent);
+    m_pInfo = new pnlAoIPInfo(pParent, this);
     return m_pInfo;
 }
 

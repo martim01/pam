@@ -15,12 +15,13 @@
 struct qosData;
 struct session;
 
+class AoIPInfoBuilder;
 
 class pnlAoIPInfo: public wxPanel
 {
 	public:
 
-		pnlAoIPInfo(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+		pnlAoIPInfo(wxWindow* parent, AoIPInfoBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pnlAoIPInfo();
 
 		//(*Declarations(pnlAoIPInfo)
@@ -244,8 +245,13 @@ class pnlAoIPInfo: public wxPanel
 
 		void OnPtpEvent(wxCommandEvent& event);
 
+		void OnInfoLeftUp(wxMouseEvent& event);
+		void ConnectLeftUp();
+
 		void SetTimestamp(const pairTime_t& tv, wmLabel* pLabel, bool bDate = false);
         void ShowLatency(const timedbuffer* pTimedBuffer);
+
+        AoIPInfoBuilder* m_pBuilder;
         pairTime_t m_tvTransmission;
         pairTime_t m_tvPresentation;
         pairTime_t m_tvPlayback;
@@ -258,7 +264,7 @@ class pnlAoIPInfo: public wxPanel
         double m_dJitter[2];
         double m_dGap[2];
         double m_dLoss[2];
-        double m_dTimestampErrors[2];
+        unsigned int m_nTimestampErrors[2];
         double m_dTSDF[2];
 
         double m_dFrameDuration;

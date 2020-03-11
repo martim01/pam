@@ -519,7 +519,41 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 
 	SetSize(size);
 	SetPosition(pos);
+    ConnectLeftUp(this);
+
 }
+
+void ptpPanel::ConnectLeftUp(wxWindow* pParent)
+{
+    wxWindowList lst = pParent->GetChildren();
+	for(auto pWnd : lst)
+    {
+        wxPanel* pPanel = dynamic_cast<wxPanel*>(pWnd);
+        if(pPanel)
+        {
+            pPanel->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&ptpPanel::OnInfoLeftUp,0,this);
+            ConnectLeftUp(pPanel);
+        }
+        else
+        {
+            wmLabel* pLabel = dynamic_cast<wmLabel*>(pWnd);
+            if(pLabel)
+            {
+                pLabel->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&ptpPanel::OnInfoLeftUp,0,this);
+            }
+            else
+            {
+                wxLogDebug(wxT("Unknown type %s"), pWnd->GetLabel());
+            }
+        }
+    }
+}
+
+void ptpPanel::OnInfoLeftUp(wxMouseEvent& event)
+{
+    m_pBuilder->Maximize((GetSize().x <= 600));
+}
+
 
 ptpPanel::~ptpPanel()
 {

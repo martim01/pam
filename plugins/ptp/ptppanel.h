@@ -228,6 +228,9 @@ class ptpPanel: public pmPanel
 
 		void OnTimer(wxTimerEvent& event);
 
+		void OnInfoLeftUp(wxMouseEvent& event);
+		void ConnectLeftUp(wxWindow* pParent);
+
 		void ShowClockDetails();
 		void ClearClockDetails();
 		void ShowTime();
