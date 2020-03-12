@@ -11,6 +11,7 @@
 #include "rtpserverthread.h"
 #include <ctime>
 #include "wxptp.h"
+#include "aoipsourcemanager.h"
 
 using namespace std;
 
@@ -55,6 +56,7 @@ IOManager::IOManager() :
 
 {
 
+    AoipSourceManager::Get();
     Settings::Get().Write(wxT("Server"), wxT("Stream"), 0); //can't be streaming at startup so set to 0 in case we exited whilst streaming
 
     Settings::Get().AddHandler(wxT("Input"),wxT("Type"), this);
@@ -284,10 +286,9 @@ void IOManager::InputChanged(const wxString& sKey)
     if(sKey == wxT("AoIP"))
     {
         wmLog::Get()->Log(wxT("IOManager::InputChanged: AoIP"));
+        AoIPSource source = AoipSourceManager::Get().FindSource(Settings::Get().Read(wxT("Input"), wxT("AoIP"), 0));
 
-        wxString sUrl = Settings::Get().Read(wxT("AoIP"), Settings::Get().Read(wxT("Input"), wxT("AoIP"), wxEmptyString), wxEmptyString);
-        wxLogDebug(wxT("IOManager::InputChanged: Url = %s"), sUrl.c_str());
-        if(sUrl != m_sCurrentRtp)
+        if(source.sDetails != m_sCurrentRtp)
         {
             wmLog::Get()->Log(wxT("Audio Input Device Changed: Close AoIP Session"));
             ClearSession();
@@ -628,14 +629,13 @@ void IOManager::InitAudioInputDevice()
         wxLogDebug(wxT("IOManager::InitAudioInputDevice: AoIP"));
         m_nInputSource = AudioEvent::RTP;
         wmLog::Get()->Log(wxT("Create Audio Input Device: AoIP"));
-        wxString sRtp(Settings::Get().Read(wxT("Input"), wxT("AoIP"), wxEmptyString));
-        sRtp = Settings::Get().Read(wxT("AoIP"), sRtp, wxEmptyString);
 
-        if(sRtp.empty() == false && m_mRtp.find(sRtp) == m_mRtp.end())
+        AoIPSource source = AoipSourceManager::Get().FindSource(Settings::Get().Read(wxT("Input"), wxT("AoIP"), 0));
+        if(source.sDetails.empty() == false && m_mRtp.find(source.sDetails) == m_mRtp.end())
         {
 
-            m_sCurrentRtp = sRtp;
-            RtpThread* pThread = new RtpThread(this, Settings::Get().Read(wxT("AoIP_Settings"), wxT("Interface"), "eth0"), wxT("pam"), sRtp, 2048);
+            m_sCurrentRtp = source.sDetails;
+            RtpThread* pThread = new RtpThread(this, Settings::Get().Read(wxT("AoIP_Settings"), wxT("Interface"), "eth0"), wxT("pam"), source, 2048);
             pThread->Create();
             pThread->Run();
 

@@ -83,6 +83,7 @@
 						<bg>#000000</bg>
 						<style>wmList::STYLE_SELECT</style>
 						<handler function="OnlstDevicesSelected" entry="EVT_LIST_SELECTED" />
+						<handler function="OnlstDevicesPaged" entry="EVT_LIST_PAGED" />
 					</object>
 					<object class="wmList" name="ID_M_PLST2" variable="m_plstInput" member="yes">
 						<scrolling>None</scrolling>

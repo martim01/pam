@@ -27,10 +27,10 @@ DEFINE_EVENT_TYPE(wxEVT_RTP_SESSION)
 DEFINE_EVENT_TYPE(wxEVT_RTP_SESSION_CLOSED)
 DEFINE_EVENT_TYPE(wxEVT_SDP)
 
-RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface, const wxString& sProg, const wxString& sUrl, unsigned int nBufferSize, bool bSaveSDPOnly) :
+RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface, const wxString& sProg, const AoIPSource& source, unsigned int nBufferSize, bool bSaveSDPOnly) :
     m_pHandler(pHandler),
     m_sProgName(sProg),
-    m_sUrl(sUrl),
+    m_source(source),
     m_nBufferSize(nBufferSize),
     m_pCurrentBuffer(nullptr),
     m_pRtspClient(nullptr),
@@ -65,7 +65,7 @@ void* RtpThread::Entry()
     TaskScheduler* scheduler = PamTaskScheduler::createNew();
     m_penv = PamUsageEnvironment::createNew(*scheduler, m_pHandler);
 
-    wxString sProtocol(m_sUrl.BeforeFirst(wxT(':')));
+    wxString sProtocol(m_source.sDetails.BeforeFirst(wxT(':')));
     if(sProtocol.CmpNoCase(wxT("rtsp")) == 0)
     {
         if(DoRTSP())
@@ -88,9 +88,7 @@ void* RtpThread::Entry()
     }
     else
     {
-        m_sDescriptor = m_sUrl.AfterFirst(wxT('[')).BeforeFirst(wxT(']'));
-        m_sDescriptor.Replace(wxT("`"), wxT("\n"));
-        m_sDescriptor = m_sDescriptor.AfterFirst(wxT('\n'));
+        m_sDescriptor = m_source.sSDP.AfterFirst('\n');
         StreamFromSDP();
     }
 
@@ -98,7 +96,7 @@ void* RtpThread::Entry()
     delete[] m_pCurrentBuffer;
 
     wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_RTP_SESSION_CLOSED);
-    pEvent->SetString(m_sUrl);
+    pEvent->SetString(m_source.sDetails);
     wxQueueEvent(m_pHandler, pEvent);
 
     // @todo do we need to delete clients etc?
@@ -205,11 +203,12 @@ bool RtpThread::DoRTSP()
 {
     // Begin by creating a "RTSPClient" object.  Note that there is a separate "RTSPClient" object for each stream that we wish
     // to receive (even if more than stream uses the same "rtsp://" URL).
-    m_sUrl.Replace(wxT(" "), wxT("%20"));
-    m_pRtspClient = ourRTSPClient::createNew((*m_penv), m_sUrl.mb_str(), this, 1, m_sProgName.mb_str());
+    wxString sUrl(m_source.sDetails);
+    sUrl.Replace(wxT(" "), wxT("%20"));
+    m_pRtspClient = ourRTSPClient::createNew((*m_penv), sUrl.mb_str(), this, 1, m_sProgName.mb_str());
     if (m_pRtspClient == NULL)
     {
-        (*m_penv) << "Failed to create a RTSP client for URL \"" << m_sUrl.mb_str() << "\": " << (*m_penv).getResultMsg() << "\n";
+        (*m_penv) << "Failed to create a RTSP client for URL \"" << sUrl.mb_str() << "\": " << (*m_penv).getResultMsg() << "\n";
         return false;
     }
 
@@ -219,11 +218,12 @@ bool RtpThread::DoRTSP()
 
 bool RtpThread::DoSIP()
 {
-    m_sUrl.Replace(wxT(" "), wxT("%20"));
-    m_pSipClient = ourSIPClient::createNew((*m_penv), m_sUrl.mb_str(), this, 1, m_sProgName.mb_str());
+    wxString sUrl(m_source.sDetails);
+    sUrl.Replace(wxT(" "), wxT("%20"));
+    m_pSipClient = ourSIPClient::createNew((*m_penv), sUrl.mb_str(), this, 1, m_sProgName.mb_str());
     if (m_pRtspClient == NULL)
     {
-        (*m_penv) << "Failed to create a RTSP client for URL \"" << m_sUrl.mb_str() << "\": " << (*m_penv).getResultMsg() << "\n";
+        (*m_penv) << "Failed to create a RTSP client for URL \"" << sUrl.mb_str() << "\": " << (*m_penv).getResultMsg() << "\n";
         return false;
     }
     m_pSipClient->GetSDPDescription();

@@ -31,7 +31,7 @@
 #include "soundcardmanager.h"
 #include "dlgAoIP.h"
 #include "settingevent.h"
-
+#include "aoipsourcemanager.h"
 
 
 using namespace std;
@@ -269,6 +269,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pswpSettings->AddPage(pnlGeneral, _("General"), false);
 
     Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstDevicesSelected);
+    Connect(ID_M_PLST1,wxEVT_LIST_PAGED,(wxObjectEventFunction)&pnlSettings::OnlstDevicesPaged);
     Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstInputSelected);
     Connect(ID_M_PBTN7,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnManageClick);
     Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnHomeClick);
@@ -289,7 +290,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     Connect(ID_M_PEDT1,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&pnlSettings::OnedtPinTextEnter);
     //*)
 
-    Connect(ID_M_PLST1,wxEVT_LIST_PAGED,(wxObjectEventFunction)&pnlSettings::OnlstDevicesPaged);
+
 
     m_pbtnCursor->SetToggleLook(true, wxT("Hide"), wxT("Show"), 40);
     m_ptbnOptions->SetToggleLook(true, wxT("Screens"), wxT("Options"), 40);
@@ -433,7 +434,7 @@ void pnlSettings::OnlstDevicesSelected(wxCommandEvent& event)
     }
     else if(sDevice == wxT("AoIP"))
     {
-        Settings::Get().Write(wxT("Input"), wxT("AoIP"), event.GetString());
+        Settings::Get().Write(wxT("Input"), wxT("AoIP"), (int)event.GetClientData());
     }
 
 }
@@ -536,23 +537,15 @@ void pnlSettings::ShowRTPDefined()
     m_plstDevices->Freeze();
     m_plstDevices->Clear();
 
-    int i = 0;
-
-
-    map<wxString, wxString>::const_iterator itBegin, itEnd;
-    if(Settings::Get().GetSectionDataBegin(wxT("AoIP"), itBegin) && Settings::Get().GetSectionDataEnd(wxT("AoIP"), itEnd))
+    for(auto itSource = AoipSourceManager::Get().GetSourceBegin(); itSource != AoipSourceManager::Get().GetSourceEnd(); ++itSource)
     {
-        for(map<wxString, wxString>::const_iterator itSource = itBegin; itSource != itEnd; ++itSource)
-        {
-            m_plstDevices->AddButton(itSource->first, wxNullBitmap, (void*)i);
-            ++i;
-        }
+        m_plstDevices->AddButton(itSource->second.sName, wxNullBitmap, (void*)itSource->first);
     }
     m_plstDevices->Thaw();
 
     ShowPagingButtons();
 
-    m_plstDevices->SelectButton(Settings::Get().Read(wxT("Input"), wxT("AoIP"), wxEmptyString));
+    m_plstDevices->SelectButton(Settings::Get().Read(wxT("Input"), wxT("AoIP"), 0));
 
 
 }
@@ -566,10 +559,6 @@ void pnlSettings::ShowPagingButtons()
     m_pbtnNext->Show(m_plstDevices->GetPageCount() > 1 && m_plstDevices->GetCurrentPageNumber() < m_plstDevices->GetPageCount());
 }
 
-void pnlSettings::OnlstDevicesPaged(wxCommandEvent& event)
-{
-    ShowPagingButtons();
-}
 
 void pnlSettings::ReloadRTP()
 {
@@ -628,21 +617,25 @@ void pnlSettings::OnswpSettingsPageChanged(wxNotebookEvent& event)
 void pnlSettings::OnbtnHomeClick(wxCommandEvent& event)
 {
     m_plstDevices->ShowFirstPage(false,false);
+
 }
 
 void pnlSettings::OnbtnPreviousClick(wxCommandEvent& event)
 {
     m_plstDevices->ShowPreviousPage(false, false);
+
 }
 
 void pnlSettings::OnbtnNextClick(wxCommandEvent& event)
 {
     m_plstDevices->ShowNextPage(false, false);
+
 }
 
 void pnlSettings::OnbtnEndClick(wxCommandEvent& event)
 {
     m_plstDevices->ShowLastPage(false, false);
+
 }
 
 
@@ -750,4 +743,9 @@ void pnlSettings::OnbtnManageClick(wxCommandEvent& event)
     dlgAoIP aDlg(this);
     aDlg.ShowModal();
     ReloadRTP();
+}
+
+void pnlSettings::OnlstDevicesPaged(wxCommandEvent& event)
+{
+    ShowPagingButtons();
 }

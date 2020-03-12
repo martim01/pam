@@ -5,13 +5,13 @@
 		<pos_arg>1</pos_arg>
 		<size_arg>1</size_arg>
 		<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
-			<label>AES67 Source</label>
+			<label>AES67 / SMPTE2110-30 Sources</label>
 			<pos>0,5</pos>
-			<size>800,30</size>
+			<size>690,30</size>
 			<fg>#FFFFFF</fg>
 			<bg>#004000</bg>
 			<font>
-				<size>10</size>
+				<size>12</size>
 				<style>normal</style>
 				<weight>bold</weight>
 				<underlined>0</underlined>
@@ -19,49 +19,11 @@
 				<face>Arial</face>
 			</font>
 		</object>
-		<object class="wmList" name="ID_M_PLST1" variable="m_plstDevices" member="yes">
-			<scrolling>Horizontal</scrolling>
-			<button_gap>5,5</button_gap>
-			<button_size>-1,40</button_size>
-			<columns>5</columns>
-			<button_selected>#008000</button_selected>
-			<button_disabled>#808080</button_disabled>
-			<items />
-			<pos>0,40</pos>
-			<size>800,370</size>
-			<bg>#000000</bg>
-			<style>wmList::STYLE_SELECT</style>
-			<handler function="OnlstDevicesSelected" entry="EVT_LIST_SELECTED" />
-		</object>
-		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnHome" member="yes">
-			<button_disabled>#808080</button_disabled>
-			<pos>70,435</pos>
-			<size>100,40</size>
-			<handler function="OnbtnHomeClick" entry="EVT_BUTTON" />
-		</object>
-		<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnPrevious" member="yes">
-			<button_disabled>#808080</button_disabled>
-			<pos>190,435</pos>
-			<size>100,40</size>
-			<handler function="OnbtnPreviousClick" entry="EVT_BUTTON" />
-		</object>
-		<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnNext" member="yes">
-			<button_disabled>#808080</button_disabled>
-			<pos>310,435</pos>
-			<size>100,40</size>
-			<handler function="OnbtnNextClick" entry="EVT_BUTTON" />
-		</object>
-		<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnEnd" member="yes">
-			<button_disabled>#808080</button_disabled>
-			<pos>430,435</pos>
-			<size>100,40</size>
-			<handler function="OnbtnEndClick" entry="EVT_BUTTON" />
-		</object>
 		<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnBack" member="yes">
 			<label>Back</label>
 			<button_disabled>#808080</button_disabled>
-			<pos>690,435</pos>
-			<size>100,40</size>
+			<pos>695,4</pos>
+			<size>100,31</size>
 			<fg>#FFFFFF</fg>
 			<bg>#008040</bg>
 			<font>
@@ -73,6 +35,159 @@
 				<face>Tahoma</face>
 			</font>
 			<handler function="OnbtnBackClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmSwitcherPanel" name="ID_M_PSWP1" variable="m_pSwp1" member="yes">
+			<pagename>Button</pagename>
+			<pos>0,35</pos>
+			<size>800,440</size>
+			<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
+			<handler function="OnSwpPageChanged" entry="EVT_NOTEBOOK_PAGE_CHANGED" />
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL1" variable="Panel1" member="yes">
+					<bg>#000000</bg>
+					<object class="wmList" name="ID_M_PLST1" variable="m_plstDevices" member="yes">
+						<scrolling>Horizontal</scrolling>
+						<button_gap>2,2</button_gap>
+						<button_size>-1,0</button_size>
+						<columns>5</columns>
+						<button_selected>#008000</button_selected>
+						<button_disabled>#808080</button_disabled>
+						<items />
+						<pos>0,0</pos>
+						<size>800,338</size>
+						<bg>#000000</bg>
+						<style>wmList::STYLE_SELECT</style>
+						<handler function="OnlstDevicesSelected" entry="EVT_LIST_SELECTED" />
+						<handler function="OnlstDevicesPaged" entry="EVT_LIST_PAGED" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnHome" member="yes">
+						<button_disabled>#808080</button_disabled>
+						<pos>70,360</pos>
+						<size>100,40</size>
+						<handler function="OnbtnHomeClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnPrevious" member="yes">
+						<button_disabled>#808080</button_disabled>
+						<pos>190,360</pos>
+						<size>100,40</size>
+						<handler function="OnbtnPreviousClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnNext" member="yes">
+						<button_disabled>#808080</button_disabled>
+						<pos>310,360</pos>
+						<size>100,40</size>
+						<handler function="OnbtnNextClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnEnd" member="yes">
+						<button_disabled>#808080</button_disabled>
+						<pos>430,360</pos>
+						<size>100,40</size>
+						<handler function="OnbtnEndClick" entry="EVT_BUTTON" />
+					</object>
+				</object>
+				<label>Paged</label>
+			</object>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL2" variable="Panel2" member="yes">
+					<bg>#000000</bg>
+					<object class="wmList" name="ID_M_PLST2" variable="m_plstAlphebtical" member="yes">
+						<scrolling>Horizontal</scrolling>
+						<button_gap>2,2</button_gap>
+						<button_size>-1,0</button_size>
+						<columns>5</columns>
+						<button_selected>#008000</button_selected>
+						<button_disabled>#808080</button_disabled>
+						<items />
+						<pos>0,0</pos>
+						<size>800,295</size>
+						<bg>#000000</bg>
+						<style>wmList::STYLE_SELECT</style>
+						<handler function="OnlstDevicesSelected" entry="EVT_LIST_SELECTED" />
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL1" variable="m_plblSearch" member="yes">
+						<label></label>
+						<pos>200,300</pos>
+						<size>400,30</size>
+						<fg>#000000</fg>
+						<bg>#FFFFFF</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Arial</face>
+						</font>
+					</object>
+					<object class="wmList" name="ID_M_PLST3" variable="m_plstAlphabet" member="yes">
+						<scrolling>None</scrolling>
+						<button_gap>0,0</button_gap>
+						<button_size>-1,35</button_size>
+						<columns>18</columns>
+						<button>#004080</button>
+						<button_selected>#1169EE</button_selected>
+						<button_disabled>#808080</button_disabled>
+						<text>#FFFFFF</text>
+						<items />
+						<pos>0,330</pos>
+						<size>745,80</size>
+						<bg>#000000</bg>
+						<handler function="OnlstAlphabetSelected" entry="EVT_LIST_SELECTED" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN6" variable="m_pbtnDelete" member="yes">
+						<label>DEL</label>
+						<button_disabled>#808080</button_disabled>
+						<pos>745,332</pos>
+						<size>50,76</size>
+						<fg>#FFFFFF</fg>
+						<bg>#004080</bg>
+						<font>
+							<size>12</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Tahoma</face>
+						</font>
+						<handler function="OnbtnDeleteClick" entry="EVT_BUTTON" />
+					</object>
+				</object>
+				<label>Alphabetical</label>
+			</object>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL3" variable="Panel3" member="yes">
+					<bg>#000000</bg>
+					<object class="wmList" name="ID_M_PLST4" variable="m_plstTagged" member="yes">
+						<scrolling>Horizontal</scrolling>
+						<button_gap>2,2</button_gap>
+						<button_size>-1,0</button_size>
+						<columns>5</columns>
+						<button_selected>#008000</button_selected>
+						<button_disabled>#808080</button_disabled>
+						<items />
+						<pos>0,0</pos>
+						<size>800,260</size>
+						<bg>#000000</bg>
+						<style>wmList::STYLE_SELECT</style>
+						<handler function="OnlstDevicesSelected" entry="EVT_LIST_SELECTED" />
+					</object>
+					<object class="wmList" name="ID_M_PLST5" variable="m_plstTags" member="yes">
+						<scrolling>None</scrolling>
+						<button_gap>0,0</button_gap>
+						<button_size>-1,35</button_size>
+						<columns>10</columns>
+						<button_selected>#1169EE</button_selected>
+						<button_disabled>#808080</button_disabled>
+						<items />
+						<pos>0,265</pos>
+						<size>800,130</size>
+						<bg>#000000</bg>
+						<style>wmList::STYLE_SELECT</style>
+						<handler function="OnlstTagsSelected" entry="EVT_LIST_SELECTED" />
+					</object>
+				</object>
+				<label>Tags</label>
+			</object>
 		</object>
 	</object>
 </wxsmith>

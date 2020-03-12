@@ -194,8 +194,8 @@ class pnlSettings: public wxPanel
 		void OnedtRTPPortText(wxCommandEvent& event);
 		void OnbtnRTSPClick(wxCommandEvent& event);
 		void OnbtnManageClick(wxCommandEvent& event);
-		//*)
 		void OnlstDevicesPaged(wxCommandEvent& event);
+		//*)
 
         void RefreshInputs();
 		void ShowSoundcardInputs();

@@ -24,6 +24,7 @@
 #include "settingevent.h"
 #include <wx/dir.h>
 #include "wxdirtraverseusb.h"
+#include "aoipsourcemanager.h"
 
 using namespace std;
 
@@ -266,6 +267,8 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	Connect(wxID_ANY, wxEVT_BROWSE_FINISHED, (wxObjectEventFunction)&pnlRTP::OnDiscoveryFinished);
 	Connect(wxID_ANY, wxEVT_SAP, (wxObjectEventFunction)&pnlRTP::OnSap);
 
+	AoipSourceManager::Get();
+    m_nSelectedSource = 0;
 
 	Settings::Get().AddHandler(wxT("ImportAoIP"), wxT("USB"), this);
 	Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pnlRTP::OnSettingEvent);
@@ -304,13 +307,19 @@ pnlRTP::~pnlRTP()
 
 void pnlRTP::OnbtnAddClick(wxCommandEvent& event)
 {
-    m_pSwp1->ChangeSelection(1);
-    m_pedtName->SetValue(m_sSelectedSource);
-    m_pedtUrl->SetValue(m_sSelectedUrl);
 
-    m_sSelectedSource = wxEmptyString;
-    m_pedtName->SetFocus();
+    FillInEdit();
     m_pbtnConfirm->SetLabel(wxT("Add"));
+}
+void pnlRTP::FillInEdit()
+{
+    AoIPSource source = AoipSourceManager::Get().FindSource(m_nSelectedSource);
+
+    m_pedtName->SetValue(source.sName);
+    m_pedtUrl->SetValue(source.sDetails);
+
+    m_pedtName->SetFocus();
+    m_pSwp1->ChangeSelection(1);
 }
 
 void pnlRTP::OnedtNameTextEnter(wxCommandEvent& event)
@@ -325,17 +334,16 @@ void pnlRTP::OnedtUrlTextEnter(wxCommandEvent& event)
 
 void pnlRTP::OnbtnConfirmClick(wxCommandEvent& event)
 {
-    if(m_sSelectedSource != wxEmptyString)
+    if(m_nSelectedSource != 0)
     {
-        Settings::Get().RemoveKey(wxT("AoIP"), m_sSelectedSource);
+        AoipSourceManager::Get().DeleteSource(m_nSelectedSource);
     }
 
-    Settings::Get().Write(wxT("AoIP"), m_pedtName->GetValue(), m_pedtUrl->GetValue());
+    AoipSourceManager::Get().AddSource(m_pedtName->GetValue(), m_pedtUrl->GetValue());
 
     ListSources();
     m_pSwp1->ChangeSelection(0);
-
-    m_sSelectedSource = wxEmptyString;
+    m_nSelectedSource = 0;
     m_pbtnDelete->Disable();
     m_pbtnUpdate->Disable();
 
@@ -343,19 +351,15 @@ void pnlRTP::OnbtnConfirmClick(wxCommandEvent& event)
 
 void pnlRTP::OnbtnUpdateClick(wxCommandEvent& event)
 {
-    m_pedtName->SetValue(m_sSelectedSource);
-    m_pedtUrl->SetValue(m_sSelectedUrl);
-    m_pSwp1->ChangeSelection(1);
-    m_pedtName->SetFocus();
-
+    FillInEdit();
     m_pbtnConfirm->SetLabel(wxT("Update"));
 }
 
 void pnlRTP::OnbtnDeleteClick(wxCommandEvent& event)
 {
-    Settings::Get().RemoveKey(wxT("AoIP"), m_sSelectedSource);
+    AoipSourceManager::Get().DeleteSource(m_nSelectedSource);
+    m_nSelectedSource = 0;
 
-    m_sSelectedSource = wxEmptyString;
     ListSources();
     m_pbtnDelete->Disable();
     m_pbtnUpdate->Disable();
@@ -367,22 +371,17 @@ void pnlRTP::ListSources()
     m_plstSources->Freeze();
     m_plstSources->Clear();
 
-    map<wxString, wxString>::const_iterator itBegin, itEnd;
-    if(Settings::Get().GetSectionDataBegin(wxT("AoIP"), itBegin) && Settings::Get().GetSectionDataEnd(wxT("AoIP"), itEnd))
+    for(auto itSource = AoipSourceManager::Get().GetSourceBegin(); itSource != AoipSourceManager::Get().GetSourceEnd(); ++itSource)
     {
-        for(map<wxString, wxString>::const_iterator itSource = itBegin; itSource != itEnd; ++itSource)
-        {
-            m_plstSources->AddButton(itSource->first);
-            m_plstSources->AddButton(itSource->second.BeforeFirst(wxT('[')));
-        }
+        m_plstSources->AddButton(itSource->second.sName, wxNullBitmap, (void*)itSource->first);
+        m_plstSources->AddButton(itSource->second.sDetails, wxNullBitmap, (void*)itSource->first);
     }
-    m_plstSources->Thaw();
+        m_plstSources->Thaw();
 }
 
 void pnlRTP::OnlstSourcesSelected(wxCommandEvent& event)
 {
-    m_sSelectedSource = m_plstSources->GetButtonText(2*(event.GetInt()/2));
-    m_sSelectedUrl = m_plstSources->GetButtonText(2*(event.GetInt()/2)+1);
+    m_nSelectedSource = (unsigned int)event.GetClientData();
 
     m_pbtnDelete->Enable();
     m_pbtnUpdate->Enable();
@@ -429,17 +428,13 @@ void pnlRTP::OnDiscovery(wxCommandEvent& event)
             {
                 sAddress = (wxString::Format(wxT("rtsp://%s:%d/by-name/%s"), pInstance->sHostIP.c_str(), pInstance->nPort, pInstance->sName.c_str()));
             }
-            Settings::Get().Write(wxT("AoIP"), wxString::Format(wxT("%s(%s)"), sIdentifier.c_str(), pInstance->sHostIP.c_str()), sAddress);
+            AoipSourceManager::Get().AddSource(wxString::Format(wxT("%s(%s)"), sIdentifier.c_str(), pInstance->sHostIP.c_str()), sAddress);
         }
         else if(pInstance->sService == "_sipuri._udp")
         {
             sAddress = pInstance->sName.BeforeFirst(' ');
-            Settings::Get().Write(wxT("AoIP"), wxString::Format(wxT("%s(%s)"), sIdentifier.c_str(), pInstance->sHostIP.c_str()), sAddress);
+            AoipSourceManager::Get().AddSource(wxString::Format(wxT("%s(%s)"), sIdentifier.c_str(), pInstance->sHostIP.c_str()), sAddress);
         }
-       // GetSDP(sAddress);
-
-
-
         wxClientDC dc(this);
         dc.SetFont(m_pList->GetFont());
         LogElement* pElement(new LogElement(dc, GetClientSize().x, wxString::Format(wxT("[%s] %s = %s:%lu"), pInstance->sService.c_str(), pInstance->sName.c_str(), pInstance->sHostIP.c_str(), pInstance->nPort), wmLog::LOG_TEST_OK));
@@ -505,10 +500,10 @@ void pnlRTP::DecodeSap(const wxString& sData)
         if(m_setDiscover.insert(make_pair(sName, sIpAddress)).second)
         {
             m_nDiscovered++;
-            m_plblDiscovering->SetLabel(wxString::Format(wxT("Discovering...\n%04uz Found"), m_nDiscovered));
+            m_plblDiscovering->SetLabel(wxString::Format(wxT("Discovering...\n%uz Found"), m_nDiscovered));
             wmLog::Get()->Log(wxString::Format(wxT("SAP response from %s\n%s"), sIpAddress.c_str(), sSDP.c_str()));
-            sSDP.Replace(wxT("\n"), wxT("`"));
-            Settings::Get().Write(wxT("AoIP"), sName, wxString::Format(wxT("sap:%s [%s]"), sIpAddress.c_str(), sSDP.c_str()));
+
+            AoipSourceManager::Get().AddSource(sName, wxString::Format(wxT("sap:%s"), sIpAddress.c_str()), sSDP);
 
             wxClientDC dc(this);
             dc.SetFont(m_pList->GetFont());
@@ -530,8 +525,8 @@ void pnlRTP::OnDiscoveryFinished(wxCommandEvent& event)
 void pnlRTP::OnbtnDeleteAllHeld(wxCommandEvent& event)
 {
     // @todo Delete all RTP Sources
-    Settings::Get().RemoveSection(wxT("AoIP"));
-    m_sSelectedSource = wxEmptyString;
+    AoipSourceManager::Get().DeleteAllSources();
+    m_nSelectedSource = 0;
     ListSources();
     m_pbtnDelete->Disable();
     m_pbtnUpdate->Disable();
@@ -541,17 +536,17 @@ void pnlRTP::OnbtnDeleteAllHeld(wxCommandEvent& event)
 void pnlRTP::GetSDP(const wxString& sUrl)
 {
     m_queueUrl.push(sUrl);
-    GetSDP();
+//    GetSDP();
 }
 
 void pnlRTP::GetSDP()
 {
-    if(m_pThread == 0 && m_queueUrl.empty() == false)
-    {
-        m_pThread = new RtpThread(this, Settings::Get().Read(wxT("AoIP"), wxT("Interface"), wxEmptyString), wxEmptyString, m_queueUrl.front(), 4096, true);
-        m_pThread->Create();
-        m_pThread->Run();
-    }
+//    if(m_pThread == 0 && m_queueUrl.empty() == false)
+//    {
+//        m_pThread = new RtpThread(this, Settings::Get().Read(wxT("AoIP"), wxT("Interface"), wxEmptyString), wxEmptyString, m_queueUrl.front(), 4096, true);
+//        m_pThread->Create();
+//        m_pThread->Run();
+//    }
 }
 
 void pnlRTP::OnSDPReceived(wxCommandEvent& event)
@@ -681,6 +676,9 @@ void pnlRTP::OnbtnImportClick(wxCommandEvent& event)
 {
     m_pSwp1->ChangeSelection(wxT("Import"));
     m_pnlUSB->StartCheck();
+    #ifdef __WXMSW__
+    //ImportSources(wxString::Format("%s/import.pii", Settings::Get().GetDocumentDirectory().c_str()));
+    #endif // __WXMSW__
 }
 
 
@@ -759,14 +757,16 @@ void pnlRTP::ImportSources(const wxString& sFileName)
             {
                 if(itData->second.Left(3).CmpNoCase("sap") == 0)
                 {
-                    wxString sSDP(itData->second);
+                    wxString sSDP(itData->second.AfterFirst('[').BeforeFirst(']'));
                     sSDP.Replace("|", "\n");
-                    Settings::Get().Write(wxT("AoIP"), itData->first, sSDP);
-
+                    sSDP.Replace("`", "\n");
+                    sSDP.Replace("\t", "");
+                    sSDP.Trim();
+                    AoipSourceManager::Get().AddSource(itData->first, itData->second.BeforeFirst('['), sSDP);
                 }
                 else if(itData->second.Left(4).CmpNoCase("rtsp") == 0)
                 {
-                    Settings::Get().Write(wxT("AoIP"), itData->first, itData->second);
+                    AoipSourceManager::Get().AddSource(itData->first, itData->second);
                 }
             }
             wmLog::Get()->Log(wxString::Format("Import AoIP: Read '%s'", sFileName.c_str()));

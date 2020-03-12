@@ -202,6 +202,8 @@
 		<Unit filename="aes67source.h" />
 		<Unit filename="anglemeter.cpp" />
 		<Unit filename="anglemeter.h" />
+		<Unit filename="aoipsourcemanager.cpp" />
+		<Unit filename="aoipsourcemanager.h" />
 		<Unit filename="audio.cpp" />
 		<Unit filename="audio.h" />
 		<Unit filename="audioevent.cpp" />

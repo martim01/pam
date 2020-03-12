@@ -152,8 +152,10 @@ class pnlRTP: public wxPanel
 		void OnSettingEvent(SettingEvent& event);
 
         void ImportSources(const wxString& sFileName);
-		wxString m_sSelectedSource;
-		wxString m_sSelectedUrl;
+
+        void FillInEdit();
+		unsigned int m_nSelectedSource;
+
 
         DNSServiceBrowser* m_pBrowser;
         SapWatchThread* m_pSapWatch;
