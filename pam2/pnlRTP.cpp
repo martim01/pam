@@ -336,10 +336,12 @@ void pnlRTP::OnbtnConfirmClick(wxCommandEvent& event)
 {
     if(m_nSelectedSource != 0)
     {
-        AoipSourceManager::Get().DeleteSource(m_nSelectedSource);
+        AoipSourceManager::Get().EditSource(m_nSelectedSource,m_pedtName->GetValue(), m_pedtUrl->GetValue());
     }
-
-    AoipSourceManager::Get().AddSource(m_pedtName->GetValue(), m_pedtUrl->GetValue());
+    else
+    {
+        AoipSourceManager::Get().AddSource(m_pedtName->GetValue(), m_pedtUrl->GetValue());
+    }
 
     ListSources();
     m_pSwp1->ChangeSelection(0);
@@ -357,6 +359,10 @@ void pnlRTP::OnbtnUpdateClick(wxCommandEvent& event)
 
 void pnlRTP::OnbtnDeleteClick(wxCommandEvent& event)
 {
+    if(Settings::Get().Read("Input", "AoIP", 0) == m_nSelectedSource)
+    {
+        Settings::Get().Write("Input", "AoIP",0);
+    }
     AoipSourceManager::Get().DeleteSource(m_nSelectedSource);
     m_nSelectedSource = 0;
 
@@ -524,7 +530,8 @@ void pnlRTP::OnDiscoveryFinished(wxCommandEvent& event)
 
 void pnlRTP::OnbtnDeleteAllHeld(wxCommandEvent& event)
 {
-    // @todo Delete all RTP Sources
+    Settings::Get().Write("Input", "AoIP",0);
+
     AoipSourceManager::Get().DeleteAllSources();
     m_nSelectedSource = 0;
     ListSources();

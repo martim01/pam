@@ -376,7 +376,7 @@ void shutdownStream(RTSPClient* rtspClient, int exitCode)
         }
     }
     Medium::close(rtspClient);
-
+    env << *rtspClient << "Closed the stream.\n";
 }
 
 

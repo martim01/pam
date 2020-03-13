@@ -203,7 +203,12 @@ void pnlAoIPSelection::ShowPaged()
 
     m_plstDevices->Thaw();
     ShowPagingButtons();
-    m_plstDevices->SelectButton(Settings::Get().Read(wxT("Input"), wxT("AoIP"), 0),false);
+
+    size_t nButton = m_plstDevices->FindButton((void*)Settings::Get().Read(wxT("Input"), wxT("AoIP"), 0));
+    if(nButton != 0xFFFFFFFF)
+    {
+        m_plstDevices->SelectButton(nButton,false);
+    }
 }
 
 void pnlAoIPSelection::ShowAlphabetical()
@@ -313,6 +318,12 @@ void pnlAoIPSelection::DoAlphabetSearch(const wxString& sLetter)
             m_plstAlphebtical->AddButton(pairSource.first, wxNullBitmap, (void*)pairSource.second);
         }
         m_plstAlphebtical->Thaw();
+
+        size_t nButton = m_plstAlphebtical->FindButton((void*)Settings::Get().Read(wxT("Input"), wxT("AoIP"), 0));
+        if(nButton != 0xFFFFFFFF)
+        {
+            m_plstAlphebtical->SelectButton(nButton,false);
+        }
     }
 
     m_plstAlphabet->Freeze();

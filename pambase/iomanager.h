@@ -87,9 +87,9 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         bool m_bStream;
 
         Generator* m_pGenerator;
-        std::map<wxString, RtpThread*> m_mRtp;
-        std::set<wxString> m_setRtpOrphan;
-        wxString m_sCurrentRtp;
+        std::map<unsigned int, RtpThread*> m_mRtp;
+        std::set<unsigned int> m_setRtpOrphan;
+        unsigned int m_nCurrentRtp;
 
         RtpServerThread* m_pRtpServer;
         wxTimer m_timerSilence;

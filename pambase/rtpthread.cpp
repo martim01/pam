@@ -61,6 +61,7 @@ RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface
 
 void* RtpThread::Entry()
 {
+    m_nSampleRate = 48000;
     // Begin by setting up our usage environment:
     TaskScheduler* scheduler = PamTaskScheduler::createNew();
     m_penv = PamUsageEnvironment::createNew(*scheduler, m_pHandler);
@@ -96,6 +97,7 @@ void* RtpThread::Entry()
     delete[] m_pCurrentBuffer;
 
     wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_RTP_SESSION_CLOSED);
+    pEvent->SetInt(m_source.nIndex);
     pEvent->SetString(m_source.sDetails);
     wxQueueEvent(m_pHandler, pEvent);
 
@@ -253,15 +255,17 @@ float RtpThread::ConvertFrameBufferToSample(u_int8_t* pFrameBuffer, u_int8_t nBy
 
 void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const pairTime_t& timePresentation, unsigned long nFrameSize, u_int8_t* pFrameBuffer, u_int8_t nBytesPerSample, const pairTime_t& timeTransmission, unsigned int nTimestamp,unsigned int nDuration, int nTimestampDifference, mExtension_t* pExt)
 {
+    wxLogDebug("1");
     if(m_bClosing || m_Session.GetCurrentSubsession() == m_Session.lstSubsession.end() || m_Session.GetCurrentSubsession()->sSourceAddress != sEndpoint)
         return;
-
+    wxLogDebug("2");
 
     if(m_pCurrentBuffer == 0)
     {
         m_pCurrentBuffer = new float[m_nBufferSize*m_nInputChannels];
         m_nSampleBufferSize = 0;
     }
+    wxLogDebug("3");
 
     #ifdef PTPMONKEY
     timeval tv = wxPtp::Get().GetPtpOffset(0);
@@ -270,6 +274,7 @@ void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const p
     double dOffset = 0.0;
     #endif
 
+    wxLogDebug("9");
     for(int i = 0; i < nFrameSize; i+=nBytesPerSample)
     {
         float dSample(ConvertFrameBufferToSample(&pFrameBuffer[i], nBytesPerSample));
@@ -285,6 +290,10 @@ void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const p
         else if(i%m_nInputChannels ==0)
         {
             ++m_nTimestamp; //timestamp goes up 1 per sample
+            if(m_nSampleRate == 0)
+            {
+                 m_nSampleRate = 48000;
+            }
             m_dTransmission += (1.0 / static_cast<double>(m_nSampleRate));
             m_dPresentation += (1.0 / static_cast<double>(m_nSampleRate)); //@todo assuming 48K here
         }
@@ -304,13 +313,17 @@ void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const p
         }
     }
 
+    wxLogDebug("10");
 
     //QOS
-    unsigned int nExpectedDifference = nFrameSize/(m_nInputChannels*nBytesPerSample);
-    if(nExpectedDifference != nTimestampDifference)
+    if(m_nInputChannels*nBytesPerSample != 0)
     {
-        m_nTimestampErrors++;
-        m_nTimestampErrorsTotal++;
+        unsigned int nExpectedDifference = nFrameSize/(m_nInputChannels*nBytesPerSample);
+        if(nExpectedDifference != nTimestampDifference)
+        {
+            m_nTimestampErrors++;
+            m_nTimestampErrorsTotal++;
+        }
     }
 
     double dTSDF = (timePresentation.first*1000000.0 + (static_cast<double>(timePresentation.second))) - (dOffset*1000000.0);
@@ -320,7 +333,7 @@ void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const p
 
     m_dTSDFMax = max(m_dTSDFMax, dTSDF);
     m_dTSDFMin = min(m_dTSDFMin, dTSDF);
-
+    wxLogDebug("11");
 }
 
 

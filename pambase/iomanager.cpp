@@ -123,7 +123,7 @@ void IOManager::Stop()
     delete m_pGenerator;
     m_pGenerator = 0;
 
-    for(map<wxString, RtpThread*>::iterator itThread = m_mRtp.begin(); itThread != m_mRtp.end(); ++itThread)
+    for(map<unsigned int, RtpThread*>::iterator itThread = m_mRtp.begin(); itThread != m_mRtp.end(); ++itThread)
     {
         bool bDelete = m_setRtpOrphan.insert(itThread->first).second;
         if(bDelete)
@@ -179,7 +179,7 @@ void IOManager::OnSettingEvent(SettingEvent& event)
     {
         if(event.GetKey() == wxT("Interval"))
         {
-            map<wxString, RtpThread*>::iterator itThread = m_mRtp.find(m_sCurrentRtp);
+            map<unsigned int, RtpThread*>::iterator itThread = m_mRtp.find(m_nCurrentRtp);
             if(itThread != m_mRtp.end())
             {
                 itThread->second->SetQosMeasurementIntervalMS(Settings::Get().Read(wxT("QoS"), wxT("Interval"), 1000));
@@ -288,11 +288,11 @@ void IOManager::InputChanged(const wxString& sKey)
         wmLog::Get()->Log(wxT("IOManager::InputChanged: AoIP"));
         AoIPSource source = AoipSourceManager::Get().FindSource(Settings::Get().Read(wxT("Input"), wxT("AoIP"), 0));
 
-        if(source.sDetails != m_sCurrentRtp)
+        if(source.nIndex != m_nCurrentRtp)
         {
             wmLog::Get()->Log(wxT("Audio Input Device Changed: Close AoIP Session"));
             ClearSession();
-            map<wxString, RtpThread*>::iterator itThread = m_mRtp.find(m_sCurrentRtp);
+            map<unsigned int, RtpThread*>::iterator itThread = m_mRtp.find(m_nCurrentRtp);
             if(itThread != m_mRtp.end())
             {
                 bool bDelete = m_setRtpOrphan.insert(itThread->first).second;
@@ -320,7 +320,7 @@ void IOManager::InputTypeChanged()
             OpenSoundcardDevice(SoundcardManager::Get().GetOutputSampleRate());    //this will remove the input stream
             break;
         case AudioEvent::RTP:
-            map<wxString, RtpThread*>::iterator itThread = m_mRtp.find(m_sCurrentRtp);
+            map<unsigned int, RtpThread*>::iterator itThread = m_mRtp.find(m_nCurrentRtp);
             if(itThread != m_mRtp.end())
             {
                 wmLog::Get()->Log(wxT("Audio Input Device Changed: Close AoIP"));
@@ -631,17 +631,16 @@ void IOManager::InitAudioInputDevice()
         wmLog::Get()->Log(wxT("Create Audio Input Device: AoIP"));
 
         AoIPSource source = AoipSourceManager::Get().FindSource(Settings::Get().Read(wxT("Input"), wxT("AoIP"), 0));
-        if(source.sDetails.empty() == false && m_mRtp.find(source.sDetails) == m_mRtp.end())
+        if(source.nIndex != 0 && m_mRtp.find(source.nIndex) == m_mRtp.end())
         {
-
-            m_sCurrentRtp = source.sDetails;
+            m_nCurrentRtp = source.nIndex;
             RtpThread* pThread = new RtpThread(this, Settings::Get().Read(wxT("AoIP_Settings"), wxT("Interface"), "eth0"), wxT("pam"), source, 2048);
             pThread->Create();
             pThread->Run();
 
             pThread->SetQosMeasurementIntervalMS(Settings::Get().Read(wxT("QoS"), wxT("Interval"), 1000));
 
-            m_mRtp.insert(make_pair(m_sCurrentRtp, pThread));
+            m_mRtp.insert(make_pair(m_nCurrentRtp, pThread));
         }
     }
     else if(sType == wxT("Output"))
@@ -739,15 +738,14 @@ void IOManager::SessionChanged()
 
 void IOManager::OnRTPSessionClosed(wxCommandEvent& event)
 {
-    wxString sTest = event.GetString();
-    sTest.Replace(wxT("%20"), wxT(" "));
 
-    if(m_sCurrentRtp == sTest)
+
+    if(m_nCurrentRtp == event.GetInt())
     {
-        m_sCurrentRtp = wxEmptyString;
+        m_nCurrentRtp = 0;
     }
-    m_setRtpOrphan.erase(sTest);
-    m_mRtp.erase(sTest);
+    m_setRtpOrphan.erase(event.GetInt());
+    m_mRtp.erase(event.GetInt());
 
 }
 
@@ -882,7 +880,7 @@ wxString IOManager::GetRandomMulticastAddress()
 
 void IOManager::OnPtpEvent(wxCommandEvent& event)
 {
-    auto itThread = m_mRtp.find(m_sCurrentRtp);
+    auto itThread = m_mRtp.find(m_nCurrentRtp);
     if(itThread != m_mRtp.end())
     {
         itThread->second->MasterClockChanged();
