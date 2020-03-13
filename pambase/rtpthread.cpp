@@ -44,7 +44,7 @@ RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface
 {
     m_eventLoopWatchVariable = 0;
     m_pCondition = new wxCondition(m_mutex);
-
+    m_nInputChannels = 2;
     m_sReceivingInterface = sReceivingInterface;
     //set the receivinginterface to eth0 or whatever the user choose
    // if(sReceivingInterface.empty() == false)
@@ -134,7 +134,12 @@ void RtpThread::StreamFromSDP()
     {
         if (strcmp(pSubsessionCount->codecName(), "L16") == 0 || strcmp(pSubsessionCount->codecName(), "L24") == 0) // 16 or 24-bit linear audio (RFC 3190)
         {
-            nCountAudio++;
+            if(pSubsessionCount->numChannels() > 0)
+                nCountAudio++;
+            else
+            {
+                *m_penv << "Audio subsession, but 0 channels defined\n";
+            }
         }
         else if (strcmp(pSubsessionCount->codecName(), "RAW") == 0)
         {
@@ -146,6 +151,11 @@ void RtpThread::StreamFromSDP()
     *m_penv << "Number of Video Subsessions: " << nCountVideo << "\n";
     *m_penv << "---------------------------------------\n";
 
+    if(nCountAudio == 0)
+    {
+        *m_penv << "No AES67 subsessions. Exit\n";
+        return;
+    }
     MediaSubsessionIterator iter(*m_pSession);
     Smpte2110MediaSubsession* subsession = NULL;
     while ((subsession = dynamic_cast<Smpte2110MediaSubsession*>(iter.next())) != NULL)
@@ -255,17 +265,14 @@ float RtpThread::ConvertFrameBufferToSample(u_int8_t* pFrameBuffer, u_int8_t nBy
 
 void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const pairTime_t& timePresentation, unsigned long nFrameSize, u_int8_t* pFrameBuffer, u_int8_t nBytesPerSample, const pairTime_t& timeTransmission, unsigned int nTimestamp,unsigned int nDuration, int nTimestampDifference, mExtension_t* pExt)
 {
-    wxLogDebug("1");
     if(m_bClosing || m_Session.GetCurrentSubsession() == m_Session.lstSubsession.end() || m_Session.GetCurrentSubsession()->sSourceAddress != sEndpoint)
         return;
-    wxLogDebug("2");
 
     if(m_pCurrentBuffer == 0)
     {
         m_pCurrentBuffer = new float[m_nBufferSize*m_nInputChannels];
         m_nSampleBufferSize = 0;
     }
-    wxLogDebug("3");
 
     #ifdef PTPMONKEY
     timeval tv = wxPtp::Get().GetPtpOffset(0);
@@ -274,7 +281,6 @@ void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const p
     double dOffset = 0.0;
     #endif
 
-    wxLogDebug("9");
     for(int i = 0; i < nFrameSize; i+=nBytesPerSample)
     {
         float dSample(ConvertFrameBufferToSample(&pFrameBuffer[i], nBytesPerSample));
@@ -313,7 +319,7 @@ void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const p
         }
     }
 
-    wxLogDebug("10");
+
 
     //QOS
     if(m_nInputChannels*nBytesPerSample != 0)
@@ -333,7 +339,7 @@ void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const p
 
     m_dTSDFMax = max(m_dTSDFMax, dTSDF);
     m_dTSDFMin = min(m_dTSDFMin, dTSDF);
-    wxLogDebug("11");
+
 }
 
 
@@ -422,6 +428,8 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
     {
         m_nSampleRate = 48000;
         m_nInputChannels = 0;
+        (*m_penv) << "No Input Channels\n";
+        StopStream();
     }
 
     if(m_pHandler)

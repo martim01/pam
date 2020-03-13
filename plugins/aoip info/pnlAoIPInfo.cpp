@@ -840,7 +840,6 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
 
     m_pGraph->SetLimit(wxT("Timestamp Errors"), 10,0);
     m_pGraph->AddPeak(wxT("Timestamp Errors"), pData->nTimestampErrors);
-    wxLogDebug("Timetsmp errors %u", pData->nTimestampErrors);
 
 }
 

@@ -127,7 +127,7 @@
 					<Add library="BasicUsageEnvironment" />
 					<Add library="UsageEnvironment" />
 					<Add library="groupsock" />
-					<Add library="ptpmonkey" />
+					<Add library="/usr/local/lib/pam2/libptpmonkey.so" />
 					<Add directory="/usr/lib/arm-linux-gnueabihf/" />
 				</Linker>
 				<ExtraCommands>

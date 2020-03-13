@@ -930,13 +930,12 @@ void wmListAdv::ShowElement(list<advElement*>::iterator itButton, Position pos)
                 nDiff = GetClientRect().GetBottom()-(*itButton)->GetBottom();
             }
     }
-    wxLogDebug(wxT("Diff=%d"), nDiff);
+
     if(GetScreenPosition().y < 0)
     {
         nDiff -= GetScreenPosition().y;
     }
 
-    wxLogDebug(wxT("Diff+screent=%d"), nDiff);
 
     if(nDiff != 0)
     {
