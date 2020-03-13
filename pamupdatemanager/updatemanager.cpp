@@ -213,6 +213,12 @@ bool UpdateManager::GetUpdateListFromLocal(const wxString& sPath)
     ppmObject.nType = UpdateObject::CONFIG;
     m_mUpdates.insert(make_pair(ppmObject.sName, ppmObject));
 
+
+    UpdateObject aoipObject;
+    aoipObject.sName = wxT("aoipsources");
+    aoipObject.nType = UpdateObject::CONFIG;
+    m_mUpdates.insert(make_pair(aoipObject.sName, aoipObject));
+
     //Add the profiles
     wxArrayString asProfiles;
     wxDir::GetAllFiles(sPath, &asProfiles, wxT("*.ini"));

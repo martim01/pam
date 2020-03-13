@@ -1,6 +1,8 @@
 #include "aoipsourcemanager.h"
 #include "settings.h"
 #include "wmlogevent.h"
+#include <wx/log.h>
+
 
 AoipSourceManager::AoipSourceManager()
 {
@@ -16,6 +18,7 @@ AoipSourceManager& AoipSourceManager::Get()
 
 bool AoipSourceManager::LoadSources()
 {
+    wxLogNull ln;
     wxXmlDocument xmlDoc;
     if(xmlDoc.Load(wxString::Format("%s/aoipsources.xml", Settings::Get().GetDocumentDirectory().c_str())) && xmlDoc.GetRoot())
     {

@@ -744,7 +744,7 @@ class PAMBASE_IMPEXPORT wmList : public pmControl
         unsigned int m_nTextAlign;
         unsigned int m_nBitmapAlign;
 
-        wxBitmap m_bmpSwipe[2];
+        wxBitmap* m_pbmpSwipe[2];
         wxBitmap m_bmpSlide;
         int m_nSwipeLeft;
         std::set<std::list<button*>::iterator>::iterator m_itSwipe;

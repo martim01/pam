@@ -504,21 +504,21 @@ void wmList::CheckSliding(wxPoint pnt)
 void wmList::CreateSwipeBitmaps()
 {
     #ifndef __WXGNU__
-    m_bmpSwipe[0] = wxBitmap(GetClientSize().x, GetClientSize().y, 24);
-    m_bmpSwipe[1] = wxBitmap(GetClientSize().x, GetClientSize().y, 24);
+    m_pbmpSwipe[0] = new wxBitmap(GetClientSize().x, GetClientSize().y, 32);
+    m_pbmpSwipe[1] = new wxBitmap(GetClientSize().x, GetClientSize().y, 32);
 
     //copy the current screen view in to the current bitmap
     wxMemoryDC memDC;
-    wxBitmap bmpTemp(GetClientRect().GetWidth(), GetClientRect().GetHeight(),24);
-    memDC.SelectObject(bmpTemp);
+    //wxBitmap bmpTemp(GetClientRect().GetWidth(), GetClientRect().GetHeight(),24);
+    memDC.SelectObject(*m_pbmpSwipe[0]);
     Draw(memDC, m_itTop);
     memDC.SelectObject(wxNullBitmap);
-    m_bmpSwipe[0] = bmpTemp;
+    //m_bmpSwipe[0] = bmpTemp;
 
-    memDC.SelectObject(bmpTemp);
+    memDC.SelectObject(*m_pbmpSwipe[1]);
     Draw(memDC, (*m_itSwipe));
     memDC.SelectObject(wxNullBitmap);
-    m_bmpSwipe[1] = bmpTemp;
+    //m_bmpSwipe[1] = bmpTemp;
     #endif
 }
 

@@ -364,7 +364,6 @@ void pnlAoIPSelection::OnbtnDeleteClick(wxCommandEvent& event)
 
 void pnlAoIPSelection::DoTagSearch(const wxString& sTag)
 {
-    wxLogMessage("DoTagSearch");
 
     if(m_lstTag.empty())
     {

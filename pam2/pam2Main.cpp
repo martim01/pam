@@ -1113,7 +1113,7 @@ void pam2Dialog::OnswpMainPageChanged(wxNotebookEvent& event)
     {
         if(m_bInputFailed)
         {
-            m_pdlgNoInput->Show((m_pswpMain->GetSelectionName() != wxT("Settings") && m_pswpMain->GetSelectionName() != wxT("Log") &&
+            m_pdlgNoInput->Show(m_pswpSplash->GetSelectionName() != "AoIP" && (m_pswpMain->GetSelectionName() != wxT("Settings") && m_pswpMain->GetSelectionName() != wxT("Log") &&
                                   m_pswpMain->GetSelectionName() != wxT("Help") && Settings::Get().Read("Input","Type","Soundcard")!="Disabled"));
         }
         else
@@ -1137,7 +1137,7 @@ void pam2Dialog::OnInputFailed(wxCommandEvent& event)
     m_bInputFailed = true;
 
     m_pdlgNoInput->SetPosition(wxPoint(0,425));
-    m_pdlgNoInput->Show((m_pswpMain->GetSelectionName() != wxT("Settings") && m_pswpMain->GetSelectionName() != wxT("Log")  &&
+    m_pdlgNoInput->Show(m_pswpSplash->GetSelectionName() != "AoIP" && (m_pswpMain->GetSelectionName() != wxT("Settings") && m_pswpMain->GetSelectionName() != wxT("Log")  &&
                                   m_pswpMain->GetSelectionName() != wxT("Help") && Settings::Get().Read("Input","Type","Soundcard")!="Disabled") );
 }
 
@@ -1639,5 +1639,9 @@ void pam2Dialog::OnbtnInputClick(wxCommandEvent& event)
     {
         //Show AoIP
         m_pswpSplash->ChangeSelection("AoIP");
+        if(m_pdlgNoInput)
+        {
+            m_pdlgNoInput->Show(false);
+        }
     }
 }
