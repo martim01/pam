@@ -14,10 +14,10 @@ class pnlSettingsOptions: public wxPanel
 		virtual ~pnlSettingsOptions();
 
 		//(*Declarations(pnlSettingsOptions)
-		wmButton* m_pbtnTerminal;
+		wmButton* m_pbtnExit;
 		wmButton* m_pbtnReboot;
 		wmButton* m_pbtnShutdown;
-		wmButton* m_pbtnExit;
+		wmButton* m_pbtnTerminal;
 		//*)
 
 	protected:

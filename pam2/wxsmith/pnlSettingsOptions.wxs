@@ -6,8 +6,8 @@
 		<size_arg>1</size_arg>
 		<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnTerminal" member="yes">
 			<label>Hold To Launch Terminal</label>
-			<pos>50,5</pos>
-			<size>100,60</size>
+			<pos>20,5</pos>
+			<size>160,60</size>
 			<bg>#346969</bg>
 			<font>
 				<size>12</size>
@@ -22,8 +22,8 @@
 		</object>
 		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnExit" member="yes">
 			<label>Hold to Exit</label>
-			<pos>50,80</pos>
-			<size>100,60</size>
+			<pos>20,80</pos>
+			<size>160,60</size>
 			<bg>#800000</bg>
 			<font>
 				<size>12</size>

@@ -3,10 +3,11 @@
 
 //(*Headers(dlgEngineering)
 #include "wmbutton.h"
-#include "wmlabel.h"
 #include <wx/dialog.h>
+#include <wx/panel.h>
 //*)
 #include <wx/timer.h>
+#include "wxbitmappanel.h"
 
 class dlgEngineering: public wxDialog
 {
@@ -17,16 +18,21 @@ class dlgEngineering: public wxDialog
 
 		//(*Declarations(dlgEngineering)
 		wmButton* m_pbtnClose;
+		wmButton* m_pbtnConfig;
+		wmButton* m_pbtnFilesystem;
 		wmButton* m_pbtnReset;
-		wmLabel* m_pLbl1;
+		wmButton* m_pbtnSoundcard;
+		wxBitmapPanel* m_pBackground;
 		//*)
-
 	protected:
 
 		//(*Identifiers(dlgEngineering)
-		static const long ID_M_PLBL1;
+		static const long ID_M_PBTN5;
+		static const long ID_M_PBTN4;
+		static const long ID_M_PBTN3;
 		static const long ID_M_PBTN2;
 		static const long ID_M_PBTN1;
+		static const long ID_PANEL1;
 		//*)
 
 	private:
@@ -34,6 +40,10 @@ class dlgEngineering: public wxDialog
 		//(*Handlers(dlgEngineering)
 		void OnbtnCloseClick(wxCommandEvent& event);
 		void OnbtnResetClick(wxCommandEvent& event);
+		void OnInit(wxInitDialogEvent& event);
+		void OnbtnSoundcardClick(wxCommandEvent& event);
+		void OnbtnConfigClick(wxCommandEvent& event);
+		void OnbtnFilesystemClick(wxCommandEvent& event);
 		//*)
 
 		void OnTimeClose(wxTimerEvent& event);

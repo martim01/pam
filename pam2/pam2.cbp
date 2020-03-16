@@ -271,6 +271,7 @@
 		<Unit filename="senderbuttonfactory.cpp" />
 		<Unit filename="senderbuttonfactory.h" />
 		<Unit filename="version.h" />
+		<Unit filename="wxbitmappanel.h" />
 		<Unit filename="wxclientapiposter.cpp" />
 		<Unit filename="wxclientapiposter.h" />
 		<Unit filename="wxdirtraverseusb.cpp" />

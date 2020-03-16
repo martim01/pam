@@ -24,11 +24,11 @@ pnlSettingsOptions::pnlSettingsOptions(wxWindow* parent,wxWindowID id,const wxPo
 	//(*Initialize(pnlSettingsOptions)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
-	m_pbtnTerminal = new wmButton(this, ID_M_PBTN4, _("Hold To Launch Terminal"), wxPoint(50,5), wxSize(100,60), wmButton::STYLE_HOLD, wxDefaultValidator, _T("ID_M_PBTN4"));
+	m_pbtnTerminal = new wmButton(this, ID_M_PBTN4, _("Hold To Launch Terminal"), wxPoint(20,5), wxSize(160,60), wmButton::STYLE_HOLD, wxDefaultValidator, _T("ID_M_PBTN4"));
 	m_pbtnTerminal->SetBackgroundColour(wxColour(52,105,105));
 	wxFont m_pbtnTerminalFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	m_pbtnTerminal->SetFont(m_pbtnTerminalFont);
-	m_pbtnExit = new wmButton(this, ID_M_PBTN1, _("Hold to Exit"), wxPoint(50,80), wxSize(100,60), wmButton::STYLE_HOLD, wxDefaultValidator, _T("ID_M_PBTN1"));
+	m_pbtnExit = new wmButton(this, ID_M_PBTN1, _("Hold to Exit"), wxPoint(20,80), wxSize(160,60), wmButton::STYLE_HOLD, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnExit->SetBackgroundColour(wxColour(128,0,0));
 	wxFont m_pbtnExitFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	m_pbtnExit->SetFont(m_pbtnExitFont);

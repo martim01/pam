@@ -675,13 +675,13 @@ void wmList::DrawHorizontalScroll()
     wxClientDC dc(this);
     if(m_nSwipeLeft > 0)
     {
-        dc.DrawBitmap(m_bmpSwipe[1],m_nSwipeLeft-m_bmpSwipe[1].GetWidth(), 0);
+        dc.DrawBitmap(*m_pbmpSwipe[1],m_nSwipeLeft-m_pbmpSwipe[1]->GetWidth(), 0);
     }
     else
     {
-        dc.DrawBitmap(m_bmpSwipe[1],m_bmpSwipe[1].GetWidth()+m_nSwipeLeft, 0);
+        dc.DrawBitmap(*m_pbmpSwipe[1],m_pbmpSwipe[1]->GetWidth()+m_nSwipeLeft, 0);
     }
-    dc.DrawBitmap(m_bmpSwipe[0],m_nSwipeLeft, 0);
+    dc.DrawBitmap(*m_pbmpSwipe[0],m_nSwipeLeft, 0);
 
     dc.DestroyClippingRegion();
 

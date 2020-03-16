@@ -31,25 +31,23 @@ bool pam2App::OnInit()
     #endif
     #ifdef __WXGNU__
     wxExecute(wxT("sudo route add -net 224.0.0.0 netmask 240.0.0.0 eth0"));
-    #endif // __WXGNU__
-
-    //read in the utime
     double dSeconds;
     wxTextFile uptime;
     if(uptime.Open("/proc/uptime"))
     {
         if(uptime.GetFirstLine().BeforeFirst(' ').ToDouble(&dSeconds))
         {
-            wxLogDebug("Uptime: %f", dSeconds);
             if(dSeconds < 60)
             {
                 dlgEngineering aDlg(NULL);
                 aDlg.ShowModal();
-
             }
         }
     }
-
+    #else
+    dlgEngineering aDlg(NULL);
+    aDlg.ShowModal();
+    #endif
 
 
 
