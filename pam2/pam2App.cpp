@@ -17,6 +17,7 @@
 #include "settings.h"
 #include <wx/stdpaths.h>
 #include <wx/log.h>
+#include <wx/textfile.h>
 #include "iomanager.h"
 #include "dlgEngineering.h"
 
@@ -31,6 +32,24 @@ bool pam2App::OnInit()
     #ifdef __WXGNU__
     wxExecute(wxT("sudo route add -net 224.0.0.0 netmask 240.0.0.0 eth0"));
     #endif // __WXGNU__
+
+    //read in the utime
+    double dSeconds;
+    wxTextFile uptime;
+    if(uptime.Open("/proc/uptime"))
+    {
+        if(uptime.GetFirstLine().BeforeFirst(' ').ToDouble(&dSeconds))
+        {
+            wxLogDebug("Uptime: %f", dSeconds);
+            if(dSeconds < 60)
+            {
+                dlgEngineering aDlg(NULL);
+                aDlg.ShowModal();
+
+            }
+        }
+    }
+
 
 
 
@@ -85,28 +104,20 @@ int pam2App::FilterEvent(wxEvent& event)
 
 void pam2App::OnTimerHold(wxTimerEvent& event)
 {
-    wxLogDebug("ONTIMERHOLD!!!!!!!!!!!!!!!!!!!!");
-    if(Settings::Get().Read("Startup", "Starting", 0))
+    if(!m_bReset)
     {
-        dlgEngineering aDlg(NULL);
-        aDlg.ShowModal();
+        m_sInput = Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard"));
+        Settings::Get().Write(wxT("Input"), wxT("Reset"), true);
+        Settings::Get().Write(wxT("Input"), wxT("Type"), wxT("Disabled"));
+
+        m_timerHold.Start(4000,true);
+        m_bReset = true;
     }
     else
     {
-        if(!m_bReset)
-        {
-            m_sInput = Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard"));
-            Settings::Get().Write(wxT("Input"), wxT("Reset"), true);
-            Settings::Get().Write(wxT("Input"), wxT("Type"), wxT("Disabled"));
-
-            m_timerHold.Start(4000,true);
-            m_bReset = true;
-        }
-        else
-        {
-            Settings::Get().Write(wxT("Input"), wxT("Type"), m_sInput);
-            Settings::Get().Write(wxT("Input"), wxT("Reset"), false);
-            m_bReset = false;
-        }
+        Settings::Get().Write(wxT("Input"), wxT("Type"), m_sInput);
+        Settings::Get().Write(wxT("Input"), wxT("Reset"), false);
+        m_bReset = false;
     }
+
 }

@@ -1,5 +1,6 @@
 #include "dlgEngineering.h"
 #include "settings.h"
+#include "images/splash.xpm"
 
 //(*InternalHeaders(dlgEngineering)
 #include <wx/font.h>
@@ -45,12 +46,20 @@ dlgEngineering::dlgEngineering(wxWindow* parent,wxWindowID id,const wxPoint& pos
 	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&dlgEngineering::OnbtnResetClick);
 	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&dlgEngineering::OnbtnCloseClick);
 	//*)
+	m_timerClose.SetOwner(this, wxNewId());
+	m_timerClose.Start(5000,true);
+	Connect(m_timerClose.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&dlgEngineering::OnTimeClose);
 }
 
 dlgEngineering::~dlgEngineering()
 {
 	//(*Destroy(dlgEngineering)
 	//*)
+}
+
+void dlgEngineering::OnTimeClose(wxTimerEvent& event)
+{
+    EndModal(wxID_OK);
 }
 
 

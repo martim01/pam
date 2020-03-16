@@ -6,6 +6,7 @@
 #include "wmlabel.h"
 #include <wx/dialog.h>
 //*)
+#include <wx/timer.h>
 
 class dlgEngineering: public wxDialog
 {
@@ -34,6 +35,10 @@ class dlgEngineering: public wxDialog
 		void OnbtnCloseClick(wxCommandEvent& event);
 		void OnbtnResetClick(wxCommandEvent& event);
 		//*)
+
+		void OnTimeClose(wxTimerEvent& event);
+
+		wxTimer m_timerClose;
 
 		DECLARE_EVENT_TABLE()
 };
