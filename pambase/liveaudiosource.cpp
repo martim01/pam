@@ -4,7 +4,12 @@
 #include <wx/defs.h>
 #include <wx/log.h>
 #include "audioevent.h"
-
+#ifdef PTPMONKEY
+#include "wxptp.h"
+#ifdef __GNU__
+#include <sys/time.h>
+#endif // __GNU__
+#endif // PTPMONKEY
 const double LiveAudioSource::TWENTYFOURBIT = 8388608.0;
 
 ////////// LiveAudioSource //////////
@@ -72,6 +77,21 @@ void LiveAudioSource::doReadFromQueue()
     {
         // This is the first frame, so use the current time:
         gettimeofday(&fPresentationTime, 0);
+
+        #ifdef PTPMONKEY
+        timeval tv = wxPtp::Get().GetPtpOffset(0);
+        #ifdef __GNU__
+        timersub(&fPresentationTime, &tv, &fPresentationTime);
+        #else
+        double dOffset = tv.tv_sec + (static_cast<double>(tv.tv_usec))/1000000.0;
+        double dPresentation = fPresentationTime.tv_sec + (static_cast<double>(fPresentationTime.tv_usec))/1000000.0;
+        dPresentation -= dOffset;
+
+        fPresentationTime.tv_sec = static_cast<int>(dPresentation);
+        fPresentationTime.tv_usec = (dPresentation-fPresentationTime.tv_sec)*1e6;
+        #endif
+        #endif // PTPMONKEY
+
         while(m_qBuffer.empty() == false)
         {
             m_qBuffer.pop();
