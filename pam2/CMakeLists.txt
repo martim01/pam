@@ -18,7 +18,7 @@ add_executable(pam2 ${SOURCES})
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(pam2 PRIVATE ${flags})
-target_compile_definitions(pam2 PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __WXGNU__ CREATING_LEVELDLL _app_ _MSL_STDINT_H)
+target_compile_definitions(pam2 PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __WXGNU__ CREATING_LEVELDLL _app_ _MSL_STDINT_H NO_OPENSSL)
 
 #find external libraries
 find_package(wxWidgets REQUIRED)

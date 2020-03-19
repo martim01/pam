@@ -3,7 +3,9 @@
 #include "timedbuffer.h"
 #include "settings.h"
 #include <wx/log.h>
+#ifdef PTPMONKEY
 #include "wxptp.h"
+#endif
 #include "aoipinfobuilder.h"
 
 //(*InternalHeaders(pnlAoIPInfo)
@@ -688,13 +690,13 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,AoIPInfoBuilder* pBuilder, wxWindowID 
 	m_pswpInfo->AddPage(pnlSDP, _("Raw SDP"), false);
 	//*)
 
-	#ifdef _PTPMONKEY_
+	#ifdef PTPMONKEY
 	wxPtp::Get().AddHandler(this);
 
 	Connect(wxID_ANY, wxEVT_CLOCK_MASTER, (wxObjectEventFunction)&pnlAoIPInfo::OnPtpEvent);
 	Connect(wxID_ANY, wxEVT_CLOCK_SLAVE, (wxObjectEventFunction)&pnlAoIPInfo::OnPtpEvent);
     Connect(wxID_ANY, wxEVT_CLOCK_UPDATED, (wxObjectEventFunction)&pnlAoIPInfo::OnPtpEvent);
-    #endif // _PTPMONKEY_
+    #endif // PTPMONKEY
 
 	m_plblEpoch = new wmLabel(pnlSubsession, wxNewId(), wxEmptyString, wxPoint(305,151), wxSize(249,25), 0, _T("ID_M_PLBL57"));
 	m_plblEpoch->SetBorderState(uiRect::BORDER_NONE);
@@ -896,12 +898,13 @@ void pnlAoIPInfo::ShowLatency(const timedbuffer* pTimedBuffer)
     dTransmission += m_dFrameDuration;   //we add the duration on because the transmission time is first sample not last sample of frane
     m_plblLatency->SetLabel(wxString::Format(wxT("%.0f us"), dPlayback));//+(dPresentation-dTransmission)));
     m_plblLatencyNetwork->SetLabel(wxString::Format(wxT("%.0f us"), (dPresentation-dTransmission)));
-
+    #ifdef PTPMONKEY	
     timeval tv(wxPtp::Get().GetLastPtpOffset(0));
     timeval tvSet(wxPtp::Get().GetPtpOffset(0));
     long long int nLast = static_cast<long long int>(tv.tv_sec)*1e6 + static_cast<long long int>(tv.tv_usec);
     long long int nSet = static_cast<long long int>(tvSet.tv_sec)*1e6 + static_cast<long long int>(tvSet.tv_usec);
     m_plblEpoch->SetLabel(wxString::Format("%lld us", nLast-nSet));
+    #endif
 }
 
 
@@ -954,6 +957,7 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
         m_plblSubSyncType->SetLabel(aSession.GetCurrentSubsession()->refClock.sType);
         m_plblSubSyncVersion->SetLabel(aSession.GetCurrentSubsession()->refClock.sVersion);
         m_plblSubSyncId->SetLabel(aSession.GetCurrentSubsession()->refClock.sId);
+        #ifdef PTPMONKEY
         if(m_plblSubSyncId->GetLabel().MakeLower() == wxPtp::Get().GetMasterClockId(0))
         {
             m_plblSubSyncId->SetBackgroundColour(wxColour(255,255,255));
@@ -962,6 +966,9 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
         {
             m_plblSubSyncId->SetBackgroundColour(wxColour(255,100,100));
         }
+        #else
+	    m_plblSubSyncId->SetBackgroundColour(wxColour(255,255,100));
+	#endif
         m_plblSubSyncDomain->SetLabel(wxString::Format(wxT("%u"), aSession.GetCurrentSubsession()->refClock.nDomain));
 
 
@@ -1029,7 +1036,7 @@ void pnlAoIPInfo::ClearGraphs()
 
 void pnlAoIPInfo::OnPtpEvent(wxCommandEvent& event)
 {
-
+    #ifdef PTPMONKEY
     if(m_plblSubSyncId->GetLabel().MakeLower() == wxPtp::Get().GetMasterClockId(0))
     {
         m_plblSubSyncId->SetBackgroundColour(wxColour(255,255,255));
@@ -1038,5 +1045,5 @@ void pnlAoIPInfo::OnPtpEvent(wxCommandEvent& event)
     {
         m_plblSubSyncId->SetBackgroundColour(wxColour(255,100,100));
     }
-
+    #endif
 }

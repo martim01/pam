@@ -14,7 +14,6 @@ file(GLOB BASICUSAGE_SOURCES "../external/live/BasicUsageEnvironment/*.cpp")
 file(GLOB GROUPSOCK_SOURCES "../external/live/groupsock/*.cpp")
 file(GLOB LIVEMEDIA_SOURCES "../external/live/liveMedia/*.cpp")
 
-
 add_library(groupsock STATIC ${GROUPSOCK_SOURCES} "../external/live/groupsock/inet.c")
 add_library(UsageEnvironment STATIC ${USAGE_SOURCES} )
 add_library(BasicUsageEnvironment STATIC ${BASICUSAGE_SOURCES} )
@@ -25,6 +24,11 @@ target_compile_options(groupsock PRIVATE ${flags})
 target_compile_options(UsageEnvironment PRIVATE ${flags})
 target_compile_options(BasicUsageEnvironment PRIVATE ${flags})
 target_compile_options(liveMedia PRIVATE ${flags})
+
+target_compile_definitions(groupsock PUBLIC NO_OPENSSL)
+target_compile_definitions(UsageEnvironment PUBLIC NO_OPENSSL)
+target_compile_definitions(BasicUsageEnvironment PUBLIC NO_OPENSSL)
+target_compile_definitions(liveMedia PUBLIC NO_OPENSSL)
 
 
 #pambase settubgs
@@ -59,7 +63,7 @@ endif()
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(pambase PRIVATE ${flags})
-target_compile_definitions(pambase PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __WXGNU__ _pambase_ CREATING_DLL _core_ _MSL_STDINT_H)
+target_compile_definitions(pambase PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __WXGNU__ _pambase_ CREATING_DLL _core_ _MSL_STDINT_H NO_OPENSSL)
 
 #find external libraries
 find_package(wxWidgets REQUIRED)
