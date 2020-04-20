@@ -345,7 +345,7 @@ multimap<wxString, wxString> Settings::GetInterfaces() const
                         {
                             //char buff[100];
                             sockaddr_in *sa_in = (sockaddr_in *)pUnicast->Address.lpSockaddr;
-                            mmInterfaces.insert(make_pair(wxString::FromAscii(pCurrAddresses->AdapterName), wxString::FromAscii(inet_ntoa(sa_in->sin_addr))));
+                            mmInterfaces.insert(make_pair(wxString(pCurrAddresses->FriendlyName), wxString::FromAscii(inet_ntoa(sa_in->sin_addr))));
                         }
                         pUnicast = pUnicast->Next;
                     }
@@ -388,3 +388,5 @@ multimap<wxString, wxString> Settings::GetInterfaces() const
     #endif // __WXMSW__
     return mmInterfaces;
 }
+
+

@@ -10,6 +10,7 @@ class SettingEvent;
 class AudioEvent;
 class RtpThread;
 class RtpServerThread;
+class OnDemandStreamer;
 
 class Generator;
 
@@ -84,14 +85,15 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         int m_nPlaybackSource;
         bool m_bPlaybackInput;
         bool  m_bMonitorOutput;
-        bool m_bStream;
+        bool m_bStreamMulticast;
 
         Generator* m_pGenerator;
         std::map<unsigned int, RtpThread*> m_mRtp;
         std::set<unsigned int> m_setRtpOrphan;
         unsigned int m_nCurrentRtp;
 
-        RtpServerThread* m_pRtpServer;
+        RtpServerThread* m_pMulticastServer;
+        OnDemandStreamer* m_pUnicastServer;
         wxTimer m_timerSilence;
         //wxString m_sCurrentSequence;
 };

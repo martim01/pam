@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="MP3StreamerPanel">
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl2" member="yes">
+			<label>On Demand MP3 Streamer</label>
+			<pos>0,0</pos>
+			<size>446,38</size>
+			<fg>#FFFFFF</fg>
+			<bg>#00589F</bg>
+			<font>
+				<size>16</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnStream" member="yes">
+			<label>Stream</label>
+			<toggle_look>1</toggle_look>
+			<toggle_left>Stop</toggle_left>
+			<toggle_right>Start</toggle_right>
+			<toggle_percent>50</toggle_percent>
+			<pos>500,5</pos>
+			<size>200,40</size>
+			<hidden>1</hidden>
+			<bg>#D50000</bg>
+			<style>wmButton::STYLE_SELECT</style>
+			<handler function="OnbtnStreamClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wxPanel" name="ID_PANEL1" variable="m_ppnlUnicast" member="yes">
+			<pos>0,40</pos>
+			<size>450,440</size>
+			<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+				<label>Address</label>
+				<pos>0,5</pos>
+				<size>145,40</size>
+				<fg>#FFFFFF</fg>
+				<bg>#000000</bg>
+				<font>
+					<size>16</size>
+					<style>normal</style>
+					<weight>normal</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+					<face>Tahoma</face>
+				</font>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL9" variable="m_plblUnicastUrl" member="yes">
+				<label></label>
+				<pos>146,5</pos>
+				<size>300,40</size>
+				<fg>#FFFFFF</fg>
+				<bg>#008040</bg>
+				<font>
+					<size>16</size>
+					<style>normal</style>
+					<weight>normal</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+					<face>Tahoma</face>
+				</font>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL2" variable="m_plblConnections" member="yes">
+				<label>Connections</label>
+				<pos>0,46</pos>
+				<size>446,28</size>
+				<fg>#000000</fg>
+				<bg>#FFFFFF</bg>
+				<font>
+					<size>16</size>
+					<style>normal</style>
+					<weight>normal</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+					<face>Tahoma</face>
+				</font>
+			</object>
+			<object class="wmList" name="ID_M_PLST1" variable="m_plstConnections" member="yes">
+				<button_size>-1,25</button_size>
+				<item_border>None</item_border>
+				<button>#FFFFFF</button>
+				<text>#000000</text>
+				<items />
+				<pos>0,75</pos>
+				<size>446,360</size>
+			</object>
+		</object>
+	</object>
+</wxsmith>

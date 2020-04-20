@@ -248,6 +248,12 @@
 		<Unit filename="monitorpluginfactory.h" />
 		<Unit filename="niir.cpp" />
 		<Unit filename="niir.h" />
+		<Unit filename="ondemandaes67mediasubsession.cpp" />
+		<Unit filename="ondemandaes67mediasubsession.h" />
+		<Unit filename="ondemandpamsubsession.cpp" />
+		<Unit filename="ondemandpamsubsession.h" />
+		<Unit filename="ondemandstreamer.cpp" />
+		<Unit filename="ondemandstreamer.h" />
 		<Unit filename="ourRTSPClient.cpp" />
 		<Unit filename="ourRTSPClient.h" />
 		<Unit filename="ourSIPClient.cpp" />

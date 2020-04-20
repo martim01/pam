@@ -66,6 +66,10 @@ void dlgMask::OnActivate(wxActivateEvent& event)
 void dlgMask::OnlstSubnetSelected(wxCommandEvent& event)
 {
     m_sSelected = event.GetString();
+    if(HasCapture())
+    {
+        ReleaseMouse();
+    }
     EndModal(wxID_OK);
 }
 

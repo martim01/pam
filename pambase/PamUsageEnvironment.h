@@ -2,8 +2,9 @@
 #include "BasicUsageEnvironment0.hh"
 #include <wx/string.h>
 #include <wx/event.h>
+#include "dlldefine.h"
 
-class PamUsageEnvironment: public BasicUsageEnvironment0 {
+class PAMBASE_IMPEXPORT PamUsageEnvironment: public BasicUsageEnvironment0 {
 public:
   static PamUsageEnvironment* createNew(TaskScheduler& taskScheduler, wxEvtHandler* pHandler);
 

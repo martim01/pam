@@ -195,6 +195,8 @@ class pnlSettings: public wxPanel
 		void OnbtnRTSPClick(wxCommandEvent& event);
 		void OnbtnManageClick(wxCommandEvent& event);
 		void OnlstDevicesPaged(wxCommandEvent& event);
+		void OnRTSPPort_UnicastText(wxCommandEvent& event);
+		void OnRTPPort_UnicastText(wxCommandEvent& event);
 		//*)
 
         void RefreshInputs();

@@ -25,6 +25,7 @@
 					<Add option="-DwxUSE_UNICODE" />
 					<Add directory="$(#wx3_0.include)" />
 					<Add directory="$(#wx3_0.include)/mswu" />
+					<Add directory="$(#pam_src.INCLUDE)" />
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="$(#wx3_0.include)/mswu" />
@@ -36,6 +37,7 @@
 					<Add library="wxmsw30u_gcc_custom" />
 					<Add library="libsamplerate.a" />
 					<Add directory="$(#wx3_0.lib)" />
+					<Add directory="$(#pam_src.LIB)" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="C:\developer\pam\manifest_creator\bin\Release\manifest_creator.exe" />
@@ -124,11 +126,9 @@
 			<Add option="-DCREATING_LEVELDLL" />
 			<Add option="-D_core_" />
 			<Add directory="../pambase" />
-			<Add directory="$(#src.include)" />
 		</Compiler>
 		<Linker>
 			<Add directory="../lib" />
-			<Add directory="$(#src.lib)" />
 		</Linker>
 		<Unit filename="filt.cpp" />
 		<Unit filename="filt.h" />

@@ -217,28 +217,28 @@
 							<object class="wxPanel" name="ID_PANEL11" variable="Panel3" member="yes">
 								<bg>#000000</bg>
 								<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
-									<label>RTP</label>
-									<pos>0,60</pos>
+									<label>Multicast</label>
+									<pos>0,65</pos>
 									<size>100,40</size>
 									<fg>#FFFFFF</fg>
 									<bg>#400080</bg>
 								</object>
 								<object class="wxPanel" name="ID_PANEL12" subclass="wmipeditpnl" variable="m_ppnlAddress" member="yes">
-									<pos>100,60</pos>
+									<pos>100,65</pos>
 									<size>200,40</size>
 									<fg>#000000</fg>
 									<bg>#FFFFFF</bg>
 								</object>
 								<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
-									<label>Port</label>
-									<pos>300,60</pos>
+									<label>RTP Port</label>
+									<pos>300,65</pos>
 									<size>50,40</size>
 									<fg>#FFFFFF</fg>
 									<bg>#400080</bg>
 								</object>
 								<object class="wmLabel" name="ID_M_PLBL8" variable="m_pLbl9" member="yes">
 									<label>RTSP</label>
-									<pos>0,10</pos>
+									<pos>0,15</pos>
 									<size>100,40</size>
 									<fg>#FFFFFF</fg>
 									<bg>#400080</bg>
@@ -248,7 +248,7 @@
 									<toggle_left>Stop</toggle_left>
 									<toggle_right>Start</toggle_right>
 									<toggle_percent>50</toggle_percent>
-									<pos>100,10</pos>
+									<pos>100,15</pos>
 									<size>200,40</size>
 									<fg>#000000</fg>
 									<bg>#FFFFFF</bg>
@@ -257,7 +257,7 @@
 								</object>
 								<object class="wmLabel" name="ID_M_PLBL6" variable="m_pLbl6" member="yes">
 									<label>Port</label>
-									<pos>300,10</pos>
+									<pos>300,15</pos>
 									<size>50,40</size>
 									<fg>#FFFFFF</fg>
 									<bg>#400080</bg>
@@ -266,7 +266,7 @@
 									<validation>Integer</validation>
 									<border>uiRect::BORDER_DOWN</border>
 									<border_focused>uiRect::BORDER_DOWN</border_focused>
-									<pos>350,10</pos>
+									<pos>350,15</pos>
 									<size>100,40</size>
 									<handler function="OnedtRTSPPortText" entry="EVT_TEXT" />
 								</object>
@@ -294,7 +294,7 @@
 									<validation>Integer</validation>
 									<border>uiRect::BORDER_DOWN</border>
 									<border_focused>uiRect::BORDER_DOWN</border_focused>
-									<pos>350,60</pos>
+									<pos>350,65</pos>
 									<size>100,40</size>
 									<handler function="OnedtRTPPortText" entry="EVT_TEXT" />
 								</object>
@@ -315,11 +315,11 @@
 								<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnStream" member="yes">
 									<label>Stream</label>
 									<toggle_look>1</toggle_look>
-									<toggle_left>Stop</toggle_left>
-									<toggle_right>Start</toggle_right>
-									<toggle_percent>50</toggle_percent>
+									<toggle_left>Unicast</toggle_left>
+									<toggle_right>Multicast</toggle_right>
+									<toggle_percent>40</toggle_percent>
 									<pos>300,320</pos>
-									<size>200,40</size>
+									<size>268,40</size>
 									<bg>#D50000</bg>
 									<style>wmButton::STYLE_SELECT</style>
 									<handler function="OnbtnStreamClick" entry="EVT_BUTTON" />
