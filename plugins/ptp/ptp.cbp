@@ -24,6 +24,7 @@
 					<Add directory="$(#wx.include)" />
 					<Add directory="$(#wx.include)/mswu" />
 					<Add directory="$(#portaudio.include)" />
+					<Add directory="../../external/ptpmonkey/include" />
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="$(#wx.include)/mswu" />

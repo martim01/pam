@@ -83,8 +83,6 @@
 		</Build>
 		<Unit filename="manifest_creatorApp.cpp" />
 		<Unit filename="manifest_creatorApp.h" />
-		<Unit filename="pnlUSB.cpp" />
-		<Unit filename="pnlUSB.h" />
 		<Unit filename="version.h" />
 		<Unit filename="wxsmith/pnlUSB.wxs" />
 		<Extensions>

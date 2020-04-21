@@ -6,12 +6,12 @@
 class PAMBASE_IMPEXPORT SapWatchThread : public wxThread
 {
     public:
-        SapWatchThread(wxEvtHandler* pParent);
+        SapWatchThread(wxEvtHandler* pParent, const wxString& sMulticast);
         void* Entry();
 
     private:
         wxEvtHandler* m_pParent;
-
+        wxString m_sMulticast;
 
         unsigned char m_packet[65536];
 };

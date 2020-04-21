@@ -200,19 +200,6 @@
 						<fg>#FFFFFF</fg>
 						<bg>#000000</bg>
 					</object>
-					<object class="wmButton" name="ID_M_PBTN8" variable="m_pbtnSAP" member="yes">
-						<label>SAP</label>
-						<toggle_look>1</toggle_look>
-						<toggle_left>No</toggle_left>
-						<toggle_right>Yes</toggle_right>
-						<toggle_percent>50</toggle_percent>
-						<pos>5,230</pos>
-						<size>130,45</size>
-						<fg>#FFFFFF</fg>
-						<bg>#000040</bg>
-						<style>wmButton::STYLE_SELECT</style>
-						<handler function="OnbtnSAPClick" entry="EVT_BUTTON" />
-					</object>
 					<object class="wmButton" name="ID_M_PBTN9" variable="m_pbtnStartDiscovery" member="yes">
 						<label>Discovery</label>
 						<toggle_look>1</toggle_look>
@@ -245,10 +232,27 @@
 						<button_gap>1,5</button_gap>
 						<items />
 						<pos>5,65</pos>
-						<size>130,160</size>
+						<size>130,150</size>
 						<bg>#000000</bg>
 						<style>wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI</style>
 						<handler function="OnlstServicesSelected" entry="EVT_LIST_SELECTED" />
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL11" variable="m_pLbl9" member="yes">
+						<label>SAP</label>
+						<pos>5,220</pos>
+						<size>130,30</size>
+						<fg>#FFFFFF</fg>
+						<bg>#000040</bg>
+					</object>
+					<object class="wmList" name="ID_M_PLST4" variable="m_plstSAP" member="yes">
+						<scrolling>None</scrolling>
+						<button_gap>1,5</button_gap>
+						<items />
+						<pos>5,250</pos>
+						<size>130,135</size>
+						<bg>#000000</bg>
+						<style>wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI</style>
+						<handler function="Onm_plstSAPSelected" entry="EVT_LIST_SELECTED" />
 					</object>
 					<object class="wmButton" name="ID_M_PBTN10" variable="m_pbtnManual" member="yes">
 						<label>Back</label>

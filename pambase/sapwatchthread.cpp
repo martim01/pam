@@ -11,7 +11,8 @@
 
 DEFINE_EVENT_TYPE(wxEVT_SAP)
 
-SapWatchThread::SapWatchThread(wxEvtHandler* pParent) : m_pParent(pParent)
+SapWatchThread::SapWatchThread(wxEvtHandler* pParent, const wxString& sMulticast) : m_pParent(pParent),
+m_sMulticast(sMulticast)
 {
 
 }
@@ -26,7 +27,7 @@ void* SapWatchThread::Entry()
     wmLog::Get()->Log(wxT("Start SapWatch"));
 
     // Create a 'groupsock' for the input multicast group,port:
-    char const* sessionAddressStr = "239.255.255.255";
+    char const* sessionAddressStr = m_sMulticast.c_str();
     //char const* sessionAddressStr = "224.0.0.233";
     struct in_addr sessionAddress;
     sessionAddress.s_addr = our_inet_addr(sessionAddressStr);

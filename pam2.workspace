@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
 	<Workspace title="Workspace">
+		<Project filename="manifest_creator/manifest_creator.cbp" />
 		<Project filename="pambase/pambase.cbp" />
 		<Project filename="pamfft/pamfft.cbp" />
 		<Project filename="pamlevel/pamlevel.cbp" />

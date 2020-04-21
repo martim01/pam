@@ -50,11 +50,12 @@ const long pnlRTP::ID_M_PKBD1 = wxNewId();
 const long pnlRTP::ID_M_PLBL6 = wxNewId();
 const long pnlRTP::ID_PANEL2 = wxNewId();
 const long pnlRTP::ID_M_PLBL7 = wxNewId();
-const long pnlRTP::ID_M_PBTN8 = wxNewId();
 const long pnlRTP::ID_M_PBTN9 = wxNewId();
 const long pnlRTP::ID_M_PLBL9 = wxNewId();
 const long pnlRTP::ID_M_PLBL8 = wxNewId();
 const long pnlRTP::ID_M_PLST2 = wxNewId();
+const long pnlRTP::ID_M_PLBL11 = wxNewId();
+const long pnlRTP::ID_M_PLST4 = wxNewId();
 const long pnlRTP::ID_M_PBTN10 = wxNewId();
 const long pnlRTP::ID_HTMLWINDOW1 = wxNewId();
 const long pnlRTP::ID_PANEL3 = wxNewId();
@@ -68,7 +69,8 @@ const long pnlRTP::ID_PANEL4 = wxNewId();
 const long pnlRTP::ID_M_PSWP1 = wxNewId();
 //*)
 
-
+const wxString pnlRTP::STR_SAP[3] = {"239.255.255.255", "239.195.255.255", "224.2.127.254"};
+const wxString pnlRTP::STR_SAP_SETTING[3] = {"SAP_LOCAL", "SAP_ORGANISATION", "SAP_GLOBAL"};
 
 BEGIN_EVENT_TABLE(pnlRTP,wxPanel)
 	//(*EventTable(pnlRTP)
@@ -171,10 +173,6 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
     m_plblDiscovering->GetUiRect().SetGradient(0);
     m_plblDiscovering->SetForegroundColour(wxColour(255,255,255));
     m_plblDiscovering->SetBackgroundColour(wxColour(0,0,0));
-    m_pbtnSAP = new wmButton(pnlDiscovery, ID_M_PBTN8, _("SAP"), wxPoint(5,230), wxSize(130,45), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN8"));
-    m_pbtnSAP->SetForegroundColour(wxColour(255,255,255));
-    m_pbtnSAP->SetBackgroundColour(wxColour(0,0,64));
-    m_pbtnSAP->SetToggleLook(true, wxT("No"), wxT("Yes"), 50);
     m_pbtnStartDiscovery = new wmButton(pnlDiscovery, ID_M_PBTN9, _("Discovery"), wxPoint(5,390), wxSize(200,45), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN9"));
     m_pbtnStartDiscovery->SetForegroundColour(wxColour(255,255,255));
     m_pbtnStartDiscovery->SetBackgroundColour(wxColour(0,0,160));
@@ -189,12 +187,19 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
     m_pLbl7->GetUiRect().SetGradient(0);
     m_pLbl7->SetForegroundColour(wxColour(255,255,255));
     m_pLbl7->SetBackgroundColour(wxColour(0,0,64));
-    m_plstServices = new wmList(pnlDiscovery, ID_M_PLST2, wxPoint(5,65), wxSize(130,160), wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI, 0, wxSize(-1,-1), 1, wxSize(1,5));
+    m_plstServices = new wmList(pnlDiscovery, ID_M_PLST2, wxPoint(5,65), wxSize(130,150), wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI, 0, wxSize(-1,-1), 1, wxSize(1,5));
     m_plstServices->SetBackgroundColour(wxColour(0,0,0));
+    m_pLbl9 = new wmLabel(pnlDiscovery, ID_M_PLBL11, _("SAP"), wxPoint(5,220), wxSize(130,30), 0, _T("ID_M_PLBL11"));
+    m_pLbl9->SetBorderState(uiRect::BORDER_NONE);
+    m_pLbl9->GetUiRect().SetGradient(0);
+    m_pLbl9->SetForegroundColour(wxColour(255,255,255));
+    m_pLbl9->SetBackgroundColour(wxColour(0,0,64));
+    m_plstSAP = new wmList(pnlDiscovery, ID_M_PLST4, wxPoint(5,250), wxSize(130,135), wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI, 0, wxSize(-1,-1), 1, wxSize(1,5));
+    m_plstSAP->SetBackgroundColour(wxColour(0,0,0));
     m_pbtnManual = new wmButton(pnlDiscovery, ID_M_PBTN10, _("Back"), wxPoint(690,390), wxSize(100,45), 0, wxDefaultValidator, _T("ID_M_PBTN10"));
     m_pbtnManual->SetBackgroundColour(wxColour(0,128,0));
     m_pbtnManual->SetColourSelected(wxColour(wxT("#F07800")));
-
+    m_phtmlResults = new wxTouchScreenHtml(pnlDiscovery, ID_HTMLWINDOW1, wxPoint(140,0), wxSize(650,385), 0, _T("ID_HTMLWINDOW1"));
     Panel3 = new wxPanel(m_pSwp1, ID_PANEL4, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL4"));
     m_pnlUSB = new pnlUSB(Panel3, ID_PANEL5, wxPoint(0,0), wxSize(600,315), wxTAB_TRAVERSAL, _T("ID_PANEL5"));
     m_pnlUSB->SetBackgroundColour(wxColour(0,0,0));
@@ -231,9 +236,9 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
     Connect(ID_M_PEDT2,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&pnlRTP::OnedtUrlTextEnter);
     Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlRTP::OnbtnConfirmClick);
     Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlRTP::OnbtnCancelClick);
-    Connect(ID_M_PBTN8,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlRTP::OnbtnSAPClick);
     Connect(ID_M_PBTN9,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlRTP::OnbtnStartDiscoveryClick);
     Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlRTP::OnlstServicesSelected);
+    Connect(ID_M_PLST4,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlRTP::Onm_plstSAPSelected);
     Connect(ID_M_PBTN10,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlRTP::OnbtnManualClick);
     Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlRTP::OnlstImportFilesSelected);
     Connect(ID_M_PBTN12,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlRTP::OnbtnImportImportClick);
@@ -262,7 +267,10 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	Panel3->SetBackgroundColour(*wxBLACK);
 
 	m_pBrowser = 0;
-	m_pSapWatch = 0;
+	m_pSapWatch[LOCAL] = nullptr;
+	m_pSapWatch[ORGANISATION] = nullptr;
+	m_pSapWatch[GLOBAL] = nullptr;
+
 	Connect(wxID_ANY, wxEVT_BROWSE_RESOLVED, (wxObjectEventFunction)&pnlRTP::OnDiscovery);
 	Connect(wxID_ANY, wxEVT_BROWSE_FINISHED, (wxObjectEventFunction)&pnlRTP::OnDiscoveryFinished);
 	Connect(wxID_ANY, wxEVT_SAP, (wxObjectEventFunction)&pnlRTP::OnSap);
@@ -284,7 +292,25 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
     {
         m_plstServices->SelectButton(wxT("NMOS"), false);
     }
-    m_pbtnSAP->ToggleSelection((Settings::Get().Read(wxT("Discovery"), wxT("SAP"),0) == 1), false);
+
+    int nIndex = m_plstSAP->AddButton("Local\n239.255.255.255");
+    if(Settings::Get().Read("Discovery", STR_SAP_SETTING[LOCAL] ,0) == 1)
+    {
+        m_plstSAP->SelectButton(nIndex, false);
+    }
+
+    nIndex = m_plstSAP->AddButton("Organisation\n239.195.255255");
+    if(Settings::Get().Read("Discovery", STR_SAP_SETTING[ORGANISATION] ,0) == 1)
+    {
+        m_plstSAP->SelectButton(nIndex, false);
+    }
+    nIndex = m_plstSAP->AddButton("Global\n224.2.127.254");
+    if(Settings::Get().Read("Discovery", STR_SAP_SETTING[GLOBAL] ,0) == 1)
+    {
+        m_plstSAP->SelectButton(nIndex, false);
+    }
+
+
 
 
 	ListSources();
@@ -298,9 +324,12 @@ pnlRTP::~pnlRTP()
     {
         delete m_pBrowser;
     }
-    if(m_pSapWatch)
+    for(int i = 0; i < 3; i++)
     {
-        m_pSapWatch->Delete();
+        if(m_pSapWatch[i])
+        {
+            m_pSapWatch[i]->Delete();
+        }
     }
 }
 
@@ -588,7 +617,9 @@ void pnlRTP::OnbtnSAPClick(wxCommandEvent& event)
 void pnlRTP::OnbtnStartDiscoveryClick(wxCommandEvent& event)
 {
     m_plstServices->Enable(!event.IsChecked());
-    m_pbtnSAP->Enable(!event.IsChecked());
+    m_plstSAP->Enable(!event.IsChecked());
+
+
     m_pbtnManual->Enable(!event.IsChecked());
 
     if(event.IsChecked())
@@ -636,16 +667,19 @@ void pnlRTP::OnbtnStartDiscoveryClick(wxCommandEvent& event)
         m_pBrowser = new DNSServiceBrowser(this);
         m_pBrowser->Start(setServices);
 
-        if(m_pSapWatch)
+        for(int i = 0; i < 3; i++)
         {
-            m_pSapWatch->Delete();
-            m_pSapWatch = 0;
-        }
-        // @todo work out how to make the sapwatchthread non-blocking then we can use this....
-        if(m_pbtnSAP->IsChecked())
-        {
-            m_pSapWatch = new SapWatchThread(this);
-            m_pSapWatch->Run();
+            if(m_pSapWatch[i])
+            {
+                m_pSapWatch[i]->Delete();
+                m_pSapWatch[i] = 0;
+            }
+
+            if(m_plstSAP->IsSelected(i))
+            {
+                m_pSapWatch[i] = new SapWatchThread(this, STR_SAP[i]);
+                m_pSapWatch[i]->Run();
+            }
         }
     }
     else
@@ -665,10 +699,13 @@ void pnlRTP::OnbtnStartDiscoveryClick(wxCommandEvent& event)
             delete m_pBrowser;
             m_pBrowser = 0;
         }
-        if(m_pSapWatch)
+        for(int i = 0; i < 3; i++)
         {
-            m_pSapWatch->Delete();
-            m_pSapWatch = 0;
+            if(m_pSapWatch[i])
+            {
+                m_pSapWatch[i]->Delete();
+                m_pSapWatch[i] = 0;
+            }
         }
     }
 }
@@ -790,5 +827,13 @@ void pnlRTP::ImportSources(const wxString& sFileName)
         wmLog::Get()->Log(wxString::Format("Import AoIP: Reading '%s' failed", sFileName.c_str()));
         m_plblImportProgress->SetLabel(wxString::Format("Reading '%s' failed", sFileName.c_str()));
         m_plblImportProgress->Update();
+    }
+}
+
+void pnlRTP::Onm_plstSAPSelected(wxCommandEvent& event)
+{
+    if(event.GetInt() >= 0 && event.GetInt() < 3)
+    {
+        Settings::Get().Write("Discovery", STR_SAP_SETTING[event.GetInt()], m_plstSAP->IsSelected(event.GetInt()));
     }
 }

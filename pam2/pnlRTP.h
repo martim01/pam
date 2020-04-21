@@ -44,7 +44,6 @@ class pnlRTP: public wxPanel
 		wmButton* m_pbtnImportBack;
 		wmButton* m_pbtnImportImport;
 		wmButton* m_pbtnManual;
-		wmButton* m_pbtnSAP;
 		wmButton* m_pbtnStartDiscovery;
 		wmButton* m_pbtnUpdate;
 		wmEdit* m_pedtName;
@@ -58,9 +57,11 @@ class pnlRTP: public wxPanel
 		wmLabel* m_pLbl6;
 		wmLabel* m_pLbl7;
 		wmLabel* m_pLbl8;
+		wmLabel* m_pLbl9;
 		wmLabel* m_plblDiscovering;
 		wmLabel* m_plblImportProgress;
 		wmList* m_plstFiles;
+		wmList* m_plstSAP;
 		wmList* m_plstServices;
 		wmList* m_plstSources;
 		wmSwitcherPanel* m_pSwp1;
@@ -99,11 +100,12 @@ class pnlRTP: public wxPanel
 		static const long ID_M_PLBL6;
 		static const long ID_PANEL2;
 		static const long ID_M_PLBL7;
-		static const long ID_M_PBTN8;
 		static const long ID_M_PBTN9;
 		static const long ID_M_PLBL9;
 		static const long ID_M_PLBL8;
 		static const long ID_M_PLST2;
+		static const long ID_M_PLBL11;
+		static const long ID_M_PLST4;
 		static const long ID_M_PBTN10;
 		static const long ID_HTMLWINDOW1;
 		static const long ID_PANEL3;
@@ -137,6 +139,7 @@ class pnlRTP: public wxPanel
 		void OnbtnImportClick(wxCommandEvent& event);
 		void OnlstImportFilesSelected(wxCommandEvent& event);
 		void OnbtnImportImportClick(wxCommandEvent& event);
+		void Onm_plstSAPSelected(wxCommandEvent& event);
 		//*)
 
 		void OnDiscovery(wxCommandEvent& event);
@@ -158,7 +161,11 @@ class pnlRTP: public wxPanel
 
 
         DNSServiceBrowser* m_pBrowser;
-        SapWatchThread* m_pSapWatch;
+        SapWatchThread* m_pSapWatch[3];
+        enum {LOCAL=0, ORGANISATION, GLOBAL};
+        static const wxString STR_SAP[3];
+        static const wxString STR_SAP_SETTING[3];
+
         size_t m_nDiscovered;
         std::set<std::pair<wxString, wxString> > m_setDiscover;
 
