@@ -1,5 +1,5 @@
 #pragma once
-#include "lame.h"
+#include "lame/lame.h"
 #include <vector>
 #include <list>
 #include <mutex>

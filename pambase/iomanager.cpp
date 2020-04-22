@@ -147,7 +147,7 @@ void IOManager::Stop()
     }
     m_pUnicastServer = nullptr;
     m_pMulticastServer = nullptr;
-
+    m_pOnDemandSubsession = nullptr;
 }
 
 
@@ -213,6 +213,7 @@ void IOManager::OnSettingEvent(SettingEvent& event)
                 m_pUnicastServer->Stop();
             }
             m_pUnicastServer = nullptr;
+            m_pOnDemandSubsession = nullptr;
         }
         InitAudioOutputDevice();
     }
@@ -233,9 +234,9 @@ void IOManager::OnAudioEvent(AudioEvent& event)
                 {
                     m_pMulticastServer->AddSamples(event.GetBuffer());
                 }
-                else if(m_pUnicastServer)
+                else if(m_pOnDemandSubsession)
                 {
-                    // @todo add samples to what?
+                    m_pOnDemandSubsession->AddSamples(event.GetBuffer());
                 }
                 break;
         }
@@ -279,9 +280,9 @@ void IOManager::AddOutputSamples(size_t nSize)
                 {
                     m_pMulticastServer->AddSamples(pBuffer);
                 }
-                else if(m_pUnicastServer)
+                else if(m_pOnDemandSubsession)
                 {
-                    //@todo add samples to what?
+                    m_pOnDemandSubsession->AddSamples(pBuffer);
                 }
                 break;
             default:
@@ -379,6 +380,7 @@ void IOManager::OutputDestinationChanged()
             }
             m_pMulticastServer = nullptr;
             m_pUnicastServer = nullptr;
+            m_pOnDemandSubsession = nullptr;
             break;
     }
 
@@ -407,9 +409,9 @@ void IOManager::OutputChanged(const wxString& sKey)
                 {
                     m_pMulticastServer->FlushQueue();
                 }
-                else if(m_pUnicastServer)
+                else if(m_pOnDemandSubsession)
                 {
-                    //@todo flush unicast queue
+                    m_pOnDemandSubsession->FlushQueue();
                 }
                 break;
         }
@@ -613,7 +615,7 @@ void IOManager::OpenSoundcardDevice(unsigned long nOutputSampleRate)
     }
 
     int nOutput(-1);
-    if(Settings::Get().Read(wxT("Output"), wxT("Type"), wxT("Soundcard")) == wxT("Soundcard"))
+    if(Settings::Get().Read(wxT("Output"), wxT("Destination"), wxT("Soundcard")) == wxT("Soundcard"))
     {
          nOutput = Settings::Get().Read(wxT("Output"), wxT("Device"), 0);
     }
@@ -718,9 +720,12 @@ void IOManager::InitAudioOutputDevice()
         {
             m_pUnicastServer->Stop();
             m_pUnicastServer = nullptr;
+            m_pOnDemandSubsession = nullptr;
         }
         if(m_bStreamMulticast)
         {
+            wmLog::Get()->Log("Create Multicast AES67 Server");
+
             wxString sDestinationIp = Settings::Get().Read(wxT("Server"), wxT("DestinationIp"), wxEmptyString);
             unsigned long nByte;
             bool bSSM(sDestinationIp.BeforeFirst(wxT('.')).ToULong(&nByte) && nByte >= 224 && nByte <= 239);
@@ -731,12 +736,17 @@ void IOManager::InitAudioOutputDevice()
                                                      Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004),
                                                      bSSM,
                                                      (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000));
+            m_pMulticastServer->Create();
             m_pMulticastServer->Run();
         }
         else
         {
+            wmLog::Get()->Log("Create Unicast AES67 Server");
             m_pUnicastServer = new OnDemandStreamer(this, Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555));
-            m_pUnicastServer->SetSubsession(OnDemandAES67MediaSubsession::createNew(this, *m_pUnicastServer->envir(), 2, (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004)));
+            m_pOnDemandSubsession = OnDemandAES67MediaSubsession::createNew(this, *m_pUnicastServer->envir(), 2, (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
+            m_pUnicastServer->SetSubsession(m_pOnDemandSubsession);
+            m_pUnicastServer->Create();
+            m_pUnicastServer->Run();
         }
 
     }

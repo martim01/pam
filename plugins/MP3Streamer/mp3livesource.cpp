@@ -1,6 +1,6 @@
 #include "mp3livesource.h"
 #include <GroupsockHelper.hh> // for "gettimeofday()"
-#include "lame.h"
+#include "lame/lame.h"
 #include <iostream>
 #include <chrono>
 

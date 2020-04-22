@@ -3,22 +3,20 @@
 #include <wx/thread.h>
 #include "AudioInputDevice.hh"
 #include <wx/event.h>
+#include "lame/lame.h"
 
 class timedbuffer;
 
-class LiveAudioSource: public AudioInputDevice
+class MP3LiveSource: public AudioInputDevice
 {
     public:
 
-        enum enumPacketTime{US125 = 125, US250 = 250, US333 = 333, MS1 = 1000, MS4 = 4000};
-
-        static LiveAudioSource* createNew(wxEvtHandler* pHandler, wxMutex& mutex, UsageEnvironment& env, unsigned char nNumChannels, enumPacketTime ePacketTime);
+        static MP3LiveSource* createNew(wxEvtHandler* pHandler, wxMutex& mutex, UsageEnvironment& env);
 
 
 
         protected:
             friend class RtpServerThread;
-            friend class OnDemandAES67MediaSubsession;
 
             void AddSamples(const timedbuffer* pTimedBuffer);
             void FlushQueue();
@@ -27,10 +25,10 @@ class LiveAudioSource: public AudioInputDevice
                 return m_nPreferredFrameSize;
             }
 
-            LiveAudioSource(wxEvtHandler* pHandler, wxMutex& mutex, UsageEnvironment& env, unsigned char nNumChannels, enumPacketTime ePacketTime);
-            virtual ~LiveAudioSource();
-            unsigned int m_nPreferredFrameSize;
+            MP3LiveSource(wxEvtHandler* pHandler, wxMutex& mutex, UsageEnvironment& env;
+            virtual ~MP3LiveSource();
 
+            bool InitCodec();
         private:
             // redefined virtual functions:
             virtual void doGetNextFrame();
@@ -61,7 +59,9 @@ class LiveAudioSource: public AudioInputDevice
             unsigned long m_nBufferWritten;
             timedbuffer* m_pAudioBuffer;
 
-            static const double TWENTYFOURBIT;
+            lame_t m_pLame;
+            unsigned int m_nFrameSize;
+            unsigned int m_nSamplesPerFrame;
 };
 
 

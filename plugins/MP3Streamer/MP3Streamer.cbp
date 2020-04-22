@@ -114,6 +114,10 @@
 					<Add option="-DDLL_EXPORTS" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
+					<Add directory="$(#live_basicusage.INCLUDE)" />
+					<Add directory="$(#live_group.INCLUDE)" />
+					<Add directory="$(#live_media.INCLUDE)" />
+					<Add directory="$(#live_usage.INCLUDE)" />
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
@@ -139,6 +143,10 @@
 					<Add option="-D__WXGNU__" />
 					<Add option="-DPAMBASE_DEBUG" />
 					<Add option="-D__WXDEBUG__" />
+					<Add directory="$(#live_basicusage.INCLUDE)" />
+					<Add directory="$(#live_group.INCLUDE)" />
+					<Add directory="$(#live_media.INCLUDE)" />
+					<Add directory="$(#live_usage.INCLUDE)" />
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
@@ -151,6 +159,7 @@
 			<Add option="-D_monitor_" />
 			<Add option="-DNO_OPENSSL" />
 			<Add directory="../../pambase" />
+			<Add directory="../../external/live/liveMedia/include" />
 		</Compiler>
 		<Linker>
 			<Add directory="../../lib" />

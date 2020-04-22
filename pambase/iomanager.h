@@ -11,7 +11,7 @@ class AudioEvent;
 class RtpThread;
 class RtpServerThread;
 class OnDemandStreamer;
-
+class OnDemandAES67MediaSubsession;
 class Generator;
 
 class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
@@ -94,6 +94,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
 
         RtpServerThread* m_pMulticastServer;
         OnDemandStreamer* m_pUnicastServer;
+        OnDemandAES67MediaSubsession* m_pOnDemandSubsession;
         wxTimer m_timerSilence;
         //wxString m_sCurrentSequence;
 };
