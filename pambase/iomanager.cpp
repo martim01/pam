@@ -14,6 +14,10 @@
 #include "aoipsourcemanager.h"
 #include "ondemandstreamer.h"
 #include "ondemandaes67mediasubsession.h"
+#include "sapserver.h"
+#include "dnssd.h"
+#include <wx/msgdlg.h>
+
 
 using namespace std;
 
@@ -52,10 +56,14 @@ IOManager::IOManager() :
     m_nPlaybackSource(-1),
     m_bPlaybackInput(false),
     m_bMonitorOutput(false),
-    m_pGenerator(0),
+    m_pGenerator(nullptr),
     m_bStreamMulticast(false),
-    m_pMulticastServer(0),
-    m_pUnicastServer(0)
+    m_pMulticastServer(nullptr),
+    m_pUnicastServer(nullptr),
+    m_pOnDemandSubsession(nullptr),
+    m_pSapServer(nullptr),
+    m_pPublisher(nullptr),
+    m_bQueueToStream(false)
 
 {
 
@@ -89,6 +97,8 @@ IOManager::IOManager() :
     Settings::Get().AddHandler(wxT("QoS"),wxT("Interval"), this);
 
     Settings::Get().AddHandler(wxT("Server"), wxT("Stream"), this);
+    Settings::Get().AddHandler(wxT("Server"), wxT("SAP"), this);
+    Settings::Get().AddHandler(wxT("Server"), wxT("DNS-SD"), this);
 
     Connect(wxID_ANY,wxEVT_DATA,(wxObjectEventFunction)&IOManager::OnAudioEvent);
     Connect(wxID_ANY,wxEVT_RTP_SESSION,(wxObjectEventFunction)&IOManager::OnRTPSession);
@@ -96,6 +106,8 @@ IOManager::IOManager() :
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&IOManager::OnSettingEvent);
 
     Connect(wxID_ANY,wxEVT_QOS_UPDATED,(wxObjectEventFunction)&IOManager::OnQoS);
+
+    Connect(wxID_ANY,wxEVT_ODS_FINISHED,(wxObjectEventFunction)&IOManager::OnUnicastServerFinished);
 
     #ifdef PTPMONKEY
     wxPtp::Get().AddHandler(this);
@@ -148,6 +160,9 @@ void IOManager::Stop()
     m_pUnicastServer = nullptr;
     m_pMulticastServer = nullptr;
     m_pOnDemandSubsession = nullptr;
+
+    m_pSapServer = nullptr;
+    m_pPublisher = nullptr;
 }
 
 
@@ -195,27 +210,37 @@ void IOManager::OnSettingEvent(SettingEvent& event)
             }
         }
     }
-    else if(event.GetSection() == wxT("Server") && event.GetKey() == wxT("Stream"))
+    else if(event.GetSection() == wxT("Server"))
     {
-        m_bStreamMulticast = (event.GetValue() == "Multicast");
-        if(!m_bStreamMulticast)
+        if(event.GetKey() == wxT("Stream"))
         {
-            if(m_pMulticastServer)
+            m_bStreamMulticast = (event.GetValue() == "Multicast");
+            if(!m_bStreamMulticast)
             {
-                m_pMulticastServer->StopStream();
+                if(m_pMulticastServer)
+                {
+                    m_pMulticastServer->StopStream();
+                }
+                m_pMulticastServer = nullptr;
             }
-            m_pMulticastServer = nullptr;
+            else
+            {
+                if(m_pUnicastServer)
+                {
+                    m_pUnicastServer->Stop();
+                }
+
+            }
+            InitAudioOutputDevice();
         }
-        else
+        else if(event.GetKey() == wxT("SAP"))
         {
-            if(m_pUnicastServer)
-            {
-                m_pUnicastServer->Stop();
-            }
-            m_pUnicastServer = nullptr;
-            m_pOnDemandSubsession = nullptr;
+            DoSAP(event.GetValue(false));
         }
-        InitAudioOutputDevice();
+        else if(event.GetKey() == wxT("DNS-SD"))
+        {
+            DoDNSSD(event.GetValue(false));
+        }
     }
 }
 
@@ -379,8 +404,6 @@ void IOManager::OutputDestinationChanged()
                 m_pUnicastServer->Stop();
             }
             m_pMulticastServer = nullptr;
-            m_pUnicastServer = nullptr;
-            m_pOnDemandSubsession = nullptr;
             break;
     }
 
@@ -706,6 +729,10 @@ void IOManager::InitAudioOutputDevice()
 
         m_nOutputDestination = AudioEvent::SOUNDCARD;
 
+        //turn off any advertising of stream
+        DoSAP(false);
+        DoDNSSD(false);
+
     }
     else if(sType == wxT("AoIP"))
     {
@@ -715,39 +742,18 @@ void IOManager::InitAudioOutputDevice()
         {
             m_pMulticastServer->StopStream();
             m_pMulticastServer = nullptr;
+            m_bQueueToStream = true;
         }
         else if(m_pUnicastServer)
         {
             m_pUnicastServer->Stop();
-            m_pUnicastServer = nullptr;
-            m_pOnDemandSubsession = nullptr;
-        }
-        if(m_bStreamMulticast)
-        {
-            wmLog::Get()->Log("Create Multicast AES67 Server");
-
-            wxString sDestinationIp = Settings::Get().Read(wxT("Server"), wxT("DestinationIp"), wxEmptyString);
-            unsigned long nByte;
-            bool bSSM(sDestinationIp.BeforeFirst(wxT('.')).ToULong(&nByte) && nByte >= 224 && nByte <= 239);
-
-            m_pMulticastServer = new RtpServerThread(this, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString),
-                                                     Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555),
-                                                     sDestinationIp,
-                                                     Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004),
-                                                     bSSM,
-                                                     (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000));
-            m_pMulticastServer->Create();
-            m_pMulticastServer->Run();
+            m_bQueueToStream = true;
         }
         else
         {
-            wmLog::Get()->Log("Create Unicast AES67 Server");
-            m_pUnicastServer = new OnDemandStreamer(this, Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555));
-            m_pOnDemandSubsession = OnDemandAES67MediaSubsession::createNew(this, *m_pUnicastServer->envir(), 2, (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
-            m_pUnicastServer->SetSubsession(m_pOnDemandSubsession);
-            m_pUnicastServer->Create();
-            m_pUnicastServer->Run();
+            Stream();
         }
+
 
     }
     else
@@ -936,3 +942,130 @@ void IOManager::OnPtpEvent(wxCommandEvent& event)
         itThread->second->MasterClockChanged();
     }
 }
+
+
+void IOManager::DoSAP(bool bRun)
+{
+    wmLog::Get()->Log("Server", "DoSAP");
+
+    if(bRun == false || m_pMulticastServer == nullptr))
+    {
+        if(m_pSapServer)
+        {
+            wmLog::Get()->Log("Server", "Stop SAP advertising");
+            m_pSapServer = nullptr;
+        }
+    }
+    else
+    {
+        if(m_pSapServer == nullptr)
+        {
+            m_pSapServer = std::unique_ptr<sapserver::SapServer>(new sapserver::SapServer(nullptr));
+            m_pSapServer->Run();
+        }
+        else
+        {
+            m_pSapServer->RemoveAllSenders();
+        }
+
+        std::string sSDP;
+        if(m_pUnicastServer)
+        {
+            sSDP = m_pUnicastServer->GetSDP();
+        }
+        else if(m_pMulticastServer)
+        {
+            sSDP = m_pMulticastServer->GetSDP();
+        }
+
+        m_pSapServer->AddSender(IpAddress(std::string(Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString).c_str())), std::chrono::milliseconds(30000), sSDP);
+
+        wmLog::Get()->Log("Server", wxString::Format("Start SAP advertising\n%s", wxString(sSDP).c_str()));
+    }
+}
+
+void IOManager::DoDNSSD(bool bRun)
+{
+    if(bRun == false || (m_pUnicastServer == nullptr && m_pMulticastServer == nullptr))
+    {
+        wmLog::Get()->Log("Server", "Stop mDNS/SD advertising");
+        m_pPublisher = nullptr;
+    }
+    else
+    {
+        if(m_pPublisher == nullptr)
+        {
+            std::string sHostName(wxGetHostName().c_str());
+            m_pPublisher = std::unique_ptr<pml::Publisher>(new pml::Publisher(sHostName, "_rtsp._tcp", Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555), sHostName));
+            m_pPublisher->Start();
+
+            wmLog::Get()->Log("Server", "Start mDNS/SD advertising");
+        }
+    }
+}
+
+
+void IOManager::OnUnicastServerFinished(wxCommandEvent& event)
+{
+    wmLog::Get()->Log("AoIP", "Unicast stream finished.");
+    m_pUnicastServer = nullptr;
+    m_pOnDemandSubsession = nullptr;
+
+    if(m_bQueueToStream)
+    {
+        m_bQueueToStream = false;
+        Stream();
+    }
+}
+
+
+void IOManager::Stream()
+{
+    if(m_bStreamMulticast)
+    {
+        StreamMulticast();
+        DoSAP(Settings::Get().Read("Server", "SAP",0));
+    }
+    else
+    {
+        StreamUnicast();
+        DoSAP(false);
+    }
+
+    DoDNSSD(Settings::Get().Read("Server", "DNS-SD", 0));
+}
+
+void IOManager::StreamMulticast()
+{
+    wmLog::Get()->Log("Create Multicast AES67 Server");
+
+    wxString sDestinationIp = Settings::Get().Read(wxT("Server"), wxT("DestinationIp"), wxEmptyString);
+    unsigned long nByte;
+    bool bSSM(sDestinationIp.BeforeFirst(wxT('.')).ToULong(&nByte) && nByte >= 224 && nByte <= 239);
+
+    m_pMulticastServer = new RtpServerThread(this, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString),
+                                             Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555),
+                                             sDestinationIp,
+                                            Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004),
+                                            bSSM,
+                                             (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000));
+    m_pMulticastServer->Create();
+    m_pMulticastServer->Run();
+}
+
+void IOManager::StreamUnicast()
+{
+    wmLog::Get()->Log("Create Unicast AES67 Server");
+
+    m_pUnicastServer = new OnDemandStreamer(this, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), "0.0.0.0"),
+                                              Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555));
+
+    m_pOnDemandSubsession = OnDemandAES67MediaSubsession::createNew(this, *m_pUnicastServer->envir(), 2, (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
+
+    m_pUnicastServer->Create();
+    m_pUnicastServer->SetSubsession(m_pOnDemandSubsession);
+
+
+    m_pUnicastServer->Run();
+}
+

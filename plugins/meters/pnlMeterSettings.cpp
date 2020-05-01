@@ -47,8 +47,8 @@ pnlMeterSettings::pnlMeterSettings(wxWindow* parent,MetersBuilder* pBuilder, wxW
 	m_plstSpeed->AddButton(wxT("Normal"));
 	m_plstSpeed->AddButton(wxT("Fast"));
 
-	m_pbtnM3M6->SetToggleLook(true, wxT("M3"), wxT("M6"), 50.0);
-	m_pbtnShading->SetToggleLook(true, wxT("Solid"), wxT("Graded"), 50.0);
+	m_pbtnM3M6->SetToogle(true, wxT("M3"), wxT("M6"), 50.0);
+	m_pbtnShading->SetToogle(true, wxT("Solid"), wxT("Graded"), 50.0);
 
 	m_plstSpeed->SelectButton((m_pBuilder->ReadSetting(wxT("Speed"),1) == 1),true);
 	m_pbtnM3M6->ToggleSelection(m_pBuilder->ReadSetting(wxT("M3M6"),1) == 1, true);

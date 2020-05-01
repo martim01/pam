@@ -27,7 +27,6 @@
 					<Add directory="$(#wx3_0.include)/mswu" />
 					<Add directory="$(#portaudio.include)" />
 					<Add directory="$(#libsndfile.include)" />
-					<Add directory="../external/mdnssd" />
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="$(#wx3_0.include)/mswu" />
@@ -43,12 +42,13 @@
 					<Add library="portaudio" />
 					<Add library="libsndfile-1" />
 					<Add library="wxmsw30u_gcc_custom" />
-					<Add library="dnssd" />
 					<Add library="Iphlpapi" />
+					<Add library="pml_log" />
+					<Add library="pml_dnssd" />
+					<Add library="sapserver" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#portaudio.lib)" />
 					<Add directory="$(#libsndfile.lib)" />
-					<Add directory="../external/mdnssd/windows" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="C:\developer\pam\manifest_creator\bin\Release\manifest_creator.exe" />
@@ -77,7 +77,6 @@
 					<Add directory="$(#wx3_0.include)/mswu" />
 					<Add directory="$(#portaudio.include)" />
 					<Add directory="$(#libsndfile.include)" />
-					<Add directory="../external/mdnssd" />
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="$(#wx3_0.include)/mswu" />
@@ -92,12 +91,13 @@
 					<Add library="portaudio" />
 					<Add library="libsndfile-1" />
 					<Add library="wxmsw30ud_gcc_custom" />
-					<Add library="dnssd" />
 					<Add library="Iphlpapi" />
+					<Add library="pml_logd" />
+					<Add library="pml_dnssdd" />
+					<Add library="sapserverd" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#portaudio.lib)" />
 					<Add directory="$(#libsndfile.lib)" />
-					<Add directory="../external/mdnssd/windows" />
 				</Linker>
 			</Target>
 			<Target title="Linux Release">
@@ -128,6 +128,9 @@
 					<Add library="UsageEnvironment" />
 					<Add library="groupsock" />
 					<Add library="/usr/local/lib/pam2/libptpmonkey.so" />
+					<Add library="pml_log" />
+					<Add library="pml_dnssd" />
+					<Add library="sapserver" />
 					<Add directory="/usr/lib/arm-linux-gnueabihf/" />
 				</Linker>
 				<ExtraCommands>
@@ -178,12 +181,18 @@
 			<Add directory="../external/live/liveMedia/include" />
 			<Add directory="../external/wxservdisc" />
 			<Add directory="../external/ptpmonkey/include" />
+			<Add directory="../external/log/include" />
+			<Add directory="../external/dnssd/include" />
+			<Add directory="../external/sapserver/include" />
 		</Compiler>
 		<Linker>
 			<Add directory="../external/live/liveMedia" />
 			<Add directory="../external/live/BasicUsageEnvironment" />
 			<Add directory="../external/live/UsageEnvironment" />
 			<Add directory="../external/live/groupsock" />
+			<Add directory="../external/log/lib" />
+			<Add directory="../external/dnssd/lib" />
+			<Add directory="../external/sapserver/lib" />
 		</Linker>
 		<Unit filename="AES67ServerMediaSubsession.cpp" />
 		<Unit filename="AES67ServerMediaSubsession.h" />
@@ -208,17 +217,7 @@
 		<Unit filename="audio.h" />
 		<Unit filename="audioevent.cpp" />
 		<Unit filename="audioevent.h" />
-		<Unit filename="avahibrowser.cpp">
-			<Option target="Linux Release" />
-			<Option target="Linux Debug" />
-		</Unit>
-		<Unit filename="avahibrowser.h">
-			<Option target="Linux Release" />
-			<Option target="Linux Debug" />
-		</Unit>
 		<Unit filename="dlldefine.h" />
-		<Unit filename="dnssdbrowser.cpp" />
-		<Unit filename="dnssdbrowser.h" />
 		<Unit filename="freq_mag.h" />
 		<Unit filename="generator.cpp" />
 		<Unit filename="generator.h" />
@@ -281,9 +280,6 @@
 		<Unit filename="rtpthread.h" />
 		<Unit filename="rtsputil.cpp" />
 		<Unit filename="rtsputil.h" />
-		<Unit filename="sapwatchthread.cpp" />
-		<Unit filename="sapwatchthread.h" />
-		<Unit filename="servicebrowser.cpp" />
 		<Unit filename="servicebrowser.h" />
 		<Unit filename="session.h" />
 		<Unit filename="settingevent.cpp" />
@@ -343,11 +339,15 @@
 		<Unit filename="wxptp.cpp" />
 		<Unit filename="wxptp.h" />
 		<Unit filename="wxptpeventhandler.h" />
+		<Unit filename="wxsaphandler.cpp" />
+		<Unit filename="wxsaphandler.h" />
 		<Unit filename="wxsink.cpp" />
 		<Unit filename="wxsink.h" />
 		<Unit filename="wxsmith/wmipeditpnl.wxs" />
 		<Unit filename="wxtouchscreenhtml.cpp" />
 		<Unit filename="wxtouchscreenhtml.h" />
+		<Unit filename="wxzxposter.cpp" />
+		<Unit filename="wxzxposter.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

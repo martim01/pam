@@ -27,7 +27,6 @@ RtpServerThread::RtpServerThread(wxEvtHandler* pHandler, const wxString& sRTSP, 
 void* RtpServerThread::Entry()
 {
     SendingInterfaceAddr = our_inet_addr(std::string(m_sRTSP.mb_str()).c_str());
-    wxLogDebug(wxT("RtpServerThread::Entry() %d"), m_ePacketTime);
     TaskScheduler* scheduler = PamTaskScheduler::createNew();
     m_penv = PamUsageEnvironment::createNew(*scheduler, m_pHandler);
     CreateStream();
@@ -96,6 +95,11 @@ bool RtpServerThread::CreateStream()
     AES67ServerMediaSubsession* pSmss =  AES67ServerMediaSubsession::createNew(*m_pSink, NULL, m_ePacketTime);
     sms->addSubsession(pSmss);
     m_pRtspServer->addServerMediaSession(sms);
+
+    char* pSDP = sms->generateSDPDescription();
+    m_sSDP = std::string(pSDP);
+    delete[] pSDP;
+
 
     // Finally, start the streaming:
     *m_penv << "Beginning streaming...\n";

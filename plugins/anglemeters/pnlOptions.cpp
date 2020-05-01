@@ -30,7 +30,7 @@ pnlOptions::pnlOptions(wxWindow* parent,AngleMetersBuilder* pBuilder, wxWindowID
 	m_pbnFreeze->SetColourSelected(wxColour(wxT("#800000")));
 	m_pbtnSurround = new wmButton(this, ID_M_PBTN1, _("Surround"), wxPoint(2,130), wxSize(195,30), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnSurround->SetColourSelected(wxColour(wxT("#800000")));
-	m_pbtnSurround->SetToggleLook(true, wxT("Hide"), wxT("Show"), 55);
+	m_pbtnSurround->SetToogle(true, wxT("Hide"), wxT("Show"), 55);
 	m_pbtnMeterClear = new wmButton(this, ID_M_PBTN12, _("Clear"), wxPoint(2,165), wxSize(90,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN12"));
 	m_pbtnMeterClear->SetColourSelected(wxColour(wxT("#800000")));
 	m_plstMeter_Peaks = new wmList(this, ID_M_PLST25, wxPoint(0,0), wxSize(190,42), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 3, wxSize(5,5));
@@ -59,7 +59,7 @@ pnlOptions::pnlOptions(wxWindow* parent,AngleMetersBuilder* pBuilder, wxWindowID
 
 
     m_pbtnSurround->ToggleSelection(m_pBuilder->ReadSetting(wxT("Surround"), 1), true);
-	//m_pbtnMeterShading->SetToggleLook(true, wxT("Solid"), wxT("Graded"), 50.0);
+	//m_pbtnMeterShading->SetToogle(true, wxT("Solid"), wxT("Graded"), 50.0);
 
 	m_plstMeter_Peaks->SelectButton(m_pBuilder->ReadSetting(wxT("Peaks"), 1), true);
 	m_pbnFreeze->ToggleSelection((m_pBuilder->ReadSetting(wxT("Freeze"),0)==1), false);

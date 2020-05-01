@@ -1,6 +1,11 @@
 #include "mp3livesource.h"
 #include <GroupsockHelper.hh> // for "gettimeofday()"
+#ifdef __WXWINDOWS__
+#include "lame.h"
+#endif // __WXWINDOWS__
+#ifdef __WXGNU__
 #include "lame/lame.h"
+#endif // __WXGNU__
 #include <iostream>
 #include <chrono>
 

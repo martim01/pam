@@ -28,7 +28,7 @@
 					<Add option="-D__WXDEBUG__" />
 					<Add option="-DPAMBASE_DEBUG" />
 					<Add option="-D__WINDOWS__" />
-					<Add option="-D__GNUWIN32__" />
+					<Add option="-D__WIN32__" />
 					<Add option="-D_MSL_STDINT_H" />
 					<Add directory="$(#wx3_0.include)" />
 					<Add directory="$(#wx3_0.include)/mswu" />
@@ -63,7 +63,7 @@
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-Wall" />
-					<Add option="-std=c++0x" />
+					<Add option="-std=c++11" />
 					<Add option="-pipe" />
 					<Add option="-mthreads" />
 					<Add option='[[if (PLATFORM == PLATFORM_MSW &amp;&amp; (GetCompilerFactory().GetCompilerVersionString(_T(&quot;gcc&quot;)) &gt;= _T(&quot;4.0.0&quot;))) print(_T(&quot;-Wno-attributes&quot;));]]' />
@@ -73,7 +73,7 @@
 					<Add option="-DUNICODE" />
 					<Add option="-D__WINDOWS__" />
 					<Add option="-DwxUSE_UNICODE" />
-					<Add option="-D__GNUWIN32__" />
+					<Add option="-D__WIN32__" />
 					<Add directory="$(#wx3_0.include)" />
 					<Add directory="$(#wx3_0.include)/mswu" />
 					<Add directory="$(#portaudio.include)" />
@@ -122,6 +122,8 @@
 					<Add library="portaudio" />
 					<Add library="pambase" />
 					<Add library="curl" />
+					<Add library="pml_dnssd" />
+					<Add library="pml_log" />
 					<Add directory="$(#nmos.lib)" />
 				</Linker>
 				<ExtraCommands>
@@ -151,6 +153,8 @@
 					<Add library="portaudio" />
 					<Add library="pambased" />
 					<Add library="curl" />
+					<Add library="pml_dnssd" />
+					<Add library="pml_log" />
 					<Add directory="$(#nmos.lib)" />
 				</Linker>
 			</Target>
@@ -176,6 +180,8 @@
 					<Add library="pambase" />
 					<Add library="curl" />
 					<Add library="nmos" />
+					<Add library="pml_dnssd" />
+					<Add library="pml_log" />
 					<Add directory="$(#nmos.lib)" />
 				</Linker>
 				<ExtraCommands>
@@ -256,6 +262,8 @@
 		<Unit filename="pnlSettingsNmos.h" />
 		<Unit filename="pnlSettingsOptions.cpp" />
 		<Unit filename="pnlSettingsOptions.h" />
+		<Unit filename="pnlSettingsOutput.cpp" />
+		<Unit filename="pnlSettingsOutput.h" />
 		<Unit filename="pnlSettingsPlugins.cpp" />
 		<Unit filename="pnlSettingsPlugins.h" />
 		<Unit filename="pnlSettingsProfiles.cpp" />
@@ -299,6 +307,7 @@
 		<Unit filename="wxsmith/pnlSettingsGenerators.wxs" />
 		<Unit filename="wxsmith/pnlSettingsNmos.wxs" />
 		<Unit filename="wxsmith/pnlSettingsOptions.wxs" />
+		<Unit filename="wxsmith/pnlSettingsOutput.wxs" />
 		<Unit filename="wxsmith/pnlSettingsPlugins.wxs" />
 		<Unit filename="wxsmith/pnlSettingsProfiles.wxs" />
 		<Unit filename="wxsmith/pnlTestOptions.wxs" />
@@ -338,6 +347,7 @@
 					<wxPanel wxs="wxsmith/pnlUSB.wxs" src="pnlUSB.cpp" hdr="pnlUSB.h" fwddecl="0" i18n="1" name="pnlUSB" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlAoIPSelection.wxs" src="pnlAoIPSelection.cpp" hdr="pnlAoIPSelection.h" fwddecl="0" i18n="1" name="pnlAoIPSelection" language="CPP" />
 					<wxDialog wxs="wxsmith/dlgEngineering.wxs" src="dlgEngineering.cpp" hdr="dlgEngineering.h" fwddecl="0" i18n="1" name="dlgEngineering" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlSettingsOutput.wxs" src="pnlSettingsOutput.cpp" hdr="pnlSettingsOutput.h" fwddecl="0" i18n="1" name="pnlSettingsOutput" language="CPP" />
 				</resources>
 			</wxsmith>
 			<AutoVersioning>

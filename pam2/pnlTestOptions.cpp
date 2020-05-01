@@ -28,7 +28,7 @@ pnlTestOptions::pnlTestOptions(wxWindow* parent,wxWindowID id,const wxPoint& pos
 
 	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlTestOptions::OnbtnLogClick);
 	//*)
-	m_pbtnLog->SetToggleLook(true, wxT("Off"), wxT("On"),50);
+	m_pbtnLog->SetToogle(true, wxT("Off"), wxT("On"),50);
 	m_pbtnLog->ToggleSelection((Settings::Get().Read(wxT("Tests"), wxT("Log"), 0)==1), false);
 
     m_pbtnLogView = new wmButton(this, wxNewId(), _("Log"), wxPoint(10,60), wxSize(180,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN4"));

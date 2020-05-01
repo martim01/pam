@@ -16,8 +16,7 @@ const double LiveAudioSource::TWENTYFOURBIT = 8388608.0;
 
 LiveAudioSource* LiveAudioSource::createNew(wxEvtHandler* pHandler, wxMutex& mutex, UsageEnvironment& env,  unsigned char nNumChannels,enumPacketTime ePacketTime)
 {
-    LiveAudioSource* pSource = new LiveAudioSource(pHandler, mutex, env, nNumChannels, ePacketTime);
-    return pSource;
+    return new LiveAudioSource(pHandler, mutex, env, nNumChannels, ePacketTime);
 }
 
 

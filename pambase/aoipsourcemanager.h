@@ -4,6 +4,9 @@
 #include <set>
 #include <wx/xml/xml.h>
 #include "dlldefine.h"
+#include <wx/event.h>
+
+#include <memory>
 
 struct PAMBASE_IMPEXPORT AoIPSource
 {
@@ -22,8 +25,20 @@ struct PAMBASE_IMPEXPORT AoIPSource
 };
 
 
+class wxZCPoster;
 
-class PAMBASE_IMPEXPORT AoipSourceManager
+namespace pml
+{
+    class Browser;
+};
+
+namespace sapserver
+{
+    class SapServer;
+};
+
+
+class PAMBASE_IMPEXPORT AoipSourceManager : public wxEvtHandler
 {
     public:
         static AoipSourceManager& Get();
@@ -44,12 +59,38 @@ class PAMBASE_IMPEXPORT AoipSourceManager
         void DeleteSource(const wxString& sName);
         void DeleteAllSources();
 
+        void StartDiscovery(wxEvtHandler* pHandler, const std::set<std::string>& setServices, std::set<std::string>& setSAP);
+        void StopDiscovery();
+
+
     private:
         AoipSourceManager();
+        ~AoipSourceManager();
+        void OnDiscovery(wxCommandEvent& event);
+        void OnDiscoveryFinished(wxCommandEvent& event);
+        void OnSap(wxCommandEvent& event);
 
         unsigned int GenerateIndex();
 
         wxXmlNode* NewTextNode(const wxString& sKey, const wxString& sValue,wxXmlNodeType type=wxXML_TEXT_NODE);
 
         std::map<unsigned int, AoIPSource> m_mSources;
+
+
+        //discovery
+        wxEvtHandler* m_pDiscoveryHandler;
+        std::unique_ptr<pml::Browser> m_pBrowser;
+        std::shared_ptr<wxZCPoster> m_pPoster;
+
+        std::unique_ptr<sapserver::SapServer> m_pSapWatcher;
+
+        enum {LOCAL=0, ORGANISATION, GLOBAL};
+
+
+        unsigned long m_nDiscovered;
+        std::set<std::pair<wxString, wxString> > m_setDiscover;
+
 };
+
+wxDECLARE_EXPORTED_EVENT(PAMBASE_IMPEXPORT, wxEVT_ASM_DISCOVERY, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(PAMBASE_IMPEXPORT, wxEVT_ASM_DISCOVERY_FINISHED, wxCommandEvent);

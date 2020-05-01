@@ -1,3 +1,12 @@
 [submodule "external/ptpmonkey"]
 	path = external/ptpmonkey
 	url = https://github.com/martim01/ptpmonkey
+[submodule "external/log"]
+	path = external/log
+	url = https://github.com/martim01/log
+[submodule "external/dnssd"]
+	path = external/dnssd
+	url = https://github.com/martim01/dnssd
+[submodule "external/sapserver"]
+	path = external/sapserver
+	url = https://github.com/martim01/sapserver

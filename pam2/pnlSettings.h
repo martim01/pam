@@ -18,6 +18,7 @@
 #include "pnlSettingsProfiles.h"
 #include "pnlSettingsGenerators.h"
 #include "pnlSettingsNmos.h"
+#include "pnlSettingsOutput.h"
 
 class SettingEvent;
 
@@ -34,6 +35,7 @@ class pnlSettings: public wxPanel
 		pnlNetworkSetup* pnlSettingsNetwork;
 		pnlSettingsGenerators* m_ppnlGenerators;
 		pnlSettingsNmos* m_ppnlNmos;
+		pnlSettingsOutput* m_ppnlOutput;
 		pnlSettingsPlugins* m_ppnlPlugins;
 		pnlSettingsProfiles* m_ppnlProfiles;
 		pnlUpdate* m_ppnlUpdate;
@@ -44,41 +46,19 @@ class pnlSettings: public wxPanel
 		wmButton* m_pbtnNext;
 		wmButton* m_pbtnPin;
 		wmButton* m_pbtnPrevious;
-		wmButton* m_pbtnRTSP;
-		wmButton* m_pbtnStream;
 		wmButton* m_ptbnOptions;
 		wmEdit* m_pedtPin;
-		wmEdit* m_pedtRTPPort;
-		wmEdit* m_pedtRTSPPort;
-		wmKeyboard* m_pkbd;
 		wmKeyboard* m_pkbdPin;
-		wmLabel* m_pLbl1;
-		wmLabel* m_pLbl2;
 		wmLabel* m_pLbl3;
-		wmLabel* m_pLbl4;
-		wmLabel* m_pLbl5;
-		wmLabel* m_pLbl6;
-		wmLabel* m_pLbl7;
 		wmLabel* m_pLbl8;
-		wmLabel* m_pLbl9;
 		wmLabel* m_plblCurrentPIN;
 		wmLabel* m_plblHostname;
 		wmLabel* m_plblVersion;
-		wmList* m_plstDestination;
 		wmList* m_plstDevices;
 		wmList* m_plstInput;
-		wmList* m_plstLatency;
-		wmList* m_plstPacket;
-		wmList* m_plstPlayback;
-		wmSwitcherPanel* m_pswpDestination;
 		wmSwitcherPanel* m_pswpSettings;
-		wmipeditpnl* m_ppnlAddress;
-		wxPanel* Panel1;
-		wxPanel* Panel2;
-		wxPanel* Panel3;
 		wxPanel* pnlGeneral;
 		wxPanel* pnlInput;
-		wxPanel* pnlOutput;
 		//*)
 
 		void ReloadRTP();
@@ -100,27 +80,6 @@ class pnlSettings: public wxPanel
 		static const long ID_M_PBTN4;
 		static const long ID_M_PBTN5;
 		static const long ID_PANEL1;
-		static const long ID_M_PLBL4;
-		static const long ID_M_PLST3;
-		static const long ID_PANEL9;
-		static const long ID_M_PLST4;
-		static const long ID_M_PLBL5;
-		static const long ID_M_PLST6;
-		static const long ID_PANEL10;
-		static const long ID_M_PLBL1;
-		static const long ID_PANEL12;
-		static const long ID_M_PLBL2;
-		static const long ID_M_PLBL8;
-		static const long ID_M_PBTN6;
-		static const long ID_M_PLBL6;
-		static const long ID_M_PEDT3;
-		static const long ID_M_PLBL7;
-		static const long ID_M_PLST5;
-		static const long ID_M_PEDT2;
-		static const long ID_M_PKBD2;
-		static const long ID_M_PBTN3;
-		static const long ID_PANEL11;
-		static const long ID_M_PSWP2;
 		static const long ID_PANEL2;
 		static const long ID_PANEL8;
 		static const long ID_PANEL5;
@@ -154,7 +113,6 @@ class pnlSettings: public wxPanel
 		void OnbtnDeleteSourceClick(wxCommandEvent& event);
 		void OnbtnDeleteSourceHeld(wxCommandEvent& event);
 		void OnbtnMeterShadingClick(wxCommandEvent& event);
-		void OnlblLatencySelected(wxCommandEvent& event);
 		void OnlstInputSelected(wxCommandEvent& event);
 		void OnswpSettingsPageChanged(wxNotebookEvent& event);
 		void OnbtnHomeClick(wxCommandEvent& event);
@@ -197,6 +155,8 @@ class pnlSettings: public wxPanel
 		void OnlstDevicesPaged(wxCommandEvent& event);
 		void OnRTSPPort_UnicastText(wxCommandEvent& event);
 		void OnRTPPort_UnicastText(wxCommandEvent& event);
+		void OnbtnSAPClick(wxCommandEvent& event);
+		void OnbtnDNSClick(wxCommandEvent& event);
 		//*)
 
         void RefreshInputs();
@@ -204,7 +164,6 @@ class pnlSettings: public wxPanel
 
 		void ShowRTPDefined();
 
-        void ShowSoundcardOutputs();
 
 
         void ShowPagingButtons();

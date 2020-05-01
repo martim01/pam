@@ -41,6 +41,8 @@ wmButton::wmButton() : pmControl()
 	, m_bChecked(false)
 	, m_nBitmapAlign(0)
 	, m_bToggleLook(false)
+	, m_uiToggleLeft(wxRect(0,0,0,0))
+	, m_uiToggleRight(wxRect(0,0,0,0))
 	, m_dToggleWidth(0.0)
 	{
 	}
@@ -94,6 +96,10 @@ bool wmButton::Create(wxWindow *parent, wxWindowID id, const wxString& sLabel , 
     CreateRects();
     m_uiRect.SetLabel(sLabel);
     m_uiRect.SetTextAlign(wxALIGN_CENTER);
+
+    m_uiToggleLeft.SetLabel(wxEmptyString);
+    m_uiToggleRight.SetLabel(wxEmptyString);
+
     SetBackgroundColour(m_uiRect.GetBackgroundColour());
     SetForegroundColour(m_uiRect.GetForegroundColour());
 
@@ -677,4 +683,15 @@ void wmButton::SetAuxillaryText(const wxString& sText)
 const wxString& wmButton::GetAuxillaryText() const
 {
     return m_sAuxillary;
+}
+
+
+void wmButton::SetToogle(bool bLook, const wxString& sLeft, const wxString& sRight, double dButtonPercent)
+{
+    m_bToggleLook = bLook;
+    m_uiToggleLeft.SetLabel(sLeft);
+    m_uiToggleRight.SetLabel(sRight);
+    m_dToggleWidth = dButtonPercent;
+    CreateRects();
+    //Refresh();
 }

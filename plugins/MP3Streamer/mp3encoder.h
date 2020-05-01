@@ -1,5 +1,10 @@
 #pragma once
+#ifdef __WXMSW__
+#include "lame.h"
+#endif // __WXMSW__
+#ifdef __WXGNU__
 #include "lame/lame.h"
+#endif // __WXGNU__
 #include <vector>
 #include <list>
 #include <mutex>

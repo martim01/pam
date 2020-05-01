@@ -28,6 +28,7 @@ class PAMBASE_IMPEXPORT RtpServerThread : public wxThread
 
         void FlushQueue();
 
+        const std::string& GetSDP() {return m_sSDP;}
 
     private:
 
@@ -52,7 +53,7 @@ class PAMBASE_IMPEXPORT RtpServerThread : public wxThread
         RTCPInstance* m_pRtcpInstance;
         Groupsock* m_pRtpGroupsock;
         RTSPServer* m_pRtspServer;
-
+        std::string m_sSDP;
         bool m_bStreaming;
 };
 

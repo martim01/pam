@@ -181,7 +181,7 @@ pamupdatemanagerDialog::pamupdatemanagerDialog(wxWindow* parent,wxWindowID id,co
 
 	 Settings::Get().Write(wxT("Version"), wxT("pamupdatemanager"), wxString::Format(wxT("%d.%d.%d.%d"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
 
-	 m_pbtnShow->SetToggleLook(true, wxT("New"), wxT("All"), 40);
+	 m_pbtnShow->SetToogle(true, wxT("New"), wxT("All"), 40);
 	 m_pbtnShow->ToggleSelection(Settings::Get().Read(wxT("Update"), wxT("ShowAll"), 0), false);
 
 	 m_plstShow->AddButton(wxT("App"));

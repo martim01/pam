@@ -69,7 +69,7 @@ pnlEbuMeter::pnlEbuMeter(wxWindow* parent,R128Builder* pBuilder, wxWindowID id,c
 	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlEbuMeter::OnbtnResetClick);
 
     m_pbtnCalculate->SetBackgroundColour(CLR_SHORT);
-	m_pbtnCalculate->SetToggleLook(true, wxT("Pause"), wxT("Run"), 50.0);
+	m_pbtnCalculate->SetToogle(true, wxT("Pause"), wxT("Run"), 50.0);
 	m_pbtnCalculate->ToggleSelection(m_pBuilder->ReadSetting(wxT("Calculate"),1) == 1, true);
 
 
