@@ -967,19 +967,10 @@ void IOManager::DoSAP(bool bRun)
             m_pSapServer->RemoveAllSenders();
         }
 
-        std::string sSDP;
-        if(m_pUnicastServer)
-        {
-            sSDP = m_pUnicastServer->GetSDP();
-        }
-        else if(m_pMulticastServer)
-        {
-            sSDP = m_pMulticastServer->GetSDP();
-        }
 
-        m_pSapServer->AddSender(IpAddress(std::string(Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString).c_str())), std::chrono::milliseconds(30000), sSDP);
+        m_pSapServer->AddSender(IpAddress(std::string(Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString).c_str())), std::chrono::milliseconds(30000), m_pMulticastServer->GetSDP());
 
-        wmLog::Get()->Log("Server", wxString::Format("Start SAP advertising\n%s", wxString(sSDP).c_str()));
+        wmLog::Get()->Log("Server", wxString::Format("Start SAP advertising\n'%s'", wxString(m_pMulticastServer->GetSDP()).c_str()));
     }
 }
 
@@ -995,7 +986,7 @@ void IOManager::DoDNSSD(bool bRun)
         if(m_pPublisher == nullptr)
         {
             std::string sHostName(wxGetHostName().c_str());
-            std::string sService = "asjdfklajeirjwelrer";
+            std::string sService = "PAM_AES67";
             m_pPublisher = std::unique_ptr<pml::Publisher>(new pml::Publisher(sService, "_rtsp._tcp", Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555), sHostName));
             m_pPublisher->AddTxt("ver", "1.0", false);
             m_pPublisher->Start();

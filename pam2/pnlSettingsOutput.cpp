@@ -181,6 +181,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
     UpdateDisplayedSettings();
 
 
+
     m_plstPlayback->Disable();
     m_pbtnStream->ToggleSelection(false);
 
@@ -207,6 +208,8 @@ void pnlSettingsOutput::UpdateDisplayedSettings()
 {
     m_plstDestination->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Destination"), wxT("Disabled")), false);
     m_plstPacket->SelectButton(m_plstPacket->FindButton(reinterpret_cast<void*>(Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 4000))));
+
+    m_pswpDestination->ChangeSelection(Settings::Get().Read(wxT("Output"), wxT("Destination"), wxT("Disabled")));
 
     m_pedtRTPPort->SetValue(Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), wxT("5004")));
     m_pedtRTSPPort->SetValue(Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), wxT("5555")));

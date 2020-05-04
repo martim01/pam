@@ -3,6 +3,8 @@
 #include "PamUsageEnvironment.h"
 #include <wx/log.h>
 #include "settings.h"
+#include "ondemandstreamer.h"
+
 
 RtpServerThread::RtpServerThread(wxEvtHandler* pHandler, const wxString& sRTSP, unsigned int nRTSPPort, const wxString& sSourceIp, unsigned int nRTPPort, bool bSSM, LiveAudioSource::enumPacketTime ePacketTime) :
     m_pHandler(pHandler),
@@ -26,17 +28,28 @@ RtpServerThread::RtpServerThread(wxEvtHandler* pHandler, const wxString& sRTSP, 
 
 void* RtpServerThread::Entry()
 {
+    m_mutex.Lock();
     SendingInterfaceAddr = our_inet_addr(std::string(m_sRTSP.mb_str()).c_str());
     TaskScheduler* scheduler = PamTaskScheduler::createNew();
     m_penv = PamUsageEnvironment::createNew(*scheduler, m_pHandler);
-    CreateStream();
-
-    while(m_eventLoopWatchVariable == 0)
+    if(CreateStream())
     {
-        m_penv->taskScheduler().doEventLoop(&m_eventLoopWatchVariable);
+        m_mutex.Unlock();
+        while(m_eventLoopWatchVariable == 0)
+        {
+            m_penv->taskScheduler().doEventLoop(&m_eventLoopWatchVariable);
+        }
+        CloseStream();
     }
-    CloseStream();
+    else
+    {
+        m_mutex.Unlock();
+    }
+
     wxLogDebug(wxT("RtpServerThread::Entry() Finished"));
+
+    wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_ODS_FINISHED);
+    wxQueueEvent(m_pHandler, pEvent);
     return NULL;
 }
 
@@ -46,7 +59,7 @@ bool RtpServerThread::CreateStream()
 {
     wxLogDebug(wxT("RtpServerThread::CreateStream()"));
 
-    wxMutexLocker lock(m_mutex);
+
     // Open the file as a 'WAV' file:
     m_pSource = LiveAudioSource::createNew(m_pHandler, m_mutex, *m_penv, 2, m_ePacketTime);
 
@@ -89,9 +102,9 @@ bool RtpServerThread::CreateStream()
     if (m_pRtspServer == NULL)
     {
         *m_penv << "Failed to create RTSP server: " << m_penv->getResultMsg() << "\n";
-        return true;
+        return false;
     }
-    ServerMediaSession* sms = ServerMediaSession::createNew(*m_penv, "PAM", "AES67", "", True/*SSM*/);
+    ServerMediaSession* sms = ServerMediaSession::createNew(*m_penv, "PAM_AES67", "PAM_AES67", "PAM_AES67", True/*SSM*/);
     AES67ServerMediaSubsession* pSmss =  AES67ServerMediaSubsession::createNew(*m_pSink, NULL, m_ePacketTime);
     sms->addSubsession(pSmss);
     m_pRtspServer->addServerMediaSession(sms);
@@ -99,7 +112,6 @@ bool RtpServerThread::CreateStream()
     char* pSDP = sms->generateSDPDescription();
     m_sSDP = std::string(pSDP);
     delete[] pSDP;
-
 
     // Finally, start the streaming:
     *m_penv << "Beginning streaming...\n";
@@ -166,4 +178,10 @@ void RtpServerThread::FlushQueue()
     {
         m_pSource->FlushQueue();
     }
+}
+
+const std::string& RtpServerThread::GetSDP()
+{
+    wxMutexLocker lock(m_mutex);
+    return m_sSDP;
 }
