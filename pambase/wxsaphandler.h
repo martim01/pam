@@ -1,7 +1,7 @@
 #pragma once
 #include <wx/event.h>
 
-#include "handler.h"
+#include "saphandler.h"
 
 
 class wxSapHandler : public sapserver::Handler

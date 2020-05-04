@@ -3,6 +3,25 @@
 #include <sstream>
 #include "wxsink.h"
 
+
+
+AES67RTPSink::AES67RTPSink(UsageEnvironment& env, Groupsock* RTPgs) : AudioRTPSink(env, RTPgs, 96, 48000, "L24", 2)
+{
+}
+
+AES67RTPSink::~AES67RTPSink()
+{
+}
+
+AES67RTPSink* AES67RTPSink::createNew(UsageEnvironment& env, Groupsock* RTPgs)
+{
+    return new AES67RTPSink(env, RTPgs);
+}
+
+
+
+
+
 OnDemandAES67MediaSubsession* OnDemandAES67MediaSubsession::createNew(wxEvtHandler* pHandler, PamUsageEnvironment& env, unsigned char nNumChannels,LiveAudioSource::enumPacketTime ePacketTime, portNumBits initialPortNum)
 {
     return new OnDemandAES67MediaSubsession(pHandler, env, nNumChannels, ePacketTime, initialPortNum);
@@ -27,12 +46,13 @@ FramedSource* OnDemandAES67MediaSubsession::createNewStreamSource(unsigned clien
 {
     estBitrate = 2250;
     m_pSource = LiveAudioSource::createNew(m_pHandler, m_mutex, envir(), m_nNumberOfChannels, m_ePacketTime);
+    return m_pSource;
 }
 
 
 RTPSink* OnDemandAES67MediaSubsession::createNewRTPSink(Groupsock* rtpGroupsock, unsigned char rtpPayloadTypeIfDynamic, FramedSource* inputSource)
 {
-    return SimpleRTPSink::createNew(envir(), rtpGroupsock, 96, 48000, "audio", "L24", m_nNumberOfChannels);
+    return AES67RTPSink::createNew(envir(), rtpGroupsock);
 }
 
 void OnDemandAES67MediaSubsession::AddSamples(const timedbuffer* pTimedBuffer)

@@ -21,6 +21,7 @@ bool MP3Encoder::StopLame()
         m_pLame = 0;
         FlushBuffer();
     }
+    return true;
 }
 
 bool MP3Encoder::InitLame(const MP3Parameters& params)

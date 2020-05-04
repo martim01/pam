@@ -135,6 +135,10 @@
 				</Linker>
 				<ExtraCommands>
 					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />
+					<Add after="cp ../external/log/lib/* ../lib" />
+					<Add after="cp ../external/dnssd/lib/* ../lib" />
+					<Add after="cp ../external/sapserver/lib/* ../lib" />
+					<Mode after="always" />
 				</ExtraCommands>
 			</Target>
 			<Target title="Linux Debug">
@@ -165,7 +169,16 @@
 					<Add library="libBasicUsageEnvironment.a" />
 					<Add library="libUsageEnvironment.a" />
 					<Add library="libgroupsock.a" />
+					<Add library="pml_logd" />
+					<Add library="pml_dnssdd" />
+					<Add library="sapserverd" />
 				</Linker>
+				<ExtraCommands>
+					<Add after="cp ../external/log/lib/* ../lib" />
+					<Add after="cp ../external/dnssd/lib/* ../lib" />
+					<Add after="cp ../external/sapserver/lib/* ../lib" />
+					<Mode after="always" />
+				</ExtraCommands>
 			</Target>
 		</Build>
 		<Compiler>

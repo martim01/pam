@@ -38,7 +38,7 @@ OnDemandStreamer::OnDemandStreamer(wxEvtHandler* pHandler, const wxString& sRTSP
 void* OnDemandStreamer::Entry()
 {
     // Create the RTSP server:
-    SendingInterfaceAddr = our_inet_addr(std::string(m_sRtspAddress.mb_str()).c_str());
+//    SendingInterfaceAddr = our_inet_addr(std::string(m_sRtspAddress.mb_str()).c_str());
 
     RTSPServer* rtspServer = RTSPServer::createNew(*m_pEnv, m_nRtspPort, NULL);
     if (rtspServer == NULL)

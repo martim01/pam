@@ -108,9 +108,9 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O3" />
+					<Add option="-fPIC" />
 					<Add option="`wx-config --cxxflags`" />
 					<Add option="-fpermissive" />
-					<Add option="-fPIC" />
 					<Add option="-DDLL_EXPORTS" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
@@ -122,6 +122,15 @@
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add library="pambase" />
+					<Add library="mp3lame" />
+					<Add library="liveMedia" />
+					<Add library="BasicUsageEnvironment" />
+					<Add library="UsageEnvironment" />
+					<Add library="groupsock" />
+					<Add directory="$(#live_basicusage.LIB)" />
+					<Add directory="$(#live_group.LIB)" />
+					<Add directory="../../external/live/liveMedia" />
+					<Add directory="$(#live_usage.LIB)" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="../../manifest_creator/bin/LinuxRelease/manifest_creator" />
@@ -151,6 +160,15 @@
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add library="pambased" />
+					<Add library="mp3lame" />
+					<Add library="liveMedia" />
+					<Add library="BasicUsageEnvironment" />
+					<Add library="UsageEnvironment" />
+					<Add library="groupsock" />
+					<Add directory="$(#live_basicusage.LIB)" />
+					<Add directory="$(#live_group.LIB)" />
+					<Add directory="$(#live_media.LIB)" />
+					<Add directory="$(#live_usage.LIB)" />
 				</Linker>
 			</Target>
 		</Build>

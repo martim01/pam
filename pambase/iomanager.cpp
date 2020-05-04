@@ -943,12 +943,11 @@ void IOManager::OnPtpEvent(wxCommandEvent& event)
     }
 }
 
-
 void IOManager::DoSAP(bool bRun)
 {
     wmLog::Get()->Log("Server", "DoSAP");
 
-    if(bRun == false || m_pMulticastServer == nullptr))
+    if(bRun == false || m_pMulticastServer == nullptr)
     {
         if(m_pSapServer)
         {
@@ -996,7 +995,9 @@ void IOManager::DoDNSSD(bool bRun)
         if(m_pPublisher == nullptr)
         {
             std::string sHostName(wxGetHostName().c_str());
-            m_pPublisher = std::unique_ptr<pml::Publisher>(new pml::Publisher(sHostName, "_rtsp._tcp", Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555), sHostName));
+            std::string sService = "asjdfklajeirjwelrer";
+            m_pPublisher = std::unique_ptr<pml::Publisher>(new pml::Publisher(sService, "_rtsp._tcp", Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555), sHostName));
+            m_pPublisher->AddTxt("ver", "1.0", false);
             m_pPublisher->Start();
 
             wmLog::Get()->Log("Server", "Start mDNS/SD advertising");

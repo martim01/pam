@@ -1,10 +1,29 @@
 #pragma once
 #include <wx/event.h>
 #include "ondemandpamsubsession.h"
+#include "AudioRTPSink.hh"
 #include "liveaudiosource.h"
 #include <wx/thread.h>
 #include <set>
 class timedbuffer;
+
+
+class AES67RTPSink : public AudioRTPSink
+{
+
+    public:
+      static AES67RTPSink* createNew(UsageEnvironment& env, Groupsock* RTPgs);
+
+    protected:
+      AES67RTPSink(UsageEnvironment& env, Groupsock* RTPgs);
+        // called only by createNew()
+
+      virtual ~AES67RTPSink();
+
+    private: // redefined virtual functions:
+
+};
+
 
 class OnDemandAES67MediaSubsession: public OnDemandPamSubsession
 {
