@@ -53,13 +53,65 @@ if(optionPTP)
                     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
     
+else()
+	message("Found ptpmonkey")
+endif()
 	add_subdirectory(${PROJECT_SOURCE_DIR}/../external/ptpmonkey ${CMAKE_CURRENT_BINARY_DIR}/ptpmonkey)
-    else()
-		message("Found ptpmonkey")
-	endif()
 	target_compile_definitions(pambase PUBLIC PTPMONKEY)
 	target_link_libraries(pambase ptpmonkey)
 endif()
+
+#log
+find_path(LOG_LIB_DIR NAMES "include/log.h" PATHS ${PROJECT_SOURCE_DIR}/../external/log)
+if((NOT LOG_LIB_DIR) OR (NOT EXISTS ${LOG_LIB_DIR}))
+    # we couldn't find the header files for FOO or they don't exist
+    message("Unable to find pml::log")
+    
+    # we have a submodule setup for asio, assume it is under external/asio
+    # now we need to clone this submodule
+    execute_process(COMMAND git submodule update --init -- ../external/log WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+else()
+    message("Found pml::log")
+endif()
+add_subdirectory(${PROJECT_SOURCE_DIR}/../external/log ${CMAKE_CURRENT_BINARY_DIR}/log)
+include_directories("../external/log/include")
+
+#dnssd
+find_path(DNSSD_LIB_DIR NAMES "include/dnssd.h" PATHS ${PROJECT_SOURCE_DIR}/../external/dnssd)
+if((NOT DNSSD_LIB_DIR) OR (NOT EXISTS ${DNSSD_LIB_DIR}))
+    # we couldn't find the header files for FOO or they don't exist
+    message("Unable to find pml::dnssd")
+    
+    # we have a submodule setup for asio, assume it is under external/asio
+    # now we need to clone this submodule
+    execute_process(COMMAND git submodule update --init -- ../external/dnssd WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+else()
+    message("Found pml::dnssd")
+endif()
+
+add_subdirectory(${PROJECT_SOURCE_DIR}/../external/dnssd ${CMAKE_CURRENT_BINARY_DIR}/dnssd)
+include_directories("../external/dnssd/include")
+target_link_libraries(pambase dnssd)
+
+#sapserver
+find_path(SAP_LIB_DIR NAMES "/include/sapserver.h" PATHS ${PROJECT_SOURCE_DIR}/../external/sapserver)
+if((NOT SAP_LIB_DIR) OR (NOT EXISTS ${SAP_LIB_DIR}))
+    # we couldn't find the header files for FOO or they don't exist
+    message("Unable to find sapserver")
+    
+    # we have a submodule setup for asio, assume it is under external/asio
+    # now we need to clone this submodule
+    execute_process(COMMAND git submodule update --init -- ../external/sapserver WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+else()
+    message("Found sapserver")
+endif()
+
+include_directories("../external/sapserver/include")
+add_subdirectory(${PROJECT_SOURCE_DIR}/../external/sapserver ${CMAKE_CURRENT_BINARY_DIR}/sapserver)
+target_link_libraries(pambase sapserver)
+
+
+
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(pambase PRIVATE ${flags})
