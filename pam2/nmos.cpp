@@ -3,13 +3,12 @@
 
 #include "nmos.h"
 #include "libnmos.h"
-#include "wxlogoutput.h"
 #include "wxeventposter.h"
 #include "wxclientapiposter.h"
 #include "wxnmosclientevent.h"
 #include "settings.h"
 #include "settingevent.h"
-#include "wmlogevent.h"
+#include "log.h"
 
 
 NmosManager::NmosManager(pnlSettingsNmos* pPnl) :
@@ -33,7 +32,6 @@ NmosManager::NmosManager(pnlSettingsNmos* pPnl) :
 void NmosManager::Setup()
 {
 
-    Log::Get().SetOutput(std::unique_ptr<wxLogOutput>(new wxLogOutput()));
 
     char chHost[256];
     gethostname(chHost, 256);
@@ -88,27 +86,27 @@ void NmosManager::Setup()
 
     if(NodeApi::Get().AddDevice(pDevice) == false)
     {
-        wmLog::Get()->Log(wxT("NMOS: Failed to add Device"));
+        pml::Log::Get(pml::Log::LOG_ERROR) << "NMOS\tFailed to add Device" << std::endl;
     }
     if(NodeApi::Get().AddSource(pSource) == false)
     {
-        wmLog::Get()->Log(wxT("NMOS: Failed to add Source"));
+        pml::Log::Get(pml::Log::LOG_ERROR) << "NMOS\tFailed to add Source" << std::endl;
     }
     if(NodeApi::Get().AddFlow(m_pFlow) == false)
     {
-        wmLog::Get()->Log(wxT("NMOS: Failed to add Flow"));
+        pml::Log::Get(pml::Log::LOG_ERROR) << "NMOS\tFailed to add Flow" << std::endl;
     }
     if(NodeApi::Get().AddReceiver(pReceiver) == false)
     {
-        wmLog::Get()->Log(wxT("NMOS: Failed to add Receiver"));
+        pml::Log::Get(pml::Log::LOG_ERROR) << "NMOS\tFailed to add Receiver" << std::endl;
     }
     else
     {
-        m_pSettingsPanel->SetReceiverId(wxString::FromAscii(pReceiver->GetId().c_str()));
+        m_pSettingsPanel->SetReceiverId(wxString::FromUTF8(pReceiver->GetId().c_str()));
     }
     if(NodeApi::Get().AddSender(m_pSender) == false)
     {
-        wmLog::Get()->Log(wxT("NMOS: Failed to add Sender"));
+        pml::Log::Get(pml::Log::LOG_ERROR) << "NMOS\tFailed to add Sender" << std::endl;
     }
     NodeApi::Get().Commit();
 
@@ -138,7 +136,7 @@ void NmosManager::Setup()
 
 void NmosManager::StartNode()
 {
-    wmLog::Get()->Log(wxT("Start NMOS Services"));
+    pml::Log::Get() << "NMOS\tStart NMOS Services" << std::endl;
 
     NodeApi::Get().StartServices();
 }
@@ -472,7 +470,7 @@ void NmosManager::ActivateReceiver(shared_ptr<Receiver> pReceiver)
 
 void NmosManager::StopNmos()
 {
-    wmLog::Get()->Log(wxT("Stop NMOS Services"));
+    pml::Log::Get() << "NMOS\tStop NMOS Services" << std::endl;
     NodeApi::Get().StopServices();
     Settings::Get().RemoveKey(wxT("AoIP"), wxT("NMOS_IS-04"));
 }

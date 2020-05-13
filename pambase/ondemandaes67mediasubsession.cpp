@@ -57,7 +57,6 @@ RTPSink* OnDemandAES67MediaSubsession::createNewRTPSink(Groupsock* rtpGroupsock,
 
 void OnDemandAES67MediaSubsession::AddSamples(const timedbuffer* pTimedBuffer)
 {
-    wxMutexLocker lock(m_mutex);
     if(m_pSource && m_nConnections > 0)
     {
         m_pSource->AddSamples(pTimedBuffer);
@@ -66,7 +65,6 @@ void OnDemandAES67MediaSubsession::AddSamples(const timedbuffer* pTimedBuffer)
 
 void OnDemandAES67MediaSubsession::FlushQueue()
 {
-    wxMutexLocker lock(m_mutex);
     if(m_pSource)
     {
         m_pSource->FlushQueue();

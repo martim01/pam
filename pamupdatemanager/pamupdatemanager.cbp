@@ -93,6 +93,7 @@
 					<Add option="`wx-config --libs`" />
 					<Add library="pambase" />
 					<Add library="curl" />
+					<Add library="pml_log" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />
@@ -116,6 +117,7 @@
 					<Add option="`wx-config --libs`" />
 					<Add library="pambased" />
 					<Add library="curl" />
+					<Add library="pml_logd" />
 				</Linker>
 			</Target>
 		</Build>
@@ -124,6 +126,7 @@
 			<Add option="-D_app_" />
 			<Add directory="C:/wxWidgets-3.0.2/include" />
 			<Add directory="../pambase" />
+			<Add directory="../external/log/include" />
 		</Compiler>
 		<ResourceCompiler>
 			<Add directory="C:/wxWidgets-3.0.2/include" />

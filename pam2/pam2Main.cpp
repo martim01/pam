@@ -28,7 +28,7 @@
 #include "pnlLogControl.h"
 #include "testpluginfactory.h"
 #include "testpluginbuilder.h"
-#include "wmlogevent.h"
+
 #include <wx/stdpaths.h>
 #include <wx/dynlib.h>
 #include "soundfile.h"
@@ -44,6 +44,7 @@
 #include "pnlTestOptions.h"
 #include "dlgPin.h"
 #include "dlgNoInput.h"
+#include "log.h"
 #ifdef __NMOS__
 #include "nmos.h"
 #endif // __WXMSW__
@@ -635,7 +636,7 @@ void pam2Dialog::ShowHelpPanel()
         sHelp = wxT("Pam");
     }
 
-    wxLogDebug(wxT("Help = %s"), sHelp.c_str());
+
     m_ppnlHelp->SelectHelp(sHelp);
     m_pswpMain->ChangeSelection(wxT("Help"));
 
@@ -854,16 +855,15 @@ void pam2Dialog::TellPluginsAboutOutputChannels()
 
 void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
 {
-    wmLog::Get();
 
-    wmLog::Get()->Log(wxString::Format(wxT("Executable Path = %s"), Settings::Get().GetExecutableDirectory().c_str()));
-    wmLog::Get()->Log(wxString::Format(wxT("Core Lib Path = %s"), Settings::Get().GetCoreLibDirectory().c_str()));
-    wmLog::Get()->Log(wxString::Format(wxT("Plugin Monitor Path = %s"), Settings::Get().GetMonitorPluginDirectory().c_str()));
-    wmLog::Get()->Log(wxString::Format(wxT("Plugin Test Path = %s"), Settings::Get().GetTestPluginDirectory().c_str()));
-    wmLog::Get()->Log(wxString::Format(wxT("Documents Path = %s"), Settings::Get().GetDocumentDirectory().c_str()));
-    wmLog::Get()->Log(wxString::Format(wxT("Logs Path = %s"), Settings::Get().GetLogDirectory().c_str()));
-    wmLog::Get()->Log(wxString::Format(wxT("Wav Files Path = %s"), Settings::Get().GetWavDirectory().c_str()));
-    wmLog::Get()->Log(wxString::Format(wxT("Temp Path = %s"), Settings::Get().GetTempDirectory().c_str()));
+    pml::Log::Get() << "PAM\tExecutable Path = " << Settings::Get().GetExecutableDirectory() << std::endl;
+    pml::Log::Get() << "PAM\tCore Lib Path = " <<  Settings::Get().GetCoreLibDirectory() << std::endl;
+    pml::Log::Get() << "PAM\tPlugin Monitor Path = " <<  Settings::Get().GetMonitorPluginDirectory() << std::endl;
+    pml::Log::Get() << "PAM\tPlugin Test Path = " <<  Settings::Get().GetTestPluginDirectory() << std::endl;
+    pml::Log::Get() << "PAM\tDocuments Path = " <<  Settings::Get().GetDocumentDirectory() << std::endl;
+    pml::Log::Get() << "PAM\tLogs Path = " <<  Settings::Get().GetLogDirectory() << std::endl;
+    pml::Log::Get() << "PAM\tWav Files Path = " <<  Settings::Get().GetWavDirectory() << std::endl;
+    pml::Log::Get() << "PAM\tTemp Path = " <<  Settings::Get().GetTempDirectory() << std::endl;
 
     RemoveOldFiles();
 
@@ -915,7 +915,7 @@ void pam2Dialog::OntimerIpcTrigger(wxTimerEvent& event)
 void pam2Dialog::OnClose(wxCloseEvent& event)
 {
     IOManager::Get().Stop();
-    wmLog::Get()->Log(wxT("Closing"));
+    pml::Log::Get() << "PAM\tClosing" << std::endl;
     event.Skip();
 }
 

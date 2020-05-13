@@ -56,7 +56,7 @@ double IIR::Filter(double dSample)
 
     m_lstY.push_front(dY);
 
-   // wxLogDebug(wxT("Filter:: %d %d %f"), m_lstX.size(), m_lstY.size(), dY);
+
     return dY;
 
 }

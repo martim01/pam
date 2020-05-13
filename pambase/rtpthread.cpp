@@ -474,7 +474,7 @@ unsigned long RtpThread::GetQosMeasurementIntervalMS()
 
 void RtpThread::MasterClockChanged()
 {
-    wxLogDebug(wxT("MasterClockChanged"));
+
     if(m_pSession)
     {
         MediaSubsessionIterator iter(*m_pSession);
@@ -484,7 +484,7 @@ void RtpThread::MasterClockChanged()
             Aes67Source* pSource = dynamic_cast<Aes67Source*>(subsession->readSource());
             if(pSource)
             {
-                wxLogDebug(wxT("MasterClockChanged: WorkoutLastEpoch"));
+
                 pSource->WorkoutLastEpoch();
 
             }

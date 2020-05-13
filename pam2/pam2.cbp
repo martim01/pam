@@ -201,6 +201,7 @@
 			<Add directory="$(#live_basicusage.include)" />
 			<Add directory="./images" />
 			<Add directory="../external/wxservdisc" />
+			<Add directory="../external/log/include" />
 		</Compiler>
 		<ResourceCompiler>
 			<Add directory="C:/wxWidgets-3.0.2/include" />
@@ -211,6 +212,7 @@
 			<Add directory="$(#live_group.lib)" />
 			<Add directory="$(#live_usage.lib)" />
 			<Add directory="$(#live_basicusage.lib)" />
+			<Add directory="../external/log/lib" />
 		</Linker>
 		<Unit filename="dlgAoIP.cpp" />
 		<Unit filename="dlgAoIP.h" />

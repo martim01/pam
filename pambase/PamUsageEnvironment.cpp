@@ -1,7 +1,7 @@
 #include "PamUsageEnvironment.h"
 #include <stdio.h>
 #include <wx/log.h>
-#include "wmlogevent.h"
+#include "log.h"
 #include <iostream>
 
 ////////// PamUsageEnvironment //////////
@@ -50,39 +50,32 @@ UsageEnvironment& PamUsageEnvironment::operator<<(char const* str)
 {
     if (str != NULL)
     {
-        m_sLog << wxString::FromAscii(str);
-        std::cout << str;
-
-        if(m_sLog.Find(wxT("\n")) != wxNOT_FOUND)
-        {
-            wmLog::Get()->Log(wxT("AoIP"), m_sLog);
-            m_sLog = wxEmptyString;
-        }
+        pml::Log::Get() << str;
     }
     return *this;
 }
 
 UsageEnvironment& PamUsageEnvironment::operator<<(int i)
 {
-    m_sLog << i;
+    pml::Log::Get() << i;
 
     return *this;
 }
 
 UsageEnvironment& PamUsageEnvironment::operator<<(unsigned u)
 {
-    m_sLog << u;
+    pml::Log::Get() << u;
     return *this;
 }
 
 UsageEnvironment& PamUsageEnvironment::operator<<(double d)
 {
-    m_sLog << d;
+    pml::Log::Get() << d;
     return *this;
 }
 
 UsageEnvironment& PamUsageEnvironment::operator<<(void* p)
 {
-    m_sLog << wxString::Format(wxT("%p"), p);
+    pml::Log::Get() << reinterpret_cast<unsigned long>(p);
     return *this;
 }

@@ -179,7 +179,7 @@ void pnlSettingsNmos::RemoveSenders(const std::set<std::string>::const_iterator&
         {
             for(size_t i = 0; i < m_plstSenders->GetMaxIndex(); i++)
             {
-                wxLogDebug(wxT("Remove %d?"), i);
+
                 if(m_plstSenders->GetButtonAuxillaryText(i) == (*itSender))
                 {
                     wxLogDebug(wxT("Delete %d"), i);

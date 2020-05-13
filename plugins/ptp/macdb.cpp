@@ -1,7 +1,7 @@
 #include "macdb.h"
 #include <wx/xml/xml.h>
 #include "settings.h"
-#include "wmlogevent.h"
+#include "log.h"
 
 bool MacDb::LoadXml()
 {
@@ -30,12 +30,13 @@ bool MacDb::LoadXml()
                 }
             }
         }
-        wmLog::Get()->Log(wxString::Format("Vendoers: %zu", m_mVendors.size()));
+        pml::Log::Get(pml::Log::LOG_DEBUG) << "MaxDb\t" << "Vendors: " << m_mVendors.size() << std::endl;
+
         return true;
     }
     else
     {
-        wmLog::Get()->Log("Failed to open file");
+        pml::Log::Get (pml::Log::LOG_ERROR) << "MaxDb\t" << "Failed to open file" << std::endl;
         return false;
     }
 }
@@ -60,7 +61,8 @@ wxString MacDb::GetVendor(const wxString& sMac) const
     }
     else
     {
-        wmLog::Get()->Log(wxString::Format("GetVendor %s: Not Found", sMac.Left(8).c_str()));
+        pml::Log::Get(pml::Log::LOG_WARN) << "MaxDb\t" << "GetVendor: '" << sMac.Last(8) << "' not found." << std::endl;
+
         return wxEmptyString;
     }
 }

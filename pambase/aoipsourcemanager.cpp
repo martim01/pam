@@ -1,6 +1,6 @@
 #include "aoipsourcemanager.h"
 #include "settings.h"
-#include "wmlogevent.h"
+#include "log.h"
 #include <wx/log.h>
 #include <wx/tokenzr.h>
 #include "dnssd.h"
@@ -47,7 +47,7 @@ bool AoipSourceManager::LoadSources()
                 auto insertSource = m_mSources.insert(std::make_pair(nIndex, AoIPSource(nIndex)));
                 if(insertSource.second == false)
                 {
-                    wmLog::Get()->Log(wxString::Format("AoIP Source Manager: Duplicate source index %d", nIndex));
+                    pml::Log::Get(pml::Log::LOG_WARN) << "AoIP Source Manager\tDuplicate source index: " << nIndex << std::endl;
                 }
                 else
                 {
@@ -290,7 +290,8 @@ void AoipSourceManager::OnSap(wxCommandEvent& event)
     wxString sIpAddress = event.GetString().BeforeFirst(wxT('\n'));
     wxString sSDP = event.GetString().AfterFirst(wxT('\n'));
     wxString sName;
-    wmLog::Get()->Log(wxT("OnSAP"));
+
+
 
     //is it an L24 or L16 session
     bool bCanDecode(false);
@@ -333,7 +334,8 @@ void AoipSourceManager::OnSap(wxCommandEvent& event)
             if(m_setDiscover.insert(std::make_pair(sName, sIpAddress)).second)
             {
                 m_nDiscovered++;
-                wmLog::Get()->Log(wxString::Format(wxT("SAP response from %s\n%s"), sIpAddress.c_str(), sSDP.c_str()));
+                pml::Log::Get() << "AoIP Source Manager\tDiscovery: SAP response from " << sIpAddress.c_str() << std::endl;
+                pml::Log::Get() << "AoIP Source Manager\tDiscovery: SDP=" << sSDP << std::endl;
 
                 AddSource(sName, wxString::Format(wxT("sap:%s"), sIpAddress.c_str()), sSDP);
 
@@ -375,7 +377,7 @@ void AoipSourceManager::StartDiscovery(wxEvtHandler* pHandler, const std::set<st
 
     if(setSAP.empty() == false)
     {
-        m_pSapWatcher = std::unique_ptr<sapserver::SapServer>(new sapserver::SapServer(std::make_shared<wxSapHandler>(this)));
+        m_pSapWatcher = std::unique_ptr<pml::SapServer>(new pml::SapServer(std::make_shared<wxSapHandler>(this)));
         m_pSapWatcher->Run();
         for(auto service : setSAP)
         {

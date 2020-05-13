@@ -1,7 +1,7 @@
 #include "pnlpeakcount.h"
 #include "pnlpeakcountchannel.h"
 #include "peakcountbuilder.h"
-#include "wmlogevent.h"
+#include "log.h"
 
 //(*InternalHeaders(pnlPeakCount)
 #include <wx/font.h>
@@ -188,7 +188,7 @@ void pnlPeakCount::OnTimerLog(wxTimerEvent& event)
             int nTotal(m_vChannels[i]->SamplesSinceLastCheck());
             if(nTotal > 0)
             {
-                wmLog::Get()->Log(wxString::Format(wxT("PeakCount Ch%d %d samples over %.2fdB in last second"), i, nTotal, m_dLimit), wmLog::LOG_TEST_ALARM);
+                pml::Log::Get(pml::Log::LOG_WARN) << "PeakCount\tChannel"<<i<< " " << nTotal << "samples over " << m_dLimit << "dB in last second" << std::endl;
             }
         }
     }

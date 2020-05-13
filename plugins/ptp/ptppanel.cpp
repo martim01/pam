@@ -6,7 +6,7 @@
 #include "settings.h"
 #include "ptpclock.h"
 #include "ptpstructs.h"
-#include "wmlogevent.h"
+#include "log.h"
 #include <wx/log.h>
 #include "macdb.h"
 
@@ -540,10 +540,6 @@ void ptpPanel::ConnectLeftUp(wxWindow* pParent)
             if(pLabel)
             {
                 pLabel->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&ptpPanel::OnInfoLeftUp,0,this);
-            }
-            else
-            {
-                wxLogDebug(wxT("Unknown type %s"), pWnd->GetLabel());
             }
         }
     }

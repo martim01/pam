@@ -7,7 +7,7 @@
 #include <thread>
 #include "ondemandmp3servermediasubsession.h"
 #include "ondemandstreamer.h"
-#include "wmlogevent.h"
+#include "log.h"
 
 
 //(*InternalHeaders(MP3StreamerPanel)
@@ -117,7 +117,7 @@ void MP3StreamerPanel::InputSession(const session& aSession)
             m_Encoder.StopLame();
             m_Encoder.InitLame(params);
 
-            wmLog::Get()->Log("MP3Streamer", "New Session");
+            pml::Log::Get(pml::Log::LOG_INFO) << "MP3Streamer\t" << "New Session" << std::endl;
 
             //Create the Unicast Streamer
             if(!m_pUnicastStreamer)

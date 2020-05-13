@@ -85,6 +85,7 @@
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
 					<Add option="-D__GNU__" />
+					<Add directory="pml_log" />
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
@@ -101,16 +102,17 @@
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-fPIC" />
 					<Add option="-g" />
 					<Add option="`wx-config --cxxflags`" />
 					<Add option="-fpermissive" />
-					<Add option="-fPIC" />
 					<Add option="-DDLL_EXPORTS" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
 					<Add option="-DPAMBASE_DEBUG" />
 					<Add option="-D__WXDEBUG__" />
 					<Add option="-D__GNU__" />
+					<Add directory="pml_logd" />
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
@@ -124,6 +126,7 @@
 			<Add option="-DPTPMONKEY" />
 			<Add directory="../../pambase" />
 			<Add directory="../../external/ptpmonkey/include" />
+			<Add directory="../../external/log/include" />
 		</Compiler>
 		<Linker>
 			<Add library="ptpmonkey" />

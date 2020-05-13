@@ -8,7 +8,7 @@
 #include "generatorpluginfactory.h"
 #include <wx/filename.h>
 #include <wx/log.h>
-#include "wmlogevent.h"
+#include "log.h"
 //(*InternalHeaders(pnlSettingsPlugins)
 #include <wx/intl.h>
 #include <wx/string.h>
@@ -332,7 +332,7 @@ void pnlSettingsPlugins::ShowMonitorPlugins()
 
     wxFileName fnDir(sLibDir);
     fnDir.MakeAbsolute();
-    wmLog::Get()->Log(wxString::Format(wxT("Monitor Lib Directory: %s"), fnDir.GetFullPath().c_str()));
+    pml::Log::Get(pml::Log::LOG_INFO) << "Plugins\tMonitor Lib Directory: " << fnDir.GetFullPath() << std::endl;
     wxArrayString asLibs;
     #ifdef __WXMSW__
         wxDir::GetAllFiles(fnDir.GetFullPath(), &asLibs, wxT("*.dll"));
@@ -347,7 +347,8 @@ void pnlSettingsPlugins::ShowMonitorPlugins()
         #ifdef __WXGNU__
             sLibToLoad = sLibToLoad.Mid(3);
         #endif // __WXGNU__
-        wmLog::Get()->Log(wxString::Format(wxT("Lib : %s"), sLibToLoad.c_str()));
+        pml::Log::Get(pml::Log::LOG_INFO) << "Plugins\tMonitor Lib: " << sLibToLoad << std::endl;
+
         plugin aPlugin = MonitorPluginFactory::Get()->GetPluginDetails(fnDir.GetFullPath(), sLibToLoad);
         if(aPlugin.sName != wxEmptyString)
         {
@@ -436,7 +437,7 @@ void pnlSettingsPlugins::ShowGeneratorPlugins()
 
     wxFileName fnDir(sLibDir);
     fnDir.MakeAbsolute();
-    wmLog::Get()->Log(wxString::Format(wxT("Generator Lib Directory: %s"), fnDir.GetFullPath().c_str()));
+    pml::Log::Get(pml::Log::LOG_INFO) << "Plugins\Generator Lib Directory: " << fnDir.GetFullPath() << std::endl;
     wxArrayString asLibs;
     #ifdef __WXMSW__
         wxDir::GetAllFiles(fnDir.GetFullPath(), &asLibs, wxT("*.dll"));
@@ -451,7 +452,7 @@ void pnlSettingsPlugins::ShowGeneratorPlugins()
         #ifdef __WXGNU__
             sLibToLoad = sLibToLoad.Mid(3);
         #endif // __WXGNU__
-        wmLog::Get()->Log(wxString::Format(wxT("Lib : %s"), sLibToLoad.c_str()));
+        pml::Log::Get(pml::Log::LOG_INFO) << "Plugins\Generator Lib: " << sLibToLoad << std::endl;
         plugin aPlugin = GeneratorPluginFactory::Get()->GetPluginDetails(fnDir.GetFullPath(), sLibToLoad);
         if(aPlugin.sName != wxEmptyString)
         {

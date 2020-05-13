@@ -10,7 +10,7 @@
 #include <wx/log.h>
 #include <wx/tokenzr.h>
 #include "settings.h"
-#include "wmlogevent.h"
+#include "log.h"
 #include "PamUsageEnvironment.h"
 #include "PamTaskScheduler.h"
 #include "wmlistadv.h"
@@ -419,7 +419,7 @@ void pnlRTP::OnDiscovery(wxCommandEvent& event)
 
     wxClientDC dc(this);
     dc.SetFont(m_pList->GetFont());
-    LogElement* pElement(new LogElement(dc, GetClientSize().x, event.GetString(), wmLog::LOG_TEST_OK));
+    LogElement* pElement(new LogElement(dc, GetClientSize().x, event.GetString(), 8));  //@todo replace with an actual value
     m_pList->AddElement(pElement);
     pElement->Filter(255);
     m_pList->Refresh();
@@ -573,7 +573,7 @@ void pnlRTP::OnSettingEvent(SettingEvent& event)
 {
     if(event.GetSection() == "ImportAoIP" && event.GetKey() == "USB" && m_pSwp1->GetSelectionName() == "Import")
     {
-        wxLogDebug(wxT("Reading USB drive"));
+
         m_plblImportProgress->SetLabel("Reading USB drive...");
         m_plblImportProgress->Update();
 
@@ -604,7 +604,7 @@ void pnlRTP::OnSettingEvent(SettingEvent& event)
 
 
         m_plstFiles->Thaw();
-        wxLogDebug(wxT("USB drive read."));
+
         m_plblImportProgress->SetLabel("USB drive read.");
         m_plblImportProgress->Update();
     }
@@ -636,18 +636,18 @@ void pnlRTP::ImportSources(const wxString& sFileName)
                     AoipSourceManager::Get().AddSource(itData->first, itData->second);
                 }
             }
-            wmLog::Get()->Log(wxString::Format("Import AoIP: Read '%s'", sFileName.c_str()));
+            pml::Log::Get() << "AoIP\tImport AoIP: Read '" << sFileName << "'" << std::endl;
         }
         else
         {
-            wmLog::Get()->Log(wxString::Format("Import AoIP: Reading '%s' invalid file", sFileName.c_str()));
+            pml::Log::Get(pml::Log::LOG_ERROR) << "AoIP\tImport AoIP: Reading '" << sFileName << "' invalid file" << std::endl;
             m_plblImportProgress->SetLabel(wxString::Format("Reading '%s' invalid file", sFileName.c_str()));
             m_plblImportProgress->Update();
         }
     }
     else
     {
-        wmLog::Get()->Log(wxString::Format("Import AoIP: Reading '%s' failed", sFileName.c_str()));
+        pml::Log::Get(pml::Log::LOG_ERROR) << "AoIP\tImport AoIP: Reading '" << sFileName << "' failed" << std::endl;
         m_plblImportProgress->SetLabel(wxString::Format("Reading '%s' failed", sFileName.c_str()));
         m_plblImportProgress->Update();
     }

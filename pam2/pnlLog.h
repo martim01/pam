@@ -10,7 +10,6 @@
 //*)
 
 class pnlLogControl;
-class wmLogEvent;
 
 class pnlLog: public wxPanel
 {
@@ -27,7 +26,7 @@ class pnlLog: public wxPanel
 	protected:
 
         wmListAdv* m_pLogList;
-        void OnLog(wmLogEvent& event);
+        void OnLog(wxCommandEvent& event);
         friend class pnlLogControl;
 
 		void Home();
@@ -45,6 +44,8 @@ class pnlLog: public wxPanel
         pnlLogControl* m_pControl;
 
         bool m_bScrollLock;
+
+        unsigned int m_nLogLevel;
 		DECLARE_EVENT_TABLE()
 };
 

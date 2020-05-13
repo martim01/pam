@@ -63,7 +63,7 @@ bool MyProcess::GetInput()
 
         m_jsStatus["error"] = std::string(tis.ReadLine().mb_str());
 
-        wxLogDebug(msg);
+
         m_bErrors = true;
     }
 

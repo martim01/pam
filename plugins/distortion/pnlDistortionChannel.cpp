@@ -1,7 +1,7 @@
 #include "pnlDistortionChannel.h"
 #include "fftAlgorithm.h"
 #include "distortionbuilder.h"
-#include "wmlogevent.h"
+#include "log.h"
 
 //(*InternalHeaders(pnlDistortionChannel)
 #include <wx/font.h>
@@ -113,7 +113,7 @@ void pnlDistortionChannel::RunTest()
        {
            if(m_pBuilder->IsLogActive())
            {
-               wmLog::Get()->Log(wxString::Format(wxT("Distortion Ch%d. Peaks=%d Distortion=%.2f%"), m_nChannel, fft.GetNumberOfPeaks(), dDistortion), wmLog::LOG_TEST_ALARM);
+                pml::Log::Get(pml::Log::LOG_INFO) << "Distortion\t" << "Channel: " << m_nChannel << " Peaks=" << fft.GetNumberOfPeaks() << " Distortion=" << dDistortion << std::endl;
            }
        }
     //    if(fft.GetNumberOfPeaks() > 1)

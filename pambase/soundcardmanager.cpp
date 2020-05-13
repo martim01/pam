@@ -2,7 +2,7 @@
 #include "audio.h"
 #include "timedbuffer.h"
 #include "portaudio.h"
-#include "wmlogevent.h"
+#include "log.h"
 #include <iostream>
 #include <wx/log.h>
 
@@ -75,7 +75,7 @@ bool SoundcardManager::Init(wxEvtHandler* pHandler, int nInputDevice, int nOutpu
         }
         return true;
         #else
-        wmLog::Get()->Log(wxT("Pi build currently does not support duplex streams"));
+        pml::Log::Get(pml::Log::LOG_ERROR) << "SoundcardManager\tPi build currently does not support duplex streams" << std::endl;
         return false;
         #endif
     }
@@ -288,7 +288,7 @@ void SoundcardManager::EnumerateDevices()
     int nDevices =  Pa_GetDeviceCount();
     if(nDevices < 0)
     {
-        wxLogDebug(wxString::FromAscii(Pa_GetErrorText(nDevices)));
+        pml::Log::Get(pml::Log::LOG_ERROR) << "SoundcardManager\tNo Soundcard devices found!" << std::endl;
 
     }
     else

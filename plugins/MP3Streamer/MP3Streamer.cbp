@@ -127,6 +127,7 @@
 					<Add library="BasicUsageEnvironment" />
 					<Add library="UsageEnvironment" />
 					<Add library="groupsock" />
+					<Add library="pml_log" />
 					<Add directory="$(#live_basicusage.LIB)" />
 					<Add directory="$(#live_group.LIB)" />
 					<Add directory="../../external/live/liveMedia" />
@@ -143,10 +144,10 @@
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-fPIC" />
 					<Add option="-g" />
 					<Add option="`wx-config --cxxflags`" />
 					<Add option="-fpermissive" />
-					<Add option="-fPIC" />
 					<Add option="-DDLL_EXPORTS" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
@@ -165,6 +166,7 @@
 					<Add library="BasicUsageEnvironment" />
 					<Add library="UsageEnvironment" />
 					<Add library="groupsock" />
+					<Add library="pml_logd" />
 					<Add directory="$(#live_basicusage.LIB)" />
 					<Add directory="$(#live_group.LIB)" />
 					<Add directory="$(#live_media.LIB)" />
@@ -178,6 +180,7 @@
 			<Add option="-DNO_OPENSSL" />
 			<Add directory="../../pambase" />
 			<Add directory="../../external/live/liveMedia/include" />
+			<Add directory="../../external/log/include" />
 		</Compiler>
 		<Linker>
 			<Add directory="../../lib" />

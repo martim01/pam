@@ -32,7 +32,7 @@ namespace pml
     class Browser;
 };
 
-namespace sapserver
+namespace pml
 {
     class SapServer;
 };
@@ -82,7 +82,7 @@ class PAMBASE_IMPEXPORT AoipSourceManager : public wxEvtHandler
         std::unique_ptr<pml::Browser> m_pBrowser;
         std::shared_ptr<wxZCPoster> m_pPoster;
 
-        std::unique_ptr<sapserver::SapServer> m_pSapWatcher;
+        std::unique_ptr<pml::SapServer> m_pSapWatcher;
 
         enum {LOCAL=0, ORGANISATION, GLOBAL};
 

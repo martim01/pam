@@ -79,9 +79,9 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O3" />
+					<Add option="-fPIC" />
 					<Add option="`wx-config --cxxflags`" />
 					<Add option="-fpermissive" />
-					<Add option="-fPIC" />
 					<Add option="-DDLL_EXPORTS" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
@@ -90,6 +90,7 @@
 					<Add option="`wx-config --libs`" />
 					<Add library="pambase" />
 					<Add library="pamfft" />
+					<Add library="pml_log" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="../../manifest_creator/bin/LinuxRelease/manifest_creator" />
@@ -102,10 +103,10 @@
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-fPIC" />
 					<Add option="-g" />
 					<Add option="`wx-config --cxxflags`" />
 					<Add option="-fpermissive" />
-					<Add option="-fPIC" />
 					<Add option="-DDLL_EXPORTS" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
@@ -116,6 +117,7 @@
 					<Add option="`wx-config --libs`" />
 					<Add library="pambased" />
 					<Add library="pamfftd" />
+					<Add library="pml_logd" />
 				</Linker>
 			</Target>
 		</Build>
@@ -125,6 +127,7 @@
 			<Add directory="$(#kiss.include)" />
 			<Add directory="$(#kiss.include)/tools" />
 			<Add directory="../../pamfft" />
+			<Add directory="../../external/log/include" />
 		</Compiler>
 		<Linker>
 			<Add directory="../../lib" />

@@ -5,7 +5,7 @@
 #include "soundfile.h"
 #include <wx/datetime.h>
 #include "timedbuffer.h"
-#include "wmlogevent.h"
+#include "log.h"
 #include "settings.h"
 #include "audioevent.h"
 #include "pa_linux_alsa.h"
@@ -45,9 +45,10 @@ bool Audio::Init(unsigned int nSampleRate)
     m_nSampleRate = nSampleRate;
     return (OpenStream(paCallback));
 }
+
 bool Audio::OpenStream(PaStreamCallback *streamCallback)
 {
-    wmLog::Get()->Log(wxString::Format(wxT("Attempt to open device %d"), m_nDevice));
+    pml::Log::Get() << "Audio\tAttempt to open device " << m_nDevice << std::endl;
 
 
     PaStreamParameters inputParameters;
@@ -59,7 +60,7 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
         if(pInfo->maxInputChannels < 2)
         {
             m_nChannelsIn = pInfo->maxInputChannels;
-            wmLog::Get()->Log(wxString::Format(wxT("Input channels changed to %d"), m_nChannelsIn));
+            pml::Log::Get() << "Audio\tInput channels changed to " << m_nChannelsIn << std::endl;
         }
         else
         {
@@ -69,7 +70,7 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
         if(pInfo->maxOutputChannels < 2)
         {
             m_nChannelsOut = pInfo->maxInputChannels;
-            wmLog::Get()->Log(wxString::Format(wxT("Output channels changed to %d"), m_nChannelsOut));
+            pml::Log::Get() << "Audio\tOutput channels changed to " << m_nChannelsOut << std::endl;
         }
         else
         {
@@ -105,15 +106,15 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
     switch(m_nType)
     {
         case INPUT:
-            wmLog::Get()->Log(wxString::Format(wxT("Attempt to open %d channel INPUT stream on device %d"), m_nChannelsIn, m_nDevice));
+            pml::Log::Get() << "Audio\tAttempt to open " << m_nChannelsIn << " channel INPUT stream on device " << m_nDevice << std::endl;
             err = Pa_OpenStream(&m_pStream, &inputParameters, 0, m_nSampleRate, 1024, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
             break;
         case OUTPUT:
-            wmLog::Get()->Log(wxString::Format(wxT("Attempt to open %d channel OUTPUT stream on device %d"), m_nChannelsOut, m_nDevice));
+            pml::Log::Get() << "Audio\tAttempt to open " << m_nChannelsOut << " channel OUTPUT stream on device " <<  m_nDevice << std::endl;
             err = Pa_OpenStream(&m_pStream, 0, &outputParameters, m_nSampleRate, 0, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
             break;
         case DUPLEX:
-            wmLog::Get()->Log(wxString::Format(wxT("Attempt to open %d in and %d out DUPLEX stream on device %d"), m_nChannelsIn, m_nChannelsOut,  m_nDevice));
+            pml::Log::Get() << "Audio\tAttempt to open " << m_nChannelsIn << " in and " << m_nChannelsOut << "out DUPLEX stream on device " << m_nDevice << std::endl;
             err = Pa_OpenStream(&m_pStream, &inputParameters, &outputParameters, m_nSampleRate, 2048, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
             break;
     }
@@ -126,18 +127,19 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
             #ifdef __WXGTK__
             PaAlsa_EnableRealtimeScheduling(m_pStream,1);
             #endif
-            wmLog::Get()->Log(wxString::Format(wxT("Device %d opened: Mode %d"), m_nDevice, m_nType));
+            pml::Log::Get() << "Audio\tDevice " << m_nDevice << " opened: Mode " << m_nType << std::endl;
             const PaStreamInfo* pStreamInfo = Pa_GetStreamInfo(m_pStream);
             if(pStreamInfo)
             {
-                wmLog::Get()->Log(wxString::Format(wxT("StreamInfo: Input Latency %.2f Output Latency %.2f Sample Rate %.2f"), pStreamInfo->inputLatency, pStreamInfo->outputLatency, pStreamInfo->sampleRate));
+                pml::Log::Get() << "Audio\tStreamInfo: Input Latency " << pStreamInfo->inputLatency << " Output Latency " << pStreamInfo->outputLatency << " Sample Rate " << pStreamInfo->sampleRate << std::endl;
             }
-
             return true;
         }
     }
     m_pStream = 0;
-    wmLog::Get()->Log(wxString::Format(wxT("Failed to open device %d %s %d %d, %d"), m_nDevice, wxString::FromAscii(Pa_GetErrorText(err)).c_str(), m_nSampleRate, m_nChannelsIn, m_nChannelsOut));
+    pml::Log::Get(pml::Log::LOG_ERROR) << "Audio\tFailed to open device " << m_nDevice << " " << Pa_GetErrorText(err)
+                                       << " with sample rate=" << m_nSampleRate << " input channels=" << m_nChannelsIn
+                                       << " and output channels=" << m_nChannelsOut << std::endl;
 
 
 
@@ -155,7 +157,7 @@ Audio::~Audio()
         err = Pa_CloseStream(m_pStream);
         if(err != paNoError)
         {
-            wmLog::Get()->Log(wxString::Format(wxT("Failed to stop PortAudio stream: %s"), wxString::FromAscii(Pa_GetErrorText(err)).c_str()));
+            pml::Log::Get(pml::Log::LOG_ERROR) << "Audio\tFailed to stop PortAudio stream: " << Pa_GetErrorText(err) << std::endl;
         }
     }
 
@@ -355,10 +357,7 @@ void Audio::AddSamples(const timedbuffer* pTimedBuffer)
             //m_sLog << wxString::Format(wxT("Added: Size now %d\n"), m_qBuffer.size());
         }
     }
-    else
-    {
-        wxLogDebug("AddSamples: Notplayig");
-    }
+
 }
 
 bool Audio::IsStreamOpen()

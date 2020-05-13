@@ -143,7 +143,7 @@ void wmList::SetSwipeSensitivity(unsigned long nPixels)
 
 void wmList::SetDefaultFactory()
 {
-//    wxLogDebug(wxT("wmList::SetDefaultFactory"));
+
     SetButtonFactory(new wmButtonFactory());
 }
 

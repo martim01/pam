@@ -15,7 +15,7 @@ class OnDemandStreamer;
 class OnDemandAES67MediaSubsession;
 class Generator;
 
-namespace sapserver
+namespace pml
 {
     class SapServer;
 }
@@ -92,6 +92,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         void Stream();
         void StreamMulticast();
         void StreamUnicast();
+        void StopStream();
 
         std::set<wxEvtHandler*> m_setHandlers;
         bool m_bSingleHandler;
@@ -117,8 +118,9 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         wxTimer m_timerSilence;
 
         bool m_bQueueToStream;
+        bool m_bStreamActive;
 
-        std::unique_ptr<sapserver::SapServer> m_pSapServer;
+        std::unique_ptr<pml::SapServer> m_pSapServer;
         std::unique_ptr<pml::Publisher> m_pPublisher;
 
 

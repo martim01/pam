@@ -32,7 +32,7 @@ void GlitsDetector::SetAudioData(const timedbuffer* pBuffer)
         {
             if(m_dLastLeft < 0.0 && pBuffer->GetBuffer()[i] > 0.0)
             {
-                wxLogDebug(wxT("LOCKED"));
+
                 m_bLocked = true;
                 m_nSampleCount = 0;
                 m_nSineCount = 0;
@@ -82,8 +82,8 @@ void GlitsDetector::WorkoutSignal()
     vector<pairTransition_t> vTransitionR(CreateTransition(m_vBuffer[1]));
     CountTransitions(vTransitionR, nSilenceCountR, nSilenceTimeR, nSignalCountR, nSignalTimeR);
 
-    wxLogDebug(wxT("LEFT : Silences = %d time = %d. Signals = %d time = %d"), nSilenceCountL, nSilenceTimeL, nSignalCountL, nSignalTimeL);
-    wxLogDebug(wxT("RIGHT: Silences = %d time = %d. Signals = %d time = %d"), nSilenceCountR, nSilenceTimeR, nSignalCountR, nSignalTimeR);
+
+
     //check if glits
     if(nSilenceCountL == 0 && nSilenceCountR == 0)
     {
@@ -121,7 +121,7 @@ void GlitsDetector::WorkoutSignal()
     {
         m_eType = GD_UNKNOWN;
     }
-    wxLogDebug(wxT("SIGNAL = %d"), m_eType);
+
 }
 
 std::vector<pairTransition_t> GlitsDetector::CreateTransition(const std::vector<bool>& vLevel)
@@ -176,13 +176,13 @@ void GlitsDetector::CountTransitions(const std::vector<pairTransition_t>& vTrans
         {
             nSilenceCount++;
             nSilenceTime += vTransition[i].first;
-            wxLogDebug(wxT("%d = Silence: %d"), i, vTransition[i].first);
+
         }
         else
         {
             nSignalCount++;
             nSignalTime += vTransition[i].first;
-            wxLogDebug(wxT("%d = Signal: %d"), i, vTransition[i].first);
+
         }
     }
 }
@@ -201,7 +201,7 @@ bool GlitsDetector::CheckLength(unsigned long nStart, unsigned long nEnd, double
     dTarget = dTarget*m_nSampleRate;
     dBand *= m_nSampleRate;
 
-    wxLogDebug(wxT("LENGTH: %.2f TARGET: %.2f"), dLength, dTarget);
+
     return (dLength >= dTarget-dBand && dLength <= dTarget+dBand);
 
 }

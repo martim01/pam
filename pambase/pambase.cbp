@@ -335,8 +335,6 @@
 		<Unit filename="wmlist.h" />
 		<Unit filename="wmlistadv.cpp" />
 		<Unit filename="wmlistadv.h" />
-		<Unit filename="wmlogevent.cpp" />
-		<Unit filename="wmlogevent.h" />
 		<Unit filename="wmslider.cpp" />
 		<Unit filename="wmslider.h" />
 		<Unit filename="wmslidewnd.cpp" />
@@ -345,8 +343,6 @@
 		<Unit filename="wmswipebutton.h" />
 		<Unit filename="wmswitcherpanel.cpp" />
 		<Unit filename="wmswitcherpanel.h" />
-		<Unit filename="wmtestlog.cpp" />
-		<Unit filename="wmtestlog.h" />
 		<Unit filename="wmtimeedit.cpp" />
 		<Unit filename="wmtimeedit.h" />
 		<Unit filename="wxptp.cpp" />

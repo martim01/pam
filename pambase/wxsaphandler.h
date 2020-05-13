@@ -4,11 +4,11 @@
 #include "saphandler.h"
 
 
-class wxSapHandler : public sapserver::Handler
+class wxSapHandler : public pml::Handler
 {
     public:
         wxSapHandler(wxEvtHandler* pHandler);
-        void SapMessage(const sapserver::sap& aMessage);
+        void SapMessage(const pml::sap& aMessage);
     private:
         wxEvtHandler* m_pHandler;
 

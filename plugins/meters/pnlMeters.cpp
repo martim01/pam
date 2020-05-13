@@ -391,7 +391,7 @@ void pnlMeters::OnInfoLeftUp(wxMouseEvent& event)
 void pnlMeters::SetScale(const wxString& sTitle, const ppmtype& aType)
 {
     m_dOvermod = aType.dOverMod;
-    wxLogDebug(wxT("Overmod = %.f"), m_dOvermod);
+
 
     for(size_t i = 0; i < m_vMeters.size(); i++)
     {

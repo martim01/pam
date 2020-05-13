@@ -14,13 +14,13 @@ RtpServerThread::RtpServerThread(wxEvtHandler* pHandler, const wxString& sRTSP, 
     m_nRTPPort(nRTPPort),
     m_bSSM(bSSM),
     m_ePacketTime(ePacketTime),
-	m_penv(0),
+	m_penv(nullptr),
     m_eventLoopWatchVariable(0),
-    m_pSource(0),
-    m_pSink(0),
-    m_pRtcpInstance(0),
-    m_pRtpGroupsock(0),
-    m_pRtspServer(0),
+    m_pSource(nullptr),
+    m_pSink(nullptr),
+    m_pRtcpInstance(nullptr),
+    m_pRtpGroupsock(nullptr),
+    m_pRtspServer(nullptr),
     m_bStreaming(false)
 {
 
@@ -32,37 +32,36 @@ void* RtpServerThread::Entry()
     SendingInterfaceAddr = our_inet_addr(std::string(m_sRTSP.mb_str()).c_str());
     TaskScheduler* scheduler = PamTaskScheduler::createNew();
     m_penv = PamUsageEnvironment::createNew(*scheduler, m_pHandler);
-    if(CreateStream())
+
+    if(!CreateStream())
     {
         m_mutex.Unlock();
-        while(m_eventLoopWatchVariable == 0)
-        {
-            m_penv->taskScheduler().doEventLoop(&m_eventLoopWatchVariable);
-        }
-        CloseStream();
+        SendFinish();
+        return NULL;
     }
-    else
+
+    m_mutex.Unlock();
+
+    while(m_eventLoopWatchVariable == 0)
     {
-        m_mutex.Unlock();
+        m_penv->taskScheduler().doEventLoop(&m_eventLoopWatchVariable);
     }
 
-    wxLogDebug(wxT("RtpServerThread::Entry() Finished"));
-
-    wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_ODS_FINISHED);
-    wxQueueEvent(m_pHandler, pEvent);
+    CloseStream();
+    SendFinish();
     return NULL;
 }
 
 
+void RtpServerThread::SendFinish()
+{
+    wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_ODS_FINISHED);
+    wxQueueEvent(m_pHandler, pEvent);
+}
+
 
 bool RtpServerThread::CreateStream()
 {
-    wxLogDebug(wxT("RtpServerThread::CreateStream()"));
-
-
-    // Open the file as a 'WAV' file:
-    m_pSource = LiveAudioSource::createNew(m_pHandler, m_mutex, *m_penv, 2, m_ePacketTime);
-
     char const* mimeType = "L24";
     unsigned char payloadFormatCode = 96; // by default, unless a static RTP payload type can be used
 
@@ -78,6 +77,7 @@ bool RtpServerThread::CreateStream()
     }
     else
     {
+        m_bStreaming = false;
         return false;
     }
 
@@ -91,6 +91,8 @@ bool RtpServerThread::CreateStream()
         m_pRtpGroupsock->multicastSendOnly(); // we're a SSM source
     }
 
+    m_pSource = LiveAudioSource::createNew(m_pHandler, m_mutex, *m_penv, 2, m_ePacketTime);
+
     // Create an appropriate audio RTP sink (using "SimpleRTPSink") from the RTP 'groupsock':
     m_pSink = SimpleRTPSink::createNew(*m_penv, m_pRtpGroupsock, payloadFormatCode, m_pSource->samplingFrequency(), "audio", mimeType, m_pSource->numChannels());
 
@@ -102,6 +104,14 @@ bool RtpServerThread::CreateStream()
     if (m_pRtspServer == NULL)
     {
         *m_penv << "Failed to create RTSP server: " << m_penv->getResultMsg() << "\n";
+        Medium::close(m_pSink);
+        Medium::close(m_pSource);
+
+        m_pSource= nullptr;
+        m_pSink = nullptr;
+        m_bStreaming = false;
+        delete m_pRtpGroupsock;
+        m_pRtpGroupsock = nullptr;
         return false;
     }
     ServerMediaSession* sms = ServerMediaSession::createNew(*m_penv, "PAM_AES67", "PAM_AES67", "PAM_AES67", True/*SSM*/);
@@ -117,13 +127,11 @@ bool RtpServerThread::CreateStream()
     *m_penv << "Beginning streaming...\n";
     *m_penv << m_pRtspServer->rtspURL(sms) << "\n";
 
-    wxLogDebug(m_pRtspServer->rtspURL(sms));
 
     m_pSink->startPlaying(*m_pSource, afterPlaying, reinterpret_cast<void*>(this));
 
-    wxLogDebug(wxT("RtpServerThread::CreateStream() Done"));
-    m_bStreaming = true;
 
+    m_bStreaming = true;
     Settings::Get().Write(wxT("AoIP"), wxT("Epoch"), pSmss->GetEpochTimestamp());
 
     return true;
@@ -156,7 +164,7 @@ void RtpServerThread::CloseStream()
 
 void RtpServerThread::StopStream()
 {
-    wxLogDebug(wxT("RTPServerThread::StopStream"));
+
     m_eventLoopWatchVariable = 1;
 }
 
@@ -164,8 +172,7 @@ void RtpServerThread::StopStream()
 
 void RtpServerThread::AddSamples(const timedbuffer* pTimedBuffer)
 {
-    wxMutexLocker lock(m_mutex);
-    if(m_pSource && m_bStreaming)
+    if(m_bStreaming)
     {
         m_pSource->AddSamples(pTimedBuffer);
     }
@@ -173,8 +180,7 @@ void RtpServerThread::AddSamples(const timedbuffer* pTimedBuffer)
 
 void RtpServerThread::FlushQueue()
 {
-    wxMutexLocker lock(m_mutex);
-    if(m_pSource && m_bStreaming)
+    if(m_bStreaming)
     {
         m_pSource->FlushQueue();
     }

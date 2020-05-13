@@ -85,6 +85,8 @@ void* OnDemandStreamer::Entry()
         m_pEnv->taskScheduler().doEventLoop(&m_eventLoopWatchVariable);
     }
 
+    Medium::close(rtspServer);
+
     SendFinish();
     return NULL;
 }
