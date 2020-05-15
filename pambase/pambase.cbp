@@ -117,6 +117,7 @@
 					<Add option="-D__WXGNU__" />
 					<Add option="-D__GNU__" />
 					<Add option="-DPTPMONKEY" />
+					<Add option="-DwxDEBUG_LEVEL=0" />
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />

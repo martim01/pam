@@ -17,7 +17,6 @@ m_pLissajou(0),
 m_ppnlRouting(0)
 {
 
-
     RegisterForSettingsUpdates(wxT("Scale"), this);
     RegisterForSettingsUpdates(wxT("Rotate"), this);
     RegisterForSettingsUpdates(wxT("Levels"), this);
@@ -29,6 +28,7 @@ m_ppnlRouting(0)
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&LissajouBuilder::OnSettingChanged);
 
+    wxLogDebug("Lissajou Test");
 
 
 }

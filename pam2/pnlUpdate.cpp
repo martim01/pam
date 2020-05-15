@@ -328,7 +328,7 @@ void pnlUpdate::OnbtnCheckClick(wxCommandEvent& event)
         #ifdef __WXMSW__
             wxString sUpdate = wxT("pamupdatemanager");
         #else
-        wxString Update = wxT("sudo pamupdatemanager");
+        wxString sUpdate = wxT("sudo pamupdatemanager");
         #endif // __WXMSW__
     #endif
 

@@ -85,6 +85,7 @@
 					<Add option="-DDLL_EXPORTS" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
+					<Add option="-DwxDEBUG_LEVEL=0" />
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
