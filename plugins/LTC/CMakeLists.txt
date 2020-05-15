@@ -19,7 +19,7 @@ add_library(LTC MODULE ${SOURCES} ${LTC_SOURCES} )
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(LTC PRIVATE ${flags})
-target_compile_definitions(LTC PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __WXGNU__ _test_ _MSL_STDINT_H)
+target_compile_definitions(LTC PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __WXGNU__ _test_ _MSL_STDINT_H wxDEBUG_LEVEL=0)
 
 #find external libraries
 find_package(wxWidgets REQUIRED)

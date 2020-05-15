@@ -9,7 +9,6 @@
 #include "pnlwindow.h"
 #include "pnloverlap.h"
 #include "pnlbins.h"
-#include "pnloptions.h"
 
 
 using namespace std;
