@@ -1,12 +1,16 @@
 [submodule "external/ptpmonkey"]
 	path = external/ptpmonkey
 	url = https://github.com/martim01/ptpmonkey
+	branch=master
 [submodule "external/log"]
 	path = external/log
 	url = https://github.com/martim01/log
+	branch=master
 [submodule "external/dnssd"]
 	path = external/dnssd
 	url = https://github.com/martim01/dnssd
+	branch=master
 [submodule "external/sapserver"]
 	path = external/sapserver
 	url = https://github.com/martim01/sapserver
+	branch=master
