@@ -90,6 +90,7 @@
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
 					<Add option="-DwxDEBUG_LEVEL=0" />
+					<Add option="-DNDEBUG" />
 					<Add directory="../../external/libltc" />
 				</Compiler>
 				<Linker>

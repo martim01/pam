@@ -17,8 +17,7 @@ void wxLogOutput::Flush(int nLogLevel, const std::stringstream&  logStream)
         wxQueueEvent(m_pHandler, pEvent);
     }
 
-    #ifdef __WXDEBUG__
-
+    #ifndef NDEBUG
         std::cout << "LOGOUTPUT:     " << logStream.str() << std::endl;
     #endif // __WXDEBUG__
 

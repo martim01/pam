@@ -116,8 +116,8 @@
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
 					<Add option="-D__GNU__" />
-					<Add option="-DPTPMONKEY" />
 					<Add option="-DwxDEBUG_LEVEL=0" />
+					<Add option="-DPTPMONKEY" />
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
@@ -128,10 +128,10 @@
 					<Add library="BasicUsageEnvironment" />
 					<Add library="UsageEnvironment" />
 					<Add library="groupsock" />
-					<Add library="/usr/local/lib/pam2/libptpmonkey.so" />
 					<Add library="pml_log" />
 					<Add library="pml_dnssd" />
 					<Add library="sapserver" />
+					<Add library="ptpmonkey" />
 					<Add directory="/usr/lib/arm-linux-gnueabihf/" />
 				</Linker>
 				<ExtraCommands>
@@ -139,6 +139,7 @@
 					<Add after="cp ../external/log/lib/* ../lib" />
 					<Add after="cp ../external/dnssd/lib/* ../lib" />
 					<Add after="cp ../external/sapserver/lib/* ../lib" />
+					<Add after="cp ../external/ptpmonkey/bin/* ../lib" />
 					<Mode after="always" />
 				</ExtraCommands>
 			</Target>
@@ -207,6 +208,7 @@
 			<Add directory="../external/log/lib" />
 			<Add directory="../external/dnssd/lib" />
 			<Add directory="../external/sapserver/lib" />
+			<Add directory="../external/ptpmonkey/bin" />
 		</Linker>
 		<Unit filename="AES67ServerMediaSubsession.cpp" />
 		<Unit filename="AES67ServerMediaSubsession.h" />

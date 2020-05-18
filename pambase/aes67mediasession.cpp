@@ -113,7 +113,9 @@ Boolean Aes67MediaSession::parseSDPAttribute_RefClk(char const* sdpLine)
                 }
             }
         }
+        return True;
     }
+    return False;
 }
 
 

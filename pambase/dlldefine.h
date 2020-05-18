@@ -1,6 +1,6 @@
 #pragma once
 #define WINVER 0x0600
-#include <wx/string.h>
+
 
 #ifdef __WXMSW__
 #ifdef CREATING_DLL

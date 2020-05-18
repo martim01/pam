@@ -26,7 +26,7 @@ IMPLEMENT_APP(pam2App);
 bool pam2App::OnInit()
 {
     m_bReset = false;
-    #ifndef __WXDEBUG__
+    #ifdef NDEGBU
     wxLog::SetLogLevel(0);
     #endif
     #ifdef __WXGNU__

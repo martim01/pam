@@ -19,17 +19,18 @@ file(GLOB SOURCES "*.cpp")
 
 add_library(fftphase MODULE ${SOURCES})
 
-target_compile_definitions(fftphase PUBLIC DLL_EXPORTS wxUSE_UNICODE _monitor_ _MSL_STDINT_H wxDEBUG_LEVEL=0)
+target_compile_definitions(fftphase PUBLIC DLL_EXPORTS wxUSE_UNICODE _monitor_ _MSL_STDINT_H)
 
-list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
+list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3" "-std=c++14")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
 	list(APPEND flags "-O3")
-	target_compile_definitions(fft PUBLIC NDEBUG)
+	target_compile_definitions(fftphase PUBLIC NDEBUG wxDEBUG_LEVEL=0)
+	set_target_properties(fftphase PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/monitor")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	list(APPEND flags "-Og")
-	target_compile_options(fft PRIVATE ${flags})
-	target_compile_definitions(fft PUBLIC __WXDEBUG__)
+	target_compile_definitions(fftphase PUBLIC __WXDEBUG__)
+	set_target_properties(fftphase PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/monitor/debug")
 endif()
 
 target_compile_options(fftphase PRIVATE ${flags})
@@ -49,7 +50,7 @@ target_link_libraries(fftphase ${wxWidgets_LIBRARIES})
 target_link_libraries(fftphase pambase)
 target_link_libraries(fftphase pamfft)
 
-set_target_properties(fftphase PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/monitor")
+
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")

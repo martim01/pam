@@ -89,6 +89,7 @@
 					<Add option="-D__WXGNU__" />
 					<Add option="-D_app_" />
 					<Add option="-DwxDEBUG_LEVEL=0" />
+					<Add option="-DNDEBUG" />
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />

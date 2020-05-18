@@ -24,6 +24,7 @@ wxDEFINE_EVENT(wxEVT_CLOCK_MSG_FOLLOWUP,wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CLOCK_MSG_DELAY_REQUEST,wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CLOCK_MSG_DELAY_RESPONSE,wxCommandEvent);
 
+
 using namespace ptpmonkey;
 
 void wxPtpEventHandler::AddHandler(wxEvtHandler* pHandler)

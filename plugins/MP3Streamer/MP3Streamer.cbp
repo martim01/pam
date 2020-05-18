@@ -115,6 +115,7 @@
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
 					<Add option="-DwxDEBUG_LEVEL=0" />
+					<Add option="-DNDEBUG" />
 					<Add directory="$(#live_basicusage.INCLUDE)" />
 					<Add directory="$(#live_group.INCLUDE)" />
 					<Add directory="$(#live_media.INCLUDE)" />
