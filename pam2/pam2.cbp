@@ -74,6 +74,8 @@
 					<Add option="-D__WINDOWS__" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WIN32__" />
+					<Add option="-DNDEBUG" />
+					<Add option="-DwxDEBUG_LEVEL=0" />
 					<Add directory="$(#wx3_0.include)" />
 					<Add directory="$(#wx3_0.include)/mswu" />
 					<Add directory="$(#portaudio.include)" />
@@ -94,6 +96,7 @@
 					<Add library="libcurl" />
 					<Add library="Ws2_32" />
 					<Add library="iphlpapi" />
+					<Add library="pml_log" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#portaudio.lib)" />
 					<Add directory="$(#curl.lib)" />

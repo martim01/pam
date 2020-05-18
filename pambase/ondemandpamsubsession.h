@@ -39,7 +39,6 @@ class PAMBASE_IMPEXPORT OnDemandPamSubsession: public OnDemandServerMediaSubsess
         long m_nConnections;
         std::string m_sSDP;
     private:
-        bool m_bPam;
 };
 
 

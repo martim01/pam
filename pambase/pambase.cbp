@@ -23,6 +23,8 @@
 					<Add option="-DWXUSINGDLL" />
 					<Add option="-DUNICODE" />
 					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-DNDEBUG" />
+					<Add option="-DwxDEBUG_LEVEL=0" />
 					<Add directory="$(#wx3_0.include)" />
 					<Add directory="$(#wx3_0.include)/mswu" />
 					<Add directory="$(#portaudio.include)" />

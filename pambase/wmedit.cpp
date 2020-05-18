@@ -45,7 +45,10 @@ wmEdit::wmEdit() : pmControl(),
     m_nInsert(0),
     m_bInsert(true),
     m_nValidation(0),
-    m_nMaxCharacters(-1)
+    m_nMaxCharacters(-1),
+	m_bExclude(false),
+	m_bCapitalize(false),
+	m_nBorderStyle{0,0}
 {
 }
 
@@ -65,7 +68,10 @@ wmEdit::wmEdit(wxWindow * pParent, wxWindowID id, const wxString& value, const w
     m_nInsert(0),
     m_bInsert(true),
     m_nValidation(0),
-    m_nMaxCharacters(-1)
+    m_nMaxCharacters(-1),
+	m_bExclude(false),
+	m_bCapitalize(false),
+	m_nBorderStyle{0,0}
 {
 
     Create(pParent, id, value, pos, size, style);

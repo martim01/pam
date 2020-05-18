@@ -13,8 +13,7 @@ class PAMBASE_IMPEXPORT advElement : public wxEvtHandler
         {
             m_itDown = m_mHitRects.end();
             m_itSelected = m_mHitRects.end();
-            CreateHitRects();
-        }
+		}
 
         virtual ~advElement(){}
 

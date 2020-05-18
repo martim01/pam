@@ -343,7 +343,7 @@ void dlgSequence::OnbtnSequenceRenameClick(wxCommandEvent& event)
         m_pSequenceNode->AddAttribute(wxT("name"), aDlg.m_pedtName->GetValue());
 
         m_pSequenceNode->DeleteAttribute(wxT("channels"));
-        m_pSequenceNode->AddAttribute(wxT("channels"), wxString::Format(wxT("%d"), aDlg.m_nChannels));
+        m_pSequenceNode->AddAttribute(wxT("channels"), wxString::Format(wxT("%lu"), aDlg.m_nChannels));
 
         m_plstSequences->SetButtonText(m_nSequenceButton, wxString::Format(wxT("%s [%s]"), aDlg.m_pedtName->GetValue().c_str(), STR_CHANNELS[aDlg.m_nChannels].c_str()));
         SaveDoc();
@@ -364,7 +364,7 @@ void dlgSequence::OnbtnSequencyCopyClick(wxCommandEvent& event)
         pNode->AddAttribute(wxT("name"), aDlg.m_pedtName->GetValue());
 
         pNode->DeleteAttribute(wxT("channels"));
-        pNode->AddAttribute(wxT("channels"), wxString::Format(wxT("%d"), aDlg.m_nChannels));
+        pNode->AddAttribute(wxT("channels"), wxString::Format(wxT("%lu"), aDlg.m_nChannels));
 
         m_pDoc->GetRoot()->AddChild(pNode);
         SaveDoc();
@@ -398,7 +398,7 @@ void dlgSequence::OnbtnSequenceCreateClick(wxCommandEvent& event)
     {
         wxXmlNode* pNode = new wxXmlNode(wxXML_ELEMENT_NODE, wxT("sequence"));
         pNode->AddAttribute(wxT("name"), aDlg.m_pedtName->GetValue());
-        pNode->AddAttribute(wxT("channels"), wxString::Format(wxT("%d"), aDlg.m_nChannels));
+        pNode->AddAttribute(wxT("channels"), wxString::Format(wxT("%lu"), aDlg.m_nChannels));
         m_pDoc->GetRoot()->AddChild(pNode);
         SaveDoc();
 

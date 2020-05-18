@@ -214,7 +214,9 @@ Boolean Smpte2110MediaSession::parseSDPAttribute_MaxPTime(char const* sdpLine)
 }
 
 
-Smpte2110MediaSession::Smpte2110MediaSession(UsageEnvironment& env) : MediaSession(env)
+Smpte2110MediaSession::Smpte2110MediaSession(UsageEnvironment& env) : MediaSession(env),
+ m_dPackageMs(0),
+ m_dMaxPackageMs(0)
 {
 
 }
@@ -228,7 +230,25 @@ MediaSubsession* Smpte2110MediaSession::createNewMediaSubsession()
 }
 
 
-Smpte2110MediaSubsession::Smpte2110MediaSubsession(MediaSession& parent) : MediaSubsession(parent), m_nSyncTime(0)
+Smpte2110MediaSubsession::Smpte2110MediaSubsession(MediaSession& parent) : MediaSubsession(parent), 
+ m_nSyncTime(0),
+ m_nFirstTimestamp(0),
+ m_dClockDeviation(0),
+ m_dPackageMs(0),
+ m_dMaxPackageMs(0),
+ m_nSampling(0),
+ m_nDepth(0),
+ m_bFloating(false),
+ m_nWidth(0),
+ m_nHeight(0),
+ m_nColorimetry(0),
+ m_nPackingMode(0),
+ m_bInterlaced(false),
+ m_bSegmented(false),
+ m_nTCS(0),
+ m_nRange(0),
+ m_bMaxUdp(false)
+
 {
 
 }

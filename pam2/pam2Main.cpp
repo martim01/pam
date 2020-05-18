@@ -263,7 +263,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Connect(wxID_ANY,wxEVT_PLAYBACK_CHANNELS,(wxObjectEventFunction)&pam2Dialog::OnPlaybackChannels);
 
 
-    Settings::Get().Write(wxT("Version"), wxT("pam2"), wxString::Format(wxT("%d.%d.%d.%d"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
+    Settings::Get().Write(wxT("Version"), wxT("pam2"), wxString::Format(wxT("%ld.%ld.%ld.%ld"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
     Settings::Get().Write(wxT("Input"), wxT("Reset"), false);
 
     m_pbtnInput->SetLabel(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")));
@@ -329,7 +329,7 @@ void pam2Dialog::LoadMonitorPanels()
     Settings::Get().RemoveSection("Monitor Plugins");
     for(unsigned long i =0; i < vPanels.size(); i++)
     {
-        Settings::Get().Write("Monitor Plugins", wxString::Format("%04u", i), vPanels[i]);
+        Settings::Get().Write("Monitor Plugins", wxString::Format("%04lu", i), vPanels[i]);
     }
 
 

@@ -135,6 +135,18 @@ void wmButton::CreateRects()
 }
 
 wmButton::wmButton( wxWindow* parent, wxWindowID id, const wxBitmap& bitmap, const wxPoint& pos, const wxSize& size, long style, const wxValidator& validator, const wxString& name) : pmControl()
+, m_nStyle(0)
+	, m_nHoldCount(0)
+	, m_nHoldTrigger(0)
+	, m_bFlashState(false)
+	, m_nBorderState(0)
+	, m_nState(0)
+	, m_bChecked(false)
+	, m_nBitmapAlign(0)
+	, m_bToggleLook(false)
+	, m_uiToggleLeft(wxRect(0,0,0,0))
+	, m_uiToggleRight(wxRect(0,0,0,0))
+	, m_dToggleWidth(0.0)
 {
     Create(parent, id, bitmap, pos, size, style, validator, name);
 }

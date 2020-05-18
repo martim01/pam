@@ -196,7 +196,9 @@ Boolean Aes67MediaSession::parseSDPAttribute_MaxPTime(char const* sdpLine)
 }
 
 
-Aes67MediaSession::Aes67MediaSession(UsageEnvironment& env) : MediaSession(env)
+Aes67MediaSession::Aes67MediaSession(UsageEnvironment& env) : MediaSession(env), 
+ m_dPackageMs(0),
+ m_dMaxPackageMs(0)
 {
 
 }
@@ -210,7 +212,12 @@ MediaSubsession* Aes67MediaSession::createNewMediaSubsession()
 }
 
 
-Aes67MediaSubsession::Aes67MediaSubsession(MediaSession& parent) : MediaSubsession(parent)
+Aes67MediaSubsession::Aes67MediaSubsession(MediaSession& parent) : MediaSubsession(parent),
+ m_nSyncTime(0),
+ m_nFirstTimestamp(0),
+ m_dClockDeviation(0),
+ m_dPackageMs(0),
+ m_dMaxPackageMs(0)
 {
 
 }

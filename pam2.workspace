@@ -5,7 +5,6 @@
 		<Project filename="external/dnssd/dnssd.cbp" />
 		<Project filename="external/sapserver/sapserver.cbp" />
 		<Project filename="manifest_creator/manifest_creator.cbp" />
-		<Project filename="external/ptpmonkey/ptpmonkey.cbp" />
 		<Project filename="pambase/pambase.cbp" />
 		<Project filename="pamfft/pamfft.cbp" />
 		<Project filename="pamlevel/pamlevel.cbp" />
@@ -69,7 +68,6 @@
 		</Project>
 		<Project filename="pam2/pam2.cbp">
 			<Depends filename="pambase/pambase.cbp" />
-			<Depends filename="plugins/MP3Streamer/MP3Streamer.cbp" />
 		</Project>
 		<Project filename="plugins/battery/battery.cbp" />
 	</Workspace>

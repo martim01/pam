@@ -280,7 +280,7 @@ void Settings::CreatePaths()
 
 wxString Settings::GetLibraryVersion() const
 {
-    return wxString::Format(wxT("%d.%d.%d.%d"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION);
+    return wxString::Format(wxT("%ld.%ld.%ld.%ld"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION);
 }
 
 

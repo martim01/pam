@@ -294,7 +294,7 @@ void DNSSD_API wxServiceBrowser::Resolve( DNSServiceRef sdRef, DNSServiceFlags f
                         sText << wxString::FromAscii(txtRecord[pos]);
                         ++pos;
                     }
-					wxLogDebug(wxT("Pos = %d, Length = %d, %s"), pos, length, sText.c_str());
+					wxLogDebug(wxT("Pos = %zu, Length = %d, %s"), pos, length, sText.c_str());
 					itInstance->second->mTxt[sText.BeforeFirst(wxT('='))] = sText.AfterFirst(wxT('='));
                 }
             }

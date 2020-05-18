@@ -43,6 +43,7 @@
 					<Add library="libUsageEnvironment.a" />
 					<Add library="libgroupsock.a" />
 					<Add library="Ws2_32" />
+					<Add library="pml_log" />
 					<Add directory="$(#wx.lib)" />
 					<Add directory="$(#lame.LIB)" />
 					<Add directory="$(#live_basicusage.LIB)" />
@@ -107,36 +108,56 @@
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-O3" />
-					<Add option="-fPIC" />
-					<Add option="`wx-config --cxxflags`" />
-					<Add option="-fpermissive" />
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-DWIN32" />
+					<Add option="-D_USRDLL" />
 					<Add option="-DDLL_EXPORTS" />
+					<Add option="-D__WXMSW__" />
+					<Add option="-DWXUSINGDLL" />
+					<Add option="-DUNICODE" />
 					<Add option="-DwxUSE_UNICODE" />
-					<Add option="-D__WXGNU__" />
-					<Add option="-DwxDEBUG_LEVEL=0" />
-					<Add option="-DNDEBUG" />
+					<Add directory="$(#wx.include)" />
+					<Add directory="$(#wx.include)/mswu" />
+					<Add directory="$(#portaudio.include)" />
+					<Add directory="$(#lame.INCLUDE)" />
 					<Add directory="$(#live_basicusage.INCLUDE)" />
 					<Add directory="$(#live_group.INCLUDE)" />
 					<Add directory="$(#live_media.INCLUDE)" />
 					<Add directory="$(#live_usage.INCLUDE)" />
 				</Compiler>
+				<ResourceCompiler>
+					<Add directory="$(#wx.include)/mswu" />
+				</ResourceCompiler>
 				<Linker>
-					<Add option="`wx-config --libs`" />
+					<Add option="-Wl,--enable-auto-import,-Map=MP3Streamer.map" />
+					<Add library="wxmsw30u_gcc_custom" />
 					<Add library="pambase" />
-					<Add library="mp3lame" />
-					<Add library="liveMedia" />
-					<Add library="BasicUsageEnvironment" />
-					<Add library="UsageEnvironment" />
-					<Add library="groupsock" />
+					<Add library="libmp3lame.a" />
+					<Add library="liblivemedia.a" />
+					<Add library="libBasicUsageEnvironment.a" />
+					<Add library="libUsageEnvironment.a" />
+					<Add library="libgroupsock.a" />
+					<Add library="Ws2_32" />
 					<Add library="pml_log" />
+					<Add library="wxmsw30u_gcc_custom" />
+					<Add library="pambase" />
+					<Add library="libmp3lame.a" />
+					<Add library="liblivemedia.a" />
+					<Add library="libBasicUsageEnvironment.a" />
+					<Add library="libUsageEnvironment.a" />
+					<Add library="libgroupsock.a" />
+					<Add library="Ws2_32" />
+					<Add library="pml_log" />
+					<Add directory="$(#wx.lib)" />
+					<Add directory="$(#lame.LIB)" />
 					<Add directory="$(#live_basicusage.LIB)" />
 					<Add directory="$(#live_group.LIB)" />
-					<Add directory="../../external/live/liveMedia" />
+					<Add directory="$(#live_media.LIB)" />
 					<Add directory="$(#live_usage.LIB)" />
 				</Linker>
 				<ExtraCommands>
-					<Add after="../../manifest_creator/bin/LinuxRelease/manifest_creator" />
+					<Add after="C:\developer\matt\pam2\manifest_creator\bin\Release\manifest_creator.exe" />
 				</ExtraCommands>
 			</Target>
 			<Target title="Linux Debug">

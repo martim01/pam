@@ -82,7 +82,7 @@ class PAMBASE_IMPEXPORT wmLineWnd : public pmControl
         *   @param style the button style: wmButton::STYLE_NORMAL, wmButton::STYLE_SELECT, wmButton::STYLE_REPEAT, wmButton::STYLE_HOLD
         *   @param name not used
         **/
-        virtual bool Create(wxWindow *parent,
+        bool Create(wxWindow *parent,
                     wxWindowID id,
                     const wxPoint& pos = wxDefaultPosition,
                     const wxSize& size = wxDefaultSize,

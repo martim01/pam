@@ -252,7 +252,7 @@ wxString NetworkControl::SetupNetworking(const wxString& sInterface, const wxStr
                 {
                     if(configFile.GetLine(i).Left(STR_ADDRESS.length()) == STR_ADDRESS)
                     {
-                        configFile.GetLine(i) = wxString::Format(wxT("%s%s/%d"), STR_ADDRESS.c_str(), sAddress.c_str(), nMask);
+                        configFile.GetLine(i) = wxString::Format(wxT("%s%s/%lu"), STR_ADDRESS.c_str(), sAddress.c_str(), nMask);
                     }
                     else if(configFile.GetLine(i).Left(STR_GATEWAY.length()) == STR_GATEWAY )
                     {
@@ -264,7 +264,7 @@ wxString NetworkControl::SetupNetworking(const wxString& sInterface, const wxStr
             if(bReplace == false)
             {
                 configFile.AddLine(sInterfaceLine);
-                configFile.AddLine(wxString::Format(wxT("%s%s/%d"), STR_ADDRESS.c_str(), sAddress.c_str(), nMask));
+                configFile.AddLine(wxString::Format(wxT("%s%s/%lu"), STR_ADDRESS.c_str(), sAddress.c_str(), nMask));
 
                 configFile.AddLine(STR_GATEWAY+sGateway);
             }

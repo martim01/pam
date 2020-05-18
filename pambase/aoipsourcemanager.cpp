@@ -340,7 +340,7 @@ void AoipSourceManager::OnSap(wxCommandEvent& event)
                 AddSource(sName, wxString::Format(wxT("sap:%s"), sIpAddress.c_str()), sSDP);
 
                 wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_ASM_DISCOVERY);
-                pEvent->SetString(wxString::Format(wxT("[SAP] %s = s"), sName.c_str(), sIpAddress.c_str()));
+                pEvent->SetString(wxString::Format("[SAP] %s = %s", sName.c_str(), sIpAddress.c_str()));
                 pEvent->SetInt(1);
                 wxQueueEvent(m_pDiscoveryHandler, pEvent);
             }
@@ -348,7 +348,7 @@ void AoipSourceManager::OnSap(wxCommandEvent& event)
         else if(m_setDiscover.erase(std::make_pair(sName, sIpAddress)) > 0)
         {
             wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_ASM_DISCOVERY);
-            pEvent->SetString(wxString::Format(wxT("[SAP] %s = REMOVED"), sName.c_str(), sIpAddress.c_str()));
+            pEvent->SetString(wxString::Format(wxT("[SAP] %s:%s = REMOVED"), sName.c_str(), sIpAddress.c_str()));
             pEvent->SetInt(-1);
             wxQueueEvent(m_pDiscoveryHandler, pEvent);
 
