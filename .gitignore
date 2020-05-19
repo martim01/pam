@@ -44,3 +44,4 @@
 /plugins/fftphase/*.save-failed
 /plugins/battery/build
 /plugins/fftphase/build
+pam2/bin/*

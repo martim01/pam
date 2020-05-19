@@ -1,6 +1,7 @@
 #include "wmslider.h"
 #include <wx/dcbuffer.h>
 #include <wx/log.h>
+#include <iostream>
 
 using namespace std;
 
@@ -191,10 +192,12 @@ bool wmSlider::SetSliderColour(const wxColour &colour)
 {
     m_uiSlider.SetBackgroundColour(colour);
     Refresh();
+    return true;
 }
 
 bool wmSlider::SetButtonColour(const wxColour &colour)
 {
     m_uiButton.SetBackgroundColour(colour);
     Refresh();
+    return true;
 }

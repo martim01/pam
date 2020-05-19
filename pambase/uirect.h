@@ -12,6 +12,7 @@
 class PAMBASE_IMPEXPORT uiRect
 {
     public:
+
         /** @brief Constructor
         *   @param rect the enclosing rectangle of the uiRect
         *   @param nGradient the direction of any background shading

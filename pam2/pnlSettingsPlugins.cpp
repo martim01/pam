@@ -437,7 +437,7 @@ void pnlSettingsPlugins::ShowGeneratorPlugins()
 
     wxFileName fnDir(sLibDir);
     fnDir.MakeAbsolute();
-    pml::Log::Get(pml::Log::LOG_INFO) << "Plugins\Generator Lib Directory: " << fnDir.GetFullPath() << std::endl;
+    pml::Log::Get(pml::Log::LOG_INFO) << "Plugins\\Generator Lib Directory: " << fnDir.GetFullPath() << std::endl;
     wxArrayString asLibs;
     #ifdef __WXMSW__
         wxDir::GetAllFiles(fnDir.GetFullPath(), &asLibs, wxT("*.dll"));
@@ -452,7 +452,7 @@ void pnlSettingsPlugins::ShowGeneratorPlugins()
         #ifdef __WXGNU__
             sLibToLoad = sLibToLoad.Mid(3);
         #endif // __WXGNU__
-        pml::Log::Get(pml::Log::LOG_INFO) << "Plugins\Generator Lib: " << sLibToLoad << std::endl;
+        pml::Log::Get(pml::Log::LOG_INFO) << "Plugins\\Generator Lib: " << sLibToLoad << std::endl;
         plugin aPlugin = GeneratorPluginFactory::Get()->GetPluginDetails(fnDir.GetFullPath(), sLibToLoad);
         if(aPlugin.sName != wxEmptyString)
         {

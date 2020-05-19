@@ -69,6 +69,7 @@ pnlLevels::pnlLevels(wxWindow* parent,LevelsBuilder* pBuilder, wxWindowID id,con
 
     std::cout << "IniLevelsAmp" << std::endl;
     m_pAmplitude->SetSliderColour(wxColour(128,128,128));
+    std::cout << "IniLevelsAmp:bt" << std::endl;
     m_pAmplitude->SetButtonColour(wxColour(100,255,100));
 
     std::cout << "IniLevelsRange" << std::endl;
