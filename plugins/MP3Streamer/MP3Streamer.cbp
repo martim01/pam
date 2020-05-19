@@ -110,13 +110,13 @@
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
-					<Add option="-DWIN32" />
 					<Add option="-D_USRDLL" />
 					<Add option="-DDLL_EXPORTS" />
-					<Add option="-D__WXMSW__" />
+					<Add option="-D__WXGNU__" />
 					<Add option="-DWXUSINGDLL" />
 					<Add option="-DUNICODE" />
 					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-DNDEBUG" />
 					<Add directory="$(#wx.include)" />
 					<Add directory="$(#wx.include)/mswu" />
 					<Add directory="$(#portaudio.include)" />
@@ -131,15 +131,6 @@
 				</ResourceCompiler>
 				<Linker>
 					<Add option="-Wl,--enable-auto-import,-Map=MP3Streamer.map" />
-					<Add library="wxmsw30u_gcc_custom" />
-					<Add library="pambase" />
-					<Add library="libmp3lame.a" />
-					<Add library="liblivemedia.a" />
-					<Add library="libBasicUsageEnvironment.a" />
-					<Add library="libUsageEnvironment.a" />
-					<Add library="libgroupsock.a" />
-					<Add library="Ws2_32" />
-					<Add library="pml_log" />
 					<Add library="wxmsw30u_gcc_custom" />
 					<Add library="pambase" />
 					<Add library="libmp3lame.a" />
