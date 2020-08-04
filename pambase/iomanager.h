@@ -94,6 +94,8 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         void StreamUnicast();
         void StopStream();
 
+        void DoGain(AudioEvent& event);
+
         std::set<wxEvtHandler*> m_setHandlers;
         bool m_bSingleHandler;
 
@@ -123,7 +125,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         std::unique_ptr<pml::SapServer> m_pSapServer;
         std::unique_ptr<pml::Publisher> m_pPublisher;
 
-
+        std::vector<double> m_vRatio;
 };
 
 DECLARE_EXPORTED_EVENT_TYPE(PAMBASE_IMPEXPORT, wxEVT_SESSION,-1)
