@@ -76,6 +76,12 @@ IOManager::IOManager() :
     Settings::Get().AddHandler(wxT("Input"),wxT("Device"), this);
     Settings::Get().AddHandler(wxT("Input"),wxT("File"), this);
 
+    m_vRatio.resize(8);
+    for(size_t i = 0; i < 8; i++)
+    {
+        Settings::Get().AddHandler("Input", wxString::Format("Ratio_%02d", i), this);
+        m_vRatio[i] = Settings::Get().Read("Input",  wxString::Format("Ratio_%02d", i), 1.0);
+    }
 
     Settings::Get().AddHandler(wxT("Output"),wxT("Device"), this);
     Settings::Get().AddHandler(wxT("Output"),wxT("Destination"), this);
@@ -126,6 +132,7 @@ IOManager::IOManager() :
     m_timerSilence.Start(250, true);
 
     srand(time(NULL));
+
 }
 
 
@@ -188,6 +195,14 @@ void IOManager::OnSettingEvent(SettingEvent& event)
         if(event.GetKey() == wxT("Type"))
         {
             InputTypeChanged();
+        }
+        else if(event.GetKey().Left(5) == "Ratio")
+        {
+            unsigned long nChannel;
+            if(event.GetKey().AfterFirst('_').ToULong(&nChannel) && nChannel < m_vRatio.size())
+            {
+                m_vRatio[nChannel] = Settings::Get().Read("Input", event.GetKey(), 1.0);
+            }
         }
         else
         {
@@ -291,6 +306,8 @@ void IOManager::OnAudioEvent(AudioEvent& event)
     //pass on input audio
     if(!m_bMonitorOutput && event.GetCreator() == m_nInputSource)
     {
+        //Do the gain here
+        DoGain(event);
         PassOnAudio(event);
     }
 
@@ -320,6 +337,21 @@ void IOManager::AddOutputSamples(size_t nSize)
                 break;
         }
         delete pBuffer;
+    }
+}
+
+void IOManager::DoGain(AudioEvent& event)
+{
+    auto itSub = m_SessionIn.GetCurrentSubsession();
+    if(itSub != m_SessionIn.lstSubsession.end() && itSub->nChannels != 0)
+    {
+       for(size_t i = 0; event.GetBuffer()->GetBufferSize(); i+= itSub->nChannels)
+        {
+            for(size_t nChannel = 0; nChannel < itSub->nChannels; nChannel++)
+            {
+                event.GetBuffer()->GetWritableBuffer()[i+nChannel] *= m_vRatio[nChannel];
+            }
+        }
     }
 }
 
