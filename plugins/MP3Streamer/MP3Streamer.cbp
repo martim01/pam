@@ -110,6 +110,8 @@
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
+					<Add option="`wx-config --cxxflags`" />
+					<Add option="-fpermissive" />
 					<Add option="-D_USRDLL" />
 					<Add option="-DDLL_EXPORTS" />
 					<Add option="-D__WXGNU__" />
@@ -130,15 +132,13 @@
 					<Add directory="$(#wx.include)/mswu" />
 				</ResourceCompiler>
 				<Linker>
-					<Add option="-Wl,--enable-auto-import,-Map=MP3Streamer.map" />
-					<Add library="wxmsw30u_gcc_custom" />
+					<Add option="`wx-config --libs`" />
 					<Add library="pambase" />
 					<Add library="libmp3lame.a" />
 					<Add library="liblivemedia.a" />
 					<Add library="libBasicUsageEnvironment.a" />
 					<Add library="libUsageEnvironment.a" />
 					<Add library="libgroupsock.a" />
-					<Add library="Ws2_32" />
 					<Add library="pml_log" />
 					<Add directory="$(#wx.lib)" />
 					<Add directory="$(#lame.LIB)" />

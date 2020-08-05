@@ -142,7 +142,6 @@
 					<Add after="cp ../external/log/lib/* ../lib" />
 					<Add after="cp ../external/dnssd/lib/* ../lib" />
 					<Add after="cp ../external/sapserver/lib/* ../lib" />
-					<Add after="cp ../external/ptpmonkey/bin/lib* ../lib" />
 					<Mode after="always" />
 				</ExtraCommands>
 			</Target>
@@ -213,6 +212,7 @@
 			<Add directory="../external/dnssd/lib" />
 			<Add directory="../external/sapserver/lib" />
 			<Add directory="../external/ptpmonkey/bin" />
+			<Add directory="../lib" />
 		</Linker>
 		<Unit filename="AES67ServerMediaSubsession.cpp" />
 		<Unit filename="AES67ServerMediaSubsession.h" />
