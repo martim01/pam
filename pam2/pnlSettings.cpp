@@ -19,6 +19,7 @@
 #include <wx/settings.h>
 #include <wx/string.h>
 //*)
+#include <iostream>
 
 #include "images/end_hz.xpm"
 #include "images/end_hz_press.xpm"
@@ -261,7 +262,10 @@ void pnlSettings::UpdateDisplayedSettings()
 
     m_plstInput->SelectButton(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")), true);
 
-    m_plblInputGain->SetLabel(wxString::Format("%.2f dB", ConvertRatioToGain(Settings::Get().Read("Input", "Ratio_01", 1.0))));
+    double dGain = ConvertRatioToGain(Settings::Get().Read("Input", "Ratio_01", 1.0));
+    m_plblInputGain->SetLabel(wxString::Format("%.2f dB", dGain));
+    m_plsliderInputGain->SetSliderPosition(dGain*100+5000, false);
+
 }
 
 void pnlSettings::OnSettingChanged(SettingEvent& event)
@@ -497,7 +501,10 @@ void pnlSettings::OnlstDevicesPaged(wxCommandEvent& event)
 
 void pnlSettings::OnlsliderInputGainMove(wxCommandEvent& event)
 {
-    double dGain = (event.GetInt()-5000)/100.0;
+
+    double dGain = (m_plsliderInputGain->GetPosition()-5000)/100.0;
+
+    std::cout << m_plsliderInputGain->GetPosition() << "=" << dGain << std::endl;
     m_plblInputGain->SetLabel(wxString::Format("%.2f dB", dGain));
 
     double dRatio = ConvertGainToRatio(dGain);
