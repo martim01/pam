@@ -698,7 +698,7 @@ const wxString& wmButton::GetAuxillaryText() const
 }
 
 
-void wmButton::SetToogle(bool bLook, const wxString& sLeft, const wxString& sRight, double dButtonPercent)
+void wmButton::SetToggle(bool bLook, const wxString& sLeft, const wxString& sRight, double dButtonPercent)
 {
     m_bToggleLook = bLook;
     m_uiToggleLeft.SetLabel(sLeft);

@@ -79,7 +79,7 @@
 						<button_disabled>#808080</button_disabled>
 						<items />
 						<pos>0,70</pos>
-						<size>600,315</size>
+						<size>600,280</size>
 						<bg>#000000</bg>
 						<style>wmList::STYLE_SELECT</style>
 						<handler function="OnlstDevicesSelected" entry="EVT_LIST_SELECTED" />
@@ -106,27 +106,65 @@
 					</object>
 					<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnHome" member="yes">
 						<button_disabled>#808080</button_disabled>
-						<pos>70,395</pos>
+						<pos>70,352</pos>
 						<size>100,40</size>
 						<handler function="OnbtnHomeClick" entry="EVT_BUTTON" />
 					</object>
 					<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnPrevious" member="yes">
 						<button_disabled>#808080</button_disabled>
-						<pos>190,395</pos>
+						<pos>190,352</pos>
 						<size>100,40</size>
 						<handler function="OnbtnPreviousClick" entry="EVT_BUTTON" />
 					</object>
 					<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnNext" member="yes">
 						<button_disabled>#808080</button_disabled>
-						<pos>310,395</pos>
+						<pos>310,352</pos>
 						<size>100,40</size>
 						<handler function="OnbtnNextClick" entry="EVT_BUTTON" />
 					</object>
 					<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnEnd" member="yes">
 						<button_disabled>#808080</button_disabled>
-						<pos>430,395</pos>
+						<pos>430,352</pos>
 						<size>100,40</size>
 						<handler function="OnbtnEndClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+						<label>Gain</label>
+						<pos>10,400</pos>
+						<size>70,30</size>
+						<fg>#FFFFFF</fg>
+						<bg>#004000</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Arial</face>
+						</font>
+					</object>
+					<object class="wmSlider" name="ID_M_PSLIDER1" variable="m_plsliderInputGain" member="yes">
+						<label>Slider</label>
+						<max>10000</max>
+						<start>5000</start>
+						<pos>80,400</pos>
+						<size>400,30</size>
+						<handler function="OnlsliderInputGainMove" entry="EVT_SLIDER_MOVE" />
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL2" variable="m_plblInputGain" member="yes">
+						<label></label>
+						<pos>480,400</pos>
+						<size>70,30</size>
+						<fg>#000000</fg>
+						<bg>#FFFFFF</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Arial</face>
+						</font>
 					</object>
 				</object>
 				<label>Input Device</label>

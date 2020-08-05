@@ -28,7 +28,7 @@ pnlDisplay::pnlDisplay(wxWindow* parent,fftphaseBuilder* pBuilder, wxWindowID id
 	Connect(ID_M_PLST4,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlDisplay::OnlstFFT_DisplaySelected);
 	//*)
 	m_pbtnFall = new wmButton(this,wxNewId(), wxT("Fall"), wxPoint(0,150), wxSize(200, 40),wmButton::STYLE_SELECT);
-	m_pbtnFall->SetToogle(true, wxT("Off"), wxT("On"), 45);
+	m_pbtnFall->SetToggle(true, wxT("Off"), wxT("On"), 45);
     m_pbtnFall->ToggleSelection(pBuilder->ReadSetting(wxT("Fall"), 0), true);
 
     Connect(m_pbtnFall->GetId(), wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&pnlDisplay::OnbtnFall);

@@ -42,7 +42,7 @@ pnlOptions::pnlOptions(wxWindow* parent,MetersBuilder* pBuilder, wxWindowID id,c
 
 
 
-	//m_pbtnMeterShading->SetToogle(true, wxT("Solid"), wxT("Graded"), 50.0);
+	//m_pbtnMeterShading->SetToggle(true, wxT("Solid"), wxT("Graded"), 50.0);
 
 	m_plstMeter_Peaks->SelectButton(m_pBuilder->ReadSetting(wxT("Peaks"), 1), true);
 	m_pbnFreeze->ToggleSelection((m_pBuilder->ReadSetting(wxT("Freeze"),0)==1), false);

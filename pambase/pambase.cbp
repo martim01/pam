@@ -17,6 +17,7 @@
 					<Add option="-Wall" />
 					<Add option="-std=c++0x" />
 					<Add option="-DWIN32" />
+					<Add option="-D__WIN32__" />
 					<Add option="-D_USRDLL" />
 					<Add option="-DDLL_EXPORTS" />
 					<Add option="-D__WXMSW__" />

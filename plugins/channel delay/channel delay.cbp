@@ -34,6 +34,7 @@
 					<Add library="wxmsw30u_gcc_custom" />
 					<Add library="pambase" />
 					<Add library="pamfft" />
+					<Add library="pml_log" />
 					<Add directory="$(#wx3_0.lib)" />
 				</Linker>
 				<ExtraCommands>

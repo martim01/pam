@@ -92,6 +92,7 @@
 					<Add option="-Wl,--enable-auto-import,-Map=pam2.map" />
 					<Add library="wxmsw30u_gcc_custom" />
 					<Add library="portaudio" />
+					<Add library="sapserver" />
 					<Add library="pambase" />
 					<Add library="libcurl" />
 					<Add library="Ws2_32" />

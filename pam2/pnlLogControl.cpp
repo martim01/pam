@@ -63,7 +63,7 @@ pnlLogControl::pnlLogControl(wxWindow* parent, pnlLog* pLogWindow, wxWindowID id
 //
 //	Connect(m_plstFilter->GetId(), wxEVT_LIST_SELECTED, (wxObjectEventFunction)&pnlLogControl::OnlstFilterSelected);
 
-	m_pbtnScroll->SetToogle(true, wxT("Scroll"), wxT("Lock"), 50.0);
+	m_pbtnScroll->SetToggle(true, wxT("Scroll"), wxT("Lock"), 50.0);
 
 	m_pbtnScroll->ToggleSelection((Settings::Get().Read(wxT("Log"), wxT("ScrollLock"), 0)==1), true);
 }

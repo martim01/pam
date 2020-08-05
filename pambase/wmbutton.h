@@ -251,7 +251,7 @@ class PAMBASE_IMPEXPORT wmButton : public pmControl
             m_nStyle = nStyle;
         }
 
-        void SetToogle(bool bLook, const wxString& sLeft = wxEmptyString, const wxString& sRight = wxEmptyString, double dButtonPercent=33);
+        void SetToggle(bool bLook, const wxString& sLeft = wxEmptyString, const wxString& sRight = wxEmptyString, double dButtonPercent=33);
 
         bool IsChecked() const;
 

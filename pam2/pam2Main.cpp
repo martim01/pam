@@ -218,7 +218,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     //m_pswpScreens->SetEventHandler(this);
     Connect(ID_M_PSWP4,wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,(wxObjectEventFunction)&pam2Dialog::OnswpScreensPageChanged);
 
-    m_pbtnMonitor->SetToogle(true, wxT("Input"), wxT("Output"), 45);
+    m_pbtnMonitor->SetToggle(true, wxT("Input"), wxT("Output"), 45);
     m_pbtnMonitor->ToggleSelection(Settings::Get().Read(wxT("Monitor"), wxT("Source"), 0), true);
     m_pbtnMonitor->Enable((Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled")) != wxT("Disabled")));
 

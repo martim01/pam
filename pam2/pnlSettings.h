@@ -7,6 +7,7 @@
 #include "wmkeyboard.h"
 #include "wmlabel.h"
 #include "wmlist.h"
+#include "wmslider.h"
 #include "wmswitcherpanel.h"
 #include <wx/notebook.h>
 #include <wx/panel.h>
@@ -49,13 +50,16 @@ class pnlSettings: public wxPanel
 		wmButton* m_ptbnOptions;
 		wmEdit* m_pedtPin;
 		wmKeyboard* m_pkbdPin;
+		wmLabel* m_pLbl1;
 		wmLabel* m_pLbl3;
 		wmLabel* m_pLbl8;
 		wmLabel* m_plblCurrentPIN;
 		wmLabel* m_plblHostname;
+		wmLabel* m_plblInputGain;
 		wmLabel* m_plblVersion;
 		wmList* m_plstDevices;
 		wmList* m_plstInput;
+		wmSlider* m_plsliderInputGain;
 		wmSwitcherPanel* m_pswpSettings;
 		wxPanel* pnlGeneral;
 		wxPanel* pnlInput;
@@ -79,6 +83,9 @@ class pnlSettings: public wxPanel
 		static const long ID_M_PBTN2;
 		static const long ID_M_PBTN4;
 		static const long ID_M_PBTN5;
+		static const long ID_M_PLBL1;
+		static const long ID_M_PSLIDER1;
+		static const long ID_M_PLBL2;
 		static const long ID_PANEL1;
 		static const long ID_PANEL2;
 		static const long ID_PANEL8;
@@ -157,6 +164,7 @@ class pnlSettings: public wxPanel
 		void OnRTPPort_UnicastText(wxCommandEvent& event);
 		void OnbtnSAPClick(wxCommandEvent& event);
 		void OnbtnDNSClick(wxCommandEvent& event);
+		void OnlsliderInputGainMove(wxCommandEvent& event);
 		//*)
 
         void RefreshInputs();
@@ -170,6 +178,9 @@ class pnlSettings: public wxPanel
 
 
         void PopulateChannelList(wmList* pList, int nSelected);
+
+        double ConvertGainToRatio(double dGain);
+        double ConvertRatioToGain(double dRatio);
 
 
 		DECLARE_EVENT_TABLE()

@@ -50,7 +50,7 @@ MP3StreamerPanel::MP3StreamerPanel(wxWindow* parent,MP3StreamerBuilder* pBuilder
 	m_pbtnStream = new wmButton(this, ID_M_PBTN3, _("Stream"), wxPoint(500,5), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
 	m_pbtnStream->Hide();
 	m_pbtnStream->SetBackgroundColour(wxColour(213,0,0));
-	m_pbtnStream->SetToogle(true, wxT("Stop"), wxT("Start"), 50);
+	m_pbtnStream->SetToggle(true, wxT("Stop"), wxT("Start"), 50);
 	m_ppnlUnicast = new wxPanel(this, ID_PANEL1, wxPoint(0,40), wxSize(600,440), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
 	m_pLbl1 = new wmLabel(m_ppnlUnicast, ID_M_PLBL1, _("Address"), wxPoint(0,5), wxSize(145,40), 0, _T("ID_M_PLBL1"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);

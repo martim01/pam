@@ -63,6 +63,7 @@
 		<Project filename="plugins/fftphase/fftphase.cbp" />
 		<Project filename="plugins/ptp/ptp.cbp" />
 		<Project filename="plugins/MP3Streamer/MP3Streamer.cbp" />
+		<Project filename="plugins/InputAlign/InputAlign.cbp" />
 		<Project filename="pamupdatemanager/pamupdatemanager.cbp">
 			<Depends filename="pambase/pambase.cbp" />
 		</Project>
