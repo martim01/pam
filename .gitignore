@@ -45,3 +45,5 @@
 /plugins/battery/build
 /plugins/fftphase/build
 pam2/bin/*
+*.a1
+*.cppcheck

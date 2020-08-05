@@ -9,39 +9,59 @@ CC = gcc
 CXX = g++
 AR = ar
 LD = g++
-WINDRES = windres
+WINDRES = 
 
-INC = -I../external/live/BasicUsageEnvironment/include -I../external/live/UsageEnvironment/include -I../external/live/groupsock/include -I../external/live/liveMedia/include -I../external/wxservdisc
-CFLAGS = -D_pambase_ -DCREATING_DLL -D_core_
+INC = -I../external/live/BasicUsageEnvironment/include -I../external/live/UsageEnvironment/include -I../external/live/groupsock/include -I../external/live/liveMedia/include -I../external/wxservdisc -I../external/ptpmonkey/include -I../external/log/include -I../external/dnssd/include -I../external/sapserver/include
+CFLAGS = -D_pambase_ -DCREATING_DLL -D_core_ -D_MSL_STDINT_H -DASIO_STANDALONE -DNO_OPENSSL
 RESINC = 
-LIBDIR = -L../external/live/liveMedia -L../external/live/BasicUsageEnvironment -L../external/live/UsageEnvironment -L../external/live/groupsock
+LIBDIR = -L../external/live/liveMedia -L../external/live/BasicUsageEnvironment -L../external/live/UsageEnvironment -L../external/live/groupsock -L../external/log/lib -L../external/dnssd/lib -L../external/sapserver/lib -L../external/ptpmonkey/bin
 LIB = 
 LDFLAGS = 
 
 INC_LINUX_RELEASE = $(INC)
-CFLAGS_LINUX_RELEASE = $(CFLAGS) -O3 `wx-config --cxxflags` -fPIC -fpermissive -DNDEBUG -DDLL_EXPORTS -DwxUSE_UNICODE -D__WXGNU__
+CFLAGS_LINUX_RELEASE = $(CFLAGS) -O3 -fPIC `wx-config --cxxflags` -fpermissive -DNDEBUG -DDLL_EXPORTS -DwxUSE_UNICODE -D__WXGNU__ -D__GNU__ -DwxDEBUG_LEVEL=0 -DPTPMONKEY
 RESINC_LINUX_RELEASE = $(RESINC)
 RCFLAGS_LINUX_RELEASE = $(RCFLAGS)
 LIBDIR_LINUX_RELEASE = $(LIBDIR) -L/usr/lib/arm-linux-gnueabihf/
-LIB_LINUX_RELEASE = $(LIB)-lportaudio -lsndfile -lliveMedia -lBasicUsageEnvironment -lUsageEnvironment -lgroupsock
-LDFLAGS_LINUX_RELEASE = $(LDFLAGS) `wx-config --libs`
+LIB_LINUX_RELEASE = $(LIB) -lportaudio -lsndfile -lliveMedia -lBasicUsageEnvironment -lUsageEnvironment -lgroupsock -lpml_log -lpml_dnssd -lsapserver -lptpmonkey
+LDFLAGS_LINUX_RELEASE = $(LDFLAGS) `wx-config --libs` `pkg-config --libs avahi-client`
 OBJDIR_LINUX_RELEASE = obj/linux
 DEP_LINUX_RELEASE = 
+DEF_LINUX_RELEASE = ../lib/libpambase.so.def
+SHAREDINT_LINUX_RELEASE = ../lib/libpambase.a
 OUT_LINUX_RELEASE = ../lib/libpambase.so
 
-OBJ_LINUX_RELEASE = $(OBJDIR_LINUX_RELEASE)/soundfile.o $(OBJDIR_LINUX_RELEASE)/streamclientstate.o $(OBJDIR_LINUX_RELEASE)/testpluginbuilder.o $(OBJDIR_LINUX_RELEASE)/testpluginfactory.o $(OBJDIR_LINUX_RELEASE)/uirect.o $(OBJDIR_LINUX_RELEASE)/wmbutton.o $(OBJDIR_LINUX_RELEASE)/rawvideosource.o $(OBJDIR_LINUX_RELEASE)/rtpthread.o $(OBJDIR_LINUX_RELEASE)/rtsputil.o $(OBJDIR_LINUX_RELEASE)/sapwatchthread.o $(OBJDIR_LINUX_RELEASE)/wmedit.o $(OBJDIR_LINUX_RELEASE)/settingevent.o $(OBJDIR_LINUX_RELEASE)/settings.o $(OBJDIR_LINUX_RELEASE)/smpte2110mediasession.o $(OBJDIR_LINUX_RELEASE)/soundcardmanager.o $(OBJDIR_LINUX_RELEASE)/wmslidewnd.o $(OBJDIR_LINUX_RELEASE)/wmswipebutton.o $(OBJDIR_LINUX_RELEASE)/wmswitcherpanel.o $(OBJDIR_LINUX_RELEASE)/wmtestlog.o $(OBJDIR_LINUX_RELEASE)/wmslider.o $(OBJDIR_LINUX_RELEASE)/wmtimeedit.o $(OBJDIR_LINUX_RELEASE)/wxsink.o $(OBJDIR_LINUX_RELEASE)/wxtouchscreenhtml.o $(OBJDIR_LINUX_RELEASE)/wmlogevent.o $(OBJDIR_LINUX_RELEASE)/wmlist.o $(OBJDIR_LINUX_RELEASE)/wmline.o $(OBJDIR_LINUX_RELEASE)/wmlabel.o $(OBJDIR_LINUX_RELEASE)/wmkeyboard.o $(OBJDIR_LINUX_RELEASE)/wmipeditpnl.o $(OBJDIR_LINUX_RELEASE)/wmfocusmanager.o $(OBJDIR_LINUX_RELEASE)/audio.o $(OBJDIR_LINUX_RELEASE)/audioevent.o $(OBJDIR_LINUX_RELEASE)/generator.o $(OBJDIR_LINUX_RELEASE)/anglemeter.o $(OBJDIR_LINUX_RELEASE)/generatorpluginbuilder.o $(OBJDIR_LINUX_RELEASE)/generatorpluginfactory.o $(OBJDIR_LINUX_RELEASE)/inimanager.o $(OBJDIR_LINUX_RELEASE)/inisection.o $(OBJDIR_LINUX_RELEASE)/PamUsageEnvironment.o $(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc/mdnsd.o $(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc/wxServDisc.o $(OBJDIR_LINUX_RELEASE)/PamTaskScheduler.o $(OBJDIR_LINUX_RELEASE)/aes67client.o $(OBJDIR_LINUX_RELEASE)/aes67mediasession.o $(OBJDIR_LINUX_RELEASE)/aes67source.o $(OBJDIR_LINUX_RELEASE)/ourRTSPClient.o $(OBJDIR_LINUX_RELEASE)/pcstats.o $(OBJDIR_LINUX_RELEASE)/pmcontrol.o $(OBJDIR_LINUX_RELEASE)/pmpanel.o $(OBJDIR_LINUX_RELEASE)/ppmtypes.o $(OBJDIR_LINUX_RELEASE)/qos.o $(OBJDIR_LINUX_RELEASE)/r128calculator.o $(OBJDIR_LINUX_RELEASE)/r128thread.o $(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc/1035.o $(OBJDIR_LINUX_RELEASE)/niir.o $(OBJDIR_LINUX_RELEASE)/monitorpluginfactory.o $(OBJDIR_LINUX_RELEASE)/monitorpluginbuilder.o $(OBJDIR_LINUX_RELEASE)/monitorevent.o $(OBJDIR_LINUX_RELEASE)/levelmeter.o $(OBJDIR_LINUX_RELEASE)/levelgraph.o $(OBJDIR_LINUX_RELEASE)/levelcalculator.o $(OBJDIR_LINUX_RELEASE)/iomanager.o
+INC_LINUX_DEBUG = $(INC)
+CFLAGS_LINUX_DEBUG = $(CFLAGS) -fPIC -g `wx-config --cxxflags` -fpermissive -DNDEBUG -DDLL_EXPORTS -DwxUSE_UNICODE -D__WXGNU__ -DPAMBASE_DEBUG -D__WXDEBUG__ -D__GNU__
+RESINC_LINUX_DEBUG = $(RESINC)
+RCFLAGS_LINUX_DEBUG = $(RCFLAGS)
+LIBDIR_LINUX_DEBUG = $(LIBDIR)
+LIB_LINUX_DEBUG = $(LIB) -llibportaudio -llibsndfile libliveMedia.a libBasicUsageEnvironment.a libUsageEnvironment.a libgroupsock.a -lpml_logd -lpml_dnssdd -lsapserverd
+LDFLAGS_LINUX_DEBUG = $(LDFLAGS) `wx-config --libs` `pkg-config --libs avahi-client`
+OBJDIR_LINUX_DEBUG = obj/linux/debug
+DEP_LINUX_DEBUG = 
+DEF_LINUX_DEBUG = ../lib/libpambased.so.def
+SHAREDINT_LINUX_DEBUG = ../lib/libpambased.a
+OUT_LINUX_DEBUG = ../lib/libpambased.so
 
-all: linux_release
+OBJ_LINUX_RELEASE = $(OBJDIR_LINUX_RELEASE)/soundfile.o $(OBJDIR_LINUX_RELEASE)/streamclientstate.o $(OBJDIR_LINUX_RELEASE)/testpluginbuilder.o $(OBJDIR_LINUX_RELEASE)/testpluginfactory.o $(OBJDIR_LINUX_RELEASE)/soundcardmanager.o $(OBJDIR_LINUX_RELEASE)/uirect.o $(OBJDIR_LINUX_RELEASE)/wmbutton.o $(OBJDIR_LINUX_RELEASE)/wmedit.o $(OBJDIR_LINUX_RELEASE)/r128thread.o $(OBJDIR_LINUX_RELEASE)/rawvideosource.o $(OBJDIR_LINUX_RELEASE)/rtpserverthread.o $(OBJDIR_LINUX_RELEASE)/rtpthread.o $(OBJDIR_LINUX_RELEASE)/rtsputil.o $(OBJDIR_LINUX_RELEASE)/settingevent.o $(OBJDIR_LINUX_RELEASE)/settings.o $(OBJDIR_LINUX_RELEASE)/smpte2110mediasession.o $(OBJDIR_LINUX_RELEASE)/wxsaphandler.o $(OBJDIR_LINUX_RELEASE)/wmswipebutton.o $(OBJDIR_LINUX_RELEASE)/wmswitcherpanel.o $(OBJDIR_LINUX_RELEASE)/wmtimeedit.o $(OBJDIR_LINUX_RELEASE)/wxptp.o $(OBJDIR_LINUX_RELEASE)/wxsink.o $(OBJDIR_LINUX_RELEASE)/wxtouchscreenhtml.o $(OBJDIR_LINUX_RELEASE)/wxzxposter.o $(OBJDIR_LINUX_RELEASE)/wmline.o $(OBJDIR_LINUX_RELEASE)/wmfocusmanager.o $(OBJDIR_LINUX_RELEASE)/wmipeditpnl.o $(OBJDIR_LINUX_RELEASE)/wmkeyboard.o $(OBJDIR_LINUX_RELEASE)/wmlabel.o $(OBJDIR_LINUX_RELEASE)/wmlist.o $(OBJDIR_LINUX_RELEASE)/wmlistadv.o $(OBJDIR_LINUX_RELEASE)/wmslider.o $(OBJDIR_LINUX_RELEASE)/wmslidewnd.o $(OBJDIR_LINUX_RELEASE)/generatorpluginfactory.o $(OBJDIR_LINUX_RELEASE)/audioevent.o $(OBJDIR_LINUX_RELEASE)/generator.o $(OBJDIR_LINUX_RELEASE)/generatorpluginbuilder.o $(OBJDIR_LINUX_RELEASE)/audio.o $(OBJDIR_LINUX_RELEASE)/inimanager.o $(OBJDIR_LINUX_RELEASE)/inisection.o $(OBJDIR_LINUX_RELEASE)/iomanager.o $(OBJDIR_LINUX_RELEASE)/levelcalculator.o $(OBJDIR_LINUX_RELEASE)/PamTaskScheduler.o $(OBJDIR_LINUX_RELEASE)/PamUsageEnvironment.o $(OBJDIR_LINUX_RELEASE)/advelement.o $(OBJDIR_LINUX_RELEASE)/aes67client.o $(OBJDIR_LINUX_RELEASE)/aes67mediasession.o $(OBJDIR_LINUX_RELEASE)/aes67source.o $(OBJDIR_LINUX_RELEASE)/anglemeter.o $(OBJDIR_LINUX_RELEASE)/aoipsourcemanager.o $(OBJDIR_LINUX_RELEASE)/pmcontrol.o $(OBJDIR_LINUX_RELEASE)/ondemandstreamer.o $(OBJDIR_LINUX_RELEASE)/ourRTSPClient.o $(OBJDIR_LINUX_RELEASE)/ourSIPClient.o $(OBJDIR_LINUX_RELEASE)/pcstats.o $(OBJDIR_LINUX_RELEASE)/pmpanel.o $(OBJDIR_LINUX_RELEASE)/ppmtypes.o $(OBJDIR_LINUX_RELEASE)/qos.o $(OBJDIR_LINUX_RELEASE)/r128calculator.o $(OBJDIR_LINUX_RELEASE)/monitorpluginbuilder.o $(OBJDIR_LINUX_RELEASE)/levelgraph.o $(OBJDIR_LINUX_RELEASE)/levelmeter.o $(OBJDIR_LINUX_RELEASE)/liveaudiosource.o $(OBJDIR_LINUX_RELEASE)/monitorevent.o $(OBJDIR_LINUX_RELEASE)/AES67ServerMediaSubsession.o $(OBJDIR_LINUX_RELEASE)/monitorpluginfactory.o $(OBJDIR_LINUX_RELEASE)/niir.o $(OBJDIR_LINUX_RELEASE)/ondemandaes67mediasubsession.o $(OBJDIR_LINUX_RELEASE)/ondemandpamsubsession.o
 
-clean: clean_linux_release
+OBJ_LINUX_DEBUG = $(OBJDIR_LINUX_DEBUG)/soundfile.o $(OBJDIR_LINUX_DEBUG)/streamclientstate.o $(OBJDIR_LINUX_DEBUG)/testpluginbuilder.o $(OBJDIR_LINUX_DEBUG)/testpluginfactory.o $(OBJDIR_LINUX_DEBUG)/soundcardmanager.o $(OBJDIR_LINUX_DEBUG)/uirect.o $(OBJDIR_LINUX_DEBUG)/wmbutton.o $(OBJDIR_LINUX_DEBUG)/wmedit.o $(OBJDIR_LINUX_DEBUG)/r128thread.o $(OBJDIR_LINUX_DEBUG)/rawvideosource.o $(OBJDIR_LINUX_DEBUG)/rtpserverthread.o $(OBJDIR_LINUX_DEBUG)/rtpthread.o $(OBJDIR_LINUX_DEBUG)/rtsputil.o $(OBJDIR_LINUX_DEBUG)/settingevent.o $(OBJDIR_LINUX_DEBUG)/settings.o $(OBJDIR_LINUX_DEBUG)/smpte2110mediasession.o $(OBJDIR_LINUX_DEBUG)/wxsaphandler.o $(OBJDIR_LINUX_DEBUG)/wmswipebutton.o $(OBJDIR_LINUX_DEBUG)/wmswitcherpanel.o $(OBJDIR_LINUX_DEBUG)/wmtimeedit.o $(OBJDIR_LINUX_DEBUG)/wxptp.o $(OBJDIR_LINUX_DEBUG)/wxsink.o $(OBJDIR_LINUX_DEBUG)/wxtouchscreenhtml.o $(OBJDIR_LINUX_DEBUG)/wxzxposter.o $(OBJDIR_LINUX_DEBUG)/wmline.o $(OBJDIR_LINUX_DEBUG)/wmfocusmanager.o $(OBJDIR_LINUX_DEBUG)/wmipeditpnl.o $(OBJDIR_LINUX_DEBUG)/wmkeyboard.o $(OBJDIR_LINUX_DEBUG)/wmlabel.o $(OBJDIR_LINUX_DEBUG)/wmlist.o $(OBJDIR_LINUX_DEBUG)/wmlistadv.o $(OBJDIR_LINUX_DEBUG)/wmslider.o $(OBJDIR_LINUX_DEBUG)/wmslidewnd.o $(OBJDIR_LINUX_DEBUG)/generatorpluginfactory.o $(OBJDIR_LINUX_DEBUG)/audioevent.o $(OBJDIR_LINUX_DEBUG)/generator.o $(OBJDIR_LINUX_DEBUG)/generatorpluginbuilder.o $(OBJDIR_LINUX_DEBUG)/audio.o $(OBJDIR_LINUX_DEBUG)/inimanager.o $(OBJDIR_LINUX_DEBUG)/inisection.o $(OBJDIR_LINUX_DEBUG)/iomanager.o $(OBJDIR_LINUX_DEBUG)/levelcalculator.o $(OBJDIR_LINUX_DEBUG)/PamTaskScheduler.o $(OBJDIR_LINUX_DEBUG)/PamUsageEnvironment.o $(OBJDIR_LINUX_DEBUG)/advelement.o $(OBJDIR_LINUX_DEBUG)/aes67client.o $(OBJDIR_LINUX_DEBUG)/aes67mediasession.o $(OBJDIR_LINUX_DEBUG)/aes67source.o $(OBJDIR_LINUX_DEBUG)/anglemeter.o $(OBJDIR_LINUX_DEBUG)/aoipsourcemanager.o $(OBJDIR_LINUX_DEBUG)/pmcontrol.o $(OBJDIR_LINUX_DEBUG)/ondemandstreamer.o $(OBJDIR_LINUX_DEBUG)/ourRTSPClient.o $(OBJDIR_LINUX_DEBUG)/ourSIPClient.o $(OBJDIR_LINUX_DEBUG)/pcstats.o $(OBJDIR_LINUX_DEBUG)/pmpanel.o $(OBJDIR_LINUX_DEBUG)/ppmtypes.o $(OBJDIR_LINUX_DEBUG)/qos.o $(OBJDIR_LINUX_DEBUG)/r128calculator.o $(OBJDIR_LINUX_DEBUG)/monitorpluginbuilder.o $(OBJDIR_LINUX_DEBUG)/levelgraph.o $(OBJDIR_LINUX_DEBUG)/levelmeter.o $(OBJDIR_LINUX_DEBUG)/liveaudiosource.o $(OBJDIR_LINUX_DEBUG)/monitorevent.o $(OBJDIR_LINUX_DEBUG)/AES67ServerMediaSubsession.o $(OBJDIR_LINUX_DEBUG)/monitorpluginfactory.o $(OBJDIR_LINUX_DEBUG)/niir.o $(OBJDIR_LINUX_DEBUG)/ondemandaes67mediasubsession.o $(OBJDIR_LINUX_DEBUG)/ondemandpamsubsession.o
+
+all: linux_release linux_debug
+
+clean: clean_linux_release clean_linux_debug
 
 before_linux_release: 
 	test -d ../lib || mkdir -p ../lib
 	test -d $(OBJDIR_LINUX_RELEASE) || mkdir -p $(OBJDIR_LINUX_RELEASE)
-	test -d $(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc || mkdir -p $(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc
 
 after_linux_release: 
 	../manifest_creator/bin/LinuxRelease/manifest_creator
+	cp ../external/log/lib/* ../lib
+	cp ../external/dnssd/lib/* ../lib
+	cp ../external/sapserver/lib/* ../lib
+	cp ../external/ptpmonkey/bin/lib* ../lib
 
 linux_release: before_linux_release out_linux_release after_linux_release
 
@@ -60,26 +80,32 @@ $(OBJDIR_LINUX_RELEASE)/testpluginbuilder.o: testpluginbuilder.cpp
 $(OBJDIR_LINUX_RELEASE)/testpluginfactory.o: testpluginfactory.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c testpluginfactory.cpp -o $(OBJDIR_LINUX_RELEASE)/testpluginfactory.o
 
+$(OBJDIR_LINUX_RELEASE)/soundcardmanager.o: soundcardmanager.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c soundcardmanager.cpp -o $(OBJDIR_LINUX_RELEASE)/soundcardmanager.o
+
 $(OBJDIR_LINUX_RELEASE)/uirect.o: uirect.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c uirect.cpp -o $(OBJDIR_LINUX_RELEASE)/uirect.o
 
 $(OBJDIR_LINUX_RELEASE)/wmbutton.o: wmbutton.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmbutton.cpp -o $(OBJDIR_LINUX_RELEASE)/wmbutton.o
 
+$(OBJDIR_LINUX_RELEASE)/wmedit.o: wmedit.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmedit.cpp -o $(OBJDIR_LINUX_RELEASE)/wmedit.o
+
+$(OBJDIR_LINUX_RELEASE)/r128thread.o: r128thread.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c r128thread.cpp -o $(OBJDIR_LINUX_RELEASE)/r128thread.o
+
 $(OBJDIR_LINUX_RELEASE)/rawvideosource.o: rawvideosource.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c rawvideosource.cpp -o $(OBJDIR_LINUX_RELEASE)/rawvideosource.o
+
+$(OBJDIR_LINUX_RELEASE)/rtpserverthread.o: rtpserverthread.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c rtpserverthread.cpp -o $(OBJDIR_LINUX_RELEASE)/rtpserverthread.o
 
 $(OBJDIR_LINUX_RELEASE)/rtpthread.o: rtpthread.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c rtpthread.cpp -o $(OBJDIR_LINUX_RELEASE)/rtpthread.o
 
 $(OBJDIR_LINUX_RELEASE)/rtsputil.o: rtsputil.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c rtsputil.cpp -o $(OBJDIR_LINUX_RELEASE)/rtsputil.o
-
-$(OBJDIR_LINUX_RELEASE)/sapwatchthread.o: sapwatchthread.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c sapwatchthread.cpp -o $(OBJDIR_LINUX_RELEASE)/sapwatchthread.o
-
-$(OBJDIR_LINUX_RELEASE)/wmedit.o: wmedit.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmedit.cpp -o $(OBJDIR_LINUX_RELEASE)/wmedit.o
 
 $(OBJDIR_LINUX_RELEASE)/settingevent.o: settingevent.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c settingevent.cpp -o $(OBJDIR_LINUX_RELEASE)/settingevent.o
@@ -90,11 +116,8 @@ $(OBJDIR_LINUX_RELEASE)/settings.o: settings.cpp
 $(OBJDIR_LINUX_RELEASE)/smpte2110mediasession.o: smpte2110mediasession.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c smpte2110mediasession.cpp -o $(OBJDIR_LINUX_RELEASE)/smpte2110mediasession.o
 
-$(OBJDIR_LINUX_RELEASE)/soundcardmanager.o: soundcardmanager.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c soundcardmanager.cpp -o $(OBJDIR_LINUX_RELEASE)/soundcardmanager.o
-
-$(OBJDIR_LINUX_RELEASE)/wmslidewnd.o: wmslidewnd.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmslidewnd.cpp -o $(OBJDIR_LINUX_RELEASE)/wmslidewnd.o
+$(OBJDIR_LINUX_RELEASE)/wxsaphandler.o: wxsaphandler.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wxsaphandler.cpp -o $(OBJDIR_LINUX_RELEASE)/wxsaphandler.o
 
 $(OBJDIR_LINUX_RELEASE)/wmswipebutton.o: wmswipebutton.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmswipebutton.cpp -o $(OBJDIR_LINUX_RELEASE)/wmswipebutton.o
@@ -102,14 +125,11 @@ $(OBJDIR_LINUX_RELEASE)/wmswipebutton.o: wmswipebutton.cpp
 $(OBJDIR_LINUX_RELEASE)/wmswitcherpanel.o: wmswitcherpanel.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmswitcherpanel.cpp -o $(OBJDIR_LINUX_RELEASE)/wmswitcherpanel.o
 
-$(OBJDIR_LINUX_RELEASE)/wmtestlog.o: wmtestlog.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmtestlog.cpp -o $(OBJDIR_LINUX_RELEASE)/wmtestlog.o
-
-$(OBJDIR_LINUX_RELEASE)/wmslider.o: wmslider.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmslider.cpp -o $(OBJDIR_LINUX_RELEASE)/wmslider.o
-
 $(OBJDIR_LINUX_RELEASE)/wmtimeedit.o: wmtimeedit.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmtimeedit.cpp -o $(OBJDIR_LINUX_RELEASE)/wmtimeedit.o
+
+$(OBJDIR_LINUX_RELEASE)/wxptp.o: wxptp.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wxptp.cpp -o $(OBJDIR_LINUX_RELEASE)/wxptp.o
 
 $(OBJDIR_LINUX_RELEASE)/wxsink.o: wxsink.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wxsink.cpp -o $(OBJDIR_LINUX_RELEASE)/wxsink.o
@@ -117,29 +137,38 @@ $(OBJDIR_LINUX_RELEASE)/wxsink.o: wxsink.cpp
 $(OBJDIR_LINUX_RELEASE)/wxtouchscreenhtml.o: wxtouchscreenhtml.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wxtouchscreenhtml.cpp -o $(OBJDIR_LINUX_RELEASE)/wxtouchscreenhtml.o
 
-$(OBJDIR_LINUX_RELEASE)/wmlogevent.o: wmlogevent.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmlogevent.cpp -o $(OBJDIR_LINUX_RELEASE)/wmlogevent.o
-
-$(OBJDIR_LINUX_RELEASE)/wmlist.o: wmlist.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmlist.cpp -o $(OBJDIR_LINUX_RELEASE)/wmlist.o
+$(OBJDIR_LINUX_RELEASE)/wxzxposter.o: wxzxposter.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wxzxposter.cpp -o $(OBJDIR_LINUX_RELEASE)/wxzxposter.o
 
 $(OBJDIR_LINUX_RELEASE)/wmline.o: wmline.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmline.cpp -o $(OBJDIR_LINUX_RELEASE)/wmline.o
 
-$(OBJDIR_LINUX_RELEASE)/wmlabel.o: wmlabel.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmlabel.cpp -o $(OBJDIR_LINUX_RELEASE)/wmlabel.o
-
-$(OBJDIR_LINUX_RELEASE)/wmkeyboard.o: wmkeyboard.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmkeyboard.cpp -o $(OBJDIR_LINUX_RELEASE)/wmkeyboard.o
+$(OBJDIR_LINUX_RELEASE)/wmfocusmanager.o: wmfocusmanager.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmfocusmanager.cpp -o $(OBJDIR_LINUX_RELEASE)/wmfocusmanager.o
 
 $(OBJDIR_LINUX_RELEASE)/wmipeditpnl.o: wmipeditpnl.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmipeditpnl.cpp -o $(OBJDIR_LINUX_RELEASE)/wmipeditpnl.o
 
-$(OBJDIR_LINUX_RELEASE)/wmfocusmanager.o: wmfocusmanager.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmfocusmanager.cpp -o $(OBJDIR_LINUX_RELEASE)/wmfocusmanager.o
+$(OBJDIR_LINUX_RELEASE)/wmkeyboard.o: wmkeyboard.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmkeyboard.cpp -o $(OBJDIR_LINUX_RELEASE)/wmkeyboard.o
 
-$(OBJDIR_LINUX_RELEASE)/audio.o: audio.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c audio.cpp -o $(OBJDIR_LINUX_RELEASE)/audio.o
+$(OBJDIR_LINUX_RELEASE)/wmlabel.o: wmlabel.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmlabel.cpp -o $(OBJDIR_LINUX_RELEASE)/wmlabel.o
+
+$(OBJDIR_LINUX_RELEASE)/wmlist.o: wmlist.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmlist.cpp -o $(OBJDIR_LINUX_RELEASE)/wmlist.o
+
+$(OBJDIR_LINUX_RELEASE)/wmlistadv.o: wmlistadv.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmlistadv.cpp -o $(OBJDIR_LINUX_RELEASE)/wmlistadv.o
+
+$(OBJDIR_LINUX_RELEASE)/wmslider.o: wmslider.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmslider.cpp -o $(OBJDIR_LINUX_RELEASE)/wmslider.o
+
+$(OBJDIR_LINUX_RELEASE)/wmslidewnd.o: wmslidewnd.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c wmslidewnd.cpp -o $(OBJDIR_LINUX_RELEASE)/wmslidewnd.o
+
+$(OBJDIR_LINUX_RELEASE)/generatorpluginfactory.o: generatorpluginfactory.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c generatorpluginfactory.cpp -o $(OBJDIR_LINUX_RELEASE)/generatorpluginfactory.o
 
 $(OBJDIR_LINUX_RELEASE)/audioevent.o: audioevent.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c audioevent.cpp -o $(OBJDIR_LINUX_RELEASE)/audioevent.o
@@ -147,14 +176,11 @@ $(OBJDIR_LINUX_RELEASE)/audioevent.o: audioevent.cpp
 $(OBJDIR_LINUX_RELEASE)/generator.o: generator.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c generator.cpp -o $(OBJDIR_LINUX_RELEASE)/generator.o
 
-$(OBJDIR_LINUX_RELEASE)/anglemeter.o: anglemeter.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c anglemeter.cpp -o $(OBJDIR_LINUX_RELEASE)/anglemeter.o
-
 $(OBJDIR_LINUX_RELEASE)/generatorpluginbuilder.o: generatorpluginbuilder.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c generatorpluginbuilder.cpp -o $(OBJDIR_LINUX_RELEASE)/generatorpluginbuilder.o
 
-$(OBJDIR_LINUX_RELEASE)/generatorpluginfactory.o: generatorpluginfactory.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c generatorpluginfactory.cpp -o $(OBJDIR_LINUX_RELEASE)/generatorpluginfactory.o
+$(OBJDIR_LINUX_RELEASE)/audio.o: audio.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c audio.cpp -o $(OBJDIR_LINUX_RELEASE)/audio.o
 
 $(OBJDIR_LINUX_RELEASE)/inimanager.o: inimanager.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c inimanager.cpp -o $(OBJDIR_LINUX_RELEASE)/inimanager.o
@@ -162,17 +188,20 @@ $(OBJDIR_LINUX_RELEASE)/inimanager.o: inimanager.cpp
 $(OBJDIR_LINUX_RELEASE)/inisection.o: inisection.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c inisection.cpp -o $(OBJDIR_LINUX_RELEASE)/inisection.o
 
-$(OBJDIR_LINUX_RELEASE)/PamUsageEnvironment.o: PamUsageEnvironment.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c PamUsageEnvironment.cpp -o $(OBJDIR_LINUX_RELEASE)/PamUsageEnvironment.o
+$(OBJDIR_LINUX_RELEASE)/iomanager.o: iomanager.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c iomanager.cpp -o $(OBJDIR_LINUX_RELEASE)/iomanager.o
 
-$(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc/mdnsd.o: ../external/wxservdisc/mdnsd.c
-	$(CC) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c ../external/wxservdisc/mdnsd.c -o $(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc/mdnsd.o
-
-$(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc/wxServDisc.o: ../external/wxservdisc/wxServDisc.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c ../external/wxservdisc/wxServDisc.cpp -o $(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc/wxServDisc.o
+$(OBJDIR_LINUX_RELEASE)/levelcalculator.o: levelcalculator.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c levelcalculator.cpp -o $(OBJDIR_LINUX_RELEASE)/levelcalculator.o
 
 $(OBJDIR_LINUX_RELEASE)/PamTaskScheduler.o: PamTaskScheduler.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c PamTaskScheduler.cpp -o $(OBJDIR_LINUX_RELEASE)/PamTaskScheduler.o
+
+$(OBJDIR_LINUX_RELEASE)/PamUsageEnvironment.o: PamUsageEnvironment.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c PamUsageEnvironment.cpp -o $(OBJDIR_LINUX_RELEASE)/PamUsageEnvironment.o
+
+$(OBJDIR_LINUX_RELEASE)/advelement.o: advelement.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c advelement.cpp -o $(OBJDIR_LINUX_RELEASE)/advelement.o
 
 $(OBJDIR_LINUX_RELEASE)/aes67client.o: aes67client.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c aes67client.cpp -o $(OBJDIR_LINUX_RELEASE)/aes67client.o
@@ -183,14 +212,26 @@ $(OBJDIR_LINUX_RELEASE)/aes67mediasession.o: aes67mediasession.cpp
 $(OBJDIR_LINUX_RELEASE)/aes67source.o: aes67source.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c aes67source.cpp -o $(OBJDIR_LINUX_RELEASE)/aes67source.o
 
-$(OBJDIR_LINUX_RELEASE)/ourRTSPClient.o: ourRTSPClient.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c ourRTSPClient.cpp -o $(OBJDIR_LINUX_RELEASE)/ourRTSPClient.o
+$(OBJDIR_LINUX_RELEASE)/anglemeter.o: anglemeter.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c anglemeter.cpp -o $(OBJDIR_LINUX_RELEASE)/anglemeter.o
 
-$(OBJDIR_LINUX_RELEASE)/pcstats.o: pcstats.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c pcstats.cpp -o $(OBJDIR_LINUX_RELEASE)/pcstats.o
+$(OBJDIR_LINUX_RELEASE)/aoipsourcemanager.o: aoipsourcemanager.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c aoipsourcemanager.cpp -o $(OBJDIR_LINUX_RELEASE)/aoipsourcemanager.o
 
 $(OBJDIR_LINUX_RELEASE)/pmcontrol.o: pmcontrol.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c pmcontrol.cpp -o $(OBJDIR_LINUX_RELEASE)/pmcontrol.o
+
+$(OBJDIR_LINUX_RELEASE)/ondemandstreamer.o: ondemandstreamer.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c ondemandstreamer.cpp -o $(OBJDIR_LINUX_RELEASE)/ondemandstreamer.o
+
+$(OBJDIR_LINUX_RELEASE)/ourRTSPClient.o: ourRTSPClient.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c ourRTSPClient.cpp -o $(OBJDIR_LINUX_RELEASE)/ourRTSPClient.o
+
+$(OBJDIR_LINUX_RELEASE)/ourSIPClient.o: ourSIPClient.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c ourSIPClient.cpp -o $(OBJDIR_LINUX_RELEASE)/ourSIPClient.o
+
+$(OBJDIR_LINUX_RELEASE)/pcstats.o: pcstats.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c pcstats.cpp -o $(OBJDIR_LINUX_RELEASE)/pcstats.o
 
 $(OBJDIR_LINUX_RELEASE)/pmpanel.o: pmpanel.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c pmpanel.cpp -o $(OBJDIR_LINUX_RELEASE)/pmpanel.o
@@ -204,41 +245,267 @@ $(OBJDIR_LINUX_RELEASE)/qos.o: qos.cpp
 $(OBJDIR_LINUX_RELEASE)/r128calculator.o: r128calculator.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c r128calculator.cpp -o $(OBJDIR_LINUX_RELEASE)/r128calculator.o
 
-$(OBJDIR_LINUX_RELEASE)/r128thread.o: r128thread.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c r128thread.cpp -o $(OBJDIR_LINUX_RELEASE)/r128thread.o
-
-$(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc/1035.o: ../external/wxservdisc/1035.c
-	$(CC) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c ../external/wxservdisc/1035.c -o $(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc/1035.o
-
-$(OBJDIR_LINUX_RELEASE)/niir.o: niir.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c niir.cpp -o $(OBJDIR_LINUX_RELEASE)/niir.o
-
-$(OBJDIR_LINUX_RELEASE)/monitorpluginfactory.o: monitorpluginfactory.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c monitorpluginfactory.cpp -o $(OBJDIR_LINUX_RELEASE)/monitorpluginfactory.o
-
 $(OBJDIR_LINUX_RELEASE)/monitorpluginbuilder.o: monitorpluginbuilder.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c monitorpluginbuilder.cpp -o $(OBJDIR_LINUX_RELEASE)/monitorpluginbuilder.o
-
-$(OBJDIR_LINUX_RELEASE)/monitorevent.o: monitorevent.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c monitorevent.cpp -o $(OBJDIR_LINUX_RELEASE)/monitorevent.o
-
-$(OBJDIR_LINUX_RELEASE)/levelmeter.o: levelmeter.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c levelmeter.cpp -o $(OBJDIR_LINUX_RELEASE)/levelmeter.o
 
 $(OBJDIR_LINUX_RELEASE)/levelgraph.o: levelgraph.cpp
 	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c levelgraph.cpp -o $(OBJDIR_LINUX_RELEASE)/levelgraph.o
 
-$(OBJDIR_LINUX_RELEASE)/levelcalculator.o: levelcalculator.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c levelcalculator.cpp -o $(OBJDIR_LINUX_RELEASE)/levelcalculator.o
+$(OBJDIR_LINUX_RELEASE)/levelmeter.o: levelmeter.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c levelmeter.cpp -o $(OBJDIR_LINUX_RELEASE)/levelmeter.o
 
-$(OBJDIR_LINUX_RELEASE)/iomanager.o: iomanager.cpp
-	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c iomanager.cpp -o $(OBJDIR_LINUX_RELEASE)/iomanager.o
+$(OBJDIR_LINUX_RELEASE)/liveaudiosource.o: liveaudiosource.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c liveaudiosource.cpp -o $(OBJDIR_LINUX_RELEASE)/liveaudiosource.o
+
+$(OBJDIR_LINUX_RELEASE)/monitorevent.o: monitorevent.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c monitorevent.cpp -o $(OBJDIR_LINUX_RELEASE)/monitorevent.o
+
+$(OBJDIR_LINUX_RELEASE)/AES67ServerMediaSubsession.o: AES67ServerMediaSubsession.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c AES67ServerMediaSubsession.cpp -o $(OBJDIR_LINUX_RELEASE)/AES67ServerMediaSubsession.o
+
+$(OBJDIR_LINUX_RELEASE)/monitorpluginfactory.o: monitorpluginfactory.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c monitorpluginfactory.cpp -o $(OBJDIR_LINUX_RELEASE)/monitorpluginfactory.o
+
+$(OBJDIR_LINUX_RELEASE)/niir.o: niir.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c niir.cpp -o $(OBJDIR_LINUX_RELEASE)/niir.o
+
+$(OBJDIR_LINUX_RELEASE)/ondemandaes67mediasubsession.o: ondemandaes67mediasubsession.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c ondemandaes67mediasubsession.cpp -o $(OBJDIR_LINUX_RELEASE)/ondemandaes67mediasubsession.o
+
+$(OBJDIR_LINUX_RELEASE)/ondemandpamsubsession.o: ondemandpamsubsession.cpp
+	$(CXX) $(CFLAGS_LINUX_RELEASE) $(INC_LINUX_RELEASE) -c ondemandpamsubsession.cpp -o $(OBJDIR_LINUX_RELEASE)/ondemandpamsubsession.o
 
 clean_linux_release: 
 	rm -f $(OBJ_LINUX_RELEASE) $(OUT_LINUX_RELEASE)
 	rm -rf ../lib
 	rm -rf $(OBJDIR_LINUX_RELEASE)
-	rm -rf $(OBJDIR_LINUX_RELEASE)/__/external/wxservdisc
 
-.PHONY: before_linux_release after_linux_release clean_linux_release
+before_linux_debug: 
+	test -d ../lib || mkdir -p ../lib
+	test -d $(OBJDIR_LINUX_DEBUG) || mkdir -p $(OBJDIR_LINUX_DEBUG)
+
+after_linux_debug: 
+	cp ../external/log/lib/* ../lib
+	cp ../external/dnssd/lib/* ../lib
+	cp ../external/sapserver/lib/* ../lib
+	cp ../external/ptpmonkey/bin/lib* ../lib
+
+linux_debug: before_linux_debug out_linux_debug after_linux_debug
+
+out_linux_debug: before_linux_debug $(OBJ_LINUX_DEBUG) $(DEP_LINUX_DEBUG)
+	$(LD) -shared $(LIBDIR_LINUX_DEBUG) $(OBJ_LINUX_DEBUG)  -o $(OUT_LINUX_DEBUG) $(LDFLAGS_LINUX_DEBUG) $(LIB_LINUX_DEBUG)
+
+$(OBJDIR_LINUX_DEBUG)/soundfile.o: soundfile.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c soundfile.cpp -o $(OBJDIR_LINUX_DEBUG)/soundfile.o
+
+$(OBJDIR_LINUX_DEBUG)/streamclientstate.o: streamclientstate.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c streamclientstate.cpp -o $(OBJDIR_LINUX_DEBUG)/streamclientstate.o
+
+$(OBJDIR_LINUX_DEBUG)/testpluginbuilder.o: testpluginbuilder.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c testpluginbuilder.cpp -o $(OBJDIR_LINUX_DEBUG)/testpluginbuilder.o
+
+$(OBJDIR_LINUX_DEBUG)/testpluginfactory.o: testpluginfactory.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c testpluginfactory.cpp -o $(OBJDIR_LINUX_DEBUG)/testpluginfactory.o
+
+$(OBJDIR_LINUX_DEBUG)/soundcardmanager.o: soundcardmanager.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c soundcardmanager.cpp -o $(OBJDIR_LINUX_DEBUG)/soundcardmanager.o
+
+$(OBJDIR_LINUX_DEBUG)/uirect.o: uirect.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c uirect.cpp -o $(OBJDIR_LINUX_DEBUG)/uirect.o
+
+$(OBJDIR_LINUX_DEBUG)/wmbutton.o: wmbutton.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c wmbutton.cpp -o $(OBJDIR_LINUX_DEBUG)/wmbutton.o
+
+$(OBJDIR_LINUX_DEBUG)/wmedit.o: wmedit.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c wmedit.cpp -o $(OBJDIR_LINUX_DEBUG)/wmedit.o
+
+$(OBJDIR_LINUX_DEBUG)/r128thread.o: r128thread.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c r128thread.cpp -o $(OBJDIR_LINUX_DEBUG)/r128thread.o
+
+$(OBJDIR_LINUX_DEBUG)/rawvideosource.o: rawvideosource.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c rawvideosource.cpp -o $(OBJDIR_LINUX_DEBUG)/rawvideosource.o
+
+$(OBJDIR_LINUX_DEBUG)/rtpserverthread.o: rtpserverthread.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c rtpserverthread.cpp -o $(OBJDIR_LINUX_DEBUG)/rtpserverthread.o
+
+$(OBJDIR_LINUX_DEBUG)/rtpthread.o: rtpthread.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c rtpthread.cpp -o $(OBJDIR_LINUX_DEBUG)/rtpthread.o
+
+$(OBJDIR_LINUX_DEBUG)/rtsputil.o: rtsputil.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c rtsputil.cpp -o $(OBJDIR_LINUX_DEBUG)/rtsputil.o
+
+$(OBJDIR_LINUX_DEBUG)/settingevent.o: settingevent.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c settingevent.cpp -o $(OBJDIR_LINUX_DEBUG)/settingevent.o
+
+$(OBJDIR_LINUX_DEBUG)/settings.o: settings.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c settings.cpp -o $(OBJDIR_LINUX_DEBUG)/settings.o
+
+$(OBJDIR_LINUX_DEBUG)/smpte2110mediasession.o: smpte2110mediasession.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c smpte2110mediasession.cpp -o $(OBJDIR_LINUX_DEBUG)/smpte2110mediasession.o
+
+$(OBJDIR_LINUX_DEBUG)/wxsaphandler.o: wxsaphandler.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c wxsaphandler.cpp -o $(OBJDIR_LINUX_DEBUG)/wxsaphandler.o
+
+$(OBJDIR_LINUX_DEBUG)/wmswipebutton.o: wmswipebutton.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c wmswipebutton.cpp -o $(OBJDIR_LINUX_DEBUG)/wmswipebutton.o
+
+$(OBJDIR_LINUX_DEBUG)/wmswitcherpanel.o: wmswitcherpanel.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c wmswitcherpanel.cpp -o $(OBJDIR_LINUX_DEBUG)/wmswitcherpanel.o
+
+$(OBJDIR_LINUX_DEBUG)/wmtimeedit.o: wmtimeedit.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c wmtimeedit.cpp -o $(OBJDIR_LINUX_DEBUG)/wmtimeedit.o
+
+$(OBJDIR_LINUX_DEBUG)/wxptp.o: wxptp.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c wxptp.cpp -o $(OBJDIR_LINUX_DEBUG)/wxptp.o
+
+$(OBJDIR_LINUX_DEBUG)/wxsink.o: wxsink.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c wxsink.cpp -o $(OBJDIR_LINUX_DEBUG)/wxsink.o
+
+$(OBJDIR_LINUX_DEBUG)/wxtouchscreenhtml.o: wxtouchscreenhtml.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c wxtouchscreenhtml.cpp -o $(OBJDIR_LINUX_DEBUG)/wxtouchscreenhtml.o
+
+$(OBJDIR_LINUX_DEBUG)/wxzxposter.o: wxzxposter.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c wxzxposter.cpp -o $(OBJDIR_LINUX_DEBUG)/wxzxposter.o
+
+$(OBJDIR_LINUX_DEBUG)/wmline.o: wmline.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c wmline.cpp -o $(OBJDIR_LINUX_DEBUG)/wmline.o
+
+$(OBJDIR_LINUX_DEBUG)/wmfocusmanager.o: wmfocusmanager.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c wmfocusmanager.cpp -o $(OBJDIR_LINUX_DEBUG)/wmfocusmanager.o
+
+$(OBJDIR_LINUX_DEBUG)/wmipeditpnl.o: wmipeditpnl.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c wmipeditpnl.cpp -o $(OBJDIR_LINUX_DEBUG)/wmipeditpnl.o
+
+$(OBJDIR_LINUX_DEBUG)/wmkeyboard.o: wmkeyboard.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c wmkeyboard.cpp -o $(OBJDIR_LINUX_DEBUG)/wmkeyboard.o
+
+$(OBJDIR_LINUX_DEBUG)/wmlabel.o: wmlabel.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c wmlabel.cpp -o $(OBJDIR_LINUX_DEBUG)/wmlabel.o
+
+$(OBJDIR_LINUX_DEBUG)/wmlist.o: wmlist.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c wmlist.cpp -o $(OBJDIR_LINUX_DEBUG)/wmlist.o
+
+$(OBJDIR_LINUX_DEBUG)/wmlistadv.o: wmlistadv.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c wmlistadv.cpp -o $(OBJDIR_LINUX_DEBUG)/wmlistadv.o
+
+$(OBJDIR_LINUX_DEBUG)/wmslider.o: wmslider.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c wmslider.cpp -o $(OBJDIR_LINUX_DEBUG)/wmslider.o
+
+$(OBJDIR_LINUX_DEBUG)/wmslidewnd.o: wmslidewnd.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c wmslidewnd.cpp -o $(OBJDIR_LINUX_DEBUG)/wmslidewnd.o
+
+$(OBJDIR_LINUX_DEBUG)/generatorpluginfactory.o: generatorpluginfactory.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c generatorpluginfactory.cpp -o $(OBJDIR_LINUX_DEBUG)/generatorpluginfactory.o
+
+$(OBJDIR_LINUX_DEBUG)/audioevent.o: audioevent.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c audioevent.cpp -o $(OBJDIR_LINUX_DEBUG)/audioevent.o
+
+$(OBJDIR_LINUX_DEBUG)/generator.o: generator.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c generator.cpp -o $(OBJDIR_LINUX_DEBUG)/generator.o
+
+$(OBJDIR_LINUX_DEBUG)/generatorpluginbuilder.o: generatorpluginbuilder.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c generatorpluginbuilder.cpp -o $(OBJDIR_LINUX_DEBUG)/generatorpluginbuilder.o
+
+$(OBJDIR_LINUX_DEBUG)/audio.o: audio.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c audio.cpp -o $(OBJDIR_LINUX_DEBUG)/audio.o
+
+$(OBJDIR_LINUX_DEBUG)/inimanager.o: inimanager.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c inimanager.cpp -o $(OBJDIR_LINUX_DEBUG)/inimanager.o
+
+$(OBJDIR_LINUX_DEBUG)/inisection.o: inisection.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c inisection.cpp -o $(OBJDIR_LINUX_DEBUG)/inisection.o
+
+$(OBJDIR_LINUX_DEBUG)/iomanager.o: iomanager.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c iomanager.cpp -o $(OBJDIR_LINUX_DEBUG)/iomanager.o
+
+$(OBJDIR_LINUX_DEBUG)/levelcalculator.o: levelcalculator.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c levelcalculator.cpp -o $(OBJDIR_LINUX_DEBUG)/levelcalculator.o
+
+$(OBJDIR_LINUX_DEBUG)/PamTaskScheduler.o: PamTaskScheduler.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c PamTaskScheduler.cpp -o $(OBJDIR_LINUX_DEBUG)/PamTaskScheduler.o
+
+$(OBJDIR_LINUX_DEBUG)/PamUsageEnvironment.o: PamUsageEnvironment.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c PamUsageEnvironment.cpp -o $(OBJDIR_LINUX_DEBUG)/PamUsageEnvironment.o
+
+$(OBJDIR_LINUX_DEBUG)/advelement.o: advelement.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c advelement.cpp -o $(OBJDIR_LINUX_DEBUG)/advelement.o
+
+$(OBJDIR_LINUX_DEBUG)/aes67client.o: aes67client.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c aes67client.cpp -o $(OBJDIR_LINUX_DEBUG)/aes67client.o
+
+$(OBJDIR_LINUX_DEBUG)/aes67mediasession.o: aes67mediasession.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c aes67mediasession.cpp -o $(OBJDIR_LINUX_DEBUG)/aes67mediasession.o
+
+$(OBJDIR_LINUX_DEBUG)/aes67source.o: aes67source.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c aes67source.cpp -o $(OBJDIR_LINUX_DEBUG)/aes67source.o
+
+$(OBJDIR_LINUX_DEBUG)/anglemeter.o: anglemeter.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c anglemeter.cpp -o $(OBJDIR_LINUX_DEBUG)/anglemeter.o
+
+$(OBJDIR_LINUX_DEBUG)/aoipsourcemanager.o: aoipsourcemanager.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c aoipsourcemanager.cpp -o $(OBJDIR_LINUX_DEBUG)/aoipsourcemanager.o
+
+$(OBJDIR_LINUX_DEBUG)/pmcontrol.o: pmcontrol.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c pmcontrol.cpp -o $(OBJDIR_LINUX_DEBUG)/pmcontrol.o
+
+$(OBJDIR_LINUX_DEBUG)/ondemandstreamer.o: ondemandstreamer.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c ondemandstreamer.cpp -o $(OBJDIR_LINUX_DEBUG)/ondemandstreamer.o
+
+$(OBJDIR_LINUX_DEBUG)/ourRTSPClient.o: ourRTSPClient.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c ourRTSPClient.cpp -o $(OBJDIR_LINUX_DEBUG)/ourRTSPClient.o
+
+$(OBJDIR_LINUX_DEBUG)/ourSIPClient.o: ourSIPClient.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c ourSIPClient.cpp -o $(OBJDIR_LINUX_DEBUG)/ourSIPClient.o
+
+$(OBJDIR_LINUX_DEBUG)/pcstats.o: pcstats.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c pcstats.cpp -o $(OBJDIR_LINUX_DEBUG)/pcstats.o
+
+$(OBJDIR_LINUX_DEBUG)/pmpanel.o: pmpanel.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c pmpanel.cpp -o $(OBJDIR_LINUX_DEBUG)/pmpanel.o
+
+$(OBJDIR_LINUX_DEBUG)/ppmtypes.o: ppmtypes.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c ppmtypes.cpp -o $(OBJDIR_LINUX_DEBUG)/ppmtypes.o
+
+$(OBJDIR_LINUX_DEBUG)/qos.o: qos.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c qos.cpp -o $(OBJDIR_LINUX_DEBUG)/qos.o
+
+$(OBJDIR_LINUX_DEBUG)/r128calculator.o: r128calculator.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c r128calculator.cpp -o $(OBJDIR_LINUX_DEBUG)/r128calculator.o
+
+$(OBJDIR_LINUX_DEBUG)/monitorpluginbuilder.o: monitorpluginbuilder.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c monitorpluginbuilder.cpp -o $(OBJDIR_LINUX_DEBUG)/monitorpluginbuilder.o
+
+$(OBJDIR_LINUX_DEBUG)/levelgraph.o: levelgraph.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c levelgraph.cpp -o $(OBJDIR_LINUX_DEBUG)/levelgraph.o
+
+$(OBJDIR_LINUX_DEBUG)/levelmeter.o: levelmeter.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c levelmeter.cpp -o $(OBJDIR_LINUX_DEBUG)/levelmeter.o
+
+$(OBJDIR_LINUX_DEBUG)/liveaudiosource.o: liveaudiosource.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c liveaudiosource.cpp -o $(OBJDIR_LINUX_DEBUG)/liveaudiosource.o
+
+$(OBJDIR_LINUX_DEBUG)/monitorevent.o: monitorevent.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c monitorevent.cpp -o $(OBJDIR_LINUX_DEBUG)/monitorevent.o
+
+$(OBJDIR_LINUX_DEBUG)/AES67ServerMediaSubsession.o: AES67ServerMediaSubsession.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c AES67ServerMediaSubsession.cpp -o $(OBJDIR_LINUX_DEBUG)/AES67ServerMediaSubsession.o
+
+$(OBJDIR_LINUX_DEBUG)/monitorpluginfactory.o: monitorpluginfactory.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c monitorpluginfactory.cpp -o $(OBJDIR_LINUX_DEBUG)/monitorpluginfactory.o
+
+$(OBJDIR_LINUX_DEBUG)/niir.o: niir.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c niir.cpp -o $(OBJDIR_LINUX_DEBUG)/niir.o
+
+$(OBJDIR_LINUX_DEBUG)/ondemandaes67mediasubsession.o: ondemandaes67mediasubsession.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c ondemandaes67mediasubsession.cpp -o $(OBJDIR_LINUX_DEBUG)/ondemandaes67mediasubsession.o
+
+$(OBJDIR_LINUX_DEBUG)/ondemandpamsubsession.o: ondemandpamsubsession.cpp
+	$(CXX) $(CFLAGS_LINUX_DEBUG) $(INC_LINUX_DEBUG) -c ondemandpamsubsession.cpp -o $(OBJDIR_LINUX_DEBUG)/ondemandpamsubsession.o
+
+clean_linux_debug: 
+	rm -f $(OBJ_LINUX_DEBUG) $(OUT_LINUX_DEBUG)
+	rm -rf ../lib
+	rm -rf $(OBJDIR_LINUX_DEBUG)
+
+.PHONY: before_linux_release after_linux_release clean_linux_release before_linux_debug after_linux_debug clean_linux_debug
 
