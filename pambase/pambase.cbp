@@ -48,7 +48,6 @@
 					<Add library="Iphlpapi" />
 					<Add library="pml_log" />
 					<Add library="pml_dnssd" />
-					<Add library="sapserver" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#portaudio.lib)" />
 					<Add directory="$(#libsndfile.lib)" />
@@ -95,9 +94,8 @@
 					<Add library="libsndfile-1" />
 					<Add library="wxmsw30ud_gcc_custom" />
 					<Add library="Iphlpapi" />
-					<Add library="pml_logd" />
-					<Add library="pml_dnssdd" />
-					<Add library="sapserverd" />
+					<Add library="pml_log" />
+					<Add library="pml_dnssd" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#portaudio.lib)" />
 					<Add directory="$(#libsndfile.lib)" />
@@ -187,12 +185,14 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-std=c++1y" />
 			<Add option="-D_pambase_" />
 			<Add option="-DCREATING_DLL" />
 			<Add option="-D_core_" />
 			<Add option="-D_MSL_STDINT_H" />
 			<Add option="-DASIO_STANDALONE" />
 			<Add option="-DNO_OPENSSL" />
+			<Add option="-DSAP_DLL" />
 			<Add directory="../external/live/BasicUsageEnvironment/include" />
 			<Add directory="../external/live/UsageEnvironment/include" />
 			<Add directory="../external/live/groupsock/include" />
@@ -202,6 +202,7 @@
 			<Add directory="../external/log/include" />
 			<Add directory="../external/dnssd/include" />
 			<Add directory="../external/sapserver/include" />
+			<Add directory="../external/sapserver/external/asio/asio/include" />
 		</Compiler>
 		<Linker>
 			<Add directory="../external/live/liveMedia" />
@@ -214,6 +215,12 @@
 			<Add directory="../external/ptpmonkey/bin" />
 			<Add directory="../lib" />
 		</Linker>
+		<Unit filename="../external/sapserver/src/parser.cpp" />
+		<Unit filename="../external/sapserver/src/receiver.cpp" />
+		<Unit filename="../external/sapserver/src/saphandler.cpp" />
+		<Unit filename="../external/sapserver/src/sapserver.cpp" />
+		<Unit filename="../external/sapserver/src/sapserverimpl.cpp" />
+		<Unit filename="../external/sapserver/src/sender.cpp" />
 		<Unit filename="AES67ServerMediaSubsession.cpp" />
 		<Unit filename="AES67ServerMediaSubsession.h" />
 		<Unit filename="PamMediaSession.h" />

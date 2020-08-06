@@ -78,6 +78,44 @@
 						<style>wmList::STYLE_SELECT</style>
 						<handler function="OnlstLatencySelected" entry="EVT_LIST_SELECTED" />
 					</object>
+					<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
+						<label>Gain</label>
+						<pos>10,300</pos>
+						<size>70,30</size>
+						<fg>#FFFFFF</fg>
+						<bg>#004000</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Arial</face>
+						</font>
+					</object>
+					<object class="wmSlider" name="ID_M_PSLIDER1" variable="m_plsliderOutputGain" member="yes">
+						<label>Slider</label>
+						<max>10000</max>
+						<start>5000</start>
+						<pos>80,300</pos>
+						<size>400,30</size>
+						<handler function="OnlsliderOutputGainMove" entry="EVT_SLIDER_MOVE" />
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL10" variable="m_plblOutputGain" member="yes">
+						<label></label>
+						<pos>480,300</pos>
+						<size>70,30</size>
+						<fg>#000000</fg>
+						<bg>#FFFFFF</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Arial</face>
+						</font>
+					</object>
 				</object>
 				<label>Soundcard</label>
 			</object>

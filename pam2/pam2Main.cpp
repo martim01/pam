@@ -855,7 +855,6 @@ void pam2Dialog::TellPluginsAboutOutputChannels()
 
 void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
 {
-
     pml::Log::Get() << "PAM\tExecutable Path = " << Settings::Get().GetExecutableDirectory() << std::endl;
     pml::Log::Get() << "PAM\tCore Lib Path = " <<  Settings::Get().GetCoreLibDirectory() << std::endl;
     pml::Log::Get() << "PAM\tPlugin Monitor Path = " <<  Settings::Get().GetMonitorPluginDirectory() << std::endl;

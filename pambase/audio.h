@@ -9,6 +9,7 @@
 #include "timedbuffer.h"
 
 class SoundFile;
+class SettingEvent;
 
 
 
@@ -92,6 +93,8 @@ private:
 
     void CloseFile();
 
+    void OnSettingChanged(const SettingEvent& event);
+
 
     wxEvtHandler* m_pManager;           ///< the wxEvtHandler that receives event messages from this class
 
@@ -145,6 +148,8 @@ private:
 
     wxString m_sLog;
     unsigned long long m_nTimeStamp;
+
+    std::vector<double> m_vOutputRatio;
 };
 
 /** PaStreamCallback function - simply calls wmComparitor::Callback using userData to get the wmComparitor object

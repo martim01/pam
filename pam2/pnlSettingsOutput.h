@@ -7,6 +7,7 @@
 #include "wmkeyboard.h"
 #include "wmlabel.h"
 #include "wmlist.h"
+#include "wmslider.h"
 #include "wmswitcherpanel.h"
 #include <wx/notebook.h>
 #include <wx/panel.h>
@@ -36,15 +37,18 @@ class pnlSettingsOutput: public wxPanel
 		wmLabel* m_pLbl10;
 		wmLabel* m_pLbl1;
 		wmLabel* m_pLbl2;
+		wmLabel* m_pLbl3;
 		wmLabel* m_pLbl4;
 		wmLabel* m_pLbl5;
 		wmLabel* m_pLbl6;
 		wmLabel* m_pLbl7;
 		wmLabel* m_pLbl9;
+		wmLabel* m_plblOutputGain;
 		wmList* m_plstDestination;
 		wmList* m_plstLatency;
 		wmList* m_plstPacket;
 		wmList* m_plstPlayback;
+		wmSlider* m_plsliderOutputGain;
 		wmSwitcherPanel* m_pswpDestination;
 		wmipeditpnl* m_ppnlAddress;
 		wxPanel* pnlAoip;
@@ -61,6 +65,9 @@ class pnlSettingsOutput: public wxPanel
 		static const long ID_M_PLST4;
 		static const long ID_M_PLBL5;
 		static const long ID_M_PLST6;
+		static const long ID_M_PLBL3;
+		static const long ID_M_PSLIDER1;
+		static const long ID_M_PLBL10;
 		static const long ID_PANEL10;
 		static const long ID_M_PLBL1;
 		static const long ID_PANEL12;
@@ -94,10 +101,12 @@ class pnlSettingsOutput: public wxPanel
 		void OnbtnDNSClick(wxCommandEvent& event);
 		void OnbtnSAPClick(wxCommandEvent& event);
 		void OnbtnStreamClick(wxCommandEvent& event);
+		void OnlsliderOutputGainMove(wxCommandEvent& event);
 		//*)
 		void OnSettingChanged(SettingEvent& event);
 
-
+        double ConvertGainToRatio(double dGain);
+        double ConvertRatioToGain(double dRatio);
 
 		DECLARE_EVENT_TABLE()
 
