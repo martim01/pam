@@ -21,6 +21,9 @@ const long pnlSettingsOutput::ID_PANEL9 = wxNewId();
 const long pnlSettingsOutput::ID_M_PLST4 = wxNewId();
 const long pnlSettingsOutput::ID_M_PLBL5 = wxNewId();
 const long pnlSettingsOutput::ID_M_PLST6 = wxNewId();
+const long pnlSettingsOutput::ID_M_PLBL3 = wxNewId();
+const long pnlSettingsOutput::ID_M_PSLIDER1 = wxNewId();
+const long pnlSettingsOutput::ID_M_PLBL10 = wxNewId();
 const long pnlSettingsOutput::ID_PANEL10 = wxNewId();
 const long pnlSettingsOutput::ID_M_PLBL1 = wxNewId();
 const long pnlSettingsOutput::ID_PANEL12 = wxNewId();
@@ -80,6 +83,22 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_plstLatency->SetBackgroundColour(wxColour(144,144,144));
 	m_plstLatency->SetButtonColour(wxColour(wxT("#008040")));
 	m_plstLatency->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
+	m_pLbl3 = new wmLabel(pnlSoundcard, ID_M_PLBL3, _("Gain"), wxPoint(10,300), wxSize(70,30), 0, _T("ID_M_PLBL3"));
+	m_pLbl3->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl3->GetUiRect().SetGradient(0);
+	m_pLbl3->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl3->SetBackgroundColour(wxColour(0,64,0));
+	wxFont m_pLbl3Font(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
+	m_pLbl3->SetFont(m_pLbl3Font);
+	m_plsliderOutputGain = new wmSlider(pnlSoundcard, ID_M_PSLIDER1, _("Slider"), wxPoint(80,300), wxSize(400,30));
+	m_plsliderOutputGain->Init(0,10000,5000);
+	m_plblOutputGain = new wmLabel(pnlSoundcard, ID_M_PLBL10, wxEmptyString, wxPoint(480,300), wxSize(70,30), 0, _T("ID_M_PLBL10"));
+	m_plblOutputGain->SetBorderState(uiRect::BORDER_NONE);
+	m_plblOutputGain->GetUiRect().SetGradient(0);
+	m_plblOutputGain->SetForegroundColour(wxColour(0,0,0));
+	m_plblOutputGain->SetBackgroundColour(wxColour(255,255,255));
+	wxFont m_plblOutputGainFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
+	m_plblOutputGain->SetFont(m_plblOutputGainFont);
 	pnlAoip = new wxPanel(m_pswpDestination, ID_PANEL11, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL11"));
 	pnlAoip->SetBackgroundColour(wxColour(0,0,0));
 	m_pLbl1 = new wmLabel(pnlAoip, ID_M_PLBL1, _("Multicast"), wxPoint(0,65), wxSize(100,40), 0, _T("ID_M_PLBL1"));
@@ -150,6 +169,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsOutput::OnlstDestinationSelected);
 	Connect(ID_M_PLST4,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsOutput::OnlstPlaybackSelected);
 	Connect(ID_M_PLST6,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsOutput::OnlstLatencySelected);
+	Connect(ID_M_PSLIDER1,wxEVT_SLIDER_MOVE,(wxObjectEventFunction)&pnlSettingsOutput::OnlsliderOutputGainMove);
 	Connect(ID_M_PBTN6,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnRTSPClick);
 	Connect(ID_M_PEDT3,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&pnlSettingsOutput::OnedtRTSPPortText);
 	Connect(ID_M_PLST5,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsOutput::OnlstPacketSelected);
@@ -229,6 +249,10 @@ void pnlSettingsOutput::UpdateDisplayedSettings()
 
     m_pbtnDNS->ToggleSelection(Settings::Get().Read("Server", "DNS-SD", 0), true);
     m_pbtnSAP->ToggleSelection(Settings::Get().Read("Server", "SAP", 0), true);
+
+    double dGain = ConvertRatioToGain(Settings::Get().Read("Output", "Ratio_00", 1.0));
+    m_plblOutputGain->SetLabel(wxString::Format("%.2f dB", dGain));
+    m_plsliderOutputGain->SetSliderPosition(dGain*100+5000, false);
 }
 
 
@@ -387,4 +411,29 @@ void pnlSettingsOutput::ShowSoundcardOutputs()
 void pnlSettingsOutput::OnlstLatencySelected(wxCommandEvent& event)
 {
     Settings::Get().Write(wxT("Output"), wxT("Latency"), event.GetInt()*40);
+}
+
+void pnlSettingsOutput::OnlsliderOutputGainMove(wxCommandEvent& event)
+{
+    double dGain = (m_plsliderOutputGain->GetPosition()-5000)/100.0;
+
+    std::cout << m_plsliderOutputGain->GetPosition() << "=" << dGain << std::endl;
+    m_plblOutputGain->SetLabel(wxString::Format("%.2f dB", dGain));
+
+    double dRatio = ConvertGainToRatio(dGain);
+    for(unsigned int i = 0; i < 8; i++)
+    {
+        Settings::Get().Write("Output", wxString::Format("Ratio_%02d", i), dRatio);
+    }
+}
+
+
+double pnlSettingsOutput::ConvertGainToRatio(double dGain)
+{
+    return pow(10.0, dGain/20.0);
+}
+
+double pnlSettingsOutput::ConvertRatioToGain(double dRatio)
+{
+    return 20*log10(dRatio);
 }

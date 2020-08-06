@@ -350,11 +350,14 @@ void IOManager::DoGain(AudioEvent& event)
     auto itSub = m_SessionIn.GetCurrentSubsession();
     if(itSub != m_SessionIn.lstSubsession.end() && itSub->nChannels != 0)
     {
-       for(size_t i = 0; event.GetBuffer()->GetBufferSize(); i+= itSub->nChannels)
+        for(size_t i = 0; i < event.GetBuffer()->GetBufferSize(); i+= itSub->nChannels)
         {
             for(size_t nChannel = 0; nChannel < itSub->nChannels; nChannel++)
             {
-                event.GetBuffer()->GetWritableBuffer()[i+nChannel] *= m_vRatio[nChannel];
+                if(nChannel < m_vRatio.size())
+                {
+                    event.GetBuffer()->GetWritableBuffer()[i+nChannel] *= m_vRatio[nChannel];
+                }
             }
         }
     }

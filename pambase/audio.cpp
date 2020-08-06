@@ -9,7 +9,7 @@
 #include "settings.h"
 #include "audioevent.h"
 #include "pa_linux_alsa.h"
-
+#include "settingevent.h"
 
 using namespace std;
 
@@ -37,7 +37,13 @@ Audio::Audio(wxEvtHandler* pHandler, unsigned int nDevice, int nType) :
  m_nTotalChannels(2),
  m_bPlaying(false)
  {
-
+    m_vOutputRatio.resize(8);
+    for(unsigned int i = 0; i < 8; i++)
+    {
+        m_vOutputRatio[i] = Settings::Get().Read("Output", wxString::Format("Ratio_%02d", i), 1.0);
+        Settings::Get().AddHandler("Output", wxString::Format("Ratio_%02d", i), this);
+    }
+    Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&Audio::OnSettingChanged);
  }
 
 bool Audio::Init(unsigned int nSampleRate)
@@ -337,7 +343,6 @@ void Audio::AddSamples(const timedbuffer* pTimedBuffer)
     wxMutexLocker ml(m_mutex);
     if(m_bPlaying)
     {
-        //m_sLog << wxString::Format(wxT("Adding: Size is %d\n"), m_qBuffer.size());
         if(m_nTotalChannels  > 0 && m_vMixer.size() > 0)
         {
             double dModifier(0.0);
@@ -351,7 +356,12 @@ void Audio::AddSamples(const timedbuffer* pTimedBuffer)
 
                 for(size_t j = 0; j < m_vMixer.size(); j++)
                 {
-                    m_qBuffer.push(timedSample(dTransmission+dModifier, dPresentation+dModifier, pTimedBuffer->GetTimestamp()+nSample, pTimedBuffer->GetBuffer()[i+m_vMixer[j]]));
+                    double dSample = pTimedBuffer->GetBuffer()[i+m_vMixer[j]];
+                    if(j < m_vOutputRatio.size())
+                    {
+                        dSample *= m_vOutputRatio[j];
+                    }
+                    m_qBuffer.push(timedSample(dTransmission+dModifier, dPresentation+dModifier, pTimedBuffer->GetTimestamp()+nSample, dSample));
                 }
             }
             //m_sLog << wxString::Format(wxT("Added: Size now %d\n"), m_qBuffer.size());
@@ -386,4 +396,16 @@ void Audio::SetMixer(const vector<char>& vChannels, unsigned int nTotalChannels)
 const std::vector<char>& Audio::GetOutputChannels()
 {
     return m_vMixer;
+}
+
+void Audio::OnSettingChanged(const SettingEvent& event)
+{
+    if(event.GetKey().Left(5) == "Ratio")
+    {
+        unsigned long nChannel;
+        if(event.GetKey().AfterFirst('_').ToULong(&nChannel) && nChannel < m_vOutputRatio.size())
+        {
+            m_vOutputRatio[nChannel] = Settings::Get().Read("Output", event.GetKey(), 1.0);
+        }
+    }
 }

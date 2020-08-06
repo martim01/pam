@@ -22,14 +22,14 @@
 					<Add option="-fexceptions" />
 					<Add option="-DWIN32" />
 					<Add option="-D__WXMSW__" />
+					<Add option="-D__GNUWIN32__" />
 					<Add option="-DWXUSINGDLL" />
 					<Add option="-DUNICODE" />
 					<Add option="-DwxUSE_UNICODE" />
-					<Add option="-D__WXDEBUG__" />
-					<Add option="-DPAMBASE_DEBUG" />
 					<Add option="-D__WINDOWS__" />
 					<Add option="-D__WIN32__" />
-					<Add option="-D_MSL_STDINT_H" />
+					<Add option="-D__WXDEBUG__" />
+					<Add option="-DPAMBASE_DEBUG" />
 					<Add directory="$(#wx3_0.include)" />
 					<Add directory="$(#wx3_0.include)/mswu" />
 					<Add directory="$(#portaudio.include)" />
@@ -48,6 +48,7 @@
 					<Add library="libcurl" />
 					<Add library="Ws2_32" />
 					<Add library="iphlpapi" />
+					<Add library="pml_log" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#portaudio.lib)" />
 					<Add directory="$(#curl.lib)" />
@@ -69,10 +70,11 @@
 					<Add option='[[if (PLATFORM == PLATFORM_MSW &amp;&amp; (GetCompilerFactory().GetCompilerVersionString(_T(&quot;gcc&quot;)) &gt;= _T(&quot;4.0.0&quot;))) print(_T(&quot;-Wno-attributes&quot;));]]' />
 					<Add option="-DWIN32" />
 					<Add option="-D__WXMSW__" />
+					<Add option="-D__GNUWIN32__" />
 					<Add option="-DWXUSINGDLL" />
 					<Add option="-DUNICODE" />
-					<Add option="-D__WINDOWS__" />
 					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-D__WINDOWS__" />
 					<Add option="-D__WIN32__" />
 					<Add option="-DNDEBUG" />
 					<Add option="-DwxDEBUG_LEVEL=0" />
@@ -92,7 +94,6 @@
 					<Add option="-Wl,--enable-auto-import,-Map=pam2.map" />
 					<Add library="wxmsw30u_gcc_custom" />
 					<Add library="portaudio" />
-					<Add library="sapserver" />
 					<Add library="pambase" />
 					<Add library="libcurl" />
 					<Add library="Ws2_32" />

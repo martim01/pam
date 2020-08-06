@@ -262,7 +262,7 @@ void pnlSettings::UpdateDisplayedSettings()
 
     m_plstInput->SelectButton(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")), true);
 
-    double dGain = ConvertRatioToGain(Settings::Get().Read("Input", "Ratio_01", 1.0));
+    double dGain = ConvertRatioToGain(Settings::Get().Read("Input", "Ratio_00", 1.0));
     m_plblInputGain->SetLabel(wxString::Format("%.2f dB", dGain));
     m_plsliderInputGain->SetSliderPosition(dGain*100+5000, false);
 
