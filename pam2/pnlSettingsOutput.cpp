@@ -252,7 +252,7 @@ void pnlSettingsOutput::UpdateDisplayedSettings()
 
     double dGain = ConvertRatioToGain(Settings::Get().Read("Output", "Ratio_00", 1.0));
     m_plblOutputGain->SetLabel(wxString::Format("%.2f dB", dGain));
-    m_plsliderOutputGain->SetSliderPosition(dGain*100+5000, false);
+    m_plsliderOutputGain->SetSliderPosition(dGain*500+5000, false);
 }
 
 
@@ -415,7 +415,7 @@ void pnlSettingsOutput::OnlstLatencySelected(wxCommandEvent& event)
 
 void pnlSettingsOutput::OnlsliderOutputGainMove(wxCommandEvent& event)
 {
-    double dGain = (m_plsliderOutputGain->GetPosition()-5000)/100.0;
+    double dGain = (m_plsliderOutputGain->GetPosition()-5000)/500.0;
 
     std::cout << m_plsliderOutputGain->GetPosition() << "=" << dGain << std::endl;
     m_plblOutputGain->SetLabel(wxString::Format("%.2f dB", dGain));

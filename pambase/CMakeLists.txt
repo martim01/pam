@@ -36,9 +36,6 @@ message(${CMAKE_CURRENT_SOURCE_DIR})
 #pambase settubgs
 
 
-file(GLOB SOURCES "*.cpp")
-add_library(pambase SHARED ${SOURCES})
-
 
 #log
 find_path(LOG_LIB_DIR NAMES "include/log.h" PATHS ${PROJECT_SOURCE_DIR}/../external/log)
@@ -90,8 +87,9 @@ else()
 endif()
 
 
-add_subdirectory(${PROJECT_SOURCE_DIR}/../external/sapserver ${CMAKE_CURRENT_BINARY_DIR}/sapserver)
-include_directories(${SAP_LIB_DIR}/include)
+file(GLOB SOURCES "*.cpp")
+add_library(pambase SHARED ${SOURCES} "../external/sapserver/src/parser.cpp"  "../external/sapserver/src/receiver.cpp" "../external/sapserver/src/saphandler.cpp" "../external/sapserver/src/sapserver.cpp" "../external/sapserver/src/sapserverimpl.cpp" "../external/sapserver/src/sender.cpp")
+
 
 
 option(optionPTP "Use PTPMonkey library" OFF)
@@ -114,6 +112,7 @@ if(optionPTP)
 	target_compile_definitions(pambase PUBLIC PTPMONKEY)
 	target_link_libraries(pambase ptpmonkey)
 endif()
+
 
 
 

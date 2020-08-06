@@ -71,5 +71,6 @@
 			<Depends filename="pambase/pambase.cbp" />
 		</Project>
 		<Project filename="plugins/battery/battery.cbp" />
+		<Project filename="external/ptpmonkey/ptpmonkey.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

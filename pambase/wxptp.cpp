@@ -178,12 +178,12 @@ wxString wxPtp::GetMasterClockId(unsigned char nDomain)
     return wxEmptyString;
 }
 
-std::shared_ptr<const PtpV2Clock> wxPtp::GetMasterClock(unsigned char nDomain)
+std::shared_ptr<const PtpV2Clock> wxPtp::GetSyncMasterClock(unsigned char nDomain)
 {
     auto itMonkey = m_mDomain.find(nDomain);
     if(itMonkey != m_mDomain.end())
     {
-        return itMonkey->second->GetMasterClock();
+        return itMonkey->second->GetSyncMasterClock();
     }
     return nullptr;
 }

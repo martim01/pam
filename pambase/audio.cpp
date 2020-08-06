@@ -400,7 +400,7 @@ const std::vector<char>& Audio::GetOutputChannels()
 
 void Audio::OnSettingChanged(const SettingEvent& event)
 {
-    if(event.GetKey().Left(5) == "Ratio")
+    if(event.GetSection() == "Output" && event.GetKey().Left(5) == "Ratio")
     {
         unsigned long nChannel;
         if(event.GetKey().AfterFirst('_').ToULong(&nChannel) && nChannel < m_vOutputRatio.size())
