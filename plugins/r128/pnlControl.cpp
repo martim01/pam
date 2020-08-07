@@ -30,7 +30,7 @@ pnlControl::pnlControl(wxWindow* parent,R128Builder* pBuilder, wxWindowID id,con
 	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlControl::OnbtnResetClick);
 	//*)
 
-	m_pbtnCalculate->SetToogle(true, wxT("Pause"), wxT("Run"), 50.0);
+	m_pbtnCalculate->SetToggle(true, wxT("Pause"), wxT("Run"), 50.0);
 	m_pbtnCalculate->ToggleSelection(m_pBuilder->ReadSetting(wxT("Calculate"),1) == 1, true);
 }
 

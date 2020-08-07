@@ -81,6 +81,7 @@
 					<Add option="-fPIC" />
 					<Add option="`wx-config --cxxflags`" />
 					<Add option="-fpermissive" />
+					<Add option="-pthread" />
 					<Add option="-DDLL_EXPORTS" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
@@ -90,6 +91,7 @@
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add library="pambase" />
+					<Add library="pthread" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />

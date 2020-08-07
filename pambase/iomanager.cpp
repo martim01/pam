@@ -455,6 +455,8 @@ void IOManager::OutputDestinationChanged()
 
 void IOManager::OutputChanged(const wxString& sKey)
 {
+    std::cout << "OutputChanged" << std::endl;
+
     if(sKey == wxT("Destination"))
     {
         OutputDestinationChanged();
@@ -545,6 +547,7 @@ void IOManager::OutputChanged(const wxString& sKey)
     {
         OutputChannelsChanged();
     }
+    std::cout << "OutputChanged:Done" << std::endl;
 }
 
 void IOManager::GeneratorToneChanged()

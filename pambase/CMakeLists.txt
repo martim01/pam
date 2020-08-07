@@ -86,6 +86,8 @@ else()
     message("Found sapserver")
 endif()
 
+include_directories(${SAP_LIB_DIR}/include)
+include_directories(${SAP_LIB_DIR}/external/asio/asio/include)
 
 file(GLOB SOURCES "*.cpp")
 add_library(pambase SHARED ${SOURCES} "../external/sapserver/src/parser.cpp"  "../external/sapserver/src/receiver.cpp" "../external/sapserver/src/saphandler.cpp" "../external/sapserver/src/sapserver.cpp" "../external/sapserver/src/sapserverimpl.cpp" "../external/sapserver/src/sender.cpp")
@@ -117,7 +119,7 @@ endif()
 
 
 
-list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
+list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-g" "-pthread")
 target_compile_options(pambase PRIVATE ${flags})
 target_compile_definitions(pambase PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __WXGNU__ _pambase_ CREATING_DLL _core_ _MSL_STDINT_H NO_OPENSSL ASIO_STANDALONE wxDEBUG_LEVEL=0)
 
@@ -157,7 +159,7 @@ target_link_libraries(pambase UsageEnvironment)
 target_link_libraries(pambase groupsock)
 target_link_libraries(pambase pml_log)
 target_link_libraries(pambase pml_dnssd)
-target_link_libraries(pambase sapserver)
+target_link_libraries(pambase pthread)
 
 
 set_target_properties(pambase PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../lib/)

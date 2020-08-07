@@ -3,7 +3,6 @@
 	<Workspace title="Workspace">
 		<Project filename="external/log/log.cbp" />
 		<Project filename="external/dnssd/dnssd.cbp" />
-		<Project filename="external/sapserver/sapserver.cbp" />
 		<Project filename="manifest_creator/manifest_creator.cbp" />
 		<Project filename="pambase/pambase.cbp" />
 		<Project filename="pamfft/pamfft.cbp" />

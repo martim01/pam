@@ -112,6 +112,7 @@
 					<Add option="-fPIC" />
 					<Add option="`wx-config --cxxflags`" />
 					<Add option="-fpermissive" />
+					<Add option="-pthread" />
 					<Add option="-DNDEBUG" />
 					<Add option="-DDLL_EXPORTS" />
 					<Add option="-DwxUSE_UNICODE" />
@@ -133,6 +134,7 @@
 					<Add library="pml_dnssd" />
 					<Add library="sapserver" />
 					<Add library="ptpmonkey" />
+					<Add library="pthread" />
 					<Add directory="/usr/lib/arm-linux-gnueabihf/" />
 				</Linker>
 				<ExtraCommands>

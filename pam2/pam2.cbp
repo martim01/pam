@@ -116,6 +116,7 @@
 					<Add option="-O3" />
 					<Add option="`wx-config --cxxflags`" />
 					<Add option="-fpermissive" />
+					<Add option="-pthread" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
 					<Add option="-DwxDEBUG_LEVEL=0" />
@@ -131,6 +132,7 @@
 					<Add library="curl" />
 					<Add library="pml_dnssd" />
 					<Add library="pml_log" />
+					<Add library="pthread" />
 					<Add directory="$(#nmos.lib)" />
 				</Linker>
 				<ExtraCommands>
