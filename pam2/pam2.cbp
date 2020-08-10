@@ -98,7 +98,6 @@
 					<Add library="libcurl" />
 					<Add library="Ws2_32" />
 					<Add library="iphlpapi" />
-					<Add library="pml_log" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#portaudio.lib)" />
 					<Add directory="$(#curl.lib)" />
@@ -130,9 +129,6 @@
 					<Add library="portaudio" />
 					<Add library="pambase" />
 					<Add library="curl" />
-					<Add library="pml_dnssd" />
-					<Add library="pml_log" />
-					<Add library="pthread" />
 					<Add directory="$(#nmos.lib)" />
 				</Linker>
 				<ExtraCommands>
@@ -162,8 +158,6 @@
 					<Add library="portaudio" />
 					<Add library="pambased" />
 					<Add library="curl" />
-					<Add library="pml_dnssd" />
-					<Add library="pml_log" />
 					<Add directory="$(#nmos.lib)" />
 				</Linker>
 			</Target>
@@ -189,8 +183,6 @@
 					<Add library="pambase" />
 					<Add library="curl" />
 					<Add library="nmos" />
-					<Add library="pml_dnssd" />
-					<Add library="pml_log" />
 					<Add directory="$(#nmos.lib)" />
 				</Linker>
 				<ExtraCommands>

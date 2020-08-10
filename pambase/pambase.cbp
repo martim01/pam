@@ -195,6 +195,8 @@
 			<Add option="-DASIO_STANDALONE" />
 			<Add option="-DNO_OPENSSL" />
 			<Add option="-DSAP_DLL" />
+			<Add option="-DLOG_DLL" />
+			<Add option="-DDNSSD_DLL" />
 			<Add directory="../external/live/BasicUsageEnvironment/include" />
 			<Add directory="../external/live/UsageEnvironment/include" />
 			<Add directory="../external/live/groupsock/include" />
@@ -217,6 +219,12 @@
 			<Add directory="../external/ptpmonkey/bin" />
 			<Add directory="../lib" />
 		</Linker>
+		<Unit filename="../external/dnssd/src/dnssd.cpp" />
+		<Unit filename="../external/dnssd/src/gnu/avahibrowser.cpp" />
+		<Unit filename="../external/dnssd/src/gnu/avahipublisher.cpp" />
+		<Unit filename="../external/dnssd/src/zcposter.cpp" />
+		<Unit filename="../external/log/src/log.cpp" />
+		<Unit filename="../external/sapserver/src/message.cpp" />
 		<Unit filename="../external/sapserver/src/parser.cpp" />
 		<Unit filename="../external/sapserver/src/receiver.cpp" />
 		<Unit filename="../external/sapserver/src/saphandler.cpp" />
