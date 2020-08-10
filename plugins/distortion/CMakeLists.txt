@@ -6,6 +6,7 @@ include_directories("../../pambase/")
 include_directories("../../pamfft/")
 include_directories("../../external/kiss_fft130")
 include_directories("../../external/kiss_fft130/tools")
+include_directories("../../external/log/include")
 
 link_directories("../../lib")
 

@@ -36,9 +36,9 @@ endif()
 target_compile_options(fftphase PRIVATE ${flags})
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	target_compile_definitions(fft PUBLIC __WXGNU__)
+	target_compile_definitions(fftphase PUBLIC __WXGNU__)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	target_compile_definitions(fft PUBLIC __WXMSW__)
+	target_compile_definitions(fftphase PUBLIC __WXMSW__)
 endif()
 
 
@@ -54,7 +54,7 @@ target_link_libraries(fftphase pamfft)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS fft LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
+	install(TARGETS fftphase LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
 endif()
 
 		

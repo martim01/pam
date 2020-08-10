@@ -50,7 +50,6 @@ if((NOT LOG_LIB_DIR) OR (NOT EXISTS ${LOG_LIB_DIR}))
 else()
     message("Found pml::log")
 endif()
-add_subdirectory(${PROJECT_SOURCE_DIR}/../external/log ${CMAKE_CURRENT_BINARY_DIR}/log)
 include_directories(${LOG_LIB_DIR}/include)
 
 
@@ -68,7 +67,6 @@ else()
     message("Found pml::dnssd")
 endif()
 
-add_subdirectory(${PROJECT_SOURCE_DIR}/../external/dnssd ${CMAKE_CURRENT_BINARY_DIR}/dnssd)
 include_directories(${DNSSD_LIB_DIR}/include)
 
 
@@ -90,7 +88,15 @@ include_directories(${SAP_LIB_DIR}/include)
 include_directories(${SAP_LIB_DIR}/external/asio/asio/include)
 
 file(GLOB SOURCES "*.cpp")
-add_library(pambase SHARED ${SOURCES} "../external/sapserver/src/parser.cpp"  "../external/sapserver/src/receiver.cpp" "../external/sapserver/src/saphandler.cpp" "../external/sapserver/src/sapserver.cpp" "../external/sapserver/src/sapserverimpl.cpp" "../external/sapserver/src/sender.cpp")
+add_library(pambase SHARED ${SOURCES} "../external/sapserver/src/parser.cpp"
+ "../external/sapserver/src/receiver.cpp"
+ "../external/sapserver/src/saphandler.cpp"
+ "../external/sapserver/src/sapserver.cpp" "../external/sapserver/src/sapserverimpl.cpp" "../external/sapserver/src/sender.cpp" 
+ "../external/log/src/log.cpp"
+ "../external/dnssd/src/dnssd.cpp"
+ "../external/dnssd/src/zcposter.cpp"
+ "../external/dnssd/src/gnu/avahibrowser.cpp"
+ "../external/dnssd/src/gnu/avahipublisher.cpp")
 
 
 
@@ -119,9 +125,9 @@ endif()
 
 
 
-list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-g" "-pthread")
+list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(pambase PRIVATE ${flags})
-target_compile_definitions(pambase PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __WXGNU__ _pambase_ CREATING_DLL _core_ _MSL_STDINT_H NO_OPENSSL ASIO_STANDALONE wxDEBUG_LEVEL=0)
+target_compile_definitions(pambase PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __WXGNU__ _pambase_ CREATING_DLL _core_ _MSL_STDINT_H NO_OPENSSL ASIO_STANDALONE wxDEBUG_LEVEL=0 DNSSD_DLL LOG_DLL)
 
 #find external libraries
 find_package(wxWidgets REQUIRED)
@@ -157,9 +163,7 @@ target_link_libraries(pambase liveMedia)
 target_link_libraries(pambase BasicUsageEnvironment)
 target_link_libraries(pambase UsageEnvironment)
 target_link_libraries(pambase groupsock)
-target_link_libraries(pambase pml_log)
-target_link_libraries(pambase pml_dnssd)
-target_link_libraries(pambase pthread)
+#target_link_libraries(pambase pthread)
 
 
 set_target_properties(pambase PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../lib/)

@@ -3,7 +3,7 @@ project(pamupdatemanager LANGUAGES CXX)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 include_directories("../pambase/")
-
+include_directories("../external/log/include")
 link_directories("../lib")
 
 
