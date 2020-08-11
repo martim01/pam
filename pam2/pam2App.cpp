@@ -20,13 +20,17 @@
 #include <wx/textfile.h>
 #include "iomanager.h"
 #include "dlgEngineering.h"
+#include <wx/image.h>
 
 IMPLEMENT_APP(pam2App);
 
 bool pam2App::OnInit()
 {
     m_bReset = false;
-    #ifndef __WXDEBUG__
+
+    wxInitAllImageHandlers();
+
+    #ifdef NDEBUG
     wxLog::SetLogLevel(0);
     #endif
     #ifdef __WXGNU__

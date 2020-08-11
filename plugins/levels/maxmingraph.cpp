@@ -6,7 +6,7 @@
 #include "uirect.h"
 #include "settings.h"
 #include "levelsbuilder.h"
-#include "wmlogevent.h"
+#include "log.h"
 //#include "testlog.h"
 
 using namespace std;
@@ -32,7 +32,7 @@ MaxMinGraph::MaxMinGraph(int nChannel, wxWindow *parent,LevelsBuilder* pBuilder,
 
     if(m_pBuilder->IsLogActive() )
     {
-        wmLog::Get()->Log(wxString::Format(wxT("Levels (Channel %d) - Meter Reset"), m_nChannel), wmLog::LOG_TEST_INFO);
+        pml::Log::Get() << "Levels\t" << "(Channel " << m_nChannel << ") - Meter Reset" << std::endl;
     }
 }
 
@@ -164,7 +164,8 @@ void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bCon
             {
                 if(m_pBuilder->IsLogActive())
                 {
-                    wmLog::Get()->Log(wxString::Format(wxT("Levels (Channel %d) - level changed from %.2fdB to %.2fdB"), m_nChannel, m_dLastLevel, m_dCurrent), wmLog::LOG_TEST_ALARM);
+                    pml::Log::Get(pml::Log::LOG_WARN) << "Levels\t" << "(Channel " << m_nChannel << ") - "
+                    << "level changed from " << m_dLastLevel << "dB to " << m_dCurrent << "dB" << std::endl;
                 }
                 m_uiCurrent.SetBackgroundColour(wxColour(255,100,100));
             }
@@ -178,7 +179,7 @@ void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bCon
             {
                 if(m_pBuilder->IsLogActive() && m_bOutOfRange == false)
                 {
-                    wmLog::Get()->Log(wxString::Format(wxT("Levels (Channel %d) - range %.2fdB > max set %.2fdB"), m_nChannel, dRange, m_dMaxRange), wmLog::LOG_TEST_ALARM);
+                    pml::Log::Get(pml::Log::LOG_WARN) << "Levels\t" << "(Channel " << m_nChannel << ") - " << "range " << dRange << "dB > max set " << m_dMaxRange << "dB" << std::endl;
                     m_bOutOfRange = true;
                 }
 
@@ -188,7 +189,7 @@ void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bCon
             {
                 if(m_pBuilder->IsLogActive() && m_bOutOfRange == true)
                 {
-                    wmLog::Get()->Log(wxString::Format(wxT("Levels (Channel %d) - range %.2fdB < max set %.2fdB"), m_nChannel, dRange, m_dMaxRange), wmLog::LOG_TEST_OK);
+                    pml::Log::Get(pml::Log::LOG_INFO) << "Levels\t" << "(Channel " << m_nChannel << ") - " << "range " << dRange << "dB <= max set " << m_dMaxRange << "dB" << std::endl;
                     m_bOutOfRange = false;
                 }
 
@@ -201,7 +202,9 @@ void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bCon
                 m_uiCurrent.SetBackgroundColour(wxColour(255,100,100));
                 if(m_pBuilder->IsLogActive() && m_bOutOfRange == false)
                 {
-                    wmLog::Get()->Log(wxString::Format(wxT("Levels (Channel %d) - level %.2fdB outside guide range [%.2fdB,%.2fdB]"), m_nChannel, m_dCurrent, m_dAmplitudeMin, m_dAmplitudeMax), wmLog::LOG_TEST_ALARM);
+                    pml::Log::Get(pml::Log::LOG_WARN) << "Levels\t" << "(Channel " << m_nChannel << ") - " <<  "level " << m_dCurrent << "dB outside guide range ["
+                    << m_dAmplitudeMin << "dB,"<< m_dAmplitudeMax << "dB]" << std::endl;
+
                     m_bOutOfRange = true;
                 }
 
@@ -211,7 +214,8 @@ void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bCon
                 m_uiCurrent.SetBackgroundColour(wxColour(91,91,0));
                 if(m_pBuilder->IsLogActive() && m_bOutOfRange == true)
                 {
-                    wmLog::Get()->Log(wxString::Format(wxT("Levels (Channel %d) - level %.2fdB inside guide range [%.2fdB,%.2fdB]"), m_nChannel, m_dCurrent, m_dAmplitudeMin, m_dAmplitudeMax), wmLog::LOG_TEST_OK);
+                    pml::Log::Get(pml::Log::LOG_INFO) << "Levels\t" << "(Channel " << m_nChannel << ") - " <<  "level " << m_dCurrent << "dB inside guide range ["
+                    << m_dAmplitudeMin << "dB,"<< m_dAmplitudeMax << "dB]" << std::endl;
                     m_bOutOfRange = false;
                 }
 

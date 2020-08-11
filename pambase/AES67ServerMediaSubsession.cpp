@@ -260,7 +260,4 @@ int AES67ServerMediaSubsession::GetEpochTimestamp()
     std::cout << "To Minus: " << nTimestampsToMinus << std::endl;
 
     return nTimestamp-static_cast<int>(nTimestampsToMinus);
-
-
-
 }

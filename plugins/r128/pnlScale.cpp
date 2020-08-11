@@ -30,10 +30,10 @@ pnlScale::pnlScale(wxWindow* parent,R128Builder* pBuilder, wxWindowID id,const w
 	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlScale::OnbtnZeroClick);
 	//*)
 
-	m_pbtnScale->SetToggleLook(true, wxT("+9"), wxT("+18"), 50.0);
+	m_pbtnScale->SetToggle(true, wxT("+9"), wxT("+18"), 50.0);
 	m_pbtnScale->ToggleSelection(m_pBuilder->ReadSetting(wxT("Scale"),1) == 1, true);
 
-	m_pbtnZero->SetToggleLook(true, wxT("-23"), wxT("Abs"), 50.0);
+	m_pbtnZero->SetToggle(true, wxT("-23"), wxT("Abs"), 50.0);
 	m_pbtnZero->ToggleSelection(m_pBuilder->ReadSetting(wxT("Zero"),1) == 1, true);
 }
 

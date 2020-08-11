@@ -41,9 +41,31 @@ wxDEFINE_EVENT(wxEVT_LIST_PAGED, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_LIST_SLID, wxCommandEvent);
 #endif // WXSPAM
 
-wmList::wmList() : pmControl()
+wmList::wmList() : pmControl(),
+ m_nStyle(0),
+ m_nScrollAllowed(0),
+ m_nHoldCount(0),
+ m_nScrolling(0),
+ m_nSliding(0),
+ m_bDownInWindow(false),
+ m_nScrollOffset(0),
+ m_nSwipeOffset(0),
+ m_nFlashTime(0),
+ m_nColumns(0),
+ m_nBorderStyle(0),
+ m_nTextAlign(0),
+ m_nBitmapAlign(0),
+ m_nSwipeLeft(0),
+ m_nSwipeTotal(0),
+ m_nSwipeCount(0),
+ m_nGradient(0),
+ m_nIndex(0),
+ m_pFactory(nullptr),
+ m_nButtonsPerPage(0),
+ m_pSlideWnd(nullptr),
+ m_nSensitivity(0)
 {
-
+	m_pbmpSwipe[0] = m_pbmpSwipe[1] = nullptr;
 }
 
 wmList::~wmList()
@@ -143,7 +165,7 @@ void wmList::SetSwipeSensitivity(unsigned long nPixels)
 
 void wmList::SetDefaultFactory()
 {
-//    wxLogDebug(wxT("wmList::SetDefaultFactory"));
+
     SetButtonFactory(new wmButtonFactory());
 }
 

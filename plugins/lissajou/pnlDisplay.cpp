@@ -47,9 +47,9 @@ pnlDisplay::pnlDisplay(wxWindow* parent,LissajouBuilder* pBuilder, wxWindowID id
 
 	m_plstScaling->SelectButton(m_pBuilder->ReadSetting(wxT("Scale"),1), true);
 
-	m_pbtnRotate->SetToggleLook(true, wxT("LvR"), wxT("MvS"), 50.0);
-	m_pbtnLevels->SetToggleLook(true, wxT("Hide"), wxT("Show"), 50.0);
-	m_pbtnDisplay->SetToggleLook(true, wxT("Stars"), wxT("Hull"), 50.0);
+	m_pbtnRotate->SetToggle(true, wxT("LvR"), wxT("MvS"), 50.0);
+	m_pbtnLevels->SetToggle(true, wxT("Hide"), wxT("Show"), 50.0);
+	m_pbtnDisplay->SetToggle(true, wxT("Stars"), wxT("Hull"), 50.0);
 
 	m_pbtnRotate->ToggleSelection((m_pBuilder->ReadSetting(wxT("Rotate"),1)==1), true);
 	m_pbtnLevels->ToggleSelection((m_pBuilder->ReadSetting(wxT("Levels"),0)==1), true);

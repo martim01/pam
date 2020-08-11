@@ -16,8 +16,7 @@ const double LiveAudioSource::TWENTYFOURBIT = 8388608.0;
 
 LiveAudioSource* LiveAudioSource::createNew(wxEvtHandler* pHandler, wxMutex& mutex, UsageEnvironment& env,  unsigned char nNumChannels,enumPacketTime ePacketTime)
 {
-    LiveAudioSource* pSource = new LiveAudioSource(pHandler, mutex, env, nNumChannels, ePacketTime);
-    return pSource;
+    return new LiveAudioSource(pHandler, mutex, env, nNumChannels, ePacketTime);
 }
 
 
@@ -158,6 +157,7 @@ double LiveAudioSource::getAverageLevel() const
 
 void LiveAudioSource::AddSamples(const timedbuffer* pTimedBuffer)
 {
+    wxMutexLocker lg(m_mutex);
     for(unsigned int i =0; i < pTimedBuffer->GetBufferSize(); i++)
     {
         m_qBuffer.push(pTimedBuffer->GetBuffer()[i]);
@@ -168,6 +168,7 @@ void LiveAudioSource::AddSamples(const timedbuffer* pTimedBuffer)
 
 void LiveAudioSource::FlushQueue()
 {
+    wxMutexLocker lg(m_mutex);
     while(m_qBuffer.empty() == false)
     {
         m_qBuffer.pop();

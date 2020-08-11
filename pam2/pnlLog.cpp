@@ -2,10 +2,11 @@
 #include <wx/tokenzr.h>
 #include "settings.h"
 #include "pnlLogControl.h"
-#include "wmlogevent.h"
+#include "wxlogoutput.h"
 #include <wx/log.h>
 #include "logelement.h"
 #include <wx/dcclient.h>
+#include "wxlogoutput.h"
 
 //(*InternalHeaders(pnlLog)
 #include <wx/intl.h>
@@ -20,7 +21,7 @@ BEGIN_EVENT_TABLE(pnlLog,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlLog::pnlLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size) : m_pControl(0)
+pnlLog::pnlLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size) : m_pControl(0), m_nLogLevel(0)
 {
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
@@ -32,8 +33,9 @@ pnlLog::pnlLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
     m_nFilter = 15;
 
 
-	wmLog::Get()->SetTarget(this);
-	Connect(wxID_ANY,wxEVT_WMLOG,(wxObjectEventFunction)&pnlLog::OnLog);
+	pml::Log::Get().AddOutput(std::unique_ptr<pml::LogOutput>(new wxLogOutput(this)));
+
+	Connect(wxID_ANY,wxEVT_PMLOG,(wxObjectEventFunction)&pnlLog::OnLog);
 }
 
 pnlLog::~pnlLog()
@@ -81,30 +83,24 @@ void pnlLog::Clear()
 
 
 
-void pnlLog::OnLog(wmLogEvent& event)
+void pnlLog::OnLog(wxCommandEvent& event)
 {
-    #ifdef __WXDEBUG__
-        cout << event.GetLogMessage().mb_str() << endl;
-    #endif // __WXDEBUG__
-
-    wxClientDC dc(this);
+        wxClientDC dc(this);
     dc.SetFont(m_pLogList->GetFont());
 
-    bool bTest(false);
-
-
-    LogElement* pElement(new LogElement(dc, GetClientSize().x, event.GetLogMessage(), event.GetLogType()));
-    m_pLogList->AddElement(pElement);
-    pElement->Filter(m_nFilter);
-    m_pLogList->Refresh();
-
-    //m_pLogList->Refresh();
-    if(!m_bScrollLock)
+    if(event.GetInt() >= m_nLogLevel)
     {
-        End();
+        LogElement* pElement(new LogElement(dc, GetClientSize().x, event.GetString(), event.GetInt()));  //@todo replace log type with something sensible
+        m_pLogList->AddElement(pElement);
+        pElement->Filter(m_nFilter);
+        m_pLogList->Refresh();
+
+        if(!m_bScrollLock)
+        {
+            End();
+        }
     }
 }
-
 
 void pnlLog::Filter(int nFilter)
 {

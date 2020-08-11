@@ -1,6 +1,7 @@
 #pragma once
 #include "dlldefine.h"
 #include <map>
+#include <wx/string.h>
 
 class PAMBASE_IMPEXPORT pcStats
 {

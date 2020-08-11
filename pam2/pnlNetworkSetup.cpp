@@ -124,7 +124,7 @@ pnlNetworkSetup::pnlNetworkSetup(wxWindow* parent,wxWindowID id,const wxPoint& p
 	Connect(m_pbtnScan->GetId(), wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&pnlNetworkSetup::OnbtnScanClick);
 
 
-	m_pbtnStaticDHCP->SetToggleLook(true, wxT("Static"), wxT("DHCP"), 40);
+	m_pbtnStaticDHCP->SetToggle(true, wxT("Static"), wxT("DHCP"), 40);
 
 	for(map<wxString, networkInterface>::const_iterator itInterface = NetworkControl::Get().GetInterfaceBegin(); itInterface != NetworkControl::Get().GetInterfaceEnd(); ++itInterface)
     {

@@ -58,7 +58,7 @@ void ourSIPClient::PlaySubsession(const wxString& sId, responseHandler* response
     MediaSubsession* pSubsession = NULL;
     while ((pSubsession = iterCount.next()) != NULL)
     {
-        wxLogDebug(wxString::Format(wxT("Subsession = %s"), wxString::FromAscii(pSubsession->sessionId()).c_str()));
+
 
         if(sId == wxT("0") || strcmp(pSubsession->sessionId(), sId.mb_str()) == 0)
         {

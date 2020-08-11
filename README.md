@@ -49,7 +49,13 @@ sudo apt-get update
 sudo apt-get install libwxgtk3.0-dev portaudio19-dev libsndfile1-dev libsamplerate0-dev libavahi-client-dev libcurl4-openssl-dev libmicrohttpd-dev
 ```
 
-
+### Other libraries required
+PAM uses a number of small libraries that I have developed. All these libraries are included in the project tree as git submodules and therefore should update automatically.
+* [log](https://github.com/martim01/log)   a simple streaming log class
+* [dnssd](https://github.com/martim01/dnssd)   a cross platform wrapper around Bonjour and Avahi for service browsing and publishing
+* [sapserver]  a library to detect and publish SAP
+* [ptpmonkey](https://github.com/martim01/ptpmonkey)  an optional library to allow PAM to decode and analyse PTP messages and also sync to a PTP grandmaster
+* [nmos](https://github.com/martim01/nmos)   an optional library to allow PAM to advertise itself as an NMOS node and also act as an NMOS client
 
 ## Building PAM
 
@@ -96,9 +102,9 @@ If you wish to include [PTPMonkey](https://github.com/martim01/ptpmonkey) in the
 
 The CMake project will clone the PTPMonkey code from GitHub to __external/ptpmonkey__ and build and install the library.
 
-Note that the first run of CMake will likely fail saying that PTPMonkey can't find the Asio library. Simply rerunning ```cmake .. -DoptionPTP=ON ``` again will build the make instructions
+Note that the first run of CMake will possibly fail saying that PTPMonkey can't find the Asio library. Simply rerunning ```cmake .. -DoptionPTP=ON ``` again will build the make instructions
 
-When subscribing to an AoIP stream whose SDP defines a PTP reference PTPMonkey will listen for a Master Clock on the relevant domain and use the Master Clock's time for timestamping incoming RTP packets. The __forthcoming__ PTP plugin will also depend on this library being part of the base build
+When subscribing to an AoIP stream whose SDP defines a PTP reference PTPMonkey will listen for a Master Clock on the relevant domain and use the Master Clock's time for timestamping incoming RTP packets. The PTP plugin will also depend on this library being part of the base build
 
 **__Note: If you wish to use PTPMonkey with PAM on Linux then you will need to run PAM using [authbind](https://en.wikipedia.org/wiki/Authbind) or with higher privileges as the application will need to open network ports 319 and 320__**
 
@@ -120,3 +126,7 @@ PAM expects a few files to live in a specific directory:
 
 ## Prebuilt Images
 Links to these can be found [here](https://github.com/martim01/pam/releases) with the associated Releaes
+
+
+## List of Plugins
+Can be found in the wiki section

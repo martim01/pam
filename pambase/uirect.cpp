@@ -2,9 +2,10 @@
 #include <wx/log.h>
 #include <wx/tokenzr.h>
 #include <algorithm>
+#include <iostream>
+
 
 using namespace std;
-
 
 uiRect::uiRect(const wxRect& rect, unsigned int nGradient) : m_rectEnclosing(rect),
 m_clrBackgroundHigh(wxColour(150,150,150)),
@@ -15,7 +16,7 @@ m_clrText(*wxWHITE),
 m_nGradient(nGradient),
 m_nAlign(wxALIGN_CENTER),
 m_nBitmapAlign(wxALIGN_CENTER),
-m_pData(0),
+m_pData(nullptr),
 m_nData(0),
 m_nIndex(0),
 m_bClip(true)
@@ -117,6 +118,7 @@ void uiRect::SetBackgroundColour(const wxColour &colour, const wxColour& clrLow)
 
         m_clrBackgroundLow = clrLow;
     }
+
     if(m_clrBackgroundLow.IsOk() == false)
     {
         return;

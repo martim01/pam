@@ -9,7 +9,7 @@
 #include "monitorpluginfactory.h"
 #include "testpluginfactory.h"
 #include <wx/dir.h>
-
+#include "log.h"
 
 using namespace std;
 
@@ -44,7 +44,7 @@ int debug_callback(CURL *handle, curl_infotype type, char *data, size_t size, vo
     #ifdef __WXMSW__
   //  wxLogMessage(wxString::FromAscii(data));
     #endif // __WXMSW__
-    //wxLogDebug(wxString::FromAscii(data));
+
     return size;
 }
 
@@ -250,7 +250,7 @@ bool UpdateManager::DecodeUpdateList(const wxXmlDocument& xmlDoc)
     }
     else
     {
-        wxLogDebug(wxT("UpdateManager Xml is not correct"));
+        pml::Log::Get(pml::Log::LOG_ERROR) << "UpdateManager\tXML is not correct!" << std::endl;
     }
     return false;
 }

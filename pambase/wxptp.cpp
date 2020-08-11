@@ -3,7 +3,7 @@
 #include "ptpmonkey.h"
 #include "timedbuffer.h"
 #include <wx/log.h>
-#include "wmlogevent.h"
+#include "log.h"
 #include "ptpeventhander.h"
 #include <iostream>
 #include <iomanip>
@@ -24,6 +24,7 @@ wxDEFINE_EVENT(wxEVT_CLOCK_MSG_FOLLOWUP,wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CLOCK_MSG_DELAY_REQUEST,wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CLOCK_MSG_DELAY_RESPONSE,wxCommandEvent);
 
+
 using namespace ptpmonkey;
 
 void wxPtpEventHandler::AddHandler(wxEvtHandler* pHandler)
@@ -43,25 +44,22 @@ void wxPtpEventHandler::NotifyHandlers(wxEventType type, const wxString& sClockI
 
 void wxPtpEventHandler::ClockAdded(std::shared_ptr<PtpV2Clock> pClock)
 {
-    //wmLog::Get()->Log(wxT("PTP"), wxString::Format("New Clock %s", wxString::FromUTF8(pClock->GetId().c_str()).c_str()));
     NotifyHandlers(wxEVT_CLOCK_ADDED, wxString::FromUTF8(pClock->GetId().c_str()));
 }
 
 void wxPtpEventHandler::ClockUpdated(std::shared_ptr<PtpV2Clock> pClock)
 {
-    //wmLog::Get()->Log(wxT("PTP"), wxString::Format("Updated Clock %s", wxString::FromUTF8(pClock->GetId().c_str()).c_str()));
+
     NotifyHandlers(wxEVT_CLOCK_UPDATED, wxString::FromUTF8(pClock->GetId().c_str()));
 }
 
 void wxPtpEventHandler::ClockBecomeMaster(std::shared_ptr<PtpV2Clock> pClock)
 {
-    //wmLog::Get()->Log(wxT("PTP"), wxString::Format("%s changed to master", wxString::FromUTF8(pClock->GetId().c_str()).c_str()));
     NotifyHandlers(wxEVT_CLOCK_MASTER, wxString::FromUTF8(pClock->GetId().c_str()));
 }
 
 void wxPtpEventHandler::ClockBecomeSlave(std::shared_ptr<PtpV2Clock> pClock)
 {
-    wmLog::Get()->Log(wxT("PTP"), wxString::Format("%s changed to slave", wxString::FromUTF8(pClock->GetId().c_str()).c_str()));
     NotifyHandlers(wxEVT_CLOCK_SLAVE, wxString::FromUTF8(pClock->GetId().c_str()));
 }
 
@@ -122,14 +120,7 @@ void wxPtp::RunDomain(const wxString& sInterface, unsigned char nDomain)
         itMonkey = m_mDomain.insert(std::make_pair(nDomain, std::make_shared<PtpMonkey>(IpInterface(std::string(sInterface.mb_str())), nDomain, 10))).first;
         itMonkey->second->AddEventHandler(m_pNotifier);
         //itMonkey->second->AddEventHandler(std::make_shared<ptpmonkey::PtpEventLogHandler>());
-        if(itMonkey->second->Run())
-        {
-            wmLog::Get()->Log(wxString::Format(wxT("PTPMonkey listening on interface %s for domain %u"), sInterface.c_str(), nDomain));
-        }
-        else
-        {
-            wmLog::Get()->Log(wxString::Format(wxT("PTPMonkey failed to listen on interface %s for domain %u"), sInterface.c_str(), nDomain));
-        }
+        itMonkey->second->Run();
 
     }
     else if(itMonkey->second->IsStopped())
@@ -187,12 +178,12 @@ wxString wxPtp::GetMasterClockId(unsigned char nDomain)
     return wxEmptyString;
 }
 
-std::shared_ptr<const PtpV2Clock> wxPtp::GetMasterClock(unsigned char nDomain)
+std::shared_ptr<const PtpV2Clock> wxPtp::GetSyncMasterClock(unsigned char nDomain)
 {
     auto itMonkey = m_mDomain.find(nDomain);
     if(itMonkey != m_mDomain.end())
     {
-        return itMonkey->second->GetMasterClock();
+        return itMonkey->second->GetSyncMasterClock();
     }
     return nullptr;
 }

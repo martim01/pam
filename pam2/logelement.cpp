@@ -1,7 +1,7 @@
 #include "logelement.h"
 #include <wx/dc.h>
 #include <wx/log.h>
-#include "wmlogevent.h"
+#include "log.h"
 
 LogElement::LogElement(wxDC& dc, unsigned int nWidth, const wxString& sMessage, int nType) : m_nType(nType)
 {
@@ -76,27 +76,27 @@ void LogElement::CreateHitRects()
 
     switch(m_nType)
     {
-        case wmLog::LOG_SYSTEM:
+        case pml::Log::LOG_DEBUG:
+            m_mHitRects[0].SetBackgroundColour(*wxBLACK);
+            m_mHitRects[1].SetBackgroundColour(*wxBLACK);
+            m_mHitRects[0].SetForegroundColour(wxColour(150,150,150));
+            m_mHitRects[1].SetForegroundColour(wxColour(150,150,150));
+            break;
+        case pml::Log::LOG_INFO:
             m_mHitRects[0].SetBackgroundColour(*wxBLACK);
             m_mHitRects[1].SetBackgroundColour(*wxBLACK);
             m_mHitRects[0].SetForegroundColour(*wxWHITE);
             m_mHitRects[1].SetForegroundColour(*wxWHITE);
             break;
-        case wmLog::LOG_TEST_INFO:
-            m_mHitRects[0].SetBackgroundColour(wxColour(100,100,255));
-            m_mHitRects[1].SetBackgroundColour(wxColour(100,100,255));
+        case pml::Log::LOG_WARN:
+            m_mHitRects[0].SetBackgroundColour(wxColour(255,100,50));
+            m_mHitRects[1].SetBackgroundColour(wxColour(255,100,50));
             m_mHitRects[0].SetForegroundColour(*wxBLACK);
             m_mHitRects[1].SetForegroundColour(*wxBLACK);
             break;
-        case wmLog::LOG_TEST_ALARM:
-            m_mHitRects[0].SetBackgroundColour(wxColour(255,100,100));
-            m_mHitRects[1].SetBackgroundColour(wxColour(255,100,100));
-            m_mHitRects[0].SetForegroundColour(*wxBLACK);
-            m_mHitRects[1].SetForegroundColour(*wxBLACK);
-            break;
-        case wmLog::LOG_TEST_OK:
-            m_mHitRects[0].SetBackgroundColour(wxColour(100,255,100));
-            m_mHitRects[1].SetBackgroundColour(wxColour(100,255,100));
+        case pml::Log::LOG_ERROR:
+            m_mHitRects[0].SetBackgroundColour(wxColour(255,50,50));
+            m_mHitRects[1].SetBackgroundColour(wxColour(255,50,50));
             m_mHitRects[0].SetForegroundColour(*wxBLACK);
             m_mHitRects[1].SetForegroundColour(*wxBLACK);
             break;

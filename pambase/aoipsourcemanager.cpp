@@ -1,12 +1,29 @@
 #include "aoipsourcemanager.h"
 #include "settings.h"
-#include "wmlogevent.h"
+#include "log.h"
 #include <wx/log.h>
+#include <wx/tokenzr.h>
+#include "dnssd.h"
+#include "wxzxposter.h"
+#include "mdns.h"
+#include "sapserver.h"
+#include "wxsaphandler.h"
 
+wxDEFINE_EVENT(wxEVT_ASM_DISCOVERY, wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_ASM_DISCOVERY_FINISHED, wxCommandEvent);
 
-AoipSourceManager::AoipSourceManager()
+AoipSourceManager::AoipSourceManager() :
+    m_pBrowser(nullptr),
+    m_pPoster(nullptr),
+    m_pSapWatcher(nullptr)
 {
     LoadSources();
+
+
+	Connect(wxID_ANY, wxEVT_ZC_RESOLVED, (wxObjectEventFunction)&AoipSourceManager::OnDiscovery);
+	Connect(wxID_ANY, wxEVT_ZC_FINISHED, (wxObjectEventFunction)&AoipSourceManager::OnDiscoveryFinished);
+	Connect(wxID_ANY, wxEVT_SAP, (wxObjectEventFunction)&AoipSourceManager::OnSap);
+
 }
 
 AoipSourceManager& AoipSourceManager::Get()
@@ -30,7 +47,7 @@ bool AoipSourceManager::LoadSources()
                 auto insertSource = m_mSources.insert(std::make_pair(nIndex, AoIPSource(nIndex)));
                 if(insertSource.second == false)
                 {
-                    wmLog::Get()->Log(wxString::Format("AoIP Source Manager: Duplicate source index %d", nIndex));
+                    pml::Log::Get(pml::Log::LOG_WARN) << "AoIP Source Manager\tDuplicate source index: " << nIndex << std::endl;
                 }
                 else
                 {
@@ -217,4 +234,182 @@ void AoipSourceManager::DeleteAllSources()
 {
     m_mSources.clear();
     SaveSources();
+}
+
+
+void AoipSourceManager::OnDiscovery(wxCommandEvent& event)
+{
+    std::shared_ptr<pml::dnsInstance> pInstance = m_pPoster->GetInstance(event.GetInt());
+    if(pInstance)
+    {
+
+        wxString sIdentifier;
+        if(pInstance->sService == "_rtsp._tcp")
+        {
+            sIdentifier = ("{"+wxString(pInstance->sService).AfterFirst('_').BeforeFirst('.')+"} "+wxString(pInstance->sName).BeforeFirst('('));
+        }
+        else if(pInstance->sService == "_sipuri._udp")
+        {
+            sIdentifier = ("{"+wxString(pInstance->sService).AfterFirst('_').BeforeFirst('.')+"} "+wxString(pInstance->sName).AfterFirst(' ').BeforeFirst('('));
+        }
+
+
+        if(m_setDiscover.insert(std::make_pair(sIdentifier, wxString(pInstance->sHostIP))).second)
+        {
+            wxString sAddress;
+            if(pInstance->sService == "_rtsp._tcp")
+            {
+                if(pInstance->nPort == 554)
+                {
+                    sAddress = (wxString::Format(wxT("rtsp://%s/by-name/%s"), wxString(pInstance->sHostIP).c_str(), wxString(pInstance->sName).c_str()));
+                }
+                else
+                {
+                    sAddress = (wxString::Format(wxT("rtsp://%s:%d/by-name/%s"), wxString(pInstance->sHostIP).c_str(), pInstance->nPort, wxString(pInstance->sName).c_str()));
+                }
+                AddSource(wxString::Format(wxT("%s(%s)"), sIdentifier.c_str(), wxString(pInstance->sHostIP).c_str()), sAddress);
+            }
+            else if(pInstance->sService == "_sipuri._udp")
+            {
+                sAddress = wxString(pInstance->sName).BeforeFirst(' ');
+                AddSource(wxString::Format(wxT("%s(%s)"), sIdentifier.c_str(),wxString(pInstance->sHostIP).c_str()), sAddress);
+            }
+
+            wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_ASM_DISCOVERY);
+            pEvent->SetString(wxString::Format(wxT("[%s] %s = %s:%lu"), wxString(pInstance->sService).c_str(), wxString(pInstance->sName).c_str(), wxString(pInstance->sHostIP).c_str(), pInstance->nPort));
+            pEvent->SetInt(1);
+            wxQueueEvent(m_pDiscoveryHandler, pEvent);
+
+        }
+    }
+}
+
+
+void AoipSourceManager::OnSap(wxCommandEvent& event)
+{
+    wxString sIpAddress = event.GetString().BeforeFirst(wxT('\n'));
+    wxString sSDP = event.GetString().AfterFirst(wxT('\n'));
+    wxString sName;
+
+
+
+    //is it an L24 or L16 session
+    bool bCanDecode(false);
+    wxArrayString asLines(wxStringTokenize(sSDP, wxT("\n")));
+    for(size_t i = 0; i < asLines.size(); i++)
+    {
+        if(asLines[i].find(wxT("a=rtpmap:")) != wxNOT_FOUND)
+        {
+            unsigned long nCodec;
+            if(asLines[i].AfterFirst(wxT(':')).BeforeFirst(wxT(' ')).ToULong(&nCodec) && nCodec > 95 && nCodec < 127)
+            {
+                if(asLines[i].find(wxT("L24")) != wxNOT_FOUND || asLines[i].find(wxT("L16")) != wxNOT_FOUND)
+                {
+                    bCanDecode = true;
+                    break;
+                }
+            }
+        }
+    }
+    if(bCanDecode)
+    {
+        //find the source name:
+        int nStart = sSDP.Find(wxT("s="));
+        if(nStart != wxNOT_FOUND)
+        {
+            sName = sSDP.Mid(nStart+2).BeforeFirst(wxT('\n'));
+        }
+        nStart = sSDP.Find(wxT("o="));
+        if(nStart != wxNOT_FOUND)
+        {
+            wxArrayString asSplit(wxStringTokenize(sSDP.Mid(nStart+2).BeforeFirst(wxT('\n'))));
+            if(asSplit.size() >= 6)
+            {
+                sIpAddress = asSplit[5];
+            }
+        }
+
+        if(event.GetInt())
+        {
+            if(m_setDiscover.insert(std::make_pair(sName, sIpAddress)).second)
+            {
+                m_nDiscovered++;
+                pml::Log::Get() << "AoIP Source Manager\tDiscovery: SAP response from " << sIpAddress.c_str() << std::endl;
+                pml::Log::Get() << "AoIP Source Manager\tDiscovery: SDP=" << sSDP << std::endl;
+
+                AddSource(sName, wxString::Format(wxT("sap:%s"), sIpAddress.c_str()), sSDP);
+
+                wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_ASM_DISCOVERY);
+                pEvent->SetString(wxString::Format("[SAP] %s = %s", sName.c_str(), sIpAddress.c_str()));
+                pEvent->SetInt(1);
+                wxQueueEvent(m_pDiscoveryHandler, pEvent);
+            }
+        }
+        else if(m_setDiscover.erase(std::make_pair(sName, sIpAddress)) > 0)
+        {
+            wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_ASM_DISCOVERY);
+            pEvent->SetString(wxString::Format(wxT("[SAP] %s:%s = REMOVED"), sName.c_str(), sIpAddress.c_str()));
+            pEvent->SetInt(-1);
+            wxQueueEvent(m_pDiscoveryHandler, pEvent);
+
+            DeleteSource(sName);
+
+        }
+    }
+}
+
+
+
+void AoipSourceManager::StartDiscovery(wxEvtHandler* pHandler, const std::set<std::string>& setServices, std::set<std::string>& setSAP)
+{
+    m_pDiscoveryHandler = pHandler;
+
+    if(setServices.empty() == false)
+    {
+        m_pBrowser = std::unique_ptr<pml::Browser>(new pml::Browser());
+        m_pPoster = std::make_shared<wxZCPoster>(this);
+        for(auto service : setServices)
+        {
+            m_pBrowser->AddService(std::string(service.c_str()), std::dynamic_pointer_cast<pml::ZCPoster>(m_pPoster));
+        }
+        m_pBrowser->StartBrowser();
+    }
+
+    if(setSAP.empty() == false)
+    {
+        m_pSapWatcher = std::unique_ptr<pml::SapServer>(new pml::SapServer(std::make_shared<wxSapHandler>(this)));
+        m_pSapWatcher->Run();
+        for(auto service : setSAP)
+        {
+            m_pSapWatcher->AddReceiver(IpAddress(std::string(service.c_str())));
+        }
+    }
+}
+
+
+void AoipSourceManager::StopDiscovery()
+{
+    m_pBrowser = nullptr;
+    m_pPoster = nullptr;
+    if(m_pSapWatcher)
+    {
+        m_pSapWatcher->Stop();
+    }
+    m_pSapWatcher = nullptr;
+}
+
+
+void AoipSourceManager::OnDiscoveryFinished(wxCommandEvent& event)
+{
+    if(m_pDiscoveryHandler)
+    {
+        wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_ASM_DISCOVERY_FINISHED);
+        wxQueueEvent(m_pDiscoveryHandler, pEvent);
+    }
+}
+
+
+AoipSourceManager::~AoipSourceManager()
+{
+
 }

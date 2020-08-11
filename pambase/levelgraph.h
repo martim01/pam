@@ -17,7 +17,8 @@ class PAMBASE_IMPEXPORT LevelGraph : public pmControl
 
         /** @brief default constructor
         **/
-        LevelGraph() : pmControl(){ }
+        LevelGraph() : pmControl(), m_nDataSize(0), m_dMax(-80),  m_dMin(0), m_dResolution(1)
+		{ }
 
         /** @brief Constructor - made to be the same as a wxButton
         *   @param parent pointer to the parent window
@@ -41,7 +42,7 @@ class PAMBASE_IMPEXPORT LevelGraph : public pmControl
         *   @param validator not used - just here to have same structure as wxButton
         *   @param name not used - just here to have same structure as wxButton
         **/
-        virtual bool Create(wxWindow *parent,
+        bool Create(wxWindow *parent,
                     wxWindowID id,
                     const wxPoint& pos = wxDefaultPosition,
                     const wxSize& size = wxDefaultSize);
@@ -101,7 +102,7 @@ class PAMBASE_IMPEXPORT LevelGraph : public pmControl
 
         struct graph
         {
-            graph(const wxColour& clr) : clrLine(clr), dDataSetTotal(0.0), dDataSetMax(-120.0), nDataSize(0), bShow(true), bShowRange(false) {}
+            graph(const wxColour& clr) : clrLine(clr), dDataSetTotal(0.0), dDataSetMax(-120.0), nDataSize(0), bShow(true), dMax(-80), dMin(0), dResolution(1), bShowRange(false) {}
             wxColour clrLine;
             std::list<double> lstPeaks;
             double dDataSetTotal;

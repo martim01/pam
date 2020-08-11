@@ -4,6 +4,7 @@ project(channeldelay LANGUAGES CXX)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 include_directories("../../pambase/")
 include_directories("../../pamfft/")
+include_directories("../../external/log/include")
 
 link_directories("../../lib")
 
@@ -14,7 +15,7 @@ add_library(channeldelay MODULE ${SOURCES})
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(channeldelay PRIVATE ${flags})
-target_compile_definitions(channeldelay PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __WXGNU__ _test_ _MSL_STDINT_H)
+target_compile_definitions(channeldelay PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __WXGNU__ _test_ _MSL_STDINT_H wxDEBUG_LEVEL=0)
 
 #find external libraries
 find_package(wxWidgets REQUIRED)

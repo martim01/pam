@@ -299,7 +299,7 @@ size_t wmSwitcherPanel::ChangeSelection(size_t nPage)
 
 wxString wmSwitcherPanel::ChangeSelection(const wxString& sName)
 {
-    //wxLogDebug(wxT("wmSwitcherPanel::ChangeSelection: %s"), sName.c_str());
+
     vector<page>::iterator it = m_vPages.begin();
     size_t nCount = 0;
     while(it != m_vPages.end())

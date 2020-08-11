@@ -4,9 +4,9 @@
 #include <wx/msgdlg.h>
 #include "settings.h"
 #include "networkcontrol.h"
-#include "wmlogevent.h"
-#include <wx/tokenzr.h>
 
+#include <wx/tokenzr.h>
+#include "log.h"
 using namespace std;
 
 
@@ -252,7 +252,7 @@ wxString NetworkControl::SetupNetworking(const wxString& sInterface, const wxStr
                 {
                     if(configFile.GetLine(i).Left(STR_ADDRESS.length()) == STR_ADDRESS)
                     {
-                        configFile.GetLine(i) = wxString::Format(wxT("%s%s/%d"), STR_ADDRESS.c_str(), sAddress.c_str(), nMask);
+                        configFile.GetLine(i) = wxString::Format(wxT("%s%s/%lu"), STR_ADDRESS.c_str(), sAddress.c_str(), nMask);
                     }
                     else if(configFile.GetLine(i).Left(STR_GATEWAY.length()) == STR_GATEWAY )
                     {
@@ -264,7 +264,7 @@ wxString NetworkControl::SetupNetworking(const wxString& sInterface, const wxStr
             if(bReplace == false)
             {
                 configFile.AddLine(sInterfaceLine);
-                configFile.AddLine(wxString::Format(wxT("%s%s/%d"), STR_ADDRESS.c_str(), sAddress.c_str(), nMask));
+                configFile.AddLine(wxString::Format(wxT("%s%s/%lu"), STR_ADDRESS.c_str(), sAddress.c_str(), nMask));
 
                 configFile.AddLine(STR_GATEWAY+sGateway);
             }
@@ -322,7 +322,7 @@ void NetworkControl::ChangeWiFiNetwork(const wxString& sAccessPoint, const wxStr
             wxExecute(wxString::Format(wxT("wpa_cli -i %s set_network %d ssid '\"%s\"'"), sInterface.c_str(), itCell->second.nNetwork, sAccessPoint.c_str()), asResult);
             if(asResult.GetCount() == 0 || asResult[0] == "FAIL")
             {
-                wmLog::Get()->Log(wxT("Unable to change WiFi"));
+                pml::Log::Get(pml::Log::LOG_ERROR) << "NetworkControl\tUnable to change WiFi" << std::endl;
                 return;
             }
             if(itCell->second.bEncryption)
@@ -330,7 +330,7 @@ void NetworkControl::ChangeWiFiNetwork(const wxString& sAccessPoint, const wxStr
                 wxExecute(wxString::Format(wxT("wpa_cli -i %s set_network %d psk '\"%s\"'"), sInterface.c_str(), itCell->second.nNetwork, sPassword.c_str()), asResult);
                 if(asResult.GetCount() == 0 || asResult[0] == "FAIL")
                 {
-                    wmLog::Get()->Log(wxT("Unable to change WiFi passworkd"));
+                    pml::Log::Get(pml::Log::LOG_ERROR) << "NetworkControl\tUnable to change WiFi password" << std::endl;
                     return;
                 }
                 if(itCell->second.sEncType.Find(wxT("WPA")) != wxNOT_FOUND)
@@ -338,7 +338,7 @@ void NetworkControl::ChangeWiFiNetwork(const wxString& sAccessPoint, const wxStr
                     wxExecute(wxString::Format(wxT("wpa_cli -i %s set_network %d key_mgmt WPA-PSK"), sInterface.c_str(), itCell->second.nNetwork), asResult);
                     if(asResult.GetCount() == 0 || asResult[0] == "FAIL")
                     {
-                        wmLog::Get()->Log(wxT("Unable to change WiFi key management"));
+                        pml::Log::Get(pml::Log::LOG_ERROR) << "NetworkControl\tUnable to change WiFi key management" << std::endl;
                         return;
                     }
                 }
@@ -346,26 +346,26 @@ void NetworkControl::ChangeWiFiNetwork(const wxString& sAccessPoint, const wxStr
             wxExecute(wxString::Format(wxT("wpa_cli -i %s enable_network %d"), sInterface.c_str(), itCell->second.nNetwork), asResult);
             if(asResult.GetCount() == 0 || asResult[0] == "FAIL")
             {
-                wmLog::Get()->Log(wxT("Unable to enable WiFi network"));
+                pml::Log::Get(pml::Log::LOG_ERROR) << "NetworkControl\tUnable to enable WiFi network" << std::endl;
                 return;
             }
 
             wxExecute(wxString::Format(wxT("wpa_cli -i %s save_config"), sInterface.c_str()), asResult);
             if(asResult.GetCount() == 0 || asResult[0] == "FAIL")
             {
-                wmLog::Get()->Log(wxT("Unable to save WiFi config"));
+                pml::Log::Get(pml::Log::LOG_ERROR) << "NetworkControl\tUnable to save WiFi config" << std::endl;
                 return;
             }
             //wxExecute(wxT("wpa_cli reconfigure"));
 
             wxExecute(wxString::Format(wxT("wpa_cli -i %s select_network %d"), sInterface.c_str(), itCell->second.nNetwork), asResult);
 
-            wmLog::Get()->Log(wxString::Format(wxT("WiFi '%s' setup: network %d"), itCell->first.c_str(), itCell->second.nNetwork));
+            pml::Log::Get() << "NetworkControl\tWiFi '"<< itCell->first.c_str() << "' Setup: network " << itCell->second.nNetwork << std::endl;
             Settings::Get().Write(wxT("WiFi"), sAccessPoint, sPassword);
         }
         else
         {
-            wmLog::Get()->Log(wxT("Unable to add WiFi network"));
+            pml::Log::Get(pml::Log::LOG_ERROR) << "NetworkControl\tUnable to add WiFi network" << std::endl;
         }
     }
 }
@@ -526,7 +526,7 @@ void NetworkControl::ScanWiFi(const wxString& sInterface)
     {
         for(size_t nLine = 1; nLine < asResults.GetCount(); nLine++)
         {
-            wxLogDebug(asResults[nLine]);
+
 
             wxArrayString asLine(wxStringTokenize(asResults[nLine], wxT("\t")));
             if(asLine.GetCount() > 4)
@@ -555,21 +555,21 @@ void NetworkControl::ScanWiFi(const wxString& sInterface)
         wxExecute(wxString::Format(wxT("wpa_cli list_networks")), asResults);
         for(size_t nLine = 0; nLine < asResults.GetCount(); nLine++)
         {
-            wxLogDebug(asResults[nLine]);
+
             wxArrayString asLine(wxStringTokenize(asResults[nLine], wxT("\t")));
-            wxLogDebug(wxT("Split %d"), asLine.GetCount());
+
             if(asLine.GetCount() >= 2)
             {
                 map<wxString, wifi_cell>::iterator itCell = m_mCells.find(asLine[1]);
                 if(itCell != m_mCells.end())
                 {
-                    wxLogDebug(wxT("Cell Found "));
+
                     asLine[0].ToLong(&itCell->second.nNetwork);
                 }
             }
         }
     }
-    wxLogDebug(wxT("Scan done-----------------------"));
+
 }
 
 

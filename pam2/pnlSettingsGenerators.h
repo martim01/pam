@@ -2,14 +2,14 @@
 #define PNLSETTINGSGENERATORS_H
 
 //(*Headers(pnlSettingsGenerators)
-#include <wx/notebook.h>
 #include "wmbutton.h"
 #include "wmlabel.h"
-#include <wx/statbox.h>
-#include "wmswitcherpanel.h"
-#include <wx/panel.h>
-#include "wmslider.h"
 #include "wmlist.h"
+#include "wmslider.h"
+#include "wmswitcherpanel.h"
+#include <wx/notebook.h>
+#include <wx/panel.h>
+#include <wx/statbox.h>
 //*)
 
 class pnlSettingsGenerators: public wxPanel
@@ -22,47 +22,47 @@ class pnlSettingsGenerators: public wxPanel
 		void InputSessionChanged();
 
 		//(*Declarations(pnlSettingsGenerators)
-		wxPanel* Panel5;
-		wmLabel* m_pLbl7;
-		wxPanel* pnlGenerator;
-		wmButton* m_pbtn900;
-		wmList* m_plstAogFiles;
-		wxPanel* Panel4;
-		wmLabel* m_plbldB;
-		wmButton* m_pbtnAogHome;
-		wmLabel* m_pLbl1;
-		wmButton* m_pbtnAogEnd;
-		wmButton* m_pbtnPlus1;
-		wmButton* m_pbtn10000;
-		wmSwitcherPanel* m_pswpAog;
-		wxStaticBox* StaticBox1;
-		wmButton* m_pbtn1000;
-		wmButton* m_pbtnNoise0dBu;
-		wxPanel* Panel3;
-		wmSlider* m_pNoiseAmplitude;
-		wmButton* m_pbtnAogNext;
-		wxStaticBox* StaticBox2;
-		wmLabel* m_plblNoisedB;
-		wmList* m_plstAudioSources;
-		wmButton* m_pbtnMinus10;
-		wmSlider* m_pAmplitude;
-		wmLabel* m_pLbl6;
-		wmButton* m_pbtn450;
-		wmButton* m_pbtnAogPrev;
-		wmButton* m_pbtnMinus1;
-		wmSlider* m_pSlider;
-		wxStaticBox* StaticBox3;
-		wmList* m_plstShape;
-		wxPanel* Panel2;
-		wmButton* m_pbtn5000;
-		wmButton* m_pbtnPlus10;
-		wmList* m_plstOutputRight;
 		wmButton* m_pbtn0dbu;
-		wmList* m_plstOutputLeft;
-		wmLabel* m_plblFrequency;
-		wmList* m_plstColour;
+		wmButton* m_pbtn10000;
+		wmButton* m_pbtn1000;
+		wmButton* m_pbtn450;
+		wmButton* m_pbtn5000;
+		wmButton* m_pbtn900;
+		wmButton* m_pbtnAogEnd;
+		wmButton* m_pbtnAogHome;
+		wmButton* m_pbtnAogNext;
+		wmButton* m_pbtnAogPrev;
+		wmButton* m_pbtnMinus10;
+		wmButton* m_pbtnMinus1;
+		wmButton* m_pbtnNoise0dBu;
+		wmButton* m_pbtnPlus10;
+		wmButton* m_pbtnPlus1;
 		wmButton* m_pbtnSequences;
+		wmLabel* m_pLbl1;
+		wmLabel* m_pLbl6;
+		wmLabel* m_pLbl7;
+		wmLabel* m_plblFrequency;
 		wmLabel* m_plblInput;
+		wmLabel* m_plblNoisedB;
+		wmLabel* m_plbldB;
+		wmList* m_plstAogFiles;
+		wmList* m_plstAudioSources;
+		wmList* m_plstColour;
+		wmList* m_plstOutputLeft;
+		wmList* m_plstOutputRight;
+		wmList* m_plstShape;
+		wmSlider* m_pAmplitude;
+		wmSlider* m_pNoiseAmplitude;
+		wmSlider* m_pSlider;
+		wmSwitcherPanel* m_pswpAog;
+		wxPanel* Panel2;
+		wxPanel* Panel3;
+		wxPanel* Panel4;
+		wxPanel* Panel5;
+		wxPanel* pnlGenerator;
+		wxStaticBox* StaticBox1;
+		wxStaticBox* StaticBox2;
+		wxStaticBox* StaticBox3;
 		//*)
 
 

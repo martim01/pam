@@ -22,14 +22,14 @@
 					<Add option="-fexceptions" />
 					<Add option="-DWIN32" />
 					<Add option="-D__WXMSW__" />
+					<Add option="-D__GNUWIN32__" />
 					<Add option="-DWXUSINGDLL" />
 					<Add option="-DUNICODE" />
 					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-D__WINDOWS__" />
+					<Add option="-D__WIN32__" />
 					<Add option="-D__WXDEBUG__" />
 					<Add option="-DPAMBASE_DEBUG" />
-					<Add option="-D__WINDOWS__" />
-					<Add option="-D__GNUWIN32__" />
-					<Add option="-D_MSL_STDINT_H" />
 					<Add directory="$(#wx3_0.include)" />
 					<Add directory="$(#wx3_0.include)/mswu" />
 					<Add directory="$(#portaudio.include)" />
@@ -48,6 +48,7 @@
 					<Add library="libcurl" />
 					<Add library="Ws2_32" />
 					<Add library="iphlpapi" />
+					<Add library="pml_log" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#portaudio.lib)" />
 					<Add directory="$(#curl.lib)" />
@@ -63,17 +64,20 @@
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-Wall" />
-					<Add option="-std=c++0x" />
+					<Add option="-std=c++11" />
 					<Add option="-pipe" />
 					<Add option="-mthreads" />
 					<Add option='[[if (PLATFORM == PLATFORM_MSW &amp;&amp; (GetCompilerFactory().GetCompilerVersionString(_T(&quot;gcc&quot;)) &gt;= _T(&quot;4.0.0&quot;))) print(_T(&quot;-Wno-attributes&quot;));]]' />
 					<Add option="-DWIN32" />
 					<Add option="-D__WXMSW__" />
+					<Add option="-D__GNUWIN32__" />
 					<Add option="-DWXUSINGDLL" />
 					<Add option="-DUNICODE" />
-					<Add option="-D__WINDOWS__" />
 					<Add option="-DwxUSE_UNICODE" />
-					<Add option="-D__GNUWIN32__" />
+					<Add option="-D__WINDOWS__" />
+					<Add option="-D__WIN32__" />
+					<Add option="-DNDEBUG" />
+					<Add option="-DwxDEBUG_LEVEL=0" />
 					<Add directory="$(#wx3_0.include)" />
 					<Add directory="$(#wx3_0.include)/mswu" />
 					<Add directory="$(#portaudio.include)" />
@@ -111,8 +115,11 @@
 					<Add option="-O3" />
 					<Add option="`wx-config --cxxflags`" />
 					<Add option="-fpermissive" />
+					<Add option="-pthread" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
+					<Add option="-DwxDEBUG_LEVEL=0" />
+					<Add option="-DNDEBUG" />
 					<Add directory="$(#nmos.include)" />
 					<Add directory="$(#json.include)" />
 				</Compiler>
@@ -195,6 +202,7 @@
 			<Add directory="$(#live_basicusage.include)" />
 			<Add directory="./images" />
 			<Add directory="../external/wxservdisc" />
+			<Add directory="../external/log/include" />
 		</Compiler>
 		<ResourceCompiler>
 			<Add directory="C:/wxWidgets-3.0.2/include" />
@@ -205,6 +213,7 @@
 			<Add directory="$(#live_group.lib)" />
 			<Add directory="$(#live_usage.lib)" />
 			<Add directory="$(#live_basicusage.lib)" />
+			<Add directory="../external/log/lib" />
 		</Linker>
 		<Unit filename="dlgAoIP.cpp" />
 		<Unit filename="dlgAoIP.h" />
@@ -256,6 +265,8 @@
 		<Unit filename="pnlSettingsNmos.h" />
 		<Unit filename="pnlSettingsOptions.cpp" />
 		<Unit filename="pnlSettingsOptions.h" />
+		<Unit filename="pnlSettingsOutput.cpp" />
+		<Unit filename="pnlSettingsOutput.h" />
 		<Unit filename="pnlSettingsPlugins.cpp" />
 		<Unit filename="pnlSettingsPlugins.h" />
 		<Unit filename="pnlSettingsProfiles.cpp" />
@@ -299,6 +310,7 @@
 		<Unit filename="wxsmith/pnlSettingsGenerators.wxs" />
 		<Unit filename="wxsmith/pnlSettingsNmos.wxs" />
 		<Unit filename="wxsmith/pnlSettingsOptions.wxs" />
+		<Unit filename="wxsmith/pnlSettingsOutput.wxs" />
 		<Unit filename="wxsmith/pnlSettingsPlugins.wxs" />
 		<Unit filename="wxsmith/pnlSettingsProfiles.wxs" />
 		<Unit filename="wxsmith/pnlTestOptions.wxs" />
@@ -338,6 +350,7 @@
 					<wxPanel wxs="wxsmith/pnlUSB.wxs" src="pnlUSB.cpp" hdr="pnlUSB.h" fwddecl="0" i18n="1" name="pnlUSB" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlAoIPSelection.wxs" src="pnlAoIPSelection.cpp" hdr="pnlAoIPSelection.h" fwddecl="0" i18n="1" name="pnlAoIPSelection" language="CPP" />
 					<wxDialog wxs="wxsmith/dlgEngineering.wxs" src="dlgEngineering.cpp" hdr="dlgEngineering.h" fwddecl="0" i18n="1" name="dlgEngineering" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlSettingsOutput.wxs" src="pnlSettingsOutput.cpp" hdr="pnlSettingsOutput.h" fwddecl="0" i18n="1" name="pnlSettingsOutput" language="CPP" />
 				</resources>
 			</wxsmith>
 			<AutoVersioning>

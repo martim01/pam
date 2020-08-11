@@ -8,7 +8,7 @@
 #include "generatorpluginfactory.h"
 #include <wx/filename.h>
 #include <wx/log.h>
-#include "wmlogevent.h"
+#include "log.h"
 //(*InternalHeaders(pnlSettingsPlugins)
 #include <wx/intl.h>
 #include <wx/string.h>
@@ -230,7 +230,7 @@ void pnlSettingsPlugins::OnbtnClearHeld(wxCommandEvent& event)
     m_plstPossible->Refresh();
 
 
-    Settings::Get().RemoveKey(m_sSection, wxString::Format(wxT("%04d"), m_nSelected+1));
+    Settings::Get().RemoveKey(m_sSection, wxString::Format(wxT("%04u"), m_nSelected+1));
     m_plstCurrent->DeleteButton(m_nSelected);
     m_nSelected = 0xFFFFFFF;
 
@@ -249,16 +249,16 @@ void pnlSettingsPlugins::OnbtnUpClick(wxCommandEvent& event)
 {
     if(m_nSelected != 0)    //first button
     {
-        wxString sLib = Settings::Get().Read(m_sSection,wxString::Format(wxT("%04d"), m_nSelected+1), wxEmptyString);
+        wxString sLib = Settings::Get().Read(m_sSection,wxString::Format(wxT("%04u"), m_nSelected+1), wxEmptyString);
         wxString sText = m_plstCurrent->GetButtonText(m_nSelected);
 
-        wxString sBeforeLib = Settings::Get().Read(m_sSection,wxString::Format(wxT("%04d"), m_nSelected), wxEmptyString);
+        wxString sBeforeLib = Settings::Get().Read(m_sSection,wxString::Format(wxT("%04u"), m_nSelected), wxEmptyString);
         wxString sBeforeText = m_plstCurrent->GetButtonText(m_nSelected-1);
 
-        Settings::Get().Write(m_sSection, wxString::Format(wxT("%04d"), m_nSelected), sLib);
+        Settings::Get().Write(m_sSection, wxString::Format(wxT("%04u"), m_nSelected), sLib);
         m_plstCurrent->SetButtonText(m_nSelected-1, sText);
 
-        Settings::Get().Write(m_sSection, wxString::Format(wxT("%04d"), m_nSelected+1), sBeforeLib);
+        Settings::Get().Write(m_sSection, wxString::Format(wxT("%04u"), m_nSelected+1), sBeforeLib);
         m_plstCurrent->SetButtonText(m_nSelected, sBeforeText);
 
         m_plstCurrent->SelectButton(m_nSelected-1, true);
@@ -269,16 +269,16 @@ void pnlSettingsPlugins::OnbtnDownClick(wxCommandEvent& event)
 {
     if(m_nSelected+1 != m_plstCurrent->GetItemCount())    //first button
     {
-        wxString sLib = Settings::Get().Read(m_sSection,wxString::Format(wxT("%04d"), m_nSelected+1), wxEmptyString);
+        wxString sLib = Settings::Get().Read(m_sSection,wxString::Format(wxT("%04u"), m_nSelected+1), wxEmptyString);
         wxString sText = m_plstCurrent->GetButtonText(m_nSelected);
 
-        wxString sAfterLib = Settings::Get().Read(m_sSection,wxString::Format(wxT("%04d"), m_nSelected+2), wxEmptyString);
+        wxString sAfterLib = Settings::Get().Read(m_sSection,wxString::Format(wxT("%04u"), m_nSelected+2), wxEmptyString);
         wxString sAfterText = m_plstCurrent->GetButtonText(m_nSelected+1);
 
-        Settings::Get().Write(m_sSection, wxString::Format(wxT("%04d"), m_nSelected+2), sLib);
+        Settings::Get().Write(m_sSection, wxString::Format(wxT("%04u"), m_nSelected+2), sLib);
         m_plstCurrent->SetButtonText(m_nSelected+1, sText);
 
-        Settings::Get().Write(m_sSection, wxString::Format(wxT("%04d"), m_nSelected+1), sAfterLib);
+        Settings::Get().Write(m_sSection, wxString::Format(wxT("%04u"), m_nSelected+1), sAfterLib);
         m_plstCurrent->SetButtonText(m_nSelected, sAfterText);
 
         m_plstCurrent->SelectButton(m_nSelected+1, true);
@@ -332,7 +332,7 @@ void pnlSettingsPlugins::ShowMonitorPlugins()
 
     wxFileName fnDir(sLibDir);
     fnDir.MakeAbsolute();
-    wmLog::Get()->Log(wxString::Format(wxT("Monitor Lib Directory: %s"), fnDir.GetFullPath().c_str()));
+    pml::Log::Get(pml::Log::LOG_INFO) << "Plugins\tMonitor Lib Directory: " << fnDir.GetFullPath() << std::endl;
     wxArrayString asLibs;
     #ifdef __WXMSW__
         wxDir::GetAllFiles(fnDir.GetFullPath(), &asLibs, wxT("*.dll"));
@@ -347,7 +347,8 @@ void pnlSettingsPlugins::ShowMonitorPlugins()
         #ifdef __WXGNU__
             sLibToLoad = sLibToLoad.Mid(3);
         #endif // __WXGNU__
-        wmLog::Get()->Log(wxString::Format(wxT("Lib : %s"), sLibToLoad.c_str()));
+        pml::Log::Get(pml::Log::LOG_INFO) << "Plugins\tMonitor Lib: " << sLibToLoad << std::endl;
+
         plugin aPlugin = MonitorPluginFactory::Get()->GetPluginDetails(fnDir.GetFullPath(), sLibToLoad);
         if(aPlugin.sName != wxEmptyString)
         {
@@ -436,7 +437,7 @@ void pnlSettingsPlugins::ShowGeneratorPlugins()
 
     wxFileName fnDir(sLibDir);
     fnDir.MakeAbsolute();
-    wmLog::Get()->Log(wxString::Format(wxT("Generator Lib Directory: %s"), fnDir.GetFullPath().c_str()));
+    pml::Log::Get(pml::Log::LOG_INFO) << "Plugins\\Generator Lib Directory: " << fnDir.GetFullPath() << std::endl;
     wxArrayString asLibs;
     #ifdef __WXMSW__
         wxDir::GetAllFiles(fnDir.GetFullPath(), &asLibs, wxT("*.dll"));
@@ -451,7 +452,7 @@ void pnlSettingsPlugins::ShowGeneratorPlugins()
         #ifdef __WXGNU__
             sLibToLoad = sLibToLoad.Mid(3);
         #endif // __WXGNU__
-        wmLog::Get()->Log(wxString::Format(wxT("Lib : %s"), sLibToLoad.c_str()));
+        pml::Log::Get(pml::Log::LOG_INFO) << "Plugins\\Generator Lib: " << sLibToLoad << std::endl;
         plugin aPlugin = GeneratorPluginFactory::Get()->GetPluginDetails(fnDir.GetFullPath(), sLibToLoad);
         if(aPlugin.sName != wxEmptyString)
         {

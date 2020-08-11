@@ -16,7 +16,7 @@ add_library(spectogram MODULE ${SOURCES})
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(spectogram PRIVATE ${flags})
-target_compile_definitions(spectogram PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __WXGNU__ _monitor_ _MSL_STDINT_H)
+target_compile_definitions(spectogram PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __WXGNU__ _monitor_ _MSL_STDINT_H wxDEBUG_LEVEL=0)
 
 #find external libraries
 find_package(wxWidgets REQUIRED)

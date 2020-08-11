@@ -1112,12 +1112,14 @@ bool wmTimeEdit::SetBackgroundColour(const wxColour& clr)
 {
     m_clrBackground[0] = clr;
     Refresh();
+    return true;
 }
 
 bool wmTimeEdit::SetForegroundColour(const wxColour& clr)
 {
     m_clrForeground[0] = clr;
     Refresh();
+    return true;
 }
 
 void wmTimeEdit::SetNonFocusedStyle(const wxColour& clrBack, const wxColour& clrText, unsigned int nBorder)

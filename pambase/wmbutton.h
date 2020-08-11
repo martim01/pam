@@ -251,6 +251,8 @@ class PAMBASE_IMPEXPORT wmButton : public pmControl
             m_nStyle = nStyle;
         }
 
+        void SetToggle(bool bLook, const wxString& sLeft = wxEmptyString, const wxString& sRight = wxEmptyString, double dButtonPercent=33);
+
         bool IsChecked() const;
 
         /** @brief set associated client data
@@ -292,15 +294,7 @@ class PAMBASE_IMPEXPORT wmButton : public pmControl
             return wxSize(60,60);
         }
 
-        void SetToggleLook(bool bLook, const wxString& sLeft = wxEmptyString, const wxString& sRight = wxEmptyString, double dButtonPercent=33)
-        {
-            m_bToggleLook = bLook;
-            m_uiToggleLeft.SetLabel(sLeft);
-            m_uiToggleRight.SetLabel(sRight);
-            m_dToggleWidth = dButtonPercent;
-            CreateRects();
-            Refresh();
-        }
+
         static const unsigned int STYLE_NORMAL = 0;     ///< A normal push button
         static const unsigned int STYLE_SELECT = 1;     ///< A toggle button - i.e. one that stays down when clicked until the next click
         static const unsigned int STYLE_HOLD   = 2;     ///< A button that will send an wxEVT_BUTTON_HELD event once it has been held down for a set time

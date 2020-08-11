@@ -18,7 +18,8 @@ END_EVENT_TABLE()
 LevelGraph::LevelGraph(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size, size_t nDataSize, double dMax, double dMin) : pmControl(),
     m_nDataSize(nDataSize),
     m_dMax(dMax),
-    m_dMin(dMin)
+    m_dMin(dMin),
+	m_dResolution(1)
 {
     Create(parent, id, pos, size);
 }

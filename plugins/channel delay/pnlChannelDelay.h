@@ -3,11 +3,11 @@
 
 //(*Headers(pnlChannelDelay)
 #include "offsetgraph.h"
+#include "wmedit.h"
 #include "wmkeyboard.h"
 #include "wmlabel.h"
-#include <wx/panel.h>
-#include "wmedit.h"
 #include "wmlist.h"
+#include <wx/panel.h>
 //*)
 
 class timedbuffer;
@@ -29,19 +29,19 @@ class pnlChannelDelay: public wxPanel
 
 
 		//(*Declarations(pnlChannelDelay)
-		wmLabel* m_pLbl4;
-		wmLabel* m_pLbl3;
+		OffsetGraph* m_pGraph;
 		wmEdit* m_pedtMaxDelay;
 		wmKeyboard* m_pKbd1;
-		wmLabel* m_pLbl1;
 		wmLabel* m_pLbl12;
-		wmList* m_plstChannel2;
-		wmList* m_plstChannel1;
+		wmLabel* m_pLbl1;
+		wmLabel* m_pLbl2;
+		wmLabel* m_pLbl3;
+		wmLabel* m_pLbl4;
 		wmLabel* m_pLbl5;
 		wmLabel* m_pLbl6;
-		wmLabel* m_pLbl2;
 		wmLabel* m_plblCurrent;
-		OffsetGraph* m_pGraph;
+		wmList* m_plstChannel1;
+		wmList* m_plstChannel2;
 		//*)
 
 	protected:

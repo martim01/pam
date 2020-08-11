@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "inimanager.h"
 #include "inisection.h"
-
+#include "log.h"
 #include <wx/log.h>
 
 
@@ -63,7 +63,7 @@ bool iniManager::ReadIniFile(const wxString& sFilename)
 	m_if.open(sFilename.mb_str(),ios::in);
 	if(!m_if.is_open())
 	{
-	    wxLogDebug(wxT("IniManager file '%s' does not exist"), sFilename.c_str());
+	    pml::Log::Get(pml::Log::LOG_ERROR) << "IniManager\tfile '" << sFilename << "' does not exist" << std::endl;
 		return false;
 	}
 
@@ -83,7 +83,7 @@ bool iniManager::ReadIniFile(const wxString& sFilename)
 			size_t nClosePos = sLine.find("]");
 			if(nClosePos == std::string::npos)	//this is an error
             {
-                wxLogDebug(wxT("IniManager file '%s' invalid section"), sFilename.c_str());
+                pml::Log::Get(pml::Log::LOG_ERROR) << "IniManager\tfile '" << sFilename << "' invalid section" << std::endl;
                 return false;
             }
 			wxString sSection = wxString::FromAscii(sLine.substr(1,nClosePos-1).c_str());

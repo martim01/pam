@@ -8,6 +8,7 @@ include_directories("../external/live/groupsock/include")
 include_directories("../external/live/liveMedia/include")
 include_directories("../external/live/UsageEnvironment/include")
 include_directories("images/")
+include_directories("../external/log/include")
 
 link_directories("../lib")
 
@@ -16,9 +17,10 @@ file(GLOB SOURCES "*.cpp")
 
 add_executable(pam2 ${SOURCES})
 
+
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(pam2 PRIVATE ${flags})
-target_compile_definitions(pam2 PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __WXGNU__ CREATING_LEVELDLL _app_ _MSL_STDINT_H NO_OPENSSL)
+target_compile_definitions(pam2 PUBLIC NDEBUG wxUSE_UNICODE __WXGNU__ _app_ NO_OPENSSL wxDEBUG_LEVEL=0)
 
 #find external libraries
 find_package(wxWidgets REQUIRED)
@@ -51,6 +53,7 @@ endif()
 
 target_link_libraries(pam2 ${wxWidgets_LIBRARIES})
 target_link_libraries(pam2 pambase)
+target_link_libraries(pam2 pthread)
 
 set_target_properties(pam2 PROPERTIES RUNTIME_OUTPUT_DIRECTORY "../../bin/")
 

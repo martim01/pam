@@ -47,8 +47,8 @@ pnlMeterSettings::pnlMeterSettings(wxWindow* parent,AngleMetersBuilder* pBuilder
 	m_plstSpeed->AddButton(wxT("Normal"));
 	m_plstSpeed->AddButton(wxT("Fast"));
 
-	m_pbtnM3M6->SetToggleLook(true, wxT("M3"), wxT("M6"), 50.0);
-	m_pbtnStereo->SetToggleLook(true, wxT("Mono"), wxT("Stereo"), 50.0);
+	m_pbtnM3M6->SetToggle(true, wxT("M3"), wxT("M6"), 50.0);
+	m_pbtnStereo->SetToggle(true, wxT("Mono"), wxT("Stereo"), 50.0);
 
 	m_plstSpeed->SelectButton((m_pBuilder->ReadSetting(wxT("Speed"),1) == 1),true);
 	m_pbtnM3M6->ToggleSelection(m_pBuilder->ReadSetting(wxT("M3M6"),1) == 1, true);

@@ -42,17 +42,7 @@ class PammClient;
 class Generator;
 class AudioEvent;
 class dlgNoInput;
-class wxNmosEvent;
-class FlowAudioRaw;
-class Sender;
-class Receiver;
-class wxNmosClientCurlEvent;
-class wxNmosClientNodeEvent;
-class wxNmosClientDeviceEvent;
-class wxNmosClientSourceEvent;
-class wxNmosClientFlowEvent;
-class wxNmosClientSenderEvent;
-class wxNmosClientReceiverEvent;
+class NmosManager;
 
 class pam2Dialog: public wxDialog
 {
@@ -134,11 +124,6 @@ class pam2Dialog: public wxDialog
         wxTimer timerStart;
         //*)
 
-        void SetupNmos();
-        void StartNmos();
-        void StopNmos();
-        void StartNmosClient();
-        void StopNmosClient();
 
         void OnSettingChanged(SettingEvent& event);
         void OnMonitorRequest(MonitorEvent& event);
@@ -183,17 +168,6 @@ class pam2Dialog: public wxDialog
 
 
 
-        void OnTarget(wxNmosEvent& event);
-        void OnPatchSender(wxNmosEvent& event);
-        void OnPatchReceiver(wxNmosEvent& event);
-        void OnSenderActivated(wxNmosEvent& event);
-        void OnReceiverActivated(wxNmosEvent& event);
-
-        void OnNmosSenderChanged(wxNmosClientSenderEvent& event);
-        void OnNmosReceiverChanged(wxNmosClientReceiverEvent& event);
-        void OnNmosFlowChanged(wxNmosClientFlowEvent& event);
-
-        void OnNmosSubscribeRequest(wxNmosClientCurlEvent& event);
 
 
 
@@ -213,11 +187,7 @@ class pam2Dialog: public wxDialog
         bool m_bInputFailed;
 
         #ifdef __NMOS__
-        void ActivateSender(std::shared_ptr<Sender> pSender);
-        void ActivateReceiver(std::shared_ptr<Receiver> pReceiver);
-        std::shared_ptr<FlowAudioRaw> m_pFlow;
-        std::shared_ptr<Sender> m_pSender;
-        std::multimap<std::string, std::shared_ptr<Sender> > m_mmLonelySender;
+        std::unique_ptr<NmosManager> m_pManager;
         #endif // __NMOS__
         DECLARE_EVENT_TABLE()
 };

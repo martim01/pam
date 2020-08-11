@@ -79,7 +79,7 @@
 						<button_disabled>#808080</button_disabled>
 						<items />
 						<pos>0,70</pos>
-						<size>600,315</size>
+						<size>600,280</size>
 						<bg>#000000</bg>
 						<style>wmList::STYLE_SELECT</style>
 						<handler function="OnlstDevicesSelected" entry="EVT_LIST_SELECTED" />
@@ -106,38 +106,32 @@
 					</object>
 					<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnHome" member="yes">
 						<button_disabled>#808080</button_disabled>
-						<pos>70,395</pos>
+						<pos>70,352</pos>
 						<size>100,40</size>
 						<handler function="OnbtnHomeClick" entry="EVT_BUTTON" />
 					</object>
 					<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnPrevious" member="yes">
 						<button_disabled>#808080</button_disabled>
-						<pos>190,395</pos>
+						<pos>190,352</pos>
 						<size>100,40</size>
 						<handler function="OnbtnPreviousClick" entry="EVT_BUTTON" />
 					</object>
 					<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnNext" member="yes">
 						<button_disabled>#808080</button_disabled>
-						<pos>310,395</pos>
+						<pos>310,352</pos>
 						<size>100,40</size>
 						<handler function="OnbtnNextClick" entry="EVT_BUTTON" />
 					</object>
 					<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnEnd" member="yes">
 						<button_disabled>#808080</button_disabled>
-						<pos>430,395</pos>
+						<pos>430,352</pos>
 						<size>100,40</size>
 						<handler function="OnbtnEndClick" entry="EVT_BUTTON" />
 					</object>
-				</object>
-				<label>Input Device</label>
-			</object>
-			<object class="wmSwitcherPanelpage">
-				<object class="wxPanel" name="ID_PANEL2" variable="pnlOutput" member="yes">
-					<bg>#000000</bg>
-					<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl4" member="yes">
-						<label>Audio Output Device</label>
-						<pos>0,5</pos>
-						<size>600,30</size>
+					<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+						<label>Gain</label>
+						<pos>10,400</pos>
+						<size>70,30</size>
 						<fg>#FFFFFF</fg>
 						<bg>#004000</bg>
 						<font>
@@ -149,186 +143,34 @@
 							<face>Arial</face>
 						</font>
 					</object>
-					<object class="wmList" name="ID_M_PLST3" variable="m_plstDestination" member="yes">
-						<scrolling>None</scrolling>
-						<button_size>100,30</button_size>
-						<columns>3</columns>
-						<button>#400080</button>
-						<button_selected>#FF8000</button_selected>
-						<items />
-						<pos>0,36</pos>
-						<size>600,34</size>
-						<style>wmList::STYLE_SELECT</style>
-						<handler function="OnlstDestinationSelected" entry="EVT_LIST_SELECTED" />
+					<object class="wmSlider" name="ID_M_PSLIDER1" variable="m_plsliderInputGain" member="yes">
+						<label>Slider</label>
+						<max>10000</max>
+						<start>5000</start>
+						<pos>80,400</pos>
+						<size>400,30</size>
+						<handler function="OnlsliderInputGainMove" entry="EVT_SLIDER_MOVE" />
 					</object>
-					<object class="wmSwitcherPanel" name="ID_M_PSWP2" variable="m_pswpDestination" member="yes">
-						<pos>0,70</pos>
-						<size>600,380</size>
-						<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
-						<object class="wmSwitcherPanelpage">
-							<object class="wxPanel" name="ID_PANEL9" variable="Panel1" member="yes">
-								<bg>#000000</bg>
-							</object>
-							<label>Disabled</label>
-						</object>
-						<object class="wmSwitcherPanelpage">
-							<object class="wxPanel" name="ID_PANEL10" variable="Panel2" member="yes">
-								<bg>#000000</bg>
-								<object class="wmList" name="ID_M_PLST4" variable="m_plstPlayback" member="yes">
-									<scrolling>None</scrolling>
-									<button_gap>5,1</button_gap>
-									<button_size>-1,60</button_size>
-									<columns>4</columns>
-									<button_selected>#008000</button_selected>
-									<items />
-									<pos>0,0</pos>
-									<size>600,200</size>
-									<enabled>0</enabled>
-									<bg>#000000</bg>
-									<style>wmList::STYLE_SELECT</style>
-									<handler function="OnlstPlaybackSelected" entry="EVT_LIST_SELECTED" />
-								</object>
-								<object class="wmLabel" name="ID_M_PLBL5" variable="m_pLbl5" member="yes">
-									<label>Latency</label>
-									<pos>0,250</pos>
-									<size>80,30</size>
-									<fg>#FFFFFF</fg>
-									<bg>#909090</bg>
-								</object>
-								<object class="wmList" name="ID_M_PLST6" variable="m_plstLatency" member="yes">
-									<scrolling>None</scrolling>
-									<button_gap>5,1</button_gap>
-									<button_size>-1,26</button_size>
-									<columns>10</columns>
-									<button>#008040</button>
-									<button_selected>#FF8000</button_selected>
-									<items />
-									<pos>80,250</pos>
-									<size>520,30</size>
-									<enabled>0</enabled>
-									<bg>#909090</bg>
-									<style>wmList::STYLE_SELECT</style>
-									<handler function="OnlblLatencySelected" entry="EVT_LIST_SELECTED" />
-								</object>
-							</object>
-							<label>Soundcard</label>
-						</object>
-						<object class="wmSwitcherPanelpage">
-							<object class="wxPanel" name="ID_PANEL11" variable="Panel3" member="yes">
-								<bg>#000000</bg>
-								<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
-									<label>Multicast</label>
-									<pos>0,65</pos>
-									<size>100,40</size>
-									<fg>#FFFFFF</fg>
-									<bg>#400080</bg>
-								</object>
-								<object class="wxPanel" name="ID_PANEL12" subclass="wmipeditpnl" variable="m_ppnlAddress" member="yes">
-									<pos>100,65</pos>
-									<size>200,40</size>
-									<fg>#000000</fg>
-									<bg>#FFFFFF</bg>
-								</object>
-								<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
-									<label>RTP Port</label>
-									<pos>300,65</pos>
-									<size>50,40</size>
-									<fg>#FFFFFF</fg>
-									<bg>#400080</bg>
-								</object>
-								<object class="wmLabel" name="ID_M_PLBL8" variable="m_pLbl9" member="yes">
-									<label>RTSP</label>
-									<pos>0,15</pos>
-									<size>100,40</size>
-									<fg>#FFFFFF</fg>
-									<bg>#400080</bg>
-								</object>
-								<object class="wmButton" name="ID_M_PBTN6" variable="m_pbtnRTSP" member="yes">
-									<label>Stream</label>
-									<toggle_left>Stop</toggle_left>
-									<toggle_right>Start</toggle_right>
-									<toggle_percent>50</toggle_percent>
-									<pos>100,15</pos>
-									<size>200,40</size>
-									<fg>#000000</fg>
-									<bg>#FFFFFF</bg>
-									<style>wmButton::STYLE_NORMAL</style>
-									<handler function="OnbtnRTSPClick" entry="EVT_BUTTON" />
-								</object>
-								<object class="wmLabel" name="ID_M_PLBL6" variable="m_pLbl6" member="yes">
-									<label>Port</label>
-									<pos>300,15</pos>
-									<size>50,40</size>
-									<fg>#FFFFFF</fg>
-									<bg>#400080</bg>
-								</object>
-								<object class="wmEdit" name="ID_M_PEDT3" variable="m_pedtRTSPPort" member="yes">
-									<validation>Integer</validation>
-									<border>uiRect::BORDER_DOWN</border>
-									<border_focused>uiRect::BORDER_DOWN</border_focused>
-									<pos>350,15</pos>
-									<size>100,40</size>
-									<handler function="OnedtRTSPPortText" entry="EVT_TEXT" />
-								</object>
-								<object class="wmLabel" name="ID_M_PLBL7" variable="m_pLbl7" member="yes">
-									<label>Packet Time</label>
-									<pos>0,110</pos>
-									<size>100,40</size>
-									<fg>#FFFFFF</fg>
-									<bg>#400080</bg>
-								</object>
-								<object class="wmList" name="ID_M_PLST5" variable="m_plstPacket" member="yes">
-									<scrolling>None</scrolling>
-									<button_gap>5,-1</button_gap>
-									<columns>5</columns>
-									<button>#004040</button>
-									<button_selected>#FF8000</button_selected>
-									<items />
-									<pos>105,109</pos>
-									<size>490,44</size>
-									<bg>#000000</bg>
-									<style>wmList::STYLE_SELECT</style>
-									<handler function="OnlstPacketSelected" entry="EVT_LIST_SELECTED" />
-								</object>
-								<object class="wmEdit" name="ID_M_PEDT2" variable="m_pedtRTPPort" member="yes">
-									<validation>Integer</validation>
-									<border>uiRect::BORDER_DOWN</border>
-									<border_focused>uiRect::BORDER_DOWN</border_focused>
-									<pos>350,65</pos>
-									<size>100,40</size>
-									<handler function="OnedtRTPPortText" entry="EVT_TEXT" />
-								</object>
-								<object class="wmKeyboard" name="ID_M_PKBD2" variable="m_pkbd" member="yes">
-									<type>Calc</type>
-									<pos>10,160</pos>
-									<size>240,200</size>
-									<fg>#FFFFFF</fg>
-									<font>
-										<size>10</size>
-										<style>normal</style>
-										<weight>bold</weight>
-										<underlined>0</underlined>
-										<family>swiss</family>
-										<face>Arial</face>
-									</font>
-								</object>
-								<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnStream" member="yes">
-									<label>Stream</label>
-									<toggle_look>1</toggle_look>
-									<toggle_left>Unicast</toggle_left>
-									<toggle_right>Multicast</toggle_right>
-									<toggle_percent>40</toggle_percent>
-									<pos>300,320</pos>
-									<size>268,40</size>
-									<bg>#D50000</bg>
-									<style>wmButton::STYLE_SELECT</style>
-									<handler function="OnbtnStreamClick" entry="EVT_BUTTON" />
-								</object>
-							</object>
-							<label>AoIP</label>
-						</object>
+					<object class="wmLabel" name="ID_M_PLBL2" variable="m_plblInputGain" member="yes">
+						<label></label>
+						<pos>480,400</pos>
+						<size>70,30</size>
+						<fg>#000000</fg>
+						<bg>#FFFFFF</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Arial</face>
+						</font>
 					</object>
 				</object>
+				<label>Input Device</label>
+			</object>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL2" subclass="pnlSettingsOutput" variable="m_ppnlOutput" member="yes" />
 				<label>Output Device</label>
 			</object>
 			<object class="wmSwitcherPanelpage">

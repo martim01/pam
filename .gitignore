@@ -35,3 +35,15 @@
 /pambase/servicetestMain.h
 /pambase/wxsmith/servicetestdialog.wxs
 !CMakeLists.txt
+/*.srctrlbm
+/*.srctrldb
+/*.srctrlprj
+/pam2/*.save-failed
+/pambase/*.save-failed
+/pamfft/*.mak
+/plugins/fftphase/*.save-failed
+/plugins/battery/build
+/plugins/fftphase/build
+pam2/bin/*
+*.a1
+*.cppcheck

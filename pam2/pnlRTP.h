@@ -17,13 +17,10 @@
 #include <queue>
 #include "wxtouchscreenhtml.h"
 #include "pnlUSB.h"
+#include <memory>
 
-class DNSServiceBrowser;
-class SapWatchThread;
-class RtpThread;
 class wmListAdv;
 class SettingEvent;
-
 
 class pnlRTP: public wxPanel
 {
@@ -144,14 +141,7 @@ class pnlRTP: public wxPanel
 
 		void OnDiscovery(wxCommandEvent& event);
 		void OnDiscoveryFinished(wxCommandEvent& event);
-		void OnSap(wxCommandEvent& event);
-		void OnSDPReceived(wxCommandEvent& event);
 
-		void DecodeSap(const wxString& sData);
-
-		void GetSDP(const wxString& sUrl);
-		void GetSDP();
-		void OnRTPClosed(wxCommandEvent& event);
 		void OnSettingEvent(SettingEvent& event);
 
         void ImportSources(const wxString& sFileName);
@@ -160,21 +150,17 @@ class pnlRTP: public wxPanel
 		unsigned int m_nSelectedSource;
 
 
-        DNSServiceBrowser* m_pBrowser;
-        SapWatchThread* m_pSapWatch[3];
-        enum {LOCAL=0, ORGANISATION, GLOBAL};
-        static const wxString STR_SAP[3];
-        static const wxString STR_SAP_SETTING[3];
-
-        size_t m_nDiscovered;
-        std::set<std::pair<wxString, wxString> > m_setDiscover;
 
         std::queue<wxString> m_queueUrl;
 
-        RtpThread* m_pThread;
 
+        unsigned long m_nDiscovered;
 
         wxArrayString m_asServices;
+
+        static const std::string STR_SAP[3];
+        static const wxString STR_SAP_SETTING[3];
+        enum {LOCAL=0, ORGANISATION, GLOBAL};
 
 		DECLARE_EVENT_TABLE()
 };

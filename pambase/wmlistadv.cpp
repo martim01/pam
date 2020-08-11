@@ -135,7 +135,7 @@ void wmListAdv::SetSize(const wxSize& size)
 
 void wmListAdv::OnResizeElement(wxCommandEvent& event)
 {
-    wxLogDebug(wxT("resize"));
+
     CreateRects();
     Refresh();
 }
@@ -203,7 +203,7 @@ void wmListAdv::OnGrowTimer(wxTimerEvent& event)
                 {
                     ScrollVertical((GetClientRect().GetBottom()-m_pGrowElement->GetRect().GetBottom()));
                 }
-//                wxLogDebug(wxT("Grow %d"), (m_pGrowElement->GetHeight()));
+
                 m_timerGrow.Start(30,true);
             }
             else
@@ -654,7 +654,7 @@ void wmListAdv::OnHolding(wxTimerEvent& event)
         int nSubElement = (*m_itDown)->MouseHeld();
         if(nSubElement != 0)
         {
-            wxLogDebug(wxT("Held"));
+
             wxCommandEvent event(wxEVT_LISTADV_HELD, GetId());
             event.SetInt((*m_itDown)->GetIndex());
             event.SetClientData(reinterpret_cast<void*>((*m_itDown)->GetClientData()));

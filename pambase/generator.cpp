@@ -6,7 +6,7 @@
 #include "settings.h"
 #include "soundfile.h"
 #include <wx/xml/xml.h>
-#include "wmlogevent.h"
+#include "log.h"
 #include "niir.h"
 #include "generatorpluginfactory.h"
 #include "generatorpluginbuilder.h"
@@ -406,20 +406,20 @@ bool Generator::SetFile()
         if(bOk == false)
         {
             CloseFile();
-            wmLog::Get()->Log(wxString::Format(wxT("Failed to open file '%s'"), sFilePath.c_str()));
+            pml::Log::Get(pml::Log::LOG_ERROR) << "Generator\tFailed to open file '" << sFilePath << "'" << std::endl;
         }
         else
         {
-            wmLog::Get()->Log(wxString::Format(wxT("Opened file '%s'"), sFilePath.c_str()));
-            wmLog::Get()->Log(wxString::Format(wxT("SampleRate = %d"), GetSampleRate()));
-            wmLog::Get()->Log(wxString::Format(wxT("Channels = %d"), GetChannels()));
+            pml::Log::Get() << "Generator\tOpened file '" << sFilePath << "'" << std::endl;
+            pml::Log::Get() << "Generator\tSampleRate =" << GetSampleRate() << std::endl;
+            pml::Log::Get() << "Generator\tChannels =" << GetChannels() << std::endl;
 
             Generate(8192);
         }
     }
     else
     {
-        wmLog::Get()->Log(wxString::Format(wxT("File '%s' does not exist or generator not established"), sFilePath.c_str()));
+        pml::Log::Get(pml::Log::LOG_ERROR) << "Generator\tFile '" << sFilePath << "' does not exist or generator not established" << std::endl;
     }
 
     return bOk;

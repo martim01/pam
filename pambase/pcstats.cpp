@@ -72,7 +72,7 @@ double pcStats::GetCpuUsage(wxString sCpu)
 
 double pcStats::GetCpuUsage(unsigned long nCpu)
 {
-    return GetCpuUsage(wxString::Format(wxT("cpu%d"), nCpu));
+    return GetCpuUsage(wxString::Format(wxT("cpu%lu"), nCpu));
 }
 
 

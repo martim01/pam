@@ -98,7 +98,38 @@ class PAMBASE_IMPEXPORT timedbuffer
             m_pBuffer = new float[m_nBufferSize];
         }
 
-		
+	timedbuffer(const timedbuffer& tbuffer) :
+		m_nBufferSize(tbuffer.GetBufferSize()),
+		m_nTimestamp(tbuffer.GetTimestamp()),
+		m_tvStamp(tbuffer.GetTimeVal()),
+		m_tvPlayback(tbuffer.GetPlaybackTime()),
+		m_tvTransmissionStamp(tbuffer.GetTransmissionTime()),
+		m_pBuffer(new float[tbuffer.GetBufferSize()]),
+		m_nDuration(tbuffer.GetDuration()),
+		m_nBufferDepth(tbuffer.GetBufferDepth()),
+		m_dPlaybackLatency(tbuffer.GetPlaybackLatency())
+		{
+			memcpy(m_pBuffer, tbuffer.GetBuffer(), tbuffer.GetBufferSize());
+		}
+
+	timedbuffer& operator=(const timedbuffer& tbuffer)
+	{
+		if(&tbuffer != this)
+		{
+			m_nBufferSize  = tbuffer.GetBufferSize();
+			m_nTimestamp = tbuffer.GetTimestamp();
+			m_tvStamp = tbuffer.GetTimeVal();
+			m_tvPlayback = tbuffer.GetPlaybackTime();
+			m_tvTransmissionStamp = tbuffer.GetTransmissionTime();
+
+			m_pBuffer = new float[tbuffer.GetBufferSize()];
+			memcpy(m_pBuffer, tbuffer.GetBuffer(), tbuffer.GetBufferSize());
+			m_nDuration = tbuffer.GetDuration();
+			m_nBufferDepth = tbuffer.GetBufferDepth();
+			m_dPlaybackLatency = tbuffer.GetPlaybackLatency();
+		}
+		return *this;
+	}
 
     ~timedbuffer()
     {

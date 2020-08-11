@@ -5,6 +5,8 @@
 #include <wx/timer.h>
 #include "session.h"
 #include "dlldefine.h"
+#include <memory>
+#include <vector>
 
 class SettingEvent;
 class AudioEvent;
@@ -13,6 +15,17 @@ class RtpServerThread;
 class OnDemandStreamer;
 class OnDemandAES67MediaSubsession;
 class Generator;
+
+namespace pml
+{
+    class SapServer;
+}
+
+namespace pml
+{
+    class Publisher;
+}
+
 
 class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
 {
@@ -71,8 +84,19 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         void CheckPlayback(unsigned long nSampleRate, unsigned long nChannels);
         void CreateSessionFromOutput(const wxString& sSource);
 
-
+        void DoSAP(bool bRun);
+        void DoDNSSD(bool bRun);
         void OnTimerSilence(wxTimerEvent& event);
+
+        void OnUnicastServerFinished(wxCommandEvent& event);
+
+        void Stream();
+        void StreamMulticast();
+        void StreamUnicast();
+        void StopStream();
+
+        void DoGain(AudioEvent& event);
+        void CheckIfGain();
 
         std::set<wxEvtHandler*> m_setHandlers;
         bool m_bSingleHandler;
@@ -96,7 +120,15 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         OnDemandStreamer* m_pUnicastServer;
         OnDemandAES67MediaSubsession* m_pOnDemandSubsession;
         wxTimer m_timerSilence;
-        //wxString m_sCurrentSequence;
+
+        bool m_bQueueToStream;
+        bool m_bStreamActive;
+
+        std::unique_ptr<pml::SapServer> m_pSapServer;
+        std::unique_ptr<pml::Publisher> m_pPublisher;
+
+        std::vector<double> m_vRatio;
+        bool m_bGain;
 };
 
 DECLARE_EXPORTED_EVENT_TYPE(PAMBASE_IMPEXPORT, wxEVT_SESSION,-1)

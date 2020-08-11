@@ -4,6 +4,9 @@
 #include "PamUsageEnvironment.h"
 #include "ondemandstreamer.h"
 
+
+
+
 OnDemandMP3MediaSubsession* OnDemandMP3MediaSubsession::createNew(wxEvtHandler* pHandler, PamUsageEnvironment& env, MP3Encoder& encoder,  portNumBits initialPortNum)
 {
     return new OnDemandMP3MediaSubsession(pHandler, env, encoder, initialPortNum);
@@ -23,17 +26,15 @@ OnDemandMP3MediaSubsession::~OnDemandMP3MediaSubsession()
 FramedSource* OnDemandMP3MediaSubsession::createNewStreamSource(unsigned clientSessionId, unsigned& estBitrate)
 {
     estBitrate = 320;
-    MP3LiveSource* pSource = MP3LiveSource::createNew(m_Encoder, envir());
-
-
-
-    return pSource;
-
+    return MP3LiveSource::createNew(m_Encoder, envir());
 }
 
 RTPSink* OnDemandMP3MediaSubsession::createNewRTPSink(Groupsock* rtpGroupsock, unsigned char rtpPayloadTypeIfDynamic, FramedSource* inputSource)
 {
-
     return MPEG1or2AudioRTPSink::createNew(envir(), rtpGroupsock);
 }
 
+std::string OnDemandMP3MediaSubsession::GetStreamName()
+{
+    return "MP3";
+}

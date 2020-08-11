@@ -8,6 +8,10 @@ class PamUsageEnvironment;
 class PAMBASE_IMPEXPORT OnDemandPamSubsession: public OnDemandServerMediaSubsession
 {
     public:
+
+        virtual std::string GetSDP() { return m_sSDP;}
+        virtual std::string GetStreamName()=0;
+
     protected: // we're a virtual base class
         OnDemandPamSubsession(wxEvtHandler* pHandler, PamUsageEnvironment& env, portNumBits initialPortNum  = 6970);
         virtual ~OnDemandPamSubsession();
@@ -28,8 +32,13 @@ class PAMBASE_IMPEXPORT OnDemandPamSubsession: public OnDemandServerMediaSubsess
                                    Port& serverRTCPPort,
                                    void*& streamToken) override;
 
-    protected:
+
+
+
         wxEvtHandler* m_pHandler;
+        long m_nConnections;
+        std::string m_sSDP;
+    private:
 };
 
 

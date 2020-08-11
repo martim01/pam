@@ -2,6 +2,7 @@
 #include <vector>
 #include <map>
 #include "dlldefine.h"
+#include <wx/string.h>
 
 struct PAMBASE_IMPEXPORT ppmtype
 {

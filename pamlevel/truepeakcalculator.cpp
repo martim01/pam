@@ -52,7 +52,7 @@ void TruePeakCalculator::InputSession(const session& aSession)
         if(m_nChannels != 0)
         {
             #ifdef __WXMSW__
-                #ifdef __WXDEBUG__
+                #ifndef NDEBUG
                 m_pSrc->pState = src_new (SRC_SINC_FASTEST, min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels), &nError);
                 #else
                 m_pSrc->pState = src_new (SRC_SINC_BEST_QUALITY, min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels), &nError);

@@ -1,6 +1,7 @@
 #pragma once
 #include <list>
 #include <vector>
+#include <cstddef>
 #include "dlldefine.h"
 
 struct session;

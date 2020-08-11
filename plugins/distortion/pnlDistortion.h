@@ -28,16 +28,16 @@ class pnlDistortion: public wxPanel
 		void InputSession(const session& aSession);
 
 		//(*Declarations(pnlDistortion)
-		wmLabel* m_pLbl4;
-		wxPanel* pnlLeft;
-		wmLabel* m_pLbl3;
+		wmButton* m_pbtnReset;
+		wmLabel* m_pLbl12;
+		wmLabel* m_pLbl15;
 		wmLabel* m_pLbl17;
 		wmLabel* m_pLbl1;
-		wmLabel* m_pLbl12;
-		wxTimer m_timerTest;
 		wmLabel* m_pLbl2;
-		wmLabel* m_pLbl15;
-		wmButton* m_pbtnReset;
+		wmLabel* m_pLbl3;
+		wmLabel* m_pLbl4;
+		wxPanel* pnlLeft;
+		wxTimer m_timerTest;
 		//*)
 
 	protected:

@@ -19,7 +19,7 @@ file(GLOB SOURCES "*.cpp")
 
 add_library(fft MODULE ${SOURCES})
 
-target_compile_definitions(fft PUBLIC DLL_EXPORTS wxUSE_UNICODE _monitor_ _MSL_STDINT_H)
+target_compile_definitions(fft PUBLIC DLL_EXPORTS wxUSE_UNICODE _monitor_ _MSL_STDINT_H wxDEBUG_LEVEL=0)
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 

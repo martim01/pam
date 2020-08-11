@@ -9,13 +9,10 @@
 #include "settings.h"
 #include <wx/log.h>
 #include <wx/tokenzr.h>
-#include "dnssdbrowser.h"
-#include "sapwatchthread.h"
 #include "settings.h"
-#include "wmlogevent.h"
+#include "log.h"
 #include "PamUsageEnvironment.h"
 #include "PamTaskScheduler.h"
-#include "rtpthread.h"
 #include "wmlistadv.h"
 #include "logelement.h"
 #include <wx/dcclient.h>
@@ -69,7 +66,7 @@ const long pnlRTP::ID_PANEL4 = wxNewId();
 const long pnlRTP::ID_M_PSWP1 = wxNewId();
 //*)
 
-const wxString pnlRTP::STR_SAP[3] = {"239.255.255.255", "239.195.255.255", "224.2.127.254"};
+const std::string pnlRTP::STR_SAP[3] = {"239.255.255.255", "239.195.255.255", "224.2.127.254"};
 const wxString pnlRTP::STR_SAP_SETTING[3] = {"SAP_LOCAL", "SAP_ORGANISATION", "SAP_GLOBAL"};
 
 BEGIN_EVENT_TABLE(pnlRTP,wxPanel)
@@ -77,7 +74,7 @@ BEGIN_EVENT_TABLE(pnlRTP,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size, long nStyle, const wxString& sId) : m_pThread(0)
+pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size, long nStyle, const wxString& sId)
 {
     //(*Initialize(pnlRTP)
     Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
@@ -176,7 +173,7 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
     m_pbtnStartDiscovery = new wmButton(pnlDiscovery, ID_M_PBTN9, _("Discovery"), wxPoint(5,390), wxSize(200,45), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN9"));
     m_pbtnStartDiscovery->SetForegroundColour(wxColour(255,255,255));
     m_pbtnStartDiscovery->SetBackgroundColour(wxColour(0,0,160));
-    m_pbtnStartDiscovery->SetToggleLook(true, wxT("Stop"), wxT("Start"), 50);
+    m_pbtnStartDiscovery->SetToggle(true, wxT("Stop"), wxT("Start"), 50);
     m_pLbl8 = new wmLabel(pnlDiscovery, ID_M_PLBL9, _("Options"), wxPoint(5,3), wxSize(130,30), 0, _T("ID_M_PLBL9"));
     m_pLbl8->SetBorderState(uiRect::BORDER_NONE);
     m_pLbl8->GetUiRect().SetGradient(0);
@@ -249,8 +246,6 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
     m_pList->SetFont(wxFont(8,wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, "Arial", wxFONTENCODING_DEFAULT));
     m_pList->SetBackgroundColour(wxColour(100,100,100));
 
-	Connect(wxID_ANY, wxEVT_SDP, (wxObjectEventFunction)&pnlRTP::OnSDPReceived);
-	Connect(wxID_ANY, wxEVT_RTP_SESSION_CLOSED, (wxObjectEventFunction)&pnlRTP::OnRTPClosed);
 	m_plstSources->SetGradient(0);
 	m_plstSources->SetTextAlign(wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
 
@@ -266,20 +261,16 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 
 	Panel3->SetBackgroundColour(*wxBLACK);
 
-	m_pBrowser = 0;
-	m_pSapWatch[LOCAL] = nullptr;
-	m_pSapWatch[ORGANISATION] = nullptr;
-	m_pSapWatch[GLOBAL] = nullptr;
-
-	Connect(wxID_ANY, wxEVT_BROWSE_RESOLVED, (wxObjectEventFunction)&pnlRTP::OnDiscovery);
-	Connect(wxID_ANY, wxEVT_BROWSE_FINISHED, (wxObjectEventFunction)&pnlRTP::OnDiscoveryFinished);
-	Connect(wxID_ANY, wxEVT_SAP, (wxObjectEventFunction)&pnlRTP::OnSap);
 
 	AoipSourceManager::Get();
+	Connect(wxID_ANY, wxEVT_ASM_DISCOVERY, (wxObjectEventFunction)&pnlRTP::OnDiscovery);
+	Connect(wxID_ANY, wxEVT_ASM_DISCOVERY_FINISHED, (wxObjectEventFunction)&pnlRTP::OnDiscoveryFinished);
+
     m_nSelectedSource = 0;
 
 	Settings::Get().AddHandler(wxT("ImportAoIP"), wxT("USB"), this);
 	Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pnlRTP::OnSettingEvent);
+
 	if(Settings::Get().Read(wxT("Discovery"), wxT("RTSP"),1) == 1)
     {
         m_plstServices->SelectButton(wxT("RTSP"), false);
@@ -311,8 +302,6 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
     }
 
 
-
-
 	ListSources();
 }
 
@@ -320,17 +309,7 @@ pnlRTP::~pnlRTP()
 {
 	//(*Destroy(pnlRTP)
 	//*)
-	if(m_pBrowser)
-    {
-        delete m_pBrowser;
-    }
-    for(int i = 0; i < 3; i++)
-    {
-        if(m_pSapWatch[i])
-        {
-            m_pSapWatch[i]->Delete();
-        }
-    }
+
 }
 
 
@@ -437,123 +416,22 @@ void pnlRTP::OnbtnDiscoverClick(wxCommandEvent& event)
 
 void pnlRTP::OnDiscovery(wxCommandEvent& event)
 {
-    dnsInstance* pInstance = reinterpret_cast<dnsInstance*>(event.GetClientData());
 
-    wxString sIdentifier;
-    if(pInstance->sService == "_rtsp._tcp")
-    {
-        sIdentifier = ("{"+pInstance->sService.AfterFirst('_').BeforeFirst('.')+"} "+pInstance->sName.BeforeFirst('('));
-    }
-    else if(pInstance->sService == "_sipuri._udp")
-    {
-        sIdentifier = ("{"+pInstance->sService.AfterFirst('_').BeforeFirst('.')+"} "+pInstance->sName.AfterFirst(' ').BeforeFirst('('));
-    }
+    wxClientDC dc(this);
+    dc.SetFont(m_pList->GetFont());
+    LogElement* pElement(new LogElement(dc, GetClientSize().x, event.GetString(), 8));  //@todo replace with an actual value
+    m_pList->AddElement(pElement);
+    pElement->Filter(255);
+    m_pList->Refresh();
 
-
-    if(m_setDiscover.insert(make_pair(sIdentifier, pInstance->sHostIP)).second)
-    {
-        wxString sAddress;
-        if(pInstance->sService == "_rtsp._tcp")
-        {
-            if(pInstance->nPort == 554)
-            {
-                sAddress = (wxString::Format(wxT("rtsp://%s/by-name/%s"), pInstance->sHostIP.c_str(), pInstance->sName.c_str()));
-            }
-            else
-            {
-                sAddress = (wxString::Format(wxT("rtsp://%s:%d/by-name/%s"), pInstance->sHostIP.c_str(), pInstance->nPort, pInstance->sName.c_str()));
-            }
-            AoipSourceManager::Get().AddSource(wxString::Format(wxT("%s(%s)"), sIdentifier.c_str(), pInstance->sHostIP.c_str()), sAddress);
-        }
-        else if(pInstance->sService == "_sipuri._udp")
-        {
-            sAddress = pInstance->sName.BeforeFirst(' ');
-            AoipSourceManager::Get().AddSource(wxString::Format(wxT("%s(%s)"), sIdentifier.c_str(), pInstance->sHostIP.c_str()), sAddress);
-        }
-        wxClientDC dc(this);
-        dc.SetFont(m_pList->GetFont());
-        LogElement* pElement(new LogElement(dc, GetClientSize().x, wxString::Format(wxT("[%s] %s = %s:%lu"), pInstance->sService.c_str(), pInstance->sName.c_str(), pInstance->sHostIP.c_str(), pInstance->nPort), wmLog::LOG_TEST_OK));
-        m_pList->AddElement(pElement);
-        pElement->Filter(255);
-        m_pList->Refresh();
-
-        m_nDiscovered++;
-        m_plblDiscovering->SetLabel(wxString::Format(wxT("Discovering...\n%zu Found"), m_nDiscovered));
-        m_plblDiscovering->Update();
-    }
-    wxLogDebug(wxT("Discover Done"));
+    m_nDiscovered+= event.GetInt();
+    m_plblDiscovering->SetLabel(wxString::Format(wxT("Discovering...\n%lu Found"), m_nDiscovered));
+    m_plblDiscovering->Update();
 }
 
-void pnlRTP::OnSap(wxCommandEvent& event)
-{
-    DecodeSap(event.GetString());
-}
-
-void pnlRTP::DecodeSap(const wxString& sData)
-{
-    wxString sIpAddress = sData.BeforeFirst(wxT('\n'));
-    wxString sSDP = sData.AfterFirst(wxT('\n'));
-    wxString sName;
-    wmLog::Get()->Log(wxT("OnSAP"));
-
-    //is it an L24 or L16 session
-    bool bCanDecode(false);
-    wxArrayString asLines(wxStringTokenize(sSDP, wxT("\n")));
-    for(size_t i = 0; i < asLines.size(); i++)
-    {
-        if(asLines[i].find(wxT("a=rtpmap:")) != wxNOT_FOUND)
-        {
-            unsigned long nCodec;
-            if(asLines[i].AfterFirst(wxT(':')).BeforeFirst(wxT(' ')).ToULong(&nCodec) && nCodec > 95 && nCodec < 127)
-            {
-                if(asLines[i].find(wxT("L24")) != wxNOT_FOUND || asLines[i].find(wxT("L16")) != wxNOT_FOUND)
-                {
-                    bCanDecode = true;
-                    break;
-                }
-            }
-        }
-    }
-    if(bCanDecode)
-    {
-        //find the source name:
-        int nStart = sSDP.Find(wxT("s="));
-        if(nStart != wxNOT_FOUND)
-        {
-            sName = sSDP.Mid(nStart+2).BeforeFirst(wxT('\n'));
-        }
-        nStart = sSDP.Find(wxT("o="));
-        if(nStart != wxNOT_FOUND)
-        {
-            wxArrayString asSplit(wxStringTokenize(sSDP.Mid(nStart+2).BeforeFirst(wxT('\n'))));
-            if(asSplit.size() >= 6)
-            {
-                sIpAddress = asSplit[5];
-            }
-        }
-
-        if(m_setDiscover.insert(make_pair(sName, sIpAddress)).second)
-        {
-            m_nDiscovered++;
-            m_plblDiscovering->SetLabel(wxString::Format(wxT("Discovering...\n%uz Found"), m_nDiscovered));
-            wmLog::Get()->Log(wxString::Format(wxT("SAP response from %s\n%s"), sIpAddress.c_str(), sSDP.c_str()));
-
-            AoipSourceManager::Get().AddSource(sName, wxString::Format(wxT("sap:%s"), sIpAddress.c_str()), sSDP);
-
-            wxClientDC dc(this);
-            dc.SetFont(m_pList->GetFont());
-            LogElement* pElement(new LogElement(dc, GetClientSize().x, wxString::Format(wxT("[SAP] %s = s"), sName.c_str(), sIpAddress.c_str()), wmLog::LOG_TEST_OK));
-            m_pList->AddElement(pElement);
-            pElement->Filter(255);
-            m_pList->Refresh();
-
-        }
-    }
-}
 
 void pnlRTP::OnDiscoveryFinished(wxCommandEvent& event)
 {
-
     m_plblDiscovering->SetLabel(wxT("DNS_SD Discovery finished..."));
 }
 
@@ -568,41 +446,6 @@ void pnlRTP::OnbtnDeleteAllHeld(wxCommandEvent& event)
     m_pbtnUpdate->Disable();
 }
 
-
-void pnlRTP::GetSDP(const wxString& sUrl)
-{
-    m_queueUrl.push(sUrl);
-//    GetSDP();
-}
-
-void pnlRTP::GetSDP()
-{
-//    if(m_pThread == 0 && m_queueUrl.empty() == false)
-//    {
-//        m_pThread = new RtpThread(this, Settings::Get().Read(wxT("AoIP"), wxT("Interface"), wxEmptyString), wxEmptyString, m_queueUrl.front(), 4096, true);
-//        m_pThread->Create();
-//        m_pThread->Run();
-//    }
-}
-
-void pnlRTP::OnSDPReceived(wxCommandEvent& event)
-{
-    wxString sSDP(event.GetString());
-    sSDP.Replace(wxT("\r"), wxEmptyString);
-    sSDP.Replace(wxT("\n"), wxT("`"));
-
-    Settings::Get().Write(wxT("SDP"), m_queueUrl.front(), sSDP);
-    //wmLog::Get()->Log(wxString::Format(wxT("'%s' = '%s'"), m_queueUrl.front().c_str(), event.GetString().c_str()));
-
-    m_queueUrl.pop();
-}
-
-void pnlRTP::OnRTPClosed(wxCommandEvent& event)
-{
-    //wmLog::Get()->Log(wxT("---------------------CLOSED-------------------"));
-    m_pThread = NULL;
-    GetSDP();
-}
 
 void pnlRTP::OnlstServicesSelected(wxCommandEvent& event)
 {
@@ -621,22 +464,25 @@ void pnlRTP::OnbtnStartDiscoveryClick(wxCommandEvent& event)
 
 
     m_pbtnManual->Enable(!event.IsChecked());
+    m_pbtnDiscover->Update();
+
+    std::set<std::string> setServices;
+    std::set<std::string> setSAP;
 
     if(event.IsChecked())
     {
-        set<wxString> setServices;
         if(m_plstServices->IsSelected(0))   //RTSP
         {
-            setServices.insert(wxT("_rtsp._tcp"));
+            setServices.insert("_rtsp._tcp");
         }
         if(m_plstServices->IsSelected(1))   //SIP
         {
-            setServices.insert(wxT("_sipuri._udp"));
+            setServices.insert("_sipuri._udp");
         }
         if(m_plstServices->IsSelected(2))   //NMOS
         {
-            setServices.insert(wxT("_nmos-query._tcp"));
-            setServices.insert(wxT("_nmos-node._tcp"));
+            setServices.insert("_nmos-query._tcp");
+            setServices.insert("_nmos-node._tcp");
         }
 
         for(int i = 0; i < m_plstServices->GetItemCount(); i++)
@@ -644,8 +490,18 @@ void pnlRTP::OnbtnStartDiscoveryClick(wxCommandEvent& event)
             Settings::Get().Write(wxT("Discovery"), m_plstServices->GetButtonText(i), m_plstServices->IsSelected(i));
         }
 
-        m_setDiscover.clear();
+        for(int i = 0; i < 3; i++)
+        {
+            if(m_plstSAP->IsSelected(i))
+            {
+                setSAP.insert(STR_SAP[i]);
+            }
+        }
+
+
+        AoipSourceManager::Get().StartDiscovery(this, setServices, setSAP);
         m_pList->Clear();
+
 
         wxClientDC dc(this);
         dc.SetFont(m_pList->GetFont());
@@ -656,31 +512,9 @@ void pnlRTP::OnbtnStartDiscoveryClick(wxCommandEvent& event)
         m_pList->Update();
 
         m_nDiscovered = 0;
-        m_plblDiscovering->SetLabel(wxString::Format(wxT("Discovering...\n%04d Found"), m_nDiscovered));
+        m_plblDiscovering->SetLabel(wxString::Format(wxT("Discovering...\n%lu Found"), m_nDiscovered));
         m_pbtnDiscover->SetLabel(wxT("Stop Discovery"));
 
-        if(m_pBrowser)
-        {
-            delete m_pBrowser;
-            m_pBrowser = 0;
-        }
-        m_pBrowser = new DNSServiceBrowser(this);
-        m_pBrowser->Start(setServices);
-
-        for(int i = 0; i < 3; i++)
-        {
-            if(m_pSapWatch[i])
-            {
-                m_pSapWatch[i]->Delete();
-                m_pSapWatch[i] = 0;
-            }
-
-            if(m_plstSAP->IsSelected(i))
-            {
-                m_pSapWatch[i] = new SapWatchThread(this, STR_SAP[i]);
-                m_pSapWatch[i]->Run();
-            }
-        }
     }
     else
     {
@@ -694,19 +528,8 @@ void pnlRTP::OnbtnStartDiscoveryClick(wxCommandEvent& event)
 
         m_pbtnDiscover->SetLabel(wxT("Discover"));
         m_plblDiscovering->SetLabel(wxEmptyString);
-        if(m_pBrowser)
-        {
-            delete m_pBrowser;
-            m_pBrowser = 0;
-        }
-        for(int i = 0; i < 3; i++)
-        {
-            if(m_pSapWatch[i])
-            {
-                m_pSapWatch[i]->Delete();
-                m_pSapWatch[i] = 0;
-            }
-        }
+
+        AoipSourceManager::Get().StopDiscovery();
     }
 }
 
@@ -750,7 +573,7 @@ void pnlRTP::OnSettingEvent(SettingEvent& event)
 {
     if(event.GetSection() == "ImportAoIP" && event.GetKey() == "USB" && m_pSwp1->GetSelectionName() == "Import")
     {
-        wxLogDebug(wxT("Reading USB drive"));
+
         m_plblImportProgress->SetLabel("Reading USB drive...");
         m_plblImportProgress->Update();
 
@@ -781,7 +604,7 @@ void pnlRTP::OnSettingEvent(SettingEvent& event)
 
 
         m_plstFiles->Thaw();
-        wxLogDebug(wxT("USB drive read."));
+
         m_plblImportProgress->SetLabel("USB drive read.");
         m_plblImportProgress->Update();
     }
@@ -813,18 +636,18 @@ void pnlRTP::ImportSources(const wxString& sFileName)
                     AoipSourceManager::Get().AddSource(itData->first, itData->second);
                 }
             }
-            wmLog::Get()->Log(wxString::Format("Import AoIP: Read '%s'", sFileName.c_str()));
+            pml::Log::Get() << "AoIP\tImport AoIP: Read '" << sFileName << "'" << std::endl;
         }
         else
         {
-            wmLog::Get()->Log(wxString::Format("Import AoIP: Reading '%s' invalid file", sFileName.c_str()));
+            pml::Log::Get(pml::Log::LOG_ERROR) << "AoIP\tImport AoIP: Reading '" << sFileName << "' invalid file" << std::endl;
             m_plblImportProgress->SetLabel(wxString::Format("Reading '%s' invalid file", sFileName.c_str()));
             m_plblImportProgress->Update();
         }
     }
     else
     {
-        wmLog::Get()->Log(wxString::Format("Import AoIP: Reading '%s' failed", sFileName.c_str()));
+        pml::Log::Get(pml::Log::LOG_ERROR) << "AoIP\tImport AoIP: Reading '" << sFileName << "' failed" << std::endl;
         m_plblImportProgress->SetLabel(wxString::Format("Reading '%s' failed", sFileName.c_str()));
         m_plblImportProgress->Update();
     }

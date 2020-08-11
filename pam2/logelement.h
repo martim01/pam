@@ -6,7 +6,7 @@ class  LogElement : public advElement
 {
     public:
 
-        LogElement(wxDC& dc, unsigned int nWidth, const wxString& sMessage, int nTest);
+        LogElement(wxDC& dc, unsigned int nWidth, const wxString& sMessage, int nLevel);
         virtual ~LogElement(){}
 
         void Destroy();

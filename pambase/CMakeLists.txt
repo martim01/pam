@@ -31,39 +31,103 @@ target_compile_definitions(BasicUsageEnvironment PUBLIC NO_OPENSSL)
 target_compile_definitions(liveMedia PUBLIC NO_OPENSSL)
 
 
+message(${CMAKE_CURRENT_SOURCE_DIR})
+
 #pambase settubgs
 
 
+
+#log
+find_path(LOG_LIB_DIR NAMES "include/log.h" PATHS ${PROJECT_SOURCE_DIR}/../external/log)
+if((NOT LOG_LIB_DIR) OR (NOT EXISTS ${LOG_LIB_DIR}))
+    # we couldn't find the header files for FOO or they don't exist
+    message("Unable to find pml::log")
+    
+    # we have a submodule setup for asio, assume it is under external/asio
+    # now we need to clone this submodule
+    execute_process(COMMAND git submodule update --init -- ../external/log WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+    find_path(LOG_LIB_DIR NAMES "include/log.h" PATHS ${PROJECT_SOURCE_DIR}/../external/log)
+else()
+    message("Found pml::log")
+endif()
+include_directories(${LOG_LIB_DIR}/include)
+
+
+#dnssd
+find_path(DNSSD_LIB_DIR NAMES "include/dnssd.h" PATHS ${PROJECT_SOURCE_DIR}/../external/dnssd)
+if((NOT DNSSD_LIB_DIR) OR (NOT EXISTS ${DNSSD_LIB_DIR}))
+    # we couldn't find the header files for FOO or they don't exist
+    message("Unable to find pml::dnssd")
+    
+    # we have a submodule setup for dnssd, assume it is under external/dnssd
+    # now we need to clone this submodule
+    execute_process(COMMAND git submodule update --init -- ${PROJECT_SOURCE_DIR}/../external/dnssd WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+    find_path(DNSSD_LIB_DIR NAMES "include/dnssd.h" PATHS ${PROJECT_SOURCE_DIR}/../external/dnssd)
+else()
+    message("Found pml::dnssd")
+endif()
+
+include_directories(${DNSSD_LIB_DIR}/include)
+
+
+#sapserver
+find_path(SAP_LIB_DIR NAMES "/include/sapserver.h" PATHS ${PROJECT_SOURCE_DIR}/../external/sapserver)
+if((NOT SAP_LIB_DIR) OR (NOT EXISTS ${SAP_LIB_DIR}))
+    # we couldn't find the header files for FOO or they don't exist
+    message("Unable to find sapserver")
+    
+    # we have a submodule setup for asio, assume it is under external/asio
+    # now we need to clone this submodule
+    execute_process(COMMAND git submodule update --init -- ../external/sapserver WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+    find_path(SAP_LIB_DIR NAMES "/include/sapserver.h" PATHS ${PROJECT_SOURCE_DIR}/../external/sapserver)
+else()
+    message("Found sapserver")
+endif()
+
+include_directories(${SAP_LIB_DIR}/include)
+include_directories(${SAP_LIB_DIR}/external/asio/asio/include)
+
 file(GLOB SOURCES "*.cpp")
-add_library(pambase SHARED ${SOURCES})
+add_library(pambase SHARED ${SOURCES} "../external/sapserver/src/parser.cpp"
+ "../external/sapserver/src/receiver.cpp"
+ "../external/sapserver/src/saphandler.cpp"
+ "../external/sapserver/src/sapserver.cpp" "../external/sapserver/src/sapserverimpl.cpp" "../external/sapserver/src/sender.cpp" 
+ "../external/log/src/log.cpp"
+ "../external/dnssd/src/dnssd.cpp"
+ "../external/dnssd/src/zcposter.cpp"
+ "../external/dnssd/src/gnu/avahibrowser.cpp"
+ "../external/dnssd/src/gnu/avahipublisher.cpp")
+
+
 
 option(optionPTP "Use PTPMonkey library" OFF)
 message (${PROJECT_SOURCE_DIR})
 if(optionPTP)
-	find_path(PTPMONKEY_LIB_DIR NAMES "libptpmonkey.so" PATHS ${PROJECT_SOURCE_DIR}/../external/ptpmonkey)
+    find_path(PTPMONKEY_LIB_DIR NAMES "libptpmonkey.so" PATHS ${PROJECT_SOURCE_DIR}/../external/ptpmonkey)
 	
-	if((NOT PTPMONKEY_LIB_DIR) OR (NOT EXISTS ${PTPMONKEY_LIB_DIR}))
-    # we couldn't find the header files for FOO or they don't exist
-    message("Unable to find PtpMonkey")
+    if((NOT PTPMONKEY_LIB_DIR) OR (NOT EXISTS ${PTPMONKEY_LIB_DIR}))
+	# we couldn't find the header files for FOO or they don't exist
+	message("Unable to find PtpMonkey")
     
-
-    # we have a submodule setup for asio, assume it is under external/asio
-    # now we need to clone this submodule
-    execute_process(COMMAND git submodule update --init -- ../external/ptpmonkey
-                    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-
-    
-	add_subdirectory(${PROJECT_SOURCE_DIR}/../external/ptpmonkey ${CMAKE_CURRENT_BINARY_DIR}/ptpmonkey)
+	# we have a submodule setup for asio, assume it is under external/asio
+	# now we need to clone this submodule
+	execute_process(COMMAND git submodule update --init -- ../external/ptpmonkey WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+       
     else()
-		message("Found ptpmonkey")
-	endif()
+	    message("Found ptpmonkey")
+    endif()
+	add_subdirectory(${PROJECT_SOURCE_DIR}/../external/ptpmonkey ${CMAKE_CURRENT_BINARY_DIR}/ptpmonkey)
 	target_compile_definitions(pambase PUBLIC PTPMONKEY)
 	target_link_libraries(pambase ptpmonkey)
 endif()
 
+
+
+
+
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(pambase PRIVATE ${flags})
-target_compile_definitions(pambase PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __WXGNU__ _pambase_ CREATING_DLL _core_ _MSL_STDINT_H NO_OPENSSL)
+target_compile_definitions(pambase PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __WXGNU__ _pambase_ CREATING_DLL _core_ _MSL_STDINT_H NO_OPENSSL ASIO_STANDALONE wxDEBUG_LEVEL=0 DNSSD_DLL LOG_DLL)
 
 #find external libraries
 find_package(wxWidgets REQUIRED)
@@ -94,12 +158,15 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	endif()
 endif()
 
+link_directories(${CMAKE_BINARY_DIR}/../lib/)
 target_link_libraries(pambase liveMedia)
 target_link_libraries(pambase BasicUsageEnvironment)
 target_link_libraries(pambase UsageEnvironment)
 target_link_libraries(pambase groupsock)
+#target_link_libraries(pambase pthread)
 
-set_target_properties(pambase PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../lib/")
+
+set_target_properties(pambase PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../lib/)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")

@@ -86,7 +86,7 @@ void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultS
 
 void saveAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultString)
 {
-    wxLogDebug(wxT("saveAfterDescribe = %s"), wxString::FromAscii(resultString).c_str());
+
     bool bSuccess(true);
     ourRTSPClient* pClient = dynamic_cast<ourRTSPClient*>(rtspClient);
     if(pClient)

@@ -195,10 +195,10 @@ void wmipeditpnl::SetValue(const wxString& sValue)
                 nValue[i] = 255;
             }
         }
-        m_pEdt1->SetValue(wxString::Format(wxT("%d"), nValue[0]));
-        m_pEdt2->SetValue(wxString::Format(wxT("%d"), nValue[1]));
-        m_pEdt3->SetValue(wxString::Format(wxT("%d"), nValue[2]));
-        m_pEdt4->SetValue(wxString::Format(wxT("%d"), nValue[3]));
+        m_pEdt1->SetValue(wxString::Format(wxT("%lu"), nValue[0]));
+        m_pEdt2->SetValue(wxString::Format(wxT("%lu"), nValue[1]));
+        m_pEdt3->SetValue(wxString::Format(wxT("%lu"), nValue[2]));
+        m_pEdt4->SetValue(wxString::Format(wxT("%lu"), nValue[3]));
     }
 }
 

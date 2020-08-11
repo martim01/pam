@@ -335,7 +335,7 @@ void LTCGeneratorPanel::LoadSettings()
 
 void LTCGeneratorPanel::OnSettingEvent(SettingEvent& event)
 {
-    wxLogDebug(wxT("LTCGeneratorPanel::OnSettingEvent %s, %s %s"), event.GetSection().c_str(), event.GetKey().c_str(), event.GetValue().c_str());
+
     if(event.GetKey() == wxT("FPS"))
     {
         m_plstFPS->SelectButton(event.GetValue(),false);

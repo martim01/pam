@@ -318,7 +318,7 @@ void pnlUpdate::OnbtnSelectClick(wxCommandEvent& event)
 
 void pnlUpdate::OnbtnCheckClick(wxCommandEvent& event)
 {
-     #ifdef __WXDEBUG__
+     #ifndef NDEBUG
         #ifdef __WXMSW__
             wxString sUpdate = wxT("C:\\developer\\matt\\pam2\\pamupdatemanager\\bin\\Debug\\pamupdatemanager");
         #else
@@ -328,7 +328,7 @@ void pnlUpdate::OnbtnCheckClick(wxCommandEvent& event)
         #ifdef __WXMSW__
             wxString sUpdate = wxT("pamupdatemanager");
         #else
-        wxString Update = wxT("sudo pamupdatemanager");
+        wxString sUpdate = wxT("sudo pamupdatemanager");
         #endif // __WXMSW__
     #endif
 

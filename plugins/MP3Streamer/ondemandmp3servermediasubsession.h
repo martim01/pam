@@ -8,6 +8,9 @@ class OnDemandMP3MediaSubsession: public OnDemandPamSubsession
 {
     public:
         static OnDemandMP3MediaSubsession* createNew(wxEvtHandler* pHandler, PamUsageEnvironment& env, MP3Encoder& encoder,  portNumBits initialPortNum = 6970);
+
+        std::string GetStreamName() override;
+
     protected: // we're a virtual base class
         OnDemandMP3MediaSubsession(wxEvtHandler* pHandler, PamUsageEnvironment& env, MP3Encoder& encoder,  portNumBits initialPortNum  = 6970);
         virtual ~OnDemandMP3MediaSubsession();

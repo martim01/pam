@@ -1,15 +1,24 @@
-#ifdef __NMOS__
 #include "wxlogoutput.h"
-#include "wmlogevent.h"
 #include <wx/log.h>
+
+
+wxDEFINE_EVENT(wxEVT_PMLOG, wxCommandEvent);
+
 void wxLogOutput::Flush(int nLogLevel, const std::stringstream&  logStream)
 {
-//    return;
-    wxLogDebug(wxString::FromAscii(logStream.str().c_str()));
-//    wxString sLog(wxString::FromAscii(logStream.str().c_str()));
- //   sLog.Replace(wxT("\n"), wxT(""));
+    if(m_pHandler)
+    {
+        wxString sLog(wxString::FromUTF8(logStream.str().c_str()));
+        sLog.Trim();
+        sLog.Trim(false);
+        wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_PMLOG);
+        pEvent->SetInt(nLogLevel);
+        pEvent->SetString(sLog);
+        wxQueueEvent(m_pHandler, pEvent);
+    }
 
-//    wmLog::Get()->Log(sLog);
+    #ifndef NDEBUG
+        std::cout << "LOGOUTPUT:     " << logStream.str() << std::endl;
+    #endif // __WXDEBUG__
+
 }
-#endif
-

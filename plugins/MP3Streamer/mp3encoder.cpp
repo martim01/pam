@@ -2,7 +2,8 @@
 #include <iostream>
 #include <chrono>
 #include <array>
-#include "wmlogevent.h"
+#include "log.h"
+#include <wx/utils.h>
 
 MP3Encoder::MP3Encoder() : m_pLame(0), m_nTimeBuffer(0), m_nBytesWritten(0), m_nBuffersWritten(0), m_nLeastIndex(0)
 {
@@ -21,6 +22,7 @@ bool MP3Encoder::StopLame()
         m_pLame = 0;
         FlushBuffer();
     }
+    return true;
 }
 
 bool MP3Encoder::InitLame(const MP3Parameters& params)
@@ -109,7 +111,7 @@ void MP3Encoder::AddSamples(const float* pBuffer, size_t nSize)
     }
     else if(nBytesOut < 0)
     {
-        wmLog::Get()->Log("MP3Streamer", "Unable to encode audio data");
+        pml::Log::Get(pml::Log::LOG_ERROR) << "MP3Streamer\t" << "Unable to encode audio data" << std::endl;
     }
 }
 
@@ -118,7 +120,7 @@ int MP3Encoder::RegisterForFrames()
     std::lock_guard<std::mutex> lg(m_mutex);
     if(m_lstFrames.size() < 2)
     {
-        wmLog::Get()->Log("MP3Streamer", "Not enough frames");
+        pml::Log::Get(pml::Log::LOG_WARN) << "MP3Streamer\t" << "Not enough frames" << std::endl;
         return -1;
     }
     return m_mReader.insert(std::make_pair(wxNewId(), m_lstFrames.begin())).first->first;
