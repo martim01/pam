@@ -91,6 +91,7 @@
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
+					<Add option="--enable-auto-import" />
 					<Add library="pambase" />
 				</Linker>
 				<ExtraCommands>
@@ -125,13 +126,11 @@
 		<Compiler>
 			<Add option="-std=c++1y" />
 			<Add option="-D_monitor_" />
-			<Add option="-DPTPMONKEY" />
 			<Add directory="../../pambase" />
 			<Add directory="../../external/ptpmonkey/include" />
 			<Add directory="../../external/log/include" />
 		</Compiler>
 		<Linker>
-			<Add library="ptpmonkey" />
 			<Add directory="../../lib" />
 		</Linker>
 		<Unit filename="macdb.cpp" />

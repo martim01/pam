@@ -1,5 +1,4 @@
 #include "wxptp.h"
-#ifdef PTPMONKEY
 #include "ptpmonkey.h"
 #include "timedbuffer.h"
 #include <wx/log.h>
@@ -282,4 +281,4 @@ timeval wxPtp::GetLastPtpOffset(unsigned char nDomain)
         return tv;
     }
 }
-#endif
+

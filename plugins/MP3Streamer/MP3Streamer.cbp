@@ -135,10 +135,10 @@
 					<Add option="`wx-config --libs`" />
 					<Add library="pambase" />
 					<Add library="libmp3lame.a" />
-					<Add library="liblivemedia.a" />
-					<Add library="libBasicUsageEnvironment.a" />
-					<Add library="libUsageEnvironment.a" />
-					<Add library="libgroupsock.a" />
+					<Add library="livemedia" />
+					<Add library="BasicUsageEnvironment" />
+					<Add library="UsageEnvironment" />
+					<Add library="groupsock" />
 					<Add library="pml_log" />
 					<Add directory="$(#wx.lib)" />
 					<Add directory="$(#lame.LIB)" />

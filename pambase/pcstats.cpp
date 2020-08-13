@@ -113,15 +113,15 @@ void pcStats::ExtractNetStats(wxString sLine)
 
 unsigned long pcStats::GetNetBandwidth(wxString sDevice)
 {
-
+    return 0;
 }
 
 unsigned long pcStats::GetNetErrors(wxString sDevice)
 {
-
+    return 0;
 }
 
 unsigned long pcStats::GetNetDrop(wxString sDevice)
 {
-
+    return 0;
 }

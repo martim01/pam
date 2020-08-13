@@ -15,7 +15,6 @@ IMPLEMENT_DYNAMIC_CLASS(AngleMeter, pmControl)
 wxIMPLEMENT_DYNAMIC_CLASS(AngleMeter, pmControl);
 #endif // WXSPAM
 
-
 AngleMeter::AngleMeter()
     : pmControl()
     , m_bSurround(false)

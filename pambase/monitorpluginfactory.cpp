@@ -211,7 +211,7 @@ plugin MonitorPluginFactory::GetPluginDetails(const wxString& sDir, const wxStri
         wxString sLib = sDir + wxT("/") + wxDynamicLibrary::CanonicalizeName(sLibrary);
         #endif // PAMBASE_DEBUG
 
-        wxDynamicLibrary* pLib = new wxDynamicLibrary(sLib);
+        wxDynamicLibrary* pLib = new wxDynamicLibrary(sLib,wxDL_LAZY);
         if(pLib)
         {
             if(pLib->IsLoaded())

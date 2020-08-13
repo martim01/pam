@@ -2,6 +2,7 @@
 <CodeBlocks_workspace_file>
 	<Workspace title="Workspace">
 		<Project filename="manifest_creator/manifest_creator.cbp" />
+		<Project filename="external/log/log.cbp" />
 		<Project filename="pambase/pambase.cbp" />
 		<Project filename="pamfft/pamfft.cbp" />
 		<Project filename="pamlevel/pamlevel.cbp" />

@@ -684,9 +684,9 @@ void ptpPanel::ShowClockDetails()
 
     wxColour clrNormal(CLR_SLAVE);
     wxColour clrSelected(CLR_SLAVE_SELECTED);
-    if(m_pClock->IsMaster())
+    if(m_pClock->IsGrandMaster())
     {
-        m_plblState->SetLabel("Master");
+        m_plblState->SetLabel("Grand Master");
         clrNormal = CLR_MASTER;
         clrSelected = CLR_MASTER_SELECTED;
     }
@@ -743,7 +743,7 @@ void ptpPanel::ShowClockDetails()
         m_plblPriority2->SetLabel(wxString::Format("%u", static_cast<unsigned int>(m_pClock->GetPriority2())));
     }
 
-    if(m_pClock->IsMaster() || m_pClock->IsSyncMaster())
+    if(m_pClock->IsGrandMaster() || m_pClock->IsSyncMaster())
     {
         m_plblSyncCount->SetLabel(wxString::Format("%llu", m_pClock->GetCount(ptpV2Header::SYNC)));
         m_plblSyncRate->SetLabel(ConvertRate(m_pClock->GetInterval(ptpV2Header::SYNC)));
@@ -755,7 +755,7 @@ void ptpPanel::ShowClockDetails()
         m_ppnlSyncFlags->ShowFlags(m_pClock->GetFlags(ptpV2Header::SYNC));
         m_ppnlFollowFlags->ShowFlags(m_pClock->GetFlags(ptpV2Header::FOLLOW_UP));
 
-        m_plblMasterId->SetLabel(wxPtp::Get()->GetMasterClockId(m_nDomain));
+        m_plblMasterId->SetLabel(wxPtp::Get().GetMasterClockId(m_nDomain));
     }
     else
     {
