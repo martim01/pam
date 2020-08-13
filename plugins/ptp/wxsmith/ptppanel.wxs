@@ -65,7 +65,7 @@
 		</object>
 		<object class="wxPanel" name="ID_PANEL1" variable="m_ppnlAnnouncements" member="yes">
 			<pos>5,95</pos>
-			<size>280,245</size>
+			<size>280,275</size>
 			<bg>#000000</bg>
 			<object class="wmLabel" name="ID_M_PLBL30" variable="m_ptitleAnnouncements" member="yes">
 				<label>Announcements</label>
@@ -234,6 +234,22 @@
 				<fg>#FFFFFF</fg>
 				<bg>#5C7AE0</bg>
 			</object>
+			<object class="wmLabel" name="ID_M_PLBL35" variable="m_plblTitleMaster" member="yes">
+				<label>Master</label>
+				<gradient>wxWEST</gradient>
+				<pos>0,180</pos>
+				<size>70,25</size>
+				<fg>#FFFFFF</fg>
+				<bg>#5C7AE0</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL39" variable="m_plblMasterId" member="yes">
+				<label></label>
+				<border>uiRect::BORDER_DOWN</border>
+				<pos>70,180</pos>
+				<size>210,25</size>
+				<fg>#000000</fg>
+				<bg>#FFFFFF</bg>
+			</object>
 			<object class="wmLabel" name="ID_M_PLBL22" variable="m_plblSource" member="yes">
 				<label></label>
 				<border>uiRect::BORDER_DOWN</border>
@@ -243,7 +259,7 @@
 				<bg>#FFFFFF</bg>
 			</object>
 			<object class="wxPanel" name="ID_PANEL9" subclass="pnlFlags" variable="m_ppnlAnnounceFlags" member="yes">
-				<pos>0,180</pos>
+				<pos>0,210</pos>
 				<size>280,64</size>
 			</object>
 		</object>

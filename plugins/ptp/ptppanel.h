@@ -64,6 +64,7 @@ class ptpPanel: public pmPanel
 		wmLabel* m_plblFollowCount;
 		wmLabel* m_plblFollowRate;
 		wmLabel* m_plblIdentity;
+		wmLabel* m_plblMasterId;
 		wmLabel* m_plblOffsetAverage;
 		wmLabel* m_plblOffsetRange;
 		wmLabel* m_plblPriority1;
@@ -76,6 +77,7 @@ class ptpPanel: public pmPanel
 		wmLabel* m_plblSyncCount;
 		wmLabel* m_plblSyncRate;
 		wmLabel* m_plblTime;
+		wmLabel* m_plblTitleMaster;
 		wmLabel* m_plblUTC;
 		wmLabel* m_plblVariance;
 		wmLabel* m_ptitleAccuracy;
@@ -168,6 +170,8 @@ class ptpPanel: public pmPanel
 		static const long ID_M_PLBL11;
 		static const long ID_M_PLBL21;
 		static const long ID_M_PLBL10;
+		static const long ID_M_PLBL35;
+		static const long ID_M_PLBL39;
 		static const long ID_M_PLBL22;
 		static const long ID_PANEL9;
 		static const long ID_PANEL1;
@@ -262,6 +266,8 @@ class ptpPanel: public pmPanel
 
         static const wxColour CLR_MASTER;
         static const wxColour CLR_MASTER_SELECTED;
+        static const wxColour CLR_SYNC_MASTER;
+        static const wxColour CLR_SYNC_MASTER_SELECTED;
         static const wxColour CLR_SLAVE;
         static const wxColour CLR_SLAVE_SELECTED;
 

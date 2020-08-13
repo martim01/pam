@@ -46,6 +46,8 @@ const long ptpPanel::ID_M_PLBL20 = wxNewId();
 const long ptpPanel::ID_M_PLBL11 = wxNewId();
 const long ptpPanel::ID_M_PLBL21 = wxNewId();
 const long ptpPanel::ID_M_PLBL10 = wxNewId();
+const long ptpPanel::ID_M_PLBL35 = wxNewId();
+const long ptpPanel::ID_M_PLBL39 = wxNewId();
 const long ptpPanel::ID_M_PLBL22 = wxNewId();
 const long ptpPanel::ID_PANEL9 = wxNewId();
 const long ptpPanel::ID_PANEL1 = wxNewId();
@@ -196,7 +198,7 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_plblState->GetUiRect().SetGradient(0);
 	m_plblState->SetForegroundColour(wxColour(0,0,0));
 	m_plblState->SetBackgroundColour(wxColour(255,255,255));
-	m_ppnlAnnouncements = new wxPanel(this, ID_PANEL1, wxPoint(5,95), wxSize(280,245), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
+	m_ppnlAnnouncements = new wxPanel(this, ID_PANEL1, wxPoint(5,95), wxSize(280,275), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
 	m_ppnlAnnouncements->SetBackgroundColour(wxColour(0,0,0));
 	m_ptitleAnnouncements = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL30, _("Announcements"), wxPoint(0,0), wxSize(280,25), 0, _T("ID_M_PLBL30"));
 	m_ptitleAnnouncements->SetBorderState(uiRect::BORDER_NONE);
@@ -300,12 +302,22 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_ptitleSource->GetUiRect().SetGradient(wxWEST);
 	m_ptitleSource->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleSource->SetBackgroundColour(wxColour(92,122,224));
+	m_plblTitleMaster = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL35, _("Master"), wxPoint(0,180), wxSize(70,25), 0, _T("ID_M_PLBL35"));
+	m_plblTitleMaster->SetBorderState(uiRect::BORDER_NONE);
+	m_plblTitleMaster->GetUiRect().SetGradient(wxWEST);
+	m_plblTitleMaster->SetForegroundColour(wxColour(255,255,255));
+	m_plblTitleMaster->SetBackgroundColour(wxColour(92,122,224));
+	m_plblMasterId = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL39, wxEmptyString, wxPoint(70,180), wxSize(210,25), 0, _T("ID_M_PLBL39"));
+	m_plblMasterId->SetBorderState(uiRect::BORDER_DOWN);
+	m_plblMasterId->GetUiRect().SetGradient(0);
+	m_plblMasterId->SetForegroundColour(wxColour(0,0,0));
+	m_plblMasterId->SetBackgroundColour(wxColour(255,255,255));
 	m_plblSource = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL22, wxEmptyString, wxPoint(210,150), wxSize(70,25), 0, _T("ID_M_PLBL22"));
 	m_plblSource->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblSource->GetUiRect().SetGradient(0);
 	m_plblSource->SetForegroundColour(wxColour(0,0,0));
 	m_plblSource->SetBackgroundColour(wxColour(255,255,255));
-	m_ppnlAnnounceFlags = new pnlFlags(m_ppnlAnnouncements, ID_PANEL9, wxPoint(0,180), wxSize(280,64), wxTAB_TRAVERSAL, _T("ID_PANEL9"));
+	m_ppnlAnnounceFlags = new pnlFlags(m_ppnlAnnouncements, ID_PANEL9, wxPoint(0,210), wxSize(280,64), wxTAB_TRAVERSAL, _T("ID_PANEL9"));
 	m_pswp = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(295,5), wxSize(280,280), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
 	m_pswp->SetPageNameStyle(0);
 	m_pswp->SetBackgroundColour(wxColour(0,0,0));
@@ -668,15 +680,33 @@ void ptpPanel::ShowClockDetails()
 
     m_ppnlAnnouncements->Show((m_pClock->GetCount(ptpV2Header::ANNOUNCE) != 0));
 
-    m_pswp->ChangeSelection(m_pClock->IsMaster() ? "Master" : "Slave");
-    m_plblState->SetLabel(m_pClock->IsMaster() ? "Master" : "Slave");
-    //m_ppnlLocal->Show(m_pClock->IsMaster());
+    m_pswp->ChangeSelection(m_pClock->IsSyncMaster() ? "Master" : "Slave");
+
+    wxColour clrNormal(CLR_SLAVE);
+    wxColour clrSelected(CLR_SLAVE_SELECTED);
+    if(m_pClock->IsMaster())
+    {
+        m_plblState->SetLabel("Master");
+        clrNormal = CLR_MASTER;
+        clrSelected = CLR_MASTER_SELECTED;
+    }
+    else if(m_pClock->IsSyncMaster())
+    {
+        m_plblState->SetLabel("Sync Master");
+        clrNormal = CLR_SYNC_MASTER;
+        clrSelected = CLR_SYNC_MASTER_SELECTED;
+    }
+    else
+    {
+        m_plblState->SetLabel("Slave");
+    }
 
     size_t nButton = m_plstClocks->FindButton(m_sSelectedClock);
+
     if(nButton != wmList::NOT_FOUND)
     {
-        m_plstClocks->SetButtonColour(nButton, m_pClock->IsMaster() ? CLR_MASTER : CLR_SLAVE);
-        m_plstClocks->SetSelectedButtonColour(nButton, m_pClock->IsMaster() ? CLR_MASTER_SELECTED : CLR_SLAVE_SELECTED);
+        m_plstClocks->SetButtonColour(nButton, clrNormal);
+        m_plstClocks->SetSelectedButtonColour(nButton, clrSelected);
     }
 
 
@@ -713,7 +743,7 @@ void ptpPanel::ShowClockDetails()
         m_plblPriority2->SetLabel(wxString::Format("%u", static_cast<unsigned int>(m_pClock->GetPriority2())));
     }
 
-    if(m_pClock->IsMaster())
+    if(m_pClock->IsMaster() || m_pClock->IsSyncMaster())
     {
         m_plblSyncCount->SetLabel(wxString::Format("%llu", m_pClock->GetCount(ptpV2Header::SYNC)));
         m_plblSyncRate->SetLabel(ConvertRate(m_pClock->GetInterval(ptpV2Header::SYNC)));
@@ -725,6 +755,7 @@ void ptpPanel::ShowClockDetails()
         m_ppnlSyncFlags->ShowFlags(m_pClock->GetFlags(ptpV2Header::SYNC));
         m_ppnlFollowFlags->ShowFlags(m_pClock->GetFlags(ptpV2Header::FOLLOW_UP));
 
+        m_plblMasterId->SetLabel(wxPtp::Get()->GetMasterClockId(m_nDomain));
     }
     else
     {
@@ -849,17 +880,24 @@ void ptpPanel::AddClock(wxString sClock)
 
     if(m_plstClocks->FindButton(sClock) == wmList::NOT_FOUND)
     {
-        size_t nButton;
+        wxColour clrNormal(CLR_SLAVE);
+        wxColour clrSelected(CLR_SLAVE_SELECTED);
         if(wxPtp::Get().GetMasterClockId(m_nDomain) == sClock)
         {
-            nButton = m_plstClocks->AddButton(sClock, wxNullBitmap, 0, wmList::wmENABLED, CLR_MASTER);
-            m_plstClocks->SetSelectedButtonColour(nButton, CLR_MASTER_SELECTED);
+            clrNormal = CLR_MASTER;
+            clrSelected = CLR_MASTER_SELECTED;
         }
         else
         {
-            nButton = m_plstClocks->AddButton(sClock, wxNullBitmap, 0, wmList::wmENABLED, CLR_SLAVE);
-            m_plstClocks->SetSelectedButtonColour(nButton, CLR_SLAVE_SELECTED);
+            std::shared_ptr<const ptpmonkey::PtpV2Clock> pSyncMaster = wxPtp::Get().GetSyncMasterClock(m_nDomain);
+            if(pSyncMaster && pSyncMaster->GetId() == sClock)
+            {
+                clrNormal = CLR_SYNC_MASTER;
+                clrSelected = CLR_SYNC_MASTER_SELECTED;
+            }
         }
+        size_t nButton = m_plstClocks->AddButton(sClock, wxNullBitmap, 0, wmList::wmENABLED, clrNormal);
+        m_plstClocks->SetSelectedButtonColour(nButton, clrSelected);
 
     }
     if(m_pLocalClock == nullptr)
