@@ -100,6 +100,8 @@ const long ptpPanel::ID_PANEL8 = wxNewId();
 
 const wxColour ptpPanel::CLR_MASTER           = wxColour(50,128,50);
 const wxColour ptpPanel::CLR_MASTER_SELECTED  = wxColour(150,228,150);
+const wxColour ptpPanel::CLR_SYNC_MASTER           = wxColour(50,50,128);
+const wxColour ptpPanel::CLR_SYNC_MASTER_SELECTED  = wxColour(150,150,228);
 const wxColour ptpPanel::CLR_SLAVE            = wxColour(50,50,50);
 const wxColour ptpPanel::CLR_SLAVE_SELECTED   = wxColour(150,150,150);
 

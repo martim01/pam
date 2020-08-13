@@ -2,7 +2,6 @@
 <CodeBlocks_workspace_file>
 	<Workspace title="Workspace">
 		<Project filename="manifest_creator/manifest_creator.cbp" />
-		<Project filename="external/log/log.cbp" />
 		<Project filename="pambase/pambase.cbp" />
 		<Project filename="pamfft/pamfft.cbp" />
 		<Project filename="pamlevel/pamlevel.cbp" />
@@ -65,9 +64,8 @@
 		<Project filename="pamupdatemanager/pamupdatemanager.cbp">
 			<Depends filename="pambase/pambase.cbp" />
 		</Project>
-		<Project filename="pam2/pam2.cbp">
-			<Depends filename="pambase/pambase.cbp" />
-		</Project>
+		<Project filename="pam2/pam2.cbp" />
 		<Project filename="plugins/battery/battery.cbp" />
+		<Project filename="../test/test.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

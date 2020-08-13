@@ -91,7 +91,6 @@
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
-					<Add option="--enable-auto-import" />
 					<Add library="pambase" />
 				</Linker>
 				<ExtraCommands>
