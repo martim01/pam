@@ -87,7 +87,7 @@ endif()
 include_directories(${SAP_LIB_DIR}/include)
 include_directories(${SAP_LIB_DIR}/external/asio/asio/include)
 
-add_library(pambase SHARED 
+set(SOURCES 
   "advelement.cpp"
  "aes67client.cpp"
  "aes67mediasession.cpp"
@@ -172,43 +172,43 @@ add_library(pambase SHARED
 option(optionPTP "Use PTPMonkey library" OFF)
 message (${PROJECT_SOURCE_DIR})
 if(optionPTP)
-    find_path(PTPMONKEY_LIB_DIR NAMES "libptpmonkey.so" PATHS ${PROJECT_SOURCE_DIR}/../external/ptpmonkey)
+    find_path(PTPMONKEY_DIR NAMES "/include/ptpmonkey.h" PATHS ${PROJECT_SOURCE_DIR}/../external/ptpmonkey)
 	
-    if((NOT PTPMONKEY_LIB_DIR) OR (NOT EXISTS ${PTPMONKEY_LIB_DIR}))
+    if((NOT PTPMONKEY_DIR) OR (NOT EXISTS ${PTPMONKEY_DIR}))
 	# we couldn't find the header files for FOO or they don't exist
 	message("Unable to find PtpMonkey")
     
 	# we have a submodule setup for asio, assume it is under external/asio
 	# now we need to clone this submodule
 	execute_process(COMMAND git submodule update --init -- ../external/ptpmonkey WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-       
+        find_path(PTPMONKEY_DIR NAMES "/include/ptpmonkey.h" PATHS ${PROJECT_SOURCE_DIR}/../external/ptpmonkey)   
     else()
-	    message("Found ptpmonkey")
+	    message("Found ptpmonkey...")
+        message(${PTPMONKEY_DIR})
     endif()
-    
-    add_subdirectory(${PROJECT_SOURCE_DIR}/../external/ptpmonkey ${CMAKE_CURRENT_BINARY_DIR}/ptpmonkey)
-    target_sources(pambase "../external/ptpmonkey/source/loghandler.cpp"
- "../external/ptpmonkey/source/ptpeventloghandler.cpp"
- "../external/ptpmonkey/source/ptpmonkeyhandler.cpp"
- "../external/ptpmonkey/source/ptpstructs.cpp"
- "../external/ptpmonkey/source/timeutils.cpp"
- "../external/ptpmonkey/source/mac.cpp"
- "../external/ptpmonkey/source/ptploghandler.cpp"
- "../external/ptpmonkey/source/ptpmonkeyimplementation.cpp"
- "../external/ptpmonkey/source/receiver.cpp"
- "../external/ptpmonkey/source/ptpclock.cpp"
- "../external/ptpmonkey/source/ptpmonkey.cpp"
- "../external/ptpmonkey/source/ptpparser.cpp"
- "../external/ptpmonkey/source/sender.cpp"
+    include_directories(${PTPMONKEY_DIR}/include)
+    list(APPEND SOURCES ${PTPMONKEY_DIR}/source/loghander.cpp
+ ${PTPMONKEY_DIR}/source/ptpeventloghandler.cpp
+ ${PTPMONKEY_DIR}/source/ptpmonkeyhandler.cpp
+ ${PTPMONKEY_DIR}/source/ptpstructs.cpp
+ ${PTPMONKEY_DIR}/source/timeutils.cpp
+ ${PTPMONKEY_DIR}/source/mac.cpp
+ ${PTPMONKEY_DIR}/source/ptploghandler.cpp
+ ${PTPMONKEY_DIR}/source/ptpmonkeyimplementation.cpp
+ ${PTPMONKEY_DIR}/source/receiver.cpp
+ ${PTPMONKEY_DIR}/source/ptpclock.cpp
+ ${PTPMONKEY_DIR}/source/ptpmonkey.cpp
+ ${PTPMONKEY_DIR}/source/ptpparser.cpp
+ ${PTPMONKEY_DIR}/source/sender.cpp
  "wxptp.cpp")
     
 endif()
 
-
+add_library(pambase SHARED ${SOURCES})
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(pambase PRIVATE ${flags})
-target_compile_definitions(pambase PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __WXGNU__ _pambase_ CREATING_DLL _core_ _MSL_STDINT_H NO_OPENSSL ASIO_STANDALONE wxDEBUG_LEVEL=0 DNSSD_DLL LOG_DLL)
+target_compile_definitions(pambase PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __GNU__ __WXGNU__ _pambase_ CREATING_DLL _core_ _MSL_STDINT_H NO_OPENSSL ASIO_STANDALONE wxDEBUG_LEVEL=0 DNSSD_DLL LOG_DLL)
 
 #find external libraries
 find_package(wxWidgets REQUIRED)
