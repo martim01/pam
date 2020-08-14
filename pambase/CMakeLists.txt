@@ -43,7 +43,6 @@ if((NOT LOG_LIB_DIR) OR (NOT EXISTS ${LOG_LIB_DIR}))
     # we couldn't find the header files for FOO or they don't exist
     message("Unable to find pml::log")
     
-    # we have a submodule setup for asio, assume it is under external/asio
     # now we need to clone this submodule
     execute_process(COMMAND git submodule update --init -- ../external/log WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
     find_path(LOG_LIB_DIR NAMES "include/log.h" PATHS ${PROJECT_SOURCE_DIR}/../external/log)
@@ -80,6 +79,7 @@ if((NOT SAP_LIB_DIR) OR (NOT EXISTS ${SAP_LIB_DIR}))
     # now we need to clone this submodule
     execute_process(COMMAND git submodule update --init -- ../external/sapserver WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
     find_path(SAP_LIB_DIR NAMES "/include/sapserver.h" PATHS ${PROJECT_SOURCE_DIR}/../external/sapserver)
+    execute_process(COMMAND git submodule update --init -- ../external/sapserver/external/asio WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 else()
     message("Found sapserver")
 endif()
@@ -87,8 +87,77 @@ endif()
 include_directories(${SAP_LIB_DIR}/include)
 include_directories(${SAP_LIB_DIR}/external/asio/asio/include)
 
-file(GLOB SOURCES "*.cpp")
-add_library(pambase SHARED ${SOURCES} "../external/sapserver/src/parser.cpp"
+add_library(pambase SHARED 
+  "advelement.cpp"
+ "aes67client.cpp"
+ "aes67mediasession.cpp"
+ "AES67ServerMediaSubsession.cpp"
+ "aes67source.cpp"
+ "anglemeter.cpp"
+ "aoipsourcemanager.cpp"
+ "audio.cpp"
+ "audioevent.cpp"
+ "generator.cpp"
+ "generatorpluginbuilder.cpp"
+ "generatorpluginfactory.cpp"
+ "inimanager.cpp"
+ "inisection.cpp"
+ "iomanager.cpp"
+ "levelcalculator.cpp"
+ "levelgraph.cpp"
+ "levelmeter.cpp"
+ "liveaudiosource.cpp"
+ "monitorevent.cpp"
+ "monitorpluginbuilder.cpp"
+ "monitorpluginfactory.cpp"
+ "niir.cpp"
+ "ondemandaes67mediasubsession.cpp"
+ "ondemandpamsubsession.cpp"
+ "ondemandstreamer.cpp"
+ "ourRTSPClient.cpp"
+ "ourSIPClient.cpp"
+ "PamTaskScheduler.cpp"
+ "PamUsageEnvironment.cpp"
+ "pcstats.cpp"
+ "pmcontrol.cpp"
+ "pmpanel.cpp"
+ "ppmtypes.cpp"
+ "qos.cpp"
+ "r128calculator.cpp"
+ "r128thread.cpp"
+ "rawvideosource.cpp"
+ "rtpserverthread.cpp"
+ "rtpthread.cpp"
+ "rtsputil.cpp"
+ "servicebrowser.cpp"
+ "settingevent.cpp"
+ "settings.cpp"
+ "smpte2110mediasession.cpp"
+ "soundcardmanager.cpp"
+ "soundfile.cpp"
+ "streamclientstate.cpp"
+ "testpluginbuilder.cpp"
+ "testpluginfactory.cpp"
+ "uirect.cpp"
+ "wmbutton.cpp"
+ "wmedit.cpp"
+ "wmfocusmanager.cpp"
+ "wmipeditpnl.cpp"
+ "wmkeyboard.cpp"
+ "wmlabel.cpp"
+ "wmline.cpp"
+ "wmlist.cpp"
+ "wmlistadv.cpp"
+ "wmslider.cpp"
+ "wmslidewnd.cpp"
+ "wmswipebutton.cpp"
+ "wmswitcherpanel.cpp"
+ "wmtimeedit.cpp"
+ "wxsaphandler.cpp"
+ "wxsink.cpp"
+ "wxtouchscreenhtml.cpp"
+ "wxzxposter.cpp"
+ "../external/sapserver/src/parser.cpp"
  "../external/sapserver/src/receiver.cpp"
  "../external/sapserver/src/saphandler.cpp"
  "../external/sapserver/src/sapserver.cpp" "../external/sapserver/src/sapserverimpl.cpp" "../external/sapserver/src/sender.cpp" 
@@ -116,12 +185,24 @@ if(optionPTP)
     else()
 	    message("Found ptpmonkey")
     endif()
-	add_subdirectory(${PROJECT_SOURCE_DIR}/../external/ptpmonkey ${CMAKE_CURRENT_BINARY_DIR}/ptpmonkey)
-	target_compile_definitions(pambase PUBLIC PTPMONKEY)
-	target_link_libraries(pambase ptpmonkey)
+    
+    add_subdirectory(${PROJECT_SOURCE_DIR}/../external/ptpmonkey ${CMAKE_CURRENT_BINARY_DIR}/ptpmonkey)
+    target_sources(pambase "../external/ptpmonkey/source/loghandler.cpp"
+ "../external/ptpmonkey/source/ptpeventloghandler.cpp"
+ "../external/ptpmonkey/source/ptpmonkeyhandler.cpp"
+ "../external/ptpmonkey/source/ptpstructs.cpp"
+ "../external/ptpmonkey/source/timeutils.cpp"
+ "../external/ptpmonkey/source/mac.cpp"
+ "../external/ptpmonkey/source/ptploghandler.cpp"
+ "../external/ptpmonkey/source/ptpmonkeyimplementation.cpp"
+ "../external/ptpmonkey/source/receiver.cpp"
+ "../external/ptpmonkey/source/ptpclock.cpp"
+ "../external/ptpmonkey/source/ptpmonkey.cpp"
+ "../external/ptpmonkey/source/ptpparser.cpp"
+ "../external/ptpmonkey/source/sender.cpp"
+ "wxptp.cpp")
+    
 endif()
-
-
 
 
 
