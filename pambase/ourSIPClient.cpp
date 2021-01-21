@@ -109,10 +109,8 @@ void ourSIPClient::GetSDPDescription()
     }
     else
     {
-        wxString sResult(wxString::FromUTF8(result));
+        m_pHandler->SaveSDP(resultCode, std::string(result));
         delete[] result;
-
-        m_pHandler->SaveSDP(resultCode, sResult);
     }
 
 }

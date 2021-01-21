@@ -30,7 +30,7 @@ class PAMBASE_IMPEXPORT OnDemandStreamer : public wxThread
 
         const std::string& GetSDP();
     protected:
-        void AnnounceStream(RTSPServer* rtspServer, ServerMediaSession* sms,  char const* streamName);
+        void AnnounceStream(RTSPServer* rtspServer, ServerMediaSession* sms,  const std::string& sStreamName);
 
         void SendFinish();
 

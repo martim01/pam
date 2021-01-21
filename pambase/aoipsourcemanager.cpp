@@ -261,22 +261,22 @@ void AoipSourceManager::OnDiscovery(wxCommandEvent& event)
             {
                 if(pInstance->nPort == 554)
                 {
-                    sAddress = (wxString::Format(wxT("rtsp://%s/by-name/%s"), wxString(pInstance->sHostIP).c_str(), wxString(pInstance->sName).c_str()));
+                    sAddress = (wxString::Format("rtsp://%s/by-name/%s", wxString(pInstance->sHostIP).c_str(), wxString(pInstance->sName).c_str()));
                 }
                 else
                 {
-                    sAddress = (wxString::Format(wxT("rtsp://%s:%d/by-name/%s"), wxString(pInstance->sHostIP).c_str(), pInstance->nPort, wxString(pInstance->sName).c_str()));
+                    sAddress = (wxString::Format("rtsp://%s:%d/by-name/%s", wxString(pInstance->sHostIP).c_str(), pInstance->nPort, wxString(pInstance->sName).c_str()));
                 }
-                AddSource(wxString::Format(wxT("%s(%s)"), sIdentifier.c_str(), wxString(pInstance->sHostIP).c_str()), sAddress);
+                AddSource(wxString::Format("%s(%s)", sIdentifier.c_str(), wxString(pInstance->sHostIP).c_str()), sAddress);
             }
             else if(pInstance->sService == "_sipuri._udp")
             {
                 sAddress = wxString(pInstance->sName).BeforeFirst(' ');
-                AddSource(wxString::Format(wxT("%s(%s)"), sIdentifier.c_str(),wxString(pInstance->sHostIP).c_str()), sAddress);
+                AddSource(wxString::Format("%s(%s)", sIdentifier.c_str(),wxString(pInstance->sHostIP).c_str()), sAddress);
             }
 
             wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_ASM_DISCOVERY);
-            pEvent->SetString(wxString::Format(wxT("[%s] %s = %s:%lu"), wxString(pInstance->sService).c_str(), wxString(pInstance->sName).c_str(), wxString(pInstance->sHostIP).c_str(), pInstance->nPort));
+            pEvent->SetString(wxString::Format("[%s] %s = %s:%lu", wxString(pInstance->sService).c_str(), wxString(pInstance->sName).c_str(), wxString(pInstance->sHostIP).c_str(), pInstance->nPort));
             pEvent->SetInt(1);
             wxQueueEvent(m_pDiscoveryHandler, pEvent);
 
@@ -287,23 +287,23 @@ void AoipSourceManager::OnDiscovery(wxCommandEvent& event)
 
 void AoipSourceManager::OnSap(wxCommandEvent& event)
 {
-    wxString sIpAddress = event.GetString().BeforeFirst(wxT('\n'));
-    wxString sSDP = event.GetString().AfterFirst(wxT('\n'));
+    wxString sIpAddress = event.GetString().BeforeFirst('\n');
+    wxString sSDP = event.GetString().AfterFirst('\n');
     wxString sName;
 
 
 
     //is it an L24 or L16 session
     bool bCanDecode(false);
-    wxArrayString asLines(wxStringTokenize(sSDP, wxT("\n")));
+    wxArrayString asLines(wxStringTokenize(sSDP, "\n"));
     for(size_t i = 0; i < asLines.size(); i++)
     {
-        if(asLines[i].find(wxT("a=rtpmap:")) != wxNOT_FOUND)
+        if(asLines[i].find("a=rtpmap:") != wxNOT_FOUND)
         {
             unsigned long nCodec;
-            if(asLines[i].AfterFirst(wxT(':')).BeforeFirst(wxT(' ')).ToULong(&nCodec) && nCodec > 95 && nCodec < 127)
+            if(asLines[i].AfterFirst(':').BeforeFirst(' ').ToULong(&nCodec) && nCodec > 95 && nCodec < 127)
             {
-                if(asLines[i].find(wxT("L24")) != wxNOT_FOUND || asLines[i].find(wxT("L16")) != wxNOT_FOUND)
+                if(asLines[i].find("L24") != wxNOT_FOUND || asLines[i].find("L16") != wxNOT_FOUND)
                 {
                     bCanDecode = true;
                     break;
@@ -314,15 +314,15 @@ void AoipSourceManager::OnSap(wxCommandEvent& event)
     if(bCanDecode)
     {
         //find the source name:
-        int nStart = sSDP.Find(wxT("s="));
+        int nStart = sSDP.Find("s=");
         if(nStart != wxNOT_FOUND)
         {
-            sName = sSDP.Mid(nStart+2).BeforeFirst(wxT('\n'));
+            sName = sSDP.Mid(nStart+2).BeforeFirst('\n');
         }
-        nStart = sSDP.Find(wxT("o="));
+        nStart = sSDP.Find("o=");
         if(nStart != wxNOT_FOUND)
         {
-            wxArrayString asSplit(wxStringTokenize(sSDP.Mid(nStart+2).BeforeFirst(wxT('\n'))));
+            wxArrayString asSplit(wxStringTokenize(sSDP.Mid(nStart+2).BeforeFirst('\n')));
             if(asSplit.size() >= 6)
             {
                 sIpAddress = asSplit[5];
@@ -337,7 +337,7 @@ void AoipSourceManager::OnSap(wxCommandEvent& event)
                 pml::Log::Get() << "AoIP Source Manager\tDiscovery: SAP response from " << sIpAddress.c_str() << std::endl;
                 pml::Log::Get() << "AoIP Source Manager\tDiscovery: SDP=" << sSDP << std::endl;
 
-                AddSource(sName, wxString::Format(wxT("sap:%s"), sIpAddress.c_str()), sSDP);
+                AddSource(sName, wxString::Format("sap:%s", sIpAddress.c_str()), sSDP);
 
                 wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_ASM_DISCOVERY);
                 pEvent->SetString(wxString::Format("[SAP] %s = %s", sName.c_str(), sIpAddress.c_str()));
@@ -348,7 +348,7 @@ void AoipSourceManager::OnSap(wxCommandEvent& event)
         else if(m_setDiscover.erase(std::make_pair(sName, sIpAddress)) > 0)
         {
             wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_ASM_DISCOVERY);
-            pEvent->SetString(wxString::Format(wxT("[SAP] %s:%s = REMOVED"), sName.c_str(), sIpAddress.c_str()));
+            pEvent->SetString(wxString::Format("[SAP] %s:%s = REMOVED", sName.c_str(), sIpAddress.c_str()));
             pEvent->SetInt(-1);
             wxQueueEvent(m_pDiscoveryHandler, pEvent);
 

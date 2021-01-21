@@ -158,8 +158,8 @@ bool pnlSettingsNmos::ConnectionIS05(size_t nSenderButton)
 void pnlSettingsNmos::AddSender(std::shared_ptr<Sender> pSender)
 {
 
-    size_t nIndex = m_plstSenders->AddButton(wxString::FromAscii(pSender->GetLabel().c_str()));
-    m_plstSenders->SetButtonAuxillaryText(nIndex, wxString::FromAscii(pSender->GetId().c_str()));
+    size_t nIndex = m_plstSenders->AddButton(wxString::FromUTF8(pSender->GetLabel().c_str()));
+    m_plstSenders->SetButtonAuxillaryText(nIndex, wxString::FromUTF8(pSender->GetId().c_str()));
     m_plstSenders->Refresh();
 
 }

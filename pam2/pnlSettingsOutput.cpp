@@ -394,7 +394,7 @@ void pnlSettingsOutput::ShowSoundcardOutputs()
                 nEnabled = wmList::wmDISABLED;
             }
             #endif // __WXGTK__
-            m_plstPlayback->AddButton(wxString::Format(wxT("[%d]%s [%d]"), i, wxString::FromAscii(pInfo->name).c_str(), pInfo->maxOutputChannels), wxNullBitmap, (void*)i, nEnabled);
+            m_plstPlayback->AddButton(wxString::Format(wxT("[%d]%s [%d]"), i, wxString::FromUTF8(pInfo->name).c_str(), pInfo->maxOutputChannels), wxNullBitmap, (void*)i, nEnabled);
         }
     }
 

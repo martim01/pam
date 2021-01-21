@@ -8,7 +8,7 @@ void wxLogOutput::Flush(int nLogLevel, const std::stringstream&  logStream)
 {
     if(m_pHandler)
     {
-        wxString sLog(wxString::FromUTF8(logStream.str().c_str()));
+        wxString sLog(logStream.str());
         sLog.Trim();
         sLog.Trim(false);
         wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_PMLOG);

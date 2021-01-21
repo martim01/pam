@@ -66,6 +66,5 @@
 		</Project>
 		<Project filename="pam2/pam2.cbp" />
 		<Project filename="plugins/battery/battery.cbp" />
-		<Project filename="../test/test.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

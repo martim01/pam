@@ -9,6 +9,8 @@
 #include <wx/log.h>
 #include <iostream>
 #include "wxptp.h"
+#include "log.h"
+
 
 using namespace std;
 
@@ -22,7 +24,6 @@ const wxString Smpte2110MediaSubsession::STR_PACKING[2] = {wxT("General"), wxT("
 Smpte2110MediaSession* Smpte2110MediaSession::createNew(UsageEnvironment& env,
         char const* sdpDescription)
 {
-    cout << "2110" << endl;
     Smpte2110MediaSession* newSession = new Smpte2110MediaSession(env);
     if (newSession != NULL)
     {
@@ -35,7 +36,6 @@ Smpte2110MediaSession* Smpte2110MediaSession::createNew(UsageEnvironment& env,
         }
 
     }
-    cout << "2110: done" << endl;
     return newSession;
 }
 
@@ -47,7 +47,7 @@ void Smpte2110MediaSession::initializeSMPTE_SDP(char const* sdpDescription)
         return;
     }
 
-    m_sRawSDP = wxString::FromAscii(sdpDescription);
+    m_sRawSDP = wxString::FromUTF8(sdpDescription);
 
     // Begin by processing all SDP lines until we see the first "m="
     char const* sdpLine = sdpDescription;
@@ -84,7 +84,7 @@ void Smpte2110MediaSession::initializeSMPTE_SDP(char const* sdpDescription)
 Boolean Smpte2110MediaSession::parseSDPAttribute_RefClk(char const* sdpLine)
 {
     cout << "2110: SDP" << endl;
-    wxString sSdp(wxString::FromAscii(sdpLine));
+    wxString sSdp(wxString::FromUTF8(sdpLine));
 
     wxString sFind(wxT("a=ts-refclk:"));
     size_t nFront = sSdp.find(sFind);
@@ -139,7 +139,7 @@ Boolean Smpte2110MediaSession::parseSDPAttribute_RefClk(char const* sdpLine)
 
 Boolean Smpte2110MediaSession::parseSDPAttribute_ClockDomain(char const* sdpLine)
 {
-    wxString sSdp(wxString::FromAscii(sdpLine));
+    wxString sSdp(wxString::FromUTF8(sdpLine));
 
     wxString sFind(wxT("a=clock-domain:"));
     size_t nFront = sSdp.find(sFind);
@@ -168,7 +168,7 @@ Boolean Smpte2110MediaSession::parseSDPAttribute_ClockDomain(char const* sdpLine
 
 Boolean Smpte2110MediaSession::parseSDPAttribute_Group(char const* sdpLine)
 {
-    wxString sSdp(wxString::FromAscii(sdpLine));
+    wxString sSdp(wxString::FromUTF8(sdpLine));
 
     wxString sFind(wxT("a=group:DUP "));
     size_t nFront = sSdp.find(sFind);
@@ -184,7 +184,7 @@ Boolean Smpte2110MediaSession::parseSDPAttribute_Group(char const* sdpLine)
 
 Boolean Smpte2110MediaSession::parseSDPAttribute_PTime(char const* sdpLine)
 {
-    wxString sSdp(wxString::FromAscii(sdpLine));
+    wxString sSdp(wxString::FromUTF8(sdpLine));
 
     wxString sFind(wxT("a=ptime:"));
     size_t nFront = sSdp.find(sFind);
@@ -199,7 +199,7 @@ Boolean Smpte2110MediaSession::parseSDPAttribute_PTime(char const* sdpLine)
 }
 Boolean Smpte2110MediaSession::parseSDPAttribute_MaxPTime(char const* sdpLine)
 {
-    wxString sSdp(wxString::FromAscii(sdpLine));
+    wxString sSdp(wxString::FromUTF8(sdpLine));
 
     wxString sFind(wxT("a=maxptime:"));
     size_t nFront = sSdp.find(sFind);
@@ -230,7 +230,7 @@ MediaSubsession* Smpte2110MediaSession::createNewMediaSubsession()
 }
 
 
-Smpte2110MediaSubsession::Smpte2110MediaSubsession(MediaSession& parent) : MediaSubsession(parent), 
+Smpte2110MediaSubsession::Smpte2110MediaSubsession(MediaSession& parent) : MediaSubsession(parent),
  m_nSyncTime(0),
  m_nFirstTimestamp(0),
  m_dClockDeviation(0),
@@ -250,7 +250,7 @@ Smpte2110MediaSubsession::Smpte2110MediaSubsession(MediaSession& parent) : Media
  m_bMaxUdp(false)
 
 {
-
+    std::cout << "Smpte2110MediaSubsession" << std::endl;
 }
 
 wxString Smpte2110MediaSubsession::GetEndpoint()
@@ -272,7 +272,7 @@ Boolean Smpte2110MediaSubsession::createSourceObjects(int useSpecialRTPoffset)
 
     if (strcmp(fCodecName, "L16") == 0 || strcmp(fCodecName, "L24") == 0) // 16 or 24-bit linear audio (RFC 3190)
     {
-        m_sEndpoint = wxString::FromAscii(fConnectionEndpointName);
+        m_sEndpoint = wxString::FromUTF8(fConnectionEndpointName);
 
         char* mimeType = new char[strlen(mediumName()) + strlen(codecName()) + 2] ;
         sprintf(mimeType, "%s/%s", mediumName(), codecName());
@@ -285,7 +285,7 @@ Boolean Smpte2110MediaSubsession::createSourceObjects(int useSpecialRTPoffset)
     {
         AnalyzeAttributes();
 
-        m_sEndpoint = wxString::FromAscii(fConnectionEndpointName);
+        m_sEndpoint = wxString::FromUTF8(fConnectionEndpointName);
 
         char* mimeType = new char[strlen(mediumName()) + strlen(codecName()) + 2] ;
         sprintf(mimeType, "%s/%s", mediumName(), codecName());
@@ -299,13 +299,14 @@ Boolean Smpte2110MediaSubsession::createSourceObjects(int useSpecialRTPoffset)
         env().setResultMsg("RTP payload format unknown or not supported");
     }
 
+    std::cout << "Smpte2110MediaSubsession: FAILED" << std::endl;
     return False; // an error occurred
 }
 
 
 void Smpte2110MediaSubsession::parseSDPAttribute_Sync()
 {
-    wxString sSdp(wxString::FromAscii(fSavedSDPLines));
+    wxString sSdp(wxString::FromUTF8(fSavedSDPLines));
 
     wxString sFind(wxT("a=sync-time:"));
     size_t nFront = sSdp.find(sFind);
@@ -315,26 +316,31 @@ void Smpte2110MediaSubsession::parseSDPAttribute_Sync()
 
     if(nFront == wxNOT_FOUND)   //not found try the mediaclk:direct
     {
-
-        sFind = wxT("a=mediaclk:direct");
+        sFind = "a=mediaclk:direct=";
         nFront = sSdp.find(sFind);
     }
+
 
     if(nFront != wxNOT_FOUND && nDante == wxNOT_FOUND)
     {
         size_t nEnd = sSdp.find(wxT("\n"), nFront);
         nEnd -= nFront;
         wxString sTime = sSdp.substr(nFront+sFind.length(), (nEnd-sFind.length()));
+        if(sTime.Find(" ") != wxNOT_FOUND)
+        {
+            //might possibly have clock rate after sync time. Ignore for now
+            sTime = sTime.BeforeFirst(' ');
+        }
+        sTime.ToULong(&m_nSyncTime);
 
-        //might possibly have clock rate after sync time. Ignore for now
-        sTime.BeforeFirst(wxT(' ')).ToULong(&m_nSyncTime);
+        pml::Log::Get(pml::Log::LOG_DEBUG) << "parseSDPAttribute_Sync: " << sTime << " to " << m_nSyncTime << std::endl;
     }
 
 }
 
 void Smpte2110MediaSubsession::parseSDPAttribute_Deviation()
 {
-    wxString sSdp(wxString::FromAscii(fSavedSDPLines));
+    wxString sSdp(wxString::FromUTF8(fSavedSDPLines));
 
     wxString sFind(wxT("a=clock-deviation:"));
     size_t nFront = sSdp.find(sFind);
@@ -374,7 +380,7 @@ const pairTime_t& Smpte2110MediaSubsession::GetLastEpoch()
 
 void Smpte2110MediaSubsession::parseSDPAttribute_RefClk()
 {
-    wxString sSdp(wxString::FromAscii(fSavedSDPLines));
+    wxString sSdp(wxString::FromUTF8(fSavedSDPLines));
 
     wxString sFind(wxT("a=ts-refclk:"));
     size_t nFront = sSdp.find(sFind);
@@ -427,7 +433,7 @@ void Smpte2110MediaSubsession::parseSDPAttribute_RefClk()
 
 void Smpte2110MediaSubsession::parseSDPAttribute_ClockDomain()
 {
-    wxString sSdp(wxString::FromAscii(fSavedSDPLines));
+    wxString sSdp(wxString::FromUTF8(fSavedSDPLines));
 
     wxString sFind(wxT("a=clock-domain:"));
     size_t nFront = sSdp.find(sFind);
@@ -462,7 +468,7 @@ void Smpte2110MediaSubsession::parseSDPAttribute_ClockDomain()
 
 void Smpte2110MediaSubsession::parseSDPAttribute_PTime()
 {
-    wxString sSdp(wxString::FromAscii(fSavedSDPLines));
+    wxString sSdp(wxString::FromUTF8(fSavedSDPLines));
 
     wxString sFind(wxT("a=ptime:"));
     size_t nFront = sSdp.find(sFind);
@@ -484,7 +490,7 @@ void Smpte2110MediaSubsession::parseSDPAttribute_PTime()
 
 void Smpte2110MediaSubsession::parseSDPAttribute_MaxPTime()
 {
-    wxString sSdp(wxString::FromAscii(fSavedSDPLines));
+    wxString sSdp(wxString::FromUTF8(fSavedSDPLines));
 
     wxString sFind(wxT("a=maxptime:"));
     size_t nFront = sSdp.find(sFind);
@@ -508,7 +514,7 @@ void Smpte2110MediaSubsession::parseSDPAttribute_MaxPTime()
 
 void Smpte2110MediaSubsession::parseSDPAttribute_ExtMap()
 {
-    wxString sSdp(wxString::FromAscii(fSavedSDPLines));
+    wxString sSdp(wxString::FromUTF8(fSavedSDPLines));
 
     wxString sFind(wxT("a=extmap:"));
     size_t nFront = sSdp.find(sFind);
@@ -527,7 +533,7 @@ void Smpte2110MediaSubsession::parseSDPAttribute_ExtMap()
 
 void Smpte2110MediaSubsession::parseSDPAttribute_Mid()
 {
-    wxString sSdp(wxString::FromAscii(fSavedSDPLines));
+    wxString sSdp(wxString::FromUTF8(fSavedSDPLines));
 
     wxString sFind(wxT("a=mid:"));
     size_t nFront = sSdp.find(sFind);
@@ -636,7 +642,7 @@ pair<unsigned long, unsigned long> Smpte2110MediaSubsession::GetAspectRatio()
 
 void Smpte2110MediaSubsession::AnalyzeAttributes()
 {
-    wxString str(wxString::FromAscii(attrVal_str("sampling")));
+    wxString str(wxString::FromUTF8(attrVal_str("sampling")));
     for(m_nSampling = 0; m_nSampling < 12; m_nSampling++)
     {
         if(str.CmpNoCase(STR_SAMPLING[m_nSampling]) == 0)
@@ -644,7 +650,7 @@ void Smpte2110MediaSubsession::AnalyzeAttributes()
     }
     env() << "Sampling: " << STR_SAMPLING[m_nSampling] << "\n";
 
-    str = wxString::FromAscii(attrVal_str("depth"));
+    str = wxString::FromUTF8(attrVal_str("depth"));
     if(str.CmpNoCase(wxT("16f")) == 0)
     {
         m_nDepth = 16;
@@ -669,7 +675,7 @@ void Smpte2110MediaSubsession::AnalyzeAttributes()
 
     env() << "Resolution: " << (int)m_nWidth << "x" << (int)m_nHeight << "\n";
 
-    str = wxString::FromAscii(attrVal_str("exactframerate"));
+    str = wxString::FromUTF8(attrVal_str("exactframerate"));
     str.BeforeFirst(wxT('/')).ToULong(&m_pairFrameRate.first);
     if(str.AfterFirst(wxT('/')) == wxEmptyString)
     {
@@ -681,7 +687,7 @@ void Smpte2110MediaSubsession::AnalyzeAttributes()
     }
     env() << "Frame Rate: "   << (int)m_pairFrameRate.first << "/" << (int)m_pairFrameRate.second << "\n";
 
-    str = wxString::FromAscii(attrVal_str("colorimetry"));
+    str = wxString::FromUTF8(attrVal_str("colorimetry"));
     for(m_nColorimetry = 0; m_nColorimetry < 7; m_nColorimetry++)
     {
         if(str.CmpNoCase(STR_COLORIMETRY[m_nColorimetry]) == 0)
@@ -690,7 +696,7 @@ void Smpte2110MediaSubsession::AnalyzeAttributes()
 
     env() << "Colorimetry:" << STR_COLORIMETRY[m_nColorimetry] << "\n";
 
-    str = wxString::FromAscii(attrVal_str("pm"));
+    str = wxString::FromUTF8(attrVal_str("pm"));
     if(str.CmpNoCase(wxT("2110GPM")) == 0)
     {
         m_nPackingMode = GPM;
@@ -701,7 +707,7 @@ void Smpte2110MediaSubsession::AnalyzeAttributes()
     }
     env() << "Packing:" << STR_PACKING[m_nPackingMode] << "\n";
 
-    m_sSSN = wxString::FromAscii(attrVal_str("ssn"));
+    m_sSSN = wxString::FromUTF8(attrVal_str("ssn"));
     env() << "SSN:" << m_sSSN << "\n";
 
     m_bInterlaced = (fAttributeTable->Lookup("interlace") != NULL);
@@ -709,7 +715,7 @@ void Smpte2110MediaSubsession::AnalyzeAttributes()
     m_bMaxUdp = (fAttributeTable->Lookup("maxudp") != NULL);
 
 
-    str = wxString::FromAscii(attrVal_str("tcs"));
+    str = wxString::FromUTF8(attrVal_str("tcs"));
     for(m_nTCS = 0; m_nTCS < 9; m_nTCS++)
     {
         if(str.CmpNoCase(STR_TCS[m_nTCS]) == 0)
@@ -717,7 +723,7 @@ void Smpte2110MediaSubsession::AnalyzeAttributes()
     }
     env() << "TCS:" << STR_TCS[m_nTCS] << "(" << str << ")\n";
 
-    str = wxString::FromAscii(attrVal_str("range"));
+    str = wxString::FromUTF8(attrVal_str("range"));
     for(m_nRange = 0; m_nRange < 3; m_nRange++)
     {
         if(str.CmpNoCase(STR_RANGE[m_nRange]) == 0)
@@ -731,7 +737,7 @@ void Smpte2110MediaSubsession::AnalyzeAttributes()
     env() << "RANGE:" << STR_RANGE[m_nRange] << "\n";
 
 
-    str = wxString::FromAscii(attrVal_str("par"));
+    str = wxString::FromUTF8(attrVal_str("par"));
     if(str != wxEmptyString)
     {
         str.BeforeFirst(wxT(':')).ToULong(&m_pairAspectRatio.first);

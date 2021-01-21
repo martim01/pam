@@ -24,6 +24,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "Base64.hh"
 #include "GroupsockHelper.hh"
 #include <ctype.h>
+#include <iostream>
 
 ////////// MediaSession //////////
 
@@ -108,7 +109,11 @@ Boolean MediaSession::initializeWithSDP(char const* sdpDescription) {
   char const* sdpLine = sdpDescription;
   char const* nextSDPLine;
   while (1) {
-    if (!parseSDPLine(sdpLine, nextSDPLine)) return False;
+    if (!parseSDPLine(sdpLine, nextSDPLine))
+    {
+
+        return False;
+    }
     //##### We should really check for the correct SDP version (v=0)
     if (sdpLine[0] == 'm') break;
     sdpLine = nextSDPLine;
@@ -280,6 +285,7 @@ Boolean MediaSession::parseSDPLine(char const* inputLine,
   if (strlen(inputLine) < 2 || inputLine[1] != '='
       || inputLine[0] < 'a' || inputLine[0] > 'z') {
     envir().setResultMsg("Invalid SDP line: ", inputLine);
+    std::cout << "Invalid: '" << inputLine << "'" << std::endl;
     return False;
   }
 
@@ -454,7 +460,7 @@ Boolean MediaSession::parseSDPAttribute_key_mgmt(char const* sdpLine) {
   delete fCrypto; delete fMIKEYState;
   fMIKEYState = newMIKEYState;
   fCrypto = new SRTPCryptographicContext(*fMIKEYState);
-  
+
   return True;
 }
 
@@ -731,7 +737,7 @@ Boolean MediaSubsession::initiate(int useSpecialRTPoffset) {
 	env().setResultMsg("Failed to create RTP socket");
 	break;
       }
-      
+
       if (protocolIsRTP) {
 	if (fMultiplexRTCPWithRTP) {
 	  // Use the RTP 'groupsock' object for RTCP as well:
@@ -776,14 +782,14 @@ Boolean MediaSubsession::initiate(int useSpecialRTPoffset) {
 	if (!getSourcePort(env(), fRTPSocket->socketNum(), clientPort)) {
 	  break;
 	}
-	fClientPortNum = ntohs(clientPort.num()); 
+	fClientPortNum = ntohs(clientPort.num());
 
 	if (fMultiplexRTCPWithRTP) {
 	  // Use this RTP 'groupsock' object for RTCP as well:
 	  fRTCPSocket = fRTPSocket;
 	  success = True;
 	  break;
-	}	  
+	}
 
 	// To be usable for RTP, the client port number must be even:
 	if ((fClientPortNum&1) != 0) { // it's odd
@@ -846,7 +852,7 @@ Boolean MediaSubsession::initiate(int useSpecialRTPoffset) {
       env().setResultMsg("Failed to create read source");
       break;
     }
-    
+
     SRTPCryptographicContext* ourCrypto = NULL;
     if (useSRTP) {
       // For SRTP, we need key management.  If MIKEY (key management) state wasn't given
@@ -1148,7 +1154,7 @@ Boolean MediaSubsession::parseSDPAttribute_fmtp(char const* sdpLine) {
 	// Convert <name> to lower-case, to ease comparison:
 	Locale l("POSIX");
 	for (char* c = nameStr; *c != '\0'; ++c) *c = tolower(*c);
-	
+
 	if (sscanfResult == 1) {
 	  // <name>
 	  setAttribute(nameStr);
@@ -1212,7 +1218,7 @@ Boolean MediaSubsession::parseSDPAttribute_key_mgmt(char const* sdpLine) {
   delete fCrypto; delete fMIKEYState;
   fMIKEYState = newMIKEYState;
   fCrypto = new SRTPCryptographicContext(*fMIKEYState);
-  
+
   return True;
 }
 
@@ -1223,7 +1229,7 @@ Boolean MediaSubsession::createSourceObjects(int useSpecialRTPoffset) {
       // A UDP-packetized stream (*not* a RTP stream)
       fReadSource = BasicUDPSource::createNew(env(), fRTPSocket);
       fRTPSource = NULL; // Note!
-      
+
       if (strcmp(fCodecName, "MP2T") == 0) { // MPEG-2 Transport Stream
 	fReadSource = MPEG2TransportStreamFramer::createNew(env(), fReadSource);
 	// this sets "durationInMicroseconds" correctly, based on the PCR values
@@ -1269,13 +1275,13 @@ Boolean MediaSubsession::createSourceObjects(int useSpecialRTPoffset) {
 	  = MP3ADURTPSource::createNew(env(), fRTPSocket, fRTPPayloadFormat,
 				       fRTPTimestampFrequency);
 	if (fRTPSource == NULL) break;
-	
+
 	if (!fReceiveRawMP3ADUs) {
 	  // Add a filter that deinterleaves the ADUs after depacketizing them:
 	  MP3ADUdeinterleaver* deinterleaver
 	    = MP3ADUdeinterleaver::createNew(env(), fRTPSource);
 	  if (deinterleaver == NULL) break;
-	
+
 	  // Add another filter that converts these ADUs to MP3 frames:
 	  fReadSource = MP3FromADUSource::createNew(env(), deinterleaver);
 	}
@@ -1287,7 +1293,7 @@ Boolean MediaSubsession::createSourceObjects(int useSpecialRTPoffset) {
 				       fRTPTimestampFrequency,
 				       "audio/MPA-ROBUST" /*hack*/);
 	if (fRTPSource == NULL) break;
-	
+
 	// Add a filter that converts these ADUs to MP3 frames:
 	fReadSource = MP3FromADUSource::createNew(env(), fRTPSource,
 						  False /*no ADU header*/);
@@ -1445,7 +1451,7 @@ Boolean MediaSubsession::createSourceObjects(int useSpecialRTPoffset) {
 	env().setResultMsg("RTP payload format unknown or not supported");
 	break;
       }
-      
+
       if (createSimpleRTPSource) {
 	char* mimeType
 	  = new char[strlen(mediumName()) + strlen(codecName()) + 2] ;
@@ -1481,7 +1487,7 @@ SDPAttribute::SDPAttribute(char const* strValue, Boolean valueIsHexadecimal)
     fStrValueToLower = strDupSize(fStrValue, strSize);
     for (unsigned i = 0; i < strSize-1; ++i) fStrValueToLower[i] = tolower(fStrValue[i]);
     fStrValueToLower[strSize-1] = '\0';
-    
+
     // Try to parse "fStrValueToLower" as an integer.  If we can't, assume an integer value of 0:
     if (sscanf(fStrValueToLower, valueIsHexadecimal ? "%x" : "%d", &fIntValue) != 1) {
       fIntValue = 0;

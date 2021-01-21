@@ -57,7 +57,7 @@ wxString iniSection::ReadSection(std::ifstream* pif)
 			continue;
 
 		if(sLine[0] == '[')	// new section
-			return wxString::FromAscii(sLine.c_str());
+			return wxString::FromUTF8(sLine.c_str());
 
 		size_t nEqualPos = sLine.find("=");
 		if(nEqualPos == std::string::npos)
@@ -71,9 +71,9 @@ wxString iniSection::ReadSection(std::ifstream* pif)
 			nCommentPos = sLine.size();
 
 		string sKey = sLine.substr(0,nEqualPos);
-		m_mSectionData[wxString::FromAscii(sKey.c_str())] = wxString::FromAscii(sLine.substr(nEqualPos+1, nCommentPos-(nEqualPos+1)).c_str());
+		m_mSectionData[wxString::FromUTF8(sKey.c_str())] = wxString::FromUTF8(sLine.substr(nEqualPos+1, nCommentPos-(nEqualPos+1)).c_str());
 	}
-	return wxString::FromAscii(sLine.c_str());
+	return wxString::FromUTF8(sLine.c_str());
     //return NULL_STRING;
 }
 

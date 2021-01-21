@@ -149,26 +149,23 @@
 					<Add option="-g" />
 					<Add option="`wx-config --cxxflags`" />
 					<Add option="-fpermissive" />
-					<Add option="-DNDEBUG" />
 					<Add option="-DDLL_EXPORTS" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
 					<Add option="-DPAMBASE_DEBUG" />
 					<Add option="-D__WXDEBUG__" />
 					<Add option="-D__GNU__" />
+					<Add option="-DPTP_DLL" />
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add option="`pkg-config --libs avahi-client`" />
-					<Add library="libportaudio" />
-					<Add library="libsndfile" />
-					<Add library="libliveMedia.a" />
-					<Add library="libBasicUsageEnvironment.a" />
-					<Add library="libUsageEnvironment.a" />
-					<Add library="libgroupsock.a" />
-					<Add library="pml_logd" />
-					<Add library="pml_dnssdd" />
-					<Add library="sapserverd" />
+					<Add library="portaudio" />
+					<Add library="sndfile" />
+					<Add library="liveMedia" />
+					<Add library="BasicUsageEnvironment" />
+					<Add library="UsageEnvironment" />
+					<Add library="groupsock" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="cp ../external/log/lib/* ../lib" />
@@ -197,6 +194,7 @@
 					<Add option="-D__GNU__" />
 					<Add option="-DwxDEBUG_LEVEL=0" />
 					<Add option="-DPTP_DLL" />
+					<Add option="-DPTPMONKEY" />
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
@@ -416,6 +414,7 @@
 		<Unit filename="ourRTSPClient.h" />
 		<Unit filename="ourSIPClient.cpp" />
 		<Unit filename="ourSIPClient.h" />
+		<Unit filename="pamRTSPServer.h" />
 		<Unit filename="pcstats.cpp" />
 		<Unit filename="pcstats.h" />
 		<Unit filename="plugin.h" />

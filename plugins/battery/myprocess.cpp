@@ -38,7 +38,7 @@ bool MyProcess::GetInput()
 
         if(jsRead.parse(std::string(sLine.mb_str()), m_jsStatus) == false)
         {
-            m_sRaw << "\n" << wxString::FromAscii(jsRead.getFormatedErrorMessages().c_str());
+            m_sRaw << "\n" << wxString::FromUTF8(jsRead.getFormatedErrorMessages().c_str());
         }
 
         sLine = tis.ReadLine();
@@ -49,7 +49,7 @@ bool MyProcess::GetInput()
 
         if(jsRead.parse(std::string(sLine.mb_str()), m_jsCharge) == false)
         {
-            m_sRaw << "\n" << wxString::FromAscii(jsRead.getFormatedErrorMessages().c_str());
+            m_sRaw << "\n" << wxString::FromUTF8(jsRead.getFormatedErrorMessages().c_str());
         }
         m_bErrors = false;
     }
@@ -76,7 +76,7 @@ wxString MyProcess::GetStatus()
 {
     if(m_jsStatus["data"]["battery"].isString())
     {
-        return wxString::FromAscii(m_jsStatus["data"]["battery"].asString().c_str());
+        return wxString::FromUTF8(m_jsStatus["data"]["battery"].asString().c_str());
     }
     return wxT("Unknown");
 }
@@ -85,7 +85,7 @@ wxString MyProcess::GetPower()
 {
     if(m_jsStatus["data"]["powerinput"].isString())
     {
-        return wxString::FromAscii(m_jsStatus["data"]["powerinput"].asString().c_str());
+        return wxString::FromUTF8(m_jsStatus["data"]["powerinput"].asString().c_str());
     }
     return wxT("Unknown");
 }
@@ -94,7 +94,7 @@ wxString MyProcess::GetError()
 {
     if(m_jsStatus["error"].isString())
     {
-        return wxString::FromAscii(m_jsStatus["error"].asString().c_str());
+        return wxString::FromUTF8(m_jsStatus["error"].asString().c_str());
     }
     return wxT("Unknown");
 }

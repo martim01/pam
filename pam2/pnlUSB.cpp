@@ -1,6 +1,6 @@
 #include "pnlUSB.h"
 #include "settings.h"
-
+#include "log.h"
 //(*InternalHeaders(pnlUSB)
 #include <wx/font.h>
 #include <wx/intl.h>
@@ -105,14 +105,15 @@ void pnlUSB::CheckUSB()
 
     for(size_t i = 0; i < asFiles.GetCount(); i++)
     {
-        //NAME="sda1" LABEL="KINGSTON"
         wxString sDevice(asFiles[i].BeforeFirst(wxT(' ')));
         wxString sLabel(asFiles[i].AfterFirst(wxT(' ')).Trim(false));
-        if(sLabel.empty() == false)
+        if(sLabel.empty())
         {
-            m_mUsb.insert(make_pair(sLabel, sDevice));
-            m_plstUsb->AddButton(sLabel);
+            sLabel = sDevice;
         }
+        m_mUsb.insert(make_pair(sLabel, sDevice));
+        m_plstUsb->AddButton(sLabel);
+
     }
     if(m_plstUsb->GetItemCount() == 0)
     {

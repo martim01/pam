@@ -90,26 +90,26 @@ void wxClientApiPoster::ReceiverChanged(const std::list<std::shared_ptr<Receiver
 void wxClientApiPoster::RequestTargetResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId)
 {
     //@todo work out why this is causing it to crash
-    //wxLogMessage(wxT("%s %s"), wxString::FromAscii(sResponse.c_str()).c_str(), wxString::FromAscii(sResourceId.c_str()).c_str());
-    wxNmosClientCurlEvent* pEvent = new wxNmosClientCurlEvent(wxEVT_NMOS_CLIENTCURL_SUBSCRIBE, nResult, wxString::FromAscii(sResponse.c_str()), wxString::FromAscii(sResourceId.c_str()));
+    //wxLogMessage(wxT("%s %s"), wxString::FromUTF8(sResponse.c_str()).c_str(), wxString::FromUTF8(sResourceId.c_str()).c_str());
+    wxNmosClientCurlEvent* pEvent = new wxNmosClientCurlEvent(wxEVT_NMOS_CLIENTCURL_SUBSCRIBE, nResult, wxString::FromUTF8(sResponse.c_str()), wxString::FromUTF8(sResourceId.c_str()));
     wxQueueEvent(m_pHandler, pEvent);
 }
 
 void wxClientApiPoster::RequestPatchSenderResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId)
 {
-    wxNmosClientCurlEvent* pEvent = new wxNmosClientCurlEvent(wxEVT_NMOS_CLIENTCURL_PATCH_SENDER, nResult, wxString::FromAscii(sResponse.c_str()), wxString::FromAscii(sResourceId.c_str()));
+    wxNmosClientCurlEvent* pEvent = new wxNmosClientCurlEvent(wxEVT_NMOS_CLIENTCURL_PATCH_SENDER, nResult, wxString::FromUTF8(sResponse.c_str()), wxString::FromUTF8(sResourceId.c_str()));
     wxQueueEvent(m_pHandler, pEvent);
 }
 
 void wxClientApiPoster::RequestPatchReceiverResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId)
 {
-    wxNmosClientCurlEvent* pEvent = new wxNmosClientCurlEvent(wxEVT_NMOS_CLIENTCURL_PATCH_RECEIVER, nResult, wxString::FromAscii(sResponse.c_str()), wxString::FromAscii(sResourceId.c_str()));
+    wxNmosClientCurlEvent* pEvent = new wxNmosClientCurlEvent(wxEVT_NMOS_CLIENTCURL_PATCH_RECEIVER, nResult, wxString::FromUTF8(sResponse.c_str()), wxString::FromUTF8(sResourceId.c_str()));
     wxQueueEvent(m_pHandler, pEvent);
 }
 
 void wxClientApiPoster::RequestConnectResult(const std::string& sSenderId, const std::string& sReceiverId, bool bSuccess, const std::string& sResponse)
 {
-    wxNmosClientCurlEvent* pEvent = new wxNmosClientCurlEvent(wxEVT_NMOS_CLIENTCURL_CONNECT, bSuccess, wxString::FromAscii(sResponse.c_str()), wxString::FromAscii(sReceiverId.c_str()));
+    wxNmosClientCurlEvent* pEvent = new wxNmosClientCurlEvent(wxEVT_NMOS_CLIENTCURL_CONNECT, bSuccess, wxString::FromUTF8(sResponse.c_str()), wxString::FromUTF8(sReceiverId.c_str()));
     wxQueueEvent(m_pHandler, pEvent);
 }
 

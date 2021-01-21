@@ -16,7 +16,7 @@ wxString GetPluginName()
 
 wxString GetPluginVersion()
 {
-    return wxString::FromAscii(AutoVersion::FULLVERSION_STRING);
+    return wxString::FromUTF8(AutoVersion::FULLVERSION_STRING);
 }
 
 wxString GetDetails()

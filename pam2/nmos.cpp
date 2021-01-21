@@ -315,7 +315,7 @@ void NmosManager::OnPatchReceiver(wxNmosEvent& event)
         multimap<wxString, wxString>::iterator itInterface = mmButtons.find(wxT("eth0"));
         if(itInterface != mmButtons.end())
         {
-            wxString sSdp = wxString::FromAscii(pReceiver->GetStaged().sTransportFileData.c_str());
+            wxString sSdp = wxString::FromUTF8(pReceiver->GetStaged().sTransportFileData.c_str());
             sSdp.Replace(wxT("\n"), wxT("`"));
             sSdp.Replace(wxT("\r"), wxT(""));
 
@@ -331,7 +331,7 @@ void NmosManager::OnPatchReceiver(wxNmosEvent& event)
             if(pReceiver->GetStaged().bMasterEnable)
             {
                 //Make sure the input type is AoIP
-                sSender = wxString::FromAscii(pReceiver->GetStaged().sSenderId.c_str());
+                sSender = wxString::FromUTF8(pReceiver->GetStaged().sSenderId.c_str());
             }
             NodeApi::Get().ReceiverPatchAllowed(event.GetPort(), true, pReceiver->GetId(), string(itInterface->second.mb_str()));
 
@@ -365,7 +365,7 @@ void NmosManager::ActivateSender(shared_ptr<Sender> pSender)
     {   //no receiver so multicast
         if(pSender->GetStaged().tpSender.sDestinationIp.empty() == false && pSender->GetStaged().tpSender.sDestinationIp != "auto")
         {   //address has been chosen by nmos
-            Settings::Get().Write(wxT("Server"), wxT("DestinationIp"), wxString::FromAscii(pSender->GetStaged().tpSender.sDestinationIp.c_str()));
+            Settings::Get().Write(wxT("Server"), wxT("DestinationIp"), wxString::FromUTF8(pSender->GetStaged().tpSender.sDestinationIp.c_str()));
         }
         else if(Settings::Get().Read(wxT("Server"), wxT("DestinationIp"), wxEmptyString).empty())
         {   //address not chosen by nmos and pam hasn't chosen one yet. create rando,
@@ -376,7 +376,7 @@ void NmosManager::ActivateSender(shared_ptr<Sender> pSender)
     {   //receiverid so unicast. -- @todo if we are already multicasting what do we do here????
         if(pSender->GetStaged().tpSender.sDestinationIp.empty() == false && pSender->GetStaged().tpSender.sDestinationIp != "auto")
         {   //one would hope ip has been set. so set the live555 address to it
-            Settings::Get().Write(wxT("Server"), wxT("DestinationIp"), wxString::FromAscii(pSender->GetStaged().tpSender.sDestinationIp.c_str()));
+            Settings::Get().Write(wxT("Server"), wxT("DestinationIp"), wxString::FromUTF8(pSender->GetStaged().tpSender.sDestinationIp.c_str()));
         }
         else
         {   // @todo no ip address set. Should we try to find what the receiver ip address is from the clientapi??
@@ -388,7 +388,7 @@ void NmosManager::ActivateSender(shared_ptr<Sender> pSender)
     string sSourceIp(pSender->GetStaged().tpSender.sSourceIp);
     if(sSourceIp.empty() == false && sSourceIp != "auto")
     {   //sourceip set by nmos
-        Settings::Get().Write(wxT("Server"), wxT("RTSP_Address"), wxString::FromAscii(sSourceIp.c_str()));
+        Settings::Get().Write(wxT("Server"), wxT("RTSP_Address"), wxString::FromUTF8(sSourceIp.c_str()));
     }
     else
     {
@@ -434,7 +434,7 @@ void NmosManager::ActivateReceiver(shared_ptr<Receiver> pReceiver)
         multimap<wxString, wxString>::iterator itInterface = mmButtons.find(wxT("eth0"));
         if(itInterface != mmButtons.end())
         {
-            wxString sSdp = wxString::FromAscii(pReceiver->GetStaged().sTransportFileData.c_str());
+            wxString sSdp = wxString::FromUTF8(pReceiver->GetStaged().sTransportFileData.c_str());
             sSdp.Replace(wxT("\n"), wxT("`"));
             sSdp.Replace(wxT("\r"), wxT(""));
 
@@ -453,7 +453,7 @@ void NmosManager::ActivateReceiver(shared_ptr<Receiver> pReceiver)
             {
                 //Make sure the input type is AoIP
                 Settings::Get().Write(wxT("Input"), wxT("Type"), wxT("AoIP"));
-                sSender = wxString::FromAscii(pReceiver->GetStaged().sSenderId.c_str());
+                sSender = wxString::FromUTF8(pReceiver->GetStaged().sSenderId.c_str());
                 Settings::Get().Write(wxT("Input"), wxT("AoIP"), sInput);
             }
             else
@@ -501,7 +501,7 @@ void pam2Dialog::OnNmosReceiverChanged(wxNmosClientReceiverEvent& event)
                 //is the receiver one of ours??
                 if((*itUpdated)->GetSender().empty() == false)
                 {
-                    m_pSettingsPanel->SetSender(wxString::FromAscii((*itUpdated)->GetSender().c_str()));
+                    m_pSettingsPanel->SetSender(wxString::FromUTF8((*itUpdated)->GetSender().c_str()));
                 }
                 else
                 {

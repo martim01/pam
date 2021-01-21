@@ -215,6 +215,8 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     //*)
     m_pdlgNoInput = 0;
 
+    wxSetCursor(*wxSTANDARD_CURSOR);
+
     //m_pswpScreens->SetEventHandler(this);
     Connect(ID_M_PSWP4,wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,(wxObjectEventFunction)&pam2Dialog::OnswpScreensPageChanged);
 

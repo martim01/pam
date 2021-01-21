@@ -86,7 +86,7 @@ bool iniManager::ReadIniFile(const wxString& sFilename)
                 pml::Log::Get(pml::Log::LOG_ERROR) << "IniManager\tfile '" << sFilename << "' invalid section" << std::endl;
                 return false;
             }
-			wxString sSection = wxString::FromAscii(sLine.substr(1,nClosePos-1).c_str());
+			wxString sSection = wxString::FromUTF8(sLine.substr(1,nClosePos-1).c_str());
 			m_mSections[sSection] = new iniSection(sSection);
 			sLine = m_mSections[sSection]->ReadSection(&m_if).char_str();
 		}

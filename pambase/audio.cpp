@@ -287,7 +287,7 @@ wxString Audio::GetDeviceName() const
     const PaDeviceInfo* pInfo = Pa_GetDeviceInfo(m_nDevice);
     if(pInfo)
     {
-        return wxString::FromAscii(pInfo->name);
+        return wxString::FromUTF8(pInfo->name);
     }
     return wxEmptyString;
 }

@@ -114,7 +114,9 @@ bool RtpServerThread::CreateStream()
         m_pRtpGroupsock = nullptr;
         return false;
     }
-    ServerMediaSession* sms = ServerMediaSession::createNew(*m_penv, "PAM_AES67", "PAM_AES67", "PAM_AES67", True/*SSM*/);
+    std::string sStreamName = "by-name/PAM_AES67";
+
+    ServerMediaSession* sms = ServerMediaSession::createNew(*m_penv, sStreamName.c_str(), sStreamName.c_str(), "PAM_AES67", True/*SSM*/);
     AES67ServerMediaSubsession* pSmss =  AES67ServerMediaSubsession::createNew(*m_pSink, NULL, m_ePacketTime);
     sms->addSubsession(pSmss);
     m_pRtspServer->addServerMediaSession(sms);

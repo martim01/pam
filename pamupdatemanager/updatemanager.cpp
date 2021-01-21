@@ -42,7 +42,7 @@ size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *user
 int debug_callback(CURL *handle, curl_infotype type, char *data, size_t size, void *userptr)
 {
     #ifdef __WXMSW__
-  //  wxLogMessage(wxString::FromAscii(data));
+  //  wxLogMessage(wxString::FromUTF8(data));
     #endif // __WXMSW__
 
     return size;
@@ -143,15 +143,15 @@ bool UpdateManager::GetUpdateListFromWebServer()
         {
             //Can't connect to server
             std::string sLastError = curl_easy_strerror(res);
-            m_sCurlError = wxString::FromAscii(sLastError.c_str());
-            m_sCurlErrorBuffer = wxString::FromAscii(chError);
+            m_sCurlError = wxString::FromUTF8(sLastError.c_str());
+            m_sCurlErrorBuffer = wxString::FromUTF8(chError);
         }
         else
         {
             std::string sBuff;
             sBuff.assign(chunk.pMemory, chunk.nSize);
 
-            wxStringInputStream sis(wxString::FromAscii(sBuff.c_str()));
+            wxStringInputStream sis(wxString::FromUTF8(sBuff.c_str()));
             DecodeUpdateList(wxXmlDocument(sis));
             m_sCurlError = wxEmptyString;
             m_sCurlErrorBuffer = wxEmptyString;
@@ -510,8 +510,8 @@ bool UpdateManager::UpdateFromWebServer(const wxString& sName, const wxString& s
             {
                 //Can't connect to server
                 std::string sLastError = curl_easy_strerror(res);
-                m_sCurlError = wxString::FromAscii(sLastError.c_str());
-                m_sCurlErrorBuffer = wxString::FromAscii(chError);
+                m_sCurlError = wxString::FromUTF8(sLastError.c_str());
+                m_sCurlErrorBuffer = wxString::FromUTF8(chError);
 
                 wxLogMessage(m_sCurlError+wxT("\n")+m_sCurlErrorBuffer);
             }

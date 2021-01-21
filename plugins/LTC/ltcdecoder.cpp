@@ -217,7 +217,7 @@ void LtcDecoder::CreateRaw()
     sRaw+=str;
 
 
-    m_sRaw = wxString::FromAscii(sRaw.c_str());
+    m_sRaw = wxString::FromUTF8(sRaw.c_str());
 }
 
 int LtcDecoder::WorkoutUserMode()

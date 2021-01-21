@@ -7,12 +7,13 @@
 #include "PamTaskScheduler.h"
 #include "timedbuffer.h"
 #include "smpte2110mediasession.h"
+#include "aes67mediasession.h"
 #include "wxsink.h"
 #include "audioevent.h"
 #include "GroupsockHelper.hh"
 #include "wxptp.h"
 #include "aes67source.h"
-
+#include "log.h"
 using namespace std;
 
 //// A function that outputs a string that identifies each subsession (for debugging output).  Modify this if you wish:
@@ -78,6 +79,7 @@ void* RtpThread::Entry()
     wxString sProtocol(m_source.sDetails.BeforeFirst(wxT(':')));
     if(sProtocol.CmpNoCase(wxT("rtsp")) == 0)
     {
+        pml::Log::Get() << "RTP:using RTSP" << std::endl;
         if(DoRTSP())
         {
             while(TestDestroy() == false && m_eventLoopWatchVariable == 0)
@@ -88,6 +90,7 @@ void* RtpThread::Entry()
     }
     else if(sProtocol.CmpNoCase(wxT("sip")) == 0)
     {
+        pml::Log::Get() << "RTP:using SIP" << std::endl;
         if(DoSIP())
         {
             while(TestDestroy() == false && m_eventLoopWatchVariable == 0)
@@ -98,7 +101,8 @@ void* RtpThread::Entry()
     }
     else
     {
-        m_sDescriptor = m_source.sSDP.AfterFirst('\n');
+        pml::Log::Get() << "RTP:using SDP" << std::endl;
+        m_sDescriptor = m_source.sSDP.AfterFirst('\n').ToStdString();
         StreamFromSDP();
     }
 
@@ -119,19 +123,18 @@ void* RtpThread::Entry()
 void RtpThread::StreamFromSDP()
 {
 
-    string sSDP(m_sDescriptor.mb_str());
+    pml::Log::Get() << m_sDescriptor << std::endl;
 
-    *m_penv << "\nUsing SDP \n" << sSDP.c_str() << "\n";
 
-    m_pSession = Smpte2110MediaSession::createNew(*m_penv, sSDP.c_str());
+    m_pSession = Smpte2110MediaSession::createNew(*m_penv, m_sDescriptor.c_str());
     if (m_pSession == NULL)
     {
-        *m_penv << "Failed to create a MediaSession object from the SDP description: " << m_penv->getResultMsg() << "\n";
+        pml::Log::Get(pml::Log::LOG_ERROR) << "Failed to create a MediaSession object from the SDP description: " << m_penv->getResultMsg() << std::endl;
         return;
     }
     else
     {
-        *m_penv << "Created MediaSession object\n";
+        pml::Log::Get() << "Created MediaSession object" << std::endl;
     }
 
     //count number of subsessions
@@ -147,7 +150,7 @@ void RtpThread::StreamFromSDP()
                 nCountAudio++;
             else
             {
-                *m_penv << "Audio subsession, but 0 channels defined\n";
+                pml::Log::Get(pml::Log::LOG_WARN) << "Audio subsession, but 0 channels defined" << std::endl;
             }
         }
         else if (strcmp(pSubsessionCount->codecName(), "RAW") == 0)
@@ -155,14 +158,14 @@ void RtpThread::StreamFromSDP()
             nCountVideo++;
         }
     }
-    *m_penv << "---------------------------------------\n";
-    *m_penv << "Number of AES67 Subsessions: " << nCountAudio << "\n";
-    *m_penv << "Number of Video Subsessions: " << nCountVideo << "\n";
-    *m_penv << "---------------------------------------\n";
+    pml::Log::Get() << "---------------------------------------" << std::endl;
+    pml::Log::Get() << "Number of AES67 Subsessions: " << nCountAudio << std::endl;
+    pml::Log::Get() << "Number of Video Subsessions: " << nCountVideo << std::endl;
+    pml::Log::Get() << "---------------------------------------" << std::endl;
 
     if(nCountAudio == 0)
     {
-        *m_penv << "No AES67 subsessions. Exit\n";
+        pml::Log::Get(pml::Log::LOG_WARN) << "No AES67 subsessions. Exit" << std::endl;
         return;
     }
     MediaSubsessionIterator iter(*m_pSession);
@@ -171,30 +174,30 @@ void RtpThread::StreamFromSDP()
     {
         if (!subsession->initiate (0))
         {
-            *m_penv << "Failed to initiate the subsession: " << m_penv->getResultMsg() << "\n";
+            pml::Log::Get(pml::Log::LOG_WARN) << "Failed to initiate the subsession: " << m_penv->getResultMsg() << std::endl;
         }
         else
         {
             subsession->sink = wxSink::createNew(*m_penv, *subsession, this);
-            *m_penv << "Initiated the \"" << *subsession << "\" subsession (";
+            pml::Log::Get() << "Initiated the subsession (";
             if (subsession->rtcpIsMuxed())
             {
-                *m_penv << "client port " << subsession->clientPortNum();
+                pml::Log::Get() << "client port " << subsession->clientPortNum();
             }
             else
             {
-                *m_penv << "client ports " << subsession->clientPortNum() << "-" << subsession->clientPortNum()+1;
+                pml::Log::Get() << "client ports " << subsession->clientPortNum() << "-" << subsession->clientPortNum()+1;
             }
-            *m_penv << ")\n";
+            pml::Log::Get() << ")" << std::endl;
 
-            *m_penv << "SessionId: " << subsession->GetEndpoint() << "\n";
+            pml::Log::Get() << "SessionId: " << subsession->GetEndpoint() << std::endl;
             if (subsession->sink == NULL)
             {
-                *m_penv << "Failed to create a data sink for the subsession: " << m_penv->getResultMsg() << "\n";
+                pml::Log::Get(pml::Log::LOG_ERROR) << "Failed to create a data sink for the subsession: " << m_penv->getResultMsg() << std::endl;
             }
             else
             {
-                *m_penv << "Created a data sink for the \"" << *subsession << "\" subsession\n";
+                pml::Log::Get() << "Created a data sink for the subsession" << std::endl;
 
                 if(m_pRtspClient)
                 {   //@todo do we need any setup here??
@@ -229,11 +232,11 @@ bool RtpThread::DoRTSP()
     m_pRtspClient = ourRTSPClient::createNew((*m_penv), sUrl.mb_str(), this, 1, m_sProgName.mb_str());
     if (m_pRtspClient == NULL)
     {
-        (*m_penv) << "Failed to create a RTSP client for URL \"" << sUrl.mb_str() << "\": " << (*m_penv).getResultMsg() << "\n";
+        pml::Log::Get(pml::Log::LOG_ERROR) << "Failed to create a RTSP client for URL \"" << sUrl.ToStdString() << "\": " << (*m_penv).getResultMsg() << std::endl;
         return false;
     }
 
-    m_pRtspClient->sendDescribeCommand(saveAfterDESCRIBE);
+    m_pRtspClient->sendDescribeCommand(continueAfterDESCRIBE);
     return true;
 }
 
@@ -244,7 +247,7 @@ bool RtpThread::DoSIP()
     m_pSipClient = ourSIPClient::createNew((*m_penv), sUrl.mb_str(), this, 1, m_sProgName.mb_str());
     if (m_pRtspClient == NULL)
     {
-        (*m_penv) << "Failed to create a RTSP client for URL \"" << sUrl.mb_str() << "\": " << (*m_penv).getResultMsg() << "\n";
+        pml::Log::Get(pml::Log::LOG_ERROR) << "Failed to create a RTSP client for URL \"" << sUrl.ToStdString() << "\": " << (*m_penv).getResultMsg() << std::endl;
         return false;
     }
     m_pSipClient->GetSDPDescription();
@@ -355,7 +358,7 @@ void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const p
 
 void RtpThread::StopStream()
 {
-    (*m_penv) << "------------------------ Stop Stream \n";
+    pml::Log::Get(pml::Log::LOG_INFO) << "------------------------ Stop Stream " << std::endl;
     if(m_pRtspClient)
     {
         shutdownStream(m_pRtspClient, 0);
@@ -394,11 +397,11 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
 {
     m_Session = session();
 
-    m_Session.sName = wxString::FromAscii(pSession->sessionName());
+    m_Session.sName = wxString::FromUTF8(pSession->sessionName());
     m_Session.sRawSDP = pSession->GetRawSDP();
-    m_Session.sType = wxString::FromAscii(pSession->mediaSessionType());
+    m_Session.sType = wxString::FromUTF8(pSession->mediaSessionType());
     m_Session.refClock = pSession->GetRefClock();
-    m_Session.sDescription = wxString::FromAscii(pSession->sessionDescription());
+    m_Session.sDescription = wxString::FromUTF8(pSession->sessionDescription());
     m_Session.sGroups = pSession->GetGroupDup();
 
 
@@ -407,11 +410,11 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
     while ((pSubsession = dynamic_cast<Smpte2110MediaSubsession*>(iterSub.next())) != NULL)
     {
         refclk clock = pSubsession->GetRefClock();
-        m_Session.lstSubsession.push_back(subsession(wxString::FromAscii(pSubsession->sessionId()),
-                                                     wxString::FromAscii(pSubsession->GetEndpoint()),
-                                                     wxString::FromAscii(pSubsession->mediumName()),
-                                                     wxString::FromAscii(pSubsession->codecName()),
-                                                     wxString::FromAscii(pSubsession->protocolName()),
+        m_Session.lstSubsession.push_back(subsession(wxString::FromUTF8(pSubsession->sessionId()),
+                                                     wxString::FromUTF8(pSubsession->GetEndpoint()),
+                                                     wxString::FromUTF8(pSubsession->mediumName()),
+                                                     wxString::FromUTF8(pSubsession->codecName()),
+                                                     wxString::FromUTF8(pSubsession->protocolName()),
                                                      pSubsession->clientPortNum(),
                                                      pSubsession->rtpTimestampFrequency(),
                                                      pSubsession->numChannels(),
@@ -425,6 +428,8 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
             wxPtp::Get().RunDomain(std::string(m_sReceivingInterface.mb_str()), pSubsession->GetRefClock().nDomain);
         }
         #endif // PTPMONKEY
+
+        pml::Log::Get(pml::Log::LOG_DEBUG) << "Subsession sync: " << pSubsession->GetSyncTime() << std::endl;
     }
 
     m_Session.SetCurrentSubsession();
@@ -437,7 +442,7 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
     {
         m_nSampleRate = 48000;
         m_nInputChannels = 0;
-        (*m_penv) << "No Input Channels\n";
+        pml::Log::Get(pml::Log::LOG_ERROR) << "No Input Channels" << std::endl;
         StopStream();
     }
 
@@ -450,10 +455,11 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
 }
 
 
-void RtpThread::SaveSDP(unsigned int nResult, const wxString& sResult)
+void RtpThread::SaveSDP(unsigned int nResult, const std::string& sResult)
 {
     m_sDescriptor = sResult;
 
+    pml::Log::Get() << "Received SDP. Code: " << nResult << " Description: '" << m_sDescriptor << "'" << std::endl;
     //Start playing
     StreamFromSDP();
 
@@ -463,7 +469,7 @@ void RtpThread::SaveSDP(unsigned int nResult, const wxString& sResult)
     {
         wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_SDP);
         pEvent->SetClientData(reinterpret_cast<void*>(this));
-        pEvent->SetString(sResult);
+        pEvent->SetString(m_sDescriptor);
         pEvent->SetInt(nResult);
         wxQueueEvent(m_pHandler, pEvent);
     }

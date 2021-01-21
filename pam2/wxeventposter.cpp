@@ -51,7 +51,7 @@ void wxEventPoster::AllForNow(const std::string& sService)
     {
         wxLogDebug(wxT("All for now"));
         wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_MDNS_ALLFORNOW);
-        pEvent->SetString(wxString::FromAscii(sService.c_str()));
+        pEvent->SetString(wxString::FromUTF8(sService.c_str()));
         wxQueueEvent(m_pHandler, pEvent);
     }
 }
@@ -73,7 +73,7 @@ void wxEventPoster::CurlDone(unsigned long nResult, const std::string& sResult, 
         wxLogDebug(wxT("Curl done"));
         wxNmosEvent* pEvent(new wxNmosEvent(wxEVT_NMOS_CURL_DONE));
         pEvent->SetInt(nResult);
-        pEvent->SetString(wxString::FromAscii(sResult.c_str()));
+        pEvent->SetString(wxString::FromUTF8(sResult.c_str()));
         pEvent->SetExtraLong(nUserType);
         wxQueueEvent(m_pHandler, pEvent);
     }
@@ -95,7 +95,7 @@ void wxEventPoster::Target(const std::string& sReceiverId, const std::string& sT
     if(m_pHandler)
     {
         wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_TARGET);
-        pEvent->SetString(wxString::FromAscii(sReceiverId.c_str()));
+        pEvent->SetString(wxString::FromUTF8(sReceiverId.c_str()));
         pEvent->SetTransportFile(sTransportFile);
         pEvent->SetInt(nPort);
         wxQueueEvent(m_pHandler, pEvent);
@@ -107,7 +107,7 @@ void wxEventPoster::PatchSender(const std::string& sSenderId, const connectionSe
     if(m_pHandler)
     {
         wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_PATCH_SENDER);
-        pEvent->SetString(wxString::FromAscii(sSenderId.c_str()));
+        pEvent->SetString(wxString::FromUTF8(sSenderId.c_str()));
         pEvent->SetSenderConnection(conPatch);
         pEvent->SetInt(nPort);
         wxQueueEvent(m_pHandler, pEvent);
@@ -119,7 +119,7 @@ void wxEventPoster::PatchReceiver(const std::string& sReceiverId, const connecti
     if(m_pHandler)
     {
         wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_PATCH_RECEIVER);
-        pEvent->SetString(wxString::FromAscii(sReceiverId.c_str()));
+        pEvent->SetString(wxString::FromUTF8(sReceiverId.c_str()));
         pEvent->SetReceiverConnection(conPatch);
         pEvent->SetInt(nPort);
         wxQueueEvent(m_pHandler, pEvent);
@@ -131,7 +131,7 @@ void wxEventPoster::SenderActivated(const std::string& sSenderId)
     if(m_pHandler)
     {
         wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_ACTIVATE_SENDER);
-        pEvent->SetString(wxString::FromAscii(sSenderId.c_str()));
+        pEvent->SetString(wxString::FromUTF8(sSenderId.c_str()));
         wxQueueEvent(m_pHandler, pEvent);
     }
 }
@@ -141,7 +141,7 @@ void wxEventPoster::ReceiverActivated(const std::string& sReceiverId)
     if(m_pHandler)
     {
         wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_ACTIVATE_RECEIVER);
-        pEvent->SetString(wxString::FromAscii(sReceiverId.c_str()));
+        pEvent->SetString(wxString::FromUTF8(sReceiverId.c_str()));
         wxQueueEvent(m_pHandler, pEvent);
     }
 }
@@ -159,7 +159,7 @@ m_sTransportFile(event.GetTransportFile()),
 m_conSender(event.GetSenderConnection()),
 m_conReceiver(event.GetReceiverConnection())
 {
-    
+
 }
 
 void wxNmosEvent::SetTransportFile(const std::string& sTransportFile)

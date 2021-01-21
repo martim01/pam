@@ -10,7 +10,7 @@
 #include <iomanip>
 #include <sstream>
 #include "ondemandpamsubsession.h"
-
+#include "log.h"
 
 wxDEFINE_EVENT(wxEVT_ODS_ANNOUNCE, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_ODS_CONNECTION, wxCommandEvent);
@@ -43,7 +43,7 @@ void* OnDemandStreamer::Entry()
     RTSPServer* rtspServer = RTSPServer::createNew(*m_pEnv, m_nRtspPort, NULL);
     if (rtspServer == NULL)
     {
-        *m_pEnv << "Failed to create RTSP server: " << m_pEnv->getResultMsg() << "\n";
+        pml::Log::Get(pml::Log::LOG_ERROR) << "Failed to create RTSP server: " << m_pEnv->getResultMsg() << std::endl;
         SendFinish();
         return NULL;
     }
@@ -55,14 +55,16 @@ void* OnDemandStreamer::Entry()
     }
 
     char const* descriptionString = wxGetHostName().c_str() + " PAM_"+m_pSubsession->GetStreamName();
-    char const* streamName = std::string("PAM_"+m_pSubsession->GetStreamName()).c_str();
+    std::string sStreamName = "by-name/PAM_"+m_pSubsession->GetStreamName();
 
-    m_pSMS = ServerMediaSession::createNew(*m_pEnv, streamName, streamName, descriptionString);
+    pml::Log::Get(pml::Log::LOG_DEBUG) << "StreamName = '" << sStreamName << "'" << std::endl;
+
+    m_pSMS = ServerMediaSession::createNew(*m_pEnv, sStreamName.c_str(), sStreamName.c_str(), descriptionString);
     m_pSMS->addSubsession(m_pSubsession);
     rtspServer->addServerMediaSession(m_pSMS);
 
 
-    AnnounceStream(rtspServer, m_pSMS, streamName);
+    AnnounceStream(rtspServer, m_pSMS, sStreamName);
 
     //GetSDP();
 
@@ -72,11 +74,11 @@ void* OnDemandStreamer::Entry()
 
     if (rtspServer->setUpTunnelingOverHTTP(80) || rtspServer->setUpTunnelingOverHTTP(8000) || rtspServer->setUpTunnelingOverHTTP(8080))
     {
-        *m_pEnv << "(We use port " << rtspServer->httpServerPortNum() << " for optional RTSP-over-HTTP tunneling.)\n";
+        pml::Log::Get(pml::Log::LOG_INFO) << "(We use port " << rtspServer->httpServerPortNum() << " for optional RTSP-over-HTTP tunneling.)" << std::endl;
     }
     else
     {
-        *m_pEnv << "(RTSP-over-HTTP tunneling is not available.)\n";
+        pml::Log::Get(pml::Log::LOG_WARN) << "(RTSP-over-HTTP tunneling is not available.)" << std::endl;
     }
 
 
@@ -102,14 +104,14 @@ void OnDemandStreamer::Stop()
     m_eventLoopWatchVariable = 1;
 }
 
-void OnDemandStreamer::AnnounceStream(RTSPServer* rtspServer, ServerMediaSession* sms,  char const* streamName)
+void OnDemandStreamer::AnnounceStream(RTSPServer* rtspServer, ServerMediaSession* sms,  const std::string& sStreamName)
 {
     char* url = rtspServer->rtspURL(sms);
 
 
     UsageEnvironment& env = rtspServer->envir();
-    env << "\"" << streamName << "\" stream\n";
-    env << "Play this stream using the URL \"" << url << "\"\n";
+    pml::Log::Get(pml::Log::LOG_INFO) << "\"" << sStreamName << "\" stream" << std::endl;
+    pml::Log::Get(pml::Log::LOG_INFO) << "Play this stream using the URL \"" << url << "\"" << std::endl;
 
     if(m_pHandler)
     {

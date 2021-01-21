@@ -24,7 +24,7 @@ TaskToken qosMeasurementTimerTask = NULL;
 
 qosMeasurementRecord* g_pRecord = NULL;
 
-/*
+
 void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultString)
 {
     bool bSuccess(true);
@@ -42,6 +42,10 @@ void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultS
     {
         char* const sdpDescription = resultString;
         env << *rtspClient << "Got a SDP description:\n" << sdpDescription << "\n";
+
+
+        //is the sream a multicaast one??
+
 
         // Create a media session object from this SDP description:
         scs.session = Smpte2110MediaSession::createNew(env, sdpDescription);
@@ -82,17 +86,17 @@ void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultS
         shutdownStream(rtspClient);
     }
 }
-*/
+
 
 void saveAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultString)
 {
-
+    std::cout << "saveAfterDESCRIBE '" << std::string(resultString) << "'" << std::endl;
     bool bSuccess(true);
     ourRTSPClient* pClient = dynamic_cast<ourRTSPClient*>(rtspClient);
     if(pClient)
     {
 
-        pClient->GetHandler()->SaveSDP(resultCode, wxString::FromUTF8(resultString));
+        pClient->GetHandler()->SaveSDP(resultCode, std::string(resultString));
     }
 
     delete[] resultString;
@@ -101,7 +105,7 @@ void saveAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultStrin
 }
 
 
-/*
+
 
 void setupNextSubsession(RTSPClient* rtspClient)
 {
@@ -275,7 +279,7 @@ void continueAfterPLAY(RTSPClient* rtspClient, int resultCode, char* resultStrin
     }
 }
 
-*/
+
 // Implementation of the other event handlers:
 
 void subsessionAfterPlaying(void* clientData)

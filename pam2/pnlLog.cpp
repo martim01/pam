@@ -33,7 +33,8 @@ pnlLog::pnlLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
     m_nFilter = 15;
 
 
-	pml::Log::Get().AddOutput(std::unique_ptr<pml::LogOutput>(new wxLogOutput(this)));
+	pml::Log::Get().AddOutput(std::make_unique<wxLogOutput>(this));
+//	pml::Log::Get().AddOutput(std::make_unique<pml::LogOutput>());
 
 	Connect(wxID_ANY,wxEVT_PMLOG,(wxObjectEventFunction)&pnlLog::OnLog);
 }
@@ -85,7 +86,7 @@ void pnlLog::Clear()
 
 void pnlLog::OnLog(wxCommandEvent& event)
 {
-        wxClientDC dc(this);
+    wxClientDC dc(this);
     dc.SetFont(m_pLogList->GetFont());
 
     if(event.GetInt() >= m_nLogLevel)
@@ -100,6 +101,7 @@ void pnlLog::OnLog(wxCommandEvent& event)
             End();
         }
     }
+
 }
 
 void pnlLog::Filter(int nFilter)

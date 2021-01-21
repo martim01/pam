@@ -322,7 +322,7 @@ void pnlSettings::ShowSoundcardInputs()
             }
             #endif // __WXGTK__
 
-            m_plstDevices->AddButton(wxString::Format(wxT("[%d] %s [%d]"),i, wxString::FromAscii(pInfo->name).c_str(), pInfo->maxInputChannels), wxNullBitmap, (void*)i, nEnabled);
+            m_plstDevices->AddButton(wxString::Format(wxT("[%d] %s [%d]"),i, wxString::FromUTF8(pInfo->name).c_str(), pInfo->maxInputChannels), wxNullBitmap, (void*)i, nEnabled);
         }
     }
 

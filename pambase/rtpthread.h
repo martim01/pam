@@ -51,7 +51,7 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
         bool DoRTSP();
         bool DoSIP();
 
-        void SaveSDP(unsigned int nResult, const wxString& sResult);
+        void SaveSDP(unsigned int nResult, const std::string& sResult);
 
         pairTime_t ConvertDoubleToPairTime(double dTime);
         wxEvtHandler* m_pHandler;
@@ -93,7 +93,7 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
         bool m_bSaveSDP;
         session m_Session;
 
-        wxString m_sDescriptor;
+        std::string m_sDescriptor;
         unsigned long m_nQosMeasurementIntervalMS;
 
 

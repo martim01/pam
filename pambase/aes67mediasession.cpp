@@ -35,7 +35,7 @@ void Aes67MediaSession::initializeSMPTE_SDP(char const* sdpDescription)
         return;
     }
 
-    m_sRawSDP = wxString::FromAscii(sdpDescription);
+    m_sRawSDP = wxString::FromUTF8(sdpDescription);
 
     // Begin by processing all SDP lines until we see the first "m="
     char const* sdpLine = sdpDescription;
@@ -69,7 +69,7 @@ void Aes67MediaSession::initializeSMPTE_SDP(char const* sdpDescription)
 
 Boolean Aes67MediaSession::parseSDPAttribute_RefClk(char const* sdpLine)
 {
-    wxString sSdp(wxString::FromAscii(sdpLine));
+    wxString sSdp(wxString::FromUTF8(sdpLine));
 
     wxString sFind(wxT("a=ts-refclk:"));
     size_t nFront = sSdp.find(sFind);
@@ -121,7 +121,7 @@ Boolean Aes67MediaSession::parseSDPAttribute_RefClk(char const* sdpLine)
 
 Boolean Aes67MediaSession::parseSDPAttribute_ClockDomain(char const* sdpLine)
 {
-    wxString sSdp(wxString::FromAscii(sdpLine));
+    wxString sSdp(wxString::FromUTF8(sdpLine));
 
     wxString sFind(wxT("a=clock-domain:"));
     size_t nFront = sSdp.find(sFind);
@@ -150,7 +150,7 @@ Boolean Aes67MediaSession::parseSDPAttribute_ClockDomain(char const* sdpLine)
 
 Boolean Aes67MediaSession::parseSDPAttribute_Group(char const* sdpLine)
 {
-    wxString sSdp(wxString::FromAscii(sdpLine));
+    wxString sSdp(wxString::FromUTF8(sdpLine));
 
     wxString sFind(wxT("a=group:DUP "));
     size_t nFront = sSdp.find(sFind);
@@ -166,7 +166,7 @@ Boolean Aes67MediaSession::parseSDPAttribute_Group(char const* sdpLine)
 
 Boolean Aes67MediaSession::parseSDPAttribute_PTime(char const* sdpLine)
 {
-    wxString sSdp(wxString::FromAscii(sdpLine));
+    wxString sSdp(wxString::FromUTF8(sdpLine));
 
     wxString sFind(wxT("a=ptime:"));
     size_t nFront = sSdp.find(sFind);
@@ -181,7 +181,7 @@ Boolean Aes67MediaSession::parseSDPAttribute_PTime(char const* sdpLine)
 }
 Boolean Aes67MediaSession::parseSDPAttribute_MaxPTime(char const* sdpLine)
 {
-    wxString sSdp(wxString::FromAscii(sdpLine));
+    wxString sSdp(wxString::FromUTF8(sdpLine));
 
     wxString sFind(wxT("a=maxptime:"));
     size_t nFront = sSdp.find(sFind);
@@ -196,7 +196,7 @@ Boolean Aes67MediaSession::parseSDPAttribute_MaxPTime(char const* sdpLine)
 }
 
 
-Aes67MediaSession::Aes67MediaSession(UsageEnvironment& env) : MediaSession(env), 
+Aes67MediaSession::Aes67MediaSession(UsageEnvironment& env) : MediaSession(env),
  m_dPackageMs(0),
  m_dMaxPackageMs(0)
 {
@@ -238,7 +238,7 @@ Boolean Aes67MediaSubsession::createSourceObjects(int useSpecialRTPoffset)
 
     if (strcmp(fCodecName, "L16") == 0 || strcmp(fCodecName, "L24") == 0) // 16 or 24-bit linear audio (RFC 3190)
     {
-        m_sEndpoint = wxString::FromAscii(fConnectionEndpointName);
+        m_sEndpoint = wxString::FromUTF8(fConnectionEndpointName);
 
         char* mimeType = new char[strlen(mediumName()) + strlen(codecName()) + 2] ;
         sprintf(mimeType, "%s/%s", mediumName(), codecName());
@@ -258,7 +258,7 @@ Boolean Aes67MediaSubsession::createSourceObjects(int useSpecialRTPoffset)
 
 void Aes67MediaSubsession::parseSDPAttribute_Sync()
 {
-    wxString sSdp(wxString::FromAscii(fSavedSDPLines));
+    wxString sSdp(wxString::FromUTF8(fSavedSDPLines));
 
     wxString sFind(wxT("a=sync-time:"));
     size_t nFront = sSdp.find(sFind);
@@ -286,7 +286,7 @@ void Aes67MediaSubsession::parseSDPAttribute_Sync()
 
 void Aes67MediaSubsession::parseSDPAttribute_Deviation()
 {
-    wxString sSdp(wxString::FromAscii(fSavedSDPLines));
+    wxString sSdp(wxString::FromUTF8(fSavedSDPLines));
 
     wxString sFind(wxT("a=clock-deviation:"));
     size_t nFront = sSdp.find(sFind);
@@ -319,7 +319,7 @@ const pairTime_t& Aes67MediaSubsession::GetLastEpoch()
 
 void Aes67MediaSubsession::parseSDPAttribute_RefClk()
 {
-    wxString sSdp(wxString::FromAscii(fSavedSDPLines));
+    wxString sSdp(wxString::FromUTF8(fSavedSDPLines));
 
     wxString sFind(wxT("a=ts-refclk:"));
     size_t nFront = sSdp.find(sFind);
@@ -372,7 +372,7 @@ void Aes67MediaSubsession::parseSDPAttribute_RefClk()
 
 void Aes67MediaSubsession::parseSDPAttribute_ClockDomain()
 {
-    wxString sSdp(wxString::FromAscii(fSavedSDPLines));
+    wxString sSdp(wxString::FromUTF8(fSavedSDPLines));
 
     wxString sFind(wxT("a=clock-domain:"));
     size_t nFront = sSdp.find(sFind);
@@ -408,7 +408,7 @@ void Aes67MediaSubsession::parseSDPAttribute_ClockDomain()
 
 void Aes67MediaSubsession::parseSDPAttribute_PTime()
 {
-    wxString sSdp(wxString::FromAscii(fSavedSDPLines));
+    wxString sSdp(wxString::FromUTF8(fSavedSDPLines));
 
     wxString sFind(wxT("a=ptime:"));
     size_t nFront = sSdp.find(sFind);
@@ -430,7 +430,7 @@ void Aes67MediaSubsession::parseSDPAttribute_PTime()
 
 void Aes67MediaSubsession::parseSDPAttribute_MaxPTime()
 {
-    wxString sSdp(wxString::FromAscii(fSavedSDPLines));
+    wxString sSdp(wxString::FromUTF8(fSavedSDPLines));
 
     wxString sFind(wxT("a=maxptime:"));
     size_t nFront = sSdp.find(sFind);
@@ -454,7 +454,7 @@ void Aes67MediaSubsession::parseSDPAttribute_MaxPTime()
 
 void Aes67MediaSubsession::parseSDPAttribute_ExtMap()
 {
-    wxString sSdp(wxString::FromAscii(fSavedSDPLines));
+    wxString sSdp(wxString::FromUTF8(fSavedSDPLines));
 
     wxString sFind(wxT("a=extmap:"));
     size_t nFront = sSdp.find(sFind);
