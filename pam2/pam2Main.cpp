@@ -8,6 +8,7 @@
  **************************************************************/
 
 #include "pam2Main.h"
+#include "pam2App.h"
 #include <wx/msgdlg.h>
 #include "settings.h"
 #include <map>
@@ -612,6 +613,8 @@ void pam2Dialog::ShowTestPanels()
 
 void pam2Dialog::ShowLogPanel(bool bTests)
 {
+
+
     m_pswpMain->ChangeSelection(wxT("Log"));
 
     if(!bTests)
@@ -670,7 +673,6 @@ void pam2Dialog::ShowOptionsPanel(const wxString& sPanel)
 
 void pam2Dialog::OnMonitorMax(wxCommandEvent& event)
 {
-    cout << "MaximizeMon" << endl;
     if(Settings::Get().Read(wxT("Input"), wxT("Reset"), false) == false)
     {
         MaximizeMonitor((event.GetInt()) == 1);
@@ -1015,6 +1017,13 @@ void pam2Dialog::OnswpMainPageChanged(wxNotebookEvent& event)
         {
             m_pdlgNoInput->Show(false);
         }
+    }
+
+    pam2App* pApp = dynamic_cast<pam2App*>(wxTheApp);
+    if(pApp)
+    {
+        pApp->CheckHold(m_pswpSplash->GetSelectionName() != "AoIP" && m_pswpMain->GetSelectionName() != wxT("Settings") && m_pswpMain->GetSelectionName() != wxT("Log") &&
+                                  m_pswpMain->GetSelectionName() != wxT("Help"));
     }
 }
 

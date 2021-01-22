@@ -67,12 +67,9 @@ pnlLevels::pnlLevels(wxWindow* parent,LevelsBuilder* pBuilder, wxWindowID id,con
 	Connect(m_pbtndB->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlLevels::OnbtndBClick);
 	Connect(m_pbtnRangedB->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlLevels::OnbtnRangedBClick);
 
-    std::cout << "IniLevelsAmp" << std::endl;
     m_pAmplitude->SetSliderColour(wxColour(128,128,128));
-    std::cout << "IniLevelsAmp:bt" << std::endl;
     m_pAmplitude->SetButtonColour(wxColour(100,255,100));
 
-    std::cout << "IniLevelsRange" << std::endl;
     m_pRange->SetSliderColour(wxColour(128,128,128));
     m_pRange->SetButtonColour(wxColour(100,255,100));
 

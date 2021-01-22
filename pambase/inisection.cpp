@@ -62,7 +62,6 @@ wxString iniSection::ReadSection(std::ifstream* pif)
 		size_t nEqualPos = sLine.find("=");
 		if(nEqualPos == std::string::npos)
 		{
-			cout << "line: "	<< sLine	<< endl;
 			return wxT("");
 		}
 

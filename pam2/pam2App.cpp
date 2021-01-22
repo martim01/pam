@@ -27,6 +27,7 @@ IMPLEMENT_APP(pam2App);
 bool pam2App::OnInit()
 {
     m_bReset = false;
+    m_bCheckHold = true;
 
     wxInitAllImageHandlers();
 
@@ -106,20 +107,22 @@ int pam2App::FilterEvent(wxEvent& event)
 
 void pam2App::OnTimerHold(wxTimerEvent& event)
 {
-    if(!m_bReset)
+    if(m_bCheckHold)
     {
-        m_sInput = Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard"));
-        Settings::Get().Write(wxT("Input"), wxT("Reset"), true);
-        Settings::Get().Write(wxT("Input"), wxT("Type"), wxT("Disabled"));
+        if(!m_bReset)
+        {
+            m_sInput = Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard"));
+            Settings::Get().Write(wxT("Input"), wxT("Reset"), true);
+            Settings::Get().Write(wxT("Input"), wxT("Type"), wxT("Disabled"));
 
-        m_timerHold.Start(4000,true);
-        m_bReset = true;
+            m_timerHold.Start(4000,true);
+            m_bReset = true;
+        }
+        else
+        {
+            Settings::Get().Write(wxT("Input"), wxT("Type"), m_sInput);
+            Settings::Get().Write(wxT("Input"), wxT("Reset"), false);
+            m_bReset = false;
+        }
     }
-    else
-    {
-        Settings::Get().Write(wxT("Input"), wxT("Type"), m_sInput);
-        Settings::Get().Write(wxT("Input"), wxT("Reset"), false);
-        m_bReset = false;
-    }
-
 }

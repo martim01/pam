@@ -504,7 +504,6 @@ void pnlSettings::OnlsliderInputGainMove(wxCommandEvent& event)
 
     double dGain = (m_plsliderInputGain->GetPosition()-5000)/500.0;
 
-    std::cout << m_plsliderInputGain->GetPosition() << "=" << dGain << std::endl;
     m_plblInputGain->SetLabel(wxString::Format("%.2f dB", dGain));
 
     double dRatio = ConvertGainToRatio(dGain);

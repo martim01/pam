@@ -11,6 +11,7 @@
 #include <sstream>
 #include "ondemandpamsubsession.h"
 #include "log.h"
+#include "pamRTSPServer.h"
 
 wxDEFINE_EVENT(wxEVT_ODS_ANNOUNCE, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_ODS_CONNECTION, wxCommandEvent);
@@ -40,10 +41,10 @@ void* OnDemandStreamer::Entry()
     // Create the RTSP server:
 //    SendingInterfaceAddr = our_inet_addr(std::string(m_sRtspAddress.mb_str()).c_str());
 
-    RTSPServer* rtspServer = RTSPServer::createNew(*m_pEnv, m_nRtspPort, NULL);
+    PamRTSPServer* rtspServer = PamRTSPServer::createNew(*m_pEnv, m_nRtspPort, NULL);
     if (rtspServer == NULL)
     {
-        pml::Log::Get(pml::Log::LOG_ERROR) << "Failed to create RTSP server: " << m_pEnv->getResultMsg() << std::endl;
+        pml::Log::Get(pml::Log::LOG_ERROR) << "Failed to create RTSP server (unicast): " << m_pEnv->getResultMsg() << std::endl;
         SendFinish();
         return NULL;
     }
@@ -126,27 +127,5 @@ void OnDemandStreamer::AnnounceStream(RTSPServer* rtspServer, ServerMediaSession
 
 const std::string& OnDemandStreamer::GetSDP()
 {
-    /*
-    if(m_sSDP.empty())
-    {
-        std::chrono::time_point<std::chrono::high_resolution_clock> tp(std::chrono::high_resolution_clock::now());
-        unsigned long nSeconds = std::chrono::duration_cast<std::chrono::seconds>(tp.time_since_epoch()).count();
-        auto nMicroseconds = std::chrono::duration_cast<std::chrono::microseconds>(tp.time_since_epoch()).count();
-        nMicroseconds %= 1000000;
-        std::stringstream ss;
-        ss << "v=0\r\n"
-           << "o=- " << nSeconds << std::setw(6) << std::setfill('0') << nMicroseconds << " 1 IN IP4 " << m_sRtspAddress << "\r\n"
-          << std::setw(0)
-           << "s=" << wxGetHostName().c_str() + "_PAM\r\n"
-           << "i=" << "Unicast Stream" << "\r\n"
-           << "t=0 0\r\n"
-           << "a=type:broadcast\r\n"
-           << "a=control:*\r\n"
-           << m_pSubsession->GetSDP();
-
-
-           m_sSDP = ss.str();
-    }
-    */
     return m_sSDP;
 }

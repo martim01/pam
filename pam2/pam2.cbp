@@ -172,6 +172,7 @@
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
 					<Add option="-D__NMOS__" />
+					<Add option="-DNDEBUG" />
 					<Add directory="$(#nmos.include)" />
 					<Add directory="$(#json.include)" />
 				</Compiler>

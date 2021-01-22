@@ -20,11 +20,17 @@ class pam2App : public wxApp
 
         /**  Captures events allowing modification or filtering before passing to normal application event handlers */
         int FilterEvent(wxEvent& event);
+        void CheckHold(bool bCheck)
+        {
+            m_bCheckHold = bCheck;
+        }
 
         void OnTimerHold(wxTimerEvent& event);
         wxTimer m_timerHold;
         bool m_bReset;
         wxString m_sInput;
+
+        bool m_bCheckHold;
 };
 
 #endif // PAM2APP_H

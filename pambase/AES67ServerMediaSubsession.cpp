@@ -236,7 +236,6 @@ int AES67ServerMediaSubsession::GetEpochTimestamp()
 {
     int nTimestamp = fRTPSink.presetNextTimestamp();
 
-    std::cout << "Timestamp: " << nTimestamp << std::endl;
 
     //get the current time
     timeval tvNow;
@@ -250,14 +249,10 @@ int AES67ServerMediaSubsession::GetEpochTimestamp()
     double dNow = static_cast<double>(tvNow.tv_sec);//*1000000.0;
     dNow += static_cast<double>(tvNow.tv_usec) / 1000000.0;
 
-    std::cout << "Frequency: " << fRTPSink.rtpTimestampFrequency() << std::endl;
-
 
     int64_t nTimestampsToMinus = static_cast<int64_t>(dNow*static_cast<double>(fRTPSink.rtpTimestampFrequency()));
 
     nTimestampsToMinus = nTimestampsToMinus % 42949672960;
-
-    std::cout << "To Minus: " << nTimestampsToMinus << std::endl;
 
     return nTimestamp-static_cast<int>(nTimestampsToMinus);
 }

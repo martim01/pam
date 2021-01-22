@@ -7,7 +7,7 @@ LogElement::LogElement(wxDC& dc, unsigned int nWidth, const wxString& sMessage, 
 {
     wxSize sz = uiRect::GetSizeOfText(dc, sMessage, wxRect(0,0,nWidth-COLUMN_TIME, 25));
 
-    m_nHeight = std::max(sz.y, 30);
+    m_nHeight = std::max(sz.y+15, 30);
 
     CreateHitRects();
     m_mHitRects[1].SetLabel(sMessage);
@@ -59,7 +59,7 @@ int LogElement::SubElementHeld()
 
 void LogElement::Draw(wxDC& dc, bool bSelected)
 {
-    m_mHitRects[0].Draw(dc, uiRect::BORDER_NONE);
+   m_mHitRects[0].Draw(dc, uiRect::BORDER_NONE);
     m_mHitRects[1].Draw(dc, uiRect::BORDER_NONE);
 }
 

@@ -89,10 +89,8 @@ double MonitorPluginBuilder::ReadSetting(const wxString& sSetting, double dDefau
 
 void MonitorPluginBuilder::Maximize(bool bMax)
 {
-    cout << "Maximize" << endl;
     if(m_pHandler)
     {
-        cout << "Maximize: Handler" << endl;
         wxCommandEvent event(wxEVT_MONITOR_MAX);
         event.SetInt(bMax);
         wxPostEvent(m_pHandler, event);

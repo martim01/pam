@@ -4,7 +4,7 @@
 #include <wx/log.h>
 #include "settings.h"
 #include "ondemandstreamer.h"
-
+#include "log.h"
 
 RtpServerThread::RtpServerThread(wxEvtHandler* pHandler, const wxString& sRTSP, unsigned int nRTSPPort, const wxString& sSourceIp, unsigned int nRTPPort, bool bSSM, LiveAudioSource::enumPacketTime ePacketTime) :
     m_pHandler(pHandler),
@@ -100,10 +100,10 @@ bool RtpServerThread::CreateStream()
     m_pSink->setPacketSizes(m_pSource->GetPreferredFrameSize()+12,m_pSource->GetPreferredFrameSize()+12);
 
     // Create and start a RTSP server to serve this stream:
-    m_pRtspServer = RTSPServer::createNew(*m_penv, m_nRTSPPort);
+    m_pRtspServer = PamRTSPServer::createNew(*m_penv, m_nRTSPPort);
     if (m_pRtspServer == NULL)
     {
-        *m_penv << "Failed to create RTSP server: " << m_penv->getResultMsg() << "\n";
+        pml::Log::Get(pml::Log::LOG_ERROR) << "Failed to create RTSP server (multicast): " << m_penv->getResultMsg() << std::endl;
         Medium::close(m_pSink);
         Medium::close(m_pSource);
 
@@ -126,8 +126,7 @@ bool RtpServerThread::CreateStream()
     delete[] pSDP;
 
     // Finally, start the streaming:
-    *m_penv << "Beginning streaming...\n";
-    *m_penv << m_pRtspServer->rtspURL(sms) << "\n";
+    pml::Log::Get(pml::Log::LOG_INFO) << "Beginning streaming..." << m_pRtspServer->rtspURL(sms) << std::endl;
 
 
     m_pSink->startPlaying(*m_pSource, afterPlaying, reinterpret_cast<void*>(this));
@@ -149,7 +148,7 @@ void afterPlaying(void* pClientData)
 void RtpServerThread::CloseStream()
 {
     wxMutexLocker lock(m_mutex);
-    *m_penv << "...done streaming\n";
+    pml::Log::Get(pml::Log::LOG_INFO) << "...done streaming" << std::endl;
 
     // End by closing the media:
     Medium::close(m_pRtspServer);

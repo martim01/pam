@@ -79,7 +79,7 @@ void* RtpThread::Entry()
     wxString sProtocol(m_source.sDetails.BeforeFirst(wxT(':')));
     if(sProtocol.CmpNoCase(wxT("rtsp")) == 0)
     {
-        pml::Log::Get() << "RTP:using RTSP" << std::endl;
+        pml::Log::Get() << "RTP: connect using RTSP" << std::endl;
         if(DoRTSP())
         {
             while(TestDestroy() == false && m_eventLoopWatchVariable == 0)
@@ -90,7 +90,7 @@ void* RtpThread::Entry()
     }
     else if(sProtocol.CmpNoCase(wxT("sip")) == 0)
     {
-        pml::Log::Get() << "RTP:using SIP" << std::endl;
+        pml::Log::Get() << "RTP:connect using SIP" << std::endl;
         if(DoSIP())
         {
             while(TestDestroy() == false && m_eventLoopWatchVariable == 0)
@@ -101,7 +101,7 @@ void* RtpThread::Entry()
     }
     else
     {
-        pml::Log::Get() << "RTP:using SDP" << std::endl;
+        pml::Log::Get() << "RTP: connect using SDP" << std::endl;
         m_sDescriptor = m_source.sSDP.AfterFirst('\n').ToStdString();
         StreamFromSDP();
     }
@@ -158,10 +158,8 @@ void RtpThread::StreamFromSDP()
             nCountVideo++;
         }
     }
-    pml::Log::Get() << "---------------------------------------" << std::endl;
     pml::Log::Get() << "Number of AES67 Subsessions: " << nCountAudio << std::endl;
     pml::Log::Get() << "Number of Video Subsessions: " << nCountVideo << std::endl;
-    pml::Log::Get() << "---------------------------------------" << std::endl;
 
     if(nCountAudio == 0)
     {
@@ -236,7 +234,9 @@ bool RtpThread::DoRTSP()
         return false;
     }
 
-    m_pRtspClient->sendDescribeCommand(continueAfterDESCRIBE);
+    m_pRtspClient->sendOptionsCommand(continueAfterOPTIONS);
+    //m_pRtspClient->sendDescribeCommand(continueAfterDESCRIBE);
+
     return true;
 }
 
@@ -358,7 +358,7 @@ void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const p
 
 void RtpThread::StopStream()
 {
-    pml::Log::Get(pml::Log::LOG_INFO) << "------------------------ Stop Stream " << std::endl;
+    pml::Log::Get(pml::Log::LOG_INFO) << "Stop Stream " << std::endl;
     if(m_pRtspClient)
     {
         shutdownStream(m_pRtspClient, 0);
@@ -459,11 +459,8 @@ void RtpThread::SaveSDP(unsigned int nResult, const std::string& sResult)
 {
     m_sDescriptor = sResult;
 
-    pml::Log::Get() << "Received SDP. Code: " << nResult << " Description: '" << m_sDescriptor << "'" << std::endl;
     //Start playing
     StreamFromSDP();
-
-
 
     if(m_pHandler)
     {

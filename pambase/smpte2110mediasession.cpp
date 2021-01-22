@@ -41,7 +41,6 @@ Smpte2110MediaSession* Smpte2110MediaSession::createNew(UsageEnvironment& env,
 
 void Smpte2110MediaSession::initializeSMPTE_SDP(char const* sdpDescription)
 {
-    cout << "2110 SMPTE" << endl;
     if (sdpDescription == NULL)
     {
         return;
@@ -67,8 +66,6 @@ void Smpte2110MediaSession::initializeSMPTE_SDP(char const* sdpDescription)
         {
             break; // there are no m= lines at all
         }
-        cout << "Line: " << endl;
-        cout << sdpLine << endl;
 
         // Check for various special SMPTE 2110 and AES56 and Ravenna SDP lines that we understand:
         if (parseSDPAttribute_RefClk(sdpLine)) continue;
@@ -83,7 +80,6 @@ void Smpte2110MediaSession::initializeSMPTE_SDP(char const* sdpDescription)
 
 Boolean Smpte2110MediaSession::parseSDPAttribute_RefClk(char const* sdpLine)
 {
-    cout << "2110: SDP" << endl;
     wxString sSdp(wxString::FromUTF8(sdpLine));
 
     wxString sFind(wxT("a=ts-refclk:"));
@@ -250,7 +246,7 @@ Smpte2110MediaSubsession::Smpte2110MediaSubsession(MediaSession& parent) : Media
  m_bMaxUdp(false)
 
 {
-    std::cout << "Smpte2110MediaSubsession" << std::endl;
+
 }
 
 wxString Smpte2110MediaSubsession::GetEndpoint()
@@ -299,7 +295,6 @@ Boolean Smpte2110MediaSubsession::createSourceObjects(int useSpecialRTPoffset)
         env().setResultMsg("RTP payload format unknown or not supported");
     }
 
-    std::cout << "Smpte2110MediaSubsession: FAILED" << std::endl;
     return False; // an error occurred
 }
 
@@ -333,7 +328,6 @@ void Smpte2110MediaSubsession::parseSDPAttribute_Sync()
         }
         sTime.ToULong(&m_nSyncTime);
 
-        pml::Log::Get(pml::Log::LOG_DEBUG) << "parseSDPAttribute_Sync: " << sTime << " to " << m_nSyncTime << std::endl;
     }
 
 }

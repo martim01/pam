@@ -117,7 +117,6 @@ int SoundcardManager::GetInputDevice() const
     {
         return m_pInput->GetDevice();
     }
-    std::cout << "GetInputDevice: Done" <<std::endl;
     return -1;
 }
 
@@ -217,7 +216,6 @@ bool SoundcardManager::IsOutputStreamOpen()
 
 double SoundcardManager::GetInputLatency()
 {
-    std::cout << "GetInputLatency" << (int)m_pInput <<std::endl;
     if(m_pInput)
     {
         return m_pInput->GetInputLatency();

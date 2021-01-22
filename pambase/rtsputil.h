@@ -16,6 +16,7 @@ static unsigned nextQOSMeasurementUSecs;
 
 
 // RTSP 'response handlers':
+void continueAfterOPTIONS(RTSPClient* rtspClient, int resultCode, char* resultString);
 void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultString);
 void continueAfterSETUP(RTSPClient* rtspClient, int resultCode, char* resultString);
 void continueAfterPLAY(RTSPClient* rtspClient, int resultCode, char* resultString);

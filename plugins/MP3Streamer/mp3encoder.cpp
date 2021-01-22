@@ -28,11 +28,9 @@ bool MP3Encoder::StopLame()
 bool MP3Encoder::InitLame(const MP3Parameters& params)
 {
     m_params = params;
-    std::cout << "InitLame\n";
     m_pLame = lame_init();
     if(m_pLame == nullptr)
     {
-        std::cout << "InitLame: Failed\n";
         return false;
     }
 
@@ -48,13 +46,10 @@ bool MP3Encoder::InitLame(const MP3Parameters& params)
     int ret_code = lame_init_params(m_pLame);
     if(ret_code <0)
     {
-        std::cout << "InitLame: Invalid Params\n";
         return false;
     }
 
 
-
-    std::cout << "InitLame: Done\n";
     return true;
 }
 

@@ -9,7 +9,7 @@
 #include "AES67ServerMediaSubsession.h"
 #include "liveaudiosource.h"
 #include "dlldefine.h"
-
+#include "pamRTSPServer.h"
 struct qosData;
 class Smpte2110MediaSession;
 class timedbuffer;
@@ -52,7 +52,7 @@ class PAMBASE_IMPEXPORT RtpServerThread : public wxThread
         SimpleRTPSink* m_pSink;
         RTCPInstance* m_pRtcpInstance;
         Groupsock* m_pRtpGroupsock;
-        RTSPServer* m_pRtspServer;
+        PamRTSPServer* m_pRtspServer;
         std::string m_sSDP;
         bool m_bStreaming;
 };

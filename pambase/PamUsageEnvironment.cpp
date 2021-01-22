@@ -50,7 +50,13 @@ UsageEnvironment& PamUsageEnvironment::operator<<(char const* str)
 {
     if (str != NULL)
     {
+        std::string sMsg(str);
+
         pml::Log::Get() << str;
+        if(sMsg.back() == '\n')
+        {
+            pml::Log::Get() << std::endl;
+        }
     }
     return *this;
 }
