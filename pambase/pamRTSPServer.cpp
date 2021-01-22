@@ -30,7 +30,7 @@ RTSPServer::RTSPClientConnection(ourServer, clientSocket, clientAddr)
 {
     //@todo put in client address and port number
 
-    pml::Log::Get() << "RTSPServer\t" << "New Connection: " << inet_ntoa(clientAddr.sin_addr) <<std::endl;
+    pml::Log::Get() << "RTSPServer\t" << "New Connection: " << inet_ntoa(clientAddr.sin_addr) << std::endl;
 }
 PamRTSPServer::PamRTSPClientConnection::~PamRTSPClientConnection()
 {}
