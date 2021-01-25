@@ -29,6 +29,7 @@ DEFINE_EVENT_TYPE(wxEVT_RTP_SESSION_CLOSED)
 DEFINE_EVENT_TYPE(wxEVT_SDP)
 
 RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface, const wxString& sProg, const AoIPSource& source, unsigned int nBufferSize, bool bSaveSDPOnly) :
+    wxThread(wxTHREAD_JOINABLE),
     m_pHandler(pHandler),
     m_sProgName(sProg),
     m_source(source),
@@ -82,7 +83,7 @@ void* RtpThread::Entry()
         pml::Log::Get() << "RTP: connect using RTSP" << std::endl;
         if(DoRTSP())
         {
-            while(TestDestroy() == false && m_eventLoopWatchVariable == 0)
+            while(m_eventLoopWatchVariable == 0)
             {
                 m_penv->taskScheduler().doEventLoop(&m_eventLoopWatchVariable);
             }
@@ -93,7 +94,7 @@ void* RtpThread::Entry()
         pml::Log::Get() << "RTP:connect using SIP" << std::endl;
         if(DoSIP())
         {
-            while(TestDestroy() == false && m_eventLoopWatchVariable == 0)
+            while(m_eventLoopWatchVariable == 0)
             {
                 m_penv->taskScheduler().doEventLoop(&m_eventLoopWatchVariable);
             }
@@ -106,7 +107,7 @@ void* RtpThread::Entry()
         StreamFromSDP();
     }
 
-
+    pml::Log::Get() << "RTP: Stream closed" << std::endl;
     delete[] m_pCurrentBuffer;
 
     wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_RTP_SESSION_CLOSED);
@@ -115,6 +116,7 @@ void* RtpThread::Entry()
     wxQueueEvent(m_pHandler, pEvent);
 
     // @todo do we need to delete clients etc?
+
 
     return 0;
 
@@ -215,7 +217,7 @@ void RtpThread::StreamFromSDP()
     }
     PassSessionDetails(m_pSession);
 
-    while(TestDestroy() == false && m_eventLoopWatchVariable == 0)
+    while(m_eventLoopWatchVariable == 0)
     {
         m_penv->taskScheduler().doEventLoop(&m_eventLoopWatchVariable);
     }

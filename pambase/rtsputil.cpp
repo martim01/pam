@@ -76,8 +76,6 @@ void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultS
     else
     {
         char* const sdpDescription = resultString;
-        pml::Log::Get() << "Got an SDP description:\n" << sdpDescription << std::endl;
-
 
         // Create a media session object from this SDP description:
         scs.session = Smpte2110MediaSession::createNew(env, sdpDescription);

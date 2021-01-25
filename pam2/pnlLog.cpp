@@ -34,7 +34,7 @@ pnlLog::pnlLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 
 
     pml::Log::Get().AddOutput(std::make_unique<wxLogOutput>(this));
-//	pml::Log::Get().AddOutput(std::make_unique<pml::LogOutput>());
+	pml::Log::Get().AddOutput(std::make_unique<pml::LogOutput>());
 
 	Connect(wxID_ANY,wxEVT_PMLOG,(wxObjectEventFunction)&pnlLog::OnLog);
 }
@@ -90,7 +90,6 @@ void pnlLog::OnLog(wxCommandEvent& event)
 
     if(event.GetInt() >= m_nLogLevel)
     {
-
         LogElement* pElement(new LogElement(dc, GetClientSize().x, event.GetString(), event.GetInt()));  //@todo replace log type with something sensible
         m_pLogList->AddElement(pElement);
         pElement->Filter(m_nFilter);

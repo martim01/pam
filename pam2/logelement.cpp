@@ -2,15 +2,33 @@
 #include <wx/dc.h>
 #include <wx/log.h>
 #include "log.h"
+#include <wx/tokenzr.h>
+
 
 LogElement::LogElement(wxDC& dc, unsigned int nWidth, const wxString& sMessage, int nType) : m_nType(nType)
 {
-    wxSize sz = uiRect::GetSizeOfText(dc, sMessage, wxRect(0,0,nWidth-COLUMN_TIME, 25));
+    wxRect rect(0,0,0,0);
+    auto& rectTime = m_mHitRects.insert(std::make_pair(0, uiRect(rect,0))).first->second;
+    rectTime.SetLabel(wxDateTime::UNow().Format(wxT("%H:%M:%S:%l")));
+    rectTime.SetTextAlign(wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
+    rectTime.SetBackgroundColour(*wxBLACK);
+    rectTime.SetForegroundColour(*wxWHITE);
 
-    m_nHeight = std::max(sz.y+15, 30);
+    m_rectEnclosing.SetWidth(nWidth);
 
-    CreateHitRects();
-    m_mHitRects[1].SetLabel(sMessage);
+    m_nHeight = 0;
+    wxArrayString asLines(wxStringTokenize(sMessage, "\n"));
+    for(size_t i = 0; i < asLines.GetCount(); i++)
+    {
+        asLines[i].Trim();
+        wxSize sz = uiRect::GetSizeOfText(dc, asLines[i], wxRect(0,0,nWidth-COLUMN_TIME, 20), true);
+        CreateHitRect(i+1, sz.y+2, asLines[i]);
+        m_nHeight += sz.y+2;
+    }
+
+   // m_nHeight = std::max(m_nHeight, (unsigned long)30);
+
+    rectTime.SetHeight(m_nHeight);
 
     SetMinSize(nWidth, -1);
     SetMaxSize(nWidth, m_nHeight);
@@ -59,57 +77,60 @@ int LogElement::SubElementHeld()
 
 void LogElement::Draw(wxDC& dc, bool bSelected)
 {
-   m_mHitRects[0].Draw(dc, uiRect::BORDER_NONE);
-    m_mHitRects[1].Draw(dc, uiRect::BORDER_NONE);
+    for(auto pairRect : m_mHitRects)
+    {
+        pairRect.second.Draw(dc, uiRect::BORDER_NONE);
+    }
 }
 
-void LogElement::CreateHitRects()
+void LogElement::CreateHitRect(size_t nId, int nHeight, const wxString& sLine)
 {
-    wxRect rect(0,0,0,0);
-
-    m_mHitRects.clear();
-    m_mHitRects.insert(std::make_pair(0, uiRect(rect,0)));
-    m_mHitRects.insert(std::make_pair(1, uiRect(rect,0)));
-
-    m_mHitRects[0].SetLabel(wxDateTime::UNow().Format(wxT("%H:%M:%S:%l")));
-    m_mHitRects[0].SetTextAlign(wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
+    auto& rect = m_mHitRects.insert(std::make_pair(nId, uiRect(wxRect(0,0,0,0)))).first->second;
 
     switch(m_nType)
     {
         case pml::Log::LOG_DEBUG:
-            m_mHitRects[0].SetBackgroundColour(*wxBLACK);
-            m_mHitRects[1].SetBackgroundColour(*wxBLACK);
-            m_mHitRects[0].SetForegroundColour(wxColour(150,150,150));
-            m_mHitRects[1].SetForegroundColour(wxColour(150,150,150));
+            rect.SetBackgroundColour(*wxBLACK);
+            rect.SetForegroundColour(wxColour(150,150,150));
             break;
         case pml::Log::LOG_INFO:
-            m_mHitRects[0].SetBackgroundColour(*wxBLACK);
-            m_mHitRects[1].SetBackgroundColour(*wxBLACK);
-            m_mHitRects[0].SetForegroundColour(*wxWHITE);
-            m_mHitRects[1].SetForegroundColour(*wxWHITE);
+            rect.SetBackgroundColour(*wxBLACK);
+            rect.SetForegroundColour(*wxWHITE);
             break;
         case pml::Log::LOG_WARN:
-            m_mHitRects[0].SetBackgroundColour(wxColour(255,100,50));
-            m_mHitRects[1].SetBackgroundColour(wxColour(255,100,50));
-            m_mHitRects[0].SetForegroundColour(*wxBLACK);
-            m_mHitRects[1].SetForegroundColour(*wxBLACK);
+            rect.SetBackgroundColour(wxColour(255,100,50));
+            rect.SetForegroundColour(*wxBLACK);
             break;
         case pml::Log::LOG_ERROR:
-            m_mHitRects[0].SetBackgroundColour(wxColour(255,50,50));
-            m_mHitRects[1].SetBackgroundColour(wxColour(255,50,50));
-            m_mHitRects[0].SetForegroundColour(*wxBLACK);
-            m_mHitRects[1].SetForegroundColour(*wxBLACK);
+            rect.SetBackgroundColour(wxColour(255,50,50));
+            rect.SetForegroundColour(*wxBLACK);
             break;
     }
-    m_mHitRects[1].SetWidth(m_rectEnclosing.GetWidth()-COLUMN_TIME);
-    m_mHitRects[1].SetTextAlign(wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
+    rect.SetWidth(m_rectEnclosing.GetWidth()-COLUMN_TIME);
+    rect.SetTextAlign(wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
+    rect.SetHeight(nHeight);
+    rect.SetLabel(sLine);
 
 }
 
 void LogElement::ElementMoved()
 {
     m_mHitRects[0].SetRect(m_rectEnclosing.GetLeft(), m_rectEnclosing.GetTop(), COLUMN_TIME, m_nHeight);
-    m_mHitRects[1].SetRect(m_mHitRects[0].GetRight()+2, m_rectEnclosing.GetTop(), m_rectEnclosing.GetRight()-m_mHitRects[0].GetRight()-2, m_nHeight);
+    int nLeft, nTop;
+    for(auto& pairRect : m_mHitRects)
+    {
+        if(pairRect.first == 0)
+        {
+            pairRect.second.SetRect(m_rectEnclosing.GetLeft(), m_rectEnclosing.GetTop(), COLUMN_TIME, m_nHeight);
+            nLeft = pairRect.second.GetRight();
+            nTop = m_rectEnclosing.GetTop();
+        }
+        else
+        {
+            pairRect.second.SetRect(nLeft+2, nTop, pairRect.second.GetWidth(), pairRect.second.GetHeight());
+            nTop = pairRect.second.GetBottom()+1;
+        }
+    }
 }
 
 

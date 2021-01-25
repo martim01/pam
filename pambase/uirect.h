@@ -3,7 +3,7 @@
 #include "dlldefine.h"
 #include <wx/dc.h>
 #include <wx/colour.h>
-
+#include <wx/tokenzr.h>
 
 
 /** @class basic ui element class for new wammacs stuff. Draws a rectangle with colours, borders, labels bitmaps etc.
@@ -252,11 +252,14 @@ class PAMBASE_IMPEXPORT uiRect
 
         void Pad(unsigned long nHorizontal, unsigned long nVertical);
 
-        static wxSize GetSizeOfText(wxDC& dc, const wxString& sText, const wxRect& rect);
+        static wxSize GetSizeOfText(wxDC& dc, const wxString& sText, const wxRect& rect, bool bWrap = true);
 
         wxSize GetSize() const;
 
         void ClipText(bool bClip);
+        void SetWrap(bool bWrap);
+
+        void StripEmptyLines(bool bStrip);
 
         enum {BORDER_UP=0, BORDER_DOWN, BORDER_FLAT, BORDER_NONE};
 
@@ -282,7 +285,8 @@ class PAMBASE_IMPEXPORT uiRect
         *   @param bClip whether to clip the text if it does not fix
         *   @return <i>wxSize</i> returns the height (and width) in pixels that the text will take up
         **/
-        static wxSize DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int nAlign, bool bWrap=true, bool bDraw=true, bool bClip=true, bool bClippingRegion=true);
+        static wxSize DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int nAlign, bool bWrap=true, bool bDraw=true, bool bClip=true,
+        bool bClippingRegion=true);
 
         ///< @brief Creates the text rect (which is slightly smaller than the enclosing rect
         void SetTextRect();
@@ -308,7 +312,7 @@ class PAMBASE_IMPEXPORT uiRect
         size_t m_nIndex;                ///< @brief the index of the uirect
 
         bool m_bClip;
-
+        bool m_bWrap;
 };
 
 

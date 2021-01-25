@@ -149,11 +149,9 @@ void IOManager::Stop()
 
     for(map<unsigned int, RtpThread*>::iterator itThread = m_mRtp.begin(); itThread != m_mRtp.end(); ++itThread)
     {
-        bool bDelete = m_setRtpOrphan.insert(itThread->first).second;
-        if(bDelete)
-        {
-            itThread->second->Delete();
-        }
+        itThread->second->SetToClose();
+        itThread->second->Wait();
+        delete itThread->second;
     }
     m_mRtp.clear();
     SoundcardManager::Get().Terminate();
@@ -392,11 +390,14 @@ void IOManager::InputChanged(const wxString& sKey)
             map<unsigned int, RtpThread*>::iterator itThread = m_mRtp.find(m_nCurrentRtp);
             if(itThread != m_mRtp.end())
             {
-                bool bDelete = m_setRtpOrphan.insert(itThread->first).second;
-                if(bDelete)
-                {
-                    itThread->second->Delete();
-                }
+                pml::Log::Get(pml::Log::LOG_DEBUG) << "IOManager\tDestroy thread" << std::endl;
+                itThread->second->SetToClose();
+                itThread->second->Wait();
+                itThread->second->Delete();
+                m_mRtp.erase(m_nCurrentRtp);
+                m_nCurrentRtp = 0;
+                pml::Log::Get(pml::Log::LOG_DEBUG) << "IOManager\tDestroy thread: Done" << std::endl;
+
             }
             InitAudioInputDevice();
         }
@@ -421,11 +422,15 @@ void IOManager::InputTypeChanged()
             if(itThread != m_mRtp.end())
             {
                 pml::Log::Get(pml::Log::LOG_DEBUG) << "IOManager\tAudio Input Device Changed: Close AoIP" << std::endl;
-                bool bDelete = m_setRtpOrphan.insert(itThread->first).second;
-                if(bDelete)
-                {
-                    itThread->second->Delete();
-                }
+
+                pml::Log::Get(pml::Log::LOG_DEBUG) << "IOManager\tDestroy thread" << std::endl;
+                itThread->second->SetToClose();
+                itThread->second->Wait();
+                itThread->second->Delete();
+                m_mRtp.erase(m_nCurrentRtp);
+                m_nCurrentRtp = 0;
+                pml::Log::Get(pml::Log::LOG_DEBUG) << "IOManager\tDestroy thread: Done" << std::endl;
+
             }
             break;
     }
@@ -745,6 +750,10 @@ void IOManager::InitAudioInputDevice()
 
             m_mRtp.insert(make_pair(m_nCurrentRtp, pThread));
         }
+        else
+        {
+            pml::Log::Get(pml::Log::LOG_WARN) << "IOManager\tRTP Thread already running for source " << source.nIndex << std::endl;
+        }
     }
     else if(sType == wxT("Output"))
     {
@@ -830,15 +839,13 @@ void IOManager::SessionChanged()
 
 void IOManager::OnRTPSessionClosed(wxCommandEvent& event)
 {
-
-
     if(m_nCurrentRtp == event.GetInt())
     {
         m_nCurrentRtp = 0;
     }
-    m_setRtpOrphan.erase(event.GetInt());
+    //m_setRtpOrphan.erase(event.GetInt());
     m_mRtp.erase(event.GetInt());
-
+    pml::Log::Get(pml::Log::LOG_DEBUG) << "IOManager\tOnRTPSessionClosed" << std::endl;
 }
 
 void IOManager::OnRTPSession(wxCommandEvent& event)

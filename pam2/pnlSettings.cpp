@@ -355,8 +355,12 @@ void pnlSettings::ShowRTPDefined()
 
     ShowPagingButtons();
 
-    m_plstDevices->SelectButton(Settings::Get().Read(wxT("Input"), wxT("AoIP"), 0));
-
+    int nDevice = m_plstDevices->FindButton(reinterpret_cast<void*>(Settings::Get().Read(wxT("Input"), wxT("AoIP"), 0)));
+    if(nDevice == wmList::NOT_FOUND)
+    {
+        nDevice = 0;
+    }
+    m_plstDevices->SelectButton(nDevice);
 
 }
 

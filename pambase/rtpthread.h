@@ -11,6 +11,8 @@
 #include "session.h"
 #include "dlldefine.h"
 #include "aoipsourcemanager.h"
+#include <atomic>
+
 
 struct qosData;
 class Smpte2110MediaSession;
@@ -25,12 +27,12 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
         void MasterClockChanged();
 
 
-        void StopStream();
 
         void SetToClose()
         {
             m_eventLoopWatchVariable = 1;
         }
+
 
         void StreamFromSDP();
 
@@ -42,18 +44,31 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
             m_pCondition->Signal();
         }
 
+        void SaveSDP(unsigned int nResult, const std::string& sResult);
+
         void QosUpdated(qosData* pData);
+
+
+
+
+
 
         void PassSessionDetails(Smpte2110MediaSession* pSession);
 
         float ConvertFrameBufferToSample(u_int8_t* pFrameBuffer, u_int8_t nBytesPerSample);
 
+    protected:
+        void StopStream();
+
         bool DoRTSP();
         bool DoSIP();
 
-        void SaveSDP(unsigned int nResult, const std::string& sResult);
+
 
         pairTime_t ConvertDoubleToPairTime(double dTime);
+
+
+
         wxEvtHandler* m_pHandler;
         wxString m_sProgName;
         AoIPSource m_source;
@@ -95,6 +110,7 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
 
         std::string m_sDescriptor;
         unsigned long m_nQosMeasurementIntervalMS;
+
 
 
 };

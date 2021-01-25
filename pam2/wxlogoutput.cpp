@@ -11,6 +11,8 @@ void wxLogOutput::Flush(pml::Log::enumLevel eLogLevel, const std::stringstream& 
         wxString sLog(logStream.str());
         sLog.Trim();
         sLog.Trim(false);
+
+
         if(sLog.empty() == false)
         {
 

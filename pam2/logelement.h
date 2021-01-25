@@ -29,7 +29,7 @@ class  LogElement : public advElement
         int SubElementHeld();
         void Draw(wxDC& dc, bool bSelected);
 
-        void CreateHitRects();
+        void CreateHitRect(size_t nId, int nHeight, const wxString& sLine);
         void ElementMoved();
         static const unsigned int COLUMN_TIME = 100;
         unsigned long m_nHeight;
