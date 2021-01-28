@@ -71,48 +71,48 @@ pnlRTCPTransmission::pnlRTCPTransmission(wxWindow* parent,wxWindowID id,const wx
 	SetBackgroundColour(wxColour(0,0,0));
 	pnlQoS = new wxPanel(this, ID_PANEL2, wxPoint(0,40), wxSize(600,440), wxTAB_TRAVERSAL, _T("ID_PANEL2"));
 	pnlQoS->SetBackgroundColour(wxColour(0,0,0));
-	m_pLbl5 = new wmLabel(pnlQoS, ID_M_PLBL8, _("First RR"), wxPoint(5,5), wxSize(147,20), 0, _T("ID_M_PLBL8"));
+	m_pLbl5 = new wmLabel(pnlQoS, ID_M_PLBL8, _("First RR"), wxPoint(5,5), wxSize(187,20), 0, _T("ID_M_PLBL8"));
 	m_pLbl5->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl5->GetUiRect().SetGradient(0);
 	m_pLbl5->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl5->SetBackgroundColour(wxColour(0,0,255));
-	m_pLbl6 = new wmLabel(pnlQoS, ID_M_PLBL9, _("Latest RR"), wxPoint(153,5), wxSize(147,20), 0, _T("ID_M_PLBL9"));
+	m_pLbl6 = new wmLabel(pnlQoS, ID_M_PLBL9, _("Latest RR"), wxPoint(193,5), wxSize(187,20), 0, _T("ID_M_PLBL9"));
 	m_pLbl6->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl6->GetUiRect().SetGradient(0);
 	m_pLbl6->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl6->SetBackgroundColour(wxColour(0,0,255));
-	m_pLbl7 = new wmLabel(pnlQoS, ID_M_PLBL10, _("RR Gap"), wxPoint(301,5), wxSize(147,20), 0, _T("ID_M_PLBL10"));
+	m_pLbl7 = new wmLabel(pnlQoS, ID_M_PLBL10, _("RR Gap"), wxPoint(381,5), wxSize(107,20), 0, _T("ID_M_PLBL10"));
 	m_pLbl7->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl7->GetUiRect().SetGradient(0);
 	m_pLbl7->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl7->SetBackgroundColour(wxColour(0,0,255));
-	m_pLbl1 = new wmLabel(pnlQoS, ID_M_PLBL1, _("SR RR Diff"), wxPoint(449,5), wxSize(146,20), 0, _T("ID_M_PLBL1"));
+	m_pLbl1 = new wmLabel(pnlQoS, ID_M_PLBL1, _("SR RR Diff"), wxPoint(489,5), wxSize(106,20), 0, _T("ID_M_PLBL1"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl1->GetUiRect().SetGradient(0);
 	m_pLbl1->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl1->SetBackgroundColour(wxColour(0,0,255));
-	m_plblRRFirst = new wmLabel(pnlQoS, ID_M_PLBL11, wxEmptyString, wxPoint(5,26), wxSize(147,25), 0, _T("ID_M_PLBL11"));
+	m_plblRRFirst = new wmLabel(pnlQoS, ID_M_PLBL11, wxEmptyString, wxPoint(5,26), wxSize(187,25), 0, _T("ID_M_PLBL11"));
 	m_plblRRFirst->SetBorderState(uiRect::BORDER_NONE);
 	m_plblRRFirst->GetUiRect().SetGradient(0);
 	m_plblRRFirst->SetForegroundColour(wxColour(0,128,0));
 	m_plblRRFirst->SetBackgroundColour(wxColour(255,255,255));
 	wxFont m_plblRRFirstFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
 	m_plblRRFirst->SetFont(m_plblRRFirstFont);
-	m_plblRRLast = new wmLabel(pnlQoS, ID_M_PLBL13, wxEmptyString, wxPoint(153,26), wxSize(147,25), 0, _T("ID_M_PLBL13"));
+	m_plblRRLast = new wmLabel(pnlQoS, ID_M_PLBL13, wxEmptyString, wxPoint(193,26), wxSize(187,25), 0, _T("ID_M_PLBL13"));
 	m_plblRRLast->SetBorderState(uiRect::BORDER_NONE);
 	m_plblRRLast->GetUiRect().SetGradient(0);
 	m_plblRRLast->SetForegroundColour(wxColour(0,128,0));
 	m_plblRRLast->SetBackgroundColour(wxColour(255,255,255));
 	wxFont m_plblRRLastFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
 	m_plblRRLast->SetFont(m_plblRRLastFont);
-	m_plblRRGap = new wmLabel(pnlQoS, ID_M_PLBL12, wxEmptyString, wxPoint(301,26), wxSize(147,25), 0, _T("ID_M_PLBL12"));
+	m_plblRRGap = new wmLabel(pnlQoS, ID_M_PLBL12, wxEmptyString, wxPoint(381,26), wxSize(107,25), 0, _T("ID_M_PLBL12"));
 	m_plblRRGap->SetBorderState(uiRect::BORDER_NONE);
 	m_plblRRGap->GetUiRect().SetGradient(0);
 	m_plblRRGap->SetForegroundColour(wxColour(0,128,0));
 	m_plblRRGap->SetBackgroundColour(wxColour(255,255,255));
 	wxFont m_plblRRGapFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
 	m_plblRRGap->SetFont(m_plblRRGapFont);
-	m_plblRRSR = new wmLabel(pnlQoS, ID_M_PLBL2, wxEmptyString, wxPoint(449,26), wxSize(146,25), 0, _T("ID_M_PLBL2"));
+	m_plblRRSR = new wmLabel(pnlQoS, ID_M_PLBL2, wxEmptyString, wxPoint(489,26), wxSize(106,25), 0, _T("ID_M_PLBL2"));
 	m_plblRRSR->SetBorderState(uiRect::BORDER_NONE);
 	m_plblRRSR->GetUiRect().SetGradient(0);
 	m_plblRRSR->SetForegroundColour(wxColour(0,128,0));
@@ -346,6 +346,8 @@ void pnlRTCPTransmission::OnRTCPTransmissionEvent(const RTCPTransmissionEvent& e
     if(itSubscriber == m_mSubscribers.end())
     {
         m_plstSubscribers->AddButton(event.GetFromAddress());
+        m_plstSubscribers->Refresh();
+        m_plstSubscribers->Update();
     }
     else
     {
@@ -353,13 +355,28 @@ void pnlRTCPTransmission::OnRTCPTransmissionEvent(const RTCPTransmissionEvent& e
     }
     m_mSubscribers[event.GetFromAddress()] = dynamic_cast<RTCPTransmissionEvent*>(event.Clone());
 
+    if(event.GetFromAddress() == m_sSelected)
+    {
+        ShowSubscriber();
+    }
 }
 
 
 void pnlRTCPTransmission::OnSubscriberSelected(const wxCommandEvent& event)
 {
+    pml::Log::Get(pml::Log::LOG_TRACE) << "pnlRTCPTransmission::OnSubscriberSelected" << std::endl;
     auto itSubscriber= m_mSubscribers.find(event.GetString());
-    if(itSubscriber == m_mSubscribers.end())
+    if(itSubscriber != m_mSubscribers.end())
+    {
+        m_sSelected = event.GetString();
+        ShowSubscriber();
+    }
+}
+
+void pnlRTCPTransmission::ShowSubscriber()
+{
+    auto itSubscriber= m_mSubscribers.find(m_sSelected);
+    if(itSubscriber != m_mSubscribers.end())
     {
         m_plblJitter->SetLabel(wxString::Format("%u", itSubscriber->second->GetJitter()));
         m_plblKbAv->SetLabel("");
@@ -372,12 +389,15 @@ void pnlRTCPTransmission::OnSubscriberSelected(const wxCommandEvent& event)
         m_plblPacketsMax->SetLabel("");
         m_plblPacketsMin->SetLabel("");
         m_plblPacketsTotal->SetLabel(wxString::Format("%u", itSubscriber->second->GetTotalPackets()));
-        m_plblRRFirst->SetLabel(itSubscriber->second->GetFirstReceivedTime().Format("%d/%m/%Y %H:%M:%S:%l"));
+        m_plblRRFirst->SetLabel(itSubscriber->second->GetFirstReceivedTime().Format("%y-%m-%d %H:%M:%S:%l"));
         m_plblRRGap->SetLabel("");
-        m_plblRRLast->SetLabel(itSubscriber->second->GetLastReceivedTime().Format("%d/%m/%Y %H:%M:%S:%l"));
+        m_plblRRLast->SetLabel(itSubscriber->second->GetLastReceivedTime().Format("%y-%m-%d %H:%M:%S:%l"));
         m_plblRRSR->SetLabel(wxString::Format("%u", itSubscriber->second->GetSRRRTime()));
 		m_plblRoundtrip->SetLabel(wxString::Format("%u", itSubscriber->second->GetRoundTripDelay()));
 		m_plblSubscriber->SetLabel(itSubscriber->second->GetString());
-
+    }
+    else
+    {
+        pml::Log::Get(pml::Log::LOG_TRACE) << "pnlRTCPTransmission::OnSubscriberSelected: Subscriber not found!" << std::endl;
     }
 }

@@ -134,8 +134,9 @@ class pnlRTCPTransmission: public wxPanel
 		void OnRTCPTransmissionEvent(const RTCPTransmissionEvent& event);
 
 		void OnSubscriberSelected(const wxCommandEvent& event);
-
+        void ShowSubscriber();
 		std::map<wxString, RTCPTransmissionEvent* > m_mSubscribers;
+		wxString m_sSelected;
 
 		DECLARE_EVENT_TABLE()
 };

@@ -12,35 +12,35 @@
 			<object class="wmLabel" name="ID_M_PLBL8" variable="m_pLbl5" member="yes">
 				<label>First RR</label>
 				<pos>5,5</pos>
-				<size>147,20</size>
+				<size>167,20</size>
 				<fg>#FFFFFF</fg>
 				<bg>#0000FF</bg>
 			</object>
 			<object class="wmLabel" name="ID_M_PLBL9" variable="m_pLbl6" member="yes">
 				<label>Latest RR</label>
-				<pos>153,5</pos>
-				<size>147,20</size>
+				<pos>173,5</pos>
+				<size>167,20</size>
 				<fg>#FFFFFF</fg>
 				<bg>#0000FF</bg>
 			</object>
 			<object class="wmLabel" name="ID_M_PLBL10" variable="m_pLbl7" member="yes">
 				<label>RR Gap</label>
-				<pos>301,5</pos>
-				<size>147,20</size>
+				<pos>341,5</pos>
+				<size>127,20</size>
 				<fg>#FFFFFF</fg>
 				<bg>#0000FF</bg>
 			</object>
 			<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
 				<label>SR RR Diff</label>
-				<pos>449,5</pos>
-				<size>146,20</size>
+				<pos>469,5</pos>
+				<size>126,20</size>
 				<fg>#FFFFFF</fg>
 				<bg>#0000FF</bg>
 			</object>
 			<object class="wmLabel" name="ID_M_PLBL11" variable="m_plblRRFirst" member="yes">
 				<label></label>
 				<pos>5,26</pos>
-				<size>147,25</size>
+				<size>167,25</size>
 				<fg>#008000</fg>
 				<bg>#FFFFFF</bg>
 				<font>
@@ -54,8 +54,8 @@
 			</object>
 			<object class="wmLabel" name="ID_M_PLBL13" variable="m_plblRRLast" member="yes">
 				<label></label>
-				<pos>153,26</pos>
-				<size>147,25</size>
+				<pos>173,26</pos>
+				<size>167,25</size>
 				<fg>#008000</fg>
 				<bg>#FFFFFF</bg>
 				<font>
@@ -69,8 +69,8 @@
 			</object>
 			<object class="wmLabel" name="ID_M_PLBL12" variable="m_plblRRGap" member="yes">
 				<label></label>
-				<pos>301,26</pos>
-				<size>147,25</size>
+				<pos>341,26</pos>
+				<size>127,25</size>
 				<fg>#008000</fg>
 				<bg>#FFFFFF</bg>
 				<font>
@@ -84,8 +84,8 @@
 			</object>
 			<object class="wmLabel" name="ID_M_PLBL2" variable="m_plblRRSR" member="yes">
 				<label></label>
-				<pos>449,26</pos>
-				<size>146,25</size>
+				<pos>469,26</pos>
+				<size>126,25</size>
 				<fg>#008000</fg>
 				<bg>#FFFFFF</bg>
 				<font>

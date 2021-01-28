@@ -263,6 +263,9 @@ void OnDemandAES67MediaSubsession::DoQoS()
         RTPTransmissionStats* pStats = statsIter.next();
         if (pStats != NULL)
         {
+            for(auto pHandler : m_setHandlers)
+            {
+
             RTCPTransmissionEvent* pEvent = new RTCPTransmissionEvent();
 
             pEvent->m_nSR_RRTime = pStats->diffSR_RRTime();
@@ -313,12 +316,9 @@ void OnDemandAES67MediaSubsession::DoQoS()
 
             pEvent->m_nTotNumPacketsLost = pStats->totNumPacketsLost();
 
-            for(auto pHandler : m_setHandlers)
-            {
                 pml::Log::Get(pml::Log::LOG_TRACE) << "OnDemandAES67MediaSubsession::DoQoS:SendEvent" << std::endl;
-                wxQueueEvent(pHandler, pEvent->Clone());
+                wxQueueEvent(pHandler, pEvent);
             }
-            delete pEvent;
 
         }
         // Do this again later:

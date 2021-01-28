@@ -7,7 +7,7 @@ wxDEFINE_EVENT(wxEVT_RTCP_TRANSMISSION, RTCPTransmissionEvent);
 #endif // WXSPAM
 
 
-RTCPTransmissionEvent::RTCPTransmissionEvent(const RTCPTransmissionEvent& event) :
+RTCPTransmissionEvent::RTCPTransmissionEvent(const RTCPTransmissionEvent& event) : wxCommandEvent(event),
     m_nSR_RRTime(event.GetSRRRTime()),
     m_nFirstPacketNumber(event.GetFirstPacketNumber()),
     m_nOctets(event.GetTotalOctets()),

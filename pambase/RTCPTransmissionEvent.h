@@ -5,6 +5,14 @@
 #include <wx/string.h>
 #include <wx/datetime.h>
 
+class RTCPTransmissionEvent;
+
+#ifdef WXSPAM
+DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_RTCP_TRANSMISSION, -1)
+#else
+wxDECLARE_EXPORTED_EVENT(PAMBASE_IMPEXPORT, wxEVT_RTCP_TRANSMISSION,RTCPTransmissionEvent);
+#endif
+
 
 class PAMBASE_IMPEXPORT RTCPTransmissionEvent : public wxCommandEvent
 {
@@ -12,7 +20,7 @@ class PAMBASE_IMPEXPORT RTCPTransmissionEvent : public wxCommandEvent
 
 public:
 
-    RTCPTransmissionEvent(){}
+    RTCPTransmissionEvent() :wxCommandEvent(wxEVT_RTCP_TRANSMISSION, wxID_ANY){}
     /** @brief	Copy Constructor
     *   @param event a wxNIEvent
     **/
@@ -70,11 +78,5 @@ protected:
 
 typedef void (wxEvtHandler::*RTCPTransmissionEventFunction)(RTCPTransmissionEvent&);
 
-
-#ifdef WXSPAM
-DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_RTCP_TRANSMISSION, -1)
-#else
-wxDECLARE_EXPORTED_EVENT(PAMBASE_IMPEXPORT, wxEVT_RTCP_TRANSMISSION,RTCPTransmissionEvent);
-#endif
 
 
