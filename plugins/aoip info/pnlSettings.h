@@ -2,8 +2,8 @@
 #define PNLSETTINGS_H
 
 //(*Headers(pnlSettings)
-#include <wx/panel.h>
 #include "wmlist.h"
+#include <wx/panel.h>
 //*)
 
 class AoIPInfoBuilder;

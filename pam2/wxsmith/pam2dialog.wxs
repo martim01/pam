@@ -166,6 +166,10 @@
 				<object class="wxPanel" name="ID_PANEL8" subclass="pnlAoIPSelection" variable="pnlAoip" member="yes" />
 				<label>AoIP</label>
 			</object>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL9" subclass="pnlRTCPTransmission" variable="pnlRTCP" member="yes" />
+				<label>RTCP</label>
+			</object>
 		</object>
 		<object class="wxTimer" name="ID_TIMER1" variable="timerStart" member="yes">
 			<interval>10</interval>

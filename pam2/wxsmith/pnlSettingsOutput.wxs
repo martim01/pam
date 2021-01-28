@@ -204,6 +204,37 @@
 						<size>100,40</size>
 						<handler function="OnedtRTPPortText" entry="EVT_TEXT" />
 					</object>
+					<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnRestartStream" member="yes">
+						<label>Restart Stream</label>
+						<pos>470,15</pos>
+						<size>120,40</size>
+						<bg>#FF0000</bg>
+						<font>
+							<size>12</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Tahoma</face>
+						</font>
+						<style>wmButton::STYLE_HOLD</style>
+						<handler function="OnbtnRestartStreamHeld" entry="EVT_BUTTON_HELD" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnStats" member="yes">
+						<label>RTCP Stats</label>
+						<pos>470,65</pos>
+						<size>120,40</size>
+						<bg>#408080</bg>
+						<font>
+							<size>12</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Tahoma</face>
+						</font>
+						<handler function="OnbtnStatsClick" entry="EVT_BUTTON" />
+					</object>
 					<object class="wmKeyboard" name="ID_M_PKBD2" variable="m_pkbd" member="yes">
 						<type>Calc</type>
 						<pos>10,160</pos>
@@ -264,7 +295,7 @@
 						<toggle_percent>40</toggle_percent>
 						<pos>300,160</pos>
 						<size>268,40</size>
-						<bg>#D50000</bg>
+						<bg>#008000</bg>
 						<style>wmButton::STYLE_SELECT</style>
 						<handler function="OnbtnStreamClick" entry="EVT_BUTTON" />
 					</object>

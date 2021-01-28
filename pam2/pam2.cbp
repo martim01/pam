@@ -256,6 +256,8 @@
 		<Unit filename="pnlLogControl.h" />
 		<Unit filename="pnlNetworkSetup.cpp" />
 		<Unit filename="pnlNetworkSetup.h" />
+		<Unit filename="pnlRTCPTransmission.cpp" />
+		<Unit filename="pnlRTCPTransmission.h" />
 		<Unit filename="pnlRTP.cpp" />
 		<Unit filename="pnlRTP.h" />
 		<Unit filename="pnlSettings.cpp" />
@@ -308,6 +310,7 @@
 		<Unit filename="wxsmith/pnlHelp.wxs" />
 		<Unit filename="wxsmith/pnlLog.wxs" />
 		<Unit filename="wxsmith/pnlLogControl.wxs" />
+		<Unit filename="wxsmith/pnlRTCPTransmission.wxs" />
 		<Unit filename="wxsmith/pnlSettingsGenerators.wxs" />
 		<Unit filename="wxsmith/pnlSettingsNmos.wxs" />
 		<Unit filename="wxsmith/pnlSettingsOptions.wxs" />
@@ -352,6 +355,7 @@
 					<wxPanel wxs="wxsmith/pnlAoIPSelection.wxs" src="pnlAoIPSelection.cpp" hdr="pnlAoIPSelection.h" fwddecl="0" i18n="1" name="pnlAoIPSelection" language="CPP" />
 					<wxDialog wxs="wxsmith/dlgEngineering.wxs" src="dlgEngineering.cpp" hdr="dlgEngineering.h" fwddecl="0" i18n="1" name="dlgEngineering" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlSettingsOutput.wxs" src="pnlSettingsOutput.cpp" hdr="pnlSettingsOutput.h" fwddecl="0" i18n="1" name="pnlSettingsOutput" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlRTCPTransmission.wxs" src="pnlRTCPTransmission.cpp" hdr="pnlRTCPTransmission.h" fwddecl="0" i18n="1" name="pnlRTCPTransmission" language="CPP" />
 				</resources>
 			</wxsmith>
 			<AutoVersioning>

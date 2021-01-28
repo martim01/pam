@@ -104,6 +104,7 @@ const long pam2Dialog::ID_M_PSWP4 = wxNewId();
 const long pam2Dialog::ID_PANEL1 = wxNewId();
 const long pam2Dialog::ID_PANEL3 = wxNewId();
 const long pam2Dialog::ID_PANEL8 = wxNewId();
+const long pam2Dialog::ID_PANEL9 = wxNewId();
 const long pam2Dialog::ID_M_PSWP3 = wxNewId();
 const long pam2Dialog::ID_TIMER1 = wxNewId();
 const long pam2Dialog::ID_TIMER2 = wxNewId();
@@ -191,9 +192,11 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_pswpScreens->AddPage(Panel2, _("Screens"), false);
     m_pswpScreens->AddPage(Panel3, _("Options"), false);
     pnlAoip = new pnlAoIPSelection(m_pswpSplash, ID_PANEL8, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL8"));
+    pnlRTCP = new pnlRTCPTransmission(m_pswpSplash, ID_PANEL9, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL9"));
     m_pswpSplash->AddPage(pnlSplash, _("Splash"), true);
     m_pswpSplash->AddPage(pnlMain, _("Main"), false);
     m_pswpSplash->AddPage(pnlAoip, _("AoIP"), false);
+    m_pswpSplash->AddPage(pnlRTCP, _("RTCP"), false);
     timerStart.SetOwner(this, ID_TIMER1);
     timerStart.Start(10, true);
     m_timerFile.SetOwner(this, ID_TIMER2);
@@ -1015,7 +1018,7 @@ void pam2Dialog::OnswpMainPageChanged(wxNotebookEvent& event)
     {
         if(m_bInputFailed)
         {
-            m_pdlgNoInput->Show(m_pswpSplash->GetSelectionName() != "AoIP" && (m_pswpMain->GetSelectionName() != wxT("Settings") && m_pswpMain->GetSelectionName() != wxT("Log") &&
+            m_pdlgNoInput->Show(m_pswpSplash->GetSelectionName() == "Main" && (m_pswpMain->GetSelectionName() != wxT("Settings") && m_pswpMain->GetSelectionName() != wxT("Log") &&
                                   m_pswpMain->GetSelectionName() != wxT("Help") && Settings::Get().Read("Input","Type","Soundcard")!="Disabled"));
         }
         else
@@ -1027,7 +1030,7 @@ void pam2Dialog::OnswpMainPageChanged(wxNotebookEvent& event)
     pam2App* pApp = dynamic_cast<pam2App*>(wxTheApp);
     if(pApp)
     {
-        pApp->CheckHold(m_pswpSplash->GetSelectionName() != "AoIP" && m_pswpMain->GetSelectionName() != wxT("Settings") && m_pswpMain->GetSelectionName() != wxT("Log") &&
+        pApp->CheckHold(m_pswpSplash->GetSelectionName() != "Main" && m_pswpMain->GetSelectionName() != wxT("Settings") && m_pswpMain->GetSelectionName() != wxT("Log") &&
                                   m_pswpMain->GetSelectionName() != wxT("Help"));
     }
 }
@@ -1046,7 +1049,7 @@ void pam2Dialog::OnInputFailed(wxCommandEvent& event)
     m_bInputFailed = true;
 
     m_pdlgNoInput->SetPosition(wxPoint(0,425));
-    m_pdlgNoInput->Show(m_pswpSplash->GetSelectionName() != "AoIP" && (m_pswpMain->GetSelectionName() != wxT("Settings") && m_pswpMain->GetSelectionName() != wxT("Log")  &&
+    m_pdlgNoInput->Show(m_pswpSplash->GetSelectionName() == "Main" && (m_pswpMain->GetSelectionName() != wxT("Settings") && m_pswpMain->GetSelectionName() != wxT("Log")  &&
                                   m_pswpMain->GetSelectionName() != wxT("Help") && Settings::Get().Read("Input","Type","Soundcard")!="Disabled") );
 }
 

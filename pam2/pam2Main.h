@@ -91,6 +91,7 @@ class pam2Dialog: public wxDialog
         static const long ID_PANEL1;
         static const long ID_PANEL3;
         static const long ID_PANEL8;
+        static const long ID_PANEL9;
         static const long ID_M_PSWP3;
         static const long ID_TIMER1;
         static const long ID_TIMER2;
@@ -99,6 +100,7 @@ class pam2Dialog: public wxDialog
 
         //(*Declarations(pam2Dialog)
         pnlAoIPSelection* pnlAoip;
+        pnlRTCPTransmission* pnlRTCP;
         wmButton* m_pbtnCPU;
         wmButton* m_pbtnInput;
         wmButton* m_pbtnMonitor;

@@ -35,6 +35,8 @@ const long pnlSettingsOutput::ID_M_PEDT3 = wxNewId();
 const long pnlSettingsOutput::ID_M_PLBL7 = wxNewId();
 const long pnlSettingsOutput::ID_M_PLST5 = wxNewId();
 const long pnlSettingsOutput::ID_M_PEDT2 = wxNewId();
+const long pnlSettingsOutput::ID_M_PBTN1 = wxNewId();
+const long pnlSettingsOutput::ID_M_PBTN2 = wxNewId();
 const long pnlSettingsOutput::ID_M_PKBD2 = wxNewId();
 const long pnlSettingsOutput::ID_M_PLBL9 = wxNewId();
 const long pnlSettingsOutput::ID_M_PBTN8 = wxNewId();
@@ -142,6 +144,14 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pedtRTPPort = new wmEdit(pnlAoip, ID_M_PEDT2, wxEmptyString, wxPoint(350,65), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PEDT2"));
 	m_pedtRTPPort->SetValidation(4);
 	m_pedtRTPPort->SetBorderStyle(1,1);
+	m_pbtnRestartStream = new wmButton(pnlAoip, ID_M_PBTN1, _("Restart Stream"), wxPoint(470,15), wxSize(120,40), wmButton::STYLE_HOLD, wxDefaultValidator, _T("ID_M_PBTN1"));
+	m_pbtnRestartStream->SetBackgroundColour(wxColour(255,0,0));
+	wxFont m_pbtnRestartStreamFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pbtnRestartStream->SetFont(m_pbtnRestartStreamFont);
+	m_pbtnStats = new wmButton(pnlAoip, ID_M_PBTN2, _("RTCP Stats"), wxPoint(470,65), wxSize(120,40), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
+	m_pbtnStats->SetBackgroundColour(wxColour(64,128,128));
+	wxFont m_pbtnStatsFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pbtnStats->SetFont(m_pbtnStatsFont);
 	m_pkbd = new wmKeyboard(pnlAoip, ID_M_PKBD2, wxPoint(10,160), wxSize(240,200), 5, 0);
 	m_pkbd->SetForegroundColour(wxColour(255,255,255));
 	wxFont m_pkbdFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
@@ -155,13 +165,13 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pLbl10->SetFont(m_pLbl10Font);
 	m_pbtnDNS = new wmButton(pnlAoip, ID_M_PBTN8, _("mDNS-SD"), wxPoint(300,250), wxSize(268,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN8"));
 	m_pbtnDNS->SetBackgroundColour(wxColour(61,120,218));
-	m_pbtnDNS->SetToggle(true, wxT("Off"), wxT("On"), 40);
+	m_pbtnDNS->SetToggleLook(true, wxT("Off"), wxT("On"), 40);
 	m_pbtnSAP = new wmButton(pnlAoip, ID_M_PBTN9, _("SAP"), wxPoint(300,300), wxSize(268,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN9"));
 	m_pbtnSAP->SetBackgroundColour(wxColour(61,120,218));
-	m_pbtnSAP->SetToggle(true, wxT("Off"), wxT("On"), 40);
+	m_pbtnSAP->SetToggleLook(true, wxT("Off"), wxT("On"), 40);
 	m_pbtnStream = new wmButton(pnlAoip, ID_M_PBTN3, _("Stream"), wxPoint(300,160), wxSize(268,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
-	m_pbtnStream->SetBackgroundColour(wxColour(213,0,0));
-	m_pbtnStream->SetToggle(true, wxT("Unicast"), wxT("Multicast"), 40);
+	m_pbtnStream->SetBackgroundColour(wxColour(0,128,0));
+	m_pbtnStream->SetToggleLook(true, wxT("Unicast"), wxT("Multicast"), 40);
 	m_pswpDestination->AddPage(pnlDisabled, _("Disabled"), false);
 	m_pswpDestination->AddPage(pnlSoundcard, _("Soundcard"), false);
 	m_pswpDestination->AddPage(pnlAoip, _("AoIP"), false);
@@ -174,6 +184,8 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	Connect(ID_M_PEDT3,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&pnlSettingsOutput::OnedtRTSPPortText);
 	Connect(ID_M_PLST5,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsOutput::OnlstPacketSelected);
 	Connect(ID_M_PEDT2,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&pnlSettingsOutput::OnedtRTPPortText);
+	Connect(ID_M_PBTN1,wxEVT_BUTTON_HELD,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnRestartStreamHeld);
+	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnStatsClick);
 	Connect(ID_M_PBTN8,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnDNSClick);
 	Connect(ID_M_PBTN9,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnSAPClick);
 	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnStreamClick);
@@ -435,4 +447,12 @@ double pnlSettingsOutput::ConvertGainToRatio(double dGain)
 double pnlSettingsOutput::ConvertRatioToGain(double dRatio)
 {
     return 20*log10(dRatio);
+}
+
+void pnlSettingsOutput::OnbtnRestartStreamHeld(wxCommandEvent& event)
+{
+}
+
+void pnlSettingsOutput::OnbtnStatsClick(wxCommandEvent& event)
+{
 }
