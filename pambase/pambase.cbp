@@ -321,6 +321,8 @@
 		<Unit filename="PamTaskScheduler.h" />
 		<Unit filename="PamUsageEnvironment.cpp" />
 		<Unit filename="PamUsageEnvironment.h" />
+		<Unit filename="RTCPTransmissionEvent.cpp" />
+		<Unit filename="RTCPTransmissionEvent.h" />
 		<Unit filename="advelement.cpp" />
 		<Unit filename="advelement.h" />
 		<Unit filename="aes67client.cpp" />

@@ -60,6 +60,8 @@ void* OnDemandStreamer::Entry()
 
     pml::Log::Get(pml::Log::LOG_DEBUG) << "RTP Server\tStreamName = '" << sStreamName << "'" << std::endl;
 
+    m_pSubsession->SetRTCPHandlers(m_setHandlers);
+
     m_pSMS = ServerMediaSession::createNew(*m_pEnv, sStreamName.c_str(), sStreamName.c_str(), descriptionString);
     m_pSMS->addSubsession(m_pSubsession);
     rtspServer->addServerMediaSession(m_pSMS);

@@ -243,6 +243,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
     Connect(wxID_ANY,wxEVT_QOS_UPDATED,(wxObjectEventFunction)&pam2Dialog::OnQoS);
 
+    Settings::Get().Write("Splash", "Screen", "Splash");
 
 
     Settings::Get().AddHandler(wxT("Input"),wxT("Type"), this);
@@ -257,6 +258,10 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Settings::Get().AddHandler(wxT("Server"), wxT("RTP_Port"), this);
     Settings::Get().AddHandler(wxT("Server"), wxT("PacketTime"), this);
     Settings::Get().AddHandler(wxT("Server"), wxT("Stream"), this);
+
+
+    Settings::Get().AddHandler("Splash", "Screen", this);
+
 
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pam2Dialog::OnSettingChanged);
@@ -503,7 +508,9 @@ void pam2Dialog::OnlstScreensSelected(wxCommandEvent& event)
         }
     }
     Settings::Get().Write("Startup", "Starting",0);
-    m_pswpSplash->ChangeSelection(1);
+    Settings::Get().Write("Splash", "Screen", "Main");
+    //m_pswpSplash->ChangeSelection(1);
+
 }
 
 void pam2Dialog::OnplstOptionsSelected(wxCommandEvent& event)
@@ -812,7 +819,23 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
         }
     }
 
+    else if(event.GetSection() == "Splash")
+    {
+        if(event.GetKey() == "Screen")
+        {
+            pml::Log::Get(pml::Log::LOG_TRACE) << "SettingChanged: Splash/Screen=" << Settings::Get().Read("Splash", "Screen", "Main") << std::endl;
 
+            m_pswpSplash->ChangeSelection(Settings::Get().Read("Splash", "Screen", "Main"));
+        }
+        else
+        {
+            pml::Log::Get(pml::Log::LOG_WARN) << event.GetSection() << ":" << event.GetKey() << " not handled" << std::endl;
+        }
+    }
+    else
+    {
+        pml::Log::Get(pml::Log::LOG_WARN) << event.GetSection() << ":" << event.GetKey() << " not handled" << std::endl;
+    }
 }
 
 
@@ -932,8 +955,8 @@ void pam2Dialog::OnClose(wxCloseEvent& event)
 
 void pam2Dialog::OnbmpSplashClick(wxCommandEvent& event)
 {
+    Settings::Get().Write("Splash", "Screen", "Main");
 
-    m_pswpSplash->ChangeSelection(1);
     Settings::Get().Write("Startup", "Starting",0);
 }
 
@@ -1030,7 +1053,7 @@ void pam2Dialog::OnswpMainPageChanged(wxNotebookEvent& event)
     pam2App* pApp = dynamic_cast<pam2App*>(wxTheApp);
     if(pApp)
     {
-        pApp->CheckHold(m_pswpSplash->GetSelectionName() != "Main" && m_pswpMain->GetSelectionName() != wxT("Settings") && m_pswpMain->GetSelectionName() != wxT("Log") &&
+        pApp->CheckHold(m_pswpSplash->GetSelectionName() == "Main" && m_pswpMain->GetSelectionName() != wxT("Settings") && m_pswpMain->GetSelectionName() != wxT("Log") &&
                                   m_pswpMain->GetSelectionName() != wxT("Help"));
     }
 }
@@ -1062,7 +1085,7 @@ void pam2Dialog::OnbtnInputClick(wxCommandEvent& event)
     if(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")) == "AoIP")
     {
         //Show AoIP
-        m_pswpSplash->ChangeSelection("AoIP");
+        Settings::Get().Write("Splash", "Screen", "AoIP");
         if(m_pdlgNoInput)
         {
             m_pdlgNoInput->Show(false);

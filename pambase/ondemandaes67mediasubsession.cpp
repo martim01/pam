@@ -5,7 +5,7 @@
 #include "wxptp.h"
 #include "log.h"
 #include "PamUsageEnvironment.h"
-
+#include "RTCPTransmissionEvent.h"
 static OnDemandAES67MediaSubsession* g_session;
 
 AES67RTPSink::AES67RTPSink(UsageEnvironment& env, Groupsock* RTPgs) : AudioRTPSink(env, RTPgs, 96, 48000, "L24", 2)
@@ -252,6 +252,7 @@ void OnDemandAES67MediaSubsession::ScheduleNextQOSMeasurement()
 
 void OnDemandAES67MediaSubsession::DoQoS()
 {
+    pml::Log::Get(pml::Log::LOG_TRACE) << "OnDemandAES67MediaSubsession::DoQoS" << std::endl;
     struct timeval timeNow;
     gettimeofday(&timeNow, NULL);
     if(m_pSink)
@@ -262,23 +263,25 @@ void OnDemandAES67MediaSubsession::DoQoS()
         RTPTransmissionStats* pStats = statsIter.next();
         if (pStats != NULL)
         {
-            m_qos.nSR_RRTime = pStats->diffSR_RRTime();
-            m_qos.nFirstPacketNumber = pStats->firstPacketNumReported();
+            RTCPTransmissionEvent* pEvent = new RTCPTransmissionEvent();
+
+            pEvent->m_nSR_RRTime = pStats->diffSR_RRTime();
+            pEvent->m_nFirstPacketNumber = pStats->firstPacketNumReported();
 
             u_int32_t nOctHigh,  nOctLow,  nPacketHigh, nPacketLow;
             pStats->getTotalOctetCount(nOctHigh, nOctLow);
             pStats->getTotalPacketCount(nPacketHigh, nPacketLow);
 
-            m_qos.nOctets = nOctHigh;
-            m_qos.nOctets = m_qos.nOctets << 32;
-            m_qos.nOctets += nOctLow;
+            pEvent->m_nOctets = nOctHigh;
+            pEvent->m_nOctets = pEvent->m_nOctets << 32;
+            pEvent->m_nOctets += nOctLow;
 
-            m_qos.nPackets = nPacketHigh;
-            m_qos.nPackets = m_qos.nPackets << 32;
-            m_qos.nPackets += nPacketLow;
+            pEvent->m_nPackets = nPacketHigh;
+            pEvent->m_nPackets = pEvent->m_nPackets << 32;
+            pEvent->m_nPackets += nPacketLow;
 
 
-            m_qos.nJitter = pStats->jitter();
+            pEvent->m_nJitter = pStats->jitter();
 
             char addr[256];
             if(pStats->lastFromAddress().sin_family == AF_INET)
@@ -289,35 +292,33 @@ void OnDemandAES67MediaSubsession::DoQoS()
             {
                 inet_ntop(AF_INET6, &pStats->lastFromAddress().sin_addr, &addr[0], 256);
             }
-            m_qos.sLastFromAddress = std::string(addr);
+            pEvent->m_sLastFromAddress = wxString(std::string(addr));
 
 
-            m_qos.nLastPacketNumber = pStats->lastPacketNumReceived();
-            m_qos.nLastSRTime = pStats->lastSRTime();
-            m_qos.tvLastTimeReceived = pStats->lastTimeReceived();
-            m_qos.nPacketLossRatio = pStats->packetLossRatio();
-            m_qos.nPacketsLostBetweenRR = pStats->packetsLostBetweenRR();
-            m_qos.nPacketsReceivedSinceLastRR = pStats->packetsReceivedSinceLastRR();
-            m_qos.nRoundTripDelay = (static_cast<double>(pStats->roundTripDelay())/65536.0)*1000000;
-            m_qos.nSSRC = pStats->SSRC();
-            m_qos.tvCreated = pStats->timeCreated();
-            m_qos.nTotNumPacketsLost = pStats->totNumPacketsLost();
+            pEvent->m_nLastPacketNumber = pStats->lastPacketNumReceived();
+            pEvent->m_nLastSRTime = pStats->lastSRTime();
+
+            pEvent->m_dtLastReceived = wxDateTime(time_t(pStats->lastTimeReceived().tv_sec));
+            pEvent->m_dtLastReceived.SetMillisecond(pStats->lastTimeReceived().tv_usec/1000);
+
+            pEvent->m_nPacketLossRatio = pStats->packetLossRatio();
+            pEvent->m_nPacketsLostBetweenRR = pStats->packetsLostBetweenRR();
+            pEvent->m_nPacketsReceivedSinceLastRR = pStats->packetsReceivedSinceLastRR();
+            pEvent->m_nRoundTripDelay = (static_cast<double>(pStats->roundTripDelay())/65536.0)*1000000;
+            pEvent->m_nSSRC = pStats->SSRC();
+
+            pEvent->m_dtCreated = wxDateTime(time_t(pStats->timeCreated().tv_sec));
+            pEvent->m_dtCreated.SetMillisecond(pStats->timeCreated().tv_usec/1000);
 
 
-            if(m_qos.tvLastTimeReceived.tv_sec != m_qos.tvLastButOneTimeReceived.tv_sec ||
-              m_qos.tvLastTimeReceived.tv_usec != m_qos.tvLastButOneTimeReceived.tv_usec)
+            pEvent->m_nTotNumPacketsLost = pStats->totNumPacketsLost();
+
+            for(auto pHandler : m_setHandlers)
             {
-                pml::Log::Get(pml::Log::LOG_DEBUG) << "Address: " << m_qos.sLastFromAddress << "\tSSRC " << m_qos.nSSRC << std::endl;
-                pml::Log::Get(pml::Log::LOG_DEBUG) << "Created: " << m_qos.tvCreated.tv_sec << "\tReceived: " << m_qos.tvLastTimeReceived.tv_sec << std::endl;
-
-                pml::Log::Get(pml::Log::LOG_DEBUG) << "Octest: " << m_qos.nOctets << "\tPackets " << m_qos.nPackets << std::endl;
-                pml::Log::Get(pml::Log::LOG_DEBUG) << "SR_RR: " << m_qos.nSR_RRTime << "\t" << "First#: " << m_qos.nFirstPacketNumber << "\tJitter: "<< m_qos.nJitter << std::endl;
-                pml::Log::Get(pml::Log::LOG_DEBUG) << "Last#: " << m_qos.nLastPacketNumber << "\tLast Time: " << m_qos.nLastSRTime << std::endl;
-                pml::Log::Get(pml::Log::LOG_DEBUG) << "LossRatio: " << (int)m_qos.nPacketLossRatio <<"\tLossBetweenRR: " << m_qos.nPacketsLostBetweenRR << "\tRecSinceRR: " << m_qos.nPacketsReceivedSinceLastRR << std::endl;
-                pml::Log::Get(pml::Log::LOG_DEBUG) << "RoundTrip: " << m_qos.nRoundTripDelay << "us\tSSRC: " <<  m_qos.nSSRC << "\tTotalLost: " << m_qos.nTotNumPacketsLost << std::endl;
-
-                m_qos.tvLastButOneTimeReceived = m_qos.tvLastTimeReceived;
+                pml::Log::Get(pml::Log::LOG_TRACE) << "OnDemandAES67MediaSubsession::DoQoS:SendEvent" << std::endl;
+                wxQueueEvent(pHandler, pEvent->Clone());
             }
+            delete pEvent;
 
         }
         // Do this again later:

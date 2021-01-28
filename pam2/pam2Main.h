@@ -27,6 +27,8 @@
 #include "session.h"
 #include <memory>
 #include "pnlAoIPSelection.h"
+#include "pnlRTCPTransmission.h"
+
 struct timedbuffer;
 class MonitorPluginBuilder;
 class pnlSettings;

@@ -2,31 +2,10 @@
 #include <wx/event.h>
 #include "OnDemandServerMediaSubsession.hh"
 #include "dlldefine.h"
-
+#include <set>
 class PamUsageEnvironment;
 
 
-struct rrqos
-{
-    unsigned int nSR_RRTime;
-    unsigned int nFirstPacketNumber;
-    int64_t nOctets;
-    int64_t nPackets;
-    unsigned int nJitter;
-    unsigned int nLastPacketNumber;
-    unsigned int nLastSRTime;
-    timeval tvLastTimeReceived;
-    timeval tvLastButOneTimeReceived;
-    u_int8_t nPacketLossRatio;
-    unsigned int nPacketsLostBetweenRR;
-    unsigned int nPacketsReceivedSinceLastRR;
-    unsigned int nRoundTripDelay;
-    unsigned int nSSRC;
-    timeval tvCreated;
-    unsigned int nTotNumPacketsLost;
-    std::string sLastFromAddress;
-
-};
 
 
 class PAMBASE_IMPEXPORT OnDemandPamSubsession: public OnDemandServerMediaSubsession
@@ -39,7 +18,7 @@ class PAMBASE_IMPEXPORT OnDemandPamSubsession: public OnDemandServerMediaSubsess
         RTPSink* GetSink() {return m_pSink;}
 
 
-
+        void SetRTCPHandlers(std::set<wxEvtHandler*>& setHandlers) { m_setHandlers = setHandlers;}
 
     protected: // we're a virtual base class
         OnDemandPamSubsession(wxEvtHandler* pHandler, PamUsageEnvironment& env, portNumBits initialPortNum  = 6970);
@@ -75,9 +54,11 @@ class PAMBASE_IMPEXPORT OnDemandPamSubsession: public OnDemandServerMediaSubsess
         RTPSink* m_pSink;
         PamUsageEnvironment& m_env;
 
-        rrqos m_qos;
+
         unsigned int m_nQOSMeasurementUSecs;
         unsigned int m_nQOSIntervalUSecs;
+
+        std::set<wxEvtHandler*> m_setHandlers;
 
     private:
 };

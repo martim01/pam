@@ -3,6 +3,7 @@
 #include <wx/event.h>
 #include "dlldefine.h"
 #include "OnDemandServerMediaSubsession.hh"
+#include <set>
 
 
 class PamUsageEnvironment;
@@ -27,6 +28,8 @@ class PAMBASE_IMPEXPORT OnDemandStreamer : public wxThread
             m_pSubsession = pSubsession;
         }
 
+        void SetRTCPHandlers(const std::set<wxEvtHandler*>& setHandlers) {m_setHandlers = setHandlers;}
+
         void* Entry();
         void Stop();
 
@@ -48,6 +51,7 @@ class PAMBASE_IMPEXPORT OnDemandStreamer : public wxThread
 
         std::string m_sSDP;
         ServerMediaSession* m_pSMS;
+        std::set<wxEvtHandler*> m_setHandlers;
 
 
 };

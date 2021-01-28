@@ -1,5 +1,8 @@
 #include "pnlRTCPTransmission.h"
-
+#include "settings.h"
+#include "iomanager.h"
+#include "RTCPTransmissionEvent.h"
+#include "log.h"
 //(*InternalHeaders(pnlRTCPTransmission)
 #include <wx/font.h>
 #include <wx/intl.h>
@@ -61,7 +64,7 @@ BEGIN_EVENT_TABLE(pnlRTCPTransmission,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlRTCPTransmission::pnlRTCPTransmission(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
+pnlRTCPTransmission::pnlRTCPTransmission(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size, int , const wxString&)
 {
 	//(*Initialize(pnlRTCPTransmission)
 	Create(parent, id, wxDefaultPosition, wxSize(800,480), wxTAB_TRAVERSAL, _T("id"));
@@ -317,6 +320,10 @@ pnlRTCPTransmission::pnlRTCPTransmission(wxWindow* parent,wxWindowID id,const wx
 
 	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlRTCPTransmission::OnbtnCloseClick);
 	//*)
+
+	IOManager::Get().RegisterForRTCPTransmission(this);
+	Connect(wxID_ANY, wxEVT_RTCP_TRANSMISSION, (wxObjectEventFunction)&pnlRTCPTransmission::OnRTCPTransmissionEvent);
+	Connect(ID_M_PLST1, wxEVT_LIST_SELECTED, (wxObjectEventFunction)&pnlRTCPTransmission::OnSubscriberSelected);
 }
 
 pnlRTCPTransmission::~pnlRTCPTransmission()
@@ -328,4 +335,49 @@ pnlRTCPTransmission::~pnlRTCPTransmission()
 
 void pnlRTCPTransmission::OnbtnCloseClick(wxCommandEvent& event)
 {
+    Settings::Get().Write("Splash", "Screen", "Main");
+}
+
+
+void pnlRTCPTransmission::OnRTCPTransmissionEvent(const RTCPTransmissionEvent& event)
+{
+    pml::Log::Get(pml::Log::LOG_TRACE) << "pnlRTCPTransmission::OnRTCPTransmissionEvent" << std::endl;
+    auto itSubscriber = m_mSubscribers.find(event.GetFromAddress());
+    if(itSubscriber == m_mSubscribers.end())
+    {
+        m_plstSubscribers->AddButton(event.GetFromAddress());
+    }
+    else
+    {
+        delete itSubscriber->second;
+    }
+    m_mSubscribers[event.GetFromAddress()] = dynamic_cast<RTCPTransmissionEvent*>(event.Clone());
+
+}
+
+
+void pnlRTCPTransmission::OnSubscriberSelected(const wxCommandEvent& event)
+{
+    auto itSubscriber= m_mSubscribers.find(event.GetString());
+    if(itSubscriber == m_mSubscribers.end())
+    {
+        m_plblJitter->SetLabel(wxString::Format("%u", itSubscriber->second->GetJitter()));
+        m_plblKbAv->SetLabel("");
+        m_plblKbMax->SetLabel("");
+        m_plblKbMin->SetLabel("");
+        m_plblPacketFirst->SetLabel(wxString::Format("%u", itSubscriber->second->GetFirstPacketNumber()));
+        m_plblPacketLatest->SetLabel(wxString::Format("%u", itSubscriber->second->GetLastPacketNumber()));
+        m_plblPacketsAv->SetLabel("");
+        m_plblPacketsLost->SetLabel(wxString::Format("%u", itSubscriber->second->GetTotalPacketsLost()));
+        m_plblPacketsMax->SetLabel("");
+        m_plblPacketsMin->SetLabel("");
+        m_plblPacketsTotal->SetLabel(wxString::Format("%u", itSubscriber->second->GetTotalPackets()));
+        m_plblRRFirst->SetLabel(itSubscriber->second->GetFirstReceivedTime().Format("%d/%m/%Y %H:%M:%S:%l"));
+        m_plblRRGap->SetLabel("");
+        m_plblRRLast->SetLabel(itSubscriber->second->GetLastReceivedTime().Format("%d/%m/%Y %H:%M:%S:%l"));
+        m_plblRRSR->SetLabel(wxString::Format("%u", itSubscriber->second->GetSRRRTime()));
+		m_plblRoundtrip->SetLabel(wxString::Format("%u", itSubscriber->second->GetRoundTripDelay()));
+		m_plblSubscriber->SetLabel(itSubscriber->second->GetString());
+
+    }
 }

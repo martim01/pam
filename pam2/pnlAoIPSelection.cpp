@@ -259,11 +259,12 @@ void pnlAoIPSelection::OnbtnBackClick(wxCommandEvent& event)
 
 void pnlAoIPSelection::ShowMainScreen()
 {
-    wmSwitcherPanel* pPanel = dynamic_cast<wmSwitcherPanel*>(GetParent());
-    if(pPanel)
-    {
-        pPanel->ChangeSelection("Main");
-    }
+    Settings::Get().Write("Splash", "Screen", "Main");
+    //wmSwitcherPanel* pPanel = dynamic_cast<wmSwitcherPanel*>(GetParent());
+    //if(pPanel)
+    //{
+    //    pPanel->ChangeSelection("Main");
+    //}
 }
 
 void pnlAoIPSelection::OnlstAlphabetSelected(wxCommandEvent& event)

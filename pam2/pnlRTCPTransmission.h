@@ -11,11 +11,16 @@
 #include <wx/panel.h>
 //*)
 
+#include <map>
+#include <memory>
+
+class RTCPTransmissionEvent;
+
 class pnlRTCPTransmission: public wxPanel
 {
 	public:
 
-		pnlRTCPTransmission(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+		pnlRTCPTransmission(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, int nStyle=0, const wxString& str="");
 		virtual ~pnlRTCPTransmission();
 
 		//(*Declarations(pnlRTCPTransmission)
@@ -125,6 +130,12 @@ class pnlRTCPTransmission: public wxPanel
 		//(*Handlers(pnlRTCPTransmission)
 		void OnbtnCloseClick(wxCommandEvent& event);
 		//*)
+
+		void OnRTCPTransmissionEvent(const RTCPTransmissionEvent& event);
+
+		void OnSubscriberSelected(const wxCommandEvent& event);
+
+		std::map<wxString, RTCPTransmissionEvent* > m_mSubscribers;
 
 		DECLARE_EVENT_TABLE()
 };

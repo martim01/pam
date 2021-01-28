@@ -33,6 +33,16 @@ IOManager& IOManager::Get()
 }
 
 
+void IOManager::RegisterForRTCPTransmission(wxEvtHandler* pHandler)
+{
+    m_setRTCPHandlers.insert(pHandler);
+}
+
+void IOManager::DeregisterForRTCPTransmission(wxEvtHandler* pHandler)
+{
+    m_setRTCPHandlers.erase(pHandler);
+}
+
 void IOManager::RegisterHandler(wxEvtHandler* pHandler)
 {
     if(m_bSingleHandler)
@@ -1106,6 +1116,7 @@ void IOManager::StreamUnicast()
     m_pUnicastServer = new OnDemandStreamer(this, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), "0.0.0.0"),
                                               Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555));
 
+    m_pUnicastServer->SetRTCPHandlers(m_setRTCPHandlers);
     m_pOnDemandSubsession = OnDemandAES67MediaSubsession::createNew(this, *m_pUnicastServer->envir(), 2, (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
 
     m_pUnicastServer->Create();
