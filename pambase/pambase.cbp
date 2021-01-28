@@ -101,43 +101,6 @@
 					<Add directory="$(#libsndfile.lib)" />
 				</Linker>
 			</Target>
-			<Target title="Linux Release">
-				<Option platforms="Unix;" />
-				<Option output="../lib/libpambase.so" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="0" extension_auto="0" />
-				<Option object_output="obj/linux" />
-				<Option type="3" />
-				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-O3" />
-					<Add option="-fPIC" />
-					<Add option="`wx-config --cxxflags`" />
-					<Add option="-fpermissive" />
-					<Add option="-pthread" />
-					<Add option="-DNDEBUG" />
-					<Add option="-DDLL_EXPORTS" />
-					<Add option="-DwxUSE_UNICODE" />
-					<Add option="-D__WXGNU__" />
-					<Add option="-D__GNU__" />
-					<Add option="-DwxDEBUG_LEVEL=0" />
-					<Add option="-DPTPMONKEY" />
-				</Compiler>
-				<Linker>
-					<Add option="`wx-config --libs`" />
-					<Add option="`pkg-config --libs avahi-client`" />
-					<Add library="portaudio" />
-					<Add library="sndfile" />
-					<Add library="liveMedia" />
-					<Add library="BasicUsageEnvironment" />
-					<Add library="UsageEnvironment" />
-					<Add library="groupsock" />
-					<Add directory="/usr/lib/arm-linux-gnueabihf/" />
-				</Linker>
-				<ExtraCommands>
-					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />
-					<Add after="cp ../external/log/lib/* ../lib" />
-					<Mode after="always" />
-				</ExtraCommands>
-			</Target>
 			<Target title="Linux Debug">
 				<Option platforms="Unix;" />
 				<Option output="../lib/libpambased.so" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="0" extension_auto="0" />
@@ -175,7 +138,7 @@
 					<Mode after="always" />
 				</ExtraCommands>
 			</Target>
-			<Target title="Linux Release+PtpMonkey">
+			<Target title="Linux Release">
 				<Option platforms="Unix;" />
 				<Option output="../lib/libpambase.so" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/linux_ptp" />
@@ -252,97 +215,97 @@
 		<Unit filename="../external/dnssd/src/zcposter.cpp" />
 		<Unit filename="../external/log/src/log.cpp" />
 		<Unit filename="../external/ptpmonkey/include/handler.h">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/loghander.h">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/mac.h">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/namedtype.h">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/parser.h">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpclock.h">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpdll.h">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpeventhander.h">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpeventloghandler.h">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptploghandler.h">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpmonkey.h">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpmonkeyhandler.h">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpmonkeyimplementation.h">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpparser.h">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpstructs.h">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/receiver.h">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/sender.h">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/timeutils.h">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/loghander.cpp">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/mac.cpp">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptpclock.cpp">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptpeventloghandler.cpp">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptploghandler.cpp">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptpmonkey.cpp">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptpmonkeyhandler.cpp">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptpmonkeyimplementation.cpp">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptpparser.cpp">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptpstructs.cpp">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/receiver.cpp">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/sender.cpp">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/timeutils.cpp">
-			<Option target="Linux Release+PtpMonkey" />
+			<Option target="Linux Release" />
 		</Unit>
 		<Unit filename="../external/sapserver/src/message.cpp" />
 		<Unit filename="../external/sapserver/src/parser.cpp" />
@@ -491,24 +454,9 @@
 		<Unit filename="wmswitcherpanel.h" />
 		<Unit filename="wmtimeedit.cpp" />
 		<Unit filename="wmtimeedit.h" />
-		<Unit filename="wxptp.cpp">
-			<Option target="Windows Release" />
-			<Option target="Windows Debug" />
-			<Option target="Linux Debug" />
-			<Option target="Linux Release+PtpMonkey" />
-		</Unit>
-		<Unit filename="wxptp.h">
-			<Option target="Windows Release" />
-			<Option target="Windows Debug" />
-			<Option target="Linux Debug" />
-			<Option target="Linux Release+PtpMonkey" />
-		</Unit>
-		<Unit filename="wxptpeventhandler.h">
-			<Option target="Windows Release" />
-			<Option target="Windows Debug" />
-			<Option target="Linux Debug" />
-			<Option target="Linux Release+PtpMonkey" />
-		</Unit>
+		<Unit filename="wxptp.cpp" />
+		<Unit filename="wxptp.h" />
+		<Unit filename="wxptpeventhandler.h" />
 		<Unit filename="wxsaphandler.cpp" />
 		<Unit filename="wxsaphandler.h" />
 		<Unit filename="wxsink.cpp" />

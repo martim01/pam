@@ -125,6 +125,10 @@ class pnlAoIPInfo: public wxPanel
 		wxTextCtrl* m_ptxtSDP;
 		//*)
 		wmLabel* m_plblEpoch;
+		wmLabel* m_plblRTCP_Last;
+		wmLabel* m_plblRTCP_Last_Title;
+		wmLabel* m_plblRTCP_NTP_Title;
+		wmLabel* m_plblRTCP_NTP;
 
 		void QoSUpdated(qosData* pData);
 		void SessionStarted(const session& aSession);
@@ -268,6 +272,9 @@ class pnlAoIPInfo: public wxPanel
         double m_dTSDF[2];
 
         double m_dFrameDuration;
+
+        double m_dInitialLatency;
+        int m_nInitialLatencyCounter;
 
         enum {GRAPH_MIN=0, GRAPH_MAX};
 		DECLARE_EVENT_TABLE()

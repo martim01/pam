@@ -154,10 +154,7 @@ pnlAoIPSelection::pnlAoIPSelection(wxWindow* parent,wxWindowID id,const wxPoint&
         wxString str(wxString::Format("%c", ascii));
         m_plstAlphabet->AddButton(str);
     }
-
     AoipSourceManager::Get();
-    DoAlphabetSearch(wxEmptyString);
-
 
 	SetPosition(pos);
 	SetSize(size);
@@ -213,7 +210,7 @@ void pnlAoIPSelection::ShowPaged()
 
 void pnlAoIPSelection::ShowAlphabetical()
 {
-    m_plstAlphabet->SelectButton(Settings::Get().Read("AoIPSelection", "Alphabet", "A"));
+    m_plstAlphabet->SelectButton(Settings::Get().Read("AoIPSelection", "Alphabet", ""));
 }
 
 

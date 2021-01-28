@@ -7,6 +7,7 @@
 #include "log.h"
 
 RtpServerThread::RtpServerThread(wxEvtHandler* pHandler, const wxString& sRTSP, unsigned int nRTSPPort, const wxString& sSourceIp, unsigned int nRTPPort, bool bSSM, LiveAudioSource::enumPacketTime ePacketTime) :
+    wxThread(wxTHREAD_JOINABLE),
     m_pHandler(pHandler),
     m_sRTSP(sRTSP),
     m_nRTSPPort(nRTSPPort),
@@ -36,7 +37,6 @@ void* RtpServerThread::Entry()
     if(!CreateStream())
     {
         m_mutex.Unlock();
-        SendFinish();
         return NULL;
     }
 
@@ -48,16 +48,10 @@ void* RtpServerThread::Entry()
     }
 
     CloseStream();
-    SendFinish();
     return NULL;
 }
 
 
-void RtpServerThread::SendFinish()
-{
-    wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_ODS_FINISHED);
-    wxQueueEvent(m_pHandler, pEvent);
-}
 
 
 bool RtpServerThread::CreateStream()
@@ -103,7 +97,7 @@ bool RtpServerThread::CreateStream()
     m_pRtspServer = PamRTSPServer::createNew(*m_penv, m_nRTSPPort);
     if (m_pRtspServer == NULL)
     {
-        pml::Log::Get(pml::Log::LOG_ERROR) << "Failed to create RTSP server (multicast): " << m_penv->getResultMsg() << std::endl;
+        pml::Log::Get(pml::Log::LOG_ERROR) << "RTP Server\tFailed to create RTSP server (multicast): " << m_penv->getResultMsg() << std::endl;
         Medium::close(m_pSink);
         Medium::close(m_pSource);
 
@@ -126,7 +120,7 @@ bool RtpServerThread::CreateStream()
     delete[] pSDP;
 
     // Finally, start the streaming:
-    pml::Log::Get(pml::Log::LOG_INFO) << "Beginning streaming..." << m_pRtspServer->rtspURL(sms) << std::endl;
+    pml::Log::Get(pml::Log::LOG_INFO) << "RTP Server\tBeginning streaming..." << m_pRtspServer->rtspURL(sms) << std::endl;
 
 
     m_pSink->startPlaying(*m_pSource, afterPlaying, reinterpret_cast<void*>(this));
@@ -148,7 +142,7 @@ void afterPlaying(void* pClientData)
 void RtpServerThread::CloseStream()
 {
     wxMutexLocker lock(m_mutex);
-    pml::Log::Get(pml::Log::LOG_INFO) << "...done streaming" << std::endl;
+    pml::Log::Get(pml::Log::LOG_INFO) << "RTP Server\t...done streaming" << std::endl;
 
     // End by closing the media:
     Medium::close(m_pRtspServer);

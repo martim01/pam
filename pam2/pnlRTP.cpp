@@ -259,10 +259,11 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	m_plstServices->AddButton(wxT("SIP"));
 	//m_plstServices->AddButton(wxT("NMOS"));
 
-	Panel3->SetBackgroundColour(*wxBLACK);
+    Panel3->SetBackgroundColour(*wxBLACK);
+
+    AoipSourceManager::Get();
 
 
-	AoipSourceManager::Get();
 	Connect(wxID_ANY, wxEVT_ASM_DISCOVERY, (wxObjectEventFunction)&pnlRTP::OnDiscovery);
 	Connect(wxID_ANY, wxEVT_ASM_DISCOVERY_FINISHED, (wxObjectEventFunction)&pnlRTP::OnDiscoveryFinished);
 

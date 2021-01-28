@@ -3,7 +3,7 @@
 #include "timedbuffer.h"
 #include "rtpthread.h"
 #include <wx/log.h>
-
+#include <iostream>
 
 
 
@@ -51,6 +51,7 @@ void qosMeasurementRecord::periodicQOSMeasurement(struct timeval const& timeNow)
         {
             m_dPacket_loss_fraction_max = lossFractionNow;
         }
+
     }
 
     printQOSData();
@@ -127,6 +128,9 @@ void qosMeasurementRecord::printQOSData()
             pData->tvLastSR_Time = stats->lastReceivedSR_time();
             pData->nSSRC = stats->SSRC();
 
+            pData->tvSync.tv_sec = pData->nLastSR_NTPmsw - 0x83AA7E80; // 1/1/1900 -> 1/1/1970
+            double microseconds = (pData->nLastSR_NTPlsw*15625.0)/0x04000000; // 10^6/2^32
+            pData->tvSync.tv_usec = (unsigned)(microseconds+0.5);
 
         }
 

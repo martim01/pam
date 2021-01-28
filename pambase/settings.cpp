@@ -87,6 +87,11 @@ bool Settings::Write(const wxString& sSection, const wxString& sKey, int nValue)
     return Write(sSection, sKey, wxString::Format(wxT("%d"), nValue));
 }
 
+bool Settings::Write(const wxString& sSection, const wxString& sKey, unsigned int nValue)
+{
+    return Write(sSection, sKey, wxString::Format(wxT("%u"), nValue));
+}
+
 bool Settings::Write(const wxString& sSection, const wxString& sKey, double dValue)
 {
     return Write(sSection, sKey, wxString::Format(wxT("%f"), dValue));

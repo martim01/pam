@@ -8,6 +8,8 @@
 #include "mdns.h"
 #include "sapserver.h"
 #include "wxsaphandler.h"
+#include <iostream>
+
 
 wxDEFINE_EVENT(wxEVT_ASM_DISCOVERY, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_ASM_DISCOVERY_FINISHED, wxCommandEvent);
@@ -17,6 +19,7 @@ AoipSourceManager::AoipSourceManager() :
     m_pPoster(nullptr),
     m_pSapWatcher(nullptr)
 {
+
     LoadSources();
 
 
@@ -80,8 +83,10 @@ bool AoipSourceManager::LoadSources()
                 }
             }
         }
+        pml::Log::Get(pml::Log::LOG_INFO) << "AoIP Source Manager\tLoaded " << m_mSources.size() << "AES67 sources" << std::endl;
         return true;
     }
+    pml::Log::Get(pml::Log::LOG_WARN) << "AoIP Source Manager\tUnable to load aoipsources.xml" << std::endl;
     return false;
 }
 
@@ -246,11 +251,11 @@ void AoipSourceManager::OnDiscovery(wxCommandEvent& event)
         wxString sIdentifier;
         if(pInstance->sService == "_rtsp._tcp")
         {
-            sIdentifier = ("{"+wxString(pInstance->sService).AfterFirst('_').BeforeFirst('.')+"} "+wxString(pInstance->sName).BeforeFirst('('));
+            sIdentifier = (wxString(pInstance->sName).BeforeFirst('(')+" {"+wxString(pInstance->sService).AfterFirst('_').BeforeFirst('.')+"}");
         }
         else if(pInstance->sService == "_sipuri._udp")
         {
-            sIdentifier = ("{"+wxString(pInstance->sService).AfterFirst('_').BeforeFirst('.')+"} "+wxString(pInstance->sName).AfterFirst(' ').BeforeFirst('('));
+            sIdentifier = (wxString(pInstance->sName).AfterFirst(' ').BeforeFirst('(')+" {"+wxString(pInstance->sService).AfterFirst('_').BeforeFirst('.')+"}");
         }
 
 

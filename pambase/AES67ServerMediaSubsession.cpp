@@ -232,27 +232,29 @@ void AES67ServerMediaSubsession::deleteStream(unsigned clientSessionId, void*& /
 }
 
 
-int AES67ServerMediaSubsession::GetEpochTimestamp()
+unsigned int AES67ServerMediaSubsession::GetEpochTimestamp()
 {
-    int nTimestamp = fRTPSink.presetNextTimestamp();
+    return 0; //This is to match specs for SMPTE2110
 
-
-    //get the current time
-    timeval tvNow;
-    #ifdef PTPMONKEY
-    tvNow = wxPtp::Get().GetPtpTime(0);
-    #else
-    gettimeofday(&tvNow, 0);
-    #endif // PTPMONKEY
-
-
-    double dNow = static_cast<double>(tvNow.tv_sec);//*1000000.0;
-    dNow += static_cast<double>(tvNow.tv_usec) / 1000000.0;
-
-
-    int64_t nTimestampsToMinus = static_cast<int64_t>(dNow*static_cast<double>(fRTPSink.rtpTimestampFrequency()));
-
-    nTimestampsToMinus = nTimestampsToMinus % 42949672960;
-
-    return nTimestamp-static_cast<int>(nTimestampsToMinus);
+//    int nTimestamp = fRTPSink.presetNextTimestamp();
+//
+//
+//    //get the current time
+//    timeval tvNow;
+//    #ifdef PTPMONKEY
+//    tvNow = wxPtp::Get().GetPtpTime(0);
+//    #else
+//    gettimeofday(&tvNow, 0);
+//    #endif // PTPMONKEY
+//
+//
+//    double dNow = static_cast<double>(tvNow.tv_sec);//*1000000.0;
+//    dNow += static_cast<double>(tvNow.tv_usec) / 1000000.0;
+//
+//
+//    int64_t nTimestampsToMinus = static_cast<int64_t>(dNow*static_cast<double>(fRTPSink.rtpTimestampFrequency()));
+//
+//    nTimestampsToMinus = nTimestampsToMinus % 42949672960;
+//
+//    return static_cast<unsigned int>(nTimestamp-static_cast<int>(nTimestampsToMinus));
 }

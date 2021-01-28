@@ -34,7 +34,6 @@ class PAMBASE_IMPEXPORT RtpServerThread : public wxThread
 
         bool CreateStream();
         void CloseStream();
-        void SendFinish();
 
         wxMutex m_mutex;
         wxEvtHandler* m_pHandler;

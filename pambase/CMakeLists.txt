@@ -110,6 +110,7 @@ set(SOURCES
  "monitorevent.cpp"
  "monitorpluginbuilder.cpp"
  "monitorpluginfactory.cpp"
+ "pamRTSPServer.cpp"
  "niir.cpp"
  "ondemandaes67mediasubsession.cpp"
  "ondemandpamsubsession.cpp"

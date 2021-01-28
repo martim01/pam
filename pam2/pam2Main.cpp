@@ -29,7 +29,7 @@
 #include "pnlLogControl.h"
 #include "testpluginfactory.h"
 #include "testpluginbuilder.h"
-
+#include "aoipsourcemanager.h"
 #include <wx/stdpaths.h>
 #include <wx/dynlib.h>
 #include "soundfile.h"
@@ -216,6 +216,10 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     //*)
     m_pdlgNoInput = 0;
 
+    m_ppnlLog = new pnlLog(m_pswpMain);
+
+    pml::Log::Get().AddOutput(std::make_unique<pml::LogOutput>());
+
     wxSetCursor(*wxSTANDARD_CURSOR);
 
     //m_pswpScreens->SetEventHandler(this);
@@ -377,7 +381,7 @@ void pam2Dialog::LoadMonitorPanels()
     }
     m_nCurrentMonitorPage = 0;
 
-    m_ppnlLog = new pnlLog(m_pswpMain);
+
     m_pswpMain->AddPage(m_ppnlLog, wxT("Log"));
 
     m_ppnlSettings = new pnlSettings(m_pswpMain);
@@ -396,6 +400,7 @@ void pam2Dialog::LoadMonitorPanels()
     m_plstInbuilt->AddButton(wxT("Log"));
     m_plstInbuilt->AddButton(wxT("Settings"));
     m_plstInbuilt->AddButton(wxT("Help"));
+
 
 
 

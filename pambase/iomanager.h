@@ -88,7 +88,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         void DoDNSSD(bool bRun);
         void OnTimerSilence(wxTimerEvent& event);
 
-        void OnUnicastServerFinished(wxCommandEvent& event);
+        void RTPServerFinished();
 
         void Stream();
         void StreamMulticast();

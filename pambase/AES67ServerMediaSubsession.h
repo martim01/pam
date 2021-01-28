@@ -6,7 +6,7 @@ class AES67ServerMediaSubsession: public ServerMediaSubsession
     public:
         static AES67ServerMediaSubsession* createNew(RTPSink& rtpSink, RTCPInstance* rtcpInstance, int nPacketTime);
 
-        int GetEpochTimestamp();
+        unsigned int GetEpochTimestamp();
     protected:
         AES67ServerMediaSubsession(RTPSink& rtpSink, RTCPInstance* rtcpInstance, int nPacketTime);
         // called only by createNew();

@@ -290,7 +290,6 @@ wxSize uiRect::DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int 
 
     bool bOverflow(false);
 
-
     wxStringTokenizer stzLine(sText,wxT("\n"),wxTOKEN_RET_EMPTY_ALL);
     while(stzLine.HasMoreTokens() && !bOverflow)
     {

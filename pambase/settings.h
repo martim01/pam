@@ -19,6 +19,7 @@ class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
 
         bool Write(const wxString& sSection, const wxString& sKey, const wxString& sValue);
         bool Write(const wxString& sSection, const wxString& sKey, int nValue);
+        bool Write(const wxString& sSection, const wxString& sKey, unsigned int nValue);
         bool Write(const wxString& sSection, const wxString& sKey, double dValue);
 
         bool RemoveKey(const wxString& sSection, const wxString& sKey);

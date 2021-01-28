@@ -115,7 +115,6 @@ IOManager::IOManager() :
 
     Connect(wxID_ANY,wxEVT_QOS_UPDATED,(wxObjectEventFunction)&IOManager::OnQoS);
 
-    Connect(wxID_ANY,wxEVT_ODS_FINISHED,(wxObjectEventFunction)&IOManager::OnUnicastServerFinished);
 
     #ifdef PTPMONKEY
     wxPtp::Get().AddHandler(this);
@@ -164,13 +163,19 @@ void IOManager::StopStream()
     if(m_pMulticastServer)
     {
         m_pMulticastServer->StopStream();
+        m_pMulticastServer->Wait();
+        delete m_pMulticastServer;
         m_pMulticastServer = nullptr;
+        RTPServerFinished();
     }
     else if(m_pUnicastServer)
     {
         m_pUnicastServer->Stop();
+        m_pUnicastServer->Wait();
+        delete m_pUnicastServer;
         m_pUnicastServer = nullptr;
         m_pOnDemandSubsession = nullptr;
+        RTPServerFinished();
     }
 
 
@@ -242,7 +247,10 @@ void IOManager::OnSettingEvent(SettingEvent& event)
                 if(m_pMulticastServer)
                 {
                     m_pMulticastServer->StopStream();
+                    m_pMulticastServer->Wait();
+                    delete m_pMulticastServer;
                     m_pMulticastServer = nullptr;
+                    RTPServerFinished();
                 }
             }
             else
@@ -250,8 +258,11 @@ void IOManager::OnSettingEvent(SettingEvent& event)
                 if(m_pUnicastServer)
                 {
                     m_pUnicastServer->Stop();
+                    m_pUnicastServer->Wait();
+                    delete m_pUnicastServer;
                     m_pUnicastServer = nullptr;
                     m_pOnDemandSubsession = nullptr;
+                    RTPServerFinished();
                 }
             }
             InitAudioOutputDevice();
@@ -1041,7 +1052,7 @@ void IOManager::DoDNSSD(bool bRun)
 }
 
 
-void IOManager::OnUnicastServerFinished(wxCommandEvent& event)
+void IOManager::RTPServerFinished()
 {
     pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tStream server finished." << std::endl;
 

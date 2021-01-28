@@ -61,7 +61,7 @@ RTPSink::RTPSink(UsageEnvironment& env,
 
   fSeqNo = (u_int16_t)our_random();
   fSSRC = our_random32();
-  fTimestampBase = our_random32();
+  fTimestampBase = 0; //our_random32() - changed for SMPTE2110
 
   fTransmissionStatsDB = new RTPTransmissionStatsDB(*this);
 }
@@ -89,9 +89,9 @@ u_int32_t RTPSink::convertToRTPTimestamp(struct timeval tv) {
 
   u_int32_t const rtpTimestamp = fTimestampBase + timestampIncrement;
 #ifdef DEBUG_TIMESTAMPS
-  fprintf(stderr, "fTimestampBase: 0x%08x, tv: %lu.%06ld\n\t=> RTP timestamp: 0x%08x\n",
+  fprintf(stdout, "fTimestampBase: 0x%08x, tv: %lu.%06ld\n\t=> RTP timestamp: 0x%08x\n",
 	  fTimestampBase, tv.tv_sec, tv.tv_usec, rtpTimestamp);
-  fflush(stderr);
+  fflush(stdout);
 #endif
 
   return rtpTimestamp;
@@ -102,11 +102,12 @@ u_int32_t RTPSink::presetNextTimestamp() {
   gettimeofday(&timeNow, NULL);
 
   u_int32_t tsNow = convertToRTPTimestamp(timeNow);
-  if (!groupsockBeingUsed().hasMultipleDestinations()) {
+
+  //if (!groupsockBeingUsed().hasMultipleDestinations()) {
     // Don't adjust the timestamp stream if we already have another destination ongoing
-    fTimestampBase = tsNow;
-    fNextTimestampHasBeenPreset = True;
-  }
+  //  fTimestampBase = tsNow;
+  //  fNextTimestampHasBeenPreset = True;
+  //}   // Changed for SMPTE2110
 
   return tsNow;
 }

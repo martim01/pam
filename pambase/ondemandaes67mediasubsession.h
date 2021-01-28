@@ -14,13 +14,17 @@ class AES67RTPSink : public AudioRTPSink
     public:
       static AES67RTPSink* createNew(UsageEnvironment& env, Groupsock* RTPgs);
 
+    char const* auxSDPLine() override;
     protected:
       AES67RTPSink(UsageEnvironment& env, Groupsock* RTPgs);
         // called only by createNew()
 
       virtual ~AES67RTPSink();
 
+      unsigned int GetEpochTimestamp();
+
     private: // redefined virtual functions:
+        std::string m_sAux;
 
 };
 
@@ -38,6 +42,10 @@ class OnDemandAES67MediaSubsession: public OnDemandPamSubsession
             return "AES67";
         }
 
+        void DoQoS();
+        void BeginQOSMeasurement();
+        void ScheduleNextQOSMeasurement();
+
 //        std::string GetSDP() override;
 
 
@@ -51,9 +59,9 @@ class OnDemandAES67MediaSubsession: public OnDemandPamSubsession
         RTPSink* createNewRTPSink(Groupsock* rtpGroupsock, unsigned char rtpPayloadTypeIfDynamic, FramedSource* inputSource) override;
 
 
-        //char const* sdpLines() override;
+//        char const* sdpLines() override;
 
-//        int GetEpochTimestamp(RTPSink* pSink);
+//        unsigned int GetEpochTimestamp(RTPSink* pSink);
 
     private:
         wxMutex m_mutex;
@@ -61,6 +69,9 @@ class OnDemandAES67MediaSubsession: public OnDemandPamSubsession
 
         LiveAudioSource::enumPacketTime m_ePacketTime;
         LiveAudioSource* m_pSource;
+
+
+
 
 };
 

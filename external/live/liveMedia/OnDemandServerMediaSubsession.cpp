@@ -21,6 +21,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 #include "OnDemandServerMediaSubsession.hh"
 #include <GroupsockHelper.hh>
+#include <iostream>
 
 OnDemandServerMediaSubsession
 ::OnDemandServerMediaSubsession(UsageEnvironment& env,
@@ -127,7 +128,7 @@ void OnDemandServerMediaSubsession
 	NoReuse dummy(envir()); // ensures that we skip over ports that are already in use
 	for (serverPortNum = fInitialPortNum; ; ++serverPortNum) {
 	  struct in_addr dummyAddr; dummyAddr.s_addr = 0;
-	  
+
 	  serverRTPPort = serverPortNum;
 	  rtpGroupsock = createGroupsock(dummyAddr, serverRTPPort);
 	  if (rtpGroupsock->socketNum() >= 0) break; // success
@@ -361,6 +362,7 @@ void OnDemandServerMediaSubsession::deleteStream(unsigned clientSessionId,
 char const* OnDemandServerMediaSubsession
 ::getAuxSDPLine(RTPSink* rtpSink, FramedSource* /*inputSource*/) {
   // Default implementation:
+    std::cout << "Default: " << rtpSink << std::endl;
   return rtpSink == NULL ? NULL : rtpSink->auxSDPLine();
 }
 
@@ -433,6 +435,8 @@ void OnDemandServerMediaSubsession
   char const* auxSDPLine = getAuxSDPLine(rtpSink, inputSource);
   if (auxSDPLine == NULL) auxSDPLine = "";
 
+  std::cout << "OnDemandServerMediaSubsession::AuxSDP '" << auxSDPLine << "'" << std::endl;
+
   char const* const sdpFmt =
     "m=%s %u RTP/AVP %d\r\n"
     "c=IN IP4 %s\r\n"
@@ -467,6 +471,8 @@ void OnDemandServerMediaSubsession
 
   delete[] fSDPLines; fSDPLines = strDup(sdpLines);
   delete[] sdpLines;
+
+  std::cout << "OnDemandServerMediaSubsession:: '" << fSDPLines << "'" << std::endl;
 }
 
 

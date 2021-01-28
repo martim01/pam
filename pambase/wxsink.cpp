@@ -74,7 +74,8 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
             m_mExtension.erase(itExt); //remove the extension map
         }
 
-        //fSubsession.rtpSource()->hasBeenSynchronizedUsingRTCP()
+        //fSubsession.rtpSource()->hasBeenSynchronizedUsingRTCP();
+
         unsigned int nBytesPerSample = 0;
 
         if(strcmp(m_pSubsession->codecName(),"L16") == 0)

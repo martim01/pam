@@ -10,6 +10,8 @@ class RTSPServer;
 class ServerMediaSession;
 class OnDemandPamSubsession;
 
+
+
 class PAMBASE_IMPEXPORT OnDemandStreamer : public wxThread
 {
     public:
@@ -28,11 +30,12 @@ class PAMBASE_IMPEXPORT OnDemandStreamer : public wxThread
         void* Entry();
         void Stop();
 
+
         const std::string& GetSDP();
     protected:
         void AnnounceStream(RTSPServer* rtspServer, ServerMediaSession* sms,  const std::string& sStreamName);
 
-        void SendFinish();
+
 
         wxEvtHandler* m_pHandler;
         wxString m_sRtspAddress;
@@ -45,6 +48,8 @@ class PAMBASE_IMPEXPORT OnDemandStreamer : public wxThread
 
         std::string m_sSDP;
         ServerMediaSession* m_pSMS;
+
+
 };
 
 wxDECLARE_EXPORTED_EVENT(PAMBASE_IMPEXPORT, wxEVT_ODS_ANNOUNCE, wxCommandEvent);
