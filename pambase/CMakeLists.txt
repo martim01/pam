@@ -127,6 +127,7 @@ set(SOURCES
  "r128calculator.cpp"
  "r128thread.cpp"
  "rawvideosource.cpp"
+ "RTCPTransmissionEvent.cpp"
  "rtpserverthread.cpp"
  "rtpthread.cpp"
  "rtsputil.cpp"
