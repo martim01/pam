@@ -12,7 +12,7 @@ RTCPTransmissionEvent::RTCPTransmissionEvent(const RTCPTransmissionEvent& event)
     m_nFirstPacketNumber(event.GetFirstPacketNumber()),
     m_nOctets(event.GetTotalOctets()),
     m_nPackets(event.GetTotalPackets()),
-    m_nJitter(event.GetJitter()),
+    m_dJitter(event.GetJitter()),
     m_nLastPacketNumber(event.GetLastPacketNumber()),
     m_nLastSRTime(event.GetLastSRTime()),
     m_dtLastReceived(event.GetLastReceivedTime()),

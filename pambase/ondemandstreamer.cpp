@@ -63,6 +63,7 @@ void* OnDemandStreamer::Entry()
     m_pSubsession->SetRTCPHandlers(m_setHandlers);
 
     m_pSMS = ServerMediaSession::createNew(*m_pEnv, sStreamName.c_str(), sStreamName.c_str(), descriptionString);
+
     m_pSMS->addSubsession(m_pSubsession);
     rtspServer->addServerMediaSession(m_pSMS);
 

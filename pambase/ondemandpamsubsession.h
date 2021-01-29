@@ -46,8 +46,6 @@ class PAMBASE_IMPEXPORT OnDemandPamSubsession: public OnDemandServerMediaSubsess
 
 
 
-
-
         wxEvtHandler* m_pHandler;
         long m_nConnections;
         std::string m_sSDP;
@@ -55,8 +53,6 @@ class PAMBASE_IMPEXPORT OnDemandPamSubsession: public OnDemandServerMediaSubsess
         PamUsageEnvironment& m_env;
 
 
-        unsigned int m_nQOSMeasurementUSecs;
-        unsigned int m_nQOSIntervalUSecs;
 
         std::set<wxEvtHandler*> m_setHandlers;
 

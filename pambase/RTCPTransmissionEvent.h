@@ -41,7 +41,7 @@ public:
     unsigned int GetFirstPacketNumber() const  { return m_nFirstPacketNumber; }
     int64_t GetTotalOctets() const  { return m_nOctets; }
     int64_t GetTotalPackets() const  { return m_nPackets; }
-    unsigned int GetJitter() const  { return m_nJitter; }
+    double GetJitter() const  { return m_dJitter; }
     unsigned int GetLastPacketNumber() const  { return m_nLastPacketNumber; }
     unsigned int GetLastSRTime() const  { return m_nLastSRTime; }
     const wxDateTime& GetLastReceivedTime() const  { return m_dtLastReceived; }
@@ -61,7 +61,7 @@ protected:
     unsigned int m_nFirstPacketNumber;
     int64_t m_nOctets;
     int64_t m_nPackets;
-    unsigned int m_nJitter;
+    double m_dJitter;
     unsigned int m_nLastPacketNumber;
     unsigned int m_nLastSRTime;
     wxDateTime m_dtLastReceived;

@@ -13,6 +13,7 @@
 
 #include <map>
 #include <memory>
+#include <limits>
 
 class RTCPTransmissionEvent;
 
@@ -135,7 +136,24 @@ class pnlRTCPTransmission: public wxPanel
 
 		void OnSubscriberSelected(const wxCommandEvent& event);
         void ShowSubscriber();
-		std::map<wxString, RTCPTransmissionEvent* > m_mSubscribers;
+
+
+        struct subscriber
+        {
+            subscriber() : pStats(nullptr), dtLast(wxDateTime::Now()), dKbpsMax(-1), dKbpsMin(std::numeric_limits<double>::max()),
+             dLostpsMax(-1), dLostpsMin(std::numeric_limits<double>::max()),nLastOctets(0){}
+            RTCPTransmissionEvent* pStats;
+            wxDateTime dtLast;
+            double dKbpsMax;
+            double dKbpsMin;
+            double dLostpsMax;
+            double dLostpsMin;
+            int64_t nLastOctets;
+        };
+
+
+		std::map<wxString, subscriber> m_mSubscribers;
+
 		wxString m_sSelected;
 
 		DECLARE_EVENT_TABLE()

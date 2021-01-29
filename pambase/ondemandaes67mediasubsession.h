@@ -62,6 +62,7 @@ class OnDemandAES67MediaSubsession: public OnDemandPamSubsession
 //        char const* sdpLines() override;
 
 //        unsigned int GetEpochTimestamp(RTPSink* pSink);
+        RTCPInstance* createRTCP(Groupsock* RTCPgs, unsigned totSessionBW, unsigned char const* cname, RTPSink* sink);
 
     private:
         wxMutex m_mutex;
@@ -71,7 +72,9 @@ class OnDemandAES67MediaSubsession: public OnDemandPamSubsession
         LiveAudioSource* m_pSource;
 
 
+        RTCPInstance* m_pRTCP;
 
+    bool m_bQos;
 
 };
 

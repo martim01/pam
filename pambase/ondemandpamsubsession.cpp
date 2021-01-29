@@ -10,8 +10,7 @@ OnDemandPamSubsession::OnDemandPamSubsession(wxEvtHandler* pHandler, PamUsageEnv
     m_pHandler(pHandler),
     m_nConnections(0),
     m_pSink(nullptr),
-    m_env(env),
-    m_nQOSIntervalUSecs(1000)
+    m_env(env)
 {
 
 }

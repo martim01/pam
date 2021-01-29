@@ -14,6 +14,9 @@ AES67RTPSink::AES67RTPSink(UsageEnvironment& env, Groupsock* RTPgs) : AudioRTPSi
 
 AES67RTPSink::~AES67RTPSink()
 {
+
+    pml::Log::Get(pml::Log::LOG_DEBUG) << "~AES67RTPSink" << std::endl;
+    //@todo tell higher up that this sink has finished so we can remove the RTCP stats (or at least mark as done)
 }
 
 AES67RTPSink* AES67RTPSink::createNew(UsageEnvironment& env, Groupsock* RTPgs)
@@ -97,7 +100,9 @@ OnDemandAES67MediaSubsession::OnDemandAES67MediaSubsession(wxEvtHandler* pHandle
     OnDemandPamSubsession(pHandler, env, initialPortNum),
   m_nNumberOfChannels(nNumChannels),
   m_ePacketTime(ePacketTime),
-  m_pSource(nullptr)
+  m_pSource(nullptr),
+  m_pRTCP(nullptr),
+  m_bQos(false)
 {
 
 }
@@ -215,40 +220,52 @@ void OnDemandAES67MediaSubsession::FlushQueue()
 //
 //
 
-void OnDemandAES67MediaSubsession::BeginQOSMeasurement()
-{
-    pml::Log::Get(pml::Log::LOG_DEBUG) << "RTP Server\tBegin QOS: " << this << std::endl;
-
-    // Set up a measurement record for each active subsession:
-    struct timeval startTime;
-    gettimeofday(&startTime, NULL);
-    m_nQOSMeasurementUSecs = startTime.tv_sec*1000000 + startTime.tv_usec;
-
-    if(m_pSink)
-    {
-        g_session = this;
-        ScheduleNextQOSMeasurement();
-    }
-}
-
-
-void periodicQOSMeasurement(UsageEnvironment& env, void* clientData)
+void QOSMeasurement(UsageEnvironment& env, void* clientData)
 {
     g_session->DoQoS();
 }
 
-void OnDemandAES67MediaSubsession::ScheduleNextQOSMeasurement()
+void ByeHandler(UsageEnvironment& env, void* clientData)
 {
-
-    m_nQOSMeasurementUSecs += m_nQOSIntervalUSecs*1000;
-    struct timeval timeNow;
-    gettimeofday(&timeNow, NULL);
-    unsigned timeNowUSecs = timeNow.tv_sec*1000000 + timeNow.tv_usec;
-    int usecsToDelay = m_nQOSMeasurementUSecs - timeNowUSecs;
-
-    m_env.taskScheduler().scheduleDelayedTask(usecsToDelay, (TaskFunc*)periodicQOSMeasurement, reinterpret_cast<void*>(this));
-
+    std::cout << "BYE BYE!!!!" << std::endl;
 }
+
+
+void OnDemandAES67MediaSubsession::BeginQOSMeasurement()
+{
+    pml::Log::Get(pml::Log::LOG_DEBUG) << "RTP Server\tBegin QOS: " << this << std::endl;
+
+    if(m_pRTCP && m_pSink && !m_bQos)
+    {
+        g_session = this;
+        m_pRTCP->setRRHandler((TaskFunc*)QOSMeasurement, reinterpret_cast<void*>(this));
+        m_pRTCP->setByeHandler((TaskFunc*)ByeHandler, reinterpret_cast<void*>(this));
+        m_bQos = true;
+    }
+}
+
+
+
+RTCPInstance* OnDemandAES67MediaSubsession::createRTCP(Groupsock* RTCPgs, unsigned totSessionBW, unsigned char const* cname, RTPSink* sink)
+{
+    m_pRTCP = OnDemandServerMediaSubsession::createRTCP(RTCPgs,totSessionBW, cname, sink);
+    BeginQOSMeasurement();
+
+    return m_pRTCP;
+}
+
+//void OnDemandAES67MediaSubsession::ScheduleNextQOSMeasurement()
+//{
+//
+//    m_nQOSMeasurementUSecs += m_nQOSIntervalUSecs*1000;
+//    struct timeval timeNow;
+//    gettimeofday(&timeNow, NULL);
+//    unsigned timeNowUSecs = timeNow.tv_sec*1000000 + timeNow.tv_usec;
+//    int usecsToDelay = m_nQOSMeasurementUSecs - timeNowUSecs;
+//
+//    m_env.taskScheduler().scheduleDelayedTask(usecsToDelay, (TaskFunc*)periodicQOSMeasurement, reinterpret_cast<void*>(this));
+//
+//}
 
 void OnDemandAES67MediaSubsession::DoQoS()
 {
@@ -257,6 +274,10 @@ void OnDemandAES67MediaSubsession::DoQoS()
     gettimeofday(&timeNow, NULL);
     if(m_pSink)
     {
+
+        //void getTotalBitrate(unsigned& outNumBytes, double& outElapsedTime)
+
+
         RTPTransmissionStatsDB& db = m_pSink->transmissionStatsDB();
         // Assume that there's only one SSRC source (usually the case):
         RTPTransmissionStatsDB::Iterator statsIter(db);
@@ -283,8 +304,9 @@ void OnDemandAES67MediaSubsession::DoQoS()
             pEvent->m_nPackets = pEvent->m_nPackets << 32;
             pEvent->m_nPackets += nPacketLow;
 
+            pEvent->m_dJitter = static_cast<double>(pStats->jitter())/static_cast<double>(m_pSink->rtpTimestampFrequency());
 
-            pEvent->m_nJitter = pStats->jitter();
+
 
             char addr[256];
             if(pStats->lastFromAddress().sin_family == AF_INET)
@@ -321,8 +343,6 @@ void OnDemandAES67MediaSubsession::DoQoS()
             }
 
         }
-        // Do this again later:
-        ScheduleNextQOSMeasurement();
     }
 }
 

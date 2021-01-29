@@ -21,6 +21,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "RTPSink.hh"
 #include "GroupsockHelper.hh"
 
+
 ////////// RTPSink //////////
 
 Boolean RTPSink::lookupByName(UsageEnvironment& env, char const* sinkName,
@@ -277,6 +278,10 @@ void RTPTransmissionStats
   fLastFromAddress = lastFromAddress;
   fPacketLossRatio = lossStats>>24;
   fTotNumPacketsLost = lossStats&0xFFFFFF;
+  if(fTotNumPacketsLost == 0xFFFFFF)    //Changed as we seem to get this number for no loss
+  {
+    fTotNumPacketsLost = 0;
+  }
   fLastPacketNumReceived = lastPacketNumReceived;
   fJitter = jitter;
   fLastSRTime = lastSRTime;
