@@ -137,24 +137,37 @@ class pnlRTCPTransmission: public wxPanel
 		void OnSubscriberSelected(const wxCommandEvent& event);
         void ShowSubscriber();
 
+        void OnConnectionEvent(const wxCommandEvent& event);
+        void OnDisconnectionEvent(const wxCommandEvent& event);
+
+
+        void AddGraphs(const wxString& sSource);
+
+
 
         struct subscriber
         {
-            subscriber() : pStats(nullptr), dtLast(wxDateTime::Now()), dKbpsMax(-1), dKbpsMin(std::numeric_limits<double>::max()),
+            subscriber() : pStats(nullptr), dtConnection(wxDateTime::Now()), dtLast(wxDateTime::Now()), dKbpsMax(-1), dKbpsMin(std::numeric_limits<double>::max()),
              dLostpsMax(-1), dLostpsMin(std::numeric_limits<double>::max()),nLastOctets(0){}
             RTCPTransmissionEvent* pStats;
+            wxDateTime dtConnection;
             wxDateTime dtLast;
             double dKbpsMax;
             double dKbpsMin;
             double dLostpsMax;
             double dLostpsMin;
             int64_t nLastOctets;
+
         };
 
+        subscriber& AddSubscriber(const wxString& sIpAddress);
+
+        void StoreGraphs(const wxString& sIpAddress, subscriber& sub);
 
 		std::map<wxString, subscriber> m_mSubscribers;
 
 		wxString m_sSelected;
+		wxString m_sGraph;
 
 		DECLARE_EVENT_TABLE()
 };

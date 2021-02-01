@@ -17,6 +17,7 @@ wxDECLARE_EXPORTED_EVENT(PAMBASE_IMPEXPORT, wxEVT_RTCP_TRANSMISSION,RTCPTransmis
 class PAMBASE_IMPEXPORT RTCPTransmissionEvent : public wxCommandEvent
 {
     friend class OnDemandAES67MediaSubsession;
+    friend class AES67ServerMediaSubsession;
 
 public:
 

@@ -3,21 +3,27 @@
 #include <sstream>
 #include <iostream>
 #include "wxptp.h"
-
+#include "RTCPTransmissionEvent.h"
+#include <wx/event.h>
+#include "log.h"
 
 ////////// AES67ServerMediaSubsession //////////
 
-AES67ServerMediaSubsession* AES67ServerMediaSubsession::createNew(RTPSink& rtpSink, RTCPInstance* rtcpInstance, int nPacketTime)
+static AES67ServerMediaSubsession* g_multiSession;
+
+AES67ServerMediaSubsession* AES67ServerMediaSubsession::createNew(const std::set<wxEvtHandler*>& setRTCPHandlers, RTPSink& rtpSink, RTCPInstance* rtcpInstance, int nPacketTime)
 {
-    return new AES67ServerMediaSubsession(rtpSink, rtcpInstance, nPacketTime);
+    return new AES67ServerMediaSubsession(setRTCPHandlers, rtpSink, rtcpInstance, nPacketTime);
 }
 
-AES67ServerMediaSubsession::AES67ServerMediaSubsession(RTPSink& rtpSink, RTCPInstance* rtcpInstance, int nPacketTime)
+AES67ServerMediaSubsession::AES67ServerMediaSubsession(const std::set<wxEvtHandler*>& setRTCPHandlers, RTPSink& rtpSink, RTCPInstance* rtcpInstance, int nPacketTime)
     : ServerMediaSubsession(rtpSink.envir()),
     fSDPLines(NULL), fRTPSink(rtpSink), fRTCPInstance(rtcpInstance),
+    m_setRTCPHandlers(setRTCPHandlers),
     m_nPacketTime(nPacketTime)
 {
   //fClientRTCPSourceRecords = HashTable::create(ONE_WORD_HASH_KEYS);
+  BeginQOSMeasurement();
 }
 
 AES67ServerMediaSubsession::~AES67ServerMediaSubsession()
@@ -257,4 +263,88 @@ unsigned int AES67ServerMediaSubsession::GetEpochTimestamp()
 //    nTimestampsToMinus = nTimestampsToMinus % 42949672960;
 //
 //    return static_cast<unsigned int>(nTimestamp-static_cast<int>(nTimestampsToMinus));
+}
+
+
+void AES67ServerMediaSubsession::DoQoS()
+{
+    pml::Log::Get(pml::Log::LOG_TRACE) << "AES67ServerMediaSubsession::DoQoS" << std::endl;
+    struct timeval timeNow;
+    gettimeofday(&timeNow, NULL);
+            //void getTotalBitrate(unsigned& outNumBytes, double& outElapsedTime)
+
+
+    RTPTransmissionStatsDB& db = fRTPSink.transmissionStatsDB();
+    // Assume that there's only one SSRC source (usually the case):
+    RTPTransmissionStatsDB::Iterator statsIter(db);
+    RTPTransmissionStats* pStats = statsIter.next();
+    while (pStats != NULL)
+    {
+        for(auto pHandler : m_setRTCPHandlers)
+        {
+            RTCPTransmissionEvent* pEvent = new RTCPTransmissionEvent();
+            pEvent->m_nSR_RRTime = pStats->diffSR_RRTime();
+            pEvent->m_nFirstPacketNumber = pStats->firstPacketNumReported();
+
+            u_int32_t nOctHigh,  nOctLow,  nPacketHigh, nPacketLow;
+            pStats->getTotalOctetCount(nOctHigh, nOctLow);
+            pStats->getTotalPacketCount(nPacketHigh, nPacketLow);
+            pEvent->m_nOctets = nOctHigh;
+            pEvent->m_nOctets = pEvent->m_nOctets << 32;
+            pEvent->m_nOctets += nOctLow;
+            pEvent->m_nPackets = nPacketHigh;
+            pEvent->m_nPackets = pEvent->m_nPackets << 32;
+            pEvent->m_nPackets += nPacketLow;
+
+            pEvent->m_dJitter = static_cast<double>(pStats->jitter())/static_cast<double>(fRTPSink.rtpTimestampFrequency());
+
+            char addr[256];
+            if(pStats->lastFromAddress().sin_family == AF_INET)
+            {
+                inet_ntop(AF_INET, &pStats->lastFromAddress().sin_addr, &addr[0], 256);
+            }
+            else if(pStats->lastFromAddress().sin_family == AF_INET6)
+            {
+                inet_ntop(AF_INET6, &pStats->lastFromAddress().sin_addr, &addr[0], 256);
+            }
+            pEvent->m_sLastFromAddress = wxString(std::string(addr));
+
+            pEvent->m_nLastPacketNumber = pStats->lastPacketNumReceived();
+            pEvent->m_nLastSRTime = pStats->lastSRTime();
+            pEvent->m_dtLastReceived = wxDateTime(time_t(pStats->lastTimeReceived().tv_sec));
+            pEvent->m_dtLastReceived.SetMillisecond(pStats->lastTimeReceived().tv_usec/1000);
+            pEvent->m_nPacketLossRatio = pStats->packetLossRatio();
+            pEvent->m_nPacketsLostBetweenRR = pStats->packetsLostBetweenRR();
+            pEvent->m_nPacketsReceivedSinceLastRR = pStats->packetsReceivedSinceLastRR();
+            pEvent->m_nRoundTripDelay = (static_cast<double>(pStats->roundTripDelay())/65536.0)*1000000;
+            pEvent->m_nSSRC = pStats->SSRC();
+            pEvent->m_dtCreated = wxDateTime(time_t(pStats->timeCreated().tv_sec));
+            pEvent->m_dtCreated.SetMillisecond(pStats->timeCreated().tv_usec/1000);
+            pEvent->m_nTotNumPacketsLost = pStats->totNumPacketsLost();
+
+            pml::Log::Get(pml::Log::LOG_TRACE) << "OnDemandAES67MediaSubsession::DoQoS:SendEvent" << pEvent->m_sLastFromAddress << std::endl;
+            wxQueueEvent(pHandler, pEvent);
+        }
+        pStats = statsIter.next();
+    }
+}
+
+void MultiQOSMeasurement(UsageEnvironment& env, void* clientData)
+{
+    g_multiSession->DoQoS();
+}
+
+void MultiByeHandler(UsageEnvironment& env, void* clientData)
+{
+    pml::Log::Get() << "Received BYE message" << std::endl;
+}
+
+void AES67ServerMediaSubsession::BeginQOSMeasurement()
+{
+    pml::Log::Get(pml::Log::LOG_DEBUG) << "RTP Server\tBegin QOS: " << this << std::endl;
+
+    g_multiSession = this;
+    fRTCPInstance->setRRHandler((TaskFunc*)MultiQOSMeasurement, reinterpret_cast<void*>(this));
+    fRTCPInstance->setByeHandler((TaskFunc*)MultiByeHandler, reinterpret_cast<void*>(this));
+
 }

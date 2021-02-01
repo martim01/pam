@@ -68,7 +68,7 @@ class PAMBASE_IMPEXPORT LevelGraph : public pmControl
             m_dResolution = static_cast<double>(GetClientSize().GetHeight())/(m_dMax-m_dMin);
         }
 
-        void AddGraph(const wxString& sName, const wxColour& clr);
+        void AddGraph(const wxString& sName, const wxColour& clr, bool bAutoRange=false);
         void AddPeak(const wxString& sGraph, double dPeak);
 
         void AddZone(double dMin, double dMax, const wxColour& clr);
@@ -82,6 +82,7 @@ class PAMBASE_IMPEXPORT LevelGraph : public pmControl
         void DeleteAllGraphs();
         void HideAllGraphs();
         void ShowRange(const wxString& sGraph, bool bShow=true);
+        void SetAutoRange(const wxString& sGraph, bool bAuto);
 
         std::pair<double,double> GetRange(const wxString& sGraph);
 
@@ -102,7 +103,9 @@ class PAMBASE_IMPEXPORT LevelGraph : public pmControl
 
         struct graph
         {
-            graph(const wxColour& clr) : clrLine(clr), dDataSetTotal(0.0), dDataSetMax(-120.0), nDataSize(0), bShow(true), dMax(-80), dMin(0), dResolution(1), bShowRange(false) {}
+            graph(const wxColour& clr, bool bAuto) : clrLine(clr), dDataSetTotal(0.0), dDataSetMax(-120.0), nDataSize(0), bShow(true), dMax(std::numeric_limits<double>::min()),
+            dMin(std::numeric_limits<double>::max()), dResolution(1),
+            bShowRange(false), bAutoRange(bAuto) {}
             wxColour clrLine;
             std::list<double> lstPeaks;
             double dDataSetTotal;
@@ -113,11 +116,14 @@ class PAMBASE_IMPEXPORT LevelGraph : public pmControl
             double dMin;
             double dResolution;
             bool bShowRange;
+            bool bAutoRange;
         };
 
 
         void ProcessDataSet(graph& aGraph);
         double GetDataSetMax(graph& aGraph);
+
+        void AutoRange(graph& aGraph);
 
         std::map<wxString, graph> m_mGraphs;
 
@@ -125,6 +131,7 @@ class PAMBASE_IMPEXPORT LevelGraph : public pmControl
         double m_dMax;
         double m_dMin;
         double m_dResolution;
+        bool m_bAutoRange;
 
         struct zone
         {

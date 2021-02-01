@@ -45,6 +45,7 @@
 			<Add option="-D_UNICODE" />
 			<Add option="-DUNICODE" />
 			<Add option="-DNO_OPENSSL" />
+			<Add option="-DALLOW_SERVER_PORT_REUSE" />
 			<Add directory="include" />
 			<Add directory="$(#live_group.include)" />
 			<Add directory="$(#live_usage.include)" />

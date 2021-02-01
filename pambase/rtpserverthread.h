@@ -10,6 +10,7 @@
 #include "liveaudiosource.h"
 #include "dlldefine.h"
 #include "pamRTSPServer.h"
+#include <set>
 struct qosData;
 class Smpte2110MediaSession;
 class timedbuffer;
@@ -19,7 +20,7 @@ static void afterPlaying(void* pClientData);
 class PAMBASE_IMPEXPORT RtpServerThread : public wxThread
 {
     public:
-        RtpServerThread(wxEvtHandler* pHandler, const wxString& sRTSP, unsigned int nRTSPPort, const wxString& sSourceIp, unsigned int RTPPort, bool bSSM, LiveAudioSource::enumPacketTime ePacketTime);
+        RtpServerThread(wxEvtHandler* pHandler, const std::set<wxEvtHandler*>& setRTCPHandlers, const wxString& sRTSP, unsigned int nRTSPPort, const wxString& sSourceIp, unsigned int RTPPort, bool bSSM, LiveAudioSource::enumPacketTime ePacketTime);
         void* Entry();
 
         void StopStream();
@@ -35,8 +36,10 @@ class PAMBASE_IMPEXPORT RtpServerThread : public wxThread
         bool CreateStream();
         void CloseStream();
 
+
         wxMutex m_mutex;
         wxEvtHandler* m_pHandler;
+        std::set<wxEvtHandler*> m_setRTCPHandlers;
         wxString m_sRTSP;
         unsigned int m_nRTSPPort;
         wxString m_sSourceIp;
@@ -51,6 +54,7 @@ class PAMBASE_IMPEXPORT RtpServerThread : public wxThread
         SimpleRTPSink* m_pSink;
         RTCPInstance* m_pRtcpInstance;
         Groupsock* m_pRtpGroupsock;
+        Groupsock* m_pRtcpGroupsock;
         PamRTSPServer* m_pRtspServer;
         std::string m_sSDP;
         bool m_bStreaming;

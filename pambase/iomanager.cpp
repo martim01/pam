@@ -43,6 +43,16 @@ void IOManager::DeregisterForRTCPTransmission(wxEvtHandler* pHandler)
     m_setRTCPHandlers.erase(pHandler);
 }
 
+void IOManager::RegisterForRTSPTransmission(wxEvtHandler* pHandler)
+{
+    m_setRTSPHandlers.insert(pHandler);
+}
+
+void IOManager::DeregisterForRTSPTransmission(wxEvtHandler* pHandler)
+{
+    m_setRTSPHandlers.erase(pHandler);
+}
+
 void IOManager::RegisterHandler(wxEvtHandler* pHandler)
 {
     if(m_bSingleHandler)
@@ -1099,7 +1109,7 @@ void IOManager::StreamMulticast()
     unsigned long nByte;
     bool bSSM(sDestinationIp.BeforeFirst(wxT('.')).ToULong(&nByte) && nByte >= 224 && nByte <= 239);
 
-    m_pMulticastServer = new RtpServerThread(this, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString),
+    m_pMulticastServer = new RtpServerThread(this, m_setRTCPHandlers, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString),
                                              Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555),
                                              sDestinationIp,
                                             Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004),
@@ -1113,10 +1123,9 @@ void IOManager::StreamUnicast()
 {
     pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tCreate Unicast AES67 Server" << std::endl;
 
-    m_pUnicastServer = new OnDemandStreamer(this, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), "0.0.0.0"),
+    m_pUnicastServer = new OnDemandStreamer(m_setRTSPHandlers, m_setRTCPHandlers, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), "0.0.0.0"),
                                               Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555));
 
-    m_pUnicastServer->SetRTCPHandlers(m_setRTCPHandlers);
     m_pOnDemandSubsession = OnDemandAES67MediaSubsession::createNew(this, *m_pUnicastServer->envir(), 2, (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
 
     m_pUnicastServer->Create();

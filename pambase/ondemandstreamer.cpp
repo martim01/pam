@@ -21,16 +21,17 @@ wxDEFINE_EVENT(wxEVT_ODS_FINISHED, wxCommandEvent);
 
 
 
-OnDemandStreamer::OnDemandStreamer(wxEvtHandler* pHandler, const wxString& sRTSPAddress, unsigned short nRtspPort) :
+OnDemandStreamer::OnDemandStreamer(const std::set<wxEvtHandler*>& setRTSPHandlers, const std::set<wxEvtHandler*>& setRTCPHandlers,  const wxString& sRTSPAddress, unsigned short nRtspPort) :
     wxThread(wxTHREAD_JOINABLE),
-    m_pHandler(pHandler),
+    m_setRTSPHandlers(setRTSPHandlers),
+    m_setRTCPHandlers(setRTCPHandlers),
     m_sRtspAddress(sRTSPAddress),
     m_nRtspPort(nRtspPort),
     m_pSubsession(nullptr),
     m_eventLoopWatchVariable(0),
     m_pSMS(nullptr)
 {
-    // Begin by setting up our usage environment:
+        // Begin by setting up our usage environment:
     m_pScheduler = PamTaskScheduler::createNew();
     m_pEnv = PamUsageEnvironment::createNew(*m_pScheduler,nullptr);
 }
@@ -60,7 +61,8 @@ void* OnDemandStreamer::Entry()
 
     pml::Log::Get(pml::Log::LOG_DEBUG) << "RTP Server\tStreamName = '" << sStreamName << "'" << std::endl;
 
-    m_pSubsession->SetRTCPHandlers(m_setHandlers);
+    m_pSubsession->SetRTCPHandlers(m_setRTCPHandlers);
+    m_pSubsession->SetRTSPHandlers(m_setRTSPHandlers);
 
     m_pSMS = ServerMediaSession::createNew(*m_pEnv, sStreamName.c_str(), sStreamName.c_str(), descriptionString);
 
@@ -91,6 +93,8 @@ void* OnDemandStreamer::Entry()
         m_pEnv->taskScheduler().doEventLoop(&m_eventLoopWatchVariable);
     }
 
+    //gracefully close
+    rtspServer->closeAllClientSessionsForServerMediaSession(sStreamName.c_str());
     Medium::close(rtspServer);
 
     return NULL;
@@ -110,11 +114,12 @@ void OnDemandStreamer::AnnounceStream(RTSPServer* rtspServer, ServerMediaSession
     UsageEnvironment& env = rtspServer->envir();
     pml::Log::Get(pml::Log::LOG_INFO) << "RTP Server\tPlay this stream using the URL \"" << url << "\"" << std::endl;
 
-    if(m_pHandler)
+    wxMutexLocker ml(m_mutex);
+    for(auto pHandler : m_setRTSPHandlers)
     {
         wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_ODS_ANNOUNCE);
         pEvent->SetString(wxString::FromUTF8(url));
-        wxQueueEvent(m_pHandler, pEvent);
+        wxQueueEvent(pHandler, pEvent);
     }
 
     delete[] url;
@@ -125,6 +130,4 @@ const std::string& OnDemandStreamer::GetSDP()
 {
     return m_sSDP;
 }
-
-
 

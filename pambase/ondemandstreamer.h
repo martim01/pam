@@ -16,7 +16,7 @@ class OnDemandPamSubsession;
 class PAMBASE_IMPEXPORT OnDemandStreamer : public wxThread
 {
     public:
-        OnDemandStreamer(wxEvtHandler* pHandler, const wxString& sRTSPAddress, unsigned short nRTSPPort);
+        OnDemandStreamer(const std::set<wxEvtHandler*>& setRTSPHandlers, const std::set<wxEvtHandler*>& setRTCPHandlers, const wxString& sRTSPAddress, unsigned short nRTSPPort);
         PamUsageEnvironment* envir()
         {
             return m_pEnv;
@@ -28,7 +28,6 @@ class PAMBASE_IMPEXPORT OnDemandStreamer : public wxThread
             m_pSubsession = pSubsession;
         }
 
-        void SetRTCPHandlers(const std::set<wxEvtHandler*>& setHandlers) {m_setHandlers = setHandlers;}
 
         void* Entry();
         void Stop();
@@ -38,9 +37,11 @@ class PAMBASE_IMPEXPORT OnDemandStreamer : public wxThread
     protected:
         void AnnounceStream(RTSPServer* rtspServer, ServerMediaSession* sms,  const std::string& sStreamName);
 
+        wxMutex m_mutex;
 
+        std::set<wxEvtHandler*> m_setRTSPHandlers;
+        std::set<wxEvtHandler*> m_setRTCPHandlers;
 
-        wxEvtHandler* m_pHandler;
         wxString m_sRtspAddress;
         unsigned short m_nRtspPort;
         OnDemandPamSubsession* m_pSubsession;
@@ -51,7 +52,7 @@ class PAMBASE_IMPEXPORT OnDemandStreamer : public wxThread
 
         std::string m_sSDP;
         ServerMediaSession* m_pSMS;
-        std::set<wxEvtHandler*> m_setHandlers;
+
 
 
 };

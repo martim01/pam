@@ -3,6 +3,8 @@
 #include "iomanager.h"
 #include "RTCPTransmissionEvent.h"
 #include "log.h"
+#include "ondemandstreamer.h"
+
 //(*InternalHeaders(pnlRTCPTransmission)
 #include <wx/font.h>
 #include <wx/intl.h>
@@ -321,9 +323,18 @@ pnlRTCPTransmission::pnlRTCPTransmission(wxWindow* parent,wxWindowID id,const wx
 	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlRTCPTransmission::OnbtnCloseClick);
 	//*)
 
+	m_pGraph->SetFont(wxFont(7,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
+
 	IOManager::Get().RegisterForRTCPTransmission(this);
+	IOManager::Get().RegisterForRTSPTransmission(this);
+
 	Connect(wxID_ANY, wxEVT_RTCP_TRANSMISSION, (wxObjectEventFunction)&pnlRTCPTransmission::OnRTCPTransmissionEvent);
+	Connect(wxID_ANY, wxEVT_ODS_CONNECTION, (wxObjectEventFunction)&pnlRTCPTransmission::OnConnectionEvent);
+	Connect(wxID_ANY, wxEVT_ODS_DISCONNECTION, (wxObjectEventFunction)&pnlRTCPTransmission::OnDisconnectionEvent);
+
 	Connect(ID_M_PLST1, wxEVT_LIST_SELECTED, (wxObjectEventFunction)&pnlRTCPTransmission::OnSubscriberSelected);
+
+	m_sGraph = "delay";
 }
 
 pnlRTCPTransmission::~pnlRTCPTransmission()
@@ -341,45 +352,59 @@ void pnlRTCPTransmission::OnbtnCloseClick(wxCommandEvent& event)
 
 void pnlRTCPTransmission::OnRTCPTransmissionEvent(const RTCPTransmissionEvent& event)
 {
-    pml::Log::Get(pml::Log::LOG_TRACE) << "pnlRTCPTransmission::OnRTCPTransmissionEvent" << std::endl;
+    pml::Log::Get(pml::Log::LOG_TRACE) << "pnlRTCPTransmission::OnRTCPTransmissionEvent: " << event.GetFromAddress() << std::endl;
+    subscriber& sub = AddSubscriber(event.GetFromAddress());
 
-    auto ins = m_mSubscribers.insert(std::make_pair(event.GetFromAddress(), subscriber()));
+    if(sub.pStats)// && sub.pStats->GetLastReceivedTime() != event.GetLastReceivedTime())
+    {
+        sub.nLastOctets = sub.pStats->GetTotalOctets();
+        sub.dtLast = sub.pStats->GetLastReceivedTime();
+        delete sub.pStats;
+        sub.pStats = nullptr;
+    }
+
+    sub.pStats = dynamic_cast<RTCPTransmissionEvent*>(event.Clone());
+
+    StoreGraphs(event.GetFromAddress(), sub);
+}
+
+pnlRTCPTransmission::subscriber& pnlRTCPTransmission::AddSubscriber(const wxString& sIpAddress)
+{
+    auto ins = m_mSubscribers.insert(std::make_pair(sIpAddress, subscriber()));
     if(ins.second)
     {
-        m_plstSubscribers->AddButton(event.GetFromAddress());
+        m_plstSubscribers->AddButton(sIpAddress);
         m_plstSubscribers->Refresh();
         m_plstSubscribers->Update();
 
+        AddGraphs(sIpAddress);
     }
-    else if(ins.first->second.pStats->GetLastReceivedTime() != event.GetLastReceivedTime())
-    {
-        ins.first->second.nLastOctets = ins.first->second.pStats->GetTotalOctets();
-        ins.first->second.dtLast = ins.first->second.pStats->GetLastReceivedTime();
-        delete ins.first->second.pStats;
-    }
-
-    ins.first->second.pStats = dynamic_cast<RTCPTransmissionEvent*>(event.Clone());
 
     if(m_sSelected == wxEmptyString)
     {
-        m_plstSubscribers->SelectButton(event.GetFromAddress(), true);
+        m_plstSubscribers->SelectButton(sIpAddress, true);
     }
-    else if(event.GetFromAddress() == m_sSelected)
+    else if(sIpAddress == m_sSelected)
     {
         ShowSubscriber();
     }
+    return ins.first->second;
 }
 
 
 void pnlRTCPTransmission::OnSubscriberSelected(const wxCommandEvent& event)
 {
-    pml::Log::Get(pml::Log::LOG_TRACE) << "pnlRTCPTransmission::OnSubscriberSelected" << std::endl;
     auto itSubscriber= m_mSubscribers.find(event.GetString());
     if(itSubscriber != m_mSubscribers.end())
     {
         m_plblSubscriber->SetLabel(event.GetString());
         m_sSelected = event.GetString();
+
+        m_pGraph->HideAllGraphs();
+        m_pGraph->ShowGraph(m_sSelected+m_sGraph, true);
+        m_plblGraph->SetLabel(m_sGraph);
         ShowSubscriber();
+
     }
 }
 
@@ -388,61 +413,138 @@ void pnlRTCPTransmission::ShowSubscriber()
     auto itSubscriber= m_mSubscribers.find(m_sSelected);
     if(itSubscriber != m_mSubscribers.end())
     {
-        m_plblJitter->SetLabel(wxString::Format("%.2f ms", itSubscriber->second.pStats->GetJitter()));
-
-        wxTimeSpan ts(itSubscriber->second.pStats->GetLastReceivedTime() - itSubscriber->second.pStats->GetFirstReceivedTime());
-        double dKbpsAv = static_cast<double>(itSubscriber->second.pStats->GetTotalOctets())/ts.GetSeconds().ToDouble();
-        dKbpsAv/=125.0;
-        double dPacketsAv = static_cast<double>(itSubscriber->second.pStats->GetTotalPacketsLost())/ts.GetSeconds().ToDouble();
-
-        m_plblKbAv->SetLabel(wxString::Format("%.2f", dKbpsAv));
-        m_plblPacketsAv->SetLabel(wxString::Format("%.2f", dPacketsAv));
-        m_plblRRGap->SetLabel(ts.Format("%H:%M:%S.%l"));
-
-        if(itSubscriber->second.dtLast < itSubscriber->second.pStats->GetLastReceivedTime())
+        if(itSubscriber->second.pStats)
         {
-            wxTimeSpan tsDiff(itSubscriber->second.pStats->GetLastReceivedTime() - itSubscriber->second.dtLast);
-            m_plblRRGap->SetLabel(tsDiff.Format("%H:%M:%S.%l"));
 
-            double dkbps = static_cast<double>(itSubscriber->second.pStats->GetTotalOctets() -itSubscriber->second.nLastOctets)/tsDiff.GetMilliseconds().ToDouble();
-            dkbps/=8;
+            m_plblJitter->SetLabel(wxString::Format("%.6f ms", itSubscriber->second.pStats->GetJitter()));
 
-            double dLost = static_cast<double>(itSubscriber->second.pStats->GetPacketsLostBetweenRR())/tsDiff.GetMilliseconds().ToDouble();
-            dLost *= 1000.0;
 
-            double dRatio = static_cast<double>(itSubscriber->second.pStats->GetPacketLossRatio())/256.0;
-            std::cout << itSubscriber->second.pStats->GetPacketsLostBetweenRR() << "\t" << tsDiff.GetSeconds().ToDouble() << "\tRatio: " << dRatio <<std::endl;
+            wxTimeSpan ts(itSubscriber->second.pStats->GetLastReceivedTime() - itSubscriber->second.dtConnection);
+            double dKbpsAv = static_cast<double>(itSubscriber->second.pStats->GetTotalOctets())/ts.GetSeconds().ToDouble();
+            dKbpsAv/=125.0;
+            double dPacketsAv = static_cast<double>(itSubscriber->second.pStats->GetTotalPacketsLost())/ts.GetSeconds().ToDouble();
 
-            itSubscriber->second.dKbpsMax = std::max(dkbps, itSubscriber->second.dKbpsMax);
-            itSubscriber->second.dKbpsMin = std::min(dkbps, itSubscriber->second.dKbpsMin);
+            m_plblKbAv->SetLabel(wxString::Format("%.2f", dKbpsAv));
+            m_plblPacketsAv->SetLabel(wxString::Format("%.2f", dPacketsAv));
+            m_plblRRGap->SetLabel(ts.Format("%H:%M:%S.%l"));
 
-            itSubscriber->second.dLostpsMax = std::max(dLost, itSubscriber->second.dLostpsMax);
-            itSubscriber->second.dLostpsMin = std::min(dLost, itSubscriber->second.dLostpsMin);
+            if(itSubscriber->second.dtLast < itSubscriber->second.pStats->GetLastReceivedTime())
+            {
+                wxTimeSpan tsDiff(itSubscriber->second.pStats->GetLastReceivedTime() - itSubscriber->second.dtLast);
+                m_plblRRGap->SetLabel(tsDiff.Format("%H:%M:%S.%l"));
 
-            m_plblKbMax->SetLabel(wxString::Format("%.2f", itSubscriber->second.dKbpsMax));
-            m_plblKbMin->SetLabel(wxString::Format("%.2f", itSubscriber->second.dKbpsMin));
+                m_plblKbMax->SetLabel(wxString::Format("%.2f", itSubscriber->second.dKbpsMax));
+                m_plblKbMin->SetLabel(wxString::Format("%.2f", itSubscriber->second.dKbpsMin));
 
-            m_plblPacketsMax->SetLabel(wxString::Format("%.2f", itSubscriber->second.dLostpsMax));
-            m_plblPacketsMin->SetLabel(wxString::Format("%.2f", itSubscriber->second.dLostpsMin));
+                m_plblPacketsMax->SetLabel(wxString::Format("%.2f", itSubscriber->second.dLostpsMax));
+                m_plblPacketsMin->SetLabel(wxString::Format("%.2f", itSubscriber->second.dLostpsMin));
+
+            }
+
+
+            m_plblPacketFirst->SetLabel(wxString::Format("%u", itSubscriber->second.pStats->GetFirstPacketNumber()));
+            m_plblPacketLatest->SetLabel(wxString::Format("%u", itSubscriber->second.pStats->GetLastPacketNumber()));
+
+            m_plblPacketsLost->SetLabel(wxString::Format("%u", itSubscriber->second.pStats->GetTotalPacketsLost()));
+            m_plblPacketsTotal->SetLabel(wxString::Format("%u", itSubscriber->second.pStats->GetTotalPackets()));
+            m_plblRRFirst->SetLabel(itSubscriber->second.pStats->GetFirstReceivedTime().Format("%y-%m-%d %H:%M:%S:%l"));
+
+
+            m_plblRRLast->SetLabel(itSubscriber->second.pStats->GetLastReceivedTime().Format("%y-%m-%d %H:%M:%S:%l"));
+            m_plblRRSR->SetLabel(wxString::Format("%.3f s", static_cast<double>(itSubscriber->second.pStats->GetSRRRTime())/65536.0));
+            m_plblRoundtrip->SetLabel(wxString::Format("%u us", itSubscriber->second.pStats->GetRoundTripDelay()));
+            m_plblSubscriber->SetLabel(itSubscriber->second.pStats->GetString());
 
         }
-
-
-        m_plblPacketFirst->SetLabel(wxString::Format("%u", itSubscriber->second.pStats->GetFirstPacketNumber()));
-        m_plblPacketLatest->SetLabel(wxString::Format("%u", itSubscriber->second.pStats->GetLastPacketNumber()));
-
-        m_plblPacketsLost->SetLabel(wxString::Format("%u", itSubscriber->second.pStats->GetTotalPacketsLost()));
-        m_plblPacketsTotal->SetLabel(wxString::Format("%u", itSubscriber->second.pStats->GetTotalPackets()));
-        m_plblRRFirst->SetLabel(itSubscriber->second.pStats->GetFirstReceivedTime().Format("%y-%m-%d %H:%M:%S:%l"));
-
-
-        m_plblRRLast->SetLabel(itSubscriber->second.pStats->GetLastReceivedTime().Format("%y-%m-%d %H:%M:%S:%l"));
-        m_plblRRSR->SetLabel(wxString::Format("%.3f s", static_cast<double>(itSubscriber->second.pStats->GetSRRRTime())/65536.0));
-		m_plblRoundtrip->SetLabel(wxString::Format("%u us", itSubscriber->second.pStats->GetRoundTripDelay()));
-		m_plblSubscriber->SetLabel(itSubscriber->second.pStats->GetString());
     }
     else
     {
         pml::Log::Get(pml::Log::LOG_TRACE) << "pnlRTCPTransmission::OnSubscriberSelected: Subscriber not found!" << std::endl;
     }
+}
+
+void pnlRTCPTransmission::StoreGraphs(const wxString& sIpAddress, subscriber& sub)
+{
+    m_pGraph->AddPeak(sIpAddress+"jitter", sub.pStats->GetJitter());
+    if(sub.dtLast < sub.pStats->GetLastReceivedTime())
+    {
+        wxTimeSpan tsDiff(sub.pStats->GetLastReceivedTime() - sub.dtLast);
+        double dkbps = static_cast<double>(sub.pStats->GetTotalOctets() -sub.nLastOctets)/tsDiff.GetMilliseconds().ToDouble();
+        dkbps*=8;
+
+
+        double dLost = static_cast<double>(sub.pStats->GetPacketsLostBetweenRR())/tsDiff.GetMilliseconds().ToDouble();
+        dLost *= 1000.0;
+
+        double dRatio = static_cast<double>(sub.pStats->GetPacketLossRatio())/256.0;
+
+        sub.dKbpsMax = std::max(dkbps, sub.dKbpsMax);
+        sub.dKbpsMin = std::min(dkbps, sub.dKbpsMin);
+
+        sub.dLostpsMax = std::max(dLost, sub.dLostpsMax);
+        sub.dLostpsMin = std::min(dLost, sub.dLostpsMin);
+
+        m_pGraph->AddPeak(sIpAddress+"kbps", dkbps);
+        pml::Log::Get(pml::Log::LOG_TRACE) << "Store: " << (sIpAddress+"kbps") << " = " << dkbps << std::endl;
+
+        m_pGraph->AddPeak(sIpAddress+"loss", dLost);
+
+        m_pGraph->AddPeak(sIpAddress+"delay", sub.pStats->GetRoundTripDelay());
+    }
+
+
+
+}
+
+void pnlRTCPTransmission::OnConnectionEvent(const wxCommandEvent& event)
+{
+    pml::Log::Get() << "Subscriber: " << event.GetString() << ":" << event.GetExtraLong() << " opened connection." << std::endl;
+    AddSubscriber(event.GetString());
+}
+
+void pnlRTCPTransmission::OnDisconnectionEvent(const wxCommandEvent& event)
+{
+    auto itSubscriber= m_mSubscribers.find(event.GetString());
+    if(itSubscriber != m_mSubscribers.end())
+    {
+        pml::Log::Get() << "Subscriber: " << itSubscriber->first << " connection closed.\n"
+        << "Total time: " << (wxDateTime::Now()-itSubscriber->second.dtConnection).Format("%H:%M:%S:%l") << "\n";
+        if(itSubscriber->second.pStats)
+        {
+            wxTimeSpan ts(itSubscriber->second.pStats->GetLastReceivedTime() - itSubscriber->second.pStats->GetFirstReceivedTime());
+            double dKbpsAv = static_cast<double>(itSubscriber->second.pStats->GetTotalOctets())/ts.GetSeconds().ToDouble();
+            dKbpsAv/=125.0;
+
+            pml::Log::Get() << "RTCP Stats\n"
+            << "Total Packets:\t" << itSubscriber->second.pStats->GetTotalPackets() << "\n"
+            << "Loast Packets:\t" << itSubscriber->second.pStats->GetTotalPacketsLost() << "\n"
+            << "Average Bitrate:\t" << dKbpsAv << "kb/s";
+
+        }
+        pml::Log::Get() << std::endl;
+    }
+}
+
+
+void pnlRTCPTransmission::AddGraphs(const wxString& sSource)
+{
+    m_pGraph->AddGraph(sSource+"kbps", wxColour(0,255,0), true);
+    m_pGraph->ShowGraph(sSource+"kbps", false);
+    m_pGraph->ShowRange(sSource+"kbps", true);
+
+    m_pGraph->AddGraph(sSource+"loss", wxColour(255,0,0), true);
+    m_pGraph->ShowGraph(sSource+"loss", false);
+    m_pGraph->ShowRange(sSource+"loss", true);
+
+
+    m_pGraph->AddGraph(sSource+"jitter", wxColour(0,0,255), true);
+    m_pGraph->ShowGraph(sSource+"jitter", false);
+    m_pGraph->ShowRange(sSource+"jitter", true);
+
+
+    m_pGraph->AddGraph(sSource+"delay", wxColour(255,255,0), true);
+    m_pGraph->ShowGraph(sSource+"delay", false);
+    m_pGraph->ShowRange(sSource+"delay", true);
+
+
 }

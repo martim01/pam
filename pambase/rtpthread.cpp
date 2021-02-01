@@ -107,6 +107,7 @@ void* RtpThread::Entry()
         StreamFromSDP();
     }
 
+
     pml::Log::Get() << "RTP Client\tStream closed" << std::endl;
     delete[] m_pCurrentBuffer;
 
@@ -116,6 +117,10 @@ void* RtpThread::Entry()
     wxQueueEvent(m_pHandler, pEvent);
 
     // @todo do we need to delete clients etc?
+    if(m_pRtspClient)
+    {
+        shutdownStream(m_pRtspClient, 0);
+    }
 
 
     return 0;

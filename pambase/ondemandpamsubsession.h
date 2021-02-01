@@ -18,10 +18,13 @@ class PAMBASE_IMPEXPORT OnDemandPamSubsession: public OnDemandServerMediaSubsess
         RTPSink* GetSink() {return m_pSink;}
 
 
-        void SetRTCPHandlers(std::set<wxEvtHandler*>& setHandlers) { m_setHandlers = setHandlers;}
+        void SetRTCPHandlers(std::set<wxEvtHandler*>& setHandlers) { m_setRTCPHandlers = setHandlers;}
+        void SetRTSPHandlers(std::set<wxEvtHandler*>& setHandlers) { m_setRTSPHandlers = setHandlers;}
+
+
 
     protected: // we're a virtual base class
-        OnDemandPamSubsession(wxEvtHandler* pHandler, PamUsageEnvironment& env, portNumBits initialPortNum  = 6970);
+        OnDemandPamSubsession(wxEvtHandler* pAudioHandler, PamUsageEnvironment& env, portNumBits initialPortNum  = 6970);
         virtual ~OnDemandPamSubsession();
 
         char const* getAuxSDPLine(RTPSink* rtpSink, FramedSource* inputSource) override;
@@ -45,8 +48,7 @@ class PAMBASE_IMPEXPORT OnDemandPamSubsession: public OnDemandServerMediaSubsess
 
 
 
-
-        wxEvtHandler* m_pHandler;
+        wxEvtHandler* m_pAudioHandler;
         long m_nConnections;
         std::string m_sSDP;
         RTPSink* m_pSink;
@@ -54,7 +56,8 @@ class PAMBASE_IMPEXPORT OnDemandPamSubsession: public OnDemandServerMediaSubsess
 
 
 
-        std::set<wxEvtHandler*> m_setHandlers;
+        std::set<wxEvtHandler*> m_setRTSPHandlers;
+        std::set<wxEvtHandler*> m_setRTCPHandlers;
 
     private:
 };

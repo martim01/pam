@@ -6,9 +6,10 @@
 #include "ondemandstreamer.h"
 #include "log.h"
 
-RtpServerThread::RtpServerThread(wxEvtHandler* pHandler, const wxString& sRTSP, unsigned int nRTSPPort, const wxString& sSourceIp, unsigned int nRTPPort, bool bSSM, LiveAudioSource::enumPacketTime ePacketTime) :
+RtpServerThread::RtpServerThread(wxEvtHandler* pHandler, const std::set<wxEvtHandler*>& setRTCPHandlers, const wxString& sRTSP, unsigned int nRTSPPort, const wxString& sSourceIp, unsigned int nRTPPort, bool bSSM, LiveAudioSource::enumPacketTime ePacketTime) :
     wxThread(wxTHREAD_JOINABLE),
     m_pHandler(pHandler),
+    m_setRTCPHandlers(setRTCPHandlers),
     m_sRTSP(sRTSP),
     m_nRTSPPort(nRTSPPort),
     m_sSourceIp(sSourceIp),
@@ -78,12 +79,16 @@ bool RtpServerThread::CreateStream()
     const unsigned char ttl = 255;
 
     const Port rtpPort(m_nRTPPort);
-
+    const Port rtcpPort(m_nRTPPort+1);
     m_pRtpGroupsock = new Groupsock(*m_penv, destinationAddress, rtpPort, ttl);
+    m_pRtcpGroupsock = new Groupsock(*m_penv, destinationAddress, rtcpPort, ttl);
     if(m_bSSM)
     {
         m_pRtpGroupsock->multicastSendOnly(); // we're a SSM source
+        m_pRtcpGroupsock->multicastSendOnly(); // we're a SSM source
     }
+
+
 
     m_pSource = LiveAudioSource::createNew(m_pHandler, m_mutex, *m_penv, 2, m_ePacketTime);
 
@@ -95,7 +100,18 @@ bool RtpServerThread::CreateStream()
 
     // Create and start a RTSP server to serve this stream:
     m_pRtspServer = PamRTSPServer::createNew(*m_penv, m_nRTSPPort);
-    if (m_pRtspServer == NULL)
+    // Create (and start) a 'RTCP instance' for this RTP sink:
+
+    const unsigned int nEstimatedSessionBandwidth =( (m_pSource->samplingFrequency()*m_pSource->numChannels() * 3) + 500)/1000; // in kbps; for RTCP b/w share
+    const unsigned int nMaxCNAMElen = 100;
+    unsigned char CNAME[nMaxCNAMElen+1];
+    gethostname((char*)CNAME, nMaxCNAMElen);
+    CNAME[nMaxCNAMElen] = '\0'; // just in case
+    m_pRtcpInstance = RTCPInstance::createNew(*m_penv, m_pRtcpGroupsock, nEstimatedSessionBandwidth, CNAME, m_pSink, NULL, True);
+
+
+
+    if (m_pRtspServer == NULL || m_pRtcpInstance == NULL)
     {
         pml::Log::Get(pml::Log::LOG_ERROR) << "RTP Server\tFailed to create RTSP server (multicast): " << m_penv->getResultMsg() << std::endl;
         Medium::close(m_pSink);
@@ -108,10 +124,14 @@ bool RtpServerThread::CreateStream()
         m_pRtpGroupsock = nullptr;
         return false;
     }
+
+
+
+
     std::string sStreamName = "by-name/PAM_AES67";
 
     ServerMediaSession* sms = ServerMediaSession::createNew(*m_penv, sStreamName.c_str(), sStreamName.c_str(), "PAM_AES67", True/*SSM*/);
-    AES67ServerMediaSubsession* pSmss =  AES67ServerMediaSubsession::createNew(*m_pSink, NULL, m_ePacketTime);
+    AES67ServerMediaSubsession* pSmss =  AES67ServerMediaSubsession::createNew(m_setRTCPHandlers, *m_pSink, m_pRtcpInstance, m_ePacketTime);
     sms->addSubsession(pSmss);
     m_pRtspServer->addServerMediaSession(sms);
 
@@ -149,11 +169,14 @@ void RtpServerThread::CloseStream()
     Medium::close(m_pSink);
     delete m_pRtpGroupsock;
     Medium::close(m_pSource);
-
-    m_pSource = 0;
-    m_pSink = 0;
-    m_pRtpGroupsock = 0;
-    m_pRtspServer = 0;
+    Medium::close(m_pRtcpInstance);
+    delete m_pRtcpGroupsock;
+    m_pSource = nullptr;
+    m_pSink = nullptr;
+    m_pRtpGroupsock = nullptr;
+    m_pRtspServer = nullptr;
+    m_pRtcpInstance = nullptr;
+    m_pRtcpGroupsock = nullptr;
 
 }
 

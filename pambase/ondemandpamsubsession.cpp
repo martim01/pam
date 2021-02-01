@@ -5,9 +5,9 @@
 #include "log.h"
 
 
-OnDemandPamSubsession::OnDemandPamSubsession(wxEvtHandler* pHandler, PamUsageEnvironment& env,  portNumBits initialPortNum) :
+OnDemandPamSubsession::OnDemandPamSubsession(wxEvtHandler* pAudioHandler, PamUsageEnvironment& env,  portNumBits initialPortNum) :
     OnDemandServerMediaSubsession(env, True, initialPortNum, False),
-    m_pHandler(pHandler),
+    m_pAudioHandler(pAudioHandler),
     m_nConnections(0),
     m_pSink(nullptr),
     m_env(env)
@@ -37,7 +37,7 @@ void OnDemandPamSubsession::getStreamParameters(unsigned clientSessionId, netAdd
 
     m_nConnections++;
 
-    if(m_pHandler)
+    for(auto pHandler : m_setRTSPHandlers)
     {
         wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_ODS_CONNECTION);
         pEvent->SetInt(clientSessionId);
@@ -52,14 +52,14 @@ void OnDemandPamSubsession::getStreamParameters(unsigned clientSessionId, netAdd
             pEvent->SetString("Unknown");
             pEvent->SetExtraLong(0);
         }
-        wxQueueEvent(m_pHandler, pEvent);
+        wxQueueEvent(pHandler, pEvent);
     }
 }
 
 
 void OnDemandPamSubsession::deleteStream(unsigned clientSessionId, void*& streamToken)
 {
-    if(m_pHandler)
+    for(auto pHandler : m_setRTSPHandlers)
     {
         wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_ODS_DISCONNECTION);
         pEvent->SetInt(clientSessionId);
@@ -74,7 +74,7 @@ void OnDemandPamSubsession::deleteStream(unsigned clientSessionId, void*& stream
             pEvent->SetString("Unknown");
             pEvent->SetExtraLong(0);
         }
-        wxQueueEvent(m_pHandler, pEvent);
+        wxQueueEvent(pHandler, pEvent);
     }
     --m_nConnections;
     OnDemandServerMediaSubsession::deleteStream(clientSessionId, streamToken);

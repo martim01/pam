@@ -33,10 +33,10 @@ class LiveAudioSource: public AudioInputDevice
 
         private:
             // redefined virtual functions:
-            virtual void doGetNextFrame();
-            virtual void doStopGettingFrames();
-            virtual Boolean setInputPort(int portIndex);
-            virtual double getAverageLevel() const;
+            void doGetNextFrame() override;
+            void doStopGettingFrames()  override;
+            Boolean setInputPort(int portIndex) override;
+            double getAverageLevel() const override;
 
             void doReadFromQueue();
 

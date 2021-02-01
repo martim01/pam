@@ -44,7 +44,6 @@ class OnDemandAES67MediaSubsession: public OnDemandPamSubsession
 
         void DoQoS();
         void BeginQOSMeasurement();
-        void ScheduleNextQOSMeasurement();
 
 //        std::string GetSDP() override;
 

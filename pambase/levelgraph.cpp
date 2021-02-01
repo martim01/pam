@@ -124,9 +124,9 @@ void LevelGraph::OnPaint(wxPaintEvent& event)
     dc.DrawLine(GetClientRect().GetRight(),0, GetClientRect().GetRight(), GetClientRect().GetBottom());
 }
 
-void LevelGraph::AddGraph(const wxString& sName, const wxColour& clr)
+void LevelGraph::AddGraph(const wxString& sName, const wxColour& clr, bool bAuto)
 {
-    m_mGraphs.insert(make_pair(sName, graph(clr)));
+    m_mGraphs.insert(make_pair(sName, graph(clr, bAuto)));
 }
 
 void LevelGraph::AddPeak(const wxString& sGraph, double dPeak)
@@ -150,7 +150,7 @@ void LevelGraph::ProcessDataSet(graph& aGraph)
     //currently we just show the max
     double dPeak(GetDataSetMax(aGraph));
     aGraph.nDataSize = 0;
-    aGraph.dDataSetMax = -120.0;
+    aGraph.dDataSetMax = std::numeric_limits<double>::min();
     aGraph.dDataSetTotal = 0.0;
 
     aGraph.lstPeaks.push_back(dPeak);
@@ -159,9 +159,50 @@ void LevelGraph::ProcessDataSet(graph& aGraph)
         aGraph.lstPeaks.pop_front();
     }
 
+    if(aGraph.bAutoRange)
+    {
+        AutoRange(aGraph);
+    }
+
     Refresh();
 
 }
+
+
+void LevelGraph::AutoRange(graph& aGraph)
+{
+
+    if(aGraph.lstPeaks.empty() == false)
+    {
+        aGraph.dMin = std::min(aGraph.dMin, aGraph.lstPeaks.back());
+        aGraph.dMax = std::max(aGraph.dMax, aGraph.lstPeaks.back());
+        aGraph.dResolution = static_cast<double>(GetClientSize().y)/(aGraph.dMax-aGraph.dMin);
+        Refresh();
+    }
+}
+
+
+void LevelGraph::SetAutoRange(const wxString& sGraph, bool bAuto)
+{
+    auto itGraph = m_mGraphs.find(sGraph);
+    if(itGraph != m_mGraphs.end())
+    {
+        itGraph->second.bAutoRange = bAuto;
+        if(bAuto)
+        {
+            itGraph->second.dMin = std::numeric_limits<double>::max();
+            itGraph->second.dMax = std::numeric_limits<double>::min();
+            for(auto dPeak : itGraph->second.lstPeaks)
+            {
+                itGraph->second.dMin = std::min(itGraph->second.dMin, dPeak);
+                itGraph->second.dMax = std::max(itGraph->second.dMax, dPeak);
+            }
+            itGraph->second.dResolution = static_cast<double>(GetClientSize().y)/(itGraph->second.dMax-itGraph->second.dMin);
+            Refresh();
+        }
+    }
+}
+
 double LevelGraph::GetDataSetMax(graph& aGraph)
 {
     return aGraph.dDataSetMax;
@@ -183,8 +224,8 @@ void LevelGraph::ClearGraphs()
         itGraph->second.dDataSetMax= -120.0;
         itGraph->second.nDataSize=0;
 
-        itGraph->second.dMax = 1.0;
-        itGraph->second.dMin = 0.0;
+        itGraph->second.dMax = std::numeric_limits<double>::min();
+        itGraph->second.dMin = std::numeric_limits<double>::max();
         itGraph->second.dResolution = static_cast<double>(GetClientSize().y);
     }
     Refresh();

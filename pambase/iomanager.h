@@ -38,6 +38,8 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
 
         void RegisterForRTCPTransmission(wxEvtHandler* pHandler);
         void DeregisterForRTCPTransmission(wxEvtHandler* pHandler);
+        void RegisterForRTSPTransmission(wxEvtHandler* pHandler);
+        void DeregisterForRTSPTransmission(wxEvtHandler* pHandler);
 
         void Stop();
         const session& GetSession();
@@ -103,6 +105,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
 
         std::set<wxEvtHandler*> m_setHandlers;
         std::set<wxEvtHandler*> m_setRTCPHandlers;
+        std::set<wxEvtHandler*> m_setRTSPHandlers;
         bool m_bSingleHandler;
 
         session m_SessionIn;
