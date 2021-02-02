@@ -150,7 +150,7 @@ void LevelGraph::ProcessDataSet(graph& aGraph)
     //currently we just show the max
     double dPeak(GetDataSetMax(aGraph));
     aGraph.nDataSize = 0;
-    aGraph.dDataSetMax = std::numeric_limits<double>::min();
+    aGraph.dDataSetMax = std::numeric_limits<double>::lowest();
     aGraph.dDataSetTotal = 0.0;
 
     aGraph.lstPeaks.push_back(dPeak);
@@ -191,7 +191,7 @@ void LevelGraph::SetAutoRange(const wxString& sGraph, bool bAuto)
         if(bAuto)
         {
             itGraph->second.dMin = std::numeric_limits<double>::max();
-            itGraph->second.dMax = std::numeric_limits<double>::min();
+            itGraph->second.dMax = std::numeric_limits<double>::lowest();
             for(auto dPeak : itGraph->second.lstPeaks)
             {
                 itGraph->second.dMin = std::min(itGraph->second.dMin, dPeak);
@@ -224,7 +224,7 @@ void LevelGraph::ClearGraphs()
         itGraph->second.dDataSetMax= -120.0;
         itGraph->second.nDataSize=0;
 
-        itGraph->second.dMax = std::numeric_limits<double>::min();
+        itGraph->second.dMax = std::numeric_limits<double>::lowest();
         itGraph->second.dMin = std::numeric_limits<double>::max();
         itGraph->second.dResolution = static_cast<double>(GetClientSize().y);
     }

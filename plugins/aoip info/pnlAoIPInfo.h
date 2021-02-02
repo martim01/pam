@@ -264,14 +264,9 @@ class pnlAoIPInfo: public wxPanel
         unsigned int m_nFrameSize;
         const session* m_pSession;
 
-        double m_dKbps[2];
-        double m_dJitter[2];
-        double m_dGap[2];
-        double m_dLoss[2];
-        unsigned int m_nTimestampErrors[2];
-        double m_dTSDF[2];
 
         double m_dFrameDuration;
+        double m_dSlip;
 
         double m_dInitialLatency;
         int m_nInitialLatencyCounter;

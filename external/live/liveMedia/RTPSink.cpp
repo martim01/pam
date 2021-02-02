@@ -81,12 +81,12 @@ u_int32_t RTPSink::convertToRTPTimestamp(struct timeval tv) {
   timestampIncrement += (u_int32_t)(fTimestampFrequency*(tv.tv_usec/1000000.0) + 0.5); // note: rounding
 
   // Then add this to our 'timestamp base':
-  if (fNextTimestampHasBeenPreset) {
+ // if (fNextTimestampHasBeenPreset) {
     // Make the returned timestamp the same as the current "fTimestampBase",
     // so that timestamps begin with the value that was previously preset:
-    fTimestampBase -= timestampIncrement;
-    fNextTimestampHasBeenPreset = False;
-  }
+ //   fTimestampBase -= timestampIncrement;
+ //   fNextTimestampHasBeenPreset = False;
+ // }
 
   u_int32_t const rtpTimestamp = fTimestampBase + timestampIncrement;
 #ifdef DEBUG_TIMESTAMPS

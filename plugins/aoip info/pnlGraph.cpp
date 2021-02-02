@@ -22,7 +22,7 @@ pnlGraph::pnlGraph(wxWindow* parent,AoIPInfoBuilder* pBuilder, wxWindowID id,con
 	//(*Initialize(pnlGraph)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
-	m_plstGraph = new wmList(this, ID_M_PLST16, wxPoint(0,0), wxSize(190,168), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 2, wxSize(5,5));
+	m_plstGraph = new wmList(this, ID_M_PLST16, wxPoint(0,0), wxSize(190,168), wmList::STYLE_SELECT, 0, wxSize(-1,35), 2, wxSize(2,2));
 	m_plstGraph->SetBackgroundColour(wxColour(0,0,0));
 	m_pbtnClear = new wmButton(this, ID_M_PBTN29, _("Clear Graphs"), wxPoint(100,175), wxSize(90,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN29"));
 	m_pbtnClear->SetColourSelected(wxColour(wxT("#800000")));

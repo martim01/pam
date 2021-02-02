@@ -58,11 +58,14 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
         float ConvertFrameBufferToSample(u_int8_t* pFrameBuffer, u_int8_t nBytesPerSample);
 
     protected:
+
+        friend void shutdownStream(RTSPClient* rtspClient, int exitCode);
         void StopStream();
 
         bool DoRTSP();
         bool DoSIP();
 
+        void StreamShutdown();
 
 
         pairTime_t ConvertDoubleToPairTime(double dTime);

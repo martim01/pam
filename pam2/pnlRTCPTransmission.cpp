@@ -61,6 +61,12 @@ const long pnlRTCPTransmission::ID_M_PLBL29 = wxNewId();
 const long pnlRTCPTransmission::ID_M_PLBL37 = wxNewId();
 //*)
 
+const wxString pnlRTCPTransmission::KBPS        = "KBit/s";
+const wxString pnlRTCPTransmission::PLPS        = "Packets lost/s";
+const wxString pnlRTCPTransmission::JITTER      = "Jitter";
+const wxString pnlRTCPTransmission::DELAY       = "Roundtrip Delay";
+const wxString pnlRTCPTransmission::LOSS_RATIO  = "Packet loss Ratio";
+
 BEGIN_EVENT_TABLE(pnlRTCPTransmission,wxPanel)
 	//(*EventTable(pnlRTCPTransmission)
 	//*)
@@ -325,6 +331,12 @@ pnlRTCPTransmission::pnlRTCPTransmission(wxWindow* parent,wxWindowID id,const wx
 
 	m_pGraph->SetFont(wxFont(7,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
 
+	m_plstOptions->AddButton(KBPS);
+	m_plstOptions->AddButton(PLPS);
+	m_plstOptions->AddButton(JITTER);
+	m_plstOptions->AddButton(DELAY);
+	m_plstOptions->AddButton(LOSS_RATIO);
+
 	IOManager::Get().RegisterForRTCPTransmission(this);
 	IOManager::Get().RegisterForRTSPTransmission(this);
 
@@ -333,8 +345,11 @@ pnlRTCPTransmission::pnlRTCPTransmission(wxWindow* parent,wxWindowID id,const wx
 	Connect(wxID_ANY, wxEVT_ODS_DISCONNECTION, (wxObjectEventFunction)&pnlRTCPTransmission::OnDisconnectionEvent);
 
 	Connect(ID_M_PLST1, wxEVT_LIST_SELECTED, (wxObjectEventFunction)&pnlRTCPTransmission::OnSubscriberSelected);
+	Connect(ID_M_PLST2, wxEVT_LIST_SELECTED, (wxObjectEventFunction)&pnlRTCPTransmission::OnGraphSelected);
 
-	m_sGraph = "delay";
+
+
+	m_sGraph = DELAY;
 }
 
 pnlRTCPTransmission::~pnlRTCPTransmission()
@@ -361,6 +376,10 @@ void pnlRTCPTransmission::OnRTCPTransmissionEvent(const RTCPTransmissionEvent& e
         sub.dtLast = sub.pStats->GetLastReceivedTime();
         delete sub.pStats;
         sub.pStats = nullptr;
+    }
+    else
+    {
+        sub.nFirstOctets = event.GetTotalOctets();
     }
 
     sub.pStats = dynamic_cast<RTCPTransmissionEvent*>(event.Clone());
@@ -391,6 +410,12 @@ pnlRTCPTransmission::subscriber& pnlRTCPTransmission::AddSubscriber(const wxStri
     return ins.first->second;
 }
 
+void pnlRTCPTransmission::ShowGraph()
+{
+    m_pGraph->HideAllGraphs();
+    m_pGraph->ShowGraph(m_sSelected+m_sGraph, true);
+    m_plblGraph->SetLabel(m_sGraph);
+}
 
 void pnlRTCPTransmission::OnSubscriberSelected(const wxCommandEvent& event)
 {
@@ -400,9 +425,7 @@ void pnlRTCPTransmission::OnSubscriberSelected(const wxCommandEvent& event)
         m_plblSubscriber->SetLabel(event.GetString());
         m_sSelected = event.GetString();
 
-        m_pGraph->HideAllGraphs();
-        m_pGraph->ShowGraph(m_sSelected+m_sGraph, true);
-        m_plblGraph->SetLabel(m_sGraph);
+        ShowGraph();
         ShowSubscriber();
 
     }
@@ -419,8 +442,8 @@ void pnlRTCPTransmission::ShowSubscriber()
             m_plblJitter->SetLabel(wxString::Format("%.6f ms", itSubscriber->second.pStats->GetJitter()));
 
 
-            wxTimeSpan ts(itSubscriber->second.pStats->GetLastReceivedTime() - itSubscriber->second.dtConnection);
-            double dKbpsAv = static_cast<double>(itSubscriber->second.pStats->GetTotalOctets())/ts.GetSeconds().ToDouble();
+            wxTimeSpan ts(itSubscriber->second.pStats->GetLastReceivedTime() - itSubscriber->second.pStats->GetFirstReceivedTime());
+            double dKbpsAv = static_cast<double>(itSubscriber->second.pStats->GetTotalOctets()-itSubscriber->second.nFirstOctets)/ts.GetSeconds().ToDouble();
             dKbpsAv/=125.0;
             double dPacketsAv = static_cast<double>(itSubscriber->second.pStats->GetTotalPacketsLost())/ts.GetSeconds().ToDouble();
 
@@ -465,7 +488,6 @@ void pnlRTCPTransmission::ShowSubscriber()
 
 void pnlRTCPTransmission::StoreGraphs(const wxString& sIpAddress, subscriber& sub)
 {
-    m_pGraph->AddPeak(sIpAddress+"jitter", sub.pStats->GetJitter());
     if(sub.dtLast < sub.pStats->GetLastReceivedTime())
     {
         wxTimeSpan tsDiff(sub.pStats->GetLastReceivedTime() - sub.dtLast);
@@ -478,18 +500,18 @@ void pnlRTCPTransmission::StoreGraphs(const wxString& sIpAddress, subscriber& su
 
         double dRatio = static_cast<double>(sub.pStats->GetPacketLossRatio())/256.0;
 
+
         sub.dKbpsMax = std::max(dkbps, sub.dKbpsMax);
         sub.dKbpsMin = std::min(dkbps, sub.dKbpsMin);
 
         sub.dLostpsMax = std::max(dLost, sub.dLostpsMax);
         sub.dLostpsMin = std::min(dLost, sub.dLostpsMin);
 
-        m_pGraph->AddPeak(sIpAddress+"kbps", dkbps);
-        pml::Log::Get(pml::Log::LOG_TRACE) << "Store: " << (sIpAddress+"kbps") << " = " << dkbps << std::endl;
-
-        m_pGraph->AddPeak(sIpAddress+"loss", dLost);
-
-        m_pGraph->AddPeak(sIpAddress+"delay", sub.pStats->GetRoundTripDelay());
+        m_pGraph->AddPeak(sIpAddress+KBPS, dkbps);
+        m_pGraph->AddPeak(sIpAddress+PLPS, dLost);
+        m_pGraph->AddPeak(sIpAddress+LOSS_RATIO, dRatio);
+        m_pGraph->AddPeak(sIpAddress+DELAY, sub.pStats->GetRoundTripDelay());
+        m_pGraph->AddPeak(sIpAddress+JITTER, sub.pStats->GetJitter());
     }
 
 
@@ -528,23 +550,38 @@ void pnlRTCPTransmission::OnDisconnectionEvent(const wxCommandEvent& event)
 
 void pnlRTCPTransmission::AddGraphs(const wxString& sSource)
 {
-    m_pGraph->AddGraph(sSource+"kbps", wxColour(0,255,0), true);
-    m_pGraph->ShowGraph(sSource+"kbps", false);
-    m_pGraph->ShowRange(sSource+"kbps", true);
+    m_pGraph->AddGraph(sSource+KBPS, wxColour(0,255,0), true);
+    m_pGraph->ShowGraph(sSource+KBPS, false);
+    m_pGraph->ShowRange(sSource+KBPS, true);
 
-    m_pGraph->AddGraph(sSource+"loss", wxColour(255,0,0), true);
-    m_pGraph->ShowGraph(sSource+"loss", false);
-    m_pGraph->ShowRange(sSource+"loss", true);
-
-
-    m_pGraph->AddGraph(sSource+"jitter", wxColour(0,0,255), true);
-    m_pGraph->ShowGraph(sSource+"jitter", false);
-    m_pGraph->ShowRange(sSource+"jitter", true);
+    m_pGraph->AddGraph(sSource+PLPS, wxColour(255,0,0), true);
+    m_pGraph->ShowGraph(sSource+PLPS, false);
+    m_pGraph->ShowRange(sSource+PLPS, true);
 
 
-    m_pGraph->AddGraph(sSource+"delay", wxColour(255,255,0), true);
-    m_pGraph->ShowGraph(sSource+"delay", false);
-    m_pGraph->ShowRange(sSource+"delay", true);
+    m_pGraph->AddGraph(sSource+JITTER, wxColour(0,0,255), true);
+    m_pGraph->ShowGraph(sSource+JITTER, false);
+    m_pGraph->ShowRange(sSource+JITTER, true);
 
 
+    m_pGraph->AddGraph(sSource+DELAY, wxColour(255,255,0), true);
+    m_pGraph->ShowGraph(sSource+DELAY, false);
+    m_pGraph->ShowRange(sSource+DELAY, true);
+
+
+    m_pGraph->AddGraph(sSource+LOSS_RATIO, wxColour(255,200,0), true);
+    m_pGraph->ShowGraph(sSource+LOSS_RATIO, false);
+    m_pGraph->ShowRange(sSource+LOSS_RATIO, true);
+
+
+}
+
+
+void pnlRTCPTransmission::OnGraphSelected(const wxCommandEvent& event)
+{
+    m_sGraph = event.GetString();
+    if(m_sSelected.empty() == false)
+    {
+        ShowGraph();
+    }
 }

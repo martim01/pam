@@ -86,6 +86,7 @@ void LogElement::Draw(wxDC& dc, bool bSelected)
 void LogElement::CreateHitRect(size_t nId, int nHeight, const wxString& sLine)
 {
     auto& rect = m_mHitRects.insert(std::make_pair(nId, uiRect(wxRect(0,0,0,0)))).first->second;
+    rect.SetGradient(0);
 
     switch(m_nType)
     {

@@ -134,6 +134,7 @@ class pnlRTCPTransmission: public wxPanel
 
 		void OnRTCPTransmissionEvent(const RTCPTransmissionEvent& event);
 
+		void OnGraphSelected(const wxCommandEvent& event);
 		void OnSubscriberSelected(const wxCommandEvent& event);
         void ShowSubscriber();
 
@@ -143,6 +144,7 @@ class pnlRTCPTransmission: public wxPanel
 
         void AddGraphs(const wxString& sSource);
 
+        void ShowGraph();
 
 
         struct subscriber
@@ -156,6 +158,7 @@ class pnlRTCPTransmission: public wxPanel
             double dKbpsMin;
             double dLostpsMax;
             double dLostpsMin;
+            int64_t nFirstOctets;
             int64_t nLastOctets;
 
         };
@@ -168,6 +171,13 @@ class pnlRTCPTransmission: public wxPanel
 
 		wxString m_sSelected;
 		wxString m_sGraph;
+
+		static const wxString KBPS;
+		static const wxString PLPS;
+		static const wxString JITTER;
+		static const wxString DELAY;
+		static const wxString LOSS_RATIO;
+
 
 		DECLARE_EVENT_TABLE()
 };

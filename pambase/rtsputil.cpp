@@ -99,6 +99,7 @@ void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultS
     if(!bSuccess)
     {
         // An unrecoverable error occurred with this stream.
+        pml::Log::Get(pml::Log::LOG_TRACE) << "continueAfterDescribe\t" << "Shutdown stream" << std::endl;
         shutdownStream(rtspClient);
     }
 }
@@ -114,7 +115,9 @@ void saveAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultStrin
     }
     else
     {
+        pml::Log::Get(pml::Log::LOG_TRACE) << "saveAfterDescribe\t" << "Shutdown stream" << std::endl;
         shutdownStream(rtspClient);
+        rtspClient = nullptr;
     }
     delete[] resultString;
 }
@@ -278,7 +281,9 @@ void continueAfterPLAY(RTSPClient* rtspClient, int resultCode, char* resultStrin
     if (!success)
     {
         // An unrecoverable error occurred with this stream.
+        pml::Log::Get(pml::Log::LOG_TRACE) <<  "continueAfterPlay\t" << "Shutdown stream" << std::endl;
         shutdownStream(rtspClient);
+        rtspClient = nullptr;
     }
     else
     {
@@ -307,7 +312,9 @@ void subsessionAfterPlaying(void* clientData)
     }
 
     // All subsessions' streams have now been closed, so shutdown the client:
+    pml::Log::Get(pml::Log::LOG_TRACE) <<  "subsessionAfterPlay\t" << "Shutdown stream" << std::endl;
     shutdownStream(rtspClient);
+    rtspClient = nullptr;
 }
 
 void subsessionByeHandler(void* clientData)
@@ -330,63 +337,71 @@ void streamTimerHandler(void* clientData)
     scs.streamTimerTask = NULL;
 
     // Shut down the stream:
+    pml::Log::Get(pml::Log::LOG_TRACE) <<  "streamTimerHandler\t" << "Shutdown stream" << std::endl;
     shutdownStream(rtspClient);
+    rtspClient = nullptr;
 }
 
 void shutdownStream(RTSPClient* rtspClient, int exitCode)
 {
-    UsageEnvironment& env = rtspClient->envir(); // alias
-    StreamClientState& scs = ((ourRTSPClient*)rtspClient)->scs; // alias
-
-    pml::Log::Get(pml::Log::LOG_DEBUG) << "RTP Client\tshutdownStream Entry" << std::endl;
-
-    // First, check whether any subsessions have still to be closed:
-    if (scs.session != NULL)
+    if(rtspClient)
     {
-        Boolean someSubsessionsWereActive = False;
-        MediaSubsessionIterator iter(*scs.session);
-        MediaSubsession* subsession;
+        UsageEnvironment& env = rtspClient->envir(); // alias
+        StreamClientState& scs = ((ourRTSPClient*)rtspClient)->scs; // alias
 
-        while ((subsession = iter.next()) != NULL)
+        pml::Log::Get(pml::Log::LOG_DEBUG) << "RTP Client\tshutdownStream Entry" << std::endl;
+
+        // First, check whether any subsessions have still to be closed:
+        if (scs.session != NULL)
         {
-            if (subsession->sink != NULL)
+            Boolean someSubsessionsWereActive = False;
+            MediaSubsessionIterator iter(*scs.session);
+            MediaSubsession* subsession;
+
+            while ((subsession = iter.next()) != NULL)
             {
-                Medium::close(subsession->sink);
-                subsession->sink = NULL;
-
-                if (subsession->rtcpInstance() != NULL)
+                if (subsession->sink != NULL)
                 {
-                    subsession->rtcpInstance()->setByeHandler(NULL, NULL); // in case the server sends a RTCP "BYE" while handling "TEARDOWN"
-                }
+                    Medium::close(subsession->sink);
+                    subsession->sink = NULL;
 
-                someSubsessionsWereActive = True;
+                    if (subsession->rtcpInstance() != NULL)
+                    {
+                        subsession->rtcpInstance()->setByeHandler(NULL, NULL); // in case the server sends a RTCP "BYE" while handling "TEARDOWN"
+                    }
+
+                    someSubsessionsWereActive = True;
+                }
+            }
+
+            if (someSubsessionsWereActive)
+            {
+                pml::Log::Get(pml::Log::LOG_INFO) << "RTP Client\tsome sessions active" << std::endl;
+                // Send a RTSP "TEARDOWN" command, to tell the server to shutdown the stream.
+                // Don't bother handling the response to the "TEARDOWN".
+                rtspClient->sendTeardownCommand(*scs.session, NULL);
             }
         }
 
-        if (someSubsessionsWereActive)
+        pml::Log::Get(pml::Log::LOG_INFO) << "RTP Client\tClosing the stream." << std::endl;
+
+
+
+        if(exitCode != 0)   //0 means thread called close
         {
-            pml::Log::Get(pml::Log::LOG_INFO) << "RTP Client\tsome sessions active" << std::endl;
-            // Send a RTSP "TEARDOWN" command, to tell the server to shutdown the stream.
-            // Don't bother handling the response to the "TEARDOWN".
-            rtspClient->sendTeardownCommand(*scs.session, NULL);
+            // Note that this will also cause this stream's "StreamClientState" structure to get reclaimed.
+            ourRTSPClient* pClient = reinterpret_cast<ourRTSPClient*>(rtspClient);
+            if(pClient && pClient->GetHandler())
+            {
+                pClient->GetHandler()->StreamShutdown();
+                pClient->GetHandler()->SetToClose();
+
+            }
         }
+        Medium::close(rtspClient);
+
+        pml::Log::Get(pml::Log::LOG_INFO) << "RTP Client\tClosed the stream." << std::endl;
     }
-
-    pml::Log::Get(pml::Log::LOG_INFO) << "RTP Client\tClosing the stream." << std::endl;
-
-
-
-    if(exitCode != 0)   //0 means thread called close
-    {
-        // Note that this will also cause this stream's "StreamClientState" structure to get reclaimed.
-        ourRTSPClient* pClient = reinterpret_cast<ourRTSPClient*>(rtspClient);
-        if(pClient && pClient->GetHandler())
-        {
-            pClient->GetHandler()->SetToClose();
-        }
-    }
-    Medium::close(rtspClient);
-    pml::Log::Get(pml::Log::LOG_INFO) << "RTP Client\tClosed the stream." << std::endl;
 }
 
 

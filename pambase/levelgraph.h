@@ -103,7 +103,7 @@ class PAMBASE_IMPEXPORT LevelGraph : public pmControl
 
         struct graph
         {
-            graph(const wxColour& clr, bool bAuto) : clrLine(clr), dDataSetTotal(0.0), dDataSetMax(-120.0), nDataSize(0), bShow(true), dMax(std::numeric_limits<double>::min()),
+            graph(const wxColour& clr, bool bAuto) : clrLine(clr), dDataSetTotal(0.0), dDataSetMax(-120.0), nDataSize(0), bShow(true), dMax(std::numeric_limits<double>::lowest()),
             dMin(std::numeric_limits<double>::max()), dResolution(1),
             bShowRange(false), bAutoRange(bAuto) {}
             wxColour clrLine;

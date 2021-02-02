@@ -38,8 +38,8 @@ RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface
 	m_dTransmission(0),
 	m_dPresentation(0),
 	m_dDelay0(0),
-	m_dTSDFMax(0),
-	m_dTSDFMin(0),
+	m_dTSDFMax(std::numeric_limits<double>::lowest()),
+	m_dTSDFMin(std::numeric_limits<double>::max()),
 	m_nSampleRate(48000),
 	m_nTimestampErrors(0),
 	m_nTimestampErrorsTotal(0),
@@ -119,7 +119,9 @@ void* RtpThread::Entry()
     // @todo do we need to delete clients etc?
     if(m_pRtspClient)
     {
+        pml::Log::Get(pml::Log::LOG_TRACE) << "RTPThread::Entry\t" << "Shutdown stream" << std::endl;
         shutdownStream(m_pRtspClient, 0);
+        m_pRtspClient = nullptr;
     }
 
 
@@ -365,11 +367,12 @@ void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const p
 
 void RtpThread::StopStream()
 {
-    pml::Log::Get(pml::Log::LOG_INFO) << "RTP Client\tStop Stream " << std::endl;
     if(m_pRtspClient)
     {
+        pml::Log::Get(pml::Log::LOG_INFO) << "RTP Client\tStop Stream " << std::endl;
+        pml::Log::Get(pml::Log::LOG_TRACE) <<  "RTPThread::StopStream\t" << "Shutdown stream" << std::endl;
         shutdownStream(m_pRtspClient, 0);
-        m_pRtspClient = 0;
+        m_pRtspClient = nullptr;
     }
     else
     {
@@ -394,8 +397,8 @@ void RtpThread::QosUpdated(qosData* pData)
     m_nTimestampErrors = 0;
     //set out transmission0 and presentation0 ready for next lot of ts-df
     m_dDelay0 = (m_dTransmission-m_dPresentation)*1e6;
-    m_dTSDFMax = -10000000000000;
-    m_dTSDFMin = 10000000000000;
+    m_dTSDFMax = std::numeric_limits<double>::lowest();
+    m_dTSDFMin = std::numeric_limits<double>::max();
 
 }
 
@@ -509,4 +512,10 @@ void RtpThread::MasterClockChanged()
             }
         }
     }
+}
+
+
+void RtpThread::StreamShutdown()
+{
+    m_pRtspClient = nullptr;    //to stop us calling shutdownStream again
 }
