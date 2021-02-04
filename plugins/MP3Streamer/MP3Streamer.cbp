@@ -135,17 +135,17 @@
 					<Add option="`wx-config --libs`" />
 					<Add library="pambase" />
 					<Add library="libmp3lame.a" />
-					<Add library="livemedia" />
+					<Add library="liveMedia" />
 					<Add library="BasicUsageEnvironment" />
 					<Add library="UsageEnvironment" />
 					<Add library="groupsock" />
-					<Add library="pml_log" />
 					<Add directory="$(#wx.lib)" />
 					<Add directory="$(#lame.LIB)" />
 					<Add directory="$(#live_basicusage.LIB)" />
 					<Add directory="$(#live_group.LIB)" />
 					<Add directory="$(#live_media.LIB)" />
 					<Add directory="$(#live_usage.LIB)" />
+					<Add directory="../../external/live/liveMedia" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="C:\developer\matt\pam2\manifest_creator\bin\Release\manifest_creator.exe" />

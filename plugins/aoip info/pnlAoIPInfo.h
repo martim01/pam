@@ -11,7 +11,7 @@
 //*)
 
 #include "timedbuffer.h"
-
+#include "histogram.h"
 struct qosData;
 struct session;
 
@@ -23,6 +23,9 @@ class pnlAoIPInfo: public wxPanel
 
 		pnlAoIPInfo(wxWindow* parent, AoIPInfoBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pnlAoIPInfo();
+
+		void ChangeGranularity(int nWhich);
+		void ChangeResolution(int nWhich);
 
 		//(*Declarations(pnlAoIPInfo)
 		LevelGraph* m_pGraph;
@@ -124,6 +127,10 @@ class pnlAoIPInfo: public wxPanel
 		wxPanel* pnlSubsession;
 		wxTextCtrl* m_ptxtSDP;
 		//*)
+
+
+		Histogram* m_pHistogram;
+
 		wmLabel* m_plblEpoch;
 		wmLabel* m_plblRTCP_Last;
 		wmLabel* m_plblRTCP_Last_Title;
@@ -136,7 +143,7 @@ class pnlAoIPInfo: public wxPanel
         void SetAudioData(const timedbuffer* pTimedBudder);
 
         void ShowGraph(const wxString& sGraph);
-
+        void SetGraphType(const wxString& sType);
         void ClearGraphs();
 
 	protected:
@@ -263,7 +270,7 @@ class pnlAoIPInfo: public wxPanel
         unsigned int m_nSampleRate;
         unsigned int m_nFrameSize;
         const session* m_pSession;
-
+        wxString m_sGraph;
 
         double m_dFrameDuration;
         double m_dSlip;

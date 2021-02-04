@@ -6,7 +6,7 @@
 using namespace std;
 
 
-RecordThread::RecordThread()
+RecordThread::RecordThread() : wxThread(wxTHREAD_JOINABLE), m_bLoop(true)
 {
 
 }
@@ -16,10 +16,14 @@ bool RecordThread::Init(const wxString& sFilename, unsigned int nChannels, unsig
     return m_sf.OpenToWrite(sFilename, nChannels, nSampleRate, nBitRate);
 }
 
+void RecordThread::Stop()
+{
+    m_bLoop = false;
+}
 
 void* RecordThread::Entry()
 {
-    while(TestDestroy() == false)
+    while(m_bLoop)
     {
         timedbuffer* pBuffer(0);
         if(m_mutex.IsOk())

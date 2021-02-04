@@ -91,6 +91,8 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
         double m_dDelay0;
         double m_dTSDFMax;
         double m_dTSDFMin;
+        double m_dTSDF;
+        unsigned int m_nTSDFCount;
         unsigned int m_nSampleRate;
         unsigned int m_nTimestampErrors;
         unsigned int m_nTimestampErrorsTotal;

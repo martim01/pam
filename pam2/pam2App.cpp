@@ -107,7 +107,7 @@ int pam2App::FilterEvent(wxEvent& event)
 
 void pam2App::OnTimerHold(wxTimerEvent& event)
 {
-    if(m_bCheckHold)
+    if(false)
     {
         if(!m_bReset)
         {

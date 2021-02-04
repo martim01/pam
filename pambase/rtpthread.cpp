@@ -37,11 +37,13 @@ RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface
     m_pCurrentBuffer(nullptr),
 	m_dTransmission(0),
 	m_dPresentation(0),
-	m_dDelay0(0),
+	m_dDelay0(std::numeric_limits<double>::lowest()),
 	m_dTSDFMax(std::numeric_limits<double>::lowest()),
 	m_dTSDFMin(std::numeric_limits<double>::max()),
+    m_dTSDF(0),
+	m_nTSDFCount(0),
 	m_nSampleRate(48000),
-	m_nTimestampErrors(0),
+    m_nTimestampErrors(0),
 	m_nTimestampErrorsTotal(0),
 	m_nTimestamp(0),
 	m_nSampleBufferSize(0),
@@ -284,7 +286,8 @@ float RtpThread::ConvertFrameBufferToSample(u_int8_t* pFrameBuffer, u_int8_t nBy
     return static_cast<float>(nSample)/ 2147483648.0;
 }
 
-void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const pairTime_t& timePresentation, unsigned long nFrameSize, u_int8_t* pFrameBuffer, u_int8_t nBytesPerSample, const pairTime_t& timeTransmission, unsigned int nTimestamp,unsigned int nDuration, int nTimestampDifference, mExtension_t* pExt)
+void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const pairTime_t& timePresentation, unsigned long nFrameSize, u_int8_t* pFrameBuffer, u_int8_t nBytesPerSample, const pairTime_t& timeTransmission,
+unsigned int nTimestamp,unsigned int nDuration, int nTimestampDifference, mExtension_t* pExt)
 {
     if(m_bClosing || m_Session.GetCurrentSubsession() == m_Session.lstSubsession.end() || m_Session.GetCurrentSubsession()->sSourceAddress != sEndpoint)
         return;
@@ -349,18 +352,34 @@ void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const p
         if(nExpectedDifference != nTimestampDifference)
         {
             m_nTimestampErrors++;
+
             m_nTimestampErrorsTotal++;
         }
+    }
+
+    int nFramesPerSec = (m_nSampleRate*m_nInputChannels*nBytesPerSample)/nFrameSize;
+
+    if(m_dDelay0 == std::numeric_limits<double>::lowest() || m_nTSDFCount == nFramesPerSec)
+    {
+        m_dTSDF = m_dTSDFMax-m_dTSDFMin;
+        m_dDelay0 = (timePresentation.first*1000000.0 + (static_cast<double>(timePresentation.second)));
+        m_dDelay0 -= (timeTransmission.first*1000000.0 + (static_cast<double>(timeTransmission.second)));
+        m_dDelay0 -= (dOffset*1000000.0);
+
+        m_dTSDFMax = std::numeric_limits<double>::lowest();
+        m_dTSDFMin = std::numeric_limits<double>::max();
+
+        m_nTSDFCount = 0;
     }
 
     double dTSDF = (timePresentation.first*1000000.0 + (static_cast<double>(timePresentation.second))) - (dOffset*1000000.0);
     dTSDF -= (timeTransmission.first*1000000.0 + (static_cast<double>(timeTransmission.second)));
 
-    dTSDF += m_dDelay0;
+    dTSDF -= m_dDelay0;
 
     m_dTSDFMax = max(m_dTSDFMax, dTSDF);
     m_dTSDFMin = min(m_dTSDFMin, dTSDF);
-
+    m_nTSDFCount++;
 }
 
 
@@ -386,7 +405,7 @@ void RtpThread::QosUpdated(qosData* pData)
 
     pData->nTimestampErrors = m_nTimestampErrors;
     pData->nTimestampErrorsTotal = m_nTimestampErrorsTotal;
-    pData->dTSDF = (m_dTSDFMax-m_dTSDFMin);
+    pData->dTSDF = m_dTSDF;
     if(m_pHandler)
     {
         wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_QOS_UPDATED);
@@ -395,10 +414,6 @@ void RtpThread::QosUpdated(qosData* pData)
     }
 
     m_nTimestampErrors = 0;
-    //set out transmission0 and presentation0 ready for next lot of ts-df
-    m_dDelay0 = (m_dTransmission-m_dPresentation)*1e6;
-    m_dTSDFMax = std::numeric_limits<double>::lowest();
-    m_dTSDFMin = std::numeric_limits<double>::max();
 
 }
 

@@ -5,7 +5,7 @@
 
 using namespace std;
 
-R128Thread::R128Thread() : wxThread()
+R128Thread::R128Thread() : wxThread(wxTHREAD_JOINABLE), m_bLoop(true)
 {
     Reset();
 }
@@ -38,10 +38,14 @@ void R128Thread::AddToRange(double dValue)
     }
 }
 
+void R128Thread::Stop()
+{
+    m_bLoop = false;
+}
 
 void* R128Thread::Entry()
 {
-    while(TestDestroy() == false)
+    while(m_bLoop)
     {
         CalculateLive();
         CalculateRange();

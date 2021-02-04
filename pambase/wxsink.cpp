@@ -89,7 +89,8 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
         }
         if(nBytesPerSample != 0)
         {
-            m_pHandler->AddFrame(m_pSubsession->GetEndpoint(), pSource->lastReceivedSSRC(), presentationTime, frameSize, fReceiveBuffer, nBytesPerSample, pSource->GetTransmissionTime(), pSource->GetRTPTimestamp(),frameSize, nDifference, mExt);
+            m_pHandler->AddFrame(m_pSubsession->GetEndpoint(), pSource->lastReceivedSSRC(), presentationTime, frameSize, fReceiveBuffer,
+             nBytesPerSample, pSource->GetTransmissionTime(), pSource->GetRTPTimestamp(),frameSize, nDifference, mExt);
         }
     }
     else if(strcmp(m_pSubsession->mediumName(), "video") == 0)

@@ -12,16 +12,16 @@ DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_RTCP_TRANSMISSION, -1)
 #else
 wxDECLARE_EXPORTED_EVENT(PAMBASE_IMPEXPORT, wxEVT_RTCP_TRANSMISSION,RTCPTransmissionEvent);
 #endif
+class RTPTransmissionStats;
 
 
 class PAMBASE_IMPEXPORT RTCPTransmissionEvent : public wxCommandEvent
 {
-    friend class OnDemandAES67MediaSubsession;
-    friend class AES67ServerMediaSubsession;
+
 
 public:
 
-    RTCPTransmissionEvent() :wxCommandEvent(wxEVT_RTCP_TRANSMISSION, wxID_ANY){}
+    RTCPTransmissionEvent(RTPTransmissionStats* pStats, int nFrequency);
     /** @brief	Copy Constructor
     *   @param event a wxNIEvent
     **/

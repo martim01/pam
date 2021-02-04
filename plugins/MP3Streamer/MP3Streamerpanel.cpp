@@ -125,7 +125,7 @@ void MP3StreamerPanel::InputSession(const session& aSession)
                 Connect(wxID_ANY, wxEVT_ODS_ANNOUNCE, (wxObjectEventFunction)&MP3StreamerPanel::OnODSAnnounce);
                 Connect(wxID_ANY, wxEVT_ODS_CONNECTION, (wxObjectEventFunction)&MP3StreamerPanel::OnODSConnection);
                 Connect(wxID_ANY, wxEVT_ODS_DISCONNECTION, (wxObjectEventFunction)&MP3StreamerPanel::OnODSDisconnection);
-                m_pUnicastStreamer = new OnDemandStreamer(this, "192.168.0.218", m_nPortCount);
+                m_pUnicastStreamer = new OnDemandStreamer({this},{this}, "192.168.0.218", m_nPortCount);
                 m_pUnicastStreamer->Create();
                 m_pUnicastStreamer->SetSubsession(OnDemandMP3MediaSubsession::createNew(this, *m_pUnicastStreamer->envir(), m_Encoder));
                 m_pUnicastStreamer->Run();

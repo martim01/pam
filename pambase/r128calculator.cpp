@@ -28,7 +28,9 @@ R128Calculator::R128Calculator() :
 
 R128Calculator::~R128Calculator()
 {
-    m_pThread->Delete();
+    m_pThread->Stop();
+    m_pThread->Wait();
+    delete m_pThread;
 }
 
 void R128Calculator::InputSession(const session& aSession)

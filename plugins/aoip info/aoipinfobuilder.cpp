@@ -15,6 +15,7 @@ m_pInfo(0)
 {
 
     RegisterForSettingsUpdates(wxT("Graph"), this);
+    RegisterForSettingsUpdates(wxT("Type"), this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&AoIPInfoBuilder::OnSettingChanged);
 
@@ -49,6 +50,7 @@ void AoIPInfoBuilder::LoadSettings()
     if(m_pInfo)
     {
         m_pInfo->ShowGraph(ReadSetting(wxT("Graph"), wxT("kBit/s")));
+        m_pInfo->SetGraphType(ReadSetting("Type", "Graph"));
     }
 
 }
@@ -70,6 +72,10 @@ void AoIPInfoBuilder::OnSettingChanged(SettingEvent& event)
     {
         m_pInfo->ShowGraph(ReadSetting(event.GetKey(), wxT("kBit/s")));
     }
+    else if(event.GetKey() == "Type")
+    {
+        m_pInfo->SetGraphType(event.GetValue());
+    }
 }
 
 void AoIPInfoBuilder::SetQoSData(qosData* pData)
@@ -90,3 +96,12 @@ void AoIPInfoBuilder::ClearGraphs()
 }
 
 
+void AoIPInfoBuilder::ChangeGranularity(int nWhich)
+{
+    m_pInfo->ChangeGranularity(nWhich);
+}
+
+void AoIPInfoBuilder::ChangeResolution(int nWhich)
+{
+    m_pInfo->ChangeResolution(nWhich);
+}

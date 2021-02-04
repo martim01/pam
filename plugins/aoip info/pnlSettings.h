@@ -5,7 +5,7 @@
 #include "wmlist.h"
 #include <wx/panel.h>
 //*)
-
+#include "wmlabel.h"
 class AoIPInfoBuilder;
 
 class pnlSettings: public wxPanel
@@ -18,7 +18,11 @@ class pnlSettings: public wxPanel
 		//(*Declarations(pnlSettings)
 		wmList* m_plstInterval;
 		//*)
-
+        wmList* m_plstGranularity;
+        wmList* m_plstResolution;
+        wmLabel* m_plblQoS;
+        wmLabel* m_plblHR;
+        wmLabel* m_plblHG;
 	protected:
 
 		//(*Identifiers(pnlSettings)
@@ -31,6 +35,8 @@ class pnlSettings: public wxPanel
 		void OnlstIntervalSelected(wxCommandEvent& event);
 		void OnbtnClearClick(wxCommandEvent& event);
 		//*)
+		void OnlstGranularityPressed(wxCommandEvent& event);
+		void OnlstResolutionPressed(wxCommandEvent& event);
 
 		AoIPInfoBuilder* m_pBuilder;
 

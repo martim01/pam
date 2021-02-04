@@ -95,7 +95,15 @@ void LevelGraph::OnPaint(wxPaintEvent& event)
             int x = GetClientRect().GetWidth()-1;
             for(list<double>::reverse_iterator itPeak = itGraph->second.lstPeaks.rbegin(); itPeak != itGraph->second.lstPeaks.rend(); ++itPeak)
             {
-                double dPeak = (*itPeak)-itGraph->second.dMin;
+                double dPeak = (*itPeak);
+                if(itGraph->second.bAutoRange)
+                {
+                    dPeak-= (itGraph->second.dMin*0.95);    //auto range includes 10% extra space around min and max
+                }
+                else
+                {
+                    dPeak -= itGraph->second.dMin;
+                }
                 double dTop = max((double)GetClientRect().GetTop(), GetClientRect().GetBottom()-(itGraph->second.dResolution*dPeak));
                 dc.DrawLine(x+1, dY_old, x, dTop);
                 dY_old=dTop;
@@ -176,7 +184,7 @@ void LevelGraph::AutoRange(graph& aGraph)
     {
         aGraph.dMin = std::min(aGraph.dMin, aGraph.lstPeaks.back());
         aGraph.dMax = std::max(aGraph.dMax, aGraph.lstPeaks.back());
-        aGraph.dResolution = static_cast<double>(GetClientSize().y)/(aGraph.dMax-aGraph.dMin);
+        aGraph.dResolution = static_cast<double>(GetClientSize().y)/((aGraph.dMax*1.05)-(aGraph.dMin*0.95));
         Refresh();
     }
 }

@@ -88,7 +88,7 @@ pnlRecord::pnlRecord(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 	//*)
 	m_pedtFile->SetFocus();
 	m_pbtnRecord->Enable(false);
-	m_pRecorder = 0;
+	m_pRecorder = nullptr;
 }
 
 pnlRecord::~pnlRecord()
@@ -96,7 +96,11 @@ pnlRecord::~pnlRecord()
 	//(*Destroy(pnlRecord)
 	//*)
 	if(m_pRecorder)
-        m_pRecorder->Delete();
+	{
+        m_pRecorder->Stop();
+        m_pRecorder->Wait();
+	}
+
 }
 
 
@@ -116,20 +120,19 @@ void pnlRecord::OnbtnRecordClick(wxCommandEvent& event)
             m_pKbd1->Disable();
             m_pedtFile->Disable();
             Settings::Get().Write(wxT("Test"), wxT("Lock"), 1);
-            //m_pRecorder->Create();
-            //m_pRecorder->SetPriority(WXTHREAD_MIN_PRIORITY);
             m_pRecorder->Run();
         }
         else
         {
             delete m_pRecorder;
-            m_pRecorder = 0;
+            m_pRecorder = nullptr;
         }
     }
     else
     {
-        m_pRecorder->Delete();
-        m_pRecorder = 0;
+        m_pRecorder->Stop();
+        m_pRecorder->Wait();
+        m_pRecorder = nullptr;
 
         m_pbtnRecord->SetLabel(wxT("Record"));
         m_plblTime->SetLabel(wxEmptyString);

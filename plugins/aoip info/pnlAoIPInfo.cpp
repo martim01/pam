@@ -713,6 +713,9 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,AoIPInfoBuilder* pBuilder, wxWindowID 
 	Panel1 = new wxPanel(pnlQoS, ID_PANEL4, wxPoint(0,280), wxSize(600,160), wxTAB_TRAVERSAL, _T("ID_PANEL4"));
 	Panel1->SetBackgroundColour(wxColour(0,0,0));
 	m_pGraph = new LevelGraph(Panel1,ID_CUSTOM12, wxPoint(0,0),wxSize(600,160),1,10,0);
+	m_pHistogram = new Histogram(Panel1,ID_CUSTOM12, wxPoint(0,0),wxSize(600,160));
+	m_pHistogram->Show(false);
+
 	pnlSDP = new wxPanel(m_pswpInfo, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
 	pnlSDP->SetBackgroundColour(wxColour(0,0,0));
 	m_ptxtSDP = new wxTextCtrl(pnlSDP, ID_TEXTCTRL1, wxEmptyString, wxPoint(5,5), wxSize(590,435), wxTE_MULTILINE|wxTE_READONLY, wxDefaultValidator, _T("ID_TEXTCTRL1"));
@@ -721,6 +724,7 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,AoIPInfoBuilder* pBuilder, wxWindowID 
 	m_pswpInfo->AddPage(pnlQoS, _("QoS"), false);
 	m_pswpInfo->AddPage(pnlSDP, _("Raw SDP"), false);
 	//*)
+
 
 	#ifdef PTPMONKEY
 	wxPtp::Get().AddHandler(this);
@@ -740,6 +744,7 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,AoIPInfoBuilder* pBuilder, wxWindowID 
 
     m_pswpInfo->SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
     m_pGraph->SetFont(wxFont(7,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
+    m_pHistogram->SetFont(wxFont(7,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
 
 
     ClearGraphs();
@@ -747,35 +752,46 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,AoIPInfoBuilder* pBuilder, wxWindowID 
 	m_pGraph->AddGraph(wxT("kBit/s"), wxColour(0,255,0), true);
 	m_pGraph->ShowGraph(wxT("kBit/s"), false);
 	m_pGraph->ShowRange(wxT("kBit/s"), true);
+	m_pHistogram->AddGraph(wxT("kBit/s"), wxColour(0,255,0), 0.1);
+
 
 	m_pGraph->AddGraph(wxT("TS-DF"), wxColour(255,255,255), true);
 	m_pGraph->ShowGraph(wxT("TS-DF"), false);
 	m_pGraph->ShowRange(wxT("TS-DF"), true);
+	m_pHistogram->AddGraph("TS-DF", wxColour(255,255,255), 1.0);
 
 	m_pGraph->AddGraph(wxT("Packet Gap"), wxColour(0,0,255), true);
 	m_pGraph->ShowGraph(wxT("Packet Gap"), false);
 	m_pGraph->ShowRange(wxT("Packet Gap"), true);
+	m_pHistogram->AddGraph("Packet Gap", wxColour(0,0,255), 0.1);
 
 
-	m_pGraph->AddGraph(wxT("Packet Loss"), wxColour(0,255,0), true);
+	m_pGraph->AddGraph(wxT("Packet Loss"), wxColour(255,0,0), true);
 	m_pGraph->ShowGraph(wxT("Packet Loss"), false);
 	m_pGraph->ShowRange(wxT("Packet Loss"), true);
+	m_pHistogram->AddGraph("Packet Loss", wxColour(255,0,0), 10.0);
 
-	m_pGraph->AddGraph(wxT("Jitter"), wxColour(0,0,255), true);
+
+	m_pGraph->AddGraph(wxT("Jitter"), wxColour(255,255,0), true);
 	m_pGraph->ShowGraph(wxT("Jitter"), false);
 	m_pGraph->ShowRange(wxT("Jitter"), true);
+	m_pHistogram->AddGraph("Jitter", wxColour(255,255,0), 0.01);
 
 	m_pGraph->AddGraph(wxT("Timestamp"), wxColour(0,0,255), true);
 	m_pGraph->ShowGraph(wxT("Timestamp"), false);
 	m_pGraph->ShowRange(wxT("Timestamp"), false);
+	m_pHistogram->AddGraph("Timestamp", wxColour(0,0,255), 1000);
 
-    m_pGraph->AddGraph(wxT("Timestamp Errors"), wxColour(255,0,0), true);
+    m_pGraph->AddGraph(wxT("Timestamp Errors"), wxColour(255,128,0), true);
 	m_pGraph->ShowGraph(wxT("Timestamp Errors"), false);
 	m_pGraph->ShowRange(wxT("Timestamp Errors"), true);
+
+    m_pHistogram->AddGraph("Timestamp Errors", wxColour(255,128,0), 10);
 
 	m_pGraph->AddGraph(wxT("Slip"), wxColour(180,200,255), true);
 	m_pGraph->ShowGraph(wxT("Slip"), false);
 	m_pGraph->ShowRange(wxT("Slip"), true);
+	m_pHistogram->AddGraph("Slip", wxColour(180,200,255), 10);
 
 
 	//ConnectLeftUp();
@@ -822,7 +838,7 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
     if(pData)
     {
         m_plblQoSTime->SetLabel(pData->tsTime.Format(wxT("%H:%M:%S:%l")));
-        m_plblQoSKbAv->SetLabel(wxString::Format(wxT("%f"), pData->dkbits_per_second_Av));
+        m_plblQoSKbAv->SetLabel(wxString::Format(wxT("%.2f [%.2f]"), pData->dkbits_per_second_Now, pData->dkbits_per_second_Av));
         m_plblQoSKbMax->SetLabel(wxString::Format(wxT("%f"), pData->dkbits_per_second_max));
         m_plblQoSKbMin->SetLabel(wxString::Format(wxT("%f"), pData->dkbits_per_second_min));
         m_plblQoSLost->SetLabel(wxString::Format(wxT("%d"), pData->nTotNumPacketsLost));
@@ -832,11 +848,11 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
         m_plblQoSReceived->SetLabel(wxString::Format(wxT("%d"), pData->nTotNumPacketsReceived));
 
         m_plblQoSInterMin->SetLabel(wxString::Format(wxT("%f ms"), pData->dInter_packet_gap_ms_min));
-        m_plblQoSInterAv->SetLabel(wxString::Format(wxT("%f ms"), pData->dInter_packet_gap_ms_av));
+        m_plblQoSInterAv->SetLabel(wxString::Format(wxT("%f ms [%f]"), pData->dInter_packet_gap_ms_Now, pData->dInter_packet_gap_ms_av));
         m_plblQoSInterMax->SetLabel(wxString::Format(wxT("%f ms"), pData->dInter_packet_gap_ms_max));
 
         m_plblQoSJitter->SetLabel(wxString::Format(wxT("%f ms"),pData->dJitter));
-        m_plblTSDF->SetLabel(wxString::Format(wxT("%f"), pData->dTSDF));
+        m_plblTSDF->SetLabel(wxString::Format(wxT("%.2f us"), pData->dTSDF));
 
         wxDateTime dtSR(time_t(pData->tvLastSR_Time.tv_sec));
         dtSR.SetMillisecond(pData->tvLastSR_Time.tv_usec/1000);
@@ -863,18 +879,26 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
 
 
         m_pGraph->AddPeak(wxT("kBit/s"), pData->dkbits_per_second_Now);
+        m_pHistogram->AddPeak(wxT("kBit/s"), pData->dkbits_per_second_Now);
 
         m_pGraph->AddPeak(wxT("Packet Gap"), pData->dInter_packet_gap_ms_Now);
+        m_pHistogram->AddPeak(wxT("Packet Gap"), pData->dInter_packet_gap_ms_Now);
 
         m_pGraph->AddPeak(wxT("Packet Loss"), pData->dPacket_loss_fraction_av);
+        m_pHistogram->AddPeak(wxT("Packet Loss"), pData->dPacket_loss_fraction_av);
 
         m_pGraph->AddPeak(wxT("Jitter"), pData->dJitter);
+        m_pHistogram->AddPeak(wxT("Jitter"), pData->dJitter);
+
 
         m_pGraph->AddPeak(wxT("TS-DF"), pData->dTSDF);
+        m_pHistogram->AddPeak(wxT("TS-DF"), pData->dTSDF);
 
         m_pGraph->AddPeak(wxT("Timestamp Errors"), pData->nTimestampErrors);
+        m_pHistogram->AddPeak(wxT("Timestamp Errors"), pData->nTimestampErrors);
 
         m_pGraph->AddPeak("Slip", m_dSlip);
+        m_pHistogram->AddPeak("Slip", m_dSlip);
     }
 }
 
@@ -897,6 +921,7 @@ void pnlAoIPInfo::SetAudioData(const timedbuffer* pTimedBuffer)
 
     double dTimestamp(static_cast<double>(pTimedBuffer->GetTimestamp())/4294967296.0);
     m_pGraph->AddPeak("Timestamp",dTimestamp);//static_cast<double>(pTimedBuffer->GetTimestamp())/2e32);
+    m_pHistogram->AddPeak("Timestamp",dTimestamp);//static_cast<double>(pTimedBuffer->GetTimestamp())/2e32);
 
     #ifdef PTPMONKEY
     m_plblTransmissionTime->SetBackgroundColour(wxPtp::Get().IsSyncedToMaster(0) ? *wxWHITE : wxColour(255,180,180));
@@ -1049,12 +1074,15 @@ void pnlAoIPInfo::ShowGraph(const wxString& sGraph)
 {
     m_pGraph->HideAllGraphs();
     m_pGraph->ShowGraph(sGraph);
+    m_pHistogram->ShowGraph(sGraph);
     m_plblGraph->SetLabel(sGraph);
+    m_sGraph = sGraph;
 }
 
 void pnlAoIPInfo::ClearGraphs()
 {
     m_pGraph->ClearGraphs();
+    m_pHistogram->ClearGraphs();
 }
 
 void pnlAoIPInfo::OnPtpEvent(wxCommandEvent& event)
@@ -1069,4 +1097,21 @@ void pnlAoIPInfo::OnPtpEvent(wxCommandEvent& event)
         m_plblSubSyncId->SetBackgroundColour(wxColour(255,100,100));
     }
     #endif
+}
+
+void pnlAoIPInfo::SetGraphType(const wxString& sType)
+{
+    m_pHistogram->Show(sType == "Histogram");
+    m_pGraph->Show(sType == "Graph");
+
+}
+
+void pnlAoIPInfo::ChangeGranularity(int nWhich)
+{
+    m_pHistogram->ChangeGranularity(m_sGraph,nWhich);
+}
+
+void pnlAoIPInfo::ChangeResolution(int nWhich)
+{
+    m_pHistogram->ChangeResolution(m_sGraph,nWhich);
 }

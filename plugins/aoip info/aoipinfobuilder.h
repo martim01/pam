@@ -17,7 +17,8 @@ class WXEXPORT AoIPInfoBuilder : public MonitorPluginBuilder
             return wxT("Session Info");
         }
 
-
+        void ChangeGranularity(int nWhich);
+        void ChangeResolution(int nWhich);
         void ClearGraphs();
 
         virtual void InputSession(const session& aSession);

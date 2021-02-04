@@ -12,11 +12,11 @@ class AES67RTPSink : public AudioRTPSink
 {
 
     public:
-      static AES67RTPSink* createNew(UsageEnvironment& env, Groupsock* RTPgs);
+      static AES67RTPSink* createNew(UsageEnvironment& env, Groupsock* RTPgs, unsigned int nFrameSize);
 
     char const* auxSDPLine() override;
     protected:
-      AES67RTPSink(UsageEnvironment& env, Groupsock* RTPgs);
+      AES67RTPSink(UsageEnvironment& env, Groupsock* RTPgs, unsigned int nFrameSize);
         // called only by createNew()
 
       virtual ~AES67RTPSink();

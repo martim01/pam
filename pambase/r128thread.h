@@ -1,6 +1,7 @@
 #pragma once
 #include <list>
 #include <wx/thread.h>
+#include <atomic>
 
 class R128Thread : public wxThread
 {
@@ -16,6 +17,7 @@ class R128Thread : public wxThread
 
         void Reset();
 
+        void Stop();
         size_t GetIntegrationTime();
     private:
 
@@ -26,6 +28,7 @@ class R128Thread : public wxThread
         std::list<double> m_lstLive;
         std::list<double> m_lstRange;
 
+        std::atomic<bool> m_bLoop;
         double m_dLive;
         double m_dRange;
         double m_dLiveTotal;
