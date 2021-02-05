@@ -31,6 +31,7 @@ class WXEXPORT AoIPInfoBuilder : public MonitorPluginBuilder
 
         friend class pnlGraph;
         friend class pnlSettings;
+        friend class pnlAoIPInfo;
 
         void OnSettingChanged(SettingEvent& event);
 

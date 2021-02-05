@@ -7,6 +7,7 @@
 #include "wxptp.h"
 #endif
 #include "aoipinfobuilder.h"
+#include "settings.h"
 
 //(*InternalHeaders(pnlAoIPInfo)
 #include <wx/font.h>
@@ -712,7 +713,7 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,AoIPInfoBuilder* pBuilder, wxWindowID 
 	m_plblGraph->SetFont(m_plblGraphFont);
 	Panel1 = new wxPanel(pnlQoS, ID_PANEL4, wxPoint(0,280), wxSize(600,160), wxTAB_TRAVERSAL, _T("ID_PANEL4"));
 	Panel1->SetBackgroundColour(wxColour(0,0,0));
-	m_pGraph = new LevelGraph(Panel1,ID_CUSTOM12, wxPoint(0,0),wxSize(600,160),1,10,0);
+	m_pGraph = new HistoryGraph(Panel1,ID_CUSTOM12, wxPoint(0,0),wxSize(600,160));
 	m_pHistogram = new Histogram(Panel1,ID_CUSTOM12, wxPoint(0,0),wxSize(600,160));
 	m_pHistogram->Show(false);
 
@@ -749,48 +750,32 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,AoIPInfoBuilder* pBuilder, wxWindowID 
 
     ClearGraphs();
 
-	m_pGraph->AddGraph(wxT("kBit/s"), wxColour(0,255,0), true);
-	m_pGraph->ShowGraph(wxT("kBit/s"), false);
-	m_pGraph->ShowRange(wxT("kBit/s"), true);
-	m_pHistogram->AddGraph(wxT("kBit/s"), wxColour(0,255,0), 0.1);
+    int nInterval = Settings::Get().Read(wxT("QoS"), wxT("Interval"), 1000)*1000;
+	m_pGraph->AddGraph(wxT("kBit/s"), wxColour(0,255,0), nInterval, false);
+    m_pHistogram->AddGraph(wxT("kBit/s"), wxColour(0,255,0), 0.1);
 
 
-	m_pGraph->AddGraph(wxT("TS-DF"), wxColour(255,255,255), true);
-	m_pGraph->ShowGraph(wxT("TS-DF"), false);
-	m_pGraph->ShowRange(wxT("TS-DF"), true);
+	m_pGraph->AddGraph(wxT("TS-DF"), wxColour(255,255,255),  nInterval, false);
 	m_pHistogram->AddGraph("TS-DF", wxColour(255,255,255), 1.0);
 
-	m_pGraph->AddGraph(wxT("Packet Gap"), wxColour(0,0,255), true);
-	m_pGraph->ShowGraph(wxT("Packet Gap"), false);
-	m_pGraph->ShowRange(wxT("Packet Gap"), true);
+	m_pGraph->AddGraph(wxT("Packet Gap"), wxColour(0,0,255),  nInterval, false);
 	m_pHistogram->AddGraph("Packet Gap", wxColour(0,0,255), 0.1);
 
 
-	m_pGraph->AddGraph(wxT("Packet Loss"), wxColour(255,0,0), true);
-	m_pGraph->ShowGraph(wxT("Packet Loss"), false);
-	m_pGraph->ShowRange(wxT("Packet Loss"), true);
+	m_pGraph->AddGraph(wxT("Packet Loss"), wxColour(255,0,0),  nInterval, false);
 	m_pHistogram->AddGraph("Packet Loss", wxColour(255,0,0), 10.0);
 
 
-	m_pGraph->AddGraph(wxT("Jitter"), wxColour(255,255,0), true);
-	m_pGraph->ShowGraph(wxT("Jitter"), false);
-	m_pGraph->ShowRange(wxT("Jitter"), true);
+	m_pGraph->AddGraph(wxT("Jitter"), wxColour(255,255,0),  nInterval, false);
 	m_pHistogram->AddGraph("Jitter", wxColour(255,255,0), 0.01);
 
-	m_pGraph->AddGraph(wxT("Timestamp"), wxColour(0,0,255), true);
-	m_pGraph->ShowGraph(wxT("Timestamp"), false);
-	m_pGraph->ShowRange(wxT("Timestamp"), false);
+	m_pGraph->AddGraph(wxT("Timestamp"), wxColour(0,0,255),  nInterval, false);
 	m_pHistogram->AddGraph("Timestamp", wxColour(0,0,255), 1000);
 
-    m_pGraph->AddGraph(wxT("Timestamp Errors"), wxColour(255,128,0), true);
-	m_pGraph->ShowGraph(wxT("Timestamp Errors"), false);
-	m_pGraph->ShowRange(wxT("Timestamp Errors"), true);
-
+    m_pGraph->AddGraph(wxT("Timestamp Errors"), wxColour(255,128,0),  nInterval, false);
     m_pHistogram->AddGraph("Timestamp Errors", wxColour(255,128,0), 10);
 
-	m_pGraph->AddGraph(wxT("Slip"), wxColour(180,200,255), true);
-	m_pGraph->ShowGraph(wxT("Slip"), false);
-	m_pGraph->ShowRange(wxT("Slip"), true);
+	m_pGraph->AddGraph(wxT("Slip"), wxColour(180,200,255),  nInterval, false);
 	m_pHistogram->AddGraph("Slip", wxColour(180,200,255), 10);
 
 
@@ -1073,7 +1058,7 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
 void pnlAoIPInfo::ShowGraph(const wxString& sGraph)
 {
     m_pGraph->HideAllGraphs();
-    m_pGraph->ShowGraph(sGraph);
+    m_pGraph->ShowGraph(sGraph, true);
     m_pHistogram->ShowGraph(sGraph);
     m_plblGraph->SetLabel(sGraph);
     m_sGraph = sGraph;

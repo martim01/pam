@@ -2,7 +2,7 @@
 #define PNLAOIPINFO_H
 
 //(*Headers(pnlAoIPInfo)
-#include "levelgraph.h"
+#include "historygraph.h"
 #include "wmlabel.h"
 #include "wmswitcherpanel.h"
 #include <wx/notebook.h>
@@ -28,7 +28,7 @@ class pnlAoIPInfo: public wxPanel
 		void ChangeResolution(int nWhich);
 
 		//(*Declarations(pnlAoIPInfo)
-		LevelGraph* m_pGraph;
+		HistoryGraph* m_pGraph;
 		wmLabel* m_pLbl10;
 		wmLabel* m_pLbl11;
 		wmLabel* m_pLbl12;
