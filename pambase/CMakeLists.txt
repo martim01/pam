@@ -100,6 +100,8 @@ set(SOURCES
  "generator.cpp"
  "generatorpluginbuilder.cpp"
  "generatorpluginfactory.cpp"
+ "histogram.cpp"
+ "historygraph.cpp"
  "inimanager.cpp"
  "inisection.cpp"
  "iomanager.cpp"
