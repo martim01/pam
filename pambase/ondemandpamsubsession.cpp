@@ -24,10 +24,9 @@ char const* OnDemandPamSubsession::getAuxSDPLine(RTPSink* rtpSink, FramedSource*
   // Default implementation:
   if(rtpSink != nullptr)
   {
-    std::cout << rtpSink->auxSDPLine() << std::endl;
     return rtpSink->auxSDPLine();
   }
-  std::cout << "NO RTPSink!!!!!" << std::endl;
+
   return NULL;
 }
 

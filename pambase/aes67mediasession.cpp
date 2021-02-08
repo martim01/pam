@@ -309,7 +309,7 @@ void Aes67MediaSubsession::parseSDPAttribute_Deviation()
     }
 }
 
-const pairTime_t& Aes67MediaSubsession::GetLastEpoch()
+const timeval& Aes67MediaSubsession::GetLastEpoch()
 {
     Aes67Source* pSource = dynamic_cast<Aes67Source*>(rtpSource());
     return pSource->GetLastEpoch();

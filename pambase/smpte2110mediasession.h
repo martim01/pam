@@ -71,7 +71,7 @@ class Smpte2110MediaSubsession : public MediaSubsession
             return m_nSyncTime;
         }
 
-        const pairTime_t& GetLastEpoch();
+        timeval GetLastEpoch();
 
         wxString GetEndpoint();
 

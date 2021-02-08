@@ -192,7 +192,7 @@ void pnlAoIPSelection::ShowPaged()
 {
     m_plstDevices->Freeze();
     m_plstDevices->Clear();
-    int i = 0;
+
     for(auto itSource = AoipSourceManager::Get().GetSourceBegin(); itSource != AoipSourceManager::Get().GetSourceEnd(); ++itSource)
     {
         m_plstDevices->AddButton(itSource->second.sName, wxNullBitmap, (void*)itSource->first);

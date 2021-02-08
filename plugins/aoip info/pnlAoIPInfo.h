@@ -259,13 +259,13 @@ class pnlAoIPInfo: public wxPanel
 		void OnInfoLeftUp(wxMouseEvent& event);
 		void ConnectLeftUp();
 
-		void SetTimestamp(const pairTime_t& tv, wmLabel* pLabel, bool bDate = false);
+		void SetTimestamp(const timeval& tv, wmLabel* pLabel, bool bDate = false);
         void ShowLatency(const timedbuffer* pTimedBuffer);
 
         AoIPInfoBuilder* m_pBuilder;
-        pairTime_t m_tvTransmission;
-        pairTime_t m_tvPresentation;
-        pairTime_t m_tvPlayback;
+        timeval m_tvTransmission;
+        timeval m_tvPresentation;
+        timeval m_tvPlayback;
 
         unsigned int m_nSampleRate;
         unsigned int m_nFrameSize;

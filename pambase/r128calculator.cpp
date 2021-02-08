@@ -237,4 +237,5 @@ size_t R128Calculator::GetIntegrationTime()
     {
         return m_pThread->GetIntegrationTime();
     }
+    return 0;
 }

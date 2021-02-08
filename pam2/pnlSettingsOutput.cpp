@@ -455,6 +455,5 @@ void pnlSettingsOutput::OnbtnRestartStreamHeld(wxCommandEvent& event)
 
 void pnlSettingsOutput::OnbtnStatsClick(wxCommandEvent& event)
 {
-    std::cout << "OnbtnStatsClick" << std::endl;
     Settings::Get().Write("Splash", "Screen", "RTCP");
 }

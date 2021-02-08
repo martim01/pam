@@ -108,10 +108,12 @@
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-std=c++1y" />
 					<Add option="-fPIC" />
 					<Add option="-g" />
 					<Add option="`wx-config --cxxflags`" />
 					<Add option="-fpermissive" />
+					<Add option="-pthread" />
 					<Add option="-DDLL_EXPORTS" />
 					<Add option="-DwxUSE_UNICODE" />
 					<Add option="-D__WXGNU__" />
@@ -119,6 +121,7 @@
 					<Add option="-D__WXDEBUG__" />
 					<Add option="-D__GNU__" />
 					<Add option="-DPTP_DLL" />
+					<Add option="-DPTPMONKEY" />
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
@@ -131,10 +134,8 @@
 					<Add library="groupsock" />
 				</Linker>
 				<ExtraCommands>
+					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />
 					<Add after="cp ../external/log/lib/* ../lib" />
-					<Add after="cp ../external/dnssd/lib/* ../lib" />
-					<Add after="cp ../external/sapserver/lib/* ../lib" />
-					<Add after="cp ../external/ptpmonkey/bin/lib* ../lib" />
 					<Mode after="always" />
 				</ExtraCommands>
 			</Target>
@@ -146,6 +147,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O3" />
+					<Add option="-std=c++1y" />
 					<Add option="-fPIC" />
 					<Add option="`wx-config --cxxflags`" />
 					<Add option="-fpermissive" />
@@ -216,96 +218,127 @@
 		<Unit filename="../external/log/src/log.cpp" />
 		<Unit filename="../external/ptpmonkey/include/handler.h">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/loghander.h">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/mac.h">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/namedtype.h">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/parser.h">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpclock.h">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpdll.h">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpeventhander.h">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpeventloghandler.h">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptploghandler.h">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpmonkey.h">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpmonkeyhandler.h">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpmonkeyimplementation.h">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpparser.h">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpstructs.h">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/receiver.h">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/sender.h">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/timeutils.h">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/loghander.cpp">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/mac.cpp">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptpclock.cpp">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptpeventloghandler.cpp">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptploghandler.cpp">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptpmonkey.cpp">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptpmonkeyhandler.cpp">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptpmonkeyimplementation.cpp">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptpparser.cpp">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptpstructs.cpp">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/receiver.cpp">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/sender.cpp">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/timeutils.cpp">
 			<Option target="Linux Release" />
+			<Option target="Linux Debug" />
 		</Unit>
 		<Unit filename="../external/sapserver/src/message.cpp" />
 		<Unit filename="../external/sapserver/src/parser.cpp" />
@@ -349,6 +382,8 @@
 		<Unit filename="generatorpluginfactory.h" />
 		<Unit filename="histogram.cpp" />
 		<Unit filename="histogram.h" />
+		<Unit filename="historygraph.cpp" />
+		<Unit filename="historygraph.h" />
 		<Unit filename="inimanager.cpp" />
 		<Unit filename="inimanager.h" />
 		<Unit filename="inisection.cpp" />

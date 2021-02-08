@@ -96,7 +96,7 @@ bool MonitorPluginFactory::LoadLibrary(const wxString& sLibrary)
         }
         else
         {
-            pml::Log::Get(pml::Log::LOG_ERROR) << "Monitor Plugin\t" << "Could not load '" << sLib << "'" << std::endl;
+                pml::Log::Get(pml::Log::LOG_ERROR) << "Monitor Plugin\t" << "Could not load '" << sLib << "' '" << dlerror() << std::endl;
         }
         delete pLib;
     }

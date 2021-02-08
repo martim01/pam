@@ -40,7 +40,6 @@ char const* AES67RTPSink::auxSDPLine()
 
         ss << "a=mediaclk:direct=" << GetEpochTimestamp() << "\r\n";
 
-        std::cout << "auxSDPLine: " << ss.str() << std::endl;
 
         m_sAux = ss.str();
     }
@@ -76,7 +75,6 @@ unsigned int AES67RTPSink::GetEpochTimestamp()
 
     return 0;
 
-    //std::cout << "Timestamp: " << nTimestamp << " Base\t: " << nBaseTimestamp << "\tEpoch: " << nEpoch << std::endl;
 
     //return nEpoch;
 }

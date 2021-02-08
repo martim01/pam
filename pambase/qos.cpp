@@ -99,8 +99,6 @@ void qosMeasurementRecord::printQOSData()
     pData->dPacket_loss_fraction_av = 100*packetLossFraction;
     pData->dPacket_loss_fraction_max =  (packetLossFraction == 1.0 ? 100.0 : 100*m_dPacket_loss_fraction_max);
 
-    m_pThread->QosUpdated(pData);
-
     if(m_pSource)
     {
 
@@ -134,6 +132,6 @@ void qosMeasurementRecord::printQOSData()
 
         }
 
-
     }
+    m_pThread->QosUpdated(pData);
 }

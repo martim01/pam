@@ -13,7 +13,8 @@ using namespace std;
 AoIPInfoBuilder::AoIPInfoBuilder() : MonitorPluginBuilder(),
 m_pInfo(0)
 {
-
+    m_bWantsAudioAlways = true;
+    m_bWantsQoSAlways = true;
     RegisterForSettingsUpdates(wxT("Graph"), this);
     RegisterForSettingsUpdates(wxT("Type"), this);
 

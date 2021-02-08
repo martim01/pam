@@ -279,7 +279,6 @@ pnlSettingsGenerators::pnlSettingsGenerators(wxWindow* parent,wxWindowID id,cons
     m_plstColour->AddButton(wxT("K"));
     m_plstColour->SelectButton(Settings::Get().Read(wxT("Noise"), wxT("Colour"), 0));
 
-    std::cout << "InitNoiseAmp" << std::endl;
     m_pNoiseAmplitude->Init(0,80, 80+Settings::Get().Read(wxT("Noise"), wxT("Amplitude"), -18.0));
     //m_pNoiseAmplitude->SetSliderColour(wxColour(128,128,128));
     //m_pNoiseAmplitude->SetButtonColour(wxColour(100,255,100));

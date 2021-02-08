@@ -70,7 +70,7 @@ class PAMBASE_IMPEXPORT HistoryGraph : public pmControl
         void ClearGraphs();
         void DeleteAllGraphs();
         void HideAllGraphs();
-
+        void ShowBarGraph(bool bShow);
 
         void ChangeInterval(const wxString& sGraph, unsigned int nIntervalMicroSeconds);
 
@@ -85,6 +85,7 @@ class PAMBASE_IMPEXPORT HistoryGraph : public pmControl
         *   @param event
         **/
         void OnPaint(wxPaintEvent& event);
+
 
         /** Called when the console resizes
         *   @param event
@@ -106,6 +107,10 @@ class PAMBASE_IMPEXPORT HistoryGraph : public pmControl
             double dResolution;
         };
 
+        void DrawLineGraph(wxDC& dc, const graph& aGraph);
+        void DrawBarChart(wxDC& dc, const graph& aGraph);
+        void DrawAxis(wxDC& dc, const graph& aGraph);
+
         wxRect m_rectGraph;
         void AutoRange(graph& aGraph);
         std::map<wxString, graph> m_mGraphs;
@@ -114,6 +119,9 @@ class PAMBASE_IMPEXPORT HistoryGraph : public pmControl
         wxPoint m_pntMouse;
         bool m_bMouseDown;
         double m_dFirstColumn;
+
+        bool m_bBarChart;
+        int m_nResolution;
 };
 
 

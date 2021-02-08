@@ -15,7 +15,7 @@ public:
 				    Boolean doNormalMBitRule = True,
 				    unsigned int nSyncTime=0);
     u_int32_t GetRTPTimestamp() const { return fCurPacketRTPTimestamp; }
-    pairTime_t GetTransmissionTime();
+    timeval GetTransmissionTime();
 
     Boolean processSpecialHeader(BufferedPacket* packet,unsigned& resultSpecialHeaderSize);
 

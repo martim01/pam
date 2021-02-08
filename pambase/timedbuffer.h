@@ -9,7 +9,7 @@
 #include <wx/msw/winundef.h>
 #endif // __WXGNU__
 
-typedef std::pair<unsigned int, unsigned int> pairTime_t;
+
 
 #ifdef  __WXMSW__
 #ifndef _SYS_TIME_H_
@@ -35,35 +35,6 @@ static int gettimeofday(struct timeval * tp, struct timezone * tzp)
 }
 #endif
 
-static int gettimeofday(pairTime_t& tp, struct timezone * tzp)
-{
-    // Note: some broken versions only have 8 trailing zero's, the correct epoch has 9 trailing zero's
-    // This magic number is the number of 100 nanosecond intervals since January 1, 1601 (UTC)
-    // until 00:00:00 January 1, 1970
-    static const uint64_t EPOCH = ((uint64_t) 116444736000000000ULL);
-
-    SYSTEMTIME  system_time;
-    FILETIME    file_time;
-    uint64_t    time;
-
-    GetSystemTime( &system_time );
-    SystemTimeToFileTime( &system_time, &file_time );
-    time =  ((uint64_t)file_time.dwLowDateTime )      ;
-    time += ((uint64_t)file_time.dwHighDateTime) << 32;
-
-    tp.first  = (long) ((time - EPOCH) / 10000000L);
-    tp.second = (long) (system_time.wMilliseconds * 1000);
-    return 0;
-}
-#else
-static int gettimeofday(pairTime_t& tp, struct timezone * tzp)
-{
-    timeval tv;
-    gettimeofday(&tv, NULL);
-    tp.first = tv.tv_sec;
-    tp.second = tv.tv_usec;
-    return 0;
-}
 #endif
 
 
@@ -78,7 +49,7 @@ class PAMBASE_IMPEXPORT timedbuffer
     m_nBufferDepth(0),
     m_dPlaybackLatency(0.0)
 	{
-        gettimeofday(m_tvStamp,NULL);
+        gettimeofday(&m_tvStamp,NULL);
 
         m_tvTransmissionStamp = m_tvStamp;
         m_tvPlayback = m_tvStamp;
@@ -86,7 +57,7 @@ class PAMBASE_IMPEXPORT timedbuffer
         m_pBuffer = new float[m_nBufferSize];
     }
 
-    timedbuffer(unsigned int nBs, const pairTime_t& tv, unsigned int nTimestamp) :
+    timedbuffer(unsigned int nBs, const timeval& tv, unsigned int nTimestamp) :
         m_nBufferSize(nBs),
         m_nTimestamp(nTimestamp),
         m_tvStamp(tv),
@@ -151,12 +122,12 @@ class PAMBASE_IMPEXPORT timedbuffer
         return m_pBuffer;
     }
 
-    const pairTime_t& GetTimeVal() const
+    const timeval& GetTimeVal() const
     {
         return m_tvStamp;
     }
 
-    void SetTimeVal(const pairTime_t& tv)
+    void SetTimeVal(const timeval& tv)
     {
         m_tvStamp = tv;
     }
@@ -180,12 +151,12 @@ class PAMBASE_IMPEXPORT timedbuffer
     {
         return m_nDuration;
     }
-    void SetTransmissionTime(const pairTime_t& tv)
+    void SetTransmissionTime(const timeval& tv)
     {
         m_tvTransmissionStamp = tv;
     }
 
-    const pairTime_t& GetTransmissionTime() const
+    const timeval& GetTransmissionTime() const
     {
         return m_tvTransmissionStamp;
     }
@@ -202,12 +173,12 @@ class PAMBASE_IMPEXPORT timedbuffer
 
     void SetPlaybackOffset(double dMicro)
     {
-        m_tvPlayback.first = m_tvStamp.first;
-        m_tvPlayback.second = m_tvStamp.second + dMicro;
-        while(m_tvPlayback.second >= 1000000)
+        m_tvPlayback.tv_sec = m_tvStamp.tv_sec;
+        m_tvPlayback.tv_usec = m_tvStamp.tv_usec + dMicro;
+        while(m_tvPlayback.tv_usec >= 1000000)
         {
-            m_tvPlayback.first++;
-            m_tvPlayback.second -= 1000000;
+            m_tvPlayback.tv_sec++;
+            m_tvPlayback.tv_usec -= 1000000;
         }
         m_dPlaybackLatency = dMicro;
     }
@@ -216,7 +187,7 @@ class PAMBASE_IMPEXPORT timedbuffer
     {
         return m_dPlaybackLatency;
     }
-    const pairTime_t& GetPlaybackTime() const
+    const timeval& GetPlaybackTime() const
     {
         return m_tvPlayback;
     }
@@ -237,9 +208,9 @@ class PAMBASE_IMPEXPORT timedbuffer
     unsigned int m_nBufferSize;
     unsigned int m_nTimestamp;
 
-    pairTime_t m_tvStamp;
-    pairTime_t m_tvPlayback;
-    pairTime_t m_tvTransmissionStamp;
+    timeval m_tvStamp;
+    timeval m_tvPlayback;
+    timeval m_tvTransmissionStamp;
     float* m_pBuffer;
 
     unsigned int m_nDuration;

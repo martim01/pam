@@ -14,9 +14,9 @@ public:
 				    Boolean doNormalMBitRule = True,
 				    unsigned int nSyncTime=0);
     u_int32_t GetRTPTimestamp() const { return fCurPacketRTPTimestamp; }
-    pairTime_t GetTransmissionTime();
+    timeval GetTransmissionTime();
 
-    const pairTime_t& GetLastEpoch()
+    const timeval& GetLastEpoch()
     {
         return m_tvLastEpoch;
     }
@@ -31,7 +31,7 @@ public:
         return m_nTimestampFrequency;
     }
 
-    unsigned int GetExpectedTimestamp(const pairTime_t& tv);
+    unsigned int GetExpectedTimestamp(const timeval& tv);
 
     void WorkoutLastEpoch();
 
@@ -47,7 +47,7 @@ protected:
 private:
 
 
-    pairTime_t m_tvLastEpoch;
+    timeval m_tvLastEpoch;
     bool m_bEpochWorkedOut;
 
     unsigned int m_nTimestampFrequency;

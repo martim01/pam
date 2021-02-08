@@ -77,14 +77,14 @@ void Aes67Source::WorkoutLastEpoch()
     double dInt, dDec;
     dDec = modf(dTime, &dInt);
 
-    m_tvLastEpoch.first = dInt;
-    m_tvLastEpoch.second = (dDec*1000000.0);
+    m_tvLastEpoch.tv_sec = dInt;
+    m_tvLastEpoch.tv_usec = (dDec*1000000.0);
 
 
 }
 
 
-pairTime_t Aes67Source::GetTransmissionTime()
+timeval Aes67Source::GetTransmissionTime()
 {
 
     double dSeconds = static_cast<double>(fCurPacketRTPTimestamp)/static_cast<double>(m_nTimestampFrequency);
@@ -93,19 +93,19 @@ pairTime_t Aes67Source::GetTransmissionTime()
     {
         WorkoutLastEpoch();
     }
-    pairTime_t tvTransmision;
-    tvTransmision.first = m_tvLastEpoch.first;
-    tvTransmision.second = m_tvLastEpoch.second;
+    timeval tvTransmision;
+    tvTransmision.tv_sec = m_tvLastEpoch.tv_sec;
+    tvTransmision.tv_usec = m_tvLastEpoch.tv_usec;
 
     double dInt, dDec;
     dDec = modf(dSeconds, &dInt);
-    tvTransmision.first += dInt;
-    tvTransmision.second += dDec*1000000.0;
+    tvTransmision.tv_sec += dInt;
+    tvTransmision.tv_usec += dDec*1000000.0;
 
-    if(tvTransmision.second > 1000000.0)
+    if(tvTransmision.tv_usec > 1000000.0)
     {
-        tvTransmision.second -= 1000000.0;
-        tvTransmision.first ++;
+        tvTransmision.tv_usec -= 1000000.0;
+        tvTransmision.tv_sec ++;
     }
 
 
@@ -114,10 +114,10 @@ pairTime_t Aes67Source::GetTransmissionTime()
 
 
 
-unsigned int Aes67Source::GetExpectedTimestamp(const pairTime_t& tv)
+unsigned int Aes67Source::GetExpectedTimestamp(const timeval& tv)
 {
-    double dSec = tv.first;
-    double dUSec  = tv.second;
+    double dSec = tv.tv_sec;
+    double dUSec  = tv.tv_usec;
 
     double dTime = dSec + (dUSec/1000000.0);
 

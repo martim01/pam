@@ -265,11 +265,11 @@ bool RtpThread::DoSIP()
     return true;
 }
 
-pairTime_t RtpThread::ConvertDoubleToPairTime(double dTime)
+timeval RtpThread::ConvertDoubleToPairTime(double dTime)
 {
     double dInt, dDec;
     dDec = modf(dTime, &dInt);
-    return make_pair(static_cast<unsigned int>(dInt), static_cast<unsigned int>(dDec*1000000.0));
+    return {static_cast<time_t>(dInt), static_cast<__suseconds_t>(dDec*1000000.0)};
 }
 
 float RtpThread::ConvertFrameBufferToSample(u_int8_t* pFrameBuffer, u_int8_t nBytesPerSample)
@@ -286,7 +286,8 @@ float RtpThread::ConvertFrameBufferToSample(u_int8_t* pFrameBuffer, u_int8_t nBy
     return static_cast<float>(nSample)/ 2147483648.0;
 }
 
-void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const pairTime_t& timePresentation, unsigned long nFrameSize, u_int8_t* pFrameBuffer, u_int8_t nBytesPerSample, const pairTime_t& timeTransmission,
+void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const timeval& timePresentation, unsigned long nFrameSize, u_int8_t* pFrameBuffer,
+u_int8_t nBytesPerSample, const timeval& timeTransmission,
 unsigned int nTimestamp,unsigned int nDuration, int nTimestampDifference, mExtension_t* pExt)
 {
     if(m_bClosing || m_Session.GetCurrentSubsession() == m_Session.lstSubsession.end() || m_Session.GetCurrentSubsession()->sSourceAddress != sEndpoint)
@@ -311,8 +312,8 @@ unsigned int nTimestamp,unsigned int nDuration, int nTimestampDifference, mExten
 
         if(m_nSampleBufferSize == 0)
         {
-            m_dTransmission = timeTransmission.first + (static_cast<double>(timeTransmission.second))/1000000.0;
-            m_dPresentation = (timePresentation.first + (static_cast<double>(timePresentation.second))/1000000.0) - dOffset;
+            m_dTransmission = timeTransmission.tv_sec + (static_cast<double>(timeTransmission.tv_usec))/1000000.0;
+            m_dPresentation = (timePresentation.tv_sec + (static_cast<double>(timePresentation.tv_usec))/1000000.0) - dOffset;
             //is the timestamp what we'd expect??
             m_nTimestamp = nTimestamp;
 
@@ -359,27 +360,31 @@ unsigned int nTimestamp,unsigned int nDuration, int nTimestampDifference, mExten
 
     int nFramesPerSec = (m_nSampleRate*m_nInputChannels*nBytesPerSample)/nFrameSize;
 
+
+
+    timeval tvSub;
+    timersub(&timePresentation, &timeTransmission, &tvSub);
+    double dTSDF = (static_cast<double>(tvSub.tv_sec)*1000000.0)+tvSub.tv_usec;
+
     if(m_dDelay0 == std::numeric_limits<double>::lowest() || m_nTSDFCount == nFramesPerSec)
     {
         m_dTSDF = m_dTSDFMax-m_dTSDFMin;
-        m_dDelay0 = (timePresentation.first*1000000.0 + (static_cast<double>(timePresentation.second)));
-        m_dDelay0 -= (timeTransmission.first*1000000.0 + (static_cast<double>(timeTransmission.second)));
-        m_dDelay0 -= (dOffset*1000000.0);
+        m_dDelay0 = dTSDF;
 
         m_dTSDFMax = std::numeric_limits<double>::lowest();
         m_dTSDFMin = std::numeric_limits<double>::max();
 
-        m_nTSDFCount = 0;
+        m_nTSDFCount = 1;
+
     }
-
-    double dTSDF = (timePresentation.first*1000000.0 + (static_cast<double>(timePresentation.second))) - (dOffset*1000000.0);
-    dTSDF -= (timeTransmission.first*1000000.0 + (static_cast<double>(timeTransmission.second)));
-
-    dTSDF -= m_dDelay0;
-
-    m_dTSDFMax = max(m_dTSDFMax, dTSDF);
-    m_dTSDFMin = min(m_dTSDFMin, dTSDF);
-    m_nTSDFCount++;
+    else
+    {
+        dTSDF -= m_dDelay0;
+       // dTSDF *= 1000000.0;
+        m_dTSDFMax = max(m_dTSDFMax, dTSDF);
+        m_dTSDFMin = min(m_dTSDFMin, dTSDF);
+        m_nTSDFCount++;
+    }
 }
 
 
@@ -435,6 +440,7 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
     while ((pSubsession = dynamic_cast<Smpte2110MediaSubsession*>(iterSub.next())) != NULL)
     {
         refclk clock = pSubsession->GetRefClock();
+        timeval tvEpoch = pSubsession->GetLastEpoch();
         m_Session.lstSubsession.push_back(subsession(wxString::FromUTF8(pSubsession->sessionId()),
                                                      wxString::FromUTF8(pSubsession->GetEndpoint()),
                                                      wxString::FromUTF8(pSubsession->mediumName()),
@@ -445,7 +451,7 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
                                                      pSubsession->numChannels(),
                                                      wxEmptyString,  /* @todo this is the channel list from SMPTE2110 */
                                                      pSubsession->GetSyncTime(),
-                                                     pSubsession->GetLastEpoch(),
+                                                     tvEpoch,
                                                      pSubsession->GetRefClock()));
         #ifdef PTPMONKEY
         if(pSubsession->GetRefClock().sType.CmpNoCase(wxT("PTP")) == 0)

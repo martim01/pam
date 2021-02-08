@@ -2,6 +2,7 @@
 #include "session.h"
 #include "timedbuffer.h"
 #include "settings.h"
+
 #include <wx/log.h>
 #ifdef PTPMONKEY
 #include "wxptp.h"
@@ -837,7 +838,7 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
         m_plblQoSInterMax->SetLabel(wxString::Format(wxT("%f ms"), pData->dInter_packet_gap_ms_max));
 
         m_plblQoSJitter->SetLabel(wxString::Format(wxT("%f ms"),pData->dJitter));
-        m_plblTSDF->SetLabel(wxString::Format(wxT("%.2f us"), pData->dTSDF));
+        m_plblTSDF->SetLabel(wxString::Format(wxT("%.0f us"), pData->dTSDF));
 
         wxDateTime dtSR(time_t(pData->tvLastSR_Time.tv_sec));
         dtSR.SetMillisecond(pData->tvLastSR_Time.tv_usec/1000);
@@ -875,10 +876,11 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
         m_pGraph->AddPeak(wxT("Jitter"), pData->dJitter);
         m_pHistogram->AddPeak(wxT("Jitter"), pData->dJitter);
 
-
-        m_pGraph->AddPeak(wxT("TS-DF"), pData->dTSDF);
-        m_pHistogram->AddPeak(wxT("TS-DF"), pData->dTSDF);
-
+        if(pData->dTSDF >= 0.0)
+        {
+            m_pGraph->AddPeak(wxT("TS-DF"), pData->dTSDF);
+            m_pHistogram->AddPeak(wxT("TS-DF"), pData->dTSDF);
+        }
         m_pGraph->AddPeak(wxT("Timestamp Errors"), pData->nTimestampErrors);
         m_pHistogram->AddPeak(wxT("Timestamp Errors"), pData->nTimestampErrors);
 
@@ -917,16 +919,16 @@ void pnlAoIPInfo::SetAudioData(const timedbuffer* pTimedBuffer)
 
 
 
-void pnlAoIPInfo::SetTimestamp(const pairTime_t& tv, wmLabel* pLabel, bool bDate)
+void pnlAoIPInfo::SetTimestamp(const timeval& tv, wmLabel* pLabel, bool bDate)
 {
-    wxDateTime dt(time_t(tv.first));
+    wxDateTime dt(time_t(tv.tv_sec));
     if(!bDate)
     {
-        pLabel->SetLabel(wxString::Format(wxT("%s:%03d"), dt.Format(wxT("%H:%M:%S")).c_str(), tv.second/1000));
+        pLabel->SetLabel(wxString::Format(wxT("%s:%03d"), dt.Format(wxT("%H:%M:%S")).c_str(), tv.tv_usec/1000));
     }
     else
     {
-        pLabel->SetLabel(wxString::Format(wxT("%s:%03d"), dt.Format(wxT("%Y-%m-%d %H:%M:%S")).c_str(), tv.second/1000));
+        pLabel->SetLabel(wxString::Format(wxT("%s:%03d"), dt.Format(wxT("%Y-%m-%d %H:%M:%S")).c_str(), tv.tv_usec/1000));
     }
 }
 
@@ -934,20 +936,23 @@ void pnlAoIPInfo::SetTimestamp(const pairTime_t& tv, wmLabel* pLabel, bool bDate
 void pnlAoIPInfo::ShowLatency(const timedbuffer* pTimedBuffer)
 {
     double dPlayback = pTimedBuffer->GetPlaybackLatency();
-    double dTransmission = static_cast<double>(pTimedBuffer->GetTransmissionTime().second) + (static_cast<double>(pTimedBuffer->GetTransmissionTime().first)*1000000.0);
-    double dPresentation = static_cast<double>(pTimedBuffer->GetTimeVal().second) + (static_cast<double>(pTimedBuffer->GetTimeVal().first)*1000000.0);
 
-    dTransmission += m_dFrameDuration;   //we add the duration on because the transmission time is first sample not last sample of frane
-    m_plblLatency->SetLabel(wxString::Format(wxT("%.0f us"), dPlayback));//+(dPresentation-dTransmission)));
-    m_plblLatencyNetwork->SetLabel(wxString::Format(wxT("%.0f us"), (dPresentation-dTransmission)));
+    timeval tvLatency;
+    timersub(&pTimedBuffer->GetTimeVal(), &pTimedBuffer->GetTransmissionTime(), &tvLatency);
+
+    double dLatency = static_cast<double>(tvLatency.tv_sec)*1000000.0 + static_cast<double>(tvLatency.tv_usec);
+    dLatency -= m_dFrameDuration;   //we add the duration on because the transmission time is first sample not last sample of frane
+
+    m_plblLatency->SetLabel(wxString::Format(wxT("%.0f us"), dPlayback));
+    m_plblLatencyNetwork->SetLabel(wxString::Format(wxT("%.0f us"), dLatency));
 
     if(m_nInitialLatencyCounter < 3)
     {
-        m_dInitialLatency = (dPresentation-dTransmission);
+        m_dInitialLatency = dLatency;
         m_nInitialLatencyCounter++;
     }
-    m_dSlip = (dPresentation-dTransmission)-m_dInitialLatency;
-    //m_pGraph->AddPeak("Slip", dSlip);
+    m_dSlip = dLatency-m_dInitialLatency;
+
 
     #ifdef PTPMONKEY
     timeval tv(wxPtp::Get().GetLastPtpOffset(0));
@@ -1087,7 +1092,8 @@ void pnlAoIPInfo::OnPtpEvent(wxCommandEvent& event)
 void pnlAoIPInfo::SetGraphType(const wxString& sType)
 {
     m_pHistogram->Show(sType == "Histogram");
-    m_pGraph->Show(sType == "Graph");
+    m_pGraph->Show(sType != "Histogram");
+    m_pGraph->ShowBarGraph(sType == "Bar Chart");
 
 }
 

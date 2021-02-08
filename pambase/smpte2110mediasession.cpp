@@ -357,7 +357,7 @@ void Smpte2110MediaSubsession::parseSDPAttribute_Deviation()
     }
 }
 
-const pairTime_t& Smpte2110MediaSubsession::GetLastEpoch()
+timeval Smpte2110MediaSubsession::GetLastEpoch()
 {
     if(dynamic_cast<RawVideoSource*>(rtpSource()))
     {
@@ -367,7 +367,7 @@ const pairTime_t& Smpte2110MediaSubsession::GetLastEpoch()
     {
         return dynamic_cast<Aes67Source*>(rtpSource())->GetLastEpoch();
     }
-    return pairTime_t(0,0);
+    return {0,0};
 }
 
 

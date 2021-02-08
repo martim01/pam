@@ -22,19 +22,24 @@ pnlGraph::pnlGraph(wxWindow* parent,AoIPInfoBuilder* pBuilder, wxWindowID id,con
 
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
-	m_plstGraph = new wmList(this, ID_M_PLST16, wxPoint(0,0), wxSize(190,155), wmList::STYLE_SELECT, 0, wxSize(-1,35), 2, wxSize(2,2));
+	m_plstGraph = new wmList(this, ID_M_PLST16, wxPoint(0,0), wxSize(195,150), wmList::STYLE_SELECT, 0, wxSize(-1,32), 2, wxSize(2,2));
 	m_plstGraph->SetBackgroundColour(wxColour(0,0,0));
 
-	m_pbtnHistoGraph = new wmButton(this, wxNewId(), "Type", wxPoint(0,160), wxSize(200,30), wmButton::STYLE_SELECT);
-	m_pbtnHistoGraph->SetToggle(true, "Graph", "Histogram", 30.0);
-    m_pbtnHistoGraph->SetBackgroundColour(wxColour(80,90,150));
+	m_plstType = new wmList(this, wxNewId(), wxPoint(0,152), wxSize(195,38), wmList::STYLE_SELECT, 0, wxSize(-1,32), 3, wxSize(1,0));
+	m_plstType->SetBackgroundColour(wxColour(0,0,0));
+    m_plstType->SetButtonColour(wxColour(50,100,0));
 
 	m_pbtnClear = new wmButton(this, ID_M_PBTN29, _("Clear Graphs"), wxPoint(100,195), wxSize(90,30), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN29"));
 	m_pbtnClear->SetColourSelected(wxColour(wxT("#800000")));
 
 	Connect(ID_M_PLST16,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlGraph::OnlstGraphSelected);
 	Connect(ID_M_PBTN29,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlGraph::OnbtnClearClick);
-	Connect(m_pbtnHistoGraph->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlGraph::OnbtnHistoGraph);
+
+	Connect(m_plstType->GetId(),wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlGraph::OnlstTypeSelected);
+
+    m_plstType->AddButton("Line Graph");
+    m_plstType->AddButton("Bar Chart");
+    m_plstType->AddButton("Histogram");
 
 
 	m_plstGraph->AddButton(wxT("kBit/s"));
@@ -49,7 +54,7 @@ pnlGraph::pnlGraph(wxWindow* parent,AoIPInfoBuilder* pBuilder, wxWindowID id,con
 
 
 	m_plstGraph->SelectButton(m_pBuilder->ReadSetting(wxT("Graph"), wxT("kBit/s")), true);
-    m_pbtnHistoGraph->ToggleSelection(m_pBuilder->ReadSetting("Type", "Graph") == "Histogram", false);
+	m_plstType->SelectButton(m_pBuilder->ReadSetting(wxT("Type"), wxT("Line Graph")), true);
 }
 
 pnlGraph::~pnlGraph()
@@ -70,7 +75,7 @@ void pnlGraph::OnbtnClearClick(wxCommandEvent& event)
 }
 
 
-void pnlGraph::OnbtnHistoGraph(wxCommandEvent& event)
+void pnlGraph::OnlstTypeSelected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting("Type", event.IsChecked() ? "Histogram" : "Graph");
+    m_pBuilder->WriteSetting("Type", event.GetString());
 }

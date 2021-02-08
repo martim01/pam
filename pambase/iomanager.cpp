@@ -756,7 +756,9 @@ void IOManager::InitAudioInputDevice()
 
 
         m_SessionIn = session(wxEmptyString, wxT("Soundcard"), SoundcardManager::Get().GetInputDeviceName());
-        m_SessionIn.lstSubsession.push_back(subsession(wxEmptyString, SoundcardManager::Get().GetInputDeviceName(), wxEmptyString, wxT("L24"), wxEmptyString, SoundcardManager::Get().GetInputDevice(), SoundcardManager::Get().GetInputSampleRate(), SoundcardManager::Get().GetInputNumberOfChannels(), wxEmptyString, 0, make_pair(0,0), refclk()));
+        m_SessionIn.lstSubsession.push_back(subsession(wxEmptyString, SoundcardManager::Get().GetInputDeviceName(), wxEmptyString,
+        wxT("L24"), wxEmptyString, SoundcardManager::Get().GetInputDevice(), SoundcardManager::Get().GetInputSampleRate(),
+         SoundcardManager::Get().GetInputNumberOfChannels(), wxEmptyString, 0, {0,0}, refclk()));
         m_SessionIn.SetCurrentSubsession();
 
         SessionChanged();
@@ -846,7 +848,8 @@ void IOManager::CreateSessionFromOutput(const wxString& sSource)
     //we need to get the info from the output...
     unsigned int nSampleRate = SoundcardManager::Get().GetOutputSampleRate();
 
-    m_SessionOut.lstSubsession.push_back(subsession(Settings::Get().Read(wxT("Output"), wxT("Source"),wxEmptyString), sSource, wxEmptyString, wxT("F32"), wxEmptyString, 0, nSampleRate, 2, wxEmptyString, 0, make_pair(0,0), refclk()));
+    m_SessionOut.lstSubsession.push_back(subsession(Settings::Get().Read(wxT("Output"), wxT("Source"),wxEmptyString),
+    sSource, wxEmptyString, wxT("F32"), wxEmptyString, 0, nSampleRate, 2, wxEmptyString, 0, {0,0}, refclk()));
     m_SessionOut.SetCurrentSubsession();
 
     SessionChanged();

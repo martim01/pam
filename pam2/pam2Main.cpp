@@ -355,6 +355,11 @@ void pam2Dialog::LoadMonitorPanels()
         {
             m_setAlwaysPassAudio.insert(itPlugin->second);
         }
+        if(itPlugin->second->WantsQoSAlways())
+        {
+            m_setAlwaysPassQoS.insert(itPlugin->second);
+        }
+
     }
 
 
@@ -762,6 +767,14 @@ void pam2Dialog::OnQoS(wxCommandEvent& event)
     {
         m_pSelectedMonitor->SetQoSData(pData);
     }
+    for(auto plugin : m_setAlwaysPassQoS)
+    {
+        if(plugin != m_pSelectedMonitor)
+        {
+            plugin->SetQoSData(pData);
+        }
+    }
+
     delete pData;
 }
 

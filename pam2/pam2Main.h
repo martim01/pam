@@ -183,6 +183,7 @@ class pam2Dialog: public wxDialog
         dlgNoInput* m_pdlgNoInput;
         MonitorPluginBuilder* m_pSelectedMonitor;
         std::set<MonitorPluginBuilder*> m_setAlwaysPassAudio;
+        std::set<MonitorPluginBuilder*> m_setAlwaysPassQoS;
 
         std::multimap<size_t, wxString> m_mmMonitorPlugins;
         size_t m_nCurrentMonitorPage;

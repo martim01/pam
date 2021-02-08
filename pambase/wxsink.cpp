@@ -55,7 +55,6 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
     {
         Aes67Source* pSource = dynamic_cast<Aes67Source*>(m_pSubsession->rtpSource());
 
-        pairTime_t presentationTime(make_pair(tvPresentation.tv_sec, tvPresentation.tv_usec));  //todo change all the pairTime_t to timeval
 
         if(m_nLastTimestamp > pSource->GetRTPTimestamp())   //this means we must have crossed an Epoch
         {
@@ -89,7 +88,7 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
         }
         if(nBytesPerSample != 0)
         {
-            m_pHandler->AddFrame(m_pSubsession->GetEndpoint(), pSource->lastReceivedSSRC(), presentationTime, frameSize, fReceiveBuffer,
+            m_pHandler->AddFrame(m_pSubsession->GetEndpoint(), pSource->lastReceivedSSRC(), tvPresentation, frameSize, fReceiveBuffer,
              nBytesPerSample, pSource->GetTransmissionTime(), pSource->GetRTPTimestamp(),frameSize, nDifference, mExt);
         }
     }

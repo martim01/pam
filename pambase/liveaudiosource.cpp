@@ -180,7 +180,7 @@ void LiveAudioSource::AddToTimedBuffer(float dSample)
 {
     if(m_nBufferWritten == m_pAudioBuffer->GetBufferSize())
     {
-        m_pAudioBuffer->SetTransmissionTime(std::make_pair(fPresentationTime.tv_sec, fPresentationTime.tv_usec));
+        m_pAudioBuffer->SetTransmissionTime(fPresentationTime);
         m_pAudioBuffer->SetBufferDepth(m_qBuffer.size()/fNumChannels);
         m_pAudioBuffer->SetDuration(m_pAudioBuffer->GetBufferSize()*4);
         AudioEvent event(m_pAudioBuffer, AudioEvent::OUTPUT, m_pAudioBuffer->GetBufferSize()/fNumChannels, fSamplingFrequency, 0,0);

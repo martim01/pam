@@ -325,17 +325,17 @@ double Audio::GetInputLatency()
     return -1;
 }
 
-pairTime_t Audio::ConvertDoubleToPairTime(double dTime)
+timeval Audio::ConvertDoubleToPairTime(double dTime)
 {
     double dInt, dDec;
     dDec = modf(dTime, &dInt);
-    return make_pair(static_cast<unsigned int>(dInt), static_cast<unsigned int>(dDec*1000000.0));
+    return {static_cast<time_t>(dInt), static_cast<unsigned int>(dDec*1000000.0)};
 }
 
 
-double Audio::ConvertPairTimeToDouble(const pairTime_t& tv)
+double Audio::ConvertPairTimeToDouble(const timeval& tv)
 {
-    return static_cast<double>(tv.second)/1000000.0 + static_cast<double>(tv.first);
+    return static_cast<double>(tv.tv_usec)/1000000.0 + static_cast<double>(tv.tv_sec);
 }
 
 void Audio::AddSamples(const timedbuffer* pTimedBuffer)

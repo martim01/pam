@@ -20,7 +20,7 @@ class pnlGraph: public wxPanel
 		wmButton* m_pbtnClear;
 		wmList* m_plstGraph;
 		//*)
-		wmButton* m_pbtnHistoGraph;
+		wmList* m_plstType;
 
 	protected:
 
@@ -35,7 +35,7 @@ class pnlGraph: public wxPanel
 		void OnlstGraphSelected(wxCommandEvent& event);
 		void OnbtnClearClick(wxCommandEvent& event);
 		//*)
-		void OnbtnHistoGraph(wxCommandEvent& event);
+		void OnlstTypeSelected(wxCommandEvent& event);
 		AoIPInfoBuilder* m_pBuilder;
 
 		DECLARE_EVENT_TABLE()

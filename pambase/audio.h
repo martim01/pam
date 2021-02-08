@@ -117,8 +117,8 @@ private:
 
 
     wxMutex m_mutex;
-    pairTime_t ConvertDoubleToPairTime(double dTime);
-    double ConvertPairTimeToDouble(const pairTime_t& tv);
+    timeval ConvertDoubleToPairTime(double dTime);
+    double ConvertPairTimeToDouble(const timeval& tv);
 
     struct timedSample
     {

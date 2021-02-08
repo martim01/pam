@@ -73,7 +73,7 @@ class Aes67MediaSubsession : public MediaSubsession
             return m_nSyncTime;
         }
 
-        const pairTime_t& GetLastEpoch();
+        const timeval& GetLastEpoch();
 
         wxString GetEndpoint();
 

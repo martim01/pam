@@ -34,6 +34,11 @@ class PAMBASE_IMPEXPORT MonitorPluginBuilder : public wxEvtHandler
             return m_bWantsAudioAlways;
         }
 
+        bool WantsQoSAlways()
+        {
+            return m_bWantsQoSAlways;
+        }
+
     protected:
 
         friend class MonitorPluginFactory;
@@ -60,6 +65,7 @@ class PAMBASE_IMPEXPORT MonitorPluginBuilder : public wxEvtHandler
         wxEvtHandler* m_pHandler;
 
         bool m_bWantsAudioAlways;
+        bool m_bWantsQoSAlways;
 
     private:
         wmSwitcherPanel* m_pswpMonitor;
