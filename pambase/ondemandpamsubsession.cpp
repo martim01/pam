@@ -39,17 +39,17 @@ void OnDemandPamSubsession::getStreamParameters(unsigned clientSessionId, netAdd
     for(auto pHandler : m_setRTSPHandlers)
     {
         wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_ODS_CONNECTION);
-        pEvent->SetInt(clientSessionId);
         Destinations* pDestinations = (Destinations*)(fDestinationsHashTable->Lookup((char const*)clientSessionId));
         if(pDestinations)
         {
             pEvent->SetString(wxString::FromUTF8(inet_ntoa(pDestinations->addr)));
-            pEvent->SetExtraLong(ntohs(pDestinations->rtpPort.num()));
+            pEvent->SetInt(ntohs(pDestinations->rtpPort.num()));
+            pEvent->SetExtraLong(ntohs(pDestinations->rtcpPort.num()));
         }
         else
         {
             pEvent->SetString("Unknown");
-            pEvent->SetExtraLong(0);
+            pEvent->SetInt(0);
         }
         wxQueueEvent(pHandler, pEvent);
     }
@@ -61,16 +61,18 @@ void OnDemandPamSubsession::deleteStream(unsigned clientSessionId, void*& stream
     for(auto pHandler : m_setRTSPHandlers)
     {
         wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_ODS_DISCONNECTION);
-        pEvent->SetInt(clientSessionId);
+
         Destinations* pDestinations = (Destinations*)(fDestinationsHashTable->Lookup((char const*)clientSessionId));
         if(pDestinations)
         {
             pEvent->SetString(wxString::FromUTF8(inet_ntoa(pDestinations->addr)));
-            pEvent->SetExtraLong(pDestinations->rtpPort.num());
+            pEvent->SetInt(ntohs(pDestinations->rtpPort.num()));
+            pEvent->SetExtraLong(ntohs(pDestinations->rtcpPort.num()));
         }
         else
         {
             pEvent->SetString("Unknown");
+            pEvent->SetInt(0);
             pEvent->SetExtraLong(0);
         }
         wxQueueEvent(pHandler, pEvent);

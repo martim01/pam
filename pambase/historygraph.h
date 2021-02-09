@@ -1,9 +1,11 @@
 #pragma once
 #include <wx/window.h>
-
+#include <chrono>
 #include <map>
 #include <list>
 #include "pmcontrol.h"
+
+using graphPoint = std::pair<double, std::chrono::time_point<std::chrono::system_clock>>;
 
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/
@@ -73,6 +75,7 @@ class PAMBASE_IMPEXPORT HistoryGraph : public pmControl
         void ShowBarGraph(bool bShow);
 
         void ChangeInterval(const wxString& sGraph, unsigned int nIntervalMicroSeconds);
+        void ChangeResolution(const wxString& sGraph, unsigned int nPixels);
 
 
 
@@ -96,15 +99,16 @@ class PAMBASE_IMPEXPORT HistoryGraph : public pmControl
         struct graph
         {
             graph(const wxColour& clr, unsigned int nInt, bool bS) : clrLine(clr), nIntervalDefault(nInt), nInterval(nInt), bShow(bS),
-            dMin(std::numeric_limits<double>::max()), dMax(std::numeric_limits<double>::lowest()), dResolution(1.0){}
+            dMin(std::numeric_limits<double>::max()), dMax(std::numeric_limits<double>::lowest()), dResolution(1.0), nPixels(5){}
             wxColour clrLine;
-            std::list<double> lstPeaks;
+            std::list<graphPoint> lstPeaks;
             unsigned int nIntervalDefault;
             unsigned int nInterval;
             bool bShow;
             double dMin;
             double dMax;
             double dResolution;
+            unsigned int nPixels;
         };
 
         void DrawLineGraph(wxDC& dc, const graph& aGraph);

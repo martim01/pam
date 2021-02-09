@@ -54,7 +54,7 @@ public:
     const wxDateTime& GetFirstReceivedTime() const  { return m_dtCreated; }
     unsigned int GetTotalPacketsLost() const  { return m_nTotNumPacketsLost; }
     const wxString& GetFromAddress() const  { return m_sLastFromAddress; }
-
+    unsigned int GetRTCPPort() const {return  m_nRTCPPort;   }
 
 protected:
 
@@ -74,7 +74,7 @@ protected:
     wxDateTime m_dtCreated;
     unsigned int m_nTotNumPacketsLost;
     wxString m_sLastFromAddress;
-
+    unsigned int m_nRTCPPort;
 };
 
 typedef void (wxEvtHandler::*RTCPTransmissionEventFunction)(RTCPTransmissionEvent&);

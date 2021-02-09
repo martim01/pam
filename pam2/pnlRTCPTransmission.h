@@ -14,6 +14,8 @@
 #include <map>
 #include <memory>
 #include <limits>
+#include "historygraph.h"
+#include "histogram.h"
 
 class RTCPTransmissionEvent;
 
@@ -24,8 +26,8 @@ class pnlRTCPTransmission: public wxPanel
 		pnlRTCPTransmission(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, int nStyle=0, const wxString& str="");
 		virtual ~pnlRTCPTransmission();
 
-		//(*Declarations(pnlRTCPTransmission)
-		LevelGraph* m_pGraph;
+		HistoryGraph* m_pGraph;
+		Histogram* m_pHistogram;
 		wmButton* m_pbtnClose;
 		wmLabel* m_pLbl10;
 		wmLabel* m_pLbl11;
@@ -73,6 +75,14 @@ class pnlRTCPTransmission: public wxPanel
 		wxPanel* Panel4;
 		wxPanel* pnlQoS;
 		//*)
+
+		wmList* m_plstType;
+		wmButton* m_pbtnClear;
+
+        wmList* m_plstGranularity;
+        wmList* m_plstResolution;
+        wmLabel* m_plblHR;
+        wmLabel* m_plblHG;
 
 	protected:
 
@@ -141,8 +151,16 @@ class pnlRTCPTransmission: public wxPanel
         void OnConnectionEvent(const wxCommandEvent& event);
         void OnDisconnectionEvent(const wxCommandEvent& event);
 
+        void OnlstResolutionPressed(const wxCommandEvent& event);
+        void OnlstGranularityPressed(const wxCommandEvent& event);
+
 
         void AddGraphs(const wxString& sSource);
+
+        void OnbtnClearClick(wxCommandEvent& event);
+		void OnlstTypeSelected(wxCommandEvent& event);
+
+        void ClearStats();
 
         void ShowGraph();
 

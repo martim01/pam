@@ -38,6 +38,7 @@ RTCPTransmissionEvent::RTCPTransmissionEvent(RTPTransmissionStats* pStats, int n
         inet_ntop(AF_INET6, &pStats->lastFromAddress().sin_addr, &addr[0], 256);
     }
     m_sLastFromAddress = wxString(std::string(addr));
+    m_nRTCPPort = ntohs(pStats->lastFromAddress().sin_port);
 
     m_nLastPacketNumber = pStats->lastPacketNumReceived();
     m_nLastSRTime = pStats->lastSRTime();
@@ -71,7 +72,8 @@ RTCPTransmissionEvent::RTCPTransmissionEvent(const RTCPTransmissionEvent& event)
     m_nSSRC(event.GetSSRC()),
     m_dtCreated(event.GetFirstReceivedTime()),
     m_nTotNumPacketsLost(event.GetTotalPacketsLost()),
-    m_sLastFromAddress(event.GetFromAddress())
+    m_sLastFromAddress(event.GetFromAddress()),
+    m_nRTCPPort(event.GetRTCPPort())
 {
 
 }

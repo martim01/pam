@@ -3,6 +3,7 @@
 #include <wx/dcbuffer.h>
 #include <wx/log.h>
 #include "uirect.h"
+#include <iostream>
 
 using namespace std;
 
@@ -18,8 +19,7 @@ END_EVENT_TABLE()
 HistoryGraph::HistoryGraph(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size) : pmControl()
 {
     Create(parent, id, pos, size);
-    m_nResolution = 5;
-    m_bBarChart = true;
+        m_bBarChart = true;
     m_rectGraph = wxRect(GetClientRect().GetLeft()+5, GetClientRect().GetTop()+5, GetClientRect().GetWidth()-45, GetClientRect().GetBottom()-25);
 }
 
@@ -92,13 +92,23 @@ void HistoryGraph::DrawLineGraph(wxDC& dc, const graph& aGraph)
     dc.SetPen(aGraph.clrLine);
     double dY_old(0);
 
-    int x = m_rectGraph.GetRight()-m_nResolution;
-    for(list<double>::const_reverse_iterator itPeak = aGraph.lstPeaks.rbegin(); itPeak != aGraph.lstPeaks.rend(); ++itPeak)
+    int x = m_rectGraph.GetRight();
+    int xOld = m_rectGraph.GetRight();
+    auto now  = std::chrono::system_clock::now();
+
+    for(list<graphPoint>::const_reverse_iterator itPeak = aGraph.lstPeaks.rbegin(); itPeak != aGraph.lstPeaks.rend(); ++itPeak)
     {
-        double dPeak = (*itPeak);
+        double dPeak = (*itPeak).first;
         dPeak-= (aGraph.dMin);
 
         double dTop = max((double)m_rectGraph.GetTop(), m_rectGraph.GetBottom()-(aGraph.dResolution*dPeak));
+
+        auto diff = std::chrono::duration_cast<std::chrono::microseconds>(now-(*itPeak).second);
+        int64_t nMicroseconds = diff.count();
+        nMicroseconds *= aGraph.nPixels;
+        nMicroseconds /= aGraph.nInterval;
+
+        x = m_rectGraph.GetRight()-(nMicroseconds);
 
         if(itPeak == aGraph.lstPeaks.rbegin())
         {
@@ -109,10 +119,10 @@ void HistoryGraph::DrawLineGraph(wxDC& dc, const graph& aGraph)
         dc.SetPen(*wxTRANSPARENT_PEN);
         dc.DrawCircle(wxPoint(x,dTop), 2);
         dc.SetPen(aGraph.clrLine);
-        dc.DrawLine(x+m_nResolution, dY_old, x, dTop);
+        dc.DrawLine(x, dTop, xOld, dY_old);
 
         dY_old=dTop;
-        x-=m_nResolution;
+        xOld = x;
     }
 }
 
@@ -123,18 +133,25 @@ void HistoryGraph::DrawBarChart(wxDC& dc, const graph& aGraph)
                                  max(aGraph.clrLine.Green()-60, 0),
                                  max(aGraph.clrLine.Blue()-60, 0))));
 
-
-    int x = m_rectGraph.GetRight()-5;
-    for(list<double>::const_reverse_iterator itPeak = aGraph.lstPeaks.rbegin(); itPeak != aGraph.lstPeaks.rend(); ++itPeak)
+    auto now  = std::chrono::system_clock::now();
+    int nOld = m_rectGraph.GetRight();
+    for(list<graphPoint>::const_reverse_iterator itPeak = aGraph.lstPeaks.rbegin(); itPeak != aGraph.lstPeaks.rend(); ++itPeak)
     {
-        double dPeak = (*itPeak);
+        double dPeak = (*itPeak).first;
         dPeak-= (aGraph.dMin);
 
         double dTop = max((double)m_rectGraph.GetTop(), m_rectGraph.GetBottom()-(aGraph.dResolution*dPeak));
 
-        dc.DrawRectangle(x,dTop, 5, m_rectGraph.GetBottom()-dTop);
+        auto diff = std::chrono::duration_cast<std::chrono::microseconds>(now-(*itPeak).second);
+        int64_t nMicroseconds = diff.count();
+        nMicroseconds *= aGraph.nPixels;
+        nMicroseconds /= aGraph.nInterval;
 
-        x-=m_nResolution;
+        int x = m_rectGraph.GetRight()-(nMicroseconds);
+
+        dc.DrawRectangle(x, static_cast<int>(dTop), nOld-x, m_rectGraph.GetBottom()-static_cast<int>(dTop));
+
+        nOld = x;
     }
 }
 
@@ -176,7 +193,7 @@ void HistoryGraph::DrawAxis(wxDC& dc, const graph& aGraph)
     for(int x = m_rectGraph.GetRight(); x >= m_rectGraph.GetLeft(); x-= 40)
     {
         int nDiff = (m_rectGraph.GetRight()-x);
-        nDiff /=m_nResolution;
+        nDiff /=aGraph.nPixels;
 
         wxString sTime;
         if(aGraph.nIntervalDefault >= 1e2)
@@ -207,10 +224,12 @@ void HistoryGraph::AddGraph(const wxString& sName, const wxColour& clr, unsigned
 
 void HistoryGraph::AddPeak(const wxString& sGraph, double dPeak)
 {
+    auto now = std::chrono::system_clock::now();
+
     auto itGraph = m_mGraphs.find(sGraph);
     if(itGraph != m_mGraphs.end())
     {
-        itGraph->second.lstPeaks.push_back(dPeak);
+        itGraph->second.lstPeaks.push_back(std::make_pair(dPeak,now));
 
         if(itGraph->second.lstPeaks.size() > m_rectGraph.GetWidth())
         {
@@ -230,8 +249,8 @@ void HistoryGraph::AutoRange(graph& aGraph)
 {
     if(aGraph.lstPeaks.empty() == false)
     {
-        aGraph.dMin = std::min(aGraph.dMin, aGraph.lstPeaks.back());
-        aGraph.dMax = std::max(aGraph.dMax, aGraph.lstPeaks.back());
+        aGraph.dMin = std::min(aGraph.dMin, aGraph.lstPeaks.back().first);
+        aGraph.dMax = std::max(aGraph.dMax, aGraph.lstPeaks.back().first);
         aGraph.dResolution = static_cast<double>(m_rectGraph.GetHeight())/((aGraph.dMax)-(aGraph.dMin));
     }
 }
@@ -273,7 +292,7 @@ void HistoryGraph::HideAllGraphs()
 
 void HistoryGraph::ShowGraph(const wxString& sGraph, bool bShow)
 {
-    map<wxString, graph>::iterator itGraph = m_mGraphs.find(sGraph);
+    auto itGraph = m_mGraphs.find(sGraph);
     if(itGraph != m_mGraphs.end())
     {
         itGraph->second.bShow = bShow;
@@ -281,3 +300,21 @@ void HistoryGraph::ShowGraph(const wxString& sGraph, bool bShow)
     Refresh();
 }
 
+void HistoryGraph::ChangeInterval(const wxString& sGraph, unsigned int nIntervalMicroSeconds)
+{
+    auto itGraph = m_mGraphs.find(sGraph);
+    if(itGraph != m_mGraphs.end())
+    {
+        itGraph->second.nInterval = nIntervalMicroSeconds;
+    }
+    Refresh();
+}
+
+void HistoryGraph::ChangeResolution(const wxString& sGraph, unsigned int nPixels)
+{
+    auto itGraph = m_mGraphs.find(sGraph);
+    if(itGraph != m_mGraphs.end())
+    {
+        itGraph->second.nPixels = nPixels;
+    }
+}
