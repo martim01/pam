@@ -74,10 +74,11 @@ class PAMBASE_IMPEXPORT Histogram : public pmControl
         void ChangeGranularity(const wxString& sGraph, int nWhich);
         void ChangeResolution(const wxString& sGraph, int nWhich);
 
-
+        void ClearGraph(const wxString& sGraph);
 
   protected:
         enum {DECREASE, RESET, INCREASE};
+
 
 
 
@@ -110,6 +111,7 @@ class PAMBASE_IMPEXPORT Histogram : public pmControl
         };
 
         void WorkoutColumns(graph& aGraph);
+        void ClearGraph(graph& aGraph);
 
         std::map<wxString, graph> m_mGraphs;
         wxString m_sGraph;

@@ -21,7 +21,7 @@ class pnlGraph: public wxPanel
 		wmList* m_plstGraph;
 		//*)
 		wmList* m_plstType;
-
+        wmButton* m_pbtnRange;
 	protected:
 
 		//(*Identifiers(pnlGraph)
@@ -36,6 +36,7 @@ class pnlGraph: public wxPanel
 		void OnbtnClearClick(wxCommandEvent& event);
 		//*)
 		void OnlstTypeSelected(wxCommandEvent& event);
+		void OnbtnRangeClick(wxCommandEvent& event);
 		AoIPInfoBuilder* m_pBuilder;
 
 		DECLARE_EVENT_TABLE()

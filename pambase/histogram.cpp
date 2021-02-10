@@ -271,14 +271,29 @@ void Histogram::OnSize(wxSizeEvent& event)
 
 }
 
+void Histogram::ClearGraph(graph& aGraph)
+{
+    aGraph.mColumns.clear();
+    aGraph.lstPeaks.clear();
+}
+
 void Histogram::ClearGraphs()
 {
     for(auto& pairGraph : m_mGraphs)
     {
-        pairGraph.second.mColumns.clear();
-        pairGraph.second.lstPeaks.clear();
+        ClearGraph(pairGraph.second);
     }
     Refresh();
+}
+
+void Histogram::ClearGraph(const wxString& sGraph)
+{
+    auto itGraph = m_mGraphs.find(sGraph);
+    if(itGraph != m_mGraphs.end())
+    {
+        ClearGraph(itGraph->second);
+        Refresh();
+    }
 }
 
 void Histogram::DeleteAllGraphs()
@@ -359,3 +374,4 @@ void Histogram::OnMouseMove(wxMouseEvent& event)
     }
 
 }
+

@@ -29,11 +29,13 @@ pnlGraph::pnlGraph(wxWindow* parent,AoIPInfoBuilder* pBuilder, wxWindowID id,con
 	m_plstType->SetBackgroundColour(wxColour(0,0,0));
     m_plstType->SetButtonColour(wxColour(50,100,0));
 
+    m_pbtnRange = new wmButton(this, wxNewId(), _("Recalculate Range"), wxPoint(5,195), wxSize(90,30), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN29"));
+
 	m_pbtnClear = new wmButton(this, ID_M_PBTN29, _("Clear Graphs"), wxPoint(100,195), wxSize(90,30), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN29"));
-	m_pbtnClear->SetColourSelected(wxColour(wxT("#800000")));
 
 	Connect(ID_M_PLST16,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlGraph::OnlstGraphSelected);
 	Connect(ID_M_PBTN29,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlGraph::OnbtnClearClick);
+	Connect(m_pbtnRange->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlGraph::OnbtnRangeClick);
 
 	Connect(m_plstType->GetId(),wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlGraph::OnlstTypeSelected);
 
@@ -74,6 +76,10 @@ void pnlGraph::OnbtnClearClick(wxCommandEvent& event)
     m_pBuilder->ClearGraphs();
 }
 
+void pnlGraph::OnbtnRangeClick(wxCommandEvent& event)
+{
+    m_pBuilder->RecalculateRange();
+}
 
 void pnlGraph::OnlstTypeSelected(wxCommandEvent& event)
 {

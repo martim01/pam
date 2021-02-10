@@ -20,6 +20,7 @@ class WXEXPORT AoIPInfoBuilder : public MonitorPluginBuilder
         void ChangeGranularity(int nWhich);
         void ChangeResolution(int nWhich);
         void ClearGraphs();
+        void RecalculateRange();
 
         virtual void InputSession(const session& aSession);
         virtual void OutputChannels(const std::vector<char>& vChannels);

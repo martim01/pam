@@ -78,6 +78,7 @@ class pnlRTCPTransmission: public wxPanel
 
 		wmList* m_plstType;
 		wmButton* m_pbtnClear;
+		wmButton* m_pbtnRange;
 
         wmList* m_plstGranularity;
         wmList* m_plstResolution;
@@ -158,11 +159,14 @@ class pnlRTCPTransmission: public wxPanel
         void AddGraphs(const wxString& sSource);
 
         void OnbtnClearClick(wxCommandEvent& event);
+        void OnbtnRangeClick(wxCommandEvent& event);
 		void OnlstTypeSelected(wxCommandEvent& event);
 
         void ClearStats();
 
         void ShowGraph();
+
+        void ClearGraphs(const wxString& sSubscriber);
 
 
         struct subscriber

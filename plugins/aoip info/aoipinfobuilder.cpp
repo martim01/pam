@@ -96,6 +96,10 @@ void AoIPInfoBuilder::ClearGraphs()
     m_pInfo->ClearGraphs();
 }
 
+void AoIPInfoBuilder::RecalculateRange()
+{
+    m_pInfo->RecalculateRange();
+}
 
 void AoIPInfoBuilder::ChangeGranularity(int nWhich)
 {

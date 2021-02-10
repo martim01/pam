@@ -67,6 +67,7 @@ class PAMBASE_IMPEXPORT HistoryGraph : public pmControl
 
         void AddGraph(const wxString& sName, const wxColour& clr, unsigned int nIntervalMicroSeconds, bool bShow=true);
         void AddPeak(const wxString& sGraph, double dPeak);
+        void RecalculateRange(const wxString& sGraph);
 
         void ShowGraph(const wxString& sGraph, bool bShow);
         void ClearGraphs();
@@ -76,6 +77,8 @@ class PAMBASE_IMPEXPORT HistoryGraph : public pmControl
 
         void ChangeInterval(const wxString& sGraph, unsigned int nIntervalMicroSeconds);
         void ChangeResolution(const wxString& sGraph, unsigned int nPixels);
+
+        void ClearGraph(const wxString& sGraph);
 
 
 
@@ -114,6 +117,9 @@ class PAMBASE_IMPEXPORT HistoryGraph : public pmControl
         void DrawLineGraph(wxDC& dc, const graph& aGraph);
         void DrawBarChart(wxDC& dc, const graph& aGraph);
         void DrawAxis(wxDC& dc, const graph& aGraph);
+
+        void ClearGraph(graph& aGraph);
+        void WorkoutMinMax(graph& aGraph);
 
         wxRect m_rectGraph;
         void AutoRange(graph& aGraph);

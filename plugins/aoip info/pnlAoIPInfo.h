@@ -145,6 +145,9 @@ class pnlAoIPInfo: public wxPanel
         void ShowGraph(const wxString& sGraph);
         void SetGraphType(const wxString& sType);
         void ClearGraphs();
+        void RecalculateRange();
+
+
 
 	protected:
 

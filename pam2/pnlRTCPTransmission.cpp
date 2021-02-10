@@ -299,7 +299,7 @@ pnlRTCPTransmission::pnlRTCPTransmission(wxWindow* parent,wxWindowID id,const wx
 	m_plstSubscribers->SetSelectedButtonColour(wxColour(wxT("#8000FF")));
 	Panel3 = new wxPanel(m_pswpMain, ID_PANEL6, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL6"));
 	Panel3->SetBackgroundColour(wxColour(0,0,0));
-	m_plstOptions = new wmList(Panel3, ID_M_PLST2, wxPoint(0,5), wxSize(200,84), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
+	m_plstOptions = new wmList(Panel3, ID_M_PLST2, wxPoint(0,5), wxSize(200,95), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
 	m_plstOptions->SetBackgroundColour(wxColour(0,0,0));
 	m_plstOptions->SetButtonColour(wxColour(wxT("#000080")));
 	m_plstOptions->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
@@ -332,7 +332,7 @@ pnlRTCPTransmission::pnlRTCPTransmission(wxWindow* parent,wxWindowID id,const wx
 	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlRTCPTransmission::OnbtnCloseClick);
 	//*)
 
-	m_plstType = new wmList(Panel3, wxNewId(), wxPoint(0,100), wxSize(195,38), wmList::STYLE_SELECT, 0, wxSize(-1,32), 3, wxSize(1,0));
+	m_plstType = new wmList(Panel3, wxNewId(), wxPoint(0,110), wxSize(195,38), wmList::STYLE_SELECT, 0, wxSize(-1,32), 3, wxSize(1,0));
 	m_plstType->SetBackgroundColour(wxColour(0,0,0));
     m_plstType->SetButtonColour(wxColour(50,100,0));
 
@@ -366,8 +366,9 @@ pnlRTCPTransmission::pnlRTCPTransmission(wxWindow* parent,wxWindowID id,const wx
     m_plstResolution->AddButton("Reset");
     m_plstResolution->AddButton("Increase");
 
-	m_pbtnClear = new wmButton(Panel3, wxNewId(), _("Clear Graphs"), wxPoint(100,320), wxSize(90,30), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN29"));
-	m_pbtnClear->SetColourSelected(wxColour(wxT("#800000")));
+    m_pbtnRange = new wmButton(Panel3, wxNewId(), _("Refresh Range"), wxPoint(5,320), wxSize(75,45), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN29"));
+	m_pbtnClear = new wmButton(Panel3, wxNewId(), _("Clear Subscriber Graphs"), wxPoint(85,320), wxSize(110,45), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN29"));
+
 
 	m_plstType->AddButton("Line Graph");
     m_plstType->AddButton("Bar Chart");
@@ -395,6 +396,7 @@ pnlRTCPTransmission::pnlRTCPTransmission(wxWindow* parent,wxWindowID id,const wx
 	Connect(ID_M_PLST2, wxEVT_LIST_SELECTED, (wxObjectEventFunction)&pnlRTCPTransmission::OnGraphSelected);
 	Connect(m_plstType->GetId(), wxEVT_LIST_SELECTED, (wxObjectEventFunction)&pnlRTCPTransmission::OnlstTypeSelected);
 	Connect(m_pbtnClear->GetId(), wxEVT_BUTTON, (wxObjectEventFunction)&pnlRTCPTransmission::OnbtnClearClick);
+	Connect(m_pbtnRange->GetId(), wxEVT_BUTTON, (wxObjectEventFunction)&pnlRTCPTransmission::OnbtnRangeClick);
 
     Connect(m_plstResolution->GetId(),wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlRTCPTransmission::OnlstResolutionPressed);
     Connect(m_plstGranularity->GetId(),wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlRTCPTransmission::OnlstGranularityPressed);
@@ -477,7 +479,7 @@ void pnlRTCPTransmission::OnSubscriberSelected(const wxCommandEvent& event)
     auto itSubscriber= m_mSubscribers.find(event.GetString());
     if(itSubscriber != m_mSubscribers.end())
     {
-        m_plblSubscriber->SetLabel(event.GetString());
+        m_plblSubscriber->SetLabel(itSubscriber->first);
         m_sSelected = event.GetString();
 
         ShowGraph();
@@ -531,7 +533,6 @@ void pnlRTCPTransmission::ShowSubscriber()
             m_plblRRLast->SetLabel(itSubscriber->second.pStats->GetLastReceivedTime().Format("%y-%m-%d %H:%M:%S:%l"));
             m_plblRRSR->SetLabel(wxString::Format("%.3f s", static_cast<double>(itSubscriber->second.pStats->GetSRRRTime())/65536.0));
             m_plblRoundtrip->SetLabel(wxString::Format("%u us", itSubscriber->second.pStats->GetRoundTripDelay()));
-            m_plblSubscriber->SetLabel(itSubscriber->second.pStats->GetString());
 
         }
     }
@@ -641,6 +642,8 @@ void pnlRTCPTransmission::OnDisconnectionEvent(const wxCommandEvent& event)
             ClearStats();
         }
 
+        ClearGraphs(itSubscriber->first);
+
         size_t nButton = m_plstSubscribers->FindButton(itSubscriber->first);
         m_plstSubscribers->DeleteButton(nButton);
         m_mSubscribers.erase(itSubscriber);
@@ -686,8 +689,7 @@ void pnlRTCPTransmission::OnGraphSelected(const wxCommandEvent& event)
 
 void pnlRTCPTransmission::OnbtnClearClick(wxCommandEvent& event)
 {
-    m_pGraph->ClearGraphs();
-    m_pHistogram->ClearGraphs();
+    ClearGraphs(m_sSelected);
 }
 
 void pnlRTCPTransmission::OnlstTypeSelected(wxCommandEvent& event)
@@ -707,4 +709,24 @@ void pnlRTCPTransmission::OnlstResolutionPressed(const wxCommandEvent& event)
 void pnlRTCPTransmission::OnlstGranularityPressed(const wxCommandEvent& event)
 {
     m_pHistogram->ChangeGranularity(m_sSelected+m_sGraph, event.GetInt());
+}
+
+void pnlRTCPTransmission::ClearGraphs(const wxString& sSubscriber)
+{
+    m_pGraph->ClearGraph(sSubscriber+KBPS);
+    m_pHistogram->ClearGraph(sSubscriber+KBPS);
+    m_pGraph->ClearGraph(sSubscriber+PLPS);
+    m_pHistogram->ClearGraph(sSubscriber+PLPS);
+    m_pGraph->ClearGraph(sSubscriber+JITTER);
+    m_pHistogram->ClearGraph(sSubscriber+JITTER);
+    m_pGraph->ClearGraph(sSubscriber+DELAY);
+    m_pHistogram->ClearGraph(sSubscriber+DELAY);
+    m_pGraph->ClearGraph(sSubscriber+LOSS_RATIO);
+    m_pHistogram->ClearGraph(sSubscriber+LOSS_RATIO);
+}
+
+
+void pnlRTCPTransmission::OnbtnRangeClick(wxCommandEvent& event)
+{
+    m_pGraph->RecalculateRange(m_sSelected+m_sGraph);
 }

@@ -4,7 +4,7 @@
 #include <wx/log.h>
 #include "uirect.h"
 #include <iostream>
-
+#include "log.h"
 using namespace std;
 
 BEGIN_EVENT_TABLE(HistoryGraph, pmControl)
@@ -265,14 +265,29 @@ void HistoryGraph::OnSize(wxSizeEvent& event)
 
 void HistoryGraph::ClearGraphs()
 {
-    for(map<wxString, graph>::iterator itGraph = m_mGraphs.begin(); itGraph != m_mGraphs.end(); ++itGraph)
+    for(auto& pairGraph : m_mGraphs)
     {
-        itGraph->second.lstPeaks.clear();
-        itGraph->second.dMax = std::numeric_limits<double>::lowest();
-        itGraph->second.dMin = std::numeric_limits<double>::max();
-        itGraph->second.dResolution = static_cast<double>(GetClientSize().y);
+        ClearGraph(pairGraph.second);
     }
     Refresh();
+}
+
+void HistoryGraph::ClearGraph(graph& aGraph)
+{
+    aGraph.lstPeaks.clear();
+    aGraph.dMax = std::numeric_limits<double>::lowest();
+    aGraph.dMin = std::numeric_limits<double>::max();
+    aGraph.dResolution = static_cast<double>(GetClientSize().y);
+}
+
+void HistoryGraph::ClearGraph(const wxString& sGraph)
+{
+    auto itGraph = m_mGraphs.find(sGraph);
+    if(itGraph != m_mGraphs.end())
+    {
+        ClearGraph(itGraph->second);
+        Refresh();
+    }
 }
 
 void HistoryGraph::DeleteAllGraphs()
@@ -316,5 +331,35 @@ void HistoryGraph::ChangeResolution(const wxString& sGraph, unsigned int nPixels
     if(itGraph != m_mGraphs.end())
     {
         itGraph->second.nPixels = nPixels;
+    }
+}
+
+
+void HistoryGraph::WorkoutMinMax(graph& aGraph)
+{
+    aGraph.dMax = std::numeric_limits<double>::lowest();
+    aGraph.dMin = std::numeric_limits<double>::max();
+
+    for(auto dPeak : aGraph.lstPeaks)
+    {
+        aGraph.dMax = std::max(aGraph.dMax, dPeak.first);
+        aGraph.dMin = std::min(aGraph.dMin, dPeak.first);
+    }
+}
+
+void HistoryGraph::RecalculateRange(const wxString& sGraph)
+{
+    auto itGraph = m_mGraphs.find(sGraph);
+    if(itGraph != m_mGraphs.end())
+    {
+        WorkoutMinMax(itGraph->second);
+        if(itGraph->second.bShow)
+        {
+            Refresh();
+        }
+    }
+    else
+    {
+        pml::Log::Get(pml::Log::LOG_DEBUG) << "HistoryGraph::RecalculateRange: Could not find graph '" << sGraph << "'" << std::endl;
     }
 }

@@ -1106,3 +1106,8 @@ void pnlAoIPInfo::ChangeResolution(int nWhich)
 {
     m_pHistogram->ChangeResolution(m_sGraph,nWhich);
 }
+
+void pnlAoIPInfo::RecalculateRange()
+{
+    m_pGraph->RecalculateRange(m_sGraph);
+}
