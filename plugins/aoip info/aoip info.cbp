@@ -147,6 +147,8 @@
 		<Unit filename="pnlGraph.h" />
 		<Unit filename="pnlSettings.cpp" />
 		<Unit filename="pnlSettings.h" />
+		<Unit filename="sdpelement.cpp" />
+		<Unit filename="sdpelement.h" />
 		<Unit filename="wxsmith/pnlAoIPInfo.wxs" />
 		<Unit filename="wxsmith/pnlGraph.wxs" />
 		<Unit filename="wxsmith/pnlSettings.wxs" />
