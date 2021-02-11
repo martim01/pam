@@ -5,6 +5,7 @@
 #include "uirect.h"
 #include <iostream>
 #include "log.h"
+#include <algorithm>
 using namespace std;
 
 BEGIN_EVENT_TABLE(HistoryGraph, pmControl)
@@ -231,7 +232,7 @@ void HistoryGraph::AddPeak(const wxString& sGraph, double dPeak)
     {
         itGraph->second.lstPeaks.push_back(std::make_pair(dPeak,now));
 
-        if(itGraph->second.lstPeaks.size() > m_rectGraph.GetWidth())
+        if(itGraph->second.lstPeaks.size() > m_rectGraph.GetWidth()/itGraph->second.nPixels)
         {
             itGraph->second.lstPeaks.pop_front();
         }

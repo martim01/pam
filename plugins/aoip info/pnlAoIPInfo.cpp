@@ -2,13 +2,15 @@
 #include "session.h"
 #include "timedbuffer.h"
 #include "settings.h"
-
+#include "sdpelement.h"
 #include <wx/log.h>
 #ifdef PTPMONKEY
 #include "wxptp.h"
 #endif
 #include "aoipinfobuilder.h"
 #include "settings.h"
+#include <wx/dcclient.h>
+#include <iostream>
 
 //(*InternalHeaders(pnlAoIPInfo)
 #include <wx/font.h>
@@ -720,7 +722,10 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,AoIPInfoBuilder* pBuilder, wxWindowID 
 
 	pnlSDP = new wxPanel(m_pswpInfo, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
 	pnlSDP->SetBackgroundColour(wxColour(0,0,0));
-	m_ptxtSDP = new wxTextCtrl(pnlSDP, ID_TEXTCTRL1, wxEmptyString, wxPoint(5,5), wxSize(590,435), wxTE_MULTILINE|wxTE_READONLY, wxDefaultValidator, _T("ID_TEXTCTRL1"));
+	m_pSdp =  new wmListAdv(pnlSDP, wxNewId(), wxPoint(5,5), wxSize(590,435), 0, wmListAdv::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(0,1));
+	m_pSdp->SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT));
+	m_pSdp->SetBackgroundColour(*wxBLACK);
+
 	m_pswpInfo->AddPage(pnlSession, _("Session"), false);
 	m_pswpInfo->AddPage(pnlSubsession, _("Active Subsession"), false);
 	m_pswpInfo->AddPage(pnlQoS, _("QoS"), false);
@@ -983,7 +988,15 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
 
     m_plblSyncDomain->SetLabel(wxString::Format(wxT("%u"), aSession.refClock.nDomain));
     m_plblSessionType->SetLabel(aSession.sType);
-    m_ptxtSDP->SetValue(aSession.sRawSDP);
+
+    wxClientDC dc(this);
+    dc.SetFont(m_pSdp->GetFont());
+
+    wxArrayString asLines(wxStringTokenize(aSession.sRawSDP, "\n"));
+    for(size_t i = 0; i < asLines.GetCount(); i++)
+    {
+        m_pSdp->AddElement(new SdpElement(dc, m_pSdp->GetClientRect().GetWidth(), asLines[i]));
+    }
 
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {

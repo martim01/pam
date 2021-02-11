@@ -451,6 +451,7 @@ double pnlSettingsOutput::ConvertRatioToGain(double dRatio)
 
 void pnlSettingsOutput::OnbtnRestartStreamHeld(wxCommandEvent& event)
 {
+    IOManager::Get().RestartStream();
 }
 
 void pnlSettingsOutput::OnbtnStatsClick(wxCommandEvent& event)

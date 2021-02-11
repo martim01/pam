@@ -12,6 +12,8 @@
 
 #include "timedbuffer.h"
 #include "histogram.h"
+#include "wmlistadv.h"
+
 struct qosData;
 struct session;
 
@@ -125,9 +127,8 @@ class pnlAoIPInfo: public wxPanel
 		wxPanel* pnlSDP;
 		wxPanel* pnlSession;
 		wxPanel* pnlSubsession;
-		wxTextCtrl* m_ptxtSDP;
 		//*)
-
+        wmListAdv* m_pSdp;
 
 		Histogram* m_pHistogram;
 

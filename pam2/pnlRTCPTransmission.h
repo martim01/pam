@@ -65,6 +65,7 @@ class pnlRTCPTransmission: public wxPanel
 		wmLabel* m_plblRRSR;
 		wmLabel* m_plblRoundtrip;
 		wmLabel* m_plblSubscriber;
+		wmLabel* m_plblSSRC;
 		wmList* m_plstOptions;
 		wmList* m_plstSubscribers;
 		wmSwitcherPanel* m_pswpMain;
@@ -182,10 +183,11 @@ class pnlRTCPTransmission: public wxPanel
             double dLostpsMin;
             int64_t nFirstOctets;
             int64_t nLastOctets;
+            unsigned int nSSRC;
 
         };
 
-        subscriber& AddSubscriber(const wxString& sIpAddress);
+        subscriber& AddSubscriber(const wxString& sIpAddress, unsigned int nSSRC);
 
         void StoreGraphs(const wxString& sIpAddress, subscriber& sub);
 

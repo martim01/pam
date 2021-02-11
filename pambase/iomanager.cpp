@@ -149,6 +149,9 @@ IOManager::IOManager() :
     m_timerSilence.SetOwner(this, wxNewId());
     Connect(m_timerSilence.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&IOManager::OnTimerSilence);
 
+    m_timerResetStream.SetOwner(this, wxNewId());
+    Connect(m_timerResetStream.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&IOManager::OnTimerReset);
+
     m_timerSilence.Start(250, true);
 
     srand(time(NULL));
@@ -1151,4 +1154,15 @@ void IOManager::CheckIfGain()
             break;
         }
     }
+}
+
+void IOManager::RestartStream()
+{
+    StopStream();
+    m_timerResetStream.Start(500,true);
+}
+
+void IOManager::OnTimerReset(wxTimerEvent& event)
+{
+    Stream();
 }

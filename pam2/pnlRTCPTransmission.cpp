@@ -314,13 +314,20 @@ pnlRTCPTransmission::pnlRTCPTransmission(wxWindow* parent,wxWindowID id,const wx
 	m_pbtnClose = new wmButton(this, ID_M_PBTN1, _("Close"), wxPoint(610,440), wxSize(180,37), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnClose->SetBackgroundColour(wxColour(128,128,64));
 	m_pbtnClose->SetColourDisabled(wxColour(wxT("#909090")));
-	m_plblSubscriber = new wmLabel(this, ID_M_PLBL29, _("127.0.0.1"), wxPoint(200,0), wxSize(400,40), 0, _T("ID_M_PLBL29"));
+	m_plblSubscriber = new wmLabel(this, ID_M_PLBL29, _("127.0.0.1"), wxPoint(200,0), wxSize(300,40), 0, _T("ID_M_PLBL29"));
 	m_plblSubscriber->SetBorderState(uiRect::BORDER_NONE);
 	m_plblSubscriber->GetUiRect().SetGradient(0);
 	m_plblSubscriber->SetForegroundColour(wxColour(255,255,255));
 	m_plblSubscriber->SetBackgroundColour(wxColour(61,146,146));
 	wxFont m_plblSubscriberFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
-	m_plblSubscriber->SetFont(m_plblSubscriberFont);
+    m_plblSubscriber->SetFont(m_plblSubscriberFont);
+
+	m_plblSSRC = new wmLabel(this, ID_M_PLBL29, _("127.0.0.1"), wxPoint(500,0), wxSize(100,40), 0, _T("ID_M_PLBL29"));
+	m_plblSSRC->SetBorderState(uiRect::BORDER_NONE);
+	m_plblSSRC->GetUiRect().SetGradient(0);
+	m_plblSSRC->SetForegroundColour(wxColour(255,255,255));
+	m_plblSSRC->SetBackgroundColour(wxColour(61,146,146));
+
 	m_plblHostname = new wmLabel(this, ID_M_PLBL37, _("RTCP Statistics"), wxPoint(0,0), wxSize(200,40), 0, _T("ID_M_PLBL37"));
 	m_plblHostname->SetBorderState(uiRect::BORDER_NONE);
 	m_plblHostname->GetUiRect().SetGradient(0);
@@ -424,7 +431,7 @@ void pnlRTCPTransmission::OnRTCPTransmissionEvent(const RTCPTransmissionEvent& e
 
     wxString sSubscriber(wxString::Format("%s:%u", event.GetFromAddress().c_str(), event.GetRTCPPort()));
 
-    subscriber& sub = AddSubscriber(sSubscriber);
+    subscriber& sub = AddSubscriber(sSubscriber, 0);
 
     if(sub.pStats)// && sub.pStats->GetLastReceivedTime() != event.GetLastReceivedTime())
     {
@@ -441,9 +448,12 @@ void pnlRTCPTransmission::OnRTCPTransmissionEvent(const RTCPTransmissionEvent& e
     sub.pStats = dynamic_cast<RTCPTransmissionEvent*>(event.Clone());
 
     StoreGraphs(sSubscriber, sub);
+
+
+
 }
 
-pnlRTCPTransmission::subscriber& pnlRTCPTransmission::AddSubscriber(const wxString& sIpAddress)
+pnlRTCPTransmission::subscriber& pnlRTCPTransmission::AddSubscriber(const wxString& sIpAddress, unsigned int nSSRC)
 {
     auto ins = m_mSubscribers.insert(std::make_pair(sIpAddress, subscriber()));
     if(ins.second)
@@ -453,6 +463,8 @@ pnlRTCPTransmission::subscriber& pnlRTCPTransmission::AddSubscriber(const wxStri
         m_plstSubscribers->Update();
 
         AddGraphs(sIpAddress);
+
+        ins.first->second.nSSRC = nSSRC;
     }
 
     if(m_sSelected == wxEmptyString)
@@ -480,6 +492,7 @@ void pnlRTCPTransmission::OnSubscriberSelected(const wxCommandEvent& event)
     if(itSubscriber != m_mSubscribers.end())
     {
         m_plblSubscriber->SetLabel(itSubscriber->first);
+        m_plblSSRC->SetLabel(wxString::Format("%X", itSubscriber->second.nSSRC));
         m_sSelected = event.GetString();
 
         ShowGraph();
@@ -611,7 +624,7 @@ void pnlRTCPTransmission::StoreGraphs(const wxString& sIpAddress, subscriber& su
 void pnlRTCPTransmission::OnConnectionEvent(const wxCommandEvent& event)
 {
     pml::Log::Get() << "Subscriber: " << event.GetString() << ":" << event.GetInt() << " [" << event.GetExtraLong() << "] opened connection." << std::endl;
-    AddSubscriber(wxString::Format("%s:%u", event.GetString().c_str(), event.GetExtraLong()));
+    AddSubscriber(wxString::Format("%s:%u", event.GetString().c_str(), event.GetExtraLong()), (unsigned int)event.GetClientData());
 }
 
 void pnlRTCPTransmission::OnDisconnectionEvent(const wxCommandEvent& event)

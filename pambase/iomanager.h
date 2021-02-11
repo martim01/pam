@@ -46,6 +46,8 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
 
         wxString GetRandomMulticastAddress();
 
+        void RestartStream();
+
     private:
         IOManager();
         ~IOManager();
@@ -92,6 +94,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         void DoSAP(bool bRun);
         void DoDNSSD(bool bRun);
         void OnTimerSilence(wxTimerEvent& event);
+        void OnTimerReset(wxTimerEvent& event);
 
         void RTPServerFinished();
 
@@ -127,6 +130,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         OnDemandStreamer* m_pUnicastServer;
         OnDemandAES67MediaSubsession* m_pOnDemandSubsession;
         wxTimer m_timerSilence;
+        wxTimer m_timerResetStream;
 
         bool m_bQueueToStream;
         bool m_bStreamActive;

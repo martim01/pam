@@ -45,11 +45,13 @@ void OnDemandPamSubsession::getStreamParameters(unsigned clientSessionId, netAdd
             pEvent->SetString(wxString::FromUTF8(inet_ntoa(pDestinations->addr)));
             pEvent->SetInt(ntohs(pDestinations->rtpPort.num()));
             pEvent->SetExtraLong(ntohs(pDestinations->rtcpPort.num()));
+            pEvent->SetClientData((void*)clientSessionId);
         }
         else
         {
             pEvent->SetString("Unknown");
             pEvent->SetInt(0);
+            pEvent->SetClientData(0);
         }
         wxQueueEvent(pHandler, pEvent);
     }
