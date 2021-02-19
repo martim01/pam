@@ -32,7 +32,7 @@ MaxMinGraph::MaxMinGraph(int nChannel, wxWindow *parent,LevelsBuilder* pBuilder,
 
     if(m_pBuilder->IsLogActive() )
     {
-        pml::Log::Get() << "Levels\t" << "(Channel " << m_nChannel << ") - Meter Reset" << std::endl;
+        pml::Log() << "Levels\t" << "(Channel " << m_nChannel << ") - Meter Reset";
     }
 }
 
@@ -164,8 +164,8 @@ void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bCon
             {
                 if(m_pBuilder->IsLogActive())
                 {
-                    pml::Log::Get(pml::Log::LOG_WARN) << "Levels\t" << "(Channel " << m_nChannel << ") - "
-                    << "level changed from " << m_dLastLevel << "dB to " << m_dCurrent << "dB" << std::endl;
+                    pml::Log(pml::LOG_WARN) << "Levels\t" << "(Channel " << m_nChannel << ") - "
+                    << "level changed from " << m_dLastLevel << "dB to " << m_dCurrent << "dB";
                 }
                 m_uiCurrent.SetBackgroundColour(wxColour(255,100,100));
             }
@@ -179,7 +179,7 @@ void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bCon
             {
                 if(m_pBuilder->IsLogActive() && m_bOutOfRange == false)
                 {
-                    pml::Log::Get(pml::Log::LOG_WARN) << "Levels\t" << "(Channel " << m_nChannel << ") - " << "range " << dRange << "dB > max set " << m_dMaxRange << "dB" << std::endl;
+                    pml::Log(pml::LOG_WARN) << "Levels\t" << "(Channel " << m_nChannel << ") - " << "range " << dRange << "dB > max set " << m_dMaxRange << "dB";
                     m_bOutOfRange = true;
                 }
 
@@ -189,7 +189,7 @@ void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bCon
             {
                 if(m_pBuilder->IsLogActive() && m_bOutOfRange == true)
                 {
-                    pml::Log::Get(pml::Log::LOG_INFO) << "Levels\t" << "(Channel " << m_nChannel << ") - " << "range " << dRange << "dB <= max set " << m_dMaxRange << "dB" << std::endl;
+                    pml::Log(pml::LOG_INFO) << "Levels\t" << "(Channel " << m_nChannel << ") - " << "range " << dRange << "dB <= max set " << m_dMaxRange << "dB";
                     m_bOutOfRange = false;
                 }
 
@@ -202,8 +202,8 @@ void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bCon
                 m_uiCurrent.SetBackgroundColour(wxColour(255,100,100));
                 if(m_pBuilder->IsLogActive() && m_bOutOfRange == false)
                 {
-                    pml::Log::Get(pml::Log::LOG_WARN) << "Levels\t" << "(Channel " << m_nChannel << ") - " <<  "level " << m_dCurrent << "dB outside guide range ["
-                    << m_dAmplitudeMin << "dB,"<< m_dAmplitudeMax << "dB]" << std::endl;
+                    pml::Log(pml::LOG_WARN) << "Levels\t" << "(Channel " << m_nChannel << ") - " <<  "level " << m_dCurrent << "dB outside guide range ["
+                    << m_dAmplitudeMin << "dB,"<< m_dAmplitudeMax << "dB]";
 
                     m_bOutOfRange = true;
                 }
@@ -214,8 +214,8 @@ void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bCon
                 m_uiCurrent.SetBackgroundColour(wxColour(91,91,0));
                 if(m_pBuilder->IsLogActive() && m_bOutOfRange == true)
                 {
-                    pml::Log::Get(pml::Log::LOG_INFO) << "Levels\t" << "(Channel " << m_nChannel << ") - " <<  "level " << m_dCurrent << "dB inside guide range ["
-                    << m_dAmplitudeMin << "dB,"<< m_dAmplitudeMax << "dB]" << std::endl;
+                    pml::Log(pml::LOG_INFO) << "Levels\t" << "(Channel " << m_nChannel << ") - " <<  "level " << m_dCurrent << "dB inside guide range ["
+                    << m_dAmplitudeMin << "dB,"<< m_dAmplitudeMax << "dB]";
                     m_bOutOfRange = false;
                 }
 

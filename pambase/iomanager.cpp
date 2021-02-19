@@ -412,25 +412,25 @@ void IOManager::InputChanged(const wxString& sKey)
 {
     if(sKey == wxT("AoIP"))
     {
-        pml::Log::Get(pml::Log::LOG_DEBUG) << "IOManager\tInputChanged: AoIP" << std::endl;
+        pml::Log(pml::LOG_DEBUG) << "IOManager\tInputChanged: AoIP";
 
         AoIPSource source = AoipSourceManager::Get().FindSource(Settings::Get().Read(wxT("Input"), wxT("AoIP"), 0));
 
         if(source.nIndex != m_nCurrentRtp)
         {
-            pml::Log::Get(pml::Log::LOG_DEBUG) << "IOManager\tAudio Input Device Changed: Close AoIP Session" << std::endl;
+            pml::Log(pml::LOG_DEBUG) << "IOManager\tAudio Input Device Changed: Close AoIP Session";
 
             ClearSession();
             map<unsigned int, RtpThread*>::iterator itThread = m_mRtp.find(m_nCurrentRtp);
             if(itThread != m_mRtp.end())
             {
-                pml::Log::Get(pml::Log::LOG_DEBUG) << "IOManager\tDestroy thread" << std::endl;
+                pml::Log(pml::LOG_DEBUG) << "IOManager\tDestroy thread";
                 itThread->second->SetToClose();
                 itThread->second->Wait();
                 itThread->second->Delete();
                 m_mRtp.erase(m_nCurrentRtp);
                 m_nCurrentRtp = 0;
-                pml::Log::Get(pml::Log::LOG_DEBUG) << "IOManager\tDestroy thread: Done" << std::endl;
+                pml::Log(pml::LOG_DEBUG) << "IOManager\tDestroy thread: Done";
 
             }
             InitAudioInputDevice();
@@ -455,15 +455,15 @@ void IOManager::InputTypeChanged()
             map<unsigned int, RtpThread*>::iterator itThread = m_mRtp.find(m_nCurrentRtp);
             if(itThread != m_mRtp.end())
             {
-                pml::Log::Get(pml::Log::LOG_DEBUG) << "IOManager\tAudio Input Device Changed: Close AoIP" << std::endl;
+                pml::Log(pml::LOG_DEBUG) << "IOManager\tAudio Input Device Changed: Close AoIP";
 
-                pml::Log::Get(pml::Log::LOG_DEBUG) << "IOManager\tDestroy thread" << std::endl;
+                pml::Log(pml::LOG_DEBUG) << "IOManager\tDestroy thread";
                 itThread->second->SetToClose();
                 itThread->second->Wait();
                 itThread->second->Delete();
                 m_mRtp.erase(m_nCurrentRtp);
                 m_nCurrentRtp = 0;
-                pml::Log::Get(pml::Log::LOG_DEBUG) << "IOManager\tDestroy thread: Done" << std::endl;
+                pml::Log(pml::LOG_DEBUG) << "IOManager\tDestroy thread: Done";
 
             }
             break;
@@ -478,11 +478,11 @@ void IOManager::OutputDestinationChanged()
     switch(m_nOutputDestination)
     {
         case AudioEvent::SOUNDCARD:
-            pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tOutput Destination changed: was Soundcard" << std::endl;
+            pml::Log(pml::LOG_INFO) << "IOManager\tOutput Destination changed: was Soundcard";
             OpenSoundcardDevice(SoundcardManager::Get().GetOutputSampleRate());    //this will remove the input stream
             break;
         case AudioEvent::RTP:
-            pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tOutput Destination changed: was AoIP" << std::endl;
+            pml::Log(pml::LOG_INFO) << "IOManager\tOutput Destination changed: was AoIP";
             StopStream();
 
 
@@ -525,19 +525,19 @@ void IOManager::OutputChanged(const wxString& sKey)
         if(sType == wxT("File"))
         {
             m_nPlaybackSource = AudioEvent::FILE;
-            pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tCreate Audio Output Generator: File" << std::endl;
+            pml::Log(pml::LOG_INFO) << "IOManager\tCreate Audio Output Generator: File";
             InitGeneratorFile();
         }
         else if(sType == wxT("Sequence"))
         {
             m_nPlaybackSource = AudioEvent::GENERATOR;
-            pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tCreate Audio Output Generator: Sequence" << std::endl;
+            pml::Log(pml::LOG_INFO) << "IOManager\tCreate Audio Output Generator: Sequence";
             InitGeneratorSequence();
         }
         else if(sType == wxT("Generator"))
         {
             m_nPlaybackSource = AudioEvent::GENERATOR;
-            pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tCreate Audio Output Generator: Generator" << std::endl;
+            pml::Log(pml::LOG_INFO) << "IOManager\tCreate Audio Output Generator: Generator";
             InitGeneratorTone();
         }
         else  if(sType == wxT("Noise"))
@@ -547,7 +547,7 @@ void IOManager::OutputChanged(const wxString& sKey)
         }
         else if(sType == wxT("Input"))
         {
-            pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tOutput source is input" << std::endl;
+            pml::Log(pml::LOG_INFO) << "IOManager\tOutput source is input";
             m_nPlaybackSource = m_nInputSource;
             m_bPlaybackInput = true;
             m_pGenerator->Stop();
@@ -564,7 +564,7 @@ void IOManager::OutputChanged(const wxString& sKey)
     {
         if(m_nOutputDestination == AudioEvent::SOUNDCARD)
         {
-            pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tSoundcard output device changed" << std::endl;
+            pml::Log(pml::LOG_INFO) << "IOManager\tSoundcard output device changed";
             OpenSoundcardDevice(SoundcardManager::Get().GetOutputSampleRate());
         }
     }
@@ -574,12 +574,12 @@ void IOManager::OutputChanged(const wxString& sKey)
     }
     else if(sKey == wxT("File") && Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")) == wxT("File"))
     {
-        pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tChange Audio Output Generator: File" << std::endl;
+        pml::Log(pml::LOG_INFO) << "IOManager\tChange Audio Output Generator: File";
         InitGeneratorFile();
     }
     else if(sKey == wxT("Sequence") && Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")) == wxT("Sequence"))
     {
-        pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tChange Audio Output Generator: Sequence" << std::endl;
+        pml::Log(pml::LOG_INFO) << "IOManager\tChange Audio Output Generator: Sequence";
         InitGeneratorSequence();
     }
     else if(sKey == wxT("Left") || sKey == wxT("Right"))
@@ -607,7 +607,7 @@ void IOManager::GeneratorNoiseChanged(const wxString& sKey)
     }
     else if(Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")) == wxT("Noise"))
     {
-        pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tChange Audio Output Generator: Noise" << std::endl;
+        pml::Log(pml::LOG_INFO) << "IOManager\tChange Audio Output Generator: Noise";
         InitGeneratorNoise();
     }
 }
@@ -628,7 +628,7 @@ void IOManager::InitGeneratorSequence()
     {
         if(m_pGenerator->LoadSequence(Settings::Get().Read(wxT("Output"), wxT("Sequence"), wxT("glits"))))
         {
-            pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tGenerating sequence file " << Settings::Get().Read(wxT("Output"), wxT("Sequence"), wxT("glits")) << std::endl;
+            pml::Log(pml::LOG_INFO) << "IOManager\tGenerating sequence file " << Settings::Get().Read(wxT("Output"), wxT("Sequence"), wxT("glits"));
             //m_sCurrentSequence = sSequence;
 
             CreateSessionFromOutput(Settings::Get().Read(wxT("Output"), wxT("Sequence"), wxT("glits")));
@@ -637,7 +637,7 @@ void IOManager::InitGeneratorSequence()
         }
         else
         {
-            pml::Log::Get(pml::Log::LOG_ERROR) << "IOManager\tGenerator: Could not open sequence file " << Settings::Get().Read(wxT("Output"), wxT("Sequence"), wxT("glits")) << std::endl;
+            pml::Log(pml::LOG_ERROR) << "IOManager\tGenerator: Could not open sequence file " << Settings::Get().Read(wxT("Output"), wxT("Sequence"), wxT("glits"));
             //m_sCurrentSequence = wxEmptyString;
 
             CreateSessionFromOutput(wxEmptyString);
@@ -655,7 +655,7 @@ void IOManager::InitGeneratorTone()
         m_pGenerator->Generate(8192);
 
 
-        pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tGenerating fixed frequency " << Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000) << "Hz at " << Settings::Get().Read(wxT("Generator"), wxT("Amplitude"), -18.0) << "dbFS" << std::endl;
+        pml::Log(pml::LOG_INFO) << "IOManager\tGenerating fixed frequency " << Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000) << "Hz at " << Settings::Get().Read(wxT("Generator"), wxT("Amplitude"), -18.0) << "dbFS";
 
         CreateSessionFromOutput(wxString::Format(wxT("%dHz %.1fdBFS"), Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000), Settings::Get().Read(wxT("Generator"), wxT("Amplitude"), -18.0)));
         CheckPlayback(m_pGenerator->GetSampleRate(), m_pGenerator->GetChannels());
@@ -712,7 +712,7 @@ void IOManager::InitGeneratorNoise()
 
 void IOManager::OpenSoundcardDevice(unsigned long nOutputSampleRate)
 {
-    pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tOpen Audio Device: Soundcard" << std::endl;
+    pml::Log(pml::LOG_INFO) << "IOManager\tOpen Audio Device: Soundcard";
 
     int nInput(-1);
     if(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")) == wxT("Soundcard"))
@@ -728,10 +728,10 @@ void IOManager::OpenSoundcardDevice(unsigned long nOutputSampleRate)
 
     if(SoundcardManager::Get().Init(this, nInput, nOutput, nOutputSampleRate))
     {
-        pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tAudio Device Created: Input [" << SoundcardManager::Get().GetInputDevice()
-                                          << "]["<< SoundcardManager::Get().GetInputDeviceName() << "] Latency " << SoundcardManager::Get().GetInputLatency() << std::endl;
-        pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tAudio Device Created: Output [" << SoundcardManager::Get().GetOutputDevice()
-                                          << "]["<< SoundcardManager::Get().GetOutputDeviceName() << "] Latency " << SoundcardManager::Get().GetOutputLatency() << std::endl;
+        pml::Log(pml::LOG_INFO) << "IOManager\tAudio Device Created: Input [" << SoundcardManager::Get().GetInputDevice()
+                                          << "]["<< SoundcardManager::Get().GetInputDeviceName() << "] Latency " << SoundcardManager::Get().GetInputLatency();
+        pml::Log(pml::LOG_INFO) << "IOManager\tAudio Device Created: Output [" << SoundcardManager::Get().GetOutputDevice()
+                                          << "]["<< SoundcardManager::Get().GetOutputDeviceName() << "] Latency " << SoundcardManager::Get().GetOutputLatency();
 
     }
     else
@@ -772,7 +772,7 @@ void IOManager::InitAudioInputDevice()
     {
 
         m_nInputSource = AudioEvent::RTP;
-        pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tCreate Audio Input Device: AoIP" << std::endl;
+        pml::Log(pml::LOG_INFO) << "IOManager\tCreate Audio Input Device: AoIP";
 
         AoIPSource source = AoipSourceManager::Get().FindSource(Settings::Get().Read(wxT("Input"), wxT("AoIP"), 0));
         if(source.nIndex != 0 && m_mRtp.find(source.nIndex) == m_mRtp.end())
@@ -788,13 +788,13 @@ void IOManager::InitAudioInputDevice()
         }
         else
         {
-            pml::Log::Get(pml::Log::LOG_WARN) << "IOManager\tRTP Thread already running for source " << source.nIndex << std::endl;
+            pml::Log(pml::LOG_WARN) << "IOManager\tRTP Thread already running for source " << source.nIndex;
         }
     }
     else if(sType == wxT("Output"))
     {
         m_nInputSource = AudioEvent::OUTPUT;
-        pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tMonitoring output" << std::endl;
+        pml::Log(pml::LOG_INFO) << "IOManager\tMonitoring output";
 
         CreateSessionFromOutput(wxEmptyString);
     }
@@ -813,7 +813,7 @@ void IOManager::InitAudioOutputDevice()
 
     if(sType == wxT("Soundcard"))
     {
-        pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tCreate Audio Destination Device: Soundcard" << std::endl;
+        pml::Log(pml::LOG_INFO) << "IOManager\tCreate Audio Destination Device: Soundcard";
         OpenSoundcardDevice(SoundcardManager::Get().GetOutputSampleRate());
 
         m_nOutputDestination = AudioEvent::SOUNDCARD;
@@ -826,7 +826,7 @@ void IOManager::InitAudioOutputDevice()
     else if(sType == wxT("AoIP"))
     {
         m_nOutputDestination = AudioEvent::RTP;
-        pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tCreate Audio Destination Device: AoIP" << std::endl;
+        pml::Log(pml::LOG_INFO) << "IOManager\tCreate Audio Destination Device: AoIP";
         StopStream();
         if(m_bStreamActive)
         {
@@ -839,7 +839,7 @@ void IOManager::InitAudioOutputDevice()
     }
     else
     {
-        pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tOutput Disabled" << std::endl;
+        pml::Log(pml::LOG_INFO) << "IOManager\tOutput Disabled";
         m_nOutputDestination = AudioEvent::DISABLED;
     }
 }
@@ -861,7 +861,7 @@ void IOManager::CreateSessionFromOutput(const wxString& sSource)
 
 void IOManager::SessionChanged()
 {
-    pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tSession Changed: " << m_setHandlers.size() << std::endl;
+    pml::Log(pml::LOG_INFO) << "IOManager\tSession Changed: " << m_setHandlers.size();
     //tell our handler that we have changed the session....
     for(set<wxEvtHandler*>::iterator itHandler = m_setHandlers.begin(); itHandler != m_setHandlers.end(); ++itHandler)
     {
@@ -882,7 +882,7 @@ void IOManager::OnRTPSessionClosed(wxCommandEvent& event)
     }
     //m_setRtpOrphan.erase(event.GetInt());
     m_mRtp.erase(event.GetInt());
-    pml::Log::Get(pml::Log::LOG_DEBUG) << "IOManager\tOnRTPSessionClosed" << std::endl;
+    pml::Log(pml::LOG_DEBUG) << "IOManager\tOnRTPSessionClosed";
 }
 
 void IOManager::OnRTPSession(wxCommandEvent& event)
@@ -1029,7 +1029,7 @@ void IOManager::DoSAP(bool bRun)
     {
         if(m_pSapServer)
         {
-            pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tStop SAP advertising" << std::endl;
+            pml::Log(pml::LOG_INFO) << "IOManager\tStop SAP advertising";
             m_pSapServer = nullptr;
         }
     }
@@ -1048,7 +1048,7 @@ void IOManager::DoSAP(bool bRun)
 
         m_pSapServer->AddSender(IpAddress(std::string(Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString).c_str())), std::chrono::milliseconds(30000), m_pMulticastServer->GetSDP());
 
-        pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tStart SAP advertising: " << m_pMulticastServer->GetSDP() << std::endl;
+        pml::Log(pml::LOG_INFO) << "IOManager\tStart SAP advertising: " << m_pMulticastServer->GetSDP();
     }
 }
 
@@ -1058,7 +1058,7 @@ void IOManager::DoDNSSD(bool bRun)
     {
         if(m_pPublisher)
         {
-            pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tStop mDNS/SD advertising" << std::endl;
+            pml::Log(pml::LOG_INFO) << "IOManager\tStop mDNS/SD advertising";
             m_pPublisher = nullptr;
         }
     }
@@ -1072,7 +1072,7 @@ void IOManager::DoDNSSD(bool bRun)
             m_pPublisher->AddTxt("ver", "1.0", false);
             m_pPublisher->Start();
 
-            pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tStart mDNS/SD advertising" << std::endl;
+            pml::Log(pml::LOG_INFO) << "IOManager\tStart mDNS/SD advertising";
         }
     }
 }
@@ -1080,7 +1080,7 @@ void IOManager::DoDNSSD(bool bRun)
 
 void IOManager::RTPServerFinished()
 {
-    pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tStream server finished." << std::endl;
+    pml::Log(pml::LOG_INFO) << "IOManager\tStream server finished.";
 
     m_bStreamActive = false;
     if(m_bQueueToStream)
@@ -1109,7 +1109,7 @@ void IOManager::Stream()
 
 void IOManager::StreamMulticast()
 {
-    pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tCreate Multicast AES67 Server" << std::endl;
+    pml::Log(pml::LOG_INFO) << "IOManager\tCreate Multicast AES67 Server";
 
     wxString sDestinationIp = Settings::Get().Read(wxT("Server"), wxT("DestinationIp"), wxEmptyString);
     unsigned long nByte;
@@ -1127,7 +1127,7 @@ void IOManager::StreamMulticast()
 
 void IOManager::StreamUnicast()
 {
-    pml::Log::Get(pml::Log::LOG_INFO) << "IOManager\tCreate Unicast AES67 Server" << std::endl;
+    pml::Log(pml::LOG_INFO) << "IOManager\tCreate Unicast AES67 Server";
 
     m_pUnicastServer = new OnDemandStreamer(m_setRTSPHandlers, m_setRTCPHandlers, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), "0.0.0.0"),
                                               Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555));

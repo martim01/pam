@@ -276,7 +276,7 @@ wxString NetworkControl::SetupNetworking(const wxString& sInterface, const wxStr
         {
             for(size_t i = 0; i < configFile.GetLineCount(); i++)
             {
-                outFile << configFile.GetLine(i).mb_str() << std::endl;
+                outFile << configFile.GetLine(i).mb_str();
             }
             outFile.close();
             configFile.Close();
@@ -322,7 +322,7 @@ void NetworkControl::ChangeWiFiNetwork(const wxString& sAccessPoint, const wxStr
             wxExecute(wxString::Format(wxT("wpa_cli -i %s set_network %d ssid '\"%s\"'"), sInterface.c_str(), itCell->second.nNetwork, sAccessPoint.c_str()), asResult);
             if(asResult.GetCount() == 0 || asResult[0] == "FAIL")
             {
-                pml::Log::Get(pml::Log::LOG_ERROR) << "NetworkControl\tUnable to change WiFi" << std::endl;
+                pml::Log(pml::LOG_ERROR) << "NetworkControl\tUnable to change WiFi";
                 return;
             }
             if(itCell->second.bEncryption)
@@ -330,7 +330,7 @@ void NetworkControl::ChangeWiFiNetwork(const wxString& sAccessPoint, const wxStr
                 wxExecute(wxString::Format(wxT("wpa_cli -i %s set_network %d psk '\"%s\"'"), sInterface.c_str(), itCell->second.nNetwork, sPassword.c_str()), asResult);
                 if(asResult.GetCount() == 0 || asResult[0] == "FAIL")
                 {
-                    pml::Log::Get(pml::Log::LOG_ERROR) << "NetworkControl\tUnable to change WiFi password" << std::endl;
+                    pml::Log(pml::LOG_ERROR) << "NetworkControl\tUnable to change WiFi password";
                     return;
                 }
                 if(itCell->second.sEncType.Find(wxT("WPA")) != wxNOT_FOUND)
@@ -338,7 +338,7 @@ void NetworkControl::ChangeWiFiNetwork(const wxString& sAccessPoint, const wxStr
                     wxExecute(wxString::Format(wxT("wpa_cli -i %s set_network %d key_mgmt WPA-PSK"), sInterface.c_str(), itCell->second.nNetwork), asResult);
                     if(asResult.GetCount() == 0 || asResult[0] == "FAIL")
                     {
-                        pml::Log::Get(pml::Log::LOG_ERROR) << "NetworkControl\tUnable to change WiFi key management" << std::endl;
+                        pml::Log(pml::LOG_ERROR) << "NetworkControl\tUnable to change WiFi key management";
                         return;
                     }
                 }
@@ -346,26 +346,26 @@ void NetworkControl::ChangeWiFiNetwork(const wxString& sAccessPoint, const wxStr
             wxExecute(wxString::Format(wxT("wpa_cli -i %s enable_network %d"), sInterface.c_str(), itCell->second.nNetwork), asResult);
             if(asResult.GetCount() == 0 || asResult[0] == "FAIL")
             {
-                pml::Log::Get(pml::Log::LOG_ERROR) << "NetworkControl\tUnable to enable WiFi network" << std::endl;
+                pml::Log(pml::LOG_ERROR) << "NetworkControl\tUnable to enable WiFi network";
                 return;
             }
 
             wxExecute(wxString::Format(wxT("wpa_cli -i %s save_config"), sInterface.c_str()), asResult);
             if(asResult.GetCount() == 0 || asResult[0] == "FAIL")
             {
-                pml::Log::Get(pml::Log::LOG_ERROR) << "NetworkControl\tUnable to save WiFi config" << std::endl;
+                pml::Log(pml::LOG_ERROR) << "NetworkControl\tUnable to save WiFi config";
                 return;
             }
             //wxExecute(wxT("wpa_cli reconfigure"));
 
             wxExecute(wxString::Format(wxT("wpa_cli -i %s select_network %d"), sInterface.c_str(), itCell->second.nNetwork), asResult);
 
-            pml::Log::Get() << "NetworkControl\tWiFi '"<< itCell->first.c_str() << "' Setup: network " << itCell->second.nNetwork << std::endl;
+            pml::Log() << "NetworkControl\tWiFi '"<< itCell->first.c_str() << "' Setup: network " << itCell->second.nNetwork;
             Settings::Get().Write(wxT("WiFi"), sAccessPoint, sPassword);
         }
         else
         {
-            pml::Log::Get(pml::Log::LOG_ERROR) << "NetworkControl\tUnable to add WiFi network" << std::endl;
+            pml::Log(pml::LOG_ERROR) << "NetworkControl\tUnable to add WiFi network";
         }
     }
 }

@@ -54,7 +54,7 @@ bool Audio::Init(unsigned int nSampleRate)
 
 bool Audio::OpenStream(PaStreamCallback *streamCallback)
 {
-    pml::Log::Get() << "Audio\tAttempt to open device " << m_nDevice << std::endl;
+    pml::Log() << "Audio\tAttempt to open device " << m_nDevice;
 
 
     PaStreamParameters inputParameters;
@@ -66,7 +66,7 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
         if(pInfo->maxInputChannels < 2)
         {
             m_nChannelsIn = pInfo->maxInputChannels;
-            pml::Log::Get() << "Audio\tInput channels changed to " << m_nChannelsIn << std::endl;
+            pml::Log() << "Audio\tInput channels changed to " << m_nChannelsIn;
         }
         else
         {
@@ -76,7 +76,7 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
         if(pInfo->maxOutputChannels < 2)
         {
             m_nChannelsOut = pInfo->maxInputChannels;
-            pml::Log::Get() << "Audio\tOutput channels changed to " << m_nChannelsOut << std::endl;
+            pml::Log() << "Audio\tOutput channels changed to " << m_nChannelsOut;
         }
         else
         {
@@ -112,15 +112,15 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
     switch(m_nType)
     {
         case INPUT:
-            pml::Log::Get() << "Audio\tAttempt to open " << m_nChannelsIn << " channel INPUT stream on device " << m_nDevice << std::endl;
+            pml::Log() << "Audio\tAttempt to open " << m_nChannelsIn << " channel INPUT stream on device " << m_nDevice;
             err = Pa_OpenStream(&m_pStream, &inputParameters, 0, m_nSampleRate, 1024, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
             break;
         case OUTPUT:
-            pml::Log::Get() << "Audio\tAttempt to open " << m_nChannelsOut << " channel OUTPUT stream on device " <<  m_nDevice << std::endl;
+            pml::Log() << "Audio\tAttempt to open " << m_nChannelsOut << " channel OUTPUT stream on device " <<  m_nDevice;
             err = Pa_OpenStream(&m_pStream, 0, &outputParameters, m_nSampleRate, 0, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
             break;
         case DUPLEX:
-            pml::Log::Get() << "Audio\tAttempt to open " << m_nChannelsIn << " in and " << m_nChannelsOut << "out DUPLEX stream on device " << m_nDevice << std::endl;
+            pml::Log() << "Audio\tAttempt to open " << m_nChannelsIn << " in and " << m_nChannelsOut << "out DUPLEX stream on device " << m_nDevice;
             err = Pa_OpenStream(&m_pStream, &inputParameters, &outputParameters, m_nSampleRate, 2048, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
             break;
     }
@@ -133,19 +133,19 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
             #ifdef __WXGTK__
             PaAlsa_EnableRealtimeScheduling(m_pStream,1);
             #endif
-            pml::Log::Get() << "Audio\tDevice " << m_nDevice << " opened: Mode " << m_nType << std::endl;
+            pml::Log() << "Audio\tDevice " << m_nDevice << " opened: Mode " << m_nType;
             const PaStreamInfo* pStreamInfo = Pa_GetStreamInfo(m_pStream);
             if(pStreamInfo)
             {
-                pml::Log::Get() << "Audio\tStreamInfo: Input Latency " << pStreamInfo->inputLatency << " Output Latency " << pStreamInfo->outputLatency << " Sample Rate " << pStreamInfo->sampleRate << std::endl;
+                pml::Log() << "Audio\tStreamInfo: Input Latency " << pStreamInfo->inputLatency << " Output Latency " << pStreamInfo->outputLatency << " Sample Rate " << pStreamInfo->sampleRate;
             }
             return true;
         }
     }
     m_pStream = 0;
-    pml::Log::Get(pml::Log::LOG_ERROR) << "Audio\tFailed to open device " << m_nDevice << " " << Pa_GetErrorText(err)
+    pml::Log(pml::LOG_ERROR) << "Audio\tFailed to open device " << m_nDevice << " " << Pa_GetErrorText(err)
                                        << " with sample rate=" << m_nSampleRate << " input channels=" << m_nChannelsIn
-                                       << " and output channels=" << m_nChannelsOut << std::endl;
+                                       << " and output channels=" << m_nChannelsOut;
 
 
 
@@ -163,7 +163,7 @@ Audio::~Audio()
         err = Pa_CloseStream(m_pStream);
         if(err != paNoError)
         {
-            pml::Log::Get(pml::Log::LOG_ERROR) << "Audio\tFailed to stop PortAudio stream: " << Pa_GetErrorText(err) << std::endl;
+            pml::Log(pml::LOG_ERROR) << "Audio\tFailed to stop PortAudio stream: " << Pa_GetErrorText(err);
         }
     }
 

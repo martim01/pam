@@ -90,19 +90,19 @@ void LogElement::CreateHitRect(size_t nId, int nHeight, const wxString& sLine)
 
     switch(m_nType)
     {
-        case pml::Log::LOG_DEBUG:
+        case pml::LOG_DEBUG:
             rect.SetBackgroundColour(*wxBLACK);
             rect.SetForegroundColour(wxColour(150,150,150));
             break;
-        case pml::Log::LOG_INFO:
+        case pml::LOG_INFO:
             rect.SetBackgroundColour(*wxBLACK);
             rect.SetForegroundColour(*wxWHITE);
             break;
-        case pml::Log::LOG_WARN:
+        case pml::LOG_WARN:
             rect.SetBackgroundColour(wxColour(255,100,50));
             rect.SetForegroundColour(*wxBLACK);
             break;
-        case pml::Log::LOG_ERROR:
+        case pml::LOG_ERROR:
             rect.SetBackgroundColour(wxColour(255,50,50));
             rect.SetForegroundColour(*wxBLACK);
             break;

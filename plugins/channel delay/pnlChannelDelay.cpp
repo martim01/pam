@@ -177,7 +177,7 @@ void pnlChannelDelay::OnOffsetDone(wxCommandEvent& event)
 
     if(m_pBuilder->IsLogActive())
     {
-        pml::Log::Get(pml::Log::LOG_INFO) << "Channel Delay\t" << event.GetInt() << "ms" << std::endl;
+        pml::Log(pml::LOG_INFO) << "Channel Delay\t" << event.GetInt() << "ms";
     }
 
 }

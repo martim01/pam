@@ -46,6 +46,7 @@
 #include "dlgPin.h"
 #include "dlgNoInput.h"
 #include "log.h"
+#include <wx/bitmap.h>
 #ifdef __NMOS__
 #include "nmos.h"
 #endif // __WXMSW__
@@ -60,6 +61,7 @@
 //helper functions
 enum wxbuildinfoformat {
     short_f, long_f };
+
 
 wxString wxbuildinfo(wxbuildinfoformat format)
 {
@@ -116,6 +118,7 @@ BEGIN_EVENT_TABLE(pam2Dialog,wxDialog)
     //(*EventTable(pam2Dialog)
     //*)
 END_EVENT_TABLE()
+
 
 pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_ppnlSettings(0),
@@ -221,9 +224,20 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
     m_ppnlLog = new pnlLog(m_pswpMain);
 
-    pml::Log::Get().AddOutput(std::make_unique<pml::LogOutput>());
+    pml::LogStream::AddOutput(std::make_unique<pml::LogOutput>());
+
+    wxImage img(16,16);
+    img.SetRGB(wxRect(0,0,16,16),0,0,0);
+    img.SetMaskColour(0,0,0);
+    img.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X,1);
+    img.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y,1);
+    m_pCursor = new wxCursor(img);
 
     wxSetCursor(*wxSTANDARD_CURSOR);
+    if(Settings::Get().Read("General", "Cursor", 1) == 0)
+    {
+        wxSetCursor(*m_pCursor);
+    }
 
     //m_pswpScreens->SetEventHandler(this);
     Connect(ID_M_PSWP4,wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,(wxObjectEventFunction)&pam2Dialog::OnswpScreensPageChanged);
@@ -261,7 +275,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
 
     Settings::Get().AddHandler("Splash", "Screen", this);
-
+    Settings::Get().AddHandler("General", "Cursor", this);
 
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pam2Dialog::OnSettingChanged);
@@ -299,7 +313,7 @@ pam2Dialog::~pam2Dialog()
     {
         delete m_pdlgNoInput;
     }
-
+    delete m_pCursor;
     //@todo stop nmos
 }
 
@@ -836,18 +850,33 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
     {
         if(event.GetKey() == "Screen")
         {
-            pml::Log::Get(pml::Log::LOG_TRACE) << "SettingChanged: Splash/Screen=" << Settings::Get().Read("Splash", "Screen", "Main") << std::endl;
+            pml::Log(pml::LOG_TRACE) << "SettingChanged: Splash/Screen=" << Settings::Get().Read("Splash", "Screen", "Main");
 
             m_pswpSplash->ChangeSelection(Settings::Get().Read("Splash", "Screen", "Main"));
         }
         else
         {
-            pml::Log::Get(pml::Log::LOG_WARN) << event.GetSection() << ":" << event.GetKey() << " not handled" << std::endl;
+            pml::Log(pml::LOG_WARN) << event.GetSection() << ":" << event.GetKey() << " not handled";
+        }
+    }
+    else if(event.GetSection() == "General")
+    {
+        if(event.GetKey() == "Cursor")
+        {
+            pml::Log() << "SettingChanged: Show Cursor: " << event.GetValue(true);
+            if(event.GetValue(true))
+            {
+                wxSetCursor(*wxSTANDARD_CURSOR);
+            }
+            else
+            {
+                wxSetCursor(*m_pCursor);
+            }
         }
     }
     else
     {
-        pml::Log::Get(pml::Log::LOG_WARN) << event.GetSection() << ":" << event.GetKey() << " not handled" << std::endl;
+        pml::Log(pml::LOG_WARN) << event.GetSection() << ":" << event.GetKey() << " not handled";
     }
 }
 
@@ -903,14 +932,14 @@ void pam2Dialog::TellPluginsAboutOutputChannels()
 
 void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
 {
-    pml::Log::Get() << "PAM\tExecutable Path = " << Settings::Get().GetExecutableDirectory() << std::endl;
-    pml::Log::Get() << "PAM\tCore Lib Path = " <<  Settings::Get().GetCoreLibDirectory() << std::endl;
-    pml::Log::Get() << "PAM\tPlugin Monitor Path = " <<  Settings::Get().GetMonitorPluginDirectory() << std::endl;
-    pml::Log::Get() << "PAM\tPlugin Test Path = " <<  Settings::Get().GetTestPluginDirectory() << std::endl;
-    pml::Log::Get() << "PAM\tDocuments Path = " <<  Settings::Get().GetDocumentDirectory() << std::endl;
-    pml::Log::Get() << "PAM\tLogs Path = " <<  Settings::Get().GetLogDirectory() << std::endl;
-    pml::Log::Get() << "PAM\tWav Files Path = " <<  Settings::Get().GetWavDirectory() << std::endl;
-    pml::Log::Get() << "PAM\tTemp Path = " <<  Settings::Get().GetTempDirectory() << std::endl;
+    pml::Log() << "PAM\tExecutable Path = " << Settings::Get().GetExecutableDirectory();
+    pml::Log() << "PAM\tCore Lib Path = " <<  Settings::Get().GetCoreLibDirectory();
+    pml::Log() << "PAM\tPlugin Monitor Path = " <<  Settings::Get().GetMonitorPluginDirectory();
+    pml::Log() << "PAM\tPlugin Test Path = " <<  Settings::Get().GetTestPluginDirectory();
+    pml::Log() << "PAM\tDocuments Path = " <<  Settings::Get().GetDocumentDirectory();
+    pml::Log() << "PAM\tLogs Path = " <<  Settings::Get().GetLogDirectory();
+    pml::Log() << "PAM\tWav Files Path = " <<  Settings::Get().GetWavDirectory();
+    pml::Log() << "PAM\tTemp Path = " <<  Settings::Get().GetTempDirectory();
 
     RemoveOldFiles();
 
@@ -962,7 +991,7 @@ void pam2Dialog::OntimerIpcTrigger(wxTimerEvent& event)
 void pam2Dialog::OnClose(wxCloseEvent& event)
 {
     IOManager::Get().Stop();
-    pml::Log::Get() << "PAM\tClosing" << std::endl;
+    pml::Log() << "PAM\tClosing";
     event.Skip();
 }
 

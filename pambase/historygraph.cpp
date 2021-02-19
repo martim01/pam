@@ -361,6 +361,6 @@ void HistoryGraph::RecalculateRange(const wxString& sGraph)
     }
     else
     {
-        pml::Log::Get(pml::Log::LOG_DEBUG) << "HistoryGraph::RecalculateRange: Could not find graph '" << sGraph << "'" << std::endl;
+        pml::Log(pml::LOG_DEBUG) << "HistoryGraph::RecalculateRange: Could not find graph '" << sGraph << "'";
     }
 }

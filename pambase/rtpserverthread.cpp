@@ -113,7 +113,7 @@ bool RtpServerThread::CreateStream()
 
     if (m_pRtspServer == NULL || m_pRtcpInstance == NULL)
     {
-        pml::Log::Get(pml::Log::LOG_ERROR) << "RTP Server\tFailed to create RTSP server (multicast): " << m_penv->getResultMsg() << std::endl;
+        pml::Log(pml::LOG_ERROR) << "RTP Server\tFailed to create RTSP server (multicast): " << m_penv->getResultMsg();
         Medium::close(m_pSink);
         Medium::close(m_pSource);
 
@@ -140,7 +140,7 @@ bool RtpServerThread::CreateStream()
     delete[] pSDP;
 
     // Finally, start the streaming:
-    pml::Log::Get(pml::Log::LOG_INFO) << "RTP Server\tBeginning streaming..." << m_pRtspServer->rtspURL(sms) << std::endl;
+    pml::Log(pml::LOG_INFO) << "RTP Server\tBeginning streaming..." << m_pRtspServer->rtspURL(sms);
 
 
     m_pSink->startPlaying(*m_pSource, afterPlaying, reinterpret_cast<void*>(this));
@@ -162,7 +162,7 @@ void afterPlaying(void* pClientData)
 void RtpServerThread::CloseStream()
 {
     wxMutexLocker lock(m_mutex);
-    pml::Log::Get(pml::Log::LOG_INFO) << "RTP Server\t...done streaming" << std::endl;
+    pml::Log(pml::LOG_INFO) << "RTP Server\t...done streaming";
 
     // End by closing the media:
     Medium::close(m_pRtspServer);

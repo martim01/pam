@@ -188,7 +188,7 @@ void pnlPeakCount::OnTimerLog(wxTimerEvent& event)
             int nTotal(m_vChannels[i]->SamplesSinceLastCheck());
             if(nTotal > 0)
             {
-                pml::Log::Get(pml::Log::LOG_WARN) << "PeakCount\tChannel"<<i<< " " << nTotal << "samples over " << m_dLimit << "dB in last second" << std::endl;
+                pml::Log(pml::LOG_WARN) << "PeakCount\tChannel"<<i<< " " << nTotal << "samples over " << m_dLimit << "dB in last second";
             }
         }
     }

@@ -86,19 +86,19 @@ void NmosManager::Setup()
 
     if(NodeApi::Get().AddDevice(pDevice) == false)
     {
-        pml::Log::Get(pml::Log::LOG_ERROR) << "NMOS\tFailed to add Device" << std::endl;
+        pml::Log(pml::LOG_ERROR) << "NMOS\tFailed to add Device";
     }
     if(NodeApi::Get().AddSource(pSource) == false)
     {
-        pml::Log::Get(pml::Log::LOG_ERROR) << "NMOS\tFailed to add Source" << std::endl;
+        pml::Log(pml::LOG_ERROR) << "NMOS\tFailed to add Source";
     }
     if(NodeApi::Get().AddFlow(m_pFlow) == false)
     {
-        pml::Log::Get(pml::Log::LOG_ERROR) << "NMOS\tFailed to add Flow" << std::endl;
+        pml::Log(pml::LOG_ERROR) << "NMOS\tFailed to add Flow";
     }
     if(NodeApi::Get().AddReceiver(pReceiver) == false)
     {
-        pml::Log::Get(pml::Log::LOG_ERROR) << "NMOS\tFailed to add Receiver" << std::endl;
+        pml::Log(pml::LOG_ERROR) << "NMOS\tFailed to add Receiver";
     }
     else
     {
@@ -106,7 +106,7 @@ void NmosManager::Setup()
     }
     if(NodeApi::Get().AddSender(m_pSender) == false)
     {
-        pml::Log::Get(pml::Log::LOG_ERROR) << "NMOS\tFailed to add Sender" << std::endl;
+        pml::Log(pml::LOG_ERROR) << "NMOS\tFailed to add Sender";
     }
     NodeApi::Get().Commit();
 
@@ -136,7 +136,7 @@ void NmosManager::Setup()
 
 void NmosManager::StartNode()
 {
-    pml::Log::Get() << "NMOS\tStart NMOS Services" << std::endl;
+    pml::Log() << "NMOS\tStart NMOS Services";
 
     NodeApi::Get().StartServices();
 }
@@ -470,7 +470,7 @@ void NmosManager::ActivateReceiver(shared_ptr<Receiver> pReceiver)
 
 void NmosManager::StopNmos()
 {
-    pml::Log::Get() << "NMOS\tStop NMOS Services" << std::endl;
+    pml::Log() << "NMOS\tStop NMOS Services";
     NodeApi::Get().StopServices();
     Settings::Get().RemoveKey(wxT("AoIP"), wxT("NMOS_IS-04"));
 }

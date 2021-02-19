@@ -6,7 +6,7 @@ class wxLogOutput : public pml::LogOutput
 {
     public:
         wxLogOutput(wxEvtHandler* pHandler) : m_pHandler(pHandler){}
-        void Flush(pml::Log::enumLevel eLogLevel, const std::stringstream&  logStream) override;
+        void Flush(pml::enumLevel eLogLevel, const std::stringstream&  logStream) override;
     private:
         wxEvtHandler* m_pHandler;
 };

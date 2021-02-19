@@ -4,7 +4,7 @@
 
 wxDEFINE_EVENT(wxEVT_PMLOG, wxCommandEvent);
 
-void wxLogOutput::Flush(pml::Log::enumLevel eLogLevel, const std::stringstream&  logStream)
+void wxLogOutput::Flush(pml::enumLevel eLogLevel, const std::stringstream&  logStream)
 {
     if(m_pHandler)
     {

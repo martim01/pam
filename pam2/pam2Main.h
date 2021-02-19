@@ -173,7 +173,7 @@ class pam2Dialog: public wxDialog
 
 
 
-
+        wxCursor* m_pCursor;
 
 
         pnlSettings* m_ppnlSettings;

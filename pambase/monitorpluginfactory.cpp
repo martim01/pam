@@ -52,7 +52,7 @@ wxString MonitorPluginFactory::GetPluginDirectory()
 bool MonitorPluginFactory::LoadLibrary(const wxString& sLibrary)
 {
     //wxLogNull ln;
-    pml::Log::Get(pml::Log::LOG_INFO) << "Monitor Plugin\t" << "Load '" << sLibrary << "'" << std::endl;
+    pml::Log(pml::LOG_INFO) << "Monitor Plugin\t" << "Load '" << sLibrary << "'";
     map<wxString, wxDynamicLibrary*>::iterator itLib = m_mLibraries.find(sLibrary);
     if(itLib == m_mLibraries.end())
     {
@@ -81,22 +81,22 @@ bool MonitorPluginFactory::LoadLibrary(const wxString& sLibrary)
                 {
                     (*ptr)();
                     m_mLibraries.insert(make_pair(sLibrary, pLib));
-                    pml::Log::Get(pml::Log::LOG_INFO) << "Monitor Plugin\t" << "Loaded '" << sLib << "'" << std::endl;
+                    pml::Log(pml::LOG_INFO) << "Monitor Plugin\t" << "Loaded '" << sLib << "'";
                     return true;
                 }
                 else
                 {
-                    pml::Log::Get(pml::Log::LOG_ERROR) << "Monitor Plugin\t" << "'"  << sLib << "' cannot execute function CreateMonitorBuilder" << std::endl;
+                    pml::Log(pml::LOG_ERROR) << "Monitor Plugin\t" << "'"  << sLib << "' cannot execute function CreateMonitorBuilder";
                 }
             }
             else
             {
-                pml::Log::Get(pml::Log::LOG_ERROR) << "Monitor Plugin\t" << "'" << sLib << "' has no function CreateMonitorBuilder" << std::endl;
+                pml::Log(pml::LOG_ERROR) << "Monitor Plugin\t" << "'" << sLib << "' has no function CreateMonitorBuilder";
             }
         }
         else
         {
-                pml::Log::Get(pml::Log::LOG_ERROR) << "Monitor Plugin\t" << "Could not load '" << sLib << "' '" << dlerror() << std::endl;
+                pml::Log(pml::LOG_ERROR) << "Monitor Plugin\t" << "Could not load '" << sLib << "' '" << dlerror();
         }
         delete pLib;
     }
@@ -239,18 +239,18 @@ plugin MonitorPluginFactory::GetPluginDetails(const wxString& sDir, const wxStri
                 }
                 else
                 {
-                    pml::Log::Get(pml::Log::LOG_ERROR) << "Monitor Plugin\t" << "Could not find correct symbols in lib " << sLib << std::endl;
+                    pml::Log(pml::LOG_ERROR) << "Monitor Plugin\t" << "Could not find correct symbols in lib " << sLib;
                 }
             }
             else
             {
-                pml::Log::Get(pml::Log::LOG_ERROR) << "Monitor Plugin\t" << "Could not load lib " << sLib << std::endl;
+                pml::Log(pml::LOG_ERROR) << "Monitor Plugin\t" << "Could not load lib " << sLib;
             }
             delete pLib;
         }
         else
         {
-            pml::Log::Get(pml::Log::LOG_ERROR) << "Monitor Plugin\t" << "Could not create lib " << sLib << std::endl;
+            pml::Log(pml::LOG_ERROR) << "Monitor Plugin\t" << "Could not create lib " << sLib;
         }
     }
     return aPlugin;

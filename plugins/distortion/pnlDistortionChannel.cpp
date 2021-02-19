@@ -113,7 +113,7 @@ void pnlDistortionChannel::RunTest()
        {
            if(m_pBuilder->IsLogActive())
            {
-                pml::Log::Get(pml::Log::LOG_INFO) << "Distortion\t" << "Channel: " << m_nChannel << " Peaks=" << fft.GetNumberOfPeaks() << " Distortion=" << dDistortion << std::endl;
+                pml::Log(pml::LOG_INFO) << "Distortion\t" << "Channel: " << m_nChannel << " Peaks=" << fft.GetNumberOfPeaks() << " Distortion=" << dDistortion;
            }
        }
     //    if(fft.GetNumberOfPeaks() > 1)

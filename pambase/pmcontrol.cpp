@@ -18,37 +18,5 @@ END_EVENT_TABLE()
 
 pmControl::pmControl()
 {
-    InitCursor();
 }
-
-
-void pmControl::InitCursor()
-{
-  //  Settings::Get().AddHandler(wxT("General"), wxT("Cursor"), this);
-  //  Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pmControl::OnSettingEvent);
-    #ifndef WXSPAM
-    if(Settings::Get().Read(wxT("General"), wxT("Cursor"),1) == 0)
-    {
-        SetCursor(wxCURSOR_BLANK);
-    }
-    #endif // WXSPAM
-}
-
-#ifndef WXSPAM
-void pmControl::OnSettingEvent(SettingEvent& event)
-{
-
-    if(event.GetSection() == wxT("General") && event.GetKey() == wxT("Cursor"))
-    {
-        if(event.GetValue(false)==false)
-        {
-            SetCursor(wxCURSOR_BLANK);
-        }
-        else
-        {
-            SetCursor(wxCURSOR_DEFAULT);
-        }
-    }
-}
-#endif // WXSPAM
 

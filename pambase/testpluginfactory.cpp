@@ -43,7 +43,7 @@ bool TestPluginFactory::LoadTestLibrary(const wxString& sLibrary)
 {
     wxLogNull ln;
 
-    pml::Log::Get(pml::Log::LOG_INFO) << "Test Plugin\t" << "Load '" << sLibrary << "'" << std::endl;
+    pml::Log(pml::LOG_INFO) << "Test Plugin\t" << "Load '" << sLibrary << "'";
 
     map<wxString, wxDynamicLibrary*>::iterator itLib = m_mLibraries.find(sLibrary);
     if(itLib == m_mLibraries.end())
@@ -72,23 +72,23 @@ bool TestPluginFactory::LoadTestLibrary(const wxString& sLibrary)
                 {
                     (*ptr)();
                     m_mLibraries.insert(make_pair(sLibrary, pLib));
-                    pml::Log::Get(pml::Log::LOG_INFO) << "Test Plugin\t" << "Loaded '" << sLibrary << "'" << std::endl;
+                    pml::Log(pml::LOG_INFO) << "Test Plugin\t" << "Loaded '" << sLibrary << "'";
                     return true;
                 }
                 else
                 {
-                    pml::Log::Get(pml::Log::LOG_ERROR) << "Test Plugin\t" << "'" << sLib << "' cannot execute function CreateMonitorBuilder" << std::endl;
+                    pml::Log(pml::LOG_ERROR) << "Test Plugin\t" << "'" << sLib << "' cannot execute function CreateMonitorBuilder";
                 }
             }
             else
             {
-                pml::Log::Get(pml::Log::LOG_ERROR) << "Test Plugin\t" << "'" << sLib << "' has no function CreateMonitorBuilder" << std::endl;
+                pml::Log(pml::LOG_ERROR) << "Test Plugin\t" << "'" << sLib << "' has no function CreateMonitorBuilder";
 
             }
         }
         else
         {
-            pml::Log::Get(pml::Log::LOG_ERROR) << "Test Plugin\t" << "Could not load '" << sLib << "'" << std::endl;
+            pml::Log(pml::LOG_ERROR) << "Test Plugin\t" << "Could not load '" << sLib << "'";
         }
         delete pLib;
     }
@@ -212,18 +212,18 @@ plugin TestPluginFactory::GetPluginDetails(const wxString& sDir, const wxString&
                 }
                 else
                 {
-                    pml::Log::Get(pml::Log::LOG_ERROR) << "Test Plugin\t" << "Could not find correct symbols in lib " << sLib << std::endl;
+                    pml::Log(pml::LOG_ERROR) << "Test Plugin\t" << "Could not find correct symbols in lib " << sLib;
                 }
             }
             else
             {
-                pml::Log::Get(pml::Log::LOG_ERROR) << "Test Plugin\t" << "Could not load lib " << sLib << std::endl;
+                pml::Log(pml::LOG_ERROR) << "Test Plugin\t" << "Could not load lib " << sLib;
             }
             delete pLib;
         }
         else
         {
-            pml::Log::Get(pml::Log::LOG_ERROR) << "Test Plugin\t" << "Could not create lib " << sLib << std::endl;
+            pml::Log(pml::LOG_ERROR) << "Test Plugin\t" << "Could not create lib " << sLib;
         }
     }
     return aPlugin;

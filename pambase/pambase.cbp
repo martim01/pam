@@ -215,6 +215,7 @@
 		<Unit filename="../external/dnssd/src/gnu/avahibrowser.cpp" />
 		<Unit filename="../external/dnssd/src/gnu/avahipublisher.cpp" />
 		<Unit filename="../external/dnssd/src/zcposter.cpp" />
+		<Unit filename="../external/log/include/log.h" />
 		<Unit filename="../external/log/src/log.cpp" />
 		<Unit filename="../external/ptpmonkey/include/handler.h">
 			<Option target="Linux Release" />

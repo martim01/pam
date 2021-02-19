@@ -30,13 +30,13 @@ bool MacDb::LoadXml()
                 }
             }
         }
-        pml::Log::Get(pml::Log::LOG_DEBUG) << "MaxDb\t" << "Vendors: " << m_mVendors.size() << std::endl;
+        pml::Log(pml::LOG_DEBUG) << "MaxDb\t" << "Vendors: " << m_mVendors.size();
 
         return true;
     }
     else
     {
-        pml::Log::Get (pml::Log::LOG_ERROR) << "MaxDb\t" << "Failed to open file" << std::endl;
+        pml::Log (pml::LOG_ERROR) << "MaxDb\t" << "Failed to open file";
         return false;
     }
 }
@@ -61,7 +61,7 @@ wxString MacDb::GetVendor(const wxString& sMac) const
     }
     else
     {
-        pml::Log::Get(pml::Log::LOG_WARN) << "MaxDb\t" << "GetVendor: '" << sMac.Last(8) << "' not found." << std::endl;
+        pml::Log(pml::LOG_WARN) << "MaxDb\t" << "GetVendor: '" << sMac.Last(8) << "' not found.";
 
         return wxEmptyString;
     }

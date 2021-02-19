@@ -51,11 +51,11 @@ UsageEnvironment& PamUsageEnvironment::operator<<(char const* str)
     if (str != NULL)
     {
         std::string sMsg(str);
+        m_ls << str;
 
-        pml::Log::Get() << str;
         if(sMsg.back() == '\n')
         {
-            pml::Log::Get() << std::endl;
+            m_ls;
         }
     }
     return *this;
@@ -63,25 +63,25 @@ UsageEnvironment& PamUsageEnvironment::operator<<(char const* str)
 
 UsageEnvironment& PamUsageEnvironment::operator<<(int i)
 {
-    pml::Log::Get() << i;
+    m_ls << i;
 
     return *this;
 }
 
 UsageEnvironment& PamUsageEnvironment::operator<<(unsigned u)
 {
-    pml::Log::Get() << u;
+    m_ls << u;
     return *this;
 }
 
 UsageEnvironment& PamUsageEnvironment::operator<<(double d)
 {
-    pml::Log::Get() << d;
+    m_ls << d;
     return *this;
 }
 
 UsageEnvironment& PamUsageEnvironment::operator<<(void* p)
 {
-    pml::Log::Get() << reinterpret_cast<unsigned long>(p);
+    m_ls << reinterpret_cast<unsigned long>(p);
     return *this;
 }

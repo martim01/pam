@@ -33,7 +33,7 @@ pnlLog::pnlLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
     m_nFilter = 15;
 
 
-    pml::Log::Get().AddOutput(std::make_unique<wxLogOutput>(this));
+    pml::LogStream::AddOutput(std::make_unique<wxLogOutput>(this));
 
 
 	Connect(wxID_ANY,wxEVT_PMLOG,(wxObjectEventFunction)&pnlLog::OnLog);

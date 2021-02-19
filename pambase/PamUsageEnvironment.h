@@ -3,7 +3,7 @@
 #include <wx/string.h>
 #include <wx/event.h>
 #include "dlldefine.h"
-
+#include "log.h"
 class PAMBASE_IMPEXPORT PamUsageEnvironment: public BasicUsageEnvironment0 {
 public:
   static PamUsageEnvironment* createNew(TaskScheduler& taskScheduler, wxEvtHandler* pHandler);
@@ -24,7 +24,7 @@ protected:
 
   wxEvtHandler* m_pHandler;
   wxString m_sLog;
-
+    pml::LogStream m_ls;
 };
 
 

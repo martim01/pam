@@ -20,9 +20,6 @@ class PAMBASE_IMPEXPORT pmPanel : public wxPanel
         virtual ~pmPanel(){}
 
   protected:
-        #ifndef WXSPAM
-        void OnSettingEvent(SettingEvent& event);
-        #endif // WXSPAM
 
 
 };

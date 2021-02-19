@@ -296,12 +296,12 @@ void MultiQOSMeasurement(UsageEnvironment& env, void* clientData)
 
 void MultiByeHandler(UsageEnvironment& env, void* clientData)
 {
-    pml::Log::Get() << "Received BYE message" << std::endl;
+    pml::Log() << "Received BYE message";
 }
 
 void AES67ServerMediaSubsession::BeginQOSMeasurement()
 {
-    pml::Log::Get(pml::Log::LOG_DEBUG) << "RTP Server\tBegin QOS: " << this << std::endl;
+    pml::Log(pml::LOG_DEBUG) << "RTP Server\tBegin QOS: " << this;
 
     g_multiSession = this;
     fRTCPInstance->setRRHandler((TaskFunc*)MultiQOSMeasurement, reinterpret_cast<void*>(this));

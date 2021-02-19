@@ -43,7 +43,7 @@ bool GeneratorPluginFactory::LoadGeneratorLibrary(const wxString& sLibrary)
 {
     wxLogNull ln;
 
-    pml::Log::Get() << "Generator Plugin\t" << "Load " << sLibrary << std::endl;
+    pml::Log() << "Generator Plugin\t" << "Load " << sLibrary;
     map<wxString, wxDynamicLibrary*>::iterator itLib = m_mLibraries.find(sLibrary);
     if(itLib == m_mLibraries.end())
     {
@@ -70,23 +70,23 @@ bool GeneratorPluginFactory::LoadGeneratorLibrary(const wxString& sLibrary)
                 {
                     (*ptr)();
                     m_mLibraries.insert(make_pair(sLibrary, pLib));
-                    pml::Log::Get() << "Generator Plugin\t" << "Loaded " << sLibrary << std::endl;
+                    pml::Log() << "Generator Plugin\t" << "Loaded " << sLibrary;
                     return true;
                 }
                 else
                 {
-                    pml::Log::Get(pml::Log::LOG_ERROR) << "Generator Plugin\t" << sLib << " cannot execute function CreateMonitorBuilder" << std::endl;
+                    pml::Log(pml::LOG_ERROR) << "Generator Plugin\t" << sLib << " cannot execute function CreateMonitorBuilder";
                 }
             }
             else
             {
-                pml::Log::Get(pml::Log::LOG_ERROR) << "Generator Plugin\t" << sLib << " has no function CreateMonitorBuilder" << std::endl;
+                pml::Log(pml::LOG_ERROR) << "Generator Plugin\t" << sLib << " has no function CreateMonitorBuilder";
 
             }
         }
         else
         {
-            pml::Log::Get(pml::Log::LOG_ERROR) << "Generator Plugin\t" << "Could not load " << sLib << std::endl;
+            pml::Log(pml::LOG_ERROR) << "Generator Plugin\t" << "Could not load " << sLib;
         }
         delete pLib;
     }
@@ -210,18 +210,18 @@ plugin GeneratorPluginFactory::GetPluginDetails(const wxString& sDir, const wxSt
                 }
                 else
                 {
-                    pml::Log::Get(pml::Log::LOG_ERROR) << "Generator Plugin\t" << "Could not find correct symbols in lib " << sLib << std::endl;
+                    pml::Log(pml::LOG_ERROR) << "Generator Plugin\t" << "Could not find correct symbols in lib " << sLib;
                 }
             }
             else
             {
-                pml::Log::Get(pml::Log::LOG_ERROR) << "Generator Plugin\t" << "Could not load lib " << sLib << std::endl;
+                pml::Log(pml::LOG_ERROR) << "Generator Plugin\t" << "Could not load lib " << sLib;
             }
             delete pLib;
         }
         else
         {
-            pml::Log::Get(pml::Log::LOG_ERROR) << "Generator Plugin\t" << "Could not create lib " << sLib << std::endl;
+            pml::Log(pml::LOG_ERROR) << "Generator Plugin\t" << "Could not create lib " << sLib;
         }
     }
     return aPlugin;

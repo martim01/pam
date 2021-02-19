@@ -406,20 +406,20 @@ bool Generator::SetFile()
         if(bOk == false)
         {
             CloseFile();
-            pml::Log::Get(pml::Log::LOG_ERROR) << "Generator\tFailed to open file '" << sFilePath << "'" << std::endl;
+            pml::Log(pml::LOG_ERROR) << "Generator\tFailed to open file '" << sFilePath << "'";
         }
         else
         {
-            pml::Log::Get() << "Generator\tOpened file '" << sFilePath << "'" << std::endl;
-            pml::Log::Get() << "Generator\tSampleRate =" << GetSampleRate() << std::endl;
-            pml::Log::Get() << "Generator\tChannels =" << GetChannels() << std::endl;
+            pml::Log() << "Generator\tOpened file '" << sFilePath << "'";
+            pml::Log() << "Generator\tSampleRate =" << GetSampleRate();
+            pml::Log() << "Generator\tChannels =" << GetChannels();
 
             Generate(8192);
         }
     }
     else
     {
-        pml::Log::Get(pml::Log::LOG_ERROR) << "Generator\tFile '" << sFilePath << "' does not exist or generator not established" << std::endl;
+        pml::Log(pml::LOG_ERROR) << "Generator\tFile '" << sFilePath << "' does not exist or generator not established";
     }
 
     return bOk;

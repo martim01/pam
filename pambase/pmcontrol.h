@@ -19,10 +19,6 @@ class PAMBASE_IMPEXPORT pmControl : public wxWindow
 
   protected:
 
-        void InitCursor();
-        #ifndef WXSPAM
-        void OnSettingEvent(SettingEvent& event);
-        #endif // WXSPAM
 
 
 };
