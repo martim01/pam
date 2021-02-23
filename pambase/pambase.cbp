@@ -160,6 +160,7 @@
 					<Add option="-DwxDEBUG_LEVEL=0" />
 					<Add option="-DPTP_DLL" />
 					<Add option="-DPTPMONKEY" />
+					<Add option="-DLOG_DLL" />
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
