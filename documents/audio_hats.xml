@@ -1,0 +1,32 @@
+<hats>
+	<manufacturer name="No">
+		<model name="HAT" dtoverlay=""/>
+	</manufacturer>
+	<manufacturer name="JustBoom">
+		<model name="Amp" dtoverlay="justboom-dac"/>
+		<model name="Amp Zero" dtoverlay="justboom-dac"/>
+		<model name="DAC" dtoverlay="justboom-dac" />
+		<model name="DAC Zero" dtoverlay="justboom-dac" />
+		<model name="Digi" dtoverlay="justboom-digi" />
+		<model name="Digi Zero" dtoverlay="justboom-digi" />
+	</manufacturer>
+	<manufacturer name="HifiBerry">
+		<model name="DAC" dtoverlay="hifiberry-dac" />
+		<model name="DAC+ LIGHT" dtoverlay="hifiberry-dac" />
+		<model name="DAC ZERO" dtoverlay="hifiberry-dac" />
+		<model name="MINIAMP" dtoverlay="hifiberry-dac" />
+		<model name="BEOCREATE" dtoverlay="hifiberry-dac" />
+		<model name="DAC+ DSP" dtoverlay="hifiberry-dac" />
+		<model name="DAC+ RTC" dtoverlay="hifiberry-dac" />
+		<model name="DAC+" dtoverlay="hifiberry-dacplus" />
+		<model name="DAC+ PRO" dtoverlay="hifiberry-dacplus" />
+		<model name="DAC+ HD" dtoverlay="hifiberry-dacplus" />
+		<model name="DAC2 HD" dtoverlay="hifiberry-dacplushd" />
+		<model name="DAC+ ADC" dtoverlay="hifiberry-dacplusadc" />
+		<model name="DAC+ ADC PRO" dtoverlay="hifiberry-dacplusadcpro" />
+		<model name="DIGI+" dtoverlay="hifiberry-digi" />
+		<model name="DIGI+ I/O" dtoverlay="hifiberry-digi" />
+		<model name="DIGI+ PRO" dtoverlay="hifiberry-digipro" />
+		<model name="AMP+" dtoverlay="hifiberry-amp" />
+	</manufacturer>
+</hats>
