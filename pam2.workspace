@@ -64,5 +64,7 @@
 		</Project>
 		<Project filename="pam2/pam2.cbp" />
 		<Project filename="plugins/battery/battery.cbp" />
+		<Project filename="InitialSetup/InitialSetup.cbp" />
+		<Project filename="InitialSetup/dosetup.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
