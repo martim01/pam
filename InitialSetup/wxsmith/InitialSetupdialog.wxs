@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxDialog" name="InitialSetupDialog">
+		<title>wxWidgets app</title>
+		<size>800,480</size>
+		<bg>#000000</bg>
+		<object class="wmLabel" name="ID_M_PLBL37" variable="m_plblHostname" member="yes">
+			<label>Initial Setup</label>
+			<pos>0,0</pos>
+			<size>200,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#3D9292</bg>
+			<font>
+				<size>12</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL13" variable="m_plblTitle" member="yes">
+			<label>Hostname</label>
+			<pos>200,0</pos>
+			<size>600,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#3D9292</bg>
+			<font>
+				<size>12</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmSwitcherPanel" name="ID_M_PSWP1" variable="m_pswp" member="yes">
+			<pagename>Button</pagename>
+			<pos>0,40</pos>
+			<size>700,440</size>
+			<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
+			<handler function="OnswpPageChanged" entry="EVT_NOTEBOOK_PAGE_CHANGED" />
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL1" variable="pnlHostname" member="yes">
+					<bg>#000000</bg>
+					<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+						<label>Enter the Hostname for this unit:</label>
+						<pos>5,5</pos>
+						<size>600,30</size>
+						<fg>#FFFFFF</fg>
+						<bg>#000000</bg>
+						<font>
+							<size>12</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Arial</face>
+						</font>
+					</object>
+					<object class="wmEdit" name="ID_M_PEDT1" variable="m_pedtName" member="yes">
+						<validation>Alphanumeric</validation>
+						<border>uiRect::BORDER_DOWN</border>
+						<border_focused>uiRect::BORDER_DOWN</border_focused>
+						<background_focused>#FFFFFF</background_focused>
+						<foreground_focused>#000080</foreground_focused>
+						<pos>10,40</pos>
+						<size>600,45</size>
+						<bg>#FFFFFF</bg>
+						<handler function="OnedtNameTextEnter" entry="EVT_TEXT_ENTER" />
+					</object>
+					<object class="wmKeyboard" name="ID_M_PKBD1" variable="m_pkdbHost" member="yes">
+						<pos>10,90</pos>
+						<fg>#FFFFFF</fg>
+					</object>
+				</object>
+				<label>Hostname</label>
+				<selected>1</selected>
+			</object>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL2" variable="pnlPassword" member="yes">
+					<bg>#000000</bg>
+					<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
+						<label>Enter a password for the default user:</label>
+						<pos>5,5</pos>
+						<size>600,30</size>
+						<fg>#FFFFFF</fg>
+						<bg>#000000</bg>
+						<font>
+							<size>12</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Arial</face>
+						</font>
+					</object>
+					<object class="wmEdit" name="ID_M_PEDT2" variable="m_pedtPassword" member="yes">
+						<validation>Alphanumeric</validation>
+						<border>uiRect::BORDER_DOWN</border>
+						<border_focused>uiRect::BORDER_DOWN</border_focused>
+						<background_focused>#FFFFFF</background_focused>
+						<foreground_focused>#000080</foreground_focused>
+						<pos>10,40</pos>
+						<size>600,45</size>
+						<bg>#FFFFFF</bg>
+						<handler function="OnedtPasswordTextEnter" entry="EVT_TEXT_ENTER" />
+					</object>
+					<object class="wmKeyboard" name="ID_M_PKBD2" variable="m_pKbd2" member="yes">
+						<pos>10,90</pos>
+						<fg>#FFFFFF</fg>
+					</object>
+				</object>
+				<label>Password</label>
+			</object>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL3" variable="pnlAudio" member="yes">
+					<bg>#000000</bg>
+					<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
+						<label>Select the Audio HAT</label>
+						<pos>5,5</pos>
+						<size>700,30</size>
+						<fg>#FFFFFF</fg>
+						<bg>#000000</bg>
+						<font>
+							<size>12</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Arial</face>
+						</font>
+					</object>
+					<object class="wmList" name="ID_M_PLST1" variable="m_plstHat" member="yes">
+						<scrolling>Horizontal</scrolling>
+						<button_gap>5,5</button_gap>
+						<button_size>-1,40</button_size>
+						<columns>4</columns>
+						<button_selected>#008000</button_selected>
+						<button_disabled>#808080</button_disabled>
+						<items />
+						<pos>0,35</pos>
+						<size>700,370</size>
+						<bg>#000000</bg>
+						<style>wmList::STYLE_SELECT</style>
+						<handler function="OnlstHatSelected" entry="EVT_LIST_SELECTED" />
+					</object>
+				</object>
+				<label>HATs</label>
+			</object>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN7" variable="m_pbtnManage" member="yes">
+			<label>Finished</label>
+			<button_disabled>#808080</button_disabled>
+			<pos>705,425</pos>
+			<size>90,40</size>
+			<bg>#009393</bg>
+			<handler function="OnbtnManageClick" entry="EVT_BUTTON" />
+		</object>
+	</object>
+</wxsmith>
