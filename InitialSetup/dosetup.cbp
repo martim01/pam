@@ -32,7 +32,14 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
+			<Add directory="../external/log/include" />
 		</Compiler>
+		<Unit filename="../external/log/include/dlllog.h" />
+		<Unit filename="../external/log/include/log.h" />
+		<Unit filename="../external/log/include/logmanager.h" />
+		<Unit filename="../external/log/src/log.cpp" />
+		<Unit filename="logtofile.cpp" />
+		<Unit filename="logtofile.h" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />

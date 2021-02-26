@@ -16,7 +16,7 @@
 		<model name="DAC ZERO" dtoverlay="hifiberry-dac" />
 		<model name="MINIAMP" dtoverlay="hifiberry-dac" />
 		<model name="BEOCREATE" dtoverlay="hifiberry-dac" />
-		<model name="DAC+ DSP" dtoverlay="hifiberry-dac" />
+		<model name="DAC+ DSP" dtoverlay="hifiberry-dacplusdsp" />
 		<model name="DAC+ RTC" dtoverlay="hifiberry-dac" />
 		<model name="DAC+" dtoverlay="hifiberry-dacplus" />
 		<model name="DAC+ PRO" dtoverlay="hifiberry-dacplus" />

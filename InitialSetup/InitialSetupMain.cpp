@@ -17,6 +17,7 @@
 #include <wx/string.h>
 //*)
 #include <wx/textfile.h>
+#include <iostream>
 
 #include <wx/xml/xml.h>
 #ifdef __WXGNU__
@@ -77,7 +78,7 @@ END_EVENT_TABLE()
 InitialSetupDialog::InitialSetupDialog(wxWindow* parent,wxWindowID id)
 {
     //(*Initialize(InitialSetupDialog)
-    Create(parent, id, _("wxWidgets app"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE, _T("id"));
+    Create(parent, id, _("wxWidgets app"), wxDefaultPosition, wxDefaultSize, wxNO_BORDER, _T("id"));
     SetClientSize(wxSize(800,480));
     SetBackgroundColour(wxColour(0,0,0));
     m_plblHostname = new wmLabel(this, ID_M_PLBL37, _("Initial Setup"), wxPoint(0,0), wxSize(800,40), 0, _T("ID_M_PLBL37"));
@@ -175,7 +176,7 @@ InitialSetupDialog::InitialSetupDialog(wxWindow* parent,wxWindowID id)
             if(boot[i].Left(STR_DTOVERALY.length()) == STR_DTOVERALY)
             {
                 wxString sOverlay = boot[i].After('=');
-                wxLogDebug(sOverlay);
+
                 for(size_t nButton = 0; nButton < m_plstHat->GetItemCount(); nButton++)
                 {
                     wxLogDebug("Aux=%s", m_plstHat->GetButtonAuxillaryText(nButton).c_str());
@@ -236,7 +237,10 @@ void InitialSetupDialog::OnbtnManageClick(wxCommandEvent& event)
 {
     if(m_pedtName->GetValue().empty() == false && m_pedtPassword->GetValue().empty() == false && m_sOverlay.empty() == false)
     {
-        wxExecute(wxString::Format("sudo dosetup %s %s %s %d", m_pedtName->GetValue().c_str(), m_pedtPassword->GetValue().c_str(), m_sOverlay.c_str(), m_nLine));
+        wxString sCommand(wxString::Format("sudo dosetup %s %s %s %d", m_pedtName->GetValue().c_str(), m_pedtPassword->GetValue().c_str(), m_sOverlay.c_str(), m_nLine));
+        wxLogDebug(sCommand);
+        long nResult = wxExecute(sCommand, wxEXEC_SYNC);
+        wxLogDebug("Result %d", nResult);
 
         EndModal(wxID_OK);
     }
