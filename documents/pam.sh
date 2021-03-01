@@ -7,5 +7,6 @@ if [ -f "$FILE" ]; then
 else
   InitialSetup
   touch "$FILE"
+  sudo raspi-config --expand-rootfs
   sudo shutdown -r now
 fi
