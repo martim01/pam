@@ -11,13 +11,16 @@
 #include "pnloptions.h"
 #include "settings.h"
 #include "version.h"
+#include "settingevent.h"
 
 using namespace std;
 
 FFTBuilder::FFTBuilder() : MonitorPluginBuilder(),
 m_pMeter(0)
 {
+    Settings::Get().AddHandler("FFT", "peaks", this);
 
+    Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&FFTBuilder::OnSettingChanged);
 }
 
 void FFTBuilder::SetAudioData(const timedbuffer* pBuffer)
@@ -155,4 +158,18 @@ void FFTBuilder::InputSession(const session& aSession)
 void FFTBuilder::OutputChannels(const std::vector<char>& vChannels)
 {
 
+}
+
+
+void FFTBuilder::ResetPeaks()
+{
+    m_pMeter->ResetPeaks();
+}
+
+void FFTBuilder::OnSettingChanged(SettingEvent& event)
+{
+    if(event.GetKey() == "peaks")
+    {
+        m_pMeter->ShowPeak(event.GetValue(false));
+    }
 }

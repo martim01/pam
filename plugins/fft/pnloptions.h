@@ -20,6 +20,8 @@ class pnlOptions: public wxPanel
 		wmButton* m_pbtnFFT_Cursor;
 		wmButton* m_pbtnFFT_Hold;
 		//*)
+		wmButton* m_pbtnFFT_Peak;
+		wmButton* m_pbtnFFT_PeakReset;
 
 	protected:
 
@@ -35,6 +37,9 @@ class pnlOptions: public wxPanel
 		void OnbtnFFT_HoldClick(wxCommandEvent& event);
 		void OnbtnFFT_CursorClick(wxCommandEvent& event);
 		//*)
+
+		void OnbtnFFT_PeakClick(wxCommandEvent& event);
+		void OnbtnFFT_PeakResetClick(wxCommandEvent& event);
 
 		FFTBuilder* m_pBuilder;
 		DECLARE_EVENT_TABLE()

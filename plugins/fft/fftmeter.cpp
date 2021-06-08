@@ -47,6 +47,7 @@ FftMeter::FftMeter(wxWindow *parent, FFTBuilder* pBuilder, wxWindowID id, const 
     m_dFall = 0.2;
     m_nBinSelected = 0;
     m_bCursorMode = false;
+    m_bShowPeak = false;
 
     m_nChannels = 2;
     m_nSampleRate = 48000;
@@ -229,11 +230,13 @@ void FftMeter::DrawFFT(wxDC& dc)
     //draw the 1025 FFT points
     int x_old(m_rectGrid.GetLeft());
     int y_old(m_rectGrid.GetHeight());
-    for(size_t i = 1; i < m_vAmplitude.size(); i++)
-    {
-        int x = static_cast<int>( (static_cast<double>(m_rectGrid.GetWidth())/log(m_vAmplitude.size())) * static_cast<double>(log(i)))+m_rectGrid.GetLeft();
 
-        int y = -static_cast<int>(  (static_cast<double>(m_rectGrid.GetHeight()/70) * m_vAmplitude[i]));
+    std::vector<float>& vAmp = m_vAmplitude;
+
+    for(size_t i = 1; i < vAmp.size(); i++)
+    {
+        int x = static_cast<int>( (static_cast<double>(m_rectGrid.GetWidth())/log(vAmp.size())) * static_cast<double>(log(i)))+m_rectGrid.GetLeft();
+        int y = -static_cast<int>(  (static_cast<double>(m_rectGrid.GetHeight()/70) * vAmp[i]));
         if(i == 1)
         {
             y_old = min(y, m_rectGrid.GetBottom());
@@ -242,7 +245,7 @@ void FftMeter::DrawFFT(wxDC& dc)
         if(m_bColour)
         {
             float r,g,b;
-            m_HeatMap.getColourAtValue(static_cast<float>(i)/static_cast<float>(m_vAmplitude.size()), r,g,b);
+            m_HeatMap.getColourAtValue(static_cast<float>(i)/static_cast<float>(vAmp.size()), r,g,b);
             dc.SetPen(wxPen(wxColour( static_cast<unsigned char>(r*255.0),
                                         static_cast<unsigned char>(g*255.0),
                                       static_cast<unsigned char>(b*255.0))));
@@ -275,15 +278,45 @@ void FftMeter::DrawFFT(wxDC& dc)
                 }
                 break;
         }
+
     }
+    if(m_bShowPeak)
+    {
+        x_old = m_rectGrid.GetLeft();
+        y_old = m_rectGrid.GetHeight();
+        if(m_bColour)
+        {
+            dc.SetPen(*wxWHITE_PEN);
+        }
+        else
+        {
+            dc.SetPen(*wxBLUE_PEN);
+        }
+        for(size_t i = 1; i < m_vPeak.size(); i++)
+        {
+            int x = static_cast<int>( (static_cast<double>(m_rectGrid.GetWidth())/log(m_vPeak.size())) * static_cast<double>(log(i)))+m_rectGrid.GetLeft();
+            int y = -static_cast<int>(  (static_cast<double>(m_rectGrid.GetHeight()/70) * m_vPeak[i]));
+            if(i == 1)
+            {
+                y_old = min(y, m_rectGrid.GetBottom());
+            }
+
+
+            dc.DrawLine(x_old, min(y_old, m_rectGrid.GetBottom()), x, min(y, m_rectGrid.GetBottom()));
+            x_old = x;
+            y_old = y;
+        }
+    }
+
+
     if(m_bCursorMode)
     {
-        int x = static_cast<int>( (static_cast<double>(m_rectGrid.GetWidth())/log(m_vAmplitude.size())) * static_cast<double>(log(m_nBinSelected)))+m_rectGrid.GetLeft();
+        int x = static_cast<int>( (static_cast<double>(m_rectGrid.GetWidth())/log(vAmp.size())) * static_cast<double>(log(m_nBinSelected)))+m_rectGrid.GetLeft();
         dc.SetPen(wxPen(wxColour(255,100,00), 1));
         dc.DrawLine(x, m_rectGrid.GetTop(), x, m_rectGrid.GetBottom());
 
         m_uiClose.Draw(dc, wxT("Exit"), uiRect::BORDER_UP);
-        m_uiAmplitude.Draw(dc, wxString::Format(wxT("%.2f dB"), m_vAmplitude[m_nBinSelected]), uiRect::BORDER_NONE);
+        m_uiAmplitude.Draw(dc, wxString::Format(wxT("%.2f dB"), vAmp[m_nBinSelected]), uiRect::BORDER_NONE);
         m_uiBin.Draw(dc, wxString::Format(wxT("%.0f Hz"), m_dBinSize*static_cast<double>(m_nBinSelected)), uiRect::BORDER_NONE);
         m_uiNudgeDown.Draw(dc,wxT("-"), (m_nNudge==DOWN)? uiRect::BORDER_DOWN : uiRect::BORDER_UP);;
 
@@ -381,6 +414,9 @@ void FftMeter::FFTRoutine()
 {
     FFTAlgorithm fft;
     m_vfft_out = fft.DoFFT(m_lstBuffer, m_nSampleRate, m_nChannels, m_nFFTAnalyse, m_nWindowType, m_vfft_out.size(), m_nOverlap);
+
+
+
     m_dBinSize = static_cast<double>(m_nSampleRate)/static_cast<double>((m_vfft_out.size()-1)*2);
     float dMax(-80);
     double dMaxBin(0);
@@ -398,6 +434,8 @@ void FftMeter::FFTRoutine()
         vAmp[i] = dAmplitude;
         double dLog = WindowMod(20*log10(dAmplitude));
         dLog = max(dLog, -80.0);
+
+        m_vPeak[i] = std::max(m_vPeak[i], m_vAmplitude[i]);
 
         m_vAmplitude[i] = min(0.0, max((double)m_vAmplitude[i]-m_dFall, (double)dLog));
         if(dMax < m_vAmplitude[i])
@@ -531,6 +569,7 @@ void FftMeter::SetNumberOfBins(size_t nBins)
     m_nSampleSize = nBins*2;
     m_vfft_out.resize(nBins+1);
     m_vAmplitude = vector<float>(m_vfft_out.size(), -80.0);
+    m_vPeak = vector<float>(m_vfft_out.size(), -80.0);
 
     m_dFall = 0.000195 * static_cast<double>(nBins)*(100-m_dOverlapPercent)/100.0;
     //store here so we can get back
@@ -668,5 +707,16 @@ void FftMeter::OnLeftUp(wxMouseEvent& event)
             TurnoffNudge();
         }
     }
+
+}
+
+void FftMeter::ShowPeak(bool bShow)
+{
+    m_bShowPeak = bShow;
+    ResetPeaks();
+}
+void FftMeter::ResetPeaks()
+{
+    m_vPeak = vector<float>(m_vfft_out.size(), -80.0);
 
 }

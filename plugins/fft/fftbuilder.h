@@ -4,7 +4,7 @@
 
 class FftMeter;
 class pnlRoutiing;
-
+class SettingEvent;
 
 class WXEXPORT FFTBuilder : public MonitorPluginBuilder
 {
@@ -20,6 +20,7 @@ class WXEXPORT FFTBuilder : public MonitorPluginBuilder
 
 
         void OnCursorMode(bool bOn);
+        void ResetPeaks();
 
         virtual void InputSession(const session& aSession);
         virtual void OutputChannels(const std::vector<char>& vChannels);
@@ -47,6 +48,8 @@ class WXEXPORT FFTBuilder : public MonitorPluginBuilder
         void OnTypeChanged(wxCommandEvent& event);
         void OnHoldClicked(wxCommandEvent& event);
         void ColourSelected(bool bSelected);
+
+        void OnSettingChanged(SettingEvent& event);
 
     private:
         FftMeter* m_pMeter;

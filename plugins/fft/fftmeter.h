@@ -63,6 +63,10 @@ class FftMeter : public pmControl
         void SetSampleRate(unsigned long nSampleRate);
 
         void SetHold(bool bHold);
+
+        void ShowPeak(bool bShow);
+        void ResetPeaks();
+
         /** @brief returns the default size of the button for sizers
         **/
         wxSize DoGetBestSize() const
@@ -146,6 +150,7 @@ class FftMeter : public pmControl
 
         std::vector<float> m_vThirdOctave;
         std::vector<float> m_vAmplitude;
+        std::vector<float> m_vPeak;
 
         FFTBuilder* m_pBuilder;
 
@@ -159,6 +164,7 @@ class FftMeter : public pmControl
         uiRect m_uiPeakLevel;
 
         bool m_bHold;
+        bool m_bShowPeak;
 
 
         double m_dBinSize;

@@ -33,6 +33,16 @@ pnlOptions::pnlOptions(wxWindow* parent,FFTBuilder* pBuilder, wxWindowID id,cons
 	Connect(ID_M_PBTN34,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlOptions::OnbtnFFT_CursorClick);
 	//*)
 
+	m_pbtnFFT_Peak = new wmButton(this, wxNewId(), _("Peak"), wxPoint(2,50), wxSize(190,30), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
+    m_pbtnFFT_Peak->SetToggle(true, "Off", "On");
+
+    m_pbtnFFT_Peak->ToggleSelection((m_pBuilder->ReadSetting("peaks", 0)==1), false);
+
+    m_pbtnFFT_PeakReset = new wmButton(this, wxNewId(), _("Peak Reset"), wxPoint(2,85), wxSize(190,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN1"));
+
+    Connect(m_pbtnFFT_Peak->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlOptions::OnbtnFFT_PeakClick);
+    Connect(m_pbtnFFT_PeakReset->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlOptions::OnbtnFFT_PeakResetClick);
+
 
 	pBuilder->RegisterForSettingsUpdates(wxT("Cursor"), this);
 
@@ -64,4 +74,15 @@ void pnlOptions::OnSettingChanged(SettingEvent& event)
     {
         m_pbtnFFT_Cursor->ToggleSelection((m_pBuilder->ReadSetting(wxT("Cursor"),0)==1), false);
     }
+}
+
+
+void pnlOptions::OnbtnFFT_PeakClick(wxCommandEvent& event)
+{
+    m_pBuilder->WriteSetting("peaks",event.IsChecked());
+}
+
+void pnlOptions::OnbtnFFT_PeakResetClick(wxCommandEvent& event)
+{
+    m_pBuilder->ResetPeaks();
 }
