@@ -34,6 +34,8 @@ void FFTBuilder::SetAudioData(const timedbuffer* pBuffer)
 wxWindow* FFTBuilder::CreateMonitorPanel(wxWindow* pParent)
 {
     m_pMeter = new FftMeter(pParent,this,wxNewId(),wxDefaultPosition, wxDefaultSize);
+
+    m_pMeter->ShowPeak((ReadSetting("peaks", 0)==1));
     return m_pMeter;
 }
 

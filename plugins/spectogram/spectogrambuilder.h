@@ -28,6 +28,8 @@ class WXEXPORT SpectogramBuilder : public MonitorPluginBuilder
         friend class pnlRoutiing;
         friend class pnlWindow;
         friend class pnlColours;
+        friend class pnlOptions;
+        friend class SpectogramMeter;
 
         void LoadSettings();
 

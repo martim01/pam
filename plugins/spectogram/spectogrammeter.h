@@ -108,6 +108,7 @@ class SpectogramMeter : public pmControl
 
         void SetHeatMap(int nMap);
 
+        void SetLinear(bool bLinear);
         enum {DISPLAY_GRAPH, DISPLAY_LINES, DISPLAY_EQ};
         enum {ANALYSE_L,ANALYSE_R, ANALYSE_L_P_R, ANALYSE_L_M_R};
         enum {WINDOW_RECTANGULAR, WINDOW_HANNING, WINDOW_HAMMING, WINDOW_BLACKMAN, WINDOW_KAISER, WINDOW_KAISERBESSEL};
@@ -215,5 +216,7 @@ class SpectogramMeter : public pmControl
         std::list<wxBitmap> m_lstBitmaps;
 
         wxBitmap m_bmpScale;
+
+        bool m_bLinear;
 };
 

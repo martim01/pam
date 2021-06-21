@@ -36,7 +36,7 @@ pnlOptions::pnlOptions(wxWindow* parent,FFTBuilder* pBuilder, wxWindowID id,cons
 	m_pbtnFFT_Peak = new wmButton(this, wxNewId(), _("Peak"), wxPoint(2,50), wxSize(190,30), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
     m_pbtnFFT_Peak->SetToggle(true, "Off", "On");
 
-    m_pbtnFFT_Peak->ToggleSelection((m_pBuilder->ReadSetting("peaks", 0)==1), false);
+    m_pbtnFFT_Peak->ToggleSelection((m_pBuilder->ReadSetting("peaks", 0)==1), true);
 
     m_pbtnFFT_PeakReset = new wmButton(this, wxNewId(), _("Peak Reset"), wxPoint(2,85), wxSize(190,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN1"));
 

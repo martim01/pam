@@ -7,6 +7,7 @@
 #include "pnloverlap.h"
 #include "pnlbins.h"
 #include "pnlColours.h"
+#include "pnlOptions.h"
 #include "settings.h"
 #include "settingevent.h"
 
@@ -20,6 +21,7 @@ m_pMeter(0)
     RegisterForSettingsUpdates(wxT("Overlap"), this);
     RegisterForSettingsUpdates(wxT("Bins"), this);
     RegisterForSettingsUpdates(wxT("HeatMap"), this);
+    RegisterForSettingsUpdates(wxT("linear"), this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&SpectogramBuilder::OnSettingChanged);
 }
@@ -53,6 +55,7 @@ list<pairOptionPanel_t> SpectogramBuilder::CreateOptionPanels(wxWindow* pParent)
     lstOptionPanels.push_back(make_pair(wxT("Overlap"), pOverlap));
     lstOptionPanels.push_back(make_pair(wxT("Bins"), pBins));
     lstOptionPanels.push_back(make_pair(wxT("HeatMap"), new pnlColours(pParent, this)));
+    lstOptionPanels.push_back(make_pair(wxT("Options"), new pnlOptions(pParent, this)));
 
 
 
@@ -110,7 +113,10 @@ void SpectogramBuilder::OnSettingChanged(SettingEvent& event)
     {
         m_pMeter->SetHeatMap(ReadSetting(wxT("HeatMap"), SpectogramMeter::MAP_FIVE));
     }
-
+    else if(event.GetKey() == wxT("linear"))
+    {
+        m_pMeter->SetLinear(event.GetValue(false));
+    }
 }
 
 

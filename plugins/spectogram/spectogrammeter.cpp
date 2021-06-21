@@ -7,7 +7,7 @@
 #include "fftAlgorithm.h"
 #include "timedbuffer.h"
 #include "spectogrambuilder.h"
-
+#include "log.h"
 #include "settings.h"
 
 
@@ -49,6 +49,7 @@ SpectogramMeter::SpectogramMeter(wxWindow *parent, SpectogramBuilder* pBuilder, 
     m_nSampleRate = 48000;
 
     m_nNudge = NONE;
+    m_bLinear = m_pBuilder->ReadSetting("linear", false);
 
     SetHeatMap(MAP_PPM);
     SetNumberOfBins(1024);
@@ -114,19 +115,57 @@ void SpectogramMeter::OnPaint(wxPaintEvent& event)
     uiRect uiLabel(wxRect(m_rectGrid.GetLeft()-50, 0, m_rectGrid.GetLeft(), 0));
 
     dc.SetFont(wxFont(7,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Verdana"),wxFONTENCODING_DEFAULT));
-    for(size_t i = 1; i < m_vfft_out.size()-1; i++)
+
+    if(!m_bLinear)
     {
-        dc.SetPen(penLine);
-        int x = m_rectGrid.GetLeft()+i;
-        if(x > uiLabel.GetLeft()+65 && x +40 < m_rectGrid.GetRight())
+        size_t nWidth = max(730, m_rectGrid.GetWidth());
+
+        for(size_t i = 1; i < m_vfft_out.size()-1; i*= 2)
         {
+            dc.SetPen(penLine);
+            int x = static_cast<int>( (static_cast<double>(nWidth)/(log(m_vfft_out.size()))) * log(static_cast<double>(i))) + m_rectGrid.GetLeft();
             dc.DrawLine(x, 0, x, m_rectGrid.GetHeight());
             uiLabel.SetRect(wxRect(x-20, m_rectGrid.GetBottom()+1, 40, 20));
             uiLabel.Draw(dc, wxString::Format(wxT("%.0f"), m_dBinSize*static_cast<double>(i)), uiRect::BORDER_NONE);
+
         }
+        /*
+        int nConcert = (static_cast<int>( (static_cast<double>(nWidth/(log(m_vfft_out.size()))) * log(440.0/m_dBinSize))) + m_rectGrid.GetLeft())%10;
+        double dMod = log(static_cast<double>(m_vfft_out.size()))/static_cast<double>(nWidth);
 
+        for(size_t i = nConcert; i < nWidth; i+=10)
+        {
+            double dExp = (static_cast<double>(i))*dMod;
+            double dBin = exp(dExp);
+
+            dBin *= m_dBinSize;
+
+            dc.SetPen(penLine);
+            int x = m_rectGrid.GetLeft()+i;
+            if(x > uiLabel.GetLeft()+65 && x +40 < m_rectGrid.GetRight())
+            {
+                dc.DrawLine(x, 0, x, m_rectGrid.GetHeight());
+                uiLabel.SetRect(wxRect(x-20, m_rectGrid.GetBottom()+1, 40, 20));
+                uiLabel.Draw(dc, wxString::Format(wxT("%.0f"), dBin), uiRect::BORDER_NONE);
+            }
+        }
+        */
     }
+    else
+    {
+        for(size_t i = 1; i < m_vfft_out.size()-1; i++)
+        {
+            dc.SetPen(penLine);
+            int x = m_rectGrid.GetLeft()+i;
+            if(x > uiLabel.GetLeft()+65 && x +40 < m_rectGrid.GetRight())
+            {
+                dc.DrawLine(x, 0, x, m_rectGrid.GetHeight());
+                uiLabel.SetRect(wxRect(x-20, m_rectGrid.GetBottom()+1, 40, 20));
+                uiLabel.Draw(dc, wxString::Format(wxT("%.0f"), m_dBinSize*static_cast<double>(i)), uiRect::BORDER_NONE);
+            }
 
+        }
+    }
     dc.DrawBitmap(m_bmpScale, m_rectGrid.GetRight()+10, m_rectGrid.GetTop());
 
     double dPos = static_cast<double>(m_rectGrid.GetHeight())/80.0;
@@ -252,45 +291,92 @@ void SpectogramMeter::FFTRoutine()
 {
     FFTAlgorithm fft;
 
+    //wxImage anImage(m_vfft_out.size(), 1);
     wxImage anImage(max(730, m_rectGrid.GetWidth()),1);
 
     m_vfft_out = fft.DoFFT(m_lstBuffer, m_nSampleRate, m_nChannels, m_nFFTAnalyse, m_nWindowType, m_vfft_out.size(), m_nOverlap);
     m_dBinSize = static_cast<double>(m_nSampleRate)/static_cast<double>((m_vfft_out.size()-1)*2);
-    float dMax(-80);
-    double dMaxBin(0);
 
-    double dTest(0);
-    for(size_t i = 0; i < m_vfft_out.size(); i++)
+
+    if(!m_bLinear)
     {
-        float dAmplitude(sqrt( (m_vfft_out[i].r*m_vfft_out[i].r) + (m_vfft_out[i].i*m_vfft_out[i].i)));
-        if(dAmplitude<0)
+        size_t nWidth = max(730, m_rectGrid.GetWidth());
+        double dMod = log(static_cast<double>(m_vfft_out.size()))/static_cast<double>(nWidth);
+        size_t nOldBin(0);
+        for(size_t i = 0; i < nWidth; i++)
         {
-            dAmplitude=-dAmplitude;
+            double dExp = (static_cast<double>(i))*dMod;
+            double dBin = exp(dExp);
+            size_t nBin = dBin;
+
+            float dMax(-120.0);
+            nOldBin = std::min(nOldBin, nBin);
+
+            for(size_t j = nOldBin; j<= nBin; j++)
+            {
+                float dAmplitude(sqrt( (m_vfft_out[j].r*m_vfft_out[j].r) + (m_vfft_out[j].i*m_vfft_out[j].i)));
+                if(dAmplitude<0)
+                {
+                    dAmplitude=-dAmplitude;
+                }
+                dAmplitude /= static_cast<float>(m_vfft_out.size());
+
+                double dLog = WindowMod(20*log10(dAmplitude));
+                dLog = max(dLog, -80.0)+80.0;
+                dAmplitude = dLog/80.0;
+                dMax = std::max(dMax,dAmplitude);
+            }
+            nOldBin = nBin+1;
+
+            float dRed, dGreen, dBlue;
+            m_HeatMap.getColourAtValue(dMax, dRed, dGreen, dBlue);
+
+            unsigned int nPixel = i*3;
+
+            if(nPixel < anImage.GetWidth()*3)
+            {
+                anImage.GetData()[nPixel] = static_cast<unsigned char>(dRed*255.0);
+                anImage.GetData()[nPixel+1] = static_cast<unsigned char>(dGreen*255.0);
+                anImage.GetData()[nPixel+2] = static_cast<unsigned char>(dBlue*255.0);
+            }
         }
-        dAmplitude /= static_cast<float>(m_vfft_out.size());
+    }
+    else
+    {
+        float dMax(-80);
+        double dMaxBin(0);
 
-        double dLog = WindowMod(20*log10(dAmplitude));
-        dLog = max(dLog, -80.0)+80.0;
-
-        dAmplitude = dLog/80.0;
-
-        float dRed, dGreen, dBlue;
-        m_HeatMap.getColourAtValue(dAmplitude, dRed, dGreen, dBlue);
-
-
-        //we show the first 800 bins at most
-        unsigned int nPixel = i*3;
-
-        if(nPixel < anImage.GetWidth()*3)
+        double dTest(0);
+        for(size_t i = 0; i < m_vfft_out.size(); i++)
         {
-            anImage.GetData()[nPixel] = static_cast<unsigned char>(dRed*255.0);
-            anImage.GetData()[nPixel+1] = static_cast<unsigned char>(dGreen*255.0);
-            anImage.GetData()[nPixel+2] = static_cast<unsigned char>(dBlue*255.0);
+            float dAmplitude(sqrt( (m_vfft_out[i].r*m_vfft_out[i].r) + (m_vfft_out[i].i*m_vfft_out[i].i)));
+            if(dAmplitude<0)
+            {
+                dAmplitude=-dAmplitude;
+            }
+            dAmplitude /= static_cast<float>(m_vfft_out.size());
 
-         //   wxLogDebug(wxT("%f=%d,%d,%d"), dAmplitude, anImage.GetData()[nPixel],anImage.GetData()[nPixel+1],anImage.GetData()[nPixel+2]);
+            double dLog = WindowMod(20*log10(dAmplitude));
+            dLog = max(dLog, -80.0)+80.0;
+
+            dAmplitude = dLog/80.0;
+
+            float dRed, dGreen, dBlue;
+            m_HeatMap.getColourAtValue(dAmplitude, dRed, dGreen, dBlue);
+
+
+            //we show the first 800 bins at most
+            unsigned int nPixel = i*3;
+
+            if(nPixel < anImage.GetWidth()*3)
+            {
+                anImage.GetData()[nPixel] = static_cast<unsigned char>(dRed*255.0);
+                anImage.GetData()[nPixel+1] = static_cast<unsigned char>(dGreen*255.0);
+                anImage.GetData()[nPixel+2] = static_cast<unsigned char>(dBlue*255.0);
+
+            }
+
         }
-
-
     }
     m_lstBitmaps.push_back(wxBitmap(anImage));
     if(m_lstBitmaps.size() > m_rectGrid.GetHeight())
@@ -546,4 +632,11 @@ void SpectogramMeter::CreateScaleBitmap()
 
     Refresh();
 
+}
+
+
+void SpectogramMeter::SetLinear(bool bLinear)
+{
+    m_lstBitmaps.clear();
+    m_bLinear = bLinear;
 }
