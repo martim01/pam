@@ -4,8 +4,8 @@
 //(*Headers(pnlSettingsPlugins)
 #include "wmbutton.h"
 #include "wmlabel.h"
-#include <wx/panel.h>
 #include "wmlist.h"
+#include <wx/panel.h>
 //*)
 
 #include "plugin.h"
@@ -18,25 +18,25 @@ class pnlSettingsPlugins: public wxPanel
 		virtual ~pnlSettingsPlugins();
 
 		//(*Declarations(pnlSettingsPlugins)
-		wmList* m_plstPossible;
-		wmButton* m_pbtnClear;
-		wmLabel* m_pLbl1;
-		wmButton* m_pbtnPossiblePrevious;
-		wxPanel* Panel1;
-		wmList* m_plstCurrent;
-		wmButton* m_pbtnUp;
-		wmButton* m_pbtnPossibleNext;
-		wmList* m_plstPluginType;
-		wmLabel* m_plblDetails;
 		wmButton* m_pbtnApply;
-		wmLabel* m_pLbl2;
-		wmLabel* m_plblCurrentVersion;
+		wmButton* m_pbtnClear;
+		wmButton* m_pbtnCurrentNext;
 		wmButton* m_pbtnCurrentPrevious;
 		wmButton* m_pbtnDown;
-		wmLabel* m_plblVersion;
-		wmButton* m_pbtnCurrentNext;
+		wmButton* m_pbtnPossibleNext;
+		wmButton* m_pbtnPossiblePrevious;
 		wmButton* m_pbtnSet;
+		wmButton* m_pbtnUp;
+		wmLabel* m_pLbl1;
+		wmLabel* m_pLbl2;
 		wmLabel* m_plblCurrentDetails;
+		wmLabel* m_plblCurrentVersion;
+		wmLabel* m_plblDetails;
+		wmLabel* m_plblVersion;
+		wmList* m_plstCurrent;
+		wmList* m_plstPluginType;
+		wmList* m_plstPossible;
+		wxPanel* Panel1;
 		//*)
 
 	protected:

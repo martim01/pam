@@ -154,7 +154,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_ppnlProfiles = new pnlSettingsProfiles(m_pswpSettings, ID_PANEL13, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL13"));
     m_ppnlNmos = new pnlSettingsNmos(m_pswpSettings, ID_PANEL4, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL4"));
     pnlGeneral = new wxPanel(m_pswpSettings, ID_PANEL6, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL6"));
-    pnlGeneral->SetBackgroundColour(*wxBLACK);
+    pnlGeneral->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
     m_pbtnCursor = new wmButton(pnlGeneral, ID_M_PBTN22, _("Cursor"), wxPoint(10,10), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN22"));
     m_ptbnOptions = new wmButton(pnlGeneral, ID_M_PBTN23, _("View"), wxPoint(10,60), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN23"));
     m_pbtnPin = new wmButton(pnlGeneral, ID_M_PBTN24, _("PIN"), wxPoint(10,110), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN24"));

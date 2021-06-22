@@ -274,6 +274,8 @@
 		<Unit filename="pnlSettingsPlugins.h" />
 		<Unit filename="pnlSettingsProfiles.cpp" />
 		<Unit filename="pnlSettingsProfiles.h" />
+		<Unit filename="pnlSettingsTime.cpp" />
+		<Unit filename="pnlSettingsTime.h" />
 		<Unit filename="pnlTestOptions.cpp" />
 		<Unit filename="pnlTestOptions.h" />
 		<Unit filename="pnlTests.cpp" />
@@ -317,6 +319,7 @@
 		<Unit filename="wxsmith/pnlSettingsOutput.wxs" />
 		<Unit filename="wxsmith/pnlSettingsPlugins.wxs" />
 		<Unit filename="wxsmith/pnlSettingsProfiles.wxs" />
+		<Unit filename="wxsmith/pnlSettingsTime.wxs" />
 		<Unit filename="wxsmith/pnlTestOptions.wxs" />
 		<Unit filename="wxsmith/pnlTests.wxs" />
 		<Unit filename="wxsmith/pnlUSB.wxs" />
@@ -356,6 +359,7 @@
 					<wxDialog wxs="wxsmith/dlgEngineering.wxs" src="dlgEngineering.cpp" hdr="dlgEngineering.h" fwddecl="0" i18n="1" name="dlgEngineering" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlSettingsOutput.wxs" src="pnlSettingsOutput.cpp" hdr="pnlSettingsOutput.h" fwddecl="0" i18n="1" name="pnlSettingsOutput" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlRTCPTransmission.wxs" src="pnlRTCPTransmission.cpp" hdr="pnlRTCPTransmission.h" fwddecl="0" i18n="1" name="pnlRTCPTransmission" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlSettingsTime.wxs" src="pnlSettingsTime.cpp" hdr="pnlSettingsTime.h" fwddecl="0" i18n="1" name="pnlSettingsTime" language="CPP" />
 				</resources>
 			</wxsmith>
 			<AutoVersioning>
