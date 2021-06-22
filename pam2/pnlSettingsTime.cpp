@@ -31,15 +31,15 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_pbtnPTP = new wmButton(this, ID_M_PBTN22, _("PTP"), wxPoint(10,10), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN22"));
 	m_pbtnPTP->SetForegroundColour(wxColour(255,255,255));
 	m_pbtnPTP->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnPTP->SetToggleLook(true, wxT("Off"), wxT("Sync"), 50);
+	m_pbtnPTP->SetToggle(true, wxT("Off"), wxT("Sync"), 50);
 	m_pbtnLTC = new wmButton(this, ID_M_PBTN1, _("LTC"), wxPoint(240,10), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnLTC->SetForegroundColour(wxColour(255,255,255));
 	m_pbtnLTC->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnLTC->SetToggleLook(true, wxT("Off"), wxT("Sync"), 50);
+	m_pbtnLTC->SetToggle(true, wxT("Off"), wxT("Sync"), 50);
 	m_pbtnNTP = new wmButton(this, ID_M_PBTN2, _("NTP"), wxPoint(10,60), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN2"));
 	m_pbtnNTP->SetForegroundColour(wxColour(255,255,255));
 	m_pbtnNTP->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnNTP->SetToggleLook(true, wxT("Off"), wxT("Sync"), 50);
+	m_pbtnNTP->SetToggle(true, wxT("Off"), wxT("Sync"), 50);
 	m_pLbl3 = new wmLabel(this, ID_M_PLBL3, _("NTP Servers"), wxPoint(0,110), wxSize(600,30), 0, _T("ID_M_PLBL3"));
 	m_pLbl3->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl3->GetUiRect().SetGradient(0);

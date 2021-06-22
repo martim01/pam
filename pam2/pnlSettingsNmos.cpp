@@ -31,7 +31,7 @@ pnlSettingsNmos::pnlSettingsNmos(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_pbtnNmos = new wmButton(this, ID_M_PBTN22, _("NMOS"), wxPoint(10,10), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN22"));
 	m_pbtnNmos->SetForegroundColour(wxColour(255,255,255));
 	m_pbtnNmos->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnNmos->SetToggleLook(true, wxT("OFF"), wxT("ON"), 50);
+	m_pbtnNmos->SetToggle(true, wxT("OFF"), wxT("ON"), 50);
 	m_pbtnClient = new wmButton(this, ID_M_PBTN1, _("Client"), wxPoint(10,60), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnClient->SetForegroundColour(wxColour(255,255,255));
 	m_pbtnClient->SetBackgroundColour(wxColour(0,128,0));
