@@ -168,7 +168,7 @@ void pnlSettingsTime::OnbtnNTPClick(wxCommandEvent& event)
 
 void pnlSettingsTime::OnlstNTPServersSelected(wxCommandEvent& event)
 {
-    m_pbtnNtpServerEdit-+>Enable();
+    m_pbtnNtpServerEdit->Enable();
     m_pbtnNtpServerDelete->Enable();
     m_nSelectedServer = event.GetInt();
 }
