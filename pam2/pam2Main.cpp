@@ -606,10 +606,12 @@ void pam2Dialog::ShowSettingsPanel()
     m_plstOptions->AddButton(wxT("Output Device"));
     m_plstOptions->AddButton(wxT("Output Source"));
     m_plstOptions->AddButton(wxT("Network"));
+    m_plstOptions->AddButton(wxT("Time"));
     #ifdef __NMOS__
     m_plstOptions->AddButton(wxT("NMOS"));
     #endif // __NMOS__
     m_plstOptions->AddButton(wxT("Plugins"));
+
     m_plstOptions->AddButton(wxT("Profiles"));
     m_plstOptions->AddButton(wxT("General"));
     m_plstOptions->AddButton(wxT("Update"));
@@ -850,20 +852,20 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
     {
         if(event.GetKey() == "Screen")
         {
-            pml::Log(pml::LOG_TRACE) << "SettingChanged: Splash/Screen=" << Settings::Get().Read("Splash", "Screen", "Main");
+            pmlLog(pml::LOG_TRACE) << "SettingChanged: Splash/Screen=" << Settings::Get().Read("Splash", "Screen", "Main");
 
             m_pswpSplash->ChangeSelection(Settings::Get().Read("Splash", "Screen", "Main"));
         }
         else
         {
-            pml::Log(pml::LOG_WARN) << event.GetSection() << ":" << event.GetKey() << " not handled";
+            pmlLog(pml::LOG_WARN) << event.GetSection() << ":" << event.GetKey() << " not handled";
         }
     }
     else if(event.GetSection() == "General")
     {
         if(event.GetKey() == "Cursor")
         {
-            pml::Log() << "SettingChanged: Show Cursor: " << event.GetValue(true);
+            pmlLog() << "SettingChanged: Show Cursor: " << event.GetValue(true);
             if(event.GetValue(true))
             {
                 wxSetCursor(*wxSTANDARD_CURSOR);
@@ -876,7 +878,7 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
     }
     else
     {
-        pml::Log(pml::LOG_WARN) << event.GetSection() << ":" << event.GetKey() << " not handled";
+        pmlLog(pml::LOG_WARN) << event.GetSection() << ":" << event.GetKey() << " not handled";
     }
 }
 
@@ -932,14 +934,14 @@ void pam2Dialog::TellPluginsAboutOutputChannels()
 
 void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
 {
-    pml::Log() << "PAM\tExecutable Path = " << Settings::Get().GetExecutableDirectory();
-    pml::Log() << "PAM\tCore Lib Path = " <<  Settings::Get().GetCoreLibDirectory();
-    pml::Log() << "PAM\tPlugin Monitor Path = " <<  Settings::Get().GetMonitorPluginDirectory();
-    pml::Log() << "PAM\tPlugin Test Path = " <<  Settings::Get().GetTestPluginDirectory();
-    pml::Log() << "PAM\tDocuments Path = " <<  Settings::Get().GetDocumentDirectory();
-    pml::Log() << "PAM\tLogs Path = " <<  Settings::Get().GetLogDirectory();
-    pml::Log() << "PAM\tWav Files Path = " <<  Settings::Get().GetWavDirectory();
-    pml::Log() << "PAM\tTemp Path = " <<  Settings::Get().GetTempDirectory();
+    pmlLog() << "PAM\tExecutable Path = " << Settings::Get().GetExecutableDirectory();
+    pmlLog() << "PAM\tCore Lib Path = " <<  Settings::Get().GetCoreLibDirectory();
+    pmlLog() << "PAM\tPlugin Monitor Path = " <<  Settings::Get().GetMonitorPluginDirectory();
+    pmlLog() << "PAM\tPlugin Test Path = " <<  Settings::Get().GetTestPluginDirectory();
+    pmlLog() << "PAM\tDocuments Path = " <<  Settings::Get().GetDocumentDirectory();
+    pmlLog() << "PAM\tLogs Path = " <<  Settings::Get().GetLogDirectory();
+    pmlLog() << "PAM\tWav Files Path = " <<  Settings::Get().GetWavDirectory();
+    pmlLog() << "PAM\tTemp Path = " <<  Settings::Get().GetTempDirectory();
 
     RemoveOldFiles();
 
@@ -991,7 +993,7 @@ void pam2Dialog::OntimerIpcTrigger(wxTimerEvent& event)
 void pam2Dialog::OnClose(wxCloseEvent& event)
 {
     IOManager::Get().Stop();
-    pml::Log() << "PAM\tClosing";
+    pmlLog() << "PAM\tClosing";
     event.Skip();
 }
 

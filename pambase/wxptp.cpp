@@ -216,6 +216,21 @@ timeval wxPtp::GetPtpTime(unsigned char nDomain)
     }
 }
 
+timespec wxPtp::GetPtpTimeSpec(unsigned char nDomain)
+{
+    timespec ts{0,0};
+    auto itMonkey = m_mDomain.find(nDomain);
+    if(itMonkey != m_mDomain.end())
+    {
+
+        time_s_ns ptp = itMonkey->second->GetPtpTime();
+        ts.tv_sec = ptp.first.count();
+        ts.tv_nsec = ptp.second.count();
+    }
+    return ts;
+
+}
+
 std::map<std::string, std::shared_ptr<PtpV2Clock> >::const_iterator wxPtp::GetClocksBegin(unsigned char nDomain) const
 {
     auto itMonkey = m_mDomain.find(nDomain);

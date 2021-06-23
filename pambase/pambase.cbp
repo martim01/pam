@@ -30,6 +30,7 @@
 					<Add directory="$(#wx3_0.include)/mswu" />
 					<Add directory="$(#portaudio.include)" />
 					<Add directory="$(#libsndfile.include)" />
+					<Add directory="pambase" />
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="$(#wx3_0.include)/mswu" />
@@ -79,6 +80,7 @@
 					<Add directory="$(#wx3_0.include)/mswu" />
 					<Add directory="$(#portaudio.include)" />
 					<Add directory="$(#libsndfile.include)" />
+					<Add directory="pambase" />
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="$(#wx3_0.include)/mswu" />
@@ -122,6 +124,7 @@
 					<Add option="-D__GNU__" />
 					<Add option="-DPTP_DLL" />
 					<Add option="-DPTPMONKEY" />
+					<Add directory="pambase" />
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
@@ -161,6 +164,7 @@
 					<Add option="-DPTP_DLL" />
 					<Add option="-DPTPMONKEY" />
 					<Add option="-DLOG_DLL" />
+					<Add directory="pambase" />
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
@@ -462,6 +466,8 @@
 		<Unit filename="testpluginfactory.cpp" />
 		<Unit filename="testpluginfactory.h" />
 		<Unit filename="timedbuffer.h" />
+		<Unit filename="timemanager.cpp" />
+		<Unit filename="timemanager.h" />
 		<Unit filename="uirect.cpp" />
 		<Unit filename="uirect.h" />
 		<Unit filename="version.h" />

@@ -25,6 +25,7 @@ class PAMBASE_IMPEXPORT wxPtp : public wxEvtHandler
 
         wxString GetMasterClockId(unsigned char nDomain);
         timeval GetPtpTime(unsigned char nDomain);
+        timespec GetPtpTimeSpec(unsigned char nDomain);
         timeval GetPtpOffset(unsigned char nDomain);
         timeval GetLastPtpOffset(unsigned char nDomain);
         bool IsSyncedToMaster(unsigned char nDomain) const;

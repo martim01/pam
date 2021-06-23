@@ -1,4 +1,8 @@
 #include "pnlSettingsTime.h"
+#include "timemanager.h"
+#include "dlgEditName.h"
+#include "settings.h"
+
 
 //(*InternalHeaders(pnlSettingsTime)
 #include <wx/font.h>
@@ -23,7 +27,7 @@ BEGIN_EVENT_TABLE(pnlSettingsTime,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
+pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size, long nStyle, const wxString& sId)
 {
 	//(*Initialize(pnlSettingsTime)
 	Create(parent, id, wxDefaultPosition, wxSize(600,400), wxTAB_TRAVERSAL, _T("id"));
@@ -71,6 +75,24 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
 	Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNtpServerDeleteClick);
 	Connect(ID_M_PBTN6,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNTPServerDeleteAllClick);
 	//*)
+
+	for(auto pairServer : TimeManager::Get().GetNtpServers())
+    {
+        if(pairServer.second)
+        {
+            m_plstNTPServers->AddButton(wxString::Format("[%s]", pairServer.first.c_str()));
+        }
+        else
+        {
+            m_plstNTPServers->AddButton(pairServer.first);
+        }
+    }
+
+    m_pbtnNTP->ToggleSelection(Settings::Get().Read("Time", "NTP", 1) == 1);
+    m_pbtnLTC->ToggleSelection(Settings::Get().Read("Time", "LTC", 0) == 1);
+    m_pbtnPTP->ToggleSelection(Settings::Get().Read("Time", "PTP", 0) == 1);
+
+    m_nSelectedServer = -1;
 }
 
 pnlSettingsTime::~pnlSettingsTime()
@@ -82,32 +104,108 @@ pnlSettingsTime::~pnlSettingsTime()
 
 void pnlSettingsTime::OnbtnPTPClick(wxCommandEvent& event)
 {
+    Settings::Get().Write("Time", "PTP", event.IsChecked());
 }
 
 void pnlSettingsTime::OnbtnLTCClick(wxCommandEvent& event)
 {
+    Settings::Get().Write("Time", "LTC", event.IsChecked());
 }
 
 void pnlSettingsTime::OnbtnNTPClick(wxCommandEvent& event)
 {
+    Settings::Get().Write("Time", "NTP", event.IsChecked());
 }
 
 void pnlSettingsTime::OnlstNTPServersSelected(wxCommandEvent& event)
 {
+    m_pbtnNtpServerEdit->Enable();
+    m_pbtnNtpServerDelete->Enable();
+    m_nSelectedServer = event.GetInt();
 }
 
 void pnlSettingsTime::OnbtnNtpServerAddClick(wxCommandEvent& event)
 {
+    dlgEditName aDlg(this, "", dlgEditName::CH_SERVER);
+    if(aDlg.ShowModal() == wxID_OK)
+    {
+        if(aDlg.m_nChannels == 1)
+        {
+            m_plstNTPServers->AddButton(aDlg.m_pedtName->GetValue());
+        }
+        else
+        {
+            m_plstNTPServers->AddButton(wxString::Format("[%s]", aDlg.m_pedtName->GetValue().c_str()));
+        }
+        m_plstNTPServers->Refresh();
+        SaveNtpServers();
+    }
 }
 
 void pnlSettingsTime::OnbtnNtpServerEditClick(wxCommandEvent& event)
 {
+    if(m_nSelectedServer != -1)
+    {
+        wxString sName(m_plstNTPServers->GetButtonText(m_nSelectedServer));
+        int nChannel(dlgEditName::CH_SERVER);
+        if(sName.GetChar(0) == '[')
+        {
+            sName = sName.After('[').Before(']');
+            nChannel = dlgEditName::CH_POOL;
+        }
+        dlgEditName aDlg(this, sName, nChannel);
+        if(aDlg.ShowModal() == wxID_OK)
+        {
+            if(aDlg.m_nChannels == 1)
+            {
+                m_plstNTPServers->SetButtonText(m_nSelectedServer, aDlg.m_pedtName->GetValue());
+            }
+            else
+            {
+                m_plstNTPServers->SetButtonText(m_nSelectedServer, wxString::Format("[%s]", aDlg.m_pedtName->GetValue().c_str()));
+            }
+            m_plstNTPServers->Refresh();
+            SaveNtpServers();
+        }
+    }
 }
 
 void pnlSettingsTime::OnbtnNtpServerDeleteClick(wxCommandEvent& event)
 {
+    if(m_nSelectedServer != -1)
+    {
+        m_plstNTPServers->DeleteButton(m_nSelectedServer);
+        m_pbtnNtpServerEdit->Enable(false);
+        m_pbtnNtpServerDelete->Enable(false);
+        m_nSelectedServer = -1;
+
+        SaveNtpServers();
+    }
 }
 
 void pnlSettingsTime::OnbtnNTPServerDeleteAllClick(wxCommandEvent& event)
 {
+    m_plstNTPServers->Clear();
+    m_pbtnNtpServerEdit->Enable(false);
+    m_pbtnNtpServerDelete->Enable(false);
+    m_nSelectedServer = -1;
+
+    TimeManager::Get().SetNtpServers(std::map<wxString,bool>());
+}
+
+void pnlSettingsTime::SaveNtpServers()
+{
+    std::map<wxString,bool> mServers;
+    for(size_t i = 0; i < m_plstNTPServers->GetItemCount(); i++)
+    {
+        if(m_plstNTPServers->GetButtonText(i).GetChar(0) == '[')
+        {
+            mServers.insert(std::make_pair(m_plstNTPServers->GetButtonText(i).After('[').Before(']'), true));
+        }
+        else
+        {
+            mServers.insert(std::make_pair(m_plstNTPServers->GetButtonText(i), false));
+        }
+    }
+    TimeManager::Get().SetNtpServers(mServers);
 }

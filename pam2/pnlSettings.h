@@ -20,6 +20,7 @@
 #include "pnlSettingsGenerators.h"
 #include "pnlSettingsNmos.h"
 #include "pnlSettingsOutput.h"
+#include "pnlSettingsTime.h"
 
 class SettingEvent;
 

@@ -427,7 +427,7 @@ void pnlRTCPTransmission::OnbtnCloseClick(wxCommandEvent& event)
 
 void pnlRTCPTransmission::OnRTCPTransmissionEvent(const RTCPTransmissionEvent& event)
 {
-    pml::Log(pml::LOG_TRACE) << "pnlRTCPTransmission::OnRTCPTransmissionEvent: " << event.GetFromAddress();
+    pmlLog(pml::LOG_TRACE) << "pnlRTCPTransmission::OnRTCPTransmissionEvent: " << event.GetFromAddress();
 
     wxString sSubscriber(wxString::Format("%s:%u", event.GetFromAddress().c_str(), event.GetRTCPPort()));
 
@@ -551,7 +551,7 @@ void pnlRTCPTransmission::ShowSubscriber()
     }
     else
     {
-        pml::Log(pml::LOG_TRACE) << "pnlRTCPTransmission::OnSubscriberSelected: Subscriber not found!";
+        pmlLog(pml::LOG_TRACE) << "pnlRTCPTransmission::OnSubscriberSelected: Subscriber not found!";
     }
 }
 
@@ -623,18 +623,18 @@ void pnlRTCPTransmission::StoreGraphs(const wxString& sIpAddress, subscriber& su
 
 void pnlRTCPTransmission::OnConnectionEvent(const wxCommandEvent& event)
 {
-    pml::Log() << "Subscriber: " << event.GetString() << ":" << event.GetInt() << " [" << event.GetExtraLong() << "] opened connection.";
+    pmlLog() << "Subscriber: " << event.GetString() << ":" << event.GetInt() << " [" << event.GetExtraLong() << "] opened connection.";
     AddSubscriber(wxString::Format("%s:%u", event.GetString().c_str(), event.GetExtraLong()), (unsigned int)event.GetClientData());
 }
 
 void pnlRTCPTransmission::OnDisconnectionEvent(const wxCommandEvent& event)
 {
-    pml::Log(pml::LOG_DEBUG) << "Disconnection: " << event.GetString() << ":" << event.GetInt() << " [" << event.GetExtraLong() << "]";
+    pmlLog(pml::LOG_DEBUG) << "Disconnection: " << event.GetString() << ":" << event.GetInt() << " [" << event.GetExtraLong() << "]";
     auto itSubscriber= m_mSubscribers.find(wxString::Format("%s:%u", event.GetString().c_str(), event.GetExtraLong()));
 
     if(itSubscriber != m_mSubscribers.end())
     {
-        pml::Log() << "Subscriber: " << itSubscriber->first << " connection closed.\n"
+        pmlLog() << "Subscriber: " << itSubscriber->first << " connection closed.\n"
         << "Total time: " << (wxDateTime::Now()-itSubscriber->second.dtConnection).Format("%H:%M:%S:%l") << "\n";
         if(itSubscriber->second.pStats)
         {
@@ -642,13 +642,13 @@ void pnlRTCPTransmission::OnDisconnectionEvent(const wxCommandEvent& event)
             double dKbpsAv = static_cast<double>(itSubscriber->second.pStats->GetTotalOctets())/ts.GetSeconds().ToDouble();
             dKbpsAv/=125.0;
 
-            pml::Log() << "RTCP Stats\n"
+            pmlLog() << "RTCP Stats\n"
             << "Total Packets:\t" << itSubscriber->second.pStats->GetTotalPackets() << "\n"
             << "Loast Packets:\t" << itSubscriber->second.pStats->GetTotalPacketsLost() << "\n"
             << "Average Bitrate:\t" << dKbpsAv << "kb/s";
 
         }
-        pml::Log();
+        pmlLog();
 
         if(m_sSelected == itSubscriber->first)
         {

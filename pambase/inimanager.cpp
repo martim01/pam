@@ -63,7 +63,7 @@ bool iniManager::ReadIniFile(const wxString& sFilename)
 	m_if.open(sFilename.mb_str(),ios::in);
 	if(!m_if.is_open())
 	{
-	    pml::Log(pml::LOG_ERROR) << "IniManager\tfile '" << sFilename << "' does not exist";
+	    pmlLog(pml::LOG_ERROR) << "IniManager\tfile '" << sFilename << "' does not exist";
 		return false;
 	}
 
@@ -83,7 +83,7 @@ bool iniManager::ReadIniFile(const wxString& sFilename)
 			size_t nClosePos = sLine.find("]");
 			if(nClosePos == std::string::npos)	//this is an error
             {
-                pml::Log(pml::LOG_ERROR) << "IniManager\tfile '" << sFilename << "' invalid section";
+                pmlLog(pml::LOG_ERROR) << "IniManager\tfile '" << sFilename << "' invalid section";
                 return false;
             }
 			wxString sSection = wxString::FromUTF8(sLine.substr(1,nClosePos-1).c_str());

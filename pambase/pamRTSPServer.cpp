@@ -30,75 +30,75 @@ RTSPServer::RTSPClientConnection(ourServer, clientSocket, clientAddr)
 {
     //@todo put in client address and port number
 
-    pml::Log() << "RTSPServer\t" << "New Connection: " << inet_ntoa(clientAddr.sin_addr);
+    pmlLog() << "RTSPServer\t" << "New Connection: " << inet_ntoa(clientAddr.sin_addr);
 }
 PamRTSPServer::PamRTSPClientConnection::~PamRTSPClientConnection()
 {}
 
 void PamRTSPServer::PamRTSPClientConnection::handleCmd_OPTIONS()
 {
-    pml::Log() << "RTSPServer\t" << "OPTIONS";
+    pmlLog() << "RTSPServer\t" << "OPTIONS";
     RTSPClientConnection::handleCmd_OPTIONS();
 }
 void PamRTSPServer::PamRTSPClientConnection::handleCmd_GET_PARAMETER(char const* fullRequestStr)
 {
-    pml::Log() << "RTSPServer\t" << "GET_PARAMETER: " << fullRequestStr;
+    pmlLog() << "RTSPServer\t" << "GET_PARAMETER: " << fullRequestStr;
     RTSPClientConnection::handleCmd_GET_PARAMETER(fullRequestStr);
 }
 
 
 void PamRTSPServer::PamRTSPClientConnection::handleCmd_SET_PARAMETER(char const* fullRequestStr)
 {
-    pml::Log() << "RTSPServer\t" << "SET_PARAMETER: " << fullRequestStr;
+    pmlLog() << "RTSPServer\t" << "SET_PARAMETER: " << fullRequestStr;
     RTSPClientConnection::handleCmd_SET_PARAMETER(fullRequestStr); // when operating on the entire server
 }
 
 void PamRTSPServer::PamRTSPClientConnection::handleCmd_DESCRIBE(char const* urlPreSuffix, char const* urlSuffix, char const* fullRequestStr)
 {
-    pml::Log() << "RTSPServer\t" << "DESCRIBE: " << fullRequestStr;
+    pmlLog() << "RTSPServer\t" << "DESCRIBE: " << fullRequestStr;
     RTSPClientConnection::handleCmd_DESCRIBE(urlPreSuffix, urlSuffix, fullRequestStr);
 }
 
 void PamRTSPServer::PamRTSPClientConnection::handleCmd_REGISTER(char const* cmd, char const* url, char const* urlSuffix, char const* fullRequestStr, Boolean reuseConnection, Boolean deliverViaTCP, char const* proxyURLSuffix)
 {
-    pml::Log() << "RTSPServer\t" << "REGISTER: " << fullRequestStr;
+    pmlLog() << "RTSPServer\t" << "REGISTER: " << fullRequestStr;
     RTSPClientConnection::handleCmd_REGISTER(cmd, url, urlSuffix, fullRequestStr, reuseConnection, deliverViaTCP, proxyURLSuffix);
 }
 
 void PamRTSPServer::PamRTSPClientConnection::handleCmd_bad()
 {
-    pml::Log(pml::LOG_WARN) << "RTSPServer\t" << "Bad command";
+    pmlLog(pml::LOG_WARN) << "RTSPServer\t" << "Bad command";
     RTSPClientConnection::handleCmd_bad();
 }
 
 void PamRTSPServer::PamRTSPClientConnection::handleCmd_notSupported()
 {
-    pml::Log(pml::LOG_WARN) << "RTSPServer\t" << "Command not supported ";
+    pmlLog(pml::LOG_WARN) << "RTSPServer\t" << "Command not supported ";
     RTSPClientConnection::handleCmd_notSupported();
 }
 
 void PamRTSPServer::PamRTSPClientConnection::handleCmd_notFound()
 {
-    pml::Log(pml::LOG_WARN) << "RTSPServer\t" << "Stream not found ";
+    pmlLog(pml::LOG_WARN) << "RTSPServer\t" << "Stream not found ";
     RTSPClientConnection::handleCmd_notFound();
 }
 
 void PamRTSPServer::PamRTSPClientConnection::handleCmd_sessionNotFound()
 {
-    pml::Log(pml::LOG_WARN) << "RTSPServer\t" << "Session not found ";
+    pmlLog(pml::LOG_WARN) << "RTSPServer\t" << "Session not found ";
     RTSPClientConnection::handleCmd_sessionNotFound();
 }
 
 void PamRTSPServer::PamRTSPClientConnection::handleCmd_unsupportedTransport()
 {
-    pml::Log(pml::LOG_WARN) << "RTSPServer\t" << "Unsupported transport ";
+    pmlLog(pml::LOG_WARN) << "RTSPServer\t" << "Unsupported transport ";
     RTSPClientConnection::handleCmd_unsupportedTransport();
 }
 
 PamRTSPServer::PamRTSPClientSession::PamRTSPClientSession(RTSPServer& ourServer, u_int32_t sessionId) :
  RTSPClientSession(ourServer, sessionId)
 {
-    pml::Log() << "RTSPServer\t" << "New Session";
+    pmlLog() << "RTSPServer\t" << "New Session";
 }
 
 PamRTSPServer::PamRTSPClientSession::~PamRTSPClientSession()
@@ -107,13 +107,13 @@ PamRTSPServer::PamRTSPClientSession::~PamRTSPClientSession()
 
 void PamRTSPServer::PamRTSPClientSession::handleCmd_SETUP(RTSPClientConnection* ourClientConnection, char const* urlPreSuffix, char const* urlSuffix, char const* fullRequestStr)
 {
-    pml::Log() << "RTSPServer\t" << "Session\n" << fullRequestStr;
+    pmlLog() << "RTSPServer\t" << "Session\n" << fullRequestStr;
     RTSPClientSession::handleCmd_SETUP(ourClientConnection, urlPreSuffix, urlSuffix, fullRequestStr);
 }
 
 void PamRTSPServer::PamRTSPClientSession::handleCmd_withinSession(RTSPClientConnection* ourClientConnection, char const* cmdName, char const* urlPreSuffix, char const* urlSuffix, char const* fullRequestStr)
 {
-    pml::Log() << "RTSPServer\t" << "Session\n" << fullRequestStr;
+    pmlLog() << "RTSPServer\t" << "Session\n" << fullRequestStr;
     RTSPClientSession::handleCmd_withinSession(ourClientConnection, cmdName, urlPreSuffix, urlSuffix, fullRequestStr);
 }
 

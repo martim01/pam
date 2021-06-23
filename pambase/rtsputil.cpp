@@ -39,7 +39,7 @@ void continueAfterOPTIONS(RTSPClient* rtspClient, int resultCode, char* resultSt
         UsageEnvironment& env = rtspClient->envir(); // alias
 
         std::string sOptions(resultString);
-        pml::Log() << "RTP Client\tRTSP Server supports: "<< resultString;
+        pmlLog() << "RTP Client\tRTSP Server supports: "<< resultString;
         delete[] resultString;
 
 
@@ -50,13 +50,13 @@ void continueAfterOPTIONS(RTSPClient* rtspClient, int resultCode, char* resultSt
         }
         else
         {
-            pml::Log()  << "RTP Client\tPLAY or SETUP not supported, use SDP only.";
+            pmlLog()  << "RTP Client\tPLAY or SETUP not supported, use SDP only.";
             rtspClient->sendDescribeCommand(saveAfterDESCRIBE);
         }
     }
     else
     {
-        pml::Log(pml::LOG_ERROR) << "RTP Client\tFailed to get option command for client";
+        pmlLog(pml::LOG_ERROR) << "RTP Client\tFailed to get option command for client";
     }
 }
 
@@ -69,7 +69,7 @@ void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultS
 
     if (resultCode != 0)
     {
-        pml::Log(pml::LOG_ERROR) << "RTP Client\tFailed to get an SDP description: " << resultString;
+        pmlLog(pml::LOG_ERROR) << "RTP Client\tFailed to get an SDP description: " << resultString;
         delete[] resultString;
         bSuccess = false;
     }
@@ -82,12 +82,12 @@ void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultS
         delete[] sdpDescription; // because we don't need it anymore
         if (scs.session == NULL)
         {
-            pml::Log(pml::LOG_ERROR)  << "RTP Client\tFailed to create a MediaSession object from the SDP description: " << env.getResultMsg();
+            pmlLog(pml::LOG_ERROR)  << "RTP Client\tFailed to create a MediaSession object from the SDP description: " << env.getResultMsg();
             bSuccess = false;
         }
         else if (!scs.session->hasSubsessions())
         {
-            pml::Log(pml::LOG_WARN)  << "RTP Client\tThis session has no media subsessions (i.e., no \"m=\" lines)";
+            pmlLog(pml::LOG_WARN)  << "RTP Client\tThis session has no media subsessions (i.e., no \"m=\" lines)";
             bSuccess = false;
         }
         else
@@ -99,7 +99,7 @@ void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultS
     if(!bSuccess)
     {
         // An unrecoverable error occurred with this stream.
-        pml::Log(pml::LOG_TRACE) << "continueAfterDescribe\t" << "Shutdown stream";
+        pmlLog(pml::LOG_TRACE) << "continueAfterDescribe\t" << "Shutdown stream";
         shutdownStream(rtspClient);
     }
 }
@@ -115,7 +115,7 @@ void saveAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultStrin
     }
     else
     {
-        pml::Log(pml::LOG_TRACE) << "saveAfterDescribe\t" << "Shutdown stream";
+        pmlLog(pml::LOG_TRACE) << "saveAfterDescribe\t" << "Shutdown stream";
         shutdownStream(rtspClient);
         rtspClient = nullptr;
     }
@@ -135,21 +135,21 @@ void setupNextSubsession(RTSPClient* rtspClient)
     {
         if (!scs.subsession->initiate())
         {
-            pml::Log(pml::LOG_ERROR)  << "RTP Client\tFailed to initiate the \"" << *scs.subsession << "\" subsession: " << env.getResultMsg();;
+            pmlLog(pml::LOG_ERROR)  << "RTP Client\tFailed to initiate the \"" << *scs.subsession << "\" subsession: " << env.getResultMsg();;
             setupNextSubsession(rtspClient); // give up on this subsession; go to the next one
         }
         else
         {
-            pml::Log(pml::LOG_DEBUG) << "RTP Client\tInitiated the \"" <<scs.subsession->sessionId()<<  "\" subsession (";
+            pmlLog(pml::LOG_DEBUG) << "RTP Client\tInitiated the \"" <<scs.subsession->sessionId()<<  "\" subsession (";
             if (scs.subsession->rtcpIsMuxed())
             {
-                pml::Log(pml::LOG_DEBUG) << "client port " << scs.subsession->clientPortNum();
+                pmlLog(pml::LOG_DEBUG) << "client port " << scs.subsession->clientPortNum();
             }
             else
             {
-                pml::Log(pml::LOG_DEBUG) << "client ports " << scs.subsession->clientPortNum() << "-" << scs.subsession->clientPortNum()+1;
+                pmlLog(pml::LOG_DEBUG) << "client ports " << scs.subsession->clientPortNum() << "-" << scs.subsession->clientPortNum()+1;
             }
-            pml::Log(pml::LOG_DEBUG) << "  SubsessionId: " << scs.subsession->sessionId();
+            pmlLog(pml::LOG_DEBUG) << "  SubsessionId: " << scs.subsession->sessionId();
 
 
             // Continue setting up this subsession, by sending a RTSP "SETUP" command:
@@ -173,7 +173,7 @@ void setupNextSubsession(RTSPClient* rtspClient)
     }
     else
     {
-        pml::Log(pml::LOG_ERROR) << "RTP Client\tFailed to create any subsessions";
+        pmlLog(pml::LOG_ERROR) << "RTP Client\tFailed to create any subsessions";
 
     }
 }
@@ -187,20 +187,20 @@ void continueAfterSETUP(RTSPClient* rtspClient, int resultCode, char* resultStri
 
         if (resultCode != 0)
         {
-            pml::Log(pml::LOG_ERROR) << "RTP Client\tFailed to set up the \"" << *scs.subsession << "\" subsession: " << resultString;
+            pmlLog(pml::LOG_ERROR) << "RTP Client\tFailed to set up the \"" << *scs.subsession << "\" subsession: " << resultString;
             break;
         }
 
-        pml::Log(pml::LOG_DEBUG) << "RTP Client\tSet up the \"" << *scs.subsession << "\" subsession (";
+        pmlLog(pml::LOG_DEBUG) << "RTP Client\tSet up the \"" << *scs.subsession << "\" subsession (";
         if (scs.subsession->rtcpIsMuxed())
         {
-            pml::Log(pml::LOG_DEBUG) << "client port " << scs.subsession->clientPortNum();
+            pmlLog(pml::LOG_DEBUG) << "client port " << scs.subsession->clientPortNum();
         }
         else
         {
-            pml::Log(pml::LOG_DEBUG) << "client ports " << scs.subsession->clientPortNum() << "-" << scs.subsession->clientPortNum()+1;
+            pmlLog(pml::LOG_DEBUG) << "client ports " << scs.subsession->clientPortNum() << "-" << scs.subsession->clientPortNum()+1;
         }
-        pml::Log(pml::LOG_DEBUG) << ")";
+        pmlLog(pml::LOG_DEBUG) << ")";
 
         // Having successfully setup the subsession, create a data sink for it, and call "startPlaying()" on it.
         // (This will prepare the data sink to receive data; the actual flow of data from the client won't start happening until later,
@@ -211,12 +211,12 @@ void continueAfterSETUP(RTSPClient* rtspClient, int resultCode, char* resultStri
         // perhaps use your own custom "MediaSink" subclass instead
         if (scs.subsession->sink == NULL)
         {
-            pml::Log(pml::LOG_ERROR) << "RTP Client\tFailed to create a data sink for the \"" << *scs.subsession
+            pmlLog(pml::LOG_ERROR) << "RTP Client\tFailed to create a data sink for the \"" << *scs.subsession
                 << "\" subsession: " << env.getResultMsg();
             break;
         }
 
-        pml::Log(pml::LOG_DEBUG) << "RTP Client\tCreated a data sink for the \"" << *scs.subsession << "\" subsession";
+        pmlLog(pml::LOG_DEBUG) << "RTP Client\tCreated a data sink for the \"" << *scs.subsession << "\" subsession";
         scs.subsession->miscPtr = rtspClient; // a hack to let subsession handler functions get the "RTSPClient" from the subsession
         scs.subsession->sink->startPlaying(*(scs.subsession->readSource()), subsessionAfterPlaying, scs.subsession);
 
@@ -254,11 +254,11 @@ void continueAfterPLAY(RTSPClient* rtspClient, int resultCode, char* resultStrin
 
     if (resultCode != 0)
     {
-        pml::Log(pml::LOG_ERROR) << "RTP Client\tFailed to start playing session: " << resultString;
+        pmlLog(pml::LOG_ERROR) << "RTP Client\tFailed to start playing session: " << resultString;
     }
     else
     {
-        pml::Log(pml::LOG_DEBUG) << "RTP Client\tContinue after play: " << resultString;
+        pmlLog(pml::LOG_DEBUG) << "RTP Client\tContinue after play: " << resultString;
 
         // Set a timer to be handled at the end of the stream's expected duration (if the stream does not already signal its end
         // using a RTCP "BYE").  This is optional.  If, instead, you want to keep the stream active - e.g., so you can later
@@ -281,7 +281,7 @@ void continueAfterPLAY(RTSPClient* rtspClient, int resultCode, char* resultStrin
     if (!success)
     {
         // An unrecoverable error occurred with this stream.
-        pml::Log(pml::LOG_TRACE) <<  "continueAfterPlay\t" << "Shutdown stream";
+        pmlLog(pml::LOG_TRACE) <<  "continueAfterPlay\t" << "Shutdown stream";
         shutdownStream(rtspClient);
         rtspClient = nullptr;
     }
@@ -312,7 +312,7 @@ void subsessionAfterPlaying(void* clientData)
     }
 
     // All subsessions' streams have now been closed, so shutdown the client:
-    pml::Log(pml::LOG_TRACE) <<  "subsessionAfterPlay\t" << "Shutdown stream";
+    pmlLog(pml::LOG_TRACE) <<  "subsessionAfterPlay\t" << "Shutdown stream";
     shutdownStream(rtspClient);
     rtspClient = nullptr;
 }
@@ -323,7 +323,7 @@ void subsessionByeHandler(void* clientData)
     RTSPClient* rtspClient = (RTSPClient*)subsession->miscPtr;
     UsageEnvironment& env = rtspClient->envir(); // alias
 
-    pml::Log(pml::LOG_DEBUG) << "RTP Client\tReceived RTCP \"BYE\" on \"" << *subsession << "\" subsession";
+    pmlLog(pml::LOG_DEBUG) << "RTP Client\tReceived RTCP \"BYE\" on \"" << *subsession << "\" subsession";
 
     // Now act as if the subsession had closed:
     subsessionAfterPlaying(subsession);
@@ -337,7 +337,7 @@ void streamTimerHandler(void* clientData)
     scs.streamTimerTask = NULL;
 
     // Shut down the stream:
-    pml::Log(pml::LOG_TRACE) <<  "streamTimerHandler\t" << "Shutdown stream";
+    pmlLog(pml::LOG_TRACE) <<  "streamTimerHandler\t" << "Shutdown stream";
     shutdownStream(rtspClient);
     rtspClient = nullptr;
 }
@@ -349,7 +349,7 @@ void shutdownStream(RTSPClient* rtspClient, int exitCode)
         UsageEnvironment& env = rtspClient->envir(); // alias
         StreamClientState& scs = ((ourRTSPClient*)rtspClient)->scs; // alias
 
-        pml::Log(pml::LOG_DEBUG) << "RTP Client\tshutdownStream Entry";
+        pmlLog(pml::LOG_DEBUG) << "RTP Client\tshutdownStream Entry";
 
         // First, check whether any subsessions have still to be closed:
         if (scs.session != NULL)
@@ -376,14 +376,14 @@ void shutdownStream(RTSPClient* rtspClient, int exitCode)
 
             if (someSubsessionsWereActive)
             {
-                pml::Log(pml::LOG_INFO) << "RTP Client\tsome sessions active";
+                pmlLog(pml::LOG_INFO) << "RTP Client\tsome sessions active";
                 // Send a RTSP "TEARDOWN" command, to tell the server to shutdown the stream.
                 // Don't bother handling the response to the "TEARDOWN".
                 rtspClient->sendTeardownCommand(*scs.session, NULL);
             }
         }
 
-        pml::Log(pml::LOG_INFO) << "RTP Client\tClosing the stream.";
+        pmlLog(pml::LOG_INFO) << "RTP Client\tClosing the stream.";
 
 
 
@@ -400,7 +400,7 @@ void shutdownStream(RTSPClient* rtspClient, int exitCode)
         }
         Medium::close(rtspClient);
 
-        pml::Log(pml::LOG_INFO) << "RTP Client\tClosed the stream.";
+        pmlLog(pml::LOG_INFO) << "RTP Client\tClosed the stream.";
     }
 }
 
@@ -408,7 +408,7 @@ void shutdownStream(RTSPClient* rtspClient, int exitCode)
 
 void beginQOSMeasurement(UsageEnvironment& env, MediaSession* session, RtpThread* pThread)
 {
-    pml::Log(pml::LOG_INFO) << "RTP Client\tBegin QOS";
+    pmlLog(pml::LOG_INFO) << "RTP Client\tBegin QOS";
 
     // Set up a measurement record for each active subsession:
     struct timeval startTime;

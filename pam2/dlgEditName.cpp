@@ -54,7 +54,7 @@ dlgEditName::dlgEditName(wxWindow* parent,wxString sName, long nChannel, wxWindo
 	m_pedtName->SetValue(sName);
 	m_pedtName->SetFocus();
 
-	if(nChannel != -1)
+	if(nChannel > -1)
 	{
 	    m_plstChannels->AddButton(wxT("Left"));
         m_plstChannels->AddButton(wxT("Right"));
@@ -62,6 +62,14 @@ dlgEditName::dlgEditName(wxWindow* parent,wxString sName, long nChannel, wxWindo
         m_ppnlChannel->Show();
         m_plstChannels->SelectButton(nChannel-1, true);
 	}
+	else if(nChannel == CH_SERVER || nChannel == CH_POOL)
+    {
+        m_plstChannels->AddButton("Server");
+        m_plstChannels->AddButton("Pool");
+        m_ppnlChannel->Show();
+        m_plstChannels->SelectButton(nChannel-CH_SERVER);
+        m_pedtName->SetValidation(wmEdit::wmEdit::ASCII);
+    }
 	m_pbtnSave->Enable(m_pedtName->GetValue().empty()==false);
 
 }

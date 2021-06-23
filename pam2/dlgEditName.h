@@ -28,6 +28,8 @@ class dlgEditName: public wxDialog
 
 		unsigned long m_nChannels;
 
+		enum {CH_SERVER=-3, CH_POOL=-2, CH_NONE=-1, CH_LEFT=1, CH_RIGHT=2};
+
 	protected:
 
 		//(*Identifiers(dlgEditName)

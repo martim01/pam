@@ -637,18 +637,18 @@ void pnlRTP::ImportSources(const wxString& sFileName)
                     AoipSourceManager::Get().AddSource(itData->first, itData->second);
                 }
             }
-            pml::Log() << "AoIP\tImport AoIP: Read '" << sFileName << "'";
+            pmlLog() << "AoIP\tImport AoIP: Read '" << sFileName << "'";
         }
         else
         {
-            pml::Log(pml::LOG_ERROR) << "AoIP\tImport AoIP: Reading '" << sFileName << "' invalid file";
+            pmlLog(pml::LOG_ERROR) << "AoIP\tImport AoIP: Reading '" << sFileName << "' invalid file";
             m_plblImportProgress->SetLabel(wxString::Format("Reading '%s' invalid file", sFileName.c_str()));
             m_plblImportProgress->Update();
         }
     }
     else
     {
-        pml::Log(pml::LOG_ERROR) << "AoIP\tImport AoIP: Reading '" << sFileName << "' failed";
+        pmlLog(pml::LOG_ERROR) << "AoIP\tImport AoIP: Reading '" << sFileName << "' failed";
         m_plblImportProgress->SetLabel(wxString::Format("Reading '%s' failed", sFileName.c_str()));
         m_plblImportProgress->Update();
     }

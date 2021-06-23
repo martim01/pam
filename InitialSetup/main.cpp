@@ -15,12 +15,12 @@ static const std::string STR_LOCAL = "127.0.1.1";
 
 int SetHostname(const std::string& sHostname)
 {
-    pml::Log() << "Set hostname to " << sHostname;
+    pmlLog() << "Set hostname to " << sHostname;
 
     char c[255];
     if(gethostname(&c[0], 255) != 0)
     {
-        pml::Log(pml::LOG_ERROR) << "Unable to get current hostname " << strerror(errno);
+        pmlLog(pml::LOG_ERROR) << "Unable to get current hostname " << strerror(errno);
         return -1;
     }
     std::string sCurrentHost(c);

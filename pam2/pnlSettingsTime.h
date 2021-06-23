@@ -12,7 +12,7 @@ class pnlSettingsTime: public wxPanel
 {
 	public:
 
-		pnlSettingsTime(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+		pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size, long nStyle, const wxString& sId);
 		virtual ~pnlSettingsTime();
 
 		//(*Declarations(pnlSettingsTime)
@@ -54,6 +54,8 @@ class pnlSettingsTime: public wxPanel
 		void OnbtnNTPServerDeleteAllClick(wxCommandEvent& event);
 		//*)
 
+		void SaveNtpServers();
+		int m_nSelectedServer;
 		DECLARE_EVENT_TABLE()
 };
 
