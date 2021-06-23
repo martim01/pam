@@ -3,8 +3,12 @@
 
 //(*Headers(pnlSettingsTime)
 #include "wmbutton.h"
+#include "wmedit.h"
+#include "wmkeyboard.h"
 #include "wmlabel.h"
 #include "wmlist.h"
+#include "wmswitcherpanel.h"
+#include <wx/notebook.h>
 #include <wx/panel.h>
 //*)
 
@@ -23,8 +27,16 @@ class pnlSettingsTime: public wxPanel
 		wmButton* m_pbtnNtpServerDelete;
 		wmButton* m_pbtnNtpServerEdit;
 		wmButton* m_pbtnPTP;
-		wmLabel* m_pLbl3;
+		wmEdit* m_pedtDomain;
+		wmKeyboard* m_pKbd1;
+		wmLabel* m_pLbl1;
+		wmLabel* m_plblListTitle;
+		wmList* m_plstDate;
 		wmList* m_plstNTPServers;
+		wmSwitcherPanel* m_pswpSettings;
+		wxPanel* m_ppnlLTCS;
+		wxPanel* m_ppnlNTP;
+		wxPanel* m_ppnlPTP;
 		//*)
 
 	protected:
@@ -33,12 +45,20 @@ class pnlSettingsTime: public wxPanel
 		static const long ID_M_PBTN22;
 		static const long ID_M_PBTN1;
 		static const long ID_M_PBTN2;
-		static const long ID_M_PLBL3;
 		static const long ID_M_PLST1;
 		static const long ID_M_PBTN3;
 		static const long ID_M_PBTN4;
 		static const long ID_M_PBTN5;
 		static const long ID_M_PBTN6;
+		static const long ID_PANEL1;
+		static const long ID_M_PLBL8;
+		static const long ID_M_PEDT1;
+		static const long ID_M_PKBD1;
+		static const long ID_PANEL2;
+		static const long ID_M_PLBL13;
+		static const long ID_M_PLST2;
+		static const long ID_PANEL3;
+		static const long ID_M_PSWP1;
 		//*)
 
 	private:
@@ -52,6 +72,10 @@ class pnlSettingsTime: public wxPanel
 		void OnbtnNtpServerEditClick(wxCommandEvent& event);
 		void OnbtnNtpServerDeleteClick(wxCommandEvent& event);
 		void OnbtnNTPServerDeleteAllClick(wxCommandEvent& event);
+		void Onm_ppnlPTPPaint(wxPaintEvent& event);
+		void Onm_pedtDomainText(wxCommandEvent& event);
+		void OnedtDomainTextEnter(wxCommandEvent& event);
+		void OnlstDateSelected(wxCommandEvent& event);
 		//*)
 
 		void SaveNtpServers();

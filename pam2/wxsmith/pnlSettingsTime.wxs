@@ -44,64 +44,131 @@
 			<style>wmButton::STYLE_SELECT</style>
 			<handler function="OnbtnNTPClick" entry="EVT_BUTTON" />
 		</object>
-		<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
-			<label>NTP Servers</label>
+		<object class="wmSwitcherPanel" name="ID_M_PSWP1" variable="m_pswpSettings" member="yes">
+			<pagename>Button</pagename>
 			<pos>0,110</pos>
-			<size>600,30</size>
-			<fg>#FFFFFF</fg>
-			<bg>#004000</bg>
-			<font>
-				<size>10</size>
-				<style>normal</style>
-				<weight>bold</weight>
-				<underlined>0</underlined>
-				<family>swiss</family>
-				<face>Arial</face>
-			</font>
-		</object>
-		<object class="wmList" name="ID_M_PLST1" variable="m_plstNTPServers" member="yes">
-			<scrolling>None</scrolling>
-			<button_gap>5,5</button_gap>
-			<button_size>-1,40</button_size>
-			<columns>3</columns>
-			<button_selected>#008000</button_selected>
-			<button_disabled>#808080</button_disabled>
-			<items />
-			<pos>0,140</pos>
-			<size>600,250</size>
-			<bg>#000000</bg>
-			<style>wmList::STYLE_SELECT</style>
-			<handler function="OnlstNTPServersSelected" entry="EVT_LIST_SELECTED" />
-		</object>
-		<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnNtpServerAdd" member="yes">
-			<label>Add Server</label>
-			<button_disabled>#808080</button_disabled>
-			<pos>70,400</pos>
-			<size>100,40</size>
-			<handler function="OnbtnNtpServerAddClick" entry="EVT_BUTTON" />
-		</object>
-		<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnNtpServerEdit" member="yes">
-			<label>Edit Server</label>
-			<button_disabled>#808080</button_disabled>
-			<pos>180,400</pos>
-			<size>100,40</size>
-			<enabled>0</enabled>
-			<handler function="OnbtnNtpServerEditClick" entry="EVT_BUTTON" />
-		</object>
-		<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnNtpServerDelete" member="yes">
-			<label>Delete Server</label>
-			<button_disabled>#808080</button_disabled>
-			<pos>290,400</pos>
-			<size>100,40</size>
-			<enabled>0</enabled>
-			<handler function="OnbtnNtpServerDeleteClick" entry="EVT_BUTTON" />
-		</object>
-		<object class="wmButton" name="ID_M_PBTN6" variable="m_pbtnNTPServerDeleteAll" member="yes">
-			<label>Delete All</label>
-			<button_disabled>#808080</button_disabled>
-			<pos>400,400</pos>
-			<size>100,40</size>
-			<handler function="OnbtnNTPServerDeleteAllClick" entry="EVT_BUTTON" />
+			<size>600,330</size>
+			<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL1" variable="m_ppnlNTP" member="yes">
+					<bg>#000000</bg>
+					<object class="wmList" name="ID_M_PLST1" variable="m_plstNTPServers" member="yes">
+						<scrolling>None</scrolling>
+						<button_gap>5,5</button_gap>
+						<button_size>-1,40</button_size>
+						<columns>3</columns>
+						<button_selected>#008000</button_selected>
+						<button_disabled>#808080</button_disabled>
+						<items />
+						<pos>0,0</pos>
+						<size>600,250</size>
+						<bg>#000000</bg>
+						<style>wmList::STYLE_SELECT</style>
+						<handler function="OnlstNTPServersSelected" entry="EVT_LIST_SELECTED" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnNtpServerAdd" member="yes">
+						<label>Add Server</label>
+						<button_disabled>#808080</button_disabled>
+						<pos>70,250</pos>
+						<size>100,40</size>
+						<handler function="OnbtnNtpServerAddClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnNtpServerEdit" member="yes">
+						<label>Edit Server</label>
+						<button_disabled>#808080</button_disabled>
+						<pos>180,250</pos>
+						<size>100,40</size>
+						<enabled>0</enabled>
+						<handler function="OnbtnNtpServerEditClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnNtpServerDelete" member="yes">
+						<label>Delete Server</label>
+						<button_disabled>#808080</button_disabled>
+						<pos>290,250</pos>
+						<size>100,40</size>
+						<enabled>0</enabled>
+						<handler function="OnbtnNtpServerDeleteClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN6" variable="m_pbtnNTPServerDeleteAll" member="yes">
+						<label>Delete All</label>
+						<button_disabled>#808080</button_disabled>
+						<pos>400,250</pos>
+						<size>100,40</size>
+						<handler function="OnbtnNTPServerDeleteAllClick" entry="EVT_BUTTON" />
+					</object>
+				</object>
+				<label>NTP Servers</label>
+			</object>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL2" variable="m_ppnlPTP" member="yes">
+					<bg>#000000</bg>
+					<object class="wmLabel" name="ID_M_PLBL8" variable="m_pLbl1" member="yes">
+						<label>Domain:</label>
+						<pos>10,20</pos>
+						<size>100,25</size>
+						<fg>#FFFFFF</fg>
+						<bg>#004000</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Arial</face>
+						</font>
+					</object>
+					<object class="wmEdit" name="ID_M_PEDT1" variable="m_pedtDomain" member="yes">
+						<validation>Integer</validation>
+						<border>uiRect::BORDER_DOWN</border>
+						<border_focused>uiRect::BORDER_DOWN</border_focused>
+						<pos>110,20</pos>
+						<bg>#FFFFFF</bg>
+						<handler function="Onm_pedtDomainText" entry="EVT_TEXT" />
+						<handler function="OnedtDomainTextEnter" entry="EVT_TEXT_ENTER" />
+					</object>
+					<object class="wmKeyboard" name="ID_M_PKBD1" variable="m_pKbd1" member="yes">
+						<type>NumPad</type>
+						<pos>10,60</pos>
+						<size>288,208</size>
+						<fg>#FFFFFF</fg>
+					</object>
+				</object>
+				<label>PTP Domain</label>
+			</object>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL3" variable="m_ppnlLTCS" member="yes">
+					<bg>#000000</bg>
+					<object class="wmLabel" name="ID_M_PLBL13" variable="m_plblListTitle" member="yes">
+						<label>Format:</label>
+						<pos>0,10</pos>
+						<size>200,44</size>
+						<fg>#FFFFFF</fg>
+						<bg>#000000</bg>
+						<font>
+							<size>22</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Courier New</face>
+						</font>
+					</object>
+					<object class="wmList" name="ID_M_PLST2" variable="m_plstDate" member="yes">
+						<scrolling>None</scrolling>
+						<button_gap>3,1</button_gap>
+						<columns>5</columns>
+						<button>#004000</button>
+						<button_selected>#FF8000</button_selected>
+						<items />
+						<pos>200,10</pos>
+						<size>400,44</size>
+						<bg>#000000</bg>
+						<style>wmList::STYLE_SELECT</style>
+						<handler function="OnlstDateSelected" entry="EVT_LIST_SELECTED" />
+					</object>
+				</object>
+				<label>LTC Settings</label>
+			</object>
 		</object>
 	</object>
 </wxsmith>
