@@ -56,8 +56,9 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_pswpSettings->SetPageNameStyle(3);
 	m_ppnlNTP = new wxPanel(m_pswpSettings, ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL1"));
 	m_ppnlNTP->SetBackgroundColour(wxColour(0,0,0));
-	m_plstNTPServers = new wmList(m_ppnlNTP, ID_M_PLST1, wxPoint(0,0), wxSize(600,250), wmList::STYLE_SELECT, 0, wxSize(-1,40), 3, wxSize(5,5));
+	m_plstNTPServers = new wmList(m_ppnlNTP, ID_M_PLST1, wxPoint(0,10), wxSize(600,240), wmList::STYLE_SELECT, 0, wxSize(-1,40), 3, wxSize(5,5));
 	m_plstNTPServers->SetBackgroundColour(wxColour(0,0,0));
+	m_plstNTPServers->SetButtonColour(wxColour(wxT("#005555")));
 	m_plstNTPServers->SetSelectedButtonColour(wxColour(wxT("#008000")));
 	m_plstNTPServers->SetDisabledColour(wxColour(wxT("#808080")));
 	m_pbtnNtpServerAdd = new wmButton(m_ppnlNTP, ID_M_PBTN3, _("Add Server"), wxPoint(70,250), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN3"));
@@ -81,9 +82,10 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_pLbl1->SetFont(m_pLbl1Font);
 	m_pedtDomain = new wmEdit(m_ppnlPTP, ID_M_PEDT1, wxEmptyString, wxPoint(110,20), wxDefaultSize, 0, wxDefaultValidator, _T("ID_M_PEDT1"));
 	m_pedtDomain->SetValidation(4);
+	m_pedtDomain->SetFocus();
 	m_pedtDomain->SetBackgroundColour(wxColour(255,255,255));
 	m_pedtDomain->SetBorderStyle(1,1);
-	m_pKbd1 = new wmKeyboard(m_ppnlPTP, ID_M_PKBD1, wxPoint(10,60), wxSize(288,208), 1, 0);
+	m_pKbd1 = new wmKeyboard(m_ppnlPTP, ID_M_PKBD1, wxPoint(10,60), wxSize(288,208), 5, 0);
 	m_pKbd1->SetForegroundColour(wxColour(255,255,255));
 	m_ppnlLTCS = new wxPanel(m_pswpSettings, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
 	m_ppnlLTCS->SetBackgroundColour(wxColour(0,0,0));

@@ -57,11 +57,12 @@
 						<button_gap>5,5</button_gap>
 						<button_size>-1,40</button_size>
 						<columns>3</columns>
+						<button>#005555</button>
 						<button_selected>#008000</button_selected>
 						<button_disabled>#808080</button_disabled>
 						<items />
-						<pos>0,0</pos>
-						<size>600,250</size>
+						<pos>0,10</pos>
+						<size>600,240</size>
 						<bg>#000000</bg>
 						<style>wmList::STYLE_SELECT</style>
 						<handler function="OnlstNTPServersSelected" entry="EVT_LIST_SELECTED" />
@@ -122,12 +123,13 @@
 						<border>uiRect::BORDER_DOWN</border>
 						<border_focused>uiRect::BORDER_DOWN</border_focused>
 						<pos>110,20</pos>
+						<focused>1</focused>
 						<bg>#FFFFFF</bg>
 						<handler function="Onm_pedtDomainText" entry="EVT_TEXT" />
 						<handler function="OnedtDomainTextEnter" entry="EVT_TEXT_ENTER" />
 					</object>
 					<object class="wmKeyboard" name="ID_M_PKBD1" variable="m_pKbd1" member="yes">
-						<type>NumPad</type>
+						<type>Calc</type>
 						<pos>10,60</pos>
 						<size>288,208</size>
 						<fg>#FFFFFF</fg>
