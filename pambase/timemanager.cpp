@@ -25,7 +25,9 @@ TimeManager::TimeManager() :
 
     Settings::Get().AddHandler("Time", "NTP", this);
     Settings::Get().AddHandler("Time", "PTP", this);
-    Settings::Get().AddHandler("Time", "LTC", this);
+    Settings::Get().AddHandler("Time", "PTP", this);
+    Settings::Get().AddHandler("Time", "PTP_Domain", this);
+    Settings::Get().AddHandler("Time", "LTC_Format", this);
 
     Bind(wxEVT_SETTING_CHANGED, &TimeManager::OnSettingChanged, this);
 
@@ -33,6 +35,7 @@ TimeManager::TimeManager() :
     EnableSyncToLtc(Settings::Get().Read("Time", "LTC", 0) == 1);
     EnableSyncToPtp(Settings::Get().Read("Time", "PTP", 0) == 1);
 
+    m_nPtpDomain = Settings::Get().Read("Time", "LTC_Format", 0);
 }
 
 TimeManager::~TimeManager()
@@ -53,6 +56,14 @@ void TimeManager::OnSettingChanged(SettingEvent& event)
     else if(event.GetKey() == "LTC")
     {
         EnableSyncToLtc(event.GetValue(false));
+    }
+    else if(event.GetKey() == "PTP_Domain")
+    {
+        m_nPtpDomain = event.GetValue((long)0);
+    }
+    else if(event.GetKey() == "LTC_Format")
+    {
+        //@todo
     }
 }
 

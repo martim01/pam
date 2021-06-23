@@ -43,15 +43,15 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_pbtnPTP = new wmButton(this, ID_M_PBTN22, _("PTP"), wxPoint(10,10), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN22"));
 	m_pbtnPTP->SetForegroundColour(wxColour(255,255,255));
 	m_pbtnPTP->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnPTP->SetToggleLook(true, wxT("Off"), wxT("Sync"), 50);
+	m_pbtnPTP->SetToggle(true, wxT("Off"), wxT("Sync"), 50);
 	m_pbtnLTC = new wmButton(this, ID_M_PBTN1, _("LTC"), wxPoint(240,10), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnLTC->SetForegroundColour(wxColour(255,255,255));
 	m_pbtnLTC->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnLTC->SetToggleLook(true, wxT("Off"), wxT("Sync"), 50);
+	m_pbtnLTC->SetToggle(true, wxT("Off"), wxT("Sync"), 50);
 	m_pbtnNTP = new wmButton(this, ID_M_PBTN2, _("NTP"), wxPoint(10,60), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN2"));
 	m_pbtnNTP->SetForegroundColour(wxColour(255,255,255));
 	m_pbtnNTP->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnNTP->SetToggleLook(true, wxT("Off"), wxT("Sync"), 50);
+	m_pbtnNTP->SetToggle(true, wxT("Off"), wxT("Sync"), 50);
 	m_pswpSettings = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(0,110), wxSize(600,330), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
 	m_pswpSettings->SetPageNameStyle(3);
 	m_ppnlNTP = new wxPanel(m_pswpSettings, ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL1"));
@@ -83,7 +83,7 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_pedtDomain->SetValidation(4);
 	m_pedtDomain->SetBackgroundColour(wxColour(255,255,255));
 	m_pedtDomain->SetBorderStyle(1,1);
-	m_pKbd1 = new wmKeyboard(m_ppnlPTP, ID_M_PKBD1, wxPoint(10,60), wxSize(288,208), 1, 0);
+	m_pKbd1 = new wmKeyboard(m_ppnlPTP, ID_M_PKBD1, wxPoint(10,60), wxSize(288,208), wmKeyboard::KBS_PHONE, 0);
 	m_pKbd1->SetForegroundColour(wxColour(255,255,255));
 	m_ppnlLTCS = new wxPanel(m_pswpSettings, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
 	m_ppnlLTCS->SetBackgroundColour(wxColour(0,0,0));
@@ -268,9 +268,9 @@ void pnlSettingsTime::Onm_pedtDomainText(wxCommandEvent& event)
 void pnlSettingsTime::OnedtDomainTextEnter(wxCommandEvent& event)
 {
     unsigned long nDomain;
-    if(m_pedtDomain->GetValue.ToULong(&nDomain) && nDomain < 128)
+    if(m_pedtDomain->GetValue().ToULong(&nDomain) && nDomain < 128)
     {
-        Settings::Get().Write("Time", "PTP_Domain", nDomain);
+        Settings::Get().Write("Time", "PTP_Domain", (unsigned int)nDomain);
     }
 }
 
