@@ -87,6 +87,21 @@ endif()
 include_directories(${SAP_LIB_DIR}/include)
 include_directories(${SAP_LIB_DIR}/external/asio/asio/include)
 
+#ptpmonkey
+find_path(PTP_LIB_DIR NAMES "include/ptpmonkey.h" PATHS ${PROJECT_SOURCE_DIR}/../external/ptpmonkey)
+if((NOT PTP_LIB_DIR) OR (NOT EXISTS ${PTP_LIB_DIR}))
+    # we couldn't find the header files for FOO or they don't exist
+    message("Unable to find ptpmonkey")
+    
+    # now we need to clone this submodule
+    execute_process(COMMAND git submodule update --init -- ../external/ptpmonkey WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+    find_path(PTP_LIB_DIR NAMES "include/ptpmonkey.h" PATHS ${PROJECT_SOURCE_DIR}/../external/ptpmonkey)
+else()
+    message("Found ptpmonkey")
+endif()
+include_directories(${PTP_LIB_DIR}/include)
+
+
 set(SOURCES 
   "advelement.cpp"
  "aes67client.cpp"
@@ -142,6 +157,7 @@ set(SOURCES
  "streamclientstate.cpp"
  "testpluginbuilder.cpp"
  "testpluginfactory.cpp"
+ "timemanager.cpp"
  "uirect.cpp"
  "wmbutton.cpp"
  "wmedit.cpp"
@@ -157,6 +173,7 @@ set(SOURCES
  "wmswipebutton.cpp"
  "wmswitcherpanel.cpp"
  "wmtimeedit.cpp"
+ "wxptp.cpp"
  "wxsaphandler.cpp"
  "wxsink.cpp"
  "wxtouchscreenhtml.cpp"
@@ -169,7 +186,20 @@ set(SOURCES
  "../external/dnssd/src/dnssd.cpp"
  "../external/dnssd/src/zcposter.cpp"
  "../external/dnssd/src/gnu/avahibrowser.cpp"
- "../external/dnssd/src/gnu/avahipublisher.cpp")
+ "../external/dnssd/src/gnu/avahipublisher.cpp"
+ "../external/ptpmonkey/source/loghander.cpp"
+ "../external/ptpmonkey/source/mac.cpp"
+ "../external/ptpmonkey/source/ptpclock.cpp"
+ "../external/ptpmonkey/source/ptpeventloghandler.cpp"
+ "../external/ptpmonkey/source/ptploghandler.cpp"
+ "../external/ptpmonkey/source/ptpmonkey.cpp"
+ "../external/ptpmonkey/source/ptpmonkeyhandler.cpp"
+ "../external/ptpmonkey/source/ptpmonkeyimplementation.cpp"
+ "../external/ptpmonkey/source/ptpparser.cpp"
+ "../external/ptpmonkey/source/ptpstructs.cpp"
+ "../external/ptpmonkey/source/receiver.cpp"
+ "../external/ptpmonkey/source/sender.cpp"
+ "../external/ptpmonkey/source/timeutils.cpp" )
 
 
 
@@ -212,7 +242,8 @@ add_library(pambase SHARED ${SOURCES})
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(pambase PRIVATE ${flags})
-target_compile_definitions(pambase PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __GNU__ __WXGNU__ _pambase_ CREATING_DLL _core_ _MSL_STDINT_H NO_OPENSSL ASIO_STANDALONE wxDEBUG_LEVEL=0 DNSSD_DLL LOG_DLL)
+target_compile_definitions(pambase PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __GNU__ __WXGNU__ _pambase_ CREATING_DLL _core_ _MSL_STDINT_H NO_OPENSSL ASIO_STANDALONE DNSSD_DLL LOG_DLL PTP_DLL PTPMONKEY wxDEBUG_LEVEL=0)
+
 
 #find external libraries
 find_package(wxWidgets REQUIRED)

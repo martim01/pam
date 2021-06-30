@@ -9,6 +9,7 @@ include_directories("../external/live/liveMedia/include")
 include_directories("../external/live/UsageEnvironment/include")
 include_directories("images/")
 include_directories("../external/log/include")
+include_directories("../external/ptpmonkey/include")
 
 link_directories("../lib")
 
@@ -20,7 +21,7 @@ add_executable(pam2 ${SOURCES})
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(pam2 PRIVATE ${flags})
-target_compile_definitions(pam2 PUBLIC NDEBUG wxUSE_UNICODE __WXGNU__ _app_ NO_OPENSSL wxDEBUG_LEVEL=0)
+target_compile_definitions(pam2 PUBLIC NDEBUG wxUSE_UNICODE __WXGNU__ _app_ NO_OPENSSL wxDEBUG_LEVEL=0 PTPMONKEY)
 
 #find external libraries
 find_package(wxWidgets REQUIRED)
