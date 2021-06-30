@@ -4,6 +4,7 @@ project(spectogram LANGUAGES CXX)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 include_directories("../../pambase/")
 include_directories("../../pamfft/")
+include_directories("../../external/log/include")
 include_directories("../../external/kiss_fft130")
 include_directories("../../external/kiss_fft130/tools")
 
