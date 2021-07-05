@@ -173,7 +173,7 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
     m_pbtnStartDiscovery = new wmButton(pnlDiscovery, ID_M_PBTN9, _("Discovery"), wxPoint(5,390), wxSize(200,45), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN9"));
     m_pbtnStartDiscovery->SetForegroundColour(wxColour(255,255,255));
     m_pbtnStartDiscovery->SetBackgroundColour(wxColour(0,0,160));
-    m_pbtnStartDiscovery->SetToggle(true, wxT("Stop"), wxT("Start"), 50);
+    m_pbtnStartDiscovery->SetToggleLook(true, wxT("Stop"), wxT("Start"), 50);
     m_pLbl8 = new wmLabel(pnlDiscovery, ID_M_PLBL9, _("Options"), wxPoint(5,3), wxSize(130,30), 0, _T("ID_M_PLBL9"));
     m_pLbl8->SetBorderState(uiRect::BORDER_NONE);
     m_pLbl8->GetUiRect().SetGradient(0);

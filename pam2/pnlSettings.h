@@ -34,6 +34,7 @@ class pnlSettings: public wxPanel
 		void UpdateDisplayedSettings();
 
 		//(*Declarations(pnlSettings)
+		pnlAoipManual* m_ppnlAoIPManual;
 		pnlNetworkSetup* pnlSettingsNetwork;
 		pnlSettingsGenerators* m_ppnlGenerators;
 		pnlSettingsNmos* m_ppnlNmos;
@@ -62,7 +63,9 @@ class pnlSettings: public wxPanel
 		wmList* m_plstDevices;
 		wmList* m_plstInput;
 		wmSlider* m_plsliderInputGain;
+		wmSwitcherPanel* m_pswpInput;
 		wmSwitcherPanel* m_pswpSettings;
+		wxPanel* Panel1;
 		wxPanel* pnlGeneral;
 		wxPanel* pnlInput;
 		//*)
@@ -79,14 +82,17 @@ class pnlSettings: public wxPanel
 		static const long ID_M_PLBL14;
 		static const long ID_M_PLBL3;
 		static const long ID_M_PLST1;
-		static const long ID_M_PLST2;
-		static const long ID_M_PBTN7;
 		static const long ID_M_PBTN1;
 		static const long ID_M_PBTN2;
 		static const long ID_M_PBTN4;
 		static const long ID_M_PBTN5;
 		static const long ID_M_PLBL1;
 		static const long ID_M_PSLIDER1;
+		static const long ID_PANEL10;
+		static const long ID_PANEL11;
+		static const long ID_M_PSWP2;
+		static const long ID_M_PLST2;
+		static const long ID_M_PBTN7;
 		static const long ID_M_PLBL2;
 		static const long ID_PANEL1;
 		static const long ID_PANEL2;

@@ -31,6 +31,7 @@
 					<Add directory="$(#portaudio.include)" />
 					<Add directory="$(#libsndfile.include)" />
 					<Add directory="pambase" />
+					<Add directory="../external/dnssd/mdnssd" />
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="$(#wx3_0.include)/mswu" />
@@ -194,6 +195,7 @@
 			<Add option="-DNO_OPENSSL" />
 			<Add option="-DSAP_DLL" />
 			<Add option="-DDNSSD_DLL" />
+			<Add option="-DLOG_DLL" />
 			<Add directory="../external/live/BasicUsageEnvironment/include" />
 			<Add directory="../external/live/UsageEnvironment/include" />
 			<Add directory="../external/live/groupsock/include" />
@@ -216,135 +218,186 @@
 			<Add directory="../external/ptpmonkey/bin" />
 			<Add directory="../lib" />
 		</Linker>
+		<Unit filename="../external/dnssd/mdnssd/dns_sd.h">
+			<Option target="Windows Release" />
+			<Option target="Windows Debug" />
+		</Unit>
 		<Unit filename="../external/dnssd/src/dnssd.cpp" />
-		<Unit filename="../external/dnssd/src/gnu/avahibrowser.cpp" />
-		<Unit filename="../external/dnssd/src/gnu/avahipublisher.cpp" />
+		<Unit filename="../external/dnssd/src/gnu/avahibrowser.cpp">
+			<Option target="Windows Debug" />
+			<Option target="Linux Debug" />
+			<Option target="Linux Release" />
+		</Unit>
+		<Unit filename="../external/dnssd/src/gnu/avahipublisher.cpp">
+			<Option target="Windows Debug" />
+			<Option target="Linux Debug" />
+			<Option target="Linux Release" />
+		</Unit>
+		<Unit filename="../external/dnssd/src/windows/bonjourbrowser.cpp">
+			<Option target="Windows Release" />
+			<Option target="Windows Debug" />
+		</Unit>
+		<Unit filename="../external/dnssd/src/windows/bonjourpublisher.cpp">
+			<Option target="Windows Release" />
+			<Option target="Windows Debug" />
+		</Unit>
 		<Unit filename="../external/dnssd/src/zcposter.cpp" />
 		<Unit filename="../external/log/include/log.h" />
 		<Unit filename="../external/log/src/log.cpp" />
 		<Unit filename="../external/ptpmonkey/include/handler.h">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/loghander.h">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/mac.h">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/namedtype.h">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/parser.h">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpclock.h">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpdll.h">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpeventhander.h">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpeventloghandler.h">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptploghandler.h">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpmonkey.h">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpmonkeyhandler.h">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpmonkeyimplementation.h">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpparser.h">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/ptpstructs.h">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/receiver.h">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/sender.h">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/include/timeutils.h">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/loghander.cpp">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/mac.cpp">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptpclock.cpp">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptpeventloghandler.cpp">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptploghandler.cpp">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptpmonkey.cpp">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptpmonkeyhandler.cpp">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptpmonkeyimplementation.cpp">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptpparser.cpp">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/ptpstructs.cpp">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/receiver.cpp">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/sender.cpp">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/ptpmonkey/source/timeutils.cpp">
 			<Option target="Linux Release" />
 			<Option target="Linux Debug" />
+			<Option target="Windows Release" />
 		</Unit>
 		<Unit filename="../external/sapserver/src/message.cpp" />
 		<Unit filename="../external/sapserver/src/parser.cpp" />

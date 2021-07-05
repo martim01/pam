@@ -165,13 +165,13 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pLbl10->SetFont(m_pLbl10Font);
 	m_pbtnDNS = new wmButton(pnlAoip, ID_M_PBTN8, _("mDNS-SD"), wxPoint(300,250), wxSize(268,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN8"));
 	m_pbtnDNS->SetBackgroundColour(wxColour(61,120,218));
-	m_pbtnDNS->SetToggle(true, wxT("Off"), wxT("On"), 40);
+	m_pbtnDNS->SetToggleLook(true, wxT("Off"), wxT("On"), 40);
 	m_pbtnSAP = new wmButton(pnlAoip, ID_M_PBTN9, _("SAP"), wxPoint(300,300), wxSize(268,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN9"));
 	m_pbtnSAP->SetBackgroundColour(wxColour(61,120,218));
-	m_pbtnSAP->SetToggle(true, wxT("Off"), wxT("On"), 40);
+	m_pbtnSAP->SetToggleLook(true, wxT("Off"), wxT("On"), 40);
 	m_pbtnStream = new wmButton(pnlAoip, ID_M_PBTN3, _("Stream"), wxPoint(300,160), wxSize(268,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
 	m_pbtnStream->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnStream->SetToggle(true, wxT("Unicast"), wxT("Multicast"), 40);
+	m_pbtnStream->SetToggleLook(true, wxT("Unicast"), wxT("Multicast"), 40);
 	m_pswpDestination->AddPage(pnlDisabled, _("Disabled"), false);
 	m_pswpDestination->AddPage(pnlSoundcard, _("Soundcard"), false);
 	m_pswpDestination->AddPage(pnlAoip, _("AoIP"), false);

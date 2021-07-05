@@ -139,12 +139,14 @@ bool TimeManager::TrySyncToPtp()
             if(ts.tv_sec != 0)
             {
                 pmlLog() << "Setting system clock from PTP";
+                #ifdef __WXGNU__
                 if(clock_settime(CLOCK_REALTIME, &ts) == 0)
                 {
                     m_eCurrentSync = SYNC_PTP;
                     return true;
                 }
                 pmlLog(pml::LOG_ERROR) << strerror(errno);
+                #endif // __WXGNU__
             }
             else
             {

@@ -43,14 +43,17 @@ const long pnlSettings::ID_M_PLBL13 = wxNewId();
 const long pnlSettings::ID_M_PLBL14 = wxNewId();
 const long pnlSettings::ID_M_PLBL3 = wxNewId();
 const long pnlSettings::ID_M_PLST1 = wxNewId();
-const long pnlSettings::ID_M_PLST2 = wxNewId();
-const long pnlSettings::ID_M_PBTN7 = wxNewId();
 const long pnlSettings::ID_M_PBTN1 = wxNewId();
 const long pnlSettings::ID_M_PBTN2 = wxNewId();
 const long pnlSettings::ID_M_PBTN4 = wxNewId();
 const long pnlSettings::ID_M_PBTN5 = wxNewId();
 const long pnlSettings::ID_M_PLBL1 = wxNewId();
 const long pnlSettings::ID_M_PSLIDER1 = wxNewId();
+const long pnlSettings::ID_PANEL10 = wxNewId();
+const long pnlSettings::ID_PANEL11 = wxNewId();
+const long pnlSettings::ID_M_PSWP2 = wxNewId();
+const long pnlSettings::ID_M_PLST2 = wxNewId();
+const long pnlSettings::ID_M_PBTN7 = wxNewId();
 const long pnlSettings::ID_M_PLBL2 = wxNewId();
 const long pnlSettings::ID_PANEL1 = wxNewId();
 const long pnlSettings::ID_PANEL2 = wxNewId();
@@ -114,32 +117,39 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pLbl3->SetBackgroundColour(wxColour(0,64,0));
     wxFont m_pLbl3Font(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
     m_pLbl3->SetFont(m_pLbl3Font);
-    m_plstDevices = new wmList(pnlInput, ID_M_PLST1, wxPoint(0,70), wxSize(600,280), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
+    m_pswpInput = new wmSwitcherPanel(pnlInput, ID_M_PSWP2, wxPoint(0,70), wxSize(600,410), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP2"));
+    m_pswpInput->SetPageNameStyle(0);
+    Panel1 = new wxPanel(m_pswpInput, ID_PANEL10, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL10"));
+    Panel1->SetBackgroundColour(wxColour(0,0,0));
+    m_plstDevices = new wmList(Panel1, ID_M_PLST1, wxPoint(0,0), wxSize(600,280), wmList::STYLE_SELECT, 2, wxSize(-1,40), 3, wxSize(5,5));
     m_plstDevices->SetBackgroundColour(wxColour(0,0,0));
     m_plstDevices->SetSelectedButtonColour(wxColour(wxT("#008000")));
     m_plstDevices->SetDisabledColour(wxColour(wxT("#808080")));
-    m_plstInput = new wmList(pnlInput, ID_M_PLST2, wxPoint(0,36), wxSize(500,34), wmList::STYLE_SELECT, 0, wxSize(100,30), 3, wxSize(-1,-1));
-    m_plstInput->SetButtonColour(wxColour(wxT("#400080")));
-    m_plstInput->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
-    m_pbtnManage = new wmButton(pnlInput, ID_M_PBTN7, _("Manage"), wxPoint(510,38), wxSize(80,30), 0, wxDefaultValidator, _T("ID_M_PBTN7"));
-    m_pbtnManage->SetColourDisabled(wxColour(wxT("#808080")));
-    m_pbtnHome = new wmButton(pnlInput, ID_M_PBTN1, wxEmptyString, wxPoint(70,352), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
+    m_pbtnHome = new wmButton(Panel1, ID_M_PBTN1, wxEmptyString, wxPoint(70,282), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
     m_pbtnHome->SetColourDisabled(wxColour(wxT("#808080")));
-    m_pbtnPrevious = new wmButton(pnlInput, ID_M_PBTN2, wxEmptyString, wxPoint(190,352), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
+    m_pbtnPrevious = new wmButton(Panel1, ID_M_PBTN2, wxEmptyString, wxPoint(190,282), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
     m_pbtnPrevious->SetColourDisabled(wxColour(wxT("#808080")));
-    m_pbtnNext = new wmButton(pnlInput, ID_M_PBTN4, wxEmptyString, wxPoint(310,352), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN4"));
+    m_pbtnNext = new wmButton(Panel1, ID_M_PBTN4, wxEmptyString, wxPoint(310,282), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN4"));
     m_pbtnNext->SetColourDisabled(wxColour(wxT("#808080")));
-    m_pbtnEnd = new wmButton(pnlInput, ID_M_PBTN5, wxEmptyString, wxPoint(430,352), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN5"));
+    m_pbtnEnd = new wmButton(Panel1, ID_M_PBTN5, wxEmptyString, wxPoint(430,282), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN5"));
     m_pbtnEnd->SetColourDisabled(wxColour(wxT("#808080")));
-    m_pLbl1 = new wmLabel(pnlInput, ID_M_PLBL1, _("Gain"), wxPoint(10,400), wxSize(70,30), 0, _T("ID_M_PLBL1"));
+    m_pLbl1 = new wmLabel(Panel1, ID_M_PLBL1, _("Gain"), wxPoint(10,330), wxSize(70,30), 0, _T("ID_M_PLBL1"));
     m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
     m_pLbl1->GetUiRect().SetGradient(0);
     m_pLbl1->SetForegroundColour(wxColour(255,255,255));
     m_pLbl1->SetBackgroundColour(wxColour(0,64,0));
     wxFont m_pLbl1Font(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
     m_pLbl1->SetFont(m_pLbl1Font);
-    m_plsliderInputGain = new wmSlider(pnlInput, ID_M_PSLIDER1, _("Slider"), wxPoint(80,400), wxSize(400,30));
+    m_plsliderInputGain = new wmSlider(Panel1, ID_M_PSLIDER1, _("Slider"), wxPoint(80,330), wxSize(400,30));
     m_plsliderInputGain->Init(0,10000,5000);
+    m_ppnlAoIPManual = new pnlAoipManual(m_pswpInput, ID_PANEL11, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL11"));
+    m_pswpInput->AddPage(Panel1, _("Auto"), false);
+    m_pswpInput->AddPage(m_ppnlAoIPManual, _("Manual"), false);
+    m_plstInput = new wmList(pnlInput, ID_M_PLST2, wxPoint(0,36), wxSize(500,34), wmList::STYLE_SELECT, 0, wxSize(100,30), 3, wxSize(-1,-1));
+    m_plstInput->SetButtonColour(wxColour(wxT("#400080")));
+    m_plstInput->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
+    m_pbtnManage = new wmButton(pnlInput, ID_M_PBTN7, _("Manage"), wxPoint(510,38), wxSize(80,30), 0, wxDefaultValidator, _T("ID_M_PBTN7"));
+    m_pbtnManage->SetColourDisabled(wxColour(wxT("#808080")));
     m_plblInputGain = new wmLabel(pnlInput, ID_M_PLBL2, wxEmptyString, wxPoint(480,400), wxSize(70,30), 0, _T("ID_M_PLBL2"));
     m_plblInputGain->SetBorderState(uiRect::BORDER_NONE);
     m_plblInputGain->GetUiRect().SetGradient(0);
@@ -188,13 +198,13 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
     Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstDevicesSelected);
     Connect(ID_M_PLST1,wxEVT_LIST_PAGED,(wxObjectEventFunction)&pnlSettings::OnlstDevicesPaged);
-    Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstInputSelected);
-    Connect(ID_M_PBTN7,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnManageClick);
     Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnHomeClick);
     Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnPreviousClick);
     Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnNextClick);
     Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnEndClick);
     Connect(ID_M_PSLIDER1,wxEVT_SLIDER_MOVE,(wxObjectEventFunction)&pnlSettings::OnlsliderInputGainMove);
+    Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstInputSelected);
+    Connect(ID_M_PBTN7,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnManageClick);
     Connect(ID_M_PBTN22,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnCursorClick);
     Connect(ID_M_PBTN23,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnOptionsClick);
     Connect(ID_M_PBTN24,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnPinClick);
@@ -230,6 +240,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_plstInput->AddButton(wxT("Disabled"));
     m_plstInput->AddButton(wxT("Soundcard"));
     m_plstInput->AddButton(wxT("AoIP"));
+    m_plstInput->AddButton(wxT("AoIP Manual"));
 
     m_plstInput->Thaw();
 
@@ -283,14 +294,11 @@ void pnlSettings::OnlstDevicesSelected(wxCommandEvent& event)
     {
         Settings::Get().Write(wxT("Input"), wxT("Device"), (int)event.GetClientData());
 
-
-
     }
     else if(sDevice == wxT("AoIP"))
     {
         Settings::Get().Write(wxT("Input"), wxT("AoIP"), (int)event.GetClientData());
     }
-
 }
 
 void pnlSettings::OnBtnExit(wxCommandEvent& event)
@@ -403,6 +411,11 @@ void pnlSettings::RefreshInputs()
     {
         m_pbtnManage->Show();
         ShowRTPDefined();
+    }
+    else if(sType == "AoIP Manual")
+    {
+        m_pbtnManage->Hide();
+        ShowManualAoIP();
     }
     else if(sType == wxT("Disabled"))
     {
