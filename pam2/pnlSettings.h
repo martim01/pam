@@ -21,6 +21,7 @@
 #include "pnlSettingsNmos.h"
 #include "pnlSettingsOutput.h"
 #include "pnlSettingsTime.h"
+#include "pnlAoipManual.h"
 
 class SettingEvent;
 

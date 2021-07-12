@@ -992,6 +992,7 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
     wxClientDC dc(this);
     dc.SetFont(m_pSdp->GetFont());
 
+    m_pSdp->Clear();
     wxArrayString asLines(wxStringTokenize(aSession.sRawSDP, "\n"));
     for(size_t i = 0; i < asLines.GetCount(); i++)
     {

@@ -6,6 +6,8 @@
 #include "ondemandstreamer.h"
 #include "log.h"
 
+const std::string RtpServerThread::STREAM_NAME = "by-name/PAM_AES67";
+
 RtpServerThread::RtpServerThread(wxEvtHandler* pHandler, const std::set<wxEvtHandler*>& setRTCPHandlers, const wxString& sRTSP, unsigned int nRTSPPort, const wxString& sSourceIp, unsigned int nRTPPort, bool bSSM, LiveAudioSource::enumPacketTime ePacketTime) :
     wxThread(wxTHREAD_JOINABLE),
     m_pHandler(pHandler),
@@ -57,6 +59,8 @@ void* RtpServerThread::Entry()
 
 bool RtpServerThread::CreateStream()
 {
+    pmlLog() << "RTP Server: CreateStream ";
+
     char const* mimeType = "L24";
     unsigned char payloadFormatCode = 96; // by default, unless a static RTP payload type can be used
 
@@ -73,6 +77,7 @@ bool RtpServerThread::CreateStream()
     else
     {
         m_bStreaming = false;
+        pmlLog(pml::LOG_ERROR) << "RTP Server: CreateStream No SourceIp and not multicast";
         return false;
     }
 
@@ -128,9 +133,7 @@ bool RtpServerThread::CreateStream()
 
 
 
-    std::string sStreamName = "by-name/PAM_AES67";
-
-    ServerMediaSession* sms = ServerMediaSession::createNew(*m_penv, sStreamName.c_str(), sStreamName.c_str(), "PAM_AES67", True/*SSM*/);
+    ServerMediaSession* sms = ServerMediaSession::createNew(*m_penv, STREAM_NAME.c_str(), nullptr, "PAM_AES67", True/*SSM*/);
     AES67ServerMediaSubsession* pSmss =  AES67ServerMediaSubsession::createNew(m_setRTCPHandlers, *m_pSink, m_pRtcpInstance, m_ePacketTime);
     sms->addSubsession(pSmss);
     m_pRtspServer->addServerMediaSession(sms);

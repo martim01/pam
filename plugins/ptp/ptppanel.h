@@ -15,7 +15,7 @@
 #include "macdb.h"
 #include "pnlFlags.h"
 #include <memory>
-
+#include "timeutils.h"
 class ptpBuilder;
 class timedbuffer;
 class session;
@@ -274,6 +274,8 @@ class ptpPanel: public pmPanel
         bool m_bRunning;
 
         MacDb m_dbMac;
+
+        double m_offset;
 
         static const wxColour CLR_MASTER;
         static const wxColour CLR_MASTER_SELECTED;

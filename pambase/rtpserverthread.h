@@ -33,6 +33,7 @@ class PAMBASE_IMPEXPORT RtpServerThread : public wxThread
 
     private:
 
+        static const std::string STREAM_NAME;
         bool CreateStream();
         void CloseStream();
 

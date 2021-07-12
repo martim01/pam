@@ -23,7 +23,7 @@ class pnlAoipManual: public wxPanel
 		wmButton* m_pbtnSampleRate;
 		wmButton* m_pbtnStream;
 		wmEdit* m_pedtPort;
-		wmIpEditPnl* m_pipServer;
+		wmipeditpnl* m_pipServer;
 		wmKeyboard* m_pkbd;
 		wmLabel* m_pLbl1;
 		wmLabel* m_pLbl2;
@@ -54,6 +54,9 @@ class pnlAoipManual: public wxPanel
 		void OnbtnSampleRateClick(wxCommandEvent& event);
 		void OnbtnStreamClick(wxCommandEvent& event);
 		//*)
+		void OnlstChannelSelected(wxCommandEvent& event);
+
+		wxString m_sChannels;
 
 		DECLARE_EVENT_TABLE()
 };
