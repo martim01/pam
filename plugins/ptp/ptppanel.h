@@ -1,6 +1,7 @@
 #pragma once
 
 //(*Headers(ptpPanel)
+#include "historygraph.h"
 #include "wmlabel.h"
 #include "wmlist.h"
 #include "wmswitcherpanel.h"
@@ -45,7 +46,10 @@ class ptpPanel: public pmPanel
 		ptpPanel(wxWindow* parent,ptpBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~ptpPanel();
 
+		void ChangeWindow(const wxString& sWindow);
+
 		//(*Declarations(ptpPanel)
+		m_pHistoryGraph* m_pHistoryGraph;
 		pnlFlags* m_ppnlAnnounceFlags;
 		pnlFlags* m_ppnlFollowFlags;
 		pnlFlags* m_ppnlRequestFlags;
@@ -114,9 +118,12 @@ class ptpPanel: public pmPanel
 		wmLabel* m_ptitleUtc;
 		wmLabel* m_ptitleVariance;
 		wmList* m_plstClocks;
+		wmSwitcherPanel* m_pSwpMain;
 		wmSwitcherPanel* m_pswp;
 		wxPanel* m_ppnlAnnouncements;
 		wxPanel* m_ppnlFollowUp;
+		wxPanel* m_ppnlGraphs;
+		wxPanel* m_ppnlInfo;
 		wxPanel* m_ppnlLocal;
 		wxPanel* m_ppnlMaster;
 		wxPanel* m_ppnlRequests;
@@ -220,6 +227,10 @@ class ptpPanel: public pmPanel
 		static const long ID_M_PLBL60;
 		static const long ID_M_PLBL64;
 		static const long ID_PANEL8;
+		static const long ID_PANEL14;
+		static const long ID_HISTORY_GRAPH;
+		static const long ID_PANEL15;
+		static const long ID_M_PSWP2;
 		//*)
 
 		void OnLeftUp(wxMouseEvent& event);

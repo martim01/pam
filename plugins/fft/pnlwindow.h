@@ -2,8 +2,8 @@
 #define PNLWINDOW_H
 
 //(*Headers(pnlWindow)
-#include <wx/panel.h>
 #include "wmlist.h"
+#include <wx/panel.h>
 //*)
 
 class FFTBuilder;

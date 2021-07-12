@@ -96,6 +96,10 @@ const long ptpPanel::ID_M_PLBL63 = wxNewId();
 const long ptpPanel::ID_M_PLBL60 = wxNewId();
 const long ptpPanel::ID_M_PLBL64 = wxNewId();
 const long ptpPanel::ID_PANEL8 = wxNewId();
+const long ptpPanel::ID_PANEL14 = wxNewId();
+const long ptpPanel::ID_HISTORY_GRAPH = wxNewId();
+const long ptpPanel::ID_PANEL15 = wxNewId();
+const long ptpPanel::ID_M_PSWP2 = wxNewId();
 //*)
 
 const wxColour ptpPanel::CLR_MASTER           = wxColour(50,128,50);
@@ -166,41 +170,45 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	//(*Initialize(ptpPanel)
 	Create(parent, wxID_ANY, wxDefaultPosition, wxSize(800,480), wxTAB_TRAVERSAL, _T("wxID_ANY"));
 	SetBackgroundColour(wxColour(0,0,0));
-	m_plstClocks = new wmList(this, ID_M_PLST1, wxPoint(605,5), wxSize(190,470), wmList::STYLE_SELECT, 1, wxSize(-1,-1), 1, wxSize(-1,-1));
+	m_pSwpMain = new wmSwitcherPanel(this, ID_M_PSWP2, wxDefaultPosition, wxSize(800,480), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP2"));
+	m_pSwpMain->SetPageNameStyle(0);
+	m_ppnlInfo = new wxPanel(m_pSwpMain, ID_PANEL14, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL14"));
+	m_ppnlInfo->SetBackgroundColour(wxColour(0,0,0));
+	m_plstClocks = new wmList(m_ppnlInfo, ID_M_PLST1, wxPoint(605,5), wxSize(190,470), wmList::STYLE_SELECT, 1, wxSize(-1,-1), 1, wxSize(-1,-1));
 	m_plstClocks->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
 	m_plstClocks->SetButtonColour(wxColour(wxT("#000000")));
 	m_plstClocks->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
-	m_ptitleIdentity = new wmLabel(this, ID_M_PLBL1, _("Port Identitiy"), wxPoint(5,5), wxSize(100,25), 0, _T("ID_M_PLBL1"));
+	m_ptitleIdentity = new wmLabel(m_ppnlInfo, ID_M_PLBL1, _("Port Identitiy"), wxPoint(5,5), wxSize(100,25), 0, _T("ID_M_PLBL1"));
 	m_ptitleIdentity->SetBorderState(uiRect::BORDER_FLAT);
 	m_ptitleIdentity->GetUiRect().SetGradient(wxWEST);
 	m_ptitleIdentity->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleIdentity->SetBackgroundColour(wxColour(92,122,224));
-	m_ptitleAddress = new wmLabel(this, ID_M_PLBL2, _("Address"), wxPoint(5,35), wxSize(100,25), 0, _T("ID_M_PLBL2"));
+	m_ptitleAddress = new wmLabel(m_ppnlInfo, ID_M_PLBL2, _("Address"), wxPoint(5,35), wxSize(100,25), 0, _T("ID_M_PLBL2"));
 	m_ptitleAddress->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleAddress->GetUiRect().SetGradient(wxWEST);
 	m_ptitleAddress->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleAddress->SetBackgroundColour(wxColour(92,122,224));
-	m_ptitleState = new wmLabel(this, ID_M_PLBL3, _("State"), wxPoint(5,65), wxSize(100,25), 0, _T("ID_M_PLBL3"));
+	m_ptitleState = new wmLabel(m_ppnlInfo, ID_M_PLBL3, _("State"), wxPoint(5,65), wxSize(100,25), 0, _T("ID_M_PLBL3"));
 	m_ptitleState->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleState->GetUiRect().SetGradient(wxWEST);
 	m_ptitleState->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleState->SetBackgroundColour(wxColour(92,122,224));
-	m_plblIdentity = new wmLabel(this, ID_M_PLBL12, wxEmptyString, wxPoint(105,5), wxSize(180,25), 0, _T("ID_M_PLBL12"));
+	m_plblIdentity = new wmLabel(m_ppnlInfo, ID_M_PLBL12, wxEmptyString, wxPoint(105,5), wxSize(180,25), 0, _T("ID_M_PLBL12"));
 	m_plblIdentity->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblIdentity->GetUiRect().SetGradient(0);
 	m_plblIdentity->SetForegroundColour(wxColour(0,0,0));
 	m_plblIdentity->SetBackgroundColour(wxColour(255,255,255));
-	m_pblAddress = new wmLabel(this, ID_M_PLBL13, wxEmptyString, wxPoint(105,35), wxSize(180,25), 0, _T("ID_M_PLBL13"));
+	m_pblAddress = new wmLabel(m_ppnlInfo, ID_M_PLBL13, wxEmptyString, wxPoint(105,35), wxSize(180,25), 0, _T("ID_M_PLBL13"));
 	m_pblAddress->SetBorderState(uiRect::BORDER_DOWN);
 	m_pblAddress->GetUiRect().SetGradient(0);
 	m_pblAddress->SetForegroundColour(wxColour(0,0,0));
 	m_pblAddress->SetBackgroundColour(wxColour(255,255,255));
-	m_plblState = new wmLabel(this, ID_M_PLBL14, wxEmptyString, wxPoint(105,65), wxSize(180,25), 0, _T("ID_M_PLBL14"));
+	m_plblState = new wmLabel(m_ppnlInfo, ID_M_PLBL14, wxEmptyString, wxPoint(105,65), wxSize(180,25), 0, _T("ID_M_PLBL14"));
 	m_plblState->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblState->GetUiRect().SetGradient(0);
 	m_plblState->SetForegroundColour(wxColour(0,0,0));
 	m_plblState->SetBackgroundColour(wxColour(255,255,255));
-	m_ppnlAnnouncements = new wxPanel(this, ID_PANEL1, wxPoint(5,95), wxSize(280,275), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
+	m_ppnlAnnouncements = new wxPanel(m_ppnlInfo, ID_PANEL1, wxPoint(5,95), wxSize(280,275), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
 	m_ppnlAnnouncements->SetBackgroundColour(wxColour(0,0,0));
 	m_ptitleAnnouncements = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL30, _("Announcements"), wxPoint(0,0), wxSize(280,25), 0, _T("ID_M_PLBL30"));
 	m_ptitleAnnouncements->SetBorderState(uiRect::BORDER_NONE);
@@ -320,7 +328,7 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_plblSource->SetForegroundColour(wxColour(0,0,0));
 	m_plblSource->SetBackgroundColour(wxColour(255,255,255));
 	m_ppnlAnnounceFlags = new pnlFlags(m_ppnlAnnouncements, ID_PANEL9, wxPoint(0,210), wxSize(280,64), wxTAB_TRAVERSAL, _T("ID_PANEL9"));
-	m_pswp = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(295,5), wxSize(280,280), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
+	m_pswp = new wmSwitcherPanel(m_ppnlInfo, ID_M_PSWP1, wxPoint(295,5), wxSize(280,280), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
 	m_pswp->SetPageNameStyle(0);
 	m_pswp->SetBackgroundColour(wxColour(0,0,0));
 	m_ppnlMaster = new wxPanel(m_pswp, ID_PANEL5, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL5"));
@@ -459,7 +467,7 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_ppnlResponseFlags = new pnlFlags(m_ppnlResponses, ID_PANEL12, wxPoint(0,60), wxSize(280,64), wxTAB_TRAVERSAL, _T("ID_PANEL12"));
 	m_pswp->AddPage(m_ppnlMaster, _("Master"), false);
 	m_pswp->AddPage(m_ppnlSlave, _("Slave"), false);
-	m_ppnlLocal = new wxPanel(this, ID_PANEL8, wxPoint(295,290), wxSize(280,175), wxTAB_TRAVERSAL, _T("ID_PANEL8"));
+	m_ppnlLocal = new wxPanel(m_ppnlInfo, ID_PANEL8, wxPoint(295,290), wxSize(280,175), wxTAB_TRAVERSAL, _T("ID_PANEL8"));
 	m_ppnlLocal->SetBackgroundColour(wxColour(0,0,0));
 	m_ptitlePam = new wmLabel(m_ppnlLocal, ID_M_PLBL54, _("PAM"), wxPoint(0,0), wxSize(280,25), 0, _T("ID_M_PLBL54"));
 	m_ptitlePam->SetBorderState(uiRect::BORDER_NONE);
@@ -518,6 +526,10 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_plblDelayRange->GetUiRect().SetGradient(0);
 	m_plblDelayRange->SetForegroundColour(wxColour(0,0,0));
 	m_plblDelayRange->SetBackgroundColour(wxColour(255,255,255));
+	m_ppnlGraphs = new wxPanel(m_pSwpMain, ID_PANEL15, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL15"));
+	m_pHistoryGraph = new m_pHistoryGraph(m_ppnlGraphs,ID_HISTORY_GRAPH,wxDefaultPosition,wxDefaultSize);
+	m_pSwpMain->AddPage(m_ppnlInfo, _("Info"), false);
+	m_pSwpMain->AddPage(m_ppnlGraphs, _("Graphs"), false);
 
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&ptpPanel::OnlstClocksSelected);
 	//*)
@@ -530,6 +542,8 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_timer.Start(500, true);
 
 	m_dbMac.LoadXml();
+
+	m_pHistoryGraph->AddGraph("Offset", wxColour(100,100,255), 2e6);
 
 	SetSize(size);
 	SetPosition(pos);
@@ -633,6 +647,8 @@ void ptpPanel::OnClockTime(wxCommandEvent& event)
 //    {
         ShowTime();
 //    }
+
+
 }
 
 void ptpPanel::OnClockMaster(wxCommandEvent& event)
@@ -793,6 +809,9 @@ void ptpPanel::ShowTime()
 
         m_plblOffsetRange->SetLabel(wxString::Format("%llu.%09llu", rangeOffset.first.count(), rangeOffset.second.count()));
         m_plblDelayRange->SetLabel(wxString::Format("%llu.%09llu", rangeDelay.first.count(), rangeDelay.second.count()));
+
+        m_pHistoryGraph->AddPeak("Offset", m_pClock->GetOffset(PtpV2Clock::CURRENT));
+
     }
 }
 
@@ -918,4 +937,9 @@ void ptpPanel::OnClockMessage(wxCommandEvent& event)
     }
 
 
+}
+
+void ptpPanel::ChangeWindow(const wxString& sWindow)
+{
+    m_pSwpMain->ChangeSelection(sWindow);
 }

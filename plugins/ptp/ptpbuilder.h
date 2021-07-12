@@ -23,7 +23,9 @@ class WXEXPORT ptpBuilder : public MonitorPluginBuilder
 
     protected:
 
-	friend class ptpPanel;
+        friend class ptpPanel;
+        friend class pnlOptions;
+
         void OnSettingChanged(SettingEvent& event);
 
         virtual wxWindow* CreateMonitorPanel(wxWindow* pParent);

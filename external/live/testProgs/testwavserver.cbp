@@ -32,6 +32,7 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
+			<Add option="-DNO_OPENSSL" />
 			<Add directory="$(#live_media.include)" />
 			<Add directory="$(#live_group.include)" />
 			<Add directory="$(#live_usage.include)" />
@@ -48,7 +49,6 @@
 			<Add directory="$(#live_usage.lib)" />
 			<Add directory="$(#live_basicusage.lib)" />
 		</Linker>
-		<Unit filename="AES67ServerMediaSubsession.cpp" />
 		<Unit filename="AES67ServerMediaSubsession.h" />
 		<Unit filename="testWAVAudioStreamer.cpp" />
 		<Extensions>
