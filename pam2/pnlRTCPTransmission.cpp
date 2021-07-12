@@ -285,7 +285,9 @@ pnlRTCPTransmission::pnlRTCPTransmission(wxWindow* parent,wxWindowID id,const wx
 	m_plblGraph->SetFont(m_plblGraphFont);
 	Panel1 = new wxPanel(pnlQoS, ID_PANEL4, wxPoint(0,280), wxSize(600,160), wxTAB_TRAVERSAL, _T("ID_PANEL4"));
 	Panel1->SetBackgroundColour(wxColour(0,0,0));
-	m_pGraph = new LevelGraph(Panel1,ID_CUSTOM12, wxPoint(0,0),wxSize(600,160),1,10,0);
+	m_pGraph = new HistoryGraph(Panel1,ID_CUSTOM12, wxPoint(0,0),wxSize(600,160));
+	m_pHistogram = new Histogram(Panel1,ID_CUSTOM12, wxPoint(0,0),wxSize(600,160));
+	m_pHistogram->Hide();
 	m_pswpMain = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(600,0), wxSize(200,440), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
 	m_pswpMain->SetPageNameStyle(3);
 	Panel2 = new wxPanel(m_pswpMain, ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL1"));

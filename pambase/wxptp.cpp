@@ -116,7 +116,7 @@ void wxPtp::RunDomain(const wxString& sInterface, unsigned char nDomain)
     auto itMonkey = m_mDomain.find(nDomain);
     if(itMonkey == m_mDomain.end())
     {
-        itMonkey = m_mDomain.insert(std::make_pair(nDomain, std::make_shared<PtpMonkey>(IpInterface(std::string(sInterface.mb_str())), nDomain, 10))).first;
+        itMonkey = m_mDomain.insert(std::make_pair(nDomain, std::make_shared<PtpMonkey>(IpInterface(std::string(sInterface.mb_str())), nDomain, 2))).first;
         itMonkey->second->AddEventHandler(m_pNotifier);
         //itMonkey->second->AddEventHandler(std::make_shared<ptpmonkey::PtpEventLogHandler>());
         itMonkey->second->Run();

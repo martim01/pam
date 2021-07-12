@@ -150,7 +150,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_plstInput->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
     m_pbtnManage = new wmButton(pnlInput, ID_M_PBTN7, _("Manage"), wxPoint(510,38), wxSize(80,30), 0, wxDefaultValidator, _T("ID_M_PBTN7"));
     m_pbtnManage->SetColourDisabled(wxColour(wxT("#808080")));
-    m_plblInputGain = new wmLabel(pnlInput, ID_M_PLBL2, wxEmptyString, wxPoint(480,400), wxSize(70,30), 0, _T("ID_M_PLBL2"));
+    m_plblInputGain = new wmLabel(Panel1, ID_M_PLBL2, wxEmptyString, wxPoint(480,400), wxSize(70,30), 0, _T("ID_M_PLBL2"));
     m_plblInputGain->SetBorderState(uiRect::BORDER_NONE);
     m_plblInputGain->GetUiRect().SetGradient(0);
     m_plblInputGain->SetForegroundColour(wxColour(0,0,0));
@@ -404,18 +404,20 @@ void pnlSettings::RefreshInputs()
     wxString sType = Settings::Get().Read(wxT("Input"), wxT("Type"), wxEmptyString);
     if(sType == wxT("Soundcard"))
     {
+        m_pswpInput->ChangeSelection(0);
         m_pbtnManage->Hide();
         ShowSoundcardInputs();
     }
     else if(sType == wxT("AoIP"))
     {
+        m_pswpInput->ChangeSelection(0);
         m_pbtnManage->Show();
         ShowRTPDefined();
     }
     else if(sType == "AoIP Manual")
     {
-        m_pbtnManage->Hide();
-        ShowManualAoIP();
+        m_pswpInput->ChangeSelection(1);
+
     }
     else if(sType == wxT("Disabled"))
     {

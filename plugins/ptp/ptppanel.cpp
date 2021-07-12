@@ -523,6 +523,8 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	//*)
 	m_plstClocks->SetTextSelectedButtonColour(*wxBLACK);
 
+	m_offset = 0.0;
+
 	Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&ptpPanel::OnLeftUp);
 
 	m_timer.SetOwner(this, wxNewId());
@@ -785,14 +787,23 @@ void ptpPanel::ShowTime()
         m_plblTime->SetLabel(wxString(TimeToIsoString(m_pLocalClock->GetPtpTime())));
         m_plblTime->SetBackgroundColour(m_pLocalClock->IsSynced() ? wxColour(150,255,150) : wxColour(255,150,150));
 
-        m_plblOffsetAverage->SetLabel(wxString::Format("%llu.%09llu", m_pLocalClock->GetOffset().first.count(), m_pLocalClock->GetOffset().second.count()));
-        m_plblDelayAverage->SetLabel(wxString::Format("%llu.%09llu", m_pLocalClock->GetDelay().first.count(), m_pLocalClock->GetDelay().second.count()));
+        double offset = TimeToDouble(m_pLocalClock->GetOffset(ptpmonkey::PtpV2Clock::CURRENT));
+
+
+        double slip = (offset-m_offset);
+        m_offset = offset;
+
+        //m_plblOffsetAverage->SetLabel(wxString::Format("%lld.%09llu", offset.first.count(), offset.second.count()));
+        m_plblOffsetAverage->SetLabel(wxString::Format("%f", m_offset));
+        //m_plblDelayAverage->SetLabel(wxString::Format("%lld.%09llu", slip.first.count(), slip.second.count()));
 
         time_s_ns rangeOffset = m_pLocalClock->GetOffset(PtpV2Clock::MAX) - m_pLocalClock->GetOffset(PtpV2Clock::MIN);
         time_s_ns rangeDelay = m_pLocalClock->GetDelay(PtpV2Clock::MAX) - m_pLocalClock->GetDelay(PtpV2Clock::MIN);
 
-        m_plblOffsetRange->SetLabel(wxString::Format("%llu.%09llu", rangeOffset.first.count(), rangeOffset.second.count()));
-        m_plblDelayRange->SetLabel(wxString::Format("%llu.%09llu", rangeDelay.first.count(), rangeDelay.second.count()));
+        //m_plblOffsetRange->SetLabel(wxString::Format("%lld.%09llu", rangeOffset.first.count(), rangeOffset.second.count()));
+        m_plblOffsetRange->SetLabel(wxString::Format("%f", slip));
+
+        m_plblDelayRange->SetLabel(wxString::Format("%lld.%09llu", rangeDelay.first.count(), rangeDelay.second.count()));
     }
 }
 

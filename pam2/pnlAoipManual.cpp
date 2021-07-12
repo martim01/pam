@@ -1,5 +1,6 @@
 #include "pnlAoipManual.h"
 #include "settings.h"
+#include "dlgmask.h"
 
 //(*InternalHeaders(pnlAoipManual)
 #include <wx/font.h>
@@ -36,7 +37,7 @@ pnlAoipManual::pnlAoipManual(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	m_pLbl9->GetUiRect().SetGradient(0);
 	m_pLbl9->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl9->SetBackgroundColour(wxColour(64,0,128));
-	m_pipServer = new wmIpEditPnl(this, ID_M_PIP1, wxPoint(110,15), wxSize(200,40));
+	m_pipServer = new wmipeditpnl(this, ID_M_PIP1, wxPoint(110,15), wxSize(200,40));
 	m_pipServer->SetValue(wxEmptyString);
 	m_pLbl1 = new wmLabel(this, ID_M_PLBL1, _("PORT"), wxPoint(310,15), wxSize(50,40), 0, _T("ID_M_PLBL1"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
@@ -56,7 +57,7 @@ pnlAoipManual::pnlAoipManual(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	m_pbtnSampleRate->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnBits = new wmButton(this, ID_M_PBTN1, _("Bits"), wxPoint(260,60), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnBits->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnBits->SetToggleLook(true, wxT("16"), wxT("24"), 40);
+	m_pbtnBits->SetToggle(true, wxT("16"), wxT("24"), 40);
 	m_pLbl4 = new wmLabel(this, ID_M_PLBL4, _("Channels"), wxPoint(10,105), wxSize(100,40), 0, _T("ID_M_PLBL4"));
 	m_pLbl4->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl4->GetUiRect().SetGradient(0);
@@ -72,7 +73,7 @@ pnlAoipManual::pnlAoipManual(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	m_pkbd->SetFont(m_pkbdFont);
 	m_pbtnStream = new wmButton(this, ID_M_PBTN3, _("Receive"), wxPoint(300,320), wxSize(268,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
 	m_pbtnStream->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnStream->SetToggleLook(true, wxT("Stop"), wxT("Start"), 40);
+	m_pbtnStream->SetToggle(true, wxT("Stop"), wxT("Start"), 40);
 
 	Connect(ID_M_PBTN6,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoipManual::OnbtnSampleRateClick);
 	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoipManual::OnbtnStreamClick);
@@ -91,6 +92,7 @@ pnlAoipManual::pnlAoipManual(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	m_pbtnBits->ToggleSelection(Settings::Get().Read("ManualAoip", "Bits", 24) == 24);
 	m_plstChannels->SelectButton(Settings::Get().Read("ManualAoip", "Channels", "2"));
 
+	Connect(m_plstChannels->GetId(), wxEVT_LIST_SELECTED, (wxObjectEventFunction)&pnlAoipManual::OnlstChannelSelected);
 }
 
 pnlAoipManual::~pnlAoipManual()
@@ -115,6 +117,11 @@ void pnlAoipManual::OnbtnSampleRateClick(wxCommandEvent& event)
     }
 }
 
+void pnlAoipManual::OnlstChannelSelected(wxCommandEvent& event)
+{
+    m_sChannels = event.GetString();
+}
+
 void pnlAoipManual::OnbtnStreamClick(wxCommandEvent& event)
 {
     m_pbtnBits->Enable(event.IsChecked() == false);
@@ -127,13 +134,13 @@ void pnlAoipManual::OnbtnStreamClick(wxCommandEvent& event)
     {
         wxString sSdp;
         sSdp << "v=0\r\n"
-             << "o=- " << sess-id << " " << sess-v << " IN 169.254.1.1\r\n"
+             << "o=- " << wxDateTime::UNow().Format("%Y%M%D%H%M%S%l") << " 1 IN 169.254.1.1\r\n"
              << "s=Manual SDP created by PAM\r\n"
              << "t=0 0\r\n"
              << "a=recvonly\r\n"
-             << "m=audio " << m_pedtPort->GetValue() << " RTP/AVP 98\r\n"
-             << "c=IN IP4 " << m_pipServer->GetValue() << "\r\n"
-             << "a=rtpmap:98 L" << (m_pbtnBits->IsChecked() ? "24" : "16") << "/" << m_pbtnSampleRate->GetLabel() << "/" << m_sChannels << "\r\n"
+             << "m=audio " << m_pedtPort->GetValue() << " RTP/AVP 96\r\n"
+             << "c=IN IP4 " << m_pipServer->GetValue() << "/255\r\n"
+             << "a=rtpmap:96 L" << (m_pbtnBits->IsChecked() ? "24" : "16") << "/" << m_pbtnSampleRate->GetLabel() << "/" << m_sChannels << "\r\n"
              << "a=mediaclk:direct=0\r\n";
          //@todo grandmaster if we have one
 

@@ -1,5 +1,6 @@
 #include "liveaudiosource.h"
 #include "GroupsockHelper.hh"
+#include "Groupsock.hh"
 #include "timedbuffer.h"
 #include <wx/defs.h>
 #include <wx/log.h>
@@ -10,6 +11,9 @@
 #include <sys/time.h>
 #endif // __GNU__
 #endif // PTPMONKEY
+
+#include "log.h"
+
 const double LiveAudioSource::TWENTYFOURBIT = 8388608.0;
 
 ////////// LiveAudioSource //////////
@@ -137,6 +141,8 @@ void LiveAudioSource::doReadFromQueue()
     // Remember the play time of this data:
     fDurationInMicroseconds = m_nLastPlayTime = (unsigned)((m_dPlayTimePerSample*fFrameSize)/nBytesPerSample);
 
+
+//    pmlLog() << Groupsock::statsOutgoing.totNumPackets();
 
 
     // Inform the reader that he has data:
