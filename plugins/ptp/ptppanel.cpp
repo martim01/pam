@@ -527,7 +527,7 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_plblDelayRange->SetForegroundColour(wxColour(0,0,0));
 	m_plblDelayRange->SetBackgroundColour(wxColour(255,255,255));
 	m_ppnlGraphs = new wxPanel(m_pSwpMain, ID_PANEL15, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL15"));
-	m_pHistoryGraph = new m_pHistoryGraph(m_ppnlGraphs,ID_HISTORY_GRAPH,wxDefaultPosition,wxDefaultSize);
+	m_pHistoryGraph = new HistoryGraph(m_ppnlGraphs,ID_HISTORY_GRAPH,wxPoint(0,0),wxSize(800,480));
 	m_pSwpMain->AddPage(m_ppnlInfo, _("Info"), false);
 	m_pSwpMain->AddPage(m_ppnlGraphs, _("Graphs"), false);
 
@@ -537,7 +537,7 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 
 	m_offset = 0.0;
 
-	Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&ptpPanel::OnLeftUp);
+
 
 	m_timer.SetOwner(this, wxNewId());
 	Connect(m_timer.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&ptpPanel::OnTimer);
@@ -545,10 +545,20 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 
 	m_dbMac.LoadXml();
 
-	m_pHistoryGraph->AddGraph("Offset", wxColour(100,100,255), 2e6);
+	m_pHistoryGraph->AddGraph("Offset", wxColour(200,200,255), 2e6, true, false);
+	m_pHistoryGraph->AddGraph("LR", wxColour(100,255,100), 2e6, true, true);
+
+	m_pHistoryGraph->ShowBarGraph(false);
+	m_pHistoryGraph->SetRightAxisWidth(100);
+	m_pHistoryGraph->SetMasterGraph("Offset");
+	m_pHistoryGraph->SetGraphUnits("Offset", "ms");
+	m_pHistoryGraph->SetGraphUnits("LR", "ms");
 
 	SetSize(size);
 	SetPosition(pos);
+
+    Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&ptpPanel::OnLeftUp);
+	m_pHistoryGraph->Bind(wxEVT_LEFT_UP, &ptpPanel::OnLeftUp, this);\
     ConnectLeftUp(this);
 
 }
@@ -813,13 +823,24 @@ void ptpPanel::ShowTime()
         m_plblOffsetAverage->SetLabel(wxString::Format("%f", m_offset));
         //m_plblDelayAverage->SetLabel(wxString::Format("%lld.%09llu", slip.first.count(), slip.second.count()));
 
-        time_s_ns rangeOffset = m_pLocalClock->GetOffset(PtpV2Clock::MAX) - m_pLocalClock->GetOffset(PtpV2Clock::MIN);
-        time_s_ns rangeDelay = m_pLocalClock->GetDelay(PtpV2Clock::MAX) - m_pLocalClock->GetDelay(PtpV2Clock::MIN);
+        //time_s_ns rangeOffset = m_pLocalClock->GetOffset(PtpV2Clock::MAX) - m_pLocalClock->GetOffset(PtpV2Clock::MIN);
+        //time_s_ns rangeDelay = m_pLocalClock->GetDelay(PtpV2Clock::MAX) - m_pLocalClock->GetDelay(PtpV2Clock::MIN);
 
-        m_plblOffsetRange->SetLabel(wxString::Format("%llu.%09llu", rangeOffset.first.count(), rangeOffset.second.count()));
-        m_plblDelayRange->SetLabel(wxString::Format("%llu.%09llu", rangeDelay.first.count(), rangeDelay.second.count()));
+        //m_plblOffsetRange->SetLabel(wxString::Format("%llu.%09llu", rangeOffset.first.count(), rangeOffset.second.count()));
+        //m_plblDelayRange->SetLabel(wxString::Format("%llu.%09llu", rangeDelay.first.count(), rangeDelay.second.count()));
 
-        m_pHistoryGraph->AddPeak("Offset", m_pClock->GetOffset(PtpV2Clock::CURRENT));
+        auto dPeak = (TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::CURRENT))+37.0)*1000.0;
+        if(m_pLocalClock->IsSynced())
+        {
+            m_pHistoryGraph->AddPeak("Offset", dPeak);
+
+            double m = m_pLocalClock->GetOffsetSlope();
+            double c = m_pLocalClock->GetOffsetIntersection();
+            auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+            double dEstimate = (37.0+c + m * TimeToDouble(now-m_pLocalClock->GetFirstOffsetTime()))*1000.0;
+
+            m_pHistoryGraph->SetLine("LR", (c+37.0)*1000.0, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dEstimate, std::chrono::system_clock::now());
+        }
     }
 }
 

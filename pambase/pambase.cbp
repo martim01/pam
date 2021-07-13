@@ -180,7 +180,6 @@
 				</Linker>
 				<ExtraCommands>
 					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />
-					<Add after="cp ../external/log/lib/* ../lib" />
 					<Mode after="always" />
 				</ExtraCommands>
 			</Target>

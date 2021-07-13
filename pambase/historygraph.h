@@ -52,6 +52,7 @@ class PAMBASE_IMPEXPORT HistoryGraph : public pmControl
 
         virtual ~HistoryGraph();
 
+        void SetRightAxisWidth(unsigned int nWidth);
 
         //void OnLeftDown(wxMouseEvent& event);
         //void OnMouseMove(wxMouseEvent& event);
@@ -65,8 +66,11 @@ class PAMBASE_IMPEXPORT HistoryGraph : public pmControl
             return wxSize(100,200);
         }
 
-        void AddGraph(const wxString& sName, const wxColour& clr, unsigned int nIntervalMicroSeconds, bool bShow=true);
+        void AddGraph(const wxString& sName, const wxColour& clr, unsigned int nIntervalMicroSeconds, bool bShow=true, bool bConnect=true);
+        void SetGraphUnits(const wxString& sGraph, const wxString& sUnits);
         void AddPeak(const wxString& sGraph, double dPeak);
+        void AddPeak(const wxString& sGraph, double dPeak, const std::chrono::time_point<std::chrono::system_clock>& tp);
+        void SetLine(const wxString& sName, double dStart, const std::chrono::time_point<std::chrono::system_clock>& tpStart, double dEnd, const std::chrono::time_point<std::chrono::system_clock>& tpEnd);
         void RecalculateRange(const wxString& sGraph);
 
         void ShowGraph(const wxString& sGraph, bool bShow);
@@ -80,7 +84,7 @@ class PAMBASE_IMPEXPORT HistoryGraph : public pmControl
 
         void ClearGraph(const wxString& sGraph);
 
-
+        void SetMasterGraph(const wxString& sGraph);
 
   protected:
         enum {DECREASE, RESET, INCREASE};
@@ -101,8 +105,8 @@ class PAMBASE_IMPEXPORT HistoryGraph : public pmControl
 
         struct graph
         {
-            graph(const wxColour& clr, unsigned int nInt, bool bS) : clrLine(clr), nIntervalDefault(nInt), nInterval(nInt), bShow(bS),
-            dMin(std::numeric_limits<double>::max()), dMax(std::numeric_limits<double>::lowest()), dResolution(1.0), nPixels(5){}
+            graph(const wxColour& clr, unsigned int nInt, bool bS, bool bC) : clrLine(clr), nIntervalDefault(nInt), nInterval(nInt), bShow(bS),
+            dMin(std::numeric_limits<double>::max()), dMax(std::numeric_limits<double>::lowest()), dResolution(1.0), nPixels(5), bConnect(bC){}
             wxColour clrLine;
             std::list<graphPoint> lstPeaks;
             unsigned int nIntervalDefault;
@@ -112,6 +116,8 @@ class PAMBASE_IMPEXPORT HistoryGraph : public pmControl
             double dMax;
             double dResolution;
             unsigned int nPixels;
+            bool bConnect;
+            wxString sUnits;
         };
 
         void DrawLineGraph(wxDC& dc, const graph& aGraph);
@@ -132,6 +138,8 @@ class PAMBASE_IMPEXPORT HistoryGraph : public pmControl
 
         bool m_bBarChart;
         int m_nResolution;
+
+        std::map<wxString, graph>::const_iterator m_itMaster;
 };
 
 

@@ -35,7 +35,7 @@ wxWindow* ptpBuilder::CreateMonitorPanel(wxWindow* pParent)
 list<pairOptionPanel_t> ptpBuilder::CreateOptionPanels(wxWindow* pParent)
 {
     list<pairOptionPanel_t> lstOptionPanels;
-    lstOptionPanels.insert(new pnlOptions(pParent, this));
+    lstOptionPanels.push_back(std::make_pair("Options", new pnlOptions(pParent, this)));
     //@todo create and return all the option panels
     return lstOptionPanels;
 }
@@ -64,7 +64,8 @@ void ptpBuilder::OnSettingChanged(SettingEvent& event)
 {
     if(event.GetKey() == "Window")
     {
-        m_pMeter->ChangeWindow(event.GetValue("Info"));
+        m_pMeter->ChangeWindow(event.GetValue());
+        Maximize(true);
     }
 }
 

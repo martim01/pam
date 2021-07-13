@@ -26,7 +26,7 @@ pnlOptions::pnlOptions(wxWindow* parent, ptpBuilder* pBuilder,wxWindowID id,cons
 	Connect(ID_M_PLST5,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlOptions::OnlstWindowSelected);
 	//*)
 	m_plstWindow->AddButton("Info");
-	m_plstWindow->AddButton("Offset Graph");
+	m_plstWindow->AddButton("Graphs");
 
 	m_plstWindow->SelectButton(m_pBuilder->ReadSetting("Window", "Info"));
 

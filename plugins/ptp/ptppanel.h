@@ -49,7 +49,7 @@ class ptpPanel: public pmPanel
 		void ChangeWindow(const wxString& sWindow);
 
 		//(*Declarations(ptpPanel)
-		m_pHistoryGraph* m_pHistoryGraph;
+		HistoryGraph* m_pHistoryGraph;
 		pnlFlags* m_ppnlAnnounceFlags;
 		pnlFlags* m_ppnlFollowFlags;
 		pnlFlags* m_ppnlRequestFlags;

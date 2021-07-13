@@ -4,6 +4,7 @@
 #include <wx/log.h>
 #include "log.h"
 #include "ptpeventhander.h"
+#include "timeutils.h"
 #include <iostream>
 #include <iomanip>
 #include "ptpclock.h"
@@ -203,10 +204,9 @@ timeval wxPtp::GetPtpTime(unsigned char nDomain)
     auto itMonkey = m_mDomain.find(nDomain);
     if(itMonkey != m_mDomain.end())
     {
-
-        time_s_ns ptp = itMonkey->second->GetPtpTime();
-        tv.tv_sec = ptp.first.count();
-        tv.tv_usec = ptp.second.count()/1000;
+        std::pair<std::chrono::seconds, std::chrono::nanoseconds> ptpTime = Split(itMonkey->second->GetPtpTime());
+        tv.tv_sec = ptpTime.first.count();
+        tv.tv_usec =ptpTime.second.count()/1000;
         return tv;
     }
     else
@@ -223,9 +223,9 @@ timespec wxPtp::GetPtpTimeSpec(unsigned char nDomain)
     if(itMonkey != m_mDomain.end())
     {
 
-        time_s_ns ptp = itMonkey->second->GetPtpTime();
-        ts.tv_sec = ptp.first.count();
-        ts.tv_nsec = ptp.second.count();
+        std::pair<std::chrono::seconds, std::chrono::nanoseconds> ptpTime = Split(itMonkey->second->GetPtpTime());
+        ts.tv_sec = ptpTime.first.count();
+        ts.tv_nsec = ptpTime.second.count();
     }
     return ts;
 
@@ -264,9 +264,9 @@ timeval wxPtp::GetPtpOffset(unsigned char nDomain)
     if(itMonkey != m_mDomain.end())
     {
 
-        time_s_ns ptp = itMonkey->second->GetPtpOffset();
-        tv.tv_sec = ptp.first.count();
-        tv.tv_usec = ptp.second.count()/1000;
+        std::pair<std::chrono::seconds, std::chrono::nanoseconds> ptpTime = Split(itMonkey->second->GetPtpOffset());
+        tv.tv_sec = ptpTime.first.count();
+        tv.tv_usec = ptpTime.second.count()/1000;
         return tv;
     }
     else
@@ -284,9 +284,9 @@ timeval wxPtp::GetLastPtpOffset(unsigned char nDomain)
     if(itMonkey != m_mDomain.end())
     {
 
-        time_s_ns ptp = itMonkey->second->GetLastPtpOffset();
-        tv.tv_sec = ptp.first.count();
-        tv.tv_usec = ptp.second.count()/1000;
+        std::pair<std::chrono::seconds, std::chrono::nanoseconds> ptpTime = Split(itMonkey->second->GetPtpOffset());
+        tv.tv_sec = ptpTime.first.count();
+        tv.tv_usec = ptpTime.second.count()/1000;
         return tv;
     }
     else
