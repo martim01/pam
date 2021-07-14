@@ -276,6 +276,7 @@ class ptpPanel: public pmPanel
         MacDb m_dbMac;
 
         double m_offset;
+        wxString m_sGraph;
 
         static const wxColour CLR_MASTER;
         static const wxColour CLR_MASTER_SELECTED;

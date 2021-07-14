@@ -97,8 +97,12 @@ const long ptpPanel::ID_M_PLBL60 = wxNewId();
 const long ptpPanel::ID_M_PLBL64 = wxNewId();
 const long ptpPanel::ID_PANEL8 = wxNewId();
 const long ptpPanel::ID_PANEL14 = wxNewId();
+const long ptpPanel::ID_M_PLBL45 = wxNewId();
 const long ptpPanel::ID_HISTORY_GRAPH = wxNewId();
 const long ptpPanel::ID_PANEL15 = wxNewId();
+const long ptpPanel::ID_M_PLBL53 = wxNewId();
+const long ptpPanel::ID_CUSTOM1 = wxNewId();
+const long ptpPanel::ID_PANEL16 = wxNewId();
 const long ptpPanel::ID_M_PSWP2 = wxNewId();
 //*)
 
@@ -527,9 +531,26 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_plblDelayRange->SetForegroundColour(wxColour(0,0,0));
 	m_plblDelayRange->SetBackgroundColour(wxColour(255,255,255));
 	m_ppnlGraphs = new wxPanel(m_pSwpMain, ID_PANEL15, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL15"));
-	m_pHistoryGraph = new HistoryGraph(m_ppnlGraphs,ID_HISTORY_GRAPH,wxPoint(0,0),wxSize(800,480));
+	m_plblGraphTitle = new wmLabel(m_ppnlGraphs, ID_M_PLBL45, wxEmptyString, wxPoint(0,0), wxSize(800,30), 0, _T("ID_M_PLBL45"));
+	m_plblGraphTitle->SetBorderState(uiRect::BORDER_NONE);
+	m_plblGraphTitle->GetUiRect().SetGradient(0);
+	m_plblGraphTitle->SetForegroundColour(wxColour(255,255,255));
+	m_plblGraphTitle->SetBackgroundColour(wxColour(91,149,57));
+	wxFont m_plblGraphTitleFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
+	m_plblGraphTitle->SetFont(m_plblGraphTitleFont);
+	m_pHistoryGraph = new HistoryGraph(m_ppnlGraphs,ID_HISTORY_GRAPH,wxPoint(0,30),wxSize(800,450));
+	m_ppnlHistograms = new wxPanel(m_pSwpMain, ID_PANEL16, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL16"));
+	m_plblHistogramTitle = new wmLabel(m_ppnlHistograms, ID_M_PLBL53, wxEmptyString, wxPoint(0,0), wxSize(800,30), 0, _T("ID_M_PLBL53"));
+	m_plblHistogramTitle->SetBorderState(uiRect::BORDER_NONE);
+	m_plblHistogramTitle->GetUiRect().SetGradient(0);
+	m_plblHistogramTitle->SetForegroundColour(wxColour(255,255,255));
+	m_plblHistogramTitle->SetBackgroundColour(wxColour(91,149,57));
+	wxFont m_plblHistogramTitleFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
+	m_plblHistogramTitle->SetFont(m_plblHistogramTitleFont);
+	m_pHistogram = new Histogram(m_ppnlHistograms,ID_CUSTOM1,wxPoint(0,30),wxSize(800,450));
 	m_pSwpMain->AddPage(m_ppnlInfo, _("Info"), false);
 	m_pSwpMain->AddPage(m_ppnlGraphs, _("Graphs"), false);
+	m_pSwpMain->AddPage(m_ppnlHistograms, _("Histrograms"), false);
 
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&ptpPanel::OnlstClocksSelected);
 	//*)
@@ -546,13 +567,17 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_dbMac.LoadXml();
 
 	m_pHistoryGraph->AddGraph("Offset", wxColour(200,200,255), 2e6, true, false);
-	m_pHistoryGraph->AddGraph("LR", wxColour(100,255,100), 2e6, true, true);
+	m_pHistoryGraph->AddGraph("OffsetLR", wxColour(100,255,100), 2e6, true, true);
+	m_pHistoryGraph->AddGraph("Delay", wxColour(200,200,255), 2e6, true, false);
+	m_pHistoryGraph->AddGraph("DelayLR", wxColour(255,100,100), 2e6, true, true);
 
 	m_pHistoryGraph->ShowBarGraph(false);
 	m_pHistoryGraph->SetRightAxisWidth(100);
-	m_pHistoryGraph->SetMasterGraph("Offset");
+
 	m_pHistoryGraph->SetGraphUnits("Offset", "ms");
-	m_pHistoryGraph->SetGraphUnits("LR", "ms");
+	m_pHistoryGraph->SetGraphUnits("OffsetLR", "ms");
+	m_pHistoryGraph->SetGraphUnits("Delay", "ms");
+	m_pHistoryGraph->SetGraphUnits("DelayLR", "ms");
 
 	SetSize(size);
 	SetPosition(pos);
@@ -654,12 +679,7 @@ void ptpPanel::OnClockRemoved(wxCommandEvent& event)
 
 void ptpPanel::OnClockTime(wxCommandEvent& event)
 {
-//    wxString sClock(m_dbMac.GetVendor(event.GetString())+event.GetString());
-//    if(m_sSelectedClock == sClock)
-//    {
         ShowTime();
-//    }
-
 
 }
 
@@ -828,13 +848,12 @@ void ptpPanel::ShowTime()
 
         //m_plblOffsetRange->SetLabel(wxString::Format("%llu.%09llu", rangeOffset.first.count(), rangeOffset.second.count()));
         //m_plblDelayRange->SetLabel(wxString::Format("%llu.%09llu", rangeDelay.first.count(), rangeDelay.second.count()));
-
         auto pSyncMaster = wxPtp::Get().GetSyncMasterClock(m_nDomain);
+
         if(m_pLocalClock->IsSynced() && pSyncMaster)
         {
-            double dUTCOffset = static_cast<double>(pSyncMaster->GetUtcOffset());
+            auto dUTCOffset = static_cast<double>(pSyncMaster->GetUtcOffset());
             auto dPeak = (TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::CURRENT))+dUTCOffset)*1000.0;
-
             m_pHistoryGraph->AddPeak("Offset", dPeak);
 
             double m = m_pLocalClock->GetOffsetSlope();
@@ -842,7 +861,18 @@ void ptpPanel::ShowTime()
             auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
             double dEstimate = (dUTCOffset+c + m * TimeToDouble(now-m_pLocalClock->GetFirstOffsetTime()))*1000.0;
 
-            m_pHistoryGraph->SetLine("LR", (c+dUTCOffset)*1000.0, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dEstimate, std::chrono::system_clock::now());
+            m_pHistoryGraph->SetLine("OffsetLR", (c+dUTCOffset)*1000.0, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dEstimate, std::chrono::system_clock::now());
+
+
+            m_pHistoryGraph->AddPeak("Delay", TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::CURRENT)*1000.0));
+
+            double m = m_pLocalClock->GetDelaySlope();
+            double c = m_pLocalClock->GetDelayIntersection();
+            auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+            double dEstimate = (c + m * TimeToDouble(now-m_pLocalClock->GetFirstOffsetTime()))*1000.0;
+
+            m_pHistoryGraph->SetLine("DelayLR", c*1000.0, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dEstimate, std::chrono::system_clock::now());
+
         }
     }
 }
@@ -923,8 +953,6 @@ void ptpPanel::OnTimer(wxTimerEvent& event)
             AddClock(wxString(itClock->first));
         }
     }
-    //ShowClockDetails();
-    //ShowTime();
 }
 
 void ptpPanel::AddClock(wxString sClock)
@@ -971,7 +999,68 @@ void ptpPanel::OnClockMessage(wxCommandEvent& event)
 
 }
 
-void ptpPanel::ChangeWindow(const wxString& sWindow)
+void ptpPanel::ChangeView(const wxString& sWindow)
 {
-    m_pSwpMain->ChangeSelection(sWindow);
+    if(sWindow == "Info")
+    {
+        m_pSwpMain->ChangeSelection(sWindow);
+        m_sGraph = "";
+    }
+    else if(sWindow.find("Graph") != wxNOT_FOUND)
+    {
+        m_pSwpMain->ChangeSelection("Graphs");
+        if(sWindow.find("Offset") != wxNOT_FOUND)
+        {
+            m_sGraph = "Offset";
+        }
+        else
+        {
+            m_sGraph = "Delay";
+        }
+        m_pHistoryGraph->SetMasterGraph(m_sGraph);
+        m_pHistoryGraph->HideAllGraphs();
+        m_pHistoryGraph->ShowGraph(m_sGraph);
+        m_pHistoryGraph->ShowGraph(m_sGraph+"LR");
+    }
+    else
+    {
+        m_pSwpMain->ChangeSelection("Histograms");
+        if(sWindow.find("Offset") != wxNOT_FOUND)
+        {
+            m_sGraph = "Offset";
+        }
+        else
+        {
+            m_sGraph = "Delay";
+        }
+        m_pHistogram->HideAllGraphs();
+        m_pHistogram->ShowGraph(m_sGraph);
+    }
+}
+
+void ptpPanel::ChangeGranularity(int nWhich)
+{
+    if(m_pSwpMain->GetSelectionName() == "Histograms" && m_sGraph != "")
+    {
+        m_pHistogram->ChangeGranularity(m_sGraph, nWhich);
+    }
+}
+
+void ptpPanel::ChangeResolution(int nWhich)
+{
+    if(m_pSwpMain->GetSelectionName() == "Histograms" && m_sGraph != "")
+    {
+        m_pHistogram->ChangeResolution(m_sGraph, nWhich);
+    }
+}
+
+void ptpPanel::ClearGraphs()
+{
+    m_pHistoryGraph->ClearGraphs();
+    m_pHistogram->ClearGraphs();
+}
+
+void ptpPanel::RecalculateRange()
+{
+
 }
