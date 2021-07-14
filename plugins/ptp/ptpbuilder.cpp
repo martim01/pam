@@ -62,14 +62,29 @@ void ptpBuilder::OutputChannels(const std::vector<char>& vChannels)
 
 void ptpBuilder::OnSettingChanged(SettingEvent& event)
 {
-    if(event.GetKey() == "Window")
-    {
-        m_pMeter->ChangeWindow(event.GetValue());
-        Maximize(true);
-    }
+    m_pMeter->ChangeView(event.GetValue());
+   Maximize(true);
 }
 
 
+void ptpBuilder::ClearGraphs()
+{
+    m_pMeter->ClearGraphs();
+}
 
+void ptpBuilder::RecalculateRange()
+{
+    m_pMeter->RecalculateRange();
+}
+
+void ptpBuilder::ChangeGranularity(int nWhich)
+{
+    m_pMeter->ChangeGranularity(nWhich);
+}
+
+void ptpBuilder::ChangeResolution(int nWhich)
+{
+    m_pMeter->ChangeResolution(nWhich);
+}
 
 

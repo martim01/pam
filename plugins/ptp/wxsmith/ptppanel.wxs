@@ -632,13 +632,59 @@
 			</object>
 			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL15" variable="m_ppnlGraphs" member="yes">
-					<object class="Custom" name="ID_HISTORY_GRAPH" subclass="m_pHistoryGraph" variable="m_pHistoryGraph" member="yes">
+					<object class="wmLabel" name="ID_M_PLBL45" variable="m_plblGraphTitle" member="yes">
+						<label></label>
+						<pos>0,0</pos>
+						<size>800,30</size>
+						<fg>#FFFFFF</fg>
+						<bg>#5B9539</bg>
+						<font>
+							<size>12</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Arial</face>
+						</font>
+					</object>
+					<object class="Custom" name="ID_HISTORY_GRAPH" subclass="HistoryGraph" variable="m_pHistoryGraph" member="yes">
 						<creating_code>$(THIS) = new $(CLASS)($(PARENT),$(ID),$(POS),$(SIZE));</creating_code>
 						<include_file>historygraph.h</include_file>
 						<local_include>1</local_include>
+						<style></style>
+						<pos>0,30</pos>
+						<size>800,450</size>
 					</object>
 				</object>
 				<label>Graphs</label>
+			</object>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL16" variable="m_ppnlHistograms" member="yes">
+					<object class="wmLabel" name="ID_M_PLBL53" variable="m_plblHistogramTitle" member="yes">
+						<label></label>
+						<pos>0,0</pos>
+						<size>800,30</size>
+						<fg>#FFFFFF</fg>
+						<bg>#5B9539</bg>
+						<font>
+							<size>12</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Arial</face>
+						</font>
+					</object>
+					<object class="Custom" name="ID_CUSTOM1" subclass="Histogram" variable="m_pHistogram" member="yes">
+						<creating_code>$(THIS) = new $(CLASS)($(PARENT),$(ID),$(POS),$(SIZE));</creating_code>
+						<include_file>histogram.h</include_file>
+						<local_include>1</local_include>
+						<style></style>
+						<pos>0,30</pos>
+						<size>800,450</size>
+					</object>
+				</object>
+				<label>Histrograms</label>
 			</object>
 		</object>
 	</object>

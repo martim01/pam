@@ -21,6 +21,11 @@ class WXEXPORT ptpBuilder : public MonitorPluginBuilder
         virtual void InputSession(const session& aSession);
         virtual void OutputChannels(const std::vector<char>& vChannels);
 
+        void ChangeGranularity(int nWhich);
+        void ChangeResolution(int nWhich);
+        void ClearGraphs();
+        void RecalculateRange();
+
     protected:
 
         friend class ptpPanel;
