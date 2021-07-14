@@ -632,6 +632,7 @@
 			</object>
 			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL15" variable="m_ppnlGraphs" member="yes">
+					<bg>#000000</bg>
 					<object class="wmLabel" name="ID_M_PLBL45" variable="m_plblGraphTitle" member="yes">
 						<label></label>
 						<pos>0,0</pos>
@@ -653,13 +654,52 @@
 						<local_include>1</local_include>
 						<style></style>
 						<pos>0,30</pos>
-						<size>800,450</size>
+						<size>800,400</size>
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL68" variable="m_pLbl4" member="yes">
+						<label>Data</label>
+						<pos>10,445</pos>
+						<size>60,30</size>
+						<fg>#FFFFFF</fg>
+						<bg>#5B9539</bg>
+						<font>
+							<size>8</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Tahoma</face>
+						</font>
+					</object>
+					<object class="wmList" name="ID_M_PLST5" variable="m_plstGraphData" member="yes">
+						<scrolling>None</scrolling>
+						<button_size>-1,30</button_size>
+						<columns>2</columns>
+						<items />
+						<pos>70,443</pos>
+						<size>120,34</size>
+						<bg>#000000</bg>
+						<style>wmList::STYLE_SELECT</style>
+						<handler function="OnlstDataSelected" entry="EVT_LIST_SELECTED" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnGraphClear" member="yes">
+						<label>Clear All</label>
+						<pos>600,445</pos>
+						<size>70,30</size>
+						<handler function="OnbtnClearClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnGraphOptions" member="yes">
+						<label>Options</label>
+						<pos>720,445</pos>
+						<size>70,30</size>
+						<handler function="OnbtnOptionsClick" entry="EVT_BUTTON" />
 					</object>
 				</object>
 				<label>Graphs</label>
 			</object>
 			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL16" variable="m_ppnlHistograms" member="yes">
+					<bg>#000000</bg>
 					<object class="wmLabel" name="ID_M_PLBL53" variable="m_plblHistogramTitle" member="yes">
 						<label></label>
 						<pos>0,0</pos>
@@ -681,7 +721,95 @@
 						<local_include>1</local_include>
 						<style></style>
 						<pos>0,30</pos>
-						<size>800,450</size>
+						<size>800,410</size>
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL67" variable="m_pLbl3" member="yes">
+						<label>Data</label>
+						<pos>10,445</pos>
+						<size>60,30</size>
+						<fg>#FFFFFF</fg>
+						<bg>#5B9539</bg>
+						<font>
+							<size>8</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Tahoma</face>
+						</font>
+					</object>
+					<object class="wmList" name="ID_M_PLST4" variable="m_plstHistogramData" member="yes">
+						<scrolling>None</scrolling>
+						<button_size>-1,30</button_size>
+						<columns>2</columns>
+						<items />
+						<pos>70,443</pos>
+						<size>120,34</size>
+						<bg>#000000</bg>
+						<style>wmList::STYLE_SELECT</style>
+						<handler function="OnlstDataSelected" entry="EVT_LIST_SELECTED" />
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL65" variable="m_pLbl1" member="yes">
+						<label>Granularity</label>
+						<pos>200,445</pos>
+						<size>60,30</size>
+						<fg>#FFFFFF</fg>
+						<bg>#5B9539</bg>
+						<font>
+							<size>8</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Tahoma</face>
+						</font>
+					</object>
+					<object class="wmList" name="ID_M_PLST2" variable="m_plstHistogramGranularity" member="yes">
+						<scrolling>None</scrolling>
+						<button_size>-1,30</button_size>
+						<columns>3</columns>
+						<items />
+						<pos>260,443</pos>
+						<size>120,34</size>
+						<bg>#000000</bg>
+						<handler function="OnlstHistogramGranularitySelected" entry="EVT_LIST_SELECTED" />
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL66" variable="m_pLbl2" member="yes">
+						<label>Resolution</label>
+						<pos>400,445</pos>
+						<size>60,30</size>
+						<fg>#FFFFFF</fg>
+						<bg>#5B9539</bg>
+						<font>
+							<size>8</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Tahoma</face>
+						</font>
+					</object>
+					<object class="wmList" name="ID_M_PLST3" variable="m_plstHistogramResolution" member="yes">
+						<scrolling>None</scrolling>
+						<button_size>-1,30</button_size>
+						<columns>3</columns>
+						<items />
+						<pos>460,443</pos>
+						<size>120,34</size>
+						<bg>#000000</bg>
+						<handler function="OnlstHistogramResolutionSelected" entry="EVT_LIST_SELECTED" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnHistogramClear" member="yes">
+						<label>Clear All</label>
+						<pos>600,445</pos>
+						<size>70,30</size>
+						<handler function="OnbtnClearClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnOptions" member="yes">
+						<label>Options</label>
+						<pos>720,445</pos>
+						<size>70,30</size>
+						<handler function="OnbtnOptionsClick" entry="EVT_BUTTON" />
 					</object>
 				</object>
 				<label>Histrograms</label>

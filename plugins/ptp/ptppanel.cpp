@@ -99,9 +99,21 @@ const long ptpPanel::ID_PANEL8 = wxNewId();
 const long ptpPanel::ID_PANEL14 = wxNewId();
 const long ptpPanel::ID_M_PLBL45 = wxNewId();
 const long ptpPanel::ID_HISTORY_GRAPH = wxNewId();
+const long ptpPanel::ID_M_PLBL68 = wxNewId();
+const long ptpPanel::ID_M_PLST5 = wxNewId();
+const long ptpPanel::ID_M_PBTN3 = wxNewId();
+const long ptpPanel::ID_M_PBTN4 = wxNewId();
 const long ptpPanel::ID_PANEL15 = wxNewId();
 const long ptpPanel::ID_M_PLBL53 = wxNewId();
 const long ptpPanel::ID_CUSTOM1 = wxNewId();
+const long ptpPanel::ID_M_PLBL67 = wxNewId();
+const long ptpPanel::ID_M_PLST4 = wxNewId();
+const long ptpPanel::ID_M_PLBL65 = wxNewId();
+const long ptpPanel::ID_M_PLST2 = wxNewId();
+const long ptpPanel::ID_M_PLBL66 = wxNewId();
+const long ptpPanel::ID_M_PLST3 = wxNewId();
+const long ptpPanel::ID_M_PBTN1 = wxNewId();
+const long ptpPanel::ID_M_PBTN2 = wxNewId();
 const long ptpPanel::ID_PANEL16 = wxNewId();
 const long ptpPanel::ID_M_PSWP2 = wxNewId();
 //*)
@@ -531,6 +543,7 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_plblDelayRange->SetForegroundColour(wxColour(0,0,0));
 	m_plblDelayRange->SetBackgroundColour(wxColour(255,255,255));
 	m_ppnlGraphs = new wxPanel(m_pSwpMain, ID_PANEL15, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL15"));
+	m_ppnlGraphs->SetBackgroundColour(wxColour(0,0,0));
 	m_plblGraphTitle = new wmLabel(m_ppnlGraphs, ID_M_PLBL45, wxEmptyString, wxPoint(0,0), wxSize(800,30), 0, _T("ID_M_PLBL45"));
 	m_plblGraphTitle->SetBorderState(uiRect::BORDER_NONE);
 	m_plblGraphTitle->GetUiRect().SetGradient(0);
@@ -538,8 +551,20 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_plblGraphTitle->SetBackgroundColour(wxColour(91,149,57));
 	wxFont m_plblGraphTitleFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	m_plblGraphTitle->SetFont(m_plblGraphTitleFont);
-	m_pHistoryGraph = new HistoryGraph(m_ppnlGraphs,ID_HISTORY_GRAPH,wxPoint(0,30),wxSize(800,450));
+	m_pHistoryGraph = new HistoryGraph(m_ppnlGraphs,ID_HISTORY_GRAPH,wxPoint(0,30),wxSize(800,400));
+	m_pLbl4 = new wmLabel(m_ppnlGraphs, ID_M_PLBL68, _("Data"), wxPoint(10,445), wxSize(60,30), 0, _T("ID_M_PLBL68"));
+	m_pLbl4->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl4->GetUiRect().SetGradient(0);
+	m_pLbl4->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl4->SetBackgroundColour(wxColour(91,149,57));
+	wxFont m_pLbl4Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pLbl4->SetFont(m_pLbl4Font);
+	m_plstGraphData = new wmList(m_ppnlGraphs, ID_M_PLST5, wxPoint(70,443), wxSize(120,34), wmList::STYLE_SELECT, 0, wxSize(-1,30), 2, wxSize(-1,-1));
+	m_plstGraphData->SetBackgroundColour(wxColour(0,0,0));
+	m_pbtnGraphClear = new wmButton(m_ppnlGraphs, ID_M_PBTN3, _("Clear All"), wxPoint(600,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN3"));
+	m_pbtnGraphOptions = new wmButton(m_ppnlGraphs, ID_M_PBTN4, _("Options"), wxPoint(720,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN4"));
 	m_ppnlHistograms = new wxPanel(m_pSwpMain, ID_PANEL16, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL16"));
+	m_ppnlHistograms->SetBackgroundColour(wxColour(0,0,0));
 	m_plblHistogramTitle = new wmLabel(m_ppnlHistograms, ID_M_PLBL53, wxEmptyString, wxPoint(0,0), wxSize(800,30), 0, _T("ID_M_PLBL53"));
 	m_plblHistogramTitle->SetBorderState(uiRect::BORDER_NONE);
 	m_plblHistogramTitle->GetUiRect().SetGradient(0);
@@ -547,12 +572,49 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_plblHistogramTitle->SetBackgroundColour(wxColour(91,149,57));
 	wxFont m_plblHistogramTitleFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	m_plblHistogramTitle->SetFont(m_plblHistogramTitleFont);
-	m_pHistogram = new Histogram(m_ppnlHistograms,ID_CUSTOM1,wxPoint(0,30),wxSize(800,450));
+	m_pHistogram = new Histogram(m_ppnlHistograms,ID_CUSTOM1,wxPoint(0,30),wxSize(800,410));
+	m_pLbl3 = new wmLabel(m_ppnlHistograms, ID_M_PLBL67, _("Data"), wxPoint(10,445), wxSize(60,30), 0, _T("ID_M_PLBL67"));
+	m_pLbl3->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl3->GetUiRect().SetGradient(0);
+	m_pLbl3->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl3->SetBackgroundColour(wxColour(91,149,57));
+	wxFont m_pLbl3Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pLbl3->SetFont(m_pLbl3Font);
+	m_plstHistogramData = new wmList(m_ppnlHistograms, ID_M_PLST4, wxPoint(70,443), wxSize(120,34), wmList::STYLE_SELECT, 0, wxSize(-1,30), 2, wxSize(-1,-1));
+	m_plstHistogramData->SetBackgroundColour(wxColour(0,0,0));
+	m_pLbl1 = new wmLabel(m_ppnlHistograms, ID_M_PLBL65, _("Granularity"), wxPoint(200,445), wxSize(60,30), 0, _T("ID_M_PLBL65"));
+	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl1->GetUiRect().SetGradient(0);
+	m_pLbl1->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl1->SetBackgroundColour(wxColour(91,149,57));
+	wxFont m_pLbl1Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pLbl1->SetFont(m_pLbl1Font);
+	m_plstHistogramGranularity = new wmList(m_ppnlHistograms, ID_M_PLST2, wxPoint(260,443), wxSize(120,34), 0, 0, wxSize(-1,30), 3, wxSize(1,1));
+	m_plstHistogramGranularity->SetBackgroundColour(wxColour(0,0,0));
+	m_pLbl2 = new wmLabel(m_ppnlHistograms, ID_M_PLBL66, _("Resolution"), wxPoint(400,445), wxSize(60,30), 0, _T("ID_M_PLBL66"));
+	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl2->GetUiRect().SetGradient(0);
+	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl2->SetBackgroundColour(wxColour(91,149,57));
+	wxFont m_pLbl2Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pLbl2->SetFont(m_pLbl2Font);
+	m_plstHistogramResolution = new wmList(m_ppnlHistograms, ID_M_PLST3, wxPoint(460,443), wxSize(120,34), 0, 0, wxSize(-1,30), 3, wxSize(-1,-1));
+	m_plstHistogramResolution->SetBackgroundColour(wxColour(0,0,0));
+	m_pbtnHistogramClear = new wmButton(m_ppnlHistograms, ID_M_PBTN1, _("Clear All"), wxPoint(600,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
+	m_pbtnOptions = new wmButton(m_ppnlHistograms, ID_M_PBTN2, _("Options"), wxPoint(720,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
 	m_pSwpMain->AddPage(m_ppnlInfo, _("Info"), false);
 	m_pSwpMain->AddPage(m_ppnlGraphs, _("Graphs"), false);
-	m_pSwpMain->AddPage(m_ppnlHistograms, _("Histograms"), false);
+	m_pSwpMain->AddPage(m_ppnlHistograms, _("Histrograms"), false);
 
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&ptpPanel::OnlstClocksSelected);
+	Connect(ID_M_PLST5,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&ptpPanel::OnlstDataSelected);
+	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnClearClick);
+	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnOptionsClick);
+	Connect(ID_M_PLST4,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&ptpPanel::OnlstDataSelected);
+	Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&ptpPanel::OnlstHistogramGranularitySelected);
+	Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&ptpPanel::OnlstHistogramResolutionSelected);
+	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnClearClick);
+	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnOptionsClick);
 	//*)
 	m_plstClocks->SetTextSelectedButtonColour(*wxBLACK);
 
@@ -1077,4 +1139,24 @@ void ptpPanel::ClearGraphs()
 void ptpPanel::RecalculateRange()
 {
 
+}
+
+void ptpPanel::OnlstDataSelected(wxCommandEvent& event)
+{
+}
+
+void ptpPanel::OnbtnClearClick(wxCommandEvent& event)
+{
+}
+
+void ptpPanel::OnbtnOptionsClick(wxCommandEvent& event)
+{
+}
+
+void ptpPanel::OnlstHistogramGranularitySelected(wxCommandEvent& event)
+{
+}
+
+void ptpPanel::OnlstHistogramResolutionSelected(wxCommandEvent& event)
+{
 }

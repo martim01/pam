@@ -3,6 +3,7 @@
 //(*Headers(ptpPanel)
 #include "histogram.h"
 #include "historygraph.h"
+#include "wmbutton.h"
 #include "wmlabel.h"
 #include "wmlist.h"
 #include "wmswitcherpanel.h"
@@ -57,6 +58,14 @@ class ptpPanel: public pmPanel
 		pnlFlags* m_ppnlRequestFlags;
 		pnlFlags* m_ppnlResponseFlags;
 		pnlFlags* m_ppnlSyncFlags;
+		wmButton* m_pbtnGraphClear;
+		wmButton* m_pbtnGraphOptions;
+		wmButton* m_pbtnHistogramClear;
+		wmButton* m_pbtnOptions;
+		wmLabel* m_pLbl1;
+		wmLabel* m_pLbl2;
+		wmLabel* m_pLbl3;
+		wmLabel* m_pLbl4;
 		wmLabel* m_pblAddress;
 		wmLabel* m_plblAccuracy;
 		wmLabel* m_plblAnnCount;
@@ -122,6 +131,10 @@ class ptpPanel: public pmPanel
 		wmLabel* m_ptitleUtc;
 		wmLabel* m_ptitleVariance;
 		wmList* m_plstClocks;
+		wmList* m_plstGraphData;
+		wmList* m_plstHistogramData;
+		wmList* m_plstHistogramGranularity;
+		wmList* m_plstHistogramResolution;
 		wmSwitcherPanel* m_pSwpMain;
 		wmSwitcherPanel* m_pswp;
 		wxPanel* m_ppnlAnnouncements;
@@ -240,9 +253,21 @@ class ptpPanel: public pmPanel
 		static const long ID_PANEL14;
 		static const long ID_M_PLBL45;
 		static const long ID_HISTORY_GRAPH;
+		static const long ID_M_PLBL68;
+		static const long ID_M_PLST5;
+		static const long ID_M_PBTN3;
+		static const long ID_M_PBTN4;
 		static const long ID_PANEL15;
 		static const long ID_M_PLBL53;
 		static const long ID_CUSTOM1;
+		static const long ID_M_PLBL67;
+		static const long ID_M_PLST4;
+		static const long ID_M_PLBL65;
+		static const long ID_M_PLST2;
+		static const long ID_M_PLBL66;
+		static const long ID_M_PLST3;
+		static const long ID_M_PBTN1;
+		static const long ID_M_PBTN2;
 		static const long ID_PANEL16;
 		static const long ID_M_PSWP2;
 		//*)
@@ -253,6 +278,11 @@ class ptpPanel: public pmPanel
 
 		//(*Handlers(ptpPanel)
 		void OnlstClocksSelected(wxCommandEvent& event);
+		void OnlstDataSelected(wxCommandEvent& event);
+		void OnbtnClearClick(wxCommandEvent& event);
+		void OnbtnOptionsClick(wxCommandEvent& event);
+		void OnlstHistogramGranularitySelected(wxCommandEvent& event);
+		void OnlstHistogramResolutionSelected(wxCommandEvent& event);
 		//*)
 
 		void OnTimer(wxTimerEvent& event);
