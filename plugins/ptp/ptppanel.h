@@ -1,6 +1,7 @@
 #pragma once
 
 //(*Headers(ptpPanel)
+#include "histogram.h"
 #include "historygraph.h"
 #include "wmlabel.h"
 #include "wmlist.h"
@@ -49,6 +50,7 @@ class ptpPanel: public pmPanel
 		void ChangeView(const wxString& sWindow);
 
 		//(*Declarations(ptpPanel)
+		Histogram* m_pHistogram;
 		HistoryGraph* m_pHistoryGraph;
 		pnlFlags* m_ppnlAnnounceFlags;
 		pnlFlags* m_ppnlFollowFlags;
@@ -67,6 +69,8 @@ class ptpPanel: public pmPanel
 		wmLabel* m_plblDelayRate;
 		wmLabel* m_plblFollowCount;
 		wmLabel* m_plblFollowRate;
+		wmLabel* m_plblGraphTitle;
+		wmLabel* m_plblHistogramTitle;
 		wmLabel* m_plblIdentity;
 		wmLabel* m_plblMasterId;
 		wmLabel* m_plblOffsetAverage;
@@ -123,6 +127,7 @@ class ptpPanel: public pmPanel
 		wxPanel* m_ppnlAnnouncements;
 		wxPanel* m_ppnlFollowUp;
 		wxPanel* m_ppnlGraphs;
+		wxPanel* m_ppnlHistograms;
 		wxPanel* m_ppnlInfo;
 		wxPanel* m_ppnlLocal;
 		wxPanel* m_ppnlMaster;
@@ -233,8 +238,12 @@ class ptpPanel: public pmPanel
 		static const long ID_M_PLBL64;
 		static const long ID_PANEL8;
 		static const long ID_PANEL14;
+		static const long ID_M_PLBL45;
 		static const long ID_HISTORY_GRAPH;
 		static const long ID_PANEL15;
+		static const long ID_M_PLBL53;
+		static const long ID_CUSTOM1;
+		static const long ID_PANEL16;
 		static const long ID_M_PSWP2;
 		//*)
 
