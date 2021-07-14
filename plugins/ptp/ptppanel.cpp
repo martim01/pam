@@ -829,17 +829,20 @@ void ptpPanel::ShowTime()
         //m_plblOffsetRange->SetLabel(wxString::Format("%llu.%09llu", rangeOffset.first.count(), rangeOffset.second.count()));
         //m_plblDelayRange->SetLabel(wxString::Format("%llu.%09llu", rangeDelay.first.count(), rangeDelay.second.count()));
 
-        auto dPeak = (TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::CURRENT))+37.0)*1000.0;
-        if(m_pLocalClock->IsSynced())
+        auto pSyncMaster = wxPtp::Get().GetSyncMasterClock(m_nDomain);
+        if(m_pLocalClock->IsSynced() && pSyncMaster)
         {
+            double dUTCOffset = static_cast<double>(pSyncMaster->GetUtcOffset());
+            auto dPeak = (TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::CURRENT))+dUTCOffset)*1000.0;
+
             m_pHistoryGraph->AddPeak("Offset", dPeak);
 
             double m = m_pLocalClock->GetOffsetSlope();
             double c = m_pLocalClock->GetOffsetIntersection();
             auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
-            double dEstimate = (37.0+c + m * TimeToDouble(now-m_pLocalClock->GetFirstOffsetTime()))*1000.0;
+            double dEstimate = (dUTCOffset+c + m * TimeToDouble(now-m_pLocalClock->GetFirstOffsetTime()))*1000.0;
 
-            m_pHistoryGraph->SetLine("LR", (c+37.0)*1000.0, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dEstimate, std::chrono::system_clock::now());
+            m_pHistoryGraph->SetLine("LR", (c+dUTCOffset)*1000.0, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dEstimate, std::chrono::system_clock::now());
         }
     }
 }
