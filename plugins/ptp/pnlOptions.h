@@ -5,6 +5,8 @@
 #include "wmlist.h"
 #include <wx/panel.h>
 //*)
+#include "wmlabel.h"
+#include "wmbutton.h"
 
 class ptpBuilder;
 class pnlOptions: public wxPanel
@@ -32,9 +34,9 @@ class pnlOptions: public wxPanel
 
 	private:
 
-	    void OnbtnClearClick(wxCommandEvent& event)
-        void OnlstGranularityPressed(wxCommandEvent& event)
-        void OnlstResolutionPressed(wxCommandEvent& event)
+	    void OnbtnClearClick(wxCommandEvent& event);
+        void OnlstGranularityPressed(wxCommandEvent& event);
+        void OnlstResolutionPressed(wxCommandEvent& event);
 
 		//(*Handlers(pnlOptions)
 		void OnlstWindowSelected(wxCommandEvent& event);

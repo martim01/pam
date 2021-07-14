@@ -550,7 +550,7 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_pHistogram = new Histogram(m_ppnlHistograms,ID_CUSTOM1,wxPoint(0,30),wxSize(800,450));
 	m_pSwpMain->AddPage(m_ppnlInfo, _("Info"), false);
 	m_pSwpMain->AddPage(m_ppnlGraphs, _("Graphs"), false);
-	m_pSwpMain->AddPage(m_ppnlHistograms, _("Histrograms"), false);
+	m_pSwpMain->AddPage(m_ppnlHistograms, _("Histograms"), false);
 
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&ptpPanel::OnlstClocksSelected);
 	//*)
@@ -566,6 +566,9 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 
 	m_dbMac.LoadXml();
 
+	m_pHistoryGraph->SetFont(wxFont(7,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
+    m_pHistogram->SetFont(wxFont(7,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
+
 	m_pHistoryGraph->AddGraph("Offset", wxColour(200,200,255), 2e6, true, false);
 	m_pHistoryGraph->AddGraph("OffsetLR", wxColour(100,255,100), 2e6, true, true);
 	m_pHistoryGraph->AddGraph("Delay", wxColour(200,200,255), 2e6, true, false);
@@ -578,6 +581,9 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_pHistoryGraph->SetGraphUnits("OffsetLR", "ms");
 	m_pHistoryGraph->SetGraphUnits("Delay", "ms");
 	m_pHistoryGraph->SetGraphUnits("DelayLR", "ms");
+
+	m_pHistogram->AddGraph("Offset", wxColour(100,255,100), 0.01);
+	m_pHistogram->AddGraph("Delay", wxColour(255,100,100), 0.01);
 
 	SetSize(size);
 	SetPosition(pos);
@@ -855,6 +861,7 @@ void ptpPanel::ShowTime()
             auto dUTCOffset = static_cast<double>(pSyncMaster->GetUtcOffset());
             auto dPeak = (TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::CURRENT))+dUTCOffset)*1000.0;
             m_pHistoryGraph->AddPeak("Offset", dPeak);
+            m_pHistogram->AddPeak("Offset", dPeak);
 
             double m = m_pLocalClock->GetOffsetSlope();
             double c = m_pLocalClock->GetOffsetIntersection();
@@ -863,15 +870,18 @@ void ptpPanel::ShowTime()
 
             m_pHistoryGraph->SetLine("OffsetLR", (c+dUTCOffset)*1000.0, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dEstimate, std::chrono::system_clock::now());
 
+            auto dDelay = TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::CURRENT))*1000.0;
+            m_pHistoryGraph->AddPeak("Delay", dDelay);
+            m_pHistogram->AddPeak("Dealy", dDelay);
 
-            m_pHistoryGraph->AddPeak("Delay", TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::CURRENT)*1000.0));
-
-            double m = m_pLocalClock->GetDelaySlope();
-            double c = m_pLocalClock->GetDelayIntersection();
-            auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
-            double dEstimate = (c + m * TimeToDouble(now-m_pLocalClock->GetFirstOffsetTime()))*1000.0;
+            m = m_pLocalClock->GetDelaySlope();
+            c = m_pLocalClock->GetDelayIntersection();
+            now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+            dEstimate = (c + m * TimeToDouble(now-m_pLocalClock->GetFirstOffsetTime()))*1000.0;
 
             m_pHistoryGraph->SetLine("DelayLR", c*1000.0, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dEstimate, std::chrono::system_clock::now());
+
+
 
         }
     }
@@ -1017,10 +1027,12 @@ void ptpPanel::ChangeView(const wxString& sWindow)
         {
             m_sGraph = "Delay";
         }
+        m_plblGraphTitle->SetLabel("PTP "+m_sGraph);
+
         m_pHistoryGraph->SetMasterGraph(m_sGraph);
         m_pHistoryGraph->HideAllGraphs();
-        m_pHistoryGraph->ShowGraph(m_sGraph);
-        m_pHistoryGraph->ShowGraph(m_sGraph+"LR");
+        m_pHistoryGraph->ShowGraph(m_sGraph, true);
+        m_pHistoryGraph->ShowGraph(m_sGraph+"LR", true);
     }
     else
     {
@@ -1034,6 +1046,7 @@ void ptpPanel::ChangeView(const wxString& sWindow)
 
             m_sGraph = "Delay";
         }
+        m_plblHistogramTitle->SetLabel("PTP "+m_sGraph);
         m_pHistogram->HideAllGraphs();
         m_pHistogram->ShowGraph(m_sGraph);
     }
