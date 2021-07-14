@@ -1031,6 +1031,7 @@ void ptpPanel::ChangeView(const wxString& sWindow)
         }
         else
         {
+
             m_sGraph = "Delay";
         }
         m_pHistogram->HideAllGraphs();

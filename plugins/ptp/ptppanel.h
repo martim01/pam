@@ -46,7 +46,7 @@ class ptpPanel: public pmPanel
 		ptpPanel(wxWindow* parent,ptpBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~ptpPanel();
 
-		void ChangeWindow(const wxString& sWindow);
+		void ChangeView(const wxString& sWindow);
 
 		//(*Declarations(ptpPanel)
 		HistoryGraph* m_pHistoryGraph;
@@ -131,6 +131,11 @@ class ptpPanel: public pmPanel
 		wxPanel* m_ppnlSlave;
 		wxPanel* m_ppnlSync;
 		//*)
+
+		void ChangeGranularity(int nWhich);
+        void ChangeResolution(int nWhich);
+        void ClearGraphs();
+        void RecalculateRange();
 
 		/**	@brief Called when there is some audio data to pass to the meter
 		*	@param pBuffer const pointer to the timedbuffer containing the audio data
