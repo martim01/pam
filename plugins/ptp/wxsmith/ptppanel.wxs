@@ -666,7 +666,7 @@
 					<object class="wmLabel" name="ID_M_PLBL74" variable="m_plblCurrent" member="yes">
 						<label></label>
 						<pos>50,30</pos>
-						<size>100,30</size>
+						<size>80,30</size>
 						<fg>#BAFEA7</fg>
 						<bg>#000000</bg>
 						<font>
@@ -681,7 +681,7 @@
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL70" variable="m_pLbl6" member="yes">
 						<label>Mean:</label>
-						<pos>160,30</pos>
+						<pos>140,30</pos>
 						<size>50,30</size>
 						<fg>#FFFFFF</fg>
 						<bg>#000000</bg>
@@ -696,8 +696,8 @@
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL75" variable="m_plblMean" member="yes">
 						<label></label>
-						<pos>210,30</pos>
-						<size>100,30</size>
+						<pos>190,30</pos>
+						<size>80,30</size>
 						<fg>#BAFEA7</fg>
 						<bg>#000000</bg>
 						<font>
@@ -712,7 +712,7 @@
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL71" variable="m_pLbl7" member="yes">
 						<label>SD:</label>
-						<pos>320,30</pos>
+						<pos>280,30</pos>
 						<size>50,30</size>
 						<fg>#FFFFFF</fg>
 						<bg>#000000</bg>
@@ -727,8 +727,8 @@
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL76" variable="m_plblDeviation" member="yes">
 						<label></label>
-						<pos>370,30</pos>
-						<size>100,30</size>
+						<pos>330,30</pos>
+						<size>80,30</size>
 						<fg>#BAFEA7</fg>
 						<bg>#000000</bg>
 						<font>
@@ -742,8 +742,8 @@
 						<style>wxALIGN_LEFT</style>
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL72" variable="m_pLbl8" member="yes">
-						<label>LR Slope:</label>
-						<pos>480,30</pos>
+						<label>Slope:</label>
+						<pos>420,30</pos>
 						<size>50,30</size>
 						<fg>#FFFFFF</fg>
 						<bg>#000000</bg>
@@ -758,8 +758,8 @@
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL77" variable="m_plblSlope" member="yes">
 						<label></label>
-						<pos>530,30</pos>
-						<size>100,30</size>
+						<pos>470,30</pos>
+						<size>80,30</size>
 						<fg>#BAFEA7</fg>
 						<bg>#000000</bg>
 						<font>
@@ -773,8 +773,8 @@
 						<style>wxALIGN_LEFT</style>
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL73" variable="m_pLbl9" member="yes">
-						<label>LR Pred:</label>
-						<pos>640,30</pos>
+						<label>Est:</label>
+						<pos>560,30</pos>
 						<size>50,30</size>
 						<fg>#FFFFFF</fg>
 						<bg>#000000</bg>
@@ -789,8 +789,8 @@
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL78" variable="m_plblPrediction" member="yes">
 						<label></label>
-						<pos>690,30</pos>
-						<size>100,30</size>
+						<pos>610,30</pos>
+						<size>80,30</size>
 						<fg>#BAFEA7</fg>
 						<bg>#000000</bg>
 						<font>
