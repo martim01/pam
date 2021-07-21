@@ -52,6 +52,7 @@ class TimeManager : public wxEvtHandler
 
         enumSync m_eCurrentSync;
 
+        unsigned long m_nSyncCount;
 
 };
 

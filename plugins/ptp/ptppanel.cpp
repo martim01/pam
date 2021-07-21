@@ -604,7 +604,7 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_pbtnOptions = new wmButton(m_ppnlHistograms, ID_M_PBTN2, _("Options"), wxPoint(720,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
 	m_pSwpMain->AddPage(m_ppnlInfo, _("Info"), false);
 	m_pSwpMain->AddPage(m_ppnlGraphs, _("Graphs"), false);
-	m_pSwpMain->AddPage(m_ppnlHistograms, _("Histrograms"), false);
+	m_pSwpMain->AddPage(m_ppnlHistograms, _("Histograms"), false);
 
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&ptpPanel::OnlstClocksSelected);
 	Connect(ID_M_PLST5,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&ptpPanel::OnlstDataSelected);
@@ -616,6 +616,20 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnClearClick);
 	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnOptionsClick);
 	//*)
+
+    m_plstHistogramGranularity->AddButton("-");
+    m_plstHistogramGranularity->AddButton("0");
+    m_plstHistogramGranularity->AddButton("+");
+
+    m_plstHistogramResolution->AddButton("-");
+    m_plstHistogramResolution->AddButton("0");
+    m_plstHistogramResolution->AddButton("+");
+
+    m_plstHistogramData->AddButton("Offset");
+    m_plstHistogramData->AddButton("Delay");
+    m_plstGraphData->AddButton("Offset");
+    m_plstGraphData->AddButton("Delay");
+
 	m_plstClocks->SetTextSelectedButtonColour(*wxBLACK);
 
 	m_offset = 0.0;
@@ -633,8 +647,15 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 
 	m_pHistoryGraph->AddGraph("Offset", wxColour(200,200,255), 2e6, true, false);
 	m_pHistoryGraph->AddGraph("OffsetLR", wxColour(100,255,100), 2e6, true, true);
+	m_pHistoryGraph->AddGraph("OffsetMean", wxColour(255,255,255), 2e6, true, true);
+	m_pHistoryGraph->AddGraph("OffsetVarMin", wxColour(100,100,200), 2e6, true, true);
+	m_pHistoryGraph->AddGraph("OffsetVarMax", wxColour(100,100,200), 2e6, true, true);
+
 	m_pHistoryGraph->AddGraph("Delay", wxColour(200,200,255), 2e6, true, false);
-	m_pHistoryGraph->AddGraph("DelayLR", wxColour(255,100,100), 2e6, true, true);
+	m_pHistoryGraph->AddGraph("DelayLR", wxColour(100,255,100), 2e6, true, true);
+    m_pHistoryGraph->AddGraph("DelayMean", wxColour(255,255,255), 2e6, true, true);
+	m_pHistoryGraph->AddGraph("DelayVarMin", wxColour(100,100,200), 2e6, true, true);
+	m_pHistoryGraph->AddGraph("DelayVarMax", wxColour(100,100,200), 2e6, true, true);
 
 	m_pHistoryGraph->ShowBarGraph(false);
 	m_pHistoryGraph->SetRightAxisWidth(100);
@@ -644,8 +665,12 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_pHistoryGraph->SetGraphUnits("Delay", "ms");
 	m_pHistoryGraph->SetGraphUnits("DelayLR", "ms");
 
-	m_pHistogram->AddGraph("Offset", wxColour(100,255,100), 0.01);
-	m_pHistogram->AddGraph("Delay", wxColour(255,100,100), 0.01);
+	m_pHistogram->AddGraph("Offset", wxColour(100,255,100), 0.001);
+	m_pHistogram->AddGraph("Delay", wxColour(255,100,100), 0.001);
+
+    ChangeView(m_pBuilder->ReadSetting("Window", "Info"));
+
+	m_plstGraphData->SelectButton(m_pBuilder->ReadSetting("Graph", "Offset"));
 
 	SetSize(size);
 	SetPosition(pos);
@@ -901,7 +926,7 @@ void ptpPanel::ShowTime()
         m_plblTime->SetLabel(wxString(TimeToIsoString(m_pLocalClock->GetPtpTime())));
         m_plblTime->SetBackgroundColour(m_pLocalClock->IsSynced() ? wxColour(150,255,150) : wxColour(255,150,150));
 
-        double offset = TimeToDouble(m_pLocalClock->GetOffset(ptpmonkey::PtpV2Clock::CURRENT));
+        double offset = TimeToDouble(m_pLocalClock->GetOffset(ptpmonkey::PtpV2Clock::MEAN));
 
 
         double slip = (offset-m_offset);
@@ -932,9 +957,17 @@ void ptpPanel::ShowTime()
 
             m_pHistoryGraph->SetLine("OffsetLR", (c+dUTCOffset)*1000.0, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dEstimate, std::chrono::system_clock::now());
 
+            dPeak = (TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::MEAN))+dUTCOffset)*1000.0;
+
+            m_pHistoryGraph->SetLine("OffsetMean", dPeak, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dPeak, std::chrono::system_clock::now());
+            dPeak -= TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::SD))*1000.0;
+            m_pHistoryGraph->SetLine("OffsetVarMin", dPeak, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dPeak, std::chrono::system_clock::now());
+            dPeak += TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::SD))*2000.0;
+            m_pHistoryGraph->SetLine("OffsetVarMax", dPeak, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dPeak, std::chrono::system_clock::now());
+
             auto dDelay = TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::CURRENT))*1000.0;
             m_pHistoryGraph->AddPeak("Delay", dDelay);
-            m_pHistogram->AddPeak("Dealy", dDelay);
+            m_pHistogram->AddPeak("Delay", dDelay);
 
             m = m_pLocalClock->GetDelaySlope();
             c = m_pLocalClock->GetDelayIntersection();
@@ -943,7 +976,12 @@ void ptpPanel::ShowTime()
 
             m_pHistoryGraph->SetLine("DelayLR", c*1000.0, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dEstimate, std::chrono::system_clock::now());
 
-
+            dDelay = TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::MEAN))*1000.0;
+            m_pHistoryGraph->SetLine("DelayMean", dDelay, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dDelay, std::chrono::system_clock::now());
+            dDelay -= TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::SD))*1000.0;
+            m_pHistoryGraph->SetLine("DelayVarMin", dDelay, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dDelay, std::chrono::system_clock::now());
+            dDelay += TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::SD))*2000.0;
+            m_pHistoryGraph->SetLine("DelayVarMax", dDelay, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dDelay, std::chrono::system_clock::now());
 
         }
     }
@@ -1073,90 +1111,49 @@ void ptpPanel::OnClockMessage(wxCommandEvent& event)
 
 void ptpPanel::ChangeView(const wxString& sWindow)
 {
-    if(sWindow == "Info")
-    {
-        m_pSwpMain->ChangeSelection(sWindow);
-        m_sGraph = "";
-    }
-    else if(sWindow.find("Graph") != wxNOT_FOUND)
-    {
-        m_pSwpMain->ChangeSelection("Graphs");
-        if(sWindow.find("Offset") != wxNOT_FOUND)
-        {
-            m_sGraph = "Offset";
-        }
-        else
-        {
-            m_sGraph = "Delay";
-        }
-        m_plblGraphTitle->SetLabel("PTP "+m_sGraph);
-
-        m_pHistoryGraph->SetMasterGraph(m_sGraph);
-        m_pHistoryGraph->HideAllGraphs();
-        m_pHistoryGraph->ShowGraph(m_sGraph, true);
-        m_pHistoryGraph->ShowGraph(m_sGraph+"LR", true);
-    }
-    else
-    {
-        m_pSwpMain->ChangeSelection("Histograms");
-        if(sWindow.find("Offset") != wxNOT_FOUND)
-        {
-            m_sGraph = "Offset";
-        }
-        else
-        {
-
-            m_sGraph = "Delay";
-        }
-        m_plblHistogramTitle->SetLabel("PTP "+m_sGraph);
-        m_pHistogram->HideAllGraphs();
-        m_pHistogram->ShowGraph(m_sGraph);
-    }
+    m_pSwpMain->ChangeSelection(sWindow);
 }
 
-void ptpPanel::ChangeGranularity(int nWhich)
-{
-    if(m_pSwpMain->GetSelectionName() == "Histograms" && m_sGraph != "")
-    {
-        m_pHistogram->ChangeGranularity(m_sGraph, nWhich);
-    }
-}
-
-void ptpPanel::ChangeResolution(int nWhich)
-{
-    if(m_pSwpMain->GetSelectionName() == "Histograms" && m_sGraph != "")
-    {
-        m_pHistogram->ChangeResolution(m_sGraph, nWhich);
-    }
-}
-
-void ptpPanel::ClearGraphs()
-{
-    m_pHistoryGraph->ClearGraphs();
-    m_pHistogram->ClearGraphs();
-}
-
-void ptpPanel::RecalculateRange()
-{
-
-}
 
 void ptpPanel::OnlstDataSelected(wxCommandEvent& event)
 {
+    m_sGraph = event.GetString();
+    m_plstHistogramData->SelectButton(m_sGraph, false);
+    m_plstGraphData->SelectButton(m_sGraph, false);
+
+    m_plblGraphTitle->SetLabel("PTP "+m_sGraph);
+    m_pHistoryGraph->HideAllGraphs();
+    m_pHistoryGraph->ShowGraph(m_sGraph, true);
+    m_pHistoryGraph->ShowGraph(m_sGraph+"LR", true);
+    m_pHistoryGraph->ShowGraph(m_sGraph+"Mean", true);
+    m_pHistoryGraph->ShowGraph(m_sGraph+"VarMin", true);
+    m_pHistoryGraph->ShowGraph(m_sGraph+"VarMax", true);
+    m_pHistoryGraph->SetMasterGraph(m_sGraph);
+    m_plblHistogramTitle->SetLabel("PTP "+m_sGraph);
+    m_pHistogram->HideAllGraphs();
+    m_pHistogram->ShowGraph(m_sGraph);
+
+    m_pBuilder->WriteSetting("Graph", m_sGraph);
+
 }
 
 void ptpPanel::OnbtnClearClick(wxCommandEvent& event)
 {
+     m_pHistoryGraph->ClearGraphs();
+    m_pHistogram->ClearGraphs();
 }
 
 void ptpPanel::OnbtnOptionsClick(wxCommandEvent& event)
 {
+    m_pBuilder->Maximize(false);
 }
 
 void ptpPanel::OnlstHistogramGranularitySelected(wxCommandEvent& event)
 {
+    m_pHistogram->ChangeGranularity(m_sGraph, event.GetInt());
 }
 
 void ptpPanel::OnlstHistogramResolutionSelected(wxCommandEvent& event)
 {
+    m_pHistogram->ChangeResolution(m_sGraph, event.GetInt());
 }

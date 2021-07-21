@@ -4,7 +4,9 @@
 #include <wx/textfile.h>
 #include "settingevent.h"
 #include "settings.h"
-
+#include "ptpclock.h"
+#include <sys/timex.h>
+#include <sys/time.h>
 
 
 TimeManager& TimeManager::Get()
@@ -17,7 +19,8 @@ TimeManager::TimeManager() :
     m_bNTP(true),
     m_bPTP(false),
     m_bLTC(false),
-    m_nPtpDomain(0)
+    m_nPtpDomain(0),
+    m_nSyncCount(0)
 {
     wxPtp::Get().AddHandler(this);
     Bind(wxEVT_CLOCK_TIME, &TimeManager::OnPtpClockSync, this);
@@ -35,7 +38,7 @@ TimeManager::TimeManager() :
     EnableSyncToLtc(Settings::Get().Read("Time", "LTC", 0) == 1);
     EnableSyncToPtp(Settings::Get().Read("Time", "PTP", 0) == 1);
 
-    m_nPtpDomain = Settings::Get().Read("Time", "LTC_Format", 0);
+    //m_nPtpDomain = Settings::Get().Read("Time", "LTC_Format", 0);
 }
 
 TimeManager::~TimeManager()
@@ -70,6 +73,7 @@ void TimeManager::OnSettingChanged(SettingEvent& event)
 void TimeManager::OnPtpClockSync(wxCommandEvent& event)
 {
     DoSync();
+
 }
 
 
@@ -120,38 +124,79 @@ void TimeManager::DoSync()
     }
 
 }
-
+//CAP_SYS_TIME
 bool TimeManager::TrySyncToPtp()
 {
+
     if(m_bPTP)
     {
-        if(m_eCurrentSync == SYNC_PTP)
-        {
-            return true;
-        }
 
-        if(wxPtp::Get().IsSyncedToMaster(m_nPtpDomain))
+
+        auto pLocal = wxPtp::Get().GetLocalClock(m_nPtpDomain);
+        if(pLocal && pLocal->IsSynced())
         {
+
+            pmlLog() << "Attempt to sync to PTP domain" << m_nPtpDomain;
+
             StopCurrentSync();
 
+            auto pMaster = wxPtp::Get().GetSyncMasterClock(m_nPtpDomain);
 
-            timespec ts = wxPtp::Get().GetPtpTimeSpec(m_nPtpDomain);
-            if(ts.tv_sec != 0)
+            double m = pLocal->GetOffsetSlope();
+            double c = pLocal->GetOffsetIntersection();
+            auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+            double dEstimate = (static_cast<double>(pMaster->GetUtcOffset())+c + m * TimeToDouble(now-pLocal->GetFirstOffsetTime()));
+
+            auto offset = pLocal->GetOffset(ptpmonkey::PtpV2Clock::CURRENT);//DoubleToTime(dEstimate);
+            auto mean = pLocal->GetOffset(ptpmonkey::PtpV2Clock::MEAN);
+            auto sd = pLocal->GetOffset(ptpmonkey::PtpV2Clock::SD);
+
+            auto maxBand = mean+sd;
+            auto minBand = mean-sd;
+
+            if(offset <= maxBand && offset >= minBand)
             {
-                pmlLog() << "Setting system clock from PTP";
-                #ifdef __WXGNU__
-                if(clock_settime(CLOCK_REALTIME, &ts) == 0)
+                auto utc = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::seconds(pMaster->GetUtcOffset()));
+                pmlLog() << "Offset: " << TimeToString(offset) << " utc " << TimeToString(utc);
+                offset += utc;
+                pmlLog() << "Offset: " << TimeToString(offset);
+
+                auto split = Split(-offset);
+
+                timeval tv;
+                tv.tv_sec = split.first.count();
+                tv.tv_usec = split.second.count()/1000;
+
+                adjtime(&tv, nullptr);
+                pmlLog() << "Setting system clock offset from PTP to " << tv.tv_sec << ":" << tv.tv_usec << "us  slope=" << pLocal->GetOffsetSlope();
+
+                return true;
+
+                timex tx;
+                memset(&tx, 0, sizeof(tx));
+
+                tx.modes |= ADJ_SETOFFSET | ADJ_NANO;
+                tx.time.tv_sec = split.first.count();
+                tx.time.tv_usec = split.second.count();
+
+                while(tx.time.tv_usec < 0)
                 {
-                    m_eCurrentSync = SYNC_PTP;
-                    return true;
+                    tx.time.tv_sec -=1;
+                    tx.time.tv_usec += 1000000000;
                 }
-                pmlLog(pml::LOG_ERROR) << strerror(errno);
-                #endif // __WXGNU__
+
+                pmlLog() << "Setting system clock offset from PTP to " << tx.time.tv_sec << ":" << tx.time.tv_usec << "ns  slope=" << pLocal->GetOffsetSlope();
+
+                if(adjtimex(&tx) < 0)
+                {
+                    pmlLog(pml::LOG_ERROR) << "Failed to adjust clock offset " << strerror(errno);
+                }
             }
-            else
-            {
-                pmlLog(pml::LOG_ERROR) << "Could not get time from PTP master";
-            }
+            return true;
+        }
+        else
+        {
+            pmlLog(pml::LOG_WARN) << "Not synced to PTP master";
         }
     }
     return false;

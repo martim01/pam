@@ -19,12 +19,6 @@ class pnlOptions: public wxPanel
 		//(*Declarations(pnlOptions)
 		wmList* m_plstWindow;
 		//*)
-        wmList* m_plstGranularity;
-        wmList* m_plstResolution;
-        wmLabel* m_plblQoS;
-        wmLabel* m_plblHR;
-        wmLabel* m_plblHG;
-        wmButton* m_pbtnClear;
 
 	protected:
 
@@ -34,9 +28,6 @@ class pnlOptions: public wxPanel
 
 	private:
 
-	    void OnbtnClearClick(wxCommandEvent& event);
-        void OnlstGranularityPressed(wxCommandEvent& event);
-        void OnlstResolutionPressed(wxCommandEvent& event);
 
 		//(*Handlers(pnlOptions)
 		void OnlstWindowSelected(wxCommandEvent& event);

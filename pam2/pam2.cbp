@@ -131,6 +131,7 @@
 					<Add directory="$(#nmos.lib)" />
 				</Linker>
 				<ExtraCommands>
+					<Add after="sudo setcap cap_sys_time,cap_net_bind_service+ep /home/pi/pam/bin/pam2" />
 					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />
 				</ExtraCommands>
 			</Target>

@@ -67,24 +67,3 @@ void ptpBuilder::OnSettingChanged(SettingEvent& event)
 }
 
 
-void ptpBuilder::ClearGraphs()
-{
-    m_pMeter->ClearGraphs();
-}
-
-void ptpBuilder::RecalculateRange()
-{
-    m_pMeter->RecalculateRange();
-}
-
-void ptpBuilder::ChangeGranularity(int nWhich)
-{
-    m_pMeter->ChangeGranularity(nWhich);
-}
-
-void ptpBuilder::ChangeResolution(int nWhich)
-{
-    m_pMeter->ChangeResolution(nWhich);
-}
-
-
