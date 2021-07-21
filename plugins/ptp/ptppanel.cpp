@@ -512,7 +512,7 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_plblTime->GetUiRect().SetGradient(0);
 	m_plblTime->SetForegroundColour(wxColour(0,0,0));
 	m_plblTime->SetBackgroundColour(wxColour(255,255,255));
-	m_ptitleOffsetAverage = new wmLabel(m_ppnlLocal, ID_M_PLBL57, _("Offset: Average"), wxPoint(0,60), wxSize(100,25), 0, _T("ID_M_PLBL57"));
+	m_ptitleOffsetAverage = new wmLabel(m_ppnlLocal, ID_M_PLBL57, L"Offset: x\u0304", wxPoint(0,60), wxSize(100,25), 0, _T("ID_M_PLBL57"));
 	m_ptitleOffsetAverage->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleOffsetAverage->GetUiRect().SetGradient(wxWEST);
 	m_ptitleOffsetAverage->SetForegroundColour(wxColour(255,255,255));
@@ -522,7 +522,7 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_plblOffsetAverage->GetUiRect().SetGradient(0);
 	m_plblOffsetAverage->SetForegroundColour(wxColour(0,0,0));
 	m_plblOffsetAverage->SetBackgroundColour(wxColour(255,255,255));
-	m_ptitleOffsetRange = new wmLabel(m_ppnlLocal, ID_M_PLBL58, _("Offset: Range"), wxPoint(0,90), wxSize(100,25), 0, _T("ID_M_PLBL58"));
+	m_ptitleOffsetRange = new wmLabel(m_ppnlLocal, ID_M_PLBL58, L"Offset: \u03c3 \u03c3\u2093\u0304", wxPoint(0,90), wxSize(100,25), 0, _T("ID_M_PLBL58"));
 	m_ptitleOffsetRange->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleOffsetRange->GetUiRect().SetGradient(wxWEST);
 	m_ptitleOffsetRange->SetForegroundColour(wxColour(255,255,255));
@@ -532,7 +532,7 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_plblOffsetRange->GetUiRect().SetGradient(0);
 	m_plblOffsetRange->SetForegroundColour(wxColour(0,0,0));
 	m_plblOffsetRange->SetBackgroundColour(wxColour(255,255,255));
-	m_ptitleDelayAverage = new wmLabel(m_ppnlLocal, ID_M_PLBL59, _("Delay: Average"), wxPoint(0,120), wxSize(100,25), 0, _T("ID_M_PLBL59"));
+	m_ptitleDelayAverage = new wmLabel(m_ppnlLocal, ID_M_PLBL59, L"Delay: x\u0304", wxPoint(0,120), wxSize(100,25), 0, _T("ID_M_PLBL59"));
 	m_ptitleDelayAverage->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleDelayAverage->GetUiRect().SetGradient(wxWEST);
 	m_ptitleDelayAverage->SetForegroundColour(wxColour(255,255,255));
@@ -542,7 +542,7 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_plblDelayAverage->GetUiRect().SetGradient(0);
 	m_plblDelayAverage->SetForegroundColour(wxColour(0,0,0));
 	m_plblDelayAverage->SetBackgroundColour(wxColour(255,255,255));
-	m_ptitleDelayRange = new wmLabel(m_ppnlLocal, ID_M_PLBL60, _("Delay: Range"), wxPoint(0,150), wxSize(100,25), 0, _T("ID_M_PLBL60"));
+	m_ptitleDelayRange = new wmLabel(m_ppnlLocal, ID_M_PLBL60, L"Delay: \u03c3 \u03c3\u2093\u0304", wxPoint(0,150), wxSize(100,25), 0, _T("ID_M_PLBL60"));
 	m_ptitleDelayRange->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleDelayRange->GetUiRect().SetGradient(wxWEST);
 	m_ptitleDelayRange->SetForegroundColour(wxColour(255,255,255));
@@ -561,63 +561,63 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_plblGraphTitle->SetBackgroundColour(wxColour(91,149,57));
 	wxFont m_plblGraphTitleFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	m_plblGraphTitle->SetFont(m_plblGraphTitleFont);
-	m_pLbl5 = new wmLabel(m_ppnlGraphs, ID_M_PLBL69, _("Current:"), wxPoint(0,30), wxSize(50,30), 0, _T("ID_M_PLBL69"));
+	m_pLbl5 = new wmLabel(m_ppnlGraphs, ID_M_PLBL69, "y=", wxPoint(0,30), wxSize(20,30), 0, _T("ID_M_PLBL69"));
 	m_pLbl5->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl5->GetUiRect().SetGradient(0);
 	m_pLbl5->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl5->SetBackgroundColour(wxColour(0,0,0));
 	wxFont m_pLbl5Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pLbl5->SetFont(m_pLbl5Font);
-	m_plblCurrent = new wmLabel(m_ppnlGraphs, ID_M_PLBL74, wxEmptyString, wxPoint(50,30), wxSize(80,30), wxALIGN_LEFT, _T("ID_M_PLBL74"));
+	m_plblCurrent = new wmLabel(m_ppnlGraphs, ID_M_PLBL74, wxEmptyString, wxPoint(20,30), wxSize(80,30), wxALIGN_LEFT, _T("ID_M_PLBL74"));
 	m_plblCurrent->SetBorderState(uiRect::BORDER_NONE);
 	m_plblCurrent->GetUiRect().SetGradient(0);
 	m_plblCurrent->SetForegroundColour(wxColour(186,254,167));
 	m_plblCurrent->SetBackgroundColour(wxColour(0,0,0));
 	wxFont m_plblCurrentFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_plblCurrent->SetFont(m_plblCurrentFont);
-	m_pLbl6 = new wmLabel(m_ppnlGraphs, ID_M_PLBL70, _("Mean:"), wxPoint(140,30), wxSize(50,30), 0, _T("ID_M_PLBL70"));
+	m_pLbl6 = new wmLabel(m_ppnlGraphs, ID_M_PLBL70, L"y\u0304=", wxPoint(140,30), wxSize(20,30), 0, _T("ID_M_PLBL70"));
 	m_pLbl6->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl6->GetUiRect().SetGradient(0);
 	m_pLbl6->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl6->SetBackgroundColour(wxColour(0,0,0));
 	wxFont m_pLbl6Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pLbl6->SetFont(m_pLbl6Font);
-	m_plblMean = new wmLabel(m_ppnlGraphs, ID_M_PLBL75, wxEmptyString, wxPoint(190,30), wxSize(80,30), wxALIGN_LEFT, _T("ID_M_PLBL75"));
+	m_plblMean = new wmLabel(m_ppnlGraphs, ID_M_PLBL75, wxEmptyString, wxPoint(160,30), wxSize(80,30), wxALIGN_LEFT, _T("ID_M_PLBL75"));
 	m_plblMean->SetBorderState(uiRect::BORDER_NONE);
 	m_plblMean->GetUiRect().SetGradient(0);
 	m_plblMean->SetForegroundColour(wxColour(186,254,167));
 	m_plblMean->SetBackgroundColour(wxColour(0,0,0));
 	wxFont m_plblMeanFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_plblMean->SetFont(m_plblMeanFont);
-	m_pLbl7 = new wmLabel(m_ppnlGraphs, ID_M_PLBL71, _("SD:"), wxPoint(280,30), wxSize(50,30), 0, _T("ID_M_PLBL71"));
+	m_pLbl7 = new wmLabel(m_ppnlGraphs, ID_M_PLBL71, L"\u03c3=", wxPoint(280,30), wxSize(20,30), 0, _T("ID_M_PLBL71"));
 	m_pLbl7->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl7->GetUiRect().SetGradient(0);
 	m_pLbl7->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl7->SetBackgroundColour(wxColour(0,0,0));
 	wxFont m_pLbl7Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pLbl7->SetFont(m_pLbl7Font);
-	m_plblDeviation = new wmLabel(m_ppnlGraphs, ID_M_PLBL76, wxEmptyString, wxPoint(330,30), wxSize(80,30), wxALIGN_LEFT, _T("ID_M_PLBL76"));
+	m_plblDeviation = new wmLabel(m_ppnlGraphs, ID_M_PLBL76, wxEmptyString, wxPoint(300,30), wxSize(80,30), wxALIGN_LEFT, _T("ID_M_PLBL76"));
 	m_plblDeviation->SetBorderState(uiRect::BORDER_NONE);
 	m_plblDeviation->GetUiRect().SetGradient(0);
 	m_plblDeviation->SetForegroundColour(wxColour(186,254,167));
 	m_plblDeviation->SetBackgroundColour(wxColour(0,0,0));
 	wxFont m_plblDeviationFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_plblDeviation->SetFont(m_plblDeviationFont);
-	m_pLbl8 = new wmLabel(m_ppnlGraphs, ID_M_PLBL72, _("Slope:"), wxPoint(420,30), wxSize(50,30), 0, _T("ID_M_PLBL72"));
+	m_pLbl8 = new wmLabel(m_ppnlGraphs, ID_M_PLBL72, L"\u03b2\u0302=", wxPoint(420,30), wxSize(20,30), 0, _T("ID_M_PLBL72"));
 	m_pLbl8->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl8->GetUiRect().SetGradient(0);
 	m_pLbl8->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl8->SetBackgroundColour(wxColour(0,0,0));
 	wxFont m_pLbl8Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pLbl8->SetFont(m_pLbl8Font);
-	m_plblSlope = new wmLabel(m_ppnlGraphs, ID_M_PLBL77, wxEmptyString, wxPoint(470,30), wxSize(80,30), wxALIGN_LEFT, _T("ID_M_PLBL77"));
+	m_plblSlope = new wmLabel(m_ppnlGraphs, ID_M_PLBL77, wxEmptyString, wxPoint(440,30), wxSize(80,30), wxALIGN_LEFT, _T("ID_M_PLBL77"));
 	m_plblSlope->SetBorderState(uiRect::BORDER_NONE);
 	m_plblSlope->GetUiRect().SetGradient(0);
 	m_plblSlope->SetForegroundColour(wxColour(186,254,167));
 	m_plblSlope->SetBackgroundColour(wxColour(0,0,0));
 	wxFont m_plblSlopeFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_plblSlope->SetFont(m_plblSlopeFont);
-	m_pLbl9 = new wmLabel(m_ppnlGraphs, ID_M_PLBL73, _("Est:"), wxPoint(560,30), wxSize(50,30), 0, _T("ID_M_PLBL73"));
+	m_pLbl9 = new wmLabel(m_ppnlGraphs, ID_M_PLBL73, L"\u03b1\u0302+\u03b2\u0302x=", wxPoint(560,30), wxSize(50,30), 0, _T("ID_M_PLBL73"));
 	m_pLbl9->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl9->GetUiRect().SetGradient(0);
 	m_pLbl9->SetForegroundColour(wxColour(255,255,255));
@@ -696,6 +696,10 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnClearClick);
 	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnOptionsClick);
 	//*)
+	m_ptitleOffsetAverage->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
+	m_ptitleOffsetRange->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
+	m_ptitleDelayAverage->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
+	m_ptitleDelayRange->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 
     m_plstHistogramGranularity->AddButton("-");
     m_plstHistogramGranularity->AddButton("0");
@@ -711,6 +715,12 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
     m_plstGraphData->AddButton("Delay");
 
 	m_plstClocks->SetTextSelectedButtonColour(*wxBLACK);
+
+	m_plblCurrent->SetTextAlign(wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL);
+	m_plblMean->SetTextAlign(wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL);
+	m_plblDeviation->SetTextAlign(wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL);
+	m_plblSlope->SetTextAlign(wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL);
+	m_plblPrediction->SetTextAlign(wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL);
 
 	m_offset = 0.0;
 
@@ -740,13 +750,13 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_pHistoryGraph->ShowBarGraph(false);
 	m_pHistoryGraph->SetRightAxisWidth(100);
 
-	m_pHistoryGraph->SetGraphUnits("Offset", "ms");
-	m_pHistoryGraph->SetGraphUnits("OffsetLR", "ms");
-	m_pHistoryGraph->SetGraphUnits("Delay", "ms");
-	m_pHistoryGraph->SetGraphUnits("DelayLR", "ms");
+	m_pHistoryGraph->SetGraphUnits("Offset", L"\u00B5s");
+	m_pHistoryGraph->SetGraphUnits("OffsetLR", L"\u00B5s");
+	m_pHistoryGraph->SetGraphUnits("Delay", L"\u00B5s");
+	m_pHistoryGraph->SetGraphUnits("DelayLR", L"\u00B5s");
 
-	m_pHistogram->AddGraph("Offset", wxColour(100,255,100), 0.001);
-	m_pHistogram->AddGraph("Delay", wxColour(255,100,100), 0.001);
+	m_pHistogram->AddGraph("Offset", wxColour(100,255,100), 1);
+	m_pHistogram->AddGraph("Delay", wxColour(255,100,100), 1);
 
     ChangeView(m_pBuilder->ReadSetting("Window", "Info"));
 
@@ -1002,68 +1012,67 @@ void ptpPanel::ShowTime()
 {
     if(m_pLocalClock)
     {
-        m_plblTime->SetLabel(wxString(TimeToIsoString(m_pLocalClock->GetPtpTime())));
-        m_plblTime->SetBackgroundColour(m_pLocalClock->IsSynced() ? wxColour(150,255,150) : wxColour(255,150,150));
-
-        double offset = TimeToDouble(m_pLocalClock->GetOffset(ptpmonkey::PtpV2Clock::MEAN));
-
-
-        double slip = (offset-m_offset);
-        m_offset = offset;
-
-        //m_plblOffsetAverage->SetLabel(wxString::Format("%lld.%09llu", offset.first.count(), offset.second.count()));
-        m_plblOffsetAverage->SetLabel(wxString::Format("%f", m_offset));
-        //m_plblDelayAverage->SetLabel(wxString::Format("%lld.%09llu", slip.first.count(), slip.second.count()));
-
-        //time_s_ns rangeOffset = m_pLocalClock->GetOffset(PtpV2Clock::MAX) - m_pLocalClock->GetOffset(PtpV2Clock::MIN);
-        //time_s_ns rangeDelay = m_pLocalClock->GetDelay(PtpV2Clock::MAX) - m_pLocalClock->GetDelay(PtpV2Clock::MIN);
-
-        //m_plblOffsetRange->SetLabel(wxString::Format("%llu.%09llu", rangeOffset.first.count(), rangeOffset.second.count()));
-        //m_plblDelayRange->SetLabel(wxString::Format("%llu.%09llu", rangeDelay.first.count(), rangeDelay.second.count()));
         auto pSyncMaster = wxPtp::Get().GetSyncMasterClock(m_nDomain);
 
-        if(m_pLocalClock->IsSynced() && pSyncMaster)
+        if(pSyncMaster)
         {
             auto dUTCOffset = static_cast<double>(pSyncMaster->GetUtcOffset());
-            auto dPeak = (TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::CURRENT))+dUTCOffset)*1000.0;
-            m_pHistoryGraph->AddPeak("Offset", dPeak);
-            m_pHistogram->AddPeak("Offset", dPeak);
 
-            double m = m_pLocalClock->GetOffsetSlope();
-            double c = m_pLocalClock->GetOffsetIntersection();
-            auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
-            double dEstimate = (dUTCOffset+c + m * TimeToDouble(now-m_pLocalClock->GetFirstOffsetTime()))*1000.0;
+            m_plblTime->SetLabel(wxString(TimeToIsoString(m_pLocalClock->GetPtpTime())));
+            m_plblTime->SetBackgroundColour(m_pLocalClock->IsSynced() ? wxColour(150,255,150) : wxColour(255,150,150));
 
-            m_pHistoryGraph->SetLine("OffsetLR", (c+dUTCOffset)*1000.0, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dEstimate, std::chrono::system_clock::now());
+            m_offset  = TimeToDouble(m_pLocalClock->GetOffset(ptpmonkey::PtpV2Clock::MEAN))+dUTCOffset;
+            auto dDelay = TimeToDouble(m_pLocalClock->GetDelay(ptpmonkey::PtpV2Clock::MEAN));
 
-            dPeak = (TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::MEAN))+dUTCOffset)*1000.0;
+            m_plblOffsetAverage->SetLabel(wxString::Format("%f", m_offset));
+            m_plblDelayAverage->SetLabel(wxString::Format("%f", dDelay));
 
-            m_pHistoryGraph->SetLine("OffsetMean", dPeak, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dPeak, std::chrono::system_clock::now());
-            dPeak -= TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::SD))*1000.0;
-            m_pHistoryGraph->SetLine("OffsetVarMin", dPeak, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dPeak, std::chrono::system_clock::now());
-            dPeak += TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::SD))*2000.0;
-            m_pHistoryGraph->SetLine("OffsetVarMax", dPeak, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dPeak, std::chrono::system_clock::now());
+            m_plblOffsetRange->SetLabel(wxString::Format("%f, %f", TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::SD)), TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::SE))));
+            m_plblDelayRange->SetLabel(wxString::Format("%f, %f", TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::SD)), TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::SE))));
 
-            auto dDelay = TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::CURRENT))*1000.0;
-            m_pHistoryGraph->AddPeak("Delay", dDelay);
-            m_pHistogram->AddPeak("Delay", dDelay);
+            if(m_pLocalClock->IsSynced())
+            {
 
-            m = m_pLocalClock->GetDelaySlope();
-            c = m_pLocalClock->GetDelayIntersection();
-            now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
-            dEstimate = (c + m * TimeToDouble(now-m_pLocalClock->GetFirstOffsetTime()))*1000.0;
+                auto dPeak = (TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::CURRENT))+dUTCOffset)*1e6;
+                m_pHistoryGraph->AddPeak("Offset", dPeak);
+                m_pHistogram->AddPeak("Offset", dPeak);
 
-            m_pHistoryGraph->SetLine("DelayLR", c*1000.0, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dEstimate, std::chrono::system_clock::now());
+                double m = m_pLocalClock->GetOffsetSlope();
+                double c = m_pLocalClock->GetOffsetIntersection();
+                auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+                double dEstimate = (dUTCOffset+c + m * TimeToDouble(now-m_pLocalClock->GetFirstOffsetTime()))*1e6;
 
-            dDelay = TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::MEAN))*1000.0;
-            m_pHistoryGraph->SetLine("DelayMean", dDelay, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dDelay, std::chrono::system_clock::now());
-            dDelay -= TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::SD))*1000.0;
-            m_pHistoryGraph->SetLine("DelayVarMin", dDelay, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dDelay, std::chrono::system_clock::now());
-            dDelay += TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::SD))*2000.0;
-            m_pHistoryGraph->SetLine("DelayVarMax", dDelay, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dDelay, std::chrono::system_clock::now());
+                m_pHistoryGraph->SetLine("OffsetLR", (c+dUTCOffset)*1e6, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dEstimate, std::chrono::system_clock::now());
 
-            UpdateGraphLabels();
+                dPeak = (TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::MEAN))+dUTCOffset)*1e6;
 
+                m_pHistoryGraph->SetLine("OffsetMean", dPeak, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dPeak, std::chrono::system_clock::now());
+                dPeak -= TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::SD))*1e6;
+                m_pHistoryGraph->SetLine("OffsetVarMin", dPeak, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dPeak, std::chrono::system_clock::now());
+                dPeak += TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::SD))*2e6;
+                m_pHistoryGraph->SetLine("OffsetVarMax", dPeak, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dPeak, std::chrono::system_clock::now());
+
+                auto dDelay = TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::CURRENT))*1e6;
+                m_pHistoryGraph->AddPeak("Delay", dDelay);
+                m_pHistogram->AddPeak("Delay", dDelay);
+
+                m = m_pLocalClock->GetDelaySlope();
+                c = m_pLocalClock->GetDelayIntersection();
+                now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+                dEstimate = (c + m * TimeToDouble(now-m_pLocalClock->GetFirstOffsetTime()))*1e6;
+
+                m_pHistoryGraph->SetLine("DelayLR", c*1e6, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dEstimate, std::chrono::system_clock::now());
+
+                dDelay = TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::MEAN))*1e6;
+                m_pHistoryGraph->SetLine("DelayMean", dDelay, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dDelay, std::chrono::system_clock::now());
+                dDelay -= TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::SD))*1e6;
+                m_pHistoryGraph->SetLine("DelayVarMin", dDelay, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dDelay, std::chrono::system_clock::now());
+                dDelay += TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::SD))*2e6;
+                m_pHistoryGraph->SetLine("DelayVarMax", dDelay, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dDelay, std::chrono::system_clock::now());
+
+                UpdateGraphLabels();
+
+            }
         }
     }
 }
@@ -1074,38 +1083,38 @@ void ptpPanel::UpdateGraphLabels()
     {
         auto pSyncMaster = wxPtp::Get().GetSyncMasterClock(m_nDomain);
         auto dUTCOffset = static_cast<double>(pSyncMaster->GetUtcOffset());
-        auto dCurrent = (TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::CURRENT))+dUTCOffset)*1000.0;
-        auto dMean = (TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::MEAN))+dUTCOffset)*1000.0;
-        auto dSD = TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::SD))*1000.0;
+        auto dCurrent = (TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::CURRENT))+dUTCOffset)*1e6;
+        auto dMean = (TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::MEAN))+dUTCOffset)*1e6;
+        auto dSD = TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::SD))*1e6;
         auto m = m_pLocalClock->GetOffsetSlope();
         auto c = m_pLocalClock->GetOffsetIntersection();
         auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
         auto dEstimate = (c + m * TimeToDouble(now-m_pLocalClock->GetFirstOffsetTime()));
-        dEstimate = (dEstimate+dUTCOffset)*1000.0;
+        dEstimate = (dEstimate+dUTCOffset)*1e6;
 
 
-        m_plblCurrent->SetLabel(wxString::Format("%fus", dCurrent));
-        m_plblMean->SetLabel(wxString::Format("%fus", dMean));
-        m_plblDeviation->SetLabel(wxString::Format("%fus", dSD));
-        m_plblSlope->SetLabel(wxString::Format("%f us/s", m));
-        m_plblPrediction->SetLabel(wxString::Format("%f us", dEstimate));
+        m_plblCurrent->SetLabel(wxString::Format(L"%.2f\u00B5s", dCurrent));
+        m_plblMean->SetLabel(wxString::Format(L"%.2f\u00B5s", dMean));
+        m_plblDeviation->SetLabel(wxString::Format(L"%.2f\u00B5s", dSD));
+        m_plblSlope->SetLabel(wxString::Format(L"%.2f\u00B5s/s", m*1e6));
+        m_plblPrediction->SetLabel(wxString::Format(L"%.2f\u00B5s", dEstimate));
     }
     else
     {
         auto pSyncMaster = wxPtp::Get().GetSyncMasterClock(m_nDomain);
-        auto dCurrent = (TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::CURRENT)))*1000.0;
-        auto dMean = (TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::MEAN)))*1000.0;
-        auto dSD = TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::SD))*1000.0;
+        auto dCurrent = (TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::CURRENT)))*1e6;
+        auto dMean = (TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::MEAN)))*1e6;
+        auto dSD = TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::SD))*1e6;
         auto m = m_pLocalClock->GetDelaySlope();
         auto c = m_pLocalClock->GetDelayIntersection();
         auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
-        auto dEstimate = (c + m * TimeToDouble(now-m_pLocalClock->GetFirstOffsetTime()))*1000.0;
+        auto dEstimate = (c + m * TimeToDouble(now-m_pLocalClock->GetFirstOffsetTime()))*1e6;
 
-        m_plblCurrent->SetLabel(wxString::Format("%fus", dCurrent));
-        m_plblMean->SetLabel(wxString::Format("%fus", dMean));
-        m_plblDeviation->SetLabel(wxString::Format("%fus", dSD));
-        m_plblSlope->SetLabel(wxString::Format("%f us/s", m));
-        m_plblPrediction->SetLabel(wxString::Format("%f us", dEstimate));
+        m_plblCurrent->SetLabel(wxString::Format(L"%.2f\u00B5s", dCurrent));
+        m_plblMean->SetLabel(wxString::Format(L"%.2f\u00B5s", dMean));
+        m_plblDeviation->SetLabel(wxString::Format(L"%.2f\u00B5s", dSD));
+        m_plblSlope->SetLabel(wxString::Format(L"%.2f\u00B5s/s", m*1e6));
+        m_plblPrediction->SetLabel(wxString::Format(L"%.2f\u00B5s", dEstimate));
     }
 }
 

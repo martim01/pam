@@ -148,7 +148,7 @@
 					<Add directory="../../external/live/liveMedia" />
 				</Linker>
 				<ExtraCommands>
-					<Add after="C:\developer\matt\pam2\manifest_creator\bin\Release\manifest_creator.exe" />
+					<Add after="../../manifest_creator/bin/LinuxRelease/manifest_creator" />
 				</ExtraCommands>
 			</Target>
 			<Target title="Linux Debug">

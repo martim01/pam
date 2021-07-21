@@ -136,8 +136,6 @@ bool TimeManager::TrySyncToPtp()
         if(pLocal && pLocal->IsSynced())
         {
 
-            pmlLog() << "Attempt to sync to PTP domain" << m_nPtpDomain;
-
             StopCurrentSync();
 
             auto pMaster = wxPtp::Get().GetSyncMasterClock(m_nPtpDomain);
@@ -153,45 +151,18 @@ bool TimeManager::TrySyncToPtp()
 
             auto maxBand = mean+sd;
             auto minBand = mean-sd;
+            offset = std::max(minBand, std::min(maxBand, offset));
+            auto utc = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::seconds(pMaster->GetUtcOffset()));
+            offset += utc;
 
-            if(offset <= maxBand && offset >= minBand)
-            {
-                auto utc = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::seconds(pMaster->GetUtcOffset()));
-                pmlLog() << "Offset: " << TimeToString(offset) << " utc " << TimeToString(utc);
-                offset += utc;
-                pmlLog() << "Offset: " << TimeToString(offset);
+            auto split = Split(-offset);
 
-                auto split = Split(-offset);
+            timeval tv;
+            tv.tv_sec = split.first.count();
+            tv.tv_usec = split.second.count()/1000;
 
-                timeval tv;
-                tv.tv_sec = split.first.count();
-                tv.tv_usec = split.second.count()/1000;
+            adjtime(&tv, nullptr);
 
-                adjtime(&tv, nullptr);
-                pmlLog() << "Setting system clock offset from PTP to " << tv.tv_sec << ":" << tv.tv_usec << "us  slope=" << pLocal->GetOffsetSlope();
-
-                return true;
-
-                timex tx;
-                memset(&tx, 0, sizeof(tx));
-
-                tx.modes |= ADJ_SETOFFSET | ADJ_NANO;
-                tx.time.tv_sec = split.first.count();
-                tx.time.tv_usec = split.second.count();
-
-                while(tx.time.tv_usec < 0)
-                {
-                    tx.time.tv_sec -=1;
-                    tx.time.tv_usec += 1000000000;
-                }
-
-                pmlLog() << "Setting system clock offset from PTP to " << tx.time.tv_sec << ":" << tx.time.tv_usec << "ns  slope=" << pLocal->GetOffsetSlope();
-
-                if(adjtimex(&tx) < 0)
-                {
-                    pmlLog(pml::LOG_ERROR) << "Failed to adjust clock offset " << strerror(errno);
-                }
-            }
             return true;
         }
         else

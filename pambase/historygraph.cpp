@@ -272,7 +272,6 @@ void HistoryGraph::AddPeak(const wxString& sGraph, double dPeak, const std::chro
         {
             itGraph->second.lstPeaks.pop_front();
         }
-
         AutoRange(itGraph->second);
 
         if(itGraph->second.bShow)
@@ -304,8 +303,9 @@ void HistoryGraph::AutoRange(graph& aGraph)
 {
     if(aGraph.lstPeaks.empty() == false)
     {
-        aGraph.dMin = std::min(aGraph.dMin, aGraph.lstPeaks.back().first);
-        aGraph.dMax = std::max(aGraph.dMax, aGraph.lstPeaks.back().first);
+        const auto minMaxE = std::minmax_element(aGraph.lstPeaks.begin(), aGraph.lstPeaks.end());
+        aGraph.dMin = minMaxE.first->first;
+        aGraph.dMax = minMaxE.second->first;
         aGraph.dResolution = static_cast<double>(m_rectGraph.GetHeight())/((aGraph.dMax)-(aGraph.dMin));
     }
 }
