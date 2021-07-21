@@ -98,6 +98,16 @@ const long ptpPanel::ID_M_PLBL64 = wxNewId();
 const long ptpPanel::ID_PANEL8 = wxNewId();
 const long ptpPanel::ID_PANEL14 = wxNewId();
 const long ptpPanel::ID_M_PLBL45 = wxNewId();
+const long ptpPanel::ID_M_PLBL69 = wxNewId();
+const long ptpPanel::ID_M_PLBL74 = wxNewId();
+const long ptpPanel::ID_M_PLBL70 = wxNewId();
+const long ptpPanel::ID_M_PLBL75 = wxNewId();
+const long ptpPanel::ID_M_PLBL71 = wxNewId();
+const long ptpPanel::ID_M_PLBL76 = wxNewId();
+const long ptpPanel::ID_M_PLBL72 = wxNewId();
+const long ptpPanel::ID_M_PLBL77 = wxNewId();
+const long ptpPanel::ID_M_PLBL73 = wxNewId();
+const long ptpPanel::ID_M_PLBL78 = wxNewId();
 const long ptpPanel::ID_HISTORY_GRAPH = wxNewId();
 const long ptpPanel::ID_M_PLBL68 = wxNewId();
 const long ptpPanel::ID_M_PLST5 = wxNewId();
@@ -551,7 +561,77 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_plblGraphTitle->SetBackgroundColour(wxColour(91,149,57));
 	wxFont m_plblGraphTitleFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	m_plblGraphTitle->SetFont(m_plblGraphTitleFont);
-	m_pHistoryGraph = new HistoryGraph(m_ppnlGraphs,ID_HISTORY_GRAPH,wxPoint(0,30),wxSize(800,400));
+	m_pLbl5 = new wmLabel(m_ppnlGraphs, ID_M_PLBL69, _("Current:"), wxPoint(0,30), wxSize(50,30), 0, _T("ID_M_PLBL69"));
+	m_pLbl5->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl5->GetUiRect().SetGradient(0);
+	m_pLbl5->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl5->SetBackgroundColour(wxColour(0,0,0));
+	wxFont m_pLbl5Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pLbl5->SetFont(m_pLbl5Font);
+	m_plblCurrent = new wmLabel(m_ppnlGraphs, ID_M_PLBL74, wxEmptyString, wxPoint(50,30), wxSize(100,30), wxALIGN_LEFT, _T("ID_M_PLBL74"));
+	m_plblCurrent->SetBorderState(uiRect::BORDER_NONE);
+	m_plblCurrent->GetUiRect().SetGradient(0);
+	m_plblCurrent->SetForegroundColour(wxColour(186,254,167));
+	m_plblCurrent->SetBackgroundColour(wxColour(0,0,0));
+	wxFont m_plblCurrentFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_plblCurrent->SetFont(m_plblCurrentFont);
+	m_pLbl6 = new wmLabel(m_ppnlGraphs, ID_M_PLBL70, _("Mean:"), wxPoint(160,30), wxSize(50,30), 0, _T("ID_M_PLBL70"));
+	m_pLbl6->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl6->GetUiRect().SetGradient(0);
+	m_pLbl6->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl6->SetBackgroundColour(wxColour(0,0,0));
+	wxFont m_pLbl6Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pLbl6->SetFont(m_pLbl6Font);
+	m_plblMean = new wmLabel(m_ppnlGraphs, ID_M_PLBL75, wxEmptyString, wxPoint(210,30), wxSize(100,30), wxALIGN_LEFT, _T("ID_M_PLBL75"));
+	m_plblMean->SetBorderState(uiRect::BORDER_NONE);
+	m_plblMean->GetUiRect().SetGradient(0);
+	m_plblMean->SetForegroundColour(wxColour(186,254,167));
+	m_plblMean->SetBackgroundColour(wxColour(0,0,0));
+	wxFont m_plblMeanFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_plblMean->SetFont(m_plblMeanFont);
+	m_pLbl7 = new wmLabel(m_ppnlGraphs, ID_M_PLBL71, _("SD:"), wxPoint(320,30), wxSize(50,30), 0, _T("ID_M_PLBL71"));
+	m_pLbl7->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl7->GetUiRect().SetGradient(0);
+	m_pLbl7->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl7->SetBackgroundColour(wxColour(0,0,0));
+	wxFont m_pLbl7Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pLbl7->SetFont(m_pLbl7Font);
+	m_plblDeviation = new wmLabel(m_ppnlGraphs, ID_M_PLBL76, wxEmptyString, wxPoint(370,30), wxSize(100,30), wxALIGN_LEFT, _T("ID_M_PLBL76"));
+	m_plblDeviation->SetBorderState(uiRect::BORDER_NONE);
+	m_plblDeviation->GetUiRect().SetGradient(0);
+	m_plblDeviation->SetForegroundColour(wxColour(186,254,167));
+	m_plblDeviation->SetBackgroundColour(wxColour(0,0,0));
+	wxFont m_plblDeviationFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_plblDeviation->SetFont(m_plblDeviationFont);
+	m_pLbl8 = new wmLabel(m_ppnlGraphs, ID_M_PLBL72, _("LR Slope:"), wxPoint(480,30), wxSize(50,30), 0, _T("ID_M_PLBL72"));
+	m_pLbl8->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl8->GetUiRect().SetGradient(0);
+	m_pLbl8->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl8->SetBackgroundColour(wxColour(0,0,0));
+	wxFont m_pLbl8Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pLbl8->SetFont(m_pLbl8Font);
+	m_plblSlope = new wmLabel(m_ppnlGraphs, ID_M_PLBL77, wxEmptyString, wxPoint(530,30), wxSize(100,30), wxALIGN_LEFT, _T("ID_M_PLBL77"));
+	m_plblSlope->SetBorderState(uiRect::BORDER_NONE);
+	m_plblSlope->GetUiRect().SetGradient(0);
+	m_plblSlope->SetForegroundColour(wxColour(186,254,167));
+	m_plblSlope->SetBackgroundColour(wxColour(0,0,0));
+	wxFont m_plblSlopeFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_plblSlope->SetFont(m_plblSlopeFont);
+	m_pLbl9 = new wmLabel(m_ppnlGraphs, ID_M_PLBL73, _("LR Pred:"), wxPoint(640,30), wxSize(50,30), 0, _T("ID_M_PLBL73"));
+	m_pLbl9->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl9->GetUiRect().SetGradient(0);
+	m_pLbl9->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl9->SetBackgroundColour(wxColour(0,0,0));
+	wxFont m_pLbl9Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pLbl9->SetFont(m_pLbl9Font);
+	m_plblPrediction = new wmLabel(m_ppnlGraphs, ID_M_PLBL78, wxEmptyString, wxPoint(690,30), wxSize(100,30), wxALIGN_LEFT, _T("ID_M_PLBL78"));
+	m_plblPrediction->SetBorderState(uiRect::BORDER_NONE);
+	m_plblPrediction->GetUiRect().SetGradient(0);
+	m_plblPrediction->SetForegroundColour(wxColour(186,254,167));
+	m_plblPrediction->SetBackgroundColour(wxColour(0,0,0));
+	wxFont m_plblPredictionFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_plblPrediction->SetFont(m_plblPredictionFont);
+	m_pHistoryGraph = new HistoryGraph(m_ppnlGraphs,ID_HISTORY_GRAPH,wxPoint(0,60),wxSize(800,370));
 	m_pLbl4 = new wmLabel(m_ppnlGraphs, ID_M_PLBL68, _("Data"), wxPoint(10,445), wxSize(60,30), 0, _T("ID_M_PLBL68"));
 	m_pLbl4->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl4->GetUiRect().SetGradient(0);
@@ -589,7 +669,7 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_pLbl1->SetBackgroundColour(wxColour(91,149,57));
 	wxFont m_pLbl1Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pLbl1->SetFont(m_pLbl1Font);
-	m_plstHistogramGranularity = new wmList(m_ppnlHistograms, ID_M_PLST2, wxPoint(260,443), wxSize(120,34), 0, 0, wxSize(-1,30), 3, wxSize(1,1));
+	m_plstHistogramGranularity = new wmList(m_ppnlHistograms, ID_M_PLST2, wxPoint(260,443), wxSize(120,34), 0, 0, wxSize(-1,30), 3, wxSize(-1,-1));
 	m_plstHistogramGranularity->SetBackgroundColour(wxColour(0,0,0));
 	m_pLbl2 = new wmLabel(m_ppnlHistograms, ID_M_PLBL66, _("Resolution"), wxPoint(400,445), wxSize(60,30), 0, _T("ID_M_PLBL66"));
 	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
@@ -920,7 +1000,6 @@ void ptpPanel::ShowClockDetails()
 
 void ptpPanel::ShowTime()
 {
-
     if(m_pLocalClock)
     {
         m_plblTime->SetLabel(wxString(TimeToIsoString(m_pLocalClock->GetPtpTime())));
@@ -983,7 +1062,48 @@ void ptpPanel::ShowTime()
             dDelay += TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::SD))*2000.0;
             m_pHistoryGraph->SetLine("DelayVarMax", dDelay, std::chrono::time_point<std::chrono::system_clock>(m_pLocalClock->GetFirstOffsetTime()), dDelay, std::chrono::system_clock::now());
 
+            UpdateGraphLabels();
+
         }
+    }
+}
+
+void ptpPanel::UpdateGraphLabels()
+{
+    if(m_sGraph == "Offset")
+    {
+        auto pSyncMaster = wxPtp::Get().GetSyncMasterClock(m_nDomain);
+        auto dUTCOffset = static_cast<double>(pSyncMaster->GetUtcOffset());
+        auto dCurrent = (TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::CURRENT))+dUTCOffset)*1000.0;
+        auto dMean = (TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::MEAN))+dUTCOffset)*1000.0;
+        auto dSD = TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::SD))*1000.0;
+        auto m = m_pLocalClock->GetOffsetSlope();
+        auto c = m_pLocalClock->GetOffsetIntersection();
+        auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+        auto dEstimate = (c + m * TimeToDouble(now-m_pLocalClock->GetFirstOffsetTime()))*1000.0;
+
+        m_plblCurrent->SetLabel(wxString::Format("%fus", dCurrent));
+        m_plblMean->SetLabel(wxString::Format("%fus", dMean));
+        m_plblDeviation->SetLabel(wxString::Format("%fus", dSD));
+        m_plblSlope->SetLabel(wxString::Format("%f us/s", m));
+        m_plblPrediction->SetLabel(wxString::Format("%f us", dEstimate));
+    }
+    else
+    {
+        auto pSyncMaster = wxPtp::Get().GetSyncMasterClock(m_nDomain);
+        auto dCurrent = (TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::CURRENT)))*1000.0;
+        auto dMean = (TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::MEAN)))*1000.0;
+        auto dSD = TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::SD))*1000.0;
+        auto m = m_pLocalClock->GetDelaySlope();
+        auto c = m_pLocalClock->GetDelayIntersection();
+        auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+        auto dEstimate = (c + m * TimeToDouble(now-m_pLocalClock->GetFirstOffsetTime()))*1000.0;
+
+        m_plblCurrent->SetLabel(wxString::Format("%fus", dCurrent));
+        m_plblMean->SetLabel(wxString::Format("%fus", dMean));
+        m_plblDeviation->SetLabel(wxString::Format("%fus", dSD));
+        m_plblSlope->SetLabel(wxString::Format("%f us/s", m));
+        m_plblPrediction->SetLabel(wxString::Format("%f us", dEstimate));
     }
 }
 
@@ -1135,6 +1255,7 @@ void ptpPanel::OnlstDataSelected(wxCommandEvent& event)
 
     m_pBuilder->WriteSetting("Graph", m_sGraph);
 
+    UpdateGraphLabels();
 }
 
 void ptpPanel::OnbtnClearClick(wxCommandEvent& event)

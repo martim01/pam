@@ -67,28 +67,38 @@ class ptpPanel: public pmPanel
 		wmLabel* m_pLbl2;
 		wmLabel* m_pLbl3;
 		wmLabel* m_pLbl4;
+		wmLabel* m_pLbl5;
+		wmLabel* m_pLbl6;
+		wmLabel* m_pLbl7;
+		wmLabel* m_pLbl8;
+		wmLabel* m_pLbl9;
 		wmLabel* m_pblAddress;
 		wmLabel* m_plblAccuracy;
 		wmLabel* m_plblAnnCount;
 		wmLabel* m_plblAnnRate;
 		wmLabel* m_plblClass;
+		wmLabel* m_plblCurrent;
 		wmLabel* m_plblDelayAverage;
 		wmLabel* m_plblDelayCount;
 		wmLabel* m_plblDelayMech;
 		wmLabel* m_plblDelayRange;
 		wmLabel* m_plblDelayRate;
+		wmLabel* m_plblDeviation;
 		wmLabel* m_plblFollowCount;
 		wmLabel* m_plblFollowRate;
 		wmLabel* m_plblGraphTitle;
 		wmLabel* m_plblHistogramTitle;
 		wmLabel* m_plblIdentity;
 		wmLabel* m_plblMasterId;
+		wmLabel* m_plblMean;
 		wmLabel* m_plblOffsetAverage;
 		wmLabel* m_plblOffsetRange;
+		wmLabel* m_plblPrediction;
 		wmLabel* m_plblPriority1;
 		wmLabel* m_plblPriority2;
 		wmLabel* m_plblResponseCount;
 		wmLabel* m_plblResponseRate;
+		wmLabel* m_plblSlope;
 		wmLabel* m_plblSource;
 		wmLabel* m_plblState;
 		wmLabel* m_plblSteps;
@@ -249,6 +259,16 @@ class ptpPanel: public pmPanel
 		static const long ID_PANEL8;
 		static const long ID_PANEL14;
 		static const long ID_M_PLBL45;
+		static const long ID_M_PLBL69;
+		static const long ID_M_PLBL74;
+		static const long ID_M_PLBL70;
+		static const long ID_M_PLBL75;
+		static const long ID_M_PLBL71;
+		static const long ID_M_PLBL76;
+		static const long ID_M_PLBL72;
+		static const long ID_M_PLBL77;
+		static const long ID_M_PLBL73;
+		static const long ID_M_PLBL78;
 		static const long ID_HISTORY_GRAPH;
 		static const long ID_M_PLBL68;
 		static const long ID_M_PLST5;
@@ -299,6 +319,8 @@ class ptpPanel: public pmPanel
         void OnClockMessage(wxCommandEvent& event);
         void AddClock(wxString sClock);
         wxString ConvertRate(unsigned char nRate);
+
+        void UpdateGraphLabels();
 
         ptpBuilder* m_pBuilder;
 

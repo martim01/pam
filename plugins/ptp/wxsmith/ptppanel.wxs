@@ -648,13 +648,168 @@
 							<face>Arial</face>
 						</font>
 					</object>
+					<object class="wmLabel" name="ID_M_PLBL69" variable="m_pLbl5" member="yes">
+						<label>Current:</label>
+						<pos>0,30</pos>
+						<size>50,30</size>
+						<fg>#FFFFFF</fg>
+						<bg>#000000</bg>
+						<font>
+							<size>8</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Tahoma</face>
+						</font>
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL74" variable="m_plblCurrent" member="yes">
+						<label></label>
+						<pos>50,30</pos>
+						<size>100,30</size>
+						<fg>#BAFEA7</fg>
+						<bg>#000000</bg>
+						<font>
+							<size>8</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Tahoma</face>
+						</font>
+						<style>wxALIGN_LEFT</style>
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL70" variable="m_pLbl6" member="yes">
+						<label>Mean:</label>
+						<pos>160,30</pos>
+						<size>50,30</size>
+						<fg>#FFFFFF</fg>
+						<bg>#000000</bg>
+						<font>
+							<size>8</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Tahoma</face>
+						</font>
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL75" variable="m_plblMean" member="yes">
+						<label></label>
+						<pos>210,30</pos>
+						<size>100,30</size>
+						<fg>#BAFEA7</fg>
+						<bg>#000000</bg>
+						<font>
+							<size>8</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Tahoma</face>
+						</font>
+						<style>wxALIGN_LEFT</style>
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL71" variable="m_pLbl7" member="yes">
+						<label>SD:</label>
+						<pos>320,30</pos>
+						<size>50,30</size>
+						<fg>#FFFFFF</fg>
+						<bg>#000000</bg>
+						<font>
+							<size>8</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Tahoma</face>
+						</font>
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL76" variable="m_plblDeviation" member="yes">
+						<label></label>
+						<pos>370,30</pos>
+						<size>100,30</size>
+						<fg>#BAFEA7</fg>
+						<bg>#000000</bg>
+						<font>
+							<size>8</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Tahoma</face>
+						</font>
+						<style>wxALIGN_LEFT</style>
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL72" variable="m_pLbl8" member="yes">
+						<label>LR Slope:</label>
+						<pos>480,30</pos>
+						<size>50,30</size>
+						<fg>#FFFFFF</fg>
+						<bg>#000000</bg>
+						<font>
+							<size>8</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Tahoma</face>
+						</font>
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL77" variable="m_plblSlope" member="yes">
+						<label></label>
+						<pos>530,30</pos>
+						<size>100,30</size>
+						<fg>#BAFEA7</fg>
+						<bg>#000000</bg>
+						<font>
+							<size>8</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Tahoma</face>
+						</font>
+						<style>wxALIGN_LEFT</style>
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL73" variable="m_pLbl9" member="yes">
+						<label>LR Pred:</label>
+						<pos>640,30</pos>
+						<size>50,30</size>
+						<fg>#FFFFFF</fg>
+						<bg>#000000</bg>
+						<font>
+							<size>8</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Tahoma</face>
+						</font>
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL78" variable="m_plblPrediction" member="yes">
+						<label></label>
+						<pos>690,30</pos>
+						<size>100,30</size>
+						<fg>#BAFEA7</fg>
+						<bg>#000000</bg>
+						<font>
+							<size>8</size>
+							<style>normal</style>
+							<weight>normal</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face>Tahoma</face>
+						</font>
+						<style>wxALIGN_LEFT</style>
+					</object>
 					<object class="Custom" name="ID_HISTORY_GRAPH" subclass="HistoryGraph" variable="m_pHistoryGraph" member="yes">
 						<creating_code>$(THIS) = new $(CLASS)($(PARENT),$(ID),$(POS),$(SIZE));</creating_code>
 						<include_file>historygraph.h</include_file>
 						<local_include>1</local_include>
 						<style></style>
-						<pos>0,30</pos>
-						<size>800,400</size>
+						<pos>0,60</pos>
+						<size>800,370</size>
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL68" variable="m_pLbl4" member="yes">
 						<label>Data</label>
@@ -812,7 +967,7 @@
 						<handler function="OnbtnOptionsClick" entry="EVT_BUTTON" />
 					</object>
 				</object>
-				<label>Histrograms</label>
+				<label>Histograms</label>
 			</object>
 		</object>
 	</object>
