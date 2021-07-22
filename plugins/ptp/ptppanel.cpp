@@ -696,6 +696,10 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnClearClick);
 	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnOptionsClick);
 	//*)
+
+	m_pbtnClearStats = new wmButton(m_ppnlGraphs, wxNewId(), _("Clear Stats"), wxPoint(520,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN3"));
+    Connect(m_pbtnClearStats->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnClearStatsClick);
+
 	m_ptitleOffsetAverage->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 	m_ptitleOffsetRange->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 	m_ptitleDelayAverage->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
@@ -1288,4 +1292,12 @@ void ptpPanel::OnlstHistogramGranularitySelected(wxCommandEvent& event)
 void ptpPanel::OnlstHistogramResolutionSelected(wxCommandEvent& event)
 {
     m_pHistogram->ChangeResolution(m_sGraph, event.GetInt());
+}
+
+void ptpPanel::OnbtnClearStatsClick(wxCommandEvent& event)
+{
+    if(m_pLocalClock)
+    {
+        m_pLocalClock->ClearStats();
+    }
 }

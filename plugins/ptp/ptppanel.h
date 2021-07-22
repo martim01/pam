@@ -161,6 +161,8 @@ class ptpPanel: public pmPanel
 		wxPanel* m_ppnlSync;
 		//*)
 
+		wmButton* m_pbtnClearStats;
+
 
 		/**	@brief Called when there is some audio data to pass to the meter
 		*	@param pBuffer const pointer to the timedbuffer containing the audio data
@@ -301,6 +303,8 @@ class ptpPanel: public pmPanel
 		void OnlstHistogramGranularitySelected(wxCommandEvent& event);
 		void OnlstHistogramResolutionSelected(wxCommandEvent& event);
 		//*)
+
+		void OnbtnClearStatsClick(wxCommandEvent& event);
 
 		void OnTimer(wxTimerEvent& event);
 

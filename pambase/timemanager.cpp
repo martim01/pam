@@ -140,30 +140,69 @@ bool TimeManager::TrySyncToPtp()
 
             auto pMaster = wxPtp::Get().GetSyncMasterClock(m_nPtpDomain);
 
-            double m = pLocal->GetOffsetSlope();
-            double c = pLocal->GetOffsetIntersection();
-            auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
-            double dEstimate = (static_cast<double>(pMaster->GetUtcOffset())+c + m * TimeToDouble(now-pLocal->GetFirstOffsetTime()));
-
             auto offset = pLocal->GetOffset(ptpmonkey::PtpV2Clock::CURRENT);//DoubleToTime(dEstimate);
             auto mean = pLocal->GetOffset(ptpmonkey::PtpV2Clock::MEAN);
             auto sd = pLocal->GetOffset(ptpmonkey::PtpV2Clock::SD);
-
-            auto maxBand = mean+sd;
-            auto minBand = mean-sd;
-            offset = std::max(minBand, std::min(maxBand, offset));
             auto utc = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::seconds(pMaster->GetUtcOffset()));
+
+            auto maxBand = mean+sd+utc;
+            auto minBand = mean-sd+utc;
+
             offset += utc;
 
-            auto split = Split(-offset);
+            //check the slope
+            //if > 1us/s then
+            //get the current frequency
+            //adjust by +- the slope *65535
 
-            timeval tv;
-            tv.tv_sec = split.first.count();
-            tv.tv_usec = split.second.count()/1000;
+            if(std::chrono::duration_cast<std::chrono::microseconds>(offset).count() < 5000 &&
+               std::chrono::duration_cast<std::chrono::microseconds>(offset).count() > -5000)
+            {
+                offset = std::max(minBand, std::min(maxBand, offset));
 
-            adjtime(&tv, nullptr);
+                auto split = Split(-offset);
+                timeval tv;
+                tv.tv_sec = split.first.count();
+                tv.tv_usec = split.second.count()/1000;
+                while(tv.tv_usec < 0)
+                {
+                    tv.tv_sec -= 1;
+                    tv.tv_usec += 1000000;
+                }
 
-            return true;
+                timeval tvOld;
+                adjtime(nullptr, &tvOld);
+                std::cout << "Old=" << tvOld.tv_sec << ":" << tvOld.tv_usec <<"us"<<std::endl;
+                std::cout << "New=" << tv.tv_sec << ":" << tv.tv_usec <<"us"<<std::endl;
+                //return  true;
+
+
+                if(adjtime(&tv, nullptr) != 0)
+                {
+                    pmlLog(pml::LOG_ERROR) << "Could not set time: " <<strerror(errno);
+                }
+                return true;
+            }
+            else
+            {
+                auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+
+                auto hardSetM = now-offset;
+                auto hardSetA = now+offset;
+                auto split = Split(hardSetM);
+
+                pmlLog() << "Now: " << TimeToIsoString(now) << "\tOffset: " << TimeToString(offset) << "\thardSetM: " << TimeToIsoString(hardSetM) << "\thardSetA: " << TimeToIsoString(hardSetA);
+
+
+                timeval tv;
+                tv.tv_sec = split.first.count();
+                tv.tv_usec = split.second.count()/1000;
+
+                settimeofday(&tv, nullptr);
+                pLocal->ClearStats();
+                return true;
+
+            }
         }
         else
         {
