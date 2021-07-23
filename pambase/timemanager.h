@@ -3,10 +3,11 @@
 
 #include <wx/event.h>
 #include <map>
+#include "dlldefine.h"
 
 class SettingEvent;
 
-class TimeManager : public wxEvtHandler
+class PAMBASE_IMPEXPORT TimeManager : public wxEvtHandler
 {
     public:
         static TimeManager& Get();
@@ -21,6 +22,7 @@ class TimeManager : public wxEvtHandler
         void SetNtpServers(const std::map<wxString, bool>& mServers);
 
         std::map<wxString, wxString> GetNtpTracking();
+        bool IsPtpFrequencyLocked() const {return m_bPtpLock;}
 
     protected:
         TimeManager();
@@ -53,6 +55,10 @@ class TimeManager : public wxEvtHandler
         enumSync m_eCurrentSync;
 
         unsigned long m_nSyncCount;
+
+        bool m_bPtpLock;
+        size_t m_nPtpSamples;
+        size_t m_nMinSamplSize;
 
 };
 

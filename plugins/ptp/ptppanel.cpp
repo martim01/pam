@@ -9,7 +9,7 @@
 #include "log.h"
 #include <wx/log.h>
 #include "macdb.h"
-
+#include "timemanager.h"
 
 //(*InternalHeaders(ptpPanel)
 #include <wx/font.h>
@@ -642,7 +642,7 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_plstGraphData = new wmList(m_ppnlGraphs, ID_M_PLST5, wxPoint(70,443), wxSize(120,34), wmList::STYLE_SELECT, 0, wxSize(-1,30), 2, wxSize(-1,-1));
 	m_plstGraphData->SetBackgroundColour(wxColour(0,0,0));
 	m_pbtnGraphClear = new wmButton(m_ppnlGraphs, ID_M_PBTN3, _("Clear All"), wxPoint(600,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN3"));
-	m_pbtnGraphOptions = new wmButton(m_ppnlGraphs, ID_M_PBTN4, _("Options"), wxPoint(720,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN4"));
+	m_pbtnGraphOptions = new wmButton(m_ppnlGraphs, ID_M_PBTN4, _("Menu"), wxPoint(720,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN4"));
 	m_ppnlHistograms = new wxPanel(m_pSwpMain, ID_PANEL16, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL16"));
 	m_ppnlHistograms->SetBackgroundColour(wxColour(0,0,0));
 	m_plblHistogramTitle = new wmLabel(m_ppnlHistograms, ID_M_PLBL53, wxEmptyString, wxPoint(0,0), wxSize(800,30), 0, _T("ID_M_PLBL53"));
@@ -681,7 +681,7 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_plstHistogramResolution = new wmList(m_ppnlHistograms, ID_M_PLST3, wxPoint(460,443), wxSize(120,34), 0, 0, wxSize(-1,30), 3, wxSize(-1,-1));
 	m_plstHistogramResolution->SetBackgroundColour(wxColour(0,0,0));
 	m_pbtnHistogramClear = new wmButton(m_ppnlHistograms, ID_M_PBTN1, _("Clear All"), wxPoint(600,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
-	m_pbtnOptions = new wmButton(m_ppnlHistograms, ID_M_PBTN2, _("Options"), wxPoint(720,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
+	m_pbtnOptions = new wmButton(m_ppnlHistograms, ID_M_PBTN2, _("Menu"), wxPoint(720,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
 	m_pSwpMain->AddPage(m_ppnlInfo, _("Info"), false);
 	m_pSwpMain->AddPage(m_ppnlGraphs, _("Graphs"), false);
 	m_pSwpMain->AddPage(m_ppnlHistograms, _("Histograms"), false);
@@ -1023,7 +1023,7 @@ void ptpPanel::ShowTime()
             auto dUTCOffset = static_cast<double>(pSyncMaster->GetUtcOffset());
 
             m_plblTime->SetLabel(wxString(TimeToIsoString(m_pLocalClock->GetPtpTime())));
-            m_plblTime->SetBackgroundColour(m_pLocalClock->IsSynced() ? wxColour(150,255,150) : wxColour(255,150,150));
+            m_plblTime->SetBackgroundColour(TimeManager::Get().IsPtpFrequencyLocked() ? wxColour(150,255,150) : wxColour(255,150,150));
 
             m_offset  = TimeToDouble(m_pLocalClock->GetOffset(ptpmonkey::PtpV2Clock::MEAN))+dUTCOffset;
             auto dDelay = TimeToDouble(m_pLocalClock->GetDelay(ptpmonkey::PtpV2Clock::MEAN));

@@ -20,7 +20,10 @@ TimeManager::TimeManager() :
     m_bPTP(false),
     m_bLTC(false),
     m_nPtpDomain(0),
-    m_nSyncCount(0)
+    m_nSyncCount(0),
+    m_bPtpLock(false),
+    m_nMinSamplSize(20),
+    m_nPtpSamples(0)
 {
     wxPtp::Get().AddHandler(this);
     Bind(wxEVT_CLOCK_TIME, &TimeManager::OnPtpClockSync, this);
@@ -130,34 +133,90 @@ bool TimeManager::TrySyncToPtp()
 
     if(m_bPTP)
     {
-
+        m_nPtpSamples++;
 
         auto pLocal = wxPtp::Get().GetLocalClock(m_nPtpDomain);
-        if(pLocal && pLocal->IsSynced())
+        if(pLocal)
         {
-
             StopCurrentSync();
 
             auto pMaster = wxPtp::Get().GetSyncMasterClock(m_nPtpDomain);
 
             auto offset = pLocal->GetOffset(ptpmonkey::PtpV2Clock::CURRENT);//DoubleToTime(dEstimate);
-            auto mean = pLocal->GetOffset(ptpmonkey::PtpV2Clock::MEAN);
-            auto sd = pLocal->GetOffset(ptpmonkey::PtpV2Clock::SD);
             auto utc = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::seconds(pMaster->GetUtcOffset()));
 
-            auto maxBand = mean+sd+utc;
-            auto minBand = mean-sd+utc;
+            auto slope = pLocal->GetOffsetSlope()*1e6;   //slope in ppm
+
 
             offset += utc;
 
-            //check the slope
-            //if > 1us/s then
-            //get the current frequency
-            //adjust by +- the slope *65535
+            std::cout << "Offset: " << TimeToString(offset) << "\tslope: " << slope << std::endl;
 
-            if(std::chrono::duration_cast<std::chrono::microseconds>(offset).count() < 5000 &&
-               std::chrono::duration_cast<std::chrono::microseconds>(offset).count() > -5000)
+            if(abs(std::chrono::duration_cast<std::chrono::milliseconds>(offset).count()) > 500)
             {
+                if(m_nPtpSamples > 1)   //first stat is often 37s out
+                {
+                    auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+                    auto hardSetM = now-offset;
+                    auto split = Split(hardSetM);
+
+                    pmlLog() << "PTP: Hard crash to " << TimeToIsoString(hardSetM);
+
+                    timeval tv;
+                    tv.tv_sec = split.first.count();
+                    tv.tv_usec = split.second.count()/1000;
+
+                    settimeofday(&tv, nullptr);
+                    pLocal->ClearStats();
+                    m_nPtpSamples = 0;
+                    m_bPtpLock = false;
+                }
+                return true;
+            }
+
+            if(!m_bPtpLock && m_nPtpSamples < m_nMinSamplSize) //
+            {   //waiting for more info
+                return true;
+            }
+
+            if(!m_bPtpLock && abs(slope) > 0.2)
+            {
+                pmlLog() << "PTP: Clock frequency adjust: " << slope;
+
+                timex buf;
+                memset(&buf, 0,sizeof(buf));
+                if(adjtimex(&buf) == -1)
+                {
+                    pmlLog(pml::LOG_ERROR) << "Failed to read frequency " <<strerror(errno);
+                    return false;
+                }
+                std::cout << "Frequency was : " << buf.freq << std::endl;
+
+                double dOffsetFreq = slope*65535.0;
+                buf.freq -= dOffsetFreq;
+                buf.modes = ADJ_FREQUENCY;
+
+                std::cout << "Frequency new : " << buf.freq << std::endl;
+                if(adjtimex(&buf) == -1)
+                {
+                    pmlLog(pml::LOG_ERROR) << "Failed to set frequency " <<strerror(errno);
+                    return false;
+                }
+                pLocal->ClearStats();
+                m_nPtpSamples = 0;
+                m_bPtpLock = false;
+                return true;
+            }
+            else
+            {
+                m_bPtpLock = true;
+
+                auto mean = pLocal->GetOffset(ptpmonkey::PtpV2Clock::MEAN);
+                auto sd = pLocal->GetOffset(ptpmonkey::PtpV2Clock::SD);
+                auto maxBand = mean+sd+utc;
+                auto minBand = mean-sd+utc;
+
+
                 offset = std::max(minBand, std::min(maxBand, offset));
 
                 auto split = Split(-offset);
@@ -170,39 +229,18 @@ bool TimeManager::TrySyncToPtp()
                     tv.tv_usec += 1000000;
                 }
 
+                std::cout << "adjtime: " << TimeToString(offset) << std::endl;
                 timeval tvOld;
                 adjtime(nullptr, &tvOld);
-                std::cout << "Old=" << tvOld.tv_sec << ":" << tvOld.tv_usec <<"us"<<std::endl;
-                std::cout << "New=" << tv.tv_sec << ":" << tv.tv_usec <<"us"<<std::endl;
-                //return  true;
-
 
                 if(adjtime(&tv, nullptr) != 0)
                 {
                     pmlLog(pml::LOG_ERROR) << "Could not set time: " <<strerror(errno);
                 }
+                m_nPtpSamples = 0;
                 return true;
             }
-            else
-            {
-                auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
 
-                auto hardSetM = now-offset;
-                auto hardSetA = now+offset;
-                auto split = Split(hardSetM);
-
-                pmlLog() << "Now: " << TimeToIsoString(now) << "\tOffset: " << TimeToString(offset) << "\thardSetM: " << TimeToIsoString(hardSetM) << "\thardSetA: " << TimeToIsoString(hardSetA);
-
-
-                timeval tv;
-                tv.tv_sec = split.first.count();
-                tv.tv_usec = split.second.count()/1000;
-
-                settimeofday(&tv, nullptr);
-                pLocal->ClearStats();
-                return true;
-
-            }
         }
         else
         {
