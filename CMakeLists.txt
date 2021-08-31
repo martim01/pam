@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 project(pamworkspace)
 
+execute_process(COMMAND git submodule update --init --recursive)
+
 message(STATUS "Configure pambase")
 add_subdirectory(pambase)
 message(STATUS "Configure pamfft")
