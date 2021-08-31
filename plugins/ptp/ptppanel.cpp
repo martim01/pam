@@ -1083,42 +1083,45 @@ void ptpPanel::ShowTime()
 
 void ptpPanel::UpdateGraphLabels()
 {
-    if(m_sGraph == "Offset")
+    auto pSyncMaster = wxPtp::Get().GetSyncMasterClock(m_nDomain);
+    if(pSyncMaster && m_pLocalClock)
     {
-        auto pSyncMaster = wxPtp::Get().GetSyncMasterClock(m_nDomain);
-        auto dUTCOffset = static_cast<double>(pSyncMaster->GetUtcOffset());
-        auto dCurrent = (TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::CURRENT))+dUTCOffset)*1e6;
-        auto dMean = (TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::MEAN))+dUTCOffset)*1e6;
-        auto dSD = TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::SD))*1e6;
-        auto m = m_pLocalClock->GetOffsetSlope();
-        auto c = m_pLocalClock->GetOffsetIntersection();
-        auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
-        auto dEstimate = (c + m * TimeToDouble(now-m_pLocalClock->GetFirstOffsetTime()));
-        dEstimate = (dEstimate+dUTCOffset)*1e6;
+
+        if(m_sGraph == "Offset")
+        {
+            auto dUTCOffset = static_cast<double>(pSyncMaster->GetUtcOffset());
+            auto dCurrent = (TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::CURRENT))+dUTCOffset)*1e6;
+            auto dMean = (TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::MEAN))+dUTCOffset)*1e6;
+            auto dSD = TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::SD))*1e6;
+            auto m = m_pLocalClock->GetOffsetSlope();
+            auto c = m_pLocalClock->GetOffsetIntersection();
+            auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+            auto dEstimate = (c + m * TimeToDouble(now-m_pLocalClock->GetFirstOffsetTime()));
+            dEstimate = (dEstimate+dUTCOffset)*1e6;
 
 
-        m_plblCurrent->SetLabel(wxString::Format(L"%.2f\u00B5s", dCurrent));
-        m_plblMean->SetLabel(wxString::Format(L"%.2f\u00B5s", dMean));
-        m_plblDeviation->SetLabel(wxString::Format(L"%.2f\u00B5s", dSD));
-        m_plblSlope->SetLabel(wxString::Format(L"%.2f\u00B5s/s", m*1e6));
-        m_plblPrediction->SetLabel(wxString::Format(L"%.2f\u00B5s", dEstimate));
-    }
-    else
-    {
-        auto pSyncMaster = wxPtp::Get().GetSyncMasterClock(m_nDomain);
-        auto dCurrent = (TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::CURRENT)))*1e6;
-        auto dMean = (TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::MEAN)))*1e6;
-        auto dSD = TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::SD))*1e6;
-        auto m = m_pLocalClock->GetDelaySlope();
-        auto c = m_pLocalClock->GetDelayIntersection();
-        auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
-        auto dEstimate = (c + m * TimeToDouble(now-m_pLocalClock->GetFirstOffsetTime()))*1e6;
+            m_plblCurrent->SetLabel(wxString::Format(L"%.2f\u00B5s", dCurrent));
+            m_plblMean->SetLabel(wxString::Format(L"%.2f\u00B5s", dMean));
+            m_plblDeviation->SetLabel(wxString::Format(L"%.2f\u00B5s", dSD));
+            m_plblSlope->SetLabel(wxString::Format(L"%.2f\u00B5s/s", m*1e6));
+            m_plblPrediction->SetLabel(wxString::Format(L"%.2f\u00B5s", dEstimate));
+        }
+        else
+        {
+            auto dCurrent = (TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::CURRENT)))*1e6;
+            auto dMean = (TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::MEAN)))*1e6;
+            auto dSD = TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::SD))*1e6;
+            auto m = m_pLocalClock->GetDelaySlope();
+            auto c = m_pLocalClock->GetDelayIntersection();
+            auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+            auto dEstimate = (c + m * TimeToDouble(now-m_pLocalClock->GetFirstOffsetTime()))*1e6;
 
-        m_plblCurrent->SetLabel(wxString::Format(L"%.2f\u00B5s", dCurrent));
-        m_plblMean->SetLabel(wxString::Format(L"%.2f\u00B5s", dMean));
-        m_plblDeviation->SetLabel(wxString::Format(L"%.2f\u00B5s", dSD));
-        m_plblSlope->SetLabel(wxString::Format(L"%.2f\u00B5s/s", m*1e6));
-        m_plblPrediction->SetLabel(wxString::Format(L"%.2f\u00B5s", dEstimate));
+            m_plblCurrent->SetLabel(wxString::Format(L"%.2f\u00B5s", dCurrent));
+            m_plblMean->SetLabel(wxString::Format(L"%.2f\u00B5s", dMean));
+            m_plblDeviation->SetLabel(wxString::Format(L"%.2f\u00B5s", dSD));
+            m_plblSlope->SetLabel(wxString::Format(L"%.2f\u00B5s/s", m*1e6));
+            m_plblPrediction->SetLabel(wxString::Format(L"%.2f\u00B5s", dEstimate));
+        }
     }
 }
 
@@ -1298,6 +1301,6 @@ void ptpPanel::OnbtnClearStatsClick(wxCommandEvent& event)
 {
     if(m_pLocalClock)
     {
-        m_pLocalClock->ClearStats();
+        wxPtp::Get().ResetLocalClockStats(m_nDomain);
     }
 }

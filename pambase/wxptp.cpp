@@ -198,6 +198,15 @@ std::shared_ptr<const PtpV2Clock> wxPtp::GetLocalClock(unsigned char nDomain)
     return nullptr;
 }
 
+void wxPtp::ResetLocalClockStats(unsigned char nDomain)
+{
+    auto itMonkey = m_mDomain.find(nDomain);
+    if(itMonkey != m_mDomain.end())
+    {
+        itMonkey->second->ResetLocalClockStats();
+    }
+}
+
 timeval wxPtp::GetPtpTime(unsigned char nDomain)
 {
     timeval tv;

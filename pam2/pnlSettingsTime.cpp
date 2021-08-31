@@ -142,6 +142,19 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
     m_plstDate->AddButton("TVE");
     m_plstDate->AddButton("MTD");
     m_plstDate->SelectButton(Settings::Get().Read("Time", "LTC_Format", 2));
+
+    m_pbtnLTC->Show(false);
+    m_pswpSettings->DeletePage("LTC Settings");
+
+    if(TimeManager::Get().HasNTP() == false)
+    {
+        m_pbtnNTP->Show(false);
+        m_pswpSettings->DeletePage("NTP Servers");
+    }
+
+
+
+
 }
 
 pnlSettingsTime::~pnlSettingsTime()

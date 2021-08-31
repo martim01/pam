@@ -134,7 +134,7 @@ void pnlAoipManual::OnbtnStreamClick(wxCommandEvent& event)
     {
         wxString sSdp;
         sSdp << "v=0\r\n"
-             << "o=- " << wxDateTime::UNow().Format("%Y%M%D%H%M%S%l") << " 1 IN 169.254.1.1\r\n"
+             << "o=- " << wxDateTime::UNow().Format("%Y%m%d%H%M%S%l") << " 1 IN 169.254.1.1\r\n"
              << "s=Manual SDP created by PAM\r\n"
              << "t=0 0\r\n"
              << "a=recvonly\r\n"

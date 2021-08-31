@@ -244,7 +244,7 @@ bool RtpThread::DoRTSP()
         pmlLog(pml::LOG_ERROR) << "RTP Client\tFailed to create a RTSP client for URL \"" << sUrl.ToStdString() << "\": " << (*m_penv).getResultMsg();
         return false;
     }
-
+    pmlLog() << "RTSP Send Options";
     m_pRtspClient->sendOptionsCommand(continueAfterOPTIONS);
     //m_pRtspClient->sendDescribeCommand(continueAfterDESCRIBE);
 
