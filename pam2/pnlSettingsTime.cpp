@@ -99,7 +99,6 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
 	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNtpServerEditClick);
 	Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNtpServerDeleteClick);
 	Connect(ID_M_PBTN6,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNTPServerDeleteAllClick);
-	Connect(ID_M_PEDT1,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&pnlSettingsTime::Onm_pedtDomainText);
 	Connect(ID_M_PEDT1,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&pnlSettingsTime::OnedtDomainTextEnter);
 	Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsTime::OnlstDateSelected);
 	Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsTime::OnlstSyncSelected);
@@ -123,11 +122,11 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
     m_plstSync->AddButton("PTP");
     if(TimeManager::Get().HasNTP() == false)
     {
-        m_plstSync->EnableButton(1, wmDISABLED);
+        m_plstSync->EnableButton(1, wmList::wmDISABLED);
         m_pswpSettings->DeletePage("NTP Servers");
     }
     //currently no LTC syncing
-    m_plstSync->EnableButton(2, wmDISABLED);
+    m_plstSync->EnableButton(2, wmList::wmDISABLED);
     m_pswpSettings->DeletePage("LTC Settings");
 
     m_plstSync->SelectButton(Settings::Get().Read("Time", "Sync", 0), false);

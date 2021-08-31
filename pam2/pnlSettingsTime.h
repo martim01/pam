@@ -68,8 +68,6 @@ class pnlSettingsTime: public wxPanel
 		void OnbtnNtpServerEditClick(wxCommandEvent& event);
 		void OnbtnNtpServerDeleteClick(wxCommandEvent& event);
 		void OnbtnNTPServerDeleteAllClick(wxCommandEvent& event);
-		void Onm_ppnlPTPPaint(wxPaintEvent& event);
-		void Onm_pedtDomainText(wxCommandEvent& event);
 		void OnedtDomainTextEnter(wxCommandEvent& event);
 		void OnlstDateSelected(wxCommandEvent& event);
 		void OnlstSyncSelected(wxCommandEvent& event);
