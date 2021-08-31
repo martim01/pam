@@ -52,11 +52,7 @@ unsigned int AES67RTPSink::GetEpochTimestamp()
 
     //get the current time
     timeval tvNow;
-    #ifdef PTPMONKEY
-    tvNow = wxPtp::Get().GetPtpTime(0);
-    #else
     gettimeofday(&tvNow, 0);
-    #endif // PTPMONKEY
 
     u_int32_t nTimestampIncrement = (rtpTimestampFrequency()*tvNow.tv_sec);
     nTimestampIncrement += (u_int32_t)(rtpTimestampFrequency()*(tvNow.tv_usec/1000000.0) + 0.5); // note: rounding

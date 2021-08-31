@@ -4,6 +4,7 @@
 #include <wx/log.h>
 #include "log.h"
 #include "ptpeventhander.h"
+#include "timeutils.h"
 #include <iostream>
 #include <iomanip>
 #include "ptpclock.h"
@@ -116,7 +117,7 @@ void wxPtp::RunDomain(const wxString& sInterface, unsigned char nDomain)
     auto itMonkey = m_mDomain.find(nDomain);
     if(itMonkey == m_mDomain.end())
     {
-        itMonkey = m_mDomain.insert(std::make_pair(nDomain, std::make_shared<PtpMonkey>(IpInterface(std::string(sInterface.mb_str())), nDomain, 10))).first;
+        itMonkey = m_mDomain.insert(std::make_pair(nDomain, std::make_shared<PtpMonkey>(IpInterface(std::string(sInterface.mb_str())), nDomain, 2))).first;
         itMonkey->second->AddEventHandler(m_pNotifier);
         //itMonkey->second->AddEventHandler(std::make_shared<ptpmonkey::PtpEventLogHandler>());
         itMonkey->second->Run();
@@ -197,16 +198,24 @@ std::shared_ptr<const PtpV2Clock> wxPtp::GetLocalClock(unsigned char nDomain)
     return nullptr;
 }
 
+void wxPtp::ResetLocalClockStats(unsigned char nDomain)
+{
+    auto itMonkey = m_mDomain.find(nDomain);
+    if(itMonkey != m_mDomain.end())
+    {
+        itMonkey->second->ResetLocalClockStats();
+    }
+}
+
 timeval wxPtp::GetPtpTime(unsigned char nDomain)
 {
     timeval tv;
     auto itMonkey = m_mDomain.find(nDomain);
     if(itMonkey != m_mDomain.end())
     {
-
-        time_s_ns ptp = itMonkey->second->GetPtpTime();
-        tv.tv_sec = ptp.first.count();
-        tv.tv_usec = ptp.second.count()/1000;
+        std::pair<std::chrono::seconds, std::chrono::nanoseconds> ptpTime = Split(itMonkey->second->GetPtpTime());
+        tv.tv_sec = ptpTime.first.count();
+        tv.tv_usec =ptpTime.second.count()/1000;
         return tv;
     }
     else
@@ -223,9 +232,9 @@ timespec wxPtp::GetPtpTimeSpec(unsigned char nDomain)
     if(itMonkey != m_mDomain.end())
     {
 
-        time_s_ns ptp = itMonkey->second->GetPtpTime();
-        ts.tv_sec = ptp.first.count();
-        ts.tv_nsec = ptp.second.count();
+        std::pair<std::chrono::seconds, std::chrono::nanoseconds> ptpTime = Split(itMonkey->second->GetPtpTime());
+        ts.tv_sec = ptpTime.first.count();
+        ts.tv_nsec = ptpTime.second.count();
     }
     return ts;
 
@@ -264,9 +273,9 @@ timeval wxPtp::GetPtpOffset(unsigned char nDomain)
     if(itMonkey != m_mDomain.end())
     {
 
-        time_s_ns ptp = itMonkey->second->GetPtpOffset();
-        tv.tv_sec = ptp.first.count();
-        tv.tv_usec = ptp.second.count()/1000;
+        std::pair<std::chrono::seconds, std::chrono::nanoseconds> ptpTime = Split(itMonkey->second->GetPtpOffset());
+        tv.tv_sec = ptpTime.first.count();
+        tv.tv_usec = ptpTime.second.count()/1000;
         return tv;
     }
     else
@@ -284,9 +293,9 @@ timeval wxPtp::GetLastPtpOffset(unsigned char nDomain)
     if(itMonkey != m_mDomain.end())
     {
 
-        time_s_ns ptp = itMonkey->second->GetLastPtpOffset();
-        tv.tv_sec = ptp.first.count();
-        tv.tv_usec = ptp.second.count()/1000;
+        std::pair<std::chrono::seconds, std::chrono::nanoseconds> ptpTime = Split(itMonkey->second->GetPtpOffset());
+        tv.tv_sec = ptpTime.first.count();
+        tv.tv_usec = ptpTime.second.count()/1000;
         return tv;
     }
     else

@@ -68,7 +68,7 @@ void Histogram::OnPaint(wxPaintEvent& event)
         dc.SetPen(wxPen(wxColour(200,200,200)));
 
         //work out the axis
-        double dMin = max(0, static_cast<int>(itGraph->second.mColumns.begin()->first)-1);
+        double dMin = /*max(0, static_cast<int>(*/itGraph->second.mColumns.begin()->first/*)-1)*/;
         double dMax = itGraph->second.mColumns.rbegin()->first+1;
 
         if(itGraph->second.bScrolled == false)
@@ -79,7 +79,7 @@ void Histogram::OnPaint(wxPaintEvent& event)
         double dResolutionX = itGraph->second.dResolutionX * itGraph->second.dResolution;
 
         unsigned int nMaxY = 0;
-        unsigned int nMaxCol(0);
+        int nMaxCol(0);
         for(auto pairColumn : itGraph->second.mColumns)
         {
             if(nMaxY < pairColumn.second)
@@ -124,7 +124,7 @@ void Histogram::OnPaint(wxPaintEvent& event)
         m_dFirstColumn = -1;
         int nFirstColumnToShow = itGraph->second.dFirstDisplay/itGraph->second.dInterval;
 
-        for(unsigned int n = dMin; n <= dMax; n+=nColumnAdd)
+        for(int n = dMin; n <= dMax; n+=nColumnAdd)
         {
 
             if(n >= nFirstColumnToShow)
@@ -361,13 +361,13 @@ void Histogram::OnMouseMove(wxMouseEvent& event)
         if(itGraph != m_mGraphs.end())
         {
             itGraph->second.bScrolled = true;
-            double dMin = max(0, static_cast<int>(itGraph->second.mColumns.begin()->first)-1);
+            double dMin = itGraph->second.mColumns.begin()->first;
             double dMax = itGraph->second.mColumns.rbegin()->first+1;
             double dResolutionX = m_rectGraph.GetWidth()/(dMax-dMin);
             dResolutionX *= itGraph->second.dResolution;
 
             int nColumns = nDiff/dResolutionX;
-            itGraph->second.dFirstDisplay = max(0.0, itGraph->second.dFirstDisplay-(nColumns*itGraph->second.dInterval));
+            itGraph->second.dFirstDisplay = itGraph->second.dFirstDisplay-(nColumns*itGraph->second.dInterval);
             Refresh();
         }
         m_pntMouse = event.GetPosition();

@@ -47,23 +47,9 @@ void Aes67Source::WorkoutLastEpoch()
 
     //get the current time
     timeval tvNow;
-    #ifdef PTPMONKEY
-
-    if(wxPtp::Get().IsSyncedToMaster(0))
-    {
-        tvNow = wxPtp::Get().GetPtpTime(0); //need to set the domain
-        m_bEpochWorkedOut = true;
-    }
-    else
-    {
-
-        gettimeofday(&tvNow, nullptr);
-    }
-    #else
     gettimeofday(&tvNow, nullptr);
-    m_bEpochWorkedOut = true;
-    #endif // PTPMONKEY
 
+    m_bEpochWorkedOut = true;
     double dNow = static_cast<double>(tvNow.tv_sec);//*1000000.0;
     dNow += static_cast<double>(tvNow.tv_usec) / 1000000.0;
 

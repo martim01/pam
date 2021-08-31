@@ -1,6 +1,9 @@
 #pragma once
 
 //(*Headers(ptpPanel)
+#include "histogram.h"
+#include "historygraph.h"
+#include "wmbutton.h"
 #include "wmlabel.h"
 #include "wmlist.h"
 #include "wmswitcherpanel.h"
@@ -14,7 +17,7 @@
 #include "macdb.h"
 #include "pnlFlags.h"
 #include <memory>
-
+#include "timeutils.h"
 class ptpBuilder;
 class timedbuffer;
 class session;
@@ -45,32 +48,57 @@ class ptpPanel: public pmPanel
 		ptpPanel(wxWindow* parent,ptpBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~ptpPanel();
 
+
+		void ChangeView(const wxString& sWindow);
+
 		//(*Declarations(ptpPanel)
+		Histogram* m_pHistogram;
+		HistoryGraph* m_pHistoryGraph;
 		pnlFlags* m_ppnlAnnounceFlags;
 		pnlFlags* m_ppnlFollowFlags;
 		pnlFlags* m_ppnlRequestFlags;
 		pnlFlags* m_ppnlResponseFlags;
 		pnlFlags* m_ppnlSyncFlags;
+		wmButton* m_pbtnGraphClear;
+		wmButton* m_pbtnGraphOptions;
+		wmButton* m_pbtnHistogramClear;
+		wmButton* m_pbtnOptions;
+		wmLabel* m_pLbl1;
+		wmLabel* m_pLbl2;
+		wmLabel* m_pLbl3;
+		wmLabel* m_pLbl4;
+		wmLabel* m_pLbl5;
+		wmLabel* m_pLbl6;
+		wmLabel* m_pLbl7;
+		wmLabel* m_pLbl8;
+		wmLabel* m_pLbl9;
 		wmLabel* m_pblAddress;
 		wmLabel* m_plblAccuracy;
 		wmLabel* m_plblAnnCount;
 		wmLabel* m_plblAnnRate;
 		wmLabel* m_plblClass;
+		wmLabel* m_plblCurrent;
 		wmLabel* m_plblDelayAverage;
 		wmLabel* m_plblDelayCount;
 		wmLabel* m_plblDelayMech;
 		wmLabel* m_plblDelayRange;
 		wmLabel* m_plblDelayRate;
+		wmLabel* m_plblDeviation;
 		wmLabel* m_plblFollowCount;
 		wmLabel* m_plblFollowRate;
+		wmLabel* m_plblGraphTitle;
+		wmLabel* m_plblHistogramTitle;
 		wmLabel* m_plblIdentity;
 		wmLabel* m_plblMasterId;
+		wmLabel* m_plblMean;
 		wmLabel* m_plblOffsetAverage;
 		wmLabel* m_plblOffsetRange;
+		wmLabel* m_plblPrediction;
 		wmLabel* m_plblPriority1;
 		wmLabel* m_plblPriority2;
 		wmLabel* m_plblResponseCount;
 		wmLabel* m_plblResponseRate;
+		wmLabel* m_plblSlope;
 		wmLabel* m_plblSource;
 		wmLabel* m_plblState;
 		wmLabel* m_plblSteps;
@@ -114,9 +142,17 @@ class ptpPanel: public pmPanel
 		wmLabel* m_ptitleUtc;
 		wmLabel* m_ptitleVariance;
 		wmList* m_plstClocks;
+		wmList* m_plstGraphData;
+		wmList* m_plstHistogramData;
+		wmList* m_plstHistogramGranularity;
+		wmList* m_plstHistogramResolution;
+		wmSwitcherPanel* m_pSwpMain;
 		wmSwitcherPanel* m_pswp;
 		wxPanel* m_ppnlAnnouncements;
 		wxPanel* m_ppnlFollowUp;
+		wxPanel* m_ppnlGraphs;
+		wxPanel* m_ppnlHistograms;
+		wxPanel* m_ppnlInfo;
 		wxPanel* m_ppnlLocal;
 		wxPanel* m_ppnlMaster;
 		wxPanel* m_ppnlRequests;
@@ -124,6 +160,9 @@ class ptpPanel: public pmPanel
 		wxPanel* m_ppnlSlave;
 		wxPanel* m_ppnlSync;
 		//*)
+
+		wmButton* m_pbtnClearStats;
+
 
 		/**	@brief Called when there is some audio data to pass to the meter
 		*	@param pBuffer const pointer to the timedbuffer containing the audio data
@@ -220,6 +259,36 @@ class ptpPanel: public pmPanel
 		static const long ID_M_PLBL60;
 		static const long ID_M_PLBL64;
 		static const long ID_PANEL8;
+		static const long ID_PANEL14;
+		static const long ID_M_PLBL45;
+		static const long ID_M_PLBL69;
+		static const long ID_M_PLBL74;
+		static const long ID_M_PLBL70;
+		static const long ID_M_PLBL75;
+		static const long ID_M_PLBL71;
+		static const long ID_M_PLBL76;
+		static const long ID_M_PLBL72;
+		static const long ID_M_PLBL77;
+		static const long ID_M_PLBL73;
+		static const long ID_M_PLBL78;
+		static const long ID_HISTORY_GRAPH;
+		static const long ID_M_PLBL68;
+		static const long ID_M_PLST5;
+		static const long ID_M_PBTN3;
+		static const long ID_M_PBTN4;
+		static const long ID_PANEL15;
+		static const long ID_M_PLBL53;
+		static const long ID_CUSTOM1;
+		static const long ID_M_PLBL67;
+		static const long ID_M_PLST4;
+		static const long ID_M_PLBL65;
+		static const long ID_M_PLST2;
+		static const long ID_M_PLBL66;
+		static const long ID_M_PLST3;
+		static const long ID_M_PBTN1;
+		static const long ID_M_PBTN2;
+		static const long ID_PANEL16;
+		static const long ID_M_PSWP2;
 		//*)
 
 		void OnLeftUp(wxMouseEvent& event);
@@ -228,7 +297,14 @@ class ptpPanel: public pmPanel
 
 		//(*Handlers(ptpPanel)
 		void OnlstClocksSelected(wxCommandEvent& event);
+		void OnlstDataSelected(wxCommandEvent& event);
+		void OnbtnClearClick(wxCommandEvent& event);
+		void OnbtnOptionsClick(wxCommandEvent& event);
+		void OnlstHistogramGranularitySelected(wxCommandEvent& event);
+		void OnlstHistogramResolutionSelected(wxCommandEvent& event);
 		//*)
+
+		void OnbtnClearStatsClick(wxCommandEvent& event);
 
 		void OnTimer(wxTimerEvent& event);
 
@@ -248,6 +324,8 @@ class ptpPanel: public pmPanel
         void AddClock(wxString sClock);
         wxString ConvertRate(unsigned char nRate);
 
+        void UpdateGraphLabels();
+
         ptpBuilder* m_pBuilder;
 
         unsigned char m_nDomain;
@@ -263,6 +341,9 @@ class ptpPanel: public pmPanel
         bool m_bRunning;
 
         MacDb m_dbMac;
+
+        double m_offset;
+        wxString m_sGraph;
 
         static const wxColour CLR_MASTER;
         static const wxColour CLR_MASTER_SELECTED;

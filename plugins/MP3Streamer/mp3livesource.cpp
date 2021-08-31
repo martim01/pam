@@ -89,19 +89,6 @@ void MP3LiveSource::doReadFromQueue()
             // This is the first frame, so use the current time:
             gettimeofday(&fPresentationTime, 0);
 
-            #ifdef PTPMONKEY
-            timeval tv = wxPtp::Get().GetPtpOffset(0);
-            #ifdef __GNU__
-            timersub(&fPresentationTime, &tv, &fPresentationTime);
-            #else
-            double dOffset = tv.tv_sec + (static_cast<double>(tv.tv_usec))/1000000.0;
-            double dPresentation = fPresentationTime.tv_sec + (static_cast<double>(fPresentationTime.tv_usec))/1000000.0;
-            dPresentation -= dOffset;
-
-            fPresentationTime.tv_sec = static_cast<int>(dPresentation);
-            fPresentationTime.tv_usec = (dPresentation-fPresentationTime.tv_sec)*1e6;
-            #endif
-            #endif // PTPMONKEY
         }
         else
         {

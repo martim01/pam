@@ -99,7 +99,7 @@ class PAMBASE_IMPEXPORT Histogram : public pmControl
             graph(const wxColour& clr, double dInt, size_t nMax) : clrLine(clr), dIntervalDefault(dInt), dInterval(dInt), nMaxEntries(nMax),
             dResolution(1.0), dFirstDisplay(-0.0), dResolutionX(1.0), bScrolled(false){}
             wxColour clrLine;
-            std::map<unsigned int, unsigned int> mColumns;
+            std::map<int, unsigned int> mColumns;
             std::list<double> lstPeaks;
             double dIntervalDefault;
             double dInterval;
