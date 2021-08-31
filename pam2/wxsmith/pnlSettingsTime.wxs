@@ -5,45 +5,6 @@
 		<bg>#000000</bg>
 		<pos_arg>1</pos_arg>
 		<size_arg>1</size_arg>
-		<object class="wmButton" name="ID_M_PBTN22" variable="m_pbtnPTP" member="yes">
-			<label>PTP</label>
-			<toggle_look>1</toggle_look>
-			<toggle_left>Off</toggle_left>
-			<toggle_right>Sync</toggle_right>
-			<toggle_percent>50</toggle_percent>
-			<pos>10,10</pos>
-			<size>200,40</size>
-			<fg>#FFFFFF</fg>
-			<bg>#008000</bg>
-			<style>wmButton::STYLE_SELECT</style>
-			<handler function="OnbtnPTPClick" entry="EVT_BUTTON" />
-		</object>
-		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnLTC" member="yes">
-			<label>LTC</label>
-			<toggle_look>1</toggle_look>
-			<toggle_left>Off</toggle_left>
-			<toggle_right>Sync</toggle_right>
-			<toggle_percent>50</toggle_percent>
-			<pos>240,10</pos>
-			<size>200,40</size>
-			<fg>#FFFFFF</fg>
-			<bg>#008000</bg>
-			<style>wmButton::STYLE_SELECT</style>
-			<handler function="OnbtnLTCClick" entry="EVT_BUTTON" />
-		</object>
-		<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnNTP" member="yes">
-			<label>NTP</label>
-			<toggle_look>1</toggle_look>
-			<toggle_left>Off</toggle_left>
-			<toggle_right>Sync</toggle_right>
-			<toggle_percent>50</toggle_percent>
-			<pos>10,60</pos>
-			<size>200,40</size>
-			<fg>#FFFFFF</fg>
-			<bg>#008000</bg>
-			<style>wmButton::STYLE_SELECT</style>
-			<handler function="OnbtnNTPClick" entry="EVT_BUTTON" />
-		</object>
 		<object class="wmSwitcherPanel" name="ID_M_PSWP1" variable="m_pswpSettings" member="yes">
 			<pagename>Button</pagename>
 			<pos>0,110</pos>
@@ -171,6 +132,18 @@
 				</object>
 				<label>LTC Settings</label>
 			</object>
+		</object>
+		<object class="wmList" name="ID_M_PLST3" variable="m_plstSync" member="yes">
+			<scrolling>None</scrolling>
+			<columns>4</columns>
+			<button>#00006A</button>
+			<button_selected>#FF8000</button_selected>
+			<items />
+			<pos>10,10</pos>
+			<size>580,45</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstSyncSelected" entry="EVT_LIST_SELECTED" />
 		</object>
 	</object>
 </wxsmith>
