@@ -203,11 +203,7 @@ float AES67ServerMediaSubsession::getCurrentNPT(void* streamToken)
     struct timeval const& creationTime  = fRTPSink.creationTime(); // alias
 
     struct timeval timeNow;
-    //#ifdef PTPMONKEY
-    //timeNow = wxPtp::Get().GetPtpTime(0);
-    //#else
     gettimeofday(&timeNow, NULL);
-    //#endif // PTPMONKEY
 
 
     return (float)(timeNow.tv_sec - creationTime.tv_sec + (timeNow.tv_usec - creationTime.tv_usec)/1000000.0);

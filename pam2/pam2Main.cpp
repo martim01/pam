@@ -225,6 +225,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_ppnlLog = new pnlLog(m_pswpMain);
 
     pml::LogStream::AddOutput(std::make_unique<pml::LogOutput>());
+    pml::LogStream::SetOutputLevel(pml::LOG_INFO);
 
     wxImage img(16,16);
     img.SetRGB(wxRect(0,0,16,16),0,0,0);

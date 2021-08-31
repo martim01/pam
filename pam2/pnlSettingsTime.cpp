@@ -11,9 +11,6 @@
 //*)
 
 //(*IdInit(pnlSettingsTime)
-const long pnlSettingsTime::ID_M_PBTN22 = wxNewId();
-const long pnlSettingsTime::ID_M_PBTN1 = wxNewId();
-const long pnlSettingsTime::ID_M_PBTN2 = wxNewId();
 const long pnlSettingsTime::ID_M_PLST1 = wxNewId();
 const long pnlSettingsTime::ID_M_PBTN3 = wxNewId();
 const long pnlSettingsTime::ID_M_PBTN4 = wxNewId();
@@ -28,6 +25,7 @@ const long pnlSettingsTime::ID_M_PLBL13 = wxNewId();
 const long pnlSettingsTime::ID_M_PLST2 = wxNewId();
 const long pnlSettingsTime::ID_PANEL3 = wxNewId();
 const long pnlSettingsTime::ID_M_PSWP1 = wxNewId();
+const long pnlSettingsTime::ID_M_PLST3 = wxNewId();
 //*)
 
 BEGIN_EVENT_TABLE(pnlSettingsTime,wxPanel)
@@ -40,18 +38,6 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
 	//(*Initialize(pnlSettingsTime)
 	Create(parent, id, wxDefaultPosition, wxSize(600,400), wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
-	m_pbtnPTP = new wmButton(this, ID_M_PBTN22, _("PTP"), wxPoint(10,10), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN22"));
-	m_pbtnPTP->SetForegroundColour(wxColour(255,255,255));
-	m_pbtnPTP->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnPTP->SetToggle(true, wxT("Off"), wxT("Sync"), 50);
-	m_pbtnLTC = new wmButton(this, ID_M_PBTN1, _("LTC"), wxPoint(240,10), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
-	m_pbtnLTC->SetForegroundColour(wxColour(255,255,255));
-	m_pbtnLTC->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnLTC->SetToggle(true, wxT("Off"), wxT("Sync"), 50);
-	m_pbtnNTP = new wmButton(this, ID_M_PBTN2, _("NTP"), wxPoint(10,60), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN2"));
-	m_pbtnNTP->SetForegroundColour(wxColour(255,255,255));
-	m_pbtnNTP->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnNTP->SetToggle(true, wxT("Off"), wxT("Sync"), 50);
 	m_pswpSettings = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(0,110), wxSize(600,330), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
 	m_pswpSettings->SetPageNameStyle(3);
 	m_ppnlNTP = new wxPanel(m_pswpSettings, ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL1"));
@@ -103,18 +89,19 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_pswpSettings->AddPage(m_ppnlNTP, _("NTP Servers"), false);
 	m_pswpSettings->AddPage(m_ppnlPTP, _("PTP Domain"), false);
 	m_pswpSettings->AddPage(m_ppnlLTCS, _("LTC Settings"), false);
+	m_plstSync = new wmList(this, ID_M_PLST3, wxPoint(10,10), wxSize(580,45), wmList::STYLE_SELECT, 0, wxSize(-1,40), 4, wxSize(1,1));
+	m_plstSync->SetBackgroundColour(wxColour(0,0,0));
+	m_plstSync->SetButtonColour(wxColour(wxT("#00006A")));
+	m_plstSync->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
 
-	Connect(ID_M_PBTN22,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnPTPClick);
-	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnLTCClick);
-	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNTPClick);
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsTime::OnlstNTPServersSelected);
 	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNtpServerAddClick);
 	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNtpServerEditClick);
 	Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNtpServerDeleteClick);
 	Connect(ID_M_PBTN6,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNTPServerDeleteAllClick);
-	Connect(ID_M_PEDT1,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&pnlSettingsTime::Onm_pedtDomainText);
 	Connect(ID_M_PEDT1,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&pnlSettingsTime::OnedtDomainTextEnter);
 	Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsTime::OnlstDateSelected);
+	Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsTime::OnlstSyncSelected);
 	//*)
 
 	for(auto pairServer : TimeManager::Get().GetNtpServers())
@@ -129,9 +116,20 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
         }
     }
 
-    m_pbtnNTP->ToggleSelection(Settings::Get().Read("Time", "NTP", 1) == 1);
-    m_pbtnLTC->ToggleSelection(Settings::Get().Read("Time", "LTC", 0) == 1);
-    m_pbtnPTP->ToggleSelection(Settings::Get().Read("Time", "PTP", 0) == 1);
+    m_plstSync->AddButton("Off");
+    m_plstSync->AddButton("NTP");
+    m_plstSync->AddButton("LTC");
+    m_plstSync->AddButton("PTP");
+    if(TimeManager::Get().HasNTP() == false)
+    {
+        m_plstSync->EnableButton(1, wmList::wmDISABLED);
+        m_pswpSettings->DeletePage("NTP Servers");
+    }
+    //currently no LTC syncing
+    m_plstSync->EnableButton(2, wmList::wmDISABLED);
+    m_pswpSettings->DeletePage("LTC Settings");
+
+    m_plstSync->SelectButton(Settings::Get().Read("Time", "Sync", 0), false);
 
     m_nSelectedServer = -1;
 
@@ -142,6 +140,8 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
     m_plstDate->AddButton("TVE");
     m_plstDate->AddButton("MTD");
     m_plstDate->SelectButton(Settings::Get().Read("Time", "LTC_Format", 2));
+
+
 }
 
 pnlSettingsTime::~pnlSettingsTime()
@@ -150,21 +150,6 @@ pnlSettingsTime::~pnlSettingsTime()
 	//*)
 }
 
-
-void pnlSettingsTime::OnbtnPTPClick(wxCommandEvent& event)
-{
-    Settings::Get().Write("Time", "PTP", event.IsChecked());
-}
-
-void pnlSettingsTime::OnbtnLTCClick(wxCommandEvent& event)
-{
-    Settings::Get().Write("Time", "LTC", event.IsChecked());
-}
-
-void pnlSettingsTime::OnbtnNTPClick(wxCommandEvent& event)
-{
-    Settings::Get().Write("Time", "NTP", event.IsChecked());
-}
 
 void pnlSettingsTime::OnlstNTPServersSelected(wxCommandEvent& event)
 {
@@ -259,14 +244,6 @@ void pnlSettingsTime::SaveNtpServers()
     TimeManager::Get().SetNtpServers(mServers);
 }
 
-void pnlSettingsTime::Onm_ppnlPTPPaint(wxPaintEvent& event)
-{
-}
-
-void pnlSettingsTime::Onm_pedtDomainText(wxCommandEvent& event)
-{
-}
-
 void pnlSettingsTime::OnedtDomainTextEnter(wxCommandEvent& event)
 {
     unsigned long nDomain;
@@ -279,4 +256,9 @@ void pnlSettingsTime::OnedtDomainTextEnter(wxCommandEvent& event)
 void pnlSettingsTime::OnlstDateSelected(wxCommandEvent& event)
 {
     Settings::Get().Write("Time", "LTC_Format", event.GetInt());
+}
+
+void pnlSettingsTime::OnlstSyncSelected(wxCommandEvent& event)
+{
+    Settings::Get().Write("Time", "Sync", event.GetInt());
 }

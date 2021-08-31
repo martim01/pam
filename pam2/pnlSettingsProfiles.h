@@ -3,8 +3,8 @@
 
 //(*Headers(pnlSettingsProfiles)
 #include "wmbutton.h"
-#include <wx/panel.h>
 #include "wmlist.h"
+#include <wx/panel.h>
 //*)
 #include <wx/filename.h>
 
@@ -17,11 +17,11 @@ class pnlSettingsProfiles: public wxPanel
 		virtual ~pnlSettingsProfiles();
 
 		//(*Declarations(pnlSettingsProfiles)
-		wmButton* m_pbtnRename;
-		wmList* m_plstProfiles;
 		wmButton* m_pbtnDelete;
-		wmButton* m_pbtnSave;
 		wmButton* m_pbtnLoad;
+		wmButton* m_pbtnRename;
+		wmButton* m_pbtnSave;
+		wmList* m_plstProfiles;
 		//*)
 
 	protected:

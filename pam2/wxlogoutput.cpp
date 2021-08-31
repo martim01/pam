@@ -6,7 +6,7 @@ wxDEFINE_EVENT(wxEVT_PMLOG, wxCommandEvent);
 
 void wxLogOutput::Flush(pml::enumLevel eLogLevel, const std::stringstream&  logStream)
 {
-    if(m_pHandler)
+    if(m_pHandler && eLogLevel >= m_eLevel)
     {
         wxString sLog(logStream.str());
         sLog.Trim();

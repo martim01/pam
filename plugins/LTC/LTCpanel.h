@@ -2,8 +2,8 @@
 
 //(*Headers(LTCPanel)
 #include "wmlabel.h"
-#include <wx/panel.h>
 #include "wmlist.h"
+#include <wx/panel.h>
 //*)
 
 #include <vector>
@@ -26,25 +26,25 @@ class LTCPanel: public pmPanel
 		virtual ~LTCPanel();
 
 		//(*Declarations(LTCPanel)
-		wmLabel* m_pLbl4;
-		wmLabel* m_plblLTCTime;
-		wmLabel* m_pLblColourTitle;
-		wmLabel* m_plblMode;
 		wmLabel* m_pLbl1;
-		wmList* m_plstDate;
+		wmLabel* m_pLbl4;
+		wmLabel* m_pLblColourTitle;
 		wmLabel* m_pLblDateTitle;
-		wmLabel* m_plblFPS;
-		wmLabel* m_plblClock;
-		wmLabel* m_plblLTCVolume;
-		wmLabel* m_pLblModeTitle;
-		wmLabel* m_plblColour;
-		wmLabel* m_plblClockTitle;
-		wmLabel* m_plblListTitle;
 		wmLabel* m_pLblFPSTitle;
-		wmLabel* m_plblRaw;
-		wmLabel* m_plblLTCDate;
+		wmLabel* m_pLblModeTitle;
 		wmLabel* m_pLblVolumeTitle;
+		wmLabel* m_plblClock;
+		wmLabel* m_plblClockTitle;
+		wmLabel* m_plblColour;
 		wmLabel* m_plblDateFormat;
+		wmLabel* m_plblFPS;
+		wmLabel* m_plblLTCDate;
+		wmLabel* m_plblLTCTime;
+		wmLabel* m_plblLTCVolume;
+		wmLabel* m_plblListTitle;
+		wmLabel* m_plblMode;
+		wmLabel* m_plblRaw;
+		wmList* m_plstDate;
 		//*)
 
 		void SetAudioData(const timedbuffer* pBuffer);

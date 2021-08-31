@@ -244,7 +244,7 @@ bool RtpThread::DoRTSP()
         pmlLog(pml::LOG_ERROR) << "RTP Client\tFailed to create a RTSP client for URL \"" << sUrl.ToStdString() << "\": " << (*m_penv).getResultMsg();
         return false;
     }
-
+    pmlLog() << "RTSP Send Options";
     m_pRtspClient->sendOptionsCommand(continueAfterOPTIONS);
     //m_pRtspClient->sendDescribeCommand(continueAfterDESCRIBE);
 
@@ -299,12 +299,7 @@ unsigned int nTimestamp,unsigned int nDuration, int nTimestampDifference, mExten
         m_nSampleBufferSize = 0;
     }
 
-    #ifdef PTPMONKEY
-    timeval tv = wxPtp::Get().GetPtpOffset(0);
-    double dOffset = tv.tv_sec + (static_cast<double>(tv.tv_usec))/1000000.0;
-    #else
     double dOffset = 0.0;
-    #endif
 
     for(int i = 0; i < nFrameSize; i+=nBytesPerSample)
     {

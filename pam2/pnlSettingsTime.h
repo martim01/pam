@@ -20,19 +20,17 @@ class pnlSettingsTime: public wxPanel
 		virtual ~pnlSettingsTime();
 
 		//(*Declarations(pnlSettingsTime)
-		wmButton* m_pbtnLTC;
-		wmButton* m_pbtnNTP;
 		wmButton* m_pbtnNTPServerDeleteAll;
 		wmButton* m_pbtnNtpServerAdd;
 		wmButton* m_pbtnNtpServerDelete;
 		wmButton* m_pbtnNtpServerEdit;
-		wmButton* m_pbtnPTP;
 		wmEdit* m_pedtDomain;
 		wmKeyboard* m_pKbd1;
 		wmLabel* m_pLbl1;
 		wmLabel* m_plblListTitle;
 		wmList* m_plstDate;
 		wmList* m_plstNTPServers;
+		wmList* m_plstSync;
 		wmSwitcherPanel* m_pswpSettings;
 		wxPanel* m_ppnlLTCS;
 		wxPanel* m_ppnlNTP;
@@ -42,9 +40,6 @@ class pnlSettingsTime: public wxPanel
 	protected:
 
 		//(*Identifiers(pnlSettingsTime)
-		static const long ID_M_PBTN22;
-		static const long ID_M_PBTN1;
-		static const long ID_M_PBTN2;
 		static const long ID_M_PLST1;
 		static const long ID_M_PBTN3;
 		static const long ID_M_PBTN4;
@@ -59,6 +54,7 @@ class pnlSettingsTime: public wxPanel
 		static const long ID_M_PLST2;
 		static const long ID_PANEL3;
 		static const long ID_M_PSWP1;
+		static const long ID_M_PLST3;
 		//*)
 
 	private:
@@ -72,10 +68,9 @@ class pnlSettingsTime: public wxPanel
 		void OnbtnNtpServerEditClick(wxCommandEvent& event);
 		void OnbtnNtpServerDeleteClick(wxCommandEvent& event);
 		void OnbtnNTPServerDeleteAllClick(wxCommandEvent& event);
-		void Onm_ppnlPTPPaint(wxPaintEvent& event);
-		void Onm_pedtDomainText(wxCommandEvent& event);
 		void OnedtDomainTextEnter(wxCommandEvent& event);
 		void OnlstDateSelected(wxCommandEvent& event);
+		void OnlstSyncSelected(wxCommandEvent& event);
 		//*)
 
 		void SaveNtpServers();

@@ -21,9 +21,12 @@ class WXEXPORT ptpBuilder : public MonitorPluginBuilder
         virtual void InputSession(const session& aSession);
         virtual void OutputChannels(const std::vector<char>& vChannels);
 
+
     protected:
 
-	friend class ptpPanel;
+        friend class ptpPanel;
+        friend class pnlOptions;
+
         void OnSettingChanged(SettingEvent& event);
 
         virtual wxWindow* CreateMonitorPanel(wxWindow* pParent);

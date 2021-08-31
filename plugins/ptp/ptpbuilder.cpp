@@ -4,6 +4,7 @@
 #include "settingevent.h"
 #include "version.h"
 #include "ptppanel.h"
+#include "pnlOptions.h"
 #include <wx/log.h>
 
 
@@ -12,7 +13,7 @@ using namespace std;
 ptpBuilder::ptpBuilder() : MonitorPluginBuilder()
 {
 
-    //RegisterForSettingsUpdates(wxT("Mode"), this);
+    RegisterForSettingsUpdates("Window", this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&ptpBuilder::OnSettingChanged);
 
@@ -34,7 +35,7 @@ wxWindow* ptpBuilder::CreateMonitorPanel(wxWindow* pParent)
 list<pairOptionPanel_t> ptpBuilder::CreateOptionPanels(wxWindow* pParent)
 {
     list<pairOptionPanel_t> lstOptionPanels;
-
+    lstOptionPanels.push_back(std::make_pair("Options", new pnlOptions(pParent, this)));
     //@todo create and return all the option panels
     return lstOptionPanels;
 }
@@ -61,10 +62,8 @@ void ptpBuilder::OutputChannels(const std::vector<char>& vChannels)
 
 void ptpBuilder::OnSettingChanged(SettingEvent& event)
 {
-    //@todo a setting registered for has changed. Handle it
+    m_pMeter->ChangeView(event.GetValue());
+   Maximize(true);
 }
-
-
-
 
 

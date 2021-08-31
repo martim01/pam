@@ -93,6 +93,7 @@ IOManager::IOManager() :
 
     Settings::Get().AddHandler(wxT("Input"),wxT("Type"), this);
     Settings::Get().AddHandler(wxT("Input"),wxT("AoIP"), this);
+    Settings::Get().AddHandler(wxT("Input"),wxT("AoIPManual"), this);
     Settings::Get().AddHandler(wxT("Input"),wxT("Device"), this);
     Settings::Get().AddHandler(wxT("Input"),wxT("File"), this);
 
@@ -436,6 +437,23 @@ void IOManager::InputChanged(const wxString& sKey)
             InitAudioInputDevice();
         }
     }
+    else if(sKey == "AoIPManual")
+    {
+        pmlLog(pml::LOG_DEBUG) << "IOManager\tInputChanged: AoIP Manual";
+        ClearSession();
+        map<unsigned int, RtpThread*>::iterator itThread = m_mRtp.find(m_nCurrentRtp);
+        if(itThread != m_mRtp.end())
+        {
+            pmlLog(pml::LOG_DEBUG) << "IOManager\tDestroy thread";
+            itThread->second->SetToClose();
+            itThread->second->Wait();
+            itThread->second->Delete();
+            m_mRtp.erase(m_nCurrentRtp);
+            m_nCurrentRtp = 0;
+            pmlLog(pml::LOG_DEBUG) << "IOManager\tDestroy thread: Done";
+        }
+        InitAudioInputDevice();
+    }
     else if(sKey == wxT("Device"))
     {
         InitAudioInputDevice();
@@ -768,13 +786,21 @@ void IOManager::InitAudioInputDevice()
 
         CheckPlayback(SoundcardManager::Get().GetInputSampleRate(), SoundcardManager::Get().GetInputNumberOfChannels());
     }
-    else if(sType == wxT("AoIP"))
+    else if(sType == "AoIP" || sType == "AoIP Manual")
     {
-
         m_nInputSource = AudioEvent::RTP;
         pmlLog(pml::LOG_INFO) << "IOManager\tCreate Audio Input Device: AoIP";
 
-        AoIPSource source = AoipSourceManager::Get().FindSource(Settings::Get().Read(wxT("Input"), wxT("AoIP"), 0));
+        AoIPSource source(0);
+        if(sType == "AoIP")
+        {
+            source = AoipSourceManager::Get().FindSource(Settings::Get().Read(wxT("Input"), wxT("AoIP"), 0));
+        }
+        else if(Settings::Get().Read("Input", "AoIPManual", "") != "")
+        {
+            source = AoIPSource(std::numeric_limits<unsigned int>::max(), "Manual", "Manual SDP created by PAM", Settings::Get().Read("Input", "AoIPManual", ""));
+        }
+
         if(source.nIndex != 0 && m_mRtp.find(source.nIndex) == m_mRtp.end())
         {
             m_nCurrentRtp = source.nIndex;
