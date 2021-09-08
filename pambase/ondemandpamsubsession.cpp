@@ -30,7 +30,19 @@ char const* OnDemandPamSubsession::getAuxSDPLine(RTPSink* rtpSink, FramedSource*
   return NULL;
 }
 
-void OnDemandPamSubsession::getStreamParameters(unsigned clientSessionId, netAddressBits clientAddress, Port const& clientRTPPort, Port const& clientRTCPPort, int tcpSocketNum, unsigned char rtpChannelId, unsigned char rtcpChannelId, netAddressBits& destinationAddress, u_int8_t& destinationTTL, Boolean& isMulticast, Port& serverRTPPort, Port& serverRTCPPort, void*& streamToken)
+void OnDemandPamSubsession::getStreamParameters(unsigned clientSessionId,
+				   struct sockaddr_storage const& clientAddress,
+                                   Port const& clientRTPPort,
+                                   Port const& clientRTCPPort,
+				   int tcpSocketNum,
+                                   unsigned char rtpChannelId,
+                                   unsigned char rtcpChannelId,
+                                   struct sockaddr_storage& destinationAddress,
+				   u_int8_t& destinationTTL,
+                                   Boolean& isMulticast,
+                                   Port& serverRTPPort,
+                                   Port& serverRTCPPort,
+                                   void*& streamToken)
 {
     OnDemandServerMediaSubsession::getStreamParameters(clientSessionId, clientAddress, clientRTPPort, clientRTCPPort, tcpSocketNum, rtpChannelId, rtcpChannelId,destinationAddress, destinationTTL, isMulticast, serverRTPPort, serverRTCPPort, streamToken);
 
@@ -42,7 +54,7 @@ void OnDemandPamSubsession::getStreamParameters(unsigned clientSessionId, netAdd
         Destinations* pDestinations = (Destinations*)(fDestinationsHashTable->Lookup((char const*)clientSessionId));
         if(pDestinations)
         {
-            pEvent->SetString(wxString::FromUTF8(inet_ntoa(pDestinations->addr)));
+//            pEvent->SetString(wxString::FromUTF8(inet_ntoa(pDestinations->addr))); //@todo fix this ip address
             pEvent->SetInt(ntohs(pDestinations->rtpPort.num()));
             pEvent->SetExtraLong(ntohs(pDestinations->rtcpPort.num()));
             pEvent->SetClientData((void*)clientSessionId);
@@ -67,7 +79,7 @@ void OnDemandPamSubsession::deleteStream(unsigned clientSessionId, void*& stream
         Destinations* pDestinations = (Destinations*)(fDestinationsHashTable->Lookup((char const*)clientSessionId));
         if(pDestinations)
         {
-            pEvent->SetString(wxString::FromUTF8(inet_ntoa(pDestinations->addr)));
+          //  pEvent->SetString(wxString::FromUTF8(inet_ntoa(pDestinations->addr)));    // @todo fix this
             pEvent->SetInt(ntohs(pDestinations->rtpPort.num()));
             pEvent->SetExtraLong(ntohs(pDestinations->rtcpPort.num()));
         }

@@ -2,7 +2,6 @@
 
 HLS_PROXY = live555HLSProxy$(EXE)
 
-PREFIX = /usr/local
 ALL = $(HLS_PROXY)
 all: $(ALL)
 

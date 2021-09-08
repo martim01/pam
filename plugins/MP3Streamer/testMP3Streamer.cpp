@@ -77,8 +77,8 @@ void stream(MP3Encoder& encoder)
     const unsigned short rtcpPortNum = rtpPortNum+1;
     const unsigned char ttl = 1; // low, in case routers don't admin scope
 
-    struct in_addr destinationAddress;
-    destinationAddress.s_addr = our_inet_addr(destinationAddressStr);
+    struct sockaddr_storage destinationAddress;
+    ((sockaddr_in&)destinationAddress).sin_addr.s_addr = inet_addr(destinationAddressStr);
     const Port rtpPort(rtpPortNum);
     const Port rtcpPort(rtcpPortNum);
 
