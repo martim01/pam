@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2020 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2021 Live Networks, Inc.  All rights reserved.
 // State encapsulating a TLS connection
 // Implementation
 
@@ -73,9 +73,12 @@ int TLSState::write(const char* data, unsigned count) {
 int TLSState::read(u_int8_t* buffer, unsigned bufferSize) {
 #ifndef NO_OPENSSL
   int result = SSL_read(fCon, buffer, bufferSize);
-  if (result < 0 && SSL_get_error(fCon, result) == SSL_ERROR_WANT_READ) {
-    // The data can't be delivered yet.  Return 0 (bytes read); we'll try again later
-    return 0;
+  if (result <= 0) {
+    if (SSL_get_error(fCon, result) == SSL_ERROR_WANT_READ) {
+      // The data can't be delivered yet.  Return 0 (bytes read); we'll try again later
+      return 0;
+    }
+    return -1; // assume that the connection has closed
   }
   return result;
 #else

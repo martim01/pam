@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2020 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2021 Live Networks, Inc.  All rights reserved.
 // A generic RTSP client
 // Implementation
 
@@ -40,7 +40,7 @@ unsigned RTSPClient::sendDescribeCommand(responseHandler* responseHandler, Authe
 }
 
 unsigned RTSPClient::sendOptionsCommand(responseHandler* responseHandler, Authenticator* authenticator) {
-  if (authenticator != NULL) fCurrentAuthenticator = *authenticator;
+  if (fCurrentAuthenticator < authenticator) fCurrentAuthenticator = *authenticator;
   return sendRequest(new RequestRecord(++fCSeq, "OPTIONS", responseHandler));
 }
 
@@ -304,11 +304,20 @@ Boolean RTSPClient::parseRTSPURL(char const* url,
 
     // Next, parse <server-address-or-name>
     char* to = &parseBuffer[0];
+    Boolean isInSquareBrackets = False; //  by default
+    if (*from == '[') {
+      ++from;
+      isInSquareBrackets = True;
+    }
     unsigned i;
     for (i = 0; i < parseBufferSize; ++i) {
-      if (*from == '\0' || *from == ':' || *from == '/') {
+      if (*from == '\0' ||
+	  (*from == ':' && !isInSquareBrackets) ||
+	  *from == '/' ||
+	  (*from == ']' && isInSquareBrackets)) {
 	// We've completed parsing the address
 	*to = '\0';
+	if (*from == ']' && isInSquareBrackets) ++from;
 	break;
       }
       *to++ = *from++;
@@ -371,8 +380,7 @@ RTSPClient::RTSPClient(UsageEnvironment& env, char const* rtspURL,
 		       portNumBits tunnelOverHTTPPortNum, int socketNumToServer)
   : Medium(env),
     desiredMaxIncomingPacketSize(0), fVerbosityLevel(verbosityLevel), fCSeq(1),
-    fAllowBasicAuthentication(True), fServerAddress(0),
-    fTunnelOverHTTPPortNum(tunnelOverHTTPPortNum),
+    fAllowBasicAuthentication(True), fTunnelOverHTTPPortNum(tunnelOverHTTPPortNum),
     fUserAgentHeaderStr(NULL), fUserAgentHeaderStrLen(0),
     fInputSocketNum(-1), fOutputSocketNum(-1), fBaseURL(NULL), fTCPStreamIdCount(0),
     fLastSessionId(NULL), fSessionTimeoutParameter(0), fSessionCookieCounter(0), fHTTPTunnelingConnectionIsPending(False),
@@ -421,7 +429,6 @@ void RTSPClient::reset() {
   fRequestsAwaitingConnection.reset();
   fRequestsAwaitingHTTPTunneling.reset();
   fRequestsAwaitingResponse.reset();
-  fServerAddress = 0;
 
   setBaseURL(NULL);
 
@@ -700,9 +707,11 @@ Boolean RTSPClient::setRequestFields(RequestRecord* request,
       rtpNumber = fTCPStreamIdCount++;
       rtcpNumber = fTCPStreamIdCount++;
     } else { // normal RTP streaming
-      unsigned connectionAddress = subsession.connectionEndpointAddress();
+      struct sockaddr_storage connectionAddress;
+      subsession.getConnectionEndpointAddress(connectionAddress);
       Boolean requestMulticastStreaming
-	= IsMulticastAddress(connectionAddress) || (connectionAddress == 0 && forceMulticastOnUnspecified);
+	= IsMulticastAddress(connectionAddress)
+	  || (forceMulticastOnUnspecified && addressIsNull(connectionAddress));
       transportTypeStr = requestMulticastStreaming ? ";multicast" : ";unicast";
       portTypeStr = requestMulticastStreaming ? ";port" : ";client_port";
       rtpNumber = subsession.clientPortNum();
@@ -746,10 +755,12 @@ Boolean RTSPClient::setRequestFields(RequestRecord* request,
     if (cmdURL[0] == '\0') cmdURL = (char*)"/";
     delete[] username;
     delete[] password;
-    netAddressBits serverAddress = *(netAddressBits*)(destAddress.data());
-    AddressString serverAddressString(serverAddress);
+
+    struct sockaddr_storage serverAddr;
+    copyAddress(serverAddr, &destAddress);
+    AddressString serverAddressString(serverAddr);
     
-    protocolStr = "HTTP/1.1";
+    protocolStr = "HTTP/1.0";
     
     if (strcmp(request->commandName(), "GET") == 0) {
       // Create a 'session cookie' string, using MD5:
@@ -886,14 +897,14 @@ int RTSPClient::openConnection() {
     }
     
     // We don't yet have a TCP socket (or we used to have one, but it got closed).  Set it up now.
-    fInputSocketNum = setupStreamSocket(envir(), 0);
+    copyAddress(fServerAddress, &destAddress);
+    fInputSocketNum = setupStreamSocket(envir(), 0, fServerAddress.ss_family);
     if (fInputSocketNum < 0) break;
     ignoreSigPipeOnSocket(fInputSocketNum); // so that servers on the same host that get killed don't also kill us
     if (fOutputSocketNum < 0) fOutputSocketNum = fInputSocketNum;
-    envir() << "Created new TCP socket " << fInputSocketNum << " for connection\n";
+    if (fVerbosityLevel >= 1) envir() << "Created new TCP socket " << fInputSocketNum << " for connection\n";
       
     // Connect to the remote endpoint:
-    fServerAddress = *(netAddressBits*)(destAddress.data());
     int connectResult = connectToServer(fInputSocketNum, destPortNum);
     if (connectResult < 0) break;
     else if (connectResult > 0) {
@@ -915,11 +926,11 @@ int RTSPClient::openConnection() {
 }
 
 int RTSPClient::connectToServer(int socketNum, portNumBits remotePortNum) {
-  MAKE_SOCKADDR_IN(remoteName, fServerAddress, htons(remotePortNum));
+  setPortNum(fServerAddress, htons(remotePortNum));
   if (fVerbosityLevel >= 1) {
-    envir() << "Connecting to " << AddressString(remoteName).val() << ", port " << remotePortNum << " on socket " << socketNum << "...\n";
+    envir() << "Connecting to " << AddressString(fServerAddress).val() << ", port " << remotePortNum << " on socket " << socketNum << "...\n";
   }
-  if (connect(socketNum, (struct sockaddr*) &remoteName, sizeof remoteName) != 0) {
+  if (connect(socketNum, (struct sockaddr*)&fServerAddress, addressSize(fServerAddress)) != 0) {
     int const err = envir().getErrno();
     if (err == EINPROGRESS || err == EWOULDBLOCK) {
       // The connection is pending; we'll need to handle it later.  Wait for our socket to be 'writable', or have an exception.
@@ -1253,8 +1264,11 @@ Boolean RTSPClient::handleSETUPResponse(MediaSubsession& subsession, char const*
     } else {
       // Normal case.
       // Set the RTP and RTCP sockets' destination address and port from the information in the SETUP response (if present):
-      netAddressBits destAddress = subsession.connectionEndpointAddress();
-      if (destAddress == 0) destAddress = fServerAddress;
+      struct sockaddr_storage destAddress;
+      subsession.getConnectionEndpointAddress(destAddress);
+      if (addressIsNull(destAddress)) {
+	destAddress = fServerAddress;
+      }
       subsession.setDestinations(destAddress);
     }
 
@@ -1287,6 +1301,9 @@ Boolean RTSPClient::handlePLAYResponse(MediaSession* session, MediaSubsession* s
       MediaSubsessionIterator iter(*session);
       MediaSubsession* subsession;
       while ((subsession = iter.next()) != NULL) {
+	subsession->scale() = session->scale();
+	subsession->speed() = session->speed();
+
 	u_int16_t seqNum; u_int32_t timestamp;
 	subsession->rtpInfo.infoIsNew = False;
 	if (parseRTPInfoParams(rtpInfoParamsStr, seqNum, timestamp)) {
@@ -1314,9 +1331,9 @@ Boolean RTSPClient::handlePLAYResponse(MediaSession* session, MediaSubsession* s
       u_int16_t seqNum; u_int32_t timestamp;
       subsession->rtpInfo.infoIsNew = False;
       if (parseRTPInfoParams(rtpInfoParamsStr, seqNum, timestamp)) {
-    subsession->rtpInfo.seqNum = seqNum;
-    subsession->rtpInfo.timestamp = timestamp;
-    subsession->rtpInfo.infoIsNew = True;
+	subsession->rtpInfo.seqNum = seqNum;
+	subsession->rtpInfo.timestamp = timestamp;
+	subsession->rtpInfo.infoIsNew = True;
       }
 
       if (subsession->rtpSource() != NULL) subsession->rtpSource()->enableRTCPReports() = True; // start sending RTCP "RR"s now
@@ -1516,7 +1533,7 @@ void RTSPClient::responseHandlerForHTTP_GET1(int responseCode, char* responseStr
 
     // Having successfully set up (using the HTTP "GET" command) the server->client link, set up a second TCP connection
     // (to the same server & port as before) for the client->server link.  All future output will be to this new socket.
-    fOutputSocketNum = setupStreamSocket(envir(), 0);
+    fOutputSocketNum = setupStreamSocket(envir(), 0, fServerAddress.ss_family);
     if (fOutputSocketNum < 0) break;
     ignoreSigPipeOnSocket(fOutputSocketNum); // so that servers on the same host that killed don't also kill us
 
@@ -1977,7 +1994,7 @@ int RTSPClient::read(u_int8_t* buffer, unsigned bufferSize) {
   if (fTLS.isNeeded) {
     return fTLS.read(buffer, bufferSize);
   } else {
-    struct sockaddr_in dummy; // 'from' address - not used
+    struct sockaddr_storage dummy; // 'from' address - not used
     return readSocket(envir(), fInputSocketNum, buffer, bufferSize, dummy);
   }
 }
@@ -2076,16 +2093,17 @@ void RTSPClient::RequestQueue::reset() {
 HandlerServerForREGISTERCommand* HandlerServerForREGISTERCommand
 ::createNew(UsageEnvironment& env, onRTSPClientCreationFunc* creationFunc, Port ourPort,
 	    UserAuthenticationDatabase* authDatabase, int verbosityLevel, char const* applicationName) {
-  int ourSocket = setUpOurSocket(env, ourPort);
-  if (ourSocket == -1) return NULL;
+  int ourSocketIPv4 = setUpOurSocket(env, ourPort, AF_INET);
+  int ourSocketIPv6 = setUpOurSocket(env, ourPort, AF_INET6);
+  if (ourSocketIPv4 < 0 && ourSocketIPv6 < 0) return NULL;
 
-  return new HandlerServerForREGISTERCommand(env, creationFunc, ourSocket, ourPort, authDatabase, verbosityLevel, applicationName);
+  return new HandlerServerForREGISTERCommand(env, creationFunc, ourSocketIPv4, ourSocketIPv6, ourPort, authDatabase, verbosityLevel, applicationName);
 }
 
 HandlerServerForREGISTERCommand
-::HandlerServerForREGISTERCommand(UsageEnvironment& env, onRTSPClientCreationFunc* creationFunc, int ourSocket, Port ourPort,
+::HandlerServerForREGISTERCommand(UsageEnvironment& env, onRTSPClientCreationFunc* creationFunc, int ourSocketIPv4, int ourSocketIPv6, Port ourPort,
                                   UserAuthenticationDatabase* authDatabase, int verbosityLevel, char const* applicationName)
-  : RTSPServer(env, ourSocket, ourPort, authDatabase, 30/*small reclamationTestSeconds*/),
+  : RTSPServer(env, ourSocketIPv4, ourSocketIPv6, ourPort, authDatabase, 30/*small reclamationTestSeconds*/),
     fCreationFunc(creationFunc), fVerbosityLevel(verbosityLevel), fApplicationName(strDup(applicationName)) {
 }
 

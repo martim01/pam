@@ -39,7 +39,7 @@ Boolean AES67ServerMediaSubsession::rtcpIsMuxed()
   return &(fRTPSink.groupsockBeingUsed()) == fRTCPInstance->RTCPgs();
 }
 
-char const* AES67ServerMediaSubsession::sdpLines()
+char const* AES67ServerMediaSubsession::sdpLines(int addressFamily)
 {
     if (fSDPLines == NULL )
     {
@@ -117,31 +117,31 @@ char const* AES67ServerMediaSubsession::sdpLines()
 }
 
 void AES67ServerMediaSubsession
-::getStreamParameters(unsigned clientSessionId,
-                      netAddressBits clientAddress,
-                      Port const& /*clientRTPPort*/,
-                      Port const& clientRTCPPort,
-                      int /*tcpSocketNum*/,
-                      unsigned char /*rtpChannelId*/,
-                      unsigned char /*rtcpChannelId*/,
-                      netAddressBits& destinationAddress,
-                      u_int8_t& destinationTTL,
-                      Boolean& isMulticast,
-                      Port& serverRTPPort,
-                      Port& serverRTCPPort,
-                      void*& streamToken)
+::getStreamParameters(unsigned clientSessionId, // in
+				   struct sockaddr_storage const& clientAddress, // in
+				   Port const& clientRTPPort, // in
+				   Port const& clientRTCPPort, // in
+				   int tcpSocketNum, // in (-1 means use UDP, not TCP)
+				   unsigned char rtpChannelId, // in (used if TCP)
+				   unsigned char rtcpChannelId, // in (used if TCP)
+				   struct sockaddr_storage& destinationAddress, // in out
+				   u_int8_t& destinationTTL, // in out
+				   Boolean& isMulticast, // out
+				   Port& serverRTPPort, // out
+				   Port& serverRTCPPort, // out
+				   void*& streamToken)
 {
     isMulticast = True;
     Groupsock& gs = fRTPSink.groupsockBeingUsed();
     if (destinationTTL == 255) destinationTTL = gs.ttl();
-    if (destinationAddress == 0)   // normal case
+    if (addressIsNull(destinationAddress))   // normal case
     {
-        destinationAddress = gs.groupAddress().s_addr;
+        destinationAddress = clientAddress;
     }
     else     // use the client-specified destination address instead:
     {
-        struct in_addr destinationAddr;
-        destinationAddr.s_addr = destinationAddress;
+        struct sockaddr_storage destinationAddr;
+        destinationAddr = destinationAddress;
         gs.changeDestinationParameters(destinationAddr, 0, destinationTTL);
         if (fRTCPInstance != NULL)
         {

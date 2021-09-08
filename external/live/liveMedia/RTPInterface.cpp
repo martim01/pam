@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2020 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2021 Live Networks, Inc.  All rights reserved.
 // An abstraction of a network interface used for RTP (or RTCP).
 // (This allows the RTP-over-TCP hack (RFC 2326, section 10.12) to
 // be implemented transparently.)
@@ -263,7 +263,7 @@ void RTPInterface
 }
 
 Boolean RTPInterface::handleRead(unsigned char* buffer, unsigned bufferMaxSize,
-				 unsigned& bytesRead, struct sockaddr_in& fromAddress,
+				 unsigned& bytesRead, struct sockaddr_storage& fromAddress,
 				 int& tcpSocketNum, unsigned char& tcpStreamChannelId,
 				 Boolean& packetReadWasIncomplete) {
   packetReadWasIncomplete = False; // by default
@@ -282,6 +282,12 @@ Boolean RTPInterface::handleRead(unsigned char* buffer, unsigned bufferMaxSize,
     if (totBytesToRead > bufferMaxSize) totBytesToRead = bufferMaxSize;
     unsigned curBytesToRead = totBytesToRead;
     int curBytesRead;
+    // Because we're calling "readSocket()" on a stream socket, we don't expect "fromAddress"
+    // to be filled in, so set it to a 'dummy' value instead:
+    fromAddress.ss_family = AF_INET;
+    ((sockaddr_in&)fromAddress).sin_addr.s_addr = 0;
+    ((sockaddr_in&)fromAddress).sin_port = 0;
+    
     while ((curBytesRead = readSocket(envir(), fNextTCPReadStreamSocketNum,
 				      &buffer[bytesRead], curBytesToRead,
 				      fromAddress)) > 0) {
@@ -505,9 +511,9 @@ Boolean SocketDescriptor::tcpReadHandler1(int mask) {
   // However, because the socket is being read asynchronously, this data might arrive in pieces.
   
   u_int8_t c;
-  struct sockaddr_in fromAddress;
+  struct sockaddr_storage dummy; // not used
   if (fTCPReadingState != AWAITING_PACKET_DATA) {
-    int result = readSocket(fEnv, fOurSocketNum, &c, 1, fromAddress);
+    int result = readSocket(fEnv, fOurSocketNum, &c, 1, dummy);
     if (result == 0) { // There was no more data to read
       return False;
     } else if (result != 1) { // error reading TCP socket, so we will no longer handle it
@@ -591,7 +597,7 @@ Boolean SocketDescriptor::tcpReadHandler1(int mask) {
 #ifdef DEBUG_RECEIVE
 	  fprintf(stderr, "SocketDescriptor(socket %d)::tcpReadHandler(): No handler proc for \"rtpInterface\" for channel %d; need to skip %d remaining bytes\n", fOurSocketNum, fStreamChannelId, rtpInterface->fNextTCPReadSize);
 #endif
-	  int result = readSocket(fEnv, fOurSocketNum, &c, 1, fromAddress);
+	  int result = readSocket(fEnv, fOurSocketNum, &c, 1, dummy);
 	  if (result < 0) { // error reading TCP socket, so we will no longer handle it
 #ifdef DEBUG_RECEIVE
 	    fprintf(stderr, "SocketDescriptor(socket %d)::tcpReadHandler(): readSocket(1 byte) returned %d (error)\n", fOurSocketNum, result);

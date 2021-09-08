@@ -416,8 +416,6 @@
 		<Unit filename="RTCPTransmissionEvent.h" />
 		<Unit filename="advelement.cpp" />
 		<Unit filename="advelement.h" />
-		<Unit filename="aes67client.cpp" />
-		<Unit filename="aes67client.h" />
 		<Unit filename="aes67mediasession.cpp" />
 		<Unit filename="aes67mediasession.h" />
 		<Unit filename="aes67source.cpp" />
@@ -472,8 +470,6 @@
 		<Unit filename="ondemandstreamer.h" />
 		<Unit filename="ourRTSPClient.cpp" />
 		<Unit filename="ourRTSPClient.h" />
-		<Unit filename="ourSIPClient.cpp" />
-		<Unit filename="ourSIPClient.h" />
 		<Unit filename="pamRTSPServer.cpp" />
 		<Unit filename="pamRTSPServer.h" />
 		<Unit filename="pcstats.cpp" />

@@ -33,7 +33,12 @@ RtpServerThread::RtpServerThread(wxEvtHandler* pHandler, const std::set<wxEvtHan
 void* RtpServerThread::Entry()
 {
     m_mutex.Lock();
-    SendingInterfaceAddr = our_inet_addr(std::string(m_sRTSP.mb_str()).c_str());
+
+    //NetAddressList sendingddresses(m_sRTSP.ToStdString().c_str());
+    //copyAddress(SendingInterfaceAddr, sendingddresses.firstAddress());
+
+
+    SendingInterfaceAddr = inet_addr(std::string(m_sRTSP.mb_str()).c_str());
     TaskScheduler* scheduler = PamTaskScheduler::createNew();
     m_penv = PamUsageEnvironment::createNew(*scheduler, m_pHandler);
 
@@ -65,14 +70,17 @@ bool RtpServerThread::CreateStream()
     unsigned char payloadFormatCode = 96; // by default, unless a static RTP payload type can be used
 
     // Create 'groupsocks' for RTP:
-    struct in_addr destinationAddress;
+    struct sockaddr_storage destinationAddress;
+    destinationAddress.ss_family = AF_INET;
     if(m_sSourceIp.empty() == false)
     {
-        destinationAddress.s_addr = inet_addr(std::string(m_sSourceIp.mb_str()).c_str());
+        NetAddressList destinationAddresses(m_sSourceIp.ToStdString().c_str());
+        copyAddress(destinationAddress, destinationAddresses.firstAddress());
     }
     else if(m_bSSM)
     {
-        destinationAddress.s_addr = chooseRandomIPv4SSMAddress(*m_penv);   //THIS IS THE MULTICAST ADDRESS
+
+        ((sockaddr_in&)destinationAddress).sin_addr.s_addr= chooseRandomIPv4SSMAddress(*m_penv);   //THIS IS THE MULTICAST ADDRESS
     }
     else
     {
@@ -138,7 +146,7 @@ bool RtpServerThread::CreateStream()
     sms->addSubsession(pSmss);
     m_pRtspServer->addServerMediaSession(sms);
 
-    char* pSDP = sms->generateSDPDescription();
+    char* pSDP = sms->generateSDPDescription(AF_INET);
     m_sSDP = std::string(pSDP);
     delete[] pSDP;
 

@@ -29,16 +29,19 @@ RTCPTransmissionEvent::RTCPTransmissionEvent(RTPTransmissionStats* pStats, int n
     m_dJitter = static_cast<double>(pStats->jitter())/static_cast<double>(nFrequency);
     m_dJitter *= 1000.0; //into ms;
     char addr[256];
-    if(pStats->lastFromAddress().sin_family == AF_INET)
+    if(pStats->lastFromAddress().ss_family == AF_INET)
     {
-        inet_ntop(AF_INET, &pStats->lastFromAddress().sin_addr, &addr[0], 256);
+        inet_ntop(AF_INET, &((struct sockaddr_in&)pStats->lastFromAddress()).sin_addr, &addr[0], 256);
+
+        m_nRTCPPort = ntohs(((struct sockaddr_in&)pStats->lastFromAddress()).sin_port);
     }
-    else if(pStats->lastFromAddress().sin_family == AF_INET6)
+    else if(pStats->lastFromAddress().ss_family == AF_INET6)
     {
-        inet_ntop(AF_INET6, &pStats->lastFromAddress().sin_addr, &addr[0], 256);
+        inet_ntop(AF_INET6, &((struct sockaddr_in6&)pStats->lastFromAddress()).sin6_addr, &addr[0], 256);
+        m_nRTCPPort = ntohs(((struct sockaddr_in6&)pStats->lastFromAddress()).sin6_port);
     }
     m_sLastFromAddress = wxString(std::string(addr));
-    m_nRTCPPort = ntohs(pStats->lastFromAddress().sin_port);
+
 
     m_nLastPacketNumber = pStats->lastPacketNumReceived();
     m_nLastSRTime = pStats->lastSRTime();

@@ -292,7 +292,7 @@ pnlRTCPTransmission::pnlRTCPTransmission(wxWindow* parent,wxWindowID id,const wx
 	m_pswpMain->SetPageNameStyle(3);
 	Panel2 = new wxPanel(m_pswpMain, ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL1"));
 	Panel2->SetBackgroundColour(wxColour(0,0,0));
-	m_plstSubscribers = new wmList(Panel2, ID_M_PLST1, wxPoint(0,0), wxSize(200,400), wmList::STYLE_SELECT, 0, wxSize(-1,30), 2, wxSize(2,2));
+	m_plstSubscribers = new wmList(Panel2, ID_M_PLST1, wxPoint(0,0), wxSize(200,400), wmList::STYLE_SELECT, 0, wxSize(-1,30), 1, wxSize(2,2));
 	m_plstSubscribers->SetBackgroundColour(wxColour(0,0,0));
 	m_plstSubscribers->SetPressedButtonColour(wxColour(wxT("#8000FF")));
 	m_plstSubscribers->SetSelectedButtonColour(wxColour(wxT("#8000FF")));
@@ -484,7 +484,7 @@ void pnlRTCPTransmission::OnSubscriberSelected(const wxCommandEvent& event)
     if(itSubscriber != m_mSubscribers.end())
     {
         m_plblSubscriber->SetLabel(itSubscriber->first);
-        m_plblSSRC->SetLabel(wxString::Format("%X", itSubscriber->second.nSSRC));
+        //m_plblSSRC->SetLabel(wxString::Format("%X", itSubscriber->second.nSSRC));
         m_sSelected = event.GetString();
 
         ShowGraph();
@@ -615,8 +615,11 @@ void pnlRTCPTransmission::StoreGraphs(const wxString& sIpAddress, subscriber& su
 
 void pnlRTCPTransmission::OnConnectionEvent(const wxCommandEvent& event)
 {
-    pmlLog() << "Subscriber: " << event.GetString() << ":" << event.GetInt() << " [" << event.GetExtraLong() << "] opened connection.";
-    AddSubscriber(wxString::Format("%s:%u", event.GetString().c_str(), event.GetExtraLong()), (unsigned int)event.GetClientData());
+    if(event.GetString().empty() == false)
+    {
+        pmlLog() << "Subscriber: " << event.GetString() << ":" << event.GetInt() << " [" << event.GetExtraLong() << "] opened connection.";
+        AddSubscriber(wxString::Format("%s:%u", event.GetString().c_str(), event.GetExtraLong()), (unsigned int)event.GetClientData());
+    }
 }
 
 void pnlRTCPTransmission::OnDisconnectionEvent(const wxCommandEvent& event)

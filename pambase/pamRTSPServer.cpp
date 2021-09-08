@@ -3,16 +3,17 @@
 
 PamRTSPServer* PamRTSPServer::createNew(UsageEnvironment& env, Port ourPort,UserAuthenticationDatabase* authDatabase, unsigned reclamationSeconds)
 {
-    int ourSocket = setUpOurSocket(env, ourPort);
-    if (ourSocket == -1)
+    int ourSocketIPv4 = setUpOurSocket(env, ourPort, AF_INET);
+    int ourSocketIPv6 = setUpOurSocket(env, ourPort, AF_INET6);
+    if (ourSocketIPv4 < 0 && ourSocketIPv6 < 0)
     {
         return NULL;
     }
-    return new PamRTSPServer(env, ourSocket, ourPort, authDatabase, reclamationSeconds);
+    return new PamRTSPServer(env, ourSocketIPv4, ourSocketIPv6, ourPort, authDatabase, reclamationSeconds);
 }
 
-PamRTSPServer::PamRTSPServer(UsageEnvironment& env, int ourSocket, Port ourPort, UserAuthenticationDatabase* authDatabase, unsigned reclamationSeconds) :
-RTSPServer(env, ourSocket, ourPort, authDatabase, reclamationSeconds)
+PamRTSPServer::PamRTSPServer(UsageEnvironment& env,  int ourSocketIPv4, int ourSocketIPv6,  Port ourPort, UserAuthenticationDatabase* authDatabase, unsigned reclamationSeconds) :
+RTSPServer(env, ourSocketIPv4, ourSocketIPv6, ourPort, authDatabase, reclamationSeconds)
 {
 }
 
@@ -25,12 +26,12 @@ void PamRTSPServer::PamRTSPClientConnection::handleRequestBytes(int newBytesRead
     RTSPClientConnection::handleRequestBytes(newBytesRead);
 }
 
-PamRTSPServer::PamRTSPClientConnection::PamRTSPClientConnection(RTSPServer& ourServer, int clientSocket, struct sockaddr_in clientAddr) :
+PamRTSPServer::PamRTSPClientConnection::PamRTSPClientConnection(RTSPServer& ourServer, int clientSocket, struct sockaddr_storage clientAddr) :
 RTSPServer::RTSPClientConnection(ourServer, clientSocket, clientAddr)
 {
     //@todo put in client address and port number
 
-    pmlLog() << "RTSPServer\t" << "New Connection: " << inet_ntoa(clientAddr.sin_addr);
+//    pmlLog() << "RTSPServer\t" << "New Connection: " << inet_ntoa(clientAddr.sin_addr); //@todo fix ip address
 }
 PamRTSPServer::PamRTSPClientConnection::~PamRTSPClientConnection()
 {}
@@ -143,7 +144,7 @@ void PamRTSPServer::PamRTSPClientSession::handleCmd_SET_PARAMETER(RTSPClientConn
 }
 
 
-GenericMediaServer::ClientConnection* PamRTSPServer::createNewClientConnection(int clientSocket, struct sockaddr_in clientAddr)
+GenericMediaServer::ClientConnection* PamRTSPServer::createNewClientConnection(int clientSocket, struct sockaddr_storage clientAddr)
 {
 
     return new PamRTSPClientConnection(*this, clientSocket, clientAddr);
