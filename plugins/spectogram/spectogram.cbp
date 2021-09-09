@@ -137,6 +137,7 @@
 		<Unit filename="colourgradient.h" />
 		<Unit filename="pnlColours.cpp" />
 		<Unit filename="pnlColours.h" />
+		<Unit filename="pnlOptions.cpp" />
 		<Unit filename="pnlbins.cpp" />
 		<Unit filename="pnlbins.h" />
 		<Unit filename="pnldisplay.h" />
