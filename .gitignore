@@ -20,6 +20,7 @@
 *.ini
 /lib/*
 /bin/*
+/help/*
 *.gdb
 /gracenote/*
 /manifest_creator/wxsmith/manifest_creatordialog.wxs
