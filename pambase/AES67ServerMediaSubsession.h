@@ -22,8 +22,20 @@ class AES67ServerMediaSubsession: public ServerMediaSubsession
         virtual Boolean rtcpIsMuxed();
 
 
-      virtual char const* sdpLines();
-        virtual void getStreamParameters(unsigned clientSessionId, netAddressBits clientAddress, Port const& clientRTPPort,Port const& clientRTCPPort, int tcpSocketNum, unsigned char rtpChannelId, unsigned char rtcpChannelId,netAddressBits& destinationAddress, u_int8_t& destinationTTL,Boolean& isMulticast, Port& serverRTPPort, Port& serverRTCPPort,void*& streamToken);
+      virtual char const* sdpLines(int addressFamily);
+        virtual void getStreamParameters(unsigned clientSessionId, // in
+				   struct sockaddr_storage const& clientAddress, // in
+				   Port const& clientRTPPort, // in
+				   Port const& clientRTCPPort, // in
+				   int tcpSocketNum, // in (-1 means use UDP, not TCP)
+				   unsigned char rtpChannelId, // in (used if TCP)
+				   unsigned char rtcpChannelId, // in (used if TCP)
+				   struct sockaddr_storage& destinationAddress, // in out
+				   u_int8_t& destinationTTL, // in out
+				   Boolean& isMulticast, // out
+				   Port& serverRTPPort, // out
+				   Port& serverRTCPPort, // out
+				   void*& streamToken);
       virtual void startStream(unsigned clientSessionId, void* streamToken, TaskFunc* rtcpRRHandler, void* rtcpRRHandlerClientData, unsigned short& rtpSeqNum, unsigned& rtpTimestamp,    ServerRequestAlternativeByteHandler* serverRequestAlternativeByteHandler, void* serverRequestAlternativeByteHandlerClientData);
 
       virtual float getCurrentNPT(void* streamToken);

@@ -470,8 +470,6 @@
 		<Unit filename="ondemandstreamer.h" />
 		<Unit filename="ourRTSPClient.cpp" />
 		<Unit filename="ourRTSPClient.h" />
-		<Unit filename="ourSIPClient.cpp" />
-		<Unit filename="ourSIPClient.h" />
 		<Unit filename="pamRTSPServer.cpp" />
 		<Unit filename="pamRTSPServer.h" />
 		<Unit filename="pcstats.cpp" />

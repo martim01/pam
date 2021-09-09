@@ -7,7 +7,7 @@ class PamRTSPServer: public RTSPServer
         static PamRTSPServer* createNew(UsageEnvironment& env, Port ourPort = 554,UserAuthenticationDatabase* authDatabase = NULL, unsigned reclamationSeconds = 65);
 
     protected:
-        PamRTSPServer(UsageEnvironment& env, int ourSocket, Port ourPort, UserAuthenticationDatabase* authDatabase, unsigned reclamationSeconds);
+        PamRTSPServer(UsageEnvironment& env,  int ourSocketIPv4, int ourSocketIPv6, Port ourPort, UserAuthenticationDatabase* authDatabase, unsigned reclamationSeconds);
         // called only by createNew();
         virtual ~PamRTSPServer();
 
@@ -19,7 +19,7 @@ class PamRTSPServer: public RTSPServer
             protected: // redefined virtual functions:
                 virtual void handleRequestBytes(int newBytesRead);
 
-                PamRTSPClientConnection(RTSPServer& ourServer, int clientSocket, struct sockaddr_in clientAddr);
+                PamRTSPClientConnection(RTSPServer& ourServer, int clientSocket, struct sockaddr_storage clientAddr);
                 virtual ~PamRTSPClientConnection();
 
                 friend class RTSPServer;
@@ -62,7 +62,7 @@ class PamRTSPServer: public RTSPServer
         };
 
     protected: // redefined virtual functions
-        virtual ClientConnection* createNewClientConnection(int clientSocket, struct sockaddr_in clientAddr);
+        virtual ClientConnection* createNewClientConnection(int clientSocket, struct sockaddr_storage clientAddr);
         virtual ClientSession* createNewClientSession(u_int32_t sessionId);
 
 };

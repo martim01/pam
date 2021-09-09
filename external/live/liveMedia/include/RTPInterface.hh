@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2020 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2021 Live Networks, Inc.  All rights reserved.
 // An abstraction of a network interface used for RTP (or RTCP).
 // (This allows the RTP-over-TCP hack (RFC 2326, section 10.12) to
 // be implemented transparently.)
@@ -59,7 +59,7 @@ public:
                            handlerProc);
   Boolean handleRead(unsigned char* buffer, unsigned bufferMaxSize,
 		     // out parameters:
-		     unsigned& bytesRead, struct sockaddr_in& fromAddress,
+		     unsigned& bytesRead, struct sockaddr_storage& fromAddress,
 		     int& tcpSocketNum, unsigned char& tcpStreamChannelId,
 		     Boolean& packetReadWasIncomplete);
   // Note: If "tcpSocketNum" < 0, then the packet was received over UDP, and "tcpStreamChannelId"

@@ -167,10 +167,11 @@ void ourSIPClient::SetupSubsession(MediaSubsession* subsession)
     subsession->rtcpChannelId = rtcpChannelId;
 
     // Set the RTP and RTCP sockets' destination address and port from the information in the SETUP response (if present):
-    netAddressBits destAddress = subsession->connectionEndpointAddress();
-    if (destAddress != 0)
-    {
-        subsession->setDestinations(destAddress);
-    }
+    // @todo SIP
+//    netAddressBits destAddress = subsession->connectionEndpointAddress();
+//    if (destAddress != 0)
+//    {
+//        subsession->setDestinations(destAddress);
+//    }
 
 }

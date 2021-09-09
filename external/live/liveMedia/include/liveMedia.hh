@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2020 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2021 Live Networks, Inc.  All rights reserved.
 // Inclusion of header files representing the interface
 // for the entire library
 //
@@ -76,6 +76,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "MPEG2TransportStreamFromESSource.hh"
 #include "MPEG2TransportStreamFramer.hh"
 #include "ADTSAudioFileSource.hh"
+#include "ADTSAudioStreamDiscreteFramer.hh"
 #include "H261VideoRTPSource.hh"
 #include "H263plusVideoRTPSource.hh"
 #include "H264VideoRTPSource.hh"
@@ -103,7 +104,6 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "WAVAudioFileSource.hh"
 #include "StreamReplicator.hh"
 #include "RTSPRegisterSender.hh"
-#include "RTSPServerSupportingHTTPStreaming.hh"
 #include "RTSPClient.hh"
 #include "SIPClient.hh"
 #include "QuickTimeFileSink.hh"
@@ -118,7 +118,6 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "AMRAudioFileSource.hh"
 #include "AMRAudioRTPSink.hh"
 #include "T140TextRTPSink.hh"
-#include "TCPStreamSink.hh"
 #include "MP3AudioFileServerMediaSubsession.hh"
 #include "MPEG1or2VideoFileServerMediaSubsession.hh"
 #include "MPEG1or2FileServerDemux.hh"
@@ -133,5 +132,6 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "MPEG2TransportStreamDemux.hh"
 #include "ProxyServerMediaSession.hh"
 #include "HLSSegmenter.hh"
+#include "MPEG2TransportStreamAccumulator.hh"
 
 #endif

@@ -13,7 +13,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
-// Copyright (c) 1996-2020, Live Networks, Inc.  All rights reserved
+// Copyright (c) 1996-2021, Live Networks, Inc.  All rights reserved
 // A program that acts as a proxy for a RTSP stream, converting it into a sequence of
 // HLS (HTTP Live Streaming) segments, plus a ".m3u8" file that can be accessed via a web browser.
 // main program
@@ -34,7 +34,10 @@ Boolean streamUsingTCP = False;
 portNumBits tunnelOverHTTPPortNum = 0;
 char const* hlsPrefix;
 MediaSession* session;
+MPEG2TransportStreamFromESSource* transportStream;
+MediaSubsessionIterator* iter;
 MediaSubsession* subsession;
+unsigned numUsableSubsessions = 0;
 double duration = 0.0;
 Boolean createHandlerServerForREGISTERCommand = False;
 portNumBits handlerServerForREGISTERCommandPortNum = 0;
@@ -58,6 +61,10 @@ int main(int argc, char** argv) {
   // Begin by setting up our usage environment:
   TaskScheduler* scheduler = BasicTaskScheduler::createNew();
   env = BasicUsageEnvironment::createNew(*scheduler);
+
+  // Output information about the program (and LIVE555 version):
+  *env << "LIVE555 HLS Proxy, documented at http://www.live555.com/hlsProxy/\n";
+  *env << "\t(LIVE555 Streaming Media version " << LIVEMEDIA_LIBRARY_VERSION_STRING << ")\n";
 
   // Parse the command line:
   programName = argv[0];
@@ -198,7 +205,7 @@ UsageEnvironment& operator<<(UsageEnvironment& env, const MediaSubsession& subse
   return env << subsession.mediumName() << "/" << subsession.codecName();
 }
 
-void continueAfterSETUP(RTSPClient* rtspClient, int resultCode, char* resultString); // forward
+void setupNextSubsession(RTSPClient* rtspClient); // forward
 
 void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultString) {
   do {
@@ -207,6 +214,9 @@ void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultS
       delete[] resultString;
       break;
     }
+
+    // Create a Transport Stream to multiplex the Elementary Stream data from each subsession:
+    transportStream = MPEG2TransportStreamFromESSource::createNew(*env);
 
     // Create a media session object from the SDP description.
     // Then iterate over it, to look for subsession(s) that we can handle:
@@ -220,28 +230,8 @@ void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultS
       break;
     }
     
-    MediaSubsessionIterator* iter = new MediaSubsessionIterator(*session);
-    while ((subsession = iter->next()) != NULL) {
-      if (strcmp(subsession->mediumName(), "video") == 0 &&
-	  strcmp(subsession->codecName(), "H264") == 0) break; // use this subsession
-    }
-    delete iter;
-
-    if (subsession == NULL) {
-      *env << *rtspClient << "This stream has no usable subsessions\n";
-      break;
-    }
-
-    if (!subsession->initiate()) {
-      *env << *rtspClient << "Failed to initiate the \"" << *subsession << "\" subsession: " << env->getResultMsg() << "\n";
-      break;
-    } else {
-      *env << *rtspClient << "Initiated the \"" << *subsession << "\" subsession\n";
-    }
-    
-    // Continue setting up this subsession, by sending a RTSP "SETUP" command:
-    rtspClient->sendSetupCommand(*subsession, continueAfterSETUP, False, streamUsingTCP,
-				 False, ourAuthenticator);
+    iter = new MediaSubsessionIterator(*session);
+    setupNextSubsession(rtspClient);
     return;
   } while (0);
 
@@ -249,9 +239,44 @@ void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultS
   exit(1);
 }
 
-void segmentationCallback(void* clientData, char const* segmentFileName, double segmentDuration); // forward
-void afterPlaying(void* clientData); // forward
-void continueAfterPLAY(RTSPClient* rtspClient, int resultCode, char* resultString); // forward
+void continueAfterSETUP(RTSPClient* rtspClient, int resultCode, char* resultString); // forward
+void startPlayingSession(RTSPClient* rtspClient); // forward
+
+void setupNextSubsession(RTSPClient* rtspClient) {
+  subsession = iter->next();
+  if (subsession != NULL) {
+    // Check whether this subsession is a codec that we support.
+    // We support H.264 or H.265 video, and AAC audio.
+    if ((strcmp(subsession->mediumName(), "video") == 0 &&
+	 (strcmp(subsession->codecName(), "H264") == 0 ||
+	  strcmp(subsession->codecName(), "H265") == 0)) ||
+	(strcmp(subsession->mediumName(), "audio") == 0 &&
+	 strcmp(subsession->codecName(), "MPEG4-GENERIC"/*aka. AAC*/) == 0)) {
+      // Use this subsession.
+      ++numUsableSubsessions;
+      if (!subsession->initiate()) {
+	*env << *rtspClient << "Failed to initiate the \"" << *subsession << "\" subsession: " << env->getResultMsg() << "\n";
+      } else {
+	*env << *rtspClient << "Initiated the \"" << *subsession << "\" subsession\n";
+    
+	// Continue setting up this subsession, by sending a RTSP "SETUP" command:
+	rtspClient->sendSetupCommand(*subsession, continueAfterSETUP, False, streamUsingTCP,
+				     False, ourAuthenticator);
+	return;
+      }
+    }      
+    setupNextSubsession(rtspClient); // give up on this subsession; go to the next one
+    return;
+  }
+
+  // We've gone through all of the subsessions.
+  if (numUsableSubsessions == 0) {
+    *env << *rtspClient << "This stream has no usable subsessions\n";
+    exit(0);
+  }
+
+  startPlayingSession(rtspClient);
+}
 
 void continueAfterSETUP(RTSPClient* rtspClient, int resultCode, char* resultString) {
   do {
@@ -263,49 +288,116 @@ void continueAfterSETUP(RTSPClient* rtspClient, int resultCode, char* resultStri
 
     *env << *rtspClient << "Set up the \"" << *subsession << "\" subsession\n";
 
-    // Having successfully setup the subsession, create a data sink for it, and call "startPlaying()" on it.
-    // (This will prepare the data sink to receive data; the actual flow of data from the client won't start happening until later,
-    // after we've sent a RTSP "PLAY" command.)
+    // Feed this subsession's input source into the Transport Stream:
+    if (strcmp(subsession->mediumName(), "video") == 0) {
+      // Create a 'framer' filter for the input source, to put the stream of NAL units into a
+      // form that's usable to output to the Transport Stream.
+      // (Note that we use a *DiscreteFramer*, because the input source is a stream of discrete
+      //  NAL units - i.e., one at a time.)
+      H264or5VideoStreamDiscreteFramer* framer;
+      int mpegVersion;
 
-    subsession->sink 
-      = HLSSegmenter::createNew(*env, OUR_HLS_SEGMENTATION_DURATION, hlsPrefix, segmentationCallback);
+      if (strcmp(subsession->codecName(), "H264") == 0) {
+	mpegVersion = 5; // for H.264
+	framer = H264VideoStreamDiscreteFramer::createNew(*env, subsession->readSource(),
+							  True/*includeStartCodeInOutput*/,
+							  True/*insertAccessUnitDelimiters*/);
 
-    // Create a 'framer' filter for the input source, to put the stream of NAL units into a
-    // form that's usable in output Transport Streams.
-    // (Note that we use a *DiscreteFramer*, because the input source is a stream of discrete
-    //  NAL units - i.e., one at a time.)
-    H264VideoStreamDiscreteFramer* framer
-      = H264VideoStreamDiscreteFramer::createNew(*env, subsession->readSource(),
-						 True/*includeStartCodeInOutput*/,
-						 True/*insertAccessUnitDelimiters*/);
-
-    // Then create a filter that packs the H.264 video data into a Transport Stream:
-    MPEG2TransportStreamFromESSource* tsFrames = MPEG2TransportStreamFromESSource::createNew(*env);
-    tsFrames->addNewVideoSource(framer, 5/*mpegVersion: H.264*/);
-
-    // Start playing the sink object:
-    *env << "Beginning to read...\n";
-    subsession->sink->startPlaying(*tsFrames, afterPlaying, NULL);
+	// Add any known SPS and PPS NAL units to the framer, so they'll get output ASAP:
+	u_int8_t* sps = NULL; unsigned spsSize = 0;
+	u_int8_t* pps = NULL; unsigned ppsSize = 0;
+	unsigned numSPropRecords;
+	SPropRecord* sPropRecords
+	  = parseSPropParameterSets(subsession->fmtp_spropparametersets(), numSPropRecords);
+	if (numSPropRecords > 0) {
+	  sps = sPropRecords[0].sPropBytes;
+	  spsSize = sPropRecords[0].sPropLength;
+	}
+	if (numSPropRecords > 1) {
+	  pps = sPropRecords[1].sPropBytes;
+	  ppsSize = sPropRecords[1].sPropLength;
+	}
+	framer->setVPSandSPSandPPS(NULL, 0, sps, spsSize, pps, ppsSize);
+	delete[] sPropRecords;
+      } else { // H.265
+	mpegVersion = 6; // for H.265
+	framer = H265VideoStreamDiscreteFramer::createNew(*env, subsession->readSource(),
+							  True/*includeStartCodeInOutput*/,
+							  True/*insertAccessUnitDelimiters*/);
+	
+	// Add any known VPS, SPS and PPS NAL units to the framer, so they'll get output ASAP:
+	u_int8_t* vps = NULL; unsigned vpsSize = 0;
+	u_int8_t* sps = NULL; unsigned spsSize = 0;
+	u_int8_t* pps = NULL; unsigned ppsSize = 0;
+	unsigned numSPropRecords;
+	SPropRecord *sPropRecordsVPS, *sPropRecordsSPS, *sPropRecordsPPS;
+	
+	sPropRecordsVPS = parseSPropParameterSets(subsession->fmtp_spropvps(), numSPropRecords);
+	if (numSPropRecords > 0) {
+	  vps = sPropRecordsVPS[0].sPropBytes;
+	  vpsSize = sPropRecordsVPS[0].sPropLength;
+	}
+	
+	sPropRecordsSPS = parseSPropParameterSets(subsession->fmtp_spropsps(), numSPropRecords);
+	if (numSPropRecords > 0) {
+	  sps = sPropRecordsSPS[0].sPropBytes;
+	  spsSize = sPropRecordsSPS[0].sPropLength;
+	}
+	
+	sPropRecordsPPS = parseSPropParameterSets(subsession->fmtp_sproppps(), numSPropRecords);
+	if (numSPropRecords > 0) {
+	  pps = sPropRecordsPPS[0].sPropBytes;
+	  ppsSize = sPropRecordsPPS[0].sPropLength;
+	}
+	
+	framer->setVPSandSPSandPPS(vps, vpsSize, sps, spsSize, pps, ppsSize);
+	delete[] sPropRecordsVPS; delete[] sPropRecordsSPS; delete[] sPropRecordsPPS;
+      }
+      
+      transportStream->addNewVideoSource(framer, mpegVersion);
+    } else { // audio (AAC)
+      // Create a 'framer' filter for the input source, to add a ADTS header to each AAC frame,
+      // to make the audio playable.
+      ADTSAudioStreamDiscreteFramer* framer
+	= ADTSAudioStreamDiscreteFramer::createNew(*env, subsession->readSource(),
+						   subsession->fmtp_config());
+      transportStream->addNewAudioSource(framer, 4/*mpegVersion: AAC*/);
+    }
 
     // Also set up BYE handler//#####@@@@@
-
-    // Finally, send a RTSP "PLAY" command to tell the server to start streaming:
-    if (session->absStartTime() != NULL) {
-      // Special case: The stream is indexed by 'absolute' time, so send an appropriate "PLAY" command:
-      rtspClient->sendPlayCommand(*session, continueAfterPLAY, session->absStartTime(), session->absEndTime(), 1.0f, ourAuthenticator);
-    } else {
-      duration = session->playEndTime() - session->playStartTime();
-      rtspClient->sendPlayCommand(*session, continueAfterPLAY, 0.0f, -1.0f, 1.0f, ourAuthenticator);
-    }
-      
-    return;
   } while (0);
 
-  // An error occurred:
-  exit(1);
+  // Set up the next subsession, if any:
+  setupNextSubsession(rtspClient);
 }
 
-// A record that defines a segment that hhas been written.  These records are kept in a list:
+void continueAfterPLAY(RTSPClient* rtspClient, int resultCode, char* resultString); // forward
+void segmentationCallback(void* clientData, char const* segmentFileName, double segmentDuration); // forward
+void afterPlaying(void* clientData); // forward
+
+void startPlayingSession(RTSPClient* rtspClient) {
+  // Having successfully setup the session, create a data sink for it, and call "startPlaying()" on it.
+  // (This will prepare the data sink to receive data; the actual flow of data from the client won't start happening until later,
+  // after we've sent a RTSP "PLAY" command.)
+
+  MediaSink* sink
+    = HLSSegmenter::createNew(*env, OUR_HLS_SEGMENTATION_DURATION, hlsPrefix, segmentationCallback);
+
+  // Start playing the sink object:
+  *env << "Beginning to read...\n";
+  sink->startPlaying(*transportStream, afterPlaying, NULL);
+
+  // Now, send a RTSP "PLAY" command to start the streaming:
+  if (session->absStartTime() != NULL) {
+    // Special case: The stream is indexed by 'absolute' time, so send an appropriate "PLAY" command:
+    rtspClient->sendPlayCommand(*session, continueAfterPLAY, session->absStartTime(), session->absEndTime(), 1.0f, ourAuthenticator);
+  } else {
+    duration = session->playEndTime() - session->playStartTime();
+    rtspClient->sendPlayCommand(*session, continueAfterPLAY, 0.0f, -1.0f, 1.0f, ourAuthenticator);
+  }
+}
+
+// A record that defines a segment that has been written.  These records are kept in a list:
 class SegmentRecord {
 public:
   SegmentRecord(char const* segmentFileName, double segmentDuration)
@@ -368,7 +460,7 @@ void segmentationCallback(void* /*clientData*/,
     ++firstSegmentCounter;
   }
 
-  // Then, rewrite our ".h3u8" file with the new list of segments:
+  // Then, rewrite our ".m3u8" file with the new list of segments:
   if (ourM3U8FileName == NULL) {
     ourM3U8FileName = new char[strlen(hlsPrefix) + 5/*strlen(".m3u8")*/ + 1];
     if (ourM3U8FileName == NULL) exit(1);

@@ -76,7 +76,7 @@ AES67Client::AES67Client(UsageEnvironment& env,
   fApplicationNameSize = strlen(fApplicationName);
 
   struct in_addr ourAddress;
-  ourAddress.s_addr = ourIPAddress(env); // hack
+  ourAddress.s_addr = ourIPv4Address(env); // hack
   fOurAddressStr = strDup(AddressString(ourAddress).val());
   fOurAddressStrSize = strlen(fOurAddressStr);
 

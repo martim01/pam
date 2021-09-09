@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2020 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2021 Live Networks, Inc.  All rights reserved.
 // A class for generating MPEG-2 Transport Stream from one or more input
 // Elementary Stream data sources
 // Implementation
@@ -250,7 +250,8 @@ void MPEG2TransportStreamMultiplexor
 	    pts += fPCR.remainingBits/90000.0;
 	    pts += fPCR.extension/27000000.0;
 
-	    double lastSubSegmentDuration = fPreviousPTS == 0.0 ? 0.0 : pts - fPreviousPTS;
+	    double lastSubSegmentDuration
+	      = (fPreviousPTS == 0.0) || (pts < fPreviousPTS) ? 0.0 : pts - fPreviousPTS;
 	    fCurrentSegmentDuration += lastSubSegmentDuration;
 
 	    // Check whether we need to segment the stream now:

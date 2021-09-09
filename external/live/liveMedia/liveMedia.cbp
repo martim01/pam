@@ -56,6 +56,7 @@
 		<Unit filename="AC3AudioStreamFramer.cpp" />
 		<Unit filename="ADTSAudioFileServerMediaSubsession.cpp" />
 		<Unit filename="ADTSAudioFileSource.cpp" />
+		<Unit filename="ADTSAudioStreamDiscreteFramer.cpp" />
 		<Unit filename="AMRAudioFileServerMediaSubsession.cpp" />
 		<Unit filename="AMRAudioFileSink.cpp" />
 		<Unit filename="AMRAudioFileSource.cpp" />
@@ -72,6 +73,8 @@
 		<Unit filename="ByteStreamFileSource.cpp" />
 		<Unit filename="ByteStreamMemoryBufferSource.cpp" />
 		<Unit filename="ByteStreamMultiFileSource.cpp" />
+		<Unit filename="COPYING" />
+		<Unit filename="COPYING.LESSER" />
 		<Unit filename="DVVideoFileServerMediaSubsession.cpp" />
 		<Unit filename="DVVideoRTPSink.cpp" />
 		<Unit filename="DVVideoRTPSource.cpp" />
@@ -181,6 +184,9 @@
 		<Unit filename="MPEGVideoStreamFramer.cpp" />
 		<Unit filename="MPEGVideoStreamParser.cpp" />
 		<Unit filename="MPEGVideoStreamParser.hh" />
+		<Unit filename="Makefile" />
+		<Unit filename="Makefile.head" />
+		<Unit filename="Makefile.tail" />
 		<Unit filename="MatroskaDemuxedTrack.cpp" />
 		<Unit filename="MatroskaDemuxedTrack.hh" />
 		<Unit filename="MatroskaFile.cpp" />
@@ -220,7 +226,6 @@
 		<Unit filename="RTSPRegisterSender.cpp" />
 		<Unit filename="RTSPServer.cpp" />
 		<Unit filename="RTSPServerRegister.cpp" />
-		<Unit filename="RTSPServerSupportingHTTPStreaming.cpp" />
 		<Unit filename="RawVideoRTPSink.cpp" />
 		<Unit filename="RawVideoRTPSource.cpp" />
 		<Unit filename="SIPClient.cpp" />
