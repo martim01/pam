@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>ptpmonkey</title>
+  </head>
+  <body>
+    <h1>Introduction</h1>
+    <p><img src="images/ptpmonkey_main.png" alt="" style="width: 398px; height: 238px;"></p>
+    <p>The PTPMonkey plugin shows information about PTP clocks (both slave and
+      master) on the network.</p>
+    <h3>Info</h3>
+    <p>The info page lists the discovered clocks on the network on the right
+      hand side and shows information on the left hand side.</p>
+    <p>The top left 3 lines show the clock identity, IP address and whether the
+      clock is a master or slave.</p>
+    <p><u>Master</u></p>
+    <p>If the clock is a master then the section below shows information about
+      the Announcement messages.</p>
+    <p>The top two right hand sections show information about Sync messages and
+      Follow Up messages (if they are sent).</p>
+    <p><u>Slave</u></p>
+    <p>If the clock is a slave then the top two right hand sections show
+      information about the Delay Request and Delay Response messages.</p>
+    <p><br>
+    </p>
+    <p>The bottom right section always shows information about time messages
+      received by the PAM.</p>
+    <ul>
+      <li>Time - shows the calculated time of the PTP master.</li>
+      <li>Offset: x̄ - shows the average offset between the PTP master clock and
+        the system clock on the PAM.</li>
+      <li>Offset: σ σ̄<sub>x</sub> - shows the standard deviation and standard
+        error of the offset between the PTP master clock and the system clock on
+        the PAM,</li>
+      <li>Delay: x̄ - shows the average network delay between the PTP master and
+        the PAM</li>
+      <li>Delay: σ σ̄<sub>x</sub> - shows the standard deviation and standard
+        error of the network delay between the PTP master and the PAM</li>
+    </ul>
+    <p><br>
+      Tapping on the left hand panel will bring up the options met where you can
+      choose to show either:</p>
+    <h4>Info</h4>
+    <p>The panel described above</p>
+    <h3>Graph</h3>
+    <p><img src="images/ptpmonkey_graph_offset.png" alt="" style="width: 401px; height: 243px;"></p>
+    <p>Displays a graph either showing the calculated Offset between the PAM
+      system clock and the PTP master or the network delay.</p>
+    <p>Each calculated value is shown as a grey point.</p>
+    <p>The white line on the graph shows the average offset.</p>
+    <p>The blue lines on the graph show the standard deviation from the average
+      offset.</p>
+    <p>The green line on the graph shows the linear regression calculation.</p>
+    <p>At the top are a number of values</p>
+    <ul>
+      <li>y - the current value</li>
+      <li>y̅ - the current average</li>
+      <li>σ - the standard deviation</li>
+      <li>β - the slope of the linear regression line</li>
+      <li>α+βx - the estimated current value using linear regression</li>
+    </ul>
+    <p><u>In Offset Mode</u><br>
+    </p>
+    <p>If the frequency of the system clock and the PTP master clock are in sync
+      then β should be 0.</p>
+    <p>The smaller σ is the more tightly aligned the clocks are.</p>
+    <h3>Histogram</h3>
+    <p><img src="images/ptpmonkey_histogram_delay.png" alt="" style="width: 399px; height: 236px;">
+    </p>
+    <p>Displays a histogram either showing the calculated Offset between the PAM
+      system clock and the PTP master or the network delay. </p>
+    <p>The histogram shows a representation of the distribution of the offset or
+      delay values.</p>
+    <p>You can change the granularity and resolution of the histogram.</p>
+    <p>You can scroll the x-axis of the histogram by pressing on it with your
+      finger and moving left or right.</p>
+    <p>Press the <strong>menu </strong>button to get back to the main screen.</p>
+    <ul>
+    </ul>
+    <p></p>
+  </body>
+</html>
