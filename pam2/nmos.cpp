@@ -15,7 +15,9 @@
 NmosManager::NmosManager(pnlSettingsInputNmos* pPnl) :
     m_pInputPanel(pPnl),
     m_pFlow(0),
-    m_pSender(0)
+    m_pSender(0),
+    m_nNodeMode(NODE_OFF),
+    m_nClientMode(CLIENT_OFF)
 {
 
     Settings::Get().AddHandler("NMOS", "Node", this);
@@ -83,9 +85,9 @@ void NmosManager::Setup()
 
     m_pReceiver = std::make_shared<Receiver>(chHost, "Live555 receiver", Receiver::RTP_MCAST, pDevice->GetId(), Receiver::AUDIO,
                                                 TransportParamsRTP::CORE | TransportParamsRTP::MULTICAST);
-    pReceiver->AddCap("audio/L24");
-    pReceiver->AddCap("audio/L16");
-    pReceiver->AddInterfaceBinding("eth0");
+    m_pReceiver->AddCap("audio/L24");
+    m_pReceiver->AddCap("audio/L16");
+    m_pReceiver->AddInterfaceBinding("eth0");
 
     if(NodeApi::Get().AddDevice(pDevice) == false)
     {
@@ -99,6 +101,8 @@ void NmosManager::Setup()
     {
         pmlLog(pml::LOG_ERROR) << "NMOS\tFailed to add Flow";
     }
+    NodeApi::Get().AddSender(m_pSender);
+    NodeApi::Get().AddReceiver(m_pReceiver);
 
     NodeApi::Get().Commit();
 
@@ -120,38 +124,49 @@ void NmosManager::Setup()
 }
 
 
-void NmosManager::StartNode(unsigned int nMode)
+void NmosManager::StartNode(int nMode)
 {
-    switch(nMode)
+    if(nMode != m_nNodeMode)
     {
-        case NODE_RECEIVER:
-            NodeApi::Get().RemoveSender(m_pSender);
-            NodeApi::Get().AddReceiver(m_pReceiver);
-            m_pInputPanel->SetReceiverId(m_pReceiver->GetId());
-            break;
-        case NODE_SENDER:
-            NodeApi::Get().RemoveReceiver(m_pReceiver);
-            NodeApi::Get().AddSender(m_pSender);
-            m_pSender->MasterEnable(true);
-            m_pInputPanel->SetReceiverId("");
-            break;
-        case NODE_BOTH:
-            NodeApi::Get().AddSender(m_pSender);
-            NodeApi::Get().AddReceiver(m_pReceiver);
-            m_pSender->MasterEnable(true);
-            m_pInputPanel->SetReceiverId(m_pReceiver->GetId());
-            break;
-    }
-    if(nMode != NODE_OFF)
-    {
-        pmlLog() << "NMOS\tStart NMOS Services";
-        NodeApi::Get().Commit();
+        switch(nMode)
+        {
+            case NODE_RECEIVER:
+                //NodeApi::Get().RemoveSender(m_pSender->GetId());
+                m_pSender->MasterEnable(false);
+                //NodeApi::Get().AddReceiver(m_pReceiver);
+                m_pReceiver->MasterEnable(true);
+                m_pInputPanel->SetReceiverId(m_pReceiver->GetId());
+                NodeApi::Get().Commit();
+                break;
+            case NODE_SENDER:
+                //NodeApi::Get().RemoveReceiver(m_pReceiver->GetId());
+                //NodeApi::Get().AddSender(m_pSender);
+                m_pReceiver->MasterEnable(false);
+                m_pSender->MasterEnable(true);
+                m_pInputPanel->SetReceiverId("");
+                NodeApi::Get().Commit();
+                break;
+            case NODE_BOTH:
+                //NodeApi::Get().AddSender(m_pSender);
+                //NodeApi::Get().AddReceiver(m_pReceiver);
+                m_pReceiver->MasterEnable(true);
+                m_pSender->MasterEnable(true);
+                m_pInputPanel->SetReceiverId(m_pReceiver->GetId());
+                NodeApi::Get().Commit();
+                break;
+        }
 
-        NodeApi::Get().StartServices();
-    }
-    else
-    {
-        StopNode();
+        if(m_nNodeMode == NODE_OFF)
+        {
+            pmlLog() << "NMOS\tStart NMOS Services";
+            NodeApi::Get().StartServices();
+        }
+        else if(nMode == NODE_OFF)
+        {
+            StopNode();
+        }
+        m_nNodeMode = nMode;
+
     }
 }
 
@@ -165,11 +180,11 @@ void NmosManager::OnSettingChanged(SettingEvent& event)
     {
         if(event.GetKey() == "Node")
         {
-            StartNode(event.GetValue(NODE_OFF));
+            StartNode(event.GetValue((long)NODE_OFF));
         }
         else if(event.GetKey() == "Client")
         {
-            StartClient(event.GetValue(CLIENT_OFF);
+            StartClient(event.GetValue((long)CLIENT_OFF));
         }
     }
     else if(event.GetSection() == "Server")
@@ -449,11 +464,22 @@ void NmosManager::StopNode()
 }
 
 
-void NmosManager::StartClient()
+void NmosManager::StartClient(int nMode)
 {
-    ClientApi::Get().SetPoster(std::make_shared<wxClientApiPoster>(this));
-    ClientApi::Get().AddQuerySubscription(ClientApi::ALL, "",0);
-    ClientApi::Get().Start();
+    if(m_nClientMode != nMode)
+    {
+        if(nMode != CLIENT_OFF && m_nClientMode == CLIENT_OFF)
+        {
+            ClientApi::Get().SetPoster(std::make_shared<wxClientApiPoster>(this));
+            ClientApi::Get().AddQuerySubscription(ClientApi::ALL, "",0);
+            ClientApi::Get().Start();
+        }
+        else
+        {
+            StopClient();
+        }
+        m_nClientMode = nMode;
+    }
 }
 
 void NmosManager::StopClient()
@@ -490,40 +516,40 @@ void NmosManager::OnNmosSenderChanged(wxNmosClientSenderEvent& event)
 {
     if(m_pInputPanel)
     {
-        for(auto itAdded = event.GetAdded().begin(); itAdded != event.GetAdded().end(); ++itAdded)
+        for(auto pSender : event.GetAdded())
         {
-            if(NodeApi::Get().GetSender((*itAdded)->GetId()) == 0)
+            if(NodeApi::Get().GetSender(pSender->GetId()) == 0)
             {  //not one of our senders
-                auto itFlow = ClientApi::Get().FindFlow((*itAdded)->GetFlowId());
+                auto itFlow = ClientApi::Get().FindFlow(pSender->GetFlowId());
                 if(itFlow != ClientApi::Get().GetFlowEnd())
                 {
                     if(itFlow->second->GetFormat().find("urn:x-nmos:format:audio") != std::string::npos)
                     {
-                        m_pInputPanel->AddSender((*itAdded));
+                        m_pInputPanel->AddSender(pSender);
                     }
                 }
             }
             else
             {
                 //Store the sender for checking once we get a flow...
-                m_mmLonelySender.insert(make_pair((*itAdded)->GetFlowId(), (*itAdded)));
+                m_mmLonelySender.insert(make_pair(pSender->GetFlowId(), pSender));
             }
         }
-        for(auto itUpdated = event.GetUpdated().begin(); itUpdated != event.GetUpdated().end(); ++itUpdated)
+        for(auto pSender : event.GetUpdated())
         {
-            if(NodeApi::Get().GetSender((*itUpdated)->GetId()) == 0)
+            if(NodeApi::Get().GetSender(pSender->GetId()) == 0)
             {   //not one of our senders
-                auto itFlow = ClientApi::Get().FindFlow((*itUpdated)->GetFlowId());
+                auto itFlow = ClientApi::Get().FindFlow(pSender->GetFlowId());
                 if(itFlow != ClientApi::Get().GetFlowEnd())
                 {
                     if(itFlow->second->GetFormat().find("urn:x-nmos:format:audio") != std::string::npos)
                     {
-                        m_pInputPanel->UpdateSender((*itUpdated));
+                        m_pInputPanel->UpdateSender(pSender);
                     }
                 }
             }
         }
-        // @todo remove senders
+        m_pInputPanel->RemoveSenders(event.GetRemoved());
     }
 }
 

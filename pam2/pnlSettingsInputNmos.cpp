@@ -1,6 +1,11 @@
 #include "pnlSettingsInputNmos.h"
 #include "settings.h"
 #include "settingevent.h"
+#include "nmos.h"
+#include "senderbuttonfactory.h"
+#include "clientapi.h"
+#include <wx/msgdlg.h>
+#include "sender.h"
 
 //(*InternalHeaders(pnlSettingsInputNmos)
 #include <wx/intl.h>
@@ -30,8 +35,6 @@ pnlSettingsInputNmos::pnlSettingsInputNmos(wxWindow* parent,wxWindowID id,const 
 	SetPosition(pos);
 	#ifdef __NMOS__
 	m_plstSenders->SetButtonFactory(new wmSenderButtonFactory());
-	#endif // __NMOS__
-    m_plstSenders->SetBackgroundColour(wxColour(0,0,0));
 
     m_plstSenders->SetSelectedButtonColour(wxColour(wxT("#008000")));
     m_plstSenders->SetDisabledColour(wxColour(wxT("#808080")));
@@ -43,6 +46,7 @@ pnlSettingsInputNmos::pnlSettingsInputNmos(wxWindow* parent,wxWindowID id,const 
 
     Settings::Get().AddHandler("NMOS", "Node", this);
     Settings::Get().AddHandler("NMOS", "Client", this);
+    #endif // __NMOS__
 
     Bind(wxEVT_SETTING_CHANGED, &pnlSettingsInputNmos::OnSettingChanged, this);
 }
@@ -123,8 +127,8 @@ bool pnlSettingsInputNmos::ConnectionIS05(size_t nSenderButton)
 #ifdef __NMOS__
 void pnlSettingsInputNmos::AddSender(std::shared_ptr<Sender> pSender)
 {
-    size_t nIndex = m_plstSenders->AddButton(wxString::FromUTF8(pSender->GetLabel().c_str()));
-    m_plstSenders->SetButtonAuxillaryText(nIndex, wxString::FromUTF8(pSender->GetId().c_str()));
+    size_t nIndex = m_plstSenders->AddButton(pSender->GetLabel());
+    m_plstSenders->SetButtonAuxillaryText(nIndex, wxString(pSender->GetId()));
     m_plstSenders->Refresh();
 
 }
@@ -134,20 +138,16 @@ void pnlSettingsInputNmos::UpdateSender(std::shared_ptr<Sender> pSender)
 
 }
 
-void pnlSettingsInputNmos::RemoveSenders(const std::set<std::string>::const_iterator& itBegin, const std::set<std::string>::const_iterator& itEnd)
+void pnlSettingsInputNmos::RemoveSenders(const std::list<std::shared_ptr<Sender>>& lstRemove)
 {
-    for(std::set<std::string>::const_iterator itSender = itBegin; itSender != itEnd; ++itSender)
+    for(auto pSender : lstRemove)
     {
-        if((*itSender).empty() == false)
+        for(size_t i = 0; i < m_plstSenders->GetMaxIndex(); i++)
         {
-            for(size_t i = 0; i < m_plstSenders->GetMaxIndex(); i++)
+            if(m_plstSenders->GetButtonAuxillaryText(i) == wxString(pSender->GetId()))
             {
-
-                if(m_plstSenders->GetButtonAuxillaryText(i) == (*itSender))
-                {
-                    m_plstSenders->DeleteButton(i);
-                    break;
-                }
+                m_plstSenders->DeleteButton(i);
+                break;
             }
         }
     }

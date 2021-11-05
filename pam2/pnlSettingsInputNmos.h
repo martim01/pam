@@ -5,7 +5,12 @@
 #include "wmlist.h"
 #include <wx/panel.h>
 //*)
+#include <memory>
+#include <set>
+#include <list>
+
 class SettingEvent;
+class Sender;
 
 class pnlSettingsInputNmos: public wxPanel
 {
@@ -23,7 +28,7 @@ class pnlSettingsInputNmos: public wxPanel
 #ifdef __NMOS__
 		void AddSender(std::shared_ptr<Sender> pSender);
 		void UpdateSender(std::shared_ptr<Sender> pSender);
-		void RemoveSenders(const std::set<std::string>::const_iterator& itBegin, const std::set<std::string>::const_iterator& itEnd);
+		void RemoveSenders(const std::list<std::shared_ptr<Sender>>& lstRemove);
 #endif // __NMOS__
 		void SubscriptionRequest(const wxString& sReceiverId, const wxString& sResponse, unsigned long nResult);
 

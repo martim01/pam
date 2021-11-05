@@ -26,9 +26,9 @@ class NmosManager : public wxEvtHandler
         NmosManager(pnlSettingsInputNmos* pPnl);
 
         void Setup();
-        void StartNode(unsigned int nMode);
+        void StartNode(int nMode);
         void StopNode();
-        void StartClient(unsigned int nMode);
+        void StartClient(int nMode);
         void StopClient();
 
         enum {NODE_OFF=0, NODE_RECEIVER, NODE_SENDER, NODE_BOTH};
@@ -59,6 +59,8 @@ class NmosManager : public wxEvtHandler
         std::shared_ptr<Receiver> m_pReceiver;
         std::multimap<std::string, std::shared_ptr<Sender> > m_mmLonelySender;
 
+        size_t m_nNodeMode;
+        size_t m_nClientMode;
 
 };
 #endif

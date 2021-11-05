@@ -195,6 +195,7 @@ class pnlSettings: public wxPanel
         double ConvertGainToRatio(double dGain);
         double ConvertRatioToGain(double dRatio);
 
+        size_t m_nNmosButton;
 
 		DECLARE_EVENT_TABLE()
 };

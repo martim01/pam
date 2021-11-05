@@ -34,6 +34,9 @@
 #include "settingevent.h"
 #include "aoipsourcemanager.h"
 
+#ifdef __NMOS__
+#include "nmos.h"
+#endif // __NMOS__
 
 using namespace std;
 
@@ -244,7 +247,9 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_plstInput->AddButton(wxT("Soundcard"));
     m_plstInput->AddButton(wxT("AoIP"));
     m_plstInput->AddButton(wxT("AoIP Manual"));
-
+    #ifdef __NMOS__
+    m_nNmosButton = m_plstInput->AddButton("NMOS");
+    #endif
     m_plstInput->Thaw();
 
 
@@ -258,7 +263,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
 
 
-
+    Settings::Get().AddHandler("NMOS", "Node", this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pnlSettings::OnSettingChanged);
 
@@ -287,7 +292,30 @@ void pnlSettings::UpdateDisplayedSettings()
 
 void pnlSettings::OnSettingChanged(SettingEvent& event)
 {
-
+    #ifdef __NMOS__
+    if(event.GetSection().CmpNoCase("NMOS") == 0 && event.GetKey() == "Node")
+    {
+        switch(event.GetValue((long)NmosManager::NODE_OFF))
+        {
+            case NmosManager::NODE_OFF:
+            case NmosManager::NODE_SENDER:
+                for(size_t i = 0; i < m_plstInput->GetItemCount(); i++)
+                {
+                    m_plstInput->EnableButton(i, i!=m_nNmosButton);
+                }
+                m_plstInput->SelectButton(0);
+                break;
+            case NmosManager::NODE_RECEIVER:
+            case NmosManager::NODE_BOTH:
+                for(size_t i = 0; i < m_plstInput->GetItemCount(); i++)
+                {
+                    m_plstInput->EnableButton(i, i==m_nNmosButton);
+                }
+                m_plstInput->SelectButton(m_nNmosButton);
+                break;
+        }
+    }
+    #endif
 }
 
 void pnlSettings::OnlstDevicesSelected(wxCommandEvent& event)
@@ -423,7 +451,10 @@ void pnlSettings::RefreshInputs()
     else if(sType == "AoIP Manual")
     {
         m_pswpInput->ChangeSelection(1);
-
+    }
+    else if(sType == "NMOS")
+    {
+        m_pswpInput->ChangeSelection("NMOS");
     }
     else if(sType == wxT("Disabled"))
     {

@@ -769,7 +769,7 @@ void IOManager::InitAudioInputDevice()
 
         CheckPlayback(SoundcardManager::Get().GetInputSampleRate(), SoundcardManager::Get().GetInputNumberOfChannels());
     }
-    else if(sType == "AoIP" || sType == "AoIP Manual")
+    else if(sType == "AoIP" || sType == "AoIP Manual" || sType == "NMOS")
     {
         m_nInputSource = AudioEvent::RTP;
         pmlLog(pml::LOG_INFO) << "IOManager\tCreate Audio Input Device: AoIP";
@@ -825,7 +825,7 @@ void IOManager::InitAudioOutputDevice()
         DoDNSSD(false);
 
     }
-    else if(sType == wxT("AoIP"))
+    else if(sType == "AoIP"  || sType == "NMOS" || sType == "AoIP Manual")
     {
         m_nOutputDestination = AudioEvent::RTP;
         pmlLog(pml::LOG_INFO) << "IOManager\tCreate Audio Destination Device: AoIP";
@@ -1095,7 +1095,7 @@ void IOManager::RTPServerFinished()
 
 void IOManager::Stream()
 {
-    if(m_bStreamMulticast)
+    if(m_bStreamMulticast || (Settings::Get().Read("NMOS", "Node", 0)  == 2 || Settings::Get().Read("NMOS", "Node", 0)  == 3))  //@todo bodge for NMOS
     {
         StreamMulticast();
         DoSAP(Settings::Get().Read("Server", "SAP",0));
