@@ -5,7 +5,7 @@
 #include <map>
 #include <memory>
 
-class wxSettingEvent;
+class SettingEvent;
 class Sender;
 class Receiver;
 class FlowAudioRaw;
@@ -32,7 +32,7 @@ class NmosManager : public wxEvtHandler
         void StopClient();
 
     protected:
-        OnSettingChanged(wxSettingEvent& event);
+        void OnSettingChanged(SettingEvent& event);
 
         void OnTarget(wxNmosEvent& event);
         void OnPatchSender(wxNmosEvent& event);

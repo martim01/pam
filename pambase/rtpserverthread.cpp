@@ -64,7 +64,7 @@ void* RtpServerThread::Entry()
 
 bool RtpServerThread::CreateStream()
 {
-    pmlLog() << "RTP Server: CreateStream ";
+    pmlLog() << "RTP Server: CreateStream -> " << m_sSourceIp;
 
     char const* mimeType = "L24";
     unsigned char payloadFormatCode = 96; // by default, unless a static RTP payload type can be used
@@ -112,6 +112,7 @@ bool RtpServerThread::CreateStream()
     m_pSink->setPacketSizes(m_pSource->GetPreferredFrameSize()+12,m_pSource->GetPreferredFrameSize()+12);
 
     // Create and start a RTSP server to serve this stream:
+    pmlLog() << "RTP Server: Create RTSP Server on port " << m_nRTSPPort;
     m_pRtspServer = PamRTSPServer::createNew(*m_penv, m_nRTSPPort);
     // Create (and start) a 'RTCP instance' for this RTP sink:
 
@@ -124,9 +125,19 @@ bool RtpServerThread::CreateStream()
 
 
 
-    if (m_pRtspServer == NULL || m_pRtcpInstance == NULL)
+    bool bOk(true);
+    if (m_pRtspServer == nullptr)
     {
-        pmlLog(pml::LOG_ERROR) << "RTP Server\tFailed to create RTSP server (multicast): " << m_penv->getResultMsg();
+        pmlLog(pml::LOG_ERROR) << "RTP Server\tFailed to create RTSP server: " << m_penv->getResultMsg();
+        bOk = false;
+    }
+    if(m_pRtcpInstance == nullptr)
+    {
+        pmlLog(pml::LOG_ERROR) << "RTP Server\tFailed to create RTCP Instance: " << m_penv->getResultMsg();
+        bOk = false;
+    }
+    if(!bOk)
+    {
         Medium::close(m_pSink);
         Medium::close(m_pSource);
 

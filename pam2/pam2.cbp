@@ -162,7 +162,7 @@
 				</Linker>
 			</Target>
 			<Target title="Linux Release+NMOS">
-				<Option output="../bin/pam2" prefix_auto="1" extension_auto="1" />
+				<Option output="../bin/pam2nmos" prefix_auto="1" extension_auto="1" />
 				<Option object_output=".objs/nmos" />
 				<Option type="0" />
 				<Option compiler="gcc" />
@@ -187,8 +187,38 @@
 					<Add directory="$(#nmos.lib)" />
 				</Linker>
 				<ExtraCommands>
+					<Add after="sudo setcap cap_sys_time,cap_net_bind_service+ep /home/pi/pam/bin/pam2nmos" />
 					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />
+					<Mode after="always" />
 				</ExtraCommands>
+			</Target>
+			<Target title="Linux Debug+NMOS">
+				<Option output="../bin/pam2nmosd" prefix_auto="1" extension_auto="1" />
+				<Option object_output=".objs/debug" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="`wx-config --cxxflags`" />
+					<Add option="-fpermissive" />
+					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-D__WXGNU__" />
+					<Add option="-DPAMBASE_DEBUG" />
+					<Add option="-D__NMOS__" />
+					<Add option="-D__WXDEBUG__" />
+					<Add directory="$(#nmos.include)" />
+					<Add directory="$(#json.include)" />
+				</Compiler>
+				<Linker>
+					<Add option="`wx-config --libs`" />
+					<Add option="-Wl,-Map=pam2.map" />
+					<Add option="`pkg-config --libs avahi-client`" />
+					<Add library="portaudio" />
+					<Add library="pambased" />
+					<Add library="curl" />
+					<Add library="nmosd" />
+					<Add directory="$(#nmos.lib)" />
+				</Linker>
 			</Target>
 		</Build>
 		<Compiler>

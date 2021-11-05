@@ -122,9 +122,9 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         bool m_bStreamMulticast;
 
         Generator* m_pGenerator;
-        std::map<unsigned int, RtpThread*> m_mRtp;
-        std::set<unsigned int> m_setRtpOrphan;
-        unsigned int m_nCurrentRtp;
+        std::map<int, RtpThread*> m_mRtp;
+        std::set<int> m_setRtpOrphan;
+        int m_nCurrentRtp;
 
         RtpServerThread* m_pMulticastServer;
         OnDemandStreamer* m_pUnicastServer;

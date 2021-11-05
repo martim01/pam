@@ -358,9 +358,12 @@ void pnlSettings::ShowRTPDefined()
     m_plstDevices->Freeze();
     m_plstDevices->Clear();
 
-    for(auto itSource = AoipSourceManager::Get().GetSourceBegin(); itSource != AoipSourceManager::Get().GetSourceEnd(); ++itSource)
+    for(auto pairSource : AoipSourceManager::Get().GetSources())
     {
-        m_plstDevices->AddButton(itSource->second.sName, wxNullBitmap, (void*)itSource->first);
+        if(pairSource.first  > 0)
+        {
+            m_plstDevices->AddButton(pairSource.second.sName, wxNullBitmap, (void*)pairSource.first);
+        }
     }
     m_plstDevices->Thaw();
 

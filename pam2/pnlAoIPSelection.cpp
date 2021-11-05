@@ -193,9 +193,12 @@ void pnlAoIPSelection::ShowPaged()
     m_plstDevices->Freeze();
     m_plstDevices->Clear();
 
-    for(auto itSource = AoipSourceManager::Get().GetSourceBegin(); itSource != AoipSourceManager::Get().GetSourceEnd(); ++itSource)
+    for(auto pairSource : AoipSourceManager::Get().GetSources())
     {
-        m_plstDevices->AddButton(itSource->second.sName, wxNullBitmap, (void*)itSource->first);
+        if(pairSource.first > 0)
+        {
+            m_plstDevices->AddButton(pairSource.second.sName, wxNullBitmap, (void*)pairSource.first);
+        }
     }
 
     m_plstDevices->Thaw();
@@ -291,16 +294,19 @@ void pnlAoIPSelection::DoAlphabetSearch(const wxString& sLetter)
     }
 
 
-    for(auto itSource = AoipSourceManager::Get().GetSourceBegin(); itSource != AoipSourceManager::Get().GetSourceEnd(); ++itSource)
+    for(auto pairSource : AoipSourceManager::Get().GetSources())
     {
-        wxString sCheck(itSource->second.sName.Upper());
-        sCheck.Replace(" ", "");
-        if(sCheck.length() >= sSearch.length() && sCheck.Left(sSearch.length()) == sSearch)
+        if(pairSource.first > 0)
         {
-            mMatch.insert(std::make_pair(itSource->second.sName, itSource->first));
-            if(sCheck.length() > sSearch.length())
+            wxString sCheck(pairSource.second.sName.Upper());
+            sCheck.Replace(" ", "");
+            if(sCheck.length() >= sSearch.length() && sCheck.Left(sSearch.length()) == sSearch)
             {
-                setAlphabet.insert(sCheck.Mid(sSearch.length(),1).Upper());
+                mMatch.insert(std::make_pair(pairSource.second.sName, pairSource.first));
+                if(sCheck.length() > sSearch.length())
+                {
+                    setAlphabet.insert(sCheck.Mid(sSearch.length(),1).Upper());
+                }
             }
         }
     }
@@ -376,10 +382,16 @@ void pnlAoIPSelection::DoTagSearch(const wxString& sTag)
 
     if(m_lstTag.empty())
     {
-        m_mTagged.insert(AoipSourceManager::Get().GetSourceBegin(), AoipSourceManager::Get().GetSourceEnd());
+        for(auto pairSource :AoipSourceManager::Get().GetSources())
+        {
+            if(pairSource.first > 0)
+            {
+                m_mTagged.insert(pairSource);
+            }
+        }
     }
 
-    std::map<unsigned int, AoIPSource> mTemp;
+    std::map<int, AoIPSource> mTemp;
     std::set<wxString> setTags;
     for(auto pairSource : m_mTagged)
     {

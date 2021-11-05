@@ -973,6 +973,7 @@ void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
     //NMOS
     #ifdef __NMOS__
     m_pManager = std::unique_ptr<NmosManager>(new NmosManager(m_ppnlSettings->m_ppnlNmos));
+    m_pManager->Setup();
     #endif // __NMOS__
 
     IOManager::Get().Start();

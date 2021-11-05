@@ -22,6 +22,10 @@ AoipSourceManager::AoipSourceManager() :
 
     LoadSources();
 
+    m_mSources.insert(std::make_pair(SOURCE_MANUAL_A, AoIPSource(SOURCE_MANUAL_A, "MANUAL_A")));
+    m_mSources.insert(std::make_pair(SOURCE_MANUAL_B, AoIPSource(SOURCE_MANUAL_A, "MANUAL_B")));
+    m_mSources.insert(std::make_pair(SOURCE_NMOS_A, AoIPSource(SOURCE_NMOS_A, "NMOS_A")));
+    m_mSources.insert(std::make_pair(SOURCE_NMOS_B, AoIPSource(SOURCE_NMOS_B, "NMOS_B")));
 
 	Connect(wxID_ANY, wxEVT_ZC_RESOLVED, (wxObjectEventFunction)&AoipSourceManager::OnDiscovery);
 	Connect(wxID_ANY, wxEVT_ZC_FINISHED, (wxObjectEventFunction)&AoipSourceManager::OnDiscoveryFinished);
@@ -91,17 +95,8 @@ bool AoipSourceManager::LoadSources()
 }
 
 
-std::map<unsigned int, AoIPSource>::const_iterator AoipSourceManager::GetSourceBegin() const
-{
-    return m_mSources.begin();
-}
 
-std::map<unsigned int, AoIPSource>::const_iterator AoipSourceManager::GetSourceEnd() const
-{
-    return m_mSources.end();
-}
-
-AoIPSource AoipSourceManager::FindSource(unsigned int nIndex) const
+AoIPSource AoipSourceManager::FindSource(int nIndex) const
 {
     auto itSource = m_mSources.find(nIndex);
     if(itSource != m_mSources.end())
@@ -126,7 +121,7 @@ AoIPSource AoipSourceManager::FindSource(const wxString& sName) const
     return AoIPSource(0);
 }
 
-bool AoipSourceManager::AddSource(const wxString& sName, const wxString& sDetails, const wxString& sSDP, unsigned int nIndex)
+bool AoipSourceManager::AddSource(const wxString& sName, const wxString& sDetails, const wxString& sSDP, int nIndex)
 {
     if(nIndex == 0)
     {
@@ -142,7 +137,7 @@ bool AoipSourceManager::AddSource(const wxString& sName, const wxString& sDetail
     }
 }
 
-unsigned int AoipSourceManager::GenerateIndex()
+int AoipSourceManager::GenerateIndex()
 {
     if(m_mSources.empty() == false)
     {
@@ -156,7 +151,18 @@ unsigned int AoipSourceManager::GenerateIndex()
     }
 }
 
-bool AoipSourceManager::EditSource(unsigned int nIndex, const wxString& sName, const wxString& sDetails)
+bool AoipSourceManager::SetSourceSDP(int nIndex, const wxString& sSDP)
+{
+    auto itSource = m_mSources.find(nIndex);
+    if(itSource == m_mSources.end())
+    {
+        return false;
+    }
+    itSource->second.sSDP = sSDP;
+    return SaveSources();
+}
+
+bool AoipSourceManager::EditSource(int nIndex, const wxString& sName, const wxString& sDetails)
 {
     auto itSource = m_mSources.find(nIndex);
     if(itSource == m_mSources.end())
@@ -168,7 +174,7 @@ bool AoipSourceManager::EditSource(unsigned int nIndex, const wxString& sName, c
     return SaveSources();
 }
 
-bool AoipSourceManager::SetSourceTags(unsigned int nIndex, const std::set<wxString>& setTags)
+bool AoipSourceManager::SetSourceTags(int nIndex, const std::set<wxString>& setTags)
 {
     auto itSource = m_mSources.find(nIndex);
     if(itSource == m_mSources.end())
@@ -187,7 +193,7 @@ bool AoipSourceManager::SaveSources()
     for(auto pairSource : m_mSources)
     {
         wxXmlNode* pSource = new wxXmlNode(wxXML_ELEMENT_NODE, "source");
-        pSource->AddAttribute("index", wxString::Format("%u", pairSource.first));
+        pSource->AddAttribute("index", wxString::Format("%d", pairSource.first));
         pSource->AddChild(NewTextNode("name", pairSource.second.sName));
         pSource->AddChild(NewTextNode("details", pairSource.second.sDetails));
         pSource->AddChild(NewTextNode("sdp", pairSource.second.sSDP, wxXML_CDATA_SECTION_NODE));
@@ -216,7 +222,7 @@ wxXmlNode* AoipSourceManager::NewTextNode(const wxString& sKey, const wxString& 
 }
 
 
-void AoipSourceManager::DeleteSource(unsigned int nIndex)
+void AoipSourceManager::DeleteSource(int nIndex)
 {
     m_mSources.erase(nIndex);
     SaveSources();

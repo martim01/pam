@@ -44,6 +44,7 @@ class pnlLog: public wxPanel
         pnlLogControl* m_pControl;
 
         bool m_bScrollLock;
+        size_t m_nLogOutput;
 
         unsigned int m_nLogLevel;
 		DECLARE_EVENT_TABLE()

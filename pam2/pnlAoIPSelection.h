@@ -92,7 +92,7 @@ class pnlAoIPSelection: public wxPanel
         void DoTagSearch(const wxString& sTag);
 
         std::list<wxString> m_lstTag;
-        std::map<unsigned int, AoIPSource> m_mTagged;
+        std::map<int, AoIPSource> m_mTagged;
         wxString m_sSearch;
 		DECLARE_EVENT_TABLE()
 };

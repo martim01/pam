@@ -89,35 +89,17 @@ private:
 
 };
 
-typedef void (wxEvtHandler::*wxNmosEventFunction)(wxNmosEvent&);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_MDNS_RESOLVED, wxNmosEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_MDNS_ALLFORNOW, wxNmosEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_MDNS_FINISHED, wxNmosEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_CURL_DONE, wxNmosEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_REG_ERROR, wxNmosEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_TARGET, wxNmosEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_PATCH_SENDER, wxNmosEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_PATCH_RECEIVER, wxNmosEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_ACTIVATE_RECEIVER, wxNmosEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_ACTIVATE_SENDER, wxNmosEvent);
 
-
-BEGIN_DECLARE_EVENT_TYPES()
-    DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_NMOS_MDNS_RESOLVED, -1)
-    DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_NMOS_MDNS_ALLFORNOW, -1)
-    DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_NMOS_MDNS_FINISHED, -1)
-    DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_NMOS_CURL_DONE, -1)
-    DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_NMOS_REG_ERROR, -1)
-    DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_NMOS_TARGET, -1)
-    DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_NMOS_PATCH_SENDER, -1)
-    DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_NMOS_PATCH_RECEIVER, -1)
-    DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_NMOS_ACTIVATE_RECEIVER, -1)
-    DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_NMOS_ACTIVATE_SENDER, -1)
-END_DECLARE_EVENT_TYPES()
-
-#define wxNmosEventHandler(func) \
-    (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxNmosEventFunction, &func)
-
-#define EVT_NMOS_MDNS_RESOLVED(id,fn) DECLARE_EVENT_TABLE_ENTRY(wxEVT_NMOS_MDNS_RESOLVED,id,-1,(wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) (wxNmosEventFunction) &fn, (wxObject*) NULL),
-#define EVT_NMOS_MDNS_ALLFORNOW(id,fn) DECLARE_EVENT_TABLE_ENTRY(wxEVT_NMOS_MDNS_ALLFORNOW,id,-1,(wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) (wxNmosEventFunction) &fn, (wxObject*) NULL),
-#define EVT_NMOS_MDNS_FINISHED(id,fn) DECLARE_EVENT_TABLE_ENTRY(wxEVT_NMOS_MDNS_FINISHED,id,-1,(wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) (wxNmosEventFunction) &fn, (wxObject*) NULL),
-#define EVT_NMOS_CURL_DONE(id,fn) DECLARE_EVENT_TABLE_ENTRY(wxEVT_NMOS_CURL_DONE,id,-1,(wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) (wxNmosEventFunction) &fn, (wxObject*) NULL),
-#define EVT_NMOS_REG_ERROR(id,fn) DECLARE_EVENT_TABLE_ENTRY(wxEVT_NMOS_REG_ERROR,id,-1,(wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) (wxNmosEventFunction) &fn, (wxObject*) NULL),
-#define EVT_NMOS_TARGET(id,fn) DECLARE_EVENT_TABLE_ENTRY(wxEVT_NMOS_TARGET,id,-1,(wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) (wxNmosEventFunction) &fn, (wxObject*) NULL),
-#define EVT_NMOS_PATCH_SENDER(id,fn) DECLARE_EVENT_TABLE_ENTRY(wxEVT_NMOS_PATCH_SENDER,id,-1,(wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) (wxNmosEventFunction) &fn, (wxObject*) NULL),
-#define EVT_NMOS_PATCH_RECEIVER(id,fn) DECLARE_EVENT_TABLE_ENTRY(wxEVT_NMOS_PATCH_RECEIVER,id,-1,(wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) (wxNmosEventFunction) &fn, (wxObject*) NULL),
-#define EVT_NMOS_ACTIVATE_RECEIVER(id,fn) DECLARE_EVENT_TABLE_ENTRY(wxEVT_NMOS_ACTIVATE_RECEIVER,id,-1,(wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) (wxNmosEventFunction) &fn, (wxObject*) NULL),
-#define EVT_NMOS_ACTIVATE_SENDER(id,fn) DECLARE_EVENT_TABLE_ENTRY(wxEVT_NMOS_ACTIVATE_SENDER,id,-1,(wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) (wxNmosEventFunction) &fn, (wxObject*) NULL),
 
 
 

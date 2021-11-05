@@ -2,16 +2,19 @@
 #ifdef __NMOS__
 
 
-BEGIN_DECLARE_EVENT_TYPES()
-    DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_NMOS_CLIENT_NODE, -1)
-    DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_NMOS_CLIENT_SOURCE, -1)
-    DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_NMOS_CLIENT_FLOW, -1)
-    DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_NMOS_CLIENT_DEVICE, -1)
-    DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_NMOS_CLIENT_SENDER, -1)
-    DECLARE_EXPORTED_EVENT_TYPE(WXEXPORT, wxEVT_NMOS_CLIENT_RECEIVER, -1)
-END_DECLARE_EVENT_TYPES()
+class wxNmosClientNodeEvent;
+class wxNmosClientSourceEvent;
+class wxNmosClientFlowEvent;
+class wxNmosClientDeviceEvent;
+class wxNmosClientSenderEvent;
+class wxNmosClientReceiverEvent;
 
-
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_CLIENT_NODE, wxNmosClientNodeEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_CLIENT_SOURCE, wxNmosClientSourceEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_CLIENT_FLOW, wxNmosClientFlowEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_CLIENT_DEVICE, wxNmosClientDeviceEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_CLIENT_SENDER, wxNmosClientSenderEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_CLIENT_RECEIVER, wxNmosClientReceiverEvent);
 
 
 class wxNmosClientNodeEvent : public wxCommandEvent
@@ -197,6 +200,7 @@ class wxNmosClientReceiverEvent : public wxCommandEvent
         std::list<std::shared_ptr<Receiver> > m_lstUpdated;
         std::list<std::shared_ptr<Receiver> > m_lstRemoved;
 };
+
 
 
 

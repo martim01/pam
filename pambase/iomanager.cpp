@@ -89,7 +89,7 @@ IOManager::IOManager() :
 {
 
     AoipSourceManager::Get();
-    Settings::Get().Write(wxT("Server"), wxT("Stream"), "Unicast"); //can't be streaming at startup so set to 0 in case we exited whilst streaming
+   // Settings::Get().Write(wxT("Server"), wxT("Stream"), "Unicast"); //can't be streaming at startup so set to 0 in case we exited whilst streaming
 
     Settings::Get().AddHandler(wxT("Input"),wxT("Type"), this);
     Settings::Get().AddHandler(wxT("Input"),wxT("AoIP"), this);
@@ -170,11 +170,11 @@ void IOManager::Stop()
     delete m_pGenerator;
     m_pGenerator = 0;
 
-    for(map<unsigned int, RtpThread*>::iterator itThread = m_mRtp.begin(); itThread != m_mRtp.end(); ++itThread)
+    for(auto pairThread : m_mRtp)
     {
-        itThread->second->SetToClose();
-        itThread->second->Wait();
-        delete itThread->second;
+        pairThread.second->SetToClose();
+        pairThread.second->Wait();
+        delete pairThread.second;
     }
     m_mRtp.clear();
     SoundcardManager::Get().Terminate();
@@ -254,7 +254,7 @@ void IOManager::OnSettingEvent(SettingEvent& event)
     {
         if(event.GetKey() == wxT("Interval"))
         {
-            map<unsigned int, RtpThread*>::iterator itThread = m_mRtp.find(m_nCurrentRtp);
+            auto itThread = m_mRtp.find(m_nCurrentRtp);
             if(itThread != m_mRtp.end())
             {
                 itThread->second->SetQosMeasurementIntervalMS(Settings::Get().Read(wxT("QoS"), wxT("Interval"), 1000));
@@ -411,7 +411,7 @@ void IOManager::PassOnAudio(AudioEvent& event)
 
 void IOManager::InputChanged(const wxString& sKey)
 {
-    if(sKey == wxT("AoIP"))
+    if(sKey == "AoIP" || sKey == "AoIPManual")
     {
         pmlLog(pml::LOG_DEBUG) << "IOManager\tInputChanged: AoIP";
 
@@ -422,7 +422,7 @@ void IOManager::InputChanged(const wxString& sKey)
             pmlLog(pml::LOG_DEBUG) << "IOManager\tAudio Input Device Changed: Close AoIP Session";
 
             ClearSession();
-            map<unsigned int, RtpThread*>::iterator itThread = m_mRtp.find(m_nCurrentRtp);
+            auto itThread = m_mRtp.find(m_nCurrentRtp);
             if(itThread != m_mRtp.end())
             {
                 pmlLog(pml::LOG_DEBUG) << "IOManager\tDestroy thread";
@@ -436,23 +436,6 @@ void IOManager::InputChanged(const wxString& sKey)
             }
             InitAudioInputDevice();
         }
-    }
-    else if(sKey == "AoIPManual")
-    {
-        pmlLog(pml::LOG_DEBUG) << "IOManager\tInputChanged: AoIP Manual";
-        ClearSession();
-        map<unsigned int, RtpThread*>::iterator itThread = m_mRtp.find(m_nCurrentRtp);
-        if(itThread != m_mRtp.end())
-        {
-            pmlLog(pml::LOG_DEBUG) << "IOManager\tDestroy thread";
-            itThread->second->SetToClose();
-            itThread->second->Wait();
-            itThread->second->Delete();
-            m_mRtp.erase(m_nCurrentRtp);
-            m_nCurrentRtp = 0;
-            pmlLog(pml::LOG_DEBUG) << "IOManager\tDestroy thread: Done";
-        }
-        InitAudioInputDevice();
     }
     else if(sKey == wxT("Device"))
     {
@@ -470,7 +453,7 @@ void IOManager::InputTypeChanged()
             OpenSoundcardDevice(SoundcardManager::Get().GetOutputSampleRate());    //this will remove the input stream
             break;
         case AudioEvent::RTP:
-            map<unsigned int, RtpThread*>::iterator itThread = m_mRtp.find(m_nCurrentRtp);
+            auto itThread = m_mRtp.find(m_nCurrentRtp);
             if(itThread != m_mRtp.end())
             {
                 pmlLog(pml::LOG_DEBUG) << "IOManager\tAudio Input Device Changed: Close AoIP";
@@ -792,14 +775,7 @@ void IOManager::InitAudioInputDevice()
         pmlLog(pml::LOG_INFO) << "IOManager\tCreate Audio Input Device: AoIP";
 
         AoIPSource source(0);
-        if(sType == "AoIP")
-        {
-            source = AoipSourceManager::Get().FindSource(Settings::Get().Read(wxT("Input"), wxT("AoIP"), 0));
-        }
-        else if(Settings::Get().Read("Input", "AoIPManual", "") != "")
-        {
-            source = AoIPSource(std::numeric_limits<unsigned int>::max(), "Manual", "Manual SDP created by PAM", Settings::Get().Read("Input", "AoIPManual", ""));
-        }
+        source = AoipSourceManager::Get().FindSource(Settings::Get().Read(wxT("Input"), wxT("AoIP"), 0));
 
         if(source.nIndex != 0 && m_mRtp.find(source.nIndex) == m_mRtp.end())
         {
@@ -908,7 +884,7 @@ void IOManager::OnRTPSessionClosed(wxCommandEvent& event)
     }
     //m_setRtpOrphan.erase(event.GetInt());
     m_mRtp.erase(event.GetInt());
-    pmlLog(pml::LOG_DEBUG) << "IOManager\tOnRTPSessionClosed";
+    pmlLog(pml::LOG_INFO) << "IOManager\tOnRTPSessionClosed: " << event.GetInt();
 }
 
 void IOManager::OnRTPSession(wxCommandEvent& event)
@@ -1136,36 +1112,48 @@ void IOManager::Stream()
 void IOManager::StreamMulticast()
 {
     pmlLog(pml::LOG_INFO) << "IOManager\tCreate Multicast AES67 Server";
+    if(m_pMulticastServer == nullptr && m_pUnicastServer == nullptr)
+    {
+        wxString sDestinationIp = Settings::Get().Read(wxT("Server"), wxT("DestinationIp"), wxEmptyString);
+        unsigned long nByte;
+        bool bSSM(sDestinationIp.BeforeFirst(wxT('.')).ToULong(&nByte) && nByte >= 224 && nByte <= 239);
 
-    wxString sDestinationIp = Settings::Get().Read(wxT("Server"), wxT("DestinationIp"), wxEmptyString);
-    unsigned long nByte;
-    bool bSSM(sDestinationIp.BeforeFirst(wxT('.')).ToULong(&nByte) && nByte >= 224 && nByte <= 239);
-
-    m_pMulticastServer = new RtpServerThread(this, m_setRTCPHandlers, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString),
-                                             Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555),
-                                             sDestinationIp,
-                                            Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004),
-                                            bSSM,
-                                             (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000));
-    m_pMulticastServer->Run();
-    m_bStreamActive = true;
+        m_pMulticastServer = new RtpServerThread(this, m_setRTCPHandlers, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString),
+                                                 Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555),
+                                                 sDestinationIp,
+                                                Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004),
+                                                bSSM,
+                                                 (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000));
+        m_pMulticastServer->Run();
+        m_bStreamActive = true;
+    }
+    else
+    {
+        pmlLog(pml::LOG_ERROR) << "Attempting to stream multicast but already streaming";
+    }
 }
 
 void IOManager::StreamUnicast()
 {
     pmlLog(pml::LOG_INFO) << "IOManager\tCreate Unicast AES67 Server";
-
-    m_pUnicastServer = new OnDemandStreamer(m_setRTSPHandlers, m_setRTCPHandlers, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), "0.0.0.0"),
+    if(m_pMulticastServer == nullptr && m_pUnicastServer == nullptr)
+    {
+        m_pUnicastServer = new OnDemandStreamer(m_setRTSPHandlers, m_setRTCPHandlers, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), "0.0.0.0"),
                                               Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555));
 
-    m_pOnDemandSubsession = OnDemandAES67MediaSubsession::createNew(this, *m_pUnicastServer->envir(), 2, (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
+        m_pOnDemandSubsession = OnDemandAES67MediaSubsession::createNew(this, *m_pUnicastServer->envir(), 2, (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
 
-    m_pUnicastServer->Create();
-    m_pUnicastServer->SetSubsession(m_pOnDemandSubsession);
+        m_pUnicastServer->Create();
+        m_pUnicastServer->SetSubsession(m_pOnDemandSubsession);
 
 
-    m_pUnicastServer->Run();
-    m_bStreamActive = true;
+        m_pUnicastServer->Run();
+        m_bStreamActive = true;
+    }
+    else
+    {
+        pmlLog(pml::LOG_ERROR) << "Attempting to stream unicast but already streaming";
+    }
 }
 
 

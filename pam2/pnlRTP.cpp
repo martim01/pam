@@ -386,12 +386,15 @@ void pnlRTP::ListSources()
     m_plstSources->Freeze();
     m_plstSources->Clear();
 
-    for(auto itSource = AoipSourceManager::Get().GetSourceBegin(); itSource != AoipSourceManager::Get().GetSourceEnd(); ++itSource)
+    for(auto pairSource : AoipSourceManager::Get().GetSources())
     {
-        m_plstSources->AddButton(itSource->second.sName, wxNullBitmap, (void*)itSource->first);
-        m_plstSources->AddButton(itSource->second.sDetails, wxNullBitmap, (void*)itSource->first);
+        if(pairSource.first > 0)
+        {
+            m_plstSources->AddButton(pairSource.second.sName, wxNullBitmap, (void*)pairSource.first);
+            m_plstSources->AddButton(pairSource.second.sDetails, wxNullBitmap, (void*)pairSource.first);
+        }
     }
-        m_plstSources->Thaw();
+    m_plstSources->Thaw();
 }
 
 void pnlRTP::OnlstSourcesSelected(wxCommandEvent& event)
