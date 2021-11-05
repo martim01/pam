@@ -22,6 +22,7 @@
 #include "pnlSettingsOutput.h"
 #include "pnlSettingsTime.h"
 #include "pnlAoipManual.h"
+#include "pnlSettingsInputNmos.h"
 
 class SettingEvent;
 
@@ -38,6 +39,7 @@ class pnlSettings: public wxPanel
 		pnlAoipManual* m_ppnlAoIPManual;
 		pnlNetworkSetup* pnlSettingsNetwork;
 		pnlSettingsGenerators* m_ppnlGenerators;
+		pnlSettingsInputNmos* m_ppnlInputNmos;
 		pnlSettingsNmos* m_ppnlNmos;
 		pnlSettingsOutput* m_ppnlOutput;
 		pnlSettingsPlugins* m_ppnlPlugins;
@@ -91,6 +93,7 @@ class pnlSettings: public wxPanel
 		static const long ID_M_PSLIDER1;
 		static const long ID_PANEL10;
 		static const long ID_PANEL11;
+		static const long ID_PANEL12;
 		static const long ID_M_PSWP2;
 		static const long ID_M_PLST2;
 		static const long ID_M_PBTN7;

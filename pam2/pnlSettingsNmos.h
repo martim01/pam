@@ -3,7 +3,8 @@
 
 
 //(*Headers(pnlSettingsNmos)
-#include "wmbutton.h"
+#include "wmlabel.h"
+#include "wmlist.h"
 #include <wx/panel.h>
 //*)
 #include "wmlist.h"
@@ -19,34 +20,20 @@ class pnlSettingsNmos: public wxPanel
 		virtual ~pnlSettingsNmos();
 
 		//(*Declarations(pnlSettingsNmos)
-		wmButton* m_pbtnClient;
-		wmButton* m_pbtnNmos;
+		wmLabel* m_pLbl1;
+		wmLabel* m_pLbl9;
+		wmList* m_plstClient;
+		wmList* m_plstNode;
 		//*)
 
-		wmButton* m_pbtnConnection;
-
-        void SetReceiverId(const wxString& sReceiverId)
-        {
-            m_sReceiverId = sReceiverId;
-        }
-        const wxString& GetReceiverId() const
-        {
-            return m_sReceiverId;
-        }
-
-        void SetSender(const wxString& sSenderId);
-#ifdef __NMOS__
-		void AddSender(std::shared_ptr<Sender> pSender);
-		void UpdateSender(std::shared_ptr<Sender> pSender);
-		void RemoveSenders(const std::set<std::string>::const_iterator& itBegin, const std::set<std::string>::const_iterator& itEnd);
-#endif // __NMOS__
-		void SubscriptionRequest(const wxString& sReceiverId, const wxString& sResponse, unsigned long nResult);
 
 	protected:
 
 		//(*Identifiers(pnlSettingsNmos)
-		static const long ID_M_PBTN22;
-		static const long ID_M_PBTN1;
+		static const long ID_M_PLBL8;
+		static const long ID_M_PLST1;
+		static const long ID_M_PLBL1;
+		static const long ID_M_PLST2;
 		//*)
 
 	private:
@@ -54,16 +41,11 @@ class pnlSettingsNmos: public wxPanel
 		//(*Handlers(pnlSettingsNmos)
 		void OnbtnNmosClick(wxCommandEvent& event);
 		void OnbtnClientClick(wxCommandEvent& event);
+		void OnlstNodeSelected(wxCommandEvent& event);
+		void OnlstClientSelected(wxCommandEvent& event);
 		//*)
 
-		void OnbtnConnectionClick(wxCommandEvent& event);
-		void OnSenderSelected(wxCommandEvent& event);
-
-		bool ConnectionIS04(size_t nSenderButton);
-		bool ConnectionIS05(size_t nSenderButton);
-		wmList* m_plstSenders;
-        wxString m_sReceiverId;
-		DECLARE_EVENT_TABLE()
+        DECLARE_EVENT_TABLE()
 };
 
 #endif

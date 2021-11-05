@@ -146,6 +146,10 @@
 							<object class="wxPanel" name="ID_PANEL11" subclass="pnlAoipManual" variable="m_ppnlAoIPManual" member="yes" />
 							<label>Manual</label>
 						</object>
+						<object class="wmSwitcherPanelpage">
+							<object class="wxPanel" name="ID_PANEL12" subclass="pnlSettingsInputNmos" variable="m_ppnlInputNmos" member="yes" />
+							<label>NMOS</label>
+						</object>
 					</object>
 					<object class="wmList" name="ID_M_PLST2" variable="m_plstInput" member="yes">
 						<scrolling>None</scrolling>

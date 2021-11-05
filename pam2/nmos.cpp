@@ -8,17 +8,17 @@
 #include "settings.h"
 #include "settingevent.h"
 #include "log.h"
-#include "pnlSettingsNmos.h"
+#include "pnlSettingsInputNmos.h"
 #include "iomanager.h"
 #include <wx/log.h>
 
-NmosManager::NmosManager(pnlSettingsNmos* pPnl) :
-    m_pSettingsPanel(pPnl),
+NmosManager::NmosManager(pnlSettingsInputNmos* pPnl) :
+    m_pInputPanel(pPnl),
     m_pFlow(0),
     m_pSender(0)
 {
 
-    Settings::Get().AddHandler("NMOS", "Activate", this);
+    Settings::Get().AddHandler("NMOS", "Node", this);
     Settings::Get().AddHandler("NMOS", "Client", this);
 
     Settings::Get().AddHandler("AoIP","Epoch", this);
@@ -34,8 +34,8 @@ NmosManager::NmosManager(pnlSettingsNmos* pPnl) :
 
 void NmosManager::Setup()
 {
-
     pmlLog() << "NMOS\tSetup NMOS";
+
     char chHost[256];
     gethostname(chHost, 256);
 
@@ -81,7 +81,7 @@ void NmosManager::Setup()
     m_pSender->SetDestinationDetails(Settings::Get().Read("Server", "DestinationIp",wxEmptyString).ToStdString(),
                                      Settings::Get().Read("Server", "RTP_Port", 5004));
 
-    auto pReceiver = std::make_shared<Receiver>(chHost, "Live555 receiver", Receiver::RTP_MCAST, pDevice->GetId(), Receiver::AUDIO,
+    m_pReceiver = std::make_shared<Receiver>(chHost, "Live555 receiver", Receiver::RTP_MCAST, pDevice->GetId(), Receiver::AUDIO,
                                                 TransportParamsRTP::CORE | TransportParamsRTP::MULTICAST);
     pReceiver->AddCap("audio/L24");
     pReceiver->AddCap("audio/L16");
@@ -99,18 +99,7 @@ void NmosManager::Setup()
     {
         pmlLog(pml::LOG_ERROR) << "NMOS\tFailed to add Flow";
     }
-    if(NodeApi::Get().AddReceiver(pReceiver) == false)
-    {
-        pmlLog(pml::LOG_ERROR) << "NMOS\tFailed to add Receiver";
-    }
-    else
-    {
-        m_pSettingsPanel->SetReceiverId(pReceiver->GetId());
-    }
-    if(NodeApi::Get().AddSender(m_pSender) == false)
-    {
-        pmlLog(pml::LOG_ERROR) << "NMOS\tFailed to add Sender";
-    }
+
     NodeApi::Get().Commit();
 
 
@@ -126,23 +115,44 @@ void NmosManager::Setup()
     Bind(wxEVT_NMOS_CLIENTCURL_SUBSCRIBE, &NmosManager::OnNmosSubscribeRequest, this);
 
 
-    if(Settings::Get().Read("NMOS", "Activate",false) == true)
-    {
-        StartNode();
-    }
-    if(Settings::Get().Read("NMOS", "Client",false) == true)
-    {
-        StartClient();
-    }
+    StartNode(Settings::Get().Read("NMOS", "Node",0));
+    StartClient(Settings::Get().Read("NMOS", "Client", 0));
 }
 
 
-void NmosManager::StartNode()
+void NmosManager::StartNode(unsigned int nMode)
 {
-    pmlLog() << "NMOS\tStart NMOS Services";
-    m_pSender->MasterEnable(true);
-    NodeApi::Get().StartServices();
+    switch(nMode)
+    {
+        case NODE_RECEIVER:
+            NodeApi::Get().RemoveSender(m_pSender);
+            NodeApi::Get().AddReceiver(m_pReceiver);
+            m_pInputPanel->SetReceiverId(m_pReceiver->GetId());
+            break;
+        case NODE_SENDER:
+            NodeApi::Get().RemoveReceiver(m_pReceiver);
+            NodeApi::Get().AddSender(m_pSender);
+            m_pSender->MasterEnable(true);
+            m_pInputPanel->SetReceiverId("");
+            break;
+        case NODE_BOTH:
+            NodeApi::Get().AddSender(m_pSender);
+            NodeApi::Get().AddReceiver(m_pReceiver);
+            m_pSender->MasterEnable(true);
+            m_pInputPanel->SetReceiverId(m_pReceiver->GetId());
+            break;
+    }
+    if(nMode != NODE_OFF)
+    {
+        pmlLog() << "NMOS\tStart NMOS Services";
+        NodeApi::Get().Commit();
 
+        NodeApi::Get().StartServices();
+    }
+    else
+    {
+        StopNode();
+    }
 }
 
 
@@ -153,35 +163,13 @@ void NmosManager::OnSettingChanged(SettingEvent& event)
 
     if(event.GetSection() == "NMOS")
     {
-        if(event.GetKey() == "Activate")
+        if(event.GetKey() == "Node")
         {
-            if(event.GetValue(false))
-            {
-                StartNode();
-            }
-            else
-            {
-                StopNode();
-            }
+            StartNode(event.GetValue(NODE_OFF));
         }
         else if(event.GetKey() == "Client")
         {
-            if(event.GetValue(false))
-            {
-                StartClient();
-            }
-            else
-            {
-                StopClient();
-            }
-        }
-    }
-    else if(event.GetSection() == "AoIP_Settings" && event.GetKey() == "Epoch")
-    {
-        if(m_pFlow && m_pSender)
-        {
-            m_pFlow->SetMediaClkOffset(event.GetValue((long(0))));
-            m_pSender->CreateSDP();
+            StartClient(event.GetValue(CLIENT_OFF);
         }
     }
     else if(event.GetSection() == "Server")
@@ -233,21 +221,16 @@ void NmosManager::OnTarget(wxNmosEvent& event)
     if(itInterface != mmButtons.end())
     {
 
-        wxString sSdp = event.GetTransportFile();
-        sSdp.Replace("\n", "`");
-        sSdp.Replace("\r", "");
-
-        wxString sInput("NMOS_IS-04_A");
         //Save the SDP file details
-        if(Settings::Get().Read("Input", "AoIP", wxEmptyString) == sInput)
+        int nInput = AoipSourceManager::SOURCE_NMOS_A;
+        if(Settings::Get().Read("Input", "AoIP", 0) == AoipSourceManager::SOURCE_NMOS_A)
         {
-            sInput = "NMOS_IS-04_B";
+            nInput = AoipSourceManager::SOURCE_NMOS_B;
         }
-        Settings::Get().Write("AoIP", sInput, wxString::Format("NMOS:[%s]",sSdp.c_str()));
-        //Make sure the input type is AoIP
+        AoipSourceManager::Get().SetSourceSDP(nInput, event.GetTransportFile());
+
         Settings::Get().Write("Input", "Type", "AoIP");
-        //Chage the AOIP source to be NMOS IS-04
-        Settings::Get().Write("Input", "AoIP", sInput);
+        Settings::Get().Write("Input", "AoIP", nInput); //write the new source number in
 
         //Now tell NMOS that we have taken the target
         NodeApi::Get().TargetTaken(itInterface->second.ToStdString(), event.GetPort(), true);
@@ -327,25 +310,7 @@ void NmosManager::OnPatchReceiver(wxNmosEvent& event)
         auto itInterface = mmButtons.find("eth0");
         if(itInterface != mmButtons.end())
         {
-            wxString sSdp(pReceiver->GetStaged().sTransportFileData);
-
-            sSdp.Replace("\n", "`");
-            sSdp.Replace("\r", "");
-
-            wxString sInput("NMOS_IS-04_A");
-            //Save the SDP file details
-            if(Settings::Get().Read("Input", "AoIP", wxEmptyString) == sInput)
-            {
-                sInput = "NMOS_IS-04_B";
-            }
-
             //Chage the AOIP source to be NMOS IS-04
-            wxString sSender;
-            if(pReceiver->GetStaged().bMasterEnable)
-            {
-                //Make sure the input type is AoIP
-                sSender = wxString::FromUTF8(pReceiver->GetStaged().sSenderId.c_str());
-            }
             NodeApi::Get().ReceiverPatchAllowed(event.GetPort(), true, pReceiver->GetId(), itInterface->second.ToStdString());
 
             if(event.GetReceiverConnection().eActivate == connection::ACT_NOW)
@@ -446,8 +411,6 @@ void NmosManager::ActivateReceiver(std::shared_ptr<Receiver> pReceiver)
         auto itInterface = mmButtons.find("eth0");
         if(itInterface != mmButtons.end())
         {
-
-
             //Save the SDP file details
             int nInput = AoipSourceManager::SOURCE_NMOS_A;
             if(Settings::Get().Read("Input", "AoIP", 0) == AoipSourceManager::SOURCE_NMOS_A)
@@ -464,17 +427,16 @@ void NmosManager::ActivateReceiver(std::shared_ptr<Receiver> pReceiver)
                 Settings::Get().Write("Input", "Type", "AoIP");
                 Settings::Get().Write("Input", "AoIP", nInput); //write the new source number in
                 sSender = wxString(pReceiver->GetStaged().sSenderId);
-
             }
             else
             {
                 Settings::Get().Write("Input", "AoIP", 0); //write the new source number in
             }
 
-            if(m_pSettingsPanel)
+            if(m_pInputPanel)
             {
                 AoipSourceManager::Get().EditSource(nInput, (nInput == AoipSourceManager::SOURCE_NMOS_A ? "NMOS_A" : "NMOS_B"), sSender);
-                m_pSettingsPanel->SetSender(sSender);
+                m_pInputPanel->SetSender(sSender);
             }
         }
     }
@@ -503,20 +465,20 @@ void NmosManager::StopClient()
 
 void NmosManager::OnNmosReceiverChanged(wxNmosClientReceiverEvent& event)
 {
-    if(m_pSettingsPanel)
+    if(m_pInputPanel)
     {
         for(auto itUpdated = event.GetUpdated().begin(); itUpdated != event.GetUpdated().end(); ++itUpdated)
         {
-            if((*itUpdated)->GetId() == m_pSettingsPanel->GetReceiverId())
+            if((*itUpdated)->GetId() == m_pInputPanel->GetReceiverId())
             {
                 //is the receiver one of ours??
                 if((*itUpdated)->GetSender().empty() == false)
                 {
-                    m_pSettingsPanel->SetSender(wxString::FromUTF8((*itUpdated)->GetSender().c_str()));
+                    m_pInputPanel->SetSender(wxString::FromUTF8((*itUpdated)->GetSender().c_str()));
                 }
                 else
                 {
-                    m_pSettingsPanel->SetSender(wxEmptyString);
+                    m_pInputPanel->SetSender(wxEmptyString);
                 }
                 break;
             }
@@ -526,7 +488,7 @@ void NmosManager::OnNmosReceiverChanged(wxNmosClientReceiverEvent& event)
 
 void NmosManager::OnNmosSenderChanged(wxNmosClientSenderEvent& event)
 {
-    if(m_pSettingsPanel)
+    if(m_pInputPanel)
     {
         for(auto itAdded = event.GetAdded().begin(); itAdded != event.GetAdded().end(); ++itAdded)
         {
@@ -537,7 +499,7 @@ void NmosManager::OnNmosSenderChanged(wxNmosClientSenderEvent& event)
                 {
                     if(itFlow->second->GetFormat().find("urn:x-nmos:format:audio") != std::string::npos)
                     {
-                        m_pSettingsPanel->AddSender((*itAdded));
+                        m_pInputPanel->AddSender((*itAdded));
                     }
                 }
             }
@@ -556,7 +518,7 @@ void NmosManager::OnNmosSenderChanged(wxNmosClientSenderEvent& event)
                 {
                     if(itFlow->second->GetFormat().find("urn:x-nmos:format:audio") != std::string::npos)
                     {
-                        m_pSettingsPanel->UpdateSender((*itUpdated));
+                        m_pInputPanel->UpdateSender((*itUpdated));
                     }
                 }
             }
@@ -567,7 +529,7 @@ void NmosManager::OnNmosSenderChanged(wxNmosClientSenderEvent& event)
 
 void NmosManager::OnNmosFlowChanged(wxNmosClientFlowEvent& event)
 {
-    if(m_pSettingsPanel)
+    if(m_pInputPanel)
     {
         for(auto itAdded = event.GetAdded().begin(); itAdded != event.GetAdded().end(); ++itAdded)
         {
@@ -575,7 +537,7 @@ void NmosManager::OnNmosFlowChanged(wxNmosClientFlowEvent& event)
             {
                 for(auto itSender = m_mmLonelySender.lower_bound((*itAdded)->GetId()); itSender != m_mmLonelySender.upper_bound((*itAdded)->GetId()); ++itSender)
                 {
-                    m_pSettingsPanel->AddSender(itSender->second);
+                    m_pInputPanel->AddSender(itSender->second);
                 }
                 //remove the senders which are no longer lonely
                 m_mmLonelySender.erase((*itAdded)->GetId());
@@ -588,9 +550,9 @@ void NmosManager::OnNmosFlowChanged(wxNmosClientFlowEvent& event)
 
 void NmosManager::OnNmosSubscribeRequest(wxNmosClientCurlEvent& event)
 {
-    if(m_pSettingsPanel)
+    if(m_pInputPanel)
     {
-        m_pSettingsPanel->SubscriptionRequest(event.GetResourceId(), event.GetResponse(), event.GetResult());
+        m_pInputPanel->SubscriptionRequest(event.GetResourceId(), event.GetResponse(), event.GetResult());
     }
 }
 #endif // __NMOS__

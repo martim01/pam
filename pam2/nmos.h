@@ -17,19 +17,22 @@ class wxNmosClientSourceEvent;
 class wxNmosClientFlowEvent;
 class wxNmosClientSenderEvent;
 class wxNmosClientReceiverEvent;
-class pnlSettingsNmos;
+class pnlSettingsInputNmos;
 
 
 class NmosManager : public wxEvtHandler
 {
     public:
-        NmosManager(pnlSettingsNmos* pPnl);
+        NmosManager(pnlSettingsInputNmos* pPnl);
 
         void Setup();
-        void StartNode();
+        void StartNode(unsigned int nMode);
         void StopNode();
-        void StartClient();
+        void StartClient(unsigned int nMode);
         void StopClient();
+
+        enum {NODE_OFF=0, NODE_RECEIVER, NODE_SENDER, NODE_BOTH};
+        enum {CLIENT_OFF=0, CLIENT_IS04, CLIENT_IS05};
 
     protected:
         void OnSettingChanged(SettingEvent& event);
@@ -49,10 +52,13 @@ class NmosManager : public wxEvtHandler
         void ActivateSender(std::shared_ptr<Sender> pSender);
         void ActivateReceiver(std::shared_ptr<Receiver> pReceiver);
 
-        pnlSettingsNmos* m_pSettingsPanel;
+        pnlSettingsInputNmos* m_pInputPanel;
 
         std::shared_ptr<FlowAudioRaw> m_pFlow;
         std::shared_ptr<Sender> m_pSender;
+        std::shared_ptr<Receiver> m_pReceiver;
         std::multimap<std::string, std::shared_ptr<Sender> > m_mmLonelySender;
+
+
 };
 #endif
