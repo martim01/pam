@@ -433,6 +433,13 @@ void pnlSettings::OnlstInputSelected(wxCommandEvent& event)
 
 }
 
+void pnlSettings::ShowGain(bool bShow)
+{
+    m_plsliderInputGain->Show(bShow);
+    m_pLbl1->Show(bShow);
+    m_plblInputGain->Show(bShow);
+}
+
 void pnlSettings::RefreshInputs()
 {
     wxString sType = Settings::Get().Read(wxT("Input"), wxT("Type"), wxEmptyString);
@@ -441,20 +448,27 @@ void pnlSettings::RefreshInputs()
         m_pswpInput->ChangeSelection(0);
         m_pbtnManage->Hide();
         ShowSoundcardInputs();
+
+        ShowGain(true);
     }
     else if(sType == wxT("AoIP"))
     {
         m_pswpInput->ChangeSelection(0);
         m_pbtnManage->Show();
         ShowRTPDefined();
+
+        ShowGain(false);
     }
     else if(sType == "AoIP Manual")
     {
         m_pswpInput->ChangeSelection(1);
+        ShowGain(false);
+
     }
     else if(sType == "NMOS")
     {
         m_pswpInput->ChangeSelection("NMOS");
+        ShowGain(false);
     }
     else if(sType == wxT("Disabled"))
     {
@@ -463,6 +477,8 @@ void pnlSettings::RefreshInputs()
         m_plstDevices->Clear();
         m_plstDevices->Thaw();
         ShowPagingButtons();
+
+        ShowGain(false);
     }
 
 }

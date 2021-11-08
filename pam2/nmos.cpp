@@ -131,24 +131,22 @@ void NmosManager::StartNode(int nMode)
         switch(nMode)
         {
             case NODE_RECEIVER:
-                //NodeApi::Get().RemoveSender(m_pSender->GetId());
-                m_pSender->MasterEnable(false);
-                //NodeApi::Get().AddReceiver(m_pReceiver);
+                NodeApi::Get().RemoveSender(m_pSender->GetId());
+                NodeApi::Get().AddReceiver(m_pReceiver);
                 m_pReceiver->MasterEnable(true);
                 m_pInputPanel->SetReceiverId(m_pReceiver->GetId());
                 NodeApi::Get().Commit();
                 break;
             case NODE_SENDER:
-                //NodeApi::Get().RemoveReceiver(m_pReceiver->GetId());
-                //NodeApi::Get().AddSender(m_pSender);
-                m_pReceiver->MasterEnable(false);
+                NodeApi::Get().RemoveReceiver(m_pReceiver->GetId());
+                NodeApi::Get().AddSender(m_pSender);
                 m_pSender->MasterEnable(true);
                 m_pInputPanel->SetReceiverId("");
                 NodeApi::Get().Commit();
                 break;
             case NODE_BOTH:
-                //NodeApi::Get().AddSender(m_pSender);
-                //NodeApi::Get().AddReceiver(m_pReceiver);
+                NodeApi::Get().AddSender(m_pSender);
+                NodeApi::Get().AddReceiver(m_pReceiver);
                 m_pReceiver->MasterEnable(true);
                 m_pSender->MasterEnable(true);
                 m_pInputPanel->SetReceiverId(m_pReceiver->GetId());
@@ -448,9 +446,9 @@ void NmosManager::ActivateReceiver(std::shared_ptr<Receiver> pReceiver)
                 Settings::Get().Write("Input", "AoIP", 0); //write the new source number in
             }
 
+            AoipSourceManager::Get().EditSource(nInput, (nInput == AoipSourceManager::SOURCE_NMOS_A ? "NMOS_A" : "NMOS_B"), sSender);
             if(m_pInputPanel)
             {
-                AoipSourceManager::Get().EditSource(nInput, (nInput == AoipSourceManager::SOURCE_NMOS_A ? "NMOS_A" : "NMOS_B"), sSender);
                 m_pInputPanel->SetSender(sSender);
             }
         }
@@ -518,7 +516,7 @@ void NmosManager::OnNmosSenderChanged(wxNmosClientSenderEvent& event)
     {
         for(auto pSender : event.GetAdded())
         {
-            if(NodeApi::Get().GetSender(pSender->GetId()) == 0)
+            if(NodeApi::Get().GetSender(pSender->GetId()) == nullptr)
             {  //not one of our senders
                 auto itFlow = ClientApi::Get().FindFlow(pSender->GetFlowId());
                 if(itFlow != ClientApi::Get().GetFlowEnd())
@@ -537,7 +535,7 @@ void NmosManager::OnNmosSenderChanged(wxNmosClientSenderEvent& event)
         }
         for(auto pSender : event.GetUpdated())
         {
-            if(NodeApi::Get().GetSender(pSender->GetId()) == 0)
+            if(NodeApi::Get().GetSender(pSender->GetId()) == nullptr)
             {   //not one of our senders
                 auto itFlow = ClientApi::Get().FindFlow(pSender->GetFlowId());
                 if(itFlow != ClientApi::Get().GetFlowEnd())
@@ -557,16 +555,16 @@ void NmosManager::OnNmosFlowChanged(wxNmosClientFlowEvent& event)
 {
     if(m_pInputPanel)
     {
-        for(auto itAdded = event.GetAdded().begin(); itAdded != event.GetAdded().end(); ++itAdded)
+        for(auto pFlow : event.GetAdded())
         {
-            if((*itAdded)->GetFormat().find("urn:x-nmos:format:audio") != std::string::npos)
+            if(pFlow->GetFormat().find("urn:x-nmos:format:audio") != std::string::npos)
             {
-                for(auto itSender = m_mmLonelySender.lower_bound((*itAdded)->GetId()); itSender != m_mmLonelySender.upper_bound((*itAdded)->GetId()); ++itSender)
+                for(auto itSender = m_mmLonelySender.lower_bound(pFlow->GetId()); itSender != m_mmLonelySender.upper_bound(pFlow->GetId()); ++itSender)
                 {
                     m_pInputPanel->AddSender(itSender->second);
                 }
                 //remove the senders which are no longer lonely
-                m_mmLonelySender.erase((*itAdded)->GetId());
+                m_mmLonelySender.erase(pFlow->GetId());
             }
         }
 

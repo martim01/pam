@@ -1130,11 +1130,23 @@ void pam2Dialog::OnbtnInputClick(wxCommandEvent& event)
 {
     if(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")) == "AoIP")
     {
-        //Show AoIP
-        Settings::Get().Write("Splash", "Screen", "AoIP");
-        if(m_pdlgNoInput)
+        int nmos = 0;
+        #ifdef __NMOS__
+        nmos = Settings::Get().Read("NMOS", "Node", NmosManager::NODE_OFF);
+        #endif
+        if(nmos == 0)
         {
-            m_pdlgNoInput->Show(false);
+            Settings::Get().Write("Splash", "Screen", "AoIP");
+            if(m_pdlgNoInput)
+            {
+                m_pdlgNoInput->Show(false);
+            }
         }
+        #ifdef __NMOS__
+        if((nmos == NmosManager::NODE_BOTH || nmos == NmosManager::NODE_RECEIVER) && Settings::Get().Read("NMOS", "Client", NmosManager::CLIENT_OFF) != NmosManager::CLIENT_OFF)
+        {
+
+        }
+        #endif // __NMOS__
     }
 }

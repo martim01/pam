@@ -31,6 +31,7 @@ class NmosManager : public wxEvtHandler
         void StartClient(int nMode);
         void StopClient();
 
+
         enum {NODE_OFF=0, NODE_RECEIVER, NODE_SENDER, NODE_BOTH};
         enum {CLIENT_OFF=0, CLIENT_IS04, CLIENT_IS05};
 

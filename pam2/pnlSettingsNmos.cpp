@@ -35,14 +35,14 @@ pnlSettingsNmos::pnlSettingsNmos(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_pLbl9->GetUiRect().SetGradient(0);
 	m_pLbl9->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl9->SetBackgroundColour(wxColour(64,0,128));
-	m_plstNode = new wmList(this, ID_M_PLST1, wxPoint(110,10), wxSize(400,44), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 4, wxSize(-1,-1));
+	m_plstNode = new wmList(this, ID_M_PLST1, wxPoint(110,10), wxSize(400,44), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 4, wxSize(5,-1));
 	m_plstNode->SetBackgroundColour(wxColour(0,0,0));
 	m_pLbl1 = new wmLabel(this, ID_M_PLBL1, _("Client"), wxPoint(10,62), wxSize(100,40),0, _T("ID_M_PLBL1"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl1->GetUiRect().SetGradient(0);
 	m_pLbl1->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl1->SetBackgroundColour(wxColour(64,0,128));
-	m_plstClient = new wmList(this, ID_M_PLST2, wxPoint(110,60), wxSize(400,44), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 3, wxSize(-1,-1));
+	m_plstClient = new wmList(this, ID_M_PLST2, wxPoint(110,60), wxSize(400,44), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 3, wxSize(5,-1));
 	m_plstClient->Disable();
 	m_plstClient->SetBackgroundColour(wxColour(0,0,0));
 
