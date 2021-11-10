@@ -183,7 +183,9 @@
 					<Add library="portaudio" />
 					<Add library="pambase" />
 					<Add library="curl" />
-					<Add library="nmos" />
+					<Add library="nmos_base" />
+					<Add library="nmos_node" />
+					<Add library="nmos_client" />
 					<Add directory="$(#nmos.lib)" />
 				</Linker>
 				<ExtraCommands>
@@ -216,7 +218,9 @@
 					<Add library="portaudio" />
 					<Add library="pambased" />
 					<Add library="curl" />
-					<Add library="nmosd" />
+					<Add library="nmos_based" />
+					<Add library="nmos_noded" />
+					<Add library="nmos_clientd" />
 					<Add directory="$(#nmos.lib)" />
 				</Linker>
 			</Target>
