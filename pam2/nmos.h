@@ -6,9 +6,17 @@
 #include <memory>
 
 class SettingEvent;
-class Sender;
-class Receiver;
-class FlowAudioRaw;
+namespace pml
+{
+    namespace nmos
+    {
+        class SenderBase;
+        class Sender;
+        class Receiver;
+        class FlowAudioRaw;
+    };
+};
+
 class wxNmosEvent;
 class wxNmosClientCurlEvent;
 class wxNmosClientNodeEvent;
@@ -50,15 +58,15 @@ class NmosManager : public wxEvtHandler
 
         void OnNmosSubscribeRequest(wxNmosClientCurlEvent& event);
 
-        void ActivateSender(std::shared_ptr<Sender> pSender);
-        void ActivateReceiver(std::shared_ptr<Receiver> pReceiver);
+        void ActivateSender(std::shared_ptr<pml::nmos::Sender> pSender);
+        void ActivateReceiver(std::shared_ptr<pml::nmos::Receiver> pReceiver);
 
         pnlSettingsInputNmos* m_pInputPanel;
 
-        std::shared_ptr<FlowAudioRaw> m_pFlow;
-        std::shared_ptr<Sender> m_pSender;
-        std::shared_ptr<Receiver> m_pReceiver;
-        std::multimap<std::string, std::shared_ptr<Sender> > m_mmLonelySender;
+        std::shared_ptr<pml::nmos::FlowAudioRaw> m_pFlow;
+        std::shared_ptr<pml::nmos::Sender> m_pSender;
+        std::shared_ptr<pml::nmos::Receiver> m_pReceiver;
+        std::multimap<std::string, std::shared_ptr<pml::nmos::SenderBase> > m_mmLonelySender;
 
         size_t m_nNodeMode;
         size_t m_nClientMode;

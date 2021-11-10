@@ -11,6 +11,7 @@
 #include "images/pagedown_press.xpm"
 #include "images/pageup.xpm"
 #include "images/pageup_press.xpm"
+#include "senderbuttonfactory.h"
 
 #ifdef __NMOS__
 #include "nmos.h"
@@ -216,12 +217,13 @@ void pnlNodeSelection::ShowPaged()
     m_plstDevices->Freeze();
     m_plstDevices->Clear();
 
-    std::for_each(ClientApi::Get().GetSenderBegin(), ClientApi::Get().GetSenderEnd(), [this](std::shared_ptr<Sender> pSender)
-    {
-            m_plstDevices->AddButton(pSender->GetLabel());
-            m_plstDevices->SetButtonAuxillaryText(nIndex, wxString(pSender->GetId()));
 
-    });
+//    std::for_each(pml::nmos::ClientApiClientApi::Get().GetSenderBegin(), pml::nmos::ClientApiClientApi::Get().GetSenderEnd(), [this](std::shared_ptr<Sender> pSender)
+//    {
+//            m_plstDevices->AddButton(pSender->GetLabel());
+//            m_plstDevices->SetButtonAuxillaryText(nIndex, wxString(pSender->GetId()));
+//
+//    });
 
     m_plstDevices->Thaw();
     ShowPagingButtons();

@@ -10,7 +10,13 @@
 #include "wmlist.h"
 #include <memory>
 
-class Sender;
+namespace pml
+{
+    namespace nmos
+    {
+        class Sender;
+    };
+};
 
 class pnlSettingsNmos: public wxPanel
 {

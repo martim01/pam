@@ -4,7 +4,7 @@
 #include "connection.h"
 #include <wx/event.h>
 
-class wxEventPoster : public EventPoster
+class wxEventPoster : public pml::nmos::EventPoster
 {
     public:
         wxEventPoster(wxEvtHandler* pHandler);
@@ -12,15 +12,15 @@ class wxEventPoster : public EventPoster
 
     protected:
         void CurlDone(unsigned long nResult, const std::string& sResponse, long nType, const std::string& sResourceId);
-        void InstanceResolved(std::shared_ptr<dnsInstance> pInstance);
+        void InstanceResolved(std::shared_ptr<pml::nmos::dnsInstance> pInstance);
         void AllForNow(const std::string& sService);
         void Finished();
         void RegistrationNodeError();
-        void InstanceRemoved(std::shared_ptr<dnsInstance> pInstance);
+        void InstanceRemoved(std::shared_ptr<pml::nmos::dnsInstance> pInstance);
 
         void Target(const std::string& sReceiverId, const std::string& sTransportFile, unsigned short nPort);
-        void PatchSender(const std::string& sSenderId, const connectionSender& conPatch, unsigned short nPort);
-        void PatchReceiver(const std::string& sReceiverId, const connectionReceiver& conPatch, unsigned short nPort);
+        void PatchSender(const std::string& sSenderId, const pml::nmos::connectionSender& conPatch, unsigned short nPort);
+        void PatchReceiver(const std::string& sReceiverId, const pml::nmos::connectionReceiver& conPatch, unsigned short nPort);
         void SenderActivated(const std::string& sSenderId);
         void ReceiverActivated(const std::string& sReceiverId);
 
@@ -55,17 +55,17 @@ public:
     **/
     virtual wxEvent *Clone() const { return new wxNmosEvent(*this); }
 
-    void SetDnsInstance(std::shared_ptr<dnsInstance> pInstance);
-    const std::shared_ptr<dnsInstance> GetDnsInstance() const;
+    void SetDnsInstance(std::shared_ptr<pml::nmos::dnsInstance> pInstance);
+    const std::shared_ptr<pml::nmos::dnsInstance> GetDnsInstance() const;
 
     void SetTransportFile(const std::string& sTransportFile);
     const wxString& GetTransportFile() const;
 
-    void SetSenderConnection(const connectionSender& con);
-    const connectionSender& GetSenderConnection() const;
+    void SetSenderConnection(const pml::nmos::connectionSender& con);
+    const pml::nmos::connectionSender& GetSenderConnection() const;
 
-    void SetReceiverConnection(const connectionReceiver& con);
-    const connectionReceiver& GetReceiverConnection() const;
+    void SetReceiverConnection(const pml::nmos::connectionReceiver& con);
+    const pml::nmos::connectionReceiver& GetReceiverConnection() const;
 
     wxString GetResourceId() const;
     wxString GetCurlResponse() const;
@@ -82,10 +82,10 @@ public:
 
 private:
 
-    std::shared_ptr<dnsInstance> m_pDnsInstance;
+    std::shared_ptr<pml::nmos::dnsInstance> m_pDnsInstance;
     wxString m_sTransportFile;
-    connectionSender m_conSender;
-    connectionReceiver m_conReceiver;
+    pml::nmos::connectionSender m_conSender;
+    pml::nmos::connectionReceiver m_conReceiver;
 
 };
 

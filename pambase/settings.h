@@ -47,7 +47,7 @@ class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
 
         wxString GetLibraryVersion() const;
 
-        std::multimap<wxString, wxString> GetInterfaces() const;
+        const std::multimap<wxString, wxString>& GetInterfaces();
 
     protected:
         Settings();
@@ -58,6 +58,8 @@ class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
         wxString m_sFullPath;
 
         std::multimap<wxString, wxEvtHandler*> m_mmHandlers;
+
+        std::multimap<wxString, wxString> m_mmInterfaces;
 
         wxTimer m_timerSave;
 };

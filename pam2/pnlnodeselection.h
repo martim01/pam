@@ -96,5 +96,3 @@ class pnlNodeSelection: public wxPanel
 		DECLARE_EVENT_TABLE()
 };
 
-#endif
-

@@ -10,7 +10,13 @@
 #include <list>
 
 class SettingEvent;
-class Sender;
+namespace pml
+{
+    namespace nmos
+    {
+        class SenderBase;
+    }
+}
 
 class pnlSettingsInputNmos: public wxPanel
 {
@@ -26,9 +32,9 @@ class pnlSettingsInputNmos: public wxPanel
         const wxString& GetReceiverId() const { return m_sReceiverId; }
         void SetSender(const wxString& sSenderId);
 #ifdef __NMOS__
-		void AddSender(std::shared_ptr<Sender> pSender);
-		void UpdateSender(std::shared_ptr<Sender> pSender);
-		void RemoveSenders(const std::list<std::shared_ptr<Sender>>& lstRemove);
+		void AddSender(std::shared_ptr<pml::nmos::SenderBase> pSender);
+		void UpdateSender(std::shared_ptr<pml::nmos::SenderBase> pSender);
+		void RemoveSenders(const std::list<std::shared_ptr<pml::nmos::SenderBase>>& lstRemove);
 #endif // __NMOS__
 		void SubscriptionRequest(const wxString& sReceiverId, const wxString& sResponse, unsigned long nResult);
 

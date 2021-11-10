@@ -51,38 +51,38 @@ void wxClientApiPoster::QuerySubscriptionRemoved(const std::string& sSubscriptio
 }
 
 
-void wxClientApiPoster::NodeChanged(const std::list<std::shared_ptr<Self> >& lstNodesAdded, const std::list<std::shared_ptr<Self> >& lstNodesUpdated, const std::list<std::shared_ptr<Self> >& lstNodesRemoved)
+void wxClientApiPoster::NodeChanged(const std::list<std::shared_ptr<pml::nmos::Self> >& lstNodesAdded, const std::list<std::shared_ptr<pml::nmos::Self> >& lstNodesUpdated, const std::list<std::shared_ptr<pml::nmos::Self> >& lstNodesRemoved)
 {
     wxNmosClientNodeEvent* pEvent = new wxNmosClientNodeEvent(lstNodesAdded, lstNodesUpdated, lstNodesRemoved);
     wxQueueEvent(m_pHandler, pEvent);
 }
 
-void wxClientApiPoster::DeviceChanged(const std::list<std::shared_ptr<Device> >& lstDevicesAdded, const std::list<std::shared_ptr<Device> >& lstDevicesUpdated, const std::list<std::shared_ptr<Device> >& lstDevicesRemoved)
+void wxClientApiPoster::DeviceChanged(const std::list<std::shared_ptr<pml::nmos::Device> >& lstDevicesAdded, const std::list<std::shared_ptr<pml::nmos::Device> >& lstDevicesUpdated, const std::list<std::shared_ptr<pml::nmos::Device> >& lstDevicesRemoved)
 {
     wxNmosClientDeviceEvent* pEvent = new wxNmosClientDeviceEvent(lstDevicesAdded, lstDevicesUpdated, lstDevicesRemoved);
     wxQueueEvent(m_pHandler, pEvent);
 }
 
-void wxClientApiPoster::SourceChanged(const std::list<std::shared_ptr<Source> >& lstSourcesAdded, const std::list<std::shared_ptr<Source> >& lstSourcesUpdated, const std::list<std::shared_ptr<Source> >& lstSourcesRemoved)
+void wxClientApiPoster::SourceChanged(const std::list<std::shared_ptr<pml::nmos::Source> >& lstSourcesAdded, const std::list<std::shared_ptr<pml::nmos::Source> >& lstSourcesUpdated, const std::list<std::shared_ptr<pml::nmos::Source> >& lstSourcesRemoved)
 {
     wxNmosClientSourceEvent* pEvent = new wxNmosClientSourceEvent(lstSourcesAdded, lstSourcesUpdated, lstSourcesRemoved);
     wxQueueEvent(m_pHandler, pEvent);
 }
 
-void wxClientApiPoster::FlowChanged(const std::list<std::shared_ptr<Flow> >& lstFlowsAdded, const std::list<std::shared_ptr<Flow> >& lstFlowsUpdated, const std::list<std::shared_ptr<Flow> >& lstFlowsRemoved)
+void wxClientApiPoster::FlowChanged(const std::list<std::shared_ptr<pml::nmos::Flow> >& lstFlowsAdded, const std::list<std::shared_ptr<pml::nmos::Flow> >& lstFlowsUpdated, const std::list<std::shared_ptr<pml::nmos::Flow> >& lstFlowsRemoved)
 {
     wxNmosClientFlowEvent* pEvent = new wxNmosClientFlowEvent(lstFlowsAdded, lstFlowsUpdated, lstFlowsRemoved);
     wxQueueEvent(m_pHandler, pEvent);
 }
 
-void wxClientApiPoster::SenderChanged(const std::list<std::shared_ptr<Sender> >& lstSendersAdded, const std::list<std::shared_ptr<Sender> >& lstSendersUpdated, const std::list<std::shared_ptr<Sender> >& lstSendersRemoved)
+void wxClientApiPoster::SenderChanged(const std::list<std::shared_ptr<pml::nmos::SenderBase> >& lstSendersAdded, const std::list<std::shared_ptr<pml::nmos::SenderBase> >& lstSendersUpdated, const std::list<std::shared_ptr<pml::nmos::SenderBase> >& lstSendersRemoved)
 {
     pmlLog(pml::LOG_DEBUG) << "NMOS: wxClientApiPoster::SenderChanged";
     wxNmosClientSenderEvent* pEvent = new wxNmosClientSenderEvent(lstSendersAdded, lstSendersUpdated, lstSendersRemoved);
     wxQueueEvent(m_pHandler, pEvent);
 }
 
-void wxClientApiPoster::ReceiverChanged(const std::list<std::shared_ptr<Receiver> >& lstReceiversAdded, const std::list<std::shared_ptr<Receiver> >& lstReceiversUpdated, const std::list<std::shared_ptr<Receiver> >& lstReceiversRemoved)
+void wxClientApiPoster::ReceiverChanged(const std::list<std::shared_ptr<pml::nmos::ReceiverBase> >& lstReceiversAdded, const std::list<std::shared_ptr<pml::nmos::ReceiverBase> >& lstReceiversUpdated, const std::list<std::shared_ptr<pml::nmos::ReceiverBase> >& lstReceiversRemoved)
 {
     pmlLog(pml::LOG_DEBUG) << "NMOS: wxClientApiPoster::ReceiverChanged";
     wxNmosClientReceiverEvent* pEvent = new wxNmosClientReceiverEvent(lstReceiversAdded, lstReceiversUpdated, lstReceiversRemoved);

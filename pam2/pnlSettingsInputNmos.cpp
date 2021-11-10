@@ -53,10 +53,11 @@ pnlSettingsInputNmos::pnlSettingsInputNmos(wxWindow* parent,wxWindowID id,const 
 
 void pnlSettingsInputNmos::OnSettingChanged(SettingEvent& event)
 {
+    #ifdef __NMOS__
     m_plstSenders->Show(Settings::Get().Read("NMOS", "Client", NmosManager::CLIENT_OFF) != NmosManager::CLIENT_OFF &&
                         (Settings::Get().Read("NMOS", "Node", NmosManager::NODE_OFF) == NmosManager::NODE_RECEIVER ||
                         (Settings::Get().Read("NMOS", "Node", NmosManager::NODE_OFF) == NmosManager::NODE_BOTH)));
-
+    #endif
 }
 
 pnlSettingsInputNmos::~pnlSettingsInputNmos()
@@ -101,10 +102,10 @@ bool pnlSettingsInputNmos::ConnectionIS04(size_t nSenderButton)
     #ifdef __NMOS__
     if(m_plstSenders->GetButtonAuxillaryText(nSenderButton).empty() == false)
     {
-        return ClientApi::Get().Subscribe(std::string(m_plstSenders->GetButtonAuxillaryText(nSenderButton).mb_str()),std::string(m_sReceiverId.mb_str()));
+        return pml::nmos::ClientApi::Get().Subscribe(std::string(m_plstSenders->GetButtonAuxillaryText(nSenderButton).mb_str()),std::string(m_sReceiverId.mb_str()));
     }
 
-    return ClientApi::Get().Unsubscribe(std::string(m_sReceiverId.mb_str()));
+    return pml::nmos::ClientApi::Get().Unsubscribe(std::string(m_sReceiverId.mb_str()));
     #else
     return false;
     #endif // __NMOS__
@@ -115,17 +116,17 @@ bool pnlSettingsInputNmos::ConnectionIS05(size_t nSenderButton)
     #ifdef __NMOS__
     if(m_plstSenders->GetButtonAuxillaryText(nSenderButton).empty() == false)
     {
-        return ClientApi::Get().Connect(std::string(m_plstSenders->GetButtonAuxillaryText(nSenderButton).mb_str()),std::string(m_sReceiverId.mb_str()));
+        return pml::nmos::ClientApi::Get().Connect(std::string(m_plstSenders->GetButtonAuxillaryText(nSenderButton).mb_str()),std::string(m_sReceiverId.mb_str()));
     }
 
-    return ClientApi::Get().Disconnect(std::string(m_sReceiverId.mb_str()));
+    return pml::nmos::ClientApi::Get().Disconnect(std::string(m_sReceiverId.mb_str()));
     #else
     return false;
     #endif // __NMOS__
 }
 
 #ifdef __NMOS__
-void pnlSettingsInputNmos::AddSender(std::shared_ptr<Sender> pSender)
+void pnlSettingsInputNmos::AddSender(std::shared_ptr<pml::nmos::SenderBase> pSender)
 {
     size_t nIndex = m_plstSenders->AddButton(pSender->GetLabel());
     m_plstSenders->SetButtonAuxillaryText(nIndex, wxString(pSender->GetId()));
@@ -133,12 +134,12 @@ void pnlSettingsInputNmos::AddSender(std::shared_ptr<Sender> pSender)
 
 }
 
-void pnlSettingsInputNmos::UpdateSender(std::shared_ptr<Sender> pSender)
+void pnlSettingsInputNmos::UpdateSender(std::shared_ptr<pml::nmos::SenderBase> pSender)
 {
 
 }
 
-void pnlSettingsInputNmos::RemoveSenders(const std::list<std::shared_ptr<Sender>>& lstRemove)
+void pnlSettingsInputNmos::RemoveSenders(const std::list<std::shared_ptr<pml::nmos::SenderBase>>& lstRemove)
 {
     for(auto pSender : lstRemove)
     {

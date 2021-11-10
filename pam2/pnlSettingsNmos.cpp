@@ -73,8 +73,10 @@ pnlSettingsNmos::~pnlSettingsNmos()
 
 void pnlSettingsNmos::OnlstNodeSelected(wxCommandEvent& event)
 {
+    #ifdef __NMOS__
     Settings::Get().Write("NMOS", "Node", event.GetInt());
     m_plstClient->Enable(event.GetInt() != NmosManager::NODE_OFF);
+    #endif
 }
 
 void pnlSettingsNmos::OnlstClientSelected(wxCommandEvent& event)

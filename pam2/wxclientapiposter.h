@@ -6,69 +6,69 @@
 #include "clientapi.h"
 #include <list>
 
-class wxClientApiPoster : public ClientApiPoster
+class wxClientApiPoster : public pml::nmos::ClientApiPoster
 {
     public:
         wxClientApiPoster(wxEvtHandler* pHandler);
-        virtual ~wxClientApiPoster();
+        ~wxClientApiPoster();
 
 
     protected:
-        virtual void ModeChanged(bool bQueryApi);
+        void ModeChanged(bool bQueryApi) override;
 
         /** @brief called when one or more Self resources that match a subscribed query are added, updated or removed
         *   @param lstNodesAdded a list of Selfs that have been added
         *   @param lstNodesUpdated a list of Selfs that have been updated
         *   @param lstNodesRemoved a list of Selfs that have been removed
         **/
-        virtual void NodeChanged(const std::list<std::shared_ptr<Self> >& lstNodesAdded, const std::list<std::shared_ptr<Self> >& lstNodesUpdated, const std::list<std::shared_ptr<Self> >& lstNodesRemoved);
+        void NodeChanged(const std::list<std::shared_ptr<pml::nmos::Self> >& lstNodesAdded, const std::list<std::shared_ptr<pml::nmos::Self> >& lstNodesUpdated, const std::list<std::shared_ptr<pml::nmos::Self> >& lstNodesRemoved) override;
 
         /** @brief called when one or more Device resources that match a subscribed query are added, updated or removed
         *   @param lstNodesAdded a list of Devices that have been added
         *   @param lstNodesUpdated a list of Devices that have been updated
         *   @param lstNodesRemoved a list of Devices that have been removed
         **/
-        virtual void DeviceChanged(const std::list<std::shared_ptr<Device> >& lstDevicesAdded, const std::list<std::shared_ptr<Device> >& lstDevicesUpdated, const std::list<std::shared_ptr<Device> >& lstDevicesRemoved);
+        void DeviceChanged(const std::list<std::shared_ptr<pml::nmos::Device> >& lstDevicesAdded, const std::list<std::shared_ptr<pml::nmos::Device> >& lstDevicesUpdated, const std::list<std::shared_ptr<pml::nmos::Device> >& lstDevicesRemoved) override;
 
         /** @brief called when one or more Source resources that match a subscribed query are added, updated or removed
         *   @param lstNodesAdded a list of Sources that have been added
         *   @param lstNodesUpdated a list of Sources that have been updated
         *   @param lstNodesRemoved a list of Sources that have been removed
         **/
-        virtual void SourceChanged(const std::list<std::shared_ptr<Source> >& lstSourcesAdded, const std::list<std::shared_ptr<Source> >& lstSourcesUpdated, const std::list<std::shared_ptr<Source> >& lstSourcesRemoved);
+        void SourceChanged(const std::list<std::shared_ptr<pml::nmos::Source> >& lstSourcesAdded, const std::list<std::shared_ptr<pml::nmos::Source> >& lstSourcesUpdated, const std::list<std::shared_ptr<pml::nmos::Source> >& lstSourcesRemoved) override;
 
         /** @brief called when one or more Flow resources that match a subscribed query are added, updated or removed
         *   @param lstNodesAdded a list of Flows that have been added
         *   @param lstNodesUpdated a list of Flows that have been updated
         *   @param lstNodesRemoved a list of Flows that have been removed
         **/
-        virtual void FlowChanged(const std::list<std::shared_ptr<Flow> >& lstFlowsAdded, const std::list<std::shared_ptr<Flow> >& lstFlowsUpdated, const std::list<std::shared_ptr<Flow> >& lstFlowsRemoved);
+        void FlowChanged(const std::list<std::shared_ptr<pml::nmos::Flow> >& lstFlowsAdded, const std::list<std::shared_ptr<pml::nmos::Flow> >& lstFlowsUpdated, const std::list<std::shared_ptr<pml::nmos::Flow> >& lstFlowsRemoved) override;
 
         /** @brief called when one or more Sender resources that match a subscribed query are added, updated or removed
         *   @param lstNodesAdded a list of Senders that have been added
         *   @param lstNodesUpdated a list of Senders that have been updated
         *   @param lstNodesRemoved a list of Senders that have been removed
         **/
-        virtual void SenderChanged(const std::list<std::shared_ptr<Sender> >& lstSendersAdded, const std::list<std::shared_ptr<Sender> >& lstSendersUpdated, const std::list<std::shared_ptr<Sender> >& lstSendersRemoved);
+        void SenderChanged(const std::list<std::shared_ptr<pml::nmos::SenderBase> >& lstSendersAdded, const std::list<std::shared_ptr<pml::nmos::SenderBase> >& lstSendersUpdated, const std::list<std::shared_ptr<pml::nmos::SenderBase> >& lstSendersRemoved) override;
 
         /** @brief called when one or more Receiver resources that match a subscribed query are added, updated or removed
         *   @param lstNodesAdded a list of Receivers that have been added
         *   @param lstNodesUpdated a list of Receivers that have been updated
         *   @param lstNodesRemoved a list of Receivers that have been removed
         **/
-        virtual void ReceiverChanged(const std::list<std::shared_ptr<Receiver> >& lstReceiversAdded, const std::list<std::shared_ptr<Receiver> >& lstReceiversUpdated, const std::list<std::shared_ptr<Receiver> >& lstReceiversRemoved);
+        void ReceiverChanged(const std::list<std::shared_ptr<pml::nmos::ReceiverBase> >& lstReceiversAdded, const std::list<std::shared_ptr<pml::nmos::ReceiverBase> >& lstReceiversUpdated, const std::list<std::shared_ptr<pml::nmos::ReceiverBase> >& lstReceiversRemoved) override;
 
         /** @brief Called when when a query is subscibed (either with the query node or in p2p mode)
         *   @param sSubscriptionId the return id of the subscription. On failure this will be an empty string
         *   @param nResource the nmos resource type we are querying
         *   @param sQuery the query string if any
         **/
-        virtual void QuerySubscription(const std::string& sSubscriptionId, int nResource, const std::string& sQuery);
+        void QuerySubscription(const std::string& sSubscriptionId, int nResource, const std::string& sQuery) override;
 
         /** @brief Called when a query subscritption is removed
         *   @param sSubscriptionId the id of the remove subscription
         **/
-        virtual void QuerySubscriptionRemoved(const std::string& sSubscriptionId);
+        void QuerySubscriptionRemoved(const std::string& sSubscriptionId) override;
 
 
         /** @brief Called when a ClientApi::Subscribe or ClientApi::Unsubscribe gets an answer from the target webserver
@@ -76,7 +76,7 @@ class wxClientApiPoster : public ClientApiPoster
         *   @param sResonse on success this will contain the uuId of the Sender, on failure this will contain a message with the reason for failure
         *   @param sResourceId contains the uuId of the Receiver
         **/
-        virtual void RequestTargetResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId);
+        void RequestTargetResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId) override;
 
 
         /** @brief Called when a ClientAPI::PatchSenderStaged gets an answer for the target webserver
@@ -84,14 +84,14 @@ class wxClientApiPoster : public ClientApiPoster
         *   @param sResonse on success this will contain the raw json, on failure this will contain a message with the reason for failure
         *   @param sResourceId contains the uuId of the Sender
         **/
-        virtual void RequestPatchSenderResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId);
+        void RequestPatchSenderResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId) override;
 
         /** @brief Called when a ClientAPI::PatchReceiverStaged gets an answer for the target webserver
         *   @param nResult the http result code
         *   @param sResonse on success this will contain the raw json, on failure this will contain a message with the reason for failure
         *   @param sResourceId contains the uuId of the Sender
         **/
-        virtual void RequestPatchReceiverResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId);
+        void RequestPatchReceiverResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId) override;
 
         /** @brief Called when a ClientAPI::Connect or ClientApi::Disconnect finishes
         *   @param sSenderId the uuid of the Sender that has been asked to be connected to
@@ -99,42 +99,42 @@ class wxClientApiPoster : public ClientApiPoster
         *   @param bSuccess true if the connection has been made, else false
         *   @param sResponse on failure this will contain a message describing the fault. On success it will contain the staged state of the receiver
         **/
-        virtual void RequestConnectResult(const std::string& sSenderId, const std::string& sReceiverId, bool bSuccess, const std::string& sResponse);
+        void RequestConnectResult(const std::string& sSenderId, const std::string& sReceiverId, bool bSuccess, const std::string& sResponse) override;
 
         /** @brief Called when a ClientAPI::RequestSenderStaged gets an answer for the target webserver
         *   @param nResult the http result code
         *   @param sResonse on success this will contain the raw json, on failure this will contain a message with the reason for failure
         *   @param sResourceId contains the uuId of the Sender
         **/
-        virtual void RequestGetSenderStagedResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId);
+        void RequestGetSenderStagedResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId) override;
 
         /** @brief Called when a ClientAPI::RequestSenderActive gets an answer for the target webserver
         *   @param nResult the http result code
         *   @param sResonse on success this will contain the raw json, on failure this will contain a message with the reason for failure
         *   @param sResourceId contains the uuId of the Sender
         **/
-        virtual void RequestGetSenderActiveResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId);
+        void RequestGetSenderActiveResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId) override;
 
         /** @brief Called when a ClientAPI::RequestSenderTransportFile gets an answer for the target webserver
         *   @param nResult the http result code
         *   @param sResonse on success this will contain the raw sdp, on failure this will contain a message with the reason for failure
         *   @param sResourceId contains the uuId of the Sender
         **/
-        virtual void RequestGetSenderTransportFileResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId);
+        void RequestGetSenderTransportFileResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId) override;
 
         /** @brief Called when a ClientAPI::RequestReceiverStaged gets an answer for the target webserver
         *   @param nResult the http result code
         *   @param sResonse on success this will contain the raw json, on failure this will contain a message with the reason for failure
         *   @param sResourceId contains the uuId of the Receiver
         **/
-        virtual void RequestGetReceiverStagedResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId);
+        void RequestGetReceiverStagedResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId) override;
 
         /** @brief Called when a ClientAPI::RequestReceiverActive gets an answer for the target webserver
         *   @param nResult the http result code
         *   @param sResonse on success this will contain the raw json, on failure this will contain a message with the reason for failure
         *   @param sResourceId contains the uuId of the Receiver
         **/
-        virtual void RequestGetReceiverActiveResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId);
+        void RequestGetReceiverActiveResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId) override;
     private:
         wxEvtHandler* m_pHandler;
 
@@ -166,7 +166,7 @@ public:
     /** Creates a copy of the wxNmosClientEvent
     *   @return <i>wxNmosClientEvent</i>
     **/
-    virtual wxEvent *Clone() const { return new wxNmosClientCurlEvent(*this); }
+    wxEvent *Clone() const { return new wxNmosClientCurlEvent(*this); }
 
     unsigned long GetResult() const;
     const wxString& GetResponse() const;

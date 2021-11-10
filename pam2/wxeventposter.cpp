@@ -23,7 +23,7 @@ m_pHandler(pHandler)
 
 }
 
-void wxEventPoster::InstanceResolved(std::shared_ptr<dnsInstance> pInstance)
+void wxEventPoster::InstanceResolved(std::shared_ptr<pml::nmos::dnsInstance> pInstance)
 {
     if(m_pHandler)
     {
@@ -34,7 +34,7 @@ void wxEventPoster::InstanceResolved(std::shared_ptr<dnsInstance> pInstance)
     }
 }
 
-void wxEventPoster::InstanceRemoved(std::shared_ptr<dnsInstance> pInstance)
+void wxEventPoster::InstanceRemoved(std::shared_ptr<pml::nmos::dnsInstance> pInstance)
 {
     if(m_pHandler)
     {
@@ -51,7 +51,7 @@ void wxEventPoster::AllForNow(const std::string& sService)
     {
         wxLogDebug(wxT("All for now"));
         wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_MDNS_ALLFORNOW);
-        pEvent->SetString(wxString::FromUTF8(sService.c_str()));
+        pEvent->SetString(sService);
         wxQueueEvent(m_pHandler, pEvent);
     }
 }
@@ -73,7 +73,7 @@ void wxEventPoster::CurlDone(unsigned long nResult, const std::string& sResult, 
         wxLogDebug(wxT("Curl done"));
         wxNmosEvent* pEvent(new wxNmosEvent(wxEVT_NMOS_CURL_DONE));
         pEvent->SetInt(nResult);
-        pEvent->SetString(wxString::FromUTF8(sResult.c_str()));
+        pEvent->SetString(sResult);
         pEvent->SetExtraLong(nUserType);
         wxQueueEvent(m_pHandler, pEvent);
     }
@@ -95,31 +95,31 @@ void wxEventPoster::Target(const std::string& sReceiverId, const std::string& sT
     if(m_pHandler)
     {
         wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_TARGET);
-        pEvent->SetString(wxString::FromUTF8(sReceiverId.c_str()));
+        pEvent->SetString(sReceiverId);
         pEvent->SetTransportFile(sTransportFile);
         pEvent->SetInt(nPort);
         wxQueueEvent(m_pHandler, pEvent);
     }
 }
 
-void wxEventPoster::PatchSender(const std::string& sSenderId, const connectionSender& conPatch, unsigned short nPort)
+void wxEventPoster::PatchSender(const std::string& sSenderId, const pml::nmos::connectionSender& conPatch, unsigned short nPort)
 {
     if(m_pHandler)
     {
         wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_PATCH_SENDER);
-        pEvent->SetString(wxString::FromUTF8(sSenderId.c_str()));
+        pEvent->SetString(sSenderId);
         pEvent->SetSenderConnection(conPatch);
         pEvent->SetInt(nPort);
         wxQueueEvent(m_pHandler, pEvent);
     }
 }
 
-void wxEventPoster::PatchReceiver(const std::string& sReceiverId, const connectionReceiver& conPatch, unsigned short nPort)
+void wxEventPoster::PatchReceiver(const std::string& sReceiverId, const pml::nmos::connectionReceiver& conPatch, unsigned short nPort)
 {
     if(m_pHandler)
     {
         wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_PATCH_RECEIVER);
-        pEvent->SetString(wxString::FromUTF8(sReceiverId.c_str()));
+        pEvent->SetString(sReceiverId);
         pEvent->SetReceiverConnection(conPatch);
         pEvent->SetInt(nPort);
         wxQueueEvent(m_pHandler, pEvent);
@@ -131,7 +131,7 @@ void wxEventPoster::SenderActivated(const std::string& sSenderId)
     if(m_pHandler)
     {
         wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_ACTIVATE_SENDER);
-        pEvent->SetString(wxString::FromUTF8(sSenderId.c_str()));
+        pEvent->SetString(sSenderId);
         wxQueueEvent(m_pHandler, pEvent);
     }
 }
@@ -141,7 +141,7 @@ void wxEventPoster::ReceiverActivated(const std::string& sReceiverId)
     if(m_pHandler)
     {
         wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_ACTIVATE_RECEIVER);
-        pEvent->SetString(wxString::FromUTF8(sReceiverId.c_str()));
+        pEvent->SetString(sReceiverId);
         wxQueueEvent(m_pHandler, pEvent);
     }
 }
@@ -172,22 +172,22 @@ const wxString& wxNmosEvent::GetTransportFile() const
     return m_sTransportFile;
 }
 
-void wxNmosEvent::SetSenderConnection(const connectionSender& con)
+void wxNmosEvent::SetSenderConnection(const pml::nmos::connectionSender& con)
 {
     m_conSender = con;
 }
 
-const connectionSender& wxNmosEvent::GetSenderConnection() const
+const pml::nmos::connectionSender& wxNmosEvent::GetSenderConnection() const
 {
     return m_conSender;
 }
 
-void wxNmosEvent::SetReceiverConnection(const connectionReceiver& con)
+void wxNmosEvent::SetReceiverConnection(const pml::nmos::connectionReceiver& con)
 {
     m_conReceiver = con;
 }
 
-const connectionReceiver& wxNmosEvent::GetReceiverConnection() const
+const pml::nmos::connectionReceiver& wxNmosEvent::GetReceiverConnection() const
 {
     return m_conReceiver;
 }
@@ -223,12 +223,12 @@ int wxNmosEvent::GetCurlType() const
 }
 
 
-void wxNmosEvent::SetDnsInstance(std::shared_ptr<dnsInstance> pInstance)
+void wxNmosEvent::SetDnsInstance(std::shared_ptr<pml::nmos::dnsInstance> pInstance)
 {
     m_pDnsInstance = pInstance;
 }
 
-const std::shared_ptr<dnsInstance> wxNmosEvent::GetDnsInstance() const
+const std::shared_ptr<pml::nmos::dnsInstance> wxNmosEvent::GetDnsInstance() const
 {
     return m_pDnsInstance;
 }
