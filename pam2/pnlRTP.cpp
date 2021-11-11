@@ -423,9 +423,8 @@ void pnlRTP::OnDiscovery(wxCommandEvent& event)
 
     wxClientDC dc(this);
     dc.SetFont(m_pList->GetFont());
-    LogElement* pElement(new LogElement(dc, GetClientSize().x, event.GetString(), 8));  //@todo replace with an actual value
+    LogElement* pElement(new LogElement(dc, GetClientSize().x, event.GetString(), 8, true));  //@todo replace with an actual value
     m_pList->AddElement(pElement);
-    pElement->Filter(255);
     m_pList->Refresh();
 
     m_nDiscovered+= event.GetInt();
@@ -509,9 +508,8 @@ void pnlRTP::OnbtnStartDiscoveryClick(wxCommandEvent& event)
 
         wxClientDC dc(this);
         dc.SetFont(m_pList->GetFont());
-        LogElement* pElement(new LogElement(dc, GetClientSize().x, wxT("Discovery started"), 1));
+        auto pElement  = new LogElement(dc, GetClientSize().x, wxT("Discovery started"), 1, true);
         m_pList->AddElement(pElement);
-        pElement->Filter(255);
         m_pList->Refresh();
         m_pList->Update();
 
@@ -524,9 +522,8 @@ void pnlRTP::OnbtnStartDiscoveryClick(wxCommandEvent& event)
     {
         wxClientDC dc(this);
         dc.SetFont(m_pList->GetFont());
-        LogElement* pElement(new LogElement(dc, GetClientSize().x, wxT("Discovery stopped"), 1));
+        auto pElement  = new LogElement(dc, GetClientSize().x, wxT("Discovery stopped"), 1, true);
         m_pList->AddElement(pElement);
-        pElement->Filter(255);
         m_pList->Refresh();
 
 
@@ -621,7 +618,7 @@ void pnlRTP::ImportSources(const wxString& sFileName)
     iniManager ini;
     if(ini.ReadIniFile(sFileName))
     {
-        const iniSection* pSection = ini.GetSection("Import");
+        auto pSection = ini.GetSection("Import");
         if(pSection)
         {
             for(auto itData = pSection->GetDataBegin(); itData != pSection->GetDataEnd(); ++itData)

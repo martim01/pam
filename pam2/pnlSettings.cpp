@@ -247,9 +247,9 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_plstInput->AddButton(wxT("Soundcard"));
     m_plstInput->AddButton(wxT("AoIP"));
     m_plstInput->AddButton(wxT("AoIP Manual"));
-    #ifdef __NMOS__
+//    #ifdef __NMOS__
     m_nNmosButton = m_plstInput->AddButton("NMOS");
-    #endif
+ //   #endif
     m_plstInput->Thaw();
 
 

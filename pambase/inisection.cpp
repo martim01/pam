@@ -23,10 +23,10 @@
 
 #include <wx/log.h>
 
-using namespace std;
 
-iniSection::iniSection(const wxString& sSection)
-: m_sSectionName(sSection)
+iniSection::iniSection(const wxString& sSection, unsigned long nLine)
+: m_sSectionName(sSection),
+m_nLine(nLine)
 {
 
 }
@@ -38,49 +38,10 @@ iniSection::~iniSection()
 
 
 
-
-/*!
-    \fn iniSection::ReadSection(std::ifstream* pif)
-	reads lines from ifstream* pif until the end of the ini section or end of file
-	returns the last line it read
- */
-wxString iniSection::ReadSection(std::ifstream* pif)
-{
-   //we loop through the ini file until we hit the end, or a new section
-	string sLine;
-	while(!pif->eof())
-	{
-		getline(*pif,sLine,'\n');
-
-
-		if(sLine[0] == '#' || sLine.size() < 2 || sLine[0] == ';')	//comment
-			continue;
-
-		if(sLine[0] == '[')	// new section
-			return wxString::FromUTF8(sLine.c_str());
-
-		size_t nEqualPos = sLine.find("=");
-		if(nEqualPos == std::string::npos)
-		{
-			return wxT("");
-		}
-
-		size_t nCommentPos = sLine.find("#",nEqualPos);
-		if(nCommentPos == std::string::npos)
-			nCommentPos = sLine.size();
-
-		string sKey = sLine.substr(0,nEqualPos);
-		m_mSectionData[wxString::FromUTF8(sKey.c_str())] = wxString::FromUTF8(sLine.substr(nEqualPos+1, nCommentPos-(nEqualPos+1)).c_str());
-	}
-	return wxString::FromUTF8(sLine.c_str());
-    //return NULL_STRING;
-}
-
-
 /*!
     \fn iniSection::GetDataBegin()
  */
-std::map<wxString,wxString>::const_iterator iniSection::GetDataBegin() const
+mapIniData::const_iterator iniSection::GetDataBegin() const
 {
     return m_mSectionData.begin();
 }
@@ -88,7 +49,7 @@ std::map<wxString,wxString>::const_iterator iniSection::GetDataBegin() const
 /*!
     \fn iniSection::GetDataEnd()
  */
-std::map<wxString,wxString>::const_iterator iniSection::GetDataEnd() const
+mapIniData::const_iterator iniSection::GetDataEnd() const
 {
     return m_mSectionData.end();
 }
@@ -97,10 +58,10 @@ std::map<wxString,wxString>::const_iterator iniSection::GetDataEnd() const
 /*!
     \fn iniSection::GetString(const wxString& sKey, const wxString& sDefault)
  */
-const wxString& iniSection::GetString(const wxString& sKey, const wxString& sDefault)
+const wxString& iniSection::GetString(const wxString& sKey, const wxString& sDefault) const
 {
   	//does the key exist
-  	itIniData it = m_mSectionData.find(sKey);
+  	auto it = m_mSectionData.find(sKey);
 	if(it==m_mSectionData.end())
 		return sDefault;
 	return it->second;
@@ -109,10 +70,10 @@ const wxString& iniSection::GetString(const wxString& sKey, const wxString& sDef
 /*!
     \fn iniSection::GetInt(const wxString& sKey, int nDefault)
  */
-int iniSection::GetInt(const wxString& sKey, int nDefault)
+int iniSection::GetInt(const wxString& sKey, int nDefault) const
 {
   	//does the key exist
-  	itIniData it = m_mSectionData.find(sKey);
+  	auto it = m_mSectionData.find(sKey);
 	if(it==m_mSectionData.end())
 		return nDefault;
     long n = nDefault;
@@ -124,10 +85,10 @@ int iniSection::GetInt(const wxString& sKey, int nDefault)
 /*!
     \fn iniSection::GetString(const wxString& sKey, double dDefault)
  */
-double iniSection::GetDouble(const wxString& sKey, double dDefault)
+double iniSection::GetDouble(const wxString& sKey, double dDefault) const
 {
   	//does the key exist
-	itIniData it = m_mSectionData.find(sKey);
+	auto it = m_mSectionData.find(sKey);
 	if(it==m_mSectionData.end())
 		return dDefault;
     double d = dDefault;
@@ -153,16 +114,22 @@ void iniSection::WriteSection(std::ofstream* pof)
 	}
 }
 
-void iniSection::SetValue(const wxString& sKey, const wxString& sValue)
+void iniSection::SetValue(const wxString& sKey, wxString sValue)
 {
-	m_mSectionData[sKey] = sValue;
+    sValue.Trim();
+    auto insData = m_mSectionData.insert(std::make_pair(sKey, sValue));
+    if(insData.second == false)
+    {
+        insData.first->second = sValue;
+        //m_mSectionData[sKey] = sValue;
+    }
+
 }
 
-size_t iniSection::GetNumberOfEntries()
+size_t iniSection::GetNumberOfEntries() const
 {
     return m_mSectionData.size();
 }
-
 
 void iniSection::RemoveKey(const wxString& sKey)
 {

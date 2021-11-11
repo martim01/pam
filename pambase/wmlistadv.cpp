@@ -7,6 +7,8 @@
 #include "icons/left16.xpm"
 #include "icons/up16.xpm"
 #include "icons/down16.xpm"
+#include <algorithm>
+
 
 using namespace std;
 
@@ -135,7 +137,6 @@ void wmListAdv::SetSize(const wxSize& size)
 
 void wmListAdv::OnResizeElement(wxCommandEvent& event)
 {
-
     CreateRects();
     Refresh();
 }
@@ -261,12 +262,13 @@ void wmListAdv::OnLeftDown(wxMouseEvent& event)
     {
         for(list<advElement*>::iterator itButton = m_itTop; itButton != m_lstElements.end(); ++itButton)
         {
-            if((*itButton)->LeftDown(event) >=0)
+            if((*itButton)->IsShown() && (*itButton)->LeftDown(event) >=0)
             {
                 m_itDown = itButton;
                 m_timerHold.Start(50);
                 Refresh();
                 Update();
+                break;
             }
         }
     }
@@ -688,20 +690,29 @@ void wmListAdv::Draw(wxDC& dc, const std::list<advElement*>::iterator& itTop)
     {
         unsigned int nColumn(0);
         unsigned int nElements(0);
+        m_itLast = m_lstElements.end();
+
         for(list<advElement*>::iterator itButton = itTop; itButton != m_lstElements.end(); ++itButton)
         {
-            ++nElements;
-            DrawElement(dc, itButton);
-
-            //only draw to the end of the screen...
-            if((*itButton)->GetBottom() >= GetClientRect().GetBottom())
+            if((*itButton)->IsShown())
             {
-                m_itLast = itButton;
-                break;
+                if(m_itLast == m_lstElements.end())
+                {
+                    DrawElement(dc, itButton);
+                    ++nElements;
+                }
+                //only draw to the end of the screen...
+                if((*itButton)->GetBottom() >= GetClientRect().GetBottom())
+                {
+                    m_itLast = itButton;
+                    break;
+                }
+
             }
+
         }
 
-        double dPosition = static_cast<double>(nElements)/static_cast<double>(m_lstElements.size());
+        double dPosition = static_cast<double>(nElements)/static_cast<double>(std::count_if(m_lstElements.begin(), m_lstElements.end(), [](advElement* pElement){ return pElement->IsShown();}));
         dPosition *= static_cast<double>(GetClientSize().y);
         m_uiScroll.SetHeight(dPosition);
         m_uiScroll.Draw(dc, uiRect::BORDER_UP);
@@ -710,7 +721,6 @@ void wmListAdv::Draw(wxDC& dc, const std::list<advElement*>::iterator& itTop)
 
 void wmListAdv::DrawElement(wxDC& dc, const std::list<advElement*>::iterator& itButton)
 {
-
     (*itButton)->DrawMe(dc, (itButton==m_itSelected));
 }
 
@@ -1090,26 +1100,41 @@ void wmListAdv::CreateRects()
         return;
     }
 
-    int nTop = m_lstElements.front()->GetTop();
-    for(list<advElement*>::iterator itButton = m_lstElements.begin(); itButton != m_lstElements.end(); ++itButton)
+    int nTop = -1;
+    for(auto itButton = m_lstElements.begin(); itButton != m_lstElements.end(); ++itButton)
     {
-
-        if(nTop == 2 && m_nScrollAllowed == SCROLL_HORIZONTAL)   //first button on page
+        if((*itButton)->IsShown())
         {
-            m_setPages.insert(itButton);
-        }
-
-        (*itButton)->SetTop(nTop);
-        nTop += (*itButton)->GetHeight();
-        nTop += m_szGap.GetHeight();
-
-        //if we swipe then once we get to the bottom we create a new page
-        if(nTop >= GetClientRect().GetBottom())
-        {
-            if(m_nScrollAllowed == SCROLL_HORIZONTAL)
+            if(nTop == -1)
+            {
+                nTop = (*itButton)->GetTop();
+            }
+            if(nTop < 2)
             {
                 nTop = 2;
             }
+
+            if(nTop == 2 && m_nScrollAllowed == SCROLL_HORIZONTAL)   //first button on page
+            {
+                m_setPages.insert(itButton);
+            }
+
+            (*itButton)->SetTop(nTop);
+            nTop += (*itButton)->GetHeight();
+            nTop += m_szGap.GetHeight();
+
+            //if we swipe then once we get to the bottom we create a new page
+            if(nTop >= GetClientRect().GetBottom())
+            {
+                if(m_nScrollAllowed == SCROLL_HORIZONTAL)
+                {
+                    nTop = 2;
+                }
+            }
+        }
+        else
+        {
+            (*itButton)->SetTop(-200);
         }
     }
 }
@@ -1194,4 +1219,10 @@ void wmListAdv::WorkoutScrollPosition()
 
 
 
+}
+
+void wmListAdv::RecreateElements()
+{
+    CreateRects();
+    Refresh();
 }

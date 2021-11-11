@@ -32,6 +32,12 @@ NmosManager::NmosManager(pnlSettingsInputNmos* pPnl) :
     Bind(wxEVT_SETTING_CHANGED, &NmosManager::OnSettingChanged, this);
 }
 
+NmosManager::~NmosManager()
+{
+    StopClient();
+    StopNode();
+}
+
 
 
 void NmosManager::Setup()
@@ -119,7 +125,7 @@ void NmosManager::Setup()
     Bind(wxEVT_NMOS_CLIENTCURL_SUBSCRIBE, &NmosManager::OnNmosSubscribeRequest, this);
 
 
-    //StartNode(Settings::Get().Read("NMOS", "Node",0));
+    StartNode(Settings::Get().Read("NMOS", "Node",0));
     StartClient(Settings::Get().Read("NMOS", "Client", 0));
 }
 

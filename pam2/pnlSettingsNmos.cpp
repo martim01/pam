@@ -59,7 +59,7 @@ pnlSettingsNmos::pnlSettingsNmos(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_plstClient->AddButton("IS04 Connection");
 	m_plstClient->AddButton("IS05 Connection");
 
-    m_plstNode->SelectButton(Settings::Get().Read("NMOS", "NODE", 0));
+    m_plstNode->SelectButton(Settings::Get().Read("NMOS", "Node", 0));
     m_plstClient->SelectButton(Settings::Get().Read("NMOS", "Client", 0));
 
 }

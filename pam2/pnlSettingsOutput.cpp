@@ -362,8 +362,8 @@ void pnlSettingsOutput::OnedtRTPPortText(wxCommandEvent& event)
 void pnlSettingsOutput::OnbtnRTSPClick(wxCommandEvent& event)
 {
     wxArrayString asButtons;
-    multimap<wxString, wxString> mmButtons(Settings::Get().GetInterfaces());
-    for(multimap<wxString, wxString>::const_iterator itInterface = mmButtons.begin(); itInterface != mmButtons.end(); ++itInterface)
+
+    for(multimap<wxString, wxString>::const_iterator itInterface = Settings::Get().GetInterfaces().begin(); itInterface != Settings::Get().GetInterfaces().end(); ++itInterface)
     {
         asButtons.Add(itInterface->first);
     }
@@ -373,8 +373,8 @@ void pnlSettingsOutput::OnbtnRTSPClick(wxCommandEvent& event)
     if(aDlg.ShowModal()== wxID_OK)
     {
         m_pbtnRTSP->SetLabel(aDlg.m_sSelected);
-        Settings::Get().Write(wxT("Server"), wxT("RTSP_Interface"), mmButtons.lower_bound(aDlg.m_sSelected)->first);
-        Settings::Get().Write(wxT("Server"), wxT("RTSP_Address"), mmButtons.lower_bound(aDlg.m_sSelected)->second);
+        Settings::Get().Write(wxT("Server"), wxT("RTSP_Interface"), Settings::Get().GetInterfaces().lower_bound(aDlg.m_sSelected)->first);
+        Settings::Get().Write(wxT("Server"), wxT("RTSP_Address"), Settings::Get().GetInterfaces().lower_bound(aDlg.m_sSelected)->second);
 
     }
 }

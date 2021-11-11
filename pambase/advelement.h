@@ -9,7 +9,7 @@
 class PAMBASE_IMPEXPORT advElement : public wxEvtHandler
 {
     public:
-        advElement(const wxRect& rect=wxRect(0,0,0,0))  :  m_nIndex(0), m_pParent(0), m_rectEnclosing(rect), m_sizeMin(rect.GetWidth(), rect.GetHeight()), m_sizeMax(rect.GetWidth(), rect.GetHeight()), m_nHoldCount(0)
+        advElement(const wxRect& rect=wxRect(0,0,0,0), bool bShow=true)  :  m_nIndex(0), m_pParent(0), m_rectEnclosing(rect), m_sizeMin(rect.GetWidth(), rect.GetHeight()), m_sizeMax(rect.GetWidth(), rect.GetHeight()), m_nHoldCount(0), m_bShow(bShow)
         {
             m_itDown = m_mHitRects.end();
             m_itSelected = m_mHitRects.end();
@@ -180,6 +180,9 @@ class PAMBASE_IMPEXPORT advElement : public wxEvtHandler
 
         void EnableSubElement(size_t nSub, bool bEnable);
 
+        bool IsShown() const {return m_bShow;}
+        void Show(bool bShow) { m_bShow = bShow;}
+
     protected:
 
         static const unsigned int ELEMENT_DISABLED = 0;
@@ -205,6 +208,7 @@ class PAMBASE_IMPEXPORT advElement : public wxEvtHandler
         wxSize m_sizeMax;
 
         unsigned int m_nHoldCount;
+        bool m_bShow;
 
         std::map<unsigned int, uiRect> m_mHitRects;
         std::map<unsigned int, uiRect>::iterator m_itDown;

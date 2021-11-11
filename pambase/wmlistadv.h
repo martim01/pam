@@ -145,6 +145,8 @@ class PAMBASE_IMPEXPORT wmListAdv : public pmControl
         std::list<advElement*>::const_iterator GetElementBegin() const;
         std::list<advElement*>::const_iterator GetElementEnd() const;
 
+        void RecreateElements();
+
         static const unsigned short SCROLL_NONE     = 0;        ///< @brief wmList may not be scrolled
         static const unsigned short SCROLL_VERTICAL = 1;        ///< @brief wmList may be scrolled vertically
         static const unsigned short SCROLL_HORIZONTAL = 2;      ///< @brief wmlist may be swiped left and right

@@ -1,12 +1,14 @@
 #include "pnlLog.h"
 #include <wx/tokenzr.h>
 #include "settings.h"
+#include "settingevent.h"
 #include "pnlLogControl.h"
 #include "wxlogoutput.h"
 #include <wx/log.h>
 #include "logelement.h"
 #include <wx/dcclient.h>
 #include "wxlogoutput.h"
+#include "log.h"
 
 //(*InternalHeaders(pnlLog)
 #include <wx/intl.h>
@@ -21,16 +23,16 @@ BEGIN_EVENT_TABLE(pnlLog,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlLog::pnlLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size) : m_pControl(0), m_nLogLevel(0)
+pnlLog::pnlLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size) : m_pControl(0), m_nLogLevel(pml::LOG_TRACE)
 {
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
-	SetBackgroundColour(wxColour(0,0,0));
-	m_pLogList = new wmListAdv(this, wxNewId(), wxPoint(0,0), wxSize(600,480), 0, wmListAdv::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(0,1));
+	SetBackgroundColour(wxColour(0,0,0)); 9nji;	m_pLogList = new wmListAdv(this, wxNewId(), wxPoint(0,0), wxSize(600,480), 0, wmListAdv::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(0,1));
 	m_pLogList->SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT));
 	m_pLogList->SetBackgroundColour(wxColour(100,100,180));
 	//*)
 
-    m_nFilter = 15;
+	Settings::Get().AddHandler("Log","Level",this);
+	Bind(wxEVT_SETTING_CHANGED, &pnlLog::OnSettingChanged, this);
 
 
     m_nLogOutput = pml::LogStream::AddOutput(std::make_unique<wxLogOutput>(this));
@@ -89,28 +91,30 @@ void pnlLog::OnLog(wxCommandEvent& event)
     wxClientDC dc(this);
     dc.SetFont(m_pLogList->GetFont());
 
-    if(event.GetInt() >= m_nLogLevel)
-    {
-        LogElement* pElement(new LogElement(dc, GetClientSize().x, event.GetString(), event.GetInt()));  //@todo replace log type with something sensible
-        m_pLogList->AddElement(pElement);
-        pElement->Filter(m_nFilter);
-        m_pLogList->Refresh();
+    m_pLogList->AddElement(new LogElement(dc, GetClientSize().x, event.GetString(), event.GetInt(), event.GetInt() >= m_nLogLevel));
+    m_pLogList->Refresh();
 
-        if(!m_bScrollLock)
-        {
-            End();
-        }
+    if(!m_bScrollLock)
+    {
+        End();
     }
 
 }
 
 void pnlLog::Filter(int nFilter)
 {
-    m_pLogList->Freeze();
+    m_nLogLevel = nFilter;
     for(list<advElement*>::const_iterator itElement = m_pLogList->GetElementBegin(); itElement != m_pLogList->GetElementEnd(); ++itElement)
     {
         dynamic_cast<LogElement*>((*itElement))->Filter(nFilter);
     }
-    m_pLogList->Thaw();
-    m_pLogList->Refresh();
+    m_pLogList->RecreateElements();
+}
+
+void pnlLog::OnSettingChanged(SettingEvent& event)
+{
+    if(event.GetSection()=="Log" && event.GetKey()=="Level")
+    {
+        Filter(event.GetValue(3L));
+    }
 }

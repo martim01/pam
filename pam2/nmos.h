@@ -32,6 +32,7 @@ class NmosManager : public wxEvtHandler
 {
     public:
         NmosManager(pnlSettingsInputNmos* pPnl);
+        ~NmosManager();
 
         void Setup();
         void StartNode(int nMode);

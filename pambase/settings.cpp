@@ -98,9 +98,9 @@ bool Settings::Write(const wxString& sSection, const wxString& sKey, double dVal
 }
 
 
-bool Settings::GetSectionDataBegin(const wxString& sSection, std::map<wxString, wxString>::const_iterator& itBegin) const
+bool Settings::GetSectionDataBegin(const wxString& sSection, std::map<wxString, wxString>::const_iterator& itBegin)
 {
-    const iniSection* pSection = m_iniManager.GetSection(sSection);
+    auto pSection = m_iniManager.GetSection(sSection);
     if(pSection)
     {
         itBegin = pSection->GetDataBegin();
@@ -109,9 +109,9 @@ bool Settings::GetSectionDataBegin(const wxString& sSection, std::map<wxString, 
     return false;
 }
 
-bool Settings::GetSectionDataEnd(const wxString& sSection, std::map<wxString, wxString>::const_iterator& itEnd) const
+bool Settings::GetSectionDataEnd(const wxString& sSection, std::map<wxString, wxString>::const_iterator& itEnd)
 {
-    const iniSection* pSection = m_iniManager.GetSection(sSection);
+    auto pSection = m_iniManager.GetSection(sSection);
     if(pSection)
     {
         itEnd = pSection->GetDataEnd();
@@ -163,7 +163,7 @@ bool Settings::RemoveSection(const wxString& sSection)
 
 void Settings::ResetFile()
 {
-    m_iniManager.RemoveAllSections();
+    m_iniManager.DeleteSections();
     m_iniManager.SetSectionValue("Discovery", "RTSP","1");
     m_iniManager.SetSectionValue("Discovery", "SAP","0");
     m_iniManager.SetSectionValue("General", "ShowOptions","0");
