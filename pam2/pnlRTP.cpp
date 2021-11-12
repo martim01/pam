@@ -423,8 +423,7 @@ void pnlRTP::OnDiscovery(wxCommandEvent& event)
 
     wxClientDC dc(this);
     dc.SetFont(m_pList->GetFont());
-    LogElement* pElement(new LogElement(dc, GetClientSize().x, event.GetString(), 8, true));  //@todo replace with an actual value
-    m_pList->AddElement(pElement);
+    m_pList->AddElement(std::make_shared<LogElement>(dc, GetClientSize().x, event.GetString(), 8), true, nullptr);
     m_pList->Refresh();
 
     m_nDiscovered+= event.GetInt();
@@ -508,8 +507,7 @@ void pnlRTP::OnbtnStartDiscoveryClick(wxCommandEvent& event)
 
         wxClientDC dc(this);
         dc.SetFont(m_pList->GetFont());
-        auto pElement  = new LogElement(dc, GetClientSize().x, wxT("Discovery started"), 1, true);
-        m_pList->AddElement(pElement);
+        m_pList->AddElement(std::make_shared<LogElement>(dc, GetClientSize().x, "Discovery started", 1), true, nullptr);
         m_pList->Refresh();
         m_pList->Update();
 
@@ -522,8 +520,7 @@ void pnlRTP::OnbtnStartDiscoveryClick(wxCommandEvent& event)
     {
         wxClientDC dc(this);
         dc.SetFont(m_pList->GetFont());
-        auto pElement  = new LogElement(dc, GetClientSize().x, wxT("Discovery stopped"), 1, true);
-        m_pList->AddElement(pElement);
+        m_pList->AddElement(std::make_shared<LogElement>(dc, GetClientSize().x, "Discovery stopped", 1), true, nullptr);
         m_pList->Refresh();
 
 

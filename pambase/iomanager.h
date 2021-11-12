@@ -79,7 +79,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         void InitGeneratorNoise();
         void InitGeneratorPlugin(const wxString& sPlugin);
 
-        void InitAudioInputDevice();
+        void InitAudioInputDevice(bool bStart =  false);
         void InitAudioOutputDevice();
         void OpenSoundcardDevice(unsigned long nOutputSampleRate);
 

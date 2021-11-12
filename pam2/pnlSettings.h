@@ -186,7 +186,7 @@ class pnlSettings: public wxPanel
 		void ShowRTPDefined();
 
 
-
+        void EnableInputButtons(int nMode);
         void ShowPagingButtons();
 
 

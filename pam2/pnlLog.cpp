@@ -26,11 +26,13 @@ END_EVENT_TABLE()
 pnlLog::pnlLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size) : m_pControl(0), m_nLogLevel(pml::LOG_TRACE)
 {
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
-	SetBackgroundColour(wxColour(0,0,0)); 9nji;	m_pLogList = new wmListAdv(this, wxNewId(), wxPoint(0,0), wxSize(600,480), 0, wmListAdv::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(0,1));
+	SetBackgroundColour(wxColour(0,0,0));
+	m_pLogList = new wmListAdv(this, wxNewId(), wxPoint(0,0), wxSize(600,480), 0, wmListAdv::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(0,1));
 	m_pLogList->SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT));
 	m_pLogList->SetBackgroundColour(wxColour(100,100,180));
 	//*)
 
+	m_nLogLevel = Settings::Get().Read("Log", "Level", pml::LOG_INFO);
 	Settings::Get().AddHandler("Log","Level",this);
 	Bind(wxEVT_SETTING_CHANGED, &pnlLog::OnSettingChanged, this);
 
@@ -91,7 +93,10 @@ void pnlLog::OnLog(wxCommandEvent& event)
     wxClientDC dc(this);
     dc.SetFont(m_pLogList->GetFont());
 
-    m_pLogList->AddElement(new LogElement(dc, GetClientSize().x, event.GetString(), event.GetInt(), event.GetInt() >= m_nLogLevel));
+    m_pLogList->AddElement(std::make_shared<LogElement>(dc, GetClientSize().x, event.GetString(), event.GetInt()), true, [this](std::shared_ptr<advElement> pElement)->bool{
+                                                       auto pLogElement = std::dynamic_pointer_cast<LogElement>(pElement);
+                                                       return (pLogElement && pLogElement->GetMessageLevel() >= m_nLogLevel);
+                                                       });
     m_pLogList->Refresh();
 
     if(!m_bScrollLock)
@@ -104,11 +109,11 @@ void pnlLog::OnLog(wxCommandEvent& event)
 void pnlLog::Filter(int nFilter)
 {
     m_nLogLevel = nFilter;
-    for(list<advElement*>::const_iterator itElement = m_pLogList->GetElementBegin(); itElement != m_pLogList->GetElementEnd(); ++itElement)
-    {
-        dynamic_cast<LogElement*>((*itElement))->Filter(nFilter);
-    }
-    m_pLogList->RecreateElements();
+    m_pLogList->Filter([this](std::shared_ptr<advElement> pElement)->bool{
+                                                       auto pLogElement = std::dynamic_pointer_cast<LogElement>(pElement);
+                                                       return (pLogElement && pLogElement->GetMessageLevel() >= m_nLogLevel);
+                                                       });
+
 }
 
 void pnlLog::OnSettingChanged(SettingEvent& event)

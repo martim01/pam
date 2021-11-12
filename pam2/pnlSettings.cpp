@@ -247,9 +247,10 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_plstInput->AddButton(wxT("Soundcard"));
     m_plstInput->AddButton(wxT("AoIP"));
     m_plstInput->AddButton(wxT("AoIP Manual"));
-//    #ifdef __NMOS__
+    #ifdef __NMOS__
     m_nNmosButton = m_plstInput->AddButton("NMOS");
- //   #endif
+    EnableInputButtons(Settings::Get().Read("NMOS", "Node", 0));
+    #endif
     m_plstInput->Thaw();
 
 
@@ -295,25 +296,32 @@ void pnlSettings::OnSettingChanged(SettingEvent& event)
     #ifdef __NMOS__
     if(event.GetSection().CmpNoCase("NMOS") == 0 && event.GetKey() == "Node")
     {
-        switch(event.GetValue((long)NmosManager::NODE_OFF))
-        {
-            case NmosManager::NODE_OFF:
-            case NmosManager::NODE_SENDER:
-                for(size_t i = 0; i < m_plstInput->GetItemCount(); i++)
-                {
-                    m_plstInput->EnableButton(i, i!=m_nNmosButton);
-                }
-                m_plstInput->SelectButton(0);
-                break;
-            case NmosManager::NODE_RECEIVER:
-            case NmosManager::NODE_BOTH:
-                for(size_t i = 0; i < m_plstInput->GetItemCount(); i++)
-                {
-                    m_plstInput->EnableButton(i, i==m_nNmosButton);
-                }
-                m_plstInput->SelectButton(m_nNmosButton);
-                break;
-        }
+        EnableInputButtons(event.GetValue(0L));
+    }
+    #endif
+}
+
+void pnlSettings::EnableInputButtons(int nMode)
+{
+    #ifdef __NMOS__
+    switch(nMode)
+    {
+        case NmosManager::NODE_OFF:
+        case NmosManager::NODE_SENDER:
+            for(size_t i = 0; i < m_plstInput->GetItemCount(); i++)
+            {
+                m_plstInput->EnableButton(i, i!=m_nNmosButton);
+            }
+            m_plstInput->SelectButton(0);
+            break;
+        case NmosManager::NODE_RECEIVER:
+        case NmosManager::NODE_BOTH:
+            for(size_t i = 0; i < m_plstInput->GetItemCount(); i++)
+            {
+                m_plstInput->EnableButton(i, i==m_nNmosButton);
+            }
+            m_plstInput->SelectButton(m_nNmosButton);
+            break;
     }
     #endif
 }

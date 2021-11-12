@@ -14,7 +14,7 @@ using namespace std;
 
 const long wmListAdv::ID_SCROLLING     = wxNewId();
 const long wmListAdv::ID_HOLDING       = wxNewId();
-const long wmListAdv::ID_GROW          = wxNewId();
+
 
 
 BEGIN_EVENT_TABLE(wmListAdv, pmControl)
@@ -44,10 +44,6 @@ wmListAdv::~wmListAdv()
     {
         ReleaseMouse();
     }
-    if(m_pSlideWnd)
-    {
-        m_pSlideWnd->Destroy();
-    }
 
     Clear();
 }
@@ -75,46 +71,32 @@ bool wmListAdv::Create(wxWindow* pParent, wxWindowID id, const wxPoint& pos, con
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
     SetBackgroundColour(*wxWHITE);
 
-    //m_itSelected = m_lstElements.end();
-    m_itDown = m_lstElements.end();
-    m_itSelected = m_lstElements.end();
-    m_itTop = m_lstElements.end();
+    m_pDown = m_pSelected = m_pTop = nullptr;
     WorkoutScrollPosition();
 
     m_timerScroll.SetOwner(this, ID_SCROLLING);
-    m_timerGrow.SetOwner(this, ID_GROW);
 
     m_nStyle = nStyle;
     m_nScrollAllowed = nScroll;
     m_nIndex = 0;
 
     m_nScrollAllowed = SCROLL_VERTICAL;
-//    m_nColumns = nColumns;
     m_szGap = szGap;
 
     m_timerHold.SetOwner(this, ID_HOLDING);
 
     m_bDownInWindow = false;
 
-    m_pSlideWnd = 0;
-    m_nSensitivity = 25;
 
     Connect(wxID_ANY, wxEVT_ADVELM_RESIZE, (wxObjectEventFunction)&wmListAdv::OnResizeElement);
-    Connect(wxID_ANY, wxEVT_ADVELM_GROW, (wxObjectEventFunction)&wmListAdv::OnGrowElement);
     Connect(ID_HOLDING, wxEVT_TIMER, (wxObjectEventFunction)&wmListAdv::OnHolding);
-    Connect(ID_GROW, wxEVT_TIMER, (wxObjectEventFunction)&wmListAdv::OnGrowTimer);
 
 
-    m_pGrowElement = 0;
     m_uiScroll.SetBackgroundColour(wxColour(100,150,100));
 
     return true;
 }
 
-void wmListAdv::SetSwipeSensitivity(unsigned long nPixels)
-{
-    m_nSensitivity = nPixels;
-}
 
 wxSize wmListAdv::DoGetBestSize() const
 {
@@ -125,7 +107,7 @@ wxSize wmListAdv::DoGetBestSize() const
 void wmListAdv::OnPaint(wxPaintEvent& event)
 {
     wxBufferedPaintDC dc(this);
-    Draw(dc, m_itTop);
+    Draw(dc);
 
 }
 
@@ -141,105 +123,6 @@ void wmListAdv::OnResizeElement(wxCommandEvent& event)
     Refresh();
 }
 
-void wmListAdv::OnGrowElement(wxCommandEvent& event)
-{
-
-    if(m_pGrowElement != 0)
-    {
-        m_timerGrow.Stop();
-        if(m_bGrowing)
-        {
-            m_pGrowElement->SetRect(m_pGrowElement->GetRect().GetLeft(), m_pGrowElement->GetRect().GetTop(), m_pGrowElement->GetMaxSize().GetWidth(), m_pGrowElement->GetMaxSize().GetHeight());
-
-        }
-        else
-        {
-            m_pGrowElement->SetRect(m_pGrowElement->GetRect().GetLeft(), m_pGrowElement->GetRect().GetTop(), m_pGrowElement->GetMinSize().GetWidth(), m_pGrowElement->GetMinSize().GetHeight());
-        }
-        GrowBelow();
-
-        m_pGrowElement = 0;
-    }
-
-
-    list<advElement*>::iterator itElement = GetElement(event.GetId());
-    if(itElement != m_lstElements.end())
-    {
-        m_pGrowElement = (*itElement);
-        m_bGrowing = (event.GetInt() != 0);
-        if(event.GetExtraLong() == 0)   //if set to 0 then don't animate
-        {
-            if(m_bGrowing)
-            {
-                m_pGrowElement->SetRect(m_pGrowElement->GetRect().GetLeft(), m_pGrowElement->GetRect().GetTop(), m_pGrowElement->GetMaxSize().GetWidth(), m_pGrowElement->GetMaxSize().GetHeight());
-
-            }
-            else
-            {
-                m_pGrowElement->SetRect(m_pGrowElement->GetRect().GetLeft(), m_pGrowElement->GetRect().GetTop(), m_pGrowElement->GetMinSize().GetWidth(), m_pGrowElement->GetMinSize().GetHeight());
-            }
-            GrowBelow();
-
-            m_pGrowElement = 0;
-        }
-        else
-        {
-            m_timerGrow.Start(30,true);
-        }
-    }
-}
-
-void wmListAdv::OnGrowTimer(wxTimerEvent& event)
-{
-    if(m_pGrowElement != 0)
-    {
-        if(m_bGrowing)
-        {
-            if(m_pGrowElement->GetRect().GetHeight() < m_pGrowElement->GetMaxSize().GetHeight())
-            {
-
-                m_pGrowElement->SetHeight(m_pGrowElement->GetHeight()+max(1, (m_pGrowElement->GetMaxSize().GetHeight()-m_pGrowElement->GetRect().GetHeight())/3));
-
-                if(m_pGrowElement->GetRect().GetBottom() > GetClientRect().GetBottom())
-                {
-                    ScrollVertical((GetClientRect().GetBottom()-m_pGrowElement->GetRect().GetBottom()));
-                }
-
-                m_timerGrow.Start(30,true);
-            }
-            else
-            {
-                m_pGrowElement = 0;
-            }
-        }
-        else
-        {
-            if(m_pGrowElement->GetRect().GetHeight() > m_pGrowElement->GetMinSize().GetHeight())
-            {
-                m_pGrowElement->SetHeight(m_pGrowElement->GetHeight()-max(1, (m_pGrowElement->GetRect().GetHeight()-m_pGrowElement->GetMinSize().GetHeight())/3));
-
-
-                m_timerGrow.Start(30,true);
-            }
-            else
-            {
-                m_pGrowElement = 0;
-            }
-        }
-        GrowBelow();
-        if(!m_bGrowing) //shrinking
-        {
-            if((*m_lstElements.front()).GetRect().GetTop() < 0 && (*m_lstElements.back()).GetRect().GetBottom() < GetClientRect().GetBottom())
-            {
-                ScrollVertical((*m_lstElements.front()).GetRect().GetTop());
-            }
-        }
-
-        Refresh();
-    }
-}
-
-
 void wmListAdv::OnSize(wxSizeEvent& event)
 {
     CreateRects();
@@ -252,24 +135,19 @@ void wmListAdv::OnLeftDown(wxMouseEvent& event)
     m_nScrolling = SCROLL_NONE;
     m_timerScroll.Stop();
     m_bDownInWindow = true;
-    m_nSwipeCount = 0;
-    m_nSwipeTotal = 0;
 
     m_pntMouse = event.GetPosition();
-    m_itDown = m_lstElements.end();
 
-    if(m_lstElements.empty() == false)
+
+    for(auto pElement : m_lstFilteredElements)
     {
-        for(list<advElement*>::iterator itButton = m_itTop; itButton != m_lstElements.end(); ++itButton)
+        if(pElement->LeftDown(event) >=0)
         {
-            if((*itButton)->IsShown() && (*itButton)->LeftDown(event) >=0)
-            {
-                m_itDown = itButton;
-                m_timerHold.Start(50);
-                Refresh();
-                Update();
-                break;
-            }
+            m_pDown = pElement;
+            m_timerHold.Start(50);
+            Refresh();
+            Update();
+            break;
         }
     }
     event.Skip();
@@ -277,20 +155,20 @@ void wmListAdv::OnLeftDown(wxMouseEvent& event)
 
 void wmListAdv::SelectSubElement(size_t nIndex, size_t nSub)
 {
-    list<advElement*>::iterator itElm = GetElement(nIndex);
-    if(itElm != m_lstElements.end())
+    auto pElement = GetElement(nIndex);
+    if(pElement)
     {
-        m_itSelected = itElm;
-        (*itElm)->SelectSubElement(nSub);
+        m_pSelected = pElement;
+        pElement->SelectSubElement(nSub);
     }
 }
 
 wxRect wmListAdv::GetSubElementRect(size_t nIndex, size_t nSub)
 {
-    list<advElement*>::const_iterator itElm = GetElement(nIndex);
-    if(itElm != m_lstElements.end())
+    auto pElement = GetElement(nIndex);
+    if(pElement)
     {
-        return (*itElm)->GetSubRect(nSub);
+        return pElement->GetSubRect(nSub);
     }
     return wxRect(0,0,0,0);
 }
@@ -301,20 +179,20 @@ void wmListAdv::OnLeftUp(wxMouseEvent& event)
     m_timerHold.Stop();
 
     bool bPressedElement(false);
-    if(m_itDown != m_lstElements.end())
+    if(m_pDown)
     {
-        int nSubElement = (*m_itDown)->LeftUp(event,(m_nScrolling!=SCROLL_NONE));
+        int nSubElement = m_pDown->LeftUp(event,(m_nScrolling!=SCROLL_NONE));
         if(nSubElement >=0)
         {
             wxCommandEvent event(wxEVT_LISTADV_SELECTED, GetId());
-            event.SetInt((*m_itDown)->GetIndex());
-            event.SetClientData(reinterpret_cast<void*>((*m_itDown)->GetClientData()));
+            event.SetInt(m_pDown->GetIndex());
+            event.SetClientData(reinterpret_cast<void*>(m_pDown->GetClientData()));
             event.SetExtraLong(nSubElement);
             wxPostEvent(GetEventHandler(), event);
             bPressedElement = true;
-            m_itSelected = m_itDown;
+            m_pSelected = m_pDown;
         }
-        m_itDown = m_lstElements.end();
+        m_pDown = nullptr;
         Refresh();
     }
 
@@ -335,47 +213,7 @@ void wmListAdv::OnLeftUp(wxMouseEvent& event)
         }
         Refresh();
     }
-    else if(m_nScrolling == SCROLL_HORIZONTAL_RIGHT)
-    {
 
-        if(-(m_nSwipeTotal/max(1, m_nSwipeCount)) > 60 || (-m_nSwipeLeft > GetClientRect().GetWidth()/3))
-        {
-            m_nSwipeOffset = min(-1, -(GetClientRect().GetWidth()+m_nSwipeLeft)/10);
-        }
-        else if(m_nSwipeLeft < 0)
-        {
-            m_nSwipeOffset = max(2, -(m_nSwipeLeft/10));
-            m_nScrolling = SCROLL_RETURN;
-        }
-        else
-        {
-            m_nSwipeOffset = -m_nSwipeLeft;
-            m_nScrolling = SCROLL_RETURN;
-        }
-        m_timerScroll.Start(10);
-    }
-    else if(m_nScrolling == SCROLL_HORIZONTAL)
-    {
-        if((m_nSwipeTotal/max(1, m_nSwipeCount)) > 60 || m_nSwipeLeft > GetClientRect().GetWidth()/3)
-        {
-            m_nSwipeOffset = max(1, (GetClientRect().GetWidth()-m_nSwipeLeft)/10);
-        }
-        else if(m_nSwipeLeft > 0)
-        {
-            m_nSwipeOffset = min(-2, -(m_nSwipeLeft/10));
-            m_nScrolling = SCROLL_RETURN;
-        }
-        else
-        {
-            m_nSwipeOffset = -m_nSwipeLeft;
-            m_nScrolling = SCROLL_RETURN;
-        }
-        m_timerScroll.Start(10);
-    }
-    if(m_pSlideWnd)
-    {
-        m_pSlideWnd->Hide();
-    }
     if(HasCapture())
     {
         ReleaseMouse();
@@ -386,87 +224,26 @@ void wmListAdv::OnLeftUp(wxMouseEvent& event)
 
 void wmListAdv::OnMouseMove(wxMouseEvent& event)
 {
-    if(event.LeftIsDown() && m_bDownInWindow && m_lstElements.empty() == false)
+    if(event.LeftIsDown() && m_bDownInWindow && m_lstFilteredElements.empty() == false)
     {
         if(m_nScrollAllowed != SCROLL_NONE)
         {
-            m_nSwipeOffset =  event.GetPosition().x-m_pntMouse.x;
             m_nScrollOffset =  event.GetPosition().y-m_pntMouse.y;
-            m_nSwipeTotal += m_nSwipeOffset;
-            ++m_nSwipeCount;
 
-            if(m_nScrolling == SCROLL_NONE)
+            if(m_nScrolling == SCROLL_NONE && m_nScrollAllowed == SCROLL_VERTICAL)
             {
-                if(m_nScrollAllowed == SCROLL_VERTICAL)
+                if(m_lstFilteredElements.back()->GetBottom() > GetClientSize().GetHeight() || m_lstFilteredElements.front()->GetTop() < 0)    //only scroll if more that on screen
                 {
-                    if(m_lstElements.back()->GetBottom() > GetClientSize().GetHeight() || m_lstElements.front()->GetTop() < 0)    //only scroll if more that on screen
+                    if(m_nScrollOffset < -5 || m_nScrollOffset > 5)
                     {
-                        if(m_nScrollOffset < -5 || m_nScrollOffset > 5)
-                        {
-                            m_nScrolling = SCROLL_VERTICAL;
-                            m_timerHold.Stop();
-                        }
-                    }
-                }
-                else if(m_nScrollAllowed == SCROLL_HORIZONTAL)
-                {
-                    if(m_nSwipeOffset > m_nSensitivity)
-                    {
-                        set<std::list<advElement*>::iterator>::iterator itPage = m_setPages.find(m_itTop);
-                        if(itPage != m_setPages.end())
-                        {
-                            if(itPage != m_setPages.begin())
-                            {
-                                --itPage;
-                                m_itSwipe = itPage;
-                                m_nScrolling = SCROLL_HORIZONTAL;
-                            }
-                            else
-                            {
-                                m_itSwipe = m_setPages.end();
-                                --m_itSwipe;
-                                m_nScrolling = SCROLL_HORIZONTAL;
-                            }
-                        }
+                        m_nScrolling = SCROLL_VERTICAL;
                         m_timerHold.Stop();
                     }
-                    else if(m_nSwipeOffset < -m_nSensitivity)
-                    {
-                        set<std::list<advElement*>::iterator>::iterator itPage = m_setPages.find(m_itTop);
-                        if(itPage != m_setPages.end())
-                        {
-                            ++itPage;
-                            if(itPage != m_setPages.end())
-                            {
-                                m_itSwipe = itPage;
-                                m_nScrolling = SCROLL_HORIZONTAL_RIGHT;
-                            }
-                            else
-                            {
-                                m_itSwipe = m_setPages.begin();
-                                m_nScrolling = SCROLL_HORIZONTAL_RIGHT;
-                            }
-                            m_timerHold.Stop();
-                        }
-                    }
-                    if(m_nScrolling == SCROLL_HORIZONTAL || m_nScrolling == SCROLL_HORIZONTAL_RIGHT)
-                    {
-
-                        CreateSwipeBitmaps();
-
-                        m_nSwipeLeft = m_nSwipeOffset;
-                        DrawHorizontalScroll();
-                    }
                 }
-
             }
             if(m_nScrolling == SCROLL_VERTICAL)
             {
                 ScrollVertical(m_nScrollOffset);
-            }
-            else if(m_nScrolling == SCROLL_HORIZONTAL || m_nScrolling == SCROLL_HORIZONTAL_RIGHT)
-            {
-                ScrollHorizontal(m_nSwipeOffset);
             }
         }
     }
@@ -476,26 +253,6 @@ void wmListAdv::OnMouseMove(wxMouseEvent& event)
     event.Skip();
 }
 
-void wmListAdv::CreateSwipeBitmaps()
-{
-    m_bmpSwipe[0].SetWidth(GetClientSize().x);
-    m_bmpSwipe[0].SetHeight(GetClientSize().y);
-    m_bmpSwipe[1].SetWidth(GetClientSize().x);
-    m_bmpSwipe[1].SetHeight(GetClientSize().y);
-
-    //copy the current screen view in to the current bitmap
-    wxMemoryDC memDC;
-    wxBitmap bmpTemp(GetClientRect().GetWidth(), GetClientRect().GetHeight());
-    memDC.SelectObject(bmpTemp);
-    Draw(memDC, m_itTop);
-    memDC.SelectObject(wxNullBitmap);
-    m_bmpSwipe[0] = bmpTemp;
-
-    memDC.SelectObject(bmpTemp);
-    Draw(memDC, (*m_itSwipe));
-    memDC.SelectObject(wxNullBitmap);
-    m_bmpSwipe[1] = bmpTemp;
-}
 
 bool wmListAdv::ScrollVertical(int nYDiff)
 {
@@ -504,23 +261,23 @@ bool wmListAdv::ScrollVertical(int nYDiff)
     {
         if(nYDiff > 0)
         {
-            nMove = min(nYDiff, 2-m_lstElements.front()->GetTop());
+            nMove = min(nYDiff, 2-m_lstFilteredElements.front()->GetTop());
         }
         else
         {
-            nMove = -min(-nYDiff, m_lstElements.back()->GetBottom()-(GetClientRect().GetBottom()-2));
+            nMove = -min(-nYDiff, m_lstFilteredElements.back()->GetBottom()-(GetClientRect().GetBottom()-2));
         }
 
         if(nMove != 0)
         {
-            m_itTop = m_lstElements.end();
             WorkoutScrollPosition();
-            for(list<advElement*>::iterator itButton = m_lstElements.begin(); itButton != m_lstElements.end(); ++itButton)
+            m_pTop = nullptr;
+            for(auto pElement : m_lstFilteredElements)
             {
-                (*itButton)->Offset(0, nMove);
-                if(m_itTop == m_lstElements.end() && (*itButton)->GetBottom() >= 0)
+                pElement->Offset(0, nMove);
+                if(m_pTop == nullptr && pElement->GetBottom() >= 0)
                 {
-                    m_itTop = itButton;
+                    m_pTop = pElement;
                     WorkoutScrollPosition();
                 }
             }
@@ -549,65 +306,6 @@ bool wmListAdv::ScrollVertical(int nYDiff)
 }
 
 
-bool wmListAdv::ScrollHorizontal(int nXDiff)
-{
-    if(nXDiff != 0)
-    {
-        int nCurrent = m_nSwipeLeft;
-        m_nSwipeLeft += nXDiff;
-
-        if(m_nScrolling == SCROLL_HORIZONTAL || m_nScrolling == SCROLL_HORIZONTAL_RIGHT)
-        {
-            if(m_nSwipeLeft < -GetClientSize().GetWidth() || m_nSwipeLeft > GetClientSize().GetWidth())
-            {
-                m_itTop = (*m_itSwipe);
-                WorkoutScrollPosition();
-                m_nScrolling = SCROLL_NONE;
-                Refresh();
-                Update();
-
-                wxCommandEvent event(wxEVT_LISTADV_PAGED, GetId());
-                event.SetInt(GetCurrentPageNumber());
-                wxPostEvent(GetEventHandler(), event);
-
-                return false;
-            }
-        }
-        else if(m_nScrolling == SCROLL_RETURN)
-        {
-            if((nCurrent <= 0 && m_nSwipeLeft >=0) || (nCurrent >= 0 && m_nSwipeLeft <=0))
-            {
-                m_nScrolling = SCROLL_NONE;
-                Refresh();
-                Update();
-                return false;
-            }
-        }
-
-        DrawHorizontalScroll();
-        return true;
-    }
-    return false;
-
-
-}
-
-void wmListAdv::DrawHorizontalScroll()
-{
-    wxClientDC dc(this);
-    if(m_nSwipeLeft > 0)
-    {
-        dc.DrawBitmap(m_bmpSwipe[1],m_nSwipeLeft-m_bmpSwipe[1].GetWidth(), 0);
-    }
-    else
-    {
-        dc.DrawBitmap(m_bmpSwipe[1],m_bmpSwipe[1].GetWidth()+m_nSwipeLeft, 0);
-    }
-    dc.DrawBitmap(m_bmpSwipe[0],m_nSwipeLeft, 0);
-
-    //dc.DestroyClippingRegion();
-}
-
 
 void wmListAdv::OnScroll(wxTimerEvent& event)
 {
@@ -633,38 +331,30 @@ void wmListAdv::OnScroll(wxTimerEvent& event)
             m_timerScroll.Stop();
         }
     }
-    else if(m_nScrolling == SCROLL_HORIZONTAL || m_nScrolling == SCROLL_RETURN || m_nScrolling == SCROLL_HORIZONTAL_RIGHT)
-    {
-        if(ScrollHorizontal(m_nSwipeOffset) == false)
-        {
-            m_timerScroll.Stop();
-        }
     }
-}
 
 void wmListAdv::OnCaptureLost(wxMouseCaptureLostEvent& event)
 {
-    m_itDown = m_lstElements.end();
+    m_pDown = nullptr;
     m_timerHold.Stop();
     Refresh();
 }
 
 void wmListAdv::OnHolding(wxTimerEvent& event)
 {
-    if(m_itDown != m_lstElements.end())
+    if(m_pDown)
     {
-        int nSubElement = (*m_itDown)->MouseHeld();
+        int nSubElement = m_pDown->MouseHeld();
         if(nSubElement != 0)
         {
-
             wxCommandEvent event(wxEVT_LISTADV_HELD, GetId());
-            event.SetInt((*m_itDown)->GetIndex());
-            event.SetClientData(reinterpret_cast<void*>((*m_itDown)->GetClientData()));
+            event.SetInt(m_pDown->GetIndex());
+            event.SetClientData(reinterpret_cast<void*>(m_pDown->GetClientData()));
             event.SetExtraLong(nSubElement);
             wxPostEvent(GetEventHandler(), event);
 
-            m_itSelected = m_itDown;
-            m_itDown = m_lstElements.end();
+            m_pSelected = m_pDown;
+            m_pDown = nullptr;
             Refresh();
         }
     }
@@ -672,7 +362,7 @@ void wmListAdv::OnHolding(wxTimerEvent& event)
 }
 
 
-void wmListAdv::Draw(wxDC& dc, const std::list<advElement*>::iterator& itTop)
+void wmListAdv::Draw(wxDC& dc)
 {
     dc.SetFont(GetFont());
 
@@ -686,102 +376,94 @@ void wmListAdv::Draw(wxDC& dc, const std::list<advElement*>::iterator& itTop)
     dc.SetTextForeground(GetForegroundColour());
 
 
-    if(m_lstElements.empty() == false)
+    unsigned int nColumn(0);
+    unsigned int nElements(0);
+
+    for(auto pElement : m_lstFilteredElements)
     {
-        unsigned int nColumn(0);
-        unsigned int nElements(0);
-        m_itLast = m_lstElements.end();
-
-        for(list<advElement*>::iterator itButton = itTop; itButton != m_lstElements.end(); ++itButton)
+        if(pElement->GetBottom() > 0)
         {
-            if((*itButton)->IsShown())
-            {
-                if(m_itLast == m_lstElements.end())
-                {
-                    DrawElement(dc, itButton);
-                    ++nElements;
-                }
-                //only draw to the end of the screen...
-                if((*itButton)->GetBottom() >= GetClientRect().GetBottom())
-                {
-                    m_itLast = itButton;
-                    break;
-                }
-
-            }
-
+            DrawElement(dc, pElement);
+            nElements++;
         }
 
-        double dPosition = static_cast<double>(nElements)/static_cast<double>(std::count_if(m_lstElements.begin(), m_lstElements.end(), [](advElement* pElement){ return pElement->IsShown();}));
-        dPosition *= static_cast<double>(GetClientSize().y);
-        m_uiScroll.SetHeight(dPosition);
-        m_uiScroll.Draw(dc, uiRect::BORDER_UP);
+        //only draw to the end of the screen...
+        if(pElement->GetBottom() >= GetClientRect().GetBottom())
+        {
+            break;
+        }
     }
+
+    double dPosition = static_cast<double>(nElements)/static_cast<double>(m_lstFilteredElements.size());
+    dPosition *= static_cast<double>(GetClientSize().y);
+    m_uiScroll.SetHeight(dPosition);
+    m_uiScroll.Draw(dc, uiRect::BORDER_UP);
 }
 
-void wmListAdv::DrawElement(wxDC& dc, const std::list<advElement*>::iterator& itButton)
+void wmListAdv::DrawElement(wxDC& dc, std::shared_ptr<advElement> pElement)
 {
-    (*itButton)->DrawMe(dc, (itButton==m_itSelected));
+    pElement->DrawMe(dc, (pElement==m_pSelected));
 }
 
 bool wmListAdv::RemoveElement(size_t nIndex)
 {
     Freeze();
 
-
-    for(list<advElement*>::iterator itButton = m_lstElements.begin(); itButton != m_lstElements.end(); ++itButton)
+    for(auto itElement = m_lstFilteredElements.begin(); itElement != m_lstFilteredElements.end(); ++itElement)
     {
-        if((*itButton)->GetIndex() == nIndex)
+        if((*itElement)->GetIndex() == nIndex)
         {
             bool bTop(false);
-            if(m_itTop == itButton)
+            if(m_pTop == (*itElement))
             {
-                if(m_itTop != m_lstElements.begin())
+                if(itElement != m_lstFilteredElements.begin())
                 {
-                    --m_itTop;
+                    auto itTop = itElement;
+                    --itTop;
+                    m_pTop   = (*itTop);
                 }
                 else
                 {
                     bTop = true;
                 }
             }
-            if(m_itDown == itButton)
+            if(m_pDown == (*itElement))
             {
-                m_itDown = m_lstElements.end();
+                m_pDown = nullptr;
             }
-            if(m_itSelected == itButton)
+            if(m_pSelected == (*itElement))
             {
-                m_itSelected = m_lstElements.end();
+                m_pSelected = nullptr;
             }
-            (*itButton)->Destroy();
-            delete (*itButton);
-            m_lstElements.erase(itButton);
+            (*itElement)->Destroy();
 
-            if(m_lstElements.empty() == false)
-            {
-                if(bTop)
-                {
-                    m_itTop = m_lstElements.begin();
-                    WorkoutScrollPosition();
-                }
+            m_lstFilteredElements.erase(itElement);
 
-                CreateRects();
-                while(m_itTop != m_lstElements.begin() && (*m_itTop)->GetTop() > 2)
-                {
-                    --m_itTop;
-                }
-
-                int nMove = 2-(*m_itTop)->GetTop();
-                for(list<advElement*>::iterator itButton = m_lstElements.begin(); itButton != m_lstElements.end(); ++itButton)
-                {
-                    (*itButton)->Offset(0, nMove);
-                }
-            }
-            else
-            {
-                m_itTop = m_lstElements.end();
-                WorkoutScrollPosition();
-            }
+//            if(m_lstFilteredElements.empty() == false)
+//            {
+//                if(bTop)
+//                {
+//                    m_pTop = m_lstFilteredElements.front());
+//                    WorkoutScrollPosition();
+//                }
+//
+//                CreateRects();
+//                while(m_itTop != m_lstElements.begin() && (*m_itTop)->GetTop() > 2)
+//                {
+//                    --m_itTop;
+//                }
+//
+//                int nMove = 2-(*m_itTop)->GetTop();
+//                for(list<advElement*>::iterator itButton = m_lstElements.begin(); itButton != m_lstElements.end(); ++itButton)
+//                {
+//                    (*itButton)->Offset(0, nMove);
+//                }
+//            }
+//            else
+//            {
+//                m_pTop = nullptr;
+//                WorkoutScrollPosition();
+//            }
             Thaw();
             Refresh();
             return true;
@@ -790,7 +472,7 @@ bool wmListAdv::RemoveElement(size_t nIndex)
     return false;
 }
 
-size_t wmListAdv::AddElement(advElement* pElement, bool bEnd)
+size_t wmListAdv::AddElement(std::shared_ptr<advElement> pElement, bool bEnd, std::function<bool(std::shared_ptr<advElement>)> pFilter)
 {
     if(bEnd)
     {
@@ -806,18 +488,30 @@ size_t wmListAdv::AddElement(advElement* pElement, bool bEnd)
 
     m_nIndex++;
 
-    if(m_itTop == m_lstElements.end())
+    if(!pFilter || pFilter(pElement))
     {
-        m_itTop = m_lstElements.begin();
-        WorkoutScrollPosition();
-    }
+        if(bEnd)
+        {
+            m_lstFilteredElements.push_back(pElement);
+        }
+        else
+        {
+            m_lstFilteredElements.push_front(pElement);
+        }
 
-    if(IsFrozen() == false)
-    {
-        CreateRects();
-        Refresh();
-    }
 
+        if(!m_pTop)
+        {
+            m_pTop = m_lstFilteredElements.front();
+            WorkoutScrollPosition();
+        }
+
+        if(IsFrozen() == false)
+        {
+            CreateRects();
+            Refresh();
+        }
+    }
     return m_nIndex;
 }
 
@@ -828,116 +522,97 @@ void wmListAdv::Thaw()
 
 void wmListAdv::Clear()
 {
-    for(list<advElement*>::iterator it = m_lstElements.begin(); it != m_lstElements.end(); ++it)
+    for(auto pElement : m_lstElements)
     {
-        (*it)->Destroy();
-        delete (*it);
+        pElement->Destroy();
     }
-    m_nIndex = 0;
     m_lstElements.clear();
-    m_itDown = m_lstElements.end();
-    m_itSelected = m_lstElements.end();
-    m_itTop = m_lstElements.end();
+    m_lstFilteredElements.clear();
+
+    m_nIndex = 0;
+    m_pDown = nullptr;
+    m_pSelected = nullptr;
+    m_pTop = nullptr;
     WorkoutScrollPosition();
     Refresh();
 }
 
-advElement* wmListAdv::GetAdvElement(size_t nIndex)
+std::shared_ptr<advElement> wmListAdv::GetElement(size_t nIndex)
 {
-    list<advElement*>::iterator itButton = m_lstElements.begin();
-    for(; itButton != m_lstElements.end(); ++itButton)
+    auto itElement = std::find_if(m_lstFilteredElements.begin(), m_lstFilteredElements.end(), [nIndex](std::shared_ptr<advElement> pElement) { return pElement->GetIndex() == nIndex;});
+    if(itElement != m_lstFilteredElements.end())
     {
-        if((*itButton)->GetIndex() == nIndex)
-        {
-            return (*itButton);
-        }
+        return *itElement;
     }
-    return NULL;
+    return nullptr;
+
 }
 
-advElement* wmListAdv::GetFirstAdvElement(void* pData)
+std::shared_ptr<advElement> wmListAdv::GetFirstElement(void* pData)
 {
-    list<advElement*>::iterator itButton = m_lstElements.begin();
-    for(; itButton != m_lstElements.end(); ++itButton)
+    auto itElement = std::find_if(m_lstFilteredElements.begin(), m_lstFilteredElements.end(), [pData](std::shared_ptr<advElement> pElement) { return pElement->GetClientData() == pData;});
+    if(itElement != m_lstFilteredElements.end())
     {
-        if((*itButton)->GetClientData() == pData)
-        {
-            return (*itButton);
-        }
+        return *itElement;
     }
-    return NULL;
+    return nullptr;
 }
 
 size_t wmListAdv::FindFirstElement(void* pData)
 {
-    list<advElement*>::iterator itButton = m_lstElements.begin();
-    for(; itButton != m_lstElements.end(); ++itButton)
+    auto itElement = std::find_if(m_lstFilteredElements.begin(), m_lstFilteredElements.end(), [pData](std::shared_ptr<advElement> pElement) { return pElement->GetClientData() == pData;});
+    if(itElement != m_lstFilteredElements.end())
     {
-        if((*itButton)->GetClientData() == pData)
-        {
-            return (*itButton)->GetIndex();
-        }
+        return (*itElement)->GetIndex();
     }
-    return 0xFFFFFFFF;
+    return (size_t)-1;
 }
-
-list<advElement*>::iterator wmListAdv::GetElement(size_t nIndex)
-{
-    list<advElement*>::iterator itButton = m_lstElements.begin();
-    for(; itButton != m_lstElements.end(); ++itButton)
-    {
-        if((*itButton)->GetIndex() == nIndex)
-            break;
-    }
-    return itButton;
-}
-
 
 void wmListAdv::ShowElement(size_t nIndex, Position pos)
 {
-    list<advElement*>::iterator itButton = GetElement(nIndex);
-    if(itButton != m_lstElements.end())
+    auto pElement = GetElement(nIndex);
+    if(pElement)
     {
-        ShowElement(itButton, pos);
+        ShowElement(pElement, pos);
     }
 }
 
 
-void wmListAdv::ShowElement(list<advElement*>::iterator itButton, Position pos)
+void wmListAdv::ShowElement(std::shared_ptr<advElement> pElement, Position pos)
 {
     ///< @todo Do ShowButton for horizontal scroll
     int nDiff(0);
     switch(pos)
     {
         case TOP:
-            nDiff = -(*itButton)->GetTop();
-            if(m_lstElements.front()->GetTop() + nDiff > 0)
+            nDiff = -pElement->GetTop();
+            if(m_lstFilteredElements.front()->GetTop() + nDiff > 0)
             {
-                nDiff = -m_lstElements.front()->GetTop();
+                nDiff = -m_lstFilteredElements.front()->GetTop();
             }
             break;
         case BOTTOM:
-            nDiff = GetClientRect().GetBottom()-(*itButton)->GetBottom();
+            nDiff = GetClientRect().GetBottom()-pElement->GetBottom();
             break;
         case MIDDLE:
-            nDiff = (GetClientRect().GetBottom()-(*itButton)->GetBottom())-(GetClientRect().GetHeight()/2);
-            if(m_lstElements.front()->GetTop() + nDiff > 0)
+            nDiff = (GetClientRect().GetBottom()-pElement->GetBottom())-(GetClientRect().GetHeight()/2);
+            if(m_lstFilteredElements.front()->GetTop() + nDiff > 0)
             {
-                nDiff = -m_lstElements.front()->GetTop();
+                nDiff = -m_lstFilteredElements.front()->GetTop();
             }
             break;
         case ONSCREEN:
-            if(GetClientRect().Contains((*itButton)->GetCenter()))
+            if(GetClientRect().Contains(pElement->GetCenter()))
             {
                 nDiff = 0;
             }
-            else if((*itButton)->GetTop() < 0)
+            else if(pElement->GetTop() < 0)
             {
-                nDiff = -(*itButton)->GetTop();
+                nDiff = -pElement->GetTop();
             }
             else
             {
-                nDiff = GetClientRect().GetBottom()-(*itButton)->GetBottom();
+                nDiff = GetClientRect().GetBottom()-pElement->GetBottom();
             }
     }
 
@@ -957,7 +632,7 @@ void wmListAdv::ShowElement(list<advElement*>::iterator itButton, Position pos)
 
 size_t wmListAdv::GetElementCount() const
 {
-    return m_lstElements.size();
+    return m_lstFilteredElements.size();
 }
 
 void wmListAdv::OnFocus(wxFocusEvent& event)
@@ -971,38 +646,12 @@ void wmListAdv::OnFocus(wxFocusEvent& event)
 
 void wmListAdv::ShowPreviousPage()
 {
-    if(m_nScrollAllowed == SCROLL_HORIZONTAL)
+    if(m_lstFilteredElements.empty() == false)
     {
-        set<std::list<advElement*>::iterator>::iterator itPage = m_setPages.find(m_itTop);
-        if(itPage != m_setPages.end())
-        {
-            if(itPage != m_setPages.begin())
-            {
-                --itPage;
-                m_itSwipe = itPage;
-                m_nScrolling = SCROLL_HORIZONTAL;
-            }
-            else
-            {
-                m_itSwipe = m_setPages.end();
-                --m_itSwipe;
-                m_nScrolling = SCROLL_HORIZONTAL;
-            }
-        }
-        m_nSwipeLeft = 0;//GetClientRect().GetWidth();
-        m_nSwipeOffset = 50;// max(1, (GetClientRect().GetWidth()-m_nSwipeLeft)/10);
-        CreateSwipeBitmaps();
-        m_timerScroll.Start(10);
-    }
-    else
-    {
-        if(m_lstElements.empty() == false)
-        {
-            list<advElement*>::iterator itButton = m_lstElements.begin();
-            int nButton = (*itButton)->GetTop();
-            int nDiff = min(GetClientSize().GetHeight(), -nButton);
-            ScrollVertical(nDiff);
-        }
+        auto pElement = m_lstFilteredElements.front();
+        int nButton = pElement->GetTop();
+        int nDiff = min(GetClientSize().GetHeight(), -nButton);
+        ScrollVertical(nDiff);
     }
 
 }
@@ -1010,210 +659,57 @@ void wmListAdv::ShowPreviousPage()
 
 void wmListAdv::ShowNextPage()
 {
-    if(m_nScrollAllowed == SCROLL_HORIZONTAL)
+    if(m_lstFilteredElements.empty() == false)
     {
-        set<std::list<advElement*>::iterator>::iterator itPage = m_setPages.find(m_itTop);
-        if(itPage != m_setPages.end())
-        {
-            ++itPage;
-            if(itPage != m_setPages.end())
-            {
-                m_itSwipe = itPage;
-                m_nScrolling = SCROLL_HORIZONTAL_RIGHT;
-            }
-            else
-            {
-                m_itSwipe = m_setPages.begin();
-                m_nScrolling = SCROLL_HORIZONTAL_RIGHT;
-            }
-        }
-
-        CreateSwipeBitmaps();
-        m_nSwipeOffset = -50;
-        m_nSwipeLeft = 0;
-        m_timerScroll.Start(10);
+        list<std::shared_ptr<advElement>>::iterator itButton = m_lstFilteredElements.end();
+        --itButton;
+        int nButton = (*itButton)->GetBottom();
+        int nDiff = min(GetClientSize().GetHeight(), nButton - GetClientRect().GetHeight());
+        ScrollVertical(-nDiff);
     }
-    else
-    {
-        if(m_lstElements.empty() == false)
-        {
-            list<advElement*>::iterator itButton = m_lstElements.end();
-            --itButton;
-            int nButton = (*itButton)->GetBottom();
-            int nDiff = min(GetClientSize().GetHeight(), nButton - GetClientRect().GetHeight());
-            ScrollVertical(-nDiff);
-        }
-    }
-
 }
-
-unsigned long wmListAdv::GetCurrentPageNumber() const
-{
-    unsigned long nCount = 1;
-    for(set<list<advElement*>::iterator>::const_iterator itPage = m_setPages.begin(); itPage != m_setPages.end(); ++itPage)
-    {
-        if((*itPage) == m_itTop)
-            return nCount;
-
-        ++nCount;
-    }
-    return 0;
-
-}
-
-unsigned long wmListAdv::GetPageCount() const
-{
-    return m_setPages.size();
-}
-
-//void wmListAdv::DeleteButton(size_t nIndex)
-//{
-//    list<advElement*>::iterator itButton = GetButton(nIndex);
-//    if(itButton != m_lstElements.end())
-//    {
-//        if(m_itDown == itButton)
-//        {
-//            m_itDown = m_lstElements.end();
-//        }
-//        if(m_itTop == itButton)
-//        {
-//            ++m_itTop;
-//        }
-//        if(m_itLast == itButton)
-//        {
-//            m_itLast = m_lstElements.end();
-//        }
-//        m_setitSelected.erase(itButton);
-//        m_setitFlash.erase(itButton);
-//        m_lstElements.erase(itButton);
-//        CreateRects();
-//        Refresh();
-//    }
-//}
 
 
 void wmListAdv::CreateRects()
 {
-    m_setPages.clear();
-    if(m_lstElements.empty())
-    {
-        return;
-    }
-
     int nTop = -1;
-    for(auto itButton = m_lstElements.begin(); itButton != m_lstElements.end(); ++itButton)
+    for(auto pElement : m_lstFilteredElements)
     {
-        if((*itButton)->IsShown())
+        if(nTop == -1)
         {
-            if(nTop == -1)
-            {
-                nTop = (*itButton)->GetTop();
-            }
-            if(nTop < 2)
-            {
-                nTop = 2;
-            }
-
-            if(nTop == 2 && m_nScrollAllowed == SCROLL_HORIZONTAL)   //first button on page
-            {
-                m_setPages.insert(itButton);
-            }
-
-            (*itButton)->SetTop(nTop);
-            nTop += (*itButton)->GetHeight();
-            nTop += m_szGap.GetHeight();
-
-            //if we swipe then once we get to the bottom we create a new page
-            if(nTop >= GetClientRect().GetBottom())
-            {
-                if(m_nScrollAllowed == SCROLL_HORIZONTAL)
-                {
-                    nTop = 2;
-                }
-            }
+            nTop = pElement->GetTop();
         }
-        else
+        if(nTop < 2)
         {
-            (*itButton)->SetTop(-200);
-        }
-    }
-}
-
-void wmListAdv::GrowBelow()
-{
-    //CreateRects();
-    //return;
-
-    bool bBelow(false);
-    unsigned int nTop;
-    for(list<advElement*>::iterator itButton = m_lstElements.begin(); itButton != m_lstElements.end(); ++itButton)
-    {
-        if(bBelow)
-        {
-            (*itButton)->SetTop(nTop);
-            nTop = (*itButton)->GetBottom()+m_szGap.GetHeight();
-        }
-        else if((*itButton) == m_pGrowElement)
-        {
-            nTop = m_pGrowElement->GetBottom()+m_szGap.GetHeight();
-            bBelow = true;
-        }
-    }
-    Refresh();
-}
-
-void wmListAdv::Sort()
-{
-    if(m_lstElements.empty() == false)
-    {
-
-        Freeze();
-
-        m_lstElements.sort(compare);
-        CreateRects();
-
-        while(m_itTop != m_lstElements.begin() && (*m_itTop)->GetTop() > 2)
-        {
-            --m_itTop;
+            nTop = 2;
         }
 
-        int nMove = 2-(*m_itTop)->GetTop();
-        for(list<advElement*>::iterator itButton = m_lstElements.begin(); itButton != m_lstElements.end(); ++itButton)
-        {
-            (*itButton)->Offset(0, nMove);
-        }
-        Thaw();
-        Refresh();
+        pElement->SetTop(nTop);
+        nTop += pElement->GetHeight();
+        nTop += m_szGap.GetHeight();
 
-        wxCommandEvent event(wxEVT_LISTADV_MOVED, GetId());
-        wxPostEvent(GetEventHandler(), event);
     }
 }
 
 
-list<advElement*>::const_iterator wmListAdv::GetElementBegin() const
+const list<std::shared_ptr<advElement>>& wmListAdv::GetElements() const
 {
-    return m_lstElements.begin();
-}
-
-list<advElement*>::const_iterator wmListAdv::GetElementEnd() const
-{
-    return m_lstElements.end();
+    return m_lstFilteredElements;
 }
 
 
 void wmListAdv::WorkoutScrollPosition()
 {
     size_t nTopElement = 0;
-    for(list<advElement*>::iterator itButton = m_lstElements.begin(); itButton != m_lstElements.end(); ++itButton)
+    for(auto pElement : m_lstFilteredElements)
     {
-        if(itButton == m_itTop)
+        if(pElement == m_pTop)
         {
             break;
         }
         ++nTopElement;
     }
-    double dPosition = static_cast<double>(nTopElement)/static_cast<double>(m_lstElements.size());
+    double dPosition = static_cast<double>(nTopElement)/static_cast<double>(m_lstFilteredElements.size());
     dPosition *= static_cast<double>(GetClientSize().y);
     m_uiScroll.SetRect(GetClientRect().GetRight()-5, dPosition,5,30);
 
@@ -1221,8 +717,38 @@ void wmListAdv::WorkoutScrollPosition()
 
 }
 
-void wmListAdv::RecreateElements()
+
+void wmListAdv::Filter(std::function<bool(std::shared_ptr<advElement>)> pFilter)
 {
+    bool bSelected(false);
+    bool bTop(false);
+
+    m_lstFilteredElements.clear();
+    for(auto pElement : m_lstElements)
+    {
+        if(!pFilter || pFilter(pElement))
+        {
+            m_lstFilteredElements.push_back(pElement);
+            if(pElement == m_pSelected)
+            {
+                bSelected = true;
+            }
+            if(pElement == m_pTop)
+            {
+                bTop = true;
+            }
+        }
+    }
+
+    if(!bSelected)
+    {
+        m_pSelected = nullptr;
+    }
+    if(!bTop)
+    {
+        m_pTop = m_lstFilteredElements.front();
+    }
     CreateRects();
+    WorkoutScrollPosition();
     Refresh();
 }

@@ -6,7 +6,7 @@ class  LogElement : public advElement
 {
     public:
 
-        LogElement(wxDC& dc, unsigned int nWidth, const wxString& sMessage, int nLevel, bool bShow);
+        LogElement(wxDC& dc, unsigned int nWidth, const wxString& sMessage, int nLevel);
         virtual ~LogElement(){}
 
         void Destroy();
@@ -19,7 +19,6 @@ class  LogElement : public advElement
             return m_nLevel;
         }
 
-        void Filter(int nFilter);
 
     protected:
 

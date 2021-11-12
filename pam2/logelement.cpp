@@ -5,7 +5,7 @@
 #include <wx/tokenzr.h>
 
 
-LogElement::LogElement(wxDC& dc, unsigned int nWidth, const wxString& sMessage, int nLevel, bool bShow) : advElement(wxRect(0,0,0,0), bShow), m_nLevel(nLevel)
+LogElement::LogElement(wxDC& dc, unsigned int nWidth, const wxString& sMessage, int nLevel) : m_nLevel(nLevel)
 {
     wxRect rect(0,0,0,0);
     auto& rectTime = m_mHitRects.insert(std::make_pair(0, uiRect(rect,0))).first->second;
@@ -149,16 +149,3 @@ void LogElement::ElementMoved()
     }
 }
 
-
-void LogElement::Filter(int nFilter)
-{
-    //return;
-    if(m_nLevel >= nFilter)
-    {
-        m_bShow = true;
-    }
-    else
-    {
-        m_bShow = false;
-    }
-}

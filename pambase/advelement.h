@@ -9,7 +9,7 @@
 class PAMBASE_IMPEXPORT advElement : public wxEvtHandler
 {
     public:
-        advElement(const wxRect& rect=wxRect(0,0,0,0), bool bShow=true)  :  m_nIndex(0), m_pParent(0), m_rectEnclosing(rect), m_sizeMin(rect.GetWidth(), rect.GetHeight()), m_sizeMax(rect.GetWidth(), rect.GetHeight()), m_nHoldCount(0), m_bShow(bShow)
+        advElement(const wxRect& rect=wxRect(0,0,0,0))  :  m_nIndex(0), m_pParent(0), m_rectEnclosing(rect), m_sizeMin(rect.GetWidth(), rect.GetHeight()), m_sizeMax(rect.GetWidth(), rect.GetHeight()), m_nHoldCount(0)
         {
             m_itDown = m_mHitRects.end();
             m_itSelected = m_mHitRects.end();
@@ -180,8 +180,6 @@ class PAMBASE_IMPEXPORT advElement : public wxEvtHandler
 
         void EnableSubElement(size_t nSub, bool bEnable);
 
-        bool IsShown() const {return m_bShow;}
-        void Show(bool bShow) { m_bShow = bShow;}
 
     protected:
 

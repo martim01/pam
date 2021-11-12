@@ -89,7 +89,6 @@ IOManager::IOManager() :
 {
 
     AoipSourceManager::Get();
-   // Settings::Get().Write(wxT("Server"), wxT("Stream"), "Unicast"); //can't be streaming at startup so set to 0 in case we exited whilst streaming
 
     Settings::Get().AddHandler(wxT("Input"),wxT("Type"), this);
     Settings::Get().AddHandler(wxT("Input"),wxT("AoIP"), this);
@@ -748,7 +747,7 @@ void IOManager::OpenSoundcardDevice(unsigned long nOutputSampleRate)
     }
 }
 
-void IOManager::InitAudioInputDevice()
+void IOManager::InitAudioInputDevice(bool bStart)
 {
     wxString sType(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")));
 
@@ -769,7 +768,7 @@ void IOManager::InitAudioInputDevice()
 
         CheckPlayback(SoundcardManager::Get().GetInputSampleRate(), SoundcardManager::Get().GetInputNumberOfChannels());
     }
-    else if(sType == "AoIP" || sType == "AoIP Manual" || sType == "NMOS")
+    else if(sType == "AoIP" || sType == "AoIP Manual" || (sType == "NMOS" && !bStart))
     {
         m_nInputSource = AudioEvent::RTP;
         pmlLog(pml::LOG_INFO) << "IOManager\tCreate Audio Input Device: AoIP";
@@ -954,7 +953,7 @@ void IOManager::Start()
     OutputChanged(wxT("Destination"));
 
 
-    InitAudioInputDevice();
+    InitAudioInputDevice(true);
 }
 
 void IOManager::OutputChannelsChanged()
