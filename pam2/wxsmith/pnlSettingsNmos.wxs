@@ -76,11 +76,25 @@
 				<button_size>-1,20</button_size>
 				<items />
 				<pos>5,35</pos>
-				<size>232,230</size>
+				<size>232,205</size>
 				<enabled>0</enabled>
 				<bg>#000000</bg>
 				<style>wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI</style>
 				<handler function="OnlstClientSelected" entry="EVT_LIST_SELECTED" />
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL5" variable="m_plblDiscoveryNode" member="yes">
+				<label></label>
+				<pos>85,240</pos>
+				<size>151,28</size>
+				<fg>#000000</fg>
+				<bg>#FFFFFF</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL6" variable="m_pLbl6" member="yes">
+				<label>Discovery:</label>
+				<pos>5,240</pos>
+				<size>80,28</size>
+				<fg>#FFFFFF</fg>
+				<bg>#804000</bg>
 			</object>
 			<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl4" member="yes">
 				<label>Query Servers</label>
@@ -94,11 +108,25 @@
 				<button_size>-1,20</button_size>
 				<items />
 				<pos>243,35</pos>
-				<size>232,230</size>
+				<size>232,205</size>
 				<enabled>0</enabled>
 				<bg>#000000</bg>
 				<style>wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI</style>
 				<handler function="OnlstClientSelected" entry="EVT_LIST_SELECTED" />
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL7" variable="m_pLbl5" member="yes">
+				<label>Query:</label>
+				<pos>243,240</pos>
+				<size>80,28</size>
+				<fg>#FFFFFF</fg>
+				<bg>#804000</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL9" variable="m_plblQueryNode" member="yes">
+				<label></label>
+				<pos>323,240</pos>
+				<size>151,28</size>
+				<fg>#000000</fg>
+				<bg>#FFFFFF</bg>
 			</object>
 		</object>
 	</object>

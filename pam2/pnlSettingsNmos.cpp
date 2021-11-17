@@ -17,6 +17,10 @@
 #include <wx/string.h>
 //*)
 
+const wxColour pnlSettingsNmos::CLR_NODE_OK         = wxColour(50,50,150);
+const wxColour pnlSettingsNmos::CLR_NODE_BAD        = wxColour(150,50,50);
+const wxColour pnlSettingsNmos::CLR_NODE_SELECTED   = wxColour(50,150,50);
+
 //(*IdInit(pnlSettingsNmos)
 const long pnlSettingsNmos::ID_M_PLBL8 = wxNewId();
 const long pnlSettingsNmos::ID_M_PLST1 = wxNewId();
@@ -26,8 +30,12 @@ const long pnlSettingsNmos::ID_M_PLBL2 = wxNewId();
 const long pnlSettingsNmos::ID_M_PLST3 = wxNewId();
 const long pnlSettingsNmos::ID_M_PLBL3 = wxNewId();
 const long pnlSettingsNmos::ID_M_PLST4 = wxNewId();
+const long pnlSettingsNmos::ID_M_PLBL5 = wxNewId();
+const long pnlSettingsNmos::ID_M_PLBL6 = wxNewId();
 const long pnlSettingsNmos::ID_M_PLBL4 = wxNewId();
 const long pnlSettingsNmos::ID_M_PLST5 = wxNewId();
+const long pnlSettingsNmos::ID_M_PLBL7 = wxNewId();
+const long pnlSettingsNmos::ID_M_PLBL9 = wxNewId();
 const long pnlSettingsNmos::ID_PANEL1 = wxNewId();
 //*)
 
@@ -71,17 +79,37 @@ pnlSettingsNmos::pnlSettingsNmos(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_pLbl3->GetUiRect().SetGradient(0);
 	m_pLbl3->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl3->SetBackgroundColour(wxColour(0,64,64));
-	m_plstRegistration = new wmList(Panel1, ID_M_PLST4, wxPoint(5,35), wxSize(232,230), wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI, 1, wxSize(-1,20), 1, wxSize(0,1));
+	m_plstRegistration = new wmList(Panel1, ID_M_PLST4, wxPoint(5,35), wxSize(232,205), wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI, 1, wxSize(-1,20), 1, wxSize(0,1));
 	m_plstRegistration->Disable();
 	m_plstRegistration->SetBackgroundColour(wxColour(0,0,0));
+	m_plblDiscoveryNode = new wmLabel(Panel1, ID_M_PLBL5, wxEmptyString, wxPoint(85,240), wxSize(151,28), 0, _T("ID_M_PLBL5"));
+	m_plblDiscoveryNode->SetBorderState(uiRect::BORDER_NONE);
+	m_plblDiscoveryNode->GetUiRect().SetGradient(0);
+	m_plblDiscoveryNode->SetForegroundColour(wxColour(0,0,0));
+	m_plblDiscoveryNode->SetBackgroundColour(wxColour(255,255,255));
+	m_pLbl6 = new wmLabel(Panel1, ID_M_PLBL6, _("Discovery:"), wxPoint(5,240), wxSize(80,28), 0, _T("ID_M_PLBL6"));
+	m_pLbl6->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl6->GetUiRect().SetGradient(0);
+	m_pLbl6->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl6->SetBackgroundColour(wxColour(128,64,0));
 	m_pLbl4 = new wmLabel(Panel1, ID_M_PLBL4, _("Query Servers"), wxPoint(243,5), wxSize(232,28), 0, _T("ID_M_PLBL4"));
 	m_pLbl4->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl4->GetUiRect().SetGradient(0);
 	m_pLbl4->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl4->SetBackgroundColour(wxColour(0,64,64));
-	m_plstQuery = new wmList(Panel1, ID_M_PLST5, wxPoint(243,35), wxSize(232,230), wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI, 1, wxSize(-1,20), 1, wxSize(0,1));
+	m_plstQuery = new wmList(Panel1, ID_M_PLST5, wxPoint(243,35), wxSize(232,205), wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI, 1, wxSize(-1,20), 1, wxSize(0,1));
 	m_plstQuery->Disable();
 	m_plstQuery->SetBackgroundColour(wxColour(0,0,0));
+	m_pLbl5 = new wmLabel(Panel1, ID_M_PLBL7, _("Query:"), wxPoint(243,240), wxSize(80,28), 0, _T("ID_M_PLBL7"));
+	m_pLbl5->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl5->GetUiRect().SetGradient(0);
+	m_pLbl5->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl5->SetBackgroundColour(wxColour(128,64,0));
+	m_plblQueryNode = new wmLabel(Panel1, ID_M_PLBL9, wxEmptyString, wxPoint(323,240), wxSize(151,28), 0, _T("ID_M_PLBL9"));
+	m_plblQueryNode->SetBorderState(uiRect::BORDER_NONE);
+	m_plblQueryNode->GetUiRect().SetGradient(0);
+	m_plblQueryNode->SetForegroundColour(wxColour(0,0,0));
+	m_plblQueryNode->SetBackgroundColour(wxColour(255,255,255));
 
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsNmos::OnlstNodeSelected);
 	Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsNmos::OnlstClientSelected);
@@ -98,6 +126,10 @@ pnlSettingsNmos::pnlSettingsNmos(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_plstClient->AddButton("OFF");
 	m_plstClient->AddButton("IS04 Connection");
 	m_plstClient->AddButton("IS05 Connection");
+
+	m_plstDiscovery->AddButton("Multicast");
+	m_plstDiscovery->AddButton("Unicast");
+
 
     m_plstNode->SelectButton(Settings::Get().Read("NMOS", "Node", 0));
     m_plstClient->SelectButton(Settings::Get().Read("NMOS", "Client", 0));
@@ -133,7 +165,7 @@ void pnlSettingsNmos::OnlstClientSelected(wxCommandEvent& event)
 void pnlSettingsNmos::OnNmosRegistrationNodeFound(const wxNmosNodeRegistrationEvent& event)
 {
     pmlLog() << "----------------------------OnNMOSREGISTRATIONFOUND";
-    m_plstRegistration->AddButton(event.GetNodeUrl().BeforeFirst('/'), wxNullBitmap, nullptr, wmList::wmENABLED,  wxColour(100,255,100));
+    m_plstRegistration->AddButton(event.GetNodeUrl().BeforeFirst('/'), wxNullBitmap, nullptr, wmList::wmENABLED,  CLR_NODE_OK);
     m_plstRegistration->Refresh();
 
 }
@@ -147,27 +179,27 @@ void pnlSettingsNmos::OnNmosRegistrationNodeRemoved(const wxNmosNodeRegistration
 void pnlSettingsNmos::OnNmosRegistrationNodeChanged(const wxNmosNodeRegistrationEvent& event)
 {
     size_t nButton = m_plstRegistration->FindButton(event.GetNodeUrl().BeforeFirst('/'));
-    m_plstRegistration->SetButtonColour(nButton, event.GetNodeStatus() ? wxColour(100,255,100) : wxColour(255,100,100));
+    m_plstRegistration->SetButtonColour(nButton, event.GetNodeStatus() ? CLR_NODE_OK : CLR_NODE_BAD);
 }
 
 void pnlSettingsNmos::OnNmosRegistrationNodeChosen(const wxNmosNodeRegistrationEvent& event)
 {
     for(size_t i = 0; i < m_plstRegistration->GetItemCount(); i++)
     {
-        if(m_plstRegistration->GetButtonColour(i) == wxColour(100,100,255))
+        if(m_plstRegistration->GetButtonColour(i) == CLR_NODE_SELECTED)
         {
-            m_plstRegistration->SetButtonColour(i, wxColour(100, 255,100));
+            m_plstRegistration->SetButtonColour(i, CLR_NODE_OK);
         }
     }
 
     size_t nButton = m_plstRegistration->FindButton(event.GetNodeUrl().BeforeFirst('/'));
-    m_plstRegistration->SetButtonColour(nButton, wxColour(100,100,255));
+    m_plstRegistration->SetButtonColour(nButton, CLR_NODE_SELECTED);
 
 }
 
 void pnlSettingsNmos::OnNmosRegistrationModeChanged(const wxNmosNodeRegistrationEvent& event)
 {
-
+    m_plblDiscoveryNode->SetLabel(event.GetRegistered() ? "Register" : "Peer-Peer");
 }
 
 void pnlSettingsNmos::OnNmosQueryNodeFound(const wxNmosClientQueryEvent& event)
@@ -182,5 +214,5 @@ void pnlSettingsNmos::OnNmosQueryNodeRemoved(const wxNmosClientQueryEvent& event
 
 void pnlSettingsNmos::OnNmosQueryNodeChanged(const wxNmosClientQueryEvent& event)
 {
-
+    m_plblQueryNode->SetLabel(event.GetUrl().empty() ? "Peer-Peer" : event.GetUrl());
 }

@@ -34,7 +34,11 @@ class pnlSettingsNmos: public wxPanel
 		wmLabel* m_pLbl2;
 		wmLabel* m_pLbl3;
 		wmLabel* m_pLbl4;
+		wmLabel* m_pLbl5;
+		wmLabel* m_pLbl6;
 		wmLabel* m_pLbl9;
+		wmLabel* m_plblDiscoveryNode;
+		wmLabel* m_plblQueryNode;
 		wmList* m_plstClient;
 		wmList* m_plstDiscovery;
 		wmList* m_plstNode;
@@ -55,8 +59,12 @@ class pnlSettingsNmos: public wxPanel
 		static const long ID_M_PLST3;
 		static const long ID_M_PLBL3;
 		static const long ID_M_PLST4;
+		static const long ID_M_PLBL5;
+		static const long ID_M_PLBL6;
 		static const long ID_M_PLBL4;
 		static const long ID_M_PLST5;
+		static const long ID_M_PLBL7;
+		static const long ID_M_PLBL9;
 		static const long ID_PANEL1;
 		//*)
 
