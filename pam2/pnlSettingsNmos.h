@@ -87,6 +87,11 @@ class pnlSettingsNmos: public wxPanel
 		void OnNmosQueryNodeRemoved(const wxNmosClientQueryEvent& event);
 		void OnNmosQueryNodeChanged(const wxNmosClientQueryEvent& event);
 
+
+		static const wxColour CLR_NODE_OK;
+		static const wxColour CLR_NODE_BAD;
+		static const wxColour CLR_NODE_SELECTED;
+
         DECLARE_EVENT_TABLE()
 };
 
