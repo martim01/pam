@@ -7,7 +7,11 @@
 #include "sender.h"
 #include "nmos.h"
 #include "senderbuttonfactory.h"
+#include "wxclientapiposter.h"
+#include "wxeventposter.h"
 #endif // __NMOS__
+#include "log.h"
+
 //(*InternalHeaders(pnlSettingsNmos)
 #include <wx/intl.h>
 #include <wx/string.h>
@@ -98,6 +102,11 @@ pnlSettingsNmos::pnlSettingsNmos(wxWindow* parent,wxWindowID id,const wxPoint& p
     m_plstNode->SelectButton(Settings::Get().Read("NMOS", "Node", 0));
     m_plstClient->SelectButton(Settings::Get().Read("NMOS", "Client", 0));
 
+    Bind(wxEVT_NMOS_REGNODE_FOUND, &pnlSettingsNmos::OnNmosRegistrationNodeFound, this);
+    Bind(wxEVT_NMOS_REGNODE_REMOVED, &pnlSettingsNmos::OnNmosRegistrationNodeRemoved, this);
+    Bind(wxEVT_NMOS_REGNODE_CHANGED, &pnlSettingsNmos::OnNmosRegistrationNodeChanged, this);
+    Bind(wxEVT_NMOS_REGNODE_CHOSEN, &pnlSettingsNmos::OnNmosRegistrationNodeChosen, this);
+    Bind(wxEVT_NMOS_REGISTRATION_CHANGED, &pnlSettingsNmos::OnNmosRegistrationModeChanged, this);
 }
 
 pnlSettingsNmos::~pnlSettingsNmos()
@@ -118,4 +127,60 @@ void pnlSettingsNmos::OnlstNodeSelected(wxCommandEvent& event)
 void pnlSettingsNmos::OnlstClientSelected(wxCommandEvent& event)
 {
     Settings::Get().Write(wxT("NMOS"), wxT("Client"), event.GetInt());
+}
+
+
+void pnlSettingsNmos::OnNmosRegistrationNodeFound(const wxNmosNodeRegistrationEvent& event)
+{
+    pmlLog() << "----------------------------OnNMOSREGISTRATIONFOUND";
+    m_plstRegistration->AddButton(event.GetNodeUrl().BeforeFirst('/'), wxNullBitmap, nullptr, wmList::wmENABLED,  wxColour(100,255,100));
+    m_plstRegistration->Refresh();
+
+}
+
+void pnlSettingsNmos::OnNmosRegistrationNodeRemoved(const wxNmosNodeRegistrationEvent& event)
+{
+    m_plstRegistration->DeleteButton(m_plstRegistration->FindButton(event.GetNodeUrl().BeforeFirst('/')));
+    m_plstRegistration->Refresh();
+}
+
+void pnlSettingsNmos::OnNmosRegistrationNodeChanged(const wxNmosNodeRegistrationEvent& event)
+{
+    size_t nButton = m_plstRegistration->FindButton(event.GetNodeUrl().BeforeFirst('/'));
+    m_plstRegistration->SetButtonColour(nButton, event.GetNodeStatus() ? wxColour(100,255,100) : wxColour(255,100,100));
+}
+
+void pnlSettingsNmos::OnNmosRegistrationNodeChosen(const wxNmosNodeRegistrationEvent& event)
+{
+    for(size_t i = 0; i < m_plstRegistration->GetItemCount(); i++)
+    {
+        if(m_plstRegistration->GetButtonColour(i) == wxColour(100,100,255))
+        {
+            m_plstRegistration->SetButtonColour(i, wxColour(100, 255,100));
+        }
+    }
+
+    size_t nButton = m_plstRegistration->FindButton(event.GetNodeUrl().BeforeFirst('/'));
+    m_plstRegistration->SetButtonColour(nButton, wxColour(100,100,255));
+
+}
+
+void pnlSettingsNmos::OnNmosRegistrationModeChanged(const wxNmosNodeRegistrationEvent& event)
+{
+
+}
+
+void pnlSettingsNmos::OnNmosQueryNodeFound(const wxNmosClientQueryEvent& event)
+{
+    m_plstQuery->AddButton(event.GetUrl());
+}
+
+void pnlSettingsNmos::OnNmosQueryNodeRemoved(const wxNmosClientQueryEvent& event)
+{
+    m_plstQuery->DeleteButton(m_plstQuery->FindButton(event.GetUrl()));
+}
+
+void pnlSettingsNmos::OnNmosQueryNodeChanged(const wxNmosClientQueryEvent& event)
+{
+
 }

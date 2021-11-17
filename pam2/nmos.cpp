@@ -13,6 +13,7 @@
 #include <wx/log.h>
 
 NmosManager::NmosManager(pnlSettingsInputNmos* pPnl) :
+    m_pPoster(std::make_shared<wxEventPoster>(this)),
     m_pInputPanel(pPnl),
     m_pFlow(0),
     m_pSender(0),
@@ -48,7 +49,8 @@ void NmosManager::Setup()
     gethostname(chHost, 256);
 
 
-    pml::nmos::NodeApi::Get().Init(std::make_shared<wxEventPoster>(this), Settings::Get().Read("NMOS", "Port_Discovery", 8080),
+
+    pml::nmos::NodeApi::Get().Init(m_pPoster, Settings::Get().Read("NMOS", "Port_Discovery", 8080),
                         Settings::Get().Read("NMOS", "Port_Connection", 8080),
                         Settings::Get().Read("NMOS", "HostLabel", wxEmptyString).ToStdString(),
                         Settings::Get().Read("NMOS", "HostDescription", "PAM").ToStdString());
@@ -232,7 +234,7 @@ void NmosManager::OnSettingChanged(SettingEvent& event)
 
 
 
-void NmosManager::OnTarget(wxNmosEvent& event)
+void NmosManager::OnTarget(wxNmosNodeConnectionEvent& event)
 {
 
     auto itInterface = Settings::Get().GetInterfaces().find("eth0");
@@ -255,9 +257,9 @@ void NmosManager::OnTarget(wxNmosEvent& event)
     }
 }
 
-void NmosManager::OnPatchSender(wxNmosEvent& event)
+void NmosManager::OnPatchSender(wxNmosNodeConnectionEvent& event)
 {
-    auto pSender = pml::nmos::NodeApi::Get().GetSender(event.GetString().ToStdString());
+    auto pSender = pml::nmos::NodeApi::Get().GetSender(event.GetResourceId().ToStdString());
     if(pSender)
     {
         std::string sSourceIp(pSender->GetStaged().tpSender.sSourceIp);
@@ -318,9 +320,9 @@ void NmosManager::OnPatchSender(wxNmosEvent& event)
 
 }
 
-void NmosManager::OnPatchReceiver(wxNmosEvent& event)
+void NmosManager::OnPatchReceiver(wxNmosNodeConnectionEvent& event)
 {
-    auto pReceiver = pml::nmos::NodeApi::Get().GetReceiver(event.GetString().ToStdString());
+    auto pReceiver = pml::nmos::NodeApi::Get().GetReceiver(event.GetResourceId().ToStdString());
     if(pReceiver)
     {
         auto itInterface = Settings::Get().GetInterfaces().find("eth0");
@@ -343,10 +345,10 @@ void NmosManager::OnPatchReceiver(wxNmosEvent& event)
 
 }
 
-void NmosManager::OnSenderActivated(wxNmosEvent& event)
+void NmosManager::OnSenderActivated(wxNmosNodeConnectionEvent& event)
 {
-    pmlLog() << "OnSenderActivated " << event.GetString().ToStdString();
-    auto pSender = pml::nmos::NodeApi::Get().GetSender(event.GetString().ToStdString());
+    pmlLog() << "OnSenderActivated " << event.GetResourceId().ToStdString();
+    auto pSender = pml::nmos::NodeApi::Get().GetSender(event.GetResourceId().ToStdString());
     if(pSender)
     {
         ActivateSender(pSender);
@@ -407,10 +409,10 @@ void NmosManager::ActivateSender(std::shared_ptr<pml::nmos::Sender> pSender)
     IOManager::Get().RestartStream();
 }
 
-void NmosManager::OnReceiverActivated(wxNmosEvent& event)
+void NmosManager::OnReceiverActivated(wxNmosNodeConnectionEvent& event)
 {
     // @todo move this somewhere else...
-    auto pReceiver = pml::nmos::NodeApi::Get().GetReceiver(event.GetString().ToStdString());
+    auto pReceiver = pml::nmos::NodeApi::Get().GetReceiver(event.GetResourceId().ToStdString());
     if(pReceiver)
     {
         ActivateReceiver(pReceiver);
@@ -581,4 +583,12 @@ void NmosManager::OnNmosSubscribeRequest(wxNmosClientCurlEvent& event)
         m_pInputPanel->SubscriptionRequest(event.GetResourceId(), event.GetResponse(), event.GetResult());
     }
 }
+
+
+void NmosManager::AddHandlerToEventPoster(wxEvtHandler* pHandler)
+{
+
+    m_pPoster->AddHandler(pHandler);
+}
+
 #endif // __NMOS__

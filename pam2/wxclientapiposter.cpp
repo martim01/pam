@@ -16,6 +16,11 @@ wxDEFINE_EVENT(wxEVT_NMOS_CLIENTCURL_PATCH_SENDER, wxNmosClientCurlEvent);
 wxDEFINE_EVENT(wxEVT_NMOS_CLIENTCURL_PATCH_RECEIVER, wxNmosClientCurlEvent);
 wxDEFINE_EVENT(wxEVT_NMOS_CLIENTCURL_CONNECT, wxNmosClientCurlEvent);
 
+wxDEFINE_EVENT(wxEVT_NMOS_CLIENTQUERY_FOUND, wxNmosClientQueryEvent);
+wxDEFINE_EVENT(wxEVT_NMOS_CLIENTQUERY_REMOVED, wxNmosClientQueryEvent);
+wxDEFINE_EVENT(wxEVT_NMOS_CLIENTQUERY_CHANGED, wxNmosClientQueryEvent);
+
+
 IMPLEMENT_DYNAMIC_CLASS(wxNmosClientNodeEvent, wxCommandEvent)
 IMPLEMENT_DYNAMIC_CLASS(wxNmosClientDeviceEvent, wxCommandEvent)
 IMPLEMENT_DYNAMIC_CLASS(wxNmosClientSourceEvent, wxCommandEvent)
@@ -23,6 +28,8 @@ IMPLEMENT_DYNAMIC_CLASS(wxNmosClientFlowEvent, wxCommandEvent)
 IMPLEMENT_DYNAMIC_CLASS(wxNmosClientSenderEvent, wxCommandEvent)
 IMPLEMENT_DYNAMIC_CLASS(wxNmosClientReceiverEvent, wxCommandEvent)
 IMPLEMENT_DYNAMIC_CLASS(wxNmosClientCurlEvent, wxCommandEvent)
+
+IMPLEMENT_DYNAMIC_CLASS(wxNmosClientQueryEvent, wxCommandEvent)
 
 wxClientApiPoster::wxClientApiPoster(wxEvtHandler* pHandler) : ClientApiPoster(),
     m_pHandler(pHandler)
@@ -145,6 +152,22 @@ void wxClientApiPoster::RequestGetReceiverActiveResult(unsigned long nResult, co
 }
 
 
+void wxClientApiPoster::QueryServerFound(const std::string& sUrl, unsigned short nPriority)
+{
+    wxQueueEvent(m_pHandler, new wxNmosClientQueryEvent(wxEVT_NMOS_CLIENTQUERY_FOUND, sUrl, nPriority));
+}
+
+void wxClientApiPoster::QueryServerRemoved(const std::string& sUrl)
+{
+    wxQueueEvent(m_pHandler, new wxNmosClientQueryEvent(wxEVT_NMOS_CLIENTQUERY_REMOVED, sUrl, 0));
+}
+
+void wxClientApiPoster::QueryServerChanged(const std::string& sUrl)
+{
+    wxQueueEvent(m_pHandler, new wxNmosClientQueryEvent(wxEVT_NMOS_CLIENTQUERY_CHANGED, sUrl, 0));
+}
+
+
 wxNmosClientCurlEvent::wxNmosClientCurlEvent(wxEventType type, unsigned long nResult, const wxString& sResponse, const wxString& sResourceId) : wxCommandEvent(type),
     m_sResponse(sResponse.c_str()),
     m_sResourceId(sResourceId.c_str())
@@ -178,6 +201,21 @@ const wxString& wxNmosClientCurlEvent::GetResourceId() const
 
 
 
+
+
+wxNmosClientQueryEvent::wxNmosClientQueryEvent(wxEventType type, const wxString& sUrl, unsigned short nPriority) : wxCommandEvent(type),
+    m_sUrl(sUrl),
+    m_nPriority(nPriority)
+{
+
+}
+
+wxNmosClientQueryEvent::wxNmosClientQueryEvent(const wxNmosClientQueryEvent& event) : wxCommandEvent(event),
+m_sUrl(event.GetUrl()),
+m_nPriority(event.GetPriority())
+{
+
+}
 
 
 #endif

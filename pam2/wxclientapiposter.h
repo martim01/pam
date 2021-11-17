@@ -135,6 +135,11 @@ class wxClientApiPoster : public pml::nmos::ClientApiPoster
         *   @param sResourceId contains the uuId of the Receiver
         **/
         void RequestGetReceiverActiveResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId) override;
+
+        void QueryServerFound(const std::string& sUrl, unsigned short nPriority) override;
+        void QueryServerRemoved(const std::string& sUrl) override;
+        void QueryServerChanged(const std::string& sUrl) override;
+
     private:
         wxEvtHandler* m_pHandler;
 
@@ -187,6 +192,48 @@ wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_CLIENTCURL_SUBSCRIBE, wxNmosClient
 wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_CLIENTCURL_PATCH_SENDER, wxNmosClientCurlEvent);
 wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_CLIENTCURL_PATCH_RECEIVER, wxNmosClientCurlEvent);
 wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_CLIENTCURL_CONNECT, wxNmosClientCurlEvent);
+
+
+
+class wxNmosClientQueryEvent : public wxCommandEvent
+{
+
+public:
+
+    wxNmosClientQueryEvent(wxEventType type, const wxString& sUrl, unsigned short nPriority=0);
+
+    wxNmosClientQueryEvent() : wxCommandEvent(){}
+
+    /** Copy Constructor
+    *   @param event a wxNIEvent
+    **/
+    wxNmosClientQueryEvent(const wxNmosClientQueryEvent& event);
+
+    /** Destructor
+    **/
+    ~wxNmosClientQueryEvent(){}
+
+    /** Creates a copy of the wxNmosClientEvent
+    *   @return <i>wxNmosClientEvent</i>
+    **/
+    wxEvent *Clone() const { return new wxNmosClientQueryEvent(*this); }
+
+    const wxString& GetUrl() const { return m_sUrl;}
+    unsigned short GetPriority() const { return m_nPriority; }
+
+
+    DECLARE_DYNAMIC_CLASS(wxNmosClientQueryEvent)
+
+    private:
+        wxString m_sUrl;
+        unsigned short m_nPriority;
+
+};
+
+
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_CLIENTQUERY_FOUND, wxNmosClientQueryEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_CLIENTQUERY_REMOVED, wxNmosClientQueryEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_CLIENTQUERY_CHANGED, wxNmosClientQueryEvent);
 
 
 #endif

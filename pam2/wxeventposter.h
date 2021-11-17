@@ -3,6 +3,8 @@
 #include "eventposter.h"
 #include "connection.h"
 #include <wx/event.h>
+#include "nmosapiversion.h"
+#include <list>
 
 class wxEventPoster : public pml::nmos::EventPoster
 {
@@ -10,13 +12,9 @@ class wxEventPoster : public pml::nmos::EventPoster
         wxEventPoster(wxEvtHandler* pHandler);
         virtual ~wxEventPoster(){}
 
+        void AddHandler(wxEvtHandler* pHandler) { m_lstHandlers.push_back(pHandler);}
+
     protected:
-        void CurlDone(unsigned long nResult, const std::string& sResponse, long nType, const std::string& sResourceId);
-        void InstanceResolved(std::shared_ptr<pml::nmos::dnsInstance> pInstance);
-        void AllForNow(const std::string& sService);
-        void Finished();
-        void RegistrationNodeError();
-        void InstanceRemoved(std::shared_ptr<pml::nmos::dnsInstance> pInstance);
 
         void Target(const std::string& sReceiverId, const std::string& sTransportFile, unsigned short nPort);
         void PatchSender(const std::string& sSenderId, const pml::nmos::connectionSender& conPatch, unsigned short nPort);
@@ -24,12 +22,22 @@ class wxEventPoster : public pml::nmos::EventPoster
         void SenderActivated(const std::string& sSenderId);
         void ReceiverActivated(const std::string& sReceiverId);
 
+
+        void RegistrationNodeFound(const std::string& sUrl, unsigned short nPriority, const pml::nmos::ApiVersion& version);
+        void RegistrationNodeRemoved(const std::string& sUrl);
+        void RegistrationNodeChanged(const std::string& sUrl, unsigned short nPriority, bool bGood, const pml::nmos::ApiVersion& version);
+        void RegistrationNodeChosen(const std::string& sUrl, unsigned short nPriority, const pml::nmos::ApiVersion& version);
+        void RegistrationChanged(const std::string& sUrl, bool bRegistered);
+
+
+
     private:
-        wxEvtHandler* m_pHandler;
+        std::list<wxEvtHandler*> m_lstHandlers;
+
 };
 
 
-class wxNmosEvent : public wxCommandEvent
+class wxNmosNodeConnectionEvent : public wxCommandEvent
 {
 
 public:
@@ -37,26 +45,24 @@ public:
     *   @param commandType should be wxEVT_NI
     *   @param id the ID of the button list control
     **/
-    wxNmosEvent(wxEventType type);
+    wxNmosNodeConnectionEvent(wxEventType type);
 
-    wxNmosEvent() : wxCommandEvent(){}
+    wxNmosNodeConnectionEvent() : wxCommandEvent(){}
 
     /** Copy Constructor
     *   @param event a wxNIEvent
     **/
-    wxNmosEvent(const wxNmosEvent& event);
+
+    wxNmosNodeConnectionEvent(const wxNmosNodeConnectionEvent& event);
 
     /** Destructor
     **/
-    ~wxNmosEvent(){}
+    ~wxNmosNodeConnectionEvent(){}
 
-    /** Creates a copy of the wxNmosEvent
-    *   @return <i>wxNmosEvent</i>
+    /** Creates a copy of the wxNmosNodeConnectionEvent
+    *   @return <i>wxNmosNodeConnectionEvent</i>
     **/
-    virtual wxEvent *Clone() const { return new wxNmosEvent(*this); }
-
-    void SetDnsInstance(std::shared_ptr<pml::nmos::dnsInstance> pInstance);
-    const std::shared_ptr<pml::nmos::dnsInstance> GetDnsInstance() const;
+    virtual wxEvent *Clone() const { return new wxNmosNodeConnectionEvent(*this); }
 
     void SetTransportFile(const std::string& sTransportFile);
     const wxString& GetTransportFile() const;
@@ -67,40 +73,86 @@ public:
     void SetReceiverConnection(const pml::nmos::connectionReceiver& con);
     const pml::nmos::connectionReceiver& GetReceiverConnection() const;
 
-    wxString GetResourceId() const;
-    wxString GetCurlResponse() const;
-    wxString GetService() const;
-    int GetPort() const;
-    int GetCurlResult() const;
-    int GetCurlType() const;
+    unsigned short GetPort() const { return m_nPort;}
+    void SetPort(unsigned short nPort) { m_nPort = nPort;}
 
 
+    const wxString& GetResourceId() const { return m_sResourceId;}
+    void SetResourceId(const wxString& sId) { m_sResourceId = sId;}
 
-    DECLARE_DYNAMIC_CLASS(wxNmosEvent)
+    DECLARE_DYNAMIC_CLASS(wxNmosNodeConnectionEvent)
 
 
 
 private:
 
-    std::shared_ptr<pml::nmos::dnsInstance> m_pDnsInstance;
     wxString m_sTransportFile;
     pml::nmos::connectionSender m_conSender;
     pml::nmos::connectionReceiver m_conReceiver;
+    wxString m_sResourceId;
+    unsigned short m_nPort;
 
 };
 
-wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_MDNS_RESOLVED, wxNmosEvent);
-wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_MDNS_ALLFORNOW, wxNmosEvent);
-wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_MDNS_FINISHED, wxNmosEvent);
-wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_CURL_DONE, wxNmosEvent);
-wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_REG_ERROR, wxNmosEvent);
-wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_TARGET, wxNmosEvent);
-wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_PATCH_SENDER, wxNmosEvent);
-wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_PATCH_RECEIVER, wxNmosEvent);
-wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_ACTIVATE_RECEIVER, wxNmosEvent);
-wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_ACTIVATE_SENDER, wxNmosEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_TARGET, wxNmosNodeConnectionEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_PATCH_SENDER, wxNmosNodeConnectionEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_PATCH_RECEIVER, wxNmosNodeConnectionEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_ACTIVATE_RECEIVER, wxNmosNodeConnectionEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_ACTIVATE_SENDER, wxNmosNodeConnectionEvent);
 
 
+class wxNmosNodeRegistrationEvent : public wxCommandEvent
+{
+
+public:
+
+    wxNmosNodeRegistrationEvent() : wxCommandEvent(){}
+
+    wxNmosNodeRegistrationEvent(wxEventType type);
+    wxNmosNodeRegistrationEvent(const wxNmosNodeRegistrationEvent& event);
+
+    /** Destructor
+    **/
+    ~wxNmosNodeRegistrationEvent(){}
+
+
+    virtual wxEvent *Clone() const { return new wxNmosNodeRegistrationEvent(*this); }
+
+    void SetNodeUrl(const wxString& sUrl) { m_sUrl = sUrl;}
+    const wxString& GetNodeUrl() const  { return m_sUrl; }
+
+    void SetNodePriority(int nPriority) { m_nPriority = nPriority;}
+    int GetNodePriority() const { return m_nPriority;   }
+
+    void SetNodeVersion(const pml::nmos::ApiVersion& version)   { m_version =version;   }
+    const pml::nmos::ApiVersion& GetNodeVersion() const { return m_version;}
+
+    void SetRegistered(bool bRegistered)    { m_bRegistered = bRegistered;}
+    bool GetRegistered() const  { return m_bRegistered;}
+
+
+    void SetNodeStatus(bool bGood) { m_bGood = bGood;}
+    bool GetNodeStatus() const { return m_bGood;}
+
+    DECLARE_DYNAMIC_CLASS(wxNmosNodeRegistrationEvent)
+
+
+
+private:
+    wxString m_sUrl;
+    int m_nPriority;
+    pml::nmos::ApiVersion m_version;
+    bool m_bGood;
+    bool m_bRegistered;
+
+};
+
+
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_REGNODE_FOUND, wxNmosNodeRegistrationEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_REGNODE_REMOVED, wxNmosNodeRegistrationEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_REGNODE_CHANGED, wxNmosNodeRegistrationEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_REGNODE_CHOSEN, wxNmosNodeRegistrationEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_REGISTRATION_CHANGED, wxNmosNodeRegistrationEvent);
 
 
 

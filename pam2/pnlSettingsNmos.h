@@ -18,6 +18,10 @@ namespace pml
     };
 };
 
+class wxNmosNodeRegistrationEvent;
+class wxNmosClientQueryEvent;
+
+
 class pnlSettingsNmos: public wxPanel
 {
 	public:
@@ -64,6 +68,16 @@ class pnlSettingsNmos: public wxPanel
 		void OnlstNodeSelected(wxCommandEvent& event);
 		void OnlstClientSelected(wxCommandEvent& event);
 		//*)
+
+		void OnNmosRegistrationNodeFound(const wxNmosNodeRegistrationEvent& event);
+		void OnNmosRegistrationNodeRemoved(const wxNmosNodeRegistrationEvent& event);
+		void OnNmosRegistrationNodeChanged(const wxNmosNodeRegistrationEvent& event);
+		void OnNmosRegistrationNodeChosen(const wxNmosNodeRegistrationEvent& event);
+		void OnNmosRegistrationModeChanged(const wxNmosNodeRegistrationEvent& event);
+
+		void OnNmosQueryNodeFound(const wxNmosClientQueryEvent& event);
+		void OnNmosQueryNodeRemoved(const wxNmosClientQueryEvent& event);
+		void OnNmosQueryNodeChanged(const wxNmosClientQueryEvent& event);
 
         DECLARE_EVENT_TABLE()
 };

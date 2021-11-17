@@ -17,7 +17,8 @@ namespace pml
     };
 };
 
-class wxNmosEvent;
+class wxNmosNodeConnectionEvent;
+class wxNmosNodeRegistrationEvent;
 class wxNmosClientCurlEvent;
 class wxNmosClientNodeEvent;
 class wxNmosClientDeviceEvent;
@@ -26,7 +27,7 @@ class wxNmosClientFlowEvent;
 class wxNmosClientSenderEvent;
 class wxNmosClientReceiverEvent;
 class pnlSettingsInputNmos;
-
+class wxEventPoster;
 
 class NmosManager : public wxEvtHandler
 {
@@ -40,6 +41,7 @@ class NmosManager : public wxEvtHandler
         void StartClient(int nMode);
         void StopClient();
 
+        void AddHandlerToEventPoster(wxEvtHandler* pHandler);
 
         enum {NODE_OFF=0, NODE_RECEIVER, NODE_SENDER, NODE_BOTH};
         enum {CLIENT_OFF=0, CLIENT_IS04, CLIENT_IS05};
@@ -47,11 +49,11 @@ class NmosManager : public wxEvtHandler
     protected:
         void OnSettingChanged(SettingEvent& event);
 
-        void OnTarget(wxNmosEvent& event);
-        void OnPatchSender(wxNmosEvent& event);
-        void OnPatchReceiver(wxNmosEvent& event);
-        void OnSenderActivated(wxNmosEvent& event);
-        void OnReceiverActivated(wxNmosEvent& event);
+        void OnTarget(wxNmosNodeConnectionEvent& event);
+        void OnPatchSender(wxNmosNodeConnectionEvent& event);
+        void OnPatchReceiver(wxNmosNodeConnectionEvent& event);
+        void OnSenderActivated(wxNmosNodeConnectionEvent& event);
+        void OnReceiverActivated(wxNmosNodeConnectionEvent& event);
 
         void OnNmosSenderChanged(wxNmosClientSenderEvent& event);
         void OnNmosReceiverChanged(wxNmosClientReceiverEvent& event);
@@ -62,6 +64,7 @@ class NmosManager : public wxEvtHandler
         void ActivateSender(std::shared_ptr<pml::nmos::Sender> pSender);
         void ActivateReceiver(std::shared_ptr<pml::nmos::Receiver> pReceiver);
 
+        std::shared_ptr<wxEventPoster> m_pPoster;
         pnlSettingsInputNmos* m_pInputPanel;
 
         std::shared_ptr<pml::nmos::FlowAudioRaw> m_pFlow;
