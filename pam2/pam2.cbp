@@ -273,6 +273,8 @@
 		<Unit filename="networkcontrol.h" />
 		<Unit filename="nmos.cpp" />
 		<Unit filename="nmos.h" />
+		<Unit filename="nodebuttonfactory.cpp" />
+		<Unit filename="nodebuttonfactory.h" />
 		<Unit filename="pam2App.cpp" />
 		<Unit filename="pam2App.h" />
 		<Unit filename="pam2Main.cpp" />

@@ -6,20 +6,17 @@
 #ifdef __NMOS__
 #include "sender.h"
 #include "nmos.h"
-#include "senderbuttonfactory.h"
 #include "wxclientapiposter.h"
 #include "wxeventposter.h"
 #endif // __NMOS__
 #include "log.h"
+#include "nodebuttonfactory.h"
 
 //(*InternalHeaders(pnlSettingsNmos)
 #include <wx/intl.h>
 #include <wx/string.h>
 //*)
 
-const wxColour pnlSettingsNmos::CLR_NODE_OK         = wxColour(50,50,150);
-const wxColour pnlSettingsNmos::CLR_NODE_BAD        = wxColour(150,50,50);
-const wxColour pnlSettingsNmos::CLR_NODE_SELECTED   = wxColour(50,150,50);
 
 //(*IdInit(pnlSettingsNmos)
 const long pnlSettingsNmos::ID_M_PLBL8 = wxNewId();
@@ -130,6 +127,8 @@ pnlSettingsNmos::pnlSettingsNmos(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_plstDiscovery->AddButton("Multicast");
 	m_plstDiscovery->AddButton("Unicast");
 
+	m_plstRegistration->SetButtonFactory(new wmNodeButtonFactory());
+	m_plstQuery->SetButtonFactory(new wmNodeButtonFactory());
 
     m_plstNode->SelectButton(Settings::Get().Read("NMOS", "Node", 0));
     m_plstClient->SelectButton(Settings::Get().Read("NMOS", "Client", 0));
@@ -164,8 +163,13 @@ void pnlSettingsNmos::OnlstClientSelected(wxCommandEvent& event)
 
 void pnlSettingsNmos::OnNmosRegistrationNodeFound(const wxNmosNodeRegistrationEvent& event)
 {
-    pmlLog() << "----------------------------OnNMOSREGISTRATIONFOUND";
-    m_plstRegistration->AddButton(event.GetNodeUrl().BeforeFirst('/'), wxNullBitmap, nullptr, wmList::wmENABLED,  CLR_NODE_OK);
+    size_t nIndex = m_plstRegistration->AddButton(event.GetNodeUrl().BeforeFirst('/'));
+    auto pUi = dynamic_cast<uiNode*>(m_plstRegistration->GetButtonuiRect(nIndex));
+    if(pUi)
+    {
+        pUi->SetPriority(event.GetNodePriority());
+        pUi->SetVersion(event.GetNodeVersion());
+    }
     m_plstRegistration->Refresh();
 
 }
@@ -174,32 +178,56 @@ void pnlSettingsNmos::OnNmosRegistrationNodeRemoved(const wxNmosNodeRegistration
 {
     m_plstRegistration->DeleteButton(m_plstRegistration->FindButton(event.GetNodeUrl().BeforeFirst('/')));
     m_plstRegistration->Refresh();
+
 }
 
 void pnlSettingsNmos::OnNmosRegistrationNodeChanged(const wxNmosNodeRegistrationEvent& event)
 {
     size_t nButton = m_plstRegistration->FindButton(event.GetNodeUrl().BeforeFirst('/'));
-    m_plstRegistration->SetButtonColour(nButton, event.GetNodeStatus() ? CLR_NODE_OK : CLR_NODE_BAD);
+
+    auto pUi = dynamic_cast<uiNode*>(m_plstRegistration->GetButtonuiRect(nButton));
+    if(pUi)
+    {
+        pUi->SetOK(event.GetNodeStatus());
+        m_plstRegistration->Refresh();
+    }
 }
 
 void pnlSettingsNmos::OnNmosRegistrationNodeChosen(const wxNmosNodeRegistrationEvent& event)
 {
+    pmlLog() << "----------------------------OnNMOSREGISTRATIONCHOSEN " << event.GetNodeUrl();
     for(size_t i = 0; i < m_plstRegistration->GetItemCount(); i++)
     {
-        if(m_plstRegistration->GetButtonColour(i) == CLR_NODE_SELECTED)
+        auto pUi = dynamic_cast<uiNode*>(m_plstRegistration->GetButtonuiRect(i));
+        if(pUi)
         {
-            m_plstRegistration->SetButtonColour(i, CLR_NODE_OK);
+            pUi->Select(pUi->GetLabel() == event.GetNodeUrl().BeforeFirst('/'));
         }
     }
-
-    size_t nButton = m_plstRegistration->FindButton(event.GetNodeUrl().BeforeFirst('/'));
-    m_plstRegistration->SetButtonColour(nButton, CLR_NODE_SELECTED);
+    m_plstRegistration->Refresh();
 
 }
 
 void pnlSettingsNmos::OnNmosRegistrationModeChanged(const wxNmosNodeRegistrationEvent& event)
 {
-    m_plblDiscoveryNode->SetLabel(event.GetRegistered() ? "Register" : "Peer-Peer");
+    pmlLog() << "----------------------------OnNmosRegistrationModeChanged: " << event.GetRegistered();
+
+    switch(event.GetRegistered())
+    {
+        case pml::nmos::EventPoster::enumRegState::NODE_PEER:
+            m_plblDiscoveryNode->SetLabel("Peer-Peer");
+            break;
+        case pml::nmos::EventPoster::enumRegState::NODE_REGISTERING:
+            m_plblDiscoveryNode->SetLabel("Registering");
+            break;
+        case pml::nmos::EventPoster::enumRegState::NODE_REGISTERED:
+            m_plblDiscoveryNode->SetLabel("Registered");
+            break;
+        case pml::nmos::EventPoster::enumRegState::NODE_REGISTER_FAILED:
+            m_plblDiscoveryNode->SetLabel("Failed");
+            break;
+    }
+    m_plblDiscoveryNode->Update();
 }
 
 void pnlSettingsNmos::OnNmosQueryNodeFound(const wxNmosClientQueryEvent& event)

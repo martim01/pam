@@ -91,7 +91,7 @@ class PAMBASE_IMPEXPORT uiRect
         /** @brief Sets the text to draw in the rectangle
         *   @param sLabel
         **/
-        void SetLabel(const wxString& sLabel);
+        virtual void SetLabel(const wxString& sLabel);
 
         /** @brief Gets the text that is currently drawn in the rectangle
         *   @return <i>wxString<i>

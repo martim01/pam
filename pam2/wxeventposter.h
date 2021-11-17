@@ -27,7 +27,7 @@ class wxEventPoster : public pml::nmos::EventPoster
         void RegistrationNodeRemoved(const std::string& sUrl);
         void RegistrationNodeChanged(const std::string& sUrl, unsigned short nPriority, bool bGood, const pml::nmos::ApiVersion& version);
         void RegistrationNodeChosen(const std::string& sUrl, unsigned short nPriority, const pml::nmos::ApiVersion& version);
-        void RegistrationChanged(const std::string& sUrl, bool bRegistered);
+        void RegistrationChanged(const std::string& sUrl, pml::nmos::EventPoster::enumRegState eState);
 
 
 
@@ -127,8 +127,8 @@ public:
     void SetNodeVersion(const pml::nmos::ApiVersion& version)   { m_version =version;   }
     const pml::nmos::ApiVersion& GetNodeVersion() const { return m_version;}
 
-    void SetRegistered(bool bRegistered)    { m_bRegistered = bRegistered;}
-    bool GetRegistered() const  { return m_bRegistered;}
+    void SetRegistered(pml::nmos::EventPoster::enumRegState eState)    { m_eState = eState;}
+    pml::nmos::EventPoster::enumRegState GetRegistered() const  { return m_eState;}
 
 
     void SetNodeStatus(bool bGood) { m_bGood = bGood;}
@@ -143,7 +143,7 @@ private:
     int m_nPriority;
     pml::nmos::ApiVersion m_version;
     bool m_bGood;
-    bool m_bRegistered;
+    pml::nmos::EventPoster::enumRegState m_eState;
 
 };
 

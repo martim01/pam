@@ -133,12 +133,12 @@ void wxEventPoster::RegistrationNodeChosen(const std::string& sUrl, unsigned sho
     }
 }
 
-void wxEventPoster::RegistrationChanged(const std::string& sUrl, bool bRegistered)
+void wxEventPoster::RegistrationChanged(const std::string& sUrl, pml::nmos::EventPoster::enumRegState eState)
 {
     for(auto pHandler : m_lstHandlers)
     {
         wxNmosNodeRegistrationEvent* pEvent = new wxNmosNodeRegistrationEvent(wxEVT_NMOS_REGISTRATION_CHANGED);
-        pEvent->SetRegistered(bRegistered);
+        pEvent->SetRegistered(eState);
         wxQueueEvent(pHandler, pEvent);
     }
 }
@@ -199,7 +199,7 @@ IMPLEMENT_DYNAMIC_CLASS(wxNmosNodeRegistrationEvent, wxCommandEvent)
 wxNmosNodeRegistrationEvent::wxNmosNodeRegistrationEvent(wxEventType type) : wxCommandEvent(type),
 m_nPriority(-1),
 m_bGood(false),
-m_bRegistered(false)
+m_eState(pml::nmos::EventPoster::enumRegState::NODE_PEER)
 {
 
 }
@@ -209,7 +209,7 @@ wxNmosNodeRegistrationEvent::wxNmosNodeRegistrationEvent(const wxNmosNodeRegistr
   m_nPriority(event.GetNodePriority()),
   m_version(event.GetNodeVersion()),
   m_bGood(event.GetNodeStatus()),
-  m_bRegistered(event.GetRegistered())
+  m_eState(event.GetRegistered())
 {
 
 }
