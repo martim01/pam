@@ -112,6 +112,7 @@ void NmosManager::Setup()
     pml::nmos::NodeApi::Get().AddSender(m_pSender);
     pml::nmos::NodeApi::Get().AddReceiver(m_pReceiver);
 
+
     pml::nmos::NodeApi::Get().Commit();
 
 
@@ -473,7 +474,12 @@ void NmosManager::StartClient(int nMode)
         if(nMode != CLIENT_OFF && m_nClientMode == CLIENT_OFF)
         {
             pml::nmos::ClientApi::Get().SetPoster(std::make_shared<wxClientApiPoster>(this));
-            pml::nmos::ClientApi::Get().AddQuerySubscription(pml::nmos::ClientApi::ALL, "",0);
+            pml::nmos::ClientApi::Get().AddQuerySubscription(pml::nmos::ClientApi::NODES, "",0);
+            pml::nmos::ClientApi::Get().AddQuerySubscription(pml::nmos::ClientApi::DEVICES, "",0);
+            pml::nmos::ClientApi::Get().AddQuerySubscription(pml::nmos::ClientApi::SOURCES, "",0);
+            pml::nmos::ClientApi::Get().AddQuerySubscription(pml::nmos::ClientApi::FLOWS, "",0);
+            pml::nmos::ClientApi::Get().AddQuerySubscription(pml::nmos::ClientApi::RECEIVERS, "",0);
+            pml::nmos::ClientApi::Get().AddQuerySubscription(pml::nmos::ClientApi::SENDERS, "",0);
             pml::nmos::ClientApi::Get().Start();
         }
         else
@@ -520,7 +526,7 @@ void NmosManager::OnNmosSenderChanged(wxNmosClientSenderEvent& event)
     {
         for(auto pSender : event.GetAdded())
         {
-            if(pml::nmos::NodeApi::Get().GetSender(pSender->GetId()) == nullptr)
+            if(pml::nmos::NodeApi::Get().GetSender(pSender->GetId()) == nullptr)    //make sure sender isn't us
             {  //not one of our senders
                 auto itFlow = pml::nmos::ClientApi::Get().FindFlow(pSender->GetFlowId());
                 if(itFlow != pml::nmos::ClientApi::Get().GetFlows().end())

@@ -7,6 +7,8 @@
 class uiNode: public uiRect
 {
     public:
+        enum enumRegState {REG_NONE, REGISTERING, REGISTERED, REGISTER_FAILED};
+
         uiNode(const wxRect& rect = wxRect(0,0,0,0), unsigned int nGradient=wxEAST);
         virtual ~uiNode(){}
 
@@ -25,7 +27,7 @@ class uiNode: public uiRect
         const wxString& GetLabel() const;
 
         void SetOK(bool bOK);
-        void Select(bool bSelect);
+        void SetRegisterState(enumRegState eState);
 
         void SetPriority(unsigned short nPriority);
         void SetVersion(const pml::nmos::ApiVersion& version);
@@ -38,11 +40,12 @@ class uiNode: public uiRect
         uiRect m_uiVersion;
 
         bool m_bOK;
-        bool m_bSelected;
+        enumRegState m_eState;
 
-        static const wxColour CLR_OK;
+        static const wxColour CLR_REG_BACK[4];
+        static const wxColour CLR_REG_TEXT[4];
         static const wxColour CLR_BAD;
-        static const wxColour CLR_SELECTED;
+
 
 };
 

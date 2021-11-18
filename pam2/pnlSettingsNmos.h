@@ -80,7 +80,6 @@ class pnlSettingsNmos: public wxPanel
 		void OnNmosRegistrationNodeFound(const wxNmosNodeRegistrationEvent& event);
 		void OnNmosRegistrationNodeRemoved(const wxNmosNodeRegistrationEvent& event);
 		void OnNmosRegistrationNodeChanged(const wxNmosNodeRegistrationEvent& event);
-		void OnNmosRegistrationNodeChosen(const wxNmosNodeRegistrationEvent& event);
 		void OnNmosRegistrationModeChanged(const wxNmosNodeRegistrationEvent& event);
 
 		void OnNmosQueryNodeFound(const wxNmosClientQueryEvent& event);

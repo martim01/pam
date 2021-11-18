@@ -5,12 +5,12 @@
 using namespace std;
 
 
-const wxColour uiNode::CLR_BAD      = wxColour(150,50,50);
-const wxColour uiNode::CLR_OK       = wxColour(50,50,150);
-const wxColour uiNode::CLR_SELECTED = wxColour(50,150,50);
+const wxColour uiNode::CLR_BAD          = wxColour(250,50,50);
+const wxColour uiNode::CLR_REG_BACK[4] = { wxColour(180,180,200),wxColour(50,250,50),wxColour(50,250,50), wxColour(50,250,50) };
+const wxColour uiNode::CLR_REG_TEXT[4]  = { *wxBLACK, wxBLACK,*wxWHITE,*wxRED};
 
 
-uiNode::uiNode(const wxRect& rect, unsigned int nGradient) : uiRect(rect, nGradient), m_bOK(true), m_bSelected(false)
+uiNode::uiNode(const wxRect& rect, unsigned int nGradient) : uiRect(rect, nGradient), m_bOK(true), m_eState(REG_NONE)
 {
     SetColour();
 }
@@ -49,30 +49,28 @@ void uiNode::SetOK(bool bOK)
     SetColour();
 }
 
-void uiNode::Select(bool bSelected)
+void uiNode::SetRegisterState(enumRegState eState)
 {
-   m_bSelected = bSelected;
+   m_eState = eState;
    SetColour();
 }
 
 void uiNode::SetColour()
 {
     wxColour clrBack(CLR_BAD);
+    wxColour clrText(*wxBLACK);
     if(m_bOK)
     {
-        if(m_bSelected)
-        {
-            clrBack = CLR_SELECTED;
-        }
-        else
-        {
-            clrBack = CLR_OK;
-        }
+        clrBack = CLR_REG_BACK[m_eState];
+        clrText = CLR_REG_TEXT[m_eState];
     }
 
     m_uiUrl.SetBackgroundColour(clrBack);
+    m_uiUrl.SetForegroundColour(clrText);
     m_uiPriority.SetBackgroundColour(clrBack);
+    m_uiPriority.SetForegroundColour(clrText);
     m_uiVersion.SetBackgroundColour(clrBack);
+    m_uiVersion.SetForegroundColour(clrText);
 }
 
 void uiNode::SetLabel(const wxString& sLabel)

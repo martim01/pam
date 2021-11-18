@@ -26,7 +26,6 @@ class wxEventPoster : public pml::nmos::EventPoster
         void RegistrationNodeFound(const std::string& sUrl, unsigned short nPriority, const pml::nmos::ApiVersion& version);
         void RegistrationNodeRemoved(const std::string& sUrl);
         void RegistrationNodeChanged(const std::string& sUrl, unsigned short nPriority, bool bGood, const pml::nmos::ApiVersion& version);
-        void RegistrationNodeChosen(const std::string& sUrl, unsigned short nPriority, const pml::nmos::ApiVersion& version);
         void RegistrationChanged(const std::string& sUrl, pml::nmos::EventPoster::enumRegState eState);
 
 
@@ -151,7 +150,6 @@ private:
 wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_REGNODE_FOUND, wxNmosNodeRegistrationEvent);
 wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_REGNODE_REMOVED, wxNmosNodeRegistrationEvent);
 wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_REGNODE_CHANGED, wxNmosNodeRegistrationEvent);
-wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_REGNODE_CHOSEN, wxNmosNodeRegistrationEvent);
 wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_REGISTRATION_CHANGED, wxNmosNodeRegistrationEvent);
 
 

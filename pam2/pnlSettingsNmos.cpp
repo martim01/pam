@@ -136,8 +136,11 @@ pnlSettingsNmos::pnlSettingsNmos(wxWindow* parent,wxWindowID id,const wxPoint& p
     Bind(wxEVT_NMOS_REGNODE_FOUND, &pnlSettingsNmos::OnNmosRegistrationNodeFound, this);
     Bind(wxEVT_NMOS_REGNODE_REMOVED, &pnlSettingsNmos::OnNmosRegistrationNodeRemoved, this);
     Bind(wxEVT_NMOS_REGNODE_CHANGED, &pnlSettingsNmos::OnNmosRegistrationNodeChanged, this);
-    Bind(wxEVT_NMOS_REGNODE_CHOSEN, &pnlSettingsNmos::OnNmosRegistrationNodeChosen, this);
     Bind(wxEVT_NMOS_REGISTRATION_CHANGED, &pnlSettingsNmos::OnNmosRegistrationModeChanged, this);
+
+    Bind(wxEVT_NMOS_CLIENTQUERY_FOUND, &pnlSettingsNmos::OnNmosQueryNodeFound, this);
+    Bind(wxEVT_NMOS_CLIENTQUERY_REMOVED, &pnlSettingsNmos::OnNmosQueryNodeRemoved, this);
+    Bind(wxEVT_NMOS_CLIENTQUERY_CHANGED, &pnlSettingsNmos::OnNmosQueryNodeChanged, this);
 }
 
 pnlSettingsNmos::~pnlSettingsNmos()
@@ -193,54 +196,65 @@ void pnlSettingsNmos::OnNmosRegistrationNodeChanged(const wxNmosNodeRegistration
     }
 }
 
-void pnlSettingsNmos::OnNmosRegistrationNodeChosen(const wxNmosNodeRegistrationEvent& event)
-{
-    pmlLog() << "----------------------------OnNMOSREGISTRATIONCHOSEN " << event.GetNodeUrl();
-    for(size_t i = 0; i < m_plstRegistration->GetItemCount(); i++)
-    {
-        auto pUi = dynamic_cast<uiNode*>(m_plstRegistration->GetButtonuiRect(i));
-        if(pUi)
-        {
-            pUi->Select(pUi->GetLabel() == event.GetNodeUrl().BeforeFirst('/'));
-        }
-    }
-    m_plstRegistration->Refresh();
-
-}
 
 void pnlSettingsNmos::OnNmosRegistrationModeChanged(const wxNmosNodeRegistrationEvent& event)
 {
-    pmlLog() << "----------------------------OnNmosRegistrationModeChanged: " << event.GetRegistered();
-
+    uiNode::enumRegState eState(uiNode::enumRegState::REG_NONE);
     switch(event.GetRegistered())
     {
         case pml::nmos::EventPoster::enumRegState::NODE_PEER:
+            eState = uiNode::enumRegState::REG_NONE;
             m_plblDiscoveryNode->SetLabel("Peer-Peer");
             break;
         case pml::nmos::EventPoster::enumRegState::NODE_REGISTERING:
             m_plblDiscoveryNode->SetLabel("Registering");
+            eState = uiNode::enumRegState::REGISTERING;
             break;
         case pml::nmos::EventPoster::enumRegState::NODE_REGISTERED:
             m_plblDiscoveryNode->SetLabel("Registered");
+            eState = uiNode::enumRegState::REGISTERED;
             break;
         case pml::nmos::EventPoster::enumRegState::NODE_REGISTER_FAILED:
             m_plblDiscoveryNode->SetLabel("Failed");
+            eState = uiNode::enumRegState::REG_NONE;
             break;
     }
+
+    auto aiButtons = m_plstRegistration->GetButtonIndexes();
+    for(size_t i = 0; i < aiButtons.Count(); i++)
+    {
+        auto pUi = dynamic_cast<uiNode*>(m_plstRegistration->GetButtonuiRect(aiButtons[i]));
+        if(pUi)
+        {
+            if(pUi->GetLabel() == event.GetNodeUrl().BeforeFirst('/'))
+            {
+                pUi->SetRegisterState(eState);
+            }
+            else
+            {
+                pUi->SetRegisterState(uiNode::enumRegState::REG_NONE);
+            }
+        }
+    }
+    m_plstRegistration->Refresh();
+    m_plstRegistration->Update();
     m_plblDiscoveryNode->Update();
 }
 
 void pnlSettingsNmos::OnNmosQueryNodeFound(const wxNmosClientQueryEvent& event)
 {
     m_plstQuery->AddButton(event.GetUrl());
+    m_plstQuery->Update();
 }
 
 void pnlSettingsNmos::OnNmosQueryNodeRemoved(const wxNmosClientQueryEvent& event)
 {
     m_plstQuery->DeleteButton(m_plstQuery->FindButton(event.GetUrl()));
+    m_plstQuery->Update();
 }
 
 void pnlSettingsNmos::OnNmosQueryNodeChanged(const wxNmosClientQueryEvent& event)
 {
     m_plblQueryNode->SetLabel(event.GetUrl().empty() ? "Peer-Peer" : event.GetUrl());
+    m_plstQuery->Update();
 }

@@ -15,7 +15,6 @@ wxDEFINE_EVENT(wxEVT_NMOS_ACTIVATE_SENDER,wxNmosNodeConnectionEvent);
 wxDEFINE_EVENT(wxEVT_NMOS_REGNODE_FOUND, wxNmosNodeRegistrationEvent);
 wxDEFINE_EVENT(wxEVT_NMOS_REGNODE_REMOVED, wxNmosNodeRegistrationEvent);
 wxDEFINE_EVENT(wxEVT_NMOS_REGNODE_CHANGED, wxNmosNodeRegistrationEvent);
-wxDEFINE_EVENT(wxEVT_NMOS_REGNODE_CHOSEN, wxNmosNodeRegistrationEvent);
 wxDEFINE_EVENT(wxEVT_NMOS_REGISTRATION_CHANGED, wxNmosNodeRegistrationEvent);
 
 wxEventPoster::wxEventPoster(wxEvtHandler* pHandler)
@@ -120,25 +119,15 @@ void wxEventPoster::wxEventPoster::RegistrationNodeChanged(const std::string& sU
     }
 }
 
-void wxEventPoster::RegistrationNodeChosen(const std::string& sUrl, unsigned short nPriority, const pml::nmos::ApiVersion& version)
-{
-    for(auto pHandler : m_lstHandlers)
-    {
-        wxNmosNodeRegistrationEvent* pEvent = new wxNmosNodeRegistrationEvent(wxEVT_NMOS_REGNODE_CHOSEN);
-        pEvent->SetNodeUrl(sUrl);
-        pEvent->SetNodePriority(nPriority);
-        pEvent->SetNodeVersion(version);
-        pEvent->SetNodeStatus(true);
-        wxQueueEvent(pHandler, pEvent);
-    }
-}
 
 void wxEventPoster::RegistrationChanged(const std::string& sUrl, pml::nmos::EventPoster::enumRegState eState)
 {
+    pmlLog() << "wxEventPoster::RegistrationChanged: " << sUrl << "=" << eState;
     for(auto pHandler : m_lstHandlers)
     {
         wxNmosNodeRegistrationEvent* pEvent = new wxNmosNodeRegistrationEvent(wxEVT_NMOS_REGISTRATION_CHANGED);
         pEvent->SetRegistered(eState);
+        pEvent->SetNodeUrl(sUrl);
         wxQueueEvent(pHandler, pEvent);
     }
 }
