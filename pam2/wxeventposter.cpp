@@ -38,7 +38,7 @@ void wxEventPoster::Target(const std::string& sReceiverId, const std::string& sT
     }
 }
 
-void wxEventPoster::PatchSender(const std::string& sSenderId, const pml::nmos::connectionSender& conPatch, unsigned short nPort)
+void wxEventPoster::PatchSender(const std::string& sSenderId, const pml::nmos::connectionSender<pml::nmos::activationResponse>& conPatch, unsigned short nPort)
 {
     for(auto pHandler : m_lstHandlers)
     {
@@ -50,7 +50,7 @@ void wxEventPoster::PatchSender(const std::string& sSenderId, const pml::nmos::c
     }
 }
 
-void wxEventPoster::PatchReceiver(const std::string& sReceiverId, const pml::nmos::connectionReceiver& conPatch, unsigned short nPort)
+void wxEventPoster::PatchReceiver(const std::string& sReceiverId, const pml::nmos::connectionReceiver<pml::nmos::activationResponse>& conPatch, unsigned short nPort)
 {
     for(auto pHandler : m_lstHandlers)
     {
@@ -155,27 +155,27 @@ void wxNmosNodeConnectionEvent::SetTransportFile(const std::string& sTransportFi
     m_sTransportFile = sTransportFile;
 }
 
-const wxString& wxNmosNodeConnectionEvent::GetTransportFile() const
+const std::string& wxNmosNodeConnectionEvent::GetTransportFile() const
 {
     return m_sTransportFile;
 }
 
-void wxNmosNodeConnectionEvent::SetSenderConnection(const pml::nmos::connectionSender& con)
+void wxNmosNodeConnectionEvent::SetSenderConnection(const pml::nmos::connectionSender<pml::nmos::activationResponse>& con)
 {
     m_conSender = con;
 }
 
-const pml::nmos::connectionSender& wxNmosNodeConnectionEvent::GetSenderConnection() const
+const std::experimental::optional<pml::nmos::connectionSender<pml::nmos::activationResponse>>& wxNmosNodeConnectionEvent::GetSenderConnection() const
 {
     return m_conSender;
 }
 
-void wxNmosNodeConnectionEvent::SetReceiverConnection(const pml::nmos::connectionReceiver& con)
+void wxNmosNodeConnectionEvent::SetReceiverConnection(const pml::nmos::connectionReceiver<pml::nmos::activationResponse>& con)
 {
     m_conReceiver = con;
 }
 
-const pml::nmos::connectionReceiver& wxNmosNodeConnectionEvent::GetReceiverConnection() const
+const std::experimental::optional<pml::nmos::connectionReceiver<pml::nmos::activationResponse>>& wxNmosNodeConnectionEvent::GetReceiverConnection() const
 {
     return m_conReceiver;
 }

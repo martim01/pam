@@ -5,7 +5,7 @@
 #include "senderbuttonfactory.h"
 #include "clientapi.h"
 #include <wx/msgdlg.h>
-#include "sender.h"
+#include "senderbase.h"
 
 //(*InternalHeaders(pnlSettingsInputNmos)
 #include <wx/intl.h>
@@ -126,7 +126,7 @@ bool pnlSettingsInputNmos::ConnectionIS05(size_t nSenderButton)
 }
 
 #ifdef __NMOS__
-void pnlSettingsInputNmos::AddSender(std::shared_ptr<pml::nmos::SenderBase> pSender)
+void pnlSettingsInputNmos::AddSender(std::shared_ptr<const pml::nmos::Sender> pSender)
 {
     size_t nIndex = m_plstSenders->AddButton(pSender->GetLabel());
     m_plstSenders->SetButtonAuxillaryText(nIndex, wxString(pSender->GetId()));
@@ -134,12 +134,12 @@ void pnlSettingsInputNmos::AddSender(std::shared_ptr<pml::nmos::SenderBase> pSen
 
 }
 
-void pnlSettingsInputNmos::UpdateSender(std::shared_ptr<pml::nmos::SenderBase> pSender)
+void pnlSettingsInputNmos::UpdateSender(std::shared_ptr<const pml::nmos::Sender> pSender)
 {
 
 }
 
-void pnlSettingsInputNmos::RemoveSenders(const std::list<std::shared_ptr<pml::nmos::SenderBase>>& lstRemove)
+void pnlSettingsInputNmos::RemoveSenders(const std::list<std::shared_ptr<const pml::nmos::Sender>>& lstRemove)
 {
     for(auto pSender : lstRemove)
     {

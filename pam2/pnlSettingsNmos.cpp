@@ -4,7 +4,7 @@
 #include <wx/log.h>
 #include <wx/msgdlg.h>
 #ifdef __NMOS__
-#include "sender.h"
+#include "senderbase.h"
 #include "nmos.h"
 #include "wxclientapiposter.h"
 #include "wxeventposter.h"

@@ -45,26 +45,22 @@ void NmosManager::Setup()
 {
     pmlLog() << "NMOS\tSetup NMOS";
 
-    char chHost[256];
-    gethostname(chHost, 256);
-
 
 
     pml::nmos::NodeApi::Get().Init(m_pPoster, Settings::Get().Read("NMOS", "Port_Discovery", 8080),
                         Settings::Get().Read("NMOS", "Port_Connection", 8080),
-                        Settings::Get().Read("NMOS", "HostLabel", wxEmptyString).ToStdString(),
+                        Settings::Get().Read("NMOS", "HostLabel", wxGetHostName()).ToStdString(),
                         Settings::Get().Read("NMOS", "HostDescription", "PAM").ToStdString());
     pml::nmos::NodeApi::Get().GetSelf().AddInternalClock("clk0");
     pml::nmos::NodeApi::Get().GetSelf().AddInterface("eth0");
     pml::nmos::NodeApi::Get().SetHeartbeatTime(5000);
 
-    auto pDevice = std::make_shared<pml::nmos::Device>(chHost, "Live555", pml::nmos::Device::GENERIC,pml::nmos::NodeApi::Get().GetSelf().GetId());
+    auto pDevice = std::make_shared<pml::nmos::Device>(wxString(wxGetHostName()+"/PAM").ToStdString(), "Live555", pml::nmos::Device::GENERIC,pml::nmos::NodeApi::Get().GetSelf().GetId());
 
-    auto pSource = std::make_shared<pml::nmos::SourceAudio>(chHost, "Live555", pDevice->GetId());
-    pSource->AddChannel("Left", "L");
-    pSource->AddChannel("Right", "R");
+    auto pSource = std::make_shared<pml::nmos::SourceAudio>(wxString(wxGetHostName()+"/PAM/Live555").ToStdString(), "Live555", pDevice->GetId());
+    pSource->AddChannels({{channelSymbol("L"), channelLabel("Left")},{channelSymbol("R"), channelLabel("Right")}});
 
-    m_pFlow = std::make_shared<pml::nmos::FlowAudioRaw>(chHost, "Live555", pSource->GetId(), pDevice->GetId(), 48000, pml::nmos::FlowAudioRaw::L24);
+    m_pFlow = std::make_shared<pml::nmos::FlowAudioRaw>(wxString(wxGetHostName()+"/PAM/Live555/L24").ToStdString(), "Live555", pSource->GetId(), pDevice->GetId(), 48000, pml::nmos::FlowAudioRaw::L24);
     int nPackeTime = Settings::Get().Read("Server", "PacketTime", 1000);
     switch(nPackeTime)
     {
@@ -85,16 +81,15 @@ void NmosManager::Setup()
         break;
     }
 
-    m_pFlow->SetMediaClkOffset(Settings::Get().Read("AoIP_Settings", "Epoch", 0));    //@todo get this from Live555
+    m_pFlow->SetMediaClkOffset(Settings::Get().Read("AoIP_Settings", "Epoch", 0));
 
-    m_pSender = std::make_shared<pml::nmos::Sender>(chHost, "Live555 sender", m_pFlow->GetId(), pml::nmos::Sender::RTP_MCAST, pDevice->GetId(), "eth0");
+    m_pSender = std::make_shared<pml::nmos::Sender>(wxString(wxGetHostName()+"/PAM/Live555/Sender").ToStdString(), "Live555 sender", m_pFlow->GetId(), pml::nmos::Sender::RTP_MCAST, pDevice->GetId(), "eth0");
     m_pSender->SetDestinationDetails(Settings::Get().Read("Server", "DestinationIp",wxEmptyString).ToStdString(),
                                      Settings::Get().Read("Server", "RTP_Port", 5004));
 
-    m_pReceiver = std::make_shared<pml::nmos::Receiver>(chHost, "Live555 receiver", pml::nmos::Receiver::RTP_MCAST, pDevice->GetId(), pml::nmos::Receiver::AUDIO,
+    m_pReceiver = std::make_shared<pml::nmos::Receiver>(wxString(wxGetHostName()+"/PAM/Live555/Receiver").ToStdString(), "Live555 receiver", pml::nmos::Receiver::RTP_MCAST, pDevice->GetId(), pml::nmos::Receiver::AUDIO,
                                                 pml::nmos::TransportParamsRTP::CORE | pml::nmos::TransportParamsRTP::MULTICAST);
-    m_pReceiver->AddCap("audio/L24");
-    m_pReceiver->AddCap("audio/L16");
+    m_pReceiver->AddCaps({"audio/L24","audio/L16"});
     m_pReceiver->AddInterfaceBinding("eth0");
 
     if(pml::nmos::NodeApi::Get().AddDevice(pDevice) == false)
@@ -125,7 +120,7 @@ void NmosManager::Setup()
     Bind(wxEVT_NMOS_CLIENT_SENDER, &NmosManager::OnNmosSenderChanged, this);
     Bind(wxEVT_NMOS_CLIENT_RECEIVER, &NmosManager::OnNmosReceiverChanged, this);
     Bind(wxEVT_NMOS_CLIENT_FLOW, &NmosManager::OnNmosFlowChanged, this);
-    Bind(wxEVT_NMOS_CLIENTCURL_SUBSCRIBE, &NmosManager::OnNmosSubscribeRequest, this);
+    Bind(wxEVT_NMOS_CLIENT_SUBSCRIBE, &NmosManager::OnNmosSubscribeRequest, this);
 
 
     StartNode(Settings::Get().Read("NMOS", "Node",0));
@@ -260,10 +255,9 @@ void NmosManager::OnTarget(wxNmosNodeConnectionEvent& event)
 
 void NmosManager::OnPatchSender(wxNmosNodeConnectionEvent& event)
 {
-    auto pSender = pml::nmos::NodeApi::Get().GetSender(event.GetResourceId().ToStdString());
-    if(pSender)
+    if(event.GetSenderConnection())
     {
-        std::string sSourceIp(pSender->GetStaged().tpSender.sSourceIp);
+        std::string sSourceIp(event.GetSenderConnection()->GetTransportParams()[0].GetSourceIp());
         if(sSourceIp.empty() || sSourceIp == "auto")
         {
             sSourceIp = Settings::Get().Read("Server", "RTSP_Address", wxEmptyString).ToStdString();
@@ -277,13 +271,29 @@ void NmosManager::OnPatchSender(wxNmosNodeConnectionEvent& event)
         }
 
         std::string sDestinationIp;
-        pmlLog() << "Patch Sender: ReceiverId = '" << pSender->GetStaged().sReceiverId << "'";
 
-        if(pSender->GetStaged().sReceiverId.empty())
-        {   //no receiver so multicast
-            if(pSender->GetStaged().tpSender.sDestinationIp.empty() == false && pSender->GetStaged().tpSender.sDestinationIp != "auto")
+
+        if(event.GetSenderConnection()->GetReceiverId())
+        {
+            pmlLog() << "Patch Sender: ReceiverId = '" << *(event.GetSenderConnection()->GetReceiverId()) << "'";
+
+            //receiverid so unicast. -- @todo if we are already multicasting what do we do here????
+            if(event.GetSenderConnection()->GetTransportParams()[0].GetDestinationIp().empty() == false && event.GetSenderConnection()->GetTransportParams()[0].GetDestinationIp() != "auto")
+            {   //one would hope ip has been set. so set the live555 address to it
+                sDestinationIp = event.GetSenderConnection()->GetTransportParams()[0].GetDestinationIp();
+                pmlLog() << "Patch Sender: DestinationIp set by receiver = '" << sDestinationIp << "'";
+            }
+            else
+            {   // @todo no ip address set. Should we try to find what the receiver ip address is from the clientapi??
+                pmlLog() << "Patch Sender: DestinationIp set by no-one = '" << sDestinationIp << "'";
+            }
+        }
+        else
+        {
+             //no receiver so multicast
+            if(event.GetSenderConnection()->GetTransportParams()[0].GetDestinationIp().empty() == false && event.GetSenderConnection()->GetTransportParams()[0].GetDestinationIp() != "auto")
             {   //address has been chosen by nmos
-                sDestinationIp = pSender->GetStaged().tpSender.sDestinationIp;
+                sDestinationIp = event.GetSenderConnection()->GetTransportParams()[0].GetDestinationIp();
 
                 pmlLog() << "Patch Sender: DestinationIp set by receiver = '" << sDestinationIp << "'";
             }
@@ -294,138 +304,118 @@ void NmosManager::OnPatchSender(wxNmosNodeConnectionEvent& event)
                 pmlLog() << "Patch Sender: DestinationIp set by us = '" << sDestinationIp << "'";
             }
         }
-        else
-        {   //receiverid so unicast. -- @todo if we are already multicasting what do we do here????
-            if(pSender->GetStaged().tpSender.sDestinationIp.empty() == false && pSender->GetStaged().tpSender.sDestinationIp != "auto")
-            {   //one would hope ip has been set. so set the live555 address to it
-                sDestinationIp = pSender->GetStaged().tpSender.sDestinationIp;
-                pmlLog() << "Patch Sender: DestinationIp set by receiver = '" << sDestinationIp << "'";
-            }
-            else
-            {   // @todo no ip address set. Should we try to find what the receiver ip address is from the clientapi??
-                pmlLog() << "Patch Sender: DestinationIp set by no-one = '" << sDestinationIp << "'";
-            }
-        }
 
         // @todo Set the sender stuff - maybe changes the Live555 settings
-        pml::nmos::NodeApi::Get().SenderPatchAllowed(event.GetPort(), true, pSender->GetId(), sSourceIp, sDestinationIp);
-        if(event.GetSenderConnection().eActivate == pml::nmos::connection::ACT_NOW)
+        pml::nmos::NodeApi::Get().SenderPatchAllowed(event.GetPort(), true, event.GetResourceId(), sSourceIp, sDestinationIp);
+        if(event.GetSenderConnection()->GetConstActivation().GetMode() == pml::nmos::activation::ACT_NOW)
         {
-            ActivateSender(pSender);
+            ActivateSender(event.GetResourceId());
         }
     }
     else
     {
-        pml::nmos::NodeApi::Get().SenderPatchAllowed(event.GetPort(), false, event.GetResourceId().ToStdString(), "", "");
+        pml::nmos::NodeApi::Get().SenderPatchAllowed(event.GetPort(), false, event.GetResourceId(), "", "");
     }
-
 }
 
 void NmosManager::OnPatchReceiver(wxNmosNodeConnectionEvent& event)
 {
-    auto pReceiver = pml::nmos::NodeApi::Get().GetReceiver(event.GetResourceId().ToStdString());
-    if(pReceiver)
+    if(event.GetReceiverConnection())
     {
         auto itInterface = Settings::Get().GetInterfaces().find("eth0");
         if(itInterface != Settings::Get().GetInterfaces().end())
         {
-            //Chage the AOIP source to be NMOS IS-04
-            pml::nmos::NodeApi::Get().ReceiverPatchAllowed(event.GetPort(), true, pReceiver->GetId(), itInterface->second.ToStdString());
+            pml::nmos::NodeApi::Get().ReceiverPatchAllowed(event.GetPort(), true, event.GetResourceId(), itInterface->second.ToStdString());
 
-            if(event.GetReceiverConnection().eActivate == pml::nmos::connection::ACT_NOW)
+            if(event.GetReceiverConnection()->GetConstActivation().GetMode() == pml::nmos::activation::ACT_NOW)
             {
-                ActivateReceiver(pReceiver);
+                ActivateReceiver(event.GetResourceId());
             }
         }
     }
     else
     {
-        pml::nmos::NodeApi::Get().SenderPatchAllowed(event.GetPort(), false, event.GetResourceId().ToStdString(),"","");
+        pml::nmos::NodeApi::Get().ReceiverPatchAllowed(event.GetPort(), false, event.GetResourceId(),"");
     }
     // @todo Set the receiver stuff - maybe changes the Live555 settings
-
 }
 
 void NmosManager::OnSenderActivated(wxNmosNodeConnectionEvent& event)
 {
-    pmlLog() << "OnSenderActivated " << event.GetResourceId().ToStdString();
-    auto pSender = pml::nmos::NodeApi::Get().GetSender(event.GetResourceId().ToStdString());
-    if(pSender)
-    {
-        ActivateSender(pSender);
-    }
+    pmlLog() << "OnSenderActivated " << event.GetResourceId();
+    ActivateSender(event.GetResourceId());
 }
 
 
-void NmosManager::ActivateSender(std::shared_ptr<pml::nmos::Sender> pSender)
+void NmosManager::ActivateSender(const std::string& sId)
 {
     pmlLog() << "NmosManager::ActivateSender";
-    if(pSender->GetDestinationIp().empty() == false)
-    {   //address has been chosen by nmos
-        Settings::Get().Write("Server", "DestinationIp", pSender->GetDestinationIp());
-        pmlLog() << "ActivateSender: DestinationIp set '" << pSender->GetDestinationIp() << "'";
-    }
-    else
+    auto pSender = pml::nmos::NodeApi::Get().GetSender(sId);
+    if(pSender)
     {
-        if(pSender->GetStaged().sReceiverId.empty())
-        {   //address not chosen by nmos and pam hasn't chosen one yet. create rando,
-            Settings::Get().Write("Server", "DestinationIp", IOManager::Get().GetRandomMulticastAddress());
-            pmlLog() << "ActivateSender: DestinationIp set by random";
+        if(pSender->GetDestinationIp().empty() == false)
+        {   //address has been chosen by nmos
+            Settings::Get().Write("Server", "DestinationIp", pSender->GetDestinationIp());
+            pmlLog() << "ActivateSender: DestinationIp set '" << pSender->GetDestinationIp() << "'";
         }
         else
-        {   // @todo no ip address set. Should we try to find what the receiver ip address is from the clientapi??
-            pmlLog() << "ActivateSender: DestinationIp not set";
-        }
-    }
-
-    //if the source interface is set then change our source ip. else do the opposites
-    std::string sSourceIp(pSender->GetStaged().tpSender.sSourceIp);
-    if(sSourceIp.empty() == false && sSourceIp != "auto")
-    {   //sourceip set by nmos
-        Settings::Get().Write("Server", "RTSP_Address", sSourceIp);
-    }
-    else
-    {
-        sSourceIp = Settings::Get().Read("Server", "RTSP_Address", wxEmptyString).ToStdString();
-        if(sSourceIp.empty())
         {
-             if(Settings::Get().GetInterfaces().empty() == false)
-             {
-                 Settings::Get().Write("Server", "RTSP_Address", Settings::Get().GetInterfaces().begin()->second);
-             }
+            if(pSender->GetStaged().GetReceiverId())
+            {   // @todo no ip address set. Should we try to find what the receiver ip address is from the clientapi??
+                pmlLog() << "ActivateSender: DestinationIp not set but ReceiverId is set";
+            }
+            else
+            {   //address not chosen by nmos and pam hasn't chosen one yet. create rando,
+                Settings::Get().Write("Server", "DestinationIp", IOManager::Get().GetRandomMulticastAddress());
+                pmlLog() << "ActivateSender: DestinationIp set by random";
+
+            }
         }
-    }
 
-    if(pSender->GetStaged().tpSender.nDestinationPort != 0)
-    {
-        Settings::Get().Write("Server", "RTP_Port", pSender->GetStaged().tpSender.nDestinationPort);
-    }
+        //if the source interface is set then change our source ip. else do the opposites
+        std::string sSourceIp(pSender->GetStaged().GetTransportParams()[0].GetSourceIp());
+        if(sSourceIp.empty() == false && sSourceIp != "auto")
+        {   //sourceip set by nmos
+            Settings::Get().Write("Server", "RTSP_Address", sSourceIp);
+        }
+        else
+        {
+            sSourceIp = Settings::Get().Read("Server", "RTSP_Address", wxEmptyString).ToStdString();
+            if(sSourceIp.empty())
+            {
+                 if(Settings::Get().GetInterfaces().empty() == false)
+                 {
+                     Settings::Get().Write("Server", "RTSP_Address", Settings::Get().GetInterfaces().begin()->second);
+                 }
+            }
+        }
 
-    if(pSender->GetStaged().bMasterEnable == true)
-    {
-        Settings::Get().Write("Output", "Destination", "AoIP");
-    }
-    Settings::Get().Write("Server", "Stream", "Multicast");
+        if(pSender->GetStaged().GetTransportParams()[0].GetDestinationPort() != 0)
+        {
+            Settings::Get().Write("Server", "RTP_Port", pSender->GetStaged().GetTransportParams()[0].GetDestinationPort());
+        }
 
-    IOManager::Get().RestartStream();
+        if(pSender->IsStagedMasterEnabled() == true)
+        {
+            Settings::Get().Write("Output", "Destination", "AoIP");
+        }
+        Settings::Get().Write("Server", "Stream", "Multicast");
+
+        IOManager::Get().RestartStream();
+    }
 }
 
 void NmosManager::OnReceiverActivated(wxNmosNodeConnectionEvent& event)
 {
     // @todo move this somewhere else...
-    auto pReceiver = pml::nmos::NodeApi::Get().GetReceiver(event.GetResourceId().ToStdString());
-    if(pReceiver)
-    {
-        ActivateReceiver(pReceiver);
-
-    }
+    ActivateReceiver(event.GetResourceId());
 }
 
-void NmosManager::ActivateReceiver(std::shared_ptr<pml::nmos::Receiver> pReceiver)
+void NmosManager::ActivateReceiver(const std::string& sId)
 {
-    if(pReceiver)
+    auto pReceiver = pml::nmos::NodeApi::Get().GetReceiver(sId);
+    if(pReceiver && pReceiver->GetStaged().GetTransportFileType() && (*pReceiver->GetStaged().GetTransportFileType()) == "application/sdp" && pReceiver->GetStaged().GetTransportFileData())
     {
-
         auto itInterface = Settings::Get().GetInterfaces().find("eth0");
         if(itInterface != Settings::Get().GetInterfaces().end())
         {
@@ -435,16 +425,19 @@ void NmosManager::ActivateReceiver(std::shared_ptr<pml::nmos::Receiver> pReceive
             {
                 nInput = AoipSourceManager::SOURCE_NMOS_B;
             }
-            AoipSourceManager::Get().SetSourceSDP(nInput, pReceiver->GetStaged().sTransportFileData);
+            AoipSourceManager::Get().SetSourceSDP(nInput, *(pReceiver->GetStaged().GetTransportFileData()));
 
             //Chage the AOIP source to be NMOS IS-04
             wxString sSender;
-            if(pReceiver->GetStaged().bMasterEnable)
+            if(pReceiver->IsStagedMasterEnabled())
             {
                 //Make sure the input type is AoIP
                 Settings::Get().Write("Input", "Type", "AoIP");
                 Settings::Get().Write("Input", "AoIP", nInput); //write the new source number in
-                sSender = wxString(pReceiver->GetStaged().sSenderId);
+                if(pReceiver->GetStaged().GetSenderId())
+                {
+                    sSender = wxString(*(pReceiver->GetStaged().GetSenderId()));
+                }
             }
             else
             {
@@ -501,7 +494,7 @@ void NmosManager::OnNmosReceiverChanged(wxNmosClientReceiverEvent& event)
 {
     if(m_pInputPanel)
     {
-        for(auto pUpdated : event.GetUpdated())
+        for(auto pUpdated : event.GetChanges().lstUpdated)
         {
             if(pUpdated->GetId() == m_pInputPanel->GetReceiverId())
             {
@@ -524,14 +517,14 @@ void NmosManager::OnNmosSenderChanged(wxNmosClientSenderEvent& event)
 {
     if(m_pInputPanel)
     {
-        for(auto pSender : event.GetAdded())
+        for(auto pSender : event.GetChanges().lstAdded)
         {
             if(pml::nmos::NodeApi::Get().GetSender(pSender->GetId()) == nullptr)    //make sure sender isn't us
             {  //not one of our senders
-                auto itFlow = pml::nmos::ClientApi::Get().FindFlow(pSender->GetFlowId());
-                if(itFlow != pml::nmos::ClientApi::Get().GetFlows().end())
+                auto pFlow = pml::nmos::ClientApi::Get().FindFlow(pSender->GetFlowId());
+                if(pFlow)
                 {
-                    if(itFlow->second->GetFormat().find("urn:x-nmos:format:audio") != std::string::npos)
+                    if(pFlow->GetFormat().find("urn:x-nmos:format:audio") != std::string::npos)
                     {
                         m_pInputPanel->AddSender(pSender);
                     }
@@ -543,21 +536,21 @@ void NmosManager::OnNmosSenderChanged(wxNmosClientSenderEvent& event)
                 m_mmLonelySender.insert(make_pair(pSender->GetFlowId(), pSender));
             }
         }
-        for(auto pSender : event.GetUpdated())
+        for(auto pSender : event.GetChanges().lstUpdated)
         {
             if(pml::nmos::NodeApi::Get().GetSender(pSender->GetId()) == nullptr)
             {   //not one of our senders
-                auto itFlow = pml::nmos::ClientApi::Get().FindFlow(pSender->GetFlowId());
-                if(itFlow != pml::nmos::ClientApi::Get().GetFlows().end())
+                auto pFlow = pml::nmos::ClientApi::Get().FindFlow(pSender->GetFlowId());
+                if(pFlow)
                 {
-                    if(itFlow->second->GetFormat().find("urn:x-nmos:format:audio") != std::string::npos)
+                    if(pFlow->GetFormat().find("urn:x-nmos:format:audio") != std::string::npos)
                     {
                         m_pInputPanel->UpdateSender(pSender);
                     }
                 }
             }
         }
-        m_pInputPanel->RemoveSenders(event.GetRemoved());
+        m_pInputPanel->RemoveSenders(event.GetChanges().lstRemoved);
     }
 }
 
@@ -565,7 +558,7 @@ void NmosManager::OnNmosFlowChanged(wxNmosClientFlowEvent& event)
 {
     if(m_pInputPanel)
     {
-        for(auto pFlow : event.GetAdded())
+        for(auto pFlow : event.GetChanges().lstAdded)
         {
             if(pFlow->GetFormat().find("urn:x-nmos:format:audio") != std::string::npos)
             {
@@ -582,12 +575,12 @@ void NmosManager::OnNmosFlowChanged(wxNmosClientFlowEvent& event)
 }
 
 
-void NmosManager::OnNmosSubscribeRequest(wxNmosClientCurlEvent& event)
+void NmosManager::OnNmosSubscribeRequest(wxNmosClientRequestEvent& event)
 {
-    if(m_pInputPanel)
+    /*if(m_pInputPanel)
     {
         m_pInputPanel->SubscriptionRequest(event.GetResourceId(), event.GetResponse(), event.GetResult());
-    }
+    }*/
 }
 
 

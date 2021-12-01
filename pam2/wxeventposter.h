@@ -17,8 +17,8 @@ class wxEventPoster : public pml::nmos::EventPoster
     protected:
 
         void Target(const std::string& sReceiverId, const std::string& sTransportFile, unsigned short nPort);
-        void PatchSender(const std::string& sSenderId, const pml::nmos::connectionSender& conPatch, unsigned short nPort);
-        void PatchReceiver(const std::string& sReceiverId, const pml::nmos::connectionReceiver& conPatch, unsigned short nPort);
+        void PatchSender(const std::string& sSenderId, const pml::nmos::connectionSender<pml::nmos::activationResponse>& conPatch, unsigned short nPort);
+        void PatchReceiver(const std::string& sReceiverId, const pml::nmos::connectionReceiver<pml::nmos::activationResponse>& conPatch, unsigned short nPort);
         void SenderActivated(const std::string& sSenderId);
         void ReceiverActivated(const std::string& sReceiverId);
 
@@ -64,20 +64,20 @@ public:
     virtual wxEvent *Clone() const { return new wxNmosNodeConnectionEvent(*this); }
 
     void SetTransportFile(const std::string& sTransportFile);
-    const wxString& GetTransportFile() const;
+    const std::string& GetTransportFile() const;
 
-    void SetSenderConnection(const pml::nmos::connectionSender& con);
-    const pml::nmos::connectionSender& GetSenderConnection() const;
+    void SetSenderConnection(const pml::nmos::connectionSender<pml::nmos::activationResponse>& con);
+    const std::experimental::optional<pml::nmos::connectionSender<pml::nmos::activationResponse>>& GetSenderConnection() const;
 
-    void SetReceiverConnection(const pml::nmos::connectionReceiver& con);
-    const pml::nmos::connectionReceiver& GetReceiverConnection() const;
+    void SetReceiverConnection(const pml::nmos::connectionReceiver<pml::nmos::activationResponse>& con);
+    const std::experimental::optional<pml::nmos::connectionReceiver<pml::nmos::activationResponse>>& GetReceiverConnection() const;
 
     unsigned short GetPort() const { return m_nPort;}
     void SetPort(unsigned short nPort) { m_nPort = nPort;}
 
 
-    const wxString& GetResourceId() const { return m_sResourceId;}
-    void SetResourceId(const wxString& sId) { m_sResourceId = sId;}
+    const std::string& GetResourceId() const { return m_sResourceId;}
+    void SetResourceId(const std::string& sId) { m_sResourceId = sId;}
 
     DECLARE_DYNAMIC_CLASS(wxNmosNodeConnectionEvent)
 
@@ -85,10 +85,10 @@ public:
 
 private:
 
-    wxString m_sTransportFile;
-    pml::nmos::connectionSender m_conSender;
-    pml::nmos::connectionReceiver m_conReceiver;
-    wxString m_sResourceId;
+    std::string m_sTransportFile;
+    std::experimental::optional<pml::nmos::connectionSender<pml::nmos::activationResponse>> m_conSender;
+    std::experimental::optional<pml::nmos::connectionReceiver<pml::nmos::activationResponse>> m_conReceiver;
+    std::string m_sResourceId;
     unsigned short m_nPort;
 
 };

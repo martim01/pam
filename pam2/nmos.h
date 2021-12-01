@@ -19,7 +19,7 @@ namespace pml
 
 class wxNmosNodeConnectionEvent;
 class wxNmosNodeRegistrationEvent;
-class wxNmosClientCurlEvent;
+class wxNmosClientRequestEvent;
 class wxNmosClientNodeEvent;
 class wxNmosClientDeviceEvent;
 class wxNmosClientSourceEvent;
@@ -59,10 +59,10 @@ class NmosManager : public wxEvtHandler
         void OnNmosReceiverChanged(wxNmosClientReceiverEvent& event);
         void OnNmosFlowChanged(wxNmosClientFlowEvent& event);
 
-        void OnNmosSubscribeRequest(wxNmosClientCurlEvent& event);
+        void OnNmosSubscribeRequest(wxNmosClientRequestEvent& event);
 
-        void ActivateSender(std::shared_ptr<pml::nmos::Sender> pSender);
-        void ActivateReceiver(std::shared_ptr<pml::nmos::Receiver> pReceiver);
+        void ActivateSender(const std::string& sId);
+        void ActivateReceiver(const std::string& sId);
 
         std::shared_ptr<wxEventPoster> m_pPoster;
         pnlSettingsInputNmos* m_pInputPanel;
@@ -70,7 +70,7 @@ class NmosManager : public wxEvtHandler
         std::shared_ptr<pml::nmos::FlowAudioRaw> m_pFlow;
         std::shared_ptr<pml::nmos::Sender> m_pSender;
         std::shared_ptr<pml::nmos::Receiver> m_pReceiver;
-        std::multimap<std::string, std::shared_ptr<pml::nmos::SenderBase> > m_mmLonelySender;
+        std::multimap<std::string, std::shared_ptr<const pml::nmos::Sender> > m_mmLonelySender;
 
         size_t m_nNodeMode;
         size_t m_nClientMode;

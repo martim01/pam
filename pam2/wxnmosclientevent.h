@@ -1,6 +1,6 @@
 #pragma once
 #ifdef __NMOS__
-
+#include "clientapiposter.h"
 
 class wxNmosClientNodeEvent;
 class wxNmosClientSourceEvent;
@@ -19,189 +19,104 @@ wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_NMOS_CLIENT_RECEIVER, wxNmosClientRecei
 
 class wxNmosClientNodeEvent : public wxCommandEvent
 {
-
     public:
-
-        wxNmosClientNodeEvent(const typename std::list<std::shared_ptr<pml::nmos::Self> >& lstAdded, const typename std::list<std::shared_ptr<pml::nmos::Self> >& lstUpdated, const typename std::list<std::shared_ptr<pml::nmos::Self> >& lstRemoved) : wxCommandEvent(wxEVT_NMOS_CLIENT_NODE), m_lstAdded(lstAdded), m_lstUpdated(lstUpdated), m_lstRemoved(lstRemoved){}
-
-        wxNmosClientNodeEvent(const wxNmosClientNodeEvent& event) : wxCommandEvent(event), m_lstAdded(event.GetAdded()), m_lstUpdated(event.GetUpdated()), m_lstRemoved(event.GetRemoved()){}
-
-        const std::list<std::shared_ptr<pml::nmos::Self> >& GetAdded() const
-        {   return m_lstAdded;  }
-        const std::list<std::shared_ptr<pml::nmos::Self> >& GetUpdated() const
-        {   return m_lstUpdated;  }
-        const std::list<std::shared_ptr<pml::nmos::Self> >& GetRemoved() const
-        {   return m_lstRemoved;  }
-
+        wxNmosClientNodeEvent(const pml::nmos::resourcechanges<pml::nmos::Self>& changed) : wxCommandEvent(wxEVT_NMOS_CLIENT_NODE), m_changed(changed){}
+        wxNmosClientNodeEvent(const wxNmosClientNodeEvent& event) : wxCommandEvent(event), m_changed(event.GetChanges()){}
         wxNmosClientNodeEvent() : wxCommandEvent(){}
         ~wxNmosClientNodeEvent(){}
-
         virtual wxEvent *Clone() const { return new wxNmosClientNodeEvent(*this); }
 
+        const pml::nmos::resourcechanges<pml::nmos::Self>& GetChanges() const { return m_changed;}
 
         DECLARE_DYNAMIC_CLASS(wxNmosClientNodeEvent)
 
     private:
-        std::list<std::shared_ptr<pml::nmos::Self> > m_lstAdded;
-        std::list<std::shared_ptr<pml::nmos::Self> > m_lstUpdated;
-        std::list<std::shared_ptr<pml::nmos::Self> > m_lstRemoved;
+        pml::nmos::resourcechanges<pml::nmos::Self> m_changed;
 };
-
-
-class wxNmosClientDeviceEvent : public wxCommandEvent
-{
-
-    public:
-
-        wxNmosClientDeviceEvent(const typename std::list<std::shared_ptr<pml::nmos::Device> >& lstAdded, const typename std::list<std::shared_ptr<pml::nmos::Device> >& lstUpdated, const typename std::list<std::shared_ptr<pml::nmos::Device> >& lstRemoved) : wxCommandEvent(wxEVT_NMOS_CLIENT_DEVICE), m_lstAdded(lstAdded), m_lstUpdated(lstUpdated), m_lstRemoved(lstRemoved){}
-
-        wxNmosClientDeviceEvent(const wxNmosClientDeviceEvent& event) : wxCommandEvent(event), m_lstAdded(event.GetAdded()), m_lstUpdated(event.GetUpdated()), m_lstRemoved(event.GetRemoved()){}
-
-        const std::list<std::shared_ptr<pml::nmos::Device> >& GetAdded() const
-        {   return m_lstAdded;  }
-        const std::list<std::shared_ptr<pml::nmos::Device> >& GetUpdated() const
-        {   return m_lstUpdated;  }
-        const std::list<std::shared_ptr<pml::nmos::Device> >& GetRemoved() const
-        {   return m_lstRemoved;  }
-
-        wxNmosClientDeviceEvent() : wxCommandEvent(){}
-        ~wxNmosClientDeviceEvent(){}
-
-        virtual wxEvent *Clone() const { return new wxNmosClientDeviceEvent(*this); }
-
-
-        DECLARE_DYNAMIC_CLASS(wxNmosClientDeviceEvent)
-
-    private:
-        std::list<std::shared_ptr<pml::nmos::Device> > m_lstAdded;
-        std::list<std::shared_ptr<pml::nmos::Device> > m_lstUpdated;
-        std::list<std::shared_ptr<pml::nmos::Device> > m_lstRemoved;
-};
-
 
 class wxNmosClientSourceEvent : public wxCommandEvent
 {
-
     public:
-
-        wxNmosClientSourceEvent(const typename std::list<std::shared_ptr<pml::nmos::Source> >& lstAdded, const typename std::list<std::shared_ptr<pml::nmos::Source> >& lstUpdated, const typename std::list<std::shared_ptr<pml::nmos::Source> >& lstRemoved) : wxCommandEvent(wxEVT_NMOS_CLIENT_SOURCE), m_lstAdded(lstAdded), m_lstUpdated(lstUpdated), m_lstRemoved(lstRemoved){}
-
-        wxNmosClientSourceEvent(const wxNmosClientSourceEvent& event) : wxCommandEvent(event), m_lstAdded(event.GetAdded()), m_lstUpdated(event.GetUpdated()), m_lstRemoved(event.GetRemoved()){}
-
-        const std::list<std::shared_ptr<pml::nmos::Source> >& GetAdded() const
-        {   return m_lstAdded;  }
-        const std::list<std::shared_ptr<pml::nmos::Source> >& GetUpdated() const
-        {   return m_lstUpdated;  }
-        const std::list<std::shared_ptr<pml::nmos::Source> >& GetRemoved() const
-        {   return m_lstRemoved;  }
-
+        wxNmosClientSourceEvent(const pml::nmos::resourcechanges<pml::nmos::Source>& changed) : wxCommandEvent(wxEVT_NMOS_CLIENT_SOURCE), m_changed(changed){}
+        wxNmosClientSourceEvent(const wxNmosClientSourceEvent& event) : wxCommandEvent(event), m_changed(event.GetChanges()){}
         wxNmosClientSourceEvent() : wxCommandEvent(){}
         ~wxNmosClientSourceEvent(){}
-
         virtual wxEvent *Clone() const { return new wxNmosClientSourceEvent(*this); }
 
+        const pml::nmos::resourcechanges<pml::nmos::Source>& GetChanges() const { return m_changed;}
 
         DECLARE_DYNAMIC_CLASS(wxNmosClientSourceEvent)
 
     private:
-        std::list<std::shared_ptr<pml::nmos::Source> > m_lstAdded;
-        std::list<std::shared_ptr<pml::nmos::Source> > m_lstUpdated;
-        std::list<std::shared_ptr<pml::nmos::Source> > m_lstRemoved;
+        pml::nmos::resourcechanges<pml::nmos::Source> m_changed;
 };
 
+class wxNmosClientDeviceEvent : public wxCommandEvent
+{
+    public:
+        wxNmosClientDeviceEvent(const pml::nmos::resourcechanges<pml::nmos::Device>& changed) : wxCommandEvent(wxEVT_NMOS_CLIENT_DEVICE), m_changed(changed){}
+        wxNmosClientDeviceEvent(const wxNmosClientDeviceEvent& event) : wxCommandEvent(event), m_changed(event.GetChanges()){}
+        wxNmosClientDeviceEvent() : wxCommandEvent(){}
+        ~wxNmosClientDeviceEvent(){}
+        virtual wxEvent *Clone() const { return new wxNmosClientDeviceEvent(*this); }
+
+        const pml::nmos::resourcechanges<pml::nmos::Device>& GetChanges() const { return m_changed;}
+
+        DECLARE_DYNAMIC_CLASS(wxNmosClientDeviceEvent)
+
+    private:
+        pml::nmos::resourcechanges<pml::nmos::Device> m_changed;
+};
 
 class wxNmosClientFlowEvent : public wxCommandEvent
 {
-
     public:
-
-        wxNmosClientFlowEvent(const typename std::list<std::shared_ptr<pml::nmos::Flow> >& lstAdded, const typename std::list<std::shared_ptr<pml::nmos::Flow> >& lstUpdated, const typename std::list<std::shared_ptr<pml::nmos::Flow> >& lstRemoved) : wxCommandEvent(wxEVT_NMOS_CLIENT_FLOW), m_lstAdded(lstAdded), m_lstUpdated(lstUpdated), m_lstRemoved(lstRemoved){}
-
-        wxNmosClientFlowEvent(const wxNmosClientFlowEvent& event) : wxCommandEvent(event), m_lstAdded(event.GetAdded()), m_lstUpdated(event.GetUpdated()), m_lstRemoved(event.GetRemoved()){}
-
-        const std::list<std::shared_ptr<pml::nmos::Flow> >& GetAdded() const
-        {   return m_lstAdded;  }
-        const std::list<std::shared_ptr<pml::nmos::Flow> >& GetUpdated() const
-        {   return m_lstUpdated;  }
-        const std::list<std::shared_ptr<pml::nmos::Flow> >& GetRemoved() const
-        {   return m_lstRemoved;  }
-
+        wxNmosClientFlowEvent(const pml::nmos::resourcechanges<pml::nmos::Flow>& changed) : wxCommandEvent(wxEVT_NMOS_CLIENT_FLOW), m_changed(changed){}
+        wxNmosClientFlowEvent(const wxNmosClientFlowEvent& event) : wxCommandEvent(event), m_changed(event.GetChanges()){}
         wxNmosClientFlowEvent() : wxCommandEvent(){}
         ~wxNmosClientFlowEvent(){}
-
         virtual wxEvent *Clone() const { return new wxNmosClientFlowEvent(*this); }
 
+        const pml::nmos::resourcechanges<pml::nmos::Flow>& GetChanges() const { return m_changed;}
 
         DECLARE_DYNAMIC_CLASS(wxNmosClientFlowEvent)
 
     private:
-        std::list<std::shared_ptr<pml::nmos::Flow> > m_lstAdded;
-        std::list<std::shared_ptr<pml::nmos::Flow> > m_lstUpdated;
-        std::list<std::shared_ptr<pml::nmos::Flow> > m_lstRemoved;
+        pml::nmos::resourcechanges<pml::nmos::Flow> m_changed;
 };
 
 class wxNmosClientSenderEvent : public wxCommandEvent
 {
-
     public:
-
-        wxNmosClientSenderEvent(const typename std::list<std::shared_ptr<pml::nmos::SenderBase> >& lstAdded, const typename std::list<std::shared_ptr<pml::nmos::SenderBase> >& lstUpdated, const typename std::list<std::shared_ptr<pml::nmos::SenderBase> >& lstRemoved) : wxCommandEvent(wxEVT_NMOS_CLIENT_SENDER), m_lstAdded(lstAdded), m_lstUpdated(lstUpdated), m_lstRemoved(lstRemoved){}
-
-        wxNmosClientSenderEvent(const wxNmosClientSenderEvent& event) : wxCommandEvent(event), m_lstAdded(event.GetAdded()), m_lstUpdated(event.GetUpdated()), m_lstRemoved(event.GetRemoved()){}
-
-        const std::list<std::shared_ptr<pml::nmos::SenderBase> >& GetAdded() const
-        {   return m_lstAdded;  }
-        const std::list<std::shared_ptr<pml::nmos::SenderBase> >& GetUpdated() const
-        {   return m_lstUpdated;  }
-        const std::list<std::shared_ptr<pml::nmos::SenderBase> >& GetRemoved() const
-        {   return m_lstRemoved;  }
-
+        wxNmosClientSenderEvent(const pml::nmos::resourcechanges<pml::nmos::Sender>& changed) : wxCommandEvent(wxEVT_NMOS_CLIENT_SENDER), m_changed(changed){}
+        wxNmosClientSenderEvent(const wxNmosClientSenderEvent& event) : wxCommandEvent(event), m_changed(event.GetChanges()){}
         wxNmosClientSenderEvent() : wxCommandEvent(){}
         ~wxNmosClientSenderEvent(){}
-
         virtual wxEvent *Clone() const { return new wxNmosClientSenderEvent(*this); }
 
+        const pml::nmos::resourcechanges<pml::nmos::Sender>& GetChanges() const { return m_changed;}
 
         DECLARE_DYNAMIC_CLASS(wxNmosClientSenderEvent)
 
     private:
-        std::list<std::shared_ptr<pml::nmos::SenderBase> > m_lstAdded;
-        std::list<std::shared_ptr<pml::nmos::SenderBase> > m_lstUpdated;
-        std::list<std::shared_ptr<pml::nmos::SenderBase> > m_lstRemoved;
+        pml::nmos::resourcechanges<pml::nmos::Sender> m_changed;
 };
-
 
 class wxNmosClientReceiverEvent : public wxCommandEvent
 {
-
     public:
-
-        wxNmosClientReceiverEvent(const typename std::list<std::shared_ptr<pml::nmos::ReceiverBase> >& lstAdded, const typename std::list<std::shared_ptr<pml::nmos::ReceiverBase> >& lstUpdated, const typename std::list<std::shared_ptr<pml::nmos::ReceiverBase> >& lstRemoved) : wxCommandEvent(wxEVT_NMOS_CLIENT_RECEIVER), m_lstAdded(lstAdded), m_lstUpdated(lstUpdated), m_lstRemoved(lstRemoved){}
-
-        wxNmosClientReceiverEvent(const wxNmosClientReceiverEvent& event) : wxCommandEvent(event), m_lstAdded(event.GetAdded()), m_lstUpdated(event.GetUpdated()), m_lstRemoved(event.GetRemoved()){}
-
-        const std::list<std::shared_ptr<pml::nmos::ReceiverBase> >& GetAdded() const
-        {   return m_lstAdded;  }
-        const std::list<std::shared_ptr<pml::nmos::ReceiverBase> >& GetUpdated() const
-        {   return m_lstUpdated;  }
-        const std::list<std::shared_ptr<pml::nmos::ReceiverBase> >& GetRemoved() const
-        {   return m_lstRemoved;  }
-
+        wxNmosClientReceiverEvent(const pml::nmos::resourcechanges<pml::nmos::Receiver>& changed) : wxCommandEvent(wxEVT_NMOS_CLIENT_RECEIVER), m_changed(changed){}
+        wxNmosClientReceiverEvent(const wxNmosClientReceiverEvent& event) : wxCommandEvent(event), m_changed(event.GetChanges()){}
         wxNmosClientReceiverEvent() : wxCommandEvent(){}
         ~wxNmosClientReceiverEvent(){}
-
         virtual wxEvent *Clone() const { return new wxNmosClientReceiverEvent(*this); }
 
+        const pml::nmos::resourcechanges<pml::nmos::Receiver>& GetChanges() const { return m_changed;}
 
         DECLARE_DYNAMIC_CLASS(wxNmosClientReceiverEvent)
 
     private:
-        std::list<std::shared_ptr<pml::nmos::ReceiverBase> > m_lstAdded;
-        std::list<std::shared_ptr<pml::nmos::ReceiverBase> > m_lstUpdated;
-        std::list<std::shared_ptr<pml::nmos::ReceiverBase> > m_lstRemoved;
+        pml::nmos::resourcechanges<pml::nmos::Receiver> m_changed;
 };
-
-
-
 
 #endif // __NMOS__
