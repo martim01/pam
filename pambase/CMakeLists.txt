@@ -104,7 +104,6 @@ include_directories(${PTP_LIB_DIR}/include)
 
 set(SOURCES 
   "advelement.cpp"
- "aes67client.cpp"
  "aes67mediasession.cpp"
  "AES67ServerMediaSubsession.cpp"
  "aes67source.cpp"
@@ -148,7 +147,6 @@ set(SOURCES
  "rtpserverthread.cpp"
  "rtpthread.cpp"
  "rtsputil.cpp"
- "servicebrowser.cpp"
  "settingevent.cpp"
  "settings.cpp"
  "smpte2110mediasession.cpp"
