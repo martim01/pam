@@ -61,5 +61,7 @@ set_target_properties(pam2 PROPERTIES RUNTIME_OUTPUT_DIRECTORY "../../bin/")
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 install(TARGETS pam2 RUNTIME DESTINATION /usr/local/bin)
-install(CODE "execute_process(COMMAND setcap cap_sys_time,cap_net_bind_service+ep /usr/local/bin/pam2 WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}")
+install(CODE "execute_process(COMMAND setcap cap_sys_time,cap_net_bind_service+ep /usr/local/bin/pam2 WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})")
+install(CODE "execute_process(COMMAND cp ../documents/pam2.conf /etc/ld.so.conf.d/)")
+install(CODE "execute_process(COMMAND ldconfig)")
 endif()
