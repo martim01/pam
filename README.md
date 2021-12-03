@@ -86,23 +86,12 @@ sudo cmake --build . --target install
 ```
 This will install the executable __pam2__ in __/usr/local/bin__ and all necessary libraries in __/usr/local/lib/pam2__
 
-It is possible that __/usr/local/lib__ is not in your path. If so then do the following:
-* Create a file called __pam2.conf__ in directory __/etc/ld.so.conf.d__
-* Add the following line to the file
-```
-/usr/local/lib/pam2
-```
-* Run the following command to update the library path
-```
-sudo ldconfig
-```
-
 #### PTPMonkey support
 This is included by default.
 
 When subscribing to an AoIP stream whose SDP defines a PTP reference PTPMonkey will listen for a Master Clock on the relevant domain and use the Master Clock's time for timestamping incoming RTP packets. The PTP plugin will also depend on this library being part of the base build
 
-**__Note: If you wish to use PTPMonkey with PAM on Linux then you will need to run the following command to give pam the rights to open the network ports and set the system time__**
+**__Note: If you wish to use PTPMonkey with PAM on Linux and are not using CMake to install the applciation then you will need to run the following command to give pam the rights to open the network ports and set the system time__**
 ```
 sudo setcap cap_sys_time,cap_net_bind_service+ep pathToPam/pam2
 ```
