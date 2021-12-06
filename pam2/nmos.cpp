@@ -13,7 +13,7 @@
 #include <wx/log.h>
 
 NmosManager::NmosManager(pnlSettingsInputNmos* pPnl) :
-    m_pPoster(std::make_shared<wxEventPoster>(this)),
+    m_pNodePoster(std::make_shared<wxEventPoster>(this)),
     m_pInputPanel(pPnl),
     m_pFlow(0),
     m_pSender(0),
@@ -45,9 +45,9 @@ void NmosManager::Setup()
 {
     pmlLog() << "NMOS\tSetup NMOS";
 
+    m_pClientPoster = std::make_shared<wxClientApiPoster>(this);
 
-
-    pml::nmos::NodeApi::Get().Init(m_pPoster, Settings::Get().Read("NMOS", "Port_Discovery", 8080),
+    pml::nmos::NodeApi::Get().Init(m_pNodePoster, Settings::Get().Read("NMOS", "Port_Discovery", 8080),
                         Settings::Get().Read("NMOS", "Port_Connection", 8080),
                         Settings::Get().Read("NMOS", "HostLabel", wxGetHostName()).ToStdString(),
                         Settings::Get().Read("NMOS", "HostDescription", "PAM").ToStdString());
@@ -466,7 +466,7 @@ void NmosManager::StartClient(int nMode)
     {
         if(nMode != CLIENT_OFF && m_nClientMode == CLIENT_OFF)
         {
-            pml::nmos::ClientApi::Get().SetPoster(std::make_shared<wxClientApiPoster>(this));
+            pml::nmos::ClientApi::Get().SetPoster(m_pClientPoster);
             pml::nmos::ClientApi::Get().AddQuerySubscription(pml::nmos::ClientApi::NODES, "",0);
             pml::nmos::ClientApi::Get().AddQuerySubscription(pml::nmos::ClientApi::DEVICES, "",0);
             pml::nmos::ClientApi::Get().AddQuerySubscription(pml::nmos::ClientApi::SOURCES, "",0);
@@ -586,8 +586,12 @@ void NmosManager::OnNmosSubscribeRequest(wxNmosClientRequestEvent& event)
 
 void NmosManager::AddHandlerToEventPoster(wxEvtHandler* pHandler)
 {
+    m_pNodePoster->AddHandler(pHandler);
+}
 
-    m_pPoster->AddHandler(pHandler);
+void NmosManager::AddHandlerToClientEventPoster(wxEvtHandler* pHandler)
+{
+    m_pClientPoster->AddHandler(pHandler);
 }
 
 #endif // __NMOS__

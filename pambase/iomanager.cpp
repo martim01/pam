@@ -1069,7 +1069,7 @@ void IOManager::DoDNSSD(bool bRun)
         {
             std::string sHostName(wxGetHostName().c_str());
             std::string sService = "PAM_AES67";
-            m_pPublisher = std::unique_ptr<pml::Publisher>(new pml::Publisher(sService, "_rtsp._tcp", Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555), sHostName));
+            m_pPublisher = std::make_unique<pml::dnssd::Publisher>(sService, "_rtsp._tcp", Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555), sHostName);
             m_pPublisher->AddTxt("ver", "1.0", false);
             m_pPublisher->Start();
 

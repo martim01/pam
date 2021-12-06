@@ -29,11 +29,11 @@ class wxZCPoster;
 
 namespace pml
 {
-    class Browser;
-};
+    namespace dnssd
+    {
+        class Browser;
+    };
 
-namespace pml
-{
     class SapServer;
 };
 
@@ -80,7 +80,7 @@ class PAMBASE_IMPEXPORT AoipSourceManager : public wxEvtHandler
 
         //discovery
         wxEvtHandler* m_pDiscoveryHandler;
-        std::unique_ptr<pml::Browser> m_pBrowser;
+        std::unique_ptr<pml::dnssd::Browser> m_pBrowser;
         std::shared_ptr<wxZCPoster> m_pPoster;
 
         std::unique_ptr<pml::SapServer> m_pSapWatcher;

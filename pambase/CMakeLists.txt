@@ -36,213 +36,33 @@ message(${CMAKE_CURRENT_SOURCE_DIR})
 #pambase settubgs
 
 
+include_directories(${DIR_LOG}/include)
+include_directories(${DIR_DNSSD}/include)
+include_directories(${DIR_SAPSERVER}/include)
+include_directories(${DIR_ASIO}/asio/include)
+include_directories(${DIR_PTPMONKEY}/include)
 
-#log
-find_path(LOG_LIB_DIR NAMES "include/log.h" PATHS ${PROJECT_SOURCE_DIR}/../external/log)
-if((NOT LOG_LIB_DIR) OR (NOT EXISTS ${LOG_LIB_DIR}))
-    # we couldn't find the header files for FOO or they don't exist
-    message("Unable to find pml::log")
-    
-    # now we need to clone this submodule
-    execute_process(COMMAND git submodule update --init -- ../external/log WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-    find_path(LOG_LIB_DIR NAMES "include/log.h" PATHS ${PROJECT_SOURCE_DIR}/../external/log)
-else()
-    message("Found pml::log")
-endif()
-include_directories(${LOG_LIB_DIR}/include)
-
-
-#dnssd
-find_path(DNSSD_LIB_DIR NAMES "include/dnssd.h" PATHS ${PROJECT_SOURCE_DIR}/../external/dnssd)
-if((NOT DNSSD_LIB_DIR) OR (NOT EXISTS ${DNSSD_LIB_DIR}))
-    # we couldn't find the header files for FOO or they don't exist
-    message("Unable to find pml::dnssd")
-    
-    # we have a submodule setup for dnssd, assume it is under external/dnssd
-    # now we need to clone this submodule
-    execute_process(COMMAND git submodule update --init -- ${PROJECT_SOURCE_DIR}/../external/dnssd WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-    find_path(DNSSD_LIB_DIR NAMES "include/dnssd.h" PATHS ${PROJECT_SOURCE_DIR}/../external/dnssd)
-else()
-    message("Found pml::dnssd")
-endif()
-
-include_directories(${DNSSD_LIB_DIR}/include)
-
-
-#sapserver
-find_path(SAP_LIB_DIR NAMES "/include/sapserver.h" PATHS ${PROJECT_SOURCE_DIR}/../external/sapserver)
-if((NOT SAP_LIB_DIR) OR (NOT EXISTS ${SAP_LIB_DIR}))
-    # we couldn't find the header files for FOO or they don't exist
-    message("Unable to find sapserver")
-    
-    # we have a submodule setup for asio, assume it is under external/asio
-    # now we need to clone this submodule
-    execute_process(COMMAND git submodule update --init -- ../external/sapserver WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-    find_path(SAP_LIB_DIR NAMES "/include/sapserver.h" PATHS ${PROJECT_SOURCE_DIR}/../external/sapserver)
-    execute_process(COMMAND git submodule update --init -- ../external/sapserver/external/asio WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-else()
-    message("Found sapserver")
-endif()
-
-include_directories(${SAP_LIB_DIR}/include)
-include_directories(${SAP_LIB_DIR}/external/asio/asio/include)
-
-#ptpmonkey
-find_path(PTP_LIB_DIR NAMES "include/ptpmonkey.h" PATHS ${PROJECT_SOURCE_DIR}/../external/ptpmonkey)
-if((NOT PTP_LIB_DIR) OR (NOT EXISTS ${PTP_LIB_DIR}))
-    # we couldn't find the header files for FOO or they don't exist
-    message("Unable to find ptpmonkey")
-    
-    # now we need to clone this submodule
-    execute_process(COMMAND git submodule update --init -- ../external/ptpmonkey WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-    find_path(PTP_LIB_DIR NAMES "include/ptpmonkey.h" PATHS ${PROJECT_SOURCE_DIR}/../external/ptpmonkey)
-else()
-    message("Found ptpmonkey")
-endif()
-include_directories(${PTP_LIB_DIR}/include)
-
-
-set(SOURCES 
-  "advelement.cpp"
- "aes67client.cpp"
- "aes67mediasession.cpp"
- "AES67ServerMediaSubsession.cpp"
- "aes67source.cpp"
- "anglemeter.cpp"
- "aoipsourcemanager.cpp"
- "audio.cpp"
- "audioevent.cpp"
- "generator.cpp"
- "generatorpluginbuilder.cpp"
- "generatorpluginfactory.cpp"
- "histogram.cpp"
- "historygraph.cpp"
- "inimanager.cpp"
- "inisection.cpp"
- "iomanager.cpp"
- "levelcalculator.cpp"
- "levelgraph.cpp"
- "levelmeter.cpp"
- "liveaudiosource.cpp"
- "monitorevent.cpp"
- "monitorpluginbuilder.cpp"
- "monitorpluginfactory.cpp"
- "pamRTSPServer.cpp"
- "niir.cpp"
- "ondemandaes67mediasubsession.cpp"
- "ondemandpamsubsession.cpp"
- "ondemandstreamer.cpp"
- "ourRTSPClient.cpp"
- "ourSIPClient.cpp"
- "PamTaskScheduler.cpp"
- "PamUsageEnvironment.cpp"
- "pcstats.cpp"
- "pmcontrol.cpp"
- "pmpanel.cpp"
- "ppmtypes.cpp"
- "qos.cpp"
- "r128calculator.cpp"
- "r128thread.cpp"
- "rawvideosource.cpp"
- "RTCPTransmissionEvent.cpp"
- "rtpserverthread.cpp"
- "rtpthread.cpp"
- "rtsputil.cpp"
- "servicebrowser.cpp"
- "settingevent.cpp"
- "settings.cpp"
- "smpte2110mediasession.cpp"
- "soundcardmanager.cpp"
- "soundfile.cpp"
- "streamclientstate.cpp"
- "testpluginbuilder.cpp"
- "testpluginfactory.cpp"
- "timemanager.cpp"
- "uirect.cpp"
- "wmbutton.cpp"
- "wmedit.cpp"
- "wmfocusmanager.cpp"
- "wmipeditpnl.cpp"
- "wmkeyboard.cpp"
- "wmlabel.cpp"
- "wmline.cpp"
- "wmlist.cpp"
- "wmlistadv.cpp"
- "wmslider.cpp"
- "wmslidewnd.cpp"
- "wmswipebutton.cpp"
- "wmswitcherpanel.cpp"
- "wmtimeedit.cpp"
- "wxptp.cpp"
- "wxsaphandler.cpp"
- "wxsink.cpp"
- "wxtouchscreenhtml.cpp"
- "wxzxposter.cpp"
- "../external/sapserver/src/parser.cpp"
- "../external/sapserver/src/receiver.cpp"
- "../external/sapserver/src/saphandler.cpp"
- "../external/sapserver/src/sapserver.cpp" "../external/sapserver/src/sapserverimpl.cpp" "../external/sapserver/src/sender.cpp" 
- "../external/log/src/log.cpp"
- "../external/dnssd/src/dnssd.cpp"
- "../external/dnssd/src/zcposter.cpp"
- "../external/dnssd/src/gnu/avahibrowser.cpp"
- "../external/dnssd/src/gnu/avahipublisher.cpp"
- "../external/ptpmonkey/source/loghander.cpp"
- "../external/ptpmonkey/source/mac.cpp"
- "../external/ptpmonkey/source/ptpclock.cpp"
- "../external/ptpmonkey/source/ptpeventloghandler.cpp"
- "../external/ptpmonkey/source/ptploghandler.cpp"
- "../external/ptpmonkey/source/ptpmonkey.cpp"
- "../external/ptpmonkey/source/ptpmonkeyhandler.cpp"
- "../external/ptpmonkey/source/ptpmonkeyimplementation.cpp"
- "../external/ptpmonkey/source/ptpparser.cpp"
- "../external/ptpmonkey/source/ptpstructs.cpp"
- "../external/ptpmonkey/source/receiver.cpp"
- "../external/ptpmonkey/source/sender.cpp"
- "../external/ptpmonkey/source/timeutils.cpp" )
-
-
-
-option(optionPTP "Use PTPMonkey library" OFF)
-message (${PROJECT_SOURCE_DIR})
-if(optionPTP)
-    find_path(PTPMONKEY_DIR NAMES "/include/ptpmonkey.h" PATHS ${PROJECT_SOURCE_DIR}/../external/ptpmonkey)
-	
-    if((NOT PTPMONKEY_DIR) OR (NOT EXISTS ${PTPMONKEY_DIR}))
-	# we couldn't find the header files for FOO or they don't exist
-	message("Unable to find PtpMonkey")
-    
-	# we have a submodule setup for asio, assume it is under external/asio
-	# now we need to clone this submodule
-	execute_process(COMMAND git submodule update --init -- ../external/ptpmonkey WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-        find_path(PTPMONKEY_DIR NAMES "/include/ptpmonkey.h" PATHS ${PROJECT_SOURCE_DIR}/../external/ptpmonkey)   
-    else()
-	    message("Found ptpmonkey...")
-        message(${PTPMONKEY_DIR})
-    endif()
-    include_directories(${PTPMONKEY_DIR}/include)
-    list(APPEND SOURCES ${PTPMONKEY_DIR}/source/loghander.cpp
- ${PTPMONKEY_DIR}/source/ptpeventloghandler.cpp
- ${PTPMONKEY_DIR}/source/ptpmonkeyhandler.cpp
- ${PTPMONKEY_DIR}/source/ptpstructs.cpp
- ${PTPMONKEY_DIR}/source/timeutils.cpp
- ${PTPMONKEY_DIR}/source/mac.cpp
- ${PTPMONKEY_DIR}/source/ptploghandler.cpp
- ${PTPMONKEY_DIR}/source/ptpmonkeyimplementation.cpp
- ${PTPMONKEY_DIR}/source/receiver.cpp
- ${PTPMONKEY_DIR}/source/ptpclock.cpp
- ${PTPMONKEY_DIR}/source/ptpmonkey.cpp
- ${PTPMONKEY_DIR}/source/ptpparser.cpp
- ${PTPMONKEY_DIR}/source/sender.cpp
- "wxptp.cpp")
-    
-endif()
-
+set(SOURCES  "advelement.cpp"  "aes67mediasession.cpp" "AES67ServerMediaSubsession.cpp" "aes67source.cpp" "anglemeter.cpp" "aoipsourcemanager.cpp" "audio.cpp" "audioevent.cpp"
+ "generator.cpp" "generatorpluginbuilder.cpp" "generatorpluginfactory.cpp" "histogram.cpp" "historygraph.cpp" "inimanager.cpp" "inisection.cpp" "iomanager.cpp" "levelcalculator.cpp" "levelgraph.cpp"
+ "levelmeter.cpp" "liveaudiosource.cpp" "monitorevent.cpp" "monitorpluginbuilder.cpp" "monitorpluginfactory.cpp" "pamRTSPServer.cpp" "niir.cpp" "ondemandaes67mediasubsession.cpp" "ondemandpamsubsession.cpp"
+ "ondemandstreamer.cpp" "ourRTSPClient.cpp" "ourSIPClient.cpp" "PamTaskScheduler.cpp" "PamUsageEnvironment.cpp" "pcstats.cpp" "pmcontrol.cpp" "pmpanel.cpp" "ppmtypes.cpp" "qos.cpp" "r128calculator.cpp"
+ "r128thread.cpp" "rawvideosource.cpp" "RTCPTransmissionEvent.cpp" "rtpserverthread.cpp" "rtpthread.cpp" "rtsputil.cpp" "servicebrowser.cpp" "settingevent.cpp" "settings.cpp" "smpte2110mediasession.cpp"
+ "soundcardmanager.cpp" "soundfile.cpp" "streamclientstate.cpp" "testpluginbuilder.cpp" "testpluginfactory.cpp" "timemanager.cpp" "uirect.cpp" "wmbutton.cpp" "wmedit.cpp" "wmfocusmanager.cpp" "wmipeditpnl.cpp"
+ "wmkeyboard.cpp" "wmlabel.cpp" "wmline.cpp" "wmlist.cpp" "wmlistadv.cpp" "wmslider.cpp" "wmslidewnd.cpp" "wmswipebutton.cpp" "wmswitcherpanel.cpp" "wmtimeedit.cpp" "wxptp.cpp" "wxsaphandler.cpp"
+ "wxsink.cpp" "wxtouchscreenhtml.cpp" "wxzxposter.cpp")
+ 
 add_library(pambase SHARED ${SOURCES})
 
-list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
+list(APPEND flags "-fPIC" "-Wall" "-fpermissive"  "-std=c++14")
+
+if(CMAKE_BUILD_TYPE MATCHES Release)
+   list(APPEND flags "-O3")
+   target_compile_definitions(pambase PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __GNU__ __WXGNU__ _pambase_ CREATING_DLL _core_ _MSL_STDINT_H NO_OPENSSL ASIO_STANDALONE  PTPMONKEY wxDEBUG_LEVEL=0)
+else()
+   list(APPEND flags "-g")
+   target_compile_definitions(pambase PUBLIC __WXDEBUG__ DLL_EXPORTS wxUSE_UNICODE __GNU__ __WXGNU__ _pambase_ CREATING_DLL _core_ _MSL_STDINT_H NO_OPENSSL ASIO_STANDALONE PTPMONKEY)
+endif()
 target_compile_options(pambase PRIVATE ${flags})
-target_compile_definitions(pambase PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __GNU__ __WXGNU__ _pambase_ CREATING_DLL _core_ _MSL_STDINT_H NO_OPENSSL ASIO_STANDALONE DNSSD_DLL LOG_DLL PTP_DLL PTPMONKEY wxDEBUG_LEVEL=0)
 
 
 #find external libraries
@@ -254,12 +74,6 @@ target_link_libraries(pambase ${wxWidgets_LIBRARIES})
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	#use pkgconfig to find the required libs
 	find_package(PkgConfig REQUIRED QUIET)
-	
-	pkg_search_module(avahi REQUIRED avahi-client IMPORTED_TARGET)
-	if(TARGET PkgConfig::avahi)
-		message(STATUS "Found avahi")
-		target_link_libraries(pambase PkgConfig::avahi)
-	endif()
 	
 	pkg_search_module(portaudio REQUIRED portaudio-2.0 IMPORTED_TARGET)
 	if(TARGET PkgConfig::portaudio)
@@ -281,7 +95,7 @@ target_link_libraries(pambase UsageEnvironment)
 target_link_libraries(pambase groupsock)
 #target_link_libraries(pambase pthread)
 
-
+set_target_properties(pambase PROPERTIES DEBUG_POSTFIX "d")
 set_target_properties(pambase PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../lib/)
 
 #linux specific

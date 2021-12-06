@@ -92,6 +92,7 @@
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add library="pambase" />
+					<Add library="ptpmonkey" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="../../manifest_creator/bin/LinuxRelease/manifest_creator" />
@@ -119,6 +120,7 @@
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add library="pambased" />
+					<Add library="ptpmonkeyd" />
 				</Linker>
 			</Target>
 		</Build>
@@ -126,11 +128,12 @@
 			<Add option="-std=c++1y" />
 			<Add option="-D_monitor_" />
 			<Add directory="../../pambase" />
-			<Add directory="../../external/ptpmonkey/include" />
-			<Add directory="../../external/log/include" />
+			<Add directory="$(#ptpmonkey.INCLUDE)" />
+			<Add directory="$(#log.INCLUDE)" />
 		</Compiler>
 		<Linker>
 			<Add directory="../../lib" />
+			<Add directory="$(#ptpmonkey.LIB)" />
 		</Linker>
 		<Unit filename="macdb.cpp" />
 		<Unit filename="macdb.h" />

@@ -14,20 +14,25 @@ file(GLOB SOURCES "*.cpp")
 
 add_library(lineup MODULE ${SOURCES})
 
-list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
-target_compile_options(lineup PRIVATE ${flags})
-target_compile_definitions(lineup PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __WXGNU__ _test_ _MSL_STDINT_H wxDEBUG_LEVEL=0)
-
 #find external libraries
 find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
+list(APPEND flags "-fPIC" "-Wall" "-fpermissive"  "-std=c++14")
+
+if(CMAKE_BUILD_TYPE MATCHES Release)
+   list(APPEND flags "-O3")
+   target_compile_definitions(lineup PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __GNU__ __WXGNU__ _test_ MSL_STDINT_H wxDEBUG_LEVEL=0)
+   set_target_properties(lineup PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/test")
+else()
+   list(APPEND flags "-g")
+   target_compile_definitions(lineup PUBLIC __WXDEBUG__ DLL_EXPORTS wxUSE_UNICODE __GNU__ __WXGNU__ _test_ MSL_STDINT_H)
+   set_target_properties(lineup PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/test/debug")
+endif()
+target_compile_options(lineup PRIVATE ${flags})
 
 target_link_libraries(lineup ${wxWidgets_LIBRARIES})
-target_link_libraries(lineup pambase)
-target_link_libraries(lineup pamfft)
-
-set_target_properties(lineup PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/test")
+target_link_libraries(lineup optimized pambase debug pambased)
 
 
 #linux specific

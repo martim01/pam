@@ -95,6 +95,9 @@
 					<Add option="`wx-config --libs`" />
 					<Add library="pambase" />
 					<Add library="curl" />
+					<Add library="pml_log" />
+					<Add library="ptpmonkey" />
+					<Add library="sapserver" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />
@@ -119,6 +122,8 @@
 					<Add library="pambased" />
 					<Add library="curl" />
 					<Add library="pml_logd" />
+					<Add library="ptpmonkeyd" />
+					<Add library="sapserverd" />
 				</Linker>
 			</Target>
 		</Build>
@@ -127,13 +132,15 @@
 			<Add option="-D_app_" />
 			<Add directory="C:/wxWidgets-3.0.2/include" />
 			<Add directory="../pambase" />
-			<Add directory="../external/log/include" />
+			<Add directory="$(#log.INCLUDE)" />
 		</Compiler>
 		<ResourceCompiler>
 			<Add directory="C:/wxWidgets-3.0.2/include" />
 		</ResourceCompiler>
 		<Linker>
 			<Add directory="../lib" />
+			<Add directory="$(#ptpmonkey.LIB)" />
+			<Add directory="$(#sapserver.LIB)" />
 		</Linker>
 		<Unit filename="pamupdatemanagerApp.cpp" />
 		<Unit filename="pamupdatemanagerApp.h" />

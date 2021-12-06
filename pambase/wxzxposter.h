@@ -3,14 +3,14 @@
 #include <wx/event.h>
 #include <map>
 
-class wxZCPoster : public pml::ZCPoster
+class wxZCPoster : public pml::dnssd::ZCPoster
 {
     public:
         wxZCPoster(wxEvtHandler* pHandler);
-        std::shared_ptr<pml::dnsInstance> GetInstance(int nId);
+        std::shared_ptr<pml::dnssd::dnsInstance> GetInstance(int nId);
 
     protected:
-        void InstanceResolved(std::shared_ptr<pml::dnsInstance> pInstance) override;
+        void InstanceResolved(std::shared_ptr<pml::dnssd::dnsInstance> pInstance) override;
 
         /** @brief Called by AvahiBrowser when no more instances of the given service are likely to be found
         *   @param sService the name of the service
@@ -33,11 +33,11 @@ class wxZCPoster : public pml::ZCPoster
         *   @param sService the name of the service.
         *   @note this is a non-blocking event
         **/
-        void InstanceRemoved(std::shared_ptr<pml::dnsInstance> pInstance) override;
+        void InstanceRemoved(std::shared_ptr<pml::dnssd::dnsInstance> pInstance) override;
 
         wxEvtHandler* m_pHandler;
 
-        std::map<int, std::shared_ptr<pml::dnsInstance> >m_mInstances;
+        std::map<int, std::shared_ptr<pml::dnssd::dnsInstance> >m_mInstances;
 };
 
 wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_ZC_RESOLVED, wxCommandEvent);

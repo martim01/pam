@@ -250,7 +250,7 @@ void AoipSourceManager::DeleteAllSources()
 
 void AoipSourceManager::OnDiscovery(wxCommandEvent& event)
 {
-    std::shared_ptr<pml::dnsInstance> pInstance = m_pPoster->GetInstance(event.GetInt());
+    std::shared_ptr<pml::dnssd::dnsInstance> pInstance = m_pPoster->GetInstance(event.GetInt());
     if(pInstance)
     {
 
@@ -377,11 +377,11 @@ void AoipSourceManager::StartDiscovery(wxEvtHandler* pHandler, const std::set<st
 
     if(setServices.empty() == false)
     {
-        m_pBrowser = std::unique_ptr<pml::Browser>(new pml::Browser());
+        m_pBrowser = std::make_unique<pml::dnssd::Browser>();
         m_pPoster = std::make_shared<wxZCPoster>(this);
         for(auto service : setServices)
         {
-            m_pBrowser->AddService(std::string(service.c_str()), std::dynamic_pointer_cast<pml::ZCPoster>(m_pPoster));
+            m_pBrowser->AddService(std::string(service.c_str()), std::dynamic_pointer_cast<pml::dnssd::ZCPoster>(m_pPoster));
         }
         m_pBrowser->StartBrowser();
     }

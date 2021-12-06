@@ -8,9 +8,10 @@
 #include "nmos.h"
 #include "wxclientapiposter.h"
 #include "wxeventposter.h"
+#include "nodebuttonfactory.h"
 #endif // __NMOS__
 #include "log.h"
-#include "nodebuttonfactory.h"
+
 
 //(*InternalHeaders(pnlSettingsNmos)
 #include <wx/intl.h>
@@ -114,7 +115,7 @@ pnlSettingsNmos::pnlSettingsNmos(wxWindow* parent,wxWindowID id,const wxPoint& p
 	Connect(ID_M_PLST4,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsNmos::OnlstClientSelected);
 	Connect(ID_M_PLST5,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsNmos::OnlstClientSelected);
 	//*)
-
+    #ifdef __NMOS__
 	m_plstNode->AddButton("OFF");
 	m_plstNode->AddButton("Receiver Only");
 	m_plstNode->AddButton("Sender Only");
@@ -133,6 +134,7 @@ pnlSettingsNmos::pnlSettingsNmos(wxWindow* parent,wxWindowID id,const wxPoint& p
     m_plstNode->SelectButton(Settings::Get().Read("NMOS", "Node", 0));
     m_plstClient->SelectButton(Settings::Get().Read("NMOS", "Client", 0));
 
+
     Bind(wxEVT_NMOS_REGNODE_FOUND, &pnlSettingsNmos::OnNmosRegistrationNodeFound, this);
     Bind(wxEVT_NMOS_REGNODE_REMOVED, &pnlSettingsNmos::OnNmosRegistrationNodeRemoved, this);
     Bind(wxEVT_NMOS_REGNODE_CHANGED, &pnlSettingsNmos::OnNmosRegistrationNodeChanged, this);
@@ -141,6 +143,7 @@ pnlSettingsNmos::pnlSettingsNmos(wxWindow* parent,wxWindowID id,const wxPoint& p
     Bind(wxEVT_NMOS_CLIENTQUERY_FOUND, &pnlSettingsNmos::OnNmosQueryNodeFound, this);
     Bind(wxEVT_NMOS_CLIENTQUERY_REMOVED, &pnlSettingsNmos::OnNmosQueryNodeRemoved, this);
     Bind(wxEVT_NMOS_CLIENTQUERY_CHANGED, &pnlSettingsNmos::OnNmosQueryNodeChanged, this);
+    #endif // __NMOS__
 }
 
 pnlSettingsNmos::~pnlSettingsNmos()
@@ -166,6 +169,7 @@ void pnlSettingsNmos::OnlstClientSelected(wxCommandEvent& event)
 
 void pnlSettingsNmos::OnNmosRegistrationNodeFound(const wxNmosNodeRegistrationEvent& event)
 {
+    #ifdef __NMOS__
     size_t nIndex = m_plstRegistration->AddButton(event.GetNodeUrl().BeforeFirst('/'));
     auto pUi = dynamic_cast<uiNode*>(m_plstRegistration->GetButtonuiRect(nIndex));
     if(pUi)
@@ -174,18 +178,20 @@ void pnlSettingsNmos::OnNmosRegistrationNodeFound(const wxNmosNodeRegistrationEv
         pUi->SetVersion(event.GetNodeVersion());
     }
     m_plstRegistration->Refresh();
-
+    #endif
 }
 
 void pnlSettingsNmos::OnNmosRegistrationNodeRemoved(const wxNmosNodeRegistrationEvent& event)
 {
+    #ifdef __NMOS__
     m_plstRegistration->DeleteButton(m_plstRegistration->FindButton(event.GetNodeUrl().BeforeFirst('/')));
     m_plstRegistration->Refresh();
-
+    #endif
 }
 
 void pnlSettingsNmos::OnNmosRegistrationNodeChanged(const wxNmosNodeRegistrationEvent& event)
 {
+    #ifdef __NMOS__
     size_t nButton = m_plstRegistration->FindButton(event.GetNodeUrl().BeforeFirst('/'));
 
     auto pUi = dynamic_cast<uiNode*>(m_plstRegistration->GetButtonuiRect(nButton));
@@ -194,11 +200,13 @@ void pnlSettingsNmos::OnNmosRegistrationNodeChanged(const wxNmosNodeRegistration
         pUi->SetOK(event.GetNodeStatus());
         m_plstRegistration->Refresh();
     }
+    #endif
 }
 
 
 void pnlSettingsNmos::OnNmosRegistrationModeChanged(const wxNmosNodeRegistrationEvent& event)
 {
+    #ifdef __NMOS__
     uiNode::enumRegState eState(uiNode::enumRegState::REG_NONE);
     switch(event.GetRegistered())
     {
@@ -239,22 +247,29 @@ void pnlSettingsNmos::OnNmosRegistrationModeChanged(const wxNmosNodeRegistration
     m_plstRegistration->Refresh();
     m_plstRegistration->Update();
     m_plblDiscoveryNode->Update();
+    #endif
 }
 
 void pnlSettingsNmos::OnNmosQueryNodeFound(const wxNmosClientQueryEvent& event)
 {
+    #ifdef __NMOS__
     m_plstQuery->AddButton(event.GetUrl());
     m_plstQuery->Update();
+    #endif
 }
 
 void pnlSettingsNmos::OnNmosQueryNodeRemoved(const wxNmosClientQueryEvent& event)
 {
+    #ifdef __NMOS__
     m_plstQuery->DeleteButton(m_plstQuery->FindButton(event.GetUrl()));
     m_plstQuery->Update();
+    #endif
 }
 
 void pnlSettingsNmos::OnNmosQueryNodeChanged(const wxNmosClientQueryEvent& event)
 {
+    #ifdef __NMOS__
     m_plblQueryNode->SetLabel(event.GetUrl().empty() ? "Peer-Peer" : event.GetUrl());
     m_plstQuery->Update();
+    #endif
 }

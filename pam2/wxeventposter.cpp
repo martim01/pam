@@ -1,7 +1,7 @@
 #ifdef __NMOS__
 #include "wxeventposter.h"
 #include "log.h"
-#include "mdns.h"
+//#include "mdns.h"
 #include <wx/log.h>
 
 

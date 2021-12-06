@@ -19,12 +19,12 @@ class Generator;
 namespace pml
 {
     class SapServer;
-}
 
-namespace pml
-{
-    class Publisher;
-}
+    namespace dnssd
+    {
+        class Publisher;
+    };
+};
 
 
 class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
@@ -136,7 +136,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         bool m_bStreamActive;
 
         std::unique_ptr<pml::SapServer> m_pSapServer;
-        std::unique_ptr<pml::Publisher> m_pPublisher;
+        std::unique_ptr<pml::dnssd::Publisher> m_pPublisher;
 
         std::vector<double> m_vRatio;
         bool m_bGain;

@@ -1,7 +1,103 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 project(pamworkspace)
 
-execute_process(COMMAND git submodule update --init --recursive)
+SET(NMOS OFF CACHE BOOL "set to ON to include NMOS")
+
+message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "NMOS: ${NMOS}")
+
+SET(DIR_BASE $ENV{HOME} CACHE STRING "base location for libraries")
+SET(DIR_NMOS ${DIR_BASE}/nmos CACHE STRING "location of nmos")
+SET(DIR_PTPMONKEY ${DIR_BASE}/ptpmonkey CACHE STRING "location of ptpmonkey")
+SET(DIR_SAPSERVER ${DIR_BASE}/sapserver CACHE STRING "location of sapserver")
+SET(DIR_LOG ${DIR_BASE}/log CACHE STRING "location of pml log")
+SET(DIR_DNSSD ${DIR_BASE}/dnssd CACHE STRING "location of pml dnssd")
+
+
+
+SET(BUILD_LOG OFF CACHE BOOL "set to OFF if pml::log built by parent project")
+
+message(STATUS "Find external libraries")
+
+#Get log
+message(STATUS "Find pml::log")
+find_path(TEMP_DIR NAMES "CMakeLists.txt" PATHS ${DIR_LOG})
+if((NOT TEMP_DIR) OR (NOT EXISTS ${TEMP_DIR}))
+	message("log not found - clone from GitHub")
+	execute_process(COMMAND git clone https://github.com/martim01/log/ ${DIR_LOG})
+endif()
+find_path(TEMP_DIR2 NAMES "CMakeLists.txt" PATHS ${DIR_LOG})
+if((NOT TEMP_DIR2) OR (NOT EXISTS ${TEMP_DIR2}))
+	message(FATAL_ERROR "Failed to clone pml::Log")
+endif()
+
+#Get ptpmonkey
+message(STATUS "Find pml::ptpmonkey")
+find_path(TEMP_DIR3 NAMES "CMakeLists.txt" PATHS ${DIR_PTPMONKEY})
+if((NOT TEMP_DIR3) OR (NOT EXISTS ${TEMP_DIR3}))
+	message("ptpmonkey not found - clone from GitHub")
+	execute_process(COMMAND git clone https://github.com/martim01/ptpmonkey/ ${DIR_PTPMONKEY})
+endif()
+find_path(TEMP_DIR4 NAMES "CMakeLists.txt" PATHS ${DIR_PTPMONKEY})
+if((NOT TEMP_DIR4) OR (NOT EXISTS ${TEMP_DIR4}))
+	message(FATAL_ERROR "Failed to clone pml::ptpmonkey")
+endif()
+
+#Get sapserver
+message(STATUS "Find pml::sapserver")
+find_path(TEMP_DIR5 NAMES "CMakeLists.txt" PATHS ${DIR_SAPSERVER})
+if((NOT TEMP_DIR5) OR (NOT EXISTS ${TEMP_DIR5}))
+	message("sapserver not found - clone from GitHub")
+	execute_process(COMMAND git clone https://github.com/martim01/sapserver/ ${DIR_SAPSERVER})
+endif()
+
+find_path(TEMP_DIR6 NAMES "CMakeLists.txt" PATHS ${DIR_SAPSERVER})
+if((NOT TEMP_DIR6) OR (NOT EXISTS ${TEMP_DIR6}))
+	message(FATAL_ERROR "Failed to clone pml::sapserver")
+endif()
+
+#Get dnssd
+message(STATUS "Find pml::dnssd")
+find_path(TEMP_DIR7 NAMES "CMakeLists.txt" PATHS ${DIR_DNSSD})
+if((NOT TEMP_DIR7) OR (NOT EXISTS ${TEMP_DIR7}))
+	message("dnssd not found - clone from GitHub")
+	execute_process(COMMAND git clone https://github.com/martim01/dnssd/ ${DIR_DNSSD})
+endif()
+
+find_path(TEMP_DIR8 NAMES "CMakeLists.txt" PATHS ${DIR_DNSSD})
+if((NOT TEMP_DIR8) OR (NOT EXISTS ${TEMP_DIR8}))
+	message(FATAL_ERROR "Failed to clone pml::dnssd")
+endif()
+
+if(${NMOS})
+    #Get nmos
+    message(STATUS "Find pml::nmos")
+    find_path(TEMP_DIR9 NAMES "CMakeLists.txt" PATHS ${DIR_NMOS})
+    if((NOT TEMP_DIR9) OR (NOT EXISTS ${TEMP_DIR9}))
+        message("dnssd not found - clone from GitHub")
+        execute_process(COMMAND git clone https://github.com/martim01/nmos/ ${DIR_NMOS})
+    endif()
+
+    find_path(TEMP_DIR10 NAMES "CMakeLists.txt" PATHS ${DIR_NMOS})
+    if((NOT TEMP_DIR10) OR (NOT EXISTS ${TEMP_DIR10}))
+        message(FATAL_ERROR "Failed to clone pml::dnssd")
+    endif()
+endif()
+
+
+message(STATUS "Configure pml::log")
+add_subdirectory(${DIR_LOG} ${DIR_LOG}/build)
+message(STATUS "Configure pml::sapserver")
+add_subdirectory(${DIR_SAPSERVER} ${DIR_SAPSERVER}/build)
+message(STATUS "Configure pml::ptpmonkey")
+add_subdirectory(${DIR_PTPMONKEY} ${DIR_PTPMONKEY}/build)
+message(STATUS "Configure pml::dnssd")
+add_subdirectory(${DIR_DNSSD} ${DIR_DNSSD}/build)
+
+if(${NMOS})
+    message(STATUS "Configure pml::nmos")
+    add_subdirectory(nmos)
+endif()
 
 message(STATUS "Configure pambase")
 add_subdirectory(pambase)
@@ -57,5 +153,5 @@ message(STATUS "Configure plugin waveform")
 add_subdirectory(plugins/waveform)
 message(STATUS "Configure pam2")
 add_subdirectory(pam2)
-message(STATUS "Configure pamupdatemanager")
-add_subdirectory(pamupdatemanager)
+#message(STATUS "Configure pamupdatemanager")
+#add_subdirectory(pamupdatemanager)

@@ -40,8 +40,8 @@ IMPLEMENT_DYNAMIC_CLASS(wxNmosClientRequestEvent, wxCommandEvent)
 
 IMPLEMENT_DYNAMIC_CLASS(wxNmosClientQueryEvent, wxCommandEvent)
 
-wxClientApiPoster::wxClientApiPoster(wxEvtHandler* pHandler) : ClientApiPoster(),
-    m_pHandler(pHandler)
+wxClientApiPoster::wxClientApiPoster(wxEvtHandler* pHandler) : ClientApiPoster() ,
+m_setHandlers({pHandler})
 {
 
 }
@@ -51,6 +51,16 @@ wxClientApiPoster::~wxClientApiPoster()
 
 }
 
+void wxClientApiPoster::AddHandler(wxEvtHandler* pHandler)
+{
+    m_setHandlers.insert(pHandler);
+}
+
+void wxClientApiPoster::RemoveHandler(wxEvtHandler* pHandler)
+{
+    m_setHandlers.erase(pHandler);
+}
+
 void wxClientApiPoster::ModeChanged(bool bQueryApi)
 {
     //@todo
@@ -58,32 +68,50 @@ void wxClientApiPoster::ModeChanged(bool bQueryApi)
 
 void wxClientApiPoster::NodeChanged(const pml::nmos::resourcechanges<pml::nmos::Self>& changed)
 {
-    wxQueueEvent(m_pHandler, new wxNmosClientNodeEvent(changed));
+    for(auto pHandler : m_setHandlers)
+    {
+        wxQueueEvent(pHandler, new wxNmosClientNodeEvent(changed));
+    }
 }
 
 void wxClientApiPoster::DeviceChanged(const pml::nmos::resourcechanges<pml::nmos::Device>& changed)
 {
-    wxQueueEvent(m_pHandler, new wxNmosClientDeviceEvent(changed));
+    for(auto pHandler : m_setHandlers)
+    {
+        wxQueueEvent(pHandler, new wxNmosClientDeviceEvent(changed));
+    }
 }
 
 void wxClientApiPoster::SourceChanged(const pml::nmos::resourcechanges<pml::nmos::Source>& changed)
 {
-    wxQueueEvent(m_pHandler, new wxNmosClientSourceEvent(changed));
+    for(auto pHandler : m_setHandlers)
+    {
+        wxQueueEvent(pHandler, new wxNmosClientSourceEvent(changed));
+    }
 }
 
 void wxClientApiPoster::FlowChanged(const pml::nmos::resourcechanges<pml::nmos::Flow>& changed)
 {
-    wxQueueEvent(m_pHandler, new wxNmosClientFlowEvent(changed));
+    for(auto pHandler : m_setHandlers)
+    {
+        wxQueueEvent(pHandler, new wxNmosClientFlowEvent(changed));
+    }
 }
 
 void wxClientApiPoster::SenderChanged(const pml::nmos::resourcechanges<pml::nmos::Sender>& changed)
 {
-    wxQueueEvent(m_pHandler, new wxNmosClientSenderEvent(changed));
+    for(auto pHandler : m_setHandlers)
+    {
+        wxQueueEvent(pHandler, new wxNmosClientSenderEvent(changed));
+    }
 }
 
 void wxClientApiPoster::ReceiverChanged(const pml::nmos::resourcechanges<pml::nmos::Receiver>& changed)
 {
-    wxQueueEvent(m_pHandler, new wxNmosClientReceiverEvent(changed));
+    for(auto pHandler : m_setHandlers)
+    {
+        wxQueueEvent(pHandler, new wxNmosClientReceiverEvent(changed));
+    }
 }
 
 
@@ -94,56 +122,74 @@ void wxClientApiPoster::RequestTargetResult(unsigned long nResult, const std::st
 
 void wxClientApiPoster::RequestPatchSenderResult(const pml::nmos::curlResponse& resp, const std::experimental::optional<pml::nmos::connectionSender<pml::nmos::activationResponse>>& con, const std::string& sResourceId)
 {
-    auto pEvent = new wxNmosClientRequestEvent(wxEVT_NMOS_CLIENT_PATCH_SENDER, resp, con, sResourceId);
-    wxQueueEvent(m_pHandler, pEvent);
+    for(auto pHandler : m_setHandlers)
+    {
+        wxQueueEvent(pHandler, new wxNmosClientRequestEvent(wxEVT_NMOS_CLIENT_PATCH_SENDER, resp, con, sResourceId));
+    }
 }
 
 void wxClientApiPoster::RequestPatchReceiverResult(const pml::nmos::curlResponse& resp, const std::experimental::optional<pml::nmos::connectionReceiver<pml::nmos::activationResponse>>& con, const std::string& sResourceId)
 {
-    auto pEvent = new wxNmosClientRequestEvent(wxEVT_NMOS_CLIENT_PATCH_RECEIVER, resp, con, sResourceId);
-    wxQueueEvent(m_pHandler, pEvent);
+    for(auto pHandler : m_setHandlers)
+    {
+        wxQueueEvent(pHandler, new wxNmosClientRequestEvent(wxEVT_NMOS_CLIENT_PATCH_RECEIVER, resp, con, sResourceId));
+    }
 }
 
 void wxClientApiPoster::RequestGetSenderStagedResult(const pml::nmos::curlResponse& resp, const std::experimental::optional<pml::nmos::connectionSender<pml::nmos::activationResponse>>& con, const std::string& sResourceId)
 {
-    auto pEvent = new wxNmosClientRequestEvent(wxEVT_NMOS_CLIENT_GET_SENDER_STAGED, resp, con, sResourceId);
-    wxQueueEvent(m_pHandler, pEvent);
+    for(auto pHandler : m_setHandlers)
+    {
+        wxQueueEvent(pHandler, new wxNmosClientRequestEvent(wxEVT_NMOS_CLIENT_GET_SENDER_STAGED, resp, con, sResourceId));
+    }
 }
 
 void wxClientApiPoster::RequestGetSenderActiveResult(const pml::nmos::curlResponse& resp, const std::experimental::optional<pml::nmos::connectionSender<pml::nmos::activationResponse>>& con, const std::string& sResourceId)
 {
-    auto pEvent = new wxNmosClientRequestEvent(wxEVT_NMOS_CLIENT_GET_SENDER_ACTIVE, resp, con, sResourceId);
-    wxQueueEvent(m_pHandler, pEvent);
+    for(auto pHandler : m_setHandlers)
+    {
+        wxQueueEvent(pHandler, new wxNmosClientRequestEvent(wxEVT_NMOS_CLIENT_GET_SENDER_ACTIVE, resp, con, sResourceId));
+    }
 }
 
 void wxClientApiPoster::RequestGetSenderTransportFileResult(const pml::nmos::curlResponse& resp, const std::experimental::optional<std::string>& transportFile, const std::string& sResourceId)
 {
-    auto pEvent = new wxNmosClientRequestEvent(resp, (transportFile ? *transportFile : wxString()), sResourceId);
-    wxQueueEvent(m_pHandler, pEvent);
+    for(auto pHandler : m_setHandlers)
+    {
+        wxQueueEvent(pHandler, new wxNmosClientRequestEvent(resp, (transportFile ? *transportFile : wxString()), sResourceId));
+    }
 }
 
 void wxClientApiPoster::RequestGetReceiverStagedResult(const pml::nmos::curlResponse& resp, const std::experimental::optional<pml::nmos::connectionReceiver<pml::nmos::activationResponse>>& con, const std::string& sResourceId)
 {
-    auto pEvent = new wxNmosClientRequestEvent(wxEVT_NMOS_CLIENT_GET_RECEIVER_STAGED, resp, con, sResourceId);
-    wxQueueEvent(m_pHandler, pEvent);
+    for(auto pHandler : m_setHandlers)
+    {
+        wxQueueEvent(pHandler, new wxNmosClientRequestEvent(wxEVT_NMOS_CLIENT_GET_RECEIVER_STAGED, resp, con, sResourceId));
+    }
 }
 
 void wxClientApiPoster::RequestGetReceiverActiveResult(const pml::nmos::curlResponse& resp, const std::experimental::optional<pml::nmos::connectionReceiver<pml::nmos::activationResponse>>& con, const std::string& sResourceId)
 {
-    auto pEvent = new wxNmosClientRequestEvent(wxEVT_NMOS_CLIENT_GET_RECEIVER_ACTIVE, resp, con, sResourceId);
-    wxQueueEvent(m_pHandler, pEvent);
+    for(auto pHandler : m_setHandlers)
+    {
+        wxQueueEvent(pHandler, new wxNmosClientRequestEvent(wxEVT_NMOS_CLIENT_GET_RECEIVER_ACTIVE, resp, con, sResourceId));
+    }
 }
 
 void wxClientApiPoster::RequestGetSenderConstraintsResult(const pml::nmos::curlResponse& resp, const std::vector<pml::nmos::Constraints>& vConstraints, const std::string& sResourceId)
 {
-       auto pEvent = new wxNmosClientRequestEvent(wxEVT_NMOS_CLIENT_GET_SENDER_CONSTRAINTS, resp, vConstraints, sResourceId);
-        wxQueueEvent(m_pHandler, pEvent);
+    for(auto pHandler : m_setHandlers)
+    {
+        wxQueueEvent(pHandler, new wxNmosClientRequestEvent(wxEVT_NMOS_CLIENT_GET_SENDER_CONSTRAINTS, resp, vConstraints, sResourceId));
+    }
 }
 
 void wxClientApiPoster::RequestGetReceiverConstraintsResult(const pml::nmos::curlResponse& resp, const std::vector<pml::nmos::Constraints>& vConstraints, const std::string& sResourceId)
 {
-       auto pEvent = new wxNmosClientRequestEvent(wxEVT_NMOS_CLIENT_GET_RECEIVER_CONSTRAINTS, resp, vConstraints, sResourceId);
-        wxQueueEvent(m_pHandler, pEvent);
+    for(auto pHandler : m_setHandlers)
+    {
+        wxQueueEvent(pHandler, new wxNmosClientRequestEvent(wxEVT_NMOS_CLIENT_GET_RECEIVER_CONSTRAINTS, resp, vConstraints, sResourceId));
+    }
 }
 
 
@@ -165,17 +211,26 @@ void wxClientApiPoster::QuerySubscriptionRemoved(const std::string& sSubscriptio
 
 void wxClientApiPoster::QueryServerFound(const std::string& sUrl, unsigned short nPriority)
 {
-    wxQueueEvent(m_pHandler, new wxNmosClientQueryEvent(wxEVT_NMOS_CLIENTQUERY_FOUND, sUrl, nPriority));
+    for(auto pHandler : m_setHandlers)
+    {
+        wxQueueEvent(pHandler, new wxNmosClientQueryEvent(wxEVT_NMOS_CLIENTQUERY_FOUND, sUrl, nPriority));
+    }
 }
 
 void wxClientApiPoster::QueryServerRemoved(const std::string& sUrl)
 {
-    wxQueueEvent(m_pHandler, new wxNmosClientQueryEvent(wxEVT_NMOS_CLIENTQUERY_REMOVED, sUrl, 0));
+    for(auto pHandler : m_setHandlers)
+    {
+        wxQueueEvent(pHandler, new wxNmosClientQueryEvent(wxEVT_NMOS_CLIENTQUERY_REMOVED, sUrl, 0));
+    }
 }
 
 void wxClientApiPoster::QueryServerChanged(const std::string& sUrl)
 {
-    wxQueueEvent(m_pHandler, new wxNmosClientQueryEvent(wxEVT_NMOS_CLIENTQUERY_CHANGED, sUrl, 0));
+    for(auto pHandler : m_setHandlers)
+    {
+        wxQueueEvent(pHandler, new wxNmosClientQueryEvent(wxEVT_NMOS_CLIENTQUERY_CHANGED, sUrl, 0));
+    }
 }
 
 

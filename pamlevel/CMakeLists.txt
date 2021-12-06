@@ -29,8 +29,21 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	endif()
 endif()
 
+list(APPEND flags "-fPIC" "-Wall" "-fpermissive"  "-std=c++14")
+
+if(CMAKE_BUILD_TYPE MATCHES Release)
+   list(APPEND flags "-O3")
+   target_compile_definitions(pamlevel PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __GNU__ __WXGNU__ _core_ MSL_STDINT_H wxDEBUG_LEVEL=0)
+else()
+   list(APPEND flags "-g")
+   target_compile_definitions(pamlevel PUBLIC __WXDEBUG__ DLL_EXPORTS wxUSE_UNICODE __GNU__ __WXGNU__ _core_ MSL_STDINT_H)
+endif()
+target_compile_options(pamlevel PRIVATE ${flags})
+
 target_link_libraries(pamlevel ${wxWidgets_LIBRARIES})
-target_link_libraries(pamlevel pambase)
+target_link_libraries(pamlevel optimized pambase debug pambased)
+
+set_target_properties(pamlevel PROPERTIES DEBUG_POSTFIX "d")
 
 set_target_properties(pamlevel PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../lib/")
 

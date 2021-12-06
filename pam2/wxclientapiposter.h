@@ -5,6 +5,7 @@
 #include <memory>
 #include "clientapi.h"
 #include <list>
+#include <set>
 
 class wxClientApiPoster : public pml::nmos::ClientApiPoster
 {
@@ -12,91 +13,93 @@ class wxClientApiPoster : public pml::nmos::ClientApiPoster
         wxClientApiPoster(wxEvtHandler* pHandler);
         ~wxClientApiPoster();
 
+        void AddHandler(wxEvtHandler* pHandler);
+        void RemoveHandler(wxEvtHandler* pHandler);
 
     protected:
             void ModeChanged(bool bQueryApi) override;
 
-                /** @brief called when one or more Self resources that match a subscribed query are added, updated or removed
-                *   @param lstNodesAdded a list of Selfs that have been added
-                *   @param lstNodesUpdated a list of Selfs that have been updated
-                *   @param lstNodesRemoved a list of Selfs that have been removed
-                **/
-                void NodeChanged(const pml::nmos::resourcechanges<pml::nmos::Self>& changed) override;
+        /** @brief called when one or more Self resources that match a subscribed query are added, updated or removed
+        *   @param lstNodesAdded a list of Selfs that have been added
+        *   @param lstNodesUpdated a list of Selfs that have been updated
+        *   @param lstNodesRemoved a list of Selfs that have been removed
+        **/
+        void NodeChanged(const pml::nmos::resourcechanges<pml::nmos::Self>& changed) override;
 
-                /** @brief called when one or more Device resources that match a subscribed query are added, updated or removed
-                *   @param lstNodesAdded a list of Devices that have been added
-                *   @param lstNodesUpdated a list of Devices that have been updated
-                *   @param lstNodesRemoved a list of Devices that have been removed
-                **/
-                void DeviceChanged(const pml::nmos::resourcechanges<pml::nmos::Device>& changed) override;
+        /** @brief called when one or more Device resources that match a subscribed query are added, updated or removed
+        *   @param lstNodesAdded a list of Devices that have been added
+        *   @param lstNodesUpdated a list of Devices that have been updated
+        *   @param lstNodesRemoved a list of Devices that have been removed
+        **/
+        void DeviceChanged(const pml::nmos::resourcechanges<pml::nmos::Device>& changed) override;
 
-                /** @brief called when one or more Source resources that match a subscribed query are added, updated or removed
-                *   @param lstNodesAdded a list of Sources that have been added
-                *   @param lstNodesUpdated a list of Sources that have been updated
-                *   @param lstNodesRemoved a list of Sources that have been removed
-                **/
-                void SourceChanged(const pml::nmos::resourcechanges<pml::nmos::Source>& changed) override;
+        /** @brief called when one or more Source resources that match a subscribed query are added, updated or removed
+        *   @param lstNodesAdded a list of Sources that have been added
+        *   @param lstNodesUpdated a list of Sources that have been updated
+        *   @param lstNodesRemoved a list of Sources that have been removed
+        **/
+        void SourceChanged(const pml::nmos::resourcechanges<pml::nmos::Source>& changed) override;
 
-                /** @brief called when one or more Flow resources that match a subscribed query are added, updated or removed
-                *   @param lstNodesAdded a list of Flows that have been added
-                *   @param lstNodesUpdated a list of Flows that have been updated
-                *   @param lstNodesRemoved a list of Flows that have been removed
-                **/
-                void FlowChanged(const pml::nmos::resourcechanges<pml::nmos::Flow>& changed) override;
+        /** @brief called when one or more Flow resources that match a subscribed query are added, updated or removed
+        *   @param lstNodesAdded a list of Flows that have been added
+        *   @param lstNodesUpdated a list of Flows that have been updated
+        *   @param lstNodesRemoved a list of Flows that have been removed
+        **/
+        void FlowChanged(const pml::nmos::resourcechanges<pml::nmos::Flow>& changed) override;
 
-                /** @brief called when one or more Sender resources that match a subscribed query are added, updated or removed
-                *   @param lstNodesAdded a list of Senders that have been added
-                *   @param lstNodesUpdated a list of Senders that have been updated
-                *   @param lstNodesRemoved a list of Senders that have been removed
-                **/
-                void SenderChanged(const pml::nmos::resourcechanges<pml::nmos::Sender>& changed) override;
+        /** @brief called when one or more Sender resources that match a subscribed query are added, updated or removed
+        *   @param lstNodesAdded a list of Senders that have been added
+        *   @param lstNodesUpdated a list of Senders that have been updated
+        *   @param lstNodesRemoved a list of Senders that have been removed
+        **/
+        void SenderChanged(const pml::nmos::resourcechanges<pml::nmos::Sender>& changed) override;
 
-                /** @brief called when one or more Receiver resources that match a subscribed query are added, updated or removed
-                *   @param lstNodesAdded a list of Receivers that have been added
-                *   @param lstNodesUpdated a list of Receivers that have been updated
-                *   @param lstNodesRemoved a list of Receivers that have been removed
-                **/
-                void ReceiverChanged(const pml::nmos::resourcechanges<pml::nmos::Receiver>& changed) override;
+        /** @brief called when one or more Receiver resources that match a subscribed query are added, updated or removed
+        *   @param lstNodesAdded a list of Receivers that have been added
+        *   @param lstNodesUpdated a list of Receivers that have been updated
+        *   @param lstNodesRemoved a list of Receivers that have been removed
+        **/
+        void ReceiverChanged(const pml::nmos::resourcechanges<pml::nmos::Receiver>& changed) override;
 
-                /** @brief Called when when a query is subscibed (either with the query node or in p2p mode)
-                *   @param sSubscriptionId the return id of the subscription. On failure this will be an empty string
-                *   @param nResource the nmos resource type we are querying
-                *   @param sQuery the query string if any
-                **/
-                void QuerySubscription(const std::string& sSubscriptionId, int nResource, const std::string& sQuery) override;
+        /** @brief Called when when a query is subscibed (either with the query node or in p2p mode)
+        *   @param sSubscriptionId the return id of the subscription. On failure this will be an empty string
+        *   @param nResource the nmos resource type we are querying
+        *   @param sQuery the query string if any
+        **/
+        void QuerySubscription(const std::string& sSubscriptionId, int nResource, const std::string& sQuery) override;
 
-                /** @brief Called when a query subscritption is removed
-                *   @param sSubscriptionId the id of the remove subscription
-                **/
-                void QuerySubscriptionRemoved(const std::string& sSubscriptionId) override;
+        /** @brief Called when a query subscritption is removed
+        *   @param sSubscriptionId the id of the remove subscription
+        **/
+        void QuerySubscriptionRemoved(const std::string& sSubscriptionId) override;
 
-                void QueryServerChanged(const std::string& sUrl) override;
-                void QueryServerFound(const std::string& sUrl, unsigned short nPriority) override;
-                void QueryServerRemoved(const std::string& sUrl) override;
+        void QueryServerChanged(const std::string& sUrl) override;
+        void QueryServerFound(const std::string& sUrl, unsigned short nPriority) override;
+        void QueryServerRemoved(const std::string& sUrl) override;
 
-                /** @brief Called when a ClientApi::Subscribe or ClientApi::Unsubscribe gets an answer from the target webserver
-                *   @param nResult the http result code
-                *   @param sResonse on success this will contain the uuId of the Sender, on failure this will contain a message with the reason for failure
-                *   @param sResourceId contains the uuId of the Receiver
-                **/
-                void RequestTargetResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId) override;
+        /** @brief Called when a ClientApi::Subscribe or ClientApi::Unsubscribe gets an answer from the target webserver
+        *   @param nResult the http result code
+        *   @param sResonse on success this will contain the uuId of the Sender, on failure this will contain a message with the reason for failure
+        *   @param sResourceId contains the uuId of the Receiver
+        **/
+        void RequestTargetResult(unsigned long nResult, const std::string& sResponse, const std::string& sResourceId) override;
 
 
-                void RequestPatchSenderResult(const pml::nmos::curlResponse& resp, const std::experimental::optional<pml::nmos::connectionSender<pml::nmos::activationResponse>>& con, const std::string& sResourceId) override;
-                void RequestPatchReceiverResult(const pml::nmos::curlResponse& resp, const std::experimental::optional<pml::nmos::connectionReceiver<pml::nmos::activationResponse>>& con, const std::string& sResourceId) override;
-                void RequestGetSenderStagedResult(const pml::nmos::curlResponse& resp, const std::experimental::optional<pml::nmos::connectionSender<pml::nmos::activationResponse>>& con, const std::string& sResourceId) override;
-                void RequestGetSenderActiveResult(const pml::nmos::curlResponse& resp, const std::experimental::optional<pml::nmos::connectionSender<pml::nmos::activationResponse>>& con, const std::string& sResourceId) override;
-                void RequestGetSenderTransportFileResult(const pml::nmos::curlResponse& resp, const std::experimental::optional<std::string>& transportFile, const std::string& sResourceId) override;
-                void RequestGetReceiverStagedResult(const pml::nmos::curlResponse& resp, const std::experimental::optional<pml::nmos::connectionReceiver<pml::nmos::activationResponse>>& con, const std::string& sResourceId) override;
-                void RequestGetReceiverActiveResult(const pml::nmos::curlResponse& resp, const std::experimental::optional<pml::nmos::connectionReceiver<pml::nmos::activationResponse>>& con, const std::string& sResourceId) override;
+        void RequestPatchSenderResult(const pml::nmos::curlResponse& resp, const std::experimental::optional<pml::nmos::connectionSender<pml::nmos::activationResponse>>& con, const std::string& sResourceId) override;
+        void RequestPatchReceiverResult(const pml::nmos::curlResponse& resp, const std::experimental::optional<pml::nmos::connectionReceiver<pml::nmos::activationResponse>>& con, const std::string& sResourceId) override;
+        void RequestGetSenderStagedResult(const pml::nmos::curlResponse& resp, const std::experimental::optional<pml::nmos::connectionSender<pml::nmos::activationResponse>>& con, const std::string& sResourceId) override;
+        void RequestGetSenderActiveResult(const pml::nmos::curlResponse& resp, const std::experimental::optional<pml::nmos::connectionSender<pml::nmos::activationResponse>>& con, const std::string& sResourceId) override;
+        void RequestGetSenderTransportFileResult(const pml::nmos::curlResponse& resp, const std::experimental::optional<std::string>& transportFile, const std::string& sResourceId) override;
+        void RequestGetReceiverStagedResult(const pml::nmos::curlResponse& resp, const std::experimental::optional<pml::nmos::connectionReceiver<pml::nmos::activationResponse>>& con, const std::string& sResourceId) override;
+        void RequestGetReceiverActiveResult(const pml::nmos::curlResponse& resp, const std::experimental::optional<pml::nmos::connectionReceiver<pml::nmos::activationResponse>>& con, const std::string& sResourceId) override;
 
-                void RequestGetSenderConstraintsResult(const pml::nmos::curlResponse& resp, const std::vector<pml::nmos::Constraints>& vConstraints, const std::string& sResourceId) override;
-                void RequestGetReceiverConstraintsResult(const pml::nmos::curlResponse& resp, const std::vector<pml::nmos::Constraints>& vConstraints, const std::string& sResourceId) override;
+        void RequestGetSenderConstraintsResult(const pml::nmos::curlResponse& resp, const std::vector<pml::nmos::Constraints>& vConstraints, const std::string& sResourceId) override;
+        void RequestGetReceiverConstraintsResult(const pml::nmos::curlResponse& resp, const std::vector<pml::nmos::Constraints>& vConstraints, const std::string& sResourceId) override;
 
-                void RequestConnectResult(const std::string& sSenderId, const std::string& sReceiverId, bool bSuccess, const std::string& sResponse) override;
+        void RequestConnectResult(const std::string& sSenderId, const std::string& sReceiverId, bool bSuccess, const std::string& sResponse) override;
 
     private:
-        wxEvtHandler* m_pHandler;
+        std::set<wxEvtHandler*> m_setHandlers;
 
 };
 

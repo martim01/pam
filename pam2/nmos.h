@@ -28,6 +28,7 @@ class wxNmosClientSenderEvent;
 class wxNmosClientReceiverEvent;
 class pnlSettingsInputNmos;
 class wxEventPoster;
+class wxClientApiPoster;
 
 class NmosManager : public wxEvtHandler
 {
@@ -42,6 +43,7 @@ class NmosManager : public wxEvtHandler
         void StopClient();
 
         void AddHandlerToEventPoster(wxEvtHandler* pHandler);
+        void AddHandlerToClientEventPoster(wxEvtHandler* pHandler);
 
         enum {NODE_OFF=0, NODE_RECEIVER, NODE_SENDER, NODE_BOTH};
         enum {CLIENT_OFF=0, CLIENT_IS04, CLIENT_IS05};
@@ -64,7 +66,8 @@ class NmosManager : public wxEvtHandler
         void ActivateSender(const std::string& sId);
         void ActivateReceiver(const std::string& sId);
 
-        std::shared_ptr<wxEventPoster> m_pPoster;
+        std::shared_ptr<wxEventPoster> m_pNodePoster;
+        std::shared_ptr<wxClientApiPoster> m_pClientPoster;
         pnlSettingsInputNmos* m_pInputPanel;
 
         std::shared_ptr<pml::nmos::FlowAudioRaw> m_pFlow;
