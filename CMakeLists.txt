@@ -14,8 +14,8 @@ SET(DIR_LOG ${DIR_BASE}/log CACHE STRING "location of pml log")
 SET(DIR_DNSSD ${DIR_BASE}/dnssd CACHE STRING "location of pml dnssd")
 
 
-
-SET(BUILD_LOG OFF CACHE BOOL "set to OFF if pml::log built by parent project")
+SET(BUILD_DNSSD OFF CACHE BOOL "set to OFF as pml::dnssd built by us")
+SET(BUILD_LOG OFF CACHE BOOL "set to OFF as pml::log built by us")
 
 message(STATUS "Find external libraries")
 
@@ -74,13 +74,13 @@ if(${NMOS})
     message(STATUS "Find pml::nmos")
     find_path(TEMP_DIR9 NAMES "CMakeLists.txt" PATHS ${DIR_NMOS})
     if((NOT TEMP_DIR9) OR (NOT EXISTS ${TEMP_DIR9}))
-        message("dnssd not found - clone from GitHub")
+        message("nmos not found - clone from GitHub")
         execute_process(COMMAND git clone https://github.com/martim01/nmos/ ${DIR_NMOS})
     endif()
 
     find_path(TEMP_DIR10 NAMES "CMakeLists.txt" PATHS ${DIR_NMOS})
     if((NOT TEMP_DIR10) OR (NOT EXISTS ${TEMP_DIR10}))
-        message(FATAL_ERROR "Failed to clone pml::dnssd")
+        message(FATAL_ERROR "Failed to clone pml::nmos")
     endif()
 endif()
 
@@ -96,7 +96,7 @@ add_subdirectory(${DIR_DNSSD} ${DIR_DNSSD}/build)
 
 if(${NMOS})
     message(STATUS "Configure pml::nmos")
-    add_subdirectory(nmos)
+    add_subdirectory(${DIR_NMOS} ${DIR_NMOS}/build)
 endif()
 
 message(STATUS "Configure pambase")
