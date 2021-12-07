@@ -2,8 +2,9 @@
 #include "wmbuttonfactory.h"
 #include "uirect.h"
 #include <wx/log.h>
+#ifdef __NMOS__
 #include "nmosapiversion.h"
-
+#endif
 class uiNode: public uiRect
 {
     public:
@@ -30,8 +31,9 @@ class uiNode: public uiRect
         void SetRegisterState(enumRegState eState);
 
         void SetPriority(unsigned short nPriority);
+        #ifdef __NMOS__
         void SetVersion(const pml::nmos::ApiVersion& version);
-
+        #endif // __NMOS__
     protected:
         void SetColour();
 

@@ -84,11 +84,12 @@ void uiNode::SetPriority(unsigned short nPriority)
     m_uiPriority.SetLabel(wxString::Format("%u", nPriority));
 }
 
+#ifdef __NMOS__
 void uiNode::SetVersion(const pml::nmos::ApiVersion& version)
 {
     m_uiVersion.SetLabel(version.GetVersionAsString());
 }
-
+#endif
 const wxString& uiNode::GetLabel() const
 {
     return m_uiUrl.GetLabel();

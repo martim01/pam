@@ -3,9 +3,12 @@
 #include "settingevent.h"
 #include "nmos.h"
 #include "senderbuttonfactory.h"
+#ifdef __NMOS__
 #include "clientapi.h"
-#include <wx/msgdlg.h>
 #include "senderbase.h"
+#endif
+#include <wx/msgdlg.h>
+
 
 //(*InternalHeaders(pnlSettingsInputNmos)
 #include <wx/intl.h>
