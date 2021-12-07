@@ -3,6 +3,8 @@ project(ptp LANGUAGES CXX)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 include_directories("../../pambase/")
+include_directories(${DIR_PTPMONKEY}/include)
+include_directories(${DIR_LOG}/include)
 
 link_directories("../../lib")
 

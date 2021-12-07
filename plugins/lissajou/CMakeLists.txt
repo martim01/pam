@@ -28,9 +28,9 @@ else()
 endif()
 target_compile_options(lissajou PRIVATE ${flags})
 
-target_link_libraries(lissajou ${wxWidgets_LIBRARIES})
-target_link_libraries(lissajou optimized pambase debug pambased)
-target_link_libraries(lissajou optimized pamfft debug pamfftd)
+#target_link_libraries(lissajou ${wxWidgets_LIBRARIES})
+#target_link_libraries(lissajou optimized pambase debug pambased)
+#target_link_libraries(lissajou optimized pamfft debug pamfftd)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")

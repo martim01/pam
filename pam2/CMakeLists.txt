@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 project(pam2 LANGUAGES CXX)
-
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 include_directories("../pambase/")
 include_directories("../external/live/BasicUsageEnvironment/include")
@@ -16,9 +15,23 @@ if(${NMOS})
 endif()
 link_directories("../lib")
 
-file(GLOB SOURCES "*.cpp")
+set(SOURCES "dlgAoIP.cpp" "dlgEditName.cpp" "dlgEngineering.cpp" "dlgNoInput.cpp" "dlgPin.cpp" "dlgSequence.cpp" "dlgWiFi.cpp" "dlgmask.cpp" "logelement.cpp"
+ "networkcontrol.cpp" "nmos.cpp" "nodebuttonfactory.cpp" "pam2App.cpp" "pam2Main.cpp" "pnlAoIPSelection.cpp" "pnlAoipManual.cpp" "pnlHelp.cpp" "pnlLog.cpp"
+ "pnlLogControl.cpp" "pnlNetworkSetup.cpp" "pnlRTCPTransmission.cpp" "pnlRTP.cpp" "pnlSettings.cpp" "pnlSettingsGenerators.cpp" "pnlSettingsInputNmos.cpp"
+ "pnlSettingsNmos.cpp" "pnlSettingsOptions.cpp" "pnlSettingsOutput.cpp" "pnlSettingsPlugins.cpp" "pnlSettingsProfiles.cpp" "pnlSettingsTime.cpp"
+ "pnlTestOptions.cpp" "pnlTests.cpp" "pnlUSB.cpp" "pnlUpdate.cpp" "senderbuttonfactory.cpp" "wxclientapiposter.cpp" "wxdirtraverseusb.cpp" "wxeventposter.cpp"
+ "wxlogoutput.cpp" "wxpammclient.cpp" "wxpammconnection.cpp")
+
 
 add_executable(pam2 ${SOURCES})
+
+#linux specific
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	#use pkgconfig to find the required libs
+	find_package(PkgConfig REQUIRED)
+	pkg_search_module(avahi avahi-client REQUIRED)
+
+endif()
 
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
@@ -35,18 +48,22 @@ find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
 target_link_libraries(pam2 ${wxWidgets_LIBRARIES})
-target_link_libraries(pam2 pambase)
 target_link_libraries(pam2 pml_log)
 target_link_libraries(pam2 pml_dnssd)
-target_link_libraries(pam2 ptpmonkey)
-target_link_libraries(pam2 pthread)
-
+target_link_libraries(pam2 avahi-client)
 if(${NMOS})
 	target_link_libraries(pam2 restgoose)
 	target_link_libraries(pam2 nmos_base)
 	target_link_libraries(pam2 nmos_node)
 	target_link_libraries(pam2 nmos_client)
 endif()
+target_link_libraries(pam2 sapserver)
+target_link_libraries(pam2 pthread)
+target_link_libraries(pam2 ptpmonkey)
+target_link_libraries(pam2 pambase)
+target_link_libraries(pam2 pamfft)
+target_link_libraries(pam2 pamlevel)
+
 
 set_target_properties(pam2 PROPERTIES RUNTIME_OUTPUT_DIRECTORY "../../bin/")
 

@@ -48,3 +48,4 @@
 pam2/bin/*
 *.a1
 *.cppcheck
+.vscode/
