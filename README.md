@@ -50,7 +50,7 @@ sudo apt-get install libwxgtk3.0-dev portaudio19-dev libsndfile1-dev libsamplera
 ```
 
 ### Other libraries required
-PAM uses a number of small libraries that I have developed. All these libraries are included in the project tree as git submodules and therefore should update automatically.
+PAM uses a number of small libraries. All these libraries are hosted on GitHub and are cloned automatically when running cmake.
 * [log](https://github.com/martim01/log)   a simple streaming log class
 * [dnssd](https://github.com/martim01/dnssd)   a cross platform wrapper around Bonjour and Avahi for service browsing and publishing
 * [sapserver]  a library to detect and publish SAP
@@ -81,7 +81,7 @@ Codeblocks  http://www.codeblocks.org/
 
 
 ### To build using CMake (currently on Linux only)
-The cmake build will clone all the required GitHub libraries if it can't find them and update to their latest version if it can.
+The cmake build will clone all the required GitHub libraries if it can't find them and update them to their latest version if it can.
  By default it looks in the home directory. You can change this by passing in the variable DIR_BASE to cmake
 
 ```
