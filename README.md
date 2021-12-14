@@ -133,6 +133,9 @@ sudo setcap cap_sys_time,cap_net_bind_service+ep pathToPam/pam2
 
 If you wish to include [nmos](https://github.com/martim01/nmos) in the application then run ``` cmake .. -DNMOS=ON ``` instead of ``` cmake ...```
 
+**__Note: NMOS support is a work in progress. The Node library passes all the NMOS tests and the Client library can be used to make simple connections. Amongst other things__**
+* **__Work is needed on the client side for systems with many nodes in order to display and filter them properly.__**
+* **__Work is needed to set the PTP clock source correctly when PTPMonkey is used to sync the clocks__**
 
 ### Setting Up
 
