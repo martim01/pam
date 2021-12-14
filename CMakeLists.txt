@@ -80,7 +80,7 @@ if(${NMOS})
 
     find_path(TEMP_DIR10 NAMES "CMakeLists.txt" PATHS ${DIR_NMOS})
     if((NOT TEMP_DIR10) OR (NOT EXISTS ${TEMP_DIR10}))
-        message(FATAL_ERROR "Failed to clone pml::dnssd")
+        message(FATAL_ERROR "Failed to clone pml::nmos")
     endif()
 endif()
 
@@ -96,7 +96,7 @@ add_subdirectory(${DIR_DNSSD} ${DIR_DNSSD}/build)
 
 if(${NMOS})
     message(STATUS "Configure pml::nmos")
-    add_subdirectory(nmos)
+    add_subdirectory(${DIR_NMOS) ${DIR_NMOS}/build)
 endif()
 
 message(STATUS "Configure pambase")
