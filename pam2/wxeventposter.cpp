@@ -122,7 +122,6 @@ void wxEventPoster::wxEventPoster::RegistrationNodeChanged(const std::string& sU
 
 void wxEventPoster::RegistrationChanged(const std::string& sUrl, pml::nmos::EventPoster::enumRegState eState)
 {
-    pmlLog() << "wxEventPoster::RegistrationChanged: " << sUrl << "=" << eState;
     for(auto pHandler : m_lstHandlers)
     {
         wxNmosNodeRegistrationEvent* pEvent = new wxNmosNodeRegistrationEvent(wxEVT_NMOS_REGISTRATION_CHANGED);
