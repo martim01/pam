@@ -50,11 +50,14 @@ sudo apt-get install libwxgtk3.0-dev portaudio19-dev libsndfile1-dev libsamplera
 ```
 
 ### Other libraries required
-PAM uses a number of small libraries that I have developed. All these libraries are included in the project tree as git submodules and therefore should update automatically.
+PAM uses a number of small libraries. All these libraries are hosted on GitHub and are cloned automatically when running cmake.
 * [log](https://github.com/martim01/log)   a simple streaming log class
 * [dnssd](https://github.com/martim01/dnssd)   a cross platform wrapper around Bonjour and Avahi for service browsing and publishing
 * [sapserver]  a library to detect and publish SAP
 * [ptpmonkey](https://github.com/martim01/ptpmonkey)  allows PAM to decode and analyse PTP messages and also sync to a PTP grandmaster
+* [asio](https://github.com/chriskohlhoff/asio) used by sapserver and ptpmonkey
+* [Mongoose](https://GitHub.com/cesanta/mongoose) http and websocket library (only needed for the NMOS build)
+* [restgoose](https://GitHub.com/martim01/restgoose) a Restful server built on top of Mongoose (only needed for the NMOS build)
 * [nmos](https://github.com/martim01/nmos)   an optional library to allow PAM to advertise itself as an NMOS node and also act as an NMOS client
 
 ## Building PAM
@@ -78,6 +81,17 @@ Codeblocks  http://www.codeblocks.org/
 
 
 ### To build using CMake (currently on Linux only)
+The cmake build will clone all the required GitHub libraries if it can't find them and update them to their latest version if it can.
+ By default it looks in the home directory. You can change this by passing in the variable DIR_BASE to cmake
+
+```
+cmake -DDIR_BASE=/home/user/pam_external
+```
+It is also possible to change the expected directory for each individual library
+```
+cmake -DDIR_LOG=logdir -DDIR_ASIO=asiodir
+```
+
 ```
 cd {pam directory}/build
 cmake ..
@@ -108,13 +122,11 @@ sudo setcap cap_sys_time,cap_net_bind_service+ep pathToPam/pam2
 ```
 
 #### NMOS support
-__forthcoming__ 
 
 [NMOS](https://github.com/AMWA-TV/nmos/wiki) support can be build in to __PAM__ allowing control of AoIP streams in to and out of the software from external devices. It is also possible to select and route NMOS compliant sources to the software for monitoring. 
 
-If you wish to include [nmos](https://github.com/martim01/nmos) in the application then run ``` cmake .. -DoptionNMOS=ON ``` instead of ``` cmake ...```
+If you wish to include [nmos](https://github.com/martim01/nmos) in the application then run ``` cmake .. -DNMOS=ON ``` instead of ``` cmake ...```
 
-The CMake project will clone the nmos code from GitHub to __external/nmos__ and build and install the library.
 
 ### Setting Up
 

@@ -31,6 +31,8 @@ target_compile_options(r128 PRIVATE ${flags})
 
 target_link_libraries(r128 ${wxWidgets_LIBRARIES})
 target_link_libraries(r128 optimized pambase debug pambased)
+target_link_libraries(r128 optimized pamlevel debug pamleveld)
+target_link_libraries(r128 optimized pamfft debug pamfftd)
 
 
 #linux specific

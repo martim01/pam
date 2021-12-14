@@ -34,6 +34,7 @@ target_compile_options(spectogram PRIVATE ${flags})
 
 target_link_libraries(spectogram ${wxWidgets_LIBRARIES})
 target_link_libraries(spectogram optimized pambase debug pambased)
+target_link_libraries(spectogram optimized pamfft debug pamfftd)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
