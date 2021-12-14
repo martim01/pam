@@ -273,7 +273,7 @@ void NmosManager::OnPatchSender(wxNmosNodeConnectionEvent& event)
         std::string sDestinationIp;
 
 
-        if(event.GetSenderConnection()->GetReceiverId() && *(event.GetSenderConnection()->GetReceiverId()).empty() == false)
+        if(event.GetSenderConnection()->GetReceiverId() && (*(event.GetSenderConnection()->GetReceiverId())).empty() == false)
         {
             pmlLog() << "Patch Sender: ReceiverId = '" << *(event.GetSenderConnection()->GetReceiverId()) << "'";
 
