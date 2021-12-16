@@ -44,9 +44,15 @@ For more information please look at the help files contained in the __documents_
 
 
 ##### To install these libraries on Raspbian
+On Buster and earlier
 ```
 sudo apt-get update
 sudo apt-get install libwxgtk3.0-dev portaudio19-dev libsndfile1-dev libsamplerate0-dev libavahi-client-dev libcurl4-openssl-dev libmicrohttpd-dev
+```
+On Bullseye
+```
+sudo apt-get update
+sudo apt-get install libwxgtk3.0-gtk3-dev portaudio19-dev libsndfile1-dev libsamplerate0-dev libavahi-client-dev libcurl4-openssl-dev libmicrohttpd-dev
 ```
 
 ### Other libraries required
@@ -127,6 +133,9 @@ sudo setcap cap_sys_time,cap_net_bind_service+ep pathToPam/pam2
 
 If you wish to include [nmos](https://github.com/martim01/nmos) in the application then run ``` cmake .. -DNMOS=ON ``` instead of ``` cmake ...```
 
+**__Note: NMOS support is a work in progress. The Node library passes all the NMOS tests and the Client library can be used to make simple connections. Amongst other things__**
+* **__Work is needed on the client side for systems with many nodes in order to display and filter them properly.__**
+* **__Work is needed to set the PTP clock source correctly when PTPMonkey is used to sync the clocks__**
 
 ### Setting Up
 
