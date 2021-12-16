@@ -108,17 +108,17 @@ endif()
 
 
 message(STATUS "Configure pml::log")
-add_subdirectory(${DIR_LOG} ${CMAKE_SOURCE_DIR}/log/build)
+add_subdirectory(${DIR_LOG} ${CMAKE_SOURCE_DIR}/build/log)
 message(STATUS "Configure pml::sapserver")
-add_subdirectory(${DIR_SAPSERVER} ${CMAKE_SOURCE_DIR}/sapserver/build)
+add_subdirectory(${DIR_SAPSERVER} ${CMAKE_SOURCE_DIR}/build/sapserver)
 message(STATUS "Configure pml::ptpmonkey")
-add_subdirectory(${DIR_PTPMONKEY} ${CMAKE_SOURCE_DIR}/ptpmonkey/build)
+add_subdirectory(${DIR_PTPMONKEY} ${CMAKE_SOURCE_DIR}/build/ptpmonkey)
 message(STATUS "Configure pml::dnssd")
-add_subdirectory(${DIR_DNSSD} ${CMAKE_SOURCE_DIR}/dnssd/build)
+add_subdirectory(${DIR_DNSSD} ${CMAKE_SOURCE_DIR}/build/dnssd)
 
 if(${NMOS})
     message(STATUS "Configure pml::nmos")
-    add_subdirectory(${DIR_NMOS} ${CMAKE_SOURCE_DIR}/nmos/build)
+    add_subdirectory(${DIR_NMOS} ${CMAKE_SOURCE_DIR}/build/nmos)
 endif()
 
 message(STATUS "Configure pambase")
