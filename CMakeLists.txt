@@ -14,8 +14,8 @@ SET(DIR_LOG ${DIR_BASE}/log CACHE STRING "location of pml log")
 SET(DIR_DNSSD ${DIR_BASE}/dnssd CACHE STRING "location of pml dnssd")
 
 
-SET(BUILD_DNSSD OFF CACHE BOOL "set to OFF as pml::dnssd built by us")
-SET(BUILD_LOG OFF CACHE BOOL "set to OFF as pml::log built by us")
+SET(BUILD_DNSSD OFF)
+SET(BUILD_LOG OFF)
 
 message(STATUS "Find external libraries")
 
