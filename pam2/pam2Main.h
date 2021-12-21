@@ -70,6 +70,7 @@ class pam2Dialog: public wxDialog
         void OnswpMainPageChanged(wxNotebookEvent& event);
         void OnswpSplashPageChanged(wxNotebookEvent& event);
         void OnbtnInputClick(wxCommandEvent& event);
+        void OnbtnScreenshotClick(wxCommandEvent& event);
         //*)
 
         //(*Identifiers(pam2Dialog)
@@ -79,7 +80,7 @@ class pam2Dialog: public wxDialog
         static const long ID_M_PLST1;
         static const long ID_M_PLST3;
         static const long ID_M_PBTN2;
-        static const long ID_M_PLBL4;
+        static const long ID_M_PBTN4;
         static const long ID_M_PBTN3;
         static const long ID_M_PLBL2;
         static const long ID_PANEL7;
@@ -106,7 +107,7 @@ class pam2Dialog: public wxDialog
         wmButton* m_pbtnCPU;
         wmButton* m_pbtnInput;
         wmButton* m_pbtnMonitor;
-        wmLabel* m_plblNetwork;
+        wmButton* m_pbtnScreenshot;
         wmLabel* m_plblOutput;
         wmList* m_plstInbuilt;
         wmList* m_plstOptions;

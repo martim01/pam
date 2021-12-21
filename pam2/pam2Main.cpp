@@ -110,7 +110,7 @@ const long pam2Dialog::ID_M_PSWP1 = wxNewId();
 const long pam2Dialog::ID_M_PLST1 = wxNewId();
 const long pam2Dialog::ID_M_PLST3 = wxNewId();
 const long pam2Dialog::ID_M_PBTN2 = wxNewId();
-const long pam2Dialog::ID_M_PLBL4 = wxNewId();
+const long pam2Dialog::ID_M_PBTN4 = wxNewId();
 const long pam2Dialog::ID_M_PBTN3 = wxNewId();
 const long pam2Dialog::ID_M_PLBL2 = wxNewId();
 const long pam2Dialog::ID_PANEL7 = wxNewId();
@@ -173,7 +173,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_plstScreens->SetBackgroundColour(wxColour(0,0,0));
     m_plstScreens->SetButtonColour(wxColour(wxT("#008000")));
     m_plstScreens->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
-    m_plstInbuilt = new wmList(Panel2, ID_M_PLST3, wxPoint(0,295), wxSize(200,44), wmList::STYLE_SELECT, 0, wxSize(-1,40), 3, wxSize(5,5));
+    m_plstInbuilt = new wmList(Panel2, ID_M_PLST3, wxPoint(0,295), wxSize(200,44), wmList::STYLE_SELECT, 0, wxSize(-1,40), 3, wxSize(2,2));
     m_plstInbuilt->SetForegroundColour(wxColour(0,0,0));
     m_plstInbuilt->SetBackgroundColour(wxColour(0,0,0));
     m_plstInbuilt->SetButtonColour(wxColour(wxT("#3DBEAB")));
@@ -183,11 +183,8 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Panel4->SetBackgroundColour(wxColour(255,255,255));
     m_pbtnCPU = new wmButton(Panel4, ID_M_PBTN2, _("Monitor"), wxPoint(1,1), wxSize(95,23), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN2"));
     m_pbtnCPU->SetBackgroundColour(wxColour(0,0,0));
-    m_plblNetwork = new wmLabel(Panel4, ID_M_PLBL4, wxEmptyString, wxPoint(97,1), wxSize(95,23), 0, _T("ID_M_PLBL4"));
-    m_plblNetwork->SetBorderState(uiRect::BORDER_NONE);
-    m_plblNetwork->GetUiRect().SetGradient(0);
-    m_plblNetwork->SetForegroundColour(wxColour(255,255,255));
-    m_plblNetwork->SetBackgroundColour(wxColour(0,0,0));
+    m_pbtnScreenshot = new wmButton(Panel4, ID_M_PBTN4, _("Screenshot"), wxPoint(97,1), wxSize(95,23), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN4"));
+    m_pbtnScreenshot->SetBackgroundColour(wxColour(0,0,108));
     m_pbtnInput = new wmButton(Panel4, ID_M_PBTN3, _("Input"), wxPoint(1,25), wxSize(95,24), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
     m_pbtnInput->SetBackgroundColour(wxColour(0,128,0));
     m_plblOutput = new wmLabel(Panel4, ID_M_PLBL2, _("Output"), wxPoint(97,25), wxSize(95,24), 0, _T("ID_M_PLBL2"));
@@ -229,6 +226,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnlstScreensSelected);
     Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnlstScreensSelected);
     Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pam2Dialog::OnbtnInputClick);
+    Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pam2Dialog::OnbtnScreenshotClick);
     Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pam2Dialog::OnbtnInputClick);
     Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pam2Dialog::OnbtnMonitorClick);
     Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnplstOptionsSelected);
@@ -1173,4 +1171,9 @@ void pam2Dialog::OnbtnInputClick(wxCommandEvent& event)
     {
         Screenshot();
     }
+}
+
+void pam2Dialog::OnbtnScreenshotClick(wxCommandEvent& event)
+{
+    Screenshot();
 }
