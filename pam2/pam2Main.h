@@ -172,7 +172,7 @@ class pam2Dialog: public wxDialog
 
         void TellPluginsAboutOutputChannels();
 
-
+        wxString Screenshot();
 
 
         wxCursor* m_pCursor;

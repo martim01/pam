@@ -49,6 +49,7 @@
 #include <wx/bitmap.h>
 #include <wx/dcscreen.h>
 #include <wx/dcmemory.h>
+#include <wx/dcclient.h>
 #include "usbchecker.h"
 #ifdef __NMOS__
 #include "nmos.h"
@@ -90,27 +91,6 @@ wxString wxbuildinfo(wxbuildinfoformat format)
 
 
 
-wxString Screenshot()
-{
-    wxScreenDC dcScreen;
-    auto dimensions = dcScreen.GetSize();
-    wxBitmap bmpScreen(dimensions.x, dimensions.y,-1);
-    wxMemoryDC dcMem;
-    dcMem.SelectObject(bmpScreen);
-    dcMem.Blit(0,0,dimensions.x,dimensions.y, &dcScreen, 0,0);
-    dcMem.SelectObject(wxNullBitmap);
-
-    wxString sFilename = wxDateTime::Now().Format("/tmp/%Y%M%d%H%M%S.jpg");
-    if(bmpScreen.SaveFile(sFilename,wxBITMAP_TYPE_JPEG))
-    {
-        pmlLog() << "Screenshot saved to " << sFilename;
-    }
-    else
-    {
-        pmlLog(pml::LOG_WARN) << "Failed to save screenshot " << sFilename;
-    }
-    return sFilename;
-}
 
 
 //(*IdInit(pam2Dialog)
@@ -507,21 +487,21 @@ void pam2Dialog::OnlstScreensSelected(wxCommandEvent& event)
 
         Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
 
-        m_pSelectedMonitor = 0;
+        m_pSelectedMonitor = nullptr;
         ShowSettingsPanel();
     }
     else if(event.GetString() == wxT("Help"))
     {
         m_plstScreens->SelectAll(false,false);
         ShowHelpPanel();
-        m_pSelectedMonitor = 0;
+        m_pSelectedMonitor = nullptr;
         Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
     }
     else if(event.GetString() == wxT("Log"))
     {
         m_plstScreens->SelectAll(false,false);
         Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
-        m_pSelectedMonitor = 0;
+        m_pSelectedMonitor = nullptr;
         ShowLogPanel();
     }
     else
@@ -533,7 +513,7 @@ void pam2Dialog::OnlstScreensSelected(wxCommandEvent& event)
         {
             Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
             Settings::Get().Write(wxT("Main"), wxT("Last"),event.GetString());
-            m_pSelectedMonitor = 0;
+            m_pSelectedMonitor = nullptr;
             ShowTestPanels();
         }
         else if(event.GetString() == wxT("Next Page"))
@@ -607,7 +587,7 @@ void pam2Dialog::ShowMonitorPanel(const wxString& sPanel)
     }
     else
     {
-        m_pSelectedMonitor = 0;
+        m_pSelectedMonitor = nullptr;
         MaximizeMonitor(false);
     }
 }
@@ -1185,6 +1165,45 @@ void pam2Dialog::OnbtnInputClick(wxCommandEvent& event)
 
 void pam2Dialog::OnbtnScreenshotClick(wxCommandEvent& event)
 {
-    MaximizeMonitor(m_pSelectedMonitor->CanBeMaximized());
-    m_usb.SaveToUSB(wxFileName(Screenshot()));
+    if(m_pSelectedMonitor)
+    {
+        MaximizeMonitor(m_pSelectedMonitor->CanBeMaximized());
+    }
+    wxFileName fn(Screenshot());
+    m_usb.SaveToUSB(fn);
+
+}
+
+
+wxString pam2Dialog::Screenshot()
+{
+    wxWindow* pWnd(nullptr);
+    if(m_pSelectedMonitor)
+    {
+        pWnd = m_pSelectedMonitor->GetMainWindow();
+    }
+    else if(m_ppnlTests)
+    {
+        pWnd = m_ppnlTests;
+    }
+    wxString sFilename;
+    if(pWnd)
+    {
+        wxWindowDC dcScreen(this);
+        auto dimensions = dcScreen.GetSize();
+        wxBitmap bmpScreen(dimensions.x, dimensions.y,-1);
+        wxMemoryDC dcMem;
+        dcMem.SelectObject(bmpScreen);
+        dcMem.Blit(0,0,dimensions.x,dimensions.y, &dcScreen, 0,0);
+        dcMem.SelectObject(wxNullBitmap);
+
+        sFilename = wxDateTime::Now().Format("/tmp/%Y%m%dT%H%M%S.jpg");
+        if(bmpScreen.SaveFile(sFilename,wxBITMAP_TYPE_JPEG) == false)
+        {
+            pmlLog(pml::LOG_WARN) << "Failed to save screenshot " << sFilename;
+            sFilename.clear();
+        }
+    }
+    return sFilename;
+
 }

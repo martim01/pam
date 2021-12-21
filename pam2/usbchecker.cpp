@@ -27,7 +27,7 @@ void UsbChecker::Abort()
 
 void UsbChecker::SaveToUSB(const wxFileName& fnSource)
 {
-    pmlLog(pml::LOG_DEBUG) << "UsbChecker\tSaveToUsb: " << fnSource.GetFullPath();
+    pmlLog(pml::LOG_DEBUG) << "USB\tSaveToUsb: " << fnSource.GetFullPath();
     if(m_pThread != nullptr)
     {
         Abort();
@@ -42,7 +42,7 @@ void UsbChecker::SaveToUSB(const wxFileName& fnSource)
         #endif // __WXGNU__
         if(asFiles.GetCount() == 0)
         {
-            pmlLog(pml::LOG_WARN) << "Not able to save " << fnSource.GetName() << " no USB drives detected.";
+            pmlLog(pml::LOG_WARN) << "USB\tNot able to save " << fnSource.GetName() << " no USB drives detected.";
         }
         else
         {
@@ -52,13 +52,22 @@ void UsbChecker::SaveToUSB(const wxFileName& fnSource)
                 {
                     if(MountDevice(asFiles[i]) == 0)
                     {
-                        if(wxCopyFile(fnSource.GetFullPath(), "/mnt/share/"+fnSource.GetFullName()))
+                        std::ifstream source(fnSource.GetFullPath().ToStdString(), std::ios::binary);
+                        std::ofstream dest(wxString("/mnt/share/"+fnSource.GetFullName()).ToStdString(), std::ios::binary);
+                        if(source.is_open() == false)
                         {
-                            pmlLog() << "USB: " << fnSource.GetName().ToStdString() << " saved to USB drive";
+                            pmlLog(pml::LOG_WARN) << "USB\tCould not open source file";
+                        }
+                        else if(dest.is_open() == false)
+                        {
+                            pmlLog(pml::LOG_WARN) << "USB\tCould not open destination file";
                         }
                         else
                         {
-                            pmlLog() << "USB: Failed to save " << fnSource.GetName().ToStdString() << " to USB drive";
+                            dest << source.rdbuf();
+                            pmlLog() << "USB\t" << fnSource.GetName().ToStdString() << " saved to USB drive";
+                            source.close();
+                            remove(fnSource.GetFullPath().ToStdString().c_str());
                         }
                         UnmountDevice();
                         break;
@@ -84,7 +93,7 @@ int UsbChecker::MountDevice(const wxString& sDevice)
 {
     if(sDevice.empty())
     {
-        pmlLog(pml::LOG_WARN) << "USB: Trying to mount an emtpy device";
+        pmlLog(pml::LOG_WARN) << "USB\tTrying to mount an emtpy device";
         return EINVAL;
     }
 
@@ -95,7 +104,7 @@ int UsbChecker::MountDevice(const wxString& sDevice)
     int nResult = umount("/mnt/share");
     if(nResult == -1 && errno != EAGAIN && errno != EINVAL)
     {
-        pmlLog(pml::LOG_WARN) << "USB: Failed to umount /mnt/share: " << strerror(errno);
+        pmlLog(pml::LOG_WARN) << "USB\tFailed to umount /mnt/share: " << strerror(errno);
         return errno;
     }
 
@@ -103,13 +112,13 @@ int UsbChecker::MountDevice(const wxString& sDevice)
     std::array<std::string, 8> fs({"ext3", "ext2", "ext4", "vfat", "msdos", "f2fs", "fuseblk", "ntfs"});
     for(size_t i = 0; i < fs.size(); i++)
     {
-        nResult = mount(sDevice.ToStdString().c_str(), "/mnt/share", fs[i].c_str(), MS_RDONLY | MS_SILENT, nullptr);
+        nResult = mount(sDevice.ToStdString().c_str(), "/mnt/share", fs[i].c_str(), MS_SILENT, nullptr);
         if(nResult == 0)
         {
             return 0;
         }
     }
-    pmlLog(pml::LOG_WARN) << "USB: Failed to mount " << sDevice.ToStdString() << ": " << strerror(errno);
+    pmlLog(pml::LOG_WARN) << "USB\tFailed to mount " << sDevice.ToStdString() << ": " << strerror(errno);
     return errno;
 
 }
