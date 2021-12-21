@@ -47,6 +47,8 @@
 #include "dlgNoInput.h"
 #include "log.h"
 #include <wx/bitmap.h>
+#include <wx/dcscreen.h>
+#include <wx/dcmemory.h>
 #ifdef __NMOS__
 #include "nmos.h"
 #endif // __WXMSW__
@@ -84,6 +86,22 @@ wxString wxbuildinfo(wxbuildinfoformat format)
 
     return wxbuild;
 }
+
+
+
+void Screenshot()
+{
+    wxScreenDC dcScreen;
+    auto dimensions = dcScreen.GetSize();
+    wxBitmap bmpScreen(dimensions.x, dimensions.y,-1);
+    wxMemoryDC dcMem;
+    dcMem.SelectObject(bmpScreen);
+    dcMem.Blit(0,0,dimensions.x,dimensions.y, &dcScreen, 0,0);
+    dcMem.SelectObject(wxNullBitmap);
+
+    bmpScreen.SaveFile("screenshot.jpg",wxBITMAP_TYPE_JPEG);
+}
+
 
 //(*IdInit(pam2Dialog)
 const long pam2Dialog::ID_BITMAPBUTTON1 = wxNewId();
@@ -1150,5 +1168,9 @@ void pam2Dialog::OnbtnInputClick(wxCommandEvent& event)
 
         }
         #endif // __NMOS__
+    }
+    else
+    {
+        Screenshot();
     }
 }
