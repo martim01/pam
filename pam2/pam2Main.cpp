@@ -49,6 +49,7 @@
 #include <wx/bitmap.h>
 #include <wx/dcscreen.h>
 #include <wx/dcmemory.h>
+#include "usbchecker.h"
 #ifdef __NMOS__
 #include "nmos.h"
 #endif // __WXMSW__
@@ -89,7 +90,7 @@ wxString wxbuildinfo(wxbuildinfoformat format)
 
 
 
-void Screenshot()
+wxString Screenshot()
 {
     wxScreenDC dcScreen;
     auto dimensions = dcScreen.GetSize();
@@ -99,7 +100,16 @@ void Screenshot()
     dcMem.Blit(0,0,dimensions.x,dimensions.y, &dcScreen, 0,0);
     dcMem.SelectObject(wxNullBitmap);
 
-    bmpScreen.SaveFile("screenshot.jpg",wxBITMAP_TYPE_JPEG);
+    wxString sFilename = wxDateTime::Now().Format("/tmp/%Y%M%d%H%M%S.jpg");
+    if(bmpScreen.SaveFile(sFilename,wxBITMAP_TYPE_JPEG))
+    {
+        pmlLog() << "Screenshot saved to " << sFilename;
+    }
+    else
+    {
+        pmlLog(pml::LOG_WARN) << "Failed to save screenshot " << sFilename;
+    }
+    return sFilename;
 }
 
 
@@ -1175,5 +1185,6 @@ void pam2Dialog::OnbtnInputClick(wxCommandEvent& event)
 
 void pam2Dialog::OnbtnScreenshotClick(wxCommandEvent& event)
 {
-    Screenshot();
+    MaximizeMonitor(m_pSelectedMonitor->CanBeMaximized());
+    m_usb.SaveToUSB(wxFileName(Screenshot()));
 }

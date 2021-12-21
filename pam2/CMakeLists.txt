@@ -21,7 +21,7 @@ set(SOURCES "dlgAoIP.cpp" "dlgEditName.cpp" "dlgEngineering.cpp" "dlgNoInput.cpp
  "pnlLogControl.cpp" "pnlNetworkSetup.cpp" "pnlRTCPTransmission.cpp" "pnlRTP.cpp" "pnlSettings.cpp" "pnlSettingsGenerators.cpp" "pnlSettingsInputNmos.cpp"
  "pnlSettingsNmos.cpp" "pnlSettingsOptions.cpp" "pnlSettingsOutput.cpp" "pnlSettingsPlugins.cpp" "pnlSettingsProfiles.cpp" "pnlSettingsTime.cpp"
  "pnlTestOptions.cpp" "pnlTests.cpp" "pnlUSB.cpp" "pnlUpdate.cpp" "senderbuttonfactory.cpp" "wxclientapiposter.cpp" "wxdirtraverseusb.cpp" "wxeventposter.cpp"
- "wxlogoutput.cpp" "wxpammclient.cpp" "wxpammconnection.cpp")
+ "wxlogoutput.cpp" "wxpammclient.cpp" "wxpammconnection.cpp" "usbchecker.cpp")
 
 
 add_executable(pam2 ${SOURCES})
