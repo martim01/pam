@@ -173,7 +173,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Panel4->SetBackgroundColour(wxColour(255,255,255));
     m_pbtnCPU = new wmButton(Panel4, ID_M_PBTN2, _("Monitor"), wxPoint(1,1), wxSize(95,23), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN2"));
     m_pbtnCPU->SetBackgroundColour(wxColour(0,0,0));
-    m_pbtnScreenshot = new wmButton(Panel4, ID_M_PBTN4, _("Screenshot"), wxPoint(97,1), wxSize(95,23), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN4"));
+    m_pbtnScreenshot = new wmButton(Panel4, ID_M_PBTN4, _("Screenshot"), wxPoint(97,1), wxSize(95,23), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN4"));
     m_pbtnScreenshot->SetBackgroundColour(wxColour(0,0,108));
     m_pbtnInput = new wmButton(Panel4, ID_M_PBTN3, _("Input"), wxPoint(1,25), wxSize(95,24), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
     m_pbtnInput->SetBackgroundColour(wxColour(0,128,0));
@@ -226,6 +226,11 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Connect(ID_TIMER3,wxEVT_TIMER,(wxObjectEventFunction)&pam2Dialog::OntimerIpcTrigger);
     Connect(wxID_ANY,wxEVT_CLOSE_WINDOW,(wxObjectEventFunction)&pam2Dialog::OnClose);
     //*)
+
+    m_pbtnScreenshot->SetColourSelected(wxColour(255,128,0));
+    m_timerScreenshot.SetOwner(this, wxNewId());
+    Connect(m_timerScreenshot.GetId(),wxEVT_TIMER,(wxObjectEventFunction)&pam2Dialog::OnTimerScreenshot);
+
     m_pdlgNoInput = 0;
 
     m_ppnlLog = new pnlLog(m_pswpMain);
@@ -1169,11 +1174,16 @@ void pam2Dialog::OnbtnScreenshotClick(wxCommandEvent& event)
     {
         MaximizeMonitor(m_pSelectedMonitor->CanBeMaximized());
     }
-    wxFileName fn(Screenshot());
-    m_usb.SaveToUSB(fn);
+
+    m_timerScreenshot.Start(100,true);
 
 }
 
+void pam2Dialog::OnTimerScreenshot(const wxTimerEvent& event)
+{
+    wxFileName fn(Screenshot());
+    m_usb.SaveToUSB(fn);
+}
 
 wxString pam2Dialog::Screenshot()
 {
@@ -1189,7 +1199,7 @@ wxString pam2Dialog::Screenshot()
     wxString sFilename;
     if(pWnd)
     {
-        wxWindowDC dcScreen(this);
+        wxWindowDC dcScreen(pWnd);
         auto dimensions = dcScreen.GetSize();
         wxBitmap bmpScreen(dimensions.x, dimensions.y,-1);
         wxMemoryDC dcMem;

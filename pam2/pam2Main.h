@@ -174,6 +174,7 @@ class pam2Dialog: public wxDialog
 
         wxString Screenshot();
 
+        void OnTimerScreenshot(const wxTimerEvent& event);
 
         wxCursor* m_pCursor;
 
@@ -198,6 +199,7 @@ class pam2Dialog: public wxDialog
         #endif // __NMOS__
 
         UsbChecker m_usb;
+        wxTimer m_timerScreenshot;
         DECLARE_EVENT_TABLE()
 };
 

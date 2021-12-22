@@ -14,6 +14,7 @@ namespace pml
         class Sender;
         class Receiver;
         class FlowAudioRaw;
+        class SourceAudio;
     };
 };
 
@@ -73,6 +74,8 @@ class NmosManager : public wxEvtHandler
         std::shared_ptr<pml::nmos::FlowAudioRaw> m_pFlow;
         std::shared_ptr<pml::nmos::Sender> m_pSender;
         std::shared_ptr<pml::nmos::Receiver> m_pReceiver;
+        std::shared_ptr<pml::nmos::SourceAudio> m_pSource;
+
         std::multimap<std::string, std::shared_ptr<const pml::nmos::Sender> > m_mmLonelySender;
 
         size_t m_nNodeMode;
