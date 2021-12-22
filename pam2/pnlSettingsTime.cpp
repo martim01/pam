@@ -109,7 +109,7 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
 	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNtpServerEditClick);
 	Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNtpServerDeleteClick);
 	Connect(ID_M_PBTN6,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNTPServerDeleteAllClick);
-	Connect(ID_M_PEDT1,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&pnlSettingsTime::Onm_pedtDomainText);
+	//Connect(ID_M_PEDT1,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&pnlSettingsTime::Onm_pedtDomainText);
 	Connect(ID_M_PEDT1,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&pnlSettingsTime::OnedtDomainTextEnter);
 	Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsTime::OnlstDateSelected);
 	Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsTime::OnlstSyncSelected);
@@ -277,5 +277,5 @@ void pnlSettingsTime::OnlstSyncSelected(wxCommandEvent& event)
 
 void pnlSettingsTime::OntimerTimeTrigger(wxTimerEvent& event)
 {
-    m_plblTime->SetLabel(wxDateTime::Now().Format("%Y-%m-%d %H%:%M:%S"));
+    m_plblTime->SetLabel(wxDateTime::Now().Format("%Y-%m-%d %H:%M:%S"));
 }
