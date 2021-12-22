@@ -10,6 +10,7 @@
 #include "wmswitcherpanel.h"
 #include <wx/notebook.h>
 #include <wx/panel.h>
+#include <wx/timer.h>
 //*)
 
 class pnlSettingsTime: public wxPanel
@@ -28,6 +29,7 @@ class pnlSettingsTime: public wxPanel
 		wmKeyboard* m_pKbd1;
 		wmLabel* m_pLbl1;
 		wmLabel* m_plblListTitle;
+		wmLabel* m_plblTime;
 		wmList* m_plstDate;
 		wmList* m_plstNTPServers;
 		wmList* m_plstSync;
@@ -35,6 +37,7 @@ class pnlSettingsTime: public wxPanel
 		wxPanel* m_ppnlLTCS;
 		wxPanel* m_ppnlNTP;
 		wxPanel* m_ppnlPTP;
+		wxTimer m_timerTime;
 		//*)
 
 	protected:
@@ -55,6 +58,8 @@ class pnlSettingsTime: public wxPanel
 		static const long ID_PANEL3;
 		static const long ID_M_PSWP1;
 		static const long ID_M_PLST3;
+		static const long ID_M_PLBL1;
+		static const long ID_TIMER1;
 		//*)
 
 	private:
@@ -71,6 +76,7 @@ class pnlSettingsTime: public wxPanel
 		void OnedtDomainTextEnter(wxCommandEvent& event);
 		void OnlstDateSelected(wxCommandEvent& event);
 		void OnlstSyncSelected(wxCommandEvent& event);
+		void OntimerTimeTrigger(wxTimerEvent& event);
 		//*)
 
 		void SaveNtpServers();
