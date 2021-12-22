@@ -28,6 +28,7 @@
 #include <memory>
 #include "pnlAoIPSelection.h"
 #include "pnlRTCPTransmission.h"
+#include "usbchecker.h"
 
 struct timedbuffer;
 class MonitorPluginBuilder;
@@ -171,8 +172,9 @@ class pam2Dialog: public wxDialog
 
         void TellPluginsAboutOutputChannels();
 
+        wxString Screenshot();
 
-
+        void OnTimerScreenshot(const wxTimerEvent& event);
 
         wxCursor* m_pCursor;
 
@@ -195,6 +197,9 @@ class pam2Dialog: public wxDialog
         #ifdef __NMOS__
         std::unique_ptr<NmosManager> m_pManager;
         #endif // __NMOS__
+
+        UsbChecker m_usb;
+        wxTimer m_timerScreenshot;
         DECLARE_EVENT_TABLE()
 };
 

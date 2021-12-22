@@ -31,6 +31,8 @@ TimeManager::TimeManager() :
     Settings::Get().AddHandler("Time", "PTP_Domain", this);
     Settings::Get().AddHandler("Time", "LTC_Format", this);
 
+    Settings::Get().Write("Time", "Grandmaster", "");   //only just started so currently have no Grandmaster
+
     Bind(wxEVT_SETTING_CHANGED, &TimeManager::OnSettingChanged, this);
 
     m_eSyncTo = Settings::Get().Read("Time", "Sync", SYNC_OFF);
@@ -109,6 +111,9 @@ bool TimeManager::PtpSyncFrequency()
             auto pMaster = wxPtp::Get().GetSyncMasterClock(m_nPtpDomain);
             auto offset = pLocal->GetOffset(ptpmonkey::PtpV2Clock::CURRENT);//DoubleToTime(dEstimate);
             auto utc = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::seconds(pMaster->GetUtcOffset()));
+
+            //store the PTP details for use by NMOS etc
+            Settings::Get().Write("Time", "Grandmaster", wxString(pMaster->GetClockId()));
 
             offset += utc;
 

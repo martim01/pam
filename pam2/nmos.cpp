@@ -29,6 +29,7 @@ NmosManager::NmosManager(pnlSettingsInputNmos* pPnl) :
     Settings::Get().AddHandler("Server", "RTP_Port", this);
     Settings::Get().AddHandler("Server", "PacketTime", this);
     Settings::Get().AddHandler("Server", "Stream", this);
+    Settings::Get().AddHandler("Time", "Grandmaster", this);
 
     Bind(wxEVT_SETTING_CHANGED, &NmosManager::OnSettingChanged, this);
 }
@@ -57,10 +58,10 @@ void NmosManager::Setup()
 
     auto pDevice = std::make_shared<pml::nmos::Device>(wxString(wxGetHostName()+"/PAM").ToStdString(), "Live555", pml::nmos::Device::GENERIC,pml::nmos::NodeApi::Get().GetSelf().GetId());
 
-    auto pSource = std::make_shared<pml::nmos::SourceAudio>(wxString(wxGetHostName()+"/PAM/Live555").ToStdString(), "Live555", pDevice->GetId());
-    pSource->AddChannels({{channelSymbol("L"), channelLabel("Left")},{channelSymbol("R"), channelLabel("Right")}});
+    m_pSource = std::make_shared<pml::nmos::SourceAudio>(wxString(wxGetHostName()+"/PAM/Live555").ToStdString(), "Live555", pDevice->GetId());
+    m_pSource->AddChannels({{channelSymbol("L"), channelLabel("Left")},{channelSymbol("R"), channelLabel("Right")}});
 
-    m_pFlow = std::make_shared<pml::nmos::FlowAudioRaw>(wxString(wxGetHostName()+"/PAM/Live555/L24").ToStdString(), "Live555", pSource->GetId(), pDevice->GetId(), 48000, pml::nmos::FlowAudioRaw::L24);
+    m_pFlow = std::make_shared<pml::nmos::FlowAudioRaw>(wxString(wxGetHostName()+"/PAM/Live555/L24").ToStdString(), "Live555", m_pSource->GetId(), pDevice->GetId(), 48000, pml::nmos::FlowAudioRaw::L24);
     int nPackeTime = Settings::Get().Read("Server", "PacketTime", 1000);
     switch(nPackeTime)
     {
@@ -96,7 +97,7 @@ void NmosManager::Setup()
     {
         pmlLog(pml::LOG_ERROR) << "NMOS\tFailed to add Device";
     }
-    if(pml::nmos::NodeApi::Get().AddSource(pSource) == false)
+    if(pml::nmos::NodeApi::Get().AddSource(m_pSource) == false)
     {
         pmlLog(pml::LOG_ERROR) << "NMOS\tFailed to add Source";
     }
@@ -223,6 +224,23 @@ void NmosManager::OnSettingChanged(SettingEvent& event)
         if(m_pSender && event.GetKey()=="Stream")
         {
             //m_pSender->MasterEnable(event.GetValue(false));
+            pml::nmos::NodeApi::Get().Commit();
+        }
+    }
+    else if(event.GetSection() == "Time")
+    {
+        if(event.GetKey() == "Grandmaster")
+        {
+            pml::nmos::NodeApi::Get().GetSelf().RemoveClock("clk1");
+            if(event.GetValue().empty() == false)
+            {
+                pml::nmos::NodeApi::Get().GetSelf().AddPTPClock("clk1", true, "IEEE1588-2008", event.GetValue().ToStdString(), true);
+                m_pSource->SetClock("clk1");
+            }
+            else
+            {
+                m_pSource->SetClock("clk0");
+            }
             pml::nmos::NodeApi::Get().Commit();
         }
     }

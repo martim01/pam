@@ -68,6 +68,5 @@
 		<Project filename="plugins/battery/battery.cbp" />
 		<Project filename="InitialSetup/InitialSetup.cbp" />
 		<Project filename="InitialSetup/dosetup.cbp" />
-		<Project filename="../nmos/libnmos_node.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

@@ -190,13 +190,13 @@
 					<Add library="pambase" />
 					<Add library="curl" />
 					<Add library="nmos_base" />
-					<Add library="nmos_node" />
-					<Add library="nmos_client" />
-					<Add library="pml_log" />
-					<Add library="pml_dnssd" />
 					<Add library="restgoose" />
 					<Add library="ptpmonkey" />
 					<Add library="sapserver" />
+					<Add library="pml_dnssd" />
+					<Add library="pml_log" />
+					<Add library="nmos_client" />
+					<Add library="nmos_node" />
 					<Add directory="$(#nmos.lib)" />
 					<Add directory="$(#restgoose.LIB)" />
 				</Linker>
@@ -348,6 +348,8 @@
 		<Unit filename="pnlUpdate.h" />
 		<Unit filename="senderbuttonfactory.cpp" />
 		<Unit filename="senderbuttonfactory.h" />
+		<Unit filename="usbchecker.cpp" />
+		<Unit filename="usbchecker.h" />
 		<Unit filename="version.h" />
 		<Unit filename="wxbitmappanel.h" />
 		<Unit filename="wxclientapiposter.cpp" />
@@ -389,9 +391,12 @@
 		<Unit filename="wxsmith/pnlUSB.wxs" />
 		<Unit filename="wxsmith/pnlUpdate.wxs" />
 		<Extensions>
-			<code_completion />
-			<envvars />
-			<debugger />
+			<AutoVersioning>
+				<Scheme minor_max="10" build_max="0" rev_max="0" rev_rand_max="10" build_times_to_increment_minor="100" />
+				<Settings autoincrement="0" date_declarations="1" use_define="0" update_manifest="1" do_auto_increment="1" ask_to_increment="0" language="C++" svn="0" svn_directory="" header_path="version.h" />
+				<Changes_Log show_changes_editor="1" app_title="released version %M.%m.%b of %p" changeslog_path="ChangesLog.txt" />
+				<Code header_guard="VERSION_H" namespace="AutoVersion" prefix="" />
+			</AutoVersioning>
 			<wxsmith version="1">
 				<gui name="wxWidgets" src="pam2App.cpp" main="pam2Dialog" init_handlers="necessary" language="CPP" />
 				<resources>
@@ -428,12 +433,6 @@
 					<wxPanel wxs="wxsmith/pnlSettingsInputNmos.wxs" src="pnlSettingsInputNmos.cpp" hdr="pnlSettingsInputNmos.h" fwddecl="0" i18n="1" name="pnlSettingsInputNmos" language="CPP" />
 				</resources>
 			</wxsmith>
-			<AutoVersioning>
-				<Scheme minor_max="10" build_max="0" rev_max="0" rev_rand_max="10" build_times_to_increment_minor="100" />
-				<Settings autoincrement="0" date_declarations="1" use_define="0" update_manifest="1" do_auto_increment="1" ask_to_increment="0" language="C++" svn="0" svn_directory="" header_path="version.h" />
-				<Changes_Log show_changes_editor="1" app_title="released version %M.%m.%b of %p" changeslog_path="ChangesLog.txt" />
-				<Code header_guard="VERSION_H" namespace="AutoVersion" prefix="" />
-			</AutoVersioning>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
