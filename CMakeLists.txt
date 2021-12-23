@@ -32,7 +32,7 @@ if((NOT TEMP_DIR) OR (NOT EXISTS ${TEMP_DIR}))
     endif()
 else()
     message(STATUS "log found - update to latest version")
-    execute_process(COMMAND git -C ${DIR_LOG} pull)
+    execute_process(COMMAND git -C ${DIR_LOG} pull --no-rebase)
 endif()
 
 #Get ptpmonkey
@@ -48,7 +48,7 @@ if((NOT TEMP_DIR3) OR (NOT EXISTS ${TEMP_DIR3}))
     endif()
 else()
     message(STATUS "ptpmonkey found - update to latest version")
-    execute_process(COMMAND git -C ${DIR_PTPMONKEY} pull)
+    execute_process(COMMAND git -C ${DIR_PTPMONKEY} pull --no-rebase)
 endif()
 
 
@@ -65,7 +65,7 @@ if((NOT TEMP_DIR5) OR (NOT EXISTS ${TEMP_DIR5}))
     endif()
 else()
     message(STATUS "sapserver found - update to latest version")
-    execute_process(COMMAND git -C ${DIR_SAPSERVER} pull)
+    execute_process(COMMAND git -C ${DIR_SAPSERVER} pull --no-rebase)
 endif()
 
 
@@ -83,7 +83,7 @@ if((NOT TEMP_DIR7) OR (NOT EXISTS ${TEMP_DIR7}))
     endif()
 else()
     message(STATUS "pml::dnssd found - update to latest version")
-    execute_process(COMMAND git -C ${DIR_DNSSD} pull)
+    execute_process(COMMAND git -C ${DIR_DNSSD} pull --no-rebase)
 endif()
 
 
@@ -102,7 +102,7 @@ if(${NMOS})
         endif()
     else()
         message(STATUS "nmos found - update to latest version")
-        execute_process(COMMAND git -C ${DIR_NMOS} pull)
+        execute_process(COMMAND git -C ${DIR_NMOS} pull --no-rebase)
     endif()
 endif()
 
