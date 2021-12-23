@@ -19,11 +19,12 @@
  ***************************************************************************/
 #include "inimanager.h"
 #include "inisection.h"
-#include "log.h"
+#include <iostream>
+#include <fstream>
 #include <wx/log.h>
+#include <wx/stopwatch.h>
+#include "log.h"
 
-
-using namespace std;
 
 iniManager::iniManager()
 {
@@ -38,13 +39,7 @@ iniManager::~iniManager()
 
 void iniManager::DeleteSections()
 {
-    map<wxString,iniSection*>::iterator it= m_mSections.begin();
-	while(it != m_mSections.end())
-	{
-		delete it->second;
-		++it;
-	}
-	m_mSections.clear();
+    m_mSections.clear();
 }
 
 /*!
@@ -52,55 +47,92 @@ void iniManager::DeleteSections()
  */
 bool iniManager::ReadIniFile(const wxString& sFilename)
 {
-	//unsigned int errno;
+    	//unsigned int errno;
 	DeleteSections();
+    m_sFilepath = sFilename;
 
-    //Close file if open
-	if(m_if.is_open())
-		m_if.close();
+    std::ifstream ifFile;
 
 	//attempt to open the file
-	m_if.open(sFilename.mb_str(),ios::in);
-	if(!m_if.is_open())
+	ifFile.open(m_sFilepath.mb_str(),std::ios::in);
+	if(!ifFile.is_open())
 	{
-	    pmlLog(pml::LOG_ERROR) << "IniManager\tfile '" << sFilename << "' does not exist";
+	    pmlLog(pml::LOG_CRITICAL) << "IniManager file '" << m_sFilepath.ToStdString() << "' does not exist";
 		return false;
 	}
 
-	m_if.clear();
+	ifFile.seekg(0, std::ios::end);
+    size_t nSize = ifFile.tellg();
+    ifFile.seekg(0,std::ios::beg);
 
-	string sLine;
-	string sTag;
-	string sData;
+    std::string text(nSize,0);
+    ifFile.read(&text[0], text.size());
+    std::istringstream isstr(text);
+    ifFile.close();
 
+
+	std::string sLine;
+	std::string sTag;
+	std::string sData;
+
+
+	unsigned long nLine(0);
 	//read in each line
-	while(!m_if.eof())
+	auto itSection = m_mSections.end();
+
+	while(getline(isstr, sLine))
 	{
+	    ++nLine;
 		// if the line starts with a [ then its the start of a section
 		if(sLine[0] == '[')
 		{
-			//get the name of the section
-			size_t nClosePos = sLine.find("]");
-			if(nClosePos == std::string::npos)	//this is an error
+		    std::string sSection;
+		    sSection.reserve(sLine.length());
+
+		    for(size_t i = 1; i < sLine.length(); i++)
             {
-                pmlLog(pml::LOG_ERROR) << "IniManager\tfile '" << sFilename << "' invalid section";
-                return false;
+                if(sLine[i] == ']')
+                    break;
+
+                sSection+=sLine[i];
             }
-			wxString sSection = wxString::FromUTF8(sLine.substr(1,nClosePos-1).c_str());
-			m_mSections[sSection] = new iniSection(sSection);
-			sLine = m_mSections[sSection]->ReadSection(&m_if).char_str();
+			//get the name of the section
+            itSection = m_mSections.insert(std::make_pair(sSection, std::make_shared<iniSection>(sSection, nLine))).first;
 		}
-		else
-		{
-			getline(m_if,sLine,'\n');
-			//if the line starts with a # we ignore
-			if(sLine[0] == '#')
-				continue;
-		}
+		else if(itSection != m_mSections.end() && sLine[0] != '#' && sLine[0] != ';' && sLine.size() >= 2)
+        {
+            size_t nEqualPos = std::string::npos;
+            size_t nCommentPos = 0;
+            std::string sKey;
+            std::string sData;
+            sKey.reserve(sLine.length());
+            sData.reserve(sLine.length());
+
+            for(;nCommentPos < sLine.length(); nCommentPos++)
+            {
+                if(sLine[nCommentPos] == '#' || sLine[nCommentPos] == ';')
+                {
+                    break;
+                }
+                else if(sLine[nCommentPos] == '=')
+                {
+                    nEqualPos = nCommentPos;
+                }
+                else if(nEqualPos == std::string::npos)
+                {
+                    sKey += sLine[nCommentPos];
+                }
+                else
+                {
+                    sData += sLine[nCommentPos];
+                }
+            }
+            if(nEqualPos != std::string::npos)
+            {
+                itSection->second->SetValue(sKey, sData);
+            }
+        }
 	}
-		//Close the file again
-	if(m_if.is_open())
-		m_if.close();
     return true;
 }
 
@@ -108,7 +140,7 @@ bool iniManager::ReadIniFile(const wxString& sFilename)
 /*!
     \fn iniManager::GetSectionBegin()
  */
-std::map<wxString,iniSection*>::iterator iniManager::GetSectionBegin()
+mapSection::iterator iniManager::GetSectionBegin()
 {
     return m_mSections.begin();
 }
@@ -116,16 +148,16 @@ std::map<wxString,iniSection*>::iterator iniManager::GetSectionBegin()
 /*!
     \fn iniManager::GetSectionEnd()
  */
-std::map<wxString,iniSection*>::iterator iniManager::GetSectionEnd()
+mapSection::iterator iniManager::GetSectionEnd()
 {
     return m_mSections.end();
 }
 
-const iniSection* iniManager::GetSection(const wxString& sSectionName) const
+std::shared_ptr<iniSection> iniManager::GetSection(const wxString& sSectionName)
 {
-    std::map<wxString,iniSection*>::const_iterator it = m_mSections.find(sSectionName);
+    auto it = m_mSections.find(sSectionName);
     if(it == m_mSections.end())
-        return NULL;
+        return nullptr;
     return it->second;
 }
 
@@ -135,7 +167,8 @@ const iniSection* iniManager::GetSection(const wxString& sSectionName) const
 const wxString& iniManager::GetIniString(const wxString& sSection, const wxString& sKey, const wxString& sDefault) const
 {
     //does the section exist?
-    itConstSection it = m_mSections.find(sSection);
+
+    auto it = m_mSections.find(sSection);
 	if(it==m_mSections.end())
 		return sDefault;
 
@@ -149,7 +182,7 @@ const wxString& iniManager::GetIniString(const wxString& sSection, const wxStrin
 int iniManager::GetIniInt(const wxString& sSection, const wxString& sKey, int nDefault) const
 {
     //does the section exist?
-	itConstSection it = m_mSections.find(sSection);
+	auto it = m_mSections.find(sSection);
 	if(it==m_mSections.end())
 		return nDefault;
 
@@ -162,7 +195,7 @@ int iniManager::GetIniInt(const wxString& sSection, const wxString& sKey, int nD
 double iniManager::GetIniDouble(const wxString& sSection, const wxString& sKey, double dDefault) const
 {
     //does the section exist?
-	itConstSection it = m_mSections.find(sSection);
+	auto it = m_mSections.find(sSection);
 	if(it==m_mSections.end())
 		return dDefault;
 
@@ -172,82 +205,78 @@ double iniManager::GetIniDouble(const wxString& sSection, const wxString& sKey, 
 bool iniManager::WriteIniFile(const wxString& sFilename)
 {
 	//unsigned int errno;
+	if(sFilename.empty() == false)
+    {
+        m_sFilepath = sFilename;
+    }
 
+	std::ofstream ofFile;
     //Close file if open
-	if(m_of.is_open())
-		m_of.close();
+	if(ofFile.is_open())
+		ofFile.close();
 
 	//attempt to open the file
 
-	m_of.open(sFilename.char_str());
-	if(!m_of.is_open())
+	ofFile.open(m_sFilepath.char_str());
+	if(!ofFile.is_open())
 	{
 		return false;
 	}
 
-	m_of.clear();
+	ofFile.clear();
 
-	std::map<wxString,iniSection*>::iterator it = m_mSections.begin();
-	while(it != m_mSections.end())
-	{
-		it->second->WriteSection(&m_of);
-		++it;
+	for(const auto& pairSection : m_mSections)
+    {
+        pairSection.second->WriteSection(&ofFile);
 	}
 
-	//m_of.flush();
 		//Close the file again
-	if(m_of.is_open())
-		m_of.close();
+	if(ofFile.is_open())
+		ofFile.close();
 
     return true;
 
 }
 
-iniSection* iniManager::CreateSection(const wxString& sSectionName)
+std::shared_ptr<iniSection> iniManager::CreateSection(const wxString& sSectionName)
 {
-    map<wxString, iniSection*>::iterator itSection =m_mSections.find(sSectionName);
+    auto itSection =m_mSections.find(sSectionName);
     if(itSection == m_mSections.end())
     {
-        itSection  = m_mSections.insert(make_pair(sSectionName,new iniSection(sSectionName))).first;
+        itSection  = m_mSections.insert(std::make_pair(sSectionName,std::make_shared<iniSection>(sSectionName,0))).first;
     }
     return itSection->second;
 }
 
 void iniManager::SetSectionValue(const wxString& sSectionName, const wxString& sKey, const wxString& sValue)
 {
-    iniSection* pSection = CreateSection(sSectionName);
+    auto pSection = CreateSection(sSectionName);
     pSection->SetValue(sKey,sValue);
-}
 
-void iniManager::RemoveSectionValue(const wxString& sSectionName, const wxString& sKey)
-{
-    iniSection* pSection = CreateSection(sSectionName);
-    pSection->RemoveKey(sKey);
 }
-
-void iniManager::RemoveSection(const wxString& sSectionName)
-{
-    map<wxString, iniSection*>::iterator itSection = m_mSections.find(sSectionName);
-    if(itSection != m_mSections.end())
-    {
-        delete itSection->second;
-        m_mSections.erase(itSection);
-    }
-}
-
-void iniManager::RemoveAllSections()
-{
-    for(auto itSection : m_mSections)
-    {
-        delete itSection.second;
-    }
-    m_mSections.clear();
-}
-
 size_t iniManager::GetNumberOfSectionEntries(const wxString& sSectionName)
 {
+
 	itSection it = m_mSections.find(sSectionName);
 	if(it== m_mSections.end())
         return 0;
     return it->second->GetNumberOfEntries();
+}
+
+bool iniManager::RemoveSectionValue(const wxString& sSection, const wxString& sKey)
+{
+    auto itSection = m_mSections.find(sSection);
+
+    if(itSection != m_mSections.end())
+    {
+        itSection->second->RemoveKey(sKey);
+        return true;
+    }
+    return false;
+
+}
+
+void iniManager::RemoveSection(const wxString& sSection)
+{
+    m_mSections.erase(sSection);
 }

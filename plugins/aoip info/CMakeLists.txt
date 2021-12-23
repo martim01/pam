@@ -11,19 +11,27 @@ file(GLOB SOURCES "*.cpp")
 
 add_library(aoipinfo MODULE ${SOURCES})
 
-list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
-target_compile_options(aoipinfo PRIVATE ${flags})
-target_compile_definitions(aoipinfo PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __WXGNU__ _monitor_ _MSL_STDINT_H wxDEBUG_LEVEL=0)
-
 #find external libraries
 find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
+list(APPEND flags "-fPIC" "-Wall" "-fpermissive"  "-std=c++14")
+
+if(CMAKE_BUILD_TYPE MATCHES Release)
+   list(APPEND flags "-O3")
+   target_compile_definitions(aoipinfo PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __GNU__ __WXGNU__ _monitor_ MSL_STDINT_H wxDEBUG_LEVEL=0)
+   set_target_properties(aoipinfo PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/monitor")
+else()
+   list(APPEND flags "-g")
+   target_compile_definitions(aoipinfo PUBLIC __WXDEBUG__ DLL_EXPORTS wxUSE_UNICODE __GNU__ __WXGNU__ _monitor_ MSL_STDINT_H)
+   set_target_properties(aoipinfo PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/monitor/debug")
+endif()
+target_compile_options(aoipinfo PRIVATE ${flags})
 
 target_link_libraries(aoipinfo ${wxWidgets_LIBRARIES})
-target_link_libraries(aoipinfo pambase)
+target_link_libraries(aoipinfo optimized pambase debug pambased)
 
-set_target_properties(aoipinfo PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/monitor")
+
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")

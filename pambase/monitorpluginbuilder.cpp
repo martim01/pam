@@ -9,11 +9,12 @@ using namespace std;
 DEFINE_EVENT_TYPE(wxEVT_MONITOR_MAX)
 
 MonitorPluginBuilder::MonitorPluginBuilder() :
-    m_pHandler(0),
+    m_pHandler(nullptr),
     m_bWantsAudioAlways(false),
     m_bWantsQoSAlways(false),
-	m_pswpMonitor(0),
-	m_pswpOptions(0)
+	m_pswpMonitor(nullptr),
+	m_pswpOptions(nullptr),
+	m_pWindow(nullptr)
 {
 
 }
@@ -28,7 +29,8 @@ void MonitorPluginBuilder::CreatePanels(wmSwitcherPanel* pswpMonitor, wmSwitcher
     m_pswpMonitor = pswpMonitor;
     m_pswpOptions = pswpOptions;
 
-    pswpMonitor->AddPage(CreateMonitorPanel(pswpMonitor), GetName(), false);
+    m_pWindow = CreateMonitorPanel(pswpMonitor);
+    pswpMonitor->AddPage(m_pWindow, GetName(), false);
     m_lstOptions = CreateOptionPanels(pswpOptions);
 
     for(list<pairOptionPanel_t>::iterator itOption = m_lstOptions.begin(); itOption != m_lstOptions.end(); ++itOption)

@@ -8,7 +8,8 @@
 #include <wx/timer.h>
 #include "pmcontrol.h"
 #include "advelement.h"
-
+#include <memory>
+#include <functional>
 
 class wmSlideWnd;
 
@@ -62,13 +63,7 @@ class PAMBASE_IMPEXPORT wmListAdv : public pmControl
         wxSize DoGetBestSize() const;
 
 
-        /** @brief Sets the sensitivity for horizontal scrolling. This is the number of pixels the user must horizontally move while touching the control in order for a horizontal slide to happen
-        *   @param nPixels
-        **/
-        void SetSwipeSensitivity(unsigned long nPixels);
-
-
-        size_t AddElement(advElement* pElement, bool bEnd=true);
+        size_t AddElement(std::shared_ptr<advElement> pElement, bool bEnd=true, std::function<bool(std::shared_ptr<advElement>)> pFilter = nullptr);
 
         bool RemoveElement(size_t nIndex);
 
@@ -81,11 +76,9 @@ class PAMBASE_IMPEXPORT wmListAdv : public pmControl
         **/
         void ShowElement(size_t nIndex, Position pos);
 
-
         size_t FindFirstElement(void* pData);
 
-        advElement* GetAdvElement(size_t nIndex);
-        advElement* GetFirstAdvElement(void* pData);
+        std::shared_ptr<advElement> GetFirstElement(void* pData);
 
         /** @brief Shows the next page or scrolls down a page
         **/
@@ -95,15 +88,6 @@ class PAMBASE_IMPEXPORT wmListAdv : public pmControl
         **/
         void ShowPreviousPage();
 
-        /** @brief If the list is a horizontal scroll then this function will return the number of page of buttons currently showing
-        *   @return <i>unsigned long</i>
-        **/
-        unsigned long GetCurrentPageNumber() const;
-
-        /** @brief If the list is a horizontal scroll then this function will return the number of pages of buttons
-        *   @return <i>unsigned long</i>
-        **/
-        unsigned long GetPageCount() const;
 
         /** @brief Removes all buttons from the list
         **/
@@ -121,11 +105,6 @@ class PAMBASE_IMPEXPORT wmListAdv : public pmControl
         bool ScrollVertical(int nYDiff);
 
 
-        /** @brief Scrolls the list horizontally
-        *   @param nYDiff the number of pixels to scroll by
-        *   @return <i>bool</i> true if scrolled, false if the end has been hit
-        **/
-        bool ScrollHorizontal(int nXDiff);
 
         /** @brief Allow the list box to update
         **/
@@ -142,13 +121,12 @@ class PAMBASE_IMPEXPORT wmListAdv : public pmControl
         wxRect GetSubElementRect(size_t nIndex, size_t nSub);
         void Sort();
 
-        std::list<advElement*>::const_iterator GetElementBegin() const;
-        std::list<advElement*>::const_iterator GetElementEnd() const;
+        const std::list<std::shared_ptr<advElement>>& GetElements() const;
+
+        void Filter(std::function<bool(std::shared_ptr<advElement>)> pFilter);
 
         static const unsigned short SCROLL_NONE     = 0;        ///< @brief wmList may not be scrolled
         static const unsigned short SCROLL_VERTICAL = 1;        ///< @brief wmList may be scrolled vertically
-        static const unsigned short SCROLL_HORIZONTAL = 2;      ///< @brief wmlist may be swiped left and right
-
 
     protected:
         /** Called to draw the control
@@ -165,79 +143,52 @@ class PAMBASE_IMPEXPORT wmListAdv : public pmControl
         void OnLeftUp(wxMouseEvent& event);
         void OnMouseMove(wxMouseEvent& event);
 
+        void OnResizeElement(wxCommandEvent& event);
         void OnHolding(wxTimerEvent& event);
-        void OnGrowTimer(wxTimerEvent& event);
         void OnScroll(wxTimerEvent& event);
         void OnFlash(wxTimerEvent& event);
 
         void OnFocus(wxFocusEvent& event);
-        void DrawHorizontalScroll();
 
         void OnCaptureLost(wxMouseCaptureLostEvent& event);
 
-        void OnResizeElement(wxCommandEvent& event);
-        void OnGrowElement(wxCommandEvent& event);
-
-        void Draw(wxDC& dc, const std::list<advElement*>::iterator& itTop);
-        void DrawElement(wxDC& dc, const std::list<advElement*>::iterator& itElement);
+        void Draw(wxDC& dc);
+        void DrawElement(wxDC& dc, std::shared_ptr<advElement> pElement);
 
         void CreateRects();
-        void GrowBelow();
 
-        void ShowElement(std::list<advElement*>::iterator itButton, Position pos);
+        void ShowElement(std::shared_ptr<advElement> pElement, Position pos);
 
-        std::list<advElement*>::iterator GetElement(size_t nIndex);
+        std::shared_ptr<advElement> GetElement(size_t nIndex);
 
-        void CreateSwipeBitmaps();
-        void CheckSliding(wxPoint pnt);
 
         void WorkoutScrollPosition();
 
-        std::list<advElement*> m_lstElements;
+        std::list<std::shared_ptr<advElement>> m_lstElements;
+        std::list<std::shared_ptr<advElement>> m_lstFilteredElements;
 
-        std::set<std::list<advElement*>::iterator> m_setPages;
-        std::list<advElement*>::iterator m_itDown;
-        std::list<advElement*>::iterator m_itSelected;
-        std::list<advElement*>::iterator m_itTop;
-        std::list<advElement*>::iterator m_itLast;
+        std::shared_ptr<advElement> m_pDown;
+        std::shared_ptr<advElement> m_pSelected;
+        std::shared_ptr<advElement> m_pTop;
 
         wxTimer m_timerHold;
-        wxTimer m_timerGrow;
 
         static const long ID_HOLDING;
-        static const long ID_GROW;
 
         unsigned int m_nStyle;
         unsigned short m_nScrollAllowed;
 
         wxPoint m_pntMouse;
         short m_nScrolling;
-        short m_nSliding;
         bool m_bDownInWindow;
 
         wxTimer m_timerScroll;
         int m_nScrollOffset;
-        int m_nSwipeOffset;
 
-        wxBitmap m_bmpSwipe[2];
-        wxBitmap m_bmpSlide;
-        int m_nSwipeLeft;
-        std::set<std::list<advElement*>::iterator>::iterator m_itSwipe;
-
-        int m_nSwipeTotal;
-        int m_nSwipeCount;
         size_t m_nIndex;
 
         static const long ID_SCROLLING;
 
-        size_t m_nButtonsPerPage;
-
-        wmSlideWnd* m_pSlideWnd;
-
-        advElement* m_pGrowElement;
-        bool m_bGrowing;
-
-        int m_nSensitivity;
         wxSize m_szGap;
         uiRect m_uiScroll;
         unsigned int m_nTopElement;
@@ -249,12 +200,12 @@ class PAMBASE_IMPEXPORT wmListAdv : public pmControl
 
 };
 
-inline bool operator<(std::list<advElement*>::iterator it1, std::list<advElement*>::iterator it2)
+inline bool operator<(std::list<std::shared_ptr<advElement>>::iterator it1, std::list<std::shared_ptr<advElement>>::iterator it2)
 {
     return ((*it1)->GetSort() < (*it2)->GetSort());
 }
 
-inline bool compare(advElement* pFirst, advElement* pSecond)
+inline bool compare(std::shared_ptr<advElement> pFirst, std::shared_ptr<advElement> pSecond)
 {
     return pFirst->GetSort() < pSecond->GetSort();
 }

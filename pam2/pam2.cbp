@@ -128,6 +128,10 @@
 					<Add library="portaudio" />
 					<Add library="pambase" />
 					<Add library="curl" />
+					<Add library="pml_log" />
+					<Add library="pml_dnssd" />
+					<Add library="ptpmonkey" />
+					<Add library="sapserver" />
 					<Add directory="$(#nmos.lib)" />
 				</Linker>
 				<ExtraCommands>
@@ -158,11 +162,13 @@
 					<Add library="portaudio" />
 					<Add library="pambased" />
 					<Add library="curl" />
+					<Add library="pml_logd" />
+					<Add library="pml_dnssdd" />
 					<Add directory="$(#nmos.lib)" />
 				</Linker>
 			</Target>
 			<Target title="Linux Release+NMOS">
-				<Option output="../bin/pam2" prefix_auto="1" extension_auto="1" />
+				<Option output="../bin/pam2nmos" prefix_auto="1" extension_auto="1" />
 				<Option object_output=".objs/nmos" />
 				<Option type="0" />
 				<Option compiler="gcc" />
@@ -183,12 +189,55 @@
 					<Add library="portaudio" />
 					<Add library="pambase" />
 					<Add library="curl" />
-					<Add library="nmos" />
+					<Add library="nmos_base" />
+					<Add library="restgoose" />
+					<Add library="ptpmonkey" />
+					<Add library="sapserver" />
+					<Add library="pml_dnssd" />
+					<Add library="pml_log" />
+					<Add library="nmos_client" />
+					<Add library="nmos_node" />
 					<Add directory="$(#nmos.lib)" />
+					<Add directory="$(#restgoose.LIB)" />
 				</Linker>
 				<ExtraCommands>
+					<Add after="sudo setcap cap_sys_time,cap_net_bind_service+ep /home/pi/pam/bin/pam2nmos" />
 					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />
+					<Mode after="always" />
 				</ExtraCommands>
+			</Target>
+			<Target title="Linux Debug+NMOS">
+				<Option output="../bin/pam2nmosd" prefix_auto="1" extension_auto="1" />
+				<Option object_output=".objs/debug" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="`wx-config --cxxflags`" />
+					<Add option="-fpermissive" />
+					<Add option="-DwxUSE_UNICODE" />
+					<Add option="-D__WXGNU__" />
+					<Add option="-DPAMBASE_DEBUG" />
+					<Add option="-D__NMOS__" />
+					<Add option="-D__WXDEBUG__" />
+					<Add directory="$(#nmos.include)" />
+					<Add directory="$(#json.include)" />
+				</Compiler>
+				<Linker>
+					<Add option="`wx-config --libs`" />
+					<Add option="-Wl,-Map=pam2.map" />
+					<Add option="`pkg-config --libs avahi-client`" />
+					<Add library="portaudio" />
+					<Add library="pambased" />
+					<Add library="curl" />
+					<Add library="nmos_based" />
+					<Add library="nmos_noded" />
+					<Add library="nmos_clientd" />
+					<Add library="pml_logd" />
+					<Add library="pml_dnssdd" />
+					<Add library="restgoosed" />
+					<Add directory="$(#nmos.lib)" />
+				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
@@ -204,7 +253,7 @@
 			<Add directory="$(#live_basicusage.include)" />
 			<Add directory="./images" />
 			<Add directory="../external/wxservdisc" />
-			<Add directory="../external/log/include" />
+			<Add directory="$(#log.INCLUDE)" />
 		</Compiler>
 		<ResourceCompiler>
 			<Add directory="C:/wxWidgets-3.0.2/include" />
@@ -215,7 +264,10 @@
 			<Add directory="$(#live_group.lib)" />
 			<Add directory="$(#live_usage.lib)" />
 			<Add directory="$(#live_basicusage.lib)" />
-			<Add directory="../external/log/lib" />
+			<Add directory="$(#log.LIB)" />
+			<Add directory="$(#dnssd.LIB)" />
+			<Add directory="$(#ptpmonkey.LIB)" />
+			<Add directory="$(#sapserver.LIB)" />
 		</Linker>
 		<Unit filename="dlgAoIP.cpp" />
 		<Unit filename="dlgAoIP.h" />
@@ -239,6 +291,11 @@
 		<Unit filename="networkcontrol.h" />
 		<Unit filename="nmos.cpp" />
 		<Unit filename="nmos.h" />
+		<Unit filename="nodebuttonfactory.cpp">
+			<Option target="Linux Release+NMOS" />
+			<Option target="Linux Debug+NMOS" />
+		</Unit>
+		<Unit filename="nodebuttonfactory.h" />
 		<Unit filename="pam2App.cpp" />
 		<Unit filename="pam2App.h" />
 		<Unit filename="pam2Main.cpp" />
@@ -267,6 +324,8 @@
 		<Unit filename="pnlSettings.h" />
 		<Unit filename="pnlSettingsGenerators.cpp" />
 		<Unit filename="pnlSettingsGenerators.h" />
+		<Unit filename="pnlSettingsInputNmos.cpp" />
+		<Unit filename="pnlSettingsInputNmos.h" />
 		<Unit filename="pnlSettingsNmos.cpp" />
 		<Unit filename="pnlSettingsNmos.h" />
 		<Unit filename="pnlSettingsOptions.cpp" />
@@ -289,6 +348,8 @@
 		<Unit filename="pnlUpdate.h" />
 		<Unit filename="senderbuttonfactory.cpp" />
 		<Unit filename="senderbuttonfactory.h" />
+		<Unit filename="usbchecker.cpp" />
+		<Unit filename="usbchecker.h" />
 		<Unit filename="version.h" />
 		<Unit filename="wxbitmappanel.h" />
 		<Unit filename="wxclientapiposter.cpp" />
@@ -318,6 +379,7 @@
 		<Unit filename="wxsmith/pnlLogControl.wxs" />
 		<Unit filename="wxsmith/pnlRTCPTransmission.wxs" />
 		<Unit filename="wxsmith/pnlSettingsGenerators.wxs" />
+		<Unit filename="wxsmith/pnlSettingsInputNmos.wxs" />
 		<Unit filename="wxsmith/pnlSettingsNmos.wxs" />
 		<Unit filename="wxsmith/pnlSettingsOptions.wxs" />
 		<Unit filename="wxsmith/pnlSettingsOutput.wxs" />
@@ -329,9 +391,12 @@
 		<Unit filename="wxsmith/pnlUSB.wxs" />
 		<Unit filename="wxsmith/pnlUpdate.wxs" />
 		<Extensions>
-			<code_completion />
-			<envvars />
-			<debugger />
+			<AutoVersioning>
+				<Scheme minor_max="10" build_max="0" rev_max="0" rev_rand_max="10" build_times_to_increment_minor="100" />
+				<Settings autoincrement="0" date_declarations="1" use_define="0" update_manifest="1" do_auto_increment="1" ask_to_increment="0" language="C++" svn="0" svn_directory="" header_path="version.h" />
+				<Changes_Log show_changes_editor="1" app_title="released version %M.%m.%b of %p" changeslog_path="ChangesLog.txt" />
+				<Code header_guard="VERSION_H" namespace="AutoVersion" prefix="" />
+			</AutoVersioning>
 			<wxsmith version="1">
 				<gui name="wxWidgets" src="pam2App.cpp" main="pam2Dialog" init_handlers="necessary" language="CPP" />
 				<resources>
@@ -365,14 +430,9 @@
 					<wxPanel wxs="wxsmith/pnlRTCPTransmission.wxs" src="pnlRTCPTransmission.cpp" hdr="pnlRTCPTransmission.h" fwddecl="0" i18n="1" name="pnlRTCPTransmission" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlSettingsTime.wxs" src="pnlSettingsTime.cpp" hdr="pnlSettingsTime.h" fwddecl="0" i18n="1" name="pnlSettingsTime" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlAoipManual.wxs" src="pnlAoipManual.cpp" hdr="pnlAoipManual.h" fwddecl="0" i18n="1" name="pnlAoipManual" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlSettingsInputNmos.wxs" src="pnlSettingsInputNmos.cpp" hdr="pnlSettingsInputNmos.h" fwddecl="0" i18n="1" name="pnlSettingsInputNmos" language="CPP" />
 				</resources>
 			</wxsmith>
-			<AutoVersioning>
-				<Scheme minor_max="10" build_max="0" rev_max="0" rev_rand_max="10" build_times_to_increment_minor="100" />
-				<Settings autoincrement="0" date_declarations="1" use_define="0" update_manifest="1" do_auto_increment="1" ask_to_increment="0" language="C++" svn="0" svn_directory="" header_path="version.h" />
-				<Changes_Log show_changes_editor="1" app_title="released version %M.%m.%b of %p" changeslog_path="ChangesLog.txt" />
-				<Code header_guard="VERSION_H" namespace="AutoVersion" prefix="" />
-			</AutoVersioning>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

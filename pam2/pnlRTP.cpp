@@ -386,12 +386,15 @@ void pnlRTP::ListSources()
     m_plstSources->Freeze();
     m_plstSources->Clear();
 
-    for(auto itSource = AoipSourceManager::Get().GetSourceBegin(); itSource != AoipSourceManager::Get().GetSourceEnd(); ++itSource)
+    for(auto pairSource : AoipSourceManager::Get().GetSources())
     {
-        m_plstSources->AddButton(itSource->second.sName, wxNullBitmap, (void*)itSource->first);
-        m_plstSources->AddButton(itSource->second.sDetails, wxNullBitmap, (void*)itSource->first);
+        if(pairSource.first > 0)
+        {
+            m_plstSources->AddButton(pairSource.second.sName, wxNullBitmap, (void*)pairSource.first);
+            m_plstSources->AddButton(pairSource.second.sDetails, wxNullBitmap, (void*)pairSource.first);
+        }
     }
-        m_plstSources->Thaw();
+    m_plstSources->Thaw();
 }
 
 void pnlRTP::OnlstSourcesSelected(wxCommandEvent& event)
@@ -420,9 +423,7 @@ void pnlRTP::OnDiscovery(wxCommandEvent& event)
 
     wxClientDC dc(this);
     dc.SetFont(m_pList->GetFont());
-    LogElement* pElement(new LogElement(dc, GetClientSize().x, event.GetString(), 8));  //@todo replace with an actual value
-    m_pList->AddElement(pElement);
-    pElement->Filter(255);
+    m_pList->AddElement(std::make_shared<LogElement>(dc, GetClientSize().x, event.GetString(), 8), true, nullptr);
     m_pList->Refresh();
 
     m_nDiscovered+= event.GetInt();
@@ -506,9 +507,7 @@ void pnlRTP::OnbtnStartDiscoveryClick(wxCommandEvent& event)
 
         wxClientDC dc(this);
         dc.SetFont(m_pList->GetFont());
-        LogElement* pElement(new LogElement(dc, GetClientSize().x, wxT("Discovery started"), 1));
-        m_pList->AddElement(pElement);
-        pElement->Filter(255);
+        m_pList->AddElement(std::make_shared<LogElement>(dc, GetClientSize().x, "Discovery started", 1), true, nullptr);
         m_pList->Refresh();
         m_pList->Update();
 
@@ -521,9 +520,7 @@ void pnlRTP::OnbtnStartDiscoveryClick(wxCommandEvent& event)
     {
         wxClientDC dc(this);
         dc.SetFont(m_pList->GetFont());
-        LogElement* pElement(new LogElement(dc, GetClientSize().x, wxT("Discovery stopped"), 1));
-        m_pList->AddElement(pElement);
-        pElement->Filter(255);
+        m_pList->AddElement(std::make_shared<LogElement>(dc, GetClientSize().x, "Discovery stopped", 1), true, nullptr);
         m_pList->Refresh();
 
 
@@ -618,7 +615,7 @@ void pnlRTP::ImportSources(const wxString& sFileName)
     iniManager ini;
     if(ini.ReadIniFile(sFileName))
     {
-        const iniSection* pSection = ini.GetSection("Import");
+        auto pSection = ini.GetSection("Import");
         if(pSection)
         {
             for(auto itData = pSection->GetDataBegin(); itData != pSection->GetDataEnd(); ++itData)

@@ -6,7 +6,7 @@ include_directories("../../pambase/")
 include_directories("../../pamfft/")
 include_directories("../../external/kiss_fft130")
 include_directories("../../external/kiss_fft130/tools")
-include_directories("../../external/log/include")
+include_directories(${DIR_LOG}/include)
 
 link_directories("../../lib")
 
@@ -15,20 +15,27 @@ file(GLOB SOURCES "*.cpp")
 
 add_library(distortion MODULE ${SOURCES})
 
-list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
-target_compile_options(distortion PRIVATE ${flags})
-target_compile_definitions(distortion PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __WXGNU__ _test_ _MSL_STDINT_H wxDEBUG_LEVEL=0)
-
 #find external libraries
 find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
+list(APPEND flags "-fPIC" "-Wall" "-fpermissive"  "-std=c++14")
+
+if(CMAKE_BUILD_TYPE MATCHES Release)
+   list(APPEND flags "-O3")
+   target_compile_definitions(distortion PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __GNU__ __WXGNU__ _test_ MSL_STDINT_H wxDEBUG_LEVEL=0)
+   set_target_properties(distortion PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/test")
+else()
+   list(APPEND flags "-g")
+   target_compile_definitions(distortion PUBLIC __WXDEBUG__ DLL_EXPORTS wxUSE_UNICODE __GNU__ __WXGNU__ _test_ MSL_STDINT_H)
+   set_target_properties(distortion PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/test/debug")
+endif()
+target_compile_options(distortion PRIVATE ${flags})
 
 target_link_libraries(distortion ${wxWidgets_LIBRARIES})
-target_link_libraries(distortion pambase)
-target_link_libraries(distortion pamfft)
+target_link_libraries(distortion optimized pambase debug pambased)
+target_link_libraries(distortion optimized pamfft debug pamfftd)
 
-set_target_properties(distortion PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/test")
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")

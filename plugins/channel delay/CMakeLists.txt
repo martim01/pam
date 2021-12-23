@@ -4,7 +4,7 @@ project(channeldelay LANGUAGES CXX)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 include_directories("../../pambase/")
 include_directories("../../pamfft/")
-include_directories("../../external/log/include")
+include_directories(${DIR_LOG}/include)
 
 link_directories("../../lib")
 
@@ -13,20 +13,27 @@ file(GLOB SOURCES "*.cpp")
 
 add_library(channeldelay MODULE ${SOURCES})
 
-list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
-target_compile_options(channeldelay PRIVATE ${flags})
-target_compile_definitions(channeldelay PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __WXGNU__ _test_ _MSL_STDINT_H wxDEBUG_LEVEL=0)
-
 #find external libraries
 find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
+list(APPEND flags "-fPIC" "-Wall" "-fpermissive"  "-std=c++14")
+
+if(CMAKE_BUILD_TYPE MATCHES Release)
+   list(APPEND flags "-O3")
+   target_compile_definitions(channeldelay PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE __GNU__ __WXGNU__ _test_ MSL_STDINT_H wxDEBUG_LEVEL=0)
+   set_target_properties(channeldelay PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/test")
+else()
+   list(APPEND flags "-g")
+   target_compile_definitions(channeldelay PUBLIC __WXDEBUG__ DLL_EXPORTS wxUSE_UNICODE __GNU__ __WXGNU__ _test_ MSL_STDINT_H)
+   set_target_properties(channeldelay PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/test/debug")
+endif()
+target_compile_options(channeldelay PRIVATE ${flags})
 
 target_link_libraries(channeldelay ${wxWidgets_LIBRARIES})
-target_link_libraries(channeldelay pambase)
-target_link_libraries(channeldelay pamfft)
+target_link_libraries(channeldelay optimized pambase debug pambased)
+target_link_libraries(channeldelay optimized pamfft debug pamfftd)
 
-set_target_properties(channeldelay PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../../lib/test")
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")

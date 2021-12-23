@@ -1,7 +1,125 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 project(pamworkspace)
 
-execute_process(COMMAND git submodule update --init --recursive)
+SET(NMOS OFF CACHE BOOL "set to ON to include NMOS")
+
+message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "NMOS: ${NMOS}")
+
+SET(DIR_BASE $ENV{HOME} CACHE STRING "base location for libraries")
+SET(DIR_NMOS ${DIR_BASE}/nmos CACHE STRING "location of nmos")
+SET(DIR_PTPMONKEY ${DIR_BASE}/ptpmonkey CACHE STRING "location of ptpmonkey")
+SET(DIR_SAPSERVER ${DIR_BASE}/sapserver CACHE STRING "location of sapserver")
+SET(DIR_LOG ${DIR_BASE}/log CACHE STRING "location of pml log")
+SET(DIR_DNSSD ${DIR_BASE}/dnssd CACHE STRING "location of pml dnssd")
+
+#set the following to off so we build them rather than one of the sub projects
+SET(BUILD_DNSSD OFF)
+SET(BUILD_LOG OFF)
+
+message(STATUS "Find external libraries")
+
+#Get log
+message(STATUS "Find pml::log")
+find_path(TEMP_DIR NAMES "CMakeLists.txt" PATHS ${DIR_LOG} NO_CACHE)
+if((NOT TEMP_DIR) OR (NOT EXISTS ${TEMP_DIR}))
+	message(STATUS "log not found - clone from GitHub")
+	execute_process(COMMAND git clone https://github.com/martim01/log/ ${DIR_LOG})
+
+    find_path(TEMP_DIR2 NAMES "CMakeLists.txt" PATHS ${DIR_LOG} NO_CACHE)
+    if((NOT TEMP_DIR2) OR (NOT EXISTS ${TEMP_DIR2}))
+        message(FATAL_ERROR "Failed to clone pml::Log")
+    endif()
+else()
+    message(STATUS "log found - update to latest version")
+    execute_process(COMMAND git -C ${DIR_LOG} pull)
+endif()
+
+#Get ptpmonkey
+message(STATUS "Find pml::ptpmonkey")
+find_path(TEMP_DIR3 NAMES "CMakeLists.txt" PATHS ${DIR_PTPMONKEY} NO_CACHE)
+if((NOT TEMP_DIR3) OR (NOT EXISTS ${TEMP_DIR3}))
+    message(STATUS "ptpmonkey not found - clone from GitHub")
+	execute_process(COMMAND git clone https://github.com/martim01/ptpmonkey/ ${DIR_PTPMONKEY})
+    
+    find_path(TEMP_DIR4 NAMES "CMakeLists.txt" PATHS ${DIR_PTPMONKEY} NO_CACHE)
+    if((NOT TEMP_DIR4) OR (NOT EXISTS ${TEMP_DIR4}))
+	    message(FATAL_ERROR "Failed to clone pml::ptpmonkey")
+    endif()
+else()
+    message(STATUS "ptpmonkey found - update to latest version")
+    execute_process(COMMAND git -C ${DIR_PTPMONKEY} pull)
+endif()
+
+
+#Get sapserver
+message(STATUS "Find pml::sapserver")
+find_path(TEMP_DIR5 NAMES "CMakeLists.txt" PATHS ${DIR_SAPSERVER} NO_CACHE)
+if((NOT TEMP_DIR5) OR (NOT EXISTS ${TEMP_DIR5}))
+    message(STATUS "sapserver not found - clone from GitHub")
+	execute_process(COMMAND git clone https://github.com/martim01/sapserver/ ${DIR_SAPSERVER})
+
+    find_path(TEMP_DIR6 NAMES "CMakeLists.txt" PATHS ${DIR_SAPSERVER} NO_CACHE)
+    if((NOT TEMP_DIR6) OR (NOT EXISTS ${TEMP_DIR6}))
+        message(FATAL_ERROR "Failed to clone pml::sapserver")
+    endif()
+else()
+    message(STATUS "sapserver found - update to latest version")
+    execute_process(COMMAND git -C ${DIR_SAPSERVER} pull)
+endif()
+
+
+
+#Get dnssd
+message(STATUS "Find pml::dnssd")
+find_path(TEMP_DIR7 NAMES "CMakeLists.txt" PATHS ${DIR_DNSSD} NO_CACHE)
+if((NOT TEMP_DIR7) OR (NOT EXISTS ${TEMP_DIR7}))
+    message(STATUS "dnssd not found - clone from GitHub")
+	execute_process(COMMAND git clone https://github.com/martim01/dnssd/ ${DIR_DNSSD})
+    
+    find_path(TEMP_DIR8 NAMES "CMakeLists.txt" PATHS ${DIR_DNSSD} NO_CACHE)
+    if((NOT TEMP_DIR8) OR (NOT EXISTS ${TEMP_DIR8}))
+        message(FATAL_ERROR "Failed to clone pml::dnssd")
+    endif()
+else()
+    message(STATUS "pml::dnssd found - update to latest version")
+    execute_process(COMMAND git -C ${DIR_DNSSD} pull)
+endif()
+
+
+
+if(${NMOS})
+    #Get nmos
+    message(STATUS "Find pml::nmos")
+    find_path(TEMP_DIR9 NAMES "CMakeLists.txt" PATHS ${DIR_NMOS} NO_CACHE)
+    if((NOT TEMP_DIR9) OR (NOT EXISTS ${TEMP_DIR9}))
+        message(STATUS "nmos not found - clone from GitHub")
+        execute_process(COMMAND git clone https://github.com/martim01/nmos/ ${DIR_NMOS})
+        
+        find_path(TEMP_DIR10 NAMES "CMakeLists.txt" PATHS ${DIR_NMOS} NO_CACHE)
+        if((NOT TEMP_DIR10) OR (NOT EXISTS ${TEMP_DIR10}))
+            message(FATAL_ERROR "Failed to clone pml::nmos")
+        endif()
+    else()
+        message(STATUS "nmos found - update to latest version")
+        execute_process(COMMAND git -C ${DIR_NMOS} pull)
+    endif()
+endif()
+
+
+message(STATUS "Configure pml::log")
+add_subdirectory(${DIR_LOG} ${CMAKE_SOURCE_DIR}/build/log)
+message(STATUS "Configure pml::sapserver")
+add_subdirectory(${DIR_SAPSERVER} ${CMAKE_SOURCE_DIR}/build/sapserver)
+message(STATUS "Configure pml::ptpmonkey")
+add_subdirectory(${DIR_PTPMONKEY} ${CMAKE_SOURCE_DIR}/build/ptpmonkey)
+message(STATUS "Configure pml::dnssd")
+add_subdirectory(${DIR_DNSSD} ${CMAKE_SOURCE_DIR}/build/dnssd)
+
+if(${NMOS})
+    message(STATUS "Configure pml::nmos")
+    add_subdirectory(${DIR_NMOS} ${CMAKE_SOURCE_DIR}/build/nmos)
+endif()
 
 message(STATUS "Configure pambase")
 add_subdirectory(pambase)
@@ -43,7 +161,7 @@ message(STATUS "Configure plugin peaklog")
 add_subdirectory(plugins/peak\ log)
 message(STATUS "Configure plugin polarscope")
 add_subdirectory(plugins/polarscope)
-message(STATUS "Configure PTP")
+message(STATUS "Configure plugin ptp")
 add_subdirectory(plugins/ptp)
 message(STATUS "Configure plugin r128")
 add_subdirectory(plugins/r128)
@@ -59,5 +177,5 @@ message(STATUS "Configure plugin waveform")
 add_subdirectory(plugins/waveform)
 message(STATUS "Configure pam2")
 add_subdirectory(pam2)
-message(STATUS "Configure pamupdatemanager")
-add_subdirectory(pamupdatemanager)
+#message(STATUS "Configure pamupdatemanager")
+#add_subdirectory(pamupdatemanager)

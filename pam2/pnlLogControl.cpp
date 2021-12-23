@@ -53,15 +53,18 @@ pnlLogControl::pnlLogControl(wxWindow* parent, pnlLog* pLogWindow, wxWindowID id
 	Connect(ID_M_PBTN6,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlLogControl::OntbnClearClick);
 	//*)
 
-//	m_plstFilter = new wmList(this, wxNewId(), wxPoint(5,150), wxSize(180, 80), wmList::STYLE_SELECT | wmList::STYLE_SELECT_MULTI, wmList::SCROLL_NONE, wxSize(-1,30), 2, wxSize(5,5));
-//	m_plstFilter->AddButton(wxT("System"));
-//	m_plstFilter->AddButton(wxT("Test\nInfo"));
-//	m_plstFilter->AddButton(wxT("Test\nAlarm"));
-//	m_plstFilter->AddButton(wxT("Test\nOkay"));
-//	m_plstFilter->SetBackgroundColour(*wxBLACK);
-//	m_plstFilter->SelectAll(true, false);   // @todo possibly load from Settings
-//
-//	Connect(m_plstFilter->GetId(), wxEVT_LIST_SELECTED, (wxObjectEventFunction)&pnlLogControl::OnlstFilterSelected);
+	m_plstFilter = new wmList(this, wxNewId(), wxPoint(5,150), wxSize(180, 80), wmList::STYLE_SELECT, wmList::SCROLL_NONE, wxSize(-1,30), 3, wxSize(5,5));
+	m_plstFilter->AddButton("Trace");
+	m_plstFilter->AddButton("Debug");
+	m_plstFilter->AddButton("Info");
+	m_plstFilter->AddButton("Warning");
+	m_plstFilter->AddButton("Error");
+	m_plstFilter->AddButton("Critical");
+
+	m_plstFilter->SetBackgroundColour(*wxBLACK);
+	m_plstFilter->SelectButton(Settings::Get().Read("Log","Level",2));
+
+	Connect(m_plstFilter->GetId(), wxEVT_LIST_SELECTED, (wxObjectEventFunction)&pnlLogControl::OnlstFilterSelected);
 
 	m_pbtnScroll->SetToggle(true, wxT("Scroll"), wxT("Lock"), 50.0);
 
@@ -120,13 +123,5 @@ void pnlLogControl::UpdateControl(size_t nCurrentPage, size_t nTotalPages)
 
 void pnlLogControl::OnlstFilterSelected(wxCommandEvent& event)
 {
-//    int nFilter(0);
-//    for(size_t i = 0; i < m_plstFilter->GetItemCount(); i++)
-//    {
-//        if(m_plstFilter->IsSelected(i))
-//        {
-//            nFilter += pow(2, i);
-//        }
-//    }
-//    m_ppnlLog->Filter(nFilter);
+    Settings::Get().Write("Log","Level", event.GetInt());
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlSettingsInputNmos">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmList" name="ID_M_PLST1" variable="m_plstSenders" member="yes">
+			<scrolling>None</scrolling>
+			<columns>3</columns>
+			<items />
+			<pos>10,10</pos>
+			<size>580,290</size>
+			<bg>#000000</bg>
+			<handler function="OnlstSendersSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+	</object>
+</wxsmith>

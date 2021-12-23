@@ -28,8 +28,8 @@ class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
 
         void ResetFile();
 
-        bool GetSectionDataBegin(const wxString& sSection, std::map<wxString, wxString>::const_iterator& itBegin) const;
-        bool GetSectionDataEnd(const wxString& sSection, std::map<wxString, wxString>::const_iterator& itEnd) const;
+        bool GetSectionDataBegin(const wxString& sSection, std::map<wxString, wxString>::const_iterator& itBegin);
+        bool GetSectionDataEnd(const wxString& sSection, std::map<wxString, wxString>::const_iterator& itEnd);
 
         void AddHandler(const wxString& sSection, const wxString& sKey, wxEvtHandler* pHandler);
         void RemoveHandler(wxEvtHandler* pHandler);
@@ -47,7 +47,7 @@ class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
 
         wxString GetLibraryVersion() const;
 
-        std::multimap<wxString, wxString> GetInterfaces() const;
+        const std::multimap<wxString, wxString>& GetInterfaces();
 
     protected:
         Settings();
@@ -58,6 +58,8 @@ class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
         wxString m_sFullPath;
 
         std::multimap<wxString, wxEvtHandler*> m_mmHandlers;
+
+        std::multimap<wxString, wxString> m_mmInterfaces;
 
         wxTimer m_timerSave;
 };

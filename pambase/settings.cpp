@@ -98,9 +98,9 @@ bool Settings::Write(const wxString& sSection, const wxString& sKey, double dVal
 }
 
 
-bool Settings::GetSectionDataBegin(const wxString& sSection, std::map<wxString, wxString>::const_iterator& itBegin) const
+bool Settings::GetSectionDataBegin(const wxString& sSection, std::map<wxString, wxString>::const_iterator& itBegin)
 {
-    const iniSection* pSection = m_iniManager.GetSection(sSection);
+    auto pSection = m_iniManager.GetSection(sSection);
     if(pSection)
     {
         itBegin = pSection->GetDataBegin();
@@ -109,9 +109,9 @@ bool Settings::GetSectionDataBegin(const wxString& sSection, std::map<wxString, 
     return false;
 }
 
-bool Settings::GetSectionDataEnd(const wxString& sSection, std::map<wxString, wxString>::const_iterator& itEnd) const
+bool Settings::GetSectionDataEnd(const wxString& sSection, std::map<wxString, wxString>::const_iterator& itEnd)
 {
-    const iniSection* pSection = m_iniManager.GetSection(sSection);
+    auto pSection = m_iniManager.GetSection(sSection);
     if(pSection)
     {
         itEnd = pSection->GetDataEnd();
@@ -163,7 +163,7 @@ bool Settings::RemoveSection(const wxString& sSection)
 
 void Settings::ResetFile()
 {
-    m_iniManager.RemoveAllSections();
+    m_iniManager.DeleteSections();
     m_iniManager.SetSectionValue("Discovery", "RTSP","1");
     m_iniManager.SetSectionValue("Discovery", "SAP","0");
     m_iniManager.SetSectionValue("General", "ShowOptions","0");
@@ -295,103 +295,104 @@ void Settings::OnTimerSave(wxTimerEvent& event)
 }
 
 
-multimap<wxString, wxString> Settings::GetInterfaces() const
+const multimap<wxString, wxString>& Settings::GetInterfaces()
 {
-    multimap<wxString, wxString> mmInterfaces;
-
-    #ifdef __WXMSW__
-
-    //DWORD dwSize = 0;
-    unsigned int i = 0;
-    // Set the flags to pass to GetAdaptersAddresses
-    // default to unspecified address family (both)
-    PIP_ADAPTER_ADDRESSES pAddresses = NULL;
-    DWORD dwRetVal = 0;
-    ULONG outBufLen = 15000;
-    ULONG Iterations = 0;
-    PIP_ADAPTER_ADDRESSES pCurrAddresses = NULL;
-    PIP_ADAPTER_UNICAST_ADDRESS pUnicast = NULL;
-    do
+    if(m_mmInterfaces.empty())
     {
-        pAddresses = (IP_ADAPTER_ADDRESSES *) HeapAlloc(GetProcessHeap(), 0, outBufLen);
-        if (pAddresses == NULL)
-        {
-            return multimap<wxString, wxString>();
-        }
+        #ifdef __WXMSW__
 
-        dwRetVal = GetAdaptersAddresses(AF_INET, GAA_FLAG_INCLUDE_PREFIX, NULL, pAddresses, &outBufLen);
-
-        if (dwRetVal == ERROR_BUFFER_OVERFLOW)
+        //DWORD dwSize = 0;
+        unsigned int i = 0;
+        // Set the flags to pass to GetAdaptersAddresses
+        // default to unspecified address family (both)
+        PIP_ADAPTER_ADDRESSES pAddresses = NULL;
+        DWORD dwRetVal = 0;
+        ULONG outBufLen = 15000;
+        ULONG Iterations = 0;
+        PIP_ADAPTER_ADDRESSES pCurrAddresses = NULL;
+        PIP_ADAPTER_UNICAST_ADDRESS pUnicast = NULL;
+        do
         {
-            HeapFree(GetProcessHeap(),0, pAddresses);
-            pAddresses = NULL;
-        }
-        else
-        {
-            break;
-        }
-        Iterations++;
-    } while ((dwRetVal == ERROR_BUFFER_OVERFLOW) && (Iterations < 3));
-
-    if (dwRetVal == NO_ERROR)
-    {
-        // If successful, output some information from the data we received
-        pCurrAddresses = pAddresses;
-        while (pCurrAddresses)
-        {
-            if (pCurrAddresses->PhysicalAddressLength != 0)
+            pAddresses = (IP_ADAPTER_ADDRESSES *) HeapAlloc(GetProcessHeap(), 0, outBufLen);
+            if (pAddresses == NULL)
             {
-                pUnicast = pCurrAddresses->FirstUnicastAddress;
-                if (pUnicast != NULL)
-                {
-                    for (i = 0; pUnicast != NULL; i++)
-                    {
-                        if (pUnicast->Address.lpSockaddr->sa_family == AF_INET)
-                        {
-                            //char buff[100];
-                            sockaddr_in *sa_in = (sockaddr_in *)pUnicast->Address.lpSockaddr;
-                            mmInterfaces.insert(make_pair(wxString(pCurrAddresses->FriendlyName), wxString::FromUTF8(inet_ntoa(sa_in->sin_addr))));
-                        }
-                        pUnicast = pUnicast->Next;
-                    }
-                }
+                return multimap<wxString, wxString>();
             }
 
-            pCurrAddresses = pCurrAddresses->Next;
-        }
-    }
-    if (pAddresses)
-    {
-        HeapFree(GetProcessHeap(),0, pAddresses);
-    }
-    #else
-    ifaddrs * ifAddrStruct=NULL;
-    ifaddrs * ifa=NULL;
-    void * tmpAddrPtr=NULL;
+            dwRetVal = GetAdaptersAddresses(AF_INET, GAA_FLAG_INCLUDE_PREFIX, NULL, pAddresses, &outBufLen);
 
-    getifaddrs(&ifAddrStruct);
+            if (dwRetVal == ERROR_BUFFER_OVERFLOW)
+            {
+                HeapFree(GetProcessHeap(),0, pAddresses);
+                pAddresses = NULL;
+            }
+            else
+            {
+                break;
+            }
+            Iterations++;
+        } while ((dwRetVal == ERROR_BUFFER_OVERFLOW) && (Iterations < 3));
 
-    for (ifa = ifAddrStruct; ifa != NULL; ifa = ifa->ifa_next)
-    {
-        if (!ifa->ifa_addr)
+        if (dwRetVal == NO_ERROR)
         {
-            continue;
+            // If successful, output some information from the data we received
+            pCurrAddresses = pAddresses;
+            while (pCurrAddresses)
+            {
+                if (pCurrAddresses->PhysicalAddressLength != 0)
+                {
+                    pUnicast = pCurrAddresses->FirstUnicastAddress;
+                    if (pUnicast != NULL)
+                    {
+                        for (i = 0; pUnicast != NULL; i++)
+                        {
+                            if (pUnicast->Address.lpSockaddr->sa_family == AF_INET)
+                            {
+                                //char buff[100];
+                                sockaddr_in *sa_in = (sockaddr_in *)pUnicast->Address.lpSockaddr;
+                                m_mmInterfaces.insert(make_pair(wxString(pCurrAddresses->FriendlyName), wxString::FromUTF8(inet_ntoa(sa_in->sin_addr))));
+                            }
+                            pUnicast = pUnicast->Next;
+                        }
+                    }
+                }
+
+                pCurrAddresses = pCurrAddresses->Next;
+            }
         }
-        if (ifa->ifa_addr->sa_family == AF_INET)
-        { // check it is IP4
-            // is a valid IP4 Address
-            tmpAddrPtr=&((sockaddr_in *)ifa->ifa_addr)->sin_addr;
-            char addressBuffer[INET_ADDRSTRLEN];
-            inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
-            mmInterfaces.insert(make_pair(wxString::FromUTF8(ifa->ifa_name), wxString::FromUTF8(addressBuffer)));
+        if (pAddresses)
+        {
+            HeapFree(GetProcessHeap(),0, pAddresses);
         }
+        #else
+        ifaddrs * ifAddrStruct=NULL;
+        ifaddrs * ifa=NULL;
+        void * tmpAddrPtr=NULL;
+
+        getifaddrs(&ifAddrStruct);
+
+        for (ifa = ifAddrStruct; ifa != NULL; ifa = ifa->ifa_next)
+        {
+            if (!ifa->ifa_addr)
+            {
+                continue;
+            }
+            if (ifa->ifa_addr->sa_family == AF_INET)
+            { // check it is IP4
+                // is a valid IP4 Address
+                tmpAddrPtr=&((sockaddr_in *)ifa->ifa_addr)->sin_addr;
+                char addressBuffer[INET_ADDRSTRLEN];
+                inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
+                m_mmInterfaces.insert(std::make_pair(wxString::FromUTF8(ifa->ifa_name), wxString::FromUTF8(addressBuffer)));
+            }
+        }
+        if (ifAddrStruct!=NULL)
+        {
+            freeifaddrs(ifAddrStruct);
+        }
+        #endif // __WXMSW__
     }
-    if (ifAddrStruct!=NULL)
-    {
-        freeifaddrs(ifAddrStruct);
-    }
-    #endif // __WXMSW__
-    return mmInterfaces;
+    return m_mmInterfaces;
 }
 
 

@@ -47,6 +47,10 @@
 #include "dlgNoInput.h"
 #include "log.h"
 #include <wx/bitmap.h>
+#include <wx/dcscreen.h>
+#include <wx/dcmemory.h>
+#include <wx/dcclient.h>
+#include "usbchecker.h"
 #ifdef __NMOS__
 #include "nmos.h"
 #endif // __WXMSW__
@@ -85,6 +89,10 @@ wxString wxbuildinfo(wxbuildinfoformat format)
     return wxbuild;
 }
 
+
+
+
+
 //(*IdInit(pam2Dialog)
 const long pam2Dialog::ID_BITMAPBUTTON1 = wxNewId();
 const long pam2Dialog::ID_PANEL4 = wxNewId();
@@ -92,7 +100,7 @@ const long pam2Dialog::ID_M_PSWP1 = wxNewId();
 const long pam2Dialog::ID_M_PLST1 = wxNewId();
 const long pam2Dialog::ID_M_PLST3 = wxNewId();
 const long pam2Dialog::ID_M_PBTN2 = wxNewId();
-const long pam2Dialog::ID_M_PLBL4 = wxNewId();
+const long pam2Dialog::ID_M_PBTN4 = wxNewId();
 const long pam2Dialog::ID_M_PBTN3 = wxNewId();
 const long pam2Dialog::ID_M_PLBL2 = wxNewId();
 const long pam2Dialog::ID_PANEL7 = wxNewId();
@@ -155,7 +163,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_plstScreens->SetBackgroundColour(wxColour(0,0,0));
     m_plstScreens->SetButtonColour(wxColour(wxT("#008000")));
     m_plstScreens->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
-    m_plstInbuilt = new wmList(Panel2, ID_M_PLST3, wxPoint(0,295), wxSize(200,44), wmList::STYLE_SELECT, 0, wxSize(-1,40), 3, wxSize(5,5));
+    m_plstInbuilt = new wmList(Panel2, ID_M_PLST3, wxPoint(0,295), wxSize(200,44), wmList::STYLE_SELECT, 0, wxSize(-1,40), 3, wxSize(2,2));
     m_plstInbuilt->SetForegroundColour(wxColour(0,0,0));
     m_plstInbuilt->SetBackgroundColour(wxColour(0,0,0));
     m_plstInbuilt->SetButtonColour(wxColour(wxT("#3DBEAB")));
@@ -165,11 +173,8 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Panel4->SetBackgroundColour(wxColour(255,255,255));
     m_pbtnCPU = new wmButton(Panel4, ID_M_PBTN2, _("Monitor"), wxPoint(1,1), wxSize(95,23), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN2"));
     m_pbtnCPU->SetBackgroundColour(wxColour(0,0,0));
-    m_plblNetwork = new wmLabel(Panel4, ID_M_PLBL4, wxEmptyString, wxPoint(97,1), wxSize(95,23), 0, _T("ID_M_PLBL4"));
-    m_plblNetwork->SetBorderState(uiRect::BORDER_NONE);
-    m_plblNetwork->GetUiRect().SetGradient(0);
-    m_plblNetwork->SetForegroundColour(wxColour(255,255,255));
-    m_plblNetwork->SetBackgroundColour(wxColour(0,0,0));
+    m_pbtnScreenshot = new wmButton(Panel4, ID_M_PBTN4, _("Screenshot"), wxPoint(97,1), wxSize(95,23), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN4"));
+    m_pbtnScreenshot->SetBackgroundColour(wxColour(0,0,108));
     m_pbtnInput = new wmButton(Panel4, ID_M_PBTN3, _("Input"), wxPoint(1,25), wxSize(95,24), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
     m_pbtnInput->SetBackgroundColour(wxColour(0,128,0));
     m_plblOutput = new wmLabel(Panel4, ID_M_PLBL2, _("Output"), wxPoint(97,25), wxSize(95,24), 0, _T("ID_M_PLBL2"));
@@ -211,6 +216,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnlstScreensSelected);
     Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnlstScreensSelected);
     Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pam2Dialog::OnbtnInputClick);
+    Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pam2Dialog::OnbtnScreenshotClick);
     Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pam2Dialog::OnbtnInputClick);
     Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pam2Dialog::OnbtnMonitorClick);
     Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pam2Dialog::OnplstOptionsSelected);
@@ -220,12 +226,17 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Connect(ID_TIMER3,wxEVT_TIMER,(wxObjectEventFunction)&pam2Dialog::OntimerIpcTrigger);
     Connect(wxID_ANY,wxEVT_CLOSE_WINDOW,(wxObjectEventFunction)&pam2Dialog::OnClose);
     //*)
+
+    m_pbtnScreenshot->SetColourSelected(wxColour(255,128,0));
+    m_timerScreenshot.SetOwner(this, wxNewId());
+    Connect(m_timerScreenshot.GetId(),wxEVT_TIMER,(wxObjectEventFunction)&pam2Dialog::OnTimerScreenshot);
+
     m_pdlgNoInput = 0;
 
     m_ppnlLog = new pnlLog(m_pswpMain);
 
     pml::LogStream::AddOutput(std::make_unique<pml::LogOutput>());
-    pml::LogStream::SetOutputLevel(pml::LOG_INFO);
+    pml::LogStream::SetOutputLevel(pml::LOG_DEBUG);
 
     wxImage img(16,16);
     img.SetRGB(wxRect(0,0,16,16),0,0,0);
@@ -481,21 +492,21 @@ void pam2Dialog::OnlstScreensSelected(wxCommandEvent& event)
 
         Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
 
-        m_pSelectedMonitor = 0;
+        m_pSelectedMonitor = nullptr;
         ShowSettingsPanel();
     }
     else if(event.GetString() == wxT("Help"))
     {
         m_plstScreens->SelectAll(false,false);
         ShowHelpPanel();
-        m_pSelectedMonitor = 0;
+        m_pSelectedMonitor = nullptr;
         Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
     }
     else if(event.GetString() == wxT("Log"))
     {
         m_plstScreens->SelectAll(false,false);
         Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
-        m_pSelectedMonitor = 0;
+        m_pSelectedMonitor = nullptr;
         ShowLogPanel();
     }
     else
@@ -507,7 +518,7 @@ void pam2Dialog::OnlstScreensSelected(wxCommandEvent& event)
         {
             Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
             Settings::Get().Write(wxT("Main"), wxT("Last"),event.GetString());
-            m_pSelectedMonitor = 0;
+            m_pSelectedMonitor = nullptr;
             ShowTestPanels();
         }
         else if(event.GetString() == wxT("Next Page"))
@@ -581,7 +592,7 @@ void pam2Dialog::ShowMonitorPanel(const wxString& sPanel)
     }
     else
     {
-        m_pSelectedMonitor = 0;
+        m_pSelectedMonitor = nullptr;
         MaximizeMonitor(false);
     }
 }
@@ -972,7 +983,10 @@ void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
 
     //NMOS
     #ifdef __NMOS__
-    m_pManager = std::unique_ptr<NmosManager>(new NmosManager(m_ppnlSettings->m_ppnlNmos));
+    m_pManager = std::unique_ptr<NmosManager>(new NmosManager(m_ppnlSettings->m_ppnlInputNmos));
+    m_pManager->Setup();
+    m_pManager->AddHandlerToEventPoster(m_ppnlSettings->m_ppnlNmos);
+    m_pManager->AddHandlerToClientEventPoster(m_ppnlSettings->m_ppnlNmos);
     #endif // __NMOS__
 
     IOManager::Get().Start();
@@ -1129,11 +1143,77 @@ void pam2Dialog::OnbtnInputClick(wxCommandEvent& event)
 {
     if(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")) == "AoIP")
     {
-        //Show AoIP
-        Settings::Get().Write("Splash", "Screen", "AoIP");
-        if(m_pdlgNoInput)
+        int nmos = 0;
+        #ifdef __NMOS__
+        nmos = Settings::Get().Read("NMOS", "Node", NmosManager::NODE_OFF);
+        #endif
+        if(nmos == 0)
         {
-            m_pdlgNoInput->Show(false);
+            Settings::Get().Write("Splash", "Screen", "AoIP");
+            if(m_pdlgNoInput)
+            {
+                m_pdlgNoInput->Show(false);
+            }
+        }
+        #ifdef __NMOS__
+        if((nmos == NmosManager::NODE_BOTH || nmos == NmosManager::NODE_RECEIVER) && Settings::Get().Read("NMOS", "Client", NmosManager::CLIENT_OFF) != NmosManager::CLIENT_OFF)
+        {
+
+        }
+        #endif // __NMOS__
+    }
+    else
+    {
+        Screenshot();
+    }
+}
+
+void pam2Dialog::OnbtnScreenshotClick(wxCommandEvent& event)
+{
+    if(m_pSelectedMonitor)
+    {
+        MaximizeMonitor(m_pSelectedMonitor->CanBeMaximized());
+    }
+
+    m_timerScreenshot.Start(100,true);
+
+}
+
+void pam2Dialog::OnTimerScreenshot(const wxTimerEvent& event)
+{
+    wxFileName fn(Screenshot());
+    m_usb.SaveToUSB(fn);
+}
+
+wxString pam2Dialog::Screenshot()
+{
+    wxWindow* pWnd(nullptr);
+    if(m_pSelectedMonitor)
+    {
+        pWnd = m_pSelectedMonitor->GetMainWindow();
+    }
+    else if(m_ppnlTests)
+    {
+        pWnd = m_ppnlTests;
+    }
+    wxString sFilename;
+    if(pWnd)
+    {
+        wxWindowDC dcScreen(pWnd);
+        auto dimensions = dcScreen.GetSize();
+        wxBitmap bmpScreen(dimensions.x, dimensions.y,-1);
+        wxMemoryDC dcMem;
+        dcMem.SelectObject(bmpScreen);
+        dcMem.Blit(0,0,dimensions.x,dimensions.y, &dcScreen, 0,0);
+        dcMem.SelectObject(wxNullBitmap);
+
+        sFilename = wxDateTime::Now().Format("/tmp/%Y%m%dT%H%M%S.jpg");
+        if(bmpScreen.SaveFile(sFilename,wxBITMAP_TYPE_JPEG) == false)
+        {
+            pmlLog(pml::LOG_WARN) << "Failed to save screenshot " << sFilename;
+            sFilename.clear();
         }
     }
+    return sFilename;
+
 }

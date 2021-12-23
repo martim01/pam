@@ -1,5 +1,4 @@
-#ifndef PNLAOIPSELECTION_H
-#define PNLAOIPSELECTION_H
+#pragma once
 
 //(*Headers(pnlAoIPSelection)
 #include "wmbutton.h"
@@ -13,14 +12,14 @@
 #include <list>
 #include <map>
 
-struct AoIPSource;
 
-class pnlAoIPSelection: public wxPanel
+
+class pnlNodeSelection: public wxPanel
 {
 	public:
 
-		pnlAoIPSelection(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, int n=0, const wxString& s=wxEmptyString);
-		virtual ~pnlAoIPSelection();
+		pnlNodeSelection(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, int n=0, const wxString& s=wxEmptyString);
+		virtual ~pnlNodeSelection();
 
 		//(*Declarations(pnlAoIPSelection)
 		wmButton* m_pbtnBack;
@@ -80,6 +79,7 @@ class pnlAoIPSelection: public wxPanel
 		void OnbtnDeleteClick(wxCommandEvent& event);
 		//*)
 
+		void SetupList(wmList* plst);
 		void OnShown(wxShowEvent& event);
 		void ShowPagingButtons();
         void ShowMainScreen();
@@ -91,10 +91,8 @@ class pnlAoIPSelection: public wxPanel
         void DoAlphabetSearch(const wxString& sLetter);
         void DoTagSearch(const wxString& sTag);
 
-        std::list<wxString> m_lstTag;
-        std::map<int, AoIPSource> m_mTagged;
+
         wxString m_sSearch;
 		DECLARE_EVENT_TABLE()
 };
 
-#endif

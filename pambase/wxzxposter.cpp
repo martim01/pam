@@ -13,7 +13,7 @@ wxZCPoster::wxZCPoster(wxEvtHandler* pHandler) : m_pHandler(pHandler)
 
 }
 
-void wxZCPoster::InstanceResolved(std::shared_ptr<pml::dnsInstance> pInstance)
+void wxZCPoster::InstanceResolved(std::shared_ptr<pml::dnssd::dnsInstance> pInstance)
 {
     if(m_pHandler)
     {
@@ -52,7 +52,7 @@ void wxZCPoster::RegistrationNodeError()
     }
 }
 
-void wxZCPoster::InstanceRemoved(std::shared_ptr<pml::dnsInstance> pInstance)
+void wxZCPoster::InstanceRemoved(std::shared_ptr<pml::dnssd::dnsInstance> pInstance)
 {
     if(m_pHandler)
     {
@@ -71,7 +71,7 @@ void wxZCPoster::InstanceRemoved(std::shared_ptr<pml::dnsInstance> pInstance)
     }
 }
 
-std::shared_ptr<pml::dnsInstance> wxZCPoster::GetInstance(int nId)
+std::shared_ptr<pml::dnssd::dnsInstance> wxZCPoster::GetInstance(int nId)
 {
     auto itInstance = m_mInstances.find(nId);
     if(itInstance != m_mInstances.end())

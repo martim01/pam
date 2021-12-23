@@ -62,7 +62,7 @@
 									</object>
 									<object class="wmList" name="ID_M_PLST3" variable="m_plstInbuilt" member="yes">
 										<scrolling>None</scrolling>
-										<button_gap>5,5</button_gap>
+										<button_gap>2,2</button_gap>
 										<button_size>-1,40</button_size>
 										<columns>3</columns>
 										<button>#3DBEAB</button>
@@ -89,12 +89,14 @@
 											<style>wmButton::STYLE_SELECT</style>
 											<handler function="OnbtnInputClick" entry="EVT_BUTTON" />
 										</object>
-										<object class="wmLabel" name="ID_M_PLBL4" variable="m_plblNetwork" member="yes">
-											<label></label>
+										<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnScreenshot" member="yes">
+											<label>Screenshot</label>
+											<toggle_percent>0</toggle_percent>
 											<pos>97,1</pos>
 											<size>95,23</size>
-											<fg>#FFFFFF</fg>
-											<bg>#000000</bg>
+											<bg>#00006C</bg>
+											<style>wmButton::STYLE_SELECT</style>
+											<handler function="OnbtnScreenshotClick" entry="EVT_BUTTON" />
 										</object>
 										<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnInput" member="yes">
 											<label>Input</label>

@@ -1,6 +1,7 @@
 #include "pnlAoipManual.h"
 #include "settings.h"
 #include "dlgmask.h"
+#include "aoipsourcemanager.h"
 
 //(*InternalHeaders(pnlAoipManual)
 #include <wx/font.h>
@@ -144,10 +145,16 @@ void pnlAoipManual::OnbtnStreamClick(wxCommandEvent& event)
              << "a=mediaclk:direct=0\r\n";
          //@todo grandmaster if we have one
 
-        Settings::Get().Write("Input", "AoIPManual", sSdp);
+        int nInput = AoipSourceManager::SOURCE_MANUAL_A;
+        if(Settings::Get().Read("Input", "AoIP", 0) == AoipSourceManager::SOURCE_MANUAL_A)
+        {
+            nInput = AoipSourceManager::SOURCE_MANUAL_B;
+        }
+        AoipSourceManager::Get().SetSourceSDP(nInput, sSdp);
+        Settings::Get().Write("Input", "AoIP", nInput); //write the new source number in
     }
     else
     {
-        Settings::Get().Write("Input", "AoIPManual", "");
+        Settings::Get().Write("Input", "AoIP", 0); //write the new source number in
     }
 }

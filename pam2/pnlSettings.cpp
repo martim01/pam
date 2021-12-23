@@ -34,6 +34,9 @@
 #include "settingevent.h"
 #include "aoipsourcemanager.h"
 
+#ifdef __NMOS__
+#include "nmos.h"
+#endif // __NMOS__
 
 using namespace std;
 
@@ -51,6 +54,7 @@ const long pnlSettings::ID_M_PLBL1 = wxNewId();
 const long pnlSettings::ID_M_PSLIDER1 = wxNewId();
 const long pnlSettings::ID_PANEL10 = wxNewId();
 const long pnlSettings::ID_PANEL11 = wxNewId();
+const long pnlSettings::ID_PANEL12 = wxNewId();
 const long pnlSettings::ID_M_PSWP2 = wxNewId();
 const long pnlSettings::ID_M_PLST2 = wxNewId();
 const long pnlSettings::ID_M_PBTN7 = wxNewId();
@@ -143,14 +147,16 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_plsliderInputGain = new wmSlider(Panel1, ID_M_PSLIDER1, _("Slider"), wxPoint(80,330), wxSize(400,30));
     m_plsliderInputGain->Init(0,10000,5000);
     m_ppnlAoIPManual = new pnlAoipManual(m_pswpInput, ID_PANEL11, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL11"));
+    m_ppnlInputNmos = new pnlSettingsInputNmos(m_pswpInput, ID_PANEL12, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL12"));
     m_pswpInput->AddPage(Panel1, _("Auto"), false);
     m_pswpInput->AddPage(m_ppnlAoIPManual, _("Manual"), false);
+    m_pswpInput->AddPage(m_ppnlInputNmos, _("NMOS"), false);
     m_plstInput = new wmList(pnlInput, ID_M_PLST2, wxPoint(0,36), wxSize(500,34), wmList::STYLE_SELECT, 0, wxSize(100,30), 3, wxSize(-1,-1));
     m_plstInput->SetButtonColour(wxColour(wxT("#400080")));
     m_plstInput->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
     m_pbtnManage = new wmButton(pnlInput, ID_M_PBTN7, _("Manage"), wxPoint(510,38), wxSize(80,30), 0, wxDefaultValidator, _T("ID_M_PBTN7"));
     m_pbtnManage->SetColourDisabled(wxColour(wxT("#808080")));
-    m_plblInputGain = new wmLabel(Panel1, ID_M_PLBL2, wxEmptyString, wxPoint(480,400), wxSize(70,30), 0, _T("ID_M_PLBL2"));
+    m_plblInputGain = new wmLabel(pnlInput, ID_M_PLBL2, wxEmptyString, wxPoint(480,400), wxSize(70,30), 0, _T("ID_M_PLBL2"));
     m_plblInputGain->SetBorderState(uiRect::BORDER_NONE);
     m_plblInputGain->GetUiRect().SetGradient(0);
     m_plblInputGain->SetForegroundColour(wxColour(0,0,0));
@@ -241,7 +247,10 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_plstInput->AddButton(wxT("Soundcard"));
     m_plstInput->AddButton(wxT("AoIP"));
     m_plstInput->AddButton(wxT("AoIP Manual"));
-
+    #ifdef __NMOS__
+    m_nNmosButton = m_plstInput->AddButton("NMOS");
+    EnableInputButtons(Settings::Get().Read("NMOS", "Node", 0));
+    #endif
     m_plstInput->Thaw();
 
 
@@ -255,7 +264,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
 
 
-
+    Settings::Get().AddHandler("NMOS", "Node", this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pnlSettings::OnSettingChanged);
 
@@ -284,7 +293,37 @@ void pnlSettings::UpdateDisplayedSettings()
 
 void pnlSettings::OnSettingChanged(SettingEvent& event)
 {
+    #ifdef __NMOS__
+    if(event.GetSection().CmpNoCase("NMOS") == 0 && event.GetKey() == "Node")
+    {
+        EnableInputButtons(event.GetValue(0L));
+    }
+    #endif
+}
 
+void pnlSettings::EnableInputButtons(int nMode)
+{
+    #ifdef __NMOS__
+    switch(nMode)
+    {
+        case NmosManager::NODE_OFF:
+        case NmosManager::NODE_SENDER:
+            for(size_t i = 0; i < m_plstInput->GetItemCount(); i++)
+            {
+                m_plstInput->EnableButton(i, i!=m_nNmosButton);
+            }
+            m_plstInput->SelectButton(0);
+            break;
+        case NmosManager::NODE_RECEIVER:
+        case NmosManager::NODE_BOTH:
+            for(size_t i = 0; i < m_plstInput->GetItemCount(); i++)
+            {
+                m_plstInput->EnableButton(i, i==m_nNmosButton);
+            }
+            m_plstInput->SelectButton(m_nNmosButton);
+            break;
+    }
+    #endif
 }
 
 void pnlSettings::OnlstDevicesSelected(wxCommandEvent& event)
@@ -358,9 +397,12 @@ void pnlSettings::ShowRTPDefined()
     m_plstDevices->Freeze();
     m_plstDevices->Clear();
 
-    for(auto itSource = AoipSourceManager::Get().GetSourceBegin(); itSource != AoipSourceManager::Get().GetSourceEnd(); ++itSource)
+    for(auto pairSource : AoipSourceManager::Get().GetSources())
     {
-        m_plstDevices->AddButton(itSource->second.sName, wxNullBitmap, (void*)itSource->first);
+        if(pairSource.first  > 0)
+        {
+            m_plstDevices->AddButton(pairSource.second.sName, wxNullBitmap, (void*)pairSource.first);
+        }
     }
     m_plstDevices->Thaw();
 
@@ -399,6 +441,13 @@ void pnlSettings::OnlstInputSelected(wxCommandEvent& event)
 
 }
 
+void pnlSettings::ShowGain(bool bShow)
+{
+    m_plsliderInputGain->Show(bShow);
+    m_pLbl1->Show(bShow);
+    m_plblInputGain->Show(bShow);
+}
+
 void pnlSettings::RefreshInputs()
 {
     wxString sType = Settings::Get().Read(wxT("Input"), wxT("Type"), wxEmptyString);
@@ -407,17 +456,27 @@ void pnlSettings::RefreshInputs()
         m_pswpInput->ChangeSelection(0);
         m_pbtnManage->Hide();
         ShowSoundcardInputs();
+
+        ShowGain(true);
     }
     else if(sType == wxT("AoIP"))
     {
         m_pswpInput->ChangeSelection(0);
         m_pbtnManage->Show();
         ShowRTPDefined();
+
+        ShowGain(false);
     }
     else if(sType == "AoIP Manual")
     {
         m_pswpInput->ChangeSelection(1);
+        ShowGain(false);
 
+    }
+    else if(sType == "NMOS")
+    {
+        m_pswpInput->ChangeSelection("NMOS");
+        ShowGain(false);
     }
     else if(sType == wxT("Disabled"))
     {
@@ -426,6 +485,8 @@ void pnlSettings::RefreshInputs()
         m_plstDevices->Clear();
         m_plstDevices->Thaw();
         ShowPagingButtons();
+
+        ShowGain(false);
     }
 
 }

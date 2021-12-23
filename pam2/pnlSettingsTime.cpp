@@ -26,6 +26,8 @@ const long pnlSettingsTime::ID_M_PLST2 = wxNewId();
 const long pnlSettingsTime::ID_PANEL3 = wxNewId();
 const long pnlSettingsTime::ID_M_PSWP1 = wxNewId();
 const long pnlSettingsTime::ID_M_PLST3 = wxNewId();
+const long pnlSettingsTime::ID_M_PLBL1 = wxNewId();
+const long pnlSettingsTime::ID_TIMER1 = wxNewId();
 //*)
 
 BEGIN_EVENT_TABLE(pnlSettingsTime,wxPanel)
@@ -89,19 +91,29 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_pswpSettings->AddPage(m_ppnlNTP, _("NTP Servers"), false);
 	m_pswpSettings->AddPage(m_ppnlPTP, _("PTP Domain"), false);
 	m_pswpSettings->AddPage(m_ppnlLTCS, _("LTC Settings"), false);
-	m_plstSync = new wmList(this, ID_M_PLST3, wxPoint(10,10), wxSize(580,45), wmList::STYLE_SELECT, 0, wxSize(-1,40), 4, wxSize(1,1));
+	m_plstSync = new wmList(this, ID_M_PLST3, wxPoint(10,10), wxSize(580,45), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 4, wxSize(-1,-1));
 	m_plstSync->SetBackgroundColour(wxColour(0,0,0));
 	m_plstSync->SetButtonColour(wxColour(wxT("#00006A")));
 	m_plstSync->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
+	m_plblTime = new wmLabel(this, ID_M_PLBL1, _("2021-12-12 12:22:30"), wxPoint(100,60), wxSize(400,40), 0, _T("ID_M_PLBL1"));
+	m_plblTime->SetBorderState(uiRect::BORDER_NONE);
+	m_plblTime->GetUiRect().SetGradient(0);
+	m_plblTime->SetForegroundColour(wxColour(0,128,0));
+	wxFont m_plblTimeFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_plblTime->SetFont(m_plblTimeFont);
+	m_timerTime.SetOwner(this, ID_TIMER1);
+	m_timerTime.Start(500, false);
 
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsTime::OnlstNTPServersSelected);
 	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNtpServerAddClick);
 	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNtpServerEditClick);
 	Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNtpServerDeleteClick);
 	Connect(ID_M_PBTN6,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNTPServerDeleteAllClick);
+	//Connect(ID_M_PEDT1,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&pnlSettingsTime::Onm_pedtDomainText);
 	Connect(ID_M_PEDT1,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&pnlSettingsTime::OnedtDomainTextEnter);
 	Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsTime::OnlstDateSelected);
 	Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsTime::OnlstSyncSelected);
+	Connect(ID_TIMER1,wxEVT_TIMER,(wxObjectEventFunction)&pnlSettingsTime::OntimerTimeTrigger);
 	//*)
 
 	for(auto pairServer : TimeManager::Get().GetNtpServers())
@@ -261,4 +273,9 @@ void pnlSettingsTime::OnlstDateSelected(wxCommandEvent& event)
 void pnlSettingsTime::OnlstSyncSelected(wxCommandEvent& event)
 {
     Settings::Get().Write("Time", "Sync", event.GetInt());
+}
+
+void pnlSettingsTime::OntimerTimeTrigger(wxTimerEvent& event)
+{
+    m_plblTime->SetLabel(wxDateTime::Now().Format("%Y-%m-%d %H:%M:%S"));
 }

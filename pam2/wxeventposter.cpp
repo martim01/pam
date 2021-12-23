@@ -1,235 +1,208 @@
 #ifdef __NMOS__
 #include "wxeventposter.h"
 #include "log.h"
-#include "mdns.h"
+//#include "mdns.h"
 #include <wx/log.h>
 
-DEFINE_EVENT_TYPE(wxEVT_NMOS_MDNS_ALLFORNOW)
-DEFINE_EVENT_TYPE(wxEVT_NMOS_MDNS_FINISHED)
-DEFINE_EVENT_TYPE(wxEVT_NMOS_MDNS_RESOLVED)
-DEFINE_EVENT_TYPE(wxEVT_NMOS_MDNS_REMOVED)
-DEFINE_EVENT_TYPE(wxEVT_NMOS_CURL_DONE)
-DEFINE_EVENT_TYPE(wxEVT_NMOS_REG_ERROR)
 
-DEFINE_EVENT_TYPE(wxEVT_NMOS_TARGET)
-DEFINE_EVENT_TYPE(wxEVT_NMOS_PATCH_SENDER)
-DEFINE_EVENT_TYPE(wxEVT_NMOS_PATCH_RECEIVER)
-DEFINE_EVENT_TYPE(wxEVT_NMOS_ACTIVATE_RECEIVER)
-DEFINE_EVENT_TYPE(wxEVT_NMOS_ACTIVATE_SENDER)
+wxDEFINE_EVENT(wxEVT_NMOS_TARGET,wxNmosNodeConnectionEvent);
+wxDEFINE_EVENT(wxEVT_NMOS_PATCH_SENDER,wxNmosNodeConnectionEvent);
+wxDEFINE_EVENT(wxEVT_NMOS_PATCH_RECEIVER,wxNmosNodeConnectionEvent);
+wxDEFINE_EVENT(wxEVT_NMOS_ACTIVATE_RECEIVER,wxNmosNodeConnectionEvent);
+wxDEFINE_EVENT(wxEVT_NMOS_ACTIVATE_SENDER,wxNmosNodeConnectionEvent);
 
-wxEventPoster::wxEventPoster(wxEvtHandler* pHandler) :
-m_pHandler(pHandler)
+
+wxDEFINE_EVENT(wxEVT_NMOS_REGNODE_FOUND, wxNmosNodeRegistrationEvent);
+wxDEFINE_EVENT(wxEVT_NMOS_REGNODE_REMOVED, wxNmosNodeRegistrationEvent);
+wxDEFINE_EVENT(wxEVT_NMOS_REGNODE_CHANGED, wxNmosNodeRegistrationEvent);
+wxDEFINE_EVENT(wxEVT_NMOS_REGISTRATION_CHANGED, wxNmosNodeRegistrationEvent);
+
+wxEventPoster::wxEventPoster(wxEvtHandler* pHandler)
 {
-
-}
-
-void wxEventPoster::InstanceResolved(std::shared_ptr<dnsInstance> pInstance)
-{
-    if(m_pHandler)
+    if(pHandler)
     {
-        wxLogDebug(wxT("Instance resolved"));
-        wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_MDNS_RESOLVED);
-        pEvent->SetDnsInstance(pInstance);
-        wxQueueEvent(m_pHandler, pEvent);
-    }
-}
-
-void wxEventPoster::InstanceRemoved(std::shared_ptr<dnsInstance> pInstance)
-{
-    if(m_pHandler)
-    {
-        wxLogDebug(wxT("Instance removed"));
-        wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_MDNS_REMOVED);
-        pEvent->SetDnsInstance(pInstance);
-        wxQueueEvent(m_pHandler, pEvent);
-    }
-}
-
-void wxEventPoster::AllForNow(const std::string& sService)
-{
-    if(m_pHandler)
-    {
-        wxLogDebug(wxT("All for now"));
-        wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_MDNS_ALLFORNOW);
-        pEvent->SetString(wxString::FromUTF8(sService.c_str()));
-        wxQueueEvent(m_pHandler, pEvent);
-    }
-}
-
-void wxEventPoster::Finished()
-{
-    if(m_pHandler)
-    {
-        wxLogDebug(wxT("Finished"));
-        wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_MDNS_FINISHED);
-        wxQueueEvent(m_pHandler, pEvent);
-    }
-}
-
-void wxEventPoster::CurlDone(unsigned long nResult, const std::string& sResult, long nUserType, const std::string& sResourceId)
-{
-    if(m_pHandler)
-    {
-        wxLogDebug(wxT("Curl done"));
-        wxNmosEvent* pEvent(new wxNmosEvent(wxEVT_NMOS_CURL_DONE));
-        pEvent->SetInt(nResult);
-        pEvent->SetString(wxString::FromUTF8(sResult.c_str()));
-        pEvent->SetExtraLong(nUserType);
-        wxQueueEvent(m_pHandler, pEvent);
-    }
-}
-
-void wxEventPoster::RegistrationNodeError()
-{
-    if(m_pHandler)
-    {
-        wxLogDebug(wxT("RegistrationNodeError"));
-        wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_REG_ERROR);
-        wxQueueEvent(m_pHandler, pEvent);
+        m_lstHandlers.push_back(pHandler);
     }
 }
 
 
 void wxEventPoster::Target(const std::string& sReceiverId, const std::string& sTransportFile, unsigned short nPort)
 {
-    if(m_pHandler)
+    for(auto pHandler : m_lstHandlers)
     {
-        wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_TARGET);
-        pEvent->SetString(wxString::FromUTF8(sReceiverId.c_str()));
+        wxNmosNodeConnectionEvent* pEvent = new wxNmosNodeConnectionEvent(wxEVT_NMOS_TARGET);
+        pEvent->SetResourceId(sReceiverId);
         pEvent->SetTransportFile(sTransportFile);
-        pEvent->SetInt(nPort);
-        wxQueueEvent(m_pHandler, pEvent);
+        pEvent->SetPort(nPort);
+        wxQueueEvent(pHandler, pEvent);
     }
 }
 
-void wxEventPoster::PatchSender(const std::string& sSenderId, const connectionSender& conPatch, unsigned short nPort)
+void wxEventPoster::PatchSender(const std::string& sSenderId, const pml::nmos::connectionSender<pml::nmos::activationResponse>& conPatch, unsigned short nPort)
 {
-    if(m_pHandler)
+    for(auto pHandler : m_lstHandlers)
     {
-        wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_PATCH_SENDER);
-        pEvent->SetString(wxString::FromUTF8(sSenderId.c_str()));
+        wxNmosNodeConnectionEvent* pEvent = new wxNmosNodeConnectionEvent(wxEVT_NMOS_PATCH_SENDER);
+        pEvent->SetResourceId(sSenderId);
         pEvent->SetSenderConnection(conPatch);
-        pEvent->SetInt(nPort);
-        wxQueueEvent(m_pHandler, pEvent);
+        pEvent->SetPort(nPort);
+        wxQueueEvent(pHandler, pEvent);
     }
 }
 
-void wxEventPoster::PatchReceiver(const std::string& sReceiverId, const connectionReceiver& conPatch, unsigned short nPort)
+void wxEventPoster::PatchReceiver(const std::string& sReceiverId, const pml::nmos::connectionReceiver<pml::nmos::activationResponse>& conPatch, unsigned short nPort)
 {
-    if(m_pHandler)
+    for(auto pHandler : m_lstHandlers)
     {
-        wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_PATCH_RECEIVER);
-        pEvent->SetString(wxString::FromUTF8(sReceiverId.c_str()));
+        wxNmosNodeConnectionEvent* pEvent = new wxNmosNodeConnectionEvent(wxEVT_NMOS_PATCH_RECEIVER);
+        pEvent->SetResourceId(sReceiverId);
         pEvent->SetReceiverConnection(conPatch);
-        pEvent->SetInt(nPort);
-        wxQueueEvent(m_pHandler, pEvent);
+        pEvent->SetPort(nPort);
+        wxQueueEvent(pHandler, pEvent);
     }
 }
 
 void wxEventPoster::SenderActivated(const std::string& sSenderId)
 {
-    if(m_pHandler)
+    for(auto pHandler : m_lstHandlers)
     {
-        wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_ACTIVATE_SENDER);
-        pEvent->SetString(wxString::FromUTF8(sSenderId.c_str()));
-        wxQueueEvent(m_pHandler, pEvent);
+        wxNmosNodeConnectionEvent* pEvent = new wxNmosNodeConnectionEvent(wxEVT_NMOS_ACTIVATE_SENDER);
+        pEvent->SetResourceId(sSenderId);
+        wxQueueEvent(pHandler, pEvent);
     }
 }
 
 void wxEventPoster::ReceiverActivated(const std::string& sReceiverId)
 {
-    if(m_pHandler)
+    for(auto pHandler : m_lstHandlers)
     {
-        wxNmosEvent* pEvent = new wxNmosEvent(wxEVT_NMOS_ACTIVATE_RECEIVER);
-        pEvent->SetString(wxString::FromUTF8(sReceiverId.c_str()));
-        wxQueueEvent(m_pHandler, pEvent);
+        wxNmosNodeConnectionEvent* pEvent = new wxNmosNodeConnectionEvent(wxEVT_NMOS_ACTIVATE_RECEIVER);
+        pEvent->SetResourceId(sReceiverId);
+        wxQueueEvent(pHandler, pEvent);
     }
 }
 
 
-IMPLEMENT_DYNAMIC_CLASS(wxNmosEvent, wxCommandEvent)
+void wxEventPoster::RegistrationNodeFound(const std::string& sUrl, unsigned short nPriority, const pml::nmos::ApiVersion& version)
+{
+    for(auto pHandler : m_lstHandlers)
+    {
+        wxNmosNodeRegistrationEvent* pEvent = new wxNmosNodeRegistrationEvent(wxEVT_NMOS_REGNODE_FOUND);
+        pEvent->SetNodeUrl(sUrl);
+        pEvent->SetNodePriority(nPriority);
+        pEvent->SetNodeVersion(version);
+        pEvent->SetNodeStatus(true);
+        wxQueueEvent(pHandler, pEvent);
+    }
+}
 
-wxNmosEvent::wxNmosEvent(wxEventType type) : wxCommandEvent(type)
+void wxEventPoster::RegistrationNodeRemoved(const std::string& sUrl)
+{
+    for(auto pHandler : m_lstHandlers)
+    {
+        wxNmosNodeRegistrationEvent* pEvent = new wxNmosNodeRegistrationEvent(wxEVT_NMOS_REGNODE_REMOVED);
+        pEvent->SetNodeUrl(sUrl);
+        wxQueueEvent(pHandler, pEvent);
+    }
+}
+
+void wxEventPoster::wxEventPoster::RegistrationNodeChanged(const std::string& sUrl, unsigned short nPriority, bool bGood, const pml::nmos::ApiVersion& version)
+{
+    for(auto pHandler : m_lstHandlers)
+    {
+        wxNmosNodeRegistrationEvent* pEvent = new wxNmosNodeRegistrationEvent(wxEVT_NMOS_REGNODE_CHANGED);
+        pEvent->SetNodeUrl(sUrl);
+        pEvent->SetNodePriority(nPriority);
+        pEvent->SetNodeVersion(version);
+        pEvent->SetNodeStatus(bGood);
+        wxQueueEvent(pHandler, pEvent);
+    }
+}
+
+
+void wxEventPoster::RegistrationChanged(const std::string& sUrl, pml::nmos::EventPoster::enumRegState eState)
+{
+    for(auto pHandler : m_lstHandlers)
+    {
+        wxNmosNodeRegistrationEvent* pEvent = new wxNmosNodeRegistrationEvent(wxEVT_NMOS_REGISTRATION_CHANGED);
+        pEvent->SetRegistered(eState);
+        pEvent->SetNodeUrl(sUrl);
+        wxQueueEvent(pHandler, pEvent);
+    }
+}
+
+
+IMPLEMENT_DYNAMIC_CLASS(wxNmosNodeConnectionEvent, wxCommandEvent)
+
+wxNmosNodeConnectionEvent::wxNmosNodeConnectionEvent(wxEventType type) : wxCommandEvent(type)
 {
 
 }
 
-wxNmosEvent::wxNmosEvent(const wxNmosEvent& event) : wxCommandEvent(event),
+wxNmosNodeConnectionEvent::wxNmosNodeConnectionEvent(const wxNmosNodeConnectionEvent& event) : wxCommandEvent(event),
 m_sTransportFile(event.GetTransportFile()),
 m_conSender(event.GetSenderConnection()),
-m_conReceiver(event.GetReceiverConnection())
+m_conReceiver(event.GetReceiverConnection()),
+m_sResourceId(event.GetResourceId()),
+m_nPort(event.GetPort())
 {
 
 }
 
-void wxNmosEvent::SetTransportFile(const std::string& sTransportFile)
+void wxNmosNodeConnectionEvent::SetTransportFile(const std::string& sTransportFile)
 {
     m_sTransportFile = sTransportFile;
 }
 
-const wxString& wxNmosEvent::GetTransportFile() const
+const std::string& wxNmosNodeConnectionEvent::GetTransportFile() const
 {
     return m_sTransportFile;
 }
 
-void wxNmosEvent::SetSenderConnection(const connectionSender& con)
+void wxNmosNodeConnectionEvent::SetSenderConnection(const pml::nmos::connectionSender<pml::nmos::activationResponse>& con)
 {
     m_conSender = con;
 }
 
-const connectionSender& wxNmosEvent::GetSenderConnection() const
+const std::experimental::optional<pml::nmos::connectionSender<pml::nmos::activationResponse>>& wxNmosNodeConnectionEvent::GetSenderConnection() const
 {
     return m_conSender;
 }
 
-void wxNmosEvent::SetReceiverConnection(const connectionReceiver& con)
+void wxNmosNodeConnectionEvent::SetReceiverConnection(const pml::nmos::connectionReceiver<pml::nmos::activationResponse>& con)
 {
     m_conReceiver = con;
 }
 
-const connectionReceiver& wxNmosEvent::GetReceiverConnection() const
+const std::experimental::optional<pml::nmos::connectionReceiver<pml::nmos::activationResponse>>& wxNmosNodeConnectionEvent::GetReceiverConnection() const
 {
     return m_conReceiver;
 }
 
 
-wxString wxNmosEvent::GetResourceId() const
+
+IMPLEMENT_DYNAMIC_CLASS(wxNmosNodeRegistrationEvent, wxCommandEvent)
+
+
+wxNmosNodeRegistrationEvent::wxNmosNodeRegistrationEvent(wxEventType type) : wxCommandEvent(type),
+m_nPriority(-1),
+m_bGood(false),
+m_eState(pml::nmos::EventPoster::enumRegState::NODE_PEER)
 {
-    return GetString();
-}
-wxString wxNmosEvent::GetCurlResponse() const
-{
-    return GetString();
+
 }
 
-wxString wxNmosEvent::GetService() const
+wxNmosNodeRegistrationEvent::wxNmosNodeRegistrationEvent(const wxNmosNodeRegistrationEvent& event) : wxCommandEvent(event),
+  m_sUrl(event.GetNodeUrl()),
+  m_nPriority(event.GetNodePriority()),
+  m_version(event.GetNodeVersion()),
+  m_bGood(event.GetNodeStatus()),
+  m_eState(event.GetRegistered())
 {
-    return GetString();
-}
 
-int wxNmosEvent::GetPort() const
-{
-    return GetInt();
-}
-
-int wxNmosEvent::GetCurlResult() const
-{
-    return GetInt();
-}
-
-int wxNmosEvent::GetCurlType() const
-{
-    return GetExtraLong();
 }
 
 
-void wxNmosEvent::SetDnsInstance(std::shared_ptr<dnsInstance> pInstance)
-{
-    m_pDnsInstance = pInstance;
-}
 
-const std::shared_ptr<dnsInstance> wxNmosEvent::GetDnsInstance() const
-{
-    return m_pDnsInstance;
-}
+
 #endif

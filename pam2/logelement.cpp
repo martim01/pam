@@ -5,7 +5,7 @@
 #include <wx/tokenzr.h>
 
 
-LogElement::LogElement(wxDC& dc, unsigned int nWidth, const wxString& sMessage, int nType) : m_nType(nType)
+LogElement::LogElement(wxDC& dc, unsigned int nWidth, const wxString& sMessage, int nLevel) : m_nLevel(nLevel)
 {
     wxRect rect(0,0,0,0);
     auto& rectTime = m_mHitRects.insert(std::make_pair(0, uiRect(rect,0))).first->second;
@@ -22,15 +22,22 @@ LogElement::LogElement(wxDC& dc, unsigned int nWidth, const wxString& sMessage, 
     {
         asLines[i].Trim();
         wxSize sz = uiRect::GetSizeOfText(dc, asLines[i], wxRect(0,0,nWidth-COLUMN_TIME, 20), true);
-        CreateHitRect(i+1, sz.y+2, asLines[i]);
-        m_nHeight += sz.y+2;
+        if(sz.y > 25)
+        {
+            sz.y+=20;
+        }
+        else
+        {
+            sz.y+=2;
+        }
+        CreateHitRect(i+1, sz.y, asLines[i]);
+        m_nHeight += sz.y;
     }
-
    // m_nHeight = std::max(m_nHeight, (unsigned long)30);
 
     rectTime.SetHeight(m_nHeight);
 
-    SetMinSize(nWidth, -1);
+    SetMinSize(nWidth, 1);
     SetMaxSize(nWidth, m_nHeight);
 
     m_rectEnclosing = wxRect(0, 0, nWidth, m_nHeight);
@@ -88,8 +95,12 @@ void LogElement::CreateHitRect(size_t nId, int nHeight, const wxString& sLine)
     auto& rect = m_mHitRects.insert(std::make_pair(nId, uiRect(wxRect(0,0,0,0)))).first->second;
     rect.SetGradient(0);
 
-    switch(m_nType)
+    switch(m_nLevel)
     {
+        case pml::LOG_TRACE:
+            rect.SetBackgroundColour(*wxBLACK);
+            rect.SetForegroundColour(wxColour(100,100,100));
+            break;
         case pml::LOG_DEBUG:
             rect.SetBackgroundColour(*wxBLACK);
             rect.SetForegroundColour(wxColour(150,150,150));
@@ -105,6 +116,10 @@ void LogElement::CreateHitRect(size_t nId, int nHeight, const wxString& sLine)
         case pml::LOG_ERROR:
             rect.SetBackgroundColour(wxColour(255,50,50));
             rect.SetForegroundColour(*wxBLACK);
+            break;
+        case pml::LOG_CRITICAL:
+            rect.SetBackgroundColour(wxColour(255,0,0));
+            rect.SetForegroundColour(*wxWHITE);
             break;
     }
     rect.SetWidth(m_rectEnclosing.GetWidth()-COLUMN_TIME);
@@ -134,15 +149,3 @@ void LogElement::ElementMoved()
     }
 }
 
-
-void LogElement::Filter(int nFilter) const
-{
-    if((nFilter&m_nType))
-    {
-        GrowMe(true, false);
-    }
-    else
-    {
-        GrowMe(false, false);
-    }
-}

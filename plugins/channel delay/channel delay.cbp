@@ -129,7 +129,7 @@
 			<Add directory="$(#kiss.include)" />
 			<Add directory="$(#kiss.include)/tools" />
 			<Add directory="../../pamfft" />
-			<Add directory="../../external/log/include" />
+			<Add directory="$(#log.INCLUDE)" />
 		</Compiler>
 		<Linker>
 			<Add directory="../../lib" />

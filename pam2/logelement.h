@@ -14,12 +14,11 @@ class  LogElement : public advElement
         void SelectSubElement(size_t nSub);
         void EnableSubElement(size_t nSub, bool bEnable);
 
-        int GetMessageType() const
+        int GetMessageLevel() const
         {
-            return m_nType;
+            return m_nLevel;
         }
 
-        void Filter(int nFilter) const;
 
     protected:
 
@@ -33,7 +32,7 @@ class  LogElement : public advElement
         void ElementMoved();
         static const unsigned int COLUMN_TIME = 100;
         unsigned long m_nHeight;
-        int m_nType;
+        int m_nLevel;
 };
 
 

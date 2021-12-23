@@ -180,6 +180,7 @@ class PAMBASE_IMPEXPORT advElement : public wxEvtHandler
 
         void EnableSubElement(size_t nSub, bool bEnable);
 
+
     protected:
 
         static const unsigned int ELEMENT_DISABLED = 0;
@@ -205,6 +206,7 @@ class PAMBASE_IMPEXPORT advElement : public wxEvtHandler
         wxSize m_sizeMax;
 
         unsigned int m_nHoldCount;
+        bool m_bShow;
 
         std::map<unsigned int, uiRect> m_mHitRects;
         std::map<unsigned int, uiRect>::iterator m_itDown;

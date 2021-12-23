@@ -494,7 +494,7 @@ void dlgSequence::OnbtnFrequencyUpClick(wxCommandEvent& event)
 
 void dlgSequence::OnbtnFrequencyDownClick(wxCommandEvent& event)
 {
-    if(m_nFrequencyButton != m_plstFrequency->GetItemCount()-1)
+    if(m_nFrequencyButton != static_cast<int>(m_plstFrequency->GetItemCount())-1)
     {
 
         map<int, wxXmlNode*> mNode;

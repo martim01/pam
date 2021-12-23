@@ -4,31 +4,130 @@
 		<bg>#000000</bg>
 		<pos_arg>1</pos_arg>
 		<size_arg>1</size_arg>
-		<object class="wmButton" name="ID_M_PBTN22" variable="m_pbtnNmos" member="yes">
-			<label>NMOS</label>
-			<toggle_look>1</toggle_look>
-			<toggle_left>OFF</toggle_left>
-			<toggle_right>ON</toggle_right>
-			<toggle_percent>50</toggle_percent>
-			<pos>10,10</pos>
-			<size>200,40</size>
+		<object class="wmLabel" name="ID_M_PLBL8" variable="m_pLbl9" member="yes">
+			<label>Node</label>
+			<pos>10,12</pos>
+			<size>100,40</size>
 			<fg>#FFFFFF</fg>
-			<bg>#008000</bg>
-			<style>wmButton::STYLE_SELECT</style>
-			<handler function="OnbtnNmosClick" entry="EVT_BUTTON" />
+			<bg>#400080</bg>
 		</object>
-		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnClient" member="yes">
+		<object class="wmList" name="ID_M_PLST1" variable="m_plstNode" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>5,-1</button_gap>
+			<columns>4</columns>
+			<items />
+			<pos>110,10</pos>
+			<size>400,44</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstNodeSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
 			<label>Client</label>
-			<toggle_look>1</toggle_look>
-			<toggle_left>OFF</toggle_left>
-			<toggle_right>ON</toggle_right>
-			<toggle_percent>50</toggle_percent>
-			<pos>10,60</pos>
-			<size>200,40</size>
+			<pos>10,62</pos>
+			<size>100,40</size>
 			<fg>#FFFFFF</fg>
-			<bg>#008000</bg>
-			<style>wmButton::STYLE_SELECT</style>
-			<handler function="OnbtnClientClick" entry="EVT_BUTTON" />
+			<bg>#400080</bg>
+		</object>
+		<object class="wmList" name="ID_M_PLST2" variable="m_plstClient" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>5,-1</button_gap>
+			<columns>3</columns>
+			<items />
+			<pos>110,60</pos>
+			<size>400,44</size>
+			<enabled>0</enabled>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstClientSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
+			<label>Discovery</label>
+			<pos>10,112</pos>
+			<size>100,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400080</bg>
+		</object>
+		<object class="wmList" name="ID_M_PLST3" variable="m_plstDiscovery" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>5,-1</button_gap>
+			<columns>2</columns>
+			<items />
+			<pos>110,110</pos>
+			<size>400,44</size>
+			<enabled>0</enabled>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI</style>
+			<handler function="OnlstClientSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+		<object class="wxPanel" name="ID_PANEL1" variable="Panel1" member="yes">
+			<pos>10,160</pos>
+			<size>480,270</size>
+			<bg>#235A35</bg>
+			<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
+				<label>Registration Servers</label>
+				<pos>5,5</pos>
+				<size>232,28</size>
+				<fg>#FFFFFF</fg>
+				<bg>#004040</bg>
+			</object>
+			<object class="wmList" name="ID_M_PLST4" variable="m_plstRegistration" member="yes">
+				<button_gap>0,1</button_gap>
+				<button_size>-1,20</button_size>
+				<items />
+				<pos>5,35</pos>
+				<size>232,205</size>
+				<enabled>0</enabled>
+				<bg>#000000</bg>
+				<style>wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI</style>
+				<handler function="OnlstClientSelected" entry="EVT_LIST_SELECTED" />
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL5" variable="m_plblDiscoveryNode" member="yes">
+				<label></label>
+				<pos>85,240</pos>
+				<size>151,28</size>
+				<fg>#000000</fg>
+				<bg>#FFFFFF</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL6" variable="m_pLbl6" member="yes">
+				<label>Discovery:</label>
+				<pos>5,240</pos>
+				<size>80,28</size>
+				<fg>#FFFFFF</fg>
+				<bg>#804000</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl4" member="yes">
+				<label>Query Servers</label>
+				<pos>243,5</pos>
+				<size>232,28</size>
+				<fg>#FFFFFF</fg>
+				<bg>#004040</bg>
+			</object>
+			<object class="wmList" name="ID_M_PLST5" variable="m_plstQuery" member="yes">
+				<button_gap>0,1</button_gap>
+				<button_size>-1,20</button_size>
+				<items />
+				<pos>243,35</pos>
+				<size>232,205</size>
+				<enabled>0</enabled>
+				<bg>#000000</bg>
+				<style>wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI</style>
+				<handler function="OnlstClientSelected" entry="EVT_LIST_SELECTED" />
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL7" variable="m_pLbl5" member="yes">
+				<label>Query:</label>
+				<pos>243,240</pos>
+				<size>80,28</size>
+				<fg>#FFFFFF</fg>
+				<bg>#804000</bg>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL9" variable="m_plblQueryNode" member="yes">
+				<label></label>
+				<pos>323,240</pos>
+				<size>151,28</size>
+				<fg>#000000</fg>
+				<bg>#FFFFFF</bg>
+			</object>
 		</object>
 	</object>
 </wxsmith>

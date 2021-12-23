@@ -1,4 +1,4 @@
-#include "pnlAoIPSelection.h"
+#include "pnlnodeselection.h"
 #include "settings.h"
 #include <wx/app.h>
 #include "pam2Main.h"
@@ -11,44 +11,50 @@
 #include "images/pagedown_press.xpm"
 #include "images/pageup.xpm"
 #include "images/pageup_press.xpm"
-#include "aoipsourcemanager.h"
+#include "senderbuttonfactory.h"
 
-//(*InternalHeaders(pnlAoIPSelection)
+#ifdef __NMOS__
+#include "nmos.h"
+#include "sender.h"
+#include "clientapi.h"
+#endif // __NMOS__
+
+//(*InternalHeaders(pnlNodeSelection)
 #include <wx/font.h>
 #include <wx/intl.h>
 #include <wx/string.h>
 //*)
 
-//(*IdInit(pnlAoIPSelection)
-const long pnlAoIPSelection::ID_M_PLBL3 = wxNewId();
-const long pnlAoIPSelection::ID_M_PBTN3 = wxNewId();
-const long pnlAoIPSelection::ID_M_PLST1 = wxNewId();
-const long pnlAoIPSelection::ID_M_PBTN1 = wxNewId();
-const long pnlAoIPSelection::ID_M_PBTN2 = wxNewId();
-const long pnlAoIPSelection::ID_M_PBTN4 = wxNewId();
-const long pnlAoIPSelection::ID_M_PBTN5 = wxNewId();
-const long pnlAoIPSelection::ID_PANEL1 = wxNewId();
-const long pnlAoIPSelection::ID_M_PLST2 = wxNewId();
-const long pnlAoIPSelection::ID_M_PLBL1 = wxNewId();
-const long pnlAoIPSelection::ID_M_PLST3 = wxNewId();
-const long pnlAoIPSelection::ID_M_PBTN6 = wxNewId();
-const long pnlAoIPSelection::ID_PANEL2 = wxNewId();
-const long pnlAoIPSelection::ID_M_PLST4 = wxNewId();
-const long pnlAoIPSelection::ID_M_PLST5 = wxNewId();
-const long pnlAoIPSelection::ID_PANEL3 = wxNewId();
-const long pnlAoIPSelection::ID_M_PSWP1 = wxNewId();
+//(*IdInit(pnlNodeSelection)
+const long pnlNodeSelection::ID_M_PLBL3 = wxNewId();
+const long pnlNodeSelection::ID_M_PBTN3 = wxNewId();
+const long pnlNodeSelection::ID_M_PLST1 = wxNewId();
+const long pnlNodeSelection::ID_M_PBTN1 = wxNewId();
+const long pnlNodeSelection::ID_M_PBTN2 = wxNewId();
+const long pnlNodeSelection::ID_M_PBTN4 = wxNewId();
+const long pnlNodeSelection::ID_M_PBTN5 = wxNewId();
+const long pnlNodeSelection::ID_PANEL1 = wxNewId();
+const long pnlNodeSelection::ID_M_PLST2 = wxNewId();
+const long pnlNodeSelection::ID_M_PLBL1 = wxNewId();
+const long pnlNodeSelection::ID_M_PLST3 = wxNewId();
+const long pnlNodeSelection::ID_M_PBTN6 = wxNewId();
+const long pnlNodeSelection::ID_PANEL2 = wxNewId();
+const long pnlNodeSelection::ID_M_PLST4 = wxNewId();
+const long pnlNodeSelection::ID_M_PLST5 = wxNewId();
+const long pnlNodeSelection::ID_PANEL3 = wxNewId();
+const long pnlNodeSelection::ID_M_PSWP1 = wxNewId();
 //*)
 
-BEGIN_EVENT_TABLE(pnlAoIPSelection,wxPanel)
-	//(*EventTable(pnlAoIPSelection)
+BEGIN_EVENT_TABLE(pnlNodeSelection,wxPanel)
+	//(*EventTable(pnlNodeSelection)
 	//*)
 END_EVENT_TABLE()
 
 using namespace std;
 
-pnlAoIPSelection::pnlAoIPSelection(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size, int n, const wxString& s)
+pnlNodeSelection::pnlNodeSelection(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size, int n, const wxString& s)
 {
-	//(*Initialize(pnlAoIPSelection)
+	//(*Initialize(pnlNodeSelection)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
 	m_pLbl3 = new wmLabel(this, ID_M_PLBL3, _("AES67 / SMPTE2110-30 Sources"), wxPoint(0,5), wxSize(690,30), 0, _T("ID_M_PLBL3"));
@@ -119,21 +125,21 @@ pnlAoIPSelection::pnlAoIPSelection(wxWindow* parent,wxWindowID id,const wxPoint&
 	m_pSwp1->AddPage(Panel2, _("Alphabetical"), false);
 	m_pSwp1->AddPage(Panel3, _("Tags"), false);
 
-	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoIPSelection::OnbtnBackClick);
-	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlAoIPSelection::OnlstDevicesSelected);
-	Connect(ID_M_PLST1,wxEVT_LIST_PAGED,(wxObjectEventFunction)&pnlAoIPSelection::OnlstDevicesPaged);
-	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoIPSelection::OnbtnHomeClick);
-	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoIPSelection::OnbtnPreviousClick);
-	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoIPSelection::OnbtnNextClick);
-	Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoIPSelection::OnbtnEndClick);
-	Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlAoIPSelection::OnlstDevicesSelected);
-	Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlAoIPSelection::OnlstAlphabetSelected);
-	Connect(ID_M_PBTN6,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoIPSelection::OnbtnDeleteClick);
-	Connect(ID_M_PLST4,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlAoIPSelection::OnlstDevicesSelected);
-	Connect(ID_M_PLST5,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlAoIPSelection::OnlstTagsSelected);
-	Connect(ID_M_PSWP1,wxEVT_NOTEBOOK_PAGE_CHANGED,(wxObjectEventFunction)&pnlAoIPSelection::OnSwpPageChanged);
+	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlNodeSelection::OnbtnBackClick);
+	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlNodeSelection::OnlstDevicesSelected);
+	Connect(ID_M_PLST1,wxEVT_LIST_PAGED,(wxObjectEventFunction)&pnlNodeSelection::OnlstDevicesPaged);
+	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlNodeSelection::OnbtnHomeClick);
+	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlNodeSelection::OnbtnPreviousClick);
+	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlNodeSelection::OnbtnNextClick);
+	Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlNodeSelection::OnbtnEndClick);
+	Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlNodeSelection::OnlstDevicesSelected);
+	Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlNodeSelection::OnlstAlphabetSelected);
+	Connect(ID_M_PBTN6,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlNodeSelection::OnbtnDeleteClick);
+	Connect(ID_M_PLST4,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlNodeSelection::OnlstDevicesSelected);
+	Connect(ID_M_PLST5,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlNodeSelection::OnlstTagsSelected);
+	Connect(ID_M_PSWP1,wxEVT_NOTEBOOK_PAGE_CHANGED,(wxObjectEventFunction)&pnlNodeSelection::OnSwpPageChanged);
 	//*)
-	Connect(wxEVT_SHOW, (wxObjectEventFunction)&pnlAoIPSelection::OnShown);
+	Connect(wxEVT_SHOW, (wxObjectEventFunction)&pnlNodeSelection::OnShown);
 
 	m_pbtnEnd->SetBitmapLabel(wxBitmap(end_hz_xpm));
     m_pbtnEnd->SetBitmapSelected(wxBitmap(end_hz_press_xpm));
@@ -154,23 +160,41 @@ pnlAoIPSelection::pnlAoIPSelection(wxWindow* parent,wxWindowID id,const wxPoint&
         wxString str(wxString::Format("%c", ascii));
         m_plstAlphabet->AddButton(str);
     }
-    AoipSourceManager::Get();
+
+
+    #ifdef __NMOS__
+	SetupList(m_plstAlphebtical);
+	SetupList(m_plstDevices);
+	SetupList(m_plstTagged);
+
+
+
+    Settings::Get().AddHandler("NMOS", "Node", this);
+    Settings::Get().AddHandler("NMOS", "Client", this);
+    #endif // __NMOS__
 
 	SetPosition(pos);
 	SetSize(size);
 }
 
-pnlAoIPSelection::~pnlAoIPSelection()
+void pnlNodeSelection::SetupList(wmList* plst)
 {
-	//(*Destroy(pnlAoIPSelection)
+    plst->SetButtonFactory(new wmSenderButtonFactory());
+    plst->SetSelectedButtonColour(wxColour(wxT("#008000")));
+    plst->SetDisabledColour(wxColour(wxT("#808080")));
+}
+
+pnlNodeSelection::~pnlNodeSelection()
+{
+	//(*Destroy(pnlNodeSelection)
 	//*)
 }
 
-void pnlAoIPSelection::OnShown(wxShowEvent& event)
+void pnlNodeSelection::OnShown(wxShowEvent& event)
 {
     if(event.IsShown())
     {
-        wxString sScreen(Settings::Get().Read("AoIPSelection", "Screen", "Paged"));
+        wxString sScreen(Settings::Get().Read("NodeSelection", "Screen", "Paged"));
         if(sScreen == "Paged")
         {
             ShowPaged();
@@ -188,66 +212,66 @@ void pnlAoIPSelection::OnShown(wxShowEvent& event)
 }
 
 
-void pnlAoIPSelection::ShowPaged()
+void pnlNodeSelection::ShowPaged()
 {
     m_plstDevices->Freeze();
     m_plstDevices->Clear();
 
-    for(auto pairSource : AoipSourceManager::Get().GetSources())
-    {
-        if(pairSource.first > 0)
-        {
-            m_plstDevices->AddButton(pairSource.second.sName, wxNullBitmap, (void*)pairSource.first);
-        }
-    }
+
+//    std::for_each(pml::nmos::ClientApiClientApi::Get().GetSenderBegin(), pml::nmos::ClientApiClientApi::Get().GetSenderEnd(), [this](std::shared_ptr<Sender> pSender)
+//    {
+//            m_plstDevices->AddButton(pSender->GetLabel());
+//            m_plstDevices->SetButtonAuxillaryText(nIndex, wxString(pSender->GetId()));
+//
+//    });
 
     m_plstDevices->Thaw();
     ShowPagingButtons();
 
-    size_t nButton = m_plstDevices->FindButton((void*)Settings::Get().Read(wxT("Input"), wxT("AoIP"), 0));
-    if(nButton != 0xFFFFFFFF)
-    {
-        m_plstDevices->SelectButton(nButton,false);
-    }
+//    size_t nButton = m_plstDevices->FindButton((void*)Settings::Get().Read(wxT("Input"), wxT("AoIP"), 0));
+//    if(nButton != 0xFFFFFFFF)
+//    {
+//        m_plstDevices->SelectButton(nButton,false);
+//    }
 }
 
-void pnlAoIPSelection::ShowAlphabetical()
+void pnlNodeSelection::ShowAlphabetical()
 {
     m_plstAlphabet->SelectButton(Settings::Get().Read("AoIPSelection", "Alphabet", ""));
 }
 
 
-void pnlAoIPSelection::OnlstDevicesSelected(wxCommandEvent& event)
+void pnlNodeSelection::OnlstDevicesSelected(wxCommandEvent& event)
 {
     Settings::Get().Write(wxT("Input"), wxT("AoIP"), (int)event.GetClientData());
     ShowMainScreen();
 }
 
-void pnlAoIPSelection::OnbtnHomeClick(wxCommandEvent& event)
+void pnlNodeSelection::OnbtnHomeClick(wxCommandEvent& event)
 {
     m_plstDevices->ShowFirstPage(false,false);
 
 }
 
-void pnlAoIPSelection::OnbtnPreviousClick(wxCommandEvent& event)
+void pnlNodeSelection::OnbtnPreviousClick(wxCommandEvent& event)
 {
     m_plstDevices->ShowPreviousPage(false, false);
 
 }
 
-void pnlAoIPSelection::OnbtnNextClick(wxCommandEvent& event)
+void pnlNodeSelection::OnbtnNextClick(wxCommandEvent& event)
 {
     m_plstDevices->ShowNextPage(false, false);
 
 }
 
-void pnlAoIPSelection::OnbtnEndClick(wxCommandEvent& event)
+void pnlNodeSelection::OnbtnEndClick(wxCommandEvent& event)
 {
     m_plstDevices->ShowLastPage(false, false);
 
 }
 
-void pnlAoIPSelection::ShowPagingButtons()
+void pnlNodeSelection::ShowPagingButtons()
 {
     m_pbtnEnd->Show(m_plstDevices->GetPageCount() > 1 && m_plstDevices->GetCurrentPageNumber() < m_plstDevices->GetPageCount());
     m_pbtnHome->Show(m_plstDevices->GetPageCount() > 1 && m_plstDevices->GetCurrentPageNumber() > 1);
@@ -255,12 +279,12 @@ void pnlAoIPSelection::ShowPagingButtons()
     m_pbtnNext->Show(m_plstDevices->GetPageCount() > 1 && m_plstDevices->GetCurrentPageNumber() < m_plstDevices->GetPageCount());
 }
 
-void pnlAoIPSelection::OnbtnBackClick(wxCommandEvent& event)
+void pnlNodeSelection::OnbtnBackClick(wxCommandEvent& event)
 {
     ShowMainScreen();
 }
 
-void pnlAoIPSelection::ShowMainScreen()
+void pnlNodeSelection::ShowMainScreen()
 {
     Settings::Get().Write("Splash", "Screen", "Main");
     //wmSwitcherPanel* pPanel = dynamic_cast<wmSwitcherPanel*>(GetParent());
@@ -270,12 +294,12 @@ void pnlAoIPSelection::ShowMainScreen()
     //}
 }
 
-void pnlAoIPSelection::OnlstAlphabetSelected(wxCommandEvent& event)
+void pnlNodeSelection::OnlstAlphabetSelected(wxCommandEvent& event)
 {
    DoAlphabetSearch(event.GetString());
 }
 
-void pnlAoIPSelection::DoAlphabetSearch(const wxString& sLetter)
+void pnlNodeSelection::DoAlphabetSearch(const wxString& sLetter)
 {
     std::map<wxString, unsigned int> mMatch;
     std::set<wxString> setAlphabet;
@@ -339,12 +363,12 @@ void pnlAoIPSelection::DoAlphabetSearch(const wxString& sLetter)
 }
 
 
-void pnlAoIPSelection::OnlstTagsSelected(wxCommandEvent& event)
+void pnlNodeSelection::OnlstTagsSelected(wxCommandEvent& event)
 {
     DoTagSearch(event.GetString());
 }
 
-void pnlAoIPSelection::OnSwpPageChanged(wxBookCtrlEvent& event)
+void pnlNodeSelection::OnSwpPageChanged(wxBookCtrlEvent& event)
 {
     Settings::Get().Write("AoIPSelection", "Screen", m_pSwp1->GetSelectionName());
     if(m_pSwp1->GetSelectionName() == "Paged")
@@ -362,22 +386,22 @@ void pnlAoIPSelection::OnSwpPageChanged(wxBookCtrlEvent& event)
 }
 
 
-void pnlAoIPSelection::ShowTagged()
+void pnlNodeSelection::ShowTagged()
 {
     DoTagSearch(wxEmptyString);
 }
 
-void pnlAoIPSelection::OnlstDevicesPaged(wxCommandEvent& event)
+void pnlNodeSelection::OnlstDevicesPaged(wxCommandEvent& event)
 {
     ShowPagingButtons();
 }
 
-void pnlAoIPSelection::OnbtnDeleteClick(wxCommandEvent& event)
+void pnlNodeSelection::OnbtnDeleteClick(wxCommandEvent& event)
 {
     DoAlphabetSearch("Del");
 }
 
-void pnlAoIPSelection::DoTagSearch(const wxString& sTag)
+void pnlNodeSelection::DoTagSearch(const wxString& sTag)
 {
 
     if(m_lstTag.empty())

@@ -281,6 +281,7 @@ wxSize uiRect::GetSizeOfText(wxDC& dc, const wxString& sText, const wxRect& rect
 
 wxSize uiRect::DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int nAlign, bool bWrap, bool bDraw, bool bClip, bool bClippingRegion)
 {
+    bWrap = true;
 
     if(bDraw && bClippingRegion)
         dc.SetClippingRegion(rect);
@@ -290,7 +291,7 @@ wxSize uiRect::DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int 
 
     bool bOverflow(false);
 
-    wxStringTokenizer stzLine(sText,wxT("\n"),wxTOKEN_RET_EMPTY_ALL);
+    wxStringTokenizer stzLine(sText,"\r\n",wxTOKEN_RET_EMPTY_ALL);
     while(stzLine.HasMoreTokens() && !bOverflow)
     {
         wxString sLine(stzLine.GetNextToken());
@@ -301,7 +302,7 @@ wxSize uiRect::DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int 
             szReturn.x = 0;
             if(bClip && szReturn.y > rect.GetHeight())
             {
-            //    sOutLine = wxT("...");
+            //    sOutLine = "...";
                 bOverflow = true;
             }
         }
@@ -309,17 +310,14 @@ wxSize uiRect::DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int 
         {
             if(bWrap)
             {
-                wxStringTokenizer stz(sLine,wxT(" "),wxTOKEN_RET_EMPTY_ALL);
+                wxStringTokenizer stz(sLine," ,.!{}[]",wxTOKEN_RET_DELIMS);
                 szReturn.x = 0;
                 int nToken(0);
                 while(stz.HasMoreTokens())
                 {
                     wxString sWord(stz.GetNextToken());
                     wxSize szExtent;
-                    if(nToken == 0)
-                        szExtent = dc.GetTextExtent(sWord);
-                    else
-                        szExtent = dc.GetTextExtent(wxString::Format(wxT(" %s"),sWord.c_str()));
+                    szExtent = dc.GetTextExtent(sWord);
 
                     szReturn.x += szExtent.GetWidth();
 
@@ -328,28 +326,22 @@ wxSize uiRect::DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int 
                         szReturn.y += dc.GetTextExtent(sOutLine).GetHeight();
 
                         sOutput += sOutLine;
-                        sOutput += wxT("\n");
-                        sOutLine = wxT("");
+                        sOutput += "\n";
+                        sOutLine = "";
 
                         szReturn.x = dc.GetTextExtent(sWord).GetWidth();
                         nToken=0;
                     }
-                    else
-                    {
-                        if(nToken != 0)
-                            sOutLine += wxT(" ");
-                    }
 
                     sOutLine += sWord;
                     nToken++;
-
-    //                wxASSERT(dc.GetTextExtent(sOutLine).GetWidth() <= rect.GetWidth());
                 }
             }
             else
             {
                 sOutLine = sLine;
             }
+
             szReturn.y += dc.GetTextExtent(sOutLine).GetHeight();
             if(bClip && szReturn.y > rect.GetHeight())
             {
@@ -360,15 +352,12 @@ wxSize uiRect::DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int 
                         sOutput = sOutput.Left(sOutput.length()-1);
                     }
                 }
-                //sOutput << wxT("...");
-               // bOverflow = true;
             }
         }
-        if(!bOverflow)
+        sOutput += sOutLine;
+        if(stzLine.HasMoreTokens()) //if more tokens then we need to add a \n
         {
-            sOutput += sOutLine;
-            if(stzLine.HasMoreTokens()) //if more tokens then we need to add a \n
-                sOutput += wxT("\n");
+            sOutput += "\n";
         }
     }
 

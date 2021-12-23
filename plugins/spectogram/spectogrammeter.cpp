@@ -7,7 +7,6 @@
 #include "fftAlgorithm.h"
 #include "timedbuffer.h"
 #include "spectogrambuilder.h"
-#include "log.h"
 #include "settings.h"
 
 

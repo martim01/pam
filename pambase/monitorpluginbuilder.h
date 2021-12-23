@@ -39,6 +39,8 @@ class PAMBASE_IMPEXPORT MonitorPluginBuilder : public wxEvtHandler
             return m_bWantsQoSAlways;
         }
 
+        wxWindow* GetMainWindow() const { return m_pWindow;}
+
     protected:
 
         friend class MonitorPluginFactory;
@@ -70,6 +72,7 @@ class PAMBASE_IMPEXPORT MonitorPluginBuilder : public wxEvtHandler
     private:
         wmSwitcherPanel* m_pswpMonitor;
         wmSwitcherPanel* m_pswpOptions;
+        wxWindow* m_pWindow;
         std::list<pairOptionPanel_t> m_lstOptions;
 
         std::set<wxEvtHandler*> m_setHandlers;

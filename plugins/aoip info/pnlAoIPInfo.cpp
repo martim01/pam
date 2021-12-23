@@ -11,7 +11,7 @@
 #include "settings.h"
 #include <wx/dcclient.h>
 #include <iostream>
-
+#include <memory>
 //(*InternalHeaders(pnlAoIPInfo)
 #include <wx/font.h>
 #include <wx/intl.h>
@@ -996,7 +996,7 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
     wxArrayString asLines(wxStringTokenize(aSession.sRawSDP, "\n"));
     for(size_t i = 0; i < asLines.GetCount(); i++)
     {
-        m_pSdp->AddElement(new SdpElement(dc, m_pSdp->GetClientRect().GetWidth(), asLines[i]));
+        m_pSdp->AddElement(std::make_shared<SdpElement>(dc, m_pSdp->GetClientRect().GetWidth(), asLines[i]));
     }
 
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())

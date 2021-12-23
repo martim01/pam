@@ -21,17 +21,12 @@
 
 #include <map>
 #include <wx/string.h>
-#include <stdio.h>
-#include <iostream>
-#include <fstream>
 #include "dlldefine.h"
+#include "inisection.h"
+#include <memory>
 
-
-class iniSection;
-
-typedef std::map<wxString,iniSection*> mapSection;
-typedef std::map<wxString,iniSection*>::iterator itSection;
-typedef std::map<wxString,iniSection*>::const_iterator itConstSection;
+typedef std::map<wxString,std::shared_ptr<iniSection>, ci_less> mapSection;
+typedef mapSection::iterator itSection;
 /**
 *   @brief simple class to read and write ini files
 *   @author Matthew Martin
@@ -84,13 +79,13 @@ public:
     *   @param sFilename the path and filename of the ini file to write to
     *   @return <i>bool<i> true on success
     **/
-    bool WriteIniFile(const wxString& sFilename);
+    bool WriteIniFile(const wxString& sFilename="");
 
     /** @brief  Creates or returns a section to store keys and values in
     *   @param sSectionName the name of the sectino
     *   @return <i>iniSection*</i> pointer to the created section.
     **/
-	iniSection* CreateSection(const wxString& sSectionName);
+	std::shared_ptr<iniSection> CreateSection(const wxString& sSectionName);
 
 	/** @brief Sets the value of the specified key. Creating both the key and section if needed
 	*   @param sSectionName the name of the section
@@ -99,13 +94,6 @@ public:
 	*   @return <i>void</i>
 	**/
 	void SetSectionValue(const wxString& sSectionName, const wxString& sKey, const wxString& sValue);
-
-
-
-	void RemoveSectionValue(const wxString& sSectionName, const wxString& sKey);
-
-	void RemoveSection(const wxString& sSectionName);
-	void RemoveAllSections();
 
 	/** @brief Returns the number of entries in a given section
 	*   @param sSectionName the name of the section
@@ -117,29 +105,29 @@ public:
     /** @brief Gets an interator pointing to the first section of the ini file
     *   @return std::map<wxString,iniSection*>::iterator
     **/
-    std::map<wxString,iniSection*>::iterator GetSectionBegin();
+    mapSection::iterator GetSectionBegin();
 
     /** @brief Gets an iterator pointing to the end of the sections in the ini file
     *   @return std::map<wxString,iniSection*>::iterator
     **/
-	std::map<wxString,iniSection*>::iterator GetSectionEnd();
+	mapSection::iterator GetSectionEnd();
+
+	const mapSection& GetSections() const { return m_mSections;}
 
     /** @brief Get a pointer to an iniSection with name sSectionName
     *   @param sSectionName the section to find
     *   @return <i>iniSection*</i> pointer to the iniSection object that encapsulates that section
     **/
-	const iniSection* GetSection(const wxString& sSectionName) const;
+	std::shared_ptr<iniSection> GetSection(const wxString& sSectionName);
 
+    bool RemoveSectionValue(const wxString& sSection, const wxString& sKey);
+    void RemoveSection(const wxString& sSection);
+    void DeleteSections();
 
 protected:
-    std::map<wxString,iniSection*> m_mSections;
-	std::ifstream m_if;
-	std::ofstream m_of;
+    mapSection m_mSections;
 
-
-
-    void DeleteSections();
-public:
+    wxString m_sFilepath;
 
 };
 

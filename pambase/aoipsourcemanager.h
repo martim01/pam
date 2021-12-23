@@ -10,13 +10,13 @@
 
 struct PAMBASE_IMPEXPORT AoIPSource
 {
-    AoIPSource(unsigned int nI,const wxString& sN=wxEmptyString, const wxString& sD=wxEmptyString, const wxString& sdp=wxEmptyString) :
+    AoIPSource(int nI,const wxString& sN=wxEmptyString, const wxString& sD=wxEmptyString, const wxString& sdp=wxEmptyString) :
         nIndex(nI),
         sName(sN),
         sDetails(sD),
         sSDP(sdp)
         {}
-    unsigned int nIndex;
+    int nIndex;
     wxString sName;
     wxString sType;
     wxString sDetails;
@@ -29,11 +29,11 @@ class wxZCPoster;
 
 namespace pml
 {
-    class Browser;
-};
+    namespace dnssd
+    {
+        class Browser;
+    };
 
-namespace pml
-{
     class SapServer;
 };
 
@@ -46,22 +46,23 @@ class PAMBASE_IMPEXPORT AoipSourceManager : public wxEvtHandler
         bool LoadSources();
         bool SaveSources();
 
-        std::map<unsigned int, AoIPSource>::const_iterator GetSourceBegin() const;
-        std::map<unsigned int, AoIPSource>::const_iterator GetSourceEnd() const;
-        AoIPSource FindSource(unsigned int nIndex) const;
+        const std::map<int, AoIPSource>& GetSources() const { return m_mSources;}
+        AoIPSource FindSource(int nIndex) const;
         AoIPSource FindSource(const wxString& sName) const;
 
-        bool AddSource(const wxString& sName, const wxString& sDetails, const wxString& sSDP=wxEmptyString, unsigned int nIndex = 0);
-        bool EditSource(unsigned int nIndex, const wxString& sName, const wxString& sDetails);
-        bool SetSourceTags(unsigned int nIndex, const std::set<wxString>& setTags);
+        bool AddSource(const wxString& sName, const wxString& sDetails, const wxString& sSDP=wxEmptyString, int nIndex = 0);
+        bool EditSource(int nIndex, const wxString& sName, const wxString& sDetails);
+        bool SetSourceSDP(int nIndex, const wxString& sSDP);
+        bool SetSourceTags(int nIndex, const std::set<wxString>& setTags);
 
-        void DeleteSource(unsigned int nIndex);
+        void DeleteSource(int nIndex);
         void DeleteSource(const wxString& sName);
         void DeleteAllSources();
 
         void StartDiscovery(wxEvtHandler* pHandler, const std::set<std::string>& setServices, std::set<std::string>& setSAP);
         void StopDiscovery();
 
+        enum {SOURCE_MANUAL_A=-1, SOURCE_MANUAL_B = -2, SOURCE_NMOS_A=-3, SOURCE_NMOS_B=-4};
 
     private:
         AoipSourceManager();
@@ -70,16 +71,16 @@ class PAMBASE_IMPEXPORT AoipSourceManager : public wxEvtHandler
         void OnDiscoveryFinished(wxCommandEvent& event);
         void OnSap(wxCommandEvent& event);
 
-        unsigned int GenerateIndex();
+        int GenerateIndex();
 
         wxXmlNode* NewTextNode(const wxString& sKey, const wxString& sValue,wxXmlNodeType type=wxXML_TEXT_NODE);
 
-        std::map<unsigned int, AoIPSource> m_mSources;
+        std::map<int, AoIPSource> m_mSources;
 
 
         //discovery
         wxEvtHandler* m_pDiscoveryHandler;
-        std::unique_ptr<pml::Browser> m_pBrowser;
+        std::unique_ptr<pml::dnssd::Browser> m_pBrowser;
         std::shared_ptr<wxZCPoster> m_pPoster;
 
         std::unique_ptr<pml::SapServer> m_pSapWatcher;
