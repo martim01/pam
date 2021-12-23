@@ -74,7 +74,7 @@ There are also CMakeLists.txt files. They have been tested on Linux using GCC
 ### To build using CMake (currently on Linux only)
 The easiest way to obtain the required GitHub libraries and build and install a PAM on Linux is by using CMake.
 The CMake build will clone all the required GitHub libraries if it can't find them and update them to their latest version if it can.
-By default it looks in your home directory. You can change this by passing in the variable DIR_BASE to cmake
+By default it looks in your home directory. You can change this by passing in the variable __DIR_BASE__ to cmake
 
 ```
 cmake -DDIR_BASE=/home/user/pam_external
@@ -86,13 +86,13 @@ cmake -DDIR_LOG=logdir
 ```
 
 The following directories can be defined
-- DIR_NMOS the location of your nmos directory (or where you want it cloned to).
-- DIR_PTPMONKEY the location of your ptpmonkey directory (or where you want it cloned to).
-- DIR_SAPSERVER the location of your sapserver directory (or where you want it cloned to).
-- DIR_DNSSD the location of your dnssd directory directory (or where you want it cloned to).
-- DIR_LOG the location of your log directory (or where you want it cloned to).
-- DIR_MONGOOSE the location of your Mongoose directory (or where you want it cloned to).
-- DIR_ASIO the location of your asio directory (or where you want it cloned to).
+- __DIR_NMOS__ the location of your nmos directory (or where you want it cloned to).
+- __DIR_PTPMONKEY__ the location of your ptpmonkey directory (or where you want it cloned to).
+- __DIR_SAPSERVER__ the location of your sapserver directory (or where you want it cloned to).
+- __DIR_DNSSD__ the location of your dnssd directory directory (or where you want it cloned to).
+- __DIR_LOG__ the location of your log directory (or where you want it cloned to).
+- __DIR_MONGOOSE__ the location of your Mongoose directory (or where you want it cloned to).
+- __DIR_ASIO__ the location of your asio directory (or where you want it cloned to).
 
 To build and install all applications and libraries
 ```
