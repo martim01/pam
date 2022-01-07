@@ -274,45 +274,21 @@
 				<object class="wxPanel" name="ID_PANEL4" variable="Panel3" member="yes">
 					<object class="wxPanel" name="ID_PANEL5" subclass="pnlUSB" variable="m_pnlUSB" member="yes">
 						<pos>0,0</pos>
-						<size>600,315</size>
+						<size>600,400</size>
 						<bg>#000000</bg>
-					</object>
-					<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
-						<label>Import Files Found</label>
-						<border>uiRect::BORDER_UP</border>
-						<pos>600,0</pos>
-						<size>200,30</size>
-						<fg>#FFFFFF</fg>
-						<bg>#40C880</bg>
-					</object>
-					<object class="wmList" name="ID_M_PLST3" variable="m_plstFiles" member="yes">
-						<items />
-						<pos>600,30</pos>
-						<size>200,350</size>
-						<style>wmList::STYLE_SELECT</style>
-						<handler function="OnlstImportFilesSelected" entry="EVT_LIST_SELECTED" />
-					</object>
-					<object class="wmButton" name="ID_M_PBTN12" variable="m_pbtnImportImport" member="yes">
-						<label>Import</label>
-						<button_pressed>#F07800</button_pressed>
-						<pos>690,390</pos>
-						<size>100,45</size>
-						<bg>#008000</bg>
-						<style>wmButton::STYLE_SELECT</style>
-						<handler function="OnbtnImportImportClick" entry="EVT_BUTTON" />
 					</object>
 					<object class="wmButton" name="ID_M_PBTN13" variable="m_pbtnImportBack" member="yes">
 						<label>Back</label>
 						<button_pressed>#F07800</button_pressed>
-						<pos>570,390</pos>
+						<pos>690,390</pos>
 						<size>100,45</size>
 						<bg>#9232FC</bg>
 						<handler function="OnbtnManualClick" entry="EVT_BUTTON" />
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL10" variable="m_plblImportProgress" member="yes">
 						<label></label>
-						<pos>144,368</pos>
-						<size>316,72</size>
+						<pos>610,10</pos>
+						<size>180,80</size>
 						<fg>#FFFFFF</fg>
 						<bg>#000000</bg>
 					</object>

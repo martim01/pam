@@ -39,7 +39,6 @@ class pnlRTP: public wxPanel
 		wmButton* m_pbtnDiscover;
 		wmButton* m_pbtnImport;
 		wmButton* m_pbtnImportBack;
-		wmButton* m_pbtnImportImport;
 		wmButton* m_pbtnManual;
 		wmButton* m_pbtnStartDiscovery;
 		wmButton* m_pbtnUpdate;
@@ -48,7 +47,6 @@ class pnlRTP: public wxPanel
 		wmKeyboard* m_pkeyboard;
 		wmLabel* m_pLbl1;
 		wmLabel* m_pLbl2;
-		wmLabel* m_pLbl3;
 		wmLabel* m_pLbl4;
 		wmLabel* m_pLbl5;
 		wmLabel* m_pLbl6;
@@ -57,7 +55,6 @@ class pnlRTP: public wxPanel
 		wmLabel* m_pLbl9;
 		wmLabel* m_plblDiscovering;
 		wmLabel* m_plblImportProgress;
-		wmList* m_plstFiles;
 		wmList* m_plstSAP;
 		wmList* m_plstServices;
 		wmList* m_plstSources;
@@ -107,9 +104,6 @@ class pnlRTP: public wxPanel
 		static const long ID_HTMLWINDOW1;
 		static const long ID_PANEL3;
 		static const long ID_PANEL5;
-		static const long ID_M_PLBL3;
-		static const long ID_M_PLST3;
-		static const long ID_M_PBTN12;
 		static const long ID_M_PBTN13;
 		static const long ID_M_PLBL10;
 		static const long ID_PANEL4;
