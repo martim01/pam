@@ -135,7 +135,8 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_ppnlLog(0),
     m_pdlgNoInput(0),
     m_pSelectedMonitor(0),
-    m_bInputFailed(false)
+    m_bInputFailed(false),
+    m_usb(this)
 {
 
     //(*Initialize(pam2Dialog)
