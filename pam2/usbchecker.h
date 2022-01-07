@@ -7,9 +7,10 @@
 class UsbChecker
 {
     public:
-        UsbChecker() : m_pThread(nullptr){}
+        UsbChecker(wxEvtHandler* pHandler) :m_pHandler(pHandler), m_pThread(nullptr){}
         ~UsbChecker();
 
+        void RunCheck(const wxString& sFilename);
         void SaveToUSB(const wxFileName& fnSource);
 
         static int MountDevice(const wxString& sDevice);
@@ -24,4 +25,8 @@ class UsbChecker
 
 };
 
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_USB_FOUND, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_USB_FILE_FOUND, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_USB_FINISHED, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_USB_ERROR, wxCommandEvent);
 
