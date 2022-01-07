@@ -414,7 +414,7 @@ void pnlRTP::OnbtnCancelClick(wxCommandEvent& event)
 void pnlRTP::OnbtnDiscoverClick(wxCommandEvent& event)
 {
     m_pSwp1->ChangeSelection(wxT("Discovery"));
-    m_pnlUSB->StopCheck();
+    //m_pnlUSB->StopCheck();
 }
 
 

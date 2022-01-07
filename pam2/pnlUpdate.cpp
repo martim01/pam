@@ -38,23 +38,13 @@ pnlUpdate::pnlUpdate(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 	m_pLbl3->SetBackgroundColour(wxColour(0,64,0));
 	wxFont m_pLbl3Font(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	m_pLbl3->SetFont(m_pLbl3Font);
-	m_pnlUSB = new pnlUSB(this, ID_PANEL4, wxPoint(0,40), wxSize(600,400), wxTAB_TRAVERSAL, _T("ID_PANEL4"));
+	m_pnlUSB = new pnlUSB(this, ID_PANEL4, wxPoint(0,40), wxSize(600,440), wxTAB_TRAVERSAL, _T("ID_PANEL4"));
 	m_pnlUSB->SetBackgroundColour(wxColour(0,0,0));
 	//*)
-	m_pbtnCheck->SetColourDisabled(wxColour(120,120,120));
-    m_plstFolders->SetGradient(0);
-    m_plstFolders->SetTextAlign(wxALIGN_BOTTOM | wxALIGN_CENTER_HORIZONTAL);
-    m_plstFolders->SetBitmapAlign(wxALIGN_TOP | wxALIGN_CENTER_HORIZONTAL);
 	SetSize(size);
 	SetPosition(pos);
 
-    m_plstType->AddButton(wxT("USB"));
-
-	m_plstType->SelectButton("USB", true);
-
-	m_plblLocation->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
-	m_plblLocation->GetUiRect().Pad(10,0);
-
+	m_pnlUSB->StartCheck();
 
     Connect(wxEVT_SHOW, (wxObjectEventFunction)&pnlUpdate::OnShown);
 
@@ -69,18 +59,6 @@ pnlUpdate::~pnlUpdate()
 
 void pnlUpdate::OnlstTypeSelected(wxCommandEvent& event)
 {
-    m_pswpType->ChangeSelection(event.GetString());
-    if(event.GetString() == wxT("USB"))
-    {
-        m_pnlUSB->StartCheck();
-    }
-    else
-    {
-        m_pnlUSB->StopCheck();
-        m_pbtnCheck->Enable();
-    }
-
-    Settings::Get().Write(wxT("Update"), wxT("Type"), event.GetString());
 }
 void pnlUpdate::OnbtnCheckClick(wxCommandEvent& event)
 {
@@ -103,11 +81,7 @@ void pnlUpdate::OnbtnCheckClick(wxCommandEvent& event)
 
 void pnlUpdate::OnShown(wxShowEvent& event)
 {
-    if(event.IsShown() == false)
-    {
-        m_pnlUSB->StopCheck();
-    }
-    else if(Settings::Get().Read(wxT("Update"), wxT("Type"), wxT("Shared")) == wxT("USB"))
+    if(Settings::Get().Read(wxT("Update"), wxT("Type"), wxT("Shared")) == wxT("USB"))
     {
         m_pnlUSB->StartCheck();
     }

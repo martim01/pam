@@ -17,7 +17,8 @@ class pnlUSB: public wxPanel
 		pnlUSB(wxWindow* parent, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, int nStyle=0,  const wxString& sN=wxEmptyString);
 		virtual ~pnlUSB();
 
-		void SetSection(const wxString& sSection);
+		void SetSection(const wxString& sSection){}
+		void StartCheck();
 
 		wmLabel* m_plblUSB;
         wmList* m_plstLog;
@@ -48,7 +49,7 @@ class pnlUSB: public wxPanel
 		void OnUsbError(const wxCommandEvent& event);
         void OnFileSelected(const wxCommandEvent& event);
 
-		void StartCheck();
+
 		void CheckUSB();
 
 		UsbChecker m_checker;
