@@ -3,8 +3,6 @@
 
 //(*Headers(pnlUpdate)
 #include "wmbutton.h"
-#include "wmedit.h"
-#include "wmkeyboard.h"
 #include "wmlabel.h"
 #include "wmlist.h"
 #include "wmswitcherpanel.h"
@@ -25,31 +23,9 @@ class pnlUpdate: public wxPanel
 		//(*Declarations(pnlUpdate)
 		pnlUSB* m_pnlUSB;
 		wmButton* m_pbtnCheck;
-		wmButton* m_pbtnSelect;
-		wmButton* m_pbtnSetHttp;
-		wmButton* m_pbtnShareSet;
-		wmButton* m_pbtnUp;
-		wmEdit* m_pedtHTTP;
-		wmEdit* m_pedtShare;
-		wmKeyboard* m_pKbd1;
-		wmKeyboard* m_pKbd2;
-		wmLabel* m_pLbl1;
 		wmLabel* m_pLbl3;
-		wmLabel* m_pLbl4;
-		wmLabel* m_pLbl5;
-		wmLabel* m_pLbl6;
-		wmLabel* m_pLbl8;
-		wmLabel* m_plblHTTPCurrent;
-		wmLabel* m_plblLocalCurrent;
-		wmLabel* m_plblLocation;
-		wmLabel* m_plblShareCurrent;
-		wmLabel* m_plblShareSet;
-		wmList* m_plstFolders;
 		wmList* m_plstType;
 		wmSwitcherPanel* m_pswpType;
-		wxPanel* Panel1;
-		wxPanel* Panel2;
-		wxPanel* pnlShare;
 		//*)
 
 	protected:
@@ -57,28 +33,6 @@ class pnlUpdate: public wxPanel
 		//(*Identifiers(pnlUpdate)
 		static const long ID_M_PLBL3;
 		static const long ID_M_PLST2;
-		static const long ID_M_PKBD1;
-		static const long ID_M_PLBL1;
-		static const long ID_M_PLBL5;
-		static const long ID_M_PEDT1;
-		static const long ID_M_PLBL6;
-		static const long ID_M_PBTN4;
-		static const long ID_PANEL1;
-		static const long ID_M_PKBD2;
-		static const long ID_M_PLBL2;
-		static const long ID_M_PLBL10;
-		static const long ID_M_PEDT2;
-		static const long ID_M_PLBL11;
-		static const long ID_M_PBTN5;
-		static const long ID_PANEL3;
-		static const long ID_M_PLST1;
-		static const long ID_M_PBTN2;
-		static const long ID_M_PBTN3;
-		static const long ID_M_PLBL7;
-		static const long ID_M_PLBL8;
-		static const long ID_M_PLBL9;
-		static const long ID_M_PLBL4;
-		static const long ID_PANEL2;
 		static const long ID_PANEL4;
 		static const long ID_M_PSWP1;
 		static const long ID_M_PBTN1;
@@ -98,9 +52,6 @@ class pnlUpdate: public wxPanel
 		void OnlstUsbSelected(wxCommandEvent& event);
 		//*)
         void OnShown(wxShowEvent& event);
-
-		void ShowDirectories();
-		void ShowDrives();
 
 
 		wxString m_sLocation;

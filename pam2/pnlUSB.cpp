@@ -8,12 +8,6 @@
 #include <wx/string.h>
 //*)
 
-//(*IdInit(pnlUSB)
-const long pnlUSB::ID_M_PLBL13 = wxNewId();
-const long pnlUSB::ID_M_PLBL12 = wxNewId();
-const long pnlUSB::ID_M_PBTN6 = wxNewId();
-const long pnlUSB::ID_M_PLST3 = wxNewId();
-//*)
 
 using namespace std;
 
@@ -24,39 +18,76 @@ END_EVENT_TABLE()
 
 pnlUSB::pnlUSB(wxWindow* parent, wxWindowID id,const wxPoint& pos,const wxSize& size, int nStyle, const wxString& sn)
 {
-	//(*Initialize(pnlUSB)
-	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
-	SetBackgroundColour(wxColour(0,0,0));
-	m_pLbl7 = new wmLabel(this, ID_M_PLBL13, _("Connect a USB Drive and press Detect button"), wxPoint(0,0), wxSize(600,60), 0, _T("ID_M_PLBL13"));
-	m_pLbl7->SetBorderState(uiRect::BORDER_NONE);
-	m_pLbl7->GetUiRect().SetGradient(0);
-	m_pLbl7->SetForegroundColour(wxColour(255,255,255));
-	m_pLbl7->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
-	wxFont m_pLbl7Font(18,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
-	m_pLbl7->SetFont(m_pLbl7Font);
-	m_plblUSB = new wmLabel(this, ID_M_PLBL12, wxEmptyString, wxPoint(0,100), wxSize(600,100), 0, _T("ID_M_PLBL12"));
-	m_plblUSB->SetBorderState(uiRect::BORDER_NONE);
-	m_plblUSB->GetUiRect().SetGradient(0);
-	m_plblUSB->SetForegroundColour(wxColour(0,255,0));
-	m_plblUSB->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
-	wxFont m_plblUSBFont(18,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
-	m_plblUSB->SetFont(m_plblUSBFont);
-	m_pbtnDetect = new wmButton(this, ID_M_PBTN6, _("Detect USB Drive"), wxPoint(200,60), wxSize(200,40), 0, wxDefaultValidator, _T("ID_M_PBTN6"));
-	m_pbtnDetect->SetBackgroundColour(wxColour(0,0,255));
-	wxFont m_pbtnDetectFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
-	m_pbtnDetect->SetFont(m_pbtnDetectFont);
-	m_plstUsb = new wmList(this, ID_M_PLST3, wxPoint(0,200), wxSize(600,120), wmList::STYLE_SELECT, 0, wxSize(-1,40), 6, wxSize(5,5));
-	m_plstUsb->SetBackgroundColour(wxColour(0,0,0));
+	wxBoxSizer* BoxSizer1;
+	wxBoxSizer* BoxSizer2;
 
-	Connect(ID_M_PBTN6,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlUSB::OnbtnDetectClick);
-	Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlUSB::OnlstUsbSelected);
-	//*)
-	SetPosition(pos);
-    m_plblUSB->SetBackgroundColour(*wxBLACK);
-	SetSize(size);
-    SetBackgroundColour(*wxBLACK);
-	m_timerUSB.SetOwner(this, wxNewId());
-    Connect(m_timerUSB.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&pnlUSB::OnTimerUSB);
+	Create(parent, id, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxNO_BORDER, _T("id"));
+	SetClientSize(wxDefaultSize);
+	Move(wxDefaultPosition);
+	SetBackgroundColour(*wxWHITE);
+	BoxSizer1 = new wxBoxSizer(wxVERTICAL);
+	m_pstHostname = new wmLabel(this, wxNewId(), sHostname, wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE, _T("ID_STATICTEXT30"));
+	m_pstHostname->SetMinSize(wxSize(800,40));
+	m_pstHostname->SetForegroundColour(wxColour(255,255,255));
+	m_pstHostname->SetBackgroundColour(wxColour(0,128,64));
+	wxFont m_pstHostnameFont(24,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
+	m_pstHostname->SetFont(m_pstHostnameFont);
+	BoxSizer1->Add(m_pstHostname, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 2);
+
+	m_plblUSB = new wmLabel(this, wxNewId(), _("Checking USB Drives For Files"), wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE, _T("ID_STATICTEXT30"));
+	m_plblUSB->SetMinSize(wxSize(800,40));
+	m_plblUSB->SetForegroundColour(*wxBLACK);
+	m_plblUSB->SetBackgroundColour(*wxWHITE);
+	m_plblUSB->SetTextAlign(wxALIGN_CENTER);
+	m_plblUSB->SetFont(wxFont(20,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
+	BoxSizer1->Add(m_plblUSB, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 2);
+
+    wxBoxSizer* BoxSizer3 = new wxBoxSizer(wxHORIZONTAL);
+    m_plstLog = new wmList(this, wxNewId(), wxDefaultPosition, wxSize(380,300), 0, wmList::SCROLL_VERTICAL, wxSize(-1,40), 1, wxSize(-1,-1));
+	BoxSizer3->Add(m_plstLog, 0, wxALL|wxEXPAND, 5);
+	m_plstFiles = new wmList(this, ID_M_PLST1, wxDefaultPosition, wxSize(380,300), wmList::STYLE_SELECT, wmList::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(-1,-1));
+	BoxSizer3->Add(m_plstFiles, 0, wxALL|wxEXPAND, 5);
+
+
+	BoxSizer1->Add(BoxSizer3, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 2);
+
+	BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
+	m_pbtnCheck = new wmButton(this, wxNewId(), _("Search Again"), wxDefaultPosition, wxSize(120,40), 0, wxDefaultValidator, _T("ID_BUTTON_UPLOAD"));
+	BoxSizer2->Add(m_pbtnCheck, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	m_pbtnUpload = new wmButton(this, ID_BUTTON_UPLOAD, _("Upload"), wxDefaultPosition, wxSize(120,40), 0, wxDefaultValidator, _T("ID_BUTTON_UPLOAD"));
+	BoxSizer2->Add(m_pbtnUpload, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	m_pbtnCancel = new wmButton(this, ID_BUTTON_CANCEL, _("Cancel"), wxDefaultPosition, wxSize(120,40), 0, wxDefaultValidator, _T("ID_BUTTON_CANCEL"));
+	BoxSizer2->Add(m_pbtnCancel, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	BoxSizer1->Add(BoxSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 2);
+	SetSizer(BoxSizer1);
+	BoxSizer1->Fit(this);
+	BoxSizer1->SetSizeHints(this);
+
+	m_pbtnUpload->SetBackgroundColour(wxColour(0,200,0));
+	m_pbtnUpload->SetColourDisabled(wxColour(128,128,128));
+
+	m_pbtnCheck->SetBackgroundColour(wxColour(0,0,200));
+	m_pbtnCheck->SetColourDisabled(wxColour(128,128,128));
+
+	m_pbtnUpload->Enable(false);
+
+	Connect(m_pbtnCheck->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlUSB::OnbtnCheckClick);
+	Connect(ID_BUTTON_UPLOAD,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlUSB::OnbtnUploadClick);
+	Connect(ID_BUTTON_CANCEL,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlUSB::OnbtnCancelClick);
+    Connect(ID_M_PLST1, wxEVT_LIST_SELECTED, (wxObjectEventFunction)&pnlUSB::OnFileSelected);
+
+	Connect(wxID_ANY, wxEVT_USB_FOUND, (wxObjectEventFunction)&pnlUSB::OnUsbFound);
+	Connect(wxID_ANY, wxEVT_USB_FILE_FOUND, (wxObjectEventFunction)&pnlUSB::OnUsbFileFound);
+	Connect(wxID_ANY, wxEVT_USB_FINISHED, (wxObjectEventFunction)&pnlUSB::OnUsbFinished);
+	Connect(wxID_ANY, wxEVT_USB_ERROR, (wxObjectEventFunction)&pnlUSB::OnUsbError);
+
+	m_plstLog->SetButtonColour(*wxWHITE);
+	m_plstLog->SetTextAlign(wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL);
+	m_plstLog->SetTextButtonColour(*wxBLACK);
+
+
+	CheckUSB();
+
 }
 
 pnlUSB::~pnlUSB()
@@ -65,109 +96,86 @@ pnlUSB::~pnlUSB()
 	//*)
 }
 
-void pnlUSB::SetSection(const wxString& sSection)
+void pnlUSB::OnbtnUploadClick(wxCommandEvent& event)
 {
-    m_sSection = sSection;
+    UsbChecker::UnmountDevice();
+    EndModal(wxID_OK);
 }
-
-
-void pnlUSB::OnbtnDetectClick(wxCommandEvent& event)
-{
-    CheckUSB();
-}
-
 
 
 void pnlUSB::StartCheck()
 {
     if(IsShownOnScreen())
     {
-        Settings::Get().Write(m_sSection, wxT("USB"), wxEmptyString);
         CheckUSB();
-        m_timerUSB.Start(2000, true);
     }
 }
-
-void pnlUSB::StopCheck()
-{
-    m_timerUSB.Stop();
-}
-
 
 void pnlUSB::CheckUSB()
 {
-    m_plstUsb->Freeze();
-    m_plstUsb->Clear();
-    wxArrayString asFiles;
-    #ifdef __WXGNU__
-    wxExecute(wxT("sh -c \"lsblk -l -o name,label | grep sd \""), asFiles);
-    #endif // __WXGNU__
+    m_pbtnCheck->Enable(false);
+    m_pbtnUpload->Enable(false);
+    m_plstFiles->Clear();
+    m_plstLog->Clear();
 
-    for(size_t i = 0; i < asFiles.GetCount(); i++)
-    {
-        wxString sDevice(asFiles[i].BeforeFirst(wxT(' ')));
-        wxString sLabel(asFiles[i].AfterFirst(wxT(' ')).Trim(false));
-        if(sLabel.empty())
-        {
-            sLabel = sDevice;
-        }
-        m_mUsb.insert(make_pair(sLabel, sDevice));
-        m_plstUsb->AddButton(sLabel);
+    m_plstLog->AddButton("Searching for USB drives...");
+    m_plstLog->Refresh();
+    m_checker.RunCheck(m_sFilename);
 
-    }
-    if(m_plstUsb->GetItemCount() == 0)
+}
+
+
+void pnlUSB::OnUsbFound(const wxCommandEvent& event)
+{
+
+    m_plstLog->AddButton(wxString::Format("Found USB drive '%s'. Searching for files...", event.GetString().c_str()));
+    m_plstLog->Refresh();
+}
+
+
+void pnlUSB::OnUsbFileFound(const wxCommandEvent& event)
+{
+    wxLogDebug(event.GetString());
+    Json::Value jsValue(ConvertToJson(event.GetString().ToStdString()));
+    if(jsValue["device"].isString() && jsValue["file"].isString())
     {
-        m_plblUSB->SetLabel(wxT("No USB Drives Detected"));
-        m_plblUSB->SetForegroundColour(*wxRED);
-        m_pbtnDetect->Show();
-        m_pLbl7->Show();
-    }
-    else if(m_plstUsb->GetItemCount() == 1)
-    {
-        m_plblUSB->SetLabel(wxT("USB Drive Detected"));
-        m_plblUSB->SetForegroundColour(*wxGREEN);
-        m_plstUsb->SelectButton(0, true);
-        m_plstUsb->Hide();
-        m_pbtnDetect->Hide();
-        m_pLbl7->Hide();
+        m_mFiles.insert(std::make_pair(wxString::FromUTF8(jsValue["file"].asString().c_str()), wxString::FromUTF8(jsValue["device"].asString().c_str())));
+        m_plstFiles->AddButton(wxString::FromUTF8(jsValue["file"].asString().c_str()));
+        m_plstFiles->Refresh();
     }
     else
     {
-        m_plblUSB->SetLabel(wxString::Format(wxT("%d USB Drives Detected.\nPlease select from the list."), m_plstUsb->GetItemCount()));
-        m_plblUSB->SetForegroundColour(*wxGREEN);
-        m_plstUsb->Show();
-        m_pbtnDetect->Hide();
-        for(map<wxString, wxString>::iterator itUSB = m_mUsb.begin(); itUSB != m_mUsb.end(); ++itUSB)
-        {
-            if(itUSB->second == Settings::Get().Read(wxT("Update"), wxT("USB"), wxEmptyString))
-            {
-                m_plstUsb->SelectButton(itUSB->first, true);
-                break;
-            }
-        }
-
-        m_pLbl7->Hide();
-    }
-
-    m_plstUsb->Thaw();
-
-    if(IsShownOnScreen())
-    {
-        m_timerUSB.Start(2000, true);
+        wxLogDebug("bad json");
     }
 }
 
-void pnlUSB::OnlstUsbSelected(wxCommandEvent& event)
+
+void pnlUSB::OnUsbFinished(const wxCommandEvent& event)
 {
-    map<wxString, wxString>::iterator itDevice = m_mUsb.find(event.GetString());
-    if(itDevice != m_mUsb.end())
-    {
-        Settings::Get().Write(m_sSection, wxT("USB"), itDevice->second);
-    }
+    m_plstLog->AddButton("Finished searching.");
+    m_plstLog->Refresh();
+    m_pbtnCheck->Enable(true);
 }
 
 
-void pnlUSB::OnTimerUSB(wxTimerEvent& event)
+void pnlUSB::OnUsbError(const wxCommandEvent& event)
+{
+    m_plstLog->AddButton(event.GetString());
+    m_plstLog->Refresh();
+}
+
+void pnlUSB::OnFileSelected(const wxCommandEvent& event)
+{
+    m_sSelectedFile = event.GetString();
+    auto itDev = m_mFiles.find(m_sSelectedFile);
+    if(itDev != m_mFiles.end())
+    {
+        m_sSelectedDevice = itDev->second;
+        m_pbtnUpload->Enable(true);
+    }
+}
+
+void pnlUSB::OnbtnCheckClick(wxCommandEvent& event)
 {
     CheckUSB();
 }
