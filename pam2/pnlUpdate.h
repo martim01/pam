@@ -2,11 +2,7 @@
 #define PNLUPDATE_H
 
 //(*Headers(pnlUpdate)
-#include "wmbutton.h"
 #include "wmlabel.h"
-#include "wmlist.h"
-#include "wmswitcherpanel.h"
-#include <wx/notebook.h>
 #include <wx/panel.h>
 //*)
 #include <wx/dir.h>
@@ -22,20 +18,14 @@ class pnlUpdate: public wxPanel
 
 		//(*Declarations(pnlUpdate)
 		pnlUSB* m_pnlUSB;
-		wmButton* m_pbtnCheck;
 		wmLabel* m_pLbl3;
-		wmList* m_plstType;
-		wmSwitcherPanel* m_pswpType;
 		//*)
 
 	protected:
 
 		//(*Identifiers(pnlUpdate)
 		static const long ID_M_PLBL3;
-		static const long ID_M_PLST2;
 		static const long ID_PANEL4;
-		static const long ID_M_PSWP1;
-		static const long ID_M_PBTN1;
 		//*)
 
 	private:

@@ -5,7 +5,7 @@
 		<pos_arg>1</pos_arg>
 		<size_arg>1</size_arg>
 		<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
-			<label>Manage Update Settings</label>
+			<label>Update</label>
 			<pos>0,5</pos>
 			<size>600,30</size>
 			<fg>#FFFFFF</fg>
@@ -19,44 +19,10 @@
 				<face>Arial</face>
 			</font>
 		</object>
-		<object class="wmList" name="ID_M_PLST2" variable="m_plstType" member="yes">
-			<scrolling>None</scrolling>
-			<button_size>100,30</button_size>
-			<columns>3</columns>
-			<button>#400080</button>
-			<button_selected>#FF8000</button_selected>
-			<items />
-			<pos>0,36</pos>
-			<size>600,34</size>
-			<style>wmList::STYLE_SELECT</style>
-			<handler function="OnlstTypeSelected" entry="EVT_LIST_SELECTED" />
-		</object>
-		<object class="wmSwitcherPanel" name="ID_M_PSWP1" variable="m_pswpType" member="yes">
-			<pos>0,70</pos>
-			<size>600,315</size>
-			<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
-			<object class="wmSwitcherPanelpage">
-				<object class="wxPanel" name="ID_PANEL4" subclass="pnlUSB" variable="m_pnlUSB" member="yes">
-					<pos>0,0</pos>
-					<bg>#000000</bg>
-				</object>
-				<label>USB</label>
-			</object>
-		</object>
-		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnCheck" member="yes">
-			<label>Check For Updates</label>
-			<pos>200,390</pos>
-			<size>200,40</size>
-			<bg>#43A745</bg>
-			<font>
-				<size>12</size>
-				<style>normal</style>
-				<weight>normal</weight>
-				<underlined>0</underlined>
-				<family>swiss</family>
-				<face>Tahoma</face>
-			</font>
-			<handler function="OnbtnCheckClick" entry="EVT_BUTTON" />
+		<object class="wxPanel" name="ID_PANEL4" subclass="pnlUSB" variable="m_pnlUSB" member="yes">
+			<pos>0,40</pos>
+			<size>600,400</size>
+			<bg>#000000</bg>
 		</object>
 	</object>
 </wxsmith>
