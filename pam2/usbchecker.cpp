@@ -174,19 +174,23 @@ void UsbChecker::MountAndSearch(const wxString& sDevice, const wxString& sFilena
 
     wxString sPath = "/mnt/share";
 
-    wxArrayString asFiles;
-    wxDir::GetAllFiles("/mnt/share", &asFiles, sFilename);
-    wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_USB_FILE_FOUND);
-    wxString sEvent = sDevice+"=";
-    for(size_t i = 0; i < asFiles.size(); i++)
-    {
-        if(i != 0)
-        {
-            sEvent += ",";
-        }
-        sEvent += asFiles[i].Mid(11);   //ignore the /mnt/share/
-    }
-    pEvent->SetString(sEvent);
-    wxQueueEvent(m_pHandler, pEvent);
+    wxDir dir("/mnt/share");
+    wxDirTraverserSimple traverser(m_pHandler, sDevice);
+    dir.Traverse(traverser, sFilename);
+
+    //wxArrayString asFiles;
+    //wxDir::GetAllFiles("/mnt/share", &asFiles, sFilename);
+//    wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_USB_FILE_FOUND);
+//    wxString sEvent = sDevice+"=";
+//    for(size_t i = 0; i < asFiles.size(); i++)
+//    {
+//        if(i != 0)
+//        {
+//            sEvent += ",";
+//        }
+//        sEvent += asFiles[i].Mid(11);   //ignore the /mnt/share/
+//    }
+//    pEvent->SetString(sEvent);
+//    wxQueueEvent(m_pHandler, pEvent);
     umount("/mnt/share");
 }

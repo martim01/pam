@@ -114,7 +114,7 @@ bool iniManager::ReadIniFile(const wxString& sFilename)
                 {
                     break;
                 }
-                else if(sLine[nCommentPos] == '=')
+                else if(sLine[nCommentPos] == '=' && nEqualPos == std::string::npos)
                 {
                     nEqualPos = nCommentPos;
                 }

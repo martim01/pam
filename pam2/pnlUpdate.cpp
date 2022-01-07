@@ -38,7 +38,7 @@ pnlUpdate::pnlUpdate(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 	m_pLbl3->SetBackgroundColour(wxColour(0,64,0));
 	wxFont m_pLbl3Font(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	m_pLbl3->SetFont(m_pLbl3Font);
-	m_pnlUSB = new pnlUSB(this, "*.puf", "Update", ID_PANEL4, wxPoint(0,40), wxSize(600,440), wxTAB_TRAVERSAL, _T("ID_PANEL4"));
+	m_pnlUSB = new pnlUSB(this, "*.puf", "Update", false, ID_PANEL4, wxPoint(0,40), wxSize(600,440), wxTAB_TRAVERSAL, _T("ID_PANEL4"));
 	m_pnlUSB->SetBackgroundColour(wxColour(0,0,0));
 	SetSize(size);
 	SetPosition(pos);
