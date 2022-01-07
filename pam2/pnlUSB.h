@@ -14,7 +14,7 @@ class pnlUSB: public wxPanel
 {
 	public:
 
-		pnlUSB(wxWindow* parent, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, int nStyle=0,  const wxString& sN=wxEmptyString);
+		pnlUSB(wxWindow* parent, const wxString& sFileType, const wxString& sSelectLabel, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, int nStyle=0,  const wxString& sN=wxEmptyString);
 		virtual ~pnlUSB();
 
 		void SetSection(const wxString& sSection){}
@@ -39,7 +39,7 @@ class pnlUSB: public wxPanel
 
 
 		void OnbtnCancelClick(wxCommandEvent& event);
-		void OnbtnUploadClick(wxCommandEvent& event);
+
 		void OnbtnCheckClick(wxCommandEvent& event);
 
 

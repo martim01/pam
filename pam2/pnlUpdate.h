@@ -43,6 +43,7 @@ class pnlUpdate: public wxPanel
 		//*)
         void OnShown(wxShowEvent& event);
 
+        void OnbtnUpdateClick(const wxCommandEvent& event);
 
 		wxString m_sLocation;
 

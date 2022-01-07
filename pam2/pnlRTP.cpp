@@ -198,7 +198,7 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
     m_pbtnManual->SetColourSelected(wxColour(wxT("#F07800")));
     m_phtmlResults = new wxTouchScreenHtml(pnlDiscovery, ID_HTMLWINDOW1, wxPoint(140,0), wxSize(650,385), 0, _T("ID_HTMLWINDOW1"));
     Panel3 = new wxPanel(m_pSwp1, ID_PANEL4, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL4"));
-    m_pnlUSB = new pnlUSB(Panel3, ID_PANEL5, wxPoint(0,0), wxSize(600,315), wxTAB_TRAVERSAL, _T("ID_PANEL5"));
+    m_pnlUSB = new pnlUSB(Panel3, "*.pii", "Import", ID_PANEL5, wxPoint(0,0), wxSize(600,315), wxTAB_TRAVERSAL, _T("ID_PANEL5"));
     m_pnlUSB->SetBackgroundColour(wxColour(0,0,0));
     m_pLbl3 = new wmLabel(Panel3, ID_M_PLBL3, _("Import Files Found"), wxPoint(600,0), wxSize(200,30), 0, _T("ID_M_PLBL3"));
     m_pLbl3->SetBorderState(uiRect::BORDER_UP);

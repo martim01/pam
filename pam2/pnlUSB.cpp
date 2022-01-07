@@ -17,7 +17,7 @@ BEGIN_EVENT_TABLE(pnlUSB,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlUSB::pnlUSB(wxWindow* parent, wxWindowID id,const wxPoint& pos,const wxSize& size, int nStyle, const wxString& sn) : m_checker(this)
+pnlUSB::pnlUSB(wxWindow* parent, const wxString& sFileType, const wxString& sSelectLabel, wxWindowID id,const wxPoint& pos,const wxSize& size, int nStyle, const wxString& sn) : m_checker(this), m_sFilename(sFileType)
 {
 	wxBoxSizer* BoxSizer1;
 	wxBoxSizer* BoxSizer2;
@@ -49,7 +49,7 @@ pnlUSB::pnlUSB(wxWindow* parent, wxWindowID id,const wxPoint& pos,const wxSize& 
 	BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
 	m_pbtnCheck = new wmButton(this, wxNewId(), _("Search Again"), wxDefaultPosition, wxSize(120,40), 0, wxDefaultValidator, _T("ID_BUTTON_UPLOAD"));
 	BoxSizer2->Add(m_pbtnCheck, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	m_pbtnUpload = new wmButton(this, wxNewId(), _("Upload"), wxDefaultPosition, wxSize(120,40), 0, wxDefaultValidator, _T("ID_BUTTON_UPLOAD"));
+	m_pbtnUpload = new wmButton(this, wxNewId(), sSelectLabel, wxDefaultPosition, wxSize(120,40), 0, wxDefaultValidator, _T("ID_BUTTON_UPLOAD"));
 	BoxSizer2->Add(m_pbtnUpload, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 
 	BoxSizer1->Add(BoxSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 2);
@@ -66,7 +66,7 @@ pnlUSB::pnlUSB(wxWindow* parent, wxWindowID id,const wxPoint& pos,const wxSize& 
 	m_pbtnUpload->Enable(false);
 
 	Connect(m_pbtnCheck->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlUSB::OnbtnCheckClick);
-	Connect(m_pbtnUpload->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlUSB::OnbtnUploadClick);
+
     Connect(m_plstFiles->GetId(), wxEVT_LIST_SELECTED, (wxObjectEventFunction)&pnlUSB::OnFileSelected);
 
 	Connect(wxID_ANY, wxEVT_USB_FOUND, (wxObjectEventFunction)&pnlUSB::OnUsbFound);
@@ -89,11 +89,6 @@ pnlUSB::~pnlUSB()
 	//*)
 }
 
-void pnlUSB::OnbtnUploadClick(wxCommandEvent& event)
-{
-    UsbChecker::UnmountDevice();
-}
-
 
 void pnlUSB::StartCheck()
 {
@@ -109,7 +104,7 @@ void pnlUSB::CheckUSB()
     m_pbtnUpload->Enable(false);
     m_plstFiles->Clear();
     m_plstLog->Clear();
-
+    m_mFiles.clear();
     m_plstLog->AddButton("Searching for USB drives...");
     m_plstLog->Refresh();
     m_checker.RunCheck(m_sFilename);
@@ -131,9 +126,11 @@ void pnlUSB::OnUsbFileFound(const wxCommandEvent& event)
     wxArrayString asFiles = wxStringTokenize(event.GetString().After('='), ",");
     for(size_t i = 0; i < asFiles.GetCount(); i++)
     {
-        m_mFiles.insert(std::make_pair(asFiles[i], sDevice));
-        m_plstFiles->AddButton(asFiles[i]);
-        m_plstFiles->Refresh();
+        if(m_mFiles.insert(std::make_pair(asFiles[i], sDevice)).second)
+        {
+            m_plstFiles->AddButton(asFiles[i]);
+            m_plstFiles->Refresh();
+        }
     }
 }
 

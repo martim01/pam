@@ -170,6 +170,7 @@ void UsbChecker::MountAndSearch(const wxString& sDevice, const wxString& sFilena
         wxQueueEvent(m_pHandler, pEvent);
         return;
     }
+    pmlLog(pml::LOG_TRACE) << "UsbChecker\tSearch for " << sFilename;
 
     wxString sPath = "/mnt/share";
 
@@ -183,9 +184,9 @@ void UsbChecker::MountAndSearch(const wxString& sDevice, const wxString& sFilena
         {
             sEvent += ",";
         }
-        sEvent += asFiles[i];
-
+        sEvent += asFiles[i].Mid(11);   //ignore the /mnt/share/
     }
+    pEvent->SetString(sEvent);
     wxQueueEvent(m_pHandler, pEvent);
     umount("/mnt/share");
 }

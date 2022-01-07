@@ -135,7 +135,7 @@
 					<Add directory="$(#nmos.lib)" />
 				</Linker>
 				<ExtraCommands>
-					<Add after="sudo setcap cap_sys_time,cap_net_bind_service+ep /home/pi/pam/bin/pam2" />
+					<Add after="sudo setcap cap_sys_time,cap_sys_admin,cap_net_bind_service+ep /home/pi/pam/bin/pam2" />
 					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />
 				</ExtraCommands>
 			</Target>
@@ -433,6 +433,9 @@
 					<wxPanel wxs="wxsmith/pnlSettingsInputNmos.wxs" src="pnlSettingsInputNmos.cpp" hdr="pnlSettingsInputNmos.h" fwddecl="0" i18n="1" name="pnlSettingsInputNmos" language="CPP" />
 				</resources>
 			</wxsmith>
+			<code_completion />
+			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
