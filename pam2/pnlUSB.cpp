@@ -17,7 +17,7 @@ BEGIN_EVENT_TABLE(pnlUSB,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlUSB::pnlUSB(wxWindow* parent, const wxString& sFileType, const wxString& sSelectLabel, wxWindowID id,const wxPoint& pos,const wxSize& size, int nStyle, const wxString& sn) : m_checker(this), m_sFilename(sFileType)
+pnlUSB::pnlUSB(wxWindow* parent, const wxString& sFileType, const wxString& sSelectLabel, bool bMultiSelect, wxWindowID id,const wxPoint& pos,const wxSize& size, int nStyle, const wxString& sn) : m_checker(this), m_sFilename(sFileType)
 {
 	wxBoxSizer* BoxSizer1;
 	wxBoxSizer* BoxSizer2;
@@ -40,7 +40,13 @@ pnlUSB::pnlUSB(wxWindow* parent, const wxString& sFileType, const wxString& sSel
     wxBoxSizer* BoxSizer3 = new wxBoxSizer(wxHORIZONTAL);
     m_plstLog = new wmList(this, wxNewId(), wxDefaultPosition, wxSize(280,300), 0, wmList::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(-1,-1));
 	BoxSizer3->Add(m_plstLog, 0, wxALL|wxEXPAND, 5);
-	m_plstFiles = new wmList(this, wxNewId(), wxDefaultPosition, wxSize(280,300), wmList::STYLE_SELECT, wmList::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(-1,-1));
+
+	long nListStyle =wmList::STYLE_SELECT;
+	if(bMultiSelect)
+    {
+        nListStyle |= wmList::STYLE_SELECT_MULTI;
+    }
+	m_plstFiles = new wmList(this, wxNewId(), wxDefaultPosition, wxSize(280,300), nListStyle, wmList::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(-1,-1));
 	BoxSizer3->Add(m_plstFiles, 0, wxALL|wxEXPAND, 5);
 
 
@@ -105,8 +111,7 @@ void pnlUSB::CheckUSB()
     m_plstFiles->Clear();
     m_plstLog->Clear();
     m_mFiles.clear();
-    m_plstLog->AddButton("Searching for USB drives...");
-    m_plstLog->Refresh();
+    Log("Searching for USB drives...");
     m_checker.RunCheck(m_sFilename);
 
 }
@@ -114,11 +119,14 @@ void pnlUSB::CheckUSB()
 
 void pnlUSB::OnUsbFound(const wxCommandEvent& event)
 {
-
-    m_plstLog->AddButton(wxString::Format("Found USB drive '%s'. Searching for files...", event.GetString().c_str()));
-    m_plstLog->Refresh();
+    Log(wxString::Format("Found USB drive '%s'. Searching for files...", event.GetString().c_str()));
 }
 
+void pnlUSB::Log(const wxString& sLog)
+{
+    m_plstLog->AddButton(sLog);
+    m_plstLog->Refresh();
+}
 
 void pnlUSB::OnUsbFileFound(const wxCommandEvent& event)
 {
@@ -137,16 +145,14 @@ void pnlUSB::OnUsbFileFound(const wxCommandEvent& event)
 
 void pnlUSB::OnUsbFinished(const wxCommandEvent& event)
 {
-    m_plstLog->AddButton("Finished searching.");
-    m_plstLog->Refresh();
+    Log("Finished searching.");
     m_pbtnCheck->Enable(true);
 }
 
 
 void pnlUSB::OnUsbError(const wxCommandEvent& event)
 {
-    m_plstLog->AddButton(event.GetString());
-    m_plstLog->Refresh();
+    Log(event.GetString());
 }
 
 void pnlUSB::OnFileSelected(const wxCommandEvent& event)
@@ -163,4 +169,14 @@ void pnlUSB::OnFileSelected(const wxCommandEvent& event)
 void pnlUSB::OnbtnCheckClick(wxCommandEvent& event)
 {
     CheckUSB();
+}
+
+wxString pnlUSB::GetDevice(const wxString& sFile) const
+{
+    auto itFile = m_mFiles.find(sFile);
+    if(itFile != m_mFiles.end())
+    {
+        return itFile->second;
+    }
+    return wxEmptyString;
 }

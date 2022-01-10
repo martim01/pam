@@ -14,11 +14,15 @@ class pnlUSB: public wxPanel
 {
 	public:
 
-		pnlUSB(wxWindow* parent, const wxString& sFileType, const wxString& sSelectLabel, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, int nStyle=0,  const wxString& sN=wxEmptyString);
+		pnlUSB(wxWindow* parent, const wxString& sFileType, const wxString& sSelectLabel, bool bMultiSelect=false,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, int nStyle=0,  const wxString& sN=wxEmptyString);
 		virtual ~pnlUSB();
 
 		void SetSection(const wxString& sSection){}
 		void StartCheck();
+
+		wxString GetDevice(const wxString& sFile) const;
+
+		void Log(const wxString& sLog);
 
 		wmLabel* m_plblUSB;
         wmList* m_plstLog;
