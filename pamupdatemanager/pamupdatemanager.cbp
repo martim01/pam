@@ -35,7 +35,6 @@
 					<Add option="-Wl,--enable-auto-import,-Map=pamupdatemanagerd.map" />
 					<Add library="wxmsw30ud_gcc_custom" />
 					<Add library="pambased" />
-					<Add library="libcurl" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#curl.lib)" />
 				</Linker>
@@ -93,11 +92,6 @@
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
-					<Add library="pambase" />
-					<Add library="curl" />
-					<Add library="pml_log" />
-					<Add library="ptpmonkey" />
-					<Add library="sapserver" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />
@@ -130,18 +124,23 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-D_app_" />
-			<Add directory="C:/wxWidgets-3.0.2/include" />
 			<Add directory="../pambase" />
-			<Add directory="$(#log.INCLUDE)" />
 		</Compiler>
-		<ResourceCompiler>
-			<Add directory="C:/wxWidgets-3.0.2/include" />
-		</ResourceCompiler>
-		<Linker>
-			<Add directory="../lib" />
-			<Add directory="$(#ptpmonkey.LIB)" />
-			<Add directory="$(#sapserver.LIB)" />
-		</Linker>
+		<Unit filename="../pam2/usbchecker.cpp" />
+		<Unit filename="../pam2/usbchecker.h" />
+		<Unit filename="../pambase/settingevent.cpp" />
+		<Unit filename="../pambase/settingevent.h" />
+		<Unit filename="../pambase/settings.cpp" />
+		<Unit filename="../pambase/settings.h" />
+		<Unit filename="../pambase/uirect.cpp" />
+		<Unit filename="../pambase/wmbutton.cpp" />
+		<Unit filename="../pambase/wmedit.cpp" />
+		<Unit filename="../pambase/wmfocusmanager.cpp" />
+		<Unit filename="../pambase/wmkeyboard.cpp" />
+		<Unit filename="../pambase/wmlabel.cpp" />
+		<Unit filename="../pambase/wmlist.cpp" />
+		<Unit filename="../pambase/wmlistadv.cpp" />
+		<Unit filename="../pambase/wmswitcherpanel.cpp" />
 		<Unit filename="pamupdatemanagerApp.cpp" />
 		<Unit filename="pamupdatemanagerApp.h" />
 		<Unit filename="pamupdatemanagerMain.cpp" />
@@ -151,6 +150,8 @@
 			<Option target="Windows Debug" />
 			<Option target="Windows Release" />
 		</Unit>
+		<Unit filename="releaseelement.cpp" />
+		<Unit filename="releaseelement.h" />
 		<Unit filename="updatemanager.cpp" />
 		<Unit filename="updatemanager.h" />
 		<Extensions>

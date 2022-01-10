@@ -2,7 +2,7 @@
 <wxsmith>
 	<object class="wxDialog" name="pamupdatemanagerDialog">
 		<size>800,480</size>
-		<bg>#000000</bg>
+		<bg>#FFFFFF</bg>
 		<font>
 			<size>12</size>
 			<style>normal</style>
@@ -14,249 +14,107 @@
 		<pos_arg>1</pos_arg>
 		<size_arg>1</size_arg>
 		<style>wxNO_BORDER</style>
-		<object class="wmSwitcherPanel" name="ID_M_PSWP1" variable="m_pswpSplash" member="yes">
+		<object class="wmLabel" name="ID_M_PLBL2" variable="m_plblTitle" member="yes">
+			<label>PAM Update Manager</label>
 			<pos>0,0</pos>
-			<size>800,480</size>
+			<size>800,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#2D2451</bg>
+			<font>
+				<size>16</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmSwitcherPanel" name="ID_M_PSWP1" variable="m_pswpMain" member="yes">
+			<pos>0,40</pos>
+			<size>800,400</size>
 			<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
 			<object class="wmSwitcherPanelpage">
-				<object class="wxPanel" name="ID_PANEL5" variable="pnlMain" member="yes">
-					<pos>0,0</pos>
-					<size>800,480</size>
-					<bg>#000000</bg>
-					<object class="wmLabel" name="ID_M_PLBL37" variable="m_plblSettings" member="yes">
-						<label>Available Updates</label>
-						<pos>0,0</pos>
-						<size>800,40</size>
+				<object class="wxPanel" name="ID_PANEL1" variable="m_ppnlProgress" member="yes" />
+				<label>Progress</label>
+			</object>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL2" variable="m_ppnlRelease" member="yes">
+					<size>0,0</size>
+					<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl2" member="yes">
+						<label>Release Notes</label>
+						<pos>0,5</pos>
+						<size>800,35</size>
 						<fg>#FFFFFF</fg>
-						<bg>#3D9292</bg>
-						<font>
-							<size>12</size>
-							<style>normal</style>
-							<weight>bold</weight>
-							<underlined>0</underlined>
-							<family>swiss</family>
-							<face>Arial</face>
-						</font>
-					</object>
-					<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnClose" member="yes">
-						<label>Close</label>
-						<pos>645,425</pos>
-						<size>150,50</size>
-						<handler function="OnbtnCloseClick" entry="EVT_BUTTON" />
-					</object>
-					<object class="wmButton" name="ID_M_PBTN6" variable="m_pbtnSelectAll" member="yes">
-						<label>Select All</label>
-						<pos>645,185</pos>
-						<size>150,40</size>
-						<bg>#B0B0B0</bg>
-						<handler function="OnbtnSelectAllClick" entry="EVT_BUTTON" />
-					</object>
-					<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnSelectNone" member="yes">
-						<label>Deselect All</label>
-						<pos>645,230</pos>
-						<size>150,40</size>
-						<bg>#B0B0B0</bg>
-						<handler function="OnbtnSelectNoneClick" entry="EVT_BUTTON" />
-					</object>
-					<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnUpdate" member="yes">
-						<label>Update Selected</label>
-						<button_pressed>#008040</button_pressed>
-						<button_disabled>#808080</button_disabled>
-						<pos>645,370</pos>
-						<size>150,50</size>
-						<enabled>0</enabled>
-						<bg>#008000</bg>
-						<handler function="OnbtnUpdateClick" entry="EVT_BUTTON" />
-					</object>
-					<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnChangelog" member="yes">
-						<label>View Changelog</label>
-						<button_pressed>#FF8000</button_pressed>
-						<button_disabled>#808080</button_disabled>
-						<pos>645,280</pos>
-						<size>150,40</size>
-						<enabled>0</enabled>
-						<bg>#007D7D</bg>
-						<style>wmButton::STYLE_SELECT</style>
-						<handler function="OnbtnChangelogClick" entry="EVT_BUTTON" />
-					</object>
-					<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnDependencies" member="yes">
-						<label>View Dependencies</label>
-						<button_pressed>#FF8000</button_pressed>
-						<button_disabled>#808080</button_disabled>
-						<pos>645,325</pos>
-						<size>150,40</size>
-						<enabled>0</enabled>
-						<bg>#007D7D</bg>
-						<style>wmButton::STYLE_SELECT</style>
-						<handler function="OnbtnDependenciesClick" entry="EVT_BUTTON" />
-					</object>
-					<object class="wmSwitcherPanel" name="ID_M_PSWP2" variable="m_pswpMain" member="yes">
-						<pos>0,45</pos>
-						<size>650,430</size>
-						<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
-						<object class="wmSwitcherPanelpage">
-							<object class="wxPanel" name="ID_PANEL1" variable="Panel1" member="yes">
-								<bg>#000000</bg>
-								<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
-									<label>Name</label>
-									<pos>2,0</pos>
-									<size>158,30</size>
-									<fg>#FFFFFF</fg>
-									<bg>#000080</bg>
-								</object>
-								<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl4" member="yes">
-									<label>Type</label>
-									<pos>162,0</pos>
-									<size>158,30</size>
-									<fg>#FFFFFF</fg>
-									<bg>#000080</bg>
-								</object>
-								<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
-									<label>Current Version</label>
-									<pos>322,0</pos>
-									<size>158,30</size>
-									<fg>#FFFFFF</fg>
-									<bg>#000080</bg>
-								</object>
-								<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
-									<label>Available Version</label>
-									<pos>482,0</pos>
-									<size>158,30</size>
-									<fg>#FFFFFF</fg>
-									<bg>#000080</bg>
-								</object>
-								<object class="wmList" name="ID_M_PLST1" variable="m_plstUpdates" member="yes">
-									<button_gap>2,1</button_gap>
-									<button_size>-1,30</button_size>
-									<columns>4</columns>
-									<item_border>Flat</item_border>
-									<button>#FFFFFF</button>
-									<button_pressed>#0080FF</button_pressed>
-									<button_selected>#0080C0</button_selected>
-									<text>#000000</text>
-									<items />
-									<pos>0,30</pos>
-									<size>645,400</size>
-									<bg>#000000</bg>
-									<style>wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI|wmList::STYLE_SELECT_ROW</style>
-									<handler function="OnlstUpdatesSelected" entry="EVT_LIST_SELECTED" />
-								</object>
-							</object>
-							<label>List</label>
-						</object>
-						<object class="wmSwitcherPanelpage">
-							<object class="wxPanel" name="ID_PANEL2" variable="Panel2" member="yes">
-								<object class="wxHtmlWindow" name="ID_HTMLWINDOW1" subclass="wxTouchScreenHtml" variable="m_phtmlChangelog" member="yes">
-									<pos>0,0</pos>
-									<size>650,430</size>
-									<style>0</style>
-								</object>
-							</object>
-							<label>Changelog</label>
-						</object>
-						<object class="wmSwitcherPanelpage">
-							<object class="wxPanel" name="ID_PANEL3" variable="Panel3" member="yes">
-								<object class="wxHtmlWindow" name="ID_HTMLWINDOW2" subclass="wxTouchScreenHtml" variable="m_phtmlDependencies" member="yes">
-									<pos>0,0</pos>
-									<size>650,430</size>
-								</object>
-							</object>
-							<label>Dependencies</label>
-						</object>
-						<object class="wmSwitcherPanelpage">
-							<object class="wxPanel" name="ID_PANEL4" variable="Panel4" member="yes">
-								<bg>#000000</bg>
-								<object class="wmLabel" name="ID_M_PLBL5" variable="m_pLbl5" member="yes">
-									<label>Update Log</label>
-									<pos>2,0</pos>
-									<size>641,30</size>
-									<fg>#FFFFFF</fg>
-									<bg>#000080</bg>
-								</object>
-								<object class="wmList" name="ID_M_PLST2" variable="m_plstLog" member="yes">
-									<button_gap>2,1</button_gap>
-									<button_size>-1,30</button_size>
-									<item_border>Flat</item_border>
-									<button>#FFFFFF</button>
-									<text>#000000</text>
-									<items />
-									<pos>0,30</pos>
-									<size>645,400</size>
-									<bg>#000000</bg>
-									<handler function="OnlstUpdatesSelected" entry="EVT_LIST_SELECTED" />
-								</object>
-							</object>
-							<label>Log</label>
-						</object>
-					</object>
-					<object class="wmButton" name="ID_M_PBTN7" variable="m_pbtnShow" member="yes">
-						<label>Show</label>
-						<pos>645,45</pos>
-						<size>150,30</size>
-						<bg>#000080</bg>
-						<style>wmButton::STYLE_SELECT</style>
-						<handler function="OnbtnShowClick" entry="EVT_BUTTON" />
-					</object>
-					<object class="wmList" name="ID_M_PLST3" variable="m_plstShow" member="yes">
-						<scrolling>None</scrolling>
-						<button_size>-1,33</button_size>
-						<columns>3</columns>
-						<button_selected>#FF8000</button_selected>
-						<items />
-						<pos>645,80</pos>
-						<size>150,100</size>
 						<bg>#000000</bg>
 						<font>
-							<size>10</size>
+							<size>16</size>
 							<style>normal</style>
 							<weight>normal</weight>
 							<underlined>0</underlined>
 							<family>swiss</family>
 							<face>Arial</face>
 						</font>
-						<style>wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI</style>
-						<handler function="OnlstShowSelected" entry="EVT_LIST_SELECTED" />
 					</object>
 				</object>
-				<label>Main</label>
+				<label>Release</label>
+				<selected>1</selected>
 			</object>
 			<object class="wmSwitcherPanelpage">
-				<object class="wxPanel" name="ID_PANEL6" variable="Panel5" member="yes">
+				<object class="wxPanel" name="ID_PANEL3" variable="m_ppnlPassword" member="yes">
 					<bg>#000000</bg>
-					<object class="wmLabel" name="ID_M_PLBL6" variable="m_pLbl6" member="yes">
-						<label>Please wait retrieving update list...</label>
-						<pos>0,40</pos>
-						<size>800,440</size>
-						<fg>#8080FF</fg>
-						<bg>#000000</bg>
-						<font>
-							<size>28</size>
-							<style>normal</style>
-							<weight>bold</weight>
-							<underlined>0</underlined>
-							<family>swiss</family>
-							<face>Verdana</face>
-						</font>
+					<object class="wmEdit" name="ID_M_PEDT1" variable="m_pedtPassword" member="yes">
+						<validation>Alphanumeric</validation>
+						<border>uiRect::BORDER_DOWN</border>
+						<border_focused>uiRect::BORDER_DOWN</border_focused>
+						<background_focused>#FFFFFF</background_focused>
+						<foreground_focused>#000000</foreground_focused>
+						<pos>110,40</pos>
+						<size>600,45</size>
+						<bg>#FFFFFF</bg>
+						<style>wxTE_PROCESS_ENTER|wxTE_PASSWORD</style>
+						<handler function="OnedtPasswordTextEnter" entry="EVT_TEXT_ENTER" />
 					</object>
-					<object class="wmLabel" name="ID_M_PLBL7" variable="m_pLbl7" member="yes">
-						<label>PAM Update Manager</label>
-						<pos>0,0</pos>
-						<size>800,40</size>
+					<object class="wmKeyboard" name="ID_M_PKBD1" variable="m_pkeyboard" member="yes">
+						<pos>110,90</pos>
 						<fg>#FFFFFF</fg>
-						<bg>#3D9292</bg>
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+						<label>Enter Password</label>
+						<pos>0,5</pos>
+						<size>800,35</size>
+						<fg>#00FF00</fg>
 						<font>
-							<size>12</size>
+							<size>16</size>
 							<style>normal</style>
-							<weight>bold</weight>
+							<weight>normal</weight>
 							<underlined>0</underlined>
 							<family>swiss</family>
 							<face>Arial</face>
 						</font>
 					</object>
 				</object>
-				<label>Splash</label>
-				<selected>1</selected>
+				<label>Password</label>
 			</object>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnCancel" member="yes">
+			<label>Cancel Update</label>
+			<button_pressed>#FF0000</button_pressed>
+			<button_disabled>#909090</button_disabled>
+			<pos>240,443</pos>
+			<size>100,35</size>
+			<enabled>0</enabled>
+			<bg>#800000</bg>
+			<handler function="OnbtnCancelClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnUpdate" member="yes">
+			<label>Update</label>
+			<button_pressed>#00FF00</button_pressed>
+			<button_disabled>#909090</button_disabled>
+			<pos>460,443</pos>
+			<size>100,35</size>
+			<enabled>0</enabled>
+			<bg>#008000</bg>
+			<handler function="OnbtnUpdateClick" entry="EVT_BUTTON" />
 		</object>
 		<object class="wxTimer" name="ID_TIMER1" variable="m_timerUpdate" member="yes">
 			<handler function="OntimerUpdateTrigger" entry="EVT_TIMER" />
