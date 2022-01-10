@@ -30,7 +30,7 @@ class NetworkControl
     public:
         static NetworkControl& Get();
 
-        wxString SetupNetworking(const wxString& sInterface, const wxString& sAddress, unsigned long nMask, wxString sGateway);
+        wxString SetupNetworking(const wxString& sInterface, const wxString& sAddress, unsigned long nMask, wxString sGateway, bool bDHCP);
         bool DeleteNetworking();
 
         wxString GetAddress(const wxString& sInterface) const;

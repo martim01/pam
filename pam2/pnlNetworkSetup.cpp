@@ -198,7 +198,7 @@ void pnlNetworkSetup::OnbtnApplyClick(wxCommandEvent& event)
 {
     unsigned long nMask(0);
     m_pbtnMask->GetLabel().AfterFirst(wxT('/')).BeforeFirst(wxT(' ')).ToULong(&nMask);
-    m_plblResult->SetLabel(NetworkControl::Get().SetupNetworking(m_sInterface, m_ppnlAddress->GetValue(), nMask, m_ppnlGateway->GetValue()));
+    m_plblResult->SetLabel(NetworkControl::Get().SetupNetworking(m_sInterface, m_ppnlAddress->GetValue(), nMask, m_ppnlGateway->GetValue(), m_pbtnStaticDHCP->IsChecked()));
 
 }
 

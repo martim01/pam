@@ -194,7 +194,7 @@ const wxString NetworkControl::STR_ADDRESS = wxT("static ip_address=");
 const wxString NetworkControl::STR_GATEWAY = wxT("static routers=");
 const wxString NetworkControl::STR_DNS = wxT("static domain_name_servers=");
 
-wxString NetworkControl::SetupNetworking(const wxString& sInterface, const wxString& sAddress, unsigned long nMask, wxString sGateway)
+wxString NetworkControl::SetupNetworking(const wxString& sInterface, const wxString& sAddress, unsigned long nMask, wxString sGateway, bool bDHCP)
 {
     if(sGateway == wxT("..."))
     {
@@ -204,7 +204,6 @@ wxString NetworkControl::SetupNetworking(const wxString& sInterface, const wxStr
     wxString sInterfaceLine(wxString::Format(wxT("%s %s"), STR_INTERFACE.c_str(), sInterface.c_str()));
     wxTextFile configFile;
     bool bEth0(false);
-    bool bDHCP((sAddress.empty() == true));
 
     if(configFile.Open(wxT("/etc/dhcpcd.conf")))
     {
@@ -276,7 +275,7 @@ wxString NetworkControl::SetupNetworking(const wxString& sInterface, const wxStr
         {
             for(size_t i = 0; i < configFile.GetLineCount(); i++)
             {
-                outFile << configFile.GetLine(i).mb_str();
+                outFile << configFile.GetLine(i).ToStdString() << "\n";
             }
             outFile.close();
             configFile.Close();
