@@ -1,6 +1,5 @@
 #pragma once
 
-//(*Headers(pamupdatemanagerDialog)
 #include "wmbutton.h"
 #include "wmedit.h"
 #include "wmkeyboard.h"
@@ -10,23 +9,25 @@
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/timer.h>
-//*)
-#include "wmlistadv.h"
 #include <wx/filename.h>
+#include <set>
+#include <map>
 
-class pamupdatemanagerDialog: public wxDialog
+class wmListAdv;
+class wxTarInputStream;
+
+class pamupdatemanagerDialog : public wxDialog
 {
 	public:
 
 		pamupdatemanagerDialog(wxWindow* parent, const wxString& sDevice, const wxFileName& fnUpdate, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pamupdatemanagerDialog();
 
-		//(*Declarations(pamupdatemanagerDialog)
 		wmButton* m_pbtnCancel;
 		wmButton* m_pbtnUpdate;
 		wmEdit* m_pedtPassword;
 		wmKeyboard* m_pkeyboard;
-		wmLabel* m_pLbl1;
+		wmLabel* m_pLblPassword;
 		wmLabel* m_pLbl2;
 		wmLabel* m_plblTitle;
 		wmSwitcherPanel* m_pswpMain;
@@ -34,13 +35,12 @@ class pamupdatemanagerDialog: public wxDialog
 		wxPanel* m_ppnlProgress;
 		wxPanel* m_ppnlRelease;
 		wxTimer m_timerStart;
-		//*)
 
 		wmListAdv* m_plstRelease;
+		wmListAdv* m_plstProgress;
 
 	protected:
 
-		//(*Identifiers(pamupdatemanagerDialog)
 		static const long ID_M_PLBL2;
 		static const long ID_PANEL1;
 		static const long ID_M_PLBL3;
@@ -53,19 +53,29 @@ class pamupdatemanagerDialog: public wxDialog
 		static const long ID_M_PBTN4;
 		static const long ID_M_PBTN1;
 		static const long ID_TIMER2;
-		//*)
 
 	private:
 
-		//(*Handlers(pamupdatemanagerDialog)
 		void OnedtPasswordTextEnter(wxCommandEvent& event);
 		void OnbtnCancelClick(wxCommandEvent& event);
 		void OnbtnUpdateClick(wxCommandEvent& event);
 		void OntimerStartTrigger(wxTimerEvent& event);
-		//*)
+
+        void Update();
+		bool ExtractAndUpdate(wxDC& dc);
+
+		wxString GetRealPath(const wxString& sPath);
+
+		bool ReplaceFile(wxDC& dc, wxTarInputStream& input, const wxFileName& fnOutput);
+		void StoreBackupFileNames();
+		void RevertAll();
+
+		void PostUpdate();
 
         wxString m_sDevice;
-        wxFileName m_fnUpdate,
+        wxFileName m_fnUpdate;
 
-		DECLARE_EVENT_TABLE()
+        std::set<wxString> m_setUpdated;
+        std::map<wxString, wxString> m_mRealPaths;
+		//DECLARE_EVENT_TABLE()
 };

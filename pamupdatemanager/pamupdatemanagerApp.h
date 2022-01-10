@@ -10,6 +10,7 @@
 #pragma once
 #include <wx/app.h>
 #include <wx/filename.h>
+#include <wx/cmdline.h>
 
 class pamupdatemanagerApp : public wxApp
 {

@@ -5,7 +5,7 @@
 #include <wx/tokenzr.h>
 
 
-ReleaseElement::ReleaseElement(wxDC& dc, unsigned int nWidth, const wxString& sMessage) : m_nHeader(0)
+ReleaseElement::ReleaseElement(wxDC& dc, unsigned int nWidth, wxString sMessage) : m_nHeader(0)
 {
     wxRect rect(0,0,0,0);
 
@@ -33,17 +33,14 @@ ReleaseElement::ReleaseElement(wxDC& dc, unsigned int nWidth, const wxString& sM
 
     m_nHeight = 0;
 
+    wxFont fnt = dc.GetFont();
     dc.SetFont(GetFont(dc));
 
     wxSize sz = uiRect::GetSizeOfText(dc, sMessage, wxRect(0,0,nWidth, 20), true);
-    if(sz.y > 25)
-    {
-        sz.y+=20;
-    }
-    else
-    {
-        sz.y+=2;
-    }
+    sz.y+=2;
+
+    dc.SetFont(fnt);
+
     CreateHitRect(sz.y, sMessage);
 
     m_nHeight = sz.y;
@@ -58,9 +55,39 @@ ReleaseElement::ReleaseElement(wxDC& dc, unsigned int nWidth, const wxString& sM
 wxFont ReleaseElement::GetFont(wxDC& dc)
 {
     auto fnt = dc.GetFont();
-    if(m_nHeader != 0)
+
+    switch(m_nHeader)
     {
-        fnt.SetPointSize(fnt.GetPointSize()+(8-m_nHeader));
+        case 1:
+            fnt.SetPixelSize(fnt.GetPixelSize()*2);
+            fnt.SetWeight(wxFONTWEIGHT_BOLD);
+            fnt.SetUnderlined(true);
+            break;
+        case 2:
+            fnt.SetPixelSize(fnt.GetPixelSize()*1.5);
+            fnt.SetWeight(wxFONTWEIGHT_BOLD);
+            fnt.SetUnderlined(true);
+            break;
+        case 3:
+            fnt.SetPixelSize(fnt.GetPixelSize()*1.17);
+            fnt.SetWeight(wxFONTWEIGHT_BOLD);
+            fnt.SetUnderlined(true);
+            break;
+        case 4:
+            fnt.SetPixelSize(fnt.GetPixelSize());
+            fnt.SetWeight(wxFONTWEIGHT_BOLD);
+            fnt.SetUnderlined(true);
+            break;
+        case 5:
+            fnt.SetPixelSize(fnt.GetPixelSize()*0.83);
+            fnt.SetWeight(wxFONTWEIGHT_BOLD);
+            fnt.SetUnderlined(true);
+            break;
+        case 6:
+            fnt.SetPixelSize(fnt.GetPixelSize()*.67);
+            fnt.SetWeight(wxFONTWEIGHT_BOLD);
+            fnt.SetUnderlined(true);
+            break;
     }
     return fnt;
 }
@@ -105,32 +132,32 @@ int ReleaseElement::SubElementHeld()
 
 void ReleaseElement::Draw(wxDC& dc, bool bSelected)
 {
+    wxFont fnt = dc.GetFont();
     dc.SetFont(GetFont(dc));
 
     for(auto pairRect : m_mHitRects)
     {
         pairRect.second.Draw(dc, uiRect::BORDER_NONE);
     }
+    dc.SetFont(fnt);
 }
 
-void ReleaseElement::CreateHitRect(size_t nId, int nHeight, const wxString& sLine)
+void ReleaseElement::CreateHitRect(int nHeight, const wxString& sLine)
 {
-    auto& rect = m_mHitRects.insert(std::make_pair(nId, uiRect(wxRect(0,0,0,0)))).first->second;
+    auto& rect = m_mHitRects.insert(std::make_pair(0, uiRect(wxRect(0,0,0,0)))).first->second;
     rect.SetGradient(0);
+    rect.SetBackgroundColour(*wxWHITE);
 
     if(m_nHeader == 1)
     {
-        rect.SetBackgroundColour(wxColour(0,50,150));
-        rect.SetForegroundColour(*wxWHITE);
+        rect.SetForegroundColour(wxColour(255, 166, 99));
     }
     else if(m_nHeader == 2)
     {
-        rect.SetBackgroundColour(wxColour(0,50,150));
-        rect.SetForegroundColour(*wxWHITE);
+        rect.SetForegroundColour(wxColour(73,187,244));
     }
     else
     {
-        rect.SetBackgroundColour(*wxWHITE);
         rect.SetForegroundColour(*wxBLACK);
     }
     rect.SetWidth(m_rectEnclosing.GetWidth());

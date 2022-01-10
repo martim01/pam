@@ -1,22 +1,20 @@
 #include "pamupdatemanagerMain.h"
 #include "version.h"
-#include "monitorpluginfactory.h"
-#include "testpluginfactory.h"
 #include "settings.h"
-#include "updatemanager.h"
 #include <wx/log.h>
 #include <wx/wfstream.h>
 #include <wx/tarstrm.h>
-
-//(*InternalHeaders(pamupdatemanagerDialog)
+#include "wmlistadv.h"
+#include "usbchecker.h"
+#include <wx/dcclient.h>
+#include <wx/txtstrm.h>
 #include <wx/font.h>
 #include <wx/intl.h>
 #include <wx/string.h>
-//*)
+#include "releaseelement.h"
 
-using namespace std;
+#include <wx/stdpaths.h>
 
-//(*IdInit(pamupdatemanagerDialog)
 const long pamupdatemanagerDialog::ID_M_PLBL2 = wxNewId();
 const long pamupdatemanagerDialog::ID_PANEL1 = wxNewId();
 const long pamupdatemanagerDialog::ID_M_PLBL3 = wxNewId();
@@ -29,16 +27,14 @@ const long pamupdatemanagerDialog::ID_M_PSWP1 = wxNewId();
 const long pamupdatemanagerDialog::ID_M_PBTN4 = wxNewId();
 const long pamupdatemanagerDialog::ID_M_PBTN1 = wxNewId();
 const long pamupdatemanagerDialog::ID_TIMER2 = wxNewId();
-//*)
 
-BEGIN_EVENT_TABLE(pamupdatemanagerDialog,wxDialog)
+//BEGIN_EVENT_TABLE(pamupdatemanagerDialog,wxDialog)
 	//(*EventTable(pamupdatemanagerDialog)
 	//*)
-END_EVENT_TABLE()
+//END_EVENT_TABLE()
 
 pamupdatemanagerDialog::pamupdatemanagerDialog(wxWindow* parent,const wxString& sDevice, const wxFileName& fnUpdate, wxWindowID id,const wxPoint& pos,const wxSize& size) : m_sDevice(sDevice), m_fnUpdate(fnUpdate)
 {
-	//(*Initialize(pamupdatemanagerDialog)
 	Create(parent, id, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxNO_BORDER, _T("id"));
 	SetClientSize(wxSize(800,480));
 	Move(wxDefaultPosition);
@@ -65,33 +61,32 @@ pamupdatemanagerDialog::pamupdatemanagerDialog(wxWindow* parent,const wxString& 
 	m_pLbl2->SetFont(m_pLbl2Font);
 	m_ppnlPassword = new wxPanel(m_pswpMain, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
 	m_ppnlPassword->SetBackgroundColour(wxColour(0,0,0));
-	m_pedtPassword = new wmEdit(m_ppnlPassword, ID_M_PEDT1, wxEmptyString, wxPoint(110,40), wxSize(600,45), wxTE_PROCESS_ENTER|wxTE_PASSWORD, wxDefaultValidator, _T("ID_M_PEDT1"));
+	m_pedtPassword = new wmEdit(m_ppnlPassword, ID_M_PEDT1, wxEmptyString, wxPoint(110,40), wxSize(600,45), wxTE_PASSWORD, wxDefaultValidator, _T("ID_M_PEDT1"));
 	m_pedtPassword->SetValidation(3);
 	m_pedtPassword->SetBackgroundColour(wxColour(255,255,255));
-	m_pedtPassword->SetFocusedBackground(wxColour(wxT("#FFFFFF")));
-	m_pedtPassword->SetFocusedForeground(wxColour(wxT("#000000")));
+	m_pedtPassword->SetFocusedBackground(wxColour("#FFFFFF"));
+	m_pedtPassword->SetFocusedForeground(wxColour("#000000"));
 	m_pedtPassword->SetBorderStyle(1,1);
 	m_pkeyboard = new wmKeyboard(m_ppnlPassword, ID_M_PKBD1, wxPoint(110,90), wxDefaultSize, 0, 0);
 	m_pkeyboard->SetForegroundColour(wxColour(255,255,255));
-	m_pLbl1 = new wmLabel(m_ppnlPassword, ID_M_PLBL1, _("Enter Password"), wxPoint(0,5), wxSize(800,35), 0, _T("ID_M_PLBL1"));
-	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
-	m_pLbl1->GetUiRect().SetGradient(0);
-	m_pLbl1->SetForegroundColour(wxColour(0,255,0));
+	m_pLblPassword = new wmLabel(m_ppnlPassword, ID_M_PLBL1, _("Enter Password"), wxPoint(0,5), wxSize(800,35), 0, _T("ID_M_PLBL1"));
+	m_pLblPassword->SetBorderState(uiRect::BORDER_NONE);
+	m_pLblPassword->GetUiRect().SetGradient(0);
+	m_pLblPassword->SetForegroundColour(wxColour(0,255,0));
 	wxFont m_pLbl1Font(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
-	m_pLbl1->SetFont(m_pLbl1Font);
+	m_pLblPassword->SetFont(m_pLbl1Font);
 	m_pswpMain->AddPage(m_ppnlProgress, _("Progress"), false);
 	m_pswpMain->AddPage(m_ppnlRelease, _("Release"), true);
 	m_pswpMain->AddPage(m_ppnlPassword, _("Password"), false);
-	m_pbtnCancel = new wmButton(this, ID_M_PBTN4, _("Cancel Update"), wxPoint(240,443), wxSize(100,35), 0, wxDefaultValidator, _T("ID_M_PBTN4"));
-	m_pbtnCancel->Disable();
+	m_pbtnCancel = new wmButton(this, ID_M_PBTN4, _("Close"), wxPoint(240,443), wxSize(100,35), 0, wxDefaultValidator, _T("ID_M_PBTN4"));
 	m_pbtnCancel->SetBackgroundColour(wxColour(128,0,0));
-	m_pbtnCancel->SetColourSelected(wxColour(wxT("#FF0000")));
-	m_pbtnCancel->SetColourDisabled(wxColour(wxT("#909090")));
+	m_pbtnCancel->SetColourSelected(wxColour("#FF0000"));
+	m_pbtnCancel->SetColourDisabled(wxColour("#909090"));
 	m_pbtnUpdate = new wmButton(this, ID_M_PBTN1, _("Update"), wxPoint(460,443), wxSize(100,35), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnUpdate->Disable();
 	m_pbtnUpdate->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnUpdate->SetColourSelected(wxColour(wxT("#00FF00")));
-	m_pbtnUpdate->SetColourDisabled(wxColour(wxT("#909090")));
+	m_pbtnUpdate->SetColourSelected(wxColour("#00FF00"));
+	m_pbtnUpdate->SetColourDisabled(wxColour("#909090"));
 	m_timerStart.SetOwner(this, ID_TIMER2);
 	m_timerStart.Start(100, true);
 
@@ -99,29 +94,73 @@ pamupdatemanagerDialog::pamupdatemanagerDialog(wxWindow* parent,const wxString& 
 	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pamupdatemanagerDialog::OnbtnCancelClick);
 	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pamupdatemanagerDialog::OnbtnUpdateClick);
 	Connect(ID_TIMER2,wxEVT_TIMER,(wxObjectEventFunction)&pamupdatemanagerDialog::OntimerStartTrigger);
-	//*)
 
-    Settings::Get().Write(wxT("Version"), wxT("pamupdatemanager"), wxString::Format(wxT("%d.%d.%d.%d"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
+    Settings::Get().Write("Version", "pamupdatemanager", wxString::Format("%d.%d.%d.%d", AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
 
-    m_plstRelease = new wmListAdv(this, wxNewId(), wxPoint(0,0), wxSize(600,480), 0, wmListAdv::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(0,1));
-	m_plstRelease->SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT));
-	m_plstRelease->SetBackgroundColour(wxColour(100,100,180));
+    m_plstRelease = new wmListAdv(m_ppnlRelease, wxNewId(), wxPoint(0,40), wxSize(800,360), 0, wmListAdv::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(0,0));
+	m_plstRelease->SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
+	m_plstRelease->SetBackgroundColour(*wxWHITE);
+
+	m_plstProgress = new wmListAdv(m_ppnlProgress, wxNewId(), wxPoint(0,40), wxSize(800,360), 0, wmListAdv::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(0,0));
+	m_plstProgress->SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
+	m_plstProgress->SetBackgroundColour(*wxWHITE);
 
 	m_plblTitle->SetLabel("PAM Update Manager - " + m_fnUpdate.GetName());
+
+	wxClientDC dc(this);
+    dc.SetFont(m_plstProgress->GetFont());
+
+    m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, Settings::Get().GetConfigDirectory()));
+    m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, Settings::Get().GetDocumentDirectory()));
+    m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, wxStandardPaths::Get().GetUserDataDir()));
+    m_plstProgress->Update();
+
+
+
 }
 
 pamupdatemanagerDialog::~pamupdatemanagerDialog()
 {
-	//(*Destroy(pamupdatemanagerDialog)
-	//*)
-	#ifdef __WXGNU__
-	wxExecute(wxT("sudo umount /mnt/share"), wxEXEC_SYNC);
-	#endif // __WXGNU__
+    //UsbChecker::UnmountDevice();
 }
-
 
 void pamupdatemanagerDialog::OnedtPasswordTextEnter(wxCommandEvent& event)
 {
+    long nResult = wxExecute(wxString::Format("echo %s | sudo -S -k cat /etc/shadow", event.GetString().c_str()), wxEXEC_SYNC);
+    if(nResult == 0)
+    {
+        m_pswpMain->ChangeSelection("Progress");
+        Update();
+    }
+    else
+    {
+        m_pLblPassword->SetLabel("Password Incorrect!");
+    }
+}
+
+
+void pamupdatemanagerDialog::Update()
+{
+    wxClientDC dc(this);
+    dc.SetFont(m_plstRelease->GetFont());
+
+    if(ExtractAndUpdate(dc) == false)
+    {
+        m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, " "));
+        m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "## Update failed. Reverting changes"));
+        m_plstProgress->Update();
+
+        RevertAll();
+    }
+    else
+    {
+        m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, " "));
+        m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "## Update Successful"));
+        m_plstProgress->Update();
+
+        PostUpdate();
+        StoreBackupFileNames();
+    }
 }
 
 void pamupdatemanagerDialog::OnbtnCancelClick(wxCommandEvent& event)
@@ -131,30 +170,230 @@ void pamupdatemanagerDialog::OnbtnCancelClick(wxCommandEvent& event)
 
 void pamupdatemanagerDialog::OnbtnUpdateClick(wxCommandEvent& event)
 {
-
+    m_pbtnUpdate->Show(false);
+    m_pswpMain->ChangeSelection("Password");
+    m_pedtPassword->SetFocus();
 }
 
 void pamupdatemanagerDialog::OntimerStartTrigger(wxTimerEvent& event)
 {
+    wxClientDC dc(this);
+    dc.SetFont(m_plstRelease->GetFont());
+
     if(UsbChecker::MountDevice(m_sDevice) != 0)
     {
-
+        m_plstRelease->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "## Could not mount device"));
+        m_plstRelease->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, strerror(errno)));
     }
     else
     {
         wxFileInputStream in(m_fnUpdate.GetFullPath());
         wxTarInputStream tar(in);
-
         wxTarEntry* pEntry = nullptr;
+        bool bRelease(false);
         do
         {
             pEntry = tar.GetNextEntry();
             if(pEntry && pEntry->GetName().CmpNoCase("release.md") == 0)
             {
-                wxString str;
-                str << tar;
+                bRelease = true;
+                wxTextInputStream text(tar);
+                while(tar.IsOk() && !tar.Eof())
+                {
+                    m_plstRelease->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, text.ReadLine()));
+                }
                 break;
             }
         }while(pEntry);
+
+        if(bRelease)
+        {
+            m_pbtnUpdate->Enable();
+        }
+        else
+        {
+            m_plstRelease->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "## Not a valid update file"));
+        }
     }
+}
+
+
+bool pamupdatemanagerDialog::ExtractAndUpdate(wxDC& dc)
+{
+
+    m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "# Update"));
+    m_plstProgress->Update();
+
+    wxFileInputStream in(m_fnUpdate.GetFullPath());
+    wxTarInputStream tar(in);
+    wxTarEntry* pEntry = nullptr;
+    bool bRelease(false);
+    do
+    {
+        pEntry = tar.GetNextEntry();
+        if(pEntry)
+        {
+            if(pEntry->IsDir() == false)
+            {
+                wxFileName fnFile(pEntry->GetName());
+
+                wxFileName fnExisiting;
+                fnExisiting.SetFullName(fnFile.GetFullName());
+
+                m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "### "+fnFile.GetFullName()));
+                m_plstProgress->Update();
+
+                auto asDir = fnFile.GetDirs();
+                if(asDir.Count() > 0)
+                {
+                    if(asDir[0] == "lib")
+                    {
+                        if(asDir.Count() > 1)
+                        {
+                            if(asDir[1] == "monitor")
+                            {
+                                fnExisiting.SetPath(GetRealPath("/usr/local/lib/pam2/monitor"));
+                            }
+                            else if(asDir[1] == "test")
+                            {
+                                fnExisiting.SetPath(GetRealPath("/usr/local/lib/pam2/test"));
+                            }
+                            else if(asDir[1] == "generator")
+                            {
+                                fnExisiting.SetPath(GetRealPath("/usr/local/lib/pam2/generator"));
+                            }
+                        }
+                        else
+                        {
+                            fnExisiting.SetPath(GetRealPath("/usr/local/lib/pam2"));
+                        }
+                    }
+                    else if(asDir[0] == "bin")
+                    {
+                        fnExisiting.SetPath(GetRealPath("/usr/local/bin/pam2"));
+                    }
+                    else if(asDir[0] == "documents")
+                    {
+                        if(asDir.Count() > 1)
+                        {
+                            if(asDir[1] == "help")
+                            {
+                                if(asDir.Count() > 2 && asDir[2] == "images")
+                                {
+                                    fnExisiting.SetPath(Settings::Get().GetDocumentDirectory()+"/help/images");
+                                }
+                                else
+                                {
+                                    fnExisiting.SetPath(Settings::Get().GetDocumentDirectory()+"/help");
+                                }
+                            }
+                            else if(asDir[1] == "generator")
+                            {
+                                fnExisiting.SetPath(Settings::Get().GetDocumentDirectory()+"/generator");
+                            }
+                        }
+                        else
+                        {
+                            fnExisiting.SetPath(Settings::Get().GetConfigDirectory());
+                        }
+                    }
+
+                    if(ReplaceFile(tar, fnExisiting) == false)
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+    }while(pEntry);
+
+    return true;
+}
+
+
+wxString pamupdatemanagerDialog::GetRealPath(const wxString& sPath)
+{
+    auto ins = m_mRealPaths.insert({sPath,""});
+    if(ins.second)
+    {
+
+        wxClientDC dc(this);
+        dc.SetFont(m_plstProgress->GetFont());
+
+        wxArrayString asOutput;
+        wxArrayString asError;
+        long nResult = wxExecute("realpath "+sPath, asOutput, asError);
+
+        if(nResult == 0 && asOutput.Count() != 0)
+        {
+            ins.first->second = asOutput[0];
+        }
+    }
+    return ins.first->second;
+}
+
+bool pamupdatemanagerDialog::ReplaceFile(wxDC& dc, wxTarInputStream& input, const wxFileName& fnOutput)
+{
+    //rename the file
+    wxString sBackup = wxString::Format("%s.bak", fnOutput.GetFullPath().c_str());
+    if(!wxFileExists(fnOutput.GetFullPath()) || wxRenameFile(fnOutput.GetFullPath(), sBackup))
+    {
+        wxFileOutputStream out(fnOutput.GetPath());
+        if(out.IsOk())
+        {
+            //read in and output
+            while(input.IsOk() && !input.Eof())
+            {
+                input.Read(out);
+            }
+
+            m_setUpdated.insert(sBackup);
+            m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "Updated"));
+            m_plstProgress->Update();
+            return true;
+        }
+        else
+        {
+            m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "Failed to update"));
+            m_plstProgress->Update();
+            return false;
+        }
+    }
+    else
+    {
+        m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "Failed to create backup"));
+        m_plstProgress->Update();
+        return false;
+    }
+}
+
+void pamupdatemanagerDialog::StoreBackupFileNames()
+{
+    wxString sRemove;
+    for(auto sBackup : m_setUpdated)
+    {
+        if(sRemove.empty() == false)
+        {
+            sRemove << ",";
+        }
+        sRemove << sBackup;
+    }
+    Settings::Get().Write("Startup", "Remove", sRemove);
+}
+
+
+void pamupdatemanagerDialog::RevertAll()
+{
+    for(auto sBackup : m_setUpdated)
+    {
+        wxString sFile = sBackup.BeforeLast('.');
+        wxRemoveFile(sFile);
+        wxRenameFile(sBackup, sFile);
+    }
+}
+
+void pamupdatemanagerDialog::PostUpdate()
+{
+    wxExecute(wxString::Format("echo %s | sudo -S -k setcap cap_sys_time,cap_sys_admin,cap_net_bind_service+ep %s", m_pedtPassword->GetValue().c_str(), GetRealPath("/usr/local/bin/pam2").c_str()), wxEXEC_SYNC);
+    wxExecute(wxString::Format("echo %s | sudo -S -k ldconfig", m_pedtPassword->GetValue().c_str()), wxEXEC_SYNC);
 }

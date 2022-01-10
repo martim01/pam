@@ -34,7 +34,6 @@
 				<Linker>
 					<Add option="-Wl,--enable-auto-import,-Map=pamupdatemanagerd.map" />
 					<Add library="wxmsw30ud_gcc_custom" />
-					<Add library="pambased" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#curl.lib)" />
 				</Linker>
@@ -67,8 +66,6 @@
 					<Add option="-s" />
 					<Add option="-Wl,--enable-auto-import,-Map=pamupdatemanager.map" />
 					<Add library="wxmsw30u_gcc_custom" />
-					<Add library="pambase" />
-					<Add library="libcurl" />
 					<Add directory="$(#wx3_0.lib)" />
 					<Add directory="$(#curl.lib)" />
 				</Linker>
@@ -80,6 +77,7 @@
 				<Option output="../bin/pamupdatemanager" prefix_auto="1" extension_auto="1" />
 				<Option type="0" />
 				<Option compiler="gcc" />
+				<Option parameters="/dev/sda1 1.2.3.4.tar" />
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="`wx-config --cxxflags`" />
@@ -89,12 +87,14 @@
 					<Add option="-D_app_" />
 					<Add option="-DwxDEBUG_LEVEL=0" />
 					<Add option="-DNDEBUG" />
+					<Add directory="$(#log.INCLUDE)" />
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
+					<Add directory="$(#log.LIB)" />
 				</Linker>
 				<ExtraCommands>
-					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />
+					<Add after="sudo setcap cap_sys_time,cap_sys_admin,cap_net_bind_service+ep /home/pi/pam/bin/pamupdatemanager" />
 				</ExtraCommands>
 			</Target>
 			<Target title="Linux Debug">
@@ -125,9 +125,23 @@
 			<Add option="-Wall" />
 			<Add option="-D_app_" />
 			<Add directory="../pambase" />
+			<Add directory="../pam2" />
 		</Compiler>
+		<Linker>
+			<Add library="pml_log" />
+		</Linker>
 		<Unit filename="../pam2/usbchecker.cpp" />
 		<Unit filename="../pam2/usbchecker.h" />
+		<Unit filename="../pambase/advelement.cpp" />
+		<Unit filename="../pambase/advelement.h" />
+		<Unit filename="../pambase/inimanager.cpp" />
+		<Unit filename="../pambase/inimanager.h" />
+		<Unit filename="../pambase/inisection.cpp" />
+		<Unit filename="../pambase/inisection.h" />
+		<Unit filename="../pambase/pmcontrol.cpp" />
+		<Unit filename="../pambase/pmcontrol.h" />
+		<Unit filename="../pambase/pmpanel.cpp" />
+		<Unit filename="../pambase/pmpanel.h" />
 		<Unit filename="../pambase/settingevent.cpp" />
 		<Unit filename="../pambase/settingevent.h" />
 		<Unit filename="../pambase/settings.cpp" />
@@ -140,6 +154,8 @@
 		<Unit filename="../pambase/wmlabel.cpp" />
 		<Unit filename="../pambase/wmlist.cpp" />
 		<Unit filename="../pambase/wmlistadv.cpp" />
+		<Unit filename="../pambase/wmslidewnd.cpp" />
+		<Unit filename="../pambase/wmslidewnd.h" />
 		<Unit filename="../pambase/wmswitcherpanel.cpp" />
 		<Unit filename="pamupdatemanagerApp.cpp" />
 		<Unit filename="pamupdatemanagerApp.h" />
@@ -152,8 +168,6 @@
 		</Unit>
 		<Unit filename="releaseelement.cpp" />
 		<Unit filename="releaseelement.h" />
-		<Unit filename="updatemanager.cpp" />
-		<Unit filename="updatemanager.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

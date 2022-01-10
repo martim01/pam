@@ -14,11 +14,6 @@ class  ReleaseElement : public advElement
         void SelectSubElement(size_t nSub);
         void EnableSubElement(size_t nSub, bool bEnable);
 
-        int GetMessageLevel() const
-        {
-            return m_nLevel;
-        }
-
 
     protected:
 

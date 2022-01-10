@@ -49,6 +49,6 @@ void pamupdatemanagerApp::OnInitCmdLine(wxCmdLineParser& parser)
 bool pamupdatemanagerApp::OnCmdLineParsed(wxCmdLineParser& parser)
 {
     m_sDevice = parser.GetParam(0);
-    m_fnUpdate.Assign(parser.GetParam(1));
+    m_fnUpdate.Assign("/mnt/share/"+parser.GetParam(1));
 	return true;
 }
