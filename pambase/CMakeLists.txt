@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
-project(pambase LANGUAGES CXX)
+project(pambase LANGUAGES CXX VERSION 1.2.0.0)
+
+execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -P ${CMAKE_SOURCE_DIR}/version.cmake)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
@@ -42,6 +44,8 @@ include_directories(${DIR_SAPSERVER}/include)
 include_directories(${DIR_ASIO}/asio/include)
 include_directories(${DIR_PTPMONKEY}/include)
 
+include_directories(${CMAKE_BINARY_DIR}/include)
+
 set(SOURCES  "advelement.cpp"  "aes67mediasession.cpp" "AES67ServerMediaSubsession.cpp" "aes67source.cpp" "anglemeter.cpp" "aoipsourcemanager.cpp" "audio.cpp" "audioevent.cpp"
  "generator.cpp" "generatorpluginbuilder.cpp" "generatorpluginfactory.cpp" "histogram.cpp" "historygraph.cpp" "inimanager.cpp" "inisection.cpp" "iomanager.cpp" "levelcalculator.cpp" "levelgraph.cpp"
  "levelmeter.cpp" "liveaudiosource.cpp" "monitorevent.cpp" "monitorpluginbuilder.cpp" "monitorpluginfactory.cpp" "pamRTSPServer.cpp" "niir.cpp" "ondemandaes67mediasubsession.cpp" "ondemandpamsubsession.cpp"
@@ -49,7 +53,7 @@ set(SOURCES  "advelement.cpp"  "aes67mediasession.cpp" "AES67ServerMediaSubsessi
  "r128thread.cpp" "rawvideosource.cpp" "RTCPTransmissionEvent.cpp" "rtpserverthread.cpp" "rtpthread.cpp" "rtsputil.cpp" "servicebrowser.cpp" "settingevent.cpp" "settings.cpp" "smpte2110mediasession.cpp"
  "soundcardmanager.cpp" "soundfile.cpp" "streamclientstate.cpp" "testpluginbuilder.cpp" "testpluginfactory.cpp" "timemanager.cpp" "uirect.cpp" "wmbutton.cpp" "wmedit.cpp" "wmfocusmanager.cpp" "wmipeditpnl.cpp"
  "wmkeyboard.cpp" "wmlabel.cpp" "wmline.cpp" "wmlist.cpp" "wmlistadv.cpp" "wmslider.cpp" "wmslidewnd.cpp" "wmswipebutton.cpp" "wmswitcherpanel.cpp" "wmtimeedit.cpp" "wxptp.cpp" "wxsaphandler.cpp"
- "wxsink.cpp" "wxtouchscreenhtml.cpp" "wxzxposter.cpp")
+ "wxsink.cpp" "wxtouchscreenhtml.cpp" "wxzxposter.cpp" ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_version.cpp)
  
 add_library(pambase SHARED ${SOURCES})
 
