@@ -23,8 +23,6 @@
 #include <fstream>
 #include <wx/log.h>
 #include <wx/stopwatch.h>
-#include "log.h"
-
 
 iniManager::iniManager()
 {
@@ -57,7 +55,6 @@ bool iniManager::ReadIniFile(const wxString& sFilename)
 	ifFile.open(m_sFilepath.mb_str(),std::ios::in);
 	if(!ifFile.is_open())
 	{
-	    pmlLog(pml::LOG_CRITICAL) << "IniManager file '" << m_sFilepath.ToStdString() << "' does not exist";
 		return false;
 	}
 
