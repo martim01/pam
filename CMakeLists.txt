@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
-project(pamworkspace)
+project(pamworkspace VERSION 1.2.0.0)
+
+SET(CMAKE_CXX_STANDARD 14)
 
 SET(NMOS OFF CACHE BOOL "set to ON to include NMOS")
 
@@ -178,6 +180,6 @@ message(STATUS "Configure plugin waveform")
 add_subdirectory(plugins/waveform)
 message(STATUS "Configure pam2")
 add_subdirectory(pam2)
-#message(STATUS "Configure pamupdatemanager")
-#add_subdirectory(pamupdatemanager)
+message(STATUS "Configure pamupdatemanager")
+add_subdirectory(pamupdatemanager)
 
