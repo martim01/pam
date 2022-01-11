@@ -5,15 +5,64 @@
 #include <wx/wfstream.h>
 #include <wx/tarstrm.h>
 #include "wmlistadv.h"
-#include "usbchecker.h"
 #include <wx/dcclient.h>
 #include <wx/txtstrm.h>
 #include <wx/font.h>
 #include <wx/intl.h>
 #include <wx/string.h>
 #include "releaseelement.h"
+#ifdef __WXGNU__
+#include <sys/mount.h>
+#endif // __WXGNU__
 
 #include <wx/stdpaths.h>
+
+
+int UnmountDevice()
+{
+    int nResult = umount("/mnt/share");
+    if(nResult == -1 && errno != EAGAIN && errno != EINVAL)
+    {
+        std::cout << "Could not umount device: " << strerror(errno);
+        return errno;
+    }
+    return 0;
+}
+
+
+int MountDevice(const wxString& sDevice)
+{
+    if(sDevice.empty())
+    {
+        return EINVAL;
+    }
+
+    if(wxDirExists("/mnt/share") == false)
+    {
+        wxMkdir("/mnt/share");
+    }
+    int nResult = umount("/mnt/share");
+    if(nResult == -1 && errno != EAGAIN && errno != EINVAL)
+    {
+        return errno;
+    }
+
+
+    std::array<std::string, 8> fs({"ext3", "ext2", "ext4", "vfat", "msdos", "f2fs", "fuseblk", "ntfs"});
+    for(size_t i = 0; i < fs.size(); i++)
+    {
+        nResult = mount(sDevice.ToStdString().c_str(), "/mnt/share", fs[i].c_str(), MS_SILENT, nullptr);
+        if(nResult == 0)
+        {
+            return 0;
+        }
+    }
+    return errno;
+
+}
+
+
+
 
 const long pamupdatemanagerDialog::ID_M_PLBL2 = wxNewId();
 const long pamupdatemanagerDialog::ID_PANEL1 = wxNewId();
@@ -39,14 +88,14 @@ pamupdatemanagerDialog::pamupdatemanagerDialog(wxWindow* parent,const wxString& 
 	SetClientSize(wxSize(800,480));
 	Move(wxDefaultPosition);
 	SetBackgroundColour(wxColour(255,255,255));
-	wxFont thisFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	wxFont thisFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Verdana"),wxFONTENCODING_DEFAULT);
 	SetFont(thisFont);
 	m_plblTitle = new wmLabel(this, ID_M_PLBL2, _("PAM Update Manager"), wxPoint(0,0), wxSize(800,40), 0, _T("ID_M_PLBL2"));
 	m_plblTitle->SetBorderState(uiRect::BORDER_NONE);
 	m_plblTitle->GetUiRect().SetGradient(0);
 	m_plblTitle->SetForegroundColour(wxColour(255,255,255));
 	m_plblTitle->SetBackgroundColour(wxColour(45,36,81));
-	wxFont m_plblTitleFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
+	wxFont m_plblTitleFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Verdana"),wxFONTENCODING_DEFAULT);
 	m_plblTitle->SetFont(m_plblTitleFont);
 	m_pswpMain = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(0,40), wxSize(800,400), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
 	m_pswpMain->SetPageNameStyle(0);
@@ -87,8 +136,10 @@ pamupdatemanagerDialog::pamupdatemanagerDialog(wxWindow* parent,const wxString& 
 	m_pbtnUpdate->SetBackgroundColour(wxColour(0,128,0));
 	m_pbtnUpdate->SetColourSelected(wxColour("#00FF00"));
 	m_pbtnUpdate->SetColourDisabled(wxColour("#909090"));
+
+    UnmountDevice();
 	m_timerStart.SetOwner(this, ID_TIMER2);
-	m_timerStart.Start(100, true);
+	m_timerStart.Start(1000, true); 
 
 	Connect(ID_M_PEDT1,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&pamupdatemanagerDialog::OnedtPasswordTextEnter);
 	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pamupdatemanagerDialog::OnbtnCancelClick);
@@ -98,14 +149,14 @@ pamupdatemanagerDialog::pamupdatemanagerDialog(wxWindow* parent,const wxString& 
     Settings::Get().Write("Version", "pamupdatemanager", wxString::Format("%d.%d.%d.%d", AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
 
     m_plstRelease = new wmListAdv(m_ppnlRelease, wxNewId(), wxPoint(0,40), wxSize(800,360), 0, wmListAdv::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(0,0));
-	m_plstRelease->SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
+	m_plstRelease->SetFont(wxFont(10,wxFONTFAMILY_ROMAN,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Verdana"),wxFONTENCODING_DEFAULT));
 	m_plstRelease->SetBackgroundColour(*wxWHITE);
 
 	m_plstProgress = new wmListAdv(m_ppnlProgress, wxNewId(), wxPoint(0,40), wxSize(800,360), 0, wmListAdv::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(0,0));
-	m_plstProgress->SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
+	m_plstProgress->SetFont(wxFont(10,wxFONTFAMILY_ROMAN,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Verdana"),wxFONTENCODING_DEFAULT));
 	m_plstProgress->SetBackgroundColour(*wxWHITE);
 
-	m_plblTitle->SetLabel("PAM Update Manager - " + m_fnUpdate.GetName());
+	m_plblTitle->SetLabel("PAM Update Manager "+wxString::Format("%d.%d.%d.%d", AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION)+" - " + m_fnUpdate.GetName());
 
 	wxClientDC dc(this);
     dc.SetFont(m_plstProgress->GetFont());
@@ -115,13 +166,13 @@ pamupdatemanagerDialog::pamupdatemanagerDialog(wxWindow* parent,const wxString& 
     m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, wxStandardPaths::Get().GetUserDataDir()));
     m_plstProgress->Update();
 
-
+    
 
 }
 
 pamupdatemanagerDialog::~pamupdatemanagerDialog()
 {
-    //UsbChecker::UnmountDevice();
+    UnmountDevice();
 }
 
 void pamupdatemanagerDialog::OnedtPasswordTextEnter(wxCommandEvent& event)
@@ -180,7 +231,7 @@ void pamupdatemanagerDialog::OntimerStartTrigger(wxTimerEvent& event)
     wxClientDC dc(this);
     dc.SetFont(m_plstRelease->GetFont());
 
-    if(UsbChecker::MountDevice(m_sDevice) != 0)
+    if(MountDevice(m_sDevice) != 0)
     {
         m_plstRelease->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "## Could not mount device"));
         m_plstRelease->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, strerror(errno)));
@@ -227,7 +278,7 @@ bool pamupdatemanagerDialog::ExtractAndUpdate(wxDC& dc)
     wxFileInputStream in(m_fnUpdate.GetFullPath());
     wxTarInputStream tar(in);
     wxTarEntry* pEntry = nullptr;
-    bool bRelease(false);
+    
     do
     {
         pEntry = tar.GetNextEntry();
@@ -298,7 +349,7 @@ bool pamupdatemanagerDialog::ExtractAndUpdate(wxDC& dc)
                         }
                     }
 
-                    if(ReplaceFile(tar, fnExisiting) == false)
+                    if(ReplaceFile(dc, tar, fnExisiting) == false)
                     {
                         return false;
                     }

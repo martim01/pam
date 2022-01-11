@@ -1,7 +1,7 @@
 #include "releaseelement.h"
 #include <wx/dc.h>
 #include <wx/log.h>
-#include "log.h"
+
 #include <wx/tokenzr.h>
 
 
@@ -61,12 +61,12 @@ wxFont ReleaseElement::GetFont(wxDC& dc)
         case 1:
             fnt.SetPixelSize(fnt.GetPixelSize()*2);
             fnt.SetWeight(wxFONTWEIGHT_BOLD);
-            fnt.SetUnderlined(true);
+            fnt.SetUnderlined(false);
             break;
         case 2:
             fnt.SetPixelSize(fnt.GetPixelSize()*1.5);
             fnt.SetWeight(wxFONTWEIGHT_BOLD);
-            fnt.SetUnderlined(true);
+            fnt.SetUnderlined(false);
             break;
         case 3:
             fnt.SetPixelSize(fnt.GetPixelSize()*1.17);
@@ -81,12 +81,12 @@ wxFont ReleaseElement::GetFont(wxDC& dc)
         case 5:
             fnt.SetPixelSize(fnt.GetPixelSize()*0.83);
             fnt.SetWeight(wxFONTWEIGHT_BOLD);
-            fnt.SetUnderlined(true);
+            fnt.SetUnderlined(false);
             break;
         case 6:
             fnt.SetPixelSize(fnt.GetPixelSize()*.67);
             fnt.SetWeight(wxFONTWEIGHT_BOLD);
-            fnt.SetUnderlined(true);
+            fnt.SetUnderlined(false);
             break;
     }
     return fnt;
