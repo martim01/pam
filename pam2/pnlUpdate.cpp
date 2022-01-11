@@ -13,8 +13,11 @@
 #ifdef __WXMSW__
 #include <wx/volume.h>
 #endif // __WXMSW__
+#include "updater.h"
 
 using namespace std;
+
+
 
 //(*IdInit(pnlUpdate)
 const long pnlUpdate::ID_M_PLBL3 = wxNewId();
@@ -57,28 +60,6 @@ pnlUpdate::~pnlUpdate()
 }
 
 
-void pnlUpdate::OnlstTypeSelected(wxCommandEvent& event)
-{
-}
-void pnlUpdate::OnbtnCheckClick(wxCommandEvent& event)
-{
-     #ifndef NDEBUG
-        #ifdef __WXMSW__
-            wxString sUpdate = wxT("C:\\developer\\matt\\pam2\\pamupdatemanager\\bin\\Debug\\pamupdatemanager");
-        #else
-          wxString sUpdate = wxT("pamupdatemanager");
-        #endif
-    #else
-        #ifdef __WXMSW__
-            wxString sUpdate = wxT("pamupdatemanager");
-        #else
-        wxString sUpdate = wxT("sudo pamupdatemanager");
-        #endif // __WXMSW__
-    #endif
-
-    wxExecute(sUpdate);
-}
-
 void pnlUpdate::OnShown(wxShowEvent& event)
 {
     m_pnlUSB->StartCheck();
@@ -87,5 +68,8 @@ void pnlUpdate::OnShown(wxShowEvent& event)
 void pnlUpdate::OnbtnUpdateClick(const wxCommandEvent& event)
 {
     pmlLog(pml::LOG_INFO) << "Update file '" << m_pnlUSB->m_sSelectedFile << "' from device '" << m_pnlUSB->m_sSelectedDevice << "'";
-    UsbChecker::UnmountDevice();
+    
+    ExtractAndRunUpdater(m_pnlUSB->m_sSelectedDevice, m_pnlUSB->m_sSelectedFile);
 }
+
+
