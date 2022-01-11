@@ -9,6 +9,7 @@
 #include "uirect.h"
 #include "pmcontrol.h"
 #include "wmbuttonfactory.h"
+#include <memory>
 
 class wmSlideWnd;
 
@@ -402,7 +403,7 @@ class PAMBASE_IMPEXPORT wmList : public pmControl
         /** @brief Sets the wmButtonFactory to use to create the buttons for wmList. By default uiRect buttons are created. By creating a new class derived from uiRect and a factory derived from wmButtonFactory you can change the appearance of the buttons that appear in the list
         *   @param pFactory
         **/
-        void SetButtonFactory(wmButtonFactory* pFactory);
+        void SetButtonFactory(std::shared_ptr<wmButtonFactory> pFactory);
 
         uiRect* GetButtonuiRect(size_t nButton);
 
@@ -755,7 +756,7 @@ class PAMBASE_IMPEXPORT wmList : public pmControl
 
         size_t m_nIndex;
 
-        wmButtonFactory* m_pFactory;
+        std::shared_ptr<wmButtonFactory> m_pFactory;
 
         static const long ID_HOLDING;
         static const long ID_SCROLLING;

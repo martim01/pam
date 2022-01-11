@@ -37,7 +37,7 @@ pnlSettingsInputNmos::pnlSettingsInputNmos(wxWindow* parent,wxWindowID id,const 
 	SetSize(size);
 	SetPosition(pos);
 	#ifdef __NMOS__
-	m_plstSenders->SetButtonFactory(new wmSenderButtonFactory());
+	m_plstSenders->SetButtonFactory(std::shared_ptr<wmSenderButtonFactory>());
 
     m_plstSenders->SetSelectedButtonColour(wxColour(wxT("#008000")));
     m_plstSenders->SetDisabledColour(wxColour(wxT("#808080")));

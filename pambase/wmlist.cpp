@@ -79,7 +79,6 @@ wmList::~wmList()
         m_pSlideWnd->Destroy();
     }
     Clear();
-    delete m_pFactory;
 }
 
 wmList::wmList(wxWindow* pParent, wxWindowID id, const wxPoint& pos, const wxSize& size, unsigned int nStyle, unsigned short nScroll, const wxSize& szButtons, unsigned int nColumns, const wxSize& szGap) : pmControl()
@@ -166,7 +165,7 @@ void wmList::SetSwipeSensitivity(unsigned long nPixels)
 void wmList::SetDefaultFactory()
 {
 
-    SetButtonFactory(new wmButtonFactory());
+    SetButtonFactory(std::make_shared<wmButtonFactory>());
 }
 
 wxSize wmList::DoGetBestSize() const
@@ -1916,12 +1915,8 @@ void wmList::OnFocus(wxFocusEvent& event)
     }
 }
 
-void wmList::SetButtonFactory(wmButtonFactory* pFactory)
+void wmList::SetButtonFactory(std::shared_ptr<wmButtonFactory> pFactory)
 {
-    if(m_pFactory)
-    {
-        delete m_pFactory;
-    }
     m_pFactory = pFactory;
 }
 
