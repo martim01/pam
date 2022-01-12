@@ -8,6 +8,8 @@
  **************************************************************/
 
 #include "InitialSetupApp.h"
+#include "settings.h"
+#include "pam2_paths.h"
 
 //(*AppHeaders
 #include "InitialSetupMain.h"
@@ -18,6 +20,7 @@ IMPLEMENT_APP(InitialSetupApp);
 
 bool InitialSetupApp::OnInit()
 {
+    Settings::Get().ReadSettings(wxString::Format(wxT("%s/pam/pam2.ini"), pml::pam2::CONFIG_PATH));
     //(*AppInitialize
     bool wxsOK = true;
     wxInitAllImageHandlers();

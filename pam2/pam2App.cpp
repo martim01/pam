@@ -21,7 +21,7 @@
 #include "iomanager.h"
 #include "dlgEngineering.h"
 #include <wx/image.h>
-
+#include "pam2_paths.h"
 IMPLEMENT_APP(pam2App);
 
 bool pam2App::OnInit()
@@ -57,7 +57,7 @@ bool pam2App::OnInit()
 
 
     //#ifdef __WXGNU__
-    Settings::Get().ReadSettings(wxString::Format(wxT("%s/pam/pam2.ini"), wxStandardPaths::Get().GetUserConfigDir().c_str()));
+    Settings::Get().ReadSettings(wxString::Format(wxT("%s/pam/pam2.ini"), pml::pam2::CONFIG_PATH));
     Settings::Get().RemoveKey(wxT("AoIP"), wxT("NMOS_IS-04"));
     Settings::Get().Write("Startup", "Starting",1);
 

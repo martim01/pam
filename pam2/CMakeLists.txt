@@ -20,6 +20,8 @@ if(${NMOS})
 endif()
 link_directories("../lib")
 
+configure_file(pam2_paths.h.in ${CMAKE_BINARY_DIR}/include/pam2_paths.h @ONLY)
+
 set(SOURCES "dlgAoIP.cpp" "dlgEditName.cpp" "dlgEngineering.cpp" "dlgNoInput.cpp" "dlgPin.cpp" "dlgSequence.cpp" "dlgWiFi.cpp" "dlgmask.cpp" "logelement.cpp"
  "networkcontrol.cpp" "nmos.cpp" "nodebuttonfactory.cpp" "pam2App.cpp" "pam2Main.cpp" "pnlAoIPSelection.cpp" "pnlAoipManual.cpp" "pnlHelp.cpp" "pnlLog.cpp"
  "pnlLogControl.cpp" "pnlNetworkSetup.cpp" "pnlRTCPTransmission.cpp" "pnlRTP.cpp" "pnlSettings.cpp" "pnlSettingsGenerators.cpp" "pnlSettingsInputNmos.cpp"
@@ -76,6 +78,12 @@ set_target_properties(pam2 PROPERTIES RUNTIME_OUTPUT_DIRECTORY "../../bin/")
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 install(TARGETS pam2 RUNTIME DESTINATION /usr/local/bin)
 install(CODE "execute_process(COMMAND setcap cap_sys_time,cap_sys_admin,cap_net_bind_service+ep /usr/local/bin/pam2 WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})")
-install(CODE "execute_process(COMMAND cp ../documents/pam2.conf /etc/ld.so.conf.d/)")
+install(CODE "execute_process(COMMAND cp ${CMAKE_SOURCE_DIR}/documents/pam2.conf /etc/ld.so.conf.d/)")
 install(CODE "execute_process(COMMAND ldconfig)")
+install(CODE "execute_process(COMMAND cp ${CMAKE_SOURCE_DIR}/documents/audio_hats.xml ${DIR_PAM})")
+install(CODE "execute_process(COMMAND cp ${CMAKE_SOURCE_DIR}/documents/macaddress.xml ${DIR_PAM})")
+install(CODE "execute_process(COMMAND cp ${CMAKE_SOURCE_DIR}/documents/ppmtypes.xml ${DIR_PAM})")
+install(CODE "execute_process(COMMAND cp ${CMAKE_SOURCE_DIR}/documents/pam2.ini ${DIR_PAM})")
+install(CODE "execute_process(COMMAND cp -r ${CMAKE_SOURCE_DIR}/documents/help ${DIR_PAM})")
+install(CODE "execute_process(COMMAND cp -r ${CMAKE_SOURCE_DIR}/documents/generator ${DIR_PAM})")
 endif()
