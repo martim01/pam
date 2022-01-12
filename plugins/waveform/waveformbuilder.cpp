@@ -2,7 +2,6 @@
 #include <wx/panel.h>
 #include "settings.h"
 #include "settingevent.h"
-#include "version.h"
 #include "waveformmeter.h"
 
 using namespace std;
@@ -11,7 +10,7 @@ waveformBuilder::waveformBuilder() : MonitorPluginBuilder()
 {
 
     //RegisterForSettingsUpdates(wxT("Mode"), this);
-    
+
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&waveformBuilder::OnSettingChanged);
 
 }

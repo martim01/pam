@@ -1,7 +1,7 @@
 #include "scope.h"
 #include "scopebuilder.h"
 #include "monitorpluginfactory.h"
-#include "version.h"
+#include "scope_version.h"
 
 
 void CreateMonitorBuilder()
@@ -18,7 +18,7 @@ wxString GetPluginName()
 
 wxString GetPluginVersion()
 {
-    return wxString::FromUTF8(AutoVersion::FULLVERSION_STRING);
+    return pml::scope::VERSION_STRING;
 }
 
 wxString GetDetails()

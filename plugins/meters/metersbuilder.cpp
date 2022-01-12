@@ -8,7 +8,6 @@
 #include "pnlMeterSettings.h"
 #include "pnlScale.h"
 #include "levelcalculator.h"
-#include "version.h"
 
 using namespace std;
 

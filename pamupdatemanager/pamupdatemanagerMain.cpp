@@ -1,5 +1,5 @@
 #include "pamupdatemanagerMain.h"
-#include "version.h"
+#include "pamupdatemanager_version.h"
 #include "settings.h"
 #include <wx/log.h>
 #include <wx/wfstream.h>
@@ -139,14 +139,14 @@ pamupdatemanagerDialog::pamupdatemanagerDialog(wxWindow* parent,const wxString& 
 
     UnmountDevice();
 	m_timerStart.SetOwner(this, ID_TIMER2);
-	m_timerStart.Start(1000, true); 
+	m_timerStart.Start(1000, true);
 
 	Connect(ID_M_PEDT1,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&pamupdatemanagerDialog::OnedtPasswordTextEnter);
 	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pamupdatemanagerDialog::OnbtnCancelClick);
 	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pamupdatemanagerDialog::OnbtnUpdateClick);
 	Connect(ID_TIMER2,wxEVT_TIMER,(wxObjectEventFunction)&pamupdatemanagerDialog::OntimerStartTrigger);
 
-    Settings::Get().Write("Version", "pamupdatemanager", wxString::Format("%d.%d.%d.%d", AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
+    Settings::Get().Write("Version", "pamupdatemanager", pml::pamupdatemanager::VERSION_STRING);
 
     m_plstRelease = new wmListAdv(m_ppnlRelease, wxNewId(), wxPoint(0,40), wxSize(800,360), 0, wmListAdv::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(0,0));
 	m_plstRelease->SetFont(wxFont(10,wxFONTFAMILY_ROMAN,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Verdana"),wxFONTENCODING_DEFAULT));
@@ -156,7 +156,7 @@ pamupdatemanagerDialog::pamupdatemanagerDialog(wxWindow* parent,const wxString& 
 	m_plstProgress->SetFont(wxFont(10,wxFONTFAMILY_ROMAN,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Verdana"),wxFONTENCODING_DEFAULT));
 	m_plstProgress->SetBackgroundColour(*wxWHITE);
 
-	m_plblTitle->SetLabel("PAM Update Manager "+wxString::Format("%d.%d.%d.%d", AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION)+" - " + m_fnUpdate.GetName());
+	m_plblTitle->SetLabel(wxString::Format("PAM Update Manager [%s] - '%s'", pml::pamupdatemanager::VERSION_STRING, m_fnUpdate.GetName().c_str()));
 
 	wxClientDC dc(this);
     dc.SetFont(m_plstProgress->GetFont());
@@ -166,7 +166,7 @@ pamupdatemanagerDialog::pamupdatemanagerDialog(wxWindow* parent,const wxString& 
     m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, wxStandardPaths::Get().GetUserDataDir()));
     m_plstProgress->Update();
 
-    
+
 
 }
 
@@ -278,7 +278,7 @@ bool pamupdatemanagerDialog::ExtractAndUpdate(wxDC& dc)
     wxFileInputStream in(m_fnUpdate.GetFullPath());
     wxTarInputStream tar(in);
     wxTarEntry* pEntry = nullptr;
-    
+
     do
     {
         pEntry = tar.GetNextEntry();

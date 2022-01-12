@@ -8,7 +8,6 @@
 #include "pnlDisplay.h"
 #include "pnlMeters.h"
 #include <wx/log.h>
-#include "version.h"
 #include "ppmtypes.h"
 
 using namespace std;

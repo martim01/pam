@@ -4,7 +4,6 @@
 #include "settingevent.h"
 #include "pnlEbuMeter.h"
 #include <wx/log.h>
-#include "version.h"
 #include "pnlControl.h"
 #include "pnlScale.h"
 #include "pnlDisplay.h"

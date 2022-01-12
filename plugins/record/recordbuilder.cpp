@@ -1,6 +1,5 @@
 #include "recordbuilder.h"
 #include "pnlRecord.h"
-#include "version.h"
 
 RecordBuilder::RecordBuilder() : TestPluginBuilder(),
 m_ppnlRecord(0)

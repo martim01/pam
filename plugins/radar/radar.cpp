@@ -1,7 +1,7 @@
 #include "radar.h"
 #include "radarbuilder.h"
 #include "monitorpluginfactory.h"
-#include "version.h"
+#include "radar_version.h"
 
 void CreateMonitorBuilder()
 {
@@ -16,7 +16,7 @@ wxString GetPluginName()
 
 wxString GetPluginVersion()
 {
-    return wxString::FromUTF8(AutoVersion::FULLVERSION_STRING);
+    return pml::radar::VERSION_STRING;
 }
 
 wxString GetDetails()

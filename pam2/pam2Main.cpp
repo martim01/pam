@@ -40,7 +40,7 @@
 #include "audioevent.h"
 #include "soundcardmanager.h"
 #include "pcstats.h"
-#include "version.h"
+#include "pam2_version.h"
 #include "iomanager.h"
 #include "pnlTestOptions.h"
 #include "dlgPin.h"
@@ -305,7 +305,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Connect(wxID_ANY,wxEVT_PLAYBACK_CHANNELS,(wxObjectEventFunction)&pam2Dialog::OnPlaybackChannels);
 
 
-    Settings::Get().Write(wxT("Version"), wxT("pam2"), wxString::Format(wxT("%ld.%ld.%ld.%ld"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
+    Settings::Get().Write(wxT("Version"), wxT("pam2"), pml::pam2::VERSION_STRING);
     Settings::Get().Write(wxT("Input"), wxT("Reset"), false);
 
     m_pbtnInput->SetLabel(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")));
@@ -952,6 +952,7 @@ void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
     pmlLog() << "PAM\tPlugin Monitor Path = " <<  Settings::Get().GetMonitorPluginDirectory();
     pmlLog() << "PAM\tPlugin Test Path = " <<  Settings::Get().GetTestPluginDirectory();
     pmlLog() << "PAM\tDocuments Path = " <<  Settings::Get().GetDocumentDirectory();
+    pmlLog() << "PAM\Config Path = " <<  Settings::Get().GetConfigDirectory();
     pmlLog() << "PAM\tLogs Path = " <<  Settings::Get().GetLogDirectory();
     pmlLog() << "PAM\tWav Files Path = " <<  Settings::Get().GetWavDirectory();
     pmlLog() << "PAM\tTemp Path = " <<  Settings::Get().GetTempDirectory();

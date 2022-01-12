@@ -1,7 +1,7 @@
 #include "waveformregister.h"
 #include "waveformbuilder.h"
 #include "monitorpluginfactory.h"
-#include "version.h"
+#include "waveform_version.h"
 
 void CreateMonitorBuilder()
 {
@@ -15,7 +15,7 @@ wxString GetPluginName()
 
 wxString GetPluginVersion()
 {
-    return wxString::FromUTF8(AutoVersion::FULLVERSION_STRING);
+    return pml::waveform::VERSION_STRING;
 }
 
 wxString GetDetails()

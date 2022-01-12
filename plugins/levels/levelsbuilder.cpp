@@ -1,6 +1,5 @@
 #include "levelsbuilder.h"
 #include "pnlLevels.h"
-#include "version.h"
 
 LevelsBuilder::LevelsBuilder() : TestPluginBuilder(),
 m_ppnlLevels(0)

@@ -1,7 +1,7 @@
 #include "lineupregister.h"
 #include "lineupbuilder.h"
 #include "testpluginfactory.h"
-#include "version.h"
+#include "lineup_version.h"
 
 void CreateTestBuilder()
 {
@@ -15,7 +15,7 @@ wxString GetTestPluginName()
 
 wxString GetPluginVersion()
 {
-    return wxString::FromUTF8(AutoVersion::FULLVERSION_STRING);
+    return pml::lineup::VERSION_STRING;
 }
 
 wxString GetDetails()

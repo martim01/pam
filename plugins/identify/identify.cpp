@@ -1,7 +1,7 @@
 #include "identify.h"
 #include "identifybuilder.h"
 #include "testpluginfactory.h"
-#include "version.h"
+#include "identify_version.h"
 
 void CreateTestBuilder()
 {
@@ -17,7 +17,7 @@ wxString GetTestPluginName()
 
 wxString GetPluginVersion()
 {
-    return wxString::FromUTF8(AutoVersion::FULLVERSION_STRING);
+    return pml::identify::VERSION_STRING;
 }
 
 wxString GetDetails()

@@ -1,6 +1,5 @@
 #include "peakcountbuilder.h"
 #include "pnlpeakcount.h"
-#include "version.h"
 
 PeakCountBuilder::PeakCountBuilder() : TestPluginBuilder(),
 m_ppnlPeakCount(0)

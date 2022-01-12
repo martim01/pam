@@ -1,7 +1,7 @@
 #include "meters.h"
 #include "metersbuilder.h"
 #include "monitorpluginfactory.h"
-#include "version.h"
+#include "meters_version.h"
 
 void CreateMonitorBuilder()
 {
@@ -15,7 +15,7 @@ wxString GetPluginName()
 
 wxString GetPluginVersion()
 {
-    return wxString::FromUTF8(AutoVersion::FULLVERSION_STRING);
+    return pml::meters::VERSION_STRING;
 }
 
 wxString GetDetails()

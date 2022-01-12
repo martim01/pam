@@ -1,7 +1,7 @@
 #include "levels.h"
 #include "levelsbuilder.h"
 #include "testpluginfactory.h"
-#include "version.h"
+#include "levels_version.h"
 
 void CreateTestBuilder()
 {
@@ -17,7 +17,7 @@ wxString GetTestPluginName()
 
 wxString GetPluginVersion()
 {
-    return wxString::FromUTF8(AutoVersion::FULLVERSION_STRING);
+    return pml::levels::VERSION_STRING;
 }
 
 wxString GetDetails()

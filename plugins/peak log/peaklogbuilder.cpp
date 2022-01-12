@@ -1,6 +1,5 @@
 #include "peaklogbuilder.h"
 #include "pnlPeakLog.h"
-#include "version.h"
 
 PeakLogBuilder::PeakLogBuilder() : TestPluginBuilder(),
 m_ppnlPeakLog(0)

@@ -3,7 +3,7 @@
 #include <wx/stdpaths.h>
 #include "settingevent.h"
 #include <wx/filename.h>
-#include "version.h"
+#include "pambase_version.h"
 #include "pmcontrol.h"
 #include "pmpanel.h"
 
@@ -188,7 +188,20 @@ void Settings::ResetFile()
 wxString Settings::GetExecutableDirectory() const
 {
     #ifdef __WXGNU__
-    return m_iniManager.GetIniString(wxT("Paths"), wxT("Executable"), wxString::Format(wxT("%s/bin"), GetDocumentDirectory().c_str()));
+    wxString sPath = m_iniManager.GetIniString("Paths", "Executable", "");
+    if(sPath == "")
+    {
+        wxArrayString asOutput;
+        wxArrayString asError;
+        long nResult = wxExecute("realpath `which pam2`", asOutput, asError);
+
+        if(nResult == 0 && asOutput.Count() != 0)
+        {
+            sPath = asOutput[0].BeforeLast('/');
+            m_iniManager.SetSectionValue("Paths", "Executable", sPath);
+        }
+    }
+    return sPath;
     #else
     return m_iniManager.GetIniString(wxT("Paths"), wxT("Executable"), wxStandardPaths::Get().GetExecutablePath().BeforeLast(wxT('\\')));
     #endif // __WXGNU__
@@ -285,7 +298,11 @@ void Settings::CreatePaths()
 
 wxString Settings::GetLibraryVersion() const
 {
-    return wxString::Format(wxT("%ld.%ld.%ld.%ld"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION);
+    #ifdef _pambase_
+    return pml::pambase::VERSION_STRING;
+    #else
+    return "";
+    #endif
 }
 
 

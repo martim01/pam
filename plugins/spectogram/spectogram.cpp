@@ -1,7 +1,7 @@
 #include "spectogram.h"
 #include "spectogrambuilder.h"
 #include "monitorpluginfactory.h"
-#include "version.h"
+#include "spectogram_version.h"
 
 void CreateMonitorBuilder()
 {
@@ -16,7 +16,7 @@ wxString GetPluginName()
 
 wxString GetPluginVersion()
 {
-    return wxString::FromUTF8(AutoVersion::FULLVERSION_STRING);
+    return pml::spectogram::VERSION_STRING;
 }
 
 wxString GetDetails()

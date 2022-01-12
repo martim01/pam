@@ -9,7 +9,7 @@
 #include <wx/stdpaths.h>
 #include "settings.h"
 //#include "meter.h"
-#include "version.h"
+#include "pam2_version.h"
 #include "dlgSequence.h"
 #include "iomanager.h"
 #include "dlgmask.h"
@@ -259,7 +259,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
     ShowRTPDefined();
 
-    m_plblVersion->SetLabel(wxString::Format(wxT("%ld.%ld.%ld.%ld"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
+    m_plblVersion->SetLabel(pml::pam2::VERSION_STRING);
     m_plblHostname->SetLabel(wxGetHostName());
 
 

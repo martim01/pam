@@ -1,7 +1,7 @@
 #include "aoipinfo.h"
 #include "aoipinfobuilder.h"
 #include "monitorpluginfactory.h"
-#include "version.h"
+#include "aoipinfo_version.h"
 
 void CreateMonitorBuilder()
 {
@@ -18,7 +18,7 @@ wxString GetPluginName()
 
 wxString GetPluginVersion()
 {
-    return wxString::FromUTF8(AutoVersion::FULLVERSION_STRING);
+    return pml::aoipinfo::VERSION_STRING;
 }
 
 wxString GetDetails()

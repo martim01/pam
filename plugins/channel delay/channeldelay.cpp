@@ -1,7 +1,7 @@
 #include "channeldelay.h"
 #include "channeldelaybuilder.h"
 #include "testpluginfactory.h"
-#include "version.h"
+#include "channeldelay_version.h"
 
 void CreateTestBuilder()
 {
@@ -17,7 +17,7 @@ wxString GetTestPluginName()
 
 wxString GetPluginVersion()
 {
-    return wxString::FromUTF8(AutoVersion::FULLVERSION_STRING);
+    return pml::channeldelay::VERSION_STRING;
 
 }
 

@@ -1,7 +1,7 @@
 #include "MP3Streamerregister.h"
 #include "MP3Streamerbuilder.h"
 #include "monitorpluginfactory.h"
-#include "version.h"
+#include "mp3streamer_version.h"
 
 void CreateMonitorBuilder()
 {
@@ -15,7 +15,7 @@ wxString GetPluginName()
 
 wxString GetPluginVersion()
 {
-    return wxString::FromUTF8(AutoVersion::FULLVERSION_STRING);
+    return pml::mp3streamer::VERSION_STRING;
 }
 
 wxString GetDetails()

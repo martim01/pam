@@ -1,7 +1,7 @@
 #include "LTCregister.h"
 #include "LTCbuilder.h"
 #include "testpluginfactory.h"
-#include "version.h"
+#include "LTC_version.h"
 
 void CreateTestBuilder()
 {
@@ -15,7 +15,7 @@ wxString GetTestPluginName()
 
 wxString GetPluginVersion()
 {
-    return wxString::FromUTF8(AutoVersion::FULLVERSION_STRING);
+    return pml::LTC::VERSION_STRING;
 }
 
 wxString GetDetails()

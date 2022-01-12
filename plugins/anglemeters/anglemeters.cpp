@@ -1,7 +1,7 @@
 #include "anglemeters.h"
 #include "anglemetersbuilder.h"
 #include "monitorpluginfactory.h"
-#include "version.h"
+#include "anglemeters_version.h"
 
 
 void CreateMonitorBuilder()
@@ -17,7 +17,7 @@ wxString GetPluginName()
 
 wxString GetPluginVersion()
 {
-    return wxString::FromUTF8(AutoVersion::FULLVERSION_STRING);
+    return pml::anglemeters::VERSION_STRING;
 }
 
 wxString GetDetails()

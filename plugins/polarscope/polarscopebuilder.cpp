@@ -5,7 +5,6 @@
 #include "polarscopemeter.h"
 #include "pnlOptionsMode.h"
 #include <wx/log.h>
-#include "version.h"
 
 
 using namespace std;

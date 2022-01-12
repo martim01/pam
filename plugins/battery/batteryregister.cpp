@@ -1,7 +1,7 @@
 #include "batteryregister.h"
 #include "batterybuilder.h"
 #include "monitorpluginfactory.h"
-#include "version.h"
+#include "battery_version.h"
 
 void CreateMonitorBuilder()
 {
@@ -15,7 +15,7 @@ wxString GetPluginName()
 
 wxString GetPluginVersion()
 {
-    return wxString::FromUTF8(AutoVersion::FULLVERSION_STRING);
+    return pml::battery::VERSION_STRING;
 }
 
 wxString GetDetails()

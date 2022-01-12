@@ -1,7 +1,7 @@
 #include "peaklog.h"
 #include "peaklogbuilder.h"
 #include "testpluginfactory.h"
-#include "version.h"
+#include "peaklog_version.h"
 
 void CreateTestBuilder()
 {
@@ -17,7 +17,7 @@ wxString GetTestPluginName()
 
 wxString GetPluginVersion()
 {
-    return wxString::FromUTF8(AutoVersion::FULLVERSION_STRING);
+    return pml::peaklog::VERSION_STRING;
 }
 
 wxString GetDetails()
