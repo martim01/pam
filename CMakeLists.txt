@@ -125,6 +125,8 @@ if(${NMOS})
     add_subdirectory(${DIR_NMOS} ${CMAKE_SOURCE_DIR}/build/nmos)
 endif()
 
+configure_file(pam2_paths.h.in ${CMAKE_BINARY_DIR}/include/pam2_paths.h @ONLY)
+
 message(STATUS "Configure pambase")
 add_subdirectory(pambase)
 message(STATUS "Configure pamfft")

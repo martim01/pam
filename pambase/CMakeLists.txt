@@ -37,7 +37,6 @@ message(${CMAKE_CURRENT_SOURCE_DIR})
 
 #pambase settubgs
 
-
 include_directories(${DIR_LOG}/include)
 include_directories(${DIR_DNSSD}/include)
 include_directories(${DIR_SAPSERVER}/include)

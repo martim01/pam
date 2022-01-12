@@ -20,7 +20,7 @@ if(${NMOS})
 endif()
 link_directories("../lib")
 
-configure_file(pam2_paths.h.in ${CMAKE_BINARY_DIR}/include/pam2_paths.h @ONLY)
+
 
 set(SOURCES "dlgAoIP.cpp" "dlgEditName.cpp" "dlgEngineering.cpp" "dlgNoInput.cpp" "dlgPin.cpp" "dlgSequence.cpp" "dlgWiFi.cpp" "dlgmask.cpp" "logelement.cpp"
  "networkcontrol.cpp" "nmos.cpp" "nodebuttonfactory.cpp" "pam2App.cpp" "pam2Main.cpp" "pnlAoIPSelection.cpp" "pnlAoipManual.cpp" "pnlHelp.cpp" "pnlLog.cpp"

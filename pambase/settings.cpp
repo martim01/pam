@@ -209,14 +209,14 @@ wxString Settings::GetExecutableDirectory() const
 
 wxString Settings::GetConfigDirectory() const
 {
-    return m_iniManager.GetIniString(wxT("Paths"), wxT("Config"), wxString::Format(wxT("%s/pam"), wxStandardPaths::Get().GetUserConfigDir().c_str()));
+    return pml::pam2::CONFIG_PATH;
 
 }
 
 wxString Settings::GetDocumentDirectory() const
 {
 
-    return m_iniManager.GetIniString(wxT("Paths"), wxT("Docs"), wxString::Format(wxT("%s/pam"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
+    return pml::pam2::CONFIG_PATH;
 }
 
 wxString Settings::GetLogDirectory() const
@@ -279,11 +279,7 @@ void Settings::CreatePaths()
         wxFileName::Mkdir(GetConfigDirectory(), 0777, wxPATH_MKDIR_FULL);
     }
 
-    if(!wxFileName::DirExists(GetDocumentDirectory()))
-    {
-        wxFileName::Mkdir(GetDocumentDirectory(), 0777, wxPATH_MKDIR_FULL);
-    }
-
+    
     if(!wxFileName::DirExists(GetLogDirectory()))
     {
         wxFileName::Mkdir(GetLogDirectory(), 0777, wxPATH_MKDIR_FULL);
