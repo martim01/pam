@@ -37,5 +37,5 @@ target_link_libraries(peakcount optimized pambase debug pambased)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS peakcount LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
+	install(TARGETS peakcount LIBRARY DESTINATION /usr/local/lib/pam2/test)
 endif()		

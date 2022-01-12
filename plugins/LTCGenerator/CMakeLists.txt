@@ -42,5 +42,5 @@ target_link_libraries(LTCGenerator optimized pambase debug pambased)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS LTCGenerator LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
+	install(TARGETS LTCGenerator LIBRARY DESTINATION /usr/local/lib/pam2/generator)
 endif()	

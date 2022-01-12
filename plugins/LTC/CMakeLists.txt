@@ -42,5 +42,5 @@ target_link_libraries(LTC optimized pambase debug pambased)
 
 	#linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS LTC LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
+	install(TARGETS LTC LIBRARY DESTINATION /usr/local/lib/pam2/test)
 endif()	

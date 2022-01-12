@@ -36,5 +36,5 @@ target_link_libraries(record optimized pambase debug pambased)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS record LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
+	install(TARGETS record LIBRARY DESTINATION /usr/local/lib/pam2/test)
 endif()		

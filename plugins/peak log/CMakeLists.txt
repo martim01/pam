@@ -35,6 +35,6 @@ target_link_libraries(peaklog optimized pambase debug pambased)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS peaklog LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
+	install(TARGETS peaklog LIBRARY DESTINATION /usr/local/lib/pam2/test)
 endif()
 		
