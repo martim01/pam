@@ -6,7 +6,7 @@
 #include "pambase_version.h"
 #include "pmcontrol.h"
 #include "pmpanel.h"
-
+#include "pam2_paths.h"
 #ifdef __WXMSW__
 #include <winsock2.h>
 #include <ws2tcpip.h>
