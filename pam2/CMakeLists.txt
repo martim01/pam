@@ -11,6 +11,7 @@ include_directories("../external/live/liveMedia/include")
 include_directories("../external/live/UsageEnvironment/include")
 include_directories("images/")
 include_directories(${DIR_LOG}/include)
+include_directories(${DIR_RESTGOOSE}/include)
 include_directories(${DIR_PTPMONKEY}/include)
 include_directories(${CMAKE_BINARY_DIR}/include)
 
@@ -22,8 +23,8 @@ link_directories("../lib")
 
 
 
-set(SOURCES "dlgAoIP.cpp" "dlgEditName.cpp" "dlgEngineering.cpp" "dlgNoInput.cpp" "dlgPin.cpp" "dlgSequence.cpp" "dlgWiFi.cpp" "dlgmask.cpp" "logelement.cpp"
- "networkcontrol.cpp" "nmos.cpp" "nodebuttonfactory.cpp" "pam2App.cpp" "pam2Main.cpp" "pnlAoIPSelection.cpp" "pnlAoipManual.cpp" "pnlHelp.cpp" "pnlLog.cpp"
+set(SOURCES "aboutelement.cpp" "dlgAoIP.cpp" "dlgEditName.cpp" "dlgEngineering.cpp" "dlgNoInput.cpp" "dlgPin.cpp" "dlgSequence.cpp" "dlgWiFi.cpp" "dlgmask.cpp" "logelement.cpp"
+ "networkcontrol.cpp" "nmos.cpp" "nodebuttonfactory.cpp" "pam2App.cpp" "pam2Main.cpp" "pnlAbout.cpp" "pnlAoIPSelection.cpp" "pnlAoipManual.cpp" "pnlHelp.cpp" "pnlLog.cpp"
  "pnlLogControl.cpp" "pnlNetworkSetup.cpp" "pnlRTCPTransmission.cpp" "pnlRTP.cpp" "pnlSettings.cpp" "pnlSettingsGenerators.cpp" "pnlSettingsInputNmos.cpp"
  "pnlSettingsNmos.cpp" "pnlSettingsOptions.cpp" "pnlSettingsOutput.cpp" "pnlSettingsPlugins.cpp" "pnlSettingsProfiles.cpp" "pnlSettingsTime.cpp"
  "pnlTestOptions.cpp" "pnlTests.cpp" "pnlUSB.cpp" "pnlUpdate.cpp" "senderbuttonfactory.cpp" "wxclientapiposter.cpp" "wxdirtraverseusb.cpp" "wxeventposter.cpp"

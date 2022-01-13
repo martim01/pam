@@ -628,6 +628,7 @@ void pam2Dialog::ShowSettingsPanel()
     m_plstOptions->AddButton(wxT("Profiles"));
     m_plstOptions->AddButton(wxT("General"));
     m_plstOptions->AddButton(wxT("Update"));
+    m_plstOptions->AddButton(wxT("About"));
 
 
 
@@ -952,7 +953,6 @@ void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
     pmlLog() << "PAM\tPlugin Monitor Path = " <<  Settings::Get().GetMonitorPluginDirectory();
     pmlLog() << "PAM\tPlugin Test Path = " <<  Settings::Get().GetTestPluginDirectory();
     pmlLog() << "PAM\tDocuments Path = " <<  Settings::Get().GetDocumentDirectory();
-    pmlLog() << "PAM\Config Path = " <<  Settings::Get().GetConfigDirectory();
     pmlLog() << "PAM\tLogs Path = " <<  Settings::Get().GetLogDirectory();
     pmlLog() << "PAM\tWav Files Path = " <<  Settings::Get().GetWavDirectory();
     pmlLog() << "PAM\tTemp Path = " <<  Settings::Get().GetTempDirectory();
