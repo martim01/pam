@@ -10,7 +10,7 @@ class pnlAbout: public wxPanel
 {
 	public:
 
-		pnlAbout(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+		pnlAbout(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, long nStyle=0, const wxString& sId="");
 		virtual ~pnlAbout();
 
 		//(*Declarations(pnlAbout)
