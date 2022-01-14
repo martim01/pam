@@ -57,7 +57,7 @@ bool pam2App::OnInit()
 
 
     //#ifdef __WXGNU__
-    Settings::Get().ReadSettings(wxString::Format(wxT("%s/pam/pam2.ini"), pml::pam2::CONFIG_PATH));
+    Settings::Get().ReadSettings(wxString::Format(wxT("%s/pam2.ini"), pml::pam2::CONFIG_PATH));
     Settings::Get().RemoveKey(wxT("AoIP"), wxT("NMOS_IS-04"));
     Settings::Get().Write("Startup", "Starting",1);
 
