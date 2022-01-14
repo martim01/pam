@@ -443,11 +443,11 @@ void wmButton::Draw(wxDC& dc)
     }
     if(m_nState != STATE_DISABLED)
     {
-        m_uiRect.Draw(dc, m_uiRect.GetLabel(), m_nBorderState, bmp);
+        m_uiRect.Draw(dc, m_uiRect.GetLabel(), m_nBorderState, uiRect::EDGE_ALL, bmp);
     }
     else
     {
-        m_uiRect.Draw(dc, m_uiRect.GetLabel(), uiRect::BORDER_FLAT, bmp);
+        m_uiRect.Draw(dc, m_uiRect.GetLabel(), uiRect::BORDER_FLAT, uiRect::EDGE_ALL, bmp);
     }
 }
 
@@ -507,13 +507,13 @@ void wmButton::DrawToggle(wxDC& dc)
 
     if(m_nState != STATE_DISABLED)
     {
-        m_uiRect.Draw(dc, m_uiRect.GetLabel(), uiRect::BORDER_UP, bmp);
+        m_uiRect.Draw(dc, m_uiRect.GetLabel(), uiRect::BORDER_UP, uiRect::EDGE_ALL, bmp);
     }
     else
     {
         m_uiRect.SetBackgroundColour(m_clrBackground[STATE_DISABLED]);
         m_uiRect.SetForegroundColour(m_clrForeground[STATE_DISABLED]);
-        m_uiRect.Draw(dc, m_uiRect.GetLabel(), uiRect::BORDER_FLAT, bmp);
+        m_uiRect.Draw(dc, m_uiRect.GetLabel(), uiRect::BORDER_FLAT, uiRect::EDGE_ALL, bmp);
     }
 }
 

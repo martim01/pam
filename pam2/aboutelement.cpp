@@ -11,14 +11,19 @@ const wxColour AboutElement::CLR_BACK = *wxWHITE;
 AboutElement::AboutElement(unsigned int nWidth,const wxString& sName, const wxString& sVersion, const wxString& sDate, const wxString& sTag, const wxString& sBranch)
 {
 
-    auto& rectTitle = m_mHitRects.insert(std::make_pair(ID_TITLE, uiRect(wxRect(0,0,WIDTH_LABEL*3,HEIGHT_TITLE)))).first->second;
+
+    m_rectEnclosing = wxRect(0, 0, nWidth, 62);
+    auto& rectEnclosing = m_mHitRects.insert(std::make_pair(ID_ENCLOSING, uiRect(wxRect(2,0,nWidth-2,62)))).first->second;
+    rectEnclosing.SetBackgroundColour(*wxBLACK);
+
+    auto& rectTitle = m_mHitRects.insert(std::make_pair(ID_TITLE, uiRect(wxRect(rectEnclosing.GetLeft()+1,rectEnclosing.GetHeight()+1,WIDTH_LABEL*3,HEIGHT_TITLE)))).first->second;
     rectTitle.SetLabel(sName);
     rectTitle.SetGradient(0);
     rectTitle.SetTextAlign(wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
     rectTitle.SetBackgroundColour(CLR_BACK);
     rectTitle.SetForegroundColour(CLR_LABEL);
 
-    auto& rectVersion = m_mHitRects.insert(std::make_pair(ID_VERSION, uiRect(wxRect(rectTitle.GetRight(),0,nWidth-rectTitle.GetRight(),rectTitle.GetHeight())))).first->second;
+    auto& rectVersion = m_mHitRects.insert(std::make_pair(ID_VERSION, uiRect(wxRect(rectTitle.GetRight(),1,rectEnclosing.GetWidth()-2-rectTitle.GetRight(),rectTitle.GetHeight())))).first->second;
     rectVersion.SetLabel(sVersion);
     rectVersion.SetGradient(0);
     rectVersion.SetTextAlign(wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT);
@@ -26,14 +31,14 @@ AboutElement::AboutElement(unsigned int nWidth,const wxString& sName, const wxSt
     rectVersion.SetForegroundColour(CLR_DATA);
 
 
-    auto& rectDateLabel = m_mHitRects.insert(std::make_pair(ID_DATE_LABEL, uiRect(wxRect(0,rectTitle.GetBottom(),WIDTH_LABEL,HEIGHT_REST)))).first->second;
+    auto& rectDateLabel = m_mHitRects.insert(std::make_pair(ID_DATE_LABEL, uiRect(wxRect(0,rectTitle.GetBottom()+1,WIDTH_LABEL,HEIGHT_REST)))).first->second;
     rectDateLabel.SetLabel("Date:");
     rectDateLabel.SetGradient(0);
     rectDateLabel.SetTextAlign(wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
     rectDateLabel.SetBackgroundColour(CLR_BACK);
     rectDateLabel.SetForegroundColour(CLR_LABEL);
 
-    auto& rectDate = m_mHitRects.insert(std::make_pair(ID_DATE, uiRect(wxRect(rectDateLabel.GetRight(),rectTitle.GetBottom(),WIDTH_DATA,HEIGHT_REST)))).first->second;
+    auto& rectDate = m_mHitRects.insert(std::make_pair(ID_DATE, uiRect(wxRect(rectDateLabel.GetRight(),rectTitle.GetBottom()+1,WIDTH_DATA,HEIGHT_REST)))).first->second;
     rectDate.SetLabel(sDate);
     rectDate.SetGradient(0);
     rectDate.SetTextAlign(wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
@@ -74,9 +79,6 @@ AboutElement::AboutElement(unsigned int nWidth,const wxString& sName, const wxSt
     SetMinSize(nWidth, 1);
     SetMaxSize(nWidth, 70);
 
-    m_rectEnclosing = wxRect(0, 0, nWidth, 60);
-    auto& rectEnclosing = m_mHitRects.insert(std::make_pair(ID_ENCLOSING, uiRect(m_rectEnclosing))).first->second;
-    rectEnclosing.SetBackgroundColour(CLR_BACK);
 
 }
 
@@ -126,10 +128,10 @@ void AboutElement::Draw(wxDC& dc, bool bSelected)
     wxFont fntTitle = fnt;
     fntTitle.SetPixelSize(fnt.GetPixelSize()*1.5);
     dc.SetFont(fntTitle);
-    m_mHitRects[ID_TITLE].Draw(dc, uiRect::BORDER_NONE);
+    m_mHitRects[ID_TITLE].Draw(dc, uiRect::BORDER_FLAT, uiRect::EDGE_BOTTOM);
     
     dc.SetFont(fnt);
-    m_mHitRects[ID_VERSION].Draw(dc, uiRect::BORDER_NONE);
+    m_mHitRects[ID_VERSION].Draw(dc, uiRect::BORDER_FLAT, uiRect::EDGE_BOTTOM);
     m_mHitRects[ID_DATE_LABEL].Draw(dc, uiRect::BORDER_NONE);
     m_mHitRects[ID_DATE].Draw(dc, uiRect::BORDER_NONE);
     m_mHitRects[ID_TAG_LABEL].Draw(dc, uiRect::BORDER_NONE);
@@ -142,19 +144,20 @@ void AboutElement::Draw(wxDC& dc, bool bSelected)
 void AboutElement::ElementMoved()
 {
     
+    m_mHitRects[ID_ENCLOSING].SetRect(m_rectEnclosing.GetLeft()+2, m_rectEnclosing.GetTop(), m_rectEnclosing.GetWidth()-2, m_rectEnclosing.GetHeight());
 
-    m_mHitRects[ID_TITLE].SetRect(m_rectEnclosing.GetLeft(), m_rectEnclosing.GetTop(), WIDTH_LABEL*3, HEIGHT_TITLE);
-    m_mHitRects[ID_VERSION].SetRect(m_mHitRects[ID_TITLE].GetRight(), m_rectEnclosing.GetTop(), m_rectEnclosing.GetWidth()-m_mHitRects[ID_TITLE].GetRight(), HEIGHT_TITLE);
+    m_mHitRects[ID_TITLE].SetRect(m_mHitRects[ID_ENCLOSING].GetLeft()+1, m_mHitRects[ID_ENCLOSING].GetTop()+1, WIDTH_LABEL*3, HEIGHT_TITLE);
+    m_mHitRects[ID_VERSION].SetRect(m_mHitRects[ID_TITLE].GetRight(), m_mHitRects[ID_ENCLOSING].GetTop()+1, m_mHitRects[ID_ENCLOSING].GetWidth()-m_mHitRects[ID_TITLE].GetRight(), HEIGHT_TITLE);
     
-    m_mHitRects[ID_DATE_LABEL].SetRect(m_rectEnclosing.GetLeft(), m_mHitRects[ID_TITLE].GetBottom(), WIDTH_LABEL, HEIGHT_REST);
-    m_mHitRects[ID_DATE].SetRect(m_mHitRects[ID_DATE_LABEL].GetRight(), m_mHitRects[ID_TITLE].GetBottom(), WIDTH_DATA, HEIGHT_REST);
+    m_mHitRects[ID_DATE_LABEL].SetRect(m_mHitRects[ID_ENCLOSING].GetLeft()+1, m_mHitRects[ID_TITLE].GetBottom()+1, WIDTH_LABEL, HEIGHT_REST);
+    m_mHitRects[ID_DATE].SetRect(m_mHitRects[ID_DATE_LABEL].GetRight(), m_mHitRects[ID_TITLE].GetBottom()+1, WIDTH_DATA, HEIGHT_REST);
 
     m_mHitRects[ID_TAG_LABEL].SetRect(m_mHitRects[ID_DATE].GetRight(), m_mHitRects[ID_DATE_LABEL].GetTop(), WIDTH_LABEL, HEIGHT_REST);
     m_mHitRects[ID_TAG].SetRect(m_mHitRects[ID_TAG_LABEL].GetRight(), m_mHitRects[ID_DATE_LABEL].GetTop(), WIDTH_DATA, HEIGHT_REST);
 
     m_mHitRects[ID_BRANCH_LABEL].SetRect(m_mHitRects[ID_TAG].GetRight(), m_mHitRects[ID_DATE_LABEL].GetTop(), WIDTH_LABEL, HEIGHT_REST);
-    m_mHitRects[ID_BRANCH].SetRect(m_mHitRects[ID_BRANCH_LABEL].GetRight(), m_mHitRects[ID_DATE_LABEL].GetTop(), m_rectEnclosing.GetWidth()-m_mHitRects[ID_BRANCH_LABEL].GetRight(), HEIGHT_REST);
+    m_mHitRects[ID_BRANCH].SetRect(m_mHitRects[ID_BRANCH_LABEL].GetRight(), m_mHitRects[ID_DATE_LABEL].GetTop(), m_mHitRects[ID_ENCLOSING].GetWidth()-m_mHitRects[ID_BRANCH_LABEL].GetRight(), HEIGHT_REST);
 
-    m_mHitRects[ID_ENCLOSING].SetRect(m_rectEnclosing);
+    
 }
 

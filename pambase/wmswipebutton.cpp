@@ -108,7 +108,7 @@ void wmSwipeButton::Draw(wxDC& dc)
     m_uiSwitchLine.Draw(dc, wxEmptyString, uiRect::BORDER_DOWN);
 
 
-    m_uiRect.Draw(dc, m_uiRect.GetLabel(), m_nBorderState, bmp);
+    m_uiRect.Draw(dc, m_uiRect.GetLabel(), m_nBorderState, uiRect::EDGE_ALL, bmp);
 
 }
 

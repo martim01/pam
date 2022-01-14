@@ -139,7 +139,7 @@ pamupdatemanagerDialog::pamupdatemanagerDialog(wxWindow* parent,const wxString& 
 
     UnmountDevice();
 	m_timerStart.SetOwner(this, ID_TIMER2);
-	m_timerStart.Start(1000, true);
+	m_timerStart.Start(2000, true);
 
 	Connect(ID_M_PEDT1,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&pamupdatemanagerDialog::OnedtPasswordTextEnter);
 	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pamupdatemanagerDialog::OnbtnCancelClick);
@@ -303,25 +303,25 @@ bool pamupdatemanagerDialog::ExtractAndUpdate(wxDC& dc)
                         {
                             if(asDir[1] == "monitor")
                             {
-                                fnExisiting.SetPath(GetRealPath("/usr/local/lib/pam2/monitor"));
+                                fnExisiting.SetPath("/usr/local/lib/pam2/monitor");
                             }
                             else if(asDir[1] == "test")
                             {
-                                fnExisiting.SetPath(GetRealPath("/usr/local/lib/pam2/test"));
+                                fnExisiting.SetPath("/usr/local/lib/pam2/test");
                             }
                             else if(asDir[1] == "generator")
                             {
-                                fnExisiting.SetPath(GetRealPath("/usr/local/lib/pam2/generator"));
+                                fnExisiting.SetPath("/usr/local/lib/pam2/generator");
                             }
                         }
                         else
                         {
-                            fnExisiting.SetPath(GetRealPath("/usr/local/lib/pam2"));
+                            fnExisiting.SetPath("/usr/local/lib/pam2");
                         }
                     }
                     else if(asDir[0] == "bin")
                     {
-                        fnExisiting.SetPath(GetRealPath("/usr/local/bin/pam2"));
+                        fnExisiting.SetPath("/usr/local/bin");
                     }
                     else if(asDir[0] == "documents")
                     {
@@ -345,7 +345,7 @@ bool pamupdatemanagerDialog::ExtractAndUpdate(wxDC& dc)
                         }
                         else
                         {
-                            fnExisiting.SetPath(Settings::Get().GetConfigDirectory());
+                            fnExisiting.SetPath(Settings::Get().GetDocumentDirectory());
                         }
                     }
 
@@ -361,27 +361,6 @@ bool pamupdatemanagerDialog::ExtractAndUpdate(wxDC& dc)
     return true;
 }
 
-
-wxString pamupdatemanagerDialog::GetRealPath(const wxString& sPath)
-{
-    auto ins = m_mRealPaths.insert({sPath,""});
-    if(ins.second)
-    {
-
-        wxClientDC dc(this);
-        dc.SetFont(m_plstProgress->GetFont());
-
-        wxArrayString asOutput;
-        wxArrayString asError;
-        long nResult = wxExecute("realpath "+sPath, asOutput, asError);
-
-        if(nResult == 0 && asOutput.Count() != 0)
-        {
-            ins.first->second = asOutput[0];
-        }
-    }
-    return ins.first->second;
-}
 
 bool pamupdatemanagerDialog::ReplaceFile(wxDC& dc, wxTarInputStream& input, const wxFileName& fnOutput)
 {
@@ -445,6 +424,6 @@ void pamupdatemanagerDialog::RevertAll()
 
 void pamupdatemanagerDialog::PostUpdate()
 {
-    wxExecute(wxString::Format("echo %s | sudo -S -k setcap cap_sys_time,cap_sys_admin,cap_net_bind_service+ep %s", m_pedtPassword->GetValue().c_str(), GetRealPath("/usr/local/bin/pam2").c_str()), wxEXEC_SYNC);
+    wxExecute(wxString::Format("echo %s | sudo -S -k setcap cap_sys_time,cap_sys_admin,cap_net_bind_service+ep /usr/local/bin/pam2", m_pedtPassword->GetValue().c_str()), wxEXEC_SYNC);
     wxExecute(wxString::Format("echo %s | sudo -S -k ldconfig", m_pedtPassword->GetValue().c_str()), wxEXEC_SYNC);
 }

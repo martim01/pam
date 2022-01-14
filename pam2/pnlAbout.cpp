@@ -27,7 +27,7 @@ pnlAbout::pnlAbout(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSiz
 {
 	Create(parent, id, pos, size, wxTAB_TRAVERSAL, _T("id"));
 
-	m_plstAbout = new wmListAdv(this, wxNewId(), wxPoint(0,0), wxSize(600,440), 0, wmListAdv::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(0,1));
+	m_plstAbout = new wmListAdv(this, wxNewId(), wxPoint(0,0), wxSize(600,440), 0, wmListAdv::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(0,0));
 	m_plstAbout->SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
 	m_plstAbout->SetBackgroundColour(*wxWHITE);
 
