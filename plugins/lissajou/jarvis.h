@@ -24,6 +24,7 @@ int swap(wxPoint &p1, wxPoint &p2)
     wxPoint temp = p1;
     p1 = p2;
     p2 = temp;
+    return 0;
 }
 
 // A utility function to return square of distance
