@@ -87,4 +87,6 @@ install(CODE "execute_process(COMMAND cp ${CMAKE_SOURCE_DIR}/documents/ppmtypes.
 install(CODE "execute_process(COMMAND cp ${CMAKE_SOURCE_DIR}/documents/pam2.ini ${DIR_PAM})")
 install(CODE "execute_process(COMMAND cp -r ${CMAKE_SOURCE_DIR}/documents/help ${DIR_PAM})")
 install(CODE "execute_process(COMMAND cp -r ${CMAKE_SOURCE_DIR}/documents/generator ${DIR_PAM})")
+install(CODE "execute_process(COMMAND chown -R pi ${DIR_PAM}/*)")
+
 endif()
