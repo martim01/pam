@@ -9,11 +9,23 @@
 
 #pragma once
 #include <wx/app.h>
+#include <wx/filename.h>
+#include <wx/cmdline.h>
 
 class pamupdatemanagerApp : public wxApp
 {
     public:
         virtual bool OnInit();
+
+        		/**	Initialise command line parser */
+		void OnInitCmdLine(wxCmdLineParser& parser);
+
+		/**	Handle command line parser result */
+		bool OnCmdLineParsed(wxCmdLineParser& parser);
+
+    private:
+        wxString m_sDevice;
+        wxFileName m_fnUpdate;
 };
 
 

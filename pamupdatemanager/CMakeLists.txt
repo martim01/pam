@@ -1,13 +1,19 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
-project(pamupdatemanager LANGUAGES CXX)
+project(pamupdatemanager LANGUAGES CXX VERSION 1.2.1)
+
+execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -P ${CMAKE_SOURCE_DIR}/version.cmake)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
 include_directories("../pambase/")
-include_directories("../external/log/include")
-link_directories("../lib")
+include_directories("../pam2/")
+include_directories(${CMAKE_BINARY_DIR}/include)
 
 
-file(GLOB SOURCES "*.cpp")
+set(SOURCES "../pambase/advelement.cpp" "../pambase/inimanager.cpp" "../pambase/inisection.cpp" "../pambase/pmcontrol.cpp" "../pambase/pmpanel.cpp" "../pambase/settingevent.cpp" "../pambase/settings.cpp" 
+"../pambase/uirect.cpp" "../pambase/wmbutton.cpp" "../pambase/wmedit.cpp" "../pambase/wmfocusmanager.cpp" "../pambase/wmkeyboard.cpp" "../pambase/wmlabel.cpp" "../pambase/wmlist.cpp" "../pambase/wmlistadv.cpp"
+"../pambase/wmslidewnd.cpp" "../pambase/wmswitcherpanel.cpp" "pamupdatemanagerApp.cpp" "pamupdatemanagerMain.cpp" "releaseelement.cpp" ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_version.cpp)
+
 
 add_executable(pamupdatemanager ${SOURCES})
 
@@ -19,23 +25,9 @@ target_compile_definitions(pamupdatemanager PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNIC
 find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
-#linux specific
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	#use pkgconfig to find the required libs
-	find_package(PkgConfig REQUIRED QUIET)
-	
-	pkg_search_module(curl REQUIRED libcurl IMPORTED_TARGET)
-	if(TARGET PkgConfig::curl)
-		message(STATUS "Found libcurl")
-		target_link_libraries(pamupdatemanager PkgConfig::curl)
-	endif()
-	
-endif()
-
-
 target_link_libraries(pamupdatemanager ${wxWidgets_LIBRARIES})
-target_link_libraries(pamupdatemanager pambase)
 
+set_property(TARGET pamupdatemanager PROPERTY CXX_STANDARD 14)
 set_target_properties(pamupdatemanager PROPERTIES RUNTIME_OUTPUT_DIRECTORY "../../bin/")
 
 #linux specific

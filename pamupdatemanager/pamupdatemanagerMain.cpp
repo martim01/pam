@@ -1,530 +1,429 @@
 #include "pamupdatemanagerMain.h"
-#include "version.h"
-#include "monitorpluginfactory.h"
-#include "testpluginfactory.h"
+#include "pamupdatemanager_version.h"
 #include "settings.h"
-#include "updatemanager.h"
 #include <wx/log.h>
-
-
-//(*InternalHeaders(pamupdatemanagerDialog)
+#include <wx/wfstream.h>
+#include <wx/tarstrm.h>
+#include "wmlistadv.h"
+#include <wx/dcclient.h>
+#include <wx/txtstrm.h>
 #include <wx/font.h>
 #include <wx/intl.h>
 #include <wx/string.h>
-//*)
+#include "releaseelement.h"
+#ifdef __WXGNU__
+#include <sys/mount.h>
+#endif // __WXGNU__
 
-using namespace std;
+#include <wx/stdpaths.h>
 
-//(*IdInit(pamupdatemanagerDialog)
-const long pamupdatemanagerDialog::ID_M_PLBL37 = wxNewId();
-const long pamupdatemanagerDialog::ID_M_PBTN1 = wxNewId();
-const long pamupdatemanagerDialog::ID_M_PBTN6 = wxNewId();
-const long pamupdatemanagerDialog::ID_M_PBTN5 = wxNewId();
-const long pamupdatemanagerDialog::ID_M_PBTN4 = wxNewId();
-const long pamupdatemanagerDialog::ID_M_PBTN2 = wxNewId();
-const long pamupdatemanagerDialog::ID_M_PBTN3 = wxNewId();
-const long pamupdatemanagerDialog::ID_M_PLBL1 = wxNewId();
-const long pamupdatemanagerDialog::ID_M_PLBL4 = wxNewId();
+
+int UnmountDevice()
+{
+    int nResult = umount("/mnt/share");
+    if(nResult == -1 && errno != EAGAIN && errno != EINVAL)
+    {
+        std::cout << "Could not umount device: " << strerror(errno);
+        return errno;
+    }
+    return 0;
+}
+
+
+int MountDevice(const wxString& sDevice)
+{
+    if(sDevice.empty())
+    {
+        return EINVAL;
+    }
+
+    if(wxDirExists("/mnt/share") == false)
+    {
+        wxMkdir("/mnt/share");
+    }
+    int nResult = umount("/mnt/share");
+    if(nResult == -1 && errno != EAGAIN && errno != EINVAL)
+    {
+        return errno;
+    }
+
+
+    std::array<std::string, 8> fs({"ext3", "ext2", "ext4", "vfat", "msdos", "f2fs", "fuseblk", "ntfs"});
+    for(size_t i = 0; i < fs.size(); i++)
+    {
+        nResult = mount(sDevice.ToStdString().c_str(), "/mnt/share", fs[i].c_str(), MS_SILENT, nullptr);
+        if(nResult == 0)
+        {
+            return 0;
+        }
+    }
+    return errno;
+
+}
+
+
+
+
 const long pamupdatemanagerDialog::ID_M_PLBL2 = wxNewId();
-const long pamupdatemanagerDialog::ID_M_PLBL3 = wxNewId();
-const long pamupdatemanagerDialog::ID_M_PLST1 = wxNewId();
 const long pamupdatemanagerDialog::ID_PANEL1 = wxNewId();
-const long pamupdatemanagerDialog::ID_HTMLWINDOW1 = wxNewId();
+const long pamupdatemanagerDialog::ID_M_PLBL3 = wxNewId();
 const long pamupdatemanagerDialog::ID_PANEL2 = wxNewId();
-const long pamupdatemanagerDialog::ID_HTMLWINDOW2 = wxNewId();
+const long pamupdatemanagerDialog::ID_M_PEDT1 = wxNewId();
+const long pamupdatemanagerDialog::ID_M_PKBD1 = wxNewId();
+const long pamupdatemanagerDialog::ID_M_PLBL1 = wxNewId();
 const long pamupdatemanagerDialog::ID_PANEL3 = wxNewId();
-const long pamupdatemanagerDialog::ID_M_PLBL5 = wxNewId();
-const long pamupdatemanagerDialog::ID_M_PLST2 = wxNewId();
-const long pamupdatemanagerDialog::ID_PANEL4 = wxNewId();
-const long pamupdatemanagerDialog::ID_M_PSWP2 = wxNewId();
-const long pamupdatemanagerDialog::ID_M_PBTN7 = wxNewId();
-const long pamupdatemanagerDialog::ID_M_PLST3 = wxNewId();
-const long pamupdatemanagerDialog::ID_PANEL5 = wxNewId();
-const long pamupdatemanagerDialog::ID_M_PLBL6 = wxNewId();
-const long pamupdatemanagerDialog::ID_M_PLBL7 = wxNewId();
-const long pamupdatemanagerDialog::ID_PANEL6 = wxNewId();
 const long pamupdatemanagerDialog::ID_M_PSWP1 = wxNewId();
-const long pamupdatemanagerDialog::ID_TIMER1 = wxNewId();
+const long pamupdatemanagerDialog::ID_M_PBTN4 = wxNewId();
+const long pamupdatemanagerDialog::ID_M_PBTN1 = wxNewId();
 const long pamupdatemanagerDialog::ID_TIMER2 = wxNewId();
-//*)
 
-BEGIN_EVENT_TABLE(pamupdatemanagerDialog,wxDialog)
+//BEGIN_EVENT_TABLE(pamupdatemanagerDialog,wxDialog)
 	//(*EventTable(pamupdatemanagerDialog)
 	//*)
-END_EVENT_TABLE()
+//END_EVENT_TABLE()
 
-pamupdatemanagerDialog::pamupdatemanagerDialog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
+pamupdatemanagerDialog::pamupdatemanagerDialog(wxWindow* parent,const wxString& sDevice, const wxFileName& fnUpdate, wxWindowID id,const wxPoint& pos,const wxSize& size) : m_sDevice(sDevice), m_fnUpdate(fnUpdate)
 {
-	//(*Initialize(pamupdatemanagerDialog)
 	Create(parent, id, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxNO_BORDER, _T("id"));
 	SetClientSize(wxSize(800,480));
 	Move(wxDefaultPosition);
-	SetBackgroundColour(wxColour(0,0,0));
-	wxFont thisFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	SetBackgroundColour(wxColour(255,255,255));
+	wxFont thisFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Verdana"),wxFONTENCODING_DEFAULT);
 	SetFont(thisFont);
-	m_pswpSplash = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(0,0), wxSize(800,480), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
-	m_pswpSplash->SetPageNameStyle(0);
-	pnlMain = new wxPanel(m_pswpSplash, ID_PANEL5, wxPoint(0,0), wxSize(800,480), wxTAB_TRAVERSAL, _T("ID_PANEL5"));
-	pnlMain->SetBackgroundColour(wxColour(0,0,0));
-	m_plblSettings = new wmLabel(pnlMain, ID_M_PLBL37, _("Available Updates"), wxPoint(0,0), wxSize(800,40), 0, _T("ID_M_PLBL37"));
-	m_plblSettings->SetBorderState(uiRect::BORDER_NONE);
-	m_plblSettings->SetForegroundColour(wxColour(255,255,255));
-	m_plblSettings->SetBackgroundColour(wxColour(61,146,146));
-	wxFont m_plblSettingsFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
-	m_plblSettings->SetFont(m_plblSettingsFont);
-	m_pbtnClose = new wmButton(pnlMain, ID_M_PBTN1, _("Close"), wxPoint(645,425), wxSize(150,50), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
-	m_pbtnSelectAll = new wmButton(pnlMain, ID_M_PBTN6, _("Select All"), wxPoint(645,185), wxSize(150,40), 0, wxDefaultValidator, _T("ID_M_PBTN6"));
-	m_pbtnSelectAll->SetBackgroundColour(wxColour(176,176,176));
-	m_pbtnSelectNone = new wmButton(pnlMain, ID_M_PBTN5, _("Deselect All"), wxPoint(645,230), wxSize(150,40), 0, wxDefaultValidator, _T("ID_M_PBTN5"));
-	m_pbtnSelectNone->SetBackgroundColour(wxColour(176,176,176));
-	m_pbtnUpdate = new wmButton(pnlMain, ID_M_PBTN4, _("Update Selected"), wxPoint(645,370), wxSize(150,50), 0, wxDefaultValidator, _T("ID_M_PBTN4"));
+	m_plblTitle = new wmLabel(this, ID_M_PLBL2, _("PAM Update Manager"), wxPoint(0,0), wxSize(800,40), 0, _T("ID_M_PLBL2"));
+	m_plblTitle->SetBorderState(uiRect::BORDER_NONE);
+	m_plblTitle->GetUiRect().SetGradient(0);
+	m_plblTitle->SetForegroundColour(wxColour(255,255,255));
+	m_plblTitle->SetBackgroundColour(wxColour(45,36,81));
+	wxFont m_plblTitleFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Verdana"),wxFONTENCODING_DEFAULT);
+	m_plblTitle->SetFont(m_plblTitleFont);
+	m_pswpMain = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(0,40), wxSize(800,400), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
+	m_pswpMain->SetPageNameStyle(0);
+	m_ppnlProgress = new wxPanel(m_pswpMain, ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL1"));
+	m_ppnlRelease = new wxPanel(m_pswpMain, ID_PANEL2, wxDefaultPosition, wxSize(0,0), wxTAB_TRAVERSAL, _T("ID_PANEL2"));
+	m_pLbl2 = new wmLabel(m_ppnlRelease, ID_M_PLBL3, _("Release Notes"), wxPoint(0,5), wxSize(800,35), 0, _T("ID_M_PLBL3"));
+	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl2->GetUiRect().SetGradient(0);
+	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl2->SetBackgroundColour(wxColour(0,0,0));
+	wxFont m_pLbl2Font(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
+	m_pLbl2->SetFont(m_pLbl2Font);
+	m_ppnlPassword = new wxPanel(m_pswpMain, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
+	m_ppnlPassword->SetBackgroundColour(wxColour(0,0,0));
+	m_pedtPassword = new wmEdit(m_ppnlPassword, ID_M_PEDT1, wxEmptyString, wxPoint(110,40), wxSize(600,45), wxTE_PASSWORD, wxDefaultValidator, _T("ID_M_PEDT1"));
+	m_pedtPassword->SetValidation(3);
+	m_pedtPassword->SetBackgroundColour(wxColour(255,255,255));
+	m_pedtPassword->SetFocusedBackground(wxColour("#FFFFFF"));
+	m_pedtPassword->SetFocusedForeground(wxColour("#000000"));
+	m_pedtPassword->SetBorderStyle(1,1);
+	m_pkeyboard = new wmKeyboard(m_ppnlPassword, ID_M_PKBD1, wxPoint(110,90), wxDefaultSize, 0, 0);
+	m_pkeyboard->SetForegroundColour(wxColour(255,255,255));
+	m_pLblPassword = new wmLabel(m_ppnlPassword, ID_M_PLBL1, _("Enter Password"), wxPoint(0,5), wxSize(800,35), 0, _T("ID_M_PLBL1"));
+	m_pLblPassword->SetBorderState(uiRect::BORDER_NONE);
+	m_pLblPassword->GetUiRect().SetGradient(0);
+	m_pLblPassword->SetForegroundColour(wxColour(0,255,0));
+	wxFont m_pLbl1Font(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
+	m_pLblPassword->SetFont(m_pLbl1Font);
+	m_pswpMain->AddPage(m_ppnlProgress, _("Progress"), false);
+	m_pswpMain->AddPage(m_ppnlRelease, _("Release"), true);
+	m_pswpMain->AddPage(m_ppnlPassword, _("Password"), false);
+	m_pbtnCancel = new wmButton(this, ID_M_PBTN4, _("Close"), wxPoint(240,443), wxSize(100,35), 0, wxDefaultValidator, _T("ID_M_PBTN4"));
+	m_pbtnCancel->SetBackgroundColour(wxColour(128,0,0));
+	m_pbtnCancel->SetColourSelected(wxColour("#FF0000"));
+	m_pbtnCancel->SetColourDisabled(wxColour("#909090"));
+	m_pbtnUpdate = new wmButton(this, ID_M_PBTN1, _("Update"), wxPoint(460,443), wxSize(100,35), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnUpdate->Disable();
 	m_pbtnUpdate->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnUpdate->SetColourSelected(wxColour(wxT("#008040")));
-	m_pbtnUpdate->SetColourDisabled(wxColour(wxT("#808080")));
-	m_pbtnChangelog = new wmButton(pnlMain, ID_M_PBTN2, _("View Changelog"), wxPoint(645,280), wxSize(150,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN2"));
-	m_pbtnChangelog->Disable();
-	m_pbtnChangelog->SetBackgroundColour(wxColour(0,125,125));
-	m_pbtnChangelog->SetColourSelected(wxColour(wxT("#FF8000")));
-	m_pbtnChangelog->SetColourDisabled(wxColour(wxT("#808080")));
-	m_pbtnDependencies = new wmButton(pnlMain, ID_M_PBTN3, _("View Dependencies"), wxPoint(645,325), wxSize(150,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
-	m_pbtnDependencies->Disable();
-	m_pbtnDependencies->SetBackgroundColour(wxColour(0,125,125));
-	m_pbtnDependencies->SetColourSelected(wxColour(wxT("#FF8000")));
-	m_pbtnDependencies->SetColourDisabled(wxColour(wxT("#808080")));
-	m_pswpMain = new wmSwitcherPanel(pnlMain, ID_M_PSWP2, wxPoint(0,45), wxSize(650,430), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP2"));
-	m_pswpMain->SetPageNameStyle(0);
-	Panel1 = new wxPanel(m_pswpMain, ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL1"));
-	Panel1->SetBackgroundColour(wxColour(0,0,0));
-	m_pLbl1 = new wmLabel(Panel1, ID_M_PLBL1, _("Name"), wxPoint(2,0), wxSize(158,30), 0, _T("ID_M_PLBL1"));
-	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
-	m_pLbl1->SetForegroundColour(wxColour(255,255,255));
-	m_pLbl1->SetBackgroundColour(wxColour(0,0,128));
-	m_pLbl4 = new wmLabel(Panel1, ID_M_PLBL4, _("Type"), wxPoint(162,0), wxSize(158,30), 0, _T("ID_M_PLBL4"));
-	m_pLbl4->SetBorderState(uiRect::BORDER_NONE);
-	m_pLbl4->SetForegroundColour(wxColour(255,255,255));
-	m_pLbl4->SetBackgroundColour(wxColour(0,0,128));
-	m_pLbl2 = new wmLabel(Panel1, ID_M_PLBL2, _("Current Version"), wxPoint(322,0), wxSize(158,30), 0, _T("ID_M_PLBL2"));
-	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
-	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
-	m_pLbl2->SetBackgroundColour(wxColour(0,0,128));
-	m_pLbl3 = new wmLabel(Panel1, ID_M_PLBL3, _("Available Version"), wxPoint(482,0), wxSize(158,30), 0, _T("ID_M_PLBL3"));
-	m_pLbl3->SetBorderState(uiRect::BORDER_NONE);
-	m_pLbl3->SetForegroundColour(wxColour(255,255,255));
-	m_pLbl3->SetBackgroundColour(wxColour(0,0,128));
-	m_plstUpdates = new wmList(Panel1, ID_M_PLST1, wxPoint(0,30), wxSize(645,400), wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI|wmList::STYLE_SELECT_ROW, 1, wxSize(-1,30), 4, wxSize(2,1));
-	m_plstUpdates->SetBackgroundColour(wxColour(0,0,0));
-	m_plstUpdates->SetBorderStyle(2);
-	m_plstUpdates->SetButtonColour(wxColour(wxT("#FFFFFF")));
-	m_plstUpdates->SetPressedButtonColour(wxColour(wxT("#0080FF")));
-	m_plstUpdates->SetSelectedButtonColour(wxColour(wxT("#0080C0")));
-	m_plstUpdates->SetTextButtonColour(wxColour(wxT("#000000")));
-	Panel2 = new wxPanel(m_pswpMain, ID_PANEL2, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL2"));
-	m_phtmlChangelog = new wxTouchScreenHtml(Panel2, ID_HTMLWINDOW1, wxPoint(0,0), wxSize(650,430), 0, _T("ID_HTMLWINDOW1"));
-	Panel3 = new wxPanel(m_pswpMain, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
-	m_phtmlDependencies = new wxTouchScreenHtml(Panel3, ID_HTMLWINDOW2, wxPoint(0,0), wxSize(650,430), wxHW_SCROLLBAR_AUTO, _T("ID_HTMLWINDOW2"));
-	Panel4 = new wxPanel(m_pswpMain, ID_PANEL4, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL4"));
-	Panel4->SetBackgroundColour(wxColour(0,0,0));
-	m_pLbl5 = new wmLabel(Panel4, ID_M_PLBL5, _("Update Log"), wxPoint(2,0), wxSize(641,30), 0, _T("ID_M_PLBL5"));
-	m_pLbl5->SetBorderState(uiRect::BORDER_NONE);
-	m_pLbl5->SetForegroundColour(wxColour(255,255,255));
-	m_pLbl5->SetBackgroundColour(wxColour(0,0,128));
-	m_plstLog = new wmList(Panel4, ID_M_PLST2, wxPoint(0,30), wxSize(645,400), 0, 1, wxSize(-1,30), 1, wxSize(2,1));
-	m_plstLog->SetBackgroundColour(wxColour(0,0,0));
-	m_plstLog->SetBorderStyle(2);
-	m_plstLog->SetButtonColour(wxColour(wxT("#FFFFFF")));
-	m_plstLog->SetTextButtonColour(wxColour(wxT("#000000")));
-	m_pswpMain->AddPage(Panel1, _("List"), false);
-	m_pswpMain->AddPage(Panel2, _("Changelog"), false);
-	m_pswpMain->AddPage(Panel3, _("Dependencies"), false);
-	m_pswpMain->AddPage(Panel4, _("Log"), false);
-	m_pbtnShow = new wmButton(pnlMain, ID_M_PBTN7, _("Show"), wxPoint(645,45), wxSize(150,30), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN7"));
-	m_pbtnShow->SetBackgroundColour(wxColour(0,0,128));
-	m_plstShow = new wmList(pnlMain, ID_M_PLST3, wxPoint(645,80), wxSize(150,100), wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI, 0, wxSize(-1,33), 3, wxSize(-1,-1));
-	m_plstShow->SetBackgroundColour(wxColour(0,0,0));
-	wxFont m_plstShowFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
-	m_plstShow->SetFont(m_plstShowFont);
-	m_plstShow->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
-	Panel5 = new wxPanel(m_pswpSplash, ID_PANEL6, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL6"));
-	Panel5->SetBackgroundColour(wxColour(0,0,0));
-	m_pLbl6 = new wmLabel(Panel5, ID_M_PLBL6, _("Please wait retrieving update list..."), wxPoint(0,40), wxSize(800,440), 0, _T("ID_M_PLBL6"));
-	m_pLbl6->SetBorderState(uiRect::BORDER_NONE);
-	m_pLbl6->SetForegroundColour(wxColour(128,128,255));
-	m_pLbl6->SetBackgroundColour(wxColour(0,0,0));
-	wxFont m_pLbl6Font(28,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Verdana"),wxFONTENCODING_DEFAULT);
-	m_pLbl6->SetFont(m_pLbl6Font);
-	m_pLbl7 = new wmLabel(Panel5, ID_M_PLBL7, _("PAM Update Manager"), wxPoint(0,0), wxSize(800,40), 0, _T("ID_M_PLBL7"));
-	m_pLbl7->SetBorderState(uiRect::BORDER_NONE);
-	m_pLbl7->SetForegroundColour(wxColour(255,255,255));
-	m_pLbl7->SetBackgroundColour(wxColour(61,146,146));
-	wxFont m_pLbl7Font(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
-	m_pLbl7->SetFont(m_pLbl7Font);
-	m_pswpSplash->AddPage(pnlMain, _("Main"), false);
-	m_pswpSplash->AddPage(Panel5, _("Splash"), true);
-	m_timerUpdate.SetOwner(this, ID_TIMER1);
+	m_pbtnUpdate->SetColourSelected(wxColour("#00FF00"));
+	m_pbtnUpdate->SetColourDisabled(wxColour("#909090"));
+
+    UnmountDevice();
 	m_timerStart.SetOwner(this, ID_TIMER2);
-	m_timerStart.Start(100, true);
+	m_timerStart.Start(2000, true);
 
-	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pamupdatemanagerDialog::OnbtnCloseClick);
-	Connect(ID_M_PBTN6,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pamupdatemanagerDialog::OnbtnSelectAllClick);
-	Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pamupdatemanagerDialog::OnbtnSelectNoneClick);
-	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pamupdatemanagerDialog::OnbtnUpdateClick);
-	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pamupdatemanagerDialog::OnbtnChangelogClick);
-	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pamupdatemanagerDialog::OnbtnDependenciesClick);
-	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pamupdatemanagerDialog::OnlstUpdatesSelected);
-	Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pamupdatemanagerDialog::OnlstUpdatesSelected);
-	Connect(ID_M_PBTN7,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pamupdatemanagerDialog::OnbtnShowClick);
-	Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pamupdatemanagerDialog::OnlstShowSelected);
-	Connect(ID_TIMER1,wxEVT_TIMER,(wxObjectEventFunction)&pamupdatemanagerDialog::OntimerUpdateTrigger);
-	Connect(ID_TIMER2,wxEVT_TIMER,(wxObjectEventFunction)&pamupdatemanagerDialog::Onm_timerStartTrigger);
-	//*)
+	Connect(ID_M_PEDT1,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&pamupdatemanagerDialog::OnedtPasswordTextEnter);
+	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pamupdatemanagerDialog::OnbtnCancelClick);
+	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pamupdatemanagerDialog::OnbtnUpdateClick);
+	Connect(ID_TIMER2,wxEVT_TIMER,(wxObjectEventFunction)&pamupdatemanagerDialog::OntimerStartTrigger);
 
-	 Settings::Get().Write(wxT("Version"), wxT("pamupdatemanager"), wxString::Format(wxT("%d.%d.%d.%d"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
+    Settings::Get().Write("Version", "pamupdatemanager", pml::pamupdatemanager::VERSION_STRING);
 
-	 m_pbtnShow->SetToggle(true, wxT("New"), wxT("All"), 40);
-	 m_pbtnShow->ToggleSelection(Settings::Get().Read(wxT("Update"), wxT("ShowAll"), 0), false);
+    m_plstRelease = new wmListAdv(m_ppnlRelease, wxNewId(), wxPoint(0,40), wxSize(800,360), 0, wmListAdv::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(0,0));
+	m_plstRelease->SetFont(wxFont(10,wxFONTFAMILY_ROMAN,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Verdana"),wxFONTENCODING_DEFAULT));
+	m_plstRelease->SetBackgroundColour(*wxWHITE);
 
-	 m_plstShow->AddButton(wxT("App"));
-	 m_plstShow->AddButton(wxT("Lib"));
-	 m_plstShow->AddButton(wxT("Monitor"));
-	 m_plstShow->AddButton(wxT("Tests"));
-	 m_plstShow->AddButton(wxT("Docs"));
-	 m_plstShow->AddButton(wxT("Profiles"));
-	 m_plstShow->AddButton(wxT("Config"));
-	 m_plstShow->SelectAll(true, false);
+	m_plstProgress = new wmListAdv(m_ppnlProgress, wxNewId(), wxPoint(0,40), wxSize(800,360), 0, wmListAdv::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(0,0));
+	m_plstProgress->SetFont(wxFont(10,wxFONTFAMILY_ROMAN,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Verdana"),wxFONTENCODING_DEFAULT));
+	m_plstProgress->SetBackgroundColour(*wxWHITE);
+
+	m_plblTitle->SetLabel(wxString::Format("PAM Update Manager [%s] - '%s'", pml::pamupdatemanager::VERSION_STRING, m_fnUpdate.GetName().c_str()));
+
+	wxClientDC dc(this);
+    dc.SetFont(m_plstProgress->GetFont());
+
+    m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, Settings::Get().GetConfigDirectory()));
+    m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, Settings::Get().GetDocumentDirectory()));
+    m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, wxStandardPaths::Get().GetUserDataDir()));
+    m_plstProgress->Update();
+
+
 
 }
 
 pamupdatemanagerDialog::~pamupdatemanagerDialog()
 {
-	//(*Destroy(pamupdatemanagerDialog)
-	//*)
-	#ifdef __WXGNU__
-	wxExecute(wxT("sudo umount /mnt/share"), wxEXEC_SYNC);
-	#endif // __WXGNU__
+    UnmountDevice();
+}
+
+void pamupdatemanagerDialog::OnedtPasswordTextEnter(wxCommandEvent& event)
+{
+    long nResult = wxExecute(wxString::Format("echo %s | sudo -S -k cat /etc/shadow", event.GetString().c_str()), wxEXEC_SYNC);
+    if(nResult == 0)
+    {
+        m_pswpMain->ChangeSelection("Progress");
+        Update();
+    }
+    else
+    {
+        m_pLblPassword->SetLabel("Password Incorrect!");
+    }
 }
 
 
-void pamupdatemanagerDialog::OnbtnCloseClick(wxCommandEvent& event)
+void pamupdatemanagerDialog::Update()
+{
+    wxClientDC dc(this);
+    dc.SetFont(m_plstRelease->GetFont());
+
+    if(ExtractAndUpdate(dc) == false)
+    {
+        m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, " "));
+        m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "## Update failed. Reverting changes"));
+        m_plstProgress->Update();
+
+        RevertAll();
+    }
+    else
+    {
+        m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, " "));
+        m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "## Update Successful"));
+        m_plstProgress->Update();
+
+        PostUpdate();
+        StoreBackupFileNames();
+    }
+}
+
+void pamupdatemanagerDialog::OnbtnCancelClick(wxCommandEvent& event)
 {
     EndModal(wxID_OK);
 }
 
-
-wxString pamupdatemanagerDialog::GetMonitorPluginVersion(const wxString& sPlugin)
-{
-    plugin aPlugin = MonitorPluginFactory::Get()->GetPluginDetails(MonitorPluginFactory::Get()->GetPluginDirectory(), sPlugin);
-    if(aPlugin.sName != wxEmptyString)
-    {
-        return aPlugin.sVersion;
-    }
-    return wxT("0.0.0.0");
-}
-
-wxString pamupdatemanagerDialog::GetTestPluginVersion(const wxString& sPlugin)
-{
-    plugin aPlugin = TestPluginFactory::Get()->GetPluginDetails(TestPluginFactory::Get()->GetPluginDirectory(), sPlugin);
-    if(aPlugin.sName != wxEmptyString)
-    {
-        return aPlugin.sVersion;
-    }
-    return wxT("0.0.0.0");
-}
-
-void pamupdatemanagerDialog::OnbtnSelectAllClick(wxCommandEvent& event)
-{
-    m_plstUpdates->SelectAll(true,true);
-}
-
-void pamupdatemanagerDialog::OnbtnSelectNoneClick(wxCommandEvent& event)
-{
-    m_plstUpdates->SelectAll(false,true);
-    m_pbtnChangelog->Enable(false);
-    m_pbtnDependencies->Enable(false);
-    m_pbtnUpdate->Enable(false);
-}
-
-void pamupdatemanagerDialog::OnbtnChangelogClick(wxCommandEvent& event)
-{
-    m_pbtnDependencies->ToggleSelection(false, false);
-    if(event.IsChecked())
-    {
-        m_pswpMain->ChangeSelection(wxT("Changelog"));
-        wxString sText;
-        wxArrayInt aiButtons(m_plstUpdates->GetSelectedButtons());
-        for(int i = 0; i < aiButtons.GetCount(); i+=4)
-        {
-            sText << wxT("<h3>") << m_plstUpdates->GetButtonText(aiButtons[i]) << wxT("   (") << UpdateManager::Get().GetVersion(m_plstUpdates->GetButtonText(aiButtons[i])) << wxT(")</h3>");
-            sText << UpdateManager::Get().GetChangelog(m_plstUpdates->GetButtonText(aiButtons[i])) << wxT("</br>");
-        }
-        m_phtmlChangelog->SetPage(sText);
-    }
-    else
-    {
-        m_pswpMain->ChangeSelection(wxT("List"));
-    }
-
-}
-
-void pamupdatemanagerDialog::OnbtnDependenciesClick(wxCommandEvent& event)
-{
-    m_pbtnChangelog->ToggleSelection(false, false);
-    if(event.IsChecked())
-    {
-        m_pswpMain->ChangeSelection(wxT("Dependencies"));
-
-        wxString sText;
-        wxArrayInt aiButtons(m_plstUpdates->GetSelectedButtons());
-        for(int i = 0; i < aiButtons.GetCount(); i+=4)
-        {
-            sText << wxT("<h3>") << m_plstUpdates->GetButtonText(aiButtons[i]) << wxT("   (") << UpdateManager::Get().GetVersion(m_plstUpdates->GetButtonText(aiButtons[i])) << wxT(")</h3>");
-            map<wxString,wxString> mDependsOn(UpdateManager::Get().GetDependencies(m_plstUpdates->GetButtonText(aiButtons[i])));
-            if(mDependsOn.empty() == false)
-            {
-                sText << wxT("<table border='1' cellpadding='3'><tr><td bgcolor='#aaaaff'>Dependency</td><td bgcolor='#aaaaff'>Version</td></tr>");
-                for(map<wxString,wxString>::iterator itDepends = mDependsOn.begin(); itDepends != mDependsOn.end(); ++itDepends)
-                {
-                    sText << wxT("<tr><td>") << itDepends->first << wxT("</td><td>") << itDepends->second << wxT("</td></tr>");
-                }
-                sText << wxT("</table>");
-            }
-        }
-        m_phtmlDependencies->SetPage(sText);
-
-    }
-    else
-    {
-        m_pswpMain->ChangeSelection(wxT("List"));
-    }
-}
-
 void pamupdatemanagerDialog::OnbtnUpdateClick(wxCommandEvent& event)
 {
-    if(m_pswpMain->GetPageText(m_pswpMain->GetSelection()) != wxT("Log"))
+    m_pbtnUpdate->Show(false);
+    m_pswpMain->ChangeSelection("Password");
+    m_pedtPassword->SetFocus();
+}
+
+void pamupdatemanagerDialog::OntimerStartTrigger(wxTimerEvent& event)
+{
+    wxClientDC dc(this);
+    dc.SetFont(m_plstRelease->GetFont());
+
+    if(MountDevice(m_sDevice) != 0)
     {
-        m_pbtnChangelog->Enable(false);
-        m_pbtnDependencies->Enable(false);
-        m_pbtnUpdate->Enable(false);
-        m_pbtnSelectAll->Enable(false);
-        m_pbtnSelectNone->Enable(false);
-        m_pswpMain->ChangeSelection(wxT("Log"));
-
-        m_pbtnUpdate->SetLabel(wxT("Updating..."));
-
-        m_mUpdate.clear();
-        m_plstLog->Clear();
-
-        wxString sMessage;
-        //we need to download all the selected and all the dependencies...
-        wxArrayInt aiButtons(m_plstUpdates->GetSelectedButtons());
-
-
-        for(int i = 0; i < aiButtons.GetCount(); i+=4)
-        {
-
-            wxString sUpdate(m_plstUpdates->GetButtonText(aiButtons[i]));
-            wxString sVersion(UpdateManager::Get().GetVersion(sUpdate));
-
-
-            pair<map<wxString, wxString>::iterator, bool> ins = m_mUpdate.insert(make_pair(sUpdate, sVersion));
-            if(ins.second == false)
-            {   //different version in list
-                if(ins.first->second != sVersion)
-                {
-                    size_t nIndex = m_plstLog->AddButton(wxString::Format(wxT("'%s' cannot be updated to version '%s' as it is already being updating to version '%s'"), sUpdate.c_str(), sVersion.c_str(), ins.first->second.c_str()));
-                    m_plstLog->ShowButton(nIndex, wmList::BOTTOM, false);
-                }
-                else
-                {
-                    size_t nIndex = m_plstLog->AddButton(wxString::Format(wxT("Selected '%s' already a dependency"), sUpdate.c_str()), wxNullBitmap, 0, wmList::wmENABLED, wxColour(100,200,100));
-                    m_plstLog->ShowButton(nIndex, wmList::BOTTOM, false);
-                }
-            }
-            else
-            {
-                size_t nIndex = m_plstLog->AddButton(wxString::Format(wxT("Selected '%s'"), sUpdate.c_str()), wxNullBitmap, 0, wmList::wmENABLED, wxColour(100,200,100));
-                m_plstLog->ShowButton(nIndex, wmList::BOTTOM, false);
-            }
-
-            map<wxString,wxString> mDependsOn(UpdateManager::Get().GetDependencies(sUpdate));
-            for(map<wxString,wxString>::iterator itDependsOn = mDependsOn.begin(); itDependsOn != mDependsOn.end(); ++itDependsOn)
-            {
-                pair<map<wxString, wxString>::iterator, bool> ins = m_mUpdate.insert(make_pair(itDependsOn->first, itDependsOn->second));
-                if(ins.second == false)
-                {
-                    if(ins.first->second != itDependsOn->second)//different version in list
-                    {
-                        size_t nIndex = m_plstLog->AddButton(wxString::Format(wxT("Dependency '%s' cannot be updated to version %s as it is already begin updating to version %s"), itDependsOn->first.c_str(), itDependsOn->second.c_str(), ins.first->second.c_str()));
-                        m_plstLog->ShowButton(nIndex, wmList::BOTTOM, false);
-                    }
-                }
-                else
-                {
-                    size_t nIndex = m_plstLog->AddButton(wxString::Format(wxT("Dependency '%s'"), itDependsOn->first.c_str()), wxNullBitmap, 0, wmList::wmENABLED, wxColour(100,200,100));
-                    m_plstLog->ShowButton(nIndex, wmList::BOTTOM, false);
-                }
-            }
-        }
-
-        m_plstLog->AddButton(wxEmptyString);
-        size_t nIndex = m_plstLog->AddButton(wxT("Updating..."));
-        m_plstLog->ShowButton(nIndex, wmList::BOTTOM, false);
-
-
-        m_bUpdate = false;
-        m_timerUpdate.Start(10,true);
+        m_plstRelease->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "## Could not mount device"));
+        m_plstRelease->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, strerror(errno)));
     }
     else
     {
-        m_pbtnChangelog->Enable(true);
-        m_pbtnDependencies->Enable(true);
-        m_pbtnSelectAll->Enable(true);
-        m_pbtnSelectNone->Enable(true);
-
-        m_pswpMain->ChangeSelection(wxT("List"));
-
-        m_pbtnUpdate->SetLabel(wxT("Update Selected"));
-
-    }
-
-}
-
-void pamupdatemanagerDialog::OnlstUpdatesSelected(wxCommandEvent& event)
-{
-    m_pbtnChangelog->Enable((m_plstUpdates->GetSelectionCount()!=0));
-    m_pbtnDependencies->Enable((m_plstUpdates->GetSelectionCount()!=0));
-    m_pbtnUpdate->Enable((m_plstUpdates->GetSelectionCount()!=0));
-}
-
-void pamupdatemanagerDialog::OntimerUpdateTrigger(wxTimerEvent& event)
-{
-    wxLogNull ln;
-    map<wxString, wxString>::iterator itUpdate = m_mUpdate.begin();
-    if(itUpdate != m_mUpdate.end())
-    {
-        if(!m_bUpdate)
+        wxFileInputStream in(m_fnUpdate.GetFullPath());
+        wxTarInputStream tar(in);
+        wxTarEntry* pEntry = nullptr;
+        bool bRelease(false);
+        do
         {
-            size_t nIndex = m_plstLog->AddButton(wxString::Format(wxT("Update '%s' to %s"), itUpdate->first.c_str(), itUpdate->second.c_str()));
-            m_plstLog->ShowButton(nIndex, wmList::BOTTOM, false);
+            pEntry = tar.GetNextEntry();
+            if(pEntry && pEntry->GetName().CmpNoCase("release.md") == 0)
+            {
+                bRelease = true;
+                wxTextInputStream text(tar);
+                while(tar.IsOk() && !tar.Eof())
+                {
+                    m_plstRelease->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, text.ReadLine()));
+                }
+                break;
+            }
+        }while(pEntry);
 
-            m_bUpdate = true;
-            m_timerUpdate.Start(100,true);
-            m_plstLog->Refresh();
+        if(bRelease)
+        {
+            m_pbtnUpdate->Enable();
         }
         else
         {
-            if(UpdateManager::Get().Update(itUpdate->first) == false)
-            {
-                size_t nIndex = m_plstLog->AddButton(wxString::Format(wxT("Failed to update '%s'"), itUpdate->first.c_str()), wxNullBitmap, 0, wmList::wmENABLED, wxColour(200,100,100));
-                m_plstLog->ShowButton(nIndex, wmList::BOTTOM, false);
-            }
-            else
-            {
-                size_t nIndex = m_plstLog->AddButton(wxString::Format(wxT("Updated '%s'"), itUpdate->first.c_str()), wxNullBitmap, 0, wmList::wmENABLED, wxColour(100,200,100));
-                m_plstLog->ShowButton(nIndex, wmList::BOTTOM, false);
-            }
-            m_bUpdate = false;
-            m_mUpdate.erase(itUpdate);
-            m_timerUpdate.Start(100,true);
-            m_plstLog->Refresh();
+            m_plstRelease->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "## Not a valid update file"));
         }
+    }
+}
 
+
+bool pamupdatemanagerDialog::ExtractAndUpdate(wxDC& dc)
+{
+
+    m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "# Update"));
+    m_plstProgress->Update();
+
+    wxFileInputStream in(m_fnUpdate.GetFullPath());
+    wxTarInputStream tar(in);
+    wxTarEntry* pEntry = nullptr;
+
+    do
+    {
+        pEntry = tar.GetNextEntry();
+        if(pEntry)
+        {
+            if(pEntry->IsDir() == false)
+            {
+                wxFileName fnFile(pEntry->GetName());
+
+                wxFileName fnExisiting;
+                fnExisiting.SetFullName(fnFile.GetFullName());
+
+                m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "### "+fnFile.GetFullName()));
+                m_plstProgress->Update();
+
+                auto asDir = fnFile.GetDirs();
+                if(asDir.Count() > 0)
+                {
+                    if(asDir[0] == "lib")
+                    {
+                        if(asDir.Count() > 1)
+                        {
+                            if(asDir[1] == "monitor")
+                            {
+                                fnExisiting.SetPath("/usr/local/lib/pam2/monitor");
+                            }
+                            else if(asDir[1] == "test")
+                            {
+                                fnExisiting.SetPath("/usr/local/lib/pam2/test");
+                            }
+                            else if(asDir[1] == "generator")
+                            {
+                                fnExisiting.SetPath("/usr/local/lib/pam2/generator");
+                            }
+                        }
+                        else
+                        {
+                            fnExisiting.SetPath("/usr/local/lib/pam2");
+                        }
+                    }
+                    else if(asDir[0] == "bin")
+                    {
+                        fnExisiting.SetPath("/usr/local/bin");
+                    }
+                    else if(asDir[0] == "documents")
+                    {
+                        if(asDir.Count() > 1)
+                        {
+                            if(asDir[1] == "help")
+                            {
+                                if(asDir.Count() > 2 && asDir[2] == "images")
+                                {
+                                    fnExisiting.SetPath(Settings::Get().GetDocumentDirectory()+"/help/images");
+                                }
+                                else
+                                {
+                                    fnExisiting.SetPath(Settings::Get().GetDocumentDirectory()+"/help");
+                                }
+                            }
+                            else if(asDir[1] == "generator")
+                            {
+                                fnExisiting.SetPath(Settings::Get().GetDocumentDirectory()+"/generator");
+                            }
+                        }
+                        else
+                        {
+                            fnExisiting.SetPath(Settings::Get().GetDocumentDirectory());
+                        }
+                    }
+
+                    if(ReplaceFile(dc, tar, fnExisiting) == false)
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+    }while(pEntry);
+
+    return true;
+}
+
+
+bool pamupdatemanagerDialog::ReplaceFile(wxDC& dc, wxTarInputStream& input, const wxFileName& fnOutput)
+{
+    //rename the file
+    wxString sBackup = wxString::Format("%s.bak", fnOutput.GetFullPath().c_str());
+    if(!wxFileExists(fnOutput.GetFullPath()) || wxRenameFile(fnOutput.GetFullPath(), sBackup))
+    {
+        wxFileOutputStream out(fnOutput.GetPath());
+        if(out.IsOk())
+        {
+            //read in and output
+            while(input.IsOk() && !input.Eof())
+            {
+                input.Read(out);
+            }
+
+            m_setUpdated.insert(sBackup);
+            m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "Updated"));
+            m_plstProgress->Update();
+            return true;
+        }
+        else
+        {
+            m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "Failed to update"));
+            m_plstProgress->Update();
+            return false;
+        }
     }
     else
     {
-        m_pbtnUpdate->SetLabel(wxT("Back to list"));
-        m_pbtnUpdate->Enable(true);
+        m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "Failed to create backup"));
+        m_plstProgress->Update();
+        return false;
     }
 }
 
-void pamupdatemanagerDialog::Onm_timerStartTrigger(wxTimerEvent& event)
+void pamupdatemanagerDialog::StoreBackupFileNames()
 {
-    	m_plblSettings->SetLabel(wxT("PAM Update Manager"));
-
-	SetPosition(wxPoint(0,0));
-
-	m_plstUpdates->SetGradient(0);
-	m_plstLog->SetGradient(0);
-	m_plstLog->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
-	UpdateManager::Get().GetUpdateList();
-
-	PopulateUpdateList();
-
-    m_pswpSplash->ChangeSelection(wxT("Main"));
-}
-
-
-void pamupdatemanagerDialog::PopulateUpdateList()
-{
-    m_plstUpdates->Freeze();
-    m_plstUpdates->Clear();
-
-    for(map<wxString, UpdateObject>::const_iterator itObject = UpdateManager::Get().GetUpdateListBegin(); itObject != UpdateManager::Get().GetUpdateListEnd(); ++itObject)
+    wxString sRemove;
+    for(auto sBackup : m_setUpdated)
     {
-        wxString sLocalVersion;
-        wxString sType;
-
-        switch(itObject->second.nType)
+        if(sRemove.empty() == false)
         {
-        case UpdateObject::APP:
-            sType = wxT("App");
-            sLocalVersion = Settings::Get().Read(wxT("Version"), itObject->first, wxT("0.0.0.0"));
-            break;
-        case UpdateObject::CORE_DLL:
-            sType = wxT("Core Lib");
-            if(itObject->first == wxT("pambase"))
-            {
-                sLocalVersion  = Settings::Get().GetLibraryVersion();
-            }
-            else
-            {
-                sLocalVersion = wxT("0.0.0.0"); //@todo get core lib version
-            }
-
-            break;
-        case UpdateObject::DOCUMENTATION:
-            sType = wxT("Doc");
-            sLocalVersion = wxT("0.0.0.0");
-            break;
-        case UpdateObject::PLUGIN_MONITOR:
-            sType=wxT("Monitor");
-            sLocalVersion = GetMonitorPluginVersion(itObject->first);
-            break;
-        case UpdateObject::PLUGIN_TEST:
-            sType = wxT("Test");
-            sLocalVersion = GetTestPluginVersion(itObject->first);
-            break;
-        case UpdateObject::PROFILES:
-            sType = wxT("Profile");
-            sLocalVersion = wxEmptyString;
-            break;
-        case UpdateObject::CONFIG:
-            sType = wxT("Config");
-            sLocalVersion = wxEmptyString;
-            break;
+            sRemove << ",";
         }
-
-        if(UpdateManager::Get().UpdateVersionIsNewer(itObject->second.sVersion, sLocalVersion) || Settings::Get().Read(wxT("Update"), wxT("ShowAll"), 0))
-        {
-            if(m_plstShow->IsSelected(itObject->second.nType-1))
-            {
-                m_plstUpdates->AddButton(itObject->first);
-                m_plstUpdates->AddButton(sType);
-                m_plstUpdates->AddButton(sLocalVersion);
-                m_plstUpdates->AddButton(itObject->second.sVersion);
-            }
-        }
+        sRemove << sBackup;
     }
-    m_plstUpdates->Thaw();
+    Settings::Get().Write("Startup", "Remove", sRemove);
 }
 
-void pamupdatemanagerDialog::OnbtnShowClick(wxCommandEvent& event)
+
+void pamupdatemanagerDialog::RevertAll()
 {
-    Settings::Get().Write(wxT("Update"), wxT("ShowAll"), event.IsChecked());
-    PopulateUpdateList();
+    for(auto sBackup : m_setUpdated)
+    {
+        wxString sFile = sBackup.BeforeLast('.');
+        wxRemoveFile(sFile);
+        wxRenameFile(sBackup, sFile);
+    }
 }
 
-void pamupdatemanagerDialog::OnlstShowSelected(wxCommandEvent& event)
+void pamupdatemanagerDialog::PostUpdate()
 {
-    PopulateUpdateList();
+    wxExecute(wxString::Format("echo %s | sudo -S -k setcap cap_sys_time,cap_sys_admin,cap_net_bind_service+ep /usr/local/bin/pam2", m_pedtPassword->GetValue().c_str()), wxEXEC_SYNC);
+    wxExecute(wxString::Format("echo %s | sudo -S -k ldconfig", m_pedtPassword->GetValue().c_str()), wxEXEC_SYNC);
 }

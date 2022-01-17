@@ -1,12 +1,15 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
-project(pamworkspace)
+project(pamworkspace VERSION 1.2.0.0)
+
+SET(CMAKE_CXX_STANDARD 14)
 
 SET(NMOS OFF CACHE BOOL "set to ON to include NMOS")
 
 message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "NMOS: ${NMOS}")
 
-SET(DIR_BASE $ENV{HOME} CACHE STRING "base location for libraries")
+SET(DIR_PAM $ENV{HOME}/pam CACHE STRING "location for pam config files etc")
+SET(DIR_BASE $ENV{HOME} CACHE STRING "base location for external libraries' source")
 SET(DIR_NMOS ${DIR_BASE}/nmos CACHE STRING "location of nmos")
 SET(DIR_PTPMONKEY ${DIR_BASE}/ptpmonkey CACHE STRING "location of ptpmonkey")
 SET(DIR_SAPSERVER ${DIR_BASE}/sapserver CACHE STRING "location of sapserver")
@@ -16,6 +19,7 @@ SET(DIR_DNSSD ${DIR_BASE}/dnssd CACHE STRING "location of pml dnssd")
 #set the following to off so we build them rather than one of the sub projects
 SET(BUILD_DNSSD OFF)
 SET(BUILD_LOG OFF)
+
 
 message(STATUS "Find external libraries")
 
@@ -121,6 +125,8 @@ if(${NMOS})
     add_subdirectory(${DIR_NMOS} ${CMAKE_SOURCE_DIR}/build/nmos)
 endif()
 
+configure_file(pam2_paths.h.in ${CMAKE_BINARY_DIR}/include/pam2_paths.h @ONLY)
+
 message(STATUS "Configure pambase")
 add_subdirectory(pambase)
 message(STATUS "Configure pamfft")
@@ -177,5 +183,9 @@ message(STATUS "Configure plugin waveform")
 add_subdirectory(plugins/waveform)
 message(STATUS "Configure pam2")
 add_subdirectory(pam2)
-#message(STATUS "Configure pamupdatemanager")
-#add_subdirectory(pamupdatemanager)
+message(STATUS "Configure pamupdatemanager")
+add_subdirectory(pamupdatemanager)
+message(STATUS "Configure InitialSetup")
+add_subdirectory(InitialSetup)
+add_subdirectory(dosetup)
+

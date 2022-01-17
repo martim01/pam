@@ -1,6 +1,7 @@
 #ifndef PNLUSB_H
 #define PNLUSB_H
 #include <wx/timer.h>
+#include "usbchecker.h"
 
 //(*Headers(pnlUSB)
 #include "wmbutton.h"
@@ -13,47 +14,51 @@ class pnlUSB: public wxPanel
 {
 	public:
 
-		pnlUSB(wxWindow* parent, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, int nStyle=0,  const wxString& sN=wxEmptyString);
+		pnlUSB(wxWindow* parent, const wxString& sFileType, const wxString& sSelectLabel, bool bMultiSelect=false,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, int nStyle=0,  const wxString& sN=wxEmptyString);
 		virtual ~pnlUSB();
 
-		void SetSection(const wxString& sSection);
-
-		//(*Declarations(pnlUSB)
-		wmButton* m_pbtnDetect;
-		wmLabel* m_pLbl7;
-		wmLabel* m_plblUSB;
-		wmList* m_plstUsb;
-		//*)
-
+		void SetSection(const wxString& sSection){}
 		void StartCheck();
-		void StopCheck();
+
+		wxString GetDevice(const wxString& sFile) const;
+
+		void Log(const wxString& sLog);
+
+		wmLabel* m_plblUSB;
+        wmList* m_plstLog;
+        wmButton* m_pbtnCheck;
+        wmButton* m_pbtnCancel;
+		wmButton* m_pbtnUpload;
+		wmList* m_plstFiles;
+		wmLabel* m_pstHostname;
+
+        wxString m_sSelectedFile;
+        wxString m_sSelectedDevice;
 
 	protected:
 
-		//(*Identifiers(pnlUSB)
-		static const long ID_M_PLBL13;
-		static const long ID_M_PLBL12;
-		static const long ID_M_PBTN6;
-		static const long ID_M_PLST3;
-		//*)
+		wxString m_sFilename;
 
 	private:
 
-		//(*Handlers(pnlUSB)
-		void OnbtnDetectClick(wxCommandEvent& event);
-		void OnlstUsbSelected(wxCommandEvent& event);
-		//*)
+
+		void OnbtnCancelClick(wxCommandEvent& event);
+
+		void OnbtnCheckClick(wxCommandEvent& event);
 
 
+		void OnUsbFound(const wxCommandEvent& event);
+		void OnUsbFileFound(const wxCommandEvent& event);
+		void OnUsbFinished(const wxCommandEvent& event);
+		void OnUsbError(const wxCommandEvent& event);
+        void OnFileSelected(const wxCommandEvent& event);
 
-		void OnTimerUSB(wxTimerEvent& event);
+
 		void CheckUSB();
 
-		wxTimer m_timerUSB;
+		UsbChecker m_checker;
 
-		std::map<wxString, wxString> m_mUsb;
-
-        wxString m_sSection;
+		std::map<wxString, wxString> m_mFiles;
 
 		DECLARE_EVENT_TABLE()
 };

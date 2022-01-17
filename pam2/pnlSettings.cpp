@@ -9,7 +9,7 @@
 #include <wx/stdpaths.h>
 #include "settings.h"
 //#include "meter.h"
-#include "version.h"
+#include "pam2_version.h"
 #include "dlgSequence.h"
 #include "iomanager.h"
 #include "dlgmask.h"
@@ -75,6 +75,7 @@ const long pnlSettings::ID_M_PEDT1 = wxNewId();
 const long pnlSettings::ID_M_PKBD1 = wxNewId();
 const long pnlSettings::ID_M_PLBL12 = wxNewId();
 const long pnlSettings::ID_PANEL6 = wxNewId();
+const long pnlSettings::ID_PANEL14 = wxNewId();
 const long pnlSettings::ID_M_PSWP1 = wxNewId();
 //*)
 
@@ -191,6 +192,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_plblCurrentPIN->GetUiRect().SetGradient(0);
     m_plblCurrentPIN->Hide();
     m_plblCurrentPIN->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+    m_ppnlAbout = new pnlAbout(m_pswpSettings, ID_PANEL14, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL14"));
     m_pswpSettings->AddPage(pnlInput, _("Input Device"), false);
     m_pswpSettings->AddPage(m_ppnlOutput, _("Output Device"), false);
     m_pswpSettings->AddPage(m_ppnlGenerators, _("Output Source"), false);
@@ -201,6 +203,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pswpSettings->AddPage(m_ppnlNmos, _("NMOS"), false);
     m_pswpSettings->AddPage(m_ppnlTime, _("Time"), false);
     m_pswpSettings->AddPage(pnlGeneral, _("General"), false);
+    m_pswpSettings->AddPage(m_ppnlAbout, _("About"), false);
 
     Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstDevicesSelected);
     Connect(ID_M_PLST1,wxEVT_LIST_PAGED,(wxObjectEventFunction)&pnlSettings::OnlstDevicesPaged);
@@ -259,7 +262,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
     ShowRTPDefined();
 
-    m_plblVersion->SetLabel(wxString::Format(wxT("%ld.%ld.%ld.%ld"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
+    m_plblVersion->SetLabel(pml::pam2::VERSION_STRING);
     m_plblHostname->SetLabel(wxGetHostName());
 
 

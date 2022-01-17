@@ -36,23 +36,17 @@ For more information please look at the help files contained in the __documents_
 * Secret Rabit Code  http://www.mega-nerd.com/SRC/
 * Avahi-Client
 
-#### For UpdateManager
-* libcurl  https://curl.haxx.se/download.html
-
-#### For UpdateWebServer
-* MicroHttp  https://www.gnu.org/software/libmicrohttpd/
-
 
 ##### To install these libraries on Raspbian
 On Buster and earlier
 ```
 sudo apt-get update
-sudo apt-get install libwxgtk3.0-dev portaudio19-dev libsndfile1-dev libsamplerate0-dev libavahi-client-dev libcurl4-openssl-dev libmicrohttpd-dev
+sudo apt-get install libwxgtk3.0-dev portaudio19-dev libsndfile1-dev libsamplerate0-dev libavahi-client-dev libcap-dev
 ```
 On Bullseye
 ```
 sudo apt-get update
-sudo apt-get install libwxgtk3.0-gtk3-dev portaudio19-dev libsndfile1-dev libsamplerate0-dev libavahi-client-dev libcurl4-openssl-dev libmicrohttpd-dev
+sudo apt-get install libwxgtk3.0-gtk3-dev portaudio19-dev libsndfile1-dev libsamplerate0-dev libavahi-client-dev libcap-dev
 ```
 
 ### Other libraries required
@@ -108,6 +102,7 @@ This will
 - install all necessary libraries in __/usr/local/lib/pam2__
 - set the relevant capabilities on the application
 - create the required __pam2.conf__ file in __/etc.ld.so.conf.d__ and run __ldconfig__ so Linux knows about the new libraries
+- copy the required files from the documents directory
 
 ### To build in Code::Blocks
 
@@ -155,7 +150,7 @@ If you wish to include [nmos](https://github.com/martim01/nmos) in the applicati
 PAM expects a few files to live in a specific directory:
 * If it doesn't exist create a directory called __pam__ in your home directory.
 * Copy the contents of the __document__ directory to the __pam__ directory.
-
+* If you used CMake to build and install PAM then this will happen automatically
 
 ## Prebuilt Images
 Links to these can be found [here](https://github.com/martim01/pam/releases) with the associated Releaes

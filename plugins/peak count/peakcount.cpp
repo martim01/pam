@@ -1,7 +1,7 @@
 #include "peakcount.h"
 #include "peakcountbuilder.h"
 #include "testpluginfactory.h"
-#include "version.h"
+#include "peakcount_version.h"
 
 void CreateTestBuilder()
 {
@@ -17,7 +17,7 @@ wxString GetTestPluginName()
 
 wxString GetPluginVersion()
 {
-    return wxString::FromUTF8(AutoVersion::FULLVERSION_STRING);
+    return pml::peakcount::VERSION_STRING;
 }
 
 wxString GetDetails()

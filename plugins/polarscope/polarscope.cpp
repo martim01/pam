@@ -1,7 +1,7 @@
 #include "polarscope.h"
 #include "polarscopebuilder.h"
 #include "monitorpluginfactory.h"
-#include "version.h"
+#include "polarscope_version.h"
 
 void CreateMonitorBuilder()
 {
@@ -16,7 +16,7 @@ wxString GetPluginName()
 
 wxString GetPluginVersion()
 {
-    return wxString::FromUTF8(AutoVersion::FULLVERSION_STRING);
+    return pml::polarscope::VERSION_STRING;
 }
 
 wxString GetDetails()

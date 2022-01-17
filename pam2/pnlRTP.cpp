@@ -57,9 +57,6 @@ const long pnlRTP::ID_M_PBTN10 = wxNewId();
 const long pnlRTP::ID_HTMLWINDOW1 = wxNewId();
 const long pnlRTP::ID_PANEL3 = wxNewId();
 const long pnlRTP::ID_PANEL5 = wxNewId();
-const long pnlRTP::ID_M_PLBL3 = wxNewId();
-const long pnlRTP::ID_M_PLST3 = wxNewId();
-const long pnlRTP::ID_M_PBTN12 = wxNewId();
 const long pnlRTP::ID_M_PBTN13 = wxNewId();
 const long pnlRTP::ID_M_PLBL10 = wxNewId();
 const long pnlRTP::ID_PANEL4 = wxNewId();
@@ -198,21 +195,12 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
     m_pbtnManual->SetColourSelected(wxColour(wxT("#F07800")));
     m_phtmlResults = new wxTouchScreenHtml(pnlDiscovery, ID_HTMLWINDOW1, wxPoint(140,0), wxSize(650,385), 0, _T("ID_HTMLWINDOW1"));
     Panel3 = new wxPanel(m_pSwp1, ID_PANEL4, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL4"));
-    m_pnlUSB = new pnlUSB(Panel3, ID_PANEL5, wxPoint(0,0), wxSize(600,315), wxTAB_TRAVERSAL, _T("ID_PANEL5"));
+    m_pnlUSB = new pnlUSB(Panel3, "*.pii", "Import", true, ID_PANEL5, wxPoint(0,0), wxSize(600,400), wxTAB_TRAVERSAL, _T("ID_PANEL5"));
     m_pnlUSB->SetBackgroundColour(wxColour(0,0,0));
-    m_pLbl3 = new wmLabel(Panel3, ID_M_PLBL3, _("Import Files Found"), wxPoint(600,0), wxSize(200,30), 0, _T("ID_M_PLBL3"));
-    m_pLbl3->SetBorderState(uiRect::BORDER_UP);
-    m_pLbl3->GetUiRect().SetGradient(0);
-    m_pLbl3->SetForegroundColour(wxColour(255,255,255));
-    m_pLbl3->SetBackgroundColour(wxColour(64,200,128));
-    m_plstFiles = new wmList(Panel3, ID_M_PLST3, wxPoint(600,30), wxSize(200,350), wmList::STYLE_SELECT, 1, wxSize(-1,-1), 1, wxSize(-1,-1));
-    m_pbtnImportImport = new wmButton(Panel3, ID_M_PBTN12, _("Import"), wxPoint(690,390), wxSize(100,45), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN12"));
-    m_pbtnImportImport->SetBackgroundColour(wxColour(0,128,0));
-    m_pbtnImportImport->SetColourSelected(wxColour(wxT("#F07800")));
-    m_pbtnImportBack = new wmButton(Panel3, ID_M_PBTN13, _("Back"), wxPoint(570,390), wxSize(100,45), 0, wxDefaultValidator, _T("ID_M_PBTN13"));
+    m_pbtnImportBack = new wmButton(Panel3, ID_M_PBTN13, _("Back"), wxPoint(690,390), wxSize(100,45), 0, wxDefaultValidator, _T("ID_M_PBTN13"));
     m_pbtnImportBack->SetBackgroundColour(wxColour(146,50,252));
     m_pbtnImportBack->SetColourSelected(wxColour(wxT("#F07800")));
-    m_plblImportProgress = new wmLabel(Panel3, ID_M_PLBL10, wxEmptyString, wxPoint(144,368), wxSize(316,72), 0, _T("ID_M_PLBL10"));
+    m_plblImportProgress = new wmLabel(Panel3, ID_M_PLBL10, wxEmptyString, wxPoint(610,10), wxSize(180,80), 0, _T("ID_M_PLBL10"));
     m_plblImportProgress->SetBorderState(uiRect::BORDER_NONE);
     m_plblImportProgress->GetUiRect().SetGradient(0);
     m_plblImportProgress->SetForegroundColour(wxColour(255,255,255));
@@ -237,8 +225,6 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
     Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlRTP::OnlstServicesSelected);
     Connect(ID_M_PLST4,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlRTP::Onm_plstSAPSelected);
     Connect(ID_M_PBTN10,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlRTP::OnbtnManualClick);
-    Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlRTP::OnlstImportFilesSelected);
-    Connect(ID_M_PBTN12,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlRTP::OnbtnImportImportClick);
     Connect(ID_M_PBTN13,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlRTP::OnbtnManualClick);
     //*)
 
@@ -249,7 +235,6 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	m_plstSources->SetGradient(0);
 	m_plstSources->SetTextAlign(wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
 
-	m_pbtnImportImport->SetColourDisabled(wxColour(180,180,180));
 	m_pkeyboard->SetBlankString(wxT(":"));
     m_pkeyboard->SetReturnString(wxT("-->|"));
 	SetSize(size);
@@ -263,6 +248,7 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 
     AoipSourceManager::Get();
 
+    Connect(m_pnlUSB->m_pbtnUpload->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlRTP::OnbtnImportImportClick);
 
 	Connect(wxID_ANY, wxEVT_ASM_DISCOVERY, (wxObjectEventFunction)&pnlRTP::OnDiscovery);
 	Connect(wxID_ANY, wxEVT_ASM_DISCOVERY_FINISHED, (wxObjectEventFunction)&pnlRTP::OnDiscoveryFinished);
@@ -414,7 +400,7 @@ void pnlRTP::OnbtnCancelClick(wxCommandEvent& event)
 void pnlRTP::OnbtnDiscoverClick(wxCommandEvent& event)
 {
     m_pSwp1->ChangeSelection(wxT("Discovery"));
-    m_pnlUSB->StopCheck();
+    //m_pnlUSB->StopCheck();
 }
 
 
@@ -549,69 +535,60 @@ void pnlRTP::OnbtnImportClick(wxCommandEvent& event)
 
 void pnlRTP::OnlstImportFilesSelected(wxCommandEvent& event)
 {
-    m_pbtnImportImport->Enable(m_plstFiles->GetSelectionCount() >0);
+
 }
 
 void pnlRTP::OnbtnImportImportClick(wxCommandEvent& event)
 {
-    m_plblImportProgress->SetLabel("Importing sources.");
-    m_plblImportProgress->Update();
+    UsbChecker::UnmountDevice();
 
-    wxArrayInt ai = m_plstFiles->GetSelectedButtons();
+    m_pnlUSB->Log("Importing sources.");
+
+    wxString sDevice;
+    wxArrayInt ai = m_pnlUSB->m_plstFiles->GetSelectedButtons();
     for(size_t i = 0; i < ai.GetCount(); i++)
     {
-        ImportSources(m_plstFiles->GetButtonText(ai[i]));
+        wxString sNextDevice = m_pnlUSB->GetDevice(m_pnlUSB->m_plstFiles->GetButtonText(ai[i]));
+        if(sNextDevice.empty() == false)
+        {
+            if(sNextDevice != sDevice)
+            {
+                UsbChecker::UnmountDevice();
+                if(UsbChecker::MountDevice(sNextDevice) != 0)
+                {
+                    sDevice = "";
+                    m_pnlUSB->Log("Failed to mount "+sNextDevice);
+                    m_pnlUSB->Log(strerror(errno));
+                }
+                else
+                {
+                    sDevice = sNextDevice;
+                }
+            }
+
+            if(sDevice.empty() == false)
+            {
+                ImportSources("/mnt/share/"+m_pnlUSB->m_plstFiles->GetButtonText(ai[i]));
+            }
+        }
+
     }
 
-    m_plblImportProgress->SetLabel("All sources imported.");
-    m_plblImportProgress->Update();
+    m_pnlUSB->Log("All sources imported.");
 }
 
 void pnlRTP::OnSettingEvent(SettingEvent& event)
 {
     if(event.GetSection() == "ImportAoIP" && event.GetKey() == "USB" && m_pSwp1->GetSelectionName() == "Import")
     {
-
-        m_plblImportProgress->SetLabel("Reading USB drive...");
-        m_plblImportProgress->Update();
-
-        m_plstFiles->Clear();
-        m_plstFiles->Freeze();
-        m_pbtnImportImport->Enable(false);
-
-        wxString sPath;
-
-        //mount the drive
-        #ifdef __WXGNU__
-        if(wxDirExists(wxT("/mnt/share")) == false)
-        {
-            wxMkdir(wxT("/mnt/share"));
-        }
-        wxExecute(wxT("sudo umount /mnt/share"), wxEXEC_SYNC);
-        wxExecute(wxString::Format(wxT("sudo mount -o umask=000 /dev/%s /mnt/share"), Settings::Get().Read(wxT("ImportAoIP"), wxT("USB"), wxEmptyString)), wxEXEC_SYNC);
-
-        sPath = "/mnt/share";
-        #else
-        sPath = Settings::Get().Read(wxT("ImportAoIP"), wxT("USB"), wxEmptyString);
-        #endif // __WXGNU__
-
-        wxDirTraverseUsb traverser(m_plblImportProgress, m_plstFiles);
-        wxDir dir(sPath);
-        dir.Traverse(traverser, "*.pii");
-
-
-
-        m_plstFiles->Thaw();
-
-        m_plblImportProgress->SetLabel("USB drive read.");
-        m_plblImportProgress->Update();
+        m_pnlUSB->StartCheck();
     }
 }
 
 void pnlRTP::ImportSources(const wxString& sFileName)
 {
-    m_plblImportProgress->SetLabel(wxString::Format("Reading '%s'", sFileName.c_str()));
-    m_plblImportProgress->Update();
+    m_pnlUSB->Log(wxString::Format("Reading '%s'", sFileName.c_str()));
+
     iniManager ini;
     if(ini.ReadIniFile(sFileName))
     {
@@ -624,9 +601,11 @@ void pnlRTP::ImportSources(const wxString& sFileName)
                 {
                     wxString sSDP(itData->second.AfterFirst('[').BeforeFirst(']'));
                     sSDP.Replace("|", "\n");
+                    sSDP.Replace("'", "\n");
                     sSDP.Replace("`", "\n");
                     sSDP.Replace("\t", "");
                     sSDP.Trim();
+                    pmlLog() << "Import: " << sSDP;
                     AoipSourceManager::Get().AddSource(itData->first, itData->second.BeforeFirst('['), sSDP);
                 }
                 else if(itData->second.Left(4).CmpNoCase("rtsp") == 0)
@@ -639,15 +618,13 @@ void pnlRTP::ImportSources(const wxString& sFileName)
         else
         {
             pmlLog(pml::LOG_ERROR) << "AoIP\tImport AoIP: Reading '" << sFileName << "' invalid file";
-            m_plblImportProgress->SetLabel(wxString::Format("Reading '%s' invalid file", sFileName.c_str()));
-            m_plblImportProgress->Update();
+            m_pnlUSB->Log(wxString::Format("Reading '%s' invalid file", sFileName.c_str()));
         }
     }
     else
     {
         pmlLog(pml::LOG_ERROR) << "AoIP\tImport AoIP: Reading '" << sFileName << "' failed";
-        m_plblImportProgress->SetLabel(wxString::Format("Reading '%s' failed", sFileName.c_str()));
-        m_plblImportProgress->Update();
+        m_pnlUSB->Log(wxString::Format("Reading '%s' failed", sFileName.c_str()));
     }
 }
 

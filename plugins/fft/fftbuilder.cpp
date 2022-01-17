@@ -10,7 +10,6 @@
 #include "pnlbins.h"
 #include "pnloptions.h"
 #include "settings.h"
-#include "version.h"
 #include "settingevent.h"
 
 using namespace std;

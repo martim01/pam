@@ -12,6 +12,13 @@
 class PAMBASE_IMPEXPORT uiRect
 {
     public:
+         enum {BORDER_UP=0, BORDER_DOWN, BORDER_FLAT, BORDER_NONE};
+        
+        static const unsigned char EDGE_LEFT = 1;
+        static const unsigned char EDGE_TOP  = 2;
+        static const unsigned char EDGE_RIGHT  = 4;
+        static const unsigned char EDGE_BOTTOM  = 8;
+        static const unsigned char EDGE_ALL  = 15;
 
         /** @brief Constructor
         *   @param rect the enclosing rectangle of the uiRect
@@ -123,13 +130,13 @@ class PAMBASE_IMPEXPORT uiRect
         *   @param nState the type of the border to draw, one of uiRect::BORDER_UP, uiRect::BORDER_DOWN, uiRect::BORDER_FLAT, uiRect::BORDER_NONE
         *   @param bmp the bitmap to draw (overrides any internal bitmap)
         **/
-        virtual void Draw(wxDC& dc, const wxString& sLabel, unsigned short nState, const wxBitmap& bmp = wxNullBitmap);
+        virtual void Draw(wxDC& dc, const wxString& sLabel, unsigned short nState, unsigned char nEdge = EDGE_ALL, const wxBitmap& bmp = wxNullBitmap);
 
         /** @brief Draw the rectangle using the internal label and bitmap
         *   @param dc the wxDC context to draw to
         *   @param nState the type of the border to draw, one of uiRect::BORDER_UP, uiRect::BORDER_DOWN, uiRect::BORDER_FLAT, uiRect::BORDER_NONE
         **/
-        virtual void Draw(wxDC& dc, unsigned short nState);
+        virtual void Draw(wxDC& dc, unsigned short nState, unsigned char nEdge = EDGE_ALL);
 
         /** @brief Checks whether the wxPoint pnt is contained within the rectangle
         *   @param pnt
@@ -261,19 +268,18 @@ class PAMBASE_IMPEXPORT uiRect
 
         void StripEmptyLines(bool bStrip);
 
-        enum {BORDER_UP=0, BORDER_DOWN, BORDER_FLAT, BORDER_NONE};
-
+       
     protected:
         virtual void RectSet(){}
 
         ///< @brief Draws an "up" border
-        void DrawUp(wxDC& dc);
+        void DrawUp(wxDC& dc, unsigned char nEdge);
 
         ///< @brief Draws a "down" border
-        void DrawDown(wxDC& dc);
+        void DrawDown(wxDC& dc, unsigned char nEdge);
 
         ///< @brief Draws a "flat" border
-        void DrawFlat(wxDC& dc);
+        void DrawFlat(wxDC& dc, unsigned char nEdge);
 
         /** Draws the text returning a wxSize which contains the width and height of the text
         *   @param dc

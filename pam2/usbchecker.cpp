@@ -10,6 +10,10 @@
 #include <iostream>
 #include "log.h"
 
+wxDEFINE_EVENT(wxEVT_USB_FOUND, wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_USB_FILE_FOUND, wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_USB_FINISHED, wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_USB_ERROR, wxCommandEvent);
 
 UsbChecker::~UsbChecker()
 {
@@ -121,4 +125,72 @@ int UsbChecker::MountDevice(const wxString& sDevice)
     pmlLog(pml::LOG_WARN) << "USB\tFailed to mount " << sDevice.ToStdString() << ": " << strerror(errno);
     return errno;
 
+}
+
+
+void UsbChecker::RunCheck(const wxString& sFilename)
+{
+    if(m_pThread != nullptr)
+    {
+        Abort();
+    }
+
+    m_pThread = std::make_unique<std::thread>([this, sFilename]()
+    {
+        wxArrayString asFiles;
+        //look through /dev/disk/by-id for drives starting usb-
+        wxDir::GetAllFiles("/dev/disk/by-id", &asFiles, "usb*");
+        //if have same name only try to mount -part1
+
+        for(size_t i = 0; i < asFiles.GetCount(); i++)
+        {
+            if(asFiles[i].Find("part") != wxNOT_FOUND)
+            {
+                wxString sDebug(asFiles[i]);
+                wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_USB_FOUND);
+                pEvent->SetString(asFiles[i]);
+                wxQueueEvent(m_pHandler, pEvent);
+                MountAndSearch(sDebug, sFilename);
+            }
+        }
+        wxCommandEvent* pEventFinished = new wxCommandEvent(wxEVT_USB_FINISHED);
+        wxQueueEvent(m_pHandler, pEventFinished);
+    });
+}
+
+void UsbChecker::MountAndSearch(const wxString& sDevice, const wxString& sFilename)
+{
+    int nError = MountDevice(sDevice);
+    if(nError != 0)
+    {
+        wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_USB_ERROR);
+        pEvent->SetInt(nError);
+        pEvent->SetString(wxString::Format("Mount: %s", wxString::FromUTF8(strerror(errno)).c_str()));
+
+        wxQueueEvent(m_pHandler, pEvent);
+        return;
+    }
+    pmlLog(pml::LOG_TRACE) << "UsbChecker\tSearch for " << sFilename;
+
+    wxString sPath = "/mnt/share";
+
+    wxDir dir("/mnt/share");
+    wxDirTraverserSimple traverser(m_pHandler, sDevice);
+    dir.Traverse(traverser, sFilename);
+
+    //wxArrayString asFiles;
+    //wxDir::GetAllFiles("/mnt/share", &asFiles, sFilename);
+//    wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_USB_FILE_FOUND);
+//    wxString sEvent = sDevice+"=";
+//    for(size_t i = 0; i < asFiles.size(); i++)
+//    {
+//        if(i != 0)
+//        {
+//            sEvent += ",";
+//        }
+//        sEvent += asFiles[i].Mid(11);   //ignore the /mnt/share/
+//    }
+//    pEvent->SetString(sEvent);
+//    wxQueueEvent(m_pHandler, pEvent);
+    umount("/mnt/share");
 }

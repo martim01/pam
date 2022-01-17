@@ -1,7 +1,7 @@
 #include "InputAlignregister.h"
 #include "InputAlignbuilder.h"
 #include "testpluginfactory.h"
-#include "version.h"
+#include "InputAlign_version.h"
 
 void CreateTestBuilder()
 {
@@ -15,7 +15,7 @@ wxString GetTestPluginName()
 
 wxString GetPluginVersion()
 {
-    return wxString::FromUTF8(AutoVersion::FULLVERSION_STRING);
+    return pml::InputAlign::VERSION_STRING;
 }
 
 wxString GetDetails()

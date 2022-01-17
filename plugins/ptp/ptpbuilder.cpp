@@ -2,7 +2,6 @@
 #include <wx/panel.h>
 #include "settings.h"
 #include "settingevent.h"
-#include "version.h"
 #include "ptppanel.h"
 #include "pnlOptions.h"
 #include <wx/log.h>

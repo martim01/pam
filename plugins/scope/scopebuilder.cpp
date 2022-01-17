@@ -8,7 +8,6 @@
 #include "pnlTimeframe.h"
 #include "pnlTrigger.h"
 #include "pnlVertical.h"
-#include "version.h"
 
 using namespace std;
 

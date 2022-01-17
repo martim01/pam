@@ -1,6 +1,5 @@
 #include "channeldelaybuilder.h"
 #include "pnlChannelDelay.h"
-#include "version.h"
 
 ChannelDelayBuilder::ChannelDelayBuilder() : TestPluginBuilder(),
 m_ppnlDelay(0)

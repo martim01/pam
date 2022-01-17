@@ -1,7 +1,7 @@
 #include "lissajou.h"
 #include "lissajoubuilder.h"
 #include "monitorpluginfactory.h"
-#include "version.h"
+#include "lissajou_version.h"
 
 void CreateMonitorBuilder()
 {
@@ -16,7 +16,7 @@ wxString GetPluginName()
 
 wxString GetPluginVersion()
 {
-    return wxString::FromUTF8(AutoVersion::FULLVERSION_STRING);
+    return pml::lissajou::VERSION_STRING;
 }
 
 wxString GetDetails()

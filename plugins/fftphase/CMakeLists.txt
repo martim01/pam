@@ -1,12 +1,14 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
-project(fftphase LANGUAGES CXX)
+project(fftphase LANGUAGES CXX VERSION 1.0.31)
+
+execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -P ${CMAKE_SOURCE_DIR}/version.cmake)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 include_directories("../../pambase/")
 include_directories("../../pamfft/")
 include_directories("../../external/kiss_fft130")
 include_directories("../../external/kiss_fft130/tools")
-
+include_directories(${CMAKE_BINARY_DIR}/include)
 link_directories("../../lib")
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -15,7 +17,7 @@ endif()
 
 file(GLOB SOURCES "*.cpp")
 
-add_library(fftphase MODULE ${SOURCES})
+add_library(fftphase MODULE ${SOURCES} ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_version.cpp)
 
 
 #find external libraries

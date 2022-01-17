@@ -40,7 +40,7 @@
 #include "audioevent.h"
 #include "soundcardmanager.h"
 #include "pcstats.h"
-#include "version.h"
+#include "pam2_version.h"
 #include "iomanager.h"
 #include "pnlTestOptions.h"
 #include "dlgPin.h"
@@ -135,7 +135,8 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_ppnlLog(0),
     m_pdlgNoInput(0),
     m_pSelectedMonitor(0),
-    m_bInputFailed(false)
+    m_bInputFailed(false),
+    m_usb(this)
 {
 
     //(*Initialize(pam2Dialog)
@@ -304,7 +305,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Connect(wxID_ANY,wxEVT_PLAYBACK_CHANNELS,(wxObjectEventFunction)&pam2Dialog::OnPlaybackChannels);
 
 
-    Settings::Get().Write(wxT("Version"), wxT("pam2"), wxString::Format(wxT("%ld.%ld.%ld.%ld"), AutoVersion::MAJOR, AutoVersion::MINOR, AutoVersion::BUILD, AutoVersion::REVISION));
+    Settings::Get().Write(wxT("Version"), wxT("pam2"), pml::pam2::VERSION_STRING);
     Settings::Get().Write(wxT("Input"), wxT("Reset"), false);
 
     m_pbtnInput->SetLabel(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")));
@@ -627,6 +628,7 @@ void pam2Dialog::ShowSettingsPanel()
     m_plstOptions->AddButton(wxT("Profiles"));
     m_plstOptions->AddButton(wxT("General"));
     m_plstOptions->AddButton(wxT("Update"));
+    m_plstOptions->AddButton(wxT("About"));
 
 
 

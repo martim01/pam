@@ -1,7 +1,7 @@
 #include "fftphaseregister.h"
 #include "fftphasebuilder.h"
 #include "monitorpluginfactory.h"
-#include "version.h"
+#include "fftphase_version.h"
 
 void CreateMonitorBuilder()
 {
@@ -15,7 +15,7 @@ wxString GetPluginName()
 
 wxString GetPluginVersion()
 {
-    return wxString::FromUTF8(AutoVersion::FULLVERSION_STRING);
+    return pml::fftphase::VERSION_STRING;
 }
 
 wxString GetDetails()

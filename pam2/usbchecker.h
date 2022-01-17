@@ -3,13 +3,15 @@
 #include <thread>
 #include <memory>
 #include <wx/filename.h>
+#include <wx/dir.h>
 
 class UsbChecker
 {
     public:
-        UsbChecker() : m_pThread(nullptr){}
+        UsbChecker(wxEvtHandler* pHandler) :m_pHandler(pHandler), m_pThread(nullptr){}
         ~UsbChecker();
 
+        void RunCheck(const wxString& sFilename);
         void SaveToUSB(const wxFileName& fnSource);
 
         static int MountDevice(const wxString& sDevice);
@@ -23,5 +25,33 @@ class UsbChecker
 
 
 };
+
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_USB_FOUND, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_USB_FILE_FOUND, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_USB_FINISHED, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_USB_ERROR, wxCommandEvent);
+
+class wxDirTraverserSimple : public wxDirTraverser
+{
+    public:
+        wxDirTraverserSimple(wxEvtHandler* pHandler, const wxString& sDevice) : m_pHandler(pHandler), m_sDevice(sDevice){}
+        wxDirTraverseResult OnFile(const wxString& sFilename) override
+        {
+            wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_USB_FILE_FOUND);
+            pEvent->SetString(m_sDevice+"="+sFilename.Mid(11));
+            wxQueueEvent(m_pHandler, pEvent);
+            return wxDIR_CONTINUE;
+        }
+
+        wxDirTraverseResult OnDir(const wxString& sDirname) override
+        {
+            return wxDIR_CONTINUE;
+        }
+    private:
+        wxEvtHandler* m_pHandler;
+        wxString m_sDevice;
+
+};
+
 
 

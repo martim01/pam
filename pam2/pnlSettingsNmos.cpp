@@ -128,8 +128,8 @@ pnlSettingsNmos::pnlSettingsNmos(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_plstDiscovery->AddButton("Multicast");
 	m_plstDiscovery->AddButton("Unicast");
 
-	m_plstRegistration->SetButtonFactory(new wmNodeButtonFactory());
-	m_plstQuery->SetButtonFactory(new wmNodeButtonFactory());
+	m_plstRegistration->SetButtonFactory(std::shared_ptr<wmNodeButtonFactory>());
+	m_plstQuery->SetButtonFactory(std::shared_ptr<wmNodeButtonFactory>());
 
     m_plstNode->SelectButton(Settings::Get().Read("NMOS", "Node", 0));
     m_plstClient->SelectButton(Settings::Get().Read("NMOS", "Client", 0));

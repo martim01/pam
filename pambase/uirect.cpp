@@ -137,20 +137,17 @@ void uiRect::SetForegroundColour(const wxColour &colour)
     m_clrText = colour;
 }
 
-void uiRect::Draw(wxDC& dc, unsigned short nState)
+void uiRect::Draw(wxDC& dc, unsigned short nState, unsigned char nEdge)
 {
-    Draw(dc, m_sLabel, nState, m_bmp);
+    Draw(dc, m_sLabel, nState, nEdge, m_bmp);
     dc.SetPen(wxNullPen);
     dc.SetBrush(wxNullBrush);
 }
 
-void uiRect::Draw(wxDC& dc, const wxString& sLabel, unsigned short nState, const wxBitmap& bmp)
+void uiRect::Draw(wxDC& dc, const wxString& sLabel, unsigned short nState, unsigned char nEdge, const wxBitmap& bmp)
 {
     wxRect rectFill(m_rectEnclosing);
-    if(nState != BORDER_NONE)
-    {
-        rectFill.Deflate(1,1);
-    }
+    
     if(m_nGradient != 0)
     {
         dc.GradientFillLinear(rectFill, m_clrBackgroundHigh, m_clrBackgroundLow, static_cast<wxDirection>(m_nGradient));
@@ -167,13 +164,13 @@ void uiRect::Draw(wxDC& dc, const wxString& sLabel, unsigned short nState, const
     switch(nState)
     {
     case BORDER_UP:
-        DrawUp(dc);
+        DrawUp(dc, nEdge);
         break;
     case BORDER_DOWN:
-        DrawDown(dc);
+        DrawDown(dc, nEdge);
         break;
     case BORDER_FLAT:
-        DrawFlat(dc);
+        DrawFlat(dc, nEdge);
     }
 
 
@@ -229,37 +226,70 @@ void uiRect::Draw(wxDC& dc, const wxString& sLabel, unsigned short nState, const
     dc.SetBrush(wxNullBrush);
 }
 
-void uiRect::DrawUp(wxDC& dc)
+void uiRect::DrawUp(wxDC& dc, unsigned char nEdge)
 {
     dc.SetPen(wxPen(m_clrBorderHigh));
-    dc.DrawLine(m_rectEnclosing.GetBottomLeft(), m_rectEnclosing.GetTopLeft());
-    dc.DrawLine(m_rectEnclosing.GetTopLeft(), m_rectEnclosing.GetTopRight());
-
+    if((nEdge & EDGE_LEFT) != 0)
+    {
+        dc.DrawLine(m_rectEnclosing.GetBottomLeft(), m_rectEnclosing.GetTopLeft());
+    }
+    if((nEdge & EDGE_TOP) != 0)
+    {
+        dc.DrawLine(m_rectEnclosing.GetTopLeft(), m_rectEnclosing.GetTopRight());
+    }
     dc.SetPen(wxPen(m_clrBorderLow));
-    dc.DrawLine(m_rectEnclosing.GetBottomLeft(), m_rectEnclosing.GetBottomRight());
-    dc.DrawLine(m_rectEnclosing.GetTopRight(), m_rectEnclosing.GetBottomRight());
+    if((nEdge & EDGE_BOTTOM) != 0)
+    {
+        dc.DrawLine(m_rectEnclosing.GetBottomLeft(), m_rectEnclosing.GetBottomRight());
+    }
+    if((nEdge & EDGE_RIGHT) != 0)
+    {
+        dc.DrawLine(m_rectEnclosing.GetTopRight(), m_rectEnclosing.GetBottomRight());
+    }
 }
 
-void uiRect::DrawDown(wxDC& dc)
+void uiRect::DrawDown(wxDC& dc, unsigned char nEdge)
 {
     dc.SetPen(wxPen(m_clrBorderLow));
-    dc.DrawLine(m_rectEnclosing.GetBottomLeft(), m_rectEnclosing.GetTopLeft());
-    dc.DrawLine(m_rectEnclosing.GetTopLeft(), m_rectEnclosing.GetTopRight());
-
+    if((nEdge & EDGE_LEFT) != 0)
+    {
+        dc.DrawLine(m_rectEnclosing.GetBottomLeft(), m_rectEnclosing.GetTopLeft());
+    }
+    if((nEdge & EDGE_TOP) != 0)
+    {
+        dc.DrawLine(m_rectEnclosing.GetTopLeft(), m_rectEnclosing.GetTopRight());
+    }
     dc.SetPen(wxPen(m_clrBorderHigh));
-    dc.DrawLine(m_rectEnclosing.GetBottomLeft(), m_rectEnclosing.GetBottomRight());
-    dc.DrawLine(m_rectEnclosing.GetTopRight(), m_rectEnclosing.GetBottomRight());
+    if((nEdge & EDGE_BOTTOM) != 0)
+    {
+        dc.DrawLine(m_rectEnclosing.GetBottomLeft(), m_rectEnclosing.GetBottomRight());
+    }
+    if((nEdge & EDGE_RIGHT) != 0)
+    {
+        dc.DrawLine(m_rectEnclosing.GetTopRight(), m_rectEnclosing.GetBottomRight());
+    }
+
 }
 
-void uiRect::DrawFlat(wxDC& dc)
+void uiRect::DrawFlat(wxDC& dc, unsigned char nEdge)
 {
     dc.SetPen(wxPen(m_clrBorderLow));
-    dc.DrawLine(m_rectEnclosing.GetBottomLeft(), m_rectEnclosing.GetTopLeft());
-    dc.DrawLine(m_rectEnclosing.GetTopLeft(), m_rectEnclosing.GetTopRight());
-
-    dc.SetPen(wxPen(m_clrBorderLow));
-    dc.DrawLine(m_rectEnclosing.GetBottomLeft(), m_rectEnclosing.GetBottomRight());
-    dc.DrawLine(m_rectEnclosing.GetTopRight(), m_rectEnclosing.GetBottomRight());
+    if((nEdge & EDGE_LEFT) != 0)
+    {
+        dc.DrawLine(m_rectEnclosing.GetBottomLeft(), m_rectEnclosing.GetTopLeft());
+    }
+    if((nEdge & EDGE_TOP) != 0)
+    {
+        dc.DrawLine(m_rectEnclosing.GetTopLeft(), m_rectEnclosing.GetTopRight());
+    }
+    if((nEdge & EDGE_BOTTOM) != 0)
+    {
+        dc.DrawLine(m_rectEnclosing.GetBottomLeft(), m_rectEnclosing.GetBottomRight());
+    }
+    if((nEdge & EDGE_RIGHT) != 0)
+    {
+        dc.DrawLine(m_rectEnclosing.GetTopRight(), m_rectEnclosing.GetBottomRight());
+    }
 }
 
 void uiRect::ClipText(bool bClip)

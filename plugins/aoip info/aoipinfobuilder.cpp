@@ -5,8 +5,6 @@
 #include "pnlAoIPInfo.h"
 #include "pnlGraph.h"
 #include "pnlSettings.h"
-#include "version.h"
-
 
 using namespace std;
 

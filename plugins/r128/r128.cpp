@@ -1,7 +1,7 @@
 #include "r128.h"
 #include "r128builder.h"
 #include "monitorpluginfactory.h"
-#include "version.h"
+#include "r128_version.h"
 
 void CreateMonitorBuilder()
 {
@@ -16,7 +16,7 @@ wxString GetPluginName()
 
 wxString GetPluginVersion()
 {
-    return wxString::FromUTF8(AutoVersion::FULLVERSION_STRING);
+    return pml::r128::VERSION_STRING;
 }
 
 wxString GetDetails()

@@ -1,7 +1,7 @@
 #include "LTCGeneratorregister.h"
 #include "LTCGeneratorbuilder.h"
 #include "generatorpluginfactory.h"
-#include "version.h"
+#include "LTCGenerator_version.h"
 
 void CreateGeneratorBuilder()
 {
@@ -15,7 +15,7 @@ wxString GetGeneratorPluginName()
 
 wxString GetPluginVersion()
 {
-    return wxString::FromUTF8(AutoVersion::FULLVERSION_STRING);
+    return pml::LTCGenerator::VERSION_STRING;
 }
 
 wxString GetDetails()

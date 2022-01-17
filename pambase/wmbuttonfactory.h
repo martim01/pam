@@ -10,6 +10,7 @@ class PAMBASE_IMPEXPORT wmButtonFactory
     public:
         ///< @brief constructor
         wmButtonFactory(){}
+        virtual ~wmButtonFactory(){}
 
         /** @brief Function that creates button for wmList
         *   @return <i>uiRect*</i>

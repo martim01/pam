@@ -1,6 +1,5 @@
 #include "identifybuilder.h"
 #include "pnlIdentify.h"
-#include "version.h"
 
 
 IdentifyBuilder::IdentifyBuilder() : TestPluginBuilder(),

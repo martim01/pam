@@ -135,7 +135,7 @@
 					<Add directory="$(#nmos.lib)" />
 				</Linker>
 				<ExtraCommands>
-					<Add after="sudo setcap cap_sys_time,cap_net_bind_service+ep /home/pi/pam/bin/pam2" />
+					<Add after="sudo setcap cap_sys_time,cap_sys_admin,cap_net_bind_service+ep /home/pi/pam/bin/pam2" />
 					<Add after="../manifest_creator/bin/LinuxRelease/manifest_creator" />
 				</ExtraCommands>
 			</Target>
@@ -269,6 +269,8 @@
 			<Add directory="$(#ptpmonkey.LIB)" />
 			<Add directory="$(#sapserver.LIB)" />
 		</Linker>
+		<Unit filename="aboutelement.cpp" />
+		<Unit filename="aboutelement.h" />
 		<Unit filename="dlgAoIP.cpp" />
 		<Unit filename="dlgAoIP.h" />
 		<Unit filename="dlgEditName.cpp" />
@@ -304,6 +306,8 @@
 			<Option compilerVar="WINDRES" />
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="pnlAbout.cpp" />
+		<Unit filename="pnlAbout.h" />
 		<Unit filename="pnlAoIPSelection.cpp" />
 		<Unit filename="pnlAoIPSelection.h" />
 		<Unit filename="pnlAoipManual.cpp" />
@@ -371,6 +375,7 @@
 		<Unit filename="wxsmith/dlgMask.wxs" />
 		<Unit filename="wxsmith/dlgPin.wxs" />
 		<Unit filename="wxsmith/dlgSequence.wxs" />
+		<Unit filename="wxsmith/pnlAbout.wxs" />
 		<Unit filename="wxsmith/pnlAoIPInfo.wxs" />
 		<Unit filename="wxsmith/pnlAoIPSelection.wxs" />
 		<Unit filename="wxsmith/pnlAoipManual.wxs" />
@@ -431,8 +436,12 @@
 					<wxPanel wxs="wxsmith/pnlSettingsTime.wxs" src="pnlSettingsTime.cpp" hdr="pnlSettingsTime.h" fwddecl="0" i18n="1" name="pnlSettingsTime" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlAoipManual.wxs" src="pnlAoipManual.cpp" hdr="pnlAoipManual.h" fwddecl="0" i18n="1" name="pnlAoipManual" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlSettingsInputNmos.wxs" src="pnlSettingsInputNmos.cpp" hdr="pnlSettingsInputNmos.h" fwddecl="0" i18n="1" name="pnlSettingsInputNmos" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlAbout.wxs" src="pnlAbout.cpp" hdr="pnlAbout.h" fwddecl="0" i18n="1" name="pnlAbout" language="CPP" />
 				</resources>
 			</wxsmith>
+			<code_completion />
+			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

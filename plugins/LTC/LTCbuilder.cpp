@@ -2,7 +2,6 @@
 #include <wx/panel.h>
 #include "settings.h"
 #include "settingevent.h"
-#include "version.h"
 #include "LTCpanel.h"
 
 using namespace std;
@@ -11,7 +10,7 @@ LTCBuilder::LTCBuilder() : TestPluginBuilder()
 {
 
     //RegisterForSettingsUpdates(wxT("Mode"), this);
-    
+
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&LTCBuilder::OnSettingChanged);
 
 }
