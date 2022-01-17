@@ -77,7 +77,6 @@ set_target_properties(pam2 PROPERTIES RUNTIME_OUTPUT_DIRECTORY "../../bin/")
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-message(STATUS "User: $ENV{USER}")
 install(TARGETS pam2 RUNTIME DESTINATION /usr/local/bin)
 install(CODE "execute_process(COMMAND setcap cap_sys_time,cap_sys_admin,cap_net_bind_service+ep /usr/local/bin/pam2 WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})")
 install(CODE "execute_process(COMMAND cp ${CMAKE_SOURCE_DIR}/documents/pam2.conf /etc/ld.so.conf.d/)")
@@ -89,5 +88,5 @@ install(CODE "execute_process(COMMAND cp ${CMAKE_SOURCE_DIR}/documents/ppmtypes.
 install(CODE "execute_process(COMMAND cp ${CMAKE_SOURCE_DIR}/documents/pam2.ini ${DIR_PAM})")
 install(CODE "execute_process(COMMAND cp -r ${CMAKE_SOURCE_DIR}/documents/help ${DIR_PAM})")
 install(CODE "execute_process(COMMAND cp -r ${CMAKE_SOURCE_DIR}/documents/generator ${DIR_PAM})")
-install(CODE "execute_process(COMMAND chown $ENV{USER} ${DIR_PAM}")
+install(CODE "execute_process(COMMAND chown `whoami` ${DIR_PAM}")
 endif()
