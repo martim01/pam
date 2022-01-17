@@ -188,4 +188,3 @@ add_subdirectory(pamupdatemanager)
 message(STATUS "Configure InitialSetup")
 add_subdirectory(InitialSetup)
 add_subdirectory(dosetup)
-

@@ -49,3 +49,5 @@ pam2/bin/*
 *.a1
 *.cppcheck
 .vscode/
+*.put
+release.md

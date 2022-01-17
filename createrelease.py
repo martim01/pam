@@ -1,43 +1,45 @@
-import subprocess
+import tarfile
+import requests
 
-def get_git_log(project, commit):
-   cmd = 'git'
-   log = 'log'
-   grep="--grep="
-   log_format ='--pretty=%s'
-
+def get_git_releases(user, project, f):
+ #get the release details for the project from the GitHub API
+ url = 'https://api.github.com/repos/'+user+'/'+project+'/releases'
+ r = requests.get(url)
    
-   
-   output = subprocess.check_output([cmd, log, grep+project+commit, log_format]).decode('utf-8')
-   lines = output.splitlines()
+ log = '# '+project+'\n'
+ log +='## '+r.json()[0]['tag_name']+'\n'
+ log += r.json()[0]['body']+'\n\n'
 
-   print(lines)
-
-def get_git_project_log(project):
-   improvement = "improvement"
-   feat = "feat"
-   perf = "perf"
-   fix = "fix"
-      
-   get_git_log(project, feat)
-   get_git_log(project, improvement)
-   get_git_log(project, perf)
-   get_git_log(project, fix)
+ f.write(log)
+ return r.json()[0]['tag_name']
 
 def create_release():
-    #find all CMakelists.txt files
-    #get the git log for the project name defined in the file
-    #add the binary path/name to what our tar list
-    ##
+ f = open('release.md', 'w')
+ release = get_git_releases('martim01','pam', f)
+ get_git_releases('martim01','nmos', f)
+ get_git_releases('martim01','ptpmonkey', f)
+ get_git_releases('martim01','dnssd', f)
+ get_git_releases('martim01','sapserver', f)
+ get_git_releases('martim01','restgoose', f)
+ get_git_releases('martim01','log', f)  
+ f.close()
+ return release
 
-    get_git_project_log('')
+def create_tar(filename):
+ filename += '.put'
+ tarObj = tarfile.open(filename, 'w')
+ tarObj.add('release.md')
+ tarObj.add('bin/')
+ tarObj.add('lib/')
+ tarObj.add('documents/audio_hats.xml')
+ tarObj.add('documents/generator/')
+ tarObj.add('documents/help/')
+ tarObj.add('documents/macaddress.xml')
+ tarObj.add('documents/ppmtypes.xml')
 
-
-
-
-
-
+ tarObj.close()
 
 
 if __name__ == '__main__':
-    create_release()
+ filename = create_release()
+ create_tar(filename)
