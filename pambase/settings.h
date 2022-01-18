@@ -5,7 +5,7 @@
 #include <map>
 #include <wx/timer.h>
 #include <wx/event.h>
-
+#include <set>
 class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
 {
     public:
@@ -49,11 +49,15 @@ class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
 
         const std::multimap<wxString, wxString>& GetInterfaces();
 
+        const mapSection& GetSections();
+
     protected:
         Settings();
         void CreatePaths();
 
         void OnTimerSave(wxTimerEvent& event);
+
+        void GetHandlers(const wxString& sHandlers, std::set<wxEvtHandler*>& setHandlers);
         iniManager m_iniManager;
         wxString m_sFullPath;
 

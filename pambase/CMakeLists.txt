@@ -37,24 +37,26 @@ message(${CMAKE_CURRENT_SOURCE_DIR})
 
 #pambase settubgs
 
-include_directories(${DIR_LOG}/include)
-include_directories(${DIR_DNSSD}/include)
-include_directories(${DIR_SAPSERVER}/include)
-include_directories(${DIR_ASIO}/asio/include)
-include_directories(${DIR_PTPMONKEY}/include)
-
-include_directories(${CMAKE_BINARY_DIR}/include)
-
 set(SOURCES  "advelement.cpp"  "aes67mediasession.cpp" "AES67ServerMediaSubsession.cpp" "aes67source.cpp" "anglemeter.cpp" "aoipsourcemanager.cpp" "audio.cpp" "audioevent.cpp"
  "generator.cpp" "generatorpluginbuilder.cpp" "generatorpluginfactory.cpp" "histogram.cpp" "historygraph.cpp" "inimanager.cpp" "inisection.cpp" "iomanager.cpp" "levelcalculator.cpp" "levelgraph.cpp"
  "levelmeter.cpp" "liveaudiosource.cpp" "monitorevent.cpp" "monitorpluginbuilder.cpp" "monitorpluginfactory.cpp" "pamRTSPServer.cpp" "niir.cpp" "ondemandaes67mediasubsession.cpp" "ondemandpamsubsession.cpp"
  "ondemandstreamer.cpp" "ourRTSPClient.cpp" "ourSIPClient.cpp" "PamTaskScheduler.cpp" "PamUsageEnvironment.cpp" "pcstats.cpp" "pmcontrol.cpp" "pmpanel.cpp" "ppmtypes.cpp" "qos.cpp" "r128calculator.cpp"
- "r128thread.cpp" "rawvideosource.cpp" "RTCPTransmissionEvent.cpp" "rtpserverthread.cpp" "rtpthread.cpp" "rtsputil.cpp" "servicebrowser.cpp" "settingevent.cpp" "settings.cpp" "smpte2110mediasession.cpp"
+ "r128thread.cpp" "rawvideosource.cpp" "remoteapi.cpp" "RTCPTransmissionEvent.cpp" "rtpserverthread.cpp" "rtpthread.cpp" "rtsputil.cpp" "servicebrowser.cpp" "settingevent.cpp" "settings.cpp" "smpte2110mediasession.cpp"
  "soundcardmanager.cpp" "soundfile.cpp" "streamclientstate.cpp" "testpluginbuilder.cpp" "testpluginfactory.cpp" "timemanager.cpp" "uirect.cpp" "wmbutton.cpp" "wmedit.cpp" "wmfocusmanager.cpp" "wmipeditpnl.cpp"
  "wmkeyboard.cpp" "wmlabel.cpp" "wmline.cpp" "wmlist.cpp" "wmlistadv.cpp" "wmslider.cpp" "wmslidewnd.cpp" "wmswipebutton.cpp" "wmswitcherpanel.cpp" "wmtimeedit.cpp" "wxptp.cpp" "wxsaphandler.cpp"
  "wxsink.cpp" "wxtouchscreenhtml.cpp" "wxzxposter.cpp" ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_version.cpp)
  
 add_library(pambase SHARED ${SOURCES})
+
+target_include_directories(pambase PUBLIC ${DIR_LOG}/include)
+target_include_directories(pambase PUBLIC ${DIR_DNSSD}/include)
+target_include_directories(pambase PUBLIC ${DIR_SAPSERVER}/include)
+target_include_directories(pambase PUBLIC ${DIR_ASIO}/asio/include)
+target_include_directories(pambase PUBLIC ${DIR_PTPMONKEY}/include)
+target_include_directories(pambase PUBLIC ${DIR_RESTGOOSE}/include)
+target_include_directories(pambase PUBLIC ${DIR_JSON}/dist)
+target_include_directories(pambase PUBLIC ${CMAKE_BINARY_DIR}/include)
+
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive"  "-std=c++14")
 
