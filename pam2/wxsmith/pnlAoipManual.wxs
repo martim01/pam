@@ -102,5 +102,24 @@
 			<style>wmButton::STYLE_SELECT</style>
 			<handler function="OnbtnStreamClick" entry="EVT_BUTTON" />
 		</object>
+		<object class="wmLabel" name="ID_M_PLBL11" variable="m_pLbl8" member="yes">
+			<label>RTPMap</label>
+			<pos>300,210</pos>
+			<size>70,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400080</bg>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnRtpMap" member="yes">
+			<label>96</label>
+			<toggle_left>Stop</toggle_left>
+			<toggle_right>Start</toggle_right>
+			<toggle_percent>50</toggle_percent>
+			<pos>370,210</pos>
+			<size>80,40</size>
+			<fg>#000000</fg>
+			<bg>#FFFFFF</bg>
+			<style>wmButton::STYLE_NORMAL</style>
+			<handler function="OnbtnRtpMapClick" entry="EVT_BUTTON" />
+		</object>
 	</object>
 </wxsmith>

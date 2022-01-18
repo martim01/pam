@@ -6,9 +6,10 @@
 #include "log.h"
 #include "PamUsageEnvironment.h"
 #include "RTCPTransmissionEvent.h"
+#include "settings.h"
 static OnDemandAES67MediaSubsession* g_session;
 
-AES67RTPSink::AES67RTPSink(UsageEnvironment& env, Groupsock* RTPgs, unsigned int nFrameSize) : AudioRTPSink(env, RTPgs, 96, 48000, "L24", 2)
+AES67RTPSink::AES67RTPSink(UsageEnvironment& env, Groupsock* RTPgs, unsigned int nFrameSize) : AudioRTPSink(env, RTPgs, Settings::Get().Read("Server", "RTPMap", 96), 48000, "L24", 2)  // @todo allow setting of channels etc
 {
     setPacketSizes(nFrameSize, nFrameSize);
 }

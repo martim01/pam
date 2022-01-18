@@ -20,14 +20,16 @@ class pnlAoipManual: public wxPanel
 
 		//(*Declarations(pnlAoipManual)
 		wmButton* m_pbtnBits;
+		wmButton* m_pbtnRtpMap;
 		wmButton* m_pbtnSampleRate;
 		wmButton* m_pbtnStream;
 		wmEdit* m_pedtPort;
-		wmipeditpnl* m_pipServer;
+		wmIpEditPnl* m_pipServer;
 		wmKeyboard* m_pkbd;
 		wmLabel* m_pLbl1;
 		wmLabel* m_pLbl2;
 		wmLabel* m_pLbl4;
+		wmLabel* m_pLbl8;
 		wmLabel* m_pLbl9;
 		wmList* m_plstChannels;
 		//*)
@@ -46,6 +48,8 @@ class pnlAoipManual: public wxPanel
 		static const long ID_M_PLST5;
 		static const long ID_M_PKBD2;
 		static const long ID_M_PBTN3;
+		static const long ID_M_PLBL11;
+		static const long ID_M_PBTN4;
 		//*)
 
 	private:
@@ -53,6 +57,7 @@ class pnlAoipManual: public wxPanel
 		//(*Handlers(pnlAoipManual)
 		void OnbtnSampleRateClick(wxCommandEvent& event);
 		void OnbtnStreamClick(wxCommandEvent& event);
+		void OnbtnRtpMapClick(wxCommandEvent& event);
 		//*)
 		void OnlstChannelSelected(wxCommandEvent& event);
 
