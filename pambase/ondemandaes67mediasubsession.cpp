@@ -9,7 +9,7 @@
 #include "settings.h"
 static OnDemandAES67MediaSubsession* g_session;
 
-AES67RTPSink::AES67RTPSink(UsageEnvironment& env, Groupsock* RTPgs, unsigned int nFrameSize) : AudioRTPSink(env, RTPgs, Settings::Get().Read("Server", "RTPMap", 96), 48000, "L24", 2)  // @todo allow setting of channels etc
+AES67RTPSink::AES67RTPSink(UsageEnvironment& env, Groupsock* RTPgs, unsigned int nFrameSize) : AudioRTPSink(env, RTPgs, Settings::Get().Read("Server", "RTPMap", 96), 48000, "L24", Settings::Get().Read("Server", "Channels",2)  // @todo allow setting of L24/L16 and samplerate?
 {
     setPacketSizes(nFrameSize, nFrameSize);
 }

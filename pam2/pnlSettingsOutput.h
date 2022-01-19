@@ -27,6 +27,7 @@ class pnlSettingsOutput: public wxPanel
 		void ShowSoundcardOutputs();
 
 		//(*Declarations(pnlSettingsOutput)
+		wmButton* m_pbtnChannels;
 		wmButton* m_pbtnDNS;
 		wmButton* m_pbtnRTSP;
 		wmButton* m_pbtnRestartStream;
@@ -38,6 +39,7 @@ class pnlSettingsOutput: public wxPanel
 		wmEdit* m_pedtRTSPPort;
 		wmKeyboard* m_pkbd;
 		wmLabel* m_pLbl10;
+		wmLabel* m_pLbl11;
 		wmLabel* m_pLbl1;
 		wmLabel* m_pLbl2;
 		wmLabel* m_pLbl3;
@@ -90,6 +92,8 @@ class pnlSettingsOutput: public wxPanel
 		static const long ID_M_PBTN8;
 		static const long ID_M_PBTN9;
 		static const long ID_M_PBTN3;
+		static const long ID_M_PLBL12;
+		static const long ID_M_PBTN5;
 		static const long ID_M_PLBL11;
 		static const long ID_M_PBTN4;
 		static const long ID_PANEL11;
@@ -113,6 +117,7 @@ class pnlSettingsOutput: public wxPanel
 		void OnbtnRestartStreamHeld(wxCommandEvent& event);
 		void OnbtnStatsClick(wxCommandEvent& event);
 		void OnbtnRtpMapClick(wxCommandEvent& event);
+		void OnbtnChannelsClick(wxCommandEvent& event);
 		//*)
 		void OnSettingChanged(SettingEvent& event);
 
