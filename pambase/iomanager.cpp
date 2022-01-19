@@ -824,7 +824,7 @@ void IOManager::InitAudioOutputDevice()
         DoDNSSD(false);
 
     }
-    else if(sType == "AoIP"  || sType == "NMOS" || sType == "AoIP Manual")
+    else if(sType == "AoIP"  || sType == "NMOS")
     {
         m_nOutputDestination = AudioEvent::RTP;
         pmlLog(pml::LOG_INFO) << "IOManager\tCreate Audio Destination Device: AoIP";
@@ -849,11 +849,23 @@ void IOManager::InitAudioOutputDevice()
 void IOManager::CreateSessionFromOutput(const wxString& sSource)
 {
     m_SessionOut = session(wxEmptyString, wxT("Output"), Settings::Get().Read(wxT("Output"), wxT("Source"), wxEmptyString));
-    //we need to get the info from the output...
-    unsigned int nSampleRate = SoundcardManager::Get().GetOutputSampleRate();
+
+
+    unsigned int nSampleRate = 48000;
+    unsigned int nChannels = 2;
+    if(m_nOutputDestination == AudioEvent::SOUNDCARD)
+    {
+        nSampleRate = SoundcardManager::Get().GetOutputSampleRate();
+        nChannels = 2;
+    }
+    else
+    {
+        nSampleRate = Settings::Get().Read("Server", "SampleRate", 48000);
+        nChannels = Settings::Get().Read("Server", "Channels", 2);
+    }
 
     m_SessionOut.lstSubsession.push_back(subsession(Settings::Get().Read(wxT("Output"), wxT("Source"),wxEmptyString),
-    sSource, wxEmptyString, wxT("F32"), wxEmptyString, 0, nSampleRate, 2, wxEmptyString, 0, {0,0}, refclk()));
+    sSource, wxEmptyString, wxT("F32"), wxEmptyString, 0, nSampleRate, nChannels, wxEmptyString, 0, {0,0}, refclk()));
     m_SessionOut.SetCurrentSubsession();
 
     SessionChanged();
@@ -914,8 +926,9 @@ void IOManager::CheckPlayback(unsigned long nSampleRate, unsigned long nChannels
     if(m_nPlaybackSource == AudioEvent::RTP || m_nPlaybackSource == AudioEvent::SOUNDCARD)
     {
         //check the stream details against the playing details...
-        if(SoundcardManager::Get().IsOutputStreamOpen() && (SoundcardManager::Get().GetOutputSampleRate() != nSampleRate ||
-                                                            SoundcardManager::Get().GetOutputNumberOfChannels() != nChannels))
+        if(SoundcardManager::Get().IsOutputStreamOpen() && //this makes sure we only worry if outputting via a soundcard
+           (SoundcardManager::Get().GetOutputSampleRate() != nSampleRate
+            || SoundcardManager::Get().GetOutputNumberOfChannels() != nChannels))
         {
             OutputChannelsChanged();
             OpenSoundcardDevice(nSampleRate);
