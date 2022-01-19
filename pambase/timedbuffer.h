@@ -42,12 +42,13 @@ static int gettimeofday(struct timeval * tp, struct timezone * tzp)
 class PAMBASE_IMPEXPORT timedbuffer
 {
     public:
-    timedbuffer(unsigned int nBs) :
+    timedbuffer(unsigned int nBs, int nChannels) :
 	m_nBufferSize(nBs),
     m_nTimestamp(0),
     m_nDuration(0),
     m_nBufferDepth(0),
-    m_dPlaybackLatency(0.0)
+    m_dPlaybackLatency(0.0),
+    m_nChannels(nChannels)
 	{
         gettimeofday(&m_tvStamp,NULL);
 
@@ -57,14 +58,15 @@ class PAMBASE_IMPEXPORT timedbuffer
         m_pBuffer = new float[m_nBufferSize];
     }
 
-    timedbuffer(unsigned int nBs, const timeval& tv, unsigned int nTimestamp) :
+    timedbuffer(unsigned int nBs, const timeval& tv, unsigned int nTimestamp, int nChannels) :
         m_nBufferSize(nBs),
         m_nTimestamp(nTimestamp),
         m_tvStamp(tv),
         m_tvPlayback(tv),
 		m_nDuration(0),
 		m_nBufferDepth(0),
-		m_dPlaybackLatency(0.0)
+		m_dPlaybackLatency(0.0),
+        m_nChannels(nChannels)
         {
             m_pBuffer = new float[m_nBufferSize];
         }
@@ -78,7 +80,8 @@ class PAMBASE_IMPEXPORT timedbuffer
 		m_pBuffer(new float[tbuffer.GetBufferSize()]),
 		m_nDuration(tbuffer.GetDuration()),
 		m_nBufferDepth(tbuffer.GetBufferDepth()),
-		m_dPlaybackLatency(tbuffer.GetPlaybackLatency())
+		m_dPlaybackLatency(tbuffer.GetPlaybackLatency()),
+        m_nChannels(tbuffer.GetNumberOfChannels())
 		{
 			memcpy(m_pBuffer, tbuffer.GetBuffer(), tbuffer.GetBufferSize());
 		}
@@ -98,6 +101,7 @@ class PAMBASE_IMPEXPORT timedbuffer
 			m_nDuration = tbuffer.GetDuration();
 			m_nBufferDepth = tbuffer.GetBufferDepth();
 			m_dPlaybackLatency = tbuffer.GetPlaybackLatency();
+            m_nChannels = tbuffer.GetNumberOfChannels();
 		}
 		return *this;
 	}
@@ -201,7 +205,13 @@ class PAMBASE_IMPEXPORT timedbuffer
         return m_nBufferDepth;
     }
 
+    unsigned int GetNumberOfChannels() const
+    {   return m_nChannels; }
 
+    unsigned int GetBufferSizePerChannel() const
+    {
+        return m_nBufferSize/m_nChannels;
+    }
 
     private:
 
@@ -216,6 +226,7 @@ class PAMBASE_IMPEXPORT timedbuffer
     unsigned int m_nDuration;
     unsigned int m_nBufferDepth;
     double m_dPlaybackLatency;
+    unsigned int m_nChannels;
 };
 
 

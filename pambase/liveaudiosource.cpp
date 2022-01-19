@@ -97,7 +97,7 @@ void LiveAudioSource::doReadFromQueue()
 
     if(m_nBufferWritten == 0)
     {
-        m_pAudioBuffer = new timedbuffer(m_nLastBufferSize);
+        m_pAudioBuffer = new timedbuffer(m_nLastBufferSize, fNumChannels);
     }
 
     for(int i = 0; i < nBytesToRead; i+=3)
@@ -128,9 +128,6 @@ void LiveAudioSource::doReadFromQueue()
     fDurationInMicroseconds = m_nLastPlayTime = (unsigned)((m_dPlayTimePerSample*fFrameSize)/nBytesPerSample);
 
 
-//    pmlLog() << Groupsock::statsOutgoing.totNumPackets();
-
-
     // Inform the reader that he has data:
     // To avoid possible infinite recursion, we need to return to the event loop to do this:
     nextTask() = envir().taskScheduler().scheduleDelayedTask(0, (TaskFunc*)FramedSource::afterGetting, this);
@@ -150,11 +147,16 @@ double LiveAudioSource::getAverageLevel() const
 void LiveAudioSource::AddSamples(const timedbuffer* pTimedBuffer)
 {
     wxMutexLocker lg(m_mutex);
-    for(unsigned int i =0; i < pTimedBuffer->GetBufferSize(); i++)
+    m_nLastBufferSize = 0;
+    for(unsigned int i =0; i < pTimedBuffer->GetBufferSize(); i+=pTimedBuffer->GetNumberOfChannels())
     {
-        m_qBuffer.push(pTimedBuffer->GetBuffer()[i]);
+        for(unsigned int j = 0; j < fNumChannels; j++)
+        {
+            m_qBuffer.push(pTimedBuffer->GetBuffer()[i+(j%pTimedBuffer->GetNumberOfChannels())]);
+            ++m_nLastBufferSize;
+        }
     }
-    m_nLastBufferSize = pTimedBuffer->GetBufferSize();
+    
 }
 
 
@@ -178,7 +180,7 @@ void LiveAudioSource::AddToTimedBuffer(float dSample)
         AudioEvent event(m_pAudioBuffer, AudioEvent::OUTPUT, m_pAudioBuffer->GetBufferSize()/fNumChannels, fSamplingFrequency, 0,0);
         wxPostEvent(m_pHandler, event);
         m_nBufferWritten = 0;
-        m_pAudioBuffer = new timedbuffer(m_nLastBufferSize);
+        m_pAudioBuffer = new timedbuffer(m_nLastBufferSize, fNumChannels);
     }
     m_pAudioBuffer->GetWritableBuffer()[m_nBufferWritten] = dSample;
     ++m_nBufferWritten;

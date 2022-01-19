@@ -97,7 +97,7 @@ IOManager::IOManager() :
     Settings::Get().AddHandler(wxT("Input"),wxT("File"), this);
 
     m_vRatio.resize(8);
-    for(size_t i = 0; i < 8; i++)
+    for(int i = 0; i < 8; i++)
     {
         Settings::Get().AddHandler("Input", wxString::Format("Ratio_%02d", i), this);
         m_vRatio[i] = Settings::Get().Read("Input",  wxString::Format("Ratio_%02d", i), 1.0);
@@ -332,7 +332,7 @@ void IOManager::OnAudioEvent(AudioEvent& event)
         }
         if(m_nPlaybackSource != m_nInputSource)
         {
-            AddOutputSamples(event.GetBuffer()->GetBufferSize());
+            AddOutputSamples(event.GetBuffer()->GetBufferSizePerChannel());
         }
     }
 
@@ -356,6 +356,8 @@ void IOManager::AddOutputSamples(size_t nSize)
 {
     if(m_pGenerator)
     {
+
+
         timedbuffer* pBuffer(m_pGenerator->Generate(nSize));
         switch(m_nOutputDestination)
         {
@@ -818,6 +820,7 @@ void IOManager::InitAudioOutputDevice()
         OpenSoundcardDevice(SoundcardManager::Get().GetOutputSampleRate());
 
         m_nOutputDestination = AudioEvent::SOUNDCARD;
+        
 
         //turn off any advertising of stream
         DoSAP(false);
@@ -843,6 +846,7 @@ void IOManager::InitAudioOutputDevice()
         pmlLog(pml::LOG_INFO) << "IOManager\tOutput Disabled";
         m_nOutputDestination = AudioEvent::DISABLED;
     }
+    UpdateOutputSession();
 }
 
 
@@ -869,6 +873,36 @@ void IOManager::CreateSessionFromOutput(const wxString& sSource)
     m_SessionOut.SetCurrentSubsession();
 
     SessionChanged();
+}
+
+void IOManager::UpdateOutputSession()
+{
+    if(m_SessionOut.lstSubsession.empty() == false)
+    {
+        unsigned int nSampleRate = 48000;
+        unsigned int nChannels = 2;
+        if(m_nOutputDestination == AudioEvent::SOUNDCARD)
+        {
+            nSampleRate = SoundcardManager::Get().GetOutputSampleRate();
+            nChannels = 2;
+        }
+        else if(m_nOutputDestination == AudioEvent::RTP)
+        {
+            nSampleRate = Settings::Get().Read("Server", "SampleRate", 48000);
+            nChannels = Settings::Get().Read("Server", "Channels", 2);
+        }
+        else if(m_nOutputDestination == AudioEvent::DISABLED)
+        {
+            nSampleRate = 0;
+            nChannels = 0;
+        }
+        if(m_SessionOut.lstSubsession.back().nSampleRate != nSampleRate || m_SessionOut.lstSubsession.back().nChannels != nChannels)
+        {
+            m_SessionOut.lstSubsession.back().nSampleRate = nSampleRate;
+            m_SessionOut.lstSubsession.back().nChannels = nChannels;    
+            SessionChanged();
+        }
+    }
 
 }
 
@@ -1190,5 +1224,6 @@ void IOManager::RestartStream()
 
 void IOManager::OnTimerReset(wxTimerEvent& event)
 {
+    UpdateOutputSession();
     Stream();
 }

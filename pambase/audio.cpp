@@ -172,7 +172,7 @@ Audio::~Audio()
 void Audio::InputCallback(const float* pBuffer, size_t nFrameCount, int nFlags)
 {
 
-    timedbuffer* pData = new timedbuffer(nFrameCount*2);
+    timedbuffer* pData = new timedbuffer(nFrameCount*2, m_nChannelsIn);
     pData->SetBuffer(pBuffer);
     pData->SetDuration(pData->GetBufferSize()*3);
 
@@ -214,7 +214,7 @@ void Audio::OutputCallback(float* pBuffer, size_t nFrameCount, double dPlayoutLa
     {
         m_bPlaying = true;
 
-        timedbuffer* pTimedBuffer = new timedbuffer(nFrameCount*m_nChannelsOut, ConvertDoubleToPairTime(tsBuffer.dPresentation), tsBuffer.nTimestamp);
+        timedbuffer* pTimedBuffer = new timedbuffer(nFrameCount*m_nChannelsOut, ConvertDoubleToPairTime(tsBuffer.dPresentation), tsBuffer.nTimestamp, m_nChannelsOut);
         pTimedBuffer->SetTransmissionTime(ConvertDoubleToPairTime(tsBuffer.dTransmission));
         pTimedBuffer->SetBuffer(pBuffer);
         pTimedBuffer->SetPlaybackOffset(dPlayoutLatency*1000000.0);//*1000.0);
