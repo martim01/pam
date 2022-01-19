@@ -90,6 +90,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
 
         void CheckPlayback(unsigned long nSampleRate, unsigned long nChannels);
         void CreateSessionFromOutput(const wxString& sSource);
+        void UpdateOutputSession();
 
         void DoSAP(bool bRun);
         void DoDNSSD(bool bRun);

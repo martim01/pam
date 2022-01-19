@@ -21,6 +21,8 @@ const long pnlAoipManual::ID_M_PLBL4 = wxNewId();
 const long pnlAoipManual::ID_M_PLST5 = wxNewId();
 const long pnlAoipManual::ID_M_PKBD2 = wxNewId();
 const long pnlAoipManual::ID_M_PBTN3 = wxNewId();
+const long pnlAoipManual::ID_M_PLBL11 = wxNewId();
+const long pnlAoipManual::ID_M_PBTN4 = wxNewId();
 //*)
 
 BEGIN_EVENT_TABLE(pnlAoipManual,wxPanel)
@@ -75,9 +77,18 @@ pnlAoipManual::pnlAoipManual(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	m_pbtnStream = new wmButton(this, ID_M_PBTN3, _("Receive"), wxPoint(300,320), wxSize(268,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
 	m_pbtnStream->SetBackgroundColour(wxColour(0,128,0));
 	m_pbtnStream->SetToggle(true, wxT("Stop"), wxT("Start"), 40);
+	m_pLbl8 = new wmLabel(this, ID_M_PLBL11, _("RTPMap"), wxPoint(300,210), wxSize(70,40), 0, _T("ID_M_PLBL11"));
+	m_pLbl8->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl8->GetUiRect().SetGradient(0);
+	m_pLbl8->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl8->SetBackgroundColour(wxColour(64,0,128));
+	m_pbtnRtpMap = new wmButton(this, ID_M_PBTN4, _("96"), wxPoint(370,210), wxSize(80,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN4"));
+	m_pbtnRtpMap->SetForegroundColour(wxColour(0,0,0));
+	m_pbtnRtpMap->SetBackgroundColour(wxColour(255,255,255));
 
 	Connect(ID_M_PBTN6,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoipManual::OnbtnSampleRateClick);
 	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoipManual::OnbtnStreamClick);
+	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoipManual::OnbtnRtpMapClick);
 	//*)
 	SetSize(size);
 	SetPosition(pos);
@@ -139,9 +150,9 @@ void pnlAoipManual::OnbtnStreamClick(wxCommandEvent& event)
              << "s=Manual SDP created by PAM\r\n"
              << "t=0 0\r\n"
              << "a=recvonly\r\n"
-             << "m=audio " << m_pedtPort->GetValue() << " RTP/AVP 96\r\n"
+             << "m=audio " << m_pedtPort->GetValue() << " RTP/AVP " << m_pbtnRtpMap->GetLabel() << "\r\n"
              << "c=IN IP4 " << m_pipServer->GetValue() << "/255\r\n"
-             << "a=rtpmap:96 L" << (m_pbtnBits->IsChecked() ? "24" : "16") << "/" << m_pbtnSampleRate->GetLabel() << "/" << m_sChannels << "\r\n"
+             << "a=rtpmap:" << m_pbtnRtpMap->GetLabel() <<" L" << (m_pbtnBits->IsChecked() ? "24" : "16") << "/" << m_pbtnSampleRate->GetLabel() << "/" << m_sChannels << "\r\n"
              << "a=mediaclk:direct=0\r\n";
          //@todo grandmaster if we have one
 
@@ -156,5 +167,20 @@ void pnlAoipManual::OnbtnStreamClick(wxCommandEvent& event)
     else
     {
         Settings::Get().Write("Input", "AoIP", 0); //write the new source number in
+    }
+}
+
+void pnlAoipManual::OnbtnRtpMapClick(wxCommandEvent& event)
+{
+    wxArrayString asButtons;
+    for(int i = 96; i < 128; i++)
+    {
+        asButtons.Add(wxString::Format("%d", i));
+    }
+
+    dlgMask aDlg(this, asButtons, m_pbtnRtpMap->GetLabel(), wxNewId(), ClientToScreen(m_pbtnRtpMap->GetPosition()), m_pbtnRtpMap->GetSize());
+    if(aDlg.ShowModal()== wxID_OK)
+    {
+        m_pbtnRtpMap->SetLabel(aDlg.m_sSelected);
     }
 }

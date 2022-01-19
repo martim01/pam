@@ -75,7 +75,7 @@ m_pBuilder(pBuilder)
 	SetBackgroundColour(*wxBLACK);
 	SetPosition(pos);
 	SetSize(70, 250);
-	m_plbLChannel->SetLabel(wxString::Format(wxT("Ch %d"), m_nChannel+1));
+	m_plbLChannel->SetLabel(wxString::Format(wxT("Ch %u"), m_nChannel+1));
 	m_dMax = 0;
 }
 
@@ -100,7 +100,7 @@ void pnlDistortionChannel::RunTest()
         m_plblDistortion->SetLabel(wxString::Format(wxT("%.2f%"),dDistortion));
         m_plblFrequency->SetLabel(wxString::Format(wxT("~ %.0f Hz"), fft.GetFundamentalBinFrequency()));
         m_plblAmplitude->SetLabel(wxString::Format(wxT("%.2f dB"), fft.GetFundamentalAmplitude()* 0.719));
-        m_plblPeaks->SetLabel(wxString::Format(wxT("%d"), fft.GetNumberOfPeaks()));
+        m_plblPeaks->SetLabel(wxString::Format(wxT("%lu"), fft.GetNumberOfPeaks()));
 
         if(m_dMax < dDistortion)
         {

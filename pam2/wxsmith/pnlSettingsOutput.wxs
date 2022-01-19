@@ -124,27 +124,27 @@
 					<bg>#000000</bg>
 					<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
 						<label>Multicast</label>
-						<pos>0,65</pos>
+						<pos>0,55</pos>
 						<size>100,40</size>
 						<fg>#FFFFFF</fg>
 						<bg>#400080</bg>
 					</object>
 					<object class="wxPanel" name="ID_PANEL12" subclass="wmipeditpnl" variable="m_ppnlAddress" member="yes">
-						<pos>100,65</pos>
+						<pos>100,55</pos>
 						<size>200,40</size>
 						<fg>#000000</fg>
 						<bg>#FFFFFF</bg>
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
 						<label>RTP Port</label>
-						<pos>300,65</pos>
+						<pos>300,55</pos>
 						<size>50,40</size>
 						<fg>#FFFFFF</fg>
 						<bg>#400080</bg>
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL8" variable="m_pLbl9" member="yes">
 						<label>RTSP</label>
-						<pos>0,15</pos>
+						<pos>0,10</pos>
 						<size>100,40</size>
 						<fg>#FFFFFF</fg>
 						<bg>#400080</bg>
@@ -154,7 +154,7 @@
 						<toggle_left>Stop</toggle_left>
 						<toggle_right>Start</toggle_right>
 						<toggle_percent>50</toggle_percent>
-						<pos>100,15</pos>
+						<pos>100,10</pos>
 						<size>200,40</size>
 						<fg>#000000</fg>
 						<bg>#FFFFFF</bg>
@@ -163,7 +163,7 @@
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL6" variable="m_pLbl6" member="yes">
 						<label>Port</label>
-						<pos>300,15</pos>
+						<pos>300,10</pos>
 						<size>50,40</size>
 						<fg>#FFFFFF</fg>
 						<bg>#400080</bg>
@@ -172,13 +172,13 @@
 						<validation>Integer</validation>
 						<border>uiRect::BORDER_DOWN</border>
 						<border_focused>uiRect::BORDER_DOWN</border_focused>
-						<pos>350,15</pos>
+						<pos>350,10</pos>
 						<size>100,40</size>
 						<handler function="OnedtRTSPPortText" entry="EVT_TEXT" />
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL7" variable="m_pLbl7" member="yes">
 						<label>Packet Time</label>
-						<pos>0,110</pos>
+						<pos>0,100</pos>
 						<size>100,40</size>
 						<fg>#FFFFFF</fg>
 						<bg>#400080</bg>
@@ -190,7 +190,7 @@
 						<button>#004040</button>
 						<button_selected>#FF8000</button_selected>
 						<items />
-						<pos>105,109</pos>
+						<pos>105,99</pos>
 						<size>490,44</size>
 						<bg>#000000</bg>
 						<style>wmList::STYLE_SELECT</style>
@@ -200,13 +200,13 @@
 						<validation>Integer</validation>
 						<border>uiRect::BORDER_DOWN</border>
 						<border_focused>uiRect::BORDER_DOWN</border_focused>
-						<pos>350,65</pos>
+						<pos>350,55</pos>
 						<size>100,40</size>
 						<handler function="OnedtRTPPortText" entry="EVT_TEXT" />
 					</object>
 					<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnRestartStream" member="yes">
 						<label>Restart Stream</label>
-						<pos>470,15</pos>
+						<pos>470,10</pos>
 						<size>120,40</size>
 						<bg>#FF0000</bg>
 						<font>
@@ -222,7 +222,7 @@
 					</object>
 					<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnStats" member="yes">
 						<label>RTCP Stats</label>
-						<pos>470,65</pos>
+						<pos>470,55</pos>
 						<size>120,40</size>
 						<bg>#408080</bg>
 						<font>
@@ -251,7 +251,7 @@
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL9" variable="m_pLbl10" member="yes">
 						<label>Advertise</label>
-						<pos>260,215</pos>
+						<pos>260,250</pos>
 						<size>330,30</size>
 						<fg>#FFFFFF</fg>
 						<bg>#3D78DA</bg>
@@ -269,7 +269,7 @@
 						<toggle_left>Off</toggle_left>
 						<toggle_right>On</toggle_right>
 						<toggle_percent>40</toggle_percent>
-						<pos>300,250</pos>
+						<pos>300,285</pos>
 						<size>268,40</size>
 						<bg>#3D78DA</bg>
 						<style>wmButton::STYLE_SELECT</style>
@@ -281,7 +281,7 @@
 						<toggle_left>Off</toggle_left>
 						<toggle_right>On</toggle_right>
 						<toggle_percent>40</toggle_percent>
-						<pos>300,300</pos>
+						<pos>300,330</pos>
 						<size>268,40</size>
 						<bg>#3D78DA</bg>
 						<style>wmButton::STYLE_SELECT</style>
@@ -293,11 +293,49 @@
 						<toggle_left>Unicast</toggle_left>
 						<toggle_right>Multicast</toggle_right>
 						<toggle_percent>40</toggle_percent>
-						<pos>300,160</pos>
+						<pos>300,200</pos>
 						<size>268,40</size>
 						<bg>#008000</bg>
 						<style>wmButton::STYLE_SELECT</style>
 						<handler function="OnbtnStreamClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL12" variable="m_pLbl11" member="yes">
+						<label>Channels</label>
+						<pos>300,145</pos>
+						<size>70,40</size>
+						<fg>#FFFFFF</fg>
+						<bg>#400080</bg>
+					</object>
+					<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnChannels" member="yes">
+						<label>2</label>
+						<toggle_left>Stop</toggle_left>
+						<toggle_right>Start</toggle_right>
+						<toggle_percent>50</toggle_percent>
+						<pos>370,145</pos>
+						<size>60,40</size>
+						<fg>#000000</fg>
+						<bg>#FFFFFF</bg>
+						<style>wmButton::STYLE_NORMAL</style>
+						<handler function="OnbtnChannelsClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL11" variable="m_pLbl8" member="yes">
+						<label>RTPMap</label>
+						<pos>438,145</pos>
+						<size>70,40</size>
+						<fg>#FFFFFF</fg>
+						<bg>#400080</bg>
+					</object>
+					<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnRtpMap" member="yes">
+						<label>96</label>
+						<toggle_left>Stop</toggle_left>
+						<toggle_right>Start</toggle_right>
+						<toggle_percent>50</toggle_percent>
+						<pos>508,145</pos>
+						<size>60,40</size>
+						<fg>#000000</fg>
+						<bg>#FFFFFF</bg>
+						<style>wmButton::STYLE_NORMAL</style>
+						<handler function="OnbtnRtpMapClick" entry="EVT_BUTTON" />
 					</object>
 				</object>
 				<label>AoIP</label>

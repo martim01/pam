@@ -329,7 +329,7 @@ unsigned int nTimestamp,unsigned int nDuration, int nTimestampDifference, mExten
 
         if(m_nSampleBufferSize == m_nBufferSize*m_nInputChannels)   //filled up buffer
         {
-            timedbuffer* pTimedBuffer = new timedbuffer(m_nBufferSize*m_nInputChannels, ConvertDoubleToPairTime(m_dPresentation), m_nTimestamp);
+            timedbuffer* pTimedBuffer = new timedbuffer(m_nBufferSize*m_nInputChannels, ConvertDoubleToPairTime(m_dPresentation), m_nTimestamp, m_nInputChannels);
             pTimedBuffer->SetBuffer(m_pCurrentBuffer);
             pTimedBuffer->SetTransmissionTime(ConvertDoubleToPairTime(m_dTransmission));
             pTimedBuffer->SetDuration(nDuration);

@@ -64,7 +64,7 @@ void RecordThread::AddToBuffer(const timedbuffer* pBuffer)
 
 timedbuffer* RecordThread::CopyBuffer(const timedbuffer* pBuffer)
 {
-    timedbuffer* pThreadBuffer = new timedbuffer(pBuffer->GetBufferSize());
+    timedbuffer* pThreadBuffer = new timedbuffer(pBuffer->GetBufferSize(), pBuffer->GetNumberOfChannels());
     pThreadBuffer->SetBuffer(pBuffer->GetBuffer());
     return pThreadBuffer;
 }

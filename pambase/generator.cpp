@@ -113,10 +113,11 @@ void Generator::SetSampleRate(unsigned int nSampleRate)
 }
 
 
-timedbuffer* Generator::Generate(unsigned int nSize)
+timedbuffer* Generator::Generate(unsigned int nSizePerChannel)
 {
+    unsigned int nSize = nSizePerChannel*GetChannels();
 
-    timedbuffer* pData = new timedbuffer(nSize);
+    timedbuffer* pData = new timedbuffer(nSize, GetChannels());
     float dSize(m_mSequences.size());
 
     switch(m_nGenerator)

@@ -903,13 +903,13 @@ void pnlAoIPInfo::SetAudioData(const timedbuffer* pTimedBuffer)
     m_plblCurrentTimestamp->SetLabel(wxString::Format(wxT("%u"), pTimedBuffer->GetTimestamp()));
     ShowLatency(pTimedBuffer);
 
-    m_plblFrameSize->SetLabel(wxString::Format(wxT("%d bytes"), pTimedBuffer->GetDuration()));
+    m_plblFrameSize->SetLabel(wxString::Format(wxT("%u bytes"), pTimedBuffer->GetDuration()));
 
     m_dFrameDuration = static_cast<double>(pTimedBuffer->GetDuration())/static_cast<double>(m_nSampleRate*m_nFrameSize)*1e6;
 
     m_plblFrameDuration->SetLabel(wxString::Format(wxT("%.2f us"), m_dFrameDuration));
 
-    m_plblPlaybackQueue->SetLabel(wxString::Format(wxT("%d"), pTimedBuffer->GetBufferDepth()));
+    m_plblPlaybackQueue->SetLabel(wxString::Format(wxT("%u"), pTimedBuffer->GetBufferDepth()));
 
     double dTimestamp(static_cast<double>(pTimedBuffer->GetTimestamp())/4294967296.0);
     m_pGraph->AddPeak("Timestamp",dTimestamp);//static_cast<double>(pTimedBuffer->GetTimestamp())/2e32);
@@ -929,11 +929,11 @@ void pnlAoIPInfo::SetTimestamp(const timeval& tv, wmLabel* pLabel, bool bDate)
     wxDateTime dt(time_t(tv.tv_sec));
     if(!bDate)
     {
-        pLabel->SetLabel(wxString::Format(wxT("%s:%03d"), dt.Format(wxT("%H:%M:%S")).c_str(), tv.tv_usec/1000));
+        pLabel->SetLabel(wxString::Format(wxT("%s:%03ld"), dt.Format(wxT("%H:%M:%S")).c_str(), tv.tv_usec/1000));
     }
     else
     {
-        pLabel->SetLabel(wxString::Format(wxT("%s:%03d"), dt.Format(wxT("%Y-%m-%d %H:%M:%S")).c_str(), tv.tv_usec/1000));
+        pLabel->SetLabel(wxString::Format(wxT("%s:%03ld"), dt.Format(wxT("%Y-%m-%d %H:%M:%S")).c_str(), tv.tv_usec/1000));
     }
 }
 
@@ -986,7 +986,7 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
     m_plblSyncId->SetLabel(aSession.refClock.sId);
 
 
-    m_plblSyncDomain->SetLabel(wxString::Format(wxT("%u"), aSession.refClock.nDomain));
+    m_plblSyncDomain->SetLabel(wxString::Format(wxT("%lu"), aSession.refClock.nDomain));
     m_plblSessionType->SetLabel(aSession.sType);
 
     wxClientDC dc(this);
@@ -1005,7 +1005,7 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
         m_plblSessionSource->SetLabel(aSession.GetCurrentSubsession()->sSourceAddress);
         m_plblSessionBits->SetLabel(aSession.GetCurrentSubsession()->sCodec);
         m_plblSessionFrequency->SetLabel(wxString::Format(wxT("%.1fkHz"), aSession.GetCurrentSubsession()->nSampleRate/1000.0));
-        m_plblSessionChannels->SetLabel(wxString::Format(wxT("%d"), aSession.GetCurrentSubsession()->nChannels));
+        m_plblSessionChannels->SetLabel(wxString::Format(wxT("%u"), aSession.GetCurrentSubsession()->nChannels));
 
         m_plblSyncTimestamp->SetLabel(wxString::Format(wxT("%u"), aSession.GetCurrentSubsession()->nSyncTimestamp));
 
@@ -1039,7 +1039,7 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
         #else
 	    m_plblSubSyncId->SetBackgroundColour(wxColour(255,255,100));
 	#endif
-        m_plblSubSyncDomain->SetLabel(wxString::Format(wxT("%u"), aSession.GetCurrentSubsession()->refClock.nDomain));
+        m_plblSubSyncDomain->SetLabel(wxString::Format(wxT("%lu"), aSession.GetCurrentSubsession()->refClock.nDomain));
 
 
 
