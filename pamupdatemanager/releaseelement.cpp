@@ -61,32 +61,26 @@ wxFont ReleaseElement::GetFont(wxDC& dc)
         case 1:
             fnt.SetPixelSize(fnt.GetPixelSize()*2);
             fnt.SetWeight(wxFONTWEIGHT_BOLD);
-            fnt.SetUnderlined(false);
             break;
         case 2:
             fnt.SetPixelSize(fnt.GetPixelSize()*1.5);
             fnt.SetWeight(wxFONTWEIGHT_BOLD);
-            fnt.SetUnderlined(false);
             break;
         case 3:
             fnt.SetPixelSize(fnt.GetPixelSize()*1.17);
             fnt.SetWeight(wxFONTWEIGHT_BOLD);
-            fnt.SetUnderlined(true);
             break;
         case 4:
             fnt.SetPixelSize(fnt.GetPixelSize());
             fnt.SetWeight(wxFONTWEIGHT_BOLD);
-            fnt.SetUnderlined(true);
             break;
         case 5:
             fnt.SetPixelSize(fnt.GetPixelSize()*0.83);
             fnt.SetWeight(wxFONTWEIGHT_BOLD);
-            fnt.SetUnderlined(false);
             break;
         case 6:
             fnt.SetPixelSize(fnt.GetPixelSize()*.67);
             fnt.SetWeight(wxFONTWEIGHT_BOLD);
-            fnt.SetUnderlined(false);
             break;
     }
     return fnt;
@@ -135,9 +129,17 @@ void ReleaseElement::Draw(wxDC& dc, bool bSelected)
     wxFont fnt = dc.GetFont();
     dc.SetFont(GetFont(dc));
 
+
     for(auto pairRect : m_mHitRects)
     {
-        pairRect.second.Draw(dc, uiRect::BORDER_NONE);
+        if(m_nHeader == 1 || m_nHeader == 2)
+        {
+            pairRect.second.Draw(dc, uiRect::BORDER_FLAT, uiRect::EDGE_BOTTOM);
+        }
+        else
+        {
+            pairRect.second.Draw(dc, uiRect::BORDER_NONE);
+        }
     }
     dc.SetFont(fnt);
 }

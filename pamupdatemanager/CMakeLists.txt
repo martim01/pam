@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
-project(pamupdatemanager LANGUAGES CXX VERSION 1.2.1)
+project(pamupdatemanager LANGUAGES CXX VERSION 1.2.2)
 
 execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -P ${CMAKE_SOURCE_DIR}/version.cmake)
 
@@ -29,8 +29,3 @@ target_link_libraries(pamupdatemanager ${wxWidgets_LIBRARIES})
 
 set_property(TARGET pamupdatemanager PROPERTY CXX_STANDARD 14)
 set_target_properties(pamupdatemanager PROPERTIES RUNTIME_OUTPUT_DIRECTORY "../../bin/")
-
-#linux specific
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-install(TARGETS pamupdatemanager RUNTIME DESTINATION /usr/local/bin)
-endif()

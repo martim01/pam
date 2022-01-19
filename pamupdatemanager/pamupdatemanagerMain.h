@@ -67,6 +67,7 @@ class pamupdatemanagerDialog : public wxDialog
 		wxString GetRealPath(const wxString& sPath);
 
 		bool ReplaceFile(wxDC& dc, wxTarInputStream& input, const wxFileName& fnOutput);
+		bool ReplaceFileUsr(wxDC& dc, wxTarInputStream& input, const wxFileName& fnOutput);
 		void StoreBackupFileNames();
 		void RevertAll();
 
