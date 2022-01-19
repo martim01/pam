@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
-project(pamworkspace VERSION 1.2.0.0)
+project(pamworkspace VERSION 1.3.0.0)
 
 SET(CMAKE_CXX_STANDARD 14)
 
