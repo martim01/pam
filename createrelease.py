@@ -29,7 +29,10 @@ def create_tar(filename):
  filename += '.put'
  tarObj = tarfile.open(filename, 'w')
  tarObj.add('release.md')
- tarObj.add('bin/')
+ tarObj.add('bin/pamupdatemanager', arcname="pamupdatemanager")
+ tarObj.add('bin/pam2')
+ tarObj.add('bin/dosetup')
+ tarObj.add('bin/InitialSetup')
  tarObj.add('lib/')
  tarObj.add('documents/audio_hats.xml')
  tarObj.add('documents/generator/')
