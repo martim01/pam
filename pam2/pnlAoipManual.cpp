@@ -40,7 +40,7 @@ pnlAoipManual::pnlAoipManual(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	m_pLbl9->GetUiRect().SetGradient(0);
 	m_pLbl9->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl9->SetBackgroundColour(wxColour(64,0,128));
-	m_pipServer = new wmIpEditPnl(this, ID_M_PIP1, wxPoint(110,15), wxSize(200,40));
+	m_pipServer = new wmipeditpnl(this, ID_M_PIP1, wxPoint(110,15), wxSize(200,40));
 	m_pipServer->SetValue(wxEmptyString);
 	m_pLbl1 = new wmLabel(this, ID_M_PLBL1, _("PORT"), wxPoint(310,15), wxSize(50,40), 0, _T("ID_M_PLBL1"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
@@ -60,7 +60,7 @@ pnlAoipManual::pnlAoipManual(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	m_pbtnSampleRate->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnBits = new wmButton(this, ID_M_PBTN1, _("Bits"), wxPoint(260,60), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnBits->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnBits->SetToggleLook(true, wxT("16"), wxT("24"), 40);
+	m_pbtnBits->SetToggle(true, wxT("16"), wxT("24"), 40);
 	m_pLbl4 = new wmLabel(this, ID_M_PLBL4, _("Channels"), wxPoint(10,105), wxSize(100,40), 0, _T("ID_M_PLBL4"));
 	m_pLbl4->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl4->GetUiRect().SetGradient(0);
@@ -76,7 +76,7 @@ pnlAoipManual::pnlAoipManual(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	m_pkbd->SetFont(m_pkbdFont);
 	m_pbtnStream = new wmButton(this, ID_M_PBTN3, _("Receive"), wxPoint(300,320), wxSize(268,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
 	m_pbtnStream->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnStream->SetToggleLook(true, wxT("Stop"), wxT("Start"), 40);
+	m_pbtnStream->SetToggle(true, wxT("Stop"), wxT("Start"), 40);
 	m_pLbl8 = new wmLabel(this, ID_M_PLBL11, _("RTPMap"), wxPoint(300,210), wxSize(70,40), 0, _T("ID_M_PLBL11"));
 	m_pLbl8->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl8->GetUiRect().SetGradient(0);

@@ -6,7 +6,7 @@
 #include "soundcardmanager.h"
 #include "portaudio.h"
 #include <map>
-
+#include "log.h"
 //(*InternalHeaders(pnlSettingsOutput)
 #include <wx/font.h>
 #include <wx/intl.h>
@@ -167,13 +167,13 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pLbl10->SetFont(m_pLbl10Font);
 	m_pbtnDNS = new wmButton(pnlAoip, ID_M_PBTN8, _("mDNS-SD"), wxPoint(300,295), wxSize(268,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN8"));
 	m_pbtnDNS->SetBackgroundColour(wxColour(61,120,218));
-	m_pbtnDNS->SetToggleLook(true, wxT("Off"), wxT("On"), 40);
+	m_pbtnDNS->SetToggle(true, wxT("Off"), wxT("On"), 40);
 	m_pbtnSAP = new wmButton(pnlAoip, ID_M_PBTN9, _("SAP"), wxPoint(300,340), wxSize(268,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN9"));
 	m_pbtnSAP->SetBackgroundColour(wxColour(61,120,218));
-	m_pbtnSAP->SetToggleLook(true, wxT("Off"), wxT("On"), 40);
+	m_pbtnSAP->SetToggle(true, wxT("Off"), wxT("On"), 40);
 	m_pbtnStream = new wmButton(pnlAoip, ID_M_PBTN3, _("Stream"), wxPoint(300,160), wxSize(268,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
 	m_pbtnStream->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnStream->SetToggleLook(true, wxT("Unicast"), wxT("Multicast"), 40);
+	m_pbtnStream->SetToggle(true, wxT("Unicast"), wxT("Multicast"), 40);
 	m_pLbl8 = new wmLabel(pnlAoip, ID_M_PLBL11, _("RTPMap"), wxPoint(300,210), wxSize(70,40), 0, _T("ID_M_PLBL11"));
 	m_pLbl8->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl8->GetUiRect().SetGradient(0);
@@ -489,6 +489,7 @@ void pnlSettingsOutput::OnbtnRtpMapClick(wxCommandEvent& event)
     if(aDlg.ShowModal()== wxID_OK)
     {
         m_pbtnRtpMap->SetLabel(aDlg.m_sSelected);
+pmlLog(pml::LOG_TRACE) << "RTPMAP: " << aDlg.m_sSelected.ToStdString();
         Settings::Get().Write("Server", "RTPMap", aDlg.m_sSelected);
     }
 }
