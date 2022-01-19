@@ -67,7 +67,7 @@ bool RtpServerThread::CreateStream()
     pmlLog() << "RTP Server: CreateStream -> " << m_sSourceIp;
 
     char const* mimeType = "L24";
-    unsigned char payloadFormatCode = 96; // by default, unless a static RTP payload type can be used
+    unsigned char payloadFormatCode = Settings::Get().Read("Server", "RTPMap", 96);
 
     // Create 'groupsocks' for RTP:
     struct sockaddr_storage destinationAddress;
@@ -102,8 +102,7 @@ bool RtpServerThread::CreateStream()
     }
 
 
-
-    m_pSource = LiveAudioSource::createNew(m_pHandler, m_mutex, *m_penv, 2, m_ePacketTime);
+    m_pSource = LiveAudioSource::createNew(m_pHandler, m_mutex, *m_penv, Settings::Get().Read("Server", "Channels", 2), m_ePacketTime);
 
     // Create an appropriate audio RTP sink (using "SimpleRTPSink") from the RTP 'groupsock':
     m_pSink = SimpleRTPSink::createNew(*m_penv, m_pRtpGroupsock, payloadFormatCode, m_pSource->samplingFrequency(), "audio", mimeType, m_pSource->numChannels());
