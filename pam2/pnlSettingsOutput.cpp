@@ -237,7 +237,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 
 
     m_plstPlayback->Disable();
-    m_pbtnStream->ToggleSelection(false);
+    //m_pbtnStream->ToggleSelection(false);
 
     Settings::Get().AddHandler(wxT("Server"), wxT("RTP_Port"), this);
     Settings::Get().AddHandler(wxT("Server"), wxT("RTSP_Port"), this);
@@ -282,7 +282,6 @@ void pnlSettingsOutput::UpdateDisplayedSettings()
     m_pbtnChannels->SetLabel(Settings::Get().Read("Server", "Channels", "2"));
 
     m_pbtnSAP->Show(bMulticast);
-
     m_pLbl1->Show(bMulticast);
     m_ppnlAddress->Show(bMulticast);
 
@@ -324,6 +323,8 @@ void pnlSettingsOutput::OnSettingChanged(SettingEvent& event)
             bool bMulticast(Settings::Get().Read(wxT("Server"), wxT("Stream"), "Unicast") == "Multicast");
             m_pbtnStream->ToggleSelection(bMulticast);
             m_pbtnSAP->Show(bMulticast);
+            m_pLbl1->Show(bMulticast);
+            m_ppnlAddress->Show(bMulticast);
         }
         else if(event.GetKey() == wxT("DNS-SD"))
         {
