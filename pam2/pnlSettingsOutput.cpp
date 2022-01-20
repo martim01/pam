@@ -258,15 +258,16 @@ void pnlSettingsOutput::UpdateDisplayedSettings()
 {
     m_plstDestination->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Destination"), wxT("Disabled")), false);
 
-    unsigned long nTime = Settings::Get().Read("Server", "PacketTime", 1000);
+    int nTime = Settings::Get().Read("Server", "PacketTime", 1000);
     if(nTime > 999)
     {
-        m_pbtnPacketTime->SetLabel(wxString::Format("%lu ms", nTime/1000));
+        m_pbtnPacketTime->SetLabel(wxString::Format("%d ms", nTime/1000));
     }
     else
     {
-        m_pbtnPacketTime->SetLabel(wxString::Format("%lu \u00B5s", nTime));
+        m_pbtnPacketTime->SetLabel(wxString::Format(L"%d \u00B5s", nTime));
     }
+
 
     m_pswpDestination->ChangeSelection(Settings::Get().Read(wxT("Output"), wxT("Destination"), wxT("Disabled")));
 
@@ -294,6 +295,7 @@ void pnlSettingsOutput::UpdateDisplayedSettings()
     double dGain = ConvertRatioToGain(Settings::Get().Read("Output", "Ratio_00", 1.0));
     m_plblOutputGain->SetLabel(wxString::Format("%.2f dB", dGain));
     m_plsliderOutputGain->SetSliderPosition(dGain*500+5000, false);
+
 }
 
 
@@ -534,9 +536,9 @@ void pnlSettingsOutput::OnbtnChannelsClick(wxCommandEvent& event)
 void pnlSettingsOutput::OnbtnPacketTimeClick(wxCommandEvent& event)
 {
     wxArrayString asButtons;
-    asButtons.Add("125 \u00B5s");
-    asButtons.Add("250 \u00B5s");
-    asButtons.Add("333 \u00B5s");
+    asButtons.Add(L"125 \u00B5s");
+    asButtons.Add(L"250 \u00B5s");
+    asButtons.Add(L"333 \u00B5s");
     asButtons.Add("1 ms");
     asButtons.Add("4 ms");
 
@@ -551,6 +553,6 @@ void pnlSettingsOutput::OnbtnPacketTimeClick(wxCommandEvent& event)
         {
             nTime*=1000;
         }
-        Settings::Get().Write("Server", "PacketTime", nTime);
+        Settings::Get().Write("Server", "PacketTime", (int)nTime);
     }
 }
