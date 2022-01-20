@@ -64,17 +64,17 @@
 			<fg>#FFFFFF</fg>
 			<bg>#400080</bg>
 		</object>
-		<object class="wmList" name="ID_M_PLST5" variable="m_plstChannels" member="yes">
-			<scrolling>None</scrolling>
-			<button_gap>5,0</button_gap>
-			<columns>8</columns>
-			<button>#004040</button>
-			<button_selected>#FF8000</button_selected>
-			<items />
+		<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnChannels" member="yes">
+			<label>2</label>
+			<toggle_left>Stop</toggle_left>
+			<toggle_right>Start</toggle_right>
+			<toggle_percent>50</toggle_percent>
 			<pos>110,105</pos>
-			<size>480,40</size>
-			<bg>#000000</bg>
-			<style>wmList::STYLE_SELECT</style>
+			<size>92,40</size>
+			<fg>#000000</fg>
+			<bg>#FFFFFF</bg>
+			<style>wmButton::STYLE_NORMAL</style>
+			<handler function="OnbtnChannelsClick" entry="EVT_BUTTON" />
 		</object>
 		<object class="wmKeyboard" name="ID_M_PKBD2" variable="m_pkbd" member="yes">
 			<type>Calc</type>
@@ -104,7 +104,7 @@
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL11" variable="m_pLbl8" member="yes">
 			<label>RTPMap</label>
-			<pos>300,210</pos>
+			<pos>260,105</pos>
 			<size>70,40</size>
 			<fg>#FFFFFF</fg>
 			<bg>#400080</bg>
@@ -114,7 +114,7 @@
 			<toggle_left>Stop</toggle_left>
 			<toggle_right>Start</toggle_right>
 			<toggle_percent>50</toggle_percent>
-			<pos>370,210</pos>
+			<pos>330,105</pos>
 			<size>80,40</size>
 			<fg>#000000</fg>
 			<bg>#FFFFFF</bg>

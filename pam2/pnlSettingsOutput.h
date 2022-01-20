@@ -29,6 +29,7 @@ class pnlSettingsOutput: public wxPanel
 		//(*Declarations(pnlSettingsOutput)
 		wmButton* m_pbtnChannels;
 		wmButton* m_pbtnDNS;
+		wmButton* m_pbtnPacketTime;
 		wmButton* m_pbtnRTSP;
 		wmButton* m_pbtnRestartStream;
 		wmButton* m_pbtnRtpMap;
@@ -52,7 +53,6 @@ class pnlSettingsOutput: public wxPanel
 		wmLabel* m_plblOutputGain;
 		wmList* m_plstDestination;
 		wmList* m_plstLatency;
-		wmList* m_plstPacket;
 		wmList* m_plstPlayback;
 		wmSlider* m_plsliderOutputGain;
 		wmSwitcherPanel* m_pswpDestination;
@@ -83,7 +83,7 @@ class pnlSettingsOutput: public wxPanel
 		static const long ID_M_PLBL6;
 		static const long ID_M_PEDT3;
 		static const long ID_M_PLBL7;
-		static const long ID_M_PLST5;
+		static const long ID_M_PBTN7;
 		static const long ID_M_PEDT2;
 		static const long ID_M_PBTN1;
 		static const long ID_M_PBTN2;
@@ -118,6 +118,7 @@ class pnlSettingsOutput: public wxPanel
 		void OnbtnStatsClick(wxCommandEvent& event);
 		void OnbtnRtpMapClick(wxCommandEvent& event);
 		void OnbtnChannelsClick(wxCommandEvent& event);
+		void OnbtnPacketTimeClick(wxCommandEvent& event);
 		//*)
 		void OnSettingChanged(SettingEvent& event);
 

@@ -7,7 +7,6 @@
 #include "wmipeditpnl.h"
 #include "wmkeyboard.h"
 #include "wmlabel.h"
-#include "wmlist.h"
 #include <wx/panel.h>
 //*)
 
@@ -20,6 +19,7 @@ class pnlAoipManual: public wxPanel
 
 		//(*Declarations(pnlAoipManual)
 		wmButton* m_pbtnBits;
+		wmButton* m_pbtnChannels;
 		wmButton* m_pbtnRtpMap;
 		wmButton* m_pbtnSampleRate;
 		wmButton* m_pbtnStream;
@@ -31,7 +31,6 @@ class pnlAoipManual: public wxPanel
 		wmLabel* m_pLbl4;
 		wmLabel* m_pLbl8;
 		wmLabel* m_pLbl9;
-		wmList* m_plstChannels;
 		//*)
 
 	protected:
@@ -45,7 +44,7 @@ class pnlAoipManual: public wxPanel
 		static const long ID_M_PBTN6;
 		static const long ID_M_PBTN1;
 		static const long ID_M_PLBL4;
-		static const long ID_M_PLST5;
+		static const long ID_M_PBTN2;
 		static const long ID_M_PKBD2;
 		static const long ID_M_PBTN3;
 		static const long ID_M_PLBL11;
@@ -58,6 +57,7 @@ class pnlAoipManual: public wxPanel
 		void OnbtnSampleRateClick(wxCommandEvent& event);
 		void OnbtnStreamClick(wxCommandEvent& event);
 		void OnbtnRtpMapClick(wxCommandEvent& event);
+		void OnbtnChannelsClick(wxCommandEvent& event);
 		//*)
 		void OnlstChannelSelected(wxCommandEvent& event);
 
