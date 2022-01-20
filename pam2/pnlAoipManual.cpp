@@ -89,17 +89,22 @@ pnlAoipManual::pnlAoipManual(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoipManual::OnbtnChannelsClick);
 	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoipManual::OnbtnStreamClick);
 	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoipManual::OnbtnRtpMapClick);
+
 	//*)
 	SetSize(size);
 	SetPosition(pos);
 
+	Connect(m_pbtnBits->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoipManual::OnbtnBitsClick);
+	Connect(m_pipServer->GetId(), wxEVT_IPEDIT_CHANGE, (wxObjectEventFunction)&pnlAoipManual::OnIpChanged);
+	Connect(m_pedtPort->GetId(),wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&pnlAoipManual::OnedtRTPPort);
 
-	m_pipServer->SetValue(Settings::Get().Read("ManualAoip", "Source", ""));
+	m_pipServer->SetValue(Settings::Get().Read("ManualAoip", "Source", "0.0.0.0"));
 	m_pedtPort->SetValue(Settings::Get().Read("ManualAoip", "Port", "5004"));
 	m_pbtnSampleRate->SetLabel(Settings::Get().Read("ManualAoip", "SampleRate", "48000"));
 	m_pbtnBits->ToggleSelection(Settings::Get().Read("ManualAoip", "Bits", 24) == 24);
-
+	m_pbtnRtpMap->SetLabel(Settings::Get().Read("ManualAoip", "RtpMap", "96"));
 	m_pbtnChannels->SetLabel(Settings::Get().Read("ManualAoip", "Channels", "2"));
+
 
 }
 
@@ -122,12 +127,10 @@ void pnlAoipManual::OnbtnSampleRateClick(wxCommandEvent& event)
     {
         m_pbtnSampleRate->SetLabel(aDlg.m_sSelected);
         m_pipServer->SetFocus();
+		Settings::Get().Write("ManualAoip", "SampleRate", aDlg.m_sSelected);
     }
 }
 
-void pnlAoipManual::OnlstChannelSelected(wxCommandEvent& event)
-{
-}
 
 void pnlAoipManual::OnbtnStreamClick(wxCommandEvent& event)
 {
@@ -166,6 +169,11 @@ void pnlAoipManual::OnbtnStreamClick(wxCommandEvent& event)
     }
 }
 
+void pnlAoipManual::OnbtnBitsClick(wxCommandEvent& event)
+{
+	Settings::Get().Write("ManualAoip", "Bits", event.IsChecked() ? "24" : "16");
+}
+
 void pnlAoipManual::OnbtnRtpMapClick(wxCommandEvent& event)
 {
     wxArrayString asButtons;
@@ -178,6 +186,7 @@ void pnlAoipManual::OnbtnRtpMapClick(wxCommandEvent& event)
     if(aDlg.ShowModal()== wxID_OK)
     {
         m_pbtnRtpMap->SetLabel(aDlg.m_sSelected);
+		Settings::Get().Write("ManualAoip", "RtpMap", aDlg.m_sSelected);
     }
 }
 
@@ -193,5 +202,16 @@ void pnlAoipManual::OnbtnChannelsClick(wxCommandEvent& event)
     if(aDlg.ShowModal()== wxID_OK)
     {
         m_pbtnChannels->SetLabel(aDlg.m_sSelected);
+		Settings::Get().Write("ManualAoip", "Channels", aDlg.m_sSelected);
     }
+}
+
+void pnlAoipManual::OnIpChanged(wxCommandEvent& event)
+{
+	Settings::Get().Write("ManualAoip", "Source", event.GetString());
+}
+
+void pnlAoipManual::OnedtRTPPort(wxCommandEvent& event)
+{
+	Settings::Get().Write("ManualAoip", "Port", m_pedtPort->GetValue());
 }

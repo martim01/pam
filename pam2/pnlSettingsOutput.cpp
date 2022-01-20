@@ -233,6 +233,9 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	SetSize(size);
 	SetPosition(pos);
 
+    m_pbtnBits->SetColourDisabled(wxColour(180,180,180));
+    m_pbtnSampleRate->SetColourDisabled(wxColour(180,180,180));
+
 	m_plstDestination->AddButton(wxT("Disabled"));
     m_plstDestination->AddButton(wxT("Soundcard"));
     m_plstDestination->AddButton(wxT("AoIP"));
@@ -297,7 +300,7 @@ void pnlSettingsOutput::UpdateDisplayedSettings()
     m_plstLatency->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Latency"), 0)/40, false);
     m_pbtnRTSP->SetLabel(Settings::Get().Read(wxT("Server"), wxT("RTSP_Interface"), wxEmptyString));
 
-    bool bMulticast(Settings::Get().Read(wxT("Server"), wxT("Stream"), "Unicast") == "Multicast");
+    bool bMulticast(Settings::Get().Read(wxT("Server"), wxT("Stream"), "OnDemand") == "AlwaysOn");
     m_pbtnStream->ToggleSelection(bMulticast);
 
     m_pbtnRtpMap->SetLabel(Settings::Get().Read("Server", "RTPMap", "96"));
@@ -345,7 +348,7 @@ void pnlSettingsOutput::OnSettingChanged(SettingEvent& event)
         }
         else if(event.GetKey() == wxT("Stream"))
         {
-            bool bMulticast(Settings::Get().Read(wxT("Server"), wxT("Stream"), "Unicast") == "Multicast");
+            bool bMulticast(Settings::Get().Read(wxT("Server"), wxT("Stream"), "OnDemand") == "AlwaysOn");
             m_pbtnStream->ToggleSelection(bMulticast);
             m_pbtnSAP->Show(bMulticast);
             m_pLbl1->Show(bMulticast);
@@ -389,13 +392,13 @@ void pnlSettingsOutput::OnbtnStreamClick(wxCommandEvent& event)
 
     if(event.IsChecked() == false)
     {
-        Settings::Get().Write(wxT("Server"), wxT("Stream"), "Unicast");
+        Settings::Get().Write(wxT("Server"), wxT("Stream"), "OnDemand");
     }
     else
     {
         //@todo create the new session
         Settings::Get().Write(wxT("Server"), wxT("DestinationIp"), m_ppnlAddress->GetValue());
-        Settings::Get().Write(wxT("Server"), wxT("Stream"), "Multicast");
+        Settings::Get().Write(wxT("Server"), wxT("Stream"), "AlwaysOn");
     }
     /*m_ppnlAddress->Enable((event.IsChecked() == false));
     m_pedtRTSPPort->Enable((event.IsChecked() == false));

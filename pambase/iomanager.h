@@ -102,8 +102,8 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         void RTPServerFinished();
 
         void Stream();
-        void StreamMulticast();
-        void StreamUnicast();
+        void StreamAlwaysOn();
+        void StreamOnDemand();
         void StopStream();
 
         void DoGain(AudioEvent& event);
@@ -122,15 +122,15 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         int m_nPlaybackSource;
         bool m_bPlaybackInput;
         bool  m_bMonitorOutput;
-        bool m_bStreamMulticast;
+        bool m_bStreamAlwaysOn;
 
         Generator* m_pGenerator;
         std::map<int, RtpThread*> m_mRtp;
         std::set<int> m_setRtpOrphan;
         int m_nCurrentRtp;
 
-        RtpServerThread* m_pMulticastServer;
-        OnDemandStreamer* m_pUnicastServer;
+        RtpServerThread* m_pAlwaysOnServer;
+        OnDemandStreamer* m_pOnDemandServer;
         OnDemandAES67MediaSubsession* m_pOnDemandSubsession;
         wxTimer m_timerSilence;
         wxTimer m_timerResetStream;

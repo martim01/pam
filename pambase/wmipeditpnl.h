@@ -71,5 +71,5 @@ class PAMBASE_IMPEXPORT wmipeditpnl: public pmPanel
 
 		DECLARE_EVENT_TABLE()
 };
-
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_IPEDIT_CHANGE, wxCommandEvent);
 #endif

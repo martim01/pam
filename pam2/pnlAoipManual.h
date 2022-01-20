@@ -59,9 +59,11 @@ class pnlAoipManual: public wxPanel
 		void OnbtnRtpMapClick(wxCommandEvent& event);
 		void OnbtnChannelsClick(wxCommandEvent& event);
 		//*)
-		void OnlstChannelSelected(wxCommandEvent& event);
+		void OnbtnBitsClick(wxCommandEvent& event);
+		void OnIpChanged(wxCommandEvent& event);
+		void OnedtRTPPort(wxCommandEvent& event);
 
-		wxString m_sChannels;
+		
 
 		DECLARE_EVENT_TABLE()
 };

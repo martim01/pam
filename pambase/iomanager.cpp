@@ -77,9 +77,9 @@ IOManager::IOManager() :
     m_bPlaybackInput(false),
     m_bMonitorOutput(false),
     m_pGenerator(nullptr),
-    m_bStreamMulticast(false),
-    m_pMulticastServer(nullptr),
-    m_pUnicastServer(nullptr),
+    m_bStreamAlwaysOn(false),
+    m_pAlwaysOnServer(nullptr),
+    m_pOnDemandServer(nullptr),
     m_pOnDemandSubsession(nullptr),
     m_pSapServer(nullptr),
     m_pPublisher(nullptr),
@@ -183,20 +183,20 @@ void IOManager::Stop()
 
 void IOManager::StopStream()
 {
-    if(m_pMulticastServer)
+    if(m_pAlwaysOnServer)
     {
-        m_pMulticastServer->StopStream();
-        m_pMulticastServer->Wait();
-        delete m_pMulticastServer;
-        m_pMulticastServer = nullptr;
+        m_pAlwaysOnServer->StopStream();
+        m_pAlwaysOnServer->Wait();
+        delete m_pAlwaysOnServer;
+        m_pAlwaysOnServer = nullptr;
         RTPServerFinished();
     }
-    else if(m_pUnicastServer)
+    else if(m_pOnDemandServer)
     {
-        m_pUnicastServer->Stop();
-        m_pUnicastServer->Wait();
-        delete m_pUnicastServer;
-        m_pUnicastServer = nullptr;
+        m_pOnDemandServer->Stop();
+        m_pOnDemandServer->Wait();
+        delete m_pOnDemandServer;
+        m_pOnDemandServer = nullptr;
         m_pOnDemandSubsession = nullptr;
         RTPServerFinished();
     }
@@ -264,26 +264,26 @@ void IOManager::OnSettingEvent(SettingEvent& event)
     {
         if(event.GetKey() == wxT("Stream"))
         {
-            m_bStreamMulticast = (event.GetValue() == "Multicast");
-            if(!m_bStreamMulticast)
+            m_bStreamAlwaysOn = (event.GetValue() == "AlwaysOn");
+            if(!m_bStreamAlwaysOn)
             {
-                if(m_pMulticastServer)
+                if(m_pAlwaysOnServer)
                 {
-                    m_pMulticastServer->StopStream();
-                    m_pMulticastServer->Wait();
-                    delete m_pMulticastServer;
-                    m_pMulticastServer = nullptr;
+                    m_pAlwaysOnServer->StopStream();
+                    m_pAlwaysOnServer->Wait();
+                    delete m_pAlwaysOnServer;
+                    m_pAlwaysOnServer = nullptr;
                     RTPServerFinished();
                 }
             }
             else
             {
-                if(m_pUnicastServer)
+                if(m_pOnDemandServer)
                 {
-                    m_pUnicastServer->Stop();
-                    m_pUnicastServer->Wait();
-                    delete m_pUnicastServer;
-                    m_pUnicastServer = nullptr;
+                    m_pOnDemandServer->Stop();
+                    m_pOnDemandServer->Wait();
+                    delete m_pOnDemandServer;
+                    m_pOnDemandServer = nullptr;
                     m_pOnDemandSubsession = nullptr;
                     RTPServerFinished();
                 }
@@ -312,9 +312,9 @@ void IOManager::OnAudioEvent(AudioEvent& event)
                 SoundcardManager::Get().AddOutputSamples(event.GetBuffer());
                 break;
             case AudioEvent::RTP:
-                if(m_pMulticastServer)
+                if(m_pAlwaysOnServer)
                 {
-                    m_pMulticastServer->AddSamples(event.GetBuffer());
+                    m_pAlwaysOnServer->AddSamples(event.GetBuffer());
                 }
                 else if(m_pOnDemandSubsession)
                 {
@@ -365,9 +365,9 @@ void IOManager::AddOutputSamples(size_t nSize)
                 SoundcardManager::Get().AddOutputSamples(pBuffer);
                 break;
             case AudioEvent::RTP:
-                if(m_pMulticastServer)
+                if(m_pAlwaysOnServer)
                 {
-                    m_pMulticastServer->AddSamples(pBuffer);
+                    m_pAlwaysOnServer->AddSamples(pBuffer);
                 }
                 else if(m_pOnDemandSubsession)
                 {
@@ -513,9 +513,9 @@ void IOManager::OutputChanged(const wxString& sKey)
                 SoundcardManager::Get().FlushOutputQueue();
                 break;
             case AudioEvent::RTP:
-                if(m_pMulticastServer)
+                if(m_pAlwaysOnServer)
                 {
-                    m_pMulticastServer->FlushQueue();
+                    m_pAlwaysOnServer->FlushQueue();
                 }
                 else if(m_pOnDemandSubsession)
                 {
@@ -1073,7 +1073,7 @@ void IOManager::OnPtpEvent(wxCommandEvent& event)
 
 void IOManager::DoSAP(bool bRun)
 {
-    if(bRun == false || m_pMulticastServer == nullptr)
+    if(bRun == false || m_pAlwaysOnServer == nullptr)
     {
         if(m_pSapServer)
         {
@@ -1094,15 +1094,15 @@ void IOManager::DoSAP(bool bRun)
         }
 
 
-        m_pSapServer->AddSender(IpAddress(std::string(Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString).c_str())), std::chrono::milliseconds(30000), m_pMulticastServer->GetSDP());
+        m_pSapServer->AddSender(IpAddress(std::string(Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString).c_str())), std::chrono::milliseconds(30000), m_pAlwaysOnServer->GetSDP());
 
-        pmlLog(pml::LOG_INFO) << "IOManager\tStart SAP advertising: " << m_pMulticastServer->GetSDP();
+        pmlLog(pml::LOG_INFO) << "IOManager\tStart SAP advertising: " << m_pAlwaysOnServer->GetSDP();
     }
 }
 
 void IOManager::DoDNSSD(bool bRun)
 {
-    if(bRun == false || (m_pUnicastServer == nullptr && m_pMulticastServer == nullptr))
+    if(bRun == false || (m_pOnDemandServer == nullptr && m_pAlwaysOnServer == nullptr))
     {
         if(m_pPublisher)
         {
@@ -1140,64 +1140,64 @@ void IOManager::RTPServerFinished()
 
 void IOManager::Stream()
 {
-    if(m_bStreamMulticast || (Settings::Get().Read("NMOS", "Node", 0)  == 2 || Settings::Get().Read("NMOS", "Node", 0)  == 3))  //@todo bodge for NMOS
+    if(m_bStreamAlwaysOn || (Settings::Get().Read("NMOS", "Node", 0)  == 2 || Settings::Get().Read("NMOS", "Node", 0)  == 3))  //@todo bodge for NMOS
     {
-        StreamMulticast();
+        StreamAlwaysOn();
         DoSAP(Settings::Get().Read("Server", "SAP",0));
     }
     else
     {
-        StreamUnicast();
+        StreamOnDemand();
         DoSAP(false);
     }
 
     DoDNSSD(Settings::Get().Read("Server", "DNS-SD", 0));
 }
 
-void IOManager::StreamMulticast()
+void IOManager::StreamAlwaysOn()
 {
-    pmlLog(pml::LOG_INFO) << "IOManager\tCreate Multicast AES67 Server";
-    if(m_pMulticastServer == nullptr && m_pUnicastServer == nullptr)
+    pmlLog(pml::LOG_INFO) << "IOManager\tCreate AlwaysOn AES67 Server";
+    if(m_pAlwaysOnServer == nullptr && m_pOnDemandServer == nullptr)
     {
         wxString sDestinationIp = Settings::Get().Read(wxT("Server"), wxT("DestinationIp"), wxEmptyString);
         unsigned long nByte;
         bool bSSM(sDestinationIp.BeforeFirst(wxT('.')).ToULong(&nByte) && nByte >= 224 && nByte <= 239);
 
-        m_pMulticastServer = new RtpServerThread(this, m_setRTCPHandlers, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString),
+        m_pAlwaysOnServer = new RtpServerThread(this, m_setRTCPHandlers, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString),
                                                  Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555),
                                                  sDestinationIp,
                                                 Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004),
                                                 bSSM,
                                                  (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000));
-        m_pMulticastServer->Run();
+        m_pAlwaysOnServer->Run();
         m_bStreamActive = true;
     }
     else
     {
-        pmlLog(pml::LOG_ERROR) << "Attempting to stream multicast but already streaming";
+        pmlLog(pml::LOG_ERROR) << "Attempting to stream AlwaysOn but already streaming";
     }
 }
 
-void IOManager::StreamUnicast()
+void IOManager::StreamOnDemand()
 {
-    pmlLog(pml::LOG_INFO) << "IOManager\tCreate Unicast AES67 Server";
-    if(m_pMulticastServer == nullptr && m_pUnicastServer == nullptr)
+    pmlLog(pml::LOG_INFO) << "IOManager\tCreate OnDemand AES67 Server";
+    if(m_pAlwaysOnServer == nullptr && m_pOnDemandServer == nullptr)
     {
-        m_pUnicastServer = new OnDemandStreamer(m_setRTSPHandlers, m_setRTCPHandlers, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), "0.0.0.0"),
+        m_pOnDemandServer = new OnDemandStreamer(m_setRTSPHandlers, m_setRTCPHandlers, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), "0.0.0.0"),
                                               Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555));
 
-        m_pOnDemandSubsession = OnDemandAES67MediaSubsession::createNew(this, *m_pUnicastServer->envir(), 2, (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
+        m_pOnDemandSubsession = OnDemandAES67MediaSubsession::createNew(this, *m_pOnDemandServer->envir(), 2, (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
 
-        m_pUnicastServer->Create();
-        m_pUnicastServer->SetSubsession(m_pOnDemandSubsession);
+        m_pOnDemandServer->Create();
+        m_pOnDemandServer->SetSubsession(m_pOnDemandSubsession);
 
 
-        m_pUnicastServer->Run();
+        m_pOnDemandServer->Run();
         m_bStreamActive = true;
     }
     else
     {
-        pmlLog(pml::LOG_ERROR) << "Attempting to stream unicast but already streaming";
+        pmlLog(pml::LOG_ERROR) << "Attempting to stream OnDemand but already streaming";
     }
 }
 

@@ -490,7 +490,7 @@ void wmButton::DrawToggle(wxDC& dc)
 
     m_uiRect.SetBackgroundColour(m_clrBackground[STATE_NORMAL]);
     m_uiRect.SetForegroundColour(m_clrForeground[STATE_NORMAL]);
-
+   
     m_uiRect.SetTop(m_uiGroove.GetTop()+2);
     m_uiRect.SetBottom(m_uiGroove.GetBottom()-2);
 

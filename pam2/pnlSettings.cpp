@@ -268,6 +268,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
 
     Settings::Get().AddHandler("NMOS", "Node", this);
+    Settings::Get().AddHandler("Input", "AoIP", this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pnlSettings::OnSettingChanged);
 
@@ -296,12 +297,25 @@ void pnlSettings::UpdateDisplayedSettings()
 
 void pnlSettings::OnSettingChanged(SettingEvent& event)
 {
+    int nAoIP = Settings::Get().Read("Input", "AoIP", 0);
+    bool bNmos = false;
     #ifdef __NMOS__
     if(event.GetSection().CmpNoCase("NMOS") == 0 && event.GetKey() == "Node")
     {
+        bNmos = (event.GetValue(0L) != 0);
         EnableInputButtons(event.GetValue(0L));
     }
     #endif
+    if(event.GetSection().CmpNoCase("Input") == 0 && event.GetKey() == "AoIP")
+    {
+        if(!bNmos)
+        {
+            for(size_t i = 0; i < m_plstInput->GetItemCount(); i++)
+            {
+                m_plstInput->EnableButton(i, (nAoIP != AoipSourceManager::SOURCE_MANUAL_A && nAoIP != AoipSourceManager::SOURCE_MANUAL_B));
+            }
+        }
+    }
 }
 
 void pnlSettings::EnableInputButtons(int nMode)
