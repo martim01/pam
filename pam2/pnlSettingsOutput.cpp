@@ -44,6 +44,9 @@ const long pnlSettingsOutput::ID_M_PBTN9 = wxNewId();
 const long pnlSettingsOutput::ID_M_PBTN3 = wxNewId();
 const long pnlSettingsOutput::ID_M_PLBL12 = wxNewId();
 const long pnlSettingsOutput::ID_M_PBTN5 = wxNewId();
+const long pnlSettingsOutput::ID_M_PLBL13 = wxNewId();
+const long pnlSettingsOutput::ID_M_PBTN10 = wxNewId();
+const long pnlSettingsOutput::ID_M_PBTN11 = wxNewId();
 const long pnlSettingsOutput::ID_M_PLBL11 = wxNewId();
 const long pnlSettingsOutput::ID_M_PBTN4 = wxNewId();
 const long pnlSettingsOutput::ID_PANEL11 = wxNewId();
@@ -107,7 +110,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_plblOutputGain->SetFont(m_plblOutputGainFont);
 	pnlAoip = new wxPanel(m_pswpDestination, ID_PANEL11, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL11"));
 	pnlAoip->SetBackgroundColour(wxColour(0,0,0));
-	m_pLbl1 = new wmLabel(pnlAoip, ID_M_PLBL1, _("Multicast"), wxPoint(0,55), wxSize(100,40), 0, _T("ID_M_PLBL1"));
+	m_pLbl1 = new wmLabel(pnlAoip, ID_M_PLBL1, _("Destination"), wxPoint(0,55), wxSize(100,40), 0, _T("ID_M_PLBL1"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl1->GetUiRect().SetGradient(0);
 	m_pLbl1->SetForegroundColour(wxColour(255,255,255));
@@ -147,11 +150,11 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pedtRTPPort = new wmEdit(pnlAoip, ID_M_PEDT2, wxEmptyString, wxPoint(350,55), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PEDT2"));
 	m_pedtRTPPort->SetValidation(4);
 	m_pedtRTPPort->SetBorderStyle(1,1);
-	m_pbtnRestartStream = new wmButton(pnlAoip, ID_M_PBTN1, _("Hold To Restart"), wxPoint(460,10), wxSize(135,40), wmButton::STYLE_HOLD, wxDefaultValidator, _T("ID_M_PBTN1"));
+	m_pbtnRestartStream = new wmButton(pnlAoip, ID_M_PBTN1, _("Hold To Restart"), wxPoint(260,220), wxSize(135,40), wmButton::STYLE_HOLD, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnRestartStream->SetBackgroundColour(wxColour(255,0,0));
 	wxFont m_pbtnRestartStreamFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pbtnRestartStream->SetFont(m_pbtnRestartStreamFont);
-	m_pbtnStats = new wmButton(pnlAoip, ID_M_PBTN2, _("RTCP Stats"), wxPoint(460,55), wxSize(135,40), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
+	m_pbtnStats = new wmButton(pnlAoip, ID_M_PBTN2, _("RTCP Stats"), wxPoint(455,220), wxSize(135,40), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
 	m_pbtnStats->SetBackgroundColour(wxColour(64,128,128));
 	wxFont m_pbtnStatsFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pbtnStats->SetFont(m_pbtnStatsFont);
@@ -172,9 +175,9 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pbtnSAP = new wmButton(pnlAoip, ID_M_PBTN9, _("SAP"), wxPoint(430,330), wxSize(160,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN9"));
 	m_pbtnSAP->SetBackgroundColour(wxColour(61,120,218));
 	m_pbtnSAP->SetToggle(true, wxT("Off"), wxT("On"), 60);
-	m_pbtnStream = new wmButton(pnlAoip, ID_M_PBTN3, _("Stream"), wxPoint(300,250), wxSize(268,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
+	m_pbtnStream = new wmButton(pnlAoip, ID_M_PBTN3, _("Stream"), wxPoint(260,175), wxSize(330,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
 	m_pbtnStream->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnStream->SetToggle(true, wxT("Unicast"), wxT("Multicast"), 40);
+	m_pbtnStream->SetToggle(true, wxT("On Demand"), wxT("Always On"), 40);
 	m_pLbl11 = new wmLabel(pnlAoip, ID_M_PLBL12, _("Channels"), wxPoint(172,100), wxSize(60,40), 0, _T("ID_M_PLBL12"));
 	m_pLbl11->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl11->GetUiRect().SetGradient(0);
@@ -183,12 +186,25 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pbtnChannels = new wmButton(pnlAoip, ID_M_PBTN5, _("2"), wxPoint(232,100), wxSize(50,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN5"));
 	m_pbtnChannels->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnChannels->SetBackgroundColour(wxColour(255,255,255));
-	m_pLbl8 = new wmLabel(pnlAoip, ID_M_PLBL11, _("rtpmap"), wxPoint(460,100), wxSize(70,40), 0, _T("ID_M_PLBL11"));
+	m_pLbl12 = new wmLabel(pnlAoip, ID_M_PLBL13, _("Sample Rate"), wxPoint(284,100), wxSize(60,40), 0, _T("ID_M_PLBL13"));
+	m_pLbl12->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl12->GetUiRect().SetGradient(0);
+	m_pLbl12->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl12->SetBackgroundColour(wxColour(64,0,128));
+	m_pbtnSampleRate = new wmButton(pnlAoip, ID_M_PBTN10, _("48000"), wxPoint(344,100), wxSize(70,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN10"));
+	m_pbtnSampleRate->Disable();
+	m_pbtnSampleRate->SetForegroundColour(wxColour(0,0,0));
+	m_pbtnSampleRate->SetBackgroundColour(wxColour(255,255,255));
+	m_pbtnBits = new wmButton(pnlAoip, ID_M_PBTN11, _("Bits"), wxPoint(416,100), wxSize(174,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN11"));
+	m_pbtnBits->Disable();
+	m_pbtnBits->SetBackgroundColour(wxColour(0,128,0));
+	m_pbtnBits->SetToggle(true, wxT("16"), wxT("24"), 50);
+	m_pLbl8 = new wmLabel(pnlAoip, ID_M_PLBL11, _("RTP Payload"), wxPoint(455,55), wxSize(70,40), 0, _T("ID_M_PLBL11"));
 	m_pLbl8->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl8->GetUiRect().SetGradient(0);
 	m_pLbl8->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl8->SetBackgroundColour(wxColour(64,0,128));
-	m_pbtnRtpMap = new wmButton(pnlAoip, ID_M_PBTN4, _("96"), wxPoint(530,100), wxSize(65,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN4"));
+	m_pbtnRtpMap = new wmButton(pnlAoip, ID_M_PBTN4, _("96"), wxPoint(525,55), wxSize(65,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN4"));
 	m_pbtnRtpMap->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnRtpMap->SetBackgroundColour(wxColour(255,255,255));
 	m_pswpDestination->AddPage(pnlDisabled, _("Disabled"), false);
@@ -209,6 +225,8 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	Connect(ID_M_PBTN9,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnSAPClick);
 	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnStreamClick);
 	Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnChannelsClick);
+	Connect(ID_M_PBTN10,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnSampleRateClick);
+	Connect(ID_M_PBTN11,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnBitsClick);
 	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnRtpMapClick);
 	//*)
 
@@ -296,6 +314,8 @@ void pnlSettingsOutput::UpdateDisplayedSettings()
     m_plblOutputGain->SetLabel(wxString::Format("%.2f dB", dGain));
     m_plsliderOutputGain->SetSliderPosition(dGain*500+5000, false);
 
+    m_pbtnBits->ToggleSelection(Settings::Get().Read("Server", "Bits", 24) == 24);
+    m_pbtnSampleRate->SetLabel(Settings::Get().Read("Server", "SampleRate", "48000"));
 }
 
 
@@ -555,4 +575,26 @@ void pnlSettingsOutput::OnbtnPacketTimeClick(wxCommandEvent& event)
         }
         Settings::Get().Write("Server", "PacketTime", (int)nTime);
     }
+}
+
+void pnlSettingsOutput::OnbtnSampleRateClick(wxCommandEvent& event)
+{
+    wxArrayString asButtons;
+    asButtons.Add("44100");
+    asButtons.Add("48000");
+    asButtons.Add("96000");
+
+    dlgMask aDlg(this, asButtons, m_pbtnSampleRate->GetLabel(), wxNewId(), ClientToScreen(m_pbtnSampleRate->GetPosition()), m_pbtnSampleRate->GetSize());
+    if(aDlg.ShowModal()== wxID_OK)
+    {
+        m_pbtnSampleRate->SetLabel(aDlg.m_sSelected);
+        unsigned long nSampleRate;
+        aDlg.m_sSelected.ToULong(&nSampleRate);
+        Settings::Get().Write("Server", "SampleRate", (int)nSampleRate);
+    }
+}
+
+void pnlSettingsOutput::OnbtnBitsClick(wxCommandEvent& event)
+{
+    Settings::Get().Write("Server", "Bits", event.IsChecked() ? 24 : 16);
 }

@@ -103,7 +103,7 @@
 			<handler function="OnbtnStreamClick" entry="EVT_BUTTON" />
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL11" variable="m_pLbl8" member="yes">
-			<label>RTPMap</label>
+			<label>RTP Payload</label>
 			<pos>260,105</pos>
 			<size>70,40</size>
 			<fg>#FFFFFF</fg>

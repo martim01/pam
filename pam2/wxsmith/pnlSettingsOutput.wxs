@@ -123,7 +123,7 @@
 				<object class="wxPanel" name="ID_PANEL11" variable="pnlAoip" member="yes">
 					<bg>#000000</bg>
 					<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
-						<label>Multicast</label>
+						<label>Destination</label>
 						<pos>0,55</pos>
 						<size>100,40</size>
 						<fg>#FFFFFF</fg>
@@ -205,7 +205,7 @@
 					</object>
 					<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnRestartStream" member="yes">
 						<label>Hold To Restart</label>
-						<pos>460,10</pos>
+						<pos>260,220</pos>
 						<size>135,40</size>
 						<bg>#FF0000</bg>
 						<font>
@@ -221,7 +221,7 @@
 					</object>
 					<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnStats" member="yes">
 						<label>RTCP Stats</label>
-						<pos>460,55</pos>
+						<pos>455,220</pos>
 						<size>135,40</size>
 						<bg>#408080</bg>
 						<font>
@@ -289,11 +289,11 @@
 					<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnStream" member="yes">
 						<label>Stream</label>
 						<toggle_look>1</toggle_look>
-						<toggle_left>Unicast</toggle_left>
-						<toggle_right>Multicast</toggle_right>
+						<toggle_left>On Demand</toggle_left>
+						<toggle_right>Always On</toggle_right>
 						<toggle_percent>40</toggle_percent>
-						<pos>300,250</pos>
-						<size>268,40</size>
+						<pos>260,175</pos>
+						<size>330,40</size>
 						<bg>#008000</bg>
 						<style>wmButton::STYLE_SELECT</style>
 						<handler function="OnbtnStreamClick" entry="EVT_BUTTON" />
@@ -317,9 +317,42 @@
 						<style>wmButton::STYLE_NORMAL</style>
 						<handler function="OnbtnChannelsClick" entry="EVT_BUTTON" />
 					</object>
+					<object class="wmLabel" name="ID_M_PLBL13" variable="m_pLbl12" member="yes">
+						<label>Sample Rate</label>
+						<pos>284,100</pos>
+						<size>60,40</size>
+						<fg>#FFFFFF</fg>
+						<bg>#400080</bg>
+					</object>
+					<object class="wmButton" name="ID_M_PBTN10" variable="m_pbtnSampleRate" member="yes">
+						<label>48 kHz</label>
+						<toggle_left>Stop</toggle_left>
+						<toggle_right>Start</toggle_right>
+						<toggle_percent>50</toggle_percent>
+						<pos>344,100</pos>
+						<size>70,40</size>
+						<enabled>0</enabled>
+						<fg>#000000</fg>
+						<bg>#FFFFFF</bg>
+						<style>wmButton::STYLE_NORMAL</style>
+						<handler function="OnbtnSampleRateClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN11" variable="m_pbtnBits" member="yes">
+						<label>Bits</label>
+						<toggle_look>1</toggle_look>
+						<toggle_left>16</toggle_left>
+						<toggle_right>24</toggle_right>
+						<toggle_percent>50</toggle_percent>
+						<pos>416,100</pos>
+						<size>174,40</size>
+						<enabled>0</enabled>
+						<bg>#008000</bg>
+						<style>wmButton::STYLE_SELECT</style>
+						<handler function="OnbtnBitsClick" entry="EVT_BUTTON" />
+					</object>
 					<object class="wmLabel" name="ID_M_PLBL11" variable="m_pLbl8" member="yes">
-						<label>rtpmap</label>
-						<pos>460,100</pos>
+						<label>RTP Payload</label>
+						<pos>455,55</pos>
 						<size>70,40</size>
 						<fg>#FFFFFF</fg>
 						<bg>#400080</bg>
@@ -329,7 +362,7 @@
 						<toggle_left>Stop</toggle_left>
 						<toggle_right>Start</toggle_right>
 						<toggle_percent>50</toggle_percent>
-						<pos>530,100</pos>
+						<pos>525,55</pos>
 						<size>65,40</size>
 						<fg>#000000</fg>
 						<bg>#FFFFFF</bg>
