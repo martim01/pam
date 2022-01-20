@@ -48,6 +48,8 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
 
         void RestartStream();
 
+        wxString GetDnsSdService() const;
+
     private:
         IOManager();
         ~IOManager();
