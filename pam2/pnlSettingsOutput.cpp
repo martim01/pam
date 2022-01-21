@@ -177,10 +177,10 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pbtnSAP = new wmButton(pnlAoip, ID_M_PBTN9, _("SAP"), wxPoint(430,330), wxSize(160,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN9"));
 	m_pbtnSAP->SetBackgroundColour(wxColour(61,120,218));
 	m_pbtnSAP->SetToggle(true, wxT("Off"), wxT("On"), 60);
-	m_pbtnStream = new wmButton(pnlAoip, ID_M_PBTN3, _("Server"), wxPoint(260,175), wxSize(330,35), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
+	m_pbtnStream = new wmButton(pnlAoip, ID_M_PBTN3, _("Stream"), wxPoint(260,175), wxSize(330,35), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
 	m_pbtnStream->SetBackgroundColour(wxColour(0,128,0));
 	m_pbtnStream->SetToggle(true, wxT("On Demand"), wxT("Always On"), 40);
-	m_pbtnActive = new wmButton(pnlAoip, ID_M_PBTN1, _("Stream"), wxPoint(260,215), wxSize(330,35), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
+	m_pbtnActive = new wmButton(pnlAoip, ID_M_PBTN1, _("Server"), wxPoint(260,215), wxSize(330,35), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnActive->SetBackgroundColour(wxColour(0,128,0));
 	m_pbtnActive->SetToggle(true, wxT("Inactive"), wxT("Active"), 40);
 	m_pLbl11 = new wmLabel(pnlAoip, ID_M_PLBL12, _("Channels"), wxPoint(172,110), wxSize(60,40), 0, _T("ID_M_PLBL12"));
