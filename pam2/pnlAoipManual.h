@@ -63,7 +63,7 @@ class pnlAoipManual: public wxPanel
 		void OnIpChanged(wxCommandEvent& event);
 		void OnedtRTPPort(wxCommandEvent& event);
 
-		
+
 
 		DECLARE_EVENT_TABLE()
 };

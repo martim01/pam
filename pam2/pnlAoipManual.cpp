@@ -58,6 +58,7 @@ pnlAoipManual::pnlAoipManual(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	m_pbtnSampleRate = new wmButton(this, ID_M_PBTN6, _("48000"), wxPoint(110,60), wxSize(92,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN6"));
 	m_pbtnSampleRate->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnSampleRate->SetBackgroundColour(wxColour(255,255,255));
+	m_pbtnSampleRate->SetColourDisabled(wxColour(wxT("#B0B0B0")));
 	m_pbtnBits = new wmButton(this, ID_M_PBTN1, _("Bits"), wxPoint(260,60), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnBits->SetBackgroundColour(wxColour(0,128,0));
 	m_pbtnBits->SetToggle(true, wxT("16"), wxT("24"), 40);
@@ -69,11 +70,12 @@ pnlAoipManual::pnlAoipManual(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	m_pbtnChannels = new wmButton(this, ID_M_PBTN2, _("2"), wxPoint(110,105), wxSize(92,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN2"));
 	m_pbtnChannels->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnChannels->SetBackgroundColour(wxColour(255,255,255));
+	m_pbtnChannels->SetColourDisabled(wxColour(wxT("#B0B0B0")));
 	m_pkbd = new wmKeyboard(this, ID_M_PKBD2, wxPoint(10,160), wxSize(240,200), 5, 0);
 	m_pkbd->SetForegroundColour(wxColour(255,255,255));
 	wxFont m_pkbdFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	m_pkbd->SetFont(m_pkbdFont);
-	m_pbtnStream = new wmButton(this, ID_M_PBTN3, _("Receive"), wxPoint(300,320), wxSize(268,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
+	m_pbtnStream = new wmButton(this, ID_M_PBTN3, _("Receive"), wxPoint(260,161), wxSize(268,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
 	m_pbtnStream->SetBackgroundColour(wxColour(0,128,0));
 	m_pbtnStream->SetToggle(true, wxT("Stop"), wxT("Start"), 40);
 	m_pLbl8 = new wmLabel(this, ID_M_PLBL11, _("RTP Payload"), wxPoint(260,105), wxSize(70,40), 0, _T("ID_M_PLBL11"));
@@ -84,12 +86,12 @@ pnlAoipManual::pnlAoipManual(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	m_pbtnRtpMap = new wmButton(this, ID_M_PBTN4, _("96"), wxPoint(330,105), wxSize(80,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN4"));
 	m_pbtnRtpMap->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnRtpMap->SetBackgroundColour(wxColour(255,255,255));
+	m_pbtnRtpMap->SetColourDisabled(wxColour(wxT("#B0B0B0")));
 
 	Connect(ID_M_PBTN6,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoipManual::OnbtnSampleRateClick);
 	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoipManual::OnbtnChannelsClick);
 	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoipManual::OnbtnStreamClick);
 	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoipManual::OnbtnRtpMapClick);
-
 	//*)
 	SetSize(size);
 	SetPosition(pos);
@@ -140,6 +142,7 @@ void pnlAoipManual::OnbtnStreamClick(wxCommandEvent& event)
     m_pipServer->Enable(event.IsChecked() == false);
     m_pkbd->Enable(event.IsChecked() == false);
     m_pedtPort->Enable(event.IsChecked() == false);
+    m_pbtnSampleRate->Enable(event.IsChecked() == false);
 
     if(event.IsChecked())
     {

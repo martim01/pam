@@ -36,6 +36,7 @@
 		</object>
 		<object class="wmButton" name="ID_M_PBTN6" variable="m_pbtnSampleRate" member="yes">
 			<label>48000</label>
+			<button_disabled>#B0B0B0</button_disabled>
 			<toggle_left>Stop</toggle_left>
 			<toggle_right>Start</toggle_right>
 			<toggle_percent>50</toggle_percent>
@@ -66,6 +67,7 @@
 		</object>
 		<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnChannels" member="yes">
 			<label>2</label>
+			<button_disabled>#B0B0B0</button_disabled>
 			<toggle_left>Stop</toggle_left>
 			<toggle_right>Start</toggle_right>
 			<toggle_percent>50</toggle_percent>
@@ -96,7 +98,7 @@
 			<toggle_left>Stop</toggle_left>
 			<toggle_right>Start</toggle_right>
 			<toggle_percent>40</toggle_percent>
-			<pos>300,320</pos>
+			<pos>260,161</pos>
 			<size>268,40</size>
 			<bg>#008000</bg>
 			<style>wmButton::STYLE_SELECT</style>
@@ -111,6 +113,7 @@
 		</object>
 		<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnRtpMap" member="yes">
 			<label>96</label>
+			<button_disabled>#B0B0B0</button_disabled>
 			<toggle_left>Stop</toggle_left>
 			<toggle_right>Start</toggle_right>
 			<toggle_percent>50</toggle_percent>
