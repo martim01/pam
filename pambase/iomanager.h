@@ -108,6 +108,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
 
         void DoGain(AudioEvent& event);
         void CheckIfGain();
+        void InitAoIPInput();
 
         std::set<wxEvtHandler*> m_setHandlers;
         std::set<wxEvtHandler*> m_setRTCPHandlers;

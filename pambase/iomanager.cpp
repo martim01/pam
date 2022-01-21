@@ -770,29 +770,9 @@ void IOManager::InitAudioInputDevice(bool bStart)
 
         CheckPlayback(SoundcardManager::Get().GetInputSampleRate(), SoundcardManager::Get().GetInputNumberOfChannels());
     }
-    else if(sType == "AoIP" || sType == "AoIP Manual" || (sType == "NMOS" && !bStart))
+    else if(sType == "AoIP" || (sType == "AoIP Manual") || (sType == "NMOS" && !bStart))
     {
-        m_nInputSource = AudioEvent::RTP;
-        pmlLog(pml::LOG_INFO) << "IOManager\tCreate Audio Input Device: AoIP";
-
-        AoIPSource source(0);
-        source = AoipSourceManager::Get().FindSource(Settings::Get().Read(wxT("Input"), wxT("AoIP"), 0));
-
-        if(source.nIndex != 0 && m_mRtp.find(source.nIndex) == m_mRtp.end())
-        {
-            m_nCurrentRtp = source.nIndex;
-            RtpThread* pThread = new RtpThread(this, Settings::Get().Read(wxT("AoIP_Settings"), wxT("Interface"), "eth0"), wxT("pam"), source, 2048);
-            pThread->Create();
-            pThread->Run();
-
-            pThread->SetQosMeasurementIntervalMS(Settings::Get().Read(wxT("QoS"), wxT("Interval"), 1000));
-
-            m_mRtp.insert(make_pair(m_nCurrentRtp, pThread));
-        }
-        else
-        {
-            pmlLog(pml::LOG_WARN) << "IOManager\tRTP Thread already running for source " << source.nIndex;
-        }
+        InitAoIPInput();
     }
     else if(sType == wxT("Output"))
     {
@@ -808,6 +788,30 @@ void IOManager::InitAudioInputDevice(bool bStart)
     }
 }
 
+void IOManager::InitAoIPInput()
+{
+    m_nInputSource = AudioEvent::RTP;
+    pmlLog(pml::LOG_INFO) << "IOManager\tCreate Audio Input Device: AoIP";
+
+    AoIPSource source(0);
+    source = AoipSourceManager::Get().FindSource(Settings::Get().Read(wxT("Input"), wxT("AoIP"), 0));
+
+    if(source.nIndex != 0 && m_mRtp.find(source.nIndex) == m_mRtp.end())
+    {
+        m_nCurrentRtp = source.nIndex;
+        RtpThread* pThread = new RtpThread(this, Settings::Get().Read(wxT("AoIP_Settings"), wxT("Interface"), "eth0"), wxT("pam"), source, 2048);
+        pThread->Create();
+        pThread->Run();
+
+        pThread->SetQosMeasurementIntervalMS(Settings::Get().Read(wxT("QoS"), wxT("Interval"), 1000));
+
+        m_mRtp.insert(make_pair(m_nCurrentRtp, pThread));
+    }
+    else
+    {
+        pmlLog(pml::LOG_WARN) << "IOManager\tRTP Thread already running for source " << source.nIndex;
+    }
+}
 
 
 void IOManager::InitAudioOutputDevice()
