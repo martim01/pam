@@ -132,6 +132,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pbtnRTSP = new wmButton(pnlAoip, ID_M_PBTN6, _("eth0"), wxPoint(100,10), wxSize(200,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN6"));
 	m_pbtnRTSP->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnRTSP->SetBackgroundColour(wxColour(255,255,255));
+	m_pbtnRTSP->SetColourDisabled(wxColour(wxT("#B0B0B0")));
 	m_pLbl6 = new wmLabel(pnlAoip, ID_M_PLBL6, _("Port"), wxPoint(300,10), wxSize(50,40), 0, _T("ID_M_PLBL6"));
 	m_pLbl6->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl6->GetUiRect().SetGradient(0);
@@ -148,6 +149,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pbtnPacketTime = new wmButton(pnlAoip, ID_M_PBTN7, _("1 ms"), wxPoint(100,110), wxSize(70,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN7"));
 	m_pbtnPacketTime->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnPacketTime->SetBackgroundColour(wxColour(255,255,255));
+	m_pbtnPacketTime->SetColourDisabled(wxColour(wxT("#B0B0B0")));
 	m_pedtRTPPort = new wmEdit(pnlAoip, ID_M_PEDT2, wxEmptyString, wxPoint(350,55), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PEDT2"));
 	m_pedtRTPPort->SetValidation(4);
 	m_pedtRTPPort->SetBorderStyle(1,1);
@@ -189,6 +191,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pbtnChannels = new wmButton(pnlAoip, ID_M_PBTN5, _("2"), wxPoint(232,110), wxSize(50,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN5"));
 	m_pbtnChannels->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnChannels->SetBackgroundColour(wxColour(255,255,255));
+	m_pbtnChannels->SetColourDisabled(wxColour(wxT("#B0B0B0")));
 	m_pLbl12 = new wmLabel(pnlAoip, ID_M_PLBL13, _("Sample Rate"), wxPoint(284,110), wxSize(60,40), 0, _T("ID_M_PLBL13"));
 	m_pLbl12->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl12->GetUiRect().SetGradient(0);
@@ -198,6 +201,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pbtnSampleRate->Disable();
 	m_pbtnSampleRate->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnSampleRate->SetBackgroundColour(wxColour(255,255,255));
+	m_pbtnSampleRate->SetColourDisabled(wxColour(wxT("#B0B0B0")));
 	m_pbtnBits = new wmButton(pnlAoip, ID_M_PBTN11, _("Bits"), wxPoint(416,110), wxSize(174,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN11"));
 	m_pbtnBits->Disable();
 	m_pbtnBits->SetBackgroundColour(wxColour(0,128,0));
@@ -211,6 +215,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pbtnRtpMap = new wmButton(pnlAoip, ID_M_PBTN4, _("96"), wxPoint(525,10), wxSize(65,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN4"));
 	m_pbtnRtpMap->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnRtpMap->SetBackgroundColour(wxColour(255,255,255));
+	m_pbtnRtpMap->SetColourDisabled(wxColour(wxT("#B0B0B0")));
 	m_pswpDestination->AddPage(pnlDisabled, _("Disabled"), false);
 	m_pswpDestination->AddPage(pnlSoundcard, _("Soundcard"), false);
 	m_pswpDestination->AddPage(pnlAoip, _("AoIP"), false);
@@ -641,6 +646,8 @@ void pnlSettingsOutput::EnableStreamSettings()
     m_pbtnSAP->Enable(!m_pbtnActive->IsChecked());
     m_pbtnChannels->Enable(!m_pbtnActive->IsChecked());
     m_pbtnRtpMap->Enable(!m_pbtnActive->IsChecked());
+    m_pbtnStream->Enable(!m_pbtnActive->IsChecked());
+
     //m_pbtnSampleRate->Enable(!m_pbtnActive->IsChecked());
     //m_pbtnBits->Enable(!m_pbtnActive->IsChecked());
 }

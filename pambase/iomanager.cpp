@@ -509,7 +509,6 @@ void IOManager::OutputDestinationChanged()
 
 void IOManager::OutputChanged(const wxString& sKey)
 {
-
     if(sKey == wxT("Destination"))
     {
         OutputDestinationChanged();
