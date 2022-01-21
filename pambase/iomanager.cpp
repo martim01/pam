@@ -127,6 +127,7 @@ IOManager::IOManager() :
     Settings::Get().AddHandler(wxT("Server"), wxT("Stream"), this);
     Settings::Get().AddHandler(wxT("Server"), wxT("SAP"), this);
     Settings::Get().AddHandler(wxT("Server"), wxT("DNS-SD"), this);
+    Settings::Get().AddHandler(wxT("Server"), wxT("State"), this);
 
     Connect(wxID_ANY,wxEVT_DATA,(wxObjectEventFunction)&IOManager::OnAudioEvent);
     Connect(wxID_ANY,wxEVT_RTP_SESSION,(wxObjectEventFunction)&IOManager::OnRTPSession);
@@ -289,6 +290,17 @@ void IOManager::OnSettingEvent(SettingEvent& event)
                 }
             }
             InitAudioOutputDevice();
+        }
+        else if(event.GetKey() == "State")
+        {
+            if(event.GetValue(false))
+            {
+                InitAudioOutputDevice();
+            }
+            else
+            {
+                StopStream();
+            }
         }
         else if(event.GetKey() == wxT("SAP"))
         {
@@ -824,7 +836,7 @@ void IOManager::InitAudioOutputDevice()
         OpenSoundcardDevice(SoundcardManager::Get().GetOutputSampleRate());
 
         m_nOutputDestination = AudioEvent::SOUNDCARD;
-        
+
 
         //turn off any advertising of stream
         DoSAP(false);
@@ -903,7 +915,7 @@ void IOManager::UpdateOutputSession()
         if(m_SessionOut.lstSubsession.back().nSampleRate != nSampleRate || m_SessionOut.lstSubsession.back().nChannels != nChannels)
         {
             m_SessionOut.lstSubsession.back().nSampleRate = nSampleRate;
-            m_SessionOut.lstSubsession.back().nChannels = nChannels;    
+            m_SessionOut.lstSubsession.back().nChannels = nChannels;
             SessionChanged();
         }
     }
@@ -1144,18 +1156,22 @@ void IOManager::RTPServerFinished()
 
 void IOManager::Stream()
 {
-    if(m_bStreamAlwaysOn || (Settings::Get().Read("NMOS", "Node", 0)  == 2 || Settings::Get().Read("NMOS", "Node", 0)  == 3))  //@todo bodge for NMOS
-    {
-        StreamAlwaysOn();
-        DoSAP(Settings::Get().Read("Server", "SAP",0));
-    }
-    else
-    {
-        StreamOnDemand();
-        DoSAP(false);
-    }
+    bool bNmos = (Settings::Get().Read("NMOS", "Node", 0)  == 2 || Settings::Get().Read("NMOS", "Node", 0)  == 3);
 
-    DoDNSSD(Settings::Get().Read("Server", "DNS-SD", 0));
+    if(Settings::Get().Read("Server", "State", 0) == 1 || bNmos) //set to stream
+    {
+        if(m_bStreamAlwaysOn || bNmos)  //@todo bodge for NMOS
+        {
+            StreamAlwaysOn();
+            DoSAP(Settings::Get().Read("Server", "SAP",0));
+        }
+        else
+        {
+            StreamOnDemand();
+            DoSAP(false);
+        }
+        DoDNSSD(Settings::Get().Read("Server", "DNS-SD", 0));
+    }
 }
 
 void IOManager::StreamAlwaysOn()
@@ -1233,6 +1249,6 @@ void IOManager::OnTimerReset(wxTimerEvent& event)
 
 wxString IOManager::GetDnsSdService() const
 {
-    return "AES67@"+wxGetHostName();    
+    return "AES67@"+wxGetHostName();
 }
 

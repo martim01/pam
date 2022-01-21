@@ -215,25 +215,9 @@
 						<style>wmButton::STYLE_SELECT</style>
 						<handler function="OnbtnRTCPClick" entry="EVT_BUTTON" />
 					</object>
-					<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnRestartStream" member="yes">
-						<label>Hold To Restart</label>
-						<pos>260,220</pos>
-						<size>135,35</size>
-						<bg>#FF0000</bg>
-						<font>
-							<size>12</size>
-							<style>normal</style>
-							<weight>normal</weight>
-							<underlined>0</underlined>
-							<family>swiss</family>
-							<face>Tahoma</face>
-						</font>
-						<style>wmButton::STYLE_HOLD</style>
-						<handler function="OnbtnRestartStreamHeld" entry="EVT_BUTTON_HELD" />
-					</object>
 					<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnStats" member="yes">
 						<label>RTCP Stats</label>
-						<pos>455,220</pos>
+						<pos>358,255</pos>
 						<size>135,35</size>
 						<bg>#408080</bg>
 						<font>
@@ -245,20 +229,6 @@
 							<face>Tahoma</face>
 						</font>
 						<handler function="OnbtnStatsClick" entry="EVT_BUTTON" />
-					</object>
-					<object class="wmLabel" name="ID_M_PLBL14" variable="m_pLbl13" member="yes">
-						<label>Stream Time</label>
-						<pos>260,265</pos>
-						<size>100,25</size>
-						<fg>#FFFFFF</fg>
-						<bg>#400080</bg>
-					</object>
-					<object class="wmLabel" name="ID_M_PLBL15" variable="m_plblStreamTime" member="yes">
-						<label></label>
-						<pos>360,265</pos>
-						<size>230,25</size>
-						<fg>#000000</fg>
-						<bg>#FFFFFF</bg>
 					</object>
 					<object class="wmKeyboard" name="ID_M_PKBD2" variable="m_pkbd" member="yes">
 						<type>Calc</type>
@@ -313,16 +283,28 @@
 						<handler function="OnbtnSAPClick" entry="EVT_BUTTON" />
 					</object>
 					<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnStream" member="yes">
-						<label>Stream</label>
+						<label>Server</label>
 						<toggle_look>1</toggle_look>
 						<toggle_left>On Demand</toggle_left>
 						<toggle_right>Always On</toggle_right>
 						<toggle_percent>40</toggle_percent>
 						<pos>260,175</pos>
-						<size>330,40</size>
+						<size>330,35</size>
 						<bg>#008000</bg>
 						<style>wmButton::STYLE_SELECT</style>
 						<handler function="OnbtnStreamClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnActive" member="yes">
+						<label>Stream</label>
+						<toggle_look>1</toggle_look>
+						<toggle_left>Inactive</toggle_left>
+						<toggle_right>Active</toggle_right>
+						<toggle_percent>40</toggle_percent>
+						<pos>260,215</pos>
+						<size>330,35</size>
+						<bg>#008000</bg>
+						<style>wmButton::STYLE_SELECT</style>
+						<handler function="OnbtnActiveClick" entry="EVT_BUTTON" />
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL12" variable="m_pLbl11" member="yes">
 						<label>Channels</label>

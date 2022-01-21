@@ -36,15 +36,13 @@ const long pnlSettingsOutput::ID_M_PLBL7 = wxNewId();
 const long pnlSettingsOutput::ID_M_PBTN7 = wxNewId();
 const long pnlSettingsOutput::ID_M_PEDT2 = wxNewId();
 const long pnlSettingsOutput::ID_M_PBTN12 = wxNewId();
-const long pnlSettingsOutput::ID_M_PBTN1 = wxNewId();
 const long pnlSettingsOutput::ID_M_PBTN2 = wxNewId();
-const long pnlSettingsOutput::ID_M_PLBL14 = wxNewId();
-const long pnlSettingsOutput::ID_M_PLBL15 = wxNewId();
 const long pnlSettingsOutput::ID_M_PKBD2 = wxNewId();
 const long pnlSettingsOutput::ID_M_PLBL9 = wxNewId();
 const long pnlSettingsOutput::ID_M_PBTN8 = wxNewId();
 const long pnlSettingsOutput::ID_M_PBTN9 = wxNewId();
 const long pnlSettingsOutput::ID_M_PBTN3 = wxNewId();
+const long pnlSettingsOutput::ID_M_PBTN1 = wxNewId();
 const long pnlSettingsOutput::ID_M_PLBL12 = wxNewId();
 const long pnlSettingsOutput::ID_M_PBTN5 = wxNewId();
 const long pnlSettingsOutput::ID_M_PLBL13 = wxNewId();
@@ -155,25 +153,11 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pedtRTPPort->SetBorderStyle(1,1);
 	m_pbtnRTCP = new wmButton(pnlAoip, ID_M_PBTN12, _("RTCP"), wxPoint(455,55), wxSize(135,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN12"));
 	m_pbtnRTCP->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnRTCP->SetToggle(true, wxT("Off"), wxT("On"), 50);
-	m_pbtnRestartStream = new wmButton(pnlAoip, ID_M_PBTN1, _("Hold To Restart"), wxPoint(260,220), wxSize(135,35), wmButton::STYLE_HOLD, wxDefaultValidator, _T("ID_M_PBTN1"));
-	m_pbtnRestartStream->SetBackgroundColour(wxColour(255,0,0));
-	wxFont m_pbtnRestartStreamFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
-	m_pbtnRestartStream->SetFont(m_pbtnRestartStreamFont);
-	m_pbtnStats = new wmButton(pnlAoip, ID_M_PBTN2, _("RTCP Stats"), wxPoint(455,220), wxSize(135,35), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
+	m_pbtnRTCP->SetToggleLook(true, wxT("Off"), wxT("On"), 50);
+	m_pbtnStats = new wmButton(pnlAoip, ID_M_PBTN2, _("RTCP Stats"), wxPoint(358,255), wxSize(135,35), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
 	m_pbtnStats->SetBackgroundColour(wxColour(64,128,128));
 	wxFont m_pbtnStatsFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pbtnStats->SetFont(m_pbtnStatsFont);
-	m_pLbl13 = new wmLabel(pnlAoip, ID_M_PLBL14, _("Stream Time"), wxPoint(260,265), wxSize(100,25), 0, _T("ID_M_PLBL14"));
-	m_pLbl13->SetBorderState(uiRect::BORDER_NONE);
-	m_pLbl13->GetUiRect().SetGradient(0);
-	m_pLbl13->SetForegroundColour(wxColour(255,255,255));
-	m_pLbl13->SetBackgroundColour(wxColour(64,0,128));
-	m_plblStreamTime = new wmLabel(pnlAoip, ID_M_PLBL15, wxEmptyString, wxPoint(360,265), wxSize(230,25), 0, _T("ID_M_PLBL15"));
-	m_plblStreamTime->SetBorderState(uiRect::BORDER_NONE);
-	m_plblStreamTime->GetUiRect().SetGradient(0);
-	m_plblStreamTime->SetForegroundColour(wxColour(0,0,0));
-	m_plblStreamTime->SetBackgroundColour(wxColour(255,255,255));
 	m_pkbd = new wmKeyboard(pnlAoip, ID_M_PKBD2, wxPoint(10,174), wxSize(240,200), 5, 0);
 	m_pkbd->SetForegroundColour(wxColour(255,255,255));
 	wxFont m_pkbdFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
@@ -187,13 +171,16 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pLbl10->SetFont(m_pLbl10Font);
 	m_pbtnDNS = new wmButton(pnlAoip, ID_M_PBTN8, _("mDNS-SD"), wxPoint(260,330), wxSize(160,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN8"));
 	m_pbtnDNS->SetBackgroundColour(wxColour(61,120,218));
-	m_pbtnDNS->SetToggle(true, wxT("Off"), wxT("On"), 60);
+	m_pbtnDNS->SetToggleLook(true, wxT("Off"), wxT("On"), 60);
 	m_pbtnSAP = new wmButton(pnlAoip, ID_M_PBTN9, _("SAP"), wxPoint(430,330), wxSize(160,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN9"));
 	m_pbtnSAP->SetBackgroundColour(wxColour(61,120,218));
-	m_pbtnSAP->SetToggle(true, wxT("Off"), wxT("On"), 60);
-	m_pbtnStream = new wmButton(pnlAoip, ID_M_PBTN3, _("Stream"), wxPoint(260,175), wxSize(330,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
+	m_pbtnSAP->SetToggleLook(true, wxT("Off"), wxT("On"), 60);
+	m_pbtnStream = new wmButton(pnlAoip, ID_M_PBTN3, _("Server"), wxPoint(260,175), wxSize(330,35), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
 	m_pbtnStream->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnStream->SetToggle(true, wxT("On Demand"), wxT("Always On"), 40);
+	m_pbtnStream->SetToggleLook(true, wxT("On Demand"), wxT("Always On"), 40);
+	m_pbtnActive = new wmButton(pnlAoip, ID_M_PBTN1, _("Stream"), wxPoint(260,215), wxSize(330,35), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
+	m_pbtnActive->SetBackgroundColour(wxColour(0,128,0));
+	m_pbtnActive->SetToggleLook(true, wxT("Inactive"), wxT("Active"), 40);
 	m_pLbl11 = new wmLabel(pnlAoip, ID_M_PLBL12, _("Channels"), wxPoint(172,110), wxSize(60,40), 0, _T("ID_M_PLBL12"));
 	m_pLbl11->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl11->GetUiRect().SetGradient(0);
@@ -215,7 +202,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pbtnBits->Disable();
 	m_pbtnBits->SetBackgroundColour(wxColour(0,128,0));
 	m_pbtnBits->SetColourDisabled(wxColour(wxT("#606060")));
-	m_pbtnBits->SetToggle(true, wxT("16"), wxT("24"), 50);
+	m_pbtnBits->SetToggleLook(true, wxT("16"), wxT("24"), 50);
 	m_pLbl8 = new wmLabel(pnlAoip, ID_M_PLBL11, _("RTP Payload"), wxPoint(455,10), wxSize(70,40), 0, _T("ID_M_PLBL11"));
 	m_pLbl8->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl8->GetUiRect().SetGradient(0);
@@ -237,11 +224,11 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	Connect(ID_M_PBTN7,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnPacketTimeClick);
 	Connect(ID_M_PEDT2,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&pnlSettingsOutput::OnedtRTPPortText);
 	Connect(ID_M_PBTN12,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnRTCPClick);
-	Connect(ID_M_PBTN1,wxEVT_BUTTON_HELD,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnRestartStreamHeld);
 	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnStatsClick);
 	Connect(ID_M_PBTN8,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnDNSClick);
 	Connect(ID_M_PBTN9,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnSAPClick);
 	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnStreamClick);
+	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnActiveClick);
 	Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnChannelsClick);
 	Connect(ID_M_PBTN10,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnSampleRateClick);
 	Connect(ID_M_PBTN11,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnBitsClick);
@@ -283,6 +270,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
     Settings::Get().AddHandler(wxT("Server"), wxT("RTPMap"), this);
     Settings::Get().AddHandler(wxT("Server"), wxT("Channels"), this);
     Settings::Get().AddHandler(wxT("Server"), wxT("RTCP"), this);
+    Settings::Get().AddHandler(wxT("Server"), wxT("State"), this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pnlSettingsOutput::OnSettingChanged);
 }
@@ -342,7 +330,8 @@ void pnlSettingsOutput::UpdateDisplayedSettings()
     m_pbtnBits->ToggleSelection(Settings::Get().Read("Server", "Bits", 24) == 24);
     m_pbtnSampleRate->SetLabel(Settings::Get().Read("Server", "SampleRate", "48000"));
 
-
+    m_pbtnActive->ToggleSelection(Settings::Get().Read("Server", "State", 0) == 1);
+    EnableStreamSettings();
 }
 
 
@@ -398,12 +387,17 @@ void pnlSettingsOutput::OnSettingChanged(SettingEvent& event)
         {
             m_pbtnStats->Show(event.GetValue(false));
         }
+        else if(event.GetKey() == "State")
+        {
+            m_pbtnActive->ToggleSelection(event.GetValue(false), false);
+            EnableStreamSettings();
+        }
     }
 }
 
 void pnlSettingsOutput::OnlstDestinationSelected(wxCommandEvent& event)
 {
-        Settings::Get().Write(wxT("Output"), wxT("Destination"), event.GetString());
+    Settings::Get().Write(wxT("Output"), wxT("Destination"), event.GetString());
     m_plstPlayback->Enable(event.GetString()!=wxT("Disabled"));
     m_pswpDestination->ChangeSelection(event.GetString());
 }
@@ -428,12 +422,6 @@ void pnlSettingsOutput::OnbtnStreamClick(wxCommandEvent& event)
         Settings::Get().Write(wxT("Server"), wxT("DestinationIp"), m_ppnlAddress->GetValue());
         Settings::Get().Write(wxT("Server"), wxT("Stream"), "AlwaysOn");
     }
-    /*m_ppnlAddress->Enable((event.IsChecked() == false));
-    m_pedtRTSPPort->Enable((event.IsChecked() == false));
-    m_pedtRTPPort->Enable((event.IsChecked() == false));
-    m_plstPacket->Enable((event.IsChecked() == false));
-    m_pkbd->Enable((event.IsChecked() == false));*/
-
 }
 
 void pnlSettingsOutput::OnlstPacketSelected(wxCommandEvent& event)
@@ -543,7 +531,6 @@ double pnlSettingsOutput::ConvertRatioToGain(double dRatio)
 
 void pnlSettingsOutput::OnbtnRestartStreamHeld(wxCommandEvent& event)
 {
-    IOManager::Get().RestartStream();
 }
 
 void pnlSettingsOutput::OnbtnStatsClick(wxCommandEvent& event)
@@ -633,4 +620,27 @@ void pnlSettingsOutput::OnbtnBitsClick(wxCommandEvent& event)
 void pnlSettingsOutput::OnbtnRTCPClick(wxCommandEvent& event)
 {
     Settings::Get().Write("Server", "RTCP", event.IsChecked() ? 1 : 0);
+}
+
+void pnlSettingsOutput::OnbtnActiveClick(wxCommandEvent& event)
+{
+    Settings::Get().Write("Server", "State", event.IsChecked() ? "1" : "0");
+    EnableStreamSettings();
+}
+
+void pnlSettingsOutput::EnableStreamSettings()
+{
+    m_ppnlAddress->Enable(!m_pbtnActive->IsChecked());
+    m_pbtnRTSP->Enable(!m_pbtnActive->IsChecked());
+    m_pedtRTSPPort->Enable(!m_pbtnActive->IsChecked());
+    m_pbtnPacketTime->Enable(!m_pbtnActive->IsChecked());
+    m_pedtRTPPort->Enable(!m_pbtnActive->IsChecked());
+    m_pbtnRTCP->Enable(!m_pbtnActive->IsChecked());
+    m_pbtnStats->Enable(m_pbtnActive->IsChecked());
+    m_pbtnDNS->Enable(!m_pbtnActive->IsChecked());
+    m_pbtnSAP->Enable(!m_pbtnActive->IsChecked());
+    m_pbtnChannels->Enable(!m_pbtnActive->IsChecked());
+    m_pbtnRtpMap->Enable(!m_pbtnActive->IsChecked());
+    //m_pbtnSampleRate->Enable(!m_pbtnActive->IsChecked());
+    //m_pbtnBits->Enable(!m_pbtnActive->IsChecked());
 }
