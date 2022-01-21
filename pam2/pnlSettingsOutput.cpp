@@ -153,7 +153,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pedtRTPPort->SetBorderStyle(1,1);
 	m_pbtnRTCP = new wmButton(pnlAoip, ID_M_PBTN12, _("RTCP"), wxPoint(455,55), wxSize(135,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN12"));
 	m_pbtnRTCP->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnRTCP->SetToggleLook(true, wxT("Off"), wxT("On"), 50);
+	m_pbtnRTCP->SetToggle(true, wxT("Off"), wxT("On"), 50);
 	m_pbtnStats = new wmButton(pnlAoip, ID_M_PBTN2, _("RTCP Stats"), wxPoint(358,255), wxSize(135,35), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
 	m_pbtnStats->SetBackgroundColour(wxColour(64,128,128));
 	wxFont m_pbtnStatsFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
@@ -171,16 +171,16 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pLbl10->SetFont(m_pLbl10Font);
 	m_pbtnDNS = new wmButton(pnlAoip, ID_M_PBTN8, _("mDNS-SD"), wxPoint(260,330), wxSize(160,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN8"));
 	m_pbtnDNS->SetBackgroundColour(wxColour(61,120,218));
-	m_pbtnDNS->SetToggleLook(true, wxT("Off"), wxT("On"), 60);
+	m_pbtnDNS->SetToggle(true, wxT("Off"), wxT("On"), 60);
 	m_pbtnSAP = new wmButton(pnlAoip, ID_M_PBTN9, _("SAP"), wxPoint(430,330), wxSize(160,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN9"));
 	m_pbtnSAP->SetBackgroundColour(wxColour(61,120,218));
-	m_pbtnSAP->SetToggleLook(true, wxT("Off"), wxT("On"), 60);
+	m_pbtnSAP->SetToggle(true, wxT("Off"), wxT("On"), 60);
 	m_pbtnStream = new wmButton(pnlAoip, ID_M_PBTN3, _("Server"), wxPoint(260,175), wxSize(330,35), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
 	m_pbtnStream->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnStream->SetToggleLook(true, wxT("On Demand"), wxT("Always On"), 40);
+	m_pbtnStream->SetToggle(true, wxT("On Demand"), wxT("Always On"), 40);
 	m_pbtnActive = new wmButton(pnlAoip, ID_M_PBTN1, _("Stream"), wxPoint(260,215), wxSize(330,35), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnActive->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnActive->SetToggleLook(true, wxT("Inactive"), wxT("Active"), 40);
+	m_pbtnActive->SetToggle(true, wxT("Inactive"), wxT("Active"), 40);
 	m_pLbl11 = new wmLabel(pnlAoip, ID_M_PLBL12, _("Channels"), wxPoint(172,110), wxSize(60,40), 0, _T("ID_M_PLBL12"));
 	m_pLbl11->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl11->GetUiRect().SetGradient(0);
@@ -202,7 +202,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pbtnBits->Disable();
 	m_pbtnBits->SetBackgroundColour(wxColour(0,128,0));
 	m_pbtnBits->SetColourDisabled(wxColour(wxT("#606060")));
-	m_pbtnBits->SetToggleLook(true, wxT("16"), wxT("24"), 50);
+	m_pbtnBits->SetToggle(true, wxT("16"), wxT("24"), 50);
 	m_pLbl8 = new wmLabel(pnlAoip, ID_M_PLBL11, _("RTP Payload"), wxPoint(455,10), wxSize(70,40), 0, _T("ID_M_PLBL11"));
 	m_pLbl8->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl8->GetUiRect().SetGradient(0);
