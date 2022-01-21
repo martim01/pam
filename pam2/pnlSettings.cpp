@@ -33,7 +33,7 @@
 #include "dlgAoIP.h"
 #include "settingevent.h"
 #include "aoipsourcemanager.h"
-
+#include "log.h"
 #ifdef __NMOS__
 #include "nmos.h"
 #endif // __NMOS__
@@ -268,6 +268,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
 
     Settings::Get().AddHandler("NMOS", "Node", this);
+    Settings::Get().AddHandler("Input", "AoIP", this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pnlSettings::OnSettingChanged);
 
@@ -296,12 +297,24 @@ void pnlSettings::UpdateDisplayedSettings()
 
 void pnlSettings::OnSettingChanged(SettingEvent& event)
 {
+    bool bNmos = false;
     #ifdef __NMOS__
     if(event.GetSection().CmpNoCase("NMOS") == 0 && event.GetKey() == "Node")
     {
+        bNmos = (event.GetValue(0L) != NmosManager::NODE_OFF) && (event.GetValue(0L) != NmosManager::NODE_SENDER);
         EnableInputButtons(event.GetValue(0L));
     }
     #endif
+    if(event.GetSection().CmpNoCase("Input") == 0 && event.GetKey() == "AoIP")
+    {
+        if(!bNmos)
+        {
+            for(size_t i = 0; i < m_plstInput->GetItemCount(); i++)
+            {
+                m_plstInput->EnableButton(i, (event.GetValue(0L) == 0 && i!=m_nNmosButton));
+            }
+        }
+    }
 }
 
 void pnlSettings::EnableInputButtons(int nMode)
@@ -400,6 +413,7 @@ void pnlSettings::ShowRTPDefined()
     m_plstDevices->Freeze();
     m_plstDevices->Clear();
 
+    m_plstDevices->AddButton("OFF", wxNullBitmap, (void*)0);
     for(auto pairSource : AoipSourceManager::Get().GetSources())
     {
         if(pairSource.first  > 0)
@@ -472,6 +486,7 @@ void pnlSettings::RefreshInputs()
     }
     else if(sType == "AoIP Manual")
     {
+        Settings::Get().Write("Input", "AoIP", 0); //just gone on to this screen so disable the incoming stream
         m_pswpInput->ChangeSelection(1);
         ShowGain(false);
 

@@ -66,7 +66,6 @@ void dlgMask::OnActivate(wxActivateEvent& event)
 void dlgMask::OnlstSubnetSelected(wxCommandEvent& event)
 {
     m_sSelected = event.GetString();
-	pmlLog(pml::LOG_INFO) << "Selected a value " << m_sSelected;
     if(HasCapture())
     {
         ReleaseMouse();
@@ -82,7 +81,6 @@ void dlgMask::OnLeftDown(wxMouseEvent& event)
         {
             ReleaseMouse();
         }
-	pmlLog(pml::LOG_INFO) << "Clicked outside";
         EndModal(wxID_CANCEL);
     }
     else
@@ -95,7 +93,6 @@ void dlgMask::OnLeftDown(wxMouseEvent& event)
 
 void dlgMask::OnCaptureLost(wxMouseCaptureLostEvent& event)
 {
-	pmlLog(pml::LOG_INFO) << "Capture lost";
     wxPostEvent(m_plstSubnet, event);
   // EndModal(wxID_CANCEL);
 //	CaptureMouse();

@@ -417,7 +417,7 @@ void NmosManager::ActivateSender(const std::string& sId)
         {
             Settings::Get().Write("Output", "Destination", "AoIP");
         }
-        Settings::Get().Write("Server", "Stream", "Multicast");
+        Settings::Get().Write("Server", "Stream", "AlwaysOn");
 
         IOManager::Get().RestartStream();
     }

@@ -27,12 +27,16 @@ class pnlSettingsOutput: public wxPanel
 		void ShowSoundcardOutputs();
 
 		//(*Declarations(pnlSettingsOutput)
+		wmButton* m_pbtnActive;
+		wmButton* m_pbtnBits;
 		wmButton* m_pbtnChannels;
 		wmButton* m_pbtnDNS;
+		wmButton* m_pbtnPacketTime;
+		wmButton* m_pbtnRTCP;
 		wmButton* m_pbtnRTSP;
-		wmButton* m_pbtnRestartStream;
 		wmButton* m_pbtnRtpMap;
 		wmButton* m_pbtnSAP;
+		wmButton* m_pbtnSampleRate;
 		wmButton* m_pbtnStats;
 		wmButton* m_pbtnStream;
 		wmEdit* m_pedtRTPPort;
@@ -40,6 +44,7 @@ class pnlSettingsOutput: public wxPanel
 		wmKeyboard* m_pkbd;
 		wmLabel* m_pLbl10;
 		wmLabel* m_pLbl11;
+		wmLabel* m_pLbl12;
 		wmLabel* m_pLbl1;
 		wmLabel* m_pLbl2;
 		wmLabel* m_pLbl3;
@@ -52,7 +57,6 @@ class pnlSettingsOutput: public wxPanel
 		wmLabel* m_plblOutputGain;
 		wmList* m_plstDestination;
 		wmList* m_plstLatency;
-		wmList* m_plstPacket;
 		wmList* m_plstPlayback;
 		wmSlider* m_plsliderOutputGain;
 		wmSwitcherPanel* m_pswpDestination;
@@ -83,17 +87,21 @@ class pnlSettingsOutput: public wxPanel
 		static const long ID_M_PLBL6;
 		static const long ID_M_PEDT3;
 		static const long ID_M_PLBL7;
-		static const long ID_M_PLST5;
+		static const long ID_M_PBTN7;
 		static const long ID_M_PEDT2;
-		static const long ID_M_PBTN1;
+		static const long ID_M_PBTN12;
 		static const long ID_M_PBTN2;
 		static const long ID_M_PKBD2;
 		static const long ID_M_PLBL9;
 		static const long ID_M_PBTN8;
 		static const long ID_M_PBTN9;
 		static const long ID_M_PBTN3;
+		static const long ID_M_PBTN1;
 		static const long ID_M_PLBL12;
 		static const long ID_M_PBTN5;
+		static const long ID_M_PLBL13;
+		static const long ID_M_PBTN10;
+		static const long ID_M_PBTN11;
 		static const long ID_M_PLBL11;
 		static const long ID_M_PBTN4;
 		static const long ID_PANEL11;
@@ -118,6 +126,11 @@ class pnlSettingsOutput: public wxPanel
 		void OnbtnStatsClick(wxCommandEvent& event);
 		void OnbtnRtpMapClick(wxCommandEvent& event);
 		void OnbtnChannelsClick(wxCommandEvent& event);
+		void OnbtnPacketTimeClick(wxCommandEvent& event);
+		void OnbtnSampleRateClick(wxCommandEvent& event);
+		void OnbtnBitsClick(wxCommandEvent& event);
+		void OnbtnRTCPClick(wxCommandEvent& event);
+		void OnbtnActiveClick(wxCommandEvent& event);
 		//*)
 		void OnSettingChanged(SettingEvent& event);
 
@@ -127,6 +140,7 @@ class pnlSettingsOutput: public wxPanel
 		DECLARE_EVENT_TABLE()
 
 		void UpdateDisplayedSettings();
+		void EnableStreamSettings();
 };
 
 #endif

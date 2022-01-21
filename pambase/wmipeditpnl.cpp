@@ -18,10 +18,13 @@ BEGIN_EVENT_TABLE(wmipeditpnl,pmPanel)
 	//*)
 END_EVENT_TABLE()
 
+wxDEFINE_EVENT(wxEVT_IPEDIT_CHANGE, wxCommandEvent);
+
 #ifdef WXSPAM
 IMPLEMENT_DYNAMIC_CLASS(wmipeditpnl, pmControl)
 #else
 wxIMPLEMENT_DYNAMIC_CLASS(wmipeditpnl, pmPanel);
+
 #endif // WXSPAM
 
 wmipeditpnl::wmipeditpnl() : pmPanel(),
@@ -150,6 +153,10 @@ void wmipeditpnl::CheckEdit(wmEdit* pCurrent, wmEdit* pNext)
             pNext->SetInsertPos(0);
         }
     }
+
+    wxCommandEvent event(wxEVT_IPEDIT_CHANGE, GetId());
+    event.SetString(GetValue());
+    wxPostEvent(GetParent(), event);
 }
 
 void wmipeditpnl::OnSetFocus(wxFocusEvent& event)
