@@ -35,8 +35,11 @@ const long pnlSettingsOutput::ID_M_PEDT3 = wxNewId();
 const long pnlSettingsOutput::ID_M_PLBL7 = wxNewId();
 const long pnlSettingsOutput::ID_M_PBTN7 = wxNewId();
 const long pnlSettingsOutput::ID_M_PEDT2 = wxNewId();
+const long pnlSettingsOutput::ID_M_PBTN12 = wxNewId();
 const long pnlSettingsOutput::ID_M_PBTN1 = wxNewId();
 const long pnlSettingsOutput::ID_M_PBTN2 = wxNewId();
+const long pnlSettingsOutput::ID_M_PLBL14 = wxNewId();
+const long pnlSettingsOutput::ID_M_PLBL15 = wxNewId();
 const long pnlSettingsOutput::ID_M_PKBD2 = wxNewId();
 const long pnlSettingsOutput::ID_M_PLBL9 = wxNewId();
 const long pnlSettingsOutput::ID_M_PBTN8 = wxNewId();
@@ -139,25 +142,38 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pedtRTSPPort = new wmEdit(pnlAoip, ID_M_PEDT3, wxEmptyString, wxPoint(350,10), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PEDT3"));
 	m_pedtRTSPPort->SetValidation(4);
 	m_pedtRTSPPort->SetBorderStyle(1,1);
-	m_pLbl7 = new wmLabel(pnlAoip, ID_M_PLBL7, _("Packet Time"), wxPoint(0,100), wxSize(100,40), 0, _T("ID_M_PLBL7"));
+	m_pLbl7 = new wmLabel(pnlAoip, ID_M_PLBL7, _("Packet Time"), wxPoint(0,110), wxSize(100,40), 0, _T("ID_M_PLBL7"));
 	m_pLbl7->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl7->GetUiRect().SetGradient(0);
 	m_pLbl7->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl7->SetBackgroundColour(wxColour(64,0,128));
-	m_pbtnPacketTime = new wmButton(pnlAoip, ID_M_PBTN7, _("1 ms"), wxPoint(100,100), wxSize(70,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN7"));
+	m_pbtnPacketTime = new wmButton(pnlAoip, ID_M_PBTN7, _("1 ms"), wxPoint(100,110), wxSize(70,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN7"));
 	m_pbtnPacketTime->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnPacketTime->SetBackgroundColour(wxColour(255,255,255));
 	m_pedtRTPPort = new wmEdit(pnlAoip, ID_M_PEDT2, wxEmptyString, wxPoint(350,55), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PEDT2"));
 	m_pedtRTPPort->SetValidation(4);
 	m_pedtRTPPort->SetBorderStyle(1,1);
-	m_pbtnRestartStream = new wmButton(pnlAoip, ID_M_PBTN1, _("Hold To Restart"), wxPoint(260,220), wxSize(135,40), wmButton::STYLE_HOLD, wxDefaultValidator, _T("ID_M_PBTN1"));
+	m_pbtnRTCP = new wmButton(pnlAoip, ID_M_PBTN12, _("RTCP"), wxPoint(455,55), wxSize(135,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN12"));
+	m_pbtnRTCP->SetBackgroundColour(wxColour(0,128,0));
+	m_pbtnRTCP->SetToggle(true, wxT("Off"), wxT("On"), 50);
+	m_pbtnRestartStream = new wmButton(pnlAoip, ID_M_PBTN1, _("Hold To Restart"), wxPoint(260,220), wxSize(135,35), wmButton::STYLE_HOLD, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnRestartStream->SetBackgroundColour(wxColour(255,0,0));
 	wxFont m_pbtnRestartStreamFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pbtnRestartStream->SetFont(m_pbtnRestartStreamFont);
-	m_pbtnStats = new wmButton(pnlAoip, ID_M_PBTN2, _("RTCP Stats"), wxPoint(455,220), wxSize(135,40), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
+	m_pbtnStats = new wmButton(pnlAoip, ID_M_PBTN2, _("RTCP Stats"), wxPoint(455,220), wxSize(135,35), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
 	m_pbtnStats->SetBackgroundColour(wxColour(64,128,128));
 	wxFont m_pbtnStatsFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pbtnStats->SetFont(m_pbtnStatsFont);
+	m_pLbl13 = new wmLabel(pnlAoip, ID_M_PLBL14, _("Stream Time"), wxPoint(260,265), wxSize(100,25), 0, _T("ID_M_PLBL14"));
+	m_pLbl13->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl13->GetUiRect().SetGradient(0);
+	m_pLbl13->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl13->SetBackgroundColour(wxColour(64,0,128));
+	m_plblStreamTime = new wmLabel(pnlAoip, ID_M_PLBL15, wxEmptyString, wxPoint(360,265), wxSize(230,25), 0, _T("ID_M_PLBL15"));
+	m_plblStreamTime->SetBorderState(uiRect::BORDER_NONE);
+	m_plblStreamTime->GetUiRect().SetGradient(0);
+	m_plblStreamTime->SetForegroundColour(wxColour(0,0,0));
+	m_plblStreamTime->SetBackgroundColour(wxColour(255,255,255));
 	m_pkbd = new wmKeyboard(pnlAoip, ID_M_PKBD2, wxPoint(10,174), wxSize(240,200), 5, 0);
 	m_pkbd->SetForegroundColour(wxColour(255,255,255));
 	wxFont m_pkbdFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
@@ -178,33 +194,34 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pbtnStream = new wmButton(pnlAoip, ID_M_PBTN3, _("Stream"), wxPoint(260,175), wxSize(330,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
 	m_pbtnStream->SetBackgroundColour(wxColour(0,128,0));
 	m_pbtnStream->SetToggle(true, wxT("On Demand"), wxT("Always On"), 40);
-	m_pLbl11 = new wmLabel(pnlAoip, ID_M_PLBL12, _("Channels"), wxPoint(172,100), wxSize(60,40), 0, _T("ID_M_PLBL12"));
+	m_pLbl11 = new wmLabel(pnlAoip, ID_M_PLBL12, _("Channels"), wxPoint(172,110), wxSize(60,40), 0, _T("ID_M_PLBL12"));
 	m_pLbl11->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl11->GetUiRect().SetGradient(0);
 	m_pLbl11->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl11->SetBackgroundColour(wxColour(64,0,128));
-	m_pbtnChannels = new wmButton(pnlAoip, ID_M_PBTN5, _("2"), wxPoint(232,100), wxSize(50,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN5"));
+	m_pbtnChannels = new wmButton(pnlAoip, ID_M_PBTN5, _("2"), wxPoint(232,110), wxSize(50,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN5"));
 	m_pbtnChannels->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnChannels->SetBackgroundColour(wxColour(255,255,255));
-	m_pLbl12 = new wmLabel(pnlAoip, ID_M_PLBL13, _("Sample Rate"), wxPoint(284,100), wxSize(60,40), 0, _T("ID_M_PLBL13"));
+	m_pLbl12 = new wmLabel(pnlAoip, ID_M_PLBL13, _("Sample Rate"), wxPoint(284,110), wxSize(60,40), 0, _T("ID_M_PLBL13"));
 	m_pLbl12->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl12->GetUiRect().SetGradient(0);
 	m_pLbl12->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl12->SetBackgroundColour(wxColour(64,0,128));
-	m_pbtnSampleRate = new wmButton(pnlAoip, ID_M_PBTN10, _("48000"), wxPoint(344,100), wxSize(70,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN10"));
+	m_pbtnSampleRate = new wmButton(pnlAoip, ID_M_PBTN10, _("48 kHz"), wxPoint(344,110), wxSize(70,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN10"));
 	m_pbtnSampleRate->Disable();
 	m_pbtnSampleRate->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnSampleRate->SetBackgroundColour(wxColour(255,255,255));
-	m_pbtnBits = new wmButton(pnlAoip, ID_M_PBTN11, _("Bits"), wxPoint(416,100), wxSize(174,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN11"));
+	m_pbtnBits = new wmButton(pnlAoip, ID_M_PBTN11, _("Bits"), wxPoint(416,110), wxSize(174,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN11"));
 	m_pbtnBits->Disable();
 	m_pbtnBits->SetBackgroundColour(wxColour(0,128,0));
+	m_pbtnBits->SetColourDisabled(wxColour(wxT("#606060")));
 	m_pbtnBits->SetToggle(true, wxT("16"), wxT("24"), 50);
-	m_pLbl8 = new wmLabel(pnlAoip, ID_M_PLBL11, _("RTP Payload"), wxPoint(455,55), wxSize(70,40), 0, _T("ID_M_PLBL11"));
+	m_pLbl8 = new wmLabel(pnlAoip, ID_M_PLBL11, _("RTP Payload"), wxPoint(455,10), wxSize(70,40), 0, _T("ID_M_PLBL11"));
 	m_pLbl8->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl8->GetUiRect().SetGradient(0);
 	m_pLbl8->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl8->SetBackgroundColour(wxColour(64,0,128));
-	m_pbtnRtpMap = new wmButton(pnlAoip, ID_M_PBTN4, _("96"), wxPoint(525,55), wxSize(65,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN4"));
+	m_pbtnRtpMap = new wmButton(pnlAoip, ID_M_PBTN4, _("96"), wxPoint(525,10), wxSize(65,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN4"));
 	m_pbtnRtpMap->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnRtpMap->SetBackgroundColour(wxColour(255,255,255));
 	m_pswpDestination->AddPage(pnlDisabled, _("Disabled"), false);
@@ -219,6 +236,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	Connect(ID_M_PEDT3,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&pnlSettingsOutput::OnedtRTSPPortText);
 	Connect(ID_M_PBTN7,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnPacketTimeClick);
 	Connect(ID_M_PEDT2,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&pnlSettingsOutput::OnedtRTPPortText);
+	Connect(ID_M_PBTN12,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnRTCPClick);
 	Connect(ID_M_PBTN1,wxEVT_BUTTON_HELD,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnRestartStreamHeld);
 	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnStatsClick);
 	Connect(ID_M_PBTN8,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsOutput::OnbtnDNSClick);
@@ -264,6 +282,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
     Settings::Get().AddHandler(wxT("Server"), wxT("DNS-SD"), this);
     Settings::Get().AddHandler(wxT("Server"), wxT("RTPMap"), this);
     Settings::Get().AddHandler(wxT("Server"), wxT("Channels"), this);
+    Settings::Get().AddHandler(wxT("Server"), wxT("RTCP"), this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pnlSettingsOutput::OnSettingChanged);
 }
@@ -312,6 +331,9 @@ void pnlSettingsOutput::UpdateDisplayedSettings()
 
     m_pbtnDNS->ToggleSelection(Settings::Get().Read("Server", "DNS-SD", 0), true);
     m_pbtnSAP->ToggleSelection(Settings::Get().Read("Server", "SAP", 0), true);
+    m_pbtnRTCP->ToggleSelection(Settings::Get().Read("Server", "RTCP", 0), true);
+
+    m_pbtnStats->Show(m_pbtnRTCP->IsChecked());
 
     double dGain = ConvertRatioToGain(Settings::Get().Read("Output", "Ratio_00", 1.0));
     m_plblOutputGain->SetLabel(wxString::Format("%.2f dB", dGain));
@@ -319,6 +341,8 @@ void pnlSettingsOutput::UpdateDisplayedSettings()
 
     m_pbtnBits->ToggleSelection(Settings::Get().Read("Server", "Bits", 24) == 24);
     m_pbtnSampleRate->SetLabel(Settings::Get().Read("Server", "SampleRate", "48000"));
+
+
 }
 
 
@@ -369,6 +393,10 @@ void pnlSettingsOutput::OnSettingChanged(SettingEvent& event)
         else if(event.GetKey() == "Channels")
         {
             m_pbtnChannels->SetLabel(event.GetValue());
+        }
+        else if(event.GetKey() == "RTCP")
+        {
+            m_pbtnStats->Show(event.GetValue(false));
         }
     }
 }
@@ -600,4 +628,9 @@ void pnlSettingsOutput::OnbtnSampleRateClick(wxCommandEvent& event)
 void pnlSettingsOutput::OnbtnBitsClick(wxCommandEvent& event)
 {
     Settings::Get().Write("Server", "Bits", event.IsChecked() ? 24 : 16);
+}
+
+void pnlSettingsOutput::OnbtnRTCPClick(wxCommandEvent& event)
+{
+    Settings::Get().Write("Server", "RTCP", event.IsChecked() ? 1 : 0);
 }

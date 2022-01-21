@@ -58,5 +58,6 @@ class PAMBASE_IMPEXPORT RtpServerThread : public wxThread
         PamRTSPServer* m_pRtspServer;
         std::string m_sSDP;
         bool m_bStreaming;
+        bool m_bRTCP;
 };
 

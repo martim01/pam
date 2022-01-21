@@ -23,7 +23,7 @@ AES67ServerMediaSubsession::AES67ServerMediaSubsession(const std::set<wxEvtHandl
     m_nPacketTime(nPacketTime)
 {
   //fClientRTCPSourceRecords = HashTable::create(ONE_WORD_HASH_KEYS);
-  BeginQOSMeasurement();
+    BeginQOSMeasurement();
 }
 
 AES67ServerMediaSubsession::~AES67ServerMediaSubsession()
@@ -298,9 +298,10 @@ void MultiByeHandler(UsageEnvironment& env, void* clientData)
 void AES67ServerMediaSubsession::BeginQOSMeasurement()
 {
     pmlLog(pml::LOG_DEBUG) << "RTP Server\tBegin QOS: " << this;
-
-    g_multiSession = this;
-    fRTCPInstance->setRRHandler((TaskFunc*)MultiQOSMeasurement, reinterpret_cast<void*>(this));
-    fRTCPInstance->setByeHandler((TaskFunc*)MultiByeHandler, reinterpret_cast<void*>(this));
-
+    if(fRTCPInstance)
+    {
+        g_multiSession = this;
+        fRTCPInstance->setRRHandler((TaskFunc*)MultiQOSMeasurement, reinterpret_cast<void*>(this));
+        fRTCPInstance->setByeHandler((TaskFunc*)MultiByeHandler, reinterpret_cast<void*>(this));
+    }
 }

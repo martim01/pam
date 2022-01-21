@@ -27,7 +27,7 @@ RtpServerThread::RtpServerThread(wxEvtHandler* pHandler, const std::set<wxEvtHan
     m_pRtspServer(nullptr),
     m_bStreaming(false)
 {
-
+    m_bRTCP = (Settings::Get().Read("Server", "RTCP", 0) != 0);
 }
 
 void* RtpServerThread::Entry()
@@ -94,11 +94,18 @@ bool RtpServerThread::CreateStream()
     const Port rtpPort(m_nRTPPort);
     const Port rtcpPort(m_nRTPPort+1);
     m_pRtpGroupsock = new Groupsock(*m_penv, destinationAddress, rtpPort, ttl);
-    m_pRtcpGroupsock = new Groupsock(*m_penv, destinationAddress, rtcpPort, ttl);
+    if(m_bRTCP)
+    {
+        m_pRtcpGroupsock = new Groupsock(*m_penv, destinationAddress, rtcpPort, ttl);
+    }
+
     if(m_bSSM)
     {
         m_pRtpGroupsock->multicastSendOnly(); // we're a SSM source
-        m_pRtcpGroupsock->multicastSendOnly(); // we're a SSM source
+        if(m_bRTCP)
+        {
+            m_pRtcpGroupsock->multicastSendOnly(); // we're a SSM source
+        }
     }
 
 
@@ -113,15 +120,18 @@ bool RtpServerThread::CreateStream()
     // Create and start a RTSP server to serve this stream:
     pmlLog() << "RTP Server: Create RTSP Server on port " << m_nRTSPPort;
     m_pRtspServer = PamRTSPServer::createNew(*m_penv, m_nRTSPPort);
+
     // Create (and start) a 'RTCP instance' for this RTP sink:
+    if(m_bRTCP)
+    {
+        const unsigned int nEstimatedSessionBandwidth =( (m_pSource->samplingFrequency()*m_pSource->numChannels() * 3) + 500)/1000; // in kbps; for RTCP b/w share
+        const unsigned int nMaxCNAMElen = 100;
+        unsigned char CNAME[nMaxCNAMElen+1];
+        gethostname((char*)CNAME, nMaxCNAMElen);
+        CNAME[nMaxCNAMElen] = '\0'; // just in case
 
-    const unsigned int nEstimatedSessionBandwidth =( (m_pSource->samplingFrequency()*m_pSource->numChannels() * 3) + 500)/1000; // in kbps; for RTCP b/w share
-    const unsigned int nMaxCNAMElen = 100;
-    unsigned char CNAME[nMaxCNAMElen+1];
-    gethostname((char*)CNAME, nMaxCNAMElen);
-    CNAME[nMaxCNAMElen] = '\0'; // just in case
-    m_pRtcpInstance = RTCPInstance::createNew(*m_penv, m_pRtcpGroupsock, nEstimatedSessionBandwidth, CNAME, m_pSink, NULL, True);
-
+        m_pRtcpInstance = RTCPInstance::createNew(*m_penv, m_pRtcpGroupsock, nEstimatedSessionBandwidth, CNAME, m_pSink, NULL, True);
+    }
 
 
     bool bOk(true);
@@ -130,7 +140,7 @@ bool RtpServerThread::CreateStream()
         pmlLog(pml::LOG_ERROR) << "RTP Server\tFailed to create RTSP server: " << m_penv->getResultMsg();
         bOk = false;
     }
-    if(m_pRtcpInstance == nullptr)
+    if(m_pRtcpInstance == nullptr && m_bRTCP)
     {
         pmlLog(pml::LOG_ERROR) << "RTP Server\tFailed to create RTCP Instance: " << m_penv->getResultMsg();
         bOk = false;
@@ -145,13 +155,18 @@ bool RtpServerThread::CreateStream()
         m_bStreaming = false;
         delete m_pRtpGroupsock;
         m_pRtpGroupsock = nullptr;
+        if(m_pRtcpGroupsock)
+        {
+            delete m_pRtcpGroupsock;
+        }
+        m_pRtcpGroupsock = nullptr;
         return false;
     }
 
 
     wxString sStream = "by-name/"+ IOManager::Get().GetDnsSdService();
 
-    ServerMediaSession* sms = ServerMediaSession::createNew(*m_penv, sStream, nullptr, "PAM_AES67", True/*SSM*/);
+    ServerMediaSession* sms = ServerMediaSession::createNew(*m_penv, sStream, nullptr, "PAM AES67", m_bSSM);
     AES67ServerMediaSubsession* pSmss =  AES67ServerMediaSubsession::createNew(m_setRTCPHandlers, *m_pSink, m_pRtcpInstance, m_ePacketTime);
     sms->addSubsession(pSmss);
     m_pRtspServer->addServerMediaSession(sms);
@@ -190,8 +205,11 @@ void RtpServerThread::CloseStream()
     Medium::close(m_pSink);
     delete m_pRtpGroupsock;
     Medium::close(m_pSource);
-    Medium::close(m_pRtcpInstance);
-    delete m_pRtcpGroupsock;
+    if(m_pRtcpInstance)
+    {
+        Medium::close(m_pRtcpInstance);
+        delete m_pRtcpGroupsock;
+    }
     m_pSource = nullptr;
     m_pSink = nullptr;
     m_pRtpGroupsock = nullptr;

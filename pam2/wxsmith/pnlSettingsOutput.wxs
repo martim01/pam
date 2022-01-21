@@ -178,7 +178,7 @@
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL7" variable="m_pLbl7" member="yes">
 						<label>Packet Time</label>
-						<pos>0,100</pos>
+						<pos>0,110</pos>
 						<size>100,40</size>
 						<fg>#FFFFFF</fg>
 						<bg>#400080</bg>
@@ -188,7 +188,7 @@
 						<toggle_left>Stop</toggle_left>
 						<toggle_right>Start</toggle_right>
 						<toggle_percent>50</toggle_percent>
-						<pos>100,100</pos>
+						<pos>100,110</pos>
 						<size>70,40</size>
 						<fg>#000000</fg>
 						<bg>#FFFFFF</bg>
@@ -203,10 +203,22 @@
 						<size>100,40</size>
 						<handler function="OnedtRTPPortText" entry="EVT_TEXT" />
 					</object>
+					<object class="wmButton" name="ID_M_PBTN12" variable="m_pbtnRTCP" member="yes">
+						<label>RTCP</label>
+						<toggle_look>1</toggle_look>
+						<toggle_left>Off</toggle_left>
+						<toggle_right>On</toggle_right>
+						<toggle_percent>50</toggle_percent>
+						<pos>455,55</pos>
+						<size>135,40</size>
+						<bg>#008000</bg>
+						<style>wmButton::STYLE_SELECT</style>
+						<handler function="OnbtnRTCPClick" entry="EVT_BUTTON" />
+					</object>
 					<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnRestartStream" member="yes">
 						<label>Hold To Restart</label>
 						<pos>260,220</pos>
-						<size>135,40</size>
+						<size>135,35</size>
 						<bg>#FF0000</bg>
 						<font>
 							<size>12</size>
@@ -222,7 +234,7 @@
 					<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnStats" member="yes">
 						<label>RTCP Stats</label>
 						<pos>455,220</pos>
-						<size>135,40</size>
+						<size>135,35</size>
 						<bg>#408080</bg>
 						<font>
 							<size>12</size>
@@ -233,6 +245,20 @@
 							<face>Tahoma</face>
 						</font>
 						<handler function="OnbtnStatsClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL14" variable="m_pLbl13" member="yes">
+						<label>Stream Time</label>
+						<pos>260,265</pos>
+						<size>100,25</size>
+						<fg>#FFFFFF</fg>
+						<bg>#400080</bg>
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL15" variable="m_plblStreamTime" member="yes">
+						<label></label>
+						<pos>360,265</pos>
+						<size>230,25</size>
+						<fg>#000000</fg>
+						<bg>#FFFFFF</bg>
 					</object>
 					<object class="wmKeyboard" name="ID_M_PKBD2" variable="m_pkbd" member="yes">
 						<type>Calc</type>
@@ -300,7 +326,7 @@
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL12" variable="m_pLbl11" member="yes">
 						<label>Channels</label>
-						<pos>172,100</pos>
+						<pos>172,110</pos>
 						<size>60,40</size>
 						<fg>#FFFFFF</fg>
 						<bg>#400080</bg>
@@ -310,7 +336,7 @@
 						<toggle_left>Stop</toggle_left>
 						<toggle_right>Start</toggle_right>
 						<toggle_percent>50</toggle_percent>
-						<pos>232,100</pos>
+						<pos>232,110</pos>
 						<size>50,40</size>
 						<fg>#000000</fg>
 						<bg>#FFFFFF</bg>
@@ -319,7 +345,7 @@
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL13" variable="m_pLbl12" member="yes">
 						<label>Sample Rate</label>
-						<pos>284,100</pos>
+						<pos>284,110</pos>
 						<size>60,40</size>
 						<fg>#FFFFFF</fg>
 						<bg>#400080</bg>
@@ -329,7 +355,7 @@
 						<toggle_left>Stop</toggle_left>
 						<toggle_right>Start</toggle_right>
 						<toggle_percent>50</toggle_percent>
-						<pos>344,100</pos>
+						<pos>344,110</pos>
 						<size>70,40</size>
 						<enabled>0</enabled>
 						<fg>#000000</fg>
@@ -339,11 +365,12 @@
 					</object>
 					<object class="wmButton" name="ID_M_PBTN11" variable="m_pbtnBits" member="yes">
 						<label>Bits</label>
+						<button_disabled>#606060</button_disabled>
 						<toggle_look>1</toggle_look>
 						<toggle_left>16</toggle_left>
 						<toggle_right>24</toggle_right>
 						<toggle_percent>50</toggle_percent>
-						<pos>416,100</pos>
+						<pos>416,110</pos>
 						<size>174,40</size>
 						<enabled>0</enabled>
 						<bg>#008000</bg>
@@ -352,7 +379,7 @@
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL11" variable="m_pLbl8" member="yes">
 						<label>RTP Payload</label>
-						<pos>455,55</pos>
+						<pos>455,10</pos>
 						<size>70,40</size>
 						<fg>#FFFFFF</fg>
 						<bg>#400080</bg>
@@ -362,7 +389,7 @@
 						<toggle_left>Stop</toggle_left>
 						<toggle_right>Start</toggle_right>
 						<toggle_percent>50</toggle_percent>
-						<pos>525,55</pos>
+						<pos>525,10</pos>
 						<size>65,40</size>
 						<fg>#000000</fg>
 						<bg>#FFFFFF</bg>
