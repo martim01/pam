@@ -12,7 +12,8 @@ class LiveAudioSource: public AudioInputDevice
 
         enum enumPacketTime{US125 = 125, US250 = 250, US333 = 333, MS1 = 1000, MS4 = 4000};
 
-        static LiveAudioSource* createNew(wxEvtHandler* pHandler, wxMutex& mutex, UsageEnvironment& env, unsigned char nNumChannels, enumPacketTime ePacketTime);
+        static LiveAudioSource* createNew(wxEvtHandler* pHandler, wxMutex& mutex, UsageEnvironment& env, unsigned char nNumChannels, enumPacketTime ePacketTime,
+unsigned char nBitsPerSample, unsigned short nSampleRate);
 
 
 
@@ -27,7 +28,8 @@ class LiveAudioSource: public AudioInputDevice
                 return m_nPreferredFrameSize;
             }
 
-            LiveAudioSource(wxEvtHandler* pHandler, wxMutex& mutex, UsageEnvironment& env, unsigned char nNumChannels, enumPacketTime ePacketTime);
+            LiveAudioSource(wxEvtHandler* pHandler, wxMutex& mutex, UsageEnvironment& env, unsigned char nNumChannels, enumPacketTime ePacketTime,
+unsigned char nBitsPerSample, unsigned short nSampleRate);
             virtual ~LiveAudioSource();
             unsigned int m_nPreferredFrameSize;
 

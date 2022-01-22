@@ -9,8 +9,9 @@
 #include "settings.h"
 static OnDemandAES67MediaSubsession* g_session;
 
-AES67RTPSink::AES67RTPSink(UsageEnvironment& env, Groupsock* RTPgs, unsigned int nFrameSize) : 
-AudioRTPSink(env, RTPgs, Settings::Get().Read("Server", "RTPMap", 96), 48000, "L24", Settings::Get().Read("Server", "Channels",2))  // @todo allow setting of L24/L16 and samplerate?
+AES67RTPSink::AES67RTPSink(UsageEnvironment& env, Groupsock* RTPgs, unsigned int nFrameSize, unsigned char nRtpPayload,
+unsigned char nChannels, const std::string& sFormat, unsigned short nSampleRate) : 
+AudioRTPSink(env, RTPgs, nRtpPayload, nSampleRate, sFormat.c_str(), nChannels))  // @todo allow setting of L24/L16 and samplerate?
 {
     setPacketSizes(nFrameSize, nFrameSize);
 }
@@ -22,9 +23,10 @@ AES67RTPSink::~AES67RTPSink()
     //@todo tell higher up that this sink has finished so we can remove the RTCP stats (or at least mark as done)
 }
 
-AES67RTPSink* AES67RTPSink::createNew(UsageEnvironment& env, Groupsock* RTPgs, unsigned int nFrameSize)
+AES67RTPSink* AES67RTPSink::createNew(UsageEnvironment& env, Groupsock* RTPgs, unsigned int nFrameSize, unsigned char nRtpPayload,
+unsigned char nChannels, const std::string& sFormat, unsigned short nSampleRate)
 {
-    return new AES67RTPSink(env, RTPgs, nFrameSize);
+    return new AES67RTPSink(env, RTPgs, nFrameSize, nRtpPayload, nChannels, sFormat, nSampleRate);
 }
 
 
@@ -88,15 +90,20 @@ unsigned int AES67RTPSink::GetEpochTimestamp()
 
 
 
-OnDemandAES67MediaSubsession* OnDemandAES67MediaSubsession::createNew(wxEvtHandler* pHandler, PamUsageEnvironment& env, unsigned char nNumChannels,LiveAudioSource::enumPacketTime ePacketTime, portNumBits initialPortNum)
+OnDemandAES67MediaSubsession* OnDemandAES67MediaSubsession::createNew(wxEvtHandler* pHandler, PamUsageEnvironment& env, unsigned char nNumChannels,unsigned char nRtpPayload, 
+LiveAudioSource::enumPacketTime ePacketTime, unsigned char nBitsPerSample, unsigned short nSampleRate, portNumBits initialPortNum)
 {
-    return new OnDemandAES67MediaSubsession(pHandler, env, nNumChannels, ePacketTime, initialPortNum);
+    return new OnDemandAES67MediaSubsession(pHandler, env, nNumChannels, nRtpPayload, ePacketTime, nBitsPerSample, nSampleRate, initialPortNum);
 }
 
-OnDemandAES67MediaSubsession::OnDemandAES67MediaSubsession(wxEvtHandler* pHandler, PamUsageEnvironment& env, unsigned char nNumChannels, LiveAudioSource::enumPacketTime ePacketTime, portNumBits initialPortNum ) :
+OnDemandAES67MediaSubsession::OnDemandAES67MediaSubsession(wxEvtHandler* pHandler, PamUsageEnvironment& env, unsigned char nNumChannels, unsigned char nRtpPayload, 
+ unsigned char nBitsPerSample, unsigned short nSampleRate, LiveAudioSource::enumPacketTime ePacketTime, portNumBits initialPortNum ) :
     OnDemandPamSubsession(pHandler, env, initialPortNum),
   m_nNumberOfChannels(nNumChannels),
+  m_nRtpPayload(nRtpPayload),
   m_ePacketTime(ePacketTime),
+  m_nBitsPerSample(nBitsPerSample),
+  m_nSampleRate(nSampleRate),
   m_pSource(nullptr),
   m_pRTCP(nullptr),
   m_bQos(false)
@@ -112,14 +119,16 @@ OnDemandAES67MediaSubsession::~OnDemandAES67MediaSubsession()
 FramedSource* OnDemandAES67MediaSubsession::createNewStreamSource(unsigned clientSessionId, unsigned& estBitrate)
 {
     estBitrate = 2250;
-    m_pSource = LiveAudioSource::createNew(m_pAudioHandler, m_mutex, envir(), m_nNumberOfChannels, m_ePacketTime);
+    m_pSource = LiveAudioSource::createNew(m_pAudioHandler, m_mutex, envir(), m_nNumberOfChannels, m_ePacketTime, m_nBitsPerSample, m_nSampleRate);
     return m_pSource;
 }
 
 
 RTPSink* OnDemandAES67MediaSubsession::createNewRTPSink(Groupsock* rtpGroupsock, unsigned char rtpPayloadTypeIfDynamic, FramedSource* inputSource)
 {
-    m_pSink =  AES67RTPSink::createNew(envir(), rtpGroupsock, m_pSource->GetPreferredFrameSize()+12);
+    std::string sFormat = "L"+std::to_string(m_nBitsPerSample);
+
+    m_pSink =  AES67RTPSink::createNew(envir(), rtpGroupsock, m_pSource->GetPreferredFrameSize()+12, m_nRtpPayload, m_nNumberOfChannels, sFormat, m_nSampleRate);
 
     BeginQOSMeasurement();
     return m_pSink;

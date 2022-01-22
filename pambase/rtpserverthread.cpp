@@ -109,7 +109,8 @@ bool RtpServerThread::CreateStream()
     }
 
 
-    m_pSource = LiveAudioSource::createNew(m_pHandler, m_mutex, *m_penv, Settings::Get().Read("Server", "Channels", 2), m_ePacketTime);
+    m_pSource = LiveAudioSource::createNew(m_pHandler, m_mutex, *m_penv, Settings::Get().Read("Server", "Channels", 2), m_ePacketTime,
+    Settings::Get().Read("Server", "Bits", 24),Settings::Get().Read("Server", "SampleRate", 48000));
 
     // Create an appropriate audio RTP sink (using "SimpleRTPSink") from the RTP 'groupsock':
     m_pSink = SimpleRTPSink::createNew(*m_penv, m_pRtpGroupsock, payloadFormatCode, m_pSource->samplingFrequency(), "audio", mimeType, m_pSource->numChannels());
