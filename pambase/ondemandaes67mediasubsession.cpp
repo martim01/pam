@@ -112,7 +112,7 @@ OnDemandAES67MediaSubsession::~OnDemandAES67MediaSubsession()
 FramedSource* OnDemandAES67MediaSubsession::createNewStreamSource(unsigned clientSessionId, unsigned& estBitrate)
 {
     estBitrate = 2250;
-    m_pSource = LiveAudioSource::createNew(m_pAudioHandler, m_mutex, envir(), m_nNumberOfChannels, m_ePacketTime);
+    m_pSource = LiveAudioSource::createNew(m_pAudioHandler, m_mutex, envir(), m_nNumberOfChannels, m_ePacketTime,24, 48000);
     return m_pSource;
 }
 

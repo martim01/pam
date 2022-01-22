@@ -15,17 +15,20 @@
 #include "log.h"
 
 const double LiveAudioSource::TWENTYFOURBIT = 8388608.0;
+const double LiveAudioSource::SIXTEENBIT = 32768.0;
 
 ////////// LiveAudioSource //////////
 
-LiveAudioSource* LiveAudioSource::createNew(wxEvtHandler* pHandler, wxMutex& mutex, UsageEnvironment& env,  unsigned char nNumChannels,enumPacketTime ePacketTime)
+LiveAudioSource* LiveAudioSource::createNew(wxEvtHandler* pHandler, wxMutex& mutex, UsageEnvironment& env,  unsigned char nNumChannels,enumPacketTime ePacketTime, 
+            unsigned char nBitsPerSample, unsigned short nSampleRate)
 {
-    return new LiveAudioSource(pHandler, mutex, env, nNumChannels, ePacketTime);
+    return new LiveAudioSource(pHandler, mutex, env, nNumChannels, ePacketTime, nBitsPerSample, nSampleRate);
 }
 
 
-LiveAudioSource::LiveAudioSource(wxEvtHandler* pHandler, wxMutex& mutex, UsageEnvironment& env,unsigned char nNumChannels,  enumPacketTime ePacketTime)
-  : AudioInputDevice(env, 24, nNumChannels, 48000, 0)/* set the real parameters later */,
+LiveAudioSource::LiveAudioSource(wxEvtHandler* pHandler, wxMutex& mutex, UsageEnvironment& env,unsigned char nNumChannels,  enumPacketTime ePacketTime, 
+            unsigned char nBitsPerSample, unsigned short nSampleRate)
+  : AudioInputDevice(env, nBitsPerSample, nNumChannels, nSampleRate, 0)/* set the real parameters later */,
     m_pHandler(pHandler),
     m_mutex(mutex),
     m_nLastPlayTime(0),
@@ -110,12 +113,21 @@ void LiveAudioSource::doReadFromQueue()
 
             m_qBuffer.pop();
         }
-        nValue = static_cast<long>(dValue*TWENTYFOURBIT);
-
-        fTo[0] = (nValue >> 16) & 0xFF;
-        fTo[1] = (nValue >> 8) & 0xFF;
-        fTo[2] = nValue & 0xFF;
-        fTo+=3;
+        if(fBitsPerSample == 24) //24 bit
+        {
+            nValue = static_cast<long>(dValue*TWENTYFOURBIT);
+            fTo[0] = (nValue >> 16) & 0xFF;
+            fTo[1] = (nValue >> 8) & 0xFF;
+            fTo[2] = nValue & 0xFF;
+            fTo+=3;
+        }
+        else if(fBitsPerSample == 16)    //16 bit
+        {
+            nValue = static_cast<long>(dValue*SIXTEENBIT);
+            fTo[0] = (nValue >> 8) & 0xFF;
+            fTo[1] = nValue & 0xFF;
+            fTo+=2;
+        }
         AddToTimedBuffer(dValue);
     }
 
