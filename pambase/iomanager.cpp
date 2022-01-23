@@ -1205,7 +1205,9 @@ void IOManager::StreamOnDemand()
         m_pOnDemandServer = new OnDemandStreamer(m_setRTSPHandlers, m_setRTCPHandlers, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), "0.0.0.0"),
                                               Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555));
 
-        m_pOnDemandSubsession = OnDemandAES67MediaSubsession::createNew(this, *m_pOnDemandServer->envir(), 2, (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
+        m_pOnDemandSubsession = OnDemandAES67MediaSubsession::createNew(this, *m_pOnDemandServer->envir(), Settings::Get().Read("Server", "Channels", 2),
+        Settings::Get().Read("Server", "RtpMap", 96),(LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000),
+        Settings::Get().Read("Server", "Bits", 24),Settings::Get().Read("Server", "SampleRate", 48000), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
 
         m_pOnDemandServer->Create();
         m_pOnDemandServer->SetSubsession(m_pOnDemandSubsession);

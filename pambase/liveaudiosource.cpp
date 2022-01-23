@@ -19,15 +19,15 @@ const double LiveAudioSource::SIXTEENBIT = 32768.0;
 
 ////////// LiveAudioSource //////////
 
-LiveAudioSource* LiveAudioSource::createNew(wxEvtHandler* pHandler, wxMutex& mutex, UsageEnvironment& env,  unsigned char nNumChannels,enumPacketTime ePacketTime, 
-            unsigned char nBitsPerSample, unsigned short nSampleRate)
+LiveAudioSource* LiveAudioSource::createNew(wxEvtHandler* pHandler, wxMutex& mutex, UsageEnvironment& env,  unsigned char nNumChannels,enumPacketTime ePacketTime,
+unsigned char nBitsPerSample, unsigned short nSampleRate)
 {
     return new LiveAudioSource(pHandler, mutex, env, nNumChannels, ePacketTime, nBitsPerSample, nSampleRate);
 }
 
 
-LiveAudioSource::LiveAudioSource(wxEvtHandler* pHandler, wxMutex& mutex, UsageEnvironment& env,unsigned char nNumChannels,  enumPacketTime ePacketTime, 
-            unsigned char nBitsPerSample, unsigned short nSampleRate)
+LiveAudioSource::LiveAudioSource(wxEvtHandler* pHandler, wxMutex& mutex, UsageEnvironment& env,unsigned char nNumChannels,  enumPacketTime ePacketTime,
+unsigned char nBitsPerSample, unsigned short nSampleRate)
   : AudioInputDevice(env, nBitsPerSample, nNumChannels, nSampleRate, 0)/* set the real parameters later */,
     m_pHandler(pHandler),
     m_mutex(mutex),
@@ -113,7 +113,7 @@ void LiveAudioSource::doReadFromQueue()
 
             m_qBuffer.pop();
         }
-        if(fBitsPerSample == 24) //24 bit
+        if(fBitsPerSample == 24)
         {
             nValue = static_cast<long>(dValue*TWENTYFOURBIT);
             fTo[0] = (nValue >> 16) & 0xFF;
@@ -121,9 +121,9 @@ void LiveAudioSource::doReadFromQueue()
             fTo[2] = nValue & 0xFF;
             fTo+=3;
         }
-        else if(fBitsPerSample == 16)    //16 bit
+        else if(fBitsPerSample == 16)
         {
-            nValue = static_cast<long>(dValue*SIXTEENBIT);
+            nValue = static_cast<long>(dValue*32768.0);
             fTo[0] = (nValue >> 8) & 0xFF;
             fTo[1] = nValue & 0xFF;
             fTo+=2;
