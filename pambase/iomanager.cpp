@@ -884,7 +884,7 @@ void IOManager::CreateSessionFromOutput(const wxString& sSource)
     }
     if(m_pGenerator)
     {
-        m_pGenerator->SetSampleRate(nSampleRate)
+        m_pGenerator->SetSampleRate(nSampleRate);
     }
 
     m_SessionOut.lstSubsession.push_back(subsession(Settings::Get().Read(wxT("Output"), wxT("Source"),wxEmptyString),
@@ -918,7 +918,7 @@ void IOManager::UpdateOutputSession()
         
         if(m_pGenerator && nSampleRate != 0)
         {
-            m_pGenerator->SetSampleRate(nSampleRate)
+            m_pGenerator->SetSampleRate(nSampleRate);
         }
         
         if(m_SessionOut.lstSubsession.back().nSampleRate != nSampleRate || m_SessionOut.lstSubsession.back().nChannels != nChannels)

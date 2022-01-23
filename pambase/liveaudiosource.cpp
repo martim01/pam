@@ -123,7 +123,7 @@ void LiveAudioSource::doReadFromQueue()
         }
         else if(fBitsPerSample == 16)
         {
-            nValue = static_cast<long>(dValue*32768.0);
+            nValue = static_cast<long>(dValue*SIXTEENBIT);
             fTo[0] = (nValue >> 8) & 0xFF;
             fTo[1] = nValue & 0xFF;
             fTo+=2;

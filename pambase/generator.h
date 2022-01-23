@@ -5,7 +5,7 @@
 #include "dlldefine.h"
 #include <list>
 #include <queue>
-
+#include <memory>
 #ifdef __WXGTK__
 #include <random>
 #endif

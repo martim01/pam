@@ -52,8 +52,8 @@ class OnDemandAES67MediaSubsession: public OnDemandPamSubsession
 
 
     protected: // we're a virtual base class
-        OnDemandAES67MediaSubsession(wxEvtHandler* pHandler, PamUsageEnvironment& env, unsigned char nNumChannels, unsigned char nRtpPayload, LiveAudioSource::enumPacketTime ePacketTime,
-         unsigned char nBitsPerSample, unsigned short nSampleRate, portNumBits initialPortNum  = 5004);
+        OnDemandAES67MediaSubsession(wxEvtHandler* pHandler, PamUsageEnvironment& env, unsigned char nNumChannels, 
+unsigned char nRtpPayload,  unsigned char nBitsPerSample, unsigned short nSampleRate, LiveAudioSource::enumPacketTime ePacketTime, portNumBits initialPortNum  = 5004);
         virtual ~OnDemandAES67MediaSubsession();
 
         // new virtual functions, defined by all subclasses

@@ -64,6 +64,7 @@ unsigned char nBitsPerSample, unsigned short nSampleRate);
             timedbuffer* m_pAudioBuffer;
 
             static const double TWENTYFOURBIT;
+            static const double SIXTEENBIT;
 };
 
 
