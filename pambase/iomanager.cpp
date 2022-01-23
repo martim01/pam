@@ -882,6 +882,10 @@ void IOManager::CreateSessionFromOutput(const wxString& sSource)
         nSampleRate = Settings::Get().Read("Server", "SampleRate", 48000);
         nChannels = Settings::Get().Read("Server", "Channels", 2);
     }
+    if(m_pGenerator)
+    {
+        m_pGenerator->SetSampleRate(nSampleRate)
+    }
 
     m_SessionOut.lstSubsession.push_back(subsession(Settings::Get().Read(wxT("Output"), wxT("Source"),wxEmptyString),
     sSource, wxEmptyString, wxT("F32"), wxEmptyString, 0, nSampleRate, nChannels, wxEmptyString, 0, {0,0}, refclk()));
@@ -911,6 +915,12 @@ void IOManager::UpdateOutputSession()
             nSampleRate = 0;
             nChannels = 0;
         }
+        
+        if(m_pGenerator && nSampleRate != 0)
+        {
+            m_pGenerator->SetSampleRate(nSampleRate)
+        }
+        
         if(m_SessionOut.lstSubsession.back().nSampleRate != nSampleRate || m_SessionOut.lstSubsession.back().nChannels != nChannels)
         {
             m_SessionOut.lstSubsession.back().nSampleRate = nSampleRate;
