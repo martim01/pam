@@ -88,7 +88,7 @@ class KFilter;
 class PAMBASE_IMPEXPORT Sequence
 {
     public:
-        Sequence(int nChannels);
+        Sequence(int nChannels, double dSampleRate);
         int GetChannels() const
         {   return m_nChannels; }
         void AppendGenFreq(float dFrequency, float ddBFS, int nCycles, int nType);
@@ -102,6 +102,7 @@ class PAMBASE_IMPEXPORT Sequence
 
     private:
         int m_nChannels;
+        double m_dSampleRate;
         std::list<genfreq> m_lstSequence;
         std::list<genfreq>::iterator m_itPosition;
 
@@ -150,14 +151,14 @@ class PAMBASE_IMPEXPORT Generator
 
     protected:
 
-        void AddSequence(const wxString& sName, Sequence* pSeq);
+        void AddSequence(const wxString& sName, std::shared_ptr<Sequence> pSeq);
         void DeleteSequence(const wxString& sName);
 
         void InitPinkNoise();
 
         void ReadSoundFile(timedbuffer* pData);
         void GenerateSequences(timedbuffer* pData);
-        void GenerateSequence(Sequence* pSeq, float* pBuffer, unsigned int nSize);
+        void GenerateSequence(std::shared_ptr<Sequence> pSeq, float* pBuffer, unsigned int nSize);
         void GenerateFrequency(float* pBuffer, unsigned int nSize);
 
         float GenerateSin(const genfreq& gfreq, float dPhase);
@@ -170,13 +171,13 @@ class PAMBASE_IMPEXPORT Generator
 
         void ClosePink();
 
-        std::map<wxString, Sequence*> m_mSequences;
+        std::map<wxString, std::shared_ptr<Sequence>> m_mSequences;
 
         std::queue<genfreq> m_queueFreq;
         float m_dSampleRate;
         size_t m_nPhase;
 
-        SoundFile* m_pSoundfile;
+        std::unique_ptr<SoundFile> m_pSoundfile;
 
         static const unsigned int PINK_RANDOM_BITS       = 24;
         static const unsigned int PINK_RANDOM_SHIFT      = 8;

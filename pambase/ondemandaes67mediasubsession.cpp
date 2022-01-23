@@ -11,7 +11,7 @@ static OnDemandAES67MediaSubsession* g_session;
 
 AES67RTPSink::AES67RTPSink(UsageEnvironment& env, Groupsock* RTPgs, unsigned int nFrameSize, unsigned char nRtpPayload,
 unsigned char nChannels, const std::string& sFormat, unsigned short nSampleRate) : 
-AudioRTPSink(env, RTPgs, nRtpPayload, nSampleRate, sFormat.c_str(), nChannels))  // @todo allow setting of L24/L16 and samplerate?
+AudioRTPSink(env, RTPgs, nRtpPayload, nSampleRate, sFormat.c_str(), nChannels))  
 {
     setPacketSizes(nFrameSize, nFrameSize);
 }

@@ -20,7 +20,7 @@ const double Generator::ANFILTER_B[3] = { 0.23614050038447681, -0.36826126695792
 const double Generator::ANFILTER_A[2] = {-0.3682612669579237, -0.6187478821508299};
 
 
-Sequence::Sequence(int nChannels) : m_nChannels(nChannels)
+Sequence::Sequence(int nChannels, double dSampleRate) : m_nChannels(nChannels), m_dSampleRate(dSampleRate)
 {
     m_itPosition = m_lstSequence.end();
 }
@@ -33,7 +33,7 @@ void Sequence::AppendGenFreq(float dFrequency, float ddBFS, int nCycles, int nTy
         dAmplitude = pow(10.0, ddBFS/20.0);
     }
 
-    double dSamples = static_cast<double>(nCycles)*48000.0/dFrequency;
+    double dSamples = static_cast<double>(nCycles)*m_dSampleRate/dFrequency;
 
 
     m_lstSequence.push_back(genfreq(dFrequency, dAmplitude, static_cast<int>(dSamples),nType));
@@ -73,7 +73,7 @@ void Sequence::AdvanceSequence()
 Generator::Generator() :
     m_dSampleRate(48000),
     m_nPhase(0),
-    m_pSoundfile(0),
+    m_pSoundfile(nullptr),
 	m_dNoiseAmplitude(-18.0),
 	m_nGenerator(FREQUENCY),
     m_pPlugin(0)
@@ -164,9 +164,9 @@ void Generator::GenerateSequences(timedbuffer* pData)
     {
         pData->GetWritableBuffer()[i] = 0.0;
     }
-    for(map<wxString, Sequence*>::iterator itSequence = m_mSequences.begin(); itSequence != m_mSequences.end(); ++itSequence)
+    for(auto pairSeq : m_mSequences)
     {
-        GenerateSequence(itSequence->second, pData->GetWritableBuffer(), pData->GetBufferSize());
+        GenerateSequence(pairSeq.second, pData->GetWritableBuffer(), pData->GetBufferSize());
     }
     m_nPhase += (pData->GetBufferSize()/2);
     if(m_nPhase >= static_cast<unsigned long>(m_dSampleRate))
@@ -175,7 +175,7 @@ void Generator::GenerateSequences(timedbuffer* pData)
     }
 }
 
-void Generator::GenerateSequence(Sequence* pSeq, float* pBuffer, unsigned int nSize)
+void Generator::GenerateSequence(std::shared_ptr<Sequence> pSeq, float* pBuffer, unsigned int nSize)
 {
 
     unsigned int nPhase = m_nPhase;
@@ -308,30 +308,19 @@ float Generator::GenerateTriangle(const genfreq& gfreq, float dPhase)
 }
 
 
-void Generator::AddSequence(const wxString& sName, Sequence* pSeq)
+void Generator::AddSequence(const wxString& sName, std::shared_ptr<Sequence> pSeq)
 {
-
-
     m_mSequences.insert(make_pair(sName, pSeq));
 }
 
 void Generator::ClearSequences()
 {
-    for(map<wxString, Sequence*>::iterator itSeq = m_mSequences.begin(); itSeq != m_mSequences.end(); ++itSeq)
-    {
-        delete itSeq->second;
-    }
     m_mSequences.clear();
 }
 
 void Generator::DeleteSequence(const wxString& sName)
 {
-    map<wxString, Sequence*>::iterator itSeq = m_mSequences.find(sName);
-    if(itSeq != m_mSequences.end())
-    {
-        delete itSeq->second;
-        m_mSequences.erase(sName);
-    }
+    m_mSequences.erase(sName);
 }
 
 
@@ -364,11 +353,7 @@ void Generator::ClearFrequences()
 
 void Generator::CloseFile()
 {
-    if(m_pSoundfile)
-    {
-        delete m_pSoundfile;
-        m_pSoundfile = 0;
-    }
+    m_pSoundfile = nullptr;
 }
 
 bool Generator::SetPlugin(const wxString& sPlugin)
@@ -402,7 +387,7 @@ bool Generator::SetFile()
     //Does the file exist
     if(wxFileExists(sFilePath))
     {
-        m_pSoundfile = new SoundFile();
+        m_pSoundfile = std::make_unique<SoundFile>();
         bOk = m_pSoundfile->OpenToRead(sFilePath);
         if(bOk == false)
         {
@@ -655,7 +640,7 @@ bool Generator::LoadSequence(const wxString& sFile)
             {
                 unsigned long nChannels(0);
                 pSequenceNode->GetAttribute(wxT("channels"), wxT("0")).ToULong(&nChannels);
-                Sequence* pSequence = new Sequence(nChannels);
+                std::shared_ptr<Sequence> pSequence = std::make_shared<Sequence>(nChannels, m_dSampleRate);
 
                 for(wxXmlNode* pFreqGenNode = pSequenceNode->GetChildren(); pFreqGenNode; pFreqGenNode = pFreqGenNode->GetNext())
                 {
