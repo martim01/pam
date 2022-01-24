@@ -198,12 +198,11 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pLbl12->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl12->SetBackgroundColour(wxColour(64,0,128));
 	m_pbtnSampleRate = new wmButton(pnlAoip, ID_M_PBTN10, _("48 kHz"), wxPoint(344,110), wxSize(70,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN10"));
-	m_pbtnSampleRate->Disable();
-	m_pbtnSampleRate->SetForegroundColour(wxColour(0,0,0));
+    m_pbtnSampleRate->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnSampleRate->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnSampleRate->SetColourDisabled(wxColour(wxT("#B0B0B0")));
 	m_pbtnBits = new wmButton(pnlAoip, ID_M_PBTN11, _("Bits"), wxPoint(416,110), wxSize(174,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN11"));
-	m_pbtnBits->Disable();
+
 	m_pbtnBits->SetBackgroundColour(wxColour(0,128,0));
 	m_pbtnBits->SetColourDisabled(wxColour(wxT("#606060")));
 	m_pbtnBits->SetToggle(true, wxT("16"), wxT("24"), 50);
@@ -243,8 +242,12 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	SetSize(size);
 	SetPosition(pos);
 
-    m_pbtnBits->SetColourDisabled(wxColour(180,180,180));
-    m_pbtnSampleRate->SetColourDisabled(wxColour(180,180,180));
+    m_pbtnBits->SetColourDisabled(wxColour(150,150,150));
+    m_pbtnSampleRate->SetColourDisabled(wxColour(150,150,150));
+    m_pbtnStream->SetColourDisabled(wxColour(150,150,150));
+    m_pbtnRTCP->SetColourDisabled(wxColour(150,150,150));
+    m_pbtnDNS->SetColourDisabled(wxColour(150,150,150));
+    m_pbtnSAP->SetColourDisabled(wxColour(150,150,150));
 
 	m_plstDestination->AddButton(wxT("Disabled"));
     m_plstDestination->AddButton(wxT("Soundcard"));
@@ -259,7 +262,8 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
     ShowSoundcardOutputs();
     UpdateDisplayedSettings();
 
-
+    //m_pbtnBits->Enable(false);
+    m_pbtnSampleRate->Enable(false);
 
     m_plstPlayback->Disable();
     //m_pbtnStream->ToggleSelection(false);
@@ -649,5 +653,5 @@ void pnlSettingsOutput::EnableStreamSettings()
     m_pbtnStream->Enable(!m_pbtnActive->IsChecked());
 
     //m_pbtnSampleRate->Enable(!m_pbtnActive->IsChecked());
-    //m_pbtnBits->Enable(!m_pbtnActive->IsChecked());
+    m_pbtnBits->Enable(!m_pbtnActive->IsChecked());
 }

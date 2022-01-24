@@ -107,6 +107,7 @@ pnlAoipManual::pnlAoipManual(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	m_pbtnRtpMap->SetLabel(Settings::Get().Read("ManualAoip", "RtpMap", "96"));
 	m_pbtnChannels->SetLabel(Settings::Get().Read("ManualAoip", "Channels", "2"));
 
+	m_pbtnBits->SetColourDisabled(wxColour(150,150,150));
 
 }
 

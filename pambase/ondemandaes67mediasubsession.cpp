@@ -96,8 +96,8 @@ LiveAudioSource::enumPacketTime ePacketTime, unsigned char nBitsPerSample, unsig
     return new OnDemandAES67MediaSubsession(pHandler, env, nNumChannels, nRtpPayload, ePacketTime, nBitsPerSample, nSampleRate, initialPortNum);
 }
 
-OnDemandAES67MediaSubsession::OnDemandAES67MediaSubsession(wxEvtHandler* pHandler, PamUsageEnvironment& env, unsigned char nNumChannels, unsigned char nRtpPayload, 
- unsigned char nBitsPerSample, unsigned short nSampleRate, LiveAudioSource::enumPacketTime ePacketTime, portNumBits initialPortNum ) :
+OnDemandAES67MediaSubsession::OnDemandAES67MediaSubsession(wxEvtHandler* pHandler, PamUsageEnvironment& env, unsigned char nNumChannels, 
+unsigned char nRtpPayload,  unsigned char nBitsPerSample, unsigned short nSampleRate, LiveAudioSource::enumPacketTime ePacketTime, portNumBits initialPortNum ) :
     OnDemandPamSubsession(pHandler, env, initialPortNum),
   m_nNumberOfChannels(nNumChannels),
   m_nRtpPayload(nRtpPayload),
