@@ -103,7 +103,7 @@ void LiveAudioSource::doReadFromQueue()
         m_pAudioBuffer = new timedbuffer(m_nLastBufferSize, fNumChannels);
     }
 
-    for(int i = 0; i < nBytesToRead; i+=3)
+    for(int i = 0; i < nBytesToRead; i+=(fBitsPerSample/8))
     {
         long nValue(0);
         float dValue(0.0);

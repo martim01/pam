@@ -188,7 +188,7 @@ void RtpThread::StreamFromSDP()
         else
         {
             subsession->sink = wxSink::createNew(*m_penv, *subsession, this);
-            pmlLog(pml::LOG_DEBUG) << "RTP Client\tInitiated the subsession (";
+            pmlLog(pml::LOG_DEBUG) << "RTP Client\tInitiated the subsession: ";
             if (subsession->rtcpIsMuxed())
             {
                 pmlLog(pml::LOG_DEBUG) << "client port " << subsession->clientPortNum();
@@ -197,7 +197,6 @@ void RtpThread::StreamFromSDP()
             {
                 pmlLog(pml::LOG_DEBUG) << "client ports " << subsession->clientPortNum() << "-" << subsession->clientPortNum()+1;
             }
-            pmlLog(pml::LOG_DEBUG) << ")";
 
             pmlLog(pml::LOG_DEBUG) << "RTP Client\tSessionId: " << subsession->GetEndpoint();
             if (subsession->sink == NULL)
