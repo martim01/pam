@@ -97,6 +97,7 @@ class PAMBASE_IMPEXPORT Sequence
         std::list<genfreq>::iterator GetSequenceEnd();
         const std::list<genfreq>::iterator& GetSequencePosition();
 
+        void SetSampleRate(double dSampleRate)  {   m_dSampleRate = dSampleRate; }
         void AdvanceSequence();
         enum {LEFT=1, RIGHT=2, MONO=3};
 

@@ -22,6 +22,7 @@ class PAMBASE_IMPEXPORT GeneratorPluginBuilder : public wxEvtHandler
         virtual wxString GetName() const=0;
         virtual void Init()=0;
         virtual void Stop()=0;
+        void SetSampleRate(double dSampleRate)  {   m_dSampleRate = dSampleRate; }
 
     protected:
 
@@ -45,6 +46,7 @@ class PAMBASE_IMPEXPORT GeneratorPluginBuilder : public wxEvtHandler
         virtual wxWindow* CreateGeneratorPanel(wxWindow* pParent)=0;
         virtual void LoadSettings()=0;
         wxEvtHandler* m_pHandler;
+        double m_dSampleRate;
 
     private:
         wmSwitcherPanel* m_pswpGenerators;

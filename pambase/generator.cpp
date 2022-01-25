@@ -110,6 +110,14 @@ void Generator::SetSampleRate(unsigned int nSampleRate)
 {
     m_dSampleRate = nSampleRate;
     m_nPhase = 0;
+    for(auto pairSeq : m_mSequences)
+    {
+        pairSeq.second->SetSampleRate(m_dSampleRate);
+    }
+    if(m_pPlugin)
+    {
+        m_pPlugin->SetSampleRate(m_dSampleRate);
+    }
 }
 
 
@@ -366,6 +374,7 @@ bool Generator::SetPlugin(const wxString& sPlugin)
     {
         m_pPlugin = itPlugin->second;
         m_pPlugin->Init();
+        m_pPlugin->SetSampleRate(m_dSampleRate);
         return true;
     }
     m_pPlugin = NULL;
