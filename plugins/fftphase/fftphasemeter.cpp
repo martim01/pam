@@ -358,7 +358,16 @@ void fftphaseMeter::DoFFT(int nChannel)
 
 void fftphaseMeter::InputSession(const session& aSession)
 {
-
+    if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
+    {
+        m_nSampleRate = aSession.GetCurrentSubsession()->nSampleRate;
+        m_nChannels = aSession.GetCurrentSubsession()->nChannels;
+    }
+    else
+    {
+        m_nSampleRate = 48000;
+        m_nChannels = 0;
+    }
 }
 
 void fftphaseMeter::OutputChannels(const std::vector<char>& vChannels)
