@@ -57,7 +57,7 @@ void* OnDemandStreamer::Entry()
     }
 
     char const* descriptionString = wxGetHostName().c_str() + " PAM_"+m_pSubsession->GetStreamName();
-    std::string sStreamName = "by-name/PAM_"+m_pSubsession->GetStreamName();
+    std::string sStreamName = "by-name/AES67@"+wxGetHostName().ToStdString();
 
     pmlLog(pml::LOG_DEBUG) << "RTP Server\tStreamName = '" << sStreamName << "'";
 
