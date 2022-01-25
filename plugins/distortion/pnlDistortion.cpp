@@ -102,7 +102,7 @@ void pnlDistortion::InputSession(const session& aSession)
 
     for(size_t i = 0; i < m_vChannels.size(); i++)
     {
-        m_vChannels[i] = new pnlDistortionChannel(pnlLeft, i,m_pBuilder,  wxID_ANY, wxPoint(38+(71*i), 0));
+        m_vChannels[i] = new pnlDistortionChannel(pnlLeft, i,m_pBuilder,  aSession.GetCurrentSubsession()->nSampleRate, wxID_ANY, wxPoint(38+(71*i), 0));
     }
 }
 

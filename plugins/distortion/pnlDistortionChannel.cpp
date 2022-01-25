@@ -24,7 +24,7 @@ BEGIN_EVENT_TABLE(pnlDistortionChannel,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlDistortionChannel::pnlDistortionChannel(wxWindow* parent,  unsigned int nChannel,DistortionBuilder* pBuilder,wxWindowID id,const wxPoint& pos,const wxSize& size) : m_nChannel(nChannel),
+pnlDistortionChannel::pnlDistortionChannel(wxWindow* parent,  unsigned int nChannel, unsigned int nSampleRate, DistortionBuilder* pBuilder,wxWindowID id,const wxPoint& pos,const wxSize& size) : m_nChannel(nChannel), m_nSampleRate(nSampleRate),
 m_pBuilder(pBuilder)
 {
 	//(*Initialize(pnlDistortionChannel)
@@ -96,7 +96,7 @@ void pnlDistortionChannel::RunTest()
     if(m_lstBuffer.empty() == false)
     {
         FFTAlgorithm fft;
-        double dDistortion = fft.GetTHDistortion(m_lstBuffer, 48000, 1, 0, FFTAlgorithm::WINDOW_BLACKMAN, 1024, 0);
+        double dDistortion = fft.GetTHDistortion(m_lstBuffer, m_nSampleRate, 1, 0, FFTAlgorithm::WINDOW_BLACKMAN, 1024, 0);
         m_plblDistortion->SetLabel(wxString::Format(wxT("%.2f%"),dDistortion));
         m_plblFrequency->SetLabel(wxString::Format(wxT("~ %.0f Hz"), fft.GetFundamentalBinFrequency()));
         m_plblAmplitude->SetLabel(wxString::Format(wxT("%.2f dB"), fft.GetFundamentalAmplitude()* 0.719));
