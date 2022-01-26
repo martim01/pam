@@ -270,6 +270,7 @@ void IOManager::OnSettingEvent(SettingEvent& event)
             {
                 if(m_pAlwaysOnServer)
                 {
+                    pmlLog() << "Stop alwayson server";
                     m_pAlwaysOnServer->StopStream();
                     m_pAlwaysOnServer->Wait();
                     delete m_pAlwaysOnServer;
@@ -281,6 +282,7 @@ void IOManager::OnSettingEvent(SettingEvent& event)
             {
                 if(m_pOnDemandServer)
                 {
+                    pmlLog() << "Stop ondemenad server";
                     m_pOnDemandServer->Stop();
                     m_pOnDemandServer->Wait();
                     delete m_pOnDemandServer;
@@ -1169,6 +1171,7 @@ void IOManager::Stream()
 
     if(Settings::Get().Read("Server", "State", 0) == 1 || bNmos) //set to stream
     {
+        m_bStreamAlwaysOn = (Settings::Get().Read("Server", "Stream", "AlwaysOn") == "AlwaysOn");
         if(m_bStreamAlwaysOn || bNmos)  //@todo bodge for NMOS
         {
             StreamAlwaysOn();

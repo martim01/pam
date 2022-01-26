@@ -427,7 +427,7 @@ void pnlSettingsOutput::OnbtnStreamClick(wxCommandEvent& event)
     }
     else
     {
-        //@todo create the new session
+       
         Settings::Get().Write(wxT("Server"), wxT("DestinationIp"), m_ppnlAddress->GetValue());
         Settings::Get().Write(wxT("Server"), wxT("Stream"), "AlwaysOn");
     }
@@ -634,6 +634,12 @@ void pnlSettingsOutput::OnbtnRTCPClick(wxCommandEvent& event)
 void pnlSettingsOutput::OnbtnActiveClick(wxCommandEvent& event)
 {
     Settings::Get().Write("Server", "State", event.IsChecked() ? "1" : "0");
+
+    if(m_pbtnStream->IsChecked())
+    {
+        Settings::Get().Write(wxT("Server"), wxT("DestinationIp"), m_ppnlAddress->GetValue());
+    }
+
     EnableStreamSettings();
 }
 
