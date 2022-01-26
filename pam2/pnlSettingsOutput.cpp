@@ -263,7 +263,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
     UpdateDisplayedSettings();
 
     //m_pbtnBits->Enable(false);
-    m_pbtnSampleRate->Enable(false);
+    //m_pbtnSampleRate->Enable(false);
 
     m_plstPlayback->Disable();
     //m_pbtnStream->ToggleSelection(false);
@@ -652,6 +652,6 @@ void pnlSettingsOutput::EnableStreamSettings()
     m_pbtnRtpMap->Enable(!m_pbtnActive->IsChecked());
     m_pbtnStream->Enable(!m_pbtnActive->IsChecked());
 
-    //m_pbtnSampleRate->Enable(!m_pbtnActive->IsChecked());
+    m_pbtnSampleRate->Enable(!m_pbtnActive->IsChecked());
     m_pbtnBits->Enable(!m_pbtnActive->IsChecked());
 }
