@@ -207,17 +207,6 @@ void RtpThread::StreamFromSDP()
             {
                 pmlLog(pml::LOG_DEBUG) << "RTP Client\tCreated a data sink for the subsession";
 
-                if(m_pRtspClient)
-                {   //@todo do we need any setup here??
-//                    m_pRtspClient->SetupSubsession(subsession);
-                }
-                else if(m_pSipClient)
-                {
-                    m_pSipClient->SetupSubsession(subsession);
-                }
-                // @todo do we need to send a Start Playing /ACK here??
-
-                // @todo move the startPlaying to later??
                 subsession->sink->startPlaying(*subsession->readSource(), NULL, NULL);
                 beginQOSMeasurement(*m_penv, m_pSession, this);
             }
@@ -462,6 +451,7 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
     {
         m_nSampleRate = m_Session.GetCurrentSubsession()->nSampleRate;
         m_nInputChannels = min((unsigned int)256 ,m_Session.GetCurrentSubsession()->nChannels);
+        pmlLog() << "RTP Client\t" << m_nInputChannels << " channels at " << m_nSampleRate << " Hz";
     }
     else
     {
