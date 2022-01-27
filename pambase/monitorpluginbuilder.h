@@ -6,6 +6,9 @@
 #include <vector>
 #include "session.h"
 #include <set>
+#include "RestGoose.h"
+
+
 class wmSwitcherPanel;
 class timedbuffer;
 
@@ -41,6 +44,8 @@ class PAMBASE_IMPEXPORT MonitorPluginBuilder : public wxEvtHandler
 
         wxWindow* GetMainWindow() const { return m_pWindow;}
 
+        virtual void SendWebsocketMessage(){}
+
     protected:
 
         friend class MonitorPluginFactory;
@@ -64,6 +69,10 @@ class PAMBASE_IMPEXPORT MonitorPluginBuilder : public wxEvtHandler
         virtual void LoadSettings()=0;
 
         void AskToMonitor(const std::vector<char>& vChannels);
+
+        void InitRemoteApi();
+        pml::restgoose::response GetStatus(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser);
+
         wxEvtHandler* m_pHandler;
 
         bool m_bWantsAudioAlways;

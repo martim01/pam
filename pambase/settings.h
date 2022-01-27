@@ -50,6 +50,7 @@ class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
         const std::multimap<wxString, wxString>& GetInterfaces();
 
         const mapSection& GetSections();
+        std::shared_ptr<iniSection> GetSection(const wxString& sSection);
 
     protected:
         Settings();

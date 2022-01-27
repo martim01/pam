@@ -425,3 +425,9 @@ const mapSection& Settings::GetSections()
 {
     return m_iniManager.GetSections();
 }
+
+std::shared_ptr<iniSection> Settings::GetSection(const wxString& sSection)
+{
+
+    return m_iniManager.GetSection(sSection);
+}

@@ -26,6 +26,8 @@ void TestPluginFactory::Register(TestPluginBuilder* pBuilder)
     pBuilder->SetHandler(m_pHandler);
     pBuilder->CreatePanels(m_pswpTests);
 
+    pBuilder->InitRemoteApi();
+
     m_mBuilders.insert(make_pair(pBuilder->GetName(), pBuilder));
 }
 
@@ -233,3 +235,4 @@ wxString TestPluginFactory::GetPluginDirectory()
 {
      return Settings::Get().GetTestPluginDirectory();
 }
+

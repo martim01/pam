@@ -3,8 +3,10 @@
 #include "settings.h"
 #include <wx/log.h>
 #include "monitorevent.h"
+#include "remoteapi.h"
 
 using namespace std;
+using namespace std::placeholders;
 
 DEFINE_EVENT_TYPE(wxEVT_MONITOR_MAX)
 
@@ -126,4 +128,25 @@ bool MonitorPluginBuilder::CanBeMaximized() const
 
 MonitorPluginBuilder::~MonitorPluginBuilder()
 {
+}
+
+void MonitorPluginBuilder::InitRemoteApi()
+{
+    RemoteApi::Get().AddPluginWebsocketEndpoint(endpoint(GetName().ToStdString()));
+    RemoteApi::Get().AddPluginEndpoint(pml::restgoose::GET, endpoint("/x-pam/plugins/monitor/"+GetName().ToStdString()), std::bind(&MonitorPluginBuilder::GetStatus, this, _1,_2,_3,_4));
+}
+
+pml::restgoose::response MonitorPluginBuilder::GetStatus(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
+{
+    pml::restgoose::response resp;
+    auto pSection = Settings::Get().GetSection(GetName());
+    if(pSection)
+    {
+        for(auto pairData : pSection->GetData())
+        {
+            resp.jsonData[pairData.first.ToStdString()] = pairData.second.ToStdString();
+        }
+    }
+    return resp;
+
 }

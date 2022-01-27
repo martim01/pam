@@ -51,6 +51,7 @@
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
 #include "usbchecker.h"
+#include "remoteapi.h"
 #ifdef __NMOS__
 #include "nmos.h"
 #endif // __WXMSW__
@@ -237,7 +238,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     m_ppnlLog = new pnlLog(m_pswpMain);
 
     pml::LogStream::AddOutput(std::make_unique<pml::LogOutput>());
-    pml::LogStream::SetOutputLevel(pml::LOG_DEBUG);
+    pml::LogStream::SetOutputLevel(pml::LOG_TRACE);
 
     wxImage img(16,16);
     img.SetRGB(wxRect(0,0,16,16),0,0,0);
@@ -314,6 +315,7 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
     m_plblOutput->Show(Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled"))!=wxT("Disabled"));
 
+    RemoteApi::Get().Run();
 
 }
 
@@ -327,7 +329,8 @@ pam2Dialog::~pam2Dialog()
         delete m_pdlgNoInput;
     }
     delete m_pCursor;
-    //@todo stop nmos
+
+    
 }
 
 void pam2Dialog::OnQuit(wxCommandEvent& event)
@@ -948,7 +951,6 @@ void pam2Dialog::TellPluginsAboutOutputChannels()
 
 void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
 {
-    pmlLog() << "PAM\tExecutable Path = " << Settings::Get().GetExecutableDirectory();
     pmlLog() << "PAM\tCore Lib Path = " <<  Settings::Get().GetCoreLibDirectory();
     pmlLog() << "PAM\tPlugin Monitor Path = " <<  Settings::Get().GetMonitorPluginDirectory();
     pmlLog() << "PAM\tPlugin Test Path = " <<  Settings::Get().GetTestPluginDirectory();

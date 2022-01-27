@@ -5,6 +5,7 @@
 #include <list>
 #include <vector>
 #include "session.h"
+#include "RestGoose.h"
 
 class wmSwitcherPanel;
 class timedbuffer;
@@ -45,6 +46,10 @@ class PAMBASE_IMPEXPORT TestPluginBuilder : public wxEvtHandler
 
         virtual wxWindow* CreateTestPanel(wxWindow* pParent)=0;
         virtual void LoadSettings()=0;
+        
+        void InitRemoteApi();
+        pml::restgoose::response GetStatus(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser);
+
         wxEvtHandler* m_pHandler;
 
     private:
