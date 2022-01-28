@@ -6,6 +6,9 @@
 #include "generatorpluginfactory.h"
 #include <algorithm>
 #include <functional>
+#include <wx/filename.h>
+#include <wx/dir.h>
+#include "aoipsourcemanager.h"
 
 using namespace std::placeholders;
 
@@ -31,6 +34,13 @@ RemoteApi::RemoteApi()
     m_Server.AddEndpoint(pml::restgoose::GET, endpoint("/x-pam/settings"), std::bind(&RemoteApi::GetSettings, this, _1,_2,_3,_4));
     m_Server.AddEndpoint(pml::restgoose::PATCH, endpoint("/x-pam/settings"), std::bind(&RemoteApi::PatchSettings, this, _1,_2,_3,_4));
 
+    m_Server.AddEndpoint(pml::restgoose::GET, endpoint("/x-pam/wav"), std::bind(&RemoteApi::GetWavFiles, this, _1,_2,_3,_4));
+    m_Server.AddEndpoint(pml::restgoose::POST, endpoint("/x-pam/wav"), std::bind(&RemoteApi::PostWavFile, this, _1,_2,_3,_4));
+    m_Server.AddEndpoint(pml::restgoose::HTTP_DELETE, endpoint("/x-pam/wav"), std::bind(&RemoteApi::DeleteWavFile, this, _1,_2,_3,_4));
+
+    m_Server.AddEndpoint(pml::restgoose::GET, endpoint("/x-pam/aoip"), std::bind(&RemoteApi::GetAoipSources, this, _1,_2,_3,_4));
+    m_Server.AddEndpoint(pml::restgoose::PATCH, endpoint("/x-pam/aoip"), std::bind(&RemoteApi::PatchAoipSources, this, _1,_2,_3,_4));
+
     m_Server.AddEndpoint(pml::restgoose::GET, endpoint("/x-pam/plugins"), std::bind(&RemoteApi::GetPlugins, this, _1,_2,_3,_4));
     m_Server.AddEndpoint(pml::restgoose::GET, endpoint("/x-pam/plugins/monitor"), std::bind(&RemoteApi::GetPluginsMonitor, this, _1,_2,_3,_4));
     m_Server.AddEndpoint(pml::restgoose::GET, endpoint("/x-pam/plugins/test"), std::bind(&RemoteApi::GetPluginsTest, this, _1,_2,_3,_4));
@@ -53,16 +63,10 @@ pml::restgoose::response RemoteApi::GetRoot(const query& theQuery, const std::ve
     pml::restgoose::response resp;
     resp.jsonData.append("settings/");
     resp.jsonData.append("plugins/");
+    resp.jsonData.append("wav/");
+    resp.jsonData.append("aoip/");
 
-    std::set<methodpoint> setPoints = m_Server.GetEndpoints();
-    for(auto pnt : setPoints)
-    {
-        Json::Value js;
-        js["method"] = pnt.first.Get();
-        js["url"] = pnt.second.Get();
-        resp.jsonData.append(js);
-    }
-    
+
 
     return resp;
 }
@@ -158,3 +162,63 @@ bool RemoteApi::AddPluginWebsocketEndpoint(const endpoint& theEndpoint)
     }
     return false;
 }
+
+pml::restgoose::response RemoteApi::GetWavFiles(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
+{
+    pml::restgoose::response resp;
+    resp.jsonData = Json::Value(Json::arrayValue);
+
+    wxArrayString asFiles;
+    wxDir::GetAllFiles(Settings::Get().GetWavDirectory(), &asFiles, wxT("*.wav"), wxDIR_FILES);
+
+    for(size_t i = 0; i < asFiles.GetCount(); i++)
+    {
+        wxFileName fn(asFiles[i]);
+        resp.jsonData.append(fn.GetName().ToStdString());
+    }
+    return resp;
+}
+
+pml::restgoose::response RemoteApi::PostWavFile(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
+{
+    pml::restgoose::response resp;
+    return resp;
+}
+
+pml::restgoose::response RemoteApi::DeleteWavFile(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
+{
+    pml::restgoose::response resp;
+    return resp;
+}
+
+pml::restgoose::response RemoteApi::GetAoipSources(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
+{
+    pml::restgoose::response resp;
+    resp.jsonData = Json::Value(Json::arrayValue);
+    for(auto pairSource : AoipSourceManager::Get().GetSources())
+    {
+        if(pairSource.first > 0)
+        {
+            Json::Value jsSource;
+            jsSource["index"] = pairSource.first;
+            jsSource["name"] = pairSource.second.sName.ToStdString();
+            jsSource["type"] = pairSource.second.sType.ToStdString();
+            jsSource["details"] = pairSource.second.sDetails.ToStdString();
+            jsSource["SDP"] = pairSource.second.sSDP.ToStdString();
+            jsSource["tags"] = Json::Value(Json::arrayValue);
+            for(auto tag : pairSource.second.setTags)
+            {
+                jsSource["tags"].append(tag.ToStdString());
+            }
+            resp.jsonData.append(jsSource);
+        }
+    }
+    return resp;
+}
+
+pml::restgoose::response RemoteApi::PatchAoipSources(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
+{
+    pml::restgoose::response resp;
+    return resp;
+}
+

@@ -14,12 +14,19 @@ struct PAMBASE_IMPEXPORT AoIPSource
         nIndex(nI),
         sName(sN),
         sDetails(sD),
+        sType(sD.BeforeFirst(':')),
         sSDP(sdp)
-        {}
+        {
+            if(sType.empty())
+            {
+                sType = "SDP";
+            }
+
+        }
     int nIndex;
     wxString sName;
-    wxString sType;
     wxString sDetails;
+    wxString sType;
     wxString sSDP;
     std::set<wxString> setTags;
 };
