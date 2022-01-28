@@ -11,7 +11,7 @@
 #include <wx/panel.h>
 //*)
 #include "usbchecker.h"
-
+#include "pnlUSB.h"
 
 class dlgWav: public wxDialog
 {

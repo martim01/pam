@@ -4,6 +4,8 @@
 #include <wx/filename.h>
 #include "usbchecker.h"
 #include "settings.h"
+#include <list>
+#include "log.h"
 
 //(*InternalHeaders(dlgWav)
 #include <wx/intl.h>
@@ -75,7 +77,7 @@ m_bTransfer(false)
 	m_pbtnClose->SetBackgroundColour(wxColour(64,0,64));
 	m_pbtnClose->SetColourDisabled(wxColour(wxT("#A0A0A0")));
 	Panel1 = new wxPanel(m_pSwp1, ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL1"));
-	m_pnlUSB = new pnlUSB(Panel1, ID_PANEL5, wxPoint(0,0), wxSize(600,400), wxTAB_TRAVERSAL, _T("ID_PANEL5"));
+	m_pnlUSB = new pnlUSB(Panel1, "*.wav", "Import", true, ID_PANEL5, wxPoint(0,0), wxSize(600,400), wxTAB_TRAVERSAL, _T("ID_PANEL5"));
 	m_pnlUSB->SetBackgroundColour(wxColour(0,0,0));
 	m_plblImportProgress = new wmLabel(Panel1, ID_M_PLBL10, wxEmptyString, wxPoint(610,10), wxSize(180,80), 0, _T("ID_M_PLBL10"));
 	m_plblImportProgress->SetBorderState(uiRect::BORDER_NONE);
@@ -94,7 +96,6 @@ m_bTransfer(false)
 	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&dlgWav::OnbtnDeleteClick);
 	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&dlgWav::OnbtnImportClick);
 	Connect(ID_M_PBTN9,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&dlgWav::OnbtnCloseClick);
-	Connect(ID_M_PBTN13,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&dlgWav::OnbtnManualClick);
 	//*)
 
 	Bind(wxEVT_USB_FINISHED, &dlgWav::OnUsbFinished, this);
@@ -120,17 +121,17 @@ dlgWav::~dlgWav()
 
 void dlgWav::OnbtnSaveClick(wxCommandEvent& event)
 {
-    std::set<wxFileName> setFn;
+    std::list<wxFileName> lstFn;
     wxArrayInt ai = m_plstFiles->GetSelectedButtons();
     for(size_t i = 0; i < ai.GetCount(); i++)
     {
         wxFileName fn;
         fn.Assign(Settings::Get().GetWavDirectory(), m_plstFiles->GetButtonText(ai[i])+".wav");
-        setFn.insert(fn);
+        lstFn.push_back(fn);
     }
     m_bTransfer = true;
     EnableButtons();
-    m_usb.SaveToUSB(setFn, false);
+    m_usb.SaveToUSB(lstFn, false);
 }
 
 void dlgWav::OnbtnRenameClick(wxCommandEvent& event)
@@ -228,7 +229,7 @@ void dlgWav::ImportWavFile(const wxFileName& fnWav)
 {
     m_pnlUSB->Log(wxString::Format("Importing '%s'", fnWav.GetName().c_str()));
 
-    if(wxCopyFile(sFileName, Settings::Get().GetWavDirectory()+"/"+fnWav.GetFullName()) == true)
+    if(wxCopyFile(fnWav.GetFullPath(), Settings::Get().GetWavDirectory()+"/"+fnWav.GetFullName()) == true)
     {
         pmlLog() << "Imported wav file " << fnWav.GetName();
         m_plstFiles->AddButton(fnWav.GetName());

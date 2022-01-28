@@ -30,22 +30,21 @@ void UsbChecker::Abort()
 
     if(m_pHandler)
     {
-        wxCommandEvent* pEvent(wxEVT_USB_FINISHED);
+        wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_USB_FINISHED);
         pEvent->SetInt(-1);
         wxQueueEvent(m_pHandler, pEvent);
     }
 
 }
 
-void UsbChecker::SaveToUSB(const std::set<const wxFileName>& setFn, bool bRemove)
+void UsbChecker::SaveToUSB(const std::list<wxFileName>& lstFn, bool bRemove)
 {
-    pmlLog(pml::LOG_DEBUG) << "USB\tSaveToUsb: " << fnSource.GetFullPath();
     if(m_pThread != nullptr)
     {
         Abort();
     }
 
-    m_pThread = std::make_unique<std::thread>([this, setFn, bRemove]()
+    m_pThread = std::make_unique<std::thread>([this, lstFn, bRemove]()
     {
         wxArrayString asFiles;
         #ifdef __WXGNU__
@@ -54,7 +53,7 @@ void UsbChecker::SaveToUSB(const std::set<const wxFileName>& setFn, bool bRemove
         #endif // __WXGNU__
         if(asFiles.GetCount() == 0)
         {
-            pmlLog(pml::LOG_WARN) << "USB\tNot able to save " << fnSource.GetName() << " no USB drives detected.";
+            pmlLog(pml::LOG_WARN) << "USB\tNot able to save. no USB drives detected.";
         }
         else
         {
@@ -64,7 +63,7 @@ void UsbChecker::SaveToUSB(const std::set<const wxFileName>& setFn, bool bRemove
                 {
                     if(MountDevice(asFiles[i]) == 0)
                     {
-                        for(const auto& fnSource : setFn)
+                        for(const auto& fnSource : lstFn)
                         {
                             std::ifstream source(fnSource.GetFullPath().ToStdString(), std::ios::binary);
                             std::ofstream dest(wxString("/mnt/share/"+fnSource.GetFullName()).ToStdString(), std::ios::binary);
@@ -103,7 +102,7 @@ void UsbChecker::SaveToUSB(const std::set<const wxFileName>& setFn, bool bRemove
         if(m_pHandler)
         {
             wxCommandEvent* pEventFinished = new wxCommandEvent(wxEVT_USB_FINISHED);
-            pEvent->SetInt(0);
+            pEventFinished->SetInt(0);
             wxQueueEvent(m_pHandler, pEventFinished);
         }
     });
@@ -181,7 +180,7 @@ void UsbChecker::RunCheck(const wxString& sFilename)
             }
         }
         wxCommandEvent* pEventFinished = new wxCommandEvent(wxEVT_USB_FINISHED);
-        pEvent->SetInt(0);
+        pEventFinished->SetInt(0);
         wxQueueEvent(m_pHandler, pEventFinished);
     });
 }
