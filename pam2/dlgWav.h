@@ -22,6 +22,7 @@ class dlgWav: public wxDialog
 
 		//(*Declarations(dlgWav)
 		pnlUSB* m_pnlUSB;
+		wmButton* m_pbtnClose;
 		wmButton* m_pbtnDelete;
 		wmButton* m_pbtnEnd;
 		wmButton* m_pbtnHome;
@@ -50,6 +51,7 @@ class dlgWav: public wxDialog
 		static const long ID_M_PBTN2;
 		static const long ID_M_PBTN3;
 		static const long ID_M_PBTN4;
+		static const long ID_M_PBTN9;
 		static const long ID_PANEL2;
 		static const long ID_PANEL5;
 		static const long ID_M_PLBL10;
@@ -66,10 +68,11 @@ class dlgWav: public wxDialog
 		void OnbtnDeleteClick(wxCommandEvent& event);
 		void OnbtnImportClick(wxCommandEvent& event);
 		void OnlstFilesSelected(wxCommandEvent& event);
+		void OnbtnCloseClick(wxCommandEvent& event);
 		//*)
 		void OnUsbFinished(wxCommandEvent& event);
         void EnableButtons();
-        void ImportWavFile(const wxString& sFileName);
+        void ImportWavFile(const wxFileName& fnWav);
         void OnbtnImportImportClick(wxCommandEvent& event);
 
 		UsbChecker m_usb;

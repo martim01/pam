@@ -18,8 +18,8 @@
 						<button_selected>#008000</button_selected>
 						<button_disabled>#808080</button_disabled>
 						<items />
-						<pos>0,0</pos>
-						<size>680,420</size>
+						<pos>5,10</pos>
+						<size>670,410</size>
 						<bg>#000000</bg>
 						<style>wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI</style>
 						<handler function="OnlstFilesSelected" entry="EVT_LIST_SELECTED" />
@@ -76,9 +76,16 @@
 						<button_disabled>#A0A0A0</button_disabled>
 						<pos>690,280</pos>
 						<size>100,60</size>
-						<enabled>0</enabled>
 						<bg>#0C1674</bg>
 						<handler function="OnbtnImportClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN9" variable="m_pbtnClose" member="yes">
+						<label>Close Manager</label>
+						<button_disabled>#A0A0A0</button_disabled>
+						<pos>690,430</pos>
+						<size>100,40</size>
+						<bg>#400040</bg>
+						<handler function="OnbtnCloseClick" entry="EVT_BUTTON" />
 					</object>
 				</object>
 				<label>Main</label>
