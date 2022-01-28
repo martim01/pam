@@ -98,6 +98,8 @@ m_bTransfer(false)
 	Connect(ID_M_PBTN9,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&dlgWav::OnbtnCloseClick);
 	//*)
 
+	Connect(ID_M_PBTN13,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&dlgWav::OnbtnBackClick);
+
 	Bind(wxEVT_USB_FINISHED, &dlgWav::OnUsbFinished, this);
 	wxArrayString asFiles;
     wxDir::GetAllFiles(Settings::Get().GetWavDirectory(), &asFiles, wxT("*.wav"), wxDIR_FILES);
@@ -244,4 +246,9 @@ void dlgWav::ImportWavFile(const wxFileName& fnWav)
 void dlgWav::OnbtnCloseClick(wxCommandEvent& event)
 {
     EndModal(wxID_OK);
+}
+
+void dlgWav::OnbtnBackClick(wxCommandEvent& event)
+{
+    m_pSwp1->ChangeSelection(0);
 }

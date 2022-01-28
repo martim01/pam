@@ -74,6 +74,7 @@ class dlgWav: public wxDialog
         void EnableButtons();
         void ImportWavFile(const wxFileName& fnWav);
         void OnbtnImportImportClick(wxCommandEvent& event);
+        void OnbtnBackClick(wxCommandEvent& event);
 
 		UsbChecker m_usb;
 		bool m_bTransfer;
