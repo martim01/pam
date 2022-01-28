@@ -1185,8 +1185,7 @@ void pam2Dialog::OnbtnScreenshotClick(wxCommandEvent& event)
 
 void pam2Dialog::OnTimerScreenshot(const wxTimerEvent& event)
 {
-    wxFileName fn(Screenshot());
-    m_usb.SaveToUSB({fn}, true);
+    m_usb.SaveToUSB({wxFileName(Screenshot())}, true);
 }
 
 wxString pam2Dialog::Screenshot()

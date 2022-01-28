@@ -4,7 +4,7 @@
 #include <memory>
 #include <wx/filename.h>
 #include <wx/dir.h>
-
+#include <list>
 class UsbChecker
 {
     public:
@@ -12,7 +12,7 @@ class UsbChecker
         ~UsbChecker();
 
         void RunCheck(const wxString& sFilename);
-        void SaveToUSB(const std::set<const wxFileName>& setFn, bool bRemove);
+        void SaveToUSB(const std::list<wxFileName>& lstFn, bool bRemove);
 
         static int MountDevice(const wxString& sDevice);
         static int UnmountDevice();

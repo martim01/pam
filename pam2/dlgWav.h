@@ -11,7 +11,7 @@
 #include <wx/panel.h>
 //*)
 #include "usbchecker.h"
-
+#include "pnlUSB.h"
 
 class dlgWav: public wxDialog
 {
@@ -69,7 +69,7 @@ class dlgWav: public wxDialog
 		//*)
 		void OnUsbFinished(wxCommandEvent& event);
         void EnableButtons();
-        void ImportWavFile(const wxString& sFileName);
+        void ImportWavFile(const wxFileName& fnFile);
         void OnbtnImportImportClick(wxCommandEvent& event);
 
 		UsbChecker m_usb;

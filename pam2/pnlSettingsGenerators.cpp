@@ -15,6 +15,7 @@
 #include <wx/filename.h>
 #include "generatorpluginfactory.h"
 #include "generatorpluginbuilder.h"
+#include "dlgWav.h"
 
 //(*InternalHeaders(pnlSettingsGenerators)
 #include <wx/font.h>
@@ -466,9 +467,11 @@ void pnlSettingsGenerators::OnbtnSequencesClick(wxCommandEvent& event)
         aDlg.ShowModal();
         ShowSequences();
     }
-    else
+    else if(Settings::Get().Read(wxT("Output"), wxT("Source"), wxEmptyString) == wxT("File"))
     {
-
+        dlgWav aDlg(this);
+        aDlg.ShowModal();
+        ShowFiles();
     }
 }
 
