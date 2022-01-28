@@ -307,6 +307,8 @@
 		<Unit filename="r128thread.h" />
 		<Unit filename="rawvideosource.cpp" />
 		<Unit filename="rawvideosource.h" />
+		<Unit filename="remoteapi.cpp" />
+		<Unit filename="remoteapi.h" />
 		<Unit filename="rtpserverthread.cpp" />
 		<Unit filename="rtpserverthread.h" />
 		<Unit filename="rtpthread.cpp" />

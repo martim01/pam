@@ -12,7 +12,7 @@ class UsbChecker
         ~UsbChecker();
 
         void RunCheck(const wxString& sFilename);
-        void SaveToUSB(const wxFileName& fnSource);
+        void SaveToUSB(const std::set<const wxFileName>& setFn, bool bRemove);
 
         static int MountDevice(const wxString& sDevice);
         static int UnmountDevice();

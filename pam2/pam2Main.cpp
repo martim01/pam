@@ -330,7 +330,7 @@ pam2Dialog::~pam2Dialog()
     }
     delete m_pCursor;
 
-    
+
 }
 
 void pam2Dialog::OnQuit(wxCommandEvent& event)
@@ -1186,7 +1186,7 @@ void pam2Dialog::OnbtnScreenshotClick(wxCommandEvent& event)
 void pam2Dialog::OnTimerScreenshot(const wxTimerEvent& event)
 {
     wxFileName fn(Screenshot());
-    m_usb.SaveToUSB(fn);
+    m_usb.SaveToUSB({fn}, true);
 }
 
 wxString pam2Dialog::Screenshot()

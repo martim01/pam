@@ -283,6 +283,8 @@
 		<Unit filename="dlgPin.h" />
 		<Unit filename="dlgSequence.cpp" />
 		<Unit filename="dlgSequence.h" />
+		<Unit filename="dlgWav.cpp" />
+		<Unit filename="dlgWav.h" />
 		<Unit filename="dlgWiFi.cpp" />
 		<Unit filename="dlgWiFi.h" />
 		<Unit filename="dlgmask.cpp" />
@@ -375,6 +377,7 @@
 		<Unit filename="wxsmith/dlgMask.wxs" />
 		<Unit filename="wxsmith/dlgPin.wxs" />
 		<Unit filename="wxsmith/dlgSequence.wxs" />
+		<Unit filename="wxsmith/dlgWav.wxs" />
 		<Unit filename="wxsmith/pnlAbout.wxs" />
 		<Unit filename="wxsmith/pnlAoIPInfo.wxs" />
 		<Unit filename="wxsmith/pnlAoIPSelection.wxs" />
@@ -437,6 +440,7 @@
 					<wxPanel wxs="wxsmith/pnlAoipManual.wxs" src="pnlAoipManual.cpp" hdr="pnlAoipManual.h" fwddecl="0" i18n="1" name="pnlAoipManual" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlSettingsInputNmos.wxs" src="pnlSettingsInputNmos.cpp" hdr="pnlSettingsInputNmos.h" fwddecl="0" i18n="1" name="pnlSettingsInputNmos" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlAbout.wxs" src="pnlAbout.cpp" hdr="pnlAbout.h" fwddecl="0" i18n="1" name="pnlAbout" language="CPP" />
+					<wxDialog wxs="wxsmith/dlgWav.wxs" src="dlgWav.cpp" hdr="dlgWav.h" fwddecl="0" i18n="1" name="dlgWav" language="CPP" />
 				</resources>
 			</wxsmith>
 			<code_completion />
