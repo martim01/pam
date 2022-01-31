@@ -32,6 +32,7 @@ class dlgWav: public wxDialog
 		wmButton* m_pbtnPrevious;
 		wmButton* m_pbtnRename;
 		wmButton* m_pbtnSave;
+		wmLabel* m_pLbl1;
 		wmLabel* m_plblImportProgress;
 		wmList* m_plstFiles;
 		wmSwitcherPanel* m_pSwp1;
@@ -58,6 +59,7 @@ class dlgWav: public wxDialog
 		static const long ID_M_PBTN13;
 		static const long ID_PANEL1;
 		static const long ID_M_PSWP1;
+		static const long ID_M_PLBL1;
 		//*)
 
 	private:
@@ -69,6 +71,11 @@ class dlgWav: public wxDialog
 		void OnbtnImportClick(wxCommandEvent& event);
 		void OnlstFilesSelected(wxCommandEvent& event);
 		void OnbtnCloseClick(wxCommandEvent& event);
+		void OnbtnHomeClick(wxCommandEvent& event);
+		void OnbtnPreviousClick(wxCommandEvent& event);
+		void OnbtnNextClick(wxCommandEvent& event);
+		void OnbtnEndClick(wxCommandEvent& event);
+		void OnlstFilesPaged(wxCommandEvent& event);
 		//*)
 		void OnUsbFinished(wxCommandEvent& event);
         void EnableButtons();
@@ -76,6 +83,7 @@ class dlgWav: public wxDialog
         void OnbtnImportImportClick(wxCommandEvent& event);
         void OnbtnBackClick(wxCommandEvent& event);
 
+        void ShowPagingButtons();
 		UsbChecker m_usb;
 		bool m_bTransfer;
 
