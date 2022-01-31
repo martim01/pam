@@ -10,8 +10,7 @@ class RemoteApi
 
         void Run();
 
-        bool AddPluginWebsocketEndpoint(const endpoint& theEndpoint);
-        bool AddPluginEndpoint(const httpMethod& method, const endpoint& theEndpoint, std::function<pml::restgoose::response(const query&, const std::vector<pml::restgoose::partData>&, const endpoint&, const userName&)> func);
+        
 
     protected:
         bool WSAuthenticate(const endpoint& theEndpoint, const userName& theUser, const ipAddress& thePeer);
@@ -37,7 +36,15 @@ class RemoteApi
         pml::restgoose::response GetAoipSources(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser);
         pml::restgoose::response PatchAoipSources(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser);
 
+        
     private:
+        friend class MonitorPluginBuilder;
+        friend class TestPluginBuilder;
+        friend class GeneratorPluginBuilder;
+
+        bool AddPluginEndpoint(const httpMethod& method, const endpoint& theEndpoint, std::function<pml::restgoose::response(const query&, const std::vector<pml::restgoose::partData>&, const endpoint&, const userName&)> func);
+        void SendPluginWebsocketMessage(const Json::Value& jsMessage);
+
         RemoteApi();
         ~RemoteApi();
 

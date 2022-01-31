@@ -77,7 +77,6 @@ bool GeneratorPluginBuilder::IsLogActive()
 void GeneratorPluginBuilder::InitRemoteApi()
 {
     pmlLog() << "Generator: " << GetName().ToStdString() << "\tInitRemoteApi";
-    RemoteApi::Get().AddPluginWebsocketEndpoint(endpoint(GetName().ToStdString()));
     RemoteApi::Get().AddPluginEndpoint(pml::restgoose::GET, endpoint("/x-pam/plugins/generator/"+GetName().ToStdString()), std::bind(&GeneratorPluginBuilder::GetStatus, this, _1,_2,_3,_4));
 }
 

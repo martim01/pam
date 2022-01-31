@@ -132,7 +132,6 @@ MonitorPluginBuilder::~MonitorPluginBuilder()
 
 void MonitorPluginBuilder::InitRemoteApi()
 {
-    RemoteApi::Get().AddPluginWebsocketEndpoint(endpoint(GetName().ToStdString()));
     RemoteApi::Get().AddPluginEndpoint(pml::restgoose::GET, endpoint("/x-pam/plugins/monitor/"+GetName().ToStdString()), std::bind(&MonitorPluginBuilder::GetStatus, this, _1,_2,_3,_4));
 }
 
@@ -149,4 +148,13 @@ pml::restgoose::response MonitorPluginBuilder::GetStatus(const query& theQuery, 
     }
     return resp;
 
+}
+
+void MonitorPluginBuilder::SendWebsocketMessage(Json::Value jsMessage)
+{
+    Json::Value jsWebsocket;
+    jsWebsocket["plugin"]["type"] = "monitor";
+    jsWebsocket["plugin"]["name"] = GetName().ToStdString();
+    jsWebsocket["data"] = jsMessage;
+    RemoteApi::Get().SendPluginWebsocketMessage(jsWebsocket);
 }

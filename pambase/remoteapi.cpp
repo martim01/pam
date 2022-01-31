@@ -9,6 +9,7 @@
 #include <wx/filename.h>
 #include <wx/dir.h>
 #include "aoipsourcemanager.h"
+#include "log.h"
 
 using namespace std::placeholders;
 
@@ -30,6 +31,9 @@ void RemoteApi::Run()
 
 RemoteApi::RemoteApi()
 {
+    m_Server.Init(Settings::Get().Read("RemoteApi", "Port", 8090), endpoint("/x-pam"), true);
+
+
     m_Server.AddEndpoint(pml::restgoose::GET, endpoint("/x-pam"), std::bind(&RemoteApi::GetRoot, this, _1,_2,_3,_4));
     m_Server.AddEndpoint(pml::restgoose::GET, endpoint("/x-pam/settings"), std::bind(&RemoteApi::GetSettings, this, _1,_2,_3,_4));
     m_Server.AddEndpoint(pml::restgoose::PATCH, endpoint("/x-pam/settings"), std::bind(&RemoteApi::PatchSettings, this, _1,_2,_3,_4));
@@ -48,7 +52,10 @@ RemoteApi::RemoteApi()
 
     m_Server.AddNotFoundCallback(std::bind(&RemoteApi::NotFound, this, _1,_2,_3,_4));
 
-    m_Server.Init(Settings::Get().Read("RemoteApi", "Port", 8090), endpoint("/x-pam"), true);
+    m_Server.AddWebsocketEndpoint(endpoint("/x-pam/settings"), std::bind(&RemoteApi::WSAuthenticate, this, _1,_2,_3), std::bind(&RemoteApi::WSMessage, this, _1,_2), std::bind(&RemoteApi::WSClose, this, _1,_2));
+    m_Server.AddWebsocketEndpoint(endpoint("/x-pam/monitor"), std::bind(&RemoteApi::WSAuthenticate, this, _1,_2,_3), std::bind(&RemoteApi::WSMessage, this, _1,_2), std::bind(&RemoteApi::WSClose, this, _1,_2));
+
+   
 
 }
 pml::restgoose::response RemoteApi::NotFound(const query& theQuery,  const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
@@ -131,11 +138,8 @@ pml::restgoose::response RemoteApi::GetPluginsGenerator(const query& theQuery, c
 
 bool RemoteApi::WSAuthenticate(const endpoint& theEndpoint, const userName& theUser, const ipAddress& thePeer)
 {
-    if(m_setWS.find(theEndpoint) != m_setWS.end())
-    {
-        return true;
-    }
-    return false;
+    pmlLog() << "RemoteApi\tWebsocket connection: " << theEndpoint.Get() << " from " << thePeer.Get();
+    return true;
 }
 
 bool RemoteApi::WSMessage(const endpoint& theEndpoint, const Json::Value& theMessage)
@@ -146,7 +150,7 @@ bool RemoteApi::WSMessage(const endpoint& theEndpoint, const Json::Value& theMes
 
 void RemoteApi::WSClose(const endpoint& theEndpoint, const ipAddress& thePeer)
 {
-
+    pmlLog() << "RemoteApi\tWebsocket closed: " << theEndpoint.Get() << " from " << thePeer.Get();
 }
 
 bool RemoteApi::AddPluginEndpoint(const httpMethod& method, const endpoint& theEndpoint, std::function<pml::restgoose::response(const query&, const std::vector<pml::restgoose::partData>&, const endpoint&, const userName&)> func)
@@ -154,14 +158,6 @@ bool RemoteApi::AddPluginEndpoint(const httpMethod& method, const endpoint& theE
     return m_Server.AddEndpoint(method, theEndpoint, func);
 }
 
-bool RemoteApi::AddPluginWebsocketEndpoint(const endpoint& theEndpoint)
-{
-    if(m_setWS.insert(theEndpoint).second)
-    {
-        return m_Server.AddWebsocketEndpoint(theEndpoint, std::bind(&RemoteApi::WSAuthenticate, this, _1,_2,_3), std::bind(&RemoteApi::WSMessage, this, _1, _2), std::bind(&RemoteApi::WSClose, this, _1, _2));
-    }
-    return false;
-}
 
 pml::restgoose::response RemoteApi::GetWavFiles(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
 {
@@ -222,3 +218,7 @@ pml::restgoose::response RemoteApi::PatchAoipSources(const query& theQuery, cons
     return resp;
 }
 
+void RemoteApi::SendPluginWebsocketMessage(const Json::Value& jsMessage)
+{
+    m_Server.SendWebsocketMessage({endpoint("/x-pam/monitor")}, jsMessage);
+}

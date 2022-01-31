@@ -74,7 +74,6 @@ bool TestPluginBuilder::IsLogActive()
 
 void TestPluginBuilder::InitRemoteApi()
 {
-    RemoteApi::Get().AddPluginWebsocketEndpoint(endpoint(GetName().ToStdString()));
     RemoteApi::Get().AddPluginEndpoint(pml::restgoose::GET, endpoint("/x-pam/plugins/test/"+GetName().ToStdString()), std::bind(&TestPluginBuilder::GetStatus, this, _1,_2,_3,_4));
 }
 
