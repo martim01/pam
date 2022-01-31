@@ -119,7 +119,6 @@
 						<pos>690,390</pos>
 						<size>100,45</size>
 						<bg>#9232FC</bg>
-						<handler function="OnbtnManualClick" entry="EVT_BUTTON" />
 					</object>
 				</object>
 				<label>Import</label>

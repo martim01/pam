@@ -121,7 +121,6 @@ m_bTransfer(false)
 	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&dlgWav::OnbtnDeleteClick);
 	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&dlgWav::OnbtnImportClick);
 	Connect(ID_M_PBTN9,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&dlgWav::OnbtnCloseClick);
-	Connect(ID_M_PBTN13,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&dlgWav::OnbtnManualClick);
 	//*)
 
 	Connect(ID_M_PBTN13,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&dlgWav::OnbtnBackClick);
