@@ -90,7 +90,7 @@ m_bTransfer(false)
 	m_pbtnClose->SetColourDisabled(wxColour(wxT("#A0A0A0")));
 	Panel1 = new wxPanel(m_pSwp1, ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL1"));
 	Panel1->SetBackgroundColour(wxColour(0,0,0));
-	m_pnlUSB = new pnlUSB(Panel1, ID_PANEL5, wxPoint(0,0), wxSize(600,400), wxTAB_TRAVERSAL, _T("ID_PANEL5"));
+	m_pnlUSB = new pnlUSB(Panel1, "*.wav", "Wav Files", true, ID_PANEL5, wxPoint(0,0), wxSize(600,400), wxTAB_TRAVERSAL, _T("ID_PANEL5"));
 	m_pnlUSB->SetBackgroundColour(wxColour(0,0,0));
 	m_plblImportProgress = new wmLabel(Panel1, ID_M_PLBL10, wxEmptyString, wxPoint(610,10), wxSize(180,80), 0, _T("ID_M_PLBL10"));
 	m_plblImportProgress->SetBorderState(uiRect::BORDER_NONE);
