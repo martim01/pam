@@ -10,7 +10,7 @@
 		<meta http-equiv="pragma" content="no-cache">
 		<meta http-equiv="Cache-Control" content="no-cache, must-revalidate, post-check=0, pre-check=0">
 		<meta http-equiv="Cache-Control" content="max-age=0">
-		<title>ePI</title>
+		<title>PAM RemoteApi Example</title>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.4/raphael-min.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/justgage/1.2.9/justgage.min.js"></script>
 		<script type="text/javascript" language="javascript">
@@ -26,10 +26,15 @@
 			}
 			
 			var g_url = "http://"+g_endpoint+"/x-pam";
-			
-			
-			
+			var g_canvas;
 
+
+			function on_load()
+			{
+				g_canvas = document.getElementById('fft');
+
+				ws_connect();
+			}
 			function ws_connect()
 			{
 				console.log("ws_connect: "+ g_endpoint+"/x-pam/monitor");
@@ -44,26 +49,87 @@
 				g_ws.onmessage = function(ev) 
 				{
 					var jsonObj = JSON.parse(ev.data);
-					console.log(jsonObj);
+					//console.log(jsonObj);
 					if(jsonObj["plugin"]["name"] == "Meters")
 					{
-						document.getElementById("left").value = jsonObj["data"][0]["level"];
-						document.getElementById("right").value = jsonObj["data"][1]["level"];
-						document.getElementById("mid").value = jsonObj["data"][2]["level"];
-						document.getElementById("side").value = jsonObj["data"][3]["level"];
+						drawMeter(jsonObj["data"]);
 					}
-					
+					else if(jsonObj["plugin"]["name"] == "FFT")
+					{
+						drawfft(jsonObj["data"]);
+					}	
                 }
             }
 
-	
+			function prepareCanvas()
+			{
+				var ctx = g_canvas.getContext('2d');
+				ctx.fillStyle = '#000000';
+				ctx.fillRect(0,0,g_canvas.width, g_canvas.height);
+				return ctx;
+			}
+
+			function drawMeter(jsonObj)
+			{
+				var ctx = prepareCanvas();
+
+				var y = -(g_canvas.height/70.0 * jsonObj[0]["level"]);
+				ctx.fillStyle = '#ff0000';
+				ctx.fillRect(40, y, 50, g_canvas.height-y);
+
+				y = -(g_canvas.height/70.0 * jsonObj[1]["level"]);
+				ctx.fillStyle = '#00ff00';
+				ctx.fillRect(100, y, 50, g_canvas.height-y);
+
+				y = -(g_canvas.height/70.0 * jsonObj[2]["level"]);
+				ctx.fillStyle = '#ffffff';
+				ctx.fillRect(180, y, 50, g_canvas.height-y);
+
+				y = -(g_canvas.height/70.0 * jsonObj[3]["level"]);
+				ctx.fillStyle = '#ff8800';
+				ctx.fillRect(240, y, 50, g_canvas.height-y);
+
+			}
+			
+			function drawfft(jsonObj)
+			{
+				var ctx = prepareCanvas();
+				ctx.strokeStyle = '#ffffff';
+				ctx.beginPath();
+				ctx.moveTo(0,0);
+				ctx.lineTo(0, g_canvas.height);
+				ctx.lineTo(g_canvas.width, g_canvas.height);
+				ctx.stroke();
+
+				if(jsonObj["bins"] !== undefined)
+				{
+					
+					ctx.beginPath();
+					var oldx = 0;
+					var oldy = 0;
+					for(var i = 0; i < jsonObj["bins"].length; i++)
+					{
+						var x = g_canvas.width/Math.log10(jsonObj["bins"].length) * Math.log10(i);
+						var y = -(g_canvas.height/70.0 * jsonObj["bins"][i]["level"]);
+        				
+						ctx.moveTo(oldx, oldy);
+						ctx.lineTo(x,y);
+
+						oldx = x;
+						oldy = y;
+					}
+					ctx.stroke();
+				}
+				else
+				{
+					console.log(jsonObj);
+				}
+
+			}
 
         </script>
     </head>
-    <body onload="ws_connect()">
-		<div><meter id="left" min="-90" low="-40" high="-18" max="0" value="-90"> L</div>
-		<div><meter id="right" min="-90" low="-40" high="-18" max="0" value="-90"> R</div>
-		<div><meter id="mid" min="-90" low="-40" high="-18" max="0" value="-90"> M</div>
-		<div><meter id="side" min="-90" low="-40" high="-18" max="0" value="-90"> S</div>
+    <body onload="on_load()">
+		<canvas id="fft" width="1024" height="600">Fallback</canvas>
     </body>
 </HTML>

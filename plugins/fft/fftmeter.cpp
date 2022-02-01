@@ -408,6 +408,8 @@ void FftMeter::DoFFT()
             break;
     }
     Refresh();
+
+     m_pBuilder->SendWebsocketMessage(CreateWebsocketMessage());
 }
 
 void FftMeter::FFTRoutine()
@@ -418,7 +420,7 @@ void FftMeter::FFTRoutine()
 
 
     m_dBinSize = static_cast<double>(m_nSampleRate)/static_cast<double>((m_vfft_out.size()-1)*2);
-    float dMax(-80);
+    m_dPeakLevel = -80;
     double dMaxBin(0);
     vector<double> vAmp;
     vAmp.resize(m_vAmplitude.size());
@@ -438,15 +440,17 @@ void FftMeter::FFTRoutine()
         m_vPeak[i] = std::max(m_vPeak[i], m_vAmplitude[i]);
 
         m_vAmplitude[i] = min(0.0, max((double)m_vAmplitude[i]-m_dFall, (double)dLog));
-        if(dMax < m_vAmplitude[i])
+        if(m_dPeakLevel < m_vAmplitude[i])
         {
-            dMax = m_vAmplitude[i];
+            m_dPeakLevel = m_vAmplitude[i];
             dMaxBin = i;
         }
     }
     double dQ = (vAmp[dMaxBin+1]-vAmp[dMaxBin-1])/(2*(2*vAmp[dMaxBin]-vAmp[dMaxBin-1]-vAmp[dMaxBin+1]));
-    m_uiPeakLevel.SetLabel(wxString::Format(wxT("%.1f"),dMax));
-    m_uiPeakFrequency.SetLabel(wxString::Format(wxT("%.0fHz"),(dQ+dMaxBin)*m_dBinSize));
+    m_dPeakFrequency = (dQ+dMaxBin)*m_dBinSize;
+
+    m_uiPeakLevel.SetLabel(wxString::Format(wxT("%.1f"),m_dPeakLevel));
+    m_uiPeakFrequency.SetLabel(wxString::Format("%.0fHz",m_dPeakFrequency));
 }
 
 float FftMeter::WindowMod(float dAmplitude)
@@ -719,4 +723,23 @@ void FftMeter::ResetPeaks()
 {
     m_vPeak = vector<float>(m_vfft_out.size(), -80.0);
 
+}
+
+Json::Value FftMeter::CreateWebsocketMessage()
+{
+    Json::Value jsData;
+    jsData["bins"] = Json::Value(Json::arrayValue);
+
+    for(size_t i = 0; i < m_vPeak.size(); i++)
+    {
+        Json::Value jsBin;
+        jsBin["peak"] = m_vPeak[i];
+        jsBin["level"] = m_vAmplitude[i];
+        jsBin["frequency"] = m_dBinSize * static_cast<double>(i);
+        jsData["bins"].append(jsBin);
+    }
+    jsData["peak"]["level"] = m_dPeakLevel;
+    jsData["peak"]["frequency"] = m_dPeakFrequency;
+
+    return jsData;
 }

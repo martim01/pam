@@ -28,6 +28,8 @@ void FFTBuilder::SetAudioData(const timedbuffer* pBuffer)
     {
         m_pMeter->SetData(pBuffer);
     }
+
+   
 }
 
 wxWindow* FFTBuilder::CreateMonitorPanel(wxWindow* pParent)

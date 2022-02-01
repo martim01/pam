@@ -7,6 +7,7 @@
 #include <queue>
 #include "pmcontrol.h"
 #include "colourgradient.h"
+#include "json/json.h"
 
 class timedbuffer;
 class FFTBuilder;
@@ -117,6 +118,8 @@ class FftMeter : public pmControl
         enum {ANALYSE_L,ANALYSE_R, ANALYSE_L_P_R, ANALYSE_L_M_R};
         enum {WINDOW_RECTANGULAR, WINDOW_HANNING, WINDOW_HAMMING, WINDOW_BLACKMAN, WINDOW_KAISER, WINDOW_KAISERBESSEL};
         enum{FFT, OCTAVE, PEAKS};
+
+        Json::Value CreateWebsocketMessage();
   protected:
 
 
@@ -221,6 +224,9 @@ class FftMeter : public pmControl
 
         ColourGradient m_HeatMap;
         bool m_bColour;
+
+        double m_dPeakLevel;
+        double m_dPeakFrequency;
 
 };
 
