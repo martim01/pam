@@ -287,7 +287,6 @@
 		<Unit filename="dlgWav.h" />
 		<Unit filename="dlgWiFi.cpp" />
 		<Unit filename="dlgWiFi.h" />
-		<Unit filename="dlgmask.cpp" />
 		<Unit filename="dlgmask.h" />
 		<Unit filename="logelement.cpp" />
 		<Unit filename="logelement.h" />
@@ -443,9 +442,6 @@
 					<wxDialog wxs="wxsmith/dlgWav.wxs" src="dlgWav.cpp" hdr="dlgWav.h" fwddecl="0" i18n="1" name="dlgWav" language="CPP" />
 				</resources>
 			</wxsmith>
-			<code_completion />
-			<envvars />
-			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

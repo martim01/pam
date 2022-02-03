@@ -23,9 +23,7 @@ pnlOptions::pnlOptions(wxWindow* parent,SpectogramBuilder* pBuilder, wxWindowID 
 	m_pbtnLinear = new wmButton(this, wxNewId(), _("Display"), wxPoint(2,50), wxSize(190,30), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
     m_pbtnLinear->SetToggle(true, "Log", "Linear");
 
-    m_pbtnLinear->ToggleSelection((m_pBuilder->ReadSetting("linear", 0)==1), true);
-
-    Connect(m_pbtnLinear->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlOptions::OnbtnLinearClick);
+    m_pbtnLinear->ConnectToSetting(m_pBuilder->GetName(),"linear", false);
 
 }
 
@@ -36,7 +34,3 @@ pnlOptions::~pnlOptions()
 }
 
 
-void pnlOptions::OnbtnLinearClick(wxCommandEvent& event)
-{
-    m_pBuilder->WriteSetting("linear", event.IsChecked());
-}

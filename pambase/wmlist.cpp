@@ -8,6 +8,9 @@
 #include "icons/up16.xpm"
 #include "icons/down16.xpm"
 
+#include "settings.h"
+#include "settingevent.h"
+
 using namespace std;
 
 const long wmList::ID_HOLDING       = wxNewId();
@@ -808,7 +811,6 @@ void wmList::SelectAll(bool bSelect, bool bEvent)
 void wmList::SelectButton(std::list<button*>::iterator itSel, bool bEvent)
 {
 
-
     if(itSel != m_lstButtons.end() && (*itSel)->nEnabled == wmENABLED)
     {
         //make this here before we possibly invalidate the iterator
@@ -818,6 +820,7 @@ void wmList::SelectButton(std::list<button*>::iterator itSel, bool bEvent)
         event.SetClientData((*itSel)->pUi->GetClientData());
         event.SetInt((*itSel)->pUi->GetIndex());
 
+        WriteSetting((*itSel));
 
         bool bSelected(false);
         if((m_nStyle & STYLE_SELECT))
@@ -863,6 +866,9 @@ void wmList::SelectButton(std::list<button*>::iterator itSel, bool bEvent)
                 }
             }
         }
+
+
+
         if(bEvent)
         {
 
@@ -2419,4 +2425,91 @@ uiRect* wmList::GetButtonuiRect(size_t nButton)
         return (*itButton)->pUi;
     }
     return 0;
+}
+
+
+bool wmList::ConnectToSetting(const wxString& sSection, const wxString& sKey, const wxString& sDefault)
+{
+    if(sSection.empty() || sKey.empty())
+    {
+        return false;
+    }
+
+    ConnectToSetting(sSection, sKey);
+    m_eSettingConnection = enumSettingConnection::LABEL;
+    SelectButton(Settings::Get().Read(sSection, sKey, sDefault), false);
+    return true;
+}
+
+bool wmList::ConnectToSetting(const wxString& sSection, const wxString& sKey, size_t nDefault)
+{
+    if(sSection.empty() || sKey.empty())
+    {
+        return false;
+    }
+    ConnectToSetting(sSection, sKey);
+    m_eSettingConnection = enumSettingConnection::INDEX;
+    SelectButton(Settings::Get().Read(sSection, sKey, (int)nDefault), false);
+    return true;
+}
+
+bool wmList::ConnectToSetting(const wxString& sSection, const wxString& sKey, void* pDefault)
+{
+    if(sSection.empty() || sKey.empty())
+    {
+        return false;
+    }
+    ConnectToSetting(sSection, sKey);
+    m_eSettingConnection = enumSettingConnection::DATA;
+    size_t nButton = FindButton((void*)Settings::Get().Read(sSection, sKey, (int)pDefault));
+    if(nButton != NOT_FOUND)
+    {
+        SelectButton(nButton, false);
+    }
+    return true;
+}
+
+void wmList::ConnectToSetting(const wxString& sSection, const wxString& sKey)
+{
+    m_sSettingSection = sSection;
+    m_sSettingKey = sKey;
+    Settings::Get().AddHandler(this, sSection, sKey);
+    Bind(wxEVT_SETTING_CHANGED, &wmList::OnSettingChanged, this);
+}
+
+void wmList::OnSettingChanged(const SettingEvent& event)
+{
+    switch(m_eSettingConnection)
+    {
+        case enumSettingConnection::LABEL:
+            SelectButton(event.GetValue(), false);
+            break;
+        case enumSettingConnection::INDEX:
+            SelectButton(event.GetValue((long)0), false);
+            break;
+        case enumSettingConnection::DATA:
+        {
+            size_t nButton = FindButton((void*)event.GetValue((long)0));
+            if(nButton != NOT_FOUND)
+            {
+                SelectButton(nButton, false);
+            }
+        }
+    }
+}
+
+void wmList::WriteSetting(button* pButton)
+{
+    switch(m_eSettingConnection)
+    {
+        case enumSettingConnection::LABEL:
+            Settings::Get().Write(m_sSettingSection, m_sSettingKey, pButton->pUi->GetLabel());
+            break;
+        case enumSettingConnection::INDEX:
+            Settings::Get().Write(m_sSettingSection, m_sSettingKey, (int)pButton->pUi->GetIndex());
+            break;
+        case enumSettingConnection::DATA:
+            Settings::Get().Write(m_sSettingSection, m_sSettingKey, (int)pButton->pUi->GetClientData());
+            break;
+    }
 }

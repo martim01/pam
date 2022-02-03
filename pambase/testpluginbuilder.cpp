@@ -63,7 +63,7 @@ double TestPluginBuilder::ReadSetting(const wxString& sSetting, double dDefault)
 
 void TestPluginBuilder::RegisterForSettingsUpdates(const wxString& sSetting, wxEvtHandler* pHandler)
 {
-    Settings::Get().AddHandler(wxString::Format(wxT("Test %s"), GetName().c_str()), sSetting, pHandler);
+    Settings::Get().AddHandler(pHandler, wxString::Format(wxT("Test %s"), GetName().c_str()), sSetting);
 }
 
 

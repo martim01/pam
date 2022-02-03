@@ -41,7 +41,7 @@ Audio::Audio(wxEvtHandler* pHandler, unsigned int nDevice, int nType) :
     for(unsigned int i = 0; i < 8; i++)
     {
         m_vOutputRatio[i] = Settings::Get().Read("Output", wxString::Format("Ratio_%02d", i), 1.0);
-        Settings::Get().AddHandler("Output", wxString::Format("Ratio_%02d", i), this);
+        Settings::Get().AddHandler(this, "Output", wxString::Format("Ratio_%02d", i));
     }
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&Audio::OnSettingChanged);
  }

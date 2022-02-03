@@ -64,6 +64,7 @@ class pnlAoipManual: public wxPanel
 		void OnedtRTPPort(wxCommandEvent& event);
 
 
+		void OnSettingChanged(SettingEvent& event);
 
 		DECLARE_EVENT_TABLE()
 };

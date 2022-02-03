@@ -1,6 +1,8 @@
 #include "wmlabel.h"
 #include <wx/dcbuffer.h>
 #include <wx/log.h>
+#include "settingevent.h"
+#include "settings.h"
 
 using namespace std;
 
@@ -244,4 +246,25 @@ bool wmLabel::SetForegroundColour(const wxColour &colour)
 uiRect& wmLabel::GetUiRect()
 {
     return m_uiRect;
+}
+
+bool wmLabel::ConnectToSetting(const wxString& sSection, const wxString& sKey, const wxString& sDefault)
+{
+    if(sSection.empty() || sKey.empty())
+    {
+        return false;
+    }
+    else
+    {
+        Settings::Get().AddHandler(this, sSection, sKey);
+        Bind(wxEVT_SETTING_CHANGED, &wmLabel::OnSettingChanged, this);
+
+        SetLabel(Settings::Get().Read(sSection, sKey, sDefault));
+        return true;
+    }
+}
+
+void wmLabel::OnSettingChanged(const SettingEvent& event)
+{
+    SetLabel(event.GetValue());
 }

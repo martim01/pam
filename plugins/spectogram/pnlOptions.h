@@ -15,7 +15,6 @@ class pnlOptions: public wxPanel
 		pnlOptions(wxWindow* parent, SpectogramBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pnlOptions();
 
-        void SelectCursorMode(bool bSelect);
 		wmButton* m_pbtnLinear;
 
 	protected:
@@ -23,7 +22,6 @@ class pnlOptions: public wxPanel
     private:
 
 
-		void OnbtnLinearClick(wxCommandEvent& event);
 
 		SpectogramBuilder* m_pBuilder;
 		DECLARE_EVENT_TABLE()

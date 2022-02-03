@@ -25,8 +25,8 @@ pnlRoutiing::pnlRoutiing(wxWindow* parent,SpectogramBuilder* pBuilder, wxWindowI
 	m_plstFFT_Routing = new wmList(this, ID_M_PLST3, wxPoint(0,0), wxSize(190,200), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 2, wxSize(5,5));
 	m_plstFFT_Routing->SetBackgroundColour(wxColour(0,0,0));
 
-	Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlRoutiing::OnlstFFT_RoutingSelected);
 	//*)
+
 
 
 
@@ -58,12 +58,7 @@ void pnlRoutiing::SetNumberOfChannels(unsigned int nChannels)
             m_plstFFT_Routing->AddButton(wxString::Format(wxT("Channel %d"), i+1), wxNullBitmap, (void*)i);
         }
     }
-
-    m_plstFFT_Routing->SelectButton(m_pBuilder->ReadSetting(wxT("Routing"),0), true);
+    m_plstFFT_Routing->ConnectToSetting(m_pBuilder->GetName(),"Routing", size_t(0));
     m_plstFFT_Routing->Thaw();
 }
 
-void pnlRoutiing::OnlstFFT_RoutingSelected(wxCommandEvent& event)
-{
-    m_pBuilder->WriteSetting(wxT("Routing"), event.GetInt());
-}

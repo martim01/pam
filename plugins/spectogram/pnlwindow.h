@@ -27,10 +27,6 @@ class pnlWindow: public wxPanel
 
 	private:
 
-		//(*Handlers(pnlWindow)
-		void OnlstFFT_WindowSelected(wxCommandEvent& event);
-
-		//*)
 
         SpectogramBuilder* m_pBuilder;
 		DECLARE_EVENT_TABLE()

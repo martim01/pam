@@ -225,6 +225,15 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pbtnCursor->SetToggle(true, wxT("Hide"), wxT("Show"), 40);
     m_ptbnOptions->SetToggle(true, wxT("Screens"), wxT("Options"), 40);
     m_pbtnPin->SetToggle(true, wxT("Off"), wxT("On"), 40);
+
+    m_pbtnCursor->ConnectToSetting("General", "Cursor", true);
+    m_ptbnOptions->ConnectToSetting("General","ShowOptions", true);
+
+    m_pbtnPin->ConnectToSetting("General", "Pin", false);
+    m_pedtPin->ConnectToSetting("General", "Pin_Value", "", true);
+
+
+
     m_plblCurrentPIN->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 
 
@@ -267,8 +276,9 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
 
 
-    Settings::Get().AddHandler("NMOS", "Node", this);
-    Settings::Get().AddHandler("Input", "AoIP", this);
+    Settings::Get().AddHandler(this, "NMOS", "Node");
+    Settings::Get().AddHandler(this, "Input", "AoIP");
+    Settings::Get().AddHandler(this, "General");
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pnlSettings::OnSettingChanged);
 
@@ -283,9 +293,6 @@ pnlSettings::~pnlSettings()
 
 void pnlSettings::UpdateDisplayedSettings()
 {
-    m_pbtnCursor->ToggleSelection((Settings::Get().Read(wxT("General"), wxT("Cursor"), 1) == 1), false);
-    m_ptbnOptions->ToggleSelection((Settings::Get().Read(wxT("General"), wxT("ShowOptions"), 1) == 1), false);
-    m_pbtnPin->ToggleSelection((Settings::Get().Read(wxT("General"), wxT("Pin"), 0)==1), false);
 
     m_plstInput->SelectButton(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")), true);
 
@@ -313,6 +320,25 @@ void pnlSettings::OnSettingChanged(SettingEvent& event)
             {
                 m_plstInput->EnableButton(i, (event.GetValue(0L) == 0 && i!=m_nNmosButton));
             }
+        }
+    }
+    else if(event.GetSection() == "General")
+    {
+        if(event.GetKey() == "Pin")
+        {
+            m_pedtPin->Show(event.GetValue(false));
+            m_pkbdPin->Show(event.GetValue(false));
+            m_plblCurrentPIN->Show(event.GetValue(false));
+            if(event.GetValue(false))
+            {
+                m_plblCurrentPIN->SetLabel(wxString::Format(wxT("Current PIN: %s"), Settings::Get().Read(wxT("General"), wxT("Pin_Value"), wxEmptyString).c_str()));
+                m_pedtPin->SetValue(wxEmptyString);
+                m_pedtPin->SetFocus();
+            }
+        }
+        else if(event.GetKey() == "Pin_Value")
+        {
+            m_plblCurrentPIN->SetLabel("Current PIN: "+event.GetValue());
         }
     }
 }
@@ -548,22 +574,12 @@ void pnlSettings::OnbtnEndClick(wxCommandEvent& event)
 
 void pnlSettings::OnbtnPinClick(wxCommandEvent& event)
 {
-    Settings::Get().Write(wxT("General"), wxT("Pin"), event.IsChecked());
-    m_pedtPin->Show(event.IsChecked());
-    m_pkbdPin->Show(event.IsChecked());
-    m_plblCurrentPIN->Show(event.IsChecked());
-    if(event.IsChecked())
-    {
-        m_plblCurrentPIN->SetLabel(wxString::Format(wxT("Current PIN: %s"), Settings::Get().Read(wxT("General"), wxT("Pin_Value"), wxEmptyString).c_str()));
-        m_pedtPin->SetValue(wxEmptyString);
-        m_pedtPin->SetFocus();
-    }
 }
 
 void pnlSettings::OnedtPinTextEnter(wxCommandEvent& event)
 {
     Settings::Get().Write(wxT("General"), wxT("Pin_Value"), m_pedtPin->GetValue());
-    m_plblCurrentPIN->SetLabel(wxString::Format(wxT("Current PIN: %s"), Settings::Get().Read(wxT("General"), wxT("Pin_Value"), wxEmptyString).c_str()));
+
 }
 
 
@@ -575,12 +591,11 @@ void pnlSettings::InputSessionChanged()
 
 void pnlSettings::OnbtnCursorClick(wxCommandEvent& event)
 {
-    Settings::Get().Write(wxT("General"), wxT("Cursor"), event.IsChecked());
 }
 
 void pnlSettings::OnbtnOptionsClick(wxCommandEvent& event)
 {
-    Settings::Get().Write(wxT("General"), wxT("ShowOptions"), event.IsChecked());
+
 }
 
 

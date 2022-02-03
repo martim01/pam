@@ -31,6 +31,9 @@ pnlRouting::pnlRouting(wxWindow* parent,ScopeBuilder* pBuilder, wxWindowID id,co
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlRouting::OnlstRouting2Selected);
 	//*)
 
+	m_plstRouting1->ConnectToSetting(m_pBuilder->GetName(), "Routing1", reinterpret_cast<void*>(0));
+	m_plstRouting2->ConnectToSetting(m_pBuilder->GetName(), "Routing2", reinterpret_cast<void*>(1));
+
 
 }
 
@@ -43,7 +46,6 @@ pnlRouting::~pnlRouting()
 
 void pnlRouting::OnlstScope_RoutingSelected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Routing1"), (int)event.GetClientData());
 }
 
 
@@ -84,5 +86,4 @@ void pnlRouting::ShowRouting(wmList* pLst, unsigned int nPlot, unsigned int nCha
 
 void pnlRouting::OnlstRouting2Selected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Routing2"), (int)event.GetClientData());
 }

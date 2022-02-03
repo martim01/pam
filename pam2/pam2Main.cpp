@@ -274,22 +274,22 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     Settings::Get().Write("Splash", "Screen", "Splash");
 
 
-    Settings::Get().AddHandler(wxT("Input"),wxT("Type"), this);
-    Settings::Get().AddHandler(wxT("Output"),wxT("Destination"), this);
-    Settings::Get().AddHandler(wxT("Output"),wxT("Source"), this);
-    Settings::Get().AddHandler(wxT("AoIP"),wxT("Epoch"), this);
+    Settings::Get().AddHandler(this, wxT("Input"),wxT("Type"));
+    Settings::Get().AddHandler(this, wxT("Output"),wxT("Destination"));
+    Settings::Get().AddHandler(this, wxT("Output"),wxT("Source"));
+    Settings::Get().AddHandler(this, wxT("AoIP"),wxT("Epoch"));
 
-    Settings::Get().AddHandler(wxT("Test"), wxT("Lock"), this);
-
-
-    Settings::Get().AddHandler(wxT("Server"), wxT("DestinationIp"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("RTP_Port"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("PacketTime"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("Stream"), this);
+    Settings::Get().AddHandler(this, wxT("Test"), wxT("Lock"));
 
 
-    Settings::Get().AddHandler("Splash", "Screen", this);
-    Settings::Get().AddHandler("General", "Cursor", this);
+    Settings::Get().AddHandler(this, wxT("Server"), wxT("DestinationIp"));
+    Settings::Get().AddHandler(this, wxT("Server"), wxT("RTP_Port"));
+    Settings::Get().AddHandler(this, wxT("Server"), wxT("PacketTime"));
+    Settings::Get().AddHandler(this, wxT("Server"), wxT("Stream"));
+
+
+    Settings::Get().AddHandler(this, "Splash", "Screen");
+    Settings::Get().AddHandler(this, "General", "Cursor");
 
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pam2Dialog::OnSettingChanged);

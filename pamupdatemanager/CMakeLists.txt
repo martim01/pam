@@ -10,7 +10,7 @@ include_directories("../pam2/")
 include_directories(${CMAKE_BINARY_DIR}/include)
 
 
-set(SOURCES "../pambase/advelement.cpp" "../pambase/inimanager.cpp" "../pambase/inisection.cpp" "../pambase/pmcontrol.cpp" "../pambase/pmpanel.cpp" "../pambase/settingevent.cpp" "../pambase/settings.cpp" 
+set(SOURCES "../pambase/advelement.cpp" "../pambase/inimanager.cpp" "../pambase/inisection.cpp" "../pambase/pmcontrol.cpp" "../pambase/pmpanel.cpp" "../pambase/dlgmask.cpp" "../pambase/settingevent.cpp" "../pambase/settings.cpp" 
 "../pambase/uirect.cpp" "../pambase/wmbutton.cpp" "../pambase/wmedit.cpp" "../pambase/wmfocusmanager.cpp" "../pambase/wmkeyboard.cpp" "../pambase/wmlabel.cpp" "../pambase/wmlist.cpp" "../pambase/wmlistadv.cpp"
 "../pambase/wmslidewnd.cpp" "../pambase/wmswitcherpanel.cpp" "pamupdatemanagerApp.cpp" "pamupdatemanagerMain.cpp" "releaseelement.cpp" ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_version.cpp)
 

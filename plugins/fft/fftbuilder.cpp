@@ -17,9 +17,21 @@ using namespace std;
 FFTBuilder::FFTBuilder() : MonitorPluginBuilder(),
 m_pMeter(0)
 {
-    Settings::Get().AddHandler("FFT", "peaks", this);
+    Settings::Get().AddHandler(this,"FFT");
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&FFTBuilder::OnSettingChanged);
+
+    //Register with remote api
+    RegisterRemoteApiIntEnum("peaks", {0,1});
+    RegisterRemoteApiIntEnum("Bins", {512,1024,1536,2048});
+    RegisterRemoteApiIntEnum("Display", {0,1,2});      //@todo names not numbers
+    RegisterRemoteApiIntEnum("Window", {0,1,2,3,4,5}); //@todo names not numbers
+    RegisterRemoteApiIntEnum("Overlap", {0,25,50,75});
+    RegisterRemoteApiIntEnum("Routing", {0,1,2,3,4,5,6,7});   //@todo this should be dynamic based on sessions
+    RegisterRemoteApiIntEnum("Type", {0,1,2});        //@todo names not numbers
+    RegisterRemoteApiIntEnum("Hold", {0,1});
+    RegisterRemoteApiIntEnum("Cursor", {0,1});
+    RegisterRemoteApiIntEnum("Colour", {0,1});
 }
 
 void FFTBuilder::SetAudioData(const timedbuffer* pBuffer)
@@ -29,7 +41,7 @@ void FFTBuilder::SetAudioData(const timedbuffer* pBuffer)
         m_pMeter->SetData(pBuffer);
     }
 
-   
+
 }
 
 wxWindow* FFTBuilder::CreateMonitorPanel(wxWindow* pParent)
@@ -61,82 +73,24 @@ list<pairOptionPanel_t> FFTBuilder::CreateOptionPanels(wxWindow* pParent)
     lstOptionPanels.push_back(make_pair(wxT("Options"), pOptions));
 
 
-    m_ppnlRouting->m_plstFFT_Routing->SelectButton(ReadSetting(wxT("Routing"),0), true);
-    pDisplay->m_plstFFT_Display->SelectButton(ReadSetting(wxT("Display"), 0),true);
-    pWindow->m_plstFFT_Window->SelectButton(ReadSetting(wxT("Window"), 0), true);
-    pType->m_plstFFT_Type->SelectButton(ReadSetting(wxT("Type"), 0), true);
-    pOverlap->m_plstFFT_Overlap->SelectButton(ReadSetting(wxT("Overlap"), 0), true);
-    pBins->m_plstFFT_Bins->SelectButton(ReadSetting(wxT("Bins"),0), true);
-    pOptions->m_pbtnFFT_Hold->ToggleSelection(ReadSetting(wxT("Hold"), 0), true);
-
-
     return lstOptionPanels;
 }
 
 
 
-void FFTBuilder::OnBinsChanged(wxCommandEvent& event)
-{
-    m_pMeter->SetNumberOfBins(reinterpret_cast<size_t>(event.GetClientData()));
-    WriteSetting(wxT("Bins"), event.GetInt());
-}
-
-void FFTBuilder::OnDisplayChanged(wxCommandEvent& event)
-{
-    m_pMeter->SetDisplayType(event.GetInt());
-    WriteSetting(wxT("Display"), event.GetInt());
-}
-
-void FFTBuilder::OnWindowChanged(wxCommandEvent& event)
-{
-    m_pMeter->SetWindowType(event.GetInt());
-    WriteSetting(wxT("Window"), event.GetInt());
-}
-
-void FFTBuilder::OnOverlapChanged(wxCommandEvent& event)
-{
-    m_pMeter->SetOverlap(reinterpret_cast<int>(event.GetClientData()));
-    WriteSetting(wxT("Overlap"), event.GetInt());
-}
-
-void FFTBuilder::OnRoutingChanged(wxCommandEvent& event)
-{
-    m_pMeter->SetAnalyseMode((int)event.GetClientData());
-    WriteSetting(wxT("Routing"), event.GetInt());
-}
-
-
-void FFTBuilder::OnTypeChanged(wxCommandEvent& event)
-{
-    m_pMeter->SetMeter(event.GetInt());
-    WriteSetting(wxT("Type"), event.GetInt());
-}
-
-void FFTBuilder::OnHoldClicked(wxCommandEvent& event)
-{
-    m_pMeter->SetHold(event.IsChecked());
-    WriteSetting(wxT("Hold"), event.IsChecked());
-}
-
-void FFTBuilder::OnCursorMode(bool bOn)
-{
-    m_pMeter->SetCursorMode(bOn);
-    WriteSetting(wxT("Cursor"), bOn);
-}
-
-void FFTBuilder::ColourSelected(bool bSelected)
-{
-    WriteSetting(wxT("Colour"), bSelected);
-    m_pMeter->SetColourMode(bSelected);
-}
-
-
 void FFTBuilder::LoadSettings()
 {
-
-
+    m_pMeter->ShowPeak(ReadSetting("peaks", (int)0));
+    m_pMeter->SetNumberOfBins(ReadSetting("Bins", (int)1024));
+    m_pMeter->SetDisplayType(ReadSetting("Display", (int)0));
+    m_pMeter->SetWindowType(ReadSetting("Window", (int)0));
+    m_pMeter->SetOverlap(ReadSetting("Overlap", (int)50));
+    m_pMeter->SetAnalyseMode(ReadSetting("Routing", (int)0));
+    m_pMeter->SetMeter(ReadSetting("Type", (int)0));
+    m_pMeter->SetHold(ReadSetting("Hold", (int)0));
+    m_pMeter->SetCursorMode(ReadSetting("Cursor", (int)0));
+    m_pMeter->SetColourMode(ReadSetting("Colour", (int)0));
 }
-
 
 void FFTBuilder::InputSession(const session& aSession)
 {
@@ -152,9 +106,6 @@ void FFTBuilder::InputSession(const session& aSession)
         m_pMeter->SetNumberOfChannels(0);
         m_ppnlRouting->SetNumberOfChannels(0);
     }
-
-
-    //@todo if more than 2 channels then let's change our routing buttons...
 
 }
 
@@ -175,4 +126,41 @@ void FFTBuilder::OnSettingChanged(SettingEvent& event)
     {
         m_pMeter->ShowPeak(event.GetValue(false));
     }
+    else if(event.GetKey() == "Bins")
+    {
+        m_pMeter->SetNumberOfBins(event.GetValue(long(0)));
+    }
+    else if(event.GetKey() == "Display")
+    {
+        m_pMeter->SetDisplayType(event.GetValue(long(0)));
+    }
+    else if(event.GetKey() == "Window")
+    {
+        m_pMeter->SetWindowType(event.GetValue(long(0)));
+    }
+    else if(event.GetKey() == "Overlap")
+    {
+        m_pMeter->SetOverlap(event.GetValue(0.0));
+    }
+    else if(event.GetKey() == "Routing")
+    {
+        m_pMeter->SetAnalyseMode(event.GetValue(long(0)));
+    }
+    else if(event.GetKey() == "Type")
+    {
+        m_pMeter->SetMeter(event.GetValue(long(0)));
+    }
+    else if(event.GetKey() == "Hold")
+    {
+        m_pMeter->SetHold(event.GetValue(long(0)));
+    }
+    else if(event.GetKey() == "Cursor")
+    {
+        m_pMeter->SetCursorMode(event.GetValue(long(0)));
+    }
+    else if(event.GetKey() == "Colour")
+    {
+        m_pMeter->SetColourMode(event.GetValue(long(0)));
+    }
 }
+

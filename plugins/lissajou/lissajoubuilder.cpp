@@ -26,9 +26,6 @@ m_ppnlRouting(0)
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&LissajouBuilder::OnSettingChanged);
 
-    wxLogDebug("Lissajou Test");
-
-
 }
 
 void LissajouBuilder::SetAudioData(const timedbuffer* pBuffer)

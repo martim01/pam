@@ -29,9 +29,6 @@ class pnlRoutiing: public wxPanel
 
 	private:
 
-		//(*Handlers(pnlRoutiing)
-		void OnlstFFT_RoutingSelected(wxCommandEvent& event);
-		//*)
 		SpectogramBuilder* m_pBuilder;
 
 		DECLARE_EVENT_TABLE()

@@ -134,7 +134,7 @@ bool Settings::GetSectionDataEnd(const wxString& sSection, std::map<wxString, wx
 
 
 
-void Settings::AddHandler(const wxString& sSection, const wxString& sKey, wxEvtHandler* pHandler)
+void Settings::AddHandler(wxEvtHandler* pHandler, const wxString& sSection, const wxString& sKey)
 {
     if(pHandler)
     {

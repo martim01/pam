@@ -7,6 +7,7 @@
 //*)
 #include "pmpanel.h"
 
+class SettingEvent;
 
 class PAMBASE_IMPEXPORT wmipeditpnl: public pmPanel
 {
@@ -35,6 +36,9 @@ class PAMBASE_IMPEXPORT wmipeditpnl: public pmPanel
 		bool SetBackgroundColour(const wxColour& colour);
 		bool SetForegroundColour(const wxColour& colour);
         bool Enable(bool bEnable=true);
+
+        bool ConnectToSetting(const wxString& sSection, const wxString& sKey, const wxString& sDefault);
+
 	protected:
 
 		//(*Identifiers(wmipeditpnl)
@@ -43,6 +47,9 @@ class PAMBASE_IMPEXPORT wmipeditpnl: public pmPanel
 		static const long ID_M_PEDT3;
 		static const long ID_M_PEDT4;
 		//*)
+
+		void OnSettingChanged(const SettingEvent& event);
+        void WriteSetting();
 
 	private:
 
@@ -68,6 +75,10 @@ class PAMBASE_IMPEXPORT wmipeditpnl: public pmPanel
 		void CheckEdit(wmEdit* pCurrent, wmEdit* pNext);
 
 		void SizeRects();
+
+		bool m_bSettingConnection;
+		wxString m_sSettingSection;
+        wxString m_sSettingKey;
 
 		DECLARE_EVENT_TABLE()
 };

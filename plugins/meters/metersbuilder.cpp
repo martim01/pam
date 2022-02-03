@@ -8,6 +8,8 @@
 #include "pnlMeterSettings.h"
 #include "pnlScale.h"
 #include "levelcalculator.h"
+#include "ppmtypes.h"
+
 
 using namespace std;
 
@@ -15,14 +17,23 @@ MetersBuilder::MetersBuilder() : MonitorPluginBuilder(),
 m_pMeters(0)
 {
 
-    RegisterForSettingsUpdates(wxT("Mode"), this);
-    RegisterForSettingsUpdates(wxT("Freeze"), this);
-    RegisterForSettingsUpdates(wxT("Peaks"), this);
-    RegisterForSettingsUpdates(wxT("Speed"), this);
-    RegisterForSettingsUpdates(wxT("M3M6"), this);
-    RegisterForSettingsUpdates(wxT("Shading"), this);
+    RegisterForSettingsUpdates("Mode", this);
+    RegisterForSettingsUpdates("Freeze", this);
+    RegisterForSettingsUpdates("Peaks", this);
+    RegisterForSettingsUpdates("Speed", this);
+    RegisterForSettingsUpdates("M3M6", this);
+    RegisterForSettingsUpdates("Shading", this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&MetersBuilder::OnSettingChanged);
+
+
+    //Register settings with RemoteAPI
+    RegisterRemoteApiStringEnum("Mode", PPMTypeManager::Get().GetTypes());
+    RegisterRemoteApiIntEnum("Freeze", {0, 1});
+    RegisterRemoteApiIntEnum("Peaks", {0, 1, 2});
+    RegisterRemoteApiIntEnum("Speed", {0, 1, 2});
+    RegisterRemoteApiIntEnum("M3M6", {0, 1});
+    RegisterRemoteApiIntEnum("Shading", {0, 1});
 
 }
 

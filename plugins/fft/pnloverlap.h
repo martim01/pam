@@ -14,21 +14,14 @@ class pnlOverlap: public wxPanel
 		pnlOverlap(wxWindow* parent,FFTBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pnlOverlap();
 
-		//(*Declarations(pnlOverlap)
 		wmList* m_plstFFT_Overlap;
-		//*)
 
 	protected:
 
-		//(*Identifiers(pnlOverlap)
 		static const long ID_M_PLST10;
-		//*)
 
 	private:
 
-		//(*Handlers(pnlOverlap)
-		void OnlstFFT_OverlapSelected(wxCommandEvent& event);
-		//*)
 
         FFTBuilder* m_pBuilder;
 		DECLARE_EVENT_TABLE()

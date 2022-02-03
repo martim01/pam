@@ -23,7 +23,7 @@ link_directories("../lib")
 
 
 
-set(SOURCES "aboutelement.cpp" "dlgAoIP.cpp" "dlgEditName.cpp" "dlgEngineering.cpp" "dlgNoInput.cpp" "dlgPin.cpp" "dlgSequence.cpp" "dlgWav.cpp" "dlgWiFi.cpp" "dlgmask.cpp" "logelement.cpp"
+set(SOURCES "aboutelement.cpp" "dlgAoIP.cpp" "dlgEditName.cpp" "dlgEngineering.cpp" "dlgNoInput.cpp" "dlgPin.cpp" "dlgSequence.cpp" "dlgWav.cpp" "dlgWiFi.cpp" "logelement.cpp"
  "networkcontrol.cpp" "nmos.cpp" "nodebuttonfactory.cpp" "pam2App.cpp" "pam2Main.cpp" "pnlAbout.cpp" "pnlAoIPSelection.cpp" "pnlAoipManual.cpp" "pnlHelp.cpp" "pnlLog.cpp"
  "pnlLogControl.cpp" "pnlNetworkSetup.cpp" "pnlRTCPTransmission.cpp" "pnlRTP.cpp" "pnlSettings.cpp" "pnlSettingsGenerators.cpp" "pnlSettingsInputNmos.cpp"
  "pnlSettingsNmos.cpp" "pnlSettingsOptions.cpp" "pnlSettingsOutput.cpp" "pnlSettingsPlugins.cpp" "pnlSettingsProfiles.cpp" "pnlSettingsTime.cpp"

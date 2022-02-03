@@ -14,7 +14,7 @@ GeneratorPluginBuilder::GeneratorPluginBuilder() :
     m_dSampleRate(48000.0),
 	m_pswpGenerators(0)
 {
-    
+
 }
 
 void GeneratorPluginBuilder::SetHandler(wxEvtHandler* pHandler)
@@ -65,7 +65,7 @@ double GeneratorPluginBuilder::ReadSetting(const wxString& sSetting, double dDef
 
 void GeneratorPluginBuilder::RegisterForSettingsUpdates(const wxString& sSetting, wxEvtHandler* pHandler)
 {
-    Settings::Get().AddHandler(wxString::Format(wxT("Generator %s"), GetName().c_str()), sSetting, pHandler);
+    Settings::Get().AddHandler(this, wxString::Format(wxT("Generator %s"), GetName().c_str()), sSetting);
 }
 
 

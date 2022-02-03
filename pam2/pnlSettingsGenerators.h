@@ -151,6 +151,9 @@ class pnlSettingsGenerators: public wxPanel
         void OnAmplitudeMove(wxCommandEvent& event);
         void OnNoiseAmplitudeMove(wxCommandEvent& event);
 
+        void DestinationChanged(const wxString& sDestination);
+        void SourceChanged(const wxString& sSource);
+
         void LoadPlugins();
 		DECLARE_EVENT_TABLE()
 };

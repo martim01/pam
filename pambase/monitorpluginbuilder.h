@@ -44,8 +44,8 @@ class PAMBASE_IMPEXPORT MonitorPluginBuilder : public wxEvtHandler
 
         wxWindow* GetMainWindow() const { return m_pWindow;}
 
-        
-        
+
+
 
     protected:
 
@@ -75,6 +75,10 @@ class PAMBASE_IMPEXPORT MonitorPluginBuilder : public wxEvtHandler
         pml::restgoose::response GetStatus(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser);
 
         void SendWebsocketMessage(Json::Value jsMessage);
+
+        void RegisterRemoteApiStringEnum(const wxString& sKey, const std::set<wxString>& setEnum);
+        void RegisterRemoteApiIntEnum(const wxString& sKey, const std::set<int>& setEnum);
+        void RegisterRemoteApiRange(const wxString& sKey, const std::pair<double, double>& dRange);
 
         wxEvtHandler* m_pHandler;
 

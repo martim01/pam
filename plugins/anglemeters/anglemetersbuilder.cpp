@@ -6,6 +6,7 @@
 #include "pnlMode.h"
 #include "pnlOptions.h"
 #include "pnlMeterSettings.h"
+#include "ppmtypes.h"
 
 using namespace std;
 
@@ -24,6 +25,17 @@ m_pAngleMeters(0)
     RegisterForSettingsUpdates(wxT("Surround"), this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&AngleMetersBuilder::OnSettingChanged);
+
+    RegisterRemoteApiStringEnum("Mode", PPMTypeManager::Get().GetTypes());
+    RegisterRemoteApiIntEnum("Freeze", {0, 1});
+    RegisterRemoteApiIntEnum("Peaks", {0, 1, 2});
+    RegisterRemoteApiIntEnum("Speed", {0, 1, 2});
+    RegisterRemoteApiIntEnum("M3M6", {0, 1});
+    RegisterRemoteApiIntEnum("Stereo", {0,1});
+    RegisterRemoteApiIntEnum("DisplayText_Current", {0,1});
+    RegisterRemoteApiIntEnum("DisplayText_Peak", {0,1});
+    RegisterRemoteApiIntEnum("Surround", {0,1});
+
 
 }
 
@@ -65,8 +77,7 @@ void AngleMetersBuilder::LoadSettings()
     m_pAngleMeters->UpdateMeterStereo();
     m_pAngleMeters->DisplayCurrentLevelAsText(ReadSetting(wxT("DisplayText_Current"),1));
     m_pAngleMeters->DisplayPeakLevelAsText(ReadSetting(wxT("DisplayText_Peak"),1));
-    //m_pAngleMeters->SetMode(wxT("EBU"));
-    //m_pAngleMeters->SetMode(ReadSetting(wxT("Mode"),wxT("BBC")));
+    m_pAngleMeters->SetMode(ReadSetting(wxT("Mode"),wxT("BBC")));
 }
 
 

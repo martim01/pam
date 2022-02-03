@@ -39,13 +39,9 @@ pnlOptions::pnlOptions(wxWindow* parent,MetersBuilder* pBuilder, wxWindowID id,c
 	m_plstMeter_Peaks->AddButton(wxT("Show Peaks"));
 	m_plstMeter_Peaks->AddButton(wxT("Hold Peaks"));
 
+    m_plstMeter_Peaks->ConnectToSetting(m_pBuilder->GetName(), "Peaks", size_t(1));
+    m_pbnFreeze->ConnectToSetting(m_pBuilder->GetName(), "Freeze", false);
 
-
-
-	//m_pbtnMeterShading->SetToggle(true, wxT("Solid"), wxT("Graded"), 50.0);
-
-	m_plstMeter_Peaks->SelectButton(m_pBuilder->ReadSetting(wxT("Peaks"), 1), true);
-	m_pbnFreeze->ToggleSelection((m_pBuilder->ReadSetting(wxT("Freeze"),0)==1), false);
 
 
 }
@@ -59,12 +55,10 @@ pnlOptions::~pnlOptions()
 
 void pnlOptions::OnlstMeter_PeaksSelected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Peaks"), event.GetInt());
 }
 
 void pnlOptions::OnbnFreezeClick(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Freeze"), event.IsChecked());
 }
 
 void pnlOptions::OnbtnMeterClearClick(wxCommandEvent& event)

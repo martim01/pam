@@ -58,6 +58,10 @@
 					{
 						drawfft(jsonObj["data"]);
 					}	
+					else if(jsonObj["plugin"]["name"] == "R128")
+					{
+						showR128(jsonObj["data"]);
+					}
                 }
             }
 
@@ -124,7 +128,11 @@
 				{
 					console.log(jsonObj);
 				}
+			}
 
+			function showR128(jsonObj)
+			{
+				console.log(jsonObj);
 			}
 
         </script>

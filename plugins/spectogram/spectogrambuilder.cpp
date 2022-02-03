@@ -24,6 +24,13 @@ m_pMeter(0)
     RegisterForSettingsUpdates(wxT("linear"), this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&SpectogramBuilder::OnSettingChanged);
+
+    RegisterRemoteApiIntEnum("Bins", {512,1024,1536,2048});
+    RegisterRemoteApiIntEnum("Window", {0,1,2,3,4,5}); //@todo names not numbers
+    RegisterRemoteApiIntEnum("Overlap", {0,25,50,75});
+    RegisterRemoteApiIntEnum("Routing", {0,1,2,3,4,5,6,7});   //@todo this should be dynamic based on sessions
+    RegisterRemoteApiIntEnum("linear", {0,1});
+    RegisterRemoteApiIntEnum("HeatMap", {SpectogramMeter::MAP_MONO, SpectogramMeter::MAP_HOTCOLD, SpectogramMeter::MAP_FIVE, SpectogramMeter::MAP_PPM, SpectogramMeter::MAP_SEVEN});
 }
 
 void SpectogramBuilder::SetAudioData(const timedbuffer* pBuffer)

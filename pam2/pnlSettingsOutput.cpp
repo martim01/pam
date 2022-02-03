@@ -268,18 +268,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
     m_plstPlayback->Disable();
     //m_pbtnStream->ToggleSelection(false);
 
-    Settings::Get().AddHandler(wxT("Server"), wxT("RTP_Port"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("RTSP_Port"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("DestinationIp"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("Latency"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("RTSP_Interface"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("Stream"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("SAP"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("DNS-SD"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("RTPMap"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("Channels"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("RTCP"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("State"), this);
+    Settings::Get().AddHandler(this, "Server");
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pnlSettingsOutput::OnSettingChanged);
 }
@@ -427,7 +416,7 @@ void pnlSettingsOutput::OnbtnStreamClick(wxCommandEvent& event)
     }
     else
     {
-       
+
         Settings::Get().Write(wxT("Server"), wxT("DestinationIp"), m_ppnlAddress->GetValue());
         Settings::Get().Write(wxT("Server"), wxT("Stream"), "AlwaysOn");
     }

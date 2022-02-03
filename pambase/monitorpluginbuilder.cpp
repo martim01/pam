@@ -105,7 +105,7 @@ void MonitorPluginBuilder::Maximize(bool bMax)
 
 void MonitorPluginBuilder::RegisterForSettingsUpdates(const wxString& sSetting, wxEvtHandler* pHandler)
 {
-    Settings::Get().AddHandler(GetName(), sSetting, pHandler);
+    Settings::Get().AddHandler(pHandler, GetName(), sSetting);
     m_setHandlers.insert(pHandler);
 }
 
@@ -157,4 +157,19 @@ void MonitorPluginBuilder::SendWebsocketMessage(Json::Value jsMessage)
     jsWebsocket["plugin"]["name"] = GetName().ToStdString();
     jsWebsocket["data"] = jsMessage;
     RemoteApi::Get().SendPluginWebsocketMessage(jsWebsocket);
+}
+
+void MonitorPluginBuilder::RegisterRemoteApiStringEnum(const wxString& sKey, const std::set<wxString>& setEnum)
+{
+    RemoteApi::Get().RegisterRemoteApiStringEnum(GetName(), sKey, setEnum);
+}
+
+void MonitorPluginBuilder::RegisterRemoteApiIntEnum(const wxString& sKey, const std::set<int>& setEnum)
+{
+    RemoteApi::Get().RegisterRemoteApiIntEnum(GetName(), sKey, setEnum);
+}
+
+void MonitorPluginBuilder::RegisterRemoteApiRange(const wxString& sKey, const std::pair<double, double>& dRange)
+{
+    RemoteApi::Get().RegisterRemoteApiRange(GetName(), sKey, dRange);
 }

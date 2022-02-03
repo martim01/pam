@@ -90,44 +90,22 @@ IOManager::IOManager() :
 
     AoipSourceManager::Get();
 
-    Settings::Get().AddHandler(wxT("Input"),wxT("Type"), this);
-    Settings::Get().AddHandler(wxT("Input"),wxT("AoIP"), this);
-    Settings::Get().AddHandler(wxT("Input"),wxT("AoIPManual"), this);
-    Settings::Get().AddHandler(wxT("Input"),wxT("Device"), this);
-    Settings::Get().AddHandler(wxT("Input"),wxT("File"), this);
+    Settings::Get().AddHandler(this, wxT("Input"));
 
     m_vRatio.resize(8);
     for(int i = 0; i < 8; i++)
     {
-        Settings::Get().AddHandler("Input", wxString::Format("Ratio_%02d", i), this);
         m_vRatio[i] = Settings::Get().Read("Input",  wxString::Format("Ratio_%02d", i), 1.0);
     }
     CheckIfGain();
 
-    Settings::Get().AddHandler(wxT("Output"),wxT("Device"), this);
-    Settings::Get().AddHandler(wxT("Output"),wxT("Destination"), this);
-    Settings::Get().AddHandler(wxT("Output"),wxT("Latency"), this);
-    Settings::Get().AddHandler(wxT("Output"),wxT("Left"), this);
-    Settings::Get().AddHandler(wxT("Output"),wxT("Right"), this);
+    Settings::Get().AddHandler(this, wxT("Output"));
+    Settings::Get().AddHandler(this, wxT("Generator"));
+    Settings::Get().AddHandler(this, wxT("Noise"));
+    Settings::Get().AddHandler(this, wxT("Monitor"), wxT("Source"));
+    Settings::Get().AddHandler(this, wxT("QoS"),wxT("Interval"));
 
-    Settings::Get().AddHandler(wxT("Output"),wxT("Source"), this);
-    Settings::Get().AddHandler(wxT("Output"),wxT("File"), this);
-    Settings::Get().AddHandler(wxT("Output"),wxT("Sequence"), this);
-
-    Settings::Get().AddHandler(wxT("Generator"),wxT("Frequency"), this);
-    Settings::Get().AddHandler(wxT("Generator"),wxT("Amplitude"), this);
-    Settings::Get().AddHandler(wxT("Generator"),wxT("Shape"), this);
-    Settings::Get().AddHandler(wxT("Noise"),wxT("Colour"), this);
-    Settings::Get().AddHandler(wxT("Noise"),wxT("Amplitude"), this);
-
-    Settings::Get().AddHandler(wxT("Monitor"), wxT("Source"), this);
-
-    Settings::Get().AddHandler(wxT("QoS"),wxT("Interval"), this);
-
-    Settings::Get().AddHandler(wxT("Server"), wxT("Stream"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("SAP"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("DNS-SD"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("State"), this);
+    Settings::Get().AddHandler(this,wxT("Server"));
 
     Connect(wxID_ANY,wxEVT_DATA,(wxObjectEventFunction)&IOManager::OnAudioEvent);
     Connect(wxID_ANY,wxEVT_RTP_SESSION,(wxObjectEventFunction)&IOManager::OnRTPSession);
@@ -917,12 +895,12 @@ void IOManager::UpdateOutputSession()
             nSampleRate = 0;
             nChannels = 0;
         }
-        
+
         if(m_pGenerator && nSampleRate != 0)
         {
             m_pGenerator->SetSampleRate(nSampleRate);
         }
-        
+
         if(m_SessionOut.lstSubsession.back().nSampleRate != nSampleRate || m_SessionOut.lstSubsession.back().nChannels != nChannels)
         {
             m_SessionOut.lstSubsession.back().nSampleRate = nSampleRate;

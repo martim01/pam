@@ -30,6 +30,16 @@ PPMTypeManager::PPMTypeManager()
     LoadTypes();
 }
 
+std::set<wxString> PPMTypeManager::GetTypes()
+{
+    std::set<wxString> setTypes;
+    for(const auto& pairType : m_mTypes)
+    {
+        setTypes.insert(pairType.first);
+    }
+    return setTypes;
+}
+
 void PPMTypeManager::LoadTypes()
 {
     wxXmlDocument xmlDoc;

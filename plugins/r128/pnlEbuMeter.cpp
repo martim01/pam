@@ -70,9 +70,7 @@ pnlEbuMeter::pnlEbuMeter(wxWindow* parent,R128Builder* pBuilder, wxWindowID id,c
 
     m_pbtnCalculate->SetBackgroundColour(CLR_SHORT);
 	m_pbtnCalculate->SetToggle(true, wxT("Pause"), wxT("Run"), 50.0);
-	m_pbtnCalculate->ToggleSelection(m_pBuilder->ReadSetting(wxT("Calculate"),1) == 1, true);
-
-
+	m_pbtnCalculate->ConnectToSetting(m_pBuilder->GetName(), "Calculate", true);
 
     m_pR128 = new R128Calculator();
     m_pTrue = new TruePeakCalculator();
@@ -225,8 +223,6 @@ void pnlEbuMeter::SetAudioData(const timedbuffer* pBuffer)
     if(m_nChannels > 0)
     {
 
-
-
         m_pR128->CalculateLevel(pBuffer);
         if(m_bTrue)
         {
@@ -236,6 +232,7 @@ void pnlEbuMeter::SetAudioData(const timedbuffer* pBuffer)
         {
             m_pBar->SetAudioData(pBuffer);
         }
+
     }
     UpdateMeters();
 }
@@ -386,7 +383,6 @@ void pnlEbuMeter::ChangeScale()
 
 void pnlEbuMeter::OnbtnCalculateClick(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Calculate"), event.IsChecked());
 }
 
 void pnlEbuMeter::OnbtnResetClick(wxCommandEvent& event)
@@ -434,4 +430,27 @@ void pnlEbuMeter::LoadSettings()
 
     m_bBar = m_pBuilder->ReadSetting(wxT("Show_Phase"), wxT("1")) == wxT("1");
     m_pBar->Show(m_bBar);
+}
+
+
+Json::Value pnlEbuMeter::CreateWebsocketMessage()
+{
+    Json::Value jsValue;
+    jsValue["state"] = "running";
+    jsValue["time"] = m_pR128->GetIntegrationTime()/10;
+    jsValue["r128"]["momentary"]["current"] = m_pR128->GetMomentaryLevel();
+    jsValue["r128"]["momentary"]["peak"] = m_pR128->GetMomentaryMax();
+    jsValue["r128"]["short"]["current"] = m_pR128->GetShortLevel();
+    jsValue["r128"]["short"]["peak"] = m_pR128->GetShortMax();
+
+    jsValue["r128"]["live"]["current"] = m_pR128->GetLiveLevel();
+    jsValue["r128"]["range"] = m_pR128->GetLURange();
+
+    jsValue["truepeak"]["left"]["current"] = m_pTrue->GetLevel(0);
+    jsValue["truepeak"]["left"]["peak"] = m_dPeak[0];
+    jsValue["truepeak"]["right"]["current"] = m_pTrue->GetLevel(1);
+    jsValue["truepeak"]["right"]["peak"] = m_dPeak[1];
+
+
+    return jsValue;
 }

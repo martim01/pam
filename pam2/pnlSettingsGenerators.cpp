@@ -244,6 +244,7 @@ pnlSettingsGenerators::pnlSettingsGenerators(wxWindow* parent,wxWindowID id,cons
     m_plstAudioSources->AddButton(wxT("Generator"));
     m_plstAudioSources->AddButton(wxT("Noise"));
     m_plstAudioSources->Enable(Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled"))!=wxT("Disabled"));
+    m_plstAudioSources->ConnectToSetting("Output", "Source", "Input");
 
     LoadPlugins();
 
@@ -257,13 +258,9 @@ pnlSettingsGenerators::pnlSettingsGenerators(wxWindow* parent,wxWindowID id,cons
         m_plstAudioSources->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")), true);
     }
     m_pSlider->Init(0,20*log10(22000), 20*log10(Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000)));
-    //m_pSlider->SetSliderColour(wxColour(128,128,128));
-    //m_pSlider->SetButtonColour(wxColour(100,100,255));
     m_plblFrequency->SetLabel(wxString::Format(wxT("%.0f Hz"), pow(10,(m_pSlider->GetPosition()/20.0))));
 
     m_pAmplitude->Init(0,80, 80+Settings::Get().Read(wxT("Generator"), wxT("Amplitude"), -18.0));
-    //m_pAmplitude->SetSliderColour(wxColour(128,128,128));
-    //m_pAmplitude->SetButtonColour(wxColour(100,200,100));
     m_plbldB->SetLabel(wxString::Format(wxT("%.1f dBFS"),m_pAmplitude->GetPosition()-80.0));
 
     m_plstShape->AddButton(wxT("Sine"));
@@ -271,28 +268,28 @@ pnlSettingsGenerators::pnlSettingsGenerators(wxWindow* parent,wxWindowID id,cons
     m_plstShape->AddButton(wxT("Sawtooth"));
     m_plstShape->AddButton(wxT("Triangle"));
 
-    m_plstShape->SelectButton(Settings::Get().Read(wxT("Generator"), wxT("Shape"), 0), true);
+    m_plstShape->ConnectToSetting("Generator", "Shape", size_t(0));
 
     m_plstColour->AddButton(wxT("White"));
     m_plstColour->AddButton(wxT("Pink"));
     m_plstColour->AddButton(wxT("Grey"));
     m_plstColour->AddButton(wxT("A"));
     m_plstColour->AddButton(wxT("K"));
-    m_plstColour->SelectButton(Settings::Get().Read(wxT("Noise"), wxT("Colour"), 0));
+    m_plstColour->ConnectToSetting("Noise","Colour",size_t(0));
 
     m_pNoiseAmplitude->Init(0,80, 80+Settings::Get().Read(wxT("Noise"), wxT("Amplitude"), -18.0));
-    //m_pNoiseAmplitude->SetSliderColour(wxColour(128,128,128));
-    //m_pNoiseAmplitude->SetButtonColour(wxColour(100,255,100));
     m_plblNoisedB->SetLabel(wxString::Format(wxT("%.1f dBFS"),m_pNoiseAmplitude->GetPosition()-80.0));
 
     Connect(m_pSlider->GetId(), wxEVT_SLIDER_MOVE, (wxObjectEventFunction)&pnlSettingsGenerators::OnSliderMove);
     Connect(m_pAmplitude->GetId(), wxEVT_SLIDER_MOVE, (wxObjectEventFunction)&pnlSettingsGenerators::OnAmplitudeMove);
     Connect(m_pNoiseAmplitude->GetId(), wxEVT_SLIDER_MOVE, (wxObjectEventFunction)&pnlSettingsGenerators::OnNoiseAmplitudeMove);
 
-    Settings::Get().AddHandler(wxT("Output"), wxT("Destination"), this);
+    Settings::Get().AddHandler(this, "Output", "Destination");
+    Settings::Get().AddHandler(this, "Output", "Source");
+    Settings::Get().AddHandler(this, "Generator", "Frequency");
+    Settings::Get().AddHandler(this, "Generator", "Amplitude");
+    Settings::Get().AddHandler(this, "Noise", "Amplitude");
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pnlSettingsGenerators::OnSettingChanged);
-
-
 
 }
 
@@ -305,40 +302,7 @@ pnlSettingsGenerators::~pnlSettingsGenerators()
 
 void pnlSettingsGenerators::OnlstAudioSourcesSelected(wxCommandEvent& event)
 {
-    Settings::Get().Write(wxT("Output"), wxT("Source"), event.GetString());
-    m_pbtnSequences->Show(false);
-    if(event.GetString() == wxT("Input"))
-    {
-        m_pswpAog->ChangeSelection(wxT("Input"));
-        PopulateChannelList(m_plstOutputLeft, Settings::Get().Read(wxT("Output"), wxT("Left"), 0));
-        PopulateChannelList(m_plstOutputRight, Settings::Get().Read(wxT("Output"), wxT("Right"), 0));
-    }
-    else if(event.GetString() == wxT("File"))
-    {
-        ShowFiles();
-        m_pswpAog->ChangeSelection(wxT("Files"));
-        m_pbtnSequences->Show(true);
-        m_pbtnSequences->SetLabel(wxT("Manage Files"));
-    }
-    else if(event.GetString() == wxT("Sequence"))
-    {
-        ShowSequences();
-        m_pswpAog->ChangeSelection(wxT("Files"));
-        m_pbtnSequences->Show(true);
-        m_pbtnSequences->SetLabel(wxT("Edit Sequences"));
-    }
-    else if(event.GetString() == wxT("Generator"))
-    {
-        m_pswpAog->ChangeSelection(wxT("Generator"));
-    }
-    else if(event.GetString() == wxT("Noise"))
-    {
-        m_pswpAog->ChangeSelection(wxT("Noise"));
-    }
-    else
-    {   //plugin
-        m_pswpAog->ChangeSelection(event.GetString());
-    }
+
 
 }
 
@@ -377,19 +341,16 @@ void pnlSettingsGenerators::OnbtnAogEndClick(wxCommandEvent& event)
 
 void pnlSettingsGenerators::OnSliderMove(wxCommandEvent& event)
 {
-    m_plblFrequency->SetLabel(wxString::Format(wxT("%.0f Hz"), pow(10,(m_pSlider->GetPosition()/20.0))));
     Settings::Get().Write(wxT("Generator"), wxT("Frequency"), wxString::Format(wxT("%.0f"), pow(10,(m_pSlider->GetPosition()/20.0))));
 }
 
 void pnlSettingsGenerators::OnAmplitudeMove(wxCommandEvent& event)
 {
-    m_plbldB->SetLabel(wxString::Format(wxT("%.1f dBFS"),m_pAmplitude->GetPosition()-80.0));
     Settings::Get().Write(wxT("Generator"), wxT("Amplitude"), wxString::Format(wxT("%.1f"),m_pAmplitude->GetPosition()-80.0));
 }
 
 void pnlSettingsGenerators::OnNoiseAmplitudeMove(wxCommandEvent& event)
 {
-    m_plblNoisedB->SetLabel(wxString::Format(wxT("%.1f dBFS"),m_pNoiseAmplitude->GetPosition()-80.0));
     Settings::Get().Write(wxT("Noise"), wxT("Amplitude"), wxString::Format(wxT("%.1f"),m_pNoiseAmplitude->GetPosition()-80.0));
 }
 
@@ -426,7 +387,7 @@ void pnlSettingsGenerators::OnbtnMinus10Click(wxCommandEvent& event)
 
 void pnlSettingsGenerators::OnlstShapeSelected(wxCommandEvent& event)
 {
-    Settings::Get().Write(wxT("Generator"), wxT("Shape"), event.GetInt());
+//    Settings::Get().Write(wxT("Generator"), wxT("Shape"), event.GetInt());
 }
 
 void pnlSettingsGenerators::Onbtn450Click(wxCommandEvent& event)
@@ -477,17 +438,13 @@ void pnlSettingsGenerators::OnbtnSequencesClick(wxCommandEvent& event)
 
 void pnlSettingsGenerators::OnlstColourSelected(wxCommandEvent& event)
 {
-    Settings::Get().Write(wxT("Noise"), wxT("Colour"), event.GetInt());
+  //  Settings::Get().Write(wxT("Noise"), wxT("Colour"), event.GetInt());
 }
 
 void pnlSettingsGenerators::OnbtnNoise0dBuClick(wxCommandEvent& event)
 {
     m_pNoiseAmplitude->SetSliderPosition(62, true);
 }
-
-
-
-
 
 void pnlSettingsGenerators::OnlstOutputLeftSelected(wxCommandEvent& event)
 {
@@ -519,7 +476,7 @@ void pnlSettingsGenerators::PopulateChannelList(wmList* pList, int nSelected)
         {
             for(int i = 0; i < nChannels; ++i)
             {
-            pList->AddButton(wxString::Format(wxT("Ch %d"), i));
+                pList->AddButton(wxString::Format(wxT("Ch %d"), i));
             }
         }
         pList->SelectButton(nSelected, true);
@@ -535,22 +492,89 @@ void pnlSettingsGenerators::InputSessionChanged()
 
 void pnlSettingsGenerators::OnSettingChanged(SettingEvent& event)
 {
-    if(event.GetSection()==wxT("Output") && event.GetKey() == wxT("Destination"))
+    if(event.GetSection()==wxT("Output"))
     {
-        m_plstAudioSources->Enable(event.GetValue()!=wxT("Disabled"));
-        if(event.GetValue() == wxT("Disabled"))
+        if(event.GetKey() == wxT("Destination"))
         {
-            m_plblInput->SetLabel(wxT("Audio output disabled"));
-            m_pswpAog->ChangeSelection(wxT("Input"));
-            m_plstOutputLeft->Clear();
-            m_plstOutputRight->Clear();
+            DestinationChanged(event.GetValue());
         }
-        else
+        else if(event.GetKey() == "Source")
         {
-            m_plblInput->SetLabel(wxT("Audio output taken from incoming audio siganl.\nSee Audio Input page"));
-            m_plstAudioSources->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")), true);
+            SourceChanged(event.GetValue());
         }
     }
+    else if(event.GetSection() == "Generator")
+    {
+        if(event.GetKey() == "Frequency")
+        {
+            m_plblFrequency->SetLabel(wxString::Format(wxT("%.0f Hz"), event.GetValue(0.0)));
+        }
+        else if(event.GetKey() == "Amplitude")
+        {
+            m_plbldB->SetLabel(wxString::Format("%.1f dBFS", event.GetValue(0.0)));
+        }
+    }
+    else if(event.GetSection() == "Noise")
+    {
+        if(event.GetKey() == "Amplitude")
+        {
+            m_plblNoisedB->SetLabel(wxString::Format("%.1f dBFS", event.GetValue(0.0)));
+        }
+    }
+}
+
+void pnlSettingsGenerators::DestinationChanged(const wxString& sDestination)
+{
+    m_plstAudioSources->Enable(sDestination!=wxT("Disabled"));
+    if(sDestination == wxT("Disabled"))
+    {
+        m_plblInput->SetLabel(wxT("Audio output disabled"));
+        m_pswpAog->ChangeSelection(wxT("Input"));
+        m_plstOutputLeft->Clear();
+        m_plstOutputRight->Clear();
+    }
+    else
+    {
+        m_plblInput->SetLabel(wxT("Audio output taken from incoming audio siganl.\nSee Audio Input page"));
+        m_plstAudioSources->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")), true);
+    }
+}
+void pnlSettingsGenerators::SourceChanged(const wxString& sSource)
+{
+    m_pbtnSequences->Show(false);
+    if(sSource == wxT("Input"))
+    {
+        m_pswpAog->ChangeSelection(wxT("Input"));
+        PopulateChannelList(m_plstOutputLeft, Settings::Get().Read(wxT("Output"), wxT("Left"), 0));
+        PopulateChannelList(m_plstOutputRight, Settings::Get().Read(wxT("Output"), wxT("Right"), 0));
+    }
+    else if(sSource == wxT("File"))
+    {
+        ShowFiles();
+        m_pswpAog->ChangeSelection(wxT("Files"));
+        m_pbtnSequences->Show(true);
+        m_pbtnSequences->SetLabel(wxT("Manage Files"));
+    }
+    else if(sSource == wxT("Sequence"))
+    {
+        ShowSequences();
+        m_pswpAog->ChangeSelection(wxT("Files"));
+        m_pbtnSequences->Show(true);
+        m_pbtnSequences->SetLabel(wxT("Edit Sequences"));
+    }
+    else if(sSource == wxT("Generator"))
+    {
+        m_pswpAog->ChangeSelection(wxT("Generator"));
+    }
+    else if(sSource == wxT("Noise"))
+    {
+        m_pswpAog->ChangeSelection(wxT("Noise"));
+    }
+    else
+    {   //plugin
+        m_pswpAog->ChangeSelection(sSource);
+    }
+
 }
 
 

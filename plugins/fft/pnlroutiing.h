@@ -15,23 +15,16 @@ class pnlRoutiing: public wxPanel
 		pnlRoutiing(wxWindow* parent,FFTBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pnlRoutiing();
 
-		//(*Declarations(pnlRoutiing)
 		wmList* m_plstFFT_Routing;
-		//*)
 
 		void SetNumberOfChannels(unsigned int nChannels);
 
 	protected:
 
-		//(*Identifiers(pnlRoutiing)
 		static const long ID_M_PLST3;
-		//*)
 
 	private:
 
-		//(*Handlers(pnlRoutiing)
-		void OnlstFFT_RoutingSelected(wxCommandEvent& event);
-		//*)
 		FFTBuilder* m_pBuilder;
 
 		DECLARE_EVENT_TABLE()

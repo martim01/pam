@@ -4,7 +4,7 @@
 #include <wx/intl.h>
 #include <wx/string.h>
 //*)
-#include "log.h"
+
 //(*IdInit(dlgMask)
 const long dlgMask::ID_M_PLST1 = wxNewId();
 //*)
@@ -44,6 +44,36 @@ dlgMask::dlgMask(wxWindow* parent, const wxArrayString& asButtons, const wxStrin
     m_plstSubnet->SelectButton(m_sSelected, false);
     //m_plstSubnet->ShowButton(m_plstSubnet->FindButton(m_sSelected), wmList::MIDDLE, false);
     //m_plstSubnet->Refresh();
+
+}
+
+dlgMask::dlgMask(wxWindow* parent, const std::list<wxString>& lstButtons, const wxString& sSelected, wxWindowID id,const wxPoint& pos,const wxSize& size)
+{
+	unsigned long nHeight = lstButtons.size()*41;
+
+
+	Create(parent, id, wxEmptyString, pos, wxSize(size.x, std::min((unsigned long)300, nHeight+4)), wxNO_BORDER, _T("id"));
+    m_plstSubnet = new wmList(this, ID_M_PLST1, wxPoint(2,2), wxSize(size.x-4,GetSize().y-4), wmList::STYLE_SELECT, 1, wxSize(-1,40), 1, wxSize(2,2));
+	m_plstSubnet->SetBackgroundColour(wxColour(0,0,0));
+	m_plstSubnet->SetGradient(128);
+	m_plstSubnet->SetButtonColour(wxColour(wxT("#FFFFFF")));
+	m_plstSubnet->SetPressedButtonColour(wxColour(wxT("#8080FF")));
+	m_plstSubnet->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
+	m_plstSubnet->SetTextButtonColour(wxColour(wxT("#000000")));
+
+	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&dlgMask::OnlstSubnetSelected);
+	Connect(wxEVT_LEFT_DOWN,(wxObjectEventFunction)&dlgMask::OnLeftDown);
+	//*)
+    Connect(wxEVT_ACTIVATE, (wxObjectEventFunction)&dlgMask::OnActivate);
+
+
+    for(const auto& sOption : lstButtons)
+    {
+       m_plstSubnet->AddButton(sOption);
+    }
+    m_sSelected = sSelected;
+
+    m_plstSubnet->SelectButton(m_sSelected, false);
 
 }
 

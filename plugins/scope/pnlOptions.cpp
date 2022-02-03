@@ -47,13 +47,12 @@ pnlOptions::pnlOptions(wxWindow* parent,ScopeBuilder* pBuilder, wxWindowID id,co
 	m_plstScope_Mode->AddButton(wxT("Normal"));
     m_plstScope_Mode->AddButton(wxT("Slide"));
     m_plstScope_Mode->AddButton(wxT("Cursor"));
+    m_plstScope_Mode->ConnectToSetting(m_pBuilder->GetName(), "Mode", size_t(0));
 
-    m_plstScope_Mode->SelectButton(m_pBuilder->ReadSetting(wxT("Mode"),0), true);
-
-    m_pbtnScope_Autotrigger->ToggleSelection((m_pBuilder->ReadSetting(wxT("Autotrigger"),0) == 1));
+    m_pbtnScope_Autotrigger->ConnectToSetting(m_pBuilder->GetName(), "Autotrigger", false);
 
     m_pBuilder->RegisterForSettingsUpdates(wxT("Mode"), this);
-    Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pnlOptions::OnSettingChanged);
+
 }
 
 pnlOptions::~pnlOptions()
@@ -65,12 +64,10 @@ pnlOptions::~pnlOptions()
 
 void pnlOptions::OnlstScope_ModeSelected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Mode"), event.GetInt());
 }
 
 void pnlOptions::OnbtnScope_AutotriggerClick(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Autotrigger"), event.GetInt());
 }
 
 void pnlOptions::OnbtnScope_ResetSlideClick(wxCommandEvent& event)
@@ -91,8 +88,4 @@ void pnlOptions::OnbtnScope_MemoryClick(wxCommandEvent& event)
 
 void pnlOptions::OnSettingChanged(SettingEvent& event)
 {
-    if(event.GetKey() == wxT("Mode"))
-    {
-        m_plstScope_Mode->SelectButton(m_pBuilder->ReadSetting(wxT("Mode"),0), false);
-    }
 }

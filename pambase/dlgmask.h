@@ -5,12 +5,14 @@
 #include <wx/dialog.h>
 #include "wmlist.h"
 //*)
+#include <list>
 
 class dlgMask: public wxDialog
 {
 	public:
 
 		dlgMask(wxWindow* parent, const wxArrayString& asButtons, const wxString& sSelected, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+		dlgMask(wxWindow* parent, const std::list<wxString>& lstButtons, const wxString& sSelected, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~dlgMask();
 
 		//(*Declarations(dlgMask)

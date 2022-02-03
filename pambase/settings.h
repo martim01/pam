@@ -31,7 +31,7 @@ class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
         bool GetSectionDataBegin(const wxString& sSection, std::map<wxString, wxString>::const_iterator& itBegin);
         bool GetSectionDataEnd(const wxString& sSection, std::map<wxString, wxString>::const_iterator& itEnd);
 
-        void AddHandler(const wxString& sSection, const wxString& sKey, wxEvtHandler* pHandler);
+        void AddHandler( wxEvtHandler* pHandler, const wxString& sSection=wxString(""), const wxString& sKey=wxString(""));
         void RemoveHandler(wxEvtHandler* pHandler);
 
         wxString GetExecutableDirectory() const;

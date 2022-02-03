@@ -21,15 +21,15 @@ NmosManager::NmosManager(pnlSettingsInputNmos* pPnl) :
     m_nClientMode(CLIENT_OFF)
 {
 
-    Settings::Get().AddHandler("NMOS", "Node", this);
-    Settings::Get().AddHandler("NMOS", "Client", this);
+    Settings::Get().AddHandler(this, "NMOS", "Node");
+    Settings::Get().AddHandler(this, "NMOS", "Client");
 
-    Settings::Get().AddHandler("AoIP","Epoch", this);
-    Settings::Get().AddHandler("Server", "DestinationIp", this);
-    Settings::Get().AddHandler("Server", "RTP_Port", this);
-    Settings::Get().AddHandler("Server", "PacketTime", this);
-    Settings::Get().AddHandler("Server", "Stream", this);
-    Settings::Get().AddHandler("Time", "Grandmaster", this);
+    Settings::Get().AddHandler(this, "AoIP","Epoch");
+    Settings::Get().AddHandler(this, "Server", "DestinationIp");
+    Settings::Get().AddHandler(this, "Server", "RTP_Port");
+    Settings::Get().AddHandler(this, "Server", "PacketTime");
+    Settings::Get().AddHandler(this, "Server", "Stream");
+    Settings::Get().AddHandler(this, "Time", "Grandmaster");
 
     Bind(wxEVT_SETTING_CHANGED, &NmosManager::OnSettingChanged, this);
 }

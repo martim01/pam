@@ -4,7 +4,11 @@
 #include "uirect.h"
 #include <wx/bitmap.h>
 #include "pmcontrol.h"
+#include <list>
+
 //#include "wmscroller.h"
+
+class SettingEvent;
 
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/
@@ -253,6 +257,8 @@ class PAMBASE_IMPEXPORT wmButton : public pmControl
 
         void SetToggle(bool bLook, const wxString& sLeft = wxEmptyString, const wxString& sRight = wxEmptyString, double dButtonPercent=33);
 
+        void SetPopup(const std::list<wxString>& lstOptions);
+
         bool IsChecked() const;
 
         /** @brief set associated client data
@@ -294,6 +300,11 @@ class PAMBASE_IMPEXPORT wmButton : public pmControl
             return wxSize(60,60);
         }
 
+        bool ConnectToSetting(const wxString& sSection, const wxString& sKey, const wxString& sDefault);
+        bool ConnectToSetting(const wxString& sSection, const wxString& sKey, const char* sDefault);
+        bool ConnectToSetting(const wxString& sSection, const wxString& sKey, bool bDefault);
+
+        void ShowPopup();
 
         static const unsigned int STYLE_NORMAL = 0;     ///< A normal push button
         static const unsigned int STYLE_SELECT = 1;     ///< A toggle button - i.e. one that stays down when clicked until the next click
@@ -345,6 +356,10 @@ class PAMBASE_IMPEXPORT wmButton : public pmControl
         virtual void Draw(wxDC& dc);
         virtual void DrawToggle(wxDC& dc);
 
+        void ConnectToSetting(const wxString& sSection, const wxString& sKey);
+        void OnSettingChanged(const SettingEvent& event);
+        void WriteSetting();
+
         uiRect m_uiRect;            ///< @brief the internal uiRect
         unsigned int m_nStyle;      ///< @brief the style of the button
 
@@ -374,7 +389,12 @@ class PAMBASE_IMPEXPORT wmButton : public pmControl
 
         wxString m_sAuxillary;
 
-//        wmScroller* m_pScroller;
+        wxString m_sSettingSection;
+        wxString m_sSettingKey;
+        enum enumSettingConnection {SC_NONE, SC_LABEL, SC_BOOL};
+        enumSettingConnection m_eSettingConnection;
+
+        std::list<wxString> m_lstPopupOptions;
 
         static const unsigned short STATE_NORMAL    = 0;    ///< @brief button in normal state
         static const unsigned short STATE_SELECTED = 1;     ///< @brief button selected

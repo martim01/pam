@@ -51,7 +51,10 @@ pnlRouting::pnlRouting(wxWindow* parent,LissajouBuilder* pBuilder, wxWindowID id
 	m_plstMonitor->AddButton(wxT("Force"));
 	m_plstMonitor->AddButton(wxT("Indy"));
 
-	m_plstMonitor->SelectButton(m_pBuilder->ReadSetting(wxT("Monitor"),0), true);
+	m_plstMonitor->ConnectToSetting(m_pBuilder->GetName(), "Monitor", size_t(0));
+
+	m_plstX->ConnectToSetting(m_pBuilder->GetName(), "Axis_X", size_t(0));
+	m_plstY->ConnectToSetting(m_pBuilder->GetName(), "Axis_Y", size_t(1));
 }
 
 pnlRouting::~pnlRouting()
@@ -63,12 +66,10 @@ pnlRouting::~pnlRouting()
 
 void pnlRouting::OnlstYSelected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Axis_Y"), event.GetInt());
 }
 
 void pnlRouting::OnlstXSelected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Axis_X"), event.GetInt());
 }
 
 
@@ -112,7 +113,7 @@ void pnlRouting::SetNumberOfChannels(unsigned int nChannels)
 
 void pnlRouting::OnlstMonitorSelected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Monitor"), event.GetInt());
+
     switch(event.GetInt())
     {
         case 0:
