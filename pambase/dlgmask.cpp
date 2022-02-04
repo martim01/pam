@@ -47,9 +47,9 @@ dlgMask::dlgMask(wxWindow* parent, const wxArrayString& asButtons, const wxStrin
 
 }
 
-dlgMask::dlgMask(wxWindow* parent, const std::list<wxString>& lstButtons, const wxString& sSelected, wxWindowID id,const wxPoint& pos,const wxSize& size)
+dlgMask::dlgMask(wxWindow* parent, const std::vector<wxString>& vButtons, const wxString& sSelected, wxWindowID id,const wxPoint& pos,const wxSize& size)
 {
-	unsigned long nHeight = lstButtons.size()*41;
+	unsigned long nHeight = vButtons.size()*41;
 
 
 	Create(parent, id, wxEmptyString, pos, wxSize(size.x, std::min((unsigned long)300, nHeight+4)), wxNO_BORDER, _T("id"));
@@ -67,7 +67,7 @@ dlgMask::dlgMask(wxWindow* parent, const std::list<wxString>& lstButtons, const 
     Connect(wxEVT_ACTIVATE, (wxObjectEventFunction)&dlgMask::OnActivate);
 
 
-    for(const auto& sOption : lstButtons)
+    for(const auto& sOption : vButtons)
     {
        m_plstSubnet->AddButton(sOption);
     }

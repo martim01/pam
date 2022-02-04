@@ -5,6 +5,8 @@
 #include <wx/bitmap.h>
 #include "pmcontrol.h"
 #include <list>
+#include <vector>
+
 
 //#include "wmscroller.h"
 
@@ -257,7 +259,7 @@ class PAMBASE_IMPEXPORT wmButton : public pmControl
 
         void SetToggle(bool bLook, const wxString& sLeft = wxEmptyString, const wxString& sRight = wxEmptyString, double dButtonPercent=33);
 
-        void SetPopup(const std::list<wxString>& lstOptions);
+        void SetPopup(const std::vector<wxString>& vOptions, const std::vector<wxString>& vValues=std::vector<wxString>());
 
         bool IsChecked() const;
 
@@ -360,6 +362,9 @@ class PAMBASE_IMPEXPORT wmButton : public pmControl
         void OnSettingChanged(const SettingEvent& event);
         void WriteSetting();
 
+        wxString GetPopupValue(const wxString& sOption);
+        wxString GetPopupOption(const wxString& sValue);
+
         uiRect m_uiRect;            ///< @brief the internal uiRect
         unsigned int m_nStyle;      ///< @brief the style of the button
 
@@ -394,7 +399,8 @@ class PAMBASE_IMPEXPORT wmButton : public pmControl
         enum enumSettingConnection {SC_NONE, SC_LABEL, SC_BOOL};
         enumSettingConnection m_eSettingConnection;
 
-        std::list<wxString> m_lstPopupOptions;
+        std::vector<wxString> m_vPopupOptions;
+        std::vector<wxString> m_vPopupValues;
 
         static const unsigned short STATE_NORMAL    = 0;    ///< @brief button in normal state
         static const unsigned short STATE_SELECTED = 1;     ///< @brief button selected

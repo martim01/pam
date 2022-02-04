@@ -334,7 +334,7 @@ void wmButton::OnLeftUp(wxMouseEvent& event)
         {
             if(m_nState == STATE_ARMED || (m_nStyle & STYLE_ARM)==0)
             {
-                if(m_lstPopupOptions.empty() == false)
+                if(m_vPopupOptions.empty() == false)
                 {
                     ShowPopup();
                 }
@@ -749,11 +749,11 @@ bool wmButton::ConnectToSetting(const wxString& sSection, const wxString& sKey, 
         ToggleSelection(Settings::Get().Read(sSection, sKey, sDefault) == m_uiToggleRight.GetLabel(), false);
         m_eSettingConnection = enumSettingConnection::SC_LABEL;
     }
-    else if(m_lstPopupOptions.empty() == false)
+    else
     {
         ConnectToSetting(sSection, sKey);
         m_eSettingConnection = enumSettingConnection::SC_LABEL;
-        m_uiRect.SetLabel(Settings::Get().Read(sSection, sKey, sDefault));
+        m_uiRect.SetLabel(GetPopupOption(Settings::Get().Read(sSection, sKey, sDefault)));
     }
     return m_eSettingConnection != SC_NONE;
 }
@@ -783,9 +783,9 @@ void wmButton::OnSettingChanged(const SettingEvent& event)
             {
                 ToggleSelection(event.GetValue() == m_uiToggleRight.GetLabel(), false);
             }
-            else if(m_lstPopupOptions.empty() == false)
+            else if(m_vPopupOptions.empty() == false)
             {
-                m_uiRect.SetLabel(event.GetValue());
+                m_uiRect.SetLabel(GetPopupOption(event.GetValue()));
             }
             break;
         case enumSettingConnection::SC_BOOL:
@@ -802,9 +802,9 @@ void wmButton::WriteSetting()
             {
                 Settings::Get().Write(m_sSettingSection, m_sSettingKey, m_bChecked ? m_uiToggleRight.GetLabel() : m_uiToggleLeft.GetLabel());
             }
-            else if(m_lstPopupOptions.empty() == false)
+            else if(m_vPopupOptions.empty() == false)
             {
-                Settings::Get().Write(m_sSettingSection, m_sSettingKey, m_uiRect.GetLabel());
+                Settings::Get().Write(m_sSettingSection, m_sSettingKey, GetPopupValue(m_uiRect.GetLabel()));
             }
             break;
         case enumSettingConnection::SC_BOOL:
@@ -813,20 +813,54 @@ void wmButton::WriteSetting()
     }
 }
 
-void wmButton::SetPopup(const std::list<wxString>& lstOptions)
+void wmButton::SetPopup(const std::vector<wxString>& vOptions, const std::vector<wxString>& vValues)
 {
     m_bToggleLook = false;  //can't be both
     m_nStyle = STYLE_NORMAL;    //normal style
-    m_lstPopupOptions = lstOptions;
+    m_vPopupOptions = vOptions;
+    m_vPopupValues = vValues;
+
+    if(m_eSettingConnection == enumSettingConnection::SC_LABEL)
+    {   //if connected to a setting then show the correct label
+        m_uiRect.SetLabel(GetPopupOption(Settings::Get().Read(m_sSettingSection, m_sSettingKey, m_uiRect.GetLabel())));
+    }
 }
 
 
 void wmButton::ShowPopup()
 {
-    dlgMask aDlg(GetParent(), m_lstPopupOptions, GetLabel(), wxNewId(), ClientToScreen(GetPosition()), GetSize());
+    dlgMask aDlg(GetParent(), m_vPopupOptions, GetLabel(), wxNewId(), ClientToScreen(GetPosition()), GetSize());
     if(aDlg.ShowModal()== wxID_OK)
     {
         SetLabel(aDlg.m_sSelected);
         WriteSetting();
     }
+}
+
+wxString wmButton::GetPopupValue(const wxString& sOption)
+{
+    auto itPos = std::find(m_vPopupOptions.begin(), m_vPopupOptions.end(), sOption);
+    if(itPos != m_vPopupOptions.end())
+    {
+        size_t nIndex = itPos-m_vPopupOptions.begin();
+        if(nIndex < m_vPopupValues.size())
+        {
+            return m_vPopupValues[nIndex];
+        }
+    }
+    return sOption;
+}
+
+wxString wmButton::GetPopupOption(const wxString& sValue)
+{
+    auto itPos = std::find(m_vPopupValues.begin(), m_vPopupValues.end(),sValue);
+    if(itPos != m_vPopupValues.end())
+    {
+        size_t nIndex = itPos-m_vPopupValues.begin();
+        if(nIndex < m_vPopupOptions.size())
+        {
+            return m_vPopupOptions[nIndex];
+        }
+    }
+    return sValue;
 }
