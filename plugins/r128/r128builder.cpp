@@ -26,14 +26,14 @@ m_pMeters(0)
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&R128Builder::OnSettingChanged);
 
 
-    RegisterRemoteApiIntEnum("Calculate", {0,1});
-    RegisterRemoteApiIntEnum("Scale", {0,1});
-    RegisterRemoteApiIntEnum("Zero", {0,1});
-    RegisterRemoteApiIntEnum("Show_Short", {0,1});
-    RegisterRemoteApiIntEnum("Show_Momentary", {0,1});
-    RegisterRemoteApiIntEnum("Show_Live", {0,1});
-    RegisterRemoteApiIntEnum("Show_True", {0,1});
-    RegisterRemoteApiIntEnum("Show_Phase", {0,1});
+    RegisterRemoteApiEnum("Calculate", {{0, "Pause"},{1,"Run"}});
+    RegisterRemoteApiEnum("Scale", {{0, "+9"},{1,"+18"}});
+    RegisterRemoteApiEnum("Zero", {{0,"-23"},{1,"Abs"}});
+    RegisterRemoteApiEnum("Show_Short", {{0,"Hide"},{1,"Show"}});
+    RegisterRemoteApiEnum("Show_Momentary", {{0,"Hide"},{1,"Show"}});
+    RegisterRemoteApiEnum("Show_Live", {{0,"Hide"},{1,"Show"}});
+    RegisterRemoteApiEnum("Show_True", {{0,"Hide"},{1,"Show"}});
+    RegisterRemoteApiEnum("Show_Phase", {{0,"Hide"},{1,"Show"}});
 
     m_nInputChannels = 1;
     m_nDisplayChannel = 0;

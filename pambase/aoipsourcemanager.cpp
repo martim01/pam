@@ -424,3 +424,13 @@ AoipSourceManager::~AoipSourceManager()
 {
 
 }
+
+std::map<int, wxString> AoipSourceManager::GetSourceNames()
+{
+    std::map<int, wxString> setSources;
+    for(const auto& pairSource : m_mSources)
+    {
+        setSources.insert(std::make_pair(pairSource.first, pairSource.second.sName));
+    }
+    return setSources;
+}

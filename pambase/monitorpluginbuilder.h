@@ -76,9 +76,13 @@ class PAMBASE_IMPEXPORT MonitorPluginBuilder : public wxEvtHandler
 
         void SendWebsocketMessage(Json::Value jsMessage);
 
-        void RegisterRemoteApiStringEnum(const wxString& sKey, const std::set<wxString>& setEnum);
-        void RegisterRemoteApiIntEnum(const wxString& sKey, const std::set<int>& setEnum);
-        void RegisterRemoteApiRange(const wxString& sKey, const std::pair<double, double>& dRange);
+        void RegisterRemoteApiEnum(const wxString& sKey, const std::set<wxString>& setEnum);
+        void RegisterRemoteApiEnum(const wxString& sKey, const std::map<int, wxString>& mEnum);
+        void RegisterRemoteApiRangeDouble(const wxString& sKey, const std::pair<double, double>& dRange);
+        void RegisterRemoteApiRangeInt(const wxString& sKey, const std::pair<int, int>& nRange);
+        void RegisterRemoteApiCallback(const wxString& sKey, std::function<std::set<wxString>()> func);
+        void RegisterRemoteApiCallback(const wxString& sKey, std::function<std::map<int, wxString>()> func);
+        void RegisterRemoteApi(const wxString& sKey);
 
         wxEvtHandler* m_pHandler;
 

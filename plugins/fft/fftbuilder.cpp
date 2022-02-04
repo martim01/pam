@@ -22,16 +22,16 @@ m_pMeter(0)
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&FFTBuilder::OnSettingChanged);
 
     //Register with remote api
-    RegisterRemoteApiIntEnum("peaks", {0,1});
-    RegisterRemoteApiIntEnum("Bins", {512,1024,1536,2048});
-    RegisterRemoteApiIntEnum("Display", {0,1,2});      //@todo names not numbers
-    RegisterRemoteApiIntEnum("Window", {0,1,2,3,4,5}); //@todo names not numbers
-    RegisterRemoteApiIntEnum("Overlap", {0,25,50,75});
-    RegisterRemoteApiIntEnum("Routing", {0,1,2,3,4,5,6,7});   //@todo this should be dynamic based on sessions
-    RegisterRemoteApiIntEnum("Type", {0,1,2});        //@todo names not numbers
-    RegisterRemoteApiIntEnum("Hold", {0,1});
-    RegisterRemoteApiIntEnum("Cursor", {0,1});
-    RegisterRemoteApiIntEnum("Colour", {0,1});
+    RegisterRemoteApiEnum("peaks", {{0,"Off"}, {1,"On"}});
+    RegisterRemoteApiEnum("Bins", {{512,"46 Hz"},{1024,"23 Hz"},{1536,"16 Hz"},{2048,"12 Hz"}});
+    RegisterRemoteApiEnum("Display", {{0,"Graph"},{1,"Lines"},{2,"EQ"}});
+    RegisterRemoteApiEnum("Window", {{0,"None"},{1,"Hann"},{2,"Hamming"},{3,"Blackman"},{4,"Kaiser"},{5,"KaiserBessel"}});
+    RegisterRemoteApiEnum("Overlap", {{0,"0%%"},{25,"25%%"},{50,"50%%"},{75,"75%%"}});
+    RegisterRemoteApiRangeInt("Routing", {0,7});   //@todo this should be dynamic based on sessions
+    RegisterRemoteApiEnum("Type", {{0,"FFT"},{1,"1/3 Octave"},{2,"Peaks"}});
+    RegisterRemoteApiEnum("Hold", {{0,"Off"}, {1,"On"}});
+    RegisterRemoteApiEnum("Cursor", {{0,"Off"}, {1,"On"}});
+    RegisterRemoteApiEnum("Colour", {{0,"Off"}, {1,"On"}});
 }
 
 void FFTBuilder::SetAudioData(const timedbuffer* pBuffer)

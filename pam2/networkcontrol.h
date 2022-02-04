@@ -44,6 +44,7 @@ class NetworkControl
         std::map<wxString, networkInterface>::const_iterator GetInterfaceBegin();
         std::map<wxString, networkInterface>::const_iterator GetInterfaceEnd();
         std::map<wxString, networkInterface>::const_iterator FindInterface(wxString sInterface);
+        std::set<wxString> GetInterfaceNames();
 //        bool HasAdminRights();
         void CheckConnection(const wxString& sInterface);
 

@@ -322,3 +322,29 @@ void SoundcardManager::FlushOutputQueue()
         m_pOutput->FlushBuffer();
     }
 }
+
+std::map<int, wxString> SoundcardManager::GetOutputDevices()
+{
+    std::map<int, wxString> mDevices;
+    for(size_t i = 0; i < m_vDevices.size(); i++)
+    {
+        if(m_vDevices[i] && m_vDevices[i]->maxOutputChannels > 0)
+        {
+            mDevices.insert(std::make_pair(i, wxString::FromUTF8(m_vDevices[i]->name)));
+        }
+    }
+    return mDevices;
+}
+
+std::map<int, wxString> SoundcardManager::GetInputDevices()
+{
+    std::map<int, wxString> mDevices;
+    for(size_t i = 0; i < m_vDevices.size(); i++)
+    {
+        if(m_vDevices[i] && m_vDevices[i]->maxOutputChannels > 0)
+        {
+            mDevices.insert(std::make_pair(i, wxString::FromUTF8(m_vDevices[i]->name)));
+        }
+    }
+    return mDevices;
+}

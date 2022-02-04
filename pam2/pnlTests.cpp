@@ -69,6 +69,7 @@ void pnlTests::ShowTestPanel(const wxString& sPanel)
 
 }
 
+
 void pnlTests::SetAudioData(const timedbuffer* pBuffer)
 {
     if(m_pSelectedTest)

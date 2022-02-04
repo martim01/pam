@@ -71,6 +71,10 @@ class pnlRTP: public wxPanel
 
 		void ListSources();
 
+		static const std::string STR_SAP[3];
+        static const wxString STR_SAP_SETTING[3];
+        enum {LOCAL=0, ORGANISATION, GLOBAL};
+
 	protected:
 
 		//(*Identifiers(pnlRTP)
@@ -152,9 +156,7 @@ class pnlRTP: public wxPanel
 
         wxArrayString m_asServices;
 
-        static const std::string STR_SAP[3];
-        static const wxString STR_SAP_SETTING[3];
-        enum {LOCAL=0, ORGANISATION, GLOBAL};
+
 
 		DECLARE_EVENT_TABLE()
 };

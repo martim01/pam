@@ -130,34 +130,82 @@ pml::restgoose::response RemoteApi::GetSettings(const query& theQuery, const std
             Json::Value jsKey;
             jsKey["current"] = Settings::Get().Read(pairSection.first, pairData.first, "").ToStdString();
 
-            if(pairData.second.setEnum.empty() == false)
+            switch(pairData.second.eType)
             {
-                Json::Value jsEnum(Json::arrayValue);
-                for(auto sOption : pairData.second.setEnum)
-                {
-                    jsEnum.append(sOption.ToStdString());
-                }
-                jsKey["enum"] = jsEnum;
-            }
-            else if(pairData.second.setEnumNum.empty() == false)
-            {
-                Json::Value jsEnum(Json::arrayValue);
-                for(auto nOption : pairData.second.setEnumNum)
-                {
-                    jsEnum.append(nOption);
-                }
-                jsKey["enum"] = jsEnum;
-            }
-            else
-            {
-                jsKey["range"]["minimum"] = pairData.second.dRange.first;
-                jsKey["range"]["maximum"] = pairData.second.dRange.second;
+                case section::constraint::enumType::STRING_ENUM:
+                    jsKey["enum"] = GetJson(pairData.second.setEnum);
+                    break;
+                case section::constraint::enumType::INT_ENUM:
+                    jsKey["enum"] = GetJson(pairData.second.mEnumNum);
+                    break;
+                case section::constraint::enumType::STRING_CALLBACK:
+                    jsKey["enum"] = GetJson(pairData.second.funcStringEnum);
+                    break;
+                case section::constraint::enumType::INT_CALLBACK:
+                    jsKey["enum"] = GetJson(pairData.second.funcIntEnum);
+                    break;break;
+                case section::constraint::enumType::INT_RANGE:
+                    jsKey["range"]["minimum"] = pairData.second.nRange.first;
+                    jsKey["range"]["maximum"] = pairData.second.nRange.second;
+                    break;
+                case section::constraint::enumType::DOUBLE_RANGE:
+                    jsKey["range"]["minimum"] = pairData.second.dRange.first;
+                    jsKey["range"]["maximum"] = pairData.second.dRange.second;
+                    break;
             }
 
             resp.jsonData[pairSection.first.ToStdString()][pairData.first.ToStdString()] = jsKey;
         }
     }
     return resp;
+}
+
+Json::Value RemoteApi::GetJson(const std::set<wxString>& setEnum)
+{
+    Json::Value jsEnum(Json::arrayValue);
+    for(auto sOption : setEnum)
+    {
+        jsEnum.append(sOption.ToStdString());
+    }
+    return jsEnum;
+}
+
+Json::Value RemoteApi::GetJson(const std::map<int,wxString>& mEnum)
+{
+    Json::Value jsEnum(Json::arrayValue);
+    for(auto pairOption : mEnum)
+    {
+        Json::Value jsV;
+        jsV["label"] = pairOption.second.ToStdString();
+        jsV["value"] = pairOption.first;
+        jsEnum.append(jsV);
+    }
+    return jsEnum;
+}
+
+
+Json::Value RemoteApi::GetJson(std::function<std::set<wxString>()> func)
+{
+    if(func)
+    {
+        return GetJson(func());
+    }
+    else
+    {
+        return Json::Value(Json::arrayValue);
+    }
+}
+
+Json::Value RemoteApi::GetJson(std::function<std::map<int, wxString>()> func)
+{
+    if(func)
+    {
+        return GetJson(func());
+    }
+    else
+    {
+        return Json::Value(Json::arrayValue);
+    }
 }
 
 pml::restgoose::response RemoteApi::PatchSettings(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
@@ -244,44 +292,111 @@ pml::restgoose::response RemoteApi::CheckJsonSettingPatch(const Json::Value& jsP
 
 pml::restgoose::response RemoteApi::CheckJsonSettingPatchConstraint(const Json::Value& jsPatch, const RemoteApi::section::constraint& aConstraint)
 {
-    if(aConstraint.setEnum.empty() == false)
+    switch(aConstraint.eType)
     {
-        auto itValue = aConstraint.setEnum.find(wxString(jsPatch["value"].asString()));
-        if(itValue != aConstraint.setEnum.end())
+        case section::constraint::enumType::STRING_ENUM:
+            return CheckJsonSettingPatchConstraint(jsPatch["value"], aConstraint.setEnum);
+        case section::constraint::enumType::INT_ENUM:
+            return CheckJsonSettingPatchConstraint(jsPatch["value"], aConstraint.mEnumNum);
+        case section::constraint::enumType::INT_RANGE:
+            return CheckJsonSettingPatchConstraint(jsPatch["value"], aConstraint.nRange);
+        case section::constraint::enumType::DOUBLE_RANGE:
+            return CheckJsonSettingPatchConstraint(jsPatch["value"], aConstraint.dRange);
+        case section::constraint::enumType::STRING_CALLBACK:
+            return CheckJsonSettingPatchConstraint(jsPatch["value"], aConstraint.funcStringEnum);
+        case section::constraint::enumType::INT_CALLBACK:
+            return CheckJsonSettingPatchConstraint(jsPatch["value"], aConstraint.funcIntEnum);
+        default:
+            return pml::restgoose::response(200);
+    }
+}
+
+pml::restgoose::response RemoteApi::CheckJsonSettingPatchConstraint(const Json::Value& jsValue, const std::set<wxString>& setEnum)
+{
+    auto itValue = setEnum.find(wxString(jsValue.asString()));
+    if(itValue != setEnum.end())
+    {
+        return pml::restgoose::response(200);
+    }
+    else
+    {
+        return pml::restgoose::response(400, jsValue.asString()+" is not a valid value");
+    }
+}
+
+pml::restgoose::response RemoteApi::CheckJsonSettingPatchConstraint(const Json::Value& jsValue, const std::map<int, wxString>& mEnum)
+{
+    if(jsValue.isConvertibleTo(Json::intValue))
+    {
+        auto itValue = mEnum.find(jsValue.asInt());
+        if(itValue != mEnum.end())
         {
             return pml::restgoose::response(200);
         }
         else
         {
-            return pml::restgoose::response(400, jsPatch["value"].asString()+" is not a valid value");
+            return pml::restgoose::response(400, jsValue.asString()+" is not a valid value");
         }
-    }
-    else if(aConstraint.setEnumNum.empty() == false)
-    {
-        if(jsPatch["value"].isConvertibleTo(Json::intValue))
-        {
-            auto itValue = aConstraint.setEnumNum.find(jsPatch["value"].asInt());
-            if(itValue != aConstraint.setEnumNum.end())
-            {
-                return true;
-            }
-            else
-            {
-                return pml::restgoose::response(400, jsPatch["value"].asString()+" is not a valid value");
-            }
-        }
-        else
-        {
-            return pml::restgoose::response(400, jsPatch["value"].asString()+" is not convertible to an integeger");
-        }
-    }
-    else if(jsPatch["value"].isConvertibleTo(Json::realValue) && jsPatch["value"].asDouble() >= aConstraint.dRange.first && jsPatch["value"].asDouble() <= aConstraint.dRange.second)
-    {
-        return true;
     }
     else
     {
-        return pml::restgoose::response(400, jsPatch["value"].asString()+" is not convertible to a double or is out of range");
+        return pml::restgoose::response(400, jsValue.asString()+" is not convertible to an integer");
+    }
+
+}
+
+pml::restgoose::response RemoteApi::CheckJsonSettingPatchConstraint(const Json::Value& jsValue, const std::pair<double, double>& dRange)
+{
+    if(jsValue.isConvertibleTo(Json::realValue) == false)
+    {
+        return pml::restgoose::response(400, jsValue.asString()+" is not convertible to a double");
+    }
+    else if (jsValue.asDouble() >= dRange.first && jsValue.asDouble() <= dRange.second)
+    {
+        return pml::restgoose::response(200);
+    }
+    else
+    {
+        return pml::restgoose::response(400, jsValue.asString()+" is not within range");
+    }
+}
+
+pml::restgoose::response RemoteApi::CheckJsonSettingPatchConstraint(const Json::Value& jsValue, const std::pair<int, int>& nRange)
+{
+    if(jsValue.isConvertibleTo(Json::intValue) == false)
+    {
+        return pml::restgoose::response(400, jsValue.asString()+" is not convertible to an integer");
+    }
+    else if (jsValue.asInt() >= nRange.first && jsValue.asInt() <= nRange.second)
+    {
+        return pml::restgoose::response(200);
+    }
+    else
+    {
+        return pml::restgoose::response(400, jsValue.asString()+" is not within range");
+    }
+}
+
+pml::restgoose::response RemoteApi::CheckJsonSettingPatchConstraint(const Json::Value& jsValue, std::function<std::set<wxString>()> func)
+{
+    if(func)
+    {
+        return CheckJsonSettingPatchConstraint(jsValue, func());
+    }
+    else
+    {
+        return pml::restgoose::response(400, "Enum is empty");
+    }
+}
+pml::restgoose::response RemoteApi::CheckJsonSettingPatchConstraint(const Json::Value& jsValue, std::function<std::map<int, wxString>()> func)
+{
+    if(func)
+    {
+        return CheckJsonSettingPatchConstraint(jsValue, func());
+    }
+    else
+    {
+        return pml::restgoose::response(400, "Enum is empty");
     }
 }
 
@@ -419,20 +534,44 @@ void RemoteApi::SendPluginWebsocketMessage(const Json::Value& jsMessage)
 }
 
 
-void RemoteApi::RegisterRemoteApiStringEnum(const wxString& sSection, const wxString& sKey, const std::set<wxString>& setEnum)
+void RemoteApi::RegisterRemoteApiEnum(const wxString& sSection, const wxString& sKey, const std::set<wxString>& setEnum)
 {
     auto itSection = m_mSettings.insert(std::make_pair(sSection, section())).first;
     itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint(setEnum)));
 }
 
-void RemoteApi::RegisterRemoteApiRange(const wxString& sSection, const wxString& sKey, const std::pair<double, double>& dRange)
+void RemoteApi::RegisterRemoteApiRangeDouble(const wxString& sSection, const wxString& sKey, const std::pair<double, double>& dRange)
 {
     auto itSection = m_mSettings.insert(std::make_pair(sSection, section())).first;
     itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint(dRange)));
 }
 
-void RemoteApi::RegisterRemoteApiIntEnum(const wxString& sSection, const wxString& sKey, const std::set<int>& setEnum)
+void RemoteApi::RegisterRemoteApiEnum(const wxString& sSection, const wxString& sKey, const std::map<int, wxString>& mEnum)
 {
     auto itSection = m_mSettings.insert(std::make_pair(sSection, section())).first;
-    itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint(setEnum)));
+    itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint(mEnum)));
+}
+
+void RemoteApi::RegisterRemoteApiRangeInt(const wxString& sSection, const wxString& sKey, const std::pair<int, int>& nRange)
+{
+    auto itSection = m_mSettings.insert(std::make_pair(sSection, section())).first;
+    itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint(nRange)));
+}
+
+void RemoteApi::RegisterRemoteApiCallback(const wxString& sSection, const wxString& sKey, std::function<std::set<wxString>()> func)
+{
+    auto itSection = m_mSettings.insert(std::make_pair(sSection, section())).first;
+    itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint(func)));
+}
+
+void RemoteApi::RegisterRemoteApiCallback(const wxString& sSection, const wxString& sKey, std::function<std::map<int, wxString>()> func)
+{
+    auto itSection = m_mSettings.insert(std::make_pair(sSection, section())).first;
+    itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint(func)));
+}
+
+void RemoteApi::RegisterRemoteApi(const wxString& sSection, const wxString& sKey)
+{
+    auto itSection = m_mSettings.insert(std::make_pair(sSection, section())).first;
+    itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint()));
 }

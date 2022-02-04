@@ -159,17 +159,36 @@ void MonitorPluginBuilder::SendWebsocketMessage(Json::Value jsMessage)
     RemoteApi::Get().SendPluginWebsocketMessage(jsWebsocket);
 }
 
-void MonitorPluginBuilder::RegisterRemoteApiStringEnum(const wxString& sKey, const std::set<wxString>& setEnum)
+void MonitorPluginBuilder::RegisterRemoteApiEnum(const wxString& sKey, const std::set<wxString>& setEnum)
 {
-    RemoteApi::Get().RegisterRemoteApiStringEnum(GetName(), sKey, setEnum);
+    RemoteApi::Get().RegisterRemoteApiEnum(GetName(), sKey, setEnum);
 }
 
-void MonitorPluginBuilder::RegisterRemoteApiIntEnum(const wxString& sKey, const std::set<int>& setEnum)
+void MonitorPluginBuilder::RegisterRemoteApiEnum(const wxString& sKey, const std::map<int, wxString>& mEnum)
 {
-    RemoteApi::Get().RegisterRemoteApiIntEnum(GetName(), sKey, setEnum);
+    RemoteApi::Get().RegisterRemoteApiEnum(GetName(), sKey, mEnum);
 }
 
-void MonitorPluginBuilder::RegisterRemoteApiRange(const wxString& sKey, const std::pair<double, double>& dRange)
+void MonitorPluginBuilder::RegisterRemoteApiRangeDouble(const wxString& sKey, const std::pair<double, double>& dRange)
 {
-    RemoteApi::Get().RegisterRemoteApiRange(GetName(), sKey, dRange);
+    RemoteApi::Get().RegisterRemoteApiRangeDouble(GetName(), sKey, dRange);
+}
+
+void MonitorPluginBuilder::RegisterRemoteApiRangeInt(const wxString& sKey, const std::pair<int, int>& nRange)
+{
+    RemoteApi::Get().RegisterRemoteApiRangeInt(GetName(), sKey, nRange);
+}
+void MonitorPluginBuilder::RegisterRemoteApiCallback(const wxString& sKey, std::function<std::set<wxString>()> func)
+{
+    RemoteApi::Get().RegisterRemoteApiCallback(GetName(), sKey, func);
+}
+
+void MonitorPluginBuilder::RegisterRemoteApiCallback(const wxString& sKey, std::function<std::map<int, wxString>()> func)
+{
+    RemoteApi::Get().RegisterRemoteApiCallback(GetName(), sKey, func);
+}
+
+void MonitorPluginBuilder::RegisterRemoteApi(const wxString& sKey)
+{
+    RemoteApi::Get().RegisterRemoteApi(GetName(), sKey);
 }
