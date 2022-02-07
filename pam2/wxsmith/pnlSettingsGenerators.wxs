@@ -27,24 +27,9 @@
 				<object class="wmSwitcherPanelpage">
 					<object class="wxPanel" name="ID_PANEL11" variable="Panel5" member="yes">
 						<bg>#000000</bg>
-						<object class="wmLabel" name="ID_M_PLBL6" variable="m_plblInput" member="yes">
-							<label>Audio output taken from incoming audio siganl.&#x0A;See Audio Input page</label>
-							<pos>0,0</pos>
-							<size>600,100</size>
-							<fg>#80FF00</fg>
-							<bg>#000000</bg>
-							<font>
-								<size>14</size>
-								<style>normal</style>
-								<weight>bold</weight>
-								<underlined>0</underlined>
-								<family>swiss</family>
-								<face>Arial</face>
-							</font>
-						</object>
 						<object class="wmLabel" name="ID_M_PLBL8" variable="m_pLbl1" member="yes">
 							<label>Input-Output Channel Mapping</label>
-							<pos>0,100</pos>
+							<pos>0,0</pos>
 							<size>600,30</size>
 							<fg>#FFFFFF</fg>
 							<bg>#004000</bg>
@@ -57,36 +42,234 @@
 								<face>Arial</face>
 							</font>
 						</object>
-						<object class="wmList" name="ID_M_PLST3" variable="m_plstOutputLeft" member="yes">
+						<object class="wmList" name="ID_M_PLST3" variable="m_plstOutput_1" member="yes">
 							<scrolling>None</scrolling>
 							<button_gap>2,-1</button_gap>
+							<button_size>-1,32</button_size>
 							<columns>8</columns>
 							<button>#A0A0A0</button>
 							<button_selected>#008000</button_selected>
 							<items />
-							<pos>60,140</pos>
-							<size>540,44</size>
+							<pos>60,60</pos>
+							<size>540,35</size>
 							<bg>#000000</bg>
 							<style>wmList::STYLE_SELECT</style>
-							<handler function="OnlstOutputLeftSelected" entry="EVT_LIST_SELECTED" />
 						</object>
-						<object class="wmList" name="ID_M_PLST10" variable="m_plstOutputRight" member="yes">
+						<object class="wmList" name="ID_M_PLST1" variable="m_plstOutput_2" member="yes">
 							<scrolling>None</scrolling>
 							<button_gap>2,-1</button_gap>
+							<button_size>-1,32</button_size>
+							<columns>8</columns>
+							<button>#A0A0A0</button>
+							<button_selected>#008000</button_selected>
+							<items />
+							<pos>60,95</pos>
+							<size>540,35</size>
+							<bg>#000000</bg>
+							<style>wmList::STYLE_SELECT</style>
+						</object>
+						<object class="wmList" name="ID_M_PLST2" variable="m_plstOutput_3" member="yes">
+							<scrolling>None</scrolling>
+							<button_gap>2,-1</button_gap>
+							<button_size>-1,32</button_size>
+							<columns>8</columns>
+							<button>#A0A0A0</button>
+							<button_selected>#008000</button_selected>
+							<items />
+							<pos>60,130</pos>
+							<size>540,35</size>
+							<bg>#000000</bg>
+							<style>wmList::STYLE_SELECT</style>
+						</object>
+						<object class="wmList" name="ID_M_PLST4" variable="m_plstOutput_4" member="yes">
+							<scrolling>None</scrolling>
+							<button_gap>2,-1</button_gap>
+							<button_size>-1,32</button_size>
+							<columns>8</columns>
+							<button>#A0A0A0</button>
+							<button_selected>#008000</button_selected>
+							<items />
+							<pos>60,165</pos>
+							<size>540,35</size>
+							<bg>#000000</bg>
+							<style>wmList::STYLE_SELECT</style>
+						</object>
+						<object class="wmList" name="ID_M_PLST6" variable="m_plstOutput_5" member="yes">
+							<scrolling>None</scrolling>
+							<button_gap>2,-1</button_gap>
+							<button_size>-1,32</button_size>
 							<columns>8</columns>
 							<button>#A0A0A0</button>
 							<button_selected>#008000</button_selected>
 							<items />
 							<pos>60,200</pos>
-							<size>540,44</size>
+							<size>540,35</size>
 							<bg>#000000</bg>
 							<style>wmList::STYLE_SELECT</style>
-							<handler function="OnlstOutputRightSelected" entry="EVT_LIST_SELECTED" />
 						</object>
-						<object class="wmLabel" name="ID_M_PLBL10" variable="m_pLbl6" member="yes">
-							<label>LEFT:</label>
-							<pos>0,140</pos>
-							<size>60,44</size>
+						<object class="wmList" name="ID_M_PLST10" variable="m_plstOutput_6" member="yes">
+							<scrolling>None</scrolling>
+							<button_gap>2,-1</button_gap>
+							<button_size>-1,32</button_size>
+							<columns>8</columns>
+							<button>#A0A0A0</button>
+							<button_selected>#008000</button_selected>
+							<items />
+							<pos>60,235</pos>
+							<size>540,35</size>
+							<bg>#000000</bg>
+							<style>wmList::STYLE_SELECT</style>
+						</object>
+						<object class="wmList" name="ID_M_PLST11" variable="m_plstOutput_7" member="yes">
+							<scrolling>None</scrolling>
+							<button_gap>2,-1</button_gap>
+							<button_size>-1,32</button_size>
+							<columns>8</columns>
+							<button>#A0A0A0</button>
+							<button_selected>#008000</button_selected>
+							<items />
+							<pos>60,270</pos>
+							<size>540,35</size>
+							<bg>#000000</bg>
+							<style>wmList::STYLE_SELECT</style>
+						</object>
+						<object class="wmList" name="ID_M_PLST12" variable="m_plstOutput_8" member="yes">
+							<scrolling>None</scrolling>
+							<button_gap>2,-1</button_gap>
+							<button_size>-1,32</button_size>
+							<columns>8</columns>
+							<button>#A0A0A0</button>
+							<button_selected>#008000</button_selected>
+							<items />
+							<pos>60,305</pos>
+							<size>540,35</size>
+							<bg>#000000</bg>
+							<style>wmList::STYLE_SELECT</style>
+						</object>
+						<object class="wmLabel" name="ID_M_PLBL10" variable="m_plblOutput" member="yes">
+							<label>Outputs:</label>
+							<pos>0,30</pos>
+							<size>70,30</size>
+							<fg>#FFFFFF</fg>
+							<bg>#000000</bg>
+							<font>
+								<size>10</size>
+								<style>normal</style>
+								<weight>bold</weight>
+								<underlined>0</underlined>
+								<family>swiss</family>
+								<face>Verdana</face>
+							</font>
+						</object>
+						<object class="wmLabel" name="ID_M_PLBL2" variable="m_plblOutput_1" member="yes">
+							<label>1</label>
+							<pos>0,60</pos>
+							<size>60,35</size>
+							<fg>#FFFFFF</fg>
+							<bg>#000000</bg>
+							<font>
+								<size>10</size>
+								<style>normal</style>
+								<weight>bold</weight>
+								<underlined>0</underlined>
+								<family>swiss</family>
+								<face>Verdana</face>
+							</font>
+						</object>
+						<object class="wmLabel" name="ID_M_PLBL3" variable="m_plblOutput_2" member="yes">
+							<label>2</label>
+							<pos>0,95</pos>
+							<size>60,35</size>
+							<fg>#FFFFFF</fg>
+							<bg>#000000</bg>
+							<font>
+								<size>10</size>
+								<style>normal</style>
+								<weight>bold</weight>
+								<underlined>0</underlined>
+								<family>swiss</family>
+								<face>Verdana</face>
+							</font>
+						</object>
+						<object class="wmLabel" name="ID_M_PLBL4" variable="m_plblOutput_3" member="yes">
+							<label>3</label>
+							<pos>0,130</pos>
+							<size>60,35</size>
+							<fg>#FFFFFF</fg>
+							<bg>#000000</bg>
+							<font>
+								<size>10</size>
+								<style>normal</style>
+								<weight>bold</weight>
+								<underlined>0</underlined>
+								<family>swiss</family>
+								<face>Verdana</face>
+							</font>
+						</object>
+						<object class="wmLabel" name="ID_M_PLBL5" variable="m_plblOutput_4" member="yes">
+							<label>4</label>
+							<pos>0,165</pos>
+							<size>60,35</size>
+							<fg>#FFFFFF</fg>
+							<bg>#000000</bg>
+							<font>
+								<size>10</size>
+								<style>normal</style>
+								<weight>bold</weight>
+								<underlined>0</underlined>
+								<family>swiss</family>
+								<face>Verdana</face>
+							</font>
+						</object>
+						<object class="wmLabel" name="ID_M_PLBL6" variable="m_plblOutput_5" member="yes">
+							<label>5</label>
+							<pos>0,200</pos>
+							<size>60,35</size>
+							<fg>#FFFFFF</fg>
+							<bg>#000000</bg>
+							<font>
+								<size>10</size>
+								<style>normal</style>
+								<weight>bold</weight>
+								<underlined>0</underlined>
+								<family>swiss</family>
+								<face>Verdana</face>
+							</font>
+						</object>
+						<object class="wmLabel" name="ID_M_PLBL12" variable="m_plblOutput_6" member="yes">
+							<label>6</label>
+							<pos>0,235</pos>
+							<size>60,35</size>
+							<fg>#FFFFFF</fg>
+							<bg>#000000</bg>
+							<font>
+								<size>10</size>
+								<style>normal</style>
+								<weight>bold</weight>
+								<underlined>0</underlined>
+								<family>swiss</family>
+								<face>Verdana</face>
+							</font>
+						</object>
+						<object class="wmLabel" name="ID_M_PLBL13" variable="m_plblOutput_7" member="yes">
+							<label>7</label>
+							<pos>0,270</pos>
+							<size>60,35</size>
+							<fg>#FFFFFF</fg>
+							<bg>#000000</bg>
+							<font>
+								<size>10</size>
+								<style>normal</style>
+								<weight>bold</weight>
+								<underlined>0</underlined>
+								<family>swiss</family>
+								<face>Verdana</face>
+							</font>
+						</object>
+						<object class="wmLabel" name="ID_M_PLBL14" variable="m_plblOutput_8" member="yes">
+							<label>8</label>
+							<pos>0,305</pos>
+							<size>60,35</size>
 							<fg>#FFFFFF</fg>
 							<bg>#000000</bg>
 							<font>
@@ -99,9 +282,9 @@
 							</font>
 						</object>
 						<object class="wmLabel" name="ID_M_PLBL11" variable="m_pLbl7" member="yes">
-							<label>RIGHT:</label>
-							<pos>0,200</pos>
-							<size>60,44</size>
+							<label>Inputs:</label>
+							<pos>200,30</pos>
+							<size>60,30</size>
 							<fg>#FFFFFF</fg>
 							<bg>#000000</bg>
 							<font>

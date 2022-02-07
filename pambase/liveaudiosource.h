@@ -16,6 +16,8 @@ class LiveAudioSource: public AudioInputDevice
 unsigned char nBitsPerSample, unsigned short nSampleRate);
 
 
+        void SetChannelMapping(const vector<char> vMapping);
+
 
         protected:
             friend class RtpServerThread;
@@ -62,6 +64,8 @@ unsigned char nBitsPerSample, unsigned short nSampleRate);
             unsigned long m_nLastBufferSize;
             unsigned long m_nBufferWritten;
             timedbuffer* m_pAudioBuffer;
+
+            vector<char> m_vChannelMapping;
 
             static const double TWENTYFOURBIT;
             static const double SIXTEENBIT;

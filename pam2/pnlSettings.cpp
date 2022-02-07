@@ -583,9 +583,9 @@ void pnlSettings::OnedtPinTextEnter(wxCommandEvent& event)
 }
 
 
-void pnlSettings::InputSessionChanged()
+void pnlSettings::SessionChanged()
 {
-    m_ppnlGenerators->InputSessionChanged();
+    m_ppnlGenerators->SessionChanged();
 }
 
 

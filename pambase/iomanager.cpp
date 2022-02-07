@@ -575,7 +575,7 @@ void IOManager::OutputChanged(const wxString& sKey)
         pmlLog(pml::LOG_INFO) << "IOManager\tChange Audio Output Generator: Sequence";
         InitGeneratorSequence();
     }
-    else if(sKey == wxT("Left") || sKey == wxT("Right"))
+    else if(sKey.Left(7) == "Channel")
     {
         OutputChannelsChanged();
     }
@@ -972,6 +972,10 @@ void IOManager::CheckPlayback(unsigned long nSampleRate, unsigned long nChannels
             OutputChannelsChanged();
             OpenSoundcardDevice(nSampleRate);
         }
+        else
+        {
+            OutputChannelsChanged();
+        }
     }
     else
     {
@@ -986,6 +990,15 @@ void IOManager::ClearSession()
     CheckPlayback(48000,0);
 }
 
+const session& IOManager::GetInputSession()
+{
+    return m_SessionIn;
+}
+
+const session& IOManager::GetOutputSession()
+{
+    return m_SessionOut;
+}
 
 const session& IOManager::GetSession()
 {
@@ -1020,9 +1033,25 @@ void IOManager::OutputChannelsChanged()
     }
 
     vector<char> vChannels;
-    vChannels.push_back(Settings::Get().Read(wxT("Output"), wxT("Left"), 0));
-    vChannels.push_back(Settings::Get().Read(wxT("Output"), wxT("Right"), 1));
-    SoundcardManager::Get().SetOutputMixer(vChannels, nInputChannels);
+    if(m_SessionOut.GetCurrentSubsession() != m_SessionOut.lstSubsession.end())
+    {
+        for(int i = 1; i <= m_SessionOut.GetCurrentSubsession()->nChannels)
+        {
+            vChannels.push_back(Settings::Get().Read("Output", wxString::Format("Channel_%d", i), i-1));
+        }
+    }
+    if(m_pOnDemandSubsession)
+    {
+        m_pOnDemandSubsession->SetChannelMapping(vChannels);
+    }
+    else if(m_pAlwaysOnServer)
+    {
+        m_pAlwaysOnServer->SetChannelMapping(vChannels);
+    }
+    else
+    {
+        SoundcardManager::Get().SetOutputMixer(vChannels, nInputChannels);
+    }
 
     for(set<wxEvtHandler*>::iterator itHandler = m_setHandlers.begin(); itHandler != m_setHandlers.end(); ++itHandler)
     {

@@ -2427,6 +2427,26 @@ uiRect* wmList::GetButtonuiRect(size_t nButton)
     return 0;
 }
 
+void wmList::ReloadSetting()
+{
+    switch(m_eSettingConnection)
+    {
+        case enumSettingConnection::LABEL:
+            SelectButton(Settings::Get().Read(sSection, sKey, ""), false);
+            break;
+        case enumSettingConnection::INDEX:
+            SelectButton(Settings::Get().Read(sSection, sKey, 0), false);
+            break;
+        case enumSettingConnection::DATA:
+            {
+                size_t nButton = FindButton((void*)Settings::Get().Read(sSection, sKey, 0));
+                if(nButton != NOT_FOUND)
+                {
+                    SelectButton(nButton, false);
+                }
+            }
+    }
+}
 
 bool wmList::ConnectToSetting(const wxString& sSection, const wxString& sKey, const wxString& sDefault)
 {

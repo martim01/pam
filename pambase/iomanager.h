@@ -43,6 +43,8 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
 
         void Stop();
         const session& GetSession();
+        const session& GetInputSession();
+        const session& GetOutputSession();
 
         wxString GetRandomMulticastAddress();
 

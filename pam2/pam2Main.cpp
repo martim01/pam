@@ -916,8 +916,8 @@ void pam2Dialog::OutputChanged(const wxString& sKey)
 
 void pam2Dialog::OnMonitorRequest(MonitorEvent& event)
 {
-    Settings::Get().Write(wxT("Output"), wxT("Left"), event.GetChannels()[0]);
-    Settings::Get().Write(wxT("Output"), wxT("Right"), event.GetChannels()[1]);
+    Settings::Get().Write(wxT("Output"), wxT("Channel_1"), event.GetChannels()[0]);
+    Settings::Get().Write(wxT("Output"), wxT("Channel_2"), event.GetChannels()[1]);
 }
 
 void pam2Dialog::OnPlaybackChannels(wxCommandEvent& event)
@@ -1074,7 +1074,7 @@ void pam2Dialog::OnSession(wxCommandEvent& event)
 
 
 
-    m_ppnlSettings->InputSessionChanged();
+    m_ppnlSettings->SessionChanged();
 }
 
 void pam2Dialog::OnbtnMonitorClick(wxCommandEvent& event)
@@ -1251,8 +1251,14 @@ void pam2Dialog::RegisterRemoteApiSettings()
     RemoteApi::Get().RegisterRemoteApiEnum("Monitor", "Source", {{0,"Input"}, {1,"Output"}});
 
     RemoteApi::Get().RegisterRemoteApiEnum("Output", "Destination", {"Disabled", "Device", "AoIP"});
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Left", {0,7});
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Right", {0,7});
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_1", {0,7});
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_2", {0,7});
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_3", {0,7});
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_4", {0,7});
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_5", {0,7});
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_6", {0,7});
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_7", {0,7});
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_8", {0,7});
 
     //RemoteApi::Get().RegisterRemoteApiCallback("Output", "File" theCallbackthatgetstheresults);
     //RemoteApi::Get().RegisterRemoteApiCallback("Output", "Sequence" theCallbackthatgetstheresults);

@@ -39,6 +39,7 @@ unsigned char nBitsPerSample, unsigned short nSampleRate)
     m_nLastBufferSize(8192),
     m_nBufferWritten(0),
     m_pAudioBuffer(0)
+    m_vChannelMapping{0,1,2,3,4,5,6,7}
 {
 
     unsigned int nSamplesPerPacket = (fSamplingFrequency/1000)*m_nPacketTime;
@@ -164,11 +165,17 @@ void LiveAudioSource::AddSamples(const timedbuffer* pTimedBuffer)
     {
         for(unsigned int j = 0; j < fNumChannels; j++)
         {
-            m_qBuffer.push(pTimedBuffer->GetBuffer()[i+(j%pTimedBuffer->GetNumberOfChannels())]);
+            if(j < m_vChannelMapping.size())
+            {
+                m_qBuffer.push(pTimedBuffer->GetBuffer()[i+(m_vChannelMapping[j]%pTimedBuffer->GetNumberOfChannels())]);
+            }
+            else
+            {
+                m_qBuffer.push(0.0);
+            }
             ++m_nLastBufferSize;
         }
     }
-    
 }
 
 
@@ -196,4 +203,10 @@ void LiveAudioSource::AddToTimedBuffer(float dSample)
     }
     m_pAudioBuffer->GetWritableBuffer()[m_nBufferWritten] = dSample;
     ++m_nBufferWritten;
+}
+
+void LiveAudioSource::SetChannelMapping(const vector<char> vMapping)
+{
+    wxMutexLocker lg(m_mutex);
+    m_vChannelMapping = vMapping;
 }

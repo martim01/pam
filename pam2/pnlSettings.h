@@ -76,7 +76,7 @@ class pnlSettings: public wxPanel
 
 		void ReloadRTP();
 
-		void InputSessionChanged();
+		void SessionChanged();
 
 	protected:
 

@@ -608,6 +608,8 @@ class PAMBASE_IMPEXPORT wmList : public pmControl
         bool ConnectToSetting(const wxString& sSection, const wxString& sKey, size_t nDefault);
         bool ConnectToSetting(const wxString& sSection, const wxString& sKey, void* dataDefault);
 
+        void ReloadSetting();
+
         static const unsigned short SCROLL_NONE     = 0;        ///< @brief wmList may not be scrolled
         static const unsigned short SCROLL_VERTICAL = 1;        ///< @brief wmList may be scrolled vertically
         static const unsigned short SCROLL_HORIZONTAL = 2;      ///< @brief wmlist may be swiped left and right
