@@ -5,6 +5,8 @@
 #include "liveaudiosource.h"
 #include <wx/thread.h>
 #include <set>
+#include <vector>
+
 class timedbuffer;
 
 
@@ -42,7 +44,7 @@ class OnDemandAES67MediaSubsession: public OnDemandPamSubsession
         void AddSamples(const timedbuffer* pTimedBuffer);
         void FlushQueue();
 
-        void SetChannelMapping(const vector<char> vMapping);
+        void SetChannelMapping(const std::vector<char>& vMapping);
 
         std::string GetStreamName() override
         {

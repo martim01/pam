@@ -1035,7 +1035,7 @@ void IOManager::OutputChannelsChanged()
     vector<char> vChannels;
     if(m_SessionOut.GetCurrentSubsession() != m_SessionOut.lstSubsession.end())
     {
-        for(int i = 1; i <= m_SessionOut.GetCurrentSubsession()->nChannels)
+        for(int i = 1; i <= m_SessionOut.GetCurrentSubsession()->nChannels; i++)
         {
             vChannels.push_back(Settings::Get().Read("Output", wxString::Format("Channel_%d", i), i-1));
         }

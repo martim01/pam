@@ -11,6 +11,7 @@
 #include "dlldefine.h"
 #include "pamRTSPServer.h"
 #include <set>
+#include <vector>
 struct qosData;
 class Smpte2110MediaSession;
 class timedbuffer;
@@ -25,7 +26,7 @@ class PAMBASE_IMPEXPORT RtpServerThread : public wxThread
 
         void StopStream();
         void AddSamples(const timedbuffer* pTimedBuffer);
-        void SetChannelMapping(const vector<char> vMapping);
+        void SetChannelMapping(const std::vector<char>& vMapping);
 
         void FlushQueue();
 

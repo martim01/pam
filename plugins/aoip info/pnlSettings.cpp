@@ -65,7 +65,7 @@ pnlSettings::pnlSettings(wxWindow* parent, AoIPInfoBuilder* pBuilder, wxWindowID
     m_plstInterval->AddButton(wxT("1000 ms"), wxNullBitmap, (void*)1000);
     m_plstInterval->AddButton(wxT("5000 ms"), wxNullBitmap, (void*)5000);
 
-    m_plstInterval->SelectButton(m_plstInterval->FindButton((void*)Settings::Get().Read(wxT("QoS"), wxT("Interval"), 1000)), true);
+    m_plstInterval->ConnectToSetting("QoS", "Interval", reinterpret_cast<void*>(1000));
 
     m_plstGranularity->AddButton("Decrease");
     m_plstGranularity->AddButton("Reset");
@@ -85,7 +85,6 @@ pnlSettings::~pnlSettings()
 
 void pnlSettings::OnlstIntervalSelected(wxCommandEvent& event)
 {
-    Settings::Get().Write(wxT("QoS"), wxT("Interval"), (int)event.GetClientData());
 }
 
 void pnlSettings::OnbtnClearClick(wxCommandEvent& event)

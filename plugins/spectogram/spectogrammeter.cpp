@@ -284,6 +284,7 @@ void SpectogramMeter::DoFFT()
 {
     FFTRoutine();
     Refresh();
+
 }
 
 void SpectogramMeter::FFTRoutine()
@@ -383,6 +384,8 @@ void SpectogramMeter::FFTRoutine()
         m_lstBitmaps.pop_front();
     }
     Refresh();
+
+    m_pBuilder->SendWebsocketMessage(CreateWebsocketMessage(anImage));
 }
 
 float SpectogramMeter::WindowMod(float dAmplitude)
@@ -648,4 +651,21 @@ void SpectogramMeter::SetLinear(bool bLinear)
 {
     m_lstBitmaps.clear();
     m_bLinear = bLinear;
+}
+
+
+Json::Value SpectogramMeter::CreateWebsocketMessage(const wxImage& anImage)
+{
+    Json::Value jsData;
+    jsData["heatmap"] = Json::Value(Json::arrayValue);
+    for(int i = 0; i < anImage.GetWidth(); i++)
+    {
+        Json::Value jsColour;
+        jsColour["r"] = anImage.GetRed(i,0);
+        jsColour["g"] = anImage.GetGreen(i,0);
+        jsColour["b"] = anImage.GetBlue(i,0);
+        jsData["heatmap"].append(jsColour);
+    }
+
+    return jsData;
 }

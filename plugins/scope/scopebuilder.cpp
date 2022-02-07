@@ -25,6 +25,15 @@ m_pScope(0)
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&ScopeBuilder::OnSettingChanged);
 
+    RegisterRemoteApiRangeDouble("Trigger", {0.0,1.0});
+    RegisterRemoteApiEnum("Autotrigger", {{0,"Off"}, {1,"On"}});
+    RegisterRemoteApiEnum("Mode", {{0,"Normal"}, {1,"Slide"}, {2,"Cursor"}});
+    RegisterRemoteApiRangeInt("Routing1", {0,7});
+    RegisterRemoteApiRangeInt("Routing2", {0,7});
+    RegisterRemoteApiRangeDouble("Vertical", {0.0,1.0});
+    RegisterRemoteApiRangeDouble("Timeframe", {0.0,100000});
+
+
 }
 
 void ScopeBuilder::SetAudioData(const timedbuffer* pBuffer)

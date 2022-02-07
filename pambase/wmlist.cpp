@@ -2432,14 +2432,14 @@ void wmList::ReloadSetting()
     switch(m_eSettingConnection)
     {
         case enumSettingConnection::LABEL:
-            SelectButton(Settings::Get().Read(sSection, sKey, ""), false);
+            SelectButton(Settings::Get().Read(m_sSettingSection, m_sSettingKey, ""), false);
             break;
         case enumSettingConnection::INDEX:
-            SelectButton(Settings::Get().Read(sSection, sKey, 0), false);
+            SelectButton(Settings::Get().Read(m_sSettingSection, m_sSettingKey, 0), false);
             break;
         case enumSettingConnection::DATA:
             {
-                size_t nButton = FindButton((void*)Settings::Get().Read(sSection, sKey, 0));
+                size_t nButton = FindButton((void*)Settings::Get().Read(m_sSettingSection, m_sSettingKey, 0));
                 if(nButton != NOT_FOUND)
                 {
                     SelectButton(nButton, false);

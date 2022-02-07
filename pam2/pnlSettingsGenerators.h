@@ -19,8 +19,7 @@ class pnlSettingsGenerators: public wxPanel
 		pnlSettingsGenerators(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, long nStyle=0, wxString sNotused=wxEmptyString);
 		virtual ~pnlSettingsGenerators();
 
-		void InputSessionChanged();
-		void OutputSessionChanged();
+		void SessionChanged();
 
 		//(*Declarations(pnlSettingsGenerators)
 		wmButton* m_pbtn0dbu;

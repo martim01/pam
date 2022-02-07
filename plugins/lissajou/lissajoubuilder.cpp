@@ -7,6 +7,7 @@
 #include "pnlMeters.h"
 #include "pnlRouting.h"
 #include <wx/log.h>
+#include "ppmtypes.h"
 
 using namespace std;
 
@@ -23,6 +24,17 @@ m_ppnlRouting(0)
     RegisterForSettingsUpdates(wxT("MeterMode"), this);
     RegisterForSettingsUpdates(wxT("Monitor"), this);
     RegisterForSettingsUpdates(wxT("Display"), this);
+
+    RegisterRemoteApiEnum("Scale", {{0, "dB"},{1,"Linear"}, {2, "Auto Scale"}});
+    RegisterRemoteApiEnum("Rotate", {{0,"LvR"},{1,"MvS"}});
+    RegisterRemoteApiEnum("Levels", {{0, "Hide"}, {1, "Show"}});
+    RegisterRemoteApiRangeInt("Axis_X", {0,7});
+    RegisterRemoteApiRangeInt("Axis_Y", {0,7});
+    RegisterRemoteApiEnum("MeterMode", PPMTypeManager::Get().GetTypes());
+    RegisterRemoteApiEnum("Monitor", {{0,"Follow"}, {1,"Force"}, {2,"Indy"}});
+    RegisterRemoteApiEnum("Display", {{0,"Stars"}, {1,"Hull"}});
+
+
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&LissajouBuilder::OnSettingChanged);
 

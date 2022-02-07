@@ -62,6 +62,10 @@
 					{
 						showR128(jsonObj["data"]);
 					}
+					else if(jsonObj["plugin"]["name"] == "Specto")
+					{
+						drawSpecto(jsonObj["data"]);
+					}
                 }
             }
 
@@ -128,6 +132,10 @@
 				{
 					console.log(jsonObj);
 				}
+			}
+			function drawSpecto(jsonObj)
+			{
+				console.log(jsonObj);
 			}
 
 			function showR128(jsonObj)

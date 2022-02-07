@@ -304,15 +304,6 @@ pnlSettingsGenerators::pnlSettingsGenerators(wxWindow* parent,wxWindowID id,cons
 	SetSize(size);
 	SetPosition(pos);
 
-	if(Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled"))==wxT("Disabled"))
-    {
-        m_plblInput->SetLabel(wxT("Audio output disabled"));
-    }
-    else
-    {
-        m_plblInput->SetLabel(wxT("Audio output taken from incoming audio siganl.\nSee Audio Input page"));
-    }
-
 	m_pbtnAogEnd->SetBitmapLabel(wxBitmap(end_hz_xpm));
     m_pbtnAogEnd->SetBitmapSelected(wxBitmap(end_hz_press_xpm));
     m_pbtnAogHome->SetBitmapLabel(wxBitmap(home_hz_xpm));
@@ -338,7 +329,6 @@ pnlSettingsGenerators::pnlSettingsGenerators(wxWindow* parent,wxWindowID id,cons
     }
     else
     {
-        m_plblInput->SetLabel(wxT("Audio output taken from incoming audio siganl.\nSee Audio Input page"));
         m_plstAudioSources->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")), true);
     }
     m_pSlider->Init(0,20*log10(22000), 20*log10(Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000)));
@@ -550,11 +540,6 @@ void pnlSettingsGenerators::OnlstOutputRightSelected(wxCommandEvent& event)
 {
 }
 
-void pnlSettingsGenerators::OutputSessionChanged()
-{
-    if(IOManager::Get().Get)
-}
-
 void pnlSettingsGenerators::PopulateChannelList(wmList* pList)
 {
     pList->Clear();
@@ -651,14 +636,11 @@ void pnlSettingsGenerators::DestinationChanged(const wxString& sDestination)
     m_plstAudioSources->Enable(sDestination!=wxT("Disabled"));
     if(sDestination == wxT("Disabled"))
     {
-        m_plblInput->SetLabel(wxT("Audio output disabled"));
         m_pswpAog->ChangeSelection(wxT("Input"));
-        m_plstOutputLeft->Clear();
-        m_plstOutputRight->Clear();
+
     }
     else
     {
-        m_plblInput->SetLabel(wxT("Audio output taken from incoming audio siganl.\nSee Audio Input page"));
         m_plstAudioSources->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")), true);
     }
 }

@@ -38,7 +38,7 @@ unsigned char nBitsPerSample, unsigned short nSampleRate)
     m_nPacketTime(ePacketTime),
     m_nLastBufferSize(8192),
     m_nBufferWritten(0),
-    m_pAudioBuffer(0)
+    m_pAudioBuffer(0),
     m_vChannelMapping{0,1,2,3,4,5,6,7}
 {
 
@@ -205,7 +205,7 @@ void LiveAudioSource::AddToTimedBuffer(float dSample)
     ++m_nBufferWritten;
 }
 
-void LiveAudioSource::SetChannelMapping(const vector<char> vMapping)
+void LiveAudioSource::SetChannelMapping(const std::vector<char>& vMapping)
 {
     wxMutexLocker lg(m_mutex);
     m_vChannelMapping = vMapping;

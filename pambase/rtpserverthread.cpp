@@ -226,7 +226,7 @@ void RtpServerThread::StopStream()
     m_eventLoopWatchVariable = 1;
 }
 
-void RtpServerThread::SetChannelMapping(const vector<char> vMapping)
+void RtpServerThread::SetChannelMapping(const std::vector<char>& vMapping)
 {
     m_pSource->SetChannelMapping(vMapping);
 }

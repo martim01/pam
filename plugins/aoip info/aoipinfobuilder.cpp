@@ -5,6 +5,7 @@
 #include "pnlAoIPInfo.h"
 #include "pnlGraph.h"
 #include "pnlSettings.h"
+#include "remoteapi.h"
 
 using namespace std;
 
@@ -17,6 +18,12 @@ m_pInfo(0)
     RegisterForSettingsUpdates(wxT("Type"), this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&AoIPInfoBuilder::OnSettingChanged);
+
+    RegisterRemoteApiEnum("QoS", {{50, "50 ms"},{100, "100 ms"},{250, "250 ms"},{500, "500 ms"},{1000, "1000 ms"},{5000, "5000 ms"}});
+    RegisterRemoteApiEnum("Graph", {"kBit/s", "Packet Gap", "Packet Loss", "Jitter", "Timestamp", "Timestamp Errors", "TS-DF", "Slip"});
+    RegisterRemoteApiEnum("Type", {"Line Graph/s", "Bar Chart", "Histogram"});
+
+
 
 }
 
@@ -69,7 +76,7 @@ void AoIPInfoBuilder::OnSettingChanged(SettingEvent& event)
 {
     if(event.GetKey() == wxT("Graph"))
     {
-        m_pInfo->ShowGraph(ReadSetting(event.GetKey(), wxT("kBit/s")));
+        m_pInfo->ShowGraph(event.GetValue());
     }
     else if(event.GetKey() == "Type")
     {
