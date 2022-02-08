@@ -1,6 +1,6 @@
 #ifndef PNLANGLEMETERS_H
 #define PNLANGLEMETERS_H
-
+#include "json/json.h"
 #include <vector>
 
 //(*Headers(pnlAngleMeters)
@@ -46,6 +46,7 @@ class pnlAngleMeters: public wxPanel
 		//(*Identifiers(pnlAngleMeters)
 		//*)
 
+
 	private:
 
 		//(*Handlers(pnlAngleMeters)
@@ -55,6 +56,8 @@ class pnlAngleMeters: public wxPanel
 		void OnMonitorClicked(wxCommandEvent& event);
         void ColourMonitorButtons();
 		void CreateMeters();
+
+		Json::Value CreateWebsocketMessage();
 
 		std::vector<AngleMeter*> m_vMeters;
         std::vector<wmButton*> m_vMonitor;

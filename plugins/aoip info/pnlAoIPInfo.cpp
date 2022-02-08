@@ -888,7 +888,6 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
         }
         m_pGraph->AddPeak(wxT("Timestamp Errors"), pData->nTimestampErrors);
         m_pHistogram->AddPeak(wxT("Timestamp Errors"), pData->nTimestampErrors);
-
         m_pGraph->AddPeak("Slip", m_dSlip);
         m_pHistogram->AddPeak("Slip", m_dSlip);
     }
@@ -945,18 +944,18 @@ void pnlAoIPInfo::ShowLatency(const timedbuffer* pTimedBuffer)
     timeval tvLatency;
     timersub(&pTimedBuffer->GetTimeVal(), &pTimedBuffer->GetTransmissionTime(), &tvLatency);
 
-    double dLatency = static_cast<double>(tvLatency.tv_sec)*1000000.0 + static_cast<double>(tvLatency.tv_usec);
-    dLatency -= m_dFrameDuration;   //we add the duration on because the transmission time is first sample not last sample of frane
+    m_dLatency = static_cast<double>(tvLatency.tv_sec)*1000000.0 + static_cast<double>(tvLatency.tv_usec);
+    m_dLatency -= m_dFrameDuration;   //we add the duration on because the transmission time is first sample not last sample of frane
 
     m_plblLatency->SetLabel(wxString::Format(wxT("%.0f us"), dPlayback));
-    m_plblLatencyNetwork->SetLabel(wxString::Format(wxT("%.0f us"), dLatency));
+    m_plblLatencyNetwork->SetLabel(wxString::Format(wxT("%.0f us"), m_dLatency));
 
     if(m_nInitialLatencyCounter < 3)
     {
-        m_dInitialLatency = dLatency;
+        m_dInitialLatency = m_dLatency;
         m_nInitialLatencyCounter++;
     }
-    m_dSlip = dLatency-m_dInitialLatency;
+    m_dSlip = m_dLatency-m_dInitialLatency;
 
 
     #ifdef PTPMONKEY

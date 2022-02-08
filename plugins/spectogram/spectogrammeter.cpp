@@ -385,7 +385,10 @@ void SpectogramMeter::FFTRoutine()
     }
     Refresh();
 
-    m_pBuilder->SendWebsocketMessage(CreateWebsocketMessage(anImage));
+    if(m_pBuilder->WebsocketsActive())
+    {
+        m_pBuilder->SendWebsocketMessage(CreateWebsocketMessage(anImage));
+    }
 }
 
 float SpectogramMeter::WindowMod(float dAmplitude)

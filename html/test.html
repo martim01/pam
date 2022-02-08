@@ -49,22 +49,37 @@
 				g_ws.onmessage = function(ev) 
 				{
 					var jsonObj = JSON.parse(ev.data);
-					//console.log(jsonObj);
-					if(jsonObj["plugin"]["name"] == "Meters")
+					if(jsonObj["plugin"] !== undefined)
 					{
-						drawMeter(jsonObj["data"]);
-					}
-					else if(jsonObj["plugin"]["name"] == "FFT")
-					{
-						drawfft(jsonObj["data"]);
-					}	
-					else if(jsonObj["plugin"]["name"] == "R128")
-					{
-						showR128(jsonObj["data"]);
-					}
-					else if(jsonObj["plugin"]["name"] == "Specto")
-					{
-						drawSpecto(jsonObj["data"]);
+						console.log(jsonObj["plugin"]["name"]);
+						if(jsonObj["plugin"]["name"] == "Meters")
+						{
+							drawMeter(jsonObj["data"]);
+						}
+						else if(jsonObj["plugin"]["name"] == "FFT")
+						{
+							drawfft(jsonObj["data"]);
+						}	
+						else if(jsonObj["plugin"]["name"] == "R128")
+						{
+							showR128(jsonObj["data"]);
+						}
+						else if(jsonObj["plugin"]["name"] == "Specto")
+						{
+							drawSpecto(jsonObj["data"]);
+						}
+						else if(jsonObj["plugin"]["name"] == "Radar")
+						{
+							drawRadar(jsonObj["data"]);
+						}
+						else if(jsonObj["plugin"]["name"] == "Session Info")
+						{
+							//drawRadar(jsonObj["data"]);
+						}
+						else
+						{
+						//	console.log(jsonObj);
+						}
 					}
                 }
             }
@@ -98,7 +113,68 @@
 				ctx.fillRect(240, y, 50, g_canvas.height-y);
 
 			}
-			
+
+			var xOld;
+			var yOld;
+			var xMaxOld;
+			var yMaxOld;
+
+			function drawRadar(jsonObj)
+			{
+				console.log(jsonObj);
+				if(jsonObj["max"] !== undefined && jsonObj["radar"] !== undefined)
+				{
+					var ctx = g_canvas.getContext('2d');
+					if(xOld === null)
+					{
+						ctx.strokeStyle = '#000000';
+						ctx.beginPath();
+						ctx.moveTo(g_canvas.width/2, g_canvas.height/2);
+						ctx.lineTo(g_canvas.width/2+jsonObj["max"]["x"], g_canvas.height/2+jsonObj["max"]["y"]);	
+						ctx.stroke();
+						
+						//ctx = g_canvas.getContext('2d');
+						ctx.strokeStyle = '#00ff00';
+						ctx.beginPath();
+						
+						ctx.moveTo(g_canvas.width/2, g_canvas.height/2);
+						ctx.lineTo(g_canvas.width/2+jsonObj["radar"]["x"], g_canvas.height/2+jsonObj["radar"]["y"]);	
+						ctx.stroke();
+					}
+					else
+					{
+						ctx.fillStyle = '#000000';
+						ctx.strokeStyle = '#000000';
+						ctx.beginPath();
+						ctx.moveTo(g_canvas.width/2, g_canvas.height/2);
+						ctx.lineTo(xMaxOld, yMaxOld);
+						ctx.lineTo(g_canvas.width/2+jsonObj["max"]["x"], g_canvas.height/2+jsonObj["max"]["y"]);	
+						ctx.lineTo(g_canvas.width/2, g_canvas.height/2);
+						ctx.fill();
+
+						ctx.fillStyle = '#00ff00';
+						ctx.strokeStyle = '#00ff00';
+						ctx.beginPath();
+						ctx.moveTo(g_canvas.width/2, g_canvas.height/2);
+						ctx.lineTo(xOld, yOld);
+						ctx.lineTo(g_canvas.width/2+jsonObj["radar"]["x"], g_canvas.height/2+jsonObj["radar"]["y"]);	
+						ctx.lineTo(g_canvas.width/2, g_canvas.height/2);
+						ctx.fill();
+
+					}
+					xOld = g_canvas.width/2+jsonObj["radar"]["x"];
+					yOld = g_canvas.height/2+jsonObj["radar"]["y"];
+
+					xMaxOld = g_canvas.width/2+jsonObj["max"]["x"];
+					yMaxOld = g_canvas.height/2+jsonObj["max"]["y"];
+
+
+				}
+				else
+				{
+					console.log(jsonObj);
+				}
+			}
 			function drawfft(jsonObj)
 			{
 				var ctx = prepareCanvas();
@@ -128,19 +204,15 @@
 					}
 					ctx.stroke();
 				}
-				else
-				{
-					console.log(jsonObj);
-				}
 			}
 			function drawSpecto(jsonObj)
 			{
-				console.log(jsonObj);
+				console.log("drawSpecto");
 			}
 
 			function showR128(jsonObj)
 			{
-				console.log(jsonObj);
+				console.log("showR128");
 			}
 
         </script>

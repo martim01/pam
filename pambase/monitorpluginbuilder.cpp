@@ -150,13 +150,21 @@ pml::restgoose::response MonitorPluginBuilder::GetStatus(const query& theQuery, 
 
 }
 
-void MonitorPluginBuilder::SendWebsocketMessage(Json::Value jsMessage)
+void MonitorPluginBuilder::SendWebsocketMessage(const Json::Value& jsMessage)
 {
-    Json::Value jsWebsocket;
-    jsWebsocket["plugin"]["type"] = "monitor";
-    jsWebsocket["plugin"]["name"] = GetName().ToStdString();
-    jsWebsocket["data"] = jsMessage;
-    RemoteApi::Get().SendPluginWebsocketMessage(jsWebsocket);
+    if(RemoteApi::Get().WebsocketsActive())
+    {
+        Json::Value jsWebsocket;
+        jsWebsocket["plugin"]["type"] = "monitor";
+        jsWebsocket["plugin"]["name"] = GetName().ToStdString();
+        jsWebsocket["data"] = jsMessage;
+        RemoteApi::Get().SendPluginWebsocketMessage(jsWebsocket);
+    }
+}
+
+bool MonitorPluginBuilder::WebsocketsActive()
+{
+    return RemoteApi::Get().WebsocketsActive();
 }
 
 void MonitorPluginBuilder::RegisterRemoteApiEnum(const wxString& sKey, const std::set<wxString>& setEnum)

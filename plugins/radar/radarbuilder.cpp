@@ -16,10 +16,10 @@ RadarBuilder::RadarBuilder() : MonitorPluginBuilder(),
 m_pRadar(0)
 {
 
-    RegisterForSettingsUpdates(wxT("Routing"), this);
-    RegisterForSettingsUpdates(wxT("Timeframe"), this);
-    RegisterForSettingsUpdates(wxT("RefreshRate"), this);
-    RegisterForSettingsUpdates(wxT("MeterMode"), this);
+    RegisterForSettingsUpdates("Routing", this);
+    RegisterForSettingsUpdates("Timeframe", this);
+    RegisterForSettingsUpdates("RefreshRate", this);
+    RegisterForSettingsUpdates("MeterMode", this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&RadarBuilder::OnSettingChanged);
 
@@ -28,6 +28,11 @@ m_pRadar(0)
 
     m_nInputChannels = 1;
     m_nDisplayChannel = 0;
+
+    RegisterRemoteApiRangeInt("Routing", {0,7});
+    RegisterRemoteApiEnum("Timeframe", {{10, "10s"},{30, "30s"},{60, "1m"},{300, "5m"},{600, "10m"},{1800, "30m"}});
+    RegisterRemoteApiEnum("RefreshRate", {{50, "50ms"},{100, "100ms"},{250, "250ms"},{500, "500ms"},{1000, "1s"},{10000, "10s"}});
+    RegisterRemoteApiEnum("MeterMode", PPMTypeManager::Get().GetTypes());
 }
 
 RadarBuilder::~RadarBuilder()
@@ -53,18 +58,13 @@ void RadarBuilder::SetAudioData(const timedbuffer* pBuffer)
             default:
                dLevel = m_pCalculator->GetLevel(m_nDisplayChannel);
         }
-
-//            case LevelCalculator::PPM:
-//                dLevel *= 4.0;
-//                dLevel -= 34.0;
-//                m_pRadar->SetRadarLevel(dLevel, pBuffer->GetBufferSize()/m_nInputChannels, true);
-                m_pRadar->SetRadarLevel(dLevel, pBuffer->GetBufferSize()/m_nInputChannels, false);
+        m_pRadar->SetRadarLevel(dLevel, pBuffer->GetBufferSize()/m_nInputChannels, false);
     }
 }
 
 wxWindow* RadarBuilder::CreateMonitorPanel(wxWindow* pParent)
 {
-    m_pRadar = new RadarMeter(pParent);
+    m_pRadar = new RadarMeter(pParent, this);
     return m_pRadar;
 }
 
@@ -77,8 +77,6 @@ list<pairOptionPanel_t> RadarBuilder::CreateOptionPanels(wxWindow* pParent)
     lstOptionPanels.push_back(make_pair(wxT("Routing"), m_ppnlRouting));
     lstOptionPanels.push_back(make_pair(wxT("Time"), new pnlDisplay(pParent, this)));
     lstOptionPanels.push_back(make_pair(wxT("Meter"), new pnlMeters(pParent, this)));
-//    lstOptionPanels.push_back(make_pair(wxT("Options"), pOptions));
-//
     return lstOptionPanels;
 }
 

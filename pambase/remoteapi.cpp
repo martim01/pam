@@ -10,6 +10,7 @@
 #include <wx/dir.h>
 #include "aoipsourcemanager.h"
 #include "log.h"
+#include <wx/tokenzr.h>
 
 using namespace std::placeholders;
 
@@ -69,7 +70,7 @@ void RemoteApi::Run()
     m_Server.Run(true);
 }
 
-RemoteApi::RemoteApi()
+RemoteApi::RemoteApi() : m_bWebsocketsActive(true)
 {
     m_Server.Init(Settings::Get().Read("RemoteApi", "Port", 8090), endpoint("/x-pam"), true);
 
@@ -120,41 +121,61 @@ pml::restgoose::response RemoteApi::GetRoot(const query& theQuery, const std::ve
 
 pml::restgoose::response RemoteApi::GetSettings(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
 {
+    wxString sSection, sKey;
+    wxArrayString asQuery = wxStringTokenize(wxString(theQuery.Get()), "&");
+
+    for(size_t i = 0; i < asQuery.GetCount(); i++)
+    {
+        if(asQuery[i].Before('=').CmpNoCase("section") == 0)
+        {
+            sSection = asQuery[i].After('=');
+        }
+        else if(asQuery[i].Before('=').CmpNoCase("key") == 0)
+        {
+            sKey = asQuery[i].After('=');
+        }
+    }
     pml::restgoose::response resp;
 
     for(auto pairSection : m_mSettings)
     {
-        resp.jsonData[pairSection.first.ToStdString()] = Json::Value(Json::objectValue);
-        for(auto pairData : pairSection.second.mKeys)
+        if(sSection.empty() || sSection.CmpNoCase(pairSection.first) == 0)
         {
-            Json::Value jsKey;
-            jsKey["current"] = Settings::Get().Read(pairSection.first, pairData.first, "").ToStdString();
-
-            switch(pairData.second.eType)
+            resp.jsonData[pairSection.first.ToStdString()] = Json::Value(Json::objectValue);
+            for(auto pairData : pairSection.second.mKeys)
             {
-                case section::constraint::enumType::STRING_ENUM:
-                    jsKey["enum"] = GetJson(pairData.second.setEnum);
-                    break;
-                case section::constraint::enumType::INT_ENUM:
-                    jsKey["enum"] = GetJson(pairData.second.mEnumNum);
-                    break;
-                case section::constraint::enumType::STRING_CALLBACK:
-                    jsKey["enum"] = GetJson(pairData.second.funcStringEnum);
-                    break;
-                case section::constraint::enumType::INT_CALLBACK:
-                    jsKey["enum"] = GetJson(pairData.second.funcIntEnum);
-                    break;break;
-                case section::constraint::enumType::INT_RANGE:
-                    jsKey["range"]["minimum"] = pairData.second.nRange.first;
-                    jsKey["range"]["maximum"] = pairData.second.nRange.second;
-                    break;
-                case section::constraint::enumType::DOUBLE_RANGE:
-                    jsKey["range"]["minimum"] = pairData.second.dRange.first;
-                    jsKey["range"]["maximum"] = pairData.second.dRange.second;
-                    break;
-            }
+                if(sKey.empty() || sKey.CmpNoCase(pairData.first) == 0)
+                {
+                    Json::Value jsKey;
+                    jsKey["current"] = Settings::Get().Read(pairSection.first, pairData.first, "").ToStdString();
 
-            resp.jsonData[pairSection.first.ToStdString()][pairData.first.ToStdString()] = jsKey;
+                    switch(pairData.second.eType)
+                    {
+                        case section::constraint::enumType::STRING_ENUM:
+                            jsKey["enum"] = GetJson(pairData.second.setEnum);
+                            break;
+                        case section::constraint::enumType::INT_ENUM:
+                            jsKey["enum"] = GetJson(pairData.second.mEnumNum);
+                            break;
+                        case section::constraint::enumType::STRING_CALLBACK:
+                            jsKey["enum"] = GetJson(pairData.second.funcStringEnum);
+                            break;
+                        case section::constraint::enumType::INT_CALLBACK:
+                            jsKey["enum"] = GetJson(pairData.second.funcIntEnum);
+                            break;break;
+                        case section::constraint::enumType::INT_RANGE:
+                            jsKey["range"]["minimum"] = pairData.second.nRange.first;
+                            jsKey["range"]["maximum"] = pairData.second.nRange.second;
+                            break;
+                        case section::constraint::enumType::DOUBLE_RANGE:
+                            jsKey["range"]["minimum"] = pairData.second.dRange.first;
+                            jsKey["range"]["maximum"] = pairData.second.dRange.second;
+                            break;
+                    }
+
+                    resp.jsonData[pairSection.first.ToStdString()][pairData.first.ToStdString()] = jsKey;
+                }
+            }
         }
     }
     return resp;
@@ -574,4 +595,9 @@ void RemoteApi::RegisterRemoteApi(const wxString& sSection, const wxString& sKey
 {
     auto itSection = m_mSettings.insert(std::make_pair(sSection, section())).first;
     itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint()));
+}
+
+bool RemoteApi::WebsocketsActive()
+{
+    return m_bWebsocketsActive;
 }

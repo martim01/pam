@@ -49,9 +49,12 @@ void R128Builder::SetAudioData(const timedbuffer* pBuffer)
     if(m_pMeters && m_bRun)
     {
         m_pMeters->SetAudioData(pBuffer);
-        SendWebsocketMessage(m_pMeters->CreateWebsocketMessage());
+        if(WebsocketsActive())
+        {
+            SendWebsocketMessage(m_pMeters->CreateWebsocketMessage());
+        }
     }
-    else
+    else if(WebsocketsActive())
     {
         Json::Value jsMessage;
         jsMessage["state"] = "paused";

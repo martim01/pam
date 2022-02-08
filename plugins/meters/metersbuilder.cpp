@@ -41,8 +41,12 @@ void MetersBuilder::SetAudioData(const timedbuffer* pBuffer)
 {
     m_pMeters->SetAudioData(pBuffer);
 
-    SendWebsocketMessage(m_pMeters->CreateWebsocketMessage());
+    if(WebsocketsActive())
+    {
+        SendWebsocketMessage(m_pMeters->CreateWebsocketMessage());
+    }
 }
+
 
 wxWindow* MetersBuilder::CreateMonitorPanel(wxWindow* pParent)
 {

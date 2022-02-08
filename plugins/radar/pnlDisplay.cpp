@@ -47,7 +47,7 @@ pnlDisplay::pnlDisplay(wxWindow* parent,RadarBuilder* pBuilder, wxWindowID id,co
 	m_plstTimeframe->AddButton(wxT("10m"), wxNullBitmap, (void*)600);
 	m_plstTimeframe->AddButton(wxT("30m"), wxNullBitmap, (void*)1800);
 
-	m_plstTimeframe->SelectButton(m_plstTimeframe->FindButton((void*)m_pBuilder->ReadSetting(wxT("Timeframe"),60)), true);
+	m_plstTimeframe->ConnectToSetting(m_pBuilder->GetName(), "Timeframe", reinterpret_cast<void*>(60));
 
 	m_plstPoints->AddButton(wxT("50ms"), wxNullBitmap, (void*)50);
 	m_plstPoints->AddButton(wxT("100ms"), wxNullBitmap, (void*)100);
@@ -56,7 +56,7 @@ pnlDisplay::pnlDisplay(wxWindow* parent,RadarBuilder* pBuilder, wxWindowID id,co
 	m_plstPoints->AddButton(wxT("1s"), wxNullBitmap, (void*)1000);
 	m_plstPoints->AddButton(wxT("10s"), wxNullBitmap, (void*)10000);
 
-	m_plstPoints->SelectButton(m_plstPoints->FindButton((void*)m_pBuilder->ReadSetting(wxT("RefreshRate"),250)), true);
+	m_plstPoints->ConnectToSetting(m_pBuilder->GetName(), "RefreshRate", reinterpret_cast<void*>(250));
 
 
 }
@@ -71,10 +71,8 @@ pnlDisplay::~pnlDisplay()
 
 void pnlDisplay::OnlstTimeframeSelected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Timeframe"), (int)event.GetClientData());
 }
 
 void pnlDisplay::OnlstPointsSelected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("RefreshRate"), (int)event.GetClientData());
 }

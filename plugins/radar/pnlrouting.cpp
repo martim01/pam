@@ -58,12 +58,11 @@ void pnlRouting::SetNumberOfChannels(unsigned int nChannels)
         }
     }
 
+    m_plstFFT_Routing->ConnectToSetting(m_pBuilder->GetName(), "Routing", reinterpret_cast<void*>(0));
 
-    m_plstFFT_Routing->SelectButton(m_plstFFT_Routing->FindButton((void*)m_pBuilder->ReadSetting(wxT("Routing"),0)), true);
     m_plstFFT_Routing->Thaw();
 }
 
 void pnlRouting::OnlstFFT_RoutingSelected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Routing"), (int)(event.GetClientData()));
 }

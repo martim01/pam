@@ -42,6 +42,7 @@ m_pAngleMeters(0)
 void AngleMetersBuilder::SetAudioData(const timedbuffer* pBuffer)
 {
     m_pAngleMeters->SetAudioData(pBuffer);
+
 }
 
 wxWindow* AngleMetersBuilder::CreateMonitorPanel(wxWindow* pParent)

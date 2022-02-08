@@ -409,7 +409,10 @@ void FftMeter::DoFFT()
     }
     Refresh();
 
-     m_pBuilder->SendWebsocketMessage(CreateWebsocketMessage());
+    if(m_pBuilder->WebsocketsActive())
+    {
+        m_pBuilder->SendWebsocketMessage(CreateWebsocketMessage());
+    }
 }
 
 void FftMeter::FFTRoutine()

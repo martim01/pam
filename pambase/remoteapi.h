@@ -60,6 +60,9 @@ class RemoteApi
         RemoteApi();
         ~RemoteApi();
 
+        bool WebsocketsActive();
+
+
         pml::restgoose::Server m_Server;
 
 
@@ -108,5 +111,6 @@ class RemoteApi
         void DoPatchSettings(const Json::Value& jsArray);
 
         std::map<wxString, section> m_mSettings;
+        bool m_bWebsocketsActive;
 
 };

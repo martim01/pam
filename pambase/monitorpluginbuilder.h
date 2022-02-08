@@ -74,7 +74,8 @@ class PAMBASE_IMPEXPORT MonitorPluginBuilder : public wxEvtHandler
         void InitRemoteApi();
         pml::restgoose::response GetStatus(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser);
 
-        void SendWebsocketMessage(Json::Value jsMessage);
+        void SendWebsocketMessage(const Json::Value& jsMessage);
+        bool WebsocketsActive();
 
         void RegisterRemoteApiEnum(const wxString& sKey, const std::set<wxString>& setEnum);
         void RegisterRemoteApiEnum(const wxString& sKey, const std::map<int, wxString>& mEnum);
@@ -83,6 +84,7 @@ class PAMBASE_IMPEXPORT MonitorPluginBuilder : public wxEvtHandler
         void RegisterRemoteApiCallback(const wxString& sKey, std::function<std::set<wxString>()> func);
         void RegisterRemoteApiCallback(const wxString& sKey, std::function<std::map<int, wxString>()> func);
         void RegisterRemoteApi(const wxString& sKey);
+
 
         wxEvtHandler* m_pHandler;
 
