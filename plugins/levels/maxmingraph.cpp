@@ -134,7 +134,7 @@ void MaxMinGraph::OnSize(wxSizeEvent& event)
 }
 
 
-void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bConvertToDb)
+Json::Value MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bConvertToDb)
 {
     if(bConvertToDb)
     {
@@ -156,7 +156,7 @@ void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bCon
     m_uiMin.SetLabel(wxString::Format(wxT("%.1fdB"),m_dMin));
     m_uiRange.SetLabel(wxString::Format(wxT("%.1fdB"), dRange));
 
-
+    Json::Value jsMessage;
     switch(m_pBuilder->ReadSetting(wxT("Monitor"),0))
     {
         case 0: //looking for any level change
@@ -167,10 +167,13 @@ void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bCon
                     pmlLog(pml::LOG_WARN) << "Levels\t" << "(Channel " << m_nChannel << ") - "
                     << "level changed from " << m_dLastLevel << "dB to " << m_dCurrent << "dB";
                 }
+                jsMessage["error"] = 1;
+                jsMessage["reason"]  = "Level changed from " + std::to_string(m_dLastLevel) + "dB to " + std::to_string(m_dCurrent) + "dB";
                 m_uiCurrent.SetBackgroundColour(wxColour(255,100,100));
             }
             else
             {
+                jsMessage["error"] = 0;
                 m_uiCurrent.SetBackgroundColour(wxColour(91,91,0));
             }
             break;
@@ -182,7 +185,8 @@ void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bCon
                     pmlLog(pml::LOG_WARN) << "Levels\t" << "(Channel " << m_nChannel << ") - " << "range " << dRange << "dB > max set " << m_dMaxRange << "dB";
                     m_bOutOfRange = true;
                 }
-
+                jsMessage["error"] = 1;
+                jsMessage["reason"]  = "Level range " + std::to_string(dRange) + "dB > max set " + std::to_string(m_dMaxRange) + "dB";
                 m_uiRange.SetBackgroundColour(wxColour(255,100,100));
             }
             else
@@ -192,7 +196,7 @@ void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bCon
                     pmlLog(pml::LOG_INFO) << "Levels\t" << "(Channel " << m_nChannel << ") - " << "range " << dRange << "dB <= max set " << m_dMaxRange << "dB";
                     m_bOutOfRange = false;
                 }
-
+                jsMessage["error"] = 0;
                 m_uiRange.SetBackgroundColour(wxColour(91,91,0));
             }
             break;
@@ -207,7 +211,8 @@ void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bCon
 
                     m_bOutOfRange = true;
                 }
-
+                jsMessage["error"] = 1;
+                jsMessage["reason"]  = "Level " + std::to_string(m_dCurrent) + "dB is outside guide range [" + std::to_string(m_dAmplitudeMin) + "dB, " + std::to_string(m_dAmplitudeMax) + "dB]";
             }
             else
             {
@@ -218,12 +223,13 @@ void MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bool bCon
                     << m_dAmplitudeMin << "dB,"<< m_dAmplitudeMax << "dB]";
                     m_bOutOfRange = false;
                 }
-
+                jsMessage["error"] = 0;
             }
     }
 
     m_dLastLevel = m_dCurrent;
     Refresh();
+    return jsMessage;
 }
 
 

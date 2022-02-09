@@ -10,6 +10,7 @@
 #include <wx/timer.h>
 //*)
 
+class SettingEvent;
 class timedbuffer;
 class pnlDistortionChannel;
 struct session;
@@ -54,6 +55,8 @@ class pnlDistortion: public wxPanel
 		static const long ID_PANEL1;
 		static const long ID_TIMER1;
 		//*)
+
+		void OnSettingEvent(SettingEvent& event);
 
 	private:
 

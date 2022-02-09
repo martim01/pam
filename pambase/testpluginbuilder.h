@@ -46,9 +46,20 @@ class PAMBASE_IMPEXPORT TestPluginBuilder : public wxEvtHandler
 
         virtual wxWindow* CreateTestPanel(wxWindow* pParent)=0;
         virtual void LoadSettings()=0;
-        
+
         void InitRemoteApi();
         pml::restgoose::response GetStatus(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser);
+
+        void SendWebsocketMessage(const Json::Value& jsMessage);
+        bool WebsocketsActive();
+
+        void RegisterRemoteApiEnum(const wxString& sKey, const std::set<wxString>& setEnum);
+        void RegisterRemoteApiEnum(const wxString& sKey, const std::map<int, wxString>& mEnum);
+        void RegisterRemoteApiRangeDouble(const wxString& sKey, const std::pair<double, double>& dRange);
+        void RegisterRemoteApiRangeInt(const wxString& sKey, const std::pair<int, int>& nRange);
+        void RegisterRemoteApiCallback(const wxString& sKey, std::function<std::set<wxString>()> func);
+        void RegisterRemoteApiCallback(const wxString& sKey, std::function<std::map<int, wxString>()> func);
+        void RegisterRemoteApi(const wxString& sKey);
 
         wxEvtHandler* m_pHandler;
 

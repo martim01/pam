@@ -3,6 +3,7 @@
 #include <wx/log.h>
 #include <wx/string.h>
 #include <math.h>
+#include <iostream>
 
 using namespace std;
 
@@ -338,6 +339,8 @@ double FFTAlgorithm::GetTHDistortion(list<float>& lstBuffer, unsigned long nSamp
         else
         {
             m_dTHD = 0.0;
+            m_dFundamentalBinFrequency = 0;
+            m_dFundamentalAmplitude=-1000;
         }
     }
     else

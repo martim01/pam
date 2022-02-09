@@ -30,7 +30,8 @@ pnlOptionsMode::pnlOptionsMode(wxWindow* parent,PolarScopeBuilder* pBuilder, wxW
 	m_plstMode->AddButton(wxT("Hull"));
 	m_plstMode->AddButton(wxT("Levels"));
 
-	m_plstMode->SelectButton(m_pBuilder->ReadSetting(wxT("Mode"), 0), true);
+	m_plstMode->ConnectToSetting(m_pBuilder->GetName(), "Mode", size_t(0));
+
 }
 
 pnlOptionsMode::~pnlOptionsMode()
@@ -42,5 +43,4 @@ pnlOptionsMode::~pnlOptionsMode()
 
 void pnlOptionsMode::OnlstModeSelected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Mode"), event.GetInt());
 }

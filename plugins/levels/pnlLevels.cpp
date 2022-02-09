@@ -3,7 +3,8 @@
 #include "timedbuffer.h"
 #include "maxmingraph.h"
 #include "levelsbuilder.h"
-#include <iostream>
+#include "settingevent.h"
+
 //(*InternalHeaders(pnlLevels)
 #include <wx/font.h>
 #include <wx/intl.h>
@@ -56,8 +57,8 @@ pnlLevels::pnlLevels(wxWindow* parent,LevelsBuilder* pBuilder, wxWindowID id,con
 	m_plstMontor->AddButton(wxT("Monitor\nLevel"));
 	m_plstMontor->AddButton(wxT("Monitor\nRange"));
 	m_plstMontor->AddButton(wxT("Monitor\nMin,Max"));
+	m_plstMontor->ConnectToSetting(m_pBuilder->GetName(), "Monitor", size_t(0));
 
-	m_plstMontor->SelectButton(m_pBuilder->ReadSetting(wxT("Monitor"),0), true);
 
 	Connect(m_pAmplitude->GetId(), wxEVT_SLIDER_MOVE, (wxObjectEventFunction)&pnlLevels::OnSliderMove);
 	Connect(m_pRange->GetId(), wxEVT_SLIDER_MOVE, (wxObjectEventFunction)&pnlLevels::OnRangeSliderMove);
@@ -72,6 +73,12 @@ pnlLevels::pnlLevels(wxWindow* parent,LevelsBuilder* pBuilder, wxWindowID id,con
 
     m_pRange->SetSliderColour(wxColour(128,128,128));
     m_pRange->SetButtonColour(wxColour(100,255,100));
+
+    m_pBuilder->RegisterForSettingsUpdates("Monitor", this);
+    m_pBuilder->RegisterForSettingsUpdates("Range", this);
+    m_pBuilder->RegisterForSettingsUpdates("LevelMax", this);
+    m_pBuilder->RegisterForSettingsUpdates("LevelMin", this);
+    Bind(wxEVT_SETTING_CHANGED, &pnlLevels::OnSettingChanged, this);
 
 }
 
@@ -100,14 +107,30 @@ void pnlLevels::SetAudioData(const timedbuffer* pBuffer)
         }
     }
 
+    Json::Value jsMessage;
+    jsMessage["settings"] = m_jsSetting;
+
     for(int i = 0; i < m_vLevelPeakMax.size(); i++)
     {
         m_vLevelPeakMax[i] = max(m_vLevelPeakMax[i], vPeak[i]);
         m_vLevelPeakMin[i] = min(m_vLevelPeakMin[i], vPeak[i]);
 
-        m_vGraph[i]->SetLevels(m_vLevelPeakMax[i], m_vLevelPeakMin[i], vPeak[i]);
+        auto jsStatus = m_vGraph[i]->SetLevels(m_vLevelPeakMax[i], m_vLevelPeakMin[i], vPeak[i]);
+        if(m_pBuilder->WebsocketsActive())
+        {
+            Json::Value jsChannel;
+            jsChannel["max"] = m_vLevelPeakMax[i];
+            jsChannel["min"] = m_vLevelPeakMin[i];
+            jsChannel["current"] = vPeak[i];
+            jsChannel["status"] = jsStatus;
+            jsMessage["channels"].append(jsChannel);
+        }
     }
 
+    if(m_pBuilder->WebsocketsActive())
+    {
+        m_pBuilder->SendWebsocketMessage(jsMessage);
+    }
 }
 
 void pnlLevels::ResetTest()
@@ -175,57 +198,49 @@ void pnlLevels::CreateGraphs(unsigned int nChannels)
     m_vLevelPeakMin = vector<double>(m_vGraph.size(), 1.0);
 }
 
-void pnlLevels::OnlstMontorSelected(wxCommandEvent& event)
+void pnlLevels::OnSettingChanged(SettingEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Monitor"), event.GetInt());
-    switch(event.GetInt())
+    if(event.GetKey() == "Monitor")
     {
-        case 0:
-            m_pAmplitude->Hide();
-            m_pbtndB->Hide();
-            m_pRange->Hide();
-            m_pbtnRangedB->Hide();
-            break;
-        case 1:
-            m_pAmplitude->Hide();
-            m_pbtndB->Hide();
-            m_pRange->Show();
-            m_pbtnRangedB->Show();
-            m_pRange->Init(0,50, m_pBuilder->ReadSetting(wxT("Range"), 40));
-            m_pbtnRangedB->SetLabel(wxString::Format(wxT("%.1f dB"),m_pRange->GetPosition()));
-            break;
-        case 2:
-            m_pAmplitude->Show();
-            m_pbtndB->Show();
-            m_pRange->Show();
-            m_pbtnRangedB->Show();
-            m_pRange->Init(0,90, m_pBuilder->ReadSetting(wxT("LevelMin"), -25)+90);
-            m_pbtnRangedB->SetLabel(wxString::Format(wxT("%.1f dB"),m_pRange->GetPosition()-90));
-            m_pAmplitude->Init(0,90, m_pBuilder->ReadSetting(wxT("LevelMax"), -10)+90);
-            m_pbtndB->SetLabel(wxString::Format(wxT("%.1f dB"),m_pAmplitude->GetPosition()-90));
-            break;
+        switch(event.GetValue(0l))
+        {
+            case 0:
+                m_pAmplitude->Hide();
+                m_pbtndB->Hide();
+                m_pRange->Hide();
+                m_pbtnRangedB->Hide();
+                break;
+            case 1:
+                m_pAmplitude->Hide();
+                m_pbtndB->Hide();
+                m_pRange->Show();
+                m_pbtnRangedB->Show();
+                m_pRange->Init(0,50, m_pBuilder->ReadSetting(wxT("Range"), 40));
+                m_pbtnRangedB->SetLabel(wxString::Format(wxT("%.1f dB"),m_pRange->GetPosition()));
+                break;
+            case 2:
+                m_pAmplitude->Show();
+                m_pbtndB->Show();
+                m_pRange->Show();
+                m_pbtnRangedB->Show();
+                m_pRange->Init(0,90, m_pBuilder->ReadSetting(wxT("LevelMin"), -25)+90);
+                m_pbtnRangedB->SetLabel(wxString::Format(wxT("%.1f dB"),m_pRange->GetPosition()-90));
+                m_pAmplitude->Init(0,90, m_pBuilder->ReadSetting(wxT("LevelMax"), -10)+90);
+                m_pbtndB->SetLabel(wxString::Format(wxT("%.1f dB"),m_pAmplitude->GetPosition()-90));
+                break;
+        }
     }
-
-}
-
-
-void pnlLevels::OnRangeSliderMove(wxCommandEvent& event)
-{
-
-    if(m_pBuilder->ReadSetting(wxT("Monitor"),0) == 1)
+    else if(event.GetKey() == "Range")
     {
         m_pbtnRangedB->SetLabel(wxString::Format(wxT("%.1f dB"),m_pRange->GetPosition()));
-        m_pBuilder->WriteSetting(wxT("Range"), wxString::Format(wxT("%.1f"),m_pRange->GetPosition()));
         for(size_t i = 0; i < m_vGraph.size(); i++)
         {
             m_vGraph[i]->SetMaxRange(m_pRange->GetPosition());
         }
     }
-    else
+    else if(event.GetKey() == "LevelMin")
     {
         m_pbtnRangedB->SetLabel(wxString::Format(wxT("%.1f dB"),m_pRange->GetPosition()-90.0));
-        m_pBuilder->WriteSetting(wxT("LevelMin"), wxString::Format(wxT("%.1f"),m_pRange->GetPosition()-90.0));
-
         if(m_pRange->GetPosition() > m_pAmplitude->GetPosition())
         {
             m_pAmplitude->SetSliderPosition(m_pRange->GetPosition(), true);
@@ -236,24 +251,53 @@ void pnlLevels::OnRangeSliderMove(wxCommandEvent& event)
             m_vGraph[i]->SetMinAmplitude(m_pRange->GetPosition()-90.0);
         }
     }
+    else if(event.GetKey() == "LevelMax")
+    {
+        m_pbtndB->SetLabel(wxString::Format(wxT("%.1f dB"),m_pAmplitude->GetPosition()-90.0));
+
+        if(m_pAmplitude->GetPosition() < m_pRange->GetPosition())
+        {
+            m_pRange->SetSliderPosition(m_pAmplitude->GetPosition(), true);
+        }
+
+        for(size_t i = 0; i < m_vGraph.size(); i++)
+        {
+            m_vGraph[i]->SetMaxAmplitude(m_pAmplitude->GetPosition()-90.0);
+        }
+    }
+
+    if(m_pBuilder->WebsocketsActive())
+    {
+        m_jsSetting = Json::objectValue;
+        m_jsSetting["monitor"] = m_pBuilder->ReadSetting("Monitor", 0);
+        switch(m_pBuilder->ReadSetting("Monitor",0))
+        {
+            case 1:
+                m_jsSetting["range"] = m_pBuilder->ReadSetting("Range",0.0);
+            case 2:
+                m_jsSetting["level"]["min"] = m_pBuilder->ReadSetting("LevelMin",0.0);
+                m_jsSetting["level"]["max"] = m_pBuilder->ReadSetting("LevelMax",0.0);
+        }
+    }
+
+}
 
 
+void pnlLevels::OnRangeSliderMove(wxCommandEvent& event)
+{
+    if(m_pBuilder->ReadSetting(wxT("Monitor"),0) == 1)
+    {
+        m_pBuilder->WriteSetting(wxT("Range"), wxString::Format(wxT("%.1f"),m_pRange->GetPosition()));
+    }
+    else
+    {
+        m_pBuilder->WriteSetting(wxT("LevelMin"), wxString::Format(wxT("%.1f"),m_pRange->GetPosition()-90.0));
+    }
 }
 
 void pnlLevels::OnSliderMove(wxCommandEvent& event)
 {
-    m_pbtndB->SetLabel(wxString::Format(wxT("%.1f dB"),m_pAmplitude->GetPosition()-90.0));
     m_pBuilder->WriteSetting(wxT("LevelMax"), wxString::Format(wxT("%.1f"),m_pAmplitude->GetPosition()-90.0));
-
-    if(m_pAmplitude->GetPosition() < m_pRange->GetPosition())
-    {
-        m_pRange->SetSliderPosition(m_pAmplitude->GetPosition(), true);
-    }
-
-    for(size_t i = 0; i < m_vGraph.size(); i++)
-    {
-        m_vGraph[i]->SetMaxAmplitude(m_pAmplitude->GetPosition()-90.0);
-    }
 }
 
 

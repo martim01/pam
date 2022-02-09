@@ -5,6 +5,8 @@
 #include "channeldelaybuilder.h"
 #include <wx/log.h>
 #include "log.h"
+#include "settingevent.h"
+
 
 //(*InternalHeaders(pnlChannelDelay)
 #include <wx/font.h>
@@ -104,10 +106,20 @@ pnlChannelDelay::pnlChannelDelay(wxWindow* parent,ChannelDelayBuilder* pBuilder,
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlChannelDelay::OnlstChannel2Selected);
 	//*)
 
+	m_pedtMaxDelay->ConnectToSetting(m_pBuilder->GetName(), "MaxDelay", "100", false);
+	m_plstChannel1->ConnectToSetting(m_pBuilder->GetName(), "Channel_1", size_t(0));
+	m_plstChannel2->ConnectToSetting(m_pBuilder->GetName(), "Channel_2", size_t(1));
+
+
 	m_pCalc = 0;
 	m_nChannel[0] = 0;
 	m_nChannel[1] = 1;
 	m_nTotalSamples = 65536;
+
+	m_pBuilder->RegisterForSettingsUpdates("MaxDelay", this);
+	m_pBuilder->RegisterForSettingsUpdates("Channel_1", this);
+	m_pBuilder->RegisterForSettingsUpdates("Channel_2", this);
+	Bind(wxEVT_SETTING_CHANGED, &pnlChannelDelay::OnSettingChanged, this);
 
     Connect(wxID_ANY, wxEVT_OFFSET_DONE, (wxObjectEventFunction)&pnlChannelDelay::OnOffsetDone);
 }
@@ -180,17 +192,45 @@ void pnlChannelDelay::OnOffsetDone(wxCommandEvent& event)
         pmlLog(pml::LOG_INFO) << "Channel Delay\t" << event.GetInt() << "ms";
     }
 
+    if(m_pBuilder->WebsocketsActive())
+    {
+        Json::Value jsResult;
+        for(int i = 0; i < 2; i++)
+        {
+            Json::Value jsChannel;
+            jsChannel["id"] = m_nChannel[i];
+            jsChannel["name"] = m_sChannel[i].ToStdString();
+            jsResult["channels"].append(jsChannel);
+        }
+        jsResult["offset"] = event.GetInt();
+        m_pBuilder->SendWebsocketMessage(jsResult);
+    }
 }
 
 
-
+void pnlChannelDelay::OnSettingChanged(SettingEvent& event)
+{
+    if(event.GetKey() == "MaxDelay")
+    {
+        SetTotalSamples(event.GetValue(0l)*96);
+        m_pedtMaxDelay->SetValue("");
+    }
+    else if(event.GetKey() == "Channel_1")
+    {
+        m_nChannel[0] = event.GetValue(0l);
+        m_sChannel[0] = m_plstChannel1->GetButtonText(m_nChannel[0]);
+        m_pGraph->SetChannel1Name(m_sChannel[0]);
+    }
+    else if(event.GetKey() == "Channel_2")
+    {
+        m_nChannel[1] = event.GetValue(1l);
+        m_sChannel[1] = m_plstChannel2->GetButtonText(m_nChannel[1]);
+        m_pGraph->SetChannel1Name(m_sChannel[1]);
+    }
+}
 
 void pnlChannelDelay::OnedtMaxDelayTextEnter(wxCommandEvent& event)
 {
-    unsigned long nMilliseconds;
-    event.GetString().ToULong(&nMilliseconds);
-    SetTotalSamples(nMilliseconds*96);
-    m_pedtMaxDelay->SetValue(wxEmptyString);
 
 }
 
@@ -228,23 +268,18 @@ void pnlChannelDelay::InputSession(const session& aSession)
     m_plstChannel1->Thaw();
     m_plstChannel2->Thaw();
 
-    m_plstChannel1->SelectButton(m_pBuilder->ReadSetting(wxT("Channel 1"), 0), true);
-    m_plstChannel2->SelectButton(m_pBuilder->ReadSetting(wxT("Channel 2"), 1), true);
+//    m_plstChannel1->SelectButton(m_pBuilder->ReadSetting(wxT("Channel 1"), 0), true);
+//    m_plstChannel2->SelectButton(m_pBuilder->ReadSetting(wxT("Channel 2"), 1), true);
 }
 
 void pnlChannelDelay::OnlstChannel1Selected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Channel 1"), event.GetInt());
-    m_nChannel[0] = event.GetInt();
+    //m_pBuilder->WriteSetting(wxT("Channel 1"), event.GetInt());
 
-    m_pGraph->SetChannel1Name(event.GetString());
 }
 
 void pnlChannelDelay::OnlstChannel2Selected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Channel 2"), event.GetInt());
-    m_nChannel[1] = event.GetInt();
-    m_pGraph->SetChannel2Name(event.GetString());
 }
 
 

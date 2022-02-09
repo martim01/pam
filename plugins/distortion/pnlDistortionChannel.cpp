@@ -24,8 +24,7 @@ BEGIN_EVENT_TABLE(pnlDistortionChannel,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlDistortionChannel::pnlDistortionChannel(wxWindow* parent,  unsigned int nChannel, unsigned int nSampleRate, DistortionBuilder* pBuilder,wxWindowID id,const wxPoint& pos,const wxSize& size) : m_nChannel(nChannel), m_nSampleRate(nSampleRate),
-m_pBuilder(pBuilder)
+pnlDistortionChannel::pnlDistortionChannel(wxWindow* parent,  unsigned int nChannel, unsigned int nSampleRate, wxWindowID id,const wxPoint& pos,const wxSize& size) : m_nChannel(nChannel), m_nSampleRate(nSampleRate)
 {
 	//(*Initialize(pnlDistortionChannel)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
@@ -91,37 +90,38 @@ void pnlDistortionChannel::AddAudioData(float dValue)
     m_lstBuffer.push_back(dValue);
 }
 
-void pnlDistortionChannel::RunTest()
+pnlDistortionChannel::result pnlDistortionChannel::RunTest()
 {
+    result res;
+
     if(m_lstBuffer.empty() == false)
     {
         FFTAlgorithm fft;
-        double dDistortion = fft.GetTHDistortion(m_lstBuffer, m_nSampleRate, 1, 0, FFTAlgorithm::WINDOW_BLACKMAN, 1024, 0);
-        m_plblDistortion->SetLabel(wxString::Format(wxT("%.2f%"),dDistortion));
+        res.dDistortion = fft.GetTHDistortion(m_lstBuffer, m_nSampleRate, 1, 0, FFTAlgorithm::WINDOW_BLACKMAN, 1024, 0);
+        res.dFrequency = fft.GetFundamentalBinFrequency();
+        res.dAmplitude = fft.GetFundamentalAmplitude();
+        res.nPeaks = fft.GetNumberOfPeaks();
+
+
+        m_plblDistortion->SetLabel(wxString::Format(wxT("%.2f%"),res.dDistortion));
         m_plblFrequency->SetLabel(wxString::Format(wxT("~ %.0f Hz"), fft.GetFundamentalBinFrequency()));
         m_plblAmplitude->SetLabel(wxString::Format(wxT("%.2f dB"), fft.GetFundamentalAmplitude()* 0.719));
         m_plblPeaks->SetLabel(wxString::Format(wxT("%lu"), fft.GetNumberOfPeaks()));
 
-        if(m_dMax < dDistortion)
+        if(m_dMax < res.dDistortion)
         {
-            m_dMax = dDistortion;
+            m_dMax = res.dDistortion;
             m_plblMax->SetLabel(wxString::Format(wxT("%.2f%"), m_dMax));
             m_plblTime->SetLabel(wxDateTime::UNow().Format(wxT("%Y-%m-%d %H:%M:%S.%l")));
 
+            res.dMaxDistortion = res.dDistortion;
+            res.sMaxTime = m_plblTime->GetLabel();
+
        }
-       if(fft.GetNumberOfPeaks() > 1)
-       {
-           if(m_pBuilder->IsLogActive())
-           {
-                pmlLog(pml::LOG_INFO) << "Distortion\t" << "Channel: " << m_nChannel << " Peaks=" << fft.GetNumberOfPeaks() << " Distortion=" << dDistortion;
-           }
-       }
-    //    if(fft.GetNumberOfPeaks() > 1)
-    //    {
-    //        TestLog::Get()->Log(wxT("Distortion+Level"), wxT("Left:\tPeaks = %03d\tDistortion=%.2f"), fft.GetNumberOfPeaks(), dDistortion);
-    //    }
+
     }
     m_lstBuffer.clear();
+    return res;
 }
 
 void pnlDistortionChannel::Reset()

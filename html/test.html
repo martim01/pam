@@ -51,7 +51,6 @@
 					var jsonObj = JSON.parse(ev.data);
 					if(jsonObj["plugin"] !== undefined)
 					{
-						console.log(jsonObj["plugin"]["name"]);
 						if(jsonObj["plugin"]["name"] == "Meters")
 						{
 							drawMeter(jsonObj["data"]);
@@ -78,7 +77,7 @@
 						}
 						else
 						{
-						//	console.log(jsonObj);
+							console.log(jsonObj);
 						}
 					}
                 }

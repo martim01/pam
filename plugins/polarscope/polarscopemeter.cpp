@@ -325,7 +325,7 @@ void PolarScope::DrawLevels(wxDC& dc)
 
 void PolarScope::DrawConvexHull(wxDC& dc)
 {
-    if(m_pBuffer)
+    if(m_pBuffer && m_nInputChannels != 0)
     {
         dc.SetPen(wxColour(50,255,50));
         wxPoint pntOld(m_pntPole);
@@ -449,6 +449,7 @@ void PolarScope::SetAudioData(const timedbuffer* pBuffer)
     {
         Refresh();
     }
+
 }
 
 void PolarScope::SetNumberOfInputChannels(unsigned int nInputChannels)
@@ -620,4 +621,23 @@ void PolarScope::SetMode(int nMode)
 {
     m_nMode = nMode;
     Refresh();
+}
+
+Json::Value PolarScope::CreateWebsocketMessage()
+{
+    Json::Value jsMessage;
+    if(m_lstLevels.empty() == false)
+    {
+        jsMessage["level"]["x"] = m_lstLevels.back().first;
+        jsMessage["level"]["y"] = m_lstLevels.back().second;
+    }
+    if(m_lstBalance.empty() == false)
+    {
+        jsMessage["balance"] = m_lstBalance.back();
+    }
+    if(m_lstCorrelation.empty() == false)
+    {
+        jsMessage["correlation"] = m_lstCorrelation.back();
+    }
+    return jsMessage;
 }

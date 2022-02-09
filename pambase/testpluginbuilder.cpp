@@ -66,6 +66,57 @@ void TestPluginBuilder::RegisterForSettingsUpdates(const wxString& sSetting, wxE
     Settings::Get().AddHandler(pHandler, wxString::Format(wxT("Test %s"), GetName().c_str()), sSetting);
 }
 
+void TestPluginBuilder::SendWebsocketMessage(const Json::Value& jsMessage)
+{
+    if(RemoteApi::Get().WebsocketsActive())
+    {
+        Json::Value jsWebsocket;
+        jsWebsocket["plugin"]["type"] = "test";
+        jsWebsocket["plugin"]["name"] = GetName().ToStdString();
+        jsWebsocket["data"] = jsMessage;
+        RemoteApi::Get().SendPluginWebsocketMessage(jsWebsocket);
+    }
+}
+
+bool TestPluginBuilder::WebsocketsActive()
+{
+    return RemoteApi::Get().WebsocketsActive();
+}
+
+void TestPluginBuilder::RegisterRemoteApiEnum(const wxString& sKey, const std::set<wxString>& setEnum)
+{
+    RemoteApi::Get().RegisterRemoteApiEnum(GetName(), sKey, setEnum);
+}
+
+void TestPluginBuilder::RegisterRemoteApiEnum(const wxString& sKey, const std::map<int, wxString>& mEnum)
+{
+    RemoteApi::Get().RegisterRemoteApiEnum(GetName(), sKey, mEnum);
+}
+
+void TestPluginBuilder::RegisterRemoteApiRangeDouble(const wxString& sKey, const std::pair<double, double>& dRange)
+{
+    RemoteApi::Get().RegisterRemoteApiRangeDouble(GetName(), sKey, dRange);
+}
+
+void TestPluginBuilder::RegisterRemoteApiRangeInt(const wxString& sKey, const std::pair<int, int>& nRange)
+{
+    RemoteApi::Get().RegisterRemoteApiRangeInt(GetName(), sKey, nRange);
+}
+void TestPluginBuilder::RegisterRemoteApiCallback(const wxString& sKey, std::function<std::set<wxString>()> func)
+{
+    RemoteApi::Get().RegisterRemoteApiCallback(GetName(), sKey, func);
+}
+
+void TestPluginBuilder::RegisterRemoteApiCallback(const wxString& sKey, std::function<std::map<int, wxString>()> func)
+{
+    RemoteApi::Get().RegisterRemoteApiCallback(GetName(), sKey, func);
+}
+
+void TestPluginBuilder::RegisterRemoteApi(const wxString& sKey)
+{
+    RemoteApi::Get().RegisterRemoteApi(GetName(), sKey);
+}
+
 
 bool TestPluginBuilder::IsLogActive()
 {

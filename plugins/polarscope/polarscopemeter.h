@@ -6,6 +6,8 @@
 #include <list>
 #include "uirect.h"
 #include "pmcontrol.h"
+#include "json/json.h"
+
 class timedbuffer;
 
 struct rgb
@@ -90,6 +92,8 @@ class PolarScope : public pmControl
         void WorkoutBalance();
         void SetMode(int nMode);
 
+        Json::Value CreateWebsocketMessage();
+
         enum {STARS, HULL, LINES};
 
       protected:
@@ -116,6 +120,9 @@ class PolarScope : public pmControl
         hsv rgb2hsv(rgb in);
 
         void WorkoutLevel();
+
+
+
         wxRect m_rectGrid;
         wxRect m_rectCorrelation;
         wxRect m_rectBalance;

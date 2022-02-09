@@ -7,6 +7,8 @@
 //*)
 #include "session.h"
 #include "distortionbuilder.h"
+#include "settingevent.h"
+#include "log.h"
 
 //(*IdInit(pnlDistortion)
 const long pnlDistortion::ID_M_PLBL37 = wxNewId();
@@ -78,6 +80,9 @@ pnlDistortion::pnlDistortion(wxWindow* parent, DistortionBuilder* pBuilder, wxWi
 	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlDistortion::OnbtnResetClick);
 	Connect(ID_TIMER1,wxEVT_TIMER,(wxObjectEventFunction)&pnlDistortion::OntimerTestTrigger);
 	//*)
+
+	m_pBuilder->RegisterForSettingsUpdates("reset", this);
+	Bind(wxEVT_SETTING_CHANGED, &pnlDistortion::OnSettingEvent, this);
 }
 
 pnlDistortion::~pnlDistortion()
@@ -102,7 +107,7 @@ void pnlDistortion::InputSession(const session& aSession)
 
     for(size_t i = 0; i < m_vChannels.size(); i++)
     {
-        m_vChannels[i] = new pnlDistortionChannel(pnlLeft, i,m_pBuilder,  aSession.GetCurrentSubsession()->nSampleRate, wxID_ANY, wxPoint(38+(71*i), 0));
+        m_vChannels[i] = new pnlDistortionChannel(pnlLeft, i,aSession.GetCurrentSubsession()->nSampleRate, wxID_ANY, wxPoint(38+(71*i), 0));
     }
 }
 
@@ -115,96 +120,12 @@ void pnlDistortion::SetAudioData(const timedbuffer* pBuffer)
             m_vChannels[j]->AddAudioData(pBuffer->GetBuffer()[i+j]);
         }
     }
-    /*
-    double dPeak[2] = {0.0,0.0};
-    for(unsigned int i = 0; i < nFrames*2; i+=2)
-    {
-        m_lstBuffer.push_back(pBuffer[i]);
-        m_lstBuffer.push_back(pBuffer[i+1]);
-
-        dPeak[0] = max((double)fabs(pBuffer[i]), (double)dPeak[0]);
-        dPeak[1] = max((double)fabs(pBuffer[i+1]), (double)dPeak[1]);
-    }
-
-
-    if(m_dLevelPeakMax[0] != dPeak[0])
-    {
-        TestLog::Get()->Log(wxT("Distortion+Level"), wxT("Left:\tMax Level: %.5f\tCurrent Level: %.5f"), m_dLevelPeakMax[0], dPeak[0]);
-    }
-    if(m_dLevelPeakMax[1] != dPeak[1])
-    {
-        TestLog::Get()->Log(wxT("Distortion+Level"), wxT("Right:\tMax Level: %.5f\tCurrent Level: %.5f"), m_dLevelPeakMax[1], dPeak[1]);
-    }
-
-    for(int i = 0; i < 2; i++)
-    {
-
-        m_dLevelPeakMax[i] = max(m_dLevelPeakMax[i], dPeak[i]);
-        m_dLevelPeakMin[i] = min(m_dLevelPeakMin[i], dPeak[i]);
-    }
-    m_pGraph_Left->SetLevels(m_dLevelPeakMax[0], m_dLevelPeakMin[0], dPeak[0]);
-    m_pGraph_Right->SetLevels(m_dLevelPeakMax[1], m_dLevelPeakMin[1], dPeak[1]);
-
-    m_plblLevel_Left->SetLabel(wxString::Format(wxT("%.5f"), dPeak[0]));
-    m_plblLevel_Right->SetLabel(wxString::Format(wxT("%.5f"), dPeak[1]));
-    m_plblLevelMax_Left->SetLabel(wxString::Format(wxT("%.5f"), m_dLevelPeakMax[0]));
-    m_plblLevelMax_Right->SetLabel(wxString::Format(wxT("%.5f"), m_dLevelPeakMax[1]));
-
-    m_plblLevelMin_Left->SetLabel(wxString::Format(wxT("%.5f"), m_dLevelPeakMin[0]));
-    m_plblLevelMin_Right->SetLabel(wxString::Format(wxT("%.5f"), m_dLevelPeakMin[1]));
-
-    */
 }
 
 void pnlDistortion::RunTest()
 {
-/*
-    FFTAlgorithm fft;
-    double dDistortion = fft.GetTHDistortion(m_lstBuffer, 48000, FFTAlgorithm::ANALYSE_L, FFTAlgorithm::WINDOW_BLACKMAN, 1024, 0);
-    m_plblDistortion_Left->SetLabel(wxString::Format(wxT("%.2f%"),dDistortion));
-    m_plblFrequency_Left->SetLabel(wxString::Format(wxT("~ %.0f Hz"), fft.GetFundamentalBinFrequency()));
-    m_plblAmplitude_Left->SetLabel(wxString::Format(wxT("%.2f dB"), fft.GetFundamentalAmplitude()* 0.719));
-    m_plblPeaks_Left->SetLabel(wxString::Format(wxT("%d"), fft.GetNumberOfPeaks()));
-
-    if(m_dMax[FFTAlgorithm::ANALYSE_L] < dDistortion)
-    {
-        m_dMax[FFTAlgorithm::ANALYSE_L] = dDistortion;
-        m_plblMax_Left->SetLabel(wxString::Format(wxT("%.2f%"), m_dMax[FFTAlgorithm::ANALYSE_L]));
-        m_plblTime_Left->SetLabel(wxDateTime::UNow().Format(wxT("%Y-%m-%d %H:%M:%S.%l")));
-
-   }
-    if(fft.GetNumberOfPeaks() > 1)
-    {
-        TestLog::Get()->Log(wxT("Distortion+Level"), wxT("Left:\tPeaks = %03d\tDistortion=%.2f"), fft.GetNumberOfPeaks(), dDistortion);
-    }
-
-    FFTAlgorithm fftRight;
-    dDistortion = fftRight.GetTHDistortion(m_lstBuffer, 48000, FFTAlgorithm::ANALYSE_R, FFTAlgorithm::WINDOW_BLACKMAN, 1024, 0);
-    m_plblDistortion_Right->SetLabel(wxString::Format(wxT("%.2f%"),dDistortion));
-    m_plblFrequency_Right->SetLabel(wxString::Format(wxT("~ %.0f Hz"), fftRight.GetFundamentalBinFrequency()));
-    m_plblAmplitude_Right->SetLabel(wxString::Format(wxT("%.2f dB"), fftRight.GetFundamentalAmplitude()* 0.719));
-    m_plblPeaks_Right->SetLabel(wxString::Format(wxT("%d"), fftRight.GetNumberOfPeaks()));
-
-    if(m_dMax[FFTAlgorithm::ANALYSE_R] < dDistortion)
-    {
-        m_dMax[FFTAlgorithm::ANALYSE_R] = dDistortion;
-        m_plblMax_Right->SetLabel(wxString::Format(wxT("%.2f%"), m_dMax[FFTAlgorithm::ANALYSE_R]));
-        m_plblTime_Right->SetLabel(wxDateTime::UNow().Format(wxT("%Y-%m-%d %H:%M:%S.%l")));
-
-    }
-    if(fft.GetNumberOfPeaks() > 1)
-    {
-        TestLog::Get()->Log(wxT("Distortion+Level"), wxT("Right:\tPeaks = %03d\tDistortion=%.2f"), fft.GetNumberOfPeaks(), dDistortion);
-    }
-
-
-
-
-    m_lstBuffer.clear();
-*/
 
 }
-
 
 
 void pnlDistortion::ResetTest()
@@ -220,12 +141,45 @@ void pnlDistortion::ResetTest()
 
 void pnlDistortion::OntimerTestTrigger(wxTimerEvent& event)
 {
+    Json::Value jsMessage;
+
     for(size_t i = 0; i < m_vChannels.size(); i++)
     {
-        m_vChannels[i]->RunTest();
+        auto res = m_vChannels[i]->RunTest();
+        if(m_pBuilder->WebsocketsActive())
+        {
+            Json::Value jsChannel;
+            jsChannel["distortion"]["current"] = res.dDistortion;
+            jsChannel["fundamental"]["frequency"] = res.dFrequency;
+            jsChannel["fundamental"]["amplitude"] = res.dAmplitude;
+            jsChannel["peaks"] = res.nPeaks;
+            jsChannel["distortion"]["max"]["percentage"] = res.dMaxDistortion;
+            jsChannel["distortion"]["max"]["when"] = res.sMaxTime.ToStdString();
+
+            jsMessage.append(jsChannel);
+        }
+        if(m_pBuilder->IsLogActive() && res.nPeaks > 1)
+        {
+            pmlLog(pml::LOG_INFO) << "Distortion\t" << "Channel: " << i << " Peaks=" << res.nPeaks << " Distortion=" << res.dDistortion;
+        }
+    }
+
+    if(m_pBuilder->WebsocketsActive())
+    {
+        m_pBuilder->SendWebsocketMessage(jsMessage);
     }
 }
 
 void pnlDistortion::OnbtnResetClick(wxCommandEvent& event)
 {
+    m_pBuilder->WriteSetting("reset", 1);
+}
+
+void pnlDistortion::OnSettingEvent(SettingEvent& event)
+{
+    if(event.GetKey() == "reset" && event.GetValue(0l) == 1)
+    {
+        m_pBuilder->WriteSetting("reset",0);
+        ResetTest();
+    }
 }

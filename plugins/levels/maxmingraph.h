@@ -5,6 +5,7 @@
 #include "uirect.h"
 #include <list>
 #include "pmcontrol.h"
+#include "json/json.h"
 class LevelsBuilder;
 //#include "wmscroller.h"
 
@@ -56,7 +57,7 @@ class MaxMinGraph : public pmControl
 
         virtual ~MaxMinGraph();
 
-        void SetLevels(double dMax, double dMin, double dCurrent, bool bConvertToDb = true);
+        Json::Value SetLevels(double dMax, double dMin, double dCurrent, bool bConvertToDb = true);
 
         void SetMaxRange(double dRange);
 

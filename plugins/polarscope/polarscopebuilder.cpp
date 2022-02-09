@@ -17,7 +17,7 @@ m_pPolarScope(0)
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&PolarScopeBuilder::OnSettingChanged);
 
-
+    RegisterRemoteApiEnum("Mode", {{0,"Points"}, {1,"Hull"}, {2,"Levels"}});
 
     m_nInputChannels = 1;
     m_nDisplayChannel = 0;
@@ -30,6 +30,10 @@ PolarScopeBuilder::~PolarScopeBuilder()
 void PolarScopeBuilder::SetAudioData(const timedbuffer* pBuffer)
 {
     m_pPolarScope->SetAudioData(pBuffer);
+    if(WebsocketsActive())
+    {
+        SendWebsocketMessage(m_pPolarScope->CreateWebsocketMessage());
+    }
 }
 
 wxWindow* PolarScopeBuilder::CreateMonitorPanel(wxWindow* pParent)
@@ -83,7 +87,7 @@ void PolarScopeBuilder::OnSettingChanged(SettingEvent& event)
 {
     if(event.GetKey() == wxT("Mode"))
     {
-        m_pPolarScope->SetMode(ReadSetting(wxT("Mode"),0));
+        m_pPolarScope->SetMode(event.GetValue(0l));
     }
 }
 
