@@ -71,15 +71,15 @@ class waveformMeter : public pmControl
 
         void OnPaint(wxPaintEvent& event);
         virtual void OnSize(wxSizeEvent& event);
-
+        void WorkoutResolution();
 
         void OnLeftUp(wxMouseEvent& event);
 
         waveformBuilder* m_pBuilder;
 
-        std::list<std::pair<double,double> > m_lstWaveformLeft;
-        std::list<std::pair<double,double> > m_lstWaveformRight;
-
+//        std::vector<std::list<std::pair<float,float> >> m_vWaveform;
+        unsigned int m_nChannels;
+        std::list<wxBitmap> m_lstWaveform;
         double m_dResolution;
 
 };

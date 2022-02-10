@@ -331,7 +331,7 @@ bool Scope::WorkoutPlot()
             if(itSample != m_lstBuffer.end())
             {
                 m_vChannels[nChannel] = *(itSample);
-                itSample++;
+                ++itSample;
             }
         }
 
