@@ -15,13 +15,12 @@ ScopeBuilder::ScopeBuilder() : MonitorPluginBuilder(),
 m_pScope(0)
 {
 
-    RegisterForSettingsUpdates(wxT("Trigger"), this);
-    RegisterForSettingsUpdates(wxT("Autotrigger"), this);
-    RegisterForSettingsUpdates(wxT("Mode"), this);
-    RegisterForSettingsUpdates(wxT("Routing1"), this);
-    RegisterForSettingsUpdates(wxT("Routing2"), this);
-    RegisterForSettingsUpdates(wxT("Vertical"), this);
-    RegisterForSettingsUpdates(wxT("Timeframe"), this);
+    RegisterForSettingsUpdates("Trigger", this);
+    RegisterForSettingsUpdates("Autotrigger", this);
+    RegisterForSettingsUpdates("Mode", this);
+    RegisterForSettingsUpdates("Plot", this);
+    RegisterForSettingsUpdates("Vertical", this);
+    RegisterForSettingsUpdates("Timeframe", this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&ScopeBuilder::OnSettingChanged);
 
@@ -77,6 +76,8 @@ void ScopeBuilder::LoadSettings()
         m_pScope->SetRouting(ReadSetting(wxT("Routing2"), 0), 1);
         m_pScope->SetTimeFrame(ReadSetting(wxT("Timeframe"), 1.0));
         m_pScope->SetVerticalZoom(ReadSetting(wxT("Vertical"),1.0));
+
+        m_pScope->SetPlot(ReadSetting("Plot", "0,1"));
     }
 
 }
@@ -121,14 +122,6 @@ void ScopeBuilder::OnSettingChanged(SettingEvent& event)
         m_pScope->SetMode(ReadSetting(wxT("Mode"),0));
 
     }
-    else if(event.GetKey() == wxT("Routing1"))
-    {
-        m_pScope->SetRouting(ReadSetting(wxT("Routing1"), 0), 0);
-    }
-    else if(event.GetKey() == wxT("Routing2"))
-    {
-        m_pScope->SetRouting(ReadSetting(wxT("Routing2"), 0), 1);
-    }
     else if(event.GetKey() == wxT("Timeframe"))
     {
         m_pScope->SetTimeFrame(ReadSetting(wxT("Timeframe"), 1.0));
@@ -136,6 +129,10 @@ void ScopeBuilder::OnSettingChanged(SettingEvent& event)
     else if(event.GetKey() == wxT("Vertical"))
     {
         m_pScope->SetVerticalZoom(ReadSetting(wxT("Vertical"),1.0));
+    }
+    else if(event.GetKey() == "Plot")
+    {
+        m_pScope->SetPlot(event.GetValue());
     }
 }
 
