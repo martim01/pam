@@ -10,8 +10,7 @@
 #include <wx/tokenzr.h>
 #include <iostream>
 
-const std::array<wxColour, 8> Scope::CLR_PLOT = {wxColour(0,255,0), wxColour(255,0,0), wxColour(0,0,255), wxColour(255,128,0),
-                                                 wxColour(128,255,0), wxColour(0,255,128), wxColour(0,128,255), wxColour(255,0,128)};
+const std::array<wxString, 8> Scope::CLR_PLOT = {"#00ff00", "#ff0000", "#0000ff", "#ff8800","#88ff00", "#00ff88", "#0088ff", "#ff0088"};
 
 using namespace std;
 
@@ -107,17 +106,17 @@ void Scope::OnPaint(wxPaintEvent& event)
 
     float dCursorAmp(0);
 
-    for(size_t nPlot = 0; nPlot < m_vPlot.size(); ++nPlot)
+    for(const auto& graph : m_vPlot)
     {
-        if(m_vPlot[nPlot].bPlot)
+        if(graph.bPlot)
         {
-            memDC.SetPen(CLR_PLOT[nPlot]);
+            memDC.SetPen(graph.clr);
 
             float x = 0;
             int x_old(0), y_old(pntCenter.y);
             float dy_old = -80;
 
-            for(const auto& sample : m_vPlot[nPlot].lstBuffer)
+            for(const auto& sample : graph.lstBuffer)
             {
                 float y;
                 int nY;
@@ -127,6 +126,7 @@ void Scope::OnPaint(wxPaintEvent& event)
                 }
 
                 y = sample*m_dResolution;
+                y += graph.nOffset;
                 nY = pntCenter.y-y;
 
 
@@ -506,6 +506,12 @@ void Scope::SetNumberOfChannels(unsigned int nChannels)
     m_vPlot.clear();
     m_vPlot.resize(nChannels);
     SetPlot(m_pBuilder->ReadSetting("Plot", "0,1"));
+
+    for(size_t i = 0; i < m_vPlot.size(); i++)
+    {
+        m_vPlot[i].clr = wxColour(m_pBuilder->ReadSetting(wxString::Format("Plot_Colour_%lu", i), CLR_PLOT[i]));
+        m_vPlot[i].nOffset = m_pBuilder->ReadSetting(wxString::Format("Plot_Offset_%lu", i), 0);
+    }
 }
 
 
@@ -516,6 +522,25 @@ void Scope::SetPlot(const wxString& sPlot)
     for(size_t i = 0; i < m_vPlot.size(); i++)
     {
         m_vPlot[i].bPlot = (asPlot.Index(wxString::Format("%lu",i)) != wxNOT_FOUND);
-        std::cout << "!!!!!!!!!!!!!!!! " << i << "=" << m_vPlot[i].bPlot << std::endl;
+
+    }
+}
+
+void Scope::SetPlotColour(unsigned long nChannel, const wxString& sColour)
+{
+    wxColour clr(sColour);
+    if(nChannel < m_vPlot.size() && clr.IsOk())
+    {
+        m_vPlot[nChannel].clr = clr;
+        Refresh();
+    }
+}
+
+void Scope::SetPlotOffset(unsigned long nChannel, int nOffset)
+{
+    if(nChannel < m_vPlot.size())
+    {
+        m_vPlot[nChannel].nOffset = nOffset;
+        Refresh();
     }
 }

@@ -79,6 +79,16 @@ bool SoundFile::OpenToWrite(const wxString& sFileName, unsigned short nChannels,
     return m_pHandle;
 }
 
+bool SoundFile::WriteAudio(std::shared_ptr<const timedbuffer> pBuffer)//, unsigned short nChannels, unsigned short nLef, unsigned short nRight)
+{
+    if(m_pHandle)
+    {
+        m_nWritten += m_pHandle->write(pBuffer->GetBuffer(), pBuffer->GetBufferSize());
+        return true;
+    }
+    return false;
+}
+
 bool SoundFile::WriteAudio(const timedbuffer* pBuffer)//, unsigned short nChannels, unsigned short nLef, unsigned short nRight)
 {
     if(m_pHandle)

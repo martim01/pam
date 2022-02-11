@@ -5,7 +5,7 @@
 #include <wx/panel.h>
 #include "wmlist.h"
 //*)
-
+#include "wmlabel.h"
 class ScopeBuilder;
 
 class pnlRouting: public wxPanel
@@ -16,8 +16,10 @@ class pnlRouting: public wxPanel
 		virtual ~pnlRouting();
 
 
-
+        wmLabel* m_plblRouting;
+        wmLabel* m_plblTrigger;
 		wmList* m_plstRouting;
+		wmList* m_plstTrigger;
 
 
 		void SetNumberOfChannels(unsigned int nChannels);
@@ -32,6 +34,7 @@ class pnlRouting: public wxPanel
 	private:
 
 		void OnlstScope_RoutingSelected(wxCommandEvent& event);
+		void OnlstTriggerSelected(wxCommandEvent& event);
 
 		void ShowRouting(wmList* pLst, unsigned int nPlot, unsigned int nChannels);
 		ScopeBuilder* m_pBuilder;

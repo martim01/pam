@@ -25,21 +25,19 @@ void* RecordThread::Entry()
 {
     while(m_bLoop)
     {
-        timedbuffer* pBuffer(0);
+        std::shared_ptr<const timedbuffer> pBuffer(nullptr);
         if(m_mutex.IsOk())
         {
             m_mutex.Lock();
             if(m_queueBuffer.empty() == false)
             {
-                pBuffer = CopyBuffer(m_queueBuffer.front());
-                delete m_queueBuffer.front();
+                pBuffer = m_queueBuffer.front();
                 m_queueBuffer.pop();
             }
             m_mutex.Unlock();
             if(pBuffer)
             {
                 m_sf.WriteAudio(pBuffer);
-                delete pBuffer;
             }
             else
             {
@@ -62,9 +60,9 @@ void RecordThread::AddToBuffer(const timedbuffer* pBuffer)
 }
 
 
-timedbuffer* RecordThread::CopyBuffer(const timedbuffer* pBuffer)
+std::shared_ptr<const timedbuffer> RecordThread::CopyBuffer(const timedbuffer* pBuffer)
 {
-    timedbuffer* pThreadBuffer = new timedbuffer(pBuffer->GetBufferSize(), pBuffer->GetNumberOfChannels());
+    auto pThreadBuffer = std::make_shared<const timedbuffer>(pBuffer->GetBufferSize(), pBuffer->GetNumberOfChannels());
     pThreadBuffer->SetBuffer(pBuffer->GetBuffer());
     return pThreadBuffer;
 }
@@ -74,7 +72,6 @@ void RecordThread::ClearQueue()
 {
     while(m_queueBuffer.empty() == false)
     {
-        delete m_queueBuffer.front();
         m_queueBuffer.pop();
     }
 }

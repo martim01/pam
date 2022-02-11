@@ -21,10 +21,22 @@ pnlRouting::pnlRouting(wxWindow* parent,ScopeBuilder* pBuilder, wxWindowID id,co
 {
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
-	m_plstRouting = new wmList(this, ID_M_PLST16, wxPoint(0,0), wxSize(190,88), wmList::STYLE_SELECT | wmList::STYLE_SELECT_MULTI, 0, wxSize(-1,-1), 4, wxSize(0,0));
+
+	m_plblRouting = new wmLabel(this, wxNewId(), "Display", wxPoint(0,0), wxSize(190,30));
+	m_plblRouting->SetBackgroundColour(wxColour(80,100,128));
+	m_plblRouting->SetForegroundColour(*wxWHITE);
+	m_plstRouting = new wmList(this, ID_M_PLST16, wxPoint(0,35), wxSize(190,72), wmList::STYLE_SELECT | wmList::STYLE_SELECT_MULTI, 0, wxSize(-1,35), 4, wxSize(0,0));
 	m_plstRouting->SetBackgroundColour(wxColour(0,0,0));
 
+	m_plblTrigger = new wmLabel(this, wxNewId(), "Trigger On", wxPoint(0,120), wxSize(190,30));
+	m_plblTrigger->SetBackgroundColour(wxColour(80,100,128));
+	m_plblTrigger->SetForegroundColour(*wxWHITE);
+	m_plstTrigger = new wmList(this, wxNewId(), wxPoint(0,165), wxSize(190,72), wmList::STYLE_SELECT , 0, wxSize(-1,35), 4, wxSize(0,0));
+	m_plstTrigger->SetBackgroundColour(wxColour(0,0,0));
+
 	Connect(ID_M_PLST16,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlRouting::OnlstScope_RoutingSelected);
+	Connect(m_plstTrigger->GetId(),wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlRouting::OnlstTriggerSelected);
+
 
 
 }
@@ -58,6 +70,15 @@ void pnlRouting::OnlstScope_RoutingSelected(wxCommandEvent& event)
 void pnlRouting::SetNumberOfChannels(unsigned int nChannels)
 {
     ShowRouting(m_plstRouting,1, nChannels);
+
+    m_plstTrigger->Freeze();
+    m_plstTrigger->Clear();
+    for(int i = 0; i < nChannels; i++)
+    {
+        m_plstTrigger->AddButton(wxString::Format("Ch %d", i+1));
+    }
+    m_plstTrigger->SelectButton(m_pBuilder->ReadSetting("TriggerOn", 0));
+    m_plstTrigger->Thaw();
 }
 
 void pnlRouting::ShowRouting(wmList* pLst, unsigned int nPlot, unsigned int nChannels)
@@ -85,3 +106,7 @@ void pnlRouting::ShowRouting(wmList* pLst, unsigned int nPlot, unsigned int nCha
     pLst->Thaw();
 }
 
+void pnlRouting::OnlstTriggerSelected(wxCommandEvent& event)
+{
+    m_pBuilder->WriteSetting("TriggerOn", event.GetInt());
+}

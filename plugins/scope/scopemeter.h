@@ -116,6 +116,10 @@ class Scope : public pmControl
         void SetTimeFrame(int nFrames);
 
         void SetPlot(const wxString& sPlot);
+        void SetTriggerChannel(unsigned int nChannel) { m_nTrigger = nChannel % 8;}
+
+        void SetPlotColour(unsigned long nChannel, const wxString& sColour);
+        void SetPlotOffset(unsigned long nChannel, int nOffset);
 
         enum{LEFT, RIGHT, MIDDLE=8, SIDE=9, LEFT_RIGHT=10};
         enum {MODE_NORMAL, MODE_SLIDE, MODE_CURSOR};
@@ -181,15 +185,17 @@ class Scope : public pmControl
 
         struct plot
         {
-            plot() : bPlot(false){}
+            plot() : bPlot(false), nOffset(0){}
             std::list<float> lstBuffer;
             bool bPlot;
+            int nOffset;
+            wxColour clr;
         };
         std::vector<plot> m_vPlot;
 
         unsigned int m_nTrigger;
 
-        static const std::array<wxColour, 8> CLR_PLOT;
+        static const std::array<wxString, 8> CLR_PLOT;
 
         //std::vector<float> m_vChannels:
 
