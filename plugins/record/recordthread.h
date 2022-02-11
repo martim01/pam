@@ -3,6 +3,7 @@
 #include "soundfile.h"
 #include <queue>
 #include <atomic>
+#include <memory>
 class timedbuffer;
 
 class RecordThread : public wxThread
@@ -18,12 +19,12 @@ class RecordThread : public wxThread
 
     private:
 
-        timedbuffer* CopyBuffer(const timedbuffer* pBuffer);
+        std::shared_ptr<const timedbuffer> CopyBuffer(const timedbuffer* pBuffer);
         void ClearQueue();
 
         wxMutex m_mutex;
         SoundFile m_sf;
         std::atomic<bool> m_bLoop;
 
-        std::queue<timedbuffer*> m_queueBuffer;
+        std::queue<std::shared_ptr<const timedbuffer>> m_queueBuffer;
 };
