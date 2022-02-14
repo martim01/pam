@@ -12,12 +12,13 @@
 class timedbuffer;
 struct session;
 class loud;
+class PeakLogBuilder;
 
 class pnlPeakLog: public wxPanel
 {
 	public:
 
-		pnlPeakLog(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+		pnlPeakLog(wxWindow* parent, PeakLogBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pnlPeakLog();
 
 		//(*Declarations(pnlPeakLog)
@@ -38,6 +39,8 @@ class pnlPeakLog: public wxPanel
         void InputSession(const session& aSession);
         void SetAudioData(const timedbuffer* pBuffer);
 		void SetLogType(bool bLUFS);
+
+		void PlotChanged(const wxString& sCSV);
 
 	protected:
 
@@ -63,6 +66,8 @@ class pnlPeakLog: public wxPanel
 		void OnbtnClearClick(wxCommandEvent& event);
 		void OnbtnTypeClick(wxCommandEvent& event);
 		//*)
+
+		PeakLogBuilder* m_pBuilder;
 
         void ClearGraphs();
         void AddLines(LevelGraph* pGraph);

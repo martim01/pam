@@ -1,6 +1,7 @@
 #include "pnlPeakLog.h"
 #include "session.h"
 #include "timedbuffer.h"
+#include "peaklogbuilder.h"
 
 //(*InternalHeaders(pnlPeakLog)
 #include <wx/font.h>
@@ -24,7 +25,7 @@ const long pnlPeakLog::ID_M_PLST1 = wxNewId();
 const long pnlPeakLog::ID_M_PBTN2 = wxNewId();
 const long pnlPeakLog::ID_M_PBTN1 = wxNewId();
 //*)
-const wxString pnlPeakLog::GRAPH_LINES[8] = {wxT("Ch 1"), wxT("Ch 2"), wxT("Ch 3"), wxT("Ch 4"), wxT("Ch 5"), wxT("Ch 6"), wxT("Ch 7"), wxT("Ch 8")};
+const wxString pnlPeakLog::GRAPH_LINES[8] = {"Ch 1", "Ch 2", "Ch 3", "Ch 4", "Ch 5", "Ch 6", "Ch 7", "Ch 8"};
 const wxColour pnlPeakLog::COLOUR_LINES[8] = {*wxRED, *wxGREEN, wxColour(255,165,0), wxColour(255,255,0), wxColour(0,0,255), wxColour(148,0,211), wxColour(238,130,238), wxColour(255,255,255)};
 
 BEGIN_EVENT_TABLE(pnlPeakLog,wxPanel)
@@ -32,7 +33,7 @@ BEGIN_EVENT_TABLE(pnlPeakLog,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlPeakLog::pnlPeakLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size) //: m_ploud(0)
+pnlPeakLog::pnlPeakLog(wxWindow* parent, PeakLogBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) : m_pBuilder(pBuilder)
 {
 	//(*Initialize(pnlPeakLog)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
@@ -96,17 +97,11 @@ pnlPeakLog::~pnlPeakLog()
 
 void pnlPeakLog::InputSession(const session& aSession)
 {
-//    if(m_ploud)
-//    {
-//        delete m_ploud;
-//    }
     m_nChannels = 0;
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
         m_nChannels = min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels);
     }
-//    m_ploud = new loud(m_nChannels);
-
     m_pLevelGraph_Day->DeleteAllGraphs();
     m_pLevelGraph_Hour->DeleteAllGraphs();
     m_pLevelGraph_Minute->DeleteAllGraphs();
@@ -132,8 +127,10 @@ void pnlPeakLog::InputSession(const session& aSession)
         m_pLevelGraph_Second->SetLimit(GRAPH_LINES[i], 0,-50);
 
 
-        m_plstGraphs->AddButton(wxString::Format(wxT("Hide %s"), GRAPH_LINES[i].c_str()));
+        m_plstGraphs->AddButton(GRAPH_LINES[i]);
     }
+
+    m_plstGraphs->ConnectToSetting(m_pBuilder->GetName(), "Plot", 255l);
 }
 
 void pnlPeakLog::AddLines(LevelGraph* pGraph)
@@ -197,25 +194,18 @@ void pnlPeakLog::SetAudioData(const timedbuffer* pBuffer)
 
 }
 
-void pnlPeakLog::OnlstGraphsSelected(wxCommandEvent& event)
+void pnlPeakLog::PlotChanged(const wxString& sCSV)
 {
-    bool bShow(false);
-    wxString sLine(event.GetString().AfterFirst(wxT(' ')));
-    wxString sNewText(wxT("Show "));
-    wxColour clr(64,0,0);
-    if(event.GetString().BeforeFirst(wxT(' ')) == wxT("Show"))
+    wxArrayString asPlot = wxStringTokenize(sCSV, ",");
+    for(size_t i = 0; i < m_plstGraphs->GetItemCount(); i++)
     {
-        sNewText = wxT("Hide ");
-        bShow = true;
-        clr = wxColour(0,64,0);
-    }
-    m_plstGraphs->SetButtonText(event.GetInt(), wxString::Format(wxT("%s%s"), sNewText.c_str(), sLine.c_str()));
-    m_plstGraphs->SetButtonColour(event.GetInt(), clr);
+        bool bShow = (asPlot.Index(wxString::Format("%lu", i)) != wxNOT_FOUND);
 
-    m_pLevelGraph_Day->ShowGraph(sLine, bShow);
-    m_pLevelGraph_Hour->ShowGraph(sLine, bShow);
-    m_pLevelGraph_Minute->ShowGraph(sLine, bShow);
-    m_pLevelGraph_Second->ShowGraph(sLine, bShow);
+        m_pLevelGraph_Day->ShowGraph(GRAPH_LINES[i], bShow);
+        m_pLevelGraph_Hour->ShowGraph(GRAPH_LINES[i], bShow);
+        m_pLevelGraph_Minute->ShowGraph(GRAPH_LINES[i], bShow);
+        m_pLevelGraph_Second->ShowGraph(GRAPH_LINES[i], bShow);
+    }
 }
 
 void pnlPeakLog::OnbtnClearClick(wxCommandEvent& event)

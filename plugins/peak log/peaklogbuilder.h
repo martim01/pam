@@ -2,6 +2,7 @@
 #include "testpluginbuilder.h"
 
 class pnlPeakLog;
+class SettingEvent;
 
 class PeakLogBuilder : public TestPluginBuilder
 {
@@ -16,6 +17,8 @@ class PeakLogBuilder : public TestPluginBuilder
         virtual wxString GetName() const;
 
     protected:
+
+        void OnSettingChanged(SettingEvent& event);
 
         friend class pnlPeakLog;
         virtual wxWindow* CreateTestPanel(wxWindow* pParent);

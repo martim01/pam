@@ -605,8 +605,8 @@ class PAMBASE_IMPEXPORT wmList : public pmControl
 
 
         bool ConnectToSetting(const wxString& sSection, const wxString& sKey, const wxString& sDefault);
-        bool ConnectToSetting(const wxString& sSection, const wxString& sKey, size_t nDefault);
-        bool ConnectToSetting(const wxString& sSection, const wxString& sKey, void* dataDefault);
+        bool ConnectToSetting(const wxString& sSection, const wxString& sKey, size_t nDefault, const wxString& sMultiDefault="");
+        bool ConnectToSetting(const wxString& sSection, const wxString& sKey, void* dataDefault, const wxString& sMultiDefault="");
 
         void ReloadSetting();
 
@@ -698,6 +698,14 @@ class PAMBASE_IMPEXPORT wmList : public pmControl
         void OnSettingChanged(const SettingEvent& event);
         void WriteSetting(button* pButton);
 
+        void SelectButtonsFromCSVLabel(const wxString& sCsv);
+        void SelectButtonsFromCSVIndex(const wxString& sCsv);
+        void SelectButtonsFromCSVData(const wxString& sCsv);
+
+        void WriteSettingCSVLabel();
+        void WriteSettingCSVIndex();
+        void WriteSettingCSVData();
+
         std::list<button*>::iterator GetButton(size_t nButton);
         std::list<button*>::iterator GetButton(void* pData);
         void SelectButton(std::list<button*>::iterator itSel, bool bEvent=true);
@@ -788,7 +796,7 @@ class PAMBASE_IMPEXPORT wmList : public pmControl
 
         wxString m_sSettingSection;
         wxString m_sSettingKey;
-        enum enumSettingConnection {NONE, LABEL, INDEX, DATA};
+        enum enumSettingConnection {NONE, LABEL, INDEX, DATA, CSV_LABEL, CSV_INDEX, CSV_DATA};
         enumSettingConnection m_eSettingConnection;
 
 

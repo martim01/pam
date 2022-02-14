@@ -2456,35 +2456,62 @@ bool wmList::ConnectToSetting(const wxString& sSection, const wxString& sKey, co
     }
 
     ConnectToSetting(sSection, sKey);
-    m_eSettingConnection = enumSettingConnection::LABEL;
-    SelectButton(Settings::Get().Read(sSection, sKey, sDefault), false);
+    if(m_nStyle & STYLE_SELECT_MULTI)
+    {
+        m_eSettingConnection = enumSettingConnection::CSV_LABEL;
+        SelectButtonsFromCSVLabel(Settings::Get().Read(sSection, sKey, sDefault));
+
+    }
+    else
+    {
+        m_eSettingConnection = enumSettingConnection::LABEL;
+        SelectButton(Settings::Get().Read(sSection, sKey, sDefault), false);
+    }
     return true;
 }
 
-bool wmList::ConnectToSetting(const wxString& sSection, const wxString& sKey, size_t nDefault)
+bool wmList::ConnectToSetting(const wxString& sSection, const wxString& sKey, size_t nDefault, const wxString& sMultiDefault)
 {
     if(sSection.empty() || sKey.empty())
     {
         return false;
     }
     ConnectToSetting(sSection, sKey);
-    m_eSettingConnection = enumSettingConnection::INDEX;
-    SelectButton(Settings::Get().Read(sSection, sKey, (int)nDefault), false);
+    if(m_nStyle & STYLE_SELECT_MULTI)
+    {
+        m_eSettingConnection = enumSettingConnection::CSV_INDEX;
+        SelectButtonsFromCSVIndex(Settings::Get().Read(sSection, sKey, sMultiDefault));
+    }
+    else
+    {
+        m_eSettingConnection = enumSettingConnection::INDEX;
+
+        SelectButton(Settings::Get().Read(sSection, sKey, (int)nDefault), false);
+    }
     return true;
 }
 
-bool wmList::ConnectToSetting(const wxString& sSection, const wxString& sKey, void* pDefault)
+bool wmList::ConnectToSetting(const wxString& sSection, const wxString& sKey, void* pDefault, const wxString& sMultiDefault)
 {
     if(sSection.empty() || sKey.empty())
     {
         return false;
     }
     ConnectToSetting(sSection, sKey);
-    m_eSettingConnection = enumSettingConnection::DATA;
-    size_t nButton = FindButton((void*)Settings::Get().Read(sSection, sKey, (int)pDefault));
-    if(nButton != NOT_FOUND)
+    if(m_nStyle & STYLE_SELECT_MULTI)
     {
-        SelectButton(nButton, false);
+        m_eSettingConnection = enumSettingConnection::CSV_DATA;
+        SelectButtonsFromCSVData(Settings::Get().Read(sSection, sKey, sMultiDefault));
+
+    }
+    else
+    {
+        m_eSettingConnection = enumSettingConnection::DATA;
+        size_t nButton = FindButton((void*)Settings::Get().Read(sSection, sKey, (int)pDefault));
+        if(nButton != NOT_FOUND)
+        {
+            SelectButton(nButton, false);
+        }
     }
     return true;
 }
@@ -2515,6 +2542,16 @@ void wmList::OnSettingChanged(const SettingEvent& event)
                 SelectButton(nButton, false);
             }
         }
+            break;
+        case enumSettingConnection::CSV_LABEL:
+            SelectButtonsFromCSVLabel(event.GetValue());
+            break;
+        case enumSettingConnection::CSV_INDEX:
+            SelectButtonsFromCSVIndex(event.GetValue());
+            break;
+        case enumSettingConnection::CSV_DATA:
+            SelectButtonsFromCSVData(event.GetValue());
+            break;
     }
 }
 
@@ -2531,5 +2568,96 @@ void wmList::WriteSetting(button* pButton)
         case enumSettingConnection::DATA:
             Settings::Get().Write(m_sSettingSection, m_sSettingKey, (int)pButton->pUi->GetClientData());
             break;
+        case enumSettingConnection::CSV_LABEL:
+            WriteSettingCSVLabel();
+            break;
+        case enumSettingConnection::CSV_INDEX:
+            WriteSettingCSVIndex();
+            break;
+        case enumSettingConnection::CSV_DATA:
+            WriteSettingCSVData();
+            break;
     }
 }
+
+void wmList::SelectButtonsFromCSVLabel(const wxString& sCsv)
+{
+    wxArrayString as = wxStringTokenize(sCsv, ",");
+    for(size_t i = 0; i > as.GetCount(); i++)
+    {
+        SelectButton(as[i], false);
+    }
+}
+
+void wmList::SelectButtonsFromCSVIndex(const wxString& sCsv)
+{
+    wxArrayString as = wxStringTokenize(sCsv, ",");
+    for(size_t i = 0; i > as.GetCount(); i++)
+    {
+        unsigned long nId;
+        if(as[i].ToULong(&nId))
+        {
+            SelectButton(nId, false);
+        }
+    }
+}
+
+void wmList::SelectButtonsFromCSVData(const wxString& sCsv)
+{
+    wxArrayString as = wxStringTokenize(sCsv, ",");
+    for(size_t i = 0; i > as.GetCount(); i++)
+    {
+        unsigned long nData;
+        if(as[i].ToULong(&nData))
+        {
+            SelectButton(reinterpret_cast<void*>(nData), false);
+        }
+    }
+}
+
+void wmList::WriteSettingCSVLabel()
+{
+    wxString sData;
+    for(auto itSel : m_setitSelected)
+    {
+        if(sData.empty() == false)
+        {
+            sData += ",";
+        }
+        sData += (*itSel)->pUi->GetLabel();
+    }
+    Settings::Get().Write(m_sSettingSection, m_sSettingKey, sData);
+}
+
+void wmList::WriteSettingCSVIndex()
+{
+    wxString sData;
+    for(auto itSel : m_setitSelected)
+    {
+        if(sData.empty() == false)
+        {
+            sData += ",";
+        }
+        sData << (*itSel)->pUi->GetIndex();
+    }
+    Settings::Get().Write(m_sSettingSection, m_sSettingKey, sData);
+}
+
+void wmList::WriteSettingCSVData()
+{
+    wxString sData;
+    for(auto itSel : m_setitSelected)
+    {
+        if(sData.empty() == false)
+        {
+            sData += ",";
+        }
+        sData << reinterpret_cast<unsigned long>((*itSel)->pUi->GetClientData());
+    }
+    Settings::Get().Write(m_sSettingSection, m_sSettingKey, sData);
+}
+
+
+
+
+

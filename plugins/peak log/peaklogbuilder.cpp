@@ -1,16 +1,28 @@
 #include "peaklogbuilder.h"
 #include "pnlPeakLog.h"
+#include "settingevent.h"
 
 PeakLogBuilder::PeakLogBuilder() : TestPluginBuilder(),
 m_ppnlPeakLog(0)
 {
+    RegisterForSettingsUpdates("Plot", this);
 
+    RegisterRemoteApiRangeInt("Plot", {0,255});
+
+    Bind(wxEVT_SETTING_CHANGED, &PeakLogBuilder::OnSettingChanged, this);
 }
 
 PeakLogBuilder::~PeakLogBuilder()
 {
 }
 
+void PeakLogBuilder::OnSettingChanged(SettingEvent& event)
+{
+    if(event.GetKey() == "Plot")
+    {
+        m_ppnlPeakLog->PlotChanged(event.GetValue());
+    }
+}
 void PeakLogBuilder::InputSession(const session& aSession)
 {
 
@@ -35,7 +47,7 @@ wxString PeakLogBuilder::GetName() const
 
 wxWindow* PeakLogBuilder::CreateTestPanel(wxWindow* pParent)
 {
-    m_ppnlPeakLog = new pnlPeakLog(pParent);
+    m_ppnlPeakLog = new pnlPeakLog(pParent, this);
     return m_ppnlPeakLog;
 }
 
