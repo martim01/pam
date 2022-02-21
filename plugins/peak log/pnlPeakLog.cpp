@@ -2,6 +2,8 @@
 #include "session.h"
 #include "timedbuffer.h"
 #include "peaklogbuilder.h"
+#include <iostream>
+#include "json/json.h"
 
 //(*InternalHeaders(pnlPeakLog)
 #include <wx/font.h>
@@ -35,7 +37,6 @@ END_EVENT_TABLE()
 
 pnlPeakLog::pnlPeakLog(wxWindow* parent, PeakLogBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) : m_pBuilder(pBuilder)
 {
-	//(*Initialize(pnlPeakLog)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
 	m_plblTitle = new wmLabel(this, ID_M_PLBL37, _("Peak Level Log"), wxPoint(0,0), wxSize(600,40), 0, _T("ID_M_PLBL37"));
@@ -64,7 +65,7 @@ pnlPeakLog::pnlPeakLog(wxWindow* parent, PeakLogBuilder* pBuilder, wxWindowID id
 	m_pLbl4->SetBorderState(uiRect::BORDER_FLAT);
 	m_pLbl4->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl4->SetBackgroundColour(wxColour(64,0,64));
-	m_plstGraphs = new wmList(this, ID_M_PLST1, wxPoint(5,430), wxSize(400,50), 0, 0, wxSize(-1,-1), 8, wxSize(5,0));
+	m_plstGraphs = new wmList(this, ID_M_PLST1, wxPoint(5,430), wxSize(400,50), wmList::STYLE_SELECT | wmList::STYLE_SELECT_MULTI, 0, wxSize(-1,-1), 8, wxSize(5,0));
 	m_plstGraphs->SetBackgroundColour(wxColour(0,0,0));
 	m_plstGraphs->SetButtonColour(wxColour(wxT("#004000")));
 	m_pbtnType = new wmButton(this, ID_M_PBTN2, _("Log Loudness"), wxPoint(410,432), wxSize(90,40), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
@@ -74,13 +75,12 @@ pnlPeakLog::pnlPeakLog(wxWindow* parent, PeakLogBuilder* pBuilder, wxWindowID id
 	m_pbtnClear->SetBackgroundColour(wxColour(128,64,0));
 	m_pbtnClear->SetColourSelected(wxColour(wxT("#5E2F00")));
 
-	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlPeakLog::OnlstGraphsSelected);
 	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlPeakLog::OnbtnTypeClick);
 	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlPeakLog::OnbtnClearClick);
-	//*)
 
 	SetPosition(pos);
 	SetSize(size);
+
 
 
 
@@ -130,7 +130,7 @@ void pnlPeakLog::InputSession(const session& aSession)
         m_plstGraphs->AddButton(GRAPH_LINES[i]);
     }
 
-    m_plstGraphs->ConnectToSetting(m_pBuilder->GetName(), "Plot", 255l);
+    m_plstGraphs->ConnectToSetting(m_pBuilder->GetName(), "Plot", size_t(0), "0,1");
 }
 
 void pnlPeakLog::AddLines(LevelGraph* pGraph)
@@ -175,31 +175,43 @@ void pnlPeakLog::SetAudioData(const timedbuffer* pBuffer)
 //            }
 //        }
     }
+
+    Json::Value jsData;
+
     for(int j=0; j < vPeak.size(); j++)
     {
-        m_pLevelGraph_Day->AddPeak(GRAPH_LINES[j], vPeak[j]);
-        m_pLevelGraph_Day->AddPeak(GRAPH_LINES[j], vPeak[j]);
+        jsData[GRAPH_LINES[j]] = Json::objectValue;
+        AddPeak("Day", m_pLevelGraph_Day, GRAPH_LINES[j], vPeak[j],jsData[GRAPH_LINES[j]]);
+        AddPeak("Hour", m_pLevelGraph_Hour, GRAPH_LINES[j], vPeak[j],jsData[GRAPH_LINES[j]]);
+        AddPeak("Minute", m_pLevelGraph_Minute, GRAPH_LINES[j], vPeak[j],jsData[GRAPH_LINES[j]]);
+        AddPeak("Second", m_pLevelGraph_Second, GRAPH_LINES[j], vPeak[j],jsData[GRAPH_LINES[j]]);
+    }
+    if(m_pBuilder->WebsocketsActive())
+    {
+        m_pBuilder->SendWebsocketMessage(jsData);
+    }
+}
 
-        m_pLevelGraph_Hour->AddPeak(GRAPH_LINES[j],vPeak[j]);
-        m_pLevelGraph_Hour->AddPeak(GRAPH_LINES[j],vPeak[j]);
-
-        m_pLevelGraph_Minute->AddPeak(GRAPH_LINES[j], vPeak[j]);
-        m_pLevelGraph_Minute->AddPeak(GRAPH_LINES[j], vPeak[j]);
-
-        m_pLevelGraph_Second->AddPeak(GRAPH_LINES[j], vPeak[j]);
-        m_pLevelGraph_Second->AddPeak(GRAPH_LINES[j], vPeak[j]);
-
-
+void pnlPeakLog::AddPeak(const wxString& sDuration, LevelGraph* pGraph, const wxString& sLine, double dPeak, Json::Value& jsData)
+{
+    pGraph->AddPeak(sLine, dPeak);
+    auto pairProcess = pGraph->AddPeak(sLine, dPeak);   //only check the second as all our data sets are even
+    if(pairProcess.first && m_pBuilder->WebsocketsActive())
+    {
+        jsData[sDuration.ToStdString()] = pairProcess.second;
     }
 
 }
 
 void pnlPeakLog::PlotChanged(const wxString& sCSV)
 {
+    std::cout << "PlotChanged: " << sCSV << std::endl;
+
     wxArrayString asPlot = wxStringTokenize(sCSV, ",");
     for(size_t i = 0; i < m_plstGraphs->GetItemCount(); i++)
     {
         bool bShow = (asPlot.Index(wxString::Format("%lu", i)) != wxNOT_FOUND);
+
 
         m_pLevelGraph_Day->ShowGraph(GRAPH_LINES[i], bShow);
         m_pLevelGraph_Hour->ShowGraph(GRAPH_LINES[i], bShow);

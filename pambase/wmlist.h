@@ -696,7 +696,7 @@ class PAMBASE_IMPEXPORT wmList : public pmControl
 
         void ConnectToSetting(const wxString& sSection, const wxString& sKey);
         void OnSettingChanged(const SettingEvent& event);
-        void WriteSetting(button* pButton);
+        void WriteSetting();
 
         void SelectButtonsFromCSVLabel(const wxString& sCsv);
         void SelectButtonsFromCSVIndex(const wxString& sCsv);

@@ -51,6 +51,7 @@ class RemoteApi
         void RegisterRemoteApiCallback(const wxString& sSection, const wxString& sKey, std::function<std::set<wxString>()> func);
         void RegisterRemoteApiCallback(const wxString& sSection, const wxString& sKey, std::function<std::map<int, wxString>()> func);
         void RegisterRemoteApi(const wxString& sSection, const wxString& sKey);
+        void RegisterRemoteApiCSV(const wxString& sSection, const wxString& sKey, const std::set<wxString>& setEnum);
 
 
 
@@ -75,10 +76,11 @@ class RemoteApi
         {
             struct constraint
             {
-                enum enumType{FREE, STRING_ENUM, INT_ENUM, INT_RANGE, DOUBLE_RANGE, STRING_CALLBACK, INT_CALLBACK};
+                enum enumType{FREE, STRING_ENUM, INT_ENUM, INT_RANGE, DOUBLE_RANGE, STRING_CALLBACK, INT_CALLBACK, CSV};
 
                 constraint() : dRange{0.0,0.0}, nRange{0,0}, funcStringEnum(nullptr), funcIntEnum(nullptr), eType(enumType::FREE){}
                 constraint(const std::set<wxString>& setE) : setEnum(setE), dRange{0.0,0.0}, nRange{0,0}, funcStringEnum(nullptr), funcIntEnum(nullptr), eType(enumType::STRING_ENUM){}
+                constraint(const std::set<wxString>& setE, bool bPlaceholder) : setEnum(setE), dRange{0.0,0.0}, nRange{0,0}, funcStringEnum(nullptr), funcIntEnum(nullptr), eType(enumType::CSV){}
                 constraint(const std::map<int, wxString>& mE) : mEnumNum(mE), dRange{0.0,0.0}, nRange{0,0}, funcStringEnum(nullptr), funcIntEnum(nullptr), eType(enumType::INT_ENUM){}
                 constraint(const std::pair<double, double>& dR) : dRange(dR), nRange{0,0}, funcStringEnum(nullptr), funcIntEnum(nullptr), eType(enumType::DOUBLE_RANGE){}
                 constraint(const std::pair<int, int>& nR) : dRange{0.0,0.0}, nRange(nR), funcStringEnum(nullptr), funcIntEnum(nullptr), eType(enumType::INT_RANGE){}
@@ -101,6 +103,7 @@ class RemoteApi
 
         pml::restgoose::response CheckJsonSettingPatch(const Json::Value& jsPatch);
         pml::restgoose::response CheckJsonSettingPatchConstraint(const Json::Value& jsPatch, const RemoteApi::section::constraint& aConstraint);
+        pml::restgoose::response CheckJsonSettingPatchConstraintCSV(const Json::Value& jsPatch, const std::set<wxString>& setEnum);
         pml::restgoose::response CheckJsonSettingPatchConstraint(const Json::Value& jsPatch, const std::set<wxString>& setEnum);
         pml::restgoose::response CheckJsonSettingPatchConstraint(const Json::Value& jsPatch, const std::map<int, wxString>& mEnum);
         pml::restgoose::response CheckJsonSettingPatchConstraint(const Json::Value& jsPatch, const std::pair<double, double>& dRange);

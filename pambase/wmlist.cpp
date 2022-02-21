@@ -7,7 +7,7 @@
 #include "icons/left16.xpm"
 #include "icons/up16.xpm"
 #include "icons/down16.xpm"
-
+#include <iostream>
 #include "settings.h"
 #include "settingevent.h"
 
@@ -820,7 +820,6 @@ void wmList::SelectButton(std::list<button*>::iterator itSel, bool bEvent)
         event.SetClientData((*itSel)->pUi->GetClientData());
         event.SetInt((*itSel)->pUi->GetIndex());
 
-        WriteSetting((*itSel));
 
         bool bSelected(false);
         if((m_nStyle & STYLE_SELECT))
@@ -867,7 +866,7 @@ void wmList::SelectButton(std::list<button*>::iterator itSel, bool bEvent)
             }
         }
 
-
+        WriteSetting();
 
         if(bEvent)
         {
@@ -2555,18 +2554,23 @@ void wmList::OnSettingChanged(const SettingEvent& event)
     }
 }
 
-void wmList::WriteSetting(button* pButton)
+void wmList::WriteSetting()
 {
+    button* pButton(nullptr);
+    if(m_setitSelected.empty() == false)
+    {
+        pButton = *(*m_setitSelected.begin());
+    }
     switch(m_eSettingConnection)
     {
         case enumSettingConnection::LABEL:
-            Settings::Get().Write(m_sSettingSection, m_sSettingKey, pButton->pUi->GetLabel());
+            Settings::Get().Write(m_sSettingSection, m_sSettingKey, pButton ? pButton->pUi->GetLabel() : "");
             break;
         case enumSettingConnection::INDEX:
-            Settings::Get().Write(m_sSettingSection, m_sSettingKey, (int)pButton->pUi->GetIndex());
+            Settings::Get().Write(m_sSettingSection, m_sSettingKey, pButton ? (int)pButton->pUi->GetIndex() : (int)0);
             break;
         case enumSettingConnection::DATA:
-            Settings::Get().Write(m_sSettingSection, m_sSettingKey, (int)pButton->pUi->GetClientData());
+            Settings::Get().Write(m_sSettingSection, m_sSettingKey, pButton ? (int)pButton->pUi->GetClientData() : (int)0);
             break;
         case enumSettingConnection::CSV_LABEL:
             WriteSettingCSVLabel();
@@ -2591,6 +2595,7 @@ void wmList::SelectButtonsFromCSVLabel(const wxString& sCsv)
 
 void wmList::SelectButtonsFromCSVIndex(const wxString& sCsv)
 {
+    std::cout << "SelectButtonsFromCSVIndex: " << sCsv << std::endl;
     wxArrayString as = wxStringTokenize(sCsv, ",");
     for(size_t i = 0; i > as.GetCount(); i++)
     {

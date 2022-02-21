@@ -7,7 +7,7 @@ m_ppnlPeakLog(0)
 {
     RegisterForSettingsUpdates("Plot", this);
 
-    RegisterRemoteApiRangeInt("Plot", {0,255});
+    RegisterRemoteApiCSV("Plot", {"0","1","2","3","4","5","6","7"});
 
     Bind(wxEVT_SETTING_CHANGED, &PeakLogBuilder::OnSettingChanged, this);
 }

@@ -31,39 +31,39 @@ void TestPluginBuilder::CreatePanels(wmSwitcherPanel* pswpTests)
 
 void TestPluginBuilder::WriteSetting(const wxString& sSetting, const wxString& sValue)
 {
-    Settings::Get().Write(wxString::Format(wxT("Test %s"), GetName().c_str()), sSetting, sValue);
+    Settings::Get().Write(GetName(), sSetting, sValue);
 }
 
 void TestPluginBuilder::WriteSetting(const wxString& sSetting, int nValue)
 {
-    Settings::Get().Write(wxString::Format(wxT("Test %s"), GetName().c_str()), sSetting, nValue);
+    Settings::Get().Write(GetName(), sSetting, nValue);
 }
 
 void TestPluginBuilder::WriteSetting(const wxString& sSetting, double dValue)
 {
-    Settings::Get().Write(wxString::Format(wxT("Test %s"), GetName().c_str()), sSetting, dValue);
+    Settings::Get().Write(GetName(), sSetting, dValue);
 }
 
 wxString TestPluginBuilder::ReadSetting(const wxString& sSetting, const wxString& sDefault)
 {
-    return Settings::Get().Read(wxString::Format(wxT("Test %s"), GetName().c_str()), sSetting, sDefault);
+    return Settings::Get().Read(GetName(), sSetting, sDefault);
 }
 
 int TestPluginBuilder::ReadSetting(const wxString& sSetting, int nDefault)
 {
-    return Settings::Get().Read(wxString::Format(wxT("Test %s"), GetName().c_str()), sSetting, nDefault);
+    return Settings::Get().Read(GetName(), sSetting, nDefault);
 }
 
 double TestPluginBuilder::ReadSetting(const wxString& sSetting, double dDefault)
 {
-    return Settings::Get().Read(wxString::Format(wxT("Test %s"), GetName().c_str()), sSetting, dDefault);
+    return Settings::Get().Read(GetName(), sSetting, dDefault);
 }
 
 
 
 void TestPluginBuilder::RegisterForSettingsUpdates(const wxString& sSetting, wxEvtHandler* pHandler)
 {
-    Settings::Get().AddHandler(pHandler, wxString::Format(wxT("Test %s"), GetName().c_str()), sSetting);
+    Settings::Get().AddHandler(pHandler, GetName(), sSetting);
 }
 
 void TestPluginBuilder::SendWebsocketMessage(const Json::Value& jsMessage)
@@ -116,6 +116,12 @@ void TestPluginBuilder::RegisterRemoteApi(const wxString& sKey)
 {
     RemoteApi::Get().RegisterRemoteApi(GetName(), sKey);
 }
+
+void TestPluginBuilder::RegisterRemoteApiCSV(const wxString& sKey, const std::set<wxString>& setEnum)
+{
+    RemoteApi::Get().RegisterRemoteApiCSV(GetName(), sKey, setEnum);
+}
+
 
 
 bool TestPluginBuilder::IsLogActive()

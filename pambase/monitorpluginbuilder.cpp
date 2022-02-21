@@ -200,3 +200,8 @@ void MonitorPluginBuilder::RegisterRemoteApi(const wxString& sKey)
 {
     RemoteApi::Get().RegisterRemoteApi(GetName(), sKey);
 }
+
+void MonitorPluginBuilder::RegisterRemoteApiCSV(const wxString& sKey, const std::set<wxString>& setEnum)
+{
+    RemoteApi::Get().RegisterRemoteApiCSV(GetName(), sKey, setEnum);
+}

@@ -9,6 +9,11 @@
 #include "wmlist.h"
 //*)
 
+namespace Json
+{
+    class Value;
+}
+
 class timedbuffer;
 struct session;
 class loud;
@@ -62,7 +67,6 @@ class pnlPeakLog: public wxPanel
 	private:
 
 		//(*Handlers(pnlPeakLog)
-		void OnlstGraphsSelected(wxCommandEvent& event);
 		void OnbtnClearClick(wxCommandEvent& event);
 		void OnbtnTypeClick(wxCommandEvent& event);
 		//*)
@@ -71,6 +75,8 @@ class pnlPeakLog: public wxPanel
 
         void ClearGraphs();
         void AddLines(LevelGraph* pGraph);
+        void AddPeak(const wxString& sDuration, LevelGraph* pGraph, const wxString& sLine, double dPeak, Json::Value& jsData);
+
         static const wxString GRAPH_LINES[8];
 		static const wxColour COLOUR_LINES[8];
 

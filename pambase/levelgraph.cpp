@@ -137,7 +137,7 @@ void LevelGraph::AddGraph(const wxString& sName, const wxColour& clr, bool bAuto
     m_mGraphs.insert(make_pair(sName, graph(clr, bAuto)));
 }
 
-void LevelGraph::AddPeak(const wxString& sGraph, double dPeak)
+std::pair<bool, double> LevelGraph::AddPeak(const wxString& sGraph, double dPeak)
 {
     map<wxString, graph>::iterator itGraph = m_mGraphs.find(sGraph);
     if(itGraph != m_mGraphs.end())
@@ -148,12 +148,13 @@ void LevelGraph::AddPeak(const wxString& sGraph, double dPeak)
 
         if(itGraph->second.nDataSize == m_nDataSize)
         {
-            ProcessDataSet(itGraph->second);
+            return {true, ProcessDataSet(itGraph->second)};
         }
     }
+    return {false,0.0};
 }
 
-void LevelGraph::ProcessDataSet(graph& aGraph)
+double LevelGraph::ProcessDataSet(graph& aGraph)
 {
     //currently we just show the max
     double dPeak(GetDataSetMax(aGraph));
@@ -173,7 +174,7 @@ void LevelGraph::ProcessDataSet(graph& aGraph)
     }
 
     Refresh();
-
+    return dPeak;
 }
 
 

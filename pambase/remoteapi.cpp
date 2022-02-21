@@ -171,6 +171,9 @@ pml::restgoose::response RemoteApi::GetSettings(const query& theQuery, const std
                             jsKey["range"]["minimum"] = pairData.second.dRange.first;
                             jsKey["range"]["maximum"] = pairData.second.dRange.second;
                             break;
+                        case section::constraint::enumType::CSV:
+                            jsKey["csv"] = GetJson(pairData.second.setEnum);
+                            break;
                     }
 
                     resp.jsonData[pairSection.first.ToStdString()][pairData.first.ToStdString()] = jsKey;
@@ -327,6 +330,8 @@ pml::restgoose::response RemoteApi::CheckJsonSettingPatchConstraint(const Json::
             return CheckJsonSettingPatchConstraint(jsPatch["value"], aConstraint.funcStringEnum);
         case section::constraint::enumType::INT_CALLBACK:
             return CheckJsonSettingPatchConstraint(jsPatch["value"], aConstraint.funcIntEnum);
+        case section::constraint::enumType::CSV:
+            return CheckJsonSettingPatchConstraintCSV(jsPatch["value"], aConstraint.setEnum);
         default:
             return pml::restgoose::response(200);
     }
@@ -343,6 +348,25 @@ pml::restgoose::response RemoteApi::CheckJsonSettingPatchConstraint(const Json::
     {
         return pml::restgoose::response(400, jsValue.asString()+" is not a valid value");
     }
+}
+
+pml::restgoose::response RemoteApi::CheckJsonSettingPatchConstraintCSV(const Json::Value& jsValue, const std::set<wxString>& setEnum)
+{
+    wxArrayString asValues = wxStringTokenize(wxString(jsValue.asString()), ",");
+    if(asValues.GetCount() == 0)
+    {
+        return pml::restgoose::response(400, jsValue.asString()+" is not a valid value");
+    }
+
+    for(size_t i = 0; i < asValues.GetCount(); i++)
+    {
+        auto itValue = setEnum.find(asValues[i]);
+        if(itValue == setEnum.end())
+        {
+            return pml::restgoose::response(400, jsValue.asString()+" is not a valid value");
+        }
+    }
+    return pml::restgoose::response(200);
 }
 
 pml::restgoose::response RemoteApi::CheckJsonSettingPatchConstraint(const Json::Value& jsValue, const std::map<int, wxString>& mEnum)
@@ -554,6 +578,11 @@ void RemoteApi::SendPluginWebsocketMessage(const Json::Value& jsMessage)
     m_Server.SendWebsocketMessage({endpoint("/x-pam/monitor")}, jsMessage);
 }
 
+void RemoteApi::RegisterRemoteApiCSV(const wxString& sSection, const wxString& sKey, const std::set<wxString>& setEnum)
+{
+    auto itSection = m_mSettings.insert(std::make_pair(sSection, section())).first;
+    itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint(setEnum, true)));
+}
 
 void RemoteApi::RegisterRemoteApiEnum(const wxString& sSection, const wxString& sKey, const std::set<wxString>& setEnum)
 {

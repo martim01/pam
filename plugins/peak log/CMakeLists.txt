@@ -32,6 +32,8 @@ target_compile_options(peaklog PRIVATE ${flags})
 
 target_link_libraries(peaklog ${wxWidgets_LIBRARIES})
 target_link_libraries(peaklog optimized pambase debug pambased)
+target_link_libraries(peaklog optimized restgoose debug restgoosed)
+target_link_libraries(peaklog optimized pml_log debug pml_logd)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")

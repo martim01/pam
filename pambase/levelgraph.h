@@ -69,7 +69,7 @@ class PAMBASE_IMPEXPORT LevelGraph : public pmControl
         }
 
         void AddGraph(const wxString& sName, const wxColour& clr, bool bAutoRange=false);
-        void AddPeak(const wxString& sGraph, double dPeak);
+        std::pair<bool, double> AddPeak(const wxString& sGraph, double dPeak);
 
         void AddZone(double dMin, double dMax, const wxColour& clr);
         void ClearZones();
@@ -120,7 +120,7 @@ class PAMBASE_IMPEXPORT LevelGraph : public pmControl
         };
 
 
-        void ProcessDataSet(graph& aGraph);
+        double ProcessDataSet(graph& aGraph);
         double GetDataSetMax(graph& aGraph);
 
         void AutoRange(graph& aGraph);

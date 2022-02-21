@@ -60,7 +60,7 @@ class PAMBASE_IMPEXPORT TestPluginBuilder : public wxEvtHandler
         void RegisterRemoteApiCallback(const wxString& sKey, std::function<std::set<wxString>()> func);
         void RegisterRemoteApiCallback(const wxString& sKey, std::function<std::map<int, wxString>()> func);
         void RegisterRemoteApi(const wxString& sKey);
-
+        void RegisterRemoteApiCSV(const wxString& sKey, const std::set<wxString>& setEnum);
         wxEvtHandler* m_pHandler;
 
     private:
