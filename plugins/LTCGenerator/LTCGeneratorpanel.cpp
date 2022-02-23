@@ -215,23 +215,7 @@ LTCGeneratorPanel::LTCGeneratorPanel(wxWindow* parent,LTCGeneratorBuilder* pBuil
 
     LoadSettings();
 
-	m_pBuilder->RegisterForSettingsUpdates(wxT("FPS"), this);
-	m_pBuilder->RegisterForSettingsUpdates(wxT("UserData"), this);
-	m_pBuilder->RegisterForSettingsUpdates(wxT("DateFormat"), this);
-	m_pBuilder->RegisterForSettingsUpdates(wxT("Amplitude"), this);
-	m_pBuilder->RegisterForSettingsUpdates(wxT("OffsetYear"), this);
-	m_pBuilder->RegisterForSettingsUpdates(wxT("OffsetMonth"), this);
-	m_pBuilder->RegisterForSettingsUpdates(wxT("OffsetDay"), this);
-	m_pBuilder->RegisterForSettingsUpdates(wxT("OffsetHour"), this);
-	m_pBuilder->RegisterForSettingsUpdates(wxT("OffsetMinute"), this);
-	m_pBuilder->RegisterForSettingsUpdates(wxT("OffsetSecond"), this);
-	m_pBuilder->RegisterForSettingsUpdates(wxT("AbsYear"), this);
-	m_pBuilder->RegisterForSettingsUpdates(wxT("AbsMonth"), this);
-	m_pBuilder->RegisterForSettingsUpdates(wxT("AbsDay"), this);
-	m_pBuilder->RegisterForSettingsUpdates(wxT("AbsHour"), this);
-	m_pBuilder->RegisterForSettingsUpdates(wxT("AbsMinute"), this);
-	m_pBuilder->RegisterForSettingsUpdates(wxT("AbsSecond"), this);
-	m_pBuilder->RegisterForSettingsUpdates(wxT("Time"), this);
+	m_pBuilder->RegisterForSettingsUpdates(this);
 
 	Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&::LTCGeneratorPanel::OnSettingEvent);
 }

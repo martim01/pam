@@ -96,6 +96,7 @@ pnlDistortionChannel::result pnlDistortionChannel::RunTest()
 
     if(m_lstBuffer.empty() == false)
     {
+        res.bOk = true;
         FFTAlgorithm fft;
         res.dDistortion = fft.GetTHDistortion(m_lstBuffer, m_nSampleRate, 1, 0, FFTAlgorithm::WINDOW_BLACKMAN, 1024, 0);
         res.dFrequency = fft.GetFundamentalBinFrequency();

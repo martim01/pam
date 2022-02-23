@@ -30,7 +30,7 @@ pnlColours::pnlColours(wxWindow* parent,SpectogramBuilder* pBuilder, wxWindowID 
 	m_plstColours->AddButton(wxT("PPM"), wxNullBitmap, reinterpret_cast<void*>(SpectogramMeter::MAP_PPM));
 	m_plstColours->AddButton(wxT("BlBCGYRWh"), wxNullBitmap, reinterpret_cast<void*>(SpectogramMeter::MAP_SEVEN));
 
-	m_plstColours->ConnectToSetting(m_pBuilder->GetName(), "HeatMap", reinterpret_cast<void*>(SpectogramMeter::MAP_FIVE));
+	m_plstColours->ConnectToSetting(m_pBuilder->GetSection(), "HeatMap", reinterpret_cast<void*>(SpectogramMeter::MAP_FIVE));
 
 }
 pnlColours::~pnlColours()

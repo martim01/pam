@@ -15,13 +15,7 @@ ScopeBuilder::ScopeBuilder() : MonitorPluginBuilder(),
 m_pScope(0)
 {
 
-    RegisterForSettingsUpdates(wxT("Trigger"), this);
-    RegisterForSettingsUpdates(wxT("Autotrigger"), this);
-    RegisterForSettingsUpdates(wxT("Mode"), this);
-    RegisterForSettingsUpdates(wxT("Routing1"), this);
-    RegisterForSettingsUpdates(wxT("Routing2"), this);
-    RegisterForSettingsUpdates(wxT("Vertical"), this);
-    RegisterForSettingsUpdates(wxT("Timeframe"), this);
+    RegisterForSettingsUpdates(this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&ScopeBuilder::OnSettingChanged);
 

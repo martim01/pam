@@ -130,7 +130,7 @@ void pnlPeakLog::InputSession(const session& aSession)
         m_plstGraphs->AddButton(GRAPH_LINES[i]);
     }
 
-    m_plstGraphs->ConnectToSetting(m_pBuilder->GetName(), "Plot", size_t(0), "0,1");
+    m_plstGraphs->ConnectToSetting(m_pBuilder->GetSection(), "Plot", size_t(0), "0,1");
 }
 
 void pnlPeakLog::AddLines(LevelGraph* pGraph)

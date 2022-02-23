@@ -23,12 +23,12 @@ class PAMBASE_IMPEXPORT GeneratorPluginBuilder : public wxEvtHandler
         virtual wxString GetName() const=0;
         virtual void Init()=0;
         virtual void Stop()=0;
-        
+
         void SetSampleRate(double dSampleRate)  {   m_dSampleRate = dSampleRate; }
 
         virtual void SendWebsocketMessage(){}
-        
 
+        wxString GetSection() { return "Generator::"+GetName();}
 
     protected:
 
@@ -38,7 +38,7 @@ class PAMBASE_IMPEXPORT GeneratorPluginBuilder : public wxEvtHandler
 
         void SetHandler(wxEvtHandler* pHandler);
         void CreatePanels(wmSwitcherPanel* pswpGenerators);
-        
+
 
         void WriteSetting(const wxString& sSetting, const wxString& sValue);
         void WriteSetting(const wxString& sSetting, int nValue);
@@ -48,7 +48,7 @@ class PAMBASE_IMPEXPORT GeneratorPluginBuilder : public wxEvtHandler
         int ReadSetting(const wxString& sSetting, int nDefault);
         double ReadSetting(const wxString& sSetting, double dDefault);
 
-        void RegisterForSettingsUpdates(const wxString& sSetting, wxEvtHandler* pHandler);
+        void RegisterForSettingsUpdates(wxEvtHandler* pHandler, const wxString& sSetting="");
 
         virtual wxWindow* CreateGeneratorPanel(wxWindow* pParent)=0;
         virtual void LoadSettings()=0;

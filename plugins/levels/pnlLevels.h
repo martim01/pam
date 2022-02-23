@@ -50,7 +50,7 @@ class pnlLevels: public wxPanel
 	private:
 
 		void OnbtnResetClick(wxCommandEvent& event);
-		void OnlstMontorSelected(wxCommandEvent& event);
+		//void OnlstMontorSelected(wxCommandEvent& event);
         void OnbtndBClick(wxCommandEvent& event);
         void OnbtnRangedBClick(wxCommandEvent& event);
 

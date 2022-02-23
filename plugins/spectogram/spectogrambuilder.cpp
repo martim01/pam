@@ -16,12 +16,7 @@ using namespace std;
 SpectogramBuilder::SpectogramBuilder() : MonitorPluginBuilder(),
 m_pMeter(0)
 {
-    RegisterForSettingsUpdates(wxT("Routing"), this);
-    RegisterForSettingsUpdates(wxT("Window"), this);
-    RegisterForSettingsUpdates(wxT("Overlap"), this);
-    RegisterForSettingsUpdates(wxT("Bins"), this);
-    RegisterForSettingsUpdates(wxT("HeatMap"), this);
-    RegisterForSettingsUpdates(wxT("linear"), this);
+    RegisterForSettingsUpdates(this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&SpectogramBuilder::OnSettingChanged);
 

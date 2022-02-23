@@ -70,7 +70,7 @@ pnlEbuMeter::pnlEbuMeter(wxWindow* parent,R128Builder* pBuilder, wxWindowID id,c
 
     m_pbtnCalculate->SetBackgroundColour(CLR_SHORT);
 	m_pbtnCalculate->SetToggle(true, wxT("Pause"), wxT("Run"), 50.0);
-	m_pbtnCalculate->ConnectToSetting(m_pBuilder->GetName(), "Calculate", true);
+	m_pbtnCalculate->ConnectToSetting(m_pBuilder->GetSection(), "Calculate", true);
 
     m_pR128 = new R128Calculator();
     m_pTrue = new TruePeakCalculator();

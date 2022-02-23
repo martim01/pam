@@ -31,7 +31,7 @@ pnlWindow::pnlWindow(wxWindow* parent,SpectogramBuilder* pBuilder, wxWindowID id
     m_plstFFT_Window->AddButton(wxT("Blackman"));
     m_plstFFT_Window->AddButton(wxT("Kaiser"));
     m_plstFFT_Window->AddButton(wxT("KaiserBessel"));
-    m_plstFFT_Window->ConnectToSetting(m_pBuilder->GetName(), "Window", size_t(3));
+    m_plstFFT_Window->ConnectToSetting(m_pBuilder->GetSection(), "Window", size_t(3));
 
 }
 

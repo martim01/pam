@@ -34,7 +34,7 @@ pnlMode::pnlMode(wxWindow* parent, AngleMetersBuilder* pBuilder, wxWindowID id,c
     {
         m_plstMeters_Display->AddButton(itType->first);
     }
-    m_plstMeters_Display->ConnectToSetting(m_pBuilder->GetName(), "Mode", "BBC");
+    m_plstMeters_Display->ConnectToSetting(m_pBuilder->GetSection(), "Mode", "BBC");
 
 }
 

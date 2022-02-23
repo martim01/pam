@@ -16,10 +16,7 @@ RadarBuilder::RadarBuilder() : MonitorPluginBuilder(),
 m_pRadar(0)
 {
 
-    RegisterForSettingsUpdates("Routing", this);
-    RegisterForSettingsUpdates("Timeframe", this);
-    RegisterForSettingsUpdates("RefreshRate", this);
-    RegisterForSettingsUpdates("MeterMode", this);
+    RegisterForSettingsUpdates(this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&RadarBuilder::OnSettingChanged);
 

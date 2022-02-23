@@ -29,13 +29,13 @@ pnlDisplay::pnlDisplay(wxWindow* parent,FFTBuilder* pBuilder, wxWindowID id,cons
 	//*)
 	m_pbtnColour = new wmButton(this,wxNewId(), wxT("Colour"), wxPoint(0,150), wxSize(200, 40),wmButton::STYLE_SELECT);
 	m_pbtnColour->SetToggle(true, wxT("Off"), wxT("On"), 45);
-    m_pbtnColour->ConnectToSetting(m_pBuilder->GetName(),"Colour", false);
+    m_pbtnColour->ConnectToSetting(m_pBuilder->GetSection(),"Colour", false);
 
 
     m_plstFFT_Display->AddButton(wxT("Graph"));
     m_plstFFT_Display->AddButton(wxT("Lines"));
     m_plstFFT_Display->AddButton(wxT("EQ"));
-    m_plstFFT_Display->ConnectToSetting(m_pBuilder->GetName(), "Display", size_t(0));
+    m_plstFFT_Display->ConnectToSetting(m_pBuilder->GetSection(), "Display", size_t(0));
 
 
 }

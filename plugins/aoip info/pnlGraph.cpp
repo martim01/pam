@@ -54,8 +54,8 @@ pnlGraph::pnlGraph(wxWindow* parent,AoIPInfoBuilder* pBuilder, wxWindowID id,con
 	m_plstGraph->AddButton(wxT("Slip"));
 
 
-	m_plstGraph->ConnectToSetting(m_pBuilder->GetName(), "Graph", "kBit/s");
-	m_plstType->ConnectToSetting(m_pBuilder->GetName(), "Type", "Line Graph");
+	m_plstGraph->ConnectToSetting(m_pBuilder->GetSection(), "Graph", "kBit/s");
+	m_plstType->ConnectToSetting(m_pBuilder->GetSection(), "Type", "Line Graph");
 
 }
 

@@ -15,18 +15,7 @@ LTCGeneratorBuilder::LTCGeneratorBuilder() : GeneratorPluginBuilder(),
 m_pEncoder(0)
 {
 
-    RegisterForSettingsUpdates("FPS", this);
-	RegisterForSettingsUpdates("UserData", this);
-	RegisterForSettingsUpdates("DateFormat", this);
-	RegisterForSettingsUpdates("Amplitude", this);
-	RegisterForSettingsUpdates("OffsetYear", this);
-	RegisterForSettingsUpdates("OffsetMonth", this);
-	RegisterForSettingsUpdates("OffsetDay", this);
-	RegisterForSettingsUpdates("OffsetHour", this);
-	RegisterForSettingsUpdates("OffsetMinute", this);
-	RegisterForSettingsUpdates("OffsetSecond", this);
-	RegisterForSettingsUpdates("Time", this);
-
+    RegisterForSettingsUpdates(this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&LTCGeneratorBuilder::OnSettingChanged);
 
@@ -147,7 +136,7 @@ void LTCGeneratorBuilder::Init()
     m_nDateType = ReadSetting("DateFormat",0);
 
     m_dFPS = ReadSetting("FPS", 25.0);
-    
+
     double dAmplitude = ReadSetting("Amplitude", -18.0);
 
 

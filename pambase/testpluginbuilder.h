@@ -25,6 +25,8 @@ class PAMBASE_IMPEXPORT TestPluginBuilder : public wxEvtHandler
         virtual void SetAudioData(const timedbuffer* pBuffer)=0;
         virtual wxString GetName() const=0;
 
+        wxString GetSection() { return "Test::"+GetName();}
+
     protected:
 
         friend class TestPluginFactory;
@@ -42,7 +44,7 @@ class PAMBASE_IMPEXPORT TestPluginBuilder : public wxEvtHandler
         int ReadSetting(const wxString& sSetting, int nDefault);
         double ReadSetting(const wxString& sSetting, double dDefault);
 
-        void RegisterForSettingsUpdates(const wxString& sSetting, wxEvtHandler* pHandler);
+        void RegisterForSettingsUpdates(wxEvtHandler* pHandler, const wxString& sSetting="");
 
         virtual wxWindow* CreateTestPanel(wxWindow* pParent)=0;
         virtual void LoadSettings()=0;

@@ -57,13 +57,13 @@ pnlLevels::pnlLevels(wxWindow* parent,LevelsBuilder* pBuilder, wxWindowID id,con
 	m_plstMontor->AddButton(wxT("Monitor\nLevel"));
 	m_plstMontor->AddButton(wxT("Monitor\nRange"));
 	m_plstMontor->AddButton(wxT("Monitor\nMin,Max"));
-	m_plstMontor->ConnectToSetting(m_pBuilder->GetName(), "Monitor", size_t(0));
+	m_plstMontor->ConnectToSetting(m_pBuilder->GetSection(), "Monitor", size_t(0));
 
 
 	Connect(m_pAmplitude->GetId(), wxEVT_SLIDER_MOVE, (wxObjectEventFunction)&pnlLevels::OnSliderMove);
 	Connect(m_pRange->GetId(), wxEVT_SLIDER_MOVE, (wxObjectEventFunction)&pnlLevels::OnRangeSliderMove);
     Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlLevels::OnbtnResetClick);
-	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlLevels::OnlstMontorSelected);
+	//Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlLevels::OnlstMontorSelected);
 
 	Connect(m_pbtndB->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlLevels::OnbtndBClick);
 	Connect(m_pbtnRangedB->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlLevels::OnbtnRangedBClick);
@@ -74,10 +74,7 @@ pnlLevels::pnlLevels(wxWindow* parent,LevelsBuilder* pBuilder, wxWindowID id,con
     m_pRange->SetSliderColour(wxColour(128,128,128));
     m_pRange->SetButtonColour(wxColour(100,255,100));
 
-    m_pBuilder->RegisterForSettingsUpdates("Monitor", this);
-    m_pBuilder->RegisterForSettingsUpdates("Range", this);
-    m_pBuilder->RegisterForSettingsUpdates("LevelMax", this);
-    m_pBuilder->RegisterForSettingsUpdates("LevelMin", this);
+    m_pBuilder->RegisterForSettingsUpdates(this);
     Bind(wxEVT_SETTING_CHANGED, &pnlLevels::OnSettingChanged, this);
 
 }

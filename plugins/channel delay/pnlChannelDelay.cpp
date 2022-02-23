@@ -106,9 +106,9 @@ pnlChannelDelay::pnlChannelDelay(wxWindow* parent,ChannelDelayBuilder* pBuilder,
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlChannelDelay::OnlstChannel2Selected);
 	//*)
 
-	m_pedtMaxDelay->ConnectToSetting(m_pBuilder->GetName(), "MaxDelay", "100", false);
-	m_plstChannel1->ConnectToSetting(m_pBuilder->GetName(), "Channel_1", size_t(0));
-	m_plstChannel2->ConnectToSetting(m_pBuilder->GetName(), "Channel_2", size_t(1));
+	m_pedtMaxDelay->ConnectToSetting(m_pBuilder->GetSection(), "MaxDelay", "100", false);
+	m_plstChannel1->ConnectToSetting(m_pBuilder->GetSection(), "Channel_1", size_t(0));
+	m_plstChannel2->ConnectToSetting(m_pBuilder->GetSection(), "Channel_2", size_t(1));
 
 
 	m_pCalc = 0;
@@ -116,9 +116,7 @@ pnlChannelDelay::pnlChannelDelay(wxWindow* parent,ChannelDelayBuilder* pBuilder,
 	m_nChannel[1] = 1;
 	m_nTotalSamples = 65536;
 
-	m_pBuilder->RegisterForSettingsUpdates("MaxDelay", this);
-	m_pBuilder->RegisterForSettingsUpdates("Channel_1", this);
-	m_pBuilder->RegisterForSettingsUpdates("Channel_2", this);
+	m_pBuilder->RegisterForSettingsUpdates(this);
 	Bind(wxEVT_SETTING_CHANGED, &pnlChannelDelay::OnSettingChanged, this);
 
     Connect(wxID_ANY, wxEVT_OFFSET_DONE, (wxObjectEventFunction)&pnlChannelDelay::OnOffsetDone);

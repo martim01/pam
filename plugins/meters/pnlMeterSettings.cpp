@@ -50,9 +50,9 @@ pnlMeterSettings::pnlMeterSettings(wxWindow* parent,MetersBuilder* pBuilder, wxW
 	m_pbtnM3M6->SetToggle(true, wxT("M3"), wxT("M6"), 50.0);
 	m_pbtnShading->SetToggle(true, wxT("Solid"), wxT("Graded"), 50.0);
 
-	m_plstSpeed->ConnectToSetting(m_pBuilder->GetName(), "Speed", size_t(1));
-	m_pbtnM3M6->ConnectToSetting(m_pBuilder->GetName(), "M3M6", true);
-	m_pbtnShading->ConnectToSetting(m_pBuilder->GetName(), "Shading", false);
+	m_plstSpeed->ConnectToSetting(m_pBuilder->GetSection(), "Speed", size_t(1));
+	m_pbtnM3M6->ConnectToSetting(m_pBuilder->GetSection(), "M3M6", true);
+	m_pbtnShading->ConnectToSetting(m_pBuilder->GetSection(), "Shading", false);
 
 
 }

@@ -15,15 +15,7 @@ LissajouBuilder::LissajouBuilder() : MonitorPluginBuilder(),
 m_pLissajou(0),
 m_ppnlRouting(0)
 {
-
-    RegisterForSettingsUpdates(wxT("Scale"), this);
-    RegisterForSettingsUpdates(wxT("Rotate"), this);
-    RegisterForSettingsUpdates(wxT("Levels"), this);
-    RegisterForSettingsUpdates(wxT("Axis_X"), this);
-    RegisterForSettingsUpdates(wxT("Axis_Y"), this);
-    RegisterForSettingsUpdates(wxT("MeterMode"), this);
-    RegisterForSettingsUpdates(wxT("Monitor"), this);
-    RegisterForSettingsUpdates(wxT("Display"), this);
+    RegisterForSettingsUpdates(this);
 
     RegisterRemoteApiEnum("Scale", {{0, "dB"},{1,"Linear"}, {2, "Auto Scale"}});
     RegisterRemoteApiEnum("Rotate", {{0,"LvR"},{1,"MvS"}});

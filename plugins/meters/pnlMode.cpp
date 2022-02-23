@@ -35,7 +35,7 @@ pnlMode::pnlMode(wxWindow* parent, MetersBuilder* pBuilder, wxWindowID id,const 
     {
         m_plstMeters_Display->AddButton(itType->first);
     }
-    m_plstMeters_Display->ConnectToSetting(m_pBuilder->GetName(), "Mode", "BBC");
+    m_plstMeters_Display->ConnectToSetting(m_pBuilder->GetSection(), "Mode", "BBC");
 }
 
 pnlMode::~pnlMode()

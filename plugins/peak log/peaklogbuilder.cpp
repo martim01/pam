@@ -5,7 +5,7 @@
 PeakLogBuilder::PeakLogBuilder() : TestPluginBuilder(),
 m_ppnlPeakLog(0)
 {
-    RegisterForSettingsUpdates("Plot", this);
+    RegisterForSettingsUpdates(this, "Plot");
 
     RegisterRemoteApiCSV("Plot", {"0","1","2","3","4","5","6","7"});
 

@@ -44,7 +44,7 @@ class PAMBASE_IMPEXPORT MonitorPluginBuilder : public wxEvtHandler
 
         wxWindow* GetMainWindow() const { return m_pWindow;}
 
-
+        wxString GetSection() { return "Monitor::"+GetName();}
 
 
     protected:
@@ -63,7 +63,7 @@ class PAMBASE_IMPEXPORT MonitorPluginBuilder : public wxEvtHandler
         int ReadSetting(const wxString& sSetting, int nDefault);
         double ReadSetting(const wxString& sSetting, double dDefault);
 
-        void RegisterForSettingsUpdates(const wxString& sSetting, wxEvtHandler* pHandler);
+        void RegisterForSettingsUpdates(wxEvtHandler* pHandler, const wxString& sSetting="");
 
         virtual wxWindow* CreateMonitorPanel(wxWindow* pParent)=0;
         virtual std::list<pairOptionPanel_t> CreateOptionPanels(wxWindow* pParent)=0;

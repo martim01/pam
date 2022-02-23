@@ -17,12 +17,7 @@ MetersBuilder::MetersBuilder() : MonitorPluginBuilder(),
 m_pMeters(0)
 {
 
-    RegisterForSettingsUpdates("Mode", this);
-    RegisterForSettingsUpdates("Freeze", this);
-    RegisterForSettingsUpdates("Peaks", this);
-    RegisterForSettingsUpdates("Speed", this);
-    RegisterForSettingsUpdates("M3M6", this);
-    RegisterForSettingsUpdates("Shading", this);
+    RegisterForSettingsUpdates(this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&MetersBuilder::OnSettingChanged);
 

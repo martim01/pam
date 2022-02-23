@@ -51,10 +51,10 @@ pnlRouting::pnlRouting(wxWindow* parent,LissajouBuilder* pBuilder, wxWindowID id
 	m_plstMonitor->AddButton(wxT("Force"));
 	m_plstMonitor->AddButton(wxT("Indy"));
 
-	m_plstMonitor->ConnectToSetting(m_pBuilder->GetName(), "Monitor", size_t(0));
+	m_plstMonitor->ConnectToSetting(m_pBuilder->GetSection(), "Monitor", size_t(0));
 
-	m_plstX->ConnectToSetting(m_pBuilder->GetName(), "Axis_X", size_t(0));
-	m_plstY->ConnectToSetting(m_pBuilder->GetName(), "Axis_Y", size_t(1));
+	m_plstX->ConnectToSetting(m_pBuilder->GetSection(), "Axis_X", size_t(0));
+	m_plstY->ConnectToSetting(m_pBuilder->GetSection(), "Axis_Y", size_t(1));
 }
 
 pnlRouting::~pnlRouting()

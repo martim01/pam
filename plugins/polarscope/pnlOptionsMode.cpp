@@ -30,7 +30,7 @@ pnlOptionsMode::pnlOptionsMode(wxWindow* parent,PolarScopeBuilder* pBuilder, wxW
 	m_plstMode->AddButton(wxT("Hull"));
 	m_plstMode->AddButton(wxT("Levels"));
 
-	m_plstMode->ConnectToSetting(m_pBuilder->GetName(), "Mode", size_t(0));
+	m_plstMode->ConnectToSetting(m_pBuilder->GetSection(), "Mode", size_t(0));
 
 }
 

@@ -32,7 +32,8 @@ class pnlDistortionChannel: public wxPanel
 
 		struct result
 		{
-		    result() : dDistortion(-1), dFrequency(-1), dAmplitude(0), nPeaks(0), dMaxDistortion(-1){}
+		    result() : bOk(false), dDistortion(-1), dFrequency(-1), dAmplitude(0), nPeaks(0), dMaxDistortion(-1){}
+		    bool bOk;
             double dDistortion;
             double dFrequency;
             double dAmplitude;

@@ -58,7 +58,7 @@ void pnlRouting::SetNumberOfChannels(unsigned int nChannels)
         }
     }
 
-    m_plstFFT_Routing->ConnectToSetting(m_pBuilder->GetName(), "Routing", reinterpret_cast<void*>(0));
+    m_plstFFT_Routing->ConnectToSetting(m_pBuilder->GetSection(), "Routing", reinterpret_cast<void*>(0));
 
     m_plstFFT_Routing->Thaw();
 }

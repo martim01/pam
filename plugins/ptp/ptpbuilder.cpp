@@ -12,7 +12,7 @@ using namespace std;
 ptpBuilder::ptpBuilder() : MonitorPluginBuilder()
 {
 
-    RegisterForSettingsUpdates("Window", this);
+    RegisterForSettingsUpdates(this, "Window");
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&ptpBuilder::OnSettingChanged);
 

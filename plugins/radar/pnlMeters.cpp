@@ -34,7 +34,7 @@ pnlMeters::pnlMeters(wxWindow* parent, RadarBuilder* pBuilder, wxWindowID id,con
         m_plstMode->AddButton(itType->first);
     }
 
-    m_plstMode->ConnectToSetting(m_pBuilder->GetName(), "MeterMode", "BBC");
+    m_plstMode->ConnectToSetting(m_pBuilder->GetSection(), "MeterMode", "BBC");
 
 }
 

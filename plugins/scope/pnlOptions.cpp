@@ -47,11 +47,11 @@ pnlOptions::pnlOptions(wxWindow* parent,ScopeBuilder* pBuilder, wxWindowID id,co
 	m_plstScope_Mode->AddButton(wxT("Normal"));
     m_plstScope_Mode->AddButton(wxT("Slide"));
     m_plstScope_Mode->AddButton(wxT("Cursor"));
-    m_plstScope_Mode->ConnectToSetting(m_pBuilder->GetName(), "Mode", size_t(0));
+    m_plstScope_Mode->ConnectToSetting(m_pBuilder->GetSection(), "Mode", size_t(0));
 
-    m_pbtnScope_Autotrigger->ConnectToSetting(m_pBuilder->GetName(), "Autotrigger", false);
+    m_pbtnScope_Autotrigger->ConnectToSetting(m_pBuilder->GetSection(), "Autotrigger", false);
 
-    m_pBuilder->RegisterForSettingsUpdates(wxT("Mode"), this);
+    m_pBuilder->RegisterForSettingsUpdates(this, "Mode");
 
 }
 

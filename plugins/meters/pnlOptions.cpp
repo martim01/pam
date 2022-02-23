@@ -39,8 +39,8 @@ pnlOptions::pnlOptions(wxWindow* parent,MetersBuilder* pBuilder, wxWindowID id,c
 	m_plstMeter_Peaks->AddButton(wxT("Show Peaks"));
 	m_plstMeter_Peaks->AddButton(wxT("Hold Peaks"));
 
-    m_plstMeter_Peaks->ConnectToSetting(m_pBuilder->GetName(), "Peaks", size_t(1));
-    m_pbnFreeze->ConnectToSetting(m_pBuilder->GetName(), "Freeze", false);
+    m_plstMeter_Peaks->ConnectToSetting(m_pBuilder->GetSection(), "Peaks", size_t(1));
+    m_pbnFreeze->ConnectToSetting(m_pBuilder->GetSection(), "Freeze", false);
 
 
 

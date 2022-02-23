@@ -13,7 +13,7 @@ PolarScopeBuilder::PolarScopeBuilder() : MonitorPluginBuilder(),
 m_pPolarScope(0)
 {
 
-    RegisterForSettingsUpdates(wxT("Mode"), this);
+    RegisterForSettingsUpdates(this, "Mode");
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&PolarScopeBuilder::OnSettingChanged);
 

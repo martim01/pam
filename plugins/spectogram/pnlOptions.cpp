@@ -23,7 +23,7 @@ pnlOptions::pnlOptions(wxWindow* parent,SpectogramBuilder* pBuilder, wxWindowID 
 	m_pbtnLinear = new wmButton(this, wxNewId(), _("Display"), wxPoint(2,50), wxSize(190,30), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
     m_pbtnLinear->SetToggle(true, "Log", "Linear");
 
-    m_pbtnLinear->ConnectToSetting(m_pBuilder->GetName(),"linear", false);
+    m_pbtnLinear->ConnectToSetting(m_pBuilder->GetSection(),"linear", false);
 
 }
 

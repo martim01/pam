@@ -14,15 +14,7 @@ AngleMetersBuilder::AngleMetersBuilder() : MonitorPluginBuilder(),
 m_pAngleMeters(0)
 {
 
-    RegisterForSettingsUpdates(wxT("Mode"), this);
-    RegisterForSettingsUpdates(wxT("Freeze"), this);
-    RegisterForSettingsUpdates(wxT("Peaks"), this);
-    RegisterForSettingsUpdates(wxT("Speed"), this);
-    RegisterForSettingsUpdates(wxT("M3M6"), this);
-    RegisterForSettingsUpdates(wxT("Stereo"), this);
-    RegisterForSettingsUpdates(wxT("DisplayText_Current"), this);
-    RegisterForSettingsUpdates(wxT("DisplayText_Peak"), this);
-    RegisterForSettingsUpdates(wxT("Surround"), this);
+    RegisterForSettingsUpdates(this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&AngleMetersBuilder::OnSettingChanged);
 

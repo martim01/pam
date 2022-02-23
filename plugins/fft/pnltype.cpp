@@ -27,7 +27,7 @@ pnlType::pnlType(wxWindow* parent,FFTBuilder* pBuilder, wxWindowID id,const wxPo
     m_plstFFT_Type->AddButton(wxT("FFT"));
     m_plstFFT_Type->AddButton(wxT("1/3 Octave"));
     m_plstFFT_Type->AddButton(wxT("Peaks"));
-    m_plstFFT_Type->ConnectToSetting(m_pBuilder->GetName(), "Type",size_t(0));
+    m_plstFFT_Type->ConnectToSetting(m_pBuilder->GetSection(), "Type",size_t(0));
 
 
 }

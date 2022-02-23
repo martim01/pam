@@ -58,7 +58,7 @@ void pnlRoutiing::SetNumberOfChannels(unsigned int nChannels)
             m_plstFFT_Routing->AddButton(wxString::Format(wxT("Channel %d"), i+1), wxNullBitmap, (void*)i);
         }
     }
-    m_plstFFT_Routing->ConnectToSetting(m_pBuilder->GetName(),"Routing", size_t(0));
+    m_plstFFT_Routing->ConnectToSetting(m_pBuilder->GetSection(),"Routing", size_t(0));
     m_plstFFT_Routing->Thaw();
 }
 

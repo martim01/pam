@@ -31,39 +31,39 @@ void TestPluginBuilder::CreatePanels(wmSwitcherPanel* pswpTests)
 
 void TestPluginBuilder::WriteSetting(const wxString& sSetting, const wxString& sValue)
 {
-    Settings::Get().Write(GetName(), sSetting, sValue);
+    Settings::Get().Write(GetSection(), sSetting, sValue);
 }
 
 void TestPluginBuilder::WriteSetting(const wxString& sSetting, int nValue)
 {
-    Settings::Get().Write(GetName(), sSetting, nValue);
+    Settings::Get().Write(GetSection(), sSetting, nValue);
 }
 
 void TestPluginBuilder::WriteSetting(const wxString& sSetting, double dValue)
 {
-    Settings::Get().Write(GetName(), sSetting, dValue);
+    Settings::Get().Write(GetSection(), sSetting, dValue);
 }
 
 wxString TestPluginBuilder::ReadSetting(const wxString& sSetting, const wxString& sDefault)
 {
-    return Settings::Get().Read(GetName(), sSetting, sDefault);
+    return Settings::Get().Read(GetSection(), sSetting, sDefault);
 }
 
 int TestPluginBuilder::ReadSetting(const wxString& sSetting, int nDefault)
 {
-    return Settings::Get().Read(GetName(), sSetting, nDefault);
+    return Settings::Get().Read(GetSection(), sSetting, nDefault);
 }
 
 double TestPluginBuilder::ReadSetting(const wxString& sSetting, double dDefault)
 {
-    return Settings::Get().Read(GetName(), sSetting, dDefault);
+    return Settings::Get().Read(GetSection(), sSetting, dDefault);
 }
 
 
 
-void TestPluginBuilder::RegisterForSettingsUpdates(const wxString& sSetting, wxEvtHandler* pHandler)
+void TestPluginBuilder::RegisterForSettingsUpdates(wxEvtHandler* pHandler,const wxString& sSetting)
 {
-    Settings::Get().AddHandler(pHandler, GetName(), sSetting);
+    Settings::Get().AddHandler(pHandler, GetSection(), sSetting);
 }
 
 void TestPluginBuilder::SendWebsocketMessage(const Json::Value& jsMessage)
@@ -85,41 +85,41 @@ bool TestPluginBuilder::WebsocketsActive()
 
 void TestPluginBuilder::RegisterRemoteApiEnum(const wxString& sKey, const std::set<wxString>& setEnum)
 {
-    RemoteApi::Get().RegisterRemoteApiEnum(GetName(), sKey, setEnum);
+    RemoteApi::Get().RegisterRemoteApiEnum(GetSection(), sKey, setEnum);
 }
 
 void TestPluginBuilder::RegisterRemoteApiEnum(const wxString& sKey, const std::map<int, wxString>& mEnum)
 {
-    RemoteApi::Get().RegisterRemoteApiEnum(GetName(), sKey, mEnum);
+    RemoteApi::Get().RegisterRemoteApiEnum(GetSection(), sKey, mEnum);
 }
 
 void TestPluginBuilder::RegisterRemoteApiRangeDouble(const wxString& sKey, const std::pair<double, double>& dRange)
 {
-    RemoteApi::Get().RegisterRemoteApiRangeDouble(GetName(), sKey, dRange);
+    RemoteApi::Get().RegisterRemoteApiRangeDouble(GetSection(), sKey, dRange);
 }
 
 void TestPluginBuilder::RegisterRemoteApiRangeInt(const wxString& sKey, const std::pair<int, int>& nRange)
 {
-    RemoteApi::Get().RegisterRemoteApiRangeInt(GetName(), sKey, nRange);
+    RemoteApi::Get().RegisterRemoteApiRangeInt(GetSection(), sKey, nRange);
 }
 void TestPluginBuilder::RegisterRemoteApiCallback(const wxString& sKey, std::function<std::set<wxString>()> func)
 {
-    RemoteApi::Get().RegisterRemoteApiCallback(GetName(), sKey, func);
+    RemoteApi::Get().RegisterRemoteApiCallback(GetSection(), sKey, func);
 }
 
 void TestPluginBuilder::RegisterRemoteApiCallback(const wxString& sKey, std::function<std::map<int, wxString>()> func)
 {
-    RemoteApi::Get().RegisterRemoteApiCallback(GetName(), sKey, func);
+    RemoteApi::Get().RegisterRemoteApiCallback(GetSection(), sKey, func);
 }
 
 void TestPluginBuilder::RegisterRemoteApi(const wxString& sKey)
 {
-    RemoteApi::Get().RegisterRemoteApi(GetName(), sKey);
+    RemoteApi::Get().RegisterRemoteApi(GetSection(), sKey);
 }
 
 void TestPluginBuilder::RegisterRemoteApiCSV(const wxString& sKey, const std::set<wxString>& setEnum)
 {
-    RemoteApi::Get().RegisterRemoteApiCSV(GetName(), sKey, setEnum);
+    RemoteApi::Get().RegisterRemoteApiCSV(GetSection(), sKey, setEnum);
 }
 
 
@@ -137,7 +137,7 @@ void TestPluginBuilder::InitRemoteApi()
 pml::restgoose::response TestPluginBuilder::GetStatus(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
 {
     pml::restgoose::response resp;
-    auto pSection = Settings::Get().GetSection(GetName());
+    auto pSection = Settings::Get().GetSection(GetSection());
     if(pSection)
     {
         for(auto pairData : pSection->GetData())

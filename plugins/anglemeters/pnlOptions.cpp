@@ -47,7 +47,7 @@ pnlOptions::pnlOptions(wxWindow* parent,AngleMetersBuilder* pBuilder, wxWindowID
 	m_plstMeter_Peaks->AddButton(wxT("Hide Peaks"));
 	m_plstMeter_Peaks->AddButton(wxT("Show Peaks"));
 	m_plstMeter_Peaks->AddButton(wxT("Hold Peaks"));
-	m_plstMeter_Peaks->ConnectToSetting(m_pBuilder->GetName(), "Peaks", size_t(1));
+	m_plstMeter_Peaks->ConnectToSetting(m_pBuilder->GetSection(), "Peaks", size_t(1));
 
 
 	m_plstText->AddButton(wxT("Current"));
@@ -55,9 +55,9 @@ pnlOptions::pnlOptions(wxWindow* parent,AngleMetersBuilder* pBuilder, wxWindowID
 
 
     m_pbtnSurround->ToggleSelection(m_pBuilder->ReadSetting(wxT("Surround"), 1), true);
-    m_pbtnSurround->ConnectToSetting(m_pBuilder->GetName(), "Surround", true);
+    m_pbtnSurround->ConnectToSetting(m_pBuilder->GetSection(), "Surround", true);
 
-    m_pbnFreeze->ConnectToSetting(m_pBuilder->GetName(), "Freeze", true);
+    m_pbnFreeze->ConnectToSetting(m_pBuilder->GetSection(), "Freeze", true);
 
 
 

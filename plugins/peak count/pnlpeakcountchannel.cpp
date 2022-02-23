@@ -18,7 +18,7 @@ BEGIN_EVENT_TABLE(pnlPeakCountChannel,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlPeakCountChannel::pnlPeakCountChannel(wxWindow* parent,unsigned int nChannel, wxWindowID id,const wxPoint& pos,const wxSize& size)
+pnlPeakCountChannel::pnlPeakCountChannel(wxWindow* parent, unsigned int nChannel, wxWindowID id,const wxPoint& pos,const wxSize& size)
 {
 	//(*Initialize(pnlPeakCountChannel)
 	Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("wxID_ANY"));
@@ -69,6 +69,7 @@ void pnlPeakCountChannel::AddPeaks(unsigned int nSamples, unsigned int nPeaks, u
     m_nTotal += nTotal;
 
     UpdateLabels();
+
 }
 
 void pnlPeakCountChannel::UpdateLabels()

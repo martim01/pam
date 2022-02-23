@@ -14,8 +14,8 @@ m_pInfo(0)
 {
     m_bWantsAudioAlways = true;
     m_bWantsQoSAlways = true;
-    RegisterForSettingsUpdates(wxT("Graph"), this);
-    RegisterForSettingsUpdates(wxT("Type"), this);
+    RegisterForSettingsUpdates(this);
+
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&AoIPInfoBuilder::OnSettingChanged);
 

@@ -33,39 +33,39 @@ void GeneratorPluginBuilder::CreatePanels(wmSwitcherPanel* pswpGenerators)
 
 void GeneratorPluginBuilder::WriteSetting(const wxString& sSetting, const wxString& sValue)
 {
-    Settings::Get().Write(wxString::Format(wxT("Generator %s"), GetName().c_str()), sSetting, sValue);
+    Settings::Get().Write(GetSection(), sSetting, sValue);
 }
 
 void GeneratorPluginBuilder::WriteSetting(const wxString& sSetting, int nValue)
 {
-    Settings::Get().Write(wxString::Format(wxT("Generator %s"), GetName().c_str()), sSetting, nValue);
+    Settings::Get().Write(GetSection(), sSetting, nValue);
 }
 
 void GeneratorPluginBuilder::WriteSetting(const wxString& sSetting, double dValue)
 {
-    Settings::Get().Write(wxString::Format(wxT("Generator %s"), GetName().c_str()), sSetting, dValue);
+    Settings::Get().Write(GetSection(), sSetting, dValue);
 }
 
 wxString GeneratorPluginBuilder::ReadSetting(const wxString& sSetting, const wxString& sDefault)
 {
-    return Settings::Get().Read(wxString::Format(wxT("Generator %s"), GetName().c_str()), sSetting, sDefault);
+    return Settings::Get().Read(GetSection(), sSetting, sDefault);
 }
 
 int GeneratorPluginBuilder::ReadSetting(const wxString& sSetting, int nDefault)
 {
-    return Settings::Get().Read(wxString::Format(wxT("Generator %s"), GetName().c_str()), sSetting, nDefault);
+    return Settings::Get().Read(GetSection(), sSetting, nDefault);
 }
 
 double GeneratorPluginBuilder::ReadSetting(const wxString& sSetting, double dDefault)
 {
-    return Settings::Get().Read(wxString::Format(wxT("Generator %s"), GetName().c_str()), sSetting, dDefault);
+    return Settings::Get().Read(GetSection(), sSetting, dDefault);
 }
 
 
 
-void GeneratorPluginBuilder::RegisterForSettingsUpdates(const wxString& sSetting, wxEvtHandler* pHandler)
+void GeneratorPluginBuilder::RegisterForSettingsUpdates(wxEvtHandler* pHandler, const wxString& sSetting)
 {
-    Settings::Get().AddHandler(this, wxString::Format(wxT("Generator %s"), GetName().c_str()), sSetting);
+    Settings::Get().AddHandler(this, GetSection(), sSetting);
 }
 
 
@@ -83,7 +83,7 @@ void GeneratorPluginBuilder::InitRemoteApi()
 pml::restgoose::response GeneratorPluginBuilder::GetStatus(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
 {
     pml::restgoose::response resp;
-    auto pSection = Settings::Get().GetSection(wxString::Format(wxT("Generator %s"), GetName().c_str()));
+    auto pSection = Settings::Get().GetSection(GetSection());
     if(pSection)
     {
         for(auto pairData : pSection->GetData())

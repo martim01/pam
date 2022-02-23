@@ -28,7 +28,7 @@ pnlOverlap::pnlOverlap(wxWindow* parent,SpectogramBuilder* pBuilder, wxWindowID 
     m_plstFFT_Overlap->AddButton(wxT("25%"), wxNullBitmap, reinterpret_cast<void*>(25));
     m_plstFFT_Overlap->AddButton(wxT("50%"), wxNullBitmap, reinterpret_cast<void*>(50));
     m_plstFFT_Overlap->AddButton(wxT("75%"), wxNullBitmap, reinterpret_cast<void*>(75));
-    m_plstFFT_Overlap->ConnectToSetting(m_pBuilder->GetName(),"Overlap", reinterpret_cast<void*>(50));
+    m_plstFFT_Overlap->ConnectToSetting(m_pBuilder->GetSection(),"Overlap", reinterpret_cast<void*>(50));
 
 
 }

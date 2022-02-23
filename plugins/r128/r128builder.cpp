@@ -15,14 +15,7 @@ m_pMeters(0)
 {
 
     //m_bWantsAudioAlways = true;
-    RegisterForSettingsUpdates(wxT("Calculate"), this);
-    RegisterForSettingsUpdates(wxT("Scale"), this);
-    RegisterForSettingsUpdates(wxT("Zero"), this);
-    RegisterForSettingsUpdates(wxT("Show_Short"), this);
-    RegisterForSettingsUpdates(wxT("Show_Momentary"), this);
-    RegisterForSettingsUpdates(wxT("Show_Live"), this);
-    RegisterForSettingsUpdates(wxT("Show_True"), this);
-    RegisterForSettingsUpdates(wxT("Show_Phase"), this);
+    RegisterForSettingsUpdates(this);
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&R128Builder::OnSettingChanged);
 
 

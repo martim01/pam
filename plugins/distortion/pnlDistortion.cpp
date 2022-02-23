@@ -81,7 +81,8 @@ pnlDistortion::pnlDistortion(wxWindow* parent, DistortionBuilder* pBuilder, wxWi
 	Connect(ID_TIMER1,wxEVT_TIMER,(wxObjectEventFunction)&pnlDistortion::OntimerTestTrigger);
 	//*)
 
-	m_pBuilder->RegisterForSettingsUpdates("reset", this);
+	m_pBuilder->RegisterForSettingsUpdates(this, "reset");
+
 	Bind(wxEVT_SETTING_CHANGED, &pnlDistortion::OnSettingEvent, this);
 }
 
@@ -142,13 +143,16 @@ void pnlDistortion::ResetTest()
 void pnlDistortion::OntimerTestTrigger(wxTimerEvent& event)
 {
     Json::Value jsMessage;
-
+    bool bRun = false;
     for(size_t i = 0; i < m_vChannels.size(); i++)
     {
         auto res = m_vChannels[i]->RunTest();
+        bRun |= res.bOk;
+
         if(m_pBuilder->WebsocketsActive())
         {
             Json::Value jsChannel;
+            jsChannel["running"] = res.bOk;
             jsChannel["distortion"]["current"] = res.dDistortion;
             jsChannel["fundamental"]["frequency"] = res.dFrequency;
             jsChannel["fundamental"]["amplitude"] = res.dAmplitude;
@@ -158,13 +162,13 @@ void pnlDistortion::OntimerTestTrigger(wxTimerEvent& event)
 
             jsMessage.append(jsChannel);
         }
-        if(m_pBuilder->IsLogActive() && res.nPeaks > 1)
+        if(m_pBuilder->IsLogActive() && res.nPeaks > 1 && res.bOk)
         {
             pmlLog(pml::LOG_INFO) << "Distortion\t" << "Channel: " << i << " Peaks=" << res.nPeaks << " Distortion=" << res.dDistortion;
         }
     }
 
-    if(m_pBuilder->WebsocketsActive())
+    if(m_pBuilder->WebsocketsActive() && bRun)
     {
         m_pBuilder->SendWebsocketMessage(jsMessage);
     }
