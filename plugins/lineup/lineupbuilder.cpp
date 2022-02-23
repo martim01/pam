@@ -9,15 +9,18 @@ using namespace std;
 lineupBuilder::lineupBuilder() : TestPluginBuilder()
 {
 
-    //RegisterForSettingsUpdates(wxT("Mode"), this);
+    RegisterForSettingsUpdates(this, "reset");
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&lineupBuilder::OnSettingChanged);
 
+    RegisterRemoteApiEnum("reset", {{0,""}, {1,"Reset"}});
 }
+
 
 void lineupBuilder::SetAudioData(const timedbuffer* pBuffer)
 {
 	m_pMeter->SetAudioData(pBuffer);
+
 }
 
 wxWindow* lineupBuilder::CreateTestPanel(wxWindow* pParent)
@@ -47,7 +50,13 @@ void lineupBuilder::OutputChannels(const std::vector<char>& vChannels)
 
 void lineupBuilder::OnSettingChanged(SettingEvent& event)
 {
-    //@todo a setting registered for has changed. Handle it
+    if(event.GetKey() == "reset")
+    {
+        if(event.GetValue(0l) == 1)
+        {
+            m_pMeter->Reset();
+        }
+    }
 }
 
 

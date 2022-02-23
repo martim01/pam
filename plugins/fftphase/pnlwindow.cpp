@@ -34,7 +34,7 @@ pnlWindow::pnlWindow(wxWindow* parent,fftphaseBuilder* pBuilder, wxWindowID id,c
     m_plstFFT_Window->AddButton(wxT("Blackman"));
     m_plstFFT_Window->AddButton(wxT("Kaiser"));
     m_plstFFT_Window->AddButton(wxT("KaiserBessel"));
-    m_plstFFT_Window->SelectButton(3,false);
+    m_plstFFT_Window->ConnectToSetting(m_pBuilder->GetSection(), "Window", size_t(3));
 
 }
 
@@ -47,5 +47,4 @@ pnlWindow::~pnlWindow()
 
 void pnlWindow::OnlstFFT_WindowSelected(wxCommandEvent& event)
 {
-    m_pBuilder->OnWindowChanged(event);
 }

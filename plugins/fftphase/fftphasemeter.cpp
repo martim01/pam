@@ -32,6 +32,10 @@ fftphaseMeter::fftphaseMeter(wxWindow *parent, fftphaseBuilder* pBuilder, wxWind
     SetOverlap(50.0);
     SetNumberOfBins(1024);
     m_HeatMap.createDefaultHeatMapGradient();
+
+    m_nChannel[0] = 0;
+    m_nChannel[1] = 1;
+
     Create(parent, id, pos, size);
 
 }
@@ -291,61 +295,61 @@ void fftphaseMeter::SetAudioData(const timedbuffer* pBuffer)
 
         while(m_lstBuffer[0].size() > (m_vfft_out[0].size()-1)*2*m_nChannels)
         {
-            DoFFT(0);
-            DoFFT(1);
+            DoFFT(m_nChannel[0], 0);
+            DoFFT(m_nChannel[1], 1);
         }
         Refresh();
     }
 }
 
-void fftphaseMeter::DoFFT(int nChannel)
+void fftphaseMeter::DoFFT(int nChannel, int nAxis)
 {
     FFTAlgorithm fft;
 
-    m_vfft_out[nChannel] = fft.DoFFT(m_lstBuffer[nChannel], m_nSampleRate, m_nChannels, nChannel, m_nWindowType, m_vfft_out[nChannel].size(), m_nOverlap);
+    m_vfft_out[nAxis] = fft.DoFFT(m_lstBuffer[nAxis], m_nSampleRate, m_nChannels, nChannel, m_nWindowType, m_vfft_out[nAxis].size(), m_nOverlap);
 
     m_dBinSize = static_cast<double>(m_nSampleRate)/static_cast<double>((m_vfft_out[0].size()-1)*2);
 
     float dMax(-80);
     double dMaxBin(0);
     vector<double> vAmp;
-    vAmp.resize(m_vAmplitude[nChannel].size());
+    vAmp.resize(m_vAmplitude[nAxis].size());
 
-    for(size_t i = 0; i < m_vfft_out[nChannel].size(); i++)
+    for(size_t i = 0; i < m_vfft_out[nAxis].size(); i++)
     {
-        float dAmplitude(sqrt( (m_vfft_out[nChannel][i].r*m_vfft_out[nChannel][i].r) + (m_vfft_out[nChannel][i].i*m_vfft_out[nChannel][i].i)));
+        float dAmplitude(sqrt( (m_vfft_out[nAxis][i].r*m_vfft_out[nAxis][i].r) + (m_vfft_out[nAxis][i].i*m_vfft_out[nAxis][i].i)));
 
         if(dAmplitude<0)
         {
             dAmplitude=-dAmplitude;
         }
-        dAmplitude /= static_cast<float>(m_vfft_out[nChannel].size());
+        dAmplitude /= static_cast<float>(m_vfft_out[nAxis].size());
         vAmp[i] = dAmplitude;
         double dLog = WindowMod(20*log10(dAmplitude));
         dLog = max(dLog, -80.0);
 
         if(!m_bFall)
         {
-            m_vAmplitude[nChannel][i] = min(0.0, (double)dLog);//max((double)m_vAmplitude[nChannel][i]-m_dFall, (double)dLog));
+            m_vAmplitude[nAxis][i] = min(0.0, (double)dLog);//max((double)m_vAmplitude[nChannel][i]-m_dFall, (double)dLog));
         }
         else
         {
-            m_vAmplitude[nChannel][i] = min(0.0, (max((double)m_vAmplitude[nChannel][i]-m_dFall, (double)dLog)));
+            m_vAmplitude[nAxis][i] = min(0.0, (max((double)m_vAmplitude[nAxis][i]-m_dFall, (double)dLog)));
         }
 
         if(dLog > -70.0)
         {
-            m_vPhase[nChannel][i] = atan2(m_vfft_out[nChannel][i].i,m_vfft_out[nChannel][i].r)+M_PI;
+            m_vPhase[nAxis][i] = atan2(m_vfft_out[nAxis][i].i,m_vfft_out[nAxis][i].r)+M_PI;
           //  wxLogDebug(wxT("%d:%d = %.2f"), nChannel,i, m_vPhase[nChannel][i]);
         }
         else
         {
-            m_vPhase[nChannel][i] = -M_PI*3;    //this will hide it
+            m_vPhase[nAxis][i] = -M_PI*3;    //this will hide it
         }
 
-        if(dMax < m_vAmplitude[nChannel][i])
+        if(dMax < m_vAmplitude[nAxis][i])
         {
-            dMax = m_vAmplitude[nChannel][i];
+            dMax = m_vAmplitude[nAxis][i];
             dMaxBin = i;
 
         }
@@ -362,12 +366,25 @@ void fftphaseMeter::InputSession(const session& aSession)
     {
         m_nSampleRate = aSession.GetCurrentSubsession()->nSampleRate;
         m_nChannels = aSession.GetCurrentSubsession()->nChannels;
+
+        m_nChannel[0] = std::min(m_nChannel[0], m_nChannels);
+        m_nChannel[1] = std::min(m_nChannel[1], m_nChannels);
     }
     else
     {
         m_nSampleRate = 48000;
         m_nChannels = 0;
     }
+}
+
+void fftphaseMeter::SetChannelX(unsigned long nChannel)
+{
+    m_nChannel[0] = std::min(nChannel, m_nChannels);
+}
+
+void fftphaseMeter::SetChannelY(unsigned long nChannel)
+{
+    m_nChannel[1] = std::min(nChannel, m_nChannels);
 }
 
 void fftphaseMeter::OutputChannels(const std::vector<char>& vChannels)

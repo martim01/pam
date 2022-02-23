@@ -244,6 +244,20 @@ void LTCPanel::SetAudioData(const timedbuffer* pBuffer)
             m_plblColour->SetLabel(wxT("Not Set"));
         }
     }
+
+    if(m_pBuilder->WebsocketsActive())
+    {
+        Json::Value jsValue;
+        jsValue["date"] = m_pDecoder->GetDate().ToStdString();
+        jsValue["time"] = m_pDecoder->GetTime().ToStdString();
+        jsValue["volume"] = m_pDecoder->GetAmplitude().ToStdString();
+        jsValue["fps"] = m_pDecoder->GetFPS().ToStdString();
+        jsValue["mode"] = m_pDecoder->GetMode().ToStdString();
+        jsValue["date_format"] = m_pDecoder->GetFormat().ToStdString();
+        jsValue["clock"] = (m_pDecoder->IsClockFlagSet() ? "External" : "Internal");
+        jsValue["colour"] = m_pDecoder->IsColourFlagSet();
+        m_pBuilder->SendWebsocketMessage(jsValue);
+    }
 }
 
 void LTCPanel::InputSession(const session& aSession)

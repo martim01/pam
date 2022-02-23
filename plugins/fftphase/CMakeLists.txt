@@ -40,6 +40,7 @@ target_compile_options(fftphase PRIVATE ${flags})
 target_link_libraries(fftphase ${wxWidgets_LIBRARIES})
 target_link_libraries(fftphase optimized pambase debug pambased)
 target_link_libraries(fftphase optimized pamfft debug pamfftd)
+target_link_libraries(fftphase optimized restgoose debug restgoosed)
 
 
 
