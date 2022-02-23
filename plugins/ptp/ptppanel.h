@@ -50,6 +50,8 @@ class ptpPanel: public pmPanel
 
 
 		void ChangeView(const wxString& sWindow);
+		void SetData(const wxString& sData);
+		void ResetStats();
 
 		//(*Declarations(ptpPanel)
 		Histogram* m_pHistogram;
@@ -325,6 +327,10 @@ class ptpPanel: public pmPanel
         wxString ConvertRate(unsigned char nRate);
 
         void UpdateGraphLabels();
+
+        void ClockWebsocketMessage(const wxString& sClock, const wxString& sType);
+        void ClockMessageWebsocketMessage(const wxString& sClock);
+        void TimeWebsocketMessage();
 
         ptpBuilder* m_pBuilder;
 
