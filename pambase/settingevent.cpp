@@ -14,19 +14,21 @@ SettingEvent::SettingEvent() : wxCommandEvent(wxEVT_SETTING_CHANGED, wxID_ANY)
 
 }
 
-SettingEvent::SettingEvent(const wxString& sSection, const wxString& sKey, const wxString& sValue) : wxCommandEvent(wxEVT_SETTING_CHANGED,wxID_ANY),
+SettingEvent::SettingEvent(const wxString& sSection, const wxString& sKey, const wxString& sValue, enumType eType) : wxCommandEvent(wxEVT_SETTING_CHANGED,wxID_ANY),
 m_sSection(sSection),
 m_sKey(sKey),
-m_sValue(sValue)
+m_sValue(sValue),
+m_eType(eType)
 {
 
 }
 
 
-SettingEvent::SettingEvent(const SettingEvent& event) : wxCommandEvent(event), 
+SettingEvent::SettingEvent(const SettingEvent& event) : wxCommandEvent(event),
 	m_sSection(event.GetSection()),
 	m_sKey(event.GetKey()),
-	m_sValue(event.GetValue())
+	m_sValue(event.GetValue()),
+	m_eType(event.GetType())
 {
 }
 

@@ -6,6 +6,8 @@
 #include <wx/timer.h>
 #include <wx/event.h>
 #include <set>
+#include "settingevent.h"
+
 class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
 {
     public:
@@ -55,6 +57,8 @@ class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
     protected:
         Settings();
         void CreatePaths();
+
+        bool WriteInternal(const wxString& sSection, const wxString& sKey, const wxString& sValue, SettingEvent::enumType eType);
 
         void OnTimerSave(wxTimerEvent& event);
 

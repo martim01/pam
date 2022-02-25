@@ -329,7 +329,7 @@ pnlSettingsGenerators::pnlSettingsGenerators(wxWindow* parent,wxWindowID id,cons
     }
     else
     {
-        m_plstAudioSources->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")), true);
+        m_pswpAog->ChangeSelection(Settings::Get().Read("Output", "Source", "Input"));
     }
     m_pSlider->Init(0,20*log10(22000), 20*log10(Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000)));
     m_plblFrequency->SetLabel(wxString::Format(wxT("%.0f Hz"), pow(10,(m_pSlider->GetPosition()/20.0))));

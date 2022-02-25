@@ -17,7 +17,7 @@ using namespace std;
 FFTBuilder::FFTBuilder() : MonitorPluginBuilder(),
 m_pMeter(0)
 {
-    Settings::Get().AddHandler(this,"FFT");
+    RegisterForSettingsUpdates(this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&FFTBuilder::OnSettingChanged);
 

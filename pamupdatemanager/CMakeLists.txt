@@ -8,6 +8,7 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 include_directories("../pambase/")
 include_directories("../pam2/")
 include_directories(${CMAKE_BINARY_DIR}/include)
+include_directories(${DIR_RESTGOOSE}/include)
 
 
 set(SOURCES "../pambase/advelement.cpp" "../pambase/inimanager.cpp" "../pambase/inisection.cpp" "../pambase/pmcontrol.cpp" "../pambase/pmpanel.cpp" "../pambase/dlgmask.cpp" "../pambase/settingevent.cpp" "../pambase/settings.cpp" 
@@ -25,7 +26,6 @@ target_compile_definitions(pamupdatemanager PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNIC
 find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
-target_link_libraries(pamupdatemanager ${wxWidgets_LIBRARIES})
-
+target_link_libraries(pamupdatemanager ${wxWidgets_LIBRARIES} restgoose)
 set_property(TARGET pamupdatemanager PROPERTY CXX_STANDARD 14)
 set_target_properties(pamupdatemanager PROPERTIES RUNTIME_OUTPUT_DIRECTORY "../../bin/")

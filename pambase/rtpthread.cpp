@@ -79,8 +79,7 @@ void* RtpThread::Entry()
     TaskScheduler* scheduler = PamTaskScheduler::createNew();
     m_penv = PamUsageEnvironment::createNew(*scheduler, m_pHandler);
 
-    wxString sProtocol(m_source.sDetails.BeforeFirst(wxT(':')));
-    if(sProtocol.CmpNoCase(wxT("rtsp")) == 0)
+    if(m_source.sType.CmpNoCase(wxT("rtsp")) == 0)
     {
         pmlLog() << "RTP Client\tconnect using RTSP";
         if(DoRTSP())
@@ -91,7 +90,7 @@ void* RtpThread::Entry()
             }
         }
     }
-    else if(sProtocol.CmpNoCase(wxT("sip")) == 0)
+    else if(m_source.sType.CmpNoCase(wxT("sip")) == 0)
     {
         pmlLog() << "RTP Client\tconnect using SIP";
         if(DoSIP())

@@ -11,6 +11,9 @@
 #include "aoipsourcemanager.h"
 #include "log.h"
 #include <wx/tokenzr.h>
+#include "soundfile.h"
+
+#include <map>
 
 using namespace std::placeholders;
 
@@ -54,6 +57,37 @@ pml::restgoose::response ConvertPostDataToJson(const std::vector<pml::restgoose:
     return resp;
 }
 
+void RemoteApi::OnSettingEvent(SettingEvent& event)
+{
+    if(WebsocketsActive())
+    {
+        auto itSection = m_mSettings.find(event.GetSection());
+        if(itSection != m_mSettings.end() && itSection->second.mKeys.find(event.GetKey()) != itSection->second.mKeys.end())
+        {
+            Json::Value jsMessage;
+            jsMessage["setting"]["section"] = event.GetSection().ToStdString();
+            jsMessage["setting"]["key"] = event.GetKey().ToStdString();
+            switch(event.GetType())
+            {
+                case SettingEvent::SETTING_STRING:
+                    jsMessage["setting"]["value"] = event.GetValue().ToStdString();
+                    break;
+                case SettingEvent::SETTING_LONG:
+                    jsMessage["setting"]["value"] = event.GetValue(0l);
+                    break;
+                case SettingEvent::SETTING_DOUBLE:
+                    jsMessage["setting"]["value"] = event.GetValue(0.0);
+                    break;
+                case SettingEvent::SETTING_BOOL:
+                    jsMessage["setting"]["value"] = event.GetValue(false);
+                    break;
+            }
+            SendSettingWebsocketMessage(jsMessage);
+        }
+    }
+}
+
+
 RemoteApi& RemoteApi::Get()
 {
     static RemoteApi api;
@@ -93,10 +127,12 @@ RemoteApi::RemoteApi() : m_bWebsocketsActive(true)
 
     m_Server.AddNotFoundCallback(std::bind(&RemoteApi::NotFound, this, _1,_2,_3,_4));
 
-    //m_Server.AddWebsocketEndpoint(endpoint("/x-pam/settings"), std::bind(&RemoteApi::WSAuthenticate, this, _1,_2,_3), std::bind(&RemoteApi::WSMessage, this, _1,_2), std::bind(&RemoteApi::WSClose, this, _1,_2));
-    m_Server.AddWebsocketEndpoint(endpoint("/x-pam/monitor"), std::bind(&RemoteApi::WSAuthenticate, this, _1,_2,_3), std::bind(&RemoteApi::WSMessage, this, _1,_2), std::bind(&RemoteApi::WSClose, this, _1,_2));
+    m_Server.AddWebsocketEndpoint(endpoint("/x-pam/ws/plugin"), std::bind(&RemoteApi::WSAuthenticate, this, _1,_2,_3), std::bind(&RemoteApi::WSMessage, this, _1,_2), std::bind(&RemoteApi::WSClose, this, _1,_2));
+    m_Server.AddWebsocketEndpoint(endpoint("/x-pam/ws/setting"), std::bind(&RemoteApi::WSAuthenticate, this, _1,_2,_3), std::bind(&RemoteApi::WSMessage, this, _1,_2), std::bind(&RemoteApi::WSClose, this, _1,_2));
+    m_Server.AddWebsocketEndpoint(endpoint("/x-pam/ws"), std::bind(&RemoteApi::WSAuthenticate, this, _1,_2,_3), std::bind(&RemoteApi::WSMessage, this, _1,_2), std::bind(&RemoteApi::WSClose, this, _1,_2));
 
-
+    Settings::Get().AddHandler(this);
+    Bind(wxEVT_SETTING_CHANGED, &RemoteApi::OnSettingEvent, this);
 
 }
 pml::restgoose::response RemoteApi::NotFound(const query& theQuery,  const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
@@ -533,19 +569,105 @@ pml::restgoose::response RemoteApi::GetWavFiles(const query& theQuery, const std
 pml::restgoose::response RemoteApi::PostWavFile(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
 {
     pml::restgoose::response resp;
+    wxString sFilename;
+    wxString sLocation;
+    for(const auto& data : vData)
+    {
+        if(data.name.Get() == "name")
+        {
+            sFilename = wxString(data.data.Get());
+        }
+        else if(data.name.Get() == "file")
+        {
+            sLocation = wxString(data.filepath.Get());
+        }
+    }
+    pmlLog() << "Name: " << sFilename.ToStdString() << "\tLocation: " << sLocation.ToStdString();
+    if(sFilename.empty() == false && sLocation.empty() == false)
+    {
+        //Check it is a wav file
+        SoundFile sf;
+        if(sf.OpenToRead(sLocation) == false)
+        {
+            wxRemoveFile(sLocation);
+            resp.jsonData["reason"] = "Uploaded file is not a wav file";
+        }
+        else
+        {
+            wxFileName fn;
+            fn.Assign(Settings::Get().GetWavDirectory(), sFilename+".wav");
+            if(wxRenameFile(sLocation, fn.GetFullPath()))
+            {
+                resp.nHttpCode = 200;
+                resp.jsonData["reason"] = "Success";
+            }
+            else
+            {
+                wxRemoveFile(sLocation);
+                resp.jsonData["reason"] = "Unable to store wav file in directory";
+            }
+        }
+    }
+    else
+    {
+        resp.jsonData["reason"] = "Filename not set, or no file uploaded";
+    }
     return resp;
 }
 
 pml::restgoose::response RemoteApi::DeleteWavFile(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
 {
+    auto request = ConvertPostDataToJson(vData);
     pml::restgoose::response resp;
+
+    if(request.nHttpCode == 200)
+    {
+        //array of data to change
+        if(request.jsonData.isArray())
+        {
+            resp.nHttpCode = 200;
+            resp.jsonData["reason"] = "Success";
+            for(Json::ArrayIndex ai = 0; ai < request.jsonData.size(); ++ai)
+            {
+                if(request.jsonData[ai].isString())
+                {
+                    wxFileName fn;
+                    fn.Assign(Settings::Get().GetWavDirectory(), wxString(request.jsonData[ai].asString()+".wav"));
+                    if(wxRemoveFile(fn.GetFullPath()))
+                    {
+                        resp.jsonData["files"].append("Deleted "+request.jsonData[ai].asString());
+                    }
+                    else
+                    {
+                        resp.jsonData["files"].append("Failed to delete "+request.jsonData[ai].asString());
+                    }
+                }
+            }
+        }
+        else
+        {
+            resp.jsonData["reason"] = "Passed Json is not an array";
+        }
+    }
+    else
+    {
+        resp.jsonData["reason"] = "JSON is invalid";
+    }
     return resp;
 }
 
 pml::restgoose::response RemoteApi::GetAoipSources(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
 {
+    wxArrayString asQuery = wxStringTokenize(wxString(theQuery.Get()), "&");
+    std::map<std::string, std::string> mQuery;
+    for(size_t i = 0; i < asQuery.GetCount(); i++)
+    {
+        mQuery.insert({asQuery[i].Before('=').ToStdString(), asQuery[i].After('=').ToStdString()});
+    }
+
     pml::restgoose::response resp;
     resp.jsonData = Json::Value(Json::arrayValue);
+
     for(auto pairSource : AoipSourceManager::Get().GetSources())
     {
         if(pairSource.first > 0)
@@ -554,14 +676,49 @@ pml::restgoose::response RemoteApi::GetAoipSources(const query& theQuery, const 
             jsSource["index"] = pairSource.first;
             jsSource["name"] = pairSource.second.sName.ToStdString();
             jsSource["type"] = pairSource.second.sType.ToStdString();
-            jsSource["details"] = pairSource.second.sDetails.ToStdString();
-            jsSource["SDP"] = pairSource.second.sSDP.ToStdString();
+            if(jsSource["type"] = pairSource.second.sType == "SDP")
+            {
+                jsSource["SDP"] = pairSource.second.sSDP.ToStdString();
+            }
+            else
+            {
+                jsSource["details"] = pairSource.second.sDetails.ToStdString();
+            }
             jsSource["tags"] = Json::Value(Json::arrayValue);
             for(auto tag : pairSource.second.setTags)
             {
                 jsSource["tags"].append(tag.ToStdString());
             }
-            resp.jsonData.append(jsSource);
+
+            //check if the source matches the query string
+            bool bAdd(true);
+            for(auto pairQuery : mQuery)
+            {
+                if(jsSource.isMember(pairQuery.first))
+                {
+                    if(jsSource[pairQuery.first].isString() && jsSource[pairQuery.first].asString() != pairQuery.second)
+                    {
+                        bAdd = false;
+                    }
+                    else if(jsSource[pairQuery.first].isArray())
+                    {
+                        bool bAdd = false;
+                        for(Json::ArrayIndex ai = 0; ai < jsSource["tags"].size(); ++ai)
+                        {
+                            if(pairQuery.second.find(jsSource["tags"].asString()+",") != std::string::npos ||
+                               pairQuery.second.find(","+jsSource["tags"].asString()) != std::string::npos)
+                            {
+                                bAdd = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            if(bAdd)
+            {
+                resp.jsonData.append(jsSource);
+            }
         }
     }
     return resp;
@@ -569,13 +726,193 @@ pml::restgoose::response RemoteApi::GetAoipSources(const query& theQuery, const 
 
 pml::restgoose::response RemoteApi::PatchAoipSources(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
 {
+    auto request = ConvertPostDataToJson(vData);
     pml::restgoose::response resp;
+
+    if(request.nHttpCode == 200)
+    {
+        //array of data to change
+        if(request.jsonData.isArray())
+        {
+            for(Json::ArrayIndex ai = 0; ai < request.jsonData.size(); ai++)
+            {
+                auto check = CheckJsonAoipPatch(request.jsonData[ai]);
+                if(check.nHttpCode == 400)
+                {
+                    resp.nHttpCode = 400;
+                }
+                resp.jsonData.append(check.jsonData);
+            }
+
+            if(resp.nHttpCode != 200)   //error somewhere
+            {
+                return resp;
+            }
+            else
+            {
+                return DoPatchAoip(request.jsonData);
+            }
+        }
+        else
+        {
+            return pml::restgoose::response(400, "Data received is not a valid JSON array");
+        }
+    }
+    else
+    {
+        return pml::restgoose::response(400, "Data received could not be converted to JSON");
+    }
+}
+
+pml::restgoose::response RemoteApi::CheckJsonAoipPatch(const Json::Value& jsPatch)
+{
+    pml::restgoose::response resp(400);
+    if(jsPatch.isMember("action") == false || jsPatch["action"].isString() == false)
+    {
+        resp.jsonData["reason"] = "No action passed";
+        return resp;
+    }
+    if(jsPatch["action"].asString() == "update")
+    {
+        if(jsPatch.isMember("index") == false || jsPatch["index"].isInt() == false)
+        {
+            resp.jsonData["reason"] = "Action is update but no index passed";
+            return resp;
+        }
+        if(jsPatch.isMember("tags") == true && jsPatch["tags"].isArray() == false)
+        {
+            resp.jsonData["reason"] = "Action is update with tags, but not an array";
+            return resp;
+        }
+    }
+    else if(jsPatch["action"].asString() == "delete" && (jsPatch.isMember("index") == false || jsPatch["index"].isInt() == false))
+    {
+        resp.jsonData["reason"] = "Action is delete but no index passed";
+        return resp;
+    }
+    else if(jsPatch["action"].asString() == "add")
+    {
+        if(jsPatch.isMember("name") == false || jsPatch["name"].isString() == false)
+        {
+            resp.jsonData["reason"] = "Action is add but no name passed";
+            return resp;
+        }
+        if(jsPatch.isMember("type") == false || jsPatch["type"].isString() == false)
+        {
+            resp.jsonData["reason"] = "Action is add but no type passed";
+            return resp;
+        }
+        if((jsPatch["type"].asString() == "SDP" || jsPatch["type"].asString() == "sdp") && (jsPatch.isMember("SDP") == false || jsPatch["SDP"].isString() == false))
+        {
+            resp.jsonData["reason"] = "Action is add and type SDP but no SDP passed";
+            return resp;
+        }
+        if((jsPatch["type"].asString() == "RTSP" || jsPatch["type"].asString() == "rtsp") &&
+           (jsPatch.isMember("details") == false || jsPatch["details"].isString() == false))
+        {
+            resp.jsonData["reason"] = "Action is add and type RTSP but no RTSP details passed";
+            return resp;
+        }
+    }
+    resp.nHttpCode = 200;
+    resp.jsonData["reason"] = "Success";
     return resp;
 }
 
+pml::restgoose::response RemoteApi::DoPatchAoip(const Json::Value& jsArray)
+{
+    pml::restgoose::response resp(200);
+
+    for(Json::ArrayIndex ai = 0; ai < jsArray.size(); ai++)
+    {
+        if(jsArray[ai]["action"].asString() == "add")
+        {
+            resp.jsonData.append(DoPatchAoipAdd(jsArray[ai]).jsonData);
+        }
+        else if(jsArray[ai]["action"].asString() == "update")
+        {
+            resp.jsonData.append(DoPatchAoipUpdate(jsArray[ai]).jsonData);
+        }
+        else if(jsArray[ai]["action"].asString() == "delete")
+        {
+            resp.jsonData.append(DoPatchAoipDelete(jsArray[ai]).jsonData);
+        }
+    }
+    return resp;
+}
+
+pml::restgoose::response RemoteApi::DoPatchAoipAdd(const Json::Value& jsSource)
+{
+    bool bSuccess(false);
+    if(jsSource["type"].asString() == "SDP" || jsSource["type"].asString() == "sdp")
+    {
+        bSuccess = AoipSourceManager::Get().AddSource(jsSource["name"].asString(), "SDP", jsSource["SDP"].asString());
+    }
+    else if(jsSource["type"].asString() == "RTSP" || jsSource["type"].asString() == "rtsp")
+    {
+        bSuccess = AoipSourceManager::Get().AddSource(jsSource["name"].asString(), jsSource["details"].asString());
+    }
+    return bSuccess ? pml::restgoose::response(200, jsSource["name"].asString()+" added") : pml::restgoose::response(400);
+
+}
+
+pml::restgoose::response RemoteApi::DoPatchAoipUpdate(const Json::Value& jsPatch)
+{
+    auto source = AoipSourceManager::Get().FindSource(jsPatch["index"].asInt());
+    if(source.nIndex == 0)
+    {
+        return pml::restgoose::response(400, "Source not found");
+    }
+    if(jsPatch.isMember("name"))
+    {
+        AoipSourceManager::Get().SetSourceName(jsPatch["index"].asInt(), jsPatch["name"].asString());
+    }
+    if(jsPatch.isMember("details"))
+    {
+        AoipSourceManager::Get().SetSourceDetails(jsPatch["index"].asInt(), jsPatch["details"].asString());
+    }
+    if(jsPatch.isMember("SDP"))
+    {
+        AoipSourceManager::Get().SetSourceSDP(jsPatch["index"].asInt(), jsPatch["SDP"].asString());
+    }
+    if(jsPatch.isMember("type"))
+    {
+        AoipSourceManager::Get().SetSourceType(jsPatch["index"].asInt(), jsPatch["type"].asString());
+    }
+    if(jsPatch.isMember("tags"))
+    {
+        std::set<wxString> setTags;
+        for(Json::ArrayIndex ai = 0; ai < jsPatch["tags"].size(); ai++)
+        {
+            setTags.insert(jsPatch["tags"][ai].asString());
+        }
+        AoipSourceManager::Get().SetSourceTags(jsPatch["index"].asInt(), setTags);
+    }
+    return pml::restgoose::response(200, jsPatch["index"].asString()+" updated");
+}
+
+pml::restgoose::response RemoteApi::DoPatchAoipDelete(const Json::Value& jsPatch)
+{
+    auto source = AoipSourceManager::Get().FindSource(jsPatch["index"].asInt());
+    if(source.nIndex == 0)
+    {
+        return pml::restgoose::response(400, "Source not found");
+    }
+    AoipSourceManager::Get().DeleteSource(jsPatch["index"].asInt());
+    return pml::restgoose::response(200, jsPatch["index"].asString()+" deleted");
+}
+
+
+
+
 void RemoteApi::SendPluginWebsocketMessage(const Json::Value& jsMessage)
 {
-    m_Server.SendWebsocketMessage({endpoint("/x-pam/monitor")}, jsMessage);
+    m_Server.SendWebsocketMessage({endpoint("/x-pam/ws/plugin")}, jsMessage);
+}
+
+void RemoteApi::SendSettingWebsocketMessage(const Json::Value& jsMessage)
+{
+    m_Server.SendWebsocketMessage({endpoint("/x-pam/ws/setting")}, jsMessage);
 }
 
 void RemoteApi::RegisterRemoteApiCSV(const wxString& sSection, const wxString& sKey, const std::set<wxString>& setEnum)
@@ -630,3 +967,6 @@ bool RemoteApi::WebsocketsActive()
 {
     return m_bWebsocketsActive;
 }
+
+
+

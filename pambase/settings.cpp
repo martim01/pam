@@ -60,7 +60,7 @@ double Settings::Read(const wxString& sSection, const wxString& sKey, double dDe
     return m_iniManager.GetIniDouble(sSection, sKey, dDefault);
 }
 
-bool Settings::Write(const wxString& sSection, const wxString& sKey, const wxString& sValue)
+bool Settings::WriteInternal(const wxString& sSection, const wxString& sKey, const wxString& sValue, SettingEvent::enumType eType)
 {
     bool bDone(true);
     if(m_iniManager.GetIniString(sSection, sKey, wxEmptyString) != sValue)
@@ -79,7 +79,7 @@ bool Settings::Write(const wxString& sSection, const wxString& sKey, const wxStr
 
         for(auto pHandler : setHandlers)
         {
-            SettingEvent* pEvent = new SettingEvent(sSection, sKey, sValue);
+            SettingEvent* pEvent = new SettingEvent(sSection, sKey, sValue, eType);
             wxQueueEvent(pHandler, pEvent);
         }
     }
@@ -94,19 +94,31 @@ void Settings::GetHandlers(const wxString& sHandlers, std::set<wxEvtHandler*>& s
     }
 }
 
+bool Settings::Write(const wxString& sSection, const wxString& sKey, const wxString& sValue)
+{
+    WriteInternal(sSection, sKey, sValue, SettingEvent::enumType::SETTING_STRING);
+
+    return true;
+}
+
 bool Settings::Write(const wxString& sSection, const wxString& sKey, int nValue)
 {
-    return Write(sSection, sKey, wxString::Format(wxT("%d"), nValue));
+    WriteInternal(sSection, sKey, wxString::Format(wxT("%d"), nValue), SettingEvent::enumType::SETTING_LONG);
+
+    return true;
 }
 
 bool Settings::Write(const wxString& sSection, const wxString& sKey, unsigned int nValue)
 {
-    return Write(sSection, sKey, wxString::Format(wxT("%u"), nValue));
+    WriteInternal(sSection, sKey, wxString::Format(wxT("%u"), nValue), SettingEvent::enumType::SETTING_LONG);
+    return true;
 }
 
 bool Settings::Write(const wxString& sSection, const wxString& sKey, double dValue)
 {
-    return Write(sSection, sKey, wxString::Format(wxT("%f"), dValue));
+    WriteInternal(sSection, sKey, wxString::Format(wxT("%f"), dValue), SettingEvent::enumType::SETTING_DOUBLE);
+
+    return true;
 }
 
 

@@ -61,8 +61,11 @@ class PAMBASE_IMPEXPORT AoipSourceManager : public wxEvtHandler
 
         bool AddSource(const wxString& sName, const wxString& sDetails, const wxString& sSDP=wxEmptyString, int nIndex = 0);
         bool EditSource(int nIndex, const wxString& sName, const wxString& sDetails);
+        bool SetSourceName(int nIndex, const wxString& sName);
+        bool SetSourceDetails(int nIndex, const wxString& sDetails);
         bool SetSourceSDP(int nIndex, const wxString& sSDP);
         bool SetSourceTags(int nIndex, const std::set<wxString>& setTags);
+        bool SetSourceType(int nIndex, const wxString& sType);
 
         void DeleteSource(int nIndex);
         void DeleteSource(const wxString& sName);

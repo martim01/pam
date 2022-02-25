@@ -37,8 +37,8 @@
 			}
 			function ws_connect()
 			{
-				console.log("ws_connect: "+ g_endpoint+"/x-pam/monitor");
-				g_ws = new WebSocket('ws://'+ g_endpoint+"/x-pam/monitor");
+				console.log("ws_connect: "+ g_endpoint+"/x-pam/ws");
+				g_ws = new WebSocket('ws://'+ g_endpoint+"/x-pam/ws");
 				
 				g_ws.onopen = function(ev)  { console.log(ev); };
 				g_ws.onerror = function(ev) { console.log(ev); };
@@ -79,6 +79,10 @@
 						{
 							console.log(jsonObj);
 						}
+					}
+					else
+					{
+						console.log(jsonObj);
 					}
                 }
             }

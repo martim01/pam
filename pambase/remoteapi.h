@@ -4,8 +4,10 @@
 #include <set>
 #include <map>
 #include <wx/string.h>
+#include <wx/event.h>
+class SettingEvent;
 
-class RemoteApi
+class RemoteApi : public wxEvtHandler
 {
     public:
         static RemoteApi& Get();
@@ -19,6 +21,7 @@ class RemoteApi
         friend class TestPluginBuilder;
         friend class GeneratorPluginBuilder;
         friend class pam2Dialog;
+        friend class Settings;
 
         bool WSAuthenticate(const endpoint& theEndpoint, const userName& theUser, const ipAddress& thePeer);
         bool WSMessage(const endpoint& theEndpoint, const Json::Value& theMessage);
@@ -57,12 +60,13 @@ class RemoteApi
 
         bool AddPluginEndpoint(const httpMethod& method, const endpoint& theEndpoint, std::function<pml::restgoose::response(const query&, const std::vector<pml::restgoose::partData>&, const endpoint&, const userName&)> func);
         void SendPluginWebsocketMessage(const Json::Value& jsMessage);
+        void SendSettingWebsocketMessage(const Json::Value& jsMessage);
 
         RemoteApi();
         ~RemoteApi();
 
         bool WebsocketsActive();
-
+        void OnSettingEvent(SettingEvent& event);
 
         pml::restgoose::Server m_Server;
 
@@ -112,6 +116,12 @@ class RemoteApi
         pml::restgoose::response CheckJsonSettingPatchConstraint(const Json::Value& jsPatch, std::function<std::map<int, wxString>()> func);
 
         void DoPatchSettings(const Json::Value& jsArray);
+
+        pml::restgoose::response CheckJsonAoipPatch(const Json::Value& jsPatch);
+        pml::restgoose::response DoPatchAoip(const Json::Value& jsArray);
+        pml::restgoose::response DoPatchAoipAdd(const Json::Value& jsPatch);
+        pml::restgoose::response DoPatchAoipUpdate(const Json::Value& jsPatch);
+        pml::restgoose::response DoPatchAoipDelete(const Json::Value& jsPatch);
 
         std::map<wxString, section> m_mSettings;
         bool m_bWebsocketsActive;

@@ -10,11 +10,13 @@ class PAMBASE_IMPEXPORT SettingEvent : public wxCommandEvent
     friend class Settings;
 
 public:
+    enum enumType {SETTING_STRING, SETTING_LONG, SETTING_DOUBLE, SETTING_BOOL};
+
     /** @brief	Constructor
     *   @param commandType should be wxEVT_NI...
     *   @param id the ID of the button list control
     **/
-    SettingEvent(const wxString& sSection, const wxString& sKey, const wxString& sValue);
+    SettingEvent(const wxString& sSection, const wxString& sKey, const wxString& sValue, enumType eType);
 
     SettingEvent();
     /** @brief	Copy Constructor
@@ -40,12 +42,14 @@ public:
     double GetValue(double dDefault) const;
     bool GetValue(bool bDefault) const;
 
+    enumType GetType() const { return m_eType;}
 
 protected:
 
     wxString m_sSection;
     wxString m_sKey;
     wxString m_sValue;
+    enumType m_eType;
 };
 
 typedef void (wxEvtHandler::*SettingEventFunction)(SettingEvent&);
