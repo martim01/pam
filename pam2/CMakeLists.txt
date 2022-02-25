@@ -27,7 +27,7 @@ set(SOURCES "aboutelement.cpp" "dlgAoIP.cpp" "dlgEditName.cpp" "dlgEngineering.c
  "networkcontrol.cpp" "nmos.cpp" "nodebuttonfactory.cpp" "pam2App.cpp" "pam2Main.cpp" "pnlAbout.cpp" "pnlAoIPSelection.cpp" "pnlAoipManual.cpp" "pnlHelp.cpp" "pnlLog.cpp"
  "pnlLogControl.cpp" "pnlNetworkSetup.cpp" "pnlRTCPTransmission.cpp" "pnlRTP.cpp" "pnlSettings.cpp" "pnlSettingsGenerators.cpp" "pnlSettingsInputNmos.cpp"
  "pnlSettingsNmos.cpp" "pnlSettingsOptions.cpp" "pnlSettingsOutput.cpp" "pnlSettingsPlugins.cpp" "pnlSettingsProfiles.cpp" "pnlSettingsTime.cpp"
- "pnlTestOptions.cpp" "pnlTests.cpp" "pnlUSB.cpp" "pnlUpdate.cpp" "senderbuttonfactory.cpp" "wxclientapiposter.cpp" "wxdirtraverseusb.cpp" "wxeventposter.cpp"
+ "pnlTestOptions.cpp" "pnlSettingsRemote.cpp" "pnlTests.cpp" "pnlUSB.cpp" "pnlUpdate.cpp" "senderbuttonfactory.cpp" "wxclientapiposter.cpp" "wxdirtraverseusb.cpp" "wxeventposter.cpp"
  "wxlogoutput.cpp" "wxpammclient.cpp" "wxpammconnection.cpp" "usbchecker.cpp" "updater.cpp" ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_version.cpp)
 
 

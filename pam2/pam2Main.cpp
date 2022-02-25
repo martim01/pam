@@ -612,6 +612,7 @@ void pam2Dialog::ShowSettingsPanel()
 
     m_plstOptions->AddButton(wxT("Profiles"));
     m_plstOptions->AddButton(wxT("General"));
+    m_plstOptions->AddButton(wxT("Remote API"));
     m_plstOptions->AddButton(wxT("Update"));
     m_plstOptions->AddButton(wxT("About"));
 

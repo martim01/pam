@@ -205,7 +205,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pswpSettings->AddPage(m_ppnlNmos, _("NMOS"), false);
     m_pswpSettings->AddPage(m_ppnlTime, _("Time"), false);
     m_pswpSettings->AddPage(pnlGeneral, _("General"), false);
-    m_pswpSettings->AddPage(m_ppnlRemote, _("RemoteAPI"), false);
+    m_pswpSettings->AddPage(m_ppnlRemote, _("Remote API"), false);
     m_pswpSettings->AddPage(m_ppnlAbout, _("About"), false);
 
     Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstDevicesSelected);

@@ -1,6 +1,7 @@
 #include "pnlSettingsRemote.h"
 #include "settings.h"
 #include "settingevent.h"
+#include "networkcontrol.h"
 
 //(*InternalHeaders(pnlSettingsRemote)
 #include <wx/font.h>
@@ -22,14 +23,14 @@ BEGIN_EVENT_TABLE(pnlSettingsRemote,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlSettingsRemote::pnlSettingsRemote(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
+pnlSettingsRemote::pnlSettingsRemote(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size, long nStyle, const wxString& sId)
 {
 	//(*Initialize(pnlSettingsRemote)
 	Create(parent, id, wxDefaultPosition, wxSize(600,440), wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
 	m_pbtnRemote = new wmButton(this, ID_M_PBTN22, _("Remote API"), wxPoint(10,10), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN22"));
 	m_pbtnRemote->SetBackgroundColour(wxColour(0,128,64));
-	m_pbtnRemote->SetToggleLook(true, wxT("Off"), wxT("On"), 60);
+	m_pbtnRemote->SetToggle(true, wxT("Off"), wxT("On"), 60);
 	m_pkbd = new wmKeyboard(this, ID_M_PKBD2, wxPoint(8,160), wxSize(240,200), 5, 0);
 	m_pkbd->SetForegroundColour(wxColour(255,255,255));
 	wxFont m_pkbdFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
@@ -50,8 +51,10 @@ pnlSettingsRemote::pnlSettingsRemote(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pLbl1->SetBackgroundColour(wxColour(64,0,128));
 	m_pbtnWebsocket = new wmButton(this, ID_M_PBTN1, _("Websockets"), wxPoint(10,60), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnWebsocket->SetBackgroundColour(wxColour(0,128,64));
-	m_pbtnWebsocket->SetToggleLook(true, wxT("Off"), wxT("On"), 60);
+	m_pbtnWebsocket->SetToggle(true, wxT("Off"), wxT("On"), 60);
 	//*)
+	SetSize(size);
+	SetPosition(pos);
 
 	m_pbtnRemote->ConnectToSetting("RemoteApi", "Enable", false);
 	m_pbtnWebsocket->ConnectToSetting("RemoteApi", "Websockets", false);
@@ -59,8 +62,8 @@ pnlSettingsRemote::pnlSettingsRemote(wxWindow* parent,wxWindowID id,const wxPoin
 	std::vector<wxString> vEntries(setInt.begin(), setInt.end());
 	vEntries.push_back("Any");
     m_pbtnInterface->SetPopup(vEntries);
-    m_pbtnInterface->ConnectToSetting("RemoteApi", "Inteface", "Any");
-    m_pedtPort->ConnectToSetting("RemoteApi", "Port", 8090, true);
+    m_pbtnInterface->ConnectToSetting("RemoteApi", "_Interface", "Any");
+    m_pedtPort->ConnectToSetting("RemoteApi", "Port", "8090", true);
 
     Settings::Get().AddHandler(this, "RemoteApi");
     Bind(wxEVT_SETTING_CHANGED, &pnlSettingsRemote::OnSettingChange, this);
@@ -73,22 +76,16 @@ pnlSettingsRemote::~pnlSettingsRemote()
 }
 
 
-void pnlSettingsRemote:::OnSettingChange(SettingEvent& event)
+void pnlSettingsRemote::OnSettingChange(SettingEvent& event)
 {
     if(event.GetKey() == "Enable")
     {
         m_pbtnInterface->Enable(!event.GetValue(false));
         m_pedtPort->Enable(!event.GetValue(false));
-        m_pbtnWebsocket->Enable(event.GetValue());
-
-        if(event.GetValue(false))
-        {
-            RemoteApi::Get().Run();
-        }
-        else
-        {
-            RemoteApi::Get().Stop();
-        }
+        m_pbtnWebsocket->Enable(event.GetValue(false));
     }
-
+    else if(event.GetKey() == "_Interface")
+    {
+        Settings::Get().Write("RemoteApi","Interface", NetworkControl::Get().GetAddress(event.GetValue()));
+    }
 }

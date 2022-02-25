@@ -12,7 +12,6 @@
 #include "log.h"
 #include <wx/tokenzr.h>
 #include "soundfile.h"
-
 #include <map>
 
 using namespace std::placeholders;
@@ -59,7 +58,33 @@ pml::restgoose::response ConvertPostDataToJson(const std::vector<pml::restgoose:
 
 void RemoteApi::OnSettingEvent(SettingEvent& event)
 {
-    if(WebsocketsActive())
+    if(event.GetSection() == "RemoteApi")
+    {
+        if(event.GetKey() == "Websockets")
+        {
+            m_bWebsocketsActive = event.GetValue(false);
+        }
+        else if(event.GetKey() == "Enable")
+        {
+            if(event.GetValue(false))
+            {
+                m_Server.Run(true);
+            }
+            else
+            {
+                m_Server.Stop();
+            }
+        }
+        else if(event.GetKey() == "Interface")
+        {
+            m_Server.SetInterface(ipAddress(event.GetValue().ToStdString()), Settings::Get().Read("RemoteApi", "Port", 8090));
+        }
+        else if(event.GetKey() == "Port")
+        {
+            m_Server.SetInterface(ipAddress(Settings::Get().Read("RemoteApi", "Interface", "0.0.0.0").ToStdString()), event.GetValue(8090l));
+        }
+    }
+    else if(WebsocketsActive())
     {
         auto itSection = m_mSettings.find(event.GetSection());
         if(itSection != m_mSettings.end() && itSection->second.mKeys.find(event.GetKey()) != itSection->second.mKeys.end())
@@ -99,18 +124,10 @@ RemoteApi::~RemoteApi()
     m_Server.Stop();
 }
 
-void RemoteApi::Run()
-{
-    m_Server.Run(true);
-}
-void RemoteApi::Stop()
-{
-    m_Server.
-}
 
 RemoteApi::RemoteApi() : m_bWebsocketsActive(Settings::Get().Read("RemoteApi", "Port", 8090))
 {
-    m_Server.Init(Settings::Get().Read("RemoteApi", "Port", 8090), endpoint("/x-pam"), true);
+    m_Server.Init(ipAddress(Settings::Get().Read("RemoteApi", "Interface", "0.0.0.0").ToStdString()), Settings::Get().Read("RemoteApi", "Port", 8090), endpoint("/x-pam"), true);
 
 
     m_Server.AddEndpoint(pml::restgoose::GET, endpoint("/x-pam"), std::bind(&RemoteApi::GetRoot, this, _1,_2,_3,_4));
@@ -137,6 +154,11 @@ RemoteApi::RemoteApi() : m_bWebsocketsActive(Settings::Get().Read("RemoteApi", "
 
     Settings::Get().AddHandler(this);
     Bind(wxEVT_SETTING_CHANGED, &RemoteApi::OnSettingEvent, this);
+
+    if(Settings::Get().Read("RemoteApi","Enable",false))
+    {
+        m_Server.Run(true);
+    }
 
 }
 pml::restgoose::response RemoteApi::NotFound(const query& theQuery,  const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)

@@ -24,6 +24,7 @@
 #include "pnlAoipManual.h"
 #include "pnlSettingsInputNmos.h"
 #include "pnlAbout.h"
+#include "pnlSettingsRemote.h"
 class SettingEvent;
 
 class pnlSettings: public wxPanel

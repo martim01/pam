@@ -15,7 +15,7 @@ class pnlSettingsRemote: public wxPanel
 {
 	public:
 
-		pnlSettingsRemote(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+		pnlSettingsRemote(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, long nStyle=0, const wxString& sId="");
 		virtual ~pnlSettingsRemote();
 
 		//(*Declarations(pnlSettingsRemote)
