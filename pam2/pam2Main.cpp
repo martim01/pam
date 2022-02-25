@@ -324,9 +324,6 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
 
     RegisterRemoteApiSettings();
-    RemoteApi::Get().Run();
-
-
 
 }
 

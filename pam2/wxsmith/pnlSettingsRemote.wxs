@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlSettingsRemote">
+		<size>600,440</size>
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmButton" name="ID_M_PBTN22" variable="m_pbtnRemote" member="yes">
+			<label>Remote API</label>
+			<toggle_look>1</toggle_look>
+			<toggle_left>Off</toggle_left>
+			<toggle_right>On</toggle_right>
+			<toggle_percent>60</toggle_percent>
+			<pos>10,10</pos>
+			<size>200,40</size>
+			<bg>#008040</bg>
+			<style>wmButton::STYLE_SELECT</style>
+		</object>
+		<object class="wmKeyboard" name="ID_M_PKBD2" variable="m_pkbd" member="yes">
+			<type>Calc</type>
+			<pos>8,160</pos>
+			<size>240,200</size>
+			<fg>#FFFFFF</fg>
+			<font>
+				<size>10</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+		<object class="wmEdit" name="ID_M_PEDT3" variable="m_pedtPort" member="yes">
+			<validation>Integer</validation>
+			<border>uiRect::BORDER_DOWN</border>
+			<border_focused>uiRect::BORDER_DOWN</border_focused>
+			<background_focused>#FFFFFF</background_focused>
+			<pos>260,115</pos>
+			<size>100,40</size>
+			<bg>#FFFFFF</bg>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN6" variable="m_pbtnInterface" member="yes">
+			<label>Any</label>
+			<button_disabled>#B0B0B0</button_disabled>
+			<toggle_left>Stop</toggle_left>
+			<toggle_right>Start</toggle_right>
+			<toggle_percent>50</toggle_percent>
+			<pos>10,115</pos>
+			<size>200,40</size>
+			<fg>#000000</fg>
+			<bg>#FFFFFF</bg>
+			<style>wmButton::STYLE_NORMAL</style>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+			<label>PORT</label>
+			<pos>210,115</pos>
+			<size>50,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400080</bg>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnWebsocket" member="yes">
+			<label>Websockets</label>
+			<toggle_look>1</toggle_look>
+			<toggle_left>Off</toggle_left>
+			<toggle_right>On</toggle_right>
+			<toggle_percent>60</toggle_percent>
+			<pos>10,60</pos>
+			<size>200,40</size>
+			<bg>#008040</bg>
+			<style>wmButton::STYLE_SELECT</style>
+		</object>
+	</object>
+</wxsmith>

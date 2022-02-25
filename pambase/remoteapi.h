@@ -14,7 +14,7 @@ class RemoteApi : public wxEvtHandler
 
         void Run();
 
-
+        void Stop();
 
     protected:
         friend class MonitorPluginBuilder;
