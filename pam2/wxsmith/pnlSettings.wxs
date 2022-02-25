@@ -280,6 +280,10 @@
 				<label>General</label>
 			</object>
 			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL15" subclass="pnlSettingsRemote" variable="m_ppnlRemote" member="yes" />
+				<label>RemoteAPI</label>
+			</object>
+			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL14" subclass="pnlAbout" variable="m_ppnlAbout" member="yes" />
 				<label>About</label>
 			</object>

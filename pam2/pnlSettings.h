@@ -45,6 +45,7 @@ class pnlSettings: public wxPanel
 		pnlSettingsOutput* m_ppnlOutput;
 		pnlSettingsPlugins* m_ppnlPlugins;
 		pnlSettingsProfiles* m_ppnlProfiles;
+		pnlSettingsRemote* m_ppnlRemote;
 		pnlSettingsTime* m_ppnlTime;
 		pnlUpdate* m_ppnlUpdate;
 		wmButton* m_pbtnCursor;
@@ -115,6 +116,7 @@ class pnlSettings: public wxPanel
 		static const long ID_M_PKBD1;
 		static const long ID_M_PLBL12;
 		static const long ID_PANEL6;
+		static const long ID_PANEL15;
 		static const long ID_PANEL14;
 		static const long ID_M_PSWP1;
 		//*)

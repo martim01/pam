@@ -75,6 +75,7 @@ const long pnlSettings::ID_M_PEDT1 = wxNewId();
 const long pnlSettings::ID_M_PKBD1 = wxNewId();
 const long pnlSettings::ID_M_PLBL12 = wxNewId();
 const long pnlSettings::ID_PANEL6 = wxNewId();
+const long pnlSettings::ID_PANEL15 = wxNewId();
 const long pnlSettings::ID_PANEL14 = wxNewId();
 const long pnlSettings::ID_M_PSWP1 = wxNewId();
 //*)
@@ -192,6 +193,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_plblCurrentPIN->GetUiRect().SetGradient(0);
     m_plblCurrentPIN->Hide();
     m_plblCurrentPIN->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+    m_ppnlRemote = new pnlSettingsRemote(m_pswpSettings, ID_PANEL15, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL15"));
     m_ppnlAbout = new pnlAbout(m_pswpSettings, ID_PANEL14, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL14"));
     m_pswpSettings->AddPage(pnlInput, _("Input Device"), false);
     m_pswpSettings->AddPage(m_ppnlOutput, _("Output Device"), false);
@@ -203,6 +205,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pswpSettings->AddPage(m_ppnlNmos, _("NMOS"), false);
     m_pswpSettings->AddPage(m_ppnlTime, _("Time"), false);
     m_pswpSettings->AddPage(pnlGeneral, _("General"), false);
+    m_pswpSettings->AddPage(m_ppnlRemote, _("RemoteAPI"), false);
     m_pswpSettings->AddPage(m_ppnlAbout, _("About"), false);
 
     Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettings::OnlstDevicesSelected);
