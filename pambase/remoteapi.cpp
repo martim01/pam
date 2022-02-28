@@ -98,7 +98,7 @@ void RemoteApi::OnSettingEvent(SettingEvent& event)
                     jsMessage["setting"]["value"] = event.GetValue().ToStdString();
                     break;
                 case SettingEvent::SETTING_LONG:
-                    jsMessage["setting"]["value"] = event.GetValue(0l);
+                    jsMessage["setting"]["value"] = (int)event.GetValue(0l);
                     break;
                 case SettingEvent::SETTING_DOUBLE:
                     jsMessage["setting"]["value"] = event.GetValue(0.0);

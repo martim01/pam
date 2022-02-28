@@ -213,7 +213,7 @@ Json::Value AoIPInfoBuilder::CreateWebsocketMessage(const session& aSession)
     jsMessage["session"]["refclock"]["type"] = aSession.refClock.sType.ToStdString();
     jsMessage["session"]["refclock"]["version"] = aSession.refClock.sVersion.ToStdString();
     jsMessage["session"]["refclock"]["id"] = aSession.refClock.sId.ToStdString();
-    jsMessage["session"]["refclock"]["domain"] = aSession.refClock.nDomain;
+    jsMessage["session"]["refclock"]["domain"] = (int)aSession.refClock.nDomain;
 
     jsMessage["session"]["sdp"] = aSession.sRawSDP.ToStdString();
 
@@ -232,7 +232,7 @@ Json::Value AoIPInfoBuilder::CreateWebsocketMessage(const session& aSession)
         jsSub["refclock"]["type"] = aSession.GetCurrentSubsession()->refClock.sType.ToStdString();
         jsSub["refclock"]["version"] = aSession.GetCurrentSubsession()->refClock.sVersion.ToStdString();
         jsSub["refclock"]["id"] = aSession.GetCurrentSubsession()->refClock.sId.ToStdString();
-        jsSub["refclock"]["domain"] = aSession.GetCurrentSubsession()->refClock.nDomain;
+        jsSub["refclock"]["domain"] = (int)aSession.GetCurrentSubsession()->refClock.nDomain;
 
         jsMessage["subsession"].append(jsSub);
     }
