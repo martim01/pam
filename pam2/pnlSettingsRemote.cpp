@@ -67,6 +67,11 @@ pnlSettingsRemote::pnlSettingsRemote(wxWindow* parent,wxWindowID id,const wxPoin
 
     Settings::Get().AddHandler(this, "RemoteApi");
     Bind(wxEVT_SETTING_CHANGED, &pnlSettingsRemote::OnSettingChange, this);
+
+    m_pbtnWebsocket->SetColourDisabled(wxColour(170,170,170));
+    m_pbtnInterface->Enable(!m_pbtnRemote->IsChecked());
+    m_pedtPort->Enable(!m_pbtnRemote->IsChecked());
+    m_pbtnWebsocket->Enable(m_pbtnRemote->IsChecked());
 }
 
 pnlSettingsRemote::~pnlSettingsRemote()

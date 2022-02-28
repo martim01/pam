@@ -125,7 +125,7 @@ RemoteApi::~RemoteApi()
 }
 
 
-RemoteApi::RemoteApi() : m_bWebsocketsActive(Settings::Get().Read("RemoteApi", "Port", 8090))
+RemoteApi::RemoteApi() : m_bWebsocketsActive(Settings::Get().Read("RemoteApi", "Websockets",0))
 {
     m_Server.Init(ipAddress(Settings::Get().Read("RemoteApi", "Interface", "0.0.0.0").ToStdString()), Settings::Get().Read("RemoteApi", "Port", 8090), endpoint("/x-pam"), true);
 

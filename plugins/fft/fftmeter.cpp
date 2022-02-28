@@ -8,7 +8,7 @@
 #include "timedbuffer.h"
 #include "fftbuilder.h"
 //#include "settings.h"
-
+#include "log.h"
 
 using namespace std;
 
@@ -394,24 +394,24 @@ void FftMeter::SetData(const timedbuffer* pBuffer)
 
 void FftMeter::DoFFT()
 {
-
     switch(m_nMeterType)
     {
-        case FFT:
-            FFTRoutine();
-            break;
         case OCTAVE:
             Octave();
             break;
         case PEAKS:
             Peaks();
             break;
+        default:
+            FFTRoutine();
+            break;
+
     }
     Refresh();
 
     if(m_pBuilder->WebsocketsActive())
     {
-        m_pBuilder->SendWebsocketMessage(CreateWebsocketMessage());
+       m_pBuilder->SendWebsocketMessage(CreateWebsocketMessage());
     }
 }
 
@@ -419,8 +419,6 @@ void FftMeter::FFTRoutine()
 {
     FFTAlgorithm fft;
     m_vfft_out = fft.DoFFT(m_lstBuffer, m_nSampleRate, m_nChannels, m_nFFTAnalyse, m_nWindowType, m_vfft_out.size(), m_nOverlap);
-
-
 
     m_dBinSize = static_cast<double>(m_nSampleRate)/static_cast<double>((m_vfft_out.size()-1)*2);
     m_dPeakLevel = -80;
@@ -454,6 +452,7 @@ void FftMeter::FFTRoutine()
 
     m_uiPeakLevel.SetLabel(wxString::Format(wxT("%.1f"),m_dPeakLevel));
     m_uiPeakFrequency.SetLabel(wxString::Format("%.0fHz",m_dPeakFrequency));
+
 }
 
 float FftMeter::WindowMod(float dAmplitude)
@@ -741,15 +740,15 @@ void FftMeter::ResetPeaks()
 Json::Value FftMeter::CreateWebsocketMessage()
 {
     Json::Value jsData;
-    jsData["bins"] = Json::Value(Json::arrayValue);
 
+    jsData["bins"] = Json::Value(Json::arrayValue);
     for(size_t i = 0; i < m_vPeak.size(); i++)
     {
         Json::Value jsBin;
         jsBin["peak"] = m_vPeak[i];
         jsBin["level"] = m_vAmplitude[i];
         jsBin["frequency"] = m_dBinSize * static_cast<double>(i);
-        jsData["bins"].append(jsBin);
+//        jsData["bins"].append(jsBin);
     }
     jsData["peak"]["level"] = m_dPeakLevel;
     jsData["peak"]["frequency"] = m_dPeakFrequency;
