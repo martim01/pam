@@ -32,9 +32,94 @@
 			function on_load()
 			{
 				g_canvas = document.getElementById('fft');
-
 				ws_connect();
+				
+				get_settings();
+				
 			}
+			
+			function getAjax()
+			{
+				var ajaxRequest;  // The variable that makes Ajax possible!
+				try
+				{
+					// Opera 8.0+, Firefox, Safari
+					ajaxRequest = new XMLHttpRequest();
+				} 
+				catch (e)
+				{
+					// Internet Explorer Browsers
+					try
+					{
+						ajaxRequest = new ActiveXObject("Msxml2.XMLHTTP");
+					} 
+					catch (e) 
+					{
+						try
+						{
+							ajaxRequest = new ActiveXObject("Microsoft.XMLHTTP");
+						}
+						catch (e)
+						{
+							// Something went wrong
+							alert("Your browser broke!");
+							return false;
+						}
+					}
+				}
+				return ajaxRequest;
+			}
+			
+			function get_settings()
+			{
+				var ajaxRequest = getAjax();  
+				ajaxRequest.onreadystatechange = function()
+				{
+					if(ajaxRequest.readyState == 4)
+					{
+						var jsonObj = JSON.parse(ajaxRequest.responseText);
+						console.log(jsonObj);
+						if(jsonObj.error)
+						{
+							alert(jsonObj.error);
+						}
+						else
+						{	
+							show_settings(jsonObj);
+						}
+						
+					}
+				}			
+				ajaxRequest.open("GET", g_url+'/settings');
+				ajaxRequest.send(null); 
+			}
+			
+			function patchSetting(section, key, value)
+			{
+				var ajaxRequest = getAjax();  
+				ajaxRequest.onreadystatechange = function()
+				{
+					if(ajaxRequest.readyState == 4)
+					{
+						var jsonObj = JSON.parse(ajaxRequest.responseText);
+						console.log(jsonObj);
+						if(ajaxRequest.status != 200)
+						{
+							alert(jsonObj.reason);
+						}
+					}
+				}			
+				ajaxRequest.open("PATCH", g_url+'/settings');
+				var jsonObj = new Array();
+				var setting =  new Object();
+				setting.section = section;
+				setting.key = key;
+				setting.value = value;
+				jsonObj.push(setting);
+				console.log(jsonObj);
+				ajaxRequest.send(JSON.stringify(jsonObj)); 
+			}
+		
 			function ws_connect()
 			{
 				console.log("ws_connect: "+ g_endpoint+"/x-pam/ws");
@@ -218,9 +303,165 @@
 				console.log("showR128");
 			}
 
+			
+			function show_settings(jsonObj)
+			{
+				var set = document.getElementById('settings');
+				
+				for(const section in jsonObj)
+				{
+					var div = document.createElement('div');
+					show_section(div, section, jsonObj[section]);
+					set.appendChild(div);
+				}
+			}
+
+
+			function show_section(parentElm, section, jsonObj)
+			{
+				var set = document.createElement('fieldset');
+				var legend = document.createElement('legend');
+				legend.innerHTML = section;
+				set.append(legend);
+				
+				console.log(jsonObj);
+				for(const key in jsonObj)
+				{
+					console.log(key);
+					var div = document.createElement('div');
+					show_key(section, div, key, jsonObj[key]);
+					set.appendChild(div);
+				}
+				
+				parentElm.appendChild(set);
+			}
+
+			function show_key(section, parentElm, key, jsonObj)
+			{
+				if(jsonObj === null)
+				{
+				}
+				else if(jsonObj.hasOwnProperty("range"))
+				{
+					show_range(section, parentElm, key, jsonObj);
+				}
+				else if(jsonObj.hasOwnProperty("enum"))
+				{
+					if(jsonObj["enum"].length > 0 && jsonObj["enum"][0].hasOwnProperty("label"))
+					{
+						show_enum_int(section, parentElm, key, jsonObj);
+					}
+					else
+					{
+						show_enum(section, parentElm, key, jsonObj);
+					}
+				}
+			}
+
+
+		function show_range(section, parentElm, key, jsonObj)
+		{
+			var label = document.createElement('label');
+			label.innerHTML = key+":";
+			label.style.color = "#8365ff";
+			parentElm.appendChild(label);
+			
+			var inp = document.createElement('input');
+			inp.type = "number";
+			inp.max = jsonObj["range"]["maximum"];
+			inp.min = jsonObj["range"]["minimum"];
+			inp.value = jsonObj["current"];
+			inp.id = section+'_'+key;
+			inp.addEventListener("change", function(event){rangeChange(event)});
+			parentElm.appendChild(inp);
+			
+			//connect a change function
+			
+		}
+
+		function show_enum(section, parentElm, key, jsonObj)
+		{
+			var label = document.createElement('label');
+			label.innerHTML = key+":";
+			label.style.color = "#8365ff";
+			parentElm.appendChild(label);
+			
+			for(var i = 0; i < jsonObj["enum"].length; i++)
+			{
+				var inp = document.createElement('input');
+				inp.type = "radio";
+				inp.id = section+'_'+key+'_'+jsonObj["enum"][i];
+				inp.name = key;
+				inp.value = jsonObj["enum"][i];
+				inp.checked = (jsonObj["enum"][i] == jsonObj["current"]);
+				inp.addEventListener("change", function(event){enumChange(event)});
+				parentElm.appendChild(inp);
+				
+				label = document.createElement('label');
+				label.for = section+'_'+key+'_'+jsonObj["enum"][i];
+				label.innerHTML = jsonObj["enum"][i];
+				parentElm.appendChild(label);
+			}
+			//connect a change function
+		}
+
+		function show_enum_int(section, parentElm, key, jsonObj)
+		{
+			var label = document.createElement('label');
+			label.innerHTML = key+":";
+			label.style.color = "#8365ff";
+			parentElm.appendChild(label);
+			
+			for(var i = 0; i < jsonObj["enum"].length; i++)
+			{
+				var inp = document.createElement('input');
+				inp.type = "radio";
+				inp.id = section+'_'+key+'_'+jsonObj["enum"][i]["value"];
+				inp.name = key;
+				inp.value = jsonObj["enum"][i]["value"];
+				inp.checked = (jsonObj["enum"][i]["value"] == jsonObj["current"]);
+				inp.addEventListener("change", function(event){enumIntChange(event)});
+				parentElm.appendChild(inp);
+				
+				label = document.createElement('label');
+				label.for = section+'_'+key+'_'+jsonObj["enum"][i]["value"];
+				label.innerHTML = jsonObj["enum"][i]["label"];
+				parentElm.appendChild(label);
+			}
+			//connect a change function
+		}
+
+		function rangeChange(event)
+		{
+			console.log(event.srcElement.id);
+			var arr = event.srcElement.id.split('_');
+			patchSetting(arr[0],arr[1],parseFloat(event.srcElement.value));
+		}
+		
+		function enumChange(event)
+		{
+			var arr = event.srcElement.id.split('_');
+			if(arr.length == 3)
+			{
+				patchSetting(arr[0],arr[1],arr[2]);
+			}
+		}
+		
+		function enumIntChange(event)
+		{
+			var arr = event.srcElement.id.split('_');
+			if(arr.length == 3)
+			{
+				patchSetting(arr[0],arr[1], parseInt(arr[2]));
+			}
+		}
+		
+		
+		
         </script>
     </head>
     <body onload="on_load()">
 		<canvas id="fft" width="1024" height="600">Fallback</canvas>
+		<fieldset id="settings"><legend>Settings</legend></fieldset>
     </body>
 </HTML>
