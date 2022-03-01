@@ -12,7 +12,7 @@ class RemoteApi : public wxEvtHandler
     public:
         static RemoteApi& Get();
 
-
+        std::map<wxString, wxString> ConvertQueryToMap(const query& theQuery);
 
     protected:
         friend class MonitorPluginBuilder;
@@ -68,6 +68,8 @@ class RemoteApi : public wxEvtHandler
 
         pml::restgoose::Server m_Server;
 
+        Json::Value GetSectionJson(const wxString& sSection, const wxString& sKeyFilter);
+
 
         Json::Value GetJson(const std::set<wxString>& setEnum);
         Json::Value GetJson(const std::map<int,wxString>& mEnum);
@@ -103,7 +105,9 @@ class RemoteApi : public wxEvtHandler
             std::map<wxString, constraint> mKeys;
         };
 
-        pml::restgoose::response CheckJsonSettingPatch(const Json::Value& jsPatch);
+        Json::Value GetSectionJson(const wxString& sSectionName, const section& aSection, const wxString& sKeyFilter);
+
+        pml::restgoose::response CheckJsonSettingPatch(const Json::Value& jsPatch, wxString sSection);
         pml::restgoose::response CheckJsonSettingPatchConstraint(const Json::Value& jsPatch, const RemoteApi::section::constraint& aConstraint);
         pml::restgoose::response CheckJsonSettingPatchConstraintCSV(const Json::Value& jsPatch, const std::set<wxString>& setEnum);
         pml::restgoose::response CheckJsonSettingPatchConstraint(const Json::Value& jsPatch, const std::set<wxString>& setEnum);
@@ -113,7 +117,9 @@ class RemoteApi : public wxEvtHandler
         pml::restgoose::response CheckJsonSettingPatchConstraint(const Json::Value& jsPatch, std::function<std::set<wxString>()> func);
         pml::restgoose::response CheckJsonSettingPatchConstraint(const Json::Value& jsPatch, std::function<std::map<int, wxString>()> func);
 
-        void DoPatchSettings(const Json::Value& jsArray);
+        pml::restgoose::response DoPatchSettings(const std::vector<pml::restgoose::partData>& vData, const wxString& sSection="");
+        void DoPatchSettings(const Json::Value& jsArray, const wxString& sSection);
+
 
         pml::restgoose::response CheckJsonAoipPatch(const Json::Value& jsPatch);
         pml::restgoose::response DoPatchAoip(const Json::Value& jsArray);

@@ -56,6 +56,21 @@ pml::restgoose::response ConvertPostDataToJson(const std::vector<pml::restgoose:
     return resp;
 }
 
+std::map<wxString, wxString> RemoteApi::ConvertQueryToMap(const query& theQuery)
+{
+
+    wxArrayString asQuery = wxStringTokenize(wxString(theQuery.Get()), "&");
+    std::map<wxString, wxString> mQuery;
+
+    for(size_t i = 0; i < asQuery.GetCount(); i++)
+    {
+        mQuery.insert({asQuery[i].Before('=').Lower(), asQuery[i].After('=')});
+    }
+    return mQuery;
+}
+
+
+
 void RemoteApi::OnSettingEvent(SettingEvent& event)
 {
     if(event.GetSection() == "RemoteApi")
@@ -183,27 +198,18 @@ pml::restgoose::response RemoteApi::GetRoot(const query& theQuery, const std::ve
 
 pml::restgoose::response RemoteApi::GetSettings(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
 {
-    wxString sSection, sKey;
-    wxArrayString asQuery = wxStringTokenize(wxString(theQuery.Get()), "&");
+    auto mQuery = ConvertQueryToMap(theQuery);
+    wxString sSection = mQuery["section"];
+    wxString sKey = mQuery["key"];
 
-    for(size_t i = 0; i < asQuery.GetCount(); i++)
-    {
-        if(asQuery[i].Before('=').CmpNoCase("section") == 0)
-        {
-            sSection = asQuery[i].After('=');
-        }
-        else if(asQuery[i].Before('=').CmpNoCase("key") == 0)
-        {
-            sKey = asQuery[i].After('=');
-        }
-    }
+
     pml::restgoose::response resp;
 
     for(auto pairSection : m_mSettings)
     {
         if(sSection.empty() || sSection.CmpNoCase(pairSection.first) == 0)
         {
-            resp.jsonData[pairSection.first.ToStdString()] = Json::Value(Json::objectValue);
+            resp.jsonData[pairSection.first.ToStdString()] = GetSectionJson(pairSection.first, pairSection.second, sKey);
             for(auto pairData : pairSection.second.mKeys)
             {
                 if(sKey.empty() || sKey.CmpNoCase(pairData.first) == 0)
@@ -244,6 +250,73 @@ pml::restgoose::response RemoteApi::GetSettings(const query& theQuery, const std
         }
     }
     return resp;
+}
+
+Json::Value RemoteApi::GetSectionJson(const wxString& sSection, const wxString& sKeyFilter)
+{
+    auto itSection = m_mSettings.find(sSection);
+    if(itSection != m_mSettings.end())
+    {
+        return GetSectionJson(itSection->first, itSection->second, sKeyFilter);
+        Json::Value GetSectionJson(const wxString& sSectionName, const section& aSection, const wxString& sKeyFilter);
+    }
+    return Json::Value(Json::objectValue);
+}
+
+Json::Value RemoteApi::GetSectionJson(const wxString& sSectionName, const section& aSection, const wxString& sKeyFilter)
+{
+    Json::Value jsSection;
+    for(auto pairData : aSection.mKeys)
+    {
+        if(sKeyFilter.empty() || sKeyFilter.CmpNoCase(pairData.first) == 0)
+        {
+            Json::Value jsKey;
+            double dValue;
+            long nValue;
+            if(Settings::Get().Read(sSectionName, pairData.first, "").ToLong(&nValue))
+            {
+                jsKey["current"] = nValue;
+            }
+            else if(Settings::Get().Read(sSectionName, pairData.first, "").ToDouble(&dValue))
+            {
+                jsKey["current"] = dValue;
+            }
+            else
+            {
+                jsKey["current"] = Settings::Get().Read(sSectionName, pairData.first, "").ToStdString();
+            }
+
+            switch(pairData.second.eType)
+            {
+                case section::constraint::enumType::STRING_ENUM:
+                    jsKey["enum"] = GetJson(pairData.second.setEnum);
+                    break;
+                case section::constraint::enumType::INT_ENUM:
+                    jsKey["enum"] = GetJson(pairData.second.mEnumNum);
+                    break;
+                case section::constraint::enumType::STRING_CALLBACK:
+                    jsKey["enum"] = GetJson(pairData.second.funcStringEnum);
+                    break;
+                case section::constraint::enumType::INT_CALLBACK:
+                    jsKey["enum"] = GetJson(pairData.second.funcIntEnum);
+                    break;break;
+                case section::constraint::enumType::INT_RANGE:
+                    jsKey["range"]["minimum"] = pairData.second.nRange.first;
+                    jsKey["range"]["maximum"] = pairData.second.nRange.second;
+                    break;
+                case section::constraint::enumType::DOUBLE_RANGE:
+                    jsKey["range"]["minimum"] = pairData.second.dRange.first;
+                    jsKey["range"]["maximum"] = pairData.second.dRange.second;
+                    break;
+                case section::constraint::enumType::CSV:
+                    jsKey["csv"] = GetJson(pairData.second.setEnum);
+                    break;
+            }
+
+            jsSection[pairData.first.ToStdString()] = jsKey;
+        }
+    }
+    return jsSection;
 }
 
 Json::Value RemoteApi::GetJson(const std::set<wxString>& setEnum)
@@ -296,9 +369,13 @@ Json::Value RemoteApi::GetJson(std::function<std::map<int, wxString>()> func)
 
 pml::restgoose::response RemoteApi::PatchSettings(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
 {
-    auto request = ConvertPostDataToJson(vData);
-    pml::restgoose::response resp;
+    return DoPatchSettings(vData);
+}
 
+pml::restgoose::response RemoteApi::DoPatchSettings(const std::vector<pml::restgoose::partData>& vData, const wxString& sSection)
+{
+    pml::restgoose::response resp;
+    auto request = ConvertPostDataToJson(vData);
     if(request.nHttpCode == 200)
     {
         //array of data to change
@@ -306,7 +383,7 @@ pml::restgoose::response RemoteApi::PatchSettings(const query& theQuery, const s
         {
             for(Json::ArrayIndex ai = 0; ai < request.jsonData.size(); ai++)
             {
-                auto check = CheckJsonSettingPatch(request.jsonData[ai]);
+                auto check = CheckJsonSettingPatch(request.jsonData[ai], sSection);
                 if(check.nHttpCode == 400)
                 {
                     resp.nHttpCode = 400;
@@ -314,9 +391,9 @@ pml::restgoose::response RemoteApi::PatchSettings(const query& theQuery, const s
                 resp.jsonData.append(check.jsonData);
             }
 
-            if(resp.nHttpCode == 200)   //error somewhere
+            if(resp.nHttpCode == 200)   //no error
             {
-                DoPatchSettings(request.jsonData);
+                DoPatchSettings(request.jsonData, sSection);
             }
             return resp;
         }
@@ -331,16 +408,20 @@ pml::restgoose::response RemoteApi::PatchSettings(const query& theQuery, const s
     }
 }
 
-pml::restgoose::response RemoteApi::CheckJsonSettingPatch(const Json::Value& jsPatch)
+pml::restgoose::response RemoteApi::CheckJsonSettingPatch(const Json::Value& jsPatch, wxString sSection)
 {
     pml::restgoose::response resp(400);
 
-    if(jsPatch.isObject() && jsPatch.isMember("section") && jsPatch.isMember("key") && jsPatch.isMember("value"))
+    if(jsPatch.isObject() && (jsPatch.isMember("section") || sSection.empty() == false) && jsPatch.isMember("key") && jsPatch.isMember("value"))
     {
+        if(sSection.empty())
+        {
+            sSection = wxString(jsPatch["section"].asString());
+        }
 
         resp.jsonData = jsPatch;
 
-        auto itSection = m_mSettings.find(wxString(jsPatch["section"].asString()));
+        auto itSection = m_mSettings.find(sSection);
         if(itSection != m_mSettings.end())
         {
             auto itKey = itSection->second.mKeys.find(wxString(jsPatch["key"].asString()));
@@ -360,12 +441,14 @@ pml::restgoose::response RemoteApi::CheckJsonSettingPatch(const Json::Value& jsP
             }
             else
             {
-                resp.jsonData["reason"] = "Section "+jsPatch["section"].asString()+" has no key "+jsPatch["key"].asString();
+                resp.nHttpCode = 404;
+                resp.jsonData["reason"] = "Section "+sSection.ToStdString()+" has no key "+jsPatch["key"].asString();
             }
         }
         else
         {
-            resp.jsonData["reason"] = "Settings has no section "+jsPatch["section"].asString();
+            resp.nHttpCode = 404;
+            resp.jsonData["reason"] = "Settings has no section "+sSection.ToStdString();
         }
     }
     else
@@ -507,11 +590,18 @@ pml::restgoose::response RemoteApi::CheckJsonSettingPatchConstraint(const Json::
     }
 }
 
-void RemoteApi::DoPatchSettings(const Json::Value& jsArray)
+void RemoteApi::DoPatchSettings(const Json::Value& jsArray, const wxString& sSection)
 {
     for(Json::ArrayIndex ai = 0; ai < jsArray.size(); ai++)
     {
-        Settings::Get().Write(jsArray[ai]["section"].asString(), jsArray[ai]["key"].asString(), jsArray[ai]["value"].asString());
+        if(sSection.empty())
+        {
+            Settings::Get().Write(jsArray[ai]["section"].asString(), jsArray[ai]["key"].asString(), jsArray[ai]["value"].asString());
+        }
+        else
+        {
+            Settings::Get().Write(sSection, jsArray[ai]["key"].asString(), jsArray[ai]["value"].asString());
+        }
     }
 }
 
@@ -665,6 +755,7 @@ pml::restgoose::response RemoteApi::DeleteWavFile(const query& theQuery, const s
                     }
                     else
                     {
+                        resp.nHttpCode = 404;
                         resp.jsonData["files"].append("Failed to delete "+request.jsonData[ai].asString());
                     }
                 }
@@ -684,12 +775,7 @@ pml::restgoose::response RemoteApi::DeleteWavFile(const query& theQuery, const s
 
 pml::restgoose::response RemoteApi::GetAoipSources(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
 {
-    wxArrayString asQuery = wxStringTokenize(wxString(theQuery.Get()), "&");
-    std::map<std::string, std::string> mQuery;
-    for(size_t i = 0; i < asQuery.GetCount(); i++)
-    {
-        mQuery.insert({asQuery[i].Before('=').ToStdString(), asQuery[i].After('=').ToStdString()});
-    }
+    auto mQuery = ConvertQueryToMap(theQuery);
 
     pml::restgoose::response resp;
     resp.jsonData = Json::Value(Json::arrayValue);
@@ -720,19 +806,19 @@ pml::restgoose::response RemoteApi::GetAoipSources(const query& theQuery, const 
             bool bAdd(true);
             for(auto pairQuery : mQuery)
             {
-                if(jsSource.isMember(pairQuery.first))
+                if(jsSource.isMember(pairQuery.first.ToStdString()))
                 {
-                    if(jsSource[pairQuery.first].isString() && jsSource[pairQuery.first].asString() != pairQuery.second)
+                    if(jsSource[pairQuery.first.ToStdString()].isString() && jsSource[pairQuery.first.ToStdString()].asString() != pairQuery.second.ToStdString())
                     {
                         bAdd = false;
                     }
-                    else if(jsSource[pairQuery.first].isArray())
+                    else if(jsSource[pairQuery.first.ToStdString()].isArray())
                     {
                         bool bAdd = false;
                         for(Json::ArrayIndex ai = 0; ai < jsSource["tags"].size(); ++ai)
                         {
-                            if(pairQuery.second.find(jsSource["tags"].asString()+",") != std::string::npos ||
-                               pairQuery.second.find(","+jsSource["tags"].asString()) != std::string::npos)
+                            if(pairQuery.second.ToStdString().find(jsSource["tags"].asString()+",") != std::string::npos ||
+                               pairQuery.second.ToStdString().find(","+jsSource["tags"].asString()) != std::string::npos)
                             {
                                 bAdd = true;
                                 break;
@@ -763,7 +849,7 @@ pml::restgoose::response RemoteApi::PatchAoipSources(const query& theQuery, cons
             for(Json::ArrayIndex ai = 0; ai < request.jsonData.size(); ai++)
             {
                 auto check = CheckJsonAoipPatch(request.jsonData[ai]);
-                if(check.nHttpCode == 400)
+                if(check.nHttpCode != 200)
                 {
                     resp.nHttpCode = 400;
                 }
@@ -887,7 +973,7 @@ pml::restgoose::response RemoteApi::DoPatchAoipUpdate(const Json::Value& jsPatch
     auto source = AoipSourceManager::Get().FindSource(jsPatch["index"].asInt());
     if(source.nIndex == 0)
     {
-        return pml::restgoose::response(400, "Source not found");
+        return pml::restgoose::response(404, "Source not found");
     }
     if(jsPatch.isMember("name"))
     {
@@ -922,7 +1008,7 @@ pml::restgoose::response RemoteApi::DoPatchAoipDelete(const Json::Value& jsPatch
     auto source = AoipSourceManager::Get().FindSource(jsPatch["index"].asInt());
     if(source.nIndex == 0)
     {
-        return pml::restgoose::response(400, "Source not found");
+        return pml::restgoose::response(404, "Source not found");
     }
     AoipSourceManager::Get().DeleteSource(jsPatch["index"].asInt());
     return pml::restgoose::response(200, jsPatch["index"].asString()+" deleted");

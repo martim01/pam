@@ -104,12 +104,40 @@ std::set<wxString> GetTestNames()
 
 std::map<int, wxString> GetAoipSources()
 {
-    return AoipSourceManager::Get().GetSourceNames();
+    return AoipSourceManager::Get().GetSourceNames(false);
 }
 
 std::set<wxString> GetInterfaces()
 {
     return NetworkControl::Get().GetInterfaceNames();
+}
+
+std::set<wxString> GetWavFiles()
+{
+    wxArrayString asFiles;
+    wxDir::GetAllFiles(Settings::Get().GetWavDirectory(), &asFiles, wxT("*.wav"), wxDIR_FILES);
+
+    std::set<wxString> setFiles;
+    for(size_t i = 0; i < asFiles.GetCount(); i++)
+    {
+        wxFileName fn(asFiles[i]);
+        setFiles.insert(fn.GetName());
+    }
+    return setFiles;
+}
+
+std::set<wxString> GetSequences()
+{
+    wxArrayString asFiles;
+    wxDir::GetAllFiles(wxString::Format(wxT("%s/generator"), Settings::Get().GetDocumentDirectory().c_str()), &asFiles, wxT("*.xml"), wxDIR_FILES);
+    std::set<wxString> setFiles;
+
+    for(size_t i = 0; i < asFiles.GetCount(); i++)
+    {
+        wxFileName fn(asFiles[i]);
+        setFiles.insert(fn.GetName());
+    }
+    return setFiles;
 }
 
 
@@ -1220,14 +1248,17 @@ wxString pam2Dialog::Screenshot()
 
 void pam2Dialog::RegisterRemoteApiSettings()
 {
+    pmlLog() << "RegisterRemoteApiSettings";
+
     RemoteApi::Get().RegisterRemoteApiEnum("Input", "Type", {"Disabled", "Soundcard", "AoIP"});
     RemoteApi::Get().RegisterRemoteApiCallback("Input", "AoIP", &GetAoipSources);
 
-    //RemoteApi::Get().RegisterRemoteApiEnum("Input", "Device", SoundcardManager::Get().GetInputDevices());
+    RemoteApi::Get().RegisterRemoteApiEnum("Input", "Device", SoundcardManager::Get().GetInputDevices());
 
     RemoteApi::Get().RegisterRemoteApiEnum("Server", "Stream", {wxString("OnDemand"), "AlwaysOn"});
     RemoteApi::Get().RegisterRemoteApiEnum("Server", "PacketTime", {{125, "125"}, {250,"250"}, {333,"333"}, {1000,"1000"}, {4000,"4000"}});
     RemoteApi::Get().RegisterRemoteApiEnum("Server", "SampleRate", {{44100,"44100"}, {48000,"48000"}, {96000,"96000"}});
+
 
     RemoteApi::Get().RegisterRemoteApiEnum("Server", "Bits", {{16,"16"}, {24,"24"}});
     RemoteApi::Get().RegisterRemoteApiEnum("Server", "RTCP", {{0,"Off"}, {1,"On"}});
@@ -1236,14 +1267,14 @@ void pam2Dialog::RegisterRemoteApiSettings()
     RemoteApi::Get().RegisterRemoteApi("Server", "RTSP_Address");
     RemoteApi::Get().RegisterRemoteApiRangeInt("Server", "RTSP_Port", {1,65535});
     RemoteApi::Get().RegisterRemoteApiRangeInt("Server", "RTP_Port", {1,65535});
-    //RemoteApi::Get().RegisterRemoteApiEnum("Server", "RTSP_Interface", GetInterfaces());
+
+//    RemoteApi::Get().RegisterRemoteApiEnum("Server", "RTSP_Interface", GetInterfaces());
     RemoteApi::Get().RegisterRemoteApiEnum("Server", "SAP", {{0,"Off"}, {1,"On"}});
     RemoteApi::Get().RegisterRemoteApiEnum("Server", "DNS-SD", {{0,"Off"}, {1,"On"}});
     RemoteApi::Get().RegisterRemoteApiRangeInt("Server", "Channels", {1,8});
     RemoteApi::Get().RegisterRemoteApiRangeInt("Server", "RTPMap", {96,127});
 
-    //RemoteApi::Get().RegisterRemoteApiString("Server", "RTSP_Address");
-
+    //RemoteApi::Get().RegisterRemoteApi("Server", "RTSP_Address");
 
 
     RemoteApi::Get().RegisterRemoteApiEnum("Monitor", "Source", {{0,"Input"}, {1,"Output"}});
@@ -1258,10 +1289,10 @@ void pam2Dialog::RegisterRemoteApiSettings()
     RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_7", {0,7});
     RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_8", {0,7});
 
-    //RemoteApi::Get().RegisterRemoteApiCallback("Output", "File" theCallbackthatgetstheresults);
-    //RemoteApi::Get().RegisterRemoteApiCallback("Output", "Sequence" theCallbackthatgetstheresults);
+    RemoteApi::Get().RegisterRemoteApiCallback("Output", "File", GetWavFiles);
+    RemoteApi::Get().RegisterRemoteApiCallback("Output", "Sequence", GetSequences);
 
-    //RemoteApi::Get().RegisterRemoteApiEnum("Output", "Device", SoundcardManager::Get().GetOutputDevices());
+    RemoteApi::Get().RegisterRemoteApiEnum("Output", "Device", SoundcardManager::Get().GetOutputDevices());
     RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Latency", {0,400});
 
     RemoteApi::Get().RegisterRemoteApiRangeInt("Generator", "Frequency", {1,22000});
@@ -1284,6 +1315,12 @@ void pam2Dialog::RegisterRemoteApiSettings()
 
     RemoteApi::Get().RegisterRemoteApiEnum("Tests", "Log", {{0,"Off"}, {1,"On"}});
     RemoteApi::Get().RegisterRemoteApiEnum("Tests", "LogView", {{0,"Off"}, {1,"On"}});
+
+    RemoteApi::Get().RegisterRemoteApiEnum("NMOS", "Node", {{0,"Off"}, {1, "Receiver Only"}, {2, "Sender Only"}, {3, "Receiver and Sender"}});
+    RemoteApi::Get().RegisterRemoteApiEnum("NMOS", "Client", {{0,"Off"}, {1, "IS04 Connection"}, {2, "IS05 Connection"}});
+
+
+    pmlLog() << "RegisterRemoteApiSettings:Done";
 
 }
 

@@ -131,8 +131,12 @@ pnlSettingsNmos::pnlSettingsNmos(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_plstRegistration->SetButtonFactory(std::shared_ptr<wmNodeButtonFactory>());
 	m_plstQuery->SetButtonFactory(std::shared_ptr<wmNodeButtonFactory>());
 
-    m_plstNode->SelectButton(Settings::Get().Read("NMOS", "Node", 0));
-    m_plstClient->SelectButton(Settings::Get().Read("NMOS", "Client", 0));
+	m_plstNode->ConnectToSetting("NMOS", "Node", size_t(0));
+	m_plstClient->ConnectToSetting("NMOS", "Client", size_t(0));
+
+
+    Settings::Get().AddHandler(this, "NMOS");
+    Bind(wxEVT_SETTING_CHANGED, &pnlSettingsNmos::OnSettingChanged, this);
 
 
     Bind(wxEVT_NMOS_REGNODE_FOUND, &pnlSettingsNmos::OnNmosRegistrationNodeFound, this);
@@ -152,18 +156,25 @@ pnlSettingsNmos::~pnlSettingsNmos()
 	//*)
 }
 
+void pnlSettingsNmos::OnSettingChanged(SettingEvent& event)
+{
+    #ifdef __NMOS__
+    if(event.GetKey() == "Node")
+    {
+        m_plstClient->Enable(event.GetValue(0l) != NmosManager::NODE_OFF);
+    }
+    #endif // __NMOS__
+}
+
 
 void pnlSettingsNmos::OnlstNodeSelected(wxCommandEvent& event)
 {
-    #ifdef __NMOS__
-    Settings::Get().Write("NMOS", "Node", event.GetInt());
-    m_plstClient->Enable(event.GetInt() != NmosManager::NODE_OFF);
-    #endif
+
 }
 
 void pnlSettingsNmos::OnlstClientSelected(wxCommandEvent& event)
 {
-    Settings::Get().Write(wxT("NMOS"), wxT("Client"), event.GetInt());
+
 }
 
 

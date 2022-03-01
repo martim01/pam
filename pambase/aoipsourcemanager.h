@@ -54,7 +54,7 @@ class PAMBASE_IMPEXPORT AoipSourceManager : public wxEvtHandler
         bool SaveSources();
 
         const std::map<int, AoIPSource>& GetSources() const { return m_mSources;}
-        std::map<int, wxString> GetSourceNames();
+        std::map<int, wxString> GetSourceNames(bool bManual=true);
 
         AoIPSource FindSource(int nIndex) const;
         AoIPSource FindSource(const wxString& sName) const;

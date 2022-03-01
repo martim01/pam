@@ -91,6 +91,13 @@ void pnlSettingsRemote::OnSettingChange(SettingEvent& event)
     }
     else if(event.GetKey() == "_Interface")
     {
-        Settings::Get().Write("RemoteApi","Interface", NetworkControl::Get().GetAddress(event.GetValue()));
+        if(event.GetValue() == "Any")
+        {
+            Settings::Get().Write("RemoteApi","Interface","0.0.0.0");
+        }
+        else
+        {
+            Settings::Get().Write("RemoteApi","Interface", NetworkControl::Get().GetAddress(event.GetValue()));
+        }
     }
 }

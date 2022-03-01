@@ -78,19 +78,21 @@ void GeneratorPluginBuilder::InitRemoteApi()
 {
     pmlLog() << "Generator: " << GetName().ToStdString() << "\tInitRemoteApi";
     RemoteApi::Get().AddPluginEndpoint(pml::restgoose::GET, endpoint("/x-pam/plugins/generator/"+GetName().ToStdString()), std::bind(&GeneratorPluginBuilder::GetStatus, this, _1,_2,_3,_4));
+    RemoteApi::Get().AddPluginEndpoint(pml::restgoose::PATCH, endpoint("/x-pam/plugins/generator/"+GetName().ToStdString()), std::bind(&GeneratorPluginBuilder::PatchSetting, this, _1,_2,_3,_4));
 }
 
 pml::restgoose::response GeneratorPluginBuilder::GetStatus(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
 {
-    pml::restgoose::response resp;
-    auto pSection = Settings::Get().GetSection(GetSection());
-    if(pSection)
-    {
-        for(auto pairData : pSection->GetData())
-        {
-            resp.jsonData[pairData.first.ToStdString()] = pairData.second.ToStdString();
-        }
-    }
+    wxString sKey = RemoteApi::Get().ConvertQueryToMap(theQuery)["key"];
+
+    pml::restgoose::response resp(200);
+    resp.jsonData = RemoteApi::Get().GetSectionJson(GetSection(), sKey);
     return resp;
 
 }
+
+pml::restgoose::response GeneratorPluginBuilder::PatchSetting(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
+{
+    return RemoteApi::Get().DoPatchSettings(vData, GetSection());
+}
+

@@ -133,19 +133,15 @@ MonitorPluginBuilder::~MonitorPluginBuilder()
 void MonitorPluginBuilder::InitRemoteApi()
 {
     RemoteApi::Get().AddPluginEndpoint(pml::restgoose::GET, endpoint("/x-pam/plugins/monitor/"+GetName().ToStdString()), std::bind(&MonitorPluginBuilder::GetStatus, this, _1,_2,_3,_4));
+    RemoteApi::Get().AddPluginEndpoint(pml::restgoose::PATCH, endpoint("/x-pam/plugins/monitor/"+GetName().ToStdString()), std::bind(&MonitorPluginBuilder::PatchSetting, this, _1,_2,_3,_4));
 }
 
 pml::restgoose::response MonitorPluginBuilder::GetStatus(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
 {
-    pml::restgoose::response resp;
-    auto pSection = Settings::Get().GetSection(GetSection());
-    if(pSection)
-    {
-        for(auto pairData : pSection->GetData())
-        {
-            resp.jsonData[pairData.first.ToStdString()] = pairData.second.ToStdString();
-        }
-    }
+    wxString sKey = RemoteApi::Get().ConvertQueryToMap(theQuery)["key"];
+
+    pml::restgoose::response resp(200);
+    resp.jsonData = RemoteApi::Get().GetSectionJson(GetSection(), sKey);
     return resp;
 
 }
@@ -205,3 +201,10 @@ void MonitorPluginBuilder::RegisterRemoteApiCSV(const wxString& sKey, const std:
 {
     RemoteApi::Get().RegisterRemoteApiCSV(GetSection(), sKey, setEnum);
 }
+
+pml::restgoose::response MonitorPluginBuilder::PatchSetting(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
+{
+    return RemoteApi::Get().DoPatchSettings(vData, GetSection());
+}
+
+

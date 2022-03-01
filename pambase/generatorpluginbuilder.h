@@ -55,6 +55,7 @@ class PAMBASE_IMPEXPORT GeneratorPluginBuilder : public wxEvtHandler
 
         void InitRemoteApi();
         pml::restgoose::response GetStatus(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser);
+        pml::restgoose::response PatchSetting(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser);
 
         wxEvtHandler* m_pHandler;
         double m_dSampleRate;
