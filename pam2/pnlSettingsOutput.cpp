@@ -310,6 +310,7 @@ pnlSettingsOutput::~pnlSettingsOutput()
 {
 	//(*Destroy(pnlSettingsOutput)
 	//*)
+	Settings::Get().RemoveHandler(this);
 }
 
 

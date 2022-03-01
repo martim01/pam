@@ -291,6 +291,7 @@ pnlSettings::~pnlSettings()
 {
 	//(*Destroy(pnlSettings)
 	//*)
+	Settings::Get().RemoveHandler(this);
 }
 
 
@@ -445,7 +446,7 @@ void pnlSettings::ShowRTPDefined()
     m_plstDevices->AddButton("OFF", wxNullBitmap, (void*)0);
     for(auto pairSource : AoipSourceManager::Get().GetSources())
     {
-        if(pairSource.first  > 0)
+        if(pairSource.first > 0)
         {
             m_plstDevices->AddButton(pairSource.second.sName, wxNullBitmap, (void*)pairSource.first);
         }

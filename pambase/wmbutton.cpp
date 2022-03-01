@@ -169,6 +169,7 @@ wmButton::~wmButton()
     {
         ReleaseMouse();
     }
+    Settings::Get().RemoveHandler(this);
 }
 
 void wmButton::SetLabel(const wxString& sLabel)

@@ -366,7 +366,7 @@ pam2Dialog::~pam2Dialog()
     }
     delete m_pCursor;
 
-
+    Settings::Get().RemoveHandler(this);
 }
 
 void pam2Dialog::OnQuit(wxCommandEvent& event)

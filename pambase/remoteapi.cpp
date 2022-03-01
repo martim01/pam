@@ -137,6 +137,7 @@ RemoteApi& RemoteApi::Get()
 RemoteApi::~RemoteApi()
 {
     m_Server.Stop();
+    Settings::Get().RemoveHandler(this);
 }
 
 

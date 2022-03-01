@@ -110,7 +110,7 @@ bool  wmLabel::Create(wxWindow* parent, wxWindowID id, const wxBitmap& bitmap, c
 
 wmLabel::~wmLabel()
 {
-
+    Settings::Get().RemoveHandler(this);
 }
 
 void wmLabel::SetLabel(const wxString& sLabel)

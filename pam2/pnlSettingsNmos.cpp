@@ -154,6 +154,7 @@ pnlSettingsNmos::~pnlSettingsNmos()
 {
 	//(*Destroy(pnlSettingsNmos)
 	//*)
+	Settings::Get().RemoveHandler(this);
 }
 
 void pnlSettingsNmos::OnSettingChanged(SettingEvent& event)

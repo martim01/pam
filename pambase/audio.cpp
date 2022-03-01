@@ -166,7 +166,7 @@ Audio::~Audio()
             pmlLog(pml::LOG_ERROR) << "Audio\tFailed to stop PortAudio stream: " << Pa_GetErrorText(err);
         }
     }
-
+    Settings::Get().RemoveHandler(this);
 }
 
 void Audio::InputCallback(const float* pBuffer, size_t nFrameCount, int nFlags)
@@ -400,12 +400,12 @@ const std::vector<char>& Audio::GetOutputChannels()
 
 void Audio::OnSettingChanged(const SettingEvent& event)
 {
-    if(event.GetSection() == "Output" && event.GetKey().Left(5) == "Ratio")
+    if(event.GetSection() == "Output" && event.GetKey().BeforeFirst('_') == "Ratio")
     {
         unsigned long nChannel;
         if(event.GetKey().AfterFirst('_').ToULong(&nChannel) && nChannel < m_vOutputRatio.size())
         {
-            m_vOutputRatio[nChannel] = Settings::Get().Read("Output", event.GetKey(), 1.0);
+            m_vOutputRatio[nChannel] = event.GetValue(1.0);
         }
     }
 }

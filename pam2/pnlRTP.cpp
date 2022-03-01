@@ -296,7 +296,7 @@ pnlRTP::~pnlRTP()
 {
 	//(*Destroy(pnlRTP)
 	//*)
-
+    Settings::Get().RemoveHandler(this);
 }
 
 
@@ -311,7 +311,16 @@ void pnlRTP::FillInEdit()
     AoIPSource source = AoipSourceManager::Get().FindSource(m_nSelectedSource);
 
     m_pedtName->SetValue(source.sName);
-    m_pedtUrl->SetValue(source.sDetails);
+    if(source.sDetails.empty() == false)
+    {
+        m_pedtUrl->SetValue(source.sDetails);
+        m_pedtUrl->Enable(true);
+    }
+    else
+    {
+        m_pedtUrl->SetValue("SDP");
+        m_pedtUrl->Enable(false);
+    }
 
     m_pedtName->SetFocus();
     m_pSwp1->ChangeSelection(1);
@@ -377,7 +386,14 @@ void pnlRTP::ListSources()
         if(pairSource.first > 0)
         {
             m_plstSources->AddButton(pairSource.second.sName, wxNullBitmap, (void*)pairSource.first);
-            m_plstSources->AddButton(pairSource.second.sDetails, wxNullBitmap, (void*)pairSource.first);
+            if(pairSource.second.sDetails.empty() == false)
+            {
+                m_plstSources->AddButton(pairSource.second.sDetails, wxNullBitmap, (void*)pairSource.first);
+            }
+            else
+            {
+                m_plstSources->AddButton("SDP", wxNullBitmap, (void*)pairSource.first);
+            }
         }
     }
     m_plstSources->Thaw();

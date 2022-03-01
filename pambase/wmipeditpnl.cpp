@@ -107,6 +107,7 @@ wmipeditpnl::~wmipeditpnl()
 {
 	//(*Destroy(wmipeditpnl)
 	//*)
+	Settings::Get().RemoveHandler(this);
 }
 
 

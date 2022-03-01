@@ -38,6 +38,7 @@ NmosManager::~NmosManager()
 {
     StopClient();
     StopNode();
+    Settings::Get().RemoveHandler(this);
 }
 
 

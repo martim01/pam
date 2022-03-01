@@ -49,6 +49,7 @@ pnlLog::~pnlLog()
 	//(*Destroy(pnlLog)
 	//*)
 	pml::LogStream::RemoveOutput(m_nLogOutput);
+	Settings::Get().RemoveHandler(this);
 }
 
 void pnlLog::SetLogControl(pnlLogControl* pControl)

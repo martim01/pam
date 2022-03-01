@@ -36,6 +36,7 @@ wmSwitcherPanel::wmSwitcherPanel() : pmPanel()
 wmSwitcherPanel::~wmSwitcherPanel()
 {
     //dtor
+    Settings::Get().RemoveHandler(this);
 }
 
 wmSwitcherPanel::wmSwitcherPanel(wxWindow* pParent, wxWindowID id, const wxPoint& pos, const wxSize& size, long nStyle, const wxString& sName)

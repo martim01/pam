@@ -43,7 +43,7 @@ pnlAoipManual::pnlAoipManual(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	m_pLbl9->GetUiRect().SetGradient(0);
 	m_pLbl9->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl9->SetBackgroundColour(wxColour(64,0,128));
-	m_pipServer = new wmIpEditPnl(this, ID_M_PIP1, wxPoint(110,15), wxSize(200,40));
+	m_pipServer = new wmipeditpnl(this, ID_M_PIP1, wxPoint(110,15), wxSize(200,40));
 	m_pipServer->SetValue(wxEmptyString);
 	m_pLbl1 = new wmLabel(this, ID_M_PLBL1, _("PORT"), wxPoint(310,15), wxSize(50,40), 0, _T("ID_M_PLBL1"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
@@ -81,7 +81,7 @@ pnlAoipManual::pnlAoipManual(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	m_pbtnStream = new wmButton(this, ID_M_PBTN3, _("Receive"), wxPoint(260,161), wxSize(268,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
 	m_pbtnStream->SetBackgroundColour(wxColour(0,128,0));
 	m_pbtnStream->SetToggle(true, wxT("Stop"), wxT("Start"), 40);
-	m_pbtnSave = new wmButton(this, ID_M_PBTN5, _("Save"), wxPoint(340,315), wxSize(100,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN5"));
+	m_pbtnSave = new wmButton(this, ID_M_PBTN5, _("Save"), wxPoint(340,315), wxSize(100,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN5"));
 	m_pbtnSave->SetBackgroundColour(wxColour(0,128,64));
 	m_pLbl8 = new wmLabel(this, ID_M_PLBL11, _("RTP Payload"), wxPoint(260,105), wxSize(70,40), 0, _T("ID_M_PLBL11"));
 	m_pLbl8->SetBorderState(uiRect::BORDER_NONE);
@@ -130,6 +130,7 @@ pnlAoipManual::~pnlAoipManual()
 {
 	//(*Destroy(pnlAoipManual)
 	//*)
+	Settings::Get().RemoveHandler(this);
 }
 
 

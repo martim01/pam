@@ -82,6 +82,7 @@ wmList::~wmList()
         m_pSlideWnd->Destroy();
     }
     Clear();
+    Settings::Get().RemoveHandler(this);
 }
 
 wmList::wmList(wxWindow* pParent, wxWindowID id, const wxPoint& pos, const wxSize& size, unsigned int nStyle, unsigned short nScroll, const wxSize& szButtons, unsigned int nColumns, const wxSize& szGap) : pmControl()

@@ -78,6 +78,7 @@ pnlSettingsRemote::~pnlSettingsRemote()
 {
 	//(*Destroy(pnlSettingsRemote)
 	//*)
+	Settings::Get().RemoveHandler(this);
 }
 
 

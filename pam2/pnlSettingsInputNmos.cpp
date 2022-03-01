@@ -67,6 +67,7 @@ pnlSettingsInputNmos::~pnlSettingsInputNmos()
 {
 	//(*Destroy(pnlSettingsInputNmos)
 	//*)
+	Settings::Get().RemoveHandler(this);
 }
 
 

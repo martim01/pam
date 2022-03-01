@@ -141,6 +141,7 @@ IOManager::IOManager() :
 IOManager::~IOManager()
 {
     Stop();
+    Settings::Get().RemoveHandler(this);
 }
 
 void IOManager::Stop()

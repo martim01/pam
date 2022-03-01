@@ -41,6 +41,7 @@ TimeManager::TimeManager() :
 TimeManager::~TimeManager()
 {
     //dtor
+    Settings::Get().RemoveHandler(this);
 }
 
 void TimeManager::OnSettingChanged(SettingEvent& event)

@@ -60,6 +60,7 @@ wmEdit::~wmEdit()
     {
         ReleaseMouse();
     }
+    Settings::Get().RemoveHandler(this);
 }
 
 

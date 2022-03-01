@@ -383,6 +383,7 @@ pnlSettingsGenerators::~pnlSettingsGenerators()
 {
 	//(*Destroy(pnlSettingsGenerators)
 	//*)
+	Settings::Get().RemoveHandler(this);
 }
 
 
