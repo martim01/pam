@@ -16,9 +16,9 @@ ptpBuilder::ptpBuilder() : MonitorPluginBuilder()
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&ptpBuilder::OnSettingChanged);
 
-    RegisterRemoteApiEnum("Window", {"Info", "Graph", "Histogram"});
-    RegisterRemoteApiEnum("Data", {"Offset", wxString("Delay")});
-    RegisterRemoteApiEnum("reset", {{0,""},{1,"Clear All"}});
+    RegisterRemoteApiEnum("Window", {"Info", "Graph", "Histogram"}, "Info");
+    RegisterRemoteApiEnum("Data", {"Offset", wxString("Delay")}, "Offset");
+    RegisterRemoteApiEnum("reset", {{0,""},{1,"Clear All"}},0);
 }
 
 void ptpBuilder::SetAudioData(const timedbuffer* pBuffer)

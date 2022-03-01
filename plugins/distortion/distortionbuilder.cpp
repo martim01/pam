@@ -4,7 +4,7 @@
 DistortionBuilder::DistortionBuilder() : TestPluginBuilder(),
 m_ppnlDistortion(0)
 {
-    RegisterRemoteApiEnum("reset", {{0, ""}, {1, "Reset"}});
+    RegisterRemoteApiEnum("reset", {{0, ""}, {1, "Reset"}},0);
 }
 
 DistortionBuilder::~DistortionBuilder()

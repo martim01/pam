@@ -29,8 +29,6 @@ pnlDisplay::pnlDisplay(wxWindow* parent,fftphaseBuilder* pBuilder, wxWindowID id
 	//*)
 	m_pbtnFall = new wmButton(this,wxNewId(), wxT("Fall"), wxPoint(0,150), wxSize(200, 40),wmButton::STYLE_SELECT);
 	m_pbtnFall->SetToggle(true, wxT("Off"), wxT("On"), 45);
-    m_pbtnFall->ToggleSelection(pBuilder->ReadSetting(wxT("Fall"), 0), true);
-
     m_pbtnFall->ConnectToSetting(m_pBuilder->GetSection(), "Fall", true);
 
     m_plstFFT_Display->AddButton(wxT("Graph"));

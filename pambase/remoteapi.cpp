@@ -211,43 +211,6 @@ pml::restgoose::response RemoteApi::GetSettings(const query& theQuery, const std
         if(sSection.empty() || sSection.CmpNoCase(pairSection.first) == 0)
         {
             resp.jsonData[pairSection.first.ToStdString()] = GetSectionJson(pairSection.first, pairSection.second, sKey);
-            for(auto pairData : pairSection.second.mKeys)
-            {
-                if(sKey.empty() || sKey.CmpNoCase(pairData.first) == 0)
-                {
-                    Json::Value jsKey;
-                    jsKey["current"] = Settings::Get().Read(pairSection.first, pairData.first, "").ToStdString();
-
-                    switch(pairData.second.eType)
-                    {
-                        case section::constraint::enumType::STRING_ENUM:
-                            jsKey["enum"] = GetJson(pairData.second.setEnum);
-                            break;
-                        case section::constraint::enumType::INT_ENUM:
-                            jsKey["enum"] = GetJson(pairData.second.mEnumNum);
-                            break;
-                        case section::constraint::enumType::STRING_CALLBACK:
-                            jsKey["enum"] = GetJson(pairData.second.funcStringEnum);
-                            break;
-                        case section::constraint::enumType::INT_CALLBACK:
-                            jsKey["enum"] = GetJson(pairData.second.funcIntEnum);
-                            break;break;
-                        case section::constraint::enumType::INT_RANGE:
-                            jsKey["range"]["minimum"] = pairData.second.nRange.first;
-                            jsKey["range"]["maximum"] = pairData.second.nRange.second;
-                            break;
-                        case section::constraint::enumType::DOUBLE_RANGE:
-                            jsKey["range"]["minimum"] = pairData.second.dRange.first;
-                            jsKey["range"]["maximum"] = pairData.second.dRange.second;
-                            break;
-                        case section::constraint::enumType::CSV:
-                            jsKey["csv"] = GetJson(pairData.second.setEnum);
-                            break;
-                    }
-
-                    resp.jsonData[pairSection.first.ToStdString()][pairData.first.ToStdString()] = jsKey;
-                }
-            }
         }
     }
     return resp;
@@ -259,7 +222,6 @@ Json::Value RemoteApi::GetSectionJson(const wxString& sSection, const wxString& 
     if(itSection != m_mSettings.end())
     {
         return GetSectionJson(itSection->first, itSection->second, sKeyFilter);
-        Json::Value GetSectionJson(const wxString& sSectionName, const section& aSection, const wxString& sKeyFilter);
     }
     return Json::Value(Json::objectValue);
 }
@@ -272,45 +234,38 @@ Json::Value RemoteApi::GetSectionJson(const wxString& sSectionName, const sectio
         if(sKeyFilter.empty() || sKeyFilter.CmpNoCase(pairData.first) == 0)
         {
             Json::Value jsKey;
-            double dValue;
-            long nValue;
-            if(Settings::Get().Read(sSectionName, pairData.first, "").ToLong(&nValue))
-            {
-                jsKey["current"] = nValue;
-            }
-            else if(Settings::Get().Read(sSectionName, pairData.first, "").ToDouble(&dValue))
-            {
-                jsKey["current"] = dValue;
-            }
-            else
-            {
-                jsKey["current"] = Settings::Get().Read(sSectionName, pairData.first, "").ToStdString();
-            }
 
             switch(pairData.second.eType)
             {
                 case section::constraint::enumType::STRING_ENUM:
                     jsKey["enum"] = GetJson(pairData.second.setEnum);
+                    jsKey["current"] = Settings::Get().Read(sSectionName, pairData.first, pairData.second.initial.s).ToStdString();
                     break;
                 case section::constraint::enumType::INT_ENUM:
                     jsKey["enum"] = GetJson(pairData.second.mEnumNum);
+                    jsKey["current"] = Settings::Get().Read(sSectionName, pairData.first, pairData.second.initial.n);
                     break;
                 case section::constraint::enumType::STRING_CALLBACK:
                     jsKey["enum"] = GetJson(pairData.second.funcStringEnum);
+                    jsKey["current"] = Settings::Get().Read(sSectionName, pairData.first, pairData.second.initial.s).ToStdString();
                     break;
                 case section::constraint::enumType::INT_CALLBACK:
                     jsKey["enum"] = GetJson(pairData.second.funcIntEnum);
+                    jsKey["current"] = Settings::Get().Read(sSectionName, pairData.first, pairData.second.initial.n);
                     break;break;
                 case section::constraint::enumType::INT_RANGE:
                     jsKey["range"]["minimum"] = pairData.second.nRange.first;
                     jsKey["range"]["maximum"] = pairData.second.nRange.second;
+                    jsKey["current"] = Settings::Get().Read(sSectionName, pairData.first, pairData.second.initial.n);
                     break;
                 case section::constraint::enumType::DOUBLE_RANGE:
                     jsKey["range"]["minimum"] = pairData.second.dRange.first;
                     jsKey["range"]["maximum"] = pairData.second.dRange.second;
+                    jsKey["current"] = Settings::Get().Read(sSectionName, pairData.first, pairData.second.initial.d);
                     break;
                 case section::constraint::enumType::CSV:
                     jsKey["csv"] = GetJson(pairData.second.setEnum);
+                    jsKey["current"] = Settings::Get().Read(sSectionName, pairData.first, pairData.second.initial.s).ToStdString();
                     break;
             }
 
@@ -1028,52 +983,52 @@ void RemoteApi::SendSettingWebsocketMessage(const Json::Value& jsMessage)
     m_Server.SendWebsocketMessage({endpoint("/x-pam/ws/setting")}, jsMessage);
 }
 
-void RemoteApi::RegisterRemoteApiCSV(const wxString& sSection, const wxString& sKey, const std::set<wxString>& setEnum)
+void RemoteApi::RegisterRemoteApiCSV(const wxString& sSection, const wxString& sKey, const std::set<wxString>& setEnum, const wxString& sDefault)
 {
     auto itSection = m_mSettings.insert(std::make_pair(sSection, section())).first;
-    itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint(setEnum, true)));
+    itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint(setEnum, sDefault, true)));
 }
 
-void RemoteApi::RegisterRemoteApiEnum(const wxString& sSection, const wxString& sKey, const std::set<wxString>& setEnum)
+void RemoteApi::RegisterRemoteApiEnum(const wxString& sSection, const wxString& sKey, const std::set<wxString>& setEnum, const wxString& sDefault)
 {
     auto itSection = m_mSettings.insert(std::make_pair(sSection, section())).first;
-    itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint(setEnum)));
+    itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint(setEnum, sDefault)));
 }
 
-void RemoteApi::RegisterRemoteApiRangeDouble(const wxString& sSection, const wxString& sKey, const std::pair<double, double>& dRange)
+void RemoteApi::RegisterRemoteApiRangeDouble(const wxString& sSection, const wxString& sKey, const std::pair<double, double>& dRange, double dDefault)
 {
     auto itSection = m_mSettings.insert(std::make_pair(sSection, section())).first;
-    itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint(dRange)));
+    itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint(dRange, dDefault)));
 }
 
-void RemoteApi::RegisterRemoteApiEnum(const wxString& sSection, const wxString& sKey, const std::map<int, wxString>& mEnum)
+void RemoteApi::RegisterRemoteApiEnum(const wxString& sSection, const wxString& sKey, const std::map<int, wxString>& mEnum, int nDefault)
 {
     auto itSection = m_mSettings.insert(std::make_pair(sSection, section())).first;
-    itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint(mEnum)));
+    itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint(mEnum, nDefault)));
 }
 
-void RemoteApi::RegisterRemoteApiRangeInt(const wxString& sSection, const wxString& sKey, const std::pair<int, int>& nRange)
+void RemoteApi::RegisterRemoteApiRangeInt(const wxString& sSection, const wxString& sKey, const std::pair<int, int>& nRange, int nDefault)
 {
     auto itSection = m_mSettings.insert(std::make_pair(sSection, section())).first;
-    itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint(nRange)));
+    itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint(nRange, nDefault)));
 }
 
-void RemoteApi::RegisterRemoteApiCallback(const wxString& sSection, const wxString& sKey, std::function<std::set<wxString>()> func)
+void RemoteApi::RegisterRemoteApiCallback(const wxString& sSection, const wxString& sKey, std::function<std::set<wxString>()> func, const wxString& sDefault)
 {
     auto itSection = m_mSettings.insert(std::make_pair(sSection, section())).first;
-    itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint(func)));
+    itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint(func, sDefault)));
 }
 
-void RemoteApi::RegisterRemoteApiCallback(const wxString& sSection, const wxString& sKey, std::function<std::map<int, wxString>()> func)
+void RemoteApi::RegisterRemoteApiCallback(const wxString& sSection, const wxString& sKey, std::function<std::map<int, wxString>()> func, int nDefault)
 {
     auto itSection = m_mSettings.insert(std::make_pair(sSection, section())).first;
-    itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint(func)));
+    itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint(func, nDefault)));
 }
 
-void RemoteApi::RegisterRemoteApi(const wxString& sSection, const wxString& sKey)
+void RemoteApi::RegisterRemoteApi(const wxString& sSection, const wxString& sKey, const wxString& sDefault)
 {
     auto itSection = m_mSettings.insert(std::make_pair(sSection, section())).first;
-    itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint()));
+    itSection->second.mKeys.insert(std::make_pair(sKey, section::constraint(sDefault)));
 }
 
 bool RemoteApi::WebsocketsActive()

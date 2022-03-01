@@ -26,10 +26,10 @@ m_pRadar(0)
     m_nInputChannels = 1;
     m_nDisplayChannel = 0;
 
-    RegisterRemoteApiRangeInt("Routing", {0,7});
-    RegisterRemoteApiEnum("Timeframe", {{10, "10s"},{30, "30s"},{60, "1m"},{300, "5m"},{600, "10m"},{1800, "30m"}});
-    RegisterRemoteApiEnum("RefreshRate", {{50, "50ms"},{100, "100ms"},{250, "250ms"},{500, "500ms"},{1000, "1s"},{10000, "10s"}});
-    RegisterRemoteApiEnum("MeterMode", PPMTypeManager::Get().GetTypes());
+    RegisterRemoteApiRangeInt("Routing", {0,7},0);
+    RegisterRemoteApiEnum("Timeframe", {{10, "10s"},{30, "30s"},{60, "1m"},{300, "5m"},{600, "10m"},{1800, "30m"}}, 60);
+    RegisterRemoteApiEnum("RefreshRate", {{50, "50ms"},{100, "100ms"},{250, "250ms"},{500, "500ms"},{1000, "1s"},{10000, "10s"}}, 1000);
+    RegisterRemoteApiEnum("MeterMode", PPMTypeManager::Get().GetTypes(), "BBC");
 }
 
 RadarBuilder::~RadarBuilder()

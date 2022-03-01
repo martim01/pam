@@ -116,7 +116,7 @@ void pnlTrigger::OnbtnTriggerDown1Click(wxCommandEvent& event)
 
 void pnlTrigger::AlterTrigger(double dMod)
 {
-    double dTrigger = m_pBuilder->ReadSetting(wxT("Trigger"), 0.0);
+    double dTrigger = m_pBuilder->ReadSetting(wxT("Trigger"), 0.5);
     dTrigger += dMod;
     m_pBuilder->WriteSetting(wxT("Trigger"), dTrigger);
 }

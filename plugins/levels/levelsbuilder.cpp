@@ -4,10 +4,10 @@
 LevelsBuilder::LevelsBuilder() : TestPluginBuilder(),
 m_ppnlLevels(0)
 {
-    RegisterRemoteApiEnum("Monitor", {{0, "Level"}, {1,"Range"}, {2, "Min-Max"}});
-    RegisterRemoteApiRangeDouble("Range", {0.0,50.0});
-    RegisterRemoteApiRangeDouble("LevelMin", {-90.0,0.0});
-    RegisterRemoteApiRangeDouble("LevelMax", {-90.0,0.0});
+    RegisterRemoteApiEnum("Monitor", {{0, "Level"}, {1,"Range"}, {2, "Min-Max"}}, 0);
+    RegisterRemoteApiRangeDouble("Range", {0.0,50.0}, 40.0);
+    RegisterRemoteApiRangeDouble("LevelMin", {-90.0,0.0}, -10.0);
+    RegisterRemoteApiRangeDouble("LevelMax", {-90.0,0.0}, -25.0);
 
 }
 

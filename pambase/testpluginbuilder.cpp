@@ -83,43 +83,43 @@ bool TestPluginBuilder::WebsocketsActive()
     return RemoteApi::Get().WebsocketsActive();
 }
 
-void TestPluginBuilder::RegisterRemoteApiEnum(const wxString& sKey, const std::set<wxString>& setEnum)
+void TestPluginBuilder::RegisterRemoteApiEnum(const wxString& sKey, const std::set<wxString>& setEnum, const wxString& sDefault)
 {
-    RemoteApi::Get().RegisterRemoteApiEnum(GetSection(), sKey, setEnum);
+    RemoteApi::Get().RegisterRemoteApiEnum(GetSection(), sKey, setEnum, sDefault);
 }
 
-void TestPluginBuilder::RegisterRemoteApiEnum(const wxString& sKey, const std::map<int, wxString>& mEnum)
+void TestPluginBuilder::RegisterRemoteApiEnum(const wxString& sKey, const std::map<int, wxString>& mEnum, int nDefault)
 {
-    RemoteApi::Get().RegisterRemoteApiEnum(GetSection(), sKey, mEnum);
+    RemoteApi::Get().RegisterRemoteApiEnum(GetSection(), sKey, mEnum, nDefault);
 }
 
-void TestPluginBuilder::RegisterRemoteApiRangeDouble(const wxString& sKey, const std::pair<double, double>& dRange)
+void TestPluginBuilder::RegisterRemoteApiRangeDouble(const wxString& sKey, const std::pair<double, double>& dRange, double dDefault)
 {
-    RemoteApi::Get().RegisterRemoteApiRangeDouble(GetSection(), sKey, dRange);
+    RemoteApi::Get().RegisterRemoteApiRangeDouble(GetSection(), sKey, dRange, dDefault);
 }
 
-void TestPluginBuilder::RegisterRemoteApiRangeInt(const wxString& sKey, const std::pair<int, int>& nRange)
+void TestPluginBuilder::RegisterRemoteApiRangeInt(const wxString& sKey, const std::pair<int, int>& nRange, int nDefault)
 {
-    RemoteApi::Get().RegisterRemoteApiRangeInt(GetSection(), sKey, nRange);
+    RemoteApi::Get().RegisterRemoteApiRangeInt(GetSection(), sKey, nRange, nDefault);
 }
-void TestPluginBuilder::RegisterRemoteApiCallback(const wxString& sKey, std::function<std::set<wxString>()> func)
+void TestPluginBuilder::RegisterRemoteApiCallback(const wxString& sKey, std::function<std::set<wxString>()> func, const wxString& sDefault)
 {
-    RemoteApi::Get().RegisterRemoteApiCallback(GetSection(), sKey, func);
-}
-
-void TestPluginBuilder::RegisterRemoteApiCallback(const wxString& sKey, std::function<std::map<int, wxString>()> func)
-{
-    RemoteApi::Get().RegisterRemoteApiCallback(GetSection(), sKey, func);
+    RemoteApi::Get().RegisterRemoteApiCallback(GetSection(), sKey, func, sDefault);
 }
 
-void TestPluginBuilder::RegisterRemoteApi(const wxString& sKey)
+void TestPluginBuilder::RegisterRemoteApiCallback(const wxString& sKey, std::function<std::map<int, wxString>()> func, int nDefault)
 {
-    RemoteApi::Get().RegisterRemoteApi(GetSection(), sKey);
+    RemoteApi::Get().RegisterRemoteApiCallback(GetSection(), sKey, func, nDefault);
 }
 
-void TestPluginBuilder::RegisterRemoteApiCSV(const wxString& sKey, const std::set<wxString>& setEnum)
+void TestPluginBuilder::RegisterRemoteApi(const wxString& sKey, const wxString& sDefault)
 {
-    RemoteApi::Get().RegisterRemoteApiCSV(GetSection(), sKey, setEnum);
+    RemoteApi::Get().RegisterRemoteApi(GetSection(), sKey, sDefault);
+}
+
+void TestPluginBuilder::RegisterRemoteApiCSV(const wxString& sKey, const std::set<wxString>& setEnum, const wxString& sDefault)
+{
+    RemoteApi::Get().RegisterRemoteApiCSV(GetSection(), sKey, setEnum, sDefault);
 }
 
 

@@ -19,14 +19,14 @@ m_pMeters(0)
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&R128Builder::OnSettingChanged);
 
 
-    RegisterRemoteApiEnum("Calculate", {{0, "Pause"},{1,"Run"}});
-    RegisterRemoteApiEnum("Scale", {{0, "+9"},{1,"+18"}});
-    RegisterRemoteApiEnum("Zero", {{0,"-23"},{1,"Abs"}});
-    RegisterRemoteApiEnum("Show_Short", {{0,"Hide"},{1,"Show"}});
-    RegisterRemoteApiEnum("Show_Momentary", {{0,"Hide"},{1,"Show"}});
-    RegisterRemoteApiEnum("Show_Live", {{0,"Hide"},{1,"Show"}});
-    RegisterRemoteApiEnum("Show_True", {{0,"Hide"},{1,"Show"}});
-    RegisterRemoteApiEnum("Show_Phase", {{0,"Hide"},{1,"Show"}});
+    RegisterRemoteApiEnum("Calculate", {{0, "Pause"},{1,"Run"}}, 1);
+    RegisterRemoteApiEnum("Scale", {{0, "+9"},{1,"+18"}}, 0);
+    RegisterRemoteApiEnum("Zero", {{0,"-23"},{1,"Abs"}}, 0);
+    RegisterRemoteApiEnum("Show_Short", {{0,"Hide"},{1,"Show"}},1);
+    RegisterRemoteApiEnum("Show_Momentary", {{0,"Hide"},{1,"Show"}},1);
+    RegisterRemoteApiEnum("Show_Live", {{0,"Hide"},{1,"Show"}},1);
+    RegisterRemoteApiEnum("Show_True", {{0,"Hide"},{1,"Show"}},1);
+    RegisterRemoteApiEnum("Show_Phase", {{0,"Hide"},{1,"Show"}},1);
 
     m_nInputChannels = 1;
     m_nDisplayChannel = 0;

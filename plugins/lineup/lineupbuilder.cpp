@@ -13,7 +13,7 @@ lineupBuilder::lineupBuilder() : TestPluginBuilder()
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&lineupBuilder::OnSettingChanged);
 
-    RegisterRemoteApiEnum("reset", {{0,""}, {1,"Reset"}});
+    RegisterRemoteApiEnum("reset", {{0,""}, {1,"Reset"}},0);
 }
 
 

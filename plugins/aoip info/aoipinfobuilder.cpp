@@ -19,9 +19,9 @@ m_pInfo(0)
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&AoIPInfoBuilder::OnSettingChanged);
 
-    RegisterRemoteApiEnum("QoS", {{50, "50 ms"},{100, "100 ms"},{250, "250 ms"},{500, "500 ms"},{1000, "1000 ms"},{5000, "5000 ms"}});
-    RegisterRemoteApiEnum("Graph", {"kBit/s", "Packet Gap", "Packet Loss", "Jitter", "Timestamp", "Timestamp Errors", "TS-DF", "Slip"});
-    RegisterRemoteApiEnum("Type", {"Line Graph/s", "Bar Chart", "Histogram"});
+    RegisterRemoteApiEnum("QoS", {{50, "50 ms"},{100, "100 ms"},{250, "250 ms"},{500, "500 ms"},{1000, "1000 ms"},{5000, "5000 ms"}}, 1000);
+    RegisterRemoteApiEnum("Graph", {"kBit/s", "Packet Gap", "Packet Loss", "Jitter", "Timestamp", "Timestamp Errors", "TS-DF", "Slip"}, "kBit/s");
+    RegisterRemoteApiEnum("Type", {"Line Graph/s", "Bar Chart", "Histogram"}, "Line Graph/s");
 
 
 

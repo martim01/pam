@@ -18,15 +18,15 @@ m_pAngleMeters(0)
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&AngleMetersBuilder::OnSettingChanged);
 
-    RegisterRemoteApiEnum("Mode", PPMTypeManager::Get().GetTypes());
-    RegisterRemoteApiEnum("Freeze", {{0,"Off"}, {1,"On"}});
-    RegisterRemoteApiEnum("Peaks", {{0,"Off"}, {1,"Show"}, {2,"Hold"}});
-    RegisterRemoteApiEnum("Speed", {{0,"Slow"}, {1,"Normal"}, {2,"Fast"}});
-    RegisterRemoteApiEnum("M3M6", {{0,"M3"}, {1,"M6"}});
-    RegisterRemoteApiEnum("Stereo", {{0,"Mono"},{1,"Stereo"}});
-    RegisterRemoteApiEnum("DisplayText_Current", {{0,"Off"}, {1,"On"}});
-    RegisterRemoteApiEnum("DisplayText_Peak", {{0,"Off"}, {1,"On"}});
-    RegisterRemoteApiEnum("Surround", {{0,"Off"}, {1,"On"}});
+    RegisterRemoteApiEnum("Mode", PPMTypeManager::Get().GetTypes(), "BBC");
+    RegisterRemoteApiEnum("Freeze", {{0,"Off"}, {1,"On"}}, 0);
+    RegisterRemoteApiEnum("Peaks", {{0,"Off"}, {1,"Show"}, {2,"Hold"}}, 1);
+    RegisterRemoteApiEnum("Speed", {{0,"Slow"}, {1,"Normal"}, {2,"Fast"}}, 1);
+    RegisterRemoteApiEnum("M3M6", {{0,"M3"}, {1,"M6"}}, 0);
+    RegisterRemoteApiEnum("Stereo", {{0,"Mono"},{1,"Stereo"}}, 1);
+    RegisterRemoteApiEnum("DisplayText_Current", {{0,"Off"}, {1,"On"}}, 0);
+    RegisterRemoteApiEnum("DisplayText_Peak", {{0,"Off"}, {1,"On"}}, 0);
+    RegisterRemoteApiEnum("Surround", {{0,"Off"}, {1,"On"}}, 0);
 
 
 }

@@ -20,12 +20,12 @@ m_pMeter(0)
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&SpectogramBuilder::OnSettingChanged);
 
-    RegisterRemoteApiEnum("linear", {{0,"Log"},{1,"Linear"}});
-    RegisterRemoteApiEnum("HeatMap", {{SpectogramMeter::MAP_MONO,"Mono"}, {SpectogramMeter::MAP_HOTCOLD,"Blue-Red"}, {SpectogramMeter::MAP_FIVE,"BCGYR"}, {SpectogramMeter::MAP_PPM,"PPM"}, {SpectogramMeter::MAP_SEVEN,"BlBCGYRWh"}});
-    RegisterRemoteApiEnum("Bins", {{512,"46 Hz"},{1024,"23 Hz"},{1536,"16 Hz"},{2048,"12 Hz"}});
-    RegisterRemoteApiEnum("Window", {{0,"None"},{1,"Hann"},{2,"Hamming"},{3,"Blackman"},{4,"Kaiser"},{5,"KaiserBessel"}});
-    RegisterRemoteApiEnum("Overlap", {{0,"0%%"},{25,"25%%"},{50,"50%%"},{75,"75%%"}});
-    RegisterRemoteApiRangeInt("Routing", {0,7});   //@todo this should be dynamic based on sessions
+    RegisterRemoteApiEnum("linear", {{0,"Log"},{1,"Linear"}},0);
+    RegisterRemoteApiEnum("HeatMap", {{SpectogramMeter::MAP_MONO,"Mono"}, {SpectogramMeter::MAP_HOTCOLD,"Blue-Red"}, {SpectogramMeter::MAP_FIVE,"BCGYR"}, {SpectogramMeter::MAP_PPM,"PPM"}, {SpectogramMeter::MAP_SEVEN,"BlBCGYRWh"}},SpectogramMeter::MAP_PPM);
+    RegisterRemoteApiEnum("Bins", {{512,"46 Hz"},{1024,"23 Hz"},{1536,"16 Hz"},{2048,"12 Hz"}},1024);
+    RegisterRemoteApiEnum("Window", {{0,"None"},{1,"Hann"},{2,"Hamming"},{3,"Blackman"},{4,"Kaiser"},{5,"KaiserBessel"}},4);
+    RegisterRemoteApiEnum("Overlap", {{0,"0%"},{25,"25%"},{50,"50%"},{75,"75%"}},75);
+    RegisterRemoteApiRangeInt("Routing", {0,7},0);   //@todo this should be dynamic based on sessions
 }
 
 void SpectogramBuilder::SetAudioData(const timedbuffer* pBuffer)

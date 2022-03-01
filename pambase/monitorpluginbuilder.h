@@ -78,14 +78,14 @@ class PAMBASE_IMPEXPORT MonitorPluginBuilder : public wxEvtHandler
         void SendWebsocketMessage(const Json::Value& jsMessage);
         bool WebsocketsActive();
 
-        void RegisterRemoteApiEnum(const wxString& sKey, const std::set<wxString>& setEnum);
-        void RegisterRemoteApiEnum(const wxString& sKey, const std::map<int, wxString>& mEnum);
-        void RegisterRemoteApiRangeDouble(const wxString& sKey, const std::pair<double, double>& dRange);
-        void RegisterRemoteApiRangeInt(const wxString& sKey, const std::pair<int, int>& nRange);
-        void RegisterRemoteApiCallback(const wxString& sKey, std::function<std::set<wxString>()> func);
-        void RegisterRemoteApiCallback(const wxString& sKey, std::function<std::map<int, wxString>()> func);
-        void RegisterRemoteApi(const wxString& sKey);
-        void RegisterRemoteApiCSV(const wxString& sKey, const std::set<wxString>& setEnum);
+        void RegisterRemoteApiEnum(const wxString& sKey, const std::set<wxString>& setEnum, const wxString& sDefault);
+        void RegisterRemoteApiEnum(const wxString& sKey, const std::map<int, wxString>& mEnum, int nDefault);
+        void RegisterRemoteApiRangeDouble(const wxString& sKey, const std::pair<double, double>& dRange, double dDefault);
+        void RegisterRemoteApiRangeInt(const wxString& sKey, const std::pair<int, int>& nRange, int nDefault);
+        void RegisterRemoteApiCallback(const wxString& sKey, std::function<std::set<wxString>()> func, const wxString& sDefault);
+        void RegisterRemoteApiCallback(const wxString& sKey, std::function<std::map<int, wxString>()> func, int nDefault);
+        void RegisterRemoteApi(const wxString& sKey, const wxString& sDefault);
+        void RegisterRemoteApiCSV(const wxString& sKey, const std::set<wxString>& setEnum, const wxString& sDefault);
 
 
         wxEvtHandler* m_pHandler;

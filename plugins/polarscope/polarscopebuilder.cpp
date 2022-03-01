@@ -17,7 +17,7 @@ m_pPolarScope(0)
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&PolarScopeBuilder::OnSettingChanged);
 
-    RegisterRemoteApiEnum("Mode", {{0,"Points"}, {1,"Hull"}, {2,"Levels"}});
+    RegisterRemoteApiEnum("Mode", {{0,"Points"}, {1,"Hull"}, {2,"Levels"}},0);
 
     m_nInputChannels = 1;
     m_nDisplayChannel = 0;

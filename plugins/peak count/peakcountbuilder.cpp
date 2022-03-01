@@ -8,7 +8,7 @@ m_ppnlPeakCount(0)
     RegisterForSettingsUpdates(this, "limit");
     Bind(wxEVT_SETTING_CHANGED, &PeakCountBuilder::OnSettingChanged, this);
 
-    RegisterRemoteApiRangeDouble("limit", {-90.0,0.0});
+    RegisterRemoteApiRangeDouble("limit", {-90.0,0.0}, -8.0);
 
 }
 

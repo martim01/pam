@@ -45,14 +45,14 @@ class RemoteApi : public wxEvtHandler
         pml::restgoose::response PatchAoipSources(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser);
 
 
-        void RegisterRemoteApiEnum(const wxString& sSection, const wxString& sKey, const std::set<wxString>& setEnum);
-        void RegisterRemoteApiEnum(const wxString& sSection, const wxString& sKey, const std::map<int, wxString>& setEnum);
-        void RegisterRemoteApiRangeDouble(const wxString& sSection, const wxString& sKey, const std::pair<double, double>& dRange);
-        void RegisterRemoteApiRangeInt(const wxString& sSection, const wxString& sKey, const std::pair<int, int>& dRange);
-        void RegisterRemoteApiCallback(const wxString& sSection, const wxString& sKey, std::function<std::set<wxString>()> func);
-        void RegisterRemoteApiCallback(const wxString& sSection, const wxString& sKey, std::function<std::map<int, wxString>()> func);
-        void RegisterRemoteApi(const wxString& sSection, const wxString& sKey);
-        void RegisterRemoteApiCSV(const wxString& sSection, const wxString& sKey, const std::set<wxString>& setEnum);
+        void RegisterRemoteApiEnum(const wxString& sSection, const wxString& sKey, const std::set<wxString>& setEnum, const wxString& sDefault);
+        void RegisterRemoteApiEnum(const wxString& sSection, const wxString& sKey, const std::map<int, wxString>& setEnum, int nDefault);
+        void RegisterRemoteApiRangeDouble(const wxString& sSection, const wxString& sKey, const std::pair<double, double>& dRange, double dDefault);
+        void RegisterRemoteApiRangeInt(const wxString& sSection, const wxString& sKey, const std::pair<int, int>& nRange, int nDefault);
+        void RegisterRemoteApiCallback(const wxString& sSection, const wxString& sKey, std::function<std::set<wxString>()> func, const wxString& sDefault);
+        void RegisterRemoteApiCallback(const wxString& sSection, const wxString& sKey, std::function<std::map<int, wxString>()> func, int nDefault);
+        void RegisterRemoteApi(const wxString& sSection, const wxString& sKey, const wxString& sDefault);
+        void RegisterRemoteApiCSV(const wxString& sSection, const wxString& sKey, const std::set<wxString>& setEnum, const wxString& sDefault);
 
 
 
@@ -82,14 +82,14 @@ class RemoteApi : public wxEvtHandler
             {
                 enum enumType{FREE, STRING_ENUM, INT_ENUM, INT_RANGE, DOUBLE_RANGE, STRING_CALLBACK, INT_CALLBACK, CSV};
 
-                constraint() : dRange{0.0,0.0}, nRange{0,0}, funcStringEnum(nullptr), funcIntEnum(nullptr), eType(enumType::FREE){}
-                constraint(const std::set<wxString>& setE) : setEnum(setE), dRange{0.0,0.0}, nRange{0,0}, funcStringEnum(nullptr), funcIntEnum(nullptr), eType(enumType::STRING_ENUM){}
-                constraint(const std::set<wxString>& setE, bool bPlaceholder) : setEnum(setE), dRange{0.0,0.0}, nRange{0,0}, funcStringEnum(nullptr), funcIntEnum(nullptr), eType(enumType::CSV){}
-                constraint(const std::map<int, wxString>& mE) : mEnumNum(mE), dRange{0.0,0.0}, nRange{0,0}, funcStringEnum(nullptr), funcIntEnum(nullptr), eType(enumType::INT_ENUM){}
-                constraint(const std::pair<double, double>& dR) : dRange(dR), nRange{0,0}, funcStringEnum(nullptr), funcIntEnum(nullptr), eType(enumType::DOUBLE_RANGE){}
-                constraint(const std::pair<int, int>& nR) : dRange{0.0,0.0}, nRange(nR), funcStringEnum(nullptr), funcIntEnum(nullptr), eType(enumType::INT_RANGE){}
-                constraint(std::function<std::set<wxString>()> func) : dRange{0.0,0.0}, nRange{0,0}, funcStringEnum(func), funcIntEnum(nullptr), eType(enumType::STRING_CALLBACK){}
-                constraint(std::function<std::map<int, wxString>()> func) : dRange{0.0,0.0}, nRange{0,0}, funcStringEnum(nullptr), funcIntEnum(func), eType(enumType::INT_CALLBACK){}
+                constraint(const wxString& sDefault) : dRange{0.0,0.0}, nRange{0,0}, funcStringEnum(nullptr), funcIntEnum(nullptr), eType(enumType::FREE){initial.s = sDefault;}
+                constraint(const std::set<wxString>& setE,const wxString& sDefault) : setEnum(setE), dRange{0.0,0.0}, nRange{0,0}, funcStringEnum(nullptr), funcIntEnum(nullptr), eType(enumType::STRING_ENUM){initial.s = sDefault;}
+                constraint(const std::set<wxString>& setE,const wxString& sDefault, bool bPlaceholder) : setEnum(setE), dRange{0.0,0.0}, nRange{0,0}, funcStringEnum(nullptr), funcIntEnum(nullptr), eType(enumType::CSV){initial.s = sDefault;}
+                constraint(const std::map<int, wxString>& mE, int nDefault) : mEnumNum(mE), dRange{0.0,0.0}, nRange{0,0}, funcStringEnum(nullptr), funcIntEnum(nullptr), eType(enumType::INT_ENUM){initial.n = nDefault;}
+                constraint(const std::pair<double, double>& dR, double dDefault) : dRange(dR), nRange{0,0}, funcStringEnum(nullptr), funcIntEnum(nullptr), eType(enumType::DOUBLE_RANGE){initial.d = dDefault;}
+                constraint(const std::pair<int, int>& nR, int nDefault) : dRange{0.0,0.0}, nRange(nR), funcStringEnum(nullptr), funcIntEnum(nullptr), eType(enumType::INT_RANGE){initial.n = nDefault;}
+                constraint(std::function<std::set<wxString>()> func,const wxString& sDefault) : dRange{0.0,0.0}, nRange{0,0}, funcStringEnum(func), funcIntEnum(nullptr), eType(enumType::STRING_CALLBACK){initial.s = sDefault;}
+                constraint(std::function<std::map<int, wxString>()> func, int nDefault) : dRange{0.0,0.0}, nRange{0,0}, funcStringEnum(nullptr), funcIntEnum(func), eType(enumType::INT_CALLBACK){initial.n = nDefault;}
 
                 std::set<wxString> setEnum;
                 std::map<int, wxString> mEnumNum;
@@ -99,8 +99,15 @@ class RemoteApi : public wxEvtHandler
                 std::function<std::set<wxString>()> funcStringEnum;
                 std::function<std::map<int, wxString>()> funcIntEnum;
 
-
                 enumType eType;
+
+                struct def
+                {
+                    double d;
+                    int n;
+                    wxString s;
+                };
+                def initial;
             };
             std::map<wxString, constraint> mKeys;
         };

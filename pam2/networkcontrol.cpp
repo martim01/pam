@@ -574,7 +574,7 @@ void NetworkControl::ScanWiFi(const wxString& sInterface)
 std::set<wxString> NetworkControl::GetInterfaceNames()
 {
     std::set<wxString> setInt;
-    for(auto pairInt : m_mInterfaces)
+    for(const auto& pairInt : m_mInterfaces)
     {
         setInt.insert(pairInt.first);
     }

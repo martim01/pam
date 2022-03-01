@@ -23,12 +23,12 @@ m_pMeters(0)
 
 
     //Register settings with RemoteAPI
-    RegisterRemoteApiEnum("Mode", PPMTypeManager::Get().GetTypes());
-    RegisterRemoteApiEnum("Freeze", {{0,"Off"}, {1,"On"}});
-    RegisterRemoteApiEnum("Peaks", {{0,"Off"}, {1,"Show"}, {2,"Hold"}});
-    RegisterRemoteApiEnum("Speed", {{0,"Slow"}, {1,"Normal"}, {2,"Fast"}});
-    RegisterRemoteApiEnum("M3M6", {{0,"M3"}, {1,"M6"}});
-    RegisterRemoteApiEnum("Shading", {{0,"Off"}, {1,"On"}});
+    RegisterRemoteApiEnum("Mode", PPMTypeManager::Get().GetTypes(), "BBC");
+    RegisterRemoteApiEnum("Freeze", {{0,"Off"}, {1,"On"}},0);
+    RegisterRemoteApiEnum("Peaks", {{0,"Off"}, {1,"Show"}, {2,"Hold"}},1);
+    RegisterRemoteApiEnum("Speed", {{0,"Slow"}, {1,"Normal"}, {2,"Fast"}},1);
+    RegisterRemoteApiEnum("M3M6", {{0,"M3"}, {1,"M6"}},0);
+    RegisterRemoteApiEnum("Shading", {{0,"Off"}, {1,"On"}},0);
 
 }
 

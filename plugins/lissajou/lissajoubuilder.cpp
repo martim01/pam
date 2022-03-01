@@ -17,14 +17,14 @@ m_ppnlRouting(0)
 {
     RegisterForSettingsUpdates(this);
 
-    RegisterRemoteApiEnum("Scale", {{0, "dB"},{1,"Linear"}, {2, "Auto Scale"}});
-    RegisterRemoteApiEnum("Rotate", {{0,"LvR"},{1,"MvS"}});
-    RegisterRemoteApiEnum("Levels", {{0, "Hide"}, {1, "Show"}});
-    RegisterRemoteApiRangeInt("Axis_X", {0,7});
-    RegisterRemoteApiRangeInt("Axis_Y", {0,7});
-    RegisterRemoteApiEnum("MeterMode", PPMTypeManager::Get().GetTypes());
-    RegisterRemoteApiEnum("Monitor", {{0,"Follow"}, {1,"Force"}, {2,"Indy"}});
-    RegisterRemoteApiEnum("Display", {{0,"Stars"}, {1,"Hull"}});
+    RegisterRemoteApiEnum("Scale", {{0, "dB"},{1,"Linear"}, {2, "Auto Scale"}},2);
+    RegisterRemoteApiEnum("Rotate", {{0,"LvR"},{1,"MvS"}},0);
+    RegisterRemoteApiEnum("Levels", {{0, "Hide"}, {1, "Show"}},0);
+    RegisterRemoteApiRangeInt("Axis_X", {0,7},0);
+    RegisterRemoteApiRangeInt("Axis_Y", {0,7},1);
+    RegisterRemoteApiEnum("MeterMode", PPMTypeManager::Get().GetTypes(), "BBC");
+    RegisterRemoteApiEnum("Monitor", {{0,"Follow"}, {1,"Force"}, {2,"Indy"}}, 0);
+    RegisterRemoteApiEnum("Display", {{0,"Stars"}, {1,"Hull"}},0);
 
 
 

@@ -163,43 +163,43 @@ bool MonitorPluginBuilder::WebsocketsActive()
     return RemoteApi::Get().WebsocketsActive();
 }
 
-void MonitorPluginBuilder::RegisterRemoteApiEnum(const wxString& sKey, const std::set<wxString>& setEnum)
+void MonitorPluginBuilder::RegisterRemoteApiEnum(const wxString& sKey, const std::set<wxString>& setEnum, const wxString& sDefault)
 {
-    RemoteApi::Get().RegisterRemoteApiEnum(GetSection(), sKey, setEnum);
+    RemoteApi::Get().RegisterRemoteApiEnum(GetSection(), sKey, setEnum, sDefault);
 }
 
-void MonitorPluginBuilder::RegisterRemoteApiEnum(const wxString& sKey, const std::map<int, wxString>& mEnum)
+void MonitorPluginBuilder::RegisterRemoteApiEnum(const wxString& sKey, const std::map<int, wxString>& mEnum, int nDefault)
 {
-    RemoteApi::Get().RegisterRemoteApiEnum(GetSection(), sKey, mEnum);
+    RemoteApi::Get().RegisterRemoteApiEnum(GetSection(), sKey, mEnum, nDefault);
 }
 
-void MonitorPluginBuilder::RegisterRemoteApiRangeDouble(const wxString& sKey, const std::pair<double, double>& dRange)
+void MonitorPluginBuilder::RegisterRemoteApiRangeDouble(const wxString& sKey, const std::pair<double, double>& dRange, double dDefault)
 {
-    RemoteApi::Get().RegisterRemoteApiRangeDouble(GetSection(), sKey, dRange);
+    RemoteApi::Get().RegisterRemoteApiRangeDouble(GetSection(), sKey, dRange, dDefault);
 }
 
-void MonitorPluginBuilder::RegisterRemoteApiRangeInt(const wxString& sKey, const std::pair<int, int>& nRange)
+void MonitorPluginBuilder::RegisterRemoteApiRangeInt(const wxString& sKey, const std::pair<int, int>& nRange, int nDefault)
 {
-    RemoteApi::Get().RegisterRemoteApiRangeInt(GetSection(), sKey, nRange);
+    RemoteApi::Get().RegisterRemoteApiRangeInt(GetSection(), sKey, nRange, nDefault);
 }
-void MonitorPluginBuilder::RegisterRemoteApiCallback(const wxString& sKey, std::function<std::set<wxString>()> func)
+void MonitorPluginBuilder::RegisterRemoteApiCallback(const wxString& sKey, std::function<std::set<wxString>()> func, const wxString& sDefault)
 {
-    RemoteApi::Get().RegisterRemoteApiCallback(GetSection(), sKey, func);
-}
-
-void MonitorPluginBuilder::RegisterRemoteApiCallback(const wxString& sKey, std::function<std::map<int, wxString>()> func)
-{
-    RemoteApi::Get().RegisterRemoteApiCallback(GetSection(), sKey, func);
+    RemoteApi::Get().RegisterRemoteApiCallback(GetSection(), sKey, func, sDefault);
 }
 
-void MonitorPluginBuilder::RegisterRemoteApi(const wxString& sKey)
+void MonitorPluginBuilder::RegisterRemoteApiCallback(const wxString& sKey, std::function<std::map<int, wxString>()> func, int nDefault)
 {
-    RemoteApi::Get().RegisterRemoteApi(GetSection(), sKey);
+    RemoteApi::Get().RegisterRemoteApiCallback(GetSection(), sKey, func, nDefault);
 }
 
-void MonitorPluginBuilder::RegisterRemoteApiCSV(const wxString& sKey, const std::set<wxString>& setEnum)
+void MonitorPluginBuilder::RegisterRemoteApi(const wxString& sKey, const wxString& sDefault)
 {
-    RemoteApi::Get().RegisterRemoteApiCSV(GetSection(), sKey, setEnum);
+    RemoteApi::Get().RegisterRemoteApi(GetSection(), sKey, sDefault);
+}
+
+void MonitorPluginBuilder::RegisterRemoteApiCSV(const wxString& sKey, const std::set<wxString>& setEnum, const wxString& sDefault)
+{
+    RemoteApi::Get().RegisterRemoteApiCSV(GetSection(), sKey, setEnum, sDefault);
 }
 
 pml::restgoose::response MonitorPluginBuilder::PatchSetting(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)

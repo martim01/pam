@@ -27,7 +27,10 @@ Settings::Settings()
 {
     //wxString::Format(wxT("%s/pam/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str())
     m_timerSave.SetOwner(this, wxNewId());
-    Connect(m_timerSave.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&Settings::OnTimerSave);
+    Bind(wxEVT_TIMER, &Settings::OnTimerSave, this, m_timerSave.GetId());
+
+    AddHandler(this);
+    Bind(wxEVT_SETTING_CHANGED, &Settings::OnSettingChanged, this);
 }
 
 void Settings::ReadSettings(const wxString& sFullPath)
@@ -67,10 +70,7 @@ bool Settings::WriteInternal(const wxString& sSection, const wxString& sKey, con
     {
         m_iniManager.SetSectionValue(sSection, sKey,sValue);
 
-        if(m_timerSave.IsRunning() == false)
-        {
-            m_timerSave.Start(500, true);
-        }
+
 
         std::set<wxEvtHandler*> setHandlers;
         GetHandlers("/", setHandlers);                  //registered for all changes
@@ -91,6 +91,15 @@ void Settings::GetHandlers(const wxString& sHandlers, std::set<wxEvtHandler*>& s
     for(multimap<wxString, wxEvtHandler*>::const_iterator itHandler = m_mmHandlers.lower_bound(sHandlers); itHandler != m_mmHandlers.upper_bound(sHandlers); ++itHandler)
     {
         setHandlers.insert(itHandler->second);
+    }
+}
+
+void Settings::OnSettingChanged(SettingEvent& event)
+{
+    //start the timer to save the ini file within 500ms
+    if(m_timerSave.IsRunning() == false)
+    {
+        m_timerSave.Start(500, true);
     }
 }
 

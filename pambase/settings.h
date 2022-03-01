@@ -63,6 +63,8 @@ class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
         void OnTimerSave(wxTimerEvent& event);
 
         void GetHandlers(const wxString& sHandlers, std::set<wxEvtHandler*>& setHandlers);
+
+        void OnSettingChanged(SettingEvent& event);
         iniManager m_iniManager;
         wxString m_sFullPath;
 

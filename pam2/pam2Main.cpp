@@ -53,6 +53,7 @@
 #include "usbchecker.h"
 #include "remoteapi.h"
 #include "networkcontrol.h"
+#include "generatorpluginfactory.h"
 
 #ifdef __NMOS__
 #include "nmos.h"
@@ -107,7 +108,7 @@ std::map<int, wxString> GetAoipSources()
     return AoipSourceManager::Get().GetSourceNames(false);
 }
 
-std::set<wxString> GetInterfaces()
+std::set<wxString> GetInterfaceNames()
 {
     return NetworkControl::Get().GetInterfaceNames();
 }
@@ -138,6 +139,17 @@ std::set<wxString> GetSequences()
         setFiles.insert(fn.GetName());
     }
     return setFiles;
+}
+
+std::set<wxString> GetOutputSources()
+{
+    std::set<wxString> setSources{"Input", "File", "Sequence", "Generator", "Noise"};
+
+    for(auto itPlugin = GeneratorPluginFactory::Get()->GetPluginBegin(); itPlugin != GeneratorPluginFactory::Get()->GetPluginEnd(); ++itPlugin)
+    {
+        setSources.insert(itPlugin->first);
+    }
+    return setSources;
 }
 
 
@@ -427,7 +439,7 @@ void pam2Dialog::LoadMonitorPanels()
         setMon.insert(itPlugin->first);
     }
 
-    RemoteApi::Get().RegisterRemoteApiEnum("Main", "Screen", setMon);
+    RemoteApi::Get().RegisterRemoteApiEnum("Main", "Screen", setMon, "Settings");
 
     //Add the test and settings panels
     m_ppnlTests = new pnlTests(m_pswpMain);
@@ -437,7 +449,7 @@ void pam2Dialog::LoadMonitorPanels()
     if(m_ppnlTests->m_pswpTests->GetPageCount() > 0)
     {
         m_pswpMain->AddPage(m_ppnlTests, "Tests");
-        RemoteApi::Get().RegisterRemoteApiEnum("Main", "Test", GetTestNames());
+        RemoteApi::Get().RegisterRemoteApiEnum("Main", "Test", GetTestNames(), "Record");
     }
     else
     {
@@ -1250,74 +1262,73 @@ void pam2Dialog::RegisterRemoteApiSettings()
 {
     pmlLog() << "RegisterRemoteApiSettings";
 
-    RemoteApi::Get().RegisterRemoteApiEnum("Input", "Type", {"Disabled", "Soundcard", "AoIP"});
-    RemoteApi::Get().RegisterRemoteApiCallback("Input", "AoIP", &GetAoipSources);
+    RemoteApi::Get().RegisterRemoteApiEnum("Input", "Type", {"Disabled", "Soundcard", "AoIP"}, "Soundcard");
+    RemoteApi::Get().RegisterRemoteApiCallback("Input", "AoIP", GetAoipSources, 0);
 
-    RemoteApi::Get().RegisterRemoteApiEnum("Input", "Device", SoundcardManager::Get().GetInputDevices());
+    RemoteApi::Get().RegisterRemoteApiEnum("Input", "Device", SoundcardManager::Get().GetInputDevices(), 0);
 
-    RemoteApi::Get().RegisterRemoteApiEnum("Server", "Stream", {wxString("OnDemand"), "AlwaysOn"});
-    RemoteApi::Get().RegisterRemoteApiEnum("Server", "PacketTime", {{125, "125"}, {250,"250"}, {333,"333"}, {1000,"1000"}, {4000,"4000"}});
-    RemoteApi::Get().RegisterRemoteApiEnum("Server", "SampleRate", {{44100,"44100"}, {48000,"48000"}, {96000,"96000"}});
-
-
-    RemoteApi::Get().RegisterRemoteApiEnum("Server", "Bits", {{16,"16"}, {24,"24"}});
-    RemoteApi::Get().RegisterRemoteApiEnum("Server", "RTCP", {{0,"Off"}, {1,"On"}});
-    RemoteApi::Get().RegisterRemoteApiEnum("Server", "State", {{0,"Off"}, {1,"On"}});
-    RemoteApi::Get().RegisterRemoteApi("Server", "DestinationIp");
-    RemoteApi::Get().RegisterRemoteApi("Server", "RTSP_Address");
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Server", "RTSP_Port", {1,65535});
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Server", "RTP_Port", {1,65535});
-
-//    RemoteApi::Get().RegisterRemoteApiEnum("Server", "RTSP_Interface", GetInterfaces());
-    RemoteApi::Get().RegisterRemoteApiEnum("Server", "SAP", {{0,"Off"}, {1,"On"}});
-    RemoteApi::Get().RegisterRemoteApiEnum("Server", "DNS-SD", {{0,"Off"}, {1,"On"}});
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Server", "Channels", {1,8});
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Server", "RTPMap", {96,127});
-
-    //RemoteApi::Get().RegisterRemoteApi("Server", "RTSP_Address");
+    RemoteApi::Get().RegisterRemoteApiEnum("Server", "Stream", {wxString("OnDemand"), "AlwaysOn"}, "OnDemand");
+    RemoteApi::Get().RegisterRemoteApiEnum("Server", "PacketTime", {{125, "125"}, {250,"250"}, {333,"333"}, {1000,"1000"}, {4000,"4000"}}, 1000);
+    RemoteApi::Get().RegisterRemoteApiEnum("Server", "SampleRate", {{44100,"44100"}, {48000,"48000"}, {96000,"96000"}}, 48000);
 
 
-    RemoteApi::Get().RegisterRemoteApiEnum("Monitor", "Source", {{0,"Input"}, {1,"Output"}});
-
-    RemoteApi::Get().RegisterRemoteApiEnum("Output", "Destination", {"Disabled", "Device", "AoIP"});
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_1", {0,7});
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_2", {0,7});
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_3", {0,7});
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_4", {0,7});
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_5", {0,7});
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_6", {0,7});
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_7", {0,7});
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_8", {0,7});
-
-    RemoteApi::Get().RegisterRemoteApiCallback("Output", "File", GetWavFiles);
-    RemoteApi::Get().RegisterRemoteApiCallback("Output", "Sequence", GetSequences);
-
-    RemoteApi::Get().RegisterRemoteApiEnum("Output", "Device", SoundcardManager::Get().GetOutputDevices());
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Latency", {0,400});
-
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Generator", "Frequency", {1,22000});
-    RemoteApi::Get().RegisterRemoteApiRangeDouble("Generator", "Amplitude", {-80.0,0.0});
-    RemoteApi::Get().RegisterRemoteApiRangeDouble("Noise", "Amplitude", {-80.0,0.0});
-    RemoteApi::Get().RegisterRemoteApiEnum("Noise", "Colour", {{0,"White"},{1,"Pink"},{2,"Grey"},{3,"A"},{4,"K"}});
+    RemoteApi::Get().RegisterRemoteApiEnum("Server", "Bits", {{16,"16"}, {24,"24"}}, 24);
+    RemoteApi::Get().RegisterRemoteApiEnum("Server", "RTCP", {{0,"Off"}, {1,"On"}}, 1);
+    RemoteApi::Get().RegisterRemoteApiEnum("Server", "State", {{0,"Off"}, {1,"On"}}, 0);
+    RemoteApi::Get().RegisterRemoteApi("Server", "DestinationIp", "");
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Server", "RTSP_Port", {1,65535}, 5555);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Server", "RTP_Port", {1,65535}, 5004);
+    RemoteApi::Get().RegisterRemoteApiCallback("Server", "RTSP_Interface", GetInterfaceNames, "eth0");
+    RemoteApi::Get().RegisterRemoteApiEnum("Server", "SAP", {{0,"Off"}, {1,"On"}}, 0);
+    RemoteApi::Get().RegisterRemoteApiEnum("Server", "DNS-SD", {{0,"Off"}, {1,"On"}}, 0);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Server", "Channels", {1,8}, 2);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Server", "RTPMap", {96,127}, 96);
 
 
 
-    RemoteApi::Get().RegisterRemoteApiEnum("Log", "Level", {{0,"TRACE"},{1,"DEBUG"},{2,"INFO"},{3,"WARNING"},{4,"ERROR"},{5,"CRITICAL"}});
+    RemoteApi::Get().RegisterRemoteApiEnum("Monitor", "Source", {{0,"Input"}, {1,"Output"}}, 0);
 
-    RemoteApi::Get().RegisterRemoteApiEnum("Discovery", "SAP", {{0,"Off"}, {1,"On"}});
-    RemoteApi::Get().RegisterRemoteApiEnum("Discovery", "DNSSD", {{0,"Off"}, {1,"On"}});
-    RemoteApi::Get().RegisterRemoteApiEnum("Discovery", pnlRTP::STR_SAP_SETTING[pnlRTP::LOCAL], {{0,"Off"}, {1,"On"}});
-    RemoteApi::Get().RegisterRemoteApiEnum("Discovery", pnlRTP::STR_SAP_SETTING[pnlRTP::ORGANISATION], {{0,"Off"}, {1,"On"}});
-    RemoteApi::Get().RegisterRemoteApiEnum("Discovery", pnlRTP::STR_SAP_SETTING[pnlRTP::GLOBAL], {{0,"Off"}, {1,"On"}});
+    RemoteApi::Get().RegisterRemoteApiEnum("Output", "Destination", {"Disabled", "Device", "AoIP"}, "Disabled");
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_1", {0,7}, 0);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_2", {0,7}, 1);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_3", {0,7}, 0);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_4", {0,7}, 1);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_5", {0,7}, 0);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_6", {0,7}, 1);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_7", {0,7}, 0);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_8", {0,7}, 1);
 
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Time", "PTP_Domain", {0,127});
-    RemoteApi::Get().RegisterRemoteApiEnum("Time", "Sync", {{0,"Off"}, {1,"NTP"}, {3,"PTP"}});
+    RemoteApi::Get().RegisterRemoteApiEnum("Output", "Source", GetOutputSources(), "Input");
 
-    RemoteApi::Get().RegisterRemoteApiEnum("Tests", "Log", {{0,"Off"}, {1,"On"}});
-    RemoteApi::Get().RegisterRemoteApiEnum("Tests", "LogView", {{0,"Off"}, {1,"On"}});
+    RemoteApi::Get().RegisterRemoteApiCallback("Output", "File", GetWavFiles, "");
+    RemoteApi::Get().RegisterRemoteApiCallback("Output", "Sequence", GetSequences, "Glits");
 
-    RemoteApi::Get().RegisterRemoteApiEnum("NMOS", "Node", {{0,"Off"}, {1, "Receiver Only"}, {2, "Sender Only"}, {3, "Receiver and Sender"}});
-    RemoteApi::Get().RegisterRemoteApiEnum("NMOS", "Client", {{0,"Off"}, {1, "IS04 Connection"}, {2, "IS05 Connection"}});
+    RemoteApi::Get().RegisterRemoteApiEnum("Output", "Device", SoundcardManager::Get().GetOutputDevices(),0);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Latency", {0,400}, 200);
+
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Generator", "Frequency", {1,22000}, 1000);
+    RemoteApi::Get().RegisterRemoteApiRangeDouble("Generator", "Amplitude", {-80.0,0.0}, -18.0);
+    RemoteApi::Get().RegisterRemoteApiRangeDouble("Noise", "Amplitude", {-80.0,0.0}, -18.0);
+    RemoteApi::Get().RegisterRemoteApiEnum("Noise", "Colour", {{0,"White"},{1,"Pink"},{2,"Grey"},{3,"A"},{4,"K"}},0);
+
+
+
+    RemoteApi::Get().RegisterRemoteApiEnum("Log", "Level", {{0,"TRACE"},{1,"DEBUG"},{2,"INFO"},{3,"WARNING"},{4,"ERROR"},{5,"CRITICAL"}}, 2);
+
+    RemoteApi::Get().RegisterRemoteApiEnum("Discovery", "SAP", {{0,"Off"}, {1,"On"}}, 0);
+    RemoteApi::Get().RegisterRemoteApiEnum("Discovery", "DNSSD", {{0,"Off"}, {1,"On"}}, 1);
+    RemoteApi::Get().RegisterRemoteApiEnum("Discovery", pnlRTP::STR_SAP_SETTING[pnlRTP::LOCAL], {{0,"Off"}, {1,"On"}}, 0);
+    RemoteApi::Get().RegisterRemoteApiEnum("Discovery", pnlRTP::STR_SAP_SETTING[pnlRTP::ORGANISATION], {{0,"Off"}, {1,"On"}}, 0);
+    RemoteApi::Get().RegisterRemoteApiEnum("Discovery", pnlRTP::STR_SAP_SETTING[pnlRTP::GLOBAL], {{0,"Off"}, {1,"On"}}, 0);
+
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Time", "PTP_Domain", {0,127}, 0);
+    RemoteApi::Get().RegisterRemoteApiEnum("Time", "Sync", {{0,"Off"}, {1,"NTP"}, {3,"PTP"}}, 0);
+
+    RemoteApi::Get().RegisterRemoteApiEnum("Tests", "Log", {{0,"Off"}, {1,"On"}}, 0);
+    RemoteApi::Get().RegisterRemoteApiEnum("Tests", "LogView", {{0,"Off"}, {1,"On"}}, 0);
+
+    RemoteApi::Get().RegisterRemoteApiEnum("NMOS", "Node", {{0,"Off"}, {1, "Receiver Only"}, {2, "Sender Only"}, {3, "Receiver and Sender"}}, 0);
+    RemoteApi::Get().RegisterRemoteApiEnum("NMOS", "Client", {{0,"Off"}, {1, "IS04 Connection"}, {2, "IS05 Connection"}}, 0);
 
 
     pmlLog() << "RegisterRemoteApiSettings:Done";
