@@ -143,7 +143,7 @@ int AoipSourceManager::GenerateIndex()
     {
         auto itEnd = m_mSources.end();
         --itEnd;
-        return itEnd->first+1;
+        return std::max(1, itEnd->first+1);
     }
     else
     {
@@ -174,6 +174,39 @@ bool AoipSourceManager::EditSource(int nIndex, const wxString& sName, const wxSt
     return SaveSources();
 }
 
+bool AoipSourceManager::SetSourceName(int nIndex, const wxString& sName)
+{
+    auto itSource = m_mSources.find(nIndex);
+    if(itSource == m_mSources.end())
+    {
+        return false;
+    }
+    itSource->second.sName = sName;
+    return SaveSources();
+}
+
+bool AoipSourceManager::SetSourceType(int nIndex, const wxString& sType)
+{
+    auto itSource = m_mSources.find(nIndex);
+    if(itSource == m_mSources.end())
+    {
+        return false;
+    }
+    itSource->second.sType = sType;
+    return SaveSources();
+}
+
+bool AoipSourceManager::SetSourceDetails(int nIndex, const wxString& sDetails)
+{
+    auto itSource = m_mSources.find(nIndex);
+    if(itSource == m_mSources.end())
+    {
+        return false;
+    }
+    itSource->second.sDetails = sDetails;
+    return SaveSources();
+}
+
 bool AoipSourceManager::SetSourceTags(int nIndex, const std::set<wxString>& setTags)
 {
     auto itSource = m_mSources.find(nIndex);
@@ -196,6 +229,7 @@ bool AoipSourceManager::SaveSources()
         pSource->AddAttribute("index", wxString::Format("%d", pairSource.first));
         pSource->AddChild(NewTextNode("name", pairSource.second.sName));
         pSource->AddChild(NewTextNode("details", pairSource.second.sDetails));
+        pSource->AddChild(NewTextNode("type", pairSource.second.sType));
         pSource->AddChild(NewTextNode("sdp", pairSource.second.sSDP, wxXML_CDATA_SECTION_NODE));
 
         if(pairSource.second.setTags.empty() == false)
@@ -348,7 +382,7 @@ void AoipSourceManager::OnSap(wxCommandEvent& event)
                 pmlLog() << "AoIP Source Manager\tDiscovery: SAP response from " << sIpAddress.c_str();
                 pmlLog() << "AoIP Source Manager\tDiscovery: SDP=" << sSDP;
 
-                AddSource(sName, wxString::Format("sap:%s", sIpAddress.c_str()), sSDP);
+                AddSource(sName, wxString::Format("sdp:%s", sIpAddress.c_str()), sSDP);
 
                 wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_ASM_DISCOVERY);
                 pEvent->SetString(wxString::Format("[SAP] %s = %s", sName.c_str(), sIpAddress.c_str()));
@@ -423,4 +457,17 @@ void AoipSourceManager::OnDiscoveryFinished(wxCommandEvent& event)
 AoipSourceManager::~AoipSourceManager()
 {
 
+}
+
+std::map<int, wxString> AoipSourceManager::GetSourceNames(bool bManual)
+{
+    std::map<int, wxString> setSources;
+    for(const auto& pairSource : m_mSources)
+    {
+        if(bManual || pairSource.first > 0)
+        {
+            setSources.insert(std::make_pair(pairSource.first, pairSource.second.sName));
+        }
+    }
+    return setSources;
 }

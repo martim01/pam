@@ -40,6 +40,12 @@ class WXEXPORT AoIPInfoBuilder : public MonitorPluginBuilder
         virtual std::list<pairOptionPanel_t>CreateOptionPanels(wxWindow* pParent);
 
         void LoadSettings();
+
+        Json::Value CreateWebsocketMessage(qosData* pData);
+        Json::Value CreateWebsocketMessage(const timedbuffer* pBuffer);
+        Json::Value CreateWebsocketMessage(const session& aSession);
+
+
     private:
         pnlAoIPInfo* m_pInfo;
 };

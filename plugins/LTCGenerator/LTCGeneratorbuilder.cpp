@@ -15,18 +15,7 @@ LTCGeneratorBuilder::LTCGeneratorBuilder() : GeneratorPluginBuilder(),
 m_pEncoder(0)
 {
 
-    RegisterForSettingsUpdates(wxT("FPS"), this);
-	RegisterForSettingsUpdates(wxT("UserData"), this);
-	RegisterForSettingsUpdates(wxT("DateFormat"), this);
-	RegisterForSettingsUpdates(wxT("Amplitude"), this);
-	RegisterForSettingsUpdates(wxT("OffsetYear"), this);
-	RegisterForSettingsUpdates(wxT("OffsetMonth"), this);
-	RegisterForSettingsUpdates(wxT("OffsetDay"), this);
-	RegisterForSettingsUpdates(wxT("OffsetHour"), this);
-	RegisterForSettingsUpdates(wxT("OffsetMinute"), this);
-	RegisterForSettingsUpdates(wxT("OffsetSecond"), this);
-	RegisterForSettingsUpdates(wxT("Time"), this);
-
+    RegisterForSettingsUpdates(this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&LTCGeneratorBuilder::OnSettingChanged);
 
@@ -124,7 +113,7 @@ void LTCGeneratorBuilder::Init()
     }
 
 
-    switch(ReadSetting(wxT("Time"), 0))
+    switch(ReadSetting("Time", 0))
     {
         case LIVE:
             m_dtFrame = wxDateTime::UNow();
@@ -132,31 +121,31 @@ void LTCGeneratorBuilder::Init()
         case OFFSET:
             {
                 m_dtFrame = wxDateTime::UNow();
-                wxDateSpan dsOffset(ReadSetting(wxT("OffsetYear"), 0),ReadSetting(wxT("OffsetMonth"), 0),0,ReadSetting(wxT("OffsetDay"), 0));
-                wxTimeSpan  tsOffset(ReadSetting(wxT("OffsetHour"), 0),ReadSetting(wxT("OffsetMinute"), 0),ReadSetting(wxT("OffsetSecond"),0));
+                wxDateSpan dsOffset(ReadSetting("OffsetYear", 0),ReadSetting("OffsetMonth", 0),0,ReadSetting("OffsetDay", 0));
+                wxTimeSpan  tsOffset(ReadSetting("OffsetHour", 0),ReadSetting("OffsetMinute", 0),ReadSetting("OffsetSecond",0));
                 m_dtFrame += dsOffset;
                 m_dtFrame += tsOffset;
             }
             break;
         case ABS:
-            m_dtFrame = wxDateTime(min(31, max(1,ReadSetting(wxT("AbsDay"), 1))), wxDateTime::Month(max(0, ReadSetting(wxT("AbsMonth"), 1)-1)), ReadSetting(wxT("AbsYear"), 2018), ReadSetting(wxT("AbsHour"), 0),ReadSetting(wxT("AbsMinute"), 0),ReadSetting(wxT("AbsSecond"),0));
+            m_dtFrame = wxDateTime(min(31, max(1,ReadSetting("AbsDay", 1))), wxDateTime::Month(max(0, ReadSetting("AbsMonth", 1)-1)), ReadSetting("AbsYear", 2018), ReadSetting("AbsHour", 0),ReadSetting("AbsMinute", 0),ReadSetting("AbsSecond",0));
             break;
 
     }
 
-    m_nDateType = ReadSetting(wxT("DateFormat"),0);
+    m_nDateType = ReadSetting("DateFormat",0);
 
-    m_dFPS = ReadSetting(wxT("FPS"), 25.0);
-    double dSampleRate = ReadSetting(wxT("SampleRate"), 48000.0);
-    double dAmplitude = ReadSetting(wxT("Amplitude"), -18.0);
+    m_dFPS = ReadSetting("FPS", 25.0);
+
+    double dAmplitude = ReadSetting("Amplitude", -18.0);
 
 
 	int total = 0;
 
 
 	m_pEncoder = ltc_encoder_create(1, 1,  static_cast<int>(round(m_dFPS))==25?LTC_TV_625_50:LTC_TV_525_60, LTC_USE_DATE);
-	ltc_encoder_set_bufsize(m_pEncoder, dSampleRate, m_dFPS);
-	ltc_encoder_reinit(m_pEncoder, dSampleRate, m_dFPS, static_cast<int>(round(m_dFPS))==25?LTC_TV_625_50:LTC_TV_525_60, LTC_USE_DATE);
+	ltc_encoder_set_bufsize(m_pEncoder, m_dSampleRate, m_dFPS);
+	ltc_encoder_reinit(m_pEncoder, m_dSampleRate, m_dFPS, static_cast<int>(round(m_dFPS))==25?LTC_TV_625_50:LTC_TV_525_60, LTC_USE_DATE);
 	ltc_encoder_set_filter(m_pEncoder, 0);
 	ltc_encoder_set_volume(m_pEncoder, dAmplitude);
 

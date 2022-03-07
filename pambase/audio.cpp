@@ -41,7 +41,7 @@ Audio::Audio(wxEvtHandler* pHandler, unsigned int nDevice, int nType) :
     for(unsigned int i = 0; i < 8; i++)
     {
         m_vOutputRatio[i] = Settings::Get().Read("Output", wxString::Format("Ratio_%02d", i), 1.0);
-        Settings::Get().AddHandler("Output", wxString::Format("Ratio_%02d", i), this);
+        Settings::Get().AddHandler(this, "Output", wxString::Format("Ratio_%02d", i));
     }
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&Audio::OnSettingChanged);
  }
@@ -166,7 +166,7 @@ Audio::~Audio()
             pmlLog(pml::LOG_ERROR) << "Audio\tFailed to stop PortAudio stream: " << Pa_GetErrorText(err);
         }
     }
-
+    Settings::Get().RemoveHandler(this);
 }
 
 void Audio::InputCallback(const float* pBuffer, size_t nFrameCount, int nFlags)
@@ -400,12 +400,12 @@ const std::vector<char>& Audio::GetOutputChannels()
 
 void Audio::OnSettingChanged(const SettingEvent& event)
 {
-    if(event.GetSection() == "Output" && event.GetKey().Left(5) == "Ratio")
+    if(event.GetSection() == "Output" && event.GetKey().BeforeFirst('_') == "Ratio")
     {
         unsigned long nChannel;
         if(event.GetKey().AfterFirst('_').ToULong(&nChannel) && nChannel < m_vOutputRatio.size())
         {
-            m_vOutputRatio[nChannel] = Settings::Get().Read("Output", event.GetKey(), 1.0);
+            m_vOutputRatio[nChannel] = event.GetValue(1.0);
         }
     }
 }

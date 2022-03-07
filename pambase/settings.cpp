@@ -27,7 +27,10 @@ Settings::Settings()
 {
     //wxString::Format(wxT("%s/pam/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str())
     m_timerSave.SetOwner(this, wxNewId());
-    Connect(m_timerSave.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&Settings::OnTimerSave);
+    Bind(wxEVT_TIMER, &Settings::OnTimerSave, this, m_timerSave.GetId());
+
+    AddHandler(this);
+    Bind(wxEVT_SETTING_CHANGED, &Settings::OnSettingChanged, this);
 }
 
 void Settings::ReadSettings(const wxString& sFullPath)
@@ -60,42 +63,71 @@ double Settings::Read(const wxString& sSection, const wxString& sKey, double dDe
     return m_iniManager.GetIniDouble(sSection, sKey, dDefault);
 }
 
-bool Settings::Write(const wxString& sSection, const wxString& sKey, const wxString& sValue)
+bool Settings::WriteInternal(const wxString& sSection, const wxString& sKey, const wxString& sValue, SettingEvent::enumType eType)
 {
     bool bDone(true);
     if(m_iniManager.GetIniString(sSection, sKey, wxEmptyString) != sValue)
     {
         m_iniManager.SetSectionValue(sSection, sKey,sValue);
 
-        if(m_timerSave.IsRunning() == false)
-        {
-            m_timerSave.Start(500, true);
-        }
 
-        wxString sHandler(wxString::Format(wxT("%s/%s"),sSection.c_str(),sKey.c_str()));
-        for(multimap<wxString, wxEvtHandler*>::const_iterator itHandler = m_mmHandlers.lower_bound(sHandler); itHandler != m_mmHandlers.upper_bound(sHandler); ++itHandler)
-        {
-            SettingEvent* pEvent = new SettingEvent(sSection, sKey, sValue);
-            wxQueueEvent(itHandler->second, pEvent);
-        }
 
+        std::set<wxEvtHandler*> setHandlers;
+        GetHandlers("/", setHandlers);                  //registered for all changes
+        GetHandlers(sSection+"/", setHandlers);         //registered for all changes to this section
+        GetHandlers(sSection+"/"+sKey, setHandlers);    //registered for change to this section key pair
+
+        for(auto pHandler : setHandlers)
+        {
+            SettingEvent* pEvent = new SettingEvent(sSection, sKey, sValue, eType);
+            wxQueueEvent(pHandler, pEvent);
+        }
     }
     return bDone;
 }
 
+void Settings::GetHandlers(const wxString& sHandlers, std::set<wxEvtHandler*>& setHandlers)
+{
+    for(multimap<wxString, wxEvtHandler*>::const_iterator itHandler = m_mmHandlers.lower_bound(sHandlers); itHandler != m_mmHandlers.upper_bound(sHandlers); ++itHandler)
+    {
+        setHandlers.insert(itHandler->second);
+    }
+}
+
+void Settings::OnSettingChanged(SettingEvent& event)
+{
+    //start the timer to save the ini file within 500ms
+    if(m_timerSave.IsRunning() == false)
+    {
+        m_timerSave.Start(500, true);
+    }
+}
+
+bool Settings::Write(const wxString& sSection, const wxString& sKey, const wxString& sValue)
+{
+    WriteInternal(sSection, sKey, sValue, SettingEvent::enumType::SETTING_STRING);
+
+    return true;
+}
+
 bool Settings::Write(const wxString& sSection, const wxString& sKey, int nValue)
 {
-    return Write(sSection, sKey, wxString::Format(wxT("%d"), nValue));
+    WriteInternal(sSection, sKey, wxString::Format(wxT("%d"), nValue), SettingEvent::enumType::SETTING_LONG);
+
+    return true;
 }
 
 bool Settings::Write(const wxString& sSection, const wxString& sKey, unsigned int nValue)
 {
-    return Write(sSection, sKey, wxString::Format(wxT("%u"), nValue));
+    WriteInternal(sSection, sKey, wxString::Format(wxT("%u"), nValue), SettingEvent::enumType::SETTING_LONG);
+    return true;
 }
 
 bool Settings::Write(const wxString& sSection, const wxString& sKey, double dValue)
 {
-    return Write(sSection, sKey, wxString::Format(wxT("%f"), dValue));
+    WriteInternal(sSection, sKey, wxString::Format(wxT("%f"), dValue), SettingEvent::enumType::SETTING_DOUBLE);
+
+    return true;
 }
 
 
@@ -123,7 +155,7 @@ bool Settings::GetSectionDataEnd(const wxString& sSection, std::map<wxString, wx
 
 
 
-void Settings::AddHandler(const wxString& sSection, const wxString& sKey, wxEvtHandler* pHandler)
+void Settings::AddHandler(wxEvtHandler* pHandler, const wxString& sSection, const wxString& sKey)
 {
     if(pHandler)
     {
@@ -280,7 +312,7 @@ void Settings::CreatePaths()
         wxFileName::Mkdir(GetConfigDirectory(), 0777, wxPATH_MKDIR_FULL);
     }
 
-    
+
     if(!wxFileName::DirExists(GetLogDirectory()))
     {
         wxFileName::Mkdir(GetLogDirectory(), 0777, wxPATH_MKDIR_FULL);
@@ -410,3 +442,13 @@ const multimap<wxString, wxString>& Settings::GetInterfaces()
 }
 
 
+const mapSection& Settings::GetSections()
+{
+    return m_iniManager.GetSections();
+}
+
+std::shared_ptr<iniSection> Settings::GetSection(const wxString& sSection)
+{
+
+    return m_iniManager.GetSection(sSection);
+}

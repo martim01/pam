@@ -6,6 +6,9 @@
 #include <vector>
 #include "session.h"
 #include <set>
+#include "RestGoose.h"
+
+
 class wmSwitcherPanel;
 class timedbuffer;
 
@@ -41,6 +44,9 @@ class PAMBASE_IMPEXPORT MonitorPluginBuilder : public wxEvtHandler
 
         wxWindow* GetMainWindow() const { return m_pWindow;}
 
+        wxString GetSection() { return "Monitor::"+GetName();}
+
+
     protected:
 
         friend class MonitorPluginFactory;
@@ -57,13 +63,31 @@ class PAMBASE_IMPEXPORT MonitorPluginBuilder : public wxEvtHandler
         int ReadSetting(const wxString& sSetting, int nDefault);
         double ReadSetting(const wxString& sSetting, double dDefault);
 
-        void RegisterForSettingsUpdates(const wxString& sSetting, wxEvtHandler* pHandler);
+        void RegisterForSettingsUpdates(wxEvtHandler* pHandler, const wxString& sSetting="");
 
         virtual wxWindow* CreateMonitorPanel(wxWindow* pParent)=0;
         virtual std::list<pairOptionPanel_t> CreateOptionPanels(wxWindow* pParent)=0;
         virtual void LoadSettings()=0;
 
         void AskToMonitor(const std::vector<char>& vChannels);
+
+        void InitRemoteApi();
+        pml::restgoose::response GetStatus(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser);
+        pml::restgoose::response PatchSetting(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser);
+
+        void SendWebsocketMessage(const Json::Value& jsMessage);
+        bool WebsocketsActive();
+
+        void RegisterRemoteApiEnum(const wxString& sKey, const std::set<wxString>& setEnum, const wxString& sDefault);
+        void RegisterRemoteApiEnum(const wxString& sKey, const std::map<int, wxString>& mEnum, int nDefault);
+        void RegisterRemoteApiRangeDouble(const wxString& sKey, const std::pair<double, double>& dRange, double dDefault);
+        void RegisterRemoteApiRangeInt(const wxString& sKey, const std::pair<int, int>& nRange, int nDefault);
+        void RegisterRemoteApiCallback(const wxString& sKey, std::function<std::set<wxString>()> func, const wxString& sDefault);
+        void RegisterRemoteApiCallback(const wxString& sKey, std::function<std::map<int, wxString>()> func, int nDefault);
+        void RegisterRemoteApi(const wxString& sKey, const wxString& sDefault);
+        void RegisterRemoteApiCSV(const wxString& sKey, const std::set<wxString>& setEnum, const wxString& sDefault);
+
+
         wxEvtHandler* m_pHandler;
 
         bool m_bWantsAudioAlways;

@@ -14,12 +14,19 @@ struct PAMBASE_IMPEXPORT AoIPSource
         nIndex(nI),
         sName(sN),
         sDetails(sD),
+        sType(sD.BeforeFirst(':')),
         sSDP(sdp)
-        {}
+        {
+            if(sType.empty())
+            {
+                sType = "SDP";
+            }
+
+        }
     int nIndex;
     wxString sName;
-    wxString sType;
     wxString sDetails;
+    wxString sType;
     wxString sSDP;
     std::set<wxString> setTags;
 };
@@ -47,13 +54,18 @@ class PAMBASE_IMPEXPORT AoipSourceManager : public wxEvtHandler
         bool SaveSources();
 
         const std::map<int, AoIPSource>& GetSources() const { return m_mSources;}
+        std::map<int, wxString> GetSourceNames(bool bManual=true);
+
         AoIPSource FindSource(int nIndex) const;
         AoIPSource FindSource(const wxString& sName) const;
 
         bool AddSource(const wxString& sName, const wxString& sDetails, const wxString& sSDP=wxEmptyString, int nIndex = 0);
         bool EditSource(int nIndex, const wxString& sName, const wxString& sDetails);
+        bool SetSourceName(int nIndex, const wxString& sName);
+        bool SetSourceDetails(int nIndex, const wxString& sDetails);
         bool SetSourceSDP(int nIndex, const wxString& sSDP);
         bool SetSourceTags(int nIndex, const std::set<wxString>& setTags);
+        bool SetSourceType(int nIndex, const wxString& sType);
 
         void DeleteSource(int nIndex);
         void DeleteSource(const wxString& sName);

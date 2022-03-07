@@ -47,8 +47,8 @@ pnlSettingsInputNmos::pnlSettingsInputNmos(wxWindow* parent,wxWindowID id,const 
                         (Settings::Get().Read("NMOS", "Node", NmosManager::NODE_OFF) == NmosManager::NODE_RECEIVER ||
                         (Settings::Get().Read("NMOS", "Node", NmosManager::NODE_OFF) == NmosManager::NODE_BOTH)));
 
-    Settings::Get().AddHandler("NMOS", "Node", this);
-    Settings::Get().AddHandler("NMOS", "Client", this);
+    Settings::Get().AddHandler(this, "NMOS", "Node");
+    Settings::Get().AddHandler(this, "NMOS", "Client");
     #endif // __NMOS__
 
     Bind(wxEVT_SETTING_CHANGED, &pnlSettingsInputNmos::OnSettingChanged, this);
@@ -67,6 +67,7 @@ pnlSettingsInputNmos::~pnlSettingsInputNmos()
 {
 	//(*Destroy(pnlSettingsInputNmos)
 	//*)
+	Settings::Get().RemoveHandler(this);
 }
 
 

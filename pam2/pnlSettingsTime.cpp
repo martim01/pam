@@ -132,6 +132,10 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
     m_plstSync->AddButton("NTP");
     m_plstSync->AddButton("LTC");
     m_plstSync->AddButton("PTP");
+    m_plstSync->ConnectToSetting("Time","Sync",(int)0);
+
+    m_pswpSettings->ChangeSelection("PTP Domain");
+
     if(TimeManager::Get().HasNTP() == false)
     {
         m_plstSync->EnableButton(1, wmList::wmDISABLED);
@@ -141,18 +145,17 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
     m_plstSync->EnableButton(2, wmList::wmDISABLED);
     m_pswpSettings->DeletePage("LTC Settings");
 
-    m_plstSync->SelectButton(Settings::Get().Read("Time", "Sync", 0), false);
 
     m_nSelectedServer = -1;
 
-    m_pedtDomain->SetValue(Settings::Get().Read("Time", "PTP_Domain", "0"));
+    m_pedtDomain->SetValue(Settings::Get().Read("Time","PTP_Domain","0"));
+
     m_plstDate->AddButton("Auto");
     m_plstDate->AddButton("SMPTE");
     m_plstDate->AddButton("BBC");
     m_plstDate->AddButton("TVE");
     m_plstDate->AddButton("MTD");
-    m_plstDate->SelectButton(Settings::Get().Read("Time", "LTC_Format", 2));
-
+    m_plstDate->ConnectToSetting("Time", "LTC_Format", (int)2);
 
 }
 
@@ -267,12 +270,12 @@ void pnlSettingsTime::OnedtDomainTextEnter(wxCommandEvent& event)
 
 void pnlSettingsTime::OnlstDateSelected(wxCommandEvent& event)
 {
-    Settings::Get().Write("Time", "LTC_Format", event.GetInt());
+//    Settings::Get().Write("Time", "LTC_Format", event.GetInt());
 }
 
 void pnlSettingsTime::OnlstSyncSelected(wxCommandEvent& event)
 {
-    Settings::Get().Write("Time", "Sync", event.GetInt());
+  //  Settings::Get().Write("Time", "Sync", event.GetInt());
 }
 
 void pnlSettingsTime::OntimerTimeTrigger(wxTimerEvent& event)

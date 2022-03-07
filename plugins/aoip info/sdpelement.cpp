@@ -83,8 +83,6 @@ void SdpElement::CreateHitRect(size_t nId, int nHeight, const wxString& sLine)
     rect.SetTextAlign(wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
     rect.SetHeight(nHeight);
     rect.SetLabel(sLine);
-
-    std::cout << "RECT: " << rect.GetLeft() << ","  << rect.GetTop() << "," << rect.GetWidth() << "," << rect.GetHeight() << "\t" << sLine;
 }
 
 void SdpElement::ElementMoved()

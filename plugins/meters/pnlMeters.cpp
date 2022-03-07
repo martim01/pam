@@ -284,6 +284,42 @@ void pnlMeters::SetAudioData(const timedbuffer* pBuffer)
     {
         m_pLevels->Refresh();
     }
+    
+}
+Json::Value pnlMeters::CreateWebsocketMessage()
+{
+    Json::Value jsMessage;
+    if(m_nInputChannels != 2)
+    {
+        for(size_t i = 0; i < m_vMeters.size(); i++)
+        {
+            Json::Value jsChannel;
+            jsChannel["channel"] = i;
+            jsChannel["level"] = m_pCalculator->GetLevel(i);
+            jsMessage.append(jsChannel);
+        }
+    }
+    else
+    {
+        Json::Value jsChannel;
+        jsChannel["channel"] = "Left";
+        jsChannel["level"] = m_pCalculator->GetLevel(0);
+        jsMessage.append(jsChannel);
+
+        jsChannel["channel"] = "Right";
+        jsChannel["level"] = m_pCalculator->GetLevel(1);
+        jsMessage.append(jsChannel);
+
+        jsChannel["channel"] = "M";
+        jsChannel["level"] = m_pCalculator->GetMSLevel(false);
+        jsMessage.append(jsChannel);
+
+        jsChannel["channel"] = "S";
+        jsChannel["level"] = m_pCalculator->GetMSLevel(true);
+        jsMessage.append(jsChannel);
+
+    }
+    return jsMessage;
 }
 
 

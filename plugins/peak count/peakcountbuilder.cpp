@@ -1,14 +1,27 @@
 #include "peakcountbuilder.h"
 #include "pnlpeakcount.h"
+#include "settingevent.h"
 
 PeakCountBuilder::PeakCountBuilder() : TestPluginBuilder(),
 m_ppnlPeakCount(0)
 {
+    RegisterForSettingsUpdates(this, "limit");
+    Bind(wxEVT_SETTING_CHANGED, &PeakCountBuilder::OnSettingChanged, this);
+
+    RegisterRemoteApiRangeDouble("limit", {-90.0,0.0}, -8.0);
 
 }
 
 PeakCountBuilder::~PeakCountBuilder()
 {
+}
+
+void PeakCountBuilder::OnSettingChanged(SettingEvent& event)
+{
+    if(event.GetKey() == "limit")
+    {
+        m_ppnlPeakCount->SetLimit(event.GetValue(-8.0));
+    }
 }
 
 void PeakCountBuilder::InputSession(const session& aSession)

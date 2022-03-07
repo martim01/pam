@@ -90,6 +90,7 @@ pnlPeakCount::pnlPeakCount(wxWindow* parent,PeakCountBuilder* pBuilder, wxWindow
 	Connect(ID_M_PEDT1,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&pnlPeakCount::OnedtLimitTextEnter);
 	//*)
     m_pedtLimit->SetFocus();
+    m_dLimit = m_pBuilder->ReadSetting("limit", -8.0);
     m_plblLimit->SetLabel(wxString::Format(wxT("%.2f"), m_dLimit));
 
     m_timerLog.SetOwner(this, wxNewId());
@@ -150,6 +151,22 @@ void pnlPeakCount::SetAudioData(const timedbuffer* pBuffer)
     {
         m_vChannels[i]->AddPeaks(vSamples[i], vPeaks[i], pBuffer->GetBufferSize()/m_vChannels.size());
     }
+
+    if(m_pBuilder->WebsocketsActive())
+    {
+        Json::Value jsArray(Json::arrayValue);
+        for(size_t i = 0; i < vPeaks.size(); i++)
+        {
+            Json::Value jsValue;
+            if(vSamples[i] != 0 || vPeaks[i] != 0)
+            {
+                jsValue["peaks"] = vPeaks[i];
+                jsValue["samples"] = vSamples[i];
+            }
+            jsArray.append(jsValue);
+        }
+        m_pBuilder->SendWebsocketMessage(jsArray);
+    }
 }
 
 void pnlPeakCount::ResetTest()
@@ -168,11 +185,20 @@ void pnlPeakCount::OnbtnResetClick(wxCommandEvent& event)
 
 void pnlPeakCount::OnedtLimitTextEnter(wxCommandEvent& event)
 {
-    m_pedtLimit->GetValue().ToDouble(&m_dLimit);
-    if(m_dLimit > 0)
+    double dLimit;
+    m_pedtLimit->GetValue().ToDouble(&dLimit);
+    if(dLimit > 0)
     {
-        m_dLimit = -m_dLimit;
+        dLimit = -dLimit;
     }
+    m_pBuilder->WriteSetting("limit", dLimit);
+
+
+}
+
+void pnlPeakCount::SetLimit(double dLimit)
+{
+    m_dLimit = dLimit;
     m_plblLimit->SetLabel(wxString::Format(wxT("%.2f"), m_dLimit));
     m_pedtLimit->SetValue(wxEmptyString);
     ResetTest();

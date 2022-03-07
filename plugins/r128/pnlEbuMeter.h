@@ -10,6 +10,7 @@ class timedbuffer;
 
 #include "wmlabel.h"
 #include <wx/panel.h>
+#include "json/json.h"
 
 class MaxMinGraph;
 class R128Meter;
@@ -67,6 +68,7 @@ class pnlEbuMeter: public wxPanel
         void ChangeScale();
 
         void LoadSettings();
+        Json::Value CreateWebsocketMessage();
 
 	protected:
 

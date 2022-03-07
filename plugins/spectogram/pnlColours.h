@@ -27,9 +27,6 @@ class pnlColours: public wxPanel
 
 	private:
 
-		//(*Handlers(pnlColours)
-		void OnlstColoursSelected(wxCommandEvent& event);
-		//*)
 
 		SpectogramBuilder* m_pBuilder;
 

@@ -12,10 +12,13 @@ using namespace std;
 ptpBuilder::ptpBuilder() : MonitorPluginBuilder()
 {
 
-    RegisterForSettingsUpdates("Window", this);
+    RegisterForSettingsUpdates(this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&ptpBuilder::OnSettingChanged);
 
+    RegisterRemoteApiEnum("Window", {"Info", "Graph", "Histogram"}, "Info");
+    RegisterRemoteApiEnum("Data", {"Offset", wxString("Delay")}, "Offset");
+    RegisterRemoteApiEnum("reset", {{0,""},{1,"Clear All"}},0);
 }
 
 void ptpBuilder::SetAudioData(const timedbuffer* pBuffer)
@@ -61,8 +64,19 @@ void ptpBuilder::OutputChannels(const std::vector<char>& vChannels)
 
 void ptpBuilder::OnSettingChanged(SettingEvent& event)
 {
-    m_pMeter->ChangeView(event.GetValue());
-   Maximize(true);
+    if(event.GetKey() == "Window")
+    {
+        m_pMeter->ChangeView(event.GetValue());
+        Maximize(true);
+    }
+    else if(event.GetKey() == "Data")
+    {
+        m_pMeter->SetData(event.GetValue());
+    }
+    else if(event.GetKey() == "reset" && event.GetValue(0l) == 1)
+    {
+        m_pMeter->ResetStats();
+    }
 }
 
 

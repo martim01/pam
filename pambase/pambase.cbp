@@ -244,6 +244,9 @@
 		<Unit filename="audio.h" />
 		<Unit filename="audioevent.cpp" />
 		<Unit filename="audioevent.h" />
+		<Unit filename="buttonpopup.h" />
+		<Unit filename="dlgmask.cpp" />
+		<Unit filename="dlgmask.h" />
 		<Unit filename="dlldefine.h" />
 		<Unit filename="freq_mag.h" />
 		<Unit filename="generator.cpp" />
@@ -307,6 +310,8 @@
 		<Unit filename="r128thread.h" />
 		<Unit filename="rawvideosource.cpp" />
 		<Unit filename="rawvideosource.h" />
+		<Unit filename="remoteapi.cpp" />
+		<Unit filename="remoteapi.h" />
 		<Unit filename="rtpserverthread.cpp" />
 		<Unit filename="rtpserverthread.h" />
 		<Unit filename="rtpthread.cpp" />
@@ -380,9 +385,6 @@
 		<Unit filename="wxzxposter.cpp" />
 		<Unit filename="wxzxposter.h" />
 		<Extensions>
-			<code_completion />
-			<envvars />
-			<debugger />
 			<AutoVersioning>
 				<Scheme minor_max="10" build_max="0" rev_max="0" rev_rand_max="10" build_times_to_increment_minor="100" />
 				<Settings autoincrement="0" date_declarations="1" use_define="0" update_manifest="0" do_auto_increment="1" ask_to_increment="0" language="C++" svn="0" svn_directory="" header_path="version.h" />

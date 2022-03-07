@@ -7,6 +7,8 @@
 #include "portaudio.h"
 #include <map>
 #include "log.h"
+#include "networkcontrol.h"
+
 //(*InternalHeaders(pnlSettingsOutput)
 #include <wx/font.h>
 #include <wx/intl.h>
@@ -179,7 +181,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pbtnSAP->SetToggle(true, wxT("Off"), wxT("On"), 60);
 	m_pbtnStream = new wmButton(pnlAoip, ID_M_PBTN3, _("Stream"), wxPoint(260,175), wxSize(330,35), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
 	m_pbtnStream->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnStream->SetToggle(true, wxT("On Demand"), wxT("Always On"), 40);
+	m_pbtnStream->SetToggle(true, wxT("OnDemand"), wxT("AlwaysOn"), 40);
 	m_pbtnActive = new wmButton(pnlAoip, ID_M_PBTN1, _("Server"), wxPoint(260,215), wxSize(330,35), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnActive->SetBackgroundColour(wxColour(0,128,0));
 	m_pbtnActive->SetToggle(true, wxT("Inactive"), wxT("Active"), 40);
@@ -198,12 +200,11 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pLbl12->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl12->SetBackgroundColour(wxColour(64,0,128));
 	m_pbtnSampleRate = new wmButton(pnlAoip, ID_M_PBTN10, _("48 kHz"), wxPoint(344,110), wxSize(70,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN10"));
-	m_pbtnSampleRate->Disable();
-	m_pbtnSampleRate->SetForegroundColour(wxColour(0,0,0));
+    m_pbtnSampleRate->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnSampleRate->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnSampleRate->SetColourDisabled(wxColour(wxT("#B0B0B0")));
 	m_pbtnBits = new wmButton(pnlAoip, ID_M_PBTN11, _("Bits"), wxPoint(416,110), wxSize(174,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN11"));
-	m_pbtnBits->Disable();
+
 	m_pbtnBits->SetBackgroundColour(wxColour(0,128,0));
 	m_pbtnBits->SetColourDisabled(wxColour(wxT("#606060")));
 	m_pbtnBits->SetToggle(true, wxT("16"), wxT("24"), 50);
@@ -243,8 +244,12 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	SetSize(size);
 	SetPosition(pos);
 
-    m_pbtnBits->SetColourDisabled(wxColour(180,180,180));
-    m_pbtnSampleRate->SetColourDisabled(wxColour(180,180,180));
+    m_pbtnBits->SetColourDisabled(wxColour(150,150,150));
+    m_pbtnSampleRate->SetColourDisabled(wxColour(150,150,150));
+    m_pbtnStream->SetColourDisabled(wxColour(150,150,150));
+    m_pbtnRTCP->SetColourDisabled(wxColour(150,150,150));
+    m_pbtnDNS->SetColourDisabled(wxColour(150,150,150));
+    m_pbtnSAP->SetColourDisabled(wxColour(150,150,150));
 
 	m_plstDestination->AddButton(wxT("Disabled"));
     m_plstDestination->AddButton(wxT("Soundcard"));
@@ -252,30 +257,51 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 
     for(unsigned int i = 0; i < 10; i++)
     {
-        m_plstLatency->AddButton(wxString::Format(wxT("%u ms"), i*40));
+        m_plstLatency->AddButton(wxString::Format(wxT("%u ms"), i*40), wxNullBitmap, reinterpret_cast<void*>(i*40));
     }
 
+    m_pbtnBits->ConnectToSetting("Server","Bits","24");
+
+    m_pbtnSampleRate->ConnectToSetting("Server","SampleRate","48000");
+    m_pbtnSampleRate->SetPopup({"44100","48000","96000"});
+
+    m_pbtnDNS->ConnectToSetting("Server","DNS-SD", true);
+    m_pbtnSAP->ConnectToSetting("Server","SAP", false);
+    m_pbtnRTCP->ConnectToSetting("Server","RCTCP",true);
+
+    m_pbtnRtpMap->ConnectToSetting("Server","RTPMap", "96");
+    m_pbtnRtpMap->SetPopup({"96","97","98","99","100","101","102","103","104","105","106","107","108","109","110","111","112","113","114","115","116","117","118","119","120","121","122","123","124","125","126","127"});
+
+    m_pbtnChannels->ConnectToSetting("Server", "Channels", "2");
+    m_pbtnChannels->SetPopup({"1","2","3","4","5","6","7","8"});
+
+    m_pbtnPacketTime->ConnectToSetting("Server","PacketTime", "1000");
+    m_pbtnPacketTime->SetPopup({L"125 \u00B5s",L"250 \u00B5s",L"333 \u00B5s","1 ms","4 ms"}, {"125","250","333","1000","4000"});
+
+    m_plstDestination->ConnectToSetting("Output", "Destination", "Disabled");
+    m_pswpDestination->ConnectToSetting("Output","Destination","Disabled");
+
+    m_pedtRTPPort->ConnectToSetting("Server","RTP_Port", "5004", true);
+    m_pedtRTSPPort->ConnectToSetting("Server","RTSP_Port", "5555", true);
+
+    m_ppnlAddress->ConnectToSetting("Server","DestinationIp", IOManager::Get().GetRandomMulticastAddress());
+
+    m_pbtnRTSP->ConnectToSetting("Server", "RTSP_Interface", wxEmptyString);
+
+    auto setInt = NetworkControl::Get().GetInterfaceNames();
+    m_pbtnRTSP->SetPopup(std::vector<wxString>(setInt.begin(), setInt.end()));
+
+    m_pbtnStream->ConnectToSetting("Server", "Stream", "OnDemand");
+    m_plstLatency->ConnectToSetting("Output", "Latency", reinterpret_cast<void*>(40));
+    m_pbtnActive->ConnectToSetting("Server", "State", false);
 
     ShowSoundcardOutputs();
     UpdateDisplayedSettings();
 
-
-
     m_plstPlayback->Disable();
-    //m_pbtnStream->ToggleSelection(false);
 
-    Settings::Get().AddHandler(wxT("Server"), wxT("RTP_Port"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("RTSP_Port"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("DestinationIp"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("Latency"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("RTSP_Interface"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("Stream"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("SAP"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("DNS-SD"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("RTPMap"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("Channels"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("RTCP"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("State"), this);
+    Settings::Get().AddHandler(this, "Server");
+    Settings::Get().AddHandler(this, "Output");
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pnlSettingsOutput::OnSettingChanged);
 }
@@ -284,58 +310,25 @@ pnlSettingsOutput::~pnlSettingsOutput()
 {
 	//(*Destroy(pnlSettingsOutput)
 	//*)
+	Settings::Get().RemoveHandler(this);
 }
 
 
 void pnlSettingsOutput::UpdateDisplayedSettings()
 {
-    m_plstDestination->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Destination"), wxT("Disabled")), false);
-
-    int nTime = Settings::Get().Read("Server", "PacketTime", 1000);
-    if(nTime > 999)
-    {
-        m_pbtnPacketTime->SetLabel(wxString::Format("%d ms", nTime/1000));
-    }
-    else
-    {
-        m_pbtnPacketTime->SetLabel(wxString::Format(L"%d \u00B5s", nTime));
-    }
-
-
-    m_pswpDestination->ChangeSelection(Settings::Get().Read(wxT("Output"), wxT("Destination"), wxT("Disabled")));
-
-    m_pedtRTPPort->SetValue(Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), wxT("5004")));
-    m_pedtRTSPPort->SetValue(Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), wxT("5555")));
-
-
-    m_ppnlAddress->SetValue(Settings::Get().Read(wxT("Server"), wxT("DestinationIp"), IOManager::Get().GetRandomMulticastAddress()));
-    m_plstLatency->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Latency"), 0)/40, false);
-    m_pbtnRTSP->SetLabel(Settings::Get().Read(wxT("Server"), wxT("RTSP_Interface"), wxEmptyString));
-
     bool bMulticast(Settings::Get().Read(wxT("Server"), wxT("Stream"), "OnDemand") == "AlwaysOn");
-    m_pbtnStream->ToggleSelection(bMulticast);
-
-    m_pbtnRtpMap->SetLabel(Settings::Get().Read("Server", "RTPMap", "96"));
-    m_pbtnChannels->SetLabel(Settings::Get().Read("Server", "Channels", "2"));
 
     m_pbtnSAP->Show(bMulticast);
     m_pLbl1->Show(bMulticast);
     m_ppnlAddress->Show(bMulticast);
 
-    m_pbtnDNS->ToggleSelection(Settings::Get().Read("Server", "DNS-SD", 0), true);
-    m_pbtnSAP->ToggleSelection(Settings::Get().Read("Server", "SAP", 0), true);
-    m_pbtnRTCP->ToggleSelection(Settings::Get().Read("Server", "RTCP", 0), true);
-
-    m_pbtnStats->Show(m_pbtnRTCP->IsChecked());
+    m_pbtnStats->Show(Settings::Get().Read("Server", "RTCP", 0)==1);
 
     double dGain = ConvertRatioToGain(Settings::Get().Read("Output", "Ratio_00", 1.0));
     m_plblOutputGain->SetLabel(wxString::Format("%.2f dB", dGain));
     m_plsliderOutputGain->SetSliderPosition(dGain*500+5000, false);
 
-    m_pbtnBits->ToggleSelection(Settings::Get().Read("Server", "Bits", 24) == 24);
-    m_pbtnSampleRate->SetLabel(Settings::Get().Read("Server", "SampleRate", "48000"));
 
-    m_pbtnActive->ToggleSelection(Settings::Get().Read("Server", "State", 0) == 1);
     EnableStreamSettings();
 }
 
@@ -344,49 +337,13 @@ void pnlSettingsOutput::OnSettingChanged(SettingEvent& event)
 {
     if(event.GetSection() == wxT("Server"))
     {
-        if(event.GetKey() == wxT("RTP_Port"))
+        if(event.GetKey() == wxT("Stream"))
         {
-            m_pedtRTPPort->SetValue(Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), wxT("5004")));
-        }
-        else if(event.GetKey() == wxT("RTSP_Port"))
-        {
-            m_pedtRTSPPort->SetValue(Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), wxT("5555")));
-        }
-        else if(event.GetKey() == wxT("DestinationIp"))
-        {
-            m_ppnlAddress->SetValue(Settings::Get().Read(wxT("Server"), wxT("DestinationIp"), IOManager::Get().GetRandomMulticastAddress()));
-        }
-        else if(event.GetKey() == wxT("Latency"))
-        {
-            m_plstLatency->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Latency"), 0)/40, false);
-        }
-        else if(event.GetKey() == wxT("RTSP_Interface"))
-        {
-            m_pbtnRTSP->SetLabel(Settings::Get().Read(wxT("Server"), wxT("RTSP_Interface"), wxEmptyString));
-        }
-        else if(event.GetKey() == wxT("Stream"))
-        {
-            bool bMulticast(Settings::Get().Read(wxT("Server"), wxT("Stream"), "OnDemand") == "AlwaysOn");
+            bool bMulticast(event.GetValue() == "AlwaysOn");
             m_pbtnStream->ToggleSelection(bMulticast);
             m_pbtnSAP->Show(bMulticast);
             m_pLbl1->Show(bMulticast);
             m_ppnlAddress->Show(bMulticast);
-        }
-        else if(event.GetKey() == wxT("DNS-SD"))
-        {
-            m_pbtnDNS->ToggleSelection(Settings::Get().Read("Server", "DNS-SD", 0));
-        }
-        else if(event.GetKey() == "SAP")
-        {
-            m_pbtnSAP->ToggleSelection(Settings::Get().Read("Server", "SAP", 0));
-        }
-        else if(event.GetKey() == "RTPMap")
-        {
-            m_pbtnRtpMap->SetLabel(event.GetValue());
-        }
-        else if(event.GetKey() == "Channels")
-        {
-            m_pbtnChannels->SetLabel(event.GetValue());
         }
         else if(event.GetKey() == "RTCP")
         {
@@ -394,17 +351,24 @@ void pnlSettingsOutput::OnSettingChanged(SettingEvent& event)
         }
         else if(event.GetKey() == "State")
         {
-            m_pbtnActive->ToggleSelection(event.GetValue(false), false);
             EnableStreamSettings();
+        }
+        else if(event.GetKey() == "RTSP_Interface")
+        {
+            Settings::Get().Write("Server","RTSP_Address", NetworkControl::Get().GetAddress(event.GetValue()));
+        }
+    }
+    else if(event.GetSection() == "Output")
+    {
+        if(event.GetKey() == "Destination")
+        {
+            m_plstPlayback->Enable(event.GetValue()!="Disabled");
         }
     }
 }
 
 void pnlSettingsOutput::OnlstDestinationSelected(wxCommandEvent& event)
 {
-    Settings::Get().Write(wxT("Output"), wxT("Destination"), event.GetString());
-    m_plstPlayback->Enable(event.GetString()!=wxT("Disabled"));
-    m_pswpDestination->ChangeSelection(event.GetString());
 }
 
 void pnlSettingsOutput::OnlstPlaybackSelected(wxCommandEvent& event)
@@ -414,64 +378,30 @@ void pnlSettingsOutput::OnlstPlaybackSelected(wxCommandEvent& event)
 
 void pnlSettingsOutput::OnbtnStreamClick(wxCommandEvent& event)
 {
-    m_pLbl1->Show(event.IsChecked());
-    m_ppnlAddress->Show(event.IsChecked());
-
-    if(event.IsChecked() == false)
-    {
-        Settings::Get().Write(wxT("Server"), wxT("Stream"), "OnDemand");
-    }
-    else
-    {
-        //@todo create the new session
-        Settings::Get().Write(wxT("Server"), wxT("DestinationIp"), m_ppnlAddress->GetValue());
-        Settings::Get().Write(wxT("Server"), wxT("Stream"), "AlwaysOn");
-    }
 }
 
 void pnlSettingsOutput::OnlstPacketSelected(wxCommandEvent& event)
 {
-    Settings::Get().Write(wxT("Server"), wxT("PacketTime"), reinterpret_cast<int>(event.GetClientData()));
 }
 
 void pnlSettingsOutput::OnedtRTSPPortText(wxCommandEvent& event)
 {
-    Settings::Get().Write(wxT("Server"), wxT("RTSP_Port"), m_pedtRTSPPort->GetValue());
 }
 
 void pnlSettingsOutput::OnedtRTPPortText(wxCommandEvent& event)
 {
-    Settings::Get().Write(wxT("Server"), wxT("RTP_Port"), m_pedtRTPPort->GetValue());
 }
 
 void pnlSettingsOutput::OnbtnRTSPClick(wxCommandEvent& event)
 {
-    wxArrayString asButtons;
-
-    for(multimap<wxString, wxString>::const_iterator itInterface = Settings::Get().GetInterfaces().begin(); itInterface != Settings::Get().GetInterfaces().end(); ++itInterface)
-    {
-        asButtons.Add(itInterface->first);
-    }
-
-
-    dlgMask aDlg(this, asButtons, m_pbtnRTSP->GetLabel(), wxNewId(), ClientToScreen(m_pbtnRTSP->GetPosition()), m_pbtnRTSP->GetSize());
-    if(aDlg.ShowModal()== wxID_OK)
-    {
-        m_pbtnRTSP->SetLabel(aDlg.m_sSelected);
-        Settings::Get().Write(wxT("Server"), wxT("RTSP_Interface"), Settings::Get().GetInterfaces().lower_bound(aDlg.m_sSelected)->first);
-        Settings::Get().Write(wxT("Server"), wxT("RTSP_Address"), Settings::Get().GetInterfaces().lower_bound(aDlg.m_sSelected)->second);
-
-    }
 }
 
 void pnlSettingsOutput::OnbtnSAPClick(wxCommandEvent& event)
 {
-    Settings::Get().Write("Server", "SAP", event.IsChecked());
 }
 
 void pnlSettingsOutput::OnbtnDNSClick(wxCommandEvent& event)
 {
-    Settings::Get().Write("Server", "DNS-SD", event.IsChecked());
 }
 
 void pnlSettingsOutput::ShowSoundcardOutputs()
@@ -507,7 +437,6 @@ void pnlSettingsOutput::ShowSoundcardOutputs()
 
 void pnlSettingsOutput::OnlstLatencySelected(wxCommandEvent& event)
 {
-    Settings::Get().Write(wxT("Output"), wxT("Latency"), event.GetInt()*40);
 }
 
 void pnlSettingsOutput::OnlsliderOutputGainMove(wxCommandEvent& event)
@@ -545,92 +474,31 @@ void pnlSettingsOutput::OnbtnStatsClick(wxCommandEvent& event)
 
 void pnlSettingsOutput::OnbtnRtpMapClick(wxCommandEvent& event)
 {
-    wxArrayString asButtons;
-    for(int i = 96; i < 128; i++)
-    {
-        asButtons.Add(wxString::Format("%d", i));
-    }
-
-    dlgMask aDlg(this, asButtons, m_pbtnRtpMap->GetLabel(), wxNewId(), ClientToScreen(m_pbtnRtpMap->GetPosition()), m_pbtnRtpMap->GetSize());
-    if(aDlg.ShowModal()== wxID_OK)
-    {
-        m_pbtnRtpMap->SetLabel(aDlg.m_sSelected);
-pmlLog(pml::LOG_TRACE) << "RTPMAP: " << aDlg.m_sSelected.ToStdString();
-        Settings::Get().Write("Server", "RTPMap", aDlg.m_sSelected);
-    }
 }
 
 void pnlSettingsOutput::OnbtnChannelsClick(wxCommandEvent& event)
 {
-    wxArrayString asButtons;
-    for(int i = 1; i < 9; i++)
-    {
-        asButtons.Add(wxString::Format("%d", i));
-    }
-
-    dlgMask aDlg(this, asButtons, m_pbtnChannels->GetLabel(), wxNewId(), ClientToScreen(m_pbtnChannels->GetPosition()), m_pbtnChannels->GetSize());
-    if(aDlg.ShowModal()== wxID_OK)
-    {
-        m_pbtnChannels->SetLabel(aDlg.m_sSelected);
-        Settings::Get().Write("Server", "Channels", aDlg.m_sSelected);
-    }
 }
 
 void pnlSettingsOutput::OnbtnPacketTimeClick(wxCommandEvent& event)
 {
-    wxArrayString asButtons;
-    asButtons.Add(L"125 \u00B5s");
-    asButtons.Add(L"250 \u00B5s");
-    asButtons.Add(L"333 \u00B5s");
-    asButtons.Add("1 ms");
-    asButtons.Add("4 ms");
-
-
-    dlgMask aDlg(this, asButtons, m_pbtnPacketTime->GetLabel(), wxNewId(), ClientToScreen(m_pbtnPacketTime->GetPosition()), m_pbtnPacketTime->GetSize());
-    if(aDlg.ShowModal()== wxID_OK)
-    {
-        m_pbtnPacketTime->SetLabel(aDlg.m_sSelected);
-        unsigned long nTime;
-        aDlg.m_sSelected.Before(' ').ToULong(&nTime);
-        if(nTime == 1 || nTime == 4)
-        {
-            nTime*=1000;
-        }
-        Settings::Get().Write("Server", "PacketTime", (int)nTime);
-    }
 }
 
 void pnlSettingsOutput::OnbtnSampleRateClick(wxCommandEvent& event)
 {
-    wxArrayString asButtons;
-    asButtons.Add("44100");
-    asButtons.Add("48000");
-    asButtons.Add("96000");
-
-    dlgMask aDlg(this, asButtons, m_pbtnSampleRate->GetLabel(), wxNewId(), ClientToScreen(m_pbtnSampleRate->GetPosition()), m_pbtnSampleRate->GetSize());
-    if(aDlg.ShowModal()== wxID_OK)
-    {
-        m_pbtnSampleRate->SetLabel(aDlg.m_sSelected);
-        unsigned long nSampleRate;
-        aDlg.m_sSelected.ToULong(&nSampleRate);
-        Settings::Get().Write("Server", "SampleRate", (int)nSampleRate);
-    }
 }
 
 void pnlSettingsOutput::OnbtnBitsClick(wxCommandEvent& event)
 {
-    Settings::Get().Write("Server", "Bits", event.IsChecked() ? 24 : 16);
 }
 
 void pnlSettingsOutput::OnbtnRTCPClick(wxCommandEvent& event)
 {
-    Settings::Get().Write("Server", "RTCP", event.IsChecked() ? 1 : 0);
 }
 
 void pnlSettingsOutput::OnbtnActiveClick(wxCommandEvent& event)
 {
-    Settings::Get().Write("Server", "State", event.IsChecked() ? "1" : "0");
-    EnableStreamSettings();
+
 }
 
 void pnlSettingsOutput::EnableStreamSettings()
@@ -648,6 +516,6 @@ void pnlSettingsOutput::EnableStreamSettings()
     m_pbtnRtpMap->Enable(!m_pbtnActive->IsChecked());
     m_pbtnStream->Enable(!m_pbtnActive->IsChecked());
 
-    //m_pbtnSampleRate->Enable(!m_pbtnActive->IsChecked());
-    //m_pbtnBits->Enable(!m_pbtnActive->IsChecked());
+    m_pbtnSampleRate->Enable(!m_pbtnActive->IsChecked());
+    m_pbtnBits->Enable(!m_pbtnActive->IsChecked());
 }

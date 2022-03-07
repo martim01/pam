@@ -178,6 +178,8 @@ LTCPanel::LTCPanel(wxWindow* parent,LTCBuilder* pBuilder, wxWindowID id,const wx
 	nIndex = m_plstDate->AddButton(wxT("TVE"));
 	nIndex = m_plstDate->AddButton(wxT("MTD"));
 
+	m_plstDate->ConnectToSetting(m_pBuilder->GetSection(), "DateFormat", "Auto");
+
 
 	m_plblLTCVolume->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 	m_plblMode->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
@@ -194,7 +196,7 @@ LTCPanel::LTCPanel(wxWindow* parent,LTCBuilder* pBuilder, wxWindowID id,const wx
 	m_plblListTitle->SetTextAlign(wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL);
 
 	Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&LTCPanel::OnLeftUp);
-	m_pBuilder->RegisterForSettingsUpdates(wxT("DateFormat"),this);
+	m_pBuilder->RegisterForSettingsUpdates(this, "DateFormat");
 
 	Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&LTCPanel::OnSettingEvent);
 
@@ -204,7 +206,6 @@ LTCPanel::LTCPanel(wxWindow* parent,LTCBuilder* pBuilder, wxWindowID id,const wx
 	m_nInputChannels = 0;
 	m_pDecoder = new LtcDecoder();
 
-	m_plstDate->SelectButton(m_pBuilder->ReadSetting(wxT("DateFormat"),0), true);
 }
 
 LTCPanel::~LTCPanel()
@@ -243,6 +244,20 @@ void LTCPanel::SetAudioData(const timedbuffer* pBuffer)
             m_plblColour->SetLabel(wxT("Not Set"));
         }
     }
+
+    if(m_pBuilder->WebsocketsActive())
+    {
+        Json::Value jsValue;
+        jsValue["date"] = m_pDecoder->GetDate().ToStdString();
+        jsValue["time"] = m_pDecoder->GetTime().ToStdString();
+        jsValue["volume"] = m_pDecoder->GetAmplitude().ToStdString();
+        jsValue["fps"] = m_pDecoder->GetFPS().ToStdString();
+        jsValue["mode"] = m_pDecoder->GetMode().ToStdString();
+        jsValue["date_format"] = m_pDecoder->GetFormat().ToStdString();
+        jsValue["clock"] = (m_pDecoder->IsClockFlagSet() ? "External" : "Internal");
+        jsValue["colour"] = m_pDecoder->IsColourFlagSet();
+        m_pBuilder->SendWebsocketMessage(jsValue);
+    }
 }
 
 void LTCPanel::InputSession(const session& aSession)
@@ -272,14 +287,12 @@ void LTCPanel::OnLeftUp(wxMouseEvent& event)
 
 void LTCPanel::OnlstDateSelected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("DateFormat"), event.GetInt());
 }
 
 void LTCPanel::OnSettingEvent(SettingEvent& event)
 {
     if(event.GetKey() == wxT("DateFormat"))
     {
-        m_plstDate->SelectButton(event.GetValue(long(0)), false);
         m_pDecoder->SetDateMode(event.GetValue(long(0)));
     }
 }

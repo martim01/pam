@@ -63,6 +63,7 @@ class lineupPanel: public pmPanel
 		void SetAudioData(const timedbuffer* pBuffer);
 		void InputSession(const session& aSession);
 		void OutputChannels(const std::vector<char>& vChannels);
+		void Reset();
 
 	protected:
 
@@ -100,6 +101,8 @@ class lineupPanel: public pmPanel
 
 		void OnLeftUp(wxMouseEvent& event);
 
+
+
 	private:
 
 		//(*Handlers(lineupPanel)
@@ -108,6 +111,9 @@ class lineupPanel: public pmPanel
 
 		void DoFFT();
 		void OnOffsetDone(wxCommandEvent& event);
+
+		void SendWebsocketMessage();
+
 		lineupBuilder* m_pBuilder;
 
         std::vector<float> m_vBufferL;
@@ -136,6 +142,8 @@ class lineupPanel: public pmPanel
         double m_dLevelMax[2];
         double m_dLevel[2];
         double m_dDistortionMax[2];
+        double m_dDistortion[2];
+        double m_dPhase;
         bool m_bFirstLevel;
         bool m_bFirstDistortion;
 		DECLARE_EVENT_TABLE()

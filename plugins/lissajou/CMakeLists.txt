@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
-project(lissajou LANGUAGES CXX VERSION 1.0.3)
+project(lissajou LANGUAGES CXX VERSION 1.1.0)
 
 execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -P ${CMAKE_SOURCE_DIR}/version.cmake)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 include_directories("../../pambase/")
+include_directories(${DIR_RESTGOOSE}/include)
+include_directories(${DIR_JSON}/dist)
 include_directories(${CMAKE_BINARY_DIR}/include)
 link_directories("../../lib")
 

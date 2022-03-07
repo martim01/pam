@@ -5,6 +5,8 @@
 #include <wx/bitmap.h>
 #include "pmcontrol.h"
 
+class SettingEvent;
+
 /** @class a class that draws a lable on the screen, derives from wxWindow
 **/
 class PAMBASE_IMPEXPORT wmLabel : public pmControl
@@ -164,6 +166,7 @@ class PAMBASE_IMPEXPORT wmLabel : public pmControl
         {
             return wxSize(60,25);
         }
+        bool ConnectToSetting(const wxString& sSection, const wxString& sKey, const wxString& sDefault);
 
         uiRect& GetUiRect();
 
@@ -186,6 +189,8 @@ class PAMBASE_IMPEXPORT wmLabel : public pmControl
 
         void CreateRects();
         void Draw(wxDC& dc);
+
+        void OnSettingChanged(const SettingEvent& event);
 
         uiRect m_uiRect;
         unsigned int m_nStyle;

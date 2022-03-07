@@ -34,7 +34,7 @@ pnlMeters::pnlMeters(wxWindow* parent, RadarBuilder* pBuilder, wxWindowID id,con
         m_plstMode->AddButton(itType->first);
     }
 
-	m_plstMode->SelectButton(m_pBuilder->ReadSetting(wxT("MeterMode"),wxT("BBC")), true);
+    m_plstMode->ConnectToSetting(m_pBuilder->GetSection(), "MeterMode", "BBC");
 
 }
 
@@ -51,5 +51,4 @@ void pnlMeters::OnlstMetersSelected(wxCommandEvent& event)
 
 void pnlMeters::OnlstMeterTypeSelected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("MeterMode"), event.GetString());
 }

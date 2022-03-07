@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
-project(peaklog LANGUAGES CXX VERSION 1.0.1)
+project(peaklog LANGUAGES CXX VERSION 1.1.0)
 
 execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -P ${CMAKE_SOURCE_DIR}/version.cmake)
 
@@ -32,6 +32,8 @@ target_compile_options(peaklog PRIVATE ${flags})
 
 target_link_libraries(peaklog ${wxWidgets_LIBRARIES})
 target_link_libraries(peaklog optimized pambase debug pambased)
+target_link_libraries(peaklog optimized restgoose debug restgoosed)
+target_link_libraries(peaklog optimized pml_log debug pml_logd)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")

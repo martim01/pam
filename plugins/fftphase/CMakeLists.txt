@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
-project(fftphase LANGUAGES CXX VERSION 1.0.31)
+project(fftphase LANGUAGES CXX VERSION 1.1.0)
 
 execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -P ${CMAKE_SOURCE_DIR}/version.cmake)
 
@@ -40,6 +40,7 @@ target_compile_options(fftphase PRIVATE ${flags})
 target_link_libraries(fftphase ${wxWidgets_LIBRARIES})
 target_link_libraries(fftphase optimized pambase debug pambased)
 target_link_libraries(fftphase optimized pamfft debug pamfftd)
+target_link_libraries(fftphase optimized restgoose debug restgoosed)
 
 
 

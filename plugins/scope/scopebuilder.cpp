@@ -16,21 +16,18 @@ ScopeBuilder::ScopeBuilder() : MonitorPluginBuilder(),
 m_pScope(0)
 {
 
-    RegisterForSettingsUpdates("Trigger", this);
-    RegisterForSettingsUpdates("TriggerOn", this);
-    RegisterForSettingsUpdates("Autotrigger", this);
-    RegisterForSettingsUpdates("Mode", this);
-    RegisterForSettingsUpdates("Plot", this);
-    RegisterForSettingsUpdates("Vertical", this);
-    RegisterForSettingsUpdates("Timeframe", this);
-
-    for(int i = 0; i < 8; i++)
-    {
-        RegisterForSettingsUpdates(wxString::Format("Plot_Colour_%d", i), this);
-        RegisterForSettingsUpdates(wxString::Format("Plot_Offset_%d", i), this);
-    }
+    RegisterForSettingsUpdates(this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&ScopeBuilder::OnSettingChanged);
+
+    RegisterRemoteApiRangeDouble("Trigger", {0.0,1.0},0.5);
+    RegisterRemoteApiEnum("Autotrigger", {{0,"Off"}, {1,"On"}},0);
+    RegisterRemoteApiEnum("Mode", {{0,"Normal"}, {1,"Slide"}, {2,"Cursor"}},0);
+    RegisterRemoteApiRangeInt("Routing1", {0,7},0);
+    RegisterRemoteApiRangeInt("Routing2", {0,7},1);
+    RegisterRemoteApiRangeDouble("Vertical", {0.0,1.0},1.0);
+    RegisterRemoteApiRangeDouble("Timeframe", {0.0,1000},1.0);
+
 
 }
 
@@ -79,7 +76,7 @@ void ScopeBuilder::LoadSettings()
 {
     if(m_pScope)
     {
-        m_pScope->SetTrigger(ReadSetting(wxT("Trigger"), 1.0));
+        m_pScope->SetTrigger(ReadSetting(wxT("Trigger"), 0.5));
         m_pScope->SetAutotrigger((ReadSetting(wxT("Autotrigger"), 0) == 1));
         m_pTrigger->EnableButtons((ReadSetting(wxT("Autotrigger"), 0) == 0));
         m_pScope->SetMode(ReadSetting(wxT("Mode"),0));
@@ -121,7 +118,7 @@ void ScopeBuilder::OnSettingChanged(SettingEvent& event)
 {
     if(event.GetKey() == wxT("Trigger"))
     {
-        m_pScope->SetTrigger(ReadSetting(wxT("Trigger"), 1.0));
+        m_pScope->SetTrigger(ReadSetting(wxT("Trigger"), 0.5));
     }
     else if(event.GetKey() == wxT("Autotrigger"))
     {

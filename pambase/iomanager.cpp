@@ -90,44 +90,22 @@ IOManager::IOManager() :
 
     AoipSourceManager::Get();
 
-    Settings::Get().AddHandler(wxT("Input"),wxT("Type"), this);
-    Settings::Get().AddHandler(wxT("Input"),wxT("AoIP"), this);
-    Settings::Get().AddHandler(wxT("Input"),wxT("AoIPManual"), this);
-    Settings::Get().AddHandler(wxT("Input"),wxT("Device"), this);
-    Settings::Get().AddHandler(wxT("Input"),wxT("File"), this);
+    Settings::Get().AddHandler(this, wxT("Input"));
 
     m_vRatio.resize(8);
     for(int i = 0; i < 8; i++)
     {
-        Settings::Get().AddHandler("Input", wxString::Format("Ratio_%02d", i), this);
         m_vRatio[i] = Settings::Get().Read("Input",  wxString::Format("Ratio_%02d", i), 1.0);
     }
     CheckIfGain();
 
-    Settings::Get().AddHandler(wxT("Output"),wxT("Device"), this);
-    Settings::Get().AddHandler(wxT("Output"),wxT("Destination"), this);
-    Settings::Get().AddHandler(wxT("Output"),wxT("Latency"), this);
-    Settings::Get().AddHandler(wxT("Output"),wxT("Left"), this);
-    Settings::Get().AddHandler(wxT("Output"),wxT("Right"), this);
+    Settings::Get().AddHandler(this, wxT("Output"));
+    Settings::Get().AddHandler(this, wxT("Generator"));
+    Settings::Get().AddHandler(this, wxT("Noise"));
+    Settings::Get().AddHandler(this, wxT("Monitor"), wxT("Source"));
+    Settings::Get().AddHandler(this, wxT("QoS"),wxT("Interval"));
 
-    Settings::Get().AddHandler(wxT("Output"),wxT("Source"), this);
-    Settings::Get().AddHandler(wxT("Output"),wxT("File"), this);
-    Settings::Get().AddHandler(wxT("Output"),wxT("Sequence"), this);
-
-    Settings::Get().AddHandler(wxT("Generator"),wxT("Frequency"), this);
-    Settings::Get().AddHandler(wxT("Generator"),wxT("Amplitude"), this);
-    Settings::Get().AddHandler(wxT("Generator"),wxT("Shape"), this);
-    Settings::Get().AddHandler(wxT("Noise"),wxT("Colour"), this);
-    Settings::Get().AddHandler(wxT("Noise"),wxT("Amplitude"), this);
-
-    Settings::Get().AddHandler(wxT("Monitor"), wxT("Source"), this);
-
-    Settings::Get().AddHandler(wxT("QoS"),wxT("Interval"), this);
-
-    Settings::Get().AddHandler(wxT("Server"), wxT("Stream"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("SAP"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("DNS-SD"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("State"), this);
+    Settings::Get().AddHandler(this,wxT("Server"));
 
     Connect(wxID_ANY,wxEVT_DATA,(wxObjectEventFunction)&IOManager::OnAudioEvent);
     Connect(wxID_ANY,wxEVT_RTP_SESSION,(wxObjectEventFunction)&IOManager::OnRTPSession);
@@ -163,6 +141,7 @@ IOManager::IOManager() :
 IOManager::~IOManager()
 {
     Stop();
+    Settings::Get().RemoveHandler(this);
 }
 
 void IOManager::Stop()
@@ -270,6 +249,7 @@ void IOManager::OnSettingEvent(SettingEvent& event)
             {
                 if(m_pAlwaysOnServer)
                 {
+                    pmlLog() << "Stop alwayson server";
                     m_pAlwaysOnServer->StopStream();
                     m_pAlwaysOnServer->Wait();
                     delete m_pAlwaysOnServer;
@@ -281,6 +261,7 @@ void IOManager::OnSettingEvent(SettingEvent& event)
             {
                 if(m_pOnDemandServer)
                 {
+                    pmlLog() << "Stop ondemenad server";
                     m_pOnDemandServer->Stop();
                     m_pOnDemandServer->Wait();
                     delete m_pOnDemandServer;
@@ -595,7 +576,7 @@ void IOManager::OutputChanged(const wxString& sKey)
         pmlLog(pml::LOG_INFO) << "IOManager\tChange Audio Output Generator: Sequence";
         InitGeneratorSequence();
     }
-    else if(sKey == wxT("Left") || sKey == wxT("Right"))
+    else if(sKey.Left(7) == "Channel")
     {
         OutputChannelsChanged();
     }
@@ -882,6 +863,10 @@ void IOManager::CreateSessionFromOutput(const wxString& sSource)
         nSampleRate = Settings::Get().Read("Server", "SampleRate", 48000);
         nChannels = Settings::Get().Read("Server", "Channels", 2);
     }
+    if(m_pGenerator)
+    {
+        m_pGenerator->SetSampleRate(nSampleRate);
+    }
 
     m_SessionOut.lstSubsession.push_back(subsession(Settings::Get().Read(wxT("Output"), wxT("Source"),wxEmptyString),
     sSource, wxEmptyString, wxT("F32"), wxEmptyString, 0, nSampleRate, nChannels, wxEmptyString, 0, {0,0}, refclk()));
@@ -911,6 +896,12 @@ void IOManager::UpdateOutputSession()
             nSampleRate = 0;
             nChannels = 0;
         }
+
+        if(m_pGenerator && nSampleRate != 0)
+        {
+            m_pGenerator->SetSampleRate(nSampleRate);
+        }
+
         if(m_SessionOut.lstSubsession.back().nSampleRate != nSampleRate || m_SessionOut.lstSubsession.back().nChannels != nChannels)
         {
             m_SessionOut.lstSubsession.back().nSampleRate = nSampleRate;
@@ -982,6 +973,10 @@ void IOManager::CheckPlayback(unsigned long nSampleRate, unsigned long nChannels
             OutputChannelsChanged();
             OpenSoundcardDevice(nSampleRate);
         }
+        else
+        {
+            OutputChannelsChanged();
+        }
     }
     else
     {
@@ -996,6 +991,15 @@ void IOManager::ClearSession()
     CheckPlayback(48000,0);
 }
 
+const session& IOManager::GetInputSession()
+{
+    return m_SessionIn;
+}
+
+const session& IOManager::GetOutputSession()
+{
+    return m_SessionOut;
+}
 
 const session& IOManager::GetSession()
 {
@@ -1030,9 +1034,25 @@ void IOManager::OutputChannelsChanged()
     }
 
     vector<char> vChannels;
-    vChannels.push_back(Settings::Get().Read(wxT("Output"), wxT("Left"), 0));
-    vChannels.push_back(Settings::Get().Read(wxT("Output"), wxT("Right"), 1));
-    SoundcardManager::Get().SetOutputMixer(vChannels, nInputChannels);
+    if(m_SessionOut.GetCurrentSubsession() != m_SessionOut.lstSubsession.end())
+    {
+        for(int i = 1; i <= m_SessionOut.GetCurrentSubsession()->nChannels; i++)
+        {
+            vChannels.push_back(Settings::Get().Read("Output", wxString::Format("Channel_%d", i), i-1));
+        }
+    }
+    if(m_pOnDemandSubsession)
+    {
+        m_pOnDemandSubsession->SetChannelMapping(vChannels);
+    }
+    else if(m_pAlwaysOnServer)
+    {
+        m_pAlwaysOnServer->SetChannelMapping(vChannels);
+    }
+    else
+    {
+        SoundcardManager::Get().SetOutputMixer(vChannels, nInputChannels);
+    }
 
     for(set<wxEvtHandler*>::iterator itHandler = m_setHandlers.begin(); itHandler != m_setHandlers.end(); ++itHandler)
     {
@@ -1159,6 +1179,7 @@ void IOManager::Stream()
 
     if(Settings::Get().Read("Server", "State", 0) == 1 || bNmos) //set to stream
     {
+        m_bStreamAlwaysOn = (Settings::Get().Read("Server", "Stream", "AlwaysOn") == "AlwaysOn");
         if(m_bStreamAlwaysOn || bNmos)  //@todo bodge for NMOS
         {
             StreamAlwaysOn();
@@ -1205,7 +1226,9 @@ void IOManager::StreamOnDemand()
         m_pOnDemandServer = new OnDemandStreamer(m_setRTSPHandlers, m_setRTCPHandlers, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), "0.0.0.0"),
                                               Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555));
 
-        m_pOnDemandSubsession = OnDemandAES67MediaSubsession::createNew(this, *m_pOnDemandServer->envir(), 2, (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
+        m_pOnDemandSubsession = OnDemandAES67MediaSubsession::createNew(this, *m_pOnDemandServer->envir(), Settings::Get().Read("Server", "Channels", 2),
+        Settings::Get().Read("Server", "RtpMap", 96),(LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000),
+        Settings::Get().Read("Server", "Bits", 24),Settings::Get().Read("Server", "SampleRate", 48000), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
 
         m_pOnDemandServer->Create();
         m_pOnDemandServer->SetSubsession(m_pOnDemandSubsession);

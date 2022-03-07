@@ -7,6 +7,9 @@
 #include <list>
 #include <vector>
 #include "pmcontrol.h"
+#include "json/json.h"
+
+class RadarBuilder;
 
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/
@@ -31,7 +34,7 @@ class RadarMeter : public pmControl
         *   @param validator not used - just here to have same structure as wxButton
         *   @param name not used - just here to have same structure as wxButton
         **/
-        RadarMeter(wxWindow *parent,
+        RadarMeter(wxWindow *parent, RadarBuilder* pBuilder,
                  wxWindowID id = wxID_ANY,
                  const wxPoint& pos = wxDefaultPosition,
                  const wxSize& size = wxDefaultSize);
@@ -126,6 +129,9 @@ class RadarMeter : public pmControl
         void DrawLines(wxImage& img, const wxPoint& pntCenter);
         void Scale(float dSampleL, float dSampleR, float& x, float& y, const wxPoint& pntCenter);
 
+        Json::Value CreateWebsocketMessage(const wxTimeSpan& tsRun, double dX, double dY, double dxMax, double dyMax);
+
+        RadarBuilder* m_pBuilder;
 
         double m_dLevel;
         wxRect m_rectGrid;

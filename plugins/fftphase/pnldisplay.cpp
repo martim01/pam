@@ -29,14 +29,14 @@ pnlDisplay::pnlDisplay(wxWindow* parent,fftphaseBuilder* pBuilder, wxWindowID id
 	//*)
 	m_pbtnFall = new wmButton(this,wxNewId(), wxT("Fall"), wxPoint(0,150), wxSize(200, 40),wmButton::STYLE_SELECT);
 	m_pbtnFall->SetToggle(true, wxT("Off"), wxT("On"), 45);
-    m_pbtnFall->ToggleSelection(pBuilder->ReadSetting(wxT("Fall"), 0), true);
-
-    Connect(m_pbtnFall->GetId(), wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&pnlDisplay::OnbtnFall);
+    m_pbtnFall->ConnectToSetting(m_pBuilder->GetSection(), "Fall", true);
 
     m_plstFFT_Display->AddButton(wxT("Graph"));
     m_plstFFT_Display->AddButton(wxT("Stars"));
     m_plstFFT_Display->AddButton(wxT("Phase"));
     m_plstFFT_Display->SelectButton(0,false);
+
+    m_plstFFT_Display->ConnectToSetting(m_pBuilder->GetSection(), "Display", size_t(1));
 
 }
 
@@ -49,10 +49,10 @@ pnlDisplay::~pnlDisplay()
 
 void pnlDisplay::OnlstFFT_DisplaySelected(wxCommandEvent& event)
 {
-    m_pBuilder->OnDisplayChanged(event);
+
 }
 
 void pnlDisplay::OnbtnFall(wxCommandEvent& event)
 {
-    m_pBuilder->FallSelected(event.IsChecked());
+
 }

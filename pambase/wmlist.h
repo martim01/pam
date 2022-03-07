@@ -12,6 +12,7 @@
 #include <memory>
 
 class wmSlideWnd;
+class SettingEvent;
 
 
 /** @brief Window which displays a list or grid of buttons
@@ -33,7 +34,7 @@ class PAMBASE_IMPEXPORT wmList : public pmControl
 
         /** @brief Constructor - simply calls Create
         *   @param sName the name of the control
-        *   @param pParent the parent window
+        *   @param pParent the parenbt window
         *   @param id the wxWindowID of the control
         *   @param pos the top-left position of the control in its parent window
         *   @param size the size of the control
@@ -602,6 +603,13 @@ class PAMBASE_IMPEXPORT wmList : public pmControl
         void AllowScroll(int nScroll)
         {   m_nScrollAllowed = nScroll; }
 
+
+        bool ConnectToSetting(const wxString& sSection, const wxString& sKey, const wxString& sDefault);
+        bool ConnectToSetting(const wxString& sSection, const wxString& sKey, size_t nDefault, const wxString& sMultiDefault="");
+        bool ConnectToSetting(const wxString& sSection, const wxString& sKey, void* dataDefault, const wxString& sMultiDefault="");
+
+        void ReloadSetting();
+
         static const unsigned short SCROLL_NONE     = 0;        ///< @brief wmList may not be scrolled
         static const unsigned short SCROLL_VERTICAL = 1;        ///< @brief wmList may be scrolled vertically
         static const unsigned short SCROLL_HORIZONTAL = 2;      ///< @brief wmlist may be swiped left and right
@@ -685,6 +693,18 @@ class PAMBASE_IMPEXPORT wmList : public pmControl
         void CheckSliding(wxPoint pnt);
 
         void SetDefaultFactory();
+
+        void ConnectToSetting(const wxString& sSection, const wxString& sKey);
+        void OnSettingChanged(const SettingEvent& event);
+        void WriteSetting();
+
+        void SelectButtonsFromCSVLabel(const wxString& sCsv);
+        void SelectButtonsFromCSVIndex(const wxString& sCsv);
+        void SelectButtonsFromCSVData(const wxString& sCsv);
+
+        void WriteSettingCSVLabel();
+        void WriteSettingCSVIndex();
+        void WriteSettingCSVData();
 
         std::list<button*>::iterator GetButton(size_t nButton);
         std::list<button*>::iterator GetButton(void* pData);
@@ -774,6 +794,10 @@ class PAMBASE_IMPEXPORT wmList : public pmControl
         static const unsigned short SCROLL_VERTICAL_END  = 5;
 
 
+        wxString m_sSettingSection;
+        wxString m_sSettingKey;
+        enum enumSettingConnection {NONE, LABEL, INDEX, DATA, CSV_LABEL, CSV_INDEX, CSV_DATA};
+        enumSettingConnection m_eSettingConnection;
 
 
 };

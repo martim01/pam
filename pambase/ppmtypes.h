@@ -3,6 +3,7 @@
 #include <map>
 #include "dlldefine.h"
 #include <wx/string.h>
+#include <set>
 
 struct PAMBASE_IMPEXPORT ppmtype
 {
@@ -28,6 +29,8 @@ class PAMBASE_IMPEXPORT PPMTypeManager
         std::map<wxString, ppmtype>::const_iterator GetTypeBegin();
         std::map<wxString, ppmtype>::const_iterator GetTypeEnd();
         std::map<wxString, ppmtype>::const_iterator FindType(const wxString& sType);
+
+        std::set<wxString> GetTypes();
 
 
     private:

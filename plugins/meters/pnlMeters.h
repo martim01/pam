@@ -2,7 +2,7 @@
 #define PNLMETERS_H
 
 #include <vector>
-
+#include "json/json.h"
 
 class session;
 class LevelMeter;
@@ -60,6 +60,7 @@ class pnlMeters: public wxPanel
 
 
         void SetScale(const wxString& sTitle, const ppmtype& aType);
+		Json::Value CreateWebsocketMessage();
 
 	protected:
 
@@ -92,6 +93,8 @@ class pnlMeters: public wxPanel
 		void OnMonitorClicked(wxCommandEvent& event);
 
 		void SetLightColours();
+
+		
 
         LevelMeter* m_pLevels;
 		std::vector<LevelMeter*> m_vMeters;

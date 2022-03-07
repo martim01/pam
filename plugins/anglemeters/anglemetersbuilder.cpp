@@ -6,6 +6,7 @@
 #include "pnlMode.h"
 #include "pnlOptions.h"
 #include "pnlMeterSettings.h"
+#include "ppmtypes.h"
 
 using namespace std;
 
@@ -13,23 +14,27 @@ AngleMetersBuilder::AngleMetersBuilder() : MonitorPluginBuilder(),
 m_pAngleMeters(0)
 {
 
-    RegisterForSettingsUpdates(wxT("Mode"), this);
-    RegisterForSettingsUpdates(wxT("Freeze"), this);
-    RegisterForSettingsUpdates(wxT("Peaks"), this);
-    RegisterForSettingsUpdates(wxT("Speed"), this);
-    RegisterForSettingsUpdates(wxT("M3M6"), this);
-    RegisterForSettingsUpdates(wxT("Stereo"), this);
-    RegisterForSettingsUpdates(wxT("DisplayText_Current"), this);
-    RegisterForSettingsUpdates(wxT("DisplayText_Peak"), this);
-    RegisterForSettingsUpdates(wxT("Surround"), this);
+    RegisterForSettingsUpdates(this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&AngleMetersBuilder::OnSettingChanged);
+
+    RegisterRemoteApiEnum("Mode", PPMTypeManager::Get().GetTypes(), "BBC");
+    RegisterRemoteApiEnum("Freeze", {{0,"Off"}, {1,"On"}}, 0);
+    RegisterRemoteApiEnum("Peaks", {{0,"Off"}, {1,"Show"}, {2,"Hold"}}, 1);
+    RegisterRemoteApiEnum("Speed", {{0,"Slow"}, {1,"Normal"}, {2,"Fast"}}, 1);
+    RegisterRemoteApiEnum("M3M6", {{0,"M3"}, {1,"M6"}}, 0);
+    RegisterRemoteApiEnum("Stereo", {{0,"Mono"},{1,"Stereo"}}, 1);
+    RegisterRemoteApiEnum("DisplayText_Current", {{0,"Off"}, {1,"On"}}, 0);
+    RegisterRemoteApiEnum("DisplayText_Peak", {{0,"Off"}, {1,"On"}}, 0);
+    RegisterRemoteApiEnum("Surround", {{0,"Off"}, {1,"On"}}, 0);
+
 
 }
 
 void AngleMetersBuilder::SetAudioData(const timedbuffer* pBuffer)
 {
     m_pAngleMeters->SetAudioData(pBuffer);
+
 }
 
 wxWindow* AngleMetersBuilder::CreateMonitorPanel(wxWindow* pParent)
@@ -65,8 +70,7 @@ void AngleMetersBuilder::LoadSettings()
     m_pAngleMeters->UpdateMeterStereo();
     m_pAngleMeters->DisplayCurrentLevelAsText(ReadSetting(wxT("DisplayText_Current"),1));
     m_pAngleMeters->DisplayPeakLevelAsText(ReadSetting(wxT("DisplayText_Peak"),1));
-    //m_pAngleMeters->SetMode(wxT("EBU"));
-    //m_pAngleMeters->SetMode(ReadSetting(wxT("Mode"),wxT("BBC")));
+    m_pAngleMeters->SetMode(ReadSetting(wxT("Mode"),wxT("BBC")));
 }
 
 

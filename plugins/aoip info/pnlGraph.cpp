@@ -54,9 +54,9 @@ pnlGraph::pnlGraph(wxWindow* parent,AoIPInfoBuilder* pBuilder, wxWindowID id,con
 	m_plstGraph->AddButton(wxT("Slip"));
 
 
+	m_plstGraph->ConnectToSetting(m_pBuilder->GetSection(), "Graph", "kBit/s");
+	m_plstType->ConnectToSetting(m_pBuilder->GetSection(), "Type", "Line Graph");
 
-	m_plstGraph->SelectButton(m_pBuilder->ReadSetting(wxT("Graph"), wxT("kBit/s")), true);
-	m_plstType->SelectButton(m_pBuilder->ReadSetting(wxT("Type"), wxT("Line Graph")), true);
 }
 
 pnlGraph::~pnlGraph()
@@ -68,7 +68,6 @@ pnlGraph::~pnlGraph()
 
 void pnlGraph::OnlstGraphSelected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Graph"), event.GetString());
 }
 
 void pnlGraph::OnbtnClearClick(wxCommandEvent& event)
@@ -83,5 +82,4 @@ void pnlGraph::OnbtnRangeClick(wxCommandEvent& event)
 
 void pnlGraph::OnlstTypeSelected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting("Type", event.GetString());
 }

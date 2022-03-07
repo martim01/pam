@@ -5,6 +5,8 @@
 #include <map>
 #include <wx/timer.h>
 #include <wx/event.h>
+#include <set>
+#include "settingevent.h"
 
 class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
 {
@@ -31,7 +33,7 @@ class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
         bool GetSectionDataBegin(const wxString& sSection, std::map<wxString, wxString>::const_iterator& itBegin);
         bool GetSectionDataEnd(const wxString& sSection, std::map<wxString, wxString>::const_iterator& itEnd);
 
-        void AddHandler(const wxString& sSection, const wxString& sKey, wxEvtHandler* pHandler);
+        void AddHandler( wxEvtHandler* pHandler, const wxString& sSection=wxString(""), const wxString& sKey=wxString(""));
         void RemoveHandler(wxEvtHandler* pHandler);
 
         wxString GetExecutableDirectory() const;
@@ -49,11 +51,20 @@ class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
 
         const std::multimap<wxString, wxString>& GetInterfaces();
 
+        const mapSection& GetSections();
+        std::shared_ptr<iniSection> GetSection(const wxString& sSection);
+
     protected:
         Settings();
         void CreatePaths();
 
+        bool WriteInternal(const wxString& sSection, const wxString& sKey, const wxString& sValue, SettingEvent::enumType eType);
+
         void OnTimerSave(wxTimerEvent& event);
+
+        void GetHandlers(const wxString& sHandlers, std::set<wxEvtHandler*>& setHandlers);
+
+        void OnSettingChanged(SettingEvent& event);
         iniManager m_iniManager;
         wxString m_sFullPath;
 

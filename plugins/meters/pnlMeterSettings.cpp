@@ -50,9 +50,10 @@ pnlMeterSettings::pnlMeterSettings(wxWindow* parent,MetersBuilder* pBuilder, wxW
 	m_pbtnM3M6->SetToggle(true, wxT("M3"), wxT("M6"), 50.0);
 	m_pbtnShading->SetToggle(true, wxT("Solid"), wxT("Graded"), 50.0);
 
-	m_plstSpeed->SelectButton((m_pBuilder->ReadSetting(wxT("Speed"),1) == 1),true);
-	m_pbtnM3M6->ToggleSelection(m_pBuilder->ReadSetting(wxT("M3M6"),1) == 1, true);
-	m_pbtnShading->ToggleSelection(m_pBuilder->ReadSetting(wxT("Shading"),0) == 1, true);
+	m_plstSpeed->ConnectToSetting(m_pBuilder->GetSection(), "Speed", size_t(1));
+	m_pbtnM3M6->ConnectToSetting(m_pBuilder->GetSection(), "M3M6", true);
+	m_pbtnShading->ConnectToSetting(m_pBuilder->GetSection(), "Shading", false);
+
 
 }
 
@@ -65,23 +66,13 @@ pnlMeterSettings::~pnlMeterSettings()
 
 void pnlMeterSettings::OnbtnM3M6Click(wxCommandEvent& event)
 {
-    if(event.IsChecked())
-    {
-        m_pBuilder->WriteSetting(wxT("M3M6"),1);
-    }
-    else
-    {
-        m_pBuilder->WriteSetting(wxT("M3M6"),0);
-    }
 }
 
 void pnlMeterSettings::OnlstSpeedSelected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Speed"), event.GetInt());
 }
 
 void pnlMeterSettings::OnbtnShadingClick(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Shading"), event.IsChecked());
 }
 

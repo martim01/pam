@@ -8,6 +8,8 @@
 #include "pnlMeterSettings.h"
 #include "pnlScale.h"
 #include "levelcalculator.h"
+#include "ppmtypes.h"
+
 
 using namespace std;
 
@@ -15,21 +17,31 @@ MetersBuilder::MetersBuilder() : MonitorPluginBuilder(),
 m_pMeters(0)
 {
 
-    RegisterForSettingsUpdates(wxT("Mode"), this);
-    RegisterForSettingsUpdates(wxT("Freeze"), this);
-    RegisterForSettingsUpdates(wxT("Peaks"), this);
-    RegisterForSettingsUpdates(wxT("Speed"), this);
-    RegisterForSettingsUpdates(wxT("M3M6"), this);
-    RegisterForSettingsUpdates(wxT("Shading"), this);
+    RegisterForSettingsUpdates(this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&MetersBuilder::OnSettingChanged);
+
+
+    //Register settings with RemoteAPI
+    RegisterRemoteApiEnum("Mode", PPMTypeManager::Get().GetTypes(), "BBC");
+    RegisterRemoteApiEnum("Freeze", {{0,"Off"}, {1,"On"}},0);
+    RegisterRemoteApiEnum("Peaks", {{0,"Off"}, {1,"Show"}, {2,"Hold"}},1);
+    RegisterRemoteApiEnum("Speed", {{0,"Slow"}, {1,"Normal"}, {2,"Fast"}},1);
+    RegisterRemoteApiEnum("M3M6", {{0,"M3"}, {1,"M6"}},0);
+    RegisterRemoteApiEnum("Shading", {{0,"Off"}, {1,"On"}},0);
 
 }
 
 void MetersBuilder::SetAudioData(const timedbuffer* pBuffer)
 {
     m_pMeters->SetAudioData(pBuffer);
+
+    if(WebsocketsActive())
+    {
+        SendWebsocketMessage(m_pMeters->CreateWebsocketMessage());
+    }
 }
+
 
 wxWindow* MetersBuilder::CreateMonitorPanel(wxWindow* pParent)
 {

@@ -31,6 +31,8 @@ pnlBins::pnlBins(wxWindow* parent,FFTBuilder* pBuilder, wxWindowID id,const wxPo
     m_plstFFT_Bins->AddButton(wxT("16 Hz"), wxNullBitmap, reinterpret_cast<void*>(1536));
     m_plstFFT_Bins->AddButton(wxT("12 Hz"), wxNullBitmap, reinterpret_cast<void*>(2048));
 
+    m_plstFFT_Bins->ConnectToSetting(m_pBuilder->GetSection(), "Bins", (void*)1024);
+
 }
 
 pnlBins::~pnlBins()
@@ -42,5 +44,4 @@ pnlBins::~pnlBins()
 
 void pnlBins::OnlstFFT_BinsSelected(wxCommandEvent& event)
 {
-    m_pBuilder->OnBinsChanged(event);
 }

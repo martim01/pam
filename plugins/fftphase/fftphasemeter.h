@@ -67,6 +67,9 @@ class fftphaseMeter : public pmControl
 		**/
 		void OutputChannels(const std::vector<char>& vChannels);
 
+		void SetChannelX(unsigned long nChannel);
+		void SetChannelY(unsigned long nChannel);
+
 
 		void SetOverlap(double dPercent);
 		void SetNumberOfBins(size_t nBins);
@@ -83,7 +86,7 @@ class fftphaseMeter : public pmControl
 
   protected:
 
-        void DoFFT(int nChannel);
+        void DoFFT(int nChannel, int nAxis);
 
         void OnPaint(wxPaintEvent& event);
         void DrawPhase(wxDC& dc);
@@ -105,6 +108,7 @@ class fftphaseMeter : public pmControl
 
         unsigned long m_nSampleRate;
         unsigned long m_nChannels;
+        unsigned long m_nChannel[2];
         unsigned long m_nWindowType;
         unsigned long m_nOverlap;
         double m_dBinSize;

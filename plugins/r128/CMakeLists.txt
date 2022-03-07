@@ -5,6 +5,7 @@ execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${P
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 include_directories("../../pambase/")
 include_directories("../../pamlevel/")
+include_directories(${DIR_JSON}/dist)
 include_directories(${CMAKE_BINARY_DIR}/include)
 link_directories("../../lib")
 

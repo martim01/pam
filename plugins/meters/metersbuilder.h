@@ -30,6 +30,7 @@ class WXEXPORT MetersBuilder : public MonitorPluginBuilder
         friend class pnlMeterSettings;
         friend class pnlScale;
 
+
         void ClearMeter();
         void OnSettingChanged(SettingEvent& event);
 

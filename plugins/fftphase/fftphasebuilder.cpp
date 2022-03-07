@@ -3,7 +3,7 @@
 #include "settings.h"
 #include "settingevent.h"
 #include "fftphasemeter.h"
-//#include "pnlroutiing.h"
+#include "pnlRouting.h"
 #include "pnldisplay.h"
 #include "pnlwindow.h"
 #include "pnloverlap.h"
@@ -15,10 +15,18 @@ using namespace std;
 fftphaseBuilder::fftphaseBuilder() : MonitorPluginBuilder()
 {
 
-    //RegisterForSettingsUpdates(wxT("Mode"), this);
+    RegisterForSettingsUpdates(this);
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&fftphaseBuilder::OnSettingChanged);
 
+    RegisterRemoteApiEnum("Bins", {{512,"46 Hz"},{1024,"23 Hz"},{1536,"16 Hz"},{2048,"12 Hz"}}, 1024);
+    RegisterRemoteApiEnum("Display", {{0,"Graph"},{1,"Stars"},{2,"Phase"}}, 1);
+    RegisterRemoteApiEnum("Window", {{0,"None"},{1,"Hann"},{2,"Hamming"},{3,"Blackman"},{4,"Kaiser"},{5,"KaiserBessel"}}, 4);
+    RegisterRemoteApiEnum("Overlap", {{0,"0%"},{25,"25%"},{50,"50%"},{75,"75%"}}, 75);
+    RegisterRemoteApiEnum("Fall", {{0,"Off"}, {1,"On"}}, 1);
+
+    RegisterRemoteApiRangeInt("ChannelX", {0,7}, 0);   //@todo this should be dynamic based on sessions
+    RegisterRemoteApiRangeInt("ChannelY", {0,7}, 1);   //@todo this should be dynamic based on sessions
 }
 
 void fftphaseBuilder::SetAudioData(const timedbuffer* pBuffer)
@@ -37,25 +45,18 @@ list<pairOptionPanel_t> fftphaseBuilder::CreateOptionPanels(wxWindow* pParent)
 {
     list<pairOptionPanel_t> lstOptionPanels;
 
-    //m_ppnlRouting = new pnlRoutiing(pParent,this);
+    m_ppnlRouting = new pnlRouting(pParent,this);
     pnlDisplay* pDisplay = new pnlDisplay(pParent,this);
     pnlWindow* pWindow = new pnlWindow(pParent,this);
     pnlOverlap* pOverlap = new pnlOverlap(pParent,this);
     pnlBins* pBins = new pnlBins(pParent,this);
 
-    //lstOptionPanels.push_back(make_pair(wxT("Routing"), m_ppnlRouting));
+
+    lstOptionPanels.push_back(make_pair(wxT("Routing"), m_ppnlRouting));
     lstOptionPanels.push_back(make_pair(wxT("Display"), pDisplay));
     lstOptionPanels.push_back(make_pair(wxT("Window"), pWindow));
     lstOptionPanels.push_back(make_pair(wxT("Overlap"), pOverlap));
     lstOptionPanels.push_back(make_pair(wxT("Bins"), pBins));
-
-
-//    m_ppnlRouting->m_plstFFT_Routing->SelectButton(ReadSetting(wxT("Routing"),0), true);
-    pDisplay->m_plstFFT_Display->SelectButton(ReadSetting(wxT("Display"), 0),true);
-    pWindow->m_plstFFT_Window->SelectButton(ReadSetting(wxT("Window"), 0), true);
-    pOverlap->m_plstFFT_Overlap->SelectButton(ReadSetting(wxT("Overlap"), 0), true);
-    pBins->m_plstFFT_Bins->SelectButton(ReadSetting(wxT("Bins"),0), true);
-
 
     return lstOptionPanels;
 }
@@ -72,6 +73,17 @@ void fftphaseBuilder::LoadSettings()
 void fftphaseBuilder::InputSession(const session& aSession)
 {
 	m_pMeter->InputSession(aSession);
+    if(m_ppnlRouting)
+    {
+        if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
+        {
+            m_ppnlRouting->SetNumberOfChannels(min((unsigned int)8 ,aSession.GetCurrentSubsession()->nChannels));
+        }
+        else
+        {
+            m_ppnlRouting->SetNumberOfChannels(0);
+        }
+    }
 }
 
 void fftphaseBuilder::OutputChannels(const std::vector<char>& vChannels)
@@ -82,47 +94,33 @@ void fftphaseBuilder::OutputChannels(const std::vector<char>& vChannels)
 
 void fftphaseBuilder::OnSettingChanged(SettingEvent& event)
 {
-    //@todo a setting registered for has changed. Handle it
-}
-
-
-
-void fftphaseBuilder::OnBinsChanged(wxCommandEvent& event)
-{
-    m_pMeter->SetNumberOfBins(reinterpret_cast<size_t>(event.GetClientData()));
-    WriteSetting(wxT("Bins"), event.GetInt());
-}
-
-void fftphaseBuilder::OnDisplayChanged(wxCommandEvent& event)
-{
-    m_pMeter->SetDisplayType(event.GetInt());
-    WriteSetting(wxT("Display"), event.GetInt());
-}
-
-void fftphaseBuilder::OnWindowChanged(wxCommandEvent& event)
-{
-    m_pMeter->SetWindowType(event.GetInt());
-    WriteSetting(wxT("Window"), event.GetInt());
-}
-
-void fftphaseBuilder::OnOverlapChanged(wxCommandEvent& event)
-{
-    m_pMeter->SetOverlap(reinterpret_cast<int>(event.GetClientData()));
-    WriteSetting(wxT("Overlap"), event.GetInt());
-}
-
-
-
-void fftphaseBuilder::OnTypeChanged(wxCommandEvent& event)
-{
-  //  m_pMeter->SetMeter(event.GetInt());
-    WriteSetting(wxT("Type"), event.GetInt());
-}
-
-void fftphaseBuilder::FallSelected(bool bSelected)
-{
-    m_pMeter->SetFall(bSelected);
-    WriteSetting(wxT("Fall"), bSelected);
-
+    if(event.GetKey() == "Bins")
+    {
+        m_pMeter->SetNumberOfBins(event.GetValue(1024l));
+    }
+    else if(event.GetKey() == "Display")
+    {
+        m_pMeter->SetDisplayType(event.GetValue(1l));
+    }
+    else if(event.GetKey() == "Window")
+    {
+        m_pMeter->SetWindowType(event.GetValue(3l));
+    }
+    else if(event.GetKey() == "Overlap")
+    {
+        m_pMeter->SetOverlap(event.GetValue(50l));
+    }
+    else if(event.GetKey() == "Fall")
+    {
+        m_pMeter->SetFall(event.GetValue(true));
+    }
+    else if(event.GetKey() == "ChannelX")
+    {
+        m_pMeter->SetChannelX(event.GetValue(0l));
+    }
+    else if(event.GetKey() == "ChannelY")
+    {
+        m_pMeter->SetChannelY(event.GetValue(1l));
+    }
 }
 

@@ -28,6 +28,8 @@ class pnlPeakCount: public wxPanel
 
 		void InputSession(const session& aSession);
 
+		void SetLimit(double dLimit);
+
 
 		//(*Declarations(pnlPeakCount)
 		wmLabel* m_pLbl4;

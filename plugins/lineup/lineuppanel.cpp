@@ -401,6 +401,8 @@ void lineupPanel::SetAudioData(const timedbuffer* pBuffer)
         m_plblAudio->SetLabel(wxT("Unknown"));
         break;
     }
+
+    SendWebsocketMessage();
 }
 
 void lineupPanel::InputSession(const session& aSession)
@@ -451,7 +453,7 @@ void lineupPanel::OnOffsetDone(wxCommandEvent& event)
     m_dOffsetSamples = event.GetInt();
 
     double dDegPerSample = 360.0/(48000.0/m_dDominantFrequency[0]);
-    double dPhase = dDegPerSample*m_dOffsetSamples;
+    m_dPhase = dDegPerSample*m_dOffsetSamples;
 
     m_plblDominantHzL->SetLabel(wxString::Format(wxT("%.f Hz"), m_dDominantFrequency[0]));
 
@@ -462,20 +464,20 @@ void lineupPanel::OnOffsetDone(wxCommandEvent& event)
 
 
     m_plblPhaseSamples->SetLabel(wxString::Format(wxT("%.0f"), m_dOffsetSamples));
-    m_plblPhaseDegrees->SetLabel(wxString::Format(wxT("%.2f'"), dPhase));
+    m_plblPhaseDegrees->SetLabel(wxString::Format(wxT("%.2f'"), m_dPhase));
 }
 
 void lineupPanel::DoFFT()
 {
     FFTAlgorithm fft;
-    double dDistortion = fft.GetTHDistortion(m_lstBufferL, m_nSampleRate, m_nChannels, false, 5, m_vfft_out.size(), m_nSampleSize/2);
+    m_dDistortion[0] = fft.GetTHDistortion(m_lstBufferL, m_nSampleRate, m_nChannels, 0, 5, m_vfft_out.size(), m_nSampleSize/2);
     if(m_bFirstDistortion)
     {
-        m_dDistortionMax[0] = dDistortion;
+        m_dDistortionMax[0] = m_dDistortion[0];
     }
     else
     {
-        m_dDistortionMax[0] = std::max(dDistortion, m_dDistortionMax[0]);
+        m_dDistortionMax[0] = std::max(m_dDistortion[0], m_dDistortionMax[0]);
     }
 
     m_dDominantFrequency[0] = fft.GetFundamentalBinFrequency();
@@ -485,10 +487,10 @@ void lineupPanel::DoFFT()
         m_dDominantFrequencyMin[0] = min(m_dDominantFrequencyMin[0], m_dDominantFrequency[0]);
     }
 
-    m_plblDistortionL->SetLabel(wxString::Format(wxT("%.2f%"), dDistortion));
+    m_plblDistortionL->SetLabel(wxString::Format(wxT("%.2f%"), m_dDistortion[0]));
 
 
-    dDistortion = fft.GetTHDistortion(m_lstBufferR, m_nSampleRate, m_nChannels, true, 5, m_vfft_out.size(), m_nSampleSize/2);
+    m_dDistortion[1] = fft.GetTHDistortion(m_lstBufferR, m_nSampleRate, m_nChannels, 1, 5, m_vfft_out.size(), m_nSampleSize/2);
 
     m_dDominantFrequency[1] = fft.GetFundamentalBinFrequency();
     if(fft.GetFundamentalAmplitude() > -60.0)
@@ -497,15 +499,15 @@ void lineupPanel::DoFFT()
         m_dDominantFrequencyMin[1] = min(m_dDominantFrequencyMin[1], m_dDominantFrequency[1]);
     }
 
-    m_plblDistortionR->SetLabel(wxString::Format(wxT("%.2f%"), dDistortion));
+    m_plblDistortionR->SetLabel(wxString::Format(wxT("%.2f%"), m_dDistortion[1]));
     if(m_bFirstDistortion)
     {
-        m_dDistortionMax[1] = dDistortion;
+        m_dDistortionMax[1] = m_dDistortion[1];
         m_bFirstDistortion = false;
     }
     else
     {
-        m_dDistortionMax[1] = std::max(dDistortion, m_dDistortionMax[1]);
+        m_dDistortionMax[1] = std::max(m_dDistortion[1], m_dDistortionMax[1]);
     }
 
     m_plblDistortionMaxL->SetLabel(wxString::Format(wxT("%.2f%"), m_dDistortionMax[0]));
@@ -514,6 +516,13 @@ void lineupPanel::DoFFT()
 
 void lineupPanel::OnbtnResetClick(wxCommandEvent& event)
 {
+    m_pBuilder->WriteSetting("reset", 1);
+}
+
+void lineupPanel::Reset()
+{
+    m_pBuilder->WriteSetting("reset", 0);
+
     m_bFirstLevel = true;
     m_bFirstDistortion = true;
 
@@ -523,3 +532,33 @@ void lineupPanel::OnbtnResetClick(wxCommandEvent& event)
     m_dDominantFrequencyMin[1] = 48000.0;
 
 }
+
+void lineupPanel::SendWebsocketMessage()
+{
+    if(m_pBuilder->WebsocketsActive())
+    {
+        Json::Value jsMessage;
+        for(size_t i = 0; i < 2; i++)
+        {
+            Json::Value jsChannel;
+            jsChannel["level"]["current"] = m_pLevelCalc->GetLevel(i);
+            jsChannel["level"]["max"] = m_dLevelMax[i];
+            jsChannel["level"]["min"] = m_dLevelMin[i];
+
+            jsChannel["frequency"]["current"] = m_dDominantFrequency[i];
+            jsChannel["frequency"]["max"] = m_dDominantFrequencyMax[i];
+            jsChannel["frequency"]["min"] = m_dDominantFrequencyMin[i];
+
+            jsChannel["distortion"]["current"] = m_dDistortion[i];
+            jsChannel["distortion"]["max"] = m_dDistortionMax[i];
+
+            jsMessage["channels"].append(jsChannel);
+        }
+        jsMessage["phase"] = m_dPhase;
+        jsMessage["lineup"] = m_plblAudio->GetLabel().ToStdString();
+
+        m_pBuilder->SendWebsocketMessage(jsMessage);
+    }
+}
+
+

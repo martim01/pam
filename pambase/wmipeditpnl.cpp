@@ -1,5 +1,7 @@
 #include "wmipeditpnl.h"
 #include <wx/tokenzr.h>
+#include "settings.h"
+#include "settingevent.h"
 
 //(*InternalHeaders(wmipeditpnl)
 #include <wx/intl.h>
@@ -31,7 +33,8 @@ wmipeditpnl::wmipeditpnl() : pmPanel(),
     m_pEdt1(0),
     m_pEdt2(0),
     m_pEdt3(0),
-    m_pEdt4(0)
+    m_pEdt4(0),
+    m_bSettingConnection(false)
 {
 }
 
@@ -39,7 +42,8 @@ wmipeditpnl::wmipeditpnl(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pEdt1(0),
     m_pEdt2(0),
     m_pEdt3(0),
-    m_pEdt4(0)
+    m_pEdt4(0),
+    m_bSettingConnection(false)
 {
 	//(*Initialize(wmipeditpnl)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
@@ -103,6 +107,7 @@ wmipeditpnl::~wmipeditpnl()
 {
 	//(*Destroy(wmipeditpnl)
 	//*)
+	Settings::Get().RemoveHandler(this);
 }
 
 
@@ -157,6 +162,11 @@ void wmipeditpnl::CheckEdit(wmEdit* pCurrent, wmEdit* pNext)
     wxCommandEvent event(wxEVT_IPEDIT_CHANGE, GetId());
     event.SetString(GetValue());
     wxPostEvent(GetParent(), event);
+
+    if(m_bSettingConnection)
+    {
+        WriteSetting();
+    }
 }
 
 void wmipeditpnl::OnSetFocus(wxFocusEvent& event)
@@ -348,4 +358,35 @@ bool wmipeditpnl::Enable(bool bEnable)
         m_pEdt4->Enable(bEnable);
     }
     return true;
+}
+
+
+bool wmipeditpnl::ConnectToSetting(const wxString& sSection, const wxString& sKey, const wxString& sDefault)
+{
+    if(sSection.empty() || sKey.empty())
+    {
+        return false;
+    }
+    else
+    {
+        m_sSettingSection = sSection;
+        m_sSettingKey = sKey;
+        Settings::Get().AddHandler(this, sSection, sKey);
+        Bind(wxEVT_SETTING_CHANGED, &wmipeditpnl::OnSettingChanged, this);
+
+        SetValue(Settings::Get().Read(sSection, sKey, sDefault));
+
+        m_bSettingConnection = true;
+
+        return true;
+    }
+}
+
+void wmipeditpnl::OnSettingChanged(const SettingEvent& event)
+{
+    SetValue(event.GetValue());
+}
+void wmipeditpnl::WriteSetting()
+{
+    Settings::Get().Write(m_sSettingSection, m_sSettingKey, GetValue());
 }

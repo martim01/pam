@@ -22,6 +22,7 @@ class pnlAoipManual: public wxPanel
 		wmButton* m_pbtnChannels;
 		wmButton* m_pbtnRtpMap;
 		wmButton* m_pbtnSampleRate;
+		wmButton* m_pbtnSave;
 		wmButton* m_pbtnStream;
 		wmEdit* m_pedtPort;
 		wmipeditpnl* m_pipServer;
@@ -47,6 +48,7 @@ class pnlAoipManual: public wxPanel
 		static const long ID_M_PBTN2;
 		static const long ID_M_PKBD2;
 		static const long ID_M_PBTN3;
+		static const long ID_M_PBTN5;
 		static const long ID_M_PLBL11;
 		static const long ID_M_PBTN4;
 		//*)
@@ -58,12 +60,15 @@ class pnlAoipManual: public wxPanel
 		void OnbtnStreamClick(wxCommandEvent& event);
 		void OnbtnRtpMapClick(wxCommandEvent& event);
 		void OnbtnChannelsClick(wxCommandEvent& event);
+		void OnbtnSaveClick(wxCommandEvent& event);
 		//*)
 		void OnbtnBitsClick(wxCommandEvent& event);
 		void OnIpChanged(wxCommandEvent& event);
 		void OnedtRTPPort(wxCommandEvent& event);
 
+        wxString CreateSDP();
 
+		void OnSettingChanged(SettingEvent& event);
 
 		DECLARE_EVENT_TABLE()
 };

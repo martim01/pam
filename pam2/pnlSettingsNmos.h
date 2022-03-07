@@ -10,6 +10,7 @@
 #include "wmlist.h"
 #include <memory>
 
+class SettingEvent;
 namespace pml
 {
     namespace nmos
@@ -86,6 +87,7 @@ class pnlSettingsNmos: public wxPanel
 		void OnNmosQueryNodeRemoved(const wxNmosClientQueryEvent& event);
 		void OnNmosQueryNodeChanged(const wxNmosClientQueryEvent& event);
 
+		void OnSettingChanged(SettingEvent& event);
 
 		static const wxColour CLR_NODE_OK;
 		static const wxColour CLR_NODE_BAD;

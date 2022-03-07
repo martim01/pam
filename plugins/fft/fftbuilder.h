@@ -18,8 +18,6 @@ class WXEXPORT FFTBuilder : public MonitorPluginBuilder
             return wxT("FFT");
         }
 
-
-        void OnCursorMode(bool bOn);
         void ResetPeaks();
 
         virtual void InputSession(const session& aSession);
@@ -40,14 +38,6 @@ class WXEXPORT FFTBuilder : public MonitorPluginBuilder
         virtual std::list<pairOptionPanel_t>CreateOptionPanels(wxWindow* pParent);
 
         void LoadSettings();
-        void OnBinsChanged(wxCommandEvent& event);
-        void OnDisplayChanged(wxCommandEvent& event);
-        void OnWindowChanged(wxCommandEvent& event);
-        void OnOverlapChanged(wxCommandEvent& event);
-        void OnRoutingChanged(wxCommandEvent& event);
-        void OnTypeChanged(wxCommandEvent& event);
-        void OnHoldClicked(wxCommandEvent& event);
-        void ColourSelected(bool bSelected);
 
         void OnSettingChanged(SettingEvent& event);
 

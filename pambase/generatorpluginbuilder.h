@@ -5,6 +5,7 @@
 #include <list>
 #include <vector>
 #include "session.h"
+#include "RestGoose.h"
 
 class wmSwitcherPanel;
 class timedbuffer;
@@ -23,6 +24,12 @@ class PAMBASE_IMPEXPORT GeneratorPluginBuilder : public wxEvtHandler
         virtual void Init()=0;
         virtual void Stop()=0;
 
+        void SetSampleRate(double dSampleRate)  {   m_dSampleRate = dSampleRate; }
+
+        virtual void SendWebsocketMessage(){}
+
+        wxString GetSection() { return "Generator::"+GetName();}
+
     protected:
 
         friend class GeneratorPluginFactory;
@@ -32,6 +39,7 @@ class PAMBASE_IMPEXPORT GeneratorPluginBuilder : public wxEvtHandler
         void SetHandler(wxEvtHandler* pHandler);
         void CreatePanels(wmSwitcherPanel* pswpGenerators);
 
+
         void WriteSetting(const wxString& sSetting, const wxString& sValue);
         void WriteSetting(const wxString& sSetting, int nValue);
         void WriteSetting(const wxString& sSetting, double dValue);
@@ -40,11 +48,17 @@ class PAMBASE_IMPEXPORT GeneratorPluginBuilder : public wxEvtHandler
         int ReadSetting(const wxString& sSetting, int nDefault);
         double ReadSetting(const wxString& sSetting, double dDefault);
 
-        void RegisterForSettingsUpdates(const wxString& sSetting, wxEvtHandler* pHandler);
+        void RegisterForSettingsUpdates(wxEvtHandler* pHandler, const wxString& sSetting="");
 
         virtual wxWindow* CreateGeneratorPanel(wxWindow* pParent)=0;
         virtual void LoadSettings()=0;
+
+        void InitRemoteApi();
+        pml::restgoose::response GetStatus(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser);
+        pml::restgoose::response PatchSetting(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser);
+
         wxEvtHandler* m_pHandler;
+        double m_dSampleRate;
 
     private:
         wmSwitcherPanel* m_pswpGenerators;

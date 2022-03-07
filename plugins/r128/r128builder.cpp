@@ -15,15 +15,19 @@ m_pMeters(0)
 {
 
     //m_bWantsAudioAlways = true;
-    RegisterForSettingsUpdates(wxT("Calculate"), this);
-    RegisterForSettingsUpdates(wxT("Scale"), this);
-    RegisterForSettingsUpdates(wxT("Zero"), this);
-    RegisterForSettingsUpdates(wxT("Show_Short"), this);
-    RegisterForSettingsUpdates(wxT("Show_Momentary"), this);
-    RegisterForSettingsUpdates(wxT("Show_Live"), this);
-    RegisterForSettingsUpdates(wxT("Show_True"), this);
-    RegisterForSettingsUpdates(wxT("Show_Phase"), this);
+    RegisterForSettingsUpdates(this);
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&R128Builder::OnSettingChanged);
+
+
+    RegisterRemoteApiEnum("Calculate", {{0, "Pause"},{1,"Run"}}, 1);
+    RegisterRemoteApiEnum("Scale", {{0, "+9"},{1,"+18"}}, 0);
+    RegisterRemoteApiEnum("Zero", {{0,"-23"},{1,"Abs"}}, 0);
+    RegisterRemoteApiEnum("Show_Short", {{0,"Hide"},{1,"Show"}},1);
+    RegisterRemoteApiEnum("Show_Momentary", {{0,"Hide"},{1,"Show"}},1);
+    RegisterRemoteApiEnum("Show_Live", {{0,"Hide"},{1,"Show"}},1);
+    RegisterRemoteApiEnum("Show_True", {{0,"Hide"},{1,"Show"}},1);
+    RegisterRemoteApiEnum("Show_Phase", {{0,"Hide"},{1,"Show"}},1);
+
     m_nInputChannels = 1;
     m_nDisplayChannel = 0;
     m_bRun = true;
@@ -38,6 +42,16 @@ void R128Builder::SetAudioData(const timedbuffer* pBuffer)
     if(m_pMeters && m_bRun)
     {
         m_pMeters->SetAudioData(pBuffer);
+        if(WebsocketsActive())
+        {
+            SendWebsocketMessage(m_pMeters->CreateWebsocketMessage());
+        }
+    }
+    else if(WebsocketsActive())
+    {
+        Json::Value jsMessage;
+        jsMessage["state"] = "paused";
+        SendWebsocketMessage(jsMessage);
     }
 }
 

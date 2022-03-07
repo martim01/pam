@@ -5,6 +5,8 @@
 #include "uirect.h"
 #include "pmpanel.h"
 
+class SettingEvent;
+
 /**
 *   @brief wxWidgets control which allows switching between different pages
 *   @author Matthew Martin
@@ -145,6 +147,10 @@ class PAMBASE_IMPEXPORT wmSwitcherPanel : public pmPanel
     void SetSwipeDirection(unsigned int nDirection);
 
 
+    bool ConnectToSetting(const wxString& sSection, const wxString& sKey, const wxString& sDefault);
+    bool ConnectToSetting(const wxString& sSection, const wxString& sKey, int nDefault);
+
+
     static const unsigned short SCROLL_NONE     = 0;
     static const unsigned short SCROLL_HORIZONTAL = 1;
     static const unsigned short SCROLL_VERTICAL = 2;
@@ -173,6 +179,8 @@ class PAMBASE_IMPEXPORT wmSwitcherPanel : public pmPanel
         bool ScrollHorizontal(int nXDiff);
         bool ScrollVertical(int nYDiff);
         void ResizePages();
+
+        void OnSettingChanged(const SettingEvent& event);
 
         void ResetCurrentSwipe();
         void SwipeFinished();
@@ -206,6 +214,8 @@ class PAMBASE_IMPEXPORT wmSwitcherPanel : public pmPanel
         unsigned long m_nPageNameStyle;
         unsigned long m_nStyle;
 
+        enum enumSettingConnection {SC_NONE, SC_NAME, SC_INDEX};
+        enumSettingConnection m_eSettingConnection;
 
         static const long ID_SCROLLING;
 

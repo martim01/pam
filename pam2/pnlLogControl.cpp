@@ -62,13 +62,12 @@ pnlLogControl::pnlLogControl(wxWindow* parent, pnlLog* pLogWindow, wxWindowID id
 	m_plstFilter->AddButton("Critical");
 
 	m_plstFilter->SetBackgroundColour(*wxBLACK);
-	m_plstFilter->SelectButton(Settings::Get().Read("Log","Level",2));
+    m_plstFilter->ConnectToSetting("Log", "Level", size_t(2));
 
 	Connect(m_plstFilter->GetId(), wxEVT_LIST_SELECTED, (wxObjectEventFunction)&pnlLogControl::OnlstFilterSelected);
 
 	m_pbtnScroll->SetToggle(true, wxT("Scroll"), wxT("Lock"), 50.0);
-
-	m_pbtnScroll->ToggleSelection((Settings::Get().Read(wxT("Log"), wxT("ScrollLock"), 0)==1), true);
+    m_pbtnScroll->ConnectToSetting("Log", "ScrollLock", false);
 }
 
 pnlLogControl::~pnlLogControl()
@@ -100,9 +99,6 @@ void pnlLogControl::OntbnPageDownClick(wxCommandEvent& event)
 
 void pnlLogControl::OnbtnScrollClick(wxCommandEvent& event)
 {
-    m_ppnlLog->ScrollLock(event.IsChecked());
-
-    Settings::Get().Write(wxT("Log"), wxT("ScrollLock"), event.IsChecked());
 
 }
 
@@ -123,5 +119,5 @@ void pnlLogControl::UpdateControl(size_t nCurrentPage, size_t nTotalPages)
 
 void pnlLogControl::OnlstFilterSelected(wxCommandEvent& event)
 {
-    Settings::Get().Write("Log","Level", event.GetInt());
+    //Settings::Get().Write("Log","Level", event.GetInt());
 }

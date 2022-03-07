@@ -32,7 +32,8 @@ pnlOptions::pnlOptions(wxWindow* parent, ptpBuilder* pBuilder,wxWindowID id,cons
 	m_plstWindow->AddButton("Graphs");
 	m_plstWindow->AddButton("Histograms");
 
-	m_plstWindow->SelectButton(m_pBuilder->ReadSetting("Window", "Info"));
+	m_plstWindow->ConnectToSetting(m_pBuilder->GetSection(), "Window", "Info");
+
 
 }
 
@@ -45,6 +46,6 @@ pnlOptions::~pnlOptions()
 
 void pnlOptions::OnlstWindowSelected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting("Window", event.GetString());
+
 }
 

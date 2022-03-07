@@ -1,7 +1,7 @@
 #pragma once
 #include "ServerMediaSession.hh"
 #include <set>
-
+#include <vector>
 class wxEvtHandler;
 
 class AES67ServerMediaSubsession: public ServerMediaSubsession

@@ -1,6 +1,8 @@
 #pragma once
 #include "testpluginbuilder.h"
+
 class pnlPeakCount;
+class SettingEvent;
 
 
 class PeakCountBuilder : public TestPluginBuilder
@@ -17,6 +19,7 @@ class PeakCountBuilder : public TestPluginBuilder
 
     protected:
 
+        void OnSettingChanged(SettingEvent& event);
         friend class pnlPeakCount;
         virtual wxWindow* CreateTestPanel(wxWindow* pParent);
         virtual void LoadSettings();

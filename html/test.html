@@ -1,0 +1,467 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+	<head>
+		<meta name="description" content="" >
+		<meta name="author" content="Matthew Martin">
+		<meta name="keywords" content="" >
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<meta http-equiv="Expires" content="Mon, 26 Jul 1980 05:00:00 GMT">
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="pragma" content="no-cache">
+		<meta http-equiv="Cache-Control" content="no-cache, must-revalidate, post-check=0, pre-check=0">
+		<meta http-equiv="Cache-Control" content="max-age=0">
+		<title>PAM RemoteApi Example</title>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.4/raphael-min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/justgage/1.2.9/justgage.min.js"></script>
+		<script type="text/javascript" language="javascript">
+			
+			var url = new URL(window.location.href);
+			var g_endpoint = url.searchParams.get("endpoint");
+			
+			
+			console.log(g_endpoint);
+			if(g_endpoint === null)
+			{
+				g_endpoint = prompt("Enter endpoint");
+			}
+			
+			var g_url = "http://"+g_endpoint+"/x-pam";
+			var g_canvas;
+
+
+			function on_load()
+			{
+				g_canvas = document.getElementById('fft');
+				ws_connect();
+				
+				get_settings();
+				
+			}
+			
+			function getAjax()
+			{
+				var ajaxRequest;  // The variable that makes Ajax possible!
+				try
+				{
+					// Opera 8.0+, Firefox, Safari
+					ajaxRequest = new XMLHttpRequest();
+				} 
+				catch (e)
+				{
+					// Internet Explorer Browsers
+					try
+					{
+						ajaxRequest = new ActiveXObject("Msxml2.XMLHTTP");
+					} 
+					catch (e) 
+					{
+						try
+						{
+							ajaxRequest = new ActiveXObject("Microsoft.XMLHTTP");
+						}
+						catch (e)
+						{
+							// Something went wrong
+							alert("Your browser broke!");
+							return false;
+						}
+					}
+				}
+				return ajaxRequest;
+			}
+			
+			function get_settings()
+			{
+				var ajaxRequest = getAjax();  
+				ajaxRequest.onreadystatechange = function()
+				{
+					if(ajaxRequest.readyState == 4)
+					{
+						var jsonObj = JSON.parse(ajaxRequest.responseText);
+						console.log(jsonObj);
+						if(jsonObj.error)
+						{
+							alert(jsonObj.error);
+						}
+						else
+						{	
+							show_settings(jsonObj);
+						}
+						
+					}
+				}			
+				ajaxRequest.open("GET", g_url+'/settings');
+				ajaxRequest.send(null); 
+			}
+			
+			function patchSetting(section, key, value)
+			{
+				var ajaxRequest = getAjax();  
+				ajaxRequest.onreadystatechange = function()
+				{
+					if(ajaxRequest.readyState == 4)
+					{
+						var jsonObj = JSON.parse(ajaxRequest.responseText);
+						console.log(jsonObj);
+						if(ajaxRequest.status != 200)
+						{
+							alert(jsonObj.reason);
+						}
+					}
+				}			
+				ajaxRequest.open("PATCH", g_url+'/settings');
+				var jsonObj = new Array();
+				var setting =  new Object();
+				setting.section = section;
+				setting.key = key;
+				setting.value = value;
+				jsonObj.push(setting);
+				console.log(jsonObj);
+				ajaxRequest.send(JSON.stringify(jsonObj)); 
+			}
+		
+			function ws_connect()
+			{
+				console.log("ws_connect: "+ g_endpoint+"/x-pam/ws");
+				g_ws = new WebSocket('ws://'+ g_endpoint+"/x-pam/ws");
+				
+				g_ws.onopen = function(ev)  { console.log(ev); };
+				g_ws.onerror = function(ev) { console.log(ev); };
+				g_ws.onclose = function(ev) { console.log(ev); alert("Server has closed");};
+				//g_ws.filter = function(jsonObj){};
+	
+							
+				g_ws.onmessage = function(ev) 
+				{
+					var jsonObj = JSON.parse(ev.data);
+					if(jsonObj["plugin"] !== undefined)
+					{
+						if(jsonObj["plugin"]["name"] == "Meters")
+						{
+							drawMeter(jsonObj["data"]);
+						}
+						else if(jsonObj["plugin"]["name"] == "FFT")
+						{
+							drawfft(jsonObj["data"]);
+						}	
+						else if(jsonObj["plugin"]["name"] == "R128")
+						{
+							showR128(jsonObj["data"]);
+						}
+						else if(jsonObj["plugin"]["name"] == "Specto")
+						{
+							drawSpecto(jsonObj["data"]);
+						}
+						else if(jsonObj["plugin"]["name"] == "Radar")
+						{
+							drawRadar(jsonObj["data"]);
+						}
+						else if(jsonObj["plugin"]["name"] == "Session Info")
+						{
+							//drawRadar(jsonObj["data"]);
+						}
+						else
+						{
+							console.log(jsonObj);
+						}
+					}
+					else
+					{
+						console.log(jsonObj);
+					}
+                }
+            }
+
+			function prepareCanvas()
+			{
+				var ctx = g_canvas.getContext('2d');
+				ctx.fillStyle = '#000000';
+				ctx.fillRect(0,0,g_canvas.width, g_canvas.height);
+				return ctx;
+			}
+
+			function drawMeter(jsonObj)
+			{
+				var ctx = prepareCanvas();
+
+				var y = -(g_canvas.height/70.0 * jsonObj[0]["level"]);
+				ctx.fillStyle = '#ff0000';
+				ctx.fillRect(40, y, 50, g_canvas.height-y);
+
+				y = -(g_canvas.height/70.0 * jsonObj[1]["level"]);
+				ctx.fillStyle = '#00ff00';
+				ctx.fillRect(100, y, 50, g_canvas.height-y);
+
+				y = -(g_canvas.height/70.0 * jsonObj[2]["level"]);
+				ctx.fillStyle = '#ffffff';
+				ctx.fillRect(180, y, 50, g_canvas.height-y);
+
+				y = -(g_canvas.height/70.0 * jsonObj[3]["level"]);
+				ctx.fillStyle = '#ff8800';
+				ctx.fillRect(240, y, 50, g_canvas.height-y);
+
+			}
+
+			var xOld;
+			var yOld;
+			var xMaxOld;
+			var yMaxOld;
+
+			function drawRadar(jsonObj)
+			{
+				console.log(jsonObj);
+				if(jsonObj["max"] !== undefined && jsonObj["radar"] !== undefined)
+				{
+					var ctx = g_canvas.getContext('2d');
+					if(xOld === null)
+					{
+						ctx.strokeStyle = '#000000';
+						ctx.beginPath();
+						ctx.moveTo(g_canvas.width/2, g_canvas.height/2);
+						ctx.lineTo(g_canvas.width/2+jsonObj["max"]["x"], g_canvas.height/2+jsonObj["max"]["y"]);	
+						ctx.stroke();
+						
+						//ctx = g_canvas.getContext('2d');
+						ctx.strokeStyle = '#00ff00';
+						ctx.beginPath();
+						
+						ctx.moveTo(g_canvas.width/2, g_canvas.height/2);
+						ctx.lineTo(g_canvas.width/2+jsonObj["radar"]["x"], g_canvas.height/2+jsonObj["radar"]["y"]);	
+						ctx.stroke();
+					}
+					else
+					{
+						ctx.fillStyle = '#000000';
+						ctx.strokeStyle = '#000000';
+						ctx.beginPath();
+						ctx.moveTo(g_canvas.width/2, g_canvas.height/2);
+						ctx.lineTo(xMaxOld, yMaxOld);
+						ctx.lineTo(g_canvas.width/2+jsonObj["max"]["x"], g_canvas.height/2+jsonObj["max"]["y"]);	
+						ctx.lineTo(g_canvas.width/2, g_canvas.height/2);
+						ctx.fill();
+
+						ctx.fillStyle = '#00ff00';
+						ctx.strokeStyle = '#00ff00';
+						ctx.beginPath();
+						ctx.moveTo(g_canvas.width/2, g_canvas.height/2);
+						ctx.lineTo(xOld, yOld);
+						ctx.lineTo(g_canvas.width/2+jsonObj["radar"]["x"], g_canvas.height/2+jsonObj["radar"]["y"]);	
+						ctx.lineTo(g_canvas.width/2, g_canvas.height/2);
+						ctx.fill();
+
+					}
+					xOld = g_canvas.width/2+jsonObj["radar"]["x"];
+					yOld = g_canvas.height/2+jsonObj["radar"]["y"];
+
+					xMaxOld = g_canvas.width/2+jsonObj["max"]["x"];
+					yMaxOld = g_canvas.height/2+jsonObj["max"]["y"];
+
+
+				}
+				else
+				{
+					console.log(jsonObj);
+				}
+			}
+			function drawfft(jsonObj)
+			{
+				var ctx = prepareCanvas();
+				ctx.strokeStyle = '#ffffff';
+				ctx.beginPath();
+				ctx.moveTo(0,0);
+				ctx.lineTo(0, g_canvas.height);
+				ctx.lineTo(g_canvas.width, g_canvas.height);
+				ctx.stroke();
+
+				if(jsonObj["bins"] !== undefined)
+				{
+					
+					ctx.beginPath();
+					var oldx = 0;
+					var oldy = 0;
+					for(var i = 0; i < jsonObj["bins"].length; i++)
+					{
+						var x = g_canvas.width/Math.log10(jsonObj["bins"].length) * Math.log10(i);
+						var y = -(g_canvas.height/70.0 * jsonObj["bins"][i]["level"]);
+        				
+						ctx.moveTo(oldx, oldy);
+						ctx.lineTo(x,y);
+
+						oldx = x;
+						oldy = y;
+					}
+					ctx.stroke();
+				}
+			}
+			function drawSpecto(jsonObj)
+			{
+				console.log("drawSpecto");
+			}
+
+			function showR128(jsonObj)
+			{
+				console.log("showR128");
+			}
+
+			
+			function show_settings(jsonObj)
+			{
+				var set = document.getElementById('settings');
+				
+				for(const section in jsonObj)
+				{
+					var div = document.createElement('div');
+					show_section(div, section, jsonObj[section]);
+					set.appendChild(div);
+				}
+			}
+
+
+			function show_section(parentElm, section, jsonObj)
+			{
+				var set = document.createElement('fieldset');
+				var legend = document.createElement('legend');
+				legend.innerHTML = section;
+				set.append(legend);
+				
+				console.log(jsonObj);
+				for(const key in jsonObj)
+				{
+					console.log(key);
+					var div = document.createElement('div');
+					show_key(section, div, key, jsonObj[key]);
+					set.appendChild(div);
+				}
+				
+				parentElm.appendChild(set);
+			}
+
+			function show_key(section, parentElm, key, jsonObj)
+			{
+				if(jsonObj === null)
+				{
+				}
+				else if(jsonObj.hasOwnProperty("range"))
+				{
+					show_range(section, parentElm, key, jsonObj);
+				}
+				else if(jsonObj.hasOwnProperty("enum"))
+				{
+					if(jsonObj["enum"].length > 0 && jsonObj["enum"][0].hasOwnProperty("label"))
+					{
+						show_enum_int(section, parentElm, key, jsonObj);
+					}
+					else
+					{
+						show_enum(section, parentElm, key, jsonObj);
+					}
+				}
+			}
+
+
+		function show_range(section, parentElm, key, jsonObj)
+		{
+			var label = document.createElement('label');
+			label.innerHTML = key+":";
+			label.style.color = "#8365ff";
+			parentElm.appendChild(label);
+			
+			var inp = document.createElement('input');
+			inp.type = "number";
+			inp.max = jsonObj["range"]["maximum"];
+			inp.min = jsonObj["range"]["minimum"];
+			inp.value = jsonObj["current"];
+			inp.id = section+'_'+key;
+			inp.addEventListener("change", function(event){rangeChange(event)});
+			parentElm.appendChild(inp);
+			
+			//connect a change function
+			
+		}
+
+		function show_enum(section, parentElm, key, jsonObj)
+		{
+			var label = document.createElement('label');
+			label.innerHTML = key+":";
+			label.style.color = "#8365ff";
+			parentElm.appendChild(label);
+			
+			for(var i = 0; i < jsonObj["enum"].length; i++)
+			{
+				var inp = document.createElement('input');
+				inp.type = "radio";
+				inp.id = section+'_'+key+'_'+jsonObj["enum"][i];
+				inp.name = key;
+				inp.value = jsonObj["enum"][i];
+				inp.checked = (jsonObj["enum"][i] == jsonObj["current"]);
+				inp.addEventListener("change", function(event){enumChange(event)});
+				parentElm.appendChild(inp);
+				
+				label = document.createElement('label');
+				label.for = section+'_'+key+'_'+jsonObj["enum"][i];
+				label.innerHTML = jsonObj["enum"][i];
+				parentElm.appendChild(label);
+			}
+			//connect a change function
+		}
+
+		function show_enum_int(section, parentElm, key, jsonObj)
+		{
+			var label = document.createElement('label');
+			label.innerHTML = key+":";
+			label.style.color = "#8365ff";
+			parentElm.appendChild(label);
+			
+			for(var i = 0; i < jsonObj["enum"].length; i++)
+			{
+				var inp = document.createElement('input');
+				inp.type = "radio";
+				inp.id = section+'_'+key+'_'+jsonObj["enum"][i]["value"];
+				inp.name = key;
+				inp.value = jsonObj["enum"][i]["value"];
+				inp.checked = (jsonObj["enum"][i]["value"] == jsonObj["current"]);
+				inp.addEventListener("change", function(event){enumIntChange(event)});
+				parentElm.appendChild(inp);
+				
+				label = document.createElement('label');
+				label.for = section+'_'+key+'_'+jsonObj["enum"][i]["value"];
+				label.innerHTML = jsonObj["enum"][i]["label"];
+				parentElm.appendChild(label);
+			}
+			//connect a change function
+		}
+
+		function rangeChange(event)
+		{
+			console.log(event.srcElement.id);
+			var arr = event.srcElement.id.split('_');
+			patchSetting(arr[0],arr[1],parseFloat(event.srcElement.value));
+		}
+		
+		function enumChange(event)
+		{
+			var arr = event.srcElement.id.split('_');
+			if(arr.length == 3)
+			{
+				patchSetting(arr[0],arr[1],arr[2]);
+			}
+		}
+		
+		function enumIntChange(event)
+		{
+			var arr = event.srcElement.id.split('_');
+			if(arr.length == 3)
+			{
+				patchSetting(arr[0],arr[1], parseInt(arr[2]));
+			}
+		}
+		
+		
+		
+        </script>
+    </head>
+    <body onload="on_load()">
+		<canvas id="fft" width="1024" height="600">Fallback</canvas>
+		<fieldset id="settings"><legend>Settings</legend></fieldset>
+    </body>
+</HTML>

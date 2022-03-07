@@ -27,9 +27,7 @@ TimeManager::TimeManager() :
     Bind(wxEVT_CLOCK_TIME, &TimeManager::OnPtpClockSync, this);
     Bind(wxEVT_CLOCK_REMOVED, &TimeManager::OnPtpClockRemoved, this);
 
-    Settings::Get().AddHandler("Time", "Sync", this);
-    Settings::Get().AddHandler("Time", "PTP_Domain", this);
-    Settings::Get().AddHandler("Time", "LTC_Format", this);
+    Settings::Get().AddHandler(this, "Time");
 
     Settings::Get().Write("Time", "Grandmaster", "");   //only just started so currently have no Grandmaster
 
@@ -43,6 +41,7 @@ TimeManager::TimeManager() :
 TimeManager::~TimeManager()
 {
     //dtor
+    Settings::Get().RemoveHandler(this);
 }
 
 void TimeManager::OnSettingChanged(SettingEvent& event)

@@ -34,8 +34,8 @@ pnlMeters::pnlMeters(wxWindow* parent, LissajouBuilder* pBuilder, wxWindowID id,
     {
         m_plstMode->AddButton(itType->first);
     }
+    m_plstMode->ConnectToSetting(m_pBuilder->GetSection(), "MeterMode", "BBC");
 
-	m_plstMode->SelectButton(pBuilder->ReadSetting(wxT("MeterMode"), wxT("BBC")), true);
 
 }
 
@@ -52,5 +52,4 @@ void pnlMeters::OnlstMetersSelected(wxCommandEvent& event)
 
 void pnlMeters::OnlstMeterTypeSelected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("MeterMode"), event.GetString());
 }

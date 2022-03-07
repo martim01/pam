@@ -7,6 +7,8 @@
 #include "uirect.h"
 #include "pmcontrol.h"
 
+class SettingEvent;
+
 /** @brief Class that provides an alternative text edit control
 **/
 class PAMBASE_IMPEXPORT wmEdit : public pmControl
@@ -120,6 +122,8 @@ class PAMBASE_IMPEXPORT wmEdit : public pmControl
         void SetFocusedBackground(const wxColour& clr);
         void SetFocusedForeground(const wxColour& clr);
 
+        bool ConnectToSetting(const wxString& sSection, const wxString& sKey, const wxString& sDefault, bool bOnChange);
+
         static const unsigned short ASCII           = 1;    ///< @brief any ASCII character may be entered
         static const unsigned short ALPHA           = 2;    ///< @brief any letter may be entered
         static const unsigned short ALPHANUMERIC    = 3;    ///< @brief any letter or number may be entered
@@ -163,6 +167,12 @@ class PAMBASE_IMPEXPORT wmEdit : public pmControl
         wxSize GetCaretSize(wxDC& dc);
 
 
+        void OnSettingChanged(const SettingEvent& event);
+        void WriteSetting();
+
+        enum enumSettingConnection {SC_NONE, SC_ENTER, SC_CHANGE};
+        enumSettingConnection m_eSettingConnection;
+
         wxString m_sText;
         wxString m_sPassword;
         long m_nStyle;
@@ -184,6 +194,9 @@ class PAMBASE_IMPEXPORT wmEdit : public pmControl
         bool m_bExclude;
 
         bool m_bCapitalize;
+
+        wxString m_sSettingSection;
+        wxString m_sSettingKey;
 
 //        wmScroller* m_pScroller;
         wxColour m_clrBackground[2];

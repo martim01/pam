@@ -29,6 +29,7 @@ void MonitorPluginFactory::Register(MonitorPluginBuilder* pBuilder)
         pBuilder->CreatePanels(m_pswpMonitor, m_pswpOptions);
         pBuilder->LoadSettings();
     }
+    pBuilder->InitRemoteApi();
 
     m_mBuilders.insert(make_pair(pBuilder->GetName(), pBuilder));
 }

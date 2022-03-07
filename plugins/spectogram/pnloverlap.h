@@ -14,9 +14,7 @@ class pnlOverlap: public wxPanel
 		pnlOverlap(wxWindow* parent,SpectogramBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pnlOverlap();
 
-		//(*Declarations(pnlOverlap)
 		wmList* m_plstFFT_Overlap;
-		//*)
 
 	protected:
 
@@ -26,9 +24,6 @@ class pnlOverlap: public wxPanel
 
 	private:
 
-		//(*Handlers(pnlOverlap)
-		void OnlstFFT_OverlapSelected(wxCommandEvent& event);
-		//*)
 
         SpectogramBuilder* m_pBuilder;
 		DECLARE_EVENT_TABLE()

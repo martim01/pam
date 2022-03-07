@@ -2,6 +2,7 @@
 #include <wx/event.h>
 #include <vector>
 #include "dlldefine.h"
+#include <map>
 
 class Audio;
 class timedbuffer;
@@ -35,6 +36,9 @@ class PAMBASE_IMPEXPORT SoundcardManager
         double GetOutputLatency();
 
         void AddOutputSamples(const timedbuffer* pTimedBuffer);
+
+        std::map<int, wxString> GetOutputDevices();
+        std::map<int, wxString> GetInputDevices();
 
         std::vector<char> GetOutputChannels();
 

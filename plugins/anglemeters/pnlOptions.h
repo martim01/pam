@@ -40,15 +40,7 @@ class pnlOptions: public wxPanel
 	private:
 
 		//(*Handlers(pnlOptions)
-		void OnlstMeter_PeaksSelected(wxCommandEvent& event);
-		void OnbnFreezeClick(wxCommandEvent& event);
-		void OnbtnMeterClearClick(wxCommandEvent& event);
-		void OnlstM3M6Selected(wxCommandEvent& event);
-		void OnlstSpeedSelected(wxCommandEvent& event);
-		void OnbtnM3M6Click(wxCommandEvent& event);
-		void OnbtnShadingClick(wxCommandEvent& event);
 		void OnlstTextSelected(wxCommandEvent& event);
-		void OnbtnSurroundClick(wxCommandEvent& event);
 		//*)
 
 		AngleMetersBuilder* m_pBuilder;

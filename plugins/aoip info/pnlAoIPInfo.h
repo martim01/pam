@@ -148,7 +148,10 @@ class pnlAoIPInfo: public wxPanel
         void ClearGraphs();
         void RecalculateRange();
 
-
+        double GetLatency() const { return m_dLatency; }
+        unsigned int GetSampleRate() const { return m_nSampleRate; }
+        unsigned int GetFrameSize() const { return m_nFrameSize; }
+        double GetSlip() const {return m_dSlip;}
 
 	protected:
 
@@ -281,6 +284,8 @@ class pnlAoIPInfo: public wxPanel
 
         double m_dInitialLatency;
         int m_nInitialLatencyCounter;
+
+        double m_dLatency;
 
         enum {GRAPH_MIN=0, GRAPH_MAX};
 		DECLARE_EVENT_TABLE()

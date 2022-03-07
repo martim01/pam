@@ -284,6 +284,7 @@ void SpectogramMeter::DoFFT()
 {
     FFTRoutine();
     Refresh();
+
 }
 
 void SpectogramMeter::FFTRoutine()
@@ -383,6 +384,11 @@ void SpectogramMeter::FFTRoutine()
         m_lstBitmaps.pop_front();
     }
     Refresh();
+
+    if(m_pBuilder->WebsocketsActive())
+    {
+        m_pBuilder->SendWebsocketMessage(CreateWebsocketMessage(anImage));
+    }
 }
 
 float SpectogramMeter::WindowMod(float dAmplitude)
@@ -409,9 +415,9 @@ float SpectogramMeter::WindowMod(float dAmplitude)
 void SpectogramMeter::SetAnalyseMode(int nMode)
 {
     m_nFFTAnalyse = nMode;
-    if(m_nChannels != 2 || nMode > 2)
+    if(m_nChannels != 2)
     {
-        m_uiSettingsAnalyse.SetLabel(LABEL_ANALYSE[nMode]);
+        m_uiSettingsAnalyse.SetLabel(LABEL_ANALYSE[m_nFFTAnalyse]);
     }
     else if(nMode == 0)
     {
@@ -420,6 +426,16 @@ void SpectogramMeter::SetAnalyseMode(int nMode)
     else if(nMode == 1)
     {
         m_uiSettingsAnalyse.SetLabel(wxT("Right"));
+    }
+    else if(nMode == 2)
+    {
+        m_nFFTAnalyse = 8;
+        m_uiSettingsAnalyse.SetLabel(LABEL_ANALYSE[m_nFFTAnalyse]);
+    }
+    else if(nMode == 3)
+    {
+        m_nFFTAnalyse = 9;
+        m_uiSettingsAnalyse.SetLabel(LABEL_ANALYSE[m_nFFTAnalyse]);
     }
 
     RefreshRect(m_uiSettingsAnalyse.GetRect());
@@ -638,4 +654,21 @@ void SpectogramMeter::SetLinear(bool bLinear)
 {
     m_lstBitmaps.clear();
     m_bLinear = bLinear;
+}
+
+
+Json::Value SpectogramMeter::CreateWebsocketMessage(const wxImage& anImage)
+{
+    Json::Value jsData;
+    jsData["heatmap"] = Json::Value(Json::arrayValue);
+    for(int i = 0; i < anImage.GetWidth(); i++)
+    {
+        Json::Value jsColour;
+        jsColour["r"] = anImage.GetRed(i,0);
+        jsColour["g"] = anImage.GetGreen(i,0);
+        jsColour["b"] = anImage.GetBlue(i,0);
+        jsData["heatmap"].append(jsColour);
+    }
+
+    return jsData;
 }

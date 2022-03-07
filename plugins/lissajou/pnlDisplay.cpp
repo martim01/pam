@@ -45,15 +45,18 @@ pnlDisplay::pnlDisplay(wxWindow* parent,LissajouBuilder* pBuilder, wxWindowID id
 	m_plstScaling->AddButton(wxT("Linear"));
 	m_plstScaling->AddButton(wxT("Auto Scale"));
 
-	m_plstScaling->SelectButton(m_pBuilder->ReadSetting(wxT("Scale"),1), true);
+	m_plstScaling->ConnectToSetting(m_pBuilder->GetSection(), "Scale", size_t(1));
+
 
 	m_pbtnRotate->SetToggle(true, wxT("LvR"), wxT("MvS"), 50.0);
-	m_pbtnLevels->SetToggle(true, wxT("Hide"), wxT("Show"), 50.0);
-	m_pbtnDisplay->SetToggle(true, wxT("Stars"), wxT("Hull"), 50.0);
+	m_pbtnRotate->ConnectToSetting(m_pBuilder->GetSection(), "Rotate", true);
 
-	m_pbtnRotate->ToggleSelection((m_pBuilder->ReadSetting(wxT("Rotate"),1)==1), true);
-	m_pbtnLevels->ToggleSelection((m_pBuilder->ReadSetting(wxT("Levels"),0)==1), true);
-	m_pbtnDisplay->ToggleSelection((m_pBuilder->ReadSetting(wxT("Display"),0)==1), true);
+	m_pbtnLevels->SetToggle(true, wxT("Hide"), wxT("Show"), 50.0);
+	m_pbtnLevels->ConnectToSetting(m_pBuilder->GetSection(), "Levels", false);
+
+	m_pbtnDisplay->SetToggle(true, wxT("Stars"), wxT("Hull"), 50.0);
+	m_pbtnDisplay->ConnectToSetting(m_pBuilder->GetSection(), "Display", false);
+
 
 
 }
@@ -67,20 +70,16 @@ pnlDisplay::~pnlDisplay()
 
 void pnlDisplay::OnlstScalingSelected(wxCommandEvent& event)
 {
-     m_pBuilder->WriteSetting(wxT("Scale"), event.GetInt());
 }
 
 void pnlDisplay::OnbtnRotateClick(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Rotate"), event.IsChecked());
 }
 
 void pnlDisplay::OnbtnLevelsClick(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Levels"), event.IsChecked());
 }
 
 void pnlDisplay::OnbtnDisplayClick(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Display"), event.IsChecked());
 }

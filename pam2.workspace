@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
 	<Workspace title="Workspace">
-		<Project filename="manifest_creator/manifest_creator.cbp" />
 		<Project filename="pambase/pambase.cbp" />
 		<Project filename="pamfft/pamfft.cbp" />
 		<Project filename="pamlevel/pamlevel.cbp" />
@@ -68,5 +67,7 @@
 		<Project filename="plugins/battery/battery.cbp" />
 		<Project filename="InitialSetup/InitialSetup.cbp" />
 		<Project filename="InitialSetup/dosetup.cbp" />
+		<Project filename="../tests/pluginloader/pluginloader.cbp" />
+		<Project filename="../Restgoose/Restgoose.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

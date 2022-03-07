@@ -15,21 +15,13 @@ class pnlMode: public wxPanel
 		pnlMode(wxWindow* parent, AngleMetersBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pnlMode();
 
-		//(*Declarations(pnlMode)
 		wmList* m_plstMeters_Display;
-		//*)
 
 	protected:
 
-		//(*Identifiers(pnlMode)
 		static const long ID_M_PLST14;
-		//*)
 
 	private:
-
-		//(*Handlers(pnlMode)
-		void OnlstMeters_DisplaySelected(wxCommandEvent& event);
-		//*)
 
 		AngleMetersBuilder* m_pBuilder;
 

@@ -241,7 +241,7 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	SetPosition(pos);
     m_pnlUSB->SetSection(wxT("ImportAoIP"));
 	m_plstServices->AddButton(wxT("RTSP"));
-	m_plstServices->AddButton(wxT("SIP"));
+	//m_plstServices->AddButton(wxT("SIP"));
 	//m_plstServices->AddButton(wxT("NMOS"));
 
     Panel3->SetBackgroundColour(*wxBLACK);
@@ -255,21 +255,21 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 
     m_nSelectedSource = 0;
 
-	Settings::Get().AddHandler(wxT("ImportAoIP"), wxT("USB"), this);
+	Settings::Get().AddHandler(this, wxT("ImportAoIP"), wxT("USB"));
 	Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pnlRTP::OnSettingEvent);
 
 	if(Settings::Get().Read(wxT("Discovery"), wxT("RTSP"),1) == 1)
     {
         m_plstServices->SelectButton(wxT("RTSP"), false);
     }
-    if(Settings::Get().Read(wxT("Discovery"), wxT("SIP"),0) == 1)
-    {
-        m_plstServices->SelectButton(wxT("SIP"), false);
-    }
-    if(Settings::Get().Read(wxT("Discovery"), wxT("NMOS"),0) == 1)
-    {
-        m_plstServices->SelectButton(wxT("NMOS"), false);
-    }
+//    if(Settings::Get().Read(wxT("Discovery"), wxT("SIP"),0) == 1)
+//    {
+//        m_plstServices->SelectButton(wxT("SIP"), false);
+//    }
+//    if(Settings::Get().Read(wxT("Discovery"), wxT("NMOS"),0) == 1)
+//    {
+//        m_plstServices->SelectButton(wxT("NMOS"), false);
+//    }
 
     int nIndex = m_plstSAP->AddButton("Local\n239.255.255.255");
     if(Settings::Get().Read("Discovery", STR_SAP_SETTING[LOCAL] ,0) == 1)
@@ -296,7 +296,7 @@ pnlRTP::~pnlRTP()
 {
 	//(*Destroy(pnlRTP)
 	//*)
-
+    Settings::Get().RemoveHandler(this);
 }
 
 
@@ -311,7 +311,16 @@ void pnlRTP::FillInEdit()
     AoIPSource source = AoipSourceManager::Get().FindSource(m_nSelectedSource);
 
     m_pedtName->SetValue(source.sName);
-    m_pedtUrl->SetValue(source.sDetails);
+    if(source.sDetails.empty() == false)
+    {
+        m_pedtUrl->SetValue(source.sDetails);
+        m_pedtUrl->Enable(true);
+    }
+    else
+    {
+        m_pedtUrl->SetValue("SDP");
+        m_pedtUrl->Enable(false);
+    }
 
     m_pedtName->SetFocus();
     m_pSwp1->ChangeSelection(1);
@@ -377,7 +386,14 @@ void pnlRTP::ListSources()
         if(pairSource.first > 0)
         {
             m_plstSources->AddButton(pairSource.second.sName, wxNullBitmap, (void*)pairSource.first);
-            m_plstSources->AddButton(pairSource.second.sDetails, wxNullBitmap, (void*)pairSource.first);
+            if(pairSource.second.sDetails.empty() == false)
+            {
+                m_plstSources->AddButton(pairSource.second.sDetails, wxNullBitmap, (void*)pairSource.first);
+            }
+            else
+            {
+                m_plstSources->AddButton("SDP", wxNullBitmap, (void*)pairSource.first);
+            }
         }
     }
     m_plstSources->Thaw();

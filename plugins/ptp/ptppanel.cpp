@@ -718,6 +718,9 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
     m_plstGraphData->AddButton("Offset");
     m_plstGraphData->AddButton("Delay");
 
+    m_plstHistogramData->ConnectToSetting(m_pBuilder->GetSection(), "Data", "Offset");
+    m_plstGraphData->ConnectToSetting(m_pBuilder->GetSection(), "Data", "Offset");
+
 	m_plstClocks->SetTextSelectedButtonColour(*wxBLACK);
 
 	m_plblCurrent->SetTextAlign(wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL);
@@ -843,6 +846,9 @@ void ptpPanel::OnlstClocksSelected(wxCommandEvent& event)
 void ptpPanel::OnClockAdded(wxCommandEvent& event)
 {
     AddClock(event.GetString());
+
+    ClockWebsocketMessage(event.GetString(), "Added");
+
 }
 
 void ptpPanel::OnClockUpdated(wxCommandEvent& event)
@@ -852,22 +858,24 @@ void ptpPanel::OnClockUpdated(wxCommandEvent& event)
     {
         ShowClockDetails();
     }
+    ClockWebsocketMessage(event.GetString(), "Updated");
 }
 
 void ptpPanel::OnClockRemoved(wxCommandEvent& event)
 {
     wxString sClock(m_dbMac.GetVendor(event.GetString())+event.GetString());
-    if(m_sSelectedClock == sClock)
-    {
+    if(m_sSelectedClock == sClock)    {
         ClearClockDetails();
     }
     m_plstClocks->DeleteButton(m_plstClocks->FindButton(sClock));
+
+    ClockWebsocketMessage(event.GetString(), "Removed");
 }
 
 void ptpPanel::OnClockTime(wxCommandEvent& event)
 {
-        ShowTime();
-
+    ShowTime();
+    TimeWebsocketMessage();
 }
 
 void ptpPanel::OnClockMaster(wxCommandEvent& event)
@@ -886,6 +894,7 @@ void ptpPanel::OnClockMaster(wxCommandEvent& event)
         m_plstClocks->SetButtonColour(nButton, CLR_MASTER);
         m_plstClocks->SetSelectedButtonColour(nButton, CLR_MASTER_SELECTED);
     }
+    ClockWebsocketMessage(event.GetString(), "Master");
 }
 
 void ptpPanel::OnClockSlave(wxCommandEvent& event)
@@ -903,6 +912,7 @@ void ptpPanel::OnClockSlave(wxCommandEvent& event)
         m_plstClocks->SetButtonColour(nButton, CLR_SLAVE);
         m_plstClocks->SetSelectedButtonColour(nButton, CLR_SLAVE_SELECTED);
     }
+    ClockWebsocketMessage(event.GetString(), "Slave");
 }
 
 
@@ -1243,19 +1253,23 @@ void ptpPanel::OnClockMessage(wxCommandEvent& event)
 
         ShowClockDetails();
     }
-
-
+    ClockMessageWebsocketMessage(event.GetString());
 }
 
 void ptpPanel::ChangeView(const wxString& sWindow)
 {
     m_pSwpMain->ChangeSelection(sWindow);
-}
 
+}
 
 void ptpPanel::OnlstDataSelected(wxCommandEvent& event)
 {
-    m_sGraph = event.GetString();
+
+}
+
+void ptpPanel::SetData(const wxString& sData)
+{
+    m_sGraph = sData;
     m_plstHistogramData->SelectButton(m_sGraph, false);
     m_plstGraphData->SelectButton(m_sGraph, false);
 
@@ -1299,8 +1313,167 @@ void ptpPanel::OnlstHistogramResolutionSelected(wxCommandEvent& event)
 
 void ptpPanel::OnbtnClearStatsClick(wxCommandEvent& event)
 {
+    m_pBuilder->WriteSetting("reset", 1);
+}
+
+void ptpPanel::ResetStats()
+{
     if(m_pLocalClock)
     {
         wxPtp::Get().ResetLocalClockStats(m_nDomain);
     }
+    m_pBuilder->WriteSetting("reset",0);
 }
+
+
+Json::Value FlagsWebsocketMessage(unsigned int nFlags)
+{
+    Json::Value jsFlags;
+    jsFlags["alternate_master"] = (nFlags & ptpmonkey::ptpV2Header::ALTERNATE_MASTER);
+    jsFlags["two_step"] = (nFlags & ptpmonkey::ptpV2Header::TWO_STEP);
+    jsFlags["unicast"] = (nFlags & ptpmonkey::ptpV2Header::UNICAST);
+    jsFlags["profile1"] = (nFlags & ptpmonkey::ptpV2Header::PROFILE1);
+    jsFlags["profile2"] = (nFlags & ptpmonkey::ptpV2Header::PROFILE2);
+    jsFlags["LI_61"] = (nFlags & ptpmonkey::ptpV2Header::LI_61);
+    jsFlags["LI_59"] = (nFlags & ptpmonkey::ptpV2Header::LI_59);
+    jsFlags["UTC_Offset"] = (nFlags & ptpmonkey::ptpV2Header::UTC_OFFSET_VALID);
+    jsFlags["timescale"] = (nFlags & ptpmonkey::ptpV2Header::TIMESCALE);
+    jsFlags["time_traceable"] = (nFlags & ptpmonkey::ptpV2Header::TIME_TRACEABLE);
+    jsFlags["frequency_traceable"] = (nFlags & ptpmonkey::ptpV2Header::FREQ_TRACEABLE);
+    return jsFlags;
+}
+
+void ptpPanel::ClockMessageWebsocketMessage(const wxString& sClock)
+{
+    if(m_pBuilder->WebsocketsActive())
+    {
+        Json::Value jsClock;
+        jsClock["action"] = "Message";
+        auto pClock = wxPtp::Get().GetPtpClock(m_nDomain, sClock);
+        if(pClock)
+        {
+            jsClock["id"] = pClock->GetClockId();
+            jsClock["address"] = pClock->GetIpAddress();
+            jsClock["vendor"] = m_dbMac.GetVendor(sClock).ToStdString();
+
+            std::shared_ptr<const ptpmonkey::PtpV2Clock> pSyncMaster = wxPtp::Get().GetSyncMasterClock(m_nDomain);
+            if(wxPtp::Get().GetMasterClockId(m_nDomain) == sClock || (pSyncMaster && pSyncMaster->GetId() == sClock))
+            {
+                jsClock["master"] = true;
+                jsClock["sync"]["count"] = Json::UInt64(pClock->GetCount(ptpV2Header::SYNC));
+                jsClock["sync"]["rate"] = ConvertRate(pClock->GetInterval(ptpV2Header::SYNC)).ToStdString();
+                jsClock["sync"]["flags"] = FlagsWebsocketMessage(pClock->GetFlags(ptpV2Header::SYNC));
+
+                jsClock["followup"]["count"] = Json::UInt64(pClock->GetCount(ptpV2Header::FOLLOW_UP));
+                jsClock["followup"]["rate"] = ConvertRate(pClock->GetInterval(ptpV2Header::FOLLOW_UP)).ToStdString();
+                jsClock["followup"]["flags"] = FlagsWebsocketMessage(pClock->GetFlags(ptpV2Header::FOLLOW_UP));
+
+            }
+            else
+            {
+                //jsClock["delay"]["type"] = "E-E";
+                jsClock["delay_request"]["count"] = Json::UInt64(pClock->GetCount(ptpV2Header::DELAY_REQ));
+                jsClock["delay_request"]["rate"] = ConvertRate(pClock->GetInterval(ptpV2Header::DELAY_REQ)).ToStdString();
+                jsClock["delay_response"]["count"] = Json::UInt64(pClock->GetCount(ptpV2Header::DELAY_RESP));
+                jsClock["delay_response"]["rate"] = ConvertRate(pClock->GetInterval(ptpV2Header::DELAY_RESP)).ToStdString();
+
+                jsClock["delay_request"]["flags"] = FlagsWebsocketMessage(pClock->GetFlags(ptpV2Header::DELAY_REQ));
+                jsClock["delay_response"]["flags"] = FlagsWebsocketMessage(pClock->GetFlags(ptpV2Header::DELAY_RESP));
+            }
+
+            if(pClock->GetCount(ptpV2Header::ANNOUNCE) != 0)
+            {
+                auto itAccuracy = m_mAccuracy.find(pClock->GetAccuracy());
+                if(itAccuracy != m_mAccuracy.end())
+                {
+                    jsClock["announcement"]["accuracy"] = itAccuracy->second.ToStdString();
+                }
+                else
+                {
+                    jsClock["announcement"]["accuracy"] = "Unknown";
+                }
+                jsClock["announcement"]["count"] = Json::UInt64(pClock->GetCount(ptpV2Header::ANNOUNCE));
+                jsClock["announcement"]["rate"] = ConvertRate(pClock->GetInterval(ptpV2Header::ANNOUNCE)).ToStdString();
+                jsClock["announcement"]["class"] = pClock->GetClass();
+
+
+                auto itSource = m_mTimeSource.find(pClock->GetTimeSource());
+                if(itSource != m_mTimeSource.end())
+                {
+                    jsClock["announcement"]["source"] = itSource->second.ToStdString();
+                }
+                else
+                {
+                    jsClock["announcement"]["source"] = pClock->GetTimeSource();
+                }
+                jsClock["announcement"]["steps"] = pClock->GetStepsRemoved();
+                jsClock["announcement"]["UTC_Offset"] = pClock->GetUtcOffset();
+                jsClock["announcement"]["variance"] = pClock->GetVariance();
+                jsClock["announcement"]["priority_1"] = pClock->GetPriority1();
+                jsClock["announcement"]["priority_2"] = pClock->GetPriority2();
+
+                jsClock["announcement"]["flags"] = FlagsWebsocketMessage(pClock->GetFlags(ptpV2Header::ANNOUNCE));
+            }
+        }
+        m_pBuilder->SendWebsocketMessage(jsClock);
+    }
+}
+
+
+
+void ptpPanel::ClockWebsocketMessage(const wxString& sClock, const wxString& sType)
+{
+    if(m_pBuilder->WebsocketsActive())
+    {
+        Json::Value jsClock;
+        jsClock["action"] = sType.ToStdString();
+        jsClock["id"] = sClock.ToStdString();
+        jsClock["vendor"] = m_dbMac.GetVendor(sClock).ToStdString();
+        m_pBuilder->SendWebsocketMessage(jsClock);
+    }
+}
+
+void ptpPanel::TimeWebsocketMessage()
+{
+    auto pSyncMaster = wxPtp::Get().GetSyncMasterClock(m_nDomain);
+
+    if(m_pLocalClock && m_pBuilder->WebsocketsActive() && pSyncMaster)
+    {
+        auto dUTCOffset = static_cast<double>(pSyncMaster->GetUtcOffset());
+
+        Json::Value jsTime;
+        jsTime["action"] = "Time";
+        jsTime["time"] = TimeToIsoString(m_pLocalClock->GetPtpTime());
+        jsTime["frequency_locke"] = TimeManager::Get().IsPtpFrequencyLocked();
+        jsTime["offset"]["mean"] = TimeToDouble(m_pLocalClock->GetOffset(ptpmonkey::PtpV2Clock::MEAN))+dUTCOffset;
+        jsTime["offset"]["standard deviation"] = TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::SD));
+        jsTime["offset"]["standard error"] = TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::SE));
+
+        jsTime["delay"]["mean"] = TimeToDouble(m_pLocalClock->GetDelay(ptpmonkey::PtpV2Clock::MEAN));
+        jsTime["delay"]["standard deviation"] = TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::SD));
+        jsTime["delay"]["standard error"] = TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::SE));
+
+        if(m_pLocalClock->IsSynced())
+        {
+            double m = m_pLocalClock->GetOffsetSlope();
+            double c = m_pLocalClock->GetOffsetIntersection();
+            auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+
+            jsTime["offset"]["linear regression"]["slope"] = m;
+            jsTime["offset"]["linear regression"]["intersection"] = c;
+            jsTime["offset"]["linear regression"]["estimate"] = (dUTCOffset+c + m * TimeToDouble(now-m_pLocalClock->GetFirstOffsetTime()))*1e6;
+
+            m = m_pLocalClock->GetDelaySlope();
+            c = m_pLocalClock->GetDelayIntersection();
+            now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+
+            jsTime["delay"]["linear regression"]["slope"] = m;
+            jsTime["delay"]["linear regression"]["intersection"] = c;
+            jsTime["delay"]["linear regression"]["estimate"] = (c + m * TimeToDouble(now-m_pLocalClock->GetFirstOffsetTime()))*1e6;
+
+        }
+        m_pBuilder->SendWebsocketMessage(jsTime);
+    }
+}
+
+

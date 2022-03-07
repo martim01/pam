@@ -33,6 +33,7 @@ pnlOverlap::pnlOverlap(wxWindow* parent,fftphaseBuilder* pBuilder, wxWindowID id
     m_plstFFT_Overlap->AddButton(wxT("50%"), wxNullBitmap, reinterpret_cast<void*>(50));
     m_plstFFT_Overlap->AddButton(wxT("75%"), wxNullBitmap, reinterpret_cast<void*>(75));
 
+    m_plstFFT_Overlap->ConnectToSetting(m_pBuilder->GetSection(), "Overlap", reinterpret_cast<void*>(50));
 
 }
 
@@ -45,5 +46,4 @@ pnlOverlap::~pnlOverlap()
 
 void pnlOverlap::OnlstFFT_OverlapSelected(wxCommandEvent& event)
 {
-    m_pBuilder->OnOverlapChanged(event);
 }

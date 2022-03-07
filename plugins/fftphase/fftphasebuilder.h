@@ -4,7 +4,7 @@
 
 class SettingEvent;
 class fftphaseMeter;
-class pnlRoutiing;
+class pnlRouting;
 
 class WXEXPORT fftphaseBuilder : public MonitorPluginBuilder
 {
@@ -56,6 +56,7 @@ class WXEXPORT fftphaseBuilder : public MonitorPluginBuilder
 
         fftphaseMeter* m_pMeter;
 
+        pnlRouting* m_ppnlRouting;
 };
 
 

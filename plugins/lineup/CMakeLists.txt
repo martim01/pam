@@ -35,6 +35,8 @@ target_compile_options(lineup PRIVATE ${flags})
 
 target_link_libraries(lineup ${wxWidgets_LIBRARIES})
 target_link_libraries(lineup optimized pambase debug pambased)
+target_link_libraries(lineup optimized pamfft debug pamfftd)
+target_link_libraries(lineup optimized pamlevel debug pamleveld)
 
 
 #linux specific

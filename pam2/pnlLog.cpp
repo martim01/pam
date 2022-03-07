@@ -33,7 +33,8 @@ pnlLog::pnlLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	//*)
 
 	m_nLogLevel = Settings::Get().Read("Log", "Level", pml::LOG_INFO);
-	Settings::Get().AddHandler("Log","Level",this);
+	Settings::Get().AddHandler(this,"Log","Level");
+	Settings::Get().AddHandler(this,"Log","ScrollLock");
 	Bind(wxEVT_SETTING_CHANGED, &pnlLog::OnSettingChanged, this);
 
 
@@ -48,6 +49,7 @@ pnlLog::~pnlLog()
 	//(*Destroy(pnlLog)
 	//*)
 	pml::LogStream::RemoveOutput(m_nLogOutput);
+	Settings::Get().RemoveHandler(this);
 }
 
 void pnlLog::SetLogControl(pnlLogControl* pControl)
@@ -118,8 +120,15 @@ void pnlLog::Filter(int nFilter)
 
 void pnlLog::OnSettingChanged(SettingEvent& event)
 {
-    if(event.GetSection()=="Log" && event.GetKey()=="Level")
+    if(event.GetSection()=="Log")
     {
-        Filter(event.GetValue(3L));
+        if(event.GetKey()=="Level")
+        {
+            Filter(event.GetValue(3L));
+        }
+        else if(event.GetKey() == "ScrollLock")
+        {
+            ScrollLock(event.GetValue(false));
+        }
     }
 }

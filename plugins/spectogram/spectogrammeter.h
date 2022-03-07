@@ -8,6 +8,7 @@
 #include <list>
 #include "colourgradient.h"
 #include "pmcontrol.h"
+#include "json/json.h"
 
 class wxImage;
 class timedbuffer;
@@ -116,6 +117,8 @@ class SpectogramMeter : public pmControl
         enum {MAP_MONO, MAP_HOTCOLD, MAP_FIVE, MAP_PPM, MAP_SEVEN};
   protected:
 
+
+        Json::Value CreateWebsocketMessage(const wxImage& anImage);
 
         /** Called to draw the console
         *   @param event

@@ -79,8 +79,7 @@ void* RtpThread::Entry()
     TaskScheduler* scheduler = PamTaskScheduler::createNew();
     m_penv = PamUsageEnvironment::createNew(*scheduler, m_pHandler);
 
-    wxString sProtocol(m_source.sDetails.BeforeFirst(wxT(':')));
-    if(sProtocol.CmpNoCase(wxT("rtsp")) == 0)
+    if(m_source.sType.CmpNoCase(wxT("rtsp")) == 0)
     {
         pmlLog() << "RTP Client\tconnect using RTSP";
         if(DoRTSP())
@@ -91,7 +90,7 @@ void* RtpThread::Entry()
             }
         }
     }
-    else if(sProtocol.CmpNoCase(wxT("sip")) == 0)
+    else if(m_source.sType.CmpNoCase(wxT("sip")) == 0)
     {
         pmlLog() << "RTP Client\tconnect using SIP";
         if(DoSIP())
@@ -188,7 +187,7 @@ void RtpThread::StreamFromSDP()
         else
         {
             subsession->sink = wxSink::createNew(*m_penv, *subsession, this);
-            pmlLog(pml::LOG_DEBUG) << "RTP Client\tInitiated the subsession (";
+            pmlLog(pml::LOG_DEBUG) << "RTP Client\tInitiated the subsession: ";
             if (subsession->rtcpIsMuxed())
             {
                 pmlLog(pml::LOG_DEBUG) << "client port " << subsession->clientPortNum();
@@ -197,7 +196,6 @@ void RtpThread::StreamFromSDP()
             {
                 pmlLog(pml::LOG_DEBUG) << "client ports " << subsession->clientPortNum() << "-" << subsession->clientPortNum()+1;
             }
-            pmlLog(pml::LOG_DEBUG) << ")";
 
             pmlLog(pml::LOG_DEBUG) << "RTP Client\tSessionId: " << subsession->GetEndpoint();
             if (subsession->sink == NULL)
@@ -208,17 +206,6 @@ void RtpThread::StreamFromSDP()
             {
                 pmlLog(pml::LOG_DEBUG) << "RTP Client\tCreated a data sink for the subsession";
 
-                if(m_pRtspClient)
-                {   //@todo do we need any setup here??
-//                    m_pRtspClient->SetupSubsession(subsession);
-                }
-                else if(m_pSipClient)
-                {
-                    m_pSipClient->SetupSubsession(subsession);
-                }
-                // @todo do we need to send a Start Playing /ACK here??
-
-                // @todo move the startPlaying to later??
                 subsession->sink->startPlaying(*subsession->readSource(), NULL, NULL);
                 beginQOSMeasurement(*m_penv, m_pSession, this);
             }
@@ -463,6 +450,7 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
     {
         m_nSampleRate = m_Session.GetCurrentSubsession()->nSampleRate;
         m_nInputChannels = min((unsigned int)256 ,m_Session.GetCurrentSubsession()->nChannels);
+        pmlLog() << "RTP Client\t" << m_nInputChannels << " channels at " << m_nSampleRate << " Hz";
     }
     else
     {

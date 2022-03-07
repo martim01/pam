@@ -27,10 +27,6 @@ class pnlBins: public wxPanel
 
 	private:
 
-		//(*Handlers(pnlBins)
-		void OnlstFFT_BinsSelected(wxCommandEvent& event);
-		//*)
-
         SpectogramBuilder* m_pBuilder;
 		DECLARE_EVENT_TABLE()
 };

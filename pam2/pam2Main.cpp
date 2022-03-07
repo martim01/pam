@@ -51,6 +51,10 @@
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
 #include "usbchecker.h"
+#include "remoteapi.h"
+#include "networkcontrol.h"
+#include "generatorpluginfactory.h"
+
 #ifdef __NMOS__
 #include "nmos.h"
 #endif // __WXMSW__
@@ -89,8 +93,64 @@ wxString wxbuildinfo(wxbuildinfoformat format)
     return wxbuild;
 }
 
+std::set<wxString> GetTestNames()
+{
+    std::set<wxString> setNames;
+    for(auto itTest = TestPluginFactory::Get()->GetPluginBegin(); itTest != TestPluginFactory::Get()->GetPluginEnd(); ++itTest)
+    {
+        setNames.insert(itTest->second->GetName());
+    }
+    return setNames;
+}
 
+std::map<int, wxString> GetAoipSources()
+{
+    return AoipSourceManager::Get().GetSourceNames(false);
+}
 
+std::set<wxString> GetInterfaceNames()
+{
+    return NetworkControl::Get().GetInterfaceNames();
+}
+
+std::set<wxString> GetWavFiles()
+{
+    wxArrayString asFiles;
+    wxDir::GetAllFiles(Settings::Get().GetWavDirectory(), &asFiles, wxT("*.wav"), wxDIR_FILES);
+
+    std::set<wxString> setFiles;
+    for(size_t i = 0; i < asFiles.GetCount(); i++)
+    {
+        wxFileName fn(asFiles[i]);
+        setFiles.insert(fn.GetName());
+    }
+    return setFiles;
+}
+
+std::set<wxString> GetSequences()
+{
+    wxArrayString asFiles;
+    wxDir::GetAllFiles(wxString::Format(wxT("%s/generator"), Settings::Get().GetDocumentDirectory().c_str()), &asFiles, wxT("*.xml"), wxDIR_FILES);
+    std::set<wxString> setFiles;
+
+    for(size_t i = 0; i < asFiles.GetCount(); i++)
+    {
+        wxFileName fn(asFiles[i]);
+        setFiles.insert(fn.GetName());
+    }
+    return setFiles;
+}
+
+std::set<wxString> GetOutputSources()
+{
+    std::set<wxString> setSources{"Input", "File", "Sequence", "Generator", "Noise"};
+
+    for(auto itPlugin = GeneratorPluginFactory::Get()->GetPluginBegin(); itPlugin != GeneratorPluginFactory::Get()->GetPluginEnd(); ++itPlugin)
+    {
+        setSources.insert(itPlugin->first);
+    }
+    return setSources;
+}
 
 
 //(*IdInit(pam2Dialog)
@@ -230,14 +290,14 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
 
     m_pbtnScreenshot->SetColourSelected(wxColour(255,128,0));
     m_timerScreenshot.SetOwner(this, wxNewId());
-    Connect(m_timerScreenshot.GetId(),wxEVT_TIMER,(wxObjectEventFunction)&pam2Dialog::OnTimerScreenshot);
+
 
     m_pdlgNoInput = 0;
 
     m_ppnlLog = new pnlLog(m_pswpMain);
 
     pml::LogStream::AddOutput(std::make_unique<pml::LogOutput>());
-    pml::LogStream::SetOutputLevel(pml::LOG_DEBUG);
+    pml::LogStream::SetOutputLevel(pml::LOG_TRACE);
 
     wxImage img(16,16);
     img.SetRGB(wxRect(0,0,16,16),0,0,0);
@@ -253,67 +313,57 @@ pam2Dialog::pam2Dialog(wxWindow* parent,wxWindowID id) :
     }
 
     //m_pswpScreens->SetEventHandler(this);
-    Connect(ID_M_PSWP4,wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,(wxObjectEventFunction)&pam2Dialog::OnswpScreensPageChanged);
 
     m_pbtnMonitor->SetToggle(true, wxT("Input"), wxT("Output"), 45);
-    m_pbtnMonitor->ToggleSelection(Settings::Get().Read(wxT("Monitor"), wxT("Source"), 0), true);
+    m_pbtnMonitor->ConnectToSetting("Monitor", "Source", false);
     m_pbtnMonitor->Enable((Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled")) != wxT("Disabled")));
 
     m_plstScreens->SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
+    m_plstScreens->SetBackgroundColour(*wxBLACK);
     m_plstOptions->SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
+    m_plstOptions->SetBackgroundColour(*wxBLACK);
 
     pnlLists->SetBackgroundColour(*wxBLACK);
 
-    m_plstScreens->SetBackgroundColour(*wxBLACK);
-    m_plstOptions->SetBackgroundColour(*wxBLACK);
-
-
-    Connect(wxID_ANY,wxEVT_QOS_UPDATED,(wxObjectEventFunction)&pam2Dialog::OnQoS);
-
     Settings::Get().Write("Splash", "Screen", "Splash");
+    Settings::Get().Write(wxT("Version"), wxT("pam2"), pml::pam2::VERSION_STRING);
+    Settings::Get().Write(wxT("Input"), wxT("Reset"), false);
+
+    Settings::Get().AddHandler(this, "Main");
+    Settings::Get().AddHandler(this, wxT("Input"),wxT("Type"));
+    Settings::Get().AddHandler(this, wxT("Output"),wxT("Destination"));
+    Settings::Get().AddHandler(this, wxT("Output"),wxT("Source"));
+    Settings::Get().AddHandler(this, wxT("AoIP"),wxT("Epoch"));
+    Settings::Get().AddHandler(this, wxT("Test"), wxT("Lock"));
+    Settings::Get().AddHandler(this, wxT("Server"), wxT("DestinationIp"));
+    Settings::Get().AddHandler(this, wxT("Server"), wxT("RTP_Port"));
+    Settings::Get().AddHandler(this, wxT("Server"), wxT("PacketTime"));
+    Settings::Get().AddHandler(this, wxT("Server"), wxT("Stream"));
+    Settings::Get().AddHandler(this, "Splash", "Screen");
+    Settings::Get().AddHandler(this, "General", "Cursor");
 
 
-    Settings::Get().AddHandler(wxT("Input"),wxT("Type"), this);
-    Settings::Get().AddHandler(wxT("Output"),wxT("Destination"), this);
-    Settings::Get().AddHandler(wxT("Output"),wxT("Source"), this);
-    Settings::Get().AddHandler(wxT("AoIP"),wxT("Epoch"), this);
-
-    Settings::Get().AddHandler(wxT("Test"), wxT("Lock"), this);
-
-
-    Settings::Get().AddHandler(wxT("Server"), wxT("DestinationIp"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("RTP_Port"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("PacketTime"), this);
-    Settings::Get().AddHandler(wxT("Server"), wxT("Stream"), this);
-
-
-    Settings::Get().AddHandler("Splash", "Screen", this);
-    Settings::Get().AddHandler("General", "Cursor", this);
+    IOManager::Get().RegisterHandler(this);
 
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pam2Dialog::OnSettingChanged);
     Connect(wxID_ANY, wxEVT_MONITOR_REQUEST, (wxObjectEventFunction)&pam2Dialog::OnMonitorRequest);
     Connect(wxID_ANY, wxEVT_PLUGINS_APPLY, (wxObjectEventFunction)&pam2Dialog::OnPluginsReload);
-
-
     Connect(wxID_ANY, wxEVT_HELP_CLOSE, (wxObjectEventFunction)&pam2Dialog::OnHelpClose);
-
-    IOManager::Get().RegisterHandler(this);
+    Connect(ID_M_PSWP4,wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,(wxObjectEventFunction)&pam2Dialog::OnswpScreensPageChanged);
+    Connect(m_timerScreenshot.GetId(),wxEVT_TIMER,(wxObjectEventFunction)&pam2Dialog::OnTimerScreenshot);
+    Connect(wxID_ANY,wxEVT_QOS_UPDATED,(wxObjectEventFunction)&pam2Dialog::OnQoS);
     Connect(wxID_ANY,wxEVT_DATA,(wxObjectEventFunction)&pam2Dialog::OnAudioData);
     Connect(wxID_ANY,wxEVT_INPUT_FAILED,(wxObjectEventFunction)&pam2Dialog::OnInputFailed);
     Connect(wxID_ANY,wxEVT_SESSION,(wxObjectEventFunction)&pam2Dialog::OnSession);
     Connect(wxID_ANY,wxEVT_PLAYBACK_CHANNELS,(wxObjectEventFunction)&pam2Dialog::OnPlaybackChannels);
 
-
-    Settings::Get().Write(wxT("Version"), wxT("pam2"), pml::pam2::VERSION_STRING);
-    Settings::Get().Write(wxT("Input"), wxT("Reset"), false);
-
     m_pbtnInput->SetLabel(Settings::Get().Read(wxT("Input"), wxT("Type"), wxT("Soundcard")));
-    m_plblOutput->SetLabel(Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")));
-
-
+    m_plblOutput->ConnectToSetting("Output", "Source", "Input");
     m_plblOutput->Show(Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled"))!=wxT("Disabled"));
 
+
+    RegisterRemoteApiSettings();
 
 }
 
@@ -327,7 +377,8 @@ pam2Dialog::~pam2Dialog()
         delete m_pdlgNoInput;
     }
     delete m_pCursor;
-    //@todo stop nmos
+
+    Settings::Get().RemoveHandler(this);
 }
 
 void pam2Dialog::OnQuit(wxCommandEvent& event)
@@ -349,10 +400,8 @@ void pam2Dialog::OnPluginsReload(wxCommandEvent& event)
 
 void pam2Dialog::LoadMonitorPanels()
 {
-
     MonitorPluginFactory::Get()->SetHandler(this);
     MonitorPluginFactory::Get()->SetSwitcherPanels(m_pswpMain, m_pswpOptions);
-
 
     Connect(wxID_ANY, wxEVT_MONITOR_MAX, (wxObjectEventFunction)&pam2Dialog::OnMonitorMax);
 
@@ -376,6 +425,7 @@ void pam2Dialog::LoadMonitorPanels()
 
 
     //now store the plugins that always want audio....
+    std::set<wxString> setMon{"Tests"};  //and also for remoteapi
     for(map<wxString, MonitorPluginBuilder*>::iterator itPlugin = MonitorPluginFactory::Get()->GetPluginBegin(); itPlugin != MonitorPluginFactory::Get()->GetPluginEnd(); ++itPlugin)
     {
         if(itPlugin->second->WantsAudioAlways())
@@ -386,9 +436,10 @@ void pam2Dialog::LoadMonitorPanels()
         {
             m_setAlwaysPassQoS.insert(itPlugin->second);
         }
-
+        setMon.insert(itPlugin->first);
     }
 
+    RemoteApi::Get().RegisterRemoteApiEnum("Main", "Screen", setMon, "Settings");
 
     //Add the test and settings panels
     m_ppnlTests = new pnlTests(m_pswpMain);
@@ -397,15 +448,14 @@ void pam2Dialog::LoadMonitorPanels()
 
     if(m_ppnlTests->m_pswpTests->GetPageCount() > 0)
     {
-        m_pswpMain->AddPage(m_ppnlTests, wxT("Tests"));
+        m_pswpMain->AddPage(m_ppnlTests, "Tests");
+        RemoteApi::Get().RegisterRemoteApiEnum("Main", "Test", GetTestNames(), "Record");
     }
     else
     {
         delete m_ppnlTests;
         m_ppnlTests = 0;
     }
-
-
 
     size_t nPage = 0;
     for(size_t i = 0; i < m_pswpMain->GetPageCount(); i++)
@@ -440,8 +490,6 @@ void pam2Dialog::LoadMonitorPanels()
     m_plstInbuilt->AddButton(wxT("Log"));
     m_plstInbuilt->AddButton(wxT("Settings"));
     m_plstInbuilt->AddButton(wxT("Help"));
-
-
 
 
     ShowMonitorList();
@@ -487,61 +535,38 @@ void pam2Dialog::ShowMonitorList()
 
 void pam2Dialog::OnlstScreensSelected(wxCommandEvent& event)
 {
-    if(event.GetString() == wxT("Settings"))
+    if(event.GetString() == wxT("Next Page"))
     {
-        m_plstScreens->SelectAll(false,false);
-
-        Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
-
-        m_pSelectedMonitor = nullptr;
-        ShowSettingsPanel();
+        m_nCurrentMonitorPage++;
+        ShowMonitorList();
+    }
+    else if(event.GetString() == wxT("Prev Page"))
+    {
+        m_nCurrentMonitorPage--;
+        ShowMonitorList();
+    }
+    else if(event.GetString() == wxT("Tests"))
+    {
+        Settings::Get().Write(wxT("Main"), "Screen", event.GetString());
+        Settings::Get().Write(wxT("Main"), wxT("Last"),event.GetString());
+    }
+    else if(event.GetString() == wxT("Settings"))
+    {
+        Settings::Get().Write(wxT("Main"), "Screen", event.GetString());
     }
     else if(event.GetString() == wxT("Help"))
     {
-        m_plstScreens->SelectAll(false,false);
-        ShowHelpPanel();
-        m_pSelectedMonitor = nullptr;
-        Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
+        Settings::Get().Write(wxT("Main"), "Screen", event.GetString());
     }
     else if(event.GetString() == wxT("Log"))
     {
-        m_plstScreens->SelectAll(false,false);
-        Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
-        m_pSelectedMonitor = nullptr;
-        ShowLogPanel();
+        Settings::Get().Write(wxT("Main"), "Screen", event.GetString());
     }
     else
     {
-        m_plstInbuilt->SelectAll(false, false);
-
-
-        if(event.GetString() == wxT("Tests"))
-        {
-            Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
-            Settings::Get().Write(wxT("Main"), wxT("Last"),event.GetString());
-            m_pSelectedMonitor = nullptr;
-            ShowTestPanels();
-        }
-        else if(event.GetString() == wxT("Next Page"))
-        {
-            m_nCurrentMonitorPage++;
-            ShowMonitorList();
-        }
-        else if(event.GetString() == wxT("Prev Page"))
-        {
-            m_nCurrentMonitorPage--;
-            ShowMonitorList();
-        }
-        else
-        {
-            Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
-            Settings::Get().Write(wxT("Main"), wxT("Last"),event.GetString());
-            ShowMonitorPanel(event.GetString());
-        }
+        Settings::Get().Write(wxT("Main"), "Screen", event.GetString());
+        Settings::Get().Write(wxT("Main"), wxT("Last"),event.GetString());
     }
-    Settings::Get().Write("Startup", "Starting",0);
-    Settings::Get().Write("Splash", "Screen", "Main");
-    //m_pswpSplash->ChangeSelection(1);
 
 }
 
@@ -554,8 +579,8 @@ void pam2Dialog::OnplstOptionsSelected(wxCommandEvent& event)
     }
     else
     {
-        Settings::Get().Write(m_pswpMain->GetSelectionName(), wxT("_Panel"), event.GetInt());
-        m_ppnlTests->ShowTestPanel(event.GetString());
+        Settings::Get().Write("Main", "Test", event.GetString());
+
     }
 }
 
@@ -627,6 +652,7 @@ void pam2Dialog::ShowSettingsPanel()
 
     m_plstOptions->AddButton(wxT("Profiles"));
     m_plstOptions->AddButton(wxT("General"));
+    m_plstOptions->AddButton(wxT("Remote API"));
     m_plstOptions->AddButton(wxT("Update"));
     m_plstOptions->AddButton(wxT("About"));
 
@@ -644,6 +670,7 @@ void pam2Dialog::ShowSettingsPanel()
 void pam2Dialog::ShowTestPanels()
 {
     m_pswpMain->ChangeSelection(wxT("Tests"));
+    MaximizeMonitor(false); //make sure we can see the options panels;
 
     m_plstOptions->Freeze();
     m_plstOptions->Clear();
@@ -653,7 +680,7 @@ void pam2Dialog::ShowTestPanels()
         m_plstOptions->AddButton(m_ppnlTests->m_pswpTests->GetPageText(i));
     }
 
-    m_plstOptions->SelectButton(Settings::Get().Read(wxT("Tests"), wxT("_Panel"), 0));
+    m_plstOptions->SelectButton(Settings::Get().Read("Main", "Test", ""));
     m_plstOptions->Thaw();
 
     m_pswpOptions->ChangeSelection(wxT("Tests|Options"));
@@ -681,10 +708,10 @@ void pam2Dialog::ShowLogPanel(bool bTests)
 
 void pam2Dialog::ShowHelpPanel()
 {
-    wxString sHelp = Settings::Get().Read(wxT("Main"), wxT("Monitor"), wxEmptyString);
+    wxString sHelp = Settings::Get().Read("Main", "Screen", wxEmptyString);
     if(sHelp == wxT("Tests"))
     {
-        sHelp = m_plstOptions->GetButtonText(Settings::Get().Read(wxT("Tests"), wxT("_Panel"),0));
+        sHelp = Settings::Get().Read("Main", "Test", "");
     }
     else if(sHelp == wxT("Log") || sHelp == wxT("Settings") || sHelp == wxEmptyString)
     {
@@ -861,7 +888,17 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
             }
         }
     }
-
+    else if(event.GetSection() == "Main")
+    {
+        if(event.GetKey() == "Screen")
+        {
+            ChangeMainScreen(event.GetValue());
+        }
+        else if(event.GetKey() == "Test")
+        {
+            m_ppnlTests->ShowTestPanel(event.GetValue());
+        }
+    }
     else if(event.GetSection() == "Splash")
     {
         if(event.GetKey() == "Screen")
@@ -912,17 +949,13 @@ void pam2Dialog::OutputChanged(const wxString& sKey)
         m_pbtnMonitor->Enable(bEnabled);
 
     }
-    else if(sKey == wxT("Source"))
-    {
-        m_plblOutput->SetLabel(Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")));
-    }
 }
 
 
 void pam2Dialog::OnMonitorRequest(MonitorEvent& event)
 {
-    Settings::Get().Write(wxT("Output"), wxT("Left"), event.GetChannels()[0]);
-    Settings::Get().Write(wxT("Output"), wxT("Right"), event.GetChannels()[1]);
+    Settings::Get().Write(wxT("Output"), wxT("Channel_1"), event.GetChannels()[0]);
+    Settings::Get().Write(wxT("Output"), wxT("Channel_2"), event.GetChannels()[1]);
 }
 
 void pam2Dialog::OnPlaybackChannels(wxCommandEvent& event)
@@ -948,7 +981,6 @@ void pam2Dialog::TellPluginsAboutOutputChannels()
 
 void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
 {
-    pmlLog() << "PAM\tExecutable Path = " << Settings::Get().GetExecutableDirectory();
     pmlLog() << "PAM\tCore Lib Path = " <<  Settings::Get().GetCoreLibDirectory();
     pmlLog() << "PAM\tPlugin Monitor Path = " <<  Settings::Get().GetMonitorPluginDirectory();
     pmlLog() << "PAM\tPlugin Test Path = " <<  Settings::Get().GetTestPluginDirectory();
@@ -962,7 +994,7 @@ void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
 
     LoadMonitorPanels();
     //check which page we need.
-    wxString sPanel(Settings::Get().Read(wxT("Main"), wxT("Monitor"), wxEmptyString));
+    wxString sPanel(Settings::Get().Read("Main", "Screen", "Meters"));
 
     for(multimap<size_t, wxString>::iterator itPage = m_mmMonitorPlugins.begin(); itPage != m_mmMonitorPlugins.end(); ++itPage)
     {
@@ -976,11 +1008,11 @@ void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
 
     if(sPanel != wxT("Settings") && sPanel != wxT("Log") && sPanel != wxT("Help"))
     {
-        m_plstScreens->SelectButton(sPanel);
+        m_plstScreens->SelectButton(sPanel,false);
     }
     else
     {
-        m_plstInbuilt->SelectButton(sPanel);
+        m_plstInbuilt->SelectButton(sPanel,false);
     }
 
     //NMOS
@@ -992,6 +1024,11 @@ void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
     #endif // __NMOS__
 
     IOManager::Get().Start();
+
+    //Show the current monitor panel
+    Settings::Get().Write("Startup", "Starting",0);
+    Settings::Get().Write("Splash", "Screen", "Main");
+    ChangeMainScreen(sPanel);
 }
 
 void pam2Dialog::Onm_timerFileTrigger(wxTimerEvent& event)
@@ -1040,7 +1077,7 @@ void pam2Dialog::OnHelpClose(wxCommandEvent& event)
     if(itPlugin != MonitorPluginFactory::Get()->GetPluginEnd())
     {
         m_plstScreens->SelectButton(event.GetString(), false);
-        Settings::Get().Write(wxT("Main"), wxT("Monitor"), event.GetString());
+        Settings::Get().Write(wxT("Main"), "Screen", event.GetString());
         ShowMonitorPanel(event.GetString());
     }
     else
@@ -1049,13 +1086,13 @@ void pam2Dialog::OnHelpClose(wxCommandEvent& event)
         if(itPlugin != TestPluginFactory::Get()->GetPluginEnd())
         {
             m_plstScreens->SelectButton(wxT("Tests"), false);
-            Settings::Get().Write(wxT("Main"), wxT("Monitor"), wxT("Tests"));
+            Settings::Get().Write(wxT("Main"), "Screen", wxT("Tests"));
             ShowTestPanels();
         }
         else
         {
             m_plstScreens->SelectButton(wxT("Settings"), false);
-            Settings::Get().Write(wxT("Main"), wxT("Monitor"), wxT("Settings"));
+            Settings::Get().Write(wxT("Main"), "Screen", wxT("Settings"));
             ShowSettingsPanel();
         }
     }
@@ -1075,12 +1112,12 @@ void pam2Dialog::OnSession(wxCommandEvent& event)
 
 
 
-    m_ppnlSettings->InputSessionChanged();
+    m_ppnlSettings->SessionChanged();
 }
 
 void pam2Dialog::OnbtnMonitorClick(wxCommandEvent& event)
 {
-    Settings::Get().Write(wxT("Monitor"), wxT("Source"), event.IsChecked());
+  //  Settings::Get().Write(wxT("Monitor"), wxT("Source"), event.IsChecked());
 }
 
 void pam2Dialog::OnswpScreensPageChanged(wxNotebookEvent& event)
@@ -1088,7 +1125,7 @@ void pam2Dialog::OnswpScreensPageChanged(wxNotebookEvent& event)
 
     if(m_pswpScreens->GetSelectionName() == wxT("Screens"))
     {
-        wxString sLast(Settings::Get().Read(wxT("Main"), wxT("Monitor"), wxEmptyString));
+        wxString sLast(Settings::Get().Read(wxT("Main"), "Screen", wxEmptyString));
         if(sLast == wxT("Log") || sLast == wxT("Settings") || sLast == wxT("Help"))
         {
             m_plstScreens->SelectButton(Settings::Get().Read(wxT("Main"), wxT("Last"), wxEmptyString));
@@ -1183,8 +1220,7 @@ void pam2Dialog::OnbtnScreenshotClick(wxCommandEvent& event)
 
 void pam2Dialog::OnTimerScreenshot(const wxTimerEvent& event)
 {
-    wxFileName fn(Screenshot());
-    m_usb.SaveToUSB(fn);
+    m_usb.SaveToUSB({wxFileName(Screenshot())}, true);
 }
 
 wxString pam2Dialog::Screenshot()
@@ -1218,4 +1254,120 @@ wxString pam2Dialog::Screenshot()
     }
     return sFilename;
 
+}
+
+
+
+void pam2Dialog::RegisterRemoteApiSettings()
+{
+    pmlLog() << "RegisterRemoteApiSettings";
+
+    RemoteApi::Get().RegisterRemoteApiEnum("Input", "Type", {"Disabled", "Soundcard", "AoIP"}, "Soundcard");
+    RemoteApi::Get().RegisterRemoteApiCallback("Input", "AoIP", GetAoipSources, 0);
+
+    RemoteApi::Get().RegisterRemoteApiEnum("Input", "Device", SoundcardManager::Get().GetInputDevices(), 0);
+
+    RemoteApi::Get().RegisterRemoteApiEnum("Server", "Stream", {wxString("OnDemand"), "AlwaysOn"}, "OnDemand");
+    RemoteApi::Get().RegisterRemoteApiEnum("Server", "PacketTime", {{125, "125"}, {250,"250"}, {333,"333"}, {1000,"1000"}, {4000,"4000"}}, 1000);
+    RemoteApi::Get().RegisterRemoteApiEnum("Server", "SampleRate", {{44100,"44100"}, {48000,"48000"}, {96000,"96000"}}, 48000);
+
+
+    RemoteApi::Get().RegisterRemoteApiEnum("Server", "Bits", {{16,"16"}, {24,"24"}}, 24);
+    RemoteApi::Get().RegisterRemoteApiEnum("Server", "RTCP", {{0,"Off"}, {1,"On"}}, 1);
+    RemoteApi::Get().RegisterRemoteApiEnum("Server", "State", {{0,"Off"}, {1,"On"}}, 0);
+    RemoteApi::Get().RegisterRemoteApi("Server", "DestinationIp", "");
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Server", "RTSP_Port", {1,65535}, 5555);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Server", "RTP_Port", {1,65535}, 5004);
+    RemoteApi::Get().RegisterRemoteApiCallback("Server", "RTSP_Interface", GetInterfaceNames, "eth0");
+    RemoteApi::Get().RegisterRemoteApiEnum("Server", "SAP", {{0,"Off"}, {1,"On"}}, 0);
+    RemoteApi::Get().RegisterRemoteApiEnum("Server", "DNS-SD", {{0,"Off"}, {1,"On"}}, 0);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Server", "Channels", {1,8}, 2);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Server", "RTPMap", {96,127}, 96);
+
+
+
+    RemoteApi::Get().RegisterRemoteApiEnum("Monitor", "Source", {{0,"Input"}, {1,"Output"}}, 0);
+
+    RemoteApi::Get().RegisterRemoteApiEnum("Output", "Destination", {"Disabled", "Device", "AoIP"}, "Disabled");
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_1", {0,7}, 0);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_2", {0,7}, 1);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_3", {0,7}, 0);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_4", {0,7}, 1);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_5", {0,7}, 0);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_6", {0,7}, 1);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_7", {0,7}, 0);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_8", {0,7}, 1);
+
+    RemoteApi::Get().RegisterRemoteApiEnum("Output", "Source", GetOutputSources(), "Input");
+
+    RemoteApi::Get().RegisterRemoteApiCallback("Output", "File", GetWavFiles, "");
+    RemoteApi::Get().RegisterRemoteApiCallback("Output", "Sequence", GetSequences, "Glits");
+
+    RemoteApi::Get().RegisterRemoteApiEnum("Output", "Device", SoundcardManager::Get().GetOutputDevices(),0);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Latency", {0,400}, 200);
+
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Generator", "Frequency", {1,22000}, 1000);
+    RemoteApi::Get().RegisterRemoteApiRangeDouble("Generator", "Amplitude", {-80.0,0.0}, -18.0);
+    RemoteApi::Get().RegisterRemoteApiRangeDouble("Noise", "Amplitude", {-80.0,0.0}, -18.0);
+    RemoteApi::Get().RegisterRemoteApiEnum("Noise", "Colour", {{0,"White"},{1,"Pink"},{2,"Grey"},{3,"A"},{4,"K"}},0);
+
+
+
+    RemoteApi::Get().RegisterRemoteApiEnum("Log", "Level", {{0,"TRACE"},{1,"DEBUG"},{2,"INFO"},{3,"WARNING"},{4,"ERROR"},{5,"CRITICAL"}}, 2);
+
+    RemoteApi::Get().RegisterRemoteApiEnum("Discovery", "SAP", {{0,"Off"}, {1,"On"}}, 0);
+    RemoteApi::Get().RegisterRemoteApiEnum("Discovery", "DNSSD", {{0,"Off"}, {1,"On"}}, 1);
+    RemoteApi::Get().RegisterRemoteApiEnum("Discovery", pnlRTP::STR_SAP_SETTING[pnlRTP::LOCAL], {{0,"Off"}, {1,"On"}}, 0);
+    RemoteApi::Get().RegisterRemoteApiEnum("Discovery", pnlRTP::STR_SAP_SETTING[pnlRTP::ORGANISATION], {{0,"Off"}, {1,"On"}}, 0);
+    RemoteApi::Get().RegisterRemoteApiEnum("Discovery", pnlRTP::STR_SAP_SETTING[pnlRTP::GLOBAL], {{0,"Off"}, {1,"On"}}, 0);
+
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Time", "PTP_Domain", {0,127}, 0);
+    RemoteApi::Get().RegisterRemoteApiEnum("Time", "Sync", {{0,"Off"}, {1,"NTP"}, {3,"PTP"}}, 0);
+
+    RemoteApi::Get().RegisterRemoteApiEnum("Tests", "Log", {{0,"Off"}, {1,"On"}}, 0);
+    RemoteApi::Get().RegisterRemoteApiEnum("Tests", "LogView", {{0,"Off"}, {1,"On"}}, 0);
+
+    RemoteApi::Get().RegisterRemoteApiEnum("NMOS", "Node", {{0,"Off"}, {1, "Receiver Only"}, {2, "Sender Only"}, {3, "Receiver and Sender"}}, 0);
+    RemoteApi::Get().RegisterRemoteApiEnum("NMOS", "Client", {{0,"Off"}, {1, "IS04 Connection"}, {2, "IS05 Connection"}}, 0);
+
+
+    pmlLog() << "RegisterRemoteApiSettings:Done";
+
+}
+
+
+void pam2Dialog::ChangeMainScreen(const wxString& sPage)
+{
+    if(sPage == "Settings")
+    {
+        m_plstScreens->SelectAll(false,false);
+        m_pSelectedMonitor = nullptr;
+        ShowSettingsPanel();
+    }
+    else if(sPage == "Help")
+    {
+        m_plstScreens->SelectAll(false,false);
+        ShowHelpPanel();
+        m_pSelectedMonitor = nullptr;
+    }
+    else if(sPage == "Log")
+    {
+        m_plstScreens->SelectAll(false,false);
+        m_pSelectedMonitor = nullptr;
+        ShowLogPanel();
+    }
+    else
+    {
+        m_plstInbuilt->SelectAll(false, false);
+
+        if(sPage == "Tests")
+        {
+            m_pSelectedMonitor = nullptr;
+            ShowTestPanels();
+        }
+        else
+        {
+            ShowMonitorPanel(sPage);
+        }
+    }
 }

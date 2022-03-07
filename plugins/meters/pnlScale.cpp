@@ -31,8 +31,8 @@ pnlScale::pnlScale(wxWindow* parent,MetersBuilder* pBuilder,wxWindowID id,const 
 	m_plstScale->AddButton(wxT("dBFS"));
 	m_plstScale->AddButton(wxT("dBu (-18dBFS)"));
 	m_plstScale->AddButton(wxT("dBu (-13dBFS)"));
+	m_plstScale->ConnectToSetting(m_pBuilder->GetSection(), "Scale", "dBFS");
 
-	m_plstScale->SelectButton(m_pBuilder->ReadSetting(wxT("Scale"), wxT("dBFS")), true);
 }
 
 pnlScale::~pnlScale()
@@ -44,5 +44,4 @@ pnlScale::~pnlScale()
 
 void pnlScale::OnlstScaleSelected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting(wxT("Scale"), event.GetString());
 }

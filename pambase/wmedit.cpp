@@ -11,7 +11,8 @@
 #include <wx/log.h>
 #include <wx/tokenzr.h>
 #include "wmfocusmanager.h"
-
+#include "settingevent.h"
+#include "settings.h"
 using namespace std;
 
 
@@ -48,7 +49,8 @@ wmEdit::wmEdit() : pmControl(),
     m_nMaxCharacters(-1),
 	m_bExclude(false),
 	m_bCapitalize(false),
-	m_nBorderStyle{0,0}
+	m_nBorderStyle{0,0},
+	m_eSettingConnection(enumSettingConnection::SC_NONE)
 {
 }
 
@@ -58,6 +60,7 @@ wmEdit::~wmEdit()
     {
         ReleaseMouse();
     }
+    Settings::Get().RemoveHandler(this);
 }
 
 
@@ -71,7 +74,8 @@ wmEdit::wmEdit(wxWindow * pParent, wxWindowID id, const wxString& value, const w
     m_nMaxCharacters(-1),
 	m_bExclude(false),
 	m_bCapitalize(false),
-	m_nBorderStyle{0,0}
+	m_nBorderStyle{0,0},
+	m_eSettingConnection(enumSettingConnection::SC_NONE)
 {
 
     Create(pParent, id, value, pos, size, style);
@@ -258,6 +262,11 @@ void wmEdit::OnChar(wxKeyEvent& event)
                 wxCommandEvent eventUp(wxEVT_COMMAND_TEXT_ENTER, GetId());
                 eventUp.SetString(m_sText);
                 wxPostEvent(GetParent(), eventUp);
+
+                if(m_eSettingConnection == enumSettingConnection::SC_ENTER)
+                {
+                    WriteSetting();
+                }
             }
             break;
         case WXK_DOWN:
@@ -682,6 +691,11 @@ void wmEdit::UpdateText(const wxString& sText)
     wxCommandEvent event(wxEVT_COMMAND_TEXT_UPDATED, GetId());
     event.SetString(m_sText);
     wxPostEvent(GetParent(), event);
+
+    if(m_eSettingConnection == enumSettingConnection::SC_CHANGE)
+    {
+        WriteSetting();
+    }
 }
 
 bool wmEdit::SetBackgroundColour(const wxColour& clr)
@@ -725,4 +739,34 @@ void wmEdit::DeleteChar()
         wxCommandEvent eventUp(wxEVT_TEXT_BACKSPACE, GetId());
         wxPostEvent(GetParent(), eventUp);
     }
+}
+
+bool wmEdit::ConnectToSetting(const wxString& sSection, const wxString& sKey, const wxString& sDefault, bool bOnChange)
+{
+    if(sSection.empty() || sKey.empty())
+    {
+        return false;
+    }
+    else
+    {
+        m_sSettingSection = sSection;
+        m_sSettingKey = sKey;
+        Settings::Get().AddHandler(this, sSection, sKey);
+        Bind(wxEVT_SETTING_CHANGED, &wmEdit::OnSettingChanged, this);
+
+        SetValue(Settings::Get().Read(sSection, sKey, sDefault));
+
+        m_eSettingConnection = bOnChange ? enumSettingConnection::SC_CHANGE : enumSettingConnection::SC_ENTER;
+
+        return true;
+    }
+}
+
+void wmEdit::OnSettingChanged(const SettingEvent& event)
+{
+    SetValue(event.GetValue());
+}
+void wmEdit::WriteSetting()
+{
+    Settings::Get().Write(m_sSettingSection, m_sSettingKey, GetValue());
 }

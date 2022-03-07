@@ -19,7 +19,7 @@ class pnlSettingsGenerators: public wxPanel
 		pnlSettingsGenerators(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, long nStyle=0, wxString sNotused=wxEmptyString);
 		virtual ~pnlSettingsGenerators();
 
-		void InputSessionChanged();
+		void SessionChanged();
 
 		//(*Declarations(pnlSettingsGenerators)
 		wmButton* m_pbtn0dbu;
@@ -39,17 +39,30 @@ class pnlSettingsGenerators: public wxPanel
 		wmButton* m_pbtnPlus1;
 		wmButton* m_pbtnSequences;
 		wmLabel* m_pLbl1;
-		wmLabel* m_pLbl6;
 		wmLabel* m_pLbl7;
 		wmLabel* m_plblFrequency;
-		wmLabel* m_plblInput;
 		wmLabel* m_plblNoisedB;
+		wmLabel* m_plblOutput;
+		wmLabel* m_plblOutput_1;
+		wmLabel* m_plblOutput_2;
+		wmLabel* m_plblOutput_3;
+		wmLabel* m_plblOutput_4;
+		wmLabel* m_plblOutput_5;
+		wmLabel* m_plblOutput_6;
+		wmLabel* m_plblOutput_7;
+		wmLabel* m_plblOutput_8;
 		wmLabel* m_plbldB;
 		wmList* m_plstAogFiles;
 		wmList* m_plstAudioSources;
 		wmList* m_plstColour;
-		wmList* m_plstOutputLeft;
-		wmList* m_plstOutputRight;
+		wmList* m_plstOutput_1;
+		wmList* m_plstOutput_2;
+		wmList* m_plstOutput_3;
+		wmList* m_plstOutput_4;
+		wmList* m_plstOutput_5;
+		wmList* m_plstOutput_6;
+		wmList* m_plstOutput_7;
+		wmList* m_plstOutput_8;
 		wmList* m_plstShape;
 		wmSlider* m_pAmplitude;
 		wmSlider* m_pNoiseAmplitude;
@@ -71,11 +84,24 @@ class pnlSettingsGenerators: public wxPanel
 
 		//(*Identifiers(pnlSettingsGenerators)
 		static const long ID_M_PLST8;
-		static const long ID_M_PLBL6;
 		static const long ID_M_PLBL8;
 		static const long ID_M_PLST3;
+		static const long ID_M_PLST1;
+		static const long ID_M_PLST2;
+		static const long ID_M_PLST4;
+		static const long ID_M_PLST6;
 		static const long ID_M_PLST10;
+		static const long ID_M_PLST11;
+		static const long ID_M_PLST12;
 		static const long ID_M_PLBL10;
+		static const long ID_M_PLBL2;
+		static const long ID_M_PLBL3;
+		static const long ID_M_PLBL4;
+		static const long ID_M_PLBL5;
+		static const long ID_M_PLBL6;
+		static const long ID_M_PLBL12;
+		static const long ID_M_PLBL13;
+		static const long ID_M_PLBL14;
 		static const long ID_M_PLBL11;
 		static const long ID_PANEL11;
 		static const long ID_M_PLST7;
@@ -140,7 +166,8 @@ class pnlSettingsGenerators: public wxPanel
 		void OnbtnSequencesClick(wxCommandEvent& event);
 		//*)
 
-		void PopulateChannelList(wmList* pList, int nSelected);
+		void ShowChannelMapping(wmList* pList, wmLabel* pLabel, int nChannels, int nOutput);
+		void PopulateChannelList(wmList* pList);
 		void OnSettingChanged(SettingEvent& event);
 
         void ShowFiles();
@@ -150,6 +177,9 @@ class pnlSettingsGenerators: public wxPanel
         void OnSliderMove(wxCommandEvent& event);
         void OnAmplitudeMove(wxCommandEvent& event);
         void OnNoiseAmplitudeMove(wxCommandEvent& event);
+
+        void DestinationChanged(const wxString& sDestination);
+        void SourceChanged(const wxString& sSource);
 
         void LoadPlugins();
 		DECLARE_EVENT_TABLE()

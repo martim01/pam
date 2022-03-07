@@ -8,7 +8,7 @@
 #include "timedbuffer.h"
 #include "fftbuilder.h"
 //#include "settings.h"
-
+#include "log.h"
 
 using namespace std;
 
@@ -394,20 +394,25 @@ void FftMeter::SetData(const timedbuffer* pBuffer)
 
 void FftMeter::DoFFT()
 {
-
     switch(m_nMeterType)
     {
-        case FFT:
-            FFTRoutine();
-            break;
         case OCTAVE:
             Octave();
             break;
         case PEAKS:
             Peaks();
             break;
+        default:
+            FFTRoutine();
+            break;
+
     }
     Refresh();
+
+    if(m_pBuilder->WebsocketsActive())
+    {
+       m_pBuilder->SendWebsocketMessage(CreateWebsocketMessage());
+    }
 }
 
 void FftMeter::FFTRoutine()
@@ -415,10 +420,8 @@ void FftMeter::FFTRoutine()
     FFTAlgorithm fft;
     m_vfft_out = fft.DoFFT(m_lstBuffer, m_nSampleRate, m_nChannels, m_nFFTAnalyse, m_nWindowType, m_vfft_out.size(), m_nOverlap);
 
-
-
     m_dBinSize = static_cast<double>(m_nSampleRate)/static_cast<double>((m_vfft_out.size()-1)*2);
-    float dMax(-80);
+    m_dPeakLevel = -80;
     double dMaxBin(0);
     vector<double> vAmp;
     vAmp.resize(m_vAmplitude.size());
@@ -438,15 +441,18 @@ void FftMeter::FFTRoutine()
         m_vPeak[i] = std::max(m_vPeak[i], m_vAmplitude[i]);
 
         m_vAmplitude[i] = min(0.0, max((double)m_vAmplitude[i]-m_dFall, (double)dLog));
-        if(dMax < m_vAmplitude[i])
+        if(m_dPeakLevel < m_vAmplitude[i])
         {
-            dMax = m_vAmplitude[i];
+            m_dPeakLevel = m_vAmplitude[i];
             dMaxBin = i;
         }
     }
     double dQ = (vAmp[dMaxBin+1]-vAmp[dMaxBin-1])/(2*(2*vAmp[dMaxBin]-vAmp[dMaxBin-1]-vAmp[dMaxBin+1]));
-    m_uiPeakLevel.SetLabel(wxString::Format(wxT("%.1f"),dMax));
-    m_uiPeakFrequency.SetLabel(wxString::Format(wxT("%.0fHz"),(dQ+dMaxBin)*m_dBinSize));
+    m_dPeakFrequency = (dQ+dMaxBin)*m_dBinSize;
+
+    m_uiPeakLevel.SetLabel(wxString::Format(wxT("%.1f"),m_dPeakLevel));
+    m_uiPeakFrequency.SetLabel(wxString::Format("%.0fHz",m_dPeakFrequency));
+
 }
 
 float FftMeter::WindowMod(float dAmplitude)
@@ -527,7 +533,7 @@ void FftMeter::Peaks()
 void FftMeter::SetAnalyseMode(int nMode)
 {
     m_nFFTAnalyse = nMode;
-    if(m_nChannels != 2 || nMode > 2)
+    if(m_nChannels != 2)
     {
         m_uiSettingsAnalyse.SetLabel(LABEL_ANALYSE[nMode]);
     }
@@ -538,6 +544,16 @@ void FftMeter::SetAnalyseMode(int nMode)
     else if(nMode == 1)
     {
         m_uiSettingsAnalyse.SetLabel(wxT("Right"));
+    }
+    else if(nMode == 2)
+    {
+        m_nFFTAnalyse = 8;
+        m_uiSettingsAnalyse.SetLabel(LABEL_ANALYSE[m_nFFTAnalyse]);
+    }
+    else if(nMode == 3)
+    {
+        m_nFFTAnalyse = 9;
+        m_uiSettingsAnalyse.SetLabel(LABEL_ANALYSE[m_nFFTAnalyse]);
     }
 
     RefreshRect(m_uiSettingsAnalyse.GetRect());
@@ -700,7 +716,7 @@ void FftMeter::OnLeftUp(wxMouseEvent& event)
         if(m_uiClose.Contains(event.GetPosition()))
         {
             m_bCursorMode = false;
-            m_pBuilder->OnCursorMode(m_bCursorMode);
+            m_pBuilder->WriteSetting("Cursor", false);
         }
         else
         {
@@ -719,4 +735,23 @@ void FftMeter::ResetPeaks()
 {
     m_vPeak = vector<float>(m_vfft_out.size(), -80.0);
 
+}
+
+Json::Value FftMeter::CreateWebsocketMessage()
+{
+    Json::Value jsData;
+
+    jsData["bins"] = Json::Value(Json::arrayValue);
+    for(size_t i = 0; i < m_vPeak.size(); i++)
+    {
+        Json::Value jsBin;
+        jsBin["peak"] = m_vPeak[i];
+        jsBin["level"] = m_vAmplitude[i];
+        jsBin["frequency"] = m_dBinSize * static_cast<double>(i);
+//        jsData["bins"].append(jsBin);
+    }
+    jsData["peak"]["level"] = m_dPeakLevel;
+    jsData["peak"]["frequency"] = m_dPeakFrequency;
+
+    return jsData;
 }

@@ -23,7 +23,6 @@ END_EVENT_TABLE()
 pnlOptions::pnlOptions(wxWindow* parent,AngleMetersBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) :
     m_pBuilder(pBuilder)
 {
-	//(*Initialize(pnlOptions)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
 	m_pbnFreeze = new wmButton(this, ID_M_PBTN11, _("Freeze Meter"), wxPoint(95,165), wxSize(90,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN11"));
@@ -43,26 +42,24 @@ pnlOptions::pnlOptions(wxWindow* parent,AngleMetersBuilder* pBuilder, wxWindowID
 	m_pLbl1->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl1->SetBackgroundColour(wxColour(128,0,255));
 
-	Connect(ID_M_PBTN11,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlOptions::OnbnFreezeClick);
-	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlOptions::OnbtnSurroundClick);
-	Connect(ID_M_PBTN12,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlOptions::OnbtnMeterClearClick);
-	Connect(ID_M_PLST25,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlOptions::OnlstMeter_PeaksSelected);
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlOptions::OnlstTextSelected);
-	//*)
 
 	m_plstMeter_Peaks->AddButton(wxT("Hide Peaks"));
 	m_plstMeter_Peaks->AddButton(wxT("Show Peaks"));
 	m_plstMeter_Peaks->AddButton(wxT("Hold Peaks"));
+	m_plstMeter_Peaks->ConnectToSetting(m_pBuilder->GetSection(), "Peaks", size_t(1));
+
 
 	m_plstText->AddButton(wxT("Current"));
 	m_plstText->AddButton(wxT("Peak"));
 
 
     m_pbtnSurround->ToggleSelection(m_pBuilder->ReadSetting(wxT("Surround"), 1), true);
-	//m_pbtnMeterShading->SetToggle(true, wxT("Solid"), wxT("Graded"), 50.0);
+    m_pbtnSurround->ConnectToSetting(m_pBuilder->GetSection(), "Surround", true);
 
-	m_plstMeter_Peaks->SelectButton(m_pBuilder->ReadSetting(wxT("Peaks"), 1), true);
-	m_pbnFreeze->ToggleSelection((m_pBuilder->ReadSetting(wxT("Freeze"),0)==1), false);
+    m_pbnFreeze->ConnectToSetting(m_pBuilder->GetSection(), "Freeze", true);
+
+
 
 	if(m_pBuilder->ReadSetting(wxT("DisplayText_Current"), 1) == 1)
 	{
@@ -82,28 +79,9 @@ pnlOptions::~pnlOptions()
 }
 
 
-void pnlOptions::OnlstMeter_PeaksSelected(wxCommandEvent& event)
-{
-    m_pBuilder->WriteSetting(wxT("Peaks"), event.GetInt());
-}
-
-void pnlOptions::OnbnFreezeClick(wxCommandEvent& event)
-{
-    m_pBuilder->WriteSetting(wxT("Freeze"), event.IsChecked());
-}
-
-void pnlOptions::OnbtnMeterClearClick(wxCommandEvent& event)
-{
-    m_pBuilder->ClearMeter();
-}
-
 void pnlOptions::OnlstTextSelected(wxCommandEvent& event)
 {
     m_pBuilder->WriteSetting(wxT("DisplayText_Current"), m_plstText->IsSelected(0));
     m_pBuilder->WriteSetting(wxT("DisplayText_Peak"), m_plstText->IsSelected(1));
 }
 
-void pnlOptions::OnbtnSurroundClick(wxCommandEvent& event)
-{
-    m_pBuilder->WriteSetting(wxT("Surround"), event.IsChecked());
-}

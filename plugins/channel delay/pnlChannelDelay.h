@@ -14,6 +14,7 @@ class timedbuffer;
 class OffsetCalculator;
 struct session;
 class ChannelDelayBuilder;
+class SettingEvent;
 
 class pnlChannelDelay: public wxPanel
 {
@@ -70,6 +71,8 @@ class pnlChannelDelay: public wxPanel
 		void OnlstChannel2Selected(wxCommandEvent& event);
 		//*)
 
+        void OnSettingChanged(SettingEvent& event);
+
 		void OnOffsetDone(wxCommandEvent& event);
 		void CalculateOffset();
 
@@ -81,6 +84,7 @@ class pnlChannelDelay: public wxPanel
         unsigned int m_nTotalChannels;
 
         unsigned int m_nChannel[2];
+        wxString m_sChannel[2];
 
 
 

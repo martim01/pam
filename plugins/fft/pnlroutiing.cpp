@@ -19,17 +19,10 @@ END_EVENT_TABLE()
 pnlRoutiing::pnlRoutiing(wxWindow* parent,FFTBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) :
     m_pBuilder(pBuilder)
 {
-	//(*Initialize(pnlRoutiing)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
 	m_plstFFT_Routing = new wmList(this, ID_M_PLST3, wxPoint(0,0), wxSize(190,200), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 2, wxSize(5,5));
 	m_plstFFT_Routing->SetBackgroundColour(wxColour(0,0,0));
-
-	Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlRoutiing::OnlstFFT_RoutingSelected);
-	//*)
-
-
-
 
 }
 
@@ -59,11 +52,8 @@ void pnlRoutiing::SetNumberOfChannels(unsigned int nChannels)
         }
     }
 
-    m_plstFFT_Routing->SelectButton(m_pBuilder->ReadSetting(wxT("Routing"),0), true);
+    m_plstFFT_Routing->ConnectToSetting(m_pBuilder->GetSection(), "Routing", size_t(0));
+
     m_plstFFT_Routing->Thaw();
 }
 
-void pnlRoutiing::OnlstFFT_RoutingSelected(wxCommandEvent& event)
-{
-    m_pBuilder->OnRoutingChanged(event);
-}

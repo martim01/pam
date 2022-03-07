@@ -34,11 +34,11 @@ pnlRouting::pnlRouting(wxWindow* parent,ScopeBuilder* pBuilder, wxWindowID id,co
 	m_plstTrigger = new wmList(this, wxNewId(), wxPoint(0,165), wxSize(190,72), wmList::STYLE_SELECT , 0, wxSize(-1,35), 4, wxSize(0,0));
 	m_plstTrigger->SetBackgroundColour(wxColour(0,0,0));
 
+  m_plstTrigger->ConnectToSetting(m_pBuilder->GetSection(),"TriggerOn", size_t(0));
+
+      
 	Connect(ID_M_PLST16,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlRouting::OnlstScope_RoutingSelected);
-	Connect(m_plstTrigger->GetId(),wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlRouting::OnlstTriggerSelected);
-
-
-
+	
 }
 
 pnlRouting::~pnlRouting()
@@ -108,5 +108,4 @@ void pnlRouting::ShowRouting(wmList* pLst, unsigned int nPlot, unsigned int nCha
 
 void pnlRouting::OnlstTriggerSelected(wxCommandEvent& event)
 {
-    m_pBuilder->WriteSetting("TriggerOn", event.GetInt());
 }

@@ -4,7 +4,8 @@
 #include <wx/settings.h>
 #include <wx/log.h>
 #include <wx/bookctrl.h>
-
+#include "settingevent.h"
+#include "settings.h"
 using namespace std;
 
 const long wmSwitcherPanel::ID_SCROLLING     = wxNewId();
@@ -27,6 +28,7 @@ wmSwitcherPanel::wmSwitcherPanel() : pmPanel()
 , m_nSelectedPage(0)
 , m_nPageNameStyle(PAGE_NONE)
 , m_nStyle(0)
+, m_eSettingConnection(enumSettingConnection::SC_NONE)
 {
 
 }
@@ -34,12 +36,14 @@ wmSwitcherPanel::wmSwitcherPanel() : pmPanel()
 wmSwitcherPanel::~wmSwitcherPanel()
 {
     //dtor
+    Settings::Get().RemoveHandler(this);
 }
 
 wmSwitcherPanel::wmSwitcherPanel(wxWindow* pParent, wxWindowID id, const wxPoint& pos, const wxSize& size, long nStyle, const wxString& sName)
 : pmPanel()
 , m_nSelectedPage(0)
 , m_nPageNameStyle(PAGE_NONE)
+, m_eSettingConnection(enumSettingConnection::SC_NONE)
 {
     Create(pParent,id,pos,size,nStyle);
 }
@@ -653,5 +657,52 @@ void wmSwitcherPanel::OnLeftUp(wxMouseEvent& event)
     if(HasCapture())
     {
         ReleaseMouse();
+    }
+}
+
+bool wmSwitcherPanel::ConnectToSetting(const wxString& sSection, const wxString& sKey, const wxString& sDefault)
+{
+    if(sSection.empty() || sKey.empty())
+    {
+        return false;
+    }
+    else
+    {
+        Settings::Get().AddHandler(this, sSection, sKey);
+        Bind(wxEVT_SETTING_CHANGED, &wmSwitcherPanel::OnSettingChanged, this);
+        ChangeSelection(Settings::Get().Read(sSection, sKey, sDefault));
+
+        m_eSettingConnection = enumSettingConnection::SC_NAME;
+        return true;
+    }
+}
+
+bool wmSwitcherPanel::ConnectToSetting(const wxString& sSection, const wxString& sKey, int nDefault)
+{
+    if(sSection.empty() || sKey.empty())
+    {
+        return false;
+    }
+    else
+    {
+        Settings::Get().AddHandler(this, sSection, sKey);
+        Bind(wxEVT_SETTING_CHANGED, &wmSwitcherPanel::OnSettingChanged, this);
+        ChangeSelection(Settings::Get().Read(sSection, sKey, nDefault));
+
+        m_eSettingConnection = enumSettingConnection::SC_INDEX;
+        return true;
+    }
+}
+
+void wmSwitcherPanel::OnSettingChanged(const SettingEvent& event)
+{
+    switch(m_eSettingConnection)
+    {
+        case enumSettingConnection::SC_INDEX:
+            ChangeSelection(event.GetValue(0l));
+            break;
+        case enumSettingConnection::SC_NAME:
+            ChangeSelection(event.GetValue());
+            break;
     }
 }

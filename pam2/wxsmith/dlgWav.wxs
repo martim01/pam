@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxDialog" name="dlgWav">
+		<size>800,480</size>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<style>wxNO_BORDER</style>
+		<object class="wmSwitcherPanel" name="ID_M_PSWP1" variable="m_pSwp1" member="yes">
+			<pos>0,30</pos>
+			<size>800,450</size>
+			<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL2" variable="Panel2" member="yes">
+					<bg>#000000</bg>
+					<object class="wmList" name="ID_M_PLST1" variable="m_plstFiles" member="yes">
+						<scrolling>Horizontal</scrolling>
+						<button_gap>5,5</button_gap>
+						<button_size>-1,0</button_size>
+						<columns>5</columns>
+						<button_selected>#008000</button_selected>
+						<button_disabled>#808080</button_disabled>
+						<items />
+						<pos>5,10</pos>
+						<size>670,380</size>
+						<bg>#000000</bg>
+						<style>wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI</style>
+						<handler function="OnlstFilesSelected" entry="EVT_LIST_SELECTED" />
+						<handler function="OnlstFilesPaged" entry="EVT_LIST_PAGED" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnHome" member="yes">
+						<button_disabled>#808080</button_disabled>
+						<pos>70,400</pos>
+						<size>100,40</size>
+						<handler function="OnbtnHomeClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN6" variable="m_pbtnPrevious" member="yes">
+						<button_disabled>#808080</button_disabled>
+						<pos>190,400</pos>
+						<size>100,40</size>
+						<handler function="OnbtnPreviousClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN7" variable="m_pbtnNext" member="yes">
+						<button_disabled>#808080</button_disabled>
+						<pos>310,400</pos>
+						<size>100,40</size>
+						<handler function="OnbtnNextClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN8" variable="m_pbtnEnd" member="yes">
+						<button_disabled>#808080</button_disabled>
+						<pos>430,400</pos>
+						<size>100,40</size>
+						<handler function="OnbtnEndClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnSave" member="yes">
+						<label>Save To USB</label>
+						<button_disabled>#A0A0A0</button_disabled>
+						<pos>690,40</pos>
+						<size>100,60</size>
+						<enabled>0</enabled>
+						<bg>#0C1674</bg>
+						<handler function="OnbtnSaveClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnRename" member="yes">
+						<label>Rename</label>
+						<button_disabled>#A0A0A0</button_disabled>
+						<pos>690,120</pos>
+						<size>100,60</size>
+						<enabled>0</enabled>
+						<bg>#0C7416</bg>
+						<handler function="OnbtnRenameClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnDelete" member="yes">
+						<label>Delete</label>
+						<button_disabled>#A0A0A0</button_disabled>
+						<pos>690,200</pos>
+						<size>100,60</size>
+						<enabled>0</enabled>
+						<bg>#74160C</bg>
+						<handler function="OnbtnDeleteClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnImport" member="yes">
+						<label>Import From USB</label>
+						<button_disabled>#A0A0A0</button_disabled>
+						<pos>690,280</pos>
+						<size>100,60</size>
+						<bg>#0C1674</bg>
+						<handler function="OnbtnImportClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN9" variable="m_pbtnClose" member="yes">
+						<label>Close Manager</label>
+						<button_disabled>#A0A0A0</button_disabled>
+						<pos>690,400</pos>
+						<size>100,40</size>
+						<bg>#400040</bg>
+						<handler function="OnbtnCloseClick" entry="EVT_BUTTON" />
+					</object>
+				</object>
+				<label>Main</label>
+				<selected>1</selected>
+			</object>
+			<object class="wmSwitcherPanelpage">
+				<object class="wxPanel" name="ID_PANEL1" variable="Panel1" member="yes">
+					<bg>#000000</bg>
+					<object class="wxPanel" name="ID_PANEL5" subclass="pnlUSB" variable="m_pnlUSB" member="yes">
+						<pos>0,0</pos>
+						<size>600,400</size>
+						<bg>#000000</bg>
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL10" variable="m_plblImportProgress" member="yes">
+						<label></label>
+						<pos>610,10</pos>
+						<size>180,80</size>
+						<fg>#FFFFFF</fg>
+						<bg>#000000</bg>
+					</object>
+					<object class="wmButton" name="ID_M_PBTN13" variable="m_pbtnImportBack" member="yes">
+						<label>Back</label>
+						<button_pressed>#F07800</button_pressed>
+						<pos>690,390</pos>
+						<size>100,45</size>
+						<bg>#9232FC</bg>
+					</object>
+				</object>
+				<label>Import</label>
+			</object>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+			<label>Audio File Manager</label>
+			<pos>0,0</pos>
+			<size>800,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#473F5F</bg>
+			<font>
+				<size>16</size>
+				<style>normal</style>
+				<weight>normal</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Arial</face>
+			</font>
+		</object>
+	</object>
+</wxsmith>

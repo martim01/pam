@@ -15,17 +15,20 @@
 #include "log.h"
 
 const double LiveAudioSource::TWENTYFOURBIT = 8388608.0;
+const double LiveAudioSource::SIXTEENBIT = 32768.0;
 
 ////////// LiveAudioSource //////////
 
-LiveAudioSource* LiveAudioSource::createNew(wxEvtHandler* pHandler, wxMutex& mutex, UsageEnvironment& env,  unsigned char nNumChannels,enumPacketTime ePacketTime)
+LiveAudioSource* LiveAudioSource::createNew(wxEvtHandler* pHandler, wxMutex& mutex, UsageEnvironment& env,  unsigned char nNumChannels,enumPacketTime ePacketTime,
+unsigned char nBitsPerSample, unsigned short nSampleRate)
 {
-    return new LiveAudioSource(pHandler, mutex, env, nNumChannels, ePacketTime);
+    return new LiveAudioSource(pHandler, mutex, env, nNumChannels, ePacketTime, nBitsPerSample, nSampleRate);
 }
 
 
-LiveAudioSource::LiveAudioSource(wxEvtHandler* pHandler, wxMutex& mutex, UsageEnvironment& env,unsigned char nNumChannels,  enumPacketTime ePacketTime)
-  : AudioInputDevice(env, 24, nNumChannels, 48000, 0)/* set the real parameters later */,
+LiveAudioSource::LiveAudioSource(wxEvtHandler* pHandler, wxMutex& mutex, UsageEnvironment& env,unsigned char nNumChannels,  enumPacketTime ePacketTime,
+unsigned char nBitsPerSample, unsigned short nSampleRate)
+  : AudioInputDevice(env, nBitsPerSample, nNumChannels, nSampleRate, 0)/* set the real parameters later */,
     m_pHandler(pHandler),
     m_mutex(mutex),
     m_nLastPlayTime(0),
@@ -35,7 +38,8 @@ LiveAudioSource::LiveAudioSource(wxEvtHandler* pHandler, wxMutex& mutex, UsageEn
     m_nPacketTime(ePacketTime),
     m_nLastBufferSize(8192),
     m_nBufferWritten(0),
-    m_pAudioBuffer(0)
+    m_pAudioBuffer(0),
+    m_vChannelMapping{0,1,2,3,4,5,6,7}
 {
 
     unsigned int nSamplesPerPacket = (fSamplingFrequency/1000)*m_nPacketTime;
@@ -100,7 +104,7 @@ void LiveAudioSource::doReadFromQueue()
         m_pAudioBuffer = new timedbuffer(m_nLastBufferSize, fNumChannels);
     }
 
-    for(int i = 0; i < nBytesToRead; i+=3)
+    for(int i = 0; i < nBytesToRead; i+=(fBitsPerSample/8))
     {
         long nValue(0);
         float dValue(0.0);
@@ -110,12 +114,21 @@ void LiveAudioSource::doReadFromQueue()
 
             m_qBuffer.pop();
         }
-        nValue = static_cast<long>(dValue*TWENTYFOURBIT);
-
-        fTo[0] = (nValue >> 16) & 0xFF;
-        fTo[1] = (nValue >> 8) & 0xFF;
-        fTo[2] = nValue & 0xFF;
-        fTo+=3;
+        if(fBitsPerSample == 24)
+        {
+            nValue = static_cast<long>(dValue*TWENTYFOURBIT);
+            fTo[0] = (nValue >> 16) & 0xFF;
+            fTo[1] = (nValue >> 8) & 0xFF;
+            fTo[2] = nValue & 0xFF;
+            fTo+=3;
+        }
+        else if(fBitsPerSample == 16)
+        {
+            nValue = static_cast<long>(dValue*SIXTEENBIT);
+            fTo[0] = (nValue >> 8) & 0xFF;
+            fTo[1] = nValue & 0xFF;
+            fTo+=2;
+        }
         AddToTimedBuffer(dValue);
     }
 
@@ -152,11 +165,17 @@ void LiveAudioSource::AddSamples(const timedbuffer* pTimedBuffer)
     {
         for(unsigned int j = 0; j < fNumChannels; j++)
         {
-            m_qBuffer.push(pTimedBuffer->GetBuffer()[i+(j%pTimedBuffer->GetNumberOfChannels())]);
+            if(j < m_vChannelMapping.size())
+            {
+                m_qBuffer.push(pTimedBuffer->GetBuffer()[i+(m_vChannelMapping[j]%pTimedBuffer->GetNumberOfChannels())]);
+            }
+            else
+            {
+                m_qBuffer.push(0.0);
+            }
             ++m_nLastBufferSize;
         }
     }
-    
 }
 
 
@@ -184,4 +203,10 @@ void LiveAudioSource::AddToTimedBuffer(float dSample)
     }
     m_pAudioBuffer->GetWritableBuffer()[m_nBufferWritten] = dSample;
     ++m_nBufferWritten;
+}
+
+void LiveAudioSource::SetChannelMapping(const std::vector<char>& vMapping)
+{
+    wxMutexLocker lg(m_mutex);
+    m_vChannelMapping = vMapping;
 }

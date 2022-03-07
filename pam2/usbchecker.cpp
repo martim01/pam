@@ -27,17 +27,24 @@ void UsbChecker::Abort()
         m_pThread->join();
         m_pThread = nullptr;
     }
+
+    if(m_pHandler)
+    {
+        wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_USB_FINISHED);
+        pEvent->SetInt(-1);
+        wxQueueEvent(m_pHandler, pEvent);
+    }
+
 }
 
-void UsbChecker::SaveToUSB(const wxFileName& fnSource)
+void UsbChecker::SaveToUSB(const std::list<wxFileName>& lstFn, bool bRemove)
 {
-    pmlLog(pml::LOG_DEBUG) << "USB\tSaveToUsb: " << fnSource.GetFullPath();
     if(m_pThread != nullptr)
     {
         Abort();
     }
 
-    m_pThread = std::make_unique<std::thread>([this, fnSource]()
+    m_pThread = std::make_unique<std::thread>([this, lstFn, bRemove]()
     {
         wxArrayString asFiles;
         #ifdef __WXGNU__
@@ -46,7 +53,7 @@ void UsbChecker::SaveToUSB(const wxFileName& fnSource)
         #endif // __WXGNU__
         if(asFiles.GetCount() == 0)
         {
-            pmlLog(pml::LOG_WARN) << "USB\tNot able to save " << fnSource.GetName() << " no USB drives detected.";
+            pmlLog(pml::LOG_WARN) << "USB\tNot able to save. no USB drives detected.";
         }
         else
         {
@@ -56,28 +63,47 @@ void UsbChecker::SaveToUSB(const wxFileName& fnSource)
                 {
                     if(MountDevice(asFiles[i]) == 0)
                     {
-                        std::ifstream source(fnSource.GetFullPath().ToStdString(), std::ios::binary);
-                        std::ofstream dest(wxString("/mnt/share/"+fnSource.GetFullName()).ToStdString(), std::ios::binary);
-                        if(source.is_open() == false)
+                        for(const auto& fnSource : lstFn)
                         {
-                            pmlLog(pml::LOG_WARN) << "USB\tCould not open source file";
+                            std::ifstream source(fnSource.GetFullPath().ToStdString(), std::ios::binary);
+                            std::ofstream dest(wxString("/mnt/share/"+fnSource.GetFullName()).ToStdString(), std::ios::binary);
+                            if(source.is_open() == false)
+                            {
+                                pmlLog(pml::LOG_WARN) << "USB\tCould not open source file";
+                            }
+                            else if(dest.is_open() == false)
+                            {
+                                pmlLog(pml::LOG_WARN) << "USB\tCould not open destination file";
+                            }
+                            else
+                            {
+                                dest << source.rdbuf();
+                                pmlLog() << "USB\t" << fnSource.GetName().ToStdString() << " saved to USB drive";
+                                source.close();
+                                if(bRemove)
+                                {
+                                    remove(fnSource.GetFullPath().ToStdString().c_str());
+                                }
+                            }
                         }
-                        else if(dest.is_open() == false)
+                        for(size_t i = 0; i < 10; i++)
                         {
-                            pmlLog(pml::LOG_WARN) << "USB\tCould not open destination file";
+                            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+                            if(UnmountDevice()==0)
+                            {
+                                break;
+                            }
                         }
-                        else
-                        {
-                            dest << source.rdbuf();
-                            pmlLog() << "USB\t" << fnSource.GetName().ToStdString() << " saved to USB drive";
-                            source.close();
-                            remove(fnSource.GetFullPath().ToStdString().c_str());
-                        }
-                        UnmountDevice();
                         break;
                     }
                 }
             }
+        }
+        if(m_pHandler)
+        {
+            wxCommandEvent* pEventFinished = new wxCommandEvent(wxEVT_USB_FINISHED);
+            pEventFinished->SetInt(0);
+            wxQueueEvent(m_pHandler, pEventFinished);
         }
     });
 }
@@ -154,6 +180,7 @@ void UsbChecker::RunCheck(const wxString& sFilename)
             }
         }
         wxCommandEvent* pEventFinished = new wxCommandEvent(wxEVT_USB_FINISHED);
+        pEventFinished->SetInt(0);
         wxQueueEvent(m_pHandler, pEventFinished);
     });
 }

@@ -176,6 +176,9 @@ class pam2Dialog: public wxDialog
 
         void OnTimerScreenshot(const wxTimerEvent& event);
 
+        void RegisterRemoteApiSettings();
+        void ChangeMainScreen(const wxString& sPage);
+
         wxCursor* m_pCursor;
 
 

@@ -7,6 +7,7 @@
 #include "pnlMeters.h"
 #include "pnlRouting.h"
 #include <wx/log.h>
+#include "ppmtypes.h"
 
 using namespace std;
 
@@ -14,20 +15,20 @@ LissajouBuilder::LissajouBuilder() : MonitorPluginBuilder(),
 m_pLissajou(0),
 m_ppnlRouting(0)
 {
+    RegisterForSettingsUpdates(this);
 
-    RegisterForSettingsUpdates(wxT("Scale"), this);
-    RegisterForSettingsUpdates(wxT("Rotate"), this);
-    RegisterForSettingsUpdates(wxT("Levels"), this);
-    RegisterForSettingsUpdates(wxT("Axis_X"), this);
-    RegisterForSettingsUpdates(wxT("Axis_Y"), this);
-    RegisterForSettingsUpdates(wxT("MeterMode"), this);
-    RegisterForSettingsUpdates(wxT("Monitor"), this);
-    RegisterForSettingsUpdates(wxT("Display"), this);
+    RegisterRemoteApiEnum("Scale", {{0, "dB"},{1,"Linear"}, {2, "Auto Scale"}},2);
+    RegisterRemoteApiEnum("Rotate", {{0,"LvR"},{1,"MvS"}},0);
+    RegisterRemoteApiEnum("Levels", {{0, "Hide"}, {1, "Show"}},0);
+    RegisterRemoteApiRangeInt("Axis_X", {0,7},0);
+    RegisterRemoteApiRangeInt("Axis_Y", {0,7},1);
+    RegisterRemoteApiEnum("MeterMode", PPMTypeManager::Get().GetTypes(), "BBC");
+    RegisterRemoteApiEnum("Monitor", {{0,"Follow"}, {1,"Force"}, {2,"Indy"}}, 0);
+    RegisterRemoteApiEnum("Display", {{0,"Stars"}, {1,"Hull"}},0);
+
+
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&LissajouBuilder::OnSettingChanged);
-
-    wxLogDebug("Lissajou Test");
-
 
 }
 

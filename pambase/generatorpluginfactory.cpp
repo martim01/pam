@@ -25,6 +25,7 @@ void GeneratorPluginFactory::Register(GeneratorPluginBuilder* pBuilder)
 {
     pBuilder->SetHandler(m_pHandler);
     pBuilder->CreatePanels(m_pswpGenerators);
+    pBuilder->InitRemoteApi();
 
     m_mBuilders.insert(make_pair(pBuilder->GetName(), pBuilder));
 }

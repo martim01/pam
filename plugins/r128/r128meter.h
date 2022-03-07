@@ -4,6 +4,8 @@
 #include "uirect.h"
 #include <wx/bitmap.h>
 #include "pmcontrol.h"
+
+
 class R128Meter : public pmControl
 {
     DECLARE_EVENT_TABLE()
@@ -49,6 +51,8 @@ public:
     {
         return m_dLastValue;
     }
+
+
 
     enum {PEAK_HIDE, PEAK_SHOW, PEAK_HOLD};
 protected:

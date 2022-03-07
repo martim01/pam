@@ -5,7 +5,7 @@
 #include <wx/image.h>
 #include "levelcalculator.h"
 #include "settings.h"
-
+#include "radarbuilder.h"
 
 const wxString RadarMeter::STR_CHANNEL[11] = {wxT("L"), wxT("R"), wxT("3"), wxT("4"), wxT("5"), wxT("6"), wxT("7"), wxT("8"), wxEmptyString, wxT("M"), wxT("S")};
 
@@ -23,7 +23,7 @@ END_EVENT_TABLE()
 const float RadarMeter::LEVEL_PPM[7] = {0.031, 0.05, 0.079, 0.126, 0.199, 0.316, 0.501};
 const wxString RadarMeter::LABEL_SCALE[3] = {wxT("dB"), wxT("Linear"), wxT("Auto")};
 
-RadarMeter::RadarMeter(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size) : pmControl()
+RadarMeter::RadarMeter(wxWindow *parent, RadarBuilder* pBuilder, wxWindowID id, const wxPoint& pos, const wxSize& size) : pmControl(), m_pBuilder(pBuilder)
 {
     Create(parent, id, pos, size);
     m_bRotate = false;
@@ -160,20 +160,21 @@ void RadarMeter::DrawRadar(wxDC& dc)
         memDC.DrawCircle(m_pntCenter, (-m_vLevels[i]-m_dMindB)*m_dResolution);
     }
 
+
     for(size_t i = 0; i < 12; i++)
     {
-        dYa = -(cos((M_PI/6*i)) * m_dMindB)*m_dResolution;
-        dXa = (sin((M_PI/6*i)) * m_dMindB)*m_dResolution;
-        memDC.DrawLine(m_pntCenter.x, m_pntCenter.y, m_pntCenter.x+dXa, m_pntCenter.y+dYa);
+        double dY = -(cos((M_PI/6*i)) * m_dMindB)*m_dResolution;
+        double dX = (sin((M_PI/6*i)) * m_dMindB)*m_dResolution;
+        memDC.DrawLine(m_pntCenter.x, m_pntCenter.y, m_pntCenter.x+dX, m_pntCenter.y+dY);
     }
 
 
     dc.Blit(m_rectGrid.GetLeft(),m_rectGrid.GetTop(),m_rectGrid.GetWidth(), m_rectGrid.GetHeight(), &memDC,0,0);
 
-    dYa = -(cos(m_dAngle) * m_dMindB)*m_dResolution;
-    dXa = (sin(m_dAngle) * m_dMindB)*m_dResolution;
+    double dYb = -(cos(m_dAngle) * m_dMindB)*m_dResolution;
+    double dXb = (sin(m_dAngle) * m_dMindB)*m_dResolution;
     dc.SetPen(*wxWHITE_PEN);
-    dc.DrawLine(m_pntCenter.x+5, m_pntCenter.y, m_pntCenter.x+5+dXa, m_pntCenter.y+dYa);
+    dc.DrawLine(m_pntCenter.x+5, m_pntCenter.y, m_pntCenter.x+5+dXb, m_pntCenter.y+dYb);
 
     dc.SetTextForeground(*wxWHITE);
     dc.SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
@@ -181,7 +182,9 @@ void RadarMeter::DrawRadar(wxDC& dc)
     dc.DrawText(wxString::Format(wxT("Ch: %s"), STR_CHANNEL[m_nChannel].c_str()), wxPoint(400,450));
 
     dc.DrawText(wxString::Format(wxT("%ds / %dms"), m_nTimespan/1000, m_nRefreshRate), wxPoint(10,430));
-    dc.DrawText((wxDateTime::Now()-m_dtStart).Format(wxT("%H:%M:%S")), wxPoint(10,450));
+
+    wxTimeSpan tsRun = (wxDateTime::Now()-m_dtStart);
+    dc.DrawText(tsRun.Format(wxT("%H:%M:%S")), wxPoint(10,450));
 
     dc.SetTextForeground(wxColour(80,70,255));
     dc.SetFont(wxFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
@@ -191,6 +194,24 @@ void RadarMeter::DrawRadar(wxDC& dc)
     m_dAngle += m_dAngleMod;
 
     m_dLevel = 0.0;
+
+    if(m_pBuilder->WebsocketsActive())
+    {
+        m_pBuilder->SendWebsocketMessage(CreateWebsocketMessage(tsRun, dXa, dYa, dXb, dYb));
+    }
+}
+
+Json::Value RadarMeter::CreateWebsocketMessage(const wxTimeSpan& tsRun, double dX, double dY, double dxMax, double dyMax)
+{
+    Json::Value jsMessage;
+    jsMessage["dbfs"] = (m_dMindB-m_dLevel);
+    jsMessage["time"] = tsRun.Format("%H:%M:%S").ToStdString();
+    jsMessage["radar"]["x"] = dX;
+    jsMessage["radar"]["y"] = dY;
+    jsMessage["max"]["x"] = dxMax;
+    jsMessage["max"]["y"] = dyMax;
+
+    return jsMessage;
 }
 
 
