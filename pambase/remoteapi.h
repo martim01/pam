@@ -25,7 +25,7 @@ class RemoteApi : public wxEvtHandler
         bool WSMessage(const endpoint& theEndpoint, const Json::Value& theMessage);
         void WSClose(const endpoint& theEndpoint, const ipAddress& thePeer);
 
-        pml::restgoose::response NotFound(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser);
+        pml::restgoose::response ExtraEndpoint(const httpMethod& theMethod, const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser);
 
         pml::restgoose::response GetRoot(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser);
         pml::restgoose::response GetSettings(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser);

@@ -162,7 +162,7 @@ RemoteApi::RemoteApi() : m_bWebsocketsActive(Settings::Get().Read("RemoteApi", "
     m_Server.AddEndpoint(pml::restgoose::GET, endpoint("/x-pam/plugins/test"), std::bind(&RemoteApi::GetPluginsTest, this, _1,_2,_3,_4));
     m_Server.AddEndpoint(pml::restgoose::GET, endpoint("/x-pam/plugins/generator"), std::bind(&RemoteApi::GetPluginsGenerator, this, _1,_2,_3,_4));
 
-    m_Server.AddNotFoundCallback(std::bind(&RemoteApi::NotFound, this, _1,_2,_3,_4));
+    m_Server.AddNotFoundCallback(std::bind(&RemoteApi::ExtraEndpoint, this, _1,_2,_3,_4,_5));
 
     m_Server.AddWebsocketEndpoint(endpoint("/x-pam/ws/plugin"), std::bind(&RemoteApi::WSAuthenticate, this, _1,_2,_3), std::bind(&RemoteApi::WSMessage, this, _1,_2), std::bind(&RemoteApi::WSClose, this, _1,_2));
     m_Server.AddWebsocketEndpoint(endpoint("/x-pam/ws/setting"), std::bind(&RemoteApi::WSAuthenticate, this, _1,_2,_3), std::bind(&RemoteApi::WSMessage, this, _1,_2), std::bind(&RemoteApi::WSClose, this, _1,_2));
@@ -177,11 +177,38 @@ RemoteApi::RemoteApi() : m_bWebsocketsActive(Settings::Get().Read("RemoteApi", "
     }
 
 }
-pml::restgoose::response RemoteApi::NotFound(const query& theQuery,  const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
+pml::restgoose::response RemoteApi::ExtraEndpoint(const httpMethod& theMethod, const query& theQuery,  const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
 {
-    pml::restgoose::response resp(404);
-    resp.jsonData["path"] = theEndpoint.Get();
-    return resp;
+    //check if the endpoint is a wav file to download
+    if(theEndpoint.Get().find("/x-pam/wav/") != std::string::npos && theMethod == pml::restgoose::GET)
+    {
+        wxFileName fnWanted(Settings::Get().GetWavDirectory(), wxString(theEndpoint.Get().substr(11))+".wav");
+
+        //check the file exists - we search through them all as we don't actually care about the case
+        wxArrayString asFiles;
+        wxDir::GetAllFiles(Settings::Get().GetWavDirectory(), &asFiles, wxT("*.wav"), wxDIR_FILES);
+        for(size_t i = 0; i < asFiles.GetCount(); i++)
+        {
+            if(asFiles[i].CmpNoCase(fnWanted.GetFullPath()) == 0)
+            {
+                wxFileName fn(asFiles[i]);
+                pml::restgoose::response resp(200);
+                resp.bFile = true;
+                resp.contentType = headerValue("audio/wav");
+                resp.data = textData(fn.GetFullPath().ToStdString());
+                return resp;
+            }
+        }
+        pml::restgoose::response resp(404);
+        resp.jsonData["wav"] = fnWanted.GetName().ToStdString();
+        return resp;
+    }
+    else
+    {
+        pml::restgoose::response resp(405);
+        resp.jsonData["path"] = theEndpoint.Get();
+        return resp;
+    }
 }
 
 pml::restgoose::response RemoteApi::GetRoot(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
