@@ -8,6 +8,7 @@
 #include "pnlTimeframe.h"
 #include "pnlTrigger.h"
 #include "pnlVertical.h"
+#include "pnlOffset.h"
 
 using namespace std;
 
@@ -49,6 +50,8 @@ list<pairOptionPanel_t> ScopeBuilder::CreateOptionPanels(wxWindow* pParent)
     list<pairOptionPanel_t> lstOptionPanels;
 
     m_pRouting = new pnlRouting(pParent, this);
+    m_pOffset = new pnlOffset(pParent, this);
+
     pnlTimeframe* pTimeframe(new pnlTimeframe(pParent, this));
     pnlVertical* pVertical(new pnlVertical(pParent, this));
     m_pTrigger = new pnlTrigger(pParent, this);
@@ -56,7 +59,8 @@ list<pairOptionPanel_t> ScopeBuilder::CreateOptionPanels(wxWindow* pParent)
 
 
 
-    lstOptionPanels.push_back(make_pair(wxT("Routing"), m_pRouting));
+    lstOptionPanels.push_back(make_pair(wxT("Channels"), m_pRouting));
+    lstOptionPanels.push_back(make_pair(wxT("Offset"), m_pOffset));
     lstOptionPanels.push_back(make_pair(wxT("Timeframe"), pTimeframe));
     lstOptionPanels.push_back(make_pair(wxT("Vertical"),pVertical));
     lstOptionPanels.push_back(make_pair(wxT("Trigger"), m_pTrigger));
@@ -76,10 +80,11 @@ void ScopeBuilder::LoadSettings()
         m_pScope->SetAutotrigger((ReadSetting(wxT("Autotrigger"), 0) == 1));
         m_pTrigger->EnableButtons((ReadSetting(wxT("Autotrigger"), 0) == 0));
         m_pScope->SetMode(ReadSetting(wxT("Mode"),0));
-        m_pScope->SetRouting(ReadSetting(wxT("Routing1"), 0), 0);
-        m_pScope->SetRouting(ReadSetting(wxT("Routing2"), 0), 1);
         m_pScope->SetTimeFrame(ReadSetting(wxT("Timeframe"), 1.0));
         m_pScope->SetVerticalZoom(ReadSetting(wxT("Vertical"),1.0));
+
+        m_pScope->SetPlot(ReadSetting("Plot", "0,1"));
+        m_pScope->SetTriggerChannel(ReadSetting("TriggerOn", 0));
     }
 
 }
@@ -91,12 +96,14 @@ void ScopeBuilder::InputSession(const session& aSession)
     {
         m_pScope->SetNumberOfChannels(min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels));
         m_pRouting->SetNumberOfChannels(min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels));
+        m_pOffset->SetNumberOfChannels(min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels));
     }
     else
 
     {
         m_pScope->SetNumberOfChannels(0);
         m_pRouting->SetNumberOfChannels(0);
+        m_pOffset->SetNumberOfChannels(0);
     }
 
 }
@@ -124,14 +131,6 @@ void ScopeBuilder::OnSettingChanged(SettingEvent& event)
         m_pScope->SetMode(ReadSetting(wxT("Mode"),0));
 
     }
-    else if(event.GetKey() == wxT("Routing1"))
-    {
-        m_pScope->SetRouting(ReadSetting(wxT("Routing1"), 0), 0);
-    }
-    else if(event.GetKey() == wxT("Routing2"))
-    {
-        m_pScope->SetRouting(ReadSetting(wxT("Routing2"), 0), 1);
-    }
     else if(event.GetKey() == wxT("Timeframe"))
     {
         m_pScope->SetTimeFrame(ReadSetting(wxT("Timeframe"), 1.0));
@@ -139,6 +138,26 @@ void ScopeBuilder::OnSettingChanged(SettingEvent& event)
     else if(event.GetKey() == wxT("Vertical"))
     {
         m_pScope->SetVerticalZoom(ReadSetting(wxT("Vertical"),1.0));
+    }
+    else if(event.GetKey() == "Plot")
+    {
+        m_pScope->SetPlot(event.GetValue());
+    }
+    else if(event.GetKey() == "TriggerOn")
+    {
+        m_pScope->SetTriggerChannel(event.GetValue((0l)));
+    }
+    else if(event.GetKey().Left(12) == "Plot_Colour_")
+    {
+        unsigned long nGraph(0);
+        event.GetKey().AfterLast('_').ToULong(&nGraph);
+        m_pScope->SetPlotColour(nGraph, event.GetValue());
+    }
+    else if(event.GetKey().Left(12) == "Plot_Offset_")
+    {
+        unsigned long nGraph(0);
+        event.GetKey().AfterLast('_').ToULong(&nGraph);
+        m_pScope->SetPlotOffset(nGraph, event.GetValue(0l));
     }
 }
 

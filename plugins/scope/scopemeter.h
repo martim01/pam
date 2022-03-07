@@ -6,6 +6,7 @@
 #include <vector>
 #include <list>
 #include "pmcontrol.h"
+#include <array>
 
 //#include "wmscroller.h"
 class ScopeBuilder;
@@ -114,6 +115,12 @@ class Scope : public pmControl
 
         void SetTimeFrame(int nFrames);
 
+        void SetPlot(const wxString& sPlot);
+        void SetTriggerChannel(unsigned int nChannel) { m_nTrigger = nChannel % 8;}
+
+        void SetPlotColour(unsigned long nChannel, const wxString& sColour);
+        void SetPlotOffset(unsigned long nChannel, int nOffset);
+
         enum{LEFT, RIGHT, MIDDLE=8, SIDE=9, LEFT_RIGHT=10};
         enum {MODE_NORMAL, MODE_SLIDE, MODE_CURSOR};
 
@@ -156,7 +163,7 @@ class Scope : public pmControl
 
         float m_dVerticalZoom;
         float m_dTrigger;
-        float m_dMaxY[2];
+        std::vector<float> m_vMaxY;
         std::list<float> m_lstBuffer;
         wxBitmap m_bmpScreen;
 
@@ -174,9 +181,21 @@ class Scope : public pmControl
         bool m_bAutotrigger;
 
         ScopeBuilder* m_pBuilder;
-        std::vector<float> m_vChannels;
 
-        std::list<float> m_lstPlot[2];
+
+        struct plot
+        {
+            plot() : bPlot(false), nOffset(0){}
+            std::list<float> lstBuffer;
+            bool bPlot;
+            int nOffset;
+            wxColour clr;
+        };
+        std::vector<plot> m_vPlot;
+
+        unsigned int m_nTrigger;
+
+        static const std::array<wxString, 8> CLR_PLOT;
 
         //std::vector<float> m_vChannels:
 

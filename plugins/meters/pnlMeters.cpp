@@ -8,6 +8,7 @@
 #include "levelcalculator.h"
 #include <array>
 #include "ppmtypes.h"
+#include "settings.h"
 //(*InternalHeaders(pnlMeters)
 #include <wx/font.h>
 #include <wx/intl.h>
@@ -202,26 +203,30 @@ void pnlMeters::SetSession(const session& aSession)
     if(m_nInputChannels != 2) //not stereo
     {
         m_vMeters.resize(m_nInputChannels);
-        if(m_nInputChannels%2 == 0)
+        if(Settings::Get().Read("Monitor","Source",0) == 0)
         {
-            m_vMonitor.resize(m_nInputChannels/2);
-        }
-        else
-        {
-            m_vMonitor.resize(m_nInputChannels/2+1);
+            if(m_nInputChannels%2 == 0)
+            {
+                m_vMonitor.resize(m_nInputChannels/2);
+            }
+            else
+            {
+                m_vMonitor.resize(m_nInputChannels/2+1);
+            }
         }
 
         for(unsigned long i = 0; i < m_vMeters.size(); i++)
         {
             m_vMeters[i] = new LevelMeter(this,wxID_ANY, wxString::Format(wxT("%lu"), i+1), -70, false, wxPoint(x, 0), wxSize(50, 440));
 
-
-
-            if(i%2 == 0)
+            if(Settings::Get().Read("Monitor", "Source", 0) == 0)
             {
-                m_vMonitor[i/2] = new wmButton(this, wxNewId(), wxT("Monitor"), wxPoint(x, 442), wxSize(101, 35));
-                m_vMonitor[i/2]->SetBackgroundColour(wxColour(80,70,180));
-                m_vMonitor[i/2]->SetIntData(i);
+                if(i%2 == 0)
+                {
+                    m_vMonitor[i/2] = new wmButton(this, wxNewId(), wxT("Monitor"), wxPoint(x, 442), wxSize(101, 35));
+                    m_vMonitor[i/2]->SetBackgroundColour(wxColour(80,70,180));
+                    m_vMonitor[i/2]->SetIntData(i);
+                }
             }
             x+= 51;
         }

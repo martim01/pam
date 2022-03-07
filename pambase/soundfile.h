@@ -2,7 +2,7 @@
 
 #include <wx/string.h>
 
-
+#include <memory>
 #include "dlldefine.h"
 
 
@@ -32,6 +32,7 @@ public:
     unsigned int GetLength();
 
 	bool OpenToWrite(const wxString& sFileName, unsigned short nChannels, unsigned long nSampleRate, unsigned short nBitLength);
+	bool WriteAudio(std::shared_ptr<const timedbuffer> pBuffer);//, unsigned short nChannels, unsigned short nLef, unsigned short nRight);
 	bool WriteAudio(const timedbuffer* pBuffer);//, unsigned short nChannels, unsigned short nLef, unsigned short nRight);
 
 private:
