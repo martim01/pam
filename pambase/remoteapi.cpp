@@ -56,6 +56,33 @@ pml::restgoose::response ConvertPostDataToJson(const std::vector<pml::restgoose:
     return resp;
 }
 
+void PatchFailed(pml::restgoose::response& resp, int nCode, const std::string& sReason)
+{
+    resp.nHttpCode = nCode;
+    resp.jsonData["code"] = nCode;
+    resp.jsonData["success"] = false;
+    resp.jsonData["reason"].append(sReason);
+}
+
+void PatchFailed(pml::restgoose::response& resp, int nCode, const Json::Value& jsReason)
+{
+    resp.nHttpCode = nCode;
+    resp.jsonData["code"] = nCode;
+    resp.jsonData["success"] = false;
+    if(jsReason.isMember("reason"))
+    {
+        resp.jsonData["reason"] = jsReason["reason"];
+    }
+}
+
+void PatchWorked(pml::restgoose::response& resp, int nCode)
+{
+    //success
+    resp.nHttpCode = nCode;
+    resp.jsonData["code"] = nCode;
+    resp.jsonData["success"] = true;
+}
+
 std::map<wxString, wxString> RemoteApi::ConvertQueryToMap(const query& theQuery)
 {
 
@@ -177,38 +204,78 @@ RemoteApi::RemoteApi() : m_bWebsocketsActive(Settings::Get().Read("RemoteApi", "
     }
 
 }
-pml::restgoose::response RemoteApi::ExtraEndpoint(const httpMethod& theMethod, const query& theQuery,  const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
-{
-    //check if the endpoint is a wav file to download
-    if(theEndpoint.Get().find("/x-pam/wav/") != std::string::npos && theMethod == pml::restgoose::GET)
-    {
-        wxFileName fnWanted(Settings::Get().GetWavDirectory(), wxString(theEndpoint.Get().substr(11))+".wav");
 
-        //check the file exists - we search through them all as we don't actually care about the case
-        wxArrayString asFiles;
-        wxDir::GetAllFiles(Settings::Get().GetWavDirectory(), &asFiles, wxT("*.wav"), wxDIR_FILES);
-        for(size_t i = 0; i < asFiles.GetCount(); i++)
+pml::restgoose::response RemoteApi::DownloadWav(const wxFileName& fnWav)
+{
+    pml::restgoose::response resp(200);
+    resp.bFile = true;
+    resp.contentType = headerValue("audio/wav");
+    resp.data = textData(fnWav.GetFullPath().ToStdString());
+    return resp;
+}
+
+pml::restgoose::response RemoteApi::DeleteWav(const wxFileName& fnWav)
+{
+    if(wxRemoveFile(fnWav.GetFullPath()))
+    {
+        return pml::restgoose::response(200);
+    }
+    else
+    {
+        return pml::restgoose::response(405, "Unable to delete wav file");
+    }
+}
+
+pml::restgoose::response RemoteApi::WavEndpoint(const httpMethod& theMethod, const query& theQuery,  const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
+{
+    wxFileName fnWanted(Settings::Get().GetWavDirectory(), wxString(theEndpoint.Get().substr(11))+".wav");
+
+    wxFileName fn;
+    bool bFound(false);
+
+    //check the file exists - we search through them all as we don't actually care about the case
+    wxArrayString asFiles;
+    wxDir::GetAllFiles(Settings::Get().GetWavDirectory(), &asFiles, wxT("*.wav"), wxDIR_FILES);
+    for(size_t i = 0; i < asFiles.GetCount(); i++)
+    {
+        if(asFiles[i].CmpNoCase(fnWanted.GetFullPath()) == 0)
         {
-            if(asFiles[i].CmpNoCase(fnWanted.GetFullPath()) == 0)
-            {
-                wxFileName fn(asFiles[i]);
-                pml::restgoose::response resp(200);
-                resp.bFile = true;
-                resp.contentType = headerValue("audio/wav");
-                resp.data = textData(fn.GetFullPath().ToStdString());
-                return resp;
-            }
+            fn.Assign(asFiles[i]);
+            bFound = true;
+            break;
         }
+    }
+
+    if(bFound)
+    {
+        if(theMethod == pml::restgoose::GET)
+        {
+            return DownloadWav(fn);
+        }
+        else if(theMethod == pml::restgoose::HTTP_DELETE)
+        {
+            return DeleteWav(fn);
+        }
+    }
+    else
+    {
         pml::restgoose::response resp(404);
         resp.jsonData["wav"] = fnWanted.GetName().ToStdString();
         return resp;
     }
-    else
+}
+
+pml::restgoose::response RemoteApi::ExtraEndpoint(const httpMethod& theMethod, const query& theQuery,  const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
+{
+    //check if the endpoint is a wav file to download
+    if(theEndpoint.Get().find("/x-pam/wav/") != std::string::npos)
     {
-        pml::restgoose::response resp(405);
-        resp.jsonData["path"] = theEndpoint.Get();
-        return resp;
+        return WavEndpoint(theMethod, theQuery, vData, theEndpoint, theUser);
     }
+
+    pml::restgoose::response resp(405);
+    resp.jsonData["path"] = theEndpoint.Get();
+    return resp;
 }
 
 pml::restgoose::response RemoteApi::GetRoot(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
@@ -367,15 +434,17 @@ pml::restgoose::response RemoteApi::DoPatchSettings(const std::vector<pml::restg
             for(Json::ArrayIndex ai = 0; ai < request.jsonData.size(); ai++)
             {
                 auto check = CheckJsonSettingPatch(request.jsonData[ai], sSection);
-                if(check.nHttpCode == 400)
+                if(check.nHttpCode != 200)
                 {
-                    resp.nHttpCode = 400;
+                    PatchFailed(resp, 400, std::string("Not all settings can be patched"));
                 }
-                resp.jsonData.append(check.jsonData);
+
+                resp.jsonData["patch"].append(check.jsonData);
             }
 
             if(resp.nHttpCode == 200)   //no error
             {
+                PatchWorked(resp,200);
                 DoPatchSettings(request.jsonData, sSection);
             }
             return resp;
@@ -413,30 +482,26 @@ pml::restgoose::response RemoteApi::CheckJsonSettingPatch(const Json::Value& jsP
                 auto check = CheckJsonSettingPatchConstraint(jsPatch, itKey->second);
                 if(check.nHttpCode == 400)
                 {
-                    resp.jsonData["reason"] = check.jsonData;
+                    PatchFailed(resp, 400, check.jsonData);
                 }
                 else
                 {
-                    //success
-                    resp.nHttpCode = 200;
-                    resp.jsonData["reason"] = "Success";
+                    PatchWorked(resp,200);
                 }
             }
             else
             {
-                resp.nHttpCode = 404;
-                resp.jsonData["reason"] = "Section "+sSection.ToStdString()+" has no key "+jsPatch["key"].asString();
+                PatchFailed(resp, 404, "Section "+sSection.ToStdString()+" has no key "+jsPatch["key"].asString());
             }
         }
         else
         {
-            resp.nHttpCode = 404;
-            resp.jsonData["reason"] = "Settings has no section "+sSection.ToStdString();
+            PatchFailed(resp, 404, "Settings has no section "+sSection.ToStdString());
         }
     }
     else
     {
-        resp.jsonData["reason"] = "JSON is invalid";
+        resp.jsonData["reason"].append("JSON is invalid");
     }
     return resp;
 
@@ -660,7 +725,7 @@ pml::restgoose::response RemoteApi::GetWavFiles(const query& theQuery, const std
     for(size_t i = 0; i < asFiles.GetCount(); i++)
     {
         wxFileName fn(asFiles[i]);
-        resp.jsonData.append(fn.GetName().ToStdString());
+        resp.jsonData.append(fn.GetName().ToStdString()+"/");
     }
     return resp;
 }
@@ -689,7 +754,7 @@ pml::restgoose::response RemoteApi::PostWavFile(const query& theQuery, const std
         if(sf.OpenToRead(sLocation) == false)
         {
             wxRemoveFile(sLocation);
-            resp.jsonData["reason"] = "Uploaded file is not a wav file";
+            PatchFailed(resp, 415,  std::string("Uploaded file is not a wav file"));
         }
         else
         {
@@ -697,19 +762,18 @@ pml::restgoose::response RemoteApi::PostWavFile(const query& theQuery, const std
             fn.Assign(Settings::Get().GetWavDirectory(), sFilename+".wav");
             if(wxRenameFile(sLocation, fn.GetFullPath()))
             {
-                resp.nHttpCode = 200;
-                resp.jsonData["reason"] = "Success";
+                PatchWorked(resp, 201);
             }
             else
             {
                 wxRemoveFile(sLocation);
-                resp.jsonData["reason"] = "Unable to store wav file in directory";
+                PatchFailed(resp, 400, std::string("Unable to store wav file in directory"));
             }
         }
     }
     else
     {
-        resp.jsonData["reason"] = "Filename not set, or no file uploaded";
+        PatchFailed(resp, 400, std::string("Filename not set, or no file uploaded"));
     }
     return resp;
 }
@@ -725,7 +789,7 @@ pml::restgoose::response RemoteApi::DeleteWavFile(const query& theQuery, const s
         if(request.jsonData.isArray())
         {
             resp.nHttpCode = 200;
-            resp.jsonData["reason"] = "Success";
+            resp.jsonData["result"] = true;
             for(Json::ArrayIndex ai = 0; ai < request.jsonData.size(); ++ai)
             {
                 if(request.jsonData[ai].isString())
@@ -789,7 +853,12 @@ pml::restgoose::response RemoteApi::GetAoipSources(const query& theQuery, const 
             bool bAdd(true);
             for(auto pairQuery : mQuery)
             {
-                if(jsSource.isMember(pairQuery.first.ToStdString()))
+                if(pairQuery.first == "index")
+                {
+                    long nIndex;
+                    bAdd = (pairQuery.second.ToLong(&nIndex) && pairSource.first == nIndex);
+                }
+                else if(jsSource.isMember(pairQuery.first.ToStdString()))
                 {
                     if(jsSource[pairQuery.first.ToStdString()].isString() && jsSource[pairQuery.first.ToStdString()].asString() != pairQuery.second.ToStdString())
                     {
@@ -809,6 +878,7 @@ pml::restgoose::response RemoteApi::GetAoipSources(const query& theQuery, const 
                         }
                     }
                 }
+
             }
             if(bAdd)
             {
@@ -834,9 +904,12 @@ pml::restgoose::response RemoteApi::PatchAoipSources(const query& theQuery, cons
                 auto check = CheckJsonAoipPatch(request.jsonData[ai]);
                 if(check.nHttpCode != 200)
                 {
-                    resp.nHttpCode = 400;
+                    PatchFailed(resp, 400, check.jsonData);
                 }
-                resp.jsonData.append(check.jsonData);
+                else
+                {
+                    resp.jsonData.append(check.jsonData);
+                }
             }
 
             if(resp.nHttpCode != 200)   //error somewhere
@@ -864,53 +937,52 @@ pml::restgoose::response RemoteApi::CheckJsonAoipPatch(const Json::Value& jsPatc
     pml::restgoose::response resp(400);
     if(jsPatch.isMember("action") == false || jsPatch["action"].isString() == false)
     {
-        resp.jsonData["reason"] = "No action passed";
+        resp.jsonData["reason"].append("No action passed");
         return resp;
     }
     if(jsPatch["action"].asString() == "update")
     {
         if(jsPatch.isMember("index") == false || jsPatch["index"].isInt() == false)
         {
-            resp.jsonData["reason"] = "Action is update but no index passed";
+            resp.jsonData["reason"].append("Action is update but no index passed");
             return resp;
         }
         if(jsPatch.isMember("tags") == true && jsPatch["tags"].isArray() == false)
         {
-            resp.jsonData["reason"] = "Action is update with tags, but not an array";
+            resp.jsonData["reason"].append("Action is update with tags, but not an array");
             return resp;
         }
     }
     else if(jsPatch["action"].asString() == "delete" && (jsPatch.isMember("index") == false || jsPatch["index"].isInt() == false))
     {
-        resp.jsonData["reason"] = "Action is delete but no index passed";
+        resp.jsonData["reason"].append("Action is delete but no index passed");
         return resp;
     }
     else if(jsPatch["action"].asString() == "add")
     {
         if(jsPatch.isMember("name") == false || jsPatch["name"].isString() == false)
         {
-            resp.jsonData["reason"] = "Action is add but no name passed";
+            resp.jsonData["reason"].append("Action is add but no name passed");
             return resp;
         }
         if(jsPatch.isMember("type") == false || jsPatch["type"].isString() == false)
         {
-            resp.jsonData["reason"] = "Action is add but no type passed";
+            resp.jsonData["reason"].append("Action is add but no type passed");
             return resp;
         }
         if((jsPatch["type"].asString() == "SDP" || jsPatch["type"].asString() == "sdp") && (jsPatch.isMember("SDP") == false || jsPatch["SDP"].isString() == false))
         {
-            resp.jsonData["reason"] = "Action is add and type SDP but no SDP passed";
+            resp.jsonData["reason"].append("Action is add and type SDP but no SDP passed");
             return resp;
         }
         if((jsPatch["type"].asString() == "RTSP" || jsPatch["type"].asString() == "rtsp") &&
            (jsPatch.isMember("details") == false || jsPatch["details"].isString() == false))
         {
-            resp.jsonData["reason"] = "Action is add and type RTSP but no RTSP details passed";
+            resp.jsonData["reason"].append("Action is add and type RTSP but no RTSP details passed");
             return resp;
         }
     }
-    resp.nHttpCode = 200;
-    resp.jsonData["reason"] = "Success";
+    PatchWorked(resp, 200);
     return resp;
 }
 
