@@ -284,7 +284,7 @@ void pnlMeters::SetAudioData(const timedbuffer* pBuffer)
     {
         m_pLevels->Refresh();
     }
-    
+
 }
 Json::Value pnlMeters::CreateWebsocketMessage()
 {

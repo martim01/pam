@@ -6,6 +6,7 @@
 #include <wx/string.h>
 #include <wx/event.h>
 class SettingEvent;
+class wxFileName;
 
 class RemoteApi : public wxEvtHandler
 {
@@ -75,6 +76,11 @@ class RemoteApi : public wxEvtHandler
         Json::Value GetJson(const std::map<int,wxString>& mEnum);
         Json::Value GetJson(std::function<std::set<wxString>()> func);
         Json::Value GetJson(std::function<std::map<int, wxString>()> func);
+
+        pml::restgoose::response WavEndpoint(const httpMethod& theMethod, const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser);
+
+        pml::restgoose::response DownloadWav(const wxFileName& fnWav);
+        pml::restgoose::response DeleteWav(const wxFileName& fnWav);
 
         struct section
         {
