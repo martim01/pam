@@ -180,11 +180,13 @@ void pnlPeakLog::SetAudioData(const timedbuffer* pBuffer)
 
     for(int j=0; j < vPeak.size(); j++)
     {
-        jsData[GRAPH_LINES[j]] = Json::objectValue;
-        AddPeak("Day", m_pLevelGraph_Day, GRAPH_LINES[j], vPeak[j],jsData[GRAPH_LINES[j]]);
-        AddPeak("Hour", m_pLevelGraph_Hour, GRAPH_LINES[j], vPeak[j],jsData[GRAPH_LINES[j]]);
-        AddPeak("Minute", m_pLevelGraph_Minute, GRAPH_LINES[j], vPeak[j],jsData[GRAPH_LINES[j]]);
-        AddPeak("Second", m_pLevelGraph_Second, GRAPH_LINES[j], vPeak[j],jsData[GRAPH_LINES[j]]);
+        Json::Value jsChannel;
+        AddPeak("Day", m_pLevelGraph_Day, GRAPH_LINES[j], vPeak[j],jsChannel);
+        AddPeak("Hour", m_pLevelGraph_Hour, GRAPH_LINES[j], vPeak[j],jsChannel);
+        AddPeak("Minute", m_pLevelGraph_Minute, GRAPH_LINES[j], vPeak[j],jsChannel);
+        AddPeak("Second", m_pLevelGraph_Second, GRAPH_LINES[j], vPeak[j],jsChannel);
+
+        jsData.append(jsChannel);
     }
     if(m_pBuilder->WebsocketsActive())
     {

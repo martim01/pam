@@ -502,10 +502,13 @@ void PolarScope::WorkoutLevel()
 
 
     m_lstLevels.push_back(make_pair(dCoordX, dCoordY));
+    m_lstAngles.push_back(make_pair(dAngle, dHeight));
+
 
     if(m_lstLevels.size() > 1000)
     {
         m_lstLevels.pop_front();
+        m_lstAngles.pop_front();
     }
 
 }
@@ -626,10 +629,10 @@ void PolarScope::SetMode(int nMode)
 Json::Value PolarScope::CreateWebsocketMessage()
 {
     Json::Value jsMessage;
-    if(m_lstLevels.empty() == false)
+    if(m_lstAngles.empty() == false)
     {
-        jsMessage["level"]["x"] = m_lstLevels.back().first;
-        jsMessage["level"]["y"] = m_lstLevels.back().second;
+        jsMessage["level"]["angle"] = m_lstAngles.back().first;
+        jsMessage["level"]["height"] = m_lstAngles.back().second;
     }
     if(m_lstBalance.empty() == false)
     {

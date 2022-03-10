@@ -139,6 +139,7 @@ class PolarScope : public pmControl
         unsigned int m_nAxisY;
 
         std::list<std::pair<double, double> > m_lstLevels;
+        std::list<std::pair<double, double> > m_lstAngles;
         double m_dCorrelation;
         double m_dBalance;
         double m_dSpread[2];
