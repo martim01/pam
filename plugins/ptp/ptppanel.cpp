@@ -1371,6 +1371,7 @@ void ptpPanel::ClockMessageWebsocketMessage(const wxString& sClock)
             }
             else
             {
+                jsClock["master"] = false;
                 //jsClock["delay"]["type"] = "E-E";
                 jsClock["delay_request"]["count"] = Json::UInt64(pClock->GetCount(ptpV2Header::DELAY_REQ));
                 jsClock["delay_request"]["rate"] = ConvertRate(pClock->GetInterval(ptpV2Header::DELAY_REQ)).ToStdString();
