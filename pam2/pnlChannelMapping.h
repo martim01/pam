@@ -6,7 +6,9 @@
 #include "wmlabel.h"
 #include <wx/panel.h>
 //*)
-c
+#include <map>
+
+class SettingEvent;
 class pnlChannelMapping: public wxPanel
 {
 	public:
@@ -16,14 +18,7 @@ class pnlChannelMapping: public wxPanel
 
 		wmButton* m_pbtnBack;
 		wmButton* m_pbtnCh[8];
-		wmLabel* m_pLbl13;
-		wmLabel* m_pLbl14;
-		wmLabel* m_pLbl15;
-		wmLabel* m_pLbl16;
-		wmLabel* m_pLbl17;
-		wmLabel* m_pLbl18;
-		wmLabel* m_pLbl19;
-		wmLabel* m_pLbl20;
+		wmLabel* m_pLbl[8];
 		wmLabel* m_plblCh[8];
 		//*)
 
@@ -66,6 +61,12 @@ class pnlChannelMapping: public wxPanel
 
 		void ShowButtons(const wxString& sValue, int nChannel);
         void ShowButton(int nButton);
+
+        void ShowChannels();
+        unsigned int m_nChannels;
+
+        static const std::multimap<unsigned int, wxString> MAPPING;
+
 		DECLARE_EVENT_TABLE()
 };
 

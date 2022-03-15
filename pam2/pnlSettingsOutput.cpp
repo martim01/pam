@@ -188,7 +188,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pbtnSAP->SetToggle(true, wxT("Off"), wxT("On"), 60);
 	m_pbtnStream = new wmButton(pnlAoipSettings, ID_M_PBTN3, _("Stream"), wxPoint(260,175), wxSize(330,35), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
 	m_pbtnStream->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnStream->SetToggle(true, wxT("On Demand"), wxT("Always On"), 40);
+	m_pbtnStream->SetToggle(true, wxT("OnDemand"), wxT("AlwaysOn"), 40);
 	m_pbtnActive = new wmButton(pnlAoipSettings, ID_M_PBTN1, _("Server"), wxPoint(260,215), wxSize(330,35), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnActive->SetBackgroundColour(wxColour(0,128,0));
 	m_pbtnActive->SetToggle(true, wxT("Inactive"), wxT("Active"), 40);
@@ -201,7 +201,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pbtnChannels->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnChannels->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnChannels->SetColourDisabled(wxColour(wxT("#B0B0B0")));
-	m_pbtnMapping = new wmButton(pnlAoipSettings, ID_M_PBTN13, _("Mapping"), wxPoint(253,110), wxSize(60,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN13"));
+	m_pbtnMapping = new wmButton(pnlAoipSettings, ID_M_PBTN13, _("Order"), wxPoint(253,110), wxSize(60,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN13"));
 	m_pbtnMapping->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnMapping->SetBackgroundColour(wxColour(163,211,211));
 	m_pbtnMapping->SetColourDisabled(wxColour(wxT("#B0B0B0")));
@@ -533,6 +533,7 @@ void pnlSettingsOutput::EnableStreamSettings()
     m_pbtnChannels->Enable(!m_pbtnActive->IsChecked());
     m_pbtnRtpMap->Enable(!m_pbtnActive->IsChecked());
     m_pbtnStream->Enable(!m_pbtnActive->IsChecked());
+    m_pbtnMapping->Enable(!m_pbtnActive->IsChecked());
 
     m_pbtnSampleRate->Enable(!m_pbtnActive->IsChecked());
     m_pbtnBits->Enable(!m_pbtnActive->IsChecked());

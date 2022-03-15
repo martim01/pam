@@ -452,3 +452,49 @@ std::shared_ptr<iniSection> Settings::GetSection(const wxString& sSection)
 
     return m_iniManager.GetSection(sSection);
 }
+
+std::string GetChannelMapping()
+{
+    int nChannels = Settings::Get().Read("Server", "Channels", 2);
+    std::string sMapping;
+    for(int i = 1; i <= nChannels; i++)
+    {
+        wxString sOrder = Settings::Get().Read("ChannelMapping", wxString::Format("Ch_%d", i), "");
+        if(sOrder.empty() == false)
+        {
+            if(sMapping.empty() == false)
+            {
+                sMapping += ",";
+            }
+            if(sOrder == "Mono")
+            {
+                sMapping += "M";
+            }
+            else if(sOrder == "Dual Mono")
+            {
+                sMapping += "DM";
+            }
+            else if(sOrder == "Stereo")
+            {
+                sMapping += "St";
+            }
+            else if(sOrder == "Matrix")
+            {
+                sMapping += "LtRt";
+            }
+            else if(sOrder == "5.1")
+            {
+                sMapping += "51";
+            }
+            else if(sOrder == "7.1")
+            {
+                sMapping += "71";
+            }
+            else
+            {
+                sMapping += sOrder.ToStdString();
+            }
+        }
+    }
+    return sMapping;
+}

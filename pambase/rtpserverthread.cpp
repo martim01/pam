@@ -168,7 +168,7 @@ bool RtpServerThread::CreateStream()
     wxString sStream = "by-name/"+ IOManager::Get().GetDnsSdService();
 
     ServerMediaSession* sms = ServerMediaSession::createNew(*m_penv, sStream, nullptr, "PAM AES67", m_bSSM);
-    AES67ServerMediaSubsession* pSmss =  AES67ServerMediaSubsession::createNew(m_setRTCPHandlers, *m_pSink, m_pRtcpInstance, m_ePacketTime);
+    AES67ServerMediaSubsession* pSmss =  AES67ServerMediaSubsession::createNew(m_setRTCPHandlers, *m_pSink, m_pRtcpInstance, m_ePacketTime, GetChannelMapping());
     sms->addSubsession(pSmss);
     m_pRtspServer->addServerMediaSession(sms);
 
@@ -176,15 +176,18 @@ bool RtpServerThread::CreateStream()
     m_sSDP = std::string(pSDP);
     delete[] pSDP;
 
+
     // Finally, start the streaming:
     pmlLog(pml::LOG_INFO) << "RTP Server\tBeginning streaming..." << m_pRtspServer->rtspURL(sms);
+    pmlLog(pml::LOG_INFO) << m_sSDP;
+
 
 
     m_pSink->startPlaying(*m_pSource, afterPlaying, reinterpret_cast<void*>(this));
 
 
     m_bStreaming = true;
-    Settings::Get().Write(wxT("AoIP"), wxT("Epoch"), pSmss->GetEpochTimestamp());
+   // Settings::Get().Write(wxT("AoIP"), wxT("Epoch"), pSmss->GetEpochTimestamp());
 
     return true;
 }

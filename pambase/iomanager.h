@@ -114,7 +114,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         void CheckIfGain();
         void InitAoIPInput();
 
-        std::set<wxEvtHandler*> m_setHandlers;
+                std::set<wxEvtHandler*> m_setHandlers;
         std::set<wxEvtHandler*> m_setRTCPHandlers;
         std::set<wxEvtHandler*> m_setRTSPHandlers;
         bool m_bSingleHandler;

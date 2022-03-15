@@ -878,18 +878,165 @@ void IOManager::CreateSessionFromOutput(const wxString& sSource)
     SessionChanged();
 }
 
+void SetChannel(std::vector<std::pair<unsigned char, wxString>>& vChannels, size_t nChannel, unsigned char nGroup, const wxString& sLabel)
+{
+    if(nChannel <= vChannels.size() && nChannel > 0)
+    {
+        vChannels[nChannel-1] = std::make_pair(nGroup, sLabel);
+    }
+}
+
 std::vector<std::pair<unsigned char, wxString>> IOManager::CreateChannels(unsigned long nChannels)
 {
     std::vector<std::pair<unsigned char, wxString>> vChannels(nChannels);
-    for(size_t i = 0; i < nChannels; i++)
+    if(Settings::Get().Read("Input", "Type", "Soundcard") == "Soundcard")
     {
-        if(i%2 == 0)
+        SetChannel(vChannels, 1, 0, "L");
+        SetChannel(vChannels, 2, 0, "R");
+    }
+    else
+    {
+        unsigned char nGroup = 0;
+        for(int i = 1; i <= nChannels; )
         {
-            vChannels[i] = std::make_pair(i/2, "L");
-        }
-        else
-        {
-            vChannels[i] = std::make_pair(i/2, "R");
+            wxString sValue = Settings::Get().Read("ChannelMapping", wxString::Format("Ch_%d", i), "");
+            if(sValue == "Mono")
+            {
+                SetChannel(vChannels, i, nGroup, "M");
+                ++i;
+                ++nGroup;
+            }
+            else if(sValue == "U01")
+            {
+                SetChannel(vChannels, i, nGroup, "U1");
+                ++i;
+                ++nGroup;
+            }
+            else if(sValue == "Dual Mono")
+            {
+                SetChannel(vChannels, i, nGroup, "M1");
+                SetChannel(vChannels, i+2, nGroup, "M2");
+                i+=2;
+                ++nGroup;
+            }
+            else if(sValue == "Stereo")
+            {
+                SetChannel(vChannels, i, nGroup, "L");
+                SetChannel(vChannels, i+1, nGroup, "R");
+                i+=2;
+                ++nGroup;
+            }
+            else if(sValue == "Matrix")
+            {
+                SetChannel(vChannels, i, nGroup, "Lt");
+                SetChannel(vChannels, i+1, nGroup, "Rt");
+                i+=2;
+                ++nGroup;
+            }
+            else if(sValue == "U02")
+            {
+                SetChannel(vChannels, i, nGroup, "U1");
+                SetChannel(vChannels, i+1, nGroup, "U2");
+                i+=2;
+                ++nGroup;
+            }
+            else if(sValue == "U03")
+            {
+                SetChannel(vChannels, i, nGroup, "U1");
+                SetChannel(vChannels, i+1, nGroup, "U2");
+                SetChannel(vChannels, i+2, nGroup, "U3");
+                i+=3;
+                ++nGroup;
+            }
+            else if(sValue == "U04")
+            {
+                SetChannel(vChannels, i, nGroup, "U1");
+                SetChannel(vChannels, i+1, nGroup, "U2");
+                SetChannel(vChannels, i+2, nGroup, "U3");
+                SetChannel(vChannels, i+3, nGroup, "U4");
+                i+=4;
+                ++nGroup;
+            }
+            else if(sValue == "SGRP")
+            {
+                SetChannel(vChannels, i, nGroup, "1");
+                SetChannel(vChannels, i+1, nGroup, "2");
+                SetChannel(vChannels, i+2, nGroup, "3");
+                SetChannel(vChannels, i+3, nGroup, "4");
+                i+=4;
+                ++nGroup;
+            }
+            else if(sValue == "U05")
+            {
+                SetChannel(vChannels, i, nGroup, "U1");
+                SetChannel(vChannels, i+1, nGroup, "U2");
+                SetChannel(vChannels, i+2, nGroup, "U3");
+                SetChannel(vChannels, i+3, nGroup, "U4");
+                SetChannel(vChannels, i+4, nGroup, "U5");
+                i+=5;
+                ++nGroup;
+            }
+            else if(sValue == "U06")
+            {
+                SetChannel(vChannels, i, nGroup, "U1");
+                SetChannel(vChannels, i+1, nGroup, "U2");
+                SetChannel(vChannels, i+2, nGroup, "U3");
+                SetChannel(vChannels, i+3, nGroup, "U4");
+                SetChannel(vChannels, i+4, nGroup, "U5");
+                SetChannel(vChannels, i+5, nGroup, "U6");
+                i+=6;
+                ++nGroup;
+            }
+            else if(sValue == "5.1")
+            {
+                SetChannel(vChannels, i, nGroup, "L");
+                SetChannel(vChannels, i+1, nGroup, "R");
+                SetChannel(vChannels, i+2, nGroup, "C");
+                SetChannel(vChannels, i+3, nGroup, "LFE");
+                SetChannel(vChannels, i+4, nGroup, "Ls");
+                SetChannel(vChannels, i+5, nGroup, "Rs");
+                i+=6;
+                ++nGroup;
+            }
+            else if(sValue == "U07")
+            {
+                SetChannel(vChannels, i, nGroup, "U1");
+                SetChannel(vChannels, i+1, nGroup, "U2");
+                SetChannel(vChannels, i+2, nGroup, "U3");
+                SetChannel(vChannels, i+3, nGroup, "U4");
+                SetChannel(vChannels, i+4, nGroup, "U5");
+                SetChannel(vChannels, i+5, nGroup, "U6");
+                SetChannel(vChannels, i+6, nGroup, "U7");
+
+                i+=7;
+                ++nGroup;
+            }
+            else if(sValue == "7.1")
+            {
+                SetChannel(vChannels, i, nGroup, "L");
+                SetChannel(vChannels, i+1, nGroup, "R");
+                SetChannel(vChannels, i+2, nGroup, "C");
+                SetChannel(vChannels, i+3, nGroup, "LFE");
+                SetChannel(vChannels, i+4, nGroup, "Ls");
+                SetChannel(vChannels, i+5, nGroup, "Rs");
+                SetChannel(vChannels, i+6, nGroup, "Lrs");
+                SetChannel(vChannels, i+7, nGroup, "Rrs");
+                i+=8;
+                ++nGroup;
+            }
+            else if(sValue == "U08")
+            {
+                SetChannel(vChannels, i, nGroup, "U1");
+                SetChannel(vChannels, i+1, nGroup, "U2");
+                SetChannel(vChannels, i+2, nGroup, "U3");
+                SetChannel(vChannels, i+3, nGroup, "U4");
+                SetChannel(vChannels, i+4, nGroup, "U5");
+                SetChannel(vChannels, i+5, nGroup, "U6");
+                SetChannel(vChannels, i+6, nGroup, "U7");
+                SetChannel(vChannels, i+7, nGroup, "U8");
+                i+=8;
+                ++nGroup;
+            }
         }
     }
     return vChannels;
@@ -1250,6 +1397,7 @@ void IOManager::StreamOnDemand()
                                               Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555));
 
         m_pOnDemandSubsession = OnDemandAES67MediaSubsession::createNew(this, *m_pOnDemandServer->envir(), Settings::Get().Read("Server", "Channels", 2),
+        GetChannelMapping(),
         Settings::Get().Read("Server", "RtpMap", 96),(LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000),
         Settings::Get().Read("Server", "Bits", 24),Settings::Get().Read("Server", "SampleRate", 48000), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
 
@@ -1296,4 +1444,7 @@ wxString IOManager::GetDnsSdService() const
 {
     return "AES67@"+wxGetHostName();
 }
+
+
+
 
