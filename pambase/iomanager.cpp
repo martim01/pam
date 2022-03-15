@@ -753,9 +753,10 @@ void IOManager::InitAudioInputDevice(bool bStart)
 
 
         m_SessionIn = session(wxEmptyString, wxT("Soundcard"), SoundcardManager::Get().GetInputDeviceName());
+        //@todo its possible soundcard might not be two channels
         m_SessionIn.lstSubsession.push_back(subsession(wxEmptyString, SoundcardManager::Get().GetInputDeviceName(), wxEmptyString,
         wxT("L24"), wxEmptyString, SoundcardManager::Get().GetInputDevice(), SoundcardManager::Get().GetInputSampleRate(),
-         SoundcardManager::Get().GetInputNumberOfChannels(), wxEmptyString, 0, {0,0}, refclk()));
+        CreateChannels(2), 0, {0,0}, refclk()));
         m_SessionIn.SetCurrentSubsession();
 
         SessionChanged();
@@ -853,6 +854,7 @@ void IOManager::CreateSessionFromOutput(const wxString& sSource)
 
     unsigned int nSampleRate = 48000;
     unsigned int nChannels = 2;
+    std::vector<wxString> vChannels;
     if(m_nOutputDestination == AudioEvent::SOUNDCARD)
     {
         nSampleRate = SoundcardManager::Get().GetOutputSampleRate();
@@ -862,18 +864,38 @@ void IOManager::CreateSessionFromOutput(const wxString& sSource)
     {
         nSampleRate = Settings::Get().Read("Server", "SampleRate", 48000);
         nChannels = Settings::Get().Read("Server", "Channels", 2);
+
     }
     if(m_pGenerator)
     {
         m_pGenerator->SetSampleRate(nSampleRate);
     }
-
     m_SessionOut.lstSubsession.push_back(subsession(Settings::Get().Read(wxT("Output"), wxT("Source"),wxEmptyString),
-    sSource, wxEmptyString, wxT("F32"), wxEmptyString, 0, nSampleRate, nChannels, wxEmptyString, 0, {0,0}, refclk()));
+    sSource, wxEmptyString, wxT("F32"), wxEmptyString, 0, nSampleRate, CreateChannels(nChannels),
+                                                    0, {0,0}, refclk()));
     m_SessionOut.SetCurrentSubsession();
 
     SessionChanged();
 }
+
+std::vector<std::pair<unsigned char, wxString>> IOManager::CreateChannels(unsigned long nChannels)
+{
+    std::vector<std::pair<unsigned char, wxString>> vChannels(nChannels);
+    for(size_t i = 0; i < nChannels; i++)
+    {
+        if(i%2 == 0)
+        {
+            vChannels[i] = std::make_pair(i/2, "L");
+        }
+        else
+        {
+            vChannels[i] = std::make_pair(i/2, "R");
+        }
+    }
+    return vChannels;
+}
+
+
 
 void IOManager::UpdateOutputSession()
 {
@@ -906,6 +928,7 @@ void IOManager::UpdateOutputSession()
         {
             m_SessionOut.lstSubsession.back().nSampleRate = nSampleRate;
             m_SessionOut.lstSubsession.back().nChannels = nChannels;
+            m_SessionOut.lstSubsession.back().vChannels = CreateChannels(nChannels);
             SessionChanged();
         }
     }

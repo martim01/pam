@@ -85,7 +85,7 @@ class SpectogramMeter : public pmControl
             m_dFall = ddB;
         }
 
-        void SetNumberOfChannels(unsigned int nChannels);
+        void SetChannels(const std::vector<std::pair<unsigned char, wxString>>& vChannels);
 
         void SetAnalyseMode(int nMode);
         void SetWindowType(int nType);
@@ -217,6 +217,7 @@ class SpectogramMeter : public pmControl
 
         ColourGradient m_HeatMap;
         std::list<wxBitmap> m_lstBitmaps;
+        std::vector<std::pair<unsigned char, wxString>> m_vChannels;
 
         wxBitmap m_bmpScale;
 

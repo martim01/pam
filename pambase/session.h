@@ -3,7 +3,8 @@
 #include "timedbuffer.h"
 #include <list>
 #include <algorithm>
-
+#include <vector>
+#include <map>
 
 struct PAMBASE_IMPEXPORT frameBuffer
 {
@@ -28,11 +29,15 @@ struct PAMBASE_IMPEXPORT refclk
     unsigned long nDomain;
 };
 
+
 struct PAMBASE_IMPEXPORT subsession
 {
-
-    subsession(const wxString& sI, const wxString& sourceaddress, const wxString& medium, const wxString& codec, const wxString& protocol, unsigned int port, unsigned int samplerate, unsigned int channels, const wxString& channelnames, unsigned int synctimestamp, const timeval& epoch, const refclk& clk) :
-    sId(sI), sSourceAddress(sourceaddress), sMedium(medium), sCodec(codec), sProtocol(protocol), nPort(port), nSampleRate(samplerate),nChannels(std::min((unsigned int)256, channels)),sChannelNames(channelnames),nSyncTimestamp(synctimestamp), tvEpoch(epoch),refClock(clk){}
+    subsession() : nPort(0), nSampleRate(0), nChannels(0), nSyncTimestamp(0){}
+    subsession(const wxString& sI, const wxString& sourceaddress, const wxString& medium, const wxString& codec, const wxString& protocol,
+               unsigned int port, unsigned int samplerate, const std::vector<std::pair<unsigned char,wxString>>& channels,
+               unsigned int synctimestamp, const timeval& epoch, const refclk& clk) :
+    sId(sI), sSourceAddress(sourceaddress), sMedium(medium), sCodec(codec), sProtocol(protocol), nPort(port), nSampleRate(samplerate), nChannels(channels.size()),
+    vChannels(channels), nSyncTimestamp(synctimestamp), tvEpoch(epoch),refClock(clk){}
 
     wxString sId;
     wxString sSourceAddress;
@@ -42,7 +47,8 @@ struct PAMBASE_IMPEXPORT subsession
     unsigned int nPort;
     unsigned int nSampleRate;
     unsigned int nChannels;
-    wxString sChannelNames;
+    std::vector<std::pair<unsigned char,wxString>> vChannels;
+
     unsigned int nSyncTimestamp;
     timeval tvEpoch;
     refclk refClock;

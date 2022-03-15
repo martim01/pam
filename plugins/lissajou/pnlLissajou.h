@@ -7,12 +7,14 @@
 #include "levelmeter.h"
 #include <wx/panel.h>
 //*)
+#include "session.h"
 
 class timedbuffer;
-class session;
+
 class LissajouBuilder;
 class LevelCalculator;
 struct ppmtype;
+
 
 class pnlLissajou: public wxPanel
 {
@@ -73,6 +75,8 @@ class pnlLissajou: public wxPanel
 		unsigned int m_nChannels;
 		unsigned int m_nChannelX;
 		unsigned int m_nChannelY;
+
+		subsession m_subsession;
 
 		DECLARE_EVENT_TABLE()
 };

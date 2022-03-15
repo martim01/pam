@@ -84,17 +84,17 @@ void pnlLissajou::SetSession(const session& aSession)
 {
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_nChannels = min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels);
+        m_subsession = (*aSession.GetCurrentSubsession());
+        SetAxis(m_nChannelX, m_nChannelY);
     }
     else
     {
-        m_nChannels = 0;
+        m_subsession = subsession();
     }
-    m_pJellyfish->SetNumberOfChannels(m_nChannels);
-    m_pMeterLeft->SetNumberOfChannels(m_nChannels);
-    m_pMeterRight->SetNumberOfChannels(m_nChannels);
+    m_pJellyfish->SetNumberOfChannels(m_subsession.nChannels);
+    m_pMeterLeft->SetNumberOfChannels(m_subsession.nChannels);
+    m_pMeterRight->SetNumberOfChannels(m_subsession.nChannels);
 
-    SetAxis(m_nChannelX, m_nChannelY);
 
     m_pCalculator->InputSession(aSession);
 }
@@ -127,39 +127,23 @@ void pnlLissajou::SetAxis(unsigned int nChannelX, unsigned int nChannelY)
     m_nChannelX = nChannelX;
     m_nChannelY = nChannelY;
 
-    if(m_nChannels == 2)
+    if(m_subsession.vChannels.size() > m_nChannelX)
     {
-        switch(m_nChannelX)
-        {
-        case 0:
-            m_pMeterLeft->SetLabel(wxT("Left"));
-
-            break;
-        case 1:
-            m_pMeterLeft->SetLabel(wxT("Right"));
-
-            break;
-        }
-
-        switch(m_nChannelY)
-        {
-        case 0:
-            m_pMeterRight->SetLabel(wxT("Left"));
-
-            break;
-        case 1:
-            m_pMeterRight->SetLabel(wxT("Right"));
-
-            break;
-        }
+        m_pMeterLeft->SetLabel(m_subsession.vChannels[m_nChannelX].second+CH_GROUPING[m_subsession.vChannels[m_nChannelX].first]);
     }
     else
     {
-        m_pMeterLeft->SetLabel(wxString::Format(wxT("Ch %d"), m_nChannelX));
-        m_pMeterRight->SetLabel(wxString::Format(wxT("Ch %d"), m_nChannelY));
-
-
+        m_pMeterLeft->SetLabel("");
     }
+    if(m_subsession.vChannels.size() > m_nChannelY)
+    {
+        m_pMeterRight->SetLabel(m_subsession.vChannels[m_nChannelY].second+CH_GROUPING[m_subsession.vChannels[m_nChannelY].first]);
+    }
+    else
+    {
+        m_pMeterRight->SetLabel("");
+    }
+
     CheckAxis();
 }
 
@@ -206,7 +190,7 @@ void pnlLissajou::CheckAxis()
         m_pMeterRight->SetLightColours(wxColour(0,220,0), -8, wxColour(255,100,100));
 
         /*
-        if(m_vOutputs[0] == m_pBuilder->ReadSetting(wxT("Axis_X"),0) || m_nChannels == 2)
+        if(m_vOutputs[0] == m_pBuilder->ReadSetting(wxT("Axis_X"),0) || m_subsession.nChannels == 2)
         {
             m_pMeterLeft->SetLightColours(-8,wxColour(220,0,0), -8,wxColour(240,0,0),  wxColour(255,100,100));
         }
@@ -215,7 +199,7 @@ void pnlLissajou::CheckAxis()
             m_pMeterLeft->SetLightColours(-8,wxColour(255,255,255), -8,wxColour(255,255,255), wxColour(255,100,100));
         }
 
-        if(m_vOutputs[1] == m_pBuilder->ReadSetting(wxT("Axis_Y"),0) || m_nChannels == 2)
+        if(m_vOutputs[1] == m_pBuilder->ReadSetting(wxT("Axis_Y"),0) || m_subsession.nChannels == 2)
         {
             m_pMeterRight->SetLightColours(-8,wxColour(0,220,0), -8, wxColour(0,240,0), wxColour(255,100,100));
         }

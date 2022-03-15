@@ -73,37 +73,29 @@ void pnlRouting::OnlstXSelected(wxCommandEvent& event)
 }
 
 
-void pnlRouting::SetNumberOfChannels(unsigned int nChannels)
+void pnlRouting::SetChannels(const std::vector<std::pair<unsigned char, wxString>>& vChannels)
 {
     m_plstX->Freeze();
     m_plstY->Freeze();
     m_plstX->Clear();
     m_plstY->Clear();
 
-    if(nChannels != 2)
+
+    for(unsigned int i = 0; i < vChannels.size(); i++)
     {
-        for(unsigned int i = 0; i < nChannels; i++)
-        {
-            m_plstX->AddButton(wxString::Format(wxT("CH: %d"), i));
-            m_plstY->AddButton(wxString::Format(wxT("CH: %d"), i));
-        }
+        m_plstX->AddButton(vChannels[i].second+CH_GROUPING[vChannels[i].first]);
+        m_plstY->AddButton(vChannels[i].second+CH_GROUPING[vChannels[i].first]);
     }
-    else
-    {
-            m_plstX->AddButton(wxT("Left"));
-            m_plstY->AddButton(wxT("Left"));
-            m_plstX->AddButton(wxT("Right"));
-            m_plstY->AddButton(wxT("Right"));
-    }
+
     m_plstX->Thaw();
     m_plstY->Thaw();
 
     int nX = m_pBuilder->ReadSetting(wxT("Axis_X"), 0);
-    if(nX >= nChannels)
+    if(nX >= vChannels.size())
         nX = 0;
 
     int nY = m_pBuilder->ReadSetting(wxT("Axis_Y"), 1);
-    if(nY >= nChannels)
+    if(nY >= vChannels.size())
         nY = 1;
 
     m_plstX->SelectButton(nX, true);

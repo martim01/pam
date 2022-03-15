@@ -86,7 +86,7 @@ class FftMeter : public pmControl
             m_dFall = ddB;
         }
 
-        void SetNumberOfChannels(unsigned int nChannels);
+        void SetChannels(const std::vector<std::pair<unsigned char, wxString>>& vChannels);
 
         void SetAnalyseMode(int nMode);
         void SetWindowType(int nType);
@@ -155,6 +155,7 @@ class FftMeter : public pmControl
         std::vector<float> m_vAmplitude;
         std::vector<float> m_vPeak;
 
+        std::vector<std::pair<unsigned char, wxString>> m_vChannels;
         FFTBuilder* m_pBuilder;
 
         uiRect m_uiSettingsAnalyse;

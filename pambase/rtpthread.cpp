@@ -423,6 +423,12 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
     {
         refclk clock = pSubsession->GetRefClock();
         timeval tvEpoch = pSubsession->GetLastEpoch();
+        std::vector<std::pair<unsigned char, wxString>> vChannels(pSubsession->numChannels());
+        for(size_t i = 0; i < pSubsession->numChannels(); i++)
+        {
+            vChannels[i] = std::make_pair(pSubsession->GetChannelGrouping()[i], pSubsession->GetChannelName(i));
+        }
+
         m_Session.lstSubsession.push_back(subsession(wxString::FromUTF8(pSubsession->sessionId()),
                                                      wxString::FromUTF8(pSubsession->GetEndpoint()),
                                                      wxString::FromUTF8(pSubsession->mediumName()),
@@ -430,8 +436,7 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
                                                      wxString::FromUTF8(pSubsession->protocolName()),
                                                      pSubsession->clientPortNum(),
                                                      pSubsession->rtpTimestampFrequency(),
-                                                     pSubsession->numChannels(),
-                                                     wxEmptyString,  /* @todo this is the channel list from SMPTE2110 */
+                                                     vChannels,
                                                      pSubsession->GetSyncTime(),
                                                      tvEpoch,
                                                      pSubsession->GetRefClock()));

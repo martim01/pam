@@ -7,6 +7,7 @@
 #include "dlldefine.h"
 #include <memory>
 #include <vector>
+#include <array>
 
 class SettingEvent;
 class AudioEvent;
@@ -95,6 +96,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         void CheckPlayback(unsigned long nSampleRate, unsigned long nChannels);
         void CreateSessionFromOutput(const wxString& sSource);
         void UpdateOutputSession();
+        std::vector<std::pair<unsigned char, wxString>> CreateChannels(unsigned long nChannels);
 
         void DoSAP(bool bRun);
         void DoDNSSD(bool bRun);

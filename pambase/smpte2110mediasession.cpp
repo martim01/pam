@@ -19,6 +19,8 @@ const wxString Smpte2110MediaSubsession::STR_COLORIMETRY[8] = {wxT("BT601"), wxT
 const wxString Smpte2110MediaSubsession::STR_TCS[10] = {wxT("SDR"), wxT("PQ"), wxT("HLG"), wxT("LINEAR"), wxT("BT2100LINPQ"), wxT("BT2100LINHLG"), wxT("ST2065-1"), wxT("ST2428-1"), wxT("DENSITY"), wxT("Unspecified")};
 const wxString Smpte2110MediaSubsession::STR_RANGE[3] = {wxT("Narrow"), wxT("FullProtect"), wxT("Full")};
 const wxString Smpte2110MediaSubsession::STR_PACKING[2] = {wxT("General"), wxT("Block")};
+const wxString Smpte2110MediaSubsession::STR_CHANNELS[26] = {"M", "M1", "M2", "L", "R", "Lt", "Rt", "C", "LFE", "Ls", "Rs", "Lrs", "Rrs", "1","2","3","4",
+"U1","U2","U3","U4","U5","U6","U7","U8", "U"};
 
 
 Smpte2110MediaSession* Smpte2110MediaSession::createNew(UsageEnvironment& env,
@@ -243,8 +245,9 @@ Smpte2110MediaSubsession::Smpte2110MediaSubsession(MediaSession& parent) : Media
  m_bSegmented(false),
  m_nTCS(0),
  m_nRange(0),
- m_bMaxUdp(false)
-
+ m_bMaxUdp(false),
+ m_channels{UNDEFINED_0, UNDEFINED_1, UNDEFINED_2, UNDEFINED_3, UNDEFINED_4, UNDEFINED_5, UNDEFINED_6, UNDEFINED_7},
+ m_channelGrouping{0,1,2,3,4,5,6,7}
 {
 
 }
@@ -264,8 +267,6 @@ Boolean Smpte2110MediaSubsession::createSourceObjects(int useSpecialRTPoffset)
     parseSDPAttribute_ExtMap();    //Header extension mapping
     parseSDPAttribute_Mid();        //Group if any
 
-
-
     if (strcmp(fCodecName, "L16") == 0 || strcmp(fCodecName, "L24") == 0) // 16 or 24-bit linear audio (RFC 3190)
     {
         m_sEndpoint = wxString::FromUTF8(fConnectionEndpointName);
@@ -274,6 +275,8 @@ Boolean Smpte2110MediaSubsession::createSourceObjects(int useSpecialRTPoffset)
         sprintf(mimeType, "%s/%s", mediumName(), codecName());
         fReadSource = fRTPSource = Aes67Source::createNew(env(), fRTPSocket, fRTPPayloadFormat, fRTPTimestampFrequency, mimeType, 0,FALSE, m_nSyncTime);
         delete[] mimeType;
+
+        parseSDPAttribute_Channels();    //Channel mapping if any
 
         return TRUE;
     }
@@ -752,3 +755,164 @@ void Smpte2110MediaSubsession::AnalyzeAttributes()
     env() << "Pixel Aspect Radio: "   << (int)m_pairAspectRatio.first << ":" << (int)m_pairAspectRatio.second << "\n";
 
  }
+
+
+void Smpte2110MediaSubsession::parseSDPAttribute_Channels()
+{
+    wxString sSdp(wxString::FromUTF8(fSavedSDPLines));
+
+    wxString sFind("channel-order=SMPTE2119.");
+    size_t nFront = sSdp.find(sFind);
+    if(nFront != wxNOT_FOUND)
+    {
+        size_t nEnd = sSdp.find(wxT("\n"), nFront);
+        wxString sChannels = sSdp.substr(nFront+sFind.length(), (nEnd-sFind.length())).AfterFirst('(').BeforeFirst(')');
+        wxArrayString asChannels = wxStringTokenize(sChannels, ",");
+
+        unsigned long nChannel(0);
+        for(size_t i = 0; i < asChannels.GetCount(); ++i)
+        {
+            if(asChannels[i] == "M")
+            {
+                m_channelGrouping[nChannel] = i;
+                m_channels[nChannel] = enumChannel::MONO;
+                ++nChannel;
+            }
+            else if(asChannels[i] == "DM")
+            {
+                m_channelGrouping[nChannel] = i;
+                m_channelGrouping[nChannel+1] = i;
+
+                m_channels[nChannel] = MONO_1;
+                m_channels[nChannel+1] = MONO_2;
+                nChannel+=2;
+            }
+            else if(asChannels[i] == "ST")
+            {
+                m_channelGrouping[nChannel] = i;
+                m_channelGrouping[nChannel+1] = i;
+
+                m_channels[nChannel] = LEFT;
+                m_channels[nChannel+1] = RIGHT;
+                nChannel+=2;
+            }
+            else if(asChannels[i] == "LtRt")
+            {
+                m_channelGrouping[nChannel] = i;
+                m_channelGrouping[nChannel+1] = i;
+
+                m_channels[nChannel] = LEFT_TOTAL;
+                m_channels[nChannel+1] = RIGHT_TOTAL;
+                nChannel+=2;
+            }
+            else if(asChannels[i] == "51")
+            {
+                m_channelGrouping[nChannel] = i;
+                m_channelGrouping[nChannel+1] = i;
+                m_channelGrouping[nChannel+2] = i;
+                m_channelGrouping[nChannel+3] = i;
+                m_channelGrouping[nChannel+4] = i;
+                m_channelGrouping[nChannel+5] = i;
+
+                m_channels[nChannel] = LEFT;
+                m_channels[nChannel+1] = RIGHT;
+                m_channels[nChannel+2] = CENTER;
+                m_channels[nChannel+3] = LFE;
+                m_channels[nChannel+4] = LEFT_SIDE;
+                m_channels[nChannel+5] = RIGHT_SIDE;
+                nChannel+=6;
+            }
+            else if(asChannels[i] == "71")
+            {
+                m_channelGrouping[nChannel] = i;
+                m_channelGrouping[nChannel+1] = i;
+                m_channelGrouping[nChannel+2] = i;
+                m_channelGrouping[nChannel+3] = i;
+                m_channelGrouping[nChannel+4] = i;
+                m_channelGrouping[nChannel+5] = i;
+                m_channelGrouping[nChannel+6] = i;
+                m_channelGrouping[nChannel+7] = i;
+
+                m_channels[nChannel] = LEFT;
+                m_channels[nChannel+1] = RIGHT;
+                m_channels[nChannel+2] = CENTER;
+                m_channels[nChannel+3] = LFE;
+                m_channels[nChannel+4] = LEFT_SIDE;
+                m_channels[nChannel+5] = RIGHT_SIDE;
+                m_channels[nChannel+6] = LEFT_REAR_SIDE;
+                m_channels[nChannel+7] = RIGHT_REAR_SIDE;
+                nChannel+=8;
+            }
+            else if(asChannels[i] == "SGRP")
+            {
+                m_channelGrouping[nChannel] = i;
+                m_channelGrouping[nChannel+1] = i;
+                m_channelGrouping[nChannel+2] = i;
+                m_channelGrouping[nChannel+3] = i;
+                m_channelGrouping[nChannel+4] = i;
+
+                m_channels[nChannel] = SDI_1;
+                m_channels[nChannel+1] = SDI_2;
+                m_channels[nChannel+2] = SDI_3;
+                m_channels[nChannel+3] = SDI_4;
+                nChannel+=4;
+            }
+            else if(asChannels[i].GetChar(0) == 'U')
+            {
+                unsigned long nUndefined;
+                asChannels[i].Mid(1).ToULong(&nUndefined);
+
+                for(size_t j = 0; j < nUndefined; j++)
+                {
+                    if(j+nChannel < m_channels.size())
+                    {
+                        m_channels[j+nChannel] = UNDEFINED_0+j;
+                        m_channelGrouping[j+nChannel] = i;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                nChannel+=nUndefined;
+            }
+        }
+    }
+}
+
+Smpte2110MediaSubsession::enumChannel Smpte2110MediaSubsession::GetChannelType(unsigned char nChannel) const
+{
+    if(nChannel < m_channels.size())
+    {
+        return m_channels[nChannel];
+    }
+    else
+    {
+        return enumChannel::UNDEFINED_0+(nChannel-m_channels.size());
+    }
+}
+
+const wxString& Smpte2110MediaSubsession::GetChannelName(unsigned char nChannel) const
+{
+    if(nChannel < m_channels.size())
+    {
+        if(m_channels[nChannel] < enumChannel::UNSET)
+        {
+            //we treat 2 channels with undefined as stereo
+            if(numChannels() == 2 && m_channels[nChannel] == enumChannel::UNDEFINED_0)
+            {
+                return STR_CHANNELS[enumChannel::LEFT];
+            }
+            else if(numChannels() == 2 && m_channels[nChannel] == enumChannel::UNDEFINED_1)
+            {
+                return STR_CHANNELS[enumChannel::RIGHT];
+            }
+            else
+            {
+                return STR_CHANNELS[m_channels[nChannel]];
+            }
+        }
+    }
+    return STR_CHANNELS[enumChannel::UNSET];
+}
+

@@ -19,7 +19,7 @@ class pnlRoutiing: public wxPanel
 		wmList* m_plstFFT_Routing;
 		//*)
 
-		void SetNumberOfChannels(unsigned int nChannels);
+		void SetChannels(const std::vector<std::pair<unsigned char, wxString>>& vChannels);
 
 	protected:
 

@@ -23,7 +23,7 @@ class pnlRouting: public wxPanel
 		wmLabel* m_pLbl2;
 		//*)
 
-		void SetNumberOfChannels(unsigned int nChannels);
+		void SetChannels(const std::vector<std::pair<unsigned char, wxString>>& vChannels);
 
 		void SetAxis(unsigned int nLeft, unsigned int nRight);
 
