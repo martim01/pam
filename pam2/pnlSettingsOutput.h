@@ -14,6 +14,7 @@
 //*)
 
 #include "wmipeditpnl.h"
+#include "pnlChannelMapping.h"
 
 class SettingEvent;
 
@@ -27,10 +28,12 @@ class pnlSettingsOutput: public wxPanel
 		void ShowSoundcardOutputs();
 
 		//(*Declarations(pnlSettingsOutput)
+		pnlChannelMapping* m_ppnlMapping;
 		wmButton* m_pbtnActive;
 		wmButton* m_pbtnBits;
 		wmButton* m_pbtnChannels;
 		wmButton* m_pbtnDNS;
+		wmButton* m_pbtnMapping;
 		wmButton* m_pbtnPacketTime;
 		wmButton* m_pbtnRTCP;
 		wmButton* m_pbtnRTSP;
@@ -59,9 +62,11 @@ class pnlSettingsOutput: public wxPanel
 		wmList* m_plstLatency;
 		wmList* m_plstPlayback;
 		wmSlider* m_plsliderOutputGain;
+		wmSwitcherPanel* m_pswpAoIP;
 		wmSwitcherPanel* m_pswpDestination;
 		wmipeditpnl* m_ppnlAddress;
 		wxPanel* pnlAoip;
+		wxPanel* pnlAoipSettings;
 		wxPanel* pnlDisabled;
 		wxPanel* pnlSoundcard;
 		//*)
@@ -99,12 +104,16 @@ class pnlSettingsOutput: public wxPanel
 		static const long ID_M_PBTN1;
 		static const long ID_M_PLBL12;
 		static const long ID_M_PBTN5;
+		static const long ID_M_PBTN13;
 		static const long ID_M_PLBL13;
 		static const long ID_M_PBTN10;
 		static const long ID_M_PBTN11;
 		static const long ID_M_PLBL11;
 		static const long ID_M_PBTN4;
 		static const long ID_PANEL11;
+		static const long ID_PANEL1;
+		static const long ID_M_PSWP1;
+		static const long ID_PANEL2;
 		static const long ID_M_PSWP2;
 		//*)
 
@@ -131,6 +140,8 @@ class pnlSettingsOutput: public wxPanel
 		void OnbtnBitsClick(wxCommandEvent& event);
 		void OnbtnRTCPClick(wxCommandEvent& event);
 		void OnbtnActiveClick(wxCommandEvent& event);
+		void OnbtnMappingClick(wxCommandEvent& event);
+		void OnbtnBackClick(wxCommandEvent& event);
 		//*)
 		void OnSettingChanged(SettingEvent& event);
 
