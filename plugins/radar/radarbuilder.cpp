@@ -102,13 +102,13 @@ void RadarBuilder::InputSession(const session& aSession)
     {
         m_pRadar->SetSampleRate(min((unsigned int)256 ,aSession.GetCurrentSubsession()->nSampleRate));
         m_nInputChannels = min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels);
-        m_ppnlRouting->SetNumberOfChannels(m_nInputChannels);
+        m_ppnlRouting->SetChannels(aSession.GetCurrentSubsession()->vChannels);
     }
     else
     {
         m_pRadar->SetSampleRate(48000);
         m_nInputChannels = 0;
-        m_ppnlRouting->SetNumberOfChannels(0);
+        m_ppnlRouting->SetChannels({});
     }
     ClearMeter();
 }

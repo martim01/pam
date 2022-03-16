@@ -114,12 +114,12 @@ void pnlPeakCount::InputSession(const session& aSession)
 
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_vChannels.resize(min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels));
-    }
+        m_vChannels.resize(min((unsigned int)8 ,aSession.GetCurrentSubsession()->nChannels));
 
-    for(size_t i = 0; i < m_vChannels.size(); i++)
-    {
-        m_vChannels[i] = new pnlPeakCountChannel(pnlLeft, i, wxID_ANY, wxPoint(38+(71*i), 30));
+        for(size_t i = 0; i < m_vChannels.size(); i++)
+        {
+            m_vChannels[i] = new pnlPeakCountChannel(pnlLeft, GetChannelLabel(aSession.GetCurrentSubsession()->vChannels[i]), i, wxID_ANY, wxPoint(38+(71*i), 30));
+        }
     }
 }
 

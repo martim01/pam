@@ -11,9 +11,11 @@ RecordThread::RecordThread() : wxThread(wxTHREAD_JOINABLE), m_bLoop(true)
 
 }
 
-bool RecordThread::Init(const wxString& sFilename, unsigned int nChannels, unsigned int nSampleRate, unsigned int nBitRate)
+bool RecordThread::Init(const wxString& sFilename, std::vector<unsigned char>& vChannels, unsigned int nSampleRate, unsigned int nBitRate)
 {
-    return m_sf.OpenToWrite(sFilename, nChannels, nSampleRate, nBitRate);
+    m_vChannels = vChannels;
+
+    return m_sf.OpenToWrite(sFilename, vChannels.size(), nSampleRate, nBitRate);
 }
 
 void RecordThread::Stop()
@@ -31,7 +33,7 @@ void* RecordThread::Entry()
             m_mutex.Lock();
             if(m_queueBuffer.empty() == false)
             {
-                pBuffer = CopyBuffer(m_queueBuffer.front());
+                pBuffer = FilterBuffer(m_queueBuffer.front());
                 delete m_queueBuffer.front();
                 m_queueBuffer.pop();
             }
@@ -69,6 +71,28 @@ timedbuffer* RecordThread::CopyBuffer(const timedbuffer* pBuffer)
     return pThreadBuffer;
 }
 
+timedbuffer* RecordThread::FilterBuffer(const timedbuffer* pBuffer)
+{
+    //if we are recording everything then do the faster copy rather than filter
+    if(m_vChannels.size() == pBuffer->GetNumberOfChannels())
+    {
+        return CopyBuffer(pBuffer);
+    }
+
+    //just get the samples for the channels we want to record
+    timedbuffer* pFilter = new timedbuffer(pBuffer->GetBufferSizePerChannel()*m_vChannels.size(), m_vChannels.size());
+
+    size_t nCount = 0;
+    for(size_t i = 0; i < pBuffer->GetBufferSize(); i+= pBuffer->GetNumberOfChannels())
+    {
+        for(auto nChannel : m_vChannels)
+        {
+            pFilter->GetBuffer()[nCount] = pBuffer->GetBuffer()[i+nChannel];
+            ++nCount;
+        }
+    }
+    return pFilter;
+}
 
 void RecordThread::ClearQueue()
 {

@@ -129,7 +129,7 @@ void pnlLissajou::SetAxis(unsigned int nChannelX, unsigned int nChannelY)
 
     if(m_subsession.vChannels.size() > m_nChannelX)
     {
-        m_pMeterLeft->SetLabel(m_subsession.vChannels[m_nChannelX].second+CH_GROUPING[m_subsession.vChannels[m_nChannelX].first]);
+        m_pMeterLeft->SetLabel(GetChannelLabel(m_subsession.vChannels[m_nChannelX]));
     }
     else
     {
@@ -137,7 +137,7 @@ void pnlLissajou::SetAxis(unsigned int nChannelX, unsigned int nChannelY)
     }
     if(m_subsession.vChannels.size() > m_nChannelY)
     {
-        m_pMeterRight->SetLabel(m_subsession.vChannels[m_nChannelY].second+CH_GROUPING[m_subsession.vChannels[m_nChannelY].first]);
+        m_pMeterRight->SetLabel(GetChannelLabel(m_subsession.vChannels[m_nChannelY]));
     }
     else
     {

@@ -49,8 +49,8 @@ FftMeter::FftMeter(wxWindow *parent, FFTBuilder* pBuilder, wxWindowID id, const 
     m_bCursorMode = false;
     m_bShowPeak = false;
 
-    m_vChannels.push_back(std::make_pair(0,"L"));
-    m_vChannels.push_back(std::make_pair(0,"R"));
+    m_vChannels.push_back(subsession::channelGrouping(0,subsession::enumChannelGrouping::ST, subsession::enumChannel::LEFT));
+    m_vChannels.push_back(subsession::channelGrouping(0,subsession::enumChannelGrouping::ST, subsession::enumChannel::RIGHT));
 
     m_nSampleRate = 48000;
 
@@ -373,7 +373,7 @@ void FftMeter::SetSampleRate(unsigned long nSampleRate)
     m_nSampleRate = nSampleRate;
 }
 
-void FftMeter::SetChannels(const std::vector<std::pair<unsigned char, wxString>>& vChannels)
+void FftMeter::SetChannels(const std::vector<subsession::channelGrouping>& vChannels)
 {
     m_vChannels = vChannels;
 }
@@ -537,7 +537,7 @@ void FftMeter::SetAnalyseMode(int nMode)
     m_nFFTAnalyse = nMode;
     if(m_vChannels.size() != 2)
     {
-        m_uiSettingsAnalyse.SetLabel(nMode < m_vChannels.size() ? m_vChannels[nMode].second+CH_GROUPING[m_vChannels[nMode].first] : "?");
+        m_uiSettingsAnalyse.SetLabel(nMode < m_vChannels.size() ? GetChannelLabel(m_vChannels[nMode]) : "?");
     }
     else if(nMode == 0)
     {

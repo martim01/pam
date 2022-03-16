@@ -98,9 +98,11 @@ pnlPeakLog::~pnlPeakLog()
 void pnlPeakLog::InputSession(const session& aSession)
 {
     m_nChannels = 0;
+    subsession sub;
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_nChannels = min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels);
+        sub = (*aSession.GetCurrentSubsession());
+        m_nChannels = min((unsigned int)8, sub.nChannels);
     }
     m_pLevelGraph_Day->DeleteAllGraphs();
     m_pLevelGraph_Hour->DeleteAllGraphs();
@@ -127,7 +129,7 @@ void pnlPeakLog::InputSession(const session& aSession)
         m_pLevelGraph_Second->SetLimit(GRAPH_LINES[i], 0,-50);
 
 
-        m_plstGraphs->AddButton(GRAPH_LINES[i]);
+        m_plstGraphs->AddButton(GetChannelLabel(sub.vChannels[i]));
     }
 
     m_plstGraphs->ConnectToSetting(m_pBuilder->GetSection(), "Plot", size_t(0), "0,1");

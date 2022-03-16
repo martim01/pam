@@ -10,6 +10,7 @@
 #include "wmlist.h"
 //*)
 #include "json/json.h"
+#include "session.h"
 
 class MaxMinGraph;
 
@@ -54,7 +55,7 @@ class pnlLevels: public wxPanel
         void OnbtndBClick(wxCommandEvent& event);
         void OnbtnRangedBClick(wxCommandEvent& event);
 
-		void CreateGraphs(unsigned int nChannels);
+		void CreateGraphs(const std::vector<subsession::channelGrouping>& vChannels);
 
 		void OnSliderMove(wxCommandEvent& event);
 		void OnRangeSliderMove(wxCommandEvent& event);

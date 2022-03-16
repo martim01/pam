@@ -423,11 +423,6 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
     {
         refclk clock = pSubsession->GetRefClock();
         timeval tvEpoch = pSubsession->GetLastEpoch();
-        std::vector<std::pair<unsigned char, wxString>> vChannels(pSubsession->numChannels());
-        for(size_t i = 0; i < pSubsession->numChannels(); i++)
-        {
-            vChannels[i] = std::make_pair(pSubsession->GetChannelGrouping()[i], pSubsession->GetChannelName(i));
-        }
 
         m_Session.lstSubsession.push_back(subsession(wxString::FromUTF8(pSubsession->sessionId()),
                                                      wxString::FromUTF8(pSubsession->GetEndpoint()),
@@ -436,7 +431,7 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
                                                      wxString::FromUTF8(pSubsession->protocolName()),
                                                      pSubsession->clientPortNum(),
                                                      pSubsession->rtpTimestampFrequency(),
-                                                     vChannels,
+                                                     pSubsession->GetChannelGrouping(),
                                                      pSubsession->GetSyncTime(),
                                                      tvEpoch,
                                                      pSubsession->GetRefClock()));
@@ -454,7 +449,7 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
     if(m_Session.GetCurrentSubsession() != m_Session.lstSubsession.end())
     {
         m_nSampleRate = m_Session.GetCurrentSubsession()->nSampleRate;
-        m_nInputChannels = min((unsigned int)256 ,m_Session.GetCurrentSubsession()->nChannels);
+        m_nInputChannels = min((unsigned int)8 ,m_Session.GetCurrentSubsession()->nChannels);
         pmlLog() << "RTP Client\t" << m_nInputChannels << " channels at " << m_nSampleRate << " Hz";
     }
     else

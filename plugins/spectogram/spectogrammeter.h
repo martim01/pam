@@ -9,6 +9,7 @@
 #include "colourgradient.h"
 #include "pmcontrol.h"
 #include "json/json.h"
+#include "session.h"
 
 class wxImage;
 class timedbuffer;
@@ -85,7 +86,7 @@ class SpectogramMeter : public pmControl
             m_dFall = ddB;
         }
 
-        void SetChannels(const std::vector<std::pair<unsigned char, wxString>>& vChannels);
+        void SetChannels(const std::vector<subsession::channelGrouping>& vChannels);
 
         void SetAnalyseMode(int nMode);
         void SetWindowType(int nType);
@@ -217,7 +218,7 @@ class SpectogramMeter : public pmControl
 
         ColourGradient m_HeatMap;
         std::list<wxBitmap> m_lstBitmaps;
-        std::vector<std::pair<unsigned char, wxString>> m_vChannels;
+        std::vector<subsession::channelGrouping> m_vChannels;
 
         wxBitmap m_bmpScale;
 

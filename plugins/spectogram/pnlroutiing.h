@@ -5,7 +5,7 @@
 #include <wx/panel.h>
 #include "wmlist.h"
 //*)
-
+#include "session.h"
 class SpectogramBuilder;
 
 class pnlRoutiing: public wxPanel
@@ -19,7 +19,7 @@ class pnlRoutiing: public wxPanel
 		wmList* m_plstFFT_Routing;
 		//*)
 
-		void SetChannels(const std::vector<std::pair<unsigned char, wxString>>& vChannels);
+		void SetChannels(const std::vector<subsession::channelGrouping>& vChannels);
 
 	protected:
 

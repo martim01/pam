@@ -118,21 +118,14 @@ class Smpte2110MediaSubsession : public MediaSubsession
         enum Range{NARROW, FULLPROTECT, FULL};
         enum Packing{GPM, BPM};
 
-        enum enumChannel{ MONO=0, MONO_1, MONO_2, LEFT, RIGHT, LEFT_TOTAL, RIGHT_TOTAL, CENTER, LFE, LEFT_SIDE, RIGHT_SIDE, LEFT_REAR_SIDE, RIGHT_REAR_SIDE, SDI_1,
-        SDI_2,SDI_3,SDI_4,
-        UNDEFINED_0,UNDEFINED_1,UNDEFINED_2,UNDEFINED_3,UNDEFINED_4,UNDEFINED_5,UNDEFINED_6,UNDEFINED_7, UNSET};
 
-        enumChannel GetChannelType(unsigned char nChannel) const;
-        const wxString& GetChannelName(unsigned char nChannel) const;
-
-        const std::array<unsigned char, 8>& GetChannelGrouping() const { return m_channelGrouping;}
+        const std::vector<subsession::channelGrouping>& GetChannelGrouping() const { return m_channels;}
 
         static const wxString STR_SAMPLING[13];
         static const wxString STR_COLORIMETRY[8];
         static const wxString STR_TCS[10];
         static const wxString STR_RANGE[3];
         static const wxString STR_PACKING[2];
-        static const wxString STR_CHANNELS[26];
 
     protected:
         void AnalyzeAttributes();
@@ -185,6 +178,6 @@ class Smpte2110MediaSubsession : public MediaSubsession
         bool m_bMaxUdp;
         std::pair<unsigned long, unsigned long> m_pairAspectRatio;
 
-        std::array<enumChannel, 8> m_channels;
-        std::array<unsigned char, 8> m_channelGrouping;
+        std::vector<subsession::channelGrouping> m_channels;
+
 };

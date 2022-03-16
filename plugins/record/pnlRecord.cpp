@@ -33,7 +33,6 @@ END_EVENT_TABLE()
 
 pnlRecord::pnlRecord(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
 {
-	//(*Initialize(pnlRecord)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
 	wxFont thisFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT);
@@ -54,7 +53,7 @@ pnlRecord::pnlRecord(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 	m_pLbl1->GetUiRect().SetGradient(0);
 	m_pLbl1->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl1->SetBackgroundColour(wxColour(0,0,0));
-	m_pbtnRecord = new wmButton(this, ID_M_PBTN1, _("Record"), wxPoint(110,100), wxSize(100,80), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
+	m_pbtnRecord = new wmButton(this, ID_M_PBTN1, _("Record"), wxPoint(10,100), wxSize(100,80), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnRecord->SetBackgroundColour(wxColour(128,0,0));
 	m_pbtnRecord->SetColourSelected(wxColour(wxT("#6F0000")));
 	m_pbtnRecord->SetColourDisabled(wxColour(wxT("#909090")));
@@ -86,6 +85,11 @@ pnlRecord::pnlRecord(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlRecord::OnbtnClearClick);
 	Connect(ID_TIMER1,wxEVT_TIMER,(wxObjectEventFunction)&pnlRecord::OntimerSecondTrigger);
 	//*)
+
+	m_plstGroup = new wmList(this, wxNewId(), wxPoint(120, 140), wxSize(470,42), wmList::STYLE_SELECT | wmList::STYLE_SELECT_MULTI, wmList::SCROLL_NONE, wxSize(-1,40), 8);
+    m_plstGroup->SetBackgroundColour(*wxBLACK);
+
+    Bind(wxEVT_LIST_SELECTED, &pnlRecord::OnlstGroupSelected, this , m_plstGroup->GetId());
 	m_pedtFile->SetFocus();
 	m_pbtnRecord->Enable(false);
 	m_pRecorder = nullptr;
@@ -103,6 +107,39 @@ pnlRecord::~pnlRecord()
 
 }
 
+std::vector<unsigned char> pnlRecord::GetChannels()
+{
+    wxArrayInt ai = m_plstGroup->GetSelectedButtons();
+    for(size_t i = 0; i < ai.GetCount(); i++)
+    {
+        switch(reinterpret_cast<subsession::enumChannelGrouping>(m_plstGroup->GetButtonData(ai[i])))
+        {
+            case subsession::enumChannelGrouping::M:
+            case subsession::enumChannelGrouping::U01:
+                break;
+            case subsession::enumChannelGrouping::DM:
+            case subsession::enumChannelGrouping::ST:
+            case subsession::enumChannelGrouping::U02:
+            case subsession::enumChannelGrouping::LtRt:
+                break;
+            case subsession::enumChannelGrouping::U03:
+                break;
+            case subsession::enumChannelGrouping::SGRP:
+            case subsession::enumChannelGrouping::U04:
+                break;
+            case subsession::enumChannelGrouping::U05:
+                break;
+            case subsession::enumChannelGrouping::FIVE1:
+            case subsession::enumChannelGrouping::U06:
+                break;
+            case subsession::enumChannelGrouping::U07:
+                break;
+            case subsession::enumChannelGrouping::SEVEN1:
+            case subsession::enumChannelGrouping::U08:
+                break;
+        }
+    }
+}
 
 void pnlRecord::OnbtnRecordClick(wxCommandEvent& event)
 {
@@ -113,7 +150,10 @@ void pnlRecord::OnbtnRecordClick(wxCommandEvent& event)
         {
             wxFileName::Mkdir(Settings::Get().GetWavDirectory());
         }
-        if(m_pRecorder->Init(wxString::Format(wxT("%s/%s.wav"), Settings::Get().GetWavDirectory().c_str(), m_pedtFile->GetValue().c_str()), m_nInputChannels, m_nSampleRate, 16))
+
+
+
+        if(m_pRecorder->Init(wxString::Format(wxT("%s/%s.wav"), Settings::Get().GetWavDirectory().c_str(), m_pedtFile->GetValue().c_str()), GetChannels(), m_nSampleRate, 16))
         {
             m_pbtnRecord->SetLabel(wxT("STOP"));
             m_dtRecording = wxDateTime::Now();
@@ -142,6 +182,10 @@ void pnlRecord::OnbtnRecordClick(wxCommandEvent& event)
     }
 }
 
+void pnlRecord::OnlstGroupSelected(wxCommandEvent& event)
+{
+    m_pbtnRecord->Enable((m_nInputChannels>0) && m_plstGroup->GetSelectionCount() > 0);
+}
 
 void pnlRecord::SetAudioData(const timedbuffer* pBuffer)
 {
@@ -161,15 +205,27 @@ void pnlRecord::OntimerSecondTrigger(wxTimerEvent& event)
 
 void pnlRecord::OnbtnDateClick(wxCommandEvent& event)
 {
-    m_pedtFile->SetValue(wxDateTime::Now().Format(wxT("%Y_%m-%d_%H%M")));
+   m_pedtFile->SetValue(wxDateTime::Now().Format(wxT("%Y_%m-%d_%H%M")));
     m_pbtnRecord->Enable();
 }
 
 
 void pnlRecord::InputSession(const session& aSession)
 {
+    m_plstGroup->Clear();
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
+        unsigned char nGroup(0xFF);
+        for(size_t i = 0; i < aSession.GetCurrentSubsession()->vChannels.size(); i++)
+        {
+            if(aSession.GetCurrentSubsession()->vChannels[i].nId != nGroup)
+            {
+                m_plstGroup->AddButton(GetChannelGroupName(aSession.GetCurrentSubsession()->vChannels[i]), wxNullBitmap, (void*)aSession.GetCurrentSubsession()->vChannels[i].grouping);
+                nGroup = aSession.GetCurrentSubsession()->vChannels[i].nId;
+            }
+        }
+        m_plstGroup->SelectButton(0);
+
         m_nInputChannels = std::min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels);
         m_nSampleRate = aSession.GetCurrentSubsession()->nSampleRate;
     }
@@ -179,7 +235,7 @@ void pnlRecord::InputSession(const session& aSession)
         m_nSampleRate = 48000;
     }
 
-    m_pbtnRecord->Enable((m_nInputChannels>0));
+    m_pbtnRecord->Enable((m_nInputChannels>0) && m_plstGroup->GetSelectionCount() > 0);
 }
 
 void pnlRecord::OnedtFileText(wxCommandEvent& event)

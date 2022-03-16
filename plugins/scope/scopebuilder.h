@@ -6,6 +6,7 @@ class Scope;
 class pnlRouting;
 class SettingEvent;
 class pnlTrigger;
+class pnlOffset;
 
 class WXEXPORT ScopeBuilder : public MonitorPluginBuilder
 {
@@ -31,6 +32,7 @@ class WXEXPORT ScopeBuilder : public MonitorPluginBuilder
         friend class pnlTimeframe;
         friend class pnlTrigger;
         friend class pnlVertical;
+        friend class pnlOffset;
 
         void OnSettingChanged(SettingEvent& event);
         void ResetSlide();
@@ -46,5 +48,6 @@ class WXEXPORT ScopeBuilder : public MonitorPluginBuilder
         Scope* m_pScope;
         pnlRouting* m_pRouting;
         pnlTrigger* m_pTrigger;
+        pnlOffset* m_pOffset;
 };
 

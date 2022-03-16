@@ -8,6 +8,7 @@
 #include "pmcontrol.h"
 #include "colourgradient.h"
 #include "json/json.h"
+#include "session.h"
 
 class timedbuffer;
 class FFTBuilder;
@@ -86,7 +87,7 @@ class FftMeter : public pmControl
             m_dFall = ddB;
         }
 
-        void SetChannels(const std::vector<std::pair<unsigned char, wxString>>& vChannels);
+        void SetChannels(const std::vector<subsession::channelGrouping>& vChannels);
 
         void SetAnalyseMode(int nMode);
         void SetWindowType(int nType);
@@ -155,7 +156,7 @@ class FftMeter : public pmControl
         std::vector<float> m_vAmplitude;
         std::vector<float> m_vPeak;
 
-        std::vector<std::pair<unsigned char, wxString>> m_vChannels;
+        std::vector<subsession::channelGrouping> m_vChannels;
         FFTBuilder* m_pBuilder;
 
         uiRect m_uiSettingsAnalyse;

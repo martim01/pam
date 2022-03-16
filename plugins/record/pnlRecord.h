@@ -10,6 +10,7 @@
 #include "wmedit.h"
 //*)
 #include "soundfile.h"
+#include "wmlist.h"
 
 class timedbuffer;
 class session;
@@ -34,6 +35,8 @@ class pnlRecord: public wxPanel
 		wmButton* m_pbtnDate;
 		wxTimer m_timerSecond;
 		//*)
+
+		wmList* m_plstGroup;
 
         void SetAudioData(const timedbuffer* pBuffer);
         void InputSession(const session& aSession);
@@ -61,6 +64,10 @@ class pnlRecord: public wxPanel
 		void OnedtFileText(wxCommandEvent& event);
 		void OnbtnClearClick(wxCommandEvent& event);
 		//*)
+        void OnlstGroupSelected(wxCommandEvent& event);
+
+        std::vector<unsigned char> GetChannels();
+
 
         wxDateTime m_dtRecording;
 

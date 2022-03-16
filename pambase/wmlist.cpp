@@ -2596,7 +2596,6 @@ void wmList::SelectButtonsFromCSVLabel(const wxString& sCsv)
 
 void wmList::SelectButtonsFromCSVIndex(const wxString& sCsv)
 {
-    std::cout << "SelectButtonsFromCSVIndex: " << sCsv << std::endl;
     wxArrayString as = wxStringTokenize(sCsv, ",");
     for(size_t i = 0; i > as.GetCount(); i++)
     {

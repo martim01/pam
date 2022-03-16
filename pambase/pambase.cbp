@@ -319,6 +319,7 @@
 		<Unit filename="rtsputil.cpp" />
 		<Unit filename="rtsputil.h" />
 		<Unit filename="servicebrowser.h" />
+		<Unit filename="session.cpp" />
 		<Unit filename="session.h" />
 		<Unit filename="settingevent.cpp" />
 		<Unit filename="settingevent.h" />

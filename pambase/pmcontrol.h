@@ -5,7 +5,7 @@
 class SettingEvent;
 
 
-extern wxString CH_GROUPING[8];
+
 
 class PAMBASE_IMPEXPORT pmControl : public wxWindow
 {

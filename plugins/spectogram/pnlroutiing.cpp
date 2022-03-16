@@ -39,7 +39,7 @@ pnlRoutiing::~pnlRoutiing()
 	//*)
 }
 
-void pnlRoutiing::SetChannels(const std::vector<std::pair<unsigned char, wxString>>& vChannels)
+void pnlRoutiing::SetChannels(const std::vector<subsession::channelGrouping>& vChannels)
 {
     m_plstFFT_Routing->Freeze();
     m_plstFFT_Routing->Clear();
@@ -56,7 +56,7 @@ void pnlRoutiing::SetChannels(const std::vector<std::pair<unsigned char, wxStrin
     {
         for(unsigned int i = 0; i < vChannels.size(); i++)
         {
-            m_plstFFT_Routing->AddButton(vChannels[i].second+CH_GROUPING[vChannels[i].first], wxNullBitmap, (void*)i);
+            m_plstFFT_Routing->AddButton(GetChannelLabelLong(vChannels[i]), wxNullBitmap, (void*)i);
         }
     }
 

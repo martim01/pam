@@ -97,7 +97,6 @@ void FFTBuilder::InputSession(const session& aSession)
 
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        pmlLog() << "FFT Builder:: Session " << aSession.GetCurrentSubsession()->vChannels.size();
         m_pMeter->SetSampleRate(aSession.GetCurrentSubsession()->nSampleRate);
         m_pMeter->SetChannels(aSession.GetCurrentSubsession()->vChannels);
         m_ppnlRouting->SetChannels(aSession.GetCurrentSubsession()->vChannels);

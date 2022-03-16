@@ -4,7 +4,8 @@
 #include <vector>
 #include "json/json.h"
 
-class session;
+#include "session.h"
+
 class LevelMeter;
 class timedbuffer;
 struct ppmtype;
@@ -94,7 +95,7 @@ class pnlMeters: public wxPanel
 
 		void SetLightColours();
 
-		
+
 
         LevelMeter* m_pLevels;
 		std::vector<LevelMeter*> m_vMeters;
@@ -109,6 +110,7 @@ class pnlMeters: public wxPanel
         double m_dOvermod;
 
         std::vector<char> m_vOutputChannels;
+        subsession m_subsession;
 
 		DECLARE_EVENT_TABLE()
 };

@@ -24,7 +24,7 @@ BEGIN_EVENT_TABLE(pnlDistortionChannel,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlDistortionChannel::pnlDistortionChannel(wxWindow* parent,  unsigned int nChannel, unsigned int nSampleRate, wxWindowID id,const wxPoint& pos,const wxSize& size) : m_nChannel(nChannel), m_nSampleRate(nSampleRate)
+pnlDistortionChannel::pnlDistortionChannel(wxWindow* parent, const wxString& sLabel,  unsigned int nChannel, unsigned int nSampleRate, wxWindowID id,const wxPoint& pos,const wxSize& size) : m_nChannel(nChannel), m_nSampleRate(nSampleRate)
 {
 	//(*Initialize(pnlDistortionChannel)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
@@ -74,7 +74,7 @@ pnlDistortionChannel::pnlDistortionChannel(wxWindow* parent,  unsigned int nChan
 	SetBackgroundColour(*wxBLACK);
 	SetPosition(pos);
 	SetSize(70, 250);
-	m_plbLChannel->SetLabel(wxString::Format(wxT("Ch %u"), m_nChannel+1));
+	m_plbLChannel->SetLabel(sLabel);
 	m_dMax = 0;
 }
 

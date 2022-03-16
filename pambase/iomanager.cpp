@@ -104,6 +104,7 @@ IOManager::IOManager() :
     Settings::Get().AddHandler(this, wxT("Noise"));
     Settings::Get().AddHandler(this, wxT("Monitor"), wxT("Source"));
     Settings::Get().AddHandler(this, wxT("QoS"),wxT("Interval"));
+    Settings::Get().AddHandler(this, "ChannelMapping");
 
     Settings::Get().AddHandler(this,wxT("Server"));
 
@@ -191,31 +192,11 @@ void IOManager::OnSettingEvent(SettingEvent& event)
 {
     if(event.GetSection() == wxT("Monitor"))
     {
-        if(event.GetKey() == wxT("Source") && m_bMonitorOutput != (Settings::Get().Read(wxT("Monitor"), wxT("Source"), 0)==1))
-        {
-            m_bMonitorOutput = (Settings::Get().Read(wxT("Monitor"), wxT("Source"), 0)==1);
-            SessionChanged();
-        }
+        OnSettingEventMonitor(event);
     }
     else if(event.GetSection() == wxT("Input"))
     {
-        if(event.GetKey() == wxT("Type"))
-        {
-            InputTypeChanged();
-        }
-        else if(event.GetKey().Left(5) == "Ratio")
-        {
-            unsigned long nChannel;
-            if(event.GetKey().AfterFirst('_').ToULong(&nChannel) && nChannel < m_vRatio.size())
-            {
-                m_vRatio[nChannel] = Settings::Get().Read("Input", event.GetKey(), 1.0);
-            }
-            CheckIfGain();
-        }
-        else
-        {
-            InputChanged(event.GetKey());
-        }
+        OnSettingEventInput(event);
     }
     else if(event.GetSection() == wxT("Output"))
     {
@@ -231,67 +212,118 @@ void IOManager::OnSettingEvent(SettingEvent& event)
     }
     else if(event.GetSection() == wxT("QoS"))
     {
-        if(event.GetKey() == wxT("Interval"))
-        {
-            auto itThread = m_mRtp.find(m_nCurrentRtp);
-            if(itThread != m_mRtp.end())
-            {
-                itThread->second->SetQosMeasurementIntervalMS(Settings::Get().Read(wxT("QoS"), wxT("Interval"), 1000));
-            }
-        }
+        OnSettingEventQoS(event);
     }
     else if(event.GetSection() == wxT("Server"))
     {
-        if(event.GetKey() == wxT("Stream"))
+        OnSettingEventServer(event);
+    }
+    else if(event.GetSection() == wxT("ChannelMapping"))
+    {
+        OnSettingEventChannelMapping(event);
+    }
+
+}
+
+void IOManager::OnSettingEventMonitor(SettingEvent& event)
+{
+    if(event.GetKey() == wxT("Source") && m_bMonitorOutput != event.GetValue(false))
+    {
+        m_bMonitorOutput = event.GetValue(false);
+        SessionChanged();
+    }
+}
+
+void IOManager::OnSettingEventInput(SettingEvent& event)
+{
+    if(event.GetKey() == wxT("Type"))
+    {
+        InputTypeChanged();
+    }
+    else if(event.GetKey().Left(5) == "Ratio")
+    {
+        unsigned long nChannel;
+        if(event.GetKey().AfterFirst('_').ToULong(&nChannel) && nChannel < m_vRatio.size())
         {
-            m_bStreamAlwaysOn = (event.GetValue() == "AlwaysOn");
-            if(!m_bStreamAlwaysOn)
-            {
-                if(m_pAlwaysOnServer)
-                {
-                    pmlLog() << "Stop alwayson server";
-                    m_pAlwaysOnServer->StopStream();
-                    m_pAlwaysOnServer->Wait();
-                    delete m_pAlwaysOnServer;
-                    m_pAlwaysOnServer = nullptr;
-                    RTPServerFinished();
-                }
-            }
-            else
-            {
-                if(m_pOnDemandServer)
-                {
-                    pmlLog() << "Stop ondemenad server";
-                    m_pOnDemandServer->Stop();
-                    m_pOnDemandServer->Wait();
-                    delete m_pOnDemandServer;
-                    m_pOnDemandServer = nullptr;
-                    m_pOnDemandSubsession = nullptr;
-                    RTPServerFinished();
-                }
-            }
-            InitAudioOutputDevice();
+            m_vRatio[nChannel] = event.GetValue(1.0);
         }
-        else if(event.GetKey() == "State")
+        CheckIfGain();
+    }
+    else
+    {
+        InputChanged(event.GetKey());
+    }
+}
+
+void IOManager::OnSettingEventQoS(SettingEvent& event)
+{
+    if(event.GetKey() == wxT("Interval"))
+    {
+        auto itThread = m_mRtp.find(m_nCurrentRtp);
+        if(itThread != m_mRtp.end())
         {
-            if(event.GetValue(false))
-            {
-                InitAudioOutputDevice();
-            }
-            else
-            {
-                StopStream();
-            }
-        }
-        else if(event.GetKey() == wxT("SAP"))
-        {
-            DoSAP(event.GetValue(false));
-        }
-        else if(event.GetKey() == wxT("DNS-SD"))
-        {
-            DoDNSSD(event.GetValue(false));
+            itThread->second->SetQosMeasurementIntervalMS(event.GetValue(1000l));
         }
     }
+}
+
+void IOManager::OnSettingEventServer(SettingEvent& event)
+{
+    if(event.GetKey() == wxT("Stream"))
+    {
+        m_bStreamAlwaysOn = (event.GetValue() == "AlwaysOn");
+        if(!m_bStreamAlwaysOn)
+        {
+            if(m_pAlwaysOnServer)
+            {
+                pmlLog() << "Stop alwayson server";
+                m_pAlwaysOnServer->StopStream();
+                m_pAlwaysOnServer->Wait();
+                delete m_pAlwaysOnServer;
+                m_pAlwaysOnServer = nullptr;
+                RTPServerFinished();
+            }
+        }
+        else
+        {
+            if(m_pOnDemandServer)
+            {
+                pmlLog() << "Stop ondemenad server";
+                m_pOnDemandServer->Stop();
+                m_pOnDemandServer->Wait();
+                delete m_pOnDemandServer;
+                m_pOnDemandServer = nullptr;
+                m_pOnDemandSubsession = nullptr;
+                RTPServerFinished();
+            }
+        }
+        InitAudioOutputDevice();
+    }
+    else if(event.GetKey() == "State")
+    {
+        if(event.GetValue(false))
+        {
+            InitAudioOutputDevice();
+        }
+        else
+        {
+            StopStream();
+        }
+    }
+    else if(event.GetKey() == wxT("SAP"))
+    {
+        DoSAP(event.GetValue(false));
+    }
+    else if(event.GetKey() == wxT("DNS-SD"))
+    {
+        DoDNSSD(event.GetValue(false));
+    }
+}
+
+void IOManager::OnSettingEventChannelMapping(SettingEvent& event)
+{
+    //output session changed...
+    UpdateOutputSession();
 }
 
 void IOManager::OnAudioEvent(AudioEvent& event)
@@ -878,21 +910,21 @@ void IOManager::CreateSessionFromOutput(const wxString& sSource)
     SessionChanged();
 }
 
-void SetChannel(std::vector<std::pair<unsigned char, wxString>>& vChannels, size_t nChannel, unsigned char nGroup, const wxString& sLabel)
+void SetChannel(std::vector<subsession::channelGrouping>& vChannels, size_t nChannel, unsigned char nId, subsession::enumChannelGrouping grouping, subsession::enumChannel channel)
 {
     if(nChannel <= vChannels.size() && nChannel > 0)
     {
-        vChannels[nChannel-1] = std::make_pair(nGroup, sLabel);
+        vChannels[nChannel-1] = subsession::channelGrouping(nId, grouping, channel);
     }
 }
 
-std::vector<std::pair<unsigned char, wxString>> IOManager::CreateChannels(unsigned long nChannels)
+std::vector<subsession::channelGrouping> IOManager::CreateChannels(unsigned long nChannels)
 {
-    std::vector<std::pair<unsigned char, wxString>> vChannels(nChannels);
+    std::vector<subsession::channelGrouping> vChannels(nChannels);
     if(Settings::Get().Read("Input", "Type", "Soundcard") == "Soundcard")
     {
-        SetChannel(vChannels, 1, 0, "L");
-        SetChannel(vChannels, 2, 0, "R");
+        SetChannel(vChannels, 1, 0, subsession::enumChannelGrouping::ST, subsession::enumChannel::LEFT);
+        SetChannel(vChannels, 2, 0, subsession::enumChannelGrouping::ST, subsession::enumChannel::RIGHT);
     }
     else
     {
@@ -902,138 +934,141 @@ std::vector<std::pair<unsigned char, wxString>> IOManager::CreateChannels(unsign
             wxString sValue = Settings::Get().Read("ChannelMapping", wxString::Format("Ch_%d", i), "");
             if(sValue == "Mono")
             {
-                SetChannel(vChannels, i, nGroup, "M");
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::M, subsession::enumChannel::MONO);
                 ++i;
                 ++nGroup;
             }
             else if(sValue == "U01")
             {
-                SetChannel(vChannels, i, nGroup, "U1");
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
                 ++i;
                 ++nGroup;
             }
             else if(sValue == "Dual Mono")
             {
-                SetChannel(vChannels, i, nGroup, "M1");
-                SetChannel(vChannels, i+2, nGroup, "M2");
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::DM, subsession::enumChannel::MONO_1);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::DM, subsession::enumChannel::MONO_2);
                 i+=2;
                 ++nGroup;
             }
             else if(sValue == "Stereo")
             {
-                SetChannel(vChannels, i, nGroup, "L");
-                SetChannel(vChannels, i+1, nGroup, "R");
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::ST, subsession::enumChannel::LEFT);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::ST, subsession::enumChannel::RIGHT);
                 i+=2;
                 ++nGroup;
             }
             else if(sValue == "Matrix")
             {
-                SetChannel(vChannels, i, nGroup, "Lt");
-                SetChannel(vChannels, i+1, nGroup, "Rt");
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::LtRt, subsession::enumChannel::LEFT_TOTAL);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::LtRt, subsession::enumChannel::RIGHT_TOTAL);
                 i+=2;
                 ++nGroup;
             }
             else if(sValue == "U02")
             {
-                SetChannel(vChannels, i, nGroup, "U1");
-                SetChannel(vChannels, i+1, nGroup, "U2");
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
                 i+=2;
                 ++nGroup;
             }
             else if(sValue == "U03")
             {
-                SetChannel(vChannels, i, nGroup, "U1");
-                SetChannel(vChannels, i+1, nGroup, "U2");
-                SetChannel(vChannels, i+2, nGroup, "U3");
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
+                SetChannel(vChannels, i+2, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_3);
+
                 i+=3;
                 ++nGroup;
             }
             else if(sValue == "U04")
             {
-                SetChannel(vChannels, i, nGroup, "U1");
-                SetChannel(vChannels, i+1, nGroup, "U2");
-                SetChannel(vChannels, i+2, nGroup, "U3");
-                SetChannel(vChannels, i+3, nGroup, "U4");
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
+                SetChannel(vChannels, i+2, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_3);
+                SetChannel(vChannels, i+3, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_4);
                 i+=4;
                 ++nGroup;
             }
             else if(sValue == "SGRP")
             {
-                SetChannel(vChannels, i, nGroup, "1");
-                SetChannel(vChannels, i+1, nGroup, "2");
-                SetChannel(vChannels, i+2, nGroup, "3");
-                SetChannel(vChannels, i+3, nGroup, "4");
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::SGRP, subsession::enumChannel::SDI_1);
+                SetChannel(vChannels, i+2, nGroup, subsession::enumChannelGrouping::SGRP, subsession::enumChannel::SDI_2);
+                SetChannel(vChannels, i+3, nGroup, subsession::enumChannelGrouping::SGRP, subsession::enumChannel::SDI_3);
+                SetChannel(vChannels, i+4, nGroup, subsession::enumChannelGrouping::SGRP, subsession::enumChannel::SDI_4);
                 i+=4;
                 ++nGroup;
             }
             else if(sValue == "U05")
             {
-                SetChannel(vChannels, i, nGroup, "U1");
-                SetChannel(vChannels, i+1, nGroup, "U2");
-                SetChannel(vChannels, i+2, nGroup, "U3");
-                SetChannel(vChannels, i+3, nGroup, "U4");
-                SetChannel(vChannels, i+4, nGroup, "U5");
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
+                SetChannel(vChannels, i+2, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_3);
+                SetChannel(vChannels, i+3, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_4);
+                SetChannel(vChannels, i+4, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_5);
                 i+=5;
                 ++nGroup;
             }
             else if(sValue == "U06")
             {
-                SetChannel(vChannels, i, nGroup, "U1");
-                SetChannel(vChannels, i+1, nGroup, "U2");
-                SetChannel(vChannels, i+2, nGroup, "U3");
-                SetChannel(vChannels, i+3, nGroup, "U4");
-                SetChannel(vChannels, i+4, nGroup, "U5");
-                SetChannel(vChannels, i+5, nGroup, "U6");
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
+                SetChannel(vChannels, i+2, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_3);
+                SetChannel(vChannels, i+3, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_4);
+                SetChannel(vChannels, i+4, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_5);
+                SetChannel(vChannels, i+5, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_6);
                 i+=6;
                 ++nGroup;
             }
             else if(sValue == "5.1")
             {
-                SetChannel(vChannels, i, nGroup, "L");
-                SetChannel(vChannels, i+1, nGroup, "R");
-                SetChannel(vChannels, i+2, nGroup, "C");
-                SetChannel(vChannels, i+3, nGroup, "LFE");
-                SetChannel(vChannels, i+4, nGroup, "Ls");
-                SetChannel(vChannels, i+5, nGroup, "Rs");
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::LEFT);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::RIGHT);
+                SetChannel(vChannels, i+2, nGroup, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::CENTER);
+                SetChannel(vChannels, i+3, nGroup, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::LFE);
+                SetChannel(vChannels, i+4, nGroup, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::LEFT_SIDE);
+                SetChannel(vChannels, i+5, nGroup, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::RIGHT_SIDE);
+
                 i+=6;
                 ++nGroup;
             }
             else if(sValue == "U07")
             {
-                SetChannel(vChannels, i, nGroup, "U1");
-                SetChannel(vChannels, i+1, nGroup, "U2");
-                SetChannel(vChannels, i+2, nGroup, "U3");
-                SetChannel(vChannels, i+3, nGroup, "U4");
-                SetChannel(vChannels, i+4, nGroup, "U5");
-                SetChannel(vChannels, i+5, nGroup, "U6");
-                SetChannel(vChannels, i+6, nGroup, "U7");
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
+                SetChannel(vChannels, i+2, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_3);
+                SetChannel(vChannels, i+3, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_4);
+                SetChannel(vChannels, i+4, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_5);
+                SetChannel(vChannels, i+5, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_6);
+                SetChannel(vChannels, i+6, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_7);
 
                 i+=7;
                 ++nGroup;
             }
             else if(sValue == "7.1")
             {
-                SetChannel(vChannels, i, nGroup, "L");
-                SetChannel(vChannels, i+1, nGroup, "R");
-                SetChannel(vChannels, i+2, nGroup, "C");
-                SetChannel(vChannels, i+3, nGroup, "LFE");
-                SetChannel(vChannels, i+4, nGroup, "Ls");
-                SetChannel(vChannels, i+5, nGroup, "Rs");
-                SetChannel(vChannels, i+6, nGroup, "Lrs");
-                SetChannel(vChannels, i+7, nGroup, "Rrs");
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::LEFT);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::RIGHT);
+                SetChannel(vChannels, i+2, nGroup, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::CENTER);
+                SetChannel(vChannels, i+3, nGroup, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::LFE);
+                SetChannel(vChannels, i+4, nGroup, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::LEFT_SIDE);
+                SetChannel(vChannels, i+5, nGroup, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::RIGHT_SIDE);
+                SetChannel(vChannels, i+6, nGroup, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::LEFT_REAR_SIDE);
+                SetChannel(vChannels, i+7, nGroup, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::RIGHT_REAR_SIDE);
+
                 i+=8;
                 ++nGroup;
             }
             else if(sValue == "U08")
             {
-                SetChannel(vChannels, i, nGroup, "U1");
-                SetChannel(vChannels, i+1, nGroup, "U2");
-                SetChannel(vChannels, i+2, nGroup, "U3");
-                SetChannel(vChannels, i+3, nGroup, "U4");
-                SetChannel(vChannels, i+4, nGroup, "U5");
-                SetChannel(vChannels, i+5, nGroup, "U6");
-                SetChannel(vChannels, i+6, nGroup, "U7");
-                SetChannel(vChannels, i+7, nGroup, "U8");
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
+                SetChannel(vChannels, i+2, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_3);
+                SetChannel(vChannels, i+3, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_4);
+                SetChannel(vChannels, i+4, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_5);
+                SetChannel(vChannels, i+5, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_6);
+                SetChannel(vChannels, i+6, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_7);
+                SetChannel(vChannels, i+7, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_8);
                 i+=8;
                 ++nGroup;
             }

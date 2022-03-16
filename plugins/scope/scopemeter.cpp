@@ -7,7 +7,10 @@
 #include "timedbuffer.h"
 #include "scopebuilder.h"
 #include "settings.h"
+#include <wx/tokenzr.h>
+#include <iostream>
 
+const std::array<wxString, 8> Scope::CLR_PLOT = {"#00ff00", "#ff0000", "#0000ff", "#ff8800","#88ff00", "#00ff88", "#0088ff", "#ff0088"};
 
 using namespace std;
 
@@ -21,7 +24,7 @@ END_EVENT_TABLE()
 
  wxIMPLEMENT_DYNAMIC_CLASS(Scope, pmControl);
 
-Scope::Scope(wxWindow *parent,ScopeBuilder* pBuilder, wxWindowID id, const wxPoint& pos, const wxSize& size) : pmControl(), m_pBuilder(pBuilder)
+Scope::Scope(wxWindow *parent,ScopeBuilder* pBuilder, wxWindowID id, const wxPoint& pos, const wxSize& size) : pmControl(), m_pBuilder(pBuilder), m_nTrigger(0)
 {
     Create(parent, id, pos, size);
 }
@@ -60,8 +63,8 @@ bool Scope::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wx
 
     SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
 
-    m_vChannels.resize(2);
 
+    m_nTrigger = 0;
     return true;
 }
 
@@ -103,56 +106,40 @@ void Scope::OnPaint(wxPaintEvent& event)
 
     float dCursorAmp(0);
 
-    for(int nPlot = 0; nPlot < 2; ++nPlot)
+    for(const auto& graph : m_vPlot)
     {
-        switch(m_nRouting[nPlot])
+        if(graph.bPlot)
         {
-            case LEFT:
-                memDC.SetPen(wxPen(wxColour(0,255,0)));
-                break;
-            case RIGHT:
-                memDC.SetPen(wxPen(wxColour(255,0,0)));
-                break;
-            case MIDDLE:
-                memDC.SetPen(wxPen(wxColour(255,255,255)));
-                break;
-            case SIDE:
-                memDC.SetPen(wxPen(wxColour(200,200,0)));
-                break;
-            default:
-                memDC.SetPen(wxPen(wxColour(255,255,255)));
-                break;
+            memDC.SetPen(graph.clr);
 
-        }
+            float x = 0;
+            int x_old(0), y_old(pntCenter.y);
+            float dy_old = -80;
 
-
-
-        float x = 0;
-        int x_old(0), y_old(pntCenter.y);
-        float dy_old = -80;
-
-        for(list<float>::iterator itSample = m_lstPlot[nPlot].begin(); itSample != m_lstPlot[nPlot].end(); ++itSample)
-        {
-            float y;
-            int nY;
-            if(x > (m_dSampleX-1)*m_dStep && x < (m_dSampleX + 1)*m_dStep)
+            for(const auto& sample : graph.lstBuffer)
             {
-                dCursorAmp = (*itSample);
+                float y;
+                int nY;
+                if(x > (m_dSampleX-1)*m_dStep && x < (m_dSampleX + 1)*m_dStep)
+                {
+                    dCursorAmp = sample;
+                }
+
+                y = sample*m_dResolution;
+                y += graph.nOffset;
+                nY = pntCenter.y-y;
+
+
+                int nX = min(static_cast<int>(x), m_rectGrid.GetWidth());
+
+                if((x_old != nX || y_old != nY) && nX+m_pntSlide.x < m_rectGrid.GetRight())
+                {
+                    memDC.DrawLine(x_old+m_pntSlide.x, y_old+m_pntSlide.y, nX+m_pntSlide.x,nY+m_pntSlide.y);
+                }
+                x_old = nX;
+                y_old = nY;
+                x+=m_dStep;
             }
-
-            y = (*itSample)*m_dResolution;
-            nY = pntCenter.y-y;
-
-
-            int nX = min(static_cast<int>(x), m_rectGrid.GetWidth());
-
-            if((x_old != nX || y_old != nY) && nX+m_pntSlide.x < m_rectGrid.GetRight())
-            {
-                memDC.DrawLine(x_old+m_pntSlide.x, y_old+m_pntSlide.y, nX+m_pntSlide.x,nY+m_pntSlide.y);
-            }
-            x_old = nX;
-            y_old = nY;
-            x+=m_dStep;
         }
     }
     dc.Blit(m_rectGrid.GetLeft(),m_rectGrid.GetTop(),m_rectGrid.GetWidth(), m_rectGrid.GetHeight(), &memDC,0,0);
@@ -216,7 +203,10 @@ void Scope::OnPaint(wxPaintEvent& event)
     uiLabel.SetBackgroundColour(wxColour(80,80,120));
 
     uiLabel.SetRect(wxRect(uiLabel.GetRight()+10, uiLabel.GetTop(), 200,20));
-    uiLabel.Draw(dc, wxString::Format(wxT("%.05f [%.05f]"), m_dMaxY[0], m_dTrigger), uiRect::BORDER_NONE);
+    if(m_vMaxY.size() > m_nTrigger)
+    {
+        uiLabel.Draw(dc, wxString::Format(wxT("%.05f [%.05f]"), m_vMaxY[m_nTrigger], m_dTrigger), uiRect::BORDER_NONE);
+    }
     uiLabel.SetRect(wxRect(uiLabel.GetRight()+10, uiLabel.GetTop(), 80,20));
     if(m_pntSlide.x != 0 || m_pntSlide.y != 0)
     {
@@ -288,27 +278,25 @@ void Scope::SetTimeFrame(int nFrames)
 void Scope::SetData(const timedbuffer* pBuffer)
 {
 
-    //if(m_vChannels.size() > 2)
+    for(int i = 0; i < pBuffer->GetBufferSize(); i++)
     {
-        for(int i = 0; i < pBuffer->GetBufferSize(); i++)
-        {
-            m_lstBuffer.push_back(pBuffer->GetBuffer()[i]);
-        }
-        if(m_lstBuffer.size() >= m_nFrameRefresh*m_vChannels.size())
-        {
-            bool bShow = WorkoutPlot();
+        m_lstBuffer.push_back(pBuffer->GetBuffer()[i]);
+    }
 
-            if(m_bAutotrigger)
-            {
-                Autotrigger();
-                bShow = WorkoutPlot();
-            }
-            if(bShow)
-            {
-                Refresh();
-            }
-            m_lstBuffer.clear();
+    if(m_lstBuffer.size() >= m_nFrameRefresh*m_vPlot.size() && m_vPlot.size() != 0)
+    {
+        bool bShow = WorkoutPlot();
+
+        if(m_bAutotrigger)
+        {
+            Autotrigger();
+            bShow = WorkoutPlot();
         }
+        if(bShow)
+        {
+            Refresh();
+        }
+        m_lstBuffer.clear();
     }
 }
 
@@ -316,55 +304,43 @@ void Scope::SetData(const timedbuffer* pBuffer)
 bool Scope::WorkoutPlot()
 {
     bool bTriggered(false);
-    m_lstPlot[0].clear();
-    m_lstPlot[1].clear();
-    m_dMaxY[0] = 0;
-    m_dMaxY[1] = 0;
+    for(auto& aplot : m_vPlot)
+    {
+        aplot.lstBuffer.clear();
+    }
 
+    std::vector<float> vChannels(m_vPlot.size());
+    m_vMaxY = std::vector<float>(m_vPlot.size(), 0.0);
+    std::vector<float> vLast(m_vPlot.size(), 0.0);
 
-    list<float>::iterator itSample = m_lstBuffer.begin();
-    float dLast[2] = {0.0,0.0};
+    auto itSample = m_lstBuffer.begin();
+
     for(; itSample != m_lstBuffer.end();)
     {
-        for(int nChannel = 0; nChannel < m_vChannels.size(); nChannel++)
+        for(int nChannel = 0; nChannel < vChannels.size(); nChannel++)
         {
             if(itSample != m_lstBuffer.end())
             {
-                m_vChannels[nChannel] = *(itSample);
-                itSample++;
+                vChannels[nChannel] = *(itSample);
+                m_vMaxY[nChannel] = max(vChannels[nChannel], m_vMaxY[nChannel]);
+                ++itSample;
             }
-        }
-
-        float dAmplitude[2];
-
-
-        for(int i = 0; i < 2; i++)
-        {
-            switch(m_nRouting[i])
-            {
-                case MIDDLE:
-                    dAmplitude[i] = (m_vChannels[0]+m_vChannels[1])/2.0;
-                    break;
-                case SIDE:
-                    dAmplitude[i] = (m_vChannels[0]-m_vChannels[1])/2.0;
-                    break;
-                default:
-                    dAmplitude[i] = m_vChannels[m_nRouting[i]];
-            }
-            m_dMaxY[i] = max(dAmplitude[i], m_dMaxY[i]);
         }
 
         if(!bTriggered)
         {
-            bTriggered = ((m_dTrigger >= 0 && dAmplitude[0] >= m_dTrigger && dLast[0] < dAmplitude[0])  || (m_dTrigger < 0 && dAmplitude[0] <= m_dTrigger && dLast[0] > dAmplitude[0]));
+            bTriggered = ((m_dTrigger >= 0 && vChannels[m_nTrigger] >= m_dTrigger && vLast[m_nTrigger] < vChannels[m_nTrigger])  ||
+                          (m_dTrigger < 0 && vChannels[m_nTrigger] <= m_dTrigger && vLast[m_nTrigger] > vChannels[m_nTrigger]));
         }
-        dLast[0] = dAmplitude[0];
-        dLast[1] = dAmplitude[1];
+        vLast = vChannels;
+
 
         if(bTriggered)
         {
-            m_lstPlot[0].push_back(dAmplitude[0]);
-            m_lstPlot[1].push_back(dAmplitude[1]);
+            for(size_t i = 0; i < vChannels.size(); i++)
+            {
+                m_vPlot[i].lstBuffer.push_back(vChannels[i]);
+            }
         }
     }
 
@@ -457,7 +433,7 @@ void Scope::OnMotion(wxMouseEvent& event)
 
 void Scope::Autotrigger()
 {
-    m_dTrigger = m_dMaxY[0];
+    m_dTrigger = m_vMaxY[m_nTrigger];
     if(m_dTrigger > 0)
     {
         m_dTrigger -= 0.001;
@@ -527,5 +503,44 @@ void Scope::OnLeftUp(wxMouseEvent& event)
 
 void Scope::SetNumberOfChannels(unsigned int nChannels)
 {
-    m_vChannels.resize(nChannels);
+    m_vPlot.clear();
+    m_vPlot.resize(nChannels);
+    SetPlot(m_pBuilder->ReadSetting("Plot", "0,1"));
+
+    for(size_t i = 0; i < m_vPlot.size(); i++)
+    {
+        m_vPlot[i].clr = wxColour(m_pBuilder->ReadSetting(wxString::Format("Plot_Colour_%lu", i), CLR_PLOT[i]));
+        m_vPlot[i].nOffset = m_pBuilder->ReadSetting(wxString::Format("Plot_Offset_%lu", i), 0);
+    }
+}
+
+
+void Scope::SetPlot(const wxString& sPlot)
+{
+
+    wxArrayString asPlot = wxStringTokenize(sPlot, ",");
+    for(size_t i = 0; i < m_vPlot.size(); i++)
+    {
+        m_vPlot[i].bPlot = (asPlot.Index(wxString::Format("%lu",i)) != wxNOT_FOUND);
+
+    }
+}
+
+void Scope::SetPlotColour(unsigned long nChannel, const wxString& sColour)
+{
+    wxColour clr(sColour);
+    if(nChannel < m_vPlot.size() && clr.IsOk())
+    {
+        m_vPlot[nChannel].clr = clr;
+        Refresh();
+    }
+}
+
+void Scope::SetPlotOffset(unsigned long nChannel, int nOffset)
+{
+    if(nChannel < m_vPlot.size())
+    {
+        m_vPlot[nChannel].nOffset = nOffset;
+        Refresh();
+    }
 }
