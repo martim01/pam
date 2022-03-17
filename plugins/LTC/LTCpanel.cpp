@@ -193,7 +193,7 @@ LTCPanel::LTCPanel(wxWindow* parent,LTCBuilder* pBuilder, wxWindowID id,const wx
 	nIndex = m_plstDate->AddButton(wxT("MTD"));
 
 	m_plstDate->ConnectToSetting(m_pBuilder->GetSection(), "DateFormat", "Auto");
-
+    m_plstChannels->ConnectToSetting(m_pBuilder->GetSection(), "Channel", size_t(0));
 
 	m_plblLTCVolume->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 	m_plblMode->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
@@ -211,6 +211,7 @@ LTCPanel::LTCPanel(wxWindow* parent,LTCBuilder* pBuilder, wxWindowID id,const wx
 
 	Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&LTCPanel::OnLeftUp);
 	m_pBuilder->RegisterForSettingsUpdates(this, "DateFormat");
+	m_pBuilder->RegisterForSettingsUpdates(this, "Channel");
 
 	Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&LTCPanel::OnSettingEvent);
 
@@ -218,6 +219,7 @@ LTCPanel::LTCPanel(wxWindow* parent,LTCBuilder* pBuilder, wxWindowID id,const wx
 	SetPosition(pos);
 
 	m_nInputChannels = 0;
+	m_nChannel = 0;
 	m_pDecoder = new LtcDecoder();
 
 }
@@ -230,7 +232,7 @@ LTCPanel::~LTCPanel()
 
 void LTCPanel::SetAudioData(const timedbuffer* pBuffer)
 {
-    if(m_pDecoder->DecodeLtc(pBuffer, m_nInputChannels,0))
+    if(m_pDecoder->DecodeLtc(pBuffer, m_nInputChannels,m_nChannel))
     {
         m_plblLTCDate->SetLabel(m_pDecoder->GetDate());
         m_plblLTCTime->SetLabel(m_pDecoder->GetTime());
@@ -279,6 +281,11 @@ void LTCPanel::InputSession(const session& aSession)
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
         m_nInputChannels = aSession.GetCurrentSubsession()->nChannels;
+        m_plstChannels->Clear();
+        for(const auto& channel : aSession.GetCurrentSubsession()->vChannels)
+        {
+            m_plstChannels->AddButton(GetChannelLabel(channel));
+        }
     }
     else
     {
@@ -308,5 +315,9 @@ void LTCPanel::OnSettingEvent(SettingEvent& event)
     if(event.GetKey() == wxT("DateFormat"))
     {
         m_pDecoder->SetDateMode(event.GetValue(long(0)));
+    }
+    else if(event.GetKey() == "Channel")
+    {
+        m_nChannel = event.GetValue(0l);
     }
 }
