@@ -323,7 +323,7 @@ void IOManager::OnSettingEventServer(SettingEvent& event)
 void IOManager::OnSettingEventChannelMapping(SettingEvent& event)
 {
     //output session changed...
-    UpdateOutputSession();
+    UpdateOutputSession(true);
 }
 
 void IOManager::OnAudioEvent(AudioEvent& event)
@@ -1079,7 +1079,7 @@ std::vector<subsession::channelGrouping> IOManager::CreateChannels(unsigned long
 
 
 
-void IOManager::UpdateOutputSession()
+void IOManager::UpdateOutputSession(bool bMapping)
 {
     if(m_SessionOut.lstSubsession.empty() == false)
     {
@@ -1106,7 +1106,7 @@ void IOManager::UpdateOutputSession()
             m_pGenerator->SetSampleRate(nSampleRate);
         }
 
-        if(m_SessionOut.lstSubsession.back().nSampleRate != nSampleRate || m_SessionOut.lstSubsession.back().nChannels != nChannels)
+        if(m_SessionOut.lstSubsession.back().nSampleRate != nSampleRate || m_SessionOut.lstSubsession.back().nChannels != nChannels || bMapping)
         {
             m_SessionOut.lstSubsession.back().nSampleRate = nSampleRate;
             m_SessionOut.lstSubsession.back().nChannels = nChannels;

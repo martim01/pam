@@ -102,7 +102,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
 
         void CheckPlayback(unsigned long nSampleRate, unsigned long nChannels);
         void CreateSessionFromOutput(const wxString& sSource);
-        void UpdateOutputSession();
+        void UpdateOutputSession(bool bMapping=false);
         std::vector<subsession::channelGrouping> CreateChannels(unsigned long nChannels);
 
         void DoSAP(bool bRun);

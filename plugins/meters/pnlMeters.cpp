@@ -462,11 +462,11 @@ void pnlMeters::SetLightColours()
     {
         for(size_t i = 0; i < m_vMeters.size(); i++)
         {
-            if(m_vOutputChannels[0] == i)
+            if(m_subsession.vChannels[i].type == subsession::enumChannel::LEFT || m_subsession.vChannels[i].type == subsession::enumChannel::LEFT_TOTAL)
             {
-                m_vMeters[i]->SetLightColours(wxColour(220,0,0), m_dOvermod,wxColour(255,50,50));
+                m_vMeters[i]->SetLightColours(wxColour(220,0,0), m_dOvermod, wxColour(255,50,50));
             }
-            else if(m_vOutputChannels[1] == i)
+            else if(m_subsession.vChannels[i].type == subsession::enumChannel::RIGHT || m_subsession.vChannels[i].type == subsession::enumChannel::RIGHT_TOTAL)
             {
                 m_vMeters[i]->SetLightColours(wxColour(0,220,0), m_dOvermod, wxColour(255,50,50));
             }
@@ -474,6 +474,18 @@ void pnlMeters::SetLightColours()
             {
                 m_vMeters[i]->SetLightColours(wxColour(245,255,245), m_dOvermod, wxColour(255,50,50));
             }
+//            if(m_vOutputChannels[0] == i)
+//            {
+//                m_vMeters[i]->SetLightColours(wxColour(220,0,0), m_dOvermod,wxColour(255,50,50));
+//            }
+//            else if(m_vOutputChannels[1] == i)
+//            {
+//                m_vMeters[i]->SetLightColours(wxColour(0,220,0), m_dOvermod, wxColour(255,50,50));
+//            }
+//            else
+//            {
+//                m_vMeters[i]->SetLightColours(wxColour(245,255,245), m_dOvermod, wxColour(255,50,50));
+//            }
             m_vMeters[i]->ResetMeter();
         }
     }

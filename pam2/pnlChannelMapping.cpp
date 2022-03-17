@@ -1,6 +1,8 @@
 #include "pnlChannelMapping.h"
 #include "settingevent.h"
 #include "settings.h"
+#include "log.h"
+
 //(*InternalHeaders(pnlChannelMapping)
 #include <wx/intl.h>
 #include <wx/string.h>
