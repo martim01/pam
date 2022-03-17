@@ -64,7 +64,12 @@ pnlEbuMeter::pnlEbuMeter(wxWindow* parent,R128Builder* pBuilder, wxWindowID id,c
     CreateMeters();
 
     m_pbtnCalculate = new wmButton(this, ID_M_PBTN1, _("R128"), wxPoint(370,380), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
-	m_pbtnReset = new wmButton(this, ID_M_PBTN2, _("Reset"), wxPoint(420,430), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
+	m_pbtnReset = new wmButton(this, ID_M_PBTN2, _("Reset"), wxPoint(470,430), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
+
+    m_plblGroup = new wmLabel(this, wxNewId(), "", wxPoint(370,430), wxSize(90,40));
+    InitLabel(m_plblGroup, wxColour(20,60,90), 11);
+    m_plblGroup->SetTextAlign(wxALIGN_CENTER);
+
     Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlEbuMeter::OnbtnCalculateClick);
 	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlEbuMeter::OnbtnResetClick);
 
@@ -74,6 +79,8 @@ pnlEbuMeter::pnlEbuMeter(wxWindow* parent,R128Builder* pBuilder, wxWindowID id,c
 
     m_pR128 = new R128Calculator();
     m_pTrue = new TruePeakCalculator();
+
+    m_pR128->SetChannelGroup(m_pBuilder->ReadSetting("Group",0));
 
     m_dtStart = wxDateTime::Now();
     LoadSettings();
@@ -95,10 +102,12 @@ void pnlEbuMeter::SetSession(const session& aSession)
 
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
+        m_subsession = (*aSession.GetCurrentSubsession());
         m_nChannels = aSession.GetCurrentSubsession()->nChannels;
     }
     else
     {
+        m_subsession = subsession();
         m_nChannels = 0;
     }
 }
@@ -222,7 +231,6 @@ void pnlEbuMeter::SetAudioData(const timedbuffer* pBuffer)
 {
     if(m_nChannels > 0)
     {
-
         m_pR128->CalculateLevel(pBuffer);
         if(m_bTrue)
         {
@@ -453,4 +461,18 @@ Json::Value pnlEbuMeter::CreateWebsocketMessage()
 
 
     return jsValue;
+}
+
+void pnlEbuMeter::SetGroup(unsigned char nGroup)
+{
+    for(const auto& channel : m_subsession.vChannels)
+    {
+        if(channel.nId == nGroup)
+        {
+            m_plblGroup->SetLabel(GetChannelGroupName(channel));
+            break;
+        }
+    }
+
+    m_pR128->SetChannelGroup(nGroup);
 }

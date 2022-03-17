@@ -179,6 +179,8 @@ struct PAMBASE_IMPEXPORT qosData
     unsigned int nTimestampErrorsTotal;
 };
 
+extern const std::map<subsession::enumChannelGrouping, unsigned char> CH_GROUP_SIZE;
+
 extern wxString GetChannelLabel(const subsession::channelGrouping& ch);
 extern wxString GetChannelLabelLong(const subsession::channelGrouping& ch);
 extern wxString GetChannelGroupName(const subsession::channelGrouping& ch);

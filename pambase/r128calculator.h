@@ -3,8 +3,8 @@
 #include <vector>
 #include <cstddef>
 #include "dlldefine.h"
+#include "session.h"
 
-struct session;
 struct timedbuffer;
 class R128Thread;
 
@@ -15,6 +15,7 @@ class PAMBASE_IMPEXPORT R128Calculator
         ~R128Calculator();
 
         void InputSession(const session& aSession);
+        void SetChannelGroup(unsigned char nGroup);
         void CalculateLevel(const timedbuffer* pBuffer);
         double GetMomentaryLevel() const;
         double GetShortLevel() const;
@@ -49,7 +50,6 @@ class PAMBASE_IMPEXPORT R128Calculator
 
         unsigned int m_nInputChannels;
         unsigned int m_nChunkFrames;
-        unsigned int  m_nChunkSize;
 
         unsigned int m_nFrames;
         double m_dTempMS;
@@ -58,6 +58,9 @@ class PAMBASE_IMPEXPORT R128Calculator
         std::vector<std::pair<double,double> > m_vFilter;
 
         R128Thread* m_pThread;
+
+        subsession m_subsession;
+        std::vector<std::pair<unsigned char, double>> m_vChannels;
 
         #ifdef __NMOS__
         /* pre-filter coefficients */

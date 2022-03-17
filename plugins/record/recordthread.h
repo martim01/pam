@@ -11,7 +11,7 @@ class RecordThread : public wxThread
 {
     public:
         RecordThread();
-        bool Init(const wxString& sFilename, std::vector<unsigned char>& vChannels, unsigned int nSampleRate, unsigned int nBitRate);
+        bool Init(const wxString& sFilename, const std::vector<unsigned char>& vChannels, unsigned int nSampleRate, unsigned int nBitRate);
         void* Entry();
 
         void AddToBuffer(const timedbuffer* pBuffer);

@@ -5,6 +5,7 @@
 class pnlEbuMeter;
 class SettingEvent;
 class pnlControl;
+class pnlGroups;
 
 class WXEXPORT R128Builder : public MonitorPluginBuilder
 {
@@ -33,6 +34,7 @@ class WXEXPORT R128Builder : public MonitorPluginBuilder
         friend class pnlControl;
         friend class pnlScale;
         friend class pnlDisplay;
+        friend class pnlGroups;
 
         void ClearMeter();
         void OnSettingChanged(SettingEvent& event);
@@ -43,7 +45,7 @@ class WXEXPORT R128Builder : public MonitorPluginBuilder
         void LoadSettings();
     private:
         pnlEbuMeter* m_pMeters;
-
+        pnlGroups* m_ppnlGroups;
         unsigned int m_nInputChannels;
         unsigned int m_nDisplayChannel;
         unsigned int m_nMode;

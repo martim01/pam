@@ -16,7 +16,6 @@ R128Calculator::R128Calculator() :
 	m_dShortMax(-80.0),
     m_nInputChannels(0),
     m_nChunkFrames(0),
-    m_nChunkSize(0),
     m_nFrames(0),
     m_dTempMS(0.0),
     m_pThread(new R128Thread())
@@ -37,15 +36,14 @@ void R128Calculator::InputSession(const session& aSession)
 {
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_nInputChannels = min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels);
-        m_nChunkFrames = aSession.GetCurrentSubsession()->nSampleRate/10;
-        m_nChunkSize = m_nInputChannels*m_nChunkFrames;
+        m_subsession = (*aSession.GetCurrentSubsession());
+        m_nInputChannels = min((unsigned int)8 ,m_subsession.nChannels);
+        m_nChunkFrames = m_subsession.nSampleRate/10;
 
     }
     else
     {
         m_nInputChannels = 0;
-        m_nChunkSize = 0;
     }
     ResetMeter();
 }
@@ -53,11 +51,11 @@ void R128Calculator::InputSession(const session& aSession)
 void R128Calculator::CalculateLevel(const timedbuffer* pBuffer)
 {
     //copy the frames into chunks
-    if(m_nChunkSize != 0)
+    if(m_nInputChannels != 0 && !m_vChannels.empty())
     {
         for(unsigned int i=0; i < pBuffer->GetBufferSize(); i+=m_nInputChannels)
         {
-            for(unsigned int j = 0; j < m_nInputChannels; j++)
+            for(unsigned int n = 0; n < m_vChannels.size(); n++)
             {
                 if(m_nFrames == m_nChunkFrames)
                 {
@@ -66,7 +64,7 @@ void R128Calculator::CalculateLevel(const timedbuffer* pBuffer)
                     m_dTempMS = 0.0;
                 }
 
-                m_dTempMS += (ApplyFilter(pBuffer->GetBuffer()[i+j],j));
+                m_dTempMS += (ApplyFilter(pBuffer->GetBuffer()[i+m_vChannels[n].first],m_vChannels[n].first))*m_vChannels[n].second;
             }
             ++m_nFrames;
         }
@@ -238,4 +236,25 @@ size_t R128Calculator::GetIntegrationTime()
         return m_pThread->GetIntegrationTime();
     }
     return 0;
+}
+
+void R128Calculator::SetChannelGroup(unsigned char nGroup)
+{
+    m_vChannels.clear();
+    for(size_t i = 0; i < m_subsession.vChannels.size(); i++)
+    {
+        //add all the channels in the group except the LFE one
+        if(m_subsession.vChannels[i].nId == nGroup && m_subsession.vChannels[i].type != subsession::enumChannel::LFE)
+        {
+            if(m_subsession.vChannels[i].type == subsession::enumChannel::LEFT_SIDE || m_subsession.vChannels[i].type == subsession::enumChannel::RIGHT_SIDE ||
+               m_subsession.vChannels[i].type == subsession::enumChannel::LEFT_REAR_SIDE || m_subsession.vChannels[i].type == subsession::enumChannel::RIGHT_REAR_SIDE)
+            {
+                m_vChannels.push_back(std::make_pair(i, 1.41));
+            }
+            else
+            {
+                m_vChannels.push_back(std::make_pair(i, 1.0));
+            }
+        }
+    }
 }

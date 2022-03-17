@@ -77,11 +77,11 @@ void fftphaseBuilder::InputSession(const session& aSession)
     {
         if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
         {
-            m_ppnlRouting->SetNumberOfChannels(min((unsigned int)8 ,aSession.GetCurrentSubsession()->nChannels));
+            m_ppnlRouting->SetChannels(aSession.GetCurrentSubsession()->vChannels);
         }
         else
         {
-            m_ppnlRouting->SetNumberOfChannels(0);
+            m_ppnlRouting->SetChannels({});
         }
     }
 }

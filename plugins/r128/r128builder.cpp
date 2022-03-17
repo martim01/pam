@@ -7,6 +7,7 @@
 #include "pnlControl.h"
 #include "pnlScale.h"
 #include "pnlDisplay.h"
+#include "pnlgroups.h"
 
 using namespace std;
 
@@ -28,10 +29,13 @@ m_pMeters(0)
     RegisterRemoteApiEnum("Show_True", {{0,"Hide"},{1,"Show"}},1);
     RegisterRemoteApiEnum("Show_Phase", {{0,"Hide"},{1,"Show"}},1);
 
+    //RegisterRemoteApiCallback("Group", std::bind(&R128Builder::GetGroups, this));
+
     m_nInputChannels = 1;
     m_nDisplayChannel = 0;
     m_bRun = true;
 }
+
 
 R128Builder::~R128Builder()
 {
@@ -65,14 +69,11 @@ list<pairOptionPanel_t> R128Builder::CreateOptionPanels(wxWindow* pParent)
 {
     list<pairOptionPanel_t> lstOptionPanels;
 
-
+    m_ppnlGroups = new pnlGroups(pParent, this);
+    lstOptionPanels.push_back(make_pair(wxT("Channels"), m_ppnlGroups));
     lstOptionPanels.push_back(make_pair(wxT("Display"), new pnlDisplay(pParent, this)));
     lstOptionPanels.push_back(make_pair(wxT("Scale"), new pnlScale(pParent, this)));
 
-   // lstOptionPanels.push_back(make_pair(wxT("Time"), new pnlDisplay(pParent, this)));
-   // lstOptionPanels.push_back(make_pair(wxT("Meter"), new pnlMeters(pParent, this)));
-//    lstOptionPanels.push_back(make_pair(wxT("Options"), pOptions));
-//
     return lstOptionPanels;
 }
 
@@ -88,7 +89,14 @@ void R128Builder::LoadSettings()
 void R128Builder::InputSession(const session& aSession)
 {
     m_pMeters->SetSession(aSession);
-
+    if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
+    {
+        m_ppnlGroups->SetChannels(aSession.GetCurrentSubsession()->vChannels);
+    }
+    else
+    {
+        m_ppnlGroups->SetChannels({});
+    }
 }
 
 void R128Builder::OutputChannels(const std::vector<char>& vChannels)
@@ -109,6 +117,10 @@ void R128Builder::OnSettingChanged(SettingEvent& event)
     else if(event.GetKey() == wxT("Zero"))
     {
         m_pMeters->ChangeScale();
+    }
+    else if(event.GetKey() == "Group")
+    {
+        m_pMeters->SetGroup(event.GetValue(0l));
     }
     else
     {

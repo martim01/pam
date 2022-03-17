@@ -36,6 +36,7 @@ class pnlRecord: public wxPanel
 		wxTimer m_timerSecond;
 		//*)
 
+		wmLabel* m_pLblGroup;
 		wmList* m_plstGroup;
 
         void SetAudioData(const timedbuffer* pBuffer);
@@ -65,6 +66,7 @@ class pnlRecord: public wxPanel
 		void OnbtnClearClick(wxCommandEvent& event);
 		//*)
         void OnlstGroupSelected(wxCommandEvent& event);
+        void EnableRecord();
 
         std::vector<unsigned char> GetChannels();
 

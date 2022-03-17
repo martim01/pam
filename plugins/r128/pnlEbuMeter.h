@@ -4,7 +4,7 @@
 #include <vector>
 #include <array>
 
-class session;
+#include "session.h"
 class LevelMeter;
 class timedbuffer;
 
@@ -65,6 +65,8 @@ class pnlEbuMeter: public wxPanel
         void InitLabel(wmLabel* pLabel, const wxColour clrBack, int nFontSize=12);
 
 
+        void SetGroup(unsigned char nGroup);
+
         void ChangeScale();
 
         void LoadSettings();
@@ -92,6 +94,7 @@ class pnlEbuMeter: public wxPanel
 
         wmButton* m_pbtnCalculate;
 		wmButton* m_pbtnReset;
+		wmLabel* m_plblGroup;
 
 
 	private:
@@ -128,6 +131,7 @@ class pnlEbuMeter: public wxPanel
         bool m_bBar;
 
         wxDateTime m_dtStart;
+        subsession m_subsession;
 
 
         static const wxColour CLR_LUFS;

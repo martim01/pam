@@ -6,6 +6,10 @@ const wxString CH_GROUP_CHANNEL[26] = { "M", "M1", "M2", "L", "R", "Lt", "Rt", "
 const wxString CH_GROUP_CHANNEL_LONG[26] = { "Mono", "Mono1", "Mono2", "Left", "Right", "Left Total", "Right Total", "Center", "LFE", "Left Side", "Right Side", "Left Rear Side", "Right Rear Side", "SDI1","SDI2","SDI3", "SDI4", "Undefined1","Undefined2","Undefined3","Undefined4","Undefined5","Undefined6","Undefined7","Undefined8", "Unset"};
 const wxColour CH_GROUP_COLOUR[8] = {wxColour("#fe2713"), wxColour("#67b132"), wxColour("#fccc20"), wxColour("#4525d8"), wxColour("#fb8906"), wxColour("#125ae0"), wxColour("#e4f135"), wxColour("#9d0798")};
 
+const std::map<subsession::enumChannelGrouping, unsigned char> CH_GROUP_SIZE = {{subsession::enumChannelGrouping::M, 1}, {subsession::enumChannelGrouping::DM,2}, {subsession::enumChannelGrouping::ST,2}, {subsession::enumChannelGrouping::LtRt,2}, {subsession::enumChannelGrouping::FIVE1,6}, {subsession::enumChannelGrouping::SEVEN1,8}, {subsession::enumChannelGrouping::SGRP,4}, {subsession::enumChannelGrouping::U01,1}, {subsession::enumChannelGrouping::U02,2}, {subsession::enumChannelGrouping::U03,3}, {subsession::enumChannelGrouping::U04,4}, {subsession::enumChannelGrouping::U05,5}, {subsession::enumChannelGrouping::U06,6}, {subsession::enumChannelGrouping::U07,7}, {subsession::enumChannelGrouping::U08,8}};
+
+
+
 wxString GetChannelLabel(const subsession::channelGrouping& ch)
 {
     if(ch.nId < 8)

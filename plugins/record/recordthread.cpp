@@ -2,6 +2,7 @@
 #include "settings.h"
 #include "timedbuffer.h"
 #include <wx/log.h>
+#include <iostream>
 
 using namespace std;
 
@@ -11,9 +12,10 @@ RecordThread::RecordThread() : wxThread(wxTHREAD_JOINABLE), m_bLoop(true)
 
 }
 
-bool RecordThread::Init(const wxString& sFilename, std::vector<unsigned char>& vChannels, unsigned int nSampleRate, unsigned int nBitRate)
+bool RecordThread::Init(const wxString& sFilename, const std::vector<unsigned char>& vChannels, unsigned int nSampleRate, unsigned int nBitRate)
 {
     m_vChannels = vChannels;
+
 
     return m_sf.OpenToWrite(sFilename, vChannels.size(), nSampleRate, nBitRate);
 }
@@ -87,7 +89,7 @@ timedbuffer* RecordThread::FilterBuffer(const timedbuffer* pBuffer)
     {
         for(auto nChannel : m_vChannels)
         {
-            pFilter->GetBuffer()[nCount] = pBuffer->GetBuffer()[i+nChannel];
+            pFilter->GetWritableBuffer()[nCount] = pBuffer->GetBuffer()[i+nChannel];
             ++nCount;
         }
     }
