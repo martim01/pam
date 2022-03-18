@@ -8,7 +8,8 @@
 #include "pnlScale.h"
 #include "pnlDisplay.h"
 #include "pnlgroups.h"
-
+#include "ppmtypes.h"
+#include "pnlMeters.h"
 using namespace std;
 
 R128Builder::R128Builder() : MonitorPluginBuilder(),
@@ -28,6 +29,7 @@ m_pMeters(0)
     RegisterRemoteApiEnum("Show_Live", {{0,"Hide"},{1,"Show"}},1);
     RegisterRemoteApiEnum("Show_True", {{0,"Hide"},{1,"Show"}},1);
     RegisterRemoteApiEnum("Show_Phase", {{0,"Hide"},{1,"Show"}},1);
+    RegisterRemoteApiEnum("MeterMode", PPMTypeManager::Get().GetTypes(), "BBC");
 
     //RegisterRemoteApiCallback("Group", std::bind(&R128Builder::GetGroups, this));
 
@@ -70,9 +72,12 @@ list<pairOptionPanel_t> R128Builder::CreateOptionPanels(wxWindow* pParent)
     list<pairOptionPanel_t> lstOptionPanels;
 
     m_ppnlGroups = new pnlGroups(pParent, this);
-    lstOptionPanels.push_back(make_pair(wxT("Channels"), m_ppnlGroups));
-    lstOptionPanels.push_back(make_pair(wxT("Display"), new pnlDisplay(pParent, this)));
-    lstOptionPanels.push_back(make_pair(wxT("Scale"), new pnlScale(pParent, this)));
+    m_ppnlMeters = new pnlMeters(pParent, this);
+
+    lstOptionPanels.push_back(make_pair("Channels", m_ppnlGroups));
+    lstOptionPanels.push_back(make_pair("Display", new pnlDisplay(pParent, this)));
+    lstOptionPanels.push_back(make_pair("Meters", m_ppnlMeters));
+    lstOptionPanels.push_back(make_pair("Scale", new pnlScale(pParent, this)));
 
     return lstOptionPanels;
 }
@@ -122,6 +127,10 @@ void R128Builder::OnSettingChanged(SettingEvent& event)
     else if(event.GetKey() == "Group")
     {
         m_pMeters->SetGroup(event.GetValue(0l));
+    }
+    else if(event.GetKey() == "MeterMode")
+    {
+        m_pMeters->ChangeMeters(event.GetValue());
     }
     else
     {

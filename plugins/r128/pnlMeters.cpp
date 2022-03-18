@@ -1,5 +1,5 @@
 #include "pnlMeters.h"
-#include "lissajoubuilder.h"
+#include "r128builder.h"
 #include "ppmtypes.h"
 
 using   namespace std;
@@ -18,18 +18,18 @@ BEGIN_EVENT_TABLE(pnlMeters,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlMeters::pnlMeters(wxWindow* parent, LissajouBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) :
+pnlMeters::pnlMeters(wxWindow* parent, R128Builder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) :
     m_pBuilder(pBuilder)
 {
-	//(*Initialize(pnlMeters)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
-	m_plstMode = new wmList(this, ID_M_PLST19, wxPoint(0,0), wxSize(190,240), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 2, wxSize(5,5));
+	m_plstMode = new wmList(this, ID_M_PLST19, wxPoint(0,0), wxSize(190,240), wmList::STYLE_SELECT, 0, wxSize(-1,30), 2, wxSize(2,2));
 	m_plstMode->SetBackgroundColour(wxColour(0,0,0));
 
 	Connect(ID_M_PLST19,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlMeters::OnlstMeterTypeSelected);
-	//*)
 	SetBackgroundColour(*wxBLACK);
 
+	m_plstMode->AddButton("True");
+	m_plstMode->AddButton("", wxNullBitmap, 0, wmList::wmHIDDEN);
 	for(map<wxString, ppmtype>::const_iterator itType = PPMTypeManager::Get().GetTypeBegin(); itType != PPMTypeManager::Get().GetTypeEnd(); ++itType)
     {
         m_plstMode->AddButton(itType->first);

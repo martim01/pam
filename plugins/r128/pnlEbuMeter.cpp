@@ -15,7 +15,7 @@
 #include <wx/string.h>
 #include "settings.h"
 #include "correlationbar.h"
-
+#include "ppmtypes.h"
 using namespace std;
 
 
@@ -61,7 +61,6 @@ pnlEbuMeter::pnlEbuMeter(wxWindow* parent,R128Builder* pBuilder, wxWindowID id,c
 	m_dPeak[0] = -80;
     m_dPeak[1] = -80;
 
-    CreateMeters();
 
     m_pbtnCalculate = new wmButton(this, ID_M_PBTN1, _("R128"), wxPoint(370,380), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnReset = new wmButton(this, ID_M_PBTN2, _("Reset"), wxPoint(470,430), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
@@ -70,6 +69,17 @@ pnlEbuMeter::pnlEbuMeter(wxWindow* parent,R128Builder* pBuilder, wxWindowID id,c
     InitLabel(m_plblGroup, wxColour(20,60,90), 11);
     m_plblGroup->SetTextAlign(wxALIGN_CENTER);
 
+
+    m_pswpMeters = new wmSwitcherPanel(this,wxNewId(), wxPoint(630,0), wxSize(270,481), wmSwitcherPanel::STYLE_NOANIMATION | wmSwitcherPanel::STYLE_NOSWIPE);
+    m_pswpMeters->SetPageNameStyle(wmSwitcherPanel::PAGE_HIDDEN);
+    m_ppnlTrue = new wxPanel(m_pswpMeters, wxNewId());
+    m_ppnlPPM = new wxPanel(m_pswpMeters, wxNewId());
+    m_pswpMeters->AddPage(m_ppnlTrue, "True", true);
+    m_pswpMeters->AddPage(m_ppnlPPM, "PPM", false);
+
+    CreateMeters();
+    m_pswpMeters->ChangeSelection(0);
+
     Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlEbuMeter::OnbtnCalculateClick);
 	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlEbuMeter::OnbtnResetClick);
 
@@ -77,8 +87,9 @@ pnlEbuMeter::pnlEbuMeter(wxWindow* parent,R128Builder* pBuilder, wxWindowID id,c
 	m_pbtnCalculate->SetToggle(true, wxT("Pause"), wxT("Run"), 50.0);
 	m_pbtnCalculate->ConnectToSetting(m_pBuilder->GetSection(), "Calculate", true);
 
-    m_pR128 = new R128Calculator();
-    m_pTrue = new TruePeakCalculator();
+    m_pR128 = std::make_unique<R128Calculator>();
+    m_pTrue = std::make_unique<TruePeakCalculator>();
+    m_pLevel = std::make_unique<LevelCalculator>(0);
 
     m_pR128->SetChannelGroup(m_pBuilder->ReadSetting("Group",0));
 
@@ -90,8 +101,6 @@ pnlEbuMeter::~pnlEbuMeter()
 {
 	//(*Destroy(pnlEbuMeter)
 	//*)
-	delete m_pR128;
-	delete m_pTrue;
 }
 
 
@@ -120,9 +129,9 @@ void pnlEbuMeter::CreateMeters()
     m_aMeters[1] = new R128Meter(this,wxID_ANY, wxT("Short"), -59, 0, false, wxPoint(135, 0), wxSize(70, 480));
     m_aMeters[2] = new R128Meter(this,wxID_ANY, wxT("Integrated"), -59,0,  false, wxPoint(235, 0), wxSize(100, 480));
 
-    m_pPeakLevels = new R128Meter(this, wxID_ANY, wxEmptyString, -40,0,  true, wxPoint(630,0), wxSize(50,481));
-    m_pPeakLeft = new R128Meter(this, wxID_ANY, wxT("Left"), -40, 0, false, wxPoint(685,0), wxSize(50,481));
-    m_pPeakRight = new R128Meter(this, wxID_ANY, wxT("Right"), -40, 0, false, wxPoint(740,0), wxSize(50,481));
+    m_pPeakLevels = new R128Meter(m_ppnlTrue, wxID_ANY, wxEmptyString, -40,0,  true, wxPoint(0,0), wxSize(50,481));
+    m_pPeakLeft = new R128Meter(m_ppnlTrue, wxID_ANY, wxT("Left"), -40, 0, false, wxPoint(55,0), wxSize(50,481));
+    m_pPeakRight = new R128Meter(m_ppnlTrue, wxID_ANY, wxT("Right"), -40, 0, false, wxPoint(110,0), wxSize(50,481));
 
 
 
@@ -150,6 +159,14 @@ void pnlEbuMeter::CreateMeters()
     m_pPeakLevels->SetLevels(dLevels, 14,0.0);
     m_pPeakLeft->SetLevels(dLevels, 14,0.0);
     m_pPeakRight->SetLevels(dLevels, 14,0.0);
+
+
+    //PPM
+    m_pPPMLevels = new LevelMeter(m_ppnlPPM, wxNewId(), "Left", -70, true, wxPoint(0,0),wxSize(50,481));
+	m_pPPMLeft = new LevelMeter(m_ppnlPPM, wxNewId(), "Left", -70, false, wxPoint(55,0),wxSize(50,481));
+	m_pPPMRight = new LevelMeter(m_ppnlPPM, wxNewId(), "Right", -70, false, wxPoint(110,0),wxSize(50,481));
+    m_pPPMLeft->SetLightColours(wxColour(220,0,0), -8, wxColour(255,100,100));
+    m_pPPMRight->SetLightColours(wxColour(0,220,0), -8, wxColour(255,100,100));
 
 
     m_plblMomentaryTitle = new wmLabel(this, wxID_ANY, wxT("Momentary"), wxPoint(350,0), wxSize(100,40));
@@ -235,6 +252,10 @@ void pnlEbuMeter::SetAudioData(const timedbuffer* pBuffer)
         if(m_bTrue)
         {
             m_pTrue->CalculateLevel(pBuffer);
+            if(m_pswpMeters->GetSelection() == 1)
+            {
+                m_pLevel->CalculateLevel(pBuffer);
+            }
         }
         if(m_bBar)
         {
@@ -251,11 +272,21 @@ void pnlEbuMeter::UpdateMeters()
     m_aMeters[1]->ShowValue(m_pR128->GetShortLevel());
     m_aMeters[2]->ShowValue(m_pR128->GetLiveLevel());
 
-    m_pPeakLeft->ShowValue(m_pTrue->GetLevel(0));
-    m_pPeakRight->ShowValue(m_pTrue->GetLevel(1));
-
-    m_dPeak[0] = max(m_pTrue->GetLevel(0), m_dPeak[0]);
-    m_dPeak[1] = max(m_pTrue->GetLevel(1), m_dPeak[1]);
+    if(m_bTrue)
+    {
+        if(m_pswpMeters->GetSelection() == 0)
+        {
+            m_pPeakLeft->ShowValue(m_pTrue->GetLevel(0));
+            m_pPeakRight->ShowValue(m_pTrue->GetLevel(1));
+        }
+        else
+        {
+            m_pPPMLeft->ShowValue(m_pLevel->GetLevel(0));
+            m_pPPMRight->ShowValue(m_pLevel->GetLevel(1));
+        }
+        m_dPeak[0] = max(m_pTrue->GetLevel(0), m_dPeak[0]);
+        m_dPeak[1] = max(m_pTrue->GetLevel(1), m_dPeak[1]);
+    }
 
     m_plblRange->SetLabel(wxString::Format(wxT("%.1f LU"), m_pR128->GetLURange()));
     if(m_dOffset == 0.0)
@@ -475,4 +506,26 @@ void pnlEbuMeter::SetGroup(unsigned char nGroup)
     }
 
     m_pR128->SetChannelGroup(nGroup);
+}
+
+void pnlEbuMeter::ChangeMeters(const wxString& sMode)
+{
+    if(sMode == "True")
+    {
+        m_pswpMeters->ChangeSelection(0);
+    }
+    else
+    {
+        map<wxString, ppmtype>::const_iterator itType = PPMTypeManager::Get().FindType(sMode);
+        if(itType != PPMTypeManager::Get().GetTypeEnd())
+        {
+            m_pLevel->SetMode(itType->second.nType);
+            m_pLevel->SetDynamicResponse(itType->second.dRiseTime, itType->second.dRisedB, itType->second.dFallTime, itType->second.dFalldB);
+
+            m_pPPMLeft->SetLevels(itType->second.vLevels, itType->second.dOffset, itType->second.sUnit, sMode, itType->second.sReference, itType->second.dScaling);
+            m_pPPMRight->SetLevels(itType->second.vLevels, itType->second.dOffset, itType->second.sUnit, sMode, itType->second.sReference,itType->second.dScaling);
+            m_pPPMLevels->SetLevels(itType->second.vLevels, itType->second.dOffset, itType->second.sUnit, sMode,itType->second.sReference, itType->second.dScaling);
+        }
+        m_pswpMeters->ChangeSelection(1);
+    }
 }
