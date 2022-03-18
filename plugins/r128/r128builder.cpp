@@ -82,7 +82,7 @@ list<pairOptionPanel_t> R128Builder::CreateOptionPanels(wxWindow* pParent)
 
 void R128Builder::LoadSettings()
 {
-
+    m_pMeters->SetGroup(ReadSetting("Group", 0));
 }
 
 
@@ -92,6 +92,7 @@ void R128Builder::InputSession(const session& aSession)
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
         m_ppnlGroups->SetChannels(aSession.GetCurrentSubsession()->vChannels);
+        m_pMeters->SetGroup(ReadSetting("Group", 0));
     }
     else
     {
