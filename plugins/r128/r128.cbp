@@ -142,8 +142,12 @@
 		<Unit filename="pnlDisplay.h" />
 		<Unit filename="pnlEbuMeter.cpp" />
 		<Unit filename="pnlEbuMeter.h" />
+		<Unit filename="pnlMeters.cpp" />
+		<Unit filename="pnlMeters.h" />
 		<Unit filename="pnlScale.cpp" />
 		<Unit filename="pnlScale.h" />
+		<Unit filename="pnlgroups.cpp" />
+		<Unit filename="pnlgroups.h" />
 		<Unit filename="r128.cpp" />
 		<Unit filename="r128.h" />
 		<Unit filename="r128builder.cpp" />
@@ -153,9 +157,6 @@
 		<Unit filename="wxsmith/pnlDisplay.wxs" />
 		<Unit filename="wxsmith/pnlScale.wxs" />
 		<Extensions>
-			<code_completion />
-			<envvars />
-			<debugger />
 			<AutoVersioning>
 				<Scheme minor_max="10" build_max="0" rev_max="0" rev_rand_max="10" build_times_to_increment_minor="100" />
 				<Settings autoincrement="0" date_declarations="1" use_define="0" update_manifest="0" do_auto_increment="1" ask_to_increment="0" language="C++" svn="0" svn_directory="" header_path="version.h" />

@@ -4,6 +4,8 @@
 #include <vector>
 #include <list>
 #include "pmcontrol.h"
+#include "session.h"
+
 class waveformBuilder;
 class session;
 class timedbuffer;
@@ -71,15 +73,15 @@ class waveformMeter : public pmControl
 
         void OnPaint(wxPaintEvent& event);
         virtual void OnSize(wxSizeEvent& event);
-
+        void WorkoutResolution();
 
         void OnLeftUp(wxMouseEvent& event);
 
         waveformBuilder* m_pBuilder;
 
-        std::list<std::pair<double,double> > m_lstWaveformLeft;
-        std::list<std::pair<double,double> > m_lstWaveformRight;
-
+//        std::vector<std::list<std::pair<float,float> >> m_vWaveform;
+        std::vector<subsession::channelGrouping> m_vChannels;
+        std::list<wxBitmap> m_lstWaveform;
         double m_dResolution;
 
 };
