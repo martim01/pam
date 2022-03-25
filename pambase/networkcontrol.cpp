@@ -20,12 +20,34 @@ NetworkControl& NetworkControl::Get()
 
 wxString NetworkControl::GetAddress(const wxString& sInterface) const
 {
+    if(sInterface.CmpNoCase("any") == 0)
+    {
+        return "0.0.0.0";
+    }
+
     map<wxString, networkInterface>::const_iterator itInterface = m_mInterfaces.find(sInterface);
     if(itInterface != m_mInterfaces.end())
     {
         return itInterface->second.sAddress;
     }
     return wxEmptyString;
+}
+
+wxString NetworkControl::GetInterface(const wxString& sAddress) const
+{
+    if(sAddress == ("0.0.0.0."))
+    {
+        return "Any";
+    }
+
+    for(const auto& pairInterface : m_mInterfaces)
+    {
+        if(pairInterface.second.sAddress == sAddress)
+        {
+            return pairInterface.first;
+        }
+    }
+    return "";
 }
 
 wxString NetworkControl::GetGateway(const wxString& sInterface) const
@@ -424,6 +446,10 @@ void NetworkControl::GetCurrentSettings()
 
         }
     }
+
+    //update any settings that depend on the interface/ip address
+    //Settings::Get().Write("Server","RTSP_Address", GetAddress(Settings::Get().Read("Server", "RTSP_Interface", "eth0")));
+    //Settings::Get().Write("RemoteApi","Interface", NetworkControl::Get().GetAddress(Settings::Get().Read("RemoteApi", "_Interface", "eth0")));
 }
 void NetworkControl::CheckConnection(const wxString& sInterface)
 {

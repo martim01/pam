@@ -37,8 +37,9 @@ void* RtpServerThread::Entry()
     //NetAddressList sendingddresses(m_sRTSP.ToStdString().c_str());
     //copyAddress(SendingInterfaceAddr, sendingddresses.firstAddress());
 
+    pmlLog() << "RtpServerThread: Interface " << m_sRTSP.ToStdString();
 
-    SendingInterfaceAddr = inet_addr(std::string(m_sRTSP.mb_str()).c_str());
+    SendingInterfaceAddr = inet_addr(m_sRTSP.ToStdString().c_str());
     TaskScheduler* scheduler = PamTaskScheduler::createNew();
     m_penv = PamUsageEnvironment::createNew(*scheduler, m_pHandler);
 
@@ -76,6 +77,8 @@ bool RtpServerThread::CreateStream()
     {
         NetAddressList destinationAddresses(m_sSourceIp.ToStdString().c_str());
         copyAddress(destinationAddress, destinationAddresses.firstAddress());
+
+        pmlLog(pml::LOG_INFO) << "RtpServerThread: Destination " << m_sSourceIp.ToStdString();
     }
     else if(m_bSSM)
     {

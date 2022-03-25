@@ -17,7 +17,7 @@
 #include "sapserver.h"
 #include "dnssd.h"
 #include <wx/msgdlg.h>
-
+#include "networkcontrol.h"
 
 using namespace std;
 
@@ -1334,7 +1334,7 @@ void IOManager::DoSAP(bool bRun)
         }
 
 
-        m_pSapServer->AddSender(IpAddress(std::string(Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString).c_str())), std::chrono::milliseconds(30000), m_pAlwaysOnServer->GetSDP());
+        m_pSapServer->AddSender(IpAddress(NetworkControl::Get().GetAddress(Settings::Get().Read("Server", "RTSP_Interface", "eth0")).ToStdString()), std::chrono::milliseconds(30000), m_pAlwaysOnServer->GetSDP());
 
         pmlLog(pml::LOG_INFO) << "IOManager\tStart SAP advertising: " << m_pAlwaysOnServer->GetSDP();
     }
@@ -1408,7 +1408,7 @@ void IOManager::StreamAlwaysOn()
         unsigned long nByte;
         bool bSSM(sDestinationIp.BeforeFirst(wxT('.')).ToULong(&nByte) && nByte >= 224 && nByte <= 239);
 
-        m_pAlwaysOnServer = new RtpServerThread(this, m_setRTCPHandlers, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString),
+        m_pAlwaysOnServer = new RtpServerThread(this, m_setRTCPHandlers, NetworkControl::Get().GetAddress(Settings::Get().Read("Server", "RTSP_Interface", "eth0")),
                                                  Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555),
                                                  sDestinationIp,
                                                 Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004),
@@ -1428,7 +1428,7 @@ void IOManager::StreamOnDemand()
     pmlLog(pml::LOG_INFO) << "IOManager\tCreate OnDemand AES67 Server";
     if(m_pAlwaysOnServer == nullptr && m_pOnDemandServer == nullptr)
     {
-        m_pOnDemandServer = new OnDemandStreamer(m_setRTSPHandlers, m_setRTCPHandlers, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), "0.0.0.0"),
+        m_pOnDemandServer = new OnDemandStreamer(m_setRTSPHandlers, m_setRTCPHandlers, NetworkControl::Get().GetAddress(Settings::Get().Read("Server", "RTSP_Interface", "eth0")),
                                               Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555));
 
         m_pOnDemandSubsession = OnDemandAES67MediaSubsession::createNew(this, *m_pOnDemandServer->envir(), Settings::Get().Read("Server", "Channels", 2),

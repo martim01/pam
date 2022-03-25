@@ -279,6 +279,7 @@
 		<Unit filename="monitorpluginbuilder.h" />
 		<Unit filename="monitorpluginfactory.cpp" />
 		<Unit filename="monitorpluginfactory.h" />
+		<Unit filename="networkcontrol.cpp" />
 		<Unit filename="niir.cpp" />
 		<Unit filename="niir.h" />
 		<Unit filename="ondemandaes67mediasubsession.cpp" />
@@ -397,6 +398,9 @@
 					<wxPanel wxs="wxsmith/wmipeditpnl.wxs" src="wmipeditpnl.cpp" hdr="wmipeditpnl.h" fwddecl="0" i18n="1" name="wmipeditpnl" language="CPP" />
 				</resources>
 			</wxsmith>
+			<code_completion />
+			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

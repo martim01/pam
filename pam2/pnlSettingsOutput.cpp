@@ -371,10 +371,6 @@ void pnlSettingsOutput::OnSettingChanged(SettingEvent& event)
         {
             EnableStreamSettings();
         }
-        else if(event.GetKey() == "RTSP_Interface")
-        {
-            Settings::Get().Write("Server","RTSP_Address", NetworkControl::Get().GetAddress(event.GetValue()));
-        }
     }
     else if(event.GetSection() == "Output")
     {

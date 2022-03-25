@@ -10,6 +10,7 @@
 #include "log.h"
 #include "pnlSettingsInputNmos.h"
 #include "iomanager.h"
+#include "networkcontrol.h"
 #include <wx/log.h>
 
 NmosManager::NmosManager(pnlSettingsInputNmos* pPnl) :
@@ -279,7 +280,7 @@ void NmosManager::OnPatchSender(wxNmosNodeConnectionEvent& event)
         std::string sSourceIp(event.GetSenderConnection()->GetTransportParams()[0].GetSourceIp());
         if(sSourceIp.empty() || sSourceIp == "auto")
         {
-            sSourceIp = Settings::Get().Read("Server", "RTSP_Address", wxEmptyString).ToStdString();
+            sSourceIp = NetworkControl::Get().GetAddress(Settings::Get().Read("Server", "RTSP_Interface", "eth0")).ToStdString();
             if(sSourceIp.empty())
             {
                  if(Settings::Get().GetInterfaces().empty() == false)
@@ -395,16 +396,18 @@ void NmosManager::ActivateSender(const std::string& sId)
         std::string sSourceIp(pSender->GetStaged().GetTransportParams()[0].GetSourceIp());
         if(sSourceIp.empty() == false && sSourceIp != "auto")
         {   //sourceip set by nmos
-            Settings::Get().Write("Server", "RTSP_Address", sSourceIp);
+
+            Settings::Get().Write("Server", "RTSP_Interface", NetworkControl::Get().GetInterface(sSourceIp));
         }
         else
         {
-            sSourceIp = Settings::Get().Read("Server", "RTSP_Address", wxEmptyString).ToStdString();
+            sSourceIp = NetworkControl::Get().GetAddress(Settings::Get().Read("Server", "RTSP_Interface", "eth0")).ToStdString();
+
             if(sSourceIp.empty())
             {
                  if(Settings::Get().GetInterfaces().empty() == false)
                  {
-                     Settings::Get().Write("Server", "RTSP_Address", Settings::Get().GetInterfaces().begin()->second);
+                     Settings::Get().Write("Server", "RTSP_Interface", Settings::Get().GetInterfaces().begin()->first);
                  }
             }
         }
