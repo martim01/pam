@@ -256,6 +256,7 @@ wxString Smpte2110MediaSubsession::GetEndpoint()
 
 Boolean Smpte2110MediaSubsession::createSourceObjects(int useSpecialRTPoffset)
 {
+
     parseSDPAttribute_Sync();           //Sync time Smpte2110 and Ravenna and SMPTE2110
     parseSDPAttribute_Deviation();      //Clock deviation sample rate Ravenna
     parseSDPAttribute_RefClk();      //Clock deviation sample rate Ravenna
@@ -758,44 +759,46 @@ void Smpte2110MediaSubsession::parseSDPAttribute_Channels()
 {
     wxString sSdp(wxString::FromUTF8(fSavedSDPLines));
 
-    wxString sFind("channel-order=SMPTE2119.");
+    wxString sFind("channel-order=SMPTE2110.");
     size_t nFront = sSdp.find(sFind);
     if(nFront != wxNOT_FOUND)
     {
         size_t nEnd = sSdp.find(wxT("\n"), nFront);
         wxString sChannels = sSdp.substr(nFront+sFind.length(), (nEnd-sFind.length())).AfterFirst('(').BeforeFirst(')');
+
+
         wxArrayString asChannels = wxStringTokenize(sChannels, ",");
 
         unsigned long nChannel(0);
         for(size_t i = 0; i < asChannels.GetCount(); ++i)
         {
-            if(asChannels[i] == "M")
+            if(asChannels[i].CmpNoCase("M") == 0)
             {
                 m_channels[nChannel] = subsession::channelGrouping(i, subsession::enumChannelGrouping::M, subsession::enumChannel::MONO);
                 ++nChannel;
             }
-            else if(asChannels[i] == "DM")
+            else if(asChannels[i].CmpNoCase("DM") == 0)
             {
                 m_channels[nChannel] = subsession::channelGrouping(i, subsession::enumChannelGrouping::DM, subsession::enumChannel::MONO_1);
                 m_channels[nChannel+1] = subsession::channelGrouping(i, subsession::enumChannelGrouping::DM, subsession::enumChannel::MONO_2);
 
                 nChannel+=2;
             }
-            else if(asChannels[i] == "ST")
+            else if(asChannels[i].CmpNoCase("ST") == 0)
             {
                 m_channels[nChannel] = subsession::channelGrouping(i, subsession::enumChannelGrouping::ST, subsession::enumChannel::LEFT);
                 m_channels[nChannel+1] = subsession::channelGrouping(i, subsession::enumChannelGrouping::ST, subsession::enumChannel::RIGHT);
 
                 nChannel+=2;
             }
-            else if(asChannels[i] == "LtRt")
+            else if(asChannels[i].CmpNoCase("LtRt") == 0)
             {
                 m_channels[nChannel] = subsession::channelGrouping(i, subsession::enumChannelGrouping::LtRt, subsession::enumChannel::LEFT_TOTAL);
                 m_channels[nChannel+1] = subsession::channelGrouping(i, subsession::enumChannelGrouping::LtRt, subsession::enumChannel::RIGHT_TOTAL);
 
                 nChannel+=2;
             }
-            else if(asChannels[i] == "51")
+            else if(asChannels[i].CmpNoCase("51") == 0)
             {
                 m_channels[nChannel] = subsession::channelGrouping(i, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::LEFT);
                 m_channels[nChannel+1] = subsession::channelGrouping(i, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::RIGHT);
@@ -806,7 +809,7 @@ void Smpte2110MediaSubsession::parseSDPAttribute_Channels()
 
                 nChannel+=6;
             }
-            else if(asChannels[i] == "71")
+            else if(asChannels[i].CmpNoCase("71") == 0)
             {
                 m_channels[nChannel] = subsession::channelGrouping(i, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::LEFT);
                 m_channels[nChannel+1] = subsession::channelGrouping(i, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::RIGHT);
@@ -819,7 +822,7 @@ void Smpte2110MediaSubsession::parseSDPAttribute_Channels()
 
                 nChannel+=8;
             }
-            else if(asChannels[i] == "SGRP")
+            else if(asChannels[i].CmpNoCase("SGRP") == 0)
             {
                 m_channels[nChannel] = subsession::channelGrouping(i, subsession::enumChannelGrouping::SGRP, subsession::enumChannel::SDI_1);
                 m_channels[nChannel+1] = subsession::channelGrouping(i, subsession::enumChannelGrouping::SGRP, subsession::enumChannel::SDI_2);
@@ -828,7 +831,7 @@ void Smpte2110MediaSubsession::parseSDPAttribute_Channels()
 
                 nChannel+=4;
             }
-            else if(asChannels[i].GetChar(0) == 'U')
+            else if(asChannels[i].GetChar(0) == 'U' || asChannels[i].GetChar(0) == 'u')
             {
                 unsigned long nUndefined;
                 asChannels[i].Mid(1).ToULong(&nUndefined);

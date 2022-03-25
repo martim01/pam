@@ -1395,7 +1395,7 @@ void IOManager::Stream()
             StreamOnDemand();
             DoSAP(false);
         }
-        DoDNSSD(Settings::Get().Read("Server", "DNS-SD", 0));
+        DoDNSSD(Settings::Get().Read("Server", "DNS-SD", true));
     }
 }
 
