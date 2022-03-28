@@ -177,35 +177,23 @@ pnlChannelMapping::pnlChannelMapping(wxWindow* parent,wxWindowID id,const wxPoin
 	SetSize(size);
 	SetPosition(pos);
 
-	m_pbtnCh[0]->ConnectToSetting("ChannelMapping", "Ch_1", "Stereo");
-	m_pbtnCh[1]->ConnectToSetting("ChannelMapping", "Ch_2", "");
-	m_pbtnCh[2]->ConnectToSetting("ChannelMapping", "Ch_3", "Stereo");
-	m_pbtnCh[3]->ConnectToSetting("ChannelMapping", "Ch_4", "");
-	m_pbtnCh[4]->ConnectToSetting("ChannelMapping", "Ch_5", "Stereo");
-	m_pbtnCh[5]->ConnectToSetting("ChannelMapping", "Ch_6", "");
-	m_pbtnCh[6]->ConnectToSetting("ChannelMapping", "Ch_7", "Stereo");
-	m_pbtnCh[7]->ConnectToSetting("ChannelMapping", "Ch_8", "");
 
 
-	Settings::Get().AddHandler(this, "ChannelMapping");
+	Settings::Get().AddHandler(this, "Server", "ChannelMapping");
 	Settings::Get().AddHandler(this, "Server", "Channels");
 
 
 	Bind(wxEVT_SETTING_CHANGED, &pnlChannelMapping::OnSettingChanged, this);
 
+	for(size_t i = 0; i < 8; i++)
+    {
+        Bind(wxEVT_COMMAND_BUTTON_CLICKED, &pnlChannelMapping::OnChannelClicked, this, m_pbtnCh[i]->GetId());
+    }
 
     m_nChannels = Settings::Get().Read("Server", "Channels", 2);
     ShowChannels();
 
-	ShowButtons(Settings::Get().Read("ChannelMapping", "Ch_1", "Stereo"), 1);
-	ShowButtons(Settings::Get().Read("ChannelMapping", "Ch_2", ""), 2);
-	ShowButtons(Settings::Get().Read("ChannelMapping", "Ch_3", "Stereo"), 3);
-	ShowButtons(Settings::Get().Read("ChannelMapping", "Ch_4", ""), 4);
-	ShowButtons(Settings::Get().Read("ChannelMapping", "Ch_5", "Stereo"), 5);
-	ShowButtons(Settings::Get().Read("ChannelMapping", "Ch_6", ""), 6);
-	ShowButtons(Settings::Get().Read("ChannelMapping", "Ch_7", "Stereo"), 7);
-	ShowButtons(Settings::Get().Read("ChannelMapping", "Ch_8", ""), 8);
-
+    ShowButtons();
 
 }
 
@@ -213,6 +201,14 @@ pnlChannelMapping::~pnlChannelMapping()
 {
 	//(*Destroy(pnlChannelMapping)
 	//*)
+}
+
+void pnlChannelMapping::OnChannelClicked(wxCommandEvent& event)
+{
+    for(size_t i = 0; i < 8 ; i++)
+    {
+        if(m_pbtnCh[i]->GetLabel() == )
+    }
 }
 
 void pnlChannelMapping::OnSettingChanged(SettingEvent& event)

@@ -276,7 +276,6 @@ void IOManager::OnSettingEventServer(SettingEvent& event)
         {
             if(m_pAlwaysOnServer)
             {
-                pmlLog() << "Stop alwayson server";
                 m_pAlwaysOnServer->StopStream();
                 m_pAlwaysOnServer->Wait();
                 delete m_pAlwaysOnServer;
@@ -288,7 +287,6 @@ void IOManager::OnSettingEventServer(SettingEvent& event)
         {
             if(m_pOnDemandServer)
             {
-                pmlLog() << "Stop ondemenad server";
                 m_pOnDemandServer->Stop();
                 m_pOnDemandServer->Wait();
                 delete m_pOnDemandServer;
@@ -932,6 +930,8 @@ std::vector<subsession::channelGrouping> IOManager::CreateChannels(unsigned long
         for(int i = 1; i <= nChannels; )
         {
             wxString sValue = Settings::Get().Read("ChannelMapping", wxString::Format("Ch_%d", i), "");
+
+
             if(sValue == "Mono")
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::M, subsession::enumChannel::MONO);
@@ -1071,6 +1071,10 @@ std::vector<subsession::channelGrouping> IOManager::CreateChannels(unsigned long
                 SetChannel(vChannels, i+7, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_8);
                 i+=8;
                 ++nGroup;
+            }
+            else
+            {
+                i++;
             }
         }
     }

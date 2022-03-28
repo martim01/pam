@@ -59,7 +59,8 @@ class pnlChannelMapping: public wxPanel
 
 		void OnSettingChanged(SettingEvent& event);
 
-		void ShowButtons(const wxString& sValue, int nChannel);
+		void OnChannelClicked(wxCommandEvent& event);
+		void ShowButtons();
         void ShowButton(int nButton);
 
         void ShowChannels();
