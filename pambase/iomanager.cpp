@@ -18,6 +18,7 @@
 #include "dnssd.h"
 #include <wx/msgdlg.h>
 #include "networkcontrol.h"
+#include <wx/tokenzr.h>
 
 using namespace std;
 
@@ -104,7 +105,6 @@ IOManager::IOManager() :
     Settings::Get().AddHandler(this, wxT("Noise"));
     Settings::Get().AddHandler(this, wxT("Monitor"), wxT("Source"));
     Settings::Get().AddHandler(this, wxT("QoS"),wxT("Interval"));
-    Settings::Get().AddHandler(this, "ChannelMapping");
 
     Settings::Get().AddHandler(this,wxT("Server"));
 
@@ -218,10 +218,6 @@ void IOManager::OnSettingEvent(SettingEvent& event)
     {
         OnSettingEventServer(event);
     }
-    else if(event.GetSection() == wxT("ChannelMapping"))
-    {
-        OnSettingEventChannelMapping(event);
-    }
 
 }
 
@@ -315,6 +311,10 @@ void IOManager::OnSettingEventServer(SettingEvent& event)
     else if(event.GetKey() == wxT("DNS-SD"))
     {
         DoDNSSD(event.GetValue(false));
+    }
+    else if(event.GetKey() == "ChannelMapping")
+    {
+        OnSettingEventChannelMapping(event);
     }
 }
 
@@ -910,9 +910,9 @@ void IOManager::CreateSessionFromOutput(const wxString& sSource)
 
 void SetChannel(std::vector<subsession::channelGrouping>& vChannels, size_t nChannel, unsigned char nId, subsession::enumChannelGrouping grouping, subsession::enumChannel channel)
 {
-    if(nChannel <= vChannels.size() && nChannel > 0)
+    if(nChannel < vChannels.size())
     {
-        vChannels[nChannel-1] = subsession::channelGrouping(nId, grouping, channel);
+        vChannels[nChannel] = subsession::channelGrouping(nId, grouping, channel);
     }
 }
 
@@ -926,53 +926,50 @@ std::vector<subsession::channelGrouping> IOManager::CreateChannels(unsigned long
     }
     else
     {
+        wxArrayString asMapping = wxStringTokenize(Settings::Get().Read("Server", "ChannelMapping", "ST"), ",");
         unsigned char nGroup = 0;
-        for(int i = 1; i <= nChannels; )
+        int i = 0;
+        for(size_t j = 0; j < asMapping.GetCount(); j++)
         {
-            wxString sValue = Settings::Get().Read("ChannelMapping", wxString::Format("Ch_%d", i), "");
-
-
-            if(sValue == "Mono")
+            if(asMapping[j] == "M")
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::M, subsession::enumChannel::MONO);
-                ++i;
                 ++nGroup;
             }
-            else if(sValue == "U01")
+            else if(asMapping[j] == "U01")
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
-                ++i;
                 ++nGroup;
             }
-            else if(sValue == "Dual Mono")
+            else if(asMapping[j] == "DM")
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::DM, subsession::enumChannel::MONO_1);
                 SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::DM, subsession::enumChannel::MONO_2);
                 i+=2;
                 ++nGroup;
             }
-            else if(sValue == "Stereo")
+            else if(asMapping[j] == "ST")
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::ST, subsession::enumChannel::LEFT);
                 SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::ST, subsession::enumChannel::RIGHT);
                 i+=2;
                 ++nGroup;
             }
-            else if(sValue == "Matrix")
+            else if(asMapping[j] == "LtRt")
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::LtRt, subsession::enumChannel::LEFT_TOTAL);
                 SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::LtRt, subsession::enumChannel::RIGHT_TOTAL);
                 i+=2;
                 ++nGroup;
             }
-            else if(sValue == "U02")
+            else if(asMapping[j] == "U02")
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
                 SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
                 i+=2;
                 ++nGroup;
             }
-            else if(sValue == "U03")
+            else if(asMapping[j] == "U03")
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
                 SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
@@ -981,7 +978,7 @@ std::vector<subsession::channelGrouping> IOManager::CreateChannels(unsigned long
                 i+=3;
                 ++nGroup;
             }
-            else if(sValue == "U04")
+            else if(asMapping[j] == "U04")
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
                 SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
@@ -990,7 +987,7 @@ std::vector<subsession::channelGrouping> IOManager::CreateChannels(unsigned long
                 i+=4;
                 ++nGroup;
             }
-            else if(sValue == "SGRP")
+            else if(asMapping[j] == "SGRP")
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::SGRP, subsession::enumChannel::SDI_1);
                 SetChannel(vChannels, i+2, nGroup, subsession::enumChannelGrouping::SGRP, subsession::enumChannel::SDI_2);
@@ -999,7 +996,7 @@ std::vector<subsession::channelGrouping> IOManager::CreateChannels(unsigned long
                 i+=4;
                 ++nGroup;
             }
-            else if(sValue == "U05")
+            else if(asMapping[j] == "U05")
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
                 SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
@@ -1009,7 +1006,7 @@ std::vector<subsession::channelGrouping> IOManager::CreateChannels(unsigned long
                 i+=5;
                 ++nGroup;
             }
-            else if(sValue == "U06")
+            else if(asMapping[j] == "U06")
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
                 SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
@@ -1020,7 +1017,7 @@ std::vector<subsession::channelGrouping> IOManager::CreateChannels(unsigned long
                 i+=6;
                 ++nGroup;
             }
-            else if(sValue == "5.1")
+            else if(asMapping[j] == "51")
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::LEFT);
                 SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::RIGHT);
@@ -1032,7 +1029,7 @@ std::vector<subsession::channelGrouping> IOManager::CreateChannels(unsigned long
                 i+=6;
                 ++nGroup;
             }
-            else if(sValue == "U07")
+            else if(asMapping[j] == "U07")
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
                 SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
@@ -1045,7 +1042,7 @@ std::vector<subsession::channelGrouping> IOManager::CreateChannels(unsigned long
                 i+=7;
                 ++nGroup;
             }
-            else if(sValue == "7.1")
+            else if(asMapping[j] == "71")
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::LEFT);
                 SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::RIGHT);
@@ -1059,7 +1056,7 @@ std::vector<subsession::channelGrouping> IOManager::CreateChannels(unsigned long
                 i+=8;
                 ++nGroup;
             }
-            else if(sValue == "U08")
+            else if(asMapping[j] == "U08")
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
                 SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
@@ -1071,10 +1068,6 @@ std::vector<subsession::channelGrouping> IOManager::CreateChannels(unsigned long
                 SetChannel(vChannels, i+7, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_8);
                 i+=8;
                 ++nGroup;
-            }
-            else
-            {
-                i++;
             }
         }
     }

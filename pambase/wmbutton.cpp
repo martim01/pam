@@ -835,6 +835,8 @@ void wmButton::ShowPopup()
     {
         SetLabel(aDlg.m_sSelected);
         WriteSetting();
+
+        SendEvent(wxEVT_COMMAND_BUTTON_CLICKED);
     }
 }
 

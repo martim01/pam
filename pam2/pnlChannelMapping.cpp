@@ -193,7 +193,8 @@ pnlChannelMapping::pnlChannelMapping(wxWindow* parent,wxWindowID id,const wxPoin
     m_nChannels = Settings::Get().Read("Server", "Channels", 2);
     ShowChannels();
 
-    ShowButtons();
+    ShowMapping(Settings::Get().Read("Server", "ChannelMapping", "ST"));
+    //ShowButtons();
 
 }
 
@@ -203,13 +204,157 @@ pnlChannelMapping::~pnlChannelMapping()
 	//*)
 }
 
+void pnlChannelMapping::ShowButton(int nButton)
+{
+    if(nButton < 8)
+    {
+        if(m_pbtnCh[nButton]->IsShown() == false)
+        {
+            m_pbtnCh[nButton]->SetLabel("U01");
+            m_pbtnCh[nButton]->Show(true);
+            ShowButton(nButton+1);
+        }
+    }
+}
+
+void pnlChannelMapping::HideButtons(int nButton, int nCount)
+{
+    for(int i = nButton; i < nCount+nButton; i++)
+    {
+        if(i < 8)
+        {
+            m_pbtnCh[i]->SetLabel("");
+            m_pbtnCh[i]->Show(false);
+        }
+    }
+}
+
 void pnlChannelMapping::OnChannelClicked(wxCommandEvent& event)
 {
     for(size_t i = 0; i < 8 ; i++)
     {
-        if(m_pbtnCh[i]->GetLabel() == )
+        if(m_pbtnCh[i]->IsShown())
+        {
+            if(m_pbtnCh[i]->GetLabel() == "Mono")
+            {
+                ShowButton(i+1);
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "U01")
+            {
+                ShowButton(i+1);
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "Dual Mono")
+            {
+                HideButtons(i+1, 1);
+                ShowButton(i+2);
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "Stereo")
+            {
+                HideButtons(i+1, 1);
+                ShowButton(i+2);
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "Matrix")
+            {
+                HideButtons(i+1, 1);
+                ShowButton(i+2);
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "U02")
+            {
+                HideButtons(i+1, 1);
+                ShowButton(i+2);
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "U03")
+            {
+                HideButtons(i+1, 2);
+                ShowButton(i+3);
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "U04")
+            {
+                HideButtons(i+1, 3);
+                ShowButton(i+4);
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "SGRP")
+            {
+                HideButtons(i+1, 3);
+                ShowButton(i+4);
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "U05")
+            {
+                HideButtons(i+1, 4);
+                ShowButton(i+5);
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "U06")
+            {
+                HideButtons(i+1, 5);
+                ShowButton(i+6);
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "5.1")
+            {
+                HideButtons(i+1, 5);
+                ShowButton(i+6);
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "U07")
+            {
+                HideButtons(i+1, 6);
+                ShowButton(i+7);
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "7.1")
+            {
+                HideButtons(i+1, 7);
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "U08")
+            {
+                HideButtons(i+1, 7);
+            }
+        }
     }
+    ShowChannelLabels();
+    SaveSettings();
 }
+
+void pnlChannelMapping::SaveSettings()
+{
+    wxString sMapping, sChannelMapping;
+    for(size_t i = 0; i < 8 ; i++)
+    {
+        if(m_pbtnCh[i]->IsShown())
+        {
+            sMapping = m_pbtnCh[i]->GetLabel();
+            if(sMapping == "Mono")
+            {
+                sMapping = "M";
+            }
+            else if(sMapping == "Dual Mono")
+            {
+                sMapping = "DM";
+            }
+            else if(sMapping == "Stereo")
+            {
+                sMapping = "ST";
+            }
+            else if(sMapping == "Matrix")
+            {
+                sMapping = "LtRt";
+            }
+            else if(sMapping == "5.1")
+            {
+                sMapping = "51";
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "7.1")
+            {
+                sMapping = "71";
+            }
+
+            if(sChannelMapping.empty() == false)
+            {
+                sChannelMapping += ",";
+            }
+            sChannelMapping += sMapping;
+        }
+    }
+    Settings::Get().Write("Server", "ChannelMapping", sChannelMapping);
+}
+
 
 void pnlChannelMapping::OnSettingChanged(SettingEvent& event)
 {
@@ -222,213 +367,254 @@ void pnlChannelMapping::OnSettingChanged(SettingEvent& event)
             ShowChannels();
         }
     }
-
-    if(event.GetKey().BeforeFirst('_') == "Ch" && event.GetKey().AfterFirst('_').ToULong(&nButton))
-    {
-        ShowButtons(event.GetValue(), nButton);
-    }
 }
 
-void pnlChannelMapping::ShowButtons(const wxString& sValue, int nChannel)
+void pnlChannelMapping::ShowMapping(const wxString& sMapping)
 {
-    if(nChannel == 0)
+    wxArrayString asMapping = wxStringTokenize(sMapping, ",");
+    int nButton = 0;
+    for(size_t j = 0; j < asMapping.GetCount() && nButton < 8; j++)
     {
-        return;
+        if(asMapping[j] == "M")
+        {
+            m_pbtnCh[nButton]->Show();
+            m_pbtnCh[nButton]->SetLabel("Mono");
+
+            ++nButton;
+        }
+        else if(asMapping[j] == "U01")
+        {
+            m_pbtnCh[nButton]->Show();
+            m_pbtnCh[nButton]->SetLabel("U01");
+
+            ++nButton;
+        }
+        else if(asMapping[j] == "DM")
+        {
+            m_pbtnCh[nButton]->Show();
+            m_pbtnCh[nButton]->SetLabel("Dual Mono");
+
+            HideButtons(nButton+1, 1);
+            nButton+=2;
+
+        }
+        else if(asMapping[j] == "ST")
+        {
+            m_pbtnCh[nButton]->Show();
+            m_pbtnCh[nButton]->SetLabel("Stereo");
+
+            HideButtons(nButton+1, 1);
+            nButton+=2;
+        }
+        else if(asMapping[j] == "LtRt")
+        {
+            m_pbtnCh[nButton]->Show();
+            m_pbtnCh[nButton]->SetLabel("Matrix");
+
+            HideButtons(nButton+1, 1);
+            nButton+=2;
+        }
+        else if(asMapping[j] == "U02")
+        {
+            m_pbtnCh[nButton]->Show();
+            m_pbtnCh[nButton]->SetLabel("U02");
+
+            HideButtons(nButton+1, 1);
+            nButton+=2;
+        }
+        else if(asMapping[j] == "U03")
+        {
+            m_pbtnCh[nButton]->Show();
+            m_pbtnCh[nButton]->SetLabel("U03");
+
+            HideButtons(nButton+1, 2);
+            nButton+=3;
+        }
+        else if(asMapping[j] == "U04")
+        {
+            m_pbtnCh[nButton]->Show();
+            m_pbtnCh[nButton]->SetLabel("U04");
+
+            HideButtons(nButton+1, 3);
+            nButton+=4;
+        }
+        else if(asMapping[j] == "SGRP")
+        {
+            m_pbtnCh[nButton]->Show();
+            m_pbtnCh[nButton]->SetLabel("SGRP");
+
+            HideButtons(nButton+1, 3);
+            nButton+=4;
+        }
+        else if(asMapping[j] == "U05")
+        {
+            m_pbtnCh[nButton]->Show();
+            m_pbtnCh[nButton]->SetLabel("U02");
+
+            HideButtons(nButton+1, 4);
+            nButton+=5;
+        }
+        else if(asMapping[j] == "U06")
+        {
+            m_pbtnCh[nButton]->Show();
+            m_pbtnCh[nButton]->SetLabel("U06");
+
+            HideButtons(nButton+1, 5);
+            nButton+=6;
+        }
+        else if(asMapping[j] == "51")
+        {
+            m_pbtnCh[nButton]->Show();
+            m_pbtnCh[nButton]->SetLabel("5.1");
+
+            HideButtons(nButton+1, 5);
+            nButton+=6;
+        }
+        else if(asMapping[j] == "U07")
+        {
+            m_pbtnCh[nButton]->Show();
+            m_pbtnCh[nButton]->SetLabel("U07");
+
+            HideButtons(nButton+1, 6);
+            nButton+=7;
+        }
+        else if(asMapping[j] == "71")
+        {
+            m_pbtnCh[nButton]->Show();
+            m_pbtnCh[nButton]->SetLabel("7.1");
+
+            HideButtons(nButton+1, 7);
+            nButton+=8;
+        }
+        else if(asMapping[j] == "U08")
+        {
+            m_pbtnCh[nButton]->Show();
+            m_pbtnCh[nButton]->SetLabel("U08");
+
+            HideButtons(nButton+1, 7);
+            nButton+=8;
+        }
     }
-
-    m_pbtnCh[nChannel-1]->Show(nChannel <= m_nChannels && (sValue.empty() == false));
-
-    if(sValue == "Mono")
-    {
-        ShowButton(nChannel+1);
-
-        m_plblCh[nChannel-1]->SetLabel("M");
-    }
-    else if(sValue == "U01")
-    {
-        ShowButton(nChannel+1);
-
-        m_plblCh[nChannel-1]->SetLabel("U1");
-    }
-    else if(sValue == "Dual Mono")
-    {
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+1), "");
-        ShowButton(nChannel+2);
-
-        m_plblCh[nChannel-1]->SetLabel("M1");
-        m_plblCh[nChannel]->SetLabel("M2");
-    }
-    else if(sValue == "Stereo")
-    {
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+1), "");
-        ShowButton(nChannel+2);
-
-        m_plblCh[nChannel-1]->SetLabel("L");
-        m_plblCh[nChannel]->SetLabel("R");
-    }
-    else if(sValue == "Matrix")
-    {
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+1), "");
-        ShowButton(nChannel+2);
-
-        m_plblCh[nChannel-1]->SetLabel("Lt");
-        m_plblCh[nChannel]->SetLabel("Rt");
-    }
-    else if(sValue == "U02")
-    {
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+1), "");
-        ShowButton(nChannel+2);
-
-        m_plblCh[nChannel-1]->SetLabel("U1");
-        m_plblCh[nChannel]->SetLabel("U2");
-    }
-    else if(sValue == "U03")
-    {
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+1), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+2), "");
-        ShowButton(nChannel+3);
-
-        m_plblCh[nChannel-1]->SetLabel("U1");
-        m_plblCh[nChannel]->SetLabel("U2");
-        m_plblCh[nChannel+1]->SetLabel("U3");
-    }
-    else if(sValue == "U04")
-    {
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+1), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+2), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+3), "");
-        ShowButton(nChannel+4);
-
-        m_plblCh[nChannel-1]->SetLabel("U1");
-        m_plblCh[nChannel]->SetLabel("U2");
-        m_plblCh[nChannel+1]->SetLabel("U3");
-        m_plblCh[nChannel+2]->SetLabel("U4");
-    }
-    else if(sValue == "SGRP")
-    {
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+1), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+2), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+3), "");
-        ShowButton(nChannel+4);
-
-        m_plblCh[nChannel-1]->SetLabel("1");
-        m_plblCh[nChannel]->SetLabel("2");
-        m_plblCh[nChannel+1]->SetLabel("3");
-        m_plblCh[nChannel+2]->SetLabel("4");
-    }
-    else if(sValue == "U05")
-    {
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+1), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+2), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+3), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+4), "");
-        ShowButton(nChannel+5);
-
-        m_plblCh[nChannel-1]->SetLabel("U1");
-        m_plblCh[nChannel]->SetLabel("U2");
-        m_plblCh[nChannel+1]->SetLabel("U3");
-        m_plblCh[nChannel+2]->SetLabel("U4");
-        m_plblCh[nChannel+3]->SetLabel("U5");
-    }
-    else if(sValue == "U06")
-    {
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+1), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+2), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+3), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+4), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+5), "");
-        ShowButton(nChannel+6);
-
-        m_plblCh[nChannel-1]->SetLabel("U1");
-        m_plblCh[nChannel]->SetLabel("U2");
-        m_plblCh[nChannel+1]->SetLabel("U3");
-        m_plblCh[nChannel+2]->SetLabel("U4");
-        m_plblCh[nChannel+3]->SetLabel("U5");
-        m_plblCh[nChannel+4]->SetLabel("U6");
-
-    }
-    else if(sValue == "5.1")
-    {
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+1), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+2), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+3), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+4), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+5), "");
-        ShowButton(nChannel+6);
-
-        m_plblCh[nChannel-1]->SetLabel("L");
-        m_plblCh[nChannel]->SetLabel("R");
-        m_plblCh[nChannel+1]->SetLabel("C");
-        m_plblCh[nChannel+2]->SetLabel("LFE");
-        m_plblCh[nChannel+3]->SetLabel("Ls");
-        m_plblCh[nChannel+4]->SetLabel("Rs");
-    }
-    else if(sValue == "U07")
-    {
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+1), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+2), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+3), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+4), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+5), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+6), "");
-        ShowButton(nChannel+7);
-
-        m_plblCh[nChannel-1]->SetLabel("U1");
-        m_plblCh[nChannel]->SetLabel("U2");
-        m_plblCh[nChannel+1]->SetLabel("U3");
-        m_plblCh[nChannel+2]->SetLabel("U4");
-        m_plblCh[nChannel+3]->SetLabel("U5");
-        m_plblCh[nChannel+4]->SetLabel("U6");
-        m_plblCh[nChannel+5]->SetLabel("U7");
-    }
-    else if(sValue == "7.1")
-    {
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+1), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+2), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+3), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+4), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+5), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+6), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+7), "");
-
-        m_plblCh[nChannel-1]->SetLabel("L");
-        m_plblCh[nChannel]->SetLabel("R");
-        m_plblCh[nChannel+1]->SetLabel("C");
-        m_plblCh[nChannel+2]->SetLabel("LFE");
-        m_plblCh[nChannel+3]->SetLabel("Ls");
-        m_plblCh[nChannel+4]->SetLabel("Rs");
-        m_plblCh[nChannel+5]->SetLabel("Lrs");
-        m_plblCh[nChannel+6]->SetLabel("Rrs");
-    }
-    else if(sValue == "U08")
-    {
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+1), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+2), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+3), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+4), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+5), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+6), "");
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nChannel+7), "");
-        ShowButton(nChannel+8);
-
-        m_plblCh[nChannel-1]->SetLabel("U1");
-        m_plblCh[nChannel]->SetLabel("U2");
-        m_plblCh[nChannel+1]->SetLabel("U3");
-        m_plblCh[nChannel+2]->SetLabel("U4");
-        m_plblCh[nChannel+3]->SetLabel("U5");
-        m_plblCh[nChannel+4]->SetLabel("U6");
-        m_plblCh[nChannel+5]->SetLabel("U7");
-        m_plblCh[nChannel+6]->SetLabel("U8");
-    }
+    ShowChannelLabels();
 }
 
-void pnlChannelMapping::ShowButton(int nButton)
+void pnlChannelMapping::ShowChannelLabels()
 {
-    if(nButton <= 8 && Settings::Get().Read("ChannelMapping", wxString::Format("Ch_%d", nButton), "") == "")
+    for(size_t i = 0; i < 8 ; i++)
     {
-        Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", nButton), "U01");
+        if(m_pbtnCh[i]->IsShown())
+        {
+            if(m_pbtnCh[i]->GetLabel() == "Mono")
+            {
+                m_plblCh[i]->SetLabel("M");
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "U01")
+            {
+                m_plblCh[i]->SetLabel("U1");
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "Dual Mono")
+            {
+                m_plblCh[i]->SetLabel("M1");
+                m_plblCh[i+1]->SetLabel("M2");
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "Stereo")
+            {
+                m_plblCh[i]->SetLabel("L");
+                m_plblCh[i+1]->SetLabel("R");
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "Matrix")
+            {
+                m_plblCh[i]->SetLabel("Lt");
+                m_plblCh[i+1]->SetLabel("Rt");
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "U02")
+            {
+                m_plblCh[i]->SetLabel("U1");
+                m_plblCh[i+1]->SetLabel("U2");
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "U03")
+            {
+                m_plblCh[i]->SetLabel("U1");
+                m_plblCh[i+1]->SetLabel("U2");
+                m_plblCh[i+2]->SetLabel("U3");
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "U04")
+            {
+                m_plblCh[i]->SetLabel("U1");
+                m_plblCh[i+1]->SetLabel("U2");
+                m_plblCh[i+2]->SetLabel("U3");
+                m_plblCh[i+3]->SetLabel("U4");
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "SGRP")
+            {
+                m_plblCh[i]->SetLabel("1");
+                m_plblCh[i+1]->SetLabel("2");
+                m_plblCh[i+2]->SetLabel("3");
+                m_plblCh[i+3]->SetLabel("4");
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "U05")
+            {
+                m_plblCh[i]->SetLabel("U1");
+                m_plblCh[i+1]->SetLabel("U2");
+                m_plblCh[i+2]->SetLabel("U3");
+                m_plblCh[i+3]->SetLabel("U4");
+                m_plblCh[i+4]->SetLabel("U5");
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "U06")
+            {
+                m_plblCh[i]->SetLabel("U1");
+                m_plblCh[i+1]->SetLabel("U2");
+                m_plblCh[i+2]->SetLabel("U3");
+                m_plblCh[i+3]->SetLabel("U4");
+                m_plblCh[i+4]->SetLabel("U5");
+                m_plblCh[i+5]->SetLabel("U6");
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "5.1")
+            {
+                m_plblCh[i]->SetLabel("L");
+                m_plblCh[i+1]->SetLabel("R");
+                m_plblCh[i+2]->SetLabel("C");
+                m_plblCh[i+3]->SetLabel("LFE");
+                m_plblCh[i+4]->SetLabel("Ls");
+                m_plblCh[i+5]->SetLabel("Rs");
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "U07")
+            {
+                m_plblCh[i]->SetLabel("U1");
+                m_plblCh[i+1]->SetLabel("U2");
+                m_plblCh[i+2]->SetLabel("U3");
+                m_plblCh[i+3]->SetLabel("U4");
+                m_plblCh[i+4]->SetLabel("U5");
+                m_plblCh[i+5]->SetLabel("U6");
+                m_plblCh[i+6]->SetLabel("U7");
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "7.1")
+            {
+                m_plblCh[i]->SetLabel("L");
+                m_plblCh[i+1]->SetLabel("R");
+                m_plblCh[i+2]->SetLabel("C");
+                m_plblCh[i+3]->SetLabel("LFE");
+                m_plblCh[i+4]->SetLabel("Ls");
+                m_plblCh[i+5]->SetLabel("Rs");
+                m_plblCh[i+6]->SetLabel("Lrs");
+                m_plblCh[i+7]->SetLabel("Rrs");
+            }
+            else if(m_pbtnCh[i]->GetLabel() == "U08")
+            {
+                m_plblCh[i]->SetLabel("U1");
+                m_plblCh[i+1]->SetLabel("U2");
+                m_plblCh[i+2]->SetLabel("U3");
+                m_plblCh[i+3]->SetLabel("U4");
+                m_plblCh[i+4]->SetLabel("U5");
+                m_plblCh[i+5]->SetLabel("U6");
+                m_plblCh[i+6]->SetLabel("U7");
+                m_plblCh[i+7]->SetLabel("U8");
+            }
+        }
     }
+
 }
+
 
 void pnlChannelMapping::ShowChannels()
 {
