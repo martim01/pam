@@ -50,7 +50,7 @@ pnlAoipManual::pnlAoipManual(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	m_pLbl9->GetUiRect().SetGradient(0);
 	m_pLbl9->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl9->SetBackgroundColour(wxColour(64,0,128));
-	m_pipServer = new wmIpEditPnl(m_ppnlSettings, ID_M_PIP1, wxPoint(110,15), wxSize(200,40));
+	m_pipServer = new wmipeditpnl(m_ppnlSettings, ID_M_PIP1, wxPoint(110,15), wxSize(200,40));
 	m_pipServer->SetValue(wxEmptyString);
 	m_pLbl1 = new wmLabel(m_ppnlSettings, ID_M_PLBL1, _("PORT"), wxPoint(310,15), wxSize(50,40), 0, _T("ID_M_PLBL1"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
