@@ -455,5 +455,5 @@ std::shared_ptr<iniSection> Settings::GetSection(const wxString& sSection)
 
 std::string GetChannelMapping()
 {
-    return Settings::Get().Read("Server", "ChannelMapping", "ST").ToStdString();
+    return Settings::Get().Read("Server", "ChannelMapping", "St").ToStdString();
 }

@@ -931,45 +931,45 @@ std::vector<subsession::channelGrouping> IOManager::CreateChannels(unsigned long
         int i = 0;
         for(size_t j = 0; j < asMapping.GetCount(); j++)
         {
-            if(asMapping[j] == "M")
+            if(asMapping[j].CmpNoCase("M") == 0)
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::M, subsession::enumChannel::MONO);
                 ++nGroup;
             }
-            else if(asMapping[j] == "U01")
+            else if(asMapping[j].CmpNoCase("U01") == 0)
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
                 ++nGroup;
             }
-            else if(asMapping[j] == "DM")
+            else if(asMapping[j].CmpNoCase("DM") == 0)
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::DM, subsession::enumChannel::MONO_1);
                 SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::DM, subsession::enumChannel::MONO_2);
                 i+=2;
                 ++nGroup;
             }
-            else if(asMapping[j] == "ST")
+            else if(asMapping[j].CmpNoCase("St") ==0)
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::ST, subsession::enumChannel::LEFT);
                 SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::ST, subsession::enumChannel::RIGHT);
                 i+=2;
                 ++nGroup;
             }
-            else if(asMapping[j] == "LtRt")
+            else if(asMapping[j].CmpNoCase("LtRt") == 0)
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::LtRt, subsession::enumChannel::LEFT_TOTAL);
                 SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::LtRt, subsession::enumChannel::RIGHT_TOTAL);
                 i+=2;
                 ++nGroup;
             }
-            else if(asMapping[j] == "U02")
+            else if(asMapping[j].CmpNoCase("U02") == 0)
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
                 SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
                 i+=2;
                 ++nGroup;
             }
-            else if(asMapping[j] == "U03")
+            else if(asMapping[j].CmpNoCase("U03") == 0)
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
                 SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
@@ -978,7 +978,7 @@ std::vector<subsession::channelGrouping> IOManager::CreateChannels(unsigned long
                 i+=3;
                 ++nGroup;
             }
-            else if(asMapping[j] == "U04")
+            else if(asMapping[j].CmpNoCase("U04") == 0)
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
                 SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
@@ -987,7 +987,7 @@ std::vector<subsession::channelGrouping> IOManager::CreateChannels(unsigned long
                 i+=4;
                 ++nGroup;
             }
-            else if(asMapping[j] == "SGRP")
+            else if(asMapping[j].CmpNoCase("SGRP") == 0)
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::SGRP, subsession::enumChannel::SDI_1);
                 SetChannel(vChannels, i+2, nGroup, subsession::enumChannelGrouping::SGRP, subsession::enumChannel::SDI_2);
@@ -996,7 +996,7 @@ std::vector<subsession::channelGrouping> IOManager::CreateChannels(unsigned long
                 i+=4;
                 ++nGroup;
             }
-            else if(asMapping[j] == "U05")
+            else if(asMapping[j].CmpNoCase("U05") == 0)
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
                 SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
@@ -1006,7 +1006,7 @@ std::vector<subsession::channelGrouping> IOManager::CreateChannels(unsigned long
                 i+=5;
                 ++nGroup;
             }
-            else if(asMapping[j] == "U06")
+            else if(asMapping[j].CmpNoCase("U06") == 0)
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
                 SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
@@ -1017,7 +1017,7 @@ std::vector<subsession::channelGrouping> IOManager::CreateChannels(unsigned long
                 i+=6;
                 ++nGroup;
             }
-            else if(asMapping[j] == "51")
+            else if(asMapping[j].CmpNoCase("51") == 0)
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::LEFT);
                 SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::RIGHT);
@@ -1029,7 +1029,7 @@ std::vector<subsession::channelGrouping> IOManager::CreateChannels(unsigned long
                 i+=6;
                 ++nGroup;
             }
-            else if(asMapping[j] == "U07")
+            else if(asMapping[j].CmpNoCase("U07") == 0)
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
                 SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
@@ -1056,7 +1056,7 @@ std::vector<subsession::channelGrouping> IOManager::CreateChannels(unsigned long
                 i+=8;
                 ++nGroup;
             }
-            else if(asMapping[j] == "U08")
+            else if(asMapping[j].CmpNoCase("U08") == 0)
             {
                 SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
                 SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);

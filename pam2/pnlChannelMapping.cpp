@@ -194,7 +194,7 @@ pnlChannelMapping::pnlChannelMapping(wxWindow* parent,const wxString& sSection, 
     m_nChannels = Settings::Get().Read(m_sSection, "Channels", 2);
     ShowChannels();
 
-    ShowMapping(Settings::Get().Read(m_sSection, "ChannelMapping", "ST"));
+    ShowMapping(Settings::Get().Read(m_sSection, "ChannelMapping", "St"));
     //ShowButtons();
 
 }
@@ -207,7 +207,7 @@ pnlChannelMapping::~pnlChannelMapping()
 
 void pnlChannelMapping::ShowButton(int nButton)
 {
-    if(nButton < 8)
+    if(nButton < m_nChannels)
     {
         if(m_pbtnCh[nButton]->IsShown() == false)
         {
@@ -232,7 +232,7 @@ void pnlChannelMapping::HideButtons(int nButton, int nCount)
 
 void pnlChannelMapping::OnChannelClicked(wxCommandEvent& event)
 {
-    for(size_t i = 0; i < 8 ; i++)
+    for(size_t i = 0; i < m_nChannels ; i++)
     {
         if(m_pbtnCh[i]->IsShown())
         {
@@ -316,7 +316,7 @@ void pnlChannelMapping::OnChannelClicked(wxCommandEvent& event)
 void pnlChannelMapping::SaveSettings()
 {
     wxString sMapping, sChannelMapping;
-    for(size_t i = 0; i < 8 ; i++)
+    for(size_t i = 0; i < m_nChannels ; i++)
     {
         if(m_pbtnCh[i]->IsShown())
         {
@@ -331,7 +331,7 @@ void pnlChannelMapping::SaveSettings()
             }
             else if(sMapping == "Stereo")
             {
-                sMapping = "ST";
+                sMapping = "St";
             }
             else if(sMapping == "Matrix")
             {
@@ -366,6 +366,7 @@ void pnlChannelMapping::OnSettingChanged(SettingEvent& event)
         {
             m_nChannels = event.GetValue(2l);
             ShowChannels();
+            ShowMapping(Settings::Get().Read(m_sSection, "ChannelMapping", "St"));
         }
     }
 }
@@ -374,23 +375,23 @@ void pnlChannelMapping::ShowMapping(const wxString& sMapping)
 {
     wxArrayString asMapping = wxStringTokenize(sMapping, ",");
     int nButton = 0;
-    for(size_t j = 0; j < asMapping.GetCount() && nButton < 8; j++)
+    for(size_t j = 0; j < asMapping.GetCount() && nButton < m_nChannels; j++)
     {
-        if(asMapping[j] == "M")
+        if(asMapping[j].CmpNoCase("M") == 0)
         {
             m_pbtnCh[nButton]->Show();
             m_pbtnCh[nButton]->SetLabel("Mono");
 
             ++nButton;
         }
-        else if(asMapping[j] == "U01")
+        else if(asMapping[j].CmpNoCase("U01") == 0)
         {
             m_pbtnCh[nButton]->Show();
             m_pbtnCh[nButton]->SetLabel("U01");
 
             ++nButton;
         }
-        else if(asMapping[j] == "DM")
+        else if(asMapping[j].CmpNoCase("DM") == 0)
         {
             m_pbtnCh[nButton]->Show();
             m_pbtnCh[nButton]->SetLabel("Dual Mono");
@@ -399,7 +400,7 @@ void pnlChannelMapping::ShowMapping(const wxString& sMapping)
             nButton+=2;
 
         }
-        else if(asMapping[j] == "ST")
+        else if(asMapping[j].CmpNoCase("ST") == 0)
         {
             m_pbtnCh[nButton]->Show();
             m_pbtnCh[nButton]->SetLabel("Stereo");
@@ -407,7 +408,7 @@ void pnlChannelMapping::ShowMapping(const wxString& sMapping)
             HideButtons(nButton+1, 1);
             nButton+=2;
         }
-        else if(asMapping[j] == "LtRt")
+        else if(asMapping[j].CmpNoCase("LtRt") == 0)
         {
             m_pbtnCh[nButton]->Show();
             m_pbtnCh[nButton]->SetLabel("Matrix");
@@ -415,7 +416,7 @@ void pnlChannelMapping::ShowMapping(const wxString& sMapping)
             HideButtons(nButton+1, 1);
             nButton+=2;
         }
-        else if(asMapping[j] == "U02")
+        else if(asMapping[j].CmpNoCase("U02") == 0)
         {
             m_pbtnCh[nButton]->Show();
             m_pbtnCh[nButton]->SetLabel("U02");
@@ -423,7 +424,7 @@ void pnlChannelMapping::ShowMapping(const wxString& sMapping)
             HideButtons(nButton+1, 1);
             nButton+=2;
         }
-        else if(asMapping[j] == "U03")
+        else if(asMapping[j].CmpNoCase("U03") == 0)
         {
             m_pbtnCh[nButton]->Show();
             m_pbtnCh[nButton]->SetLabel("U03");
@@ -431,7 +432,7 @@ void pnlChannelMapping::ShowMapping(const wxString& sMapping)
             HideButtons(nButton+1, 2);
             nButton+=3;
         }
-        else if(asMapping[j] == "U04")
+        else if(asMapping[j].CmpNoCase("U04") == 0)
         {
             m_pbtnCh[nButton]->Show();
             m_pbtnCh[nButton]->SetLabel("U04");
@@ -439,7 +440,7 @@ void pnlChannelMapping::ShowMapping(const wxString& sMapping)
             HideButtons(nButton+1, 3);
             nButton+=4;
         }
-        else if(asMapping[j] == "SGRP")
+        else if(asMapping[j].CmpNoCase("SGRP") == 0)
         {
             m_pbtnCh[nButton]->Show();
             m_pbtnCh[nButton]->SetLabel("SGRP");
@@ -447,7 +448,7 @@ void pnlChannelMapping::ShowMapping(const wxString& sMapping)
             HideButtons(nButton+1, 3);
             nButton+=4;
         }
-        else if(asMapping[j] == "U05")
+        else if(asMapping[j].CmpNoCase("U05") == 0)
         {
             m_pbtnCh[nButton]->Show();
             m_pbtnCh[nButton]->SetLabel("U02");
@@ -455,7 +456,7 @@ void pnlChannelMapping::ShowMapping(const wxString& sMapping)
             HideButtons(nButton+1, 4);
             nButton+=5;
         }
-        else if(asMapping[j] == "U06")
+        else if(asMapping[j].CmpNoCase("U06") == 0)
         {
             m_pbtnCh[nButton]->Show();
             m_pbtnCh[nButton]->SetLabel("U06");
@@ -463,7 +464,7 @@ void pnlChannelMapping::ShowMapping(const wxString& sMapping)
             HideButtons(nButton+1, 5);
             nButton+=6;
         }
-        else if(asMapping[j] == "51")
+        else if(asMapping[j].CmpNoCase("51") == 0)
         {
             m_pbtnCh[nButton]->Show();
             m_pbtnCh[nButton]->SetLabel("5.1");
@@ -471,7 +472,7 @@ void pnlChannelMapping::ShowMapping(const wxString& sMapping)
             HideButtons(nButton+1, 5);
             nButton+=6;
         }
-        else if(asMapping[j] == "U07")
+        else if(asMapping[j].CmpNoCase("U07") == 0)
         {
             m_pbtnCh[nButton]->Show();
             m_pbtnCh[nButton]->SetLabel("U07");
@@ -479,7 +480,7 @@ void pnlChannelMapping::ShowMapping(const wxString& sMapping)
             HideButtons(nButton+1, 6);
             nButton+=7;
         }
-        else if(asMapping[j] == "71")
+        else if(asMapping[j].CmpNoCase("71") == 0)
         {
             m_pbtnCh[nButton]->Show();
             m_pbtnCh[nButton]->SetLabel("7.1");
@@ -487,7 +488,7 @@ void pnlChannelMapping::ShowMapping(const wxString& sMapping)
             HideButtons(nButton+1, 7);
             nButton+=8;
         }
-        else if(asMapping[j] == "U08")
+        else if(asMapping[j].CmpNoCase("U08") == 0)
         {
             m_pbtnCh[nButton]->Show();
             m_pbtnCh[nButton]->SetLabel("U08");
@@ -501,7 +502,7 @@ void pnlChannelMapping::ShowMapping(const wxString& sMapping)
 
 void pnlChannelMapping::ShowChannelLabels()
 {
-    for(size_t i = 0; i < 8 ; i++)
+    for(size_t i = 0; i < m_nChannels ; i++)
     {
         if(m_pbtnCh[i]->IsShown())
         {
@@ -622,14 +623,8 @@ void pnlChannelMapping::ShowChannels()
     for(unsigned long i = 0; i < 8; i++)
     {
         m_pLbl[i]->Show(i < m_nChannels);
-
         m_plblCh[i]->Show(i < m_nChannels);
-
-        //if(i >= m_nChannels)
-        //{
-        //    Settings::Get().Write("ChannelMapping", wxString::Format("Ch_%d", i+1), "");
-        //}
-        m_pbtnCh[i]->Show(i < m_nChannels && Settings::Get().Read("ChannelMapping", wxString::Format("Ch_%d", i+1), "")!="");
+        m_pbtnCh[i]->Show(i < m_nChannels);
 
         std::vector<wxString> vPopup;
         for(auto pairMap : MAPPING)

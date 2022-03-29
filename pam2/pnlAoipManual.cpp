@@ -168,7 +168,7 @@ wxString pnlAoipManual::CreateSDP()
          << "c=IN IP4 " << Settings::Get().Read("ManualAoip","Source", "0.0.0.0") << "/255\r\n"
          << "a=rtpmap:" << Settings::Get().Read("ManualAoip","RtpMap", "96") <<" L" << Settings::Get().Read("ManualAoip","Bits", "24") << "/" << Settings::Get().Read("ManualAoIp", "SampleRate", "48000") << "/"
          << Settings::Get().Read("ManualAoIp", "Channels", "2") << "\r\n"
-         << "a=fmtp:" << Settings::Get().Read("ManualAoip","RtpMap", "96") << " channel-order=SMPTE2110.(" << Settings::Get().Read("ManualAoip","ChannelMapping", "ST") << ")\r\n"
+         << "a=fmtp:" << Settings::Get().Read("ManualAoip","RtpMap", "96") << " channel-order=SMPTE2110.(" << Settings::Get().Read("ManualAoip","ChannelMapping", "St") << ")\r\n"
          << "a=mediaclk:direct=0\r\n";
         //@todo grandmaster if we have one
     return sSdp;

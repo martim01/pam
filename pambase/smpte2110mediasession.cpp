@@ -784,7 +784,7 @@ void Smpte2110MediaSubsession::parseSDPAttribute_Channels()
 
                 nChannel+=2;
             }
-            else if(asChannels[i].CmpNoCase("ST") == 0)
+            else if(asChannels[i].CmpNoCase("St") == 0)
             {
                 m_channels[nChannel] = subsession::channelGrouping(i, subsession::enumChannelGrouping::ST, subsession::enumChannel::LEFT);
                 m_channels[nChannel+1] = subsession::channelGrouping(i, subsession::enumChannelGrouping::ST, subsession::enumChannel::RIGHT);
