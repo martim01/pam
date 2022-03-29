@@ -201,7 +201,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pbtnChannels->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnChannels->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnChannels->SetColourDisabled(wxColour(wxT("#B0B0B0")));
-	m_pbtnMapping = new wmButton(pnlAoipSettings, ID_M_PBTN13, _("Order"), wxPoint(253,110), wxSize(60,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN13"));
+	m_pbtnMapping = new wmButton(pnlAoipSettings, ID_M_PBTN13, _("Mapping"), wxPoint(253,110), wxSize(60,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN13"));
 	m_pbtnMapping->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnMapping->SetBackgroundColour(wxColour(163,211,211));
 	m_pbtnMapping->SetColourDisabled(wxColour(wxT("#B0B0B0")));
@@ -229,7 +229,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pbtnRtpMap->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnRtpMap->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnRtpMap->SetColourDisabled(wxColour(wxT("#B0B0B0")));
-	m_ppnlMapping = new pnlChannelMapping(m_pswpAoIP, ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL1"));
+	m_ppnlMapping = new pnlChannelMapping(m_pswpAoIP, "Server", ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL1"));
 	m_pswpAoIP->AddPage(pnlAoipSettings, _("Settings"), false);
 	m_pswpAoIP->AddPage(m_ppnlMapping, _("Mapping"), false);
 	m_pswpDestination->AddPage(pnlDisabled, _("Disabled"), false);

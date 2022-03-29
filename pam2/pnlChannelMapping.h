@@ -13,7 +13,7 @@ class pnlChannelMapping: public wxPanel
 {
 	public:
 
-		pnlChannelMapping(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, long nStyle=0, wxString sNotused=wxEmptyString);
+		pnlChannelMapping(wxWindow* parent, const wxString& sSection, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, long nStyle=0, wxString sNotused=wxEmptyString);
 		virtual ~pnlChannelMapping();
 
 		wmButton* m_pbtnBack;
@@ -70,6 +70,7 @@ class pnlChannelMapping: public wxPanel
 
 
         void ShowChannels();
+        wxString m_sSection;
         unsigned int m_nChannels;
 
         static const std::multimap<unsigned int, wxString> MAPPING;

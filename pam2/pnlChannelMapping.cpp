@@ -54,7 +54,8 @@ BEGIN_EVENT_TABLE(pnlChannelMapping,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlChannelMapping::pnlChannelMapping(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size, long nStyle, wxString sNotused)
+pnlChannelMapping::pnlChannelMapping(wxWindow* parent,const wxString& sSection, wxWindowID id,const wxPoint& pos,const wxSize& size, long nStyle, wxString sNotused) :
+    m_sSection(sSection)
 {
 	Create(parent, id, wxDefaultPosition, wxSize(600,400), wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
@@ -179,8 +180,8 @@ pnlChannelMapping::pnlChannelMapping(wxWindow* parent,wxWindowID id,const wxPoin
 
 
 
-	Settings::Get().AddHandler(this, "Server", "ChannelMapping");
-	Settings::Get().AddHandler(this, "Server", "Channels");
+	Settings::Get().AddHandler(this, m_sSection, "ChannelMapping");
+	Settings::Get().AddHandler(this, m_sSection, "Channels");
 
 
 	Bind(wxEVT_SETTING_CHANGED, &pnlChannelMapping::OnSettingChanged, this);
@@ -190,10 +191,10 @@ pnlChannelMapping::pnlChannelMapping(wxWindow* parent,wxWindowID id,const wxPoin
         Bind(wxEVT_COMMAND_BUTTON_CLICKED, &pnlChannelMapping::OnChannelClicked, this, m_pbtnCh[i]->GetId());
     }
 
-    m_nChannels = Settings::Get().Read("Server", "Channels", 2);
+    m_nChannels = Settings::Get().Read(m_sSection, "Channels", 2);
     ShowChannels();
 
-    ShowMapping(Settings::Get().Read("Server", "ChannelMapping", "ST"));
+    ShowMapping(Settings::Get().Read(m_sSection, "ChannelMapping", "ST"));
     //ShowButtons();
 
 }
@@ -352,14 +353,14 @@ void pnlChannelMapping::SaveSettings()
             sChannelMapping += sMapping;
         }
     }
-    Settings::Get().Write("Server", "ChannelMapping", sChannelMapping);
+    Settings::Get().Write(m_sSection, "ChannelMapping", sChannelMapping);
 }
 
 
 void pnlChannelMapping::OnSettingChanged(SettingEvent& event)
 {
     unsigned long nButton;
-    if(event.GetSection() == "Server")
+    if(event.GetSection() == m_sSection)
     {
         if(event.GetKey() == "Channels")
         {
