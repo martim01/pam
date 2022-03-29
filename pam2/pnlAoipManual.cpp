@@ -24,6 +24,7 @@ const long pnlAoipManual::ID_M_PBTN2 = wxNewId();
 const long pnlAoipManual::ID_M_PBTN13 = wxNewId();
 const long pnlAoipManual::ID_M_PKBD2 = wxNewId();
 const long pnlAoipManual::ID_M_PBTN3 = wxNewId();
+const long pnlAoipManual::ID_M_PBTN5 = wxNewId();
 const long pnlAoipManual::ID_M_PLBL11 = wxNewId();
 const long pnlAoipManual::ID_M_PBTN4 = wxNewId();
 const long pnlAoipManual::ID_PANEL1 = wxNewId();
@@ -92,6 +93,8 @@ pnlAoipManual::pnlAoipManual(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	m_pbtnStream = new wmButton(m_ppnlSettings, ID_M_PBTN3, _("Receive"), wxPoint(260,161), wxSize(268,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
 	m_pbtnStream->SetBackgroundColour(wxColour(0,128,0));
 	m_pbtnStream->SetToggle(true, wxT("Stop"), wxT("Start"), 40);
+	m_pbtnSave = new wmButton(m_ppnlSettings, ID_M_PBTN5, _("Save"), wxPoint(340,315), wxSize(100,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN5"));
+	m_pbtnSave->SetBackgroundColour(wxColour(0,128,0));
 	m_pLbl8 = new wmLabel(m_ppnlSettings, ID_M_PLBL11, _("RTP Payload"), wxPoint(310,105), wxSize(70,40), 0, _T("ID_M_PLBL11"));
 	m_pLbl8->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl8->GetUiRect().SetGradient(0);
@@ -109,6 +112,7 @@ pnlAoipManual::pnlAoipManual(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoipManual::OnbtnChannelsClick);
 	Connect(ID_M_PBTN13,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoipManual::OnbtnMappingClick);
 	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoipManual::OnbtnStreamClick);
+	Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoipManual::OnbtnSaveClick);
 	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlAoipManual::OnbtnRtpMapClick);
 	//*)
 	SetSize(size);

@@ -123,6 +123,17 @@
 						<style>wmButton::STYLE_SELECT</style>
 						<handler function="OnbtnStreamClick" entry="EVT_BUTTON" />
 					</object>
+					<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnSave" member="yes">
+						<label>Save</label>
+						<toggle_left>Stop</toggle_left>
+						<toggle_right>Start</toggle_right>
+						<toggle_percent>40</toggle_percent>
+						<pos>340,315</pos>
+						<size>100,40</size>
+						<bg>#008000</bg>
+						<style>wmButton::STYLE_SELECT</style>
+						<handler function="OnbtnSaveClick" entry="EVT_BUTTON" />
+					</object>
 					<object class="wmLabel" name="ID_M_PLBL11" variable="m_pLbl8" member="yes">
 						<label>RTP Payload</label>
 						<pos>310,105</pos>
