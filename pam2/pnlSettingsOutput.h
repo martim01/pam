@@ -2,6 +2,7 @@
 #define PNLSETTINGSOUTPUT_H
 
 //(*Headers(pnlSettingsOutput)
+#include "pnlChannelMapping.h"
 #include "wmbutton.h"
 #include "wmedit.h"
 #include "wmkeyboard.h"
@@ -111,7 +112,7 @@ class pnlSettingsOutput: public wxPanel
 		static const long ID_M_PLBL11;
 		static const long ID_M_PBTN4;
 		static const long ID_PANEL11;
-		static const long ID_PANEL1;
+		static const long ID_CHANNEL_MAPPING;
 		static const long ID_M_PSWP1;
 		static const long ID_PANEL2;
 		static const long ID_M_PSWP2;

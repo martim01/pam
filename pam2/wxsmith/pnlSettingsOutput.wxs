@@ -405,7 +405,11 @@
 							<label>Settings</label>
 						</object>
 						<object class="wmSwitcherPanelpage">
-							<object class="wxPanel" name="ID_PANEL1" subclass="pnlChannelMapping" variable="m_ppnlMapping" member="yes" />
+							<object class="Custom" name="ID_CHANNEL_MAPPING" subclass="pnlChannelMapping" variable="m_ppnlMapping" member="yes">
+								<creating_code>$(THIS) = new $(CLASS)($(PARENT),&quot;Server&quot;,$(ID),$(POS),$(SIZE));</creating_code>
+								<include_file>pnlChannelMapping.h</include_file>
+								<local_include>1</local_include>
+							</object>
 							<label>Mapping</label>
 						</object>
 					</object>

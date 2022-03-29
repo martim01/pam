@@ -54,7 +54,7 @@ const long pnlSettingsOutput::ID_M_PBTN11 = wxNewId();
 const long pnlSettingsOutput::ID_M_PLBL11 = wxNewId();
 const long pnlSettingsOutput::ID_M_PBTN4 = wxNewId();
 const long pnlSettingsOutput::ID_PANEL11 = wxNewId();
-const long pnlSettingsOutput::ID_PANEL1 = wxNewId();
+const long pnlSettingsOutput::ID_CHANNEL_MAPPING = wxNewId();
 const long pnlSettingsOutput::ID_M_PSWP1 = wxNewId();
 const long pnlSettingsOutput::ID_PANEL2 = wxNewId();
 const long pnlSettingsOutput::ID_M_PSWP2 = wxNewId();
@@ -188,7 +188,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pbtnSAP->SetToggle(true, wxT("Off"), wxT("On"), 60);
 	m_pbtnStream = new wmButton(pnlAoipSettings, ID_M_PBTN3, _("Stream"), wxPoint(260,175), wxSize(330,35), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
 	m_pbtnStream->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnStream->SetToggle(true, wxT("OnDemand"), wxT("AlwaysOn"), 40);
+	m_pbtnStream->SetToggle(true, wxT("On Demand"), wxT("Always On"), 40);
 	m_pbtnActive = new wmButton(pnlAoipSettings, ID_M_PBTN1, _("Server"), wxPoint(260,215), wxSize(330,35), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnActive->SetBackgroundColour(wxColour(0,128,0));
 	m_pbtnActive->SetToggle(true, wxT("Inactive"), wxT("Active"), 40);
@@ -229,7 +229,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pbtnRtpMap->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnRtpMap->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnRtpMap->SetColourDisabled(wxColour(wxT("#B0B0B0")));
-	m_ppnlMapping = new pnlChannelMapping(m_pswpAoIP, "Server", ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL1"));
+	m_ppnlMapping = new pnlChannelMapping(m_pswpAoIP,"Server",ID_CHANNEL_MAPPING,wxDefaultPosition,wxDefaultSize);
 	m_pswpAoIP->AddPage(pnlAoipSettings, _("Settings"), false);
 	m_pswpAoIP->AddPage(m_ppnlMapping, _("Mapping"), false);
 	m_pswpDestination->AddPage(pnlDisabled, _("Disabled"), false);
