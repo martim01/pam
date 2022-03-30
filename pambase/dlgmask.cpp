@@ -33,6 +33,8 @@ dlgMask::dlgMask(wxWindow* parent, const wxArrayString& asButtons, const wxStrin
 	Connect(wxEVT_LEFT_DOWN,(wxObjectEventFunction)&dlgMask::OnLeftDown);
     Connect(wxEVT_ACTIVATE, (wxObjectEventFunction)&dlgMask::OnActivate);
 
+    Connect(wxEVT_INIT_DIALOG, (wxObjectEventFunction)&dlgMask::OnInit);
+
 
     for(size_t i = 0; i < asButtons.GetCount(); i++)
     {
@@ -62,6 +64,7 @@ dlgMask::dlgMask(wxWindow* parent, const std::vector<wxString>& vButtons, const 
 	Connect(wxEVT_LEFT_DOWN,(wxObjectEventFunction)&dlgMask::OnLeftDown);
 	//*)
     Connect(wxEVT_ACTIVATE, (wxObjectEventFunction)&dlgMask::OnActivate);
+    Connect(wxEVT_SHOW, (wxObjectEventFunction)&dlgMask::OnShow);
 
 
     for(const auto& sOption : vButtons)
@@ -71,6 +74,8 @@ dlgMask::dlgMask(wxWindow* parent, const std::vector<wxString>& vButtons, const 
     m_sSelected = sSelected;
 
     m_plstSubnet->SelectButton(m_sSelected, false);
+    //m_plstSubnet->Show(false);
+    SetBackgroundColour(*wxBLACK);
 
 //    SetPosition(m_pntWindow);
 
@@ -89,6 +94,17 @@ dlgMask::~dlgMask()
 void dlgMask::OnActivate(wxActivateEvent& event)
 {
     CaptureMouse();
+//    CenterOnParent();
+//
+//    wxPoint pnt  = GetPosition();
+//    if(pnt.y < 0)
+//    {
+//        Move(pnt.x, 0);
+//    }
+}
+
+void dlgMask::OnShow(wxShowEvent& event)
+{
     CenterOnParent();
 
     wxPoint pnt  = GetPosition();
@@ -96,11 +112,21 @@ void dlgMask::OnActivate(wxActivateEvent& event)
     {
         Move(pnt.x, 0);
     }
-    //SetPosition(wxPoint(pnt.x, pnt.y-GetSize().y/2));
-
-
-
+//    m_plstSubnet->Show();
 }
+
+void dlgMask::OnInit(wxInitDialogEvent& event)
+{
+    CenterOnParent();
+
+    wxPoint pnt  = GetPosition();
+    if(pnt.y < 0)
+    {
+        Move(pnt.x, 0);
+    }
+}
+
+
 void dlgMask::OnlstSubnetSelected(wxCommandEvent& event)
 {
     m_sSelected = event.GetString();

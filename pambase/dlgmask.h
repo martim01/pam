@@ -28,6 +28,8 @@ class dlgMask: public wxDialog
 		//*)
 
 		void OnActivate(wxActivateEvent& event);
+		void OnInit(wxInitDialogEvent& event);
+		void OnShow(wxShowEvent& event);
 	private:
 
 		//(*Handlers(dlgMask)
