@@ -830,7 +830,10 @@ void wmButton::SetPopup(const std::vector<wxString>& vOptions, const std::vector
 
 void wmButton::ShowPopup()
 {
-    dlgMask aDlg(GetParent(), m_vPopupOptions, GetLabel(), wxNewId(), ClientToScreen(GetPosition()), GetSize());
+    wxPoint pnt = ClientToScreen(GetPosition());
+    dlgMask aDlg(this, m_vPopupOptions, GetLabel(), wxNewId(), pnt, GetSize());
+
+
     if(aDlg.ShowModal()== wxID_OK)
     {
         SetLabel(aDlg.m_sSelected);
