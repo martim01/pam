@@ -1,5 +1,4 @@
 #include "dlgmask.h"
-#include "log.h"
 
 //(*InternalHeaders(dlgMask)
 #include <wx/intl.h>
@@ -18,11 +17,11 @@ END_EVENT_TABLE()
 
 dlgMask::dlgMask(wxWindow* parent, const wxArrayString& asButtons, const wxString& sSelected, wxWindowID id,const wxPoint& pos,const wxSize& size) : m_pntWindow(pos)
 {
-	unsigned long nHeight = asButtons.GetCount()*41;
+	unsigned long nHeight = asButtons.GetCount()*42;
 
 
-	Create(parent, id, wxEmptyString, pos, wxSize(size.x, std::min((unsigned long)480, nHeight+4)), wxNO_BORDER, _T("id"));
-    m_plstSubnet = new wmList(this, ID_M_PLST1, wxPoint(2,2), wxSize(size.x-4,GetSize().y-4), wmList::STYLE_SELECT, 1, wxSize(-1,40), 1, wxSize(2,2));
+	Create(parent, id, wxEmptyString, pos, wxSize(size.x, std::min((unsigned long)480, nHeight+2)), wxNO_BORDER, _T("id"));
+    m_plstSubnet = new wmList(this, ID_M_PLST1, wxPoint(2,2), wxSize(size.x-4,GetSize().y-2), wmList::STYLE_SELECT, 1, wxSize(-1,40), 1, wxSize(2,2));
 	m_plstSubnet->SetBackgroundColour(wxColour(0,0,0));
 	m_plstSubnet->SetGradient(128);
 	m_plstSubnet->SetButtonColour(wxColour(wxT("#FFFFFF")));
@@ -32,7 +31,6 @@ dlgMask::dlgMask(wxWindow* parent, const wxArrayString& asButtons, const wxStrin
 
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&dlgMask::OnlstSubnetSelected);
 	Connect(wxEVT_LEFT_DOWN,(wxObjectEventFunction)&dlgMask::OnLeftDown);
-	//*)
     Connect(wxEVT_ACTIVATE, (wxObjectEventFunction)&dlgMask::OnActivate);
 
 
@@ -40,21 +38,19 @@ dlgMask::dlgMask(wxWindow* parent, const wxArrayString& asButtons, const wxStrin
     {
         m_plstSubnet->AddButton(asButtons[i]);
     }
-   m_sSelected = sSelected;
+    m_sSelected = sSelected;
 
     m_plstSubnet->SelectButton(m_sSelected, false);
-    //m_plstSubnet->ShowButton(m_plstSubnet->FindButton(m_sSelected), wmList::MIDDLE, false);
-    //m_plstSubnet->Refresh();
 
 }
 
 dlgMask::dlgMask(wxWindow* parent, const std::vector<wxString>& vButtons, const wxString& sSelected, wxWindowID id,const wxPoint& pos,const wxSize& size) : m_pntWindow(pos)
 {
-	unsigned long nHeight = vButtons.size()*41;
+	unsigned long nHeight = vButtons.size()*42;
 
 
-	Create(parent, id, wxEmptyString, pos, wxSize(size.x, std::min((unsigned long)480, nHeight+4)), wxNO_BORDER, _T("id"));
-    m_plstSubnet = new wmList(this, ID_M_PLST1, wxPoint(2,2), wxSize(size.x-4,GetSize().y-4), wmList::STYLE_SELECT, 1, wxSize(-1,40), 1, wxSize(2,2));
+	Create(parent, id, wxEmptyString, pos, wxSize(size.x, std::min((unsigned long)480, nHeight+2)), wxNO_BORDER, _T("id"));
+    m_plstSubnet = new wmList(this, ID_M_PLST1, wxPoint(2,2), wxSize(size.x-4,GetSize().y-2), wmList::STYLE_SELECT, 1, wxSize(-1,40), 1, wxSize(2,2));
 	m_plstSubnet->SetBackgroundColour(wxColour(0,0,0));
 	m_plstSubnet->SetGradient(128);
 	m_plstSubnet->SetButtonColour(wxColour(wxT("#FFFFFF")));
