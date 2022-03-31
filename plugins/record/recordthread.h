@@ -4,7 +4,6 @@
 #include <queue>
 #include <atomic>
 #include <memory>
-
 class timedbuffer;
 
 class RecordThread : public wxThread
@@ -30,5 +29,5 @@ class RecordThread : public wxThread
         std::vector<unsigned char> m_vChannels;
         std::atomic<bool> m_bLoop;
 
-        std::queue<timedbuffer*> m_queueBuffer;
+        std::queue<std::shared_ptr<const timedbuffer>> m_queueBuffer;
 };

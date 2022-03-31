@@ -6,7 +6,7 @@
 #include "timedbuffer.h"
 #include "levelcalculator.h"
 #include "ppmtypes.h"
-
+#include "settings.h"
 //(*InternalHeaders(pnlAngleMeters)
 #include <wx/intl.h>
 #include <wx/string.h>
@@ -90,16 +90,22 @@ void pnlAngleMeters::CreateMeters()
         if(m_nInputChannels != 2) //not stereo
         {
             m_vMeters.resize(m_nInputChannels);
-            m_vMonitor.resize(m_nInputChannels);
+            if(Settings::Get().Read("Monitor","Source",0) == 0)
+            {
+                m_vMonitor.resize(m_nInputChannels);
+            }
 
             for(unsigned long i = 0; i < m_vMeters.size(); i++)
             {
                 m_vMeters[i] = new AngleMeter(this, wxID_ANY, wxString::Format(wxT("Channel %lu"),i), -70.0, AngleMeter::MONO, i, wxPoint(x,y), wxSize(180,150));
                 m_vMeters[i]->SetInputChannels(m_nInputChannels);
 
-                m_vMonitor[i] = new wmButton(this, wxNewId(), wxT("Monitor"), wxPoint(x, y+155), wxSize(180, 35));
-                m_vMonitor[i]->SetBackgroundColour(wxColour(80,70,180));
-                m_vMonitor[i]->SetIntData(i);
+                if(Settings::Get().Read("Monitor","Source",0) == 0)
+                {
+                    m_vMonitor[i] = new wmButton(this, wxNewId(), wxT("Monitor"), wxPoint(x, y+155), wxSize(180, 35));
+                    m_vMonitor[i]->SetBackgroundColour(wxColour(80,70,180));
+                    m_vMonitor[i]->SetIntData(i);
+                }
 
                 x+= 190;
                 if(i == 3)
@@ -128,15 +134,21 @@ void pnlAngleMeters::CreateMeters()
         if(m_nInputChannels != 2)
         {
             m_vMeters.resize(m_nInputChannels/2);
-            m_vMonitor.resize(m_nInputChannels/2);
+            if(Settings::Get().Read("Monitor","Source",0) == 0)
+            {
+                m_vMonitor.resize(m_nInputChannels/2);
+            }
 
             for(unsigned long i = 0; i < m_vMeters.size(); i++)
             {
                 m_vMeters[i] = new AngleMeter(this, wxID_ANY, wxString::Format(wxT("Channel %lu"),i), -70.0, AngleMeter::LEFT_RIGHT, i*2, wxPoint(x,y), wxSize(360,180));
                 m_vMeters[i]->SetInputChannels(m_nInputChannels);
-                m_vMonitor[i] = new wmButton(this, wxNewId(), wxT("Monitor"), wxPoint(x, y+185), wxSize(360, 35));
-                m_vMonitor[i]->SetBackgroundColour(wxColour(80,70,180));
-                m_vMonitor[i]->SetIntData(i);
+                if(Settings::Get().Read("Monitor","Source",0) == 0)
+                {
+                    m_vMonitor[i] = new wmButton(this, wxNewId(), wxT("Monitor"), wxPoint(x, y+185), wxSize(360, 35));
+                    m_vMonitor[i]->SetBackgroundColour(wxColour(80,70,180));
+                    m_vMonitor[i]->SetIntData(i*2);
+                }
 
                 x+= 380;
                 if(i == 1)

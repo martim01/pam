@@ -55,4 +55,3 @@ class pnlOffset: public wxPanel
 
 #endif
 
-

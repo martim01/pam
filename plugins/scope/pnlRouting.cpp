@@ -42,6 +42,10 @@ pnlRouting::pnlRouting(wxWindow* parent,ScopeBuilder* pBuilder, wxWindowID id,co
 
 	Connect(ID_M_PLST16,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlRouting::OnlstScope_RoutingSelected);
 
+
+      
+	Connect(ID_M_PLST16,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlRouting::OnlstScope_RoutingSelected);
+	
 }
 
 pnlRouting::~pnlRouting()
@@ -79,6 +83,7 @@ void pnlRouting::SetChannels(const std::vector<subsession::channelGrouping>& vCh
     for(int i = 0; i < vChannels.size(); i++)
     {
         m_plstTrigger->AddButton(GetChannelLabel(vChannels[i]));
+
     }
     m_plstTrigger->SelectButton(m_pBuilder->ReadSetting("TriggerOn", 0));
     m_plstTrigger->Thaw();

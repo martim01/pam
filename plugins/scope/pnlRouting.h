@@ -33,8 +33,7 @@ class pnlRouting: public wxPanel
 
 	private:
 
-        void OnlstScope_RoutingSelected(wxCommandEvent& event);
-		void OnlstTriggerSelected(wxCommandEvent& event);
+        void OnlstScope_RoutingSelected(wxCommandEvent& event);		void OnlstTriggerSelected(wxCommandEvent& event);
 
 		void ShowRouting(wmList* pLst, unsigned int nPlot, const std::vector<subsession::channelGrouping>& vChannels);
 		ScopeBuilder* m_pBuilder;

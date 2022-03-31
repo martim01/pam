@@ -8,6 +8,7 @@
 #include "levelcalculator.h"
 #include <array>
 #include "ppmtypes.h"
+#include "settings.h"
 //(*InternalHeaders(pnlMeters)
 #include <wx/font.h>
 #include <wx/intl.h>
