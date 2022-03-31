@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlChannelMapping">
+		<size>600,400</size>
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmLabel" name="ID_M_PLBL14" variable="m_pLbl13" member="yes">
+			<label>Channel 1</label>
+			<pos>10,40</pos>
+			<size>65,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400080</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL15" variable="m_pLbl14" member="yes">
+			<label>Channel 2</label>
+			<pos>80,40</pos>
+			<size>65,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400080</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL16" variable="m_pLbl15" member="yes">
+			<label>Channel 3</label>
+			<pos>150,40</pos>
+			<size>65,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400080</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL17" variable="m_pLbl16" member="yes">
+			<label>Channel 4</label>
+			<pos>220,40</pos>
+			<size>65,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400080</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL18" variable="m_pLbl17" member="yes">
+			<label>Channel 5</label>
+			<pos>290,40</pos>
+			<size>65,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400080</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL19" variable="m_pLbl18" member="yes">
+			<label>Channel 6</label>
+			<pos>360,40</pos>
+			<size>65,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400080</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL20" variable="m_pLbl19" member="yes">
+			<label>Channel 7</label>
+			<pos>430,40</pos>
+			<size>65,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400080</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL21" variable="m_pLbl20" member="yes">
+			<label>Channel 8</label>
+			<pos>500,40</pos>
+			<size>65,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#400080</bg>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN14" variable="m_pbtnCh1" member="yes">
+			<label>Undefined</label>
+			<button_disabled>#B0B0B0</button_disabled>
+			<toggle_left>Stop</toggle_left>
+			<toggle_right>Start</toggle_right>
+			<toggle_percent>50</toggle_percent>
+			<pos>10,72</pos>
+			<size>65,40</size>
+			<fg>#000000</fg>
+			<bg>#FFFFFF</bg>
+			<style>wmButton::STYLE_NORMAL</style>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN15" variable="m_pbtnCh2" member="yes">
+			<label>Undefined</label>
+			<button_disabled>#B0B0B0</button_disabled>
+			<toggle_left>Stop</toggle_left>
+			<toggle_right>Start</toggle_right>
+			<toggle_percent>50</toggle_percent>
+			<pos>80,72</pos>
+			<size>65,40</size>
+			<fg>#000000</fg>
+			<bg>#FFFFFF</bg>
+			<style>wmButton::STYLE_NORMAL</style>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN16" variable="m_pbtnCh3" member="yes">
+			<label>Undefined</label>
+			<button_disabled>#B0B0B0</button_disabled>
+			<toggle_left>Stop</toggle_left>
+			<toggle_right>Start</toggle_right>
+			<toggle_percent>50</toggle_percent>
+			<pos>150,72</pos>
+			<size>65,40</size>
+			<fg>#000000</fg>
+			<bg>#FFFFFF</bg>
+			<style>wmButton::STYLE_NORMAL</style>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN17" variable="m_pbtnCh4" member="yes">
+			<label>Undefined</label>
+			<button_disabled>#B0B0B0</button_disabled>
+			<toggle_left>Stop</toggle_left>
+			<toggle_right>Start</toggle_right>
+			<toggle_percent>50</toggle_percent>
+			<pos>220,72</pos>
+			<size>65,40</size>
+			<fg>#000000</fg>
+			<bg>#FFFFFF</bg>
+			<style>wmButton::STYLE_NORMAL</style>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN18" variable="m_pbtnCh5" member="yes">
+			<label>Undefined</label>
+			<button_disabled>#B0B0B0</button_disabled>
+			<toggle_left>Stop</toggle_left>
+			<toggle_right>Start</toggle_right>
+			<toggle_percent>50</toggle_percent>
+			<pos>290,72</pos>
+			<size>65,40</size>
+			<fg>#000000</fg>
+			<bg>#FFFFFF</bg>
+			<style>wmButton::STYLE_NORMAL</style>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN19" variable="m_pbtnCh6" member="yes">
+			<label>Undefined</label>
+			<button_disabled>#B0B0B0</button_disabled>
+			<toggle_left>Stop</toggle_left>
+			<toggle_right>Start</toggle_right>
+			<toggle_percent>50</toggle_percent>
+			<pos>360,72</pos>
+			<size>65,40</size>
+			<fg>#000000</fg>
+			<bg>#FFFFFF</bg>
+			<style>wmButton::STYLE_NORMAL</style>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN20" variable="m_pbtnCh7" member="yes">
+			<label>Undefined</label>
+			<button_disabled>#B0B0B0</button_disabled>
+			<toggle_left>Stop</toggle_left>
+			<toggle_right>Start</toggle_right>
+			<toggle_percent>50</toggle_percent>
+			<pos>430,72</pos>
+			<size>65,40</size>
+			<fg>#000000</fg>
+			<bg>#FFFFFF</bg>
+			<style>wmButton::STYLE_NORMAL</style>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN21" variable="m_pbtnCh8" member="yes">
+			<label>Undefined</label>
+			<button_disabled>#B0B0B0</button_disabled>
+			<toggle_left>Stop</toggle_left>
+			<toggle_right>Start</toggle_right>
+			<toggle_percent>50</toggle_percent>
+			<pos>500,72</pos>
+			<size>65,40</size>
+			<fg>#000000</fg>
+			<bg>#FFFFFF</bg>
+			<style>wmButton::STYLE_NORMAL</style>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL22" variable="m_plblCh1" member="yes">
+			<label>U1</label>
+			<pos>10,114</pos>
+			<size>65,30</size>
+			<fg>#000000</fg>
+			<bg>#BFCFD0</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL23" variable="m_plblCh2" member="yes">
+			<label>U1</label>
+			<pos>80,114</pos>
+			<size>65,30</size>
+			<fg>#000000</fg>
+			<bg>#BFCFD0</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL24" variable="m_plblCh3" member="yes">
+			<label>U1</label>
+			<pos>150,114</pos>
+			<size>65,30</size>
+			<fg>#000000</fg>
+			<bg>#BFCFD0</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL25" variable="m_plblCh4" member="yes">
+			<label>U1</label>
+			<pos>220,114</pos>
+			<size>65,30</size>
+			<fg>#000000</fg>
+			<bg>#BFCFD0</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL26" variable="m_plblCh5" member="yes">
+			<label>U1</label>
+			<pos>290,114</pos>
+			<size>65,30</size>
+			<fg>#000000</fg>
+			<bg>#BFCFD0</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL27" variable="m_plblCh6" member="yes">
+			<label>U1</label>
+			<pos>360,114</pos>
+			<size>65,30</size>
+			<fg>#000000</fg>
+			<bg>#BFCFD0</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL28" variable="m_plblCh7" member="yes">
+			<label>U1</label>
+			<pos>430,114</pos>
+			<size>65,30</size>
+			<fg>#000000</fg>
+			<bg>#BFCFD0</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL29" variable="m_plblCh8" member="yes">
+			<label>U1</label>
+			<pos>500,114</pos>
+			<size>65,30</size>
+			<fg>#000000</fg>
+			<bg>#BFCFD0</bg>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN22" variable="m_pbtnBack" member="yes">
+			<label>Back</label>
+			<button_disabled>#B0B0B0</button_disabled>
+			<toggle_left>Stop</toggle_left>
+			<toggle_right>Start</toggle_right>
+			<toggle_percent>50</toggle_percent>
+			<pos>260,330</pos>
+			<size>80,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#004000</bg>
+			<style>wmButton::STYLE_NORMAL</style>
+		</object>
+	</object>
+</wxsmith>

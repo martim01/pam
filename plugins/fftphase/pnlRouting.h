@@ -6,6 +6,8 @@
 #include <wx/panel.h>
 #include "wmlist.h"
 //*)
+#include <vector>
+#include "session.h"
 
 class fftphaseBuilder;
 class pnlRouting: public wxPanel
@@ -23,7 +25,7 @@ class pnlRouting: public wxPanel
 		wmLabel* m_pLbl2;
 		//*)
 
-		void SetNumberOfChannels(unsigned int nChannels);
+		void SetChannels(const std::vector<subsession::channelGrouping>& vChannels);
 
 		void SetAxis(unsigned int nLeft, unsigned int nRight);
 

@@ -10,7 +10,7 @@ class pnlPeakCountChannel: public wxPanel
 {
 	public:
 
-		pnlPeakCountChannel(wxWindow* parent,unsigned int nChannel, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+		pnlPeakCountChannel(wxWindow* parent,const wxString& sLabel, unsigned int nChannel, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pnlPeakCountChannel();
 
         void AddPeaks(unsigned int nSamples, unsigned int nPeaks, unsigned int nTotal);

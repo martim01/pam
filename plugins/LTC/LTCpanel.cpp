@@ -29,6 +29,8 @@ const long LTCPanel::ID_M_PLBL13 = wxNewId();
 const long LTCPanel::ID_M_PLBL18 = wxNewId();
 const long LTCPanel::ID_M_PLST1 = wxNewId();
 const long LTCPanel::ID_M_PLBL15 = wxNewId();
+const long LTCPanel::ID_M_PLBL19 = wxNewId();
+const long LTCPanel::ID_M_PLST2 = wxNewId();
 const long LTCPanel::ID_M_PLBL4 = wxNewId();
 const long LTCPanel::ID_M_PLBL5 = wxNewId();
 //*)
@@ -53,13 +55,13 @@ LTCPanel::LTCPanel(wxWindow* parent,LTCBuilder* pBuilder, wxWindowID id,const wx
 	m_pLbl1->SetBackgroundColour(wxColour(128,64,0));
 	wxFont m_pLbl1Font(22,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Oxygen"),wxFONTENCODING_DEFAULT);
 	m_pLbl1->SetFont(m_pLbl1Font);
-	m_plblLTCDate = new wmLabel(this, ID_M_PLBL1, _("2018-10-31"), wxPoint(0,50), wxSize(600,30), 0, _T("ID_M_PLBL1"));
+	m_plblLTCDate = new wmLabel(this, ID_M_PLBL1, _("2018-10-31"), wxPoint(0,50), wxSize(450,30), 0, _T("ID_M_PLBL1"));
 	m_plblLTCDate->SetBorderState(uiRect::BORDER_NONE);
 	m_plblLTCDate->GetUiRect().SetGradient(0);
 	m_plblLTCDate->SetForegroundColour(wxColour(0,255,0));
 	wxFont m_plblLTCDateFont(22,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Courier New"),wxFONTENCODING_DEFAULT);
 	m_plblLTCDate->SetFont(m_plblLTCDateFont);
-	m_plblLTCTime = new wmLabel(this, ID_M_PLBL2, _("10:18:00.12"), wxPoint(0,80), wxSize(600,30), 0, _T("ID_M_PLBL2"));
+	m_plblLTCTime = new wmLabel(this, ID_M_PLBL2, _("10:18:00.12"), wxPoint(0,80), wxSize(450,30), 0, _T("ID_M_PLBL2"));
 	m_plblLTCTime->SetBorderState(uiRect::BORDER_NONE);
 	m_plblLTCTime->GetUiRect().SetGradient(0);
 	m_plblLTCTime->SetForegroundColour(wxColour(0,255,0));
@@ -92,13 +94,13 @@ LTCPanel::LTCPanel(wxWindow* parent,LTCBuilder* pBuilder, wxWindowID id,const wx
 	m_pLblDateTitle->SetBackgroundColour(wxColour(0,0,0));
 	wxFont m_pLblDateTitleFont(22,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Courier New"),wxFONTENCODING_DEFAULT);
 	m_pLblDateTitle->SetFont(m_pLblDateTitleFont);
-	m_plblDateFormat = new wmLabel(this, ID_M_PLBL17, _("BBC"), wxPoint(200,150), wxSize(400,30), wxALIGN_LEFT, _T("ID_M_PLBL17"));
+	m_plblDateFormat = new wmLabel(this, ID_M_PLBL17, _("BBC"), wxPoint(200,150), wxSize(250,30), wxALIGN_LEFT, _T("ID_M_PLBL17"));
 	m_plblDateFormat->SetBorderState(uiRect::BORDER_NONE);
 	m_plblDateFormat->GetUiRect().SetGradient(0);
 	m_plblDateFormat->SetForegroundColour(wxColour(242,252,131));
 	wxFont m_plblDateFormatFont(22,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Courier New"),wxFONTENCODING_DEFAULT);
 	m_plblDateFormat->SetFont(m_plblDateFormatFont);
-	m_plblMode = new wmLabel(this, ID_M_PLBL11, _("BBC"), wxPoint(200,120), wxSize(400,30), wxALIGN_LEFT, _T("ID_M_PLBL11"));
+	m_plblMode = new wmLabel(this, ID_M_PLBL11, _("BBC"), wxPoint(200,120), wxSize(250,30), wxALIGN_LEFT, _T("ID_M_PLBL11"));
 	m_plblMode->SetBorderState(uiRect::BORDER_NONE);
 	m_plblMode->GetUiRect().SetGradient(0);
 	m_plblMode->SetForegroundColour(wxColour(242,252,131));
@@ -125,7 +127,7 @@ LTCPanel::LTCPanel(wxWindow* parent,LTCBuilder* pBuilder, wxWindowID id,const wx
 	m_pLblColourTitle->SetBackgroundColour(wxColour(0,0,0));
 	wxFont m_pLblColourTitleFont(22,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Courier New"),wxFONTENCODING_DEFAULT);
 	m_pLblColourTitle->SetFont(m_pLblColourTitleFont);
-	m_plblColour = new wmLabel(this, ID_M_PLBL14, _("-1.4 dbFS"), wxPoint(200,240), wxSize(300,30), wxALIGN_LEFT, _T("ID_M_PLBL14"));
+	m_plblColour = new wmLabel(this, ID_M_PLBL14, _("-1.4 dbFS"), wxPoint(200,240), wxSize(250,30), wxALIGN_LEFT, _T("ID_M_PLBL14"));
 	m_plblColour->SetBorderState(uiRect::BORDER_NONE);
 	m_plblColour->GetUiRect().SetGradient(0);
 	m_plblColour->SetForegroundColour(wxColour(242,252,131));
@@ -149,19 +151,30 @@ LTCPanel::LTCPanel(wxWindow* parent,LTCBuilder* pBuilder, wxWindowID id,const wx
 	m_plstDate->SetBackgroundColour(wxColour(0,0,0));
 	m_plstDate->SetButtonColour(wxColour(wxT("#004000")));
 	m_plstDate->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
-	m_plblClock = new wmLabel(this, ID_M_PLBL15, _("-1.4 dbFS"), wxPoint(200,270), wxSize(300,30), wxALIGN_LEFT, _T("ID_M_PLBL15"));
+	m_plblClock = new wmLabel(this, ID_M_PLBL15, _("-1.4 dbFS"), wxPoint(200,270), wxSize(250,30), wxALIGN_LEFT, _T("ID_M_PLBL15"));
 	m_plblClock->SetBorderState(uiRect::BORDER_NONE);
 	m_plblClock->GetUiRect().SetGradient(0);
 	m_plblClock->SetForegroundColour(wxColour(242,252,131));
 	wxFont m_plblClockFont(22,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Courier New"),wxFONTENCODING_DEFAULT);
 	m_plblClock->SetFont(m_plblClockFont);
-	m_plblFPS = new wmLabel(this, ID_M_PLBL4, _("-1.4 dbFS"), wxPoint(200,210), wxSize(300,30), wxALIGN_LEFT, _T("ID_M_PLBL4"));
+	m_pLbl2 = new wmLabel(this, ID_M_PLBL19, _("Channels"), wxPoint(460,90), wxSize(130,30), 0, _T("ID_M_PLBL19"));
+	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl2->GetUiRect().SetGradient(0);
+	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl2->SetBackgroundColour(wxColour(0,0,0));
+	wxFont m_pLbl2Font(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Courier New"),wxFONTENCODING_DEFAULT);
+	m_pLbl2->SetFont(m_pLbl2Font);
+	m_plstChannels = new wmList(this, ID_M_PLST2, wxPoint(460,118), wxSize(130,162), wmList::STYLE_SELECT, 0, wxSize(-1,40), 2, wxSize(3,1));
+	m_plstChannels->SetBackgroundColour(wxColour(0,0,0));
+	m_plstChannels->SetButtonColour(wxColour(wxT("#004000")));
+	m_plstChannels->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
+	m_plblFPS = new wmLabel(this, ID_M_PLBL4, _("-1.4 dbFS"), wxPoint(200,210), wxSize(250,30), wxALIGN_LEFT, _T("ID_M_PLBL4"));
 	m_plblFPS->SetBorderState(uiRect::BORDER_NONE);
 	m_plblFPS->GetUiRect().SetGradient(0);
 	m_plblFPS->SetForegroundColour(wxColour(242,252,131));
 	wxFont m_plblFPSFont(22,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Courier New"),wxFONTENCODING_DEFAULT);
 	m_plblFPS->SetFont(m_plblFPSFont);
-	m_plblLTCVolume = new wmLabel(this, ID_M_PLBL5, _("-1.4 dbFS"), wxPoint(200,180), wxSize(300,30), wxALIGN_LEFT, _T("ID_M_PLBL5"));
+	m_plblLTCVolume = new wmLabel(this, ID_M_PLBL5, _("-1.4 dbFS"), wxPoint(200,180), wxSize(250,30), wxALIGN_LEFT, _T("ID_M_PLBL5"));
 	m_plblLTCVolume->SetBorderState(uiRect::BORDER_NONE);
 	m_plblLTCVolume->GetUiRect().SetGradient(0);
 	m_plblLTCVolume->SetForegroundColour(wxColour(242,252,131));
@@ -169,6 +182,7 @@ LTCPanel::LTCPanel(wxWindow* parent,LTCBuilder* pBuilder, wxWindowID id,const wx
 	m_plblLTCVolume->SetFont(m_plblLTCVolumeFont);
 
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&LTCPanel::OnlstDateSelected);
+	Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&LTCPanel::OnlstDateSelected);
 	//*)
 
 	size_t nIndex;
@@ -179,7 +193,7 @@ LTCPanel::LTCPanel(wxWindow* parent,LTCBuilder* pBuilder, wxWindowID id,const wx
 	nIndex = m_plstDate->AddButton(wxT("MTD"));
 
 	m_plstDate->ConnectToSetting(m_pBuilder->GetSection(), "DateFormat", "Auto");
-
+    m_plstChannels->ConnectToSetting(m_pBuilder->GetSection(), "Channel", size_t(0));
 
 	m_plblLTCVolume->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 	m_plblMode->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
@@ -197,6 +211,7 @@ LTCPanel::LTCPanel(wxWindow* parent,LTCBuilder* pBuilder, wxWindowID id,const wx
 
 	Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&LTCPanel::OnLeftUp);
 	m_pBuilder->RegisterForSettingsUpdates(this, "DateFormat");
+	m_pBuilder->RegisterForSettingsUpdates(this, "Channel");
 
 	Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&LTCPanel::OnSettingEvent);
 
@@ -204,6 +219,7 @@ LTCPanel::LTCPanel(wxWindow* parent,LTCBuilder* pBuilder, wxWindowID id,const wx
 	SetPosition(pos);
 
 	m_nInputChannels = 0;
+	m_nChannel = 0;
 	m_pDecoder = new LtcDecoder();
 
 }
@@ -216,7 +232,7 @@ LTCPanel::~LTCPanel()
 
 void LTCPanel::SetAudioData(const timedbuffer* pBuffer)
 {
-    if(m_pDecoder->DecodeLtc(pBuffer, m_nInputChannels,0))
+    if(m_pDecoder->DecodeLtc(pBuffer, m_nInputChannels,m_nChannel))
     {
         m_plblLTCDate->SetLabel(m_pDecoder->GetDate());
         m_plblLTCTime->SetLabel(m_pDecoder->GetTime());
@@ -265,6 +281,11 @@ void LTCPanel::InputSession(const session& aSession)
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
         m_nInputChannels = aSession.GetCurrentSubsession()->nChannels;
+        m_plstChannels->Clear();
+        for(const auto& channel : aSession.GetCurrentSubsession()->vChannels)
+        {
+            m_plstChannels->AddButton(GetChannelLabel(channel));
+        }
     }
     else
     {
@@ -294,5 +315,9 @@ void LTCPanel::OnSettingEvent(SettingEvent& event)
     if(event.GetKey() == wxT("DateFormat"))
     {
         m_pDecoder->SetDateMode(event.GetValue(long(0)));
+    }
+    else if(event.GetKey() == "Channel")
+    {
+        m_nChannel = event.GetValue(0l);
     }
 }

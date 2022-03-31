@@ -56,13 +56,13 @@ void pnlOffset::OnlstChannelSelected(wxCommandEvent& event)
 
 
 
-void pnlOffset::SetNumberOfChannels(unsigned int nChannels)
+void pnlOffset::SetChannels(const std::vector<subsession::channelGrouping>& vChannels)
 {
     m_plstChannels->Freeze();
     m_plstChannels->Clear();
-    for(int i = 0; i < nChannels; i++)
+    for(int i = 0; i < vChannels.size(); i++)
     {
-        m_plstChannels->AddButton(wxString::Format("Ch %d", i+1));
+        m_plstChannels->AddButton(GetChannelLabel(vChannels[i]));
     }
     m_plstChannels->SelectButton(0);
     m_plstChannels->Thaw();

@@ -11,16 +11,17 @@
 
 static AES67ServerMediaSubsession* g_multiSession;
 
-AES67ServerMediaSubsession* AES67ServerMediaSubsession::createNew(const std::set<wxEvtHandler*>& setRTCPHandlers, RTPSink& rtpSink, RTCPInstance* rtcpInstance, int nPacketTime)
+AES67ServerMediaSubsession* AES67ServerMediaSubsession::createNew(const std::set<wxEvtHandler*>& setRTCPHandlers, RTPSink& rtpSink, RTCPInstance* rtcpInstance, int nPacketTime, const std::string& sMapping)
 {
-    return new AES67ServerMediaSubsession(setRTCPHandlers, rtpSink, rtcpInstance, nPacketTime);
+    return new AES67ServerMediaSubsession(setRTCPHandlers, rtpSink, rtcpInstance, nPacketTime, sMapping);
 }
 
-AES67ServerMediaSubsession::AES67ServerMediaSubsession(const std::set<wxEvtHandler*>& setRTCPHandlers, RTPSink& rtpSink, RTCPInstance* rtcpInstance, int nPacketTime)
+AES67ServerMediaSubsession::AES67ServerMediaSubsession(const std::set<wxEvtHandler*>& setRTCPHandlers, RTPSink& rtpSink, RTCPInstance* rtcpInstance, int nPacketTime, const std::string& sMapping)
     : ServerMediaSubsession(rtpSink.envir()),
     fSDPLines(NULL), fRTPSink(rtpSink), fRTCPInstance(rtcpInstance),
     m_setRTCPHandlers(setRTCPHandlers),
-    m_nPacketTime(nPacketTime)
+    m_nPacketTime(nPacketTime),
+    m_sMapping(sMapping)
 {
   //fClientRTCPSourceRecords = HashTable::create(ONE_WORD_HASH_KEYS);
     BeginQOSMeasurement();
@@ -68,6 +69,8 @@ char const* AES67ServerMediaSubsession::sdpLines(int addressFamily)
 #endif // PTPMONKEY
 
         ss << "a=mediaclk:direct=" << GetEpochTimestamp() << "\r\n";
+        ss << "a=fmtp:" << (int)fRTPSink.rtpPayloadType() << " channel-order=SMPTE2110.(" << m_sMapping << ")\r\n";
+
         std::string sMedia(ss.str());
 
         if (auxSDPLine == NULL) auxSDPLine = "";

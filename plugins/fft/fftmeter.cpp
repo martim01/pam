@@ -49,7 +49,9 @@ FftMeter::FftMeter(wxWindow *parent, FFTBuilder* pBuilder, wxWindowID id, const 
     m_bCursorMode = false;
     m_bShowPeak = false;
 
-    m_nChannels = 2;
+    m_vChannels.push_back(subsession::channelGrouping(0,subsession::enumChannelGrouping::ST, subsession::enumChannel::LEFT));
+    m_vChannels.push_back(subsession::channelGrouping(0,subsession::enumChannelGrouping::ST, subsession::enumChannel::RIGHT));
+
     m_nSampleRate = 48000;
 
     m_nNudge = NONE;
@@ -371,21 +373,21 @@ void FftMeter::SetSampleRate(unsigned long nSampleRate)
     m_nSampleRate = nSampleRate;
 }
 
-void FftMeter::SetNumberOfChannels(unsigned int nChannels)
+void FftMeter::SetChannels(const std::vector<subsession::channelGrouping>& vChannels)
 {
-    m_nChannels = nChannels;
+    m_vChannels = vChannels;
 }
 
 void FftMeter::SetData(const timedbuffer* pBuffer)
 {
-    if(!m_bHold && m_nChannels != 0)
+    if(!m_bHold &&  m_vChannels.size() != 0)
     {
         for(size_t i = 0; i < pBuffer->GetBufferSize(); i++)
         {
             m_lstBuffer.push_back(pBuffer->GetBuffer()[i]);
         }
 
-        while(m_lstBuffer.size() > (m_vfft_out.size()-1)*2*m_nChannels)
+        while(m_lstBuffer.size() > (m_vfft_out.size()-1)*2*m_vChannels.size())
         {
             DoFFT();
         }
@@ -418,7 +420,7 @@ void FftMeter::DoFFT()
 void FftMeter::FFTRoutine()
 {
     FFTAlgorithm fft;
-    m_vfft_out = fft.DoFFT(m_lstBuffer, m_nSampleRate, m_nChannels, m_nFFTAnalyse, m_nWindowType, m_vfft_out.size(), m_nOverlap);
+    m_vfft_out = fft.DoFFT(m_lstBuffer, m_nSampleRate, m_vChannels.size(), m_nFFTAnalyse, m_nWindowType, m_vfft_out.size(), m_nOverlap);
 
     m_dBinSize = static_cast<double>(m_nSampleRate)/static_cast<double>((m_vfft_out.size()-1)*2);
     m_dPeakLevel = -80;
@@ -480,7 +482,7 @@ void FftMeter::Octave()
 {
     FFTAlgorithm fft;
 
-    m_vfft_out = fft.DoFFT(m_lstBuffer, m_nSampleRate, m_nChannels, m_nFFTAnalyse, m_nWindowType, m_vfft_out.size(), m_nOverlap);
+    m_vfft_out = fft.DoFFT(m_lstBuffer, m_nSampleRate, m_vChannels.size(), m_nFFTAnalyse, m_nWindowType, m_vfft_out.size(), m_nOverlap);
     m_dBinSize = static_cast<double>(m_nSampleRate)/static_cast<double>((m_vfft_out.size()-1)*2);
 
     //work out the third octave bands
@@ -512,7 +514,7 @@ void FftMeter::Octave()
 void FftMeter::Peaks()
 {
     FFTAlgorithm fft;
-    map<int, double> mPeaks(fft.GetPeaks(m_lstBuffer, m_nSampleRate, m_nChannels, m_nFFTAnalyse, m_nWindowType, m_vfft_out.size(), m_nOverlap));
+    map<int, double> mPeaks(fft.GetPeaks(m_lstBuffer, m_nSampleRate, m_vChannels.size(), m_nFFTAnalyse, m_nWindowType, m_vfft_out.size(), m_nOverlap));
 
     for(size_t i = 0; i < m_vAmplitude.size(); i++)
     {
@@ -533,9 +535,9 @@ void FftMeter::Peaks()
 void FftMeter::SetAnalyseMode(int nMode)
 {
     m_nFFTAnalyse = nMode;
-    if(m_nChannels != 2)
+    if(m_vChannels.size() != 2)
     {
-        m_uiSettingsAnalyse.SetLabel(LABEL_ANALYSE[nMode]);
+        m_uiSettingsAnalyse.SetLabel(nMode < m_vChannels.size() ? GetChannelLabel(m_vChannels[nMode]) : "?");
     }
     else if(nMode == 0)
     {

@@ -243,8 +243,8 @@ Smpte2110MediaSubsession::Smpte2110MediaSubsession(MediaSession& parent) : Media
  m_bSegmented(false),
  m_nTCS(0),
  m_nRange(0),
- m_bMaxUdp(false)
-
+ m_bMaxUdp(false),
+ m_channels(8)
 {
 
 }
@@ -256,6 +256,7 @@ wxString Smpte2110MediaSubsession::GetEndpoint()
 
 Boolean Smpte2110MediaSubsession::createSourceObjects(int useSpecialRTPoffset)
 {
+
     parseSDPAttribute_Sync();           //Sync time Smpte2110 and Ravenna and SMPTE2110
     parseSDPAttribute_Deviation();      //Clock deviation sample rate Ravenna
     parseSDPAttribute_RefClk();      //Clock deviation sample rate Ravenna
@@ -263,8 +264,6 @@ Boolean Smpte2110MediaSubsession::createSourceObjects(int useSpecialRTPoffset)
     parseSDPAttribute_MaxPTime();      //Clock deviation sample rate Ravenna
     parseSDPAttribute_ExtMap();    //Header extension mapping
     parseSDPAttribute_Mid();        //Group if any
-
-
 
     if (strcmp(fCodecName, "L16") == 0 || strcmp(fCodecName, "L24") == 0) // 16 or 24-bit linear audio (RFC 3190)
     {
@@ -274,6 +273,8 @@ Boolean Smpte2110MediaSubsession::createSourceObjects(int useSpecialRTPoffset)
         sprintf(mimeType, "%s/%s", mediumName(), codecName());
         fReadSource = fRTPSource = Aes67Source::createNew(env(), fRTPSocket, fRTPPayloadFormat, fRTPTimestampFrequency, mimeType, 0,FALSE, m_nSyncTime);
         delete[] mimeType;
+
+        parseSDPAttribute_Channels();    //Channel mapping if any
 
         return TRUE;
     }
@@ -752,3 +753,105 @@ void Smpte2110MediaSubsession::AnalyzeAttributes()
     env() << "Pixel Aspect Radio: "   << (int)m_pairAspectRatio.first << ":" << (int)m_pairAspectRatio.second << "\n";
 
  }
+
+
+void Smpte2110MediaSubsession::parseSDPAttribute_Channels()
+{
+    wxString sSdp(wxString::FromUTF8(fSavedSDPLines));
+
+    wxString sFind("channel-order=SMPTE2110.");
+    size_t nFront = sSdp.find(sFind);
+    if(nFront != wxNOT_FOUND)
+    {
+        size_t nEnd = sSdp.find(wxT("\n"), nFront);
+        wxString sChannels = sSdp.substr(nFront+sFind.length(), (nEnd-sFind.length())).AfterFirst('(').BeforeFirst(')');
+
+
+        wxArrayString asChannels = wxStringTokenize(sChannels, ",");
+
+        unsigned long nChannel(0);
+        for(size_t i = 0; i < asChannels.GetCount(); ++i)
+        {
+            if(asChannels[i].CmpNoCase("M") == 0)
+            {
+                m_channels[nChannel] = subsession::channelGrouping(i, subsession::enumChannelGrouping::M, subsession::enumChannel::MONO);
+                ++nChannel;
+            }
+            else if(asChannels[i].CmpNoCase("DM") == 0)
+            {
+                m_channels[nChannel] = subsession::channelGrouping(i, subsession::enumChannelGrouping::DM, subsession::enumChannel::MONO_1);
+                m_channels[nChannel+1] = subsession::channelGrouping(i, subsession::enumChannelGrouping::DM, subsession::enumChannel::MONO_2);
+
+                nChannel+=2;
+            }
+            else if(asChannels[i].CmpNoCase("St") == 0)
+            {
+                m_channels[nChannel] = subsession::channelGrouping(i, subsession::enumChannelGrouping::ST, subsession::enumChannel::LEFT);
+                m_channels[nChannel+1] = subsession::channelGrouping(i, subsession::enumChannelGrouping::ST, subsession::enumChannel::RIGHT);
+
+                nChannel+=2;
+            }
+            else if(asChannels[i].CmpNoCase("LtRt") == 0)
+            {
+                m_channels[nChannel] = subsession::channelGrouping(i, subsession::enumChannelGrouping::LtRt, subsession::enumChannel::LEFT_TOTAL);
+                m_channels[nChannel+1] = subsession::channelGrouping(i, subsession::enumChannelGrouping::LtRt, subsession::enumChannel::RIGHT_TOTAL);
+
+                nChannel+=2;
+            }
+            else if(asChannels[i].CmpNoCase("51") == 0)
+            {
+                m_channels[nChannel] = subsession::channelGrouping(i, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::LEFT);
+                m_channels[nChannel+1] = subsession::channelGrouping(i, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::RIGHT);
+                m_channels[nChannel+2] = subsession::channelGrouping(i, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::CENTER);
+                m_channels[nChannel+3] = subsession::channelGrouping(i, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::LFE);
+                m_channels[nChannel+4] = subsession::channelGrouping(i, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::LEFT_SIDE);
+                m_channels[nChannel+5] = subsession::channelGrouping(i, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::RIGHT_SIDE);
+
+                nChannel+=6;
+            }
+            else if(asChannels[i].CmpNoCase("71") == 0)
+            {
+                m_channels[nChannel] = subsession::channelGrouping(i, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::LEFT);
+                m_channels[nChannel+1] = subsession::channelGrouping(i, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::RIGHT);
+                m_channels[nChannel+2] = subsession::channelGrouping(i, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::CENTER);
+                m_channels[nChannel+3] = subsession::channelGrouping(i, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::LFE);
+                m_channels[nChannel+4] = subsession::channelGrouping(i, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::LEFT_SIDE);
+                m_channels[nChannel+5] = subsession::channelGrouping(i, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::RIGHT_SIDE);
+                m_channels[nChannel+6] = subsession::channelGrouping(i, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::LEFT_REAR_SIDE);
+                m_channels[nChannel+7] = subsession::channelGrouping(i, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::RIGHT_REAR_SIDE);
+
+                nChannel+=8;
+            }
+            else if(asChannels[i].CmpNoCase("SGRP") == 0)
+            {
+                m_channels[nChannel] = subsession::channelGrouping(i, subsession::enumChannelGrouping::SGRP, subsession::enumChannel::SDI_1);
+                m_channels[nChannel+1] = subsession::channelGrouping(i, subsession::enumChannelGrouping::SGRP, subsession::enumChannel::SDI_2);
+                m_channels[nChannel+2] = subsession::channelGrouping(i, subsession::enumChannelGrouping::SGRP, subsession::enumChannel::SDI_3);
+                m_channels[nChannel+3] = subsession::channelGrouping(i, subsession::enumChannelGrouping::SGRP, subsession::enumChannel::SDI_4);
+
+                nChannel+=4;
+            }
+            else if(asChannels[i].GetChar(0) == 'U' || asChannels[i].GetChar(0) == 'u')
+            {
+                unsigned long nUndefined;
+                asChannels[i].Mid(1).ToULong(&nUndefined);
+
+                for(size_t j = 0; j < nUndefined; j++)
+                {
+                    if(j+nChannel < m_channels.size())
+                    {
+                        m_channels[nChannel] = subsession::channelGrouping(i, subsession::enumChannelGrouping::U01+(nUndefined-1), subsession::enumChannel::UNDEFINED_1+j);
+
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                nChannel+=nUndefined;
+            }
+        }
+    }
+}
+
+

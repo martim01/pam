@@ -37,8 +37,9 @@ void* RtpServerThread::Entry()
     //NetAddressList sendingddresses(m_sRTSP.ToStdString().c_str());
     //copyAddress(SendingInterfaceAddr, sendingddresses.firstAddress());
 
+    pmlLog() << "RtpServerThread: Interface " << m_sRTSP.ToStdString();
 
-    SendingInterfaceAddr = inet_addr(std::string(m_sRTSP.mb_str()).c_str());
+    SendingInterfaceAddr = inet_addr(m_sRTSP.ToStdString().c_str());
     TaskScheduler* scheduler = PamTaskScheduler::createNew();
     m_penv = PamUsageEnvironment::createNew(*scheduler, m_pHandler);
 
@@ -76,6 +77,8 @@ bool RtpServerThread::CreateStream()
     {
         NetAddressList destinationAddresses(m_sSourceIp.ToStdString().c_str());
         copyAddress(destinationAddress, destinationAddresses.firstAddress());
+
+        pmlLog(pml::LOG_INFO) << "RtpServerThread: Destination " << m_sSourceIp.ToStdString();
     }
     else if(m_bSSM)
     {
@@ -168,7 +171,7 @@ bool RtpServerThread::CreateStream()
     wxString sStream = "by-name/"+ IOManager::Get().GetDnsSdService();
 
     ServerMediaSession* sms = ServerMediaSession::createNew(*m_penv, sStream, nullptr, "PAM AES67", m_bSSM);
-    AES67ServerMediaSubsession* pSmss =  AES67ServerMediaSubsession::createNew(m_setRTCPHandlers, *m_pSink, m_pRtcpInstance, m_ePacketTime);
+    AES67ServerMediaSubsession* pSmss =  AES67ServerMediaSubsession::createNew(m_setRTCPHandlers, *m_pSink, m_pRtcpInstance, m_ePacketTime, GetChannelMapping());
     sms->addSubsession(pSmss);
     m_pRtspServer->addServerMediaSession(sms);
 
@@ -176,15 +179,18 @@ bool RtpServerThread::CreateStream()
     m_sSDP = std::string(pSDP);
     delete[] pSDP;
 
+
     // Finally, start the streaming:
     pmlLog(pml::LOG_INFO) << "RTP Server\tBeginning streaming..." << m_pRtspServer->rtspURL(sms);
+    pmlLog(pml::LOG_INFO) << m_sSDP;
+
 
 
     m_pSink->startPlaying(*m_pSource, afterPlaying, reinterpret_cast<void*>(this));
 
 
     m_bStreaming = true;
-    Settings::Get().Write(wxT("AoIP"), wxT("Epoch"), pSmss->GetEpochTimestamp());
+   // Settings::Get().Write(wxT("AoIP"), wxT("Epoch"), pSmss->GetEpochTimestamp());
 
     return true;
 }

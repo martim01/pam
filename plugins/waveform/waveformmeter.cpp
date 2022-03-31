@@ -67,6 +67,38 @@ void waveformMeter::OnPaint(wxPaintEvent& event)
         dc.DrawBitmap(bmp, x,0);
         ++x;
     }
+
+    if(!m_vChannels.empty())
+    {
+
+        int nGap =GetClientSize().y/(m_vChannels.size())/2;
+
+        dc.SetPen(*wxWHITE_PEN);
+
+        unsigned int nYStart = nGap-m_dResolution;
+        unsigned int nYStop = nGap+m_dResolution;
+        unsigned char nId = m_vChannels[0].nId;
+        for(size_t i = 0; i < m_vChannels.size(); i++)
+        {
+            bool bSameGroup(false);
+            if(i+1 < m_vChannels.size())
+            {
+                bSameGroup = (m_vChannels[i+1].nId == m_vChannels[i].nId);
+            }
+
+            if(!bSameGroup)
+            {
+                dc.SetPen(*wxWHITE_PEN);
+                dc.DrawLine(0,nYStart, 0, nYStop);
+                nYStop += nGap*2;
+                nYStart = nYStop+1 - (m_dResolution*2.0);
+            }
+            else
+            {
+                nYStop += m_dResolution*2.0+2;
+            }
+        }
+    }
 }
 
 
@@ -77,21 +109,21 @@ void waveformMeter::OnSize(wxSizeEvent& event)
 
 void waveformMeter::WorkoutResolution()
 {
-    if(m_nChannels != 0)
+    if(m_vChannels.size() != 0)
     {
-        m_dResolution = static_cast<double>(GetClientSize().y-20);
-        m_dResolution /= m_nChannels*2.0;
+        m_dResolution = static_cast<double>(GetClientSize().y-40);
+        m_dResolution /= m_vChannels.size()*2.0;
     }
     Refresh();
 }
 
 void waveformMeter::SetAudioData(const timedbuffer* pBuffer)
 {
-    std::vector<std::pair<float, float>> vRange(m_nChannels, {-1.0,1.0});
+    std::vector<std::pair<float, float>> vRange(m_vChannels.size(), {-1.0,1.0});
 	for(size_t i = 0; i < pBuffer->GetBufferSize(); i++)
     {
-        vRange[i%m_nChannels].first = max(vRange[i%m_nChannels].first, pBuffer->GetBuffer()[i]);
-        vRange[i%m_nChannels].second = min(vRange[i%m_nChannels].second, pBuffer->GetBuffer()[i]);
+        vRange[i%m_vChannels.size()].first = max(vRange[i%m_vChannels.size()].first, pBuffer->GetBuffer()[i]);
+        vRange[i%m_vChannels.size()].second = min(vRange[i%m_vChannels.size()].second, pBuffer->GetBuffer()[i]);
     }
 
     wxMemoryDC dc;
@@ -101,21 +133,64 @@ void waveformMeter::SetAudioData(const timedbuffer* pBuffer)
     dc.SetBackground(*wxBLACK_BRUSH);
     dc.Clear();
 
-
-    int nGap =bmp.GetHeight()/(m_nChannels)/2;
+    int nGap =bmp.GetHeight()/(m_vChannels.size())/2;
     int nCenter = nGap;
 
-    for(const auto& pairRange : vRange)
+    for(size_t i = 0; i < vRange.size(); i++)
     {
-        dc.SetPen(*wxWHITE_PEN);
-        dc.DrawLine(0, (pairRange.first*m_dResolution) + nCenter, 0, (pairRange.second*m_dResolution)+nCenter);
+        if(m_vChannels[i].type == subsession::enumChannel::LEFT)
+        {
+            dc.SetPen(*wxRED_PEN);
+        }
+        else if(m_vChannels[i].type == subsession::enumChannel::RIGHT)
+        {
+            dc.SetPen(*wxGREEN_PEN);
+        }
+        else
+        {
+            dc.SetPen(wxPen(wxColour(80,90,166)));
+        }
+        dc.DrawLine(0, (vRange[i].first*m_dResolution) + nCenter, 0, (vRange[i].second*m_dResolution)+nCenter);
+
+        bool bSameGroup(false);
+        if(i+1 < vRange.size())
+        {
+            bSameGroup = (m_vChannels[i+1].nId == m_vChannels[i].nId);
+        }
+
+        //draw the surrounds
+        if(i == 0 || m_vChannels[i-1].nId != m_vChannels[i].nId)
+        {
+            dc.SetPen(*wxWHITE_PEN);
+        }
+        else
+        {
+            dc.SetPen(*wxGREY_PEN);
+        }
+        dc.DrawLine(0,nCenter-m_dResolution, 1, nCenter-m_dResolution);
 
         dc.SetPen(*wxGREY_PEN);
-        dc.DrawLine(0,nCenter-m_dResolution, 1, nCenter-m_dResolution);
         dc.DrawLine(0,nCenter, 1, nCenter);
+
+        if(!bSameGroup)
+        {
+            dc.SetPen(*wxWHITE_PEN);
+        }
+        else
+        {
+            dc.SetPen(*wxGREY_PEN);
+        }
         dc.DrawLine(0,nCenter+m_dResolution, 1, nCenter+m_dResolution);
 
-        nCenter += nGap*2;
+
+        if(bSameGroup)
+        {
+            nCenter += m_dResolution*2.0+2;
+        }
+        else
+        {
+            nCenter += nGap*2;
+        }
     }
     dc.SelectObject(wxNullBitmap);
 
@@ -134,7 +209,7 @@ void waveformMeter::InputSession(const session& aSession)
     m_lstWaveform.clear();
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_nChannels = (std::min((unsigned int)8 ,aSession.GetCurrentSubsession()->nChannels));
+        m_vChannels = aSession.GetCurrentSubsession()->vChannels;
     }
     WorkoutResolution();
 }

@@ -7,6 +7,7 @@
 //*)
 #include "wmbutton.h"
 #include "wmlabel.h"
+#include "session.h"
 class ScopeBuilder;
 
 class pnlOffset: public wxPanel
@@ -27,7 +28,7 @@ class pnlOffset: public wxPanel
 		wmButton* m_pbtnUp5;
 
 
-		void SetNumberOfChannels(unsigned int nChannels);
+		void SetChannels(const std::vector<subsession::channelGrouping>& vChannels);
 
 	protected:
 

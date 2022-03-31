@@ -40,7 +40,7 @@ pnlDisplay::pnlDisplay(wxWindow* parent,R128Builder* pBuilder,wxWindowID id,cons
 	m_plstShow->AddButton(wxT("Momentary"));
 	m_plstShow->AddButton(wxT("Short"));
 	m_plstShow->AddButton(wxT("Integrated"));
-	m_plstShow->AddButton(wxT("True Peak"));
+	m_plstShow->AddButton(wxT("Level Meters"));
 	m_plstShow->AddButton(wxT("Phase"));
 
 

@@ -2,11 +2,14 @@
 #define PNLAOIPMANUAL_H
 
 //(*Headers(pnlAoipManual)
+#include "pnlChannelMapping.h"
 #include "wmbutton.h"
 #include "wmedit.h"
 #include "wmipeditpnl.h"
 #include "wmkeyboard.h"
 #include "wmlabel.h"
+#include "wmswitcherpanel.h"
+#include <wx/notebook.h>
 #include <wx/panel.h>
 //*)
 
@@ -18,8 +21,10 @@ class pnlAoipManual: public wxPanel
 		virtual ~pnlAoipManual();
 
 		//(*Declarations(pnlAoipManual)
+		pnlChannelMapping* m_ppnlMapping;
 		wmButton* m_pbtnBits;
 		wmButton* m_pbtnChannels;
+		wmButton* m_pbtnMapping;
 		wmButton* m_pbtnRtpMap;
 		wmButton* m_pbtnSampleRate;
 		wmButton* m_pbtnSave;
@@ -32,6 +37,8 @@ class pnlAoipManual: public wxPanel
 		wmLabel* m_pLbl4;
 		wmLabel* m_pLbl8;
 		wmLabel* m_pLbl9;
+		wmSwitcherPanel* m_pswpMain;
+		wxPanel* m_ppnlSettings;
 		//*)
 
 	protected:
@@ -46,11 +53,15 @@ class pnlAoipManual: public wxPanel
 		static const long ID_M_PBTN1;
 		static const long ID_M_PLBL4;
 		static const long ID_M_PBTN2;
+		static const long ID_M_PBTN13;
 		static const long ID_M_PKBD2;
 		static const long ID_M_PBTN3;
 		static const long ID_M_PBTN5;
 		static const long ID_M_PLBL11;
 		static const long ID_M_PBTN4;
+		static const long ID_PANEL1;
+		static const long ID_CHANNEL_MAPPING;
+		static const long ID_M_PSWP1;
 		//*)
 
 	private:
@@ -61,10 +72,13 @@ class pnlAoipManual: public wxPanel
 		void OnbtnRtpMapClick(wxCommandEvent& event);
 		void OnbtnChannelsClick(wxCommandEvent& event);
 		void OnbtnSaveClick(wxCommandEvent& event);
+		void OnbtnMappingClick(wxCommandEvent& event);
 		//*)
 		void OnbtnBitsClick(wxCommandEvent& event);
 		void OnIpChanged(wxCommandEvent& event);
 		void OnedtRTPPort(wxCommandEvent& event);
+
+		void OnbtnBackClick(wxCommandEvent& event);
 
         wxString CreateSDP();
 

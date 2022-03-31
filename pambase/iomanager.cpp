@@ -17,7 +17,8 @@
 #include "sapserver.h"
 #include "dnssd.h"
 #include <wx/msgdlg.h>
-
+#include "networkcontrol.h"
+#include <wx/tokenzr.h>
 
 using namespace std;
 
@@ -191,31 +192,11 @@ void IOManager::OnSettingEvent(SettingEvent& event)
 {
     if(event.GetSection() == wxT("Monitor"))
     {
-        if(event.GetKey() == wxT("Source") && m_bMonitorOutput != (Settings::Get().Read(wxT("Monitor"), wxT("Source"), 0)==1))
-        {
-            m_bMonitorOutput = (Settings::Get().Read(wxT("Monitor"), wxT("Source"), 0)==1);
-            SessionChanged();
-        }
+        OnSettingEventMonitor(event);
     }
     else if(event.GetSection() == wxT("Input"))
     {
-        if(event.GetKey() == wxT("Type"))
-        {
-            InputTypeChanged();
-        }
-        else if(event.GetKey().Left(5) == "Ratio")
-        {
-            unsigned long nChannel;
-            if(event.GetKey().AfterFirst('_').ToULong(&nChannel) && nChannel < m_vRatio.size())
-            {
-                m_vRatio[nChannel] = Settings::Get().Read("Input", event.GetKey(), 1.0);
-            }
-            CheckIfGain();
-        }
-        else
-        {
-            InputChanged(event.GetKey());
-        }
+        OnSettingEventInput(event);
     }
     else if(event.GetSection() == wxT("Output"))
     {
@@ -231,67 +212,116 @@ void IOManager::OnSettingEvent(SettingEvent& event)
     }
     else if(event.GetSection() == wxT("QoS"))
     {
-        if(event.GetKey() == wxT("Interval"))
-        {
-            auto itThread = m_mRtp.find(m_nCurrentRtp);
-            if(itThread != m_mRtp.end())
-            {
-                itThread->second->SetQosMeasurementIntervalMS(Settings::Get().Read(wxT("QoS"), wxT("Interval"), 1000));
-            }
-        }
+        OnSettingEventQoS(event);
     }
     else if(event.GetSection() == wxT("Server"))
     {
-        if(event.GetKey() == wxT("Stream"))
+        OnSettingEventServer(event);
+    }
+
+}
+
+void IOManager::OnSettingEventMonitor(SettingEvent& event)
+{
+    if(event.GetKey() == wxT("Source") && m_bMonitorOutput != event.GetValue(false))
+    {
+        m_bMonitorOutput = event.GetValue(false);
+        SessionChanged();
+    }
+}
+
+void IOManager::OnSettingEventInput(SettingEvent& event)
+{
+    if(event.GetKey() == wxT("Type"))
+    {
+        InputTypeChanged();
+    }
+    else if(event.GetKey().Left(5) == "Ratio")
+    {
+        unsigned long nChannel;
+        if(event.GetKey().AfterFirst('_').ToULong(&nChannel) && nChannel < m_vRatio.size())
         {
-            m_bStreamAlwaysOn = (event.GetValue() == "AlwaysOn");
-            if(!m_bStreamAlwaysOn)
-            {
-                if(m_pAlwaysOnServer)
-                {
-                    pmlLog() << "Stop alwayson server";
-                    m_pAlwaysOnServer->StopStream();
-                    m_pAlwaysOnServer->Wait();
-                    delete m_pAlwaysOnServer;
-                    m_pAlwaysOnServer = nullptr;
-                    RTPServerFinished();
-                }
-            }
-            else
-            {
-                if(m_pOnDemandServer)
-                {
-                    pmlLog() << "Stop ondemenad server";
-                    m_pOnDemandServer->Stop();
-                    m_pOnDemandServer->Wait();
-                    delete m_pOnDemandServer;
-                    m_pOnDemandServer = nullptr;
-                    m_pOnDemandSubsession = nullptr;
-                    RTPServerFinished();
-                }
-            }
-            InitAudioOutputDevice();
+            m_vRatio[nChannel] = event.GetValue(1.0);
         }
-        else if(event.GetKey() == "State")
+        CheckIfGain();
+    }
+    else
+    {
+        InputChanged(event.GetKey());
+    }
+}
+
+void IOManager::OnSettingEventQoS(SettingEvent& event)
+{
+    if(event.GetKey() == wxT("Interval"))
+    {
+        auto itThread = m_mRtp.find(m_nCurrentRtp);
+        if(itThread != m_mRtp.end())
         {
-            if(event.GetValue(false))
-            {
-                InitAudioOutputDevice();
-            }
-            else
-            {
-                StopStream();
-            }
-        }
-        else if(event.GetKey() == wxT("SAP"))
-        {
-            DoSAP(event.GetValue(false));
-        }
-        else if(event.GetKey() == wxT("DNS-SD"))
-        {
-            DoDNSSD(event.GetValue(false));
+            itThread->second->SetQosMeasurementIntervalMS(event.GetValue(1000l));
         }
     }
+}
+
+void IOManager::OnSettingEventServer(SettingEvent& event)
+{
+    if(event.GetKey() == wxT("Stream"))
+    {
+        m_bStreamAlwaysOn = (event.GetValue() == "AlwaysOn");
+        if(!m_bStreamAlwaysOn)
+        {
+            if(m_pAlwaysOnServer)
+            {
+                m_pAlwaysOnServer->StopStream();
+                m_pAlwaysOnServer->Wait();
+                delete m_pAlwaysOnServer;
+                m_pAlwaysOnServer = nullptr;
+                RTPServerFinished();
+            }
+        }
+        else
+        {
+            if(m_pOnDemandServer)
+            {
+                m_pOnDemandServer->Stop();
+                m_pOnDemandServer->Wait();
+                delete m_pOnDemandServer;
+                m_pOnDemandServer = nullptr;
+                m_pOnDemandSubsession = nullptr;
+                RTPServerFinished();
+            }
+        }
+        InitAudioOutputDevice();
+    }
+    else if(event.GetKey() == "State")
+    {
+        if(event.GetValue(false))
+        {
+            InitAudioOutputDevice();
+        }
+        else
+        {
+            StopStream();
+        }
+    }
+    else if(event.GetKey() == wxT("SAP"))
+    {
+        DoSAP(event.GetValue(false));
+    }
+    else if(event.GetKey() == wxT("DNS-SD"))
+    {
+        DoDNSSD(event.GetValue(false));
+    }
+    else if(event.GetKey() == "ChannelMapping")
+    {
+        OnSettingEventChannelMapping(event);
+    }
+}
+
+void IOManager::OnSettingEventChannelMapping(SettingEvent& event)
+{
+    //output session changed...
+    UpdateOutputSession(true);
 }
 
 void IOManager::OnAudioEvent(AudioEvent& event)
@@ -753,9 +783,10 @@ void IOManager::InitAudioInputDevice(bool bStart)
 
 
         m_SessionIn = session(wxEmptyString, wxT("Soundcard"), SoundcardManager::Get().GetInputDeviceName());
+        //@todo its possible soundcard might not be two channels
         m_SessionIn.lstSubsession.push_back(subsession(wxEmptyString, SoundcardManager::Get().GetInputDeviceName(), wxEmptyString,
         wxT("L24"), wxEmptyString, SoundcardManager::Get().GetInputDevice(), SoundcardManager::Get().GetInputSampleRate(),
-         SoundcardManager::Get().GetInputNumberOfChannels(), wxEmptyString, 0, {0,0}, refclk()));
+        CreateChannels(2), 0, {0,0}, refclk()));
         m_SessionIn.SetCurrentSubsession();
 
         SessionChanged();
@@ -853,6 +884,7 @@ void IOManager::CreateSessionFromOutput(const wxString& sSource)
 
     unsigned int nSampleRate = 48000;
     unsigned int nChannels = 2;
+    std::vector<wxString> vChannels;
     if(m_nOutputDestination == AudioEvent::SOUNDCARD)
     {
         nSampleRate = SoundcardManager::Get().GetOutputSampleRate();
@@ -862,20 +894,189 @@ void IOManager::CreateSessionFromOutput(const wxString& sSource)
     {
         nSampleRate = Settings::Get().Read("Server", "SampleRate", 48000);
         nChannels = Settings::Get().Read("Server", "Channels", 2);
+
     }
     if(m_pGenerator)
     {
         m_pGenerator->SetSampleRate(nSampleRate);
     }
-
     m_SessionOut.lstSubsession.push_back(subsession(Settings::Get().Read(wxT("Output"), wxT("Source"),wxEmptyString),
-    sSource, wxEmptyString, wxT("F32"), wxEmptyString, 0, nSampleRate, nChannels, wxEmptyString, 0, {0,0}, refclk()));
+    sSource, wxEmptyString, wxT("F32"), wxEmptyString, 0, nSampleRate, CreateChannels(nChannels),
+                                                    0, {0,0}, refclk()));
     m_SessionOut.SetCurrentSubsession();
 
     SessionChanged();
 }
 
-void IOManager::UpdateOutputSession()
+void SetChannel(std::vector<subsession::channelGrouping>& vChannels, size_t nChannel, unsigned char nId, subsession::enumChannelGrouping grouping, subsession::enumChannel channel)
+{
+    if(nChannel < vChannels.size())
+    {
+        vChannels[nChannel] = subsession::channelGrouping(nId, grouping, channel);
+    }
+}
+
+std::vector<subsession::channelGrouping> IOManager::CreateChannels(unsigned long nChannels)
+{
+    std::vector<subsession::channelGrouping> vChannels(nChannels);
+    if(Settings::Get().Read("Input", "Type", "Soundcard") == "Soundcard")
+    {
+        SetChannel(vChannels, 1, 0, subsession::enumChannelGrouping::ST, subsession::enumChannel::LEFT);
+        SetChannel(vChannels, 2, 0, subsession::enumChannelGrouping::ST, subsession::enumChannel::RIGHT);
+    }
+    else
+    {
+        wxArrayString asMapping = wxStringTokenize(Settings::Get().Read("Server", "ChannelMapping", "ST"), ",");
+        unsigned char nGroup = 0;
+        int i = 0;
+        for(size_t j = 0; j < asMapping.GetCount(); j++)
+        {
+            if(asMapping[j].CmpNoCase("M") == 0)
+            {
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::M, subsession::enumChannel::MONO);
+                ++nGroup;
+            }
+            else if(asMapping[j].CmpNoCase("U01") == 0)
+            {
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
+                ++nGroup;
+            }
+            else if(asMapping[j].CmpNoCase("DM") == 0)
+            {
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::DM, subsession::enumChannel::MONO_1);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::DM, subsession::enumChannel::MONO_2);
+                i+=2;
+                ++nGroup;
+            }
+            else if(asMapping[j].CmpNoCase("St") ==0)
+            {
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::ST, subsession::enumChannel::LEFT);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::ST, subsession::enumChannel::RIGHT);
+                i+=2;
+                ++nGroup;
+            }
+            else if(asMapping[j].CmpNoCase("LtRt") == 0)
+            {
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::LtRt, subsession::enumChannel::LEFT_TOTAL);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::LtRt, subsession::enumChannel::RIGHT_TOTAL);
+                i+=2;
+                ++nGroup;
+            }
+            else if(asMapping[j].CmpNoCase("U02") == 0)
+            {
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
+                i+=2;
+                ++nGroup;
+            }
+            else if(asMapping[j].CmpNoCase("U03") == 0)
+            {
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
+                SetChannel(vChannels, i+2, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_3);
+
+                i+=3;
+                ++nGroup;
+            }
+            else if(asMapping[j].CmpNoCase("U04") == 0)
+            {
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
+                SetChannel(vChannels, i+2, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_3);
+                SetChannel(vChannels, i+3, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_4);
+                i+=4;
+                ++nGroup;
+            }
+            else if(asMapping[j].CmpNoCase("SGRP") == 0)
+            {
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::SGRP, subsession::enumChannel::SDI_1);
+                SetChannel(vChannels, i+2, nGroup, subsession::enumChannelGrouping::SGRP, subsession::enumChannel::SDI_2);
+                SetChannel(vChannels, i+3, nGroup, subsession::enumChannelGrouping::SGRP, subsession::enumChannel::SDI_3);
+                SetChannel(vChannels, i+4, nGroup, subsession::enumChannelGrouping::SGRP, subsession::enumChannel::SDI_4);
+                i+=4;
+                ++nGroup;
+            }
+            else if(asMapping[j].CmpNoCase("U05") == 0)
+            {
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
+                SetChannel(vChannels, i+2, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_3);
+                SetChannel(vChannels, i+3, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_4);
+                SetChannel(vChannels, i+4, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_5);
+                i+=5;
+                ++nGroup;
+            }
+            else if(asMapping[j].CmpNoCase("U06") == 0)
+            {
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
+                SetChannel(vChannels, i+2, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_3);
+                SetChannel(vChannels, i+3, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_4);
+                SetChannel(vChannels, i+4, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_5);
+                SetChannel(vChannels, i+5, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_6);
+                i+=6;
+                ++nGroup;
+            }
+            else if(asMapping[j].CmpNoCase("51") == 0)
+            {
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::LEFT);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::RIGHT);
+                SetChannel(vChannels, i+2, nGroup, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::CENTER);
+                SetChannel(vChannels, i+3, nGroup, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::LFE);
+                SetChannel(vChannels, i+4, nGroup, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::LEFT_SIDE);
+                SetChannel(vChannels, i+5, nGroup, subsession::enumChannelGrouping::FIVE1, subsession::enumChannel::RIGHT_SIDE);
+
+                i+=6;
+                ++nGroup;
+            }
+            else if(asMapping[j].CmpNoCase("U07") == 0)
+            {
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
+                SetChannel(vChannels, i+2, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_3);
+                SetChannel(vChannels, i+3, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_4);
+                SetChannel(vChannels, i+4, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_5);
+                SetChannel(vChannels, i+5, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_6);
+                SetChannel(vChannels, i+6, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_7);
+
+                i+=7;
+                ++nGroup;
+            }
+            else if(asMapping[j] == "71")
+            {
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::LEFT);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::RIGHT);
+                SetChannel(vChannels, i+2, nGroup, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::CENTER);
+                SetChannel(vChannels, i+3, nGroup, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::LFE);
+                SetChannel(vChannels, i+4, nGroup, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::LEFT_SIDE);
+                SetChannel(vChannels, i+5, nGroup, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::RIGHT_SIDE);
+                SetChannel(vChannels, i+6, nGroup, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::LEFT_REAR_SIDE);
+                SetChannel(vChannels, i+7, nGroup, subsession::enumChannelGrouping::SEVEN1, subsession::enumChannel::RIGHT_REAR_SIDE);
+
+                i+=8;
+                ++nGroup;
+            }
+            else if(asMapping[j].CmpNoCase("U08") == 0)
+            {
+                SetChannel(vChannels, i, nGroup, subsession::enumChannelGrouping::U01, subsession::enumChannel::UNDEFINED_1);
+                SetChannel(vChannels, i+1, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_2);
+                SetChannel(vChannels, i+2, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_3);
+                SetChannel(vChannels, i+3, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_4);
+                SetChannel(vChannels, i+4, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_5);
+                SetChannel(vChannels, i+5, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_6);
+                SetChannel(vChannels, i+6, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_7);
+                SetChannel(vChannels, i+7, nGroup, subsession::enumChannelGrouping::U02, subsession::enumChannel::UNDEFINED_8);
+                i+=8;
+                ++nGroup;
+            }
+        }
+    }
+    return vChannels;
+}
+
+
+
+void IOManager::UpdateOutputSession(bool bMapping)
 {
     if(m_SessionOut.lstSubsession.empty() == false)
     {
@@ -902,10 +1103,11 @@ void IOManager::UpdateOutputSession()
             m_pGenerator->SetSampleRate(nSampleRate);
         }
 
-        if(m_SessionOut.lstSubsession.back().nSampleRate != nSampleRate || m_SessionOut.lstSubsession.back().nChannels != nChannels)
+        if(m_SessionOut.lstSubsession.back().nSampleRate != nSampleRate || m_SessionOut.lstSubsession.back().nChannels != nChannels || bMapping)
         {
             m_SessionOut.lstSubsession.back().nSampleRate = nSampleRate;
             m_SessionOut.lstSubsession.back().nChannels = nChannels;
+            m_SessionOut.lstSubsession.back().vChannels = CreateChannels(nChannels);
             SessionChanged();
         }
     }
@@ -1129,7 +1331,7 @@ void IOManager::DoSAP(bool bRun)
         }
 
 
-        m_pSapServer->AddSender(IpAddress(std::string(Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString).c_str())), std::chrono::milliseconds(30000), m_pAlwaysOnServer->GetSDP());
+        m_pSapServer->AddSender(IpAddress(NetworkControl::Get().GetAddress(Settings::Get().Read("Server", "RTSP_Interface", "eth0")).ToStdString()), std::chrono::milliseconds(30000), m_pAlwaysOnServer->GetSDP());
 
         pmlLog(pml::LOG_INFO) << "IOManager\tStart SAP advertising: " << m_pAlwaysOnServer->GetSDP();
     }
@@ -1190,7 +1392,7 @@ void IOManager::Stream()
             StreamOnDemand();
             DoSAP(false);
         }
-        DoDNSSD(Settings::Get().Read("Server", "DNS-SD", 0));
+        DoDNSSD(Settings::Get().Read("Server", "DNS-SD", true));
     }
 }
 
@@ -1203,7 +1405,7 @@ void IOManager::StreamAlwaysOn()
         unsigned long nByte;
         bool bSSM(sDestinationIp.BeforeFirst(wxT('.')).ToULong(&nByte) && nByte >= 224 && nByte <= 239);
 
-        m_pAlwaysOnServer = new RtpServerThread(this, m_setRTCPHandlers, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), wxEmptyString),
+        m_pAlwaysOnServer = new RtpServerThread(this, m_setRTCPHandlers, NetworkControl::Get().GetAddress(Settings::Get().Read("Server", "RTSP_Interface", "eth0")),
                                                  Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555),
                                                  sDestinationIp,
                                                 Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004),
@@ -1223,10 +1425,11 @@ void IOManager::StreamOnDemand()
     pmlLog(pml::LOG_INFO) << "IOManager\tCreate OnDemand AES67 Server";
     if(m_pAlwaysOnServer == nullptr && m_pOnDemandServer == nullptr)
     {
-        m_pOnDemandServer = new OnDemandStreamer(m_setRTSPHandlers, m_setRTCPHandlers, Settings::Get().Read(wxT("Server"), wxT("RTSP_Address"), "0.0.0.0"),
+        m_pOnDemandServer = new OnDemandStreamer(m_setRTSPHandlers, m_setRTCPHandlers, NetworkControl::Get().GetAddress(Settings::Get().Read("Server", "RTSP_Interface", "eth0")),
                                               Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555));
 
         m_pOnDemandSubsession = OnDemandAES67MediaSubsession::createNew(this, *m_pOnDemandServer->envir(), Settings::Get().Read("Server", "Channels", 2),
+        GetChannelMapping(),
         Settings::Get().Read("Server", "RtpMap", 96),(LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000),
         Settings::Get().Read("Server", "Bits", 24),Settings::Get().Read("Server", "SampleRate", 48000), Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004));
 
@@ -1273,4 +1476,7 @@ wxString IOManager::GetDnsSdService() const
 {
     return "AES67@"+wxGetHostName();
 }
+
+
+
 

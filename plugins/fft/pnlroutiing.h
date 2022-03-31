@@ -5,6 +5,7 @@
 #include <wx/panel.h>
 #include "wmlist.h"
 //*)
+#include "session.h"
 
 class FFTBuilder;
 
@@ -17,7 +18,7 @@ class pnlRoutiing: public wxPanel
 
 		wmList* m_plstFFT_Routing;
 
-		void SetNumberOfChannels(unsigned int nChannels);
+		void SetChannels(const std::vector<subsession::channelGrouping>& vChannels);
 
 	protected:
 

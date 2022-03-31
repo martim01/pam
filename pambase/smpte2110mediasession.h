@@ -4,7 +4,7 @@
 #include "timedbuffer.h"
 #include "session.h"
 #include <map>
-
+#include <vector>
 
 class Smpte2110MediaSubsession;
 
@@ -13,6 +13,7 @@ class Smpte2110MediaSession : public MediaSession
 {
     public:
         static Smpte2110MediaSession* createNew(UsageEnvironment& env, char const* sdpDescription);
+
 
         const wxString& GetRawSDP() const
         {
@@ -60,6 +61,7 @@ class Smpte2110MediaSession : public MediaSession
         refclk m_refclk;
         double m_dPackageMs;
         double m_dMaxPackageMs;
+
 };
 
 
@@ -116,12 +118,14 @@ class Smpte2110MediaSubsession : public MediaSubsession
         enum Range{NARROW, FULLPROTECT, FULL};
         enum Packing{GPM, BPM};
 
+
+        const std::vector<subsession::channelGrouping>& GetChannelGrouping() const { return m_channels;}
+
         static const wxString STR_SAMPLING[13];
         static const wxString STR_COLORIMETRY[8];
         static const wxString STR_TCS[10];
         static const wxString STR_RANGE[3];
         static const wxString STR_PACKING[2];
-
 
     protected:
         void AnalyzeAttributes();
@@ -140,6 +144,7 @@ class Smpte2110MediaSubsession : public MediaSubsession
         void parseSDPAttribute_MaxPTime();
         void parseSDPAttribute_ExtMap();
         void parseSDPAttribute_Mid();
+        void parseSDPAttribute_Channels();
 
         unsigned long m_nSyncTime;
         unsigned int m_nFirstTimestamp;
@@ -172,4 +177,7 @@ class Smpte2110MediaSubsession : public MediaSubsession
         int m_nRange;
         bool m_bMaxUdp;
         std::pair<unsigned long, unsigned long> m_pairAspectRatio;
+
+        std::vector<subsession::channelGrouping> m_channels;
+
 };

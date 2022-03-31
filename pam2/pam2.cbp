@@ -290,7 +290,6 @@
 		<Unit filename="dlgmask.h" />
 		<Unit filename="logelement.cpp" />
 		<Unit filename="logelement.h" />
-		<Unit filename="networkcontrol.cpp" />
 		<Unit filename="networkcontrol.h" />
 		<Unit filename="nmos.cpp" />
 		<Unit filename="nmos.h" />
@@ -313,6 +312,8 @@
 		<Unit filename="pnlAoIPSelection.h" />
 		<Unit filename="pnlAoipManual.cpp" />
 		<Unit filename="pnlAoipManual.h" />
+		<Unit filename="pnlChannelMapping.cpp" />
+		<Unit filename="pnlChannelMapping.h" />
 		<Unit filename="pnlHelp.cpp" />
 		<Unit filename="pnlHelp.h" />
 		<Unit filename="pnlLog.cpp" />
@@ -383,6 +384,7 @@
 		<Unit filename="wxsmith/pnlAoIPInfo.wxs" />
 		<Unit filename="wxsmith/pnlAoIPSelection.wxs" />
 		<Unit filename="wxsmith/pnlAoipManual.wxs" />
+		<Unit filename="wxsmith/pnlChannelMapping.wxs" />
 		<Unit filename="wxsmith/pnlHelp.wxs" />
 		<Unit filename="wxsmith/pnlLog.wxs" />
 		<Unit filename="wxsmith/pnlLogControl.wxs" />
@@ -444,6 +446,7 @@
 					<wxPanel wxs="wxsmith/pnlAbout.wxs" src="pnlAbout.cpp" hdr="pnlAbout.h" fwddecl="0" i18n="1" name="pnlAbout" language="CPP" />
 					<wxDialog wxs="wxsmith/dlgWav.wxs" src="dlgWav.cpp" hdr="dlgWav.h" fwddecl="0" i18n="1" name="dlgWav" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlSettingsRemote.wxs" src="pnlSettingsRemote.cpp" hdr="pnlSettingsRemote.h" fwddecl="0" i18n="1" name="pnlSettingsRemote" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlChannelMapping.wxs" src="pnlChannelMapping.cpp" hdr="pnlChannelMapping.h" fwddecl="0" i18n="1" name="pnlChannelMapping" language="CPP" />
 				</resources>
 			</wxsmith>
 			<code_completion />

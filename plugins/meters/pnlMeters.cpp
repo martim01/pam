@@ -165,12 +165,14 @@ void pnlMeters::SetSession(const session& aSession)
 
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_plblInput->SetLabel(aSession.GetCurrentSubsession()->sProtocol);
-        m_plblSessionSource->SetLabel(aSession.GetCurrentSubsession()->sSourceAddress);
-        m_plblSessionChannels->SetLabel(wxString::Format(wxT("%u"), aSession.GetCurrentSubsession()->nChannels));
-        m_plblSessionFrequency->SetLabel(wxString::Format(wxT("%u"), aSession.GetCurrentSubsession()->nSampleRate));
-        m_plblSessionBits->SetLabel(aSession.GetCurrentSubsession()->sCodec);
-        m_nInputChannels = min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels);
+        m_subsession = (*aSession.GetCurrentSubsession());
+
+        m_plblInput->SetLabel(m_subsession.sProtocol);
+        m_plblSessionSource->SetLabel(m_subsession.sSourceAddress);
+        m_plblSessionChannels->SetLabel(wxString::Format(wxT("%u"), m_subsession.nChannels));
+        m_plblSessionFrequency->SetLabel(wxString::Format(wxT("%u"), m_subsession.nSampleRate));
+        m_plblSessionBits->SetLabel(m_subsession.sCodec);
+        m_nInputChannels = min((unsigned int)8 ,m_subsession.nChannels);
     }
     else
     {
@@ -191,6 +193,7 @@ void pnlMeters::SetSession(const session& aSession)
     {
         m_vMonitor[i]->Destroy();
     }
+
     m_vMonitor.resize(0);
     if(m_pLevels)
     {
@@ -200,36 +203,34 @@ void pnlMeters::SetSession(const session& aSession)
     m_pCalculator->InputSession(aSession);
 
     int x = 55;
+    int nMonLeft = 55;
     if(m_nInputChannels != 2) //not stereo
     {
         m_vMeters.resize(m_nInputChannels);
-        if(Settings::Get().Read("Monitor","Source",0) == 0)
-        {
-            if(m_nInputChannels%2 == 0)
-            {
-                m_vMonitor.resize(m_nInputChannels/2);
-            }
-            else
-            {
-                m_vMonitor.resize(m_nInputChannels/2+1);
-            }
-        }
 
+        unsigned char nGroup(0);
         for(unsigned long i = 0; i < m_vMeters.size(); i++)
         {
-            m_vMeters[i] = new LevelMeter(this,wxID_ANY, wxString::Format(wxT("%lu"), i+1), -70, false, wxPoint(x, 0), wxSize(50, 440));
-
-            if(Settings::Get().Read("Monitor", "Source", 0) == 0)
+            if(m_subsession.vChannels[i].nId != nGroup)
             {
-                if(i%2 == 0)
-                {
-                    m_vMonitor[i/2] = new wmButton(this, wxNewId(), wxT("Monitor"), wxPoint(x, 442), wxSize(101, 35));
-                    m_vMonitor[i/2]->SetBackgroundColour(wxColour(80,70,180));
-                    m_vMonitor[i/2]->SetIntData(i);
-                }
+                m_vMonitor.push_back(new wmButton(this, wxNewId(), wxT("Monitor"), wxPoint(nMonLeft, 442), wxSize(x-nMonLeft, 35)));
+                m_vMonitor.back()->SetBackgroundColour(wxColour(80,70,180));
+                m_vMonitor.back()->SetIntData(nGroup);
+
+
+                x+= 10;
+                nGroup = m_subsession.vChannels[i].nId;
+                nMonLeft = x;
             }
+            m_vMeters[i] = new LevelMeter(this,wxID_ANY, GetChannelLabel(m_subsession.vChannels[i]), -70, false, wxPoint(x, 0), wxSize(50, 440));
+
+
             x+= 51;
         }
+        m_vMonitor.push_back(new wmButton(this, wxNewId(), wxT("Monitor"), wxPoint(nMonLeft, 442), wxSize(x-nMonLeft, 35)));
+        m_vMonitor.back()->SetBackgroundColour(wxColour(80,70,180));
+        m_vMonitor.back()->SetIntData(nGroup);
+
         m_pLevels = new LevelMeter(this, wxID_ANY, wxEmptyString, -70, true, wxPoint(5,0), wxSize(50,440));
     }
     else
@@ -240,8 +241,6 @@ void pnlMeters::SetSession(const session& aSession)
         m_vMeters[1] = new LevelMeter(this,wxID_ANY, wxT("R"), -70, false, wxPoint(110, 0), wxSize(50, 480));
         m_vMeters[2] = new LevelMeter(this,wxID_ANY, wxT("M"), -70, false, wxPoint(200, 0), wxSize(50, 480));
         m_vMeters[3] = new LevelMeter(this,wxID_ANY, wxT("S"), -70, false, wxPoint(260, 0), wxSize(50, 480));
-
-
 
 
         m_pLevels = new LevelMeter(this, wxID_ANY, wxEmptyString, -70, true, wxPoint(5,0), wxSize(50,481));
@@ -393,9 +392,14 @@ void pnlMeters::OnLeftUp(wxMouseEvent& event)
 void pnlMeters::OnMonitorClicked(wxCommandEvent& event)
 {
     vector<char> vChannels;
-    vChannels.resize(2);
-    vChannels[0] = event.GetExtraLong();
-    vChannels[1] = event.GetExtraLong()+1;
+    for(size_t n = 0; n < m_subsession.vChannels.size(); n++)
+    {
+        if(m_subsession.vChannels[n].nId == event.GetExtraLong())
+        {
+            vChannels.push_back(static_cast<char>(n));
+        }
+    }
+
 
     m_pBuilder->AskToMonitor(vChannels);
 }
@@ -459,11 +463,11 @@ void pnlMeters::SetLightColours()
     {
         for(size_t i = 0; i < m_vMeters.size(); i++)
         {
-            if(m_vOutputChannels[0] == i)
+            if(m_subsession.vChannels[i].type == subsession::enumChannel::LEFT || m_subsession.vChannels[i].type == subsession::enumChannel::LEFT_TOTAL)
             {
-                m_vMeters[i]->SetLightColours(wxColour(220,0,0), m_dOvermod,wxColour(255,50,50));
+                m_vMeters[i]->SetLightColours(wxColour(220,0,0), m_dOvermod, wxColour(255,50,50));
             }
-            else if(m_vOutputChannels[1] == i)
+            else if(m_subsession.vChannels[i].type == subsession::enumChannel::RIGHT || m_subsession.vChannels[i].type == subsession::enumChannel::RIGHT_TOTAL)
             {
                 m_vMeters[i]->SetLightColours(wxColour(0,220,0), m_dOvermod, wxColour(255,50,50));
             }
@@ -471,6 +475,18 @@ void pnlMeters::SetLightColours()
             {
                 m_vMeters[i]->SetLightColours(wxColour(245,255,245), m_dOvermod, wxColour(255,50,50));
             }
+//            if(m_vOutputChannels[0] == i)
+//            {
+//                m_vMeters[i]->SetLightColours(wxColour(220,0,0), m_dOvermod,wxColour(255,50,50));
+//            }
+//            else if(m_vOutputChannels[1] == i)
+//            {
+//                m_vMeters[i]->SetLightColours(wxColour(0,220,0), m_dOvermod, wxColour(255,50,50));
+//            }
+//            else
+//            {
+//                m_vMeters[i]->SetLightColours(wxColour(245,255,245), m_dOvermod, wxColour(255,50,50));
+//            }
             m_vMeters[i]->ResetMeter();
         }
     }

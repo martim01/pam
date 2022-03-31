@@ -183,6 +183,7 @@ message(STATUS "Configure plugin waveform")
 add_subdirectory(plugins/waveform)
 message(STATUS "Configure pam2")
 add_subdirectory(pam2)
+
 message(STATUS "Configure pamupdatemanager")
 add_subdirectory(pamupdatemanager)
 message(STATUS "Configure InitialSetup")

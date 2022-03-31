@@ -36,6 +36,7 @@ class NetworkControl
         wxString GetAddress(const wxString& sInterface) const;
         wxString GetGateway(const wxString& sInterface) const;
         unsigned long GetMask(const wxString& sInterface) const;
+        wxString GetInterface(const wxString& sAddress) const;
 
         wxString ConvertMaskToAddress(unsigned long nMask);
         unsigned long ConvertAddressToMask(wxString sAddress);
@@ -44,6 +45,7 @@ class NetworkControl
         std::map<wxString, networkInterface>::const_iterator GetInterfaceBegin();
         std::map<wxString, networkInterface>::const_iterator GetInterfaceEnd();
         std::map<wxString, networkInterface>::const_iterator FindInterface(wxString sInterface);
+
         std::set<wxString> GetInterfaceNames();
 //        bool HasAdminRights();
         void CheckConnection(const wxString& sInterface);

@@ -1,5 +1,5 @@
 #include "pnlRouting.h"
-#include "lissajoubuilder.h"
+#include "polarscopebuilder.h"
 
 //(*InternalHeaders(pnlRouting)
 #include <wx/intl.h>
@@ -19,7 +19,7 @@ BEGIN_EVENT_TABLE(pnlRouting,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlRouting::pnlRouting(wxWindow* parent,LissajouBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) :
+pnlRouting::pnlRouting(wxWindow* parent,PolarScopeBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) :
     m_pBuilder(pBuilder)
 {
 	//(*Initialize(pnlRouting)

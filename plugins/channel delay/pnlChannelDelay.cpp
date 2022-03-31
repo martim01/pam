@@ -115,6 +115,7 @@ pnlChannelDelay::pnlChannelDelay(wxWindow* parent,ChannelDelayBuilder* pBuilder,
 	m_nChannel[0] = 0;
 	m_nChannel[1] = 1;
 	m_nTotalSamples = 65536;
+	m_nTotalChannels = 0;
 
 	m_pBuilder->RegisterForSettingsUpdates(this);
 	Bind(wxEVT_SETTING_CHANGED, &pnlChannelDelay::OnSettingChanged, this);
@@ -235,10 +236,12 @@ void pnlChannelDelay::OnedtMaxDelayTextEnter(wxCommandEvent& event)
 
 void pnlChannelDelay::InputSession(const session& aSession)
 {
+    subsession sub;
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_pGraph->SetSampleRate(aSession.GetCurrentSubsession()->nSampleRate);
-        m_nTotalChannels = std::min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels);
+        sub = (*aSession.GetCurrentSubsession());
+        m_pGraph->SetSampleRate(sub.nSampleRate);
+        m_nTotalChannels = std::min((unsigned int)8 ,sub.nChannels);
     }
     else
     {
@@ -252,27 +255,19 @@ void pnlChannelDelay::InputSession(const session& aSession)
     m_plstChannel2->Freeze();
     m_plstChannel2->Clear();
 
-    for(size_t i = 1; i <= m_nTotalChannels; i++)
+    for(size_t i = 0; i < sub.vChannels.size(); i++)
     {
-        #ifdef __WXGNU__
-        m_plstChannel1->AddButton(wxString::Format(wxT("Ch %zu"), i));
-        m_plstChannel2->AddButton(wxString::Format(wxT("Ch %zu"), i));
-        #else
-        m_plstChannel1->AddButton(wxString::Format(wxT("Ch %u"), i));
-        m_plstChannel2->AddButton(wxString::Format(wxT("Ch %u"), i));
-        #endif
+        m_plstChannel1->AddButton(GetChannelLabel(sub.vChannels[i]));
+        m_plstChannel2->AddButton(GetChannelLabel(sub.vChannels[i]));
     }
 
     m_plstChannel1->Thaw();
     m_plstChannel2->Thaw();
 
-//    m_plstChannel1->SelectButton(m_pBuilder->ReadSetting(wxT("Channel 1"), 0), true);
-//    m_plstChannel2->SelectButton(m_pBuilder->ReadSetting(wxT("Channel 2"), 1), true);
 }
 
 void pnlChannelDelay::OnlstChannel1Selected(wxCommandEvent& event)
 {
-    //m_pBuilder->WriteSetting(wxT("Channel 1"), event.GetInt());
 
 }
 

@@ -2,12 +2,13 @@
 #include "ServerMediaSession.hh"
 #include <set>
 #include <vector>
+#include <string>
 class wxEvtHandler;
 
 class AES67ServerMediaSubsession: public ServerMediaSubsession
 {
     public:
-        static AES67ServerMediaSubsession* createNew(const std::set<wxEvtHandler*>& setRTCPHandlers, RTPSink& rtpSink, RTCPInstance* rtcpInstance, int nPacketTime);
+        static AES67ServerMediaSubsession* createNew(const std::set<wxEvtHandler*>& setRTCPHandlers, RTPSink& rtpSink, RTCPInstance* rtcpInstance, int nPacketTime, const std::string& sMapping);
 
         unsigned int GetEpochTimestamp();
 
@@ -15,7 +16,7 @@ class AES67ServerMediaSubsession: public ServerMediaSubsession
         void BeginQOSMeasurement();
 
     protected:
-        AES67ServerMediaSubsession(const std::set<wxEvtHandler*>& setRTCPHandlers, RTPSink& rtpSink, RTCPInstance* rtcpInstance, int nPacketTime);
+        AES67ServerMediaSubsession(const std::set<wxEvtHandler*>& setRTCPHandlers, RTPSink& rtpSink, RTCPInstance* rtcpInstance, int nPacketTime, const std::string& sMapping);
         // called only by createNew();
         virtual ~AES67ServerMediaSubsession();
 
@@ -51,6 +52,7 @@ class AES67ServerMediaSubsession: public ServerMediaSubsession
       RTCPInstance* fRTCPInstance;
       std::set<wxEvtHandler*> m_setRTCPHandlers;
         int m_nPacketTime;
+    std::string m_sMapping;
 
         //HashTable* fClientRTCPSourceRecords; // indexed by client session id; used to implement RTCP "RR" handling
 

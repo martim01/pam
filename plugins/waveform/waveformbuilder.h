@@ -22,7 +22,7 @@ class WXEXPORT waveformBuilder : public MonitorPluginBuilder
         virtual void OutputChannels(const std::vector<char>& vChannels);
 
     protected:
-		
+
 	friend class waveformMeter;
         void OnSettingChanged(SettingEvent& event);
 

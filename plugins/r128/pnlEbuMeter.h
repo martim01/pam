@@ -3,14 +3,17 @@
 
 #include <vector>
 #include <array>
-
-class session;
+#include <memory>
+#include "session.h"
 class LevelMeter;
 class timedbuffer;
 
 #include "wmlabel.h"
 #include <wx/panel.h>
 #include "json/json.h"
+#include "wmswitcherpanel.h"
+#include "levelmeter.h"
+#include "levelcalculator.h"
 
 class MaxMinGraph;
 class R128Meter;
@@ -50,6 +53,10 @@ class pnlEbuMeter: public wxPanel
 		wmLabel* m_plblPeakRight;
 		wmLabel* m_plblPeakRightMax;
 
+		wmSwitcherPanel* m_pswpMeters;
+		wxPanel* m_ppnlTrue;
+		wxPanel* m_ppnlPPM;
+
 		void SetSession(const session& aSession);
 
 		void SetAudioData(const timedbuffer* pBuffer);
@@ -65,10 +72,14 @@ class pnlEbuMeter: public wxPanel
         void InitLabel(wmLabel* pLabel, const wxColour clrBack, int nFontSize=12);
 
 
+        void SetGroup(unsigned char nGroup);
+
         void ChangeScale();
 
         void LoadSettings();
         Json::Value CreateWebsocketMessage();
+
+        void ChangeMeters(const wxString& sMode);
 
 	protected:
 
@@ -92,6 +103,7 @@ class pnlEbuMeter: public wxPanel
 
         wmButton* m_pbtnCalculate;
 		wmButton* m_pbtnReset;
+		wmLabel* m_plblGroup;
 
 
 	private:
@@ -115,12 +127,15 @@ class pnlEbuMeter: public wxPanel
         R128Meter* m_pPeakLeft;
         R128Meter* m_pPeakRight;
 
+        LevelMeter* m_pPPMLevels;
+        LevelMeter* m_pPPMLeft;
+        LevelMeter* m_pPPMRight;
 
         CorrelationBar* m_pBar;
 
         double m_dPeak[2];
-        R128Calculator* m_pR128;
-        TruePeakCalculator* m_pTrue;
+        std::unique_ptr<R128Calculator> m_pR128;
+        std::unique_ptr<TruePeakCalculator> m_pTrue;
         double m_dOffset;
         unsigned int m_nChannels;
 
@@ -128,7 +143,9 @@ class pnlEbuMeter: public wxPanel
         bool m_bBar;
 
         wxDateTime m_dtStart;
+        subsession m_subsession;
 
+        std::unique_ptr<LevelCalculator> m_pLevel;
 
         static const wxColour CLR_LUFS;
         static const wxColour CLR_SHORT;

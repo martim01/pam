@@ -101,14 +101,16 @@ void pnlDistortion::InputSession(const session& aSession)
     }
     m_vChannels.clear();
 
+    subsession sub;
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_vChannels.resize(std::min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels));
+        sub = (*aSession.GetCurrentSubsession());
+        m_vChannels.resize(std::min((unsigned int)256 ,sub.nChannels));
     }
 
     for(size_t i = 0; i < m_vChannels.size(); i++)
     {
-        m_vChannels[i] = new pnlDistortionChannel(pnlLeft, i,aSession.GetCurrentSubsession()->nSampleRate, wxID_ANY, wxPoint(38+(71*i), 0));
+        m_vChannels[i] = new pnlDistortionChannel(pnlLeft,GetChannelLabel(sub.vChannels[i]), i, sub.nSampleRate, wxID_ANY, wxPoint(38+(71*i), 0));
     }
 }
 

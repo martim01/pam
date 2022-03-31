@@ -27,6 +27,7 @@ class LTCPanel: public pmPanel
 
 		//(*Declarations(LTCPanel)
 		wmLabel* m_pLbl1;
+		wmLabel* m_pLbl2;
 		wmLabel* m_pLbl4;
 		wmLabel* m_pLblColourTitle;
 		wmLabel* m_pLblDateTitle;
@@ -44,6 +45,7 @@ class LTCPanel: public pmPanel
 		wmLabel* m_plblListTitle;
 		wmLabel* m_plblMode;
 		wmLabel* m_plblRaw;
+		wmList* m_plstChannels;
 		wmList* m_plstDate;
 		//*)
 
@@ -71,6 +73,8 @@ class LTCPanel: public pmPanel
 		static const long ID_M_PLBL18;
 		static const long ID_M_PLST1;
 		static const long ID_M_PLBL15;
+		static const long ID_M_PLBL19;
+		static const long ID_M_PLST2;
 		static const long ID_M_PLBL4;
 		static const long ID_M_PLBL5;
 		//*)
@@ -89,6 +93,7 @@ class LTCPanel: public pmPanel
 		LtcDecoder* m_pDecoder;
 
 		unsigned int m_nInputChannels;
+		unsigned int m_nChannel;
 		DECLARE_EVENT_TABLE()
 };
 

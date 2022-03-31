@@ -10,8 +10,9 @@
 static OnDemandAES67MediaSubsession* g_session;
 
 AES67RTPSink::AES67RTPSink(UsageEnvironment& env, Groupsock* RTPgs, unsigned int nFrameSize, unsigned char nRtpPayload,
-unsigned char nChannels, const std::string& sFormat, unsigned short nSampleRate) :
-AudioRTPSink(env, RTPgs, nRtpPayload, nSampleRate, sFormat.c_str(), nChannels)
+unsigned char nChannels, const std::string& sMapping, const std::string& sFormat, unsigned short nSampleRate) :
+AudioRTPSink(env, RTPgs, nRtpPayload, nSampleRate, sFormat.c_str(), nChannels),
+m_sMapping(sMapping)
 {
     setPacketSizes(nFrameSize, nFrameSize);
 }
@@ -24,9 +25,9 @@ AES67RTPSink::~AES67RTPSink()
 }
 
 AES67RTPSink* AES67RTPSink::createNew(UsageEnvironment& env, Groupsock* RTPgs, unsigned int nFrameSize, unsigned char nRtpPayload,
-unsigned char nChannels, const std::string& sFormat, unsigned short nSampleRate)
+unsigned char nChannels, const std::string& sMapping, const std::string& sFormat, unsigned short nSampleRate)
 {
-    return new AES67RTPSink(env, RTPgs, nFrameSize, nRtpPayload, nChannels, sFormat, nSampleRate);
+    return new AES67RTPSink(env, RTPgs, nFrameSize, nRtpPayload, nChannels, sMapping, sFormat, nSampleRate);
 }
 
 
@@ -44,7 +45,7 @@ char const* AES67RTPSink::auxSDPLine()
 
         ss << "a=mediaclk:direct=" << GetEpochTimestamp() << "\r\n";
 
-
+        ss << "a=fmtp:" << (int)fRTPPayloadType << " channel-order=SMPTE2110.(" << m_sMapping << ")\r\n";
         m_sAux = ss.str();
     }
     return m_sAux.c_str();
@@ -90,16 +91,16 @@ unsigned int AES67RTPSink::GetEpochTimestamp()
 
 
 
-OnDemandAES67MediaSubsession* OnDemandAES67MediaSubsession::createNew(wxEvtHandler* pHandler, PamUsageEnvironment& env, unsigned char nNumChannels,unsigned char nRtpPayload,
-LiveAudioSource::enumPacketTime ePacketTime, unsigned char nBitsPerSample, unsigned short nSampleRate, portNumBits initialPortNum)
+OnDemandAES67MediaSubsession* OnDemandAES67MediaSubsession::createNew(wxEvtHandler* pHandler, PamUsageEnvironment& env, unsigned char nNumChannels, const std::string& sMapping, unsigned char nRtpPayload, LiveAudioSource::enumPacketTime ePacketTime, unsigned char nBitsPerSample, unsigned short nSampleRate, portNumBits initialPortNum)
 {
-    return new OnDemandAES67MediaSubsession(pHandler, env, nNumChannels, nRtpPayload, ePacketTime, nBitsPerSample, nSampleRate, initialPortNum);
+    return new OnDemandAES67MediaSubsession(pHandler, env, nNumChannels, sMapping, nRtpPayload, ePacketTime, nBitsPerSample, nSampleRate, initialPortNum);
 }
 
-OnDemandAES67MediaSubsession::OnDemandAES67MediaSubsession(wxEvtHandler* pHandler, PamUsageEnvironment& env, unsigned char nNumChannels,
+OnDemandAES67MediaSubsession::OnDemandAES67MediaSubsession(wxEvtHandler* pHandler, PamUsageEnvironment& env, unsigned char nNumChannels, const std::string& sMapping,
 unsigned char nRtpPayload,  unsigned char nBitsPerSample, unsigned short nSampleRate, LiveAudioSource::enumPacketTime ePacketTime, portNumBits initialPortNum ) :
     OnDemandPamSubsession(pHandler, env, initialPortNum),
   m_nNumberOfChannels(nNumChannels),
+  m_sMapping(sMapping),
   m_nRtpPayload(nRtpPayload),
   m_ePacketTime(ePacketTime),
   m_nBitsPerSample(nBitsPerSample),
@@ -128,7 +129,7 @@ RTPSink* OnDemandAES67MediaSubsession::createNewRTPSink(Groupsock* rtpGroupsock,
 {
     std::string sFormat = "L"+std::to_string(m_nBitsPerSample);
 
-    m_pSink =  AES67RTPSink::createNew(envir(), rtpGroupsock, m_pSource->GetPreferredFrameSize()+12, m_nRtpPayload, m_nNumberOfChannels, sFormat, m_nSampleRate);
+    m_pSink =  AES67RTPSink::createNew(envir(), rtpGroupsock, m_pSource->GetPreferredFrameSize()+12, m_nRtpPayload, m_nNumberOfChannels, m_sMapping, sFormat, m_nSampleRate);
 
     BeginQOSMeasurement();
     return m_pSink;

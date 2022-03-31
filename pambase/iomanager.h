@@ -7,6 +7,8 @@
 #include "dlldefine.h"
 #include <memory>
 #include <vector>
+#include <array>
+#include "session.h"
 
 class SettingEvent;
 class AudioEvent;
@@ -57,6 +59,12 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         ~IOManager();
 
         void OnSettingEvent(SettingEvent& event);
+        void OnSettingEventMonitor(SettingEvent& event);
+        void OnSettingEventInput(SettingEvent& event);
+        void OnSettingEventQoS(SettingEvent& event);
+        void OnSettingEventServer(SettingEvent& event);
+        void OnSettingEventChannelMapping(SettingEvent& event);
+
         void OnAudioEvent(AudioEvent& event);
         void PassOnAudio(AudioEvent& event);
 
@@ -94,7 +102,8 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
 
         void CheckPlayback(unsigned long nSampleRate, unsigned long nChannels);
         void CreateSessionFromOutput(const wxString& sSource);
-        void UpdateOutputSession();
+        void UpdateOutputSession(bool bMapping=false);
+        std::vector<subsession::channelGrouping> CreateChannels(unsigned long nChannels);
 
         void DoSAP(bool bRun);
         void DoDNSSD(bool bRun);
@@ -112,7 +121,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         void CheckIfGain();
         void InitAoIPInput();
 
-        std::set<wxEvtHandler*> m_setHandlers;
+                std::set<wxEvtHandler*> m_setHandlers;
         std::set<wxEvtHandler*> m_setRTCPHandlers;
         std::set<wxEvtHandler*> m_setRTSPHandlers;
         bool m_bSingleHandler;

@@ -32,7 +32,7 @@ class WXEXPORT PolarScopeBuilder : public MonitorPluginBuilder
 
         friend class PolarScope;
         friend class pnlOptionsMode;
-        //friend class pnlRouting;
+        friend class pnlRouting;
         //friend class pnlDisplay;
         //friend class pnlMeters;
 
@@ -46,7 +46,7 @@ class WXEXPORT PolarScopeBuilder : public MonitorPluginBuilder
     private:
 
         PolarScope* m_pPolarScope;
-        //pnlRouting* m_ppnlRouting;
+        pnlRouting* m_ppnlRouting;
         unsigned int m_nInputChannels;
         unsigned int m_nDisplayChannel;
         unsigned int m_nMode;

@@ -73,14 +73,14 @@ void SpectogramBuilder::InputSession(const session& aSession)
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
         m_pMeter->SetSampleRate(aSession.GetCurrentSubsession()->nSampleRate);
-        m_pMeter->SetNumberOfChannels(min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels));
-        m_ppnlRouting->SetNumberOfChannels(min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels));
+        m_pMeter->SetChannels(aSession.GetCurrentSubsession()->vChannels);
+        m_ppnlRouting->SetChannels(aSession.GetCurrentSubsession()->vChannels);
     }
     else
     {
         m_pMeter->SetSampleRate(48000);
-        m_pMeter->SetNumberOfChannels(0);
-        m_ppnlRouting->SetNumberOfChannels(0);
+        m_pMeter->SetChannels({});
+        m_ppnlRouting->SetChannels({});
     }
 
 

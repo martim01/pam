@@ -44,7 +44,10 @@ SpectogramMeter::SpectogramMeter(wxWindow *parent, SpectogramBuilder* pBuilder, 
     m_nBinSelected = 0;
     m_bCursorMode = false;
 
-    m_nChannels = 2;
+    m_vChannels.push_back(subsession::channelGrouping(0,subsession::enumChannelGrouping::ST, subsession::enumChannel::LEFT));
+    m_vChannels.push_back(subsession::channelGrouping(0,subsession::enumChannelGrouping::ST, subsession::enumChannel::RIGHT));
+
+
     m_nSampleRate = 48000;
 
     m_nNudge = NONE;
@@ -259,21 +262,21 @@ void SpectogramMeter::SetSampleRate(unsigned long nSampleRate)
     m_nSampleRate = nSampleRate;
 }
 
-void SpectogramMeter::SetNumberOfChannels(unsigned int nChannels)
+void SpectogramMeter::SetChannels(const std::vector<subsession::channelGrouping>& vChannels)
 {
-    m_nChannels = nChannels;
+    m_vChannels = vChannels;
 }
 
 void SpectogramMeter::SetData(const timedbuffer* pBuffer)
 {
-    if(!m_bHold && m_nChannels != 0)
+    if(!m_bHold && m_vChannels.size() != 0)
     {
         for(size_t i = 0; i < pBuffer->GetBufferSize(); i++)
         {
             m_lstBuffer.push_back(pBuffer->GetBuffer()[i]);
         }
 
-        while(m_lstBuffer.size() > (m_vfft_out.size()-1)*2*m_nChannels)
+        while(m_lstBuffer.size() > (m_vfft_out.size()-1)*2*m_vChannels.size())
         {
             DoFFT();
         }
@@ -294,7 +297,7 @@ void SpectogramMeter::FFTRoutine()
     //wxImage anImage(m_vfft_out.size(), 1);
     wxImage anImage(max(730, m_rectGrid.GetWidth()),1);
 
-    m_vfft_out = fft.DoFFT(m_lstBuffer, m_nSampleRate, m_nChannels, m_nFFTAnalyse, m_nWindowType, m_vfft_out.size(), m_nOverlap);
+    m_vfft_out = fft.DoFFT(m_lstBuffer, m_nSampleRate, m_vChannels.size(), m_nFFTAnalyse, m_nWindowType, m_vfft_out.size(), m_nOverlap);
     m_dBinSize = static_cast<double>(m_nSampleRate)/static_cast<double>((m_vfft_out.size()-1)*2);
 
 
@@ -415,9 +418,9 @@ float SpectogramMeter::WindowMod(float dAmplitude)
 void SpectogramMeter::SetAnalyseMode(int nMode)
 {
     m_nFFTAnalyse = nMode;
-    if(m_nChannels != 2)
+    if(m_vChannels.size() != 2)
     {
-        m_uiSettingsAnalyse.SetLabel(LABEL_ANALYSE[m_nFFTAnalyse]);
+        m_uiSettingsAnalyse.SetLabel(nMode < m_vChannels.size() ? GetChannelLabel(m_vChannels[nMode]) : "?");
     }
     else if(nMode == 0)
     {

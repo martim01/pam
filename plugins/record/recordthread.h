@@ -10,7 +10,7 @@ class RecordThread : public wxThread
 {
     public:
         RecordThread();
-        bool Init(const wxString& sFilename, unsigned int nChannels, unsigned int nSampleRate, unsigned int nBitRate);
+        bool Init(const wxString& sFilename, const std::vector<unsigned char>& vChannels, unsigned int nSampleRate, unsigned int nBitRate);
         void* Entry();
 
         void AddToBuffer(const timedbuffer* pBuffer);
@@ -19,11 +19,14 @@ class RecordThread : public wxThread
 
     private:
 
-        std::shared_ptr<const timedbuffer> CopyBuffer(const timedbuffer* pBuffer);
+        timedbuffer* CopyBuffer(const timedbuffer* pBuffer);
+        timedbuffer* FilterBuffer(const timedbuffer* pBuffer);
+
         void ClearQueue();
 
         wxMutex m_mutex;
         SoundFile m_sf;
+        std::vector<unsigned char> m_vChannels;
         std::atomic<bool> m_bLoop;
 
         std::queue<std::shared_ptr<const timedbuffer>> m_queueBuffer;

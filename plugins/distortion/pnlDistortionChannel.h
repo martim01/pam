@@ -14,7 +14,7 @@ class pnlDistortionChannel: public wxPanel
 {
 	public:
 
-		pnlDistortionChannel(wxWindow* parent,unsigned int nChannel, unsigned int nSampleRate, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+		pnlDistortionChannel(wxWindow* parent, const wxString& sLabel, unsigned int nChannel, unsigned int nSampleRate, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pnlDistortionChannel();
 
 		void AddAudioData(float dValue);

@@ -38,12 +38,12 @@ pnlRouting::~pnlRouting()
 	//*)
 }
 
-void pnlRouting::SetNumberOfChannels(unsigned int nChannels)
+void pnlRouting::SetChannels(const std::vector<subsession::channelGrouping>& vChannels)
 {
     m_plstFFT_Routing->Freeze();
     m_plstFFT_Routing->Clear();
 
-    if(nChannels == 2)
+    if(vChannels.size() == 2)
     {
         m_plstFFT_Routing->AddButton(wxT("Left"), wxNullBitmap, (void*)0);
         m_plstFFT_Routing->AddButton(wxT("Right"), wxNullBitmap, (void*)1);
@@ -52,9 +52,9 @@ void pnlRouting::SetNumberOfChannels(unsigned int nChannels)
     }
     else
     {
-        for(unsigned int i = 0; i < nChannels; i++)
+        for(unsigned int i = 0; i < vChannels.size(); i++)
         {
-            m_plstFFT_Routing->AddButton(wxString::Format(wxT("Channel %d"), i+1), wxNullBitmap, (void*)i);
+            m_plstFFT_Routing->AddButton(GetChannelLabelLong(vChannels[i]), wxNullBitmap, (void*)i);
         }
     }
 

@@ -13,6 +13,7 @@
 #include <wx/tokenzr.h>
 #include "soundfile.h"
 #include <map>
+#include "networkcontrol.h"
 
 using namespace std::placeholders;
 
@@ -117,13 +118,14 @@ void RemoteApi::OnSettingEvent(SettingEvent& event)
                 m_Server.Stop();
             }
         }
-        else if(event.GetKey() == "Interface")
+        else if(event.GetKey() == "_Interface")
         {
-            m_Server.SetInterface(ipAddress(event.GetValue().ToStdString()), Settings::Get().Read("RemoteApi", "Port", 8090));
+
+            m_Server.SetInterface(ipAddress(NetworkControl::Get().GetAddress(event.GetValue()).ToStdString()), Settings::Get().Read("RemoteApi", "Port", 8090));
         }
         else if(event.GetKey() == "Port")
         {
-            m_Server.SetInterface(ipAddress(Settings::Get().Read("RemoteApi", "Interface", "0.0.0.0").ToStdString()), event.GetValue(8090l));
+            m_Server.SetInterface(ipAddress(NetworkControl::Get().GetAddress(Settings::Get().Read("RemoteApi", "_Interface", "Any")).ToStdString()), event.GetValue(8090l));
         }
     }
     else if(WebsocketsActive())

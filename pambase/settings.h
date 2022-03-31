@@ -76,3 +76,4 @@ class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
 };
 
 
+extern std::string GetChannelMapping();

@@ -27,6 +27,8 @@ class dlgMask: public wxDialog
 		static const long ID_M_PLST1;
 		//*)
 
+		void DoCreate(wxWindow* parent, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+
 		void OnActivate(wxActivateEvent& event);
 	private:
 
@@ -34,7 +36,7 @@ class dlgMask: public wxDialog
 		void OnlstSubnetSelected(wxCommandEvent& event);
 		void OnLeftDown(wxMouseEvent& event);
 		//*)
-
+        void MoveToCorrectPlace(size_t nButtons);
 		void OnCaptureLost(wxMouseCaptureLostEvent& event);
 		wxPoint m_pntWindow;
 

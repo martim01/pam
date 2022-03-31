@@ -3,6 +3,10 @@
 #include "dlldefine.h"
 
 class SettingEvent;
+
+
+
+
 class PAMBASE_IMPEXPORT pmControl : public wxWindow
 {
     DECLARE_EVENT_TABLE()
@@ -15,6 +19,7 @@ class PAMBASE_IMPEXPORT pmControl : public wxWindow
 
         pmControl();
         virtual ~pmControl(){}
+
 
 
   protected:

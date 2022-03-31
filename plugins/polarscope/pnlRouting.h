@@ -8,12 +8,12 @@
 //*)
 #include "session.h"
 
-class LissajouBuilder;
+class PolarScopeBuilder;
 class pnlRouting: public wxPanel
 {
 	public:
 
-		pnlRouting(wxWindow* parent,LissajouBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+		pnlRouting(wxWindow* parent,PolarScopeBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pnlRouting();
 
 		//(*Declarations(pnlRouting)
@@ -47,7 +47,7 @@ class pnlRouting: public wxPanel
 		//*)
 
 		void EnableLists(bool bEnable);
-		LissajouBuilder* m_pBuilder;
+		PolarScopeBuilder* m_pBuilder;
 
 
 		DECLARE_EVENT_TABLE()

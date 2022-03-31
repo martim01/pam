@@ -132,22 +132,23 @@ void pnlLevels::SetAudioData(const timedbuffer* pBuffer)
 
 void pnlLevels::ResetTest()
 {
-    CreateGraphs(m_vGraph.size());
+    //@todo resettest
+    //CreateGraphs(m_vGraph.size());
 }
 
 void pnlLevels::InputSession(const session& aSession)
 {
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        CreateGraphs(min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels));
+        CreateGraphs(aSession.GetCurrentSubsession()->vChannels);
     }
     else
     {
-        CreateGraphs(0);
+        CreateGraphs({});
     }
 }
 
-void pnlLevels::CreateGraphs(unsigned int nChannels)
+void pnlLevels::CreateGraphs(const std::vector<subsession::channelGrouping>& vChannels)
 {
     for(size_t i = 0; i < m_vLabel.size(); i++)
     {
@@ -161,17 +162,21 @@ void pnlLevels::CreateGraphs(unsigned int nChannels)
     m_vLevelPeakMin.clear();
 
 
-    for(size_t i = 0 ; i < nChannels; i++)
+    unsigned char nGroup = 0;
+    int x = 10;
+    for(size_t i = 0 ; i < vChannels.size(); i++)
     {
-        #ifdef __WXGNU__
-        wmLabel* pLabel = new wmLabel(this, wxNewId(), wxString::Format(wxT("Ch %zu"), i+1), wxPoint(10+(i*60), 50), wxSize(50,30));
-        #else
-        wmLabel* pLabel = new wmLabel(this, wxNewId(), wxString::Format(wxT("Ch %u"), i+1), wxPoint(10+(i*60), 50), wxSize(50,30));
-        #endif
+        if(vChannels[i].nId != nGroup)
+        {
+            x+= 10;
+            nGroup = vChannels[i].nId;
+        }
+        wmLabel* pLabel = new wmLabel(this, wxNewId(),GetChannelLabel(vChannels[i]), wxPoint(x, 50), wxSize(50,30));
         pLabel->SetBackgroundColour(wxColour(50,50,100));
         pLabel->SetForegroundColour(*wxWHITE);
         m_vLabel.push_back(pLabel);
-        m_vGraph.push_back(new MaxMinGraph(i+1, this, m_pBuilder, wxNewId(), wxPoint(10+(i*60), 80), wxSize(50,300)));
+        m_vGraph.push_back(new MaxMinGraph(i+1, this, m_pBuilder, wxNewId(), wxPoint(x, 80), wxSize(50,300)));
+        x+= 52;
     }
 
     switch(m_pBuilder->ReadSetting(wxT("Monitor"),0))

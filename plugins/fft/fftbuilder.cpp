@@ -11,7 +11,7 @@
 #include "pnloptions.h"
 #include "settings.h"
 #include "settingevent.h"
-
+#include "log.h"
 using namespace std;
 
 FFTBuilder::FFTBuilder() : MonitorPluginBuilder(),
@@ -94,17 +94,18 @@ void FFTBuilder::LoadSettings()
 
 void FFTBuilder::InputSession(const session& aSession)
 {
+
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
         m_pMeter->SetSampleRate(aSession.GetCurrentSubsession()->nSampleRate);
-        m_pMeter->SetNumberOfChannels(min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels));
-        m_ppnlRouting->SetNumberOfChannels(min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels));
+        m_pMeter->SetChannels(aSession.GetCurrentSubsession()->vChannels);
+        m_ppnlRouting->SetChannels(aSession.GetCurrentSubsession()->vChannels);
     }
     else
     {
         m_pMeter->SetSampleRate(48000);
-        m_pMeter->SetNumberOfChannels(0);
-        m_ppnlRouting->SetNumberOfChannels(0);
+        m_pMeter->SetChannels({});
+        m_ppnlRouting->SetChannels({});
     }
 
 }

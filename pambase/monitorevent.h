@@ -3,6 +3,7 @@
 #include <wx/event.h>
 #include "dlldefine.h"
 #include <vector>
+#include "session.h"
 
 DECLARE_EXPORTED_EVENT_TYPE(PAMBASE_IMPEXPORT,wxEVT_MONITOR_REQUEST,-1)
 
@@ -14,9 +15,9 @@ public:
     *   @param commandType should be wxEVT_NI...
     *   @param id the ID of the button list control
     **/
-    MonitorEvent(const std::vector<char>& vChannels);
-
     MonitorEvent();
+
+    MonitorEvent(const std::vector<char>& vChannels );
     /** @brief	Copy Constructor
     *   @param event a wxNIEvent
     **/

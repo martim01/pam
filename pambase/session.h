@@ -3,7 +3,15 @@
 #include "timedbuffer.h"
 #include <list>
 #include <algorithm>
+#include <vector>
+#include <map>
+#include <wx/colour.h>
 
+extern const wxString CH_GROUP_ORDER[8];
+extern const wxString CH_GROUP_TYPE[15];
+extern const wxString CH_GROUP_CHANNEL[26];
+extern const wxString CH_GROUP_CHANNEL_LONG[26];
+extern const wxColour CH_GROUP_COLOUR[8];
 
 struct PAMBASE_IMPEXPORT frameBuffer
 {
@@ -28,11 +36,31 @@ struct PAMBASE_IMPEXPORT refclk
     unsigned long nDomain;
 };
 
+
 struct PAMBASE_IMPEXPORT subsession
 {
+    enum enumChannelGrouping { M, DM, ST, LtRt, FIVE1, SEVEN1, SGRP, U01, U02, U03, U04, U05, U06, U07, U08};
 
-    subsession(const wxString& sI, const wxString& sourceaddress, const wxString& medium, const wxString& codec, const wxString& protocol, unsigned int port, unsigned int samplerate, unsigned int channels, const wxString& channelnames, unsigned int synctimestamp, const timeval& epoch, const refclk& clk) :
-    sId(sI), sSourceAddress(sourceaddress), sMedium(medium), sCodec(codec), sProtocol(protocol), nPort(port), nSampleRate(samplerate),nChannels(std::min((unsigned int)256, channels)),sChannelNames(channelnames),nSyncTimestamp(synctimestamp), tvEpoch(epoch),refClock(clk){}
+    enum enumChannel{ MONO=0, MONO_1, MONO_2, LEFT, RIGHT, LEFT_TOTAL, RIGHT_TOTAL, CENTER, LFE, LEFT_SIDE, RIGHT_SIDE, LEFT_REAR_SIDE, RIGHT_REAR_SIDE, SDI_1,
+        SDI_2,SDI_3,SDI_4, UNDEFINED_1,UNDEFINED_2,UNDEFINED_3,UNDEFINED_4,UNDEFINED_5,UNDEFINED_6,UNDEFINED_7,UNDEFINED_8, UNSET};
+
+
+    struct channelGrouping
+    {
+        channelGrouping(unsigned char n, enumChannelGrouping g, enumChannel t) : nId(n), grouping(g), type(t){}
+        channelGrouping() : nId(0), grouping(enumChannelGrouping::U01), type(enumChannel::UNDEFINED_1){}
+
+        unsigned char nId;
+        enumChannelGrouping grouping;
+        enumChannel type;
+    };
+
+    subsession() : nPort(0), nSampleRate(0), nChannels(0), nSyncTimestamp(0){}
+    subsession(const wxString& sI, const wxString& sourceaddress, const wxString& medium, const wxString& codec, const wxString& protocol,
+               unsigned int port, unsigned int samplerate, const std::vector<channelGrouping>& channels,
+               unsigned int synctimestamp, const timeval& epoch, const refclk& clk) :
+    sId(sI), sSourceAddress(sourceaddress), sMedium(medium), sCodec(codec), sProtocol(protocol), nPort(port), nSampleRate(samplerate), nChannels(channels.size()),
+    vChannels(channels), nSyncTimestamp(synctimestamp), tvEpoch(epoch),refClock(clk){}
 
     wxString sId;
     wxString sSourceAddress;
@@ -42,7 +70,9 @@ struct PAMBASE_IMPEXPORT subsession
     unsigned int nPort;
     unsigned int nSampleRate;
     unsigned int nChannels;
-    wxString sChannelNames;
+
+    std::vector<channelGrouping> vChannels;
+
     unsigned int nSyncTimestamp;
     timeval tvEpoch;
     refclk refClock;
@@ -149,3 +179,8 @@ struct PAMBASE_IMPEXPORT qosData
     unsigned int nTimestampErrorsTotal;
 };
 
+extern const std::map<subsession::enumChannelGrouping, unsigned char> CH_GROUP_SIZE;
+
+extern wxString GetChannelLabel(const subsession::channelGrouping& ch);
+extern wxString GetChannelLabelLong(const subsession::channelGrouping& ch);
+extern wxString GetChannelGroupName(const subsession::channelGrouping& ch);

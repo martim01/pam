@@ -72,17 +72,17 @@ void pnlRouting::OnlstXSelected(wxCommandEvent& event)
 }
 
 
-void pnlRouting::SetNumberOfChannels(unsigned int nChannels)
+void pnlRouting::SetChannels(const std::vector<subsession::channelGrouping>& vChannels)
 {
     m_plstX->Freeze();
     m_plstY->Freeze();
     m_plstX->Clear();
     m_plstY->Clear();
 
-    for(unsigned int i = 0; i < nChannels; i++)
+    for(unsigned int i = 0; i < vChannels.size(); i++)
     {
-        m_plstX->AddButton(wxString::Format(wxT("CH: %d"), i));
-        m_plstY->AddButton(wxString::Format(wxT("CH: %d"), i));
+        m_plstX->AddButton(GetChannelLabel(vChannels[i]));
+        m_plstY->AddButton(GetChannelLabel(vChannels[i]));
     }
 
     m_plstX->Thaw();

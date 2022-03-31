@@ -90,15 +90,4 @@ void pnlSettingsRemote::OnSettingChange(SettingEvent& event)
         m_pedtPort->Enable(!event.GetValue(false));
         m_pbtnWebsocket->Enable(event.GetValue(false));
     }
-    else if(event.GetKey() == "_Interface")
-    {
-        if(event.GetValue() == "Any")
-        {
-            Settings::Get().Write("RemoteApi","Interface","0.0.0.0");
-        }
-        else
-        {
-            Settings::Get().Write("RemoteApi","Interface", NetworkControl::Get().GetAddress(event.GetValue()));
-        }
-    }
 }
