@@ -208,7 +208,7 @@ void pamupdatemanagerDialog::Update()
     {
         m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, " "));
         m_plstProgress->ShowElement(m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "## Update failed. Reverting changes")), wmListAdv::BOTTOM);
-        
+        m_plstProgress->Update();
 
         RevertAll();
     }
@@ -216,7 +216,7 @@ void pamupdatemanagerDialog::Update()
     {
         m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, " "));
         m_plstProgress->ShowElement(m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "## Update Successful")), wmListAdv::BOTTOM);
-        
+        m_plstProgress->Update();
 
         PostUpdate();
         StoreBackupFileNames();
@@ -308,7 +308,7 @@ bool pamupdatemanagerDialog::ExtractAndUpdate(wxDC& dc)
 {
 
     m_plstProgress->ShowElement(m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "# Update")), wmListAdv::BOTTOM);
-    
+    m_plstProgress->Update();
 
     wxFileInputStream in(m_fnUpdate.GetFullPath());
     wxTarInputStream tar(in);
@@ -327,7 +327,7 @@ bool pamupdatemanagerDialog::ExtractAndUpdate(wxDC& dc)
                 fnExisting.SetFullName(fnFile.GetFullName());
 
                 m_plstProgress->ShowElement(m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "## "+fnFile.GetFullName())), wmListAdv::TOP);
-                
+                m_plstProgress->Update();
 
                 auto asDir = fnFile.GetDirs();
                 if(asDir.Count() > 0)
@@ -373,7 +373,7 @@ bool pamupdatemanagerDialog::ExtractAndUpdate(wxDC& dc)
                         {
                             return false;
                         }
-                    }                   
+                    }
                 }
             }
         }
@@ -400,13 +400,14 @@ bool pamupdatemanagerDialog::ReplaceFile(wxDC& dc, wxTarInputStream& input, cons
         {
             input.Read(out);
         }
-        m_plstProgress->ShowElement(m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "Updated")), wmListAdv::TOP);      
+        m_plstProgress->ShowElement(m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "Updated")), wmListAdv::TOP);
+        m_plstProgress->Update();
         return true;
     }
     else
     {
         m_plstProgress->ShowElement(m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "Failed to update")), wmListAdv::BOTTOM);
-        
+        m_plstProgress->Update();
         return false;
     }
 }
@@ -420,7 +421,7 @@ bool pamupdatemanagerDialog::ReplaceFileUsr(wxDC& dc, wxTarInputStream& input, c
         if(nResult != 0)
         {
             m_plstProgress->ShowElement(m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "Failed to create backup")), wmListAdv::BOTTOM);
-            
+            m_plstProgress->Update();
             return false;
         }
     }
@@ -440,14 +441,14 @@ bool pamupdatemanagerDialog::ReplaceFileUsr(wxDC& dc, wxTarInputStream& input, c
         {
             m_setUpdated.insert(fnOutput.GetFullPath()+".bak");
             m_plstProgress->ShowElement(m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "Updated")), wmListAdv::BOTTOM);
-            
+            m_plstProgress->Update();
             return true;
         }
     }
     else
     {
         m_plstProgress->ShowElement(m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "Failed to update")), wmListAdv::BOTTOM);
-        
+        m_plstProgress->Update();
         return false;
     }
 }
