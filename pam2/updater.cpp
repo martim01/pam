@@ -55,14 +55,31 @@ bool InheritCapabilities()
 }
 
 
-void ExtractAndRunUpdater(const wxString& sDevice, const wxString& sFile)
+bool ExtractAndRunUpdater(const wxString& sDevice, const wxString& sFile)
 {
     pmlLog(pml::LOG_DEBUG) << "ExtractAndRunUpdater: " << sFile;
 
     wxRemoveFile("/tmp/pamupdatemanager");
 
+    if(UsbChecker::IsMounted() != 0 && UsbChecker::MountDevice(sDevice) != 0)
+    {
+        pmlLog(pml::LOG_ERROR) << "ExtractAndRunUpdater: Could not mount device " << sDevice;
+        return false;
+    }
+
     wxFileInputStream in("/mnt/share/"+sFile);
+    if(in.IsOk() == false)
+    {
+        pmlLog(pml::LOG_ERROR) << "ExtractAndRunUpdater: Could not open " << sFile;
+        return false;
+    }
     wxTarInputStream tar(in);
+    if(tar.IsOk() == false)
+    {
+        pmlLog(pml::LOG_ERROR) << "ExtractAndRunUpdater: " << sFile << " is not a valid update file";
+        return false;
+    }
+
     wxTarEntry* pEntry = nullptr;
     bool bExtracted(false);
     do
@@ -88,14 +105,16 @@ void ExtractAndRunUpdater(const wxString& sDevice, const wxString& sFile)
     if(bExtracted)
     {
         chmod("/tmp/pamupdatemanager", S_IXUSR | S_IRUSR | S_IWUSR);
-    
+
         InheritCapabilities();
         pmlLog(pml::LOG_DEBUG) << "Run Updater";
-        wxExecute("/tmp/pamupdatemanager "+sDevice+" "+sFile);    
+        wxExecute("/tmp/pamupdatemanager "+sDevice+" "+sFile);
+        return true;
     }
     else
     {
         pmlLog(pml::LOG_ERROR) << "Could not find pamupdatemanager in 'put' file";
+        return false;
     }
 }
 

@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iostream>
 #include "log.h"
+#include <wx/textfile.h>
 
 wxDEFINE_EVENT(wxEVT_USB_FOUND, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_USB_FILE_FOUND, wxCommandEvent);
@@ -18,6 +19,23 @@ wxDEFINE_EVENT(wxEVT_USB_ERROR, wxCommandEvent);
 UsbChecker::~UsbChecker()
 {
     Abort();
+}
+
+int UsbChecker::IsMounted()
+{
+    wxTextFile tf("/proc/self/mountinfo");
+    if(tf.Open())
+    {
+        for(size_t i = 0; i < tf.GetLineCount(); i++)
+        {
+            if(tf[i].Find("/mnt/share") != wxNOT_FOUND)
+            {
+                return 0;
+            }
+        }
+        return -1;
+    }
+    return -2;
 }
 
 void UsbChecker::Abort()
