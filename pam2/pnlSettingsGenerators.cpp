@@ -28,6 +28,8 @@ using namespace std;
 
 //(*IdInit(pnlSettingsGenerators)
 const long pnlSettingsGenerators::ID_M_PLST8 = wxNewId();
+const long pnlSettingsGenerators::ID_M_PBTN2 = wxNewId();
+const long pnlSettingsGenerators::ID_M_PBTN1 = wxNewId();
 const long pnlSettingsGenerators::ID_M_PLBL8 = wxNewId();
 const long pnlSettingsGenerators::ID_M_PLST3 = wxNewId();
 const long pnlSettingsGenerators::ID_M_PLST1 = wxNewId();
@@ -91,18 +93,27 @@ END_EVENT_TABLE()
 pnlSettingsGenerators::pnlSettingsGenerators(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size, long nStyle, const wxString sempty)
 {
 	//(*Initialize(pnlSettingsGenerators)
-	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
+	Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("wxID_ANY"));
 	pnlGenerator = new wxPanel(this, ID_PANEL8, wxDefaultPosition, wxSize(600,440), wxTAB_TRAVERSAL, _T("ID_PANEL8"));
 	pnlGenerator->SetBackgroundColour(wxColour(0,0,0));
-	m_plstAudioSources = new wmList(pnlGenerator, ID_M_PLST8, wxPoint(0,0), wxSize(600,64), wmList::STYLE_SELECT, 0, wxSize(-1,30), 8, wxSize(2,-1));
+	m_plstAudioSources = new wmList(pnlGenerator, ID_M_PLST8, wxPoint(0,0), wxSize(525,34), wmList::STYLE_SELECT|wmList::STYLE_CIRCULAR, 2, wxSize(-1,30), 7, wxSize(2,-1));
 	m_plstAudioSources->SetBackgroundColour(wxColour(0,0,0));
 	m_plstAudioSources->SetButtonColour(wxColour(wxT("#400080")));
 	m_plstAudioSources->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
+	m_pbtnMixer = new wmButton(pnlGenerator, ID_M_PBTN2, _("Mixer"), wxPoint(250,36), wxSize(100,30), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
+	m_pbtnMixer->SetBackgroundColour(wxColour(128,64,0));
+	wxFont m_pbtnMixerFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pbtnMixer->SetFont(m_pbtnMixerFont);
+	m_pbtnNext = new wmButton(pnlGenerator, ID_M_PBTN1, _("Next"), wxPoint(525,2), wxSize(75,30), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
+	m_pbtnNext->Hide();
+	m_pbtnNext->SetBackgroundColour(wxColour(64,128,128));
+	wxFont m_pbtnNextFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pbtnNext->SetFont(m_pbtnNextFont);
 	m_pswpAog = new wmSwitcherPanel(pnlGenerator, ID_M_PSWP2, wxPoint(0,70), wxSize(600,380), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP2"));
 	m_pswpAog->SetPageNameStyle(0);
 	Panel5 = new wxPanel(m_pswpAog, ID_PANEL11, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL11"));
 	Panel5->SetBackgroundColour(wxColour(0,0,0));
-	m_pLbl1 = new wmLabel(Panel5, ID_M_PLBL8, _("Input-Output Channel Mapping"), wxPoint(0,0), wxSize(600,30), 0, _T("ID_M_PLBL8"));
+	m_pLbl1 = new wmLabel(Panel5, ID_M_PLBL8, _("Output Channel Mapping"), wxPoint(0,0), wxSize(600,30), 0, _T("ID_M_PLBL8"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl1->GetUiRect().SetGradient(0);
 	m_pLbl1->SetForegroundColour(wxColour(255,255,255));
@@ -204,7 +215,7 @@ pnlSettingsGenerators::pnlSettingsGenerators(wxWindow* parent,wxWindowID id,cons
 	m_plblOutput_8->SetBackgroundColour(wxColour(0,0,0));
 	wxFont m_plblOutput_8Font(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Verdana"),wxFONTENCODING_DEFAULT);
 	m_plblOutput_8->SetFont(m_plblOutput_8Font);
-	m_pLbl7 = new wmLabel(Panel5, ID_M_PLBL11, _("Inputs:"), wxPoint(200,30), wxSize(60,30), 0, _T("ID_M_PLBL11"));
+	m_pLbl7 = new wmLabel(Panel5, ID_M_PLBL11, _("Source Channels:"), wxPoint(200,30), wxSize(192,30), 0, _T("ID_M_PLBL11"));
 	m_pLbl7->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl7->GetUiRect().SetGradient(0);
 	m_pLbl7->SetForegroundColour(wxColour(255,255,255));
@@ -281,6 +292,8 @@ pnlSettingsGenerators::pnlSettingsGenerators(wxWindow* parent,wxWindowID id,cons
 	m_pswpAog->AddPage(Panel2, _("Noise"), false);
 
 	Connect(ID_M_PLST8,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsGenerators::OnlstAudioSourcesSelected);
+	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsGenerators::OnbtnMixerClick);
+	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsGenerators::OnbtnNextClick);
 	Connect(ID_M_PLST7,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsGenerators::OnlstAogFilesSelected);
 	Connect(ID_M_PBTN6,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsGenerators::OnbtnAogHomeClick);
 	Connect(ID_M_PBTN7,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsGenerators::OnbtnAogPrevClick);
@@ -325,7 +338,7 @@ pnlSettingsGenerators::pnlSettingsGenerators(wxWindow* parent,wxWindowID id,cons
 
     if(Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled"))==wxT("Disabled"))
     {
-        m_pswpAog->ChangeSelection(wxT("Input"));
+        m_pswpAog->ChangeSelection("Mixer");
     }
     else
     {
@@ -762,4 +775,18 @@ void pnlSettingsGenerators::LoadPlugins()
         m_plstAudioSources->AddButton(itPlugin->first);
     }
 
+    if(m_plstAudioSources->GetItemCount() > 7)
+    {
+        m_pbtnNext->Show();
+    }
+}
+
+void pnlSettingsGenerators::OnbtnNextClick(wxCommandEvent& event)
+{
+    m_plstAogFiles->ShowNextPage(false, false);
+}
+
+void pnlSettingsGenerators::OnbtnMixerClick(wxCommandEvent& event)
+{
+    m_pswpAog->ChangeSelection("Input");
 }

@@ -34,6 +34,8 @@ class pnlSettingsGenerators: public wxPanel
 		wmButton* m_pbtnAogPrev;
 		wmButton* m_pbtnMinus10;
 		wmButton* m_pbtnMinus1;
+		wmButton* m_pbtnMixer;
+		wmButton* m_pbtnNext;
 		wmButton* m_pbtnNoise0dBu;
 		wmButton* m_pbtnPlus10;
 		wmButton* m_pbtnPlus1;
@@ -84,6 +86,8 @@ class pnlSettingsGenerators: public wxPanel
 
 		//(*Identifiers(pnlSettingsGenerators)
 		static const long ID_M_PLST8;
+		static const long ID_M_PBTN2;
+		static const long ID_M_PBTN1;
 		static const long ID_M_PLBL8;
 		static const long ID_M_PLST3;
 		static const long ID_M_PLST1;
@@ -164,6 +168,8 @@ class pnlSettingsGenerators: public wxPanel
 		void OnlstColourSelected(wxCommandEvent& event);
 		void OnbtnNoise0dBuClick(wxCommandEvent& event);
 		void OnbtnSequencesClick(wxCommandEvent& event);
+		void OnbtnNextClick(wxCommandEvent& event);
+		void OnbtnMixerClick(wxCommandEvent& event);
 		//*)
 
 		void ShowChannelMapping(wmList* pList, wmLabel* pLabel, int nChannels, int nOutput);
