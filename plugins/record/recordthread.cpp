@@ -29,14 +29,13 @@ void* RecordThread::Entry()
 {
     while(m_bLoop)
     {
-        std::shared_ptr<const timedbuffer> pBuffer(nullptr);
+        std::shared_ptr<timedbuffer> pBuffer(nullptr);
         if(m_mutex.IsOk())
         {
             m_mutex.Lock();
             if(m_queueBuffer.empty() == false)
-           {
-              pBuffer = FilterBuffer(m_queueBuffer.front());
-                delete m_queueBuffer.front();
+            {
+                pBuffer = FilterBuffer(m_queueBuffer.front());
                 m_queueBuffer.pop();
             }
             m_mutex.Unlock();
@@ -65,23 +64,23 @@ void RecordThread::AddToBuffer(const timedbuffer* pBuffer)
 }
 
 
-std::shared_ptr<const timedbuffer> RecordThread::CopyBuffer(const timedbuffer* pBuffer)
+std::shared_ptr<timedbuffer> RecordThread::CopyBuffer(const timedbuffer* pBuffer)
 {
-    auto pThreadBuffer = std::make_shared<const timedbuffer>(pBuffer->GetBufferSize(), pBuffer->GetNumberOfChannels());
+    auto pThreadBuffer = std::make_shared<timedbuffer>(pBuffer->GetBufferSize(), pBuffer->GetNumberOfChannels());
     pThreadBuffer->SetBuffer(pBuffer->GetBuffer());
     return pThreadBuffer;
 }
 
-timedbuffer* RecordThread::FilterBuffer(const timedbuffer* pBuffer)
+std::shared_ptr<timedbuffer> RecordThread::FilterBuffer(std::shared_ptr<timedbuffer> pBuffer)
 {
     //if we are recording everything then do the faster copy rather than filter
     if(m_vChannels.size() == pBuffer->GetNumberOfChannels())
     {
-        return CopyBuffer(pBuffer);
+        return CopyBuffer(pBuffer.get());
     }
 
     //just get the samples for the channels we want to record
-    timedbuffer* pFilter = new timedbuffer(pBuffer->GetBufferSizePerChannel()*m_vChannels.size(), m_vChannels.size());
+    auto pFilter = std::make_shared<timedbuffer>(pBuffer->GetBufferSizePerChannel()*m_vChannels.size(), m_vChannels.size());
 
     size_t nCount = 0;
     for(size_t i = 0; i < pBuffer->GetBufferSize(); i+= pBuffer->GetNumberOfChannels())

@@ -1478,5 +1478,20 @@ wxString IOManager::GetDnsSdService() const
 }
 
 
-
+int IOManager::GetNumberOfSourceChannels() const
+{
+    auto sSource = Settings::Get().Read("Output", "Source", "Input");
+    if(sSource == wxT("Input"))
+    {
+        if(GetInputSession().GetCurrentSubsession() != GetInputSession().lstSubsession.end())
+        {
+            return GetInputSession().GetCurrentSubsession()->nChannels;
+        }
+        return 0;
+    }
+    else
+    {
+        return m_pGenerator->GetNumberOfChannels();
+    }
+}
 

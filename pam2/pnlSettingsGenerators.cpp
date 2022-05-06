@@ -16,6 +16,7 @@
 #include "generatorpluginfactory.h"
 #include "generatorpluginbuilder.h"
 #include "dlgWav.h"
+#include "log.h"
 
 //(*InternalHeaders(pnlSettingsGenerators)
 #include <wx/font.h>
@@ -100,7 +101,7 @@ pnlSettingsGenerators::pnlSettingsGenerators(wxWindow* parent,wxWindowID id,cons
 	m_plstAudioSources->SetBackgroundColour(wxColour(0,0,0));
 	m_plstAudioSources->SetButtonColour(wxColour(wxT("#400080")));
 	m_plstAudioSources->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
-	m_pbtnMixer = new wmButton(pnlGenerator, ID_M_PBTN2, _("Mixer"), wxPoint(250,36), wxSize(100,30), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
+	m_pbtnMixer = new wmButton(pnlGenerator, ID_M_PBTN2, _("Router"), wxPoint(250,36), wxSize(100,30), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
 	m_pbtnMixer->SetBackgroundColour(wxColour(128,64,0));
 	wxFont m_pbtnMixerFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pbtnMixer->SetFont(m_pbtnMixerFont);
@@ -557,11 +558,9 @@ void pnlSettingsGenerators::OnlstOutputRightSelected(wxCommandEvent& event)
 void pnlSettingsGenerators::PopulateChannelList(wmList* pList)
 {
     pList->Clear();
-    int nChannels(0);
-    if(IOManager::Get().GetInputSession().GetCurrentSubsession() != IOManager::Get().GetInputSession().lstSubsession.end())
-    {
-        nChannels = IOManager::Get().GetInputSession().GetCurrentSubsession()->nChannels;
-    }
+
+    auto nChannels = IOManager::Get().GetNumberOfSourceChannels();
+
     if(nChannels > 0)
     {
         if(nChannels==2)
@@ -664,14 +663,6 @@ void pnlSettingsGenerators::SourceChanged(const wxString& sSource)
     if(sSource == wxT("Input"))
     {
         m_pswpAog->ChangeSelection(wxT("Input"));
-        PopulateChannelList(m_plstOutput_1);
-        PopulateChannelList(m_plstOutput_2);
-        PopulateChannelList(m_plstOutput_3);
-        PopulateChannelList(m_plstOutput_4);
-        PopulateChannelList(m_plstOutput_5);
-        PopulateChannelList(m_plstOutput_6);
-        PopulateChannelList(m_plstOutput_7);
-        PopulateChannelList(m_plstOutput_8);
     }
     else if(sSource == wxT("File"))
     {
@@ -700,6 +691,14 @@ void pnlSettingsGenerators::SourceChanged(const wxString& sSource)
         m_pswpAog->ChangeSelection(sSource);
     }
 
+    PopulateChannelList(m_plstOutput_1);
+    PopulateChannelList(m_plstOutput_2);
+    PopulateChannelList(m_plstOutput_3);
+    PopulateChannelList(m_plstOutput_4);
+    PopulateChannelList(m_plstOutput_5);
+    PopulateChannelList(m_plstOutput_6);
+    PopulateChannelList(m_plstOutput_7);
+    PopulateChannelList(m_plstOutput_8);
 }
 
 
@@ -788,5 +787,14 @@ void pnlSettingsGenerators::OnbtnNextClick(wxCommandEvent& event)
 
 void pnlSettingsGenerators::OnbtnMixerClick(wxCommandEvent& event)
 {
-    m_pswpAog->ChangeSelection("Input");
+    if(m_pbtnMixer->GetLabel() == "Router")
+    {
+        m_pswpAog->ChangeSelection("Input");
+        m_pbtnMixer->SetLabel("Back");
+    }
+    else
+    {
+        SourceChanged(Settings::Get().Read("Output", "Source", "Input"));
+        m_pbtnMixer->SetLabel("Router");
+    }
 }

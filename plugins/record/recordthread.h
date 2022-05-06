@@ -19,8 +19,9 @@ class RecordThread : public wxThread
 
     private:
 
-        timedbuffer* CopyBuffer(const timedbuffer* pBuffer);
-        timedbuffer* FilterBuffer(const timedbuffer* pBuffer);
+        std::shared_ptr<timedbuffer> CopyBuffer(const timedbuffer* pBuffer);
+       // std::shared_ptr<timedbuffer> CopyBuffer(std::shared_ptr<timedbuffer> pBuffer);
+        std::shared_ptr<timedbuffer> FilterBuffer(std::shared_ptr<timedbuffer> pBuffer);
 
         void ClearQueue();
 
@@ -29,5 +30,5 @@ class RecordThread : public wxThread
         std::vector<unsigned char> m_vChannels;
         std::atomic<bool> m_bLoop;
 
-        std::queue<std::shared_ptr<const timedbuffer>> m_queueBuffer;
+        std::queue<std::shared_ptr< timedbuffer>> m_queueBuffer;
 };
