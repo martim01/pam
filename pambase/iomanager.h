@@ -54,6 +54,8 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
 
         wxString GetDnsSdService() const;
 
+        int GetNumberOfSourceChannels() const;
+
     private:
         IOManager();
         ~IOManager();

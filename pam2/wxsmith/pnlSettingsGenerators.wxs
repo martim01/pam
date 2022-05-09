@@ -1,24 +1,54 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <wxsmith>
 	<object class="wxPanel" name="pnlSettingsGenerators">
-		<pos_arg>1</pos_arg>
-		<size_arg>1</size_arg>
+		<id_arg>0</id_arg>
 		<object class="wxPanel" name="ID_PANEL8" variable="pnlGenerator" member="yes">
 			<size>600,440</size>
 			<bg>#000000</bg>
 			<object class="wmList" name="ID_M_PLST8" variable="m_plstAudioSources" member="yes">
-				<scrolling>None</scrolling>
+				<scrolling>Horizontal</scrolling>
 				<button_gap>2,-1</button_gap>
 				<button_size>-1,30</button_size>
-				<columns>8</columns>
+				<columns>7</columns>
 				<button>#400080</button>
 				<button_selected>#FF8000</button_selected>
 				<items />
 				<pos>0,0</pos>
-				<size>600,64</size>
+				<size>525,34</size>
 				<bg>#000000</bg>
-				<style>wmList::STYLE_SELECT</style>
+				<style>wmList::STYLE_SELECT|wmList::STYLE_CIRCULAR</style>
 				<handler function="OnlstAudioSourcesSelected" entry="EVT_LIST_SELECTED" />
+			</object>
+			<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnMixer" member="yes">
+				<label>Mixer</label>
+				<pos>250,36</pos>
+				<size>100,30</size>
+				<bg>#804000</bg>
+				<font>
+					<size>12</size>
+					<style>normal</style>
+					<weight>normal</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+					<face>Tahoma</face>
+				</font>
+				<handler function="OnbtnMixerClick" entry="EVT_BUTTON" />
+			</object>
+			<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnNext" member="yes">
+				<label>Next</label>
+				<pos>525,2</pos>
+				<size>75,30</size>
+				<hidden>1</hidden>
+				<bg>#408080</bg>
+				<font>
+					<size>12</size>
+					<style>normal</style>
+					<weight>normal</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+					<face>Tahoma</face>
+				</font>
+				<handler function="OnbtnNextClick" entry="EVT_BUTTON" />
 			</object>
 			<object class="wmSwitcherPanel" name="ID_M_PSWP2" variable="m_pswpAog" member="yes">
 				<pos>0,70</pos>
@@ -28,7 +58,7 @@
 					<object class="wxPanel" name="ID_PANEL11" variable="Panel5" member="yes">
 						<bg>#000000</bg>
 						<object class="wmLabel" name="ID_M_PLBL8" variable="m_pLbl1" member="yes">
-							<label>Input-Output Channel Mapping</label>
+							<label>Output Channel Mapping</label>
 							<pos>0,0</pos>
 							<size>600,30</size>
 							<fg>#FFFFFF</fg>
@@ -282,9 +312,9 @@
 							</font>
 						</object>
 						<object class="wmLabel" name="ID_M_PLBL11" variable="m_pLbl7" member="yes">
-							<label>Inputs:</label>
+							<label>Source Channels:</label>
 							<pos>200,30</pos>
-							<size>60,30</size>
+							<size>192,30</size>
 							<fg>#FFFFFF</fg>
 							<bg>#000000</bg>
 							<font>

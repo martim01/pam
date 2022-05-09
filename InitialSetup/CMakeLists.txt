@@ -22,7 +22,7 @@ target_compile_definitions(InitialSetup PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNICODE 
 find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
-target_link_libraries(InitialSetup ${wxWidgets_LIBRARIES} pambase restgoose)
+target_link_libraries(InitialSetup ${wxWidgets_LIBRARIES} pambase restgoose ssl)
 
 
 

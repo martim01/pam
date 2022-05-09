@@ -726,3 +726,12 @@ double Generator::randn(double mu, double sigma)
   return (mu + sigma * (double) X1);
 }
 
+int Generator::GetNumberOfChannels()
+{
+    if(m_pSoundfile)
+    {
+        return m_pSoundfile->GetChannels();
+    }
+
+    return 2;
+}

@@ -134,7 +134,7 @@ class PAMBASE_IMPEXPORT Generator
 
         void Stop();
 
-
+        int GetNumberOfChannels();
 
         void ClearSequences();
         void ClearFrequences();
