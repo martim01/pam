@@ -188,7 +188,7 @@ pnlSettingsOutput::pnlSettingsOutput(wxWindow* parent,wxWindowID id,const wxPoin
 	m_pbtnSAP->SetToggle(true, wxT("Off"), wxT("On"), 60);
 	m_pbtnStream = new wmButton(pnlAoipSettings, ID_M_PBTN3, _("Stream"), wxPoint(260,175), wxSize(330,35), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN3"));
 	m_pbtnStream->SetBackgroundColour(wxColour(0,128,0));
-	m_pbtnStream->SetToggle(true, wxT("On Demand"), wxT("Always On"), 40);
+	m_pbtnStream->SetToggle(true, wxT("OnDemand"), wxT("AlwaysOn"), 40);
 	m_pbtnActive = new wmButton(pnlAoipSettings, ID_M_PBTN1, _("Server"), wxPoint(260,215), wxSize(330,35), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnActive->SetBackgroundColour(wxColour(0,128,0));
 	m_pbtnActive->SetToggle(true, wxT("Inactive"), wxT("Active"), 40);

@@ -62,14 +62,20 @@ pnlUpdate::~pnlUpdate()
 
 void pnlUpdate::OnShown(wxShowEvent& event)
 {
+    m_pLbl3->SetBackgroundColour(wxColour(0,64,0));
+    m_pLbl3->SetLabel("Update");
     m_pnlUSB->StartCheck();
 }
 
 void pnlUpdate::OnbtnUpdateClick(const wxCommandEvent& event)
 {
     pmlLog(pml::LOG_INFO) << "Update file '" << m_pnlUSB->m_sSelectedFile << "' from device '" << m_pnlUSB->m_sSelectedDevice << "'";
-    
-    ExtractAndRunUpdater(m_pnlUSB->m_sSelectedDevice, m_pnlUSB->m_sSelectedFile);
+
+    if(ExtractAndRunUpdater(m_pnlUSB->m_sSelectedDevice, m_pnlUSB->m_sSelectedFile) == false)
+    {
+        m_pLbl3->SetBackgroundColour(*wxRED);
+        m_pLbl3->SetLabel("FAILED TO UPDATE FROM FILE!!!!!!!");
+    }
 }
 
 

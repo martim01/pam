@@ -233,7 +233,8 @@ void pnlRecord::InputSession(const session& aSession)
 
 void pnlRecord::EnableRecord()
 {
-    m_pbtnRecord->Enable(m_plstGroup->GetSelectionCount() > 0 && (m_pedtFile->GetValue().Trim()!=wxEmptyString));
+    wxString sFile = m_pedtFile->GetValue();
+    m_pbtnRecord->Enable(m_plstGroup->GetSelectionCount() > 0 && (sFile.Trim()!=wxEmptyString));
 }
 
 void pnlRecord::OnedtFileText(wxCommandEvent& event)

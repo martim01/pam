@@ -16,6 +16,7 @@ class UsbChecker
 
         static int MountDevice(const wxString& sDevice);
         static int UnmountDevice();
+        static int IsMounted();
 
     private:
         void Abort();
