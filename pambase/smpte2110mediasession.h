@@ -134,7 +134,7 @@ class Smpte2110MediaSubsession : public MediaSubsession
         Smpte2110MediaSubsession(MediaSession& parent);
         virtual Boolean createSourceObjects(int useSpecialRTPoffset);
 
-
+        bool SetChannelGrouping(size_t& nChannel, const subsession::channelGrouping& grouping);
 
         void  parseSDPAttribute_Sync();
         void  parseSDPAttribute_Deviation();
