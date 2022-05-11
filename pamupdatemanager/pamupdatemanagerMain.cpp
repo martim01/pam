@@ -426,6 +426,7 @@ bool pamupdatemanagerDialog::ReplaceFileUsr(wxDC& dc, wxTarInputStream& input, c
         }
     }
 
+
     wxString sTemp = "/tmp/"+fnOutput.GetFullName();
     wxFileOutputStream out(sTemp);
     if(out.IsOk())
@@ -436,7 +437,7 @@ bool pamupdatemanagerDialog::ReplaceFileUsr(wxDC& dc, wxTarInputStream& input, c
             input.Read(out);
         }
         auto nResult = wxExecute(wxString::Format("sh -c \"echo %s | sudo -S -k mv %s %s\"", m_pedtPassword->GetValue().c_str(), sTemp.c_str(), fnOutput.GetFullPath().c_str()), wxEXEC_SYNC);
-        nResult += wxExecute(wxString::Format("sh -c \"echo %s | sudo -S -k chmod u+x %s\"", m_pedtPassword->GetValue().c_str(), fnOutput.GetFullPath().c_str()), wxEXEC_SYNC);
+        nResult += wxExecute(wxString::Format("sh -c \"echo %s | sudo -S -k chmod +x %s\"", m_pedtPassword->GetValue().c_str(), fnOutput.GetFullPath().c_str()), wxEXEC_SYNC);
         if(nResult == 0)
         {
             m_setUpdated.insert(fnOutput.GetFullPath()+".bak");
