@@ -8,7 +8,8 @@
 #include "iomanager.h"
 
 
-RtpServerThread::RtpServerThread(wxEvtHandler* pHandler, const std::set<wxEvtHandler*>& setRTCPHandlers, const wxString& sRTSP, unsigned int nRTSPPort, const wxString& sSourceIp, unsigned int nRTPPort, bool bSSM, LiveAudioSource::enumPacketTime ePacketTime) :
+RtpServerThread::RtpServerThread(wxEvtHandler* pHandler, const std::set<wxEvtHandler*>& setRTCPHandlers, const wxString& sRTSP, unsigned int nRTSPPort, const wxString& sSourceIp,
+                                 unsigned int nRTPPort, bool bSSM, LiveAudioSource::enumPacketTime ePacketTime, const std::vector<char>& vRouting) :
     wxThread(wxTHREAD_JOINABLE),
     m_pHandler(pHandler),
     m_setRTCPHandlers(setRTCPHandlers),
@@ -25,7 +26,8 @@ RtpServerThread::RtpServerThread(wxEvtHandler* pHandler, const std::set<wxEvtHan
     m_pRtcpInstance(nullptr),
     m_pRtpGroupsock(nullptr),
     m_pRtspServer(nullptr),
-    m_bStreaming(false)
+    m_bStreaming(false),
+    m_vRouting(vRouting)
 {
     m_bRTCP = (Settings::Get().Read("Server", "RTCP", 0) != 0);
 }
@@ -114,6 +116,8 @@ bool RtpServerThread::CreateStream()
 
     m_pSource = LiveAudioSource::createNew(m_pHandler, m_mutex, *m_penv, Settings::Get().Read("Server", "Channels", 2), m_ePacketTime,
     Settings::Get().Read("Server", "Bits", 24),Settings::Get().Read("Server", "SampleRate", 48000));
+
+    m_pSource->SetRouting(m_vRouting);
 
     // Create an appropriate audio RTP sink (using "SimpleRTPSink") from the RTP 'groupsock':
     m_pSink = SimpleRTPSink::createNew(*m_penv, m_pRtpGroupsock, payloadFormatCode, m_pSource->samplingFrequency(), "audio", mimeType, m_pSource->numChannels());
@@ -234,7 +238,10 @@ void RtpServerThread::StopStream()
 
 void RtpServerThread::SetRouting(const std::vector<char>& vRouting)
 {
-    m_pSource->SetRouting(vRouting);
+    if(m_pSource)
+    {
+        m_pSource->SetRouting(vRouting);
+    }
 }
 
 void RtpServerThread::AddSamples(const timedbuffer* pTimedBuffer)

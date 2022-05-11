@@ -1283,6 +1283,7 @@ void pam2Dialog::RegisterRemoteApiSettings()
     RemoteApi::Get().RegisterRemoteApiEnum("Server", "DNS-SD", {{0,"Off"}, {1,"On"}}, 0);
     RemoteApi::Get().RegisterRemoteApiRangeInt("Server", "Channels", {1,8}, 2);
     RemoteApi::Get().RegisterRemoteApiRangeInt("Server", "RTPMap", {96,127}, 96);
+    RemoteApi::Get().RegisterRemoteApiEnum("Server", "MappingEnabled", {{0, "Disabled"}, {1,"Enabled"}}, 0);
 
 
 

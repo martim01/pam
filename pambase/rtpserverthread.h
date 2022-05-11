@@ -21,7 +21,8 @@ static void afterPlaying(void* pClientData);
 class PAMBASE_IMPEXPORT RtpServerThread : public wxThread
 {
     public:
-        RtpServerThread(wxEvtHandler* pHandler, const std::set<wxEvtHandler*>& setRTCPHandlers, const wxString& sRTSP, unsigned int nRTSPPort, const wxString& sSourceIp, unsigned int RTPPort, bool bSSM, LiveAudioSource::enumPacketTime ePacketTime);
+        RtpServerThread(wxEvtHandler* pHandler, const std::set<wxEvtHandler*>& setRTCPHandlers, const wxString& sRTSP, unsigned int nRTSPPort, const wxString& sSourceIp, unsigned int RTPPort, bool bSSM,
+                        LiveAudioSource::enumPacketTime ePacketTime, const std::vector<char>& vRouting);
         void* Entry();
 
         void StopStream();
@@ -60,5 +61,7 @@ class PAMBASE_IMPEXPORT RtpServerThread : public wxThread
         std::string m_sSDP;
         bool m_bStreaming;
         bool m_bRTCP;
+
+        std::vector<char> m_vRouting;
 };
 

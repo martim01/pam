@@ -357,9 +357,9 @@ void Audio::AddSamples(const timedbuffer* pTimedBuffer)
                 for(size_t j = 0; j < m_vMixer.size(); j++)
                 {
                     double dSample = 0.0;
-                    if(m_vMixer[j] >= 0)
+                    if(m_vMixer[j] >= 0 && (int)m_vMixer[j] != 255)
                     {
-                        pTimedBuffer->GetBuffer()[i+m_vMixer[j]];
+                        dSample = pTimedBuffer->GetBuffer()[i+m_vMixer[j]];
                     }
                     if(j < m_vOutputRatio.size())
                     {

@@ -1239,6 +1239,19 @@ void IOManager::Start()
     InitAudioInputDevice(true);
 }
 
+std::vector<char> IOManager::CreateRouting()
+{
+    vector<char> vChannels;
+    if(m_SessionOut.GetCurrentSubsession() != m_SessionOut.lstSubsession.end())
+    {
+        for(int i = 1; i <= m_SessionOut.GetCurrentSubsession()->nChannels; i++)
+        {
+            vChannels.push_back(Settings::Get().Read("Output", wxString::Format("Channel_%d", i), i-1));
+        }
+    }
+    return vChannels;
+}
+
 void IOManager::OutputChannelsChanged()
 {
     unsigned int nInputChannels(2);
@@ -1250,25 +1263,17 @@ void IOManager::OutputChannelsChanged()
         }
     }
 
-    vector<char> vChannels;
-    if(m_SessionOut.GetCurrentSubsession() != m_SessionOut.lstSubsession.end())
-    {
-        for(int i = 1; i <= m_SessionOut.GetCurrentSubsession()->nChannels; i++)
-        {
-            vChannels.push_back(Settings::Get().Read("Output", wxString::Format("Channel_%d", i), i-1));
-        }
-    }
     if(m_pOnDemandSubsession)
     {
-        m_pOnDemandSubsession->SetRouting(vChannels);
+        m_pOnDemandSubsession->SetRouting(CreateRouting());
     }
     else if(m_pAlwaysOnServer)
     {
-        m_pAlwaysOnServer->SetRouting(vChannels);
+        m_pAlwaysOnServer->SetRouting(CreateRouting());
     }
     else
     {
-        SoundcardManager::Get().SetOutputMixer(vChannels, nInputChannels);
+        SoundcardManager::Get().SetOutputMixer(CreateRouting(), nInputChannels);
     }
 
     for(set<wxEvtHandler*>::iterator itHandler = m_setHandlers.begin(); itHandler != m_setHandlers.end(); ++itHandler)
@@ -1425,8 +1430,10 @@ void IOManager::StreamAlwaysOn()
                                                  sDestinationIp,
                                                 Settings::Get().Read(wxT("Server"), wxT("RTP_Port"), 5004),
                                                 bSSM,
-                                                 (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000));
+                                                 (LiveAudioSource::enumPacketTime)Settings::Get().Read(wxT("Server"), wxT("PacketTime"), 1000), CreateRouting());
         m_pAlwaysOnServer->Run();
+        OutputChannelsChanged();
+
         m_bStreamActive = true;
     }
     else
@@ -1451,6 +1458,7 @@ void IOManager::StreamOnDemand()
         m_pOnDemandServer->Create();
         m_pOnDemandServer->SetSubsession(m_pOnDemandSubsession);
 
+        m_pOnDemandSubsession->SetRouting(CreateRouting());
 
         m_pOnDemandServer->Run();
         m_bStreamActive = true;
