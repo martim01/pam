@@ -167,7 +167,14 @@ void LiveAudioSource::AddSamples(const timedbuffer* pTimedBuffer)
         {
             if(j < m_vChannelMapping.size())
             {
-                m_qBuffer.push(pTimedBuffer->GetBuffer()[i+(m_vChannelMapping[j]%pTimedBuffer->GetNumberOfChannels())]);
+                if(m_vChannelMapping[j] >= 0)
+                {
+                    m_qBuffer.push(pTimedBuffer->GetBuffer()[i+(m_vChannelMapping[j]%pTimedBuffer->GetNumberOfChannels())]);
+                }
+                else
+                {
+                    m_qBuffer.push(0.0);
+                }
             }
             else
             {

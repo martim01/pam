@@ -170,7 +170,7 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
     m_pbtnStartDiscovery = new wmButton(pnlDiscovery, ID_M_PBTN9, _("Discovery"), wxPoint(5,390), wxSize(200,45), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN9"));
     m_pbtnStartDiscovery->SetForegroundColour(wxColour(255,255,255));
     m_pbtnStartDiscovery->SetBackgroundColour(wxColour(0,0,160));
-    m_pbtnStartDiscovery->SetToggle(true, wxT("Stop"), wxT("Start"), 50);
+    m_pbtnStartDiscovery->SetToggleLook(true, wxT("Stop"), wxT("Start"), 50);
     m_pLbl8 = new wmLabel(pnlDiscovery, ID_M_PLBL9, _("Options"), wxPoint(5,3), wxSize(130,30), 0, _T("ID_M_PLBL9"));
     m_pLbl8->SetBorderState(uiRect::BORDER_NONE);
     m_pLbl8->GetUiRect().SetGradient(0);
@@ -195,7 +195,7 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
     m_pbtnManual->SetColourSelected(wxColour(wxT("#F07800")));
     m_phtmlResults = new wxTouchScreenHtml(pnlDiscovery, ID_HTMLWINDOW1, wxPoint(140,0), wxSize(650,385), 0, _T("ID_HTMLWINDOW1"));
     Panel3 = new wxPanel(m_pSwp1, ID_PANEL4, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL4"));
-    m_pnlUSB = new pnlUSB(Panel3, "*.pii", "Import", true, ID_PANEL5, wxPoint(0,0), wxSize(600,400), wxTAB_TRAVERSAL, _T("ID_PANEL5"));
+    m_pnlUSB = new pnlUSB(Panel3, ID_PANEL5, wxPoint(0,0), wxSize(600,400), wxTAB_TRAVERSAL, _T("ID_PANEL5"));
     m_pnlUSB->SetBackgroundColour(wxColour(0,0,0));
     m_pbtnImportBack = new wmButton(Panel3, ID_M_PBTN13, _("Back"), wxPoint(690,390), wxSize(100,45), 0, wxDefaultValidator, _T("ID_M_PBTN13"));
     m_pbtnImportBack->SetBackgroundColour(wxColour(146,50,252));

@@ -373,14 +373,14 @@ pnlSettingsGenerators::pnlSettingsGenerators(wxWindow* parent,wxWindowID id,cons
     Connect(m_pNoiseAmplitude->GetId(), wxEVT_SLIDER_MOVE, (wxObjectEventFunction)&pnlSettingsGenerators::OnNoiseAmplitudeMove);
 
 
-    m_plstOutput_1->ConnectToSetting("Output", "Channel_1", size_t(0));
-    m_plstOutput_2->ConnectToSetting("Output", "Channel_2", size_t(1));
-    m_plstOutput_3->ConnectToSetting("Output", "Channel_3", size_t(2));
-    m_plstOutput_4->ConnectToSetting("Output", "Channel_4", size_t(3));
-    m_plstOutput_5->ConnectToSetting("Output", "Channel_5", size_t(4));
-    m_plstOutput_6->ConnectToSetting("Output", "Channel_6", size_t(5));
-    m_plstOutput_7->ConnectToSetting("Output", "Channel_7", size_t(6));
-    m_plstOutput_8->ConnectToSetting("Output", "Channel_8", size_t(7));
+    m_plstOutput_1->ConnectToSetting("Output", "Channel_1", reinterpret_cast<void*>(0));
+    m_plstOutput_2->ConnectToSetting("Output", "Channel_2", reinterpret_cast<void*>(1));
+    m_plstOutput_3->ConnectToSetting("Output", "Channel_3", reinterpret_cast<void*>(2));
+    m_plstOutput_4->ConnectToSetting("Output", "Channel_4", reinterpret_cast<void*>(3));
+    m_plstOutput_5->ConnectToSetting("Output", "Channel_5", reinterpret_cast<void*>(4));
+    m_plstOutput_6->ConnectToSetting("Output", "Channel_6", reinterpret_cast<void*>(5));
+    m_plstOutput_7->ConnectToSetting("Output", "Channel_7", reinterpret_cast<void*>(6));
+    m_plstOutput_8->ConnectToSetting("Output", "Channel_8", reinterpret_cast<void*>(7));
 
 
     Settings::Get().AddHandler(this, "Output", "Destination");
@@ -565,14 +565,16 @@ void pnlSettingsGenerators::PopulateChannelList(wmList* pList)
     {
         if(nChannels==2)
         {
-            pList->AddButton("Left");
-            pList->AddButton("Right");
+            pList->AddButton("Off", wxNullBitmap, reinterpret_cast<void*>(-1));
+            pList->AddButton("Left", wxNullBitmap, reinterpret_cast<void*>(0));
+            pList->AddButton("Right", wxNullBitmap, reinterpret_cast<void*>(1));
         }
         else
         {
+            pList->AddButton("Off", wxNullBitmap, reinterpret_cast<void*>(-1));
             for(int i = 0; i < nChannels; ++i)
             {
-                pList->AddButton(wxString::Format("Ch %d", i));
+                pList->AddButton(wxString::Format("Ch %d", i), wxNullBitmap, reinterpret_cast<void*>(i));
             }
         }
         pList->ReloadSetting();
@@ -690,6 +692,8 @@ void pnlSettingsGenerators::SourceChanged(const wxString& sSource)
     {   //plugin
         m_pswpAog->ChangeSelection(sSource);
     }
+
+    m_pbtnMixer->SetLabel("Router");
 
     PopulateChannelList(m_plstOutput_1);
     PopulateChannelList(m_plstOutput_2);

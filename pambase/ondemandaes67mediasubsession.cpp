@@ -44,8 +44,10 @@ char const* AES67RTPSink::auxSDPLine()
         #endif // PTPMONKEY
 
         ss << "a=mediaclk:direct=" << GetEpochTimestamp() << "\r\n";
-
-        ss << "a=fmtp:" << (int)fRTPPayloadType << " channel-order=SMPTE2110.(" << m_sMapping << ")\r\n";
+        if(m_sMapping.empty() == false)
+        {
+            ss << "a=fmtp:" << (int)fRTPPayloadType << " channel-order=SMPTE2110.(" << m_sMapping << ")\r\n";
+        }
         m_sAux = ss.str();
     }
     return m_sAux.c_str();

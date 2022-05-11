@@ -455,5 +455,12 @@ std::shared_ptr<iniSection> Settings::GetSection(const wxString& sSection)
 
 std::string GetChannelMapping()
 {
-    return Settings::Get().Read("Server", "ChannelMapping", "St").ToStdString();
+    if(Settings::Get().Read("Server", "MappingEnabled", 0) == 1)
+    {
+        return Settings::Get().Read("Server", "ChannelMapping", "St").ToStdString();
+    }
+    else
+    {
+        return std::string("");
+    }
 }

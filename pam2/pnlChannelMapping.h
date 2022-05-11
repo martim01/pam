@@ -20,11 +20,15 @@ class pnlChannelMapping: public wxPanel
 		wmButton* m_pbtnCh[8];
 		wmLabel* m_pLbl[8];
 		wmLabel* m_plblCh[8];
-		//*)
+
+		wmButton* m_pbtnEnable;
+		wmPanel* m_ppnlMapping;
 
 	protected:
 
 		//(*Identifiers(pnlChannelMapping)
+		static const long ID_M_PBTN22;
+		static const long ID_M_PBTN1;
 		static const long ID_M_PLBL14;
 		static const long ID_M_PLBL15;
 		static const long ID_M_PLBL16;
@@ -49,7 +53,7 @@ class pnlChannelMapping: public wxPanel
 		static const long ID_M_PLBL27;
 		static const long ID_M_PLBL28;
 		static const long ID_M_PLBL29;
-		static const long ID_M_PBTN22;
+		static const long ID_PANEL1;
 		//*)
 
 	private:

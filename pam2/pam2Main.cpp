@@ -1289,14 +1289,14 @@ void pam2Dialog::RegisterRemoteApiSettings()
     RemoteApi::Get().RegisterRemoteApiEnum("Monitor", "Source", {{0,"Input"}, {1,"Output"}}, 0);
 
     RemoteApi::Get().RegisterRemoteApiEnum("Output", "Destination", {"Disabled", "Device", "AoIP"}, "Disabled");
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_1", {0,7}, 0);
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_2", {0,7}, 1);
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_3", {0,7}, 0);
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_4", {0,7}, 1);
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_5", {0,7}, 0);
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_6", {0,7}, 1);
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_7", {0,7}, 0);
-    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_8", {0,7}, 1);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_1", {-1,7}, 0);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_2", {-1,7}, 1);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_3", {-1,7}, 0);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_4", {-1,7}, 1);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_5", {-1,7}, 0);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_6", {-1,7}, 1);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_7", {-1,7}, 0);
+    RemoteApi::Get().RegisterRemoteApiRangeInt("Output", "Channel_8", {-1,7}, 1);
 
     RemoteApi::Get().RegisterRemoteApiEnum("Output", "Source", GetOutputSources(), "Input");
 

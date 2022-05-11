@@ -69,7 +69,10 @@ char const* AES67ServerMediaSubsession::sdpLines(int addressFamily)
 #endif // PTPMONKEY
 
         ss << "a=mediaclk:direct=" << GetEpochTimestamp() << "\r\n";
-        ss << "a=fmtp:" << (int)fRTPSink.rtpPayloadType() << " channel-order=SMPTE2110.(" << m_sMapping << ")\r\n";
+        if(m_sMapping.empty() == false)
+        {
+            ss << "a=fmtp:" << (int)fRTPSink.rtpPayloadType() << " channel-order=SMPTE2110.(" << m_sMapping << ")\r\n";
+        }
 
         std::string sMedia(ss.str());
 

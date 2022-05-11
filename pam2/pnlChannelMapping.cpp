@@ -9,6 +9,8 @@
 //*)
 
 //(*IdInit(pnlChannelMapping)
+const long pnlChannelMapping::ID_M_PBTN22 = wxNewId();
+const long pnlChannelMapping::ID_M_PBTN1 = wxNewId();
 const long pnlChannelMapping::ID_M_PLBL14 = wxNewId();
 const long pnlChannelMapping::ID_M_PLBL15 = wxNewId();
 const long pnlChannelMapping::ID_M_PLBL16 = wxNewId();
@@ -33,7 +35,7 @@ const long pnlChannelMapping::ID_M_PLBL26 = wxNewId();
 const long pnlChannelMapping::ID_M_PLBL27 = wxNewId();
 const long pnlChannelMapping::ID_M_PLBL28 = wxNewId();
 const long pnlChannelMapping::ID_M_PLBL29 = wxNewId();
-const long pnlChannelMapping::ID_M_PBTN22 = wxNewId();
+const long pnlChannelMapping::ID_PANEL1 = wxNewId();
 //*)
 
 const std::multimap<unsigned int, wxString> pnlChannelMapping::MAPPING = {{1,"Mono"},{1, "U01"},
@@ -59,129 +61,137 @@ pnlChannelMapping::pnlChannelMapping(wxWindow* parent,const wxString& sSection, 
 {
 	Create(parent, id, wxDefaultPosition, wxSize(600,400), wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
-	m_pLbl[0] = new wmLabel(this, ID_M_PLBL14, _("Channel 1"), wxPoint(10,40), wxSize(65,30), 0, _T("ID_M_PLBL14"));
+
+	m_pbtnEnable = new wmButton(this, wxNewId(), _("Mapping"), wxPoint(200,40), wxSize(200,30), wmButton::STYLE_SELECT);
+	m_pbtnEnable->SetToggle(true, "Disable", "Enable", 40);
+
+    m_ppnlMapping = new wxPanel(this, 10, 80, 590, 200);
+    m_ppnlMapping->SetBackgroundColour(*wxBLACK);
+
+	m_pLbl[0] = new wmLabel(m_ppnlMapping, ID_M_PLBL14, _("Channel 1"), wxPoint(10,40), wxSize(65,30), 0, _T("ID_M_PLBL14"));
 	m_pLbl[0]->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl[0]->GetUiRect().SetGradient(0);
 	m_pLbl[0]->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl[0]->SetBackgroundColour(wxColour(64,0,128));
-	m_pLbl[1] = new wmLabel(this, ID_M_PLBL15, _("Channel 2"), wxPoint(80,40), wxSize(65,30), 0, _T("ID_M_PLBL15"));
+	m_pLbl[1] = new wmLabel(m_ppnlMapping, ID_M_PLBL15, _("Channel 2"), wxPoint(80,40), wxSize(65,30), 0, _T("ID_M_PLBL15"));
 	m_pLbl[1]->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl[1]->GetUiRect().SetGradient(0);
 	m_pLbl[1]->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl[1]->SetBackgroundColour(wxColour(64,0,128));
-	m_pLbl[2] = new wmLabel(this, ID_M_PLBL16, _("Channel 3"), wxPoint(150,40), wxSize(65,30), 0, _T("ID_M_PLBL16"));
+	m_pLbl[2] = new wmLabel(m_ppnlMapping, ID_M_PLBL16, _("Channel 3"), wxPoint(150,40), wxSize(65,30), 0, _T("ID_M_PLBL16"));
 	m_pLbl[2]->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl[2]->GetUiRect().SetGradient(0);
 	m_pLbl[2]->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl[2]->SetBackgroundColour(wxColour(64,0,128));
-	m_pLbl[3] = new wmLabel(this, ID_M_PLBL17, _("Channel 4"), wxPoint(220,40), wxSize(65,30), 0, _T("ID_M_PLBL17"));
+	m_pLbl[3] = new wmLabel(m_ppnlMapping, ID_M_PLBL17, _("Channel 4"), wxPoint(220,40), wxSize(65,30), 0, _T("ID_M_PLBL17"));
 	m_pLbl[3]->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl[3]->GetUiRect().SetGradient(0);
 	m_pLbl[3]->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl[3]->SetBackgroundColour(wxColour(64,0,128));
-	m_pLbl[4] = new wmLabel(this, ID_M_PLBL18, _("Channel 5"), wxPoint(290,40), wxSize(65,30), 0, _T("ID_M_PLBL18"));
+	m_pLbl[4] = new wmLabel(m_ppnlMapping, ID_M_PLBL18, _("Channel 5"), wxPoint(290,40), wxSize(65,30), 0, _T("ID_M_PLBL18"));
 	m_pLbl[4]->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl[4]->GetUiRect().SetGradient(0);
 	m_pLbl[4]->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl[4]->SetBackgroundColour(wxColour(64,0,128));
-	m_pLbl[5] = new wmLabel(this, ID_M_PLBL19, _("Channel 6"), wxPoint(360,40), wxSize(65,30), 0, _T("ID_M_PLBL19"));
+	m_pLbl[5] = new wmLabel(m_ppnlMapping, ID_M_PLBL19, _("Channel 6"), wxPoint(360,40), wxSize(65,30), 0, _T("ID_M_PLBL19"));
 	m_pLbl[5]->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl[5]->GetUiRect().SetGradient(0);
 	m_pLbl[5]->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl[5]->SetBackgroundColour(wxColour(64,0,128));
-	m_pLbl[6] = new wmLabel(this, ID_M_PLBL20, _("Channel 7"), wxPoint(430,40), wxSize(65,30), 0, _T("ID_M_PLBL20"));
+	m_pLbl[6] = new wmLabel(m_ppnlMapping, ID_M_PLBL20, _("Channel 7"), wxPoint(430,40), wxSize(65,30), 0, _T("ID_M_PLBL20"));
 	m_pLbl[6]->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl[6]->GetUiRect().SetGradient(0);
 	m_pLbl[6]->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl[6]->SetBackgroundColour(wxColour(64,0,128));
-	m_pLbl[7] = new wmLabel(this, ID_M_PLBL21, _("Channel 8"), wxPoint(500,40), wxSize(65,30), 0, _T("ID_M_PLBL21"));
+	m_pLbl[7] = new wmLabel(m_ppnlMapping, ID_M_PLBL21, _("Channel 8"), wxPoint(500,40), wxSize(65,30), 0, _T("ID_M_PLBL21"));
 	m_pLbl[7]->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl[7]->GetUiRect().SetGradient(0);
 	m_pLbl[7]->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl[7]->SetBackgroundColour(wxColour(64,0,128));
-	m_pbtnCh[0] = new wmButton(this, ID_M_PBTN14, _("Undefined"), wxPoint(10,72), wxSize(65,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN14"));
+	m_pbtnCh[0] = new wmButton(m_ppnlMapping, ID_M_PBTN14, _("Undefined"), wxPoint(10,72), wxSize(65,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN14"));
 	m_pbtnCh[0]->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnCh[0]->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnCh[0]->SetColourDisabled(wxColour(wxT("#B0B0B0")));
-	m_pbtnCh[1] = new wmButton(this, ID_M_PBTN15, _("Undefined"), wxPoint(80,72), wxSize(65,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN15"));
+	m_pbtnCh[1] = new wmButton(m_ppnlMapping, ID_M_PBTN15, _("Undefined"), wxPoint(80,72), wxSize(65,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN15"));
 	m_pbtnCh[1]->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnCh[1]->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnCh[1]->SetColourDisabled(wxColour(wxT("#B0B0B0")));
-	m_pbtnCh[2] = new wmButton(this, ID_M_PBTN16, _("Undefined"), wxPoint(150,72), wxSize(65,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN16"));
+	m_pbtnCh[2] = new wmButton(m_ppnlMapping, ID_M_PBTN16, _("Undefined"), wxPoint(150,72), wxSize(65,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN16"));
 	m_pbtnCh[2]->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnCh[2]->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnCh[2]->SetColourDisabled(wxColour(wxT("#B0B0B0")));
-	m_pbtnCh[3] = new wmButton(this, ID_M_PBTN17, _("Undefined"), wxPoint(220,72), wxSize(65,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN17"));
+	m_pbtnCh[3] = new wmButton(m_ppnlMapping, ID_M_PBTN17, _("Undefined"), wxPoint(220,72), wxSize(65,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN17"));
 	m_pbtnCh[3]->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnCh[3]->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnCh[3]->SetColourDisabled(wxColour(wxT("#B0B0B0")));
-	m_pbtnCh[4] = new wmButton(this, ID_M_PBTN18, _("Undefined"), wxPoint(290,72), wxSize(65,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN18"));
+	m_pbtnCh[4] = new wmButton(m_ppnlMapping, ID_M_PBTN18, _("Undefined"), wxPoint(290,72), wxSize(65,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN18"));
 	m_pbtnCh[4]->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnCh[4]->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnCh[4]->SetColourDisabled(wxColour(wxT("#B0B0B0")));
-	m_pbtnCh[5] = new wmButton(this, ID_M_PBTN19, _("Undefined"), wxPoint(360,72), wxSize(65,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN19"));
+	m_pbtnCh[5] = new wmButton(m_ppnlMapping, ID_M_PBTN19, _("Undefined"), wxPoint(360,72), wxSize(65,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN19"));
 	m_pbtnCh[5]->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnCh[5]->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnCh[5]->SetColourDisabled(wxColour(wxT("#B0B0B0")));
-	m_pbtnCh[6] = new wmButton(this, ID_M_PBTN20, _("Undefined"), wxPoint(430,72), wxSize(65,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN20"));
+	m_pbtnCh[6] = new wmButton(m_ppnlMapping, ID_M_PBTN20, _("Undefined"), wxPoint(430,72), wxSize(65,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN20"));
 	m_pbtnCh[6]->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnCh[6]->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnCh[6]->SetColourDisabled(wxColour(wxT("#B0B0B0")));
-	m_pbtnCh[7] = new wmButton(this, ID_M_PBTN21, _("Undefined"), wxPoint(500,72), wxSize(65,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN21"));
+	m_pbtnCh[7] = new wmButton(m_ppnlMapping, ID_M_PBTN21, _("Undefined"), wxPoint(500,72), wxSize(65,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN21"));
 	m_pbtnCh[7]->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnCh[7]->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnCh[7]->SetColourDisabled(wxColour(wxT("#B0B0B0")));
-	m_plblCh[0] = new wmLabel(this, ID_M_PLBL22, _("U1"), wxPoint(10,114), wxSize(65,30), 0, _T("ID_M_PLBL22"));
+	m_plblCh[0] = new wmLabel(m_ppnlMapping, ID_M_PLBL22, _("U1"), wxPoint(10,114), wxSize(65,30), 0, _T("ID_M_PLBL22"));
 	m_plblCh[0]->SetBorderState(uiRect::BORDER_NONE);
 	m_plblCh[0]->GetUiRect().SetGradient(0);
 	m_plblCh[0]->SetForegroundColour(wxColour(0,0,0));
 	m_plblCh[0]->SetBackgroundColour(wxColour(191,207,208));
-	m_plblCh[1] = new wmLabel(this, ID_M_PLBL23, _("U1"), wxPoint(80,114), wxSize(65,30), 0, _T("ID_M_PLBL23"));
+	m_plblCh[1] = new wmLabel(m_ppnlMapping, ID_M_PLBL23, _("U1"), wxPoint(80,114), wxSize(65,30), 0, _T("ID_M_PLBL23"));
 	m_plblCh[1]->SetBorderState(uiRect::BORDER_NONE);
 	m_plblCh[1]->GetUiRect().SetGradient(0);
 	m_plblCh[1]->SetForegroundColour(wxColour(0,0,0));
 	m_plblCh[1]->SetBackgroundColour(wxColour(191,207,208));
-	m_plblCh[2]= new wmLabel(this, ID_M_PLBL24, _("U1"), wxPoint(150,114), wxSize(65,30), 0, _T("ID_M_PLBL24"));
+	m_plblCh[2]= new wmLabel(m_ppnlMapping, ID_M_PLBL24, _("U1"), wxPoint(150,114), wxSize(65,30), 0, _T("ID_M_PLBL24"));
 	m_plblCh[2]->SetBorderState(uiRect::BORDER_NONE);
 	m_plblCh[2]->GetUiRect().SetGradient(0);
 	m_plblCh[2]->SetForegroundColour(wxColour(0,0,0));
 	m_plblCh[2]->SetBackgroundColour(wxColour(191,207,208));
-	m_plblCh[3] = new wmLabel(this, ID_M_PLBL25, _("U1"), wxPoint(220,114), wxSize(65,30), 0, _T("ID_M_PLBL25"));
+	m_plblCh[3] = new wmLabel(m_ppnlMapping, ID_M_PLBL25, _("U1"), wxPoint(220,114), wxSize(65,30), 0, _T("ID_M_PLBL25"));
 	m_plblCh[3]->SetBorderState(uiRect::BORDER_NONE);
 	m_plblCh[3]->GetUiRect().SetGradient(0);
 	m_plblCh[3]->SetForegroundColour(wxColour(0,0,0));
 	m_plblCh[3]->SetBackgroundColour(wxColour(191,207,208));
-	m_plblCh[4] = new wmLabel(this, ID_M_PLBL26, _("U1"), wxPoint(290,114), wxSize(65,30), 0, _T("ID_M_PLBL26"));
+	m_plblCh[4] = new wmLabel(m_ppnlMapping, ID_M_PLBL26, _("U1"), wxPoint(290,114), wxSize(65,30), 0, _T("ID_M_PLBL26"));
 	m_plblCh[4]->SetBorderState(uiRect::BORDER_NONE);
 	m_plblCh[4]->GetUiRect().SetGradient(0);
 	m_plblCh[4]->SetForegroundColour(wxColour(0,0,0));
 	m_plblCh[4]->SetBackgroundColour(wxColour(191,207,208));
-	m_plblCh[5] = new wmLabel(this, ID_M_PLBL27, _("U1"), wxPoint(360,114), wxSize(65,30), 0, _T("ID_M_PLBL27"));
+	m_plblCh[5] = new wmLabel(m_ppnlMapping, ID_M_PLBL27, _("U1"), wxPoint(360,114), wxSize(65,30), 0, _T("ID_M_PLBL27"));
 	m_plblCh[5]->SetBorderState(uiRect::BORDER_NONE);
 	m_plblCh[5]->GetUiRect().SetGradient(0);
 	m_plblCh[5]->SetForegroundColour(wxColour(0,0,0));
 	m_plblCh[5]->SetBackgroundColour(wxColour(191,207,208));
-	m_plblCh[6] = new wmLabel(this, ID_M_PLBL28, _("U1"), wxPoint(430,114), wxSize(65,30), 0, _T("ID_M_PLBL28"));
+	m_plblCh[6] = new wmLabel(m_ppnlMapping, ID_M_PLBL28, _("U1"), wxPoint(430,114), wxSize(65,30), 0, _T("ID_M_PLBL28"));
 	m_plblCh[6]->SetBorderState(uiRect::BORDER_NONE);
 	m_plblCh[6]->GetUiRect().SetGradient(0);
 	m_plblCh[6]->SetForegroundColour(wxColour(0,0,0));
 	m_plblCh[6]->SetBackgroundColour(wxColour(191,207,208));
-	m_plblCh[7] = new wmLabel(this, ID_M_PLBL29, _("U1"), wxPoint(500,114), wxSize(65,30), 0, _T("ID_M_PLBL29"));
+	m_plblCh[7] = new wmLabel(m_ppnlMapping, ID_M_PLBL29, _("U1"), wxPoint(500,114), wxSize(65,30), 0, _T("ID_M_PLBL29"));
 	m_plblCh[7]->SetBorderState(uiRect::BORDER_NONE);
 	m_plblCh[7]->GetUiRect().SetGradient(0);
 	m_plblCh[7]->SetForegroundColour(wxColour(0,0,0));
 	m_plblCh[7]->SetBackgroundColour(wxColour(191,207,208));
-	m_pbtnBack = new wmButton(this, ID_M_PBTN22, _("Back"), wxPoint(260,330), wxSize(80,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN22"));
+	m_pbtnBack = new wmButton(m_ppnlMapping, ID_M_PBTN22, _("Back"), wxPoint(260,330), wxSize(80,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN22"));
 	m_pbtnBack->SetForegroundColour(wxColour(255,255,255));
 	m_pbtnBack->SetBackgroundColour(wxColour(0,64,0));
 	m_pbtnBack->SetColourDisabled(wxColour(wxT("#B0B0B0")));
 	SetSize(size);
 	SetPosition(pos);
 
-
+    m_pbtnMapping->ConnectToSetting(m_sSection, "MappingEnabled", false);
 
 	Settings::Get().AddHandler(this, m_sSection, "ChannelMapping");
 	Settings::Get().AddHandler(this, m_sSection, "Channels");
+	Settings::Get().AddHandler(this, m_sSection, "MappingEnabled");
 
 
 	Bind(wxEVT_SETTING_CHANGED, &pnlChannelMapping::OnSettingChanged, this);
@@ -367,6 +377,10 @@ void pnlChannelMapping::OnSettingChanged(SettingEvent& event)
             m_nChannels = event.GetValue(2l);
             ShowChannels();
             ShowMapping(Settings::Get().Read(m_sSection, "ChannelMapping", "St"));
+        }
+        else if(event.GetKey() == "MappingEnabled")
+        {
+            m_ppnlMapping->Show(event.GetValue(false));
         }
     }
 }
