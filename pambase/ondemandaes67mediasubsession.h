@@ -46,7 +46,7 @@ class OnDemandAES67MediaSubsession: public OnDemandPamSubsession
         void AddSamples(const timedbuffer* pTimedBuffer);
         void FlushQueue();
 
-        void SetChannelMapping(const std::vector<char>& vMapping);
+        void SetRouting(const std::vector<char>& vRouting);
 
         std::string GetStreamName() override
         {

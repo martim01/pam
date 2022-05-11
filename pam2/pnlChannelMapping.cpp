@@ -64,6 +64,7 @@ pnlChannelMapping::pnlChannelMapping(wxWindow* parent,const wxString& sSection, 
 
 	m_pbtnEnable = new wmButton(this, wxNewId(), _("Mapping"), wxPoint(200,40), wxSize(200,30), wmButton::STYLE_SELECT);
 	m_pbtnEnable->SetToggle(true, "Disable", "Enable", 40);
+	m_pbtnEnable->SetBackgroundColour(wxColour(50,150,50));
 
     m_ppnlMapping = new wxPanel(this, 10, 80, 590, 200);
     m_ppnlMapping->SetBackgroundColour(*wxBLACK);
@@ -180,7 +181,9 @@ pnlChannelMapping::pnlChannelMapping(wxWindow* parent,const wxString& sSection, 
 	m_plblCh[7]->GetUiRect().SetGradient(0);
 	m_plblCh[7]->SetForegroundColour(wxColour(0,0,0));
 	m_plblCh[7]->SetBackgroundColour(wxColour(191,207,208));
-	m_pbtnBack = new wmButton(m_ppnlMapping, ID_M_PBTN22, _("Back"), wxPoint(260,330), wxSize(80,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN22"));
+
+
+	m_pbtnBack = new wmButton(this, ID_M_PBTN22, _("Back"), wxPoint(260,330), wxSize(80,40), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN22"));
 	m_pbtnBack->SetForegroundColour(wxColour(255,255,255));
 	m_pbtnBack->SetBackgroundColour(wxColour(0,64,0));
 	m_pbtnBack->SetColourDisabled(wxColour(wxT("#B0B0B0")));
@@ -206,6 +209,8 @@ pnlChannelMapping::pnlChannelMapping(wxWindow* parent,const wxString& sSection, 
 
     ShowMapping(Settings::Get().Read(m_sSection, "ChannelMapping", "St"));
     //ShowButtons();
+
+    m_ppnlMapping->Show(Settings::Get().Read(m_sSection, "MappingEnabled",0) ==1);
 
 }
 

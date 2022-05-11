@@ -16,7 +16,7 @@ class LiveAudioSource: public AudioInputDevice
 unsigned char nBitsPerSample, unsigned short nSampleRate);
 
 
-        void SetChannelMapping(const std::vector<char>& vMapping);
+        void SetRouting(const std::vector<char>& vRouting);
 
 
         protected:
@@ -65,7 +65,7 @@ unsigned char nBitsPerSample, unsigned short nSampleRate);
             unsigned long m_nBufferWritten;
             timedbuffer* m_pAudioBuffer;
 
-            std::vector<char> m_vChannelMapping;
+            std::vector<char> m_vRouting;
 
             static const double TWENTYFOURBIT;
             static const double SIXTEENBIT;

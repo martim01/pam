@@ -106,6 +106,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         void CreateSessionFromOutput(const wxString& sSource);
         void UpdateOutputSession(bool bMapping=false);
         std::vector<subsession::channelGrouping> CreateChannels(unsigned long nChannels);
+        std::vector<subsession::channelGrouping> CreateChannelsFrom2110(unsigned long nChannels);
 
         void DoSAP(bool bRun);
         void DoDNSSD(bool bRun);

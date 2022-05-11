@@ -232,9 +232,9 @@ void RtpServerThread::StopStream()
     m_eventLoopWatchVariable = 1;
 }
 
-void RtpServerThread::SetChannelMapping(const std::vector<char>& vMapping)
+void RtpServerThread::SetRouting(const std::vector<char>& vRouting)
 {
-    m_pSource->SetChannelMapping(vMapping);
+    m_pSource->SetRouting(vRouting);
 }
 
 void RtpServerThread::AddSamples(const timedbuffer* pTimedBuffer)

@@ -303,7 +303,7 @@ void OnDemandAES67MediaSubsession::DoQoS()
     }
 }
 
-void OnDemandAES67MediaSubsession::SetChannelMapping(const std::vector<char>& vMapping)
+void OnDemandAES67MediaSubsession::SetRouting(const std::vector<char>& vRouting)
 {
-    m_pSource->SetChannelMapping(vMapping);
+    m_pSource->SetRouting(vRouting);
 }

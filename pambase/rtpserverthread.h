@@ -26,7 +26,7 @@ class PAMBASE_IMPEXPORT RtpServerThread : public wxThread
 
         void StopStream();
         void AddSamples(const timedbuffer* pTimedBuffer);
-        void SetChannelMapping(const std::vector<char>& vMapping);
+        void SetRouting(const std::vector<char>& vRouting);
 
         void FlushQueue();
 
