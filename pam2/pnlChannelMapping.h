@@ -22,7 +22,7 @@ class pnlChannelMapping: public wxPanel
 		wmLabel* m_plblCh[8];
 
 		wmButton* m_pbtnEnable;
-		wmPanel* m_ppnlMapping;
+		wxPanel* m_ppnlMapping;
 
 	protected:
 

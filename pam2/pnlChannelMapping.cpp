@@ -187,7 +187,7 @@ pnlChannelMapping::pnlChannelMapping(wxWindow* parent,const wxString& sSection, 
 	SetSize(size);
 	SetPosition(pos);
 
-    m_pbtnMapping->ConnectToSetting(m_sSection, "MappingEnabled", false);
+    m_pbtnEnable->ConnectToSetting(m_sSection, "MappingEnabled", false);
 
 	Settings::Get().AddHandler(this, m_sSection, "ChannelMapping");
 	Settings::Get().AddHandler(this, m_sSection, "Channels");
