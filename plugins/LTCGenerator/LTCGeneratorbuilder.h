@@ -12,15 +12,17 @@ class WXEXPORT LTCGeneratorBuilder : public GeneratorPluginBuilder
     public:
         LTCGeneratorBuilder();
 
-        virtual void GetAudioData(timedbuffer* pBuffer);
+        void GetAudioData(timedbuffer* pBuffer) override;
 
         wxString GetName() const
         {
             return wxT("LTC");
         }
 
-        virtual void Init();
-        virtual void Stop();
+        void Init() override;
+        void Stop() override;
+
+        unsigned long GetNumberOfChannels() override { return 2;}
 
     protected:
 

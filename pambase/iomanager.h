@@ -141,7 +141,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         bool  m_bMonitorOutput;
         bool m_bStreamAlwaysOn;
 
-        Generator* m_pGenerator;
+        std::unique_ptr<Generator> m_pGenerator;
         std::map<int, RtpThread*> m_mRtp;
         std::set<int> m_setRtpOrphan;
         int m_nCurrentRtp;

@@ -67,7 +67,7 @@
 		<Project filename="plugins/battery/battery.cbp" />
 		<Project filename="InitialSetup/InitialSetup.cbp" />
 		<Project filename="InitialSetup/dosetup.cbp" />
-		<Project filename="../tests/pluginloader/pluginloader.cbp" />
 		<Project filename="../Restgoose/Restgoose.cbp" />
+		<Project filename="plugins/noiseGenerator/noiseGenerator.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

@@ -74,6 +74,10 @@ int SetHostname(const std::string& sHostname)
     over.close();
 
     pmlLog() << "/etc/hosts and /etc/hostname overwritten";
+
+
+    system("sudo raspi-config nonint do_expand_rootfs");
+
     return 0;
 }
 
