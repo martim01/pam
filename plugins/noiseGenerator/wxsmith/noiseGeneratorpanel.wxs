@@ -17,6 +17,7 @@
 			<size>80,40</size>
 			<fg>#000000</fg>
 			<bg>#FFFFFF</bg>
+			<handler function="OnpbtnGeneratorsClick" entry="EVT_BUTTON" />
 		</object>
 		<object class="wmList" name="ID_M_PLST1" variable="m_plstGenerators" member="yes">
 			<scrolling>None</scrolling>
@@ -27,8 +28,9 @@
 			<size>580,44</size>
 			<bg>#000000</bg>
 			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstGeneratorsSelected" entry="EVT_LIST_SELECTED" />
 		</object>
-		<object class="wxPanel" name="ID_PANEL12" variable="Panel2" member="yes">
+		<object class="wxPanel" name="ID_PANEL12" variable="m_ppnlSettings" member="yes">
 			<pos>0,140</pos>
 			<size>600,480</size>
 			<bg>#000000</bg>
