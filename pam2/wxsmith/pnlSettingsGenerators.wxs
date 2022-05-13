@@ -520,51 +520,6 @@
 					</object>
 					<label>Generator</label>
 				</object>
-				<object class="wmSwitcherPanelpage">
-					<object class="wxPanel" name="ID_PANEL12" variable="Panel2" member="yes">
-						<bg>#000000</bg>
-						<object class="wmList" name="ID_M_PLST5" variable="m_plstColour" member="yes">
-							<scrolling>None</scrolling>
-							<button_gap>5,1</button_gap>
-							<columns>4</columns>
-							<items />
-							<pos>10,10</pos>
-							<size>580,200</size>
-							<bg>#000000</bg>
-							<style>wmList::STYLE_SELECT</style>
-							<handler function="OnlstColourSelected" entry="EVT_LIST_SELECTED" />
-						</object>
-						<object class="wxStaticBox" name="ID_STATICBOX3" variable="StaticBox3" member="yes">
-							<label>Amplitude</label>
-							<pos>5,210</pos>
-							<size>590,105</size>
-							<fg>#FFFFFF</fg>
-							<bg>#000000</bg>
-						</object>
-						<object class="Custom" name="ID_CUSTOM2" subclass="wmSlider" variable="m_pNoiseAmplitude" member="yes">
-							<creating_code>$(THIS) = new $(CLASS)($(PARENT),$(ID),wxT(&quot;Frequency&quot;),$(POS),$(SIZE),$(STYLE),$(NAME));</creating_code>
-							<include_file>wmslider.h</include_file>
-							<local_include>1</local_include>
-							<style>5</style>
-							<pos>10,250</pos>
-							<size>400,40</size>
-						</object>
-						<object class="wmLabel" name="ID_M_PLBL1" variable="m_plblNoisedB" member="yes">
-							<label>dB</label>
-							<pos>415,250</pos>
-							<size>60,40</size>
-							<fg>#000000</fg>
-							<bg>#FFFFFF</bg>
-						</object>
-						<object class="wmButton" name="ID_M_PBTN21" variable="m_pbtnNoise0dBu" member="yes">
-							<label>-18 dBFS</label>
-							<pos>480,250</pos>
-							<size>80,40</size>
-							<handler function="OnbtnNoise0dBuClick" entry="EVT_BUTTON" />
-						</object>
-					</object>
-					<label>Noise</label>
-				</object>
 			</object>
 		</object>
 	</object>

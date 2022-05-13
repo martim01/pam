@@ -36,14 +36,12 @@ class pnlSettingsGenerators: public wxPanel
 		wmButton* m_pbtnMinus1;
 		wmButton* m_pbtnMixer;
 		wmButton* m_pbtnNext;
-		wmButton* m_pbtnNoise0dBu;
 		wmButton* m_pbtnPlus10;
 		wmButton* m_pbtnPlus1;
 		wmButton* m_pbtnSequences;
 		wmLabel* m_pLbl1;
 		wmLabel* m_pLbl7;
 		wmLabel* m_plblFrequency;
-		wmLabel* m_plblNoisedB;
 		wmLabel* m_plblOutput;
 		wmLabel* m_plblOutput_1;
 		wmLabel* m_plblOutput_2;
@@ -56,7 +54,6 @@ class pnlSettingsGenerators: public wxPanel
 		wmLabel* m_plbldB;
 		wmList* m_plstAogFiles;
 		wmList* m_plstAudioSources;
-		wmList* m_plstColour;
 		wmList* m_plstOutput_1;
 		wmList* m_plstOutput_2;
 		wmList* m_plstOutput_3;
@@ -67,17 +64,14 @@ class pnlSettingsGenerators: public wxPanel
 		wmList* m_plstOutput_8;
 		wmList* m_plstShape;
 		wmSlider* m_pAmplitude;
-		wmSlider* m_pNoiseAmplitude;
 		wmSlider* m_pSlider;
 		wmSwitcherPanel* m_pswpAog;
-		wxPanel* Panel2;
 		wxPanel* Panel3;
 		wxPanel* Panel4;
 		wxPanel* Panel5;
 		wxPanel* pnlGenerator;
 		wxStaticBox* StaticBox1;
 		wxStaticBox* StaticBox2;
-		wxStaticBox* StaticBox3;
 		//*)
 
 
@@ -133,12 +127,6 @@ class pnlSettingsGenerators: public wxPanel
 		static const long ID_M_PBTN19;
 		static const long ID_M_PLST9;
 		static const long ID_PANEL10;
-		static const long ID_M_PLST5;
-		static const long ID_STATICBOX3;
-		static const long ID_CUSTOM2;
-		static const long ID_M_PLBL1;
-		static const long ID_M_PBTN21;
-		static const long ID_PANEL12;
 		static const long ID_M_PSWP2;
 		static const long ID_PANEL8;
 		//*)
