@@ -128,14 +128,17 @@ void Generator::GenerateSequences(timedbuffer* pData)
     {
         pData->GetWritableBuffer()[i] = 0.0;
     }
-    for(auto pairSeq : m_mSequences)
+    if(m_nSequenceChannels != 0)
     {
-        GenerateSequence(pairSeq.second, pData->GetWritableBuffer(), pData->GetBufferSize());
-    }
-    m_nPhase += (pData->GetBufferSize()/2);
-    if(m_nPhase >= static_cast<unsigned long>(m_dSampleRate))
-    {
-        m_nPhase -= static_cast<unsigned long>(m_dSampleRate);
+        for(auto pairSeq : m_mSequences)
+        {
+            GenerateSequence(pairSeq.second, pData->GetWritableBuffer(), pData->GetBufferSize());
+        }
+        m_nPhase += (pData->GetBufferSize()/m_nSequenceChannels);
+        if(m_nPhase >= static_cast<unsigned long>(m_dSampleRate))
+        {
+            m_nPhase -= static_cast<unsigned long>(m_dSampleRate);
+        }
     }
 }
 
@@ -144,7 +147,7 @@ void Generator::GenerateSequence(std::shared_ptr<Sequence> pSeq, float* pBuffer,
 
     unsigned int nPhase = m_nPhase;
 
-    for(int i = 0; i < nSize; i+=2)
+    for(int i = pSeq->GetChannel(); i < nSize; i+=m_nSequenceChannels)
     {
         float dAmplitude(0.0);
         switch(pSeq->GetSequencePosition()->nType)
@@ -162,14 +165,7 @@ void Generator::GenerateSequence(std::shared_ptr<Sequence> pSeq, float* pBuffer,
                 dAmplitude = GenerateTriangle((*pSeq->GetSequencePosition()),nPhase);
                 break;
         }
-        if((pSeq->GetChannels() & Sequence::LEFT))
-        {
-            pBuffer[i] += dAmplitude;
-        }
-        if((pSeq->GetChannels() & Sequence::RIGHT))
-        {
-            pBuffer[i+1] += dAmplitude;
-        }
+        pBuffer[i] += dAmplitude;
 
         nPhase++;
         if(nPhase == static_cast<unsigned long>(m_dSampleRate))
@@ -409,13 +405,15 @@ bool Generator::LoadSequence(const wxString& sFile)
     wxXmlDocument doc;
     if(doc.Load(wxString::Format(wxT("%s/generator/%s.xml"), Settings::Get().GetDocumentDirectory().c_str(), sFile.c_str())) && doc.GetRoot())
     {
+        doc.GetRoot()->GetAttribute("channels", "2").ToULong(&m_nSequenceChannels);
         for(wxXmlNode* pSequenceNode = doc.GetRoot()->GetChildren(); pSequenceNode; pSequenceNode = pSequenceNode->GetNext())
         {
+
             if(pSequenceNode->GetName().CmpNoCase(wxT("sequence")) == 0)
             {
-                unsigned long nChannels(0);
-                pSequenceNode->GetAttribute(wxT("channels"), wxT("0")).ToULong(&nChannels);
-                std::shared_ptr<Sequence> pSequence = std::make_shared<Sequence>(nChannels, m_dSampleRate);
+                unsigned long nChannel(0);
+                pSequenceNode->GetAttribute(wxT("channels"), wxT("0")).ToULong(&nChannel);
+                std::shared_ptr<Sequence> pSequence = std::make_shared<Sequence>(nChannel, m_dSampleRate);
 
                 for(wxXmlNode* pFreqGenNode = pSequenceNode->GetChildren(); pFreqGenNode; pFreqGenNode = pFreqGenNode->GetNext())
                 {

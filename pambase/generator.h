@@ -88,9 +88,9 @@ class KFilter;
 class PAMBASE_IMPEXPORT Sequence
 {
     public:
-        Sequence(int nChannels, double dSampleRate);
-        int GetChannels() const
-        {   return m_nChannels; }
+        Sequence(int nChannel, double dSampleRate);
+        int GetChannel() const
+        {   return m_nChannel; }
         void AppendGenFreq(float dFrequency, float ddBFS, int nCycles, int nType);
 
         std::list<genfreq>::iterator GetSequenceBegin();
@@ -102,7 +102,7 @@ class PAMBASE_IMPEXPORT Sequence
         enum {LEFT=1, RIGHT=2, MONO=3};
 
     private:
-        int m_nChannels;
+        int m_nChannel;
         double m_dSampleRate;
         std::list<genfreq> m_lstSequence;
         std::list<genfreq>::iterator m_itPosition;
@@ -160,7 +160,7 @@ class PAMBASE_IMPEXPORT Generator
         float GenerateSaw(const genfreq& gfreq, float dPhase);
         float GenerateTriangle(const genfreq& gfreq, float dPhase);
 
-
+        unsigned long m_nSequenceChannels;
         std::map<wxString, std::shared_ptr<Sequence>> m_mSequences;
 
         std::queue<genfreq> m_queueFreq;

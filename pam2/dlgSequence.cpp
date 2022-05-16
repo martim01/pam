@@ -267,6 +267,7 @@ void dlgSequence::OnlstFilesSelected(wxCommandEvent& event)
 void dlgSequence::OnbtnFileRenameClick(wxCommandEvent& event)
 {
     dlgEditName aDlg(this, m_sFilename);
+
     if(aDlg.ShowModal() == wxID_OK)
     {
         if(wxFileExists(wxString::Format(wxT("%s/generator/%s.xml"), Settings::Get().GetDocumentDirectory().c_str(), aDlg.m_pedtName->GetValue().c_str())) == false)
@@ -313,7 +314,7 @@ void dlgSequence::OntbnFileDeleteClick(wxCommandEvent& event)
 
 void dlgSequence::OntbnFileCreateClick(wxCommandEvent& event)
 {
-    dlgEditName aDlg(this, wxEmptyString);
+    dlgEditName aDlg(this, wxEmptyString,9, 2);
     if(aDlg.ShowModal() == wxID_OK)
     {
         if(wxFileExists(wxString::Format(wxT("%s/generator/%s.xml"), Settings::Get().GetDocumentDirectory().c_str(), aDlg.m_pedtName->GetValue().c_str())) == false)
@@ -324,6 +325,8 @@ void dlgSequence::OntbnFileCreateClick(wxCommandEvent& event)
             }
             m_pDoc = new wxXmlDocument();
             m_pDoc->SetRoot(new wxXmlNode(wxXML_ELEMENT_NODE, wxT("generator")));
+            m_pDoc->GetRoot()->AddAttribute("channels", wxString::Format("%lu", aDlg.m_nSelectedChannel));
+
             m_pDoc->Save(wxString::Format(wxT("%s/generator/%s.xml"), Settings::Get().GetDocumentDirectory().c_str(), aDlg.m_pedtName->GetValue().c_str()));
             m_sFilename = aDlg.m_pedtName->GetValue();
             m_plstFiles->SelectButton(m_plstFiles->AddButton(m_sFilename), true);
@@ -333,19 +336,19 @@ void dlgSequence::OntbnFileCreateClick(wxCommandEvent& event)
 
 void dlgSequence::OnbtnSequenceRenameClick(wxCommandEvent& event)
 {
-    unsigned long nChannels;
-    m_pSequenceNode->GetAttribute(wxT("channels"), wxT("3")).ToULong(&nChannels);
+    unsigned long nChannel;
+    m_pSequenceNode->GetAttribute(wxT("channels"), wxT("0")).ToULong(&nChannel);
 
-    dlgEditName aDlg(this, m_pSequenceNode->GetAttribute(wxT("name"), wxEmptyString), nChannels);
+    dlgEditName aDlg(this, m_pSequenceNode->GetAttribute(wxT("name"), wxEmptyString), m_nChannelCount, nChannel);
     if(aDlg.ShowModal() == wxID_OK)
     {
         m_pSequenceNode->DeleteAttribute(wxT("name"));
         m_pSequenceNode->AddAttribute(wxT("name"), aDlg.m_pedtName->GetValue());
 
         m_pSequenceNode->DeleteAttribute(wxT("channels"));
-        m_pSequenceNode->AddAttribute(wxT("channels"), wxString::Format(wxT("%lu"), aDlg.m_nChannels));
+        m_pSequenceNode->AddAttribute(wxT("channels"), wxString::Format(wxT("%lu"), aDlg.m_nSelectedChannel));
 
-        m_plstSequences->SetButtonText(m_nSequenceButton, wxString::Format(wxT("%s [%s]"), aDlg.m_pedtName->GetValue().c_str(), STR_CHANNELS[aDlg.m_nChannels].c_str()));
+        m_plstSequences->SetButtonText(m_nSequenceButton, wxString::Format(wxT("%s [%d]"), aDlg.m_pedtName->GetValue().c_str(), aDlg.m_nSelectedChannel));
         SaveDoc();
     }
 }
@@ -354,9 +357,9 @@ void dlgSequence::OnbtnSequencyCopyClick(wxCommandEvent& event)
 {
 
     unsigned long nChannels;
-    m_pSequenceNode->GetAttribute(wxT("channels"), wxT("3")).ToULong(&nChannels);
+    m_pSequenceNode->GetAttribute(wxT("channels"), wxT("0")).ToULong(&nChannels);
 
-    dlgEditName aDlg(this, m_pSequenceNode->GetAttribute(wxT("name"), wxEmptyString), nChannels);
+    dlgEditName aDlg(this, m_pSequenceNode->GetAttribute(wxT("name"), wxEmptyString), m_nChannelCount, nChannels);
     if(aDlg.ShowModal() == wxID_OK)
     {
         wxXmlNode* pNode = new wxXmlNode(*m_pSequenceNode);
@@ -364,12 +367,12 @@ void dlgSequence::OnbtnSequencyCopyClick(wxCommandEvent& event)
         pNode->AddAttribute(wxT("name"), aDlg.m_pedtName->GetValue());
 
         pNode->DeleteAttribute(wxT("channels"));
-        pNode->AddAttribute(wxT("channels"), wxString::Format(wxT("%lu"), aDlg.m_nChannels));
+        pNode->AddAttribute(wxT("channels"), wxString::Format(wxT("%lu"), aDlg.m_nSelectedChannel));
 
         m_pDoc->GetRoot()->AddChild(pNode);
         SaveDoc();
 
-        m_plstSequences->SelectButton(m_plstSequences->AddButton(wxString::Format(wxT("%s [%s]"), pNode->GetAttribute(wxT("name"), wxEmptyString).c_str(), STR_CHANNELS[aDlg.m_nChannels].c_str())));
+        m_plstSequences->SelectButton(m_plstSequences->AddButton(wxString::Format(wxT("%s [%lu]"), pNode->GetAttribute(wxT("name"), wxEmptyString).c_str(), aDlg.m_nSelectedChannel)));
     }
 }
 
@@ -393,16 +396,16 @@ void dlgSequence::OnbtnSequenceDeleteClick(wxCommandEvent& event)
 
 void dlgSequence::OnbtnSequenceCreateClick(wxCommandEvent& event)
 {
-    dlgEditName aDlg(this,wxEmptyString, 2);
+    dlgEditName aDlg(this,wxEmptyString, m_nChannelCount, 0);
     if(aDlg.ShowModal() == wxID_OK)
     {
         wxXmlNode* pNode = new wxXmlNode(wxXML_ELEMENT_NODE, wxT("sequence"));
         pNode->AddAttribute(wxT("name"), aDlg.m_pedtName->GetValue());
-        pNode->AddAttribute(wxT("channels"), wxString::Format(wxT("%lu"), aDlg.m_nChannels));
+        pNode->AddAttribute(wxT("channels"), wxString::Format(wxT("%lu"), aDlg.m_nSelectedChannel));
         m_pDoc->GetRoot()->AddChild(pNode);
         SaveDoc();
 
-        m_plstSequences->SelectButton(m_plstSequences->AddButton(wxString::Format(wxT("%s [%s]"), pNode->GetAttribute(wxT("name"), wxEmptyString).c_str(), STR_CHANNELS[aDlg.m_nChannels].c_str())));
+        m_plstSequences->SelectButton(m_plstSequences->AddButton(wxString::Format(wxT("%s [%lu]"), pNode->GetAttribute(wxT("name"), wxEmptyString).c_str(), aDlg.m_nSelectedChannel)));
     }
 }
 
@@ -594,6 +597,7 @@ void dlgSequence::LoadFile()
 
     if(m_pDoc->Load(wxString::Format(wxT("%s/generator/%s.xml"), Settings::Get().GetDocumentDirectory().c_str(), m_sFilename.c_str())))
     {
+        m_pDoc->GetRoot().GetAttribute("channels","0").ToULong(&m_nChannelCount);
         for(wxXmlNode* pNode = m_pDoc->GetRoot()->GetChildren(); pNode; pNode = pNode->GetNext())
         {
             if(pNode->GetName().CmpNoCase(wxT("sequence")) == 0)

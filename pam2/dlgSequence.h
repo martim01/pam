@@ -130,6 +130,7 @@ class dlgSequence: public wxDialog
         void FillInFreqGen(wxXmlNode* pNode);
 
 		wxString m_sFilename;
+		unsigned long m_nChannelCount;
 		wxXmlDocument* m_pDoc;
 		wxXmlNode* m_pSequenceNode;
 		wxXmlNode* m_pFrequencyNode;
