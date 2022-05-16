@@ -19,12 +19,27 @@
 			<bg>#FFFFFF</bg>
 			<handler function="OnpbtnGeneratorsClick" entry="EVT_BUTTON" />
 		</object>
+		<object class="wmList" name="ID_M_PLST2" variable="m_plstTitle" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>2,1</button_gap>
+			<button_size>-1,28</button_size>
+			<columns>8</columns>
+			<button>#FFFFFF</button>
+			<button_disabled>#FFFFFF</button_disabled>
+			<text>#004040</text>
+			<text_disabled>#004040</text_disabled>
+			<items />
+			<pos>10,60</pos>
+			<size>580,30</size>
+			<bg>#000000</bg>
+			<handler function="OnlstGeneratorsSelected" entry="EVT_LIST_SELECTED" />
+		</object>
 		<object class="wmList" name="ID_M_PLST1" variable="m_plstGenerators" member="yes">
 			<scrolling>None</scrolling>
 			<button_gap>2,1</button_gap>
 			<columns>8</columns>
 			<items />
-			<pos>10,60</pos>
+			<pos>10,90</pos>
 			<size>580,44</size>
 			<bg>#000000</bg>
 			<style>wmList::STYLE_SELECT</style>

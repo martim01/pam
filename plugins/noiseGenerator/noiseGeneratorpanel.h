@@ -35,10 +35,10 @@ class noiseGeneratorPanel: public pmPanel
 		wmLabel* m_plblSelected;
 		wmList* m_plstColour;
 		wmList* m_plstGenerators;
+		wmList* m_plstTitle;
 		wmSlider* m_pNoiseAmplitude;
 		wxPanel* m_ppnlSettings;
 		wxStaticBox* StaticBox3;
-
 		//*)
 
 		void OnSettingEvent(SettingEvent& event);
@@ -48,6 +48,7 @@ class noiseGeneratorPanel: public pmPanel
 		//(*Identifiers(noiseGeneratorPanel)
 		static const long ID_M_PLBL2;
 		static const long ID_M_PBTN1;
+		static const long ID_M_PLST2;
 		static const long ID_M_PLST1;
 		static const long ID_M_PLBL3;
 		static const long ID_M_PLST5;

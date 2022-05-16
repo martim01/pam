@@ -14,6 +14,7 @@
 //(*IdInit(noiseGeneratorPanel)
 const long noiseGeneratorPanel::ID_M_PLBL2 = wxNewId();
 const long noiseGeneratorPanel::ID_M_PBTN1 = wxNewId();
+const long noiseGeneratorPanel::ID_M_PLST2 = wxNewId();
 const long noiseGeneratorPanel::ID_M_PLST1 = wxNewId();
 const long noiseGeneratorPanel::ID_M_PLBL3 = wxNewId();
 const long noiseGeneratorPanel::ID_M_PLST5 = wxNewId();
@@ -46,7 +47,13 @@ noiseGeneratorPanel::noiseGeneratorPanel(wxWindow* parent,noiseGeneratorBuilder*
 	m_pbtnGenerators = new wmButton(this, ID_M_PBTN1, _("1"), wxPoint(300,10), wxSize(80,40), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnGenerators->SetForegroundColour(wxColour(0,0,0));
 	m_pbtnGenerators->SetBackgroundColour(wxColour(255,255,255));
-	m_plstGenerators = new wmList(this, ID_M_PLST1, wxPoint(10,60), wxSize(580,44), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 8, wxSize(2,1));
+	m_plstTitle = new wmList(this, ID_M_PLST2, wxPoint(10,60), wxSize(580,30), 0, 0, wxSize(-1,28), 8, wxSize(2,1));
+	m_plstTitle->SetBackgroundColour(wxColour(0,0,0));
+	m_plstTitle->SetButtonColour(wxColour(wxT("#FFFFFF")));
+	m_plstTitle->SetDisabledColour(wxColour(wxT("#FFFFFF")));
+	m_plstTitle->SetTextButtonColour(wxColour(wxT("#004040")));
+	m_plstTitle->SetTextDisabledButtonColour(wxColour(wxT("#004040")));
+	m_plstGenerators = new wmList(this, ID_M_PLST1, wxPoint(10,90), wxSize(580,44), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 8, wxSize(2,1));
 	m_plstGenerators->SetBackgroundColour(wxColour(0,0,0));
 	m_ppnlSettings = new wxPanel(this, ID_PANEL12, wxPoint(0,140), wxSize(600,480), wxTAB_TRAVERSAL, _T("ID_PANEL12"));
 	m_ppnlSettings->SetBackgroundColour(wxColour(0,0,0));
@@ -69,6 +76,7 @@ noiseGeneratorPanel::noiseGeneratorPanel(wxWindow* parent,noiseGeneratorBuilder*
 	m_pbtnNoise0dBu = new wmButton(m_ppnlSettings, ID_M_PBTN21, _("-18 dBFS"), wxPoint(480,150), wxSize(80,40), 0, wxDefaultValidator, _T("ID_M_PBTN21"));
 
 	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&noiseGeneratorPanel::OnpbtnGeneratorsClick);
+	Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&noiseGeneratorPanel::OnlstGeneratorsSelected);
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&noiseGeneratorPanel::OnlstGeneratorsSelected);
 	//*)
 
@@ -87,6 +95,7 @@ noiseGeneratorPanel::noiseGeneratorPanel(wxWindow* parent,noiseGeneratorBuilder*
     for(size_t i = 0; i < 8; i++)
     {
         m_plstGenerators->AddButton("", wxNullBitmap, 0, wmList::wmHIDDEN);
+        m_plstTitle->AddButton(wxString::Format("Ch %u", i),wxNullBitmap, 0, wmList::wmDISABLED);
     }
 
     m_plstColour->AddButton("White");
@@ -94,6 +103,7 @@ noiseGeneratorPanel::noiseGeneratorPanel(wxWindow* parent,noiseGeneratorBuilder*
     m_plstColour->AddButton("Grey");
     m_plstColour->AddButton("A");
     m_plstColour->AddButton("K");
+
 
 	SetSize(size);
 	SetPosition(pos);
