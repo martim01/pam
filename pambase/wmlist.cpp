@@ -1082,6 +1082,7 @@ void wmList::DrawButton(wxDC& dc, const std::list<button*>::iterator& itButton)
         else
         {
             (*itButton)->pUi->SetBackgroundColour(m_clrDisabledButton);
+            (*itButton)->pUi->SetForegroundColour(m_clrDisabledText);
             (*itButton)->pUi->Draw(dc,uiRect::BORDER_FLAT);
         }
     }
@@ -1910,7 +1911,8 @@ void wmList::SetDisabledColour(const wxColour& clr)
 
 void wmList::SetTextDisabledButtonColour(const wxColour& clr)
 {
-    ///< @todo
+    m_clrDisabledText = clr;
+    Refresh();
 }
 
 void wmList::OnFocus(wxFocusEvent& event)
