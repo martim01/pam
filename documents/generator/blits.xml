@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<generator channels="6">
+  <sequence name="IdentL" channels="0">
+    <genfreq frequency="880" dBFS="-18.00" cycles="528" type="0"/>    <!-- 606 ms-->
+    <genfreq frequency="1000" dBFS="-80.00" cycles="12800" type="0"/>
+  </sequence>
+  <sequence name="IdentR" channels="1">
+    <genfreq frequency="1000" dBFS="-80.00" cycles="800" type="0"/>
+    <genfreq frequency="880" dBFS="-18.00" cycles="528" type="0"/>
+    <genfreq frequency="1000" dBFS="-80.00" cycles="12000" type="0"/>
+  </sequence>
+  <sequence name="IdentC" channels="2">
+    <genfreq frequency="1000" dBFS="-80.00" cycles="1600" type="0"/>
+    <genfreq frequency="1320" dBFS="-18.00" cycles="792" type="0"/>
+    <genfreq frequency="1000" dBFS="-80.00" cycles="11200" type="0"/>
+  </sequence>
+  <sequence name="IdentLFE" channels="3">
+    <genfreq frequency="1000" dBFS="-80.00" cycles="2400" type="0"/>
+    <genfreq frequency="80" dBFS="-18.00" cycles="48" type="0"/>
+    <genfreq frequency="1000" dBFS="-80.00" cycles="10400" type="0"/>
+  </sequence>
+  <sequence name="IdentLs" channels="4">
+    <genfreq frequency="1000" dBFS="-80.00" cycles="3200" type="0"/>
+    <genfreq frequency="660" dBFS="-18.00" cycles="396" type="0"/>
+    <genfreq frequency="1000" dBFS="-80.00" cycles="9600" type="0"/>
+  </sequence>
+  <sequence name="IdentRs" channels="5">
+    <genfreq frequency="1000" dBFS="-80.00" cycles="4000" type="0"/>
+    <genfreq frequency="660" dBFS="-18.00" cycles="396" type="0"/>
+    <genfreq frequency="1000" dBFS="-80.00" cycles="8800" type="0"/>
+  </sequence>
+  <sequence name="StereoR" channels="1">
+    <genfreq frequency="1000" dBFS="-80.00" cycles="4800" type="0"/>
+    <genfreq frequency="1000" dBFS="-18.00" cycles="5100" type="0"/>
+    <genfreq frequency="1000" dBFS="-80.00" cycles="3500" type="0"/>
+  </sequence>
+  <sequence name="StereoL" channels="0">
+    <genfreq frequency="1000" dBFS="-80.00" cycles="4800" type="0"/>
+    <genfreq frequency="1000" dBFS="-18.00" cycles="1000" type="0"/>
+    <genfreq frequency="1000" dBFS="-80.00" cycles="300" type="0"/>
+    <genfreq frequency="1000" dBFS="-18.00" cycles="300" type="0"/>
+    <genfreq frequency="1000" dBFS="-80.00" cycles="300" type="0"/>
+    <genfreq frequency="1000" dBFS="-18.00" cycles="300" type="0"/>
+    <genfreq frequency="1000" dBFS="-80.00" cycles="300" type="0"/>
+    <genfreq frequency="1000" dBFS="-18.00" cycles="300" type="0"/>
+    <genfreq frequency="1000" dBFS="-80.00" cycles="300" type="0"/>
+    <genfreq frequency="1000" dBFS="-18.00" cycles="2000" type="0"/>
+    <genfreq frequency="1000" dBFS="-80.00" cycles="3500" type="0"/>
+  </sequence>
+  <sequence name="Phase0" channels="0">
+    <genfreq frequency="1000" dBFS="-80.00" cycles="10200" type="0"/>
+    <genfreq frequency="2000" dBFS="-18.00" cycles="6000" type="0"/>
+    <genfreq frequency="1000" dBFS="-80.00" cycles="200" type="0"/>
+  </sequence>
+  <sequence name="Phase1" channels="1">
+    <genfreq frequency="1000" dBFS="-80.00" cycles="10200" type="0"/>
+    <genfreq frequency="2000" dBFS="-18.00" cycles="6000" type="0"/>
+    <genfreq frequency="1000" dBFS="-80.00" cycles="200" type="0"/>
+  </sequence>
+  <sequence name="Phase2" channels="2">
+    <genfreq frequency="1000" dBFS="-80.00" cycles="10200" type="0"/>
+    <genfreq frequency="2000" dBFS="-18.00" cycles="6000" type="0"/>
+    <genfreq frequency="1000" dBFS="-80.00" cycles="200" type="0"/>
+  </sequence>
+  <sequence name="Phase3" channels="3">
+    <genfreq frequency="1000" dBFS="-80.00" cycles="10200" type="0"/>
+    <genfreq frequency="2000" dBFS="-18.00" cycles="6000" type="0"/>
+    <genfreq frequency="1000" dBFS="-80.00" cycles="200" type="0"/>
+  </sequence>
+  <sequence name="Phase4" channels="4">
+    <genfreq frequency="1000" dBFS="-80.00" cycles="10200" type="0"/>
+    <genfreq frequency="2000" dBFS="-18.00" cycles="6000" type="0"/>
+    <genfreq frequency="1000" dBFS="-80.00" cycles="200" type="0"/>
+  </sequence>
+  <sequence name="Phase5" channels="5">
+    <genfreq frequency="1000" dBFS="-80.00" cycles="10200" type="0"/>
+    <genfreq frequency="2000" dBFS="-18.00" cycles="6000" type="0"/>
+    <genfreq frequency="1000" dBFS="-80.00" cycles="200" type="0"/>
+  </sequence>
+</generator>

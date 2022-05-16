@@ -130,7 +130,7 @@ void Generator::GenerateSequences(timedbuffer* pData)
     }
     if(m_nSequenceChannels != 0)
     {
-        for(auto pairSeq : m_mSequences)
+        for(const auto& pairSeq : m_mSequences)
         {
             GenerateSequence(pairSeq.second, pData->GetWritableBuffer(), pData->GetBufferSize());
         }
@@ -153,19 +153,18 @@ void Generator::GenerateSequence(std::shared_ptr<Sequence> pSeq, float* pBuffer,
         switch(pSeq->GetSequencePosition()->nType)
         {
             case SINE:
-                dAmplitude = GenerateSin((*pSeq->GetSequencePosition()),nPhase);
+                pBuffer[i] += GenerateSin((*pSeq->GetSequencePosition()),nPhase);
                 break;
             case SQUARE:
-                dAmplitude = GenerateSquare((*pSeq->GetSequencePosition()),nPhase);
+                pBuffer[i] += GenerateSquare((*pSeq->GetSequencePosition()),nPhase);
                 break;
             case SAW:
-                dAmplitude = GenerateSaw((*pSeq->GetSequencePosition()),nPhase);
+                pBuffer[i] += GenerateSaw((*pSeq->GetSequencePosition()),nPhase);
                 break;
             case TRIANGLE:
-                dAmplitude = GenerateTriangle((*pSeq->GetSequencePosition()),nPhase);
+                pBuffer[i] += GenerateTriangle((*pSeq->GetSequencePosition()),nPhase);
                 break;
         }
-        pBuffer[i] += dAmplitude;
 
         nPhase++;
         if(nPhase == static_cast<unsigned long>(m_dSampleRate))
