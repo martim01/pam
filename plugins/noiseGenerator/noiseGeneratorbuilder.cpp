@@ -4,7 +4,7 @@
 #include "settingevent.h"
 #include "noiseGeneratorpanel.h"
 #include "noise.h"
-
+#include "log.h"
 
 using namespace std;
 
@@ -12,7 +12,6 @@ noiseGeneratorBuilder::noiseGeneratorBuilder() : GeneratorPluginBuilder()
 {
 
     RegisterForSettingsUpdates(this);
-
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&noiseGeneratorBuilder::OnSettingChanged);
 
@@ -22,7 +21,14 @@ void noiseGeneratorBuilder::GetAudioData(timedbuffer* pBuffer)
 {
     for(size_t i = 0; i < pBuffer->GetBufferSize(); i++)
     {
-        pBuffer->GetWritableBuffer()[i] = m_vGenerators[i%m_vGenerators.size()]->ProduceSample();
+        if(m_vGenerators.empty() == false)
+        {
+            pBuffer->GetWritableBuffer()[i] = m_vGenerators[i%m_vGenerators.size()]->ProduceSample();
+        }
+        else
+        {
+            pBuffer->GetWritableBuffer()[i] = 0.0;
+        }
     }
 }
 
@@ -48,7 +54,21 @@ void noiseGeneratorBuilder::LoadSettings()
         CreateGenerator(i, m_asGenerators[i]);
     }
 
-    //@todo amplitude
+    ExtractAmplitudes(ReadSetting("amplitudes",""));
+}
+
+void noiseGeneratorBuilder::ExtractAmplitudes(const wxString& sValue)
+{
+    wxArrayString as = wxStringTokenize(sValue, ",");
+    for(size_t i = 0; i < as.GetCount(); i++)
+    {
+        double dValue(-18.0);
+        as[i].ToDouble(&dValue);
+        if(i < m_vGenerators.size())
+        {
+            m_vGenerators[i]->SetAmplitude(dValue);
+        }
+    }
 }
 
 void noiseGeneratorBuilder::CreateGenerator(size_t n, const wxString& sType)
@@ -73,8 +93,6 @@ void noiseGeneratorBuilder::CreateGenerator(size_t n, const wxString& sType)
     {
         m_vGenerators[n] = std::make_unique<WhiteNoise>();
     }
-
-
 }
 
 
@@ -95,16 +113,18 @@ void noiseGeneratorBuilder::OnSettingChanged(SettingEvent& event)
         }
         m_asGenerators = asGenerators;
     }
-    else if(event.GetKey() == "amplitude")
+    else if(event.GetKey() == "amplitudes")
     {
-        //@todo
+        ExtractAmplitudes(event.GetValue());
     }
+
+    m_pMeter->OnSettingEvent(event);
 }
 
 
 void noiseGeneratorBuilder::Init()
 {
-
+    // @todo remote api
 }
 
 void noiseGeneratorBuilder::Stop()

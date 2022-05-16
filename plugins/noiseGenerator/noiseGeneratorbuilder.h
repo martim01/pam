@@ -36,6 +36,8 @@ class WXEXPORT noiseGeneratorBuilder : public GeneratorPluginBuilder
 
     void CreateGenerator(size_t n, const wxString& sType);
 
+    void ExtractAmplitudes(const wxString& sValue);
+
 	noiseGeneratorPanel* m_pMeter;
 
     wxArrayString m_asGenerators;

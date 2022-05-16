@@ -4,7 +4,7 @@
 #include "session.h"
 #include "settingevent.h"
 #include <wx/log.h>
-
+#include "log.h"
 
 //(*InternalHeaders(noiseGeneratorPanel)
 #include <wx/intl.h>
@@ -72,9 +72,13 @@ noiseGeneratorPanel::noiseGeneratorPanel(wxWindow* parent,noiseGeneratorBuilder*
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&noiseGeneratorPanel::OnlstGeneratorsSelected);
 	//*)
 
-	m_pNoiseAmplitude->Init(0,80, 80+Settings::Get().Read(wxT("Noise"), wxT("Amplitude"), -18.0));
-    m_plblNoisedB->SetLabel(wxString::Format(wxT("%.1f dBFS"),m_pNoiseAmplitude->GetPosition()-80.0));
+	m_ppnlSettings->Show(false);
+
+	m_pNoiseAmplitude->Init(0,80, -18.0);
+    m_plblNoisedB->SetLabel("-18.0 dBFS");
     Connect(m_pNoiseAmplitude->GetId(), wxEVT_SLIDER_MOVE, (wxObjectEventFunction)&noiseGeneratorPanel::OnNoiseAmplitudeMove);
+    Connect(m_pbtnNoise0dBu->GetId(), wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&noiseGeneratorPanel::OnbtnNoise0dBuClicked);
+    Connect(ID_M_PLST5,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&noiseGeneratorPanel::OnlstColourSelected);
 
 	m_pbtnGenerators->ConnectToSetting(m_pBuilder->GetSection(), "count", "1");
     m_pbtnGenerators->SetPopup({"0","1","2","3","4","5","6","7","8"});
@@ -82,7 +86,7 @@ noiseGeneratorPanel::noiseGeneratorPanel(wxWindow* parent,noiseGeneratorBuilder*
 
     for(size_t i = 0; i < 8; i++)
     {
-        m_plstGenerators->AddButton("", wxNullBitmap, 0, wmHIDDEN);
+        m_plstGenerators->AddButton("", wxNullBitmap, 0, wmList::wmHIDDEN);
     }
 
     m_plstColour->AddButton("White");
@@ -96,9 +100,7 @@ noiseGeneratorPanel::noiseGeneratorPanel(wxWindow* parent,noiseGeneratorBuilder*
 
     LoadSettings();
 
-	m_pBuilder->RegisterForSettingsUpdates(this);
 
-	Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&::noiseGeneratorPanel::OnSettingEvent);
 }
 
 noiseGeneratorPanel::~noiseGeneratorPanel()
@@ -109,15 +111,10 @@ noiseGeneratorPanel::~noiseGeneratorPanel()
 
 
 
-void noiseGeneratorPanel::OnLeftUp(wxMouseEvent& event)
-{
-
-}
-
 void noiseGeneratorPanel::LoadSettings()
 {
     m_asGenerators = wxStringTokenize(m_pBuilder->ReadSetting("generators",""), ",");
-    ExtractAmplitudes(m_pBuilder->ReadSetting("amplitudes", ""), ",");
+    ExtractAmplitudes(m_pBuilder->ReadSetting("amplitudes", ""));
 
     PopulateGeneratorList();
 }
@@ -133,6 +130,26 @@ void noiseGeneratorPanel::OnSettingEvent(SettingEvent& event)
     {
         ExtractAmplitudes(event.GetValue());
     }
+    else if(event.GetKey() == "count")
+    {
+
+        while(event.GetValue(0l) > m_asGenerators.GetCount())
+        {
+            m_asGenerators.Add("White");
+            m_adAmplitude.Add(-18.0);
+        }
+
+        while(m_asGenerators.GetCount() > event.GetValue(0l))
+        {
+            m_asGenerators.RemoveAt(m_asGenerators.GetCount()-1);
+            m_adAmplitude.RemoveAt(m_adAmplitude.GetCount()-1);
+        }
+
+
+        WriteGenerators();
+
+        PopulateGeneratorList();
+    }
 }
 
 void noiseGeneratorPanel::ExtractAmplitudes(const wxString& sValue)
@@ -142,34 +159,50 @@ void noiseGeneratorPanel::ExtractAmplitudes(const wxString& sValue)
     for(size_t i = 0; i < as.GetCount(); i++)
     {
         double dValue(0.0);
-        as.ToDouble(&dValue);
+        as[i].ToDouble(&dValue);
         m_adAmplitude.Add(dValue);
     }
 }
 
 void noiseGeneratorPanel::OnlstGeneratorsSelected(wxCommandEvent& event)
 {
-    m_ppnlSettings->Show();
-
     m_nSelected = event.GetInt();
-    m_plstColour->SelectButton(m_asGenerators[m_nSelected]);
-
-    m_pNoiseAmplitude->SetSliderPosition(m_adAmplitude[m_nSelected]+80.0);
+    if(m_nSelected < m_asGenerators.GetCount())
+    {
+        m_ppnlSettings->Show();
+        m_plstColour->SelectButton(m_asGenerators[m_nSelected]);
+        double dPos = m_adAmplitude[m_nSelected]+80.0;
+        m_pNoiseAmplitude->SetSliderPosition(dPos, true);
+    }
 }
 
 void noiseGeneratorPanel::OnpbtnGeneratorsClick(wxCommandEvent& event)
 {
-    unsigned long nValue;
-    event.GetString().ToULong(&nValue);
-    while(nValue > m_asGenerators.GetCount())
+    unsigned long nCount;
+    event.GetString().ToULong(&nCount);
+    while(nCount > m_asGenerators.GetCount())
     {
-        m_asGenerators.Add("white");
+        m_asGenerators.Add("White");
     }
-    while(m_asGenerators.GetCount() > nValue)
+
+    while(nCount > m_adAmplitude.GetCount())
+    {
+        m_adAmplitude.Add(-18.0);
+    }
+
+    while(m_asGenerators.GetCount() > nCount)
     {
         m_asGenerators.RemoveAt(m_asGenerators.GetCount()-1);
     }
+
+    while(m_adAmplitude.GetCount() > nCount)
+    {
+        m_adAmplitude.RemoveAt(m_adAmplitude.GetCount()-1);
+    }
+
+
     WriteGenerators();
+    PopulateGeneratorList();
 }
 
 void noiseGeneratorPanel::WriteGenerators()
@@ -183,7 +216,9 @@ void noiseGeneratorPanel::WriteGenerators()
         }
         sValue += m_asGenerators[i];
     }
-    m_pBuilder->WriteSetting(m_pBuilder->GetSection(), "generators", sValue);
+    m_pBuilder->WriteSetting("generators", sValue);
+
+    WriteAmplitudes();
 }
 
 void noiseGeneratorPanel::WriteAmplitudes()
@@ -197,7 +232,7 @@ void noiseGeneratorPanel::WriteAmplitudes()
         }
         sValue += wxString::Format("%.2f", m_adAmplitude[i]);
     }
-    m_pBuilder->WriteSetting(m_pBuilder->GetSection(), "amplitudes", sValue);
+    m_pBuilder->WriteSetting("amplitudes", sValue);
 }
 
 void noiseGeneratorPanel::PopulateGeneratorList()
@@ -209,11 +244,11 @@ void noiseGeneratorPanel::PopulateGeneratorList()
         if(i < m_asGenerators.GetCount())
         {
             m_plstGenerators->SetButtonText(i, m_asGenerators[i]);
-            m_plstGenerators->EnableButton(i, wmENABLED);
+            m_plstGenerators->EnableButton(i, wmList::wmENABLED);
         }
         else
         {
-            m_plstGenerators->EnableButton(i, wmHIDDEN);
+            m_plstGenerators->EnableButton(i, wmList::wmHIDDEN);
             if(m_nSelected == i)
             {
                 m_ppnlSettings->Show(false);
@@ -229,6 +264,28 @@ void noiseGeneratorPanel::OnNoiseAmplitudeMove(wxCommandEvent& event)
     if(m_nSelected > -1)
     {
         m_adAmplitude[m_nSelected] = m_pNoiseAmplitude->GetPosition()-80.0;
+        m_plblNoisedB->SetLabel(wxString::Format("%.1f dBFS", m_adAmplitude[m_nSelected]));
+        WriteAmplitudes();
     }
-    WriteAmplitudes();
+}
+
+
+void noiseGeneratorPanel::OnlstColourSelected(wxCommandEvent& event)
+{
+    if(m_nSelected > -1)
+    {
+        m_asGenerators[m_nSelected] = event.GetString();
+        WriteGenerators();
+    }
+}
+
+void noiseGeneratorPanel::OnbtnNoise0dBuClicked(wxCommandEvent& event)
+{
+    if(m_nSelected > -1)
+    {
+        m_adAmplitude[m_nSelected] = -18.0;
+        m_plblNoisedB->SetLabel(wxString::Format("%.1f dBFS", m_adAmplitude[m_nSelected]));
+        m_pNoiseAmplitude->SetSliderPosition(62.0,false);
+        WriteAmplitudes();
+    }
 }

@@ -38,7 +38,10 @@ class noiseGeneratorPanel: public pmPanel
 		wmSlider* m_pNoiseAmplitude;
 		wxPanel* m_ppnlSettings;
 		wxStaticBox* StaticBox3;
+
 		//*)
+
+		void OnSettingEvent(SettingEvent& event);
 
 	protected:
 
@@ -64,9 +67,11 @@ class noiseGeneratorPanel: public pmPanel
 		//*)
 
 		void OnNoiseAmplitudeMove(wxCommandEvent& event);
+		void OnlstColourSelected(wxCommandEvent& event);
+		void OnbtnNoise0dBuClicked(wxCommandEvent& event);
 
 		void LoadSettings();
-		void OnSettingEvent(SettingEvent& event);
+
 
 		void WriteGenerators();
 		void WriteAmplitudes();

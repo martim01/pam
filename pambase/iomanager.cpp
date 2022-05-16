@@ -562,11 +562,6 @@ void IOManager::OutputChanged(const wxString& sKey)
             pmlLog(pml::LOG_INFO) << "IOManager\tCreate Audio Output Generator: Generator";
             InitGeneratorTone();
         }
-        else  if(sType == wxT("Noise"))
-        {
-            m_nPlaybackSource = AudioEvent::GENERATOR;
-            InitGeneratorNoise();
-        }
         else if(sType == wxT("Input"))
         {
             pmlLog(pml::LOG_INFO) << "IOManager\tOutput source is input";
