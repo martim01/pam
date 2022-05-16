@@ -741,6 +741,7 @@ class PAMBASE_IMPEXPORT wmList : public pmControl
         wxColour m_clrTextPressed;
         wxColour m_clrPressedButton;
         wxColour m_clrDisabledButton;
+        wxColour m_clrDisabledText;
 
         wxPoint m_pntMouse;
         short m_nScrolling;
