@@ -13,7 +13,7 @@
 using namespace std;
 
 
-Sequence::Sequence(int nChannels, double dSampleRate) : m_nChannels(nChannels), m_dSampleRate(dSampleRate)
+Sequence::Sequence(int nChannel, double dSampleRate) : m_nChannel(nChannel), m_dSampleRate(dSampleRate)
 {
     m_itPosition = m_lstSequence.end();
 }
@@ -461,13 +461,28 @@ void Generator::GeneratePlugin(timedbuffer* pData)
 
 int Generator::GetNumberOfChannels()
 {
-    if(m_pSoundfile)
+    switch(m_nGenerator)
     {
-        return m_pSoundfile->GetChannels();
+        case FILE:
+            if(m_pSoundfile)
+            {
+                return m_pSoundfile->GetChannels();
+            }
+            return 0;
+            break;
+        case SEQUENCE:
+            return m_nSequenceChannels;
+            break;
+        case FREQUENCY:
+            return 2;
+            break;
+        case PLUGIN:
+            if(m_pPlugin)
+            {
+                return m_pPlugin->GetNumberOfChannels();
+            }
+            return 0;
     }
-    if(m_pPlugin)
-    {
-        return m_pPlugin->GetNumberOfChannels();
-    }
+
     return 2;
 }

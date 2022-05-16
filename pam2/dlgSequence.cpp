@@ -597,7 +597,7 @@ void dlgSequence::LoadFile()
 
     if(m_pDoc->Load(wxString::Format(wxT("%s/generator/%s.xml"), Settings::Get().GetDocumentDirectory().c_str(), m_sFilename.c_str())))
     {
-        m_pDoc->GetRoot().GetAttribute("channels","0").ToULong(&m_nChannelCount);
+        m_pDoc->GetRoot()->GetAttribute("channels","0").ToULong(&m_nChannelCount);
         for(wxXmlNode* pNode = m_pDoc->GetRoot()->GetChildren(); pNode; pNode = pNode->GetNext())
         {
             if(pNode->GetName().CmpNoCase(wxT("sequence")) == 0)
@@ -605,7 +605,7 @@ void dlgSequence::LoadFile()
                 unsigned long nChannels(3);
                 pNode->GetAttribute(wxT("channels"), wxT("3")).ToULong(&nChannels);
 
-                m_plstSequences->AddButton(wxString::Format(wxT("%s [%s]"), pNode->GetAttribute(wxT("name"), wxEmptyString).c_str(), STR_CHANNELS[nChannels].c_str()));
+                m_plstSequences->AddButton(wxString::Format(wxT("%s [%lu]"), pNode->GetAttribute(wxT("name"), wxEmptyString).c_str(), nChannels));
             }
         }
         m_pbtnSequenceCreate->Enable();

@@ -178,7 +178,7 @@ void pnlSettingsTime::OnbtnNtpServerAddClick(wxCommandEvent& event)
     dlgEditName aDlg(this, "", dlgEditName::CH_SERVER);
     if(aDlg.ShowModal() == wxID_OK)
     {
-        if(aDlg.m_nChannels == 1)
+        if(aDlg.m_nSelectedChannel == 1)
         {
             m_plstNTPServers->AddButton(aDlg.m_pedtName->GetValue());
         }
@@ -205,7 +205,7 @@ void pnlSettingsTime::OnbtnNtpServerEditClick(wxCommandEvent& event)
         dlgEditName aDlg(this, sName, nChannel);
         if(aDlg.ShowModal() == wxID_OK)
         {
-            if(aDlg.m_nChannels == 1)
+            if(aDlg.m_nSelectedChannel == 1)
             {
                 m_plstNTPServers->SetButtonText(m_nSelectedServer, aDlg.m_pedtName->GetValue());
             }

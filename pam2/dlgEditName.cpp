@@ -85,7 +85,7 @@ dlgEditName::dlgEditName(wxWindow* parent,wxString sName, long nChannelCount, lo
     {
         for(int i = 0; i < nChannelCount; i ++)
         {
-            m_plstChannels->AddButton(wxString::Format("%d", nChannel));
+            m_plstChannels->AddButton(wxString::Format("%d", i));
         }
         m_ppnlChannel->Show();
         m_plstChannels->SelectButton(m_nSelectedChannel);
@@ -95,7 +95,7 @@ dlgEditName::dlgEditName(wxWindow* parent,wxString sName, long nChannelCount, lo
         m_plstChannels->AddButton("Server");
         m_plstChannels->AddButton("Pool");
         m_ppnlChannel->Show();
-        m_plstChannels->SelectButton(nChannel-CH_SERVER);
+        m_plstChannels->SelectButton(nChannelCount-CH_SERVER);
         m_pedtName->SetValidation(wmEdit::wmEdit::ASCII);
     }
 	m_pbtnSave->Enable(m_pedtName->GetValue().empty()==false);
