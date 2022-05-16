@@ -95,7 +95,7 @@ pnlSettingsGenerators::pnlSettingsGenerators(wxWindow* parent,wxWindowID id,cons
 	m_plstAudioSources->SetBackgroundColour(wxColour(0,0,0));
 	m_plstAudioSources->SetButtonColour(wxColour(wxT("#400080")));
 	m_plstAudioSources->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
-	m_pbtnMixer = new wmButton(pnlGenerator, ID_M_PBTN2, _("Mixer"), wxPoint(250,36), wxSize(100,30), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
+	m_pbtnMixer = new wmButton(pnlGenerator, ID_M_PBTN2, _("Router"), wxPoint(250,36), wxSize(100,30), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
 	m_pbtnMixer->SetBackgroundColour(wxColour(128,64,0));
 	wxFont m_pbtnMixerFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pbtnMixer->SetFont(m_pbtnMixerFont);
@@ -315,7 +315,7 @@ pnlSettingsGenerators::pnlSettingsGenerators(wxWindow* parent,wxWindowID id,cons
 
     if(Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled"))==wxT("Disabled"))
     {
-        m_pswpAog->ChangeSelection("Mixer");
+        m_pswpAog->ChangeSelection("Router");
     }
     else
     {
