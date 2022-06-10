@@ -1,37 +1,37 @@
 #pragma once
 
-//(*Headers([CLASS_PREFIX]Panel)
+//(*Headers(fftdiffPanel)
 #include <wx/panel.h>
 //*)
 
 #include <vector>
 #include "pmpanel.h"
 
-class [CLASS_PREFIX]Builder;
+class fftdiffBuilder;
 class timedbuffer;
 class session;
 
-class [CLASS_PREFIX]Panel: public pmPanel
+class fftdiffPanel: public pmPanel
 {
 	public:
 	
-		wxDECLARE_DYNAMIC_CLASS([CLASS_PREFIX]Panel);
+		wxDECLARE_DYNAMIC_CLASS(fftdiffPanel);
 
 		/** @brief default constructor
         **/
-		[CLASS_PREFIX]Panel() : pmPanel(){}
+		fftdiffPanel() : pmPanel(){}
 		
 		/** @brief Creates the panel
         *   @param parent pointer to the parent window
-        *   @param pBuilder pointer to the [CLASS_PREFIX]Builder object that built the plugin
+        *   @param pBuilder pointer to the fftdiffBuilder object that built the plugin
 		*   @param id the wxWindowId of the control
         *   @param pos the top-left point of the control
         *   @param size the width and height of the control
         **/
-		[CLASS_PREFIX]Panel(wxWindow* parent,[CLASS_PREFIX]Builder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
-		virtual ~[CLASS_PREFIX]Panel();
+		fftdiffPanel(wxWindow* parent,fftdiffBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+		virtual ~fftdiffPanel();
 
-		//(*Declarations([CLASS_PREFIX]Panel)
+		//(*Declarations(fftdiffPanel)
 		//*)
 		
 		/**	@brief Called when there is some audio data to pass to the meter
@@ -51,17 +51,17 @@ class [CLASS_PREFIX]Panel: public pmPanel
 
 	protected:
 
-		//(*Identifiers([CLASS_PREFIX]Panel)
+		//(*Identifiers(fftdiffPanel)
 		//*)
 		
 		void OnLeftUp(wxMouseEvent& event);
 
 	private:
 
-		//(*Handlers([CLASS_PREFIX]Panel)
+		//(*Handlers(fftdiffPanel)
 		//*)
 		
-		[CLASS_PREFIX]Builder* m_pBuilder;
+		fftdiffBuilder* m_pBuilder;
 
 		DECLARE_EVENT_TABLE()
 };

@@ -3,19 +3,19 @@
 #include <wx/string.h>
 
 class SettingEvent;
-@meter	class [CLASS_PREFIX]Meter;
-@panel	class [CLASS_PREFIX]Panel;
+@meter	class fftdiffMeter;
+@panel	class fftdiffPanel;
 
-class WXEXPORT [CLASS_PREFIX]Builder : public MonitorPluginBuilder
+class WXEXPORT fftdiffBuilder : public MonitorPluginBuilder
 {
     public:
-        [CLASS_PREFIX]Builder();
+        fftdiffBuilder();
 
         virtual void SetAudioData(const timedbuffer* pBuffer);
 
         wxString GetName() const
         {
-            return wxT("[CLASS_PREFIX]");
+            return wxT("fftdiff");
         }
 
 
@@ -24,8 +24,7 @@ class WXEXPORT [CLASS_PREFIX]Builder : public MonitorPluginBuilder
 
     protected:
 		
-@meter	friend class [CLASS_PREFIX]Meter;
-@panel	friend class [CLASS_PREFIX]Panel;
+    	friend class fftdiff;
         void OnSettingChanged(SettingEvent& event);
 
         virtual wxWindow* CreateMonitorPanel(wxWindow* pParent);
@@ -33,8 +32,8 @@ class WXEXPORT [CLASS_PREFIX]Builder : public MonitorPluginBuilder
 
         void LoadSettings();
 
-@meter	[CLASS_PREFIX]Meter* m_pMeter;
-@panel	[CLASS_PREFIX]Panel* m_pMeter;
+        fftdiff* m_pMeter;
+@panel	fftdiffPanel* m_pMeter;
 
 };
 

@@ -1,0 +1,61 @@
+#include "@PLUGIN@panel.h"
+#include "@PLUGIN@builder.h"
+#include "timedbuffer.h"
+#include "session.h"
+
+//(*InternalHeaders(@PLUGIN@Panel)
+#include <wx/intl.h>
+#include <wx/string.h>
+//*)
+
+//(*IdInit(@PLUGIN@Panel)
+//*)
+
+wxIMPLEMENT_DYNAMIC_CLASS(@PLUGIN@Panel, pmPanel)
+
+BEGIN_EVENT_TABLE(@PLUGIN@Panel,pmPanel)
+	//(*EventTable(@PLUGIN@Panel)
+	//*)
+END_EVENT_TABLE()
+
+
+@PLUGIN@Panel::@PLUGIN@Panel(wxWindow* parent,@PLUGIN@Builder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) : pmPanel(),
+    m_pBuilder(pBuilder)
+{
+	//(*Initialize(@PLUGIN@Panel)
+	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
+	//*)
+	
+	Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&@PLUGIN@Panel::OnLeftUp);
+
+	SetSize(size);
+	SetPosition(pos);
+}
+
+@PLUGIN@Panel::~@PLUGIN@Panel()
+{
+	//(*Destroy(@PLUGIN@Panel)
+	//*)
+}
+
+void @PLUGIN@Panel::SetAudioData(const timedbuffer* pBuffer)
+{
+	
+}
+
+void @PLUGIN@Panel::InputSession(const session& aSession)
+{
+	
+}
+
+void @PLUGIN@Panel::OutputChannels(const std::vector<char>& vChannels)
+{
+	
+}
+
+
+void @PLUGIN@Panel::OnLeftUp(wxMouseEvent& event)
+{
+    m_pBuilder->Maximize((GetSize().x <= 600));
+}
+

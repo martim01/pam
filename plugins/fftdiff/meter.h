@@ -4,22 +4,22 @@
 #include <vector>
 #include "pmcontrol.h"
 
-class [CLASS_PREFIX]Builder;
+class fftdiffBuilder;
 class session;
 class timedbuffer;
 
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/
-class [CLASS_PREFIX]Meter : public pmControl
+class fftdiffMeter : public pmControl
 {
     DECLARE_EVENT_TABLE()
-	wxDECLARE_DYNAMIC_CLASS([CLASS_PREFIX]Meter);
+	wxDECLARE_DYNAMIC_CLASS(fftdiffMeter);
 
     public:
 
         /** @brief default constructor
         **/
-        [CLASS_PREFIX]Meter() : pmControl() { }
+        fftdiffMeter() : pmControl() { }
 
         /** @brief Constructor
         *   @param parent pointer to the parent window
@@ -28,7 +28,7 @@ class [CLASS_PREFIX]Meter : public pmControl
         *   @param pos the top-left point of the control
         *   @param size the width and height of the button
         **/
-        [CLASS_PREFIX]Meter(wxWindow *parent, [CLASS_PREFIX]Builder* pBuilder,
+        fftdiffMeter(wxWindow *parent, fftdiffBuilder* pBuilder,
                  wxWindowID id = wxNewId(),
                  const wxPoint& pos = wxDefaultPosition,
                  const wxSize& size = wxDefaultSize);
@@ -47,7 +47,7 @@ class [CLASS_PREFIX]Meter : public pmControl
 
 
 
-        virtual ~[CLASS_PREFIX]Meter();
+        virtual ~fftdiffMeter();
 
 		/**	@brief Called when there is some audio data to pass to the meter
 		*	@param pBuffer const pointer to the timedbuffer containing the audio data
@@ -79,7 +79,7 @@ class [CLASS_PREFIX]Meter : public pmControl
 
         void OnLeftUp(wxMouseEvent& event);
 
-        [CLASS_PREFIX]Builder* m_pBuilder;
+        fftdiffBuilder* m_pBuilder;
 
 
 };

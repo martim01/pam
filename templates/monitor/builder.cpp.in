@@ -1,0 +1,67 @@
+#include "@PLUGIN@builder.h"
+#include <wx/panel.h>
+#include "settings.h"
+#include "settingevent.h"
+#include "version.h"
+@panel#include "@PLUGIN@panel.h"
+@meter#include "@PLUGIN@meter.h"
+
+using namespace std;
+
+@PLUGIN@Builder::@PLUGIN@Builder() : MonitorPluginBuilder()
+{
+
+    //RegisterForSettingsUpdates(wxT("Mode"), this);
+    
+    Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&@PLUGIN@Builder::OnSettingChanged);
+
+}
+
+void @PLUGIN@Builder::SetAudioData(const timedbuffer* pBuffer)
+{
+	m_pMeter->SetAudioData(pBuffer);
+}
+
+wxWindow* @PLUGIN@Builder::CreateMonitorPanel(wxWindow* pParent)
+{
+    m_pMeter = new @PLUGIN@@DISPLAY_TYPE@(pParent,this);
+	return m_pMeter;
+
+}
+
+list<pairOptionPanel_t> @PLUGIN@Builder::CreateOptionPanels(wxWindow* pParent)
+{
+    list<pairOptionPanel_t> lstOptionPanels;
+
+    //@todo create and return all the option panels
+    return lstOptionPanels;
+}
+
+
+
+
+void @PLUGIN@Builder::LoadSettings()
+{
+	//@todo load any settings
+}
+
+
+void @PLUGIN@Builder::InputSession(const session& aSession)
+{
+	m_pMeter->InputSession(aSession);
+}
+
+void @PLUGIN@Builder::OutputChannels(const std::vector<char>& vChannels)
+{
+	m_pMeter->OutputChannels(vChannels);
+}
+
+
+void @PLUGIN@Builder::OnSettingChanged(SettingEvent& event)
+{
+    //@todo a setting registered for has changed. Handle it
+}
+
+
+
+

@@ -1,0 +1,95 @@
+#include "@PLUGIN@meter.h"
+#include <wx/dc.h>
+#include <wx/dcbuffer.h>
+#include <wx/log.h>
+#include "uirect.h"
+#include "@PLUGIN@builder.h"
+#include "settings.h"
+#include "timedbuffer.h"
+
+
+using namespace std;
+
+BEGIN_EVENT_TABLE(@PLUGIN@Meter, pmControl)
+    EVT_PAINT(@PLUGIN@Meter::OnPaint)
+    EVT_SIZE(@PLUGIN@Meter::OnSize)
+    EVT_LEFT_UP(@PLUGIN@Meter::OnLeftUp)
+END_EVENT_TABLE()
+
+wxIMPLEMENT_DYNAMIC_CLASS(@PLUGIN@Meter, pmControl);
+
+
+
+@PLUGIN@Meter::@PLUGIN@Meter(wxWindow *parent, @PLUGIN@Builder* pBuilder, wxWindowID id, const wxPoint& pos, const wxSize& size) : pmControl(),
+    m_pBuilder(pBuilder)
+{
+    Create(parent, id, pos, size);
+   
+
+}
+
+bool @PLUGIN@Meter::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size)
+{
+    wxSize szInit(size);
+    wxSize bestSize = DoGetBestSize();
+    if(size.x<=0)
+        szInit.SetWidth(bestSize.x);
+    if(size.y <= 0)
+        szInit.SetHeight(bestSize.y);
+
+    if(!wxWindow::Create(parent,id,pos,szInit,wxWANTS_CHARS, wxT("fft")))
+        return false;
+
+    SetMinSize(size);
+
+    SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+
+
+    return true;
+}
+
+@PLUGIN@Meter::~@PLUGIN@Meter()
+{
+
+}
+
+
+void @PLUGIN@Meter::OnPaint(wxPaintEvent& event)
+{
+    wxAutoBufferedPaintDC dc(this);
+    wxBrush br(*wxBLACK);
+    dc.SetBrush(br);
+    dc.DrawRectangle(GetClientRect());
+
+}
+
+
+void @PLUGIN@Meter::OnSize(wxSizeEvent& event)
+{
+
+    Refresh();
+
+}
+
+void @PLUGIN@Meter::SetAudioData(const timedbuffer* pBuffer)
+{
+	
+}
+
+void @PLUGIN@Meter::InputSession(const session& aSession)
+{
+	
+}
+	
+void @PLUGIN@Meter::OutputChannels(const std::vector<char>& vChannels)
+{
+	
+}
+
+
+
+void @PLUGIN@Meter::OnLeftUp(wxMouseEvent& event)
+{
+	m_pBuilder->Maximize((GetSize().x<=600));
+
+}
