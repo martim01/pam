@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="noiseGeneratorPanel">
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl1" member="yes">
+			<label>Generators:</label>
+			<pos>200,10</pos>
+			<size>100,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#008000</bg>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnGenerators" member="yes">
+			<label>1</label>
+			<pos>300,10</pos>
+			<size>80,40</size>
+			<fg>#000000</fg>
+			<bg>#FFFFFF</bg>
+			<handler function="OnpbtnGeneratorsClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmList" name="ID_M_PLST2" variable="m_plstTitle" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>2,1</button_gap>
+			<button_size>-1,28</button_size>
+			<columns>8</columns>
+			<button>#FFFFFF</button>
+			<button_disabled>#FFFFFF</button_disabled>
+			<text>#004040</text>
+			<text_disabled>#004040</text_disabled>
+			<items />
+			<pos>10,60</pos>
+			<size>580,30</size>
+			<bg>#000000</bg>
+			<handler function="OnlstGeneratorsSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+		<object class="wmList" name="ID_M_PLST1" variable="m_plstGenerators" member="yes">
+			<scrolling>None</scrolling>
+			<button_gap>2,1</button_gap>
+			<columns>8</columns>
+			<items />
+			<pos>10,90</pos>
+			<size>580,44</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT</style>
+			<handler function="OnlstGeneratorsSelected" entry="EVT_LIST_SELECTED" />
+		</object>
+		<object class="wxPanel" name="ID_PANEL12" variable="m_ppnlSettings" member="yes">
+			<pos>0,140</pos>
+			<size>600,480</size>
+			<bg>#000000</bg>
+			<object class="wmLabel" name="ID_M_PLBL3" variable="m_plblSelected" member="yes">
+				<label>Generator #</label>
+				<pos>0,0</pos>
+				<size>600,30</size>
+				<fg>#FFFFFF</fg>
+				<bg>#008000</bg>
+			</object>
+			<object class="wmList" name="ID_M_PLST5" variable="m_plstColour" member="yes">
+				<scrolling>None</scrolling>
+				<button_gap>2,1</button_gap>
+				<columns>5</columns>
+				<items />
+				<pos>10,50</pos>
+				<size>580,44</size>
+				<bg>#000000</bg>
+				<style>wmList::STYLE_SELECT</style>
+			</object>
+			<object class="wxStaticBox" name="ID_STATICBOX3" variable="StaticBox3" member="yes">
+				<label>Amplitude</label>
+				<pos>5,110</pos>
+				<size>590,105</size>
+				<fg>#FFFFFF</fg>
+				<bg>#000000</bg>
+			</object>
+			<object class="Custom" name="ID_CUSTOM2" subclass="wmSlider" variable="m_pNoiseAmplitude" member="yes">
+				<creating_code>$(THIS) = new $(CLASS)($(PARENT),$(ID),wxT(&quot;Frequency&quot;),$(POS),$(SIZE),$(STYLE),$(NAME));</creating_code>
+				<include_file>wmslider.h</include_file>
+				<local_include>1</local_include>
+				<style>5</style>
+				<pos>10,150</pos>
+				<size>400,40</size>
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL1" variable="m_plblNoisedB" member="yes">
+				<label>dB</label>
+				<pos>415,150</pos>
+				<size>60,40</size>
+				<fg>#000000</fg>
+				<bg>#FFFFFF</bg>
+			</object>
+			<object class="wmButton" name="ID_M_PBTN21" variable="m_pbtnNoise0dBu" member="yes">
+				<label>-18 dBFS</label>
+				<pos>480,150</pos>
+				<size>80,40</size>
+			</object>
+		</object>
+	</object>
+</wxsmith>

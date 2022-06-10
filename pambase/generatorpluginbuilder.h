@@ -26,6 +26,8 @@ class PAMBASE_IMPEXPORT GeneratorPluginBuilder : public wxEvtHandler
 
         void SetSampleRate(double dSampleRate)  {   m_dSampleRate = dSampleRate; }
 
+        virtual unsigned long GetNumberOfChannels()=0;
+
         virtual void SendWebsocketMessage(){}
 
         wxString GetSection() { return "Generator::"+GetName();}

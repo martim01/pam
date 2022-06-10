@@ -123,7 +123,7 @@ IOManager::IOManager() :
     wxPtp::Get().RunDomain(std::string(Settings::Get().Read(wxT("AoIP_Settings"), wxT("Interface"), wxT("eth0")).mb_str()),
     Settings::Get().Read(wxT("AoIP_Settings"), wxT("Domain"), 0));
     #endif // PTPMONKEY
-    m_pGenerator = new Generator();
+    m_pGenerator = std::make_unique<Generator>();
     m_pGenerator->SetSampleRate(48000);
 
     m_timerSilence.SetOwner(this, wxNewId());
@@ -147,8 +147,7 @@ IOManager::~IOManager()
 
 void IOManager::Stop()
 {
-    delete m_pGenerator;
-    m_pGenerator = 0;
+    m_pGenerator = nullptr;
 
     for(auto pairThread : m_mRtp)
     {
@@ -380,7 +379,6 @@ void IOManager::AddOutputSamples(size_t nSize)
     if(m_pGenerator)
     {
 
-
         timedbuffer* pBuffer(m_pGenerator->Generate(nSize));
         switch(m_nOutputDestination)
         {
@@ -564,11 +562,6 @@ void IOManager::OutputChanged(const wxString& sKey)
             pmlLog(pml::LOG_INFO) << "IOManager\tCreate Audio Output Generator: Generator";
             InitGeneratorTone();
         }
-        else  if(sType == wxT("Noise"))
-        {
-            m_nPlaybackSource = AudioEvent::GENERATOR;
-            InitGeneratorNoise();
-        }
         else if(sType == wxT("Input"))
         {
             pmlLog(pml::LOG_INFO) << "IOManager\tOutput source is input";
@@ -625,7 +618,7 @@ void IOManager::GeneratorToneChanged()
 
 void IOManager::GeneratorNoiseChanged(const wxString& sKey)
 {
-    if(sKey == wxT("Amplitude"))
+    /*if(sKey == wxT("Amplitude"))
     {
         m_pGenerator->SetNoiseAmplitude(Settings::Get().Read(wxT("Noise"), wxT("Amplitude"), -18.0));
     }
@@ -634,6 +627,7 @@ void IOManager::GeneratorNoiseChanged(const wxString& sKey)
         pmlLog(pml::LOG_INFO) << "IOManager\tChange Audio Output Generator: Noise";
         InitGeneratorNoise();
     }
+    */
 }
 
 
@@ -642,7 +636,7 @@ void IOManager::InitGeneratorFile()
     if(m_pGenerator && m_pGenerator->SetFile())
     {
         CreateSessionFromOutput(Settings::Get().Read(wxT("Output"), wxT("File"), wxEmptyString));
-        CheckPlayback(m_pGenerator->GetSampleRate(), m_pGenerator->GetChannels());
+        CheckPlayback(m_pGenerator->GetSampleRate(), m_pGenerator->GetNumberOfChannels());
     }
 }
 
@@ -656,7 +650,7 @@ void IOManager::InitGeneratorSequence()
             //m_sCurrentSequence = sSequence;
 
             CreateSessionFromOutput(Settings::Get().Read(wxT("Output"), wxT("Sequence"), wxT("glits")));
-            CheckPlayback(m_pGenerator->GetSampleRate(), m_pGenerator->GetChannels());
+            CheckPlayback(m_pGenerator->GetSampleRate(), m_pGenerator->GetNumberOfChannels());
 
         }
         else
@@ -682,7 +676,7 @@ void IOManager::InitGeneratorTone()
         pmlLog(pml::LOG_INFO) << "IOManager\tGenerating fixed frequency " << Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000) << "Hz at " << Settings::Get().Read(wxT("Generator"), wxT("Amplitude"), -18.0) << "dbFS";
 
         CreateSessionFromOutput(wxString::Format(wxT("%dHz %.1fdBFS"), Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000), Settings::Get().Read(wxT("Generator"), wxT("Amplitude"), -18.0)));
-        CheckPlayback(m_pGenerator->GetSampleRate(), m_pGenerator->GetChannels());
+        CheckPlayback(m_pGenerator->GetSampleRate(), m_pGenerator->GetNumberOfChannels());
 
 
     }
@@ -694,40 +688,36 @@ void IOManager::InitGeneratorPlugin(const wxString& sPlugin)
     if(m_pGenerator)
     {
         m_pGenerator->SetPlugin(sPlugin);
-         CreateSessionFromOutput(sPlugin);
-    }
-    else
-    {
-
+        CreateSessionFromOutput(sPlugin);
     }
 }
 
 
 void IOManager::InitGeneratorNoise()
 {
-    if(m_pGenerator)
-    {
-        m_pGenerator->SetNoise(Settings::Get().Read(wxT("Noise"), wxT("Colour"), 0), Settings::Get().Read(wxT("Noise"), wxT("Amplitude"), -18.0));
-
-        switch(Settings::Get().Read(wxT("Noise"), wxT("Colour"), 0))
-        {
-            case 0:
-                CreateSessionFromOutput(wxT("White"));
-                break;
-            case 1:
-                CreateSessionFromOutput(wxT("Pink"));
-                break;
-            case 2:
-                CreateSessionFromOutput(wxT("Grey A"));
-                break;
-            case 3:
-                CreateSessionFromOutput(wxT("Grey K"));
-                break;
-
-        }
-        CheckPlayback(m_pGenerator->GetSampleRate(), m_pGenerator->GetChannels());
-
-    }
+//    if(m_pGenerator)
+//    {
+//        m_pGenerator->SetNoise(Settings::Get().Read(wxT("Noise"), wxT("Colour"), 0), Settings::Get().Read(wxT("Noise"), wxT("Amplitude"), -18.0));
+//
+//        switch(Settings::Get().Read(wxT("Noise"), wxT("Colour"), 0))
+//        {
+//            case 0:
+//                CreateSessionFromOutput(wxT("White"));
+//                break;
+//            case 1:
+//                CreateSessionFromOutput(wxT("Pink"));
+//                break;
+//            case 2:
+//                CreateSessionFromOutput(wxT("Grey A"));
+//                break;
+//            case 3:
+//                CreateSessionFromOutput(wxT("Grey K"));
+//                break;
+//
+//        }
+//        CheckPlayback(m_pGenerator->GetSampleRate(), m_pGenerator->GetChannels());
+//
+//    }
 }
 
 

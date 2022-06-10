@@ -7,20 +7,13 @@
 #include "soundfile.h"
 #include <wx/xml/xml.h>
 #include "log.h"
-#include "niir.h"
 #include "generatorpluginfactory.h"
 #include "generatorpluginbuilder.h"
 
 using namespace std;
 
-const double Generator::AFILTER_B[7] = {0.234301792299513,  -0.468603584599026,  -0.234301792299513, 0.937207169198054,  -0.234301792299515,  -0.468603584599025,   0.234301792299513};
-const double Generator::AFILTER_A[6] = {-4.113043408775871,   6.553121752655047, -4.990849294163381,1.785737302937573,  -0.246190595319487,   0.011224250033231};
 
-const double Generator::ANFILTER_B[3] = { 0.23614050038447681, -0.3682612669579237, 0.14511161746470033};
-const double Generator::ANFILTER_A[2] = {-0.3682612669579237, -0.6187478821508299};
-
-
-Sequence::Sequence(int nChannels, double dSampleRate) : m_nChannels(nChannels), m_dSampleRate(dSampleRate)
+Sequence::Sequence(int nChannel, double dSampleRate) : m_nChannel(nChannel), m_dSampleRate(dSampleRate)
 {
     m_itPosition = m_lstSequence.end();
 }
@@ -74,21 +67,9 @@ Generator::Generator() :
     m_dSampleRate(48000),
     m_nPhase(0),
     m_pSoundfile(nullptr),
-	m_dNoiseAmplitude(-18.0),
 	m_nGenerator(FREQUENCY),
     m_pPlugin(0)
 {
-    m_pPink[0] = 0;
-    m_pPink[1] = 0;
-    srand(time(0));
-
-    m_pKFilter[0] = new KFilter();
-    m_pKFilter[1] = new KFilter();
-    m_pGreyFilter[0] = new IIR(ANFILTER_A, ANFILTER_B, 2, 3);
-    m_pGreyFilter[1] = new IIR(ANFILTER_A, ANFILTER_B, 2, 3);
-
-    m_pAFilter[0] = new IIR(AFILTER_A, AFILTER_B, 6, 7);
-    m_pAFilter[1] = new IIR(AFILTER_A, AFILTER_B, 6, 7);
 }
 
 Generator::~Generator()
@@ -96,14 +77,7 @@ Generator::~Generator()
     ClearSequences();
     ClearFrequences();
     CloseFile();
-    ClosePink();
 
-    delete m_pKFilter[0];
-    delete m_pKFilter[1];
-    delete m_pAFilter[0];
-    delete m_pAFilter[1];
-    delete m_pGreyFilter[0];
-    delete m_pGreyFilter[1];
 }
 
 void Generator::SetSampleRate(unsigned int nSampleRate)
@@ -123,9 +97,9 @@ void Generator::SetSampleRate(unsigned int nSampleRate)
 
 timedbuffer* Generator::Generate(unsigned int nSizePerChannel)
 {
-    unsigned int nSize = nSizePerChannel*GetChannels();
+    unsigned int nSize = nSizePerChannel*GetNumberOfChannels();
 
-    timedbuffer* pData = new timedbuffer(nSize, GetChannels());
+    timedbuffer* pData = new timedbuffer(nSize, GetNumberOfChannels());
     float dSize(m_mSequences.size());
 
     switch(m_nGenerator)
@@ -138,24 +112,6 @@ timedbuffer* Generator::Generate(unsigned int nSizePerChannel)
             break;
         case FREQUENCY:
             GenerateFrequency(pData->GetWritableBuffer(), nSize);
-            break;
-        case NOISE_PINK:
-            GeneratePinkNoise(pData->GetWritableBuffer(), nSize);
-            break;
-        case NOISE_WHITE:
-            GenerateWhiteNoise(pData->GetWritableBuffer(), nSize);
-            break;
-        case NOISE_GREY:
-            GenerateGreyNoise(pData->GetWritableBuffer(), nSize);
-            break;
-        case NOISE_A:
-            GenerateGreyANoise(pData->GetWritableBuffer(), nSize);
-            break;
-        case NOISE_K:
-            GenerateGreyKNoise(pData->GetWritableBuffer(), nSize);
-            break;
-        case NOISE_BROWN:
-            GenerateBrownNoise(pData->GetWritableBuffer(), nSize);
             break;
         case PLUGIN:
             GeneratePlugin(pData);
@@ -172,14 +128,17 @@ void Generator::GenerateSequences(timedbuffer* pData)
     {
         pData->GetWritableBuffer()[i] = 0.0;
     }
-    for(auto pairSeq : m_mSequences)
+    if(m_nSequenceChannels != 0)
     {
-        GenerateSequence(pairSeq.second, pData->GetWritableBuffer(), pData->GetBufferSize());
-    }
-    m_nPhase += (pData->GetBufferSize()/2);
-    if(m_nPhase >= static_cast<unsigned long>(m_dSampleRate))
-    {
-        m_nPhase -= static_cast<unsigned long>(m_dSampleRate);
+        for(const auto& pairSeq : m_mSequences)
+        {
+            GenerateSequence(pairSeq.second, pData->GetWritableBuffer(), pData->GetBufferSize());
+        }
+        m_nPhase += (pData->GetBufferSize()/m_nSequenceChannels);
+        if(m_nPhase >= static_cast<unsigned long>(m_dSampleRate))
+        {
+            m_nPhase -= static_cast<unsigned long>(m_dSampleRate);
+        }
     }
 }
 
@@ -188,31 +147,23 @@ void Generator::GenerateSequence(std::shared_ptr<Sequence> pSeq, float* pBuffer,
 
     unsigned int nPhase = m_nPhase;
 
-    for(int i = 0; i < nSize; i+=2)
+    for(int i = pSeq->GetChannel(); i < nSize; i+=m_nSequenceChannels)
     {
         float dAmplitude(0.0);
         switch(pSeq->GetSequencePosition()->nType)
         {
             case SINE:
-                dAmplitude = GenerateSin((*pSeq->GetSequencePosition()),nPhase);
+                pBuffer[i] += GenerateSin((*pSeq->GetSequencePosition()),nPhase);
                 break;
             case SQUARE:
-                dAmplitude = GenerateSquare((*pSeq->GetSequencePosition()),nPhase);
+                pBuffer[i] += GenerateSquare((*pSeq->GetSequencePosition()),nPhase);
                 break;
             case SAW:
-                dAmplitude = GenerateSaw((*pSeq->GetSequencePosition()),nPhase);
+                pBuffer[i] += GenerateSaw((*pSeq->GetSequencePosition()),nPhase);
                 break;
             case TRIANGLE:
-                dAmplitude = GenerateTriangle((*pSeq->GetSequencePosition()),nPhase);
+                pBuffer[i] += GenerateTriangle((*pSeq->GetSequencePosition()),nPhase);
                 break;
-        }
-        if((pSeq->GetChannels() & Sequence::LEFT))
-        {
-            pBuffer[i] += dAmplitude;
-        }
-        if((pSeq->GetChannels() & Sequence::RIGHT))
-        {
-            pBuffer[i+1] += dAmplitude;
         }
 
         nPhase++;
@@ -336,7 +287,6 @@ void Generator::SetFrequency(float dFrequency, float ddBFS, int nType)
 {
     ClearSequences();
     CloseFile();
-    ClosePink();
 
     m_nGenerator = FREQUENCY;
 
@@ -407,7 +357,7 @@ bool Generator::SetFile()
         {
             pmlLog() << "Generator\tOpened file '" << sFilePath << "'";
             pmlLog() << "Generator\tSampleRate =" << GetSampleRate();
-            pmlLog() << "Generator\tChannels =" << GetChannels();
+            pmlLog() << "Generator\tChannels =" << GetNumberOfChannels();
 
             Generate(8192);
         }
@@ -430,15 +380,6 @@ unsigned int Generator::GetSampleRate()
     return m_dSampleRate;
 }
 
-unsigned int Generator::GetChannels()
-{
-    if(m_pSoundfile)
-    {
-        return m_pSoundfile->GetChannels();
-    }
-    return 2;
-}
-
 
 void Generator::ReadSoundFile(timedbuffer* pData)
 {
@@ -451,205 +392,27 @@ void Generator::ReadSoundFile(timedbuffer* pData)
     }
 }
 
-void Generator::SetNoiseAmplitude(float ddBFS)
-{
-    m_dNoiseAmplitude = pow(10.0, ddBFS/20.0);
-}
-
-void Generator::SetNoise(int nColour, float ddBFS)
-{
-    ClosePink();
-    CloseFile();
-    ClearSequences();
-    ClearFrequences();
-
-    m_dNoiseAmplitude = pow(10.0, ddBFS/20.0);
-    switch(nColour)
-    {
-    case PINK:
-        InitPinkNoise();
-        break;
-    case WHITE:
-        m_nGenerator = NOISE_WHITE;
-        break;
-    case GREY:
-        m_nGenerator = NOISE_GREY;
-        break;
-    case GREY_A:
-        m_nGenerator = NOISE_A;
-        break;
-    case GREY_K:
-        m_nGenerator = NOISE_K;
-        break;
-    case BROWN:
-        m_nGenerator = NOISE_BROWN;
-        break;
-    }
-    Generate(8192);
-}
-
-
-
-void Generator::InitPinkNoise()
-{
-    m_nGenerator = NOISE_PINK;
-
-    m_pPink[0] = new PinkNoise();
-    m_pPink[1] = new PinkNoise();
-    InitializePinkNoise(16);
-}
-
-
-unsigned long Generator::GenerateRandomNumber( void )
-{
-    static unsigned long randSeed = 22222;
-    randSeed = (randSeed * 196314165) + 907633515;
-    return randSeed;
-}
-
-void Generator::InitializePinkNoise(int numRows )
-{
-    for(int nChannel = 0; nChannel < 2; nChannel++)
-    {
-        int i;
-        long pmax;
-        m_pPink[nChannel]->pink_Index = 0;
-        m_pPink[nChannel]->pink_IndexMask = (1<<numRows) - 1;
-        /* Calculate maximum possible signed random value. Extra 1 for white noise always added. */
-        pmax = (numRows + 1) * (1<<(PINK_RANDOM_BITS-1));
-        m_pPink[nChannel]->pink_Scalar = 1.0f / pmax;
-        /* Initialize rows. */
-        for( i=0; i<numRows; i++ ) m_pPink[nChannel]->pink_Rows[i] = 0;
-        m_pPink[nChannel]->pink_RunningSum = 0;
-    }
-}
-
-/* Generate Pink noise values between -1.0 and +1.0 */
-void Generator::GeneratePinkNoise(float* pBuffer, unsigned int nSize)
-{
-    long newRandom;
-    long sum;
-    float output;
-
-    for(unsigned int i = 0; i < nSize; i++)
-    {
-        /* Increment and mask index. */
-        m_pPink[i%2]->pink_Index = (m_pPink[i%2]->pink_Index + 1) & m_pPink[i%2]->pink_IndexMask;
-        /* If index is zero, don't update any random values. */
-        if( m_pPink[i%2]->pink_Index != 0 )
-        {
-            /* Determine how many trailing zeros in PinkIndex. */
-            /* This algorithm will hang if n==0 so test first. */
-            int numZeros = 0;
-            int n = m_pPink[i%2]->pink_Index;
-            while( (n & 1) == 0 )
-            {
-                n = n >> 1;
-                numZeros++;
-            }
-            /* Replace the indexed ROWS random value.
-             * Subtract and add back to RunningSum instead of adding all the random
-             * values together. Only one changes each time.
-             */
-            m_pPink[i%2]->pink_RunningSum -= m_pPink[i%2]->pink_Rows[numZeros];
-            newRandom = ((long)GenerateRandomNumber()) >> PINK_RANDOM_SHIFT;
-            m_pPink[i%2]->pink_RunningSum += newRandom;
-            m_pPink[i%2]->pink_Rows[numZeros] = newRandom;
-        }
-
-        /* Add extra white noise value. */
-        newRandom = ((long)GenerateRandomNumber()) >> PINK_RANDOM_SHIFT;
-        sum = m_pPink[i%2]->pink_RunningSum + newRandom;
-        /* Scale to range of -1.0 to 0.9999. */
-        output = m_pPink[i%2]->pink_Scalar * sum;
-        pBuffer[i] = output*m_dNoiseAmplitude;
-
-    }
-}
-
-void Generator::ClosePink()
-{
-    if(m_pPink[0])
-    {
-        delete m_pPink[0];
-        delete m_pPink[1];
-        m_pPink[0] = 0;
-        m_pPink[1] = 0;
-    }
-
-}
-
-
-void Generator::GenerateWhiteNoise(float* pBuffer, unsigned int nSize)
-{
-    for (int i = 0; i < nSize; i++)
-    {
-        //float random1 = ((float)rand() / (float)(RAND_MAX + 1));
-
-        float random1 = randn(0,0.4);
-        pBuffer[i] = random1*m_dNoiseAmplitude;
-
-        //pBuffer[i] = ((2.0*random1)-1.0)*m_dNoiseAmplitude;
-
-   }
-}
-
-void Generator::GenerateGreyANoise(float* pBuffer, unsigned int nSize)
-{
-    GenerateWhiteNoise(pBuffer, nSize);
-    for(int i = 0; i < nSize; i+=2)
-    {
-        pBuffer[i] = m_pAFilter[0]->Filter(pBuffer[i]);
-        pBuffer[i+1] = m_pAFilter[1]->Filter(pBuffer[i+1]);
-    }
-}
-
-void Generator::GenerateGreyNoise(float* pBuffer, unsigned int nSize)
-{
-    GenerateWhiteNoise(pBuffer, nSize);
-    for(int i = 0; i < nSize; i+=2)
-    {
-        pBuffer[i] = m_pGreyFilter[0]->Filter(pBuffer[i])*2.0;
-        pBuffer[i+1] = m_pGreyFilter[1]->Filter(pBuffer[i+1])*2.0;
-    }
-}
-
-void Generator::GenerateGreyKNoise(float* pBuffer, unsigned int nSize)
-{
-    GenerateWhiteNoise(pBuffer, nSize);
-    for(int i = 0; i < nSize; i+=2)
-    {
-        pBuffer[i] = m_pKFilter[0]->Filter(pBuffer[i]);
-        pBuffer[i+1] = m_pKFilter[1]->Filter(pBuffer[i+1]);
-    }
-}
-
-void Generator::GenerateBrownNoise(float* pBuffer, unsigned int nSize)
-{
-
-}
-
-
 
 bool Generator::LoadSequence(const wxString& sFile)
 {
     ClearSequences();
     ClearFrequences();
     CloseFile();
-    ClosePink();
 
     m_nGenerator = SEQUENCE;
 
     wxXmlDocument doc;
     if(doc.Load(wxString::Format(wxT("%s/generator/%s.xml"), Settings::Get().GetDocumentDirectory().c_str(), sFile.c_str())) && doc.GetRoot())
     {
+        doc.GetRoot()->GetAttribute("channels", "2").ToULong(&m_nSequenceChannels);
         for(wxXmlNode* pSequenceNode = doc.GetRoot()->GetChildren(); pSequenceNode; pSequenceNode = pSequenceNode->GetNext())
         {
+
             if(pSequenceNode->GetName().CmpNoCase(wxT("sequence")) == 0)
             {
-                unsigned long nChannels(0);
-                pSequenceNode->GetAttribute(wxT("channels"), wxT("0")).ToULong(&nChannels);
-                std::shared_ptr<Sequence> pSequence = std::make_shared<Sequence>(nChannels, m_dSampleRate);
+                unsigned long nChannel(0);
+                pSequenceNode->GetAttribute(wxT("channels"), wxT("0")).ToULong(&nChannel);
+                std::shared_ptr<Sequence> pSequence = std::make_shared<Sequence>(nChannel, m_dSampleRate);
 
                 for(wxXmlNode* pFreqGenNode = pSequenceNode->GetChildren(); pFreqGenNode; pFreqGenNode = pFreqGenNode->GetNext())
                 {
@@ -678,7 +441,6 @@ void Generator::Stop()
     ClearFrequences();
     ClearSequences();
     CloseFile();
-    ClosePink();
     if(m_pPlugin)
     {
         m_pPlugin->Stop();
@@ -696,41 +458,29 @@ void Generator::GeneratePlugin(timedbuffer* pData)
 }
 
 
-double Generator::randn(double mu, double sigma)
-{/* Generates additive white Gaussian Noise samples with zero mean and a standard deviation of 1. */
-
-  double U1, U2, W, mult;
-  static double X1, X2;
-  static int call = 0;
-
-  if (call == 1)
-    {
-      call = !call;
-      return (mu + sigma * (double) X2);
-    }
-
-  do
-    {
-      U1 = -1 + ((double) rand () / RAND_MAX) * 2;
-      U2 = -1 + ((double) rand () / RAND_MAX) * 2;
-      W = pow (U1, 2) + pow (U2, 2);
-    }
-  while (W >= 1 || W == 0);
-
-  mult = sqrt ((-2 * log (W)) / W);
-  X1 = U1 * mult;
-  X2 = U2 * mult;
-
-  call = !call;
-
-  return (mu + sigma * (double) X1);
-}
-
 int Generator::GetNumberOfChannels()
 {
-    if(m_pSoundfile)
+    switch(m_nGenerator)
     {
-        return m_pSoundfile->GetChannels();
+        case FILE:
+            if(m_pSoundfile)
+            {
+                return m_pSoundfile->GetChannels();
+            }
+            return 0;
+            break;
+        case SEQUENCE:
+            return m_nSequenceChannels;
+            break;
+        case FREQUENCY:
+            return 2;
+            break;
+        case PLUGIN:
+            if(m_pPlugin)
+            {
+                return m_pPlugin->GetNumberOfChannels();
+            }
+            return 0;
     }
 
     return 2;

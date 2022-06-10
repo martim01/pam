@@ -45,17 +45,32 @@
 		</object>
 		<object class="wxPanel" name="ID_PANEL1" variable="m_ppnlChannel" member="yes">
 			<pos>664,30</pos>
-			<size>90,140</size>
+			<size>100,440</size>
 			<hidden>1</hidden>
-			<bg>#000000</bg>
+			<bg>wxSYS_COLOUR_BTNFACE</bg>
 			<object class="wmList" name="ID_M_PLST1" variable="m_plstChannels" member="yes">
 				<scrolling>None</scrolling>
 				<items />
-				<pos>0,0</pos>
-				<size>84,130</size>
+				<pos>0,30</pos>
+				<size>100,410</size>
 				<bg>#000000</bg>
 				<style>wmList::STYLE_SELECT</style>
 				<handler function="OnlstChannelsSelected" entry="EVT_LIST_SELECTED" />
+			</object>
+			<object class="wmLabel" name="ID_M_PLBL1" variable="m_plblChannels" member="yes">
+				<label>Channels</label>
+				<pos>0,0</pos>
+				<size>100,30</size>
+				<fg>#0080C0</fg>
+				<bg>#000000</bg>
+				<font>
+					<size>10</size>
+					<style>normal</style>
+					<weight>bold</weight>
+					<underlined>0</underlined>
+					<family>swiss</family>
+					<face></face>
+				</font>
 			</object>
 		</object>
 	</object>

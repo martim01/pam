@@ -34,6 +34,9 @@
 			<Add option="-fexceptions" />
 			<Add directory="../external/log/include" />
 		</Compiler>
+		<Unit filename="../dosetup/logtofile.cpp" />
+		<Unit filename="../dosetup/logtofile.h" />
+		<Unit filename="../dosetup/main.cpp" />
 		<Unit filename="../external/log/include/dlllog.h" />
 		<Unit filename="../external/log/include/log.h" />
 		<Unit filename="../external/log/include/logmanager.h" />

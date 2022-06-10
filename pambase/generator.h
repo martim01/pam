@@ -88,9 +88,9 @@ class KFilter;
 class PAMBASE_IMPEXPORT Sequence
 {
     public:
-        Sequence(int nChannels, double dSampleRate);
-        int GetChannels() const
-        {   return m_nChannels; }
+        Sequence(int nChannel, double dSampleRate);
+        int GetChannel() const
+        {   return m_nChannel; }
         void AppendGenFreq(float dFrequency, float ddBFS, int nCycles, int nType);
 
         std::list<genfreq>::iterator GetSequenceBegin();
@@ -102,7 +102,7 @@ class PAMBASE_IMPEXPORT Sequence
         enum {LEFT=1, RIGHT=2, MONO=3};
 
     private:
-        int m_nChannels;
+        int m_nChannel;
         double m_dSampleRate;
         std::list<genfreq> m_lstSequence;
         std::list<genfreq>::iterator m_itPosition;
@@ -127,8 +127,6 @@ class PAMBASE_IMPEXPORT Generator
 
         bool LoadSequence(const wxString& sFile);
 
-        void SetNoise(int nColour, float ddBFS);
-        void SetNoiseAmplitude(float ddBFS);
 
         timedbuffer* Generate(unsigned int nSize);
 
@@ -143,19 +141,14 @@ class PAMBASE_IMPEXPORT Generator
 
 
         unsigned int GetSampleRate();
-        unsigned int GetChannels();
+
 
         enum {SINE=0, SQUARE, SAW, TRIANGLE};
-
-        enum {WHITE=0, PINK, GREY, GREY_A, GREY_K, BROWN};
-
 
     protected:
 
         void AddSequence(const wxString& sName, std::shared_ptr<Sequence> pSeq);
         void DeleteSequence(const wxString& sName);
-
-        void InitPinkNoise();
 
         void ReadSoundFile(timedbuffer* pData);
         void GenerateSequences(timedbuffer* pData);
@@ -167,11 +160,7 @@ class PAMBASE_IMPEXPORT Generator
         float GenerateSaw(const genfreq& gfreq, float dPhase);
         float GenerateTriangle(const genfreq& gfreq, float dPhase);
 
-        double randn(double mu=0.0, double sigma=1.0);
-
-
-        void ClosePink();
-
+        unsigned long m_nSequenceChannels;
         std::map<wxString, std::shared_ptr<Sequence>> m_mSequences;
 
         std::queue<genfreq> m_queueFreq;
@@ -180,47 +169,16 @@ class PAMBASE_IMPEXPORT Generator
 
         std::unique_ptr<SoundFile> m_pSoundfile;
 
-        static const unsigned int PINK_RANDOM_BITS       = 24;
-        static const unsigned int PINK_RANDOM_SHIFT      = 8;
-
-
-        struct PinkNoise
-        {
-            long      pink_Rows[30];
-            long      pink_RunningSum;   /* Used to optimize summing of generators. */
-            int       pink_Index;        /* Incremented each sample. */
-            int       pink_IndexMask;    /* Index wrapped by ANDing with this mask. */
-            float     pink_Scalar;       /* Used to scale within range of -1.0 to +1.0 */
-        } ;
-
-        PinkNoise* m_pPink[2];
-        static unsigned long GenerateRandomNumber( void );
-        void InitializePinkNoise(int numRows );
-        void GeneratePinkNoise(float* pBuffer, unsigned int nSize);
-        void GenerateWhiteNoise(float* pBuffer, unsigned int nSize);
-        void GenerateGreyNoise(float* pBuffer, unsigned int nSize);
-        void GenerateGreyANoise(float* pBuffer, unsigned int nSize);
-        void GenerateGreyKNoise(float* pBuffer, unsigned int nSize);
-        void GenerateBrownNoise(float* pBuffer, unsigned int nSize);
         void GeneratePlugin(timedbuffer* pBuffer);
-        float m_dNoiseAmplitude;
+
         int m_nGenerator;
 
 
         GeneratorPluginBuilder* m_pPlugin;
 
-        KFilter* m_pKFilter[2];
-        IIR* m_pAFilter[2];
-        IIR* m_pGreyFilter[2];
 
-        enum {FILE, FREQUENCY, SEQUENCE, NOISE_WHITE, NOISE_PINK, NOISE_GREY, NOISE_A, NOISE_K, NOISE_BROWN,PLUGIN};
+        enum {FILE, FREQUENCY, SEQUENCE,PLUGIN};
 
-
-        static const double AFILTER_B[7];
-        static const double AFILTER_A[6];
-
-        static const double ANFILTER_B[3];
-        static const double ANFILTER_A[2];
 
 };
 
