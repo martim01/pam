@@ -3,8 +3,7 @@
 #include <wx/string.h>
 
 class SettingEvent;
-@meter	class fftdiffMeter;
-@panel	class fftdiffPanel;
+class fftdiffMeter;
 
 class WXEXPORT fftdiffBuilder : public MonitorPluginBuilder
 {
@@ -23,8 +22,8 @@ class WXEXPORT fftdiffBuilder : public MonitorPluginBuilder
         virtual void OutputChannels(const std::vector<char>& vChannels);
 
     protected:
-		
-    	friend class fftdiff;
+
+    	friend class fftdiffMeter;
         void OnSettingChanged(SettingEvent& event);
 
         virtual wxWindow* CreateMonitorPanel(wxWindow* pParent);
@@ -32,8 +31,7 @@ class WXEXPORT fftdiffBuilder : public MonitorPluginBuilder
 
         void LoadSettings();
 
-        fftdiff* m_pMeter;
-@panel	fftdiffPanel* m_pMeter;
+        fftdiffMeter* m_pMeter;
 
 };
 

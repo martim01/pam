@@ -3,17 +3,16 @@
 #include "settings.h"
 #include "settingevent.h"
 #include "version.h"
-@panel#include "@PLUGIN@panel.h"
-@meter#include "@PLUGIN@meter.h"
+#include "@PLUGIN@@DISPLAY_TYPE@.h"
 
 using namespace std;
 
 @PLUGIN@Builder::@PLUGIN@Builder() : MonitorPluginBuilder()
 {
 
-    //RegisterForSettingsUpdates(wxT("Mode"), this);
+    RegisterForSettingsUpdates(this);
     
-    Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&@PLUGIN@Builder::OnSettingChanged);
+    Bind(wxEVT_SETTING_CHANGED, &@PLUGIN@Builder::OnSettingChanged, this);
 
 }
 

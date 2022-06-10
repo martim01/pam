@@ -3,8 +3,7 @@
 #include <wx/string.h>
 
 class SettingEvent;
-@meter	class @PLUGIN@Meter;
-@panel	class @PLUGIN@Panel;
+class @PLUGIN@@DISPLAY_TYPE@;
 
 class WXEXPORT @PLUGIN@Builder : public MonitorPluginBuilder
 {
@@ -33,7 +32,6 @@ class WXEXPORT @PLUGIN@Builder : public MonitorPluginBuilder
         void LoadSettings();
 
         @PLUGIN@@DISPLAY_TYPE@* m_pMeter;
-@panel	@PLUGIN@Panel* m_pMeter;
 
 };
 

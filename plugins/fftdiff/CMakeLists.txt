@@ -7,11 +7,12 @@ execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${P
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 include_directories("../../pambase/")
 include_directories(${CMAKE_BINARY_DIR}/include)
+include_directories("../../pamfft/" "../../external/kiss_fft130" "../../external/kiss_fft130/tools")
 link_directories("../../lib")
 
 
-#set(SOURCES "meter.cpp" "builder.cpp" "register.cpp")
-file(GLOB SOURCES "*.cpp")
+set(SOURCES fftdiffmeter.cpp fftdiffbuilder.cpp fftdiffregister.cpp)
+#file(GLOB SOURCES "*.cpp")
 
 add_library(fftdiff MODULE ${SOURCES} ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_version.cpp)
 

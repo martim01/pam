@@ -7,11 +7,14 @@ execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${P
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 include_directories("../../pambase/")
 include_directories(${CMAKE_BINARY_DIR}/include)
+@FFT_INCLUDE@
+@LEVEL_INCLUDE@
+
 link_directories("../../lib")
 
 
-#set(SOURCES "meter.cpp" "builder.cpp" "register.cpp")
-file(GLOB SOURCES "*.cpp")
+set(SOURCES "@SOURCES@")
+#file(GLOB SOURCES "*.cpp")
 
 add_library(@PLUGIN@ MODULE ${SOURCES} ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_version.cpp)
 

@@ -1,3 +1,4 @@
+*.swp
 *.bak
 *.depend
 *.layout
@@ -51,3 +52,4 @@ pam2/bin/*
 .vscode/
 *.put
 release.md
+/templates/monitor/build
