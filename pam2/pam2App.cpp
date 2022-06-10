@@ -35,7 +35,7 @@ bool pam2App::OnInit()
     wxLog::SetLogLevel(0);
     #endif
     #ifdef __WXGNU__
-    wxExecute(wxT("sudo route add -net 224.0.0.0 netmask 240.0.0.0 eth0"));
+//    wxExecute(wxT("sudo route add -net 224.0.0.0 netmask 240.0.0.0 eth0"));
     double dSeconds;
     wxTextFile uptime;
     if(uptime.Open("/proc/uptime"))
@@ -57,7 +57,7 @@ bool pam2App::OnInit()
 
 
     //#ifdef __WXGNU__
-    Settings::Get().ReadSettings(wxString::Format(wxT("%s/pam2.ini"), pml::pam2::CONFIG_PATH));
+    Settings::Get().ReadSettings(wxString::Format(wxT("%s/pam/pam2.ini"), getenv("HOME")));
     Settings::Get().RemoveKey(wxT("AoIP"), wxT("NMOS_IS-04"));
     Settings::Get().Write("Startup", "Starting",1);
 

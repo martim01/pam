@@ -67,7 +67,9 @@ class FftMeter : public pmControl
         void SetHold(bool bHold);
 
         void ShowPeak(bool bShow);
+        void ShowTrough(bool bShow);
         void ResetPeaks();
+        void ResetTroughs();
 
         /** @brief returns the default size of the button for sizers
         **/
@@ -155,6 +157,7 @@ class FftMeter : public pmControl
         std::vector<float> m_vThirdOctave;
         std::vector<float> m_vAmplitude;
         std::vector<float> m_vPeak;
+        std::vector<float> m_vTrough;
 
         std::vector<subsession::channelGrouping> m_vChannels;
         FFTBuilder* m_pBuilder;
@@ -170,6 +173,7 @@ class FftMeter : public pmControl
 
         bool m_bHold;
         bool m_bShowPeak;
+        bool m_bShowTrough;
 
 
         double m_dBinSize;

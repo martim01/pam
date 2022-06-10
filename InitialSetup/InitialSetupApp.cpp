@@ -20,7 +20,7 @@ IMPLEMENT_APP(InitialSetupApp);
 
 bool InitialSetupApp::OnInit()
 {
-    Settings::Get().ReadSettings(wxString::Format(wxT("%s/pam/pam2.ini"), pml::pam2::CONFIG_PATH));
+    Settings::Get().ReadSettings(wxString::Format(wxT("%s/pam/pam2.ini"), getenv("HOME")));
     //(*AppInitialize
     bool wxsOK = true;
     wxInitAllImageHandlers();

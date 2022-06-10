@@ -21,6 +21,9 @@ class pnlOptions: public wxPanel
 		wmButton* m_pbtnFFT_Peak;
 		wmButton* m_pbtnFFT_PeakReset;
 
+		wmButton* m_pbtnFFT_Trough;
+		wmButton* m_pbtnFFT_TroughReset;
+
 	protected:
 
 		static const long ID_M_PBTN1;

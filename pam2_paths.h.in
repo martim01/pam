@@ -1,5 +1,7 @@
 #ifndef __PAM2_PATHS_H__
 #define __PAM2_PATHS_H__
+#include <stdlib.h>
+#include <string>
 namespace pml
 {
     namespace pam2

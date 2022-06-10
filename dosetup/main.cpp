@@ -76,17 +76,26 @@ int SetHostname(const std::string& sHostname)
     pmlLog() << "/etc/hosts and /etc/hostname overwritten";
 
 
-    system("sudo raspi-config nonint do_expand_rootfs");
+    // @todo do we need this here?
+    //system("sudo raspi-config nonint do_expand_rootfs");
 
     return 0;
 }
 
 int SetPassword(const std::string& sPassword)
 {
-    //set the password
-    std::string sCommand("echo 'pi:"+sPassword+"' | sudo chpasswd");
-    system(sCommand.c_str());
-    return 0;
+    auto user = getlogin();
+    if(user)
+    {
+        //set the password
+        std::string sCommand = "echo '";
+        sCommand += user;
+        sCommand += ":"+sPassword+"' | sudo chpasswd";
+
+        system(sCommand.c_str());
+        return 0;
+    }
+    return -1;
 }
 
 int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber)

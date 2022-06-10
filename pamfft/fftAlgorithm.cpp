@@ -362,6 +362,7 @@ map<int, double>  FFTAlgorithm::GetPeaks(list<float>& lstBuffer, unsigned long n
     int nPeaks(0);
     bool bDown(false);
 
+
     for(size_t i = 0; i < vfft_out.size(); i++)
     {
         float dAmplitude(sqrt( (vfft_out[i].r*vfft_out[i].r) + (vfft_out[i].i*vfft_out[i].i)));
@@ -379,7 +380,7 @@ map<int, double>  FFTAlgorithm::GetPeaks(list<float>& lstBuffer, unsigned long n
             {
                 if(dLog > -100)
                 {
-                    mPeaks.insert(make_pair(i-1, dLastBin));
+                    mPeaks.insert(make_pair((i-1), dLastBin));
                 }
             }
             bDown = true;

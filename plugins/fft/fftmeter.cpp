@@ -48,6 +48,7 @@ FftMeter::FftMeter(wxWindow *parent, FFTBuilder* pBuilder, wxWindowID id, const 
     m_nBinSelected = 0;
     m_bCursorMode = false;
     m_bShowPeak = false;
+    m_bShowTrough = false;
 
     m_vChannels.push_back(subsession::channelGrouping(0,subsession::enumChannelGrouping::ST, subsession::enumChannel::LEFT));
     m_vChannels.push_back(subsession::channelGrouping(0,subsession::enumChannelGrouping::ST, subsession::enumChannel::RIGHT));
@@ -309,6 +310,33 @@ void FftMeter::DrawFFT(wxDC& dc)
             y_old = y;
         }
     }
+     if(m_bShowTrough)
+    {
+        x_old = m_rectGrid.GetLeft();
+        y_old = m_rectGrid.GetHeight();
+        if(m_bColour)
+        {
+            dc.SetPen(*wxWHITE_PEN);
+        }
+        else
+        {
+            dc.SetPen(*wxBLUE_PEN);
+        }
+        for(size_t i = 1; i < m_vTrough.size(); i++)
+        {
+            int x = static_cast<int>( (static_cast<double>(m_rectGrid.GetWidth())/log(m_vTrough.size())) * static_cast<double>(log(i)))+m_rectGrid.GetLeft();
+            int y = -static_cast<int>(  (static_cast<double>(m_rectGrid.GetHeight()/70) * m_vTrough[i]));
+            if(i == 1)
+            {
+                y_old = min(y, m_rectGrid.GetBottom());
+            }
+
+
+            dc.DrawLine(x_old, min(y_old, m_rectGrid.GetBottom()), x, min(y, m_rectGrid.GetBottom()));
+            x_old = x;
+            y_old = y;
+        }
+    }
 
 
     if(m_bCursorMode)
@@ -441,6 +469,7 @@ void FftMeter::FFTRoutine()
         dLog = max(dLog, -80.0);
 
         m_vPeak[i] = std::max(m_vPeak[i], m_vAmplitude[i]);
+        m_vTrough[i] = std::min(m_vTrough[i], m_vAmplitude[i]);
 
         m_vAmplitude[i] = min(0.0, max((double)m_vAmplitude[i]-m_dFall, (double)dLog));
         if(m_dPeakLevel < m_vAmplitude[i])
@@ -588,6 +617,7 @@ void FftMeter::SetNumberOfBins(size_t nBins)
     m_vfft_out.resize(nBins+1);
     m_vAmplitude = vector<float>(m_vfft_out.size(), -80.0);
     m_vPeak = vector<float>(m_vfft_out.size(), -80.0);
+    m_vTrough = vector<float>(m_vfft_out.size(), 0.0);
 
     m_dFall = 0.000195 * static_cast<double>(nBins)*(100-m_dOverlapPercent)/100.0;
     //store here so we can get back
@@ -733,6 +763,20 @@ void FftMeter::ShowPeak(bool bShow)
     m_bShowPeak = bShow;
     ResetPeaks();
 }
+
+void FftMeter::ShowTrough(bool bShow)
+{
+    m_bShowTrough = bShow;
+    ResetTroughs();
+}
+
+
+void FftMeter::ResetTroughs()
+{
+    m_vTrough = vector<float>(m_vfft_out.size(), 0.0);
+
+}
+
 void FftMeter::ResetPeaks()
 {
     m_vPeak = vector<float>(m_vfft_out.size(), -80.0);
@@ -748,6 +792,7 @@ Json::Value FftMeter::CreateWebsocketMessage()
     {
         Json::Value jsBin;
         jsBin["peak"] = m_vPeak[i];
+        jsBin["trough"] = m_vTrough[i];
         jsBin["level"] = m_vAmplitude[i];
         jsBin["frequency"] = m_dBinSize * static_cast<double>(i);
 //        jsData["bins"].append(jsBin);
