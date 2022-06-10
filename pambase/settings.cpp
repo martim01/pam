@@ -242,14 +242,13 @@ wxString Settings::GetExecutableDirectory() const
 
 wxString Settings::GetConfigDirectory() const
 {
-    return pml::pam2::CONFIG_PATH;
+    return wxString::Format("%s/pam", getenv("HOME"));
 
 }
 
 wxString Settings::GetDocumentDirectory() const
 {
-
-    return pml::pam2::CONFIG_PATH;
+    return wxString::Format("%s/pam", getenv("HOME"));
 }
 
 wxString Settings::GetLogDirectory() const

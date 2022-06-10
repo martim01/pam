@@ -23,6 +23,7 @@ m_pMeter(0)
 
     //Register with remote api
     RegisterRemoteApiEnum("peaks", {{0,"Off"}, {1,"On"}}, 0);
+    RegisterRemoteApiEnum("troughs", {{0,"Off"}, {1,"On"}}, 0);
     RegisterRemoteApiEnum("Bins", {{512,"46 Hz"},{1024,"23 Hz"},{1536,"16 Hz"},{2048,"12 Hz"}}, 1024);
     RegisterRemoteApiEnum("Display", {{0,"Graph"},{1,"Lines"},{2,"EQ"}}, 0);
     RegisterRemoteApiEnum("Window", {{0,"None"},{1,"Hann"},{2,"Hamming"},{3,"Blackman"},{4,"Kaiser"},{5,"KaiserBessel"}}, 4);
@@ -49,6 +50,7 @@ wxWindow* FFTBuilder::CreateMonitorPanel(wxWindow* pParent)
     m_pMeter = new FftMeter(pParent,this,wxNewId(),wxDefaultPosition, wxDefaultSize);
 
     m_pMeter->ShowPeak((ReadSetting("peaks", 0)==1));
+    m_pMeter->ShowTrough((ReadSetting("troughs", 0)==1));
     return m_pMeter;
 }
 
@@ -81,6 +83,7 @@ list<pairOptionPanel_t> FFTBuilder::CreateOptionPanels(wxWindow* pParent)
 void FFTBuilder::LoadSettings()
 {
     m_pMeter->ShowPeak(ReadSetting("peaks", (int)0));
+    m_pMeter->ShowTrough(ReadSetting("troughs", (int)0));
     m_pMeter->SetNumberOfBins(ReadSetting("Bins", (int)1024));
     m_pMeter->SetDisplayType(ReadSetting("Display", (int)0));
     m_pMeter->SetWindowType(ReadSetting("Window", (int)0));
@@ -126,6 +129,10 @@ void FFTBuilder::OnSettingChanged(SettingEvent& event)
     if(event.GetKey() == "peaks")
     {
         m_pMeter->ShowPeak(event.GetValue(false));
+    }
+    else if(event.GetKey() == "troughs")
+    {
+        m_pMeter->ShowTrough(event.GetValue(false));
     }
     else if(event.GetKey() == "Bins")
     {
