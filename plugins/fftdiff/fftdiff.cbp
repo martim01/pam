@@ -33,8 +33,7 @@
 					<Add option="-Wl,--enable-auto-import,-Map=fftdiff.map" />
 					<Add library="wxmsw30u_gcc_custom" />
 					<Add library="pambase" />
-			<Add library="pamfft" />	
-<!--				<Add library="pamlevel" /> -->
+					<Add library="pamfft" />
 					<Add directory="$(#wx.lib)" />
 				</Linker>
 				<ExtraCommands>
@@ -68,8 +67,7 @@
 					<Add option="-Wl,--enable-auto-import,-Map=fftdiff.map" />
 					<Add library="wxmsw30ud_gcc_custom" />
 					<Add library="pambased" />
-				<Add library="pamfftd" /> 
-<!--				<Add library="pamleveld" /> -->
+					<Add library="pamfftd" />
 					<Add directory="$(#wx.lib)" />
 				</Linker>
 			</Target>
@@ -91,8 +89,7 @@
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add library="pambase" />
-				<Add library="pamfft" /> 
-<!--				<Add library="pamlevel" /> -->
+					<Add library="pamfft" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="../../manifest_creator/bin/LinuxRelease/manifest_creator" />
@@ -118,39 +115,47 @@
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add library="pambased" />
-				<Add library="pamfftd" /> 
-<!--				<Add library="pamlevel" /> -->
+					<Add library="pamfftd" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-D_monitor_" />
 			<Add directory="../../pambase" />
-		<Add directory="$(#kiss.include)" />
+			<Add directory="$(#kiss.include)" />
 			<Add directory="$(#kiss.include)/tools" />
-				<Add directory="../../pamfft" /> 
-<!--		<Add directory="../../pamlevel" /> -->
+			<Add directory="../../pamfft" />
 		</Compiler>
 		<Linker>
 			<Add directory="../../lib" />
 		</Linker>
-		<Unit filename="fftdiffregister.cpp" />
-		<Unit filename="fftdiffregister.h" />
 		<Unit filename="fftdiffbuilder.cpp" />
 		<Unit filename="fftdiffbuilder.h" />
 		<Unit filename="fftdiffmeter.cpp" />
 		<Unit filename="fftdiffmeter.h" />
+		<Unit filename="fftdiffregister.cpp" />
+		<Unit filename="fftdiffregister.h" />
+		<Unit filename="pnlbins.cpp" />
+		<Unit filename="pnlbins.h" />
+		<Unit filename="pnldelay.cpp" />
+		<Unit filename="pnldelay.h" />
+		<Unit filename="pnlmode.cpp" />
+		<Unit filename="pnlmode.h" />
+		<Unit filename="pnloptions.cpp" />
+		<Unit filename="pnloptions.h" />
+		<Unit filename="pnloverlap.cpp" />
+		<Unit filename="pnloverlap.h" />
+		<Unit filename="pnlrange.cpp" />
+		<Unit filename="pnlrange.h" />
+		<Unit filename="pnlwindow.cpp" />
+		<Unit filename="pnlwindow.h" />
 		<Extensions>
-			<code_completion />
-			<envvars />
-			<debugger />
 			<AutoVersioning>
 				<Scheme minor_max="10" build_max="0" rev_max="0" rev_rand_max="10" build_times_to_increment_minor="100" />
 				<Settings autoincrement="0" date_declarations="1" use_define="0" update_manifest="0" do_auto_increment="1" ask_to_increment="0" language="C++" svn="0" svn_directory="" header_path="version.h" />
 				<Changes_Log show_changes_editor="1" app_title="released version %M.%m.%b of %p" changeslog_path="ChangesLog.txt" />
 				<Code header_guard="VERSION_H" namespace="AutoVersion" prefix="" />
 			</AutoVersioning>
-			
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

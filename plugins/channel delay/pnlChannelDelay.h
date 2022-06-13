@@ -11,7 +11,6 @@
 //*)
 
 class timedbuffer;
-class OffsetCalculator;
 struct session;
 class ChannelDelayBuilder;
 class SettingEvent;
@@ -78,14 +77,12 @@ class pnlChannelDelay: public wxPanel
 
 		std::vector<float> m_vBufferL;
 		std::vector<float> m_vBufferR;
-        OffsetCalculator* m_pCalc;
         size_t m_nTotalSamples;
 
         unsigned int m_nTotalChannels;
 
         unsigned int m_nChannel[2];
         wxString m_sChannel[2];
-
 
 
         ChannelDelayBuilder* m_pBuilder;

@@ -1,5 +1,5 @@
 #include "pnlbins.h"
-#include "fftbuilder.h"
+#include "fftdiffbuilder.h"
 
 //(*InternalHeaders(pnlBins)
 #include <wx/intl.h>
@@ -15,7 +15,7 @@ BEGIN_EVENT_TABLE(pnlBins,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlBins::pnlBins(wxWindow* parent,FFTBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) :
+pnlBins::pnlBins(wxWindow* parent,fftdiffBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) :
     m_pBuilder(pBuilder)
 {
 	//(*Initialize(pnlBins)

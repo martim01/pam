@@ -6,23 +6,24 @@
 #include <wx/panel.h>
 //*)
 
-class FFTBuilder;
+class fftdiffBuilder;
 class SettingEvent;
 class pnlOptions: public wxPanel
 {
 	public:
 
-		pnlOptions(wxWindow* parent, FFTBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+		pnlOptions(wxWindow* parent, fftdiffBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pnlOptions();
 
         void SelectCursorMode(bool bSelect);
-		wmButton* m_pbtnFFT_Cursor;
-		wmButton* m_pbtnFFT_Hold;
-		wmButton* m_pbtnFFT_Peak;
-		wmButton* m_pbtnFFT_PeakReset;
+		wmButton* m_pbtnMax;
+		wmButton* m_pbtnMaxReset;
 
-		wmButton* m_pbtnFFT_Trough;
-		wmButton* m_pbtnFFT_TroughReset;
+		wmButton* m_pbtnMin;
+		wmButton* m_pbtnMinReset;
+
+		wmButton* m_pbtnAverage;
+		wmButton* m_pbtnAverageReset;
 
 	protected:
 
@@ -32,9 +33,11 @@ class pnlOptions: public wxPanel
 	private:
 
 
-		void OnbtnFFT_PeakResetClick(wxCommandEvent& event);
+		void OnbtnMaxResetClick(wxCommandEvent& event);
+		void OnbtnMinResetClick(wxCommandEvent& event);
+		void OnbtnAverageResetClick(wxCommandEvent& event);
 
-		FFTBuilder* m_pBuilder;
+		fftdiffBuilder* m_pBuilder;
 		DECLARE_EVENT_TABLE()
 };
 

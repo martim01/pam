@@ -5,6 +5,16 @@
 #include "version.h"
 #include "fftdiffmeter.h"
 
+#include "pnlwindow.h"
+#include "pnloverlap.h"
+#include "pnlbins.h"
+#include "pnloptions.h"
+#include "pnlmode.h"
+#include "pnldelay.h"
+#include "pnlrange.h"
+
+
+
 using namespace std;
 
 fftdiffBuilder::fftdiffBuilder() : MonitorPluginBuilder()
@@ -23,6 +33,7 @@ fftdiffBuilder::fftdiffBuilder() : MonitorPluginBuilder()
     RegisterRemoteApiEnum("Hold", {{0,"Off"}, {1,"On"}}, 0);
     RegisterRemoteApiEnum("Cursor", {{0,"Off"}, {1,"On"}}, 0);
     RegisterRemoteApiEnum("Colour", {{0,"Off"}, {1,"On"}}, 0);
+    RegisterRemoteApiRangeInt("Range", {10,80}, 80);
 }
 
 void fftdiffBuilder::SetAudioData(const timedbuffer* pBuffer)
@@ -41,7 +52,23 @@ list<pairOptionPanel_t> fftdiffBuilder::CreateOptionPanels(wxWindow* pParent)
 {
     list<pairOptionPanel_t> lstOptionPanels;
 
-    //@todo create and return all the option panels
+    //m_ppnlRouting = new pnlRoutiing(pParent,this);
+    pnlWindow* pWindow = new pnlWindow(pParent,this);
+    pnlOverlap* pOverlap = new pnlOverlap(pParent,this);
+    pnlBins* pBins = new pnlBins(pParent,this);
+    pnlOptions* pOptions = new pnlOptions(pParent,this);
+    pnlMode* pMode = new pnlMode(pParent,this);
+
+    //lstOptionPanels.push_back(make_pair(wxT("Routing"), m_ppnlRouting));
+    lstOptionPanels.push_back(make_pair(wxT("Window"), pWindow));
+    lstOptionPanels.push_back(make_pair(wxT("Overlap"), pOverlap));
+    lstOptionPanels.push_back(make_pair(wxT("Bins"), pBins));
+    lstOptionPanels.push_back(make_pair(wxT("Display"), pOptions));
+    lstOptionPanels.push_back(make_pair(wxT("Mode"), pMode));
+
+    lstOptionPanels.push_back(make_pair(wxT("Delay"), new pnlDelay(pParent, this)));
+    lstOptionPanels.push_back(make_pair(wxT("Range"), new pnlRange(pParent, this)));
+
     return lstOptionPanels;
 }
 
@@ -78,13 +105,17 @@ void fftdiffBuilder::OutputChannels(const std::vector<char>& vChannels)
 
 void fftdiffBuilder::OnSettingChanged(SettingEvent& event)
 {
-    if(event.GetKey() == "peaks")
+    if(event.GetKey() == "max")
     {
-        m_pMeter->ShowPeak(event.GetValue(false));
+        m_pMeter->ShowMax(event.GetValue(false));
     }
-    else if(event.GetKey() == "troughs")
+    else if(event.GetKey() == "min")
     {
-        m_pMeter->ShowTrough(event.GetValue(false));
+        m_pMeter->ShowMin(event.GetValue(false));
+    }
+    else if(event.GetKey() == "average")
+    {
+        m_pMeter->ShowAverage(event.GetValue(false));
     }
     else if(event.GetKey() == "Bins")
     {
@@ -110,8 +141,33 @@ void fftdiffBuilder::OnSettingChanged(SettingEvent& event)
     {
         m_pMeter->SetColourMode(event.GetValue(long(0)));
     }
+    else if(event.GetKey() == "Delay")
+    {
+        m_pMeter->SetDelayMode(event.GetValue(long(0)));
+    }
+    else if(event.GetKey() == "Range")
+    {
+        m_pMeter->SetVerticalRange(event.GetValue(long(0)));
+    }
 }
 
 
+void fftdiffBuilder::ResetMax()
+{
+    m_pMeter->ResetMax();
+}
 
+void fftdiffBuilder::ResetMin()
+{
+    m_pMeter->ResetMin();
+}
 
+void fftdiffBuilder::ResetAverage()
+{
+    m_pMeter->ResetAverage();
+}
+
+void fftdiffBuilder::CalculateDelay()
+{
+    m_pMeter->SetDelayMode(1);
+}

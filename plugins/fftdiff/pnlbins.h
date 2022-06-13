@@ -6,13 +6,13 @@
 #include "wmlist.h"
 //*)
 
-class FFTBuilder;
+class fftdiffBuilder;
 
 class pnlBins: public wxPanel
 {
 	public:
 
-		pnlBins(wxWindow* parent, FFTBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+		pnlBins(wxWindow* parent, fftdiffBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pnlBins();
 
 		//(*Declarations(pnlBins)
@@ -31,7 +31,7 @@ class pnlBins: public wxPanel
 		void OnlstFFT_BinsSelected(wxCommandEvent& event);
 		//*)
 
-        FFTBuilder* m_pBuilder;
+        fftdiffBuilder* m_pBuilder;
 		DECLARE_EVENT_TABLE()
 };
 

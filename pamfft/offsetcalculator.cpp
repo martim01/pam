@@ -1,30 +1,32 @@
 #include "offsetcalculator.h"
-
+#include "threadpool.h"
 #include <wx/log.h>
 #include <wx/event.h>
 #include "kiss_xcorr.h"
 
 wxDEFINE_EVENT(wxEVT_OFFSET_DONE, wxCommandEvent);
 
-using namespace std;
 
-OffsetCalculator::OffsetCalculator(wxEvtHandler* pHandler, const std::vector<kiss_fft_scalar>& vInLeft, const std::vector<kiss_fft_scalar>& vInRight) :
-    m_pHandler(pHandler),
-    m_vfft_inL(vInLeft),
-    m_vfft_inR(vInRight)
+void WindowData(std::vector<kiss_fft_scalar>& vData)
 {
+	double angle;
+	for(size_t i = 0; i < vData.size(); i++)
+    {
+        angle = (2*M_PI)*i/(vData.size()-1);
+        vData[i] *= 0.5*(1.0 - cos(angle));
+    }
+
 }
 
-void* OffsetCalculator::Entry()
+int CalculateOffset(std::vector<kiss_fft_scalar>& vInLeft, std::vector<kiss_fft_scalar>& vInRight)
 {
-    WindowData(m_vfft_inL);
-    WindowData(m_vfft_inR);
+    WindowData(vInLeft);
+    WindowData(vInRight);
 
     std::vector<kiss_fft_scalar> vfft_out;
-    vfft_out.resize(m_vfft_inL.size());
+    vfft_out.resize(vInLeft.size());
 
-    rfft_xcorr(m_vfft_inL.size(), m_vfft_inL.data(), m_vfft_inR.data(), vfft_out.data(),KISS_XCORR);
-
+    rfft_xcorr(vInLeft.size(), vInLeft.data(), vInRight.data(), vfft_out.data(),KISS_XCORR);
 
 
     long pos_peak_pos = 0;
@@ -48,34 +50,28 @@ void* OffsetCalculator::Entry()
     }
 
 
-    int nBlockSize = m_vfft_inL.size();
+    int nBlockSize = vInLeft.size();
 
     int offset =  ((biggest < fabs(smallest)) ?  neg_peak_pos : pos_peak_pos) ;
     if ((unsigned)offset > nBlockSize/2)
     {
         offset = offset - nBlockSize;
     }
-
-
-    if(m_pHandler)
-    {
-        wxCommandEvent event(wxEVT_OFFSET_DONE);
-        event.SetInt(offset);
-        wxPostEvent(m_pHandler, event);
-    }
-    return NULL;
+    return offset;
 }
 
-void OffsetCalculator::WindowData(std::vector<kiss_fft_scalar>& vData)
+
+void CalculateOffset(wxEvtHandler* pHandler, const std::vector<float>& vInLeft, const std::vector<float>& vInRight)
 {
-	double angle;
-	for(size_t i = 0; i < vData.size(); i++)
-    {
-        angle = (2*M_PI)*i/(vData.size()-1);
-        vData[i] *= 0.5*(1.0 - cos(angle));
-    }
-
+    pml::restgoose::ThreadPool::Get().Submit([pHandler, vInLeft, vInRight](){
+                        auto vA = vInLeft;
+                        auto vB = vInRight;
+                      auto pEvent = new wxCommandEvent(wxEVT_OFFSET_DONE);
+                      pEvent->SetInt(CalculateOffset(vA, vB));
+                      wxQueueEvent(pHandler, pEvent);
+                   });
 }
+
 
 
 /*

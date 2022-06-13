@@ -11,7 +11,7 @@ include_directories("../../pamfft/" "../../external/kiss_fft130" "../../external
 link_directories("../../lib")
 
 
-set(SOURCES fftdiffmeter.cpp fftdiffbuilder.cpp fftdiffregister.cpp)
+set(SOURCES "fftdiffmeter.cpp" "fftdiffbuilder.cpp" "fftdiffregister.cpp" "pnlbins.cpp" "pnloverlap.cpp" "pnlwindow.cpp" "pnloptions.cpp" "pnlmode.cpp" "pnldelay.cpp" "pnlrange.cpp")
 #file(GLOB SOURCES "*.cpp")
 
 add_library(fftdiff MODULE ${SOURCES} ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_version.cpp)

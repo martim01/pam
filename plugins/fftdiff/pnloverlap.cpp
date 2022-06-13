@@ -5,7 +5,7 @@
 #include <wx/string.h>
 //*)
 
-#include "fftbuilder.h"
+#include "fftdiffbuilder.h"
 
 //(*IdInit(pnlOverlap)
 const long pnlOverlap::ID_M_PLST10 = wxNewId();
@@ -16,7 +16,7 @@ BEGIN_EVENT_TABLE(pnlOverlap,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlOverlap::pnlOverlap(wxWindow* parent,FFTBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) :
+pnlOverlap::pnlOverlap(wxWindow* parent,fftdiffBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) :
     m_pBuilder(pBuilder)
 {
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));

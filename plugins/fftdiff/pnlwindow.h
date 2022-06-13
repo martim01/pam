@@ -6,13 +6,13 @@
 #include <wx/panel.h>
 //*)
 
-class FFTBuilder;
+class fftdiffBuilder;
 
 class pnlWindow: public wxPanel
 {
 	public:
 
-		pnlWindow(wxWindow* parent,FFTBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+		pnlWindow(wxWindow* parent,fftdiffBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pnlWindow();
 
 		wmList* m_plstFFT_Window;
@@ -24,7 +24,7 @@ class pnlWindow: public wxPanel
 	private:
 
 
-        FFTBuilder* m_pBuilder;
+        fftdiffBuilder* m_pBuilder;
 		DECLARE_EVENT_TABLE()
 };
 

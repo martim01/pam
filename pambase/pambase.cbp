@@ -221,6 +221,7 @@
 			<Add directory="$(#log.LIB)" />
 			<Add directory="$(#dnssd.LIB)" />
 		</Linker>
+		<Unit filename="../pamfft/delayline.cpp" />
 		<Unit filename="AES67ServerMediaSubsession.cpp" />
 		<Unit filename="AES67ServerMediaSubsession.h" />
 		<Unit filename="PamMediaSession.h" />
@@ -398,9 +399,6 @@
 					<wxPanel wxs="wxsmith/wmipeditpnl.wxs" src="wmipeditpnl.cpp" hdr="wmipeditpnl.h" fwddecl="0" i18n="1" name="wmipeditpnl" language="CPP" />
 				</resources>
 			</wxsmith>
-			<code_completion />
-			<envvars />
-			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

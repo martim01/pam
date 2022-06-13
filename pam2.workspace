@@ -69,5 +69,6 @@
 		<Project filename="InitialSetup/dosetup.cbp" />
 		<Project filename="../Restgoose/Restgoose.cbp" />
 		<Project filename="plugins/noiseGenerator/noiseGenerator.cbp" />
+		<Project filename="plugins/fftdiff/fftdiff.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

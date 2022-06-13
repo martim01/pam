@@ -9,6 +9,7 @@
 #include "colourgradient.h"
 #include "json/json.h"
 #include "session.h"
+#include "delayline.h"
 
 class timedbuffer;
 class fftdiffBuilder;
@@ -66,10 +67,12 @@ class fftdiffMeter : public pmControl
 
         void SetHold(bool bHold);
 
-        void ShowPeak(bool bShow);
-        void ShowTrough(bool bShow);
-        void ResetPeaks();
-        void ResetTroughs();
+        void ShowMax(bool bShow);
+        void ShowMin(bool bShow);
+        void ShowAverage(bool bShow);
+        void ResetMax();
+        void ResetMin();
+        void ResetAverage();
 
         /** @brief returns the default size of the button for sizers
         **/
@@ -117,6 +120,9 @@ class fftdiffMeter : public pmControl
 
         void TurnoffNudge();
 
+        void SetDelayMode(long nMode);
+        void SetVerticalRange(unsigned long ndB);
+
         enum {DISPLAY_GRAPH, DISPLAY_LINES, DISPLAY_EQ};
         enum {ANALYSE_L,ANALYSE_R, ANALYSE_L_P_R, ANALYSE_L_M_R};
         enum {WINDOW_RECTANGULAR, WINDOW_HANNING, WINDOW_HAMMING, WINDOW_BLACKMAN, WINDOW_KAISER, WINDOW_KAISERBESSEL};
@@ -148,7 +154,10 @@ class fftdiffMeter : public pmControl
         void OnLeftUp(wxMouseEvent& event);
         void OnTimerNudge(wxTimerEvent& event);
 
-        std::list<float> m_lstBuffer[2];      ///< vector containing the a-leg samples
+
+
+        nonInterlacedList m_buffer;
+
         std::vector<kiss_fft_cpx> m_vfft_out[2];
 
         std::queue<freq_mag> m_qResult;
@@ -172,12 +181,13 @@ class fftdiffMeter : public pmControl
         uiRect m_uiPeakLevel;
 
         bool m_bHold;
-        bool m_bShowPeak;
-        bool m_bShowTrough;
+        bool m_bShowMax;
+        bool m_bShowMin;
+        bool m_bShowAverage;
 
 
         double m_dBinSize;
-
+        double m_dVerticalResolution;
 
         int m_nSelectedChannels[2];
 
@@ -221,6 +231,7 @@ class fftdiffMeter : public pmControl
 
         uiRect m_uiClose;
         uiRect m_uiAmplitude;
+        uiRect m_uiAverage;
         uiRect m_uiBin;
         uiRect m_uiNudgeDown;
         uiRect m_uiNudgeUp;
@@ -233,6 +244,12 @@ class fftdiffMeter : public pmControl
 
         double m_dPeakLevel;
         double m_dPeakFrequency;
+
+        DelayLine m_delayLine;
+        int m_nOffset;
+        long m_nDelayMode;
+
+        enum {DELAY_OFF=0, DELAY_ONE, DELAY_AUTO};
 
 };
 

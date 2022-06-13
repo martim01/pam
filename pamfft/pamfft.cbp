@@ -145,6 +145,8 @@
 		<Unit filename="../external/kiss_fft130/tools/kiss_fftr.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="delayline.cpp" />
+		<Unit filename="delayline.h" />
 		<Unit filename="fftAlgorithm.cpp" />
 		<Unit filename="fftAlgorithm.h" />
 		<Unit filename="kaiserwindow.cpp" />
@@ -162,9 +164,6 @@
 			<Option target="Windows Debug" />
 		</Unit>
 		<Extensions>
-			<code_completion />
-			<envvars />
-			<debugger />
 			<AutoVersioning>
 				<Scheme minor_max="10" build_max="0" rev_max="0" rev_rand_max="10" build_times_to_increment_minor="100" />
 				<Settings autoincrement="0" date_declarations="1" use_define="0" update_manifest="0" do_auto_increment="1" ask_to_increment="0" language="C++" svn="0" svn_directory="" header_path="version.h" />

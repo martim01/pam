@@ -6,12 +6,12 @@
 #include "wmlist.h"
 //*)
 
-class FFTBuilder;
+class fftdiffBuilder;
 class pnlOverlap: public wxPanel
 {
 	public:
 
-		pnlOverlap(wxWindow* parent,FFTBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+		pnlOverlap(wxWindow* parent,fftdiffBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pnlOverlap();
 
 		wmList* m_plstFFT_Overlap;
@@ -23,7 +23,7 @@ class pnlOverlap: public wxPanel
 	private:
 
 
-        FFTBuilder* m_pBuilder;
+        fftdiffBuilder* m_pBuilder;
 		DECLARE_EVENT_TABLE()
 };
 

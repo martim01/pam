@@ -74,6 +74,7 @@ class OffsetGraph : public pmControl
         void ShowSamplesLeftToGet(unsigned int nSamples);
 
         void SetCalculating(bool bCalc);
+        bool GetCalculating() const { return m_bCalculating;}
 
   protected:
 

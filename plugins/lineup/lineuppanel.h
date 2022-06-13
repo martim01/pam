@@ -118,7 +118,7 @@ class lineupPanel: public pmPanel
 
         std::vector<float> m_vBufferL;
 		std::vector<float> m_vBufferR;
-        OffsetCalculator* m_pCalc;
+        bool m_bCalculating;
 
         std::list<float> m_lstBufferL;      ///< vector containing the a-leg samples
         std::list<float> m_lstBufferR;      ///< vector containing the a-leg samples

@@ -3,6 +3,7 @@ project(pamfft LANGUAGES CXX C VERSION 1.2.0.0)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 include_directories("../pambase/")
+include_directories(${DIR_RESTGOOSE}/include)
 include_directories("../external/kiss_fft130")
 include_directories("../external/kiss_fft130/tools")
 include_directories(${CMAKE_BINARY_DIR}/include)
@@ -32,6 +33,7 @@ target_compile_options(pamfft PRIVATE ${flags})
 
 target_link_libraries(pamfft ${wxWidgets_LIBRARIES})
 target_link_libraries(pamfft optimized pambase debug pambased)
+target_link_libraries(pamfft optimized restgoose debug restgoosed)
 
 set_target_properties(pamfft PROPERTIES DEBUG_POSTFIX "d")
 

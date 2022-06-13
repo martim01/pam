@@ -5,7 +5,7 @@
 #include <wx/string.h>
 //*)
 
-#include "fftbuilder.h"
+#include "fftdiffbuilder.h"
 
 //(*IdInit(pnlDisplay)
 const long pnlDisplay::ID_M_PLST4 = wxNewId();
@@ -16,7 +16,7 @@ BEGIN_EVENT_TABLE(pnlDisplay,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlDisplay::pnlDisplay(wxWindow* parent,FFTBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) :
+pnlDisplay::pnlDisplay(wxWindow* parent,fftdiffBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) :
     m_pBuilder(pBuilder)
 {
 	//(*Initialize(pnlDisplay)

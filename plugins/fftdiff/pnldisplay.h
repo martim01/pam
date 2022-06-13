@@ -7,13 +7,13 @@
 //*)
 #include "wmbutton.h"
 
-class FFTBuilder;
+class fftdiffBuilder;
 
 class pnlDisplay: public wxPanel
 {
 	public:
 
-		pnlDisplay(wxWindow* parent,FFTBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+		pnlDisplay(wxWindow* parent,fftdiffBuilder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pnlDisplay();
 
 		//(*Declarations(pnlDisplay)

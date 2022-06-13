@@ -287,7 +287,7 @@ lineupPanel::lineupPanel(wxWindow* parent,lineupBuilder* pBuilder, wxWindowID id
 
     m_bFirstLevel = true;
     m_bFirstDistortion = true;
-	m_pCalc = 0;
+	m_bCalculating = false;
 	std::map<wxString, ppmtype>::const_iterator itType = PPMTypeManager::Get().FindType(wxT("Digital"));
     if(itType != PPMTypeManager::Get().GetTypeEnd())
     {
@@ -342,15 +342,14 @@ void lineupPanel::SetAudioData(const timedbuffer* pBuffer)
     {
         if(m_vBufferL.size() == 4096)
         {
-            if(m_pCalc == 0)
+            if(m_bCalculating == false)
             {
-                m_pCalc = new OffsetCalculator(this, m_vBufferL, m_vBufferR);
-                m_pCalc->Create();
-                m_pCalc->Run();
+                m_bCalculating = true;
+                CalculateOffset(this, m_vBufferL, m_vBufferR);
             }
             break;
         }
-        else if(m_pCalc == 0)
+        else if(m_bCalculating == false)
         {
             m_vBufferL.push_back(pBuffer->GetBuffer()[i+m_nChannel[0]]);
             m_vBufferR.push_back(pBuffer->GetBuffer()[i+m_nChannel[1]]);
@@ -437,7 +436,7 @@ void lineupPanel::OnLeftUp(wxMouseEvent& event)
 
 void lineupPanel::OnOffsetDone(wxCommandEvent& event)
 {
-    m_pCalc = 0;
+    m_bCalculating = false;
 
     //copy the data in to the buffer and do the fft
     while(m_lstBufferL.size() > m_nSampleSize)

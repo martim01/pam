@@ -111,7 +111,6 @@ pnlChannelDelay::pnlChannelDelay(wxWindow* parent,ChannelDelayBuilder* pBuilder,
 	m_plstChannel2->ConnectToSetting(m_pBuilder->GetSection(), "Channel_2", size_t(1));
 
 
-	m_pCalc = 0;
 	m_nChannel[0] = 0;
 	m_nChannel[1] = 1;
 	m_nTotalSamples = 65536;
@@ -167,21 +166,17 @@ void pnlChannelDelay::SetTotalSamples(size_t nSamples)
 
 void pnlChannelDelay::CalculateOffset()
 {
-    if(m_pCalc == 0)
+    if(m_pGraph->GetCalculating() == false)
     {
         m_pGraph->SetCalculating(true);
-        m_pCalc = new OffsetCalculator(this, m_vBufferL, m_vBufferR);
-        m_pCalc->Create();
-        m_pCalc->Run();
+        ::CalculateOffset(this, m_vBufferL, m_vBufferR);
     }
 }
 
 
 void pnlChannelDelay::OnOffsetDone(wxCommandEvent& event)
 {
-    m_pCalc = 0;
-
-    m_pGraph->SetCalculating(false);
+        m_pGraph->SetCalculating(false);
     SetTotalSamples(m_nTotalSamples);
 
     m_pGraph->AddOffset(event.GetInt());

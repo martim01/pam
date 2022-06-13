@@ -9,6 +9,7 @@
 #include "fftdiffbuilder.h"
 //#include "settings.h"
 #include "log.h"
+#include "delayline.h"
 
 using namespace std;
 
@@ -21,7 +22,6 @@ BEGIN_EVENT_TABLE(fftdiffMeter, pmControl)
     EVT_LEFT_UP(fftdiffMeter::OnLeftUp)
 END_EVENT_TABLE()
 
-const double DB_RES = 160.0;
 
 
 const wxString fftdiffMeter::LABEL_WINDOW[6] = {wxT("None"), wxT("Hann"), wxT("Hamming"), wxT("Blackman"), wxT("Kaiser"), wxT("KaiserBessel")};
@@ -32,7 +32,9 @@ const double fftdiffMeter::OCTAVE_LOW_3 = 13.9;
 
 
 fftdiffMeter::fftdiffMeter(wxWindow *parent, fftdiffBuilder* pBuilder, wxWindowID id, const wxPoint& pos, const wxSize& size) : pmControl(),
-    m_pBuilder(pBuilder)
+    m_pBuilder(pBuilder),
+    m_dVerticalResolution(100.0),
+    m_nDelayMode(0)
 {
     Create(parent, id, pos, size);
     m_nPeakCutoff = -50;
@@ -41,8 +43,9 @@ fftdiffMeter::fftdiffMeter(wxWindow *parent, fftdiffBuilder* pBuilder, wxWindowI
     m_dFall = 0.2;
     m_nBinSelected = 0;
     m_bCursorMode = false;
-    m_bShowPeak = false;
-    m_bShowTrough = false;
+    m_bShowMax = false;
+    m_bShowMin = false;
+    m_bShowAverage = true;
 
     m_nSelectedChannels[0] = 0;
     m_nSelectedChannels[1] = 1;
@@ -115,12 +118,12 @@ void fftdiffMeter::OnPaint(wxPaintEvent& event)
 
     //draw horizonal lines
     uiRect uiLevel;
-    for(double i = 0; i < DB_RES; i += 10)
+    for(double i = 0; i < m_dVerticalResolution; i += 10)
     {
-        int nDB = (static_cast<double>(m_rectGrid.GetHeight()/DB_RES) * i);
+        int nDB = (static_cast<double>(m_rectGrid.GetHeight()/m_dVerticalResolution) * i);
 
         uiLevel.SetRect(5, nDB-10, m_rectGrid.GetLeft()-5, 20);
-        uiLevel.SetLabel(wxString::Format(wxT("%.0f"),(i-DB_RES/2)));
+        uiLevel.SetLabel(wxString::Format(wxT("%.0f"),-(i-m_dVerticalResolution/2)));
         uiLevel.Draw(dc,uiRect::BORDER_NONE);
         dc.SetPen(wxPen(wxColour(100,100,100),1 ));
         dc.DrawLine(m_rectGrid.GetLeft(), nDB, m_rectGrid.GetWidth()+m_rectGrid.GetLeft(), nDB);
@@ -160,10 +163,19 @@ void fftdiffMeter::DrawFFT(wxDC& dc)
     //dc.SetBrush(wxBrush(wxColour(90,60,200)));
     DrawGraph(dc, m_vAmplitude, wxColour(140,140,140));
 
-    DrawGraph(dc, m_vAverage, *wxWHITE);
+    if(m_bShowAverage)
+    {
+        DrawGraph(dc, m_vAverage, *wxWHITE);
+    }
 
-    DrawGraph(dc, m_vMax, *wxBLUE);
-    DrawGraph(dc, m_vMin, *wxBLUE);
+    if(m_bShowMax)
+    {
+        DrawGraph(dc, m_vMax, *wxBLUE);
+    }
+    if(m_bShowMin)
+    {
+        DrawGraph(dc, m_vMin, *wxBLUE);
+    }
    // DrawGraph(dc, m_vSD, *wxBLUE, -3.0);
 //
 
@@ -176,6 +188,7 @@ void fftdiffMeter::DrawFFT(wxDC& dc)
 
         m_uiClose.Draw(dc, wxT("Exit"), uiRect::BORDER_UP);
         m_uiAmplitude.Draw(dc, wxString::Format(wxT("%.2f dB"), m_vAmplitude[m_nBinSelected]), uiRect::BORDER_NONE);
+        m_uiAverage.Draw(dc, wxString::Format(wxT("%.2f dB"), m_vAverage[m_nBinSelected]), uiRect::BORDER_NONE);
         m_uiBin.Draw(dc, wxString::Format(wxT("%.0f Hz"), m_dBinSize*static_cast<double>(m_nBinSelected)), uiRect::BORDER_NONE);
         m_uiNudgeDown.Draw(dc,wxT("-"), (m_nNudge==DOWN)? uiRect::BORDER_DOWN : uiRect::BORDER_UP);;
 
@@ -194,7 +207,7 @@ void fftdiffMeter::DrawGraph(wxDC& dc, const std::vector<float>& vSpectrum, cons
     for(size_t i = 1; i < vSpectrum.size(); i++)
     {
         int x = static_cast<int>( (static_cast<double>(m_rectGrid.GetWidth())/log(vSpectrum.size())) * static_cast<double>(log(i)))+m_rectGrid.GetLeft();
-        int y = -static_cast<int>(  (static_cast<double>(m_rectGrid.GetHeight()/DB_RES) * vSpectrum[i]*dMultiplier));
+        int y = -static_cast<int>(  (static_cast<double>(m_rectGrid.GetHeight()/m_dVerticalResolution) * vSpectrum[i]*dMultiplier));
         y += m_rectGrid.GetHeight()/2;
         if(i == 1)
         {
@@ -229,8 +242,14 @@ void fftdiffMeter::OnSize(wxSizeEvent& event)
     m_uiClose.SetBackgroundColour(*wxRED);
 
     m_uiAmplitude.SetRect(m_uiClose.GetLeft()-120, m_uiClose.GetTop(), 100, m_uiClose.GetHeight());
+    m_uiAmplitude.SetBackgroundColour(*wxWHITE);
+    m_uiAmplitude.SetForegroundColour(*wxBLACK);
 
-    m_uiBin.SetRect(m_uiAmplitude.GetLeft()-180, m_uiAmplitude.GetTop(), 100, m_uiAmplitude.GetHeight());
+    m_uiAverage.SetRect(m_uiAmplitude.GetLeft()-105, m_uiClose.GetTop(), 100, m_uiClose.GetHeight());
+    m_uiAverage.SetBackgroundColour(*wxWHITE);
+    m_uiAverage.SetForegroundColour(*wxBLACK);
+
+    m_uiBin.SetRect(m_uiAverage.GetLeft()-180, m_uiAmplitude.GetTop(), 100, m_uiAmplitude.GetHeight());
     m_uiNudgeUp.SetRect(m_uiBin.GetRight()+5, m_uiAmplitude.GetTop(), 50, m_uiAmplitude.GetHeight());
     m_uiNudgeDown.SetRect(m_uiBin.GetLeft()-55, m_uiAmplitude.GetTop(), 50, m_uiAmplitude.GetHeight());
 
@@ -263,13 +282,30 @@ void fftdiffMeter::SetAudioData(const timedbuffer* pBuffer)
 {
     if(!m_bHold &&  m_vChannels.size() != 0)
     {
-        for(size_t i = 0; i < pBuffer->GetBufferSize(); i++)
+        nonInterlacedVector data;
+        data.first.reserve((pBuffer->GetBufferSize()/m_vChannels.size()));
+        data.second.reserve((pBuffer->GetBufferSize()/m_vChannels.size()));
+
+        for(size_t i = 0; i < pBuffer->GetBufferSize(); i+=m_vChannels.size())
         {
-            m_lstBuffer[0].push_back(pBuffer->GetBuffer()[i]);
-            m_lstBuffer[1].push_back(pBuffer->GetBuffer()[i]);
+            data.first.push_back(pBuffer->GetBuffer()[i+m_nSelectedChannels[0]]);
+            data.second.push_back(pBuffer->GetBuffer()[i+m_nSelectedChannels[1]]);
+
         }
 
-        while(m_lstBuffer[0].size() > (m_vfft_out[0].size()-1)*2*m_vChannels.size())
+        if(m_nDelayMode != DELAY_OFF)
+        {
+            m_nOffset = m_delayLine.ProcessAudio(data);
+
+            m_uiSettingsDisplay.SetLabel(wxString::Format("%.2fms", static_cast<double>(m_nOffset*1000)/static_cast<double>(m_nSampleRate)));
+        }
+
+        //copy the data to the fft buffer
+        std::copy(data.first.begin(), data.first.end(), std::back_inserter(m_buffer.first));
+        std::copy(data.second.begin(), data.second.end(), std::back_inserter(m_buffer.second));
+
+
+        while(m_buffer.first.size() > (m_vfft_out[0].size()-1))
         {
             DoFFT();
         }
@@ -290,8 +326,8 @@ void fftdiffMeter::DoFFT()
 void fftdiffMeter::FFTRoutine()
 {
     FFTAlgorithm fft;
-    m_vfft_out[0] = fft.DoFFT(m_lstBuffer[0], m_nSampleRate, m_vChannels.size(), 0/*m_nSelectedChannels[0]*/, m_nWindowType, m_vfft_out[0].size(), m_nOverlap);
-    m_vfft_out[1] = fft.DoFFT(m_lstBuffer[1], m_nSampleRate, m_vChannels.size(), 1/*m_nSelectedChannels[1]*/, m_nWindowType, m_vfft_out[1].size(), m_nOverlap);
+    m_vfft_out[0] = fft.DoFFT(m_buffer.first, m_nSampleRate, 1, 0, m_nWindowType, m_vfft_out[0].size(), m_nOverlap);
+    m_vfft_out[1] = fft.DoFFT(m_buffer.second, m_nSampleRate, 1, 0, m_nWindowType, m_vfft_out[1].size(), m_nOverlap);
 
     m_dBinSize = static_cast<double>(m_nSampleRate)/static_cast<double>((m_vfft_out[0].size()-1)*2);
     m_dPeakLevel = -80;
@@ -349,8 +385,8 @@ void fftdiffMeter::SetChannels(int nA, int nB)
 
 void fftdiffMeter::SetWindowType(int nType)
 {
-    m_lstBuffer[0].clear();
-    m_lstBuffer[1].clear();
+    m_buffer.first.clear();
+    m_buffer.second.clear();
     m_nWindowType = nType;
     m_uiSettingsWindow.SetLabel(LABEL_WINDOW[nType]);
     RefreshRect(m_uiSettingsWindow.GetRect());
@@ -494,27 +530,38 @@ void fftdiffMeter::OnLeftUp(wxMouseEvent& event)
 
 }
 
-void fftdiffMeter::ShowPeak(bool bShow)
+void fftdiffMeter::ShowMax(bool bShow)
 {
-    m_bShowPeak = bShow;
-    ResetPeaks();
+    m_bShowMax = bShow;
 }
 
-void fftdiffMeter::ShowTrough(bool bShow)
+void fftdiffMeter::ShowMin(bool bShow)
 {
-    m_bShowTrough = bShow;
-    ResetTroughs();
+    m_bShowMin = bShow;
+}
+
+void fftdiffMeter::ShowAverage(bool bShow)
+{
+    m_bShowAverage = bShow;
 }
 
 
-void fftdiffMeter::ResetTroughs()
+void fftdiffMeter::ResetMax()
 {
+    m_vMax = vector<float>(m_vfft_out[0].size(), -80.0);
 
 }
 
-void fftdiffMeter::ResetPeaks()
+void fftdiffMeter::ResetMin()
 {
+    m_vMin = vector<float>(m_vfft_out[0].size(), 80.0);
 
+}
+
+void fftdiffMeter::ResetAverage()
+{
+    m_vAverage = vector<float>(m_vfft_out[0].size(), 0.0);
+    m_dTotalFrames = 0.0;
 }
 
 Json::Value fftdiffMeter::CreateWebsocketMessage()
@@ -524,4 +571,23 @@ Json::Value fftdiffMeter::CreateWebsocketMessage()
     jsData["bins"] = Json::Value(Json::arrayValue);
 
     return jsData;
+}
+
+void fftdiffMeter::SetDelayMode(long nMode)
+{
+    m_nDelayMode = nMode;
+    switch(m_nDelayMode)
+    {
+        case DELAY_ONE:
+            m_delayLine.SetCalculationMode(true);
+            break;
+        case DELAY_AUTO:
+            m_delayLine.SetCalculationMode(false);
+            break;
+    }
+}
+
+void fftdiffMeter::SetVerticalRange(unsigned long ndB)
+{
+    m_dVerticalResolution = std::min(80.0, static_cast<double>(ndB));
 }
