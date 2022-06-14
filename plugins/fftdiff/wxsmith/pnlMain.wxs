@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxPanel" name="pnlMain">
+		<size>800,480</size>
+		<bg>#000000</bg>
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<object class="Custom" name="ID_METER" subclass="fftdiffMeter" variable="m_pMeter" member="yes">
+			<creating_code>$(THIS) = new $(CLASS)($(PARENT),m__pBuilder, $(ID),$(POS),$(SIZE));</creating_code>
+			<include_file>fftdiffmeter.h</include_file>
+			<local_include>1</local_include>
+			<style></style>
+			<pos>0,0</pos>
+			<size>800,440</size>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnDelay" member="yes">
+			<label>Delay</label>
+			<pos>5,440</pos>
+			<size>80,30</size>
+			<bg>#5403DA</bg>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnWindow" member="yes">
+			<label>Window</label>
+			<pos>175,440</pos>
+			<size>80,30</size>
+			<bg>#5403DA</bg>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnOverlap" member="yes">
+			<label>Overlap</label>
+			<pos>260,440</pos>
+			<size>80,30</size>
+			<bg>#5403DA</bg>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnBins" member="yes">
+			<label>Bins</label>
+			<pos>345,440</pos>
+			<size>80,30</size>
+			<bg>#5403DA</bg>
+		</object>
+		<object class="wmButton" name="ID_M_PBTN7" variable="m_pbtnReset" member="yes">
+			<label>Reset</label>
+			<pos>515,440</pos>
+			<size>80,30</size>
+			<bg>#5403DA</bg>
+			<handler function="OnbtnResetClick" entry="EVT_BUTTON" />
+		</object>
+	</object>
+</wxsmith>

@@ -3,7 +3,7 @@
 #include <wx/string.h>
 
 class SettingEvent;
-class fftdiffMeter;
+class pnlMain;
 
 class WXEXPORT fftdiffBuilder : public MonitorPluginBuilder
 {
@@ -40,7 +40,7 @@ class WXEXPORT fftdiffBuilder : public MonitorPluginBuilder
 
         void LoadSettings();
 
-        fftdiffMeter* m_pMeter;
+        pnlMain m_ppnlMain;
 
 };
 

@@ -135,6 +135,8 @@
 		<Unit filename="fftdiffmeter.h" />
 		<Unit filename="fftdiffregister.cpp" />
 		<Unit filename="fftdiffregister.h" />
+		<Unit filename="pnlMain.cpp" />
+		<Unit filename="pnlMain.h" />
 		<Unit filename="pnlbins.cpp" />
 		<Unit filename="pnlbins.h" />
 		<Unit filename="pnldelay.cpp" />
@@ -149,6 +151,7 @@
 		<Unit filename="pnlrange.h" />
 		<Unit filename="pnlwindow.cpp" />
 		<Unit filename="pnlwindow.h" />
+		<Unit filename="wxsmith/pnlMain.wxs" />
 		<Extensions>
 			<AutoVersioning>
 				<Scheme minor_max="10" build_max="0" rev_max="0" rev_rand_max="10" build_times_to_increment_minor="100" />
@@ -156,6 +159,14 @@
 				<Changes_Log show_changes_editor="1" app_title="released version %M.%m.%b of %p" changeslog_path="ChangesLog.txt" />
 				<Code header_guard="VERSION_H" namespace="AutoVersion" prefix="" />
 			</AutoVersioning>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<wxsmith version="1">
+				<resources>
+					<wxPanel wxs="wxsmith/pnlMain.wxs" src="pnlMain.cpp" hdr="pnlMain.h" fwddecl="0" i18n="1" name="pnlMain" language="CPP" />
+				</resources>
+			</wxsmith>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

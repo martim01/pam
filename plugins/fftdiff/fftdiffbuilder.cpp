@@ -3,7 +3,7 @@
 #include "settings.h"
 #include "settingevent.h"
 #include "version.h"
-#include "fftdiffmeter.h"
+#include "pnlMain.h"
 
 #include "pnlwindow.h"
 #include "pnloverlap.h"
@@ -38,13 +38,13 @@ fftdiffBuilder::fftdiffBuilder() : MonitorPluginBuilder()
 
 void fftdiffBuilder::SetAudioData(const timedbuffer* pBuffer)
 {
-	m_pMeter->SetAudioData(pBuffer);
+    m_ppnlMain->SetAudioData(pBuffer);
 }
 
 wxWindow* fftdiffBuilder::CreateMonitorPanel(wxWindow* pParent)
 {
-    m_pMeter = new fftdiffMeter(pParent,this);
-	return m_pMeter;
+    m_ppnlMain = new pnlMain(pParent,this);
+	return m_ppnlMain;
 
 }
 
@@ -85,14 +85,14 @@ void fftdiffBuilder::InputSession(const session& aSession)
 {
 	if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
-        m_pMeter->SetSampleRate(aSession.GetCurrentSubsession()->nSampleRate);
-        m_pMeter->SetChannels(aSession.GetCurrentSubsession()->vChannels);
+        m_ppnlMain->SetSampleRate(aSession.GetCurrentSubsession()->nSampleRate);
+        m_ppnlMain->SetChannels(aSession.GetCurrentSubsession()->vChannels);
         //m_ppnlRouting->SetChannels(aSession.GetCurrentSubsession()->vChannels);
     }
     else
     {
-        m_pMeter->SetSampleRate(48000);
-        m_pMeter->SetChannels({});
+        m_ppnlMain->SetSampleRate(48000);
+        m_ppnlMain->SetChannels({});
         //m_ppnlRouting->SetChannels({});
     }
 }
@@ -108,20 +108,20 @@ void fftdiffBuilder::OutputChannels(const std::vector<char>& vChannels)
 
 void fftdiffBuilder::ResetMax()
 {
-    m_pMeter->ResetMax();
+    m_ppnlMain->ResetMax();
 }
 
 void fftdiffBuilder::ResetMin()
 {
-    m_pMeter->ResetMin();
+    m_ppnlMain->ResetMin();
 }
 
 void fftdiffBuilder::ResetAverage()
 {
-    m_pMeter->ResetAverage();
+    m_ppnlMain->ResetAverage();
 }
 
 void fftdiffBuilder::CalculateDelay()
 {
-    m_pMeter->SetDelayMode(1);
+    m_ppnlMain->SetDelayMode(1);
 }
