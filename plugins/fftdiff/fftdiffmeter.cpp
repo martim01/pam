@@ -7,7 +7,7 @@
 #include "fftAlgorithm.h"
 #include "timedbuffer.h"
 #include "fftdiffbuilder.h"
-//#include "settings.h"
+#include "settingevent.h"
 #include "log.h"
 #include "delayline.h"
 
@@ -82,18 +82,9 @@ bool fftdiffMeter::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, c
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
-    m_rectGrid = wxRect(GetClientRect().GetLeft()+40, GetClientRect().GetTop(), GetClientRect().GetWidth()-40, GetClientRect().GetHeight()-50);
+    m_rectGrid = wxRect(GetClientRect().GetLeft()+40, GetClientRect().GetTop(), GetClientRect().GetWidth()-40, GetClientRect().GetHeight());
 
-    m_uiSettingsDisplay.SetBackgroundColour(COLOUR_LABEL);
-    m_uiSettingsMeter.SetBackgroundColour(COLOUR_LABEL);
-    m_uiSettingsAnalyse.SetBackgroundColour(COLOUR_LABEL);
 
-    m_uiSettingsWindow.SetBackgroundColour(COLOUR_LABEL);
-    m_uiSettingsOverlap.SetBackgroundColour(COLOUR_LABEL);
-    m_uiSettingsBins.SetBackgroundColour(COLOUR_LABEL);
-
-    m_uiPeakFrequency.SetBackgroundColour(COLOUR_LABEL);
-    m_uiPeakLevel.SetBackgroundColour(COLOUR_LABEL);
 
     m_bHold = false;
 
@@ -135,14 +126,6 @@ void fftdiffMeter::OnPaint(wxPaintEvent& event)
 
     DrawFFT(dc);
 
-    m_uiSettingsAnalyse.Draw(dc, uiRect::BORDER_DOWN);
-    m_uiSettingsWindow.Draw(dc, uiRect::BORDER_FLAT);
-    m_uiSettingsOverlap.Draw(dc, uiRect::BORDER_FLAT);
-    m_uiSettingsBins.Draw(dc, uiRect::BORDER_FLAT);
-    m_uiSettingsDisplay.Draw(dc, uiRect::BORDER_FLAT);
-    m_uiSettingsMeter.Draw(dc, uiRect::BORDER_FLAT);
-    m_uiPeakFrequency.Draw(dc, uiRect::BORDER_FLAT);
-    m_uiPeakLevel.Draw(dc, uiRect::BORDER_FLAT);
 }
 
 void fftdiffMeter::DrawFFT(wxDC& dc)
@@ -228,18 +211,8 @@ void fftdiffMeter::DrawGraph(wxDC& dc, const std::vector<float>& vSpectrum, cons
 
 void fftdiffMeter::OnSize(wxSizeEvent& event)
 {
-    m_rectGrid = wxRect(GetClientRect().GetLeft()+40, GetClientRect().GetTop(), GetClientRect().GetWidth()-40, GetClientRect().GetHeight()-50);
+    m_rectGrid = wxRect(GetClientRect().GetLeft()+40, GetClientRect().GetTop(), GetClientRect().GetWidth()-40, GetClientRect().GetHeight());
 
-    m_uiSettingsDisplay.SetRect(m_rectGrid.GetLeft(), GetClientRect().GetBottom()-23, 80,20);
-    m_uiSettingsMeter.SetRect(m_uiSettingsDisplay.GetRight()+5, GetClientRect().GetBottom()-23, 80,20);
-    m_uiSettingsAnalyse.SetRect(m_uiSettingsMeter.GetRight()+5, GetClientRect().GetBottom()-23, 80,20);
-
-    m_uiSettingsWindow.SetRect(m_uiSettingsAnalyse.GetRight()+10, GetClientRect().GetBottom()-23, 80,20);
-    m_uiSettingsOverlap.SetRect(m_uiSettingsWindow.GetRight()+5, GetClientRect().GetBottom()-23, 120,20);
-    m_uiSettingsBins.SetRect(m_uiSettingsOverlap.GetRight()+5, GetClientRect().GetBottom()-23, 120,20);
-
-    m_uiPeakFrequency.SetRect(m_uiSettingsBins.GetRight()+15, GetClientRect().GetBottom()-23, 80,20);
-    m_uiPeakLevel.SetRect(m_uiPeakFrequency.GetRight()+3, GetClientRect().GetBottom()-23, 80,20);
 
     m_uiClose.SetRect(GetClientRect().GetRight()-85, GetClientRect().GetTop()+5, 80, 50);
     m_uiClose.SetBackgroundColour(*wxRED);
@@ -300,7 +273,7 @@ void fftdiffMeter::SetAudioData(const timedbuffer* pBuffer)
         {
             m_nOffset = m_delayLine.ProcessAudio(data);
 
-            m_uiSettingsDisplay.SetLabel(wxString::Format("%.2fms", static_cast<double>(m_nOffset*1000)/static_cast<double>(m_nSampleRate)));
+            //m_uiSettingsDisplay.SetLabel(wxString::Format("%.2fms", static_cast<double>(m_nOffset*1000)/static_cast<double>(m_nSampleRate)));
         }
 
         //copy the data to the fft buffer
@@ -391,8 +364,6 @@ void fftdiffMeter::SetWindowType(int nType)
     m_buffer.first.clear();
     m_buffer.second.clear();
     m_nWindowType = nType;
-    m_uiSettingsWindow.SetLabel(LABEL_WINDOW[nType]);
-    RefreshRect(m_uiSettingsWindow.GetRect());
 }
 
 void fftdiffMeter::SetOverlap(double dPercent)
@@ -402,8 +373,6 @@ void fftdiffMeter::SetOverlap(double dPercent)
 
     m_dFall = 0.000195 * static_cast<double>(m_nNumberOfSetBins)*(100-m_dOverlapPercent)/100.0;
 
-    m_uiSettingsOverlap.SetLabel(wxString::Format(wxT("Overlap: %.2f%"), m_dOverlapPercent));
-    RefreshRect(m_uiSettingsOverlap.GetRect());
 
 }
 
@@ -427,8 +396,6 @@ void fftdiffMeter::SetNumberOfBins(size_t nBins)
     }
 
     SetOverlap(m_dOverlapPercent);
-    m_uiSettingsBins.SetLabel(wxString::Format(wxT("Res: %.1f Hz"), 24000.0/static_cast<double>(nBins)));
-    RefreshRect(m_uiSettingsBins.GetRect());
 
 }
 

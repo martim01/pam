@@ -13,6 +13,7 @@
 
 class timedbuffer;
 class fftdiffBuilder;
+class SettingEvent;
 
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/
@@ -173,12 +174,6 @@ class fftdiffMeter : public pmControl
         std::vector<subsession::channelGrouping> m_vChannels;
         fftdiffBuilder* m_pBuilder;
 
-        uiRect m_uiSettingsAnalyse;
-        uiRect m_uiSettingsWindow;
-        uiRect m_uiSettingsOverlap;
-        uiRect m_uiSettingsBins;
-        uiRect m_uiSettingsDisplay;
-        uiRect m_uiSettingsMeter;
         uiRect m_uiPeakFrequency;
         uiRect m_uiPeakLevel;
 

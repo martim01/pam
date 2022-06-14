@@ -43,12 +43,14 @@ pnlMain::pnlMain(wxWindow* parent,fftdiffBuilder* pBuilder, wxWindowID id,const 
 	m_pbtnWindow->SetPopup({"None","Hann","Hamming","Blackman","Kaiser","KaiserBessel"}, {"0","1","2","3","4","5"});
 
 	m_pbtnBins->ConnectToSetting(m_pBuilder->GetSection(), "Bins", 1024);
-	m_pbtnBins->SetPopup({"46 Hz","23 Hz","16 Hz","12 Hz"}, {512,1024,1536,2048});
+	m_pbtnBins->SetPopup({"46 Hz","23 Hz","16 Hz","12 Hz"}, {"512","1024","1536","2048"});
 
 	m_pbtnOverlap->ConnectToSetting(m_pBuilder->GetSection(), "Overlap", 75);
-	m_pbtnOverlap->SetPopup({"0%","25%","50%","75%"}, {0,25,50,75});
+	m_pbtnOverlap->SetPopup({"0%","25%","50%","75%"}, {"0","25","50","75"});
 
-    Bind(wxEVT_LEFT_UP, [this](){m_pBuilder->Maximize((GetSize().x <= 600));});
+    Bind(wxEVT_LEFT_UP, [this](wxMouseEvent&){
+                                m_pBuilder->Maximize((GetSize().x <= 600));
+                                });
 }
 
 pnlMain::~pnlMain()
@@ -78,21 +80,25 @@ void pnlMain::SetChannels(const std::vector<subsession::channelGrouping>& vChann
 
 void pnlMain::ResetMax()
 {
-    m_ppnlMain->ResetMax();
+    m_pMeter->ResetMax();
 }
 
 void pnlMain::ResetMin()
 {
-    m_ppnlMain->ResetMin();
+    m_pMeter->ResetMin();
 }
 
 void pnlMain::ResetAverage()
 {
-    m_ppnlMain->ResetAverage();
+    m_pMeter->ResetAverage();
 }
 
 void pnlMain::CalculateDelay()
 {
-    m_ppnlMain->SetDelayMode(1);
+    m_pMeter->SetDelayMode(1);
 }
 
+void pnlMain::SetAudioData(const timedbuffer* pBuffer)
+{
+    m_pMeter->SetAudioData(pBuffer);
+}

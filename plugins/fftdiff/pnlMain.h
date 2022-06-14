@@ -8,6 +8,7 @@
 //*)
 
 class fftdiffBuilder;
+
 class pnlMain: public wxPanel
 {
 	public:
@@ -23,6 +24,15 @@ class pnlMain: public wxPanel
 		wmButton* m_pbtnReset;
 		wmButton* m_pbtnWindow;
 		//*)
+
+		void SetSampleRate(unsigned long nSampleRate);
+        void SetChannels(const std::vector<subsession::channelGrouping>& vChannels);
+        void ResetMax();
+        void ResetMin();
+        void ResetAverage();
+        void CalculateDelay();
+        void SetAudioData(const timedbuffer* pBuffer);
+
 
 	protected:
 

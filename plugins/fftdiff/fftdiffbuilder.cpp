@@ -123,5 +123,5 @@ void fftdiffBuilder::ResetAverage()
 
 void fftdiffBuilder::CalculateDelay()
 {
-    m_ppnlMain->SetDelayMode(1);
+    m_ppnlMain->CalculateDelay();
 }

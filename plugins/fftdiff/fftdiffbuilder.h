@@ -40,7 +40,7 @@ class WXEXPORT fftdiffBuilder : public MonitorPluginBuilder
 
         void LoadSettings();
 
-        pnlMain m_ppnlMain;
+        pnlMain* m_ppnlMain;
 
 };
 
