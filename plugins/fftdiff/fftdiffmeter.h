@@ -121,6 +121,8 @@ class fftdiffMeter : public pmControl
         void TurnoffNudge();
 
         void SetDelayMode(long nMode);
+        void SetDelayWindow(unsigned long nWindow);
+        void SetDelayAccuracy(unsigned long nAccuracy);
         void SetVerticalRange(unsigned long ndB);
 
         enum {DISPLAY_GRAPH, DISPLAY_LINES, DISPLAY_EQ};
@@ -131,7 +133,7 @@ class fftdiffMeter : public pmControl
         Json::Value CreateWebsocketMessage();
   protected:
 
-
+        void OnSettingChanged(SettingEvent& event);
         /** Called to draw the console
         *   @param event
         **/

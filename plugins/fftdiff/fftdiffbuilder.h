@@ -35,8 +35,6 @@ class WXEXPORT fftdiffBuilder : public MonitorPluginBuilder
     	friend class pnlDelay;
     	friend class pnlRange;
 
-        void OnSettingChanged(SettingEvent& event);
-
         virtual wxWindow* CreateMonitorPanel(wxWindow* pParent);
         virtual std::list<pairOptionPanel_t>CreateOptionPanels(wxWindow* pParent);
 

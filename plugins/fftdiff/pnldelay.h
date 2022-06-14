@@ -5,8 +5,8 @@
 #include "wmbutton.h"
 #include <wx/panel.h>
 //*)
-#include <wmlist.h>
-
+#include "wmlist.h"
+#include "wmlabel.h"
 class fftdiffBuilder;
 class SettingEvent;
 class pnlDelay: public wxPanel
@@ -17,7 +17,14 @@ class pnlDelay: public wxPanel
 		virtual ~pnlDelay();
 
         void SelectCursorMode(bool bSelect);
+
 		wmList* m_plstMode;
+
+		wmLabel* m_plblWindow;
+		wmList* m_plstWindow;
+
+		wmLabel* m_plblAccuracy;
+		wmList* m_plstAccuracy;
 		wmButton* m_pbtnCalculate;
 
 	protected:

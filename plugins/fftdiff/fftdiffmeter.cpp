@@ -61,6 +61,9 @@ fftdiffMeter::fftdiffMeter(wxWindow *parent, fftdiffBuilder* pBuilder, wxWindowI
     m_HeatMap.createDefaultHeatMapGradient();
 
     SetNumberOfBins(1024);
+
+    m_pBuilder->RegisterForSettingsUpdates(this);
+    Bind(wxEVT_SETTING_CHANGED, &fftdiffMeter::OnSettingChanged, this);
 }
 
 bool fftdiffMeter::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size)
@@ -590,4 +593,71 @@ void fftdiffMeter::SetDelayMode(long nMode)
 void fftdiffMeter::SetVerticalRange(unsigned long ndB)
 {
     m_dVerticalResolution = std::min(80.0, static_cast<double>(ndB));
+}
+
+void fftdiffMeter::SetDelayWindow(unsigned long nWindow)
+{
+    m_delayLine.SetWindowSize(nWindow*m_nSampleRate/500);
+}
+
+void fftdiffMeter::SetDelayAccuracy(unsigned long nAccuracy)
+{
+    m_delayLine.SetAccuracy(nAccuracy);
+}
+
+
+void fftdiffMeter::OnSettingChanged(SettingEvent& event)
+{
+    if(event.GetKey() == "max")
+    {
+        ShowMax(event.GetValue(false));
+    }
+    else if(event.GetKey() == "min")
+    {
+        ShowMin(event.GetValue(false));
+    }
+    else if(event.GetKey() == "average")
+    {
+        ShowAverage(event.GetValue(false));
+    }
+    else if(event.GetKey() == "Bins")
+    {
+        SetNumberOfBins(event.GetValue(long(0)));
+    }
+    else if(event.GetKey() == "Window")
+    {
+        SetWindowType(event.GetValue(long(0)));
+    }
+    else if(event.GetKey() == "Overlap")
+    {
+        SetOverlap(event.GetValue(0.0));
+    }
+    else if(event.GetKey() == "Hold")
+    {
+        SetHold(event.GetValue(long(0)));
+    }
+    else if(event.GetKey() == "Cursor")
+    {
+        SetCursorMode(event.GetValue(long(0)));
+    }
+    else if(event.GetKey() == "Colour")
+    {
+        SetColourMode(event.GetValue(long(0)));
+    }
+    else if(event.GetKey() == "DelayMode")
+    {
+        SetDelayMode(event.GetValue(long(0)));
+    }
+    else if(event.GetKey() == "DelayWindow")
+    {
+        SetDelayWindow(event.GetValue(long(0)));
+    }
+    else if(event.GetKey() == "DelayAccuracy")
+    {
+        SetDelayAccuracy(event.GetValue(long(0)));
+    }
+    else if(event.GetKey() == "Range")
+    {
+        SetVerticalRange(event.GetValue(long(0)));
+    }
 }
