@@ -174,8 +174,6 @@ class fftdiffMeter : public pmControl
         std::vector<subsession::channelGrouping> m_vChannels;
         fftdiffBuilder* m_pBuilder;
 
-        uiRect m_uiPeakFrequency;
-        uiRect m_uiPeakLevel;
 
         bool m_bHold;
         bool m_bShowMax;

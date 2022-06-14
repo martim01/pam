@@ -82,7 +82,7 @@ bool fftdiffMeter::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, c
 
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
-    m_rectGrid = wxRect(GetClientRect().GetLeft()+40, GetClientRect().GetTop(), GetClientRect().GetWidth()-40, GetClientRect().GetHeight());
+    m_rectGrid = wxRect(GetClientRect().GetLeft()+40, GetClientRect().GetTop(), GetClientRect().GetWidth()-40, GetClientRect().GetHeight()-25);
 
 
 
@@ -211,7 +211,7 @@ void fftdiffMeter::DrawGraph(wxDC& dc, const std::vector<float>& vSpectrum, cons
 
 void fftdiffMeter::OnSize(wxSizeEvent& event)
 {
-    m_rectGrid = wxRect(GetClientRect().GetLeft()+40, GetClientRect().GetTop(), GetClientRect().GetWidth()-40, GetClientRect().GetHeight());
+    m_rectGrid = wxRect(GetClientRect().GetLeft()+40, GetClientRect().GetTop(), GetClientRect().GetWidth()-40, GetClientRect().GetHeight()-25);
 
 
     m_uiClose.SetRect(GetClientRect().GetRight()-85, GetClientRect().GetTop()+5, 80, 50);

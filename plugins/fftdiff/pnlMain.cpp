@@ -39,18 +39,20 @@ pnlMain::pnlMain(wxWindow* parent,fftdiffBuilder* pBuilder, wxWindowID id,const 
 	Connect(ID_M_PBTN7,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlMain::OnbtnResetClick);
 	//*)
 
-	m_pbtnWindow->ConnectToSetting(m_pBuilder->GetSection(), "Window", 4);
 	m_pbtnWindow->SetPopup({"None","Hann","Hamming","Blackman","Kaiser","KaiserBessel"}, {"0","1","2","3","4","5"});
+	m_pbtnWindow->ConnectToSetting(m_pBuilder->GetSection(), "Window", "4");
 
-	m_pbtnBins->ConnectToSetting(m_pBuilder->GetSection(), "Bins", 1024);
+
 	m_pbtnBins->SetPopup({"46 Hz","23 Hz","16 Hz","12 Hz"}, {"512","1024","1536","2048"});
+	m_pbtnBins->ConnectToSetting(m_pBuilder->GetSection(), "Bins", "1024");
 
-	m_pbtnOverlap->ConnectToSetting(m_pBuilder->GetSection(), "Overlap", 75);
-	m_pbtnOverlap->SetPopup({"0%","25%","50%","75%"}, {"0","25","50","75"});
+    m_pbtnOverlap->SetPopup({"0%","25%","50%","75%"}, {"0","25","50","75"});
+	m_pbtnOverlap->ConnectToSetting(m_pBuilder->GetSection(), "Overlap", "75");
 
-    Bind(wxEVT_LEFT_UP, [this](wxMouseEvent&){
-                                m_pBuilder->Maximize((GetSize().x <= 600));
-                                });
+
+    Bind(wxEVT_LEFT_UP, [this](wxMouseEvent&){m_pBuilder->Maximize((GetSize().x <= 600));});
+    Bind(wxEVT_COMMAND_BUTTON_CLICKED, [this](wxCommandEvent&){CalculateDelay();}, m_pbtnDelay->GetId());
+    Bind(wxEVT_SIZE, [this](wxSizeEvent&){m_pMeter->SetSize(GetSize().x, GetSize().y-40);});
 }
 
 pnlMain::~pnlMain()
