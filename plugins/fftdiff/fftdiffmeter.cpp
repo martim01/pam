@@ -33,8 +33,7 @@ const double fftdiffMeter::OCTAVE_LOW_3 = 13.9;
 
 fftdiffMeter::fftdiffMeter(wxWindow *parent, fftdiffBuilder* pBuilder, wxWindowID id, const wxPoint& pos, const wxSize& size) : pmControl(),
     m_pBuilder(pBuilder),
-    m_dVerticalResolution(100.0),
-    m_nDelayMode(0)
+    m_dVerticalResolution(100.0)
 {
     Create(parent, id, pos, size);
     m_nPeakCutoff = -50;
@@ -47,11 +46,8 @@ fftdiffMeter::fftdiffMeter(wxWindow *parent, fftdiffBuilder* pBuilder, wxWindowI
     m_bShowMin = false;
     m_bShowAverage = true;
 
-    m_nSelectedChannels[0] = 0;
-    m_nSelectedChannels[1] = 1;
 
-    m_vChannels.push_back(subsession::channelGrouping(0,subsession::enumChannelGrouping::ST, subsession::enumChannel::LEFT));
-    m_vChannels.push_back(subsession::channelGrouping(0,subsession::enumChannelGrouping::ST, subsession::enumChannel::RIGHT));
+
 
     m_nSampleRate = 48000;
 
@@ -248,46 +244,16 @@ void fftdiffMeter::SetSampleRate(unsigned long nSampleRate)
     m_nSampleRate = nSampleRate;
 }
 
-void fftdiffMeter::SetChannels(const std::vector<subsession::channelGrouping>& vChannels)
-{
-    m_vChannels = vChannels;
-}
 
-void fftdiffMeter::SetAudioData(const timedbuffer* pBuffer)
+void fftdiffMeter::SetAudioData(const nonInterlacedVector& data)
 {
-    if(!m_bHold &&  m_vChannels.size() != 0)
+    //copy the data to the fft buffer
+    std::copy(data.first.begin(), data.first.end(), std::back_inserter(m_buffer.first));
+    std::copy(data.second.begin(), data.second.end(), std::back_inserter(m_buffer.second));
+
+    while(m_buffer.first.size() > (m_vfft_out[0].size()-1))
     {
-        nonInterlacedVector data;
-        data.first.reserve((pBuffer->GetBufferSize()/m_vChannels.size()));
-        data.second.reserve((pBuffer->GetBufferSize()/m_vChannels.size()));
-
-        for(size_t i = 0; i < pBuffer->GetBufferSize(); i+=m_vChannels.size())
-        {
-            data.first.push_back(pBuffer->GetBuffer()[i+m_nSelectedChannels[0]]);
-            data.second.push_back(pBuffer->GetBuffer()[i+m_nSelectedChannels[1]]);
-
-        }
-
-        if(m_nDelayMode != DELAY_OFF)
-        {
-            m_nOffset = m_delayLine.ProcessAudio(data);
-
-            //m_uiSettingsDisplay.SetLabel(wxString::Format("%.2fms", static_cast<double>(m_nOffset*1000)/static_cast<double>(m_nSampleRate)));
-        }
-        else
-        {
-            m_nOffset = 0;
-        }
-
-        //copy the data to the fft buffer
-        std::copy(data.first.begin(), data.first.end(), std::back_inserter(m_buffer.first));
-        std::copy(data.second.begin(), data.second.end(), std::back_inserter(m_buffer.second));
-
-
-        while(m_buffer.first.size() > (m_vfft_out[0].size()-1))
-        {
-            DoFFT();
-        }
+        DoFFT();
     }
 }
 
@@ -351,15 +317,6 @@ float fftdiffMeter::WindowMod(float dAmplitude)
 
     }
     return dAmplitude;
-}
-
-
-void fftdiffMeter::SetChannels(int nA, int nB)
-{
-    m_nSelectedChannels[0] = nA;
-    m_nSelectedChannels[1] = nB;
-
-
 }
 
 void fftdiffMeter::SetWindowType(int nType)
@@ -535,33 +492,9 @@ Json::Value fftdiffMeter::CreateWebsocketMessage()
     return jsData;
 }
 
-void fftdiffMeter::SetDelayMode(long nMode)
-{
-    m_nDelayMode = nMode;
-    switch(m_nDelayMode)
-    {
-        case DELAY_ONE:
-            m_delayLine.SetCalculationMode(true);
-            break;
-        case DELAY_AUTO:
-            m_delayLine.SetCalculationMode(false);
-            break;
-    }
-}
-
 void fftdiffMeter::SetVerticalRange(unsigned long ndB)
 {
     m_dVerticalResolution = std::min(80.0, static_cast<double>(ndB));
-}
-
-void fftdiffMeter::SetDelayWindow(unsigned long nWindow)
-{
-    m_delayLine.SetWindowSize(nWindow*m_nSampleRate/500);
-}
-
-void fftdiffMeter::SetDelayAccuracy(unsigned long nAccuracy)
-{
-    m_delayLine.SetAccuracy(nAccuracy);
 }
 
 
@@ -603,34 +536,10 @@ void fftdiffMeter::OnSettingChanged(SettingEvent& event)
     {
         SetColourMode(event.GetValue(long(0)));
     }
-    else if(event.GetKey() == "DelayMode")
-    {
-        SetDelayMode(event.GetValue(long(0)));
-    }
-    else if(event.GetKey() == "DelayWindow")
-    {
-        SetDelayWindow(event.GetValue(long(0)));
-    }
-    else if(event.GetKey() == "DelayAccuracy")
-    {
-        SetDelayAccuracy(event.GetValue(long(0)));
-    }
     else if(event.GetKey() == "Range")
     {
         SetVerticalRange(event.GetValue(long(0)));
     }
-    else if(event.GetKey() == "ChannelA")
-    {
-        m_nSelectedChannels[0] = std::min(m_vChannels.size(), static_cast<size_t>(event.GetValue(0l)));
-    }
-    else if(event.GetKey() == "ChannelB")
-    {
-        m_nSelectedChannels[1] = std::min(m_vChannels.size(), static_cast<size_t>(event.GetValue(1l)));
-    }
 }
 
 
-void fftdiffMeter::ResetDelay()
-{
-    m_delayLine.Reset();
-}

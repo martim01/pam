@@ -63,7 +63,7 @@ class fftdiffMeter : public pmControl
 
         void SetFreqMag(const freq_mag& fm);
 
-        void SetAudioData(const timedbuffer* pBuffer);
+        void SetAudioData(const nonInterlacedVector& buffer);
         void SetSampleRate(unsigned long nSampleRate);
 
         void SetHold(bool bHold);
@@ -93,9 +93,6 @@ class fftdiffMeter : public pmControl
             m_dFall = ddB;
         }
 
-        void SetChannels(const std::vector<subsession::channelGrouping>& vChannels);
-
-        void SetChannels(int nA, int nB);
         void SetWindowType(int nType);
         void SetOverlap(double dPercent);
         void SetBufferSize(size_t nFrames);
@@ -121,13 +118,8 @@ class fftdiffMeter : public pmControl
 
         void TurnoffNudge();
 
-        void ResetDelay();
-        void SetDelayMode(long nMode);
-        void SetDelayWindow(unsigned long nWindow);
-        void SetDelayAccuracy(unsigned long nAccuracy);
         void SetVerticalRange(unsigned long ndB);
 
-        int GetOffset() const { return m_nOffset;}
         unsigned long GetSampleRate() const { return m_nSampleRate;}
 
         enum {DISPLAY_GRAPH, DISPLAY_LINES, DISPLAY_EQ};
@@ -175,7 +167,6 @@ class fftdiffMeter : public pmControl
         std::vector<float> m_vMin;
 
         double m_dTotalFrames;
-        std::vector<subsession::channelGrouping> m_vChannels;
         fftdiffBuilder* m_pBuilder;
 
 
@@ -188,7 +179,7 @@ class fftdiffMeter : public pmControl
         double m_dBinSize;
         double m_dVerticalResolution;
 
-        int m_nSelectedChannels[2];
+
 
         double m_dFall;
         int m_nPeakCutoff;
@@ -243,11 +234,7 @@ class fftdiffMeter : public pmControl
         double m_dPeakLevel;
         double m_dPeakFrequency;
 
-        DelayLine m_delayLine;
-        int m_nOffset;
-        long m_nDelayMode;
 
-        enum {DELAY_OFF=0, DELAY_ONE, DELAY_AUTO};
 
 };
 

@@ -8,7 +8,9 @@
 #include <wx/panel.h>
 //*)
 
+#include "delayline.h"
 class fftdiffBuilder;
+class SettingEvent;
 
 class pnlMain: public wxPanel
 {
@@ -70,8 +72,22 @@ class pnlMain: public wxPanel
 		void OnbtnResetClick(wxCommandEvent& event);
 		//*)
 
+		void OnSettingChange(SettingEvent& event);
+
 		fftdiffBuilder* m_pBuilder;
 		int m_nOffset;
+        int m_nSelectedChannels[2];
+        std::vector<subsession::channelGrouping> m_vChannels;
+
+		DelayLine m_delayLine;
+        long m_nDelayMode;
+        unsigned long m_nSampleRate;
+
+        double m_dAverage = 0.0;
+        double m_dTotalFrames = 0.0;
+
+        enum {DELAY_OFF=0, DELAY_ONE, DELAY_AUTO};
+
 		DECLARE_EVENT_TABLE()
 };
 

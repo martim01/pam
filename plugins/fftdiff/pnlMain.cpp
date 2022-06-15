@@ -1,6 +1,7 @@
 #include "pnlMain.h"
 #include "fftdiffbuilder.h"
 #include "log.h"
+#include "settingevent.h"
 //(*InternalHeaders(pnlMain)
 #include <wx/intl.h>
 #include <wx/string.h>
@@ -31,6 +32,9 @@ END_EVENT_TABLE()
 
 pnlMain::pnlMain(wxWindow* parent,fftdiffBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) : m_pBuilder(pBuilder)
 {
+    m_nSelectedChannels[0] = 0;
+    m_nSelectedChannels[1] = 1;
+
 	//(*Initialize(pnlMain)
 	Create(parent, wxID_ANY, wxDefaultPosition, wxSize(800,480), wxTAB_TRAVERSAL, _T("wxID_ANY"));
 	SetBackgroundColour(wxColour(0,0,0));
@@ -101,10 +105,15 @@ pnlMain::pnlMain(wxWindow* parent,fftdiffBuilder* pBuilder, wxWindowID id,const 
 
     Bind(wxEVT_LEFT_UP, [this](wxMouseEvent&){m_pBuilder->Maximize((GetSize().x <= 600));});
     Bind(wxEVT_COMMAND_BUTTON_CLICKED, [this](wxCommandEvent& event){ CalculateDelay(); }, m_pbtnDelayCalculate->GetId());
-    Bind(wxEVT_COMMAND_BUTTON_CLICKED, [this](wxCommandEvent& event){ m_pMeter->ResetDelay(); m_plblDelay->SetLabel("0ms"); }, m_pbtnDelayReset->GetId());
+    Bind(wxEVT_COMMAND_BUTTON_CLICKED, [this](wxCommandEvent& event){ m_delayLine.Reset(); m_plblDelay->SetLabel("0ms"); }, m_pbtnDelayReset->GetId());
 
     Bind(wxEVT_SIZE, [this](wxSizeEvent&){m_pMeter->SetSize(GetSize().x, GetSize().y-80);});
 
+    m_pBuilder->RegisterForSettingsUpdates(this);
+    Bind(wxEVT_SETTING_CHANGED, &pnlMain::OnSettingChange, this);
+
+    m_vChannels.push_back(subsession::channelGrouping(0,subsession::enumChannelGrouping::ST, subsession::enumChannel::LEFT));
+    m_vChannels.push_back(subsession::channelGrouping(0,subsession::enumChannelGrouping::ST, subsession::enumChannel::RIGHT));
 }
 
 pnlMain::~pnlMain()
@@ -123,14 +132,15 @@ void pnlMain::OnbtnResetClick(wxCommandEvent& event)
 
 void pnlMain::SetSampleRate(unsigned long nSampleRate)
 {
+    m_nSampleRate = nSampleRate;
     m_pMeter->SetSampleRate(nSampleRate);
 }
 
 void pnlMain::SetChannels(const std::vector<subsession::channelGrouping>& vChannels)
 {
-    m_pMeter->SetChannels(vChannels);
+    m_vChannels = vChannels;
 
-    if(vChannels.size() == 2)
+    if(m_vChannels.size() == 2)
     {
         m_pbtnChannelA->SetPopup({"Left","Right"},{"0","1"});
         m_pbtnChannelB->SetPopup({"Left","Right"},{"0","1"});
@@ -138,12 +148,12 @@ void pnlMain::SetChannels(const std::vector<subsession::channelGrouping>& vChann
     }
     else
     {
-        std::vector<wxString> vLabels(vChannels.size());
-        std::vector<wxString> vValues(vChannels.size());
+        std::vector<wxString> vLabels(m_vChannels.size());
+        std::vector<wxString> vValues(m_vChannels.size());
 
-        for(unsigned int i = 0; i < vChannels.size(); i++)
+        for(unsigned int i = 0; i < m_vChannels.size(); i++)
         {
-            vLabels[i] = GetChannelLabelLong(vChannels[i]);
+            vLabels[i] = GetChannelLabelLong(m_vChannels[i]);
             vValues[i] = wxString::Format("%u",i);
         }
         m_pbtnChannelA->SetPopup(vLabels, vValues);;
@@ -169,16 +179,55 @@ void pnlMain::ResetAverage()
 
 void pnlMain::CalculateDelay()
 {
-    m_pMeter->SetDelayMode(1);
+    m_delayLine.SetCalculationMode(true);
 }
-
 
 void pnlMain::SetAudioData(const timedbuffer* pBuffer)
 {
-    m_pMeter->SetAudioData(pBuffer);
-    if(m_nOffset != m_pMeter->GetOffset())
+    if(m_vChannels.size() != 0)
     {
-        m_nOffset = m_pMeter->GetOffset();
+        nonInterlacedVector data;
+        data.first.reserve((pBuffer->GetBufferSize()/m_vChannels.size()));
+        data.second.reserve((pBuffer->GetBufferSize()/m_vChannels.size()));
+
+        for(size_t i = 0; i < pBuffer->GetBufferSize(); i+=m_vChannels.size())
+        {
+            data.first.push_back(pBuffer->GetBuffer()[i+m_nSelectedChannels[0]]);
+            data.second.push_back(pBuffer->GetBuffer()[i+m_nSelectedChannels[1]]);
+
+            float dLogA = log10(abs(pBuffer->GetBuffer()[i+m_nSelectedChannels[0]]));
+            float dLogB = log10(abs(pBuffer->GetBuffer()[i+m_nSelectedChannels[1]]));
+            float dLog = 20*(-dLogA+dLogB);
+
+            m_dAverage = m_dAverage + ((dLog-m_dAverage)/(m_dTotalFrames+1));
+
+        }
+        m_dTotalFrames++;
+
+        m_nOffset = m_delayLine.ProcessAudio(data);
+
         m_plblDelay->SetLabel(wxString::Format("%.1fms", static_cast<double>(m_nOffset*1000)/static_cast<double>(m_pMeter->GetSampleRate())));
+
+        m_pMeter->SetAudioData(data);
+    }
+}
+
+void pnlMain::OnSettingChange(SettingEvent& event)
+{
+    if(event.GetKey() == "DelayWindow")
+    {
+        m_delayLine.SetWindowSize(event.GetValue(long(0))*m_nSampleRate/500);
+    }
+    else if(event.GetKey() == "DelayAccuracy")
+    {
+        m_delayLine.SetAccuracy(event.GetValue(long(0)));
+    }
+    else if(event.GetKey() == "ChannelA")
+    {
+        m_nSelectedChannels[0] = std::min(m_vChannels.size(), static_cast<size_t>(event.GetValue(0l)));
+    }
+    else if(event.GetKey() == "ChannelB")
+    {
+        m_nSelectedChannels[1] = std::min(m_vChannels.size(), static_cast<size_t>(event.GetValue(1l)));
     }
 }

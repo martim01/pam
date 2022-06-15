@@ -20,12 +20,11 @@ using namespace std;
 fftdiffBuilder::fftdiffBuilder() : TestPluginBuilder()
 {
 
-    RegisterRemoteApiEnum("peaks", {{0,"Off"}, {1,"On"}}, 0);
-    RegisterRemoteApiEnum("troughs", {{0,"Off"}, {1,"On"}}, 0);
     RegisterRemoteApiEnum("Bins", {{512,"46 Hz"},{1024,"23 Hz"},{1536,"16 Hz"},{2048,"12 Hz"}}, 1024);
     RegisterRemoteApiEnum("Window", {{0,"None"},{1,"Hann"},{2,"Hamming"},{3,"Blackman"},{4,"Kaiser"},{5,"KaiserBessel"}}, 4);
     RegisterRemoteApiEnum("Overlap", {{0,"0%"},{25,"25%"},{50,"50%"},{75,"75%"}}, 75);
-//    RegisterRemoteApiRangeInt("Routing", {0,7},0);   //@todo this should be dynamic based on sessions
+    RegisterRemoteApiRangeInt("ChannelA", {0,7},0);   //@todo this should be dynamic based on sessions
+    RegisterRemoteApiRangeInt("ChannelB", {0,7},1);   //@todo this should be dynamic based on sessions
     RegisterRemoteApiEnum("Hold", {{0,"Off"}, {1,"On"}}, 0);
     RegisterRemoteApiEnum("Cursor", {{0,"Off"}, {1,"On"}}, 0);
     RegisterRemoteApiEnum("Colour", {{0,"Off"}, {1,"On"}}, 0);
