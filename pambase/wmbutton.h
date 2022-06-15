@@ -258,6 +258,7 @@ class PAMBASE_IMPEXPORT wmButton : public pmControl
         }
 
         void SetToggle(bool bLook, const wxString& sLeft = wxEmptyString, const wxString& sRight = wxEmptyString, double dButtonPercent=33);
+        void SetToggleLook(bool bLook, const wxString& sLeft = wxEmptyString, const wxString& sRight = wxEmptyString, double dButtonPercent=33);
 
 
         void SetPopup(const std::vector<wxString>& vOptions, const std::vector<wxString>& vValues=std::vector<wxString>());

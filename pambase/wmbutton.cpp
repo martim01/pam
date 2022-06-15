@@ -713,13 +713,18 @@ const wxString& wmButton::GetAuxillaryText() const
     return m_sAuxillary;
 }
 
-
+void wmButton::SetToggleLook(bool bLook, const wxString& sLeft, const wxString& sRight, double dButtonPercent)
+{
+    SetToggle(bLook, sLeft, sRight, dButtonPercent);
+}
 void wmButton::SetToggle(bool bLook, const wxString& sLeft, const wxString& sRight, double dButtonPercent)
 {
     m_bToggleLook = bLook;
     m_uiToggleLeft.SetLabel(sLeft);
     m_uiToggleRight.SetLabel(sRight);
     m_dToggleWidth = dButtonPercent;
+
+    m_nStyle |= STYLE_SELECT;
     CreateRects();
     //Refresh();
 }
