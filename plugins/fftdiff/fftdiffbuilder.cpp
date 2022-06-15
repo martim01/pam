@@ -17,7 +17,7 @@
 
 using namespace std;
 
-fftdiffBuilder::fftdiffBuilder() : MonitorPluginBuilder()
+fftdiffBuilder::fftdiffBuilder() : TestPluginBuilder()
 {
 
     RegisterRemoteApiEnum("peaks", {{0,"Off"}, {1,"On"}}, 0);
@@ -41,38 +41,12 @@ void fftdiffBuilder::SetAudioData(const timedbuffer* pBuffer)
     m_ppnlMain->SetAudioData(pBuffer);
 }
 
-wxWindow* fftdiffBuilder::CreateMonitorPanel(wxWindow* pParent)
+wxWindow* fftdiffBuilder::CreateTestPanel(wxWindow* pParent)
 {
     m_ppnlMain = new pnlMain(pParent,this);
 	return m_ppnlMain;
 
 }
-
-list<pairOptionPanel_t> fftdiffBuilder::CreateOptionPanels(wxWindow* pParent)
-{
-    list<pairOptionPanel_t> lstOptionPanels;
-
-    //m_ppnlRouting = new pnlRoutiing(pParent,this);
-    pnlWindow* pWindow = new pnlWindow(pParent,this);
-    pnlOverlap* pOverlap = new pnlOverlap(pParent,this);
-    pnlBins* pBins = new pnlBins(pParent,this);
-    pnlOptions* pOptions = new pnlOptions(pParent,this);
-    pnlMode* pMode = new pnlMode(pParent,this);
-
-    //lstOptionPanels.push_back(make_pair(wxT("Routing"), m_ppnlRouting));
-    lstOptionPanels.push_back(make_pair(wxT("Window"), pWindow));
-    lstOptionPanels.push_back(make_pair(wxT("Overlap"), pOverlap));
-    lstOptionPanels.push_back(make_pair(wxT("Bins"), pBins));
-    lstOptionPanels.push_back(make_pair(wxT("Display"), pOptions));
-    lstOptionPanels.push_back(make_pair(wxT("Mode"), pMode));
-
-    lstOptionPanels.push_back(make_pair(wxT("Delay"), new pnlDelay(pParent, this)));
-    lstOptionPanels.push_back(make_pair(wxT("Range"), new pnlRange(pParent, this)));
-
-    return lstOptionPanels;
-}
-
-
 
 
 void fftdiffBuilder::LoadSettings()

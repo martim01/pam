@@ -69,13 +69,13 @@ fftdiffMeter::fftdiffMeter(wxWindow *parent, fftdiffBuilder* pBuilder, wxWindowI
 bool fftdiffMeter::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size)
 {
     wxSize szInit(size);
-    wxSize bestSize = DoGetBestSize();
-    if(size.x<=0)
-        szInit.SetWidth(bestSize.x);
-    if(size.y <= 0)
-        szInit.SetHeight(bestSize.y);
 
-    if(!wxWindow::Create(parent,id,pos,szInit,wxWANTS_CHARS, wxT("fft")))
+    if(size.x<=0)
+        szInit.SetWidth(800);
+    if(size.y <= 0)
+        szInit.SetHeight(400);
+
+    if(!wxWindow::Create(parent,id,pos,szInit,wxWANTS_CHARS, wxT("fftdiff")))
         return false;
 
     SetMinSize(size);
@@ -112,15 +112,18 @@ void fftdiffMeter::OnPaint(wxPaintEvent& event)
 
     //draw horizonal lines
     uiRect uiLevel;
-    for(double i = 0; i < m_dVerticalResolution; i += 10)
+    double dLines = 10.0;
+    for(double i = 0; i <= dLines; i ++)
     {
-        int nDB = (static_cast<double>(m_rectGrid.GetHeight()/m_dVerticalResolution) * i);
+        int y = static_cast<double>(m_rectGrid.GetHeight())/dLines*i;
+        double dDb = (m_dVerticalResolution/dLines)*i-(m_dVerticalResolution/2.0);
 
-        uiLevel.SetRect(5, nDB-10, m_rectGrid.GetLeft()-5, 20);
-        uiLevel.SetLabel(wxString::Format(wxT("%.0f"),-(i-m_dVerticalResolution/2)));
+        uiLevel.SetRect(5, y-10, m_rectGrid.GetLeft()-5, 20);
+        uiLevel.SetLabel(wxString::Format(wxT("%.0f"),-dDb));
+        uiLevel.SetBackgroundColour(wxColour(50,50,50));
         uiLevel.Draw(dc,uiRect::BORDER_NONE);
         dc.SetPen(wxPen(wxColour(100,100,100),1 ));
-        dc.DrawLine(m_rectGrid.GetLeft(), nDB, m_rectGrid.GetWidth()+m_rectGrid.GetLeft(), nDB);
+        dc.DrawLine(m_rectGrid.GetLeft(), y, m_rectGrid.GetWidth()+m_rectGrid.GetLeft(), y);
 
     }
 
@@ -133,13 +136,14 @@ void fftdiffMeter::DrawFFT(wxDC& dc)
     dc.SetTextForeground(GetForegroundColour());
 
     uiRect uiLabel;
-    wxPen penLine(wxColour(120,120,120),1);
+    wxPen penLine(wxColour(100,100,100),1);
     for(size_t i = 1; i < m_vfft_out[0].size()-1; i*= 2)
     {
         dc.SetPen(penLine);
         int x = static_cast<int>( (static_cast<double>(m_rectGrid.GetWidth())/(log(m_vfft_out[0].size()))) * log(static_cast<double>(i))) + m_rectGrid.GetLeft();
         dc.DrawLine(x, 0, x, m_rectGrid.GetHeight());
-        uiLabel.SetRect(wxRect(x-20, m_rectGrid.GetBottom()+1, 40, 20));
+        uiLabel.SetRect(wxRect(x-20, m_rectGrid.GetBottom()+2, 40, 20));
+        uiLabel.SetBackgroundColour(wxColour(50,50,50));
         uiLabel.Draw(dc, wxString::Format(wxT("%.0f"), m_dBinSize*static_cast<double>(i)), uiRect::BORDER_NONE);
 
     }
@@ -172,7 +176,6 @@ void fftdiffMeter::DrawFFT(wxDC& dc)
         dc.SetPen(wxPen(wxColour(255,100,00), 1));
         dc.DrawLine(x, m_rectGrid.GetTop(), x, m_rectGrid.GetBottom());
 
-        m_uiClose.Draw(dc, wxT("Exit"), uiRect::BORDER_UP);
         m_uiAmplitude.Draw(dc, wxString::Format(wxT("%.2f dB"), m_vAmplitude[m_nBinSelected]), uiRect::BORDER_NONE);
         m_uiAverage.Draw(dc, wxString::Format(wxT("%.2f dB"), m_vAverage[m_nBinSelected]), uiRect::BORDER_NONE);
         m_uiBin.Draw(dc, wxString::Format(wxT("%.0f Hz"), m_dBinSize*static_cast<double>(m_nBinSelected)), uiRect::BORDER_NONE);
@@ -213,15 +216,11 @@ void fftdiffMeter::OnSize(wxSizeEvent& event)
 {
     m_rectGrid = wxRect(GetClientRect().GetLeft()+40, GetClientRect().GetTop(), GetClientRect().GetWidth()-40, GetClientRect().GetHeight()-25);
 
-
-    m_uiClose.SetRect(GetClientRect().GetRight()-85, GetClientRect().GetTop()+5, 80, 50);
-    m_uiClose.SetBackgroundColour(*wxRED);
-
-    m_uiAmplitude.SetRect(m_uiClose.GetLeft()-120, m_uiClose.GetTop(), 100, m_uiClose.GetHeight());
+    m_uiAmplitude.SetRect(GetClientRect().GetRight()-120, 2, 100, 30);
     m_uiAmplitude.SetBackgroundColour(*wxWHITE);
     m_uiAmplitude.SetForegroundColour(*wxBLACK);
 
-    m_uiAverage.SetRect(m_uiAmplitude.GetLeft()-105, m_uiClose.GetTop(), 100, m_uiClose.GetHeight());
+    m_uiAverage.SetRect(m_uiAmplitude.GetLeft()-105, m_uiAmplitude.GetTop(), 100, m_uiAmplitude.GetHeight());
     m_uiAverage.SetBackgroundColour(*wxWHITE);
     m_uiAverage.SetForegroundColour(*wxBLACK);
 
@@ -274,6 +273,10 @@ void fftdiffMeter::SetAudioData(const timedbuffer* pBuffer)
             m_nOffset = m_delayLine.ProcessAudio(data);
 
             //m_uiSettingsDisplay.SetLabel(wxString::Format("%.2fms", static_cast<double>(m_nOffset*1000)/static_cast<double>(m_nSampleRate)));
+        }
+        else
+        {
+            m_nOffset = 0;
         }
 
         //copy the data to the fft buffer
@@ -425,10 +428,7 @@ void fftdiffMeter::OnLeftDown(wxMouseEvent& event)
     if(m_bCursorMode)
     {
         m_nNudge = NONE;
-        if(m_uiClose.Contains(event.GetPosition()))
-        {
-        }
-        else if(m_uiNudgeDown.Contains(event.GetPosition()))
+        if(m_uiNudgeDown.Contains(event.GetPosition()))
         {
             m_nBinSelected = max(m_nBinSelected-1, (size_t)1);
             m_timerNudge.Start(100);
@@ -487,15 +487,7 @@ void fftdiffMeter::OnLeftUp(wxMouseEvent& event)
     }
     else
     {
-        if(m_uiClose.Contains(event.GetPosition()))
-        {
-            m_bCursorMode = false;
-            m_pBuilder->WriteSetting("Cursor", false);
-        }
-        else
-        {
             TurnoffNudge();
-        }
     }
 
 }
@@ -626,6 +618,14 @@ void fftdiffMeter::OnSettingChanged(SettingEvent& event)
     else if(event.GetKey() == "Range")
     {
         SetVerticalRange(event.GetValue(long(0)));
+    }
+    else if(event.GetKey() == "ChannelA")
+    {
+        m_nSelectedChannels[0] = std::min(m_vChannels.size(), static_cast<size_t>(event.GetValue(0l)));
+    }
+    else if(event.GetKey() == "ChannelB")
+    {
+        m_nSelectedChannels[1] = std::min(m_vChannels.size(), static_cast<size_t>(event.GetValue(1l)));
     }
 }
 

@@ -1,44 +1,37 @@
 #pragma once
-#include "monitorpluginbuilder.h"
+#include "testpluginbuilder.h"
 #include <wx/string.h>
 
 class SettingEvent;
 class pnlMain;
 
-class WXEXPORT fftdiffBuilder : public MonitorPluginBuilder
+class WXEXPORT fftdiffBuilder : public TestPluginBuilder
 {
     public:
         fftdiffBuilder();
 
-        virtual void SetAudioData(const timedbuffer* pBuffer);
+        void SetAudioData(const timedbuffer* pBuffer) override;
 
-        wxString GetName() const
+        wxString GetName() const override
         {
-            return wxT("fftdiff");
+            return wxT("C.A.R.");
         }
 
         void ResetMax();
         void ResetMin();
         void ResetAverage();
         void CalculateDelay();
-        virtual void InputSession(const session& aSession);
-        virtual void OutputChannels(const std::vector<char>& vChannels);
+        void InputSession(const session& aSession) override;
+        void OutputChannels(const std::vector<char>& vChannels) override;
+        bool CanBeMaximized() const override { return true; }
 
     protected:
 
     	friend class fftdiffMeter;
-    	friend class pnlBins;
-    	friend class pnlMode;
-    	friend class pnlOptions;
-    	friend class pnlOverlap;
-    	friend class pnlWindow;
-    	friend class pnlDelay;
-    	friend class pnlRange;
+    	friend class pnlMain;
+        wxWindow* CreateTestPanel(wxWindow* pParent) override;
 
-        virtual wxWindow* CreateMonitorPanel(wxWindow* pParent);
-        virtual std::list<pairOptionPanel_t>CreateOptionPanels(wxWindow* pParent);
-
-        void LoadSettings();
+        void LoadSettings() override;
 
         pnlMain* m_ppnlMain;
 

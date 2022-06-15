@@ -137,19 +137,12 @@
 		<Unit filename="fftdiffregister.h" />
 		<Unit filename="pnlMain.cpp" />
 		<Unit filename="pnlMain.h" />
-		<Unit filename="pnlbins.cpp" />
 		<Unit filename="pnlbins.h" />
-		<Unit filename="pnldelay.cpp" />
 		<Unit filename="pnldelay.h" />
-		<Unit filename="pnlmode.cpp" />
 		<Unit filename="pnlmode.h" />
-		<Unit filename="pnloptions.cpp" />
 		<Unit filename="pnloptions.h" />
-		<Unit filename="pnloverlap.cpp" />
 		<Unit filename="pnloverlap.h" />
-		<Unit filename="pnlrange.cpp" />
 		<Unit filename="pnlrange.h" />
-		<Unit filename="pnlwindow.cpp" />
 		<Unit filename="pnlwindow.h" />
 		<Unit filename="wxsmith/pnlMain.wxs" />
 		<Extensions>
@@ -159,9 +152,6 @@
 				<Changes_Log show_changes_editor="1" app_title="released version %M.%m.%b of %p" changeslog_path="ChangesLog.txt" />
 				<Code header_guard="VERSION_H" namespace="AutoVersion" prefix="" />
 			</AutoVersioning>
-			<code_completion />
-			<envvars />
-			<debugger />
 			<wxsmith version="1">
 				<resources>
 					<wxPanel wxs="wxsmith/pnlMain.wxs" src="pnlMain.cpp" hdr="pnlMain.h" fwddecl="0" i18n="1" name="pnlMain" language="CPP" />

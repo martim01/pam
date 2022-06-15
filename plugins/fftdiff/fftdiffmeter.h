@@ -228,7 +228,6 @@ class fftdiffMeter : public pmControl
         enum {NONE, UP, DOWN};
         wxTimer m_timerNudge;
 
-        uiRect m_uiClose;
         uiRect m_uiAmplitude;
         uiRect m_uiAverage;
         uiRect m_uiBin;

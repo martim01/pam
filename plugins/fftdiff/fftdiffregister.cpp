@@ -1,16 +1,16 @@
 #include "fftdiffregister.h"
 #include "fftdiffbuilder.h"
-#include "monitorpluginfactory.h"
+#include "testpluginfactory.h"
 #include "version.h"
 
-void CreateMonitorBuilder()
+void CreateTestBuilder()
 {
-    MonitorPluginFactory::Get()->Register(new fftdiffBuilder());
+    TestPluginFactory::Get()->Register(new fftdiffBuilder());
 }
 
-wxString GetPluginName()
+wxString GetTestPluginName()
 {
-    return "fftdiff";
+    return "C.A.R.";
 }
 
 wxString GetPluginVersion()
@@ -20,5 +20,5 @@ wxString GetPluginVersion()
 
 wxString GetDetails()
 {
-    return "";
+    return "Displays a circuit's audio response and latency";
 }
