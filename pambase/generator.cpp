@@ -339,7 +339,7 @@ bool Generator::SetFile()
     m_nGenerator = FILE;
 
     wxString sFilePath;
-    sFilePath << Settings::Get().GetWavDirectory() << wxT("/") << Settings::Get().Read(wxT("Output"), wxT("File"), wxEmptyString) << wxT(".wav");
+    sFilePath << Settings::Get().GetWavDirectory() << "/" << Settings::Get().Read("Output", "File", wxEmptyString) << ".wav";
 
     bool bOk(false);
 
@@ -352,6 +352,7 @@ bool Generator::SetFile()
         {
             CloseFile();
             pmlLog(pml::LOG_ERROR) << "Generator\tFailed to open file '" << sFilePath << "'";
+            Generate(8192); //this will generate silence
         }
         else
         {
@@ -364,7 +365,9 @@ bool Generator::SetFile()
     }
     else
     {
-        pmlLog(pml::LOG_ERROR) << "Generator\tFile '" << sFilePath << "' does not exist or generator not established";
+        m_pSoundfile = nullptr;
+        pmlLog(pml::LOG_ERROR) << "Generator\tFile '" << sFilePath << "' does not exist.";
+        Generate(8192);//this will generate silence
     }
 
     return bOk;
@@ -388,6 +391,13 @@ void Generator::ReadSoundFile(timedbuffer* pData)
         if(m_pSoundfile->ReadAudio(pData->GetWritableBuffer(), pData->GetBufferSize(), 1))
         {
             pData->SetDuration(pData->GetBufferSize()*(m_pSoundfile->GetFormat()&0x0F));
+        }
+    }
+    else
+    {
+        for(int i = 0; i < pData->GetBufferSize(); i++)
+        {
+            pData->GetWritableBuffer()[i] = 0.0;
         }
     }
 }

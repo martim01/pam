@@ -191,7 +191,7 @@ void LiveAudioSource::FlushQueue()
 
 void LiveAudioSource::AddToTimedBuffer(float dSample)
 {
-    if(m_nBufferWritten == m_pAudioBuffer->GetBufferSize())
+    if(m_nBufferWritten == m_pAudioBuffer->GetBufferSize() && fNumChannels != 0)
     {
         m_pAudioBuffer->SetTransmissionTime(fPresentationTime);
         m_pAudioBuffer->SetBufferDepth(m_qBuffer.size()/fNumChannels);

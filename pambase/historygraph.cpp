@@ -306,7 +306,14 @@ void HistoryGraph::AutoRange(graph& aGraph)
         const auto minMaxE = std::minmax_element(aGraph.lstPeaks.begin(), aGraph.lstPeaks.end());
         aGraph.dMin = minMaxE.first->first;
         aGraph.dMax = minMaxE.second->first;
-        aGraph.dResolution = static_cast<double>(m_rectGraph.GetHeight())/((aGraph.dMax)-(aGraph.dMin));
+        if(((aGraph.dMax)-(aGraph.dMin)) != 0.0)
+        {
+            aGraph.dResolution = static_cast<double>(m_rectGraph.GetHeight())/((aGraph.dMax)-(aGraph.dMin));
+        }
+        else
+        {
+            aGraph.dResolution = static_cast<double>(m_rectGraph.GetHeight());
+        }
     }
 }
 

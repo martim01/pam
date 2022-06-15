@@ -638,6 +638,12 @@ void IOManager::InitGeneratorFile()
         CreateSessionFromOutput(Settings::Get().Read(wxT("Output"), wxT("File"), wxEmptyString));
         CheckPlayback(m_pGenerator->GetSampleRate(), m_pGenerator->GetNumberOfChannels());
     }
+    else
+    {
+        pmlLog(pml::LOG_ERROR) << "IOManager\tGenerator: Could not open file " << Settings::Get().Read(wxT("Output"), wxT("File"), wxT(""));
+        CreateSessionFromOutput("Silence");
+        CheckPlayback(48000,2);
+    }
 }
 
 void IOManager::InitGeneratorSequence()
@@ -659,7 +665,7 @@ void IOManager::InitGeneratorSequence()
             //m_sCurrentSequence = wxEmptyString;
 
             CreateSessionFromOutput(wxEmptyString);
-            CheckPlayback(48000,0);
+            CheckPlayback(48000,2);
         }
     }
 }
