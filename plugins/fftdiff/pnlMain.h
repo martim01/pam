@@ -34,7 +34,9 @@ class pnlMain: public wxPanel
 		wmButton* m_pbtnWindow;
 		wmLabel* m_pLbl1;
 		wmLabel* m_pLbl2;
+		wmLabel* m_pLbl3;
 		wmLabel* m_plblDelay;
+		wmLabel* m_plblLevel;
 		//*)
 
 		void SetSampleRate(unsigned long nSampleRate);
@@ -60,6 +62,8 @@ class pnlMain: public wxPanel
 		static const long ID_M_PBTN5;
 		static const long ID_M_PBTN11;
 		static const long ID_M_PBTN10;
+		static const long ID_M_PLBL4;
+		static const long ID_M_PLBL5;
 		static const long ID_M_PLBL2;
 		static const long ID_M_PBTN9;
 		static const long ID_M_PBTN8;
