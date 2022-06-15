@@ -1,4 +1,5 @@
 #include "testpluginbuilder.h"
+#include "monitorpluginbuilder.h"
 #include "wmswitcherpanel.h"
 #include "settings.h"
 #include <wx/log.h>
@@ -10,8 +11,9 @@ using namespace std;
 
 
 TestPluginBuilder::TestPluginBuilder() :
-    m_pHandler(0),
-	m_pswpTests(0)
+    m_pHandler(nullptr),
+	m_pswpTests(nullptr),
+	m_pWindow(nullptr)
 {
 
 }
@@ -23,7 +25,8 @@ void TestPluginBuilder::SetHandler(wxEvtHandler* pHandler)
 
 void TestPluginBuilder::CreatePanels(wmSwitcherPanel* pswpTests)
 {
-    pswpTests->AddPage(CreateTestPanel(pswpTests), GetName(), false);
+    m_pWindow = CreateTestPanel(pswpTests);
+    pswpTests->AddPage(m_pWindow, GetName(), false);
 
     LoadSettings();
 }
@@ -150,3 +153,12 @@ pml::restgoose::response TestPluginBuilder::PatchSetting(const query& theQuery, 
     return RemoteApi::Get().DoPatchSettings(vData, GetSection());
 }
 
+void TestPluginBuilder::Maximize(bool bMax)
+{
+    if(m_pHandler)
+    {
+        wxCommandEvent event(wxEVT_MONITOR_MAX);
+        event.SetInt(bMax);
+        wxPostEvent(m_pHandler, event);
+    }
+}

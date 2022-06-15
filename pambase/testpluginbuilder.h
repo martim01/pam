@@ -24,8 +24,12 @@ class PAMBASE_IMPEXPORT TestPluginBuilder : public wxEvtHandler
 
         virtual void SetAudioData(const timedbuffer* pBuffer)=0;
         virtual wxString GetName() const=0;
+        virtual bool CanBeMaximized() const { return false;}
 
         wxString GetSection() { return "Test::"+GetName();}
+
+        void Maximize(bool bMax);
+        wxWindow* GetMainWindow() const { return m_pWindow;}
 
     protected:
 
@@ -68,6 +72,7 @@ class PAMBASE_IMPEXPORT TestPluginBuilder : public wxEvtHandler
 
     private:
         wmSwitcherPanel* m_pswpTests;
+        wxWindow* m_pWindow;
 };
 
 

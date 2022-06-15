@@ -28,6 +28,7 @@ class pnlTests: public wxPanel
         void ShowTestPanel(const wxString& sPanel);
 		void SetAudioData(const timedbuffer* pBuffer);
 
+		TestPluginBuilder* GetSelectedTest() { return m_pSelectedTest;}
 	protected:
 
 		//(*Identifiers(pnlTests)
@@ -39,6 +40,8 @@ class pnlTests: public wxPanel
 		//(*Handlers(pnlTests)
 		void OnswpTestsPageChanged(wxNotebookEvent& event);
 		//*)
+
+		void OnSize(wxSizeEvent& event);
 
 		TestPluginBuilder* m_pSelectedTest;
 

@@ -24,12 +24,14 @@ pnlTests::pnlTests(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSiz
 {
 	//(*Initialize(pnlTests)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
-	m_pswpTests = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(0,0), wxSize(600,481), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
+	m_pswpTests = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(0,0), wxSize(800,481), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
 	m_pswpTests->SetPageNameStyle(0);
 
 	Connect(ID_M_PSWP1,wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,(wxObjectEventFunction)&pnlTests::OnswpTestsPageChanged);
 	//*)
 	m_pSelectedTest = 0;
+
+	Bind(wxEVT_SIZE, &pnlTests::OnSize, this);
 }
 
 pnlTests::~pnlTests()
@@ -69,6 +71,10 @@ void pnlTests::ShowTestPanel(const wxString& sPanel)
 
 }
 
+void pnlTests::OnSize(wxSizeEvent& event)
+{
+    m_pswpTests->SetSize(event.GetSize());
+}
 
 void pnlTests::SetAudioData(const timedbuffer* pBuffer)
 {

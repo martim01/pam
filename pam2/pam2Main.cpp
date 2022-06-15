@@ -897,6 +897,7 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
         else if(event.GetKey() == "Test")
         {
             m_ppnlTests->ShowTestPanel(event.GetValue());
+            MaximizeMonitor(m_ppnlTests->GetSelectedTest()->CanBeMaximized());
         }
     }
     else if(event.GetSection() == "Splash")
@@ -916,7 +917,6 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
     {
         if(event.GetKey() == "Cursor")
         {
-            pmlLog() << "SettingChanged: Show Cursor: " << event.GetValue(true);
             if(event.GetValue(true))
             {
                 wxSetCursor(*wxSTANDARD_CURSOR);
@@ -1212,6 +1212,10 @@ void pam2Dialog::OnbtnScreenshotClick(wxCommandEvent& event)
     if(m_pSelectedMonitor)
     {
         MaximizeMonitor(m_pSelectedMonitor->CanBeMaximized());
+    }
+    else if(m_ppnlTests->GetSelectedTest())
+    {
+        MaximizeMonitor(m_ppnlTests->GetSelectedTest()->CanBeMaximized());
     }
 
     m_timerScreenshot.Start(100,true);
