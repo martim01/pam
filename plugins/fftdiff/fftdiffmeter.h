@@ -121,10 +121,14 @@ class fftdiffMeter : public pmControl
 
         void TurnoffNudge();
 
+        void ResetDelay();
         void SetDelayMode(long nMode);
         void SetDelayWindow(unsigned long nWindow);
         void SetDelayAccuracy(unsigned long nAccuracy);
         void SetVerticalRange(unsigned long ndB);
+
+        int GetOffset() const { return m_nOffset;}
+        unsigned long GetSampleRate() const { return m_nSampleRate;}
 
         enum {DISPLAY_GRAPH, DISPLAY_LINES, DISPLAY_EQ};
         enum {ANALYSE_L,ANALYSE_R, ANALYSE_L_P_R, ANALYSE_L_M_R};

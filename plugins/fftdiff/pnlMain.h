@@ -52,6 +52,7 @@ class pnlMain: public wxPanel
 		//*)
 
 		fftdiffBuilder* m_pBuilder;
+		int m_nOffset;
 		DECLARE_EVENT_TABLE()
 };
 

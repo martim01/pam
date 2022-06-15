@@ -20,6 +20,8 @@ class DelayLine
         int ProcessAudio(nonInterlacedVector& data);
         void CalculateChannelOffset();
 
+        void Reset();
+
     private:
         unsigned int m_nWindowSamples;
         unsigned int m_nAccuracy;

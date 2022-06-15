@@ -49,9 +49,20 @@ pnlMain::pnlMain(wxWindow* parent,fftdiffBuilder* pBuilder, wxWindowID id,const 
     m_pbtnOverlap->SetPopup({"0%","25%","50%","75%"}, {"0","25","50","75"});
 	m_pbtnOverlap->ConnectToSetting(m_pBuilder->GetSection(), "Overlap", "75");
 
+	m_pbtnDelay->SetPopup({"Calculate", "Reset"});
 
     Bind(wxEVT_LEFT_UP, [this](wxMouseEvent&){m_pBuilder->Maximize((GetSize().x <= 600));});
-    Bind(wxEVT_COMMAND_BUTTON_CLICKED, [this](wxCommandEvent&){CalculateDelay();}, m_pbtnDelay->GetId());
+    Bind(wxEVT_COMMAND_BUTTON_CLICKED, [this](wxCommandEvent& event){
+         if(event.GetString() == "Calculate")
+         {
+             CalculateDelay();
+         }
+         else
+         {
+             m_pMeter->ResetDelay();
+             m_pbtnDelay->SetLabel("?ms");
+        }}, m_pbtnDelay->GetId());
+
     Bind(wxEVT_SIZE, [this](wxSizeEvent&){m_pMeter->SetSize(GetSize().x, GetSize().y-40);});
 }
 
@@ -100,7 +111,13 @@ void pnlMain::CalculateDelay()
     m_pMeter->SetDelayMode(1);
 }
 
+
 void pnlMain::SetAudioData(const timedbuffer* pBuffer)
 {
     m_pMeter->SetAudioData(pBuffer);
+    if(m_nOffset != m_pMeter->GetOffset())
+    {
+        m_nOffset = m_pMeter->GetOffset();
+        m_pbtnDelay->SetLabel(wxString::Format("%.1fms", static_cast<double>(m_nOffset*1000)/static_cast<double>(m_pMeter->GetSampleRate())));
+    }
 }

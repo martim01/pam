@@ -32,11 +32,6 @@ void DelayLine::CalculateChannelOffset()
 
         auto offset = CalculateOffset(vLeft, vRight);
 
-        if(offset != m_nOffset && abs(offset) > m_nAccuracy)
-        {
-            pmlLog() << "Offset=" << offset;
-        }
-
         m_nOffset = offset;
 
         // remove samples from leading side so that buffer is aligned
@@ -74,4 +69,11 @@ int DelayLine::ProcessAudio(nonInterlacedVector& data)
 
 
     return m_nOffset;
+}
+
+
+void DelayLine::Reset()
+{
+    m_Buffer.first.clear();
+    m_Buffer.second.clear();
 }

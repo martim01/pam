@@ -628,3 +628,9 @@ void fftdiffMeter::OnSettingChanged(SettingEvent& event)
         SetVerticalRange(event.GetValue(long(0)));
     }
 }
+
+
+void fftdiffMeter::ResetDelay()
+{
+    m_delayLine.Reset();
+}
