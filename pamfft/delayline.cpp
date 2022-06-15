@@ -32,16 +32,14 @@ void DelayLine::CalculateChannelOffset()
 
         auto offset = CalculateOffset(vLeft, vRight);
 
-        m_nOffset = offset;
-
         // remove samples from leading side so that buffer is aligned
-        if(m_nOffset < -static_cast<int>(m_nAccuracy))
+        if(offset < -static_cast<int>(m_nAccuracy))
         {
-            m_Buffer.second.erase(m_Buffer.second.begin(), std::next(m_Buffer.second.begin(), -m_nOffset));
+            m_Buffer.second.erase(m_Buffer.second.begin(), std::next(m_Buffer.second.begin(), -offset));
         }
-        else if(m_nOffset > static_cast<int>(m_nAccuracy))
+        else if(offset > static_cast<int>(m_nAccuracy))
         {
-            m_Buffer.first.erase(m_Buffer.first.begin(), std::next(m_Buffer.first.begin(), m_nOffset));
+            m_Buffer.first.erase(m_Buffer.first.begin(), std::next(m_Buffer.first.begin(), offset));
         }
     }
 }
@@ -68,7 +66,7 @@ int DelayLine::ProcessAudio(nonInterlacedVector& data)
     }
 
 
-    return m_nOffset;
+    return (static_cast<int>(m_Buffer.first.size()) - static_cast<int>(m_Buffer.second.size()));
 }
 
 
