@@ -87,7 +87,8 @@ class pnlMain: public wxPanel
         long m_nDelayMode;
         unsigned long m_nSampleRate;
 
-        double m_dAverage = 0.0;
+        double m_dAverageA = 0.0;
+        double m_dAverageB = 0.0;
         double m_dTotalFrames = 0.0;
 
         enum {DELAY_OFF=0, DELAY_ONE, DELAY_AUTO};

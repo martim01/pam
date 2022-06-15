@@ -140,6 +140,11 @@ void pnlMain::OnbtnResetClick(wxCommandEvent& event)
     m_pMeter->ResetAverage();
     m_pMeter->ResetMax();
     m_pMeter->ResetMin();
+
+    m_dAverageA = 0.0;
+    m_dAverageB = 0.0;
+    m_dTotalFrames = 0.0;
+    m_plblLevel->SetLabel("0.00 db");
 }
 
 void pnlMain::SetSampleRate(unsigned long nSampleRate)
@@ -202,19 +207,23 @@ void pnlMain::SetAudioData(const timedbuffer* pBuffer)
         data.first.reserve((pBuffer->GetBufferSize()/m_vChannels.size()));
         data.second.reserve((pBuffer->GetBufferSize()/m_vChannels.size()));
 
+        float dPeakA = 0.0;
+        float dPeakB = 0.0;
         for(size_t i = 0; i < pBuffer->GetBufferSize(); i+=m_vChannels.size())
         {
             data.first.push_back(pBuffer->GetBuffer()[i+m_nSelectedChannels[0]]);
             data.second.push_back(pBuffer->GetBuffer()[i+m_nSelectedChannels[1]]);
 
-            float dLogA = log10(abs(pBuffer->GetBuffer()[i+m_nSelectedChannels[0]]));
-            float dLogB = log10(abs(pBuffer->GetBuffer()[i+m_nSelectedChannels[1]]));
-            float dLog = 20*(-dLogA+dLogB);
-
-            m_dAverage = m_dAverage + ((dLog-m_dAverage)/(m_dTotalFrames+1));
-
+            dPeakA = std::max(dPeakA, abs(pBuffer->GetBuffer()[i+m_nSelectedChannels[0]]));
+            dPeakB = std::max(dPeakB, abs(pBuffer->GetBuffer()[i+m_nSelectedChannels[1]]));
         }
+
+        m_dAverageA = m_dAverageA + ((dPeakA-m_dAverageA)/(m_dTotalFrames+1));
+        m_dAverageB = m_dAverageB + ((dPeakB-m_dAverageB)/(m_dTotalFrames+1));
         m_dTotalFrames++;
+
+        auto dDiff = -(20*log10(m_dAverageA))+(20*log10(m_dAverageB));
+        m_plblLevel->SetLabel(wxString::Format("%.2f dB", dDiff));
 
         m_nOffset = m_delayLine.ProcessAudio(data);
 
