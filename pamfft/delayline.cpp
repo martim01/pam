@@ -5,7 +5,7 @@
 
 DelayLine::DelayLine(unsigned int nWindowSamples, unsigned int nAccuracy) : m_nWindowSamples(nWindowSamples),
 m_nAccuracy(nAccuracy),
-m_bOneShot(false),
+m_bOneShot(true),
 m_bCalculated(false)
 {
 
@@ -74,4 +74,5 @@ void DelayLine::Reset()
 {
     m_Buffer.first.clear();
     m_Buffer.second.clear();
+    m_bCalculated = false;
 }
