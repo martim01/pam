@@ -115,6 +115,10 @@ timedbuffer* Generator::Generate(unsigned int nSizePerChannel)
             break;
         case PLUGIN:
             GeneratePlugin(pData);
+            break;
+        case SILENCE:
+            GenerateSilence(pData);
+
     }
 
     pData->SetDuration(pData->GetBufferSize()*4);
@@ -327,6 +331,8 @@ bool Generator::SetPlugin(const wxString& sPlugin)
         m_pPlugin->SetSampleRate(m_dSampleRate);
         return true;
     }
+    m_nGenerator = SILENCE;
+
     m_pPlugin = NULL;
     return false;
 }
@@ -352,7 +358,7 @@ bool Generator::SetFile()
         {
             CloseFile();
             pmlLog(pml::LOG_ERROR) << "Generator\tFailed to open file '" << sFilePath << "'";
-            Generate(8192); //this will generate silence
+            m_nGenerator = SILENCE;
         }
         else
         {
@@ -360,16 +366,17 @@ bool Generator::SetFile()
             pmlLog() << "Generator\tSampleRate =" << GetSampleRate();
             pmlLog() << "Generator\tChannels =" << GetNumberOfChannels();
 
-            Generate(8192);
+
         }
     }
     else
     {
+        m_nGenerator = SILENCE;
         m_pSoundfile = nullptr;
         pmlLog(pml::LOG_ERROR) << "Generator\tFile '" << sFilePath << "' does not exist.";
-        Generate(8192);//this will generate silence
     }
 
+    Generate(8192);
     return bOk;
 
 }
@@ -393,12 +400,13 @@ void Generator::ReadSoundFile(timedbuffer* pData)
             pData->SetDuration(pData->GetBufferSize()*(m_pSoundfile->GetFormat()&0x0F));
         }
     }
-    else
+}
+
+void Generator::GenerateSilence(timedbuffer* pData)
+{
+    for(int i = 0; i < pData->GetBufferSize(); i++)
     {
-        for(int i = 0; i < pData->GetBufferSize(); i++)
-        {
-            pData->GetWritableBuffer()[i] = 0.0;
-        }
+        pData->GetWritableBuffer()[i] = 0.0;
     }
 }
 
@@ -442,6 +450,8 @@ bool Generator::LoadSequence(const wxString& sFile)
         Generate(8192);
         return true;
     }
+    m_nGenerator = SILENCE;
+    Generate(8192);
     return false;
 
 }
@@ -477,7 +487,6 @@ int Generator::GetNumberOfChannels()
             {
                 return m_pSoundfile->GetChannels();
             }
-            return 0;
             break;
         case SEQUENCE:
             return m_nSequenceChannels;
@@ -490,7 +499,9 @@ int Generator::GetNumberOfChannels()
             {
                 return m_pPlugin->GetNumberOfChannels();
             }
-            return 0;
+            break;
+        case SILENCE:
+            return 2;
     }
 
     return 2;

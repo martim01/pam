@@ -151,6 +151,7 @@ class PAMBASE_IMPEXPORT Generator
         void DeleteSequence(const wxString& sName);
 
         void ReadSoundFile(timedbuffer* pData);
+        void GenerateSilence(timedbuffer* pData);
         void GenerateSequences(timedbuffer* pData);
         void GenerateSequence(std::shared_ptr<Sequence> pSeq, float* pBuffer, unsigned int nSize);
         void GenerateFrequency(float* pBuffer, unsigned int nSize);
@@ -177,7 +178,7 @@ class PAMBASE_IMPEXPORT Generator
         GeneratorPluginBuilder* m_pPlugin;
 
 
-        enum {FILE, FREQUENCY, SEQUENCE,PLUGIN};
+        enum {SILENCE, FILE, FREQUENCY, SEQUENCE,PLUGIN};
 
 
 };
