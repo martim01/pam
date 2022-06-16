@@ -494,7 +494,7 @@ Json::Value fftdiffMeter::CreateWebsocketMessage()
 
 void fftdiffMeter::SetVerticalRange(unsigned long ndB)
 {
-    m_dVerticalResolution = std::min(80.0, static_cast<double>(ndB));
+    m_dVerticalResolution = std::min(160.0, static_cast<double>(ndB));
 }
 
 
