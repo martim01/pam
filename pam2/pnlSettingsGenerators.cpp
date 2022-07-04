@@ -12,6 +12,7 @@
 #include "dlgSequence.h"
 #include "iomanager.h"
 #include <wx/dir.h>
+#include <wx/log.h>
 #include <wx/filename.h>
 #include "generatorpluginfactory.h"
 #include "generatorpluginbuilder.h"
@@ -308,19 +309,13 @@ pnlSettingsGenerators::pnlSettingsGenerators(wxWindow* parent,wxWindowID id,cons
     m_plstAudioSources->AddButton(wxT("File"));
     m_plstAudioSources->AddButton(wxT("Sequence"));
     m_plstAudioSources->AddButton(wxT("Generator"));
-    m_plstAudioSources->Enable(Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled"))!=wxT("Disabled"));
-    m_plstAudioSources->ConnectToSetting("Output", "Source", "Input");
+    m_plstAudioSources->Enable(true);
+    m_plstAudioSources->ConnectToSetting("Output", "Source", "Sequence");
 
     LoadPlugins();
 
-    if(Settings::Get().Read(wxT("Output"), wxT("Destination"),wxT("Disabled"))==wxT("Disabled"))
-    {
-        m_pswpAog->ChangeSelection("Router");
-    }
-    else
-    {
-        m_pswpAog->ChangeSelection(Settings::Get().Read("Output", "Source", "Input"));
-    }
+    SourceChanged(Settings::Get().Read("Output", "Source", "Sequence"));
+
     m_pSlider->Init(0,20*log10(22000), 20*log10(Settings::Get().Read(wxT("Generator"), wxT("Frequency"), 1000)));
     m_plblFrequency->SetLabel(wxString::Format(wxT("%.0f Hz"), pow(10,(m_pSlider->GetPosition()/20.0))));
 
@@ -593,16 +588,8 @@ void pnlSettingsGenerators::OnSettingChanged(SettingEvent& event)
 
 void pnlSettingsGenerators::DestinationChanged(const wxString& sDestination)
 {
-    m_plstAudioSources->Enable(sDestination!=wxT("Disabled"));
-    if(sDestination == wxT("Disabled"))
-    {
-        m_pswpAog->ChangeSelection(wxT("Input"));
-
-    }
-    else
-    {
-        m_plstAudioSources->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Input")), true);
-    }
+    //m_plstAudioSources->Enable(sDestination!=wxT("Disabled"));
+    m_plstAudioSources->SelectButton(Settings::Get().Read(wxT("Output"), wxT("Source"), wxT("Sequence")), true);
 }
 void pnlSettingsGenerators::SourceChanged(const wxString& sSource)
 {
@@ -635,6 +622,7 @@ void pnlSettingsGenerators::SourceChanged(const wxString& sSource)
     }
 
     m_pbtnMixer->SetLabel("Router");
+    //m_pswpAog->ChangeSelection("Input");
 
     PopulateChannelList(m_plstOutput_1);
     PopulateChannelList(m_plstOutput_2);
@@ -739,7 +727,7 @@ void pnlSettingsGenerators::OnbtnMixerClick(wxCommandEvent& event)
     }
     else
     {
-        SourceChanged(Settings::Get().Read("Output", "Source", "Input"));
+        SourceChanged(Settings::Get().Read("Output", "Source", "Sequence"));
         m_pbtnMixer->SetLabel("Router");
     }
 }

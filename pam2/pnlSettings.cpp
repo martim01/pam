@@ -432,7 +432,10 @@ void pnlSettings::ShowSoundcardInputs()
     {
         nDevice = 0;
     }
-    m_plstDevices->SelectButton(nDevice);
+    if(m_plstDevices->GetItemCount() > nDevice)
+    {
+        m_plstDevices->SelectButton(nDevice);
+    }
 
 }
 
