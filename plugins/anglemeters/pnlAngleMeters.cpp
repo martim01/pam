@@ -7,6 +7,7 @@
 #include "levelcalculator.h"
 #include "ppmtypes.h"
 #include "settings.h"
+#include "log.h"
 //(*InternalHeaders(pnlAngleMeters)
 #include <wx/intl.h>
 #include <wx/string.h>
@@ -71,15 +72,15 @@ void pnlAngleMeters::UpdateMeterStereo()
 }
 void pnlAngleMeters::CreateMeters()
 {
-    m_bStereo = (m_pBuilder->ReadSetting(wxT("Stereo"),0)==1);
-    for(size_t i = 0; i < m_vMeters.size(); i++)
+    m_bStereo = (m_pBuilder->ReadSetting("Stereo",1)==1);
+    for(auto pMeter : m_vMeters)
     {
-        m_vMeters[i]->Destroy();
+        pMeter->Destroy();
     }
 
-    for(size_t i = 0; i < m_vMonitor.size(); i++)
+    for(auto pMonitor : m_vMonitor)
     {
-        m_vMonitor[i]->Destroy();
+        pMonitor->Destroy();
     }
 
     int x = 10;
@@ -208,19 +209,25 @@ void pnlAngleMeters::SetAudioData(const timedbuffer* pBuffer)
     {
         if(!m_bStereo)
         {
-            double dLeft[2] = {m_pCalculator->GetLevel(0), m_pCalculator->GetLevel(0)};
-            double dRight[2] = {m_pCalculator->GetLevel(1), m_pCalculator->GetLevel(1)};
-            double dMS[2] = {m_pCalculator->GetMSLevel(false), m_pCalculator->GetMSLevel(true)};
-            m_vMeters[0]->ShowValue(dLeft);
-            m_vMeters[1]->ShowValue(dRight);
-            m_vMeters[2]->ShowValue(dMS);
+            if(m_vMeters.size() > 2)
+            {
+                    double dLeft[2] = {m_pCalculator->GetLevel(0), m_pCalculator->GetLevel(0)};
+                double dRight[2] = {m_pCalculator->GetLevel(1), m_pCalculator->GetLevel(1)};
+                double dMS[2] = {m_pCalculator->GetMSLevel(false), m_pCalculator->GetMSLevel(true)};
+                m_vMeters[0]->ShowValue(dLeft);
+                m_vMeters[1]->ShowValue(dRight);
+                m_vMeters[2]->ShowValue(dMS);
+            }
         }
         else
         {
-            double dLeftRight[2] = {m_pCalculator->GetLevel(0), m_pCalculator->GetLevel(1)};
-            double dMS[2] = {m_pCalculator->GetMSLevel(false), m_pCalculator->GetMSLevel(true)};
-            m_vMeters[0]->ShowValue(dLeftRight);
-            m_vMeters[1]->ShowValue(dMS);
+            if(m_vMeters.size() > 1)
+            {
+                double dLeftRight[2] = {m_pCalculator->GetLevel(0), m_pCalculator->GetLevel(1)};
+                double dMS[2] = {m_pCalculator->GetMSLevel(false), m_pCalculator->GetMSLevel(true)};
+                m_vMeters[0]->ShowValue(dLeftRight);
+                m_vMeters[1]->ShowValue(dMS);
+            }
         }
     }
 
@@ -319,7 +326,7 @@ void pnlAngleMeters::ColourMonitorButtons()
         m_vMonitor[i]->SetBackgroundColour(wxColour(80,70,180));
     }
 
-    m_bStereo = (m_pBuilder->ReadSetting(wxT("Stereo"),0)==1);
+
     if(!m_bStereo)
     {
         for(size_t i = 0; i < m_vOutputChannels.size(); i++)

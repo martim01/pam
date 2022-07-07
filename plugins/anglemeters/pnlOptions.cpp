@@ -54,7 +54,7 @@ pnlOptions::pnlOptions(wxWindow* parent,AngleMetersBuilder* pBuilder, wxWindowID
 	m_plstText->AddButton(wxT("Peak"));
 
 
-    m_pbtnSurround->ToggleSelection(m_pBuilder->ReadSetting(wxT("Surround"), 1), true);
+//    m_pbtnSurround->ToggleSelection(m_pBuilder->ReadSetting(wxT("Surround"), 1), true);
     m_pbtnSurround->ConnectToSetting(m_pBuilder->GetSection(), "Surround", true);
 
     m_pbnFreeze->ConnectToSetting(m_pBuilder->GetSection(), "Freeze", true);
