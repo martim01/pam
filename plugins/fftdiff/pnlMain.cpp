@@ -24,7 +24,9 @@ const long pnlMain::ID_M_PLBL5 = wxNewId();
 const long pnlMain::ID_M_PLBL2 = wxNewId();
 const long pnlMain::ID_M_PBTN9 = wxNewId();
 const long pnlMain::ID_M_PBTN8 = wxNewId();
+const long pnlMain::ID_M_PBTN12 = wxNewId();
 const long pnlMain::ID_M_PBTN7 = wxNewId();
+const long pnlMain::ID_M_PLST1 = wxNewId();
 //*)
 
 BEGIN_EVENT_TABLE(pnlMain,wxPanel)
@@ -52,44 +54,52 @@ pnlMain::pnlMain(wxWindow* parent,fftdiffBuilder* pBuilder, wxWindowID id,const 
 	m_pbtnDelayCalculate->SetBackgroundColour(wxColour(84,3,218));
 	m_pbtnDelayReset = new wmButton(this, ID_M_PBTN6, _("Reset"), wxPoint(190,445), wxSize(60,30), 0, wxDefaultValidator, _T("ID_M_PBTN6"));
 	m_pbtnDelayReset->SetBackgroundColour(wxColour(84,3,218));
-	m_pbtnWindow = new wmButton(this, ID_M_PBTN3, _("Window"), wxPoint(55,2), wxSize(60,30), 0, wxDefaultValidator, _T("ID_M_PBTN3"));
+	m_pbtnWindow = new wmButton(this, ID_M_PBTN3, _("Window"), wxPoint(5,2), wxSize(60,30), 0, wxDefaultValidator, _T("ID_M_PBTN3"));
 	m_pbtnWindow->SetBackgroundColour(wxColour(12,163,16));
-	m_pbtnOverlap = new wmButton(this, ID_M_PBTN4, _("Overlap"), wxPoint(116,2), wxSize(60,30), 0, wxDefaultValidator, _T("ID_M_PBTN4"));
+	m_pbtnOverlap = new wmButton(this, ID_M_PBTN4, _("Overlap"), wxPoint(66,2), wxSize(60,30), 0, wxDefaultValidator, _T("ID_M_PBTN4"));
 	m_pbtnOverlap->SetBackgroundColour(wxColour(12,163,16));
-	m_pLbl1 = new wmLabel(this, ID_M_PLBL1, _("Range:"), wxPoint(300,2), wxSize(60,30), 0, _T("ID_M_PLBL1"));
+	m_pLbl1 = new wmLabel(this, ID_M_PLBL1, _("Range:"), wxPoint(200,2), wxSize(60,30), 0, _T("ID_M_PLBL1"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl1->GetUiRect().SetGradient(0);
 	m_pLbl1->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl1->SetBackgroundColour(wxColour(0,0,0));
-	m_pbtnRange = new wmButton(this, ID_M_PBTN5, _("40dB"), wxPoint(360,2), wxSize(60,30), 0, wxDefaultValidator, _T("ID_M_PBTN5"));
+	m_pbtnRange = new wmButton(this, ID_M_PBTN5, _("40dB"), wxPoint(260,2), wxSize(60,30), 0, wxDefaultValidator, _T("ID_M_PBTN5"));
 	m_pbtnRange->SetBackgroundColour(wxColour(11,119,138));
-	m_pbtnCursor = new wmButton(this, ID_M_PBTN11, _("Cursor"), wxPoint(500,2), wxSize(120,30), 0, wxDefaultValidator, _T("ID_M_PBTN11"));
+	m_pbtnCursor = new wmButton(this, ID_M_PBTN11, _("Cursor"), wxPoint(670,2), wxSize(120,30), 0, wxDefaultValidator, _T("ID_M_PBTN11"));
 	m_pbtnCursor->SetBackgroundColour(wxColour(11,119,138));
 	m_pbtnCursor->SetToggleLook(true, wxT("Off"), wxT("On"), 50);
-	m_pbtnBins = new wmButton(this, ID_M_PBTN10, _("Bins"), wxPoint(177,2), wxSize(60,30), 0, wxDefaultValidator, _T("ID_M_PBTN10"));
+	m_pbtnBins = new wmButton(this, ID_M_PBTN10, _("Bins"), wxPoint(127,2), wxSize(60,30), 0, wxDefaultValidator, _T("ID_M_PBTN10"));
 	m_pbtnBins->SetBackgroundColour(wxColour(12,163,19));
-	m_pLbl3 = new wmLabel(this, ID_M_PLBL4, _("Level Diff:"), wxPoint(280,445), wxSize(60,30), 0, _T("ID_M_PLBL4"));
+	m_pLbl3 = new wmLabel(this, ID_M_PLBL4, _("Level Diff:"), wxPoint(260,445), wxSize(60,30), 0, _T("ID_M_PLBL4"));
 	m_pLbl3->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl3->GetUiRect().SetGradient(0);
 	m_pLbl3->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl3->SetBackgroundColour(wxColour(0,0,0));
-	m_plblLevel = new wmLabel(this, ID_M_PLBL5, wxEmptyString, wxPoint(340,445), wxSize(60,30), 0, _T("ID_M_PLBL5"));
+	m_plblLevel = new wmLabel(this, ID_M_PLBL5, wxEmptyString, wxPoint(320,445), wxSize(60,30), 0, _T("ID_M_PLBL5"));
 	m_plblLevel->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblLevel->GetUiRect().SetGradient(0);
 	m_plblLevel->SetForegroundColour(wxColour(0,0,0));
 	m_plblLevel->SetBackgroundColour(wxColour(255,255,255));
-	m_pLbl2 = new wmLabel(this, ID_M_PLBL2, _("Routing:"), wxPoint(440,445), wxSize(60,30), 0, _T("ID_M_PLBL2"));
+	m_pLbl2 = new wmLabel(this, ID_M_PLBL2, _("Routing:"), wxPoint(380,445), wxSize(60,30), 0, _T("ID_M_PLBL2"));
 	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl2->GetUiRect().SetGradient(0);
 	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl2->SetBackgroundColour(wxColour(0,0,0));
-	m_pbtnChannelA = new wmButton(this, ID_M_PBTN9, _("Left"), wxPoint(500,445), wxSize(60,30), 0, wxDefaultValidator, _T("ID_M_PBTN9"));
+	m_pbtnChannelA = new wmButton(this, ID_M_PBTN9, _("Left"), wxPoint(440,445), wxSize(60,30), 0, wxDefaultValidator, _T("ID_M_PBTN9"));
 	m_pbtnChannelA->SetBackgroundColour(wxColour(84,3,218));
-	m_pbtnChannelB = new wmButton(this, ID_M_PBTN8, _("Right"), wxPoint(561,445), wxSize(60,30), 0, wxDefaultValidator, _T("ID_M_PBTN8"));
+	m_pbtnChannelB = new wmButton(this, ID_M_PBTN8, _("Right"), wxPoint(501,445), wxSize(60,30), 0, wxDefaultValidator, _T("ID_M_PBTN8"));
 	m_pbtnChannelB->SetBackgroundColour(wxColour(84,3,218));
-	m_pbtnReset = new wmButton(this, ID_M_PBTN7, _("Reset"), wxPoint(700,445), wxSize(90,30), 0, wxDefaultValidator, _T("ID_M_PBTN7"));
+	m_pbtnSnapshot = new wmButton(this, ID_M_PBTN12, _("Snapshot"), wxPoint(600,445), wxSize(90,30), 0, wxDefaultValidator, _T("ID_M_PBTN12"));
+	m_pbtnSnapshot->SetBackgroundColour(wxColour(0,166,166));
+	m_pbtnReset = new wmButton(this, ID_M_PBTN7, _("Reset All"), wxPoint(700,445), wxSize(90,30), 0, wxDefaultValidator, _T("ID_M_PBTN7"));
 	m_pbtnReset->SetBackgroundColour(wxColour(218,84,3));
+	m_plstShow = new wmList(this, ID_M_PLST1, wxPoint(400,0), wxSize(240,34), wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI, 0, wxSize(-1,30), 4, wxSize(1,1));
+	m_plstShow->SetBackgroundColour(wxColour(0,0,0));
+	m_plstShow->SetButtonColour(wxColour(wxT("#008040")));
+	m_plstShow->SetPressedButtonColour(wxColour(wxT("#008080")));
+	m_plstShow->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
 
+	Connect(ID_M_PBTN12,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlMain::OnbtnSnapshotClick);
 	Connect(ID_M_PBTN7,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlMain::OnbtnResetClick);
 	//*)
 
@@ -126,6 +136,13 @@ pnlMain::pnlMain(wxWindow* parent,fftdiffBuilder* pBuilder, wxWindowID id,const 
 
     m_vChannels.push_back(subsession::channelGrouping(0,subsession::enumChannelGrouping::ST, subsession::enumChannel::LEFT));
     m_vChannels.push_back(subsession::channelGrouping(0,subsession::enumChannelGrouping::ST, subsession::enumChannel::RIGHT));
+
+
+    m_plstShow->AddButton("Min");
+    m_plstShow->AddButton("Max");
+    m_plstShow->AddButton("Rolling");
+    m_plstShow->AddButton("Average");
+    m_plstShow->ConnectToSetting(m_pBuilder->GetSection(), "Show", 0, "2,3");
 
 }
 
@@ -251,5 +268,26 @@ void pnlMain::OnSettingChange(SettingEvent& event)
     else if(event.GetKey() == "ChannelB")
     {
         m_nSelectedChannels[1] = std::min(m_vChannels.size(), static_cast<size_t>(event.GetValue(1l)));
+    }
+    else if(event.GetKey() == "Show")
+    {
+        auto asShow = wxStringTokenize(event.GetValue(), ",");
+        m_pMeter->ShowMin(asShow.Index("0") != -1);
+        m_pMeter->ShowMax(asShow.Index("1") != -1);
+        m_pMeter->ShowAverage(asShow.Index("2") != -1);
+        m_pMeter->ShowAverageRolling(asShow.Index("3") != -1);
+    }
+}
+
+void pnlMain::OnbtnSnapshotClick(wxCommandEvent& event)
+{
+    if(m_pbtnSnapshot->GetLabel() == "Snapshot")
+    {
+        m_pMeter->Snapshot();
+        m_pbtnSnapshot->SetLabel("Clear Snapshot");
+    }
+    else
+    {
+        m_pMeter->ResetSnapshot();
     }
 }

@@ -5,6 +5,7 @@
 #include "fftdiffmeter.h"
 #include "wmbutton.h"
 #include "wmlabel.h"
+#include "wmlist.h"
 #include <wx/panel.h>
 //*)
 
@@ -31,12 +32,14 @@ class pnlMain: public wxPanel
 		wmButton* m_pbtnOverlap;
 		wmButton* m_pbtnRange;
 		wmButton* m_pbtnReset;
+		wmButton* m_pbtnSnapshot;
 		wmButton* m_pbtnWindow;
 		wmLabel* m_pLbl1;
 		wmLabel* m_pLbl2;
 		wmLabel* m_pLbl3;
 		wmLabel* m_plblDelay;
 		wmLabel* m_plblLevel;
+		wmList* m_plstShow;
 		//*)
 
 		void SetSampleRate(unsigned long nSampleRate);
@@ -67,13 +70,16 @@ class pnlMain: public wxPanel
 		static const long ID_M_PLBL2;
 		static const long ID_M_PBTN9;
 		static const long ID_M_PBTN8;
+		static const long ID_M_PBTN12;
 		static const long ID_M_PBTN7;
+		static const long ID_M_PLST1;
 		//*)
 
 	private:
 
 		//(*Handlers(pnlMain)
 		void OnbtnResetClick(wxCommandEvent& event);
+		void OnbtnSnapshotClick(wxCommandEvent& event);
 		//*)
 
 		void OnSettingChange(SettingEvent& event);

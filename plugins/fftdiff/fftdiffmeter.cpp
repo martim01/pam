@@ -200,7 +200,7 @@ void fftdiffMeter::DrawGraph(wxDC& dc, const std::vector<float>& vSpectrum, cons
     for(size_t i = 1; i < vSpectrum.size(); i++)
     {
         int x = static_cast<int>( (static_cast<double>(m_rectGrid.GetWidth())/log(vSpectrum.size())) * static_cast<double>(log(i)))+m_rectGrid.GetLeft();
-        int y = -static_cast<int>(  (static_cast<double>(m_rectGrid.GetHeight()/m_dVerticalResolution) * vSpectrum[i]*dMultiplier));
+        int y = -static_cast<int>(  (static_cast<double>(m_rectGrid.GetHeight()/m_dVerticalResolution) * (vSpectrum[i]-m_vSnapshot[i])*dMultiplier));
         y += m_rectGrid.GetHeight()/2;
         if(i == 1)
         {
@@ -368,6 +368,9 @@ void fftdiffMeter::SetNumberOfBins(size_t nBins)
     m_vfft_out[0].resize(nBins+1);
     m_vfft_out[1].resize(nBins+1);
     m_vAmplitude = std::vector<float>(m_vfft_out[0].size(), 0.0);
+
+    m_vSnapshot = std::vector<float>(m_vfft_out[0].size(), 0.0);
+
     m_vAverage = std::vector<float>(m_vfft_out[0].size(), 0.0);
     m_vAverageRolling = std::vector<float>(m_vfft_out[0].size(), 0.0);
     m_vAverageRollingDisplay.clear();
@@ -515,6 +518,7 @@ void fftdiffMeter::ResetAverage()
     m_vAverage = vector<float>(m_vfft_out[0].size(), 0.0);
     m_vAverageRolling = vector<float>(m_vfft_out[0].size(), 0.0);
     m_vAverageRollingDisplay.clear();
+
     m_dTotalFrames = 0.0;
     m_dRollingFrames = 0.0;
 
@@ -580,4 +584,14 @@ void fftdiffMeter::OnSettingChanged(SettingEvent& event)
     }
 }
 
+void fftdiffMeter::Snapshot()
+{
+    m_vSnapshot = m_vAverage;
+    ResetAverage();
+}
+
+void fftdiffMeter::ResetSnapshot()
+{
+    m_vSnapshot = std::vector<float>(m_vfft_out[0].size(), 0.0);
+}
 

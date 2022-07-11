@@ -123,6 +123,9 @@ class fftdiffMeter : public pmControl
 
         unsigned long GetSampleRate() const { return m_nSampleRate;}
 
+        void Snapshot();
+        void ResetSnapshot();
+
         enum {DISPLAY_GRAPH, DISPLAY_LINES, DISPLAY_EQ};
         enum {ANALYSE_L,ANALYSE_R, ANALYSE_L_P_R, ANALYSE_L_M_R};
         enum {WINDOW_RECTANGULAR, WINDOW_HANNING, WINDOW_HAMMING, WINDOW_BLACKMAN, WINDOW_KAISER, WINDOW_KAISERBESSEL};
@@ -164,6 +167,8 @@ class fftdiffMeter : public pmControl
         std::queue<freq_mag> m_qResult;
 
         std::vector<float> m_vAmplitude;
+
+        std::vector<float> m_vSnapshot;
         std::vector<float> m_vAverage;
         std::vector<float> m_vAverageRolling;
         std::vector<float> m_vAverageRollingDisplay;

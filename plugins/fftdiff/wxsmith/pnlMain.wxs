@@ -40,26 +40,26 @@
 		</object>
 		<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnWindow" member="yes">
 			<label>Window</label>
-			<pos>55,2</pos>
+			<pos>5,2</pos>
 			<size>60,30</size>
 			<bg>#0CA310</bg>
 		</object>
 		<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnOverlap" member="yes">
 			<label>Overlap</label>
-			<pos>116,2</pos>
+			<pos>66,2</pos>
 			<size>60,30</size>
 			<bg>#0CA310</bg>
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
 			<label>Range:</label>
-			<pos>300,2</pos>
+			<pos>200,2</pos>
 			<size>60,30</size>
 			<fg>#FFFFFF</fg>
 			<bg>#000000</bg>
 		</object>
 		<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnRange" member="yes">
 			<label>40dB</label>
-			<pos>360,2</pos>
+			<pos>260,2</pos>
 			<size>60,30</size>
 			<bg>#0B778A</bg>
 		</object>
@@ -69,19 +69,19 @@
 			<toggle_left>Off</toggle_left>
 			<toggle_right>On</toggle_right>
 			<toggle_percent>50</toggle_percent>
-			<pos>500,2</pos>
+			<pos>670,2</pos>
 			<size>120,30</size>
 			<bg>#0B778A</bg>
 		</object>
 		<object class="wmButton" name="ID_M_PBTN10" variable="m_pbtnBins" member="yes">
 			<label>Bins</label>
-			<pos>177,2</pos>
+			<pos>127,2</pos>
 			<size>60,30</size>
 			<bg>#0CA313</bg>
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl3" member="yes">
 			<label>Level Diff:</label>
-			<pos>280,445</pos>
+			<pos>260,445</pos>
 			<size>60,30</size>
 			<fg>#FFFFFF</fg>
 			<bg>#000000</bg>
@@ -89,36 +89,56 @@
 		<object class="wmLabel" name="ID_M_PLBL5" variable="m_plblLevel" member="yes">
 			<label></label>
 			<border>uiRect::BORDER_DOWN</border>
-			<pos>340,445</pos>
+			<pos>320,445</pos>
 			<size>60,30</size>
 			<fg>#000000</fg>
 			<bg>#FFFFFF</bg>
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
 			<label>Routing:</label>
-			<pos>440,445</pos>
+			<pos>380,445</pos>
 			<size>60,30</size>
 			<fg>#FFFFFF</fg>
 			<bg>#000000</bg>
 		</object>
 		<object class="wmButton" name="ID_M_PBTN9" variable="m_pbtnChannelA" member="yes">
 			<label>Left</label>
-			<pos>500,445</pos>
+			<pos>440,445</pos>
 			<size>60,30</size>
 			<bg>#5403DA</bg>
 		</object>
 		<object class="wmButton" name="ID_M_PBTN8" variable="m_pbtnChannelB" member="yes">
 			<label>Right</label>
-			<pos>561,445</pos>
+			<pos>501,445</pos>
 			<size>60,30</size>
 			<bg>#5403DA</bg>
 		</object>
+		<object class="wmButton" name="ID_M_PBTN12" variable="m_pbtnSnapshot" member="yes">
+			<label>Snapshot</label>
+			<pos>600,445</pos>
+			<size>90,30</size>
+			<bg>#00A6A6</bg>
+			<handler function="OnbtnSnapshotClick" entry="EVT_BUTTON" />
+		</object>
 		<object class="wmButton" name="ID_M_PBTN7" variable="m_pbtnReset" member="yes">
-			<label>Reset</label>
+			<label>Reset All</label>
 			<pos>700,445</pos>
 			<size>90,30</size>
 			<bg>#DA5403</bg>
 			<handler function="OnbtnResetClick" entry="EVT_BUTTON" />
+		</object>
+		<object class="wmList" name="ID_M_PLST1" variable="m_plstShow" member="yes">
+			<scrolling>None</scrolling>
+			<button_size>-1,30</button_size>
+			<columns>4</columns>
+			<button>#008040</button>
+			<button_pressed>#008080</button_pressed>
+			<button_selected>#FF8000</button_selected>
+			<items />
+			<pos>400,0</pos>
+			<size>240,34</size>
+			<bg>#000000</bg>
+			<style>wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI</style>
 		</object>
 	</object>
 </wxsmith>
