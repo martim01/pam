@@ -142,7 +142,8 @@ pnlMain::pnlMain(wxWindow* parent,fftdiffBuilder* pBuilder, wxWindowID id,const 
     m_plstShow->AddButton("Max");
     m_plstShow->AddButton("Rolling");
     m_plstShow->AddButton("Average");
-    m_plstShow->ConnectToSetting(m_pBuilder->GetSection(), "Show", 0, "2,3");
+
+    m_plstShow->ConnectToSetting(m_pBuilder->GetSection(), "Show", size_t(0), wxString("2,3"));
 
 }
 
@@ -274,8 +275,8 @@ void pnlMain::OnSettingChange(SettingEvent& event)
         auto asShow = wxStringTokenize(event.GetValue(), ",");
         m_pMeter->ShowMin(asShow.Index("0") != -1);
         m_pMeter->ShowMax(asShow.Index("1") != -1);
-        m_pMeter->ShowAverage(asShow.Index("2") != -1);
-        m_pMeter->ShowAverageRolling(asShow.Index("3") != -1);
+        m_pMeter->ShowAverageRolling(asShow.Index("2") != -1);
+        m_pMeter->ShowAverage(asShow.Index("3") != -1);
     }
 }
 
@@ -289,5 +290,6 @@ void pnlMain::OnbtnSnapshotClick(wxCommandEvent& event)
     else
     {
         m_pMeter->ResetSnapshot();
+        m_pbtnSnapshot->SetLabel("Snapshot");
     }
 }
