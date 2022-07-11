@@ -45,6 +45,7 @@ fftdiffMeter::fftdiffMeter(wxWindow *parent, fftdiffBuilder* pBuilder, wxWindowI
     m_bShowMax = false;
     m_bShowMin = false;
     m_bShowAverage = true;
+    m_bShowAverageRolling = true;
 
 
 
@@ -148,6 +149,13 @@ void fftdiffMeter::DrawFFT(wxDC& dc)
     //dc.SetPen(*wxWHITE_PEN);
     //dc.SetBrush(wxBrush(wxColour(90,60,200)));
     DrawGraph(dc, m_vAmplitude, wxColour(140,140,140));
+
+
+
+    if(m_bShowAverageRolling)
+    {
+        DrawGraph(dc, (m_vAverageRollingDisplay.empty() ? m_vAverageRolling : m_vAverageRollingDisplay), *wxRED);
+    }
 
     if(m_bShowAverage)
     {
@@ -291,11 +299,28 @@ void fftdiffMeter::FFTRoutine()
 
         auto oldAverage = m_vAverage[i];
         m_vAverage[i] = oldAverage + ((dLog-oldAverage)/(m_dTotalFrames+1));
+
+        oldAverage = m_vAverageRolling[i];
+        m_vAverageRolling[i] = oldAverage + ((dLog-oldAverage)/(m_dRollingFrames+1));
+
         m_vMax[i] = std::max(dLog, m_vMax[i]);
         m_vMin[i] = std::min(dLog, m_vMin[i]);
     }
 
     m_dTotalFrames++;
+    m_dRollingFrames++;
+
+    CheckRollingCount();
+}
+
+void fftdiffMeter::CheckRollingCount()
+{
+    if(m_dRollingFrames > 100.0)
+    {
+        m_vAverageRollingDisplay = m_vAverageRolling;
+        m_vAverageRolling = std::vector<float>(m_vfft_out[0].size(), 0.0);
+        m_dRollingFrames = 0.0;
+    }
 }
 
 float fftdiffMeter::WindowMod(float dAmplitude)
@@ -342,11 +367,15 @@ void fftdiffMeter::SetNumberOfBins(size_t nBins)
     m_nSampleSize = nBins*2;
     m_vfft_out[0].resize(nBins+1);
     m_vfft_out[1].resize(nBins+1);
-    m_vAmplitude = vector<float>(m_vfft_out[0].size(), 0.0);
-    m_vAverage = vector<float>(m_vfft_out[0].size(), 0.0);
-    m_vMax = vector<float>(m_vfft_out[0].size(), -80.0);
-    m_vMin = vector<float>(m_vfft_out[0].size(), 80.0);
+    m_vAmplitude = std::vector<float>(m_vfft_out[0].size(), 0.0);
+    m_vAverage = std::vector<float>(m_vfft_out[0].size(), 0.0);
+    m_vAverageRolling = std::vector<float>(m_vfft_out[0].size(), 0.0);
+    m_vAverageRollingDisplay.clear();
+
+    m_vMax = std::vector<float>(m_vfft_out[0].size(), -80.0);
+    m_vMin = std::vector<float>(m_vfft_out[0].size(), 80.0);
     m_dTotalFrames = 0.0;
+    m_dRollingFrames = 0.0;
 
     m_dFall = 0.000195 * static_cast<double>(nBins)*(100-m_dOverlapPercent)/100.0;
     //store here so we can get back
@@ -464,6 +493,10 @@ void fftdiffMeter::ShowAverage(bool bShow)
     m_bShowAverage = bShow;
 }
 
+void fftdiffMeter::ShowAverageRolling(bool bShow)
+{
+    m_bShowAverageRolling = bShow;
+}
 
 void fftdiffMeter::ResetMax()
 {
@@ -480,7 +513,12 @@ void fftdiffMeter::ResetMin()
 void fftdiffMeter::ResetAverage()
 {
     m_vAverage = vector<float>(m_vfft_out[0].size(), 0.0);
+    m_vAverageRolling = vector<float>(m_vfft_out[0].size(), 0.0);
+    m_vAverageRollingDisplay.clear();
     m_dTotalFrames = 0.0;
+    m_dRollingFrames = 0.0;
+
+
 }
 
 Json::Value fftdiffMeter::CreateWebsocketMessage()

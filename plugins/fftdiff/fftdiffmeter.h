@@ -71,6 +71,7 @@ class fftdiffMeter : public pmControl
         void ShowMax(bool bShow);
         void ShowMin(bool bShow);
         void ShowAverage(bool bShow);
+        void ShowAverageRolling(bool bShow);
         void ResetMax();
         void ResetMin();
         void ResetAverage();
@@ -153,6 +154,7 @@ class fftdiffMeter : public pmControl
         void OnLeftUp(wxMouseEvent& event);
         void OnTimerNudge(wxTimerEvent& event);
 
+        void CheckRollingCount();
 
 
         nonInterlacedList m_buffer;
@@ -163,10 +165,13 @@ class fftdiffMeter : public pmControl
 
         std::vector<float> m_vAmplitude;
         std::vector<float> m_vAverage;
+        std::vector<float> m_vAverageRolling;
+        std::vector<float> m_vAverageRollingDisplay;
         std::vector<float> m_vMax;
         std::vector<float> m_vMin;
 
         double m_dTotalFrames;
+        double m_dRollingFrames;
         fftdiffBuilder* m_pBuilder;
 
 
@@ -174,6 +179,7 @@ class fftdiffMeter : public pmControl
         bool m_bShowMax;
         bool m_bShowMin;
         bool m_bShowAverage;
+        bool m_bShowAverageRolling;
 
 
         double m_dBinSize;
