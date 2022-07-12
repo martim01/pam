@@ -63,7 +63,7 @@ double Settings::Read(const wxString& sSection, const wxString& sKey, double dDe
     return m_iniManager.GetIniDouble(sSection, sKey, dDefault);
 }
 
-bool Settings::WriteInternal(const wxString& sSection, const wxString& sKey, const wxString& sValue, SettingEvent::enumType eType)
+bool Settings::WriteInternal(const wxString& sSection, const wxString& sKey, const wxString& sValue, SettingEvent::enumType eType, wxEvtHandler* pWriter)
 {
     bool bDone(true);
     if(m_iniManager.GetIniString(sSection, sKey, wxEmptyString) != sValue)
@@ -77,6 +77,7 @@ bool Settings::WriteInternal(const wxString& sSection, const wxString& sKey, con
         GetHandlers(sSection+"/", setHandlers);         //registered for all changes to this section
         GetHandlers(sSection+"/"+sKey, setHandlers);    //registered for change to this section key pair
 
+        setHandlers.erase(pWriter); //don't send back to the writer as it already should know
         for(auto pHandler : setHandlers)
         {
             SettingEvent* pEvent = new SettingEvent(sSection, sKey, sValue, eType);
@@ -103,29 +104,29 @@ void Settings::OnSettingChanged(SettingEvent& event)
     }
 }
 
-bool Settings::Write(const wxString& sSection, const wxString& sKey, const wxString& sValue)
+bool Settings::Write(const wxString& sSection, const wxString& sKey, const wxString& sValue, wxEvtHandler* pWriter)
 {
-    WriteInternal(sSection, sKey, sValue, SettingEvent::enumType::SETTING_STRING);
+    WriteInternal(sSection, sKey, sValue, SettingEvent::enumType::SETTING_STRING, pWriter);
 
     return true;
 }
 
-bool Settings::Write(const wxString& sSection, const wxString& sKey, int nValue)
+bool Settings::Write(const wxString& sSection, const wxString& sKey, int nValue, wxEvtHandler* pWriter)
 {
-    WriteInternal(sSection, sKey, wxString::Format(wxT("%d"), nValue), SettingEvent::enumType::SETTING_LONG);
+    WriteInternal(sSection, sKey, wxString::Format(wxT("%d"), nValue), SettingEvent::enumType::SETTING_LONG, pWriter);
 
     return true;
 }
 
-bool Settings::Write(const wxString& sSection, const wxString& sKey, unsigned int nValue)
+bool Settings::Write(const wxString& sSection, const wxString& sKey, unsigned int nValue, wxEvtHandler* pWriter)
 {
-    WriteInternal(sSection, sKey, wxString::Format(wxT("%u"), nValue), SettingEvent::enumType::SETTING_LONG);
+    WriteInternal(sSection, sKey, wxString::Format(wxT("%u"), nValue), SettingEvent::enumType::SETTING_LONG, pWriter);
     return true;
 }
 
-bool Settings::Write(const wxString& sSection, const wxString& sKey, double dValue)
+bool Settings::Write(const wxString& sSection, const wxString& sKey, double dValue, wxEvtHandler* pWriter)
 {
-    WriteInternal(sSection, sKey, wxString::Format(wxT("%f"), dValue), SettingEvent::enumType::SETTING_DOUBLE);
+    WriteInternal(sSection, sKey, wxString::Format(wxT("%f"), dValue), SettingEvent::enumType::SETTING_DOUBLE, pWriter);
 
     return true;
 }

@@ -72,6 +72,7 @@ class fftdiffMeter : public pmControl
         void ShowMin(bool bShow);
         void ShowAverage(bool bShow);
         void ShowAverageRolling(bool bShow);
+        void ShowCurrent(bool bShow);
         void ResetMax();
         void ResetMin();
         void ResetAverage();
@@ -181,6 +182,7 @@ class fftdiffMeter : public pmControl
 
 
         bool m_bHold;
+        bool m_bShowCurrent;
         bool m_bShowMax;
         bool m_bShowMin;
         bool m_bShowAverage;

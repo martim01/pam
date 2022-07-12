@@ -44,6 +44,7 @@ fftdiffMeter::fftdiffMeter(wxWindow *parent, fftdiffBuilder* pBuilder, wxWindowI
     m_bCursorMode = false;
     m_bShowMax = false;
     m_bShowMin = false;
+    m_bShowCurrent = true;
     m_bShowAverage = true;
     m_bShowAverageRolling = true;
 
@@ -148,7 +149,10 @@ void fftdiffMeter::DrawFFT(wxDC& dc)
 
     //dc.SetPen(*wxWHITE_PEN);
     //dc.SetBrush(wxBrush(wxColour(90,60,200)));
-    DrawGraph(dc, m_vAmplitude, wxColour(140,140,140));
+    if(m_bShowCurrent)
+    {
+        DrawGraph(dc, m_vAmplitude, wxColour(140,140,140));
+    }
 
 
 
@@ -480,6 +484,12 @@ void fftdiffMeter::OnLeftUp(wxMouseEvent& event)
     }
 
 }
+
+void fftdiffMeter::ShowCurrent(bool bShow)
+{
+    m_bShowCurrent = bShow;
+}
+
 
 void fftdiffMeter::ShowMax(bool bShow)
 {

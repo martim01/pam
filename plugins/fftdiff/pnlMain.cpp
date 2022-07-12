@@ -93,7 +93,7 @@ pnlMain::pnlMain(wxWindow* parent,fftdiffBuilder* pBuilder, wxWindowID id,const 
 	m_pbtnSnapshot->SetBackgroundColour(wxColour(0,166,166));
 	m_pbtnReset = new wmButton(this, ID_M_PBTN7, _("Reset All"), wxPoint(700,445), wxSize(90,30), 0, wxDefaultValidator, _T("ID_M_PBTN7"));
 	m_pbtnReset->SetBackgroundColour(wxColour(218,84,3));
-	m_plstShow = new wmList(this, ID_M_PLST1, wxPoint(400,0), wxSize(240,34), wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI, 0, wxSize(-1,30), 4, wxSize(1,1));
+	m_plstShow = new wmList(this, ID_M_PLST1, wxPoint(340,0), wxSize(300,34), wmList::STYLE_SELECT|wmList::STYLE_SELECT_MULTI, 0, wxSize(-1,30), 5, wxSize(1,1));
 	m_plstShow->SetBackgroundColour(wxColour(0,0,0));
 	m_plstShow->SetButtonColour(wxColour(wxT("#008040")));
 	m_plstShow->SetPressedButtonColour(wxColour(wxT("#008080")));
@@ -138,12 +138,13 @@ pnlMain::pnlMain(wxWindow* parent,fftdiffBuilder* pBuilder, wxWindowID id,const 
     m_vChannels.push_back(subsession::channelGrouping(0,subsession::enumChannelGrouping::ST, subsession::enumChannel::RIGHT));
 
 
+    m_plstShow->AddButton("Current");
     m_plstShow->AddButton("Min");
     m_plstShow->AddButton("Max");
     m_plstShow->AddButton("Rolling");
     m_plstShow->AddButton("Average");
 
-    m_plstShow->ConnectToSetting(m_pBuilder->GetSection(), "Show", size_t(0), wxString("2,3"));
+    m_plstShow->ConnectToSetting(m_pBuilder->GetSection(), "Show", "Current,Rolling,Average");
 
 }
 
@@ -273,10 +274,11 @@ void pnlMain::OnSettingChange(SettingEvent& event)
     else if(event.GetKey() == "Show")
     {
         auto asShow = wxStringTokenize(event.GetValue(), ",");
-        m_pMeter->ShowMin(asShow.Index("0") != -1);
-        m_pMeter->ShowMax(asShow.Index("1") != -1);
-        m_pMeter->ShowAverageRolling(asShow.Index("2") != -1);
-        m_pMeter->ShowAverage(asShow.Index("3") != -1);
+        m_pMeter->ShowMin(asShow.Index("Min") != -1);
+        m_pMeter->ShowMax(asShow.Index("Max") != -1);
+        m_pMeter->ShowAverageRolling(asShow.Index("Rolling") != -1);
+        m_pMeter->ShowAverage(asShow.Index("Average") != -1);
+        m_pMeter->ShowCurrent(asShow.Index("Current") != -1);
     }
 }
 

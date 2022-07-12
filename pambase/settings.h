@@ -19,10 +19,10 @@ class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
         int Read(const wxString& sSection, const wxString& sKey, int nDefault);
         double Read(const wxString& sSection, const wxString& sKey, double dDefault);
 
-        bool Write(const wxString& sSection, const wxString& sKey, const wxString& sValue);
-        bool Write(const wxString& sSection, const wxString& sKey, int nValue);
-        bool Write(const wxString& sSection, const wxString& sKey, unsigned int nValue);
-        bool Write(const wxString& sSection, const wxString& sKey, double dValue);
+        bool Write(const wxString& sSection, const wxString& sKey, const wxString& sValue, wxEvtHandler* pWriter = nullptr);
+        bool Write(const wxString& sSection, const wxString& sKey, int nValue, wxEvtHandler* pWriter = nullptr);
+        bool Write(const wxString& sSection, const wxString& sKey, unsigned int nValue, wxEvtHandler* pWriter = nullptr);
+        bool Write(const wxString& sSection, const wxString& sKey, double dValue, wxEvtHandler* pWriter = nullptr);
 
         bool RemoveKey(const wxString& sSection, const wxString& sKey);
         bool RemoveSection(const wxString& sSection);
@@ -58,7 +58,7 @@ class PAMBASE_IMPEXPORT Settings : public wxEvtHandler
         Settings();
         void CreatePaths();
 
-        bool WriteInternal(const wxString& sSection, const wxString& sKey, const wxString& sValue, SettingEvent::enumType eType);
+        bool WriteInternal(const wxString& sSection, const wxString& sKey, const wxString& sValue, SettingEvent::enumType eType, wxEvtHandler* pWriter);
 
         void OnTimerSave(wxTimerEvent& event);
 

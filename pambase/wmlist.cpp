@@ -11,6 +11,7 @@
 #include "settings.h"
 #include "settingevent.h"
 
+
 using namespace std;
 
 const long wmList::ID_HOLDING       = wxNewId();
@@ -867,10 +868,9 @@ void wmList::SelectButton(std::list<button*>::iterator itSel, bool bEvent)
             }
         }
 
-        WriteSetting();
-
         if(bEvent)
         {
+            WriteSetting();
 
             event.SetExtraLong(bSelected);
             //ProcessWindowEvent(event);
@@ -2452,13 +2452,14 @@ void wmList::ReloadSetting()
 
 bool wmList::ConnectToSetting(const wxString& sSection, const wxString& sKey, const wxString& sDefault)
 {
+    std::cout << "wmList::ConnectToSetting(" << sSection << "," << sKey << "," << sDefault << ")" << std::endl;
     if(sSection.empty() || sKey.empty())
     {
         return false;
     }
 
     ConnectToSetting(sSection, sKey);
-    if(m_nStyle & STYLE_SELECT_MULTI)
+    if((m_nStyle & STYLE_SELECT_MULTI) != 0)
     {
         m_eSettingConnection = enumSettingConnection::CSV_LABEL;
         SelectButtonsFromCSVLabel(Settings::Get().Read(sSection, sKey, sDefault));
@@ -2567,13 +2568,13 @@ void wmList::WriteSetting()
     switch(m_eSettingConnection)
     {
         case enumSettingConnection::LABEL:
-            Settings::Get().Write(m_sSettingSection, m_sSettingKey, pButton ? pButton->pUi->GetLabel() : "");
+            Settings::Get().Write(m_sSettingSection, m_sSettingKey, pButton ? pButton->pUi->GetLabel() : "", this);
             break;
         case enumSettingConnection::INDEX:
-            Settings::Get().Write(m_sSettingSection, m_sSettingKey, pButton ? (int)pButton->pUi->GetIndex() : (int)0);
+            Settings::Get().Write(m_sSettingSection, m_sSettingKey, pButton ? (int)pButton->pUi->GetIndex() : (int)0, this);
             break;
         case enumSettingConnection::DATA:
-            Settings::Get().Write(m_sSettingSection, m_sSettingKey, pButton ? (int)pButton->pUi->GetClientData() : (int)0);
+            Settings::Get().Write(m_sSettingSection, m_sSettingKey, pButton ? (int)pButton->pUi->GetClientData() : (int)0, this);
             break;
         case enumSettingConnection::CSV_LABEL:
             WriteSettingCSVLabel();
@@ -2590,19 +2591,19 @@ void wmList::WriteSetting()
 void wmList::SelectButtonsFromCSVLabel(const wxString& sCsv)
 {
     wxArrayString as = wxStringTokenize(sCsv, ",");
-    for(size_t i = 0; i > as.GetCount(); i++)
+    for(const auto& str : as)
     {
-        SelectButton(as[i], false);
+        SelectButton(str, false);
     }
 }
 
 void wmList::SelectButtonsFromCSVIndex(const wxString& sCsv)
 {
     wxArrayString as = wxStringTokenize(sCsv, ",");
-    for(size_t i = 0; i > as.GetCount(); i++)
+    for(const auto& str : as)
     {
         unsigned long nId;
-        if(as[i].ToULong(&nId))
+        if(str.ToULong(&nId))
         {
             SelectButton(nId, false);
         }
@@ -2612,12 +2613,12 @@ void wmList::SelectButtonsFromCSVIndex(const wxString& sCsv)
 void wmList::SelectButtonsFromCSVData(const wxString& sCsv)
 {
     wxArrayString as = wxStringTokenize(sCsv, ",");
-    for(size_t i = 0; i > as.GetCount(); i++)
+    for(const auto& str : as)
     {
         unsigned long nData;
-        if(as[i].ToULong(&nData))
+        if(str.ToULong(&nData))
         {
-            SelectButton(reinterpret_cast<void*>(nData), false);
+            SelectButton(GetButton(reinterpret_cast<void*>(nData)), false);
         }
     }
 }
@@ -2633,7 +2634,7 @@ void wmList::WriteSettingCSVLabel()
         }
         sData += (*itSel)->pUi->GetLabel();
     }
-    Settings::Get().Write(m_sSettingSection, m_sSettingKey, sData);
+    Settings::Get().Write(m_sSettingSection, m_sSettingKey, sData, this);
 }
 
 void wmList::WriteSettingCSVIndex()
@@ -2647,7 +2648,7 @@ void wmList::WriteSettingCSVIndex()
         }
         sData << (*itSel)->pUi->GetIndex();
     }
-    Settings::Get().Write(m_sSettingSection, m_sSettingKey, sData);
+    Settings::Get().Write(m_sSettingSection, m_sSettingKey, sData, this);
 }
 
 void wmList::WriteSettingCSVData()
@@ -2661,7 +2662,7 @@ void wmList::WriteSettingCSVData()
         }
         sData << reinterpret_cast<unsigned long>((*itSel)->pUi->GetClientData());
     }
-    Settings::Get().Write(m_sSettingSection, m_sSettingKey, sData);
+    Settings::Get().Write(m_sSettingSection, m_sSettingKey, sData, this);
 }
 
 
