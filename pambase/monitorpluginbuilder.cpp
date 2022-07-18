@@ -138,7 +138,12 @@ void MonitorPluginBuilder::InitRemoteApi()
 
 pml::restgoose::response MonitorPluginBuilder::GetStatus(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
 {
-    wxString sKey = RemoteApi::Get().ConvertQueryToMap(theQuery)["key"];
+    auto itParam = theQuery.find(queryKey("key"));
+    wxString sKey;
+    if(itParam != theQuery.end())
+    {
+        sKey = itParam->second.Get();
+    }
 
     pml::restgoose::response resp(200);
     resp.jsonData = RemoteApi::Get().GetSectionJson(GetSection(), sKey);

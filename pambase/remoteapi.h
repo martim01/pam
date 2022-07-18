@@ -13,7 +13,6 @@ class RemoteApi : public wxEvtHandler
     public:
         static RemoteApi& Get();
 
-        std::map<wxString, wxString> ConvertQueryToMap(const query& theQuery);
 
     protected:
         friend class MonitorPluginBuilder;
@@ -22,7 +21,7 @@ class RemoteApi : public wxEvtHandler
         friend class pam2Dialog;
         friend class Settings;
 
-        bool WSAuthenticate(const endpoint& theEndpoint, const userName& theUser, const ipAddress& thePeer);
+        bool WSAuthenticate(const endpoint& theEndpoint,const query& theQuery, const userName& theUser, const ipAddress& thePeer);
         bool WSMessage(const endpoint& theEndpoint, const Json::Value& theMessage);
         void WSClose(const endpoint& theEndpoint, const ipAddress& thePeer);
 

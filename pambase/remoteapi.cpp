@@ -84,18 +84,6 @@ void PatchWorked(pml::restgoose::response& resp, int nCode)
     resp.jsonData["success"] = true;
 }
 
-std::map<wxString, wxString> RemoteApi::ConvertQueryToMap(const query& theQuery)
-{
-
-    wxArrayString asQuery = wxStringTokenize(wxString(theQuery.Get()), "&");
-    std::map<wxString, wxString> mQuery;
-
-    for(size_t i = 0; i < asQuery.GetCount(); i++)
-    {
-        mQuery.insert({asQuery[i].Before('=').Lower(), asQuery[i].After('=')});
-    }
-    return mQuery;
-}
 
 
 
@@ -193,9 +181,9 @@ RemoteApi::RemoteApi() : m_bWebsocketsActive(Settings::Get().Read("RemoteApi", "
 
     m_Server.AddNotFoundCallback(std::bind(&RemoteApi::ExtraEndpoint, this, _1,_2,_3,_4,_5));
 
-    m_Server.AddWebsocketEndpoint(endpoint("/x-pam/ws/plugin"), std::bind(&RemoteApi::WSAuthenticate, this, _1,_2,_3), std::bind(&RemoteApi::WSMessage, this, _1,_2), std::bind(&RemoteApi::WSClose, this, _1,_2));
-    m_Server.AddWebsocketEndpoint(endpoint("/x-pam/ws/setting"), std::bind(&RemoteApi::WSAuthenticate, this, _1,_2,_3), std::bind(&RemoteApi::WSMessage, this, _1,_2), std::bind(&RemoteApi::WSClose, this, _1,_2));
-    m_Server.AddWebsocketEndpoint(endpoint("/x-pam/ws"), std::bind(&RemoteApi::WSAuthenticate, this, _1,_2,_3), std::bind(&RemoteApi::WSMessage, this, _1,_2), std::bind(&RemoteApi::WSClose, this, _1,_2));
+    m_Server.AddWebsocketEndpoint(endpoint("/x-pam/ws/plugin"), std::bind(&RemoteApi::WSAuthenticate, this, _1,_2,_3,_4), std::bind(&RemoteApi::WSMessage, this, _1,_2), std::bind(&RemoteApi::WSClose, this, _1,_2));
+    m_Server.AddWebsocketEndpoint(endpoint("/x-pam/ws/setting"), std::bind(&RemoteApi::WSAuthenticate, this, _1,_2,_3,_4), std::bind(&RemoteApi::WSMessage, this, _1,_2), std::bind(&RemoteApi::WSClose, this, _1,_2));
+    m_Server.AddWebsocketEndpoint(endpoint("/x-pam/ws"), std::bind(&RemoteApi::WSAuthenticate, this, _1,_2,_3,_4), std::bind(&RemoteApi::WSMessage, this, _1,_2), std::bind(&RemoteApi::WSClose, this, _1,_2));
 
     Settings::Get().AddHandler(this);
     Bind(wxEVT_SETTING_CHANGED, &RemoteApi::OnSettingEvent, this);
@@ -295,9 +283,11 @@ pml::restgoose::response RemoteApi::GetRoot(const query& theQuery, const std::ve
 
 pml::restgoose::response RemoteApi::GetSettings(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
 {
-    auto mQuery = ConvertQueryToMap(theQuery);
-    wxString sSection = mQuery["section"];
-    wxString sKey = mQuery["key"];
+    auto itSection = theQuery.find(queryKey("section"));
+    auto itKey = theQuery.find(queryKey("key"));
+
+    wxString sSection = (itSection != theQuery.end() ? itSection->second.Get() : "");
+    wxString sKey = (itKey != theQuery.end() ? itKey->second.Get() : "");
 
 
     pml::restgoose::response resp;
@@ -693,7 +683,7 @@ pml::restgoose::response RemoteApi::GetPluginsGenerator(const query& theQuery, c
     return resp;
 }
 
-bool RemoteApi::WSAuthenticate(const endpoint& theEndpoint, const userName& theUser, const ipAddress& thePeer)
+bool RemoteApi::WSAuthenticate(const endpoint& theEndpoint, const query& theQuery, const userName& theUser, const ipAddress& thePeer)
 {
     pmlLog() << "RemoteApi\tWebsocket connection: " << theEndpoint.Get() << " from " << thePeer.Get();
     return true;
@@ -824,7 +814,6 @@ pml::restgoose::response RemoteApi::DeleteWavFile(const query& theQuery, const s
 
 pml::restgoose::response RemoteApi::GetAoipSources(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)
 {
-    auto mQuery = ConvertQueryToMap(theQuery);
 
     pml::restgoose::response resp;
     resp.jsonData = Json::Value(Json::arrayValue);
@@ -853,26 +842,27 @@ pml::restgoose::response RemoteApi::GetAoipSources(const query& theQuery, const 
 
             //check if the source matches the query string
             bool bAdd(true);
-            for(auto pairQuery : mQuery)
+            for(auto pairQuery : theQuery)
             {
-                if(pairQuery.first == "index")
+                if(pairQuery.first.Get() == "index")
                 {
                     long nIndex;
-                    bAdd = (pairQuery.second.ToLong(&nIndex) && pairSource.first == nIndex);
+                    wxString sConvert(pairQuery.second.Get());
+                    bAdd = (sConvert.ToLong(&nIndex) && pairSource.first == nIndex);
                 }
-                else if(jsSource.isMember(pairQuery.first.ToStdString()))
+                else if(jsSource.isMember(pairQuery.first.Get()))
                 {
-                    if(jsSource[pairQuery.first.ToStdString()].isString() && jsSource[pairQuery.first.ToStdString()].asString() != pairQuery.second.ToStdString())
+                    if(jsSource[pairQuery.first.Get()].isString() && jsSource[pairQuery.first.Get()].asString() != pairQuery.second.Get())
                     {
                         bAdd = false;
                     }
-                    else if(jsSource[pairQuery.first.ToStdString()].isArray())
+                    else if(jsSource[pairQuery.first.Get()].isArray())
                     {
                         bool bAdd = false;
                         for(Json::ArrayIndex ai = 0; ai < jsSource["tags"].size(); ++ai)
                         {
-                            if(pairQuery.second.ToStdString().find(jsSource["tags"].asString()+",") != std::string::npos ||
-                               pairQuery.second.ToStdString().find(","+jsSource["tags"].asString()) != std::string::npos)
+                            if(pairQuery.second.Get().find(jsSource["tags"].asString()+",") != std::string::npos ||
+                               pairQuery.second.Get().find(","+jsSource["tags"].asString()) != std::string::npos)
                             {
                                 bAdd = true;
                                 break;
