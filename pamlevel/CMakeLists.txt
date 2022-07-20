@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
-project(pamlevel LANGUAGES CXX VERSION 1.2.0)
+project(pamlevel LANGUAGES CXX VERSION 1.3.0)
 
 execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -P ${CMAKE_SOURCE_DIR}/version.cmake)
 
@@ -9,9 +9,8 @@ include_directories(${CMAKE_BINARY_DIR}/include)
 link_directories("../lib")
 
 
-file(GLOB SOURCES "*.cpp" )
 
-add_library(pamlevel SHARED ${SOURCES} ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_version.cpp)
+add_library(pamlevel SHARED "audioalgorithms.cpp" "filt.cpp" "truepeakcalculator.cpp" ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_version.cpp)
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(pamlevel PRIVATE ${flags})

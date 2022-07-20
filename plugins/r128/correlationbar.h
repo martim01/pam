@@ -132,15 +132,11 @@ class CorrelationBar : public pmControl
 
         std::list<std::pair<double, double> > m_lstLevels;
         double m_dCorrelation;
-        double m_dBalance;
-        double m_dSpread[2];
 
 
         std::list<double> m_lstCorrelation;
-        std::list<double> m_lstBalance;
 
         uiRect m_uiCorrelation;
-        uiRect m_uiBalance;
 
         wxBitmap* m_pBmpCorrelationOut;
         wxBitmap* m_pBmpCorrelationIn;

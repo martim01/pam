@@ -133,6 +133,8 @@
 		<Linker>
 			<Add directory="../lib" />
 		</Linker>
+		<Unit filename="audioalgorithms.cpp" />
+		<Unit filename="audioalgorithms.h" />
 		<Unit filename="filt.cpp" />
 		<Unit filename="filt.h" />
 		<Unit filename="pamleveldll.h" />

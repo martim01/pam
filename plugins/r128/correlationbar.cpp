@@ -6,6 +6,7 @@
 #include "levelcalculator.h"
 #include "timedbuffer.h"
 #include "settings.h"
+#include "audioalgorithms.h"
 
 using namespace std;
 
@@ -27,7 +28,6 @@ CorrelationBar::CorrelationBar(wxWindow *parent, wxWindowID id, const wxPoint& p
     m_nAxisX(0),
     m_nAxisY(0),
     m_dCorrelation(0),
-    m_dBalance(0),
     m_pBmpCorrelationOut(0),
     m_pBmpCorrelationIn(0)
 {
@@ -111,18 +111,6 @@ void CorrelationBar::OnPaint(wxPaintEvent& event)
     dc.DrawRectangle(m_rectCorrelation.GetLeft()+m_rectCorrelation.GetWidth()/2+dCorrelation*m_dResolutionCorrelation, m_rectCorrelation.GetTop()+1, 3, m_rectCorrelation.GetHeight()-2);
 
 
-//    double dBalance = 0.0;
-//    int nCount = 0;
-//    for(list<double>::const_reverse_iterator itBalance = m_lstBalance.rbegin(); itBalance != m_lstBalance.rend(); ++itBalance)
-//    {
-//        dBalance += (*itBalance);
-//    }
-//    dBalance /= m_lstBalance.size();
-//
-//    double dLeft = m_rectBalance.GetLeft()+m_rectBalance.GetWidth()/2+(dBalance*m_dResolutionCorrelation);
-//    dc.SetBrush(wxColour(50,255,50));
-//    dc.DrawRectangle(dLeft-1, m_rectBalance.GetTop()+1, 2, m_rectBalance.GetHeight()-2);
-
 
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
 
@@ -161,49 +149,13 @@ void CorrelationBar::OnPaint(wxPaintEvent& event)
 
 void CorrelationBar::WorkoutBalance(const timedbuffer* pBuffer)
 {
-    float dCorrelation(0.0);
-    double dBalance[2] = {0.0, 0.0};
-    double dProduct(0.0);
 
-    for(size_t i = 0; i < pBuffer->GetBufferSize(); i+=m_nInputChannels)
-    {
-        float dX = pBuffer->GetBuffer()[i+m_nAxisX];
-        float dY = pBuffer->GetBuffer()[i+m_nAxisY];
-
-        dBalance[0] += pow(dX,2);
-        dBalance[1] += pow(dY,2);
-        dProduct += dX*dY;
-
-    }
-    double dFrames = pBuffer->GetBufferSize()/m_nInputChannels;
-
-    m_dCorrelation = dProduct/sqrt(dBalance[0]*dBalance[1]);
-
-    dBalance[1] = max(0.0, sqrt(dBalance[1]/dFrames));
-    dBalance[0] = max(0.0, sqrt(dBalance[0]/dFrames));
-
-    if(dBalance[1] > dBalance[0])
-    {
-        dBalance[0] /= dBalance[1];
-        m_dBalance = 1.0-dBalance[0];
-    }
-    else
-    {
-        dBalance[1] /= dBalance[0];
-        m_dBalance = -(1.0-dBalance[1]);
-    }
-
-    m_lstCorrelation.push_back(m_dCorrelation);
+    m_lstCorrelation.push_back(PearsonCorrelation(pBuffer, m_nInputChannels, m_nAxisX, m_nAxisY));
     if(m_lstCorrelation.size() > 40)
     {
         m_lstCorrelation.pop_front();
     }
 
-    m_lstBalance.push_back(m_dBalance);
-    if(m_lstBalance.size() > 300)
-    {
-        m_lstBalance.pop_front();
-    }
 }
 
 
