@@ -72,7 +72,6 @@ class PAMBASE_IMPEXPORT HistoryGraph : public pmControl
         void AddPeak(const wxString& sGraph, double dPeak, const std::chrono::time_point<std::chrono::system_clock>& tp);
         void SetLine(const wxString& sName, double dStart, const std::chrono::time_point<std::chrono::system_clock>& tpStart, double dEnd, const std::chrono::time_point<std::chrono::system_clock>& tpEnd);
         void RecalculateRange(const wxString& sGraph);
-
         void ShowGraph(const wxString& sGraph, bool bShow);
         void ClearGraphs();
         void DeleteAllGraphs();

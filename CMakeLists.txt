@@ -185,6 +185,9 @@ message(STATUS "Configure plugin waveform")
 add_subdirectory(plugins/waveform)
 message(STATUS "Configure plugin fftdiff")
 add_subdirectory(plugins/fftdiff)
+message(STATUS "Configure plugin correlation")
+add_subdirectory(plugins/correlation)
+
 
 message(STATUS "Configure pam2")
 add_subdirectory(pam2)

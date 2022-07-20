@@ -113,6 +113,7 @@ void pnlEbuMeter::SetSession(const session& aSession)
     {
         m_subsession = (*aSession.GetCurrentSubsession());
         m_nChannels = aSession.GetCurrentSubsession()->nChannels;
+        m_pBar->SetNumberOfInputChannels(m_nChannels);
     }
     else
     {

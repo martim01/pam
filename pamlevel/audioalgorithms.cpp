@@ -1,9 +1,9 @@
 #include "audioalgorithms.h"
 #include <cmath>
+#include "log.h"
 
 float PearsonCorrelation(const timedbuffer* pBuffer, unsigned long nChannels, unsigned long nChannelX, unsigned long nChannelY, bool bCosineOnly)
 {
-    float dCorrelation(0.0);
     double dBalance[2] = {0.0, 0.0};
     double dProduct(0.0);
 
@@ -20,6 +20,7 @@ float PearsonCorrelation(const timedbuffer* pBuffer, unsigned long nChannels, un
         float dCount = (static_cast<float>(pBuffer->GetBufferSize())/static_cast<float>(nChannels));
         dAverage[0] /= dCount;
         dAverage[1] /= dCount;
+
     }
 
     for(size_t i = 0; i < pBuffer->GetBufferSize(); i+=nChannels)
@@ -32,6 +33,9 @@ float PearsonCorrelation(const timedbuffer* pBuffer, unsigned long nChannels, un
         dProduct += dX*dY;
 
     }
-
+    if(dBalance[0] == 0.0 || dBalance[1] == 0.0)
+    {
+        return 0.0;
+    }
     return dProduct/sqrt(dBalance[0]*dBalance[1]);
 }
