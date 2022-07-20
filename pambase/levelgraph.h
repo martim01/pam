@@ -68,7 +68,9 @@ class PAMBASE_IMPEXPORT LevelGraph : public pmControl
             m_dResolution = static_cast<double>(GetClientSize().GetHeight())/(m_dMax-m_dMin);
         }
 
-        void AddGraph(const wxString& sName, const wxColour& clr, bool bAutoRange=false);
+        enum enumMode {DS_MIN = 0, DS_MAX, DS_AV};
+
+        void AddGraph(const wxString& sName, const wxColour& clr, bool bAutoRange=false, enumMode eMode = DS_MAX);
         std::pair<bool, double> AddPeak(const wxString& sGraph, double dPeak);
 
         void AddZone(double dMin, double dMax, const wxColour& clr);
@@ -103,13 +105,16 @@ class PAMBASE_IMPEXPORT LevelGraph : public pmControl
 
         struct graph
         {
-            graph(const wxColour& clr, bool bAuto) : clrLine(clr), dDataSetTotal(0.0), dDataSetMax(-120.0), nDataSize(0), bShow(true), dMax(std::numeric_limits<double>::lowest()),
+            graph(const wxColour& clr, bool bAuto, enumMode eM) : clrLine(clr), dDataSetTotal(0.0), dDataSetMax(-120.0), nDataSize(0), bShow(true),
+            dMax(std::numeric_limits<double>::lowest()),
             dMin(std::numeric_limits<double>::max()), dResolution(1),
-            bShowRange(false), bAutoRange(bAuto) {}
+            bShowRange(false), bAutoRange(bAuto), eMode(eM) {}
+
             wxColour clrLine;
             std::list<double> lstPeaks;
             double dDataSetTotal;
             double dDataSetMax;
+            double dDataSetMin;
             size_t nDataSize;
             bool bShow;
             double dMax;
@@ -117,6 +122,8 @@ class PAMBASE_IMPEXPORT LevelGraph : public pmControl
             double dResolution;
             bool bShowRange;
             bool bAutoRange;
+
+            enumMode eMode;
         };
 
 

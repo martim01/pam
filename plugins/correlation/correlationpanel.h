@@ -1,13 +1,10 @@
 #pragma once
 
-//(*Headers(correlationPanel)
-#include <wx/panel.h>
-//*)
-
 #include <vector>
 #include "pmpanel.h"
-#include "historygraph.h"
+#include <wx/pen.h>
 
+class LevelGraph;
 class correlationBuilder;
 class timedbuffer;
 class session;
@@ -64,7 +61,7 @@ class correlationPanel: public pmPanel
 
 		correlationBuilder* m_pBuilder;
 
-		HistoryGraph* m_pGraph;
+		LevelGraph* m_pGraph;
 
 		unsigned long m_nInputChannels = 2;
 		unsigned long m_nX = 0;

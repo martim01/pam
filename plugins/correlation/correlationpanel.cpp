@@ -4,6 +4,7 @@
 #include "session.h"
 #include "audioalgorithms.h"
 #include "log.h"
+#include "levelgraph.h"
 
 //(*InternalHeaders(correlationPanel)
 #include <wx/intl.h>
@@ -30,10 +31,14 @@ correlationPanel::correlationPanel(wxWindow* parent,correlationBuilder* pBuilder
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
 	//*)
 
-	m_pGraph = new HistoryGraph(this, wxNewId(), wxPoint(0,0), wxSize(800,480));
-	m_pGraph->AddGraph(GRAPH, *wxWHITE, 853333);
+	m_pGraph = new LevelGraph(this, wxNewId(), wxPoint(0,0), wxSize(800,480), 10, 1.0, -1.0);
+	m_pGraph->AddGraph(GRAPH, *wxWHITE, false, LevelGraph::DS_AV);
+	m_pGraph->ShowGraph(GRAPH);
+	m_pGraph->SetLimit(GRAPH, 1.0, -1.0);
+    m_pGraph->AddLine(0, wxPen(wxColour(120,120,120), 1));
 
 	Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&correlationPanel::OnLeftUp);
+    m_pGraph->Bind(wxEVT_LEFT_UP, &correlationPanel::OnLeftUp, this);
 
 	SetSize(size);
 	SetPosition(pos);
@@ -49,7 +54,6 @@ void correlationPanel::SetAudioData(const timedbuffer* pBuffer)
 {
     if(m_nInputChannels != 0)
     {
-
         auto dValue = PearsonCorrelation(pBuffer, 2, 0, 1);
         m_pGraph->AddPeak(GRAPH, dValue);
     }

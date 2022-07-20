@@ -132,9 +132,9 @@ void LevelGraph::OnPaint(wxPaintEvent& event)
     dc.DrawLine(GetClientRect().GetRight(),0, GetClientRect().GetRight(), GetClientRect().GetBottom());
 }
 
-void LevelGraph::AddGraph(const wxString& sName, const wxColour& clr, bool bAuto)
+void LevelGraph::AddGraph(const wxString& sName, const wxColour& clr, bool bAuto, enumMode eMode)
 {
-    m_mGraphs.insert(make_pair(sName, graph(clr, bAuto)));
+    m_mGraphs.insert(make_pair(sName, graph(clr, bAuto, eMode)));
 }
 
 std::pair<bool, double> LevelGraph::AddPeak(const wxString& sGraph, double dPeak)
@@ -144,6 +144,7 @@ std::pair<bool, double> LevelGraph::AddPeak(const wxString& sGraph, double dPeak
     {
         itGraph->second.dDataSetTotal += dPeak;
         itGraph->second.dDataSetMax = max(dPeak,itGraph->second.dDataSetMax);
+        itGraph->second.dDataSetMin = min(dPeak,itGraph->second.dDataSetMin);
         itGraph->second.nDataSize++;
 
         if(itGraph->second.nDataSize == m_nDataSize)
@@ -157,9 +158,22 @@ std::pair<bool, double> LevelGraph::AddPeak(const wxString& sGraph, double dPeak
 double LevelGraph::ProcessDataSet(graph& aGraph)
 {
     //currently we just show the max
-    double dPeak(GetDataSetMax(aGraph));
+    double dPeak = 0.0;
+    switch(aGraph.eMode)
+    {
+        case DS_MAX:
+            dPeak = aGraph.dDataSetMax;
+            break;
+        case DS_MIN:
+            dPeak = aGraph.dDataSetMin;
+            break;
+        case DS_AV:
+            dPeak = aGraph.dDataSetTotal/static_cast<double>(aGraph.nDataSize);
+            break;
+    }
     aGraph.nDataSize = 0;
     aGraph.dDataSetMax = std::numeric_limits<double>::lowest();
+    aGraph.dDataSetMin = std::numeric_limits<double>::max();
     aGraph.dDataSetTotal = 0.0;
 
     aGraph.lstPeaks.push_back(dPeak);
@@ -230,7 +244,8 @@ void LevelGraph::ClearGraphs()
     {
         itGraph->second.lstPeaks.clear();
         itGraph->second.dDataSetTotal =0.0;
-        itGraph->second.dDataSetMax= -120.0;
+        itGraph->second.dDataSetMax= std::numeric_limits<double>::lowest();
+        itGraph->second.dDataSetMin= -std::numeric_limits<double>::max();
         itGraph->second.nDataSize=0;
 
         itGraph->second.dMax = std::numeric_limits<double>::lowest();
