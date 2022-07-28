@@ -1,0 +1,33 @@
+#pragma once
+
+//(*Headers(pnl@OPTIONS@)
+#include <wx/panel.h>
+//*)
+
+class @PLUGIN@Builder;
+
+class pnl@OPTIONS@: public wxPanel
+{
+	public:
+
+		pnl@OPTIONS@(wxWindow* parent,@PLUGIN@Builder* pBuilder, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+		virtual ~pnl@OPTIONS@();
+
+		//(*Declarations(pnl@OPTIONS@)
+		//*)
+
+	protected:
+
+		//(*Identifiers(pnl@OPTIONS@)
+		//*)
+
+	private:
+
+		//(*Handlers(pnl@OPTIONS@)
+		//*)
+
+		@PLUGIN@Builder* m_pBuilder;
+
+		DECLARE_EVENT_TABLE()
+};
+

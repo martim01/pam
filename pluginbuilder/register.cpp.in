@@ -1,0 +1,25 @@
+#include "@PLUGIN@register.h"
+#include "@PLUGIN@builder.h"
+#include "@TYPE@pluginfactory.h"
+#include "@PLUGIN@_version.h"
+
+
+void Create@TYPEU@Builder()
+{
+    @TYPEU@PluginFactory::Get()->Register(new @PLUGIN@Builder());
+}
+
+wxString GetPluginName()
+{
+    return "@PLUGIN@";
+}
+
+wxString GetPluginVersion()
+{
+    return pml::@PLUGIN@::VERSION_STRING;
+}
+
+wxString GetDetails()
+{
+    return "@DESCRIPTION@";
+}

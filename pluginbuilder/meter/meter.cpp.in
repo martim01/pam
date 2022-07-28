@@ -37,7 +37,7 @@ bool @PLUGIN@Meter::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, 
     if(size.y <= 0)
         szInit.SetHeight(bestSize.y);
 
-    if(!wxWindow::Create(parent,id,pos,szInit,wxWANTS_CHARS, wxT("fft")))
+    if(!wxWindow::Create(parent,id,pos,szInit,wxWANTS_CHARS, "@PLUGIN@"))
         return false;
 
     SetMinSize(size);

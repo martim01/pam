@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <wxsmith>
-	<object class="wxPanel" name="pnl[CLASS_PREFIX]">
+	<object class="wxPanel" name="pnl@OPTIONS@">
+		<bg>#000000</bg>
 		<pos_arg>1</pos_arg>
 		<size_arg>1</size_arg>
 	</object>

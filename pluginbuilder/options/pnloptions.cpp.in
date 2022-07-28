@@ -1,0 +1,34 @@
+#include "pnl@OPTIONS@.h"
+#include "@PLUGIN@builder.h"
+
+//(*InternalHeaders(pnl@OPTIONS@)
+#include <wx/intl.h>
+#include <wx/string.h>
+//*)
+
+//(*IdInit(pnl@OPTIONS@)
+//*)
+
+BEGIN_EVENT_TABLE(pnl@OPTIONS@,wxPanel)
+	//(*EventTable(pnl@OPTIONS@)
+	//*)
+END_EVENT_TABLE()
+
+pnl@OPTIONS@::pnl@OPTIONS@(wxWindow* parent,@PLUGIN@Builder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) :
+    m_pBuilder(pBuilder)
+{
+	//(*Initialize(pnl@OPTIONS@)
+	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
+	SetBackgroundColour(wxColour(0,0,0));
+	//*)
+
+
+}
+
+pnl@OPTIONS@::~pnl@OPTIONS@()
+{
+	//(*Destroy(pnl@OPTIONS@)
+	//*)
+}
+
+

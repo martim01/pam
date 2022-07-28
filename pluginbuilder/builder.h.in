@@ -1,11 +1,11 @@
 #pragma once
-#include "monitorpluginbuilder.h"
+#include "@TYPE@pluginbuilder.h"
 #include <wx/string.h>
 
 class SettingEvent;
 class @PLUGIN@@DISPLAY_TYPE@;
 
-class WXEXPORT @PLUGIN@Builder : public MonitorPluginBuilder
+class WXEXPORT @PLUGIN@Builder : public @TYPEU@PluginBuilder
 {
     public:
         @PLUGIN@Builder();
@@ -26,8 +26,8 @@ class WXEXPORT @PLUGIN@Builder : public MonitorPluginBuilder
     	friend class @PLUGIN@@DISPLAY_TYPE@;
         void OnSettingChanged(SettingEvent& event);
 
-        virtual wxWindow* CreateMonitorPanel(wxWindow* pParent);
-        virtual std::list<pairOptionPanel_t>CreateOptionPanels(wxWindow* pParent);
+        virtual wxWindow* Create@TYPEU@Panel(wxWindow* pParent);
+$MONITOR$       virtual std::list<pairOptionPanel_t>CreateOptionPanels(wxWindow* pParent);
 
         void LoadSettings();
 

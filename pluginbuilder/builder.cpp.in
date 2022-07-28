@@ -3,11 +3,12 @@
 #include "settings.h"
 #include "settingevent.h"
 #include "version.h"
-#include "@PLUGIN@@DISPLAY_TYPE@.h"
+#include "@PLUGIN@@DISPLAY_FILE@.h"
+@INCLUDE_OPTIONS@
 
 using namespace std;
 
-@PLUGIN@Builder::@PLUGIN@Builder() : MonitorPluginBuilder()
+@PLUGIN@Builder::@PLUGIN@Builder() : @TYPEU@PluginBuilder()
 {
 
     RegisterForSettingsUpdates(this);
@@ -21,20 +22,17 @@ void @PLUGIN@Builder::SetAudioData(const timedbuffer* pBuffer)
 	m_pMeter->SetAudioData(pBuffer);
 }
 
-wxWindow* @PLUGIN@Builder::CreateMonitorPanel(wxWindow* pParent)
+wxWindow* @PLUGIN@Builder::Create@TYPEU@Panel(wxWindow* pParent)
 {
     m_pMeter = new @PLUGIN@@DISPLAY_TYPE@(pParent,this);
 	return m_pMeter;
 
 }
 
-list<pairOptionPanel_t> @PLUGIN@Builder::CreateOptionPanels(wxWindow* pParent)
-{
-    list<pairOptionPanel_t> lstOptionPanels;
-
-    //@todo create and return all the option panels
-    return lstOptionPanels;
-}
+$MONITOR$list<pairOptionPanel_t> @PLUGIN@Builder::CreateOptionPanels(wxWindow* pParent)
+$MONITOR$ {
+$MONITOR$    return {@CREATE_OPTIONS@};
+$MONITOR$}
 
 
 
