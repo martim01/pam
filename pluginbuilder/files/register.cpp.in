@@ -1,8 +1,9 @@
 #include "@PLUGIN@register.h"
 #include "@PLUGIN@builder.h"
 #include "@TYPE@pluginfactory.h"
+#ifdef _CMAKE_
 #include "@PLUGIN@_version.h"
-
+#endif
 
 void Create@TYPEU@Builder()
 {
@@ -16,7 +17,11 @@ wxString GetPluginName()
 
 wxString GetPluginVersion()
 {
+    #ifdef _CMAKE_
     return pml::@PLUGIN@::VERSION_STRING;
+    #else
+    return "Unknown";
+    #endif
 }
 
 wxString GetDetails()
