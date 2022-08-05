@@ -35,18 +35,20 @@ For more information please look at the help files contained in the __documents_
 * libsndfile   http://www.mega-nerd.com/libsndfile/
 * Secret Rabit Code  http://www.mega-nerd.com/SRC/
 * Avahi-Client
+* OpenSSL
+* libCurl
 
 
 ##### To install these libraries on Raspbian
 On Buster and earlier
 ```
 sudo apt-get update
-sudo apt-get install libwxgtk3.0-dev portaudio19-dev libsndfile1-dev libsamplerate0-dev libavahi-client-dev libcap-dev
+sudo apt-get install libwxgtk3.0-dev portaudio19-dev libsndfile1-dev libsamplerate0-dev libavahi-client-dev libcap-dev libssl-dev libcurl4-openssl-dev
 ```
 On Bullseye
 ```
 sudo apt-get update
-sudo apt-get install libwxgtk3.0-gtk3-dev portaudio19-dev libsndfile1-dev libsamplerate0-dev libavahi-client-dev libcap-dev
+sudo apt-get install libwxgtk3.0-gtk3-dev portaudio19-dev libsndfile1-dev libsamplerate0-dev libavahi-client-dev libcap-dev libssl-dev libcurl4-openssl-dev
 ```
 
 ### Other libraries required
