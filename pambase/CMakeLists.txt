@@ -105,6 +105,7 @@ target_link_libraries(pambase optimized pml_dnssd debug pml_dnssdd)
 target_link_libraries(pambase avahi-client)
 target_link_libraries(pambase optimized sapserver debug sapserverd)
 target_link_libraries(pambase optimized ptpmonkey debug ptpmonkeyd)
+target_link_libraries(pambase optimized restgoose debug restgoosed)
 
 set_target_properties(pambase PROPERTIES DEBUG_POSTFIX "d")
 set_target_properties(pambase PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../lib/)
