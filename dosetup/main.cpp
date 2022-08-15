@@ -100,6 +100,11 @@ int SetPassword(const std::string& sPassword)
 
 int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber)
 {
+    if(sOverlay == "_") //this means no HAT
+    {
+        return 0;
+    }
+
     pmlLog() << "Set overlay to " << sOverlay;
 
     int nLine = -1;
@@ -173,8 +178,6 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber)
 
 int main(int argc, char* argv[])
 {
-
-
     struct passwd* pw = getpwuid(getuid());
     std::string sRoot(pw->pw_dir);
     sRoot += "/pam/logs/setup";

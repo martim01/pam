@@ -1,6 +1,6 @@
 <hats>
 	<manufacturer name="No">
-		<model name="HAT" dtoverlay=""/>
+		<model name="HAT" dtoverlay="_"/>
 	</manufacturer>
 	<manufacturer name="JustBoom">
 		<model name="Amp" dtoverlay="justboom-dac"/>

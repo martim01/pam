@@ -235,7 +235,7 @@ void InitialSetupDialog::OnedtPasswordTextEnter(wxCommandEvent& event)
 
 void InitialSetupDialog::OnbtnManageClick(wxCommandEvent& event)
 {
-    if(m_pedtName->GetValue().empty() == false && m_pedtPassword->GetValue().empty() == false && m_sOverlay.empty() == false)
+    if(m_pedtName->GetValue().empty() == false && m_pedtPassword->GetValue().empty() == false)
     {
         wxString sCommand(wxString::Format("sudo dosetup %s %s %s %d", m_pedtName->GetValue().c_str(), m_pedtPassword->GetValue().c_str(), m_sOverlay.c_str(), m_nLine));
         wxLogDebug(sCommand);
