@@ -53,6 +53,7 @@ class PAMBASE_IMPEXPORT TimeManager : public wxEvtHandler
 
         enumSync m_eSyncTo;
         size_t m_nPtpDomain;
+        bool m_bUseTai;
 
         enumSync m_eCurrentSync;
 

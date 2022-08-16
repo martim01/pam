@@ -18,6 +18,7 @@ TimeManager& TimeManager::Get()
 TimeManager::TimeManager() :
     m_eSyncTo(SYNC_OFF),
     m_nPtpDomain(0),
+    m_bUseTai((Settings::Get().Read("Time", "Tai", 0 ) != 0)),
     m_nSyncCount(0),
     m_bPtpLock(false),
     m_nMinSamplSize(10),
@@ -30,6 +31,8 @@ TimeManager::TimeManager() :
     Settings::Get().AddHandler(this, "Time");
 
     Settings::Get().Write("Time", "Grandmaster", "");   //only just started so currently have no Grandmaster
+
+
 
     Bind(wxEVT_SETTING_CHANGED, &TimeManager::OnSettingChanged, this);
 
@@ -58,6 +61,10 @@ void TimeManager::OnSettingChanged(SettingEvent& event)
     else if(event.GetKey() == "PTP_Domain")
     {
         m_nPtpDomain = event.GetValue((long)0);
+    }
+    else if(event.GetKey() == "Tai")
+    {
+        m_bUseTai = event.GetValue(false);
     }
     else if(event.GetKey() == "LTC_Format")
     {
@@ -109,14 +116,18 @@ bool TimeManager::PtpSyncFrequency()
 
             auto pMaster = wxPtp::Get().GetSyncMasterClock(m_nPtpDomain);
             auto offset = pLocal->GetOffset(ptpmonkey::PtpV2Clock::CURRENT);//DoubleToTime(dEstimate);
-            auto utc = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::seconds(pMaster->GetUtcOffset()));
 
             //store the PTP details for use by NMOS etc
             Settings::Get().Write("Time", "Grandmaster", wxString(pMaster->GetClockId()));
 
-            offset += utc;
 
-           if(abs(std::chrono::duration_cast<std::chrono::milliseconds>(offset).count()) > 500)
+            if(!m_bUseTai)
+            {
+                auto utc = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::seconds(pMaster->GetUtcOffset()));
+                offset += utc;
+            }
+
+            if(abs(std::chrono::duration_cast<std::chrono::milliseconds>(offset).count()) > 500)
             {
                 if(m_nPtpSamples > 1)   //first stat is often 37s out
                 {
