@@ -86,7 +86,6 @@
 						<pos>110,20</pos>
 						<focused>1</focused>
 						<bg>#FFFFFF</bg>
-						<handler function="Onm_pedtDomainText" entry="EVT_TEXT" />
 						<handler function="OnedtDomainTextEnter" entry="EVT_TEXT_ENTER" />
 					</object>
 					<object class="wmKeyboard" name="ID_M_PKBD1" variable="m_pKbd1" member="yes">
@@ -94,6 +93,18 @@
 						<pos>10,60</pos>
 						<size>288,208</size>
 						<fg>#FFFFFF</fg>
+					</object>
+					<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnSync" member="yes">
+						<label>Sync To</label>
+						<button_disabled>#808080</button_disabled>
+						<toggle_look>1</toggle_look>
+						<toggle_left>UTC</toggle_left>
+						<toggle_right>TAI</toggle_right>
+						<toggle_percent>60</toggle_percent>
+						<pos>350,60</pos>
+						<size>200,40</size>
+						<bg>#008040</bg>
+						<handler function="OnbtnNtpServerAddClick" entry="EVT_BUTTON" />
 					</object>
 				</object>
 				<label>PTP Domain</label>

@@ -20,6 +20,7 @@ const long pnlSettingsTime::ID_PANEL1 = wxNewId();
 const long pnlSettingsTime::ID_M_PLBL8 = wxNewId();
 const long pnlSettingsTime::ID_M_PEDT1 = wxNewId();
 const long pnlSettingsTime::ID_M_PKBD1 = wxNewId();
+const long pnlSettingsTime::ID_M_PBTN1 = wxNewId();
 const long pnlSettingsTime::ID_PANEL2 = wxNewId();
 const long pnlSettingsTime::ID_M_PLBL13 = wxNewId();
 const long pnlSettingsTime::ID_M_PLST2 = wxNewId();
@@ -75,6 +76,10 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_pedtDomain->SetBorderStyle(1,1);
 	m_pKbd1 = new wmKeyboard(m_ppnlPTP, ID_M_PKBD1, wxPoint(10,60), wxSize(288,208), 5, 0);
 	m_pKbd1->SetForegroundColour(wxColour(255,255,255));
+	m_pbtnSync = new wmButton(m_ppnlPTP, ID_M_PBTN1, _("Sync To"), wxPoint(350,60), wxSize(200,40), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
+	m_pbtnSync->SetBackgroundColour(wxColour(0,128,64));
+	m_pbtnSync->SetColourDisabled(wxColour(wxT("#808080")));
+	m_pbtnSync->SetToggleLook(true, wxT("UTC"), wxT("TAI"), 60);
 	m_ppnlLTCS = new wxPanel(m_pswpSettings, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
 	m_ppnlLTCS->SetBackgroundColour(wxColour(0,0,0));
 	m_plblListTitle = new wmLabel(m_ppnlLTCS, ID_M_PLBL13, _("Format:"), wxPoint(0,10), wxSize(200,44), 0, _T("ID_M_PLBL13"));
@@ -109,8 +114,8 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
 	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNtpServerEditClick);
 	Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNtpServerDeleteClick);
 	Connect(ID_M_PBTN6,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNTPServerDeleteAllClick);
-	//Connect(ID_M_PEDT1,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&pnlSettingsTime::Onm_pedtDomainText);
 	Connect(ID_M_PEDT1,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&pnlSettingsTime::OnedtDomainTextEnter);
+	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNtpServerAddClick);
 	Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsTime::OnlstDateSelected);
 	Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsTime::OnlstSyncSelected);
 	Connect(ID_TIMER1,wxEVT_TIMER,(wxObjectEventFunction)&pnlSettingsTime::OntimerTimeTrigger);
@@ -157,6 +162,7 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
     m_plstDate->AddButton("MTD");
     m_plstDate->ConnectToSetting("Time", "LTC_Format", (int)2);
 
+    m_pbtnSync->ConnectToSetting("Time", "Tai", false);
 }
 
 pnlSettingsTime::~pnlSettingsTime()

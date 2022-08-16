@@ -25,6 +25,7 @@ class pnlSettingsTime: public wxPanel
 		wmButton* m_pbtnNtpServerAdd;
 		wmButton* m_pbtnNtpServerDelete;
 		wmButton* m_pbtnNtpServerEdit;
+		wmButton* m_pbtnSync;
 		wmEdit* m_pedtDomain;
 		wmKeyboard* m_pKbd1;
 		wmLabel* m_pLbl1;
@@ -52,6 +53,7 @@ class pnlSettingsTime: public wxPanel
 		static const long ID_M_PLBL8;
 		static const long ID_M_PEDT1;
 		static const long ID_M_PKBD1;
+		static const long ID_M_PBTN1;
 		static const long ID_PANEL2;
 		static const long ID_M_PLBL13;
 		static const long ID_M_PLST2;
