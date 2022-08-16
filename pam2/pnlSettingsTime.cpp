@@ -115,7 +115,6 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
 	Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNtpServerDeleteClick);
 	Connect(ID_M_PBTN6,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNTPServerDeleteAllClick);
 	Connect(ID_M_PEDT1,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&pnlSettingsTime::OnedtDomainTextEnter);
-	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNtpServerAddClick);
 	Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsTime::OnlstDateSelected);
 	Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsTime::OnlstSyncSelected);
 	Connect(ID_TIMER1,wxEVT_TIMER,(wxObjectEventFunction)&pnlSettingsTime::OntimerTimeTrigger);
