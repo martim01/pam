@@ -285,5 +285,12 @@ void pnlSettingsTime::OnlstSyncSelected(wxCommandEvent& event)
 
 void pnlSettingsTime::OntimerTimeTrigger(wxTimerEvent& event)
 {
-    m_plblTime->SetLabel(wxDateTime::Now().Format("%Y-%m-%d %H:%M:%S"));
+    if(Settings::Get().Read("Time", "Sync", 0) == 3 && Settings::Get().Read("Time", "Tai",0) == 1)
+    {
+        m_plblTime->SetLabel(wxDateTime::Now().Format("%Y-%m-%d %H:%M:%S TAI"));
+    }
+    else
+    {
+        m_plblTime->SetLabel(wxDateTime::Now().Format("%Y-%m-%d %H:%M:%S"));
+    }
 }
