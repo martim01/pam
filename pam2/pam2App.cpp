@@ -22,6 +22,8 @@
 #include "dlgEngineering.h"
 #include <wx/image.h>
 #include "pam2_paths.h"
+#include "timemanager.h"
+
 IMPLEMENT_APP(pam2App);
 
 bool pam2App::OnInit()
@@ -66,6 +68,7 @@ bool pam2App::OnInit()
 
     SoundcardManager::Get().Initialize();
 
+    TimeManager::Get();
     //#else
    // Settings::Get().ReadSettings(wxString::Format(wxT("%s/documents/pam2.ini"), wxStandardPaths::Get().GetExecutablePath().c_str()));
    // #endif

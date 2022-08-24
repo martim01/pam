@@ -12,7 +12,7 @@ class PAMBASE_IMPEXPORT TimeManager : public wxEvtHandler
     public:
         static TimeManager& Get();
 
-        enum enumSync {SYNC_OFF=0, SYNC_NTP, SYNC_LTC, SYNC_PTP};
+        enum enumSync {SYNC_OFF=0, SYNC_NTP=1, SYNC_LTC=2, SYNC_PTP=3};
 
 
         enumSync GetCurrentSync() const {return m_eCurrentSync;}

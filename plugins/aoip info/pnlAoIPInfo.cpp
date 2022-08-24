@@ -948,7 +948,7 @@ void pnlAoIPInfo::ShowLatency(const timedbuffer* pTimedBuffer)
     m_dLatency -= m_dFrameDuration;   //we add the duration on because the transmission time is first sample not last sample of frane
 
     m_plblLatency->SetLabel(wxString::Format(wxT("%.0f us"), dPlayback));
-    m_plblLatencyNetwork->SetLabel(wxString::Format(wxT("%.0f us"), -m_dLatency));  //@todo confirm that our latency calculation is back to front - hence the minus sign
+    m_plblLatencyNetwork->SetLabel(wxString::Format(wxT("%.0f us"), m_dLatency));  //@todo confirm that our latency calculation is back to front - hence the minus sign
 
     if(m_nInitialLatencyCounter < 3)
     {

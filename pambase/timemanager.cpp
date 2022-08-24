@@ -31,14 +31,13 @@ TimeManager::TimeManager() :
     Settings::Get().AddHandler(this, "Time");
 
     Settings::Get().Write("Time", "Grandmaster", "");   //only just started so currently have no Grandmaster
-
+    m_eSyncTo = Settings::Get().Read("Time", "Sync", SYNC_OFF);
 
 
     Bind(wxEVT_SETTING_CHANGED, &TimeManager::OnSettingChanged, this);
 
-    m_eSyncTo = Settings::Get().Read("Time", "Sync", SYNC_OFF);
+
     DoSync();
-    //m_nPtpDomain = Settings::Get().Read("Time", "LTC_Format", 0);
 }
 
 TimeManager::~TimeManager()
@@ -230,18 +229,24 @@ bool TimeManager::TrySyncToPtp()
     auto pLocal = wxPtp::Get().GetLocalClock(m_nPtpDomain);
     if(pLocal)
     {
+
+
         StopCurrentSync();
 
         auto pMaster = wxPtp::Get().GetSyncMasterClock(m_nPtpDomain);
 
         auto offset = pLocal->GetOffset(ptpmonkey::PtpV2Clock::CURRENT);//DoubleToTime(dEstimate);
-        auto utc = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::seconds(pMaster->GetUtcOffset()));
 
         auto slope = pLocal->GetOffsetSlope()*1e6;   //slope in ppm
 
+        auto utc = std::chrono::nanoseconds(0);
+        if(m_bUseTai)
+        {
+            utc = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::seconds(pMaster->GetUtcOffset()));
+            offset += utc;
+        }
 
-        offset += utc;
-
+        pmlLog(pml::LOG_TRACE) << "TimeManager::SyncToPTP\t" << (m_bUseTai ? "TAI" : "UTC") << "\tOffset=" << offset.count();
 
         if(abs(std::chrono::duration_cast<std::chrono::milliseconds>(offset).count()) > 500)
         {
@@ -274,6 +279,7 @@ bool TimeManager::TrySyncToPtp()
 
         if(!m_bPtpLock && m_nPtpSamples < m_nMinSamplSize) //
         {   //waiting for more info
+            pmlLog(pml::LOG_TRACE) << "TimeManager::SyncToPTP\t" << "waiting for more info";
             return true;
         }
 
