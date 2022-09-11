@@ -37,6 +37,7 @@ void OnDemandPamSubsession::getStreamParameters(unsigned clientSessionId,
 				   int tcpSocketNum,
                                    unsigned char rtpChannelId,
                                    unsigned char rtcpChannelId,
+                                   TLSState* tlsState, // in (used if TCP)
                                    struct sockaddr_storage& destinationAddress,
 				   u_int8_t& destinationTTL,
                                    Boolean& isMulticast,
@@ -44,7 +45,7 @@ void OnDemandPamSubsession::getStreamParameters(unsigned clientSessionId,
                                    Port& serverRTCPPort,
                                    void*& streamToken)
 {
-    OnDemandServerMediaSubsession::getStreamParameters(clientSessionId, clientAddress, clientRTPPort, clientRTCPPort, tcpSocketNum, rtpChannelId, rtcpChannelId,destinationAddress, destinationTTL, isMulticast, serverRTPPort, serverRTCPPort, streamToken);
+    OnDemandServerMediaSubsession::getStreamParameters(clientSessionId, clientAddress, clientRTPPort, clientRTCPPort, tcpSocketNum, rtpChannelId, rtcpChannelId,tlsState, destinationAddress, destinationTTL, isMulticast, serverRTPPort, serverRTCPPort, streamToken);
 
     m_nConnections++;
 

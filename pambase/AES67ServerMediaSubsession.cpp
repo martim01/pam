@@ -130,6 +130,7 @@ void AES67ServerMediaSubsession
 				   int tcpSocketNum, // in (-1 means use UDP, not TCP)
 				   unsigned char rtpChannelId, // in (used if TCP)
 				   unsigned char rtcpChannelId, // in (used if TCP)
+                  TLSState* tlsState, // in (used if TCP)
 				   struct sockaddr_storage& destinationAddress, // in out
 				   u_int8_t& destinationTTL, // in out
 				   Boolean& isMulticast, // out

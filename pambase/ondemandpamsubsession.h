@@ -38,6 +38,7 @@ class PAMBASE_IMPEXPORT OnDemandPamSubsession: public OnDemandServerMediaSubsess
 				   int tcpSocketNum,
                                    unsigned char rtpChannelId,
                                    unsigned char rtcpChannelId,
+                                   TLSState* tlsState, // in (used if TCP)
                                    struct sockaddr_storage& destinationAddress,
 				   u_int8_t& destinationTTL,
                                    Boolean& isMulticast,
