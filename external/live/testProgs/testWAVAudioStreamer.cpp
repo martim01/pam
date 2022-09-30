@@ -13,14 +13,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
-// Copyright (c) 1996-2020, Live Networks, Inc.  All rights reserved
+// Copyright (c) 1996-2022, Live Networks, Inc.  All rights reserved
 // A test program that streams a WAV audio file via RTP/RTCP
 // main program
 
 #include "liveMedia.hh"
-#include "GroupsockHelper.hh"
 
 #include "BasicUsageEnvironment.hh"
+#include "announceURL.hh"
+#include "GroupsockHelper.hh"
 
 // To convert 16-bit samples to 8-bit u-law ("u" is the Greek letter "mu")
 // encoding, before streaming, uncomment the following line:
@@ -30,11 +31,7 @@ UsageEnvironment* env;
 
 void play(); // forward
 
-
-
 int main(int argc, char** argv) {
-
-  SendingInterfaceAddr = our_inet_addr("192.168.1.136");
   // Begin by setting up our usage environment:
   TaskScheduler* scheduler = BasicTaskScheduler::createNew();
   env = BasicUsageEnvironment::createNew(*scheduler);
@@ -109,7 +106,7 @@ void play() {
 	payloadFormatCode = 0; // a static RTP payload type
       }
 #else
-      // Add a filter that converts from little-endian to network (big-endian) order:
+      // Add a filter that converts from little-endian to network (big-endian) order: 
       sessionState.source = EndianSwap16::createNew(*env, wavSource);
       if (sessionState.source == NULL) {
 	*env << "Unable to create a little->bit-endian order filter from the PCM audio source: " << env->getResultMsg() << "\n";
@@ -124,7 +121,7 @@ void play() {
       }
 #endif
     } else if (bitsPerSample == 20 || bitsPerSample == 24) {
-      // Add a filter that converts from little-endian to network (big-endian) order:
+      // Add a filter that converts from little-endian to network (big-endian) order: 
       sessionState.source = EndianSwap24::createNew(*env, wavSource);
       if (sessionState.source == NULL) {
 	*env << "Unable to create a little->bit-endian order filter from the PCM audio source: " << env->getResultMsg() << "\n";
@@ -139,35 +136,36 @@ void play() {
   } else if (audioFormat == WA_PCMU) {
     mimeType = "PCMU";
     if (samplingFrequency == 8000 && numChannels == 1) {
-      payloadFormatCode = 0; // a static RTP payload type
+      payloadFormatCode = 0; // a static RTP payload type                                                                          
     }
   } else if (audioFormat == WA_PCMA) {
     mimeType = "PCMA";
     if (samplingFrequency == 8000 && numChannels == 1) {
-      payloadFormatCode = 8; // a static RTP payload type
-    }
+      payloadFormatCode = 8; // a static RTP payload type                                                                          
+    } 
   } else if (audioFormat == WA_IMA_ADPCM) {
     mimeType = "DVI4";
-    // Use a static payload type, if one is defined:
+    // Use a static payload type, if one is defined:                                                                               
     if (numChannels == 1) {
       if (samplingFrequency == 8000) {
-	payloadFormatCode = 5; // a static RTP payload type
+	payloadFormatCode = 5; // a static RTP payload type                                                                        
       } else if (samplingFrequency == 16000) {
-	payloadFormatCode = 6; // a static RTP payload type
+	payloadFormatCode = 6; // a static RTP payload type                                                                        
       } else if (samplingFrequency == 11025) {
-	payloadFormatCode = 16; // a static RTP payload type
+	payloadFormatCode = 16; // a static RTP payload type                                                                       
       } else if (samplingFrequency == 22050) {
-	payloadFormatCode = 17; // a static RTP payload type
+	payloadFormatCode = 17; // a static RTP payload type                                                                       
       }
     }
-  } else { //unknown format
+  } else { //unknown format                                                                                                        
     *env << "Unknown audio format code \"" << audioFormat << "\" in WAV file header\n";
     exit(1);
   }
 
   // Create 'groupsocks' for RTP and RTCP:
-  struct in_addr destinationAddress;
-  destinationAddress.s_addr = chooseRandomIPv4SSMAddress(*env);
+  struct sockaddr_storage destinationAddress;
+  destinationAddress.ss_family = AF_INET;
+  ((struct sockaddr_in&)destinationAddress).sin_addr.s_addr = chooseRandomIPv4SSMAddress(*env);
   // Note: This is a multicast address.  If you wish instead to stream
   // using unicast, then you should use the "testOnDemandRTSPServer" demo application,
   // or the "LIVE555 Media Server" - not this application - as a model.
@@ -178,7 +176,6 @@ void play() {
 
   const Port rtpPort(rtpPortNum);
   const Port rtcpPort(rtcpPortNum);
-
 
   sessionState.rtpGroupsock
     = new Groupsock(*env, destinationAddress, rtpPort, ttl);
@@ -217,10 +214,7 @@ void play() {
 	   "Session streamed by \"testWAVAudiotreamer\"", True/*SSM*/);
   sms->addSubsession(PassiveServerMediaSubsession::createNew(*sessionState.sink, sessionState.rtcpInstance));
   sessionState.rtspServer->addServerMediaSession(sms);
-
-  char* url = sessionState.rtspServer->rtspURL(sms);
-  *env << "Play this stream using the URL \"" << url << "\"\n";
-  delete[] url;
+  announceURL(sessionState.rtspServer, sms);
 
   // Finally, start the streaming:
   *env << "Beginning streaming...\n";

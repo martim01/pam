@@ -82,7 +82,7 @@ FramedFilter.$(CPP):	include/FramedFilter.hh
 include/FramedFilter.hh:	include/FramedSource.hh
 RTPSource.$(CPP):	include/RTPSource.hh
 include/RTPSource.hh:		include/FramedSource.hh include/RTPInterface.hh include/SRTPCryptographicContext.hh
-include/RTPInterface.hh:	include/Media.hh
+include/RTPInterface.hh:	include/Media.hh include/TLSState.hh
 MultiFramedRTPSource.$(CPP):	include/MultiFramedRTPSource.hh include/RTCP.hh
 include/MultiFramedRTPSource.hh:	include/RTPSource.hh
 SimpleRTPSource.$(CPP):	include/SimpleRTPSource.hh
@@ -241,8 +241,8 @@ H265VideoFileSink.$(CPP):       include/H265VideoFileSink.hh include/OutputFile.
 include/H265VideoFileSink.hh:   include/H264or5VideoFileSink.hh
 OggFileSink.$(CPP):		include/OggFileSink.hh include/OutputFile.hh include/VorbisAudioRTPSource.hh include/MPEG2TransportStreamMultiplexor.hh include/FramedSource.hh
 include/OggFileSink.hh:		include/FileSink.hh
-RTPSink.$(CPP):			include/RTPSink.hh
-include/RTPSink.hh:		include/MediaSink.hh include/RTPInterface.hh
+RTPSink.$(CPP):			include/RTPSink.hh include/Base64.hh
+include/RTPSink.hh:		include/MediaSink.hh include/RTPInterface.hh include/SRTPCryptographicContext.hh
 MultiFramedRTPSink.$(CPP):	include/MultiFramedRTPSink.hh
 include/MultiFramedRTPSink.hh:		include/RTPSink.hh
 AudioRTPSink.$(CPP):		include/AudioRTPSink.hh

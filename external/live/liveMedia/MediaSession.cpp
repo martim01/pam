@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2021 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2022 Live Networks, Inc.  All rights reserved.
 // A data structure that represents a session that consists of
 // potentially multiple (audio and/or video) sub-sessions
 // Implementation
@@ -24,7 +24,6 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "Base64.hh"
 #include "GroupsockHelper.hh"
 #include <ctype.h>
-#include <iostream>
 
 ////////// MediaSession //////////
 
@@ -109,11 +108,7 @@ Boolean MediaSession::initializeWithSDP(char const* sdpDescription) {
   char const* sdpLine = sdpDescription;
   char const* nextSDPLine;
   while (1) {
-    if (!parseSDPLine(sdpLine, nextSDPLine))
-    {
-
-        return False;
-    }
+    if (!parseSDPLine(sdpLine, nextSDPLine)) return False;
     //##### We should really check for the correct SDP version (v=0)
     if (sdpLine[0] == 'm') break;
     sdpLine = nextSDPLine;
@@ -285,7 +280,6 @@ Boolean MediaSession::parseSDPLine(char const* inputLine,
   if (strlen(inputLine) < 2 || inputLine[1] != '='
       || inputLine[0] < 'a' || inputLine[0] > 'z') {
     envir().setResultMsg("Invalid SDP line: ", inputLine);
-    std::cout << "Invalid: '" << inputLine << "'" << std::endl;
     return False;
   }
 
@@ -342,6 +336,7 @@ static MIKEYState* parseSDPAttribute_key_mgmtToMIKEY(char const* sdpLine) {
     if (keyMgmtData_decoded == NULL) break;
 
     resultMIKEYState = MIKEYState::createNew(keyMgmtData_decoded, keyMgmtData_decodedSize);
+    delete[] keyMgmtData_decoded;
   } while (0);
 
   delete[] keyMgmtPrtclId;

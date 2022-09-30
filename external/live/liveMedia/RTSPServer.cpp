@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2021 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2022 Live Networks, Inc.  All rights reserved.
 // A RTSP server
 // Implementation
 
@@ -91,12 +91,15 @@ char* RTSPServer::rtspURLPrefix(int clientSocket, Boolean useIPv6) const {
   char const* addressPrefixInURL = ourAddress.ss_family == AF_INET6 ? "[" : "";
   char const* addressSuffixInURL = ourAddress.ss_family == AF_INET6 ? "]" : "";
 
+  portNumBits defaultPortNum = fWeServeSRTP ? 322 : 554;
   portNumBits portNumHostOrder = ntohs(fServerPort.num());
-  if (portNumHostOrder == 554 /* the default port number */) {
-    sprintf(urlBuffer, "rtsp://%s%s%s/",
+  if (portNumHostOrder == defaultPortNum) {
+    sprintf(urlBuffer, "rtsp%s://%s%s%s/",
+	    fWeServeSRTP ? "s" : "",
 	    addressPrefixInURL, AddressString(ourAddress).val(), addressSuffixInURL);
   } else {
-    sprintf(urlBuffer, "rtsp://%s%s%s:%hu/",
+    sprintf(urlBuffer, "rtsp%s://%s%s%s:%hu/",
+	    fWeServeSRTP ? "s" : "",
 	    addressPrefixInURL, AddressString(ourAddress).val(), addressSuffixInURL, portNumHostOrder);
   }
   
@@ -111,6 +114,10 @@ UserAuthenticationDatabase* RTSPServer::setAuthenticationDatabase(UserAuthentica
 }
 
 Boolean RTSPServer::setUpTunnelingOverHTTP(Port httpPort) {
+  if (fWeServeSRTP) return False;
+    // If we've already set up streaming using SRTP, then streaming over HTTPS would make no
+    // sense (as SRTP would add extra overhead for no benefit).
+
   fHTTPServerSocketIPv4 = setUpOurSocket(envir(), httpPort, AF_INET);
   fHTTPServerSocketIPv6 = setUpOurSocket(envir(), httpPort, AF_INET6);
   if (fHTTPServerSocketIPv4 >= 0 || fHTTPServerSocketIPv6 >= 0) {
@@ -129,6 +136,19 @@ portNumBits RTSPServer::httpServerPortNum() const {
   return ntohs(fHTTPServerPort.num());
 }
 
+void RTSPServer
+::setTLSState(char const* certFileName, char const* privKeyFileName,
+	      Boolean weServeSRTP, Boolean weEncryptSRTP) {
+  setTLSFileNames(certFileName, privKeyFileName);
+  fOurConnectionsUseTLS = True;
+  fWeServeSRTP = weServeSRTP;
+  fWeEncryptSRTP = weEncryptSRTP;
+
+  if (fWeServeSRTP) disableStreamingRTPOverTCP();
+    // If you want to stream RTP-over-TCP using a secure TCP connection, then stream over TLS,
+    // but without SRTP (as SRTP would add extra overhead for no benefit).
+}
+
 char const* RTSPServer::allowedCommandNames() {
   return "OPTIONS, DESCRIBE, SETUP, TEARDOWN, PLAY, PAUSE, GET_PARAMETER, SET_PARAMETER";
 }
@@ -138,17 +158,26 @@ UserAuthenticationDatabase* RTSPServer::getAuthenticationDatabaseForCommand(char
   return fAuthDB;
 }
 
-Boolean RTSPServer::specialClientAccessCheck(int /*clientSocket*/, struct sockaddr_storage const& /*clientAddr*/, char const* /*urlSuffix*/) {
+Boolean RTSPServer::specialClientAccessCheck(int /*clientSocket*/,
+					     struct sockaddr_storage const& /*clientAddr*/,
+					     char const* /*urlSuffix*/) {
   // default implementation
   return True;
 }
 
-Boolean RTSPServer::specialClientUserAccessCheck(int /*clientSocket*/, struct sockaddr_storage const& /*clientAddr*/,
+Boolean RTSPServer::specialClientUserAccessCheck(int /*clientSocket*/,
+						 struct sockaddr_storage const& /*clientAddr*/,
 						 char const* /*urlSuffix*/, char const * /*username*/) {
   // default implementation; no further access restrictions:
   return True;
 }
 
+void RTSPServer
+::specialHandlingOfAuthenticationFailure(int /*clientSocket*/,
+					 struct sockaddr_storage const& /*clientAddr*/,
+					 char const* /*urlSuffix*/) {
+  // default implementation: do nothing
+}
 
 RTSPServer::RTSPServer(UsageEnvironment& env,
 		       int ourSocketIPv4, int ourSocketIPv6, Port ourPort,
@@ -159,7 +188,9 @@ RTSPServer::RTSPServer(UsageEnvironment& env,
     fClientConnectionsForHTTPTunneling(NULL), // will get created if needed
     fTCPStreamingDatabase(HashTable::create(ONE_WORD_HASH_KEYS)),
     fPendingRegisterOrDeregisterRequests(HashTable::create(ONE_WORD_HASH_KEYS)),
-    fRegisterOrDeregisterRequestCounter(0), fAuthDB(authDatabase), fAllowStreamingRTPOverTCP(True) {
+    fRegisterOrDeregisterRequestCounter(0), fAuthDB(authDatabase),
+    fAllowStreamingRTPOverTCP(True),
+    fOurConnectionsUseTLS(False), fWeServeSRTP(False) {
 }
 
 // A data structure that is used to implement "fTCPStreamingDatabase"
@@ -205,6 +236,14 @@ RTSPServer::~RTSPServer() {
 
 Boolean RTSPServer::isRTSPServer() const {
   return True;
+}
+
+void RTSPServer::addServerMediaSession(ServerMediaSession* serverMediaSession) {
+  GenericMediaServer::addServerMediaSession(serverMediaSession);
+  if (serverMediaSession != NULL) {
+    serverMediaSession->streamingUsesSRTP = fWeServeSRTP;
+    serverMediaSession->streamingIsEncrypted = fWeEncryptSRTP;
+  }
 }
 
 void RTSPServer::incomingConnectionHandlerHTTPIPv4(void* instance, int /*mask*/) {
@@ -294,10 +333,12 @@ void RTSPServer::stopTCPStreamingOnSocket(int socketNum) {
 ////////// RTSPServer::RTSPClientConnection implementation //////////
 
 RTSPServer::RTSPClientConnection
-::RTSPClientConnection(RTSPServer& ourServer, int clientSocket, struct sockaddr_storage const& clientAddr)
-  : GenericMediaServer::ClientConnection(ourServer, clientSocket, clientAddr),
+::RTSPClientConnection(RTSPServer& ourServer,
+		       int clientSocket, struct sockaddr_storage const& clientAddr,
+		       Boolean useTLS)
+  : GenericMediaServer::ClientConnection(ourServer, clientSocket, clientAddr, useTLS),
     fOurRTSPServer(ourServer), fClientInputSocket(fOurSocket), fClientOutputSocket(fOurSocket),
-    fAddressFamily(clientAddr.ss_family),
+    fPOSTSocketTLS(envir()), fAddressFamily(clientAddr.ss_family),
     fIsActive(True), fRecursionCount(0), fOurSessionCookie(NULL), fScheduledDelayedTask(0) {
   resetRequestBuffer();
 }
@@ -451,6 +492,17 @@ void RTSPServer::RTSPClientConnection::handleCmd_notSupported() {
 	   fCurrentCSeq, dateHeader(), fOurRTSPServer.allowedCommandNames());
 }
 
+void RTSPServer::RTSPClientConnection::handleCmd_redirect(char const* urlSuffix) {
+  snprintf((char*)fResponseBuffer, sizeof fResponseBuffer,
+	   "RTSP/1.0 301 Moved Permanently\r\n"
+	   "CSeq: %s\r\n"
+	   "%s"
+	   "Location: %s%s\r\n\r\n",
+	   fCurrentCSeq,
+	   dateHeader(),
+	   fOurRTSPServer.rtspURLPrefix(fClientInputSocket), urlSuffix);
+}
+
 void RTSPServer::RTSPClientConnection::handleCmd_notFound() {
   setRTSPResponse("404 Stream Not Found");
 }
@@ -587,8 +639,11 @@ Boolean RTSPServer::RTSPClientConnection
 #endif
   
   // Change the previous "RTSPClientSession" object's input socket to ours.  It will be used for subsequent requests:
-  prevClientConnection->changeClientInputSocket(fClientInputSocket, extraData, extraDataSize);
+  prevClientConnection->changeClientInputSocket(fClientInputSocket, fInputTLS,
+						extraData, extraDataSize);
   fClientInputSocket = fClientOutputSocket = -1; // so the socket doesn't get closed when we get deleted
+  fInputTLS->nullify(); // so that our destructor doesn't reset the copied TLS state
+
   return True;
 }
 
@@ -734,6 +789,7 @@ void RTSPServer::RTSPClientConnection::handleRequestBytes(int newBytesRead) {
     char cseq[RTSP_PARAM_STRING_MAX];
     char sessionIdStr[RTSP_PARAM_STRING_MAX];
     unsigned contentLength = 0;
+    Boolean urlIsRTSPS;
     Boolean playAfterSetup = False;
     fLastCRLF[2] = '\0'; // temporarily, for parsing
     Boolean parseSucceeded = parseRTSPRequestString((char*)fRequestBuffer, fLastCRLF+2 - fRequestBuffer,
@@ -742,7 +798,7 @@ void RTSPServer::RTSPClientConnection::handleRequestBytes(int newBytesRead) {
 						    urlSuffix, sizeof urlSuffix,
 						    cseq, sizeof cseq,
 						    sessionIdStr, sizeof sessionIdStr,
-						    contentLength);
+						    contentLength, urlIsRTSPS);
     fLastCRLF[2] = '\r'; // restore its value
     // Check first for a bogus "Content-Length" value that would cause a pointer wraparound:
     if (tmpPtr + 2 + contentLength < tmpPtr + 2) {
@@ -771,7 +827,15 @@ void RTSPServer::RTSPClientConnection::handleRequestBytes(int newBytesRead) {
       // We now have a complete RTSP request.
       // Handle the specified command (beginning with commands that are session-independent):
       fCurrentCSeq = cseq;
-      if (strcmp(cmdName, "OPTIONS") == 0) {
+
+      // If the request specified the wrong type of URL
+      // (i.e., "rtsps" instead of "rtsp", or vice versa), then send back a 'redirect':
+      if (urlIsRTSPS != fOurRTSPServer.fWeServeSRTP) {
+#ifdef DEBUG
+	fprintf(stderr, "Calling handleCmd_redirect()\n");
+#endif
+	handleCmd_redirect(urlSuffix);
+      } else if (strcmp(cmdName, "OPTIONS") == 0) {
 	// If the "OPTIONS" command included a "Session:" id for a session that doesn't exist,
 	// then treat this as an error:
 	if (requestIncludedSessionId && clientSession == NULL) {
@@ -917,7 +981,12 @@ void RTSPServer::RTSPClientConnection::handleRequestBytes(int newBytesRead) {
 #ifdef DEBUG
     fprintf(stderr, "sending response: %s", fResponseBuffer);
 #endif
-    send(fClientOutputSocket, (char const*)fResponseBuffer, strlen((char*)fResponseBuffer), 0);
+    unsigned const numBytesToWrite = strlen((char*)fResponseBuffer);
+    if (fOutputTLS->isNeeded) {
+        fOutputTLS->write((char const*)fResponseBuffer, numBytesToWrite);
+    } else {
+        send(fClientOutputSocket, (char const*)fResponseBuffer, numBytesToWrite, 0);
+   }
     
     if (playAfterSetup) {
       // The client has asked for streaming to commence now, rather than after a
@@ -1083,6 +1152,7 @@ Boolean RTSPServer::RTSPClientConnection
 	   fCurrentCSeq,
 	   dateHeader(),
 	   fCurrentAuthenticator.realm(), fCurrentAuthenticator.nonce());
+  fOurRTSPServer.specialHandlingOfAuthenticationFailure(fClientInputSocket, fClientAddr, urlSuffix);
   return False;
 }
 
@@ -1149,11 +1219,17 @@ void RTSPServer::RTSPClientConnection
 }
 
 void RTSPServer::RTSPClientConnection
-::changeClientInputSocket(int newSocketNum, unsigned char const* extraData, unsigned extraDataSize) {
+::changeClientInputSocket(int newSocketNum, ServerTLSState const* newTLSState,
+			  unsigned char const* extraData, unsigned extraDataSize) {
+  // Change the socket number:
   envir().taskScheduler().disableBackgroundHandling(fClientInputSocket);
   fClientInputSocket = newSocketNum;
   envir().taskScheduler().setBackgroundHandling(fClientInputSocket, SOCKET_READABLE|SOCKET_EXCEPTION,
 						incomingRequestHandler, this);
+  
+  // Change the TLS state:
+  fPOSTSocketTLS.assignStateFrom(*newTLSState);
+  fInputTLS = &fPOSTSocketTLS;
   
   // Also write any extra data to our buffer, and handle it:
   if (extraDataSize > 0 && extraDataSize <= fRequestBufferBytesLeft/*sanity check; should always be true*/) {
@@ -1504,6 +1580,7 @@ void RTSPServer::RTSPClientSession
     subsession->getStreamParameters(fOurSessionId, fOurClientConnection->fClientAddr,
 				    clientRTPPort, clientRTCPPort,
 				    fStreamStates[trackNum].tcpSocketNum, rtpChannelId, rtcpChannelId,
+                                    &fOurClientConnection->fTLS,
 				    destinationAddress, destinationTTL, fIsMulticast,
 				    serverRTPPort, serverRTCPPort,
 				    fStreamStates[trackNum].streamToken);
@@ -1523,10 +1600,11 @@ void RTSPServer::RTSPClientSession
 		     "RTSP/1.0 200 OK\r\n"
 		     "CSeq: %s\r\n"
 		     "%s"
-		     "Transport: RTP/AVP;multicast;destination=%s;source=%s;port=%d-%d;ttl=%d\r\n"
+		     "Transport: RTP/%s;multicast;destination=%s;source=%s;port=%d-%d;ttl=%d\r\n"
 		     "Session: %08X%s\r\n\r\n",
 		     fOurClientConnection->fCurrentCSeq,
 		     dateHeader(),
+		     fOurRTSPServer.fWeServeSRTP ? "SAVP" : "AVP",
 		     destAddrStr.val(), sourceAddrStr.val(), ntohs(serverRTPPort.num()), ntohs(serverRTCPPort.num()), destinationTTL,
 		     fOurSessionId, timeoutParameterString);
 	    break;
@@ -1557,10 +1635,11 @@ void RTSPServer::RTSPClientSession
 		     "RTSP/1.0 200 OK\r\n"
 		     "CSeq: %s\r\n"
 		     "%s"
-		     "Transport: RTP/AVP;unicast;destination=%s;source=%s;client_port=%d-%d;server_port=%d-%d\r\n"
+		     "Transport: RTP/%s;unicast;destination=%s;source=%s;client_port=%d-%d;server_port=%d-%d\r\n"
 		     "Session: %08X%s\r\n\r\n",
 		     fOurClientConnection->fCurrentCSeq,
 		     dateHeader(),
+		     fOurRTSPServer.fWeServeSRTP ? "SAVP" : "AVP",
 		     destAddrStr.val(), sourceAddrStr.val(), ntohs(clientRTPPort.num()), ntohs(clientRTCPPort.num()), ntohs(serverRTPPort.num()), ntohs(serverRTCPPort.num()),
 		     fOurSessionId, timeoutParameterString);
 	    break;
@@ -1944,7 +2023,7 @@ void RTSPServer::RTSPClientSession
 
 GenericMediaServer::ClientConnection*
 RTSPServer::createNewClientConnection(int clientSocket, struct sockaddr_storage const& clientAddr) {
-  return new RTSPClientConnection(*this, clientSocket, clientAddr);
+  return new RTSPClientConnection(*this, clientSocket, clientAddr, fOurConnectionsUseTLS);
 }
 
 GenericMediaServer::ClientSession*

@@ -60,10 +60,14 @@ Boolean parseMikeyHDR(u_int8_t const*& ptr, u_int8_t const* endPtr, u_int8_t& ne
   fprintf(stderr, "\tCS ID map info:\n");
   testSize(numCryptoSessions * (1+4+4)); // the size of the "CS ID map info"
   for (u_int8_t i = 1; i <= numCryptoSessions; ++i) {
+    u_int8_t policy_no = getByte(ptr);
+    u_int32_t ssrc = get4Bytes(ptr);
+    u_int32_t roc = get4Bytes(ptr);
+    
     fprintf(stderr, "\tPolicy_no_%d: %d;\tSSRC_%d: 0x%08x; ROC_%d: 0x%08x\n",
-	    i, getByte(ptr),
-	    i, get4Bytes(ptr),
-	    i, get4Bytes(ptr));
+	    i, policy_no,
+	    i, ssrc,
+	    i, roc);
   }
 
   return True;

@@ -14,4 +14,4 @@ LIBRARY_LINK_OPTS =    $(LINK_OPTS) -r -Bstatic
 LIB_SUFFIX =                   a
 LIBS_FOR_CONSOLE_APPLICATION = -lws2_32 -lssl -lcrypto
 LIBS_FOR_GUI_APPLICATION = -lws2_32
-EXE =
+EXE = .exe

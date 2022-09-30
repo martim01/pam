@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2021 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2022 Live Networks, Inc.  All rights reserved.
 // A 'ServerMediaSubsession' object that creates new, unicast, "RTPSink"s
 // on demand.
 // C++ header
@@ -51,6 +51,7 @@ protected: // redefined virtual functions
 				   int tcpSocketNum,
                                    unsigned char rtpChannelId,
                                    unsigned char rtcpChannelId,
+				   TLSState* tlsState,
                                    struct sockaddr_storage& destinationAddress,
 				   u_int8_t& destinationTTL,
                                    Boolean& isMulticast,
@@ -132,6 +133,8 @@ protected:
 
 protected:
   char* fSDPLines;
+  u_int8_t* fMIKEYStateMessage; // used if we're streaming SRTP
+  unsigned fMIKEYStateMessageSize; // ditto
   HashTable* fDestinationsHashTable; // indexed by client session id
 
 private:
@@ -157,9 +160,11 @@ public:
                Port const& rtcpDestPort)
     : isTCP(False), addr(destAddr), rtpPort(rtpDestPort), rtcpPort(rtcpDestPort) {
   }
-  Destinations(int tcpSockNum, unsigned char rtpChanId, unsigned char rtcpChanId)
+  Destinations(int tcpSockNum, unsigned char rtpChanId, unsigned char rtcpChanId,
+	       TLSState* tlsSt)
     : isTCP(True), rtpPort(0) /*dummy*/, rtcpPort(0) /*dummy*/,
-      tcpSocketNum(tcpSockNum), rtpChannelId(rtpChanId), rtcpChannelId(rtcpChanId) {
+      tcpSocketNum(tcpSockNum), rtpChannelId(rtpChanId), rtcpChannelId(rtcpChanId),
+      tlsState(tlsSt) {
   }
 
 public:
@@ -169,6 +174,7 @@ public:
   Port rtcpPort;
   int tcpSocketNum;
   unsigned char rtpChannelId, rtcpChannelId;
+  TLSState* tlsState;
 };
 
 class StreamState {

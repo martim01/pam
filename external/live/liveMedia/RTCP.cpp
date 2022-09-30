@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2021 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2022 Live Networks, Inc.  All rights reserved.
 // RTCP
 // Implementation
 
@@ -141,6 +141,8 @@ RTCPInstance::RTCPInstance(UsageEnvironment& env, Groupsock* RTCPgs,
 #ifdef DEBUG
   fprintf(stderr, "RTCPInstance[%p]::RTCPInstance()\n", this);
 #endif
+  setupForSRTCP();
+
   if (fTotSessionBW == 0) { // not allowed!
     env << "RTCPInstance::RTCPInstance error: totSessionBW parameter should not be zero!\n";
     fTotSessionBW = 1;
@@ -281,6 +283,12 @@ unsigned RTCPInstance::numMembers() const {
   return fKnownMembers->numMembers();
 }
 
+void RTCPInstance::setupForSRTCP() {
+  if (fCrypto == NULL && fSink != NULL) { // take crypto state (if any) from the sink instead:
+    fCrypto = fSink->getCrypto();
+  }
+}
+
 void RTCPInstance::setByeHandler(TaskFunc* handlerTask, void* clientData,
 				 Boolean handleActiveParticipantsOnly) {
   fByeHandlerTask = handlerTask;
@@ -379,13 +387,13 @@ void RTCPInstance::sendAppPacket(u_int8_t subtype, char const* name,
   sendBuiltPacket();
 }
 
-void RTCPInstance::setStreamSocket(int sockNum,
-				   unsigned char streamChannelId) {
+void RTCPInstance::setStreamSocket(int sockNum, unsigned char streamChannelId,
+				   TLSState* tlsState) {
   // Turn off background read handling:
   fRTCPInterface.stopNetworkReading();
 
   // Switch to RTCP-over-TCP:
-  fRTCPInterface.setStreamSocket(sockNum, streamChannelId);
+  fRTCPInterface.setStreamSocket(sockNum, streamChannelId, tlsState);
 
   // Turn background reading back on:
   TaskScheduler::BackgroundHandlerProc* handler
@@ -393,13 +401,13 @@ void RTCPInstance::setStreamSocket(int sockNum,
   fRTCPInterface.startNetworkReading(handler);
 }
 
-void RTCPInstance::addStreamSocket(int sockNum,
-				   unsigned char streamChannelId) {
+void RTCPInstance::addStreamSocket(int sockNum, unsigned char streamChannelId,
+				   TLSState* tlsState) {
   // First, turn off background read handling for the default (UDP) socket:
   envir().taskScheduler().turnOffBackgroundReadHandling(fRTCPInterface.gs()->socketNum());
 
   // Add the RTCP-over-TCP interface:
-  fRTCPInterface.addStreamSocket(sockNum, streamChannelId);
+  fRTCPInterface.addStreamSocket(sockNum, streamChannelId, tlsState);
 
   // Turn on background reading for this socket (in case it's not on already):
   TaskScheduler::BackgroundHandlerProc* handler

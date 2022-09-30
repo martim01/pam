@@ -13,7 +13,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
-// Copyright (c) 1996-2021 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2022 Live Networks, Inc.  All rights reserved.
 // 'Group sockets'
 // Implementation
 
@@ -225,7 +225,7 @@ void Groupsock::addDestination(struct sockaddr_storage const& addr, Port const& 
   for (destRecord* dest = fDests; dest != NULL; dest = dest->fNext) {
     if (dest->fSessionId == sessionId &&
 	dest->fGroupEId.groupAddress() == addr &&
-	dest->fGroupEId.portNum() == portNum(addr)) {
+	dest->fGroupEId.portNum() == port.num()) {
       return;
     }
   }

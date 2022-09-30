@@ -13,7 +13,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
-// Copyright (c) 1996-2021 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2022 Live Networks, Inc.  All rights reserved.
 // The SRTP 'Cryptographic Context', used in all of our uses of SRTP.
 // Definition
 
@@ -38,12 +38,14 @@ public:
 				     unsigned& outPacketSize);
 
   // Encrypt (if necessary) and add an authentication tag (if necessary) to an outgoing
-  // RTCP packet.
+  // RTP and RTCP packet.
   // Returns True iff the packet is well-formed.
   // ("outPacketSize" will be >= "inPacketSize"; there must be enough space at the end of
-  //  "buffer" for the extra SRTCP tags (4+4+10 bytes).)
+  //  "buffer" for the extra (4+10 bytes for SRTP; 4+4+10 bytes for SRTCP).)
+  Boolean processOutgoingSRTPPacket(u_int8_t* buffer, unsigned inPacketSize,
+				    unsigned& outPacketSize);
   Boolean processOutgoingSRTCPPacket(u_int8_t* buffer, unsigned inPacketSize,
-				      unsigned& outPacketSize);
+				     unsigned& outPacketSize);
 
 #ifndef NO_OPENSSL
 private:
@@ -75,6 +77,9 @@ private:
 		label_srtcp_salt       = 0x05
   } SRTPKeyDerivationLabel;
 
+  unsigned generateSRTPAuthenticationTag(u_int8_t const* dataToAuthenticate, unsigned numBytesToAuthenticate,
+					 u_int8_t* resultAuthenticationTag);
+      // returns the size of the resulting authentication tag
   unsigned generateSRTCPAuthenticationTag(u_int8_t const* dataToAuthenticate, unsigned numBytesToAuthenticate,
 					  u_int8_t* resultAuthenticationTag);
       // returns the size of the resulting authentication tag
@@ -87,6 +92,7 @@ private:
   void decryptSRTPPacket(u_int64_t index, u_int32_t ssrc, u_int8_t* data, unsigned numDataBytes);
   void decryptSRTCPPacket(u_int32_t index, u_int32_t ssrc, u_int8_t* data, unsigned numDataBytes);
 
+  void encryptSRTPPacket(u_int64_t index, u_int32_t ssrc, u_int8_t* data, unsigned numDataBytes);
   void encryptSRTCPPacket(u_int32_t index, u_int32_t ssrc, u_int8_t* data, unsigned numDataBytes);
 
   unsigned generateAuthenticationTag(derivedKeys& keysToUse,
@@ -132,7 +138,11 @@ private:
   // State used for handling the reception of SRTP packets:
   Boolean fHaveReceivedSRTPPackets;
   u_int16_t fPreviousHighRTPSeqNum;
-  u_int32_t fROC; // rollover counter
+  u_int32_t fReceptionROC; // rollover counter
+
+  // State used for handling the sending of SRTP packets:
+  Boolean fHaveSentSRTPPackets;
+  u_int32_t fSendingROC;
 
   // State used for handling the sending of SRTCP packets:
   u_int32_t fSRTCPIndex;

@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2021, Live Networks, Inc.  All rights reserved
+// Copyright (c) 1996-2022, Live Networks, Inc.  All rights reserved
 //
 // The SRTP 'Cryptographic Context', used in all of our uses of SRTP.
 // Implementation
@@ -22,7 +22,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "SRTPCryptographicContext.hh"
 #ifndef NO_OPENSSL
 #include "HMAC_SHA1.hh"
-#include <openssl/aes.h>
+#include <openssl/evp.h>
 #endif
 
 #ifdef DEBUG
@@ -33,7 +33,7 @@ SRTPCryptographicContext
 ::SRTPCryptographicContext(MIKEYState const& mikeyState)
 #ifndef NO_OPENSSL
   : fMIKEYState(mikeyState),
-    fHaveReceivedSRTPPackets(False), fSRTCPIndex(0) {
+    fHaveReceivedSRTPPackets(False), fHaveSentSRTPPackets(False), fSRTCPIndex(0) {
   // Begin by doing a key derivation, to generate the keying data that we need:
   performKeyDerivation();
 #else
@@ -74,7 +74,7 @@ Boolean SRTPCryptographicContext
 
     if (!fHaveReceivedSRTPPackets) {
       // First time:
-      nextROC = thisPacketsROC = fROC = 0;
+      nextROC = thisPacketsROC = fReceptionROC = 0;
       nextHighRTPSeqNum = rtpSeqNum;
     } else {
       // Check whether the sequence number has rolled over, or is out-of-order:
@@ -83,23 +83,23 @@ Boolean SRTPCryptographicContext
 	// normal case, or out-of-order packet that crosses a rollover:
 	if (rtpSeqNum - fPreviousHighRTPSeqNum < SEQ_NUM_THRESHOLD) {
 	  // normal case:
-	  nextROC = thisPacketsROC = fROC;
+	  nextROC = thisPacketsROC = fReceptionROC;
 	  nextHighRTPSeqNum = rtpSeqNum;
 	} else {
-	  // out-of-order packet that crosses rollover:
-	  nextROC = fROC;
-	  thisPacketsROC = fROC-1;
+	  // out-of-order packet that crosses a rollover:
+	  nextROC = fReceptionROC;
+	  thisPacketsROC = fReceptionROC-1;
 	  nextHighRTPSeqNum = fPreviousHighRTPSeqNum;
 	}
       } else {
 	// rollover, or out-of-order packet that crosses a rollover:
 	if (fPreviousHighRTPSeqNum - rtpSeqNum > SEQ_NUM_THRESHOLD) {
 	  // rollover:
-	  nextROC = thisPacketsROC = fROC+1;
+	  nextROC = thisPacketsROC = fReceptionROC+1;
 	  nextHighRTPSeqNum = rtpSeqNum;
 	} else {
 	  // out-of-order packet (that doesn't cross a rollover):
-	  nextROC = thisPacketsROC = fROC;
+	  nextROC = thisPacketsROC = fReceptionROC;
 	  nextHighRTPSeqNum = fPreviousHighRTPSeqNum;
 	}
       }
@@ -120,7 +120,7 @@ Boolean SRTPCryptographicContext
     }
 
     // Now that we've verified the packet, set the 'index values' for next time:
-    fROC = nextROC;
+    fReceptionROC = nextROC;
     fPreviousHighRTPSeqNum = nextHighRTPSeqNum;
     fHaveReceivedSRTPPackets = True;
 
@@ -139,7 +139,7 @@ Boolean SRTPCryptographicContext
 #endif
 	  break;
 	}
-	u_int16_t hdrExtLength = (buffer[rtpHeaderSize+2]<<8)|buffer[rtpHeaderSize+3];
+	u_int16_t const hdrExtLength = (buffer[rtpHeaderSize+2]<<8)|buffer[rtpHeaderSize+3];
 	rtpHeaderSize += 4 + hdrExtLength*4;
       }
 
@@ -235,6 +235,90 @@ Boolean SRTPCryptographicContext
 }
 
 Boolean SRTPCryptographicContext
+::processOutgoingSRTPPacket(u_int8_t* buffer, unsigned inPacketSize,
+			    unsigned& outPacketSize) {
+#ifndef NO_OPENSSL
+  do {
+    unsigned const minRTPHeaderSize = 12;
+    if (inPacketSize < minRTPHeaderSize) { // packet is too small
+      // Hack: Let small, non RTCP packets through w/o encryption; they may be used to
+      // punch through NATs
+      outPacketSize = inPacketSize;
+      return True;
+    }
+
+    // Encrypt the appropriate part of the packet.
+    if (weEncryptSRTP()) {
+      // Figure out the RTP header size.  This will tell us which bytes to encrypt:
+      unsigned rtpHeaderSize = 12; // at least the basic 12-byte header
+      rtpHeaderSize += (buffer[0]&0x0F)*4; // # CSRC identifiers
+      if ((buffer[0]&0x10) != 0) {
+	// There's a RTP extension header.  Add its size:
+	if (inPacketSize < rtpHeaderSize + 4) {
+#ifdef DEBUG
+	  fprintf(stderr, "SRTPCryptographicContext::processOutgoingSRTPPacket(): Error: Packet size %d is shorter than the minimum specified RTP header size %d!\n", inPacketSize, rtpHeaderSize + 4);
+#endif
+	  break;
+	}
+	u_int16_t const hdrExtLength = (buffer[rtpHeaderSize+2]<<8)|buffer[rtpHeaderSize+3];
+	rtpHeaderSize += 4 + hdrExtLength*4;
+      }
+
+      unsigned const offsetToEncryptedBytes = rtpHeaderSize;
+      if (inPacketSize < offsetToEncryptedBytes) {
+#ifdef DEBUG
+	fprintf(stderr, "SRTPCryptographicContext::processOutgoingSRTPPacket(): Error: Packet size %d is too small (should be >= %d)!\n", inPacketSize, offsetToEncryptedBytes);
+#endif
+	break;
+      }
+
+      // Figure out this packet's 'index' (ROC|rtpSeqNum):
+      u_int16_t const rtpSeqNum = (buffer[2]<<8)|buffer[3];
+      if (!fHaveSentSRTPPackets) {
+	fSendingROC = 0;
+	fHaveSentSRTPPackets = True; // for the future
+      } else {
+	if (rtpSeqNum == 0) ++fSendingROC; // increment the ROC when the RTP seq num rolls over
+      }
+      u_int64_t index = (fSendingROC<<16)|rtpSeqNum;
+
+      unsigned const numEncryptedBytes = inPacketSize - offsetToEncryptedBytes; // ASSERT: >= 0
+      u_int32_t const SSRC = (buffer[8]<<24)|(buffer[9]<<16)|(buffer[10]<<8)|buffer[11];
+      encryptSRTPPacket(index, SSRC, &buffer[offsetToEncryptedBytes], numEncryptedBytes);
+    }
+
+    outPacketSize = inPacketSize; // initially
+    
+    unsigned const mkiPosition = outPacketSize; // where the MKI will go
+    
+    if (weAuthenticate()) {
+      // Append the ROC to the payload, because it's used to generate the authentication tag.
+      // (Next, the MKI will take its place.)
+      buffer[outPacketSize++] = fSendingROC>>24;
+      buffer[outPacketSize++] = fSendingROC>>16;
+      buffer[outPacketSize++] = fSendingROC>>8;
+      buffer[outPacketSize++] = fSendingROC;
+
+      // Generate and add an authentication tag over the whole packet, plus the ROC:
+      outPacketSize += generateSRTPAuthenticationTag(buffer, outPacketSize,
+						     &buffer[outPacketSize]);
+    }
+
+    // Add the MKI:
+    buffer[mkiPosition] = MKI()>>24;
+    buffer[mkiPosition+1] = MKI()>>16;
+    buffer[mkiPosition+2] = MKI()>>8;
+    buffer[mkiPosition+3] = MKI();
+
+    return True;
+  } while (0);
+#endif
+  
+  // An error occurred:
+  return False;
+}
+
+Boolean SRTPCryptographicContext
 ::processOutgoingSRTCPPacket(u_int8_t* buffer, unsigned inPacketSize,
 			     unsigned& outPacketSize) {
 #ifndef NO_OPENSSL
@@ -285,6 +369,13 @@ Boolean SRTPCryptographicContext
 }
 
 #ifndef NO_OPENSSL
+unsigned SRTPCryptographicContext
+::generateSRTPAuthenticationTag(u_int8_t const* dataToAuthenticate, unsigned numBytesToAuthenticate,
+				u_int8_t* resultAuthenticationTag) {
+  return generateAuthenticationTag(fDerivedKeys.srtp, dataToAuthenticate, numBytesToAuthenticate,
+				   resultAuthenticationTag);
+}
+
 unsigned SRTPCryptographicContext
 ::generateSRTCPAuthenticationTag(u_int8_t const* dataToAuthenticate, unsigned numBytesToAuthenticate,
 				 u_int8_t* resultAuthenticationTag) {
@@ -343,6 +434,11 @@ void SRTPCryptographicContext
 }
 
 void SRTPCryptographicContext
+::encryptSRTPPacket(u_int64_t index, u_int32_t ssrc, u_int8_t* data, unsigned numDataBytes) {
+  cryptData(fDerivedKeys.srtp, index, ssrc, data, numDataBytes);
+}
+
+void SRTPCryptographicContext
 ::encryptSRTCPPacket(u_int32_t index, u_int32_t ssrc, u_int8_t* data, unsigned numDataBytes) {
   cryptData(fDerivedKeys.srtcp, (u_int64_t)index, ssrc, data, numDataBytes);
 }
@@ -396,26 +492,34 @@ Boolean SRTPCryptographicContext
   // Now generate as many blocks of the keystream as we need, by repeatedly encrypting
   // the IV using our cipher key.  (After each step, we increment the IV by 1.)
   // We then XOR the keystream into the provided data, to do the en/decryption.
-  AES_KEY key;
-  AES_set_encrypt_key(keys.cipherKey, 8*SRTP_CIPHER_KEY_LENGTH, &key);
+  do {
+    EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
+    if (ctx == NULL) break;
+    
+    if (EVP_EncryptInit(ctx, EVP_aes_128_ecb(), keys.cipherKey, NULL/*no IV*/) != 1) break;
+        // Note: We use ECB mode here, because we're using our "iv" as plaintext
 
-  while (numDataBytes > 0) {
-    u_int8_t keyStream[SRTP_CIPHER_KEY_LENGTH];
-    AES_encrypt(iv, keyStream, &key);
+    while (numDataBytes > 0) {
+      u_int8_t keyStream[SRTP_CIPHER_KEY_LENGTH];
+      int numBytesEncrypted;
+      if (EVP_EncryptUpdate(ctx, keyStream, &numBytesEncrypted, iv, SRTP_CIPHER_KEY_LENGTH) != 1) break;
 
-    unsigned numBytesToUse
-      = numDataBytes < SRTP_CIPHER_KEY_LENGTH ? numDataBytes : SRTP_CIPHER_KEY_LENGTH;
-    for (unsigned i = 0; i < numBytesToUse; ++i) data[i] ^= keyStream[i];
-    data += numBytesToUse;
-    numDataBytes -= numBytesToUse;
+      unsigned numBytesToUse
+	= numDataBytes < numBytesEncrypted ? numDataBytes : numBytesEncrypted;
+      for (unsigned i = 0; i < numBytesToUse; ++i) data[i] ^= keyStream[i];
+      data += numBytesToUse;
+      numDataBytes -= numBytesToUse;
 
-    // Increment the IV by 1:
-    u_int8_t* ptr = &iv[sizeof iv];
-    do {
-      --ptr;
-      ++*ptr;
-    } while (*ptr == 0x00);
-  }
+      // Increment the IV by 1:
+      u_int8_t* ptr = &iv[sizeof iv];
+      do {
+	--ptr;
+	++*ptr;
+      } while (*ptr == 0x00);
+    }
+
+    EVP_CIPHER_CTX_free(ctx);
+  } while (0);
 }
 
 void SRTPCryptographicContext::performKeyDerivation() {
@@ -445,13 +549,8 @@ void SRTPCryptographicContext
 ::deriveSingleKey(u_int8_t const* masterKey, u_int8_t const* salt,
 		  SRTPKeyDerivationLabel label,
 		  unsigned resultKeyLength, u_int8_t* resultKey) {
-  // This looks a little different from the mechanism described in RFC 3711, section 4.3, but
-  // it's what the 'libsrtp' code does, so I hope it's functionally equivalent:
-  AES_KEY key;
-  AES_set_encrypt_key(masterKey, 8*SRTP_CIPHER_KEY_LENGTH, &key);
-
   u_int8_t counter[KDF_PRF_CIPHER_BLOCK_LENGTH];
-  // Set the first bytes of "counter" to be the 'salt'; set the remainder to zero:
+  // Fill in the first bytes of "counter" with our 'salt'; set the remaining bytes to zero:
   memmove(counter, salt, SRTP_CIPHER_SALT_LENGTH);
   for (unsigned i = SRTP_CIPHER_SALT_LENGTH; i < sizeof counter; ++i) {
     counter[i] = 0;
@@ -463,17 +562,29 @@ void SRTPCryptographicContext
   // And use the resulting "counter" as the plaintext:
   u_int8_t const* plaintext = counter;
 
-  unsigned numBytesRemaining = resultKeyLength;
-  while (numBytesRemaining > 0) {
-    u_int8_t ciphertext[KDF_PRF_CIPHER_BLOCK_LENGTH];
-    AES_encrypt(plaintext, ciphertext, &key);
+  // Generate the key by repeatedly encrypting the plaintext:
+  do {
+    EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
+    if (ctx == NULL) break;
 
-    unsigned numBytesToCopy
-      = numBytesRemaining < KDF_PRF_CIPHER_BLOCK_LENGTH ? numBytesRemaining : KDF_PRF_CIPHER_BLOCK_LENGTH;
-    memmove(resultKey, ciphertext, numBytesToCopy);
-    resultKey += numBytesToCopy;
-    numBytesRemaining -= numBytesToCopy;
-    ++counter[15]; // for next time
-  }
+    if (EVP_EncryptInit(ctx, EVP_aes_128_ecb(), masterKey, NULL/*no IV*/) != 1) break;
+        // Note: We use ECB mode here, because there's no IV
+
+    unsigned numBytesRemaining = resultKeyLength;
+    while (numBytesRemaining > 0) {
+      u_int8_t ciphertext[KDF_PRF_CIPHER_BLOCK_LENGTH];
+      int numBytesEncrypted;
+      if (EVP_EncryptUpdate(ctx, ciphertext, &numBytesEncrypted, plaintext, KDF_PRF_CIPHER_BLOCK_LENGTH) != 1) break;
+
+      unsigned numBytesToCopy
+	= numBytesRemaining < numBytesEncrypted ? numBytesRemaining : numBytesEncrypted;
+      memmove(resultKey, ciphertext, numBytesToCopy);
+      resultKey += numBytesToCopy;
+      numBytesRemaining -= numBytesToCopy;
+      ++counter[15]; // for next time
+    }
+
+    EVP_CIPHER_CTX_free(ctx);
+  } while (0);
 }
 #endif

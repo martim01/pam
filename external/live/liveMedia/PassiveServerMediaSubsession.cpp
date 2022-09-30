@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2021 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2022 Live Networks, Inc.  All rights reserved.
 // A 'ServerMediaSubsession' object that represents an existing
 // 'RTPSink', rather than one that creates new 'RTPSink's on demand.
 // Implementation
@@ -71,7 +71,12 @@ char const*
 PassiveServerMediaSubsession::sdpLines(int /*addressFamily*/) {
   if (fSDPLines == NULL ) {
     // Construct a set of SDP lines that describe this subsession:
-    // Use the components from "rtpSink":
+    // Use the components from "rtpSink".
+    if (fParentSession->streamingUsesSRTP) { // Hack to set up for SRTP/SRTCP
+      fRTPSink.setupForSRTP(fParentSession->streamingIsEncrypted);
+      if (fRTCPInstance != NULL) fRTCPInstance->setupForSRTCP();
+    }
+
     Groupsock const& gs = fRTPSink.groupsockBeingUsed();
     AddressString groupAddressStr(gs.groupAddress());
     unsigned short portNum = ntohs(gs.port().num());
@@ -81,25 +86,28 @@ PassiveServerMediaSubsession::sdpLines(int /*addressFamily*/) {
     unsigned estBitrate
       = fRTCPInstance == NULL ? 50 : fRTCPInstance->totSessionBW();
     char* rtpmapLine = fRTPSink.rtpmapLine();
+    char* keyMgmtLine = fRTPSink.keyMgmtLine();
     char const* rtcpmuxLine = rtcpIsMuxed() ? "a=rtcp-mux\r\n" : "";
     char const* rangeLine = rangeSDPLine();
     char const* auxSDPLine = fRTPSink.auxSDPLine();
     if (auxSDPLine == NULL) auxSDPLine = "";
 
     char const* const sdpFmt =
-      "m=%s %d RTP/AVP %d\r\n"
+      "m=%s %d RTP/%sAVP %d\r\n"
       "c=IN %s %s/%d\r\n"
       "b=AS:%u\r\n"
       "%s"
       "%s"
       "%s"
       "%s"
+      "%s"
       "a=control:%s\r\n";
     unsigned sdpFmtSize = strlen(sdpFmt)
-      + strlen(mediaType) + 5 /* max short len */ + 3 /* max char len */
+      + strlen(mediaType) + 5 /* max short len */ + 1 + 3 /* max char len */
       + 3/*IP4 or IP6*/ + strlen(groupAddressStr.val()) + 3 /* max char len */
       + 20 /* max int len */
       + strlen(rtpmapLine)
+      + strlen(keyMgmtLine)
       + strlen(rtcpmuxLine)
       + strlen(rangeLine)
       + strlen(auxSDPLine)
@@ -108,17 +116,19 @@ PassiveServerMediaSubsession::sdpLines(int /*addressFamily*/) {
     sprintf(sdpLines, sdpFmt,
 	    mediaType, // m= <media>
 	    portNum, // m= <port>
+	    fParentSession->streamingUsesSRTP ? "S" : "",
 	    rtpPayloadType, // m= <fmt list>
 	    gs.groupAddress().ss_family == AF_INET ? "IP4" : "IP6", // c= address type
 	    groupAddressStr.val(), // c= <connection address>
 	    ttl, // c= TTL
 	    estBitrate, // b=AS:<bandwidth>
 	    rtpmapLine, // a=rtpmap:... (if present)
+	    keyMgmtLine, // a=key-mgmt:... (if present)
 	    rtcpmuxLine, // a=rtcp-mux:... (if present)
 	    rangeLine, // a=range:... (if present)
 	    auxSDPLine, // optional extra SDP line
 	    trackId()); // a=control:<track-id>
-    delete[] (char*)rangeLine; delete[] rtpmapLine;
+    delete[] (char*)rangeLine; delete[] keyMgmtLine; delete[] rtpmapLine;
 
     fSDPLines = strDup(sdpLines);
     delete[] sdpLines;
@@ -135,6 +145,7 @@ void PassiveServerMediaSubsession
 		      int /*tcpSocketNum*/,
 		      unsigned char /*rtpChannelId*/,
 		      unsigned char /*rtcpChannelId*/,
+		      TLSState* /*tlsState*/,
 		      struct sockaddr_storage& destinationAddress,
 		      u_int8_t& destinationTTL,
 		      Boolean& isMulticast,

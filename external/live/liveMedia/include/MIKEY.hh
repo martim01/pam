@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2021 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2022 Live Networks, Inc.  All rights reserved.
 // A data structure that implements a MIKEY message (RFC 3830)
 // C++ header
 
@@ -30,14 +30,12 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 class MIKEYState {
 public:
-  MIKEYState(); // initialize with default parameters
+  MIKEYState(Boolean useEncryption = True); // initialize with default parameters
   virtual ~MIKEYState();
 
-  static MIKEYState* createNew(u_int8_t* messageToParse, unsigned messageSize);
+  static MIKEYState* createNew(u_int8_t const* messageToParse, unsigned messageSize);
       // (Attempts to) parse a binary MIKEY message, returning a new "MIKEYState" if successful
       // (or NULL if unsuccessful).
-      // ("messageToParse" is assumed to have been dynamically allocated;
-      // this function will delete[] it.)
 
   u_int8_t* generateMessage(unsigned& messageSize) const;
       // Returns a binary message representing the current MIKEY state, of size "messageSize" bytes.
