@@ -422,7 +422,7 @@ void AoipSourceManager::StartDiscovery(wxEvtHandler* pHandler, const std::set<st
 
     if(setSAP.empty() == false)
     {
-        m_pSapWatcher = std::unique_ptr<pml::SapServer>(new pml::SapServer(std::make_shared<wxSapHandler>(this)));
+        m_pSapWatcher = std::unique_ptr<pml::SapServer>(new pml::SapServer(std::make_shared<wxSapHandler>(this), true));
         m_pSapWatcher->Run();
         for(auto service : setSAP)
         {
