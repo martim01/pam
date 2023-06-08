@@ -86,6 +86,7 @@ install(CODE "execute_process(COMMAND chown ${DIR_PAM} -Rv --reference=${DIR_PAM
 install(CODE "execute_process(COMMAND cp -p ${CMAKE_SOURCE_DIR}/documents/audio_hats.xml ${DIR_PAM})")
 install(CODE "execute_process(COMMAND cp -p ${CMAKE_SOURCE_DIR}/documents/macaddress.xml ${DIR_PAM})")
 install(CODE "execute_process(COMMAND cp -p ${CMAKE_SOURCE_DIR}/documents/ppmtypes.xml ${DIR_PAM})")
+install(CODE "execute_process(COMMAND cp -p ${CMAKE_SOURCE_DIR}/documents/r128types.xml ${DIR_PAM})")
 install(CODE "execute_process(COMMAND cp -p ${CMAKE_SOURCE_DIR}/documents/pam2.ini ${DIR_PAM})")
 install(CODE "execute_process(COMMAND cp -rp ${CMAKE_SOURCE_DIR}/documents/help ${DIR_PAM})")
 install(CODE "execute_process(COMMAND cp -rp ${CMAKE_SOURCE_DIR}/documents/generator ${DIR_PAM})")

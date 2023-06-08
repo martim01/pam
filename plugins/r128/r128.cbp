@@ -154,6 +154,8 @@
 		<Unit filename="r128builder.h" />
 		<Unit filename="r128meter.cpp" />
 		<Unit filename="r128meter.h" />
+		<Unit filename="r128types.cpp" />
+		<Unit filename="r128types.h" />
 		<Unit filename="wxsmith/pnlDisplay.wxs" />
 		<Unit filename="wxsmith/pnlScale.wxs" />
 		<Extensions>
@@ -169,6 +171,9 @@
 					<wxPanel wxs="wxsmith/pnlDisplay.wxs" src="pnlDisplay.cpp" hdr="pnlDisplay.h" fwddecl="0" i18n="1" name="pnlDisplay" language="CPP" />
 				</resources>
 			</wxsmith>
+			<code_completion />
+			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

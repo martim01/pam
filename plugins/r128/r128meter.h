@@ -20,7 +20,7 @@ public:
     void InitMeter(const wxString & sText,double dMin, double dMax);
     void SetMinMax(double dMin, double dMax);
 
-    void SetLevels(const double dLevels[], size_t nSize, double dOffset);
+    void SetLevels(const std::vector<double>& vLevels,  double dOffset);
 
     bool SetLightColours(double dLow, wxColour clrLow, double dMid, wxColour clrMid,  wxColour clrHigh);
     void ResetMeter(void);

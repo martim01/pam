@@ -1,0 +1,38 @@
+<pam>
+	<r128_type>
+		<name>R128 +18</name>
+		<scale>-0,-5, -8, -11, -14, -17, -20, -23, -30, -36, -42, -48, -54, -59</scale>
+		<target>-23.0</target>
+		<max>-5.0</max>
+		<min>-59.0</min>
+		<ok>-24.0</ok>
+		<high>-20.0</high>
+		<colour_low>#000064</colour_low>
+		<colour_ok>#32ff32</colour_ok>
+		<colour_high>#640000</colour_high>
+	</r128_type>
+	<r128_type>
+		<name>R128 +9</name>
+		<scale>-14, -17, -20, -23, -26, -29, -32, -35, -38, -41</scale>
+		<target>-23.0</target>
+		<max>-14.0</max>
+		<min>-41.0</min>
+		<ok>-24.0</ok>
+		<high>-20.0</high>
+		<colour_low>#000064</colour_low>
+		<colour_ok>#32ff32</colour_ok>
+		<colour_high>#640000</colour_high>
+	</r128_type>
+	<r128_type>
+		<name>R128s2</name>
+		<scale>-0,-5, -8, -11, -14, -16, -20, -23, -30, -36, -42, -48, -54, -59</scale>
+		<target>-16.0</target>
+		<max>-5.0</max>
+		<min>-59.0</min>
+		<ok>-20.0</ok>
+		<high>-16.0</high>
+		<colour_low>#000088</colour_low>
+		<colour_ok>#64ff64</colour_ok>
+		<colour_high>#880000</colour_high>
+	</r128_type>
+</pam>
