@@ -459,11 +459,11 @@ void wmButton::Draw(wxDC& dc)
     }
     if(m_nState != STATE_DISABLED)
     {
-        m_uiRect.Draw(dc, m_uiRect.GetLabel(), m_nBorderState, bmp);
+        m_uiRect.Draw(dc, m_uiRect.GetLabel(), uiRect::EDGE_ALL, m_nBorderState, bmp);
     }
     else
     {
-        m_uiRect.Draw(dc, m_uiRect.GetLabel(), uiRect::BORDER_FLAT, bmp);
+        m_uiRect.Draw(dc, m_uiRect.GetLabel(), uiRect::EDGE_ALL, uiRect::BORDER_FLAT, bmp);
     }
 }
 

@@ -247,12 +247,9 @@ pml::restgoose::response RemoteApi::WavEndpoint(const httpMethod& theMethod, con
             return DeleteWav(fn);
         }
     }
-    else
-    {
-        pml::restgoose::response resp(404);
-        resp.jsonData["wav"] = fnWanted.GetName().ToStdString();
-        return resp;
-    }
+    pml::restgoose::response resp(404);
+    resp.jsonData["wav"] = fnWanted.GetName().ToStdString();
+    return resp;
 }
 
 pml::restgoose::response RemoteApi::ExtraEndpoint(const httpMethod& theMethod, const query& theQuery,  const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)

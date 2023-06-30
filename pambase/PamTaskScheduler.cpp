@@ -190,8 +190,7 @@ void PamTaskScheduler::SingleStep(unsigned maxDelayTime) {
       if (mask == 0) mask = 0x80000000;
 
 #ifndef NO_STD_LIB
-      if (fTriggersAwaitingHandling[i].test()) {
-	fTriggersAwaitingHandling[i].clear();
+      if (fTriggersAwaitingHandling[i].test_and_set()) {
 #else
       if (fTriggersAwaitingHandling[i]) {
 	fTriggersAwaitingHandling[i] = False;
@@ -204,6 +203,9 @@ void PamTaskScheduler::SingleStep(unsigned maxDelayTime) {
 	fLastUsedTriggerNum = i;
 	break;
       }
+#ifndef NO_STD_LIB
+      fTriggersAwaitingHandling[i].clear();
+#endif // NO_STD_LIB
     } while (i != fLastUsedTriggerNum);
   }
 
