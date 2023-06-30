@@ -31,7 +31,7 @@ correlationPanel::correlationPanel(wxWindow* parent,correlationBuilder* pBuilder
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
 	//*)
 
-	m_pGraph = new LevelGraph(this, wxNewId(), wxPoint(0,0), wxSize(800,480), 10, 1.0, -1.0);
+	m_pGraph = new LevelGraph(this, wxNewId(), wxPoint(0,0), wxSize(800,480), 117, 1.0, -1.0);
 	m_pGraph->AddGraph(GRAPH, *wxWHITE, false, LevelGraph::DS_AV);
 	m_pGraph->ShowGraph(GRAPH);
 	m_pGraph->SetLimit(GRAPH, 1.0, -1.0);

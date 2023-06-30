@@ -74,7 +74,7 @@ class pnlEbuMeter: public wxPanel
 
         void SetGroup(unsigned char nGroup);
 
-        void ChangeScale();
+        void ChangeR128(const wxString& sType);
 
         void LoadSettings();
         Json::Value CreateWebsocketMessage();

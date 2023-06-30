@@ -309,15 +309,10 @@ void R128Meter::SetLevelDisplay(bool bLevel)
     ResetMeter();
 }
 
-void R128Meter::SetLevels(const double dLevels[], size_t nSize, double dOffset)
+void R128Meter::SetLevels(const std::vector<double>& vLevels, double dOffset)
 {
     m_dLevelOffset = dOffset;
-    m_vLevels.clear();
-    m_vLevels.resize(nSize);
-    for(size_t i = 0 ; i < nSize; i++)
-    {
-        m_vLevels[i] = dLevels[i];
-    }
+    m_vLevels = vLevels;
 
     RefreshRect(m_uiLabel.GetRect());
 }

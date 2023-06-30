@@ -9,6 +9,7 @@
 #include "pnlDisplay.h"
 #include "pnlgroups.h"
 #include "ppmtypes.h"
+#include "r128types.h"
 #include "pnlMeters.h"
 using namespace std;
 
@@ -30,6 +31,7 @@ m_pMeters(0)
     RegisterRemoteApiEnum("Show_True", {{0,"Hide"},{1,"Show"}},1);
     RegisterRemoteApiEnum("Show_Phase", {{0,"Hide"},{1,"Show"}},1);
     RegisterRemoteApiEnum("MeterMode", PPMTypeManager::Get().GetTypes(), "BBC");
+    RegisterRemoteApiEnum("R128Mode", R128TypeManager::Get().GetTypes(), "R128");
 
     //RegisterRemoteApiCallback("Group", std::bind(&R128Builder::GetGroups, this));
 
@@ -116,13 +118,9 @@ void R128Builder::OnSettingChanged(SettingEvent& event)
     {
         m_bRun = (ReadSetting(wxT("Calculate"),1) == 1);
     }
-    else if(event.GetKey() == wxT("Scale"))
-    {
-        m_pMeters->ChangeScale();
-    }
     else if(event.GetKey() == wxT("Zero"))
     {
-        m_pMeters->ChangeScale();
+        m_pMeters->ChangeR128(ReadSetting("R128Mode", "R128 +18"));
     }
     else if(event.GetKey() == "Group")
     {
@@ -131,6 +129,10 @@ void R128Builder::OnSettingChanged(SettingEvent& event)
     else if(event.GetKey() == "MeterMode")
     {
         m_pMeters->ChangeMeters(event.GetValue());
+    }
+    else if(event.GetKey() == "R128Mode")
+    {
+        m_pMeters->ChangeR128(event.GetValue());
     }
     else
     {

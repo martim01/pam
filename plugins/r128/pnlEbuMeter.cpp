@@ -16,6 +16,7 @@
 #include "settings.h"
 #include "correlationbar.h"
 #include "ppmtypes.h"
+#include "r128types.h"
 using namespace std;
 
 
@@ -106,8 +107,7 @@ pnlEbuMeter::~pnlEbuMeter()
 
 void pnlEbuMeter::SetSession(const session& aSession)
 {
-    m_pR128->InputSession(aSession);
-    m_pTrue->InputSession(aSession);
+    m_pR128->InputSession(aSession);    m_pTrue->InputSession(aSession);
 
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {
@@ -156,10 +156,10 @@ void pnlEbuMeter::CreateMeters()
     m_pPeakLeft->SetTargetLevel(0, wxPen(wxColour(255,255,255)));
     m_pPeakRight->SetTargetLevel(0, wxPen(wxColour(255,255,255)));
 
-    double dLevels[14] = {5.0, 3.0, 0.0,-3.0, -6.0, -9.0, -12.0, -15.0, -18.0, -21.0, -24.0, -30.0, -36.0, -40.0};
-    m_pPeakLevels->SetLevels(dLevels, 14,0.0);
-    m_pPeakLeft->SetLevels(dLevels, 14,0.0);
-    m_pPeakRight->SetLevels(dLevels, 14,0.0);
+
+    m_pPeakLevels->SetLevels({5.0, 3.0, 0.0,-3.0, -6.0, -9.0, -12.0, -15.0, -18.0, -21.0, -24.0, -30.0, -36.0, -40.0},0.0);
+    m_pPeakLeft->SetLevels({5.0, 3.0, 0.0,-3.0, -6.0, -9.0, -12.0, -15.0, -18.0, -21.0, -24.0, -30.0, -36.0, -40.0},0.0);
+    m_pPeakRight->SetLevels({5.0, 3.0, 0.0,-3.0, -6.0, -9.0, -12.0, -15.0, -18.0, -21.0, -24.0, -30.0, -36.0, -40.0},0.0);
 
 
     //PPM
@@ -229,7 +229,8 @@ void pnlEbuMeter::CreateMeters()
     m_aMeters[1]->SetLightColours(-26,wxColour(0,0,100), -20, wxColour(50,255,50), wxColour(0,0,100));
     m_aMeters[2]->SetLightColours(-24,wxColour(0,0,100), -22, wxColour(50,255,50), wxColour(0,0,100));
 
-    ChangeScale();
+
+    ChangeR128(m_pBuilder->ReadSetting("R12Type", "R128 +18"));
     m_pLevels->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pnlEbuMeter::OnInfoLeftUp,0,this);
 
 }
@@ -378,17 +379,35 @@ void pnlEbuMeter::OnInfoLeftUp(wxMouseEvent& event)
     m_pBuilder->Maximize((GetSize().x <= 600));
 }
 
-void pnlEbuMeter::ChangeScale()
+void pnlEbuMeter::ChangeR128(const wxString& sType)
 {
-    if(m_pBuilder->ReadSetting(wxT("Zero"),1) == 0)
+    auto itType = R128TypeManager::Get().FindType(sType);
+    if(itType != R128TypeManager::Get().GetTypeEnd())
     {
-        m_dOffset = -23.0;
-    }
-    else
-    {
-        m_dOffset = 0.0;
+        if(m_pBuilder->ReadSetting(wxT("Zero"),1) == 0)
+        {
+            m_dOffset = itType->second.dTarget;
+        }
+        else
+        {
+            m_dOffset = 0.0;
+        }
+
+        for(size_t i = 0; i < 3; i++)
+        {
+            m_aMeters[i]->SetMinMax(itType->second.dMin, itType->second.dMax);
+            m_aMeters[i]->SetLevels(itType->second.vLevels, m_dOffset);
+            m_aMeters[i]->SetLightColours(itType->second.dOk, itType->second.clrLow,itType->second.dHigh, itType->second.clrOk, itType->second.clrHigh);
+            m_aMeters[i]->Refresh();
+            m_aMeters[i]->SetTargetLevel(itType->second.dTarget, wxPen(wxColour(255,255,255)));
+        }
+
+        m_pLevels->SetMinMax(itType->second.dMin, itType->second.dMax);
+        m_pLevels->SetLevels(itType->second.vLevels, m_dOffset);
+        m_pLevels->Refresh();
     }
 
+/*
     if(m_pBuilder->ReadSetting(wxT("Scale"),1) == 1)
     {
         double dLevels[14] = {0,-5, -8, -11, -14, -17, -20, -23, -30, -36, -42, -48, -54, -59};
@@ -417,7 +436,7 @@ void pnlEbuMeter::ChangeScale()
         m_pLevels->SetLevels(dLevels,10, m_dOffset);
         m_pLevels->Refresh();
     }
-
+    */
 
 }
 
