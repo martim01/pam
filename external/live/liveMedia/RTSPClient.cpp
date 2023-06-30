@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2022 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2023 Live Networks, Inc.  All rights reserved.
 // A generic RTSP client
 // Implementation
 
@@ -1568,19 +1568,24 @@ void RTSPClient::responseHandlerForHTTP_GET1(int responseCode, char* responseStr
     fHTTPTunnelingConnectionIsPending = True;
     int connectResult = connectToServer(fOutputSocketNum, fTunnelOverHTTPPortNum);
     if (connectResult < 0) break; // an error occurred
-    else if (connectResult == 0) {
+    else if (connectResult > 0) {
+      if (fOutputTLS->isNeeded) {
+	// We need to complete an additional TLS connection:
+	connectResult = fOutputTLS->connect(fOutputSocketNum);
+	if (connectResult < 0) break;
+	if (connectResult > 0 && fVerbosityLevel >= 1) envir() << "...TLS connection completed\n";
+      }
+
+      if (connectResult > 0 && fVerbosityLevel >= 1) envir() << "...local connection opened\n";
+    }
+
+    if (connectResult == 0) {
       // A connection is pending.  Continue setting up RTSP-over-HTTP when the connection completes.
       // First, move the pending requests to the 'awaiting connection' queue:
       while ((request = fRequestsAwaitingHTTPTunneling.dequeue()) != NULL) {
 	fRequestsAwaitingConnection.enqueue(request);
       }
       return;
-    } else { // connectResult > 0
-      if (fOutputTLS->isNeeded) {
-	// We need to complete an additional TLS connection:
-	connectResult = fOutputTLS->connect(fOutputSocketNum);
-	if (connectResult < 0) break;
-      }
     }
 
     // The connection succeeded.  Continue setting up RTSP-over-HTTP:
@@ -1638,12 +1643,11 @@ void RTSPClient::connectionHandler1() {
       break;
     }
 
-    // The connection succeeded.  If the connection came about from an attempt to set up RTSP-over-HTTP, finish this now:
-    if (fHTTPTunnelingConnectionIsPending && !setupHTTPTunneling2()) break;
-
-    if (fInputTLS->isNeeded) {
+    // Note: Normally "fOutputTLS" == "fInputTLS" here, except when we're connecting
+    // to the second (i.e., "POST") connection when doing RTSP-over-HTTP:
+    if (fOutputTLS->isNeeded) {
       // We need to complete an additional TLS connection:
-      int tlsConnectResult = fInputTLS->connect(fInputSocketNum);
+      int tlsConnectResult = fOutputTLS->connect(fOutputSocketNum);
       if (tlsConnectResult < 0) break; // error in TLS connection
       if (tlsConnectResult > 0 && fVerbosityLevel >= 1) envir() << "...TLS connection completed\n";
       if (tlsConnectResult == 0) {
@@ -1654,6 +1658,9 @@ void RTSPClient::connectionHandler1() {
 	return;
       }
     }
+
+    // The connection succeeded.  If the connection came about from an attempt to set up RTSP-over-HTTP, finish this now:
+    if (fHTTPTunnelingConnectionIsPending && !setupHTTPTunneling2()) break;
 
     // The connection is complete.  Resume sending all pending requests:
     if (fVerbosityLevel >= 1) envir() << "...remote connection opened\n";
@@ -2022,7 +2029,7 @@ int RTSPClient::write(const char* data, unsigned count) {
       if (fOutputTLS->isNeeded) {
 	return fOutputTLS->write(data, count);
       } else {
-	return send(fOutputSocketNum, data, count, 0);
+	return send(fOutputSocketNum, data, count, MSG_NOSIGNAL);
       }
 }
 

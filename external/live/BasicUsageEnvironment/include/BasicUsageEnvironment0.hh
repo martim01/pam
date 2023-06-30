@@ -13,7 +13,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
-// Copyright (c) 1996-2022 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2023 Live Networks, Inc.  All rights reserved.
 // Basic Usage Environment: for a simple, non-scripted, console application
 // C++ header
 
@@ -30,6 +30,12 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 #ifndef _DELAY_QUEUE_HH
 #include "DelayQueue.hh"
+#endif
+
+#ifndef NO_STD_LIB
+#ifndef _LIBCPP_ATOMIC
+#include <atomic>
+#endif
 #endif
 
 #define RESULT_MSG_BUFFER_MAX 1000
@@ -97,6 +103,7 @@ protected:
 
 protected:
   // To implement delayed operations:
+  intptr_t fTokenCounter;
   DelayQueue fDelayQueue;
 
   // To implement background reads:
@@ -104,11 +111,16 @@ protected:
   int fLastHandledSocketNum;
 
   // To implement event triggers:
-  EventTriggerId volatile fTriggersAwaitingHandling; // implemented as a 32-bit bitmap
-  EventTriggerId fLastUsedTriggerMask; // implemented as a 32-bit bitmap
+#ifndef NO_STD_LIB
+  std::atomic_flag fTriggersAwaitingHandling[MAX_NUM_EVENT_TRIGGERS];
+#else
+  Boolean volatile fTriggersAwaitingHandling[MAX_NUM_EVENT_TRIGGERS];
+#endif
+  u_int32_t fLastUsedTriggerMask; // implemented as a 32-bit bitmap
   TaskFunc* fTriggeredEventHandlers[MAX_NUM_EVENT_TRIGGERS];
   void* fTriggeredEventClientDatas[MAX_NUM_EVENT_TRIGGERS];
   unsigned fLastUsedTriggerNum; // in the range [0,MAX_NUM_EVENT_TRIGGERS)
+  Boolean fEventTriggersAreBeingUsed;
 };
 
 #endif

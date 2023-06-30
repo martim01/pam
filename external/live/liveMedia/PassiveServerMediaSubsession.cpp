@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2022 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2023 Live Networks, Inc.  All rights reserved.
 // A 'ServerMediaSubsession' object that represents an existing
 // 'RTPSink', rather than one that creates new 'RTPSink's on demand.
 // Implementation
@@ -210,7 +210,7 @@ void PassiveServerMediaSubsession::startStream(unsigned clientSessionId,
   }
 }
 
-float PassiveServerMediaSubsession::getCurrentNPT(void* streamToken) {
+float PassiveServerMediaSubsession::getCurrentNPT(void* /*streamToken*/) {
   // Return the elapsed time between our "RTPSink"s creation time, and the current time:
   struct timeval const& creationTime  = fRTPSink.creationTime(); // alias
 
@@ -221,7 +221,7 @@ float PassiveServerMediaSubsession::getCurrentNPT(void* streamToken) {
 }
 
 void PassiveServerMediaSubsession
-::getRTPSinkandRTCP(void* streamToken,
+::getRTPSinkandRTCP(void* /*streamToken*/,
 		    RTPSink const*& rtpSink, RTCPInstance const*& rtcp) {
   rtpSink = &fRTPSink;
   rtcp = fRTCPInstance;

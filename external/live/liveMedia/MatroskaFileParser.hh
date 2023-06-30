@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2022 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2023 Live Networks, Inc.  All rights reserved.
 // A parser for a Matroska file.
 // C++ header
 
@@ -52,6 +52,8 @@ public:
 
   void seekToTime(double& seekNPT);
   void pause();
+
+  void stopAnyDeliveryForTrack(unsigned trackNumber);
 
   // StreamParser 'client continue' function:
   static void continueParsing(void* clientData, unsigned char* ptr, unsigned size, struct timeval presentationTime);

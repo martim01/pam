@@ -209,6 +209,8 @@ message(STATUS "Configure plugin fftdiff")
 add_subdirectory(plugins/fftdiff)
 message(STATUS "Configure plugin correlation")
 add_subdirectory(plugins/correlation)
+message(STATUS "Configure bob")
+add_subdirectory(plugins/bob)
 #Add new plugin projects above this line
 
 message(STATUS "Configure pam2")

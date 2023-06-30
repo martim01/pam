@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "groupsock"
-// Copyright (c) 1996-2022 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2023 Live Networks, Inc.  All rights reserved.
 // Helper routines to implement 'group sockets'
 // Implementation
 
@@ -51,6 +51,7 @@ extern "C" int initializeWinsockIfNecessary();
 // By default, use INADDR_ANY for the sending and receiving interfaces (IPv4 only):
 ipv4AddressBits SendingInterfaceAddr = INADDR_ANY;
 ipv4AddressBits ReceivingInterfaceAddr = INADDR_ANY;
+in6_addr ReceivingInterfaceAddr6 = IN6ADDR_ANY_INIT;
 
 static void socketErr(UsageEnvironment& env, char const* errorMsg) {
   env.setResultErrMsg(errorMsg);
@@ -176,13 +177,14 @@ int setupDatagramSocket(UsageEnvironment& env, Port port, int domain) {
     }
 #endif
   } else { // IPv6
+    in6_addr addr = IN6ADDR_ANY_INIT;
     if (port.num() != 0) {
       // For IPv6 sockets, we need the IPV6_V6ONLY flag set to 1, otherwise we would not
       // be able to have an IPv4 socket and an IPv6 socket bound to the same port:
       int const one = 1;
       (void)setsockopt(newSocket, IPPROTO_IPV6, IPV6_V6ONLY, (const char*)&one, sizeof one);
 
-      MAKE_SOCKADDR_IN6(name, port.num());
+      MAKE_SOCKADDR_IN6(name, addr, port.num());
       if (bind(newSocket, (struct sockaddr*)&name, sizeof name) != 0) {
 	char tmpBuffer[100];
 	sprintf(tmpBuffer, "IPv6 bind() error (port number: %d): ", ntohs(port.num()));
@@ -353,7 +355,7 @@ int setupStreamSocket(UsageEnvironment& env, Port port, int domain,
       int const one = 1;
       (void)setsockopt(newSocket, IPPROTO_IPV6, IPV6_V6ONLY, (const char*)&one, sizeof one);
 
-      MAKE_SOCKADDR_IN6(name, port.num());
+      MAKE_SOCKADDR_IN6(name, ReceivingInterfaceAddr6, port.num());
       if (bind(newSocket, (struct sockaddr*)&name, sizeof name) != 0) {
 	char tmpBuffer[100];
 	sprintf(tmpBuffer, "IPv6 bind() error (port number: %d): ", ntohs(port.num()));
@@ -447,7 +449,7 @@ Boolean writeSocket(UsageEnvironment& env,
 		    unsigned char* buffer, unsigned bufferSize) {
   do {
     SOCKLEN_T dest_len = addressSize(addressAndPort);
-    int bytesSent = sendto(socket, (char*)buffer, bufferSize, 0,
+    int bytesSent = sendto(socket, (char*)buffer, bufferSize, MSG_NOSIGNAL,
 			   (struct sockaddr const*)&addressAndPort, dest_len);
     if (bytesSent != (int)bufferSize) {
       char tmpBuf[100];
@@ -740,7 +742,8 @@ Boolean getSourcePort(UsageEnvironment& env, int socket, int domain, Port& port)
       MAKE_SOCKADDR_IN(name, INADDR_ANY, 0);
       bind(socket, (struct sockaddr*)&name, sizeof name);
     } else { // IPv6
-      MAKE_SOCKADDR_IN6(name, 0);
+      in6_addr const in6addr_any_init = IN6ADDR_ANY_INIT;
+      MAKE_SOCKADDR_IN6(name, in6addr_any_init, 0);
       bind(socket, (struct sockaddr*)&name, sizeof name);
     }
 

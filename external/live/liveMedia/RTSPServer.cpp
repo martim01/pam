@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2022 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2023 Live Networks, Inc.  All rights reserved.
 // A RTSP server
 // Implementation
 
@@ -91,15 +91,15 @@ char* RTSPServer::rtspURLPrefix(int clientSocket, Boolean useIPv6) const {
   char const* addressPrefixInURL = ourAddress.ss_family == AF_INET6 ? "[" : "";
   char const* addressSuffixInURL = ourAddress.ss_family == AF_INET6 ? "]" : "";
 
-  portNumBits defaultPortNum = fWeServeSRTP ? 322 : 554;
+  portNumBits defaultPortNum = fOurConnectionsUseTLS ? 322 : 554;
   portNumBits portNumHostOrder = ntohs(fServerPort.num());
   if (portNumHostOrder == defaultPortNum) {
     sprintf(urlBuffer, "rtsp%s://%s%s%s/",
-	    fWeServeSRTP ? "s" : "",
+	    fOurConnectionsUseTLS ? "s" : "",
 	    addressPrefixInURL, AddressString(ourAddress).val(), addressSuffixInURL);
   } else {
     sprintf(urlBuffer, "rtsp%s://%s%s%s:%hu/",
-	    fWeServeSRTP ? "s" : "",
+	    fOurConnectionsUseTLS ? "s" : "",
 	    addressPrefixInURL, AddressString(ourAddress).val(), addressSuffixInURL, portNumHostOrder);
   }
   
@@ -493,6 +493,7 @@ void RTSPServer::RTSPClientConnection::handleCmd_notSupported() {
 }
 
 void RTSPServer::RTSPClientConnection::handleCmd_redirect(char const* urlSuffix) {
+  char* urlPrefix = fOurRTSPServer.rtspURLPrefix(fClientInputSocket);
   snprintf((char*)fResponseBuffer, sizeof fResponseBuffer,
 	   "RTSP/1.0 301 Moved Permanently\r\n"
 	   "CSeq: %s\r\n"
@@ -500,7 +501,8 @@ void RTSPServer::RTSPClientConnection::handleCmd_redirect(char const* urlSuffix)
 	   "Location: %s%s\r\n\r\n",
 	   fCurrentCSeq,
 	   dateHeader(),
-	   fOurRTSPServer.rtspURLPrefix(fClientInputSocket), urlSuffix);
+	   urlPrefix, urlSuffix);
+  delete[] urlPrefix;
 }
 
 void RTSPServer::RTSPClientConnection::handleCmd_notFound() {
@@ -830,7 +832,7 @@ void RTSPServer::RTSPClientConnection::handleRequestBytes(int newBytesRead) {
 
       // If the request specified the wrong type of URL
       // (i.e., "rtsps" instead of "rtsp", or vice versa), then send back a 'redirect':
-      if (urlIsRTSPS != fOurRTSPServer.fWeServeSRTP) {
+      if (urlIsRTSPS != fOurRTSPServer.fOurConnectionsUseTLS) {
 #ifdef DEBUG
 	fprintf(stderr, "Calling handleCmd_redirect()\n");
 #endif
@@ -985,7 +987,7 @@ void RTSPServer::RTSPClientConnection::handleRequestBytes(int newBytesRead) {
     if (fOutputTLS->isNeeded) {
         fOutputTLS->write((char const*)fResponseBuffer, numBytesToWrite);
     } else {
-        send(fClientOutputSocket, (char const*)fResponseBuffer, numBytesToWrite, 0);
+        send(fClientOutputSocket, (char const*)fResponseBuffer, numBytesToWrite, MSG_NOSIGNAL);
    }
     
     if (playAfterSetup) {
@@ -1143,6 +1145,7 @@ Boolean RTSPServer::RTSPClientConnection
   
   // If we get here, we failed to authenticate the user.
   // Send back a "401 Unauthorized" response, with a new random nonce:
+  Boolean isInitial401 = fCurrentAuthenticator.nonce() == NULL;
   fCurrentAuthenticator.setRealmAndRandomNonce(authDB->realm());
   snprintf((char*)fResponseBuffer, sizeof fResponseBuffer,
 	   "RTSP/1.0 401 Unauthorized\r\n"
@@ -1152,7 +1155,9 @@ Boolean RTSPServer::RTSPClientConnection
 	   fCurrentCSeq,
 	   dateHeader(),
 	   fCurrentAuthenticator.realm(), fCurrentAuthenticator.nonce());
-  fOurRTSPServer.specialHandlingOfAuthenticationFailure(fClientInputSocket, fClientAddr, urlSuffix);
+  if (!isInitial401) { // this is an actual authentication failure
+    fOurRTSPServer.specialHandlingOfAuthenticationFailure(fClientInputSocket, fClientAddr, urlSuffix);
+  }
   return False;
 }
 

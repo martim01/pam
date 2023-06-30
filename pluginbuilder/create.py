@@ -3,7 +3,7 @@ from urllib.request import build_opener
 import xml.etree.ElementTree as ET 
 
 
-def yesNo(question, default="no"):
+def yesNo(question, default="no") -> bool:
     if default is None:
         prompt = " [y/n]"
     elif default == 'yes':
@@ -14,17 +14,16 @@ def yesNo(question, default="no"):
         raise ValueError(f"Unknown setting '{default}' for default.")
 
     while True:
-        try:
-            resp = input(question+prompt).strip().lower()
-            if default is not None and resp == '':
-                return default == 'yes'
+        resp = input(question+prompt).strip().lower()
+        if default is not None and resp == '':
+            return default == 'yes'
+        else:
+            if resp == 'y' or resp == 'yes':
+                return True
+            elif resp == 'n' or resp == 'no':
+                return False
             else:
-                if resp == 'y' or resp == 'yes':
-                    return True
-                else:
-                    return False
-        except ValueError:
-            print("Please respong with 'yes' or 'no (or 'y' or 'n')/.\n")
+                print("Please respond with 'yes' or 'no (or 'y' or 'n')!")
 
 def createDirectory(dir):
         try:
@@ -94,7 +93,7 @@ class PluginBuilder:
             outDest = "../plugins/"+self.dict["@PLUGIN@"]+"/"+dest+"/pnl"+name+"."+finExt;
         
         fin = open("files/options/pnloptions."+finExt+".in")
-        fout = open(outDest, "wt")te
+        fout = open(outDest, "wt")
 
         for line in fin:
             for key in self.dict:
@@ -178,7 +177,7 @@ class PluginBuilder:
 
         else:
             projectNode.append(ET.Element("Unit", {"filename" : self.dict["@PLUGIN@"]+"meter.h"}))
-            projectNode.append(yET.Element("Unit", {"filename" : self.dict["@PLUGIN@"]+"meter.cpp"}))
+            projectNode.append(ET.Element("Unit", {"filename" : self.dict["@PLUGIN@"]+"meter.cpp"}))
             
         for panel in self.options:
             projectNode.append(ET.Element("Unit", {"filename" : "pnl"+panel+".cpp"}))
@@ -216,7 +215,10 @@ class PluginBuilder:
 
     def createVariables(self):
 
-        self.dict["@PLUGIN@"] = input("Enter plugin name: ")
+        while self.dict["@PLUGIN@"] == "":
+            self.dict["@PLUGIN@"] = input("Enter plugin name: ").strip()
+
+
         self.varMonitor = yesNo("Is this a monitor plugin? ", "yes")
         self.varPanel = yesNo("Use a base panel? ", "yes")
         self.varFFT = yesNo("Use FFT library? ")
@@ -318,5 +320,6 @@ class PluginBuilder:
         print("Finished!")
 
 
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 builder = PluginBuilder()
 builder.Run()
