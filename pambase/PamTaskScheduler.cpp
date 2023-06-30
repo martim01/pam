@@ -13,7 +13,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
-// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2023 Live Networks, Inc.  All rights reserved.
 // Basic Usage Environment: for a simple, non-scripted, console application
 // Implementation
 #include "PamTaskScheduler.h"
@@ -43,7 +43,6 @@ PamTaskScheduler::PamTaskScheduler(unsigned maxSchedulerGranularity)
   FD_ZERO(&fReadSet);
   FD_ZERO(&fWriteSet);
   FD_ZERO(&fExceptionSet);
-
 
   if (maxSchedulerGranularity > 0) schedulerTickTask(); // ensures that we handle events frequently
 }
@@ -149,13 +148,12 @@ void PamTaskScheduler::SingleStep(unsigned maxDelayTime) {
     if (FD_ISSET(sock, &readSet) && FD_ISSET(sock, &fReadSet)/*sanity check*/) resultConditionSet |= SOCKET_READABLE;
     if (FD_ISSET(sock, &writeSet) && FD_ISSET(sock, &fWriteSet)/*sanity check*/) resultConditionSet |= SOCKET_WRITABLE;
     if (FD_ISSET(sock, &exceptionSet) && FD_ISSET(sock, &fExceptionSet)/*sanity check*/) resultConditionSet |= SOCKET_EXCEPTION;
-    if ((resultConditionSet&handler->conditionSet) != 0 && handler->handlerProc != NULL)
-        {
+    if ((resultConditionSet&handler->conditionSet) != 0 && handler->handlerProc != NULL) {
       fLastHandledSocketNum = sock;
           // Note: we set "fLastHandledSocketNum" before calling the handler,
           // in case the handler calls "doEventLoop()" reentrantly.
-            (*handler->handlerProc)(handler->clientData, resultConditionSet);
-            break;
+      (*handler->handlerProc)(handler->clientData, resultConditionSet);
+      break;
     }
   }
   if (handler == NULL && fLastHandledSocketNum >= 0) {
@@ -172,7 +170,7 @@ void PamTaskScheduler::SingleStep(unsigned maxDelayTime) {
 	fLastHandledSocketNum = sock;
 	    // Note: we set "fLastHandledSocketNum" before calling the handler,
             // in case the handler calls "doEventLoop()" reentrantly.
-    (*handler->handlerProc)(handler->clientData, resultConditionSet);
+	(*handler->handlerProc)(handler->clientData, resultConditionSet);
 	break;
       }
     }
@@ -181,35 +179,32 @@ void PamTaskScheduler::SingleStep(unsigned maxDelayTime) {
 
   // Also handle any newly-triggered event (Note that we do this *after* calling a socket handler,
   // in case the triggered event handler modifies The set of readable sockets.)
-  if (fTriggersAwaitingHandling != 0) {
-    if (fTriggersAwaitingHandling == fLastUsedTriggerMask) {
-      // Common-case optimization for a single event trigger:
-      fTriggersAwaitingHandling &=~ fLastUsedTriggerMask;
-      if (fTriggeredEventHandlers[fLastUsedTriggerNum] != NULL) {
-	(*fTriggeredEventHandlers[fLastUsedTriggerNum])(fTriggeredEventClientDatas[fLastUsedTriggerNum]);
-      }
-    } else {
-      // Look for an event trigger that needs handling (making sure that we make forward progress through all possible triggers):
-      unsigned i = fLastUsedTriggerNum;
-      EventTriggerId mask = fLastUsedTriggerMask;
+  if (fEventTriggersAreBeingUsed) {
+    // Look for an event trigger that needs handling (making sure that we make forward progress through all possible triggers):
+    unsigned i = fLastUsedTriggerNum;
+    EventTriggerId mask = fLastUsedTriggerMask;
 
-      do {
-	i = (i+1)%MAX_NUM_EVENT_TRIGGERS;
-	mask >>= 1;
-	if (mask == 0) mask = 0x80000000;
+    do {
+      i = (i+1)%MAX_NUM_EVENT_TRIGGERS;
+      mask >>= 1;
+      if (mask == 0) mask = 0x80000000;
 
-	if ((fTriggersAwaitingHandling&mask) != 0) {
-	  fTriggersAwaitingHandling &=~ mask;
-	  if (fTriggeredEventHandlers[i] != NULL) {
-	    (*fTriggeredEventHandlers[i])(fTriggeredEventClientDatas[i]);
-	  }
-
-	  fLastUsedTriggerMask = mask;
-	  fLastUsedTriggerNum = i;
-	  break;
+#ifndef NO_STD_LIB
+      if (fTriggersAwaitingHandling[i].test()) {
+	fTriggersAwaitingHandling[i].clear();
+#else
+      if (fTriggersAwaitingHandling[i]) {
+	fTriggersAwaitingHandling[i] = False;
+#endif
+	if (fTriggeredEventHandlers[i] != NULL) {
+	  (*fTriggeredEventHandlers[i])(fTriggeredEventClientDatas[i]);
 	}
-      } while (i != fLastUsedTriggerNum);
-    }
+
+	fLastUsedTriggerMask = mask;
+	fLastUsedTriggerNum = i;
+	break;
+      }
+    } while (i != fLastUsedTriggerNum);
   }
 
   // Also handle any delayed event that may have come due.
