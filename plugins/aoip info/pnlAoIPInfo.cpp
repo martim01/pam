@@ -294,19 +294,21 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
             itPanelSub->second->QoSUpdated(pData);
         }
     }
-}
+    }
 
 
 void pnlAoIPInfo::SetAudioData(const timedbuffer* pTimedBuffer)
 {
-    
     for(const auto& [sName, pPanel] : m_mQos)
     {
         pPanel->SetAudioData(pTimedBuffer);
     }
 
-    SetTimestamp(pTimedBuffer->GetPlaybackTime(), m_plblTimestampOut);
-    m_plblCurrentTimestamp->SetLabel(wxString::Format("%u", pTimedBuffer->GetTimestamp()));
+    if(IsShownOnScreen())
+    {
+        SetTimestamp(pTimedBuffer->GetPlaybackTime(), m_plblTimestampOut);
+        m_plblCurrentTimestamp->SetLabel(wxString::Format("%u", pTimedBuffer->GetTimestamp()));
+    }
 }
 
 

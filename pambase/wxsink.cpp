@@ -84,6 +84,10 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
         {
             nBytesPerSample = 3;
         }
+        else if(strcmp(m_pSubsession->codecName(),"AM824") == 0)
+        {
+            nBytesPerSample = 4
+        }
         if(nBytesPerSample != 0)
         {
             auto pFrame = std::make_shared<rtpFrame>();

@@ -248,7 +248,7 @@ Boolean Smpte2110MediaSubsession::createSourceObjects(int useSpecialRTPoffset)
     parseSDPAttribute_Mid();        //Group if any
 
 
-    if (strcmp(fCodecName, "L16") == 0 || strcmp(fCodecName, "L24") == 0) // 16 or 24-bit linear audio (RFC 3190)
+    if (strcmp(fCodecName, "L16") == 0 || strcmp(fCodecName, "L24") == 0 || strcmp(fCodecName, "AM824") == 0) // 16 or 24-bit linear audio (RFC 3190) or 2110-31
     {
         m_sEndpoint = wxString::FromUTF8(fConnectionEndpointName);
 

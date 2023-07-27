@@ -141,7 +141,6 @@ void RtpThread::StreamFromSDP()
 
     pmlLog() << m_sDescriptor;
 
-
     m_pSession = Smpte2110MediaSession::createNew(*m_penv, m_sDescriptor.c_str());
     if (m_pSession == nullptr)
     {
@@ -155,12 +154,12 @@ void RtpThread::StreamFromSDP()
 
     //count number of subsessions
     unsigned int nCountAudio(0);
-    unsigned int nCountVideo(0);
     MediaSubsessionIterator iterCount(*m_pSession);
     MediaSubsession* pSubsessionCount = nullptr;
     while ((pSubsessionCount = iterCount.next()) != nullptr)
     {
-        if (strcmp(pSubsessionCount->codecName(), "L16") == 0 || strcmp(pSubsessionCount->codecName(), "L24") == 0) // 16 or 24-bit linear audio (RFC 3190)
+        if (strcmp(pSubsessionCount->codecName(), "L16") == 0 || strcmp(pSubsessionCount->codecName(), "L24") == 0 
+        || strcmp(pSubsessionCount->codecName(), "AM824") == 0) // 16 or 24-bit linear audio (RFC 3190) or 2110-31
         {
             if(pSubsessionCount->numChannels() > 0)
             {
@@ -283,6 +282,10 @@ float RtpThread::ConvertFrameBufferToSample(u_int8_t* pFrameBuffer, u_int8_t nBy
     else if(nBytesPerSample == 3)
     {
         nSample = (static_cast<int>(pFrameBuffer[2]) << 8) | (static_cast<int>(pFrameBuffer[1]) << 16) | (static_cast<int>(pFrameBuffer[0]) << 24);
+    }
+    else if(nBytesPerSample == 4)
+    {
+        pa
     }
     return static_cast<float>(nSample)/ 2147483648.0;
 }

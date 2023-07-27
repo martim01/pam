@@ -343,46 +343,48 @@ pnlQos::~pnlQos()
 
 void pnlQos::QoSUpdated(qosData* pData)
 {
-    m_plblQoSTime->SetLabel(pData->tsTime.Format(wxT("%H:%M:%S:%l")));
-    m_plblQoSKbAv->SetLabel(wxString::Format(wxT("%.2f [%.2f]"), pData->dkbits_per_second_Now, pData->dkbits_per_second_Av));
-    m_plblQoSKbMax->SetLabel(wxString::Format(wxT("%f"), pData->dkbits_per_second_max));
-    m_plblQoSKbMin->SetLabel(wxString::Format(wxT("%f"), pData->dkbits_per_second_min));
-    m_plblQoSLost->SetLabel(wxString::Format(wxT("%d"), pData->nTotNumPacketsLost));
-    m_plblQoSPacketsAv->SetLabel(wxString::Format(wxT("%.3f"), pData->dPacket_loss_fraction_av));
-    m_plblQoSPacketsMax->SetLabel(wxString::Format(wxT("%.3f"), pData->dPacket_loss_fraction_max));
-    m_plblQoSPacketsMin->SetLabel(wxString::Format(wxT("%.3f"), pData->dPacket_loss_fraction_min));
-    m_plblQoSReceived->SetLabel(wxString::Format(wxT("%d"), pData->nTotNumPacketsReceived));
-
-    m_plblQoSInterMin->SetLabel(wxString::Format(wxT("%f ms"), pData->dInter_packet_gap_ms_min));
-    m_plblQoSInterAv->SetLabel(wxString::Format(wxT("%f ms [%f]"), pData->dInter_packet_gap_ms_Now, pData->dInter_packet_gap_ms_av));
-    m_plblQoSInterMax->SetLabel(wxString::Format(wxT("%f ms"), pData->dInter_packet_gap_ms_max));
-
-    m_plblQoSJitter->SetLabel(wxString::Format(wxT("%f ms"),pData->dJitter));
-
-
-    wxDateTime dtSR(time_t(pData->tvLastSR_Time.tv_sec));
-    dtSR.SetMillisecond(pData->tvLastSR_Time.tv_usec/1000);
-
-    if(dtSR.IsValid())
+	if(IsShownOnScreen())
     {
-        m_plblRTCP_Last->SetLabel(dtSR.Format("%H:%M:%S:%l"));
-    }
-    else
-    {
-        m_plblRTCP_Last->SetLabel("");
-    }
+		m_plblQoSTime->SetLabel(pData->tsTime.Format(wxT("%H:%M:%S:%l")));
+		m_plblQoSKbAv->SetLabel(wxString::Format(wxT("%.2f [%.2f]"), pData->dkbits_per_second_Now, pData->dkbits_per_second_Av));
+		m_plblQoSKbMax->SetLabel(wxString::Format(wxT("%f"), pData->dkbits_per_second_max));
+		m_plblQoSKbMin->SetLabel(wxString::Format(wxT("%f"), pData->dkbits_per_second_min));
+		m_plblQoSLost->SetLabel(wxString::Format(wxT("%d"), pData->nTotNumPacketsLost));
+		m_plblQoSPacketsAv->SetLabel(wxString::Format(wxT("%.3f"), pData->dPacket_loss_fraction_av));
+		m_plblQoSPacketsMax->SetLabel(wxString::Format(wxT("%.3f"), pData->dPacket_loss_fraction_max));
+		m_plblQoSPacketsMin->SetLabel(wxString::Format(wxT("%.3f"), pData->dPacket_loss_fraction_min));
+		m_plblQoSReceived->SetLabel(wxString::Format(wxT("%d"), pData->nTotNumPacketsReceived));
 
-    wxDateTime dtNTP(time_t(pData->tvSync.tv_sec));
-    dtNTP.SetMillisecond(pData->tvSync.tv_usec/1000);
-    if(dtNTP.IsValid())
-    {
-        m_plblRTCP_NTP->SetLabel(dtNTP.Format("%H:%M:%S:%l"));
-    }
-    else
-    {
-        m_plblRTCP_NTP->SetLabel("");
-    }
+		m_plblQoSInterMin->SetLabel(wxString::Format(wxT("%f ms"), pData->dInter_packet_gap_ms_min));
+		m_plblQoSInterAv->SetLabel(wxString::Format(wxT("%f ms [%f]"), pData->dInter_packet_gap_ms_Now, pData->dInter_packet_gap_ms_av));
+		m_plblQoSInterMax->SetLabel(wxString::Format(wxT("%f ms"), pData->dInter_packet_gap_ms_max));
 
+		m_plblQoSJitter->SetLabel(wxString::Format(wxT("%f ms"),pData->dJitter));
+
+
+		wxDateTime dtSR(time_t(pData->tvLastSR_Time.tv_sec));
+		dtSR.SetMillisecond(pData->tvLastSR_Time.tv_usec/1000);
+
+		if(dtSR.IsValid())
+		{
+			m_plblRTCP_Last->SetLabel(dtSR.Format("%H:%M:%S:%l"));
+		}
+		else
+		{
+			m_plblRTCP_Last->SetLabel("");
+		}
+
+		wxDateTime dtNTP(time_t(pData->tvSync.tv_sec));
+		dtNTP.SetMillisecond(pData->tvSync.tv_usec/1000);
+		if(dtNTP.IsValid())
+		{
+			m_plblRTCP_NTP->SetLabel(dtNTP.Format("%H:%M:%S:%l"));
+		}
+		else
+		{
+			m_plblRTCP_NTP->SetLabel("");
+		}
+	}
 
     m_pGraph->AddPeak(wxT("kBit/s"), pData->dkbits_per_second_Now);
     m_pHistogram->AddPeak(wxT("kBit/s"), pData->dkbits_per_second_Now);

@@ -357,19 +357,18 @@ void pnlSubsession::SetAudioData(const timedbuffer* pTimedBuffer)
 
 void pnlSubsession::RtpFrame(std::shared_ptr<const rtpFrame> pFrame)
 {
-	m_plblBuffer;
-	m_plblContribution;
-	m_plblCurrentTimestamp->SetLabel(wxString::Format("%u", pFrame->nTimestamp));
+	if(IsShownOnScreen())
+	{
+		m_plblCurrentTimestamp->SetLabel(wxString::Format("%u", pFrame->nTimestamp));
 
-	m_dDuration = (1e6*static_cast<double>(pFrame->nFrameSize)) / (static_cast<double>(m_sub.nSampleRate* m_sub.nChannels*pFrame->nBytesPerSample));
-	m_plblFrameDuration->SetLabel(wxString::Format(L"%.0f \u03bcs", m_dDuration));
-	m_plblFrameSize->SetLabel(wxString::Format("%u bytes", pFrame->nFrameSize));
-	
-	
-	
-	SetTimestamp(pFrame->timePresentation, m_plblTimestampIn, false);
-	SetTimestamp(pFrame->timeTransmission, m_plblTransmissionTime, false);
-	ShowLatency(pFrame);
+		m_dDuration = (1e6*static_cast<double>(pFrame->nFrameSize)) / (static_cast<double>(m_sub.nSampleRate* m_sub.nChannels*pFrame->nBytesPerSample));
+		m_plblFrameDuration->SetLabel(wxString::Format(L"%.0f \u03bcs", m_dDuration));
+		m_plblFrameSize->SetLabel(wxString::Format("%lu bytes", pFrame->nFrameSize));
+		
+		SetTimestamp(pFrame->timePresentation, m_plblTimestampIn, false);
+		SetTimestamp(pFrame->timeTransmission, m_plblTransmissionTime, false);
+		ShowLatency(pFrame);
+	}
 }
 
 void pnlSubsession::SetTimestamp(const timeval& tv, wmLabel* pLabel, bool bDate)
@@ -398,6 +397,9 @@ void pnlSubsession::ShowLatency(std::shared_ptr<const rtpFrame> pFrame)
 
 void pnlSubsession::QoSUpdated(qosData* pData)
 {
-	m_plblBuffer->SetLabel(wxString::Format("%u", pData->nBufferSize));
-	m_plblContribution->SetLabel(wxString::Format("%.1f%%", (static_cast<double>(pData->nFramesUsed)/static_cast<double>(pData->nTotalFrames))*100.0));
+	if(IsShownOnScreen())
+	{
+		m_plblBuffer->SetLabel(wxString::Format("%lu", pData->nBufferSize));
+		m_plblContribution->SetLabel(wxString::Format("%.1f%%", (static_cast<double>(pData->nFramesUsed)/static_cast<double>(pData->nTotalFrames))*100.0));
+	}
 }
