@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 project(pamworkspace VERSION 1.5.4)
 
 set(CMAKE_INSTALL_PREFIX "/usr/local")
