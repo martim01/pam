@@ -99,6 +99,31 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
             pFrame->nTimestampDifference = nDifference;
             pFrame->mExt = mExt;
 
+            timeval tvSub;
+            int nFramesPerSec = (m_pSubsession->rtpTimestampFrequency()*m_pSubsession->GetChannelGrouping().size()*pFrame->nBytesPerSample)/pFrame->nFrameSize;
+            timersub(&pFrame->timePresentation, &pFrame->timeTransmission, &tvSub);
+            double dTSDF = (static_cast<double>(tvSub.tv_sec)*1000000.0)+tvSub.tv_usec;
+
+            if(m_dDelay0 == std::numeric_limits<double>::lowest() || m_nTSDFCount == nFramesPerSec)
+            {
+                m_dTSDF = m_dTSDFMax-m_dTSDFMin;
+                m_dDelay0 = dTSDF;
+
+                m_dTSDFMax = std::numeric_limits<double>::lowest();
+                m_dTSDFMin = std::numeric_limits<double>::max();
+
+                m_nTSDFCount = 1;
+
+            }
+            else
+            {
+                dTSDF -= m_dDelay0;
+                m_dTSDFMax = max(m_dTSDFMax, dTSDF);
+                m_dTSDFMin = min(m_dTSDFMin, dTSDF);
+                m_nTSDFCount++;
+            }
+            pFrame->dTSDF = m_dTSDF;
+            timersub(&(pFrame->timePresentation), &(pFrame->timeTransmission), &pFrame->timeLatency);
             m_pHandler->AddFrame(pFrame);
         }
     }

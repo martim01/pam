@@ -42,7 +42,7 @@ set(SOURCES  "advelement.cpp"  "AES67ServerMediaSubsession.cpp" "aes67source.cpp
  "generator.cpp" "generatorpluginbuilder.cpp" "generatorpluginfactory.cpp" "histogram.cpp" "historygraph.cpp" "inimanager.cpp" "inisection.cpp" "iomanager.cpp" "levelcalculator.cpp" "levelgraph.cpp"
  "levelmeter.cpp" "liveaudiosource.cpp" "monitorevent.cpp" "monitorpluginbuilder.cpp" "monitorpluginfactory.cpp" "networkcontrol.cpp" "pamRTSPServer.cpp" "niir.cpp" "ondemandaes67mediasubsession.cpp" "ondemandpamsubsession.cpp"
  "ondemandstreamer.cpp" "ourRTSPClient.cpp" "ourSIPClient.cpp" "PamTaskScheduler.cpp" "PamUsageEnvironment.cpp" "pcstats.cpp" "pmcontrol.cpp" "pmpanel.cpp" "ppmtypes.cpp" "qos.cpp" "r128calculator.cpp"
- "r128thread.cpp" "rawvideosource.cpp" "remoteapi.cpp" "RTCPTransmissionEvent.cpp" "rtpserverthread.cpp" "rtpthread.cpp" "rtsputil.cpp" "servicebrowser.cpp" "session.cpp" "settingevent.cpp" "settings.cpp" "smpte2110mediasession.cpp"
+ "r128thread.cpp" "rawvideosource.cpp" "remoteapi.cpp" "RTCPTransmissionEvent.cpp" "rtpframeevent.cpp" "rtpserverthread.cpp" "rtpthread.cpp" "rtsputil.cpp" "servicebrowser.cpp" "session.cpp" "settingevent.cpp" "settings.cpp" "smpte2110mediasession.cpp"
  "soundcardmanager.cpp" "soundfile.cpp" "streamclientstate.cpp" "testpluginbuilder.cpp" "testpluginfactory.cpp" "timemanager.cpp" "uirect.cpp" "wmbutton.cpp" "wmedit.cpp" "wmfocusmanager.cpp" "wmipeditpnl.cpp"
  "wmkeyboard.cpp" "wmlabel.cpp" "wmline.cpp" "wmlist.cpp" "wmlistadv.cpp" "wmslider.cpp" "wmslidewnd.cpp" "wmswipebutton.cpp" "wmswitcherpanel.cpp" "wmtimeedit.cpp" "wxptp.cpp" "wxsaphandler.cpp"
  "wxsink.cpp" "wxtouchscreenhtml.cpp" "wxzxposter.cpp" ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_version.cpp)

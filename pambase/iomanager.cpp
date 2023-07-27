@@ -54,6 +54,16 @@ void IOManager::DeregisterForRTSPTransmission(wxEvtHandler* pHandler)
     m_setRTSPHandlers.erase(pHandler);
 }
 
+void IOManager::RegisterForRTPFrame(wxEvtHandler* pHandler)
+{
+    m_setRtpFrameHandlers.insert(pHandler);
+}
+
+void IOManager::DeregisterForRTPFrame(wxEvtHandler* pHandler)
+{
+    m_setRtpFrameHandlers.erase(pHandler);
+}
+
 void IOManager::RegisterHandler(wxEvtHandler* pHandler)
 {
     if(m_bSingleHandler)
@@ -1293,14 +1303,11 @@ void IOManager::OnQoS(wxCommandEvent& event)
     }
 }
 
-void IOManager::OnRtpFrame(wxCommandEvent& event)
+void IOManager::OnRtpFrame(RtpFrameEvent& event)
 {
-    for(auto pHandler : m_setHandlers)
+    for(auto pHandler : m_setRtpFrameHandlers)
     {
-        wxCommandEvent eventUp(wxEVT_RTP_FRAME);
-        eventUp.SetId(event.GetId());
-        eventUp.SetInt(event.GetInt());
-        eventUp.SetExtraLong(event.GetExtraLong());
+        RtpFrameEvent eventUp(event.GetFrame());
         pHandler->ProcessEvent(eventUp);
     }
 }

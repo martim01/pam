@@ -173,7 +173,7 @@ Boolean Smpte2110MediaSession::parseSDPAttribute_Group(char const* sdpLine)
         return True;
     }
 
-    m_setGroups = {"1"};
+    m_setGroups = {"0"};
 
     return False;
 }
@@ -224,7 +224,9 @@ MediaSubsession* Smpte2110MediaSession::createNewMediaSubsession()
 }
 
 
-Smpte2110MediaSubsession::Smpte2110MediaSubsession(MediaSession& parent) : MediaSubsession(parent), m_qos(this)
+Smpte2110MediaSubsession::Smpte2110MediaSubsession(MediaSession& parent) : MediaSubsession(parent), 
+m_sGroup("0"),
+m_qos(this)
 {
 
 }

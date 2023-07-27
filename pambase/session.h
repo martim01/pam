@@ -157,7 +157,11 @@ struct PAMBASE_IMPEXPORT qosData
     unsigned int nTimestampErrorsTotal = 0;
 
     wxString sStream;
-    unsigned long nFramesUsed = 0;
+    uint64_t nFramesUsed = 0;
+    uint64_t nFramesReceived = 0;
+    uint64_t nTotalFrames = 0;
+    unsigned long nBufferSize = 0;
+    
 };
 
 extern const std::map<subsession::enumChannelGrouping, unsigned char> CH_GROUP_SIZE;

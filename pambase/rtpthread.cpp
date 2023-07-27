@@ -15,6 +15,7 @@
 #include "aes67source.h"
 #include "log.h"
 #include "settings.h"
+#include "rtpframeevent.h"
 
 using namespace std;
 
@@ -35,7 +36,7 @@ DEFINE_EVENT_TYPE(wxEVT_QOS_UPDATED)
 DEFINE_EVENT_TYPE(wxEVT_RTP_SESSION)
 DEFINE_EVENT_TYPE(wxEVT_RTP_SESSION_CLOSED)
 DEFINE_EVENT_TYPE(wxEVT_SDP)
-DEFINE_EVENT_TYPE(wxEVT_RTP_FRAME)
+
 
 RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface, const wxString& sProg, const AoIPSource& source, unsigned int nBufferSize, bool bSaveSDPOnly) :
     wxThread(wxTHREAD_JOINABLE),
@@ -46,11 +47,7 @@ RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface
     m_pCurrentBuffer(nullptr),
 	m_dTransmission(0),
 	m_dPresentation(0),
-	m_dDelay0(std::numeric_limits<double>::lowest()),
-	m_dTSDFMax(std::numeric_limits<double>::lowest()),
-	m_dTSDFMin(std::numeric_limits<double>::max()),
-    m_dTSDF(0),
-	m_nTSDFCount(0),
+	
 	m_nSampleRate(48000),
     m_nTimestampErrors(0),
 	m_nTimestampErrorsTotal(0),
@@ -290,7 +287,7 @@ float RtpThread::ConvertFrameBufferToSample(u_int8_t* pFrameBuffer, u_int8_t nBy
     return static_cast<float>(nSample)/ 2147483648.0;
 }
 
-void RtpThread::AddFrame(std::shared_ptr<rtpFrame> pFrame)
+void RtpThread::AddFrame(std::shared_ptr<const rtpFrame> pFrame)
 {
     if(m_bClosing || m_Session.GetCurrentSubsession() == m_Session.lstSubsession.end() || m_nInputChannels==0)
     {
@@ -300,16 +297,21 @@ void RtpThread::AddFrame(std::shared_ptr<rtpFrame> pFrame)
     auto itGroup = m_mRedundantBuffers.find(pFrame->sGroup);
     if(itGroup == m_mRedundantBuffers.end())
     {
-        itGroup = m_mRedundantBuffers.insert({pFrame->sGroup, std::list<std::shared_ptr<rtpFrame>>()}).first;
-        m_mStreamUsage.insert({pFrame->sGroup, 0});
+        itGroup = m_mRedundantBuffers.insert({pFrame->sGroup, std::list<std::shared_ptr<const rtpFrame>>()}).first;
+        m_mStreamUsage.try_emplace(pFrame->sGroup, 0);
     }
     itGroup->second.push_back(pFrame);
 
+    auto itReceived = m_mFramesReceived.find(pFrame->sGroup);
+    if(itReceived == m_mFramesReceived.end())
+    {
+        itReceived = m_mFramesReceived.try_emplace(pFrame->sGroup,0).first;
+    }
+    ++itReceived->second;
+
     if(m_pHandler)
     {
-        wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_RTP_FRAME);
-        pEvent->SetString(pFrame->sGroup);
-        pEvent->SetInt(pFrame->nTimestamp);
+        auto pEvent = new RtpFrameEvent(pFrame);
         wxQueueEvent(m_pHandler, pEvent);
     }
     
@@ -389,9 +391,8 @@ void RtpThread::WorkoutNextFrame()
     }
 }
 
-void RtpThread::ConvertFrameToTimedBuffer(std::shared_ptr<rtpFrame> pFrame)
+void RtpThread::ConvertFrameToTimedBuffer(std::shared_ptr<const rtpFrame> pFrame)
 {
-    
     if(m_pCurrentBuffer == nullptr)
     {
         m_pCurrentBuffer = new float[m_nBufferSize*m_nInputChannels];
@@ -447,34 +448,12 @@ void RtpThread::ConvertFrameToTimedBuffer(std::shared_ptr<rtpFrame> pFrame)
             m_nTimestampErrorsTotal++;
         }
     }
-    int nFramesPerSec = (m_nSampleRate*m_nInputChannels*pFrame->nBytesPerSample)/pFrame->nFrameSize;
+    
 
-
-    timeval tvSub;
-    timersub(&pFrame->timePresentation, &pFrame->timeTransmission, &tvSub);
-    double dTSDF = (static_cast<double>(tvSub.tv_sec)*1000000.0)+tvSub.tv_usec;
-
-    if(m_dDelay0 == std::numeric_limits<double>::lowest() || m_nTSDFCount == nFramesPerSec)
-    {
-        m_dTSDF = m_dTSDFMax-m_dTSDFMin;
-        m_dDelay0 = dTSDF;
-
-        m_dTSDFMax = std::numeric_limits<double>::lowest();
-        m_dTSDFMin = std::numeric_limits<double>::max();
-
-        m_nTSDFCount = 1;
-
-    }
-    else
-    {
-        dTSDF -= m_dDelay0;
-        m_dTSDFMax = max(m_dTSDFMax, dTSDF);
-        m_dTSDFMin = min(m_dTSDFMin, dTSDF);
-        m_nTSDFCount++;
-    }
 
     //keep track of which streams frames come from
     ++m_mStreamUsage[pFrame->sGroup];
+    ++m_nTotalFramesPlayed;
 }
 
 
@@ -502,10 +481,20 @@ void RtpThread::QosUpdated(qosData* pData)
     {
         pData->nFramesUsed = itStream->second;
     }
+    auto itReceived = m_mFramesReceived.find(pData->sStream);
+    if(itReceived != m_mFramesReceived.end())
+    {
+        pData->nFramesReceived = itReceived->second;
+    }
+    auto itBuffer = m_mRedundantBuffers.find(pData->sStream);
+    if(itBuffer != m_mRedundantBuffers.end())
+    {
+        pData->nBufferSize = itBuffer->second.size();
+    }
+    pData->nTotalFrames = m_nTotalFramesPlayed;
     
     pData->nTimestampErrors = m_nTimestampErrors;
     pData->nTimestampErrorsTotal = m_nTimestampErrorsTotal;
-    pData->dTSDF = m_dTSDF;
     if(m_pHandler)
     {
         wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_QOS_UPDATED);

@@ -17,7 +17,7 @@
 
 struct qosData;
 struct session;
-
+class RtpFrameEvent;
 class AoIPInfoBuilder;
 
 class pnlAoIPInfo: public wxPanel
@@ -121,6 +121,7 @@ class pnlAoIPInfo: public wxPanel
 		//*)
 
 		void OnPtpEvent(wxCommandEvent& event);
+		void OnRtpFrame(RtpFrameEvent& event);
 
 		void OnInfoLeftUp(wxMouseEvent& event);
 		void ConnectLeftUp();

@@ -9,6 +9,7 @@
 #include <vector>
 #include <array>
 #include "session.h"
+#include "rtpframeevent.h"
 
 class SettingEvent;
 class AudioEvent;
@@ -42,6 +43,9 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         void DeregisterForRTCPTransmission(wxEvtHandler* pHandler);
         void RegisterForRTSPTransmission(wxEvtHandler* pHandler);
         void DeregisterForRTSPTransmission(wxEvtHandler* pHandler);
+
+        void RegisterForRTPFrame(wxEvtHandler* pHandler);
+        void DeregisterForRTPFrame(wxEvtHandler* pHandler);
 
         void Stop();
         const session& GetSession();
@@ -77,7 +81,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
          void OnRTPSession(wxCommandEvent& event);
         void OnRTPSessionClosed(wxCommandEvent& event);
         void OnQoS(wxCommandEvent& event);
-        void OnRtpFrame(wxCommandEvent& event);
+        void OnRtpFrame(RtpFrameEvent& event);
 
         void InputTypeChanged();
         void InputChanged(const wxString& sKey);
@@ -129,9 +133,10 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
 
         std::vector<char> CreateRouting();
 
-                std::set<wxEvtHandler*> m_setHandlers;
+        std::set<wxEvtHandler*> m_setHandlers;
         std::set<wxEvtHandler*> m_setRTCPHandlers;
         std::set<wxEvtHandler*> m_setRTSPHandlers;
+        std::set<wxEvtHandler*> m_setRtpFrameHandlers;
         bool m_bSingleHandler;
 
         session m_SessionIn;

@@ -18,6 +18,10 @@
 #include <wx/string.h>
 //*)
 #include "log.h"
+#include "iomanager.h"
+#include "rtpframeevent.h"
+
+
 using namespace std;
 
 //(*IdInit(pnlAoIPInfo)
@@ -234,8 +238,8 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,AoIPInfoBuilder* pBuilder, wxWindowID 
     Connect(wxID_ANY, wxEVT_CLOCK_UPDATED, (wxObjectEventFunction)&pnlAoIPInfo::OnPtpEvent);
     #endif // PTPMONKEY
 
-
-	//ConnectLeftUp();
+    IOManager::Get().RegisterForRTPFrame(this);
+    Bind(wxEVT_RTP_FRAME, &pnlAoIPInfo::OnRtpFrame, this);
 
 }
 
@@ -283,9 +287,11 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
         {
             itPanel->second->QoSUpdated(pData);
         }
-        else
+        
+        auto itPanelSub = m_mSubsessions.find(pData->sStream);
+        if(itPanelSub != m_mSubsessions.end())
         {
-            pmlLog() << "Could not find QoS " << pData->sStream;
+            itPanelSub->second->QoSUpdated(pData);
         }
     }
 }
@@ -293,10 +299,7 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
 
 void pnlAoIPInfo::SetAudioData(const timedbuffer* pTimedBuffer)
 {
-    for(const auto& [sName, pPanel] : m_mSubsessions)
-    {
-        pPanel->SetAudioData(pTimedBuffer);
-    }
+    
     for(const auto& [sName, pPanel] : m_mQos)
     {
         pPanel->SetAudioData(pTimedBuffer);
@@ -461,7 +464,7 @@ void pnlAoIPInfo::OnPtpEvent(wxCommandEvent& event)
 
 void pnlAoIPInfo::ChangeGranularity(int nWhich)
 {
-//    m_pHistogram->ChangeGranularity(m_sGraph,nWhich);
+//    m_pHistogram->ChangeGranularity(m_sGraph,nWhichU);
 }
 
 void pnlAoIPInfo::ChangeResolution(int nWhich)
@@ -472,4 +475,18 @@ void pnlAoIPInfo::ChangeResolution(int nWhich)
 void pnlAoIPInfo::RecalculateRange()
 {
   //  m_pGraph->RecalculateRange(m_sGraph);
+}
+
+void pnlAoIPInfo::OnRtpFrame(RtpFrameEvent& event)
+{
+    auto itSub = m_mSubsessions.find(event.GetFrame()->sGroup);
+    if(itSub != m_mSubsessions.end())
+    {
+        itSub->second->RtpFrame(event.GetFrame());
+    }
+    auto itQos = m_mQos.find(event.GetFrame()->sGroup);
+    if(itQos != m_mQos.end())
+    {
+        itQos->second->RtpFrame(event.GetFrame());
+    }
 }

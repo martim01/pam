@@ -5,6 +5,7 @@
 #include "BasicUsageEnvironment.hh"
 #include "timedbuffer.h"
 #include <memory>
+#include "rtpframeevent.h"
 
 class RtpThread;
 class Smpte2110MediaSubsession;
@@ -12,27 +13,6 @@ class Smpte2110MediaSubsession;
 
 bool operator<(const timeval& t1, const timeval& t2);
 
-typedef std::map<unsigned char, unsigned char*> mExtension_t;
-
-
-
-struct rtpFrame
-{
-    wxString sEndpoint;
-    wxString sGroup;
-    unsigned long nSSRC = 0;
-
-    timeval timePresentation;
-    timeval timeTransmission;
-    unsigned int nTimestamp = 0;
-    int nTimestampDifference = 0;
-    
-    unsigned long nFrameSize = 0;
-    u_int8_t* pBuffer = nullptr;
-    u_int8_t nBytesPerSample = 0;
-        
-    mExtension_t* mExt = nullptr;
-};
 
 class wxSink: public MediaSink
 {
@@ -74,6 +54,13 @@ private:
     unsigned int m_nLastTimestamp = 0;
 
     std::map<timeval, mExtension_t*> m_mExtension;
+
+    double m_dTSDFMax = std::numeric_limits<double>::lowest();
+	double m_dTSDFMin = std::numeric_limits<double>::max();
+    double m_dTSDF = 0;
+	double m_nTSDFCount = 0;
+	double m_dDelay0 = std::numeric_limits<double>::lowest();
+    timeval m_tvDelay0;
 
 };
 

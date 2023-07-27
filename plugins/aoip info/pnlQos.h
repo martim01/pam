@@ -9,7 +9,9 @@
 #include <wx/panel.h>
 //*)
 #include "aoipinfobuilder.h"
+#include <memory>
 
+struct rtpFrame;
 class SettingEvent;
 
 class pnlQos: public wxPanel
@@ -63,6 +65,7 @@ class pnlQos: public wxPanel
 		//*)
 		void QoSUpdated(qosData* pData);
 		void SetAudioData(const timedbuffer* pTimedBuffer);
+		void RtpFrame(std::shared_ptr<const rtpFrame> pFrame);
 
 	protected:
 
@@ -125,7 +128,8 @@ class pnlQos: public wxPanel
         wxString m_sGroup;
 		wxString m_sGraph;
 
-		double m_dSlip;
+		double m_dInitialLatency=0.0;
+		unsigned short m_nLatencyCounter = 0;
 		DECLARE_EVENT_TABLE()
 };
 

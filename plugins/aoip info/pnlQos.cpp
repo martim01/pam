@@ -7,6 +7,8 @@
 //*)
 #include "settingevent.h"
 #include "settings.h"
+#include "rtpframeevent.h"
+#include "log.h"
 
 //(*IdInit(pnlQos)
 const long pnlQos::ID_CUSTOM12 = wxNewId();
@@ -327,6 +329,9 @@ pnlQos::pnlQos(wxWindow* parent,const wxString& sGroup, AoIPInfoBuilder* pBuilde
 	pBuilder->RegisterForSettingsUpdates(this, "Graph_"+sGroup);
 	pBuilder->RegisterForSettingsUpdates(this, "GraphType_"+sGroup);
 
+	ShowGraph(pBuilder->ReadSetting("Graph_"+sGroup, "kBit/s"));
+	SetGraphType(pBuilder->ReadSetting("GraphType_"+sGroup, "Line Graph"));
+
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&pnlQos::OnSettingChanged);
 }
 
@@ -353,7 +358,7 @@ void pnlQos::QoSUpdated(qosData* pData)
     m_plblQoSInterMax->SetLabel(wxString::Format(wxT("%f ms"), pData->dInter_packet_gap_ms_max));
 
     m_plblQoSJitter->SetLabel(wxString::Format(wxT("%f ms"),pData->dJitter));
-    m_plblTSDF->SetLabel(wxString::Format(wxT("%.0f us"), pData->dTSDF));
+
 
     wxDateTime dtSR(time_t(pData->tvLastSR_Time.tv_sec));
     dtSR.SetMillisecond(pData->tvLastSR_Time.tv_usec/1000);
@@ -391,15 +396,10 @@ void pnlQos::QoSUpdated(qosData* pData)
     m_pGraph->AddPeak(wxT("Jitter"), pData->dJitter);
     m_pHistogram->AddPeak(wxT("Jitter"), pData->dJitter);
 
-    if(pData->dTSDF >= 0.0)
-    {
-        m_pGraph->AddPeak(wxT("TS-DF"), pData->dTSDF);
-        m_pHistogram->AddPeak(wxT("TS-DF"), pData->dTSDF);
-    }
+    
     m_pGraph->AddPeak(wxT("Timestamp Errors"), pData->nTimestampErrors);
     m_pHistogram->AddPeak(wxT("Timestamp Errors"), pData->nTimestampErrors);
-    m_pGraph->AddPeak("Slip", m_dSlip);
-    m_pHistogram->AddPeak("Slip", m_dSlip);
+    
 }
 
 void pnlQos::OnbtnRangeClick(wxCommandEvent& event)
@@ -451,4 +451,24 @@ void pnlQos::SetAudioData(const timedbuffer* pTimedBuffer)
     m_pGraph->AddPeak("Timestamp",dTimestamp);
     m_pHistogram->AddPeak("Timestamp",dTimestamp);
 
+}
+
+void pnlQos::RtpFrame(std::shared_ptr<const rtpFrame> pFrame)
+{
+	m_plblTSDF->SetLabel(wxString::Format(wxT("%.0f us"), pFrame->dTSDF));
+	if(pFrame->dTSDF >= 0.0)
+    {
+        m_pGraph->AddPeak(wxT("TS-DF"), pFrame->dTSDF);
+        m_pHistogram->AddPeak(wxT("TS-DF"), pFrame->dTSDF);
+    }
+
+	auto dLatency = static_cast<double>(pFrame->timeLatency.tv_sec)*1000000.0 + static_cast<double>(pFrame->timeLatency.tv_usec);
+	if(m_nLatencyCounter < 3)
+	{
+		++m_nLatencyCounter;
+		m_dInitialLatency = dLatency;
+	}
+	double dSlip = dLatency-m_dInitialLatency;
+	m_pGraph->AddPeak("Slip", dSlip);
+	m_pHistogram->AddPeak("Slip", dSlip);
 }

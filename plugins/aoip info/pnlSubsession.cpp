@@ -5,7 +5,7 @@
 #include <wx/intl.h>
 #include <wx/string.h>
 //*)
-
+#include "rtpframeevent.h"
 #ifdef PTPMONKEY
 #include "wxptp.h"
 #endif
@@ -326,6 +326,8 @@ m_sub(sub)
     m_plblSubSyncId->SetBackgroundColour(wxColour(255,255,100));
 #endif
     m_plblSubSyncDomain->SetLabel(wxString::Format("%lu", sub.refClock.nDomain));
+
+	m_plblSyncTimestamp->SetLabel(wxString::Format("%u", sub.nSyncTimestamp));
 }
 
 pnlSubsession::~pnlSubsession()
@@ -346,4 +348,56 @@ void pnlSubsession::OnPtpEvent(wxCommandEvent& event)
         m_plblSubSyncId->SetBackgroundColour(wxColour(255,100,100));
     }
 #endif
+}
+
+void pnlSubsession::SetAudioData(const timedbuffer* pTimedBuffer)
+{
+	
+}
+
+void pnlSubsession::RtpFrame(std::shared_ptr<const rtpFrame> pFrame)
+{
+	m_plblBuffer;
+	m_plblContribution;
+	m_plblCurrentTimestamp->SetLabel(wxString::Format("%u", pFrame->nTimestamp));
+
+	m_dDuration = (1e6*static_cast<double>(pFrame->nFrameSize)) / (static_cast<double>(m_sub.nSampleRate* m_sub.nChannels*pFrame->nBytesPerSample));
+	m_plblFrameDuration->SetLabel(wxString::Format(L"%.0f \u03bcs", m_dDuration));
+	m_plblFrameSize->SetLabel(wxString::Format("%u bytes", pFrame->nFrameSize));
+	
+	
+	
+	SetTimestamp(pFrame->timePresentation, m_plblTimestampIn, false);
+	SetTimestamp(pFrame->timeTransmission, m_plblTransmissionTime, false);
+	ShowLatency(pFrame);
+}
+
+void pnlSubsession::SetTimestamp(const timeval& tv, wmLabel* pLabel, bool bDate)
+{
+    wxDateTime dt(time_t(tv.tv_sec));
+    if(!bDate)
+    {
+        pLabel->SetLabel(wxString::Format("%s:%03ld", dt.Format("%H:%M:%S").c_str(), tv.tv_usec/1000));
+    }
+    else
+    {
+        pLabel->SetLabel(wxString::Format("%s:%03ld", dt.Format("%Y-%m-%d %H:%M:%S").c_str(), tv.tv_usec/1000));
+    }
+}
+
+
+void pnlSubsession::ShowLatency(std::shared_ptr<const rtpFrame> pFrame)
+{
+
+    auto dLatency = static_cast<double>(pFrame->timeLatency.tv_sec)*1000000.0 + static_cast<double>(pFrame->timeLatency.tv_usec);
+    dLatency += m_dDuration;   //we add the duration on because the transmission time is first sample not last sample of frane
+
+    m_plblLatencyNetwork->SetLabel(wxString::Format("%.0f us", dLatency));
+
+}
+
+void pnlSubsession::QoSUpdated(qosData* pData)
+{
+	m_plblBuffer->SetLabel(wxString::Format("%u", pData->nBufferSize));
+	m_plblContribution->SetLabel(wxString::Format("%.1f%%", (static_cast<double>(pData->nFramesUsed)/static_cast<double>(pData->nTotalFrames))*100.0));
 }

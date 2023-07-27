@@ -7,13 +7,17 @@
 //*)
 
 #include "session.h"
+#include <memory>
 
+struct rtpFrame;
 class pnlSubsession: public wxPanel
 {
 	public:
 
 		pnlSubsession(wxWindow* parent,const subsession& sub, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~pnlSubsession();
+
+		void RtpFrame(std::shared_ptr<const rtpFrame> pFrame);	
 
 		//(*Declarations(pnlSubsession)
 		wmLabel* m_pLbl1;
@@ -55,6 +59,7 @@ class pnlSubsession: public wxPanel
 		//*)
 
 		void SetAudioData(const timedbuffer* pTimedBuffer);
+		void QoSUpdated(qosData* pData);
 
 	protected:
 
@@ -102,8 +107,11 @@ class pnlSubsession: public wxPanel
 		//(*Handlers(pnlSubsession)
 		//*)
 		void OnPtpEvent(wxCommandEvent& event);
+		void SetTimestamp(const timeval& tv, wmLabel* pLabel, bool bDate);
+		void ShowLatency(std::shared_ptr<const rtpFrame> pFrame);
 
 		subsession m_sub;
+		double m_dDuration;
 		DECLARE_EVENT_TABLE()
 };
 

@@ -30,7 +30,6 @@ qosMeasurementRecord::qosMeasurementRecord(Smpte2110MediaSubsession* pSubsession
 
 void qosMeasurementRecord::periodicQOSMeasurement(struct timeval const& timeNow)
 {
-    pmlLog(pml::LOG_DEBUG) << "qosMeasurementRecord::periodicQOSMeasurement";
     if(!m_pSubsession || !m_pSubsession->rtpSource() || !m_pThread)
     {
         return;
