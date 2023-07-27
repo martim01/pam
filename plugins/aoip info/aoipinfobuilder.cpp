@@ -20,10 +20,6 @@ m_pInfo(0)
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&AoIPInfoBuilder::OnSettingChanged);
 
     RegisterRemoteApiEnum("QoS", {{50, "50 ms"},{100, "100 ms"},{250, "250 ms"},{500, "500 ms"},{1000, "1000 ms"},{5000, "5000 ms"}}, 1000);
-    RegisterRemoteApiEnum("Graph", {"kBit/s", "Packet Gap", "Packet Loss", "Jitter", "Timestamp", "Timestamp Errors", "TS-DF", "Slip"}, "kBit/s");
-    RegisterRemoteApiEnum("Type", {"Line Graph/s", "Bar Chart", "Histogram"}, "Line Graph/s");
-
-
 
 }
 
@@ -46,7 +42,6 @@ list<pairOptionPanel_t> AoIPInfoBuilder::CreateOptionPanels(wxWindow* pParent)
 {
     list<pairOptionPanel_t> lstOptionPanels;
 
-    lstOptionPanels.push_back(make_pair(wxT("Graph"), new pnlGraph(pParent, this)));
     lstOptionPanels.push_back(make_pair(wxT("Settings"), new pnlSettings(pParent, this)));
 
     return lstOptionPanels;
@@ -57,12 +52,6 @@ list<pairOptionPanel_t> AoIPInfoBuilder::CreateOptionPanels(wxWindow* pParent)
 
 void AoIPInfoBuilder::LoadSettings()
 {
-    if(m_pInfo)
-    {
-        m_pInfo->ShowGraph(ReadSetting(wxT("Graph"), wxT("kBit/s")));
-        m_pInfo->SetGraphType(ReadSetting("Type", "Graph"));
-    }
-
 }
 
 void AoIPInfoBuilder::InputSession(const session& aSession)
