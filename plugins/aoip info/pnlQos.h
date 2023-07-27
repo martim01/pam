@@ -9,8 +9,6 @@
 #include <wx/panel.h>
 //*)
 #include "aoipinfobuilder.h"
-#include "histogram.h"
-#include "historygraph.h"
 
 class SettingEvent;
 
@@ -111,7 +109,7 @@ class pnlQos: public wxPanel
 		static const long ID_M_PLBL2;
 		//*)
 
-		
+
 		void ShowGraph(const wxString& sGraph);
         void SetGraphType(const wxString& sType);
 

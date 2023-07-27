@@ -9,7 +9,7 @@
 			<size>600,160</size>
 			<bg>#000000</bg>
 			<object class="Custom" name="ID_CUSTOM12" subclass="Histogram" variable="m_pHistogram" member="yes">
-				<creating_code>$(THIS) = new $(CLASS)($(PARENT),$(ID), $(POS),$(SIZE),1,10,0);</creating_code>
+				<creating_code>$(THIS) = new $(CLASS)($(PARENT),$(ID), $(POS),$(SIZE));</creating_code>
 				<include_file>histogram.h</include_file>
 				<local_include>1</local_include>
 				<style></style>
@@ -21,7 +21,7 @@
 				<maxsize>50,-1</maxsize>
 			</object>
 			<object class="Custom" name="ID_CUSTOM1" subclass="HistoryGraph" variable="m_pGraph" member="yes">
-				<creating_code>$(THIS) = new $(CLASS)($(PARENT),$(ID), $(POS),$(SIZE),1,10,0);</creating_code>
+				<creating_code>$(THIS) = new $(CLASS)($(PARENT),$(ID), $(POS),$(SIZE));</creating_code>
 				<include_file>historygraph.h</include_file>
 				<local_include>1</local_include>
 				<style></style>
