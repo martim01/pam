@@ -732,7 +732,7 @@ pml::restgoose::response RemoteApi::PostWavFile(const query& theQuery, const std
         }
         else if(data.name.Get() == "file")
         {
-            sLocation = wxString(data.filepath.Get());
+            sLocation = wxString(data.filepath.string());
         }
     }
     pmlLog() << "Name: " << sFilename.ToStdString() << "\tLocation: " << sLocation.ToStdString();

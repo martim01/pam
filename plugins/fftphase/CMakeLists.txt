@@ -24,7 +24,7 @@ add_library(fftphase MODULE ${SOURCES} ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_v
 find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
-list(APPEND flags "-fPIC" "-Wall" "-fpermissive"  "-std=c++14")
+list(APPEND flags "-fPIC" "-Wall" "-fpermissive")
 
 if(CMAKE_BUILD_TYPE MATCHES Release)
    list(APPEND flags "-O3")
@@ -42,11 +42,11 @@ target_link_libraries(fftphase optimized pambase debug pambased)
 target_link_libraries(fftphase optimized pamfft debug pamfftd)
 target_link_libraries(fftphase optimized restgoose debug restgoosed)
 
-
+set_target_properties(fftphase PROPERTIES CXX_STANDARD 17)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS fftphase LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
+	install(TARGETS fftphase LIBRARY DESTINATION lib/pam2/monitor)
 endif()
 
 		

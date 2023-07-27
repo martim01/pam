@@ -17,7 +17,7 @@
 #include <wx/intl.h>
 #include <wx/string.h>
 //*)
-
+#include "log.h"
 using namespace std;
 
 //(*IdInit(pnlAoIPInfo)
@@ -188,10 +188,15 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,AoIPInfoBuilder* pBuilder, wxWindowID 
     pnlSDP = new wxPanel(m_pswpInfo, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
     pnlSDP->SetBackgroundColour(wxColour(0,0,0));
     m_ptxtSDP = new wxTextCtrl(pnlSDP, ID_TEXTCTRL1, wxEmptyString, wxPoint(5,5), wxSize(590,435), wxTE_MULTILINE|wxTE_READONLY, wxDefaultValidator, _T("ID_TEXTCTRL1"));
-    m_pswpInfo->AddPage(pnlSession, _("Session"), false);x
+    m_pswpInfo->AddPage(pnlSession, _("Session"), false);
     m_pswpInfo->AddPage(pnlSDP, _("Raw SDP"), false);
     //*)
 
+    m_pSdp = new wmListAdv(pnlSDP, wxNewId(), wxPoint(5,5), wxSize(590,435), 0, wmListAdv::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(0,1));
+    m_pSdp->SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
+    m_pSdp->SetBackgroundColour(*wxBLACK);
+
+    m_pswpInfo->SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
 
 	#ifdef PTPMONKEY
 	wxPtp::Get().AddHandler(this);
@@ -245,7 +250,7 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
 {
     if(pData)
     {
-        auto itPanel = m_mQos.find(pData->nStream);
+        auto itPanel = m_mQos.find(pData->sStream);
         if(itPanel != m_mQos.end())
         {
             itPanel->second->QoSUpdated(pData);
@@ -256,6 +261,15 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
 
 void pnlAoIPInfo::SetAudioData(const timedbuffer* pTimedBuffer)
 {
+    for(const auto& [sName, pPanel] : m_mSubsessions)
+    {
+        pPanel->SetAudioData(pTimedBuffer);
+    }
+    for(const auto& [sName, pPanel] : m_mQos)
+    {
+        pPanel->SetAudioData(pTimedBuffer);
+    }
+    /*
     SetTimestamp(pTimedBuffer->GetTransmissionTime(), m_plblTransmissionTime, false);
     SetTimestamp(pTimedBuffer->GetTimeVal(), m_plblTimestampIn);
     SetTimestamp(pTimedBuffer->GetPlaybackTime(), m_plblTimestampOut);
@@ -279,6 +293,7 @@ void pnlAoIPInfo::SetAudioData(const timedbuffer* pTimedBuffer)
     m_plblTimestampIn->SetBackgroundColour(wxPtp::Get().IsSyncedToMaster(0) ? *wxWHITE : wxColour(255,180,180));
     m_plblLatencyNetwork->SetBackgroundColour(wxPtp::Get().IsSyncedToMaster(0) ? *wxWHITE : wxColour(255,180,180));
     #endif // PTPMONKEY
+    */
 }
 
 
@@ -299,6 +314,7 @@ void pnlAoIPInfo::SetTimestamp(const timeval& tv, wmLabel* pLabel, bool bDate)
 
 void pnlAoIPInfo::ShowLatency(const timedbuffer* pTimedBuffer)
 {
+    /*
     double dPlayback = pTimedBuffer->GetPlaybackLatency();
 
     timeval tvLatency;
@@ -325,12 +341,16 @@ void pnlAoIPInfo::ShowLatency(const timedbuffer* pTimedBuffer)
     long long int nSet = static_cast<long long int>(tvSet.tv_sec)*1e6 + static_cast<long long int>(tvSet.tv_usec);
     m_plblEpoch->SetLabel(wxString::Format("%lld us", nLast-nSet));
     #endif
+    */
 }
 
 
 void pnlAoIPInfo::SessionStarted(const session& aSession)
 {
+    pmlLog() << "pnlAoIPInfo::SessionStarted";
+
     m_pSession = &aSession;
+
     m_plblSessionName->SetLabel(aSession.sName);
     if(Settings::Get().Read("Input", "Type", wxEmptyString) == "AoIP")
     {
@@ -340,15 +360,19 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
     {
         m_plblInput->SetLabel(wxEmptyString);
     }
+    pmlLog() << "pnlAoIPInfo::SessionStarted 2";
     m_plblSyncType->SetLabel(aSession.refClock.sType);
     m_plblSyncVersion->SetLabel(aSession.refClock.sVersion);
     m_plblSyncId->SetLabel(aSession.refClock.sId);
 
+    pmlLog() << "pnlAoIPInfo::SessionStarted 3";
     m_plblSyncDomain->SetLabel(wxString::Format("%lu", aSession.refClock.nDomain));
     m_plblSessionType->SetLabel(aSession.sType);
 
+    pmlLog() << "pnlAoIPInfo::SessionStarted 4";
     wxClientDC dc(this);
     dc.SetFont(m_pSdp->GetFont());
+    pmlLog() << "pnlAoIPInfo::SessionStarted 5";
 
     m_pSdp->Clear();
     wxArrayString asLines(wxStringTokenize(aSession.sRawSDP, "\n"));
@@ -372,7 +396,7 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
         }
     }
 
-    unsigned int nAudio(0), nVideo(0);
+    unsigned int nAudio = 0;
     for(list<subsession>::const_iterator itSub = aSession.lstSubsession.begin(); itSub != aSession.lstSubsession.end(); ++itSub)
     {
         if(itSub->sMedium.CmpNoCase("audio") == 0)
@@ -381,19 +405,31 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
         }
     }
     m_plblSubsessionsAudio->SetLabel(wxString::Format("%u", nAudio));
-    m_plblGroups->SetLabel(aSession.sGroups);
+    wxString sGroups;
+    for(const auto& sGroup : aSession.setGroups)
+    {
+		sGroups += sGroup+" ";
+    }
+    m_plblGroups->SetLabel(sGroups);
 
 
 
     for(const auto& sub : aSession.lstSubsession)
     {
-        auto pnlSub = new pnlSubsession(m_pswpInfo, wxNewId(), wxDefaultPosition, wxDefaultSize);
+        pmlLog() << "Create subsession page";
+        auto pnlSub = new pnlSubsession(m_pswpInfo, sub, wxNewId(), wxDefaultPosition, wxDefaultSize);
         m_pswpInfo->AddPage(pnlSub, "Subsession: "+sub.sGroup, false);
 
-        auto pnlQos = new pnlQoS(m_pswpInfo, wxNewId(), wxDefaultPosition, wxDefaultSize);
-        m_pswpInfo->AddPage(pnlQos, "QoS: "+sub.sGroup, false);
+        m_mSubsessions.try_emplace(sub.sGroup, pnlSub);
+
+        pmlLog() << "Create Qos page";
+        auto pnlQ = new pnlQos(m_pswpInfo, sub.sGroup, m_pBuilder, wxNewId(), wxDefaultPosition, wxDefaultSize);
+        m_pswpInfo->AddPage(pnlQ, "QoS: "+sub.sGroup, false);
+
+        m_mQos.try_emplace(sub.sGroup, pnlQ);
     }
 
+    pmlLog() << "DONE";
 }
 
 
@@ -415,15 +451,15 @@ void pnlAoIPInfo::OnPtpEvent(wxCommandEvent& event)
 
 void pnlAoIPInfo::ChangeGranularity(int nWhich)
 {
-    m_pHistogram->ChangeGranularity(m_sGraph,nWhich);
+//    m_pHistogram->ChangeGranularity(m_sGraph,nWhich);
 }
 
 void pnlAoIPInfo::ChangeResolution(int nWhich)
 {
-    m_pHistogram->ChangeResolution(m_sGraph,nWhich);
+ //   m_pHistogram->ChangeResolution(m_sGraph,nWhich);
 }
 
 void pnlAoIPInfo::RecalculateRange()
 {
-    m_pGraph->RecalculateRange(m_sGraph);
+  //  m_pGraph->RecalculateRange(m_sGraph);
 }

@@ -1203,7 +1203,7 @@ void ptpPanel::OnTimer(wxTimerEvent& event)
         Connect(wxID_ANY, wxEVT_CLOCK_MSG_DELAY_REQUEST,(wxObjectEventFunction)&ptpPanel::OnClockMessage);
         Connect(wxID_ANY, wxEVT_CLOCK_MSG_DELAY_RESPONSE,(wxObjectEventFunction)&ptpPanel::OnClockMessage);
 
-        wxPtp::Get().RunDomain(Settings::Get().Read("AoIP_Settings", "Interface", "eth0"), m_nDomain);
+        wxPtp::Get().RunDomain(Settings::Get().Read("AoIP_Settings", "Interface", "eth0"), m_nDomain, Settings::Get().Read("Time", "Ptp_Mode", 0) ? ptpmonkey::Mode::HYBRID : ptpmonkey::Mode::MULTICAST);
 
 
         for(auto itClock = wxPtp::Get().GetClocksBegin(m_nDomain); itClock != wxPtp::Get().GetClocksEnd(m_nDomain); ++itClock)

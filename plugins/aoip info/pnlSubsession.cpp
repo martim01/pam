@@ -6,6 +6,10 @@
 #include <wx/string.h>
 //*)
 
+#ifdef PTPMONKEY
+#include "wxptp.h"
+#endif
+
 //(*IdInit(pnlSubsession)
 const long pnlSubsession::ID_M_PLBL39 = wxNewId();
 const long pnlSubsession::ID_M_PLBL42 = wxNewId();
@@ -50,7 +54,8 @@ BEGIN_EVENT_TABLE(pnlSubsession,wxPanel)
 	//*)
 END_EVENT_TABLE()
 
-pnlSubsession::pnlSubsession(wxWindow* parent, const subsession& sub, wxWindowID id,const wxPoint& pos,const wxSize& size)
+pnlSubsession::pnlSubsession(wxWindow* parent, const subsession& sub, wxWindowID id,const wxPoint& pos,const wxSize& size) :
+m_sub(sub)
 {
 	//(*Initialize(pnlSubsession)
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
@@ -273,15 +278,6 @@ pnlSubsession::pnlSubsession(wxWindow* parent, const subsession& sub, wxWindowID
 	m_plblTimestampOut->SetFont(m_plblTimestampOutFont);
 	//*)
 
-	m_plblEpoch = new wmLabel(this, wxNewId(), wxEmptyString, wxPoint(305,151), wxSize(249,25), 0, _T("ID_M_PLBL57"));
-	m_plblEpoch->SetBorderState(uiRect::BORDER_NONE);
-	m_plblEpoch->GetUiRect().SetGradient(0);
-	m_plblEpoch->SetForegroundColour(wxColour(0,128,0));
-	m_plblEpoch->SetBackgroundColour(wxColour(255,255,255));
-	wxFont m_plblEpochFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
-	m_plblEpoch->SetFont(m_plblEpochFont);
-
-
 
 
 	m_plblSubsessionId->SetLabel(sub.sId);
@@ -292,8 +288,9 @@ pnlSubsession::pnlSubsession(wxWindow* parent, const subsession& sub, wxWindowID
 
     m_plblSyncTimestamp->SetLabel(wxString::Format("%u", sub.nSyncTimestamp));
 
-    m_nSampleRate = sub.nSampleRate;
-    m_nFrameSize = min((unsigned int)256 ,sub.nChannels);
+    /*m_nSampleRate = sub.nSampleRate;
+    
+	m_nFrameSize = min((unsigned int)256 ,sub.nChannels);
     if(sub.sCodec == "L24")
     {
         m_nFrameSize*=3;
@@ -305,7 +302,7 @@ pnlSubsession::pnlSubsession(wxWindow* parent, const subsession& sub, wxWindowID
     else if(sub.sCodec == "F32")
     {
         m_nFrameSize*=4;
-    }
+    }*/
 
     m_plblSubSyncType->SetLabel(sub.refClock.sType);
     m_plblSubSyncVersion->SetLabel(sub.refClock.sVersion);
@@ -321,9 +318,9 @@ pnlSubsession::pnlSubsession(wxWindow* parent, const subsession& sub, wxWindowID
     }
     wxPtp::Get().AddHandler(this);
 
-	Connect(wxID_ANY, wxEVT_CLOCK_MASTER, (wxObjectEventFunction)&pnlAoIPInfo::OnPtpEvent);
-	Connect(wxID_ANY, wxEVT_CLOCK_SLAVE, (wxObjectEventFunction)&pnlAoIPInfo::OnPtpEvent);
-    Connect(wxID_ANY, wxEVT_CLOCK_UPDATED, (wxObjectEventFunction)&pnlAoIPInfo::OnPtpEvent);
+	Connect(wxID_ANY, wxEVT_CLOCK_MASTER, (wxObjectEventFunction)&pnlSubsession::OnPtpEvent);
+	Connect(wxID_ANY, wxEVT_CLOCK_SLAVE, (wxObjectEventFunction)&pnlSubsession::OnPtpEvent);
+    Connect(wxID_ANY, wxEVT_CLOCK_UPDATED, (wxObjectEventFunction)&pnlSubsession::OnPtpEvent);
 
 #else
     m_plblSubSyncId->SetBackgroundColour(wxColour(255,255,100));

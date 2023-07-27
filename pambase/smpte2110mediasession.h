@@ -5,6 +5,8 @@
 #include "session.h"
 #include <map>
 #include <vector>
+#include "qos.h"
+
 
 class Smpte2110MediaSubsession;
 
@@ -35,10 +37,12 @@ class Smpte2110MediaSession : public MediaSession
             return m_dMaxPackageMs;
         }
 
-        const wxString& GetGroupDup() const
+        const std::set<wxString>& GetGroups() const
         {
-            return m_sGroups;
+            return m_setGroups;
         }
+
+        
 
 
     protected:
@@ -57,7 +61,7 @@ class Smpte2110MediaSession : public MediaSession
 
         wxString m_sRawSDP;
 
-        wxString m_sGroups;
+        std::set<wxString> m_setGroups;
         refclk m_refclk;
         double m_dPackageMs;
         double m_dMaxPackageMs;
@@ -91,47 +95,26 @@ class Smpte2110MediaSubsession : public MediaSubsession
             return m_dMaxPackageMs;
         }
 
+        const wxString& GetGroup() const { return m_sGroup; }
+
         std::map<unsigned long, wxString>::const_iterator GetExtHeaderBegin() const;
         std::map<unsigned long, wxString>::const_iterator GetExtHeaderEnd() const;
         std::map<unsigned long, wxString>::const_iterator GetExtHeader(unsigned long nId) const;
 
-        int GetSampling();
-        unsigned char GetDepth();
-        bool AreSamplesInteger();
-        unsigned int GetWidth();
-        unsigned int GetHeight();
-        std::pair<unsigned long, unsigned long> GetExactFrameRate();
-        int GetColorimetry();
-        int GetPackingMode();
-        wxString GetSSN();
-        bool IsInterlaced();
-        bool IsSegmented();
-        int GetTCS();
-        int GetRange();
-        bool UseMaxUDP();
-        std::pair<unsigned long, unsigned long> GetAspectRatio();
-
-
-        enum Sampling{YCbCr_444, YCbCr_422, YCbCr_420, CLYCbCr_444, CLYCbCr_422, CLYCbCr_420, ICtCp_444, ICtCp_422, ICtCp_420, RGB_, XYZ, KEY, UNKNOWN};
-        enum Colorimetry{C_BT601, C_BT709, BC_T2020, C_BT2100, C_ST2065_1, C_ST2065_3, C_XYZ, C_UNSPECIFIED};
-        enum TCS{SDR, PQ, HLG, LINEAR, BT2100LINPQ, BT2100LINHLG, ST2065_1, ST2428_1, DENSITY, UNSPECIFIED};
-        enum Range{NARROW, FULLPROTECT, FULL};
-        enum Packing{GPM, BPM};
-
-
+        void SetHandler(RtpThread* pThread) { m_qos.SetHandler(pThread);}
+    
         const std::vector<subsession::channelGrouping>& GetChannelGrouping() const { return m_channels;}
 
-        static const wxString STR_SAMPLING[13];
-        static const wxString STR_COLORIMETRY[8];
-        static const wxString STR_TCS[10];
-        static const wxString STR_RANGE[3];
-        static const wxString STR_PACKING[2];
+        const qosMeasurementRecord& GetQoS() const { return m_qos;}
+
+        void ScheduleNextQOSMeasurement();
+        void PeriodicQOSMeasurement();
+
+        UsageEnvironment& GetEnv() { return env(); }
 
     protected:
-        void AnalyzeAttributes();
-
         friend class Smpte2110MediaSession;
-        Smpte2110MediaSubsession(MediaSession& parent);
+        explicit Smpte2110MediaSubsession(MediaSession& parent);
         virtual Boolean createSourceObjects(int useSpecialRTPoffset);
 
         bool SetChannelGrouping(size_t& nChannel, const subsession::channelGrouping& grouping);
@@ -146,38 +129,26 @@ class Smpte2110MediaSubsession : public MediaSubsession
         void parseSDPAttribute_Mid();
         void parseSDPAttribute_Channels();
 
-        unsigned long m_nSyncTime;
-        unsigned int m_nFirstTimestamp;
+        
+
+        unsigned long m_nSyncTime = 0;
+        unsigned int m_nFirstTimestamp = 0;
         wxString m_sEndpoint;
 
-        double m_dClockDeviation;
+        double m_dClockDeviation = 0.0;
 
 
         refclk m_refclk;
-        double m_dPackageMs;
-        double m_dMaxPackageMs;
+        double m_dPackageMs = 0.0;
+        double m_dMaxPackageMs = 0.0;
 
         std::map<unsigned long, wxString> m_mExtHeader;
 
         wxString m_sGroup;
-
-
-        int m_nSampling;
-        unsigned char m_nDepth;
-        bool m_bFloating;
-        unsigned long m_nWidth;
-        unsigned long m_nHeight;
-        std::pair<unsigned long, unsigned long> m_pairFrameRate;
-        int m_nColorimetry;
-        int m_nPackingMode;
-        wxString m_sSSN;
-        bool m_bInterlaced;
-        bool m_bSegmented;
-        int m_nTCS;
-        int m_nRange;
-        bool m_bMaxUdp;
-        std::pair<unsigned long, unsigned long> m_pairAspectRatio;
-
+    
         std::vector<subsession::channelGrouping> m_channels;
+    
+        qosMeasurementRecord m_qos;
+        TaskToken m_qosMeasurementTimerTask = nullptr;
 
 };

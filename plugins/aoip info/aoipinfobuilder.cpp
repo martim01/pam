@@ -71,14 +71,6 @@ void AoIPInfoBuilder::OutputChannels(const std::vector<char>& vChannels)
 
 void AoIPInfoBuilder::OnSettingChanged(SettingEvent& event)
 {
-    if(event.GetKey() == wxT("Graph"))
-    {
-        m_pInfo->ShowGraph(event.GetValue());
-    }
-    else if(event.GetKey() == "Type")
-    {
-        m_pInfo->SetGraphType(event.GetValue());
-    }
 }
 
 void AoIPInfoBuilder::SetQoSData(qosData* pData)
@@ -99,12 +91,10 @@ bool AoIPInfoBuilder::CanBeMaximized() const
 
 void AoIPInfoBuilder::ClearGraphs()
 {
-    m_pInfo->ClearGraphs();
 }
 
 void AoIPInfoBuilder::RecalculateRange()
 {
-    m_pInfo->RecalculateRange();
 }
 
 void AoIPInfoBuilder::ChangeGranularity(int nWhich)

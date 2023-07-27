@@ -10,10 +10,9 @@
 //*)
 
 #include "timedbuffer.h"
-#include "histogram.h"
 #include "wmlistadv.h"
 #include "pnlSubsession.h"
-#include "pnlQos.h";
+#include "pnlQos.h"
 #include <map>
 
 struct qosData;
@@ -72,9 +71,6 @@ class pnlAoIPInfo: public wxPanel
 
         void SetAudioData(const timedbuffer* pTimedBudder);
 
-        void ShowGraph(const wxString& sGraph);
-        void SetGraphType(const wxString& sType);
-        void ClearGraphs();
         void RecalculateRange();
 
         double GetLatency() const { return m_dLatency; }
@@ -132,8 +128,7 @@ class pnlAoIPInfo: public wxPanel
         unsigned int m_nSampleRate;
         unsigned int m_nFrameSize;
         const session* m_pSession;
-        wxString m_sGraph;
-
+        
         double m_dFrameDuration;
         double m_dSlip;
 
@@ -144,8 +139,8 @@ class pnlAoIPInfo: public wxPanel
 
         enum {GRAPH_MIN=0, GRAPH_MAX};
 
-        std::map<unsigned long, pnlSubsession*> m_mSubsessions;
-        std::map<unsigned long, pnlQos*> m_mQos;
+        std::map<wxString, pnlSubsession*> m_mSubsessions;
+        std::map<wxString, pnlQos*> m_mQos;
 
 		DECLARE_EVENT_TABLE()
 };

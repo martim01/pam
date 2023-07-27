@@ -31,7 +31,6 @@ wxSink::wxSink(UsageEnvironment& env, MediaSubsession& subsession,RtpThread* pHa
 {
     fStreamId = strDup(streamId);
     fReceiveBuffer = new u_int8_t[DUMMY_SINK_RECEIVE_BUFFER_SIZE];
-    m_nLastTimestamp = 0;
 }
 
 wxSink::~wxSink()
@@ -42,7 +41,7 @@ wxSink::~wxSink()
 
 void wxSink::afterGettingFrame(void* clientData, unsigned frameSize, unsigned numTruncatedBytes, struct timeval presentationTime, unsigned durationInMicroseconds)
 {
-    wxSink* sink = (wxSink*)clientData;
+    auto sink = (wxSink*)clientData;
 
     sink->afterGettingFrame(frameSize, numTruncatedBytes, presentationTime, durationInMicroseconds);
 }
@@ -65,7 +64,7 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
         m_nLastTimestamp = pSource->GetRTPTimestamp();
 
         //do we have an associated header ext??
-        mExtension_t* mExt = NULL;
+        mExtension_t* mExt = nullptr;
         map<timeval, mExtension_t*>::iterator itExt = m_mExtension.find(tvPresentation);
         if(itExt != m_mExtension.end())
         {
@@ -80,7 +79,6 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
         if(strcmp(m_pSubsession->codecName(),"L16") == 0)
         {
             nBytesPerSample = 2;
-
         }
         else if(strcmp(m_pSubsession->codecName(),"L24") == 0)
         {
@@ -88,15 +86,22 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
         }
         if(nBytesPerSample != 0)
         {
-            m_pHandler->AddFrame(m_pSubsession->GetEndpoint(), pSource->lastReceivedSSRC(), tvPresentation, frameSize, fReceiveBuffer,
-             nBytesPerSample, pSource->GetTransmissionTime(), pSource->GetRTPTimestamp(),frameSize, nDifference, mExt);
+            auto pFrame = std::make_shared<rtpFrame>();
+            pFrame->sEndpoint = m_pSubsession->GetEndpoint();
+            pFrame->sGroup = m_pSubsession->GetGroup();
+            pFrame->nSSRC = pSource->lastReceivedSSRC();
+            pFrame->timePresentation = tvPresentation;
+            pFrame->timeTransmission = pSource->GetTransmissionTime();
+            pFrame->nFrameSize = frameSize;
+            pFrame->pBuffer = fReceiveBuffer;
+            pFrame->nBytesPerSample = nBytesPerSample;
+            pFrame->nTimestamp = pSource->GetRTPTimestamp();
+            pFrame->nTimestampDifference = nDifference;
+            pFrame->mExt = mExt;
+
+            m_pHandler->AddFrame(pFrame);
         }
     }
-    else if(strcmp(m_pSubsession->mediumName(), "video") == 0)
-    {
-
-    }
-
 
     continuePlaying();
 }

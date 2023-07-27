@@ -77,6 +77,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
          void OnRTPSession(wxCommandEvent& event);
         void OnRTPSessionClosed(wxCommandEvent& event);
         void OnQoS(wxCommandEvent& event);
+        void OnRtpFrame(wxCommandEvent& event);
 
         void InputTypeChanged();
         void InputChanged(const wxString& sKey);
@@ -123,6 +124,8 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         void DoGain(AudioEvent& event);
         void CheckIfGain();
         void InitAoIPInput();
+
+        void OnStreaming(wxCommandEvent& event);
 
         std::vector<char> CreateRouting();
 

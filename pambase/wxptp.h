@@ -5,13 +5,7 @@
 #include <memory>
 #include <list>
 #include "dlldefine.h"
-
-
-namespace ptpmonkey
-{
-    class PtpMonkey;
-    class PtpV2Clock;
-};
+#include "ptpmonkey.h"
 
 
 class wxPtpEventHandler;
@@ -20,7 +14,7 @@ class PAMBASE_IMPEXPORT wxPtp : public wxEvtHandler
     public:
         static wxPtp& Get();
 
-        void RunDomain(const wxString& sInterface, unsigned char nDomain);
+        void RunDomain(const wxString& sInterface, unsigned char nDomain, ptpmonkey::Mode mode);
         void StopDomain(unsigned char nDomain);
 
         wxString GetMasterClockId(unsigned char nDomain);
@@ -43,6 +37,7 @@ class PAMBASE_IMPEXPORT wxPtp : public wxEvtHandler
         std::shared_ptr<wxPtpEventHandler> m_pNotifier;
         std::map<unsigned char, std::shared_ptr<ptpmonkey::PtpMonkey>> m_mDomain;
         std::map<std::string, std::shared_ptr<ptpmonkey::PtpV2Clock> > m_mEmpty;
+
 };
 
 

@@ -120,6 +120,12 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
 	Connect(ID_TIMER1,wxEVT_TIMER,(wxObjectEventFunction)&pnlSettingsTime::OntimerTimeTrigger);
 	//*)
 
+    //extra buttons etc
+    m_pbtnPtpMode = new wmButton(m_ppnlPTP, wxNewId(), "Mode", wxPoint(350,110), wxSize(200,40), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
+	m_pbtnPtpMode->SetBackgroundColour(wxColour(0,128,64));
+	m_pbtnPtpMode->SetColourDisabled(wxColour(wxT("#808080")));
+	m_pbtnPtpMode->SetToggleLook(true, wxT("Multicast"), wxT("Hybrid"), 60);
+
 	for(auto pairServer : TimeManager::Get().GetNtpServers())
     {
         if(pairServer.second)
@@ -162,6 +168,7 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
     m_plstDate->ConnectToSetting("Time", "LTC_Format", (int)2);
 
     m_pbtnSync->ConnectToSetting("Time", "Tai", false);
+    m_pbtnPtpMode->ConnectToSetting("Time", "Ptp_Mode", false);
 }
 
 pnlSettingsTime::~pnlSettingsTime()

@@ -112,21 +112,32 @@ wxPtp::wxPtp() : m_pNotifier(std::make_shared<wxPtpEventHandler>())
 {
 }
 
-void wxPtp::RunDomain(const wxString& sInterface, unsigned char nDomain)
+void wxPtp::RunDomain(const wxString& sInterface, unsigned char nDomain, ptpmonkey::Mode mode)
 {
+    pmlLog(pml::LOG_TRACE) << "wxPtp::RunDomain";
     auto itMonkey = m_mDomain.find(nDomain);
     if(itMonkey == m_mDomain.end())
     {
-        itMonkey = m_mDomain.insert(std::make_pair(nDomain, std::make_shared<PtpMonkey>(IpInterface(std::string(sInterface.mb_str())), nDomain, 2))).first;
+        mode = ptpmonkey::Mode::HYBRID;
+        itMonkey = m_mDomain.insert(std::make_pair(nDomain, std::make_shared<PtpMonkey>(IpInterface(std::string(sInterface.mb_str())), nDomain, 2, mode, ptpmonkey::Rate::EVERY_1_SEC))).first;
         itMonkey->second->AddEventHandler(m_pNotifier);
-        //itMonkey->second->AddEventHandler(std::make_shared<ptpmonkey::PtpEventLogHandler>());
         itMonkey->second->Run();
 
     }
-    else if(itMonkey->second->IsStopped())
+    else
     {
-        itMonkey->second->Restart();
+        if(itMonkey->second->GetMode() != mode)
+        {
+            m_mDomain.erase(itMonkey);
+            itMonkey = m_mDomain.insert(std::make_pair(nDomain, std::make_shared<PtpMonkey>(IpInterface(std::string(sInterface.mb_str())), nDomain, 2, mode, ptpmonkey::Rate::EVERY_1_SEC))).first;
+            itMonkey->second->AddEventHandler(m_pNotifier);
+        }
+        else if(itMonkey->second->IsStopped())
+        {
+            itMonkey->second->Restart();
+        }
     }
+    pmlLog(pml::LOG_TRACE) << "wxPtp::RunDomain = done";
 }
 
 void wxPtp::AddHandler(wxEvtHandler* pHandler)

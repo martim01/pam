@@ -246,8 +246,6 @@ bool TimeManager::TrySyncToPtp()
             offset += utc;
         }
 
-        pmlLog(pml::LOG_TRACE) << "TimeManager::SyncToPTP\t" << (m_bUseTai ? "TAI" : "UTC") << "\tOffset=" << offset.count();
-
         if(abs(std::chrono::duration_cast<std::chrono::milliseconds>(offset).count()) > 500)
         {
             if(m_nPtpSamples > 1)   //first stat is often 37s out
@@ -279,7 +277,6 @@ bool TimeManager::TrySyncToPtp()
 
         if(!m_bPtpLock && m_nPtpSamples < m_nMinSamplSize) //
         {   //waiting for more info
-            pmlLog(pml::LOG_TRACE) << "TimeManager::SyncToPTP\t" << "waiting for more info";
             return true;
         }
 

@@ -8,6 +8,9 @@
 #include "wmlabel.h"
 #include <wx/panel.h>
 //*)
+#include "aoipinfobuilder.h"
+#include "histogram.h"
+#include "historygraph.h"
 
 class SettingEvent;
 
@@ -60,6 +63,8 @@ class pnlQos: public wxPanel
 		wmLabel* m_plblTSDF;
 		wxPanel* Panel1;
 		//*)
+		void QoSUpdated(qosData* pData);
+		void SetAudioData(const timedbuffer* pTimedBuffer);
 
 	protected:
 
@@ -106,7 +111,7 @@ class pnlQos: public wxPanel
 		static const long ID_M_PLBL2;
 		//*)
 
-		void QoSUpdated(qosData* pData);
+		
 		void ShowGraph(const wxString& sGraph);
         void SetGraphType(const wxString& sType);
 
@@ -122,7 +127,7 @@ class pnlQos: public wxPanel
         wxString m_sGroup;
 		wxString m_sGraph;
 
-
+		double m_dSlip;
 		DECLARE_EVENT_TABLE()
 };
 

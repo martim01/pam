@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
 project(pamworkspace VERSION 1.5.4)
 
-SET(CMAKE_CXX_STANDARD 14)
+set(CMAKE_INSTALL_PREFIX "/usr/local")
 
 SET(NMOS OFF CACHE BOOL "set to ON to include NMOS")
 
@@ -15,7 +15,7 @@ SET(DIR_PTPMONKEY ${DIR_BASE}/ptpmonkey CACHE STRING "location of ptpmonkey")
 SET(DIR_SAPSERVER ${DIR_BASE}/sapserver CACHE STRING "location of sapserver")
 SET(DIR_LOG ${DIR_BASE}/log CACHE STRING "location of pml log")
 SET(DIR_DNSSD ${DIR_BASE}/dnssd CACHE STRING "location of pml dnssd")
-SET(DIR_RESTGOOSE ${DIR_BASE}/restgoose CACHE STRING "location of pml restgoose")
+SET(DIR_RESTGOOSE ${DIR_BASE}/Restgoose CACHE STRING "location of pml restgoose")
 
 #set the following to off so we build them rather than one of the sub projects
 SET(BUILD_DNSSD OFF)
@@ -124,6 +124,8 @@ else()
         unset(NMOS_TEMP_DIR2)
     else()
         message(STATUS "restgoose found - update to latest version")
+        execute_process(COMMAND git -C ${DIR_RESTGOOSE} checkout v3_7.10)
+        #execute_process(COMMAND git -C ${DIR_RESTGOOSE} pull)
         execute_process(COMMAND git -C ${DIR_RESTGOOSE} pull --no-rebase)
     endif()
     unset(NMOS_TEMP_DIR)
@@ -209,8 +211,6 @@ message(STATUS "Configure plugin fftdiff")
 add_subdirectory(plugins/fftdiff)
 message(STATUS "Configure plugin correlation")
 add_subdirectory(plugins/correlation)
-message(STATUS "Configure bob")
-add_subdirectory(plugins/bob)
 #Add new plugin projects above this line
 
 message(STATUS "Configure pam2")

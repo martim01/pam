@@ -4,17 +4,44 @@
 #include "rtpthread.h"
 #include <wx/log.h>
 #include <iostream>
+#include "smpte2110mediasession.h"
+#include "log.h"
 
-
+qosMeasurementRecord::qosMeasurementRecord(Smpte2110MediaSubsession* pSubsession) : 
+    m_pSubsession(pSubsession)
+{
+    
+    gettimeofday(&m_tvMeasurementStart, nullptr);
+    gettimeofday(&m_tvMeasurementEnd, nullptr);
+    
+    if(m_pSubsession->rtpSource())
+    {
+        RTPReceptionStatsDB::Iterator statsIter(m_pSubsession->rtpSource()->receptionStatsDB());
+        // Assume that there's only one SSRC source (usually the case):
+        RTPReceptionStats* stats = statsIter.next(True);
+        if (stats != NULL)
+        {
+            m_dkBytesTotal = stats->totNumKBytesReceived();
+            m_nTotNumPacketsReceived = stats->totNumPacketsReceived();
+            m_nTotNumPacketsExpected = stats->totNumPacketsExpected();
+        }
+    }
+}
 
 void qosMeasurementRecord::periodicQOSMeasurement(struct timeval const& timeNow)
 {
+    pmlLog(pml::LOG_DEBUG) << "qosMeasurementRecord::periodicQOSMeasurement";
+    if(!m_pSubsession || !m_pSubsession->rtpSource() || !m_pThread)
+    {
+        return;
+    }
+
     unsigned secsDiff = timeNow.tv_sec - m_tvMeasurementEnd.tv_sec;
     int usecsDiff = timeNow.tv_usec - m_tvMeasurementEnd.tv_usec;
     double timeDiff = secsDiff + usecsDiff/1000000.0;
     m_tvMeasurementEnd = timeNow;
 
-    RTPReceptionStatsDB::Iterator statsIter(m_pSource->receptionStatsDB());
+    RTPReceptionStatsDB::Iterator statsIter(m_pSubsession->rtpSource()->receptionStatsDB());
     // Assume that there's only one SSRC source (usually the case):
     RTPReceptionStats* stats = statsIter.next(True);
     if (stats != NULL)
@@ -42,7 +69,6 @@ void qosMeasurementRecord::periodicQOSMeasurement(struct timeval const& timeNow)
         m_nTotNumPacketsExpected = totExpectedNow;
 
         double lossFractionNow = deltaExpectedNow == 0 ? 0.0 : 1.0 - deltaReceivedNow/(double)deltaExpectedNow;
-        //if (lossFractionNow < 0.0) lossFractionNow = 0.0; //reordering can cause
         if (lossFractionNow < m_dPacket_loss_fraction_min)
         {
             m_dPacket_loss_fraction_min = lossFractionNow;
@@ -99,19 +125,18 @@ void qosMeasurementRecord::printQOSData()
     pData->dPacket_loss_fraction_av = 100*packetLossFraction;
     pData->dPacket_loss_fraction_max =  (packetLossFraction == 1.0 ? 100.0 : 100*m_dPacket_loss_fraction_max);
 
-    if(m_pSource)
+    if(m_pSubsession->rtpSource())
     {
-
-        RTPReceptionStatsDB::Iterator statsIter(m_pSource->receptionStatsDB());
+        RTPReceptionStatsDB::Iterator statsIter(m_pSubsession->rtpSource()->receptionStatsDB());
         // Assume that there's only one SSRC source (usually the case):
         RTPReceptionStats* stats = statsIter.next(True);
         if (stats != NULL)
         {
             pData->dInter_packet_gap_ms_Now = stats->currentInterPacketGapUS()/1000.0;
             pData->dInter_packet_gap_ms_min = stats->minInterPacketGapUS()/1000.0;
-            struct timeval totalGaps = stats->totalInterPacketGaps();
-            double totalGapsMS = totalGaps.tv_sec*1000.0 + totalGaps.tv_usec/1000.0;
-            unsigned totNumPacketsReceived = stats->totNumPacketsReceived();
+            auto  totalGaps = stats->totalInterPacketGaps();
+            auto  totalGapsMS = totalGaps.tv_sec*1000.0 + totalGaps.tv_usec/1000.0;
+            auto totNumPacketsReceived = stats->totNumPacketsReceived();
 
             pData->dInter_packet_gap_ms_av = (totNumPacketsReceived == 0 ? 0.0 : totalGapsMS/totNumPacketsReceived);
             pData->dInter_packet_gap_ms_max = stats->maxInterPacketGapUS()/1000.0;
@@ -119,7 +144,7 @@ void qosMeasurementRecord::printQOSData()
             pData->nBaseExtSeqNum = stats->baseExtSeqNumReceived();
             pData->nLastResetExtSeqNum = stats->lastResetExtSeqNumReceived();
             pData->nHighestExtSeqNum = stats->highestExtSeqNumReceived();
-            pData->dJitter = static_cast<double>(stats->jitter())/static_cast<double>(m_pSource->timestampFrequency());
+            pData->dJitter = static_cast<double>(stats->jitter())/static_cast<double>(m_pSubsession->rtpSource()->timestampFrequency());
             pData->dJitter *= 1000.0;   //into ms not seconds
             pData->nLastSR_NTPmsw = stats->lastReceivedSR_NTPmsw();
             pData->nLastSR_NTPlsw = stats->lastReceivedSR_NTPlsw();
@@ -131,7 +156,17 @@ void qosMeasurementRecord::printQOSData()
             pData->tvSync.tv_usec = (unsigned)(microseconds+0.5);
 
         }
-
     }
+    pData->sStream = m_pSubsession->GetGroup();
     m_pThread->QosUpdated(pData);
+}
+
+
+unsigned long qosMeasurementRecord::GetQosMeasurementIntervalMS() const
+{
+    if(m_pThread)
+    {
+        return m_pThread->GetQosMeasurementIntervalMS();
+    }
+    return 5000;
 }

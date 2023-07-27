@@ -113,15 +113,17 @@ IOManager::IOManager() :
     Connect(wxID_ANY,wxEVT_RTP_SESSION_CLOSED,(wxObjectEventFunction)&IOManager::OnRTPSessionClosed);
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&IOManager::OnSettingEvent);
 
+    Connect(wxID_ANY,wxEVT_RTP_FRAME,(wxObjectEventFunction)&IOManager::OnRtpFrame);
     Connect(wxID_ANY,wxEVT_QOS_UPDATED,(wxObjectEventFunction)&IOManager::OnQoS);
+    Connect(wxID_ANY, wxEVT_STREAMING, (wxObjectEventFunction)&IOManager::OnStreaming);
 
 
     #ifdef PTPMONKEY
     wxPtp::Get().AddHandler(this);
     Connect(wxID_ANY, wxEVT_CLOCK_MASTER, (wxObjectEventFunction)&IOManager::OnPtpEvent);
     Connect(wxID_ANY, wxEVT_CLOCK_SLAVE, (wxObjectEventFunction)&IOManager::OnPtpEvent);
-    wxPtp::Get().RunDomain(std::string(Settings::Get().Read(wxT("AoIP_Settings"), wxT("Interface"), wxT("eth0")).mb_str()),
-    Settings::Get().Read(wxT("AoIP_Settings"), wxT("Domain"), 0));
+    wxPtp::Get().RunDomain(std::string(Settings::Get().Read("AoIP_Settings", "Interface", "eth0").mb_str()),
+    Settings::Get().Read("Time", "PTP_Domain", 0), Settings::Get().Read("Time", "Ptp_Mode", 0) ? ptpmonkey::Mode::HYBRID : ptpmonkey::Mode::MULTICAST);
     #endif // PTPMONKEY
     m_pGenerator = std::make_unique<Generator>();
     m_pGenerator->SetSampleRate(48000);
@@ -189,7 +191,7 @@ void IOManager::StopStream()
 
 void IOManager::OnSettingEvent(SettingEvent& event)
 {
-    if(event.GetSection() == wxT("Monitor"))
+    if(event.GetSection() == "Monitor")
     {
         OnSettingEventMonitor(event);
     }
@@ -780,7 +782,7 @@ void IOManager::InitAudioInputDevice(bool bStart)
 
         m_SessionIn = session(wxEmptyString, wxT("Soundcard"), SoundcardManager::Get().GetInputDeviceName());
         //@todo its possible soundcard might not be two channels
-        m_SessionIn.lstSubsession.push_back(subsession(wxEmptyString, SoundcardManager::Get().GetInputDeviceName(), wxEmptyString,
+        m_SessionIn.lstSubsession.push_back(subsession(wxEmptyString, SoundcardManager::Get().GetInputDeviceName(), "0", wxEmptyString,
         wxT("L24"), wxEmptyString, SoundcardManager::Get().GetInputDevice(), SoundcardManager::Get().GetInputSampleRate(),
         CreateChannels(2), 0, {0,0}, refclk()));
         m_SessionIn.SetCurrentSubsession();
@@ -897,7 +899,7 @@ void IOManager::CreateSessionFromOutput(const wxString& sSource)
         m_pGenerator->SetSampleRate(nSampleRate);
     }
     m_SessionOut.lstSubsession.push_back(subsession(Settings::Get().Read(wxT("Output"), wxT("Source"),wxEmptyString),
-    sSource, wxEmptyString, wxT("F32"), wxEmptyString, 0, nSampleRate, CreateChannels(nChannels),
+    sSource, "0", wxEmptyString, wxT("F32"), wxEmptyString, 0, nSampleRate, CreateChannels(nChannels),
                                                     0, {0,0}, refclk()));
     m_SessionOut.SetCurrentSubsession();
 
@@ -1146,19 +1148,19 @@ void IOManager::OnRTPSessionClosed(wxCommandEvent& event)
     {
         m_nCurrentRtp = 0;
     }
-    //m_setRtpOrphan.erase(event.GetInt());
+
     m_mRtp.erase(event.GetInt());
     pmlLog(pml::LOG_INFO) << "IOManager\tOnRTPSessionClosed: " << event.GetInt();
 }
 
 void IOManager::OnRTPSession(wxCommandEvent& event)
 {
-    session* pSession = reinterpret_cast<session*>(event.GetClientData());
+    auto pSession = reinterpret_cast<session*>(event.GetClientData());
 
-    m_SessionIn = session(pSession->sRawSDP, pSession->sName, pSession->sType, pSession->sDescription, pSession->sGroups);
-    for(list<subsession>::iterator itSub = pSession->lstSubsession.begin(); itSub != pSession->lstSubsession.end(); ++itSub)
+    m_SessionIn = session(pSession->sRawSDP, pSession->sName, pSession->sType, pSession->sDescription, pSession->setGroups);
+    for(const auto& sub : pSession->lstSubsession)
     {
-        m_SessionIn.lstSubsession.push_back((*itSub));
+        m_SessionIn.lstSubsession.push_back(sub);
     }
     m_SessionIn.SetCurrentSubsession();
 
@@ -1291,6 +1293,18 @@ void IOManager::OnQoS(wxCommandEvent& event)
     }
 }
 
+void IOManager::OnRtpFrame(wxCommandEvent& event)
+{
+    for(auto pHandler : m_setHandlers)
+    {
+        wxCommandEvent eventUp(wxEVT_RTP_FRAME);
+        eventUp.SetId(event.GetId());
+        eventUp.SetInt(event.GetInt());
+        eventUp.SetExtraLong(event.GetExtraLong());
+        pHandler->ProcessEvent(eventUp);
+    }
+}
+
 
 void IOManager::OnTimerSilence(wxTimerEvent& event)
 {
@@ -1401,7 +1415,6 @@ void IOManager::Stream()
         if(m_bStreamAlwaysOn || bNmos)  //@todo bodge for NMOS
         {
             StreamAlwaysOn();
-            DoSAP(Settings::Get().Read("Server", "SAP",0));
         }
         else
         {
@@ -1435,6 +1448,19 @@ void IOManager::StreamAlwaysOn()
     else
     {
         pmlLog(pml::LOG_ERROR) << "Attempting to stream AlwaysOn but already streaming";
+    }
+}
+
+void IOManager::OnStreaming(wxCommandEvent& event)
+{
+    pmlLog() << "IOManager::OnStreaming " << event.GetInt();
+    if(event.GetInt() == 1)
+    {
+        DoSAP(Settings::Get().Read("Server", "SAP",0));
+    }
+    else
+    {
+        DoSAP(false);
     }
 }
 

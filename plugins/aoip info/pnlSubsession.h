@@ -6,6 +6,8 @@
 #include <wx/panel.h>
 //*)
 
+#include "session.h"
+
 class pnlSubsession: public wxPanel
 {
 	public:
@@ -99,6 +101,7 @@ class pnlSubsession: public wxPanel
 		//*)
 		void OnPtpEvent(wxCommandEvent& event);
 
+		subsession m_sub;
 		DECLARE_EVENT_TABLE()
 };
 

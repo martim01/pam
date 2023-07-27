@@ -21,7 +21,7 @@ add_library(spectogram MODULE ${SOURCES} ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}
 find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
-list(APPEND flags "-fPIC" "-Wall" "-fpermissive"  "-std=c++14")
+list(APPEND flags "-fPIC" "-Wall" "-fpermissive")
 
 if(CMAKE_BUILD_TYPE MATCHES Release)
    list(APPEND flags "-O3")
@@ -37,9 +37,10 @@ target_compile_options(spectogram PRIVATE ${flags})
 target_link_libraries(spectogram ${wxWidgets_LIBRARIES})
 target_link_libraries(spectogram optimized pambase debug pambased)
 target_link_libraries(spectogram optimized pamfft debug pamfftd)
+set_target_properties(spectogram PROPERTIES CXX_STANDARD 17)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS spectogram LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
+	install(TARGETS spectogram LIBRARY DESTINATION lib/pam2/monitor)
 endif()
 		

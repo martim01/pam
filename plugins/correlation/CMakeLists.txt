@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
 project(correlation LANGUAGES CXX VERSION 0.1.0)
 
 
@@ -22,7 +22,7 @@ add_library(correlation MODULE ${SOURCES} ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME
 find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
-list(APPEND flags "-fPIC" "-Wall" "-fpermissive"  "-std=c++14")
+list(APPEND flags "-fPIC" "-Wall" "-fpermissive" )
 
 if(CMAKE_BUILD_TYPE MATCHES Release)
    list(APPEND flags "-O3")
@@ -41,7 +41,9 @@ target_link_libraries(correlation optimized pambase debug pambased)
    
 target_link_libraries(correlation optimized pamlevel debug pamleveld)
 
+set_target_properties(correlation PROPERTIES CXX_STANDARD 17)
+
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS correlation LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
+	install(TARGETS correlation LIBRARY DESTINATION lib/pam2/monitor)
 endif()		

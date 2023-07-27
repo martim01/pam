@@ -41,6 +41,9 @@ class pnlSettingsTime: public wxPanel
 		wxTimer m_timerTime;
 		//*)
 
+		wmButton* m_pbtnPtpMode;
+		
+
 	protected:
 
 		//(*Identifiers(pnlSettingsTime)

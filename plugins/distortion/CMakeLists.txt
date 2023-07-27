@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
 project(distortion LANGUAGES CXX VERSION 1.2.0)
 
 execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -P ${CMAKE_SOURCE_DIR}/version.cmake)
@@ -22,7 +22,7 @@ add_library(distortion MODULE ${SOURCES} ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}
 find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
-list(APPEND flags "-fPIC" "-Wall" "-fpermissive"  "-std=c++14")
+list(APPEND flags "-fPIC" "-Wall" "-fpermissive")
 
 if(CMAKE_BUILD_TYPE MATCHES Release)
    list(APPEND flags "-O3")
@@ -39,9 +39,10 @@ target_link_libraries(distortion ${wxWidgets_LIBRARIES})
 target_link_libraries(distortion optimized pambase debug pambased)
 target_link_libraries(distortion optimized pamfft debug pamfftd)
 
+set_target_properties(distortion PROPERTIES CXX_STANDARD 17)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS distortion LIBRARY DESTINATION /usr/local/lib/pam2/test)
+	install(TARGETS distortion LIBRARY DESTINATION lib/pam2/test)
 endif()
 		

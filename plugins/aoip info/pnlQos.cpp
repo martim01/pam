@@ -5,6 +5,8 @@
 #include <wx/intl.h>
 #include <wx/string.h>
 //*)
+#include "settingevent.h"
+#include "settings.h"
 
 //(*IdInit(pnlQos)
 const long pnlQos::ID_CUSTOM12 = wxNewId();
@@ -62,8 +64,8 @@ pnlQos::pnlQos(wxWindow* parent,const wxString& sGroup, AoIPInfoBuilder* pBuilde
 	SetBackgroundColour(wxColour(0,0,0));
 	Panel1 = new wxPanel(this, ID_PANEL4, wxPoint(0,280), wxSize(600,160), wxTAB_TRAVERSAL, _T("ID_PANEL4"));
 	Panel1->SetBackgroundColour(wxColour(0,0,0));
-	m_pHistogram = new Histogram(Panel1,ID_CUSTOM12, wxPoint(0,0),wxSize(600,160),1,10,0);
-	m_pGraph = new HistoryGraph(Panel1,ID_CUSTOM1, wxPoint(0,0),wxSize(600,160),1,10,0);
+	m_pHistogram = new Histogram(Panel1,ID_CUSTOM12, wxPoint(0,0),wxSize(600,160));
+	m_pGraph = new HistoryGraph(Panel1,ID_CUSTOM1, wxPoint(0,0),wxSize(600,160));
 	m_plblTSDF = new wmLabel(this, ID_M_PLBL90, wxEmptyString, wxPoint(146,246), wxSize(109,25), 0, _T("ID_M_PLBL90"));
 	m_plblTSDF->SetBorderState(uiRect::BORDER_NONE);
 	m_plblTSDF->GetUiRect().SetGradient(0);
@@ -283,13 +285,9 @@ pnlQos::pnlQos(wxWindow* parent,const wxString& sGroup, AoIPInfoBuilder* pBuilde
 	//*)
 
 
-
-    m_pswpInfo->SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
     m_pGraph->SetFont(wxFont(7,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
     m_pHistogram->SetFont(wxFont(7,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
 
-
-    ClearGraphs();
 
     int nInterval = Settings::Get().Read(wxT("QoS"), wxT("Interval"), 1000)*1000;
 	m_pGraph->AddGraph(wxT("kBit/s"), wxColour(0,255,0), nInterval, false);
@@ -321,10 +319,10 @@ pnlQos::pnlQos(wxWindow* parent,const wxString& sGroup, AoIPInfoBuilder* pBuilde
 
 
 	m_pbtnCurrentGraph->SetPopup({"kBit/s", "Packet Gap", "Packet Loss", "Jitter", "Timestamp", "Timestamp Errors", "TS-DF", "Slip"});
-	m_pbtnCurrentGraph->ConnectToSetting(m_pBuilder->GetSection(), "Graph_"+sGroup, "kBit/s");
+	m_pbtnCurrentGraph->ConnectToSetting(pBuilder->GetSection(), "Graph_"+sGroup, "kBit/s");
 
 	m_pbtnGraphType->SetPopup({"Line Graph", "Bar Chart", "Histogram"});
-	m_pbtnGraphType->ConnectToSetting(m_pBuilder->GetSection(), "GraphType_"+sGroup, "kBit/s");
+	m_pbtnGraphType->ConnectToSetting(pBuilder->GetSection(), "GraphType_"+sGroup, "kBit/s");
 
 	pBuilder->RegisterForSettingsUpdates(this, "Graph_"+sGroup);
 	pBuilder->RegisterForSettingsUpdates(this, "GraphType_"+sGroup);
@@ -436,12 +434,21 @@ void pnlQos::SetGraphType(const wxString& sType)
 
 void pnlQos::OnSettingChanged(SettingEvent& event)
 {
-    if(event.GetKey() == "Graph_"+sGroup)
+    if(event.GetKey() == "Graph_"+m_sGroup)
     {
         ShowGraph(event.GetValue());
     }
-    else if(event.GetKey() == "GraphType_"+sGroup)
+    else if(event.GetKey() == "GraphType_"+m_sGroup)
     {
-        ShowGraphType(event.GetValue());
+        SetGraphType(event.GetValue());
     }
+}
+
+void pnlQos::SetAudioData(const timedbuffer* pTimedBuffer)
+{
+	
+	double dTimestamp(static_cast<double>(pTimedBuffer->GetTimestamp())/4294967296.0);
+    m_pGraph->AddPeak("Timestamp",dTimestamp);
+    m_pHistogram->AddPeak("Timestamp",dTimestamp);
+
 }
