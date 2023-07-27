@@ -54,6 +54,8 @@ class pnlSubsession: public wxPanel
 		wmLabel* m_plblTransmissionTime;
 		//*)
 
+		void SetAudioData(const timedbuffer* pTimedBuffer);
+
 	protected:
 
 		//(*Identifiers(pnlSubsession)
