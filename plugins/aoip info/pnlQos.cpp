@@ -64,8 +64,8 @@ pnlQos::pnlQos(wxWindow* parent,const wxString& sGroup, AoIPInfoBuilder* pBuilde
 	SetBackgroundColour(wxColour(0,0,0));
 	Panel1 = new wxPanel(this, ID_PANEL4, wxPoint(0,280), wxSize(600,160), wxTAB_TRAVERSAL, _T("ID_PANEL4"));
 	Panel1->SetBackgroundColour(wxColour(0,0,0));
-	m_pHistogram = new Histogram(Panel1,ID_CUSTOM12, wxPoint(0,0),wxSize(600,160));
-	m_pGraph = new HistoryGraph(Panel1,ID_CUSTOM1, wxPoint(0,0),wxSize(600,160));
+	m_pHistogram = new Histogram(Panel1,ID_CUSTOM12, wxPoint(0,0),wxSize(600,160),1,10,0);
+	m_pGraph = new HistoryGraph(Panel1,ID_CUSTOM1, wxPoint(0,0),wxSize(600,160),1,10,0);
 	m_plblTSDF = new wmLabel(this, ID_M_PLBL90, wxEmptyString, wxPoint(146,246), wxSize(109,25), 0, _T("ID_M_PLBL90"));
 	m_plblTSDF->SetBorderState(uiRect::BORDER_NONE);
 	m_plblTSDF->GetUiRect().SetGradient(0);
@@ -73,11 +73,11 @@ pnlQos::pnlQos(wxWindow* parent,const wxString& sGroup, AoIPInfoBuilder* pBuilde
 	m_plblTSDF->SetBackgroundColour(wxColour(255,255,255));
 	wxFont m_plblTSDFFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
 	m_plblTSDF->SetFont(m_plblTSDFFont);
-	m_pbtnCurrentGraph = new wmButton(this, ID_M_PBTN29, wxEmptyString, wxPoint(262,246), wxSize(150,25), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN29"));
+	m_pbtnCurrentGraph = new wmButton(this, ID_M_PBTN29, wxEmptyString, wxPoint(262,246), wxSize(140,25), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN29"));
 	m_pbtnCurrentGraph->SetForegroundColour(wxColour(0,128,0));
 	m_pbtnCurrentGraph->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnCurrentGraph->SetColourSelected(wxColour(wxT("#800000")));
-	m_pbtnGraphType = new wmButton(this, ID_M_PBTN1, _("Line Graph"), wxPoint(413,246), wxSize(60,25), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN1"));
+	m_pbtnGraphType = new wmButton(this, ID_M_PBTN1, _("Line Graph"), wxPoint(403,246), wxSize(70,25), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnGraphType->SetForegroundColour(wxColour(0,128,0));
 	m_pbtnGraphType->SetBackgroundColour(wxColour(255,255,255));
 	m_pbtnGraphType->SetColourSelected(wxColour(wxT("#800000")));
@@ -322,7 +322,7 @@ pnlQos::pnlQos(wxWindow* parent,const wxString& sGroup, AoIPInfoBuilder* pBuilde
 	m_pbtnCurrentGraph->ConnectToSetting(pBuilder->GetSection(), "Graph_"+sGroup, "kBit/s");
 
 	m_pbtnGraphType->SetPopup({"Line Graph", "Bar Chart", "Histogram"});
-	m_pbtnGraphType->ConnectToSetting(pBuilder->GetSection(), "GraphType_"+sGroup, "kBit/s");
+	m_pbtnGraphType->ConnectToSetting(pBuilder->GetSection(), "GraphType_"+sGroup, "Line Graph");
 
 	pBuilder->RegisterForSettingsUpdates(this, "Graph_"+sGroup);
 	pBuilder->RegisterForSettingsUpdates(this, "GraphType_"+sGroup);
@@ -446,7 +446,7 @@ void pnlQos::OnSettingChanged(SettingEvent& event)
 
 void pnlQos::SetAudioData(const timedbuffer* pTimedBuffer)
 {
-	
+
 	double dTimestamp(static_cast<double>(pTimedBuffer->GetTimestamp())/4294967296.0);
     m_pGraph->AddPeak("Timestamp",dTimestamp);
     m_pHistogram->AddPeak("Timestamp",dTimestamp);

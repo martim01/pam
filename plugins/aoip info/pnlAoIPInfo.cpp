@@ -41,6 +41,10 @@ const long pnlAoIPInfo::ID_M_PLBL75 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL77 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL78 = wxNewId();
 const long pnlAoIPInfo::ID_M_PLBL80 = wxNewId();
+const long pnlAoIPInfo::ID_M_PLBL54 = wxNewId();
+const long pnlAoIPInfo::ID_M_PLBL57 = wxNewId();
+const long pnlAoIPInfo::ID_M_PLBL4 = wxNewId();
+const long pnlAoIPInfo::ID_M_PLBL5 = wxNewId();
 const long pnlAoIPInfo::pnlSessionInfo = wxNewId();
 const long pnlAoIPInfo::ID_TEXTCTRL1 = wxNewId();
 const long pnlAoIPInfo::ID_PANEL3 = wxNewId();
@@ -161,30 +165,54 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,AoIPInfoBuilder* pBuilder, wxWindowID 
     m_plblSyncDomain->SetBackgroundColour(wxColour(255,255,255));
     wxFont m_plblSyncDomainFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
     m_plblSyncDomain->SetFont(m_plblSyncDomainFont);
-    m_pLbl40 = new wmLabel(pnlSession, ID_M_PLBL75, _("Audio Subsessions"), wxPoint(5,300), wxSize(144,20), 0, _T("ID_M_PLBL75"));
+    m_pLbl40 = new wmLabel(pnlSession, ID_M_PLBL75, _("Audio Subsessions"), wxPoint(5,260), wxSize(144,20), 0, _T("ID_M_PLBL75"));
     m_pLbl40->SetBorderState(uiRect::BORDER_NONE);
     m_pLbl40->GetUiRect().SetGradient(0);
     m_pLbl40->SetForegroundColour(wxColour(255,255,255));
     m_pLbl40->SetBackgroundColour(wxColour(0,0,255));
-    m_pLbl42 = new wmLabel(pnlSession, ID_M_PLBL77, _("Duplicate Streams"), wxPoint(295,300), wxSize(144,20), 0, _T("ID_M_PLBL77"));
+    m_pLbl42 = new wmLabel(pnlSession, ID_M_PLBL77, _("Duplicate Streams"), wxPoint(150,260), wxSize(144,20), 0, _T("ID_M_PLBL77"));
     m_pLbl42->SetBorderState(uiRect::BORDER_NONE);
     m_pLbl42->GetUiRect().SetGradient(0);
     m_pLbl42->SetForegroundColour(wxColour(255,255,255));
     m_pLbl42->SetBackgroundColour(wxColour(0,0,255));
-    m_plblSubsessionsAudio = new wmLabel(pnlSession, ID_M_PLBL78, wxEmptyString, wxPoint(5,321), wxSize(144,25), 0, _T("ID_M_PLBL78"));
+    m_plblSubsessionsAudio = new wmLabel(pnlSession, ID_M_PLBL78, wxEmptyString, wxPoint(5,281), wxSize(144,25), 0, _T("ID_M_PLBL78"));
     m_plblSubsessionsAudio->SetBorderState(uiRect::BORDER_NONE);
     m_plblSubsessionsAudio->GetUiRect().SetGradient(0);
     m_plblSubsessionsAudio->SetForegroundColour(wxColour(0,128,0));
     m_plblSubsessionsAudio->SetBackgroundColour(wxColour(255,255,255));
     wxFont m_plblSubsessionsAudioFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
     m_plblSubsessionsAudio->SetFont(m_plblSubsessionsAudioFont);
-    m_plblGroups = new wmLabel(pnlSession, ID_M_PLBL80, wxEmptyString, wxPoint(295,321), wxSize(144,25), 0, _T("ID_M_PLBL80"));
+    m_plblGroups = new wmLabel(pnlSession, ID_M_PLBL80, wxEmptyString, wxPoint(150,281), wxSize(144,25), 0, _T("ID_M_PLBL80"));
     m_plblGroups->SetBorderState(uiRect::BORDER_NONE);
     m_plblGroups->GetUiRect().SetGradient(0);
     m_plblGroups->SetForegroundColour(wxColour(0,128,0));
     m_plblGroups->SetBackgroundColour(wxColour(255,255,255));
     wxFont m_plblGroupsFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
     m_plblGroups->SetFont(m_plblGroupsFont);
+    m_pLbl31 = new wmLabel(pnlSession, ID_M_PLBL54, _("Current Timestamp"), wxPoint(5,320), wxSize(160,20), 0, _T("ID_M_PLBL54"));
+    m_pLbl31->SetBorderState(uiRect::BORDER_NONE);
+    m_pLbl31->GetUiRect().SetGradient(0);
+    m_pLbl31->SetForegroundColour(wxColour(255,255,255));
+    m_pLbl31->SetBackgroundColour(wxColour(0,0,255));
+    m_plblCurrentTimestamp = new wmLabel(pnlSession, ID_M_PLBL57, wxEmptyString, wxPoint(5,341), wxSize(160,25), 0, _T("ID_M_PLBL57"));
+    m_plblCurrentTimestamp->SetBorderState(uiRect::BORDER_NONE);
+    m_plblCurrentTimestamp->GetUiRect().SetGradient(0);
+    m_plblCurrentTimestamp->SetForegroundColour(wxColour(0,128,0));
+    m_plblCurrentTimestamp->SetBackgroundColour(wxColour(255,255,255));
+    wxFont m_plblCurrentTimestampFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
+    m_plblCurrentTimestamp->SetFont(m_plblCurrentTimestampFont);
+    m_pLbl2 = new wmLabel(pnlSession, ID_M_PLBL4, _("Display/Playback Time"), wxPoint(166,320), wxSize(167,20), 0, _T("ID_M_PLBL4"));
+    m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
+    m_pLbl2->GetUiRect().SetGradient(0);
+    m_pLbl2->SetForegroundColour(wxColour(255,255,255));
+    m_pLbl2->SetBackgroundColour(wxColour(0,0,255));
+    m_plblTimestampOut = new wmLabel(pnlSession, ID_M_PLBL5, wxEmptyString, wxPoint(166,341), wxSize(167,25), 0, _T("ID_M_PLBL5"));
+    m_plblTimestampOut->SetBorderState(uiRect::BORDER_NONE);
+    m_plblTimestampOut->GetUiRect().SetGradient(0);
+    m_plblTimestampOut->SetForegroundColour(wxColour(0,128,0));
+    m_plblTimestampOut->SetBackgroundColour(wxColour(255,255,255));
+    wxFont m_plblTimestampOutFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
+    m_plblTimestampOut->SetFont(m_plblTimestampOutFont);
     pnlSDP = new wxPanel(m_pswpInfo, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
     pnlSDP->SetBackgroundColour(wxColour(0,0,0));
     m_ptxtSDP = new wxTextCtrl(pnlSDP, ID_TEXTCTRL1, wxEmptyString, wxPoint(5,5), wxSize(590,435), wxTE_MULTILINE|wxTE_READONLY, wxDefaultValidator, _T("ID_TEXTCTRL1"));
@@ -255,6 +283,10 @@ void pnlAoIPInfo::QoSUpdated(qosData* pData)
         {
             itPanel->second->QoSUpdated(pData);
         }
+        else
+        {
+            pmlLog() << "Could not find QoS " << pData->sStream;
+        }
     }
 }
 
@@ -269,31 +301,9 @@ void pnlAoIPInfo::SetAudioData(const timedbuffer* pTimedBuffer)
     {
         pPanel->SetAudioData(pTimedBuffer);
     }
-    /*
-    SetTimestamp(pTimedBuffer->GetTransmissionTime(), m_plblTransmissionTime, false);
-    SetTimestamp(pTimedBuffer->GetTimeVal(), m_plblTimestampIn);
+
     SetTimestamp(pTimedBuffer->GetPlaybackTime(), m_plblTimestampOut);
     m_plblCurrentTimestamp->SetLabel(wxString::Format("%u", pTimedBuffer->GetTimestamp()));
-    ShowLatency(pTimedBuffer);
-
-    m_plblFrameSize->SetLabel(wxString::Format("%u bytes", pTimedBuffer->GetDuration()));
-
-    m_dFrameDuration = static_cast<double>(pTimedBuffer->GetDuration())/static_cast<double>(m_nSampleRate*m_nFrameSize)*1e6;
-
-    m_plblFrameDuration->SetLabel(wxString::Format("%.2f us", m_dFrameDuration));
-
-    m_plblPlaybackQueue->SetLabel(wxString::Format("%u", pTimedBuffer->GetBufferDepth()));
-
-    double dTimestamp(static_cast<double>(pTimedBuffer->GetTimestamp())/4294967296.0);
-    m_pGraph->AddPeak("Timestamp",dTimestamp);//static_cast<double>(pTimedBuffer->GetTimestamp())/2e32);
-    m_pHistogram->AddPeak("Timestamp",dTimestamp);//static_cast<double>(pTimedBuffer->GetTimestamp())/2e32);
-
-    #ifdef PTPMONKEY
-    m_plblTransmissionTime->SetBackgroundColour(wxPtp::Get().IsSyncedToMaster(0) ? *wxWHITE : wxColour(255,180,180));
-    m_plblTimestampIn->SetBackgroundColour(wxPtp::Get().IsSyncedToMaster(0) ? *wxWHITE : wxColour(255,180,180));
-    m_plblLatencyNetwork->SetBackgroundColour(wxPtp::Get().IsSyncedToMaster(0) ? *wxWHITE : wxColour(255,180,180));
-    #endif // PTPMONKEY
-    */
 }
 
 

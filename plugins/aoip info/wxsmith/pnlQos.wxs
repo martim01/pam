@@ -50,7 +50,7 @@
 		<object class="wmButton" name="ID_M_PBTN29" variable="m_pbtnCurrentGraph" member="yes">
 			<button_pressed>#800000</button_pressed>
 			<pos>262,246</pos>
-			<size>150,25</size>
+			<size>140,25</size>
 			<fg>#008000</fg>
 			<bg>#FFFFFF</bg>
 			<style>wmButton::STYLE_NORMAL</style>
@@ -58,8 +58,8 @@
 		<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnGraphType" member="yes">
 			<label>Line Graph</label>
 			<button_pressed>#800000</button_pressed>
-			<pos>413,246</pos>
-			<size>60,25</size>
+			<pos>403,246</pos>
+			<size>70,25</size>
 			<fg>#008000</fg>
 			<bg>#FFFFFF</bg>
 			<style>wmButton::STYLE_NORMAL</style>

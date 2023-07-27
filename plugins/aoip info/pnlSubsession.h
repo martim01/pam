@@ -34,7 +34,8 @@ class pnlSubsession: public wxPanel
 		wmLabel* m_pLbl38;
 		wmLabel* m_pLbl3;
 		wmLabel* m_pLbl43;
-		wmLabel* m_pLbl4;
+		wmLabel* m_plblBuffer;
+		wmLabel* m_plblContribution;
 		wmLabel* m_plblCurrentTimestamp;
 		wmLabel* m_plblFrameDuration;
 		wmLabel* m_plblFrameSize;
@@ -50,7 +51,6 @@ class pnlSubsession: public wxPanel
 		wmLabel* m_plblSubsessionId;
 		wmLabel* m_plblSyncTimestamp;
 		wmLabel* m_plblTimestampIn;
-		wmLabel* m_plblTimestampOut;
 		wmLabel* m_plblTransmissionTime;
 		//*)
 
@@ -78,21 +78,21 @@ class pnlSubsession: public wxPanel
 		static const long ID_M_PLBL52;
 		static const long ID_M_PLBL54;
 		static const long ID_M_PLBL3;
+		static const long ID_M_PLBL4;
 		static const long ID_M_PLBL50;
 		static const long ID_M_PLBL55;
 		static const long ID_M_PLBL57;
+		static const long ID_M_PLBL5;
 		static const long ID_M_PLBL6;
 		static const long ID_M_PLBL51;
 		static const long ID_M_PLBL1;
 		static const long ID_M_PLBL53;
-		static const long ID_M_PLBL4;
 		static const long ID_M_PLBL61;
 		static const long ID_M_PLBL81;
 		static const long ID_M_PLBL82;
 		static const long ID_M_PLBL83;
 		static const long ID_M_PLBL2;
 		static const long ID_M_PLBL56;
-		static const long ID_M_PLBL5;
 		//*)
 
 	private:

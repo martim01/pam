@@ -36,11 +36,14 @@ class pnlAoIPInfo: public wxPanel
 		wmLabel* m_pLbl20;
 		wmLabel* m_pLbl21;
 		wmLabel* m_pLbl24;
+		wmLabel* m_pLbl2;
+		wmLabel* m_pLbl31;
 		wmLabel* m_pLbl32;
 		wmLabel* m_pLbl33;
 		wmLabel* m_pLbl3;
 		wmLabel* m_pLbl40;
 		wmLabel* m_pLbl42;
+		wmLabel* m_plblCurrentTimestamp;
 		wmLabel* m_plblDescription;
 		wmLabel* m_plblGroups;
 		wmLabel* m_plblInput;
@@ -51,6 +54,7 @@ class pnlAoIPInfo: public wxPanel
 		wmLabel* m_plblSyncId;
 		wmLabel* m_plblSyncType;
 		wmLabel* m_plblSyncVersion;
+		wmLabel* m_plblTimestampOut;
 		wmSwitcherPanel* m_pswpInfo;
 		wxPanel* pnlSDP;
 		wxPanel* pnlSession;
@@ -101,6 +105,10 @@ class pnlAoIPInfo: public wxPanel
 		static const long ID_M_PLBL77;
 		static const long ID_M_PLBL78;
 		static const long ID_M_PLBL80;
+		static const long ID_M_PLBL54;
+		static const long ID_M_PLBL57;
+		static const long ID_M_PLBL4;
+		static const long ID_M_PLBL5;
 		static const long pnlSessionInfo;
 		static const long ID_TEXTCTRL1;
 		static const long ID_PANEL3;

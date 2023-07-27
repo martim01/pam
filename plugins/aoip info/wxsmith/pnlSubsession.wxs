@@ -216,10 +216,17 @@
 			<fg>#FFFFFF</fg>
 			<bg>#0000FF</bg>
 		</object>
-		<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
-			<label>Playing Timestamp</label>
-			<pos>428,130</pos>
-			<size>167,20</size>
+		<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl2" member="yes">
+			<label>Buffer Size</label>
+			<pos>400,130</pos>
+			<size>80,20</size>
+			<fg>#FFFFFF</fg>
+			<bg>#0000FF</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl3" member="yes">
+			<label>Frames Used</label>
+			<pos>485,130</pos>
+			<size>110,20</size>
 			<fg>#FFFFFF</fg>
 			<bg>#0000FF</bg>
 		</object>
@@ -260,10 +267,25 @@
 				<face>Consolas</face>
 			</font>
 		</object>
-		<object class="wmLabel" name="ID_M_PLBL6" variable="m_pLbl4" member="yes">
+		<object class="wmLabel" name="ID_M_PLBL5" variable="m_plblBuffer" member="yes">
 			<label></label>
-			<pos>428,151</pos>
-			<size>167,25</size>
+			<pos>400,151</pos>
+			<size>80,25</size>
+			<fg>#008000</fg>
+			<bg>#FFFFFF</bg>
+			<font>
+				<size>10</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Consolas</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL6" variable="m_plblContribution" member="yes">
+			<label></label>
+			<pos>485,151</pos>
+			<size>110,25</size>
 			<fg>#008000</fg>
 			<bg>#FFFFFF</bg>
 			<font>
@@ -301,13 +323,6 @@
 			<label>Network Latency</label>
 			<pos>327,185</pos>
 			<size>100,20</size>
-			<fg>#FFFFFF</fg>
-			<bg>#0000FF</bg>
-		</object>
-		<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl2" member="yes">
-			<label>Display/Playback Time</label>
-			<pos>428,185</pos>
-			<size>167,20</size>
 			<fg>#FFFFFF</fg>
 			<bg>#0000FF</bg>
 		</object>
@@ -375,21 +390,6 @@
 			<pos>327,206</pos>
 			<size>100,25</size>
 			<fg>#9B0000</fg>
-			<bg>#FFFFFF</bg>
-			<font>
-				<size>10</size>
-				<style>normal</style>
-				<weight>bold</weight>
-				<underlined>0</underlined>
-				<family>swiss</family>
-				<face>Consolas</face>
-			</font>
-		</object>
-		<object class="wmLabel" name="ID_M_PLBL5" variable="m_plblTimestampOut" member="yes">
-			<label></label>
-			<pos>428,206</pos>
-			<size>167,25</size>
-			<fg>#008000</fg>
 			<bg>#FFFFFF</bg>
 			<font>
 				<size>10</size>

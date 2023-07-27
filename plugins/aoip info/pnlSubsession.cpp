@@ -32,21 +32,21 @@ const long pnlSubsession::ID_M_PLBL73 = wxNewId();
 const long pnlSubsession::ID_M_PLBL52 = wxNewId();
 const long pnlSubsession::ID_M_PLBL54 = wxNewId();
 const long pnlSubsession::ID_M_PLBL3 = wxNewId();
+const long pnlSubsession::ID_M_PLBL4 = wxNewId();
 const long pnlSubsession::ID_M_PLBL50 = wxNewId();
 const long pnlSubsession::ID_M_PLBL55 = wxNewId();
 const long pnlSubsession::ID_M_PLBL57 = wxNewId();
+const long pnlSubsession::ID_M_PLBL5 = wxNewId();
 const long pnlSubsession::ID_M_PLBL6 = wxNewId();
 const long pnlSubsession::ID_M_PLBL51 = wxNewId();
 const long pnlSubsession::ID_M_PLBL1 = wxNewId();
 const long pnlSubsession::ID_M_PLBL53 = wxNewId();
-const long pnlSubsession::ID_M_PLBL4 = wxNewId();
 const long pnlSubsession::ID_M_PLBL61 = wxNewId();
 const long pnlSubsession::ID_M_PLBL81 = wxNewId();
 const long pnlSubsession::ID_M_PLBL82 = wxNewId();
 const long pnlSubsession::ID_M_PLBL83 = wxNewId();
 const long pnlSubsession::ID_M_PLBL2 = wxNewId();
 const long pnlSubsession::ID_M_PLBL56 = wxNewId();
-const long pnlSubsession::ID_M_PLBL5 = wxNewId();
 //*)
 
 BEGIN_EVENT_TABLE(pnlSubsession,wxPanel)
@@ -178,7 +178,12 @@ m_sub(sub)
 	m_pLbl31->GetUiRect().SetGradient(0);
 	m_pLbl31->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl31->SetBackgroundColour(wxColour(0,0,255));
-	m_pLbl3 = new wmLabel(this, ID_M_PLBL3, _("Playing Timestamp"), wxPoint(428,130), wxSize(167,20), 0, _T("ID_M_PLBL3"));
+	m_pLbl2 = new wmLabel(this, ID_M_PLBL3, _("Buffer Size"), wxPoint(400,130), wxSize(80,20), 0, _T("ID_M_PLBL3"));
+	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl2->GetUiRect().SetGradient(0);
+	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl2->SetBackgroundColour(wxColour(0,0,255));
+	m_pLbl3 = new wmLabel(this, ID_M_PLBL4, _("Frames Used"), wxPoint(485,130), wxSize(110,20), 0, _T("ID_M_PLBL4"));
 	m_pLbl3->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl3->GetUiRect().SetGradient(0);
 	m_pLbl3->SetForegroundColour(wxColour(255,255,255));
@@ -202,13 +207,20 @@ m_sub(sub)
 	m_plblCurrentTimestamp->SetBackgroundColour(wxColour(255,255,255));
 	wxFont m_plblCurrentTimestampFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
 	m_plblCurrentTimestamp->SetFont(m_plblCurrentTimestampFont);
-	m_pLbl4 = new wmLabel(this, ID_M_PLBL6, wxEmptyString, wxPoint(428,151), wxSize(167,25), 0, _T("ID_M_PLBL6"));
-	m_pLbl4->SetBorderState(uiRect::BORDER_NONE);
-	m_pLbl4->GetUiRect().SetGradient(0);
-	m_pLbl4->SetForegroundColour(wxColour(0,128,0));
-	m_pLbl4->SetBackgroundColour(wxColour(255,255,255));
-	wxFont m_pLbl4Font(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
-	m_pLbl4->SetFont(m_pLbl4Font);
+	m_plblBuffer = new wmLabel(this, ID_M_PLBL5, wxEmptyString, wxPoint(400,151), wxSize(80,25), 0, _T("ID_M_PLBL5"));
+	m_plblBuffer->SetBorderState(uiRect::BORDER_NONE);
+	m_plblBuffer->GetUiRect().SetGradient(0);
+	m_plblBuffer->SetForegroundColour(wxColour(0,128,0));
+	m_plblBuffer->SetBackgroundColour(wxColour(255,255,255));
+	wxFont m_plblBufferFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
+	m_plblBuffer->SetFont(m_plblBufferFont);
+	m_plblContribution = new wmLabel(this, ID_M_PLBL6, wxEmptyString, wxPoint(485,151), wxSize(110,25), 0, _T("ID_M_PLBL6"));
+	m_plblContribution->SetBorderState(uiRect::BORDER_NONE);
+	m_plblContribution->GetUiRect().SetGradient(0);
+	m_plblContribution->SetForegroundColour(wxColour(0,128,0));
+	m_plblContribution->SetBackgroundColour(wxColour(255,255,255));
+	wxFont m_plblContributionFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
+	m_plblContribution->SetFont(m_plblContributionFont);
 	m_plblTransmissionTime = new wmLabel(this, ID_M_PLBL51, wxEmptyString, wxPoint(5,206), wxSize(160,25), 0, _T("ID_M_PLBL51"));
 	m_plblTransmissionTime->SetBorderState(uiRect::BORDER_NONE);
 	m_plblTransmissionTime->GetUiRect().SetGradient(0);
@@ -226,11 +238,6 @@ m_sub(sub)
 	m_pLbl30->GetUiRect().SetGradient(0);
 	m_pLbl30->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl30->SetBackgroundColour(wxColour(0,0,255));
-	m_pLbl2 = new wmLabel(this, ID_M_PLBL4, _("Display/Playback Time"), wxPoint(428,185), wxSize(167,20), 0, _T("ID_M_PLBL4"));
-	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
-	m_pLbl2->GetUiRect().SetGradient(0);
-	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
-	m_pLbl2->SetBackgroundColour(wxColour(0,0,255));
 	m_pLbl34 = new wmLabel(this, ID_M_PLBL61, _("Last Frame Size"), wxPoint(5,240), wxSize(144,20), 0, _T("ID_M_PLBL61"));
 	m_pLbl34->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl34->GetUiRect().SetGradient(0);
@@ -269,13 +276,6 @@ m_sub(sub)
 	m_plblLatencyNetwork->SetBackgroundColour(wxColour(255,255,255));
 	wxFont m_plblLatencyNetworkFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
 	m_plblLatencyNetwork->SetFont(m_plblLatencyNetworkFont);
-	m_plblTimestampOut = new wmLabel(this, ID_M_PLBL5, wxEmptyString, wxPoint(428,206), wxSize(167,25), 0, _T("ID_M_PLBL5"));
-	m_plblTimestampOut->SetBorderState(uiRect::BORDER_NONE);
-	m_plblTimestampOut->GetUiRect().SetGradient(0);
-	m_plblTimestampOut->SetForegroundColour(wxColour(0,128,0));
-	m_plblTimestampOut->SetBackgroundColour(wxColour(255,255,255));
-	wxFont m_plblTimestampOutFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
-	m_plblTimestampOut->SetFont(m_plblTimestampOutFont);
 	//*)
 
 
