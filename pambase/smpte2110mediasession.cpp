@@ -212,7 +212,7 @@ Boolean Smpte2110MediaSession::parseSDPAttribute_MaxPTime(char const* sdpLine)
 
 Smpte2110MediaSession::Smpte2110MediaSession(UsageEnvironment& env) : MediaSession(env)
 {
-
+    m_setGroups = {"0"};
 }
 
 

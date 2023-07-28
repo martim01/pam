@@ -160,6 +160,7 @@ void setupNextSubsession(RTSPClient* rtspClient)
         }
         else
         {
+            pmlLog(pml::LOG_DEBUG) << " subsession not in groups " << pSubsession->GetGroup();
             setupNextSubsession(rtspClient); // give up on this subsession; go to the next one
         }
     }

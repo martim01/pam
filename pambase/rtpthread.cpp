@@ -285,7 +285,7 @@ float RtpThread::ConvertFrameBufferToSample(u_int8_t* pFrameBuffer, u_int8_t nBy
     }
     else if(nBytesPerSample == 4)
     {
-        pa
+        
     }
     return static_cast<float>(nSample)/ 2147483648.0;
 }
@@ -312,10 +312,10 @@ void RtpThread::AddFrame(std::shared_ptr<const rtpFrame> pFrame)
     }
     ++itReceived->second;
 
-    if(m_pHandler)
+    if(m_pHandler && itReceived->second%21 == 0)
     {
-        auto pEvent = new RtpFrameEvent(pFrame);
-        wxQueueEvent(m_pHandler, pEvent);
+       auto pEvent = new RtpFrameEvent(pFrame);
+       wxQueueEvent(m_pHandler, pEvent);
     }
     
     HandleFrameAdded();

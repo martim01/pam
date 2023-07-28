@@ -283,7 +283,7 @@ m_sub(sub)
 	m_plblSubsessionId->SetLabel(sub.sId);
     m_plblSessionSource->SetLabel(sub.sSourceAddress);
     m_plblSessionBits->SetLabel(sub.sCodec);
-    m_plblSessionFrequency->SetLabel(wxString::Format("%.1fkHz", sub.nSampleRate/1000.0));
+    m_plblSessionFrequency->SetLabel(wxString::Format("%.1fkHz", static_cast<double>(sub.nSampleRate)/1000.0));
     m_plblSessionChannels->SetLabel(wxString::Format("%u", sub.nChannels));
 
     m_plblSyncTimestamp->SetLabel(wxString::Format("%u", sub.nSyncTimestamp));
@@ -361,13 +361,15 @@ void pnlSubsession::RtpFrame(std::shared_ptr<const rtpFrame> pFrame)
 	{
 		m_plblCurrentTimestamp->SetLabel(wxString::Format("%u", pFrame->nTimestamp));
 
-		m_dDuration = (1e6*static_cast<double>(pFrame->nFrameSize)) / (static_cast<double>(m_sub.nSampleRate* m_sub.nChannels*pFrame->nBytesPerSample));
-		m_plblFrameDuration->SetLabel(wxString::Format(L"%.0f \u03bcs", m_dDuration));
-		m_plblFrameSize->SetLabel(wxString::Format("%lu bytes", pFrame->nFrameSize));
-		
-		SetTimestamp(pFrame->timePresentation, m_plblTimestampIn, false);
-		SetTimestamp(pFrame->timeTransmission, m_plblTransmissionTime, false);
-		ShowLatency(pFrame);
+	m_dDuration = (1e6*static_cast<double>(pFrame->nFrameSize)) / (static_cast<double>(m_sub.nSampleRate* m_sub.nChannels*pFrame->nBytesPerSample));
+	m_plblFrameDuration->SetLabel(wxString::Format(L"%.0f \u03bcs", m_dDuration));
+	m_plblFrameSize->SetLabel(wxString::Format("%lu bytes", pFrame->nFrameSize));
+	
+	
+	
+	SetTimestamp(pFrame->timePresentation, m_plblTimestampIn, false);
+	SetTimestamp(pFrame->timeTransmission, m_plblTransmissionTime, false);
+	ShowLatency(pFrame);
 	}
 }
 

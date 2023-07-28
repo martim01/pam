@@ -86,7 +86,7 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
         }
         else if(strcmp(m_pSubsession->codecName(),"AM824") == 0)
         {
-            nBytesPerSample = 4
+            nBytesPerSample = 4;
         }
         if(nBytesPerSample != 0)
         {
