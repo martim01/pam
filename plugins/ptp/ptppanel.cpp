@@ -1477,4 +1477,9 @@ void ptpPanel::TimeWebsocketMessage()
     }
 }
 
+void ptpPanel::SetDomain(unsigned char nDomain)
+{
+	m_nDomain = nDomain;
+	wxPtp::Get().RunDomain(Settings::Get().Read("AoIP_Settings", "Interface", "eth0"), m_nDomain, Settings::Get().Read("Time", "Ptp_Mode", 0) ? ptpmonkey::Mode::HYBRID : ptpmonkey::Mode::MULTICAST);
+}
 

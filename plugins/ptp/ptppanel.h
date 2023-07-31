@@ -181,6 +181,7 @@ class ptpPanel: public pmPanel
 		**/
 		void OutputChannels(const std::vector<char>& vChannels);
 
+		void SetDomain(unsigned char nDomain);
 	protected:
 
 		//(*Identifiers(ptpPanel)
@@ -294,6 +295,8 @@ class ptpPanel: public pmPanel
 		//*)
 
 		void OnLeftUp(wxMouseEvent& event);
+
+		
 
 	private:
 

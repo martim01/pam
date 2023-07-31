@@ -13,6 +13,7 @@ ptpBuilder::ptpBuilder() : MonitorPluginBuilder()
 {
 
     RegisterForSettingsUpdates(this);
+    Settings::Get().AddHandler(this, "Time", "PTP_Domain");
 
     Connect(wxID_ANY, wxEVT_SETTING_CHANGED, (wxObjectEventFunction)&ptpBuilder::OnSettingChanged);
 
@@ -23,13 +24,13 @@ ptpBuilder::ptpBuilder() : MonitorPluginBuilder()
 
 void ptpBuilder::SetAudioData(const timedbuffer* pBuffer)
 {
-//	m_pMeter->SetAudioData(pBuffer);
+
 }
 
 wxWindow* ptpBuilder::CreateMonitorPanel(wxWindow* pParent)
 {
 
-	m_pMeter = new ptpPanel(pParent, this);
+	m_pMeter = new ptpPanel(pParent, this, Settings::Get().Read("Time", "PTP_Domain", 0));
 	return m_pMeter;
 
 }
@@ -76,6 +77,10 @@ void ptpBuilder::OnSettingChanged(SettingEvent& event)
     else if(event.GetKey() == "reset" && event.GetValue(0l) == 1)
     {
         m_pMeter->ResetStats();
+    }
+    else if(event.GetKey() == "PTP_Domain")
+    {
+        m_pMeter->SetDomain(event.GetValue(0l));
     }
 }
 
