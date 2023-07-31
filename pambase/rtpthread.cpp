@@ -267,8 +267,8 @@ bool RtpThread::DoSIP()
 
 timeval RtpThread::ConvertDoubleToPairTime(double dTime)
 {
-    double dInt, dDec;
-    dDec = modf(dTime, &dInt);
+    double dInt;
+    auto dDec = modf(dTime, &dInt);
     return {static_cast<time_t>(dInt), static_cast<__suseconds_t>(dDec*1000000.0)};
 }
 
@@ -284,8 +284,8 @@ float RtpThread::ConvertFrameBufferToSample(u_int8_t* pFrameBuffer, u_int8_t nBy
         nSample = (static_cast<int>(pFrameBuffer[2]) << 8) | (static_cast<int>(pFrameBuffer[1]) << 16) | (static_cast<int>(pFrameBuffer[0]) << 24);
     }
     else if(nBytesPerSample == 4)
-    {
-        
+    {   //@todo need to check which 3 of the 4 we uses
+        nSample = (static_cast<int>(pFrameBuffer[3]) << 8) | (static_cast<int>(pFrameBuffer[2]) << 16) | (static_cast<int>(pFrameBuffer[1]) << 24);
     }
     return static_cast<float>(nSample)/ 2147483648.0;
 }
@@ -312,7 +312,8 @@ void RtpThread::AddFrame(std::shared_ptr<const rtpFrame> pFrame)
     }
     ++itReceived->second;
 
-    if(m_pHandler && itReceived->second%21 == 0)
+    //send out an rtpframe event 20 times a second...
+    if(m_pHandler && itReceived->second%((14400 / itReceived->second->nFrameSize) == 0)
     {
        auto pEvent = new RtpFrameEvent(pFrame);
        wxQueueEvent(m_pHandler, pEvent);
@@ -604,7 +605,6 @@ void RtpThread::SetQosMeasurementIntervalMS(unsigned long nMilliseconds)
 
 unsigned long RtpThread::GetQosMeasurementIntervalMS()
 {
-    //wxMutexLocker ml(m_mutex);
     return m_nQosMeasurementIntervalMS;
 }
 
@@ -617,12 +617,10 @@ void RtpThread::MasterClockChanged()
         Smpte2110MediaSubsession* subsession = nullptr;
         while ((subsession = dynamic_cast<Smpte2110MediaSubsession*>(iter.next())) != nullptr)
         {
-            Aes67Source* pSource = dynamic_cast<Aes67Source*>(subsession->readSource());
+            auto pSource = dynamic_cast<Aes67Source*>(subsession->readSource());
             if(pSource)
             {
-
                 pSource->WorkoutLastEpoch();
-
             }
         }
     }
