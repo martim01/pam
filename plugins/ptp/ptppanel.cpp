@@ -150,7 +150,7 @@ END_EVENT_TABLE()
 
 ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) : pmPanel(),
     m_pBuilder(pBuilder),
-    m_nDomain(0),
+    m_nDomain(Settings::Get().Read("Time", "PTP_Domain", 0)),
     m_pClock(nullptr),
     m_pLocalClock(nullptr),
     m_mAccuracy({ { ptpAnnounce::ACC_25NS,  "Within 25ns"},
@@ -1208,7 +1208,7 @@ void ptpPanel::OnTimer(wxTimerEvent& event)
     if(m_bRunning == false)
     {
         m_bRunning = true;
-        wxPtp::Get().AddHandler(this);
+        wxPtp::Get().AddHandler(this, Settings::Get().Read("Time", "PTP_Domain", 0));
 
         Connect(wxID_ANY, wxEVT_CLOCK_ADDED,(wxObjectEventFunction)&ptpPanel::OnClockAdded);
         Connect(wxID_ANY, wxEVT_CLOCK_UPDATED,(wxObjectEventFunction)&ptpPanel::OnClockUpdated);
@@ -1500,7 +1500,9 @@ void ptpPanel::SetDomain(unsigned char nDomain)
 {
     if(m_nDomain != nDomain)
     {
-        wxPtp::Get().StopDomain(m_nDomain);
+		wxPtp::Get().RemoveHandler(this, m_nDomain);
+        wxPtp::Get().AddHandler(this, Settings::Get().Read("Time", "PTP_Domain", 0));
+		
         m_nDomain = nDomain;
         m_plblDomain->SetLabel(wxString::Format("Domain: %u", m_nDomain));
 

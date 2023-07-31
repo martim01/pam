@@ -30,7 +30,8 @@ class PAMBASE_IMPEXPORT wxPtp : public wxEvtHandler
         std::map<std::string, std::shared_ptr<ptpmonkey::PtpV2Clock> >::const_iterator GetClocksBegin(unsigned char nDomain) const;
         std::map<std::string, std::shared_ptr<ptpmonkey::PtpV2Clock> >::const_iterator GetClocksEnd(unsigned char nDomain) const;
         void ResetLocalClockStats(unsigned char nDomain);
-        void AddHandler(wxEvtHandler* pHandler);
+        void AddHandler(wxEvtHandler* pHandler, unsigned char nDomain);
+        void RemoveHandler(wxEvtHandler* pHandler, unsigned char nDomain);
 
     private:
         wxPtp();

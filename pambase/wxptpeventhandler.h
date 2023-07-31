@@ -1,5 +1,7 @@
 #pragma once
 #include "ptpeventhander.h"
+#include <map>
+
 namespace ptpmonkey
 {
     class PtpV2Clock;
@@ -8,7 +10,8 @@ namespace ptpmonkey
 class wxPtpEventHandler : public ptpmonkey::PtpEventHandler
 {
     public:
-        void AddHandler(wxEvtHandler* pHandler);
+        void AddHandler(wxEvtHandler* pHandler, unsigned char nDomain);
+        void RemoveHandler(wxEvtHandler* pHandler, unsigned char nDomain);
 
         void ClockAdded(std::shared_ptr<ptpmonkey::PtpV2Clock> pClock) override;
         void ClockUpdated(std::shared_ptr<ptpmonkey::PtpV2Clock> pClock) override;
@@ -24,8 +27,8 @@ class wxPtpEventHandler : public ptpmonkey::PtpEventHandler
         void DelayResponseSent(std::shared_ptr<ptpmonkey::PtpV2Clock> pClock) override;
 
     protected:
-        void NotifyHandlers(wxEventType type, const wxString& sClockId);
-        std::list<wxEvtHandler*> m_lstHandlers;
+        void NotifyHandlers(wxEventType type, const wxString& sClockId, unsigned char nDomain);
+        std::multimap<unsigned char, wxEvtHandler*> m_mmHandlers;
 };
 
 

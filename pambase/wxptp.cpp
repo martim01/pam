@@ -27,75 +27,88 @@ wxDEFINE_EVENT(wxEVT_CLOCK_MSG_DELAY_RESPONSE,wxCommandEvent);
 
 using namespace ptpmonkey;
 
-void wxPtpEventHandler::AddHandler(wxEvtHandler* pHandler)
+void wxPtpEventHandler::AddHandler(wxEvtHandler* pHandler, unsigned char nDomain)
 {
-    m_lstHandlers.push_back(pHandler);
+    m_mmHandlers.insert({nDomain, pHandler});
 }
 
-void wxPtpEventHandler::NotifyHandlers(wxEventType type, const wxString& sClockId)
+void wxPtpEventHandler::RemoveHandler(wxEvtHandler* pHandler, unsigned char nDomain)
 {
-    for(auto pHandler : m_lstHandlers)
+    for(auto itHandler = m_mmHandlers.lower_bound(nDomain); itHandler != m_mmHandlers.upper_bound(nDomain); ++itHandler)
+    {
+        if(itHandler->second == pHandler)
+        {
+            m_mmHandlers.erase(itHandler);
+            break;
+        }
+    }
+}
+
+void wxPtpEventHandler::NotifyHandlers(wxEventType type, const wxString& sClockId, unsigned char nDomain)
+{
+    for(auto itHandler = m_mmHandlers.lower_bound(nDomain); itHandler != m_mmHandlers.upper_bound(nDomain); ++itHandler)
     {
         wxCommandEvent* pEvent = new wxCommandEvent(type);
         pEvent->SetString(sClockId);
-        wxQueueEvent(pHandler, pEvent);
+        pEvent->SetInt(nDomain);
+        wxQueueEvent(itHandler->second, pEvent);
     }
 }
 
 void wxPtpEventHandler::ClockAdded(std::shared_ptr<PtpV2Clock> pClock)
 {
-    NotifyHandlers(wxEVT_CLOCK_ADDED, wxString::FromUTF8(pClock->GetId().c_str()));
+    NotifyHandlers(wxEVT_CLOCK_ADDED, wxString::FromUTF8(pClock->GetId().c_str()), pClock->GetDomain());
 }
 
 void wxPtpEventHandler::ClockUpdated(std::shared_ptr<PtpV2Clock> pClock)
 {
 
-    NotifyHandlers(wxEVT_CLOCK_UPDATED, wxString::FromUTF8(pClock->GetId().c_str()));
+    NotifyHandlers(wxEVT_CLOCK_UPDATED, wxString::FromUTF8(pClock->GetId().c_str()), pClock->GetDomain());
 }
 
 void wxPtpEventHandler::ClockBecomeMaster(std::shared_ptr<PtpV2Clock> pClock)
 {
-    NotifyHandlers(wxEVT_CLOCK_MASTER, wxString::FromUTF8(pClock->GetId().c_str()));
+    NotifyHandlers(wxEVT_CLOCK_MASTER, wxString::FromUTF8(pClock->GetId().c_str()), pClock->GetDomain());
 }
 
 void wxPtpEventHandler::ClockBecomeSlave(std::shared_ptr<PtpV2Clock> pClock)
 {
-    NotifyHandlers(wxEVT_CLOCK_SLAVE, wxString::FromUTF8(pClock->GetId().c_str()));
+    NotifyHandlers(wxEVT_CLOCK_SLAVE, wxString::FromUTF8(pClock->GetId().c_str()), pClock->GetDomain());
 }
 
 void wxPtpEventHandler::ClockRemoved(std::shared_ptr<PtpV2Clock> pClock)
 {
-    NotifyHandlers(wxEVT_CLOCK_REMOVED, wxString::FromUTF8(pClock->GetId().c_str()));
+    NotifyHandlers(wxEVT_CLOCK_REMOVED, wxString::FromUTF8(pClock->GetId().c_str()), pClock->GetDomain());
 }
 
 void wxPtpEventHandler::ClockTimeCalculated(std::shared_ptr<PtpV2Clock> pClock)
 {
-    NotifyHandlers(wxEVT_CLOCK_TIME, wxString::FromUTF8(pClock->GetId().c_str()));
+    NotifyHandlers(wxEVT_CLOCK_TIME, wxString::FromUTF8(pClock->GetId().c_str()), pClock->GetDomain());
 }
 
 void wxPtpEventHandler::AnnounceSent(std::shared_ptr<PtpV2Clock> pClock)
 {
-    NotifyHandlers(wxEVT_CLOCK_MSG_ANNOUNCE, wxString::FromUTF8(pClock->GetId().c_str()));
+    NotifyHandlers(wxEVT_CLOCK_MSG_ANNOUNCE, wxString::FromUTF8(pClock->GetId().c_str()), pClock->GetDomain());
 }
 
 void wxPtpEventHandler::SyncSent(std::shared_ptr<PtpV2Clock> pClock)
 {
-    NotifyHandlers(wxEVT_CLOCK_MSG_SYNC, wxString::FromUTF8(pClock->GetId().c_str()));
+    NotifyHandlers(wxEVT_CLOCK_MSG_SYNC, wxString::FromUTF8(pClock->GetId().c_str()), pClock->GetDomain());
 }
 
 void wxPtpEventHandler::FollowUpSent(std::shared_ptr<PtpV2Clock> pClock)
 {
-    NotifyHandlers(wxEVT_CLOCK_MSG_FOLLOWUP, wxString::FromUTF8(pClock->GetId().c_str()));
+    NotifyHandlers(wxEVT_CLOCK_MSG_FOLLOWUP, wxString::FromUTF8(pClock->GetId().c_str()), pClock->GetDomain());
 }
 
 void wxPtpEventHandler::DelayRequestSent(std::shared_ptr<PtpV2Clock> pClock)
 {
-    NotifyHandlers(wxEVT_CLOCK_MSG_DELAY_REQUEST, wxString::FromUTF8(pClock->GetId().c_str()));
+    NotifyHandlers(wxEVT_CLOCK_MSG_DELAY_REQUEST, wxString::FromUTF8(pClock->GetId().c_str()), pClock->GetDomain());
 }
 
 void wxPtpEventHandler::DelayResponseSent(std::shared_ptr<PtpV2Clock> pClock)
 {
-    NotifyHandlers(wxEVT_CLOCK_MSG_DELAY_RESPONSE, wxString::FromUTF8(pClock->GetId().c_str()));
+    NotifyHandlers(wxEVT_CLOCK_MSG_DELAY_RESPONSE, wxString::FromUTF8(pClock->GetId().c_str()), pClock->GetDomain());
 }
 
 
@@ -140,9 +153,14 @@ void wxPtp::RunDomain(const wxString& sInterface, unsigned char nDomain, ptpmonk
     pmlLog(pml::LOG_TRACE) << "wxPtp::RunDomain = done";
 }
 
-void wxPtp::AddHandler(wxEvtHandler* pHandler)
+void wxPtp::AddHandler(wxEvtHandler* pHandler, unsigned char nDomain)
 {
-    m_pNotifier->AddHandler(pHandler);
+    m_pNotifier->AddHandler(pHandler, nDomain);
+}
+
+void wxPtp::RemoveHandler(wxEvtHandler* pHandler, unsigned char nDomain)
+{
+    m_pNotifier->RemoveHandler(pHandler, nDomain);
 }
 
 void wxPtp::StopDomain(unsigned char nDomain)

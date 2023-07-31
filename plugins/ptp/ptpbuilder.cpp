@@ -30,7 +30,7 @@ void ptpBuilder::SetAudioData(const timedbuffer* pBuffer)
 wxWindow* ptpBuilder::CreateMonitorPanel(wxWindow* pParent)
 {
 
-	m_pMeter = new ptpPanel(pParent, this, Settings::Get().Read("Time", "PTP_Domain", 0));
+	m_pMeter = new ptpPanel(pParent, this);
 	return m_pMeter;
 
 }
