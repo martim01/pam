@@ -313,7 +313,8 @@ void RtpThread::AddFrame(std::shared_ptr<const rtpFrame> pFrame)
     ++itReceived->second;
 
     //send out an rtpframe event 20 times a second...
-    if(m_pHandler && itReceived->second%((14400 / pFrame->nFrameSize) == 0))
+    
+    if(m_pHandler && itReceived->second%(14400 / pFrame->nFrameSize) == 0)
     {
        auto pEvent = new RtpFrameEvent(pFrame);
        wxQueueEvent(m_pHandler, pEvent);

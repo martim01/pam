@@ -57,7 +57,7 @@ private:
 
     double m_dTSDFMax = std::numeric_limits<double>::lowest();
 	double m_dTSDFMin = std::numeric_limits<double>::max();
-    double m_dTSDF = 0;
+    double m_dTSDF = std::numeric_limits<double>::lowest();
 	double m_nTSDFCount = 0;
 	double m_dDelay0 = std::numeric_limits<double>::lowest();
     timeval m_tvDelay0;

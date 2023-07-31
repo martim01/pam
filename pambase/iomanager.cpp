@@ -129,7 +129,7 @@ IOManager::IOManager() :
 
 
     #ifdef PTPMONKEY
-    wxPtp::Get().AddHandler(this);
+    wxPtp::Get().AddHandler(this, Settings::Get().Read("Time", "PTP_Domain", 0));
     Connect(wxID_ANY, wxEVT_CLOCK_MASTER, (wxObjectEventFunction)&IOManager::OnPtpEvent);
     Connect(wxID_ANY, wxEVT_CLOCK_SLAVE, (wxObjectEventFunction)&IOManager::OnPtpEvent);
     wxPtp::Get().RunDomain(std::string(Settings::Get().Read("AoIP_Settings", "Interface", "eth0").mb_str()),

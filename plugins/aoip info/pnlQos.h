@@ -10,6 +10,7 @@
 //*)
 #include "aoipinfobuilder.h"
 #include <memory>
+#include <limits>
 
 struct rtpFrame;
 class SettingEvent;
@@ -130,6 +131,9 @@ class pnlQos: public wxPanel
 
 		double m_dInitialLatency=0.0;
 		unsigned short m_nLatencyCounter = 0;
+
+		double m_dTotalMaxInterPacket = -1.0;
+		double m_dTotalMinInterPacket = std::numeric_limits<double>::max();
 		DECLARE_EVENT_TABLE()
 };
 

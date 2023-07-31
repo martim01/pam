@@ -4,7 +4,7 @@
 #ifdef __WXMSW__
 #include "Ws2tcpip.h"
 #endif
-
+#include "log.h"
 #include "aes67source.h"
 #include "smpte2110mediasession.h"
 
@@ -103,10 +103,10 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
             pFrame->nTimestampDifference = nDifference;
             pFrame->mExt = mExt;
 
-            timeval tvSub;
             int nFramesPerSec = (m_pSubsession->rtpTimestampFrequency()*m_pSubsession->GetChannelGrouping().size()*pFrame->nBytesPerSample)/pFrame->nFrameSize;
-            timersub(&pFrame->timePresentation, &pFrame->timeTransmission, &tvSub);
-            double dTSDF = (static_cast<double>(tvSub.tv_sec)*1000000.0)+tvSub.tv_usec;
+            timersub(&pFrame->timePresentation, &pFrame->timeTransmission, &pFrame->timeLatency);
+           
+            double dTSDF = (static_cast<double>(pFrame->timeLatency.tv_sec)*1000000.0)+pFrame->timeLatency.tv_usec;
 
             if(m_dDelay0 == std::numeric_limits<double>::lowest() || m_nTSDFCount == nFramesPerSec)
             {
@@ -127,7 +127,6 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
                 m_nTSDFCount++;
             }
             pFrame->dTSDF = m_dTSDF;
-            timersub(&(pFrame->timePresentation), &(pFrame->timeTransmission), &pFrame->timeLatency);
             m_pHandler->AddFrame(pFrame);
         }
     }

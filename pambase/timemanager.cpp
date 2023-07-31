@@ -24,7 +24,7 @@ TimeManager::TimeManager() :
     m_nMinSamplSize(10),
     m_nPtpSamples(0)
 {
-    wxPtp::Get().AddHandler(this);
+    wxPtp::Get().AddHandler(this, Settings::Get().Read("Time", "PTP_Domain", 0));
     Bind(wxEVT_CLOCK_TIME, &TimeManager::OnPtpClockSync, this);
     Bind(wxEVT_CLOCK_REMOVED, &TimeManager::OnPtpClockRemoved, this);
 

@@ -10,6 +10,8 @@
 #include "wxptp.h"
 #endif
 
+#include "settings.h"
+
 //(*IdInit(pnlSubsession)
 const long pnlSubsession::ID_M_PLBL39 = wxNewId();
 const long pnlSubsession::ID_M_PLBL42 = wxNewId();
@@ -316,7 +318,7 @@ m_sub(sub)
     {
         m_plblSubSyncId->SetBackgroundColour(wxColour(255,100,100));
     }
-    wxPtp::Get().AddHandler(this);
+    wxPtp::Get().AddHandler(this, Settings::Get().Read("Time", "PTP_Domain", 0));
 
 	Connect(wxID_ANY, wxEVT_CLOCK_MASTER, (wxObjectEventFunction)&pnlSubsession::OnPtpEvent);
 	Connect(wxID_ANY, wxEVT_CLOCK_SLAVE, (wxObjectEventFunction)&pnlSubsession::OnPtpEvent);

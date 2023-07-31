@@ -399,6 +399,13 @@ void RTPReceptionStats::reset() {
   fLastResetExtSeqNumReceived = fHighestExtSeqNumReceived;
 }
 
+
+void RTPReceptionStats::resetMinMax()
+{
+  fMinInterPacketGapUS = 0x7FFFFFFF;
+  fMaxInterPacketGapUS = 0;
+}
+
 Boolean seqNumLT(u_int16_t s1, u_int16_t s2) {
   // a 'less-than' on 16-bit sequence numbers
   int diff = s2-s1;

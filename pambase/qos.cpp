@@ -131,7 +131,6 @@ void qosMeasurementRecord::printQOSData()
         RTPReceptionStats* stats = statsIter.next(True);
         if (stats != NULL)
         {
-            pData->dInter_packet_gap_ms_Now = stats->currentInterPacketGapUS()/1000.0;
             pData->dInter_packet_gap_ms_min = stats->minInterPacketGapUS()/1000.0;
             auto  totalGaps = stats->totalInterPacketGaps();
             auto  totalGapsMS = totalGaps.tv_sec*1000.0 + totalGaps.tv_usec/1000.0;
@@ -139,6 +138,8 @@ void qosMeasurementRecord::printQOSData()
 
             pData->dInter_packet_gap_ms_av = (totNumPacketsReceived == 0 ? 0.0 : totalGapsMS/totNumPacketsReceived);
             pData->dInter_packet_gap_ms_max = stats->maxInterPacketGapUS()/1000.0;
+
+            stats->resetMinMax();   //reset the min and max interpacket gap as we monitor them every second
 
             pData->nBaseExtSeqNum = stats->baseExtSeqNumReceived();
             pData->nLastResetExtSeqNum = stats->lastResetExtSeqNumReceived();

@@ -355,9 +355,12 @@ void pnlQos::QoSUpdated(qosData* pData)
 		m_plblQoSPacketsMin->SetLabel(wxString::Format(wxT("%.3f"), pData->dPacket_loss_fraction_min));
 		m_plblQoSReceived->SetLabel(wxString::Format(wxT("%d"), pData->nTotNumPacketsReceived));
 
-		m_plblQoSInterMin->SetLabel(wxString::Format(wxT("%f ms"), pData->dInter_packet_gap_ms_min));
-		m_plblQoSInterAv->SetLabel(wxString::Format(wxT("%f ms [%f]"), pData->dInter_packet_gap_ms_Now, pData->dInter_packet_gap_ms_av));
-		m_plblQoSInterMax->SetLabel(wxString::Format(wxT("%f ms"), pData->dInter_packet_gap_ms_max));
+		m_plblQoSInterAv->SetLabel(wxString::Format(wxT("%f ms [%f]"), pData->dInter_packet_gap_ms_max, pData->dInter_packet_gap_ms_av));
+
+		m_dTotalMaxInterPacket = std::max(m_dTotalMaxInterPacket, pData->dInter_packet_gap_ms_max);
+		m_dTotalMinInterPacket = std::min(m_dTotalMinInterPacket, pData->dInter_packet_gap_ms_min);
+		m_plblQoSInterMax->SetLabel(wxString::Format(wxT("%f ms"), m_dTotalMaxInterPacket));
+		m_plblQoSInterMin->SetLabel(wxString::Format(wxT("%f ms"), m_dTotalMinInterPacket));
 
 		m_plblQoSJitter->SetLabel(wxString::Format(wxT("%f ms"),pData->dJitter));
 
@@ -389,8 +392,8 @@ void pnlQos::QoSUpdated(qosData* pData)
     m_pGraph->AddPeak(wxT("kBit/s"), pData->dkbits_per_second_Now);
     m_pHistogram->AddPeak(wxT("kBit/s"), pData->dkbits_per_second_Now);
 
-    m_pGraph->AddPeak(wxT("Packet Gap"), pData->dInter_packet_gap_ms_Now);
-    m_pHistogram->AddPeak(wxT("Packet Gap"), pData->dInter_packet_gap_ms_Now);
+    m_pGraph->AddPeak(wxT("Packet Gap"), pData->dInter_packet_gap_ms_max);
+    m_pHistogram->AddPeak(wxT("Packet Gap"), pData->dInter_packet_gap_ms_max);
 
     m_pGraph->AddPeak(wxT("Packet Loss"), pData->dPacket_loss_fraction_av);
     m_pHistogram->AddPeak(wxT("Packet Loss"), pData->dPacket_loss_fraction_av);
@@ -413,6 +416,8 @@ void pnlQos::OnbtnClearClick(wxCommandEvent& event)
 {
     m_pGraph->ClearGraphs();
     m_pHistogram->ClearGraphs();
+	m_dTotalMaxInterPacket = -1.0;
+	m_dTotalMinInterPacket = std::numeric_limits<double>::max();
 }
 
 void pnlQos::ShowGraph(const wxString& sGraph)
