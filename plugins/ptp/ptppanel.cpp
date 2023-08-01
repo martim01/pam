@@ -857,7 +857,7 @@ void ptpPanel::OnLeftUp(wxMouseEvent& event)
 void ptpPanel::OnlstClocksSelected(wxCommandEvent& event)
 {
     m_sSelectedClock = event.GetString();
-    m_pClock = wxPtp::Get().GetPtpClock(m_nDomain, m_sSelectedClock.AfterFirst('\n'));
+    m_pClock = wxPtp::Get().GetPtpClock(m_sSelectedClock.AfterFirst('\n'));
     ShowClockDetails();
 }
 
@@ -1021,7 +1021,7 @@ void ptpPanel::ShowClockDetails()
         m_ppnlSyncFlags->ShowFlags(m_pClock->GetFlags(ptpV2Header::SYNC));
         m_ppnlFollowFlags->ShowFlags(m_pClock->GetFlags(ptpV2Header::FOLLOW_UP));
 
-        m_plblMasterId->SetLabel(wxPtp::Get().GetMasterClockId(m_nDomain));
+        m_plblMasterId->SetLabel(wxPtp::Get().GetMasterClockId());
     }
     else
     {
@@ -1045,7 +1045,7 @@ void ptpPanel::ShowTime()
 {
     if(m_pLocalClock)
     {
-        auto pSyncMaster = wxPtp::Get().GetSyncMasterClock(m_nDomain);
+        auto pSyncMaster = wxPtp::Get().GetSyncMasterClock();
 
         if(pSyncMaster)
         {
@@ -1112,7 +1112,7 @@ void ptpPanel::ShowTime()
 
 void ptpPanel::UpdateGraphLabels()
 {
-    auto pSyncMaster = wxPtp::Get().GetSyncMasterClock(m_nDomain);
+    auto pSyncMaster = wxPtp::Get().GetSyncMasterClock();
     if(pSyncMaster && m_pLocalClock)
     {
 
@@ -1208,7 +1208,7 @@ void ptpPanel::OnTimer(wxTimerEvent& event)
     if(m_bRunning == false)
     {
         m_bRunning = true;
-        wxPtp::Get().AddHandler(this, Settings::Get().Read("Time", "PTP_Domain", 0));
+        wxPtp::Get().AddHandler(this);
 
         Connect(wxID_ANY, wxEVT_CLOCK_ADDED,(wxObjectEventFunction)&ptpPanel::OnClockAdded);
         Connect(wxID_ANY, wxEVT_CLOCK_UPDATED,(wxObjectEventFunction)&ptpPanel::OnClockUpdated);
@@ -1222,12 +1222,12 @@ void ptpPanel::OnTimer(wxTimerEvent& event)
         Connect(wxID_ANY, wxEVT_CLOCK_MSG_DELAY_REQUEST,(wxObjectEventFunction)&ptpPanel::OnClockMessage);
         Connect(wxID_ANY, wxEVT_CLOCK_MSG_DELAY_RESPONSE,(wxObjectEventFunction)&ptpPanel::OnClockMessage);
 
-        wxPtp::Get().RunDomain(Settings::Get().Read("AoIP_Settings", "Interface", "eth0"), m_nDomain, Settings::Get().Read("Time", "Ptp_Mode", 0) ? ptpmonkey::Mode::HYBRID : ptpmonkey::Mode::MULTICAST);
+        wxPtp::Get().Run(Settings::Get().Read("AoIP_Settings", "Interface", "eth0"), m_nDomain, Settings::Get().Read("Time", "Ptp_Mode", 0) ? ptpmonkey::Mode::HYBRID : ptpmonkey::Mode::MULTICAST);
 
 
-        for(auto itClock = wxPtp::Get().GetClocksBegin(m_nDomain); itClock != wxPtp::Get().GetClocksEnd(m_nDomain); ++itClock)
-        {
-            AddClock(wxString(itClock->first));
+        for(const auto& [sClock, pClock] : wxPtp::Get().GetClocks())
+		{
+            AddClock(wxString(sClock));
         }
     }
 }
@@ -1240,14 +1240,14 @@ void ptpPanel::AddClock(wxString sClock)
     {
         wxColour clrNormal(CLR_SLAVE);
         wxColour clrSelected(CLR_SLAVE_SELECTED);
-        if(wxPtp::Get().GetMasterClockId(m_nDomain) == sClock)
+        if(wxPtp::Get().GetMasterClockId() == sClock)
         {
             clrNormal = CLR_MASTER;
             clrSelected = CLR_MASTER_SELECTED;
         }
         else
         {
-            std::shared_ptr<const ptpmonkey::PtpV2Clock> pSyncMaster = wxPtp::Get().GetSyncMasterClock(m_nDomain);
+            std::shared_ptr<const ptpmonkey::PtpV2Clock> pSyncMaster = wxPtp::Get().GetSyncMasterClock();
             if(pSyncMaster && pSyncMaster->GetId() == sClock)
             {
                 clrNormal = CLR_SYNC_MASTER;
@@ -1260,7 +1260,7 @@ void ptpPanel::AddClock(wxString sClock)
     }
     if(m_pLocalClock == nullptr)
     {
-        m_pLocalClock = wxPtp::Get().GetLocalClock(m_nDomain);
+        m_pLocalClock = wxPtp::Get().GetLocalClock();
     }
 }
 
@@ -1339,7 +1339,7 @@ void ptpPanel::ResetStats()
 {
     if(m_pLocalClock)
     {
-        wxPtp::Get().ResetLocalClockStats(m_nDomain);
+        wxPtp::Get().ResetLocalClockStats();
     }
     m_pBuilder->WriteSetting("reset",0);
 }
@@ -1368,15 +1368,15 @@ void ptpPanel::ClockMessageWebsocketMessage(const wxString& sClock)
     {
         Json::Value jsClock;
         jsClock["action"] = "Message";
-        auto pClock = wxPtp::Get().GetPtpClock(m_nDomain, sClock);
+        auto pClock = wxPtp::Get().GetPtpClock(sClock);
         if(pClock)
         {
             jsClock["id"] = pClock->GetClockId();
             jsClock["address"] = pClock->GetIpAddress();
             jsClock["vendor"] = m_dbMac.GetVendor(sClock).ToStdString();
 
-            std::shared_ptr<const ptpmonkey::PtpV2Clock> pSyncMaster = wxPtp::Get().GetSyncMasterClock(m_nDomain);
-            if(wxPtp::Get().GetMasterClockId(m_nDomain) == sClock || (pSyncMaster && pSyncMaster->GetId() == sClock))
+            std::shared_ptr<const ptpmonkey::PtpV2Clock> pSyncMaster = wxPtp::Get().GetSyncMasterClock();
+            if(wxPtp::Get().GetMasterClockId() == sClock || (pSyncMaster && pSyncMaster->GetId() == sClock))
             {
                 jsClock["master"] = true;
                 jsClock["sync"]["count"] = Json::UInt64(pClock->GetCount(ptpV2Header::SYNC));
@@ -1455,7 +1455,7 @@ void ptpPanel::ClockWebsocketMessage(const wxString& sClock, const wxString& sTy
 
 void ptpPanel::TimeWebsocketMessage()
 {
-    auto pSyncMaster = wxPtp::Get().GetSyncMasterClock(m_nDomain);
+    auto pSyncMaster = wxPtp::Get().GetSyncMasterClock();
 
     if(m_pLocalClock && m_pBuilder->WebsocketsActive() && pSyncMaster)
     {
@@ -1500,13 +1500,8 @@ void ptpPanel::SetDomain(unsigned char nDomain)
 {
     if(m_nDomain != nDomain)
     {
-		wxPtp::Get().RemoveHandler(this, m_nDomain);
-        wxPtp::Get().AddHandler(this, Settings::Get().Read("Time", "PTP_Domain", 0));
-		
-        m_nDomain = nDomain;
+	    m_nDomain = nDomain;
         m_plblDomain->SetLabel(wxString::Format("Domain: %u", m_nDomain));
-
-        wxPtp::Get().RunDomain(Settings::Get().Read("AoIP_Settings", "Interface", "eth0"), m_nDomain, Settings::Get().Read("Time", "Ptp_Mode", 0) ? ptpmonkey::Mode::HYBRID : ptpmonkey::Mode::MULTICAST);
     }
 }
 

@@ -38,7 +38,7 @@ char const* AES67RTPSink::auxSDPLine()
         std::stringstream ss;
 
         #ifdef PTPMONKEY
-            ss << "a=ts-refclk:ptp=IEEE1588-2008:" << wxPtp::Get().GetMasterClockId(0).ToStdString() << ":0\r\n";
+            ss << "a=ts-refclk:ptp=IEEE1588-2008:" << wxPtp::Get().GetMasterClockId().ToStdString() << ":0\r\n";
         #else
             ss << "a=ts-refclk:" << "\r\n";
         #endif // PTPMONKEY
@@ -207,7 +207,7 @@ void OnDemandAES67MediaSubsession::FlushQueue()
 //        ss << "a=ptime:" << m_ePacketTime << "\r\n";
 //        ss << "a=maxptime:" << m_ePacketTime << "\r\n";
 //    #ifdef PTPMONKEY
-//        ss << "a=ts-refclk:ptp=IEEE1588-2008:" << wxPtp::Get().GetMasterClockId(0) << ":0\r\n";
+//        ss << "a=ts-refclk:ptp=IEEE1588-2008:" << wxPtp::Get().GetMasterClockId() << ":0\r\n";
 //    #else
 //        ss << "a=ts-refclk:" << "\r\n";
 //    #endif // PTPMONKEY

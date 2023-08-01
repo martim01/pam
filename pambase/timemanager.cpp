@@ -24,7 +24,7 @@ TimeManager::TimeManager() :
     m_nMinSamplSize(10),
     m_nPtpSamples(0)
 {
-    wxPtp::Get().AddHandler(this, Settings::Get().Read("Time", "PTP_Domain", 0));
+    wxPtp::Get().AddHandler(this);
     Bind(wxEVT_CLOCK_TIME, &TimeManager::OnPtpClockSync, this);
     Bind(wxEVT_CLOCK_REMOVED, &TimeManager::OnPtpClockRemoved, this);
 
@@ -108,12 +108,12 @@ bool TimeManager::PtpSyncFrequency()
     {
         m_nPtpSamples++;
 
-        auto pLocal = wxPtp::Get().GetLocalClock(m_nPtpDomain);
+        auto pLocal = wxPtp::Get().GetLocalClock();
         if(pLocal)
         {
             StopCurrentSync();
 
-            auto pMaster = wxPtp::Get().GetSyncMasterClock(m_nPtpDomain);
+            auto pMaster = wxPtp::Get().GetSyncMasterClock();
             auto offset = pLocal->GetOffset(ptpmonkey::PtpV2Clock::CURRENT);//DoubleToTime(dEstimate);
 
             //store the PTP details for use by NMOS etc
@@ -150,7 +150,7 @@ bool TimeManager::PtpSyncFrequency()
                         clock_gettime(CLOCK_REALTIME, &tv);
                         pmlLog() << "PTP: Current time now: " << ctime(&tv.tv_sec);
                     }
-                    wxPtp::Get().ResetLocalClockStats(m_nPtpDomain);
+                    wxPtp::Get().ResetLocalClockStats();
                     m_nPtpSamples = 0;
                     m_bPtpLock = false;
                 }
@@ -182,7 +182,7 @@ bool TimeManager::PtpSyncFrequency()
                         return false;
                     }
 */
-                    wxPtp::Get().ResetLocalClockStats(m_nPtpDomain);
+                    wxPtp::Get().ResetLocalClockStats();
                     m_nPtpSamples = 0;
 
                     std::thread th([this]{
@@ -226,14 +226,14 @@ bool TimeManager::TrySyncToPtp()
 {
     m_nPtpSamples++;
 
-    auto pLocal = wxPtp::Get().GetLocalClock(m_nPtpDomain);
+    auto pLocal = wxPtp::Get().GetLocalClock();
     if(pLocal)
     {
 
 
         StopCurrentSync();
 
-        auto pMaster = wxPtp::Get().GetSyncMasterClock(m_nPtpDomain);
+        auto pMaster = wxPtp::Get().GetSyncMasterClock();
 
         auto offset = pLocal->GetOffset(ptpmonkey::PtpV2Clock::CURRENT);//DoubleToTime(dEstimate);
 
@@ -268,7 +268,7 @@ bool TimeManager::TrySyncToPtp()
                     clock_gettime(CLOCK_REALTIME, &tv);
                     pmlLog() << "PTP: Current time now: " << ctime(&tv.tv_sec);
                 }
-                wxPtp::Get().ResetLocalClockStats(m_nPtpDomain);
+                wxPtp::Get().ResetLocalClockStats();
                 m_nPtpSamples = 0;
                 m_bPtpLock = false;
             }
@@ -301,7 +301,7 @@ bool TimeManager::TrySyncToPtp()
                 pmlLog(pml::LOG_ERROR) << "Failed to set frequency " <<strerror(errno);
                 return false;
             }
-            wxPtp::Get().ResetLocalClockStats(m_nPtpDomain);
+            wxPtp::Get().ResetLocalClockStats();
             m_nPtpSamples = 0;
             m_bPtpLock = false;
             return true;
@@ -463,7 +463,7 @@ std::map<wxString, wxString> TimeManager::GetNtpTracking()
 
 void TimeManager::OnPtpClockRemoved(wxCommandEvent& event)
 {
-    if(wxPtp::Get().GetSyncMasterClock(m_nPtpDomain) == nullptr && m_eCurrentSync == SYNC_PTP)
+    if(wxPtp::Get().GetSyncMasterClock() == nullptr && m_eCurrentSync == SYNC_PTP)
     {
         pmlLog() << "PTP Sync Master disappeared.";
         DoSync();

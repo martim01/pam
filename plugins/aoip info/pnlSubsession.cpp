@@ -310,7 +310,7 @@ m_sub(sub)
     m_plblSubSyncVersion->SetLabel(sub.refClock.sVersion);
     m_plblSubSyncId->SetLabel(sub.refClock.sId);
 #ifdef PTPMONKEY
-    if(m_plblSubSyncId->GetLabel().MakeLower() == wxPtp::Get().GetMasterClockId(0))
+    if(m_plblSubSyncId->GetLabel().MakeLower() == wxPtp::Get().GetMasterClockId())
     {
         m_plblSubSyncId->SetBackgroundColour(wxColour(255,255,255));
     }
@@ -318,7 +318,7 @@ m_sub(sub)
     {
         m_plblSubSyncId->SetBackgroundColour(wxColour(255,100,100));
     }
-    wxPtp::Get().AddHandler(this, Settings::Get().Read("Time", "PTP_Domain", 0));
+    wxPtp::Get().AddHandler(this);
 
 	Connect(wxID_ANY, wxEVT_CLOCK_MASTER, (wxObjectEventFunction)&pnlSubsession::OnPtpEvent);
 	Connect(wxID_ANY, wxEVT_CLOCK_SLAVE, (wxObjectEventFunction)&pnlSubsession::OnPtpEvent);
@@ -341,7 +341,7 @@ pnlSubsession::~pnlSubsession()
 void pnlSubsession::OnPtpEvent(wxCommandEvent& event)
 {
 #ifdef PTPMONKEY
-    if(m_plblSubSyncId->GetLabel().MakeLower() == wxPtp::Get().GetMasterClockId(0))
+    if(m_plblSubSyncId->GetLabel().MakeLower() == wxPtp::Get().GetMasterClockId())
     {
         m_plblSubSyncId->SetBackgroundColour(wxColour(255,255,255));
     }

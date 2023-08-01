@@ -129,10 +129,10 @@ IOManager::IOManager() :
 
 
     #ifdef PTPMONKEY
-    wxPtp::Get().AddHandler(this, Settings::Get().Read("Time", "PTP_Domain", 0));
+    wxPtp::Get().AddHandler(this);
     Connect(wxID_ANY, wxEVT_CLOCK_MASTER, (wxObjectEventFunction)&IOManager::OnPtpEvent);
     Connect(wxID_ANY, wxEVT_CLOCK_SLAVE, (wxObjectEventFunction)&IOManager::OnPtpEvent);
-    wxPtp::Get().RunDomain(std::string(Settings::Get().Read("AoIP_Settings", "Interface", "eth0").mb_str()),
+    wxPtp::Get().Run(std::string(Settings::Get().Read("AoIP_Settings", "Interface", "eth0").mb_str()),
     Settings::Get().Read("Time", "PTP_Domain", 0), Settings::Get().Read("Time", "Ptp_Mode", 0) ? ptpmonkey::Mode::HYBRID : ptpmonkey::Mode::MULTICAST);
     #endif // PTPMONKEY
     m_pGenerator = std::make_unique<Generator>();

@@ -231,7 +231,7 @@ pnlAoIPInfo::pnlAoIPInfo(wxWindow* parent,AoIPInfoBuilder* pBuilder, wxWindowID 
     m_pswpInfo->SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
 
 	#ifdef PTPMONKEY
-	wxPtp::Get().AddHandler(this, Settings::Get().Read("Time", "PTP_Domain", 0));
+	wxPtp::Get().AddHandler(this);
 
 	Connect(wxID_ANY, wxEVT_CLOCK_MASTER, (wxObjectEventFunction)&pnlAoIPInfo::OnPtpEvent);
 	Connect(wxID_ANY, wxEVT_CLOCK_SLAVE, (wxObjectEventFunction)&pnlAoIPInfo::OnPtpEvent);
@@ -329,34 +329,7 @@ void pnlAoIPInfo::SetTimestamp(const timeval& tv, wmLabel* pLabel, bool bDate)
 
 void pnlAoIPInfo::ShowLatency(const timedbuffer* pTimedBuffer)
 {
-    /*
-    double dPlayback = pTimedBuffer->GetPlaybackLatency();
 
-    timeval tvLatency;
-    timersub(&pTimedBuffer->GetTimeVal(), &pTimedBuffer->GetTransmissionTime(), &tvLatency);
-
-    m_dLatency = static_cast<double>(tvLatency.tv_sec)*1000000.0 + static_cast<double>(tvLatency.tv_usec);
-    m_dLatency -= m_dFrameDuration;   //we add the duration on because the transmission time is first sample not last sample of frane
-
-    m_plblLatency->SetLabel(wxString::Format("%.0f us", dPlayback));
-    m_plblLatencyNetwork->SetLabel(wxString::Format("%.0f us", m_dLatency));  //@todo confirm that our latency calculation is back to front - hence the minus sign
-
-    if(m_nInitialLatencyCounter < 3)
-    {
-        m_dInitialLatency = m_dLatency;
-        m_nInitialLatencyCounter++;
-    }
-    m_dSlip = m_dLatency-m_dInitialLatency;
-
-
-    #ifdef PTPMONKEY
-    timeval tv(wxPtp::Get().GetLastPtpOffset(0));
-    timeval tvSet(wxPtp::Get().GetPtpOffset(0));
-    long long int nLast = static_cast<long long int>(tv.tv_sec)*1e6 + static_cast<long long int>(tv.tv_usec);
-    long long int nSet = static_cast<long long int>(tvSet.tv_sec)*1e6 + static_cast<long long int>(tvSet.tv_usec);
-    m_plblEpoch->SetLabel(wxString::Format("%lld us", nLast-nSet));
-    #endif
-    */
 }
 
 
@@ -451,7 +424,7 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
 void pnlAoIPInfo::OnPtpEvent(wxCommandEvent& event)
 {
     #ifdef PTPMONKEY
-    if(m_plblSyncId->GetLabel().MakeLower() == wxPtp::Get().GetMasterClockId(0))
+    if(m_plblSyncId->GetLabel().MakeLower() == wxPtp::Get().GetMasterClockId())
     {
         m_plblSyncId->SetBackgroundColour(wxColour(255,255,255));
     }

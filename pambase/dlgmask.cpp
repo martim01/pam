@@ -79,7 +79,10 @@ dlgMask::~dlgMask()
 
 void dlgMask::OnActivate(wxActivateEvent& event)
 {
-    CaptureMouse();
+    if(!HasCapture())
+    {
+        CaptureMouse();
+    }
 }
 
 void dlgMask::MoveToCorrectPlace(size_t nButtons)

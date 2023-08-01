@@ -27,88 +27,80 @@ wxDEFINE_EVENT(wxEVT_CLOCK_MSG_DELAY_RESPONSE,wxCommandEvent);
 
 using namespace ptpmonkey;
 
-void wxPtpEventHandler::AddHandler(wxEvtHandler* pHandler, unsigned char nDomain)
+void wxPtpEventHandler::AddHandler(wxEvtHandler* pHandler)
 {
-    m_mmHandlers.insert({nDomain, pHandler});
+    m_setHandlers.insert(pHandler);
 }
 
-void wxPtpEventHandler::RemoveHandler(wxEvtHandler* pHandler, unsigned char nDomain)
+void wxPtpEventHandler::RemoveHandler(wxEvtHandler* pHandler)
 {
-    for(auto itHandler = m_mmHandlers.lower_bound(nDomain); itHandler != m_mmHandlers.upper_bound(nDomain); ++itHandler)
-    {
-        if(itHandler->second == pHandler)
-        {
-            m_mmHandlers.erase(itHandler);
-            break;
-        }
-    }
+    m_setHandlers.erase(pHandler);
 }
 
-void wxPtpEventHandler::NotifyHandlers(wxEventType type, const wxString& sClockId, unsigned char nDomain)
+void wxPtpEventHandler::NotifyHandlers(wxEventType type, const wxString& sClockId)
 {
-    for(auto itHandler = m_mmHandlers.lower_bound(nDomain); itHandler != m_mmHandlers.upper_bound(nDomain); ++itHandler)
+    for(auto pHandler : m_setHandlers)
     {
         wxCommandEvent* pEvent = new wxCommandEvent(type);
         pEvent->SetString(sClockId);
-        pEvent->SetInt(nDomain);
-        wxQueueEvent(itHandler->second, pEvent);
+        wxQueueEvent(pHandler, pEvent);
     }
 }
 
 void wxPtpEventHandler::ClockAdded(std::shared_ptr<PtpV2Clock> pClock)
 {
-    NotifyHandlers(wxEVT_CLOCK_ADDED, wxString::FromUTF8(pClock->GetId().c_str()), pClock->GetDomain());
+    NotifyHandlers(wxEVT_CLOCK_ADDED, wxString::FromUTF8(pClock->GetId().c_str()));
 }
 
 void wxPtpEventHandler::ClockUpdated(std::shared_ptr<PtpV2Clock> pClock)
 {
 
-    NotifyHandlers(wxEVT_CLOCK_UPDATED, wxString::FromUTF8(pClock->GetId().c_str()), pClock->GetDomain());
+    NotifyHandlers(wxEVT_CLOCK_UPDATED, wxString::FromUTF8(pClock->GetId().c_str()));
 }
 
 void wxPtpEventHandler::ClockBecomeMaster(std::shared_ptr<PtpV2Clock> pClock)
 {
-    NotifyHandlers(wxEVT_CLOCK_MASTER, wxString::FromUTF8(pClock->GetId().c_str()), pClock->GetDomain());
+    NotifyHandlers(wxEVT_CLOCK_MASTER, wxString::FromUTF8(pClock->GetId().c_str()));
 }
 
 void wxPtpEventHandler::ClockBecomeSlave(std::shared_ptr<PtpV2Clock> pClock)
 {
-    NotifyHandlers(wxEVT_CLOCK_SLAVE, wxString::FromUTF8(pClock->GetId().c_str()), pClock->GetDomain());
+    NotifyHandlers(wxEVT_CLOCK_SLAVE, wxString::FromUTF8(pClock->GetId().c_str()));
 }
 
 void wxPtpEventHandler::ClockRemoved(std::shared_ptr<PtpV2Clock> pClock)
 {
-    NotifyHandlers(wxEVT_CLOCK_REMOVED, wxString::FromUTF8(pClock->GetId().c_str()), pClock->GetDomain());
+    NotifyHandlers(wxEVT_CLOCK_REMOVED, wxString::FromUTF8(pClock->GetId().c_str()));
 }
 
 void wxPtpEventHandler::ClockTimeCalculated(std::shared_ptr<PtpV2Clock> pClock)
 {
-    NotifyHandlers(wxEVT_CLOCK_TIME, wxString::FromUTF8(pClock->GetId().c_str()), pClock->GetDomain());
+    NotifyHandlers(wxEVT_CLOCK_TIME, wxString::FromUTF8(pClock->GetId().c_str()));
 }
 
 void wxPtpEventHandler::AnnounceSent(std::shared_ptr<PtpV2Clock> pClock)
 {
-    NotifyHandlers(wxEVT_CLOCK_MSG_ANNOUNCE, wxString::FromUTF8(pClock->GetId().c_str()), pClock->GetDomain());
+    NotifyHandlers(wxEVT_CLOCK_MSG_ANNOUNCE, wxString::FromUTF8(pClock->GetId().c_str()));
 }
 
 void wxPtpEventHandler::SyncSent(std::shared_ptr<PtpV2Clock> pClock)
 {
-    NotifyHandlers(wxEVT_CLOCK_MSG_SYNC, wxString::FromUTF8(pClock->GetId().c_str()), pClock->GetDomain());
+    NotifyHandlers(wxEVT_CLOCK_MSG_SYNC, wxString::FromUTF8(pClock->GetId().c_str()));
 }
 
 void wxPtpEventHandler::FollowUpSent(std::shared_ptr<PtpV2Clock> pClock)
 {
-    NotifyHandlers(wxEVT_CLOCK_MSG_FOLLOWUP, wxString::FromUTF8(pClock->GetId().c_str()), pClock->GetDomain());
+    NotifyHandlers(wxEVT_CLOCK_MSG_FOLLOWUP, wxString::FromUTF8(pClock->GetId().c_str()));
 }
 
 void wxPtpEventHandler::DelayRequestSent(std::shared_ptr<PtpV2Clock> pClock)
 {
-    NotifyHandlers(wxEVT_CLOCK_MSG_DELAY_REQUEST, wxString::FromUTF8(pClock->GetId().c_str()), pClock->GetDomain());
+    NotifyHandlers(wxEVT_CLOCK_MSG_DELAY_REQUEST, wxString::FromUTF8(pClock->GetId().c_str()));
 }
 
 void wxPtpEventHandler::DelayResponseSent(std::shared_ptr<PtpV2Clock> pClock)
 {
-    NotifyHandlers(wxEVT_CLOCK_MSG_DELAY_RESPONSE, wxString::FromUTF8(pClock->GetId().c_str()), pClock->GetDomain());
+    NotifyHandlers(wxEVT_CLOCK_MSG_DELAY_RESPONSE, wxString::FromUTF8(pClock->GetId().c_str()));
 }
 
 
@@ -125,213 +117,164 @@ wxPtp::wxPtp() : m_pNotifier(std::make_shared<wxPtpEventHandler>())
 {
 }
 
-void wxPtp::RunDomain(const wxString& sInterface, unsigned char nDomain, ptpmonkey::Mode mode)
+void wxPtp::Run(const wxString& sInterface, unsigned char nDomain, ptpmonkey::Mode mode)
 {
-    pmlLog(pml::LOG_TRACE) << "wxPtp::RunDomain";
-    auto itMonkey = m_mDomain.find(nDomain);
-    if(itMonkey == m_mDomain.end())
+    if(m_pMonkey == nullptr || sInterface.ToStdString() != m_interface.Get() || mode != m_pMonkey->GetMode())
     {
-        mode = ptpmonkey::Mode::HYBRID;
-        itMonkey = m_mDomain.insert(std::make_pair(nDomain, std::make_shared<PtpMonkey>(IpInterface(std::string(sInterface.mb_str())), nDomain, 2, mode, ptpmonkey::Rate::EVERY_1_SEC))).first;
-        itMonkey->second->AddEventHandler(m_pNotifier);
-        itMonkey->second->Run();
+        m_interface = IpInterface(sInterface.ToStdString());
 
+        m_pMonkey = std::make_unique<PtpMonkey>(m_interface, nDomain, 2, mode, ptpmonkey::Rate::EVERY_1_SEC);
+        m_pMonkey->AddEventHandler(m_pNotifier);
+        m_pMonkey->Run();
     }
-    else
+    else if(nDomain != m_pMonkey->GetDomain())
     {
-        if(itMonkey->second->GetMode() != mode)
-        {
-            m_mDomain.erase(itMonkey);
-            itMonkey = m_mDomain.insert(std::make_pair(nDomain, std::make_shared<PtpMonkey>(IpInterface(std::string(sInterface.mb_str())), nDomain, 2, mode, ptpmonkey::Rate::EVERY_1_SEC))).first;
-            itMonkey->second->AddEventHandler(m_pNotifier);
-        }
-        else if(itMonkey->second->IsStopped())
-        {
-            itMonkey->second->Restart();
-        }
-    }
-    pmlLog(pml::LOG_TRACE) << "wxPtp::RunDomain = done";
-}
-
-void wxPtp::AddHandler(wxEvtHandler* pHandler, unsigned char nDomain)
-{
-    m_pNotifier->AddHandler(pHandler, nDomain);
-}
-
-void wxPtp::RemoveHandler(wxEvtHandler* pHandler, unsigned char nDomain)
-{
-    m_pNotifier->RemoveHandler(pHandler, nDomain);
-}
-
-void wxPtp::StopDomain(unsigned char nDomain)
-{
-    auto itMonkey = m_mDomain.find(nDomain);
-    if(itMonkey != m_mDomain.end())
-    {
-        itMonkey->second->Stop();
+        m_pMonkey->SetDomain(nDomain);
     }
 }
 
-std::shared_ptr<const PtpV2Clock> wxPtp::GetPtpClock(unsigned char nDomain, const wxString& sClockId)
+void wxPtp::ChangeDomain(unsigned char nDomain)
 {
-    auto itMonkey = m_mDomain.find(nDomain);
-    if(itMonkey != m_mDomain.end())
+    if(m_pMonkey && m_pMonkey->GetDomain() != nDomain)
     {
-        return itMonkey->second->GetClock(std::string(sClockId.mb_str()));
+        m_pMonkey->SetDomain(nDomain);
+    }
+}
+
+void wxPtp::AddHandler(wxEvtHandler* pHandler)
+{
+    m_pNotifier->AddHandler(pHandler);
+}
+
+void wxPtp::RemoveHandler(wxEvtHandler* pHandler)
+{
+    m_pNotifier->RemoveHandler(pHandler);
+}
+
+void wxPtp::Stop()
+{
+    if(m_pMonkey)
+    {
+        m_pMonkey->Stop();
+    }
+}
+
+std::shared_ptr<const PtpV2Clock> wxPtp::GetPtpClock(const wxString& sClockId)
+{
+    if(m_pMonkey)
+    {
+        return m_pMonkey->GetClock(std::string(sClockId.mb_str()));
     }
     return nullptr;
 }
 
-bool wxPtp::IsSyncedToMaster(unsigned char nDomain) const
+bool wxPtp::IsSyncedToMaster() const
 {
-    auto itMonkey = m_mDomain.find(nDomain);
-    return (itMonkey != m_mDomain.end() && itMonkey->second->IsSyncedToMaster());
+    return (m_pMonkey && m_pMonkey->IsSyncedToMaster());
 }
 
-void wxPtp::ResyncToMaster(unsigned char nDomain)
+void wxPtp::ResyncToMaster()
 {
-    auto itMonkey = m_mDomain.find(nDomain);
-    if(itMonkey != m_mDomain.end())
+    if(m_pMonkey)
     {
-        itMonkey->second->ResyncToMaster();
+        m_pMonkey->ResyncToMaster();
     }
 }
 
-wxString wxPtp::GetMasterClockId(unsigned char nDomain)
+wxString wxPtp::GetMasterClockId()
 {
-    auto itMonkey = m_mDomain.find(nDomain);
-    if(itMonkey != m_mDomain.end())
+    if(m_pMonkey)
     {
-        return wxString::FromUTF8(itMonkey->second->GetMasterClockId().c_str());
+        return wxString::FromUTF8(m_pMonkey->GetMasterClockId().c_str());
     }
     return wxEmptyString;
 }
 
-std::shared_ptr<const PtpV2Clock> wxPtp::GetSyncMasterClock(unsigned char nDomain)
+std::shared_ptr<const PtpV2Clock> wxPtp::GetSyncMasterClock()
 {
-    auto itMonkey = m_mDomain.find(nDomain);
-    if(itMonkey != m_mDomain.end())
+    if(m_pMonkey)
     {
-        return itMonkey->second->GetSyncMasterClock();
+        return m_pMonkey->GetSyncMasterClock();
     }
     return nullptr;
 }
 
-std::shared_ptr<const PtpV2Clock> wxPtp::GetLocalClock(unsigned char nDomain)
+std::shared_ptr<const PtpV2Clock> wxPtp::GetLocalClock()
 {
-    auto itMonkey = m_mDomain.find(nDomain);
-    if(itMonkey != m_mDomain.end())
+    if(m_pMonkey)
     {
-        return itMonkey->second->GetLocalClock();
+        return m_pMonkey->GetLocalClock();
     }
     return nullptr;
 }
 
-void wxPtp::ResetLocalClockStats(unsigned char nDomain)
+void wxPtp::ResetLocalClockStats()
 {
-    auto itMonkey = m_mDomain.find(nDomain);
-    if(itMonkey != m_mDomain.end())
+    if(m_pMonkey)
     {
-        itMonkey->second->ResetLocalClockStats();
+        m_pMonkey->ResetLocalClockStats();
     }
 }
 
-timeval wxPtp::GetPtpTime(unsigned char nDomain)
+timeval wxPtp::GetPtpTime()
 {
-    timeval tv;
-    auto itMonkey = m_mDomain.find(nDomain);
-    if(itMonkey != m_mDomain.end())
+    if(m_pMonkey)
     {
-        std::pair<std::chrono::seconds, std::chrono::nanoseconds> ptpTime = Split(itMonkey->second->GetPtpTime());
+        timeval tv;
+        std::pair<std::chrono::seconds, std::chrono::nanoseconds> ptpTime = Split(m_pMonkey->GetPtpTime());
         tv.tv_sec = ptpTime.first.count();
         tv.tv_usec =ptpTime.second.count()/1000;
         return tv;
     }
-    else
-    {
-        gettimeofday(&tv, nullptr);
-        return tv;
-    }
+    return {0,0};
+    
 }
 
-timespec wxPtp::GetPtpTimeSpec(unsigned char nDomain)
+timespec wxPtp::GetPtpTimeSpec()
 {
-    timespec ts{0,0};
-    auto itMonkey = m_mDomain.find(nDomain);
-    if(itMonkey != m_mDomain.end())
+    if(m_pMonkey)
     {
-
-        std::pair<std::chrono::seconds, std::chrono::nanoseconds> ptpTime = Split(itMonkey->second->GetPtpTime());
+        timespec ts{0,0};
+        std::pair<std::chrono::seconds, std::chrono::nanoseconds> ptpTime = Split(m_pMonkey->GetPtpTime());
         ts.tv_sec = ptpTime.first.count();
         ts.tv_nsec = ptpTime.second.count();
+        return ts;
     }
-    return ts;
-
+    return {0,0};
 }
 
-std::map<std::string, std::shared_ptr<PtpV2Clock> >::const_iterator wxPtp::GetClocksBegin(unsigned char nDomain) const
+const std::map<std::string, std::shared_ptr<PtpV2Clock> >& wxPtp::GetClocks() const
 {
-    auto itMonkey = m_mDomain.find(nDomain);
-    if(itMonkey != m_mDomain.end())
+    if(m_pMonkey)
     {
-        return itMonkey->second->GetClocksBegin();
+        return m_pMonkey->GetClocks();
     }
-    else
-    {
-        return m_mEmpty.end();
-    }
+    return m_mEmpty;
 }
 
-std::map<std::string, std::shared_ptr<PtpV2Clock> >::const_iterator wxPtp::GetClocksEnd(unsigned char nDomain) const
+timeval wxPtp::GetPtpOffset()
 {
-    auto itMonkey = m_mDomain.find(nDomain);
-    if(itMonkey != m_mDomain.end())
+    if(m_pMonkey)
     {
-        return itMonkey->second->GetClocksEnd();
-    }
-    else
-    {
-        return m_mEmpty.end();
-    }
-}
-
-timeval wxPtp::GetPtpOffset(unsigned char nDomain)
-{
-    timeval tv;
-    auto itMonkey = m_mDomain.find(nDomain);
-    if(itMonkey != m_mDomain.end())
-    {
-
-        std::pair<std::chrono::seconds, std::chrono::nanoseconds> ptpTime = Split(itMonkey->second->GetPtpOffset());
+        timeval tv;
+        std::pair<std::chrono::seconds, std::chrono::nanoseconds> ptpTime = Split(m_pMonkey->GetPtpOffset());
         tv.tv_sec = ptpTime.first.count();
         tv.tv_usec = ptpTime.second.count()/1000;
         return tv;
     }
-    else
-    {
-        tv.tv_sec = 0;
-        tv.tv_usec = 0;
-        return tv;
-    }
+    return {0,0};
 }
 
-timeval wxPtp::GetLastPtpOffset(unsigned char nDomain)
+timeval wxPtp::GetLastPtpOffset()
 {
-    timeval tv;
-    auto itMonkey = m_mDomain.find(nDomain);
-    if(itMonkey != m_mDomain.end())
+    if(m_pMonkey)
     {
-
-        std::pair<std::chrono::seconds, std::chrono::nanoseconds> ptpTime = Split(itMonkey->second->GetPtpOffset());
+        timeval tv;
+        std::pair<std::chrono::seconds, std::chrono::nanoseconds> ptpTime = Split(m_pMonkey->GetPtpOffset());
         tv.tv_sec = ptpTime.first.count();
         tv.tv_usec = ptpTime.second.count()/1000;
         return tv;
     }
-    else
-    {
-        tv.tv_sec = 0;
-        tv.tv_usec = 0;
-        return tv;
-    }
+    return {0,0};
 }
 

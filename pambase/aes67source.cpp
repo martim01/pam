@@ -34,7 +34,7 @@ Aes67Source
   m_nSyncTimestamp(nSync)
   {
       #ifdef PTPMONKEY
-      wxPtp::Get().ResyncToMaster(0);
+      wxPtp::Get().ResyncToMaster();
       #endif // PTPMONKEY
       WorkoutLastEpoch();
   }

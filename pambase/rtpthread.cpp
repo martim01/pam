@@ -550,7 +550,7 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
         #ifdef PTPMONKEY
         if(pSubsession->GetRefClock().sType.CmpNoCase("PTP") == 0)
         {
-            wxPtp::Get().RunDomain(std::string(m_sReceivingInterface.mb_str()), pSubsession->GetRefClock().nDomain, Settings::Get().Read("Time", "Ptp_Mode", 0) ? ptpmonkey::Mode::HYBRID : ptpmonkey::Mode::MULTICAST);
+            wxPtp::Get().Run(std::string(m_sReceivingInterface.mb_str()), pSubsession->GetRefClock().nDomain, Settings::Get().Read("Time", "Ptp_Mode", 0) ? ptpmonkey::Mode::HYBRID : ptpmonkey::Mode::MULTICAST);
         }
         #endif // PTPMONKEY
 

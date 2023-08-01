@@ -131,7 +131,10 @@ void wmListAdv::OnSize(wxSizeEvent& event)
 
 void wmListAdv::OnLeftDown(wxMouseEvent& event)
 {
-    CaptureMouse();
+    if(!HasCapture())
+    {
+        CaptureMouse();
+    }
     m_nScrolling = SCROLL_NONE;
     m_timerScroll.Stop();
     m_bDownInWindow = true;
