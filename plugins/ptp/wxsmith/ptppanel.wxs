@@ -20,11 +20,26 @@
 						<style>wmList::STYLE_SELECT</style>
 						<handler function="OnlstClocksSelected" entry="EVT_LIST_SELECTED" />
 					</object>
+					<object class="wmLabel" name="ID_M_PLBL79" variable="m_plblDomain" member="yes">
+						<label>Domain:</label>
+						<gradient>wxWEST</gradient>
+						<pos>5,5</pos>
+						<size>280,25</size>
+						<fg>#FFFFFF</fg>
+						<bg>#8080C0</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+						</font>
+					</object>
 					<object class="wmLabel" name="ID_M_PLBL1" variable="m_ptitleIdentity" member="yes">
 						<label>Port Identitiy</label>
 						<border>uiRect::BORDER_FLAT</border>
 						<gradient>wxWEST</gradient>
-						<pos>5,5</pos>
+						<pos>5,35</pos>
 						<size>100,25</size>
 						<fg>#FFFFFF</fg>
 						<bg>#5C7AE0</bg>
@@ -32,7 +47,7 @@
 					<object class="wmLabel" name="ID_M_PLBL2" variable="m_ptitleAddress" member="yes">
 						<label>Address</label>
 						<gradient>wxWEST</gradient>
-						<pos>5,35</pos>
+						<pos>5,65</pos>
 						<size>100,25</size>
 						<fg>#FFFFFF</fg>
 						<bg>#5C7AE0</bg>
@@ -40,7 +55,7 @@
 					<object class="wmLabel" name="ID_M_PLBL3" variable="m_ptitleState" member="yes">
 						<label>State</label>
 						<gradient>wxWEST</gradient>
-						<pos>5,65</pos>
+						<pos>5,95</pos>
 						<size>100,25</size>
 						<fg>#FFFFFF</fg>
 						<bg>#5C7AE0</bg>
@@ -48,7 +63,7 @@
 					<object class="wmLabel" name="ID_M_PLBL12" variable="m_plblIdentity" member="yes">
 						<label></label>
 						<border>uiRect::BORDER_DOWN</border>
-						<pos>105,5</pos>
+						<pos>105,35</pos>
 						<size>180,25</size>
 						<fg>#000000</fg>
 						<bg>#FFFFFF</bg>
@@ -56,7 +71,7 @@
 					<object class="wmLabel" name="ID_M_PLBL13" variable="m_pblAddress" member="yes">
 						<label></label>
 						<border>uiRect::BORDER_DOWN</border>
-						<pos>105,35</pos>
+						<pos>105,65</pos>
 						<size>180,25</size>
 						<fg>#000000</fg>
 						<bg>#FFFFFF</bg>
@@ -64,13 +79,13 @@
 					<object class="wmLabel" name="ID_M_PLBL14" variable="m_plblState" member="yes">
 						<label></label>
 						<border>uiRect::BORDER_DOWN</border>
-						<pos>105,65</pos>
+						<pos>105,95</pos>
 						<size>180,25</size>
 						<fg>#000000</fg>
 						<bg>#FFFFFF</bg>
 					</object>
 					<object class="wxPanel" name="ID_PANEL1" variable="m_ppnlAnnouncements" member="yes">
-						<pos>5,95</pos>
+						<pos>5,140</pos>
 						<size>280,275</size>
 						<bg>#000000</bg>
 						<object class="wmLabel" name="ID_M_PLBL30" variable="m_ptitleAnnouncements" member="yes">

@@ -86,6 +86,7 @@ class ptpPanel: public pmPanel
 		wmLabel* m_plblDelayRange;
 		wmLabel* m_plblDelayRate;
 		wmLabel* m_plblDeviation;
+		wmLabel* m_plblDomain;
 		wmLabel* m_plblFollowCount;
 		wmLabel* m_plblFollowRate;
 		wmLabel* m_plblGraphTitle;
@@ -186,6 +187,7 @@ class ptpPanel: public pmPanel
 
 		//(*Identifiers(ptpPanel)
 		static const long ID_M_PLST1;
+		static const long ID_M_PLBL79;
 		static const long ID_M_PLBL1;
 		static const long ID_M_PLBL2;
 		static const long ID_M_PLBL3;
