@@ -364,12 +364,8 @@ class ptpPanel: public pmPanel
         double m_offset;
         wxString m_sGraph;
 
-        static const wxColour CLR_MASTER;
-        static const wxColour CLR_MASTER_SELECTED;
-        static const wxColour CLR_SYNC_MASTER;
-        static const wxColour CLR_SYNC_MASTER_SELECTED;
-        static const wxColour CLR_SLAVE;
-        static const wxColour CLR_SLAVE_SELECTED;
+        static const wxColour CLR_CLOCK;
+        static const wxColour CLR_CLOCK_SELECTED;
 
 		DECLARE_EVENT_TABLE()
 };

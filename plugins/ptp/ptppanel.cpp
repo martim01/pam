@@ -18,6 +18,10 @@
 #include <wx/string.h>
 //*)
 
+#include "syncmaster.xpm"
+#include "grandmaster.xpm"
+#include "slave.xpm"
+
 //(*IdInit(ptpPanel)
 const long ptpPanel::ID_M_PLBL80 = wxNewId();
 const long ptpPanel::ID_M_PLST1 = wxNewId();
@@ -132,12 +136,8 @@ const long ptpPanel::ID_PANEL16 = wxNewId();
 const long ptpPanel::ID_M_PSWP2 = wxNewId();
 //*)
 
-const wxColour ptpPanel::CLR_MASTER           = wxColour(50,128,50);
-const wxColour ptpPanel::CLR_MASTER_SELECTED  = wxColour(150,228,150);
-const wxColour ptpPanel::CLR_SYNC_MASTER           = wxColour(50,50,128);
-const wxColour ptpPanel::CLR_SYNC_MASTER_SELECTED  = wxColour(150,150,228);
-const wxColour ptpPanel::CLR_SLAVE            = wxColour(50,50,50);
-const wxColour ptpPanel::CLR_SLAVE_SELECTED   = wxColour(150,150,150);
+const wxColour ptpPanel::CLR_CLOCK            = wxColour(50,50,150);
+const wxColour ptpPanel::CLR_CLOCK_SELECTED   = wxColour(150,150,250);
 
 
 using namespace ptpmonkey;
@@ -780,7 +780,7 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 
 	m_offset = 0.0;
 
-
+	m_plstClocks->SetBitmapAlign(wxALIGN_TOP | wxALIGN_RIGHT);
 
 	m_timer.SetOwner(this, wxNewId());
 	Connect(m_timer.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&ptpPanel::OnTimer);
@@ -942,8 +942,15 @@ void ptpPanel::OnClockMaster(wxCommandEvent& event)
     size_t nButton = m_plstClocks->FindButton(sClock);
     if(nButton != wmList::NOT_FOUND)
     {
-        m_plstClocks->SetButtonColour(nButton, CLR_MASTER);
-        m_plstClocks->SetSelectedButtonColour(nButton, CLR_MASTER_SELECTED);
+		auto pSyncMaster = wxPtp::Get().GetSyncMasterClock();
+		if(pSyncMaster && pSyncMaster->GetId() == sClock)
+		{
+			m_plstClocks->SetButtonBitmap(nButton, wxBitmap(syncmaster_xpm));
+		}
+		else
+		{
+			m_plstClocks->SetButtonBitmap(nButton, wxBitmap(grandmaster_xpm));
+		}
     }
     ClockWebsocketMessage(event.GetString(), "Master");
 }
@@ -960,8 +967,7 @@ void ptpPanel::OnClockSlave(wxCommandEvent& event)
     size_t nButton = m_plstClocks->FindButton(sClock);
     if(nButton != wmList::NOT_FOUND)
     {
-        m_plstClocks->SetButtonColour(nButton, CLR_SLAVE);
-        m_plstClocks->SetSelectedButtonColour(nButton, CLR_SLAVE_SELECTED);
+        m_plstClocks->SetButtonBitmap(nButton, wxBitmap(slave_xpm));
     }
     ClockWebsocketMessage(event.GetString(), "Slave");
 }
@@ -980,31 +986,24 @@ void ptpPanel::ShowClockDetails()
 
     m_pswp->ChangeSelection(m_pClock->IsSyncMaster() ? "Master" : "Slave");
 
-    wxColour clrNormal(CLR_SLAVE);
-    wxColour clrSelected(CLR_SLAVE_SELECTED);
-    if(m_pClock->IsGrandMaster())
-    {
-        m_plblState->SetLabel("Grand Master");
-        clrNormal = CLR_MASTER;
-        clrSelected = CLR_MASTER_SELECTED;
-    }
-    else if(m_pClock->IsSyncMaster())
-    {
-        m_plblState->SetLabel("Sync Master");
-        clrNormal = CLR_SYNC_MASTER;
-        clrSelected = CLR_SYNC_MASTER_SELECTED;
-    }
-    else
-    {
-        m_plblState->SetLabel("Slave");
-    }
-
-    size_t nButton = m_plstClocks->FindButton(m_sSelectedClock);
-
-    if(nButton != wmList::NOT_FOUND)
-    {
-        m_plstClocks->SetButtonColour(nButton, clrNormal);
-        m_plstClocks->SetSelectedButtonColour(nButton, clrSelected);
+	size_t nButton = m_plstClocks->FindButton(m_sSelectedClock);
+	if(nButton != wmList::NOT_FOUND)
+	{
+		if(m_pClock->IsGrandMaster())
+		{
+			m_plblState->SetLabel("Grand Master");
+			m_plstClocks->SetButtonBitmap(nButton, wxBitmap(grandmaster_xpm));		
+		}
+		else if(m_pClock->IsSyncMaster())
+		{
+			m_plblState->SetLabel("Sync Master");
+			m_plstClocks->SetButtonBitmap(nButton, wxBitmap(syncmaster_xpm));
+		}
+		else
+		{
+			m_plblState->SetLabel("Slave");
+			m_plstClocks->SetButtonBitmap(nButton, wxBitmap(slave_xpm));
+		}
     }
 
 
@@ -1270,24 +1269,21 @@ void ptpPanel::AddClock(wxString sClock)
 
     if(m_plstClocks->FindButton(sClock) == wmList::NOT_FOUND)
     {
-        wxColour clrNormal(CLR_SLAVE);
-        wxColour clrSelected(CLR_SLAVE_SELECTED);
+		wxBitmap bmp(slave_xpm);
         if(wxPtp::Get().GetMasterClockId() == sClock)
         {
-            clrNormal = CLR_MASTER;
-            clrSelected = CLR_MASTER_SELECTED;
+			bmp = wxBitmap(grandmaster_xpm);
         }
         else
         {
-            std::shared_ptr<const ptpmonkey::PtpV2Clock> pSyncMaster = wxPtp::Get().GetSyncMasterClock();
+            auto pSyncMaster = wxPtp::Get().GetSyncMasterClock();
             if(pSyncMaster && pSyncMaster->GetId() == sClock)
             {
-                clrNormal = CLR_SYNC_MASTER;
-                clrSelected = CLR_SYNC_MASTER_SELECTED;
+                bmp = wxBitmap(syncmaster_xpm);
             }
         }
-        size_t nButton = m_plstClocks->AddButton(sClock, wxNullBitmap, 0, wmList::wmENABLED, clrNormal);
-        m_plstClocks->SetSelectedButtonColour(nButton, clrSelected);
+        size_t nButton = m_plstClocks->AddButton(sClock, bmp, 0, wmList::wmENABLED, CLR_CLOCK);
+        m_plstClocks->SetSelectedButtonColour(nButton, CLR_CLOCK_SELECTED);
 
     }
     if(m_pLocalClock == nullptr)
@@ -1301,7 +1297,6 @@ void ptpPanel::OnClockMessage(wxCommandEvent& event)
     wxString sClock(m_dbMac.GetVendor(event.GetString())+event.GetString());
     if(sClock == m_sSelectedClock)
     {
-
         ShowClockDetails();
     }
     ClockMessageWebsocketMessage(event.GetString());
