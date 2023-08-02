@@ -7,8 +7,8 @@
 		<size_arg>1</size_arg>
 		<object class="wmSwitcherPanel" name="ID_M_PSWP1" variable="m_pswpSettings" member="yes">
 			<pagename>Button</pagename>
-			<pos>0,110</pos>
-			<size>600,330</size>
+			<pos>0,125</pos>
+			<size>600,315</size>
 			<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
 			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL1" variable="m_ppnlNTP" member="yes">
@@ -23,7 +23,7 @@
 						<button_disabled>#808080</button_disabled>
 						<items />
 						<pos>0,10</pos>
-						<size>600,240</size>
+						<size>600,220</size>
 						<bg>#000000</bg>
 						<style>wmList::STYLE_SELECT</style>
 						<handler function="OnlstNTPServersSelected" entry="EVT_LIST_SELECTED" />
@@ -31,14 +31,14 @@
 					<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnNtpServerAdd" member="yes">
 						<label>Add Server</label>
 						<button_disabled>#808080</button_disabled>
-						<pos>70,250</pos>
+						<pos>70,235</pos>
 						<size>100,40</size>
 						<handler function="OnbtnNtpServerAddClick" entry="EVT_BUTTON" />
 					</object>
 					<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnNtpServerEdit" member="yes">
 						<label>Edit Server</label>
 						<button_disabled>#808080</button_disabled>
-						<pos>180,250</pos>
+						<pos>180,235</pos>
 						<size>100,40</size>
 						<enabled>0</enabled>
 						<handler function="OnbtnNtpServerEditClick" entry="EVT_BUTTON" />
@@ -46,7 +46,7 @@
 					<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnNtpServerDelete" member="yes">
 						<label>Delete Server</label>
 						<button_disabled>#808080</button_disabled>
-						<pos>290,250</pos>
+						<pos>290,235</pos>
 						<size>100,40</size>
 						<enabled>0</enabled>
 						<handler function="OnbtnNtpServerDeleteClick" entry="EVT_BUTTON" />
@@ -54,7 +54,7 @@
 					<object class="wmButton" name="ID_M_PBTN6" variable="m_pbtnNTPServerDeleteAll" member="yes">
 						<label>Delete All</label>
 						<button_disabled>#808080</button_disabled>
-						<pos>400,250</pos>
+						<pos>400,235</pos>
 						<size>100,40</size>
 						<handler function="OnbtnNTPServerDeleteAllClick" entry="EVT_BUTTON" />
 					</object>
@@ -106,6 +106,18 @@
 						<bg>#008040</bg>
 						<handler function="OnbtnNtpServerAddClick" entry="EVT_BUTTON" />
 					</object>
+					<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnPtpMode" member="yes">
+						<label>Mode</label>
+						<button_disabled>#808080</button_disabled>
+						<toggle_look>1</toggle_look>
+						<toggle_left>Multicast</toggle_left>
+						<toggle_right>Hybrid</toggle_right>
+						<toggle_percent>35</toggle_percent>
+						<pos>350,110</pos>
+						<size>200,40</size>
+						<bg>#008040</bg>
+						<handler function="OnbtnNtpServerAddClick" entry="EVT_BUTTON" />
+					</object>
 				</object>
 				<label>PTP Domain</label>
 			</object>
@@ -144,25 +156,56 @@
 				<label>LTC Settings</label>
 			</object>
 		</object>
+		<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
+			<label>Sync To:</label>
+			<pos>10,10</pos>
+			<size>100,40</size>
+			<fg>#FFFFFF</fg>
+			<bg>#8080FF</bg>
+			<font>
+				<size>10</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+		</object>
 		<object class="wmList" name="ID_M_PLST3" variable="m_plstSync" member="yes">
 			<scrolling>None</scrolling>
 			<columns>4</columns>
 			<button>#00006A</button>
 			<button_selected>#FF8000</button_selected>
 			<items />
-			<pos>10,10</pos>
-			<size>580,45</size>
+			<pos>110,10</pos>
+			<size>480,40</size>
 			<bg>#000000</bg>
 			<style>wmList::STYLE_SELECT</style>
 			<handler function="OnlstSyncSelected" entry="EVT_LIST_SELECTED" />
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL1" variable="m_plblTime" member="yes">
 			<label>2021-12-12 12:22:30</label>
-			<pos>100,60</pos>
+			<pos>100,50</pos>
 			<size>400,40</size>
 			<fg>#008000</fg>
 			<font>
 				<size>16</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Tahoma</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
+			<label>Settings</label>
+			<border>uiRect::BORDER_FLAT</border>
+			<pos>10,90</pos>
+			<size>580,30</size>
+			<fg>#FFFFFF</fg>
+			<bg>#004040</bg>
+			<font>
+				<size>10</size>
 				<style>normal</style>
 				<weight>bold</weight>
 				<underlined>0</underlined>

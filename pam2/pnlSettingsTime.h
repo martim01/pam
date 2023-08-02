@@ -25,10 +25,13 @@ class pnlSettingsTime: public wxPanel
 		wmButton* m_pbtnNtpServerAdd;
 		wmButton* m_pbtnNtpServerDelete;
 		wmButton* m_pbtnNtpServerEdit;
+		wmButton* m_pbtnPtpMode;
 		wmButton* m_pbtnSync;
 		wmEdit* m_pedtDomain;
 		wmKeyboard* m_pKbd1;
 		wmLabel* m_pLbl1;
+		wmLabel* m_pLbl2;
+		wmLabel* m_pLbl3;
 		wmLabel* m_plblListTitle;
 		wmLabel* m_plblTime;
 		wmList* m_plstDate;
@@ -40,9 +43,6 @@ class pnlSettingsTime: public wxPanel
 		wxPanel* m_ppnlPTP;
 		wxTimer m_timerTime;
 		//*)
-
-		wmButton* m_pbtnPtpMode;
-		
 
 	protected:
 
@@ -57,13 +57,16 @@ class pnlSettingsTime: public wxPanel
 		static const long ID_M_PEDT1;
 		static const long ID_M_PKBD1;
 		static const long ID_M_PBTN1;
+		static const long ID_M_PBTN2;
 		static const long ID_PANEL2;
 		static const long ID_M_PLBL13;
 		static const long ID_M_PLST2;
 		static const long ID_PANEL3;
 		static const long ID_M_PSWP1;
+		static const long ID_M_PLBL2;
 		static const long ID_M_PLST3;
 		static const long ID_M_PLBL1;
+		static const long ID_M_PLBL3;
 		static const long ID_TIMER1;
 		//*)
 

@@ -21,13 +21,16 @@ const long pnlSettingsTime::ID_M_PLBL8 = wxNewId();
 const long pnlSettingsTime::ID_M_PEDT1 = wxNewId();
 const long pnlSettingsTime::ID_M_PKBD1 = wxNewId();
 const long pnlSettingsTime::ID_M_PBTN1 = wxNewId();
+const long pnlSettingsTime::ID_M_PBTN2 = wxNewId();
 const long pnlSettingsTime::ID_PANEL2 = wxNewId();
 const long pnlSettingsTime::ID_M_PLBL13 = wxNewId();
 const long pnlSettingsTime::ID_M_PLST2 = wxNewId();
 const long pnlSettingsTime::ID_PANEL3 = wxNewId();
 const long pnlSettingsTime::ID_M_PSWP1 = wxNewId();
+const long pnlSettingsTime::ID_M_PLBL2 = wxNewId();
 const long pnlSettingsTime::ID_M_PLST3 = wxNewId();
 const long pnlSettingsTime::ID_M_PLBL1 = wxNewId();
+const long pnlSettingsTime::ID_M_PLBL3 = wxNewId();
 const long pnlSettingsTime::ID_TIMER1 = wxNewId();
 //*)
 
@@ -41,24 +44,24 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
 	//(*Initialize(pnlSettingsTime)
 	Create(parent, id, wxDefaultPosition, wxSize(600,400), wxTAB_TRAVERSAL, _T("id"));
 	SetBackgroundColour(wxColour(0,0,0));
-	m_pswpSettings = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(0,110), wxSize(600,330), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
+	m_pswpSettings = new wmSwitcherPanel(this, ID_M_PSWP1, wxPoint(0,125), wxSize(600,315), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
 	m_pswpSettings->SetPageNameStyle(3);
 	m_ppnlNTP = new wxPanel(m_pswpSettings, ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL1"));
 	m_ppnlNTP->SetBackgroundColour(wxColour(0,0,0));
-	m_plstNTPServers = new wmList(m_ppnlNTP, ID_M_PLST1, wxPoint(0,10), wxSize(600,240), wmList::STYLE_SELECT, 0, wxSize(-1,40), 3, wxSize(5,5));
+	m_plstNTPServers = new wmList(m_ppnlNTP, ID_M_PLST1, wxPoint(0,10), wxSize(600,220), wmList::STYLE_SELECT, 0, wxSize(-1,40), 3, wxSize(5,5));
 	m_plstNTPServers->SetBackgroundColour(wxColour(0,0,0));
 	m_plstNTPServers->SetButtonColour(wxColour(wxT("#005555")));
 	m_plstNTPServers->SetSelectedButtonColour(wxColour(wxT("#008000")));
 	m_plstNTPServers->SetDisabledColour(wxColour(wxT("#808080")));
-	m_pbtnNtpServerAdd = new wmButton(m_ppnlNTP, ID_M_PBTN3, _("Add Server"), wxPoint(70,250), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN3"));
+	m_pbtnNtpServerAdd = new wmButton(m_ppnlNTP, ID_M_PBTN3, _("Add Server"), wxPoint(70,235), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN3"));
 	m_pbtnNtpServerAdd->SetColourDisabled(wxColour(wxT("#808080")));
-	m_pbtnNtpServerEdit = new wmButton(m_ppnlNTP, ID_M_PBTN4, _("Edit Server"), wxPoint(180,250), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN4"));
+	m_pbtnNtpServerEdit = new wmButton(m_ppnlNTP, ID_M_PBTN4, _("Edit Server"), wxPoint(180,235), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN4"));
 	m_pbtnNtpServerEdit->Disable();
 	m_pbtnNtpServerEdit->SetColourDisabled(wxColour(wxT("#808080")));
-	m_pbtnNtpServerDelete = new wmButton(m_ppnlNTP, ID_M_PBTN5, _("Delete Server"), wxPoint(290,250), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN5"));
+	m_pbtnNtpServerDelete = new wmButton(m_ppnlNTP, ID_M_PBTN5, _("Delete Server"), wxPoint(290,235), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN5"));
 	m_pbtnNtpServerDelete->Disable();
 	m_pbtnNtpServerDelete->SetColourDisabled(wxColour(wxT("#808080")));
-	m_pbtnNTPServerDeleteAll = new wmButton(m_ppnlNTP, ID_M_PBTN6, _("Delete All"), wxPoint(400,250), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN6"));
+	m_pbtnNTPServerDeleteAll = new wmButton(m_ppnlNTP, ID_M_PBTN6, _("Delete All"), wxPoint(400,235), wxSize(100,40), 0, wxDefaultValidator, _T("ID_M_PBTN6"));
 	m_pbtnNTPServerDeleteAll->SetColourDisabled(wxColour(wxT("#808080")));
 	m_ppnlPTP = new wxPanel(m_pswpSettings, ID_PANEL2, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL2"));
 	m_ppnlPTP->SetBackgroundColour(wxColour(0,0,0));
@@ -80,6 +83,10 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_pbtnSync->SetBackgroundColour(wxColour(0,128,64));
 	m_pbtnSync->SetColourDisabled(wxColour(wxT("#808080")));
 	m_pbtnSync->SetToggleLook(true, wxT("UTC"), wxT("TAI"), 60);
+	m_pbtnPtpMode = new wmButton(m_ppnlPTP, ID_M_PBTN2, _("Mode"), wxPoint(350,110), wxSize(200,40), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
+	m_pbtnPtpMode->SetBackgroundColour(wxColour(0,128,64));
+	m_pbtnPtpMode->SetColourDisabled(wxColour(wxT("#808080")));
+	m_pbtnPtpMode->SetToggleLook(true, wxT("Multicast"), wxT("Hybrid"), 35);
 	m_ppnlLTCS = new wxPanel(m_pswpSettings, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
 	m_ppnlLTCS->SetBackgroundColour(wxColour(0,0,0));
 	m_plblListTitle = new wmLabel(m_ppnlLTCS, ID_M_PLBL13, _("Format:"), wxPoint(0,10), wxSize(200,44), 0, _T("ID_M_PLBL13"));
@@ -96,16 +103,30 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
 	m_pswpSettings->AddPage(m_ppnlNTP, _("NTP Servers"), false);
 	m_pswpSettings->AddPage(m_ppnlPTP, _("PTP Domain"), false);
 	m_pswpSettings->AddPage(m_ppnlLTCS, _("LTC Settings"), false);
-	m_plstSync = new wmList(this, ID_M_PLST3, wxPoint(10,10), wxSize(580,45), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 4, wxSize(-1,-1));
+	m_pLbl2 = new wmLabel(this, ID_M_PLBL2, _("Sync To:"), wxPoint(10,10), wxSize(100,40), 0, _T("ID_M_PLBL2"));
+	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl2->GetUiRect().SetGradient(0);
+	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl2->SetBackgroundColour(wxColour(128,128,255));
+	wxFont m_pLbl2Font(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pLbl2->SetFont(m_pLbl2Font);
+	m_plstSync = new wmList(this, ID_M_PLST3, wxPoint(110,10), wxSize(480,40), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 4, wxSize(-1,-1));
 	m_plstSync->SetBackgroundColour(wxColour(0,0,0));
 	m_plstSync->SetButtonColour(wxColour(wxT("#00006A")));
 	m_plstSync->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
-	m_plblTime = new wmLabel(this, ID_M_PLBL1, _("2021-12-12 12:22:30"), wxPoint(100,60), wxSize(400,40), 0, _T("ID_M_PLBL1"));
+	m_plblTime = new wmLabel(this, ID_M_PLBL1, _("2021-12-12 12:22:30"), wxPoint(100,50), wxSize(400,40), 0, _T("ID_M_PLBL1"));
 	m_plblTime->SetBorderState(uiRect::BORDER_NONE);
 	m_plblTime->GetUiRect().SetGradient(0);
 	m_plblTime->SetForegroundColour(wxColour(0,128,0));
 	wxFont m_plblTimeFont(16,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_plblTime->SetFont(m_plblTimeFont);
+	m_pLbl3 = new wmLabel(this, ID_M_PLBL3, _("Settings"), wxPoint(10,90), wxSize(580,30), 0, _T("ID_M_PLBL3"));
+	m_pLbl3->SetBorderState(uiRect::BORDER_FLAT);
+	m_pLbl3->GetUiRect().SetGradient(0);
+	m_pLbl3->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl3->SetBackgroundColour(wxColour(0,64,64));
+	wxFont m_pLbl3Font(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	m_pLbl3->SetFont(m_pLbl3Font);
 	m_timerTime.SetOwner(this, ID_TIMER1);
 	m_timerTime.Start(500, false);
 
@@ -115,16 +136,14 @@ pnlSettingsTime::pnlSettingsTime(wxWindow* parent,wxWindowID id,const wxPoint& p
 	Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNtpServerDeleteClick);
 	Connect(ID_M_PBTN6,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNTPServerDeleteAllClick);
 	Connect(ID_M_PEDT1,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&pnlSettingsTime::OnedtDomainTextEnter);
+	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNtpServerAddClick);
+	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettingsTime::OnbtnNtpServerAddClick);
 	Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsTime::OnlstDateSelected);
 	Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&pnlSettingsTime::OnlstSyncSelected);
 	Connect(ID_TIMER1,wxEVT_TIMER,(wxObjectEventFunction)&pnlSettingsTime::OntimerTimeTrigger);
 	//*)
 
     //extra buttons etc
-    m_pbtnPtpMode = new wmButton(m_ppnlPTP, wxNewId(), "Mode", wxPoint(350,110), wxSize(200,40), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
-	m_pbtnPtpMode->SetBackgroundColour(wxColour(0,128,64));
-	m_pbtnPtpMode->SetColourDisabled(wxColour(wxT("#808080")));
-	m_pbtnPtpMode->SetToggleLook(true, wxT("Multicast"), wxT("Hybrid"), 60);
 
 	for(auto pairServer : TimeManager::Get().GetNtpServers())
     {
