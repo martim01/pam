@@ -8,6 +8,7 @@
 #include "wmipeditpnl.h"
 #include "wmkeyboard.h"
 #include "wmlabel.h"
+#include "wmlist.h"
 #include "wmswitcherpanel.h"
 #include <wx/notebook.h>
 #include <wx/panel.h>
@@ -29,21 +30,31 @@ class pnlAoipManual: public wxPanel
 		wmButton* m_pbtnSampleRate;
 		wmButton* m_pbtnSave;
 		wmButton* m_pbtnStream;
+		wmEdit* m_pedtLivewire;
 		wmEdit* m_pedtPort;
-		wmipeditpnl* m_pipServer;
+		wmIpEditPnl* m_pipServer;
 		wmKeyboard* m_pkbd;
 		wmLabel* m_pLbl1;
 		wmLabel* m_pLbl2;
+		wmLabel* m_pLbl3;
 		wmLabel* m_pLbl4;
 		wmLabel* m_pLbl8;
 		wmLabel* m_pLbl9;
+		wmList* m_plstManualMode;
 		wmSwitcherPanel* m_pswpMain;
+		wmSwitcherPanel* m_pswpManualMode;
 		wxPanel* m_ppnlSettings;
+		wxPanel* pnlIp;
+		wxPanel* pnlLivewire;
 		//*)
 
 	protected:
 
 		//(*Identifiers(pnlAoipManual)
+		static const long ID_M_PKBD2;
+		static const long ID_M_PBTN3;
+		static const long ID_M_PBTN5;
+		static const long ID_M_PLST1;
 		static const long ID_M_PLBL8;
 		static const long ID_M_PIP1;
 		static const long ID_M_PLBL1;
@@ -54,11 +65,13 @@ class pnlAoipManual: public wxPanel
 		static const long ID_M_PLBL4;
 		static const long ID_M_PBTN2;
 		static const long ID_M_PBTN13;
-		static const long ID_M_PKBD2;
-		static const long ID_M_PBTN3;
-		static const long ID_M_PBTN5;
 		static const long ID_M_PLBL11;
 		static const long ID_M_PBTN4;
+		static const long ID_PANEL2;
+		static const long ID_M_PLBL3;
+		static const long ID_M_PEDT1;
+		static const long ID_PANEL3;
+		static const long ID_M_PSWP2;
 		static const long ID_PANEL1;
 		static const long ID_CHANNEL_MAPPING;
 		static const long ID_M_PSWP1;

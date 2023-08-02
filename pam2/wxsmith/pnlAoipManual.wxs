@@ -8,95 +8,6 @@
 			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL1" variable="m_ppnlSettings" member="yes">
 					<bg>#000000</bg>
-					<object class="wmLabel" name="ID_M_PLBL8" variable="m_pLbl9" member="yes">
-						<label>IP</label>
-						<pos>10,15</pos>
-						<size>100,40</size>
-						<fg>#FFFFFF</fg>
-						<bg>#400080</bg>
-					</object>
-					<object class="wmIpEditPnl" name="ID_M_PIP1" variable="m_pipServer" member="yes">
-						<pos>110,15</pos>
-						<size>200,40</size>
-					</object>
-					<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
-						<label>PORT</label>
-						<pos>310,15</pos>
-						<size>50,40</size>
-						<fg>#FFFFFF</fg>
-						<bg>#400080</bg>
-					</object>
-					<object class="wmEdit" name="ID_M_PEDT3" variable="m_pedtPort" member="yes">
-						<validation>Integer</validation>
-						<border>uiRect::BORDER_DOWN</border>
-						<border_focused>uiRect::BORDER_DOWN</border_focused>
-						<pos>360,15</pos>
-						<size>100,40</size>
-					</object>
-					<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
-						<label>Sample Rate</label>
-						<pos>10,60</pos>
-						<size>100,40</size>
-						<fg>#FFFFFF</fg>
-						<bg>#400080</bg>
-					</object>
-					<object class="wmButton" name="ID_M_PBTN6" variable="m_pbtnSampleRate" member="yes">
-						<label>48000</label>
-						<button_disabled>#B0B0B0</button_disabled>
-						<toggle_left>Stop</toggle_left>
-						<toggle_right>Start</toggle_right>
-						<toggle_percent>50</toggle_percent>
-						<pos>110,60</pos>
-						<size>90,40</size>
-						<fg>#000000</fg>
-						<bg>#FFFFFF</bg>
-						<style>wmButton::STYLE_NORMAL</style>
-						<handler function="OnbtnSampleRateClick" entry="EVT_BUTTON" />
-					</object>
-					<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnBits" member="yes">
-						<label>Bits</label>
-						<toggle_look>1</toggle_look>
-						<toggle_left>16</toggle_left>
-						<toggle_right>24</toggle_right>
-						<toggle_percent>40</toggle_percent>
-						<pos>260,60</pos>
-						<size>200,40</size>
-						<bg>#008000</bg>
-						<style>wmButton::STYLE_SELECT</style>
-					</object>
-					<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl4" member="yes">
-						<label>Channels</label>
-						<pos>10,105</pos>
-						<size>100,40</size>
-						<fg>#FFFFFF</fg>
-						<bg>#400080</bg>
-					</object>
-					<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnChannels" member="yes">
-						<label>2</label>
-						<button_disabled>#B0B0B0</button_disabled>
-						<toggle_left>Stop</toggle_left>
-						<toggle_right>Start</toggle_right>
-						<toggle_percent>50</toggle_percent>
-						<pos>110,105</pos>
-						<size>90,40</size>
-						<fg>#000000</fg>
-						<bg>#FFFFFF</bg>
-						<style>wmButton::STYLE_NORMAL</style>
-						<handler function="OnbtnChannelsClick" entry="EVT_BUTTON" />
-					</object>
-					<object class="wmButton" name="ID_M_PBTN13" variable="m_pbtnMapping" member="yes">
-						<label>Mapping</label>
-						<button_disabled>#B0B0B0</button_disabled>
-						<toggle_left>Stop</toggle_left>
-						<toggle_right>Start</toggle_right>
-						<toggle_percent>50</toggle_percent>
-						<pos>200,105</pos>
-						<size>60,40</size>
-						<fg>#000000</fg>
-						<bg>#A3D3D3</bg>
-						<style>wmButton::STYLE_NORMAL</style>
-						<handler function="OnbtnMappingClick" entry="EVT_BUTTON" />
-					</object>
 					<object class="wmKeyboard" name="ID_M_PKBD2" variable="m_pkbd" member="yes">
 						<type>Calc</type>
 						<pos>10,160</pos>
@@ -134,25 +45,154 @@
 						<style>wmButton::STYLE_SELECT</style>
 						<handler function="OnbtnSaveClick" entry="EVT_BUTTON" />
 					</object>
-					<object class="wmLabel" name="ID_M_PLBL11" variable="m_pLbl8" member="yes">
-						<label>RTP Payload</label>
-						<pos>310,105</pos>
-						<size>70,40</size>
-						<fg>#FFFFFF</fg>
-						<bg>#400080</bg>
+					<object class="wmList" name="ID_M_PLST1" variable="m_plstManualMode" member="yes">
+						<scrolling>None</scrolling>
+						<button_size>90,64</button_size>
+						<button_pressed>#F07800</button_pressed>
+						<items />
+						<pos>5,13</pos>
+						<size>94,132</size>
+						<bg>wxSYS_COLOUR_SCROLLBAR</bg>
 					</object>
-					<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnRtpMap" member="yes">
-						<label>96</label>
-						<button_disabled>#B0B0B0</button_disabled>
-						<toggle_left>Stop</toggle_left>
-						<toggle_right>Start</toggle_right>
-						<toggle_percent>50</toggle_percent>
-						<pos>380,105</pos>
-						<size>80,40</size>
-						<fg>#000000</fg>
-						<bg>#FFFFFF</bg>
-						<style>wmButton::STYLE_NORMAL</style>
-						<handler function="OnbtnRtpMapClick" entry="EVT_BUTTON" />
+					<object class="wmSwitcherPanel" name="ID_M_PSWP2" variable="m_pswpManualMode" member="yes">
+						<pos>100,0</pos>
+						<size>470,150</size>
+						<style>wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION</style>
+						<object class="wmSwitcherPanelpage">
+							<object class="wxPanel" name="ID_PANEL2" variable="pnlIp" member="yes">
+								<bg>#000000</bg>
+								<object class="wmLabel" name="ID_M_PLBL8" variable="m_pLbl9" member="yes">
+									<label>IP</label>
+									<pos>10,15</pos>
+									<size>100,40</size>
+									<fg>#FFFFFF</fg>
+									<bg>#400080</bg>
+								</object>
+								<object class="wmIpEditPnl" name="ID_M_PIP1" variable="m_pipServer" member="yes">
+									<pos>110,15</pos>
+									<size>200,40</size>
+								</object>
+								<object class="wmLabel" name="ID_M_PLBL1" variable="m_pLbl1" member="yes">
+									<label>PORT</label>
+									<pos>310,15</pos>
+									<size>50,40</size>
+									<fg>#FFFFFF</fg>
+									<bg>#400080</bg>
+								</object>
+								<object class="wmEdit" name="ID_M_PEDT3" variable="m_pedtPort" member="yes">
+									<validation>Integer</validation>
+									<border>uiRect::BORDER_DOWN</border>
+									<border_focused>uiRect::BORDER_DOWN</border_focused>
+									<pos>360,15</pos>
+									<size>100,40</size>
+								</object>
+								<object class="wmLabel" name="ID_M_PLBL2" variable="m_pLbl2" member="yes">
+									<label>Sample Rate</label>
+									<pos>10,60</pos>
+									<size>100,40</size>
+									<fg>#FFFFFF</fg>
+									<bg>#400080</bg>
+								</object>
+								<object class="wmButton" name="ID_M_PBTN6" variable="m_pbtnSampleRate" member="yes">
+									<label>48000</label>
+									<button_disabled>#B0B0B0</button_disabled>
+									<toggle_left>Stop</toggle_left>
+									<toggle_right>Start</toggle_right>
+									<toggle_percent>50</toggle_percent>
+									<pos>110,60</pos>
+									<size>90,40</size>
+									<fg>#000000</fg>
+									<bg>#FFFFFF</bg>
+									<style>wmButton::STYLE_NORMAL</style>
+									<handler function="OnbtnSampleRateClick" entry="EVT_BUTTON" />
+								</object>
+								<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnBits" member="yes">
+									<label>Bits</label>
+									<toggle_look>1</toggle_look>
+									<toggle_left>16</toggle_left>
+									<toggle_right>24</toggle_right>
+									<toggle_percent>40</toggle_percent>
+									<pos>260,60</pos>
+									<size>200,40</size>
+									<bg>#008000</bg>
+									<style>wmButton::STYLE_SELECT</style>
+								</object>
+								<object class="wmLabel" name="ID_M_PLBL4" variable="m_pLbl4" member="yes">
+									<label>Channels</label>
+									<pos>10,105</pos>
+									<size>100,40</size>
+									<fg>#FFFFFF</fg>
+									<bg>#400080</bg>
+								</object>
+								<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnChannels" member="yes">
+									<label>2</label>
+									<button_disabled>#B0B0B0</button_disabled>
+									<toggle_left>Stop</toggle_left>
+									<toggle_right>Start</toggle_right>
+									<toggle_percent>50</toggle_percent>
+									<pos>110,105</pos>
+									<size>90,40</size>
+									<fg>#000000</fg>
+									<bg>#FFFFFF</bg>
+									<style>wmButton::STYLE_NORMAL</style>
+									<handler function="OnbtnChannelsClick" entry="EVT_BUTTON" />
+								</object>
+								<object class="wmButton" name="ID_M_PBTN13" variable="m_pbtnMapping" member="yes">
+									<label>Mapping</label>
+									<button_disabled>#B0B0B0</button_disabled>
+									<toggle_left>Stop</toggle_left>
+									<toggle_right>Start</toggle_right>
+									<toggle_percent>50</toggle_percent>
+									<pos>200,105</pos>
+									<size>60,40</size>
+									<fg>#000000</fg>
+									<bg>#A3D3D3</bg>
+									<style>wmButton::STYLE_NORMAL</style>
+									<handler function="OnbtnMappingClick" entry="EVT_BUTTON" />
+								</object>
+								<object class="wmLabel" name="ID_M_PLBL11" variable="m_pLbl8" member="yes">
+									<label>RTP Payload</label>
+									<pos>310,105</pos>
+									<size>70,40</size>
+									<fg>#FFFFFF</fg>
+									<bg>#400080</bg>
+								</object>
+								<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnRtpMap" member="yes">
+									<label>96</label>
+									<button_disabled>#B0B0B0</button_disabled>
+									<toggle_left>Stop</toggle_left>
+									<toggle_right>Start</toggle_right>
+									<toggle_percent>50</toggle_percent>
+									<pos>380,105</pos>
+									<size>80,40</size>
+									<fg>#000000</fg>
+									<bg>#FFFFFF</bg>
+									<style>wmButton::STYLE_NORMAL</style>
+									<handler function="OnbtnRtpMapClick" entry="EVT_BUTTON" />
+								</object>
+							</object>
+							<label>IP</label>
+						</object>
+						<object class="wmSwitcherPanelpage">
+							<object class="wxPanel" name="ID_PANEL3" variable="pnlLivewire" member="yes">
+								<bg>#000000</bg>
+								<object class="wmLabel" name="ID_M_PLBL3" variable="m_pLbl3" member="yes">
+									<label>STREAM</label>
+									<pos>10,15</pos>
+									<size>100,40</size>
+									<fg>#FFFFFF</fg>
+									<bg>#400080</bg>
+								</object>
+								<object class="wmEdit" name="ID_M_PEDT1" variable="m_pedtLivewire" member="yes">
+									<validation>Integer</validation>
+									<border>uiRect::BORDER_DOWN</border>
+									<border_focused>uiRect::BORDER_DOWN</border_focused>
+									<pos>110,15</pos>
+									<size>250,40</size>
+								</object>
+							</object>
+							<label>Livewire</label>
+						</object>
 					</object>
 				</object>
 				<label>Settings</label>
@@ -163,6 +203,7 @@
 					<creating_code>$(THIS) = new $(CLASS)($(PARENT),&quot;ManualAoIp&quot;, $(ID),$(POS),$(SIZE));</creating_code>
 					<include_file>pnlChannelMapping.h</include_file>
 					<local_include>1</local_include>
+					<style></style>
 				</object>
 				<label>Mapping</label>
 			</object>
