@@ -1570,13 +1570,17 @@ void ptpPanel::UpdateListBitmaps()
 		auto pClock = wxPtp::Get().GetPtpClock(m_plstClocks->GetButtonText(nButton).AfterFirst('\n'));
 		if(pClock)
 		{
-			if(pClock->IsGrandMaster())
+			if(pClock->IsSyncMaster())
 			{
-				m_plstClocks->SetButtonBitmap(nButton, wxBitmap(grandmaster_xpm));
-			}
-			else if(pClock->IsSyncMaster())
-			{
-				m_plstClocks->SetButtonBitmap(nButton, wxBitmap(syncmaster_xpm));
+				if(pClock->IsGrandMaster())
+				{
+					m_plstClocks->SetButtonBitmap(nButton, wxBitmap(grandmaster_xpm));
+				}
+				else
+				{	
+					pmlLog() << pClock->GetId() << " : " << pClock->GetGrandmasterClockId();
+					m_plstClocks->SetButtonBitmap(nButton, wxBitmap(syncmaster_xpm));
+				}
 			}
 			else
 			{
