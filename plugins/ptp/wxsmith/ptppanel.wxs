@@ -669,7 +669,6 @@
 								<weight>bold</weight>
 								<underlined>0</underlined>
 								<family>swiss</family>
-								<face></face>
 							</font>
 							<style>wmButton::STYLE_NORMAL</style>
 							<handler function="OnbtnGraphsClick" entry="EVT_BUTTON" />
@@ -687,7 +686,6 @@
 								<weight>bold</weight>
 								<underlined>0</underlined>
 								<family>swiss</family>
-								<face></face>
 							</font>
 							<style>wmButton::STYLE_NORMAL</style>
 							<handler function="OnbtnHistogramClick" entry="EVT_BUTTON" />
@@ -903,14 +901,20 @@
 						<style>wmList::STYLE_SELECT</style>
 						<handler function="OnlstDataSelected" entry="EVT_LIST_SELECTED" />
 					</object>
+					<object class="wmButton" name="ID_M_PBTN8" variable="m_pbtnClearStats" member="yes">
+						<label>Clear All</label>
+						<pos>498,445</pos>
+						<size>70,30</size>
+						<handler function="OnbtnClearStatsClick" entry="EVT_BUTTON" />
+					</object>
 					<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnGraphClear" member="yes">
 						<label>Clear All</label>
-						<pos>550,445</pos>
+						<pos>570,445</pos>
 						<size>70,30</size>
 						<handler function="OnbtnClearClick" entry="EVT_BUTTON" />
 					</object>
 					<object class="wmButton" name="ID_M_PBTN7" variable="m_pbtnGraphHisto" member="yes">
-						<label>Histogram</label>
+						<label>Histo</label>
 						<pos>649,445</pos>
 						<size>70,30</size>
 						<fg>#008000</fg>
@@ -936,7 +940,6 @@
 							<weight>bold</weight>
 							<underlined>0</underlined>
 							<family>swiss</family>
-							<face></face>
 						</font>
 						<handler function="OnbtnOptionsClick" entry="EVT_BUTTON" />
 					</object>
@@ -968,6 +971,7 @@
 						<style></style>
 						<pos>0,30</pos>
 						<size>800,410</size>
+						<bg>#000000</bg>
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL67" variable="m_pLbl3" member="yes">
 						<label>Data</label>
@@ -997,7 +1001,7 @@
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL65" variable="m_pLbl1" member="yes">
 						<label>Granularity</label>
-						<pos>200,445</pos>
+						<pos>195,445</pos>
 						<size>60,30</size>
 						<fg>#FFFFFF</fg>
 						<bg>#5B9539</bg>
@@ -1015,14 +1019,14 @@
 						<button_size>-1,30</button_size>
 						<columns>3</columns>
 						<items />
-						<pos>260,443</pos>
+						<pos>255,443</pos>
 						<size>120,34</size>
 						<bg>#000000</bg>
 						<handler function="OnlstHistogramGranularitySelected" entry="EVT_LIST_SELECTED" />
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL66" variable="m_pLbl2" member="yes">
 						<label>Resolution</label>
-						<pos>400,445</pos>
+						<pos>380,445</pos>
 						<size>60,30</size>
 						<fg>#FFFFFF</fg>
 						<bg>#5B9539</bg>
@@ -1040,14 +1044,14 @@
 						<button_size>-1,30</button_size>
 						<columns>3</columns>
 						<items />
-						<pos>460,443</pos>
+						<pos>440,443</pos>
 						<size>120,34</size>
 						<bg>#000000</bg>
 						<handler function="OnlstHistogramResolutionSelected" entry="EVT_LIST_SELECTED" />
 					</object>
 					<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnHistogramClear" member="yes">
 						<label>Clear All</label>
-						<pos>550,445</pos>
+						<pos>570,445</pos>
 						<size>70,30</size>
 						<handler function="OnbtnClearClick" entry="EVT_BUTTON" />
 					</object>
@@ -1078,7 +1082,6 @@
 							<weight>bold</weight>
 							<underlined>0</underlined>
 							<family>swiss</family>
-							<face></face>
 						</font>
 						<handler function="OnbtnOptionsClick" entry="EVT_BUTTON" />
 					</object>

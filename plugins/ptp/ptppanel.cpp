@@ -119,6 +119,7 @@ const long ptpPanel::ID_M_PLBL78 = wxNewId();
 const long ptpPanel::ID_HISTORY_GRAPH = wxNewId();
 const long ptpPanel::ID_M_PLBL68 = wxNewId();
 const long ptpPanel::ID_M_PLST5 = wxNewId();
+const long ptpPanel::ID_M_PBTN8 = wxNewId();
 const long ptpPanel::ID_M_PBTN3 = wxNewId();
 const long ptpPanel::ID_M_PBTN7 = wxNewId();
 const long ptpPanel::ID_M_PBTN4 = wxNewId();
@@ -673,8 +674,9 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_pLbl4->SetFont(m_pLbl4Font);
 	m_plstGraphData = new wmList(m_ppnlGraphs, ID_M_PLST5, wxPoint(70,443), wxSize(120,34), wmList::STYLE_SELECT, 0, wxSize(-1,30), 2, wxSize(-1,-1));
 	m_plstGraphData->SetBackgroundColour(wxColour(0,0,0));
-	m_pbtnGraphClear = new wmButton(m_ppnlGraphs, ID_M_PBTN3, _("Clear All"), wxPoint(550,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN3"));
-	m_pbtnGraphHisto = new wmButton(m_ppnlGraphs, ID_M_PBTN7, _("Histogram"), wxPoint(649,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN7"));
+	m_pbtnClearStats = new wmButton(m_ppnlGraphs, ID_M_PBTN8, _("Clear All"), wxPoint(498,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN8"));
+	m_pbtnGraphClear = new wmButton(m_ppnlGraphs, ID_M_PBTN3, _("Clear All"), wxPoint(570,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN3"));
+	m_pbtnGraphHisto = new wmButton(m_ppnlGraphs, ID_M_PBTN7, _("Histo"), wxPoint(649,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN7"));
 	m_pbtnGraphHisto->SetForegroundColour(wxColour(0,128,0));
 	m_pbtnGraphHisto->SetBackgroundColour(wxColour(255,255,255));
 	wxFont m_pbtnGraphHistoFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,wxEmptyString,wxFONTENCODING_DEFAULT);
@@ -703,25 +705,25 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_pLbl3->SetFont(m_pLbl3Font);
 	m_plstHistogramData = new wmList(m_ppnlHistograms, ID_M_PLST4, wxPoint(70,443), wxSize(120,34), wmList::STYLE_SELECT, 0, wxSize(-1,30), 2, wxSize(-1,-1));
 	m_plstHistogramData->SetBackgroundColour(wxColour(0,0,0));
-	m_pLbl1 = new wmLabel(m_ppnlHistograms, ID_M_PLBL65, _("Granularity"), wxPoint(200,445), wxSize(60,30), 0, _T("ID_M_PLBL65"));
+	m_pLbl1 = new wmLabel(m_ppnlHistograms, ID_M_PLBL65, _("Granularity"), wxPoint(195,445), wxSize(60,30), 0, _T("ID_M_PLBL65"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl1->GetUiRect().SetGradient(0);
 	m_pLbl1->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl1->SetBackgroundColour(wxColour(91,149,57));
 	wxFont m_pLbl1Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pLbl1->SetFont(m_pLbl1Font);
-	m_plstHistogramGranularity = new wmList(m_ppnlHistograms, ID_M_PLST2, wxPoint(260,443), wxSize(120,34), 0, 0, wxSize(-1,30), 3, wxSize(-1,-1));
+	m_plstHistogramGranularity = new wmList(m_ppnlHistograms, ID_M_PLST2, wxPoint(255,443), wxSize(120,34), 0, 0, wxSize(-1,30), 3, wxSize(-1,-1));
 	m_plstHistogramGranularity->SetBackgroundColour(wxColour(0,0,0));
-	m_pLbl2 = new wmLabel(m_ppnlHistograms, ID_M_PLBL66, _("Resolution"), wxPoint(400,445), wxSize(60,30), 0, _T("ID_M_PLBL66"));
+	m_pLbl2 = new wmLabel(m_ppnlHistograms, ID_M_PLBL66, _("Resolution"), wxPoint(380,445), wxSize(60,30), 0, _T("ID_M_PLBL66"));
 	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl2->GetUiRect().SetGradient(0);
 	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl2->SetBackgroundColour(wxColour(91,149,57));
 	wxFont m_pLbl2Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pLbl2->SetFont(m_pLbl2Font);
-	m_plstHistogramResolution = new wmList(m_ppnlHistograms, ID_M_PLST3, wxPoint(460,443), wxSize(120,34), 0, 0, wxSize(-1,30), 3, wxSize(-1,-1));
+	m_plstHistogramResolution = new wmList(m_ppnlHistograms, ID_M_PLST3, wxPoint(440,443), wxSize(120,34), 0, 0, wxSize(-1,30), 3, wxSize(-1,-1));
 	m_plstHistogramResolution->SetBackgroundColour(wxColour(0,0,0));
-	m_pbtnHistogramClear = new wmButton(m_ppnlHistograms, ID_M_PBTN1, _("Clear All"), wxPoint(550,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
+	m_pbtnHistogramClear = new wmButton(m_ppnlHistograms, ID_M_PBTN1, _("Clear All"), wxPoint(570,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
 	m_pbtnHistGraphs = new wmButton(m_ppnlHistograms, ID_M_PBTN6, _("Graphs"), wxPoint(649,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN6"));
 	m_pbtnHistGraphs->SetForegroundColour(wxColour(0,128,0));
 	m_pbtnHistGraphs->SetBackgroundColour(wxColour(255,255,255));
@@ -740,6 +742,7 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	Connect(ID_M_PBTN29,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnGraphsClick);
 	Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnHistogramClick);
 	Connect(ID_M_PLST5,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&ptpPanel::OnlstDataSelected);
+	Connect(ID_M_PBTN8,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnClearStatsClick);
 	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnClearClick);
 	Connect(ID_M_PBTN7,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnHistogramClick);
 	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnOptionsClick);
@@ -760,8 +763,8 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
     m_pLbl8->SetLabel(L"\u03b2\u0302=");
     m_pLbl9->SetLabel(L"\u03b1\u0302+\u03b2\u0302x=");
 
-	m_pbtnClearStats = new wmButton(m_ppnlGraphs, wxNewId(), _("Clear Stats"), wxPoint(520,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN3"));
-    Connect(m_pbtnClearStats->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnClearStatsClick);
+	//m_pbtnClearStats = new wmButton(m_ppnlGraphs, wxNewId(), _("Clear Stats"), wxPoint(520,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN3"));
+    //Connect(m_pbtnClearStats->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnClearStatsClick);
 
 	m_ptitleOffsetAverage->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 	m_ptitleOffsetRange->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
@@ -1007,7 +1010,7 @@ void ptpPanel::ShowClockDetails()
 		if(m_pClock->IsGrandMaster())
 		{
 			m_plblState->SetLabel("Grand Master");
-			m_plstClocks->SetButtonBitmap(nButton, wxBitmap(grandmaster_xpm));		
+			m_plstClocks->SetButtonBitmap(nButton, wxBitmap(grandmaster_xpm));
 		}
 		else if(m_pClock->IsSyncMaster())
 		{
@@ -1557,3 +1560,4 @@ void ptpPanel::OnbtnHistogramClick(wxCommandEvent& event)
 {
     ChangeView("Histograms");
 }
+

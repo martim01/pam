@@ -61,6 +61,7 @@ class ptpPanel: public pmPanel
 		pnlFlags* m_ppnlRequestFlags;
 		pnlFlags* m_ppnlResponseFlags;
 		pnlFlags* m_ppnlSyncFlags;
+		wmButton* m_pbtnClearStats;
 		wmButton* m_pbtnGraphClear;
 		wmButton* m_pbtnGraphHisto;
 		wmButton* m_pbtnGraphOptions;
@@ -287,6 +288,7 @@ class ptpPanel: public pmPanel
 		static const long ID_HISTORY_GRAPH;
 		static const long ID_M_PLBL68;
 		static const long ID_M_PLST5;
+		static const long ID_M_PBTN8;
 		static const long ID_M_PBTN3;
 		static const long ID_M_PBTN7;
 		static const long ID_M_PBTN4;
@@ -308,7 +310,7 @@ class ptpPanel: public pmPanel
 
 		void OnLeftUp(wxMouseEvent& event);
 
-		
+
 
 	private:
 
@@ -321,9 +323,9 @@ class ptpPanel: public pmPanel
 		void OnlstHistogramResolutionSelected(wxCommandEvent& event);
 		void OnbtnGraphsClick(wxCommandEvent& event);
 		void OnbtnHistogramClick(wxCommandEvent& event);
+		void OnbtnClearStatsClick(wxCommandEvent& event);
 		//*)
 
-		void OnbtnClearStatsClick(wxCommandEvent& event);
 
 		void OnTimer(wxTimerEvent& event);
 
