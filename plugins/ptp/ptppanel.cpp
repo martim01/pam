@@ -932,7 +932,8 @@ void ptpPanel::OnClockUpdated(wxCommandEvent& event)
 void ptpPanel::OnClockRemoved(wxCommandEvent& event)
 {
     wxString sClock(m_dbMac.GetVendor(event.GetString())+event.GetString());
-    if(m_sSelectedClock == sClock)    {
+    if(m_sSelectedClock == sClock)    
+	{
         ClearClockDetails();
     }
     m_plstClocks->DeleteButton(m_plstClocks->FindButton(sClock));
@@ -1317,6 +1318,7 @@ void ptpPanel::OnClockMessage(wxCommandEvent& event)
     {
         ShowClockDetails();
     }
+	UpdateListBitmaps();
     ClockMessageWebsocketMessage(event.GetString());
 }
 
@@ -1561,3 +1563,25 @@ void ptpPanel::OnbtnHistogramClick(wxCommandEvent& event)
     ChangeView("Histograms");
 }
 
+void ptpPanel::UpdateListBitmaps()
+{
+	for(size_t nButton = 0; nButton < m_plstClocks->GetItemCount(); nButton++)
+	{
+		auto pClock = wxPtp::Get().GetPtpClock(m_plstClocks->GetButtonText(nButton).AfterFirst('\n'));
+		if(pClock)
+		{
+			if(pClock->IsGrandMaster())
+			{
+				m_plstClocks->SetButtonBitmap(nButton, wxBitmap(grandmaster_xpm));
+			}
+			else if(pClock->IsSyncMaster())
+			{
+				m_plstClocks->SetButtonBitmap(nButton, wxBitmap(syncmaster_xpm));
+			}
+			else
+			{
+				m_plstClocks->SetButtonBitmap(nButton, wxBitmap(slave_xpm));
+			}			
+		}
+	}	
+}
