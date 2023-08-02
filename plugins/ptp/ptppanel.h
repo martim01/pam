@@ -63,8 +63,11 @@ class ptpPanel: public pmPanel
 		pnlFlags* m_ppnlSyncFlags;
 		wmButton* m_pbtnGraphClear;
 		wmButton* m_pbtnGraphOptions;
+		wmButton* m_pbtnGraphs;
+		wmButton* m_pbtnHistogram;
 		wmButton* m_pbtnHistogramClear;
 		wmButton* m_pbtnOptions;
+		wmLabel* m_pLbl10;
 		wmLabel* m_pLbl1;
 		wmLabel* m_pLbl2;
 		wmLabel* m_pLbl3;
@@ -186,6 +189,7 @@ class ptpPanel: public pmPanel
 	protected:
 
 		//(*Identifiers(ptpPanel)
+		static const long ID_M_PLBL80;
 		static const long ID_M_PLST1;
 		static const long ID_M_PLBL79;
 		static const long ID_M_PLBL1;
@@ -263,6 +267,8 @@ class ptpPanel: public pmPanel
 		static const long ID_M_PLBL63;
 		static const long ID_M_PLBL60;
 		static const long ID_M_PLBL64;
+		static const long ID_M_PBTN29;
+		static const long ID_M_PBTN5;
 		static const long ID_PANEL8;
 		static const long ID_PANEL14;
 		static const long ID_M_PLBL45;
@@ -309,6 +315,8 @@ class ptpPanel: public pmPanel
 		void OnbtnOptionsClick(wxCommandEvent& event);
 		void OnlstHistogramGranularitySelected(wxCommandEvent& event);
 		void OnlstHistogramResolutionSelected(wxCommandEvent& event);
+		void OnbtnGraphsClick(wxCommandEvent& event);
+		void OnbtnHistogramClick(wxCommandEvent& event);
 		//*)
 
 		void OnbtnClearStatsClick(wxCommandEvent& event);

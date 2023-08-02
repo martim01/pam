@@ -38,7 +38,7 @@ wxWindow* ptpBuilder::CreateMonitorPanel(wxWindow* pParent)
 list<pairOptionPanel_t> ptpBuilder::CreateOptionPanels(wxWindow* pParent)
 {
     list<pairOptionPanel_t> lstOptionPanels;
-    lstOptionPanels.push_back(std::make_pair("Options", new pnlOptions(pParent, this)));
+    //lstOptionPanels.push_back(std::make_pair("Options", new pnlOptions(pParent, this)));
     //@todo create and return all the option panels
     return lstOptionPanels;
 }
