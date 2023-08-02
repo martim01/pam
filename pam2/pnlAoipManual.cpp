@@ -77,7 +77,7 @@ pnlAoipManual::pnlAoipManual(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	m_pLbl9->GetUiRect().SetGradient(0);
 	m_pLbl9->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl9->SetBackgroundColour(wxColour(64,0,128));
-	m_pipServer = new wmIpEditPnl(pnlIp, ID_M_PIP1, wxPoint(110,15), wxSize(200,40));
+	m_pipServer = new wmipeditpnl(pnlIp, ID_M_PIP1, wxPoint(110,15), wxSize(200,40));
 	m_pipServer->SetValue(wxEmptyString);
 	m_pLbl1 = new wmLabel(pnlIp, ID_M_PLBL1, _("PORT"), wxPoint(310,15), wxSize(50,40), 0, _T("ID_M_PLBL1"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
@@ -169,6 +169,8 @@ pnlAoipManual::pnlAoipManual(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	m_plstManualMode->AddButton("IP");
 	m_plstManualMode->AddButton("Livewire+");
 	m_plstManualMode->ConnectToSetting("ManualAoIp", "Mode", "IP");
+	m_pswpManualMode->ChangeSelection(Settings::Get().Read("ManualAoIp", "Mode", "IP"));
+	m_pedtLivewire->ConnectToSetting("ManualAoIp", "Livewire", "", false);
 
 	Settings::Get().AddHandler(this, "Input", "AoIP");
 	Settings::Get().AddHandler(this, "ManualAoIp", "Mode");
@@ -196,8 +198,9 @@ wxString pnlAoipManual::CreateSDP()
     if(Settings::Get().Read("ManualAoIp", "Mode", "IP") == "IP")
     {
         sSdp << "v=0\r\n"
-         << "o=- " << wxDateTime::UNow().Format("%Y%m%d%H%M%S%l") << " 1 IN 169.254.1.1\r\n"
-         << "s=Manual SDP created by PAM\r\n"
+         << "o=- " << wxDateTime::UNow().Format("%Y%m%d%H%M%S%l") << " 1 IN IP4 " << Settings::Get().Read("ManualAoip","Source", "0.0.0.0") << "\r\n"
+		 << "s=Manual IP=" <<Settings::Get().Read("ManualAoip","Source", "0.0.0.0") << "\r\n"
+		 << "i=Manual SDP created by PAM. Origin source may be incorrect\r\n"
          << "t=0 0\r\n"
          << "a=recvonly\r\n"
          << "m=audio " << Settings::Get().Read("ManualAoip", "Port", "5004") << " RTP/AVP " << Settings::Get().Read("ManualAoip","RtpMap", "96") << "\r\n"
@@ -220,15 +223,19 @@ wxString pnlAoipManual::CreateSDP()
         unsigned long Y = nChannel-(X*256);
 
         sSdp << "v=0\r\n"
-         << "o=- " << wxDateTime::UNow().Format("%Y%m%d%H%M%S%l") << " 1 IN 169.254.1.1\r\n"
-         << "s=Manual SDP created by PAM\r\n"
+         << "o=- " << wxDateTime::UNow().Format("%Y%m%d%H%M%S%l") << " 1 IN IP4 169.254.1.1\r\n"
+         << "s=Livewire+ channel=" << nChannel << "\r\n"
+		 << "i=Manual SDP created by PAM. Origin source ip will be incorrect\r\n"
          << "t=0 0\r\n"
          << "a=recvonly\r\n"
          << "m=audio 5004" << " RTP/AVP " << "96" << "\r\n"
-         << "c=IN IP4 239.192." << X << "." << Y << "/255\r\n"
-         << "a=rtpmap:96 L24/48000/2\r\n";
-
-         sSdp << "a=mediaclk:direct=0\r\n";
+         << "a=recvonly\r\n"
+		 << "a=ptime:1\r\n"
+		 << "a=maxptime:5\r\n"
+		 << "c=IN IP4 239.192." << X << "." << Y << "\r\n"
+         << "a=rtpmap:96 L24/48000/2\r\n"
+		 << "a=sync-time:0\r\n"
+         << "a=mediaclk:direct=0\r\n";
          //@todo grandmaster if we have ,
 
     }
@@ -258,13 +265,14 @@ void pnlAoipManual::OnSettingChanged(SettingEvent& event)
 {
     if(event.GetSection() == "Input" && event.GetKey() == "AoIP")
     {
-        m_pbtnBits->Enable(event.GetValue(0l) == 0);
-        m_pbtnChannels->Enable(event.GetValue(0l) == 0);
-        m_pbtnRtpMap->Enable(event.GetValue(0l) == 0);
-        m_pipServer->Enable(event.GetValue(0l) == 0);
-        m_pkbd->Enable(event.GetValue(0l) == 0);
-        m_pedtPort->Enable(event.GetValue(0l) == 0);
-        m_pbtnSampleRate->Enable(event.GetValue(0l) == 0);
+        m_pbtnBits->Enable(event.GetValue(0L) == 0);
+        m_pbtnChannels->Enable(event.GetValue(0L) == 0);
+        m_pbtnRtpMap->Enable(event.GetValue(0L) == 0);
+        m_pipServer->Enable(event.GetValue(0L) == 0);
+        m_pkbd->Enable(event.GetValue(0L) == 0);
+        m_pedtPort->Enable(event.GetValue(0L) == 0);
+        m_pbtnSampleRate->Enable(event.GetValue(0L) == 0);
+		m_plstManualMode->Enable(event.GetValue(0L) == 0);
     }
     else if(event.GetSection() == "ManualAoIp" && event.GetKey() == "Mode")
     {

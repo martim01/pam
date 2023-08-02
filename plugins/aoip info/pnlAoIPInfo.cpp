@@ -372,16 +372,9 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
     //delete the old subsession pages
     m_mQos.clear();
     m_mSubsessions.clear();
-    for(size_t i = 0 ; i < m_pswpInfo->GetPageCount();)
+    for(size_t i = 2 ; i < m_pswpInfo->GetPageCount();)
     {
-        if(m_pswpInfo->GetPageText(i).Before(':') == "Subsession" || m_pswpInfo->GetPageText(i).Before(':') == "QoS")
-        {
-            m_pswpInfo->DeletePage(i);
-        }
-        else
-        {
-            ++i;
-        }
+        m_pswpInfo->DeletePage(i);
     }
 
     unsigned int nAudio = 0;

@@ -965,6 +965,7 @@ void ptpPanel::OnClockMaster(wxCommandEvent& event)
 		{
 			m_plstClocks->SetButtonBitmap(nButton, wxBitmap(grandmaster_xpm));
 		}
+		m_plstClocks->Update();
     }
     ClockWebsocketMessage(event.GetString(), "Master");
 }
@@ -1006,7 +1007,7 @@ void ptpPanel::ShowClockDetails()
 		if(m_pClock->IsGrandMaster())
 		{
 			m_plblState->SetLabel("Grand Master");
-			m_plstClocks->SetButtonBitmap(nButton, wxBitmap(grandmaster_xpm));
+			m_plstClocks->SetButtonBitmap(nButton, wxBitmap(grandmaster_xpm));		
 		}
 		else if(m_pClock->IsSyncMaster())
 		{
