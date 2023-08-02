@@ -48,11 +48,21 @@
 					<object class="wmList" name="ID_M_PLST1" variable="m_plstManualMode" member="yes">
 						<scrolling>None</scrolling>
 						<button_size>90,64</button_size>
+						<button>#006C6C</button>
 						<button_pressed>#F07800</button_pressed>
 						<items />
 						<pos>5,13</pos>
 						<size>94,132</size>
 						<bg>wxSYS_COLOUR_SCROLLBAR</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+							<face></face>
+						</font>
+						<style>wmList::STYLE_SELECT</style>
 					</object>
 					<object class="wmSwitcherPanel" name="ID_M_PSWP2" variable="m_pswpManualMode" member="yes">
 						<pos>100,0</pos>
@@ -191,7 +201,7 @@
 									<size>250,40</size>
 								</object>
 							</object>
-							<label>Livewire</label>
+							<label>Livewire+</label>
 						</object>
 					</object>
 				</object>

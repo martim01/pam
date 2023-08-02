@@ -62,8 +62,11 @@ pnlAoipManual::pnlAoipManual(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	m_pbtnStream->SetToggleLook(true, wxT("Stop"), wxT("Start"), 40);
 	m_pbtnSave = new wmButton(m_ppnlSettings, ID_M_PBTN5, _("Save"), wxPoint(340,315), wxSize(100,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN5"));
 	m_pbtnSave->SetBackgroundColour(wxColour(0,128,0));
-	m_plstManualMode = new wmList(m_ppnlSettings, ID_M_PLST1, wxPoint(5,13), wxSize(94,132), 0, 0, wxSize(90,64), 1, wxSize(-1,-1));
+	m_plstManualMode = new wmList(m_ppnlSettings, ID_M_PLST1, wxPoint(5,13), wxSize(94,132), wmList::STYLE_SELECT, 0, wxSize(90,64), 1, wxSize(-1,-1));
 	m_plstManualMode->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_SCROLLBAR));
+	wxFont m_plstManualModeFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,wxEmptyString,wxFONTENCODING_DEFAULT);
+	m_plstManualMode->SetFont(m_plstManualModeFont);
+	m_plstManualMode->SetButtonColour(wxColour(wxT("#006C6C")));
 	m_plstManualMode->SetPressedButtonColour(wxColour(wxT("#F07800")));
 	m_pswpManualMode = new wmSwitcherPanel(m_ppnlSettings, ID_M_PSWP2, wxPoint(100,0), wxSize(470,150), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP2"));
 	m_pswpManualMode->SetPageNameStyle(0);
@@ -129,7 +132,7 @@ pnlAoipManual::pnlAoipManual(wxWindow* parent,wxWindowID id,const wxPoint& pos,c
 	m_pedtLivewire->SetValidation(4);
 	m_pedtLivewire->SetBorderStyle(1,1);
 	m_pswpManualMode->AddPage(pnlIp, _("IP"), false);
-	m_pswpManualMode->AddPage(pnlLivewire, _("Livewire"), false);
+	m_pswpManualMode->AddPage(pnlLivewire, _("Livewire+"), false);
 	m_ppnlMapping = new pnlChannelMapping(m_pswpMain,"ManualAoIp", ID_CHANNEL_MAPPING,wxDefaultPosition,wxDefaultSize);
 	m_pswpMain->AddPage(m_ppnlSettings, _("Settings"), true);
 	m_pswpMain->AddPage(m_ppnlMapping, _("Mapping"), false);
