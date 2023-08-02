@@ -905,9 +905,24 @@
 					</object>
 					<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnGraphClear" member="yes">
 						<label>Clear All</label>
-						<pos>600,445</pos>
+						<pos>550,445</pos>
 						<size>70,30</size>
 						<handler function="OnbtnClearClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN7" variable="m_pbtnGraphHisto" member="yes">
+						<label>Histogram</label>
+						<pos>649,445</pos>
+						<size>70,30</size>
+						<fg>#008000</fg>
+						<bg>#FFFFFF</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+						</font>
+						<handler function="OnbtnHistogramClick" entry="EVT_BUTTON" />
 					</object>
 					<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnGraphOptions" member="yes">
 						<label>Info</label>
@@ -1032,9 +1047,24 @@
 					</object>
 					<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnHistogramClear" member="yes">
 						<label>Clear All</label>
-						<pos>600,445</pos>
+						<pos>550,445</pos>
 						<size>70,30</size>
 						<handler function="OnbtnClearClick" entry="EVT_BUTTON" />
+					</object>
+					<object class="wmButton" name="ID_M_PBTN6" variable="m_pbtnHistGraphs" member="yes">
+						<label>Graphs</label>
+						<pos>649,445</pos>
+						<size>70,30</size>
+						<fg>#008000</fg>
+						<bg>#FFFFFF</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+						</font>
+						<handler function="OnbtnGraphsClick" entry="EVT_BUTTON" />
 					</object>
 					<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnOptions" member="yes">
 						<label>Info</label>

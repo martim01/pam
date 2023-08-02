@@ -62,8 +62,10 @@ class ptpPanel: public pmPanel
 		pnlFlags* m_ppnlResponseFlags;
 		pnlFlags* m_ppnlSyncFlags;
 		wmButton* m_pbtnGraphClear;
+		wmButton* m_pbtnGraphHisto;
 		wmButton* m_pbtnGraphOptions;
 		wmButton* m_pbtnGraphs;
+		wmButton* m_pbtnHistGraphs;
 		wmButton* m_pbtnHistogram;
 		wmButton* m_pbtnHistogramClear;
 		wmButton* m_pbtnOptions;
@@ -286,6 +288,7 @@ class ptpPanel: public pmPanel
 		static const long ID_M_PLBL68;
 		static const long ID_M_PLST5;
 		static const long ID_M_PBTN3;
+		static const long ID_M_PBTN7;
 		static const long ID_M_PBTN4;
 		static const long ID_PANEL15;
 		static const long ID_M_PLBL53;
@@ -297,6 +300,7 @@ class ptpPanel: public pmPanel
 		static const long ID_M_PLBL66;
 		static const long ID_M_PLST3;
 		static const long ID_M_PBTN1;
+		static const long ID_M_PBTN6;
 		static const long ID_M_PBTN2;
 		static const long ID_PANEL16;
 		static const long ID_M_PSWP2;
