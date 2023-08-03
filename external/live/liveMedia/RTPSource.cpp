@@ -404,6 +404,7 @@ void RTPReceptionStats::resetMinMax()
 {
   fMinInterPacketGapUS = 0x7FFFFFFF;
   fMaxInterPacketGapUS = 0;
+  fJitter =0.0;
 }
 
 Boolean seqNumLT(u_int16_t s1, u_int16_t s2) {
