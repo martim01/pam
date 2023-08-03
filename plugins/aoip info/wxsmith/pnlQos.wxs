@@ -122,8 +122,8 @@
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL31" variable="m_plblQoSInterMax" member="yes">
 			<label></label>
-			<pos>400,191</pos>
-			<size>195,25</size>
+			<pos>450,191</pos>
+			<size>147,25</size>
 			<fg>#008000</fg>
 			<bg>#FFFFFF</bg>
 			<font>
@@ -137,8 +137,8 @@
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL30" variable="m_plblQoSInterAv" member="yes">
 			<label></label>
-			<pos>200,191</pos>
-			<size>199,25</size>
+			<pos>301,191</pos>
+			<size>147,25</size>
 			<fg>#008000</fg>
 			<bg>#FFFFFF</bg>
 			<font>
@@ -153,7 +153,22 @@
 		<object class="wmLabel" name="ID_M_PLBL29" variable="m_plblQoSInterMin" member="yes">
 			<label></label>
 			<pos>5,191</pos>
-			<size>194,25</size>
+			<size>147,25</size>
+			<fg>#008000</fg>
+			<bg>#FFFFFF</bg>
+			<font>
+				<size>10</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Consolas</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL33" variable="m_plblQoSInter" member="yes">
+			<label></label>
+			<pos>153,191</pos>
+			<size>147,25</size>
 			<fg>#008000</fg>
 			<bg>#FFFFFF</bg>
 			<font>
@@ -167,22 +182,29 @@
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL28" variable="m_pLbl16" member="yes">
 			<label>Inter Packet Gap Max</label>
-			<pos>400,170</pos>
-			<size>195,20</size>
+			<pos>450,170</pos>
+			<size>147,20</size>
 			<fg>#FFFFFF</fg>
 			<bg>#0000FF</bg>
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL27" variable="m_pLbl15" member="yes">
-			<label>Inter Packet Gap Average</label>
-			<pos>200,170</pos>
-			<size>199,20</size>
+			<label>IPG Average</label>
+			<pos>301,170</pos>
+			<size>147,20</size>
 			<fg>#FFFFFF</fg>
 			<bg>#0000FF</bg>
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL26" variable="m_pLbl14" member="yes">
 			<label>Inter Packet Gap Min</label>
 			<pos>5,170</pos>
-			<size>194,20</size>
+			<size>147,20</size>
+			<fg>#FFFFFF</fg>
+			<bg>#0000FF</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL7" variable="m_pLbl4" member="yes">
+			<label>Inter Packet Gap</label>
+			<pos>153,170</pos>
+			<size>147,20</size>
 			<fg>#FFFFFF</fg>
 			<bg>#0000FF</bg>
 		</object>
@@ -254,8 +276,8 @@
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL19" variable="m_plblQoSKbMax" member="yes">
 			<label></label>
-			<pos>400,81</pos>
-			<size>195,25</size>
+			<pos>450,81</pos>
+			<size>147,25</size>
 			<fg>#008000</fg>
 			<bg>#FFFFFF</bg>
 			<font>
@@ -269,8 +291,8 @@
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL18" variable="m_plblQoSKbAv" member="yes">
 			<label></label>
-			<pos>200,81</pos>
-			<size>199,25</size>
+			<pos>301,81</pos>
+			<size>148,25</size>
 			<fg>#008000</fg>
 			<bg>#FFFFFF</bg>
 			<font>
@@ -285,7 +307,22 @@
 		<object class="wmLabel" name="ID_M_PLBL17" variable="m_plblQoSKbMin" member="yes">
 			<label></label>
 			<pos>5,81</pos>
-			<size>194,25</size>
+			<size>147,25</size>
+			<fg>#008000</fg>
+			<bg>#FFFFFF</bg>
+			<font>
+				<size>10</size>
+				<style>normal</style>
+				<weight>bold</weight>
+				<underlined>0</underlined>
+				<family>swiss</family>
+				<face>Consolas</face>
+			</font>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL6" variable="m_plblQoSKb" member="yes">
+			<label></label>
+			<pos>153,81</pos>
+			<size>147,25</size>
 			<fg>#008000</fg>
 			<bg>#FFFFFF</bg>
 			<font>
@@ -299,22 +336,29 @@
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL15" variable="m_pLbl9" member="yes">
 			<label>kBits/s Average</label>
-			<pos>200,60</pos>
-			<size>199,20</size>
+			<pos>301,60</pos>
+			<size>148,20</size>
 			<fg>#FFFFFF</fg>
 			<bg>#0000FF</bg>
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL16" variable="m_pLbl10" member="yes">
 			<label>kBits/s Max</label>
-			<pos>400,60</pos>
-			<size>195,20</size>
+			<pos>450,60</pos>
+			<size>147,20</size>
 			<fg>#FFFFFF</fg>
 			<bg>#0000FF</bg>
 		</object>
 		<object class="wmLabel" name="ID_M_PLBL14" variable="m_pLbl8" member="yes">
 			<label>kBits/s Min</label>
 			<pos>5,60</pos>
-			<size>194,20</size>
+			<size>147,20</size>
+			<fg>#FFFFFF</fg>
+			<bg>#0000FF</bg>
+		</object>
+		<object class="wmLabel" name="ID_M_PLBL5" variable="m_pLbl3" member="yes">
+			<label>kBits/s</label>
+			<pos>153,60</pos>
+			<size>147,20</size>
 			<fg>#FFFFFF</fg>
 			<bg>#0000FF</bg>
 		</object>

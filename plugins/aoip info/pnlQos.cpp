@@ -26,9 +26,11 @@ const long pnlQos::ID_M_PLBL32 = wxNewId();
 const long pnlQos::ID_M_PLBL31 = wxNewId();
 const long pnlQos::ID_M_PLBL30 = wxNewId();
 const long pnlQos::ID_M_PLBL29 = wxNewId();
+const long pnlQos::ID_M_PLBL33 = wxNewId();
 const long pnlQos::ID_M_PLBL28 = wxNewId();
 const long pnlQos::ID_M_PLBL27 = wxNewId();
 const long pnlQos::ID_M_PLBL26 = wxNewId();
+const long pnlQos::ID_M_PLBL7 = wxNewId();
 const long pnlQos::ID_M_PLBL25 = wxNewId();
 const long pnlQos::ID_M_PLBL24 = wxNewId();
 const long pnlQos::ID_M_PLBL23 = wxNewId();
@@ -38,9 +40,11 @@ const long pnlQos::ID_M_PLBL20 = wxNewId();
 const long pnlQos::ID_M_PLBL19 = wxNewId();
 const long pnlQos::ID_M_PLBL18 = wxNewId();
 const long pnlQos::ID_M_PLBL17 = wxNewId();
+const long pnlQos::ID_M_PLBL6 = wxNewId();
 const long pnlQos::ID_M_PLBL15 = wxNewId();
 const long pnlQos::ID_M_PLBL16 = wxNewId();
 const long pnlQos::ID_M_PLBL14 = wxNewId();
+const long pnlQos::ID_M_PLBL5 = wxNewId();
 const long pnlQos::ID_M_PLBL12 = wxNewId();
 const long pnlQos::ID_M_PLBL13 = wxNewId();
 const long pnlQos::ID_M_PLBL11 = wxNewId();
@@ -113,42 +117,54 @@ pnlQos::pnlQos(wxWindow* parent,const wxString& sGroup, AoIPInfoBuilder* pBuilde
 	m_pLbl17->GetUiRect().SetGradient(0);
 	m_pLbl17->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl17->SetBackgroundColour(wxColour(0,0,255));
-	m_plblQoSInterMax = new wmLabel(this, ID_M_PLBL31, wxEmptyString, wxPoint(400,191), wxSize(195,25), 0, _T("ID_M_PLBL31"));
+	m_plblQoSInterMax = new wmLabel(this, ID_M_PLBL31, wxEmptyString, wxPoint(450,191), wxSize(147,25), 0, _T("ID_M_PLBL31"));
 	m_plblQoSInterMax->SetBorderState(uiRect::BORDER_NONE);
 	m_plblQoSInterMax->GetUiRect().SetGradient(0);
 	m_plblQoSInterMax->SetForegroundColour(wxColour(0,128,0));
 	m_plblQoSInterMax->SetBackgroundColour(wxColour(255,255,255));
 	wxFont m_plblQoSInterMaxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
 	m_plblQoSInterMax->SetFont(m_plblQoSInterMaxFont);
-	m_plblQoSInterAv = new wmLabel(this, ID_M_PLBL30, wxEmptyString, wxPoint(200,191), wxSize(199,25), 0, _T("ID_M_PLBL30"));
+	m_plblQoSInterAv = new wmLabel(this, ID_M_PLBL30, wxEmptyString, wxPoint(301,191), wxSize(147,25), 0, _T("ID_M_PLBL30"));
 	m_plblQoSInterAv->SetBorderState(uiRect::BORDER_NONE);
 	m_plblQoSInterAv->GetUiRect().SetGradient(0);
 	m_plblQoSInterAv->SetForegroundColour(wxColour(0,128,0));
 	m_plblQoSInterAv->SetBackgroundColour(wxColour(255,255,255));
 	wxFont m_plblQoSInterAvFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
 	m_plblQoSInterAv->SetFont(m_plblQoSInterAvFont);
-	m_plblQoSInterMin = new wmLabel(this, ID_M_PLBL29, wxEmptyString, wxPoint(5,191), wxSize(194,25), 0, _T("ID_M_PLBL29"));
+	m_plblQoSInterMin = new wmLabel(this, ID_M_PLBL29, wxEmptyString, wxPoint(5,191), wxSize(147,25), 0, _T("ID_M_PLBL29"));
 	m_plblQoSInterMin->SetBorderState(uiRect::BORDER_NONE);
 	m_plblQoSInterMin->GetUiRect().SetGradient(0);
 	m_plblQoSInterMin->SetForegroundColour(wxColour(0,128,0));
 	m_plblQoSInterMin->SetBackgroundColour(wxColour(255,255,255));
 	wxFont m_plblQoSInterMinFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
 	m_plblQoSInterMin->SetFont(m_plblQoSInterMinFont);
-	m_pLbl16 = new wmLabel(this, ID_M_PLBL28, _("Inter Packet Gap Max"), wxPoint(400,170), wxSize(195,20), 0, _T("ID_M_PLBL28"));
+	m_plblQoSInter = new wmLabel(this, ID_M_PLBL33, wxEmptyString, wxPoint(153,191), wxSize(147,25), 0, _T("ID_M_PLBL33"));
+	m_plblQoSInter->SetBorderState(uiRect::BORDER_NONE);
+	m_plblQoSInter->GetUiRect().SetGradient(0);
+	m_plblQoSInter->SetForegroundColour(wxColour(0,128,0));
+	m_plblQoSInter->SetBackgroundColour(wxColour(255,255,255));
+	wxFont m_plblQoSInterFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
+	m_plblQoSInter->SetFont(m_plblQoSInterFont);
+	m_pLbl16 = new wmLabel(this, ID_M_PLBL28, _("Inter Packet Gap Max"), wxPoint(450,170), wxSize(147,20), 0, _T("ID_M_PLBL28"));
 	m_pLbl16->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl16->GetUiRect().SetGradient(0);
 	m_pLbl16->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl16->SetBackgroundColour(wxColour(0,0,255));
-	m_pLbl15 = new wmLabel(this, ID_M_PLBL27, _("Inter Packet Gap Average"), wxPoint(200,170), wxSize(199,20), 0, _T("ID_M_PLBL27"));
+	m_pLbl15 = new wmLabel(this, ID_M_PLBL27, _("IPG Average"), wxPoint(301,170), wxSize(147,20), 0, _T("ID_M_PLBL27"));
 	m_pLbl15->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl15->GetUiRect().SetGradient(0);
 	m_pLbl15->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl15->SetBackgroundColour(wxColour(0,0,255));
-	m_pLbl14 = new wmLabel(this, ID_M_PLBL26, _("Inter Packet Gap Min"), wxPoint(5,170), wxSize(194,20), 0, _T("ID_M_PLBL26"));
+	m_pLbl14 = new wmLabel(this, ID_M_PLBL26, _("Inter Packet Gap Min"), wxPoint(5,170), wxSize(147,20), 0, _T("ID_M_PLBL26"));
 	m_pLbl14->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl14->GetUiRect().SetGradient(0);
 	m_pLbl14->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl14->SetBackgroundColour(wxColour(0,0,255));
+	m_pLbl4 = new wmLabel(this, ID_M_PLBL7, _("Inter Packet Gap"), wxPoint(153,170), wxSize(147,20), 0, _T("ID_M_PLBL7"));
+	m_pLbl4->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl4->GetUiRect().SetGradient(0);
+	m_pLbl4->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl4->SetBackgroundColour(wxColour(0,0,255));
 	m_plblQoSPacketsMax = new wmLabel(this, ID_M_PLBL25, wxEmptyString, wxPoint(400,136), wxSize(195,25), 0, _T("ID_M_PLBL25"));
 	m_plblQoSPacketsMax->SetBorderState(uiRect::BORDER_NONE);
 	m_plblQoSPacketsMax->GetUiRect().SetGradient(0);
@@ -185,42 +201,54 @@ pnlQos::pnlQos(wxWindow* parent,const wxString& sGroup, AoIPInfoBuilder* pBuilde
 	m_pLbl11->GetUiRect().SetGradient(0);
 	m_pLbl11->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl11->SetBackgroundColour(wxColour(0,0,255));
-	m_plblQoSKbMax = new wmLabel(this, ID_M_PLBL19, wxEmptyString, wxPoint(400,81), wxSize(195,25), 0, _T("ID_M_PLBL19"));
+	m_plblQoSKbMax = new wmLabel(this, ID_M_PLBL19, wxEmptyString, wxPoint(450,81), wxSize(147,25), 0, _T("ID_M_PLBL19"));
 	m_plblQoSKbMax->SetBorderState(uiRect::BORDER_NONE);
 	m_plblQoSKbMax->GetUiRect().SetGradient(0);
 	m_plblQoSKbMax->SetForegroundColour(wxColour(0,128,0));
 	m_plblQoSKbMax->SetBackgroundColour(wxColour(255,255,255));
 	wxFont m_plblQoSKbMaxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
 	m_plblQoSKbMax->SetFont(m_plblQoSKbMaxFont);
-	m_plblQoSKbAv = new wmLabel(this, ID_M_PLBL18, wxEmptyString, wxPoint(200,81), wxSize(199,25), 0, _T("ID_M_PLBL18"));
+	m_plblQoSKbAv = new wmLabel(this, ID_M_PLBL18, wxEmptyString, wxPoint(301,81), wxSize(148,25), 0, _T("ID_M_PLBL18"));
 	m_plblQoSKbAv->SetBorderState(uiRect::BORDER_NONE);
 	m_plblQoSKbAv->GetUiRect().SetGradient(0);
 	m_plblQoSKbAv->SetForegroundColour(wxColour(0,128,0));
 	m_plblQoSKbAv->SetBackgroundColour(wxColour(255,255,255));
 	wxFont m_plblQoSKbAvFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
 	m_plblQoSKbAv->SetFont(m_plblQoSKbAvFont);
-	m_plblQoSKbMin = new wmLabel(this, ID_M_PLBL17, wxEmptyString, wxPoint(5,81), wxSize(194,25), 0, _T("ID_M_PLBL17"));
+	m_plblQoSKbMin = new wmLabel(this, ID_M_PLBL17, wxEmptyString, wxPoint(5,81), wxSize(147,25), 0, _T("ID_M_PLBL17"));
 	m_plblQoSKbMin->SetBorderState(uiRect::BORDER_NONE);
 	m_plblQoSKbMin->GetUiRect().SetGradient(0);
 	m_plblQoSKbMin->SetForegroundColour(wxColour(0,128,0));
 	m_plblQoSKbMin->SetBackgroundColour(wxColour(255,255,255));
 	wxFont m_plblQoSKbMinFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
 	m_plblQoSKbMin->SetFont(m_plblQoSKbMinFont);
-	m_pLbl9 = new wmLabel(this, ID_M_PLBL15, _("kBits/s Average"), wxPoint(200,60), wxSize(199,20), 0, _T("ID_M_PLBL15"));
+	m_plblQoSKb = new wmLabel(this, ID_M_PLBL6, wxEmptyString, wxPoint(153,81), wxSize(147,25), 0, _T("ID_M_PLBL6"));
+	m_plblQoSKb->SetBorderState(uiRect::BORDER_NONE);
+	m_plblQoSKb->GetUiRect().SetGradient(0);
+	m_plblQoSKb->SetForegroundColour(wxColour(0,128,0));
+	m_plblQoSKb->SetBackgroundColour(wxColour(255,255,255));
+	wxFont m_plblQoSKbFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Consolas"),wxFONTENCODING_DEFAULT);
+	m_plblQoSKb->SetFont(m_plblQoSKbFont);
+	m_pLbl9 = new wmLabel(this, ID_M_PLBL15, _("kBits/s Average"), wxPoint(301,60), wxSize(148,20), 0, _T("ID_M_PLBL15"));
 	m_pLbl9->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl9->GetUiRect().SetGradient(0);
 	m_pLbl9->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl9->SetBackgroundColour(wxColour(0,0,255));
-	m_pLbl10 = new wmLabel(this, ID_M_PLBL16, _("kBits/s Max"), wxPoint(400,60), wxSize(195,20), 0, _T("ID_M_PLBL16"));
+	m_pLbl10 = new wmLabel(this, ID_M_PLBL16, _("kBits/s Max"), wxPoint(450,60), wxSize(147,20), 0, _T("ID_M_PLBL16"));
 	m_pLbl10->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl10->GetUiRect().SetGradient(0);
 	m_pLbl10->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl10->SetBackgroundColour(wxColour(0,0,255));
-	m_pLbl8 = new wmLabel(this, ID_M_PLBL14, _("kBits/s Min"), wxPoint(5,60), wxSize(194,20), 0, _T("ID_M_PLBL14"));
+	m_pLbl8 = new wmLabel(this, ID_M_PLBL14, _("kBits/s Min"), wxPoint(5,60), wxSize(147,20), 0, _T("ID_M_PLBL14"));
 	m_pLbl8->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl8->GetUiRect().SetGradient(0);
 	m_pLbl8->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl8->SetBackgroundColour(wxColour(0,0,255));
+	m_pLbl3 = new wmLabel(this, ID_M_PLBL5, _("kBits/s"), wxPoint(153,60), wxSize(147,20), 0, _T("ID_M_PLBL5"));
+	m_pLbl3->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl3->GetUiRect().SetGradient(0);
+	m_pLbl3->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl3->SetBackgroundColour(wxColour(0,0,255));
 	m_plblQoSLost = new wmLabel(this, ID_M_PLBL12, wxEmptyString, wxPoint(500,26), wxSize(100,25), 0, _T("ID_M_PLBL12"));
 	m_plblQoSLost->SetBorderState(uiRect::BORDER_NONE);
 	m_plblQoSLost->GetUiRect().SetGradient(0);
@@ -346,7 +374,8 @@ void pnlQos::QoSUpdated(qosData* pData)
 	if(IsShownOnScreen())
     {
 		m_plblQoSTime->SetLabel(pData->tsTime.Format(wxT("%H:%M:%S:%l")));
-		m_plblQoSKbAv->SetLabel(wxString::Format(wxT("%.2f [%.2f]"), pData->dkbits_per_second_Now, pData->dkbits_per_second_Av));
+		m_plblQoSKb->SetLabel(wxString::Format(wxT("%.2f"), pData->dkbits_per_second_Now));
+		m_plblQoSKbAv->SetLabel(wxString::Format(wxT("%.2f"), pData->dkbits_per_second_Av));
 		m_plblQoSKbMax->SetLabel(wxString::Format(wxT("%f"), pData->dkbits_per_second_max));
 		m_plblQoSKbMin->SetLabel(wxString::Format(wxT("%f"), pData->dkbits_per_second_min));
 		m_plblQoSLost->SetLabel(wxString::Format(wxT("%d"), pData->nTotNumPacketsLost));
@@ -355,7 +384,8 @@ void pnlQos::QoSUpdated(qosData* pData)
 		m_plblQoSPacketsMin->SetLabel(wxString::Format(wxT("%.3f"), pData->dPacket_loss_fraction_min));
 		m_plblQoSReceived->SetLabel(wxString::Format(wxT("%d"), pData->nTotNumPacketsReceived));
 
-		m_plblQoSInterAv->SetLabel(wxString::Format(wxT("%f ms [%f]"), pData->dInter_packet_gap_ms_max, pData->dInter_packet_gap_ms_av));
+		m_plblQoSInter->SetLabel(wxString::Format(wxT("%f ms"), pData->dInter_packet_gap_ms_max));
+		m_plblQoSInterAv->SetLabel(wxString::Format(wxT("%f ms"), pData->dInter_packet_gap_ms_av));
 
 		m_dTotalMaxInterPacket = std::max(m_dTotalMaxInterPacket, pData->dInter_packet_gap_ms_max);
 		m_dTotalMinInterPacket = std::min(m_dTotalMinInterPacket, pData->dInter_packet_gap_ms_min);
@@ -401,10 +431,10 @@ void pnlQos::QoSUpdated(qosData* pData)
     m_pGraph->AddPeak(wxT("Jitter"), pData->dJitter);
     m_pHistogram->AddPeak(wxT("Jitter"), pData->dJitter);
 
-    
+
     m_pGraph->AddPeak(wxT("Timestamp Errors"), pData->nTimestampErrors);
     m_pHistogram->AddPeak(wxT("Timestamp Errors"), pData->nTimestampErrors);
-    
+
 }
 
 void pnlQos::OnbtnRangeClick(wxCommandEvent& event)
