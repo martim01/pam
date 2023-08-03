@@ -435,6 +435,11 @@ void pnlQos::QoSUpdated(qosData* pData)
     m_pGraph->AddPeak(wxT("Timestamp Errors"), pData->nTimestampErrors);
     m_pHistogram->AddPeak(wxT("Timestamp Errors"), pData->nTimestampErrors);
 
+	
+	auto dSlip = m_dLatency-m_dInitialLatency;
+	m_pGraph->AddPeak("Slip", dSlip);
+	m_pHistogram->AddPeak("Slip", dSlip);
+
 }
 
 void pnlQos::OnbtnRangeClick(wxCommandEvent& event)
@@ -499,13 +504,10 @@ void pnlQos::RtpFrame(std::shared_ptr<const rtpFrame> pFrame)
         m_pHistogram->AddPeak(wxT("TS-DF"), pFrame->dTSDF);
     }
 
-	auto dLatency = static_cast<double>(pFrame->timeLatency.tv_sec)*1000000.0 + static_cast<double>(pFrame->timeLatency.tv_usec);
+	m_dLatency = static_cast<double>(pFrame->timeLatency.tv_sec)*1000000.0 + static_cast<double>(pFrame->timeLatency.tv_usec);
 	if(m_nLatencyCounter < 3)
 	{
 		++m_nLatencyCounter;
-		m_dInitialLatency = dLatency;
-	}
-	double dSlip = dLatency-m_dInitialLatency;
-	m_pGraph->AddPeak("Slip", dSlip);
-	m_pHistogram->AddPeak("Slip", dSlip);
+		m_dInitialLatency = m_dLatency;
+	}	
 }

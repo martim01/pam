@@ -137,6 +137,7 @@ class pnlQos: public wxPanel
         wxString m_sGroup;
 		wxString m_sGraph;
 
+		double m_dLatency=0.0;
 		double m_dInitialLatency=0.0;
 		unsigned short m_nLatencyCounter = 0;
 
