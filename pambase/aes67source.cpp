@@ -1,4 +1,4 @@
-#include "aes67mediasession.h"
+//#include "aes67mediasession.h"
 #include "UsageEnvironment.hh"
 #include "aes67source.h"
 #include <string>
@@ -34,7 +34,7 @@ Aes67Source
   m_nSyncTimestamp(nSync)
   {
       #ifdef PTPMONKEY
-      wxPtp::Get().ResyncToMaster(0);
+      wxPtp::Get().ResyncToMaster();
       #endif // PTPMONKEY
       WorkoutLastEpoch();
   }

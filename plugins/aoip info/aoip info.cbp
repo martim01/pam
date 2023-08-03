@@ -145,13 +145,19 @@
 		<Unit filename="pnlAoIPInfo.h" />
 		<Unit filename="pnlGraph.cpp" />
 		<Unit filename="pnlGraph.h" />
+		<Unit filename="pnlQos.cpp" />
+		<Unit filename="pnlQos.h" />
 		<Unit filename="pnlSettings.cpp" />
 		<Unit filename="pnlSettings.h" />
+		<Unit filename="pnlSubsession.cpp" />
+		<Unit filename="pnlSubsession.h" />
 		<Unit filename="sdpelement.cpp" />
 		<Unit filename="sdpelement.h" />
 		<Unit filename="wxsmith/pnlAoIPInfo.wxs" />
 		<Unit filename="wxsmith/pnlGraph.wxs" />
+		<Unit filename="wxsmith/pnlQos.wxs" />
 		<Unit filename="wxsmith/pnlSettings.wxs" />
+		<Unit filename="wxsmith/pnlSubsession.wxs" />
 		<Extensions>
 			<code_completion />
 			<envvars />
@@ -167,6 +173,8 @@
 					<wxPanel wxs="wxsmith/pnlAoIPInfo.wxs" src="pnlAoIPInfo.cpp" hdr="pnlAoIPInfo.h" fwddecl="0" i18n="1" name="pnlAoIPInfo" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlGraph.wxs" src="pnlGraph.cpp" hdr="pnlGraph.h" fwddecl="0" i18n="1" name="pnlGraph" language="CPP" />
 					<wxPanel wxs="wxsmith/pnlSettings.wxs" src="pnlSettings.cpp" hdr="pnlSettings.h" fwddecl="0" i18n="1" name="pnlSettings" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlSubsession.wxs" src="pnlSubsession.cpp" hdr="pnlSubsession.h" fwddecl="0" i18n="1" name="pnlSubsession" language="CPP" />
+					<wxPanel wxs="wxsmith/pnlQos.wxs" src="pnlQos.cpp" hdr="pnlQos.h" fwddecl="0" i18n="1" name="pnlQos" language="CPP" />
 				</resources>
 			</wxsmith>
 		</Extensions>

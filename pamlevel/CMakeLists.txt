@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 project(pamlevel LANGUAGES CXX VERSION 1.3.0)
 
 execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -P ${CMAKE_SOURCE_DIR}/version.cmake)
@@ -31,7 +31,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	endif()
 endif()
 
-list(APPEND flags "-fPIC" "-Wall" "-fpermissive"  "-std=c++14")
+list(APPEND flags "-fPIC" "-Wall" "-fpermissive")
 
 if(CMAKE_BUILD_TYPE MATCHES Release)
    list(APPEND flags "-O3")
@@ -46,11 +46,11 @@ target_link_libraries(pamlevel ${wxWidgets_LIBRARIES})
 target_link_libraries(pamlevel optimized pambase debug pambased)
 
 set_target_properties(pamlevel PROPERTIES DEBUG_POSTFIX "d")
-
+set_target_properties(pamlevel PROPERTIES CXX_STANDARD 17)
 set_target_properties(pamlevel PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../lib/")
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS pamlevel LIBRARY DESTINATION /usr/local/lib)
+	install(TARGETS pamlevel LIBRARY DESTINATION lib)
 endif()
 		

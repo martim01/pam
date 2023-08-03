@@ -348,7 +348,7 @@ void AoipSourceManager::OnSap(wxCommandEvent& event)
             unsigned long nCodec;
             if(asLines[i].AfterFirst(':').BeforeFirst(' ').ToULong(&nCodec) && nCodec > 95 && nCodec < 127)
             {
-                if(asLines[i].find("L24") != wxNOT_FOUND || asLines[i].find("L16") != wxNOT_FOUND)
+                if(asLines[i].find("L24") != wxNOT_FOUND || asLines[i].find("L16") != wxNOT_FOUND || asLines[i].find("AM824") != wxNOT_FOUND)
                 {
                     bCanDecode = true;
                     break;

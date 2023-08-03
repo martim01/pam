@@ -14,6 +14,9 @@
 #include "wxptp.h"
 #include "aes67source.h"
 #include "log.h"
+#include "settings.h"
+#include "rtpframeevent.h"
+
 using namespace std;
 
 //// A function that outputs a string that identifies each subsession (for debugging output).  Modify this if you wish:
@@ -22,11 +25,18 @@ UsageEnvironment& operator<<(UsageEnvironment& env, const Smpte2110MediaSubsessi
     return env << subsession.mediumName() << "/" << subsession.codecName();
 }
 
+bool Tv1LessThanTv2(const timeval& tv1, const timeval& tv2)
+{
+    return (tv1.tv_sec < tv2.tv_sec || (tv1.tv_sec == tv2.tv_sec && tv1.tv_usec < tv2.tv_usec));
+}
+
+
 
 DEFINE_EVENT_TYPE(wxEVT_QOS_UPDATED)
 DEFINE_EVENT_TYPE(wxEVT_RTP_SESSION)
 DEFINE_EVENT_TYPE(wxEVT_RTP_SESSION_CLOSED)
 DEFINE_EVENT_TYPE(wxEVT_SDP)
+
 
 RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface, const wxString& sProg, const AoIPSource& source, unsigned int nBufferSize, bool bSaveSDPOnly) :
     wxThread(wxTHREAD_JOINABLE),
@@ -37,11 +47,7 @@ RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface
     m_pCurrentBuffer(nullptr),
 	m_dTransmission(0),
 	m_dPresentation(0),
-	m_dDelay0(std::numeric_limits<double>::lowest()),
-	m_dTSDFMax(std::numeric_limits<double>::lowest()),
-	m_dTSDFMin(std::numeric_limits<double>::max()),
-    m_dTSDF(0),
-	m_nTSDFCount(0),
+	
 	m_nSampleRate(48000),
     m_nTimestampErrors(0),
 	m_nTimestampErrorsTotal(0),
@@ -120,7 +126,7 @@ void* RtpThread::Entry()
     // @todo do we need to delete clients etc?
     if(m_pRtspClient)
     {
-        pmlLog(pml::LOG_TRACE) << "RTPThread::Entry\t" << "Shutdown stream";
+        pmlLog(pml::LOG_DEBUG) << "RTPThread::Entry\t" << "Shutdown stream";
         shutdownStream(m_pRtspClient, 0);
         m_pRtspClient = nullptr;
     }
@@ -135,9 +141,8 @@ void RtpThread::StreamFromSDP()
 
     pmlLog() << m_sDescriptor;
 
-
     m_pSession = Smpte2110MediaSession::createNew(*m_penv, m_sDescriptor.c_str());
-    if (m_pSession == NULL)
+    if (m_pSession == nullptr)
     {
         pmlLog(pml::LOG_ERROR) << "RTP Client\tFailed to create a MediaSession object from the SDP description: " << m_penv->getResultMsg();
         return;
@@ -149,73 +154,82 @@ void RtpThread::StreamFromSDP()
 
     //count number of subsessions
     unsigned int nCountAudio(0);
-    unsigned int nCountVideo(0);
     MediaSubsessionIterator iterCount(*m_pSession);
-    MediaSubsession* pSubsessionCount = NULL;
-    while ((pSubsessionCount = iterCount.next()) != NULL)
+    MediaSubsession* pSubsessionCount = nullptr;
+    while ((pSubsessionCount = iterCount.next()) != nullptr)
     {
-        if (strcmp(pSubsessionCount->codecName(), "L16") == 0 || strcmp(pSubsessionCount->codecName(), "L24") == 0) // 16 or 24-bit linear audio (RFC 3190)
+        if (strcmp(pSubsessionCount->codecName(), "L16") == 0 || strcmp(pSubsessionCount->codecName(), "L24") == 0 
+        || strcmp(pSubsessionCount->codecName(), "AM824") == 0) // 16 or 24-bit linear audio (RFC 3190) or 2110-31
         {
             if(pSubsessionCount->numChannels() > 0)
+            {
                 nCountAudio++;
+            }
             else
             {
                 pmlLog(pml::LOG_WARN) << "RTP Client\tAudio subsession, but 0 channels defined";
             }
         }
-        else if (strcmp(pSubsessionCount->codecName(), "RAW") == 0)
-        {
-            nCountVideo++;
-        }
     }
     pmlLog(pml::LOG_DEBUG) << "RTP Client\tNumber of AES67 Subsessions: " << nCountAudio;
-    pmlLog(pml::LOG_DEBUG) << "RTP Client\tNumber of Video Subsessions: " << nCountVideo;
+    pmlLog(pml::LOG_DEBUG) << "RTP Client\tStreams = " << m_pSession->GetGroups().size();
 
     if(nCountAudio == 0)
     {
         pmlLog(pml::LOG_WARN) << "RTP Client\tNo AES67 subsessions. Exit";
         return;
     }
+
+    
     MediaSubsessionIterator iter(*m_pSession);
-    Smpte2110MediaSubsession* subsession = NULL;
-    while ((subsession = dynamic_cast<Smpte2110MediaSubsession*>(iter.next())) != NULL)
+    Smpte2110MediaSubsession* pSubsession = nullptr;
+    while ((pSubsession = dynamic_cast<Smpte2110MediaSubsession*>(iter.next())) != nullptr)
     {
-        if (!subsession->initiate (0))
+        if((m_pSession->GetGroups().find(pSubsession->GetGroup()) != m_pSession->GetGroups().end())) // duplicate streams
         {
-            pmlLog(pml::LOG_WARN) << "RTP Client\tFailed to initiate the subsession: " << m_penv->getResultMsg();
-        }
-        else
-        {
-            subsession->sink = wxSink::createNew(*m_penv, *subsession, this);
-            pmlLog(pml::LOG_DEBUG) << "RTP Client\tInitiated the subsession: ";
-            if (subsession->rtcpIsMuxed())
+            if (!pSubsession->initiate (0))
             {
-                pmlLog(pml::LOG_DEBUG) << "client port " << subsession->clientPortNum();
+                pmlLog(pml::LOG_WARN) << "RTP Client\tFailed to initiate the subsession: " << m_penv->getResultMsg();
             }
             else
             {
-                pmlLog(pml::LOG_DEBUG) << "client ports " << subsession->clientPortNum() << "-" << subsession->clientPortNum()+1;
-            }
-
-            pmlLog(pml::LOG_DEBUG) << "RTP Client\tSessionId: " << subsession->GetEndpoint();
-            if (subsession->sink == NULL)
-            {
-                pmlLog(pml::LOG_ERROR) << "RTP Client\tFailed to create a data sink for the subsession: " << m_penv->getResultMsg();
-            }
-            else
-            {
-                pmlLog(pml::LOG_DEBUG) << "RTP Client\tCreated a data sink for the subsession";
-
-                subsession->sink->startPlaying(*subsession->readSource(), NULL, NULL);
-                beginQOSMeasurement(*m_penv, m_pSession, this);
+                CreateSink(pSubsession);
             }
         }
     }
     PassSessionDetails(m_pSession);
+    beginQOSMeasurement(*m_penv, m_pSession, this);
+
+    
 
     while(m_eventLoopWatchVariable == 0)
     {
         m_penv->taskScheduler().doEventLoop(&m_eventLoopWatchVariable);
+    }
+}
+
+void RtpThread::CreateSink(Smpte2110MediaSubsession* pSubsession)
+{
+    pSubsession->sink = wxSink::createNew(*m_penv, *pSubsession, this);
+    pmlLog(pml::LOG_DEBUG) << "RTP Client\tInitiated the subsession: ";
+    if (pSubsession->rtcpIsMuxed())
+    {
+        pmlLog(pml::LOG_DEBUG) << "client port " << pSubsession->clientPortNum();
+    }
+    else
+    {
+        pmlLog(pml::LOG_DEBUG) << "client ports " << pSubsession->clientPortNum() << "-" << pSubsession->clientPortNum()+1;
+    }
+    pmlLog(pml::LOG_DEBUG) << "RTP Client\tSessionId: " << pSubsession->GetEndpoint();
+    
+    if (pSubsession->sink == nullptr)
+    {
+        pmlLog(pml::LOG_ERROR) << "RTP Client\tFailed to create a data sink for the subsession: " << m_penv->getResultMsg();
+    }
+    else
+    {
+        pmlLog(pml::LOG_DEBUG) << "RTP Client\tCreated a data sink for the subsession";
+        pSubsession->sink->startPlaying(*pSubsession->readSource(), nullptr, nullptr);
     }
 }
 
@@ -226,14 +240,13 @@ bool RtpThread::DoRTSP()
     wxString sUrl(m_source.sDetails);
     sUrl.Replace(wxT(" "), wxT("%20"));
     m_pRtspClient = ourRTSPClient::createNew((*m_penv), sUrl.mb_str(), this, 1, m_sProgName.mb_str());
-    if (m_pRtspClient == NULL)
+    if (m_pRtspClient == nullptr)
     {
         pmlLog(pml::LOG_ERROR) << "RTP Client\tFailed to create a RTSP client for URL \"" << sUrl.ToStdString() << "\": " << (*m_penv).getResultMsg();
         return false;
     }
     pmlLog() << "RTSP Send Options";
     m_pRtspClient->sendOptionsCommand(continueAfterOPTIONS);
-    //m_pRtspClient->sendDescribeCommand(continueAfterDESCRIBE);
 
     return true;
 }
@@ -243,7 +256,7 @@ bool RtpThread::DoSIP()
     wxString sUrl(m_source.sDetails);
     sUrl.Replace(wxT(" "), wxT("%20"));
     m_pSipClient = ourSIPClient::createNew((*m_penv), sUrl.mb_str(), this, 1, m_sProgName.mb_str());
-    if (m_pRtspClient == NULL)
+    if (m_pRtspClient == nullptr)
     {
         pmlLog(pml::LOG_ERROR) << "RTP Client\tFailed to create a RTSP client for URL \"" << sUrl.ToStdString() << "\": " << (*m_penv).getResultMsg();
         return false;
@@ -254,8 +267,8 @@ bool RtpThread::DoSIP()
 
 timeval RtpThread::ConvertDoubleToPairTime(double dTime)
 {
-    double dInt, dDec;
-    dDec = modf(dTime, &dInt);
+    double dInt;
+    auto dDec = modf(dTime, &dInt);
     return {static_cast<time_t>(dInt), static_cast<__suseconds_t>(dDec*1000000.0)};
 }
 
@@ -270,17 +283,122 @@ float RtpThread::ConvertFrameBufferToSample(u_int8_t* pFrameBuffer, u_int8_t nBy
     {
         nSample = (static_cast<int>(pFrameBuffer[2]) << 8) | (static_cast<int>(pFrameBuffer[1]) << 16) | (static_cast<int>(pFrameBuffer[0]) << 24);
     }
+    else if(nBytesPerSample == 4)
+    {   //@todo need to check which 3 of the 4 we uses
+        nSample = (static_cast<int>(pFrameBuffer[3]) << 8) | (static_cast<int>(pFrameBuffer[2]) << 16) | (static_cast<int>(pFrameBuffer[1]) << 24);
+    }
     return static_cast<float>(nSample)/ 2147483648.0;
 }
 
-void RtpThread::AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const timeval& timePresentation, unsigned long nFrameSize, u_int8_t* pFrameBuffer,
-u_int8_t nBytesPerSample, const timeval& timeTransmission,
-unsigned int nTimestamp,unsigned int nDuration, int nTimestampDifference, mExtension_t* pExt)
+void RtpThread::AddFrame(std::shared_ptr<const rtpFrame> pFrame)
 {
-    if(m_bClosing || m_Session.GetCurrentSubsession() == m_Session.lstSubsession.end() || m_Session.GetCurrentSubsession()->sSourceAddress != sEndpoint)
+    if(m_bClosing || m_Session.GetCurrentSubsession() == m_Session.lstSubsession.end() || m_nInputChannels==0)
+    {
         return;
+    }
 
-    if(m_pCurrentBuffer == 0)
+    auto itGroup = m_mRedundantBuffers.find(pFrame->sGroup);
+    if(itGroup == m_mRedundantBuffers.end())
+    {
+        itGroup = m_mRedundantBuffers.insert({pFrame->sGroup, std::list<std::shared_ptr<const rtpFrame>>()}).first;
+        m_mStreamUsage.try_emplace(pFrame->sGroup, 0);
+    }
+    itGroup->second.push_back(pFrame);
+
+    auto itReceived = m_mFramesReceived.find(pFrame->sGroup);
+    if(itReceived == m_mFramesReceived.end())
+    {
+        itReceived = m_mFramesReceived.try_emplace(pFrame->sGroup,0).first;
+    }
+    ++itReceived->second;
+
+    //send out an rtpframe event 20 times a second...
+    
+    if(m_pHandler && itReceived->second%(14400 / pFrame->nFrameSize) == 0)
+    {
+       auto pEvent = new RtpFrameEvent(pFrame);
+       wxQueueEvent(m_pHandler, pEvent);
+    }
+    
+    HandleFrameAdded();
+}
+
+void RtpThread::WorkoutFirstFrame()
+{
+    //if we've not yet extracted from the buffer then get the one with the earliest transmission time
+    gettimeofday(&m_tvLastExtracted, nullptr);
+    size_t nMaxReceived = 0;
+
+    for(const auto& pairBuffer : m_mRedundantBuffers)
+    {
+        nMaxReceived = std::max(nMaxReceived, pairBuffer.second.size());
+        if(pairBuffer.second.empty() == false && Tv1LessThanTv2(pairBuffer.second.front()->timeTransmission, m_tvLastExtracted))
+        {
+            m_nTimestamp = pairBuffer.second.front()->nTimestamp-1;
+            m_tvLastExtracted = pairBuffer.second.front()->timeTransmission;
+        }
+    }
+    if(nMaxReceived > m_nRedundantBufferQueue)  //we don't move on from this until at least one stream has sent (10) frames
+    {
+        m_bFrameExtracted = true;
+    }
+}
+
+void RtpThread::HandleFrameAdded()
+{
+    if(m_mRedundantBuffers.size() == 1) //no redundant frames so no point buffering
+    {
+        if(m_mRedundantBuffers.begin()->second.empty() == false)
+        {
+            ConvertFrameToTimedBuffer(m_mRedundantBuffers.begin()->second.front());
+            m_mRedundantBuffers.begin()->second.pop_front();
+        }
+    }
+    else if(m_bFrameExtracted == false) 
+    {
+        WorkoutFirstFrame();
+    }
+    else
+    {
+        WorkoutNextFrame();
+    }
+}
+
+void RtpThread::WorkoutNextFrame()
+{
+    auto bExtracted = false;
+    for(const auto& pairBuffer : m_mRedundantBuffers)
+    {
+        for(auto itFrame = pairBuffer.second.begin(); itFrame != pairBuffer.second.end();)
+        {
+            if(Tv1LessThanTv2((*itFrame)->timeTransmission, m_tvLastExtracted))
+            {   //delete frame if transmitted earlier than the last one we extracted
+                auto itDelete = itFrame;
+                ++itFrame;
+                pairBuffer.second.erase(itFrame);
+            }
+            else if((*itFrame)->nTimestamp == m_nTimestamp+1)   //this is the timestamp we want
+            {
+                if(!bExtracted)
+                {
+                    m_tvLastExtracted = (*itFrame)->timeTransmission;
+                    ConvertFrameToTimedBuffer(*itFrame);
+                    bExtracted = true;
+                }
+                pairBuffer.second.erase(itFrame);
+                break;
+            }
+            else
+            {
+                ++itFrame;
+            }
+        }
+    }
+}
+
+void RtpThread::ConvertFrameToTimedBuffer(std::shared_ptr<const rtpFrame> pFrame)
+{
+    if(m_pCurrentBuffer == nullptr)
     {
         m_pCurrentBuffer = new float[m_nBufferSize*m_nInputChannels];
         m_nSampleBufferSize = 0;
@@ -288,16 +406,16 @@ unsigned int nTimestamp,unsigned int nDuration, int nTimestampDifference, mExten
 
     double dOffset = 0.0;
 
-    for(int i = 0; i < nFrameSize; i+=nBytesPerSample)
+    for(int i = 0; i < pFrame->nFrameSize; i+=pFrame->nBytesPerSample)
     {
-        float dSample(ConvertFrameBufferToSample(&pFrameBuffer[i], nBytesPerSample));
+        auto dSample = ConvertFrameBufferToSample(&(pFrame->pBuffer[i]), pFrame->nBytesPerSample);
 
         if(m_nSampleBufferSize == 0)
         {
-            m_dTransmission = timeTransmission.tv_sec + (static_cast<double>(timeTransmission.tv_usec))/1000000.0;
-            m_dPresentation = (timePresentation.tv_sec + (static_cast<double>(timePresentation.tv_usec))/1000000.0) - dOffset;
+            m_dTransmission = pFrame->timeTransmission.tv_sec + (static_cast<double>(pFrame->timeTransmission.tv_usec))/1000000.0;
+            m_dPresentation = (pFrame->timePresentation.tv_sec + (static_cast<double>(pFrame->timePresentation.tv_usec))/1000000.0) - dOffset;
             //is the timestamp what we'd expect??
-            m_nTimestamp = nTimestamp;
+            m_nTimestamp = pFrame->nTimestamp;
 
         }
         else if(i%m_nInputChannels ==0)
@@ -316,57 +434,31 @@ unsigned int nTimestamp,unsigned int nDuration, int nTimestampDifference, mExten
 
         if(m_nSampleBufferSize == m_nBufferSize*m_nInputChannels)   //filled up buffer
         {
-            timedbuffer* pTimedBuffer = new timedbuffer(m_nBufferSize*m_nInputChannels, ConvertDoubleToPairTime(m_dPresentation), m_nTimestamp, m_nInputChannels);
+            auto pTimedBuffer = new timedbuffer(m_nBufferSize*m_nInputChannels, ConvertDoubleToPairTime(m_dPresentation), m_nTimestamp, m_nInputChannels);
             pTimedBuffer->SetBuffer(m_pCurrentBuffer);
             pTimedBuffer->SetTransmissionTime(ConvertDoubleToPairTime(m_dTransmission));
-            pTimedBuffer->SetDuration(nDuration);
-            AudioEvent* pEvent = new AudioEvent(pTimedBuffer, AudioEvent::RTP, m_nBufferSize, m_nSampleRate, false, false);
+            pTimedBuffer->SetDuration(pFrame->nFrameSize);
+            auto pEvent = new AudioEvent(pTimedBuffer, AudioEvent::RTP, m_nBufferSize, m_nSampleRate, false, false);
             wxQueueEvent(m_pHandler, pEvent);
             m_nSampleBufferSize = 0;
         }
     }
-
-
-
     //QOS
-    if(m_nInputChannels*nBytesPerSample != 0)
+    if(m_nInputChannels*pFrame->nBytesPerSample != 0)
     {
-        unsigned int nExpectedDifference = nFrameSize/(m_nInputChannels*nBytesPerSample);
-        if(nExpectedDifference != nTimestampDifference)
+        auto nExpectedDifference = pFrame->nFrameSize/(m_nInputChannels*pFrame->nBytesPerSample);
+        if(nExpectedDifference != pFrame->nTimestampDifference)
         {
             m_nTimestampErrors++;
-
             m_nTimestampErrorsTotal++;
         }
     }
-
-    int nFramesPerSec = (m_nSampleRate*m_nInputChannels*nBytesPerSample)/nFrameSize;
-
+    
 
 
-    timeval tvSub;
-    timersub(&timePresentation, &timeTransmission, &tvSub);
-    double dTSDF = (static_cast<double>(tvSub.tv_sec)*1000000.0)+tvSub.tv_usec;
-
-    if(m_dDelay0 == std::numeric_limits<double>::lowest() || m_nTSDFCount == nFramesPerSec)
-    {
-        m_dTSDF = m_dTSDFMax-m_dTSDFMin;
-        m_dDelay0 = dTSDF;
-
-        m_dTSDFMax = std::numeric_limits<double>::lowest();
-        m_dTSDFMin = std::numeric_limits<double>::max();
-
-        m_nTSDFCount = 1;
-
-    }
-    else
-    {
-        dTSDF -= m_dDelay0;
-       // dTSDF *= 1000000.0;
-        m_dTSDFMax = max(m_dTSDFMax, dTSDF);
-        m_dTSDFMin = min(m_dTSDFMin, dTSDF);
-        m_nTSDFCount++;
-    }
+    //keep track of which streams frames come from
+    ++m_mStreamUsage[pFrame->sGroup];
+    ++m_nTotalFramesPlayed;
 }
 
 
@@ -376,7 +468,7 @@ void RtpThread::StopStream()
     if(m_pRtspClient)
     {
         pmlLog(pml::LOG_INFO) << "RTP Client\tStop Stream ";
-        pmlLog(pml::LOG_TRACE) <<  "RTPThread::StopStream\t" << "Shutdown stream";
+        pmlLog(pml::LOG_DEBUG) <<  "RTPThread::StopStream\t" << "Shutdown stream";
         shutdownStream(m_pRtspClient, 0);
         m_pRtspClient = nullptr;
     }
@@ -389,10 +481,25 @@ void RtpThread::StopStream()
 
 void RtpThread::QosUpdated(qosData* pData)
 {
-
+    auto itStream = m_mStreamUsage.find(pData->sStream);
+    if(itStream != m_mStreamUsage.end())
+    {
+        pData->nFramesUsed = itStream->second;
+    }
+    auto itReceived = m_mFramesReceived.find(pData->sStream);
+    if(itReceived != m_mFramesReceived.end())
+    {
+        pData->nFramesReceived = itReceived->second;
+    }
+    auto itBuffer = m_mRedundantBuffers.find(pData->sStream);
+    if(itBuffer != m_mRedundantBuffers.end())
+    {
+        pData->nBufferSize = itBuffer->second.size();
+    }
+    pData->nTotalFrames = m_nTotalFramesPlayed;
+    
     pData->nTimestampErrors = m_nTimestampErrors;
     pData->nTimestampErrorsTotal = m_nTimestampErrorsTotal;
-    pData->dTSDF = m_dTSDF;
     if(m_pHandler)
     {
         wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_QOS_UPDATED);
@@ -407,6 +514,10 @@ void RtpThread::QosUpdated(qosData* pData)
 
 void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
 {
+    pmlLog(pml::LOG_DEBUG) << "RtpThread::PassSessionDetails";
+
+    //make the buffer queue the same size as the number of streams
+    
     m_Session = session();
 
     m_Session.sName = wxString::FromUTF8(pSession->sessionName());
@@ -414,18 +525,19 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
     m_Session.sType = wxString::FromUTF8(pSession->mediaSessionType());
     m_Session.refClock = pSession->GetRefClock();
     m_Session.sDescription = wxString::FromUTF8(pSession->sessionDescription());
-    m_Session.sGroups = pSession->GetGroupDup();
+    m_Session.setGroups = pSession->GetGroups();
 
 
     MediaSubsessionIterator iterSub(*pSession);
-    Smpte2110MediaSubsession* pSubsession = NULL;
-    while ((pSubsession = dynamic_cast<Smpte2110MediaSubsession*>(iterSub.next())) != NULL)
+    Smpte2110MediaSubsession* pSubsession = nullptr;
+    while ((pSubsession = dynamic_cast<Smpte2110MediaSubsession*>(iterSub.next())) != nullptr)
     {
         refclk clock = pSubsession->GetRefClock();
         timeval tvEpoch = pSubsession->GetLastEpoch();
 
         m_Session.lstSubsession.push_back(subsession(wxString::FromUTF8(pSubsession->sessionId()),
                                                      wxString::FromUTF8(pSubsession->GetEndpoint()),
+                                                     pSubsession->GetGroup(),
                                                      wxString::FromUTF8(pSubsession->mediumName()),
                                                      wxString::FromUTF8(pSubsession->codecName()),
                                                      wxString::FromUTF8(pSubsession->protocolName()),
@@ -436,9 +548,9 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
                                                      tvEpoch,
                                                      pSubsession->GetRefClock()));
         #ifdef PTPMONKEY
-        if(pSubsession->GetRefClock().sType.CmpNoCase(wxT("PTP")) == 0)
+        if(pSubsession->GetRefClock().sType.CmpNoCase("PTP") == 0)
         {
-            wxPtp::Get().RunDomain(std::string(m_sReceivingInterface.mb_str()), pSubsession->GetRefClock().nDomain);
+            wxPtp::Get().Run(std::string(m_sReceivingInterface.mb_str()), pSubsession->GetRefClock().nDomain, Settings::Get().Read("Time", "Ptp_Mode", 0) ? ptpmonkey::Mode::HYBRID : ptpmonkey::Mode::MULTICAST);
         }
         #endif // PTPMONKEY
 
@@ -494,7 +606,6 @@ void RtpThread::SetQosMeasurementIntervalMS(unsigned long nMilliseconds)
 
 unsigned long RtpThread::GetQosMeasurementIntervalMS()
 {
-    wxMutexLocker ml(m_mutex);
     return m_nQosMeasurementIntervalMS;
 }
 
@@ -504,15 +615,13 @@ void RtpThread::MasterClockChanged()
     if(m_pSession)
     {
         MediaSubsessionIterator iter(*m_pSession);
-        Smpte2110MediaSubsession* subsession = NULL;
-        while ((subsession = dynamic_cast<Smpte2110MediaSubsession*>(iter.next())) != NULL)
+        Smpte2110MediaSubsession* subsession = nullptr;
+        while ((subsession = dynamic_cast<Smpte2110MediaSubsession*>(iter.next())) != nullptr)
         {
-            Aes67Source* pSource = dynamic_cast<Aes67Source*>(subsession->readSource());
+            auto pSource = dynamic_cast<Aes67Source*>(subsession->readSource());
             if(pSource)
             {
-
                 pSource->WorkoutLastEpoch();
-
             }
         }
     }

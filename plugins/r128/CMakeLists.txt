@@ -18,7 +18,7 @@ add_library(r128 MODULE ${SOURCES} ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_versi
 find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
-list(APPEND flags "-fPIC" "-Wall" "-fpermissive"  "-std=c++14")
+list(APPEND flags "-fPIC" "-Wall" "-fpermissive")
 
 if(CMAKE_BUILD_TYPE MATCHES Release)
    list(APPEND flags "-O3")
@@ -35,9 +35,9 @@ target_link_libraries(r128 ${wxWidgets_LIBRARIES})
 target_link_libraries(r128 optimized pambase debug pambased)
 target_link_libraries(r128 optimized pamlevel debug pamleveld)
 target_link_libraries(r128 optimized pamfft debug pamfftd)
-
+set_target_properties(r128 PROPERTIES CXX_STANDARD 17)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS r128 LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
+	install(TARGETS r128 LIBRARY DESTINATION lib/pam2/monitor)
 endif()	

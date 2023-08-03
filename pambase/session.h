@@ -6,6 +6,8 @@
 #include <vector>
 #include <map>
 #include <wx/colour.h>
+#include <set>
+
 
 extern const wxString CH_GROUP_ORDER[8];
 extern const wxString CH_GROUP_TYPE[15];
@@ -55,25 +57,25 @@ struct PAMBASE_IMPEXPORT subsession
         enumChannel type;
     };
 
-    subsession() : nPort(0), nSampleRate(0), nChannels(0), nSyncTimestamp(0){}
-    subsession(const wxString& sI, const wxString& sourceaddress, const wxString& medium, const wxString& codec, const wxString& protocol,
-               unsigned int port, unsigned int samplerate, const std::vector<channelGrouping>& channels,
-               unsigned int synctimestamp, const timeval& epoch, const refclk& clk) :
-    sId(sI), sSourceAddress(sourceaddress), sMedium(medium), sCodec(codec), sProtocol(protocol), nPort(port), nSampleRate(samplerate), nChannels(channels.size()),
+    subsession()=default;
+    subsession(const wxString& sI, const wxString& sourceaddress, const wxString& group, const wxString& medium, const wxString& codec, const wxString& protocol, unsigned int port, unsigned int samplerate, const std::vector<channelGrouping>& channels,unsigned int synctimestamp, const timeval& epoch, const refclk& clk) :
+    sId(sI), sSourceAddress(sourceaddress), sGroup(group), sMedium(medium), sCodec(codec), sProtocol(protocol), nPort(port), nSampleRate(samplerate), nChannels(channels.size()),
     vChannels(channels), nSyncTimestamp(synctimestamp), tvEpoch(epoch),refClock(clk){}
 
     wxString sId;
     wxString sSourceAddress;
+    wxString sGroup;
     wxString sMedium;
     wxString sCodec;
     wxString sProtocol;
-    unsigned int nPort;
-    unsigned int nSampleRate;
-    unsigned int nChannels;
-
+    
+    unsigned int nPort = 0;
+    unsigned int nSampleRate = 0;
+    unsigned int nChannels = 0;
+    
     std::vector<channelGrouping> vChannels;
 
-    unsigned int nSyncTimestamp;
+    unsigned int nSyncTimestamp = 0;
     timeval tvEpoch;
     refclk refClock;
 
@@ -81,9 +83,8 @@ struct PAMBASE_IMPEXPORT subsession
 
 struct PAMBASE_IMPEXPORT session
 {
-    session(const wxString& sRaw=wxEmptyString, const wxString& sn=wxEmptyString, const wxString& st=wxEmptyString, const wxString& sD=wxEmptyString, const wxString& sGr=wxEmptyString) : sRawSDP(sRaw), sName(sn), sType(st), sDescription(sD), sGroups(sGr), lstSubsession(std::list<subsession>())
+    session(const wxString& sRaw=wxEmptyString, const wxString& sn=wxEmptyString, const wxString& st=wxEmptyString, const wxString& sD=wxEmptyString, const std::set<wxString>& groups={}) : sRawSDP(sRaw), sName(sn), sType(st), sDescription(sD), setGroups(groups), lstSubsession(std::list<subsession>())
     {
-
         itCurrentSubsession = lstSubsession.end();
     }
 
@@ -105,7 +106,7 @@ struct PAMBASE_IMPEXPORT session
     wxString sName;
     wxString sType;
     wxString sDescription;
-    wxString sGroups;
+    std::set<wxString> setGroups;
     refclk refClock;
 
     std::list<subsession> lstSubsession;
@@ -119,64 +120,48 @@ struct PAMBASE_IMPEXPORT session
 struct PAMBASE_IMPEXPORT qosData
 {
     qosData() : tsTime(0,0,0,0),
-    dkbits_per_second_min(-1.0),
-    dkbits_per_second_max(-1.0),
-    dkbits_per_second_Av(-1.0),
-    dkbits_per_second_Now(-1.0),
-    dkBytesTotal(-1.0),
-    dPacket_loss_fraction_min(-1.0),
-    dPacket_loss_fraction_max(-1.0),
-    dPacket_loss_fraction_av(-1.0),
-    nTotNumPacketsReceived(0),
-    dInter_packet_gap_ms_Now(-1.0),
-    dInter_packet_gap_ms_min(-1.0),
-    dInter_packet_gap_ms_av(-1.0),
-    dInter_packet_gap_ms_max(-1.0),
-    nTotNumPacketsLost(-1),
-    nBaseExtSeqNum(0),
-    nLastResetExtSeqNum(0),
-    nHighestExtSeqNum(0),
-    dJitter(-1.0),
-    nLastSR_NTPmsw(0),
-    nLastSR_NTPlsw(0),
     tvLastSR_Time{0,0},
-    tvSync{0,0},
-    nSSRC(0),
-    dTSDF(-1.0),
-    nTimestampErrors(0),
-    nTimestampErrorsTotal(0){}
+    tvSync{0,0}
+    {}
 
 
     wxTimeSpan tsTime;
-    double dkbits_per_second_min;
-    double dkbits_per_second_max;
-    double dkbits_per_second_Av;
-    double dkbits_per_second_Now;
-    double dkBytesTotal;
-    double dPacket_loss_fraction_min;
-    double dPacket_loss_fraction_max;
-    double dPacket_loss_fraction_av;
-    unsigned int nTotNumPacketsReceived;
+    double dkbits_per_second_min = -1.0;
+    double dkbits_per_second_max = -1.0;
+    double dkbits_per_second_Av = -1.0;
+    double dkbits_per_second_Now = -1.0;
+    double dkBytesTotal = -1.0;
+    double dPacket_loss_fraction_min = -1.0;
+    double dPacket_loss_fraction_max = -1.0;
+    double dPacket_loss_fraction_av = -1.0;
+    unsigned int nTotNumPacketsReceived = 0;
 
-    double dInter_packet_gap_ms_Now;
-    double dInter_packet_gap_ms_min;
-    double dInter_packet_gap_ms_av;
-    double dInter_packet_gap_ms_max;
-    int nTotNumPacketsLost;
+    double dInter_packet_gap_ms_Now = -1.0;
+    double dInter_packet_gap_ms_min = -1.0;
+    double dInter_packet_gap_ms_av = -1.0;
+    double dInter_packet_gap_ms_max = -1.0;
+    int nTotNumPacketsLost = -1;
 
-    unsigned int nBaseExtSeqNum;
-    unsigned int nLastResetExtSeqNum;
-    unsigned int nHighestExtSeqNum;
-    double dJitter;
-    unsigned int nLastSR_NTPmsw;
-    unsigned int nLastSR_NTPlsw;
+    unsigned int nBaseExtSeqNum = 0;
+    unsigned int nLastResetExtSeqNum = 0;
+    unsigned int nHighestExtSeqNum = 0;
+    double dJitter = -1.0;
+    unsigned int nLastSR_NTPmsw = 0;
+    unsigned int nLastSR_NTPlsw = 0;
     timeval tvLastSR_Time;
     timeval tvSync;
-    unsigned int nSSRC;
+    unsigned int nSSRC = 0;
 
-    double dTSDF;
-    unsigned int nTimestampErrors;
-    unsigned int nTimestampErrorsTotal;
+    double dTSDF = -1.0;
+    unsigned int nTimestampErrors = 0;
+    unsigned int nTimestampErrorsTotal = 0;
+
+    wxString sStream;
+    uint64_t nFramesUsed = 0;
+    uint64_t nFramesReceived = 0;
+    uint64_t nTotalFrames = 0;
+    unsigned long nBufferSize = 0;
+    
 };
 
 extern const std::map<subsession::enumChannelGrouping, unsigned char> CH_GROUP_SIZE;

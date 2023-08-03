@@ -17,7 +17,7 @@ add_library(scope MODULE ${SOURCES} ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_vers
 find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
-list(APPEND flags "-fPIC" "-Wall" "-fpermissive"  "-std=c++14")
+list(APPEND flags "-fPIC" "-Wall" "-fpermissive")
 
 if(CMAKE_BUILD_TYPE MATCHES Release)
    list(APPEND flags "-O3")
@@ -32,9 +32,10 @@ target_compile_options(scope PRIVATE ${flags})
 
 target_link_libraries(scope ${wxWidgets_LIBRARIES})
 target_link_libraries(scope optimized pambase debug pambased)
+set_target_properties(scope PROPERTIES CXX_STANDARD 17)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS scope LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
+	install(TARGETS scope LIBRARY DESTINATION lib/pam2/monitor)
 endif()
 		

@@ -1,5 +1,6 @@
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 project(dosetup LANGUAGES CXX VERSION 1.0.0.0)
+
 
 execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -P ${CMAKE_SOURCE_DIR}/version.cmake)
 
@@ -21,12 +22,12 @@ target_link_libraries(dosetup pml_log)
 
 
 
-set_property(TARGET dosetup PROPERTY CXX_STANDARD 14)
+set_property(TARGET dosetup PROPERTY CXX_STANDARD 17)
 set_target_properties(dosetup PROPERTIES RUNTIME_OUTPUT_DIRECTORY "../../bin/")
 
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-install(TARGETS dosetup RUNTIME DESTINATION /usr/local/bin)
+install(TARGETS dosetup RUNTIME DESTINATION bin)
 endif()
 

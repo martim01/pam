@@ -214,10 +214,11 @@ public:
 
   unsigned minInterPacketGapUS() const { return fMinInterPacketGapUS; }
   unsigned maxInterPacketGapUS() const { return fMaxInterPacketGapUS; }
-  unsigned currentInterPacketGapUS() const { return fCurrentInterPacketGapUS; }
   struct timeval const& totalInterPacketGaps() const {
     return fTotalInterPacketGaps;
   }
+
+  void resetMinMax();
 
 protected:
   // called only by RTPReceptionStatsDB:

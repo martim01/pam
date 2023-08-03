@@ -12,7 +12,9 @@
 #include "dlldefine.h"
 #include "aoipsourcemanager.h"
 #include <atomic>
-
+#include <vector>
+#include <list>
+#include <map>
 
 struct qosData;
 class Smpte2110MediaSession;
@@ -22,7 +24,7 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
     public:
         RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface, const wxString& sProg, const AoIPSource& source, unsigned int nBufferSize, bool bSaveSDPOnly = false);
         void* Entry();
-        void AddFrame(const wxString& sEndpoint, unsigned long nSSRC, const timeval& timePresentation, unsigned long nFrameSize, u_int8_t* pBuffer, u_int8_t nBits, const timeval& timeTransmission, unsigned int nTimestamp,unsigned int nDuration, int nTimestampDifference, mExtension_t* pExt);
+        void AddFrame(std::shared_ptr<const rtpFrame> pFrame);
 
         void MasterClockChanged();
 
@@ -70,7 +72,13 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
 
         timeval ConvertDoubleToPairTime(double dTime);
 
+        void CreateSink(Smpte2110MediaSubsession* pSubsession);
 
+        void HandleFrameAdded();
+
+        void ConvertFrameToTimedBuffer(std::shared_ptr<const rtpFrame> pFrame);
+        void WorkoutFirstFrame();
+        void WorkoutNextFrame();
 
         wxEvtHandler* m_pHandler;
         wxString m_sProgName;
@@ -82,18 +90,12 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
         wxCondition* m_pCondition;
 
         wxString m_sReceivingInterface;
-        std::queue<frameBuffer> m_qBufferFrames;
 
         float* m_pCurrentBuffer;
         double m_dTransmission;
         double m_dPresentation;
 
-        timeval m_tvDelay0;
-        double m_dDelay0;
-        double m_dTSDFMax;
-        double m_dTSDFMin;
-        double m_dTSDF;
-        unsigned int m_nTSDFCount;
+        
         unsigned int m_nSampleRate;
         unsigned int m_nTimestampErrors;
         unsigned int m_nTimestampErrorsTotal;
@@ -118,7 +120,13 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
         unsigned long m_nQosMeasurementIntervalMS;
 
 
-
+        std::map<wxString, std::list<std::shared_ptr<const rtpFrame>>> m_mRedundantBuffers;
+        std::map<wxString, uint64_t> m_mStreamUsage;
+        std::map<wxString, uint64_t> m_mFramesReceived;
+        uint64_t m_nTotalFramesPlayed = 0;
+        bool m_bFrameExtracted = false;
+        timeval m_tvLastExtracted;
+        size_t m_nRedundantBufferQueue = 10;
 };
 
 
@@ -126,5 +134,5 @@ DECLARE_EXPORTED_EVENT_TYPE(PAMBASE_IMPEXPORT, wxEVT_QOS_UPDATED,-1)
 DECLARE_EXPORTED_EVENT_TYPE(PAMBASE_IMPEXPORT, wxEVT_RTP_SESSION,-1)
 DECLARE_EXPORTED_EVENT_TYPE(PAMBASE_IMPEXPORT, wxEVT_RTP_SESSION_CLOSED,-1)
 DECLARE_EXPORTED_EVENT_TYPE(PAMBASE_IMPEXPORT, wxEVT_SDP,-1)
-DECLARE_EXPORTED_EVENT_TYPE(PAMBASE_IMPEXPORT, wxEVT_RPT_SESSION_EPOCH,-1)
+DECLARE_EXPORTED_EVENT_TYPE(PAMBASE_IMPEXPORT, wxEVT_RTP_SESSION_EPOCH,-1)
 

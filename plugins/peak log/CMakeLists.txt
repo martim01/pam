@@ -17,7 +17,7 @@ add_library(peaklog MODULE ${SOURCES} ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_ve
 find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
-list(APPEND flags "-fPIC" "-Wall" "-fpermissive"  "-std=c++14")
+list(APPEND flags "-fPIC" "-Wall" "-fpermissive" )
 
 if(CMAKE_BUILD_TYPE MATCHES Release)
    list(APPEND flags "-O3")
@@ -34,9 +34,10 @@ target_link_libraries(peaklog ${wxWidgets_LIBRARIES})
 target_link_libraries(peaklog optimized pambase debug pambased)
 target_link_libraries(peaklog optimized restgoose debug restgoosed)
 target_link_libraries(peaklog optimized pml_log debug pml_logd)
+set_target_properties(peaklog PROPERTIES CXX_STANDARD 17)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS peaklog LIBRARY DESTINATION /usr/local/lib/pam2/test)
+	install(TARGETS peaklog LIBRARY DESTINATION lib/pam2/test)
 endif()
 		

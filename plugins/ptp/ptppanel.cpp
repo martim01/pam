@@ -18,8 +18,14 @@
 #include <wx/string.h>
 //*)
 
+#include "syncmaster.xpm"
+#include "grandmaster.xpm"
+#include "slave.xpm"
+
 //(*IdInit(ptpPanel)
+const long ptpPanel::ID_M_PLBL80 = wxNewId();
 const long ptpPanel::ID_M_PLST1 = wxNewId();
+const long ptpPanel::ID_M_PLBL79 = wxNewId();
 const long ptpPanel::ID_M_PLBL1 = wxNewId();
 const long ptpPanel::ID_M_PLBL2 = wxNewId();
 const long ptpPanel::ID_M_PLBL3 = wxNewId();
@@ -95,6 +101,8 @@ const long ptpPanel::ID_M_PLBL59 = wxNewId();
 const long ptpPanel::ID_M_PLBL63 = wxNewId();
 const long ptpPanel::ID_M_PLBL60 = wxNewId();
 const long ptpPanel::ID_M_PLBL64 = wxNewId();
+const long ptpPanel::ID_M_PBTN29 = wxNewId();
+const long ptpPanel::ID_M_PBTN5 = wxNewId();
 const long ptpPanel::ID_PANEL8 = wxNewId();
 const long ptpPanel::ID_PANEL14 = wxNewId();
 const long ptpPanel::ID_M_PLBL45 = wxNewId();
@@ -111,7 +119,9 @@ const long ptpPanel::ID_M_PLBL78 = wxNewId();
 const long ptpPanel::ID_HISTORY_GRAPH = wxNewId();
 const long ptpPanel::ID_M_PLBL68 = wxNewId();
 const long ptpPanel::ID_M_PLST5 = wxNewId();
+const long ptpPanel::ID_M_PBTN8 = wxNewId();
 const long ptpPanel::ID_M_PBTN3 = wxNewId();
+const long ptpPanel::ID_M_PBTN7 = wxNewId();
 const long ptpPanel::ID_M_PBTN4 = wxNewId();
 const long ptpPanel::ID_PANEL15 = wxNewId();
 const long ptpPanel::ID_M_PLBL53 = wxNewId();
@@ -123,17 +133,14 @@ const long ptpPanel::ID_M_PLST2 = wxNewId();
 const long ptpPanel::ID_M_PLBL66 = wxNewId();
 const long ptpPanel::ID_M_PLST3 = wxNewId();
 const long ptpPanel::ID_M_PBTN1 = wxNewId();
+const long ptpPanel::ID_M_PBTN6 = wxNewId();
 const long ptpPanel::ID_M_PBTN2 = wxNewId();
 const long ptpPanel::ID_PANEL16 = wxNewId();
 const long ptpPanel::ID_M_PSWP2 = wxNewId();
 //*)
 
-const wxColour ptpPanel::CLR_MASTER           = wxColour(50,128,50);
-const wxColour ptpPanel::CLR_MASTER_SELECTED  = wxColour(150,228,150);
-const wxColour ptpPanel::CLR_SYNC_MASTER           = wxColour(50,50,128);
-const wxColour ptpPanel::CLR_SYNC_MASTER_SELECTED  = wxColour(150,150,228);
-const wxColour ptpPanel::CLR_SLAVE            = wxColour(50,50,50);
-const wxColour ptpPanel::CLR_SLAVE_SELECTED   = wxColour(150,150,150);
+const wxColour ptpPanel::CLR_CLOCK            = wxColour(50,50,150);
+const wxColour ptpPanel::CLR_CLOCK_SELECTED   = wxColour(150,150,250);
 
 
 using namespace ptpmonkey;
@@ -149,7 +156,7 @@ END_EVENT_TABLE()
 
 ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) : pmPanel(),
     m_pBuilder(pBuilder),
-    m_nDomain(0),
+    m_nDomain(Settings::Get().Read("Time", "PTP_Domain", 0)),
     m_pClock(nullptr),
     m_pLocalClock(nullptr),
     m_mAccuracy({ { ptpAnnounce::ACC_25NS,  "Within 25ns"},
@@ -200,41 +207,55 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_pSwpMain->SetPageNameStyle(0);
 	m_ppnlInfo = new wxPanel(m_pSwpMain, ID_PANEL14, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL14"));
 	m_ppnlInfo->SetBackgroundColour(wxColour(0,0,0));
-	m_plstClocks = new wmList(m_ppnlInfo, ID_M_PLST1, wxPoint(605,5), wxSize(190,470), wmList::STYLE_SELECT, 1, wxSize(-1,-1), 1, wxSize(-1,-1));
+	m_pLbl10 = new wmLabel(m_ppnlInfo, ID_M_PLBL80, _("Clocks"), wxPoint(605,5), wxSize(190,25), 0, _T("ID_M_PLBL80"));
+	m_pLbl10->SetBorderState(uiRect::BORDER_NONE);
+	m_pLbl10->GetUiRect().SetGradient(wxWEST);
+	m_pLbl10->SetForegroundColour(wxColour(255,255,255));
+	m_pLbl10->SetBackgroundColour(wxColour(128,128,192));
+	wxFont m_pLbl10Font(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,wxEmptyString,wxFONTENCODING_DEFAULT);
+	m_pLbl10->SetFont(m_pLbl10Font);
+	m_plstClocks = new wmList(m_ppnlInfo, ID_M_PLST1, wxPoint(605,35), wxSize(190,440), wmList::STYLE_SELECT, 1, wxSize(-1,-1), 1, wxSize(-1,-1));
 	m_plstClocks->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
 	m_plstClocks->SetButtonColour(wxColour(wxT("#000000")));
 	m_plstClocks->SetSelectedButtonColour(wxColour(wxT("#FF8000")));
-	m_ptitleIdentity = new wmLabel(m_ppnlInfo, ID_M_PLBL1, _("Port Identitiy"), wxPoint(5,5), wxSize(100,25), 0, _T("ID_M_PLBL1"));
+	m_plblDomain = new wmLabel(m_ppnlInfo, ID_M_PLBL79, _("Domain:"), wxPoint(5,5), wxSize(280,25), 0, _T("ID_M_PLBL79"));
+	m_plblDomain->SetBorderState(uiRect::BORDER_NONE);
+	m_plblDomain->GetUiRect().SetGradient(wxWEST);
+	m_plblDomain->SetForegroundColour(wxColour(255,255,255));
+	m_plblDomain->SetBackgroundColour(wxColour(128,128,192));
+	wxFont m_plblDomainFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,wxEmptyString,wxFONTENCODING_DEFAULT);
+	m_plblDomain->SetFont(m_plblDomainFont);
+	m_ptitleIdentity = new wmLabel(m_ppnlInfo, ID_M_PLBL1, _("Port Identitiy"), wxPoint(5,33), wxSize(100,25), 0, _T("ID_M_PLBL1"));
 	m_ptitleIdentity->SetBorderState(uiRect::BORDER_FLAT);
 	m_ptitleIdentity->GetUiRect().SetGradient(wxWEST);
 	m_ptitleIdentity->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleIdentity->SetBackgroundColour(wxColour(92,122,224));
-	m_ptitleAddress = new wmLabel(m_ppnlInfo, ID_M_PLBL2, _("Address"), wxPoint(5,35), wxSize(100,25), 0, _T("ID_M_PLBL2"));
+	m_ptitleAddress = new wmLabel(m_ppnlInfo, ID_M_PLBL2, _("Address"), wxPoint(5,61), wxSize(100,25), 0, _T("ID_M_PLBL2"));
 	m_ptitleAddress->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleAddress->GetUiRect().SetGradient(wxWEST);
 	m_ptitleAddress->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleAddress->SetBackgroundColour(wxColour(92,122,224));
-	m_ptitleState = new wmLabel(m_ppnlInfo, ID_M_PLBL3, _("State"), wxPoint(5,65), wxSize(100,25), 0, _T("ID_M_PLBL3"));
+	m_ptitleState = new wmLabel(m_ppnlInfo, ID_M_PLBL3, _("State"), wxPoint(5,89), wxSize(100,25), 0, _T("ID_M_PLBL3"));
 	m_ptitleState->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleState->GetUiRect().SetGradient(wxWEST);
 	m_ptitleState->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleState->SetBackgroundColour(wxColour(92,122,224));
-	m_plblIdentity = new wmLabel(m_ppnlInfo, ID_M_PLBL12, wxEmptyString, wxPoint(105,5), wxSize(180,25), 0, _T("ID_M_PLBL12"));
+	m_plblIdentity = new wmLabel(m_ppnlInfo, ID_M_PLBL12, wxEmptyString, wxPoint(105,33), wxSize(180,25), 0, _T("ID_M_PLBL12"));
 	m_plblIdentity->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblIdentity->GetUiRect().SetGradient(0);
 	m_plblIdentity->SetForegroundColour(wxColour(0,0,0));
 	m_plblIdentity->SetBackgroundColour(wxColour(255,255,255));
-	m_pblAddress = new wmLabel(m_ppnlInfo, ID_M_PLBL13, wxEmptyString, wxPoint(105,35), wxSize(180,25), 0, _T("ID_M_PLBL13"));
+	m_pblAddress = new wmLabel(m_ppnlInfo, ID_M_PLBL13, wxEmptyString, wxPoint(105,61), wxSize(180,25), 0, _T("ID_M_PLBL13"));
 	m_pblAddress->SetBorderState(uiRect::BORDER_DOWN);
 	m_pblAddress->GetUiRect().SetGradient(0);
 	m_pblAddress->SetForegroundColour(wxColour(0,0,0));
 	m_pblAddress->SetBackgroundColour(wxColour(255,255,255));
-	m_plblState = new wmLabel(m_ppnlInfo, ID_M_PLBL14, wxEmptyString, wxPoint(105,65), wxSize(180,25), 0, _T("ID_M_PLBL14"));
+	m_plblState = new wmLabel(m_ppnlInfo, ID_M_PLBL14, wxEmptyString, wxPoint(105,89), wxSize(180,25), 0, _T("ID_M_PLBL14"));
 	m_plblState->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblState->GetUiRect().SetGradient(0);
 	m_plblState->SetForegroundColour(wxColour(0,0,0));
 	m_plblState->SetBackgroundColour(wxColour(255,255,255));
-	m_ppnlAnnouncements = new wxPanel(m_ppnlInfo, ID_PANEL1, wxPoint(5,95), wxSize(280,275), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
+	m_ppnlAnnouncements = new wxPanel(m_ppnlInfo, ID_PANEL1, wxPoint(5,135), wxSize(280,275), wxTAB_TRAVERSAL, _T("ID_PANEL1"));
 	m_ppnlAnnouncements->SetBackgroundColour(wxColour(0,0,0));
 	m_ptitleAnnouncements = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL30, _("Announcements"), wxPoint(0,0), wxSize(280,25), 0, _T("ID_M_PLBL30"));
 	m_ptitleAnnouncements->SetBorderState(uiRect::BORDER_NONE);
@@ -243,117 +264,117 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_ptitleAnnouncements->SetBackgroundColour(wxColour(98,219,101));
 	wxFont m_ptitleAnnouncementsFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,wxEmptyString,wxFONTENCODING_DEFAULT);
 	m_ptitleAnnouncements->SetFont(m_ptitleAnnouncementsFont);
-	m_ptitleAnnRate = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL24, _("Rate"), wxPoint(0,30), wxSize(70,25), 0, _T("ID_M_PLBL24"));
+	m_ptitleAnnRate = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL24, _("Rate"), wxPoint(0,28), wxSize(70,25), 0, _T("ID_M_PLBL24"));
 	m_ptitleAnnRate->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleAnnRate->GetUiRect().SetGradient(wxWEST);
 	m_ptitleAnnRate->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleAnnRate->SetBackgroundColour(wxColour(92,122,224));
-	m_plblAnnRate = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL25, wxEmptyString, wxPoint(70,30), wxSize(70,25), 0, _T("ID_M_PLBL25"));
+	m_plblAnnRate = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL25, wxEmptyString, wxPoint(70,28), wxSize(70,25), 0, _T("ID_M_PLBL25"));
 	m_plblAnnRate->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblAnnRate->GetUiRect().SetGradient(0);
 	m_plblAnnRate->SetForegroundColour(wxColour(0,0,0));
 	m_plblAnnRate->SetBackgroundColour(wxColour(255,255,255));
-	m_ptitleCount = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL26, _("Count"), wxPoint(140,30), wxSize(70,25), 0, _T("ID_M_PLBL26"));
+	m_ptitleCount = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL26, _("Count"), wxPoint(140,28), wxSize(70,25), 0, _T("ID_M_PLBL26"));
 	m_ptitleCount->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleCount->GetUiRect().SetGradient(wxWEST);
 	m_ptitleCount->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleCount->SetBackgroundColour(wxColour(92,122,224));
-	m_plblAnnCount = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL27, wxEmptyString, wxPoint(210,30), wxSize(70,25), 0, _T("ID_M_PLBL27"));
+	m_plblAnnCount = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL27, wxEmptyString, wxPoint(210,28), wxSize(70,25), 0, _T("ID_M_PLBL27"));
 	m_plblAnnCount->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblAnnCount->GetUiRect().SetGradient(0);
 	m_plblAnnCount->SetForegroundColour(wxColour(0,0,0));
 	m_plblAnnCount->SetBackgroundColour(wxColour(255,255,255));
-	m_ptitleUtc = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL4, _("UTC Offset"), wxPoint(140,90), wxSize(70,25), 0, _T("ID_M_PLBL4"));
+	m_ptitleUtc = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL4, _("UTC Offset"), wxPoint(140,84), wxSize(70,25), 0, _T("ID_M_PLBL4"));
 	m_ptitleUtc->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleUtc->GetUiRect().SetGradient(wxWEST);
 	m_ptitleUtc->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleUtc->SetBackgroundColour(wxColour(92,122,224));
-	m_plblUTC = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL15, wxEmptyString, wxPoint(210,90), wxSize(70,25), 0, _T("ID_M_PLBL15"));
+	m_plblUTC = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL15, wxEmptyString, wxPoint(210,84), wxSize(70,25), 0, _T("ID_M_PLBL15"));
 	m_plblUTC->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblUTC->GetUiRect().SetGradient(0);
 	m_plblUTC->SetForegroundColour(wxColour(0,0,0));
 	m_plblUTC->SetBackgroundColour(wxColour(255,255,255));
-	m_ptitlePriority1 = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL5, _("Priority 1"), wxPoint(0,60), wxSize(70,25), 0, _T("ID_M_PLBL5"));
+	m_ptitlePriority1 = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL5, _("Priority 1"), wxPoint(0,56), wxSize(70,25), 0, _T("ID_M_PLBL5"));
 	m_ptitlePriority1->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitlePriority1->GetUiRect().SetGradient(wxWEST);
 	m_ptitlePriority1->SetForegroundColour(wxColour(255,255,255));
 	m_ptitlePriority1->SetBackgroundColour(wxColour(92,122,224));
-	m_plblPriority1 = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL16, wxEmptyString, wxPoint(70,60), wxSize(70,25), 0, _T("ID_M_PLBL16"));
+	m_plblPriority1 = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL16, wxEmptyString, wxPoint(70,56), wxSize(70,25), 0, _T("ID_M_PLBL16"));
 	m_plblPriority1->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblPriority1->GetUiRect().SetGradient(0);
 	m_plblPriority1->SetForegroundColour(wxColour(0,0,0));
 	m_plblPriority1->SetBackgroundColour(wxColour(255,255,255));
-	m_ptitleClass = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL7, _("Class"), wxPoint(140,60), wxSize(70,25), 0, _T("ID_M_PLBL7"));
+	m_ptitleClass = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL7, _("Class"), wxPoint(140,56), wxSize(70,25), 0, _T("ID_M_PLBL7"));
 	m_ptitleClass->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleClass->GetUiRect().SetGradient(wxWEST);
 	m_ptitleClass->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleClass->SetBackgroundColour(wxColour(92,122,224));
-	m_plblClass = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL17, wxEmptyString, wxPoint(210,60), wxSize(70,25), 0, _T("ID_M_PLBL17"));
+	m_plblClass = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL17, wxEmptyString, wxPoint(210,56), wxSize(70,25), 0, _T("ID_M_PLBL17"));
 	m_plblClass->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblClass->GetUiRect().SetGradient(0);
 	m_plblClass->SetForegroundColour(wxColour(0,0,0));
 	m_plblClass->SetBackgroundColour(wxColour(255,255,255));
-	m_ptitleAccuracy = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL8, _("Accuracy"), wxPoint(0,90), wxSize(70,25), 0, _T("ID_M_PLBL8"));
+	m_ptitleAccuracy = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL8, _("Accuracy"), wxPoint(0,84), wxSize(70,25), 0, _T("ID_M_PLBL8"));
 	m_ptitleAccuracy->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleAccuracy->GetUiRect().SetGradient(wxWEST);
 	m_ptitleAccuracy->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleAccuracy->SetBackgroundColour(wxColour(92,122,224));
-	m_plblAccuracy = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL18, _("Unknown"), wxPoint(70,90), wxSize(70,25), 0, _T("ID_M_PLBL18"));
+	m_plblAccuracy = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL18, _("Unknown"), wxPoint(70,84), wxSize(70,25), 0, _T("ID_M_PLBL18"));
 	m_plblAccuracy->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblAccuracy->GetUiRect().SetGradient(0);
 	m_plblAccuracy->SetForegroundColour(wxColour(0,0,0));
 	m_plblAccuracy->SetBackgroundColour(wxColour(255,255,255));
-	m_ptitleVariance = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL9, _("Variance"), wxPoint(0,120), wxSize(70,25), 0, _T("ID_M_PLBL9"));
+	m_ptitleVariance = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL9, _("Variance"), wxPoint(0,112), wxSize(70,25), 0, _T("ID_M_PLBL9"));
 	m_ptitleVariance->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleVariance->GetUiRect().SetGradient(wxWEST);
 	m_ptitleVariance->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleVariance->SetBackgroundColour(wxColour(92,122,224));
-	m_plblVariance = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL19, wxEmptyString, wxPoint(70,120), wxSize(70,25), 0, _T("ID_M_PLBL19"));
+	m_plblVariance = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL19, wxEmptyString, wxPoint(70,112), wxSize(70,25), 0, _T("ID_M_PLBL19"));
 	m_plblVariance->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblVariance->GetUiRect().SetGradient(0);
 	m_plblVariance->SetForegroundColour(wxColour(0,0,0));
 	m_plblVariance->SetBackgroundColour(wxColour(255,255,255));
-	m_ptitlePriority2 = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL6, _("Priority 2"), wxPoint(140,120), wxSize(70,25), 0, _T("ID_M_PLBL6"));
+	m_ptitlePriority2 = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL6, _("Priority 2"), wxPoint(140,112), wxSize(70,25), 0, _T("ID_M_PLBL6"));
 	m_ptitlePriority2->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitlePriority2->GetUiRect().SetGradient(wxWEST);
 	m_ptitlePriority2->SetForegroundColour(wxColour(255,255,255));
 	m_ptitlePriority2->SetBackgroundColour(wxColour(92,122,224));
-	m_plblPriority2 = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL20, wxEmptyString, wxPoint(210,120), wxSize(70,25), 0, _T("ID_M_PLBL20"));
+	m_plblPriority2 = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL20, wxEmptyString, wxPoint(210,112), wxSize(70,25), 0, _T("ID_M_PLBL20"));
 	m_plblPriority2->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblPriority2->GetUiRect().SetGradient(0);
 	m_plblPriority2->SetForegroundColour(wxColour(0,0,0));
 	m_plblPriority2->SetBackgroundColour(wxColour(255,255,255));
-	m_ptitleSteps = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL11, _("Steps"), wxPoint(0,150), wxSize(70,25), 0, _T("ID_M_PLBL11"));
+	m_ptitleSteps = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL11, _("Steps"), wxPoint(0,140), wxSize(70,25), 0, _T("ID_M_PLBL11"));
 	m_ptitleSteps->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleSteps->GetUiRect().SetGradient(wxWEST);
 	m_ptitleSteps->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleSteps->SetBackgroundColour(wxColour(92,122,224));
-	m_plblSteps = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL21, wxEmptyString, wxPoint(70,150), wxSize(70,25), 0, _T("ID_M_PLBL21"));
+	m_plblSteps = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL21, wxEmptyString, wxPoint(70,140), wxSize(70,25), 0, _T("ID_M_PLBL21"));
 	m_plblSteps->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblSteps->GetUiRect().SetGradient(0);
 	m_plblSteps->SetForegroundColour(wxColour(0,0,0));
 	m_plblSteps->SetBackgroundColour(wxColour(255,255,255));
-	m_ptitleSource = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL10, _("Source"), wxPoint(140,150), wxSize(70,25), 0, _T("ID_M_PLBL10"));
+	m_ptitleSource = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL10, _("Source"), wxPoint(140,140), wxSize(70,25), 0, _T("ID_M_PLBL10"));
 	m_ptitleSource->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleSource->GetUiRect().SetGradient(wxWEST);
 	m_ptitleSource->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleSource->SetBackgroundColour(wxColour(92,122,224));
-	m_plblTitleMaster = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL35, _("Master"), wxPoint(0,180), wxSize(70,25), 0, _T("ID_M_PLBL35"));
+	m_plblTitleMaster = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL35, _("Master"), wxPoint(0,168), wxSize(70,25), 0, _T("ID_M_PLBL35"));
 	m_plblTitleMaster->SetBorderState(uiRect::BORDER_NONE);
 	m_plblTitleMaster->GetUiRect().SetGradient(wxWEST);
 	m_plblTitleMaster->SetForegroundColour(wxColour(255,255,255));
 	m_plblTitleMaster->SetBackgroundColour(wxColour(92,122,224));
-	m_plblMasterId = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL39, wxEmptyString, wxPoint(70,180), wxSize(210,25), 0, _T("ID_M_PLBL39"));
+	m_plblMasterId = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL39, wxEmptyString, wxPoint(70,168), wxSize(210,25), 0, _T("ID_M_PLBL39"));
 	m_plblMasterId->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblMasterId->GetUiRect().SetGradient(0);
 	m_plblMasterId->SetForegroundColour(wxColour(0,0,0));
 	m_plblMasterId->SetBackgroundColour(wxColour(255,255,255));
-	m_plblSource = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL22, wxEmptyString, wxPoint(210,150), wxSize(70,25), 0, _T("ID_M_PLBL22"));
+	m_plblSource = new wmLabel(m_ppnlAnnouncements, ID_M_PLBL22, wxEmptyString, wxPoint(210,140), wxSize(70,25), 0, _T("ID_M_PLBL22"));
 	m_plblSource->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblSource->GetUiRect().SetGradient(0);
 	m_plblSource->SetForegroundColour(wxColour(0,0,0));
 	m_plblSource->SetBackgroundColour(wxColour(255,255,255));
-	m_ppnlAnnounceFlags = new pnlFlags(m_ppnlAnnouncements, ID_PANEL9, wxPoint(0,210), wxSize(280,64), wxTAB_TRAVERSAL, _T("ID_PANEL9"));
+	m_ppnlAnnounceFlags = new pnlFlags(m_ppnlAnnouncements, ID_PANEL9, wxPoint(0,196), wxSize(280,64), wxTAB_TRAVERSAL, _T("ID_PANEL9"));
 	m_pswp = new wmSwitcherPanel(m_ppnlInfo, ID_M_PSWP1, wxPoint(295,5), wxSize(280,280), wmSwitcherPanel::STYLE_NOSWIPE|wmSwitcherPanel::STYLE_NOANIMATION, _T("ID_M_PSWP1"));
 	m_pswp->SetPageNameStyle(0);
 	m_pswp->SetBackgroundColour(wxColour(0,0,0));
@@ -368,28 +389,28 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_ptitleSync->SetBackgroundColour(wxColour(98,219,101));
 	wxFont m_ptitleSyncFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,wxEmptyString,wxFONTENCODING_DEFAULT);
 	m_ptitleSync->SetFont(m_ptitleSyncFont);
-	m_ptitleSyncRate = new wmLabel(m_ppnlSync, ID_M_PLBL31, _("Rate"), wxPoint(0,30), wxSize(50,25), 0, _T("ID_M_PLBL31"));
+	m_ptitleSyncRate = new wmLabel(m_ppnlSync, ID_M_PLBL31, _("Rate"), wxPoint(0,28), wxSize(50,25), 0, _T("ID_M_PLBL31"));
 	m_ptitleSyncRate->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleSyncRate->GetUiRect().SetGradient(wxWEST);
 	m_ptitleSyncRate->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleSyncRate->SetBackgroundColour(wxColour(92,122,224));
-	m_plblSyncRate = new wmLabel(m_ppnlSync, ID_M_PLBL32, wxEmptyString, wxPoint(50,30), wxSize(50,25), 0, _T("ID_M_PLBL32"));
+	m_plblSyncRate = new wmLabel(m_ppnlSync, ID_M_PLBL32, wxEmptyString, wxPoint(50,28), wxSize(50,25), 0, _T("ID_M_PLBL32"));
 	m_plblSyncRate->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblSyncRate->GetUiRect().SetGradient(0);
 	m_plblSyncRate->SetForegroundColour(wxColour(0,0,0));
 	m_plblSyncRate->SetBackgroundColour(wxColour(255,255,255));
-	m_ptitleSyncCount = new wmLabel(m_ppnlSync, ID_M_PLBL33, _("Count"), wxPoint(100,30), wxSize(50,25), 0, _T("ID_M_PLBL33"));
+	m_ptitleSyncCount = new wmLabel(m_ppnlSync, ID_M_PLBL33, _("Count"), wxPoint(100,28), wxSize(50,25), 0, _T("ID_M_PLBL33"));
 	m_ptitleSyncCount->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleSyncCount->GetUiRect().SetGradient(wxWEST);
 	m_ptitleSyncCount->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleSyncCount->SetBackgroundColour(wxColour(92,122,224));
-	m_plblSyncCount = new wmLabel(m_ppnlSync, ID_M_PLBL34, wxEmptyString, wxPoint(150,30), wxSize(130,25), 0, _T("ID_M_PLBL34"));
+	m_plblSyncCount = new wmLabel(m_ppnlSync, ID_M_PLBL34, wxEmptyString, wxPoint(150,28), wxSize(130,25), 0, _T("ID_M_PLBL34"));
 	m_plblSyncCount->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblSyncCount->GetUiRect().SetGradient(0);
 	m_plblSyncCount->SetForegroundColour(wxColour(0,0,0));
 	m_plblSyncCount->SetBackgroundColour(wxColour(255,255,255));
-	m_ppnlSyncFlags = new pnlFlags(m_ppnlSync, ID_PANEL10, wxPoint(0,60), wxSize(280,64), wxTAB_TRAVERSAL, _T("ID_PANEL10"));
-	m_ppnlFollowUp = new wxPanel(m_ppnlMaster, ID_PANEL3, wxPoint(0,135), wxSize(280,125), wxTAB_TRAVERSAL, _T("ID_PANEL3"));
+	m_ppnlSyncFlags = new pnlFlags(m_ppnlSync, ID_PANEL10, wxPoint(0,56), wxSize(280,64), wxTAB_TRAVERSAL, _T("ID_PANEL10"));
+	m_ppnlFollowUp = new wxPanel(m_ppnlMaster, ID_PANEL3, wxPoint(0,130), wxSize(280,125), wxTAB_TRAVERSAL, _T("ID_PANEL3"));
 	m_ppnlFollowUp->SetBackgroundColour(wxColour(0,0,0));
 	m_ptitleFollowUp = new wmLabel(m_ppnlFollowUp, ID_M_PLBL28, _("Follow Up"), wxPoint(0,0), wxSize(280,25), 0, _T("ID_M_PLBL28"));
 	m_ptitleFollowUp->SetBorderState(uiRect::BORDER_NONE);
@@ -398,27 +419,27 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_ptitleFollowUp->SetBackgroundColour(wxColour(98,219,101));
 	wxFont m_ptitleFollowUpFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,wxEmptyString,wxFONTENCODING_DEFAULT);
 	m_ptitleFollowUp->SetFont(m_ptitleFollowUpFont);
-	m_ptitleFollowRate = new wmLabel(m_ppnlFollowUp, ID_M_PLBL29, _("Rate"), wxPoint(0,30), wxSize(50,25), 0, _T("ID_M_PLBL29"));
+	m_ptitleFollowRate = new wmLabel(m_ppnlFollowUp, ID_M_PLBL29, _("Rate"), wxPoint(0,28), wxSize(50,25), 0, _T("ID_M_PLBL29"));
 	m_ptitleFollowRate->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleFollowRate->GetUiRect().SetGradient(wxWEST);
 	m_ptitleFollowRate->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleFollowRate->SetBackgroundColour(wxColour(92,122,224));
-	m_plblFollowRate = new wmLabel(m_ppnlFollowUp, ID_M_PLBL36, wxEmptyString, wxPoint(50,30), wxSize(50,25), 0, _T("ID_M_PLBL36"));
+	m_plblFollowRate = new wmLabel(m_ppnlFollowUp, ID_M_PLBL36, wxEmptyString, wxPoint(50,28), wxSize(50,25), 0, _T("ID_M_PLBL36"));
 	m_plblFollowRate->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblFollowRate->GetUiRect().SetGradient(0);
 	m_plblFollowRate->SetForegroundColour(wxColour(0,0,0));
 	m_plblFollowRate->SetBackgroundColour(wxColour(255,255,255));
-	m_ptitleFollowCount = new wmLabel(m_ppnlFollowUp, ID_M_PLBL37, _("Count"), wxPoint(100,30), wxSize(50,25), 0, _T("ID_M_PLBL37"));
+	m_ptitleFollowCount = new wmLabel(m_ppnlFollowUp, ID_M_PLBL37, _("Count"), wxPoint(100,28), wxSize(50,25), 0, _T("ID_M_PLBL37"));
 	m_ptitleFollowCount->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleFollowCount->GetUiRect().SetGradient(wxWEST);
 	m_ptitleFollowCount->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleFollowCount->SetBackgroundColour(wxColour(92,122,224));
-	m_plblFollowCount = new wmLabel(m_ppnlFollowUp, ID_M_PLBL38, wxEmptyString, wxPoint(150,30), wxSize(130,25), 0, _T("ID_M_PLBL38"));
+	m_plblFollowCount = new wmLabel(m_ppnlFollowUp, ID_M_PLBL38, wxEmptyString, wxPoint(150,28), wxSize(130,25), 0, _T("ID_M_PLBL38"));
 	m_plblFollowCount->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblFollowCount->GetUiRect().SetGradient(0);
 	m_plblFollowCount->SetForegroundColour(wxColour(0,0,0));
 	m_plblFollowCount->SetBackgroundColour(wxColour(255,255,255));
-	m_ppnlFollowFlags = new pnlFlags(m_ppnlFollowUp, ID_PANEL11, wxPoint(0,60), wxSize(280,64), wxTAB_TRAVERSAL, _T("ID_PANEL11"));
+	m_ppnlFollowFlags = new pnlFlags(m_ppnlFollowUp, ID_PANEL11, wxPoint(0,56), wxSize(280,64), wxTAB_TRAVERSAL, _T("ID_PANEL11"));
 	m_ppnlSlave = new wxPanel(m_pswp, ID_PANEL6, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL6"));
 	m_ppnlSlave->SetBackgroundColour(wxColour(0,0,0));
 	m_ppnlRequests = new wxPanel(m_ppnlSlave, ID_PANEL4, wxPoint(0,0), wxSize(280,165), wxTAB_TRAVERSAL, _T("ID_PANEL4"));
@@ -430,38 +451,38 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_ptitleDelay->SetBackgroundColour(wxColour(98,219,101));
 	wxFont m_ptitleDelayFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,wxEmptyString,wxFONTENCODING_DEFAULT);
 	m_ptitleDelay->SetFont(m_ptitleDelayFont);
-	m_ptitleDelayRate = new wmLabel(m_ppnlRequests, ID_M_PLBL41, _("Rate"), wxPoint(0,30), wxSize(70,25), 0, _T("ID_M_PLBL41"));
+	m_ptitleDelayRate = new wmLabel(m_ppnlRequests, ID_M_PLBL41, _("Rate"), wxPoint(0,28), wxSize(70,25), 0, _T("ID_M_PLBL41"));
 	m_ptitleDelayRate->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleDelayRate->GetUiRect().SetGradient(wxWEST);
 	m_ptitleDelayRate->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleDelayRate->SetBackgroundColour(wxColour(92,122,224));
-	m_plblDelayRate = new wmLabel(m_ppnlRequests, ID_M_PLBL42, wxEmptyString, wxPoint(70,30), wxSize(70,25), 0, _T("ID_M_PLBL42"));
+	m_plblDelayRate = new wmLabel(m_ppnlRequests, ID_M_PLBL42, wxEmptyString, wxPoint(70,28), wxSize(70,25), 0, _T("ID_M_PLBL42"));
 	m_plblDelayRate->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblDelayRate->GetUiRect().SetGradient(0);
 	m_plblDelayRate->SetForegroundColour(wxColour(0,0,0));
 	m_plblDelayRate->SetBackgroundColour(wxColour(255,255,255));
-	m_ptitleDelayCount = new wmLabel(m_ppnlRequests, ID_M_PLBL43, _("Count"), wxPoint(140,30), wxSize(70,25), 0, _T("ID_M_PLBL43"));
+	m_ptitleDelayCount = new wmLabel(m_ppnlRequests, ID_M_PLBL43, _("Count"), wxPoint(140,28), wxSize(70,25), 0, _T("ID_M_PLBL43"));
 	m_ptitleDelayCount->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleDelayCount->GetUiRect().SetGradient(wxWEST);
 	m_ptitleDelayCount->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleDelayCount->SetBackgroundColour(wxColour(92,122,224));
-	m_plblDelayCount = new wmLabel(m_ppnlRequests, ID_M_PLBL44, wxEmptyString, wxPoint(210,30), wxSize(70,25), 0, _T("ID_M_PLBL44"));
+	m_plblDelayCount = new wmLabel(m_ppnlRequests, ID_M_PLBL44, wxEmptyString, wxPoint(210,28), wxSize(70,25), 0, _T("ID_M_PLBL44"));
 	m_plblDelayCount->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblDelayCount->GetUiRect().SetGradient(0);
 	m_plblDelayCount->SetForegroundColour(wxColour(0,0,0));
 	m_plblDelayCount->SetBackgroundColour(wxColour(255,255,255));
-	m_ptitleDelayMech = new wmLabel(m_ppnlRequests, ID_M_PLBL46, _("Mechanism"), wxPoint(0,60), wxSize(70,25), 0, _T("ID_M_PLBL46"));
+	m_ptitleDelayMech = new wmLabel(m_ppnlRequests, ID_M_PLBL46, _("Mechanism"), wxPoint(0,56), wxSize(70,25), 0, _T("ID_M_PLBL46"));
 	m_ptitleDelayMech->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleDelayMech->GetUiRect().SetGradient(wxWEST);
 	m_ptitleDelayMech->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleDelayMech->SetBackgroundColour(wxColour(92,122,224));
-	m_plblDelayMech = new wmLabel(m_ppnlRequests, ID_M_PLBL47, wxEmptyString, wxPoint(70,60), wxSize(210,25), 0, _T("ID_M_PLBL47"));
+	m_plblDelayMech = new wmLabel(m_ppnlRequests, ID_M_PLBL47, wxEmptyString, wxPoint(70,56), wxSize(210,25), 0, _T("ID_M_PLBL47"));
 	m_plblDelayMech->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblDelayMech->GetUiRect().SetGradient(0);
 	m_plblDelayMech->SetForegroundColour(wxColour(0,0,0));
 	m_plblDelayMech->SetBackgroundColour(wxColour(255,255,255));
-	m_ppnlRequestFlags = new pnlFlags(m_ppnlRequests, ID_PANEL13, wxPoint(0,90), wxSize(280,64), wxTAB_TRAVERSAL, _T("ID_PANEL13"));
-	m_ppnlResponses = new wxPanel(m_ppnlSlave, ID_PANEL7, wxPoint(0,160), wxSize(280,124), wxTAB_TRAVERSAL, _T("ID_PANEL7"));
+	m_ppnlRequestFlags = new pnlFlags(m_ppnlRequests, ID_PANEL13, wxPoint(0,84), wxSize(280,64), wxTAB_TRAVERSAL, _T("ID_PANEL13"));
+	m_ppnlResponses = new wxPanel(m_ppnlSlave, ID_PANEL7, wxPoint(0,152), wxSize(280,124), wxTAB_TRAVERSAL, _T("ID_PANEL7"));
 	m_ppnlResponses->SetBackgroundColour(wxColour(0,0,0));
 	m_ptitleDelayResponses = new wmLabel(m_ppnlResponses, ID_M_PLBL48, _("Delay Responses Received"), wxPoint(0,0), wxSize(280,25), 0, _T("ID_M_PLBL48"));
 	m_ptitleDelayResponses->SetBorderState(uiRect::BORDER_NONE);
@@ -470,30 +491,30 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_ptitleDelayResponses->SetBackgroundColour(wxColour(98,219,101));
 	wxFont m_ptitleDelayResponsesFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,wxEmptyString,wxFONTENCODING_DEFAULT);
 	m_ptitleDelayResponses->SetFont(m_ptitleDelayResponsesFont);
-	m_ptitleResponseRate = new wmLabel(m_ppnlResponses, ID_M_PLBL49, _("Rate"), wxPoint(0,30), wxSize(70,25), 0, _T("ID_M_PLBL49"));
+	m_ptitleResponseRate = new wmLabel(m_ppnlResponses, ID_M_PLBL49, _("Rate"), wxPoint(0,28), wxSize(70,25), 0, _T("ID_M_PLBL49"));
 	m_ptitleResponseRate->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleResponseRate->GetUiRect().SetGradient(wxWEST);
 	m_ptitleResponseRate->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleResponseRate->SetBackgroundColour(wxColour(92,122,224));
-	m_plblResponseRate = new wmLabel(m_ppnlResponses, ID_M_PLBL50, wxEmptyString, wxPoint(70,30), wxSize(70,25), 0, _T("ID_M_PLBL50"));
+	m_plblResponseRate = new wmLabel(m_ppnlResponses, ID_M_PLBL50, wxEmptyString, wxPoint(70,28), wxSize(70,25), 0, _T("ID_M_PLBL50"));
 	m_plblResponseRate->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblResponseRate->GetUiRect().SetGradient(0);
 	m_plblResponseRate->SetForegroundColour(wxColour(0,0,0));
 	m_plblResponseRate->SetBackgroundColour(wxColour(255,255,255));
-	m_ptitleResponseCount = new wmLabel(m_ppnlResponses, ID_M_PLBL51, _("Count"), wxPoint(140,30), wxSize(70,25), 0, _T("ID_M_PLBL51"));
+	m_ptitleResponseCount = new wmLabel(m_ppnlResponses, ID_M_PLBL51, _("Count"), wxPoint(140,28), wxSize(70,25), 0, _T("ID_M_PLBL51"));
 	m_ptitleResponseCount->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleResponseCount->GetUiRect().SetGradient(wxWEST);
 	m_ptitleResponseCount->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleResponseCount->SetBackgroundColour(wxColour(92,122,224));
-	m_plblResponseCount = new wmLabel(m_ppnlResponses, ID_M_PLBL52, wxEmptyString, wxPoint(210,30), wxSize(70,25), 0, _T("ID_M_PLBL52"));
+	m_plblResponseCount = new wmLabel(m_ppnlResponses, ID_M_PLBL52, wxEmptyString, wxPoint(210,28), wxSize(70,25), 0, _T("ID_M_PLBL52"));
 	m_plblResponseCount->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblResponseCount->GetUiRect().SetGradient(0);
 	m_plblResponseCount->SetForegroundColour(wxColour(0,0,0));
 	m_plblResponseCount->SetBackgroundColour(wxColour(255,255,255));
-	m_ppnlResponseFlags = new pnlFlags(m_ppnlResponses, ID_PANEL12, wxPoint(0,60), wxSize(280,64), wxTAB_TRAVERSAL, _T("ID_PANEL12"));
+	m_ppnlResponseFlags = new pnlFlags(m_ppnlResponses, ID_PANEL12, wxPoint(0,56), wxSize(280,64), wxTAB_TRAVERSAL, _T("ID_PANEL12"));
 	m_pswp->AddPage(m_ppnlMaster, _("Master"), false);
 	m_pswp->AddPage(m_ppnlSlave, _("Slave"), false);
-	m_ppnlLocal = new wxPanel(m_ppnlInfo, ID_PANEL8, wxPoint(295,290), wxSize(280,175), wxTAB_TRAVERSAL, _T("ID_PANEL8"));
+	m_ppnlLocal = new wxPanel(m_ppnlInfo, ID_PANEL8, wxPoint(295,280), wxSize(280,205), wxTAB_TRAVERSAL, _T("ID_PANEL8"));
 	m_ppnlLocal->SetBackgroundColour(wxColour(0,0,0));
 	m_ptitlePam = new wmLabel(m_ppnlLocal, ID_M_PLBL54, _("PAM"), wxPoint(0,0), wxSize(280,25), 0, _T("ID_M_PLBL54"));
 	m_ptitlePam->SetBorderState(uiRect::BORDER_NONE);
@@ -502,56 +523,68 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_ptitlePam->SetBackgroundColour(wxColour(217,138,100));
 	wxFont m_ptitlePamFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,wxEmptyString,wxFONTENCODING_DEFAULT);
 	m_ptitlePam->SetFont(m_ptitlePamFont);
-	m_ptitleTime = new wmLabel(m_ppnlLocal, ID_M_PLBL55, _("Time"), wxPoint(0,30), wxSize(50,25), 0, _T("ID_M_PLBL55"));
+	m_ptitleTime = new wmLabel(m_ppnlLocal, ID_M_PLBL55, _("Time"), wxPoint(0,27), wxSize(50,25), 0, _T("ID_M_PLBL55"));
 	m_ptitleTime->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleTime->GetUiRect().SetGradient(wxWEST);
 	m_ptitleTime->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleTime->SetBackgroundColour(wxColour(92,122,224));
-	m_plblTime = new wmLabel(m_ppnlLocal, ID_M_PLBL56, wxEmptyString, wxPoint(50,30), wxSize(230,25), 0, _T("ID_M_PLBL56"));
+	m_plblTime = new wmLabel(m_ppnlLocal, ID_M_PLBL56, wxEmptyString, wxPoint(50,27), wxSize(230,25), 0, _T("ID_M_PLBL56"));
 	m_plblTime->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblTime->GetUiRect().SetGradient(0);
 	m_plblTime->SetForegroundColour(wxColour(0,0,0));
 	m_plblTime->SetBackgroundColour(wxColour(255,255,255));
-	m_ptitleOffsetAverage = new wmLabel(m_ppnlLocal, ID_M_PLBL57, L"Offset: x\u0304", wxPoint(0,60), wxSize(100,25), 0, _T("ID_M_PLBL57"));
+	m_ptitleOffsetAverage = new wmLabel(m_ppnlLocal, ID_M_PLBL57, _("Offset: Average"), wxPoint(0,56), wxSize(100,25), 0, _T("ID_M_PLBL57"));
 	m_ptitleOffsetAverage->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleOffsetAverage->GetUiRect().SetGradient(wxWEST);
 	m_ptitleOffsetAverage->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleOffsetAverage->SetBackgroundColour(wxColour(92,122,224));
-	m_plblOffsetAverage = new wmLabel(m_ppnlLocal, ID_M_PLBL61, wxEmptyString, wxPoint(100,60), wxSize(180,25), 0, _T("ID_M_PLBL61"));
+	m_plblOffsetAverage = new wmLabel(m_ppnlLocal, ID_M_PLBL61, wxEmptyString, wxPoint(100,56), wxSize(180,25), 0, _T("ID_M_PLBL61"));
 	m_plblOffsetAverage->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblOffsetAverage->GetUiRect().SetGradient(0);
 	m_plblOffsetAverage->SetForegroundColour(wxColour(0,0,0));
 	m_plblOffsetAverage->SetBackgroundColour(wxColour(255,255,255));
-	m_ptitleOffsetRange = new wmLabel(m_ppnlLocal, ID_M_PLBL58, L"Offset: \u03c3 \u03c3\u2093\u0304", wxPoint(0,90), wxSize(100,25), 0, _T("ID_M_PLBL58"));
+	m_ptitleOffsetRange = new wmLabel(m_ppnlLocal, ID_M_PLBL58, _("Offset: Range"), wxPoint(0,84), wxSize(100,25), 0, _T("ID_M_PLBL58"));
 	m_ptitleOffsetRange->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleOffsetRange->GetUiRect().SetGradient(wxWEST);
 	m_ptitleOffsetRange->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleOffsetRange->SetBackgroundColour(wxColour(92,122,224));
-	m_plblOffsetRange = new wmLabel(m_ppnlLocal, ID_M_PLBL62, wxEmptyString, wxPoint(100,90), wxSize(180,25), 0, _T("ID_M_PLBL62"));
+	m_plblOffsetRange = new wmLabel(m_ppnlLocal, ID_M_PLBL62, wxEmptyString, wxPoint(100,84), wxSize(180,25), 0, _T("ID_M_PLBL62"));
 	m_plblOffsetRange->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblOffsetRange->GetUiRect().SetGradient(0);
 	m_plblOffsetRange->SetForegroundColour(wxColour(0,0,0));
 	m_plblOffsetRange->SetBackgroundColour(wxColour(255,255,255));
-	m_ptitleDelayAverage = new wmLabel(m_ppnlLocal, ID_M_PLBL59, L"Delay: x\u0304", wxPoint(0,120), wxSize(100,25), 0, _T("ID_M_PLBL59"));
+	m_ptitleDelayAverage = new wmLabel(m_ppnlLocal, ID_M_PLBL59, _("Delay: Average"), wxPoint(0,112), wxSize(100,25), 0, _T("ID_M_PLBL59"));
 	m_ptitleDelayAverage->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleDelayAverage->GetUiRect().SetGradient(wxWEST);
 	m_ptitleDelayAverage->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleDelayAverage->SetBackgroundColour(wxColour(92,122,224));
-	m_plblDelayAverage = new wmLabel(m_ppnlLocal, ID_M_PLBL63, wxEmptyString, wxPoint(100,120), wxSize(180,25), 0, _T("ID_M_PLBL63"));
+	m_plblDelayAverage = new wmLabel(m_ppnlLocal, ID_M_PLBL63, wxEmptyString, wxPoint(100,112), wxSize(180,25), 0, _T("ID_M_PLBL63"));
 	m_plblDelayAverage->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblDelayAverage->GetUiRect().SetGradient(0);
 	m_plblDelayAverage->SetForegroundColour(wxColour(0,0,0));
 	m_plblDelayAverage->SetBackgroundColour(wxColour(255,255,255));
-	m_ptitleDelayRange = new wmLabel(m_ppnlLocal, ID_M_PLBL60, L"Delay: \u03c3 \u03c3\u2093\u0304", wxPoint(0,150), wxSize(100,25), 0, _T("ID_M_PLBL60"));
+	m_ptitleDelayRange = new wmLabel(m_ppnlLocal, ID_M_PLBL60, _("Delay: Range"), wxPoint(0,140), wxSize(100,25), 0, _T("ID_M_PLBL60"));
 	m_ptitleDelayRange->SetBorderState(uiRect::BORDER_NONE);
 	m_ptitleDelayRange->GetUiRect().SetGradient(wxWEST);
 	m_ptitleDelayRange->SetForegroundColour(wxColour(255,255,255));
 	m_ptitleDelayRange->SetBackgroundColour(wxColour(92,122,224));
-	m_plblDelayRange = new wmLabel(m_ppnlLocal, ID_M_PLBL64, wxEmptyString, wxPoint(100,150), wxSize(180,25), 0, _T("ID_M_PLBL64"));
+	m_plblDelayRange = new wmLabel(m_ppnlLocal, ID_M_PLBL64, wxEmptyString, wxPoint(100,140), wxSize(180,25), 0, _T("ID_M_PLBL64"));
 	m_plblDelayRange->SetBorderState(uiRect::BORDER_DOWN);
 	m_plblDelayRange->GetUiRect().SetGradient(0);
 	m_plblDelayRange->SetForegroundColour(wxColour(0,0,0));
 	m_plblDelayRange->SetBackgroundColour(wxColour(255,255,255));
+	m_pbtnGraphs = new wmButton(m_ppnlLocal, ID_M_PBTN29, _("Graphs"), wxPoint(5,168), wxSize(130,30), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN29"));
+	m_pbtnGraphs->SetForegroundColour(wxColour(0,128,0));
+	m_pbtnGraphs->SetBackgroundColour(wxColour(255,255,255));
+	wxFont m_pbtnGraphsFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,wxEmptyString,wxFONTENCODING_DEFAULT);
+	m_pbtnGraphs->SetFont(m_pbtnGraphsFont);
+	m_pbtnGraphs->SetColourSelected(wxColour(wxT("#800000")));
+	m_pbtnHistogram = new wmButton(m_ppnlLocal, ID_M_PBTN5, _("Histogram"), wxPoint(145,168), wxSize(130,30), wmButton::STYLE_NORMAL, wxDefaultValidator, _T("ID_M_PBTN5"));
+	m_pbtnHistogram->SetForegroundColour(wxColour(0,128,0));
+	m_pbtnHistogram->SetBackgroundColour(wxColour(255,255,255));
+	wxFont m_pbtnHistogramFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,wxEmptyString,wxFONTENCODING_DEFAULT);
+	m_pbtnHistogram->SetFont(m_pbtnHistogramFont);
+	m_pbtnHistogram->SetColourSelected(wxColour(wxT("#800000")));
 	m_ppnlGraphs = new wxPanel(m_pSwpMain, ID_PANEL15, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL15"));
 	m_ppnlGraphs->SetBackgroundColour(wxColour(0,0,0));
 	m_plblGraphTitle = new wmLabel(m_ppnlGraphs, ID_M_PLBL45, wxEmptyString, wxPoint(0,0), wxSize(800,30), 0, _T("ID_M_PLBL45"));
@@ -561,63 +594,63 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_plblGraphTitle->SetBackgroundColour(wxColour(91,149,57));
 	wxFont m_plblGraphTitleFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT);
 	m_plblGraphTitle->SetFont(m_plblGraphTitleFont);
-	m_pLbl5 = new wmLabel(m_ppnlGraphs, ID_M_PLBL69, "y=", wxPoint(0,30), wxSize(20,30), 0, _T("ID_M_PLBL69"));
+	m_pLbl5 = new wmLabel(m_ppnlGraphs, ID_M_PLBL69, _("Current:"), wxPoint(0,30), wxSize(50,30), 0, _T("ID_M_PLBL69"));
 	m_pLbl5->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl5->GetUiRect().SetGradient(0);
 	m_pLbl5->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl5->SetBackgroundColour(wxColour(0,0,0));
 	wxFont m_pLbl5Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pLbl5->SetFont(m_pLbl5Font);
-	m_plblCurrent = new wmLabel(m_ppnlGraphs, ID_M_PLBL74, wxEmptyString, wxPoint(20,30), wxSize(80,30), wxALIGN_LEFT, _T("ID_M_PLBL74"));
+	m_plblCurrent = new wmLabel(m_ppnlGraphs, ID_M_PLBL74, wxEmptyString, wxPoint(50,30), wxSize(80,30), wxALIGN_LEFT, _T("ID_M_PLBL74"));
 	m_plblCurrent->SetBorderState(uiRect::BORDER_NONE);
 	m_plblCurrent->GetUiRect().SetGradient(0);
 	m_plblCurrent->SetForegroundColour(wxColour(186,254,167));
 	m_plblCurrent->SetBackgroundColour(wxColour(0,0,0));
 	wxFont m_plblCurrentFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_plblCurrent->SetFont(m_plblCurrentFont);
-	m_pLbl6 = new wmLabel(m_ppnlGraphs, ID_M_PLBL70, L"y\u0304=", wxPoint(140,30), wxSize(20,30), 0, _T("ID_M_PLBL70"));
+	m_pLbl6 = new wmLabel(m_ppnlGraphs, ID_M_PLBL70, _("Mean:"), wxPoint(140,30), wxSize(50,30), 0, _T("ID_M_PLBL70"));
 	m_pLbl6->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl6->GetUiRect().SetGradient(0);
 	m_pLbl6->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl6->SetBackgroundColour(wxColour(0,0,0));
 	wxFont m_pLbl6Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pLbl6->SetFont(m_pLbl6Font);
-	m_plblMean = new wmLabel(m_ppnlGraphs, ID_M_PLBL75, wxEmptyString, wxPoint(160,30), wxSize(80,30), wxALIGN_LEFT, _T("ID_M_PLBL75"));
+	m_plblMean = new wmLabel(m_ppnlGraphs, ID_M_PLBL75, wxEmptyString, wxPoint(190,30), wxSize(80,30), wxALIGN_LEFT, _T("ID_M_PLBL75"));
 	m_plblMean->SetBorderState(uiRect::BORDER_NONE);
 	m_plblMean->GetUiRect().SetGradient(0);
 	m_plblMean->SetForegroundColour(wxColour(186,254,167));
 	m_plblMean->SetBackgroundColour(wxColour(0,0,0));
 	wxFont m_plblMeanFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_plblMean->SetFont(m_plblMeanFont);
-	m_pLbl7 = new wmLabel(m_ppnlGraphs, ID_M_PLBL71, L"\u03c3=", wxPoint(280,30), wxSize(20,30), 0, _T("ID_M_PLBL71"));
+	m_pLbl7 = new wmLabel(m_ppnlGraphs, ID_M_PLBL71, _("SD:"), wxPoint(280,30), wxSize(50,30), 0, _T("ID_M_PLBL71"));
 	m_pLbl7->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl7->GetUiRect().SetGradient(0);
 	m_pLbl7->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl7->SetBackgroundColour(wxColour(0,0,0));
 	wxFont m_pLbl7Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pLbl7->SetFont(m_pLbl7Font);
-	m_plblDeviation = new wmLabel(m_ppnlGraphs, ID_M_PLBL76, wxEmptyString, wxPoint(300,30), wxSize(80,30), wxALIGN_LEFT, _T("ID_M_PLBL76"));
+	m_plblDeviation = new wmLabel(m_ppnlGraphs, ID_M_PLBL76, wxEmptyString, wxPoint(330,30), wxSize(80,30), wxALIGN_LEFT, _T("ID_M_PLBL76"));
 	m_plblDeviation->SetBorderState(uiRect::BORDER_NONE);
 	m_plblDeviation->GetUiRect().SetGradient(0);
 	m_plblDeviation->SetForegroundColour(wxColour(186,254,167));
 	m_plblDeviation->SetBackgroundColour(wxColour(0,0,0));
 	wxFont m_plblDeviationFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_plblDeviation->SetFont(m_plblDeviationFont);
-	m_pLbl8 = new wmLabel(m_ppnlGraphs, ID_M_PLBL72, L"\u03b2\u0302=", wxPoint(420,30), wxSize(20,30), 0, _T("ID_M_PLBL72"));
+	m_pLbl8 = new wmLabel(m_ppnlGraphs, ID_M_PLBL72, _("Slope:"), wxPoint(420,30), wxSize(50,30), 0, _T("ID_M_PLBL72"));
 	m_pLbl8->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl8->GetUiRect().SetGradient(0);
 	m_pLbl8->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl8->SetBackgroundColour(wxColour(0,0,0));
 	wxFont m_pLbl8Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pLbl8->SetFont(m_pLbl8Font);
-	m_plblSlope = new wmLabel(m_ppnlGraphs, ID_M_PLBL77, wxEmptyString, wxPoint(440,30), wxSize(80,30), wxALIGN_LEFT, _T("ID_M_PLBL77"));
+	m_plblSlope = new wmLabel(m_ppnlGraphs, ID_M_PLBL77, wxEmptyString, wxPoint(470,30), wxSize(80,30), wxALIGN_LEFT, _T("ID_M_PLBL77"));
 	m_plblSlope->SetBorderState(uiRect::BORDER_NONE);
 	m_plblSlope->GetUiRect().SetGradient(0);
 	m_plblSlope->SetForegroundColour(wxColour(186,254,167));
 	m_plblSlope->SetBackgroundColour(wxColour(0,0,0));
 	wxFont m_plblSlopeFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_plblSlope->SetFont(m_plblSlopeFont);
-	m_pLbl9 = new wmLabel(m_ppnlGraphs, ID_M_PLBL73, L"\u03b1\u0302+\u03b2\u0302x=", wxPoint(560,30), wxSize(50,30), 0, _T("ID_M_PLBL73"));
+	m_pLbl9 = new wmLabel(m_ppnlGraphs, ID_M_PLBL73, _("Est:"), wxPoint(560,30), wxSize(50,30), 0, _T("ID_M_PLBL73"));
 	m_pLbl9->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl9->GetUiRect().SetGradient(0);
 	m_pLbl9->SetForegroundColour(wxColour(255,255,255));
@@ -641,8 +674,18 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_pLbl4->SetFont(m_pLbl4Font);
 	m_plstGraphData = new wmList(m_ppnlGraphs, ID_M_PLST5, wxPoint(70,443), wxSize(120,34), wmList::STYLE_SELECT, 0, wxSize(-1,30), 2, wxSize(-1,-1));
 	m_plstGraphData->SetBackgroundColour(wxColour(0,0,0));
-	m_pbtnGraphClear = new wmButton(m_ppnlGraphs, ID_M_PBTN3, _("Clear All"), wxPoint(600,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN3"));
-	m_pbtnGraphOptions = new wmButton(m_ppnlGraphs, ID_M_PBTN4, _("Menu"), wxPoint(720,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN4"));
+	m_pbtnClearStats = new wmButton(m_ppnlGraphs, ID_M_PBTN8, _("Clear All"), wxPoint(498,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN8"));
+	m_pbtnGraphClear = new wmButton(m_ppnlGraphs, ID_M_PBTN3, _("Clear All"), wxPoint(570,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN3"));
+	m_pbtnGraphHisto = new wmButton(m_ppnlGraphs, ID_M_PBTN7, _("Histo"), wxPoint(649,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN7"));
+	m_pbtnGraphHisto->SetForegroundColour(wxColour(0,128,0));
+	m_pbtnGraphHisto->SetBackgroundColour(wxColour(255,255,255));
+	wxFont m_pbtnGraphHistoFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,wxEmptyString,wxFONTENCODING_DEFAULT);
+	m_pbtnGraphHisto->SetFont(m_pbtnGraphHistoFont);
+	m_pbtnGraphOptions = new wmButton(m_ppnlGraphs, ID_M_PBTN4, _("Info"), wxPoint(720,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN4"));
+	m_pbtnGraphOptions->SetForegroundColour(wxColour(0,128,0));
+	m_pbtnGraphOptions->SetBackgroundColour(wxColour(255,255,255));
+	wxFont m_pbtnGraphOptionsFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,wxEmptyString,wxFONTENCODING_DEFAULT);
+	m_pbtnGraphOptions->SetFont(m_pbtnGraphOptionsFont);
 	m_ppnlHistograms = new wxPanel(m_pSwpMain, ID_PANEL16, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL16"));
 	m_ppnlHistograms->SetBackgroundColour(wxColour(0,0,0));
 	m_plblHistogramTitle = new wmLabel(m_ppnlHistograms, ID_M_PLBL53, wxEmptyString, wxPoint(0,0), wxSize(800,30), 0, _T("ID_M_PLBL53"));
@@ -662,43 +705,66 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_pLbl3->SetFont(m_pLbl3Font);
 	m_plstHistogramData = new wmList(m_ppnlHistograms, ID_M_PLST4, wxPoint(70,443), wxSize(120,34), wmList::STYLE_SELECT, 0, wxSize(-1,30), 2, wxSize(-1,-1));
 	m_plstHistogramData->SetBackgroundColour(wxColour(0,0,0));
-	m_pLbl1 = new wmLabel(m_ppnlHistograms, ID_M_PLBL65, _("Granularity"), wxPoint(200,445), wxSize(60,30), 0, _T("ID_M_PLBL65"));
+	m_pLbl1 = new wmLabel(m_ppnlHistograms, ID_M_PLBL65, _("Granularity"), wxPoint(195,445), wxSize(60,30), 0, _T("ID_M_PLBL65"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl1->GetUiRect().SetGradient(0);
 	m_pLbl1->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl1->SetBackgroundColour(wxColour(91,149,57));
 	wxFont m_pLbl1Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pLbl1->SetFont(m_pLbl1Font);
-	m_plstHistogramGranularity = new wmList(m_ppnlHistograms, ID_M_PLST2, wxPoint(260,443), wxSize(120,34), 0, 0, wxSize(-1,30), 3, wxSize(-1,-1));
+	m_plstHistogramGranularity = new wmList(m_ppnlHistograms, ID_M_PLST2, wxPoint(255,443), wxSize(120,34), 0, 0, wxSize(-1,30), 3, wxSize(-1,-1));
 	m_plstHistogramGranularity->SetBackgroundColour(wxColour(0,0,0));
-	m_pLbl2 = new wmLabel(m_ppnlHistograms, ID_M_PLBL66, _("Resolution"), wxPoint(400,445), wxSize(60,30), 0, _T("ID_M_PLBL66"));
+	m_pLbl2 = new wmLabel(m_ppnlHistograms, ID_M_PLBL66, _("Resolution"), wxPoint(380,445), wxSize(60,30), 0, _T("ID_M_PLBL66"));
 	m_pLbl2->SetBorderState(uiRect::BORDER_NONE);
 	m_pLbl2->GetUiRect().SetGradient(0);
 	m_pLbl2->SetForegroundColour(wxColour(255,255,255));
 	m_pLbl2->SetBackgroundColour(wxColour(91,149,57));
 	wxFont m_pLbl2Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pLbl2->SetFont(m_pLbl2Font);
-	m_plstHistogramResolution = new wmList(m_ppnlHistograms, ID_M_PLST3, wxPoint(460,443), wxSize(120,34), 0, 0, wxSize(-1,30), 3, wxSize(-1,-1));
+	m_plstHistogramResolution = new wmList(m_ppnlHistograms, ID_M_PLST3, wxPoint(440,443), wxSize(120,34), 0, 0, wxSize(-1,30), 3, wxSize(-1,-1));
 	m_plstHistogramResolution->SetBackgroundColour(wxColour(0,0,0));
-	m_pbtnHistogramClear = new wmButton(m_ppnlHistograms, ID_M_PBTN1, _("Clear All"), wxPoint(600,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
-	m_pbtnOptions = new wmButton(m_ppnlHistograms, ID_M_PBTN2, _("Menu"), wxPoint(720,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
+	m_pbtnHistogramClear = new wmButton(m_ppnlHistograms, ID_M_PBTN1, _("Clear All"), wxPoint(570,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN1"));
+	m_pbtnHistGraphs = new wmButton(m_ppnlHistograms, ID_M_PBTN6, _("Graphs"), wxPoint(649,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN6"));
+	m_pbtnHistGraphs->SetForegroundColour(wxColour(0,128,0));
+	m_pbtnHistGraphs->SetBackgroundColour(wxColour(255,255,255));
+	wxFont m_pbtnHistGraphsFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,wxEmptyString,wxFONTENCODING_DEFAULT);
+	m_pbtnHistGraphs->SetFont(m_pbtnHistGraphsFont);
+	m_pbtnOptions = new wmButton(m_ppnlHistograms, ID_M_PBTN2, _("Info"), wxPoint(720,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN2"));
+	m_pbtnOptions->SetForegroundColour(wxColour(0,128,0));
+	m_pbtnOptions->SetBackgroundColour(wxColour(255,255,255));
+	wxFont m_pbtnOptionsFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,wxEmptyString,wxFONTENCODING_DEFAULT);
+	m_pbtnOptions->SetFont(m_pbtnOptionsFont);
 	m_pSwpMain->AddPage(m_ppnlInfo, _("Info"), false);
 	m_pSwpMain->AddPage(m_ppnlGraphs, _("Graphs"), false);
 	m_pSwpMain->AddPage(m_ppnlHistograms, _("Histograms"), false);
 
 	Connect(ID_M_PLST1,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&ptpPanel::OnlstClocksSelected);
+	Connect(ID_M_PBTN29,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnGraphsClick);
+	Connect(ID_M_PBTN5,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnHistogramClick);
 	Connect(ID_M_PLST5,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&ptpPanel::OnlstDataSelected);
+	Connect(ID_M_PBTN8,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnClearStatsClick);
 	Connect(ID_M_PBTN3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnClearClick);
+	Connect(ID_M_PBTN7,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnHistogramClick);
 	Connect(ID_M_PBTN4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnOptionsClick);
 	Connect(ID_M_PLST4,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&ptpPanel::OnlstDataSelected);
 	Connect(ID_M_PLST2,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&ptpPanel::OnlstHistogramGranularitySelected);
 	Connect(ID_M_PLST3,wxEVT_LIST_SELECTED,(wxObjectEventFunction)&ptpPanel::OnlstHistogramResolutionSelected);
 	Connect(ID_M_PBTN1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnClearClick);
+	Connect(ID_M_PBTN6,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnGraphsClick);
 	Connect(ID_M_PBTN2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnOptionsClick);
 	//*)
 
-	m_pbtnClearStats = new wmButton(m_ppnlGraphs, wxNewId(), _("Clear Stats"), wxPoint(520,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN3"));
-    Connect(m_pbtnClearStats->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnClearStatsClick);
+	m_ptitleOffsetAverage->SetLabel(L"Offset: x\u0304");
+    m_ptitleOffsetRange->SetLabel(L"Offset: \u03c3 \u03c3\u2093\u0304");
+    m_ptitleDelayAverage->SetLabel(L"Delay: x\u0304");
+    m_ptitleDelayRange->SetLabel(L"Delay: \u03c3 \u03c3\u2093\u0304");
+    m_pLbl6->SetLabel(L"y\u0304=");
+    m_pLbl7->SetLabel(L"\u03c3=");
+    m_pLbl8->SetLabel(L"\u03b2\u0302=");
+    m_pLbl9->SetLabel(L"\u03b1\u0302+\u03b2\u0302x=");
+
+	//m_pbtnClearStats = new wmButton(m_ppnlGraphs, wxNewId(), _("Clear Stats"), wxPoint(520,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN3"));
+    //Connect(m_pbtnClearStats->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ptpPanel::OnbtnClearStatsClick);
 
 	m_ptitleOffsetAverage->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 	m_ptitleOffsetRange->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
@@ -731,7 +797,7 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 
 	m_offset = 0.0;
 
-
+	m_plstClocks->SetBitmapAlign(wxALIGN_TOP | wxALIGN_RIGHT);
 
 	m_timer.SetOwner(this, wxNewId());
 	Connect(m_timer.GetId(), wxEVT_TIMER, (wxObjectEventFunction)&ptpPanel::OnTimer);
@@ -775,6 +841,8 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
     Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&ptpPanel::OnLeftUp);
 	m_pHistoryGraph->Bind(wxEVT_LEFT_UP, &ptpPanel::OnLeftUp, this);\
     ConnectLeftUp(this);
+
+    m_plblDomain->SetLabel(wxString::Format("Domain: %u", m_nDomain));
 
 }
 
@@ -838,7 +906,7 @@ void ptpPanel::OnLeftUp(wxMouseEvent& event)
 void ptpPanel::OnlstClocksSelected(wxCommandEvent& event)
 {
     m_sSelectedClock = event.GetString();
-    m_pClock = wxPtp::Get().GetPtpClock(m_nDomain, m_sSelectedClock.AfterFirst('\n'));
+    m_pClock = wxPtp::Get().GetPtpClock(m_sSelectedClock.AfterFirst('\n'));
     ShowClockDetails();
 }
 
@@ -864,7 +932,8 @@ void ptpPanel::OnClockUpdated(wxCommandEvent& event)
 void ptpPanel::OnClockRemoved(wxCommandEvent& event)
 {
     wxString sClock(m_dbMac.GetVendor(event.GetString())+event.GetString());
-    if(m_sSelectedClock == sClock)    {
+    if(m_sSelectedClock == sClock)
+	{
         ClearClockDetails();
     }
     m_plstClocks->DeleteButton(m_plstClocks->FindButton(sClock));
@@ -891,8 +960,16 @@ void ptpPanel::OnClockMaster(wxCommandEvent& event)
     size_t nButton = m_plstClocks->FindButton(sClock);
     if(nButton != wmList::NOT_FOUND)
     {
-        m_plstClocks->SetButtonColour(nButton, CLR_MASTER);
-        m_plstClocks->SetSelectedButtonColour(nButton, CLR_MASTER_SELECTED);
+		auto pSyncMaster = wxPtp::Get().GetSyncMasterClock();
+		if(pSyncMaster && pSyncMaster->GetId() == sClock)
+		{
+			m_plstClocks->SetButtonBitmap(nButton, wxBitmap(syncmaster_xpm));
+		}
+		else
+		{
+			m_plstClocks->SetButtonBitmap(nButton, wxBitmap(grandmaster_xpm));
+		}
+		m_plstClocks->Update();
     }
     ClockWebsocketMessage(event.GetString(), "Master");
 }
@@ -909,8 +986,7 @@ void ptpPanel::OnClockSlave(wxCommandEvent& event)
     size_t nButton = m_plstClocks->FindButton(sClock);
     if(nButton != wmList::NOT_FOUND)
     {
-        m_plstClocks->SetButtonColour(nButton, CLR_SLAVE);
-        m_plstClocks->SetSelectedButtonColour(nButton, CLR_SLAVE_SELECTED);
+        m_plstClocks->SetButtonBitmap(nButton, wxBitmap(slave_xpm));
     }
     ClockWebsocketMessage(event.GetString(), "Slave");
 }
@@ -929,31 +1005,24 @@ void ptpPanel::ShowClockDetails()
 
     m_pswp->ChangeSelection(m_pClock->IsSyncMaster() ? "Master" : "Slave");
 
-    wxColour clrNormal(CLR_SLAVE);
-    wxColour clrSelected(CLR_SLAVE_SELECTED);
-    if(m_pClock->IsGrandMaster())
-    {
-        m_plblState->SetLabel("Grand Master");
-        clrNormal = CLR_MASTER;
-        clrSelected = CLR_MASTER_SELECTED;
-    }
-    else if(m_pClock->IsSyncMaster())
-    {
-        m_plblState->SetLabel("Sync Master");
-        clrNormal = CLR_SYNC_MASTER;
-        clrSelected = CLR_SYNC_MASTER_SELECTED;
-    }
-    else
-    {
-        m_plblState->SetLabel("Slave");
-    }
-
-    size_t nButton = m_plstClocks->FindButton(m_sSelectedClock);
-
-    if(nButton != wmList::NOT_FOUND)
-    {
-        m_plstClocks->SetButtonColour(nButton, clrNormal);
-        m_plstClocks->SetSelectedButtonColour(nButton, clrSelected);
+	size_t nButton = m_plstClocks->FindButton(m_sSelectedClock);
+	if(nButton != wmList::NOT_FOUND)
+	{
+		if(m_pClock->IsGrandMaster())
+		{
+			m_plblState->SetLabel("Grand Master");
+			m_plstClocks->SetButtonBitmap(nButton, wxBitmap(grandmaster_xpm));
+		}
+		else if(m_pClock->IsSyncMaster())
+		{
+			m_plblState->SetLabel("Sync Master");
+			m_plstClocks->SetButtonBitmap(nButton, wxBitmap(syncmaster_xpm));
+		}
+		else
+		{
+			m_plblState->SetLabel("Slave");
+			m_plstClocks->SetButtonBitmap(nButton, wxBitmap(slave_xpm));
+		}
     }
 
 
@@ -1002,7 +1071,7 @@ void ptpPanel::ShowClockDetails()
         m_ppnlSyncFlags->ShowFlags(m_pClock->GetFlags(ptpV2Header::SYNC));
         m_ppnlFollowFlags->ShowFlags(m_pClock->GetFlags(ptpV2Header::FOLLOW_UP));
 
-        m_plblMasterId->SetLabel(wxPtp::Get().GetMasterClockId(m_nDomain));
+        m_plblMasterId->SetLabel(wxPtp::Get().GetMasterClockId());
     }
     else
     {
@@ -1026,7 +1095,7 @@ void ptpPanel::ShowTime()
 {
     if(m_pLocalClock)
     {
-        auto pSyncMaster = wxPtp::Get().GetSyncMasterClock(m_nDomain);
+        auto pSyncMaster = wxPtp::Get().GetSyncMasterClock();
 
         if(pSyncMaster)
         {
@@ -1093,7 +1162,7 @@ void ptpPanel::ShowTime()
 
 void ptpPanel::UpdateGraphLabels()
 {
-    auto pSyncMaster = wxPtp::Get().GetSyncMasterClock(m_nDomain);
+    auto pSyncMaster = wxPtp::Get().GetSyncMasterClock();
     if(pSyncMaster && m_pLocalClock)
     {
 
@@ -1203,12 +1272,12 @@ void ptpPanel::OnTimer(wxTimerEvent& event)
         Connect(wxID_ANY, wxEVT_CLOCK_MSG_DELAY_REQUEST,(wxObjectEventFunction)&ptpPanel::OnClockMessage);
         Connect(wxID_ANY, wxEVT_CLOCK_MSG_DELAY_RESPONSE,(wxObjectEventFunction)&ptpPanel::OnClockMessage);
 
-        wxPtp::Get().RunDomain(Settings::Get().Read("AoIP_Settings", "Interface", "eth0"), m_nDomain);
+        wxPtp::Get().Run(Settings::Get().Read("AoIP_Settings", "Interface", "eth0"), m_nDomain, Settings::Get().Read("Time", "Ptp_Mode", 0) ? ptpmonkey::Mode::HYBRID : ptpmonkey::Mode::MULTICAST);
 
 
-        for(auto itClock = wxPtp::Get().GetClocksBegin(m_nDomain); itClock != wxPtp::Get().GetClocksEnd(m_nDomain); ++itClock)
-        {
-            AddClock(wxString(itClock->first));
+        for(const auto& [sClock, pClock] : wxPtp::Get().GetClocks())
+		{
+            AddClock(wxString(sClock));
         }
     }
 }
@@ -1219,29 +1288,26 @@ void ptpPanel::AddClock(wxString sClock)
 
     if(m_plstClocks->FindButton(sClock) == wmList::NOT_FOUND)
     {
-        wxColour clrNormal(CLR_SLAVE);
-        wxColour clrSelected(CLR_SLAVE_SELECTED);
-        if(wxPtp::Get().GetMasterClockId(m_nDomain) == sClock)
+		wxBitmap bmp(slave_xpm);
+        if(wxPtp::Get().GetMasterClockId() == sClock)
         {
-            clrNormal = CLR_MASTER;
-            clrSelected = CLR_MASTER_SELECTED;
+			bmp = wxBitmap(grandmaster_xpm);
         }
         else
         {
-            std::shared_ptr<const ptpmonkey::PtpV2Clock> pSyncMaster = wxPtp::Get().GetSyncMasterClock(m_nDomain);
+            auto pSyncMaster = wxPtp::Get().GetSyncMasterClock();
             if(pSyncMaster && pSyncMaster->GetId() == sClock)
             {
-                clrNormal = CLR_SYNC_MASTER;
-                clrSelected = CLR_SYNC_MASTER_SELECTED;
+                bmp = wxBitmap(syncmaster_xpm);
             }
         }
-        size_t nButton = m_plstClocks->AddButton(sClock, wxNullBitmap, 0, wmList::wmENABLED, clrNormal);
-        m_plstClocks->SetSelectedButtonColour(nButton, clrSelected);
+        size_t nButton = m_plstClocks->AddButton(sClock, bmp, 0, wmList::wmENABLED, CLR_CLOCK);
+        m_plstClocks->SetSelectedButtonColour(nButton, CLR_CLOCK_SELECTED);
 
     }
     if(m_pLocalClock == nullptr)
     {
-        m_pLocalClock = wxPtp::Get().GetLocalClock(m_nDomain);
+        m_pLocalClock = wxPtp::Get().GetLocalClock();
     }
 }
 
@@ -1250,9 +1316,9 @@ void ptpPanel::OnClockMessage(wxCommandEvent& event)
     wxString sClock(m_dbMac.GetVendor(event.GetString())+event.GetString());
     if(sClock == m_sSelectedClock)
     {
-
         ShowClockDetails();
     }
+	UpdateListBitmaps();
     ClockMessageWebsocketMessage(event.GetString());
 }
 
@@ -1298,7 +1364,7 @@ void ptpPanel::OnbtnClearClick(wxCommandEvent& event)
 
 void ptpPanel::OnbtnOptionsClick(wxCommandEvent& event)
 {
-    m_pBuilder->Maximize(false);
+    ChangeView("Info");
 }
 
 void ptpPanel::OnlstHistogramGranularitySelected(wxCommandEvent& event)
@@ -1320,7 +1386,7 @@ void ptpPanel::ResetStats()
 {
     if(m_pLocalClock)
     {
-        wxPtp::Get().ResetLocalClockStats(m_nDomain);
+        wxPtp::Get().ResetLocalClockStats();
     }
     m_pBuilder->WriteSetting("reset",0);
 }
@@ -1349,15 +1415,15 @@ void ptpPanel::ClockMessageWebsocketMessage(const wxString& sClock)
     {
         Json::Value jsClock;
         jsClock["action"] = "Message";
-        auto pClock = wxPtp::Get().GetPtpClock(m_nDomain, sClock);
+        auto pClock = wxPtp::Get().GetPtpClock(sClock);
         if(pClock)
         {
             jsClock["id"] = pClock->GetClockId();
             jsClock["address"] = pClock->GetIpAddress();
             jsClock["vendor"] = m_dbMac.GetVendor(sClock).ToStdString();
 
-            std::shared_ptr<const ptpmonkey::PtpV2Clock> pSyncMaster = wxPtp::Get().GetSyncMasterClock(m_nDomain);
-            if(wxPtp::Get().GetMasterClockId(m_nDomain) == sClock || (pSyncMaster && pSyncMaster->GetId() == sClock))
+            std::shared_ptr<const ptpmonkey::PtpV2Clock> pSyncMaster = wxPtp::Get().GetSyncMasterClock();
+            if(wxPtp::Get().GetMasterClockId() == sClock || (pSyncMaster && pSyncMaster->GetId() == sClock))
             {
                 jsClock["master"] = true;
                 jsClock["sync"]["count"] = Json::UInt64(pClock->GetCount(ptpV2Header::SYNC));
@@ -1436,7 +1502,7 @@ void ptpPanel::ClockWebsocketMessage(const wxString& sClock, const wxString& sTy
 
 void ptpPanel::TimeWebsocketMessage()
 {
-    auto pSyncMaster = wxPtp::Get().GetSyncMasterClock(m_nDomain);
+    auto pSyncMaster = wxPtp::Get().GetSyncMasterClock();
 
     if(m_pLocalClock && m_pBuilder->WebsocketsActive() && pSyncMaster)
     {
@@ -1477,4 +1543,49 @@ void ptpPanel::TimeWebsocketMessage()
     }
 }
 
+void ptpPanel::SetDomain(unsigned char nDomain)
+{
+    if(m_nDomain != nDomain)
+    {
+	    m_nDomain = nDomain;
+        m_plblDomain->SetLabel(wxString::Format("Domain: %u", m_nDomain));
+    }
+}
 
+
+void ptpPanel::OnbtnGraphsClick(wxCommandEvent& event)
+{
+    ChangeView("Graphs");
+}
+
+void ptpPanel::OnbtnHistogramClick(wxCommandEvent& event)
+{
+    ChangeView("Histograms");
+}
+
+void ptpPanel::UpdateListBitmaps()
+{
+	for(size_t nButton = 0; nButton < m_plstClocks->GetItemCount(); nButton++)
+	{
+		auto pClock = wxPtp::Get().GetPtpClock(m_plstClocks->GetButtonText(nButton).AfterFirst('\n'));
+		if(pClock)
+		{
+			if(pClock->IsSyncMaster())
+			{
+				if(pClock->IsGrandMaster())
+				{
+					m_plstClocks->SetButtonBitmap(nButton, wxBitmap(grandmaster_xpm));
+				}
+				else
+				{	
+					pmlLog() << pClock->GetId() << " : " << pClock->GetGrandmasterClockId();
+					m_plstClocks->SetButtonBitmap(nButton, wxBitmap(syncmaster_xpm));
+				}
+			}
+			else
+			{
+				m_plstClocks->SetButtonBitmap(nButton, wxBitmap(slave_xpm));
+			}
+		}
+	}
+}

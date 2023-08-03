@@ -61,10 +61,16 @@ class ptpPanel: public pmPanel
 		pnlFlags* m_ppnlRequestFlags;
 		pnlFlags* m_ppnlResponseFlags;
 		pnlFlags* m_ppnlSyncFlags;
+		wmButton* m_pbtnClearStats;
 		wmButton* m_pbtnGraphClear;
+		wmButton* m_pbtnGraphHisto;
 		wmButton* m_pbtnGraphOptions;
+		wmButton* m_pbtnGraphs;
+		wmButton* m_pbtnHistGraphs;
+		wmButton* m_pbtnHistogram;
 		wmButton* m_pbtnHistogramClear;
 		wmButton* m_pbtnOptions;
+		wmLabel* m_pLbl10;
 		wmLabel* m_pLbl1;
 		wmLabel* m_pLbl2;
 		wmLabel* m_pLbl3;
@@ -86,6 +92,7 @@ class ptpPanel: public pmPanel
 		wmLabel* m_plblDelayRange;
 		wmLabel* m_plblDelayRate;
 		wmLabel* m_plblDeviation;
+		wmLabel* m_plblDomain;
 		wmLabel* m_plblFollowCount;
 		wmLabel* m_plblFollowRate;
 		wmLabel* m_plblGraphTitle;
@@ -163,8 +170,6 @@ class ptpPanel: public pmPanel
 		wxPanel* m_ppnlSync;
 		//*)
 
-		wmButton* m_pbtnClearStats;
-
 
 		/**	@brief Called when there is some audio data to pass to the meter
 		*	@param pBuffer const pointer to the timedbuffer containing the audio data
@@ -181,10 +186,13 @@ class ptpPanel: public pmPanel
 		**/
 		void OutputChannels(const std::vector<char>& vChannels);
 
+		void SetDomain(unsigned char nDomain);
 	protected:
 
 		//(*Identifiers(ptpPanel)
+		static const long ID_M_PLBL80;
 		static const long ID_M_PLST1;
+		static const long ID_M_PLBL79;
 		static const long ID_M_PLBL1;
 		static const long ID_M_PLBL2;
 		static const long ID_M_PLBL3;
@@ -260,6 +268,8 @@ class ptpPanel: public pmPanel
 		static const long ID_M_PLBL63;
 		static const long ID_M_PLBL60;
 		static const long ID_M_PLBL64;
+		static const long ID_M_PBTN29;
+		static const long ID_M_PBTN5;
 		static const long ID_PANEL8;
 		static const long ID_PANEL14;
 		static const long ID_M_PLBL45;
@@ -276,7 +286,9 @@ class ptpPanel: public pmPanel
 		static const long ID_HISTORY_GRAPH;
 		static const long ID_M_PLBL68;
 		static const long ID_M_PLST5;
+		static const long ID_M_PBTN8;
 		static const long ID_M_PBTN3;
+		static const long ID_M_PBTN7;
 		static const long ID_M_PBTN4;
 		static const long ID_PANEL15;
 		static const long ID_M_PLBL53;
@@ -288,12 +300,15 @@ class ptpPanel: public pmPanel
 		static const long ID_M_PLBL66;
 		static const long ID_M_PLST3;
 		static const long ID_M_PBTN1;
+		static const long ID_M_PBTN6;
 		static const long ID_M_PBTN2;
 		static const long ID_PANEL16;
 		static const long ID_M_PSWP2;
 		//*)
 
 		void OnLeftUp(wxMouseEvent& event);
+
+
 
 	private:
 
@@ -304,9 +319,11 @@ class ptpPanel: public pmPanel
 		void OnbtnOptionsClick(wxCommandEvent& event);
 		void OnlstHistogramGranularitySelected(wxCommandEvent& event);
 		void OnlstHistogramResolutionSelected(wxCommandEvent& event);
+		void OnbtnGraphsClick(wxCommandEvent& event);
+		void OnbtnHistogramClick(wxCommandEvent& event);
+		void OnbtnClearStatsClick(wxCommandEvent& event);
 		//*)
 
-		void OnbtnClearStatsClick(wxCommandEvent& event);
 
 		void OnTimer(wxTimerEvent& event);
 
@@ -327,6 +344,7 @@ class ptpPanel: public pmPanel
         wxString ConvertRate(unsigned char nRate);
 
         void UpdateGraphLabels();
+		void UpdateListBitmaps();
 
         void ClockWebsocketMessage(const wxString& sClock, const wxString& sType);
         void ClockMessageWebsocketMessage(const wxString& sClock);
@@ -351,12 +369,8 @@ class ptpPanel: public pmPanel
         double m_offset;
         wxString m_sGraph;
 
-        static const wxColour CLR_MASTER;
-        static const wxColour CLR_MASTER_SELECTED;
-        static const wxColour CLR_SYNC_MASTER;
-        static const wxColour CLR_SYNC_MASTER_SELECTED;
-        static const wxColour CLR_SLAVE;
-        static const wxColour CLR_SLAVE_SELECTED;
+        static const wxColour CLR_CLOCK;
+        static const wxColour CLR_CLOCK_SELECTED;
 
 		DECLARE_EVENT_TABLE()
 };

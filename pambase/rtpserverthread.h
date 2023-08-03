@@ -65,3 +65,4 @@ class PAMBASE_IMPEXPORT RtpServerThread : public wxThread
         std::vector<char> m_vRouting;
 };
 
+wxDECLARE_EXPORTED_EVENT(WXEXPORT, wxEVT_STREAMING, wxCommandEvent);

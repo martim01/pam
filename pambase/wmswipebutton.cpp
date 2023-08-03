@@ -149,7 +149,10 @@ void wmSwipeButton::OnMouseMove(wxMouseEvent& event)
 
 void wmSwipeButton::OnLeftDown(wxMouseEvent& event)
 {
-    CaptureMouse();
+    if(!HasCapture())
+    {
+        CaptureMouse();
+    }
     m_pntMouse = event.GetPosition();
 
     if(m_uiRect.Contains(event.GetPosition()))// && (*itButton).bEnabled)

@@ -10,21 +10,51 @@
 			<object class="wmSwitcherPanelpage">
 				<object class="wxPanel" name="ID_PANEL14" variable="m_ppnlInfo" member="yes">
 					<bg>#000000</bg>
+					<object class="wmLabel" name="ID_M_PLBL80" variable="m_pLbl10" member="yes">
+						<label>Clocks</label>
+						<gradient>wxWEST</gradient>
+						<pos>605,5</pos>
+						<size>190,25</size>
+						<fg>#FFFFFF</fg>
+						<bg>#8080C0</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+						</font>
+					</object>
 					<object class="wmList" name="ID_M_PLST1" variable="m_plstClocks" member="yes">
-						<button>wxSYS_COLOUR_BACKGROUND</button>
+						<button>#000000</button>
 						<button_selected>#FF8000</button_selected>
 						<items />
-						<pos>605,5</pos>
-						<size>190,470</size>
+						<pos>605,35</pos>
+						<size>190,440</size>
 						<bg>wxSYS_COLOUR_BACKGROUND</bg>
 						<style>wmList::STYLE_SELECT</style>
 						<handler function="OnlstClocksSelected" entry="EVT_LIST_SELECTED" />
+					</object>
+					<object class="wmLabel" name="ID_M_PLBL79" variable="m_plblDomain" member="yes">
+						<label>Domain:</label>
+						<gradient>wxWEST</gradient>
+						<pos>5,5</pos>
+						<size>280,25</size>
+						<fg>#FFFFFF</fg>
+						<bg>#8080C0</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+						</font>
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL1" variable="m_ptitleIdentity" member="yes">
 						<label>Port Identitiy</label>
 						<border>uiRect::BORDER_FLAT</border>
 						<gradient>wxWEST</gradient>
-						<pos>5,5</pos>
+						<pos>5,33</pos>
 						<size>100,25</size>
 						<fg>#FFFFFF</fg>
 						<bg>#5C7AE0</bg>
@@ -32,7 +62,7 @@
 					<object class="wmLabel" name="ID_M_PLBL2" variable="m_ptitleAddress" member="yes">
 						<label>Address</label>
 						<gradient>wxWEST</gradient>
-						<pos>5,35</pos>
+						<pos>5,61</pos>
 						<size>100,25</size>
 						<fg>#FFFFFF</fg>
 						<bg>#5C7AE0</bg>
@@ -40,7 +70,7 @@
 					<object class="wmLabel" name="ID_M_PLBL3" variable="m_ptitleState" member="yes">
 						<label>State</label>
 						<gradient>wxWEST</gradient>
-						<pos>5,65</pos>
+						<pos>5,89</pos>
 						<size>100,25</size>
 						<fg>#FFFFFF</fg>
 						<bg>#5C7AE0</bg>
@@ -48,7 +78,7 @@
 					<object class="wmLabel" name="ID_M_PLBL12" variable="m_plblIdentity" member="yes">
 						<label></label>
 						<border>uiRect::BORDER_DOWN</border>
-						<pos>105,5</pos>
+						<pos>105,33</pos>
 						<size>180,25</size>
 						<fg>#000000</fg>
 						<bg>#FFFFFF</bg>
@@ -56,7 +86,7 @@
 					<object class="wmLabel" name="ID_M_PLBL13" variable="m_pblAddress" member="yes">
 						<label></label>
 						<border>uiRect::BORDER_DOWN</border>
-						<pos>105,35</pos>
+						<pos>105,61</pos>
 						<size>180,25</size>
 						<fg>#000000</fg>
 						<bg>#FFFFFF</bg>
@@ -64,13 +94,13 @@
 					<object class="wmLabel" name="ID_M_PLBL14" variable="m_plblState" member="yes">
 						<label></label>
 						<border>uiRect::BORDER_DOWN</border>
-						<pos>105,65</pos>
+						<pos>105,89</pos>
 						<size>180,25</size>
 						<fg>#000000</fg>
 						<bg>#FFFFFF</bg>
 					</object>
 					<object class="wxPanel" name="ID_PANEL1" variable="m_ppnlAnnouncements" member="yes">
-						<pos>5,95</pos>
+						<pos>5,135</pos>
 						<size>280,275</size>
 						<bg>#000000</bg>
 						<object class="wmLabel" name="ID_M_PLBL30" variable="m_ptitleAnnouncements" member="yes">
@@ -91,7 +121,7 @@
 						<object class="wmLabel" name="ID_M_PLBL24" variable="m_ptitleAnnRate" member="yes">
 							<label>Rate</label>
 							<gradient>wxWEST</gradient>
-							<pos>0,30</pos>
+							<pos>0,28</pos>
 							<size>70,25</size>
 							<fg>#FFFFFF</fg>
 							<bg>#5C7AE0</bg>
@@ -99,7 +129,7 @@
 						<object class="wmLabel" name="ID_M_PLBL25" variable="m_plblAnnRate" member="yes">
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
-							<pos>70,30</pos>
+							<pos>70,28</pos>
 							<size>70,25</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
@@ -107,7 +137,7 @@
 						<object class="wmLabel" name="ID_M_PLBL26" variable="m_ptitleCount" member="yes">
 							<label>Count</label>
 							<gradient>wxWEST</gradient>
-							<pos>140,30</pos>
+							<pos>140,28</pos>
 							<size>70,25</size>
 							<fg>#FFFFFF</fg>
 							<bg>#5C7AE0</bg>
@@ -115,7 +145,7 @@
 						<object class="wmLabel" name="ID_M_PLBL27" variable="m_plblAnnCount" member="yes">
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
-							<pos>210,30</pos>
+							<pos>210,28</pos>
 							<size>70,25</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
@@ -123,7 +153,7 @@
 						<object class="wmLabel" name="ID_M_PLBL4" variable="m_ptitleUtc" member="yes">
 							<label>UTC Offset</label>
 							<gradient>wxWEST</gradient>
-							<pos>140,90</pos>
+							<pos>140,84</pos>
 							<size>70,25</size>
 							<fg>#FFFFFF</fg>
 							<bg>#5C7AE0</bg>
@@ -131,7 +161,7 @@
 						<object class="wmLabel" name="ID_M_PLBL15" variable="m_plblUTC" member="yes">
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
-							<pos>210,90</pos>
+							<pos>210,84</pos>
 							<size>70,25</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
@@ -139,7 +169,7 @@
 						<object class="wmLabel" name="ID_M_PLBL5" variable="m_ptitlePriority1" member="yes">
 							<label>Priority 1</label>
 							<gradient>wxWEST</gradient>
-							<pos>0,60</pos>
+							<pos>0,56</pos>
 							<size>70,25</size>
 							<fg>#FFFFFF</fg>
 							<bg>#5C7AE0</bg>
@@ -147,7 +177,7 @@
 						<object class="wmLabel" name="ID_M_PLBL16" variable="m_plblPriority1" member="yes">
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
-							<pos>70,60</pos>
+							<pos>70,56</pos>
 							<size>70,25</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
@@ -155,7 +185,7 @@
 						<object class="wmLabel" name="ID_M_PLBL7" variable="m_ptitleClass" member="yes">
 							<label>Class</label>
 							<gradient>wxWEST</gradient>
-							<pos>140,60</pos>
+							<pos>140,56</pos>
 							<size>70,25</size>
 							<fg>#FFFFFF</fg>
 							<bg>#5C7AE0</bg>
@@ -163,7 +193,7 @@
 						<object class="wmLabel" name="ID_M_PLBL17" variable="m_plblClass" member="yes">
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
-							<pos>210,60</pos>
+							<pos>210,56</pos>
 							<size>70,25</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
@@ -171,7 +201,7 @@
 						<object class="wmLabel" name="ID_M_PLBL8" variable="m_ptitleAccuracy" member="yes">
 							<label>Accuracy</label>
 							<gradient>wxWEST</gradient>
-							<pos>0,90</pos>
+							<pos>0,84</pos>
 							<size>70,25</size>
 							<fg>#FFFFFF</fg>
 							<bg>#5C7AE0</bg>
@@ -179,7 +209,7 @@
 						<object class="wmLabel" name="ID_M_PLBL18" variable="m_plblAccuracy" member="yes">
 							<label>Unknown</label>
 							<border>uiRect::BORDER_DOWN</border>
-							<pos>70,90</pos>
+							<pos>70,84</pos>
 							<size>70,25</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
@@ -187,7 +217,7 @@
 						<object class="wmLabel" name="ID_M_PLBL9" variable="m_ptitleVariance" member="yes">
 							<label>Variance</label>
 							<gradient>wxWEST</gradient>
-							<pos>0,120</pos>
+							<pos>0,112</pos>
 							<size>70,25</size>
 							<fg>#FFFFFF</fg>
 							<bg>#5C7AE0</bg>
@@ -195,7 +225,7 @@
 						<object class="wmLabel" name="ID_M_PLBL19" variable="m_plblVariance" member="yes">
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
-							<pos>70,120</pos>
+							<pos>70,112</pos>
 							<size>70,25</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
@@ -203,7 +233,7 @@
 						<object class="wmLabel" name="ID_M_PLBL6" variable="m_ptitlePriority2" member="yes">
 							<label>Priority 2</label>
 							<gradient>wxWEST</gradient>
-							<pos>140,120</pos>
+							<pos>140,112</pos>
 							<size>70,25</size>
 							<fg>#FFFFFF</fg>
 							<bg>#5C7AE0</bg>
@@ -211,7 +241,7 @@
 						<object class="wmLabel" name="ID_M_PLBL20" variable="m_plblPriority2" member="yes">
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
-							<pos>210,120</pos>
+							<pos>210,112</pos>
 							<size>70,25</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
@@ -219,7 +249,7 @@
 						<object class="wmLabel" name="ID_M_PLBL11" variable="m_ptitleSteps" member="yes">
 							<label>Steps</label>
 							<gradient>wxWEST</gradient>
-							<pos>0,150</pos>
+							<pos>0,140</pos>
 							<size>70,25</size>
 							<fg>#FFFFFF</fg>
 							<bg>#5C7AE0</bg>
@@ -227,7 +257,7 @@
 						<object class="wmLabel" name="ID_M_PLBL21" variable="m_plblSteps" member="yes">
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
-							<pos>70,150</pos>
+							<pos>70,140</pos>
 							<size>70,25</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
@@ -235,7 +265,7 @@
 						<object class="wmLabel" name="ID_M_PLBL10" variable="m_ptitleSource" member="yes">
 							<label>Source</label>
 							<gradient>wxWEST</gradient>
-							<pos>140,150</pos>
+							<pos>140,140</pos>
 							<size>70,25</size>
 							<fg>#FFFFFF</fg>
 							<bg>#5C7AE0</bg>
@@ -243,7 +273,7 @@
 						<object class="wmLabel" name="ID_M_PLBL35" variable="m_plblTitleMaster" member="yes">
 							<label>Master</label>
 							<gradient>wxWEST</gradient>
-							<pos>0,180</pos>
+							<pos>0,168</pos>
 							<size>70,25</size>
 							<fg>#FFFFFF</fg>
 							<bg>#5C7AE0</bg>
@@ -251,7 +281,7 @@
 						<object class="wmLabel" name="ID_M_PLBL39" variable="m_plblMasterId" member="yes">
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
-							<pos>70,180</pos>
+							<pos>70,168</pos>
 							<size>210,25</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
@@ -259,13 +289,13 @@
 						<object class="wmLabel" name="ID_M_PLBL22" variable="m_plblSource" member="yes">
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
-							<pos>210,150</pos>
+							<pos>210,140</pos>
 							<size>70,25</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
 						</object>
 						<object class="wxPanel" name="ID_PANEL9" subclass="pnlFlags" variable="m_ppnlAnnounceFlags" member="yes">
-							<pos>0,210</pos>
+							<pos>0,196</pos>
 							<size>280,64</size>
 						</object>
 					</object>
@@ -299,7 +329,7 @@
 									<object class="wmLabel" name="ID_M_PLBL31" variable="m_ptitleSyncRate" member="yes">
 										<label>Rate</label>
 										<gradient>wxWEST</gradient>
-										<pos>0,30</pos>
+										<pos>0,28</pos>
 										<size>50,25</size>
 										<fg>#FFFFFF</fg>
 										<bg>#5C7AE0</bg>
@@ -307,7 +337,7 @@
 									<object class="wmLabel" name="ID_M_PLBL32" variable="m_plblSyncRate" member="yes">
 										<label></label>
 										<border>uiRect::BORDER_DOWN</border>
-										<pos>50,30</pos>
+										<pos>50,28</pos>
 										<size>50,25</size>
 										<fg>#000000</fg>
 										<bg>#FFFFFF</bg>
@@ -315,7 +345,7 @@
 									<object class="wmLabel" name="ID_M_PLBL33" variable="m_ptitleSyncCount" member="yes">
 										<label>Count</label>
 										<gradient>wxWEST</gradient>
-										<pos>100,30</pos>
+										<pos>100,28</pos>
 										<size>50,25</size>
 										<fg>#FFFFFF</fg>
 										<bg>#5C7AE0</bg>
@@ -323,18 +353,18 @@
 									<object class="wmLabel" name="ID_M_PLBL34" variable="m_plblSyncCount" member="yes">
 										<label></label>
 										<border>uiRect::BORDER_DOWN</border>
-										<pos>150,30</pos>
+										<pos>150,28</pos>
 										<size>130,25</size>
 										<fg>#000000</fg>
 										<bg>#FFFFFF</bg>
 									</object>
 									<object class="wxPanel" name="ID_PANEL10" subclass="pnlFlags" variable="m_ppnlSyncFlags" member="yes">
-										<pos>0,60</pos>
+										<pos>0,56</pos>
 										<size>280,64</size>
 									</object>
 								</object>
 								<object class="wxPanel" name="ID_PANEL3" variable="m_ppnlFollowUp" member="yes">
-									<pos>0,135</pos>
+									<pos>0,130</pos>
 									<size>280,125</size>
 									<bg>#000000</bg>
 									<object class="wmLabel" name="ID_M_PLBL28" variable="m_ptitleFollowUp" member="yes">
@@ -355,7 +385,7 @@
 									<object class="wmLabel" name="ID_M_PLBL29" variable="m_ptitleFollowRate" member="yes">
 										<label>Rate</label>
 										<gradient>wxWEST</gradient>
-										<pos>0,30</pos>
+										<pos>0,28</pos>
 										<size>50,25</size>
 										<fg>#FFFFFF</fg>
 										<bg>#5C7AE0</bg>
@@ -363,7 +393,7 @@
 									<object class="wmLabel" name="ID_M_PLBL36" variable="m_plblFollowRate" member="yes">
 										<label></label>
 										<border>uiRect::BORDER_DOWN</border>
-										<pos>50,30</pos>
+										<pos>50,28</pos>
 										<size>50,25</size>
 										<fg>#000000</fg>
 										<bg>#FFFFFF</bg>
@@ -371,7 +401,7 @@
 									<object class="wmLabel" name="ID_M_PLBL37" variable="m_ptitleFollowCount" member="yes">
 										<label>Count</label>
 										<gradient>wxWEST</gradient>
-										<pos>100,30</pos>
+										<pos>100,28</pos>
 										<size>50,25</size>
 										<fg>#FFFFFF</fg>
 										<bg>#5C7AE0</bg>
@@ -379,13 +409,13 @@
 									<object class="wmLabel" name="ID_M_PLBL38" variable="m_plblFollowCount" member="yes">
 										<label></label>
 										<border>uiRect::BORDER_DOWN</border>
-										<pos>150,30</pos>
+										<pos>150,28</pos>
 										<size>130,25</size>
 										<fg>#000000</fg>
 										<bg>#FFFFFF</bg>
 									</object>
 									<object class="wxPanel" name="ID_PANEL11" subclass="pnlFlags" variable="m_ppnlFollowFlags" member="yes">
-										<pos>0,60</pos>
+										<pos>0,56</pos>
 										<size>280,64</size>
 									</object>
 								</object>
@@ -417,7 +447,7 @@
 									<object class="wmLabel" name="ID_M_PLBL41" variable="m_ptitleDelayRate" member="yes">
 										<label>Rate</label>
 										<gradient>wxWEST</gradient>
-										<pos>0,30</pos>
+										<pos>0,28</pos>
 										<size>70,25</size>
 										<fg>#FFFFFF</fg>
 										<bg>#5C7AE0</bg>
@@ -425,7 +455,7 @@
 									<object class="wmLabel" name="ID_M_PLBL42" variable="m_plblDelayRate" member="yes">
 										<label></label>
 										<border>uiRect::BORDER_DOWN</border>
-										<pos>70,30</pos>
+										<pos>70,28</pos>
 										<size>70,25</size>
 										<fg>#000000</fg>
 										<bg>#FFFFFF</bg>
@@ -433,7 +463,7 @@
 									<object class="wmLabel" name="ID_M_PLBL43" variable="m_ptitleDelayCount" member="yes">
 										<label>Count</label>
 										<gradient>wxWEST</gradient>
-										<pos>140,30</pos>
+										<pos>140,28</pos>
 										<size>70,25</size>
 										<fg>#FFFFFF</fg>
 										<bg>#5C7AE0</bg>
@@ -441,7 +471,7 @@
 									<object class="wmLabel" name="ID_M_PLBL44" variable="m_plblDelayCount" member="yes">
 										<label></label>
 										<border>uiRect::BORDER_DOWN</border>
-										<pos>210,30</pos>
+										<pos>210,28</pos>
 										<size>70,25</size>
 										<fg>#000000</fg>
 										<bg>#FFFFFF</bg>
@@ -449,7 +479,7 @@
 									<object class="wmLabel" name="ID_M_PLBL46" variable="m_ptitleDelayMech" member="yes">
 										<label>Mechanism</label>
 										<gradient>wxWEST</gradient>
-										<pos>0,60</pos>
+										<pos>0,56</pos>
 										<size>70,25</size>
 										<fg>#FFFFFF</fg>
 										<bg>#5C7AE0</bg>
@@ -457,18 +487,18 @@
 									<object class="wmLabel" name="ID_M_PLBL47" variable="m_plblDelayMech" member="yes">
 										<label></label>
 										<border>uiRect::BORDER_DOWN</border>
-										<pos>70,60</pos>
+										<pos>70,56</pos>
 										<size>210,25</size>
 										<fg>#000000</fg>
 										<bg>#FFFFFF</bg>
 									</object>
 									<object class="wxPanel" name="ID_PANEL13" subclass="pnlFlags" variable="m_ppnlRequestFlags" member="yes">
-										<pos>0,90</pos>
+										<pos>0,84</pos>
 										<size>280,64</size>
 									</object>
 								</object>
 								<object class="wxPanel" name="ID_PANEL7" variable="m_ppnlResponses" member="yes">
-									<pos>0,160</pos>
+									<pos>0,152</pos>
 									<size>280,124</size>
 									<bg>#000000</bg>
 									<object class="wmLabel" name="ID_M_PLBL48" variable="m_ptitleDelayResponses" member="yes">
@@ -489,7 +519,7 @@
 									<object class="wmLabel" name="ID_M_PLBL49" variable="m_ptitleResponseRate" member="yes">
 										<label>Rate</label>
 										<gradient>wxWEST</gradient>
-										<pos>0,30</pos>
+										<pos>0,28</pos>
 										<size>70,25</size>
 										<fg>#FFFFFF</fg>
 										<bg>#5C7AE0</bg>
@@ -497,7 +527,7 @@
 									<object class="wmLabel" name="ID_M_PLBL50" variable="m_plblResponseRate" member="yes">
 										<label></label>
 										<border>uiRect::BORDER_DOWN</border>
-										<pos>70,30</pos>
+										<pos>70,28</pos>
 										<size>70,25</size>
 										<fg>#000000</fg>
 										<bg>#FFFFFF</bg>
@@ -505,7 +535,7 @@
 									<object class="wmLabel" name="ID_M_PLBL51" variable="m_ptitleResponseCount" member="yes">
 										<label>Count</label>
 										<gradient>wxWEST</gradient>
-										<pos>140,30</pos>
+										<pos>140,28</pos>
 										<size>70,25</size>
 										<fg>#FFFFFF</fg>
 										<bg>#5C7AE0</bg>
@@ -513,13 +543,13 @@
 									<object class="wmLabel" name="ID_M_PLBL52" variable="m_plblResponseCount" member="yes">
 										<label></label>
 										<border>uiRect::BORDER_DOWN</border>
-										<pos>210,30</pos>
+										<pos>210,28</pos>
 										<size>70,25</size>
 										<fg>#000000</fg>
 										<bg>#FFFFFF</bg>
 									</object>
 									<object class="wxPanel" name="ID_PANEL12" subclass="pnlFlags" variable="m_ppnlResponseFlags" member="yes">
-										<pos>0,60</pos>
+										<pos>0,56</pos>
 										<size>280,64</size>
 									</object>
 								</object>
@@ -528,8 +558,8 @@
 						</object>
 					</object>
 					<object class="wxPanel" name="ID_PANEL8" variable="m_ppnlLocal" member="yes">
-						<pos>295,290</pos>
-						<size>280,175</size>
+						<pos>295,280</pos>
+						<size>280,205</size>
 						<bg>#000000</bg>
 						<object class="wmLabel" name="ID_M_PLBL54" variable="m_ptitlePam" member="yes">
 							<label>PAM</label>
@@ -549,7 +579,7 @@
 						<object class="wmLabel" name="ID_M_PLBL55" variable="m_ptitleTime" member="yes">
 							<label>Time</label>
 							<gradient>wxWEST</gradient>
-							<pos>0,30</pos>
+							<pos>0,27</pos>
 							<size>50,25</size>
 							<fg>#FFFFFF</fg>
 							<bg>#5C7AE0</bg>
@@ -557,7 +587,7 @@
 						<object class="wmLabel" name="ID_M_PLBL56" variable="m_plblTime" member="yes">
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
-							<pos>50,30</pos>
+							<pos>50,27</pos>
 							<size>230,25</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
@@ -565,7 +595,7 @@
 						<object class="wmLabel" name="ID_M_PLBL57" variable="m_ptitleOffsetAverage" member="yes">
 							<label>Offset: Average</label>
 							<gradient>wxWEST</gradient>
-							<pos>0,60</pos>
+							<pos>0,56</pos>
 							<size>100,25</size>
 							<fg>#FFFFFF</fg>
 							<bg>#5C7AE0</bg>
@@ -573,7 +603,7 @@
 						<object class="wmLabel" name="ID_M_PLBL61" variable="m_plblOffsetAverage" member="yes">
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
-							<pos>100,60</pos>
+							<pos>100,56</pos>
 							<size>180,25</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
@@ -581,7 +611,7 @@
 						<object class="wmLabel" name="ID_M_PLBL58" variable="m_ptitleOffsetRange" member="yes">
 							<label>Offset: Range</label>
 							<gradient>wxWEST</gradient>
-							<pos>0,90</pos>
+							<pos>0,84</pos>
 							<size>100,25</size>
 							<fg>#FFFFFF</fg>
 							<bg>#5C7AE0</bg>
@@ -589,7 +619,7 @@
 						<object class="wmLabel" name="ID_M_PLBL62" variable="m_plblOffsetRange" member="yes">
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
-							<pos>100,90</pos>
+							<pos>100,84</pos>
 							<size>180,25</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
@@ -597,7 +627,7 @@
 						<object class="wmLabel" name="ID_M_PLBL59" variable="m_ptitleDelayAverage" member="yes">
 							<label>Delay: Average</label>
 							<gradient>wxWEST</gradient>
-							<pos>0,120</pos>
+							<pos>0,112</pos>
 							<size>100,25</size>
 							<fg>#FFFFFF</fg>
 							<bg>#5C7AE0</bg>
@@ -605,7 +635,7 @@
 						<object class="wmLabel" name="ID_M_PLBL63" variable="m_plblDelayAverage" member="yes">
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
-							<pos>100,120</pos>
+							<pos>100,112</pos>
 							<size>180,25</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
@@ -613,7 +643,7 @@
 						<object class="wmLabel" name="ID_M_PLBL60" variable="m_ptitleDelayRange" member="yes">
 							<label>Delay: Range</label>
 							<gradient>wxWEST</gradient>
-							<pos>0,150</pos>
+							<pos>0,140</pos>
 							<size>100,25</size>
 							<fg>#FFFFFF</fg>
 							<bg>#5C7AE0</bg>
@@ -621,10 +651,44 @@
 						<object class="wmLabel" name="ID_M_PLBL64" variable="m_plblDelayRange" member="yes">
 							<label></label>
 							<border>uiRect::BORDER_DOWN</border>
-							<pos>100,150</pos>
+							<pos>100,140</pos>
 							<size>180,25</size>
 							<fg>#000000</fg>
 							<bg>#FFFFFF</bg>
+						</object>
+						<object class="wmButton" name="ID_M_PBTN29" variable="m_pbtnGraphs" member="yes">
+							<label>Graphs</label>
+							<button_pressed>#800000</button_pressed>
+							<pos>5,168</pos>
+							<size>130,30</size>
+							<fg>#008000</fg>
+							<bg>#FFFFFF</bg>
+							<font>
+								<size>10</size>
+								<style>normal</style>
+								<weight>bold</weight>
+								<underlined>0</underlined>
+								<family>swiss</family>
+							</font>
+							<style>wmButton::STYLE_NORMAL</style>
+							<handler function="OnbtnGraphsClick" entry="EVT_BUTTON" />
+						</object>
+						<object class="wmButton" name="ID_M_PBTN5" variable="m_pbtnHistogram" member="yes">
+							<label>Histogram</label>
+							<button_pressed>#800000</button_pressed>
+							<pos>145,168</pos>
+							<size>130,30</size>
+							<fg>#008000</fg>
+							<bg>#FFFFFF</bg>
+							<font>
+								<size>10</size>
+								<style>normal</style>
+								<weight>bold</weight>
+								<underlined>0</underlined>
+								<family>swiss</family>
+							</font>
+							<style>wmButton::STYLE_NORMAL</style>
+							<handler function="OnbtnHistogramClick" entry="EVT_BUTTON" />
 						</object>
 					</object>
 				</object>
@@ -837,16 +901,46 @@
 						<style>wmList::STYLE_SELECT</style>
 						<handler function="OnlstDataSelected" entry="EVT_LIST_SELECTED" />
 					</object>
+					<object class="wmButton" name="ID_M_PBTN8" variable="m_pbtnClearStats" member="yes">
+						<label>Clear All</label>
+						<pos>498,445</pos>
+						<size>70,30</size>
+						<handler function="OnbtnClearStatsClick" entry="EVT_BUTTON" />
+					</object>
 					<object class="wmButton" name="ID_M_PBTN3" variable="m_pbtnGraphClear" member="yes">
 						<label>Clear All</label>
-						<pos>600,445</pos>
+						<pos>570,445</pos>
 						<size>70,30</size>
 						<handler function="OnbtnClearClick" entry="EVT_BUTTON" />
 					</object>
+					<object class="wmButton" name="ID_M_PBTN7" variable="m_pbtnGraphHisto" member="yes">
+						<label>Histo</label>
+						<pos>649,445</pos>
+						<size>70,30</size>
+						<fg>#008000</fg>
+						<bg>#FFFFFF</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+						</font>
+						<handler function="OnbtnHistogramClick" entry="EVT_BUTTON" />
+					</object>
 					<object class="wmButton" name="ID_M_PBTN4" variable="m_pbtnGraphOptions" member="yes">
-						<label>Options</label>
+						<label>Info</label>
 						<pos>720,445</pos>
 						<size>70,30</size>
+						<fg>#008000</fg>
+						<bg>#FFFFFF</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+						</font>
 						<handler function="OnbtnOptionsClick" entry="EVT_BUTTON" />
 					</object>
 				</object>
@@ -877,6 +971,7 @@
 						<style></style>
 						<pos>0,30</pos>
 						<size>800,410</size>
+						<bg>#000000</bg>
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL67" variable="m_pLbl3" member="yes">
 						<label>Data</label>
@@ -906,7 +1001,7 @@
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL65" variable="m_pLbl1" member="yes">
 						<label>Granularity</label>
-						<pos>200,445</pos>
+						<pos>195,445</pos>
 						<size>60,30</size>
 						<fg>#FFFFFF</fg>
 						<bg>#5B9539</bg>
@@ -924,14 +1019,14 @@
 						<button_size>-1,30</button_size>
 						<columns>3</columns>
 						<items />
-						<pos>260,443</pos>
+						<pos>255,443</pos>
 						<size>120,34</size>
 						<bg>#000000</bg>
 						<handler function="OnlstHistogramGranularitySelected" entry="EVT_LIST_SELECTED" />
 					</object>
 					<object class="wmLabel" name="ID_M_PLBL66" variable="m_pLbl2" member="yes">
 						<label>Resolution</label>
-						<pos>400,445</pos>
+						<pos>380,445</pos>
 						<size>60,30</size>
 						<fg>#FFFFFF</fg>
 						<bg>#5B9539</bg>
@@ -949,21 +1044,45 @@
 						<button_size>-1,30</button_size>
 						<columns>3</columns>
 						<items />
-						<pos>460,443</pos>
+						<pos>440,443</pos>
 						<size>120,34</size>
 						<bg>#000000</bg>
 						<handler function="OnlstHistogramResolutionSelected" entry="EVT_LIST_SELECTED" />
 					</object>
 					<object class="wmButton" name="ID_M_PBTN1" variable="m_pbtnHistogramClear" member="yes">
 						<label>Clear All</label>
-						<pos>600,445</pos>
+						<pos>570,445</pos>
 						<size>70,30</size>
 						<handler function="OnbtnClearClick" entry="EVT_BUTTON" />
 					</object>
+					<object class="wmButton" name="ID_M_PBTN6" variable="m_pbtnHistGraphs" member="yes">
+						<label>Graphs</label>
+						<pos>649,445</pos>
+						<size>70,30</size>
+						<fg>#008000</fg>
+						<bg>#FFFFFF</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+						</font>
+						<handler function="OnbtnGraphsClick" entry="EVT_BUTTON" />
+					</object>
 					<object class="wmButton" name="ID_M_PBTN2" variable="m_pbtnOptions" member="yes">
-						<label>Options</label>
+						<label>Info</label>
 						<pos>720,445</pos>
 						<size>70,30</size>
+						<fg>#008000</fg>
+						<bg>#FFFFFF</bg>
+						<font>
+							<size>10</size>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<family>swiss</family>
+						</font>
 						<handler function="OnbtnOptionsClick" entry="EVT_BUTTON" />
 					</object>
 				</object>

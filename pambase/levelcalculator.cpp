@@ -51,7 +51,7 @@ void LevelCalculator::InputSession(const session& aSession)
         {
             dBits = 16;
         }
-        else if(aSession.GetCurrentSubsession()->sCodec == wxT("L24"))
+        else if(aSession.GetCurrentSubsession()->sCodec == wxT("L24") || aSession.GetCurrentSubsession()->sCodec == wxT("AM824"))
         {
             dBits = 24;
         }

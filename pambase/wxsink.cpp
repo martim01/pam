@@ -4,7 +4,7 @@
 #ifdef __WXMSW__
 #include "Ws2tcpip.h"
 #endif
-
+#include "log.h"
 #include "aes67source.h"
 #include "smpte2110mediasession.h"
 
@@ -31,7 +31,6 @@ wxSink::wxSink(UsageEnvironment& env, MediaSubsession& subsession,RtpThread* pHa
 {
     fStreamId = strDup(streamId);
     fReceiveBuffer = new u_int8_t[DUMMY_SINK_RECEIVE_BUFFER_SIZE];
-    m_nLastTimestamp = 0;
 }
 
 wxSink::~wxSink()
@@ -42,7 +41,7 @@ wxSink::~wxSink()
 
 void wxSink::afterGettingFrame(void* clientData, unsigned frameSize, unsigned numTruncatedBytes, struct timeval presentationTime, unsigned durationInMicroseconds)
 {
-    wxSink* sink = (wxSink*)clientData;
+    auto sink = (wxSink*)clientData;
 
     sink->afterGettingFrame(frameSize, numTruncatedBytes, presentationTime, durationInMicroseconds);
 }
@@ -65,7 +64,7 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
         m_nLastTimestamp = pSource->GetRTPTimestamp();
 
         //do we have an associated header ext??
-        mExtension_t* mExt = NULL;
+        mExtension_t* mExt = nullptr;
         map<timeval, mExtension_t*>::iterator itExt = m_mExtension.find(tvPresentation);
         if(itExt != m_mExtension.end())
         {
@@ -80,23 +79,57 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
         if(strcmp(m_pSubsession->codecName(),"L16") == 0)
         {
             nBytesPerSample = 2;
-
         }
         else if(strcmp(m_pSubsession->codecName(),"L24") == 0)
         {
             nBytesPerSample = 3;
         }
+        else if(strcmp(m_pSubsession->codecName(),"AM824") == 0)
+        {
+            nBytesPerSample = 4;
+        }
         if(nBytesPerSample != 0)
         {
-            m_pHandler->AddFrame(m_pSubsession->GetEndpoint(), pSource->lastReceivedSSRC(), tvPresentation, frameSize, fReceiveBuffer,
-             nBytesPerSample, pSource->GetTransmissionTime(), pSource->GetRTPTimestamp(),frameSize, nDifference, mExt);
+            auto pFrame = std::make_shared<rtpFrame>();
+            pFrame->sEndpoint = m_pSubsession->GetEndpoint();
+            pFrame->sGroup = m_pSubsession->GetGroup();
+            pFrame->nSSRC = pSource->lastReceivedSSRC();
+            pFrame->timePresentation = tvPresentation;
+            pFrame->timeTransmission = pSource->GetTransmissionTime();
+            pFrame->nFrameSize = frameSize;
+            pFrame->pBuffer = fReceiveBuffer;
+            pFrame->nBytesPerSample = nBytesPerSample;
+            pFrame->nTimestamp = pSource->GetRTPTimestamp();
+            pFrame->nTimestampDifference = nDifference;
+            pFrame->mExt = mExt;
+
+            int nFramesPerSec = (m_pSubsession->rtpTimestampFrequency()*m_pSubsession->GetChannelGrouping().size()*pFrame->nBytesPerSample)/pFrame->nFrameSize;
+            timersub(&pFrame->timePresentation, &pFrame->timeTransmission, &pFrame->timeLatency);
+           
+            double dTSDF = (static_cast<double>(pFrame->timeLatency.tv_sec)*1000000.0)+pFrame->timeLatency.tv_usec;
+
+            if(m_dDelay0 == std::numeric_limits<double>::lowest() || m_nTSDFCount == nFramesPerSec)
+            {
+                m_dTSDF = m_dTSDFMax-m_dTSDFMin;
+                m_dDelay0 = dTSDF;
+
+                m_dTSDFMax = std::numeric_limits<double>::lowest();
+                m_dTSDFMin = std::numeric_limits<double>::max();
+
+                m_nTSDFCount = 1;
+
+            }
+            else
+            {
+                dTSDF -= m_dDelay0;
+                m_dTSDFMax = max(m_dTSDFMax, dTSDF);
+                m_dTSDFMin = min(m_dTSDFMin, dTSDF);
+                m_nTSDFCount++;
+            }
+            pFrame->dTSDF = m_dTSDF;
+            m_pHandler->AddFrame(pFrame);
         }
     }
-    else if(strcmp(m_pSubsession->mediumName(), "video") == 0)
-    {
-
-    }
-
 
     continuePlaying();
 }

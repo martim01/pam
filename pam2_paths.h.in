@@ -6,7 +6,7 @@ namespace pml
 {
     namespace pam2
     {
-        const char* CONFIG_PATH = "@DIR_PAM@";
+        const char* CONFIG_PATH = "/usr/local/etc";
     }
 }
 #endif

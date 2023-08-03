@@ -9,6 +9,7 @@
 class RtpThread;
 
 class qosMeasurementRecord;
+class Smpte2110MediaSubsessionl;
 
 static unsigned nextQOSMeasurementUSecs;
 
@@ -38,6 +39,5 @@ void setupNextSubsession(RTSPClient* rtspClient);
 void shutdownStream(RTSPClient* rtspClient, int exitCode = 1);
 
 void beginQOSMeasurement(UsageEnvironment& env, MediaSession* session, RtpThread* pThread);
-static void periodicQOSMeasurement(UsageEnvironment& env, void* clientData); // forward
-static void scheduleNextQOSMeasurement();
+
 

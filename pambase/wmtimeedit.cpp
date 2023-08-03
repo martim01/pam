@@ -942,13 +942,17 @@ void wmTimeEdit::OnMouse(wxMouseEvent& event)
     if(event.LeftDown())
     {
         if(!HasCapture())
+        {
             CaptureMouse();
+        }
         SetFocus();
     }
     else if(event.LeftUp())
     {
         if(HasCapture())
+        {
             ReleaseMouse();
+        }
 
     }
     else

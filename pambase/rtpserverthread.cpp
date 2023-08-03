@@ -7,6 +7,7 @@
 #include "log.h"
 #include "iomanager.h"
 
+wxDEFINE_EVENT(wxEVT_STREAMING, wxCommandEvent);
 
 RtpServerThread::RtpServerThread(wxEvtHandler* pHandler, const std::set<wxEvtHandler*>& setRTCPHandlers, const wxString& sRTSP, unsigned int nRTSPPort, const wxString& sSourceIp,
                                  unsigned int nRTPPort, bool bSSM, LiveAudioSource::enumPacketTime ePacketTime, const std::vector<char>& vRouting) :
@@ -48,10 +49,17 @@ void* RtpServerThread::Entry()
     if(!CreateStream())
     {
         m_mutex.Unlock();
+        wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_STREAMING);
+        pEvent->SetInt(0);
+        wxQueueEvent(m_pHandler, pEvent);
         return NULL;
     }
 
     m_mutex.Unlock();
+
+    wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_STREAMING);
+    pEvent->SetInt(1);
+    wxQueueEvent(m_pHandler, pEvent);
 
     while(m_eventLoopWatchVariable == 0)
     {
@@ -59,6 +67,11 @@ void* RtpServerThread::Entry()
     }
 
     CloseStream();
+
+    pEvent = new wxCommandEvent(wxEVT_STREAMING);
+    pEvent->SetInt(0);
+    wxQueueEvent(m_pHandler, pEvent);
+
     return NULL;
 }
 
@@ -189,11 +202,11 @@ bool RtpServerThread::CreateStream()
     pmlLog(pml::LOG_INFO) << m_sSDP;
 
 
-
+    m_bStreaming = true;
     m_pSink->startPlaying(*m_pSource, afterPlaying, reinterpret_cast<void*>(this));
 
 
-    m_bStreaming = true;
+    
    // Settings::Get().Write(wxT("AoIP"), wxT("Epoch"), pSmss->GetEpochTimestamp());
 
     return true;

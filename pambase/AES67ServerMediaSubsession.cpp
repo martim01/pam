@@ -63,7 +63,7 @@ char const* AES67ServerMediaSubsession::sdpLines(int addressFamily)
         ss << "a=ptime:" << m_nPacketTime << "\r\n";
         ss << "a=maxptime:" << m_nPacketTime << "\r\n";
 #ifdef PTPMONKEY
-        ss << "a=ts-refclk:ptp=IEEE1588-2008:" << wxPtp::Get().GetMasterClockId(0) << ":0\r\n";
+        ss << "a=ts-refclk:ptp=IEEE1588-2008:" << wxPtp::Get().GetMasterClockId() << ":0\r\n";
 #else
         ss << "a=ts-refclk:" << "\r\n";
 #endif // PTPMONKEY
@@ -251,7 +251,7 @@ unsigned int AES67ServerMediaSubsession::GetEpochTimestamp()
 //    //get the current time
 //    timeval tvNow;
 //    #ifdef PTPMONKEY
-//    tvNow = wxPtp::Get().GetPtpTime(0);
+//    tvNow = wxPtp::Get().GetPtpTime();
 //    #else
 //    gettimeofday(&tvNow, 0);
 //    #endif // PTPMONKEY

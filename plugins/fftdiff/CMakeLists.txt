@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 project(car LANGUAGES CXX VERSION 1.1.0)
 
 
@@ -20,7 +20,7 @@ add_library(car MODULE ${SOURCES} ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_versio
 find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
-list(APPEND flags "-fPIC" "-Wall" "-fpermissive"  "-std=c++14")
+list(APPEND flags "-fPIC" "-Wall" "-fpermissive")
 
 if(CMAKE_BUILD_TYPE MATCHES Release)
    list(APPEND flags "-O3")
@@ -38,8 +38,9 @@ target_link_libraries(car optimized pambase debug pambased)
 
 target_link_libraries(car optimized pamfft debug pamfftd)   
 
+set_target_properties(car PROPERTIES CXX_STANDARD 17)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS car LIBRARY DESTINATION /usr/local/lib/pam2/test)
+	install(TARGETS car LIBRARY DESTINATION lib/pam2/test)
 endif()		

@@ -110,7 +110,10 @@ void wmSlider::OnMouseMove(wxMouseEvent& event)
 
 void wmSlider::OnLeftDown(wxMouseEvent& event)
 {
-    CaptureMouse();
+    if(!HasCapture())
+    {
+        CaptureMouse();
+    }
 
     if(m_uiButton.Contains(event.GetPosition()))// && (*itButton).bEnabled)
     {

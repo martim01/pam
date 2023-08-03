@@ -245,7 +245,10 @@ void wmButton::OnLeftDClick(wxMouseEvent& event)
 
 void wmButton::OnLeftDown(wxMouseEvent& event)
 {
-    CaptureMouse();
+    if(!HasCapture())
+    {
+        CaptureMouse();
+    }
 
 //    m_pScroller->MouseDown(event.GetPosition());
 

@@ -26,12 +26,6 @@ std::stringstream& operator<<(std::stringstream& ss, const MediaSubsession& subs
 }
 
 
-
-TaskToken qosMeasurementTimerTask = NULL;
-
-qosMeasurementRecord* g_pRecord = NULL;
-
-
 void continueAfterOPTIONS(RTSPClient* rtspClient, int resultCode, char* resultString)
 {
     if(resultCode == 0 && rtspClient != nullptr)
@@ -130,40 +124,53 @@ void setupNextSubsession(RTSPClient* rtspClient)
     UsageEnvironment& env = rtspClient->envir(); // alias
     StreamClientState& scs = ((ourRTSPClient*)rtspClient)->scs; // alias
 
+    auto pSession = dynamic_cast<Smpte2110MediaSession*>(scs.session);
+
     scs.subsession = scs.iter->next();
     if (scs.subsession != NULL)
     {
-        if (!scs.subsession->initiate())
+        
+        auto pSubsession = dynamic_cast<Smpte2110MediaSubsession*>(scs.subsession);
+
+        if((pSession->GetGroups().find(pSubsession->GetGroup()) != pSession->GetGroups().end())) // duplicate streams
         {
-            pmlLog(pml::LOG_ERROR)  << "RTP Client\tFailed to initiate the \"" << *scs.subsession << "\" subsession: " << env.getResultMsg();;
-            setupNextSubsession(rtspClient); // give up on this subsession; go to the next one
-        }
-        else
-        {
-            pmlLog(pml::LOG_DEBUG) << "RTP Client\tInitiated the \"" <<scs.subsession->sessionId()<<  "\" subsession (";
-            if (scs.subsession->rtcpIsMuxed())
+            if (!pSubsession->initiate())
             {
-                pmlLog(pml::LOG_DEBUG) << "client port " << scs.subsession->clientPortNum();
+                pmlLog(pml::LOG_ERROR)  << "RTP Client\tFailed to initiate the \"" << *pSubsession << "\" subsession: " << env.getResultMsg();;
+                setupNextSubsession(rtspClient); // give up on this subsession; go to the next one
             }
             else
             {
-                pmlLog(pml::LOG_DEBUG) << "client ports " << scs.subsession->clientPortNum() << "-" << scs.subsession->clientPortNum()+1;
+                pmlLog(pml::LOG_DEBUG) << "RTP Client\tInitiated the \"" <<pSubsession->sessionId()<<  "\" subsession (";
+                if (pSubsession->rtcpIsMuxed())
+                {
+                    pmlLog(pml::LOG_DEBUG) << "client port " << pSubsession->clientPortNum();
+                }
+                else
+                {
+                    pmlLog(pml::LOG_DEBUG) << "client ports " << pSubsession->clientPortNum() << "-" << pSubsession->clientPortNum()+1;
+                }
+                pmlLog(pml::LOG_DEBUG) << "  SubsessionId: " << pSubsession->sessionId();
+
+
+                // Continue setting up this subsession, by sending a RTSP "SETUP" command:
+                rtspClient->sendSetupCommand(*pSubsession, continueAfterSETUP, False, False);
             }
-            pmlLog(pml::LOG_DEBUG) << "  SubsessionId: " << scs.subsession->sessionId();
-
-
-            // Continue setting up this subsession, by sending a RTSP "SETUP" command:
-            rtspClient->sendSetupCommand(*scs.subsession, continueAfterSETUP, False, False);
+            return;
         }
-        return;
+        else
+        {
+            pmlLog(pml::LOG_DEBUG) << " subsession not in groups " << pSubsession->GetGroup();
+            setupNextSubsession(rtspClient); // give up on this subsession; go to the next one
+        }
     }
 
     if(scs.sFirstSubSessionId.empty() == false)
     {   //managed to setup at least 1 subsession
-        ourRTSPClient* pClient = dynamic_cast<ourRTSPClient*>(rtspClient);
+        auto pClient = dynamic_cast<ourRTSPClient*>(rtspClient);
         if(pClient)
         {
-            pClient->GetHandler()->PassSessionDetails(dynamic_cast<Smpte2110MediaSession*>(scs.session));
+            pClient->GetHandler()->PassSessionDetails(pSession);
 
             // We've finished setting up all of the subsessions.  Now, send a RTSP "PLAY" command to start the streaming:
             scs.duration = scs.session->playEndTime() - scs.session->playStartTime();
@@ -414,50 +421,20 @@ void beginQOSMeasurement(UsageEnvironment& env, MediaSession* session, RtpThread
     struct timeval startTime;
     gettimeofday(&startTime, NULL);
     nextQOSMeasurementUSecs = startTime.tv_sec*1000000 + startTime.tv_usec;
-   // qosMeasurementRecord* qosRecordTail = NULL;
+
     MediaSubsessionIterator iter(*session);
     MediaSubsession* subsession;
     while ((subsession = iter.next()) != NULL)
     {
-        RTPSource* src = subsession->rtpSource();
-        if (src != NULL)
+        auto pSubsession = dynamic_cast<Smpte2110MediaSubsession*>(subsession);
+        if(pSubsession)
         {
-            if(g_pRecord != NULL)
-            {
-                delete g_pRecord;
-            }
-            g_pRecord =  new qosMeasurementRecord(startTime, src, env, pThread);
-            scheduleNextQOSMeasurement();
-            break;
+            pSubsession->SetHandler(pThread);
+            pSubsession->ScheduleNextQOSMeasurement();
         }
     }
 }
 
-void scheduleNextQOSMeasurement()
-{
-    nextQOSMeasurementUSecs += g_pRecord->m_pThread->GetQosMeasurementIntervalMS()*1000;
-    struct timeval timeNow;
-    gettimeofday(&timeNow, NULL);
-    unsigned timeNowUSecs = timeNow.tv_sec*1000000 + timeNow.tv_usec;
-    int usecsToDelay = nextQOSMeasurementUSecs - timeNowUSecs;
 
-
-    qosMeasurementTimerTask = g_pRecord->m_pEnv->taskScheduler().scheduleDelayedTask(usecsToDelay, (TaskFunc*)periodicQOSMeasurement, (void*)NULL);
-
-
-
-}
-
-void periodicQOSMeasurement(UsageEnvironment& env, void* clientData)
-{
-    struct timeval timeNow;
-    gettimeofday(&timeNow, NULL);
-
-
-    g_pRecord->periodicQOSMeasurement(timeNow);
-
-    // Do this again later:
-    scheduleNextQOSMeasurement();
-}
 
 

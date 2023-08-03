@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
-project(aoipinfo LANGUAGES CXX VERSION 1.1.0)
+cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
+project(aoipinfo LANGUAGES CXX VERSION 1.2.0)
 
 execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -P ${CMAKE_SOURCE_DIR}/version.cmake)
 
@@ -18,7 +18,7 @@ add_library(aoipinfo MODULE ${SOURCES} ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_v
 find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
-list(APPEND flags "-fPIC" "-Wall" "-fpermissive"  "-std=c++14")
+list(APPEND flags "-fPIC" "-Wall" "-fpermissive")
 
 if(CMAKE_BUILD_TYPE MATCHES Release)
    list(APPEND flags "-O3")
@@ -34,10 +34,10 @@ target_compile_options(aoipinfo PRIVATE ${flags})
 target_link_libraries(aoipinfo ${wxWidgets_LIBRARIES})
 target_link_libraries(aoipinfo optimized pambase debug pambased)
 
-
+set_target_properties(aoipinfo PROPERTIES CXX_STANDARD 17)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS aoipinfo LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
+	install(TARGETS aoipinfo LIBRARY DESTINATION lib/pam2/monitor)
 endif()
 		

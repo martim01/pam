@@ -99,7 +99,10 @@ void wmKeyboard::OnSize(wxSizeEvent& event)
 
 void wmKeyboard::OnLeftDown(wxMouseEvent& event)
 {
-    CaptureMouse();
+    if(!HasCapture())
+    {
+        CaptureMouse();
+    }
 
     m_itDown = m_lstButtons.end();
     for(list<button>::iterator itButton = m_lstButtons.begin(); itButton != m_lstButtons.end(); ++itButton)

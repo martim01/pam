@@ -207,7 +207,10 @@ void wmList::OnSize(wxSizeEvent& event)
 
 void wmList::OnLeftDown(wxMouseEvent& event)
 {
-    CaptureMouse();
+    if(!HasCapture())
+    {
+        CaptureMouse();
+    }
     m_nScrolling = SCROLL_NONE;
     m_nSliding = SLID_NONE;
     m_timerScroll.Stop();

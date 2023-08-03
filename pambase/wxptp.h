@@ -5,13 +5,7 @@
 #include <memory>
 #include <list>
 #include "dlldefine.h"
-
-
-namespace ptpmonkey
-{
-    class PtpMonkey;
-    class PtpV2Clock;
-};
+#include "ptpmonkey.h"
 
 
 class wxPtpEventHandler;
@@ -20,29 +14,32 @@ class PAMBASE_IMPEXPORT wxPtp : public wxEvtHandler
     public:
         static wxPtp& Get();
 
-        void RunDomain(const wxString& sInterface, unsigned char nDomain);
-        void StopDomain(unsigned char nDomain);
+        void Run(const wxString& sInterface, unsigned char nDomain, ptpmonkey::Mode mode);
+        void Stop();
+        void ChangeDomain(unsigned char nDomain);
 
-        wxString GetMasterClockId(unsigned char nDomain);
-        timeval GetPtpTime(unsigned char nDomain);
-        timespec GetPtpTimeSpec(unsigned char nDomain);
-        timeval GetPtpOffset(unsigned char nDomain);
-        timeval GetLastPtpOffset(unsigned char nDomain);
-        bool IsSyncedToMaster(unsigned char nDomain) const;
-        void ResyncToMaster(unsigned char nDomain);
-        std::shared_ptr<const ptpmonkey::PtpV2Clock> GetPtpClock(unsigned char nDomain, const wxString& sClockId);
-        std::shared_ptr<const ptpmonkey::PtpV2Clock> GetSyncMasterClock(unsigned char nDomain);
-        std::shared_ptr<const ptpmonkey::PtpV2Clock> GetLocalClock(unsigned char nDomain);
-        std::map<std::string, std::shared_ptr<ptpmonkey::PtpV2Clock> >::const_iterator GetClocksBegin(unsigned char nDomain) const;
-        std::map<std::string, std::shared_ptr<ptpmonkey::PtpV2Clock> >::const_iterator GetClocksEnd(unsigned char nDomain) const;
-        void ResetLocalClockStats(unsigned char nDomain);
+        wxString GetMasterClockId();
+        timeval GetPtpTime();
+        timespec GetPtpTimeSpec();
+        timeval GetPtpOffset();
+        timeval GetLastPtpOffset();
+        bool IsSyncedToMaster() const;
+        void ResyncToMaster();
+        std::shared_ptr<const ptpmonkey::PtpV2Clock> GetPtpClock(const wxString& sClockId);
+        std::shared_ptr<const ptpmonkey::PtpV2Clock> GetSyncMasterClock();
+        std::shared_ptr<const ptpmonkey::PtpV2Clock> GetLocalClock();
+        const std::map<std::string, std::shared_ptr<ptpmonkey::PtpV2Clock> >& GetClocks() const;
+        void ResetLocalClockStats();
         void AddHandler(wxEvtHandler* pHandler);
+        void RemoveHandler(wxEvtHandler* pHandler);
 
     private:
         wxPtp();
+        IpInterface m_interface;
         std::shared_ptr<wxPtpEventHandler> m_pNotifier;
-        std::map<unsigned char, std::shared_ptr<ptpmonkey::PtpMonkey>> m_mDomain;
+        std::unique_ptr<ptpmonkey::PtpMonkey> m_pMonkey;
         std::map<std::string, std::shared_ptr<ptpmonkey::PtpV2Clock> > m_mEmpty;
+
 };
 
 

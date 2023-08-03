@@ -629,7 +629,10 @@ wxString wmSwitcherPanel::GetPageText(size_t nPage)
 
 void wmSwitcherPanel::OnLeftDown(wxMouseEvent& event)
 {
-    CaptureMouse();
+    if(!HasCapture())
+    {
+        CaptureMouse();
+    }
     m_bDownInWindow = true;
     m_pntMouse = event.GetPosition();
     m_nSwipePage = 0xFFFFFFFF;

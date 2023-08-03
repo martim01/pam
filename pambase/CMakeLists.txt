@@ -1,5 +1,6 @@
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
-project(pambase LANGUAGES CXX VERSION 1.7.1)
+cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
+project(pambase LANGUAGES CXX VERSION 1.8.1)
+
 
 execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -P ${CMAKE_SOURCE_DIR}/version.cmake)
 
@@ -37,11 +38,11 @@ message(${CMAKE_CURRENT_SOURCE_DIR})
 
 #pambase settubgs
 
-set(SOURCES  "advelement.cpp"  "aes67mediasession.cpp" "AES67ServerMediaSubsession.cpp" "aes67source.cpp" "anglemeter.cpp" "aoipsourcemanager.cpp" "audio.cpp" "audioevent.cpp" "dlgmask.cpp"
+set(SOURCES  "advelement.cpp"  "AES67ServerMediaSubsession.cpp" "aes67source.cpp" "anglemeter.cpp" "aoipsourcemanager.cpp" "audio.cpp" "audioevent.cpp" "dlgmask.cpp"
  "generator.cpp" "generatorpluginbuilder.cpp" "generatorpluginfactory.cpp" "histogram.cpp" "historygraph.cpp" "inimanager.cpp" "inisection.cpp" "iomanager.cpp" "levelcalculator.cpp" "levelgraph.cpp"
  "levelmeter.cpp" "liveaudiosource.cpp" "monitorevent.cpp" "monitorpluginbuilder.cpp" "monitorpluginfactory.cpp" "networkcontrol.cpp" "pamRTSPServer.cpp" "niir.cpp" "ondemandaes67mediasubsession.cpp" "ondemandpamsubsession.cpp"
  "ondemandstreamer.cpp" "ourRTSPClient.cpp" "ourSIPClient.cpp" "PamTaskScheduler.cpp" "PamUsageEnvironment.cpp" "pcstats.cpp" "pmcontrol.cpp" "pmpanel.cpp" "ppmtypes.cpp" "qos.cpp" "r128calculator.cpp"
- "r128thread.cpp" "rawvideosource.cpp" "remoteapi.cpp" "RTCPTransmissionEvent.cpp" "rtpserverthread.cpp" "rtpthread.cpp" "rtsputil.cpp" "servicebrowser.cpp" "session.cpp" "settingevent.cpp" "settings.cpp" "smpte2110mediasession.cpp"
+ "r128thread.cpp" "rawvideosource.cpp" "remoteapi.cpp" "RTCPTransmissionEvent.cpp" "rtpframeevent.cpp" "rtpserverthread.cpp" "rtpthread.cpp" "rtsputil.cpp" "servicebrowser.cpp" "session.cpp" "settingevent.cpp" "settings.cpp" "smpte2110mediasession.cpp"
  "soundcardmanager.cpp" "soundfile.cpp" "streamclientstate.cpp" "testpluginbuilder.cpp" "testpluginfactory.cpp" "timemanager.cpp" "uirect.cpp" "wmbutton.cpp" "wmedit.cpp" "wmfocusmanager.cpp" "wmipeditpnl.cpp"
  "wmkeyboard.cpp" "wmlabel.cpp" "wmline.cpp" "wmlist.cpp" "wmlistadv.cpp" "wmslider.cpp" "wmslidewnd.cpp" "wmswipebutton.cpp" "wmswitcherpanel.cpp" "wmtimeedit.cpp" "wxptp.cpp" "wxsaphandler.cpp"
  "wxsink.cpp" "wxtouchscreenhtml.cpp" "wxzxposter.cpp" ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_version.cpp)
@@ -58,7 +59,8 @@ target_include_directories(pambase PUBLIC ${DIR_JSON}/dist)
 target_include_directories(pambase PUBLIC ${CMAKE_BINARY_DIR}/include)
 
 
-list(APPEND flags "-fPIC" "-Wall" "-fpermissive"  "-std=c++14")
+set_target_properties(pambase PROPERTIES CXX_STANDARD 17)
+list(APPEND flags "-fPIC" "-Wall" "-fpermissive" )
 
 if(CMAKE_BUILD_TYPE MATCHES Release)
    list(APPEND flags "-O3")
@@ -112,5 +114,5 @@ set_target_properties(pambase PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS pambase LIBRARY DESTINATION /usr/local/lib)
+	install(TARGETS pambase LIBRARY DESTINATION lib)
 endif()

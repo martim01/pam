@@ -342,13 +342,19 @@ void Histogram::OnLeftDown(wxMouseEvent& event)
         m_bMouseDown = true;
         itGraph->second.dFirstDisplay = m_dFirstColumn;
     }
-    CaptureMouse();
+    if(!HasCapture())
+    {
+        CaptureMouse();
+    }
 }
 
 void Histogram::OnLeftUp(wxMouseEvent& event)
 {
     m_bMouseDown = false;
-    ReleaseMouse();
+    if(HasCapture())
+    {
+        ReleaseMouse();
+    }
 }
 
 void Histogram::OnMouseMove(wxMouseEvent& event)

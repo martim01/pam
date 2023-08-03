@@ -18,7 +18,7 @@ add_library(noiseGenerator MODULE ${SOURCES} ${CMAKE_BINARY_DIR}/src/${PROJECT_N
 find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
-list(APPEND flags "-fPIC" "-Wall" "-fpermissive"  "-std=c++14")
+list(APPEND flags "-fPIC" "-Wall" "-fpermissive")
 
 if(CMAKE_BUILD_TYPE MATCHES Release)
    list(APPEND flags "-O3")
@@ -33,9 +33,9 @@ target_compile_options(noiseGenerator PRIVATE ${flags})
 
 target_link_libraries(noiseGenerator ${wxWidgets_LIBRARIES})
 target_link_libraries(noiseGenerator optimized pambase debug pambased)
-
+set_target_properties(noiseGenerator PROPERTIES CXX_STANDARD 17)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS noiseGenerator LIBRARY DESTINATION /usr/local/lib/pam2/generator)
+	install(TARGETS noiseGenerator LIBRARY DESTINATION lib/pam2/generator)
 endif()	

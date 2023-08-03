@@ -18,7 +18,7 @@ target_link_libraries(polarscope optimized pamfft debug pamfftd)
 find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
-list(APPEND flags "-fPIC" "-Wall" "-fpermissive"  "-std=c++14")
+list(APPEND flags "-fPIC" "-Wall" "-fpermissive")
 
 if(CMAKE_BUILD_TYPE MATCHES Release)
    list(APPEND flags "-O3")
@@ -33,10 +33,10 @@ target_compile_options(polarscope PRIVATE ${flags})
 
 target_link_libraries(polarscope ${wxWidgets_LIBRARIES})
 target_link_libraries(polarscope optimized pambase debug pambased)
-
+set_target_properties(polarscope PROPERTIES CXX_STANDARD 17)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS polarscope LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
+	install(TARGETS polarscope LIBRARY DESTINATION lib/pam2/monitor)
 endif()
 		
