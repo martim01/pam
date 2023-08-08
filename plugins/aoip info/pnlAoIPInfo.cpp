@@ -335,8 +335,6 @@ void pnlAoIPInfo::ShowLatency(const timedbuffer* pTimedBuffer)
 
 void pnlAoIPInfo::SessionStarted(const session& aSession)
 {
-    pmlLog() << "pnlAoIPInfo::SessionStarted";
-
     m_pSession = &aSession;
 
     m_plblSessionName->SetLabel(aSession.sName);
@@ -348,19 +346,15 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
     {
         m_plblInput->SetLabel(wxEmptyString);
     }
-    pmlLog() << "pnlAoIPInfo::SessionStarted 2";
     m_plblSyncType->SetLabel(aSession.refClock.sType);
     m_plblSyncVersion->SetLabel(aSession.refClock.sVersion);
     m_plblSyncId->SetLabel(aSession.refClock.sId);
 
-    pmlLog() << "pnlAoIPInfo::SessionStarted 3";
     m_plblSyncDomain->SetLabel(wxString::Format("%lu", aSession.refClock.nDomain));
     m_plblSessionType->SetLabel(aSession.sType);
 
-    pmlLog() << "pnlAoIPInfo::SessionStarted 4";
     wxClientDC dc(this);
     dc.SetFont(m_pSdp->GetFont());
-    pmlLog() << "pnlAoIPInfo::SessionStarted 5";
 
     m_pSdp->Clear();
     wxArrayString asLines(wxStringTokenize(aSession.sRawSDP, "\n"));
@@ -370,6 +364,8 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
     }
 
     //delete the old subsession pages
+    m_pswpInfo->ChangeSelection(0);
+
     m_mQos.clear();
     m_mSubsessions.clear();
     for(size_t i = 2 ; i < m_pswpInfo->GetPageCount();)
@@ -397,20 +393,17 @@ void pnlAoIPInfo::SessionStarted(const session& aSession)
 
     for(const auto& sub : aSession.lstSubsession)
     {
-        pmlLog() << "Create subsession page";
         auto pnlSub = new pnlSubsession(m_pswpInfo, sub, wxNewId(), wxDefaultPosition, wxDefaultSize);
         m_pswpInfo->AddPage(pnlSub, "Subsession: "+sub.sGroup, false);
 
         m_mSubsessions.try_emplace(sub.sGroup, pnlSub);
 
-        pmlLog() << "Create Qos page";
         auto pnlQ = new pnlQos(m_pswpInfo, sub.sGroup, m_pBuilder, wxNewId(), wxDefaultPosition, wxDefaultSize);
         m_pswpInfo->AddPage(pnlQ, "QoS: "+sub.sGroup, false);
 
         m_mQos.try_emplace(sub.sGroup, pnlQ);
     }
 
-    pmlLog() << "DONE";
 }
 
 
