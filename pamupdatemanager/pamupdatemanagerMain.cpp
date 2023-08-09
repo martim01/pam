@@ -15,7 +15,8 @@
 #ifdef __WXGNU__
 #include <sys/mount.h>
 #endif // __WXGNU__
-
+#include <array>
+#include <string>
 #include <wx/stdpaths.h>
 
 int IsMounted()
@@ -64,7 +65,7 @@ int MountDevice(const wxString& sDevice)
     }
 
 
-    std::array<std::string, 8> fs({"ext3", "ext2", "ext4", "vfat", "msdos", "f2fs", "fuseblk", "ntfs"});
+    auto fs = std::array<std::string, 8>({"ext3", "ext2", "ext4", "vfat", "msdos", "f2fs", "fuseblk", "ntfs"});
     for(size_t i = 0; i < fs.size(); i++)
     {
         nResult = mount(sDevice.ToStdString().c_str(), "/mnt/share", fs[i].c_str(), MS_SILENT, nullptr);
