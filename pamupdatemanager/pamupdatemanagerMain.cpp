@@ -15,7 +15,8 @@
 #ifdef __WXGNU__
 #include <sys/mount.h>
 #endif // __WXGNU__
-
+#include <array>
+#include <string>
 #include <wx/stdpaths.h>
 
 int IsMounted()
