@@ -66,7 +66,7 @@ pnlChannelMapping::pnlChannelMapping(wxWindow* parent,const wxString& sSection, 
 	m_pbtnEnable->SetToggle(true, "Disable", "Enable", 40);
 	m_pbtnEnable->SetBackgroundColour(wxColour(50,150,50));
 
-    m_ppnlMapping = new wxPanel(this, 10, 80, 590, 200);
+    m_ppnlMapping = new wxPanel(this, wxNewId(), wxPoint(10, 80), wxSize(590, 200));
     m_ppnlMapping->SetBackgroundColour(*wxBLACK);
 
 	m_pLbl[0] = new wmLabel(m_ppnlMapping, ID_M_PLBL14, _("Channel 1"), wxPoint(10,40), wxSize(65,30), 0, _T("ID_M_PLBL14"));
