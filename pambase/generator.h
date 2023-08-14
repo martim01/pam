@@ -9,6 +9,7 @@
 #ifdef __WXGTK__
 #include <random>
 #endif
+#include <cstdint>
 
 /** @file paex_pink.c
 	@ingroup examples_src
