@@ -504,7 +504,7 @@ void pnlQos::RtpFrame(std::shared_ptr<const rtpFrame> pFrame)
         m_pHistogram->AddPeak(wxT("TS-DF"), pFrame->dTSDF);
     }
 
-	m_dLatency = static_cast<double>(pFrame->timeLatency.tv_sec)*1000000.0 + static_cast<double>(pFrame->timeLatency.tv_usec);
+	m_dLatency = std::max(m_dLatency, static_cast<double>(pFrame->timeLatency.tv_sec)*1000000.0 + static_cast<double>(pFrame->timeLatency.tv_usec));
 	if(m_nLatencyCounter < 3)
 	{
 		++m_nLatencyCounter;
