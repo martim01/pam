@@ -48,6 +48,31 @@ bool SoundFile::ReadAudio(float* pBuffer, int nSize, unsigned int nLoop)
     return false;
 }
 
+bool SoundFile::ReadAudio(std::vector<float>& vBuffer, unsigned int nLoop)
+{
+    if(m_pHandle)
+    {
+        auto pBuffer = vBuffer.data();
+        auto nSize = vBuffer.size();
+        sf_count_t nRead = m_pHandle->read(pBuffer, nSize);
+        if(nLoop  != 0)
+        {
+            while(nRead < nSize)
+            {
+                m_bLooped = true;
+
+                int nPointer = nRead;
+                nSize -= nRead;
+
+                m_pHandle->seek(SEEK_SET, 0);
+                nRead = m_pHandle->read(&pBuffer[nPointer], nSize);
+            }
+        }
+        return true;
+    }
+    return false;
+}
+
 bool SoundFile::Close(void)
 {
     delete m_pHandle;
@@ -83,7 +108,7 @@ bool SoundFile::WriteAudio(std::shared_ptr<const timedbuffer> pBuffer)//, unsign
 {
     if(m_pHandle)
     {
-        m_nWritten += m_pHandle->write(pBuffer->GetBuffer(), pBuffer->GetBufferSize());
+        m_nWritten += m_pHandle->write(pBuffer->GetBuffer().data(), pBuffer->GetBufferSize());
         return true;
     }
     return false;
@@ -93,7 +118,7 @@ bool SoundFile::WriteAudio(const timedbuffer* pBuffer)//, unsigned short nChanne
 {
     if(m_pHandle)
     {
-        m_nWritten += m_pHandle->write(pBuffer->GetBuffer(), pBuffer->GetBufferSize());
+        m_nWritten += m_pHandle->write(pBuffer->GetBuffer().data(), pBuffer->GetBufferSize());
         return true;
     }
     return false;

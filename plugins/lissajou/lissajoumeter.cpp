@@ -24,7 +24,6 @@ const wxString LissajouMeter::LABEL_SCALE[3] = {wxT("dB"), wxT("Linear"), wxT("A
 LissajouMeter::LissajouMeter(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size) : pmControl()
 {
     Create(parent, id, pos, size);
-    m_pBuffer = 0;
     m_bRotate = false;
     m_nScaling = SCALE_DB;
     m_bShowLevels = false;
@@ -80,9 +79,8 @@ void LissajouMeter::OnPaint(wxPaintEvent& event)
     dc.SetBrush(br);
     dc.DrawRectangle(GetClientRect());
     dc.SetPen(wxColour(0,0,200));
-//    dc.DrawRectangle(m_rectGrid);
 
-    if(m_pBuffer)
+    if(m_vBuffer.empty() == false)
     {
         if(m_nType == STARS)
         {
@@ -93,9 +91,6 @@ void LissajouMeter::OnPaint(wxPaintEvent& event)
             DrawHull(dc);
         }
 
-        delete[] m_pBuffer;
-        m_nBufferSize = 0;
-        m_pBuffer = 0;
     }
 
     m_uiScale.Draw(dc, LABEL_SCALE[m_nScaling], uiRect::BORDER_NONE);
@@ -289,12 +284,12 @@ void LissajouMeter::DrawStars(wxDC& dc)
     DrawLines(img, pntCenter);
 
 
-    for(size_t nSample = 0; nSample < m_nBufferSize; nSample+=m_nChannels)
+    for(size_t nSample = 0; nSample < m_vBuffer.size(); nSample+=m_nChannels)
     {
         float x;
         float y;
 
-        Scale(m_pBuffer[nSample+m_nAxis[1]], m_pBuffer[nSample+m_nAxis[0]], x, y, pntCenter);
+        Scale(m_vBuffer[nSample+m_nAxis[1]], m_vBuffer[nSample+m_nAxis[0]], x, y, pntCenter);
 
 
 
@@ -327,37 +322,37 @@ void LissajouMeter::DrawPeaks(wxDC&  dc)
     pair<float,float> pairSideMax = make_pair(pntCenter.x, pntCenter.y);
 
 
-    for(size_t nSample = 0; nSample < m_nBufferSize; nSample +=m_nChannels)
+    for(size_t nSample = 0; nSample < m_vBuffer.size(); nSample +=m_nChannels)
     {
         float x;
-        if(m_pBuffer[nSample+m_nAxis[0]] == 0)
+        if(m_vBuffer[nSample+m_nAxis[0]] == 0)
         {
             x = pntCenter.x;
         }
-        else if(m_pBuffer[nSample+m_nAxis[0]] < 0)
+        else if(m_vBuffer[nSample+m_nAxis[0]] < 0)
         {
-            x = 20*log10(-m_pBuffer[nSample+m_nAxis[0]])*m_pairStep.first;
+            x = 20*log10(-m_vBuffer[nSample+m_nAxis[0]])*m_pairStep.first;
             x = min(-x, static_cast<float>(pntCenter.x));
         }
         else
         {
-            x = 20*log10(m_pBuffer[nSample+m_nAxis[0]])*m_pairStep.first;
+            x = 20*log10(m_vBuffer[nSample+m_nAxis[0]])*m_pairStep.first;
             x = max(m_bmpScreen.GetWidth()+x, static_cast<float>(pntCenter.x));
         }
 
         float y;
-        if(m_pBuffer[nSample+m_nAxis[1]] == 0)
+        if(m_vBuffer[nSample+m_nAxis[1]] == 0)
         {
             y = pntCenter.y;
         }
-        else if(m_pBuffer[nSample+m_nAxis[1]] < 0)
+        else if(m_vBuffer[nSample+m_nAxis[1]] < 0)
         {
-            y = 20*log10(-m_pBuffer[nSample+m_nAxis[1]])*m_pairStep.second;
+            y = 20*log10(-m_vBuffer[nSample+m_nAxis[1]])*m_pairStep.second;
             y = min(-y, static_cast<float>(pntCenter.y));
         }
         else
         {
-            y = 20*log10(m_pBuffer[nSample+m_nAxis[1]])*m_pairStep.second;
+            y = 20*log10(m_vBuffer[nSample+m_nAxis[1]])*m_pairStep.second;
             y = max(m_bmpScreen.GetHeight()+y, static_cast<float>(pntCenter.y));
         }
 
@@ -439,15 +434,15 @@ void LissajouMeter::DrawHull(wxDC& dc)
     wxImage img(m_bmpScreen.GetWidth(), m_bmpScreen.GetHeight());
     DrawLines(img, pntCenter);
 
-    vector<wxPoint> pntList(m_nBufferSize/m_nChannels, pntCenter);
+    vector<wxPoint> pntList(m_vBuffer.size()/m_nChannels, pntCenter);
 
     size_t i = 0;
-    for(size_t nSample = 0; nSample < m_nBufferSize; nSample+=m_nChannels)
+    for(size_t nSample = 0; nSample < m_vBuffer.size(); nSample+=m_nChannels)
     {
         float x;
         float y;
 
-        Scale(m_pBuffer[nSample+m_nAxis[1]], m_pBuffer[nSample+m_nAxis[0]], x, y, pntCenter);
+        Scale(m_vBuffer[nSample+m_nAxis[1]], m_vBuffer[nSample+m_nAxis[0]], x, y, pntCenter);
 
        if(m_bRotate)
        {
@@ -498,26 +493,20 @@ void LissajouMeter::SetMindB(float dMin)
     m_dMindB = dMin;
 }
 
-void LissajouMeter::SetLissajouData(const float* pBuffer, int nBufferSize)
+void LissajouMeter::SetLissajouData(const std::vector<float>& vBuffer)
 {
-    if(m_pBuffer)
-    {
-        delete[] m_pBuffer;
-        m_pBuffer = 0;
-    }
     if(m_nChannels != 0)
     {
-        m_nBufferSize = (nBufferSize);
-        m_pBuffer = new float[m_nBufferSize];
-        memcpy(m_pBuffer, pBuffer, m_nBufferSize*sizeof(float));
+        m_vBuffer = vBuffer;
+
 
         if(m_nScaling == SCALE_AUTO)
         {
             double dMax[2] = {0.0,0.0};
-            for(int i = 0; i < nBufferSize; i+=m_nChannels)
+            for(int i = 0; i < m_vBuffer.size(); i+=m_nChannels)
             {
-                dMax[0] = max((double)dMax[0], (double)fabs(pBuffer[i+m_nAxis[0]]));
-                dMax[1] = max((double)dMax[1], (double)fabs(pBuffer[i+m_nAxis[1]]));
+                dMax[0] = max((double)dMax[0], (double)fabs(m_vBuffer[i+m_nAxis[0]]));
+                dMax[1] = max((double)dMax[1], (double)fabs(m_vBuffer[i+m_nAxis[1]]));
             }
             m_dAutoScale = m_Compressor.getRatio()/m_Compressor.process(dMax[0],dMax[1]);
         }

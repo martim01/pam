@@ -44,22 +44,7 @@ RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface
     m_sProgName(sProg),
     m_source(source),
     m_nBufferSize(nBufferSize),
-    m_pCurrentBuffer(nullptr),
-	m_dTransmission(0),
-	m_dPresentation(0),
-	
-	m_nSampleRate(48000),
-    m_nTimestampErrors(0),
-	m_nTimestampErrorsTotal(0),
-	m_nTimestamp(0),
-	m_nSampleBufferSize(0),
-	m_penv(nullptr),
-    m_pRtspClient(nullptr),
-    m_pSipClient(nullptr),
-    m_pSession(nullptr),
-    m_bClosing(false),
-    m_bSaveSDP(bSaveSDPOnly),
-    m_nQosMeasurementIntervalMS(1000)
+    m_bSaveSDP(bSaveSDPOnly)
 {
     m_eventLoopWatchVariable = 0;
     m_pCondition = new wxCondition(m_mutex);
@@ -116,8 +101,7 @@ void* RtpThread::Entry()
 
 
     pmlLog() << "RTP Client\tStream closed";
-    delete[] m_pCurrentBuffer;
-
+    
     wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_RTP_SESSION_CLOSED);
     pEvent->SetInt(m_source.nIndex);
     pEvent->SetString(m_source.sDetails);
@@ -272,9 +256,10 @@ timeval RtpThread::ConvertDoubleToPairTime(double dTime)
     return {static_cast<time_t>(dInt), static_cast<__suseconds_t>(dDec*1000000.0)};
 }
 
-float RtpThread::ConvertFrameBufferToSample(u_int8_t* pFrameBuffer, u_int8_t nBytesPerSample)
+std::pair<float, unsigned char> RtpThread::ConvertFrameBufferToSample(u_int8_t* pFrameBuffer, u_int8_t nBytesPerSample)
 {
-    int nSample(0);
+    int nSample = 0;
+    unsigned char nUser = 0;
     if(nBytesPerSample == 2)
     {
         nSample = (static_cast<int>(pFrameBuffer[1]) << 16) | (static_cast<int>(pFrameBuffer[0]) << 24);
@@ -286,8 +271,10 @@ float RtpThread::ConvertFrameBufferToSample(u_int8_t* pFrameBuffer, u_int8_t nBy
     else if(nBytesPerSample == 4)
     {   //@todo need to check which 3 of the 4 we uses
         nSample = (static_cast<int>(pFrameBuffer[3]) << 8) | (static_cast<int>(pFrameBuffer[2]) << 16) | (static_cast<int>(pFrameBuffer[1]) << 24);
+
+        nUser = pFrameBuffer[0];
     }
-    return static_cast<float>(nSample)/ 2147483648.0;
+    return {static_cast<float>(nSample)/ 2147483648.0, nUser};
 }
 
 void RtpThread::AddFrame(std::shared_ptr<const rtpFrame> pFrame)
@@ -398,9 +385,10 @@ void RtpThread::WorkoutNextFrame()
 
 void RtpThread::ConvertFrameToTimedBuffer(std::shared_ptr<const rtpFrame> pFrame)
 {
-    if(m_pCurrentBuffer == nullptr)
+    if(m_vCurrentBuffer.empty())
     {
-        m_pCurrentBuffer = new float[m_nBufferSize*m_nInputChannels];
+        m_vCurrentBuffer.resize(m_nBufferSize*m_nInputChannels);
+        m_vCurrentUserBits.resize(m_vCurrentBuffer.size());
         m_nSampleBufferSize = 0;
     }
 
@@ -408,7 +396,7 @@ void RtpThread::ConvertFrameToTimedBuffer(std::shared_ptr<const rtpFrame> pFrame
 
     for(int i = 0; i < pFrame->nFrameSize; i+=pFrame->nBytesPerSample)
     {
-        auto dSample = ConvertFrameBufferToSample(&(pFrame->pBuffer[i]), pFrame->nBytesPerSample);
+        auto sample = ConvertFrameBufferToSample(&(pFrame->pBuffer[i]), pFrame->nBytesPerSample);
 
         if(m_nSampleBufferSize == 0)
         {
@@ -429,13 +417,14 @@ void RtpThread::ConvertFrameToTimedBuffer(std::shared_ptr<const rtpFrame> pFrame
             m_dPresentation += (1.0 / static_cast<double>(m_nSampleRate)); //@todo assuming 48K here
         }
 
-        m_pCurrentBuffer[m_nSampleBufferSize] = dSample;
+        m_vCurrentBuffer[m_nSampleBufferSize] = sample.first;
+        m_vCurrentUserBits[m_nSampleBufferSize] = sample.second;
         ++m_nSampleBufferSize;
 
-        if(m_nSampleBufferSize == m_nBufferSize*m_nInputChannels)   //filled up buffer
+        if(m_nSampleBufferSize == m_vCurrentBuffer.size())   //filled up buffer
         {
-            auto pTimedBuffer = new timedbuffer(m_nBufferSize*m_nInputChannels, ConvertDoubleToPairTime(m_dPresentation), m_nTimestamp, m_nInputChannels);
-            pTimedBuffer->SetBuffer(m_pCurrentBuffer);
+            auto pTimedBuffer = new timedbuffer(ConvertDoubleToPairTime(m_dPresentation), m_nTimestamp, m_nInputChannels, m_vCurrentBuffer, m_vCurrentUserBits);
+
             pTimedBuffer->SetTransmissionTime(ConvertDoubleToPairTime(m_dTransmission));
             pTimedBuffer->SetDuration(pFrame->nFrameSize);
             auto pEvent = new AudioEvent(pTimedBuffer, AudioEvent::RTP, m_nBufferSize, m_nSampleRate, false, false);
@@ -453,7 +442,6 @@ void RtpThread::ConvertFrameToTimedBuffer(std::shared_ptr<const rtpFrame> pFrame
             m_nTimestampErrorsTotal++;
         }
     }
-    
 
 
     //keep track of which streams frames come from

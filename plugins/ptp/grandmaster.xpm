@@ -1,5 +1,5 @@
 /* XPM */
-static char * grandmaster_xpm[] = {
+static const char * grandmaster_xpm[] = {
 "32 16 25 1",
 " 	c None",
 ".	c #F70000",

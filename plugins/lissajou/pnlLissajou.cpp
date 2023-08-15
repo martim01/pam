@@ -74,7 +74,7 @@ void pnlLissajou::SetAudioData(const timedbuffer* pBuffer)
     m_pMeterLeft->ShowValue(m_pCalculator->GetLevel(m_nChannelX));
     m_pMeterRight->ShowValue(m_pCalculator->GetLevel(m_nChannelY));
 
-    m_pJellyfish->SetLissajouData(pBuffer->GetBuffer(), pBuffer->GetBufferSize());
+    m_pJellyfish->SetLissajouData(pBuffer->GetBuffer());
 
 
 }

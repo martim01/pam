@@ -58,7 +58,7 @@ void RecordThread::AddToBuffer(const timedbuffer* pBuffer)
     if(m_mutex.IsOk())
     {
         wxMutexLocker ml(m_mutex);
-        m_queueBuffer.push(CopyBuffer(pBuffer));
+        m_queueBuffer.push(std::make_shared<timedbuffer>(*pBuffer));
     }
 
 }
@@ -66,8 +66,7 @@ void RecordThread::AddToBuffer(const timedbuffer* pBuffer)
 
 std::shared_ptr<timedbuffer> RecordThread::CopyBuffer(const timedbuffer* pBuffer)
 {
-    auto pThreadBuffer = std::make_shared<timedbuffer>(pBuffer->GetBufferSize(), pBuffer->GetNumberOfChannels());
-    pThreadBuffer->SetBuffer(pBuffer->GetBuffer());
+    auto pThreadBuffer = std::make_shared<timedbuffer>(*pBuffer);
     return pThreadBuffer;
 }
 

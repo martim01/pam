@@ -2,6 +2,8 @@
 #include <wx/gdicmn.h>
 #include <stack>
 #include <vector>
+#include "log.h"
+#include <algorithm>
 
 // A globle point needed for  sorting points with reference
 // to  the first point Used in compare function of qsort()
@@ -63,32 +65,36 @@ int compare(const void *vp1, const void *vp2)
 }
 
 // Prints convex hull of a set of n points.
-std::vector<wxPoint> convexHull(wxPoint points[], int n)
+std::vector<wxPoint> convexHull(std::vector<wxPoint>& vPnts)
 {
     std::vector<wxPoint> vPoints;
 
    // Find the bottommost point
-   int ymin = points[0].y, min = 0;
-   for (int i = 1; i < n; i++)
+   int ymin = vPnts[0].y;
+   int min = 0;
+   for (auto i = 1; i < vPnts.size(); i++)
    {
-     int y = points[i].y;
+     int y = vPnts[i].y;
 
      // Pick the bottom-most or chose the left
      // most point in case of tie
-     if ((y < ymin) || (ymin == y &&
-         points[i].x < points[min].x))
-        ymin = points[i].y, min = i;
+     if ((y < ymin) || (ymin == y && vPnts[i].x < vPnts[min].x))
+     {
+        ymin = vPnts[i].y; 
+        min = i;
+     }
    }
 
+
    // Place the bottom-most point at first position
-   swap(points[0], points[min]);
+   std::swap(vPnts[0], vPnts[min]);
 
    // Sort n-1 points with respect to the first point.
    // A point p1 comes before p2 in sorted ouput if p2
    // has larger polar angle (in counterclockwise
    // direction) than p1
-   p0 = points[0];
-   qsort(&points[1], n-1, sizeof(wxPoint), compare);
+   p0 = vPnts[0];
+   qsort(&vPnts[1], vPnts.size()-1, sizeof(wxPoint), compare);
 
    // If two or more points make same angle with p0,
    // Remove all but the one that is farthest from p0
@@ -96,16 +102,16 @@ std::vector<wxPoint> convexHull(wxPoint points[], int n)
    // to keep the farthest point at the end when more than
    // one points have same angle.
    int m = 1; // Initialize size of modified array
-   for (int i=1; i<n; i++)
+   for (int i=1; i<vPnts.size(); i++)
    {
        // Keep removing i while angle of i and i+1 is same
        // with respect to p0
-       while (i < n-1 && orientation(p0, points[i],
-                                    points[i+1]) == 0)
+       while (i < vPnts.size()-1 && orientation(p0, vPnts[i],
+                                    vPnts[i+1]) == 0)
           i++;
 
 
-       points[m] = points[i];
+       vPnts[m] = vPnts[i];
        m++;  // Update size of modified array
    }
 
@@ -116,12 +122,13 @@ std::vector<wxPoint> convexHull(wxPoint points[], int n)
        return vPoints;
    }
 
+
    // Create an empty std::stack and push first three points
    // to it.
    std::stack<wxPoint> S;
-   S.push(points[0]);
-   S.push(points[1]);
-   S.push(points[2]);
+   S.push(vPnts[0]);
+   S.push(vPnts[1]);
+   S.push(vPnts[2]);
 
    // Process remaining n-3 points
    for (int i = 3; i < m; i++)
@@ -129,9 +136,9 @@ std::vector<wxPoint> convexHull(wxPoint points[], int n)
       // Keep removing top while the angle formed by
       // points next-to-top, top, and points[i] makes
       // a non-left turn
-      while (orientation(nextToTop(S), S.top(), points[i]) != 2)
+      while (orientation(nextToTop(S), S.top(), vPnts[i]) != 2)
          S.pop();
-      S.push(points[i]);
+      S.push(vPnts[i]);
    }
 
    vPoints.reserve(S.size());

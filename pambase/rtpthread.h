@@ -57,7 +57,7 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
 
         void PassSessionDetails(Smpte2110MediaSession* pSession);
 
-        float ConvertFrameBufferToSample(u_int8_t* pFrameBuffer, u_int8_t nBytesPerSample);
+        std::pair<float, unsigned char> ConvertFrameBufferToSample(u_int8_t* pFrameBuffer, u_int8_t nBytesPerSample);
 
     protected:
 
@@ -80,44 +80,47 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
         void WorkoutFirstFrame();
         void WorkoutNextFrame();
 
-        wxEvtHandler* m_pHandler;
+        wxEvtHandler* m_pHandler = nullptr;
         wxString m_sProgName;
         AoIPSource m_source;
 
-        unsigned int m_nBufferSize;
+        unsigned int m_nBufferSize = 4096;
 
         wxMutex m_mutex;
-        wxCondition* m_pCondition;
+        wxCondition* m_pCondition = nullptr;
 
         wxString m_sReceivingInterface;
 
-        float* m_pCurrentBuffer;
-        double m_dTransmission;
-        double m_dPresentation;
+        std::vector<float> m_vCurrentBuffer;
+        std::vector<unsigned char> m_vCurrentUserBits;
 
         
-        unsigned int m_nSampleRate;
-        unsigned int m_nTimestampErrors;
-        unsigned int m_nTimestampErrorsTotal;
+        double m_dTransmission = 0.0;
+        double m_dPresentation = 0.0;
 
-        unsigned long m_nTimestamp;
-        unsigned long m_nSampleBufferSize;
+    
+        unsigned int m_nSampleRate = 48000;
+        unsigned int m_nTimestampErrors = 0;
+        unsigned int m_nTimestampErrorsTotal = 0;
 
-        UsageEnvironment* m_penv;
+        unsigned long m_nTimestamp = 0;
+        unsigned long m_nSampleBufferSize = 0;
 
-        RTSPClient* m_pRtspClient;
-        ourSIPClient* m_pSipClient;
-        Smpte2110MediaSession* m_pSession;
-        unsigned int m_nInputChannels;
+        UsageEnvironment* m_penv = nullptr;
 
-        char m_eventLoopWatchVariable;
+        RTSPClient* m_pRtspClient = nullptr;
+        ourSIPClient* m_pSipClient = nullptr;
+        Smpte2110MediaSession* m_pSession = nullptr;
+        unsigned int m_nInputChannels = 2;
 
-        bool m_bClosing;
-        bool m_bSaveSDP;
+        char m_eventLoopWatchVariable= 0;
+
+        bool m_bClosing = false;
+        bool m_bSaveSDP = false;
         session m_Session;
 
         std::string m_sDescriptor;
-        unsigned long m_nQosMeasurementIntervalMS;
+        unsigned long m_nQosMeasurementIntervalMS = 1000;
 
 
         std::map<wxString, std::list<std::shared_ptr<const rtpFrame>>> m_mRedundantBuffers;

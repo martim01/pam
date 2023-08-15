@@ -146,7 +146,7 @@ void Generator::GenerateSequences(timedbuffer* pData)
     }
 }
 
-void Generator::GenerateSequence(std::shared_ptr<Sequence> pSeq, float* pBuffer, unsigned int nSize)
+void Generator::GenerateSequence(std::shared_ptr<Sequence> pSeq, std::vector<float>& vBuffer, unsigned int nSize)
 {
 
     unsigned int nPhase = m_nPhase;
@@ -157,16 +157,16 @@ void Generator::GenerateSequence(std::shared_ptr<Sequence> pSeq, float* pBuffer,
         switch(pSeq->GetSequencePosition()->nType)
         {
             case SINE:
-                pBuffer[i] += GenerateSin((*pSeq->GetSequencePosition()),nPhase);
+                vBuffer[i] += GenerateSin((*pSeq->GetSequencePosition()),nPhase);
                 break;
             case SQUARE:
-                pBuffer[i] += GenerateSquare((*pSeq->GetSequencePosition()),nPhase);
+                vBuffer[i] += GenerateSquare((*pSeq->GetSequencePosition()),nPhase);
                 break;
             case SAW:
-                pBuffer[i] += GenerateSaw((*pSeq->GetSequencePosition()),nPhase);
+                vBuffer[i] += GenerateSaw((*pSeq->GetSequencePosition()),nPhase);
                 break;
             case TRIANGLE:
-                pBuffer[i] += GenerateTriangle((*pSeq->GetSequencePosition()),nPhase);
+                vBuffer[i] += GenerateTriangle((*pSeq->GetSequencePosition()),nPhase);
                 break;
         }
 
@@ -188,7 +188,7 @@ void Generator::GenerateSequence(std::shared_ptr<Sequence> pSeq, float* pBuffer,
     }
 }
 
-void Generator::GenerateFrequency(float* pBuffer, unsigned int nSize)
+void Generator::GenerateFrequency(std::vector<float>& vBuffer, unsigned int nSize)
 {
 
     for(int i = 0; i < nSize; i+=2)
@@ -210,8 +210,8 @@ void Generator::GenerateFrequency(float* pBuffer, unsigned int nSize)
                 break;
         }
 
-        pBuffer[i] = dAmplitude;
-        pBuffer[i+1] = dAmplitude;
+        vBuffer[i] = dAmplitude;
+        vBuffer[i+1] = dAmplitude;
 
 
         m_nPhase++;
@@ -395,7 +395,7 @@ void Generator::ReadSoundFile(timedbuffer* pData)
 {
     if(m_pSoundfile)
     {
-        if(m_pSoundfile->ReadAudio(pData->GetWritableBuffer(), pData->GetBufferSize(), 1))
+        if(m_pSoundfile->ReadAudio(pData->GetWritableBuffer(), 1))
         {
             pData->SetDuration(pData->GetBufferSize()*(m_pSoundfile->GetFormat()&0x0F));
         }

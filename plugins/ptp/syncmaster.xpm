@@ -1,5 +1,5 @@
 /* XPM */
-static char * syncmaster_xpm[] = {
+static const char * syncmaster_xpm[] = {
 "32 16 20 1",
 " 	c None",
 ".	c #880000",

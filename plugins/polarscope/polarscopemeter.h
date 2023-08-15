@@ -7,6 +7,8 @@
 #include "uirect.h"
 #include "pmcontrol.h"
 #include "json/json.h"
+#include <vector>
+#include <memory>
 
 class timedbuffer;
 
@@ -121,40 +123,37 @@ class PolarScope : public pmControl
 
         void WorkoutLevel();
 
-
-
         wxRect m_rectGrid;
         wxRect m_rectCorrelation;
         wxRect m_rectBalance;
         wxPoint m_pntPole;
-        double m_dResolution;
-        double m_dResolutionCorrelation;
+        double m_dResolution = 1.0;
+        double m_dResolutionCorrelation = 1.0;
 
-        int m_nMode;
+        int m_nMode = 0;
 
-        float m_dMindB;
+        float m_dMindB = 70.0;
 
-        unsigned int m_nInputChannels;
-        unsigned int m_nAxisX;
-        unsigned int m_nAxisY;
+        unsigned int m_nInputChannels = 1;
+        unsigned int m_nAxisX = 0;
+        unsigned int m_nAxisY = 0;
 
         std::list<std::pair<double, double> > m_lstLevels;
         std::list<std::pair<double, double> > m_lstAngles;
-        double m_dCorrelation;
-        double m_dBalance;
+        double m_dCorrelation = 0.0;
+        double m_dBalance = 0.0;
         double m_dSpread[2];
 
-        float* m_pBuffer;
-        unsigned int m_nBufferSize;
-
+        std::vector<float> m_vBuffer;
+        
         std::list<double> m_lstCorrelation;
         std::list<double> m_lstBalance;
 
         uiRect m_uiCorrelation;
         uiRect m_uiBalance;
 
-        wxBitmap* m_pBmpCorrelationOut;
-        wxBitmap* m_pBmpCorrelationIn;
+        std::shared_ptr<wxBitmap> m_pBmpCorrelationOut = nullptr;
+        std::shared_ptr<wxBitmap> m_pBmpCorrelationIn = nullptr;
 };
 
 

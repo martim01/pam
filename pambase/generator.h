@@ -154,8 +154,8 @@ class PAMBASE_IMPEXPORT Generator
         void ReadSoundFile(timedbuffer* pData);
         void GenerateSilence(timedbuffer* pData);
         void GenerateSequences(timedbuffer* pData);
-        void GenerateSequence(std::shared_ptr<Sequence> pSeq, float* pBuffer, unsigned int nSize);
-        void GenerateFrequency(float* pBuffer, unsigned int nSize);
+        void GenerateSequence(std::shared_ptr<Sequence> pSeq, std::vector<float>& vBuffer, unsigned int nSize);
+        void GenerateFrequency(std::vector<float>& vBuffer, unsigned int nSize);
 
         float GenerateSin(const genfreq& gfreq, float dPhase);
         float GenerateSquare(const genfreq& gfreq, float dPhase);

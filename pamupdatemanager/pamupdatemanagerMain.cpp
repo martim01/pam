@@ -16,7 +16,7 @@
 #include <sys/mount.h>
 #endif // __WXGNU__
 #include <array>
-#include <string>s
+#include <string>
 #include <wx/stdpaths.h>
 
 int IsMounted()
@@ -446,9 +446,9 @@ bool pamupdatemanagerDialog::ReplaceFileUsr(wxDC& dc, wxTarInputStream& input, c
             m_plstProgress->Update();
             return true;
         }
-    
+    }
     m_plstProgress->ShowElement(m_plstProgress->AddElement(std::make_shared<ReleaseElement>(dc, GetClientSize().x, "Failed to update")), wmListAdv::BOTTOM);
-        m_plstProgress->Update();
+    m_plstProgress->Update();
     return false;
     
 }

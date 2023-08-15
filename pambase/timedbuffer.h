@@ -8,7 +8,8 @@
 #include "windows.h"
 #include <wx/msw/winundef.h>
 #endif // __WXGNU__
-
+#include <memory>
+#include <vector>
 
 
 #ifdef  __WXMSW__
@@ -43,11 +44,8 @@ class PAMBASE_IMPEXPORT timedbuffer
 {
     public:
     timedbuffer(unsigned int nBs, int nChannels) :
-	m_nBufferSize(nBs),
-    m_nTimestamp(0),
-    m_nDuration(0),
-    m_nBufferDepth(0),
-    m_dPlaybackLatency(0.0),
+    m_vBuffer(nBs,0.0),
+    m_vUserBits(nBs,0),
     m_nChannels(nChannels)
 	{
         gettimeofday(&m_tvStamp,NULL);
@@ -55,49 +53,55 @@ class PAMBASE_IMPEXPORT timedbuffer
         m_tvTransmissionStamp = m_tvStamp;
         m_tvPlayback = m_tvStamp;
 
-        m_pBuffer = new float[m_nBufferSize];
     }
 
     timedbuffer(unsigned int nBs, const timeval& tv, unsigned int nTimestamp, int nChannels) :
-        m_nBufferSize(nBs),
         m_nTimestamp(nTimestamp),
         m_tvStamp(tv),
         m_tvPlayback(tv),
-		m_nDuration(0),
-		m_nBufferDepth(0),
-		m_dPlaybackLatency(0.0),
+        m_vBuffer(nBs,0.0),
+        m_vUserBits(nBs,0),
         m_nChannels(nChannels)
         {
-            m_pBuffer = new float[m_nBufferSize];
         }
 
+    timedbuffer(const timeval& tv, unsigned int nTimestamp, int nChannels, const std::vector<float>& vBuffer, const std::vector<unsigned char>& vUserBits) :
+        m_nTimestamp(nTimestamp),
+        m_tvStamp(tv),
+        m_tvPlayback(tv),
+        m_vBuffer(vBuffer),
+        m_vUserBits(vUserBits),
+        m_nChannels(nChannels)
+    {
+
+    }
+
 	timedbuffer(const timedbuffer& tbuffer) :
-		m_nBufferSize(tbuffer.GetBufferSize()),
 		m_nTimestamp(tbuffer.GetTimestamp()),
 		m_tvStamp(tbuffer.GetTimeVal()),
 		m_tvPlayback(tbuffer.GetPlaybackTime()),
 		m_tvTransmissionStamp(tbuffer.GetTransmissionTime()),
-		m_pBuffer(new float[tbuffer.GetBufferSize()]),
+		m_vBuffer(tbuffer.GetBuffer()),
+        m_vUserBits(tbuffer.GetUserBits()),
 		m_nDuration(tbuffer.GetDuration()),
 		m_nBufferDepth(tbuffer.GetBufferDepth()),
 		m_dPlaybackLatency(tbuffer.GetPlaybackLatency()),
         m_nChannels(tbuffer.GetNumberOfChannels())
 		{
-			memcpy(m_pBuffer, tbuffer.GetBuffer(), tbuffer.GetBufferSize());
 		}
 
 	timedbuffer& operator=(const timedbuffer& tbuffer)
 	{
 		if(&tbuffer != this)
 		{
-			m_nBufferSize  = tbuffer.GetBufferSize();
 			m_nTimestamp = tbuffer.GetTimestamp();
 			m_tvStamp = tbuffer.GetTimeVal();
 			m_tvPlayback = tbuffer.GetPlaybackTime();
 			m_tvTransmissionStamp = tbuffer.GetTransmissionTime();
 
-			m_pBuffer = new float[tbuffer.GetBufferSize()];
-			memcpy(m_pBuffer, tbuffer.GetBuffer(), tbuffer.GetBufferSize());
+            m_vBuffer = tbuffer.GetBuffer();
+            m_vUserBits = tbuffer.GetUserBits();
+
 			m_nDuration = tbuffer.GetDuration();
 			m_nBufferDepth = tbuffer.GetBufferDepth();
 			m_dPlaybackLatency = tbuffer.GetPlaybackLatency();
@@ -108,22 +112,27 @@ class PAMBASE_IMPEXPORT timedbuffer
 
     ~timedbuffer()
     {
-        delete[] m_pBuffer;
+
     }
 
     void SetBuffer(const float* pBuff)
     {
-        memcpy(m_pBuffer, pBuff, m_nBufferSize*sizeof(float));
+        m_vBuffer = {pBuff, pBuff+m_vBuffer.size()};
     }
 
-    const float* GetBuffer() const
+    const std::vector<float>& GetBuffer() const
     {
-        return m_pBuffer;
+        return m_vBuffer;
     }
 
-    float* GetWritableBuffer()
+    const std::vector<unsigned char>& GetUserBits() const
     {
-        return m_pBuffer;
+        return m_vUserBits;
+    }
+
+    std::vector<float>& GetWritableBuffer()
+    {
+        return m_vBuffer;
     }
 
     const timeval& GetTimeVal() const
@@ -138,12 +147,12 @@ class PAMBASE_IMPEXPORT timedbuffer
 
     unsigned int GetBufferSize() const
     {
-        return m_nBufferSize;
+        return m_vBuffer.size();
     }
 
     void Silence()
     {
-        memset(m_pBuffer, 0, m_nBufferSize*sizeof(float));
+        m_vBuffer = std::vector<float>(m_vBuffer.size(), 0.0);
     }
 
     void SetDuration(unsigned int nDuration)
@@ -210,23 +219,24 @@ class PAMBASE_IMPEXPORT timedbuffer
 
     unsigned int GetBufferSizePerChannel() const
     {
-        return m_nBufferSize/m_nChannels;
+        return m_vBuffer.size()/m_nChannels;
     }
 
     private:
 
-    unsigned int m_nBufferSize;
-    unsigned int m_nTimestamp;
+    unsigned int m_nTimestamp = 0;
 
     timeval m_tvStamp;
     timeval m_tvPlayback;
     timeval m_tvTransmissionStamp;
-    float* m_pBuffer;
 
-    unsigned int m_nDuration;
-    unsigned int m_nBufferDepth;
-    double m_dPlaybackLatency;
-    unsigned int m_nChannels;
+    std::vector<float> m_vBuffer;
+    std::vector<unsigned char> m_vUserBits;
+
+    unsigned int m_nDuration = 0;
+    unsigned int m_nBufferDepth = 0;
+    double m_dPlaybackLatency = 0;
+    unsigned int m_nChannels = 0;
 };
 
 

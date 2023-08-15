@@ -5,7 +5,7 @@
 #include "uirect.h"
 #include "SimpleComp.h"
 #include "pmcontrol.h"
-//#include "wmscroller.h"
+#include <vector>
 
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/
@@ -56,7 +56,7 @@ class LissajouMeter : public pmControl
 
         void SetNumberOfChannels(unsigned int nChannels);
         void SetAxis(unsigned int nX, unsigned int nY);
-        void SetLissajouData(const float* pBuffer, int nBufferSize);
+        void SetLissajouData(const std::vector<float>& vBuffer);
 
         void RotateLissajou(bool bRotate)
         {
@@ -123,8 +123,8 @@ class LissajouMeter : public pmControl
 
         void Rotate(float& x, float& y, const wxPoint& pntCenter);
 
-        float* m_pBuffer;
-        size_t m_nBufferSize;
+        std::vector<float> m_vBuffer;
+        
         wxRect m_rectGrid;
 
         short m_nType;
