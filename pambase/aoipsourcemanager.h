@@ -71,7 +71,7 @@ class PAMBASE_IMPEXPORT AoipSourceManager : public wxEvtHandler
         void DeleteSource(const wxString& sName);
         void DeleteAllSources();
 
-        void StartDiscovery(wxEvtHandler* pHandler, const std::set<std::string>& setServices, std::set<std::string>& setSAP);
+        void StartDiscovery(wxEvtHandler* pHandler, const std::set<std::string>& setServices, std::set<std::string>& setSAP, bool bLivewire=false);
         void StopDiscovery();
 
         enum {SOURCE_MANUAL_A=-1, SOURCE_MANUAL_B = -2, SOURCE_NMOS_A=-3, SOURCE_NMOS_B=-4};

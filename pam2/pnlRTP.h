@@ -39,6 +39,7 @@ class pnlRTP: public wxPanel
 		wmButton* m_pbtnDiscover;
 		wmButton* m_pbtnImport;
 		wmButton* m_pbtnImportBack;
+		wmButton* m_pbtnLivewire;
 		wmButton* m_pbtnManual;
 		wmButton* m_pbtnStartDiscovery;
 		wmButton* m_pbtnUpdate;
@@ -98,6 +99,7 @@ class pnlRTP: public wxPanel
 		static const long ID_M_PLBL6;
 		static const long ID_PANEL2;
 		static const long ID_M_PLBL7;
+		static const long ID_M_PBTN8;
 		static const long ID_M_PBTN9;
 		static const long ID_M_PLBL9;
 		static const long ID_M_PLBL8;

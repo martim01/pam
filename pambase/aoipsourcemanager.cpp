@@ -405,7 +405,7 @@ void AoipSourceManager::OnSap(wxCommandEvent& event)
 
 
 
-void AoipSourceManager::StartDiscovery(wxEvtHandler* pHandler, const std::set<std::string>& setServices, std::set<std::string>& setSAP)
+void AoipSourceManager::StartDiscovery(wxEvtHandler* pHandler, const std::set<std::string>& setServices, std::set<std::string>& setSAP, bool bLivewire)
 {
     m_pDiscoveryHandler = pHandler;
 
@@ -422,12 +422,17 @@ void AoipSourceManager::StartDiscovery(wxEvtHandler* pHandler, const std::set<st
 
     if(setSAP.empty() == false)
     {
-        m_pSapWatcher = std::unique_ptr<pml::SapServer>(new pml::SapServer(std::make_shared<wxSapHandler>(this), true));
+        m_pSapWatcher = std::make_unique<pml::SapServer>(std::make_shared<wxSapHandler>(this), true);
         m_pSapWatcher->Run();
         for(auto service : setSAP)
         {
             m_pSapWatcher->AddReceiver(IpAddress(std::string(service.c_str())));
         }
+    }
+    if(bLivewire)
+    {
+    //    m_pLivewireWatcher = std::make_unique<LivewireWatcher>(this);
+    //    m_pLivewireWatcher->Run();
     }
 }
 
