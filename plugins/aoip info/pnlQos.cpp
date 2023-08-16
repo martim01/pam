@@ -436,10 +436,9 @@ void pnlQos::QoSUpdated(qosData* pData)
     m_pHistogram->AddPeak(wxT("Timestamp Errors"), pData->nTimestampErrors);
 
 	
-	auto dSlip = m_dLatency-m_dInitialLatency;
-	m_pGraph->AddPeak("Slip", dSlip);
-	m_pHistogram->AddPeak("Slip", dSlip);
-
+	m_pGraph->AddPeak("Slip", (m_bMinus ? -m_dMaxSlip : m_dMaxSlip));
+	
+	m_dMaxSlip = 0.0;
 }
 
 void pnlQos::OnbtnRangeClick(wxCommandEvent& event)
@@ -453,6 +452,9 @@ void pnlQos::OnbtnClearClick(wxCommandEvent& event)
     m_pHistogram->ClearGraphs();
 	m_dTotalMaxInterPacket = -1.0;
 	m_dTotalMinInterPacket = std::numeric_limits<double>::max();
+
+	m_dMaxSlip = 0.0;
+	m_nLatencyCounter = 0;
 }
 
 void pnlQos::ShowGraph(const wxString& sGraph)
@@ -503,11 +505,17 @@ void pnlQos::RtpFrame(std::shared_ptr<const rtpFrame> pFrame)
         m_pGraph->AddPeak(wxT("TS-DF"), pFrame->dTSDF);
         m_pHistogram->AddPeak(wxT("TS-DF"), pFrame->dTSDF);
     }
-
-	m_dLatency = std::max(m_dLatency, static_cast<double>(pFrame->timeLatency.tv_sec)*1000000.0 + static_cast<double>(pFrame->timeLatency.tv_usec));
+		
+	m_dLatency = static_cast<double>(pFrame->timeLatency.tv_sec)*1000000.0 + static_cast<double>(pFrame->timeLatency.tv_usec);
+	
 	if(m_nLatencyCounter < 3)
 	{
 		++m_nLatencyCounter;
 		m_dInitialLatency = m_dLatency;
-	}	
+	}
+	auto dSlip = m_dLatency-m_dInitialLatency;
+	m_bMinus = (dSlip < 0.0);
+	m_dMaxSlip = std::max(m_dMaxSlip, abs(dSlip));
+
+	
 }

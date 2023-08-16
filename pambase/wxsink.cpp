@@ -106,6 +106,8 @@ void wxSink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes, c
             int nFramesPerSec = (m_pSubsession->rtpTimestampFrequency()*m_pSubsession->GetChannelGrouping().size()*pFrame->nBytesPerSample)/pFrame->nFrameSize;
             timersub(&pFrame->timePresentation, &pFrame->timeTransmission, &pFrame->timeLatency);
            
+            
+
             double dTSDF = (static_cast<double>(pFrame->timeLatency.tv_sec)*1000000.0)+pFrame->timeLatency.tv_usec;
 
             if(m_dDelay0 == std::numeric_limits<double>::lowest() || m_nTSDFCount == nFramesPerSec)
