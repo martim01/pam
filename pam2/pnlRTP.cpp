@@ -47,6 +47,7 @@ const long pnlRTP::ID_M_PKBD1 = wxNewId();
 const long pnlRTP::ID_M_PLBL6 = wxNewId();
 const long pnlRTP::ID_PANEL2 = wxNewId();
 const long pnlRTP::ID_M_PLBL7 = wxNewId();
+const long pnlRTP::ID_M_PBTN8 = wxNewId();
 const long pnlRTP::ID_M_PBTN9 = wxNewId();
 const long pnlRTP::ID_M_PLBL9 = wxNewId();
 const long pnlRTP::ID_M_PLBL8 = wxNewId();
@@ -167,7 +168,11 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
     m_plblDiscovering->GetUiRect().SetGradient(0);
     m_plblDiscovering->SetForegroundColour(wxColour(255,255,255));
     m_plblDiscovering->SetBackgroundColour(wxColour(0,0,0));
-    m_pbtnStartDiscovery = new wmButton(pnlDiscovery, ID_M_PBTN9, _("Discovery"), wxPoint(5,390), wxSize(200,45), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN9"));
+    m_pbtnLivewire = new wmButton(pnlDiscovery, ID_M_PBTN8, _("Livewire+"), wxPoint(5,390), wxSize(130,45), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN8"));
+    m_pbtnLivewire->SetForegroundColour(wxColour(255,255,255));
+    m_pbtnLivewire->SetBackgroundColour(wxColour(0,0,160));
+    m_pbtnLivewire->SetToggle(true, wxT("N"), wxT("Y"), 60);
+    m_pbtnStartDiscovery = new wmButton(pnlDiscovery, ID_M_PBTN9, _("Discovery"), wxPoint(140,390), wxSize(200,45), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN9"));
     m_pbtnStartDiscovery->SetForegroundColour(wxColour(255,255,255));
     m_pbtnStartDiscovery->SetBackgroundColour(wxColour(0,0,160));
     m_pbtnStartDiscovery->SetToggle(true, wxT("Stop"), wxT("Start"), 50);
@@ -287,6 +292,8 @@ pnlRTP::pnlRTP(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
     {
         m_plstSAP->SelectButton(nIndex, false);
     }
+
+    m_pbtnLivewire->ConnectToSetting("Discovery", "Livewire", false);
 
 
 	ListSources();
@@ -503,7 +510,7 @@ void pnlRTP::OnbtnStartDiscoveryClick(wxCommandEvent& event)
         }
 
 
-        AoipSourceManager::Get().StartDiscovery(this, setServices, setSAP);
+        AoipSourceManager::Get().StartDiscovery(this, setServices, setSAP, Settings::Get().Read("Discovery", "Livewire", false));
         m_pList->Clear();
 
 

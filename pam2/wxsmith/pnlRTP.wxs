@@ -200,13 +200,26 @@
 						<fg>#FFFFFF</fg>
 						<bg>#000000</bg>
 					</object>
+					<object class="wmButton" name="ID_M_PBTN8" variable="m_pbtnLivewire" member="yes">
+						<label>Livewire+</label>
+						<toggle_look>1</toggle_look>
+						<toggle_left>N</toggle_left>
+						<toggle_right>Y</toggle_right>
+						<toggle_percent>60</toggle_percent>
+						<pos>5,390</pos>
+						<size>130,45</size>
+						<fg>#FFFFFF</fg>
+						<bg>#0000A0</bg>
+						<style>wmButton::STYLE_SELECT</style>
+						<handler function="OnbtnStartDiscoveryClick" entry="EVT_BUTTON" />
+					</object>
 					<object class="wmButton" name="ID_M_PBTN9" variable="m_pbtnStartDiscovery" member="yes">
 						<label>Discovery</label>
 						<toggle_look>1</toggle_look>
 						<toggle_left>Stop</toggle_left>
 						<toggle_right>Start</toggle_right>
 						<toggle_percent>50</toggle_percent>
-						<pos>5,390</pos>
+						<pos>140,390</pos>
 						<size>200,45</size>
 						<fg>#FFFFFF</fg>
 						<bg>#0000A0</bg>
