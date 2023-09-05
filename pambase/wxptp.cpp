@@ -95,6 +95,7 @@ void wxPtpEventHandler::FollowUpSent(std::shared_ptr<PtpV2Clock> pClock)
 
 void wxPtpEventHandler::DelayRequestSent(std::shared_ptr<PtpV2Clock> pClock)
 {
+    pmlLog() << "DelayRequestSent";
     NotifyHandlers(wxEVT_CLOCK_MSG_DELAY_REQUEST, wxString::FromUTF8(pClock->GetId().c_str()));
 }
 

@@ -39,7 +39,7 @@ message(${CMAKE_CURRENT_SOURCE_DIR})
 #pambase settubgs
 
 set(SOURCES  "advelement.cpp"  "AES67ServerMediaSubsession.cpp" "aes67source.cpp" "anglemeter.cpp" "aoipsourcemanager.cpp" "audio.cpp" "audioevent.cpp" "dlgmask.cpp"
- "generator.cpp" "generatorpluginbuilder.cpp" "generatorpluginfactory.cpp" "histogram.cpp" "historygraph.cpp" "inimanager.cpp" "inisection.cpp" "iomanager.cpp" "levelcalculator.cpp" "levelgraph.cpp"
+ "generator.cpp" "generatorpluginbuilder.cpp" "generatorpluginfactory.cpp" "histogram.cpp" "historygraph.cpp" "inimanager.cpp" "inisection.cpp" "iomanager.cpp" "levelcalculator.cpp" "levelgraph.cpp" "wxlivewirehandler.cpp"
  "levelmeter.cpp" "liveaudiosource.cpp" "monitorevent.cpp" "monitorpluginbuilder.cpp" "monitorpluginfactory.cpp" "networkcontrol.cpp" "pamRTSPServer.cpp" "niir.cpp" "ondemandaes67mediasubsession.cpp" "ondemandpamsubsession.cpp"
  "ondemandstreamer.cpp" "ourRTSPClient.cpp" "ourSIPClient.cpp" "PamTaskScheduler.cpp" "PamUsageEnvironment.cpp" "pcstats.cpp" "pmcontrol.cpp" "pmpanel.cpp" "ppmtypes.cpp" "qos.cpp" "r128calculator.cpp"
  "r128thread.cpp" "rawvideosource.cpp" "remoteapi.cpp" "RTCPTransmissionEvent.cpp" "rtpframeevent.cpp" "rtpserverthread.cpp" "rtpthread.cpp" "rtsputil.cpp" "servicebrowser.cpp" "session.cpp" "settingevent.cpp" "settings.cpp" "smpte2110mediasession.cpp"
@@ -52,6 +52,7 @@ add_library(pambase SHARED ${SOURCES})
 target_include_directories(pambase PUBLIC ${DIR_LOG}/include)
 target_include_directories(pambase PUBLIC ${DIR_DNSSD}/include)
 target_include_directories(pambase PUBLIC ${DIR_SAPSERVER}/include)
+target_include_directories(pambase PUBLIC ${DIR_LIVEWIRE}/include)
 target_include_directories(pambase PUBLIC ${DIR_ASIO}/asio/include)
 target_include_directories(pambase PUBLIC ${DIR_PTPMONKEY}/include)
 target_include_directories(pambase PUBLIC ${DIR_RESTGOOSE}/include)
@@ -108,6 +109,7 @@ target_link_libraries(pambase avahi-client)
 target_link_libraries(pambase optimized sapserver debug sapserverd)
 target_link_libraries(pambase optimized ptpmonkey debug ptpmonkeyd)
 target_link_libraries(pambase optimized restgoose debug restgoosed)
+target_link_libraries(pambase optimized livewireserver debug livewireserverd)
 
 set_target_properties(pambase PROPERTIES DEBUG_POSTFIX "d")
 set_target_properties(pambase PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../lib/)

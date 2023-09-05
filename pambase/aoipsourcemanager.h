@@ -5,6 +5,10 @@
 #include <wx/xml/xml.h>
 #include "dlldefine.h"
 #include <wx/event.h>
+#include "dnssd.h"
+#include "sapserver.h"
+#include "livewireserver.h"
+
 
 #include <memory>
 
@@ -33,6 +37,7 @@ struct PAMBASE_IMPEXPORT AoIPSource
 
 
 class wxZCPoster;
+class LivewireEvent;
 
 namespace pml
 {
@@ -40,6 +45,11 @@ namespace pml
     {
         class Browser;
     };
+
+    namespace livewire
+    {
+        class Server;
+    }
 
     class SapServer;
 };
@@ -82,6 +92,7 @@ class PAMBASE_IMPEXPORT AoipSourceManager : public wxEvtHandler
         void OnDiscovery(wxCommandEvent& event);
         void OnDiscoveryFinished(wxCommandEvent& event);
         void OnSap(wxCommandEvent& event);
+        void OnLivewire(LivewireEvent& event);
 
         int GenerateIndex();
 
@@ -91,11 +102,12 @@ class PAMBASE_IMPEXPORT AoipSourceManager : public wxEvtHandler
 
 
         //discovery
-        wxEvtHandler* m_pDiscoveryHandler;
-        std::unique_ptr<pml::dnssd::Browser> m_pBrowser;
-        std::shared_ptr<wxZCPoster> m_pPoster;
+        wxEvtHandler* m_pDiscoveryHandler = nullptr;
+        std::unique_ptr<pml::dnssd::Browser> m_pBrowser = nullptr;
+        std::shared_ptr<wxZCPoster> m_pPoster = nullptr;
 
-        std::unique_ptr<pml::SapServer> m_pSapWatcher;
+        std::unique_ptr<pml::SapServer> m_pSapWatcher = nullptr;
+        std::shared_ptr<pml::livewire::Server> m_pLivewireWatcher = nullptr;
 
         enum {LOCAL=0, ORGANISATION, GLOBAL};
 

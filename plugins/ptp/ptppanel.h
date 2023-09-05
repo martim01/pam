@@ -372,6 +372,10 @@ class ptpPanel: public pmPanel
         static const wxColour CLR_CLOCK;
         static const wxColour CLR_CLOCK_SELECTED;
 
+		static const wxBitmap BMP_SLAVE;
+		static const wxBitmap BMP_SYNC;
+		static const wxBitmap BMP_GRAND;
+
 		DECLARE_EVENT_TABLE()
 };
 

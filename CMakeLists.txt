@@ -13,6 +13,7 @@ SET(DIR_BASE $ENV{HOME} CACHE STRING "base location for external libraries' sour
 SET(DIR_NMOS ${DIR_BASE}/nmos CACHE STRING "location of nmos")
 SET(DIR_PTPMONKEY ${DIR_BASE}/ptpmonkey CACHE STRING "location of ptpmonkey")
 SET(DIR_SAPSERVER ${DIR_BASE}/sapserver CACHE STRING "location of sapserver")
+SET(DIR_LIVEWIRE ${DIR_BASE}/livewirediscover CACHE STRING "location of livewire watcher")
 SET(DIR_LOG ${DIR_BASE}/log CACHE STRING "location of pml log")
 SET(DIR_DNSSD ${DIR_BASE}/dnssd CACHE STRING "location of pml dnssd")
 SET(DIR_RESTGOOSE ${DIR_BASE}/Restgoose CACHE STRING "location of pml restgoose")
@@ -73,6 +74,22 @@ else()
     execute_process(COMMAND git -C ${DIR_SAPSERVER} pull --no-rebase)
 endif()
 
+#Get livewire
+message(STATUS "Find pml::livewire")
+find_path(TEMP_DIR5 NAMES "CMakeLists.txt" PATHS ${DIR_LIVEWIRE} NO_CACHE)
+if((NOT TEMP_DIR5) OR (NOT EXISTS ${TEMP_DIR5}))
+    message(STATUS "livewire not found - clone from GitHub")
+	execute_process(COMMAND git clone https://github.com/martim01/livewirediscover/ ${DIR_LIVEWIRE})
+
+    find_path(TEMP_DIR6 NAMES "CMakeLists.txt" PATHS ${DIR_LIVEWIRE} NO_CACHE)
+    if((NOT TEMP_DIR6) OR (NOT EXISTS ${TEMP_DIR6}))
+        message(FATAL_ERROR "Failed to clone pml::livewire")
+    endif()
+else()
+    message(STATUS "livewire found - update to latest version")
+    execute_process(COMMAND git -C ${DIR_LIVEWIRE} pull --no-rebase)
+endif()
+
 
 
 #Get dnssd
@@ -124,7 +141,7 @@ else()
         unset(NMOS_TEMP_DIR2)
     else()
         message(STATUS "restgoose found - update to latest version")
-        execute_process(COMMAND git -C ${DIR_RESTGOOSE} checkout v3_7.10)
+        execute_process(COMMAND git -C ${DIR_RESTGOOSE} checkout main)
         #execute_process(COMMAND git -C ${DIR_RESTGOOSE} pull)
         execute_process(COMMAND git -C ${DIR_RESTGOOSE} pull --no-rebase)
     endif()
@@ -140,6 +157,8 @@ message(STATUS "Configure pml::ptpmonkey")
 add_subdirectory(${DIR_PTPMONKEY} ${CMAKE_SOURCE_DIR}/build/ptpmonkey)
 message(STATUS "Configure pml::dnssd")
 add_subdirectory(${DIR_DNSSD} ${CMAKE_SOURCE_DIR}/build/dnssd)
+message(STATUS "Configure pml::livewire")
+add_subdirectory(${DIR_LIVEWIRE} ${CMAKE_SOURCE_DIR}/build/livewire)
 
 if(${NMOS})
     message(STATUS "Configure pml::nmos")

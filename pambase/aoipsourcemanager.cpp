@@ -3,21 +3,17 @@
 #include "log.h"
 #include <wx/log.h>
 #include <wx/tokenzr.h>
-#include "dnssd.h"
+
 #include "wxzxposter.h"
 #include "mdns.h"
-#include "sapserver.h"
+
 #include "wxsaphandler.h"
+#include "wxlivewirehandler.h"
 #include <iostream>
-
-
 wxDEFINE_EVENT(wxEVT_ASM_DISCOVERY, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_ASM_DISCOVERY_FINISHED, wxCommandEvent);
 
-AoipSourceManager::AoipSourceManager() :
-    m_pBrowser(nullptr),
-    m_pPoster(nullptr),
-    m_pSapWatcher(nullptr)
+AoipSourceManager::AoipSourceManager()
 {
 
     LoadSources();
@@ -30,6 +26,7 @@ AoipSourceManager::AoipSourceManager() :
 	Connect(wxID_ANY, wxEVT_ZC_RESOLVED, (wxObjectEventFunction)&AoipSourceManager::OnDiscovery);
 	Connect(wxID_ANY, wxEVT_ZC_FINISHED, (wxObjectEventFunction)&AoipSourceManager::OnDiscoveryFinished);
 	Connect(wxID_ANY, wxEVT_SAP, (wxObjectEventFunction)&AoipSourceManager::OnSap);
+    Connect(wxID_ANY, wxEVT_LIVEWIRE, (wxObjectEventFunction)&AoipSourceManager::OnLivewire);
 
 }
 
@@ -404,6 +401,12 @@ void AoipSourceManager::OnSap(wxCommandEvent& event)
 }
 
 
+void AoipSourceManager::OnLivewire(LivewireEvent& event)
+{
+    //@todo add source
+}
+
+
 
 void AoipSourceManager::StartDiscovery(wxEvtHandler* pHandler, const std::set<std::string>& setServices, std::set<std::string>& setSAP, bool bLivewire)
 {
@@ -431,8 +434,8 @@ void AoipSourceManager::StartDiscovery(wxEvtHandler* pHandler, const std::set<st
     }
     if(bLivewire)
     {
-    //    m_pLivewireWatcher = std::make_unique<LivewireWatcher>(this);
-    //    m_pLivewireWatcher->Run();
+        m_pLivewireWatcher = std::make_shared<pml::livewire::Server>(std::make_shared<wxLivewireHandler>(this), true);
+        m_pLivewireWatcher->Run();
     }
 }
 
@@ -446,6 +449,12 @@ void AoipSourceManager::StopDiscovery()
         m_pSapWatcher->Stop();
     }
     m_pSapWatcher = nullptr;
+
+    if(m_pLivewireWatcher)
+    {
+        m_pLivewireWatcher->Stop();
+    }
+    m_pLivewireWatcher = nullptr;
 }
 
 
