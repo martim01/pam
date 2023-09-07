@@ -101,7 +101,7 @@ void* RtpThread::Entry()
 
 
     pmlLog() << "RTP Client\tStream closed";
-    
+
     wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_RTP_SESSION_CLOSED);
     pEvent->SetInt(m_source.nIndex);
     pEvent->SetString(m_source.sDetails);
@@ -142,7 +142,7 @@ void RtpThread::StreamFromSDP()
     MediaSubsession* pSubsessionCount = nullptr;
     while ((pSubsessionCount = iterCount.next()) != nullptr)
     {
-        if (strcmp(pSubsessionCount->codecName(), "L16") == 0 || strcmp(pSubsessionCount->codecName(), "L24") == 0 
+        if (strcmp(pSubsessionCount->codecName(), "L16") == 0 || strcmp(pSubsessionCount->codecName(), "L24") == 0
         || strcmp(pSubsessionCount->codecName(), "AM824") == 0) // 16 or 24-bit linear audio (RFC 3190) or 2110-31
         {
             if(pSubsessionCount->numChannels() > 0)
@@ -164,7 +164,7 @@ void RtpThread::StreamFromSDP()
         return;
     }
 
-    
+
     MediaSubsessionIterator iter(*m_pSession);
     Smpte2110MediaSubsession* pSubsession = nullptr;
     while ((pSubsession = dynamic_cast<Smpte2110MediaSubsession*>(iter.next())) != nullptr)
@@ -184,7 +184,7 @@ void RtpThread::StreamFromSDP()
     PassSessionDetails(m_pSession);
     beginQOSMeasurement(*m_penv, m_pSession, this);
 
-    
+
 
     while(m_eventLoopWatchVariable == 0)
     {
@@ -205,7 +205,7 @@ void RtpThread::CreateSink(Smpte2110MediaSubsession* pSubsession)
         pmlLog(pml::LOG_DEBUG) << "client ports " << pSubsession->clientPortNum() << "-" << pSubsession->clientPortNum()+1;
     }
     pmlLog(pml::LOG_DEBUG) << "RTP Client\tSessionId: " << pSubsession->GetEndpoint();
-    
+
     if (pSubsession->sink == nullptr)
     {
         pmlLog(pml::LOG_ERROR) << "RTP Client\tFailed to create a data sink for the subsession: " << m_penv->getResultMsg();
@@ -300,13 +300,13 @@ void RtpThread::AddFrame(std::shared_ptr<const rtpFrame> pFrame)
     ++itReceived->second;
 
     //send out an rtpframe event 20 times a second... every 50ms
-    
+
     if(m_pHandler && itReceived->second%(14400 / pFrame->nFrameSize) == 0)
     {
        auto pEvent = new RtpFrameEvent(pFrame);
        wxQueueEvent(m_pHandler, pEvent);
     }
-    
+
     HandleFrameAdded();
 }
 
@@ -341,7 +341,7 @@ void RtpThread::HandleFrameAdded()
             m_mRedundantBuffers.begin()->second.pop_front();
         }
     }
-    else if(m_bFrameExtracted == false) 
+    else if(m_bFrameExtracted == false)
     {
         WorkoutFirstFrame();
     }
@@ -362,7 +362,7 @@ void RtpThread::WorkoutNextFrame()
             {   //delete frame if transmitted earlier than the last one we extracted
                 auto itDelete = itFrame;
                 ++itFrame;
-                pairBuffer.second.erase(itFrame);
+                pairBuffer.second.erase(itDelete);
             }
             else if((*itFrame)->nTimestamp == m_nTimestamp+1)   //this is the timestamp we want
             {
@@ -485,7 +485,7 @@ void RtpThread::QosUpdated(qosData* pData)
         pData->nBufferSize = itBuffer->second.size();
     }
     pData->nTotalFrames = m_nTotalFramesPlayed;
-    
+
     pData->nTimestampErrors = m_nTimestampErrors;
     pData->nTimestampErrorsTotal = m_nTimestampErrorsTotal;
     if(m_pHandler)
@@ -505,7 +505,7 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
     pmlLog(pml::LOG_DEBUG) << "RtpThread::PassSessionDetails";
 
     //make the buffer queue the same size as the number of streams
-    
+
     m_Session = session();
 
     m_Session.sName = wxString::FromUTF8(pSession->sessionName());
