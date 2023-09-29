@@ -212,7 +212,7 @@ pml::restgoose::response RemoteApi::DeleteWav(const wxFileName& fnWav)
     }
     else
     {
-        return pml::restgoose::response(405, "Unable to delete wav file");
+        return pml::restgoose::response(405, std::string("Unable to delete wav file"));
     }
 }
 
@@ -440,12 +440,12 @@ pml::restgoose::response RemoteApi::DoPatchSettings(const std::vector<pml::restg
         }
         else
         {
-            return pml::restgoose::response(400, "Data received is not a valid JSON array");
+            return pml::restgoose::response(400, std::string("Data received is not a valid JSON array"));
         }
     }
     else
     {
-        return pml::restgoose::response(400, "Data received could not be converted to JSON");
+        return pml::restgoose::response(400, std::string("Data received could not be converted to JSON"));
     }
 }
 
@@ -612,7 +612,7 @@ pml::restgoose::response RemoteApi::CheckJsonSettingPatchConstraint(const Json::
     }
     else
     {
-        return pml::restgoose::response(400, "Enum is empty");
+        return pml::restgoose::response(400, std::string("Enum is empty"));
     }
 }
 pml::restgoose::response RemoteApi::CheckJsonSettingPatchConstraint(const Json::Value& jsValue, std::function<std::map<int, wxString>()> func)
@@ -623,7 +623,7 @@ pml::restgoose::response RemoteApi::CheckJsonSettingPatchConstraint(const Json::
     }
     else
     {
-        return pml::restgoose::response(400, "Enum is empty");
+        return pml::restgoose::response(400, std::string("Enum is empty"));
     }
 }
 
@@ -912,12 +912,12 @@ pml::restgoose::response RemoteApi::PatchAoipSources(const query& theQuery, cons
         }
         else
         {
-            return pml::restgoose::response(400, "Data received is not a valid JSON array");
+            return pml::restgoose::response(400, std::string("Data received is not a valid JSON array"));
         }
     }
     else
     {
-        return pml::restgoose::response(400, "Data received could not be converted to JSON");
+        return pml::restgoose::response(400, std::string("Data received could not be converted to JSON"));
     }
 }
 
@@ -1017,7 +1017,7 @@ pml::restgoose::response RemoteApi::DoPatchAoipUpdate(const Json::Value& jsPatch
     auto source = AoipSourceManager::Get().FindSource(jsPatch["index"].asInt());
     if(source.nIndex == 0)
     {
-        return pml::restgoose::response(404, "Source not found");
+        return pml::restgoose::response(404, std::string("Source not found"));
     }
     if(jsPatch.isMember("name"))
     {
@@ -1052,7 +1052,7 @@ pml::restgoose::response RemoteApi::DoPatchAoipDelete(const Json::Value& jsPatch
     auto source = AoipSourceManager::Get().FindSource(jsPatch["index"].asInt());
     if(source.nIndex == 0)
     {
-        return pml::restgoose::response(404, "Source not found");
+        return pml::restgoose::response(404, std::string("Source not found"));
     }
     AoipSourceManager::Get().DeleteSource(jsPatch["index"].asInt());
     return pml::restgoose::response(200, jsPatch["index"].asString()+" deleted");

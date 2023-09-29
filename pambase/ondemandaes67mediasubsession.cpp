@@ -305,5 +305,8 @@ void OnDemandAES67MediaSubsession::DoQoS()
 
 void OnDemandAES67MediaSubsession::SetRouting(const std::vector<char>& vRouting)
 {
-    m_pSource->SetRouting(vRouting);
+    if(m_pSource)
+    {
+        m_pSource->SetRouting(vRouting);
+    }
 }

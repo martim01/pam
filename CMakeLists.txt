@@ -158,7 +158,7 @@ add_subdirectory(${DIR_PTPMONKEY} ${CMAKE_SOURCE_DIR}/build/ptpmonkey)
 message(STATUS "Configure pml::dnssd")
 add_subdirectory(${DIR_DNSSD} ${CMAKE_SOURCE_DIR}/build/dnssd)
 message(STATUS "Configure pml::livewire")
-add_subdirectory(${DIR_LIVEWIRE} ${CMAKE_SOURCE_DIR}/build/livewire)
+add_subdirectory(${DIR_LIVEWIRE} ${CMAKE_SOURCE_DIR}/build/livewirediscover)
 
 if(${NMOS})
     message(STATUS "Configure pml::nmos")

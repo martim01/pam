@@ -394,9 +394,13 @@ void RtpThread::ConvertFrameToTimedBuffer(std::shared_ptr<const rtpFrame> pFrame
 
     double dOffset = 0.0;
 
+    //pml::LogStream ls;
+
     for(int i = 0; i < pFrame->nFrameSize; i+=pFrame->nBytesPerSample)
     {
         auto sample = ConvertFrameBufferToSample(&(pFrame->pBuffer[i]), pFrame->nBytesPerSample);
+
+         //ls << std::dec << sample.first << std::hex << "[" << (int)pFrame->pBuffer[i] << (int)pFrame->pBuffer[i+1] << (int)pFrame->pBuffer[i+2]  << "],";
 
         if(m_nSampleBufferSize == 0)
         {
@@ -442,6 +446,8 @@ void RtpThread::ConvertFrameToTimedBuffer(std::shared_ptr<const rtpFrame> pFrame
             m_nTimestampErrorsTotal++;
         }
     }
+
+    //m_bFirstDebug = false;
 
 
     //keep track of which streams frames come from
