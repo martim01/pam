@@ -50,8 +50,10 @@ namespace pml
     {
         class Server;
     }
-
-    class SapServer;
+    namespace sap
+    {
+        class Server;
+    }
 };
 
 
@@ -106,7 +108,7 @@ class PAMBASE_IMPEXPORT AoipSourceManager : public wxEvtHandler
         std::unique_ptr<pml::dnssd::Browser> m_pBrowser = nullptr;
         std::shared_ptr<wxZCPoster> m_pPoster = nullptr;
 
-        std::unique_ptr<pml::SapServer> m_pSapWatcher = nullptr;
+        std::unique_ptr<pml::sap::Server> m_pSapWatcher = nullptr;
         std::shared_ptr<pml::livewire::Server> m_pLivewireWatcher = nullptr;
 
         enum {LOCAL=0, ORGANISATION, GLOBAL};

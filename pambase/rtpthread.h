@@ -130,6 +130,8 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
         bool m_bFrameExtracted = false;
         timeval m_tvLastExtracted;
         size_t m_nRedundantBufferQueue = 10;
+
+        bool m_bFirstDebug = true;
 };
 
 

@@ -1359,7 +1359,7 @@ void IOManager::DoSAP(bool bRun)
     {
         if(m_pSapServer == nullptr)
         {
-            m_pSapServer = std::unique_ptr<pml::SapServer>(new pml::SapServer(nullptr));
+            m_pSapServer = std::make_unique<pml::sap::Server>(nullptr);
             m_pSapServer->Run();
         }
         else

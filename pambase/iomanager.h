@@ -21,7 +21,10 @@ class Generator;
 
 namespace pml
 {
-    class SapServer;
+    namespace sap
+    {
+        class Server;
+    }
 
     namespace dnssd
     {
@@ -163,7 +166,7 @@ class PAMBASE_IMPEXPORT IOManager : public wxEvtHandler
         bool m_bQueueToStream;
         bool m_bStreamActive;
 
-        std::unique_ptr<pml::SapServer> m_pSapServer;
+        std::unique_ptr<pml::sap::Server> m_pSapServer;
         std::unique_ptr<pml::dnssd::Publisher> m_pPublisher;
 
         std::vector<double> m_vRatio;

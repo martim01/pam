@@ -9,7 +9,7 @@ wxSapHandler::wxSapHandler(wxEvtHandler* pHandler) :
 
     }
 
-void wxSapHandler::SapMessage(const pml::sap& aMessage)
+void wxSapHandler::SapMessage(const pml::sap::sap& aMessage)
 {
     if(m_pHandler)
     {
