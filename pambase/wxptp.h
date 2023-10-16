@@ -14,7 +14,7 @@ class PAMBASE_IMPEXPORT wxPtp : public wxEvtHandler
     public:
         static wxPtp& Get();
 
-        void Run(const wxString& sInterface, unsigned char nDomain, ptpmonkey::Mode mode);
+        void Run(const wxString& sInterface, unsigned char nDomain, pml::ptpmonkey::Mode mode);
         void Stop();
         void ChangeDomain(unsigned char nDomain);
 
@@ -25,10 +25,10 @@ class PAMBASE_IMPEXPORT wxPtp : public wxEvtHandler
         timeval GetLastPtpOffset();
         bool IsSyncedToMaster() const;
         void ResyncToMaster();
-        std::shared_ptr<const ptpmonkey::PtpV2Clock> GetPtpClock(const wxString& sClockId);
-        std::shared_ptr<const ptpmonkey::PtpV2Clock> GetSyncMasterClock();
-        std::shared_ptr<const ptpmonkey::PtpV2Clock> GetLocalClock();
-        const std::map<std::string, std::shared_ptr<ptpmonkey::PtpV2Clock> >& GetClocks() const;
+        std::shared_ptr<const pml::ptpmonkey::PtpV2Clock> GetPtpClock(const wxString& sClockId);
+        std::shared_ptr<const pml::ptpmonkey::PtpV2Clock> GetSyncMasterClock();
+        std::shared_ptr<const pml::ptpmonkey::PtpV2Clock> GetLocalClock();
+        const std::map<std::string, std::shared_ptr<pml::ptpmonkey::PtpV2Clock> >& GetClocks() const;
         void ResetLocalClockStats();
         void AddHandler(wxEvtHandler* pHandler);
         void RemoveHandler(wxEvtHandler* pHandler);
@@ -37,8 +37,8 @@ class PAMBASE_IMPEXPORT wxPtp : public wxEvtHandler
         wxPtp();
         IpInterface m_interface;
         std::shared_ptr<wxPtpEventHandler> m_pNotifier;
-        std::unique_ptr<ptpmonkey::PtpMonkey> m_pMonkey;
-        std::map<std::string, std::shared_ptr<ptpmonkey::PtpV2Clock> > m_mEmpty;
+        std::unique_ptr<pml::ptpmonkey::PtpMonkey> m_pMonkey;
+        std::map<std::string, std::shared_ptr<pml::ptpmonkey::PtpV2Clock> > m_mEmpty;
 
 };
 

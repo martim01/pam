@@ -25,7 +25,7 @@ wxDEFINE_EVENT(wxEVT_CLOCK_MSG_DELAY_REQUEST,wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CLOCK_MSG_DELAY_RESPONSE,wxCommandEvent);
 
 
-using namespace ptpmonkey;
+using namespace pml::ptpmonkey;
 
 void wxPtpEventHandler::AddHandler(wxEvtHandler* pHandler)
 {
@@ -118,13 +118,13 @@ wxPtp::wxPtp() : m_pNotifier(std::make_shared<wxPtpEventHandler>())
 {
 }
 
-void wxPtp::Run(const wxString& sInterface, unsigned char nDomain, ptpmonkey::Mode mode)
+void wxPtp::Run(const wxString& sInterface, unsigned char nDomain, pml::ptpmonkey::Mode mode)
 {
     if(m_pMonkey == nullptr || sInterface.ToStdString() != m_interface.Get() || mode != m_pMonkey->GetMode())
     {
         m_interface = IpInterface(sInterface.ToStdString());
 
-        m_pMonkey = std::make_unique<PtpMonkey>(m_interface, nDomain, 2, mode, ptpmonkey::Rate::EVERY_1_SEC);
+        m_pMonkey = std::make_unique<PtpMonkey>(m_interface, nDomain, 2, mode, pml::ptpmonkey::Rate::EVERY_1_SEC);
         m_pMonkey->AddEventHandler(m_pNotifier);
         m_pMonkey->Run();
     }
