@@ -1388,10 +1388,11 @@ void IOManager::DoDNSSD(bool bRun)
     {
         if(m_pPublisher == nullptr)
         {
-            std::string sHostName(wxGetHostName().c_str());
-            m_pPublisher = std::make_unique<pml::dnssd::Publisher>(GetDnsSdService().ToStdString(), "_rtsp._tcp", Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555), sHostName);
-            m_pPublisher->AddTxt("ver", "1.0", false);
+            m_pPublisher = std::make_unique<pml::dnssd::Publisher>();
             m_pPublisher->Start();
+
+            m_pPublisher->AddService(GetDnsSdService().ToStdString(), "_rtsp._tcp", Settings::Get().Read(wxT("Server"), wxT("RTSP_Port"), 5555), {{"ver", "1.0"}});
+            
 
             pmlLog(pml::LOG_INFO) << "IOManager\tStart mDNS/SD advertising";
         }

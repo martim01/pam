@@ -331,4 +331,5 @@ std::string AES67ServerMediaSubsession::GetPacketTime()
         case LiveAudioSource::enumPacketTime::US333:
             return "0.333";
     }
+    return "";
 }
