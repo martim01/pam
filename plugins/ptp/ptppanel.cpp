@@ -146,7 +146,7 @@ const wxBitmap ptpPanel::BMP_SLAVE 	 = wxBitmap(slave_xpm);
 const wxBitmap ptpPanel::BMP_SYNC	 = wxBitmap(syncmaster_xpm);
 const wxBitmap ptpPanel::BMP_GRAND   = wxBitmap(grandmaster_xpm);
 
-using namespace ptpmonkey;
+using namespace pml::ptpmonkey;
 
 
 wxIMPLEMENT_DYNAMIC_CLASS(ptpPanel, pmPanel)
@@ -675,7 +675,7 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_pLbl4->SetBackgroundColour(wxColour(91,149,57));
 	wxFont m_pLbl4Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pLbl4->SetFont(m_pLbl4Font);
-	m_plstGraphData = new wmList(m_ppnlGraphs, ID_M_PLST5, wxPoint(70,443), wxSize(120,34), wmList::STYLE_SELECT, 0, wxSize(-1,30), 2, wxSize(-1,-1));
+	m_plstGraphData = new wmList(m_ppnlGraphs, ID_M_PLST5, wxPoint(70,443), wxSize(180,34), wmList::STYLE_SELECT, 0, wxSize(-1,30), 3, wxSize(-1,-1));
 	m_plstGraphData->SetBackgroundColour(wxColour(0,0,0));
 	m_pbtnClearStats = new wmButton(m_ppnlGraphs, ID_M_PBTN8, _("Clear All"), wxPoint(498,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN8"));
 	m_pbtnGraphClear = new wmButton(m_ppnlGraphs, ID_M_PBTN3, _("Clear All"), wxPoint(570,445), wxSize(70,30), 0, wxDefaultValidator, _T("ID_M_PBTN3"));
@@ -706,7 +706,7 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_pLbl3->SetBackgroundColour(wxColour(91,149,57));
 	wxFont m_pLbl3Font(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	m_pLbl3->SetFont(m_pLbl3Font);
-	m_plstHistogramData = new wmList(m_ppnlHistograms, ID_M_PLST4, wxPoint(70,443), wxSize(120,34), wmList::STYLE_SELECT, 0, wxSize(-1,30), 2, wxSize(-1,-1));
+	m_plstHistogramData = new wmList(m_ppnlHistograms, ID_M_PLST4, wxPoint(70,443), wxSize(180,34), wmList::STYLE_SELECT, 0, wxSize(-1,30), 3, wxSize(-1,-1));
 	m_plstHistogramData->SetBackgroundColour(wxColour(0,0,0));
 	m_pLbl1 = new wmLabel(m_ppnlHistograms, ID_M_PLBL65, _("Granularity"), wxPoint(195,445), wxSize(60,30), 0, _T("ID_M_PLBL65"));
 	m_pLbl1->SetBorderState(uiRect::BORDER_NONE);
@@ -785,7 +785,9 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
     m_plstHistogramData->AddButton("Offset");
     m_plstHistogramData->AddButton("Delay");
     m_plstGraphData->AddButton("Offset");
-    m_plstGraphData->AddButton("Delay");
+    m_plstGraphData->AddButton("Mean");
+	m_plstGraphData->AddButton("Delay");
+
 
     m_plstHistogramData->ConnectToSetting(m_pBuilder->GetSection(), "Data", "Offset");
     m_plstGraphData->ConnectToSetting(m_pBuilder->GetSection(), "Data", "Offset");
@@ -817,6 +819,8 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_pHistoryGraph->AddGraph("OffsetVarMin", wxColour(100,100,200), 2e6, true, true);
 	m_pHistoryGraph->AddGraph("OffsetVarMax", wxColour(100,100,200), 2e6, true, true);
 
+	m_pHistoryGraph->AddGraph("Mean", wxColour(200,200,255), 2e6, true, false);
+
 	m_pHistoryGraph->AddGraph("Delay", wxColour(200,200,255), 2e6, true, false);
 	m_pHistoryGraph->AddGraph("DelayLR", wxColour(100,255,100), 2e6, true, true);
     m_pHistoryGraph->AddGraph("DelayMean", wxColour(255,255,255), 2e6, true, true);
@@ -827,6 +831,7 @@ ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const w
 	m_pHistoryGraph->SetRightAxisWidth(100);
 
 	m_pHistoryGraph->SetGraphUnits("Offset", L"\u00B5s");
+	m_pHistoryGraph->SetGraphUnits("Mean", L"\u00B5s");
 	m_pHistoryGraph->SetGraphUnits("OffsetLR", L"\u00B5s");
 	m_pHistoryGraph->SetGraphUnits("Delay", L"\u00B5s");
 	m_pHistoryGraph->SetGraphUnits("DelayLR", L"\u00B5s");
@@ -1104,8 +1109,8 @@ void ptpPanel::ShowTime()
             m_plblTime->SetLabel(wxString(TimeToIsoString(m_pLocalClock->GetPtpTime())));
             m_plblTime->SetBackgroundColour(TimeManager::Get().IsPtpFrequencyLocked() ? wxColour(150,255,150) : wxColour(255,150,150));
 
-            m_offset  = TimeToDouble(m_pLocalClock->GetOffset(ptpmonkey::PtpV2Clock::MEAN))+dUTCOffset;
-            auto dDelay = TimeToDouble(m_pLocalClock->GetDelay(ptpmonkey::PtpV2Clock::MEAN));
+            m_offset  = TimeToDouble(m_pLocalClock->GetOffset(pml::ptpmonkey::PtpV2Clock::MEAN))+dUTCOffset;
+            auto dDelay = TimeToDouble(m_pLocalClock->GetDelay(pml::ptpmonkey::PtpV2Clock::MEAN));
 
             m_plblOffsetAverage->SetLabel(wxString::Format("%f", m_offset));
             m_plblDelayAverage->SetLabel(wxString::Format("%f", dDelay));
@@ -1119,6 +1124,8 @@ void ptpPanel::ShowTime()
                 auto dPeak = (TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::CURRENT))+dUTCOffset)*1e6;
                 m_pHistoryGraph->AddPeak("Offset", dPeak);
                 m_pHistogram->AddPeak("Offset", dPeak);
+
+				m_pHistoryGraph->AddPeak("Mean", (TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::MEAN))+dUTCOffset)*1e6);
 
                 double m = m_pLocalClock->GetOffsetSlope();
                 double c = m_pLocalClock->GetOffsetIntersection();
@@ -1166,7 +1173,7 @@ void ptpPanel::UpdateGraphLabels()
     if(pSyncMaster && m_pLocalClock)
     {
 
-        if(m_sGraph == "Offset")
+        if(m_sGraph == "Offset" || m_sGraph == "Mean")
         {
             auto dUTCOffset = static_cast<double>(pSyncMaster->GetUtcOffset());
             auto dCurrent = (TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::CURRENT))+dUTCOffset)*1e6;
@@ -1185,7 +1192,7 @@ void ptpPanel::UpdateGraphLabels()
             m_plblSlope->SetLabel(wxString::Format(L"%.2f\u00B5s/s", m*1e6));
             m_plblPrediction->SetLabel(wxString::Format(L"%.2f\u00B5s", dEstimate));
         }
-        else
+        else if(m_sGraph == "Delay")
         {
             auto dCurrent = (TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::CURRENT)))*1e6;
             auto dMean = (TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::MEAN)))*1e6;
@@ -1272,7 +1279,7 @@ void ptpPanel::OnTimer(wxTimerEvent& event)
         Connect(wxID_ANY, wxEVT_CLOCK_MSG_DELAY_REQUEST,(wxObjectEventFunction)&ptpPanel::OnClockMessage);
         Connect(wxID_ANY, wxEVT_CLOCK_MSG_DELAY_RESPONSE,(wxObjectEventFunction)&ptpPanel::OnClockMessage);
 
-        wxPtp::Get().Run(Settings::Get().Read("AoIP_Settings", "Interface", "eth0"), m_nDomain, Settings::Get().Read("Time", "Ptp_Mode", 0) ? ptpmonkey::Mode::HYBRID : ptpmonkey::Mode::MULTICAST);
+        wxPtp::Get().Run(Settings::Get().Read("AoIP_Settings", "Interface", "eth0"), m_nDomain, Settings::Get().Read("Time", "Ptp_Mode", 0) ? pml::ptpmonkey::Mode::HYBRID : pml::ptpmonkey::Mode::MULTICAST);
 
 
         for(const auto& [sClock, pClock] : wxPtp::Get().GetClocks())
@@ -1339,11 +1346,15 @@ void ptpPanel::SetData(const wxString& sData)
     m_plblGraphTitle->SetLabel("PTP "+m_sGraph);
     m_pHistoryGraph->HideAllGraphs();
     m_pHistoryGraph->ShowGraph(m_sGraph, true);
-    m_pHistoryGraph->ShowGraph(m_sGraph+"LR", true);
-    m_pHistoryGraph->ShowGraph(m_sGraph+"Mean", true);
-    m_pHistoryGraph->ShowGraph(m_sGraph+"VarMin", true);
-    m_pHistoryGraph->ShowGraph(m_sGraph+"VarMax", true);
-    m_pHistoryGraph->SetMasterGraph(m_sGraph);
+	if(m_sGraph != "Mean")
+    {
+		m_pHistoryGraph->ShowGraph(m_sGraph+"LR", true);
+		m_pHistoryGraph->ShowGraph(m_sGraph+"Mean", true);
+		m_pHistoryGraph->ShowGraph(m_sGraph+"VarMin", true);
+		m_pHistoryGraph->ShowGraph(m_sGraph+"VarMax", true);
+	}
+    
+	m_pHistoryGraph->SetMasterGraph(m_sGraph);
     m_plblHistogramTitle->SetLabel("PTP "+m_sGraph);
     m_pHistogram->HideAllGraphs();
     m_pHistogram->ShowGraph(m_sGraph);
@@ -1392,17 +1403,17 @@ void ptpPanel::ResetStats()
 Json::Value FlagsWebsocketMessage(unsigned int nFlags)
 {
     Json::Value jsFlags;
-    jsFlags["alternate_master"] = (nFlags & ptpmonkey::ptpV2Header::ALTERNATE_MASTER);
-    jsFlags["two_step"] = (nFlags & ptpmonkey::ptpV2Header::TWO_STEP);
-    jsFlags["unicast"] = (nFlags & ptpmonkey::ptpV2Header::UNICAST);
-    jsFlags["profile1"] = (nFlags & ptpmonkey::ptpV2Header::PROFILE1);
-    jsFlags["profile2"] = (nFlags & ptpmonkey::ptpV2Header::PROFILE2);
-    jsFlags["LI_61"] = (nFlags & ptpmonkey::ptpV2Header::LI_61);
-    jsFlags["LI_59"] = (nFlags & ptpmonkey::ptpV2Header::LI_59);
-    jsFlags["UTC_Offset"] = (nFlags & ptpmonkey::ptpV2Header::UTC_OFFSET_VALID);
-    jsFlags["timescale"] = (nFlags & ptpmonkey::ptpV2Header::TIMESCALE);
-    jsFlags["time_traceable"] = (nFlags & ptpmonkey::ptpV2Header::TIME_TRACEABLE);
-    jsFlags["frequency_traceable"] = (nFlags & ptpmonkey::ptpV2Header::FREQ_TRACEABLE);
+    jsFlags["alternate_master"] = (nFlags & pml::ptpmonkey::ptpV2Header::ALTERNATE_MASTER);
+    jsFlags["two_step"] = (nFlags & pml::ptpmonkey::ptpV2Header::TWO_STEP);
+    jsFlags["unicast"] = (nFlags & pml::ptpmonkey::ptpV2Header::UNICAST);
+    jsFlags["profile1"] = (nFlags & pml::ptpmonkey::ptpV2Header::PROFILE1);
+    jsFlags["profile2"] = (nFlags & pml::ptpmonkey::ptpV2Header::PROFILE2);
+    jsFlags["LI_61"] = (nFlags & pml::ptpmonkey::ptpV2Header::LI_61);
+    jsFlags["LI_59"] = (nFlags & pml::ptpmonkey::ptpV2Header::LI_59);
+    jsFlags["UTC_Offset"] = (nFlags & pml::ptpmonkey::ptpV2Header::UTC_OFFSET_VALID);
+    jsFlags["timescale"] = (nFlags & pml::ptpmonkey::ptpV2Header::TIMESCALE);
+    jsFlags["time_traceable"] = (nFlags & pml::ptpmonkey::ptpV2Header::TIME_TRACEABLE);
+    jsFlags["frequency_traceable"] = (nFlags & pml::ptpmonkey::ptpV2Header::FREQ_TRACEABLE);
     return jsFlags;
 }
 
@@ -1419,7 +1430,7 @@ void ptpPanel::ClockMessageWebsocketMessage(const wxString& sClock)
             jsClock["address"] = pClock->GetIpAddress();
             jsClock["vendor"] = m_dbMac.GetVendor(sClock).ToStdString();
 
-            std::shared_ptr<const ptpmonkey::PtpV2Clock> pSyncMaster = wxPtp::Get().GetSyncMasterClock();
+            std::shared_ptr<const pml::ptpmonkey::PtpV2Clock> pSyncMaster = wxPtp::Get().GetSyncMasterClock();
             if(wxPtp::Get().GetMasterClockId() == sClock || (pSyncMaster && pSyncMaster->GetId() == sClock))
             {
                 jsClock["master"] = true;
@@ -1509,11 +1520,11 @@ void ptpPanel::TimeWebsocketMessage()
         jsTime["action"] = "Time";
         jsTime["time"] = TimeToIsoString(m_pLocalClock->GetPtpTime());
         jsTime["frequency_locke"] = TimeManager::Get().IsPtpFrequencyLocked();
-        jsTime["offset"]["mean"] = TimeToDouble(m_pLocalClock->GetOffset(ptpmonkey::PtpV2Clock::MEAN))+dUTCOffset;
+        jsTime["offset"]["mean"] = TimeToDouble(m_pLocalClock->GetOffset(pml::ptpmonkey::PtpV2Clock::MEAN))+dUTCOffset;
         jsTime["offset"]["standard deviation"] = TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::SD));
         jsTime["offset"]["standard error"] = TimeToDouble(m_pLocalClock->GetOffset(PtpV2Clock::SE));
 
-        jsTime["delay"]["mean"] = TimeToDouble(m_pLocalClock->GetDelay(ptpmonkey::PtpV2Clock::MEAN));
+        jsTime["delay"]["mean"] = TimeToDouble(m_pLocalClock->GetDelay(pml::ptpmonkey::PtpV2Clock::MEAN));
         jsTime["delay"]["standard deviation"] = TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::SD));
         jsTime["delay"]["standard error"] = TimeToDouble(m_pLocalClock->GetDelay(PtpV2Clock::SE));
 

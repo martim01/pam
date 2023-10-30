@@ -114,7 +114,7 @@ bool TimeManager::PtpSyncFrequency()
             StopCurrentSync();
 
             auto pMaster = wxPtp::Get().GetSyncMasterClock();
-            auto offset = pLocal->GetOffset(ptpmonkey::PtpV2Clock::CURRENT);//DoubleToTime(dEstimate);
+            auto offset = pLocal->GetOffset(pml::ptpmonkey::PtpV2Clock::CURRENT);//DoubleToTime(dEstimate);
 
             //store the PTP details for use by NMOS etc
             Settings::Get().Write("Time", "Grandmaster", wxString(pMaster->GetClockId()));
@@ -175,19 +175,12 @@ bool TimeManager::PtpSyncFrequency()
 
                     auto nOffsetPPM = std::chrono::duration_cast<std::chrono::microseconds>(offset).count();
                     auto nNewFreq = m_nFrequency - nOffsetPPM;
-/*
-                    setFreq = SetGetFrequency(std::make_pair(true, nNewFreq));
-                    if(!setFreq.first)
-                    {
-                        return false;
-                    }
-*/
                     wxPtp::Get().ResetLocalClockStats();
                     m_nPtpSamples = 0;
 
-                    std::thread th([this]{
+                    std::thread th([this, nNewFreq]{
                                    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-                                   SetGetFrequency(std::make_pair(true, m_nFrequency));
+                                   SetGetFrequency(std::make_pair(true, nNewFreq));
                                    });
 
                     th.detach();
@@ -235,7 +228,7 @@ bool TimeManager::TrySyncToPtp()
 
         auto pMaster = wxPtp::Get().GetSyncMasterClock();
 
-        auto offset = pLocal->GetOffset(ptpmonkey::PtpV2Clock::CURRENT);//DoubleToTime(dEstimate);
+        auto offset = pLocal->GetOffset(pml::ptpmonkey::PtpV2Clock::CURRENT);//DoubleToTime(dEstimate);
 
         auto slope = pLocal->GetOffsetSlope()*1e6;   //slope in ppm
 
@@ -310,12 +303,20 @@ bool TimeManager::TrySyncToPtp()
         {
             m_bPtpLock = true;
 
-            auto mean = pLocal->GetOffset(ptpmonkey::PtpV2Clock::MEAN);
-            auto sd = pLocal->GetOffset(ptpmonkey::PtpV2Clock::SD);
+            auto mean = pLocal->GetOffset(pml::ptpmonkey::PtpV2Clock::MEAN);
+            auto sd = pLocal->GetOffset(pml::ptpmonkey::PtpV2Clock::SD);
             auto maxBand = mean+sd+utc;
             auto minBand = mean-sd+utc;
 
+            auto dUTCOffset = static_cast<double>(wxPtp::Get().GetSyncMasterClock()->GetUtcOffset());
+            
+            auto m = pLocal->GetOffsetSlope();
+            auto c = pLocal->GetOffsetIntersection();
+            auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch());
+            auto dEstimate = (c + m * TimeToDouble(now-pLocal->GetFirstOffsetTime()));
+            dEstimate = (dEstimate+dUTCOffset)*1e9;
 
+            //offset = std::chrono::nanoseconds(static_cast<long>(dEstimate));
             offset = std::max(minBand, std::min(maxBand, offset));
 
             auto split = Split(-offset);

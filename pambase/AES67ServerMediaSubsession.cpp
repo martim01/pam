@@ -11,16 +11,16 @@
 
 static AES67ServerMediaSubsession* g_multiSession;
 
-AES67ServerMediaSubsession* AES67ServerMediaSubsession::createNew(const std::set<wxEvtHandler*>& setRTCPHandlers, RTPSink& rtpSink, RTCPInstance* rtcpInstance, int nPacketTime, const std::string& sMapping)
+AES67ServerMediaSubsession* AES67ServerMediaSubsession::createNew(const std::set<wxEvtHandler*>& setRTCPHandlers, RTPSink& rtpSink, RTCPInstance* rtcpInstance, LiveAudioSource::enumPacketTime ePacketTime, const std::string& sMapping)
 {
-    return new AES67ServerMediaSubsession(setRTCPHandlers, rtpSink, rtcpInstance, nPacketTime, sMapping);
+    return new AES67ServerMediaSubsession(setRTCPHandlers, rtpSink, rtcpInstance, ePacketTime, sMapping);
 }
 
-AES67ServerMediaSubsession::AES67ServerMediaSubsession(const std::set<wxEvtHandler*>& setRTCPHandlers, RTPSink& rtpSink, RTCPInstance* rtcpInstance, int nPacketTime, const std::string& sMapping)
+AES67ServerMediaSubsession::AES67ServerMediaSubsession(const std::set<wxEvtHandler*>& setRTCPHandlers, RTPSink& rtpSink, RTCPInstance* rtcpInstance, LiveAudioSource::enumPacketTime ePacketTime, const std::string& sMapping)
     : ServerMediaSubsession(rtpSink.envir()),
     fSDPLines(NULL), fRTPSink(rtpSink), fRTCPInstance(rtcpInstance),
     m_setRTCPHandlers(setRTCPHandlers),
-    m_nPacketTime(nPacketTime),
+    m_ePacketTime(ePacketTime),
     m_sMapping(sMapping)
 {
   //fClientRTCPSourceRecords = HashTable::create(ONE_WORD_HASH_KEYS);
@@ -60,8 +60,10 @@ char const* AES67ServerMediaSubsession::sdpLines(int addressFamily)
         char const* auxSDPLine = fRTPSink.auxSDPLine();
 
         std::stringstream ss;
-        ss << "a=ptime:" << m_nPacketTime << "\r\n";
-        ss << "a=maxptime:" << m_nPacketTime << "\r\n";
+
+        
+        ss << "a=ptime:" << GetPacketTime() << "\r\n";
+        ss << "a=maxptime:" << GetPacketTime() << "\r\n";
 #ifdef PTPMONKEY
         ss << "a=ts-refclk:ptp=IEEE1588-2008:" << wxPtp::Get().GetMasterClockId() << ":0\r\n";
 #else
@@ -310,5 +312,23 @@ void AES67ServerMediaSubsession::BeginQOSMeasurement()
         g_multiSession = this;
         fRTCPInstance->setRRHandler((TaskFunc*)MultiQOSMeasurement, reinterpret_cast<void*>(this));
         fRTCPInstance->setByeHandler((TaskFunc*)MultiByeHandler, reinterpret_cast<void*>(this));
+    }
+}
+
+
+std::string AES67ServerMediaSubsession::GetPacketTime()
+{
+    switch(m_ePacketTime)
+    {
+        case LiveAudioSource::enumPacketTime::MS1:
+            return "1";
+        case LiveAudioSource::enumPacketTime::MS4:
+            return "4";
+        case LiveAudioSource::enumPacketTime::US125:
+            return "0.125";
+        case LiveAudioSource::enumPacketTime::US250:
+            return "0.250";
+        case LiveAudioSource::enumPacketTime::US333:
+            return "0.333";
     }
 }

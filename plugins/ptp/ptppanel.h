@@ -22,7 +22,7 @@ class ptpBuilder;
 class timedbuffer;
 class session;
 
-namespace ptpmonkey
+namespace pml::ptpmonkey
 {
     class PtpV2Clock;
 };
@@ -354,8 +354,8 @@ class ptpPanel: public pmPanel
 
         unsigned char m_nDomain;
 		wxString m_sSelectedClock;
-		std::shared_ptr<const ptpmonkey::PtpV2Clock> m_pClock;
-		std::shared_ptr<const ptpmonkey::PtpV2Clock> m_pLocalClock;
+		std::shared_ptr<const pml::ptpmonkey::PtpV2Clock> m_pClock;
+		std::shared_ptr<const pml::ptpmonkey::PtpV2Clock> m_pLocalClock;
 
         std::map<unsigned char, wxString> m_mAccuracy;
         std::map<unsigned char, wxString> m_mTimeSource;

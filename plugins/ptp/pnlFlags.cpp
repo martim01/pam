@@ -100,16 +100,16 @@ pnlFlags::~pnlFlags()
 
 void pnlFlags::ShowFlags(unsigned short nFlags)
 {
-    m_plblFlagsAlternate->SetBackgroundColour( (nFlags & ptpmonkey::ptpV2Header::ALTERNATE_MASTER) ? CLR_ON : CLR_OFF);
-    m_plblFlags2Step->SetBackgroundColour( (nFlags & ptpmonkey::ptpV2Header::TWO_STEP) ? CLR_ON : CLR_OFF);
-    m_plblFlagsUnicast->SetBackgroundColour( (nFlags & ptpmonkey::ptpV2Header::UNICAST) ? CLR_ON : CLR_OFF);
-    m_plblFlagsProfile1->SetBackgroundColour( (nFlags & ptpmonkey::ptpV2Header::PROFILE1) ? CLR_ON : CLR_OFF);
-    m_plblFlagsProfile2->SetBackgroundColour( (nFlags & ptpmonkey::ptpV2Header::PROFILE2) ? CLR_ON : CLR_OFF);
-    m_plblFlags61->SetBackgroundColour( (nFlags & ptpmonkey::ptpV2Header::LI_61) ? CLR_ON : CLR_OFF);
-    m_plblFlags59->SetBackgroundColour( (nFlags & ptpmonkey::ptpV2Header::LI_59) ? CLR_ON : CLR_OFF);
-    m_plblFlagsUTC->SetBackgroundColour( (nFlags & ptpmonkey::ptpV2Header::UTC_OFFSET_VALID) ? CLR_ON : CLR_OFF);
-    m_plblFlagsScale->SetBackgroundColour( (nFlags & ptpmonkey::ptpV2Header::TIMESCALE) ? CLR_ON : CLR_OFF);
-    m_plblFlagsTime->SetBackgroundColour( (nFlags & ptpmonkey::ptpV2Header::TIME_TRACEABLE) ? CLR_ON : CLR_OFF);
-    m_plblFlagsFreq->SetBackgroundColour( (nFlags & ptpmonkey::ptpV2Header::FREQ_TRACEABLE) ? CLR_ON : CLR_OFF);
+    m_plblFlagsAlternate->SetBackgroundColour( (nFlags & pml::ptpmonkey::ptpV2Header::ALTERNATE_MASTER) ? CLR_ON : CLR_OFF);
+    m_plblFlags2Step->SetBackgroundColour( (nFlags & pml::ptpmonkey::ptpV2Header::TWO_STEP) ? CLR_ON : CLR_OFF);
+    m_plblFlagsUnicast->SetBackgroundColour( (nFlags & pml::ptpmonkey::ptpV2Header::UNICAST) ? CLR_ON : CLR_OFF);
+    m_plblFlagsProfile1->SetBackgroundColour( (nFlags & pml::ptpmonkey::ptpV2Header::PROFILE1) ? CLR_ON : CLR_OFF);
+    m_plblFlagsProfile2->SetBackgroundColour( (nFlags & pml::ptpmonkey::ptpV2Header::PROFILE2) ? CLR_ON : CLR_OFF);
+    m_plblFlags61->SetBackgroundColour( (nFlags & pml::ptpmonkey::ptpV2Header::LI_61) ? CLR_ON : CLR_OFF);
+    m_plblFlags59->SetBackgroundColour( (nFlags & pml::ptpmonkey::ptpV2Header::LI_59) ? CLR_ON : CLR_OFF);
+    m_plblFlagsUTC->SetBackgroundColour( (nFlags & pml::ptpmonkey::ptpV2Header::UTC_OFFSET_VALID) ? CLR_ON : CLR_OFF);
+    m_plblFlagsScale->SetBackgroundColour( (nFlags & pml::ptpmonkey::ptpV2Header::TIMESCALE) ? CLR_ON : CLR_OFF);
+    m_plblFlagsTime->SetBackgroundColour( (nFlags & pml::ptpmonkey::ptpV2Header::TIME_TRACEABLE) ? CLR_ON : CLR_OFF);
+    m_plblFlagsFreq->SetBackgroundColour( (nFlags & pml::ptpmonkey::ptpV2Header::FREQ_TRACEABLE) ? CLR_ON : CLR_OFF);
 
 }
