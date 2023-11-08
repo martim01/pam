@@ -24,6 +24,7 @@ class pnlLogControl: public wxPanel
 		wmButton* m_ptbnClear;
 		wmButton* m_ptbnPageDown;
 		//*)
+		wmButton* m_pbtnLogToFile;
         wmList* m_plstFilter;
 	protected:
 

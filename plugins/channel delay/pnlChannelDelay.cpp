@@ -176,15 +176,16 @@ void pnlChannelDelay::CalculateOffset()
 
 void pnlChannelDelay::OnOffsetDone(wxCommandEvent& event)
 {
-        m_pGraph->SetCalculating(false);
+    m_pGraph->SetCalculating(false);
     SetTotalSamples(m_nTotalSamples);
 
     m_pGraph->AddOffset(event.GetInt());
 
-    if(m_pBuilder->IsLogActive())
+    if(m_pBuilder->IsLogActive() && m_nOffset != event.GetInt())
     {
-        pmlLog(pml::LOG_INFO) << "Channel Delay\t" << event.GetInt() << "ms";
+        pmlLog(pml::LOG_INFO) << "Channel Delay\t" << static_cast<double>(event.GetInt())/m_dSampleRate << "ms";
     }
+    m_nOffset = event.GetInt();
 
     if(m_pBuilder->WebsocketsActive())
     {
@@ -236,6 +237,7 @@ void pnlChannelDelay::InputSession(const session& aSession)
     {
         sub = (*aSession.GetCurrentSubsession());
         m_pGraph->SetSampleRate(sub.nSampleRate);
+        m_dSampleRate = sub.nSampleRate;
         m_nTotalChannels = std::min((unsigned int)8 ,sub.nChannels);
     }
     else

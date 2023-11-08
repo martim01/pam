@@ -84,6 +84,9 @@ class pnlChannelDelay: public wxPanel
         unsigned int m_nChannel[2];
         wxString m_sChannel[2];
 
+		double m_dSampleRate = 48000.0;
+
+		int m_nOffset = 0;
 
         ChannelDelayBuilder* m_pBuilder;
 

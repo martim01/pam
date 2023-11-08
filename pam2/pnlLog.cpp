@@ -9,7 +9,7 @@
 #include <wx/dcclient.h>
 #include "wxlogoutput.h"
 #include "log.h"
-
+#include "logtofile.h"
 //(*InternalHeaders(pnlLog)
 #include <wx/intl.h>
 #include <wx/string.h>
@@ -35,11 +35,18 @@ pnlLog::pnlLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	m_nLogLevel = Settings::Get().Read("Log", "Level", pml::LOG_INFO);
 	Settings::Get().AddHandler(this,"Log","Level");
 	Settings::Get().AddHandler(this,"Log","ScrollLock");
+    Settings::Get().AddHandler(this,"Log","LogToFile");
+    
 	Bind(wxEVT_SETTING_CHANGED, &pnlLog::OnSettingChanged, this);
 
 
     m_nLogOutput = pml::LogStream::AddOutput(std::make_unique<wxLogOutput>(this));
     pml::LogStream::SetOutputLevel(pml::LOG_INFO);
+
+    if(Settings::Get().Read("Log", "LogToFile", false))
+    {
+        m_nLogToFile = pml::LogStream::AddOutput(std::make_unique<pml::LogToFile>("/var/log/pam"));
+    }
 
 	Connect(wxID_ANY,wxEVT_PMLOG,(wxObjectEventFunction)&pnlLog::OnLog);
 }
@@ -129,6 +136,18 @@ void pnlLog::OnSettingChanged(SettingEvent& event)
         else if(event.GetKey() == "ScrollLock")
         {
             ScrollLock(event.GetValue(false));
+        }
+        else if(event.GetKey() == "LogToFile")
+        {
+            if(event.GetValue(false) && m_nLogToFile == -1)
+            {
+                m_nLogToFile = pml::LogStream::AddOutput(std::make_unique<pml::LogToFile>("/var/log/pam"));
+            }
+            else if(!event.GetValue(false) && m_nLogToFile != -1)
+            {
+                pml::LogStream::RemoveOutput(m_nLogToFile);
+                m_nLogToFile = -1;
+            }
         }
     }
 }

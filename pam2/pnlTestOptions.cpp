@@ -50,5 +50,5 @@ void pnlTestOptions::OnbtnLogClick(wxCommandEvent& event)
 
 void pnlTestOptions::OnbtnLogViewClick(wxCommandEvent& event)
 {
-    Settings::Get().Write(wxT("Tests"), wxT("LogView"), event.IsChecked());
+    Settings::Get().Write(wxT("Main"), "Screen", "Log");
 }
