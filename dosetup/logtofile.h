@@ -8,7 +8,7 @@ class LogToFile : public pml::LogOutput
     public:
         LogToFile(const std::string& sRootPath, int nTimestamp=TS_TIME, enumTS eResolution=TSR_MILLISECOND);
         virtual ~LogToFile(){}
-        void Flush(pml::enumLevel eLogLevel, const std::stringstream&  logStream) override;
+        void Flush(pml::enumLevel eLogLevel, const std::stringstream&  logStream, const std::string& sPrefix) override;
 
     private:
 

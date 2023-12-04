@@ -118,7 +118,7 @@ void LogToFile::OpenFile(const std::string& sFilePath, const std::string& sFileN
     chmod(sFile.c_str(), 0664);
 }
 
-void LogToFile::Flush(pml::enumLevel eLogLevel, const std::stringstream&  logStream)
+void LogToFile::Flush(pml::enumLevel eLogLevel, const std::stringstream&  logStream, const std::string& sPrefix)
 {
     auto now = std::chrono::system_clock::now();
     auto in_time_t = std::chrono::system_clock::to_time_t(now);
@@ -136,7 +136,7 @@ void LogToFile::Flush(pml::enumLevel eLogLevel, const std::stringstream&  logStr
     if(m_ofLog.is_open())
     {
         m_ofLog << Timestamp().str();
-        m_ofLog << pml::LogStream::STR_LEVEL[eLogLevel] << "\t" << logStream.str();
+        m_ofLog << pml::LogStream::STR_LEVEL[eLogLevel] << "\t[" << sPrefix << "]\t" << logStream.str();
         m_ofLog.flush();
     }
     else
