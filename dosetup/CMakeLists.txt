@@ -8,10 +8,11 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 include_directories("../pambase/")
 include_directories(${CMAKE_BINARY_DIR}/include)
+include_directories(${DIR_LOG}/include)
 
 link_directories("../lib")
 
-set(SOURCES "main.cpp" "logtofile.cpp" ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_version.cpp)
+set(SOURCES "main.cpp" ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_version.cpp)
 
 add_executable(dosetup ${SOURCES})
 

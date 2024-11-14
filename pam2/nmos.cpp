@@ -46,7 +46,7 @@ NmosManager::~NmosManager()
 
 void NmosManager::Setup()
 {
-    pmlLog() << "NMOS\tSetup NMOS";
+    pmlLog(pml::LOG_INFO, "NmosManager") << "Setup NMOS";
 
     m_pClientPoster = std::make_shared<wxClientApiPoster>(this);
 
@@ -97,15 +97,15 @@ void NmosManager::Setup()
 
     if(pml::nmos::NodeApi::Get().AddDevice(pDevice) == false)
     {
-        pmlLog(pml::LOG_ERROR) << "NMOS\tFailed to add Device";
+        pmlLog(pml::LOG_ERROR, "NmosManager") << "Failed to add Device";
     }
     if(pml::nmos::NodeApi::Get().AddSource(m_pSource) == false)
     {
-        pmlLog(pml::LOG_ERROR) << "NMOS\tFailed to add Source";
+        pmlLog(pml::LOG_ERROR, "NmosManager") << "Failed to add Source";
     }
     if(pml::nmos::NodeApi::Get().AddFlow(m_pFlow) == false)
     {
-        pmlLog(pml::LOG_ERROR) << "NMOS\tFailed to add Flow";
+        pmlLog(pml::LOG_ERROR, "NmosManager") << "Failed to add Flow";
     }
     pml::nmos::NodeApi::Get().AddSender(m_pSender);
     pml::nmos::NodeApi::Get().AddReceiver(m_pReceiver);
@@ -163,7 +163,7 @@ void NmosManager::StartNode(int nMode)
 
         if(m_nNodeMode == NODE_OFF)
         {
-            pmlLog() << "NMOS\tStart NMOS Services " << nMode;
+            pml::LOG_INFO, "NmosManager") << "Start NMOS Services " << nMode;
             pml::nmos::NodeApi::Get().StartServices();
         }
         else if(nMode == NODE_OFF)
@@ -185,7 +185,7 @@ void NmosManager::OnSettingChanged(SettingEvent& event)
     {
         if(event.GetKey() == "Node")
         {
-            pmlLog() << "NMOS: NODE UPDATED " << event.GetValue((long)NODE_OFF);
+            pmlLog(pml::LOG_INFO, "NmosManager") << "NODE UPDATED " << event.GetValue((long)NODE_OFF);
             StartNode(event.GetValue((long)NODE_OFF));
         }
         else if(event.GetKey() == "Client")
@@ -295,17 +295,17 @@ void NmosManager::OnPatchSender(wxNmosNodeConnectionEvent& event)
 
         if(event.GetSenderConnection()->GetReceiverId() && (*(event.GetSenderConnection()->GetReceiverId())).empty() == false)
         {
-            pmlLog() << "Patch Sender: ReceiverId = '" << *(event.GetSenderConnection()->GetReceiverId()) << "'";
+            pmlLog(pml::LOG_INFO, "NmosManager") << "Patch Sender: ReceiverId = '" << *(event.GetSenderConnection()->GetReceiverId()) << "'";
 
             //receiverid so unicast. -- @todo if we are already multicasting what do we do here????
             if(event.GetSenderConnection()->GetTransportParams()[0].GetDestinationIp().empty() == false && event.GetSenderConnection()->GetTransportParams()[0].GetDestinationIp() != "auto")
             {   //one would hope ip has been set. so set the live555 address to it
                 sDestinationIp = event.GetSenderConnection()->GetTransportParams()[0].GetDestinationIp();
-                pmlLog() << "Patch Sender: DestinationIp set by receiver = '" << sDestinationIp << "'";
+                pmlLog(pml::LOG_INFO, "NmosManager") << "Patch Sender: DestinationIp set by receiver = '" << sDestinationIp << "'";
             }
             else
             {   // @todo no ip address set. Should we try to find what the receiver ip address is from the clientapi??
-                pmlLog() << "Patch Sender: DestinationIp set by no-one = '" << sDestinationIp << "'";
+                pmlLog(pml::LOG_INFO, "NmosManager") << "Patch Sender: DestinationIp set by no-one = '" << sDestinationIp << "'";
             }
         }
         else
@@ -315,13 +315,13 @@ void NmosManager::OnPatchSender(wxNmosNodeConnectionEvent& event)
             {   //address has been chosen by nmos
                 sDestinationIp = event.GetSenderConnection()->GetTransportParams()[0].GetDestinationIp();
 
-                pmlLog() << "Patch Sender: DestinationIp set by receiver = '" << sDestinationIp << "'";
+                pmlLog(pml::LOG_INFO, "NmosManager") << "Patch Sender: DestinationIp set by receiver = '" << sDestinationIp << "'";
             }
             else //if(Settings::Get().Read("Server", "DestinationIp", wxEmptyString).empty())
             {   //address not chosen by nmos and pam hasn't chosen one yet. create rando,
                 sDestinationIp = IOManager::Get().GetRandomMulticastAddress().ToStdString();
 
-                pmlLog() << "Patch Sender: DestinationIp set by us = '" << sDestinationIp << "'";
+                pmlLog(pml::LOG_INFO, "NmosManager") << "Patch Sender: DestinationIp set by us = '" << sDestinationIp << "'";
             }
         }
 
@@ -362,32 +362,32 @@ void NmosManager::OnPatchReceiver(wxNmosNodeConnectionEvent& event)
 
 void NmosManager::OnSenderActivated(wxNmosNodeConnectionEvent& event)
 {
-    pmlLog() << "OnSenderActivated " << event.GetResourceId();
+    pmlLog(pml::LOG_INFO, "NmosManager") << "OnSenderActivated " << event.GetResourceId();
     ActivateSender(event.GetResourceId());
 }
 
 
 void NmosManager::ActivateSender(const std::string& sId)
 {
-    pmlLog() << "NmosManager::ActivateSender";
+    pmlLog(pml::LOG_INFO, "NmosManager") << "NmosManager::ActivateSender";
     auto pSender = pml::nmos::NodeApi::Get().GetSender(sId);
     if(pSender)
     {
         if(pSender->GetDestinationIp().empty() == false)
         {   //address has been chosen by nmos
             Settings::Get().Write("Server", "DestinationIp", pSender->GetDestinationIp());
-            pmlLog() << "ActivateSender: DestinationIp set '" << pSender->GetDestinationIp() << "'";
+            pmlLog(pml::LOG_INFO, "NmosManager") << "ActivateSender: DestinationIp set '" << pSender->GetDestinationIp() << "'";
         }
         else
         {
             if(pSender->GetStaged().GetReceiverId())
             {   // @todo no ip address set. Should we try to find what the receiver ip address is from the clientapi??
-                pmlLog() << "ActivateSender: DestinationIp not set but ReceiverId is set";
+                pmlLog(pml::LOG_INFO, "NmosManager") << "ActivateSender: DestinationIp not set but ReceiverId is set";
             }
             else
             {   //address not chosen by nmos and pam hasn't chosen one yet. create rando,
                 Settings::Get().Write("Server", "DestinationIp", IOManager::Get().GetRandomMulticastAddress());
-                pmlLog() << "ActivateSender: DestinationIp set by random";
+                pmlLog(pml::LOG_INFO, "NmosManager") << "ActivateSender: DestinationIp set by random";
 
             }
         }
@@ -477,7 +477,7 @@ void NmosManager::ActivateReceiver(const std::string& sId)
 
 void NmosManager::StopNode()
 {
-    pmlLog() << "NMOS\tStop NMOS Services";
+    pml::LOG_INFO, "NmosManager") << "Stop NMOS Services";
     pml::nmos::NodeApi::Get().StopServices();
 }
 

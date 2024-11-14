@@ -72,7 +72,7 @@ void* RtpThread::Entry()
 
     if(m_source.sType.CmpNoCase(wxT("rtsp")) == 0)
     {
-        pmlLog() << "RTP Client\tconnect using RTSP";
+        pmlLog(pml::LOG_INFO, "pam::rtpclient") << "connect using RTSP";
         if(DoRTSP())
         {
             while(m_eventLoopWatchVariable == 0)
@@ -83,7 +83,7 @@ void* RtpThread::Entry()
     }
     else if(m_source.sType.CmpNoCase(wxT("sip")) == 0)
     {
-        pmlLog() << "RTP Client\tconnect using SIP";
+        pmlLog(pml::LOG_INFO, "pam::rtpclient") << "connect using SIP";
         if(DoSIP())
         {
             while(m_eventLoopWatchVariable == 0)
@@ -94,13 +94,13 @@ void* RtpThread::Entry()
     }
     else
     {
-        pmlLog() << "RTP Client\tconnect using SDP";
+        pmlLog(pml::LOG_INFO, "pam::rtpclient") << "connect using SDP";
         m_sDescriptor = m_source.sSDP.AfterFirst('\n').ToStdString();
         StreamFromSDP();
     }
 
 
-    pmlLog() << "RTP Client\tStream closed";
+    pmlLog(pml::LOG_INFO, "pam::rtpclient") << "Stream closed";
 
     wxCommandEvent* pEvent = new wxCommandEvent(wxEVT_RTP_SESSION_CLOSED);
     pEvent->SetInt(m_source.nIndex);
@@ -110,7 +110,7 @@ void* RtpThread::Entry()
     // @todo do we need to delete clients etc?
     if(m_pRtspClient)
     {
-        pmlLog(pml::LOG_DEBUG) << "RTPThread::Entry\t" << "Shutdown stream";
+        pmlLog(pml::LOG_DEBUG, "pam::rtpclient") << "Shutdown stream";
         shutdownStream(m_pRtspClient, 0);
         m_pRtspClient = nullptr;
     }
@@ -123,17 +123,17 @@ void* RtpThread::Entry()
 void RtpThread::StreamFromSDP()
 {
 
-    pmlLog() << m_sDescriptor;
+    pmlLog(pml::LOG_INFO, "pam::rtpclient") << m_sDescriptor;
 
     m_pSession = Smpte2110MediaSession::createNew(*m_penv, m_sDescriptor.c_str());
     if (m_pSession == nullptr)
     {
-        pmlLog(pml::LOG_ERROR) << "RTP Client\tFailed to create a MediaSession object from the SDP description: " << m_penv->getResultMsg();
+        pmlLog(pml::LOG_ERROR, "pam::rtpclient") << "Failed to create a MediaSession object from the SDP description: " << m_penv->getResultMsg();
         return;
     }
     else
     {
-        pmlLog(pml::LOG_DEBUG) << "RTP Client\tCreated MediaSession object";
+        pmlLog(pml::LOG_DEBUG, "pam::rtpclient") << "Created MediaSession object";
     }
 
     //count number of subsessions
@@ -151,16 +151,16 @@ void RtpThread::StreamFromSDP()
             }
             else
             {
-                pmlLog(pml::LOG_WARN) << "RTP Client\tAudio subsession, but 0 channels defined";
+                pmlLog(pml::LOG_WARN, "pam::rtpclient") << "Audio subsession, but 0 channels defined";
             }
         }
     }
-    pmlLog(pml::LOG_DEBUG) << "RTP Client\tNumber of AES67 Subsessions: " << nCountAudio;
-    pmlLog(pml::LOG_DEBUG) << "RTP Client\tStreams = " << m_pSession->GetGroups().size();
+    pmlLog(pml::LOG_DEBUG, "pam::rtpclient") << "Number of AES67 Subsessions: " << nCountAudio;
+    pmlLog(pml::LOG_DEBUG, "pam::rtpclient") << "Streams = " << m_pSession->GetGroups().size();
 
     if(nCountAudio == 0)
     {
-        pmlLog(pml::LOG_WARN) << "RTP Client\tNo AES67 subsessions. Exit";
+        pmlLog(pml::LOG_WARN, "pam::rtpclient") << "No AES67 subsessions. Exit";
         return;
     }
 
@@ -173,7 +173,7 @@ void RtpThread::StreamFromSDP()
         {
             if (!pSubsession->initiate (0))
             {
-                pmlLog(pml::LOG_WARN) << "RTP Client\tFailed to initiate the subsession: " << m_penv->getResultMsg();
+                pmlLog(pml::LOG_WARN, "pam::rtpclient") << "Failed to initiate the subsession: " << m_penv->getResultMsg();
             }
             else
             {
@@ -195,24 +195,24 @@ void RtpThread::StreamFromSDP()
 void RtpThread::CreateSink(Smpte2110MediaSubsession* pSubsession)
 {
     pSubsession->sink = wxSink::createNew(*m_penv, *pSubsession, this);
-    pmlLog(pml::LOG_DEBUG) << "RTP Client\tInitiated the subsession: ";
+    pmlLog(pml::LOG_DEBUG, "pam::rtpclient") << "Initiated the subsession: ";
     if (pSubsession->rtcpIsMuxed())
     {
-        pmlLog(pml::LOG_DEBUG) << "client port " << pSubsession->clientPortNum();
+        pmlLog(pml::LOG_DEBUG, "pam::rtpclient") << "client port " << pSubsession->clientPortNum();
     }
     else
     {
-        pmlLog(pml::LOG_DEBUG) << "client ports " << pSubsession->clientPortNum() << "-" << pSubsession->clientPortNum()+1;
+        pmlLog(pml::LOG_DEBUG, "pam::rtpclient") << "client ports " << pSubsession->clientPortNum() << "-" << pSubsession->clientPortNum()+1;
     }
-    pmlLog(pml::LOG_DEBUG) << "RTP Client\tSessionId: " << pSubsession->GetEndpoint();
+    pmlLog(pml::LOG_DEBUG, "pam::rtpclient") << "SessionId: " << pSubsession->GetEndpoint();
 
     if (pSubsession->sink == nullptr)
     {
-        pmlLog(pml::LOG_ERROR) << "RTP Client\tFailed to create a data sink for the subsession: " << m_penv->getResultMsg();
+        pmlLog(pml::LOG_ERROR, "pam::rtpclient") << "Failed to create a data sink for the subsession: " << m_penv->getResultMsg();
     }
     else
     {
-        pmlLog(pml::LOG_DEBUG) << "RTP Client\tCreated a data sink for the subsession";
+        pmlLog(pml::LOG_DEBUG, "pam::rtpclient") << "Created a data sink for the subsession";
         pSubsession->sink->startPlaying(*pSubsession->readSource(), nullptr, nullptr);
     }
 }
@@ -226,10 +226,10 @@ bool RtpThread::DoRTSP()
     m_pRtspClient = ourRTSPClient::createNew((*m_penv), sUrl.mb_str(), this, 1, m_sProgName.mb_str());
     if (m_pRtspClient == nullptr)
     {
-        pmlLog(pml::LOG_ERROR) << "RTP Client\tFailed to create a RTSP client for URL \"" << sUrl.ToStdString() << "\": " << (*m_penv).getResultMsg();
+        pmlLog(pml::LOG_ERROR, "pam::rtpclient") << "Failed to create a RTSP client for URL \"" << sUrl.ToStdString() << "\": " << (*m_penv).getResultMsg();
         return false;
     }
-    pmlLog() << "RTSP Send Options";
+    pmlLog(pml::LOG_INFO, "pam::rtpclient") << "RTSP Send Options";
     m_pRtspClient->sendOptionsCommand(continueAfterOPTIONS);
 
     return true;
@@ -242,7 +242,7 @@ bool RtpThread::DoSIP()
     m_pSipClient = ourSIPClient::createNew((*m_penv), sUrl.mb_str(), this, 1, m_sProgName.mb_str());
     if (m_pRtspClient == nullptr)
     {
-        pmlLog(pml::LOG_ERROR) << "RTP Client\tFailed to create a RTSP client for URL \"" << sUrl.ToStdString() << "\": " << (*m_penv).getResultMsg();
+        pmlLog(pml::LOG_ERROR, "pam::rtpclient") << "Failed to create a RTSP client for URL \"" << sUrl.ToStdString() << "\": " << (*m_penv).getResultMsg();
         return false;
     }
     m_pSipClient->GetSDPDescription();
@@ -461,8 +461,8 @@ void RtpThread::StopStream()
 {
     if(m_pRtspClient)
     {
-        pmlLog(pml::LOG_INFO) << "RTP Client\tStop Stream ";
-        pmlLog(pml::LOG_DEBUG) <<  "RTPThread::StopStream\t" << "Shutdown stream";
+        pmlLog(pml::LOG_INFO, "pam::rtpclient") << "Stop Stream ";
+        pmlLog(pml::LOG_DEBUG, "pam::rtpclient") << "Shutdown stream";
         shutdownStream(m_pRtspClient, 0);
         m_pRtspClient = nullptr;
     }
@@ -508,7 +508,7 @@ void RtpThread::QosUpdated(qosData* pData)
 
 void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
 {
-    pmlLog(pml::LOG_DEBUG) << "RtpThread::PassSessionDetails";
+    pmlLog(pml::LOG_DEBUG, "pam::rtpclient") << "PassSessionDetails";
 
     //make the buffer queue the same size as the number of streams
 
@@ -548,7 +548,7 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
         }
         #endif // PTPMONKEY
 
-        pmlLog(pml::LOG_DEBUG) << "RTP Client\tSubsession sync: " << pSubsession->GetSyncTime();
+        pmlLog(pml::LOG_DEBUG, "pam::rtpclient") << "Subsession sync: " << pSubsession->GetSyncTime();
     }
 
     m_Session.SetCurrentSubsession();
@@ -556,13 +556,13 @@ void RtpThread::PassSessionDetails(Smpte2110MediaSession* pSession)
     {
         m_nSampleRate = m_Session.GetCurrentSubsession()->nSampleRate;
         m_nInputChannels = min((unsigned int)8 ,m_Session.GetCurrentSubsession()->nChannels);
-        pmlLog() << "RTP Client\t" << m_nInputChannels << " channels at " << m_nSampleRate << " Hz";
+        pmlLog(pml::LOG_INFO, "pam::rtpclient") << m_nInputChannels << " channels at " << m_nSampleRate << " Hz";
     }
     else
     {
         m_nSampleRate = 48000;
         m_nInputChannels = 0;
-        pmlLog(pml::LOG_ERROR) << "RTP Client\tNo Input Channels";
+        pmlLog(pml::LOG_ERROR, "pam::rtpclient") << "No Input Channels";
         StopStream();
     }
 

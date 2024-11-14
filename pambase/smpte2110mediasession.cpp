@@ -257,7 +257,6 @@ Boolean Smpte2110MediaSubsession::createSourceObjects(int useSpecialRTPoffset)
         fReadSource = fRTPSource = Aes67Source::createNew(env(), fRTPSocket, fRTPPayloadFormat, fRTPTimestampFrequency, mimeType, 0,FALSE, m_nSyncTime);
         delete[] mimeType;
         
-        pmlLog() << "-------------- " << fNumChannels << "----------------------";
         m_channels.resize(fNumChannels);
         parseSDPAttribute_Channels();    //Channel mapping if any
 
@@ -643,7 +642,7 @@ void Smpte2110MediaSubsession::ScheduleNextQOSMeasurement()
     m_qosMeasurementTimerTask = env().taskScheduler().scheduleDelayedTask(usecsToDelay, (TaskFunc*)periodicQOSMeasurement, (void*)this);
     if(m_qosMeasurementTimerTask == nullptr)
     {
-        pmlLog(pml::LOG_ERROR) << "Smpte2110MediaSubsession::ScheduleNextQOSMeasurement - FAILED";
+        pmlLog(pml::LOG_ERROR, "pam::rtp") << "ScheduleNextQOSMeasurement - FAILED";
     }    
     
 }

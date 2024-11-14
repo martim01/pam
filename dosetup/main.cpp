@@ -15,22 +15,22 @@ static const std::string STR_LOCAL = "127.0.1.1";
 
 int SetHostname(const std::string& sHostname)
 {
-    pmlLog() << "Set hostname to " << sHostname;
+    pmlLog(pml::LOG_INFO, "dosetup") << "Set hostname to " << sHostname;
 
     char c[255];
     if(gethostname(&c[0], 255) != 0)
     {
-        pmlLog(pml::LOG_ERROR) << "Unable to get current hostname " << strerror(errno);
+        pmlLog(pml::LOG_ERROR, "dosetup") << "Unable to get current hostname " << strerror(errno);
         return -1;
     }
     std::string sCurrentHost(c);
 
-    pmlLog() << "Current hostname = " << sCurrentHost;
+    pmlLog(pml::LOG_INFO, "dosetup") << "Current hostname = " << sCurrentHost;
 
     std::ifstream input("/etc/hosts");
     if(!input)
     {
-        pmlLog(pml::LOG_ERROR) << "Unable to read /etc/hosts";
+        pmlLog(pml::LOG_ERROR, "dosetup") << "Unable to read /etc/hosts";
         return -1;
     }
 
@@ -43,7 +43,7 @@ int SetHostname(const std::string& sHostname)
         {
             ssOut << STR_LOCAL << "\t" << sHostname << '\n';
 
-            pmlLog() << "/etc/hosts\tChange '" << sLine << "' to '" << STR_LOCAL << "\t" << sHostname << "'";
+            pmlLog(pml::LOG_INFO, "dosetup") << "/etc/hosts\tChange '" << sLine << "' to '" << STR_LOCAL << "\t" << sHostname << "'";
         }
         else
         {
@@ -57,13 +57,13 @@ int SetHostname(const std::string& sHostname)
     std::ofstream out("/etc/hostname");
     if(!over)
     {
-        pmlLog(pml::LOG_ERROR) << "Unable to write to /etc/hosts";
+        pmlLog(pml::LOG_ERROR, "dosetup") << "Unable to write to /etc/hosts";
         return -1;
     }
 
     if(!out)
     {
-        pmlLog(pml::LOG_ERROR) << "Unable to write to /etc/hostname";
+        pmlLog(pml::LOG_ERROR, "dosetup") << "Unable to write to /etc/hostname";
         return -1;
     }
 
@@ -73,7 +73,7 @@ int SetHostname(const std::string& sHostname)
     over << ssOut.str() << std::endl;
     over.close();
 
-    pmlLog() << "/etc/hosts and /etc/hostname overwritten";
+    pmlLog(pml::LOG_INFO, "dosetup") << "/etc/hosts and /etc/hostname overwritten";
 
 
     // @todo do we need this here?
@@ -105,7 +105,7 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber)
         return 0;
     }
 
-    pmlLog() << "Set overlay to " << sOverlay;
+    pmlLog(pml::LOG_INFO, "dosetup") << "Set overlay to " << sOverlay;
 
     int nLine = -1;
     try
@@ -114,7 +114,7 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber)
     }
     catch(const std::invalid_argument& e)
     {
-        pmlLog(pml::LOG_ERROR) << "Line number incorrect: " << sLineNumber;
+        pmlLog(pml::LOG_ERROR, "dosetup") << "Line number incorrect: " << sLineNumber;
     }
 
     std::ifstream input("/boot/config.txt");
@@ -122,7 +122,7 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber)
 
     if(!input)
     {
-        pmlLog(pml::LOG_ERROR) << "Could not open /boot/config.txt";
+        pmlLog(pml::LOG_ERROR, "dosetup") << "Could not open /boot/config.txt";
         return -1;
     }
 
@@ -134,18 +134,18 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber)
         if(sLine.substr(0, STR_DTPARAM.length()) == STR_DTPARAM)
         {
             output << "#" << sLine << '\n';
-            pmlLog() << "Commented out " << STR_DTPARAM;
+            pmlLog(pml::LOG_INFO, "dosetup") << "Commented out " << STR_DTPARAM;
 
             if(nLine == -1)
             {
                 output << STR_DTOVERLAY << sOverlay << '\n';
-                pmlLog() << "Insert overlay";
+                pmlLog(pml::LOG_INFO, "dosetup") << "Insert overlay";
                 bAdded = true;
             }
         }
         else if(nCount == nLine)
         {
-            pmlLog() << "Overwrite overlay";
+            pmlLog(pml::LOG_INFO, "dosetup") << "Overwrite overlay";
             output << STR_DTOVERLAY << sOverlay << '\n';
             bAdded = true;
         }
@@ -157,7 +157,7 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber)
     }
     if(!bAdded)
     {
-        pmlLog() << "Append overlay";
+        pmlLog(pml::LOG_INFO, "dosetup") << "Append overlay";
         output << STR_DTOVERLAY << sOverlay << '\n';
     }
     input.close();
@@ -165,14 +165,14 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber)
     std::ofstream outputFile("/boot/config.txt");
     if(!outputFile)
     {
-        pmlLog(pml::LOG_ERROR) << "Unable to set overlay: " << strerror(errno);
+        pmlLog(pml::LOG_ERROR, "dosetup") << "Unable to set overlay: " << strerror(errno);
         return -1;
     }
 
     outputFile << output.str() << std::endl;
     outputFile.close();
 
-    pmlLog() << "/boot/config.txt overwritten";
+    pmlLog(pml::LOG_INFO, "dosetup") << "/boot/config.txt overwritten";
     return 0;
 }
 
@@ -181,14 +181,14 @@ int main(int argc, char* argv[])
     struct passwd* pw = getpwuid(getuid());
     std::string sRoot(pw->pw_dir);
     sRoot += "/pam/logs/setup";
-    pml::LogStream::AddOutput(std::make_unique<LogToFile>(sRoot, pml::LogOutput::TS_TIME, pml::LogOutput::TSR_SECOND));
+    pml::LogStream::AddOutput(std::make_unique<pml::LogToFile>(sRoot, 2, 0));
 
-    pmlLog() << "---- Starting dosetup ----";
+    pmlLog(pml::LOG_INFO, "dosetup") << "---- Starting dosetup ----";
 
     if(argc != 5)
     {
-        pmlLog(pml::LOG_ERROR) << "Not enough arguments. Need 5 given " << argc;
-        pmlLog(pml::LOG_INFO) << "Usage: hostname password overlay line_to_replace";
+        pmlLog(pml::LOG_ERROR, "dosetup") << "Not enough arguments. Need 5 given " << argc;
+        pmlLog(pml::LOG_INFO, "dosetup") << "Usage: hostname password overlay line_to_replace";
         return -1;
     }
 

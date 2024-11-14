@@ -301,12 +301,12 @@ void MultiQOSMeasurement(UsageEnvironment& env, void* clientData)
 
 void MultiByeHandler(UsageEnvironment& env, void* clientData)
 {
-    pmlLog() << "Received BYE message";
+    pmlLog(pml::LOG_INFO, "pam::rtsp") << "Received BYE message";
 }
 
 void AES67ServerMediaSubsession::BeginQOSMeasurement()
 {
-    pmlLog(pml::LOG_DEBUG) << "RTP Server\tBegin QOS: " << this;
+    pmlLog(pml::LOG_DEBUG, "pam::rtsp") << "RTP Server\tBegin QOS: " << this;
     if(fRTCPInstance)
     {
         g_multiSession = this;

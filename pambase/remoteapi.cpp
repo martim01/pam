@@ -29,7 +29,7 @@ Json::Value ConvertToJson(const std::string& str)
     }
     catch(const Json::RuntimeError& e)
     {
-        pmlLog(pml::LOG_ERROR) << "NMOS: " << "Unable to convert '" << str << "' to JSON: " << e.what();
+        pmlLog(pml::LOG_ERROR, "pam::api") << "Unable to convert '" << str << "' to JSON: " << e.what();
     }
     return jsData;
 }
@@ -682,7 +682,7 @@ pml::restgoose::response RemoteApi::GetPluginsGenerator(const query& theQuery, c
 
 bool RemoteApi::WSAuthenticate(const endpoint& theEndpoint, const query& theQuery, const userName& theUser, const ipAddress& thePeer)
 {
-    pmlLog() << "RemoteApi\tWebsocket connection: " << theEndpoint.Get() << " from " << thePeer.Get();
+    pmlLog(pml::LOG_INFO, "pam::api") << "Websocket connection: " << theEndpoint.Get() << " from " << thePeer.Get();
     return true;
 }
 
@@ -694,7 +694,7 @@ bool RemoteApi::WSMessage(const endpoint& theEndpoint, const Json::Value& theMes
 
 void RemoteApi::WSClose(const endpoint& theEndpoint, const ipAddress& thePeer)
 {
-    pmlLog() << "RemoteApi\tWebsocket closed: " << theEndpoint.Get() << " from " << thePeer.Get();
+    pmlLog(pml::LOG_INFO, "pam::api") << "Websocket closed: " << theEndpoint.Get() << " from " << thePeer.Get();
 }
 
 bool RemoteApi::AddPluginEndpoint(const httpMethod& method, const endpoint& theEndpoint, std::function<pml::restgoose::response(const query&, const std::vector<pml::restgoose::partData>&, const endpoint&, const userName&)> func)
@@ -735,7 +735,7 @@ pml::restgoose::response RemoteApi::PostWavFile(const query& theQuery, const std
             sLocation = wxString(data.filepath.string());
         }
     }
-    pmlLog() << "Name: " << sFilename.ToStdString() << "\tLocation: " << sLocation.ToStdString();
+    pmlLog(pml::LOG_INFO, "pam::api") << "Name: " << sFilename.ToStdString() << "\tLocation: " << sLocation.ToStdString();
     if(sFilename.empty() == false && sLocation.empty() == false)
     {
         //Check it is a wav file

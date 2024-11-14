@@ -69,7 +69,7 @@ void pnlUpdate::OnShown(wxShowEvent& event)
 
 void pnlUpdate::OnbtnUpdateClick(const wxCommandEvent& event)
 {
-    pmlLog(pml::LOG_INFO) << "Update file '" << m_pnlUSB->m_sSelectedFile << "' from device '" << m_pnlUSB->m_sSelectedDevice << "'";
+    pmlLog(pml::LOG_INFO, "pam::update") << "Update file '" << m_pnlUSB->m_sSelectedFile << "' from device '" << m_pnlUSB->m_sSelectedDevice << "'";
 
     if(ExtractAndRunUpdater(m_pnlUSB->m_sSelectedDevice, m_pnlUSB->m_sSelectedFile) == false)
     {

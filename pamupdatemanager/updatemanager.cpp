@@ -250,7 +250,7 @@ bool UpdateManager::DecodeUpdateList(const wxXmlDocument& xmlDoc)
     }
     else
     {
-        pmlLog(pml::LOG_ERROR) << "UpdateManager\tXML is not correct!";
+        pmlLog(pml::LOG_ERROR, "pam::update") << XML is not correct!";
     }
     return false;
 }

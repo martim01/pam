@@ -32,7 +32,7 @@ MaxMinGraph::MaxMinGraph(int nChannel, wxWindow *parent,LevelsBuilder* pBuilder,
 
     if(m_pBuilder->IsLogActive() )
     {
-        pmlLog() << "Levels\t" << "(Channel " << m_nChannel << ") - Meter Reset";
+        pmlLog(pml::LOG_DEBUG, "pam::minmax") << "Levels\t" << "(Channel " << m_nChannel << ") - Meter Reset";
     }
 }
 
@@ -164,7 +164,7 @@ Json::Value MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bo
             {
                 if(m_pBuilder->IsLogActive())
                 {
-                    pmlLog(pml::LOG_WARN) << "Levels\t" << "(Channel " << m_nChannel << ") - "
+                    pmlLog(pml::LOG_WARN, "pam::minmax") << "Levels\t" << "(Channel " << m_nChannel << ") - "
                     << "level changed from " << m_dLastLevel << "dB to " << m_dCurrent << "dB";
                 }
                 jsMessage["error"] = true;
@@ -182,7 +182,7 @@ Json::Value MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bo
             {
                 if(m_pBuilder->IsLogActive() && m_bOutOfRange == false)
                 {
-                    pmlLog(pml::LOG_WARN) << "Levels\t" << "(Channel " << m_nChannel << ") - " << "range " << dRange << "dB > max set " << m_dMaxRange << "dB";
+                    pmlLog(pml::LOG_WARN, "pam::minmax") << "Levels\t" << "(Channel " << m_nChannel << ") - " << "range " << dRange << "dB > max set " << m_dMaxRange << "dB";
                     m_bOutOfRange = true;
                 }
                 jsMessage["error"] = true;
@@ -193,7 +193,7 @@ Json::Value MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bo
             {
                 if(m_pBuilder->IsLogActive() && m_bOutOfRange == true)
                 {
-                    pmlLog(pml::LOG_INFO) << "Levels\t" << "(Channel " << m_nChannel << ") - " << "range " << dRange << "dB <= max set " << m_dMaxRange << "dB";
+                    pmlLog(pml::LOG_INFO, "pam::minmax") << "Levels\t" << "(Channel " << m_nChannel << ") - " << "range " << dRange << "dB <= max set " << m_dMaxRange << "dB";
                     m_bOutOfRange = false;
                 }
                 jsMessage["error"] = false;
@@ -206,7 +206,7 @@ Json::Value MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bo
                 m_uiCurrent.SetBackgroundColour(wxColour(255,100,100));
                 if(m_pBuilder->IsLogActive() && m_bOutOfRange == false)
                 {
-                    pmlLog(pml::LOG_WARN) << "Levels\t" << "(Channel " << m_nChannel << ") - " <<  "level " << m_dCurrent << "dB outside guide range ["
+                    pmlLog(pml::LOG_WARN, "pam::minmax") << "Levels\t" << "(Channel " << m_nChannel << ") - " <<  "level " << m_dCurrent << "dB outside guide range ["
                     << m_dAmplitudeMin << "dB,"<< m_dAmplitudeMax << "dB]";
 
                     m_bOutOfRange = true;
@@ -219,7 +219,7 @@ Json::Value MaxMinGraph::SetLevels(double dMax, double dMin, double dCurrent, bo
                 m_uiCurrent.SetBackgroundColour(wxColour(91,91,0));
                 if(m_pBuilder->IsLogActive() && m_bOutOfRange == true)
                 {
-                    pmlLog(pml::LOG_INFO) << "Levels\t" << "(Channel " << m_nChannel << ") - " <<  "level " << m_dCurrent << "dB inside guide range ["
+                    pmlLog(pml::LOG_INFO, "pam::minmax") << "Levels\t" << "(Channel " << m_nChannel << ") - " <<  "level " << m_dCurrent << "dB inside guide range ["
                     << m_dAmplitudeMin << "dB,"<< m_dAmplitudeMax << "dB]";
                     m_bOutOfRange = false;
                 }

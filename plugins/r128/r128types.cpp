@@ -99,7 +99,6 @@ void R128TypeManager::LoadTypes()
                         }
                         else
                         {
-                            pmlLog(pml::LOG_WARN) << "Could not read colour_low " << pNode->GetNodeContent();
                             atype.clrLow = wxColour(0,0,100);
                         }
                     }

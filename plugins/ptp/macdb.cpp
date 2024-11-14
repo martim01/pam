@@ -30,13 +30,12 @@ bool MacDb::LoadXml()
                 }
             }
         }
-        pmlLog(pml::LOG_DEBUG) << "MAC DB\t" << "Vendors: " << m_mVendors.size();
 
         return true;
     }
     else
     {
-        pmlLog(pml::LOG_ERROR) << "MAC DB\t" << "Failed to open file";
+        pmlLog(pml::LOG_ERROR, "pam::mac") << "Failed to open file";
         return false;
     }
 }
@@ -61,8 +60,7 @@ wxString MacDb::GetVendor(const wxString& sMac) const
     }
     else
     {
-        //pmlLog(pml::LOG_WARN) << "MAC DB\t" << "GetVendor: '" << sMac.Last(8) << "' not found.";
-
+    
         return wxEmptyString;
     }
 }

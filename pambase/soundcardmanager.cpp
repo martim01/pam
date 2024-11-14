@@ -75,7 +75,7 @@ bool SoundcardManager::Init(wxEvtHandler* pHandler, int nInputDevice, int nOutpu
         }
         return true;
         #else
-        pmlLog(pml::LOG_ERROR) << "SoundcardManager\tPi build currently does not support duplex streams";
+        pmlLog(pml::LOG_ERROR, "pam::soundcard") << "Pi build currently does not support duplex streams";
         return false;
         #endif
     }
@@ -286,7 +286,7 @@ void SoundcardManager::EnumerateDevices()
     int nDevices =  Pa_GetDeviceCount();
     if(nDevices < 0)
     {
-        pmlLog(pml::LOG_ERROR) << "SoundcardManager\tNo Soundcard devices found!";
+        pmlLog(pml::LOG_ERROR, "pam::soundcard") << "No Soundcard devices found!";
 
     }
     else

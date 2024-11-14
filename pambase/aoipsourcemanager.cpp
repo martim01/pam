@@ -51,7 +51,7 @@ bool AoipSourceManager::LoadSources()
                 auto insertSource = m_mSources.insert(std::make_pair(nIndex, AoIPSource(nIndex)));
                 if(insertSource.second == false)
                 {
-                    pmlLog(pml::LOG_WARN) << "AoIP Source Manager\tDuplicate source index: " << nIndex;
+                    pmlLog(pml::LOG_WARN, "pam::aoip") << "Duplicate source index: " << nIndex;
                 }
                 else
                 {
@@ -84,10 +84,10 @@ bool AoipSourceManager::LoadSources()
                 }
             }
         }
-        pmlLog(pml::LOG_INFO) << "AoIP Source Manager\tLoaded " << m_mSources.size() << "AES67 sources";
+        pmlLog(pml::LOG_INFO, "pam::aoip") << "Loaded " << m_mSources.size() << "AES67 sources";
         return true;
     }
-    pmlLog(pml::LOG_WARN) << "AoIP Source Manager\tUnable to load aoipsources.xml";
+    pmlLog(pml::LOG_WARN, "pam::aoip") << "Unable to load aoipsources.xml";
     return false;
 }
 
@@ -376,8 +376,8 @@ void AoipSourceManager::OnSap(wxCommandEvent& event)
             if(m_setDiscover.insert(std::make_pair(sName, sIpAddress)).second)
             {
                 m_nDiscovered++;
-                pmlLog() << "AoIP Source Manager\tDiscovery: SAP response from " << sIpAddress.c_str();
-                pmlLog() << "AoIP Source Manager\tDiscovery: SDP=" << sSDP;
+                pmlLog(pml::LOG_INFO, "pam::aoip") << "Discovery: SAP response from " << sIpAddress.c_str();
+                pmlLog(pml::LOG_INFO, "pam::aoip") << "Discovery: SDP=" << sSDP;
 
                 AddSource(sName, wxString::Format("sdp:%s", sIpAddress.c_str()), sSDP);
 

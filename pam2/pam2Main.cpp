@@ -905,13 +905,11 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
     {
         if(event.GetKey() == "Screen")
         {
-            pmlLog(pml::LOG_TRACE) << "SettingChanged: Splash/Screen=" << Settings::Get().Read("Splash", "Screen", "Main");
-
             m_pswpSplash->ChangeSelection(Settings::Get().Read("Splash", "Screen", "Main"));
         }
         else
         {
-            pmlLog(pml::LOG_WARN) << event.GetSection() << ":" << event.GetKey() << " not handled";
+            pmlLog(pml::LOG_WARN, "pam") << event.GetSection() << ":" << event.GetKey() << " not handled";
         }
     }
     else if(event.GetSection() == "General")
@@ -930,7 +928,7 @@ void pam2Dialog::OnSettingChanged(SettingEvent& event)
     }
     else
     {
-        pmlLog(pml::LOG_WARN) << event.GetSection() << ":" << event.GetKey() << " not handled";
+        pmlLog(pml::LOG_WARN, "pam") << event.GetSection() << ":" << event.GetKey() << " not handled";
     }
 }
 
@@ -982,13 +980,13 @@ void pam2Dialog::TellPluginsAboutOutputChannels()
 
 void pam2Dialog::OntimerStartTrigger(wxTimerEvent& event)
 {
-    pmlLog() << "PAM\tCore Lib Path = " <<  Settings::Get().GetCoreLibDirectory();
-    pmlLog() << "PAM\tPlugin Monitor Path = " <<  Settings::Get().GetMonitorPluginDirectory();
-    pmlLog() << "PAM\tPlugin Test Path = " <<  Settings::Get().GetTestPluginDirectory();
-    pmlLog() << "PAM\tDocuments Path = " <<  Settings::Get().GetDocumentDirectory();
-    pmlLog() << "PAM\tLogs Path = " <<  Settings::Get().GetLogDirectory();
-    pmlLog() << "PAM\tWav Files Path = " <<  Settings::Get().GetWavDirectory();
-    pmlLog() << "PAM\tTemp Path = " <<  Settings::Get().GetTempDirectory();
+    pmlLog(pml::LOG_INFO, "pam") << "Core Lib Path = " <<  Settings::Get().GetCoreLibDirectory();
+    pmlLog(pml::LOG_INFO, "pam") << "Plugin Monitor Path = " <<  Settings::Get().GetMonitorPluginDirectory();
+    pmlLog(pml::LOG_INFO, "pam") << "Plugin Test Path = " <<  Settings::Get().GetTestPluginDirectory();
+    pmlLog(pml::LOG_INFO, "pam") << "Documents Path = " <<  Settings::Get().GetDocumentDirectory();
+    pmlLog(pml::LOG_INFO, "pam") << "Logs Path = " <<  Settings::Get().GetLogDirectory();
+    pmlLog(pml::LOG_INFO, "pam") << "Wav Files Path = " <<  Settings::Get().GetWavDirectory();
+    pmlLog(pml::LOG_INFO, "pam") << "Temp Path = " <<  Settings::Get().GetTempDirectory();
 
     RemoveOldFiles();
 
@@ -1048,7 +1046,7 @@ void pam2Dialog::OntimerIpcTrigger(wxTimerEvent& event)
 void pam2Dialog::OnClose(wxCloseEvent& event)
 {
     IOManager::Get().Stop();
-    pmlLog() << "PAM\tClosing";
+    pmlLog(pml::LOG_INFO, "pam") << "Closing";
     event.Skip();
 }
 
@@ -1253,7 +1251,7 @@ wxString pam2Dialog::Screenshot()
         sFilename = wxDateTime::Now().Format("/tmp/%Y%m%dT%H%M%S.jpg");
         if(bmpScreen.SaveFile(sFilename,wxBITMAP_TYPE_JPEG) == false)
         {
-            pmlLog(pml::LOG_WARN) << "Failed to save screenshot " << sFilename;
+            pmlLog(pml::LOG_WARN, "pam") << "Failed to save screenshot " << sFilename;
             sFilename.clear();
         }
     }
@@ -1265,7 +1263,7 @@ wxString pam2Dialog::Screenshot()
 
 void pam2Dialog::RegisterRemoteApiSettings()
 {
-    pmlLog() << "RegisterRemoteApiSettings";
+    pmlLog(pml::LOG_INFO, "pam") << "RegisterRemoteApiSettings";
 
     RemoteApi::Get().RegisterRemoteApiEnum("Input", "Type", {"Disabled", "Soundcard", "AoIP"}, "Soundcard");
     RemoteApi::Get().RegisterRemoteApiCallback("Input", "AoIP", GetAoipSources, 0);
@@ -1337,7 +1335,7 @@ void pam2Dialog::RegisterRemoteApiSettings()
     RemoteApi::Get().RegisterRemoteApiEnum("NMOS", "Client", {{0,"Off"}, {1, "IS04 Connection"}, {2, "IS05 Connection"}}, 0);
 
 
-    pmlLog() << "RegisterRemoteApiSettings:Done";
+    pmlLog(pml::LOG_INFO, "pam") << "RegisterRemoteApiSettings:Done";
 
 }
 

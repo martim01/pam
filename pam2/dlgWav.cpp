@@ -270,13 +270,13 @@ void dlgWav::ImportWavFile(const wxFileName& fnWav)
 
     if(wxCopyFile(fnWav.GetFullPath(), Settings::Get().GetWavDirectory()+"/"+fnWav.GetFullName()) == true)
     {
-        pmlLog() << "Imported wav file " << fnWav.GetName();
+        pmlLog(pml::LOG_INFO, "pam") << "Imported wav file " << fnWav.GetName();
         m_plstFiles->AddButton(fnWav.GetName());
         ShowPagingButtons();
     }
     else
     {
-        pmlLog(pml::LOG_ERROR) << "Importing wav file: Reading '" << fnWav.GetName() << "' invalid file";
+        pmlLog(pml::LOG_ERROR, "pam") << "Importing wav file: Reading '" << fnWav.GetName() << "' invalid file";
         m_pnlUSB->Log(wxString::Format("Reading '%s' invalid file", fnWav.GetName().c_str()));
     }
 }

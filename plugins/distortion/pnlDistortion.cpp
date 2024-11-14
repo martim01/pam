@@ -166,7 +166,7 @@ void pnlDistortion::OntimerTestTrigger(wxTimerEvent& event)
         }
         if(m_pBuilder->IsLogActive() && res.nPeaks > 1 && res.bOk)
         {
-            pmlLog(pml::LOG_INFO) << "Distortion\t" << "Channel: " << i << " Peaks=" << res.nPeaks << " Distortion=" << res.dDistortion;
+            pmlLog(pml::LOG_INFO, "pam::distortion") << "Channel: " << i << " Peaks=" << res.nPeaks << " Distortion=" << res.dDistortion;
         }
     }
 

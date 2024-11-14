@@ -18,6 +18,7 @@
 #include "pnlFlags.h"
 #include <memory>
 #include "timeutils.h"
+#include "enums.h"
 class ptpBuilder;
 class timedbuffer;
 class session;
@@ -357,8 +358,8 @@ class ptpPanel: public pmPanel
 		std::shared_ptr<const pml::ptpmonkey::PtpV2Clock> m_pClock;
 		std::shared_ptr<const pml::ptpmonkey::PtpV2Clock> m_pLocalClock;
 
-        std::map<unsigned char, wxString> m_mAccuracy;
-        std::map<unsigned char, wxString> m_mTimeSource;
+        std::map<pml::ptpmonkey::clck::enumAccuracy, wxString> m_mAccuracy;
+        std::map<pml::ptpmonkey::clck::enumTimeSource, wxString> m_mTimeSource;
         std::map<std::int8_t, wxString> m_mRate;
 
         wxTimer m_timer;

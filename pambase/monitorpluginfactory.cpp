@@ -53,7 +53,7 @@ wxString MonitorPluginFactory::GetPluginDirectory()
 bool MonitorPluginFactory::LoadLibrary(const wxString& sLibrary)
 {
     //wxLogNull ln;
-    pmlLog(pml::LOG_INFO) << "Monitor Plugin\t" << "Load '" << sLibrary << "'";
+    pmlLog(pml::LOG_INFO, "pam::plugins") << "Load '" << sLibrary << "'";
     map<wxString, wxDynamicLibrary*>::iterator itLib = m_mLibraries.find(sLibrary);
     if(itLib == m_mLibraries.end())
     {
@@ -82,22 +82,22 @@ bool MonitorPluginFactory::LoadLibrary(const wxString& sLibrary)
                 {
                     (*ptr)();
                     m_mLibraries.insert(make_pair(sLibrary, pLib));
-                    pmlLog(pml::LOG_INFO) << "Monitor Plugin\t" << "Loaded '" << sLib << "'";
+                    pmlLog(pml::LOG_INFO, "pam::plugins") << "Loaded '" << sLib << "'";
                     return true;
                 }
                 else
                 {
-                    pmlLog(pml::LOG_ERROR) << "Monitor Plugin\t" << "'"  << sLib << "' cannot execute function CreateMonitorBuilder";
+                    pmlLog(pml::LOG_ERROR, "pam::plugins") << "'"  << sLib << "' cannot execute function CreateMonitorBuilder";
                 }
             }
             else
             {
-                pmlLog(pml::LOG_ERROR) << "Monitor Plugin\t" << "'" << sLib << "' has no function CreateMonitorBuilder";
+                pmlLog(pml::LOG_ERROR, "pam::plugins") << "'" << sLib << "' has no function CreateMonitorBuilder";
             }
         }
         else
         {
-                pmlLog(pml::LOG_ERROR) << "Monitor Plugin\t" << "Could not load '" << sLib << "' '" << dlerror();
+                pmlLog(pml::LOG_ERROR, "pam::plugins") << "Could not load '" << sLib << "' '" << dlerror();
         }
         delete pLib;
     }
@@ -240,18 +240,18 @@ plugin MonitorPluginFactory::GetPluginDetails(const wxString& sDir, const wxStri
                 }
                 else
                 {
-                    pmlLog(pml::LOG_ERROR) << "Monitor Plugin\t" << "Could not find correct symbols in lib " << sLib;
+                    pmlLog(pml::LOG_ERROR, "pam::plugins") << "Could not find correct symbols in lib " << sLib;
                 }
             }
             else
             {
-                pmlLog(pml::LOG_ERROR) << "Monitor Plugin\t" << "Could not load lib " << sLib;
+                pmlLog(pml::LOG_ERROR, "pam::plugins") << "Could not load lib " << sLib;
             }
             delete pLib;
         }
         else
         {
-            pmlLog(pml::LOG_ERROR) << "Monitor Plugin\t" << "Could not create lib " << sLib;
+            pmlLog(pml::LOG_ERROR, "pam::plugins") << "Could not create lib " << sLib;
         }
     }
     return aPlugin;

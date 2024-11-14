@@ -40,7 +40,7 @@ void* RtpServerThread::Entry()
     //NetAddressList sendingddresses(m_sRTSP.ToStdString().c_str());
     //copyAddress(SendingInterfaceAddr, sendingddresses.firstAddress());
 
-    pmlLog() << "RtpServerThread: Interface " << m_sRTSP.ToStdString();
+    pmlLog(pml::LOG_INFO, "pam::rtpserver") << "Interface " << m_sRTSP.ToStdString();
 
     SendingInterfaceAddr = inet_addr(m_sRTSP.ToStdString().c_str());
     TaskScheduler* scheduler = PamTaskScheduler::createNew();
@@ -80,7 +80,7 @@ void* RtpServerThread::Entry()
 
 bool RtpServerThread::CreateStream()
 {
-    pmlLog() << "RTP Server: CreateStream -> " << m_sSourceIp;
+    pmlLog(pml::LOG_INFO, "pam::rtpserver") << "CreateStream -> " << m_sSourceIp;
 
     char const* mimeType = "L24";
     unsigned char payloadFormatCode = Settings::Get().Read("Server", "RTPMap", 96);
@@ -93,7 +93,7 @@ bool RtpServerThread::CreateStream()
         NetAddressList destinationAddresses(m_sSourceIp.ToStdString().c_str());
         copyAddress(destinationAddress, destinationAddresses.firstAddress());
 
-        pmlLog(pml::LOG_INFO) << "RtpServerThread: Destination " << m_sSourceIp.ToStdString();
+        pmlLog(pml::LOG_INFO, "pam::rtpserver") << "Destination " << m_sSourceIp.ToStdString();
     }
     else if(m_bSSM)
     {
@@ -103,7 +103,7 @@ bool RtpServerThread::CreateStream()
     else
     {
         m_bStreaming = false;
-        pmlLog(pml::LOG_ERROR) << "RTP Server: CreateStream No SourceIp and not multicast";
+        pmlLog(pml::LOG_ERROR, "pam::rtpserver") << "CreateStream No SourceIp and not multicast";
         return false;
     }
 
@@ -139,7 +139,7 @@ bool RtpServerThread::CreateStream()
     m_pSink->setPacketSizes(m_pSource->GetPreferredFrameSize()+12,m_pSource->GetPreferredFrameSize()+12);
 
     // Create and start a RTSP server to serve this stream:
-    pmlLog() << "RTP Server: Create RTSP Server on port " << m_nRTSPPort;
+    pmlLog(pml::LOG_INFO, "pam::rtpserver") << "Create RTSP Server on port " << m_nRTSPPort;
     m_pRtspServer = PamRTSPServer::createNew(*m_penv, m_nRTSPPort);
 
     // Create (and start) a 'RTCP instance' for this RTP sink:
@@ -158,12 +158,12 @@ bool RtpServerThread::CreateStream()
     bool bOk(true);
     if (m_pRtspServer == nullptr)
     {
-        pmlLog(pml::LOG_ERROR) << "RTP Server\tFailed to create RTSP server: " << m_penv->getResultMsg();
+        pmlLog(pml::LOG_ERROR, "pam::rtpserver") << "Failed to create RTSP server: " << m_penv->getResultMsg();
         bOk = false;
     }
     if(m_pRtcpInstance == nullptr && m_bRTCP)
     {
-        pmlLog(pml::LOG_ERROR) << "RTP Server\tFailed to create RTCP Instance: " << m_penv->getResultMsg();
+        pmlLog(pml::LOG_ERROR, "pam::rtpserver") << "Failed to create RTCP Instance: " << m_penv->getResultMsg();
         bOk = false;
     }
     if(!bOk)
@@ -198,8 +198,8 @@ bool RtpServerThread::CreateStream()
 
 
     // Finally, start the streaming:
-    pmlLog(pml::LOG_INFO) << "RTP Server\tBeginning streaming..." << m_pRtspServer->rtspURL(sms);
-    pmlLog(pml::LOG_INFO) << m_sSDP;
+    pmlLog(pml::LOG_INFO, "pam::rtpserver") << "Beginning streaming..." << m_pRtspServer->rtspURL(sms);
+    pmlLog(pml::LOG_INFO, "pam::rtpserver") << m_sSDP;
 
 
     m_bStreaming = true;
@@ -222,7 +222,7 @@ void afterPlaying(void* pClientData)
 void RtpServerThread::CloseStream()
 {
     wxMutexLocker lock(m_mutex);
-    pmlLog(pml::LOG_INFO) << "RTP Server\t...done streaming";
+    pmlLog(pml::LOG_INFO, "pam::rtpserver") << "...done streaming";
 
     // End by closing the media:
     Medium::close(m_pRtspServer);

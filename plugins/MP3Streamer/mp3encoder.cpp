@@ -106,7 +106,7 @@ void MP3Encoder::AddSamples(const float* pBuffer, size_t nSize)
     }
     else if(nBytesOut < 0)
     {
-        pmlLog(pml::LOG_ERROR) << "MP3Streamer\t" << "Unable to encode audio data";
+        pmlLog(pml::LOG_ERROR, "pam::mp3streamer") << "Unable to encode audio data";
     }
 }
 
@@ -115,7 +115,7 @@ int MP3Encoder::RegisterForFrames()
     std::lock_guard<std::mutex> lg(m_mutex);
     if(m_lstFrames.size() < 2)
     {
-        pmlLog(pml::LOG_WARN) << "MP3Streamer\t" << "Not enough frames";
+        pmlLog(pml::LOG_WARN, "pam::mp3streamer") << "Not enough frames";
         return -1;
     }
     return m_mReader.insert(std::make_pair(wxNewId(), m_lstFrames.begin())).first->first;

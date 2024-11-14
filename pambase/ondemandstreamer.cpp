@@ -46,20 +46,20 @@ void* OnDemandStreamer::Entry()
     PamRTSPServer* rtspServer = PamRTSPServer::createNew(*m_pEnv, m_nRtspPort, NULL);
     if (rtspServer == NULL)
     {
-        pmlLog(pml::LOG_ERROR) << "RTP Server\tFailed to create RTSP server (unicast): " << m_pEnv->getResultMsg();
+        pmlLog(pml::LOG_ERROR, "pam::rtspserver") << "Failed to create RTSP server (unicast): " << m_pEnv->getResultMsg();
         return NULL;
     }
 
     if(m_pSubsession == nullptr)
     {
-        pmlLog(pml::LOG_ERROR) << "RTP Server\tFailed to create RTSP server (unicast): No subsession defined";
+        pmlLog(pml::LOG_ERROR, "pam::rtspserver") << "Failed to create RTSP server (unicast): No subsession defined";
         return NULL;
     }
 
     char const* descriptionString = wxGetHostName().c_str() + " PAM_"+m_pSubsession->GetStreamName();
     std::string sStreamName = "by-name/AES67@"+wxGetHostName().ToStdString();
 
-    pmlLog(pml::LOG_DEBUG) << "RTP Server\tStreamName = '" << sStreamName << "'";
+    pmlLog(pml::LOG_DEBUG, "pam::rtspserver") << "StreamName = '" << sStreamName << "'";
 
     m_pSubsession->SetRTCPHandlers(m_setRTCPHandlers);
     m_pSubsession->SetRTSPHandlers(m_setRTSPHandlers);
@@ -80,11 +80,11 @@ void* OnDemandStreamer::Entry()
 
     if (rtspServer->setUpTunnelingOverHTTP(80) || rtspServer->setUpTunnelingOverHTTP(8000) || rtspServer->setUpTunnelingOverHTTP(8080))
     {
-        pmlLog(pml::LOG_INFO) << "RTP Server\t(We use port " << rtspServer->httpServerPortNum() << " for optional RTSP-over-HTTP tunneling.)";
+        pmlLog(pml::LOG_INFO, "pam::rtspserver") << "(We use port " << rtspServer->httpServerPortNum() << " for optional RTSP-over-HTTP tunneling.)";
     }
     else
     {
-        pmlLog(pml::LOG_WARN) << "RTP Server\t(RTSP-over-HTTP tunneling is not available.)";
+        pmlLog(pml::LOG_WARN, "pam::rtspserver") << "(RTSP-over-HTTP tunneling is not available.)";
     }
 
 
@@ -112,7 +112,7 @@ void OnDemandStreamer::AnnounceStream(RTSPServer* rtspServer, ServerMediaSession
 
 
     UsageEnvironment& env = rtspServer->envir();
-    pmlLog(pml::LOG_INFO) << "RTP Server\tPlay this stream using the URL \"" << url << "\"";
+    pmlLog(pml::LOG_INFO, "pam::rtspserver") << "Play this stream using the URL \"" << url << "\"";
 
     wxMutexLocker ml(m_mutex);
     for(auto pHandler : m_setRTSPHandlers)

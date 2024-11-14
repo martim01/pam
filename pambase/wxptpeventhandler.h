@@ -26,6 +26,8 @@ class wxPtpEventHandler : public pml::ptpmonkey::PtpEventHandler
         void DelayRequestSent(std::shared_ptr<pml::ptpmonkey::PtpV2Clock> pClock) override;
         void DelayResponseSent(std::shared_ptr<pml::ptpmonkey::PtpV2Clock> pClock) override;
 
+        void ManagementMessageReceived(std::shared_ptr<pml::ptpmonkey::ptpV2Header> pHeader, std::shared_ptr<pml::ptpmonkey::ptpManagement> pMessage) override{};
+
     protected:
         void NotifyHandlers(wxEventType type, const wxString& sClockId);
         std::set<wxEvtHandler*> m_setHandlers;

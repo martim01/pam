@@ -54,7 +54,7 @@ bool Audio::Init(unsigned int nSampleRate)
 
 bool Audio::OpenStream(PaStreamCallback *streamCallback)
 {
-    pmlLog() << "Audio\tAttempt to open device " << m_nDevice;
+    pmlLog(pml::LOG_INFO, "pam::soundcard") << "Attempt to open device " << m_nDevice;
 
 
     PaStreamParameters inputParameters;
@@ -66,7 +66,7 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
         if(pInfo->maxInputChannels < 2)
         {
             m_nChannelsIn = pInfo->maxInputChannels;
-            pmlLog() << "Audio\tInput channels changed to " << m_nChannelsIn;
+            pmlLog(pml::LOG_INFO, "pam::soundcard") << "Input channels changed to " << m_nChannelsIn;
         }
         else
         {
@@ -76,7 +76,7 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
         if(pInfo->maxOutputChannels < 2)
         {
             m_nChannelsOut = pInfo->maxInputChannels;
-            pmlLog() << "Audio\tOutput channels changed to " << m_nChannelsOut;
+            pmlLog(pml::LOG_INFO, "pam::soundcard") << "Output channels changed to " << m_nChannelsOut;
         }
         else
         {
@@ -112,15 +112,15 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
     switch(m_nType)
     {
         case INPUT:
-            pmlLog() << "Audio\tAttempt to open " << m_nChannelsIn << " channel INPUT stream on device " << m_nDevice;
+            pmlLog(pml::LOG_INFO, "pam::soundcard") << "Attempt to open " << m_nChannelsIn << " channel INPUT stream on device " << m_nDevice;
             err = Pa_OpenStream(&m_pStream, &inputParameters, 0, m_nSampleRate, 1024, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
             break;
         case OUTPUT:
-            pmlLog() << "Audio\tAttempt to open " << m_nChannelsOut << " channel OUTPUT stream on device " <<  m_nDevice;
+            pmlLog(pml::LOG_INFO, "pam::soundcard") << "Attempt to open " << m_nChannelsOut << " channel OUTPUT stream on device " <<  m_nDevice;
             err = Pa_OpenStream(&m_pStream, 0, &outputParameters, m_nSampleRate, 0, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
             break;
         case DUPLEX:
-            pmlLog() << "Audio\tAttempt to open " << m_nChannelsIn << " in and " << m_nChannelsOut << "out DUPLEX stream on device " << m_nDevice;
+            pmlLog(pml::LOG_INFO, "pam::soundcard") << "Attempt to open " << m_nChannelsIn << " in and " << m_nChannelsOut << "out DUPLEX stream on device " << m_nDevice;
             err = Pa_OpenStream(&m_pStream, &inputParameters, &outputParameters, m_nSampleRate, 2048, paNoFlag, streamCallback, reinterpret_cast<void*>(this) );
             break;
     }
@@ -133,17 +133,17 @@ bool Audio::OpenStream(PaStreamCallback *streamCallback)
             #ifdef __WXGTK__
             PaAlsa_EnableRealtimeScheduling(m_pStream,1);
             #endif
-            pmlLog() << "Audio\tDevice " << m_nDevice << " opened: Mode " << m_nType;
+            pmlLog(pml::LOG_INFO, "pam::soundcard") << "Device " << m_nDevice << " opened: Mode " << m_nType;
             const PaStreamInfo* pStreamInfo = Pa_GetStreamInfo(m_pStream);
             if(pStreamInfo)
             {
-                pmlLog() << "Audio\tStreamInfo: Input Latency " << pStreamInfo->inputLatency << " Output Latency " << pStreamInfo->outputLatency << " Sample Rate " << pStreamInfo->sampleRate;
+                pmlLog(pml::LOG_INFO, "pam::soundcard") << "StreamInfo: Input Latency " << pStreamInfo->inputLatency << " Output Latency " << pStreamInfo->outputLatency << " Sample Rate " << pStreamInfo->sampleRate;
             }
             return true;
         }
     }
     m_pStream = 0;
-    pmlLog(pml::LOG_ERROR) << "Audio\tFailed to open device " << m_nDevice << " " << Pa_GetErrorText(err)
+    pmlLog(pml::LOG_ERROR, "pam::soundcard") << "Failed to open device " << m_nDevice << " " << Pa_GetErrorText(err)
                                        << " with sample rate=" << m_nSampleRate << " input channels=" << m_nChannelsIn
                                        << " and output channels=" << m_nChannelsOut;
 
@@ -163,7 +163,7 @@ Audio::~Audio()
         err = Pa_CloseStream(m_pStream);
         if(err != paNoError)
         {
-            pmlLog(pml::LOG_ERROR) << "Audio\tFailed to stop PortAudio stream: " << Pa_GetErrorText(err);
+            pmlLog(pml::LOG_ERROR, "pam::soundcard") << "Failed to stop PortAudio stream: " << Pa_GetErrorText(err);
         }
     }
     Settings::Get().RemoveHandler(this);

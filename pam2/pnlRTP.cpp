@@ -628,7 +628,7 @@ void pnlRTP::ImportSources(const wxString& sFileName)
                     sSDP.Replace("`", "\n");
                     sSDP.Replace("\t", "");
                     sSDP.Trim();
-                    pmlLog() << "Import: " << sSDP;
+                    pmlLog(pml::LOG_INFO, "pam::aoip") << "Import: " << sSDP;
                     AoipSourceManager::Get().AddSource(itData->first, itData->second.BeforeFirst('['), sSDP);
                 }
                 else if(itData->second.Left(4).CmpNoCase("rtsp") == 0)
@@ -636,17 +636,17 @@ void pnlRTP::ImportSources(const wxString& sFileName)
                     AoipSourceManager::Get().AddSource(itData->first, itData->second);
                 }
             }
-            pmlLog() << "AoIP\tImport AoIP: Read '" << sFileName << "'";
+            pmlLog(pml::LOG_INFO, "pam::aoip") << "Import AoIP: Read '" << sFileName << "'";
         }
         else
         {
-            pmlLog(pml::LOG_ERROR) << "AoIP\tImport AoIP: Reading '" << sFileName << "' invalid file";
+            pmlLog(pml::LOG_ERROR, "pam::aoip") << "Import AoIP: Reading '" << sFileName << "' invalid file";
             m_pnlUSB->Log(wxString::Format("Reading '%s' invalid file", sFileName.c_str()));
         }
     }
     else
     {
-        pmlLog(pml::LOG_ERROR) << "AoIP\tImport AoIP: Reading '" << sFileName << "' failed";
+        pmlLog(pml::LOG_ERROR, "pam::aoip") << "Import AoIP: Reading '" << sFileName << "' failed";
         m_pnlUSB->Log(wxString::Format("Reading '%s' failed", sFileName.c_str()));
     }
 }

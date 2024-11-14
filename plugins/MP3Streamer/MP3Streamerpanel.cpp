@@ -117,8 +117,6 @@ void MP3StreamerPanel::InputSession(const session& aSession)
             m_Encoder.StopLame();
             m_Encoder.InitLame(params);
 
-            pmlLog(pml::LOG_INFO) << "MP3Streamer\t" << "New Session";
-
             //Create the Unicast Streamer
             if(!m_pUnicastStreamer)
             {

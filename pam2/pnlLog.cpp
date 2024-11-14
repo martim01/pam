@@ -3,11 +3,10 @@
 #include "settings.h"
 #include "settingevent.h"
 #include "pnlLogControl.h"
-#include "wxlogoutput.h"
 #include <wx/log.h>
 #include "logelement.h"
 #include <wx/dcclient.h>
-#include "wxlogoutput.h"
+#include "wx/wxlogoutput.h"
 #include "log.h"
 #include "logtofile.h"
 //(*InternalHeaders(pnlLog)
@@ -48,7 +47,7 @@ pnlLog::pnlLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
         m_nLogToFile = pml::LogStream::AddOutput(std::make_unique<pml::LogToFile>("/var/log/pam"));
     }
 
-	Connect(wxID_ANY,wxEVT_PMLOG,(wxObjectEventFunction)&pnlLog::OnLog);
+	Connect(wxID_ANY,wxEVT_LOG,(wxObjectEventFunction)&pnlLog::OnLog);
 }
 
 pnlLog::~pnlLog()

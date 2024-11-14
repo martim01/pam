@@ -183,7 +183,7 @@ void pnlChannelDelay::OnOffsetDone(wxCommandEvent& event)
 
     if(m_pBuilder->IsLogActive() && m_nOffset != event.GetInt())
     {
-        pmlLog(pml::LOG_INFO) << "Channel Delay\t" << static_cast<double>(event.GetInt())/m_dSampleRate << "ms";
+        pmlLog(pml::LOG_INFO, "pam::channeldelay") << static_cast<double>(event.GetInt())/m_dSampleRate << "ms";
     }
     m_nOffset = event.GetInt();
 

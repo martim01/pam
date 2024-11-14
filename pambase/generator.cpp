@@ -357,14 +357,14 @@ bool Generator::SetFile()
         if(bOk == false)
         {
             CloseFile();
-            pmlLog(pml::LOG_ERROR) << "Generator\tFailed to open file '" << sFilePath << "'";
+            pmlLog(pml::LOG_ERROR, "pam::generator") << "Failed to open file '" << sFilePath << "'";
             m_nGenerator = SILENCE;
         }
         else
         {
-            pmlLog() << "Generator\tOpened file '" << sFilePath << "'";
-            pmlLog() << "Generator\tSampleRate =" << GetSampleRate();
-            pmlLog() << "Generator\tChannels =" << GetNumberOfChannels();
+            pmlLog(pml::LOG_INFO, "pam::generator") << "Opened file '" << sFilePath << "'";
+            pmlLog(pml::LOG_INFO, "pam::generator") << "SampleRate =" << GetSampleRate();
+            pmlLog(pml::LOG_INFO, "pam::generator") << "Channels =" << GetNumberOfChannels();
 
 
         }
@@ -373,7 +373,7 @@ bool Generator::SetFile()
     {
         m_nGenerator = SILENCE;
         m_pSoundfile = nullptr;
-        pmlLog(pml::LOG_ERROR) << "Generator\tFile '" << sFilePath << "' does not exist.";
+        pmlLog(pml::LOG_ERROR, "pam::generator") << "File '" << sFilePath << "' does not exist.";
     }
 
     Generate(8192);

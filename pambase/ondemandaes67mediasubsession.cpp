@@ -20,7 +20,6 @@ m_sMapping(sMapping)
 AES67RTPSink::~AES67RTPSink()
 {
 
-    pmlLog(pml::LOG_DEBUG) << "~AES67RTPSink" ;
     //@todo tell higher up that this sink has finished so we can remove the RTCP stats (or at least mark as done)
 }
 
@@ -158,12 +157,10 @@ void OnDemandAES67MediaSubsession::FlushQueue()
 //{
 //    if (fSDPLines == NULL)
 //    {
-//        pmlLog() << "OnDemandAES67MediaSubsession::sdpLines" ;
 //        GetSDP();
 //        fSDPLines =new char[m_sSDP.size()+1];
 //        strcpy(fSDPLines, m_sSDP.c_str());
 //    }
-//    pmlLog() << "OnDemandAES67MediaSubsession::sdpLines: " << fSDPLines ;
 //    return fSDPLines;
 //}
 //
@@ -237,13 +234,13 @@ void QOSMeasurement(UsageEnvironment& env, void* clientData)
 
 void ByeHandler(UsageEnvironment& env, void* clientData)
 {
-    pmlLog() << "Received BYE message" ;
+    pmlLog(pml::LOG_INFO, "pam::rtsp") << "Received BYE message" ;
 }
 
 
 void OnDemandAES67MediaSubsession::BeginQOSMeasurement()
 {
-    pmlLog(pml::LOG_DEBUG) << "RTP Server\tBegin QOS: " << this ;
+    pmlLog(pml::LOG_DEBUG, "pam::rtsp") << "RTP Server\tBegin QOS: " << this ;
 
     if(m_pRTCP && m_pSink && !m_bQos)
     {

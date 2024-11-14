@@ -98,7 +98,7 @@ void TimeManager::DoSync()
 
     if(!bSuccess)
     {
-        pmlLog(pml::LOG_ERROR) << "Could not sync time";
+        pmlLog(pml::LOG_ERROR, "pam::timesysnc") << "Could not sync time";
     }
 }
 
@@ -142,13 +142,13 @@ bool TimeManager::PtpSyncFrequency()
 
                     if(clock_settime(CLOCK_REALTIME, &tv) != 0)
                     {
-                        pmlLog(pml::LOG_ERROR) << "Failed to hard crash " <<strerror(errno);
+                        pmlLog(pml::LOG_ERROR, "pam::timesysnc") << "Failed to hard crash " <<strerror(errno);
                     }
                     else
                     {
-                        pmlLog() << "PTP: Hard crashed to " << TimeToIsoString(hardSetM);
+                        pmlLog(pml::LOG_INFO, "pam::timesysnc") << "Hard crashed to " << TimeToIsoString(hardSetM);
                         clock_gettime(CLOCK_REALTIME, &tv);
-                        pmlLog() << "PTP: Current time now: " << ctime(&tv.tv_sec);
+                        pmlLog(pml::LOG_INFO, "pam::timesysnc") << "Current time now: " << ctime(&tv.tv_sec);
                     }
                     wxPtp::Get().ResetLocalClockStats();
                     m_nPtpSamples = 0;
@@ -204,12 +204,12 @@ std::pair<bool, long> TimeManager::SetGetFrequency(std::pair<bool, long> setFreq
     {
         buf.freq = setFreq.second;
         buf.modes = ADJ_FREQUENCY;
-        pmlLog() << "Set frequency to: " << setFreq.second;
+        pmlLog(pml::LOG_INFO, "pam::timesysnc") << "Set frequency to: " << setFreq.second;
     }
 
     if(adjtimex(&buf) == -1)
     {
-        pmlLog(pml::LOG_ERROR) << "Failed to read/write frequency " <<strerror(errno);
+        pmlLog(pml::LOG_ERROR, "pam::timesysnc") << "Failed to read/write frequency " <<strerror(errno);
         return std::make_pair(false,0);
     }
     return std::make_pair(true, buf.freq);
@@ -253,13 +253,13 @@ bool TimeManager::TrySyncToPtp()
 
                 if(clock_settime(CLOCK_REALTIME, &tv) != 0)
                 {
-                    pmlLog(pml::LOG_ERROR) << "Failed to hard crash " <<strerror(errno);
+                    pmlLog(pml::LOG_ERROR, "pam::timesysnc") << "Failed to hard crash " <<strerror(errno);
                 }
                 else
                 {
-                    pmlLog() << "PTP: Hard crashed to " << TimeToIsoString(hardSetM);
+                    pmlLog(pml::LOG_INFO, "pam::timesysnc") << "Hard crashed to " << TimeToIsoString(hardSetM);
                     clock_gettime(CLOCK_REALTIME, &tv);
-                    pmlLog() << "PTP: Current time now: " << ctime(&tv.tv_sec);
+                    pmlLog(pml::LOG_INFO, "pam::timesysnc") << "Current time now: " << ctime(&tv.tv_sec);
                 }
                 wxPtp::Get().ResetLocalClockStats();
                 m_nPtpSamples = 0;
@@ -275,13 +275,13 @@ bool TimeManager::TrySyncToPtp()
 
         if(false && !m_bPtpLock && abs(slope) > 0.2)
         {
-            pmlLog() << "PTP: Clock frequency adjust: " << slope;
+            pmlLog(pml::LOG_INFO, "pam::timesysnc") << "Clock frequency adjust: " << slope;
 
             timex buf;
             memset(&buf, 0,sizeof(buf));
             if(adjtimex(&buf) == -1)
             {
-                pmlLog(pml::LOG_ERROR) << "Failed to read frequency " <<strerror(errno);
+                pmlLog(pml::LOG_ERROR, "pam::timesysnc") << "Failed to read frequency " <<strerror(errno);
                 return false;
             }
 
@@ -291,7 +291,7 @@ bool TimeManager::TrySyncToPtp()
 
             if(adjtimex(&buf) == -1)
             {
-                pmlLog(pml::LOG_ERROR) << "Failed to set frequency " <<strerror(errno);
+                pmlLog(pml::LOG_ERROR, "pam::timesysnc") << "Failed to set frequency " <<strerror(errno);
                 return false;
             }
             wxPtp::Get().ResetLocalClockStats();
@@ -334,7 +334,7 @@ bool TimeManager::TrySyncToPtp()
 
             if(adjtime(&tv, nullptr) != 0)
             {
-                pmlLog(pml::LOG_ERROR) << "Could not set time: " <<strerror(errno);
+                pmlLog(pml::LOG_ERROR, "pam::timesysnc") << "Could not set time: " <<strerror(errno);
             }
             m_nPtpSamples = 0;
             return true;
@@ -343,7 +343,7 @@ bool TimeManager::TrySyncToPtp()
     }
     else
     {
-        pmlLog(pml::LOG_WARN) << "Not synced to PTP master";
+        pmlLog(pml::LOG_WARN, "pam::timesysnc") << "Not synced to PTP master";
     }
     return false;
 }
@@ -413,7 +413,7 @@ bool TimeManager::HasNTP()
 
 void TimeManager::SetNtpServers(const std::map<wxString, bool>& mServers)
 {
-    pmlLog() << "Updating NTP servers";
+    pmlLog(pml::LOG_INFO, "pam::timesysnc") << "Updating NTP servers";
 
     wxTextFile tf;
     if(tf.Open("/etc/chrony/chrony.conf"))
@@ -451,7 +451,7 @@ void TimeManager::SetNtpServers(const std::map<wxString, bool>& mServers)
     }
     else
     {
-        pmlLog(pml::LOG_ERROR) << "Could not write to chrony.conf";
+        pmlLog(pml::LOG_ERROR, "pam::timesysnc") << "Could not write to chrony.conf";
     }
 }
 
@@ -466,7 +466,7 @@ void TimeManager::OnPtpClockRemoved(wxCommandEvent& event)
 {
     if(wxPtp::Get().GetSyncMasterClock() == nullptr && m_eCurrentSync == SYNC_PTP)
     {
-        pmlLog() << "PTP Sync Master disappeared.";
+        pmlLog(pml::LOG_INFO, "pam::timesysnc") << "Sync Master disappeared.";
         DoSync();
     }
 }
@@ -477,9 +477,9 @@ bool TimeManager::ManageChrony(const wxString& sAction)
     if(nResult == 0)
     {
         m_eCurrentSync = SYNC_PTP;
-        pmlLog() << "Started chronyd for NTP";
+        pmlLog(pml::LOG_INFO, "pam::timesysnc") << "Started chronyd for NTP";
         return true;
     }
-    pmlLog(pml::LOG_ERROR) << "Could not change status of chronyd.service";
+    pmlLog(pml::LOG_ERROR, "pam::timesysnc") << "Could not change status of chronyd.service";
     return false;
 }
