@@ -42,5 +42,5 @@ target_link_libraries(@PLUGIN@ optimized pambase debug pambased)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS @PLUGIN@ LIBRARY DESTINATION /usr/local/lib/pam2/@TYPE@)
+	install(TARGETS @PLUGIN@ LIBRARY DESTINATION lib/pam2/@TYPE@)
 endif()		

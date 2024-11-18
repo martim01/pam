@@ -27,5 +27,5 @@ find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
 target_link_libraries(pamupdatemanager ${wxWidgets_LIBRARIES})
-set_property(TARGET pamupdatemanager PROPERTY CXX_STANDARD 14)
+set_property(TARGET pamupdatemanager PROPERTY CXX_STANDARD 17)
 set_target_properties(pamupdatemanager PROPERTIES RUNTIME_OUTPUT_DIRECTORY "../../bin/")

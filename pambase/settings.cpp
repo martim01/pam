@@ -243,23 +243,22 @@ wxString Settings::GetExecutableDirectory() const
 
 wxString Settings::GetConfigDirectory() const
 {
-    return wxString::Format("%s/pam", getenv("HOME"));
-
+    return "/usr/local/etc/pam2";
 }
 
 wxString Settings::GetDocumentDirectory() const
 {
-    return wxString::Format("%s/pam", getenv("HOME"));
+    return "/usr/local/etc/pam2";
 }
 
 wxString Settings::GetLogDirectory() const
 {
-    return wxString::Format(wxT("%s/logs"), GetDocumentDirectory().c_str());
+    return "/var/local/pam2/logs";
 }
 
 wxString Settings::GetWavDirectory() const
 {
-    return wxString::Format(wxT("%s/wav"), GetDocumentDirectory().c_str());
+    return "var/local/pam2/wav";
 }
 
 wxString Settings::GetTempDirectory() const

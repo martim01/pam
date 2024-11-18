@@ -42,5 +42,5 @@ target_link_libraries(bob optimized pambase debug pambased)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	install(TARGETS bob LIBRARY DESTINATION /usr/local/lib/pam2/monitor)
+	install(TARGETS bob LIBRARY DESTINATION lib/pam2/monitor)
 endif()		

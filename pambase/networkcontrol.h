@@ -82,4 +82,6 @@ class NetworkControl
         #endif
 
         static const wxString STR_MASK[33];
+
+        enum {IFACE, ETH, INET, DHCP_STATIC};
 };

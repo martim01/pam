@@ -243,3 +243,7 @@ add_subdirectory(pamupdatemanager)
 message(STATUS "Configure InitialSetup")
 add_subdirectory(InitialSetup)
 add_subdirectory(dosetup)
+
+
+include(${CMAKE_SOURCE_DIR}/CMakeCPack.cmake)
+include(CPack)

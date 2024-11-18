@@ -90,3 +90,5 @@ install(FILES  ${CMAKE_SOURCE_DIR}/documents/pam2.ini DESTINATION etc/pam2/)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/documents/help DESTINATION etc/pam2/)
 install(DIRECTORY  ${CMAKE_SOURCE_DIR}/documents/generator DESTINATION /etc/pam2/)
 endif()
+
+
