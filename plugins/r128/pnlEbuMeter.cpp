@@ -107,7 +107,8 @@ pnlEbuMeter::~pnlEbuMeter()
 
 void pnlEbuMeter::SetSession(const session& aSession)
 {
-    m_pR128->InputSession(aSession);    m_pTrue->InputSession(aSession);
+    m_pR128->InputSession(aSession);    
+    m_pTrue->InputSession(aSession);
 
     if(aSession.GetCurrentSubsession() != aSession.lstSubsession.end())
     {

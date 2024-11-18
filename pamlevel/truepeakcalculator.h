@@ -2,7 +2,7 @@
 
 #include "pamleveldll.h"
 #include <vector>
-
+#include <memory>
 
 class Filter;
 struct session;
@@ -22,7 +22,7 @@ class PAMLEVEL_IMPEXPORT TruePeakCalculator
 
     private:
         SrcWrapper* m_pSrc;
-        std::vector<Filter*> m_vFilter;
+        std::vector<std::shared_ptr<Filter>> m_vFilter;
         std::vector<float> m_vTruePeak;
         std::vector<float> m_vCurrentPeak;
         std::vector<float> m_vSamplePeak;

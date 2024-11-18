@@ -20,11 +20,8 @@ TruePeakCalculator::~TruePeakCalculator()
         delete m_pSrc->pState;
         delete m_pSrc;
     }
-    for(size_t i = 0; i < m_vFilter.size(); i++)
-    {
-        delete m_vFilter[i];
-        m_vFilter.clear();
-    }
+    m_vFilter.clear();
+
 }
 
 void TruePeakCalculator::InputSession(const session& aSession)
@@ -35,11 +32,8 @@ void TruePeakCalculator::InputSession(const session& aSession)
         m_pSrc->pState = 0;
     }
 
-    for(size_t i = 0; i < m_vFilter.size(); i++)
-    {
-        delete m_vFilter[i];
-        m_vFilter.clear();
-    }
+    
+    m_vFilter.clear();
 
     m_vTruePeak.clear();
     m_vCurrentPeak.clear();
@@ -69,11 +63,10 @@ void TruePeakCalculator::InputSession(const session& aSession)
         m_vFilter.resize(min((unsigned int)256 ,aSession.GetCurrentSubsession()->nChannels));
         for(size_t i = 0; i < m_vFilter.size(); i++)
         {
-            m_vFilter[i] = new Filter(LPF, 48, (aSession.GetCurrentSubsession()->nSampleRate*4)/1000, (aSession.GetCurrentSubsession()->nSampleRate/2)/1000);
+            m_vFilter[i] = std::make_shared<Filter>(LPF, 48, (aSession.GetCurrentSubsession()->nSampleRate*4)/1000, (aSession.GetCurrentSubsession()->nSampleRate/2)/1000);
             if(m_vFilter[i]->get_error_flag() != 0)
             {
-                delete m_vFilter[i];
-                m_vFilter[i] = 0;
+                m_vFilter[i] = nullptr;
             }
         }
         m_vCurrentPeak.resize(m_nChannels);
