@@ -97,7 +97,15 @@ bool MonitorPluginFactory::LoadLibrary(const wxString& sLibrary)
         }
         else
         {
-                pmlLog(pml::LOG_ERROR, "pam::plugins") << "Could not load '" << sLib << "' '" << dlerror();
+            if(dlopen(sLib.c_str(), RTLD_NOW) == nullptr)
+            {
+                pmlLog(pml::LOG_ERROR, "pam::plugins") << "Could not load '" << sLib << "' " << dlerror();
+            }
+            else
+            {
+                pmlLog(pml::LOG_ERROR, "pam::plugins") << "dlopen coud load '" << sLib << "' ";
+            }
+
         }
         delete pLib;
     }

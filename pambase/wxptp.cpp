@@ -163,7 +163,7 @@ std::shared_ptr<const PtpV2Clock> wxPtp::GetPtpClock(const wxString& sClockId)
 {
     if(m_pMonkey)
     {
-        return m_pMonkey->GetClock(std::string(sClockId.mb_str()));
+        return m_pMonkey->GetClock(sClockId.ToStdString());
     }
     return nullptr;
 }

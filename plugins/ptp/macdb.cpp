@@ -50,7 +50,7 @@ wxString MacDb::GetVendor(const wxString& sMac) const
     {
         if(itMac->first.length() == 8)
         {
-            return itMac->second.BeforeFirst(' ')+"\n";
+            return itMac->second.BeforeFirst(' ');
         }
         else
         {
@@ -63,4 +63,14 @@ wxString MacDb::GetVendor(const wxString& sMac) const
     
         return wxEmptyString;
     }
+}
+
+wxString MacDb::CreateClockText(const wxString& sMac) const
+{
+    auto sVendor = GetVendor(sMac);
+    if(sVendor != "")
+    {
+        return sMac+"\n"+sVendor;
+    }
+    return sMac;
 }

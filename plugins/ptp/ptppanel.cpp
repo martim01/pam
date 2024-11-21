@@ -914,7 +914,7 @@ void ptpPanel::OnLeftUp(wxMouseEvent& event)
 void ptpPanel::OnlstClocksSelected(wxCommandEvent& event)
 {
     m_sSelectedClock = event.GetString();
-    m_pClock = wxPtp::Get().GetPtpClock(m_sSelectedClock.AfterFirst('\n'));
+    m_pClock = wxPtp::Get().GetPtpClock(m_sSelectedClock.BeforeFirst('\n'));
     ShowClockDetails();
 }
 
@@ -929,7 +929,7 @@ void ptpPanel::OnClockAdded(wxCommandEvent& event)
 
 void ptpPanel::OnClockUpdated(wxCommandEvent& event)
 {
-    if(event.GetString() == m_sSelectedClock.AfterFirst('\n'))
+    if(event.GetString() == m_sSelectedClock.BeforeFirst('\n'))
     {
         ShowClockDetails();
     }
@@ -938,12 +938,11 @@ void ptpPanel::OnClockUpdated(wxCommandEvent& event)
 
 void ptpPanel::OnClockRemoved(wxCommandEvent& event)
 {
-    if(event.GetString() == m_sSelectedClock.AfterFirst('\n'))
+    if(event.GetString() == m_sSelectedClock.BeforeFirst('\n'))
 	{
         ClearClockDetails();
     }
-	auto sClock = m_dbMac.GetVendor(event.GetString())+event.GetString();
-    m_plstClocks->DeleteButton(m_plstClocks->FindButton(sClock));
+    m_plstClocks->DeleteButton(m_plstClocks->FindButton(m_dbMac.CreateClockText(event.GetString())));
 
     ClockWebsocketMessage(event.GetString(), "Removed");
 }
@@ -956,13 +955,13 @@ void ptpPanel::OnClockTime(wxCommandEvent& event)
 
 void ptpPanel::OnClockMaster(wxCommandEvent& event)
 {
-    if(event.GetString() == m_sSelectedClock.AfterFirst('\n'))
+    if(event.GetString() == m_sSelectedClock.BeforeFirst('\n'))
     {
         m_pswp->ChangeSelection("Master");
         m_plblState->SetLabel("Master");
     }
 
-	auto sClock = m_dbMac.GetVendor(event.GetString())+event.GetString();
+	auto sClock = m_dbMac.CreateClockText(event.GetString());
     size_t nButton = m_plstClocks->FindButton(sClock);
     if(nButton != wmList::NOT_FOUND)
     {
@@ -982,7 +981,7 @@ void ptpPanel::OnClockMaster(wxCommandEvent& event)
 
 void ptpPanel::OnClockSlave(wxCommandEvent& event)
 {
-    if(event.GetString() == m_sSelectedClock.AfterFirst('\n'))
+    if(event.GetString() == m_sSelectedClock.BeforeFirst('\n'))
     {
         m_pswp->ChangeSelection("Slave");
         m_plblState->SetLabel("Slave");
@@ -1000,8 +999,10 @@ void ptpPanel::OnClockSlave(wxCommandEvent& event)
 void ptpPanel::ShowClockDetails()
 {
 
-    if(!m_pClock) return;
-
+    if(!m_pClock) 
+	{
+		return;
+	}
 
     m_pblAddress->SetLabel(wxString(m_pClock->GetIpAddress()));
     m_plblIdentity->SetLabel(wxString(m_pClock->GetClockId()));
@@ -1291,7 +1292,7 @@ void ptpPanel::OnTimer(wxTimerEvent& event)
 
 void ptpPanel::AddClock(wxString sClock)
 {
-    sClock = m_dbMac.GetVendor(sClock)+sClock;
+    sClock = m_dbMac.CreateClockText(sClock);
 
     if(m_plstClocks->FindButton(sClock) == wmList::NOT_FOUND)
     {
@@ -1575,7 +1576,7 @@ void ptpPanel::UpdateListBitmaps()
 {
 	for(size_t nButton = 0; nButton < m_plstClocks->GetItemCount(); nButton++)
 	{
-		auto pClock = wxPtp::Get().GetPtpClock(m_plstClocks->GetButtonText(nButton).AfterFirst('\n'));
+		auto pClock = wxPtp::Get().GetPtpClock(m_plstClocks->GetButtonText(nButton).BeforeFirst('\n'));
 		if(pClock)
 		{
 			if(pClock->IsSyncMaster())
@@ -1586,7 +1587,6 @@ void ptpPanel::UpdateListBitmaps()
 				}
 				else
 				{	
-					pmlLog(pml::LOG_INFO, "pam::ptp") << pClock->GetId() << " : " << pClock->GetGrandmasterClockId();
 					m_plstClocks->SetButtonBitmap(nButton, BMP_SYNC);
 				}
 			}

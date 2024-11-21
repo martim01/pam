@@ -10,5 +10,5 @@ SET(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
 SET(CPACK_PACKAGE_SOURCE_IGNORE_FILES "${PROJECT_BINARY_DIR};/.git;.gitignore")
 set(CPACK_GENERATOR "DEB")
 SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "martim01")
-SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libssl-dev, alsa-utils, portaudio19-dev, libsndfile1-dev, libsamplerate0-dev, libavahi-client-dev" "libwxgtk3.2-1" "libcap-dev" "libcurl4-openssl-dev")
-
+SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libssl-dev, alsa-utils, portaudio19-dev, libsndfile1-dev, libsamplerate0-dev, libavahi-client-dev, libwxgtk3.2-1, libcap-dev, libcurl4-openssl-dev")
+SET(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA ${CMAKE_CURRENT_SOURCE_DIR}/documents/postinst)

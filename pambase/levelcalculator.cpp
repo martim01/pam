@@ -122,6 +122,7 @@ void LevelCalculator::CalculateDynamicRepsonse()
         dRiseInterval=dInterval/m_dRiseMs;
     }
 
+
     m_dFallSample = m_dFalldB*dFallInterval*m_dSpeed;
     m_dRiseSample = 0.0;
     if(dRiseInterval > 0.0)

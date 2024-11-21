@@ -9,6 +9,7 @@ class MacDb
 
         bool LoadXml();
         wxString GetVendor(const wxString& sMac) const;
+        wxString CreateClockText(const wxString& sMac) const;
     private:
         std::map<wxString, wxString> m_mVendors;
 };
