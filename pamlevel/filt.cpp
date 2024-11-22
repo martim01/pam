@@ -60,10 +60,8 @@ m_phi(0.0)
     if( Fx <= 0 || Fx >= Fs/2 ) ECODE(-2);
     if( m_num_taps <= 0 || m_num_taps > MAX_NUM_FILTER_TAPS ) ECODE(-3);
 
-    m_taps = m_sr = NULL;
-    m_taps = (double*)malloc( m_num_taps * sizeof(double) );
-    m_sr = (double*)malloc( m_num_taps * sizeof(double) );
-    if( m_taps == NULL || m_sr == NULL ) ECODE(-4);
+    m_taps.resize(m_num_taps);
+    m_sr.resize(m_num_taps);
 
     init();
 
@@ -93,10 +91,8 @@ Filter::Filter(filterType filt_t, int num_taps, double Fs, double Fl,
     if( Fu <= 0 || Fu >= Fs/2 ) ECODE(-13);
     if( m_num_taps <= 0 || m_num_taps > MAX_NUM_FILTER_TAPS ) ECODE(-14);
 
-    m_taps = m_sr = NULL;
-    m_taps = (double*)malloc( m_num_taps * sizeof(double) );
-    m_sr = (double*)malloc( m_num_taps * sizeof(double) );
-    if( m_taps == NULL || m_sr == NULL ) ECODE(-15);
+    m_taps.resize(m_num_taps);
+    m_sr.resize(m_num_taps);
 
     init();
 
@@ -108,8 +104,7 @@ Filter::Filter(filterType filt_t, int num_taps, double Fs, double Fl,
 
 Filter::~Filter()
 {
-    if( m_taps != NULL ) free( m_taps );
-    if( m_sr != NULL ) free( m_sr );
+
 }
 
 void

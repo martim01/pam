@@ -218,7 +218,7 @@ wxString NetworkControl::SetupNetworking(const wxString &sInterface, const wxStr
     }
 
     
-    if (wxTextFile configFile; configFile.Open("/etc/network/interfaces.d/network.cfg"))
+    if (wxTextFile configFile; configFile.Open("/usr/local/etc/pam2/network.cfg"))
     {
         configFile.Clear();
     
@@ -356,7 +356,7 @@ void NetworkControl::GetCurrentSettings()
 
     map<wxString, networkInterface>::iterator itInterface = m_mInterfaces.end();
     wxTextFile configFile;
-    if (configFile.Open("/etc/network/interfaces.d/network.cfg"))
+    if (configFile.Open("/usr/local/etc/pam2/network.cfg"))
     {
         for (size_t i = 0; i < configFile.GetLineCount(); i++)
         {

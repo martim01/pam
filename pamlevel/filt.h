@@ -126,19 +126,20 @@
 #include <unistd.h>
 #include <string.h>
 #include <inttypes.h>
+#include <vector>
 
 enum filterType {LPF, HPF, BPF};
 
 class Filter{
 	private:
 		filterType m_filt_t;
-		int m_num_taps;
+		int m_num_taps=0;
 		int m_error_flag;
-		double m_Fs;
-		double m_Fx;
-		double m_lambda;
-		double *m_taps;
-		double *m_sr;
+		double m_Fs=0.0;
+		double m_Fx=0.0;
+		double m_lambda=0.0;
+		std::vector<double> m_taps;
+		std::vector<double> m_sr;
 		void designLPF();
 		void designHPF();
 
