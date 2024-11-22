@@ -4,6 +4,7 @@
 #include "filt.h"
 #include "srcwrapper.h"
 #include <wx/log.h>
+#include "log.h"
 
 using namespace std;
 
@@ -32,7 +33,7 @@ void TruePeakCalculator::InputSession(const session& aSession)
         m_pSrc->pState = 0;
     }
 
-    
+    pmlLog(pml::LOG_DEBUG, "pam::truepeak") << "Clear filters";
     m_vFilter.clear();
 
     m_vTruePeak.clear();

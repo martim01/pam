@@ -1,2 +1,2 @@
 #!/bin/bash
-chown -R pam /usr/local/etc/pam2
+chown -R 1000 /usr/local/etc/pam2

@@ -233,11 +233,18 @@ wxString NetworkControl::SetupNetworking(const wxString &sInterface, const wxStr
                 configFile.AddLine(wxString::Format("    gateway %s", interface.sGateway.c_str()));
             }
         }
-        configFile.Write();
-    
-        GetCurrentSettings();
-        // restart the interfaces
-        wxExecute("sudo service network restart");
+        pmlLog(pml::LOG_INFO, "pam::network") << "Attempt to save new network config";
+        if( configFile.Write() == false)
+        {
+             pmlLog(pml::LOG_ERROR, "pam::network") << "Failed to save new network config";
+             return "Could not write file";
+        }
+        else
+        {
+             GetCurrentSettings();
+             pmlLog(pml::LOG_INFO, "pam::network") << "Restart networking";
+             wxExecute("sudo service networking restart");
+        }
         return wxEmptyString;
     }
     
@@ -363,7 +370,7 @@ void NetworkControl::GetCurrentSettings()
                     itInterface = m_mInterfaces.find(as[ETH]);
                     if (itInterface != m_mInterfaces.end())
                     {
-                        itInterface->second.bStatic = (as[DHCP_STATIC] == "dhcp");
+                        itInterface->second.bStatic = (as[DHCP_STATIC] != "dhcp");
                     }
                 }
             }
