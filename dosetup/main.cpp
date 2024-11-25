@@ -101,7 +101,7 @@ int SetPassword(const std::string& sPassword)
     return 0;
 }
 
-int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber, bool bRotate)
+int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber, const std::string& sRotate)
 {
     if(sOverlay == "_") //this means no HAT
     {
@@ -155,17 +155,17 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber, bool
         }
         else if(sLine == "lcd_rotate=2")
         {
-            if(bRotate == false)
+            if(sRotate == "0")
             {
-                output << "#lcr_rotate=2" << '\n';
+                output << "#lcd_rotate=2" << '\n';
             }
             bRotateDone = true;
         }
         else if(sLine == "#lcd_rotate=2")
         {
-            if(bRotate)
+            if(sRotate == "1")
             {
-                output << "lcr_rotate=2" << '\n';
+                output << "lcd_rotate=2" << '\n';
             }
             bRotateDone = true;
         }
@@ -180,7 +180,7 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber, bool
         pmlLog(pml::LOG_INFO, "dosetup") << "Append overlay";
         output << STR_DTOVERLAY << sOverlay << '\n';
     }
-    if(!bRotateDone && bRotate)
+    if(!bRotateDone && sRotate == "1")
     {
         pmlLog(pml::LOG_INFO, "dosetup") << "Append overlay";
         output << "lcr_rotate=2" << '\n';
@@ -202,57 +202,6 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber, bool
     return 0;
 }
 
-int SetRotate(bool bRotate)
-{
-    std::ifstream input("/boot/firmware/cmdline.txt");
-    std::stringstream output;
-
-    if(!input)
-    {
-        pmlLog(pml::LOG_ERROR, "dosetup") << "Could not open /boot/firmware/cmdline.txt";
-        return -1;
-    }
-
-    std::string sLine;
-    int nCount = 0;
-    bool bAdded(false);
-    bool bRotateDone(false);
-    while(getline(input, sLine, ' '))
-    {
-        if(sLine == "video=DSI-1:800x480@60,rotate=180")
-        {
-            if(bRotate)
-            {
-                output << sLine << " ";
-            }
-            bRotateDone = true;
-        }        
-        else
-        {
-            output << sLine << " ";
-        }
-
-    }
-    if(!bRotateDone && bRotate)
-    {
-        output << "video=DSI-1:800x480@60,rotate=180";
-    }
-
-    input.close();
-
-    std::ofstream outputFile("/boot/firmware/cmdline.txt");
-    if(!outputFile)
-    {
-        pmlLog(pml::LOG_ERROR, "dosetup") << "Unable to rotate screen " << strerror(errno);
-        return -1;
-    }
-
-    outputFile << output.str() << std::endl;
-    outputFile.close();
-
-    pmlLog(pml::LOG_INFO, "dosetup") << "/boot/firmware/cmdline.txt overwritten";
-    return 0;
-}
 
 int main(int argc, char* argv[])
 {
@@ -286,14 +235,8 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    if(SetRotate(argv[5] != 0))
-    {
-        pmlLog(pml::LOG_CRITICAL, "dosetup") << "Failed to set screen rotation. Exiting";
-        pml::LogStream::Stop();
 
-        return -1;
-    }
-    if(SetOverlay(argv[3], argv[4], argv[5]!=0) != 0)
+    if(SetOverlay(argv[3], argv[4], argv[5]) != 0)
     {
         pml::LogStream::Stop();
         return -1;

@@ -70,6 +70,7 @@ const long InitialSetupDialog::ID_M_PBTN7 = wxNewId();
 
 const wxString InitialSetupDialog::STR_DTPARAM = "dtparam=audio";
 const wxString InitialSetupDialog::STR_DTOVERALY = "dtoverlay=";
+const wxString InitialSetupDialog::STR_ROTATE = "lcd_rotate=2";
 
 BEGIN_EVENT_TABLE(InitialSetupDialog,wxDialog)
     //(*EventTable(InitialSetupDialog)
@@ -197,6 +198,10 @@ InitialSetupDialog::InitialSetupDialog(wxWindow* parent,wxWindowID id)
                     }
                 }
             }
+            else if(boot[i].Left(STR_ROTATE.length()) == STR_ROTATE)
+            {
+                m_pbtnRotate->ToggleSelection(true);
+            }
         }
         boot.Close();
     }
@@ -205,22 +210,6 @@ InitialSetupDialog::InitialSetupDialog(wxWindow* parent,wxWindowID id)
         wxLogDebug("Unable to open /boot/config.txt");
     }
 
-    wxTextFile cmd("/boot/cmdline.txt");
-    if(cmd.Open() && cmd.GetLineCount() > 0)
-    {
-        auto asCommands = wxStringTokenize(cmd[0], " ");
-        for(size_t i = 0; i < asCommands.GetCount(); ++i)
-        {
-            if(asCommands[i] == "video=DSI-1:800x480@60,rotate=180")
-            {
-                m_pbtnRotate->ToggleSelection(true);
-            }
-        }
-    }
-    else
-    {
-        wxLogDebug("Unable to open /boot/cmdline.txt");
-    }
 
     m_pedtName->SetFocus();
 }

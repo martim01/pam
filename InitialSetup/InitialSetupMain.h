@@ -88,6 +88,7 @@ class InitialSetupDialog: public wxDialog
         int m_nLine;
         static const wxString STR_DTPARAM;
         static const wxString STR_DTOVERALY;
+        static const wxString STR_ROTATE;
 };
 
 #endif // INITIALSETUPMAIN_H
