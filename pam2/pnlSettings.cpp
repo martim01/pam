@@ -54,6 +54,7 @@ int SetRotate(bool bRotate)
     }
 
     std::string sLine;
+    std::string sFind = "dtoverlay=vc4-fkms-v3d";
     bool bRotateDone(false);
     while(getline(input, sLine))
     {
@@ -73,11 +74,10 @@ int SetRotate(bool bRotate)
             }
             bRotateDone = true;
         }
-        else if(sLine != "dtoverlay=vc4-fkms-v3d")
+        else if(sLine.substr(0,sFind.length()) != sFind)
         {
             output << sLine << '\n';
         }
-        nCount++;
     }
     if(!bRotateDone && bRotate)
     {
@@ -237,7 +237,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     pnlGeneral = new wxPanel(m_pswpSettings, ID_PANEL6, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL6"));
     pnlGeneral->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
     m_pbtnCursor = new wmButton(pnlGeneral, ID_M_PBTN22, _("Cursor"), wxPoint(10,10), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN22"));
-    m_pbtnRotate = new wmButton(pnlGeneral, wxID_ANY, _("Rotate"), wxPoint(300,10), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN22"));
+    //m_pbtnRotate = new wmButton(pnlGeneral, wxID_ANY, _("Rotate"), wxPoint(300,10), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN22"));
     
     
     m_ptbnOptions = new wmButton(pnlGeneral, ID_M_PBTN23, _("View"), wxPoint(10,60), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN23"));
@@ -290,7 +290,7 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
 
     m_pbtnCursor->SetToggle(true, wxT("Hide"), wxT("Show"), 40);
-    m_pbtnRotate->SetToggle(true, wxT("Normal"), wxT("Inverted"), 40);
+    //m_pbtnRotate->SetToggle(true, wxT("Normal"), wxT("Inverted"), 40);
     m_ptbnOptions->SetToggle(true, wxT("Screens"), wxT("Options"), 40);
     m_pbtnPin->SetToggle(true, wxT("Off"), wxT("On"), 40);
 
@@ -301,8 +301,8 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     m_pedtPin->ConnectToSetting("General", "Pin_Value", "", true);
 
 
-    m_pbtnRotate->ToggleSelection(std::filesystem::exists("/usr/local/etc/pam2/rotate"));
-    Connect(m_pbtnRotate->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnRotateClick);
+    //m_pbtnRotate->ToggleSelection(std::filesystem::exists("/usr/local/etc/pam2/rotate"));
+    //Connect(m_pbtnRotate->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnRotateClick);
 
     
 
@@ -658,13 +658,13 @@ void pnlSettings::OnbtnPinClick(wxCommandEvent& event)
 
 void pnlSettings::OnbtnRotateClick(wxCommandEvent& event)
 {
+    pmlLog(pml::LOG_DEBUG, "pam::settings") << "Rotate screen changed";
     if(m_pbtnRotate->IsChecked())
     {
         if(std::filesystem::exists("/usr/local/etc/pam2/rotate") == false)
         {
             std::ofstream output("/usr/local/etc/pam2/rotate");
         }
-        
     }
     else
     {
@@ -672,8 +672,8 @@ void pnlSettings::OnbtnRotateClick(wxCommandEvent& event)
         {
             std::filesystem::remove("/usr/local/etc/pam2/rotate");
         }
-        
     }
+    SetRotate(m_pbtnRotate->IsChecked());
 }
 
 void pnlSettings::OnedtPinTextEnter(wxCommandEvent& event)

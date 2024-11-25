@@ -131,6 +131,7 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber, cons
     }
 
     std::string sLine;
+    std::string sFind = "dtoverlay=vc4-fkms-v3d";
     int nCount = 0;
     bool bAdded(false);
     bool bRotateDone(false);
@@ -154,23 +155,23 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber, cons
             output << STR_DTOVERLAY << sOverlay << '\n';
             bAdded = true;
         }
-        else if(sLine == "lcd_rotate=2")
+        else if(sLine == "display_rotate=2")
         {
             if(sRotate == "0")
             {
-                output << "#lcd_rotate=2" << '\n';
+                output << "#display_rotate=2" << '\n';
             }
             bRotateDone = true;
         }
-        else if(sLine == "#lcd_rotate=2")
+        else if(sLine == "#display_rotate=2")
         {
             if(sRotate == "1")
             {
-                output << "lcd_rotate=2" << '\n';
+                output << "display_rotate=2" << '\n';
             }
             bRotateDone = true;
         }
-        else if(sLine != "dtoverlay=vc4-fkms-v3d")
+        else if(sLine.substr(0,sFind.length()) != sFind)
         {
             output << sLine << '\n';
         }
@@ -184,7 +185,7 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber, cons
     if(!bRotateDone && sRotate == "1")
     {
         pmlLog(pml::LOG_INFO, "dosetup") << "Append overlay";
-        output << "lcr_rotate=2" << '\n';
+        output << "display_rotate=2" << '\n';
     }
 
     input.close();
@@ -261,8 +262,9 @@ int main(int argc, char* argv[])
         return -1;
     }
     
-   SetRotate(argv[5]);
+    SetRotate(argv[5]);
 
+    pmlLog(pml::LOG_INFO, "dosetup") << "------ FINISHED ------";
     pml::LogStream::Stop();
     return 0;
 }

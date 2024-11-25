@@ -70,7 +70,7 @@ const long InitialSetupDialog::ID_M_PBTN7 = wxNewId();
 
 const wxString InitialSetupDialog::STR_DTPARAM = "dtparam=audio";
 const wxString InitialSetupDialog::STR_DTOVERALY = "dtoverlay=";
-const wxString InitialSetupDialog::STR_ROTATE = "lcd_rotate=2";
+const wxString InitialSetupDialog::STR_ROTATE = "display_rotate=2";
 
 BEGIN_EVENT_TABLE(InitialSetupDialog,wxDialog)
     //(*EventTable(InitialSetupDialog)
@@ -178,7 +178,7 @@ InitialSetupDialog::InitialSetupDialog(wxWindow* parent,wxWindowID id)
 
 
     m_nLine = -1;
-    wxTextFile boot("/boot/config.txt");
+    wxTextFile boot("/boot/firmware/config.txt");
     if(boot.Open())
     {
         for(size_t i = 0; i < boot.GetLineCount(); i++)
@@ -190,11 +190,10 @@ InitialSetupDialog::InitialSetupDialog(wxWindow* parent,wxWindowID id)
                 for(size_t nButton = 0; nButton < m_plstHat->GetItemCount(); nButton++)
                 {
                     wxLogDebug("Aux=%s", m_plstHat->GetButtonAuxillaryText(nButton).c_str());
-                    if(sOverlay == m_plstHat->GetButtonAuxillaryText(nButton))
+                    if(sOverlay == m_plstHat->GetButtonAuxillaryText(nButton) && m_nLine == -1)
                     {
                         m_plstHat->SelectButton(nButton);
                         m_nLine = i;
-                        break;
                     }
                 }
             }
