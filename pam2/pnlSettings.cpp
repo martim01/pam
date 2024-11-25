@@ -42,6 +42,65 @@
 
 using namespace std;
 
+int SetRotate(bool bRotate)
+{
+    std::ifstream input("/boot/firmware/config.txt");
+    std::stringstream output;
+
+    if(!input)
+    {
+        pmlLog(pml::LOG_ERROR, "pam::settings") << "Could not open /boot/firmware/config.txt";
+        return -1;
+    }
+
+    std::string sLine;
+    bool bRotateDone(false);
+    while(getline(input, sLine))
+    {
+        if(sLine == "display_rotate=2")
+        {
+            if(!bRotate)
+            {
+                output << "#display_rotate=2" << '\n';
+            }
+            bRotateDone = true;
+        }
+        else if(sLine == "#display_rotate=2")
+        {
+            if(bRotate)
+            {
+                output << "display_rotate=2" << '\n';
+            }
+            bRotateDone = true;
+        }
+        else if(sLine != "dtoverlay=vc4-fkms-v3d")
+        {
+            output << sLine << '\n';
+        }
+        nCount++;
+    }
+    if(!bRotateDone && bRotate)
+    {
+        output << "display_rotate=2" << '\n';
+    }
+
+    input.close();
+
+    std::ofstream outputFile("/boot/firmware/config.txt");
+    if(!outputFile)
+    {
+        pmlLog(pml::LOG_ERROR, "pam::settings") << "Unable to set overlay: " << strerror(errno);
+        return -1;
+    }
+
+    outputFile << output.str() << std::endl;
+    outputFile.close();
+
+    pmlLog(pml::LOG_INFO, "pam::settings") << "/boot/firmware/config.txt overwritten";
+    return 0;
+}
+
+
 //(*IdInit(pnlSettings)
 const long pnlSettings::ID_M_PLBL37 = wxNewId();
 const long pnlSettings::ID_M_PLBL13 = wxNewId();
@@ -605,7 +664,7 @@ void pnlSettings::OnbtnRotateClick(wxCommandEvent& event)
         {
             std::ofstream output("/usr/local/etc/pam2/rotate");
         }
-        wxExecute("xrandr -o inverted");
+        
     }
     else
     {
@@ -613,7 +672,7 @@ void pnlSettings::OnbtnRotateClick(wxCommandEvent& event)
         {
             std::filesystem::remove("/usr/local/etc/pam2/rotate");
         }
-        wxExecute("xrandr -o normal");
+        
     }
 }
 

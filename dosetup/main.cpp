@@ -170,7 +170,7 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber, cons
             }
             bRotateDone = true;
         }
-        else
+        else if(sLine != "dtoverlay=vc4-fkms-v3d")
         {
             output << sLine << '\n';
         }
