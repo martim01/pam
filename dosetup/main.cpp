@@ -265,6 +265,7 @@ int main(int argc, char* argv[])
     {
         pmlLog(pml::LOG_ERROR, "dosetup") << "Not enough arguments. Need 6 given " << argc;
         pmlLog(pml::LOG_INFO, "dosetup") << "Usage: hostname password overlay line_to_replace";
+        pml::LogStream::Stop();
         return -1;
     }
 
@@ -272,20 +273,32 @@ int main(int argc, char* argv[])
     if(SetHostname(argv[1]) !=0)
     {
         pmlLog(pml::LOG_CRITICAL, "dosetup") << "Failed to set hostname. Exiting";
+        pml::LogStream::Stop();
+
         return -1;
     }
 
     if(SetPassword(argv[2]) !=0)
     {
         pmlLog(pml::LOG_CRITICAL, "dosetup") << "Failed to set password. Exiting";
+        pml::LogStream::Stop();
+
         return -1;
     }
 
     if(SetRotate(argv[5] != 0))
     {
         pmlLog(pml::LOG_CRITICAL, "dosetup") << "Failed to set screen rotation. Exiting";
+        pml::LogStream::Stop();
+
         return -1;
     }
-    return SetOverlay(argv[3], argv[4], argv[5]);
+    if(SetOverlay(argv[3], argv[4], argv[5]!=0) != 0)
+    {
+        pml::LogStream::Stop();
+        return -1;
+    }
 
+    pml::LogStream::Stop();
+    return 0;
 }
