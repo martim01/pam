@@ -76,6 +76,8 @@ class pnlSettings: public wxPanel
 		wxPanel* pnlInput;
 		//*)
 
+		wmButton* m_pbtnRotate;
+
 		void ReloadRTP();
 
 		void SessionChanged();
@@ -184,6 +186,8 @@ class pnlSettings: public wxPanel
 		void OnbtnDNSClick(wxCommandEvent& event);
 		void OnlsliderInputGainMove(wxCommandEvent& event);
 		//*)
+
+		void OnbtnRotateClick(wxCommandEvent& event);
 
         void RefreshInputs();
 		void ShowSoundcardInputs();

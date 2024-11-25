@@ -20,6 +20,7 @@
 #include <wx/string.h>
 //*)
 #include <iostream>
+#include <fstream>
 
 #include "images/end_hz.xpm"
 #include "images/end_hz_press.xpm"
@@ -34,6 +35,7 @@
 #include "settingevent.h"
 #include "aoipsourcemanager.h"
 #include "log.h"
+#include <filesystem>
 #ifdef __NMOS__
 #include "nmos.h"
 #endif // __NMOS__
@@ -176,6 +178,9 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
     pnlGeneral = new wxPanel(m_pswpSettings, ID_PANEL6, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL6"));
     pnlGeneral->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
     m_pbtnCursor = new wmButton(pnlGeneral, ID_M_PBTN22, _("Cursor"), wxPoint(10,10), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN22"));
+    m_pbtnRotate = new wmButton(pnlGeneral, wxID_ANY, _("Rotate"), wxPoint(300,10), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN22"));
+    
+    
     m_ptbnOptions = new wmButton(pnlGeneral, ID_M_PBTN23, _("View"), wxPoint(10,60), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN23"));
     m_pbtnPin = new wmButton(pnlGeneral, ID_M_PBTN24, _("PIN"), wxPoint(10,110), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN24"));
     m_pedtPin = new wmEdit(pnlGeneral, ID_M_PEDT1, wxEmptyString, wxPoint(40,200), wxSize(250,25), 0, wxDefaultValidator, _T("ID_M_PEDT1"));
@@ -226,16 +231,21 @@ pnlSettings::pnlSettings(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
 
     m_pbtnCursor->SetToggle(true, wxT("Hide"), wxT("Show"), 40);
+    m_pbtnRotate->SetToggle(true, wxT("Normal"), wxT("Inverted"), 40);
     m_ptbnOptions->SetToggle(true, wxT("Screens"), wxT("Options"), 40);
     m_pbtnPin->SetToggle(true, wxT("Off"), wxT("On"), 40);
 
     m_pbtnCursor->ConnectToSetting("General", "Cursor", true);
     m_ptbnOptions->ConnectToSetting("General","ShowOptions", true);
-
+    
     m_pbtnPin->ConnectToSetting("General", "Pin", false);
     m_pedtPin->ConnectToSetting("General", "Pin_Value", "", true);
 
 
+    m_pbtnRotate->ToggleSelection(std::filesystem::exists("/usr/local/etc/pam2/rotate"));
+    Connect(m_pbtnRotate->GetId(),wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&pnlSettings::OnbtnRotateClick);
+
+    
 
     m_plblCurrentPIN->SetTextAlign(wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 
@@ -343,6 +353,10 @@ void pnlSettings::OnSettingChanged(SettingEvent& event)
         else if(event.GetKey() == "Pin_Value")
         {
             m_plblCurrentPIN->SetLabel("Current PIN: "+event.GetValue());
+        }
+        else if(event.GetKey() == "Rotate")
+        {
+
         }
     }
 }
@@ -581,6 +595,26 @@ void pnlSettings::OnbtnEndClick(wxCommandEvent& event)
 
 void pnlSettings::OnbtnPinClick(wxCommandEvent& event)
 {
+}
+
+void pnlSettings::OnbtnRotateClick(wxCommandEvent& event)
+{
+    if(m_pbtnRotate->IsChecked())
+    {
+        if(std::filesystem::exists("/usr/local/etc/pam2/rotate") == false)
+        {
+            std::ofstream output("/usr/local/etc/pam2/rotate");
+        }
+        wxExecute("xrandr -o inverted");
+    }
+    else
+    {
+        if(std::filesystem::exists("/usr/local/etc/pam2/rotate") == true)
+        {
+            std::filesystem::remove("/usr/local/etc/pam2/rotate");
+        }
+        wxExecute("xrandr -o normal");
+    }
 }
 
 void pnlSettings::OnedtPinTextEnter(wxCommandEvent& event)

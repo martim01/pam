@@ -205,7 +205,21 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber, cons
 
 void SetRotate(const std::string& sRotate)
 {
-   if    
+    if(sRotate == "1")
+    {
+        if(std::filesystem::exists("/usr/local/etc/pam2/rotate") == false)
+        {
+            std::ofstream rotate("/usr/local/etc/pam2/rotate");
+        }
+    }
+    else
+    {
+        if(std::filesystem::exists("/usr/local/etc/pam2/rotate") == true)
+        {
+            std::filesystem::remove("/usr/local/etc/pam2/remove");
+        }
+    }
+}
 
 
 int main(int argc, char* argv[])
