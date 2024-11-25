@@ -24,7 +24,7 @@ bool pamupdatemanagerApp::OnInit()
     if(!wxApp::OnInit())
 		return false;
 
-    Settings::Get().ReadSettings(wxString::Format(wxT("%s/pam/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str()));
+    Settings::Get().ReadSettings(wxString::Format(wxT("%s/pam2.ini"), Settings::Get().GetConfigDirectory().c_str()));
 
     bool wxsOK = true;
     wxInitAllImageHandlers();

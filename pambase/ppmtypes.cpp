@@ -43,7 +43,7 @@ std::set<wxString> PPMTypeManager::GetTypes()
 void PPMTypeManager::LoadTypes()
 {
     wxXmlDocument xmlDoc;
-    wxString sFile = wxString::Format(wxT("%s/pam/ppmtypes.xml"), wxStandardPaths::Get().GetDocumentsDir().c_str());
+    wxString sFile = wxString::Format(wxT("%s/ppmtypes.xml"), Settings::Get().GetConfigDirectory().c_str());
     if(xmlDoc.Load(sFile) && xmlDoc.GetRoot())
     {
         for(wxXmlNode* pTopNode = xmlDoc.GetRoot()->GetChildren(); pTopNode; pTopNode = pTopNode->GetNext())

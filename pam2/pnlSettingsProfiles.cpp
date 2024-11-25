@@ -29,7 +29,7 @@ BEGIN_EVENT_TABLE(pnlSettingsProfiles,wxPanel)
 END_EVENT_TABLE()
 
 pnlSettingsProfiles::pnlSettingsProfiles(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size, long nStyle, const wxString& sId) :
-    m_fnPam(wxString::Format(wxT("%s/pam/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str()))
+    m_fnPam(wxString::Format(wxT("%s/pam2.ini"), Settings::Get().GetConfigDirectory().c_str()))
 {
 	//(*Initialize(pnlSettingsProfiles)
 	Create(parent, id, wxDefaultPosition, wxSize(600,480), wxTAB_TRAVERSAL, _T("id"));

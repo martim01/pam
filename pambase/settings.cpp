@@ -25,7 +25,6 @@ using   namespace std;
 
 Settings::Settings()
 {
-    //wxString::Format(wxT("%s/pam/pam2.ini"), wxStandardPaths::Get().GetDocumentsDir().c_str())
     m_timerSave.SetOwner(this, wxNewId());
     Bind(wxEVT_TIMER, &Settings::OnTimerSave, this, m_timerSave.GetId());
 

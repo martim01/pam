@@ -86,9 +86,10 @@ install(CODE "execute_process(COMMAND ldconfig)")
 install(FILES ${CMAKE_SOURCE_DIR}/documents/audio_hats.xml DESTINATION etc/pam2/)
 install(FILES  ${CMAKE_SOURCE_DIR}/documents/macaddress.xml DESTINATION etc/pam2/)
 install(FILES  ${CMAKE_SOURCE_DIR}/documents/ppmtypes.xml DESTINATION etc/pam2/)
+install(FILES  ${CMAKE_SOURCE_DIR}/documents/r128types.xml DESTINATION etc/pam2/)
 install(FILES  ${CMAKE_SOURCE_DIR}/documents/pam2.ini DESTINATION etc/pam2/)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/documents/help DESTINATION etc/pam2/)
-install(DIRECTORY  ${CMAKE_SOURCE_DIR}/documents/generator DESTINATION /etc/pam2/)
+install(DIRECTORY  ${CMAKE_SOURCE_DIR}/documents/generator DESTINATION etc/pam2/)
 endif()
 
 

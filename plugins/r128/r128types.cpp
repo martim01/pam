@@ -45,7 +45,7 @@ std::set<wxString> R128TypeManager::GetTypes()
 void R128TypeManager::LoadTypes()
 {
     wxXmlDocument xmlDoc;
-    wxString sFile = wxString::Format(wxT("%s/pam/r128types.xml"), wxStandardPaths::Get().GetDocumentsDir().c_str());
+    wxString sFile = wxString::Format(wxT("%s/r128types.xml"), Settings::Get().GetConfigDirectory().c_str());
     if(xmlDoc.Load(sFile) && xmlDoc.GetRoot())
     {
         for(wxXmlNode* pTopNode = xmlDoc.GetRoot()->GetChildren(); pTopNode; pTopNode = pTopNode->GetNext())
