@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include "log.h"
 #include "logtofile.h"
+#include <filesystem>
 
 static const std::string STR_DTPARAM = "dtparam=audio";
 static const std::string STR_DTOVERLAY = "dtoverlay=";
@@ -202,6 +203,10 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber, cons
     return 0;
 }
 
+void SetRotate(const std::string& sRotate)
+{
+   if    
+
 
 int main(int argc, char* argv[])
 {
@@ -241,6 +246,8 @@ int main(int argc, char* argv[])
         pml::LogStream::Stop();
         return -1;
     }
+    
+   SetRotate(argv[5]);
 
     pml::LogStream::Stop();
     return 0;

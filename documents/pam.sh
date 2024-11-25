@@ -1,3 +1,8 @@
+ROTATE=~/pam/rotate
+if [ -f "$ROTATE" ]; then
+    xrandr -o inverted
+fi
+
 FILE=~/pam/setup
 if [ -f "$FILE" ]; then
   while true;
