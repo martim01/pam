@@ -18,6 +18,7 @@
 //*)
 #include <wx/textfile.h>
 #include <iostream>
+#include <wx/tokenzr.h>
 
 #include <wx/xml/xml.h>
 #ifdef __WXGNU__
@@ -137,9 +138,17 @@ InitialSetupDialog::InitialSetupDialog(wxWindow* parent,wxWindowID id)
     m_plstHat->SetBackgroundColour(wxColour(0,0,0));
     m_plstHat->SetSelectedButtonColour(wxColour(wxT("#008000")));
     m_plstHat->SetDisabledColour(wxColour(wxT("#808080")));
+
+    pnlAdvanced= new wxPanel(m_pswp, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL3"));
+    pnlAdvanced->SetBackgroundColour(wxColour(0,0,0));
+    m_pbtnRotate = new wmButton(pnlAdvanced, wxID_ANY, _("Screen"), wxPoint(10,35), wxSize(200,40), wmButton::STYLE_SELECT, wxDefaultValidator, _T("ID_M_PBTN22"));
+    m_pbtnRotate->SetToggle(true, wxT("Normal"), wxT("Rotate"), 40);
+
     m_pswp->AddPage(pnlHostname, _("Hostname"), true);
     m_pswp->AddPage(pnlPassword, _("Password"), false);
     m_pswp->AddPage(pnlAudio, _("HATs"), false);
+    m_pswp->AddPage(pnlAdvanced, _("Advanced"), false);
+
     m_pbtnManage = new wmButton(this, ID_M_PBTN7, _("Finished"), wxPoint(705,425), wxSize(90,40), 0, wxDefaultValidator, _T("ID_M_PBTN7"));
     m_pbtnManage->SetBackgroundColour(wxColour(0,147,147));
     m_pbtnManage->SetColourDisabled(wxColour(wxT("#808080")));
@@ -196,6 +205,22 @@ InitialSetupDialog::InitialSetupDialog(wxWindow* parent,wxWindowID id)
         wxLogDebug("Unable to open /boot/config.txt");
     }
 
+    wxTextFile cmd("/boot/cmdline.txt");
+    if(cmd.Open() && cmd.GetLineCount() > 0)
+    {
+        auto asCommands = wxStringTokenize(cmd[0], " ");
+        for(size_t i = 0; i < asCommands.GetCount(); ++i)
+        {
+            if(asCommands[i] == "video=DSI-1:800x480@60,rotate=180")
+            {
+                m_pbtnRotate->ToggleSelection(true);
+            }
+        }
+    }
+    else
+    {
+        wxLogDebug("Unable to open /boot/cmdline.txt");
+    }
 
     m_pedtName->SetFocus();
 }
@@ -237,7 +262,7 @@ void InitialSetupDialog::OnbtnManageClick(wxCommandEvent& event)
 {
     if(m_pedtName->GetValue().empty() == false && m_pedtPassword->GetValue().empty() == false)
     {
-        wxString sCommand(wxString::Format("sudo dosetup %s %s %s %d", m_pedtName->GetValue().c_str(), m_pedtPassword->GetValue().c_str(), m_sOverlay.c_str(), m_nLine));
+        wxString sCommand(wxString::Format("sudo dosetup %s %s %s %d %d", m_pedtName->GetValue().c_str(), m_pedtPassword->GetValue().c_str(), m_sOverlay.c_str(), m_nLine, m_pbtnRotate->IsChecked()));
         wxLogDebug(sCommand);
         long nResult = wxExecute(sCommand, wxEXEC_SYNC);
         wxLogDebug("Result %d", nResult);

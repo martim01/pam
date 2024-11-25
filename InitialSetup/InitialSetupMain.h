@@ -20,6 +20,7 @@
 #include <wx/dialog.h>
 #include <wx/notebook.h>
 #include <wx/panel.h>
+#include "wmbutton.h"
 //*)
 
 class InitialSetupDialog: public wxDialog
@@ -76,6 +77,10 @@ class InitialSetupDialog: public wxDialog
         wxPanel* pnlHostname;
         wxPanel* pnlPassword;
         //*)
+
+        wxPanel* pnlAdvanced;
+        wmButton* m_pbtnRotate;
+
 
         DECLARE_EVENT_TABLE()
 

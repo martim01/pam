@@ -98,7 +98,7 @@ int SetPassword(const std::string& sPassword)
     return -1;
 }
 
-int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber)
+int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber, bool bRotate)
 {
     if(sOverlay == "_") //this means no HAT
     {
@@ -129,6 +129,7 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber)
     std::string sLine;
     int nCount = 0;
     bool bAdded(false);
+    bool bRotateDone(false);
     while(getline(input, sLine))
     {
         if(sLine.substr(0, STR_DTPARAM.length()) == STR_DTPARAM)
@@ -149,6 +150,22 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber)
             output << STR_DTOVERLAY << sOverlay << '\n';
             bAdded = true;
         }
+        else if(sLine == "lcd_rotate=2")
+        {
+            if(bRotate == false)
+            {
+                output << "#lcr_rotate=2" << '\n';
+            }
+            bRotateDone = true;
+        }
+        else if(sLine == "#lcd_rotate=2")
+        {
+            if(bRotate)
+            {
+                output << "lcr_rotate=2" << '\n';
+            }
+            bRotateDone = true;
+        }
         else
         {
             output << sLine << '\n';
@@ -160,6 +177,12 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber)
         pmlLog(pml::LOG_INFO, "dosetup") << "Append overlay";
         output << STR_DTOVERLAY << sOverlay << '\n';
     }
+    if(!bRotateDone && bRotate)
+    {
+        pmlLog(pml::LOG_INFO, "dosetup") << "Append overlay";
+        output << "lcr_rotate=2" << '\n';
+    }
+
     input.close();
 
     std::ofstream outputFile("/boot/config.txt");
@@ -176,6 +199,58 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber)
     return 0;
 }
 
+int SetRotate(bool bRotate)
+{
+    std::ifstream input("/boot/cmdline.txt");
+    std::stringstream output;
+
+    if(!input)
+    {
+        pmlLog(pml::LOG_ERROR, "dosetup") << "Could not open /boot/cmdline.txt";
+        return -1;
+    }
+
+    std::string sLine;
+    int nCount = 0;
+    bool bAdded(false);
+    bool bRotateDone(false);
+    while(getline(input, sLine, ' '))
+    {
+        if(sLine == "video=DSI-1:800x480@60,rotate=180")
+        {
+            if(bRotate)
+            {
+                output << sLine << " ";
+            }
+            bRotateDone = true;
+        }        
+        else
+        {
+            output << sLine << " ";
+        }
+
+    }
+    if(!bRotateDone && bRotate)
+    {
+        output << "video=DSI-1:800x480@60,rotate=180";
+    }
+
+    input.close();
+
+    std::ofstream outputFile("/boot/cmdline.txt");
+    if(!outputFile)
+    {
+        pmlLog(pml::LOG_ERROR, "dosetup") << "Unable to rotate screen " << strerror(errno);
+        return -1;
+    }
+
+    outputFile << output.str() << std::endl;
+    outputFile.close();
+
+    pmlLog(pml::LOG_INFO, "dosetup") << "/boot/cmdline.txt overwritten";
+    return 0;
+}
+
 int main(int argc, char* argv[])
 {
     struct passwd* pw = getpwuid(getuid());
@@ -185,9 +260,9 @@ int main(int argc, char* argv[])
 
     pmlLog(pml::LOG_INFO, "dosetup") << "---- Starting dosetup ----";
 
-    if(argc != 5)
+    if(argc != 6)
     {
-        pmlLog(pml::LOG_ERROR, "dosetup") << "Not enough arguments. Need 5 given " << argc;
+        pmlLog(pml::LOG_ERROR, "dosetup") << "Not enough arguments. Need 6 given " << argc;
         pmlLog(pml::LOG_INFO, "dosetup") << "Usage: hostname password overlay line_to_replace";
         return -1;
     }
@@ -203,6 +278,10 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    return SetOverlay(argv[3], argv[4]);
+    if(SetRotate(argv[5] != 0))
+    {
+        return -1;
+    }
+    return SetOverlay(argv[3], argv[4], argv[5]);
 
 }
