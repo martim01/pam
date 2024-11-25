@@ -10,9 +10,11 @@
 #include "logtofile.h"
 #include <filesystem>
 
+
 static const std::string STR_DTPARAM = "dtparam=audio";
 static const std::string STR_DTOVERLAY = "dtoverlay=";
 static const std::string STR_LOCAL = "127.0.1.1";
+static const std::string STR_VC4 = "dtoverlay=vc4-kms-v3d";
 
 int SetHostname(const std::string& sHostname)
 {
@@ -131,7 +133,6 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber, cons
     }
 
     std::string sLine;
-    std::string sFind = "dtoverlay=vc4-fkms-v3d";
     int nCount = 0;
     bool bAdded(false);
     bool bRotateDone(false);
@@ -171,9 +172,13 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber, cons
             }
             bRotateDone = true;
         }
-        else if(sLine.substr(0,sFind.length()) != sFind)
+        else if(sLine.substr(0,STR_VC4.length()) != STR_VC4)
         {
             output << sLine << '\n';
+        }
+        else
+        {
+         std::cout << "removed" << std::endl;
         }
         nCount++;
     }
@@ -235,6 +240,7 @@ int main(int argc, char* argv[])
         pmlLog(pml::LOG_ERROR, "dosetup") << "Not enough arguments. Need 6 given " << argc;
         pmlLog(pml::LOG_INFO, "dosetup") << "Usage: hostname password overlay line_to_replace";
         pml::LogStream::Stop();
+        std::cout << "STOPPED" << std::endl;
         return -1;
     }
 
@@ -243,6 +249,7 @@ int main(int argc, char* argv[])
     {
         pmlLog(pml::LOG_CRITICAL, "dosetup") << "Failed to set hostname. Exiting";
         pml::LogStream::Stop();
+        std::cout << "STOPPED" << std::endl;
 
         return -1;
     }
@@ -251,6 +258,7 @@ int main(int argc, char* argv[])
     {
         pmlLog(pml::LOG_CRITICAL, "dosetup") << "Failed to set password. Exiting";
         pml::LogStream::Stop();
+        std::cout << "STOPPED" << std::endl;
 
         return -1;
     }
@@ -259,6 +267,7 @@ int main(int argc, char* argv[])
     if(SetOverlay(argv[3], argv[4], argv[5]) != 0)
     {
         pml::LogStream::Stop();
+        std::cout << "STOPPED" << std::endl;
         return -1;
     }
     
@@ -266,5 +275,7 @@ int main(int argc, char* argv[])
 
     pmlLog(pml::LOG_INFO, "dosetup") << "------ FINISHED ------";
     pml::LogStream::Stop();
+    std::cout << "STOPPED" << std::endl;
+
     return 0;
 }
