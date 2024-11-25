@@ -93,9 +93,12 @@ int SetPassword(const std::string& sPassword)
         sCommand += ":"+sPassword+"' | sudo chpasswd";
 
         system(sCommand.c_str());
+
+        pmlLog(pml::LOG_INFO, "dosetup") << "Password changed";
         return 0;
     }
-    return -1;
+    pmlLog(pml::LOG_ERROR, "dosetup") << "Failed to change password";
+    return 0;
 }
 
 int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber, bool bRotate)
@@ -117,12 +120,12 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber, bool
         pmlLog(pml::LOG_ERROR, "dosetup") << "Line number incorrect: " << sLineNumber;
     }
 
-    std::ifstream input("/boot/config.txt");
+    std::ifstream input("/boot/firmware/config.txt");
     std::stringstream output;
 
     if(!input)
     {
-        pmlLog(pml::LOG_ERROR, "dosetup") << "Could not open /boot/config.txt";
+        pmlLog(pml::LOG_ERROR, "dosetup") << "Could not open /boot/firmware/config.txt";
         return -1;
     }
 
@@ -185,7 +188,7 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber, bool
 
     input.close();
 
-    std::ofstream outputFile("/boot/config.txt");
+    std::ofstream outputFile("/boot/firmware/config.txt");
     if(!outputFile)
     {
         pmlLog(pml::LOG_ERROR, "dosetup") << "Unable to set overlay: " << strerror(errno);
@@ -195,18 +198,18 @@ int SetOverlay(const std::string& sOverlay, const std::string& sLineNumber, bool
     outputFile << output.str() << std::endl;
     outputFile.close();
 
-    pmlLog(pml::LOG_INFO, "dosetup") << "/boot/config.txt overwritten";
+    pmlLog(pml::LOG_INFO, "dosetup") << "/boot/firmware/config.txt overwritten";
     return 0;
 }
 
 int SetRotate(bool bRotate)
 {
-    std::ifstream input("/boot/cmdline.txt");
+    std::ifstream input("/boot/firmware/cmdline.txt");
     std::stringstream output;
 
     if(!input)
     {
-        pmlLog(pml::LOG_ERROR, "dosetup") << "Could not open /boot/cmdline.txt";
+        pmlLog(pml::LOG_ERROR, "dosetup") << "Could not open /boot/firmware/cmdline.txt";
         return -1;
     }
 
@@ -237,7 +240,7 @@ int SetRotate(bool bRotate)
 
     input.close();
 
-    std::ofstream outputFile("/boot/cmdline.txt");
+    std::ofstream outputFile("/boot/firmware/cmdline.txt");
     if(!outputFile)
     {
         pmlLog(pml::LOG_ERROR, "dosetup") << "Unable to rotate screen " << strerror(errno);
@@ -247,15 +250,13 @@ int SetRotate(bool bRotate)
     outputFile << output.str() << std::endl;
     outputFile.close();
 
-    pmlLog(pml::LOG_INFO, "dosetup") << "/boot/cmdline.txt overwritten";
+    pmlLog(pml::LOG_INFO, "dosetup") << "/boot/firmware/cmdline.txt overwritten";
     return 0;
 }
 
 int main(int argc, char* argv[])
 {
-    struct passwd* pw = getpwuid(getuid());
-    std::string sRoot(pw->pw_dir);
-    sRoot += "/pam/logs/setup";
+    std::string sRoot = "/opt";
     pml::LogStream::AddOutput(std::make_unique<pml::LogToFile>(sRoot, 2, 0));
 
     pmlLog(pml::LOG_INFO, "dosetup") << "---- Starting dosetup ----";
@@ -270,16 +271,19 @@ int main(int argc, char* argv[])
 
     if(SetHostname(argv[1]) !=0)
     {
+        pmlLog(pml::LOG_CRITICAL, "dosetup") << "Failed to set hostname. Exiting";
         return -1;
     }
 
     if(SetPassword(argv[2]) !=0)
     {
+        pmlLog(pml::LOG_CRITICAL, "dosetup") << "Failed to set password. Exiting";
         return -1;
     }
 
     if(SetRotate(argv[5] != 0))
     {
+        pmlLog(pml::LOG_CRITICAL, "dosetup") << "Failed to set screen rotation. Exiting";
         return -1;
     }
     return SetOverlay(argv[3], argv[4], argv[5]);
