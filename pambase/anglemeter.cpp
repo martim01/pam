@@ -323,22 +323,22 @@ void AngleMeter::ResetMeter(void)
 
 
 }
-void AngleMeter::ShowValue(double dValue[2])
+void AngleMeter::ShowValue(std::array<double,2> values)
 {
     for(int i = 0; i < 2; i++)
     {
         if(!m_bFreeze)
         {
-            m_dLastValue[i] = dValue[i];
+            m_dLastValue[i] = values[i];
 
         }
         if(m_nPeakMode == PEAK_SHOW)
         {
             m_nPeakCounter[i]++;
         }
-        if(dValue[i] >= m_dPeakValue[i] || m_nPeakCounter[i] >= 96)
+        if(values[i] >= m_dPeakValue[i] || m_nPeakCounter[i] >= 96)
         {
-            m_dPeakValue[i] = min(dValue[i], m_dMax);
+            m_dPeakValue[i] = min(values[i], m_dMax);
             m_nPeakCounter[i] = 0;
         }
 

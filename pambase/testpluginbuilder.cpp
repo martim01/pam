@@ -134,8 +134,8 @@ bool TestPluginBuilder::IsLogActive()
 
 void TestPluginBuilder::InitRemoteApi()
 {
-    RemoteApi::Get().AddPluginEndpoint(pml::restgoose::GET, endpoint("/x-pam/plugins/test/"+GetName().ToStdString()), std::bind(&TestPluginBuilder::GetStatus, this, _1,_2,_3,_4));
-    RemoteApi::Get().AddPluginEndpoint(pml::restgoose::PATCH, endpoint("/x-pam/plugins/test/"+GetName().ToStdString()), std::bind(&TestPluginBuilder::PatchSetting, this, _1,_2,_3,_4));
+    RemoteApi::Get().AddPluginEndpoint(pml::restgoose::kGet, endpoint("/x-pam/plugins/test/"+GetName().ToStdString()), std::bind(&TestPluginBuilder::GetStatus, this, _1,_2,_3,_4));
+    RemoteApi::Get().AddPluginEndpoint(pml::restgoose::kPatch, endpoint("/x-pam/plugins/test/"+GetName().ToStdString()), std::bind(&TestPluginBuilder::PatchSetting, this, _1,_2,_3,_4));
 }
 
 pml::restgoose::response TestPluginBuilder::GetStatus(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)

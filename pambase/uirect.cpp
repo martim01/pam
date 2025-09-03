@@ -124,12 +124,21 @@ void uiRect::SetBackgroundColour(const wxColour &colour, const wxColour& clrLow)
     {
         return;
     }
-    m_clrBorderHigh = wxColour(min(255, (int)m_clrBackgroundHigh.Red()+40),
+
+    if(m_clrBackgroundHigh == wxColour(0,0,0) || m_clrBackgroundLow == wxColour(0,0,0))
+    {
+        m_clrBorderHigh = *wxWHITE;
+        m_clrBorderLow = *wxWHITE;
+    }
+    else
+    {
+        m_clrBorderHigh = wxColour(min(255, (int)m_clrBackgroundHigh.Red()+40),
                                min(255, (int)m_clrBackgroundHigh.Green()+40),
                                min(255, (int)m_clrBackgroundHigh.Blue()+40));
-    m_clrBorderLow = wxColour(max(0, (int)m_clrBackgroundLow.Red()-20),
+        m_clrBorderLow = wxColour(max(0, (int)m_clrBackgroundLow.Red()-20),
                                   max(0, (int)m_clrBackgroundLow.Green()-20),
                                   max(0, (int)m_clrBackgroundLow.Blue()-20));
+    }
 }
 
 void uiRect::SetForegroundColour(const wxColour &colour)
@@ -137,17 +146,17 @@ void uiRect::SetForegroundColour(const wxColour &colour)
     m_clrText = colour;
 }
 
-void uiRect::Draw(wxDC& dc, unsigned short nState, unsigned char nEdge)
+void uiRect::Draw(wxDC& dc, unsigned short nState, unsigned char nEdge, bool bRotateText)
 {
-    Draw(dc, m_sLabel, nState, nEdge, m_bmp);
+    Draw(dc, m_sLabel, nState, nEdge, m_bmp,bRotateText);
     dc.SetPen(wxNullPen);
     dc.SetBrush(wxNullBrush);
 }
 
-void uiRect::Draw(wxDC& dc, const wxString& sLabel, unsigned short nState, unsigned char nEdge, const wxBitmap& bmp)
+void uiRect::Draw(wxDC& dc, const wxString& sLabel, unsigned short nState, unsigned char nEdge, const wxBitmap& bmp, bool bRotateText)
 {
     wxRect rectFill(m_rectEnclosing);
-    
+
     if(m_nGradient != 0)
     {
         dc.GradientFillLinear(rectFill, m_clrBackgroundHigh, m_clrBackgroundLow, static_cast<wxDirection>(m_nGradient));
@@ -214,7 +223,14 @@ void uiRect::Draw(wxDC& dc, const wxString& sLabel, unsigned short nState, unsig
         dc.SetClippingRegion(m_rectText);
     }
 
-    DrawText(dc, sLabel, m_rectText, m_nAlign, m_bWrap, true, true, m_bClip);
+    if(bRotateText == false)
+    {
+        DrawText(dc, sLabel, m_rectText, m_nAlign, m_bWrap, true, true, m_bClip, bRotateText);
+    }
+    else
+    {
+        dc.DrawRotatedText("Test", m_rectText.GetLeft(), m_rectText.GetTop(),90);
+    }
 
     if(m_bClip)
     {
@@ -309,7 +325,7 @@ wxSize uiRect::GetSizeOfText(wxDC& dc, const wxString& sText, const wxRect& rect
     return DrawText(dc,sText, rect, wxALIGN_TOP | wxALIGN_LEFT, bWrap, false, true, false);
 }
 
-wxSize uiRect::DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int nAlign, bool bWrap, bool bDraw, bool bClip, bool bClippingRegion)
+wxSize uiRect::DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int nAlign, bool bWrap, bool bDraw, bool bClip, bool bClippingRegion, bool bRotateText)
 {
     bWrap = true;
 
@@ -328,12 +344,23 @@ wxSize uiRect::DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int 
         wxString sOutLine;
         if(sLine.empty())   //simply a \n
         {
-            szReturn.y += dc.GetTextExtent(sText).GetHeight();
-            szReturn.x = 0;
-            if(bClip && szReturn.y > rect.GetHeight())
+            if(bRotateText == false)
             {
-            //    sOutLine = "...";
-                bOverflow = true;
+                szReturn.y += dc.GetTextExtent(sText).GetHeight();
+                szReturn.x = 0;
+                if(bClip && szReturn.y > rect.GetHeight())
+                {
+                    bOverflow = true;
+                }
+            }
+            else
+            {
+                szReturn.x += dc.GetTextExtent(sText).GetHeight();
+                szReturn.y = 0;
+                if(bClip && szReturn.x > rect.GetWidth())
+                {
+                    bOverflow = true;
+                }
             }
         }
         else
@@ -349,18 +376,33 @@ wxSize uiRect::DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int 
                     wxSize szExtent;
                     szExtent = dc.GetTextExtent(sWord);
 
-                    szReturn.x += szExtent.GetWidth();
-
-                    if(szReturn.x > rect.GetWidth() && nToken != 0)    //we don't move down one if we are the first word on the line
+                    if(bRotateText == false)
                     {
-                        szReturn.y += dc.GetTextExtent(sOutLine).GetHeight();
+                        szReturn.x += szExtent.GetWidth();
+                        if(szReturn.x > rect.GetWidth() && nToken != 0)    //we don't move down one if we are the first word on the line
+                        {
+                            szReturn.y += dc.GetTextExtent(sOutLine).GetHeight();
+                            sOutput += sOutLine;
+                            sOutput += "\n";
+                            sOutLine = "";
 
-                        sOutput += sOutLine;
-                        sOutput += "\n";
-                        sOutLine = "";
+                            szReturn.x = dc.GetTextExtent(sWord).GetWidth();
+                            nToken=0;
+                        }
+                    }
+                    else
+                    {
+                        szReturn.y += szExtent.GetWidth();
+                        if(szReturn.y > rect.GetHeight() && nToken != 0)    //we don't move down one if we are the first word on the line
+                        {
+                            szReturn.x += dc.GetTextExtent(sOutLine).GetHeight();
+                            sOutput += sOutLine;
+                            sOutput += "\n";
+                            sOutLine = "";
 
-                        szReturn.x = dc.GetTextExtent(sWord).GetWidth();
-                        nToken=0;
+                            szReturn.y = dc.GetTextExtent(sWord).GetWidth();
+                            nToken=0;
+                        }
                     }
 
                     sOutLine += sWord;
@@ -372,14 +414,31 @@ wxSize uiRect::DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int 
                 sOutLine = sLine;
             }
 
-            szReturn.y += dc.GetTextExtent(sOutLine).GetHeight();
-            if(bClip && szReturn.y > rect.GetHeight())
+            if(bRotateText == false)
             {
-                if(sOutput.empty() == false)
+                szReturn.y += dc.GetTextExtent(sOutLine).GetHeight();
+                if(bClip && szReturn.y > rect.GetHeight())
                 {
-                    if(sOutput.GetChar(sOutput.length()-1) == wxT('\n'))
+                    if(sOutput.empty() == false)
                     {
-                        sOutput = sOutput.Left(sOutput.length()-1);
+                        if(sOutput.GetChar(sOutput.length()-1) == wxT('\n'))
+                        {
+                            sOutput = sOutput.Left(sOutput.length()-1);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                szReturn.x += dc.GetTextExtent(sOutLine).GetHeight();
+                if(bClip && szReturn.x > rect.GetHeight())
+                {
+                    if(sOutput.empty() == false)
+                    {
+                        if(sOutput.GetChar(sOutput.length()-1) == wxT('\n'))
+                        {
+                            sOutput = sOutput.Left(sOutput.length()-1);
+                        }
                     }
                 }
             }
@@ -396,7 +455,11 @@ wxSize uiRect::DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int 
     if(bDraw)
     {
        // dc.DrawRectangle(rect);
-        dc.DrawLabel(sOutput,rect,nAlign);
+        if(bRotateText == false)
+        {
+            dc.DrawLabel(sOutput,rect,nAlign);
+        }
+
         if(bClippingRegion)
             dc.DestroyClippingRegion();
     }

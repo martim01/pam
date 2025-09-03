@@ -93,7 +93,8 @@ LevelMeter::LevelMeter(wxWindow *parent, wxWindowID id, const wxString & sText,d
     m_clrText = wxColour(200,180,255);
 
     m_pairColour[0] = make_pair(m_dMin/2, GetBackgroundColour());
-    m_pairColour[1] = make_pair(m_dMin/4, GetBackgroundColour());
+    m_pairColour[1] = make_pair(m_dMin/3, GetBackgroundColour());
+    m_pairColour[2] = make_pair(m_dMin/4, GetBackgroundColour());
 
     m_uiBlack.SetBackgroundColour(*wxBLACK);
     InitMeter(sText, dMin);
@@ -113,7 +114,18 @@ void LevelMeter::OnPaint(wxPaintEvent& event)
 {
     wxAutoBufferedPaintDC dc(this);
 
+    if(m_bHorizontal)
+    {
+        DrawHorizontal(dc);
+    }
+    else
+    {
+        DrawVertical(dc);
+    }
+}
 
+void LevelMeter::DrawVertical(wxDC& dc)
+{
     dc.SetFont(GetFont());
     wxBrush br(*wxBLACK);
     dc.SetBrush(br);
@@ -135,8 +147,8 @@ void LevelMeter::OnPaint(wxPaintEvent& event)
         }
 
         dc.SetPen(wxNullPen);
-        m_uiLabel.Draw(dc, uiRect::BORDER_NONE);
-        m_uiLevelText.Draw(dc, uiRect::BORDER_NONE);
+        m_uiLabel.Draw(dc, uiRect::BORDER_NONE, uiRect::EDGE_ALL, m_bHorizontal);
+        m_uiLevelText.Draw(dc, uiRect::BORDER_NONE, uiRect::EDGE_ALL, m_bHorizontal);
 
     }
     else
@@ -161,7 +173,61 @@ void LevelMeter::OnPaint(wxPaintEvent& event)
                 uiLevel.Draw(dc, m_sReference, uiRect::BORDER_NONE);
             }
         }
-        m_uiLevelText.Draw(dc, uiRect::BORDER_NONE);
+        m_uiLevelText.Draw(dc, uiRect::BORDER_NONE, uiRect::EDGE_ALL, m_bHorizontal);
+    }
+}
+
+void LevelMeter::DrawHorizontal(wxDC& dc)
+{
+    dc.SetFont(GetFont());
+
+    dc.SetBrush(*wxBLACK_BRUSH);
+    dc.SetPen(*wxWHITE_PEN);
+    dc.DrawRectangle(GetClientRect());
+
+    if(!m_bLevelDisplay)
+    {
+        dc.DrawBitmap(m_bmpMeter, 1,1);
+        m_uiBlack.Draw(dc, uiRect::BORDER_FLAT);
+
+        if(m_nPeakMode != PEAK_HIDE)
+        {
+            m_uiPeak.Draw(dc,uiRect::BORDER_FLAT);
+        }
+        dc.SetPen(wxPen(wxColour(120,120,120),1));
+
+        for(const auto& dLevel : m_vLevels)
+        {
+            auto x = GetClientRect().GetRight()+static_cast<int>(m_dPixelsPerdB*dLevel);
+            dc.DrawLine(x, 1, x, GetClientRect().GetBottom());
+        }
+
+        dc.SetPen(wxNullPen);
+
+    }
+    else
+    {
+        for(size_t i = 0; i < m_vLevels.size(); i++)
+        {
+            int nY(m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])));
+
+
+            dc.SetPen(wxPen(wxColour(160,160,160),1));
+            dc.DrawLine(0, m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])), GetClientRect().GetWidth(), m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])));
+            uiRect uiLevel(wxRect(10, nY-10,GetClientSize().x-25, 20));
+            uiLevel.SetBackgroundColour(*wxBLACK);
+            uiLevel.SetForegroundColour(*wxWHITE);
+
+            if((m_vLevels[i]-m_dLevelOffset) < -0.5 || (m_vLevels[i]-m_dLevelOffset) > 0.5 || m_sReference.empty())
+            {
+                uiLevel.Draw(dc, wxString::Format(wxT("%.0f"), (m_vLevels[i]-m_dLevelOffset)/m_dScalingFactor), uiRect::BORDER_NONE);
+            }
+            else
+            {
+                uiLevel.Draw(dc, m_sReference, uiRect::BORDER_NONE);
+            }
+        }
+        m_uiLevelText.Draw(dc, uiRect::BORDER_NONE, uiRect::EDGE_ALL, m_bHorizontal);
     }
 }
 
@@ -176,6 +242,19 @@ void LevelMeter::InitMeter(const wxString& sText,double dMin)
 
     m_uiLabel.SetLabel(sText);
     m_uiLabel.SetGradient(0);
+    if(m_bHorizontal)
+    {
+        InitMeterHorizontal(sText, dMin);
+    }
+    else
+    {
+        InitMeterVertical(sText, dMin);
+    }
+
+}
+
+void LevelMeter::InitMeterVertical(const wxString& sText,double dMin)
+{
     m_uiLevelText.SetRect(0,0, GetClientRect().GetWidth(), 20);
     m_uiLevelText.SetGradient(0);
     m_uiLabel.SetRect(0,GetClientRect().GetBottom()-20, GetClientRect().GetWidth(), 20);
@@ -184,9 +263,7 @@ void LevelMeter::InitMeter(const wxString& sText,double dMin)
 
     m_dPixelsPerPPM = (GetClientRect().GetHeight()-40)/8.0;
 
-
-    int nMid = -m_pairColour[1].first*m_dPixelsPerdB;
-
+    int nMid = -m_pairColour[2].first*m_dPixelsPerdB;
 
     m_uiLevel[0].SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), GetClientRect().GetHeight()-m_uiLevelText.GetHeight()-m_uiLabel.GetHeight());
     m_uiLevel[1].SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), nMid-m_uiLevelText.GetHeight());
@@ -216,22 +293,84 @@ void LevelMeter::InitMeter(const wxString& sText,double dMin)
     m_uiLevel[0].Draw(dc, uiRect::BORDER_NONE);
     m_uiLevel[1].Draw(dc, uiRect::BORDER_NONE);
 
+    m_uiPeak.SetBackgroundColour(*wxRED);
+}
 
 
-    m_uiPeak.SetBackgroundColour(m_pairColour[1].second);
+void LevelMeter::InitMeterHorizontal(const wxString& sText,double dMin)
+{
+    m_uiLabel.SetRect(0,0, 0, GetClientRect().GetHeight());
+    m_uiLevelText.SetGradient(0);
+    m_uiLevelText.SetRect(GetClientRect().GetRight(),0, 20, GetClientRect().GetHeight());
+
+    m_dPixelsPerdB = (GetClientRect().GetWidth()-40)/(-m_dMin);
+    m_dPixelsPerPPM = (GetClientRect().GetWidth()-40)/8.0;
+
+    int nMid = -m_pairColour[1].first*m_dPixelsPerdB;
+    int nTop = -m_pairColour[2].first*m_dPixelsPerdB;
+
+    m_uiLevel[2].SetLeft( m_uiLevelText.GetLeft()-m_uiLabel.GetWidth()-nTop);
+    m_uiLevel[2].SetRight(m_uiLevelText.GetLeft()-m_uiLabel.GetWidth()-1);
+    m_uiLevel[2].SetTop(1);
+    m_uiLevel[2].SetBottom(GetClientRect().GetBottom());
+
+    m_uiLevel[1].SetLeft(m_uiLevelText.GetLeft()-nMid-m_uiLabel.GetWidth());
+    m_uiLevel[1].SetRight(m_uiLevel[2].GetLeft());
+    m_uiLevel[1].SetTop(1);
+    m_uiLevel[1].SetBottom(GetClientRect().GetBottom()-1);
+
+    m_uiLevel[0].SetLeft(1);
+    m_uiLevel[0].SetRight(m_uiLevel[1].GetLeft());
+    m_uiLevel[0].SetTop(1);
+    m_uiLevel[0].SetBottom(GetClientRect().GetBottom()-1);
+
+    
+    
+
+
+    //draw to the bmp..
+    wxMemoryDC dc;
+    m_bmpMeter = wxBitmap(GetClientSize().x-2, GetClientSize().y-3, 24);
+    dc.SelectObject(m_bmpMeter);
+    if(m_bShading)
+    {
+        for(int i= 0; i < 3; i++)
+        {
+            m_uiLevel[i].SetGradient(wxEAST);
+        }
+    }
+    else
+    {
+        for(int i= 0; i < 3; i++)
+        {
+            m_uiLevel[i].SetGradient(0);
+        }
+    }
+
+    m_uiLevel[0].Draw(dc, uiRect::BORDER_NONE);
+    m_uiLevel[1].Draw(dc, uiRect::BORDER_NONE);
+    m_uiLevel[2].Draw(dc, uiRect::BORDER_NONE);
+
+    m_uiPeak.SetBackgroundColour(m_pairColour[2].second);
 
 }
 
 bool LevelMeter::SetLightColours(wxColour clrLow, double dOverMod, wxColour clrOver)
 {
+    return SetLightColours(clrLow, -60.0, clrLow, dOverMod, clrOver);
+}
 
-    m_pairColour[0] = make_pair(-80, clrLow);
-    m_pairColour[1] = make_pair(dOverMod, clrOver);
+bool LevelMeter::SetLightColours(wxColour clrLow, double dMidMod, wxColour clrMid, double dOverMod, wxColour clrOver)
+{
+    m_pairColour[0] = {-80, clrLow};
+    m_pairColour[1] = {dMidMod, clrMid};
+    m_pairColour[2] = {dOverMod, clrOver};
 
     m_uiSimple.SetBackgroundColour(clrLow,clrLow);
 
-    m_uiLevel[0].SetBackgroundColour(wxNullColour, clrLow);
-    m_uiLevel[1].SetBackgroundColour(clrOver, clrOver);
+    m_uiLevel[0].SetBackgroundColour(clrLow, clrLow);
+    m_uiLevel[1].SetBackgroundColour(clrMid, clrMid);
+    m_uiLevel[2].SetBackgroundColour(clrOver, clrOver);
 
     InitMeter(m_uiLabel.GetLabel(), m_dMin);
 
@@ -274,15 +413,63 @@ void LevelMeter::ShowValue(double dValue)
     m_uiBlack.SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), -ndB);
     m_uiPeak.SetRect(0,m_uiLevelText.GetBottom()-(nPeakdB)-1, GetClientRect().GetWidth(), 3);
 
-    if(m_uiBlack.GetBottom() != m_rectLastBlack.GetBottom())    //level change
+    if(m_bHorizontal == false)
     {
-        RefreshRect(wxRect(0,m_uiLevelText.GetBottom(), GetClientSize().x, max(m_uiBlack.GetBottom(), m_rectLastBlack.GetBottom())+1-m_uiLevelText.GetBottom()));
-    }
 
-    if(m_uiPeak.GetBottom() != m_rectLastPeak.GetBottom())
+        ndB = max(ndB, -(m_uiLabel.GetTop()-m_uiLevelText.GetHeight()));
+
+        nPeakdB = max(nPeakdB, -(m_uiLabel.GetTop()-m_uiLevelText.GetHeight()));
+
+        m_uiBlack.SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), -ndB);
+        m_uiPeak.SetRect(0,m_uiLevelText.GetBottom()-(nPeakdB)-1, GetClientRect().GetWidth(), 3);
+
+        if(m_uiBlack.GetBottom() != m_rectLastBlack.GetBottom())    //level change
+        {
+            RefreshRect(wxRect(0,m_uiLevelText.GetBottom(), GetClientSize().x, max(m_uiBlack.GetBottom(), m_rectLastBlack.GetBottom())+1-m_uiLevelText.GetBottom()));
+        }
+
+
+        if(m_uiPeak.GetBottom() != m_rectLastPeak.GetBottom())
+        {
+            RefreshRect(m_uiPeak.GetRect());
+            RefreshRect(m_rectLastPeak);
+        }
+    }
+    else
     {
-        RefreshRect(m_uiPeak.GetRect());
-        RefreshRect(m_rectLastPeak);
+        ndB += m_uiLevelText.GetLeft();
+        ndB = std::max(0, ndB);
+
+        nPeakdB += m_uiLevelText.GetLeft();
+        nPeakdB = std::max(0, ndB);
+
+
+        nPeakdB = max(nPeakdB, -(m_uiLabel.GetRight()-m_uiLevelText.GetWidth()));
+
+        m_uiBlack.SetTop(0);
+        m_uiBlack.SetBottom(GetClientRect().GetBottom());
+        m_uiBlack.SetLeft(ndB);
+        m_uiBlack.SetRight(m_uiLevelText.GetLeft());
+
+        m_uiPeak.SetTop(1);
+        m_uiPeak.SetBottom(GetClientRect().GetBottom()-1);
+        m_uiPeak.SetWidth(3);
+        m_uiPeak.SetLeft(nPeakdB-1);
+
+        if(m_uiBlack.GetLeft() < m_rectLastBlack.GetLeft())
+        {
+            RefreshRect(wxRect(m_uiBlack.GetLeft(), 0, m_rectLastBlack.GetLeft()-m_uiBlack.GetLeft(), m_uiBlack.GetHeight()));
+        }
+        else if(m_uiBlack.GetLeft() > m_rectLastBlack.GetLeft())
+        {
+            RefreshRect(wxRect(m_rectLastBlack.GetLeft(), 0, m_uiBlack.GetLeft()-m_rectLastBlack.GetLeft(), m_uiBlack.GetHeight()));
+        }
+
+        if(m_uiPeak.GetLeft() != m_rectLastPeak.GetLeft())
+        {
+            RefreshRect(m_uiPeak.GetRect());
+            RefreshRect(m_rectLastPeak);
+        }
     }
 
     m_rectLastBlack = m_uiBlack.GetRect();
@@ -401,18 +588,50 @@ void LevelMeter::ShowPPM(double dValue)
     int nPeakY = m_dPixelsPerPPM*(8-m_dPeakValue);
     nPeakY = min(nPeakY, (m_uiLabel.GetTop()-m_uiLevelText.GetHeight()));
 
-    m_uiBlack.SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), nY);
-    m_uiPeak.SetRect(0,m_uiLevelText.GetBottom()+(nPeakY), GetClientRect().GetWidth(), 2);
-
-    if(m_uiBlack.GetBottom() != m_rectLastBlack.GetBottom())    //level change
+    if(m_bHorizontal == false)
     {
-        RefreshRect(wxRect(0,m_uiLevelText.GetBottom(), GetClientSize().x, max(m_uiBlack.GetBottom(), m_rectLastBlack.GetBottom())+1-m_uiLevelText.GetBottom()));
+        nY = min(nY, (m_uiLabel.GetTop()-m_uiLevelText.GetHeight()));
+        nPeakY = min(nPeakY, (m_uiLabel.GetTop()-m_uiLevelText.GetHeight()));
+
+        m_uiBlack.SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), nY);
+        m_uiPeak.SetRect(0,m_uiLevelText.GetBottom()+(nPeakY), GetClientRect().GetWidth(), 2);
+
+        if(m_uiBlack.GetBottom() != m_rectLastBlack.GetBottom())    //level change
+        {
+            RefreshRect(wxRect(0,m_uiLevelText.GetBottom(), GetClientSize().x, max(m_uiBlack.GetBottom(), m_rectLastBlack.GetBottom())+1-m_uiLevelText.GetBottom()));
+        }
+
+        if(m_uiPeak.GetBottom() != m_rectLastPeak.GetBottom())
+        {
+            RefreshRect(m_uiPeak.GetRect());
+            RefreshRect(m_rectLastPeak);
+        }
     }
-
-    if(m_uiPeak.GetBottom() != m_rectLastPeak.GetBottom())
+    else
     {
-        RefreshRect(m_uiPeak.GetRect());
-        RefreshRect(m_rectLastPeak);
+        nY = min(nY, (m_uiLabel.GetRight()-m_uiLevelText.GetWidth()));
+        nPeakY = min(nPeakY, (m_uiLabel.GetRight()-m_uiLevelText.GetWidth()));
+
+        m_uiBlack.SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), nY);
+
+        m_uiBlack.SetTop(0);
+        m_uiBlack.SetBottom(GetClientSize().y);
+        m_uiBlack.SetWidth(-nY);
+        m_uiBlack.SetRight(m_uiLevelText.GetLeft());
+
+        m_uiPeak.SetRect(0,m_uiLevelText.GetBottom()+(nPeakY), GetClientRect().GetWidth(), 2);
+
+
+        if(m_uiBlack.GetBottom() != m_rectLastBlack.GetBottom())    //level change
+        {
+            RefreshRect(wxRect(m_uiLevelText.GetLeft(), 0, max(m_uiBlack.GetLeft(), m_rectLastBlack.GetLeft())+1-m_uiLevelText.GetLeft(), m_uiBlack.GetHeight()));
+        }
+
+        if(m_uiPeak.GetBottom() != m_rectLastPeak.GetBottom())
+        {
+            RefreshRect(m_uiPeak.GetRect());
+            RefreshRect(m_rectLastPeak);
+        }
     }
 
     m_rectLastBlack = m_uiBlack.GetRect();

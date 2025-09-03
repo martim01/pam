@@ -1,5 +1,6 @@
 #pragma once
 #include <wx/window.h>
+#include <array>
 #include <vector>
 #include "uirect.h"
 #include <wx/bitmap.h>
@@ -29,7 +30,7 @@ public:
 
     void SetLabel(const wxString& sLabel);
 
-    void ShowValue(double dValue[2]);
+    void ShowValue(std::array<double,2> values);
 
     void ShowSurround(bool bSurround);
 
@@ -83,10 +84,10 @@ protected:
 
     bool m_bInit;
 
-    double m_dLastValue[2];
+    std::array<double,2> m_dLastValue;
     unsigned int m_nRouting;
 
-    double m_dPeakValue[2];
+    std::array<double,2> m_dPeakValue;
 
     double m_dFall;
 

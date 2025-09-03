@@ -8,7 +8,6 @@
 #include "settings.h"
 #include "audioalgorithms.h"
 
-using namespace std;
 
 BEGIN_EVENT_TABLE(CorrelationBar, pmControl)
     EVT_PAINT(CorrelationBar::OnPaint)
@@ -28,8 +27,9 @@ CorrelationBar::CorrelationBar(wxWindow *parent, wxWindowID id, const wxPoint& p
     m_nAxisX(0),
     m_nAxisY(0),
     m_dCorrelation(0),
-    m_pBmpCorrelationOut(0),
-    m_pBmpCorrelationIn(0)
+    m_pBmpCorrelationOut(nullptr),
+    m_pBmpCorrelationIn(nullptr),
+    m_dtFlash(wxDateTime::UNow())
 {
     Create(parent, id, pos, size);
 
@@ -67,14 +67,6 @@ bool CorrelationBar::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos,
 
 CorrelationBar::~CorrelationBar()
 {
-    if(m_pBmpCorrelationIn)
-    {
-        delete m_pBmpCorrelationIn;
-    }
-    if(m_pBmpCorrelationOut)
-    {
-        delete m_pBmpCorrelationOut;
-    }
 }
 
 
@@ -82,10 +74,23 @@ void CorrelationBar::OnPaint(wxPaintEvent& event)
 {
     wxAutoBufferedPaintDC dc(this);
 
+
     dc.SetPen(*wxTRANSPARENT_PEN);
     dc.SetBrush(*wxBLACK_BRUSH);
     dc.DrawRectangle(GetClientRect());
 
+    if(m_bBar)
+    {
+        DrawBar(dc);
+    }
+    else
+    {
+        DrawBox(dc);
+    }
+}
+
+void CorrelationBar::DrawBar(wxDC& dc)
+{
     dc.SetPen(*wxWHITE_PEN);
     dc.DrawRectangle(m_rectCorrelation);
     dc.DrawRectangle(m_rectBalance);
@@ -93,17 +98,8 @@ void CorrelationBar::OnPaint(wxPaintEvent& event)
     dc.DrawBitmap(*m_pBmpCorrelationOut, m_rectCorrelation.GetLeft()+1, m_rectCorrelation.GetTop()+1);
     dc.DrawBitmap(*m_pBmpCorrelationIn, wxPoint(m_rectCorrelation.GetLeft()+m_rectCorrelation.GetWidth()/2, m_rectCorrelation.GetTop()+1));
 
-//    dc.SetBrush(*wxWHITE_BRUSH);
-//    dc.SetPen(*wxTRANSPARENT_PEN);
-//    dc.DrawRectangle(m_rectCorrelation.GetLeft()+m_rectCorrelation.GetWidth()/2+m_dCorrelation*m_dResolutionCorrelation, m_rectCorrelation.GetTop()+1, 1, m_rectCorrelation.GetHeight()-2);
 
-    double dCorrelation = 0.0;
-    for(list<double>::const_iterator itCorrelation = m_lstCorrelation.begin(); itCorrelation != m_lstCorrelation.end(); ++itCorrelation)
-    {
-        dCorrelation += (*itCorrelation);
-    }
-
-    dCorrelation /= m_lstCorrelation.size();
+    auto dCorrelation = WorkoutCorrelation();
 
 
     dc.SetBrush(*wxBLACK_BRUSH);
@@ -136,15 +132,35 @@ void CorrelationBar::OnPaint(wxPaintEvent& event)
     rectLabel.SetRect(m_rectCorrelation.GetRight()-10, m_rectCorrelation.GetBottom()+5, 20,20);
     rectLabel.Draw(dc, wxT("1"), uiRect::BORDER_NONE);
 
-//    rectLabel.SetRect(m_rectBalance.GetLeft()-5, m_rectBalance.GetBottom()+5, 20,20);
-//    rectLabel.Draw(dc, wxT("L"), uiRect::BORDER_NONE);
-//    rectLabel.SetRect(m_rectBalance.GetRight()-10, m_rectBalance.GetBottom()+5, 20,20);
-//    rectLabel.Draw(dc, wxT("R"), uiRect::BORDER_NONE);
-
-
     m_uiCorrelation.Draw(dc, wxString::Format(wxT("%.2f"), dCorrelation), uiRect::BORDER_NONE);
-//    m_uiBalance.Draw(dc, wxString::Format(wxT("%.2f"), dBalance), uiRect::BORDER_NONE);
 
+}
+
+void CorrelationBar::DrawBox(wxDC& dc)
+{
+    
+    uiRect rect(GetClientRect());
+
+    auto dCorrelation = WorkoutCorrelation();
+    if(dCorrelation > m_dThreshold)
+    {
+        rect.SetBackgroundColour(wxColour(0,128,0));
+        rect.SetForegroundColour(*wxWHITE);
+        rect.Draw(dc, "PHASE OK", uiRect::BORDER_FLAT);
+    }
+    else
+    {
+        rect.SetBackgroundColour(m_bFlash ? wxColour(255,0,0) : wxColour(128,0,0));
+        rect.SetForegroundColour(*wxWHITE);
+        rect.Draw(dc, "OUT OF PHASE", uiRect::BORDER_FLAT);
+
+        auto dtNow = wxDateTime::UNow();
+        if(dtNow > m_dtFlash+wxTimeSpan(0,0,0,500))
+        {
+            m_bFlash = !m_bFlash;
+            m_dtFlash = dtNow;
+        }
+    }
 }
 
 void CorrelationBar::WorkoutBalance(const timedbuffer* pBuffer)
@@ -175,25 +191,13 @@ void CorrelationBar::CreateRects()
     m_uiCorrelation.SetBackgroundColour(*wxBLACK);
 
 
-//    m_rectBalance = wxRect(5, m_uiCorrelation.GetBottom()+20, m_rectCorrelation.GetWidth(), 20);
-
-//    m_uiBalance.SetRect(wxRect(m_rectBalance.GetLeft()+m_rectBalance.GetWidth()/2 -25 , m_rectBalance.GetBottom()+5, 50, 20));
-
     m_dResolution = static_cast<double>((GetClientRect().GetWidth()-4))/(m_dMindB*2.0);
     m_dResolutionCorrelation = static_cast<double>((m_rectCorrelation.GetWidth()-2))/2.0;
 
 
-    if(m_pBmpCorrelationOut)
-    {
-        delete m_pBmpCorrelationOut;
-    }
-    m_pBmpCorrelationOut = new wxBitmap(m_rectCorrelation.GetWidth()/2-1, m_rectCorrelation.GetHeight()-2);
+    m_pBmpCorrelationOut = std::make_unique<wxBitmap>(m_rectCorrelation.GetWidth()/2-1, m_rectCorrelation.GetHeight()-2);
 
-    if(m_pBmpCorrelationIn)
-    {
-        delete m_pBmpCorrelationIn;
-    }
-    m_pBmpCorrelationIn = new wxBitmap(m_rectCorrelation.GetWidth()/2-1, m_rectCorrelation.GetHeight()-2);
+    m_pBmpCorrelationIn = std::make_unique<wxBitmap>(m_rectCorrelation.GetWidth()/2-1, m_rectCorrelation.GetHeight()-2);
 
     wxMemoryDC dc;
     dc.SelectObject(*m_pBmpCorrelationOut);
@@ -206,6 +210,17 @@ void CorrelationBar::CreateRects()
     Refresh();
 }
 
+double CorrelationBar::WorkoutCorrelation()
+{
+    double dCorrelation = 0.0;
+    for(const auto d : m_lstCorrelation)
+    {
+        dCorrelation += d;
+    }
+
+    dCorrelation /= static_cast<double>(m_lstCorrelation.size());
+    return dCorrelation;
+}
 
 
 void CorrelationBar::OnLeftUp(wxMouseEvent& event)

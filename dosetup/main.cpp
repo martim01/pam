@@ -231,7 +231,7 @@ void SetRotate(const std::string& sRotate)
 int main(int argc, char* argv[])
 {
     std::string sRoot = "/opt";
-    pml::LogStream::AddOutput(std::make_unique<pml::LogToFile>(sRoot, 2, 0));
+    pml::log::Stream::AddOutput(std::make_unique<pml::log::File>(sRoot, pml::log::Output::kTsTime, pml::log::Output::TS::kSecond));
 
     pmlLog(pml::LOG_INFO, "dosetup") << "---- Starting dosetup ----";
 
@@ -239,7 +239,7 @@ int main(int argc, char* argv[])
     {
         pmlLog(pml::LOG_ERROR, "dosetup") << "Not enough arguments. Need 6 given " << argc;
         pmlLog(pml::LOG_INFO, "dosetup") << "Usage: hostname password overlay line_to_replace";
-        pml::LogStream::Stop();
+        pml::log::Stream::Stop();
         std::cout << "STOPPED" << std::endl;
         return -1;
     }
@@ -248,7 +248,7 @@ int main(int argc, char* argv[])
     if(SetHostname(argv[1]) !=0)
     {
         pmlLog(pml::LOG_CRITICAL, "dosetup") << "Failed to set hostname. Exiting";
-        pml::LogStream::Stop();
+        pml::log::Stream::Stop();
         std::cout << "STOPPED" << std::endl;
 
         return -1;
@@ -257,7 +257,7 @@ int main(int argc, char* argv[])
     if(SetPassword(argv[2]) !=0)
     {
         pmlLog(pml::LOG_CRITICAL, "dosetup") << "Failed to set password. Exiting";
-        pml::LogStream::Stop();
+        pml::log::Stream::Stop();
         std::cout << "STOPPED" << std::endl;
 
         return -1;
@@ -266,7 +266,7 @@ int main(int argc, char* argv[])
 
     if(SetOverlay(argv[3], argv[4], argv[5]) != 0)
     {
-        pml::LogStream::Stop();
+        pml::log::Stream::Stop();
         std::cout << "STOPPED" << std::endl;
         return -1;
     }
@@ -274,7 +274,7 @@ int main(int argc, char* argv[])
     SetRotate(argv[5]);
 
     pmlLog(pml::LOG_INFO, "dosetup") << "------ FINISHED ------";
-    pml::LogStream::Stop();
+    pml::log::Stream::Stop();
     std::cout << "STOPPED" << std::endl;
 
     return 0;

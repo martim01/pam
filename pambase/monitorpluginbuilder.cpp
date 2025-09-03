@@ -132,8 +132,8 @@ MonitorPluginBuilder::~MonitorPluginBuilder()
 
 void MonitorPluginBuilder::InitRemoteApi()
 {
-    RemoteApi::Get().AddPluginEndpoint(pml::restgoose::GET, endpoint("/x-pam/plugins/monitor/"+GetName().ToStdString()), std::bind(&MonitorPluginBuilder::GetStatus, this, _1,_2,_3,_4));
-    RemoteApi::Get().AddPluginEndpoint(pml::restgoose::PATCH, endpoint("/x-pam/plugins/monitor/"+GetName().ToStdString()), std::bind(&MonitorPluginBuilder::PatchSetting, this, _1,_2,_3,_4));
+    RemoteApi::Get().AddPluginEndpoint(pml::restgoose::kGet, endpoint("/x-pam/plugins/monitor/"+GetName().ToStdString()), std::bind(&MonitorPluginBuilder::GetStatus, this, _1,_2,_3,_4));
+    RemoteApi::Get().AddPluginEndpoint(pml::restgoose::kPatch, endpoint("/x-pam/plugins/monitor/"+GetName().ToStdString()), std::bind(&MonitorPluginBuilder::PatchSetting, this, _1,_2,_3,_4));
 }
 
 pml::restgoose::response MonitorPluginBuilder::GetStatus(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)

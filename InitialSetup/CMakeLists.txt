@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.3.16 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 project(InitialSetup LANGUAGES CXX VERSION 1.0.0.0)
 
 execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -P ${CMAKE_SOURCE_DIR}/version.cmake)
@@ -10,7 +10,7 @@ include_directories(${CMAKE_BINARY_DIR}/include)
 
 link_directories("../lib")
 
-set(SOURCES "InitialSetupApp.cpp" "InitialSetupMain.cpp" ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_version.cpp)
+set(SOURCES "InitialSetupApp.cpp" "InitialSetupMain.cpp" ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_version.cpp ${DIR_JSON}/dist/jsoncpp.cpp)
 
 add_executable(InitialSetup ${SOURCES})
 

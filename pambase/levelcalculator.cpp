@@ -24,21 +24,16 @@ using namespace std;
         m_dLastLevel[i] = -80.0;
 		m_dLevel[i] = -80.0;
 		m_dInterim[i] = -80.0;
+        m_dLastMS[i] = -80.0;
+        m_dMS[i] = -80.0;
+        m_dInterimMS[i] = -80.0;
     }
-    m_dLastMS[0] = -80.0;
-    m_dLastMS[1] = -80.0;
-	m_dMS[0] = -80.0;
-	m_dMS[1] = -80.0;
-	m_dInterimMS[0] = -80.0;
-	m_dInterimMS[1] = -80.0;
-
+    
     SetDynamicResponse(1,78, 1200, 20);
 
  }
 
-LevelCalculator::~LevelCalculator()
-{
-}
+LevelCalculator::~LevelCalculator()=default;
 
 void LevelCalculator::InputSession(const session& aSession)
 {
@@ -47,11 +42,11 @@ void LevelCalculator::InputSession(const session& aSession)
         m_nChannels = min((unsigned int)8 ,aSession.GetCurrentSubsession()->nChannels);
         m_nSampleRate = aSession.GetCurrentSubsession()->nSampleRate;
         double dBits;
-        if(aSession.GetCurrentSubsession()->sCodec == wxT("L16"))
+        if(aSession.GetCurrentSubsession()->sCodec == "L16")
         {
             dBits = 16;
         }
-        else if(aSession.GetCurrentSubsession()->sCodec == wxT("L24") || aSession.GetCurrentSubsession()->sCodec == wxT("AM824"))
+        else if(aSession.GetCurrentSubsession()->sCodec == "L24" || aSession.GetCurrentSubsession()->sCodec == "AM824")
         {
             dBits = 24;
         }
@@ -185,49 +180,43 @@ void LevelCalculator::CalculatePpm(const timedbuffer* pBuffer)
             m_dLevel[j] = max(m_dLevel[j], m_dInterim[j]);
         }
 
+        //Middle+Side
+        for(unsigned int nPair = 0; nPair < m_nChannels; nPair+=2)
+        {
+            m_dInterimMS[nPair] = (fabs(pBuffer->GetBuffer()[i+nPair]+pBuffer->GetBuffer()[i+nPair+1]));
+            m_dInterimMS[nPair+1] = (fabs(pBuffer->GetBuffer()[i+nPair]-pBuffer->GetBuffer()[i+nPair+1]));
+        
+            if(m_nMSMode == M6)
+            {
+                m_dInterimMS[nPair]*=0.5;
+                m_dInterimMS[nPair+1]*=0.5;
+            }
+            else
+            {
+                m_dInterimMS[nPair]*=0.707;
+                m_dInterimMS[nPair+1]*=0.707;
+            }
+        }
+        
+        for(int j = 0; j < m_nChannels; j++)
+        {
+            if(m_dInterimMS[j] > m_dLastMS[j])
+            {
+                m_dInterimMS[j] = m_dLastMS[j] + m_dRiseRatio*(m_dInterimMS[j]-m_dLastMS[j]);
+            }
+            else if(m_dInterimMS[j] < m_dLastMS[j])
+            {
+                m_dInterimMS[j] = max(m_dInterimMS[j], m_dLastMS[j]*m_dDropRatio);
+            }
+            m_dLastMS[j] = m_dInterimMS[j]; 
+            m_dMS[j] = max(m_dMS[j], m_dInterimMS[j]);
+        }
     }
 
     for(unsigned int j = 0; j < m_nChannels; j++)
     {
         ConvertToDb(m_dLevel[j]);
-    }
-
-    if(m_nChannels == 2)
-    {
-        for(unsigned int i=0; i < pBuffer->GetBufferSize(); i+=2)
-        {
-            m_dInterimMS[0] = (fabs(pBuffer->GetBuffer()[i]+pBuffer->GetBuffer()[i+1]));
-            m_dInterimMS[1] = (fabs(pBuffer->GetBuffer()[i]-pBuffer->GetBuffer()[i+1]));
-            if(m_nMSMode == M6)
-            {
-                m_dInterimMS[0]*=0.5;
-                m_dInterimMS[1]*=0.5;
-            }
-            else
-            {
-                m_dInterimMS[0]*=0.707;
-                m_dInterimMS[1]*=0.707;
-            }
-
-
-            for(int j = 0; j < 2; j++)
-            {
-                if(m_dInterimMS[j] > m_dLastMS[j])
-                {
-                    m_dInterimMS[j] = m_dLastMS[j] + m_dRiseRatio*(m_dInterimMS[j]-m_dLastMS[j]);
-
-                }
-                else if(m_dInterimMS[j] < m_dLastMS[j])
-                {
-                    m_dInterimMS[j] = max(m_dInterimMS[j], m_dLastMS[j]*m_dDropRatio);
-                }
-                m_dLastMS[j] = m_dInterimMS[j];
-
-                m_dMS[j] = max(m_dMS[j], m_dInterimMS[j]);
-            }
-        }
-        ConvertToDb(m_dMS[0]);
-        ConvertToDb(m_dMS[1]);
+        ConvertToDb(m_dMS[j]);
     }
 }
 
@@ -237,10 +226,8 @@ void LevelCalculator::ResetLevels(double dLevel)
     for(int i = 0; i < 8; i++)
     {
         m_dLevel[i] = dLevel;
+        m_dMS[i] = dLevel;
     }
-    m_dMS[0] = dLevel;
-    m_dMS[1] = dLevel;
-
 
 }
 
@@ -256,14 +243,10 @@ void LevelCalculator::CalculatePeak(const timedbuffer* pBuffer)
             double dSample(fabs(pBuffer->GetBuffer()[i+j]));
             m_dLevel[j] = max(m_dLevel[j],dSample);
         }
-    }
-
-    if(m_nChannels == 2)
-    {
-        for(unsigned int i=0; i < pBuffer->GetBufferSize(); i+=2)
+        /*for(unsigned int j = 0; j < m_nChannels; j+=2)
         {
-            double dSampleM(fabs(pBuffer->GetBuffer()[i]+pBuffer->GetBuffer()[i+1]));
-            double dSampleS(fabs(pBuffer->GetBuffer()[i]-pBuffer->GetBuffer()[i+1]));
+            double dSampleM = fabs(pBuffer->GetBuffer()[i+j]+pBuffer->GetBuffer()[i+j+1]);
+            double dSampleS = fabs(pBuffer->GetBuffer()[i+j]-pBuffer->GetBuffer()[i+j+1]);
             if(m_nMSMode == M6)
             {
                 dSampleM*=0.5;
@@ -274,10 +257,12 @@ void LevelCalculator::CalculatePeak(const timedbuffer* pBuffer)
                 dSampleM*=0.707;
                 dSampleS*=0.707;
             }
-            m_dMS[0] = max(m_dMS[0],dSampleM);
-            m_dMS[1] = max(m_dMS[1],dSampleS);
-        }
+            m_dMS[j] = max(m_dMS[j],dSampleM);
+            m_dMS[j+1] = max(m_dMS[j+1],dSampleS);
+        }*/
     }
+
+    CalculateMS();
 
     CalculateRiseFall(pBuffer->GetBufferSize()/m_nChannels);
 }
@@ -295,19 +280,8 @@ void LevelCalculator::CalculateEnergy(const timedbuffer* pBuffer)
         m_dLevel[i] = sqrt(m_dLevel[i]/(pBuffer->GetBufferSize()/m_nChannels));
     }
 
-    if(m_nChannels == 2)
-    {
-        if(m_nMSMode == M6)
-        {
-            m_dMS[0] = (m_dLevel[0]+m_dLevel[1])/2;
-            m_dMS[1] = (m_dLevel[0]-m_dLevel[1])/2;
-        }
-        else
-        {
-            m_dMS[0] = (m_dLevel[0]+m_dLevel[1]);
-            m_dMS[1] = (m_dLevel[0]-m_dLevel[1]);
-        }
-    }
+    CalculateMS();
+
     CalculateRiseFall(pBuffer->GetBufferSize()/m_nChannels);
 }
 
@@ -319,23 +293,27 @@ void LevelCalculator::CalculateTotal(const timedbuffer* pBuffer)
     {
         m_dLevel[i%m_nChannels] += fabs(pBuffer->GetBuffer()[i]);
     }
-    if(m_nChannels == 2)
+    
+    CalculateMS();
+
+    CalculateRiseFall(pBuffer->GetBufferSize()/m_nChannels);
+}
+
+void LevelCalculator::CalculateMS()
+{
+    for(int i = 0; i < 8; i+=2)
     {
-        for(unsigned int i=0; i < pBuffer->GetBufferSize(); i++)
+        if(m_nMSMode == M6)
         {
-            if(m_nMSMode == M6)
-            {
-                m_dMS[0] += fabs((pBuffer->GetBuffer()[i]+pBuffer->GetBuffer()[i+1])/2);
-                m_dMS[1] += fabs((pBuffer->GetBuffer()[i]-pBuffer->GetBuffer()[i+1])/2);
-            }
-            else
-            {
-                m_dMS[0] += fabs((pBuffer->GetBuffer()[i]+pBuffer->GetBuffer()[i+1]));
-                m_dMS[1] += fabs((pBuffer->GetBuffer()[i]-pBuffer->GetBuffer()[i+1]));
-            }
+            m_dMS[i] = (m_dLevel[i]+m_dLevel[i+1])/2;
+            m_dMS[i+1] = (m_dLevel[i]-m_dLevel[i+1])/2;
+        }
+        else
+        {
+            m_dMS[i] = (m_dLevel[i]+m_dLevel[i+1]);
+            m_dMS[i+1] = (m_dLevel[i]-m_dLevel[i+1]);
         }
     }
-    CalculateRiseFall(pBuffer->GetBufferSize()/m_nChannels);
 }
 
 void LevelCalculator::CalculateAverage(const timedbuffer* pBuffer)
@@ -344,9 +322,9 @@ void LevelCalculator::CalculateAverage(const timedbuffer* pBuffer)
     for(unsigned int i = 0; i < 8; i++)
     {
         m_dLevel[i] /= (pBuffer->GetBufferSize()/m_nChannels);
+        m_dMS[i] /= (pBuffer->GetBufferSize()/m_nChannels);
     }
-    m_dMS[0] /= (pBuffer->GetBufferSize()/m_nChannels);
-    m_dMS[1] /= (pBuffer->GetBufferSize()/m_nChannels);
+    
 
     CalculateRiseFall(pBuffer->GetBufferSize()/m_nChannels);
 }
@@ -362,9 +340,13 @@ double LevelCalculator::GetLevel(unsigned int nChannel)
 }
 
 
-double LevelCalculator::GetMSLevel(bool bStereo)
+double LevelCalculator::GetMSLevel(bool bSide, unsigned int nPair)
 {
-    return m_dMS[bStereo];
+    if(nPair < 4)
+    {
+        return m_dMS[nPair*2 + (bSide ? 1 : 0)];
+    }
+    return m_dMin;
 }
 
 
@@ -377,10 +359,8 @@ void LevelCalculator::CalculateRiseFall(unsigned long nSamples)
     for(int i = 0; i < 8; i++)
     {
         CalculateRiseFall(m_dLevel[i], m_dLastLevel[i],dFalldB,dRisedB,(i==0));
+        CalculateRiseFall(m_dMS[i], m_dLastMS[i],dFalldB,dRisedB);
     }
-
-    CalculateRiseFall(m_dMS[0], m_dLastMS[0],dFalldB,dRisedB);
-    CalculateRiseFall(m_dMS[1], m_dLastMS[1],dFalldB,dRisedB);
 
 }
 

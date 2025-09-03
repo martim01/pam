@@ -1,4 +1,8 @@
-#pragma once
+#ifndef PML_PAMBASE_LEVELCALCULATOR_H
+#define PML_PAMBASE_LEVELCALCULATOR_H
+
+#include <array>
+
 #include "dlldefine.h"
 
 
@@ -10,7 +14,7 @@ class timedbuffer;
 class PAMBASE_IMPEXPORT LevelCalculator
 {
     public:
-        LevelCalculator(double dMin);
+        explicit LevelCalculator(double dMin);
         ~LevelCalculator();
 
         void InputSession(const session& aSession);
@@ -24,7 +28,7 @@ class PAMBASE_IMPEXPORT LevelCalculator
 
 
         double GetLevel(unsigned int nChannel);
-        double GetMSLevel(bool bStereo);
+        double GetMSLevel(bool bSide, unsigned int nPair=0);
 
         enum {PPM, PEAK, ENERGY, TOTAL, AVERAGE};
         enum speeds { SLOW, NORMAL, FAST };
@@ -48,6 +52,8 @@ class PAMBASE_IMPEXPORT LevelCalculator
         void ConvertToDb(double& dSample);
         void CalculateDynamicRepsonse();
 
+        void CalculateMS();
+
 
         unsigned int m_nChannels;
         unsigned int m_nSampleRate;
@@ -57,14 +63,14 @@ class PAMBASE_IMPEXPORT LevelCalculator
 
         double m_dSpeed;
 
-        double m_dLevel[8];
-        double m_dMS[2];
+        std::array<double,8> m_dLevel;
+        std::array<double,8> m_dMS;
         double m_dMin;
 
-        double m_dLastLevel[8];
-        double m_dLastMS[2];
-        double m_dInterim[8];
-        double m_dInterimMS[2];
+        std::array<double,8> m_dLastLevel;
+        std::array<double,8> m_dLastMS;
+        std::array<double,8> m_dInterim;
+        std::array<double,8> m_dInterimMS;
 
         double m_dRisedB;
         double m_dFalldB;
@@ -81,3 +87,5 @@ class PAMBASE_IMPEXPORT LevelCalculator
         double m_dRiseRatio;
 
 };
+
+#endif

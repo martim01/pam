@@ -30,9 +30,9 @@ pnlScale::pnlScale(wxWindow* parent,R128Builder* pBuilder, wxWindowID id,const w
 
 	SetBackgroundColour(*wxBLACK);
 
-	for(auto itType = R128TypeManager::Get().GetTypeBegin(); itType != R128TypeManager::Get().GetTypeEnd(); ++itType)
+	for(const auto& [sName, type] :R128TypeManager::Get().GetTypeMap())
     {
-        m_plstMode->AddButton(itType->first);
+        m_plstMode->AddButton(sName);
     }
 
     m_plstMode->ConnectToSetting(m_pBuilder->GetSection(), "R128Mode", "R128 +18");

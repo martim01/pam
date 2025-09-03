@@ -76,8 +76,8 @@ bool GeneratorPluginBuilder::IsLogActive()
 
 void GeneratorPluginBuilder::InitRemoteApi()
 {
-    RemoteApi::Get().AddPluginEndpoint(pml::restgoose::GET, endpoint("/x-pam/plugins/generator/"+GetName().ToStdString()), std::bind(&GeneratorPluginBuilder::GetStatus, this, _1,_2,_3,_4));
-    RemoteApi::Get().AddPluginEndpoint(pml::restgoose::PATCH, endpoint("/x-pam/plugins/generator/"+GetName().ToStdString()), std::bind(&GeneratorPluginBuilder::PatchSetting, this, _1,_2,_3,_4));
+    RemoteApi::Get().AddPluginEndpoint(pml::restgoose::kGet, endpoint("/x-pam/plugins/generator/"+GetName().ToStdString()), std::bind(&GeneratorPluginBuilder::GetStatus, this, _1,_2,_3,_4));
+    RemoteApi::Get().AddPluginEndpoint(pml::restgoose::kPatch, endpoint("/x-pam/plugins/generator/"+GetName().ToStdString()), std::bind(&GeneratorPluginBuilder::PatchSetting, this, _1,_2,_3,_4));
 }
 
 pml::restgoose::response GeneratorPluginBuilder::GetStatus(const query& theQuery, const std::vector<pml::restgoose::partData>& vData, const endpoint& theEndpoint, const userName& theUser)

@@ -13,20 +13,6 @@ R128TypeManager& R128TypeManager::Get()
     return manager;
 }
 
-map<wxString, r128type>::const_iterator R128TypeManager::GetTypeBegin()
-{
-    return m_mTypes.begin();
-}
-map<wxString, r128type>::const_iterator R128TypeManager::GetTypeEnd()
-{
-    return m_mTypes.end();
-}
-
-map<wxString, r128type>::const_iterator R128TypeManager::FindType(const wxString& sType)
-{
-    return m_mTypes.find(sType);
-}
-
 R128TypeManager::R128TypeManager()
 {
     LoadTypes();

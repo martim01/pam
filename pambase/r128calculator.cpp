@@ -1,11 +1,20 @@
 #include "r128calculator.h"
+
+#include <math.h>
+
+#include <algorithm>
+
+#include <wx/log.h>
+#include <wx/stopwatch.h>
+
+#include "log.h"
+
+#include "r128thread.h"
 #include "session.h"
 #include "timedbuffer.h"
-#include <wx/log.h>
-#include <math.h>
-#include <wx/stopwatch.h>
-#include <algorithm>
-#include "r128thread.h"
+
+
+
 
 using namespace std;
 
@@ -69,6 +78,10 @@ void R128Calculator::CalculateLevel(const timedbuffer* pBuffer)
             ++m_nFrames;
         }
         CalculateMomentary();
+    }
+    else
+    {
+        pml::log::log(pml::log::Level::kDebug, "R128") << m_nInputChannels << "\t" << m_vChannels.size();
     }
 }
 
@@ -240,12 +253,14 @@ size_t R128Calculator::GetIntegrationTime()
 
 void R128Calculator::SetChannelGroup(unsigned char nGroup)
 {
+    pml::log::log(pml::log::Level::kInfo, "R128") << "SetChannelGroup " << (int)nGroup;
     m_vChannels.clear();
     for(size_t i = 0; i < m_subsession.vChannels.size(); i++)
     {
-        //add all the channels in the group except the LFE one
-        if(m_subsession.vChannels[i].nId == nGroup && m_subsession.vChannels[i].type != subsession::enumChannel::LFE)
+        //add all the channels in the group except the LFE one'
+        if(nGroup == 255 || (m_subsession.vChannels[i].nId == nGroup && m_subsession.vChannels[i].type != subsession::enumChannel::LFE))
         {
+            pml::log::log(pml::log::Level::kInfo, "R128") << "Add " << i;
             if(m_subsession.vChannels[i].type == subsession::enumChannel::LEFT_SIDE || m_subsession.vChannels[i].type == subsession::enumChannel::RIGHT_SIDE ||
                m_subsession.vChannels[i].type == subsession::enumChannel::LEFT_REAR_SIDE || m_subsession.vChannels[i].type == subsession::enumChannel::RIGHT_REAR_SIDE)
             {

@@ -24,7 +24,7 @@ protected:
 
   wxEvtHandler* m_pHandler;
   wxString m_sLog;
-    pml::LogStream m_ls;
+    pml::log::Stream m_ls;
 };
 
 

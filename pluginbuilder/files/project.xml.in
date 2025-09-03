@@ -105,7 +105,7 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-std=c++14" />
+			<Add option="-std=c++17" />
 			<Add option="-D_monitor_" />
 			<Add directory="../../pambase" />
 			<Add directory="$(#json.include)" />

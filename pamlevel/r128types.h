@@ -25,10 +25,8 @@ class PAMBASE_IMPEXPORT R128TypeManager
     public:
         static R128TypeManager& Get();
 
-        std::map<wxString, r128type>::const_iterator GetTypeBegin();
-        std::map<wxString, r128type>::const_iterator GetTypeEnd();
-        std::map<wxString, r128type>::const_iterator FindType(const wxString& sType);
-
+        const std::map<wxString, r128type>& GetTypeMap() const { return m_mTypes;}
+        
         std::set<wxString> GetTypes();
 
 

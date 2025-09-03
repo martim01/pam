@@ -382,8 +382,8 @@ void pnlEbuMeter::OnInfoLeftUp(wxMouseEvent& event)
 
 void pnlEbuMeter::ChangeR128(const wxString& sType)
 {
-    auto itType = R128TypeManager::Get().FindType(sType);
-    if(itType != R128TypeManager::Get().GetTypeEnd())
+    auto itType = R128TypeManager::Get().GetTypeMap().find(sType);
+    if(itType != R128TypeManager::Get().GetTypeMap().end())
     {
         if(m_pBuilder->ReadSetting(wxT("Zero"),1) == 0)
         {

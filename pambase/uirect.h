@@ -130,13 +130,13 @@ class PAMBASE_IMPEXPORT uiRect
         *   @param nState the type of the border to draw, one of uiRect::BORDER_UP, uiRect::BORDER_DOWN, uiRect::BORDER_FLAT, uiRect::BORDER_NONE
         *   @param bmp the bitmap to draw (overrides any internal bitmap)
         **/
-        virtual void Draw(wxDC& dc, const wxString& sLabel, unsigned short nState, unsigned char nEdge = EDGE_ALL, const wxBitmap& bmp = wxNullBitmap);
+        virtual void Draw(wxDC& dc, const wxString& sLabel, unsigned short nState, unsigned char nEdge = EDGE_ALL, const wxBitmap& bmp = wxNullBitmap, bool bRotateText=false);
 
         /** @brief Draw the rectangle using the internal label and bitmap
         *   @param dc the wxDC context to draw to
         *   @param nState the type of the border to draw, one of uiRect::BORDER_UP, uiRect::BORDER_DOWN, uiRect::BORDER_FLAT, uiRect::BORDER_NONE
         **/
-        virtual void Draw(wxDC& dc, unsigned short nState, unsigned char nEdge = EDGE_ALL);
+        virtual void Draw(wxDC& dc, unsigned short nState, unsigned char nEdge = EDGE_ALL, bool bRotateText=false);
 
         /** @brief Checks whether the wxPoint pnt is contained within the rectangle
         *   @param pnt
@@ -291,8 +291,7 @@ class PAMBASE_IMPEXPORT uiRect
         *   @param bClip whether to clip the text if it does not fix
         *   @return <i>wxSize</i> returns the height (and width) in pixels that the text will take up
         **/
-        static wxSize DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int nAlign, bool bWrap=true, bool bDraw=true, bool bClip=true,
-        bool bClippingRegion=true);
+        static wxSize DrawText(wxDC& dc,const wxString& sText, const wxRect& rect, int nAlign, bool bWrap=true, bool bDraw=true, bool bClip=true, bool bClippingRegion=true, bool bRotateText=false);
 
         ///< @brief Creates the text rect (which is slightly smaller than the enclosing rect
         void SetTextRect();

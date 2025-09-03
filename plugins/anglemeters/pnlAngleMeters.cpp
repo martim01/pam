@@ -13,6 +13,8 @@
 #include <wx/string.h>
 //*)
 
+#include <array>
+
 using namespace std;
 
 
@@ -139,10 +141,19 @@ void pnlAngleMeters::CreateMeters()
             {
                 m_vMonitor.resize(m_nInputChannels/2);
             }
+            
+            int nWidth = 360;
+            int nHeight = 180;
 
+            if(m_vMeters.size() < 3)
+            {
+                nWidth = 380;
+                nHeight = 250;
+                y = 60;
+            }
             for(unsigned long i = 0; i < m_vMeters.size(); i++)
             {
-                m_vMeters[i] = new AngleMeter(this, wxID_ANY, wxString::Format(wxT("Channel %lu"),i), -70.0, AngleMeter::LEFT_RIGHT, i*2, wxPoint(x,y), wxSize(360,180));
+                m_vMeters[i] = new AngleMeter(this, wxID_ANY, wxString::Format(wxT("Channel %lu"),i), -70.0, AngleMeter::LEFT_RIGHT, i*2, wxPoint(x,y), wxSize(nWidth,nHeight));
                 m_vMeters[i]->SetInputChannels(m_nInputChannels);
                 if(Settings::Get().Read("Monitor","Source",0) == 0)
                 {
@@ -151,7 +162,7 @@ void pnlAngleMeters::CreateMeters()
                     m_vMonitor[i]->SetIntData(i*2);
                 }
 
-                x+= 380;
+                x+= nWidth+20;
                 if(i == 1)
                 {
                     x = 10;
@@ -192,16 +203,16 @@ void pnlAngleMeters::SetAudioData(const timedbuffer* pBuffer)
         {
             for(size_t i = 0; i < m_vMeters.size(); i++)
             {
-                double dValue[2] = {m_pCalculator->GetLevel(i), m_pCalculator->GetLevel(i)};
-                m_vMeters[i]->ShowValue(dValue);
+                std::array<double, 2> values = {m_pCalculator->GetLevel(i), m_pCalculator->GetLevel(i)};
+                m_vMeters[i]->ShowValue(values);
             }
         }
         else
         {
              for(size_t i = 0; i < m_vMeters.size(); i++)
             {
-                double dValue[2] = {m_pCalculator->GetLevel(i*2), m_pCalculator->GetLevel(i*2+1)};
-                m_vMeters[i]->ShowValue(dValue);
+                std::array<double, 2> values  = {m_pCalculator->GetLevel(i*2), m_pCalculator->GetLevel(i*2+1)};
+                m_vMeters[i]->ShowValue(values);
             }
         }
     }
@@ -211,22 +222,22 @@ void pnlAngleMeters::SetAudioData(const timedbuffer* pBuffer)
         {
             if(m_vMeters.size() > 2)
             {
-                    double dLeft[2] = {m_pCalculator->GetLevel(0), m_pCalculator->GetLevel(0)};
-                double dRight[2] = {m_pCalculator->GetLevel(1), m_pCalculator->GetLevel(1)};
-                double dMS[2] = {m_pCalculator->GetMSLevel(false), m_pCalculator->GetMSLevel(true)};
-                m_vMeters[0]->ShowValue(dLeft);
-                m_vMeters[1]->ShowValue(dRight);
-                m_vMeters[2]->ShowValue(dMS);
+                    std::array<double, 2> left  = {m_pCalculator->GetLevel(0), m_pCalculator->GetLevel(0)};
+                std::array<double, 2> right = {m_pCalculator->GetLevel(1), m_pCalculator->GetLevel(1)};
+                std::array<double, 2> ms = {m_pCalculator->GetMSLevel(false), m_pCalculator->GetMSLevel(true)};
+                m_vMeters[0]->ShowValue(left);
+                m_vMeters[1]->ShowValue(right);
+                m_vMeters[2]->ShowValue(ms);
             }
         }
         else
         {
             if(m_vMeters.size() > 1)
             {
-                double dLeftRight[2] = {m_pCalculator->GetLevel(0), m_pCalculator->GetLevel(1)};
-                double dMS[2] = {m_pCalculator->GetMSLevel(false), m_pCalculator->GetMSLevel(true)};
-                m_vMeters[0]->ShowValue(dLeftRight);
-                m_vMeters[1]->ShowValue(dMS);
+                std::array<double, 2> leftright = {m_pCalculator->GetLevel(0), m_pCalculator->GetLevel(1)};
+                std::array<double, 2> ms = {m_pCalculator->GetMSLevel(false), m_pCalculator->GetMSLevel(true)};
+                m_vMeters[0]->ShowValue(leftright);
+                m_vMeters[1]->ShowValue(ms);
             }
         }
     }

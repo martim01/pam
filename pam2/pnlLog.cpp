@@ -39,12 +39,12 @@ pnlLog::pnlLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	Bind(wxEVT_SETTING_CHANGED, &pnlLog::OnSettingChanged, this);
 
 
-    m_nLogOutput = pml::LogStream::AddOutput(std::make_unique<wxLogOutput>(this));
-    pml::LogStream::SetOutputLevel(pml::LOG_INFO);
+    m_nLogOutput = pml::log::Stream::AddOutput(std::make_unique<wxLogOutput>(this));
+    pml::log::Stream::SetOutputLevel(pml::LOG_INFO);
 
     if(Settings::Get().Read("Log", "LogToFile", false))
     {
-        m_nLogToFile = pml::LogStream::AddOutput(std::make_unique<pml::LogToFile>("/var/log/pam"));
+        m_nLogToFile = pml::log::Stream::AddOutput(std::make_unique<pml::log::File>("/var/log/pam"));
     }
 
 	Connect(wxID_ANY,wxEVT_LOG,(wxObjectEventFunction)&pnlLog::OnLog);
@@ -54,7 +54,7 @@ pnlLog::~pnlLog()
 {
 	//(*Destroy(pnlLog)
 	//*)
-	pml::LogStream::RemoveOutput(m_nLogOutput);
+	pml::log::Stream::RemoveOutput(m_nLogOutput);
 	Settings::Get().RemoveHandler(this);
 }
 
@@ -140,11 +140,11 @@ void pnlLog::OnSettingChanged(SettingEvent& event)
         {
             if(event.GetValue(false) && m_nLogToFile == -1)
             {
-                m_nLogToFile = pml::LogStream::AddOutput(std::make_unique<pml::LogToFile>("/var/log/pam"));
+                m_nLogToFile = pml::log::Stream::AddOutput(std::make_unique<pml::log::File>("/var/log/pam"));
             }
             else if(!event.GetValue(false) && m_nLogToFile != -1)
             {
-                pml::LogStream::RemoveOutput(m_nLogToFile);
+                pml::log::Stream::RemoveOutput(m_nLogToFile);
                 m_nLogToFile = -1;
             }
         }

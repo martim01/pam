@@ -10,7 +10,7 @@ link_directories("../lib")
 
 
 
-add_library(pamlevel SHARED "audioalgorithms.cpp" "filt.cpp" "truepeakcalculator.cpp" ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_version.cpp)
+add_library(pamlevel SHARED "audioalgorithms.cpp" "correlationbar.cpp" "filt.cpp" "r128types.cpp" "truepeakcalculator.cpp" ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_version.cpp)
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(pamlevel PRIVATE ${flags})

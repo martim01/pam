@@ -163,21 +163,21 @@ RemoteApi::RemoteApi() : m_bWebsocketsActive(Settings::Get().Read("RemoteApi", "
     m_Server.Init(ipAddress(Settings::Get().Read("RemoteApi", "Interface", "0.0.0.0").ToStdString()), Settings::Get().Read("RemoteApi", "Port", 8090), endpoint("/x-pam"), true);
 
 
-    m_Server.AddEndpoint(pml::restgoose::GET, endpoint("/x-pam"), std::bind(&RemoteApi::GetRoot, this, _1,_2,_3,_4));
-    m_Server.AddEndpoint(pml::restgoose::GET, endpoint("/x-pam/settings"), std::bind(&RemoteApi::GetSettings, this, _1,_2,_3,_4));
-    m_Server.AddEndpoint(pml::restgoose::PATCH, endpoint("/x-pam/settings"), std::bind(&RemoteApi::PatchSettings, this, _1,_2,_3,_4));
+    m_Server.AddEndpoint(pml::restgoose::kGet, endpoint("/x-pam"), std::bind(&RemoteApi::GetRoot, this, _1,_2,_3,_4));
+    m_Server.AddEndpoint(pml::restgoose::kGet, endpoint("/x-pam/settings"), std::bind(&RemoteApi::GetSettings, this, _1,_2,_3,_4));
+    m_Server.AddEndpoint(pml::restgoose::kPatch, endpoint("/x-pam/settings"), std::bind(&RemoteApi::PatchSettings, this, _1,_2,_3,_4));
 
-    m_Server.AddEndpoint(pml::restgoose::GET, endpoint("/x-pam/wav"), std::bind(&RemoteApi::GetWavFiles, this, _1,_2,_3,_4));
-    m_Server.AddEndpoint(pml::restgoose::POST, endpoint("/x-pam/wav"), std::bind(&RemoteApi::PostWavFile, this, _1,_2,_3,_4));
-    m_Server.AddEndpoint(pml::restgoose::HTTP_DELETE, endpoint("/x-pam/wav"), std::bind(&RemoteApi::DeleteWavFile, this, _1,_2,_3,_4));
+    m_Server.AddEndpoint(pml::restgoose::kGet, endpoint("/x-pam/wav"), std::bind(&RemoteApi::GetWavFiles, this, _1,_2,_3,_4));
+    m_Server.AddEndpoint(pml::restgoose::kPost, endpoint("/x-pam/wav"), std::bind(&RemoteApi::PostWavFile, this, _1,_2,_3,_4));
+    m_Server.AddEndpoint(pml::restgoose::kDelete, endpoint("/x-pam/wav"), std::bind(&RemoteApi::DeleteWavFile, this, _1,_2,_3,_4));
 
-    m_Server.AddEndpoint(pml::restgoose::GET, endpoint("/x-pam/aoip"), std::bind(&RemoteApi::GetAoipSources, this, _1,_2,_3,_4));
-    m_Server.AddEndpoint(pml::restgoose::PATCH, endpoint("/x-pam/aoip"), std::bind(&RemoteApi::PatchAoipSources, this, _1,_2,_3,_4));
+    m_Server.AddEndpoint(pml::restgoose::kGet, endpoint("/x-pam/aoip"), std::bind(&RemoteApi::GetAoipSources, this, _1,_2,_3,_4));
+    m_Server.AddEndpoint(pml::restgoose::kPatch, endpoint("/x-pam/aoip"), std::bind(&RemoteApi::PatchAoipSources, this, _1,_2,_3,_4));
 
-    m_Server.AddEndpoint(pml::restgoose::GET, endpoint("/x-pam/plugins"), std::bind(&RemoteApi::GetPlugins, this, _1,_2,_3,_4));
-    m_Server.AddEndpoint(pml::restgoose::GET, endpoint("/x-pam/plugins/monitor"), std::bind(&RemoteApi::GetPluginsMonitor, this, _1,_2,_3,_4));
-    m_Server.AddEndpoint(pml::restgoose::GET, endpoint("/x-pam/plugins/test"), std::bind(&RemoteApi::GetPluginsTest, this, _1,_2,_3,_4));
-    m_Server.AddEndpoint(pml::restgoose::GET, endpoint("/x-pam/plugins/generator"), std::bind(&RemoteApi::GetPluginsGenerator, this, _1,_2,_3,_4));
+    m_Server.AddEndpoint(pml::restgoose::kGet, endpoint("/x-pam/plugins"), std::bind(&RemoteApi::GetPlugins, this, _1,_2,_3,_4));
+    m_Server.AddEndpoint(pml::restgoose::kGet, endpoint("/x-pam/plugins/monitor"), std::bind(&RemoteApi::GetPluginsMonitor, this, _1,_2,_3,_4));
+    m_Server.AddEndpoint(pml::restgoose::kGet, endpoint("/x-pam/plugins/test"), std::bind(&RemoteApi::GetPluginsTest, this, _1,_2,_3,_4));
+    m_Server.AddEndpoint(pml::restgoose::kGet, endpoint("/x-pam/plugins/generator"), std::bind(&RemoteApi::GetPluginsGenerator, this, _1,_2,_3,_4));
 
     m_Server.AddNotFoundCallback(std::bind(&RemoteApi::ExtraEndpoint, this, _1,_2,_3,_4,_5));
 
@@ -238,11 +238,11 @@ pml::restgoose::response RemoteApi::WavEndpoint(const httpMethod& theMethod, con
 
     if(bFound)
     {
-        if(theMethod == pml::restgoose::GET)
+        if(theMethod == pml::restgoose::kGet)
         {
             return DownloadWav(fn);
         }
-        else if(theMethod == pml::restgoose::HTTP_DELETE)
+        else if(theMethod == pml::restgoose::kDelete)
         {
             return DeleteWav(fn);
         }

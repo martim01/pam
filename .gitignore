@@ -53,3 +53,11 @@ pam2/bin/*
 *.put
 release.md
 /templates/monitor/build
+/external/dnssd
+/external/jsoncpp
+/external/livewirediscover
+/external/log
+/external/mongoose
+/external/ptpmonkey
+/external/restgoose
+/external/sapserver

@@ -1,11 +1,17 @@
 #pragma once
-#include <wx/window.h>
-#include <wx/bitmap.h>
-#include "uirect.h"
-#include <wx/timer.h>
+
 #include <list>
-#include "uirect.h"
+#include <memory>
+
+#include <wx/bitmap.h>
+#include <wx/datetime.h>
+#include <wx/window.h>
+
 #include "pmcontrol.h"
+#include "uirect.h"
+
+#include "pamleveldll.h"
+
 
 class timedbuffer;
 
@@ -26,7 +32,7 @@ struct hsv
 
 /** @class a class that draws a button on the screen, derives from wxWindow
 **/
-class CorrelationBar : public pmControl
+class PAMLEVEL_IMPEXPORT CorrelationBar : public pmControl
 {
     DECLARE_EVENT_TABLE()
     wxDECLARE_DYNAMIC_CLASS(CorrelationBar);
@@ -90,6 +96,8 @@ class CorrelationBar : public pmControl
         void WorkoutBalance(const timedbuffer* pBuffer);
         void SetMode(int nMode);
 
+        void SetThreshold(double dThreshold) { m_dThreshold = dThreshold;}
+        void ShowBar(bool bBar = true) { m_bBar = bBar; Refresh();}
 
       protected:
 
@@ -98,6 +106,11 @@ class CorrelationBar : public pmControl
         *   @param event
         **/
         void OnPaint(wxPaintEvent& event);
+
+        void DrawBar(wxDC& dc);
+        void DrawBox(wxDC& dc);
+
+        double WorkoutCorrelation();
 
         void DrawPoints(wxDC& dc);
         void DrawLevels(wxDC& dc);
@@ -138,8 +151,14 @@ class CorrelationBar : public pmControl
 
         uiRect m_uiCorrelation;
 
-        wxBitmap* m_pBmpCorrelationOut;
-        wxBitmap* m_pBmpCorrelationIn;
+        std::unique_ptr<wxBitmap> m_pBmpCorrelationOut;
+        std::unique_ptr<wxBitmap> m_pBmpCorrelationIn;
+
+        bool m_bBar = true;
+        double m_dThreshold = -0.75;
+        
+        wxDateTime m_dtFlash;
+        bool m_bFlash = false;
 };
 
 
