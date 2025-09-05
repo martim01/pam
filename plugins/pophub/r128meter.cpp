@@ -57,7 +57,6 @@ m_bLevelDisplay(bLevelDisplay)
 
     SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
     
-
 }
 
 R128MeterH::~R128MeterH()=default;
@@ -97,6 +96,9 @@ void R128MeterH::OnPaint(wxPaintEvent& event)
         dc.DrawLine((m_dPixelsPerdB*(m_dTargetLevel-m_dMax)),0, (m_dPixelsPerdB*(m_dTargetLevel-m_dMax)), GetClientRect().GetHeight());
     }
 
+    dc.SetPen(*wxWHITE_PEN);
+    dc.SetBrush(*wxTRANSPARENT_BRUSH);
+    dc.DrawRectangle(GetClientRect());
 }
 
 void R128MeterH::SetTargetLevel(double dValue, const wxPen& penLevel)
@@ -154,6 +156,7 @@ void R128MeterH::SetMinMax(double dMin, double dMax)
 
     m_uiPeak.SetBackgroundColour(m_pairColour[kHigh].second);
 
+    ShowValue(m_dMin);
 }
 
 

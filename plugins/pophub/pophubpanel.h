@@ -9,6 +9,7 @@
 #include <wx/panel.h>
 
 #include "pmpanel.h"
+#include "ppmtypes.h"
 #include "session.h"
 
 class pophubBuilder;
@@ -18,8 +19,10 @@ class timedbuffer;
 class AngleMeter;
 class CorrelationBar;
 class LevelCalculator;
+class LevelMeter;
 class wmButton;
 class wmLabel;
+
 class pnlR128;
 
 class pophubPanel: public pmPanel
@@ -85,6 +88,10 @@ class pophubPanel: public pmPanel
 
 		void DestroyControls();
 
+		void SetSpeed(unsigned long nSpeed);
+		void SetScale(const wxString& sTitle, const ppmtype& aType);
+		void SetLightColours();
+
 		pophubBuilder* m_pBuilder;
 
 		int m_nInputChannels = 2;
@@ -92,6 +99,10 @@ class pophubPanel: public pmPanel
 
 		std::array<AngleMeter*,2> m_meters{nullptr,nullptr};
 		std::array<meter, 2> m_meterDetails;
+		
+		std::array<wmLabel*, 2> m_barLabels{nullptr, nullptr};
+		std::array<LevelMeter*,2> m_barMeters{nullptr, nullptr};
+		LevelMeter* m_pLevels = nullptr;
 
 		std::array<wmButton*,2> m_meterSelect{nullptr,nullptr};
 		std::array<CorrelationBar*,2> m_phasebars{nullptr,nullptr};

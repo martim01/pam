@@ -6,10 +6,12 @@
 #include <wx/intl.h>
 #include <wx/string.h>
 
+#include "log.h"
+
 #include "anglemeter.h"
 #include "correlationbar.h"
 #include "levelcalculator.h"
-#include "log.h"
+#include "levelmeter.h"
 #include "ppmtypes.h"
 #include "settingevent.h"
 #include "settings.h"
@@ -74,6 +76,10 @@ void pophubPanel::SetAudioData(const timedbuffer* pBuffer)
 				m_meters[nSide]->ShowValue({m_pCalculator->GetMSLevel(false, m_meterDetails[nSide].nChannel*2), 
 						    				m_pCalculator->GetMSLevel(true,m_meterDetails[nSide].nChannel*2)});
 			}
+		}
+		if(m_barMeters[nSide])
+		{
+			m_barMeters[nSide]->ShowValue(m_pCalculator->GetLevel(nSide));
 		}
 	}
 
@@ -150,6 +156,21 @@ void pophubPanel::DestroyControls()
 			m_meterSelect[i]->Destroy();
 			m_meterSelect[i] = nullptr;
 		}
+		if(m_barMeters[i])
+		{
+			m_barMeters[i]->Destroy();
+			m_barMeters[i] = nullptr;
+		}
+		if(m_barLabels[i])
+		{
+			m_barLabels[i]->Destroy();
+			m_barLabels[i] = nullptr;
+		}
+	}
+	if(m_pLevels)
+	{
+		m_pLevels->Destroy();
+		m_pLevels = nullptr;
 	}
 	if(m_ppnlR128)
 	{
@@ -257,7 +278,7 @@ void pophubPanel::ShowRadioLoudness()
 {
 	ShowOutputMonitorMeters(10);
 
-	m_ppnlR128 = new pnlR128(this, m_pBuilder, wxPoint(2,335), wxSize(800, 140));
+	m_ppnlR128 = new pnlR128(this, m_pBuilder, wxPoint(2,335), wxSize(796, 140));
 	m_ppnlR128->SetSession(m_session);
 }
 
@@ -270,7 +291,7 @@ void pophubPanel::ShowNews()
 void pophubPanel::ShowNewsLoudness()
 {
 	ShowNewsMeters(10);
-	m_ppnlR128 = new pnlR128(this, m_pBuilder, wxPoint(2,335), wxSize(800, 140));
+	m_ppnlR128 = new pnlR128(this, m_pBuilder, wxPoint(2,335), wxSize(796, 140));
 	m_ppnlR128->SetSession(m_session);
 }
 
@@ -282,16 +303,19 @@ void pophubPanel::ShowNewsGain()
 void pophubPanel::ShowWorkshop()
 {
 	m_meterSelect[enumSide::kLeft] = new wmButton(this, wxID_ANY, "", wxPoint(10, 10), wxSize(780,25));
-	
+	m_meterSelect[enumSide::kLeft]->SetPopup({"Output", "Output M/S"});
+	m_meterSelect[enumSide::kLeft]->ConnectToSetting(m_pBuilder->GetSection(), "meter_left", "Output");
+	m_meterSelect[enumSide::kRight] = nullptr;
+
 	m_meters[enumSide::kLeft] = new AngleMeter(this, wxID_ANY, "", -70.0, AngleMeter::LEFT_RIGHT, 0, wxPoint(10,35), wxSize(780,380));
 	m_meters[enumSide::kLeft]->SetInputChannels(2);
 	m_meters[enumSide::kLeft]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 	
 	
 	m_phasebars[enumSide::kLeft] = new CorrelationBar(this, wxID_ANY, wxPoint(10, m_meters[enumSide::kLeft]->GetRect().GetBottom()+10), wxSize(m_meters[enumSide::kLeft]->GetSize().x,40));
+	
 	m_phasebars[enumSide::kRight] = nullptr;
 
-	m_meterSelect[enumSide::kRight] = nullptr;
 
 	m_phasebars[enumSide::kLeft]->SetNumberOfInputChannels(m_nInputChannels);
 	m_phasebars[enumSide::kLeft]->SetAxisX(0);
@@ -302,7 +326,40 @@ void pophubPanel::ShowWorkshop()
 
 void pophubPanel::ShowTV()
 {
+	int nHeight = 70;
 
+	auto nLeft = 100;
+	auto nWidth = 780-nLeft;
+
+	m_barLabels[enumSide::kLeft] = new wmLabel(this, wxID_ANY, "LEFT", wxPoint(10,10), wxSize(90,nHeight));
+	
+	m_barMeters[enumSide::kLeft] = new LevelMeter(this,wxID_ANY, "", -70, false, wxPoint(nLeft, 10), wxSize(nWidth, nHeight), true);
+	m_barMeters[enumSide::kLeft]->SetNumberOfChannels(m_nInputChannels);
+	m_barMeters[enumSide::kLeft]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
+
+	m_barLabels[enumSide::kRight] = new wmLabel(this, wxID_ANY, "RIGHT", wxPoint(10,m_barMeters[enumSide::kLeft]->GetRect().GetBottom()+10), wxSize(90,nHeight));
+	m_barMeters[enumSide::kRight] = new LevelMeter(this,wxID_ANY, "", -70, false, wxPoint(nLeft, m_barMeters[enumSide::kLeft]->GetRect().GetBottom()+10), wxSize(nWidth, nHeight), true);
+	m_barMeters[enumSide::kRight]->SetNumberOfChannels(m_nInputChannels);
+	m_barMeters[enumSide::kRight]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
+	
+	m_pLevels = new LevelMeter(this,wxID_ANY, "", -70, true, wxPoint(nLeft, m_barMeters[enumSide::kRight]->GetRect().GetBottom()+2), wxSize(nWidth, nHeight/2), true);
+	m_pLevels->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
+
+	
+	m_phasebars[enumSide::kLeft] = new CorrelationBar(this, wxID_ANY, wxPoint(10, m_pLevels->GetRect().GetBottom()+20), wxSize(770,40));
+	m_phasebars[enumSide::kRight] = nullptr;
+
+	m_phasebars[enumSide::kLeft]->SetNumberOfInputChannels(m_nInputChannels);
+	m_phasebars[enumSide::kLeft]->SetAxisX(0);
+	m_phasebars[enumSide::kLeft]->SetAxisY(1);
+	m_phasebars[enumSide::kLeft]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
+
+	
+	auto nTop = m_phasebars[enumSide::kLeft]->GetRect().GetBottom()+10;
+	m_ppnlR128 = new pnlR128(this, m_pBuilder, wxPoint(2,nTop), wxSize(796, 470-nTop));
+	m_ppnlR128->SetSession(m_session);
+
+	SetMeterSettings();
 }
 
 void pophubPanel::SetMeterMSMode(int nSide, const wxString& sLabel)
@@ -341,8 +398,6 @@ void pophubPanel::SetMeterMSMode(int nSide, const wxString& sLabel)
 
 void pophubPanel::SetMeterSettings()
 {
-	
-	
 	SetMeterMSMode(enumSide::kLeft, Settings::Get().Read(m_pBuilder->GetSection(), "meter_left", "Output"));
 	SetMeterMSMode(enumSide::kRight, Settings::Get().Read(m_pBuilder->GetSection(), "meter_right", "Output"));
 	
@@ -355,17 +410,25 @@ void pophubPanel::SetMeterSettings()
 			pMeter->DisplayPeakLevelAsText(m_pBuilder->ReadSetting("display_text_peak",1));
 		}
 	}
+	for(auto pMeter : m_barMeters)
+	{
+		if(pMeter)
+		{
+			pMeter->SetPeakMode(m_pBuilder->ReadSetting("peaks",0));
+		}
+	}
 
 	for(auto pBar : m_phasebars)
 	{
 		if(pBar)
 		{
 			pBar->SetThreshold(m_pBuilder->ReadSetting("phase_threshold", -0.75));
-			pBar->ShowBar(m_pBuilder->ReadSetting("phase_display",true));
+			pBar->ShowBar(m_pBuilder->ReadSetting("phase_display",false));
 		}
 	}
 
 	SetMode(m_pBuilder->ReadSetting("mode", "BBC"));
+	SetSpeed(m_pBuilder->ReadSetting("speed", 1));
 }
 
 void pophubPanel::SetMode(const wxString& sMode)
@@ -381,5 +444,51 @@ void pophubPanel::SetMode(const wxString& sMode)
 				pMeter->SetLevels(itType->second.vLevels,itType->second.dOffset, itType->second.dScaling, itType->first, itType->second.sUnit, itType->second.dOverMod, itType->second.sReference);
 			}
         }
+		SetScale(itType->first, itType->second);
     }
+}
+
+void pophubPanel::SetSpeed(unsigned long nSpeed)
+{
+	for(auto pMeter : m_barMeters)
+	{
+		if(pMeter)
+		{
+			pMeter->SetSpeed(nSpeed);
+		}
+	}
+
+    m_pCalculator->SetSpeed(nSpeed);
+}
+
+
+void pophubPanel::SetScale(const wxString& sTitle, const ppmtype& aType)
+{
+	for(auto pMeter : m_barMeters)
+	{
+		if(pMeter)
+        {
+			pMeter->SetLevels(aType.vLevels, aType.dOffset, aType.sUnit, sTitle, aType.sReference, aType.dScaling);
+		}
+    }
+    if(m_pLevels)
+    {
+        m_pLevels->SetLevels(aType.vLevels, aType.dOffset, aType.sUnit, sTitle, aType.sReference, aType.dScaling);
+    }
+    SetLightColours();
+}
+
+void pophubPanel::SetLightColours()
+{
+	if(m_barMeters[enumSide::kLeft])
+	{
+		m_barMeters[enumSide::kLeft]->SetLightColours(wxColour(220,0,0), -6.0, wxColour(255,50,50));
+		m_barMeters[enumSide::kLeft]->ResetMeter();
+	}
+	if(m_barMeters[enumSide::kRight])
+    {
+		m_barMeters[enumSide::kRight]->SetLightColours(wxColour(0,220,0), -6.0, wxColour(255,50,50));
+		m_barMeters[enumSide::kRight]->ResetMeter();
+	}
+	
 }

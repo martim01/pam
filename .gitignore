@@ -61,3 +61,6 @@ release.md
 /external/ptpmonkey
 /external/restgoose
 /external/sapserver
+/external/asio
+/asio
+

@@ -19,7 +19,7 @@ pnlPhase::pnlPhase(wxWindow* parent,pophubBuilder* pBuilder, wxWindowID id,const
 	m_pbtnDisplay->SetForegroundColour(wxColour(255,255,255));
 	m_pbtnDisplay->SetBackgroundColour(wxColour(64,0,128));
 	m_pbtnDisplay->SetToggle(true, "Label", "Meter", 50.0);
-	m_pbtnDisplay->ConnectToSetting(pBuilder->GetSection(), "phase_display", true);
+	m_pbtnDisplay->ConnectToSetting(pBuilder->GetSection(), "phase_display", false);
 
 	m_plblThresholdTitle = new wmLabel(this, wxID_ANY, "Threshold", wxPoint(2,37), wxSize(196,25), 0, _T("ID_M_PLBL1"));
 	m_plblThresholdTitle->SetBorderState(uiRect::BORDER_NONE);

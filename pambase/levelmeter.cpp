@@ -1,10 +1,15 @@
-#include <wx/log.h>
 #include "levelmeter.h"
+
+#include <algorithm>
+#include <list>
+
 #include <wx/busyinfo.h>
 #include <wx/dcbuffer.h>
-#include <list>
 #include <wx/dcmemory.h>
-#include <algorithm>
+#include <wx/log.h>
+
+#include "log.h"
+
 #include "levelcalculator.h"
 using namespace std;
 
@@ -46,7 +51,7 @@ LevelMeter::LevelMeter() : pmControl()
     m_clrText = wxColour(200,180,255);
 }
 
-LevelMeter::LevelMeter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, bool bLevelDisplay, const wxPoint& pos, const wxSize& size) : pmControl(),
+LevelMeter::LevelMeter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, bool bLevelDisplay, const wxPoint& pos, const wxSize& size, bool bHorizontal) : pmControl(),
     m_dMax(0)
 	, m_nLightGap(0)
 	, m_bInit(false)
@@ -66,6 +71,7 @@ LevelMeter::LevelMeter(wxWindow *parent, wxWindowID id, const wxString & sText,d
 	, m_dLevelOffset(0.0)
 	, m_dScalingFactor(0.0)
 	, m_nChannels(2)
+    , m_bHorizontal(bHorizontal)
 {
     m_dLastValue = -180;
     wxSize szInit(size);
@@ -102,6 +108,7 @@ LevelMeter::LevelMeter(wxWindow *parent, wxWindowID id, const wxString & sText,d
     SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL,false,_T("Arial"),wxFONTENCODING_DEFAULT));
     m_nChannels = 2;
 
+    ShowValue(-80.0);
 }
 
 LevelMeter::~LevelMeter()
@@ -182,11 +189,12 @@ void LevelMeter::DrawHorizontal(wxDC& dc)
     dc.SetFont(GetFont());
 
     dc.SetBrush(*wxBLACK_BRUSH);
-    dc.SetPen(*wxWHITE_PEN);
-    dc.DrawRectangle(GetClientRect());
-
+    
     if(!m_bLevelDisplay)
     {
+        dc.SetPen(*wxWHITE_PEN);
+        dc.DrawRectangle(GetClientRect());
+
         dc.DrawBitmap(m_bmpMeter, 1,1);
         m_uiBlack.Draw(dc, uiRect::BORDER_FLAT);
 
@@ -207,25 +215,30 @@ void LevelMeter::DrawHorizontal(wxDC& dc)
     }
     else
     {
-        for(size_t i = 0; i < m_vLevels.size(); i++)
+        dc.SetPen(*wxBLACK_PEN);
+        dc.DrawRectangle(GetClientRect());
+
+        for(const auto& dLevel : m_vLevels)
         {
-            int nY(m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])));
-
-
-            dc.SetPen(wxPen(wxColour(160,160,160),1));
-            dc.DrawLine(0, m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])), GetClientRect().GetWidth(), m_uiLevelText.GetBottom()-(m_dPixelsPerdB*(m_vLevels[i])));
-            uiRect uiLevel(wxRect(10, nY-10,GetClientSize().x-25, 20));
+            int nX = m_dPixelsPerdB*dLevel;
+            nX +=  m_uiLevelText.GetLeft();
+        
+            uiRect uiLevel(wxRect(nX-15, 0, 30, GetClientSize().y));
             uiLevel.SetBackgroundColour(*wxBLACK);
             uiLevel.SetForegroundColour(*wxWHITE);
 
-            if((m_vLevels[i]-m_dLevelOffset) < -0.5 || (m_vLevels[i]-m_dLevelOffset) > 0.5 || m_sReference.empty())
+            if(dLevel-m_dLevelOffset < -0.5 || (dLevel-m_dLevelOffset) > 0.5 || m_sReference.empty())
             {
-                uiLevel.Draw(dc, wxString::Format(wxT("%.0f"), (m_vLevels[i]-m_dLevelOffset)/m_dScalingFactor), uiRect::BORDER_NONE);
+                uiLevel.Draw(dc, wxString::Format(wxT("%.0f"), (dLevel-m_dLevelOffset)/m_dScalingFactor), uiRect::BORDER_NONE);
             }
             else
             {
                 uiLevel.Draw(dc, m_sReference, uiRect::BORDER_NONE);
             }
+
+            dc.SetPen(wxPen(wxColour(160,160,160),1));
+            dc.DrawLine(nX, 0, nX, 10);
+            
         }
         m_uiLevelText.Draw(dc, uiRect::BORDER_NONE, uiRect::EDGE_ALL, m_bHorizontal);
     }
@@ -405,17 +418,10 @@ void LevelMeter::ShowValue(double dValue)
     }
 
     int ndB = m_dPixelsPerdB*m_dLastValue;
-    ndB = max(ndB, -(m_uiLabel.GetTop()-m_uiLevelText.GetHeight()));
-
     int nPeakdB = m_dPixelsPerdB*m_dPeakValue;
-    nPeakdB = max(nPeakdB, -(m_uiLabel.GetTop()-m_uiLevelText.GetHeight()));
-
-    m_uiBlack.SetRect(0, m_uiLevelText.GetBottom(), GetClientRect().GetWidth(), -ndB);
-    m_uiPeak.SetRect(0,m_uiLevelText.GetBottom()-(nPeakdB)-1, GetClientRect().GetWidth(), 3);
-
+    
     if(m_bHorizontal == false)
     {
-
         ndB = max(ndB, -(m_uiLabel.GetTop()-m_uiLevelText.GetHeight()));
 
         nPeakdB = max(nPeakdB, -(m_uiLabel.GetTop()-m_uiLevelText.GetHeight()));

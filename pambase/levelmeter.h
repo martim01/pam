@@ -18,7 +18,7 @@ public:
     LevelMeter();
     virtual ~LevelMeter();
 
-    LevelMeter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, bool bLevelDisplay, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize);
+    LevelMeter(wxWindow *parent, wxWindowID id, const wxString & sText,double dMin, bool bLevelDisplay, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, bool bHorizontal = false);
 
         void InitMeter(const wxString & sText,double dMin);
         void InitMeterVertical(const wxString & sText,double dMin);

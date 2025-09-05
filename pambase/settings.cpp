@@ -257,7 +257,7 @@ wxString Settings::GetLogDirectory() const
 
 wxString Settings::GetWavDirectory() const
 {
-    return "var/local/pam2/wav";
+    return "/var/local/pam2/wav";
 }
 
 wxString Settings::GetTempDirectory() const

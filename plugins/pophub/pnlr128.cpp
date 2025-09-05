@@ -31,16 +31,19 @@ pnlR128::pnlR128(wxWindow *parent, pophubBuilder *pBuilder, const wxPoint &pos, 
     m_pBuilder(pBuilder)
 {
 	Create(parent, wxID_ANY, pos, size, wxTAB_TRAVERSAL | nStyle, _T("id"));
-	   
 
     wxBoxSizer* pBoxSizer;
     wxFlexGridSizer* pFlexGridSizer;
     pFlexGridSizer = new wxFlexGridSizer(4, 3, 0, 0);
     pFlexGridSizer->AddGrowableCol(2);
+    pFlexGridSizer->AddGrowableRow(0,1);
+    pFlexGridSizer->AddGrowableRow(1,1);
+    pFlexGridSizer->AddGrowableRow(2,1);
+    pFlexGridSizer->AddGrowableRow(3,1);
 
     m_plblMomentaryTitle = new wmLabel(this, wxID_ANY, "Momentary", wxPoint(-1,-1), wxSize(80,-1));
     pFlexGridSizer->Add(m_plblMomentaryTitle, 0, wxALL|wxEXPAND,  wxDLG_UNIT(this,wxSize(2,0)).GetWidth());
-    m_plblMomentary = new wmLabel(this, wxID_ANY, "");
+    m_plblMomentary = new wmLabel(this, wxID_ANY, "", wxPoint(-1,-1), wxSize(80,-1));
     pFlexGridSizer->Add(m_plblMomentary, 0, wxALL|wxEXPAND,  wxDLG_UNIT(this,wxSize(2,0)).GetWidth());
     m_aMeters[enumType::kMomentary] = new R128MeterH(this,wxID_ANY, "Momentary", -59,0,  false);
     pFlexGridSizer->Add(m_aMeters[enumType::kMomentary], 0, wxALL|wxEXPAND,  wxDLG_UNIT(this,wxSize(2,0)).GetWidth());
@@ -94,7 +97,7 @@ pnlR128::pnlR128(wxWindow *parent, pophubBuilder *pBuilder, const wxPoint &pos, 
 
     
 
-    SetSize(796, 140);
+    SetSize(size);
 
     for(auto pMeter : m_aMeters)
     {
