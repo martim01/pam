@@ -38,7 +38,7 @@ message(${CMAKE_CURRENT_SOURCE_DIR})
 
 #pambase settubgs
 
-set(SOURCES  "advelement.cpp"  "AES67ServerMediaSubsession.cpp" "aes67source.cpp" "anglemeter.cpp" "aoipsourcemanager.cpp" "audio.cpp" "audioevent.cpp" "dlgmask.cpp" 
+set(SOURCES  "advelement.cpp"  "AES67ServerMediaSubsession.cpp" "aes67source.cpp" "anglemeter.cpp" "aoipsourcemanager.cpp" "audio.cpp" "audioevent.cpp" "dlgEditName.cpp" "dlgmask.cpp" 
  "generator.cpp" "generatorpluginbuilder.cpp" "generatorpluginfactory.cpp" "histogram.cpp" "historygraph.cpp" "inimanager.cpp" "inisection.cpp" "iomanager.cpp" "levelcalculator.cpp" "levelgraph.cpp" "wxlivewirehandler.cpp"
  "levelmeter.cpp" "liveaudiosource.cpp" "monitorevent.cpp" "monitorpluginbuilder.cpp" "monitorpluginfactory.cpp" "networkcontrol.cpp" "pamRTSPServer.cpp" "niir.cpp" "ondemandaes67mediasubsession.cpp" "ondemandpamsubsession.cpp"
  "ondemandstreamer.cpp" "ourRTSPClient.cpp" "ourSIPClient.cpp" "PamTaskScheduler.cpp" "PamUsageEnvironment.cpp" "pcstats.cpp" "pmcontrol.cpp" "pmpanel.cpp" "ppmtypes.cpp" "qos.cpp" "r128calculator.cpp"

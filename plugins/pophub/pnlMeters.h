@@ -3,6 +3,7 @@
 
 #include <wx/panel.h>
 
+#include "wmbutton.h"
 #include "wmlabel.h"
 #include "wmlist.h"
 
@@ -30,6 +31,9 @@ class pnlMeters: public wxPanel
 
 		wmList* m_plstLeft;
 		wmList* m_plstRight;
+
+		wmButton* m_pbtnLeft;
+		wmButton* m_pbtnRight;
 
 		DECLARE_EVENT_TABLE()
 };

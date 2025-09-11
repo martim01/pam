@@ -17,11 +17,13 @@ class pnlOptions: public wxPanel
 		virtual ~pnlOptions();
 
 		wmButton* m_pbtnM3M6;
-		wmLabel* m_pLblText;
-		wmLabel* m_pLblSpeed;
+		wmLabel* m_plblSpeed;
+		wmLabel* m_plblPeaks;
 		wmList* m_plstSpeed;
 		wmList* m_plstMeterPeaks;
-		wmList* m_plstText;
+		
+		wmButton* m_pbtnLabelCurrent;
+		wmButton* m_pbtnLabelPeak;
 
 	protected:
 

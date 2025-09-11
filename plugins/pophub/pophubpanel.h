@@ -65,8 +65,8 @@ class pophubPanel: public pmPanel
 	private:
 		struct meter
 		{
-			int nChannel{0};
 			bool bMS{false};
+			int nInput{0};
 		};
 
 		void ViewChanged(unsigned long nView);
@@ -80,11 +80,11 @@ class pophubPanel: public pmPanel
 
 		void ShowOutputMonitorMeters(unsigned int nTop);
 		void ShowNewsMeters(unsigned int nTop);
-		void SetMeterSettings();
+		void SetMeterSettings(int nView);
 
 		void SetMode(const wxString& sMode);
 
-		void SetMeterMSMode(int nSide, const wxString& sLabel);
+		void SetMeterDetails(int nView, int nSide, const wxString& sLabel);
 
 		void DestroyControls();
 
@@ -104,6 +104,7 @@ class pophubPanel: public pmPanel
 		std::array<LevelMeter*,2> m_barMeters{nullptr, nullptr};
 		LevelMeter* m_pLevels = nullptr;
 
+		std::array<wmLabel*,2> m_meterLabel{nullptr,nullptr};
 		std::array<wmButton*,2> m_meterSelect{nullptr,nullptr};
 		std::array<CorrelationBar*,2> m_phasebars{nullptr,nullptr};
 		std::shared_ptr<LevelCalculator> m_pCalculator = nullptr;

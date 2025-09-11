@@ -3,6 +3,8 @@
 #include <wx/intl.h>
 #include <wx/string.h>
 
+#include "dlgEditName.h"
+
 #include "pophubbuilder.h"
 #include "settingevent.h"
 #include "settings.h"
@@ -28,36 +30,43 @@ pnlMeters::pnlMeters(wxWindow* parent,pophubBuilder* pBuilder, wxWindowID id,con
 	m_plblRight->SetForegroundColour(wxColour(255,255,255));
 	m_plblRight->SetBackgroundColour(wxColour(63,115,192));
 
-	m_plstLeft = new wmList(this, wxID_ANY, wxPoint(0,30), wxSize(96,185), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 1, wxSize(5,5));
-	m_plstRight = new wmList(this, wxID_ANY, wxPoint(102,30), wxSize(96,185), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 1, wxSize(5,5));
+	m_plstLeft = new wmList(this, wxID_ANY, wxPoint(0,30), wxSize(96,92), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 1, wxSize(5,5));
+	m_plstRight = new wmList(this, wxID_ANY, wxPoint(102,30), wxSize(96,92), wmList::STYLE_SELECT, 0, wxSize(-1,-1), 1, wxSize(5,5));
 	m_plstLeft->SetBackgroundColour(*wxBLACK);
 	m_plstRight->SetBackgroundColour(*wxBLACK);
 
-	m_plstLeft->AddButton("Output");
-	m_plstLeft->AddButton("Output M/S");
-	m_plstLeft->AddButton("Monitor");
-	m_plstLeft->AddButton("Monitor M/S");
-
-	m_plstRight->AddButton("Output");
-	m_plstRight->AddButton("Output M/S");
-	m_plstRight->AddButton("Monitor");
-	m_plstRight->AddButton("Monitor M/S");
+	m_plstLeft->AddButton("Stereo");
+	m_plstLeft->AddButton("M+S");
 	
-	
+	m_plstRight->AddButton("Stereo");
+	m_plstRight->AddButton("M+S");
 
-	m_plstLeft->ConnectToSetting(m_pBuilder->GetSection(), "meter_left", "Output");
-	m_plstRight->ConnectToSetting(m_pBuilder->GetSection(), "meter_right", "Monitor");
-
-
+	m_plstLeft->ConnectToSetting(m_pBuilder->GetSection(), "meter_left", "Stereo");
+	m_plstRight->ConnectToSetting(m_pBuilder->GetSection(), "meter_right", "Stereo");
 	HideButtons(m_pBuilder->ReadSetting("view", 0));
 
+	m_pbtnLeft = new wmButton(this, wxID_ANY, "Edit Label", wxPoint(0, 180), wxSize(96, 40));
+	m_pbtnRight = new wmButton(this, wxID_ANY, "Edit Label", wxPoint(102, 180), wxSize(96, 40));
 
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [this](wxCommandEvent& event)
+	{
+		dlgEditName aDlg(this,m_pBuilder->ReadSetting("label_left", "Channels 1+2"));
+		if(aDlg.ShowModal() == wxID_OK)
+		{
+			m_pBuilder->WriteSetting("label_left", aDlg.m_pedtName->GetValue());
+		}
+	}, m_pbtnLeft->GetId());
+	
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [this](wxCommandEvent& event)
+	{
+		dlgEditName aDlg(this,m_pBuilder->ReadSetting("label_right", "Channels 3+4"));
+		if(aDlg.ShowModal() == wxID_OK)
+		{
+			m_pBuilder->WriteSetting("label_right", aDlg.m_pedtName->GetValue());
+		}
+	}, m_pbtnRight->GetId());
 
-	Settings::Get().AddHandler(this, m_pBuilder->GetSection(), "view");
-
-	Bind(wxEVT_SETTING_CHANGED, [this](SettingEvent& e) {
-		HideButtons(e.GetValue(0L));
-	});
+	Bind(wxEVT_SETTING_CHANGED, [this](SettingEvent& e) { HideButtons(e.GetValue(0L)); });
 }
 
 pnlMeters::~pnlMeters()
@@ -76,14 +85,10 @@ void pnlMeters::HideButtons(unsigned long nView)
 		case pophubBuilder::enumView::kRadioLoudness:		
 			m_plstLeft->EnableButton(0, wmList::wmENABLED);
 			m_plstLeft->EnableButton(1, wmList::wmENABLED);
-			m_plstLeft->EnableButton(2, wmList::wmENABLED);
-			m_plstLeft->EnableButton(3, wmList::wmENABLED);
 			m_plstRight->EnableButton(0, wmList::wmENABLED);
 			m_plstRight->EnableButton(1, wmList::wmENABLED);
-			m_plstRight->EnableButton(2, wmList::wmENABLED);
-			m_plstRight->EnableButton(3, wmList::wmENABLED);
 			m_plstLeft->SelectButton(0);
-			m_plstRight->SelectButton(2);
+			m_plstRight->SelectButton(0);
 			m_plblRight->Show();
 			break;
 		case pophubBuilder::enumView::kNews:
@@ -91,13 +96,8 @@ void pnlMeters::HideButtons(unsigned long nView)
 		case pophubBuilder::enumView::kNewsGain:
 			m_plstLeft->EnableButton(0, wmList::wmENABLED);
 			m_plstLeft->EnableButton(1, wmList::wmHIDDEN);
-			m_plstLeft->EnableButton(2, wmList::wmHIDDEN);
-			m_plstLeft->EnableButton(3, wmList::wmHIDDEN);
 			m_plstRight->EnableButton(0, wmList::wmHIDDEN);
 			m_plstRight->EnableButton(1, wmList::wmENABLED);
-			m_plstRight->EnableButton(2, wmList::wmHIDDEN);
-			m_plstRight->EnableButton(3, wmList::wmHIDDEN);
-			
 			m_plstLeft->SelectButton(0);
 			m_plstRight->SelectButton(1);
 			m_plblRight->Show();
@@ -106,12 +106,8 @@ void pnlMeters::HideButtons(unsigned long nView)
 		case pophubBuilder::enumView::kTV:
 			m_plstLeft->EnableButton(0, wmList::wmENABLED);
 			m_plstLeft->EnableButton(1, wmList::wmENABLED);
-			m_plstLeft->EnableButton(2, wmList::wmHIDDEN);
-			m_plstLeft->EnableButton(3, wmList::wmHIDDEN);
 			m_plstRight->EnableButton(0, wmList::wmHIDDEN);
 			m_plstRight->EnableButton(1, wmList::wmHIDDEN);
-			m_plstRight->EnableButton(2, wmList::wmHIDDEN);
-			m_plstRight->EnableButton(3, wmList::wmHIDDEN);
 			m_plstLeft->SelectButton(0);
 			m_plblRight->Show(false);
 		break;

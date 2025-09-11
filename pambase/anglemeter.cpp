@@ -104,26 +104,13 @@ AngleMeter::AngleMeter(wxWindow *parent, wxWindowID id, const wxString & sText,d
     SetMeterMSMode(LevelCalculator::M6);
 
     m_nRouting = nRouting;
-
+    ResetMeter();
+    
     Connect(wxEVT_PAINT, (wxObjectEventFunction)&AngleMeter::OnPaint);
     Connect(wxEVT_SIZE, (wxObjectEventFunction)&AngleMeter::OnSize);
     m_clrText = wxColour(200,180,255);
 
-    switch(m_nRouting)
-    {
-        case LEFT_RIGHT:
-            m_clrMeter[0] = *wxRED;
-            m_clrMeter[1] = *wxGREEN;
-            break;
-        case MONO_STEREO:
-            m_clrMeter[0] = *wxWHITE;
-            m_clrMeter[1] = wxColour(255,180,0);
-            break;
-        case MONO:
-            m_clrMeter[0] = *wxWHITE;
-            m_clrMeter[1] = *wxWHITE;
-            break;
-    }
+    
 
     InitMeter(sText, dMin);
 
@@ -321,6 +308,21 @@ void AngleMeter::ResetMeter(void)
     m_dPeakValue[1] = m_dMin;
     ShowValue(m_dLastValue);
 
+    switch(m_nRouting)
+    {
+        case LEFT_RIGHT:
+            m_clrMeter[0] = *wxRED;
+            m_clrMeter[1] = *wxGREEN;
+            break;
+        case MONO_STEREO:
+            m_clrMeter[0] = *wxWHITE;
+            m_clrMeter[1] = wxColour(255,180,0);
+            break;
+        case MONO:
+            m_clrMeter[0] = *wxWHITE;
+            m_clrMeter[1] = *wxWHITE;
+            break;
+    }
 
 }
 void AngleMeter::ShowValue(std::array<double,2> values)
