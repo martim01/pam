@@ -12,8 +12,7 @@ pnlView::pnlView(wxWindow* parent,pophubBuilder* pBuilder, wxWindowID id,const w
     m_pBuilder(pBuilder)
 {
 	Create(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("id"));
-	SetBackgroundColour(wxColour(0,0,0));
-
+	
 	/*
 		Radio 1/2
 		Radio 1/2 Loudness

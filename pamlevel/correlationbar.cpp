@@ -146,13 +146,19 @@ void CorrelationBar::DrawBox(wxDC& dc)
     {
         rect.SetBackgroundColour(wxColour(0,128,0));
         rect.SetForegroundColour(*wxWHITE);
+        auto fnt = dc.GetFont();
+        dc.SetFont(wxFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT));
         rect.Draw(dc, "PHASE OK", uiRect::BORDER_FLAT);
+        dc.SetFont(fnt);
     }
     else
     {
         rect.SetBackgroundColour(m_bFlash ? wxColour(255,0,0) : wxColour(128,0,0));
         rect.SetForegroundColour(*wxWHITE);
+        auto fnt = dc.GetFont();
+        dc.SetFont(wxFont(12,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT));
         rect.Draw(dc, "OUT OF PHASE", uiRect::BORDER_FLAT);
+        dc.SetFont(fnt);
 
         auto dtNow = wxDateTime::UNow();
         if(dtNow > m_dtFlash+wxTimeSpan(0,0,0,500))

@@ -96,7 +96,7 @@ class pophubPanel: public pmPanel
 
 		int m_nInputChannels = 2;
 
-
+		
 		std::array<AngleMeter*,2> m_meters{nullptr,nullptr};
 		std::array<meter, 2> m_meterDetails;
 		

@@ -6,6 +6,8 @@
 #include <wx/log.h>
 #include <algorithm>
 #include "levelcalculator.h"
+#include "log.h"
+
 using namespace std;
 
 // AngleMeter
@@ -121,6 +123,26 @@ AngleMeter::~AngleMeter()
 {
 }
 
+void AngleMeter::DrawLevelLine(wxDC& dc, double dAngle, const wxPoint& pntBottom, double dHT, double dHL, bool bOverMod)
+{
+    double dX = dHT*sin(dAngle);
+    double dXTo = dHL*sin(dAngle);
+    double dY = dHT*cos(dAngle);
+    double dYTo = dHL*cos(dAngle);
+
+        
+    dc.SetPen(wxPen(wxColour(180,180,180),3, wxSOLID));
+    if(!bOverMod)
+    {
+        dc.SetTextForeground(wxColour(255,255,255));
+    }
+    else
+    {
+        dc.SetTextForeground(wxColour(255,0,0));
+    }
+
+    dc.DrawLine(pntBottom.x+dXTo, pntBottom.y-dYTo, pntBottom.x+static_cast<int>(dX), pntBottom.y-static_cast<int>(dY));
+}
 
 
 void AngleMeter::OnPaint(wxPaintEvent& event)
@@ -136,46 +158,48 @@ void AngleMeter::OnPaint(wxPaintEvent& event)
     dc.DrawRectangle(GetClientRect());
 
 
-    wxPoint pntBottom(m_rectGrid.GetLeft() + m_rectGrid.GetWidth()/2, m_rectGrid.GetBottom()+50);
+    wxPoint pntBottom(m_rectGrid.GetLeft() + m_rectGrid.GetWidth()/2, m_rectGrid.GetBottom()+100);
     double dH = m_rectGrid.GetHeight()+20;
     double dHT = m_rectGrid.GetHeight()+30;
     double dHL = m_rectGrid.GetHeight()+10;
 
+    DrawLevelLine(dc, m_dBackStopAngle, pntBottom, dHL+15, dHL, false);
+    DrawLevelLine(dc, m_dEndStopAngle, pntBottom, dHL+15, dHL, false);
     //Draw the text
     for(int i = 0; i < m_vLevels.size(); i++)
     {
-        double dAngle = m_vLevelAngles[i];
-        double dAngleDeg = m_vLevelAngles[i];
-        double dX = dHT*sin(dAngle);
-        double dXTo = dHL*sin(dAngle);
-        double dY = dHT*cos(dAngle);
-        double dYTo = dHL*cos(dAngle);
-
-        double dTextX = (dHT+15.0)*sin(dAngle);
-        double dTextY = (dHT+15.0)*cos(dAngle);
-
-
-        dc.SetPen(wxPen(wxColour(180,180,180),1, wxSOLID));
-        if(m_vLevels[i] < m_dOverMod)
-        {
-            dc.SetTextForeground(wxColour(255,255,255));
-        }
-        else
-        {
-            dc.SetTextForeground(wxColour(255,0,0));
-        }
-
-        dc.DrawLine(pntBottom.x+dXTo, pntBottom.y-dYTo, pntBottom.x+static_cast<int>(dX), pntBottom.y-static_cast<int>(dY));
+        DrawLevelLine(dc, m_vLevelAngles[i], pntBottom, dHT, dHL, m_vLevels[i] > m_dOverMod);
+        
+        
         wxString sText(wxString::Format(wxT("%.0f"),(m_vLevels[i]-m_dOffset)/m_dScalingFactor));
         if(m_vLevels[i]-m_dOffset == 0.0 && m_sReference.empty()==false)
         {
             sText = m_sReference;
         }
-        dc.DrawRotatedText(sText, wxPoint(pntBottom.x+static_cast<int>(dTextX)-((sText.length()-1)*5), pntBottom.y-static_cast<int>(dTextY)), -dAngleDeg);
+
+        int textW, textH;
+        dc.GetTextExtent(sText, &textW, &textH);
+
+        double dTextX = (dHT+30.0)*sin(m_vLevelAngles[i]);
+        double dTextY = (dHT+30.0)*cos(m_vLevelAngles[i]);
+        double dAngleDeg = m_vLevelAngles[i]*360/(2*M_PI);
+        double angleRad = -m_vLevelAngles[i]; // negative for wxWidgets rotation
+
+        // Offset from top-left to center, rotated by angle
+        double offsetX = -textW/2 * cos(angleRad) + textH/2 * sin(angleRad);
+        double offsetY = -textW/2 * sin(angleRad) - textH/2 * cos(angleRad);
+
+        wxPoint textPos(
+            pntBottom.x + static_cast<int>(dTextX + offsetX),
+            pntBottom.y - static_cast<int>(dTextY + offsetY)
+        );
+
+        dc.DrawRotatedText(sText, textPos, -dAngleDeg);
 
     }
 
     m_uiType.Draw(dc, uiRect::BORDER_NONE);
+    m_uiLabel.Draw(dc,uiRect::BORDER_NONE);
 
     dc.SetClippingRegion(m_rectGrid);
     for(int i = 1; i >= 0; i--)
@@ -215,7 +239,7 @@ void AngleMeter::OnPaint(wxPaintEvent& event)
         }
     }
 
-        dc.SetPen(*wxBLACK_PEN);
+    dc.SetPen(*wxBLACK_PEN);
     dc.SetBrush(wxBrush(wxColour(50,50,50)));
 
     wxPoint pntTop[4] = {wxPoint(0,0), wxPoint(m_nBevel,m_nBevel), wxPoint(GetClientRect().GetRight()-m_nBevel,m_nBevel), wxPoint(GetClientRect().GetRight(),0)};
@@ -227,7 +251,7 @@ void AngleMeter::OnPaint(wxPaintEvent& event)
     dc.DrawPolygon(4,pntLeft);
     dc.DrawPolygon(4,pntBottoms);
 
-    m_uiLabel.Draw(dc,uiRect::BORDER_NONE);
+    
 }
 
 
@@ -388,6 +412,8 @@ void AngleMeter::SetMeterDisplay(short nDisplay)
 void AngleMeter::SetLevels(const std::vector<double>& vLevels, double dOffset, double dScaling, const wxString& sTitle, const wxString& sUnits, double dOverMod, wxString sReference)
 {
     m_vLevels = vLevels;
+
+
     m_vLevelAngles = vLevels;
 
     m_dOffset = dOffset;
@@ -406,6 +432,9 @@ void AngleMeter::SetLevels(const std::vector<double>& vLevels, double dOffset, d
     {
         WorkoutAngles(m_vLevels[i], m_vLevelAngles[i]);
     }
+    WorkoutAngles(0.0, m_dEndStopAngle);
+    WorkoutAngles(m_dMin-6, m_dBackStopAngle);
+
     m_uiLabel.SetLabel(wxString::Format(wxT("%s"), sTitle.c_str()));
     m_uiType.SetLabel(sUnits);
 

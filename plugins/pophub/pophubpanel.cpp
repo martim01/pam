@@ -37,13 +37,15 @@ pophubPanel::pophubPanel(wxWindow* parent,pophubBuilder* pBuilder, wxWindowID id
 	
 	Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp);
 
-	SetBackgroundColour(wxColour(254,80,80));
 	SetSize(size);
 	SetPosition(pos);
 
+	SetBackgroundColour(wxColour(50,55,50));
+
+
 	ViewChanged(Settings::Get().Read(m_pBuilder->GetSection(), "view", pophubBuilder::enumView::kRadio));
 
-
+	
 	Settings::Get().AddHandler(this, m_pBuilder->GetSection());
 	Bind(wxEVT_SETTING_CHANGED, [this](SettingEvent& event){
 		pml::log::log(pml::log::Level::kDebug,"pophup") << event.GetKey() << "=" << event.GetValue();
@@ -189,6 +191,7 @@ void pophubPanel::DestroyControls()
 void pophubPanel::ViewChanged(unsigned long nView)
 {
 	DestroyControls();
+	SetBackgroundColour(wxColour(50,55,50));
 
 	switch(nView)
 	{
@@ -218,13 +221,14 @@ void pophubPanel::ViewChanged(unsigned long nView)
 
 void pophubPanel::ShowOutputMonitorMeters(unsigned int nTop)
 {
-	m_meterLabel[enumSide::kLeft] = new wmLabel(this, wxID_ANY, m_pBuilder->ReadSetting("label_left", "Channels 1+2"), wxPoint(10,nTop), wxSize(270,25));
+
+	m_meterLabel[enumSide::kLeft] = new wmLabel(this, wxID_ANY, m_pBuilder->ReadSetting("label_left", "Channels 1+2"), wxPoint(10,nTop), wxSize(280,25));
 	m_meterLabel[enumSide::kLeft]->SetBackgroundColour(*wxBLACK);
 	m_meterLabel[enumSide::kLeft]->SetForegroundColour(*wxWHITE);
 	m_meterLabel[enumSide::kLeft]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 
-	m_meterSelect[enumSide::kLeft] = new wmButton(this, wxID_ANY, "", wxPoint(280, nTop), wxSize(100,25));
-	m_meters[enumSide::kLeft] = new AngleMeter(this, wxID_ANY, "", -70.0, AngleMeter::LEFT_RIGHT, 0, wxPoint(10,nTop+25), wxSize(380,250));
+	m_meterSelect[enumSide::kLeft] = new wmButton(this, wxID_ANY, "", wxPoint(290, nTop), wxSize(100,25));
+	m_meters[enumSide::kLeft] = new AngleMeter(this, wxID_ANY, "", -70.0, AngleMeter::LEFT_RIGHT, 0, wxPoint(10,m_meterSelect[enumSide::kLeft]->GetRect().GetBottom()+5), wxSize(380,250));
 	m_meters[enumSide::kLeft]->SetInputChannels(2);
 	m_meters[enumSide::kLeft]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 	
@@ -234,7 +238,7 @@ void pophubPanel::ShowOutputMonitorMeters(unsigned int nTop)
 	m_meterLabel[enumSide::kRight]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 
 	m_meterSelect[enumSide::kRight] = new wmButton(this, wxID_ANY, "", wxPoint(680, nTop), wxSize(100,25));
-	m_meters[enumSide::kRight] = new AngleMeter(this, wxID_ANY, "", -70.0, AngleMeter::LEFT_RIGHT, 0, wxPoint(400,nTop+25), wxSize(380,250));
+	m_meters[enumSide::kRight] = new AngleMeter(this, wxID_ANY, "", -70.0, AngleMeter::LEFT_RIGHT, 0, wxPoint(400,m_meterSelect[enumSide::kRight]->GetRect().GetBottom()+5), wxSize(380,250));
 	m_meters[enumSide::kRight]->SetInputChannels(2);
 	m_meters[enumSide::kRight]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 	
@@ -261,20 +265,24 @@ void pophubPanel::ShowOutputMonitorMeters(unsigned int nTop)
 
 void pophubPanel::ShowNewsMeters(unsigned int nTop)
 {
-	m_meterLabel[enumSide::kLeft] = new wmLabel(this, wxID_ANY, m_pBuilder->ReadSetting("label_left", "Channels 1+2"), wxPoint(10,nTop), wxSize(270,25));
+	m_meterLabel[enumSide::kLeft] = new wmLabel(this, wxID_ANY, m_pBuilder->ReadSetting("label_left", "Channels 1+2"), wxPoint(10,nTop), wxSize(280,25));
 	m_meterLabel[enumSide::kLeft]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
+	m_meterLabel[enumSide::kLeft]->SetBackgroundColour(*wxBLACK);
+	m_meterLabel[enumSide::kLeft]->SetForegroundColour(*wxWHITE);
 
-	m_meterSelect[enumSide::kLeft] = new wmButton(this, wxID_ANY, "", wxPoint(280, nTop), wxSize(100,25));
+	m_meterSelect[enumSide::kLeft] = new wmButton(this, wxID_ANY, "", wxPoint(290, nTop), wxSize(100,25));
 
-	m_meters[enumSide::kLeft] = new AngleMeter(this, wxID_ANY, "", -70.0, AngleMeter::LEFT_RIGHT, 0, wxPoint(10,nTop+25), wxSize(380,250));
+	m_meters[enumSide::kLeft] = new AngleMeter(this, wxID_ANY, "", -70.0, AngleMeter::LEFT_RIGHT, 0, wxPoint(10,m_meterSelect[enumSide::kLeft]->GetRect().GetBottom()+5), wxSize(380,250));
 	m_meters[enumSide::kLeft]->SetInputChannels(2);
 	m_meters[enumSide::kLeft]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 	
-	m_meterLabel[enumSide::kRight] = new wmLabel(this, wxID_ANY, m_pBuilder->ReadSetting("label_right", "Channels 1+2"), wxPoint(400,nTop), wxSize(270,25));
+	m_meterLabel[enumSide::kRight] = new wmLabel(this, wxID_ANY, m_pBuilder->ReadSetting("label_right", "Channels 1+2"), wxPoint(400,nTop), wxSize(280,25));
+	m_meterLabel[enumSide::kRight]->SetBackgroundColour(*wxBLACK);
+	m_meterLabel[enumSide::kRight]->SetForegroundColour(*wxWHITE);
 	m_meterLabel[enumSide::kRight]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 	m_meterSelect[enumSide::kRight] = new wmButton(this, wxID_ANY, "", wxPoint(680, nTop), wxSize(100,25));
 
-	m_meters[enumSide::kRight] = new AngleMeter(this, wxID_ANY, "", -70.0, AngleMeter::LEFT_RIGHT, 0, wxPoint(400,nTop+25), wxSize(380,250));
+	m_meters[enumSide::kRight] = new AngleMeter(this, wxID_ANY, "", -70.0, AngleMeter::LEFT_RIGHT, 0, wxPoint(400,m_meterSelect[enumSide::kRight]->GetRect().GetBottom()+5), wxSize(380,250));
 	m_meters[enumSide::kRight]->SetInputChannels(2);
 	m_meters[enumSide::kRight]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 
@@ -299,6 +307,7 @@ void pophubPanel::ShowRadioLoudness()
 	ShowOutputMonitorMeters(10);
 
 	m_ppnlR128 = new pnlR128(this, m_pBuilder, wxPoint(2,335), wxSize(796, 140));
+	m_ppnlR128->SetBackgroundColour(*wxBLACK);
 	m_ppnlR128->SetSession(m_session);
 }
 
@@ -312,6 +321,7 @@ void pophubPanel::ShowNewsLoudness()
 {
 	ShowNewsMeters(10);
 	m_ppnlR128 = new pnlR128(this, m_pBuilder, wxPoint(2,335), wxSize(796, 140));
+	m_ppnlR128->SetBackgroundColour(*wxBLACK);
 	m_ppnlR128->SetSession(m_session);
 }
 
@@ -324,7 +334,8 @@ void pophubPanel::ShowWorkshop()
 {
 	m_meterLabel[enumSide::kLeft] = new wmLabel(this, wxID_ANY, m_pBuilder->ReadSetting("label_left", "Channels 1+2"), wxPoint(10,10), wxSize(670,25));
 	m_meterLabel[enumSide::kLeft]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
-	
+	m_meterLabel[enumSide::kLeft]->SetBackgroundColour(*wxBLACK);
+	m_meterLabel[enumSide::kLeft]->SetForegroundColour(*wxWHITE);
 	m_meterLabel[enumSide::kLeft]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 	
 
@@ -333,7 +344,7 @@ void pophubPanel::ShowWorkshop()
 	m_meterSelect[enumSide::kLeft]->ConnectToSetting(m_pBuilder->GetSection(), "meter_left", "Stereo");
 	m_meterSelect[enumSide::kRight] = nullptr;
 
-	m_meters[enumSide::kLeft] = new AngleMeter(this, wxID_ANY, "", -70.0, AngleMeter::LEFT_RIGHT, 0, wxPoint(10,35), wxSize(780,380));
+	m_meters[enumSide::kLeft] = new AngleMeter(this, wxID_ANY, "", -70.0, AngleMeter::LEFT_RIGHT, 0, wxPoint(10,m_meterSelect[enumSide::kLeft]->GetRect().GetBottom()+5), wxSize(780,380));
 	m_meters[enumSide::kLeft]->SetInputChannels(2);
 	m_meters[enumSide::kLeft]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 	
@@ -352,6 +363,7 @@ void pophubPanel::ShowWorkshop()
 
 void pophubPanel::ShowTV()
 {
+	SetBackgroundColour(*wxBLACK);
 	int nHeight = 70;
 
 	auto nLeft = 100;
@@ -369,7 +381,7 @@ void pophubPanel::ShowTV()
 	m_barMeters[enumSide::kRight]->SetNumberOfChannels(m_nInputChannels);
 	m_barMeters[enumSide::kRight]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 	
-	m_pLevels = new LevelMeter(this,wxID_ANY, "", -70, true, wxPoint(nLeft, m_barMeters[enumSide::kRight]->GetRect().GetBottom()+2), wxSize(nWidth, nHeight/2), true);
+	m_pLevels = new LevelMeter(this,wxID_ANY, "", -70, true, wxPoint(nLeft, m_barMeters[enumSide::kRight]->GetRect().GetBottom()+5), wxSize(nWidth, nHeight/2), true);
 	m_pLevels->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 
 	
@@ -434,8 +446,22 @@ void pophubPanel::SetMeterSettings(int nView)
 		m_meterLabel[enumSide::kRight]->SetLabel(m_pBuilder->ReadSetting("label_right", nView < pophubBuilder::enumView::kNews ? "Channels 3+4" : "Channels 1+2"));
 	}
 	
-	SetMeterDetails(nView, enumSide::kLeft, Settings::Get().Read(m_pBuilder->GetSection(), "meter_left", "Stereo"));
-	SetMeterDetails(nView, enumSide::kRight, Settings::Get().Read(m_pBuilder->GetSection(), "meter_right", "Stereo"));
+	if(nView < pophubBuilder::enumView::kNews)
+	{
+		SetMeterDetails(nView, enumSide::kLeft, Settings::Get().Read(m_pBuilder->GetSection(), "meter_left", "Stereo"));
+	}
+	else
+	{
+		SetMeterDetails(nView, enumSide::kLeft, "Stereo");
+	}
+	if(nView < pophubBuilder::enumView::kNews)
+	{
+		SetMeterDetails(nView, enumSide::kRight, Settings::Get().Read(m_pBuilder->GetSection(), "meter_right", "Stereo"));
+	}
+	else
+	{
+		SetMeterDetails(nView, enumSide::kRight, "M+S");
+	}
 	
 	for(auto pMeter : m_meters)
 	{

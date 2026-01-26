@@ -65,6 +65,9 @@ protected:
 
 
     void WorkoutAngles(double dLevel, double& dAngle);
+
+    void DrawLevelLine(wxDC& dc, double dAngle, const wxPoint& pntBottom, double dHT, double dHL, bool bOverMod);
+
     bool m_bSurround;
 
     uiRect m_uiLabel;
@@ -125,6 +128,9 @@ protected:
 
     bool m_bTextCurrent;
     bool m_bTextPeak;
+
+    double m_dBackStopAngle;
+    double m_dEndStopAngle;
 };
 
 

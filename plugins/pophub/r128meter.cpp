@@ -127,8 +127,6 @@ void R128MeterH::SetMinMax(double dMin, double dMax)
     int nLow = (m_pairColour[kLow].first-m_dMin)*m_dPixelsPerdB;
     int nMid = (m_pairColour[kMid].first-m_dMin)*m_dPixelsPerdB;
 
-    pml::log::log(pml::log::Level::kDebug, "Meter") << "Max=" << m_dMax << "\tMin=" << m_dMin << "\tlow=" << m_pairColour[kLow].first << "\tlow pixels=" << nLow << "\tmid=" << m_pairColour[kMid].first << "\tmid pixels=" << nMid;
-
     m_uiLevel[kLow].SetRect(0, 0, nLow, GetClientRect().GetHeight());
     m_uiLevel[kMid].SetRect(nLow, 0, nMid-nLow, GetClientRect().GetHeight());
     m_uiLevel[kHigh].SetRect(nMid, 0, GetClientRect().GetRight()-nMid, GetClientRect().GetHeight());
