@@ -123,7 +123,7 @@ void wxPtp::Run(const wxString& sInterface, unsigned char nDomain, pml::ptpmonke
     {
         m_interface = IpInterface(sInterface.ToStdString());
 
-        m_pMonkey = std::make_unique<PtpMonkey>(m_interface, nDomain, 2, mode, pml::ptpmonkey::Rate::EVERY_1_SEC);
+        m_pMonkey = std::make_unique<PtpMonkey>(m_interface, nDomain, 2, mode, pml::ptpmonkey::Rate::kEvery1Sec);
         m_pMonkey->AddEventHandler(m_pNotifier);
         m_pMonkey->Run();
     }

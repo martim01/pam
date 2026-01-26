@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 project(anglemeters LANGUAGES CXX)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-include_directories("../../pambase/")
+include_directories("${CMAKE_SOURCE_DIR}/pambase/")
 
-link_directories("../../lib")
+link_directories("${CMAKE_SOURCE_DIR}/lib")
 
 
 file(GLOB SOURCES "*.cpp")
@@ -23,7 +23,7 @@ include(${wxWidgets_USE_FILE})
 target_link_libraries(anglemeters ${wxWidgets_LIBRARIES})
 target_link_libraries(anglemeters pambase)
 
-set_target_properties(anglemeters PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../lib/monitor")
+set_target_properties(anglemeters PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/lib/monitor")
 
 
 		

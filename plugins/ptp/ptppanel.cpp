@@ -143,7 +143,7 @@ const wxColour ptpPanel::CLR_CLOCK            = wxColour(50,50,150);
 const wxColour ptpPanel::CLR_CLOCK_SELECTED   = wxColour(150,150,250);
 
 const wxBitmap ptpPanel::BMP_SLAVE 	 = wxBitmap(slave_xpm);
-const wxBitmap ptpPanel::BMP_SYNC	 = wxBitmap(syncmaster_xpm);
+const wxBitmap ptpPanel::BMP_SYNC	 = wxBitmap(syncmaster_xpm); 
 const wxBitmap ptpPanel::BMP_GRAND   = wxBitmap(grandmaster_xpm);
 
 using namespace pml::ptpmonkey;
@@ -156,51 +156,52 @@ BEGIN_EVENT_TABLE(ptpPanel,pmPanel)
 	//*)
 END_EVENT_TABLE()
 
+const std::map<pml::ptpmonkey::clck::enumAccuracy, wxString> kAccuracy{ { pml::ptpmonkey::clck::enumAccuracy::k25Ns,  "Within 25ns"},
+                  { pml::ptpmonkey::clck::enumAccuracy::k100Ns, "Within 100ns"},
+                  { pml::ptpmonkey::clck::enumAccuracy::k250Ns, "Within 250ns" },
+                  { pml::ptpmonkey::clck::enumAccuracy::k1Us,   "Within 1us"},
+                  { pml::ptpmonkey::clck::enumAccuracy::k2_5Us, "Within 2.5us"},
+                  { pml::ptpmonkey::clck::enumAccuracy::k10Us,  "Within 10us"},
+                  { pml::ptpmonkey::clck::enumAccuracy::k25Us,  "Within 25us"},
+                  { pml::ptpmonkey::clck::enumAccuracy::k100Us, "Within 100us"},
+                  { pml::ptpmonkey::clck::enumAccuracy::k250Us, "Within 250us"},
+                  { pml::ptpmonkey::clck::enumAccuracy::k1Ms,   "Within 1ms"},
+                  { pml::ptpmonkey::clck::enumAccuracy::k2_5Ms, "Within 2.5ms"},
+                  { pml::ptpmonkey::clck::enumAccuracy::k10Ms,  "Within 10ms"},
+                  { pml::ptpmonkey::clck::enumAccuracy::k25Ms,  "Within 25ms"},
+                  { pml::ptpmonkey::clck::enumAccuracy::k100Ms, "Within 100ms"},
+                  { pml::ptpmonkey::clck::enumAccuracy::k250Ms, "Within 250ms"},
+                  { pml::ptpmonkey::clck::enumAccuracy::k1S,    "Within 1s"},
+                  { pml::ptpmonkey::clck::enumAccuracy::k10S,   "Within 10s"},
+                  { pml::ptpmonkey::clck::enumAccuracy::kOver,  "Over 10ss"},
+                  { pml::ptpmonkey::clck::enumAccuracy::kUnknown,"Unknown" } };
+
+const std::map<pml::ptpmonkey::clck::enumTimeSource, wxString> kTimeSource{ { pml::ptpmonkey::clck::enumTimeSource::kAtomic, "Atomic"},
+                    { pml::ptpmonkey::clck::enumTimeSource::kGps, "GPS"},
+                    { pml::ptpmonkey::clck::enumTimeSource::kRadio,"Radio"},
+                    { pml::ptpmonkey::clck::enumTimeSource::kPtp, "PTP"},
+                    { pml::ptpmonkey::clck::enumTimeSource::kNtp, "NTP"},
+                    { pml::ptpmonkey::clck::enumTimeSource::kHandset, "Handset"},
+                    { pml::ptpmonkey::clck::enumTimeSource::kOther, "Other"},
+                    { pml::ptpmonkey::clck::enumTimeSource::kInternal, "Internal"}};
+const std::map<std::int8_t, wxString> kRate{{static_cast<std::int8_t>(Rate::kPerSec128), "128/s"},
+             {static_cast<std::int8_t>(Rate::kPerSec64), "64/s"},
+             {static_cast<std::int8_t>(Rate::kPerSec32), "32/s"},
+             {static_cast<std::int8_t>(Rate::kPerSec16), "16/s"},
+             {static_cast<std::int8_t>(Rate::kPerSec8), "8/s"},
+             {static_cast<std::int8_t>(Rate::kPerSec4), "4/s"},
+             {static_cast<std::int8_t>(Rate::kPerSec2), "2/s"},
+             {static_cast<std::int8_t>(Rate::kEvery1Sec), "1/s"},
+             {static_cast<std::int8_t>(Rate::kEvery2Sec), "1/2s"},
+             {static_cast<std::int8_t>(Rate::kEvery4Sec), "1/4s"},
+             {static_cast<std::int8_t>(Rate::kEvery8Sec), "1/8s"},
+             {static_cast<std::int8_t>(Rate::kEvery16Sec), "1/16s"}};
 
 ptpPanel::ptpPanel(wxWindow* parent, ptpBuilder* pBuilder, wxWindowID id,const wxPoint& pos,const wxSize& size) : pmPanel(),
     m_pBuilder(pBuilder),
     m_nDomain(Settings::Get().Read("Time", "PTP_Domain", 0)),
     m_pClock(nullptr),
     m_pLocalClock(nullptr),
-    m_mAccuracy({ { pml::ptpmonkey::clck::enumAccuracy::ACC_25NS,  "Within 25ns"},
-                  { pml::ptpmonkey::clck::enumAccuracy::ACC_100NS, "Within 100ns"},
-                  { pml::ptpmonkey::clck::enumAccuracy::ACC_250NS, "Within 250ns" },
-                  { pml::ptpmonkey::clck::enumAccuracy::ACC_1US,   "Within 1us"},
-                  { pml::ptpmonkey::clck::enumAccuracy::ACC_2_5US, "Within 2.5us"},
-                  { pml::ptpmonkey::clck::enumAccuracy::ACC_10US,  "Within 10us"},
-                  { pml::ptpmonkey::clck::enumAccuracy::ACC_25US,  "Within 25us"},
-                  { pml::ptpmonkey::clck::enumAccuracy::ACC_100US, "Within 100us"},
-                  { pml::ptpmonkey::clck::enumAccuracy::ACC_250US, "Within 250us"},
-                  { pml::ptpmonkey::clck::enumAccuracy::ACC_1MS,   "Within 1ms"},
-                  { pml::ptpmonkey::clck::enumAccuracy::ACC_2_5MS, "Within 2.5ms"},
-                  { pml::ptpmonkey::clck::enumAccuracy::ACC_10MS,  "Within 10ms"},
-                  { pml::ptpmonkey::clck::enumAccuracy::ACC_25MS,  "Within 25ms"},
-                  { pml::ptpmonkey::clck::enumAccuracy::ACC_100MS, "Within 100ms"},
-                  { pml::ptpmonkey::clck::enumAccuracy::ACC_250MS, "Within 250ms"},
-                  { pml::ptpmonkey::clck::enumAccuracy::ACC_1S,    "Within 1s"},
-                  { pml::ptpmonkey::clck::enumAccuracy::ACC_10S,   "Within 10s"},
-                  { pml::ptpmonkey::clck::enumAccuracy::ACC_OVER,  "Over 10ss"},
-                  { pml::ptpmonkey::clck::enumAccuracy::ACC_UNKNOWN,"Unknown" }}),
-    m_mTimeSource({ { pml::ptpmonkey::clck::enumTimeSource::ATOMIC, "Atomic"},
-                    { pml::ptpmonkey::clck::enumTimeSource::GPS, "GPS"},
-                    { pml::ptpmonkey::clck::enumTimeSource::RADIO,"Radio"},
-                    { pml::ptpmonkey::clck::enumTimeSource::PTP, "PTP"},
-                    { pml::ptpmonkey::clck::enumTimeSource::NTP, "NTP"},
-                    { pml::ptpmonkey::clck::enumTimeSource::HANDSET, "Handset"},
-                    { pml::ptpmonkey::clck::enumTimeSource::OTHER, "Other"},
-                    { pml::ptpmonkey::clck::enumTimeSource::INTERNAL, "Internal"}}),
-    m_mRate({{static_cast<std::int8_t>(Rate::PER_SEC_128), "128/s"},
-             {static_cast<std::int8_t>(Rate::PER_SEC_64), "64/s"},
-             {static_cast<std::int8_t>(Rate::PER_SEC_32), "32/s"},
-             {static_cast<std::int8_t>(Rate::PER_SEC_16), "16/s"},
-             {static_cast<std::int8_t>(Rate::PER_SEC_8), "8/s"},
-             {static_cast<std::int8_t>(Rate::PER_SEC_4), "4/s"},
-             {static_cast<std::int8_t>(Rate::PER_SEC_2), "2/s"},
-             {static_cast<std::int8_t>(Rate::EVERY_1_SEC), "1/s"},
-             {static_cast<std::int8_t>(Rate::EVERY_2_SEC), "1/2s"},
-             {static_cast<std::int8_t>(Rate::EVERY_4_SEC), "1/4s"},
-             {static_cast<std::int8_t>(Rate::EVERY_8_SEC), "1/8s"},
-             {static_cast<std::int8_t>(Rate::EVERY_16_SEC), "1/16s"}}),
     m_bRunning(false)
 {
 	//(*Initialize(ptpPanel)
@@ -1007,7 +1008,7 @@ void ptpPanel::ShowClockDetails()
     m_pblAddress->SetLabel(wxString(m_pClock->GetIpAddress()));
     m_plblIdentity->SetLabel(wxString(m_pClock->GetClockId()));
 
-    m_ppnlAnnouncements->Show((m_pClock->GetCount(hdr::enumType::ANNOUNCE) != 0));
+    m_ppnlAnnouncements->Show((m_pClock->GetCount(hdr::enumType::kAnnounce) != 0));
 
     m_pswp->ChangeSelection(m_pClock->IsSyncMaster() ? "Master" : "Slave");
 
@@ -1032,10 +1033,10 @@ void ptpPanel::ShowClockDetails()
     }
 
 
-    if((m_pClock->GetCount(hdr::enumType::ANNOUNCE) != 0))
+    if((m_pClock->GetCount(hdr::enumType::kAnnounce) != 0))
     {
-        auto itAccuracy = m_mAccuracy.find(m_pClock->GetAccuracy());
-        if(itAccuracy != m_mAccuracy.end())
+        auto itAccuracy = kAccuracy.find(m_pClock->GetAccuracy());
+        if(itAccuracy != kAccuracy.end())
         {
             m_plblAccuracy->SetLabel(itAccuracy->second);
         }
@@ -1043,13 +1044,13 @@ void ptpPanel::ShowClockDetails()
         {
             m_plblAccuracy->SetLabel("Unknown");
         }
-        m_plblAnnCount->SetLabel(wxString::Format("%llu", m_pClock->GetCount(hdr::enumType::ANNOUNCE)));
-        m_plblAnnRate->SetLabel(ConvertRate(m_pClock->GetInterval(hdr::enumType::ANNOUNCE)));
+        m_plblAnnCount->SetLabel(wxString::Format("%llu", m_pClock->GetCount(hdr::enumType::kAnnounce)));
+        m_plblAnnRate->SetLabel(ConvertRate(m_pClock->GetInterval(hdr::enumType::kAnnounce)));
 
         m_plblClass->SetLabel(wxString::Format("%u", static_cast<unsigned int>(m_pClock->GetClass())));
 
-        auto itSource = m_mTimeSource.find(m_pClock->GetTimeSource());
-        if(itSource != m_mTimeSource.end())
+        auto itSource = kTimeSource.find(m_pClock->GetTimeSource());
+        if(itSource != kTimeSource.end())
         {
             m_plblSource->SetLabel(itSource->second);
         }
@@ -1067,15 +1068,14 @@ void ptpPanel::ShowClockDetails()
 
     if(m_pClock->IsGrandMaster() || m_pClock->IsSyncMaster())
     {
-        m_plblSyncCount->SetLabel(wxString::Format("%llu", m_pClock->GetCount(hdr::enumType::SYNC)));
-        m_plblSyncRate->SetLabel(ConvertRate(m_pClock->GetInterval(hdr::enumType::SYNC)));
+        m_plblSyncCount->SetLabel(wxString::Format("%llu", m_pClock->GetCount(hdr::enumType::kSync)));
+        m_plblSyncRate->SetLabel(ConvertRate(m_pClock->GetInterval(hdr::enumType::kSync)));
 
-        m_plblFollowCount->SetLabel(wxString::Format("%llu", m_pClock->GetCount(hdr::enumType::FOLLOW_UP)));
-        m_plblFollowRate->SetLabel(ConvertRate(m_pClock->GetInterval(hdr::enumType::FOLLOW_UP)));
-
-        m_ppnlAnnounceFlags->ShowFlags(m_pClock->GetFlags(hdr::enumType::ANNOUNCE));
-        m_ppnlSyncFlags->ShowFlags(m_pClock->GetFlags(hdr::enumType::SYNC));
-        m_ppnlFollowFlags->ShowFlags(m_pClock->GetFlags(hdr::enumType::FOLLOW_UP));
+        m_plblFollowCount->SetLabel(wxString::Format("%llu", m_pClock->GetCount(hdr::enumType::kFollowUp)));
+        m_plblFollowRate->SetLabel(ConvertRate(m_pClock->GetInterval(hdr::enumType::kFollowUp)));
+        m_ppnlAnnounceFlags->ShowFlags(m_pClock->GetFlags(hdr::enumType::kAnnounce));
+        m_ppnlSyncFlags->ShowFlags(m_pClock->GetFlags(hdr::enumType::kSync));
+        m_ppnlFollowFlags->ShowFlags(m_pClock->GetFlags(hdr::enumType::kFollowUp));
 
         m_plblMasterId->SetLabel(wxPtp::Get().GetMasterClockId());
     }
@@ -1084,15 +1084,15 @@ void ptpPanel::ShowClockDetails()
         m_plblDelayMech->SetLabel("E-E");
 
         //m_plblDelayMessage->SetLabel
-        m_plblDelayCount->SetLabel(wxString::Format("%llu", m_pClock->GetCount(hdr::enumType::DELAY_REQ)));
-        m_plblDelayRate->SetLabel(ConvertRate(m_pClock->GetInterval(hdr::enumType::DELAY_REQ)));
+        m_plblDelayCount->SetLabel(wxString::Format("%llu", m_pClock->GetCount(hdr::enumType::kDelayReq)));
+        m_plblDelayRate->SetLabel(ConvertRate(m_pClock->GetInterval(hdr::enumType::kDelayReq)));
 
 
-        m_plblResponseCount->SetLabel(wxString::Format("%llu", m_pClock->GetCount(hdr::enumType::DELAY_RESP)));
-        m_plblResponseRate->SetLabel(ConvertRate(m_pClock->GetInterval(hdr::enumType::DELAY_RESP)));
+        m_plblResponseCount->SetLabel(wxString::Format("%llu", m_pClock->GetCount(hdr::enumType::kDelayResp)));
+        m_plblResponseRate->SetLabel(ConvertRate(m_pClock->GetInterval(hdr::enumType::kDelayResp)));
 
-        m_ppnlRequestFlags->ShowFlags(m_pClock->GetFlags(hdr::enumType::DELAY_REQ));
-        m_ppnlResponseFlags->ShowFlags(m_pClock->GetFlags(hdr::enumType::DELAY_RESP));
+        m_ppnlRequestFlags->ShowFlags(m_pClock->GetFlags(hdr::enumType::kDelayReq));
+        m_ppnlResponseFlags->ShowFlags(m_pClock->GetFlags(hdr::enumType::kDelayResp));
     }
 
 }
@@ -1250,8 +1250,8 @@ void ptpPanel::ClearClockDetails()
 
 wxString ptpPanel::ConvertRate(unsigned char nRate)
 {
-    auto itRate = m_mRate.find(nRate);
-    if(itRate != m_mRate.end())
+    auto itRate = kRate.find(nRate);
+    if(itRate != kRate.end())
     {
         return itRate->second;
     }
@@ -1280,7 +1280,7 @@ void ptpPanel::OnTimer(wxTimerEvent& event)
         Connect(wxID_ANY, wxEVT_CLOCK_MSG_DELAY_REQUEST,(wxObjectEventFunction)&ptpPanel::OnClockMessage);
         Connect(wxID_ANY, wxEVT_CLOCK_MSG_DELAY_RESPONSE,(wxObjectEventFunction)&ptpPanel::OnClockMessage);
 
-        wxPtp::Get().Run(Settings::Get().Read("AoIP_Settings", "Interface", "eth0"), m_nDomain, Settings::Get().Read("Time", "Ptp_Mode", 0) ? pml::ptpmonkey::Mode::HYBRID : pml::ptpmonkey::Mode::MULTICAST);
+        wxPtp::Get().Run(Settings::Get().Read("AoIP_Settings", "Interface", "eth0"), m_nDomain, Settings::Get().Read("Time", "Ptp_Mode", 0) ? pml::ptpmonkey::Mode::kHybrid : pml::ptpmonkey::Mode::kMulticast);
 
 
         for(const auto& [sClock, pClock] : wxPtp::Get().GetClocks())
@@ -1404,17 +1404,17 @@ void ptpPanel::ResetStats()
 Json::Value FlagsWebsocketMessage(unsigned int nFlags)
 {
     Json::Value jsFlags;
-    jsFlags["alternate_master"] =    (nFlags & static_cast<unsigned int>(pml::ptpmonkey::hdr::enumFlags::ALTERNATE_MASTER));
-    jsFlags["two_step"] = 		     (nFlags & static_cast<unsigned int>(pml::ptpmonkey::hdr::enumFlags::TWO_STEP));
-    jsFlags["unicast"] = 		     (nFlags & static_cast<unsigned int>(pml::ptpmonkey::hdr::enumFlags::UNICAST));
-    jsFlags["profile1"] = 		     (nFlags & static_cast<unsigned int>(pml::ptpmonkey::hdr::enumFlags::PROFILE1));
-    jsFlags["profile2"] = 		     (nFlags & static_cast<unsigned int>(pml::ptpmonkey::hdr::enumFlags::PROFILE2));
-    jsFlags["LI_61"] = 			     (nFlags & static_cast<unsigned int>(pml::ptpmonkey::hdr::enumFlags::LI_61));
-    jsFlags["LI_59"] = 			     (nFlags & static_cast<unsigned int>(pml::ptpmonkey::hdr::enumFlags::LI_59));
-    jsFlags["UTC_Offset"] = 	     (nFlags & static_cast<unsigned int>(pml::ptpmonkey::hdr::enumFlags::UTC_OFFSET_VALID));
-    jsFlags["timescale"] = 		     (nFlags & static_cast<unsigned int>(pml::ptpmonkey::hdr::enumFlags::TIMESCALE));
-    jsFlags["time_traceable"] =      (nFlags & static_cast<unsigned int>(pml::ptpmonkey::hdr::enumFlags::TIME_TRACEABLE));
-    jsFlags["frequency_traceable"] = (nFlags & static_cast<unsigned int>(pml::ptpmonkey::hdr::enumFlags::FREQ_TRACEABLE));
+    jsFlags["alternate_master"] =    (nFlags & static_cast<unsigned int>(pml::ptpmonkey::hdr::enumFlags::kAlternateMaster));
+    jsFlags["two_step"] = 		     (nFlags & static_cast<unsigned int>(pml::ptpmonkey::hdr::enumFlags::kTwoStep));
+    jsFlags["unicast"] = 		     (nFlags & static_cast<unsigned int>(pml::ptpmonkey::hdr::enumFlags::kUnicast));
+    jsFlags["profile1"] = 		     (nFlags & static_cast<unsigned int>(pml::ptpmonkey::hdr::enumFlags::kProfile1));
+    jsFlags["profile2"] = 		     (nFlags & static_cast<unsigned int>(pml::ptpmonkey::hdr::enumFlags::kProfile2));
+    jsFlags["LI_61"] = 			     (nFlags & static_cast<unsigned int>(pml::ptpmonkey::hdr::enumFlags::kLI_61));
+    jsFlags["LI_59"] = 			     (nFlags & static_cast<unsigned int>(pml::ptpmonkey::hdr::enumFlags::kLI_59));
+    jsFlags["UTC_Offset"] = 	     (nFlags & static_cast<unsigned int>(pml::ptpmonkey::hdr::enumFlags::kUtcOffsetValid));
+    jsFlags["timescale"] = 		     (nFlags & static_cast<unsigned int>(pml::ptpmonkey::hdr::enumFlags::kTimescale));
+    jsFlags["time_traceable"] =      (nFlags & static_cast<unsigned int>(pml::ptpmonkey::hdr::enumFlags::kTimeTraceable));
+    jsFlags["frequency_traceable"] = (nFlags & static_cast<unsigned int>(pml::ptpmonkey::hdr::enumFlags::kFreqTraceable));
     return jsFlags;
 }
 
@@ -1435,32 +1435,32 @@ void ptpPanel::ClockMessageWebsocketMessage(const wxString& sClock)
             if(wxPtp::Get().GetMasterClockId() == sClock || (pSyncMaster && pSyncMaster->GetId() == sClock))
             {
                 jsClock["master"] = true;
-                jsClock["sync"]["count"] = Json::UInt64(pClock->GetCount(hdr::enumType::SYNC));
-                jsClock["sync"]["rate"] = ConvertRate(pClock->GetInterval(hdr::enumType::SYNC)).ToStdString();
-                jsClock["sync"]["flags"] = FlagsWebsocketMessage(pClock->GetFlags(hdr::enumType::SYNC));
+                jsClock["sync"]["count"] = static_cast<Json::UInt64>(pClock->GetCount(hdr::enumType::kSync));
+                jsClock["sync"]["rate"] = ConvertRate(pClock->GetInterval(hdr::enumType::kSync)).ToStdString();
+                jsClock["sync"]["flags"] = FlagsWebsocketMessage(pClock->GetFlags(hdr::enumType::kSync));
 
-                jsClock["followup"]["count"] = Json::UInt64(pClock->GetCount(hdr::enumType::FOLLOW_UP));
-                jsClock["followup"]["rate"] = ConvertRate(pClock->GetInterval(hdr::enumType::FOLLOW_UP)).ToStdString();
-                jsClock["followup"]["flags"] = FlagsWebsocketMessage(pClock->GetFlags(hdr::enumType::FOLLOW_UP));
+                jsClock["followup"]["count"] = static_cast<Json::UInt64>(pClock->GetCount(hdr::enumType::kFollowUp));
+                jsClock["followup"]["rate"] = ConvertRate(pClock->GetInterval(hdr::enumType::kFollowUp)).ToStdString();
+                jsClock["followup"]["flags"] = FlagsWebsocketMessage(pClock->GetFlags(hdr::enumType::kFollowUp));
 
             }
             else
             {
                 jsClock["master"] = false;
                 //jsClock["delay"]["type"] = "E-E";
-                jsClock["delay_request"]["count"] = Json::UInt64(pClock->GetCount(hdr::enumType::DELAY_REQ));
-                jsClock["delay_request"]["rate"] = ConvertRate(pClock->GetInterval(hdr::enumType::DELAY_REQ)).ToStdString();
-                jsClock["delay_response"]["count"] = Json::UInt64(pClock->GetCount(hdr::enumType::DELAY_RESP));
-                jsClock["delay_response"]["rate"] = ConvertRate(pClock->GetInterval(hdr::enumType::DELAY_RESP)).ToStdString();
+                jsClock["delay_request"]["count"] = Json::UInt64(pClock->GetCount(hdr::enumType::kDelayReq));
+                jsClock["delay_request"]["rate"] = ConvertRate(pClock->GetInterval(hdr::enumType::kDelayReq)).ToStdString();
+                jsClock["delay_response"]["count"] = Json::UInt64(pClock->GetCount(hdr::enumType::kDelayResp));
+                jsClock["delay_response"]["rate"] = ConvertRate(pClock->GetInterval(hdr::enumType::kDelayResp)).ToStdString();
 
-                jsClock["delay_request"]["flags"] = FlagsWebsocketMessage(pClock->GetFlags(hdr::enumType::DELAY_REQ));
-                jsClock["delay_response"]["flags"] = FlagsWebsocketMessage(pClock->GetFlags(hdr::enumType::DELAY_RESP));
+                jsClock["delay_request"]["flags"] = FlagsWebsocketMessage(pClock->GetFlags(hdr::enumType::kDelayReq));
+                jsClock["delay_response"]["flags"] = FlagsWebsocketMessage(pClock->GetFlags(hdr::enumType::kDelayResp));
             }
 
-            if(pClock->GetCount(hdr::enumType::ANNOUNCE) != 0)
+            if(pClock->GetCount(hdr::enumType::kAnnounce) != 0)
             {
-                auto itAccuracy = m_mAccuracy.find(pClock->GetAccuracy());
-                if(itAccuracy != m_mAccuracy.end())
+                auto itAccuracy = kAccuracy.find(pClock->GetAccuracy());
+                if(itAccuracy != kAccuracy.end())
                 {
                     jsClock["announcement"]["accuracy"] = itAccuracy->second.ToStdString();
                 }
@@ -1468,13 +1468,13 @@ void ptpPanel::ClockMessageWebsocketMessage(const wxString& sClock)
                 {
                     jsClock["announcement"]["accuracy"] = "Unknown";
                 }
-                jsClock["announcement"]["count"] = Json::UInt64(pClock->GetCount(hdr::enumType::ANNOUNCE));
-                jsClock["announcement"]["rate"] = ConvertRate(pClock->GetInterval(hdr::enumType::ANNOUNCE)).ToStdString();
+                jsClock["announcement"]["count"] = Json::UInt64(pClock->GetCount(hdr::enumType::kAnnounce));
+                jsClock["announcement"]["rate"] = ConvertRate(pClock->GetInterval(hdr::enumType::kAnnounce)).ToStdString();
                 jsClock["announcement"]["class"] = pClock->GetClass();
 
 
-                auto itSource = m_mTimeSource.find(pClock->GetTimeSource());
-                if(itSource != m_mTimeSource.end())
+                auto itSource = kTimeSource.find(pClock->GetTimeSource());
+                if(itSource != kTimeSource.end())
                 {
                     jsClock["announcement"]["source"] = itSource->second.ToStdString();
                 }
@@ -1488,7 +1488,7 @@ void ptpPanel::ClockMessageWebsocketMessage(const wxString& sClock)
                 jsClock["announcement"]["priority_1"] = pClock->GetPriority1();
                 jsClock["announcement"]["priority_2"] = pClock->GetPriority2();
 
-                jsClock["announcement"]["flags"] = FlagsWebsocketMessage(pClock->GetFlags(hdr::enumType::ANNOUNCE));
+                jsClock["announcement"]["flags"] = FlagsWebsocketMessage(pClock->GetFlags(hdr::enumType::kAnnounce));
             }
         }
         m_pBuilder->SendWebsocketMessage(jsClock);

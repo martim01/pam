@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 project(pamworkspace VERSION 1.8.0)
 
-include(FetchContent)
+include(addexternal.cmake)
 
 set(CMAKE_INSTALL_PREFIX "/usr/local")
 
@@ -20,6 +20,7 @@ SET(DIR_LOG ${DIR_BASE}/external/log CACHE STRING "location of pml log")
 SET(DIR_DNSSD ${DIR_BASE}/external/dnssd CACHE STRING "location of pml dnssd")
 SET(DIR_RESTGOOSE ${DIR_BASE}/external/restgoose CACHE STRING "location of Restgoose")
 SET(RESTGOOSE_BRANCH "main" CACHE STRING "Restgoose branch to use")
+SET(DIR_JSON ${DIR_BASE}/external/jsoncpp CACHE STRING "location of jsoncpp")
 
 #set the following to off so we build them rather than one of the sub projects
 SET(BUILD_DNSSD OFF)
@@ -28,46 +29,27 @@ SET(BUILD_LOG OFF)
 
 message(STATUS "Find external libraries")
 
-FetchContent_Declare(jsoncpp GIT_REPOSITORY "https://github.com/open-source-parsers/jsoncpp" SOURCE_DIR ${DIR_JSON})
-FetchContent_GetProperties(jsoncpp)
-if(NOT jsoncpp_POPULATED)
-    FetchContent_Populate(jsoncpp)
-    execute_process(COMMAND python3 amalgamate.py WORKING_DIRECTORY ${DIR_JSON})
+add_external_library(jsoncpp ${DIR_JSON} "https://github.com/open-source-parsers/jsoncpp" "" FALSE)
+if(EXISTS ${DIR_JSON}/amalgamate.py)
+	message(STATUS "Generating jsoncpp amalgamated source files")
+	execute_process(COMMAND python3 amalgamate.py WORKING_DIRECTORY ${DIR_JSON})
 endif()
 
+add_external_library(log ${DIR_LOG} "https://github.com/martim01/log.git" "" TRUE)
+add_external_library(ptpmonkey ${DIR_PTPMONKEY} "https://github.com/martim01/ptpmonkey.git" "" TRUE)
+add_external_library(restgoose ${DIR_RESTGOOSE} "https://github.com/martim01/restgoose.git" "origin/main" TRUE)
 
-FetchContent_Declare(log GIT_REPOSITORY "https://github.com/martim01/log.git"  SOURCE_DIR ${DIR_LOG})
-FetchContent_Declare(ptpmonkey GIT_REPOSITORY "https://github.com/martim01/ptpmonkey.git"  SOURCE_DIR ${DIR_PTPMONKEY})
-FetchContent_Declare(sapserver GIT_REPOSITORY "https://github.com/martim01/sapserver.git"  SOURCE_DIR ${DIR_SAPSERVER})
-FetchContent_Declare(livewire GIT_REPOSITORY "https://github.com/martim01/livewirediscover.git"  SOURCE_DIR ${DIR_LIVEWIRE})
-FetchContent_Declare(dnssd GIT_REPOSITORY "https://github.com/martim01/dnssd.git"  SOURCE_DIR ${DIR_DNSSD})
-FetchContent_Declare(restgoose GIT_REPOSITORY "https://github.com/martim01/restgoose.git"  GIT_TAG "origin/main" SOURCE_DIR ${DIR_RESTGOOSE})
-
-FetchContent_MakeAvailable(log ptpmonkey sapserver livewire dnssd restgoose)
+add_external_library(sapserver ${DIR_SAPSERVER} "https://github.com/martim01/sapserver.git" "" TRUE)
+add_external_library(livewire ${DIR_LIVEWIRE} "https://github.com/martim01/livewirediscover.git"  "" TRUE)
+add_external_library(dnssd ${DIR_DNSSD} "https://github.com/martim01/dnssd.git"  "" TRUE)
 
 if(${NMOS})
-    FetchContent_Declare(nmos GIT_REPOSITORY "https://github.com/martim01/nmos.git"  SOURCE_DIR ${DIR_NMOS})
-    FetchContent_MakeAvailable(nmos)
+    add_external_library(nmos ${DIR_NMOS} "https://github.com/martim01/nmos.git"  "" TRUE)
+
 endif()
 
-#message(STATUS "Configure pml::log")
-#add_subdirectory(${DIR_LOG} ${CMAKE_SOURCE_DIR}/build/log)
-#message(STATUS "Configure pml::sapserver")
-#add_subdirectory(${DIR_SAPSERVER} ${CMAKE_SOURCE_DIR}/build/sapserver)
-#message(STATUS "Configure pml::ptpmonkey")
-#add_subdirectory(${DIR_PTPMONKEY} ${CMAKE_SOURCE_DIR}/build/ptpmonkey)
-#message(STATUS "Configure pml::dnssd")
-#add_subdirectory(${DIR_DNSSD} ${CMAKE_SOURCE_DIR}/build/dnssd)
-#message(STATUS "Configure pml::livewire")
-#add_subdirectory(${DIR_LIVEWIRE} ${CMAKE_SOURCE_DIR}/build/livewirediscover)
-
-#if(${NMOS})
-#    message(STATUS "Configure pml::nmos")
-#    add_subdirectory(${DIR_NMOS} ${CMAKE_SOURCE_DIR}/build/nmos)
-#else()
-#    message(STATUS "Configure pml::restgoose")
-#    add_subdirectory(${DIR_RESTGOOSE} ${CMAKE_SOURCE_DIR}/build/restgoose)
-#endif()
+include_directories(${DIR_LOG}/include)
+include_directories(${DIR_RESTGOOSE}/include)
 
 configure_file(pam2_paths.h.in ${CMAKE_BINARY_DIR}/include/pam2_paths.h @ONLY)
 

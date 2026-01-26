@@ -133,7 +133,7 @@ IOManager::IOManager() :
     Connect(wxID_ANY, wxEVT_CLOCK_MASTER, (wxObjectEventFunction)&IOManager::OnPtpEvent);
     Connect(wxID_ANY, wxEVT_CLOCK_SLAVE, (wxObjectEventFunction)&IOManager::OnPtpEvent);
     wxPtp::Get().Run(std::string(Settings::Get().Read("AoIP_Settings", "Interface", "eth0").mb_str()),
-    Settings::Get().Read("Time", "PTP_Domain", 0), Settings::Get().Read("Time", "Ptp_Mode", 0) ? pml::ptpmonkey::Mode::HYBRID : pml::ptpmonkey::Mode::MULTICAST);
+    Settings::Get().Read("Time", "PTP_Domain", 0), Settings::Get().Read("Time", "Ptp_Mode", 0) ? pml::ptpmonkey::Mode::kHybrid : pml::ptpmonkey::Mode::kMulticast);
     #endif // PTPMONKEY
     m_pGenerator = std::make_unique<Generator>();
     m_pGenerator->SetSampleRate(48000);

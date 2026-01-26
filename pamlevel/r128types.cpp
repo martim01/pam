@@ -3,7 +3,7 @@
 #include <wx/xml/xml.h>
 #include <wx/tokenzr.h>
 #include <wx/stdpaths.h>
-#include "log.h"
+
 
 using namespace std;
 

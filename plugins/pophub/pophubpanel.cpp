@@ -37,6 +37,7 @@ pophubPanel::pophubPanel(wxWindow* parent,pophubBuilder* pBuilder, wxWindowID id
 	
 	Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp);
 
+	SetBackgroundColour(wxColour(254,80,80));
 	SetSize(size);
 	SetPosition(pos);
 

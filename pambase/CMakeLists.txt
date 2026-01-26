@@ -2,25 +2,25 @@ cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 project(pambase LANGUAGES CXX VERSION 1.8.2)
 
 
-execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -P ${CMAKE_SOURCE_DIR}/version.cmake)
+execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -DOUTPUT=${CMAKE_BINARY_DIR} -P ${CMAKE_SOURCE_DIR}/version.cmake)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 #build the live555 libs
-include_directories("../external/live/BasicUsageEnvironment/include")
-include_directories("../external/live/groupsock/include")
-include_directories("../external/live/liveMedia/include")
-include_directories("../external/live/UsageEnvironment/include")
+include_directories("${CMAKE_SOURCE_DIR}/external/live/BasicUsageEnvironment/include")
+include_directories("${CMAKE_SOURCE_DIR}/external/live/groupsock/include")
+include_directories("${CMAKE_SOURCE_DIR}/external/live/liveMedia/include")
+include_directories("${CMAKE_SOURCE_DIR}/external/live/UsageEnvironment/include")
 
-file(GLOB USAGE_SOURCES "../external/live/UsageEnvironment/*.cpp")
-file(GLOB BASICUSAGE_SOURCES "../external/live/BasicUsageEnvironment/*.cpp")
-file(GLOB GROUPSOCK_SOURCES "../external/live/groupsock/*.cpp")
-file(GLOB LIVEMEDIA_SOURCES "../external/live/liveMedia/*.cpp")
+file(GLOB USAGE_SOURCES "${CMAKE_SOURCE_DIR}/external/live/UsageEnvironment/*.cpp")
+file(GLOB BASICUSAGE_SOURCES "${CMAKE_SOURCE_DIR}/external/live/BasicUsageEnvironment/*.cpp")
+file(GLOB GROUPSOCK_SOURCES "${CMAKE_SOURCE_DIR}/external/live/groupsock/*.cpp")
+file(GLOB LIVEMEDIA_SOURCES "${CMAKE_SOURCE_DIR}/external/live/liveMedia/*.cpp")
 
-add_library(groupsock STATIC ${GROUPSOCK_SOURCES} "../external/live/groupsock/inet.c")
+add_library(groupsock STATIC ${GROUPSOCK_SOURCES} "${CMAKE_SOURCE_DIR}/external/live/groupsock/inet.c")
 add_library(UsageEnvironment STATIC ${USAGE_SOURCES} )
 add_library(BasicUsageEnvironment STATIC ${BASICUSAGE_SOURCES} )
-add_library(liveMedia STATIC ${LIVEMEDIA_SOURCES}  "../external/live/liveMedia/rtcp_from_spec.c")
+add_library(liveMedia STATIC ${LIVEMEDIA_SOURCES}  "${CMAKE_SOURCE_DIR}/external/live/liveMedia/rtcp_from_spec.c")
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive")
 target_compile_options(groupsock PRIVATE ${flags})
@@ -96,7 +96,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	endif()
 endif()
 
-link_directories(${CMAKE_BINARY_DIR}/../lib/)
+target_link_directories(pambase PRIVATE ${CMAKE_SOURCE_DIR}/lib)	
+
 target_link_libraries(pambase liveMedia)
 target_link_libraries(pambase BasicUsageEnvironment)
 target_link_libraries(pambase UsageEnvironment)
@@ -113,7 +114,7 @@ target_link_libraries(pambase optimized restgoose debug restgoosed)
 target_link_libraries(pambase optimized livewireserver debug livewireserverd)
 
 set_target_properties(pambase PROPERTIES DEBUG_POSTFIX "d")
-set_target_properties(pambase PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../lib/)
+set_target_properties(pambase PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib/)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")

@@ -1,7 +1,7 @@
 #include "delayline.h"
 #include "offsetcalculator.h"
 #include <algorithm>
-#include "log.h"
+
 
 DelayLine::DelayLine(unsigned int nWindowSamples, unsigned int nAccuracy) : m_nWindowSamples(nWindowSamples),
 m_nAccuracy(nAccuracy),

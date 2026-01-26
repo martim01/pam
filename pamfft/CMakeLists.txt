@@ -2,23 +2,25 @@ cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 project(pamfft LANGUAGES CXX C VERSION 1.2.0.0)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-include_directories("../pambase/")
+include_directories("${CMAKE_SOURCE_DIR}/pambase/")
 include_directories(${DIR_RESTGOOSE}/include)
-include_directories("../external/kiss_fft130")
-include_directories("../external/kiss_fft130/tools")
+include_directories("${CMAKE_SOURCE_DIR}/external/kiss_fft130")
+include_directories("${CMAKE_SOURCE_DIR}/external/kiss_fft130/tools")
 include_directories(${CMAKE_BINARY_DIR}/include)
-link_directories("../lib")
 
-execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -P ${CMAKE_SOURCE_DIR}/version.cmake)
 
-file(GLOB SOURCES "*.cpp" "../external/kiss_fft130/kiss_fft.c" "../external/kiss_fft130/tools/kfc.c" 
- "../external/kiss_fft130/tools/kiss_fftnd.c" "../external/kiss_fft130/tools/kiss_fftndr.c" "../external/kiss_fft130/tools/kiss_fftr.c"	"kiss_xcorr.c" ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_version.cpp)
+
+execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -DOUTPUT=${CMAKE_BINARY_DIR} -P ${CMAKE_SOURCE_DIR}/version.cmake)
+
+file(GLOB SOURCES "*.cpp" "${CMAKE_SOURCE_DIR}/external/kiss_fft130/kiss_fft.c" "${CMAKE_SOURCE_DIR}/external/kiss_fft130/tools/kfc.c" 
+ "${CMAKE_SOURCE_DIR}/external/kiss_fft130/tools/kiss_fftnd.c" "${CMAKE_SOURCE_DIR}/external/kiss_fft130/tools/kiss_fftndr.c" "${CMAKE_SOURCE_DIR}/external/kiss_fft130/tools/kiss_fftr.c"	"kiss_xcorr.c" ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_version.cpp)
 
 add_library(pamfft SHARED ${SOURCES})
 #find external libraries
 find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
+target_link_directories(pamfft PRIVATE ${CMAKE_SOURCE_DIR}/lib)
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" )
 
@@ -40,7 +42,7 @@ set_target_properties(pamfft PROPERTIES CXX_STANDARD 17)
 
 
 
-set_target_properties(pamfft PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../lib/")
+set_target_properties(pamfft PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/lib/")
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")

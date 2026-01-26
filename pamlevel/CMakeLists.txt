@@ -1,16 +1,18 @@
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 project(pamlevel LANGUAGES CXX VERSION 1.3.0)
 
-execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -P ${CMAKE_SOURCE_DIR}/version.cmake)
+execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -DOUTPUT=${CMAKE_BINARY_DIR} -P ${CMAKE_SOURCE_DIR}/version.cmake)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-include_directories("../pambase/")
+include_directories("${CMAKE_SOURCE_DIR}/pambase/")
 include_directories(${CMAKE_BINARY_DIR}/include)
-link_directories("../lib")
+
 
 
 
 add_library(pamlevel SHARED "audioalgorithms.cpp" "correlationbar.cpp" "filt.cpp" "r128types.cpp" "truepeakcalculator.cpp" ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_version.cpp)
+
+target_link_directories(pamlevel PRIVATE ${CMAKE_SOURCE_DIR}/lib)	
 
 list(APPEND flags "-fPIC" "-Wall" "-fpermissive" "-O3")
 target_compile_options(pamlevel PRIVATE ${flags})
@@ -47,7 +49,7 @@ target_link_libraries(pamlevel optimized pambase debug pambased)
 
 set_target_properties(pamlevel PROPERTIES DEBUG_POSTFIX "d")
 set_target_properties(pamlevel PROPERTIES CXX_STANDARD 17)
-set_target_properties(pamlevel PROPERTIES LIBRARY_OUTPUT_DIRECTORY "../../lib/")
+set_target_properties(pamlevel PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/lib/")
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")

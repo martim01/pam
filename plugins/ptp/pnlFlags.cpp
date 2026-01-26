@@ -102,16 +102,16 @@ pnlFlags::~pnlFlags()
 
 void pnlFlags::ShowFlags(unsigned short nFlags)
 {
-    m_plblFlagsAlternate->SetBackgroundColour((nFlags & static_cast<unsigned short>(pml::ptpmonkey::hdr::enumFlags::ALTERNATE_MASTER)) ? CLR_ON : CLR_OFF);
-    m_plblFlags2Step->SetBackgroundColour(    (nFlags & static_cast<unsigned short>(pml::ptpmonkey::hdr::enumFlags::TWO_STEP)) ? CLR_ON : CLR_OFF);
-    m_plblFlagsUnicast->SetBackgroundColour(  (nFlags & static_cast<unsigned short>(pml::ptpmonkey::hdr::enumFlags::UNICAST)) ? CLR_ON : CLR_OFF);
-    m_plblFlagsProfile1->SetBackgroundColour( (nFlags & static_cast<unsigned short>(pml::ptpmonkey::hdr::enumFlags::PROFILE1)) ? CLR_ON : CLR_OFF);
-    m_plblFlagsProfile2->SetBackgroundColour( (nFlags & static_cast<unsigned short>(pml::ptpmonkey::hdr::enumFlags::PROFILE2)) ? CLR_ON : CLR_OFF);
-    m_plblFlags61->SetBackgroundColour(       (nFlags & static_cast<unsigned short>(pml::ptpmonkey::hdr::enumFlags::LI_61)) ? CLR_ON : CLR_OFF);
-    m_plblFlags59->SetBackgroundColour(       (nFlags & static_cast<unsigned short>(pml::ptpmonkey::hdr::enumFlags::LI_59)) ? CLR_ON : CLR_OFF);
-    m_plblFlagsUTC->SetBackgroundColour(      (nFlags & static_cast<unsigned short>(pml::ptpmonkey::hdr::enumFlags::UTC_OFFSET_VALID)) ? CLR_ON : CLR_OFF);
-    m_plblFlagsScale->SetBackgroundColour(    (nFlags & static_cast<unsigned short>(pml::ptpmonkey::hdr::enumFlags::TIMESCALE)) ? CLR_ON : CLR_OFF);
-    m_plblFlagsTime->SetBackgroundColour(     (nFlags & static_cast<unsigned short>(pml::ptpmonkey::hdr::enumFlags::TIME_TRACEABLE)) ? CLR_ON : CLR_OFF);
-    m_plblFlagsFreq->SetBackgroundColour(     (nFlags & static_cast<unsigned short>(pml::ptpmonkey::hdr::enumFlags::FREQ_TRACEABLE)) ? CLR_ON : CLR_OFF);
+    m_plblFlagsAlternate->SetBackgroundColour((nFlags & static_cast<unsigned short>(pml::ptpmonkey::hdr::enumFlags::kAlternateMaster)) ? CLR_ON : CLR_OFF);
+    m_plblFlags2Step->SetBackgroundColour(    (nFlags & static_cast<unsigned short>(pml::ptpmonkey::hdr::enumFlags::kTwoStep)) ? CLR_ON : CLR_OFF);
+    m_plblFlagsUnicast->SetBackgroundColour(  (nFlags & static_cast<unsigned short>(pml::ptpmonkey::hdr::enumFlags::kUnicast)) ? CLR_ON : CLR_OFF);
+    m_plblFlagsProfile1->SetBackgroundColour( (nFlags & static_cast<unsigned short>(pml::ptpmonkey::hdr::enumFlags::kProfile1)) ? CLR_ON : CLR_OFF);
+    m_plblFlagsProfile2->SetBackgroundColour( (nFlags & static_cast<unsigned short>(pml::ptpmonkey::hdr::enumFlags::kProfile2)) ? CLR_ON : CLR_OFF);
+    m_plblFlags61->SetBackgroundColour(       (nFlags & static_cast<unsigned short>(pml::ptpmonkey::hdr::enumFlags::kLI_61)) ? CLR_ON : CLR_OFF);
+    m_plblFlags59->SetBackgroundColour(       (nFlags & static_cast<unsigned short>(pml::ptpmonkey::hdr::enumFlags::kLI_59)) ? CLR_ON : CLR_OFF);
+    m_plblFlagsUTC->SetBackgroundColour(      (nFlags & static_cast<unsigned short>(pml::ptpmonkey::hdr::enumFlags::kUtcOffsetValid)) ? CLR_ON : CLR_OFF);
+    m_plblFlagsScale->SetBackgroundColour(    (nFlags & static_cast<unsigned short>(pml::ptpmonkey::hdr::enumFlags::kTimescale)) ? CLR_ON : CLR_OFF);
+    m_plblFlagsTime->SetBackgroundColour(     (nFlags & static_cast<unsigned short>(pml::ptpmonkey::hdr::enumFlags::kTimeTraceable)) ? CLR_ON : CLR_OFF);
+    m_plblFlagsFreq->SetBackgroundColour(     (nFlags & static_cast<unsigned short>(pml::ptpmonkey::hdr::enumFlags::kFreqTraceable)) ? CLR_ON : CLR_OFF);
 
 }

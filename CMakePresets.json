@@ -1,0 +1,150 @@
+{
+  "version": 2,
+  "cmakeMinimumRequired": { "major": 3, "minor": 20, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "vs2022-debug",
+      "displayName": "Visual Studio 17 2022 - Debug",
+      "description": "Configure for Visual Studio 2022 (Debug)",
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "${sourceDir}/build/vs2022/Debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "AOIP_USE_STATIC_MSVC_RUNTIME": "FALSE"
+      }
+    },
+    {
+      "name": "vs2022-release",
+      "displayName": "Visual Studio 17 2022 - Release",
+      "description": "Configure for Visual Studio 2022 (Release)",
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "${sourceDir}/build/vs2022/Release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "AOIP_USE_STATIC_MSVC_RUNTIME": "FALSE"
+      }
+    },
+    {
+      "name": "mingw-debug",
+      "displayName": "MinGW Makefiles - Debug",
+      "description": "Configure for MinGW Makefiles (Debug)",
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${sourceDir}/build/mingw/Debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "mingw-release",
+      "displayName": "MinGW Makefiles - Release",
+      "description": "Configure for MinGW Makefiles (Release)",
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${sourceDir}/build/mingw/Release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "ninja-debug",
+      "displayName": "Ninja - Debug",
+      "description": "Configure for Ninja (Debug)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/ninja/Debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "ninja-release",
+      "displayName": "Ninja - Release",
+      "description": "Configure for Ninja (Release)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/ninja/Release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "linux-gcc-debug",
+      "displayName": "Linux GCC - Debug",
+      "description": "Configure for Linux using GCC (Debug)",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/linux/gcc/Debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
+      }
+    },
+    {
+      "name": "linux-gcc-release",
+      "displayName": "Linux GCC - Release",
+      "description": "Configure for Linux using GCC (Release)",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/linux/gcc/Release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "default",
+      "displayName": "Build (default: mingw-debug)",
+      "configurePreset": "mingw-debug",
+      "description": "Configure (if needed) and build using the mingw-debug configure preset",
+      "configuration": "Debug"
+    },
+    {
+      "name": "vs2022-debug",
+      "displayName": "Build (Visual Studio Debug)",
+      "configurePreset": "vs2022-debug",
+      "description": "Build using the Visual Studio 2022 debug configure preset",
+      "configuration": "Debug"
+    },
+    {
+      "name": "vs2022-release",
+      "displayName": "Build (Visual Studio Release)",
+      "configurePreset": "vs2022-release",
+      "description": "Build using the Visual Studio 2022 release configure preset",
+      "configuration": "Release"
+    },
+    {
+      "name": "mingw-release",
+      "displayName": "Build (MinGW Release)",
+      "configurePreset": "mingw-release",
+      "description": "Build using the MinGW release configure preset",
+      "configuration": "Release"
+    },
+    {
+      "name": "ninja-debug",
+      "displayName": "Build (Ninja Debug)",
+      "configurePreset": "ninja-debug",
+      "description": "Build using the Ninja debug configure preset",
+      "configuration": "Debug"
+    },
+    {
+      "name": "ninja-release",
+      "displayName": "Build (Ninja Release)",
+      "configurePreset": "ninja-release",
+      "description": "Build using the Ninja release configure preset",
+      "configuration": "Release"
+    },
+    {
+      "name": "linux-gcc-debug",
+      "displayName": "Build (Linux GCC Debug)",
+      "configurePreset": "linux-gcc-debug",
+      "description": "Build using the Linux GCC debug configure preset",
+      "configuration": "Debug"
+    },
+    {
+      "name": "linux-gcc-release",
+      "displayName": "Build (Linux GCC Release)",
+      "configurePreset": "linux-gcc-release",
+      "description": "Build using the Linux GCC release configure preset",
+      "configuration": "Release"
+    }
+  ]
+}

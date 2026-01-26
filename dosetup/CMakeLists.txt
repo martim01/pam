@@ -2,16 +2,15 @@ cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 project(dosetup LANGUAGES CXX VERSION 1.0.0.0)
 
 
-execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -P ${CMAKE_SOURCE_DIR}/version.cmake)
+execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -DOUTPUT=${CMAKE_BINARY_DIR} -P ${CMAKE_SOURCE_DIR}/version.cmake)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-include_directories("../pambase/")
+include_directories(${CMAKE_SOURCE_DIR}/pambase/)
 include_directories(${CMAKE_BINARY_DIR}/include)
 include_directories(${DIR_LOG}/include)
 
-link_directories("../lib")
-
+link_directories("${CMAKE_SOURCE_DIR}/lib")
 set(SOURCES "main.cpp" ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}_version.cpp)
 
 add_executable(dosetup ${SOURCES})
@@ -24,7 +23,7 @@ target_link_libraries(dosetup pml_log)
 
 
 set_property(TARGET dosetup PROPERTY CXX_STANDARD 17)
-set_target_properties(dosetup PROPERTIES RUNTIME_OUTPUT_DIRECTORY "../../bin/")
+set_target_properties(dosetup PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/")
 
 
 #linux specific

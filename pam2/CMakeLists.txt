@@ -1,25 +1,27 @@
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 project(pam2 LANGUAGES CXX VERSION 1.8.0)
 
-execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -P ${CMAKE_SOURCE_DIR}/version.cmake)
+execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -DOUTPUT=${CMAKE_BINARY_DIR} -P ${CMAKE_SOURCE_DIR}/version.cmake)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-include_directories("../pambase/")
-include_directories("../external/live/BasicUsageEnvironment/include")
-include_directories("../external/live/groupsock/include")
-include_directories("../external/live/liveMedia/include")
-include_directories("../external/live/UsageEnvironment/include")
+include_directories("${CMAKE_SOURCE_DIR}/pambase/")
+include_directories("${CMAKE_SOURCE_DIR}/external/live/BasicUsageEnvironment/include")
+include_directories("${CMAKE_SOURCE_DIR}/external/live/groupsock/include")
+include_directories("${CMAKE_SOURCE_DIR}/external/live/liveMedia/include")
+include_directories("${CMAKE_SOURCE_DIR}/external/live/UsageEnvironment/include")
 include_directories("images/")
 include_directories(${DIR_LOG}/include)
 include_directories(${DIR_RESTGOOSE}/include
 include_directories(${DIR_JSON}/include))
 include_directories(${DIR_PTPMONKEY}/include)
+include_directories(${DIR_DNSSD}/include)
+include_directories(${DIR_SAPSERVER}/include)
+include_directories(${DIR_LIVEWIRE}/include)
 include_directories(${CMAKE_BINARY_DIR}/include)
 
 if(${NMOS})
 	include_directories(${DIR_NMOS}/include)
 endif()
-link_directories("../lib")
 
 
 
@@ -33,6 +35,7 @@ set(SOURCES "aboutelement.cpp" "dlgAoIP.cpp" "dlgEngineering.cpp" "dlgNoInput.cp
 
 
 add_executable(pam2 ${SOURCES})
+target_link_directories(pam2 PRIVATE ${CMAKE_SOURCE_DIR}/lib)
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -61,6 +64,7 @@ target_link_libraries(pam2 optimized pml_log debug pml_logd)
 target_link_libraries(pam2 optimized pml_dnssd debug pml_dnssdd)
 target_link_libraries(pam2 avahi-client)
 target_link_libraries(pam2 jsoncpp)
+target_link_libraries(pam2 portaudio)
 
 target_link_libraries(pam2 optimized restgoose debug restgoosed)
 if(${NMOS})
@@ -78,7 +82,7 @@ target_link_libraries(pam2 optimized pamlevel debug pamleveld)
 
 
 set_target_properties(pam2 PROPERTIES CXX_STANDARD 17)
-set_target_properties(pam2 PROPERTIES RUNTIME_OUTPUT_DIRECTORY "../../bin/")
+set_target_properties(pam2 PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/")
 
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")

@@ -7,7 +7,7 @@
 #include "levelcalculator.h"
 #include "ppmtypes.h"
 #include "settings.h"
-#include "log.h"
+
 //(*InternalHeaders(pnlAngleMeters)
 #include <wx/intl.h>
 #include <wx/string.h>

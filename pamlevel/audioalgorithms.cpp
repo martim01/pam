@@ -1,6 +1,6 @@
 #include "audioalgorithms.h"
 #include <cmath>
-#include "log.h"
+
 
 float PearsonCorrelation(const timedbuffer* pBuffer, unsigned long nChannels, unsigned long nChannelX, unsigned long nChannelY, bool bCosineOnly)
 {
