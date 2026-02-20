@@ -181,9 +181,9 @@ RemoteApi::RemoteApi() : m_bWebsocketsActive(Settings::Get().Read("RemoteApi", "
 
     m_Server.AddNotFoundCallback(std::bind(&RemoteApi::ExtraEndpoint, this, _1,_2,_3,_4,_5));
 
-    m_Server.AddWebsocketEndpoint(endpoint("/x-pam/ws/plugin"), std::bind(&RemoteApi::WSAuthenticate, this, _1,_2,_3,_4), std::bind(&RemoteApi::WSMessage, this, _1,_2), std::bind(&RemoteApi::WSClose, this, _1,_2));
-    m_Server.AddWebsocketEndpoint(endpoint("/x-pam/ws/setting"), std::bind(&RemoteApi::WSAuthenticate, this, _1,_2,_3,_4), std::bind(&RemoteApi::WSMessage, this, _1,_2), std::bind(&RemoteApi::WSClose, this, _1,_2));
-    m_Server.AddWebsocketEndpoint(endpoint("/x-pam/ws"), std::bind(&RemoteApi::WSAuthenticate, this, _1,_2,_3,_4), std::bind(&RemoteApi::WSMessage, this, _1,_2), std::bind(&RemoteApi::WSClose, this, _1,_2));
+    m_Server.AddWebsocketEndpoint(endpoint("/x-pam/ws/plugin"), std::bind(&RemoteApi::WSAuthenticate, this, _1,_2,_3,_4), nullptr, std::bind(&RemoteApi::WSMessage, this, _1,_2), std::bind(&RemoteApi::WSClose, this, _1,_2));
+    m_Server.AddWebsocketEndpoint(endpoint("/x-pam/ws/setting"), std::bind(&RemoteApi::WSAuthenticate, this, _1,_2,_3,_4), nullptr, std::bind(&RemoteApi::WSMessage, this, _1,_2), std::bind(&RemoteApi::WSClose, this, _1,_2));
+    m_Server.AddWebsocketEndpoint(endpoint("/x-pam/ws"), std::bind(&RemoteApi::WSAuthenticate, this, _1,_2,_3,_4), nullptr, std::bind(&RemoteApi::WSMessage, this, _1,_2), std::bind(&RemoteApi::WSClose, this, _1,_2));
 
     Settings::Get().AddHandler(this);
     Bind(wxEVT_SETTING_CHANGED, &RemoteApi::OnSettingEvent, this);
