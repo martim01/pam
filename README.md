@@ -50,6 +50,11 @@ On Bullseye
 sudo apt-get update
 sudo apt-get install libwxgtk3.0-gtk3-dev portaudio19-dev libsndfile1-dev libsamplerate0-dev libavahi-client-dev libcap-dev libssl-dev libcurl4-openssl-dev
 ```
+On Trixie
+```
+sudo apt-get update
+sudo apt-get install libwxgtk3.2-dev portaudio19-dev libsndfile1-dev libsamplerate0-dev libavahi-client-dev libcap-dev libssl-dev libcurl4-openssl-dev
+```
 
 ### Other libraries required
 PAM uses a number of small libraries. All these libraries are hosted on GitHub and are cloned automatically when running cmake.
