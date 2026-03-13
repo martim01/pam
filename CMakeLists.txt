@@ -29,22 +29,22 @@ SET(BUILD_LOG OFF)
 
 message(STATUS "Find external libraries")
 
-add_external_library(jsoncpp ${DIR_JSON} "https://github.com/open-source-parsers/jsoncpp" "" FALSE)
+add_external_library(jsoncpp ${DIR_JSON} "open-source-parsers/jsoncpp" "" FALSE "CMakeLists.txt")
 if(EXISTS ${DIR_JSON}/amalgamate.py)
 	message(STATUS "Generating jsoncpp amalgamated source files")
 	execute_process(COMMAND python3 amalgamate.py WORKING_DIRECTORY ${DIR_JSON})
 endif()
 
-add_external_library(log ${DIR_LOG} "https://github.com/martim01/log.git" "" TRUE)
-add_external_library(ptpmonkey ${DIR_PTPMONKEY} "https://github.com/martim01/ptpmonkey.git" "" TRUE)
-add_external_library(restgoose ${DIR_RESTGOOSE} "https://github.com/martim01/restgoose.git" "origin/main" TRUE)
+add_external_library(pml_log ${DIR_LOG} "martim01/log" "" TRUE "CMakeLists.txt")
+add_external_library(ptpmonkey ${DIR_PTPMONKEY} "martim01/ptpmonkey" "" TRUE "CMakeLists.txt")
+add_external_library(restgoose ${DIR_RESTGOOSE} "martim01/restgoose" "origin/main" TRUE "CMakeLists.txt")
 
-add_external_library(sapserver ${DIR_SAPSERVER} "https://github.com/martim01/sapserver.git" "" TRUE)
-add_external_library(livewire ${DIR_LIVEWIRE} "https://github.com/martim01/livewirediscover.git"  "" TRUE)
-add_external_library(dnssd ${DIR_DNSSD} "https://github.com/martim01/dnssd.git"  "" TRUE)
+add_external_library(sapserver ${DIR_SAPSERVER} "martim01/sapserver" "" TRUE "CMakeLists.txt")
+add_external_library(livewireserver ${DIR_LIVEWIRE} "martim01/livewirediscover"  "" TRUE "CMakeLists.txt")
+add_external_library(pml_dnssd ${DIR_DNSSD} "martim01/dnssd"  "" TRUE "CMakeLists.txt")
 
 if(${NMOS})
-    add_external_library(nmos ${DIR_NMOS} "https://github.com/martim01/nmos.git"  "" TRUE)
+    add_external_library(nmos ${DIR_NMOS} "martim01/nmos"  "" TRUE "CMakeLists.txt")
 
 endif()
 

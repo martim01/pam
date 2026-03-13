@@ -63,4 +63,5 @@ release.md
 /external/sapserver
 /external/asio
 /asio
-
+/build
+/dist
