@@ -26,6 +26,6 @@ target_compile_definitions(pamupdatemanager PUBLIC NDEBUG DLL_EXPORTS wxUSE_UNIC
 find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
-target_link_libraries(pamupdatemanager ${wxWidgets_LIBRARIES})
+target_link_libraries(pamupdatemanager ${wxWidgets_LIBRARIES} pml_log)
 set_property(TARGET pamupdatemanager PROPERTY CXX_STANDARD 17)
 set_target_properties(pamupdatemanager PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/")

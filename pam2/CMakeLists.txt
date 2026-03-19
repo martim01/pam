@@ -63,7 +63,7 @@ target_link_libraries(pam2 ${wxWidgets_LIBRARIES} cap ssl)
 target_link_libraries(pam2 optimized pml_log debug pml_logd)
 target_link_libraries(pam2 optimized pml_dnssd debug pml_dnssdd)
 target_link_libraries(pam2 avahi-client)
-target_link_libraries(pam2 jsoncpp)
+#target_link_libraries(pam2 jsoncpp)
 target_link_libraries(pam2 portaudio)
 
 target_link_libraries(pam2 optimized restgoose debug restgoosed)

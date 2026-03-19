@@ -19,6 +19,7 @@
 #include <arpa/inet.h>
 #endif
 
+#include "log.h"
 
 using   namespace std;
 
@@ -335,7 +336,10 @@ wxString Settings::GetLibraryVersion() const
 
 void Settings::OnTimerSave(wxTimerEvent& event)
 {
-    m_iniManager.WriteIniFile(m_sFullPath);
+    if(m_iniManager.WriteIniFile(m_sFullPath) == false)
+    {
+        pml::log::warning("settings") << "Could not save settings";
+    }
 }
 
 

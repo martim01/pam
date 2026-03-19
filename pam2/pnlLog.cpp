@@ -28,7 +28,7 @@ pnlLog::pnlLog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& s
 	SetBackgroundColour(wxColour(0,0,0));
 	m_pLogList = new wmListAdv(this, wxNewId(), wxPoint(0,0), wxSize(600,480), 0, wmListAdv::SCROLL_VERTICAL, wxSize(-1,30), 1, wxSize(0,1));
 	m_pLogList->SetFont(wxFont(8,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Arial"),wxFONTENCODING_DEFAULT));
-	m_pLogList->SetBackgroundColour(wxColour(100,100,180));
+	m_pLogList->SetBackgroundColour(wxColour(0,0,0));
 	//*)
 
 	m_nLogLevel = Settings::Get().Read("Log", "Level", pml::LOG_INFO);

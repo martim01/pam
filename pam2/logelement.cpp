@@ -18,6 +18,7 @@ LogElement::LogElement(wxDC& dc, unsigned int nWidth, const wxString& sMessage, 
 
     m_nHeight = 0;
     wxArrayString asLines(wxStringTokenize(sMessage, "\n"));
+
     for(size_t i = 0; i < asLines.GetCount(); i++)
     {
         asLines[i].Trim();
@@ -84,15 +85,15 @@ int LogElement::SubElementHeld()
 
 void LogElement::Draw(wxDC& dc, bool bSelected)
 {
-    for(auto pairRect : m_mHitRects)
+    for(auto& [_, rect] : m_mHitRects)
     {
-        pairRect.second.Draw(dc, uiRect::BORDER_NONE);
+        rect.Draw(dc, uiRect::BORDER_NONE);
     }
 }
 
 void LogElement::CreateHitRect(size_t nId, int nHeight, const wxString& sLine)
 {
-    auto& rect = m_mHitRects.insert(std::make_pair(nId, uiRect(wxRect(0,0,0,0)))).first->second;
+    auto rect = uiRect(wxRect(0,0,m_rectEnclosing.GetWidth()-COLUMN_TIME,nHeight));
     rect.SetGradient(0);
 
     switch(m_nLevel)
@@ -122,17 +123,20 @@ void LogElement::CreateHitRect(size_t nId, int nHeight, const wxString& sLine)
             rect.SetForegroundColour(*wxWHITE);
             break;
     }
-    rect.SetWidth(m_rectEnclosing.GetWidth()-COLUMN_TIME);
+    
     rect.SetTextAlign(wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
-    rect.SetHeight(nHeight);
     rect.SetLabel(sLine);
+
+    m_mHitRects.insert(std::make_pair(nId, rect));
+    
 
 }
 
 void LogElement::ElementMoved()
 {
     m_mHitRects[0].SetRect(m_rectEnclosing.GetLeft(), m_rectEnclosing.GetTop(), COLUMN_TIME, m_nHeight);
-    int nLeft, nTop;
+    int nLeft = 0;
+    int nTop = 0;
     for(auto& pairRect : m_mHitRects)
     {
         if(pairRect.first == 0)
@@ -146,6 +150,7 @@ void LogElement::ElementMoved()
             pairRect.second.SetRect(nLeft+2, nTop, pairRect.second.GetWidth(), pairRect.second.GetHeight());
             nTop = pairRect.second.GetBottom()+1;
         }
-    }
+        
+   }
 }
 

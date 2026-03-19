@@ -22,11 +22,11 @@ class  LogElement : public advElement
 
     protected:
 
-        bool SubElementDown(const wxPoint& pnt);
-        bool SubElementUp(const wxPoint& pnt, bool bIn);
-        bool SubElementMove(const wxPoint& pnt);
-        int SubElementHeld();
-        void Draw(wxDC& dc, bool bSelected);
+        bool SubElementDown(const wxPoint& pnt) override;
+        bool SubElementUp(const wxPoint& pnt, bool bIn) override;
+        bool SubElementMove(const wxPoint& pnt) override;
+        int SubElementHeld() override;
+        void Draw(wxDC& dc, bool bSelected) override;
 
         void CreateHitRect(size_t nId, int nHeight, const wxString& sLine);
         void ElementMoved();
