@@ -222,36 +222,36 @@ void pophubPanel::ViewChanged(unsigned long nView)
 void pophubPanel::ShowOutputMonitorMeters(unsigned int nTop)
 {
 
-	m_meterLabel[enumSide::kLeft] = new wmLabel(this, wxID_ANY, m_pBuilder->ReadSetting("label_left", "Channels 1+2"), wxPoint(10,nTop), wxSize(280,25));
+	m_meterLabel[enumSide::kLeft] = new wmLabel(this, wxID_ANY, m_pBuilder->ReadSetting("label_left", "Channels 1+2"), wxPoint(14,nTop), wxSize(280,25));
 	m_meterLabel[enumSide::kLeft]->SetBackgroundColour(*wxBLACK);
 	m_meterLabel[enumSide::kLeft]->SetForegroundColour(*wxWHITE);
 	m_meterLabel[enumSide::kLeft]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 	m_meterLabel[enumSide::kLeft]->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
 
-	m_meterSelect[enumSide::kLeft] = new wmButton(this, wxID_ANY, "", wxPoint(290, nTop), wxSize(100,25));
+	m_meterSelect[enumSide::kLeft] = new wmButton(this, wxID_ANY, "", wxPoint(294, nTop), wxSize(100,25));
 	m_meterSelect[enumSide::kLeft]->SetBackgroundColour(wxColour(100,190,100));
 	m_meterSelect[enumSide::kLeft]->SetColourDisabled(wxColour(100,100,100));
 
-	m_meters[enumSide::kLeft] = new AngleMeter(this, wxID_ANY, "", -70.0, AngleMeter::LEFT_RIGHT, 0, wxPoint(10,m_meterSelect[enumSide::kLeft]->GetRect().GetBottom()+5), wxSize(380,250));
+	m_meters[enumSide::kLeft] = new AngleMeter(this, wxID_ANY, "", -70.0, AngleMeter::LEFT_RIGHT, 0, wxPoint(14,m_meterSelect[enumSide::kLeft]->GetRect().GetBottom()+5), wxSize(380,250));
 	m_meters[enumSide::kLeft]->SetInputChannels(2);
 	m_meters[enumSide::kLeft]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 	
-	m_meterLabel[enumSide::kRight] = new wmLabel(this, wxID_ANY, m_pBuilder->ReadSetting("label_right", "Channels 3+4"), wxPoint(400,nTop), wxSize(280,25));
+	m_meterLabel[enumSide::kRight] = new wmLabel(this, wxID_ANY, m_pBuilder->ReadSetting("label_right", "Channels 3+4"), wxPoint(407,nTop), wxSize(280,25));
 	m_meterLabel[enumSide::kRight]->SetBackgroundColour(*wxBLACK);
 	m_meterLabel[enumSide::kRight]->SetForegroundColour(*wxWHITE);
 	m_meterLabel[enumSide::kRight]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 	m_meterLabel[enumSide::kRight]->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
 
-	m_meterSelect[enumSide::kRight] = new wmButton(this, wxID_ANY, "", wxPoint(680, nTop), wxSize(100,25));
+	m_meterSelect[enumSide::kRight] = new wmButton(this, wxID_ANY, "", wxPoint(687, nTop), wxSize(100,25));
 	m_meterSelect[enumSide::kRight]->SetBackgroundColour(wxColour(100,190,100));
 	m_meterSelect[enumSide::kRight]->SetColourDisabled(wxColour(100,100,100));
 
-	m_meters[enumSide::kRight] = new AngleMeter(this, wxID_ANY, "", -70.0, AngleMeter::LEFT_RIGHT, 0, wxPoint(400,m_meterSelect[enumSide::kRight]->GetRect().GetBottom()+5), wxSize(380,250));
+	m_meters[enumSide::kRight] = new AngleMeter(this, wxID_ANY, "", -70.0, AngleMeter::LEFT_RIGHT, 0, wxPoint(407,m_meterSelect[enumSide::kRight]->GetRect().GetBottom()+5), wxSize(380,250));
 	m_meters[enumSide::kRight]->SetInputChannels(2);
 	m_meters[enumSide::kRight]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 	
-	m_phasebars[enumSide::kLeft] = new CorrelationBar(this, wxID_ANY, wxPoint(10, m_meters[enumSide::kLeft]->GetRect().GetBottom()+10), wxSize(380,40));
-	m_phasebars[enumSide::kRight] = new CorrelationBar(this, wxID_ANY, wxPoint(400, m_meters[enumSide::kRight]->GetRect().GetBottom()+10), wxSize(380,40));
+	m_phasebars[enumSide::kLeft] = new CorrelationBar(this, wxID_ANY, wxPoint(14, m_meters[enumSide::kLeft]->GetRect().GetBottom()+5), wxSize(380,40));
+	m_phasebars[enumSide::kRight] = new CorrelationBar(this, wxID_ANY, wxPoint(407, m_meters[enumSide::kRight]->GetRect().GetBottom()+5), wxSize(380,40));
 
 	m_phasebars[enumSide::kLeft]->SetNumberOfInputChannels(m_nInputChannels);
 	m_phasebars[enumSide::kLeft]->SetAxisX(0);
@@ -273,37 +273,38 @@ void pophubPanel::ShowOutputMonitorMeters(unsigned int nTop)
 
 void pophubPanel::ShowNewsMeters(unsigned int nTop)
 {
-	m_meterLabel[enumSide::kLeft] = new wmLabel(this, wxID_ANY, m_pBuilder->ReadSetting("label_left", "Channels 1+2"), wxPoint(10,nTop), wxSize(280,25));
+	m_meterLabel[enumSide::kLeft] = new wmLabel(this, wxID_ANY, m_pBuilder->ReadSetting("label_left", "Channels 1+2"), wxPoint(14,nTop), wxSize(280,25));
 	m_meterLabel[enumSide::kLeft]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 	m_meterLabel[enumSide::kLeft]->SetBackgroundColour(*wxBLACK);
 	m_meterLabel[enumSide::kLeft]->SetForegroundColour(*wxWHITE);
 	m_meterLabel[enumSide::kLeft]->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
 
-	m_meterSelect[enumSide::kLeft] = new wmButton(this, wxID_ANY, "", wxPoint(290, nTop), wxSize(100,25));
+	m_meterSelect[enumSide::kLeft] = new wmButton(this, wxID_ANY, "", wxPoint(294, nTop), wxSize(100,25));
 	m_meterSelect[enumSide::kLeft]->SetBackgroundColour(wxColour(100,190,100));
 	m_meterSelect[enumSide::kLeft]->SetColourDisabled(wxColour(100,100,100));
 	m_meterSelect[enumSide::kLeft]->Enable(false);
 
-	m_meters[enumSide::kLeft] = new AngleMeter(this, wxID_ANY, "", -70.0, AngleMeter::LEFT_RIGHT, 0, wxPoint(10,m_meterSelect[enumSide::kLeft]->GetRect().GetBottom()+5), wxSize(380,250));
+	m_meters[enumSide::kLeft] = new AngleMeter(this, wxID_ANY, "", -70.0, AngleMeter::LEFT_RIGHT, 0, wxPoint(14,m_meterSelect[enumSide::kLeft]->GetRect().GetBottom()+5), wxSize(380,250));
 	m_meters[enumSide::kLeft]->SetInputChannels(2);
 	m_meters[enumSide::kLeft]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 	
-	m_meterLabel[enumSide::kRight] = new wmLabel(this, wxID_ANY, m_pBuilder->ReadSetting("label_right", "Channels 1+2"), wxPoint(400,nTop), wxSize(280,25));
+	m_meterLabel[enumSide::kRight] = new wmLabel(this, wxID_ANY, m_pBuilder->ReadSetting("label_right", "Channels 1+2"), wxPoint(407,nTop), wxSize(280,25));
 	m_meterLabel[enumSide::kRight]->SetBackgroundColour(*wxBLACK);
 	m_meterLabel[enumSide::kRight]->SetForegroundColour(*wxWHITE);
 	m_meterLabel[enumSide::kRight]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 	m_meterLabel[enumSide::kRight]->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
-	m_meterSelect[enumSide::kRight] = new wmButton(this, wxID_ANY, "", wxPoint(680, nTop), wxSize(100,25));
+
+	m_meterSelect[enumSide::kRight] = new wmButton(this, wxID_ANY, "", wxPoint(687, nTop), wxSize(100,25));
 	m_meterSelect[enumSide::kRight]->SetBackgroundColour(wxColour(100,190,100));
 	m_meterSelect[enumSide::kRight]->SetColourDisabled(wxColour(100,100,100));
 	m_meterSelect[enumSide::kRight]->Enable(false);
 
-	m_meters[enumSide::kRight] = new AngleMeter(this, wxID_ANY, "", -70.0, AngleMeter::LEFT_RIGHT, 0, wxPoint(400,m_meterSelect[enumSide::kRight]->GetRect().GetBottom()+5), wxSize(380,250));
+	m_meters[enumSide::kRight] = new AngleMeter(this, wxID_ANY, "", -70.0, AngleMeter::LEFT_RIGHT, 0, wxPoint(407,m_meterSelect[enumSide::kRight]->GetRect().GetBottom()+5), wxSize(380,250));
 	m_meters[enumSide::kRight]->SetInputChannels(2);
 	m_meters[enumSide::kRight]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 
 	
-	m_phasebars[enumSide::kLeft] = new CorrelationBar(this, wxID_ANY, wxPoint(10, m_meters[enumSide::kLeft]->GetRect().GetBottom()+10), wxSize(770,40));
+	m_phasebars[enumSide::kLeft] = new CorrelationBar(this, wxID_ANY, wxPoint(14, m_meters[enumSide::kLeft]->GetRect().GetBottom()+5), wxSize(773,40));
 	m_phasebars[enumSide::kRight] = nullptr;
 
 	m_phasebars[enumSide::kLeft]->SetNumberOfInputChannels(m_nInputChannels);
@@ -320,7 +321,7 @@ void pophubPanel::ShowRadio()
 
 void pophubPanel::ShowRadioLoudness()
 {
-	ShowOutputMonitorMeters(10);
+	ShowOutputMonitorMeters(5);
 
 	m_ppnlR128 = new pnlR128(this, m_pBuilder, wxPoint(2,335), wxSize(796, 140));
 	m_ppnlR128->SetBackgroundColour(*wxBLACK);
@@ -335,7 +336,7 @@ void pophubPanel::ShowNews()
 
 void pophubPanel::ShowNewsLoudness()
 {
-	ShowNewsMeters(10);
+	ShowNewsMeters(5);
 	m_ppnlR128 = new pnlR128(this, m_pBuilder, wxPoint(2,335), wxSize(796, 140));
 	m_ppnlR128->SetBackgroundColour(*wxBLACK);
 	m_ppnlR128->SetSession(m_session);
@@ -343,7 +344,7 @@ void pophubPanel::ShowNewsLoudness()
 
 void pophubPanel::ShowNewsGain()
 {
-	ShowNewsMeters(10);
+	ShowNewsMeters(5);
 }
 
 void pophubPanel::ShowWorkshop()
@@ -356,7 +357,7 @@ void pophubPanel::ShowWorkshop()
 	m_meterLabel[enumSide::kLeft]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 	
 
-	m_meterSelect[enumSide::kLeft] = new wmButton(this, wxID_ANY, "", wxPoint(680, 10), wxSize(100,25));
+	m_meterSelect[enumSide::kLeft] = new wmButton(this, wxID_ANY, "", wxPoint(680, 10), wxSize(110,25));
 	m_meterSelect[enumSide::kLeft]->SetBackgroundColour(wxColour(100,190,100));
 	m_meterSelect[enumSide::kLeft]->SetColourDisabled(wxColour(100,100,100));
 
@@ -387,16 +388,22 @@ void pophubPanel::ShowTV()
 	int nHeight = 70;
 
 	auto nLeft = 100;
-	auto nWidth = 780-nLeft;
-
+	auto nWidth = 790-nLeft;
+	
 	m_barLabels[enumSide::kLeft] = new wmLabel(this, wxID_ANY, "LEFT", wxPoint(10,10), wxSize(90,nHeight));
+	m_barLabels[enumSide::kLeft]->SetBackgroundColour(*wxBLACK);
+	m_barLabels[enumSide::kLeft]->SetForegroundColour(*wxWHITE);
+	m_barLabels[enumSide::kLeft]->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
 	
 	m_barMeters[enumSide::kLeft] = new LevelMeter(this,wxID_ANY, "", -70, false, wxPoint(nLeft, 10), wxSize(nWidth, nHeight), true);
 	m_barMeters[enumSide::kLeft]->SetNumberOfChannels(m_nInputChannels);
 	m_barMeters[enumSide::kLeft]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 	
-
 	m_barLabels[enumSide::kRight] = new wmLabel(this, wxID_ANY, "RIGHT", wxPoint(10,m_barMeters[enumSide::kLeft]->GetRect().GetBottom()+10), wxSize(90,nHeight));
+	m_barLabels[enumSide::kRight]->SetBackgroundColour(*wxBLACK);
+	m_barLabels[enumSide::kRight]->SetForegroundColour(*wxWHITE);
+	m_barLabels[enumSide::kRight]->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
+	
 	m_barMeters[enumSide::kRight] = new LevelMeter(this,wxID_ANY, "", -70, false, wxPoint(nLeft, m_barMeters[enumSide::kLeft]->GetRect().GetBottom()+10), wxSize(nWidth, nHeight), true);
 	m_barMeters[enumSide::kRight]->SetNumberOfChannels(m_nInputChannels);
 	m_barMeters[enumSide::kRight]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
@@ -404,8 +411,7 @@ void pophubPanel::ShowTV()
 	m_pLevels = new LevelMeter(this,wxID_ANY, "", -70, true, wxPoint(nLeft, m_barMeters[enumSide::kRight]->GetRect().GetBottom()+5), wxSize(nWidth, nHeight/2), true);
 	m_pLevels->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 
-	
-	m_phasebars[enumSide::kLeft] = new CorrelationBar(this, wxID_ANY, wxPoint(10, m_pLevels->GetRect().GetBottom()+20), wxSize(770,40));
+	m_phasebars[enumSide::kLeft] = new CorrelationBar(this, wxID_ANY, wxPoint(10, m_pLevels->GetRect().GetBottom()+10), wxSize(780,40));
 	m_phasebars[enumSide::kRight] = nullptr;
 
 	m_phasebars[enumSide::kLeft]->SetNumberOfInputChannels(m_nInputChannels);
@@ -413,7 +419,6 @@ void pophubPanel::ShowTV()
 	m_phasebars[enumSide::kLeft]->SetAxisY(1);
 	m_phasebars[enumSide::kLeft]->Connect(wxEVT_LEFT_UP,(wxObjectEventFunction)&pophubPanel::OnLeftUp,0,this);
 
-	
 	auto nTop = m_phasebars[enumSide::kLeft]->GetRect().GetBottom()+10;
 	m_ppnlR128 = new pnlR128(this, m_pBuilder, wxPoint(2,nTop), wxSize(796, 470-nTop));
 	m_ppnlR128->SetSession(m_session);
