@@ -34,12 +34,12 @@ pnlAbout::pnlAbout(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSiz
 
 	m_plstAbout->AddElement(std::make_shared<AboutElement>(590, "pam", pml::pam2::VERSION_STRING, pml::pam2::GIT_DATE, pml::pam2::GIT_TAG, pml::pam2::GIT_BRANCH));
 	m_plstAbout->AddElement(std::make_shared<AboutElement>(590, "pambase", pml::pambase::VERSION_STRING, pml::pambase::GIT_DATE, pml::pambase::GIT_TAG, pml::pambase::GIT_BRANCH));
-	m_plstAbout->AddElement(std::make_shared<AboutElement>(590, "pml::log", pml::log::VERSION_STRING, pml::log::GIT_DATE, pml::log::GIT_TAG, pml::log::GIT_BRANCH));
+	m_plstAbout->AddElement(std::make_shared<AboutElement>(590, "pml::log", pml::log::kVersionString, pml::log::kGitDate, pml::log::kGitTag, pml::log::kGitBranch));
 	m_plstAbout->AddElement(std::make_shared<AboutElement>(590, "pml::dnssd", pml::pml_dnssd::VERSION_STRING, pml::pml_dnssd::GIT_DATE, pml::pml_dnssd::GIT_TAG, pml::pml_dnssd::GIT_BRANCH));
 	m_plstAbout->AddElement(std::make_shared<AboutElement>(590, "pml::sapserver", pml::sapserver::VERSION_STRING, pml::sapserver::GIT_DATE, pml::sapserver::GIT_TAG, pml::sapserver::GIT_BRANCH));
 	m_plstAbout->AddElement(std::make_shared<AboutElement>(590, "pml::ptpmonkey", pml::ptpmonkey::VERSION_STRING, pml::ptpmonkey::GIT_DATE, pml::ptpmonkey::GIT_TAG, pml::ptpmonkey::GIT_BRANCH));
 	#ifdef __NMOS__
-	m_plstAbout->AddElement(std::make_shared<AboutElement>(590, "pml::restgoose", pml::restgoose::VERSION_STRING, pml::restgoose::GIT_DATE, pml::restgoose::GIT_TAG, pml::restgoose::GIT_BRANCH));
+	m_plstAbout->AddElement(std::make_shared<AboutElement>(590, "pml::restgoose", pml::restgoose::kVersionString, pml::restgoose::kGitDate, pml::restgoose::kGitTag, pml::restgoose::kGitBranch));
 	m_plstAbout->AddElement(std::make_shared<AboutElement>(590, "pml::nmos", pml::nmos::VERSION_STRING, pml::nmos::GIT_DATE, pml::nmos::GIT_TAG, pml::nmos::GIT_BRANCH));
 	#endif
 }
