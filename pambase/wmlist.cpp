@@ -1920,7 +1920,7 @@ void wmList::SetTextDisabledButtonColour(const wxColour& clr)
 
 void wmList::OnFocus(wxFocusEvent& event)
 {
-    if(event.GetWindow() && event.GetWindow() != this)
+    if(event.GetWindow() && event.GetWindow() != this && !event.GetWindow()->IsBeingDeleted())
     {
         event.GetWindow()->SetFocus();
     }

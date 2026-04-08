@@ -86,7 +86,7 @@ class pophubPanel: public pmPanel
 
 		void SetMeterDetails(int nView, int nSide, const wxString& sLabel);
 
-		void DestroyControls();
+		void HideControls();
 
 		void SetSpeed(unsigned long nSpeed);
 		void SetScale(const wxString& sTitle, const ppmtype& aType);
@@ -96,6 +96,7 @@ class pophubPanel: public pmPanel
 
 		int m_nInputChannels = 2;
 
+		void CreateControls();
 		
 		std::array<AngleMeter*,2> m_meters{nullptr,nullptr};
 		std::array<meter, 2> m_meterDetails;
