@@ -356,12 +356,8 @@ void pophubPanel::ShowNewsMeters(unsigned int nTop)
 	m_meters[enumSide::kRight]->Show();
 	
 	m_phasebars[enumSide::kLeft]->SetPosition(wxPoint(m_meters[enumSide::kLeft]->GetRect().GetLeft(), m_meters[enumSide::kLeft]->GetRect().GetBottom()+5));
-	m_phasebars[enumSide::kLeft]->SetSize(wxSize(380,40));
+	m_phasebars[enumSide::kLeft]->SetSize(wxSize(773,40));
 	m_phasebars[enumSide::kLeft]->Show();
-
-	m_phasebars[enumSide::kRight]->SetPosition(wxPoint(m_meters[enumSide::kRight]->GetRect().GetLeft(), m_meters[enumSide::kRight]->GetRect().GetBottom()+5));
-	m_phasebars[enumSide::kRight]->SetSize(wxSize(380,40));
-	m_phasebars[enumSide::kRight]->Show();
 	
 	SetMeterSettings(pophubBuilder::enumView::kNews);
 }
