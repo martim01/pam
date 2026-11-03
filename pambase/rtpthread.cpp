@@ -15,6 +15,7 @@
 #include "aes67source.h"
 #include "log.h"
 #include "settings.h"
+#include "networkcontrol.h"
 #include "rtpframeevent.h"
 
 using namespace std;
@@ -50,16 +51,6 @@ RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface
     m_pCondition = new wxCondition(m_mutex);
     m_nInputChannels = 2;
     m_sReceivingInterface = sReceivingInterface;
-    //set the receivinginterface to eth0 or whatever the user choose
-   // if(sReceivingInterface.empty() == false)
-   // {
-   //     ReceivingInterfaceAddr = our_inet_addr(std::string(sReceivingInterface.mb_str()).c_str());
-   // }
-   // else
-   // {
-        ReceivingInterfaceAddr = INADDR_ANY;
-
-    //}
 }
 
 
@@ -136,6 +127,8 @@ void RtpThread::StreamFromSDP()
         pmlLog(pml::LOG_DEBUG, "pam::rtpclient") << "Created MediaSession object";
     }
 
+    ConfigureReceivingInterface(*m_pSession);
+
     //count number of subsessions
     unsigned int nCountAudio(0);
     MediaSubsessionIterator iterCount(*m_pSession);
@@ -190,6 +183,28 @@ void RtpThread::StreamFromSDP()
     {
         m_penv->taskScheduler().doEventLoop(&m_eventLoopWatchVariable);
     }
+}
+
+void RtpThread::ConfigureReceivingInterface(MediaSession& session) const
+{
+    const wxString sAddress = NetworkControl::Get().GetAddress(m_sReceivingInterface);
+    if(sAddress.IsEmpty())
+    {
+        pmlLog(pml::LOG_WARN, "pam::rtpclient") << "Unknown receiving interface " << m_sReceivingInterface.ToStdString() << "; using the default interface";
+        session.setReceivingInterfaceAddr(INADDR_ANY);
+        return;
+    }
+
+    const ipv4AddressBits nAddress = inet_addr(sAddress.ToStdString().c_str());
+    if(nAddress == INADDR_NONE)
+    {
+        pmlLog(pml::LOG_WARN, "pam::rtpclient") << "Invalid IPv4 address for receiving interface " << m_sReceivingInterface.ToStdString() << "; using the default interface";
+        session.setReceivingInterfaceAddr(INADDR_ANY);
+        return;
+    }
+
+    pmlLog(pml::LOG_DEBUG, "pam::rtpclient") << "Receiving multicast on " << m_sReceivingInterface.ToStdString() << " (" << sAddress.ToStdString() << ")";
+    session.setReceivingInterfaceAddr(nAddress);
 }
 
 void RtpThread::CreateSink(Smpte2110MediaSubsession* pSubsession)

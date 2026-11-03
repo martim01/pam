@@ -94,10 +94,16 @@ NetInterfaceTrafficStats Groupsock::statsOutgoing;
 // Constructor for a source-independent multicast group
 Groupsock::Groupsock(UsageEnvironment& env, struct sockaddr_storage const& groupAddr,
 		     Port port, u_int8_t ttl)
+  : Groupsock(env, groupAddr, port, ttl, ReceivingInterfaceAddr) {
+}
+
+Groupsock::Groupsock(UsageEnvironment& env, struct sockaddr_storage const& groupAddr,
+		     Port port, u_int8_t ttl, ipv4AddressBits receivingInterfaceAddr)
   : OutputSocket(env, port, groupAddr.ss_family),
     fDests(new destRecord(groupAddr, port, ttl, 0, NULL)),
-    fIncomingGroupEId(groupAddr, port.num(), ttl) {
-  if (!socketJoinGroup(env, socketNum(), groupAddr)) {
+    fIncomingGroupEId(groupAddr, port.num(), ttl),
+    fReceivingInterfaceAddr(receivingInterfaceAddr) {
+  if (!socketJoinGroup(env, socketNum(), groupAddr, fReceivingInterfaceAddr)) {
     if (DebugLevel >= 1) {
       env << *this << ": failed to join group: "
 	  << env.getResultMsg() << "\n";
@@ -119,17 +125,24 @@ Groupsock::Groupsock(UsageEnvironment& env, struct sockaddr_storage const& group
 Groupsock::Groupsock(UsageEnvironment& env, struct sockaddr_storage const& groupAddr,
 		     struct sockaddr_storage const& sourceFilterAddr,
 		     Port port)
+  : Groupsock(env, groupAddr, sourceFilterAddr, port, ReceivingInterfaceAddr) {
+}
+
+Groupsock::Groupsock(UsageEnvironment& env, struct sockaddr_storage const& groupAddr,
+		     struct sockaddr_storage const& sourceFilterAddr,
+		     Port port, ipv4AddressBits receivingInterfaceAddr)
   : OutputSocket(env, port, groupAddr.ss_family),
     fDests(new destRecord(groupAddr, port, 255, 0, NULL)),
-    fIncomingGroupEId(groupAddr, sourceFilterAddr, port.num()) {
+    fIncomingGroupEId(groupAddr, sourceFilterAddr, port.num()),
+    fReceivingInterfaceAddr(receivingInterfaceAddr) {
   // First try a SSM join.  If that fails, try a regular join:
-  if (!socketJoinGroupSSM(env, socketNum(), groupAddr, sourceFilterAddr)) {
+  if (!socketJoinGroupSSM(env, socketNum(), groupAddr, sourceFilterAddr, fReceivingInterfaceAddr)) {
     if (DebugLevel >= 3) {
       env << *this << ": SSM join failed: "
 	  << env.getResultMsg();
       env << " - trying regular join instead\n";
     }
-    if (!socketJoinGroup(env, socketNum(), groupAddr)) {
+    if (!socketJoinGroup(env, socketNum(), groupAddr, fReceivingInterfaceAddr)) {
       if (DebugLevel >= 1) {
 	env << *this << ": failed to join group: "
 	     << env.getResultMsg() << "\n";
@@ -142,11 +155,11 @@ Groupsock::Groupsock(UsageEnvironment& env, struct sockaddr_storage const& group
 
 Groupsock::~Groupsock() {
   if (isSSM()) {
-    if (!socketLeaveGroupSSM(env(), socketNum(), groupAddress(), sourceFilterAddress())) {
-      socketLeaveGroup(env(), socketNum(), groupAddress());
+    if (!socketLeaveGroupSSM(env(), socketNum(), groupAddress(), sourceFilterAddress(), fReceivingInterfaceAddr)) {
+      socketLeaveGroup(env(), socketNum(), groupAddress(), fReceivingInterfaceAddr);
     }
   } else {
-    socketLeaveGroup(env(), socketNum(), groupAddress());
+    socketLeaveGroup(env(), socketNum(), groupAddress(), fReceivingInterfaceAddr);
   }
 
   delete fDests;
@@ -180,8 +193,8 @@ Groupsock::changeDestinationParameters(struct sockaddr_storage const& newDestAdd
       // If the new destination is a multicast address, then we assume that
       // we want to join it also.  (If this is not in fact the case, then
       // call "multicastSendOnly()" afterwards.)
-      socketLeaveGroup(env(), socketNum(), destAddr);
-      socketJoinGroup(env(), socketNum(), newDestAddr);
+      socketLeaveGroup(env(), socketNum(), destAddr, fReceivingInterfaceAddr);
+      socketJoinGroup(env(), socketNum(), newDestAddr, fReceivingInterfaceAddr);
     }
     destAddr = newDestAddr;
   }
@@ -193,7 +206,7 @@ Groupsock::changeDestinationParameters(struct sockaddr_storage const& newDestAdd
       // Also bind to the new port number:
       changePort(newDestPort);
       // And rejoin the multicast group:
-      socketJoinGroup(env(), socketNum(), destAddr);
+      socketJoinGroup(env(), socketNum(), destAddr, fReceivingInterfaceAddr);
     }
     destPortNum = newDestPort.num();
   }

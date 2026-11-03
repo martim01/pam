@@ -556,6 +556,12 @@ static void clearMulticastAllSocketOption(int socket, int domain) {
 
 Boolean socketJoinGroup(UsageEnvironment& env, int socket,
 			struct sockaddr_storage const& groupAddress){
+  return socketJoinGroup(env, socket, groupAddress, ReceivingInterfaceAddr);
+}
+
+Boolean socketJoinGroup(UsageEnvironment& env, int socket,
+      struct sockaddr_storage const& groupAddress,
+      ipv4AddressBits receivingInterfaceAddr){
   if (!IsMulticastAddress(groupAddress)) return True; // ignore this case
 
   int level, option_name;
@@ -567,7 +573,7 @@ Boolean socketJoinGroup(UsageEnvironment& env, int socket,
   switch (groupAddress.ss_family) {
     case AF_INET: {
       imr4.imr_multiaddr.s_addr = ((struct sockaddr_in&)groupAddress).sin_addr.s_addr;
-      imr4.imr_interface.s_addr = ReceivingInterfaceAddr;
+      imr4.imr_interface.s_addr = receivingInterfaceAddr;
 
       level = IPPROTO_IP;
       option_name = IP_ADD_MEMBERSHIP;
@@ -607,8 +613,14 @@ Boolean socketJoinGroup(UsageEnvironment& env, int socket,
   return True;
 }
 
-Boolean socketLeaveGroup(UsageEnvironment&, int socket,
+Boolean socketLeaveGroup(UsageEnvironment& env, int socket,
 			 struct sockaddr_storage const& groupAddress) {
+  return socketLeaveGroup(env, socket, groupAddress, ReceivingInterfaceAddr);
+}
+
+Boolean socketLeaveGroup(UsageEnvironment&, int socket,
+       struct sockaddr_storage const& groupAddress,
+       ipv4AddressBits receivingInterfaceAddr) {
   if (!IsMulticastAddress(groupAddress)) return True; // ignore this case
 
   int level, option_name;
@@ -620,7 +632,7 @@ Boolean socketLeaveGroup(UsageEnvironment&, int socket,
   switch (groupAddress.ss_family) {
     case AF_INET: {
       imr4.imr_multiaddr.s_addr = ((struct sockaddr_in&)groupAddress).sin_addr.s_addr;
-      imr4.imr_interface.s_addr = ReceivingInterfaceAddr;
+      imr4.imr_interface.s_addr = receivingInterfaceAddr;
 
       level = IPPROTO_IP;
       option_name = IP_DROP_MEMBERSHIP;
@@ -675,6 +687,13 @@ struct ip_mreq_source {
 Boolean socketJoinGroupSSM(UsageEnvironment& env, int socket,
 			   struct sockaddr_storage const& groupAddress,
 			   struct sockaddr_storage const& sourceFilterAddr) {
+  return socketJoinGroupSSM(env, socket, groupAddress, sourceFilterAddr, ReceivingInterfaceAddr);
+}
+
+Boolean socketJoinGroupSSM(UsageEnvironment& env, int socket,
+         struct sockaddr_storage const& groupAddress,
+         struct sockaddr_storage const& sourceFilterAddr,
+         ipv4AddressBits receivingInterfaceAddr) {
   if (!IsMulticastAddress(groupAddress)) return True; // ignore this case
   if (groupAddress.ss_family != AF_INET) return False; // later, support IPv6
 
@@ -682,11 +701,11 @@ Boolean socketJoinGroupSSM(UsageEnvironment& env, int socket,
 #if ANDROID_OLD_NDK
     imr.imr_multiaddr = ((struct sockaddr_in&)groupAddress).sin_addr.s_addr;
     imr.imr_sourceaddr = ((struct sockaddr_in&)sourceFilterAddr).sin_addr.s_addr;
-    imr.imr_interface = ReceivingInterfaceAddr;
+    imr.imr_interface = receivingInterfaceAddr;
 #else
     imr.imr_multiaddr.s_addr = ((struct sockaddr_in&)groupAddress).sin_addr.s_addr;
     imr.imr_sourceaddr.s_addr = ((struct sockaddr_in&)sourceFilterAddr).sin_addr.s_addr;
-    imr.imr_interface.s_addr = ReceivingInterfaceAddr;
+    imr.imr_interface.s_addr = receivingInterfaceAddr;
 #endif
   if (setsockopt(socket, IPPROTO_IP, IP_ADD_SOURCE_MEMBERSHIP,
 		 (const char*)&imr, sizeof (struct ip_mreq_source)) < 0) {
@@ -699,9 +718,16 @@ Boolean socketJoinGroupSSM(UsageEnvironment& env, int socket,
   return True;
 }
 
-Boolean socketLeaveGroupSSM(UsageEnvironment& /*env*/, int socket,
+Boolean socketLeaveGroupSSM(UsageEnvironment& env, int socket,
 			    struct sockaddr_storage const& groupAddress,
 			    struct sockaddr_storage const& sourceFilterAddr) {
+  return socketLeaveGroupSSM(env, socket, groupAddress, sourceFilterAddr, ReceivingInterfaceAddr);
+}
+
+Boolean socketLeaveGroupSSM(UsageEnvironment& /*env*/, int socket,
+          struct sockaddr_storage const& groupAddress,
+          struct sockaddr_storage const& sourceFilterAddr,
+          ipv4AddressBits receivingInterfaceAddr) {
   if (!IsMulticastAddress(groupAddress)) return True; // ignore this case
   if (groupAddress.ss_family != AF_INET) return False; // later, support IPv6
 
@@ -709,11 +735,11 @@ Boolean socketLeaveGroupSSM(UsageEnvironment& /*env*/, int socket,
 #if ANDROID_OLD_NDK
     imr.imr_multiaddr = ((struct sockaddr_in&)groupAddress).sin_addr.s_addr;
     imr.imr_sourceaddr = ((struct sockaddr_in&)sourceFilterAddr).sin_addr.s_addr;
-    imr.imr_interface = ReceivingInterfaceAddr;
+    imr.imr_interface = receivingInterfaceAddr;
 #else
     imr.imr_multiaddr.s_addr = ((struct sockaddr_in&)groupAddress).sin_addr.s_addr;
     imr.imr_sourceaddr.s_addr = ((struct sockaddr_in&)sourceFilterAddr).sin_addr.s_addr;
-    imr.imr_interface.s_addr = ReceivingInterfaceAddr;
+    imr.imr_interface.s_addr = receivingInterfaceAddr;
 #endif
   if (setsockopt(socket, IPPROTO_IP, IP_DROP_SOURCE_MEMBERSHIP,
 		 (const char*)&imr, sizeof (struct ip_mreq_source)) < 0) {

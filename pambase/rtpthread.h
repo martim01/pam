@@ -18,6 +18,7 @@
 
 struct qosData;
 class Smpte2110MediaSession;
+class MediaSession;
 
 class PAMBASE_IMPEXPORT RtpThread : public wxThread
 {
@@ -37,6 +38,7 @@ class PAMBASE_IMPEXPORT RtpThread : public wxThread
 
 
         void StreamFromSDP();
+        void ConfigureReceivingInterface(MediaSession& session) const;
 
         void SetQosMeasurementIntervalMS(unsigned long nMilliseconds);
         unsigned long GetQosMeasurementIntervalMS();
