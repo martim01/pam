@@ -62,10 +62,11 @@ MediaSession::MediaSession(UsageEnvironment& env)
     fSubsessionsHead(NULL), fSubsessionsTail(NULL),
     fConnectionEndpointName(NULL), fConnectionEndpointNameAddressFamily(AF_UNSPEC),
     fMaxPlayStartTime(0.0f), fMaxPlayEndTime(0.0f), fAbsStartTime(NULL), fAbsEndTime(NULL),
-    fSourceFilterAddr(nullAddress()), fReceivingInterfaceAddr(ReceivingInterfaceAddr),
     fScale(1.0f), fSpeed(1.0f),
     fMediaSessionType(NULL), fSessionName(NULL), fSessionDescription(NULL), fControlPath(NULL),
     fMIKEYState(NULL), fCrypto(NULL) {
+  fSourceFilterAddr = nullAddress();
+
   // Get our host name, and use this for the RTCP CNAME:
   const unsigned maxCNAMElen = 100;
   char CNAME[maxCNAMElen+1];
@@ -733,9 +734,9 @@ Boolean MediaSubsession::initiate(int useSpecialRTPoffset) {
 	    // use an even-numbered port for RTP, and the next (odd-numbered) port for RTCP
       }
       if (isSSM()) {
-  fRTPSocket = new Groupsock(env(), tempAddr, fSourceFilterAddr, fClientPortNum, fParent.receivingInterfaceAddr());
+  fRTPSocket = new Groupsock(env(), tempAddr, fSourceFilterAddr, fClientPortNum);
       } else {
-  fRTPSocket = new Groupsock(env(), tempAddr, fClientPortNum, 255, fParent.receivingInterfaceAddr());
+  fRTPSocket = new Groupsock(env(), tempAddr, fClientPortNum, 255);
       }
       if (fRTPSocket == NULL) {
 	env().setResultMsg("Failed to create RTP socket");
@@ -750,9 +751,9 @@ Boolean MediaSubsession::initiate(int useSpecialRTPoffset) {
 	  // Set our RTCP port to be the RTP port + 1:
 	  portNumBits const rtcpPortNum = fClientPortNum|1;
 	  if (isSSM()) {
-	    fRTCPSocket = new Groupsock(env(), tempAddr, fSourceFilterAddr, rtcpPortNum, fParent.receivingInterfaceAddr());
+      fRTCPSocket = new Groupsock(env(), tempAddr, fSourceFilterAddr, rtcpPortNum);
 	  } else {
-	    fRTCPSocket = new Groupsock(env(), tempAddr, rtcpPortNum, 255, fParent.receivingInterfaceAddr());
+      fRTCPSocket = new Groupsock(env(), tempAddr, rtcpPortNum, 255);
 	  }
 	}
       }
@@ -772,9 +773,9 @@ Boolean MediaSubsession::initiate(int useSpecialRTPoffset) {
       while (1) {
 	// Create a new socket:
 	if (isSSM()) {
-	  fRTPSocket = new Groupsock(env(), tempAddr, fSourceFilterAddr, 0, fParent.receivingInterfaceAddr());
+    fRTPSocket = new Groupsock(env(), tempAddr, fSourceFilterAddr, 0);
 	} else {
-	  fRTPSocket = new Groupsock(env(), tempAddr, 0, 255, fParent.receivingInterfaceAddr());
+    fRTPSocket = new Groupsock(env(), tempAddr, 0, 255);
 	}
 	if (fRTPSocket == NULL) {
 	  env().setResultMsg("MediaSession::initiate(): unable to create RTP and RTCP sockets");
@@ -807,9 +808,9 @@ Boolean MediaSubsession::initiate(int useSpecialRTPoffset) {
 	// Make sure we can use the next (i.e., odd) port number, for RTCP:
 	portNumBits rtcpPortNum = fClientPortNum|1;
 	if (isSSM()) {
-	  fRTCPSocket = new Groupsock(env(), tempAddr, fSourceFilterAddr, rtcpPortNum, fParent.receivingInterfaceAddr());
+    fRTCPSocket = new Groupsock(env(), tempAddr, fSourceFilterAddr, rtcpPortNum);
 	} else {
-	  fRTCPSocket = new Groupsock(env(), tempAddr, rtcpPortNum, 255, fParent.receivingInterfaceAddr());
+    fRTCPSocket = new Groupsock(env(), tempAddr, rtcpPortNum, 255);
 	}
 	if (fRTCPSocket != NULL && fRTCPSocket->socketNum() >= 0) {
 	  // Success! Use these two sockets.

@@ -81,14 +81,9 @@ public:
 	    Port port, u_int8_t ttl);
       // used for a 'source-independent multicast' group
   Groupsock(UsageEnvironment& env, struct sockaddr_storage const& groupAddr,
-	    Port port, u_int8_t ttl, ipv4AddressBits receivingInterfaceAddr);
-  Groupsock(UsageEnvironment& env, struct sockaddr_storage const& groupAddr,
 	    struct sockaddr_storage const& sourceFilterAddr,
 	    Port port);
       // used for a 'source-specific multicast' group
-  Groupsock(UsageEnvironment& env, struct sockaddr_storage const& groupAddr,
-	    struct sockaddr_storage const& sourceFilterAddr,
-	    Port port, ipv4AddressBits receivingInterfaceAddr);
 
   virtual ~Groupsock();
 
@@ -156,7 +151,6 @@ protected:
   destRecord* fDests;
 private:
   GroupEId fIncomingGroupEId;
-  ipv4AddressBits fReceivingInterfaceAddr;
 };
 
 UsageEnvironment& operator<<(UsageEnvironment& s, const Groupsock& g);

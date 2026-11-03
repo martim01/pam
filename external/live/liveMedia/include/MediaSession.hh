@@ -57,7 +57,6 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #ifndef _SRTP_CRYPTOGRAPHIC_CONTEXT_HH
 #include "SRTPCryptographicContext.hh"
 #endif
-#include "GroupsockHelper.hh"
 
 class MediaSubsession; // forward
 
@@ -75,8 +74,6 @@ public:
   int connectionEndpointNameAddressFamily() const { return fConnectionEndpointNameAddressFamily; }
   char const* CNAME() const { return fCNAME; }
   struct sockaddr_storage const& sourceFilterAddr() const { return fSourceFilterAddr; }
-  void setReceivingInterfaceAddr(ipv4AddressBits address) { fReceivingInterfaceAddr = address; }
-  ipv4AddressBits receivingInterfaceAddr() const { return fReceivingInterfaceAddr; }
   float& scale() { return fScale; }
   float& speed() { return fSpeed; }
   char* mediaSessionType() const { return fMediaSessionType; }
@@ -144,7 +141,6 @@ protected:
   char* fAbsStartTime;
   char* fAbsEndTime;
   struct sockaddr_storage fSourceFilterAddr; // used for SSM
-  ipv4AddressBits fReceivingInterfaceAddr;
   float fScale; // set from a RTSP "Scale:" header
   float fSpeed;
   char* fMediaSessionType; // holds a=type value

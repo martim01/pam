@@ -67,30 +67,16 @@ Boolean setSocketKeepAlive(int sock);
 
 Boolean socketJoinGroup(UsageEnvironment& env, int socket,
 			struct sockaddr_storage const& groupAddress);
-Boolean socketJoinGroup(UsageEnvironment& env, int socket,
-      struct sockaddr_storage const& groupAddress,
-      ipv4AddressBits receivingInterfaceAddr);
 Boolean socketLeaveGroup(UsageEnvironment&, int socket,
 			 struct sockaddr_storage const& groupAddress);
-Boolean socketLeaveGroup(UsageEnvironment&, int socket,
-       struct sockaddr_storage const& groupAddress,
-       ipv4AddressBits receivingInterfaceAddr);
 
 // source-specific multicast join/leave
 Boolean socketJoinGroupSSM(UsageEnvironment& env, int socket,
 			   struct sockaddr_storage const& groupAddress,
 			   struct sockaddr_storage const& sourceFilterAddr);
-Boolean socketJoinGroupSSM(UsageEnvironment& env, int socket,
-         struct sockaddr_storage const& groupAddress,
-         struct sockaddr_storage const& sourceFilterAddr,
-         ipv4AddressBits receivingInterfaceAddr);
 Boolean socketLeaveGroupSSM(UsageEnvironment&, int socket,
 			    struct sockaddr_storage const& groupAddress,
 			    struct sockaddr_storage const& sourceFilterAddr);
-Boolean socketLeaveGroupSSM(UsageEnvironment&, int socket,
-          struct sockaddr_storage const& groupAddress,
-          struct sockaddr_storage const& sourceFilterAddr,
-          ipv4AddressBits receivingInterfaceAddr);
 
 Boolean getSourcePort(UsageEnvironment& env, int socket, int domain, Port& port);
 

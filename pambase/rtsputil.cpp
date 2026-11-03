@@ -86,11 +86,6 @@ void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultS
         }
         else
         {
-            auto* pPamClient = dynamic_cast<ourRTSPClient*>(rtspClient);
-            if(pPamClient && pPamClient->GetHandler())
-            {
-                pPamClient->GetHandler()->ConfigureReceivingInterface(*scs.session);
-            }
             scs.iter = new MediaSubsessionIterator(*scs.session);
             setupNextSubsession(rtspClient);
         }

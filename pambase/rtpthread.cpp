@@ -56,6 +56,7 @@ RtpThread::RtpThread(wxEvtHandler* pHandler, const wxString& sReceivingInterface
 
 void* RtpThread::Entry()
 {
+    ConfigureReceivingInterface();
     m_nSampleRate = 48000;
     // Begin by setting up our usage environment:
     TaskScheduler* scheduler = PamTaskScheduler::createNew();
@@ -127,8 +128,6 @@ void RtpThread::StreamFromSDP()
         pmlLog(pml::LOG_DEBUG, "pam::rtpclient") << "Created MediaSession object";
     }
 
-    ConfigureReceivingInterface(*m_pSession);
-
     //count number of subsessions
     unsigned int nCountAudio(0);
     MediaSubsessionIterator iterCount(*m_pSession);
@@ -185,13 +184,13 @@ void RtpThread::StreamFromSDP()
     }
 }
 
-void RtpThread::ConfigureReceivingInterface(MediaSession& session) const
+void RtpThread::ConfigureReceivingInterface() const
 {
     const wxString sAddress = NetworkControl::Get().GetAddress(m_sReceivingInterface);
     if(sAddress.IsEmpty())
     {
         pmlLog(pml::LOG_WARN, "pam::rtpclient") << "Unknown receiving interface " << m_sReceivingInterface.ToStdString() << "; using the default interface";
-        session.setReceivingInterfaceAddr(INADDR_ANY);
+        ReceivingInterfaceAddr = INADDR_ANY;
         return;
     }
 
@@ -199,12 +198,12 @@ void RtpThread::ConfigureReceivingInterface(MediaSession& session) const
     if(nAddress == INADDR_NONE)
     {
         pmlLog(pml::LOG_WARN, "pam::rtpclient") << "Invalid IPv4 address for receiving interface " << m_sReceivingInterface.ToStdString() << "; using the default interface";
-        session.setReceivingInterfaceAddr(INADDR_ANY);
+        ReceivingInterfaceAddr = INADDR_ANY;
         return;
     }
 
     pmlLog(pml::LOG_DEBUG, "pam::rtpclient") << "Receiving multicast on " << m_sReceivingInterface.ToStdString() << " (" << sAddress.ToStdString() << ")";
-    session.setReceivingInterfaceAddr(nAddress);
+    ReceivingInterfaceAddr = nAddress;
 }
 
 void RtpThread::CreateSink(Smpte2110MediaSubsession* pSubsession)
