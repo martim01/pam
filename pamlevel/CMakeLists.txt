@@ -45,7 +45,7 @@ endif()
 target_compile_options(pamlevel PRIVATE ${flags})
 
 target_link_libraries(pamlevel ${wxWidgets_LIBRARIES})
-target_link_libraries(pamlevel optimized pambase debug pambased)
+target_link_libraries(pamlevel pambase)
 
 set_target_properties(pamlevel PROPERTIES DEBUG_POSTFIX "d")
 set_target_properties(pamlevel PROPERTIES CXX_STANDARD 17)

@@ -34,8 +34,7 @@ endif()
 target_compile_options(pamfft PRIVATE ${flags})
 
 target_link_libraries(pamfft ${wxWidgets_LIBRARIES})
-target_link_libraries(pamfft optimized pambase debug pambased)
-target_link_libraries(pamfft optimized restgoose debug restgoosed)
+target_link_libraries(pamfft pambase restgoose)
 
 set_target_properties(pamfft PROPERTIES DEBUG_POSTFIX "d")
 set_target_properties(pamfft PROPERTIES CXX_STANDARD 17)
